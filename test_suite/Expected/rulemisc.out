@@ -1,0 +1,897 @@
+TRUE
+CLIPS> (batch "rulemisc.bat")
+TRUE
+CLIPS> (unwatch all)
+CLIPS> (clear) ; Test Thing #1
+CLIPS> (defrule rule-1 (foo $?b ?x) =>)
+CLIPS> (defrule rule-2 (foo $?y) =>)
+CLIPS> (clear) ; Test Thing #2
+CLIPS> (watch facts)
+CLIPS> (watch activations)
+CLIPS> (defrule foo (not (not (and (a) (b)))) =>)
+CLIPS> (defrule bar (not (and (a) (b))) =>)
+==> Activation 0      bar: *
+CLIPS> (assert (a))
+==> f-1     (a)
+<Fact-1>
+CLIPS> (assert (b))
+==> f-2     (b)
+<== Activation 0      bar: *
+==> Activation 0      foo: *
+<Fact-2>
+CLIPS> (unwatch all)
+CLIPS> (clear) ; Test Thing #3
+CLIPS> (reset)
+CLIPS> (defrule foo (initial-fact) (not (a)) =>)
+CLIPS> (defrule bar (initial-fact) =>)
+CLIPS> (agenda)
+0      bar: f-0
+0      foo: f-0,*
+For a total of 2 activations.
+CLIPS> (unwatch all)
+CLIPS> (clear) ; Test Thing #4
+CLIPS> (defrule foo (logical (exists (a ?) (b ?))) => (assert (q)))
+CLIPS> (reset)
+CLIPS> (assert (a 1) (b 1) (a 2) (b 2) (a 3))
+<Fact-5>
+CLIPS> (run)
+CLIPS> (watch facts)
+CLIPS> (retract 1 2 3 4)
+<== f-1     (a 1)
+<== f-2     (b 1)
+<== f-3     (a 2)
+<== f-4     (b 2)
+<== f-6     (q)
+CLIPS> (unwatch all)
+CLIPS> (clear) ; Test Thing #5
+CLIPS> (defrule rule-1 (a ?x) (not (b ?x)) =>)
+CLIPS> (reset)
+CLIPS> (assert (a 1) (a 2) (b 2))
+<Fact-3>
+CLIPS> (run)
+CLIPS> (refresh rule-1)
+CLIPS> (agenda)
+0      rule-1: f-1,*
+For a total of 1 activation.
+CLIPS> (clear) ; Test Thing #6
+CLIPS> (reset)
+CLIPS> (watch facts)
+CLIPS> (watch activations)
+CLIPS> (defrule all-players-practiced
+   (logical (forall (player ?name)
+                    (pitched ?name)
+                    (batted ?name)))
+   =>
+   (assert (all-players-have-practiced)))
+==> Activation 0      all-players-practiced: *
+CLIPS> (assert (player Gary) (pitched Gary) (batted Gary))
+==> f-1     (player Gary)
+<== Activation 0      all-players-practiced: *
+==> f-2     (pitched Gary)
+==> f-3     (batted Gary)
+==> Activation 0      all-players-practiced: *
+<Fact-3>
+CLIPS> (assert (pitched Brian) (player Brian) (batted Brian))
+==> f-4     (pitched Brian)
+==> f-5     (player Brian)
+<== Activation 0      all-players-practiced: *
+==> f-6     (batted Brian)
+==> Activation 0      all-players-practiced: *
+<Fact-6>
+CLIPS> (run)
+==> f-7     (all-players-have-practiced)
+CLIPS> (retract 3)
+<== f-3     (batted Gary)
+<== f-7     (all-players-have-practiced)
+CLIPS> (unwatch all)
+CLIPS> (clear) ; Test Thing #7
+CLIPS> (defrule rule-1
+  (team ?x)
+  (forall (player ?z ?x) (batted ?z) (pitched ?z))
+  =>)
+CLIPS> (matches rule-1)
+Matches for Pattern 1
+ None
+Matches for Pattern 2
+ None
+Matches for Pattern 3
+ None
+Matches for Pattern 4
+ None
+Partial matches for CEs 1 - 2
+ None
+Partial matches for CEs 1 - 3
+ None
+Partial matches for CEs 1 - 4
+ None
+Partial matches for CEs 1 (P1) - 2 (P2) , 3 (P3 - P4)
+ None
+Partial matches for CEs 1 (P1) , 2 (P2 - P4)
+ None
+Activations
+ None
+(0 0 0)
+CLIPS> (assert (team Reds))
+<Fact-1>
+CLIPS> (matches rule-1)
+Matches for Pattern 1
+f-1
+Matches for Pattern 2
+ None
+Matches for Pattern 3
+ None
+Matches for Pattern 4
+ None
+Partial matches for CEs 1 - 2
+ None
+Partial matches for CEs 1 - 3
+ None
+Partial matches for CEs 1 - 4
+ None
+Partial matches for CEs 1 (P1) - 2 (P2) , 3 (P3 - P4)
+ None
+Partial matches for CEs 1 (P1) , 2 (P2 - P4)
+f-1,*
+Activations
+f-1,*
+(1 1 1)
+CLIPS> (assert (player Gary Reds))
+<Fact-2>
+CLIPS> (matches rule-1)
+Matches for Pattern 1
+f-1
+Matches for Pattern 2
+f-2
+Matches for Pattern 3
+ None
+Matches for Pattern 4
+ None
+Partial matches for CEs 1 - 2
+f-1,f-2
+Partial matches for CEs 1 - 3
+ None
+Partial matches for CEs 1 - 4
+ None
+Partial matches for CEs 1 (P1) - 2 (P2) , 3 (P3 - P4)
+f-1,f-2,*
+Partial matches for CEs 1 (P1) , 2 (P2 - P4)
+ None
+Activations
+ None
+(2 2 0)
+CLIPS> (assert (batted Gary))
+<Fact-3>
+CLIPS> (matches rule-1)
+Matches for Pattern 1
+f-1
+Matches for Pattern 2
+f-2
+Matches for Pattern 3
+f-3
+Matches for Pattern 4
+ None
+Partial matches for CEs 1 - 2
+f-1,f-2
+Partial matches for CEs 1 - 3
+f-1,f-2,f-3
+Partial matches for CEs 1 - 4
+ None
+Partial matches for CEs 1 (P1) - 2 (P2) , 3 (P3 - P4)
+f-1,f-2,*
+Partial matches for CEs 1 (P1) , 2 (P2 - P4)
+ None
+Activations
+ None
+(3 3 0)
+CLIPS> (assert (pitched Gary))
+<Fact-4>
+CLIPS> (matches rule-1)
+Matches for Pattern 1
+f-1
+Matches for Pattern 2
+f-2
+Matches for Pattern 3
+f-3
+Matches for Pattern 4
+f-4
+Partial matches for CEs 1 - 2
+f-1,f-2
+Partial matches for CEs 1 - 3
+f-1,f-2,f-3
+Partial matches for CEs 1 - 4
+f-1,f-2,f-3,f-4
+Partial matches for CEs 1 (P1) - 2 (P2) , 3 (P3 - P4)
+ None
+Partial matches for CEs 1 (P1) , 2 (P2 - P4)
+f-1,*
+Activations
+f-1,*
+(4 4 1)
+CLIPS> (clear) ; Test Thing #8 - Fact Addresses References
+CLIPS> (defrule theRule 
+  ?f <- (this)
+  (that ?f)
+  =>)
+CLIPS> (assert (that =(assert (this))))
+<Fact-2>
+CLIPS> (agenda)
+0      theRule: f-1,f-2
+For a total of 1 activation.
+CLIPS> (defrule theRule
+  ?f <- (a)
+  ?f <- (b)
+  =>)
+
+[ANALYSIS1] Duplicate pattern-address ?f found in CE #2.
+
+ERROR:
+(defrule MAIN::theRule
+   ?f <- (a)
+   ?f <- (b)
+   =>)
+CLIPS> (defrule theRule
+  (a ?f)
+  ?f <- (b)
+  =>)
+
+[ANALYSIS2] Pattern-address ?f used in CE #2 was previously bound within a pattern CE.
+
+ERROR:
+(defrule MAIN::theRule
+   (a ?f)
+   ?f <- (b)
+   =>)
+CLIPS> (clear) ; Test Thing #9
+CLIPS> (deffacts start (rule-2))
+CLIPS> (defrule rule-1 (rule-2) (rule-2 green) =>)
+CLIPS> (defrule rule-2 (rule-2 $?) =>)
+CLIPS> (reset)
+CLIPS> (agenda)
+0      rule-2: f-1
+For a total of 1 activation.
+CLIPS> (clear) ; Test Thing #10
+CLIPS> (defrule foo (a ?) (b ?) (c ?) =>)
+CLIPS> (assert (a 1) (a 2) (b 1) (b 2) (c 1))
+<Fact-5>
+CLIPS> (matches foo)
+Matches for Pattern 1
+f-1
+f-2
+Matches for Pattern 2
+f-3
+f-4
+Matches for Pattern 3
+f-5
+Partial matches for CEs 1 - 2
+f-1,f-4
+f-2,f-4
+f-1,f-3
+f-2,f-3
+Partial matches for CEs 1 - 3
+f-2,f-3,f-5
+f-1,f-3,f-5
+f-2,f-4,f-5
+f-1,f-4,f-5
+Activations
+f-2,f-3,f-5
+f-1,f-3,f-5
+f-2,f-4,f-5
+f-1,f-4,f-5
+(5 8 4)
+CLIPS> (clear) ; Test Thing #11
+CLIPS> (defrule foo 
+   (exists (a ?x) (b ?x)) 
+   (exists (c ?x) (d ?x))
+   =>)
+CLIPS> (reset)
+CLIPS> (assert (a 1) (b 1) (c 2) (d 2))
+<Fact-4>
+CLIPS> (matches foo)
+Matches for Pattern 1
+f-1
+Matches for Pattern 2
+f-2
+Matches for Pattern 3
+f-3
+Matches for Pattern 4
+f-4
+Partial matches for CEs 1 - 2
+f-1,f-2
+Partial matches for CEs 1 (P1 - P2)
+*
+Partial matches for CEs 1 (P1 - P2) , 2 (P3)
+*,f-3
+Partial matches for CEs 1 (P1 - P2) , 2 (P3) - 3 (P4)
+*,f-3,f-4
+Partial matches for CEs 1 (P1 - P2) , 2 (P3 - P4)
+*,*
+Activations
+*,*
+(4 5 1)
+CLIPS> (clear) ; Test Thing #12
+CLIPS> 
+(defrule Buggy-Rule
+   (A ?a)  
+   (not (and (A ?a)
+             (B)
+             (not (and (C ?c)
+                       (test (neq ?c ?a))))))
+   =>) 
+CLIPS> (reset)
+CLIPS> (assert (A G1))
+<Fact-1>
+CLIPS> (assert (B))
+<Fact-2>
+CLIPS> (assert (C G1))
+<Fact-3>
+CLIPS> (agenda)
+CLIPS> (clear) ; Matches
+CLIPS> (defrule foo 
+   (exists (a ?x) (b ?x) (c ?x)) 
+   (exists (d ?x) (e ?x) (f ?x))
+   (exists (g ?x) (h ?x) (i ?x))
+   (j ?x)
+   =>)
+CLIPS> (assert (a 1) (b 1) (c 1) (d 2) (e 2) (f 2) (g 3) (h 3) (i 3) (j 4))
+<Fact-10>
+CLIPS> (matches foo)
+Matches for Pattern 1
+f-1
+Matches for Pattern 2
+f-2
+Matches for Pattern 3
+f-3
+Matches for Pattern 4
+f-4
+Matches for Pattern 5
+f-5
+Matches for Pattern 6
+f-6
+Matches for Pattern 7
+f-7
+Matches for Pattern 8
+f-8
+Matches for Pattern 9
+f-9
+Matches for Pattern 10
+f-10
+Partial matches for CEs 1 - 2
+f-1,f-2
+Partial matches for CEs 1 - 3
+f-1,f-2,f-3
+Partial matches for CEs 1 (P1 - P3)
+*
+Partial matches for CEs 1 (P1 - P3) , 2 (P4)
+*,f-4
+Partial matches for CEs 1 (P1 - P3) , 2 (P4) - 3 (P5)
+*,f-4,f-5
+Partial matches for CEs 1 (P1 - P3) , 2 (P4) - 4 (P6)
+*,f-4,f-5,f-6
+Partial matches for CEs 1 (P1 - P3) , 2 (P4 - P6)
+*,*
+Partial matches for CEs 1 (P1 - P3) , 2 (P4 - P6) , 3 (P7)
+*,*,f-7
+Partial matches for CEs 1 (P1 - P3) , 2 (P4 - P6) , 3 (P7) - 4 (P8)
+*,*,f-7,f-8
+Partial matches for CEs 1 (P1 - P3) , 2 (P4 - P6) , 3 (P7) - 5 (P9)
+*,*,f-7,f-8,f-9
+Partial matches for CEs 1 (P1 - P3) , 2 (P4 - P6) , 3 (P7 - P9)
+*,*,*
+Partial matches for CEs 1 (P1 - P3) , 2 (P4 - P6) , 3 (P7 - P9) , 4 (P10)
+*,*,*,f-10
+Activations
+*,*,*,f-10
+(10 12 1)
+CLIPS> (clear) ; Test Thing #13
+CLIPS> (deftemplate TAG2100 (slot tag-id))
+CLIPS> (deftemplate TAG2300 (slot parent))
+CLIPS> (deftemplate TAG2500 (slot parent))
+CLIPS> (deftemplate TAG2400 (slot parent))
+CLIPS> (deftemplate GCSS-merge-tag (slot tag-id))
+CLIPS> 
+(defrule load-data
+   =>
+   (assert (TAG2300 (parent "1")))
+   (assert (TAG2370))
+   (assert (TAG2400 (parent "1")));  (matched no)))
+   (assert (GCSS-merge-tag (tag-id "1"))))
+CLIPS> 
+(defrule TAG2400-AA-Update ""
+   (TBX)
+   (TAG2100 (tag-id ?td2))
+   (TAG2500 (parent ?td2))      
+   (exists (GCSS-merge-tag (tag-id ?td3))
+           (TAG2400 (parent ?td2 | ?td3)) 
+           (not (and (TAG2370)
+                     (TAG2300 (parent ?td2 | ?td3)))))
+   =>)
+CLIPS> (reset)
+CLIPS> (run)
+CLIPS> (clear) ; Test Thing #14
+CLIPS> 
+(deftemplate TAG2100
+   (slot source)
+   (slot matched)
+   (slot sort-order))
+CLIPS> 
+(defrule load-data
+   =>
+   (assert (TAGS100)
+           (TAG2100 (source ESI) (matched yes) (sort-order 2))
+           (TAG2100 (source GCSS) (matched yes) (sort-order 19))))
+CLIPS> 
+(defrule Rule-2 ""
+   
+   (TAG2100 (source ESI)
+            (matched ?m))
+            
+   (TAG2100 (source GCSS)
+            (matched ?m)
+            (sort-order ?so1))
+
+   (not (and (TAGS100)
+                       
+             (not (TAG2100 (source GCSS)
+                           (sort-order ?so5&:(< ?so5 ?so1))))))
+   
+   =>)
+CLIPS> (reset)
+CLIPS> (run)
+CLIPS> (clear) ; Test Thing #15
+CLIPS> (watch activations) 
+CLIPS> (watch facts) 
+CLIPS> (deftemplate foo (slot bar)) 
+CLIPS> 
+(defrule modify-with-logical 
+   (logical (something))
+   ?f <- (foo (bar 1))
+  => 
+   (modify ?f (bar TRUE))) 
+CLIPS> 
+(assert (foo (bar 1)))
+==> f-1     (foo (bar 1))
+<Fact-1>
+CLIPS> (assert (something))
+==> f-2     (something)
+==> Activation 0      modify-with-logical: f-2,f-1
+<Fact-2>
+CLIPS> (run) 
+<== f-1     (foo (bar 1))
+==> f-3     (foo (bar TRUE))
+CLIPS> (facts)
+f-0     (initial-fact)
+f-2     (something)
+f-3     (foo (bar TRUE))
+For a total of 3 facts.
+CLIPS> (unwatch all)
+CLIPS> (clear)
+CLIPS> (watch activations) 
+CLIPS> (watch facts) 
+CLIPS> (deftemplate foo (slot bar)) 
+CLIPS> 
+(defrule modify-with-logical 
+   (logical (something)
+   ?f <- (foo (bar 1)))
+  => 
+   (modify ?f (bar TRUE))) 
+CLIPS> 
+(assert (foo (bar 1)))
+==> f-1     (foo (bar 1))
+<Fact-1>
+CLIPS> (assert (something))
+==> f-2     (something)
+==> Activation 0      modify-with-logical: f-2,f-1
+<Fact-2>
+CLIPS> (run) 
+<== f-1     (foo (bar 1))
+CLIPS> (facts)
+f-0     (initial-fact)
+f-2     (something)
+For a total of 2 facts.
+CLIPS> (unwatch all)
+CLIPS> (clear) ; Test Thing #16
+CLIPS> (watch facts)
+CLIPS> (defrule prop
+   (logical (level-search ?n))
+   (not (level-search ?n1&:(> ?n1 ?n)))
+   =>
+   (assert (level-search (+ ?n 1))))
+CLIPS> (reset)
+<== f-0     (initial-fact)
+==> f-0     (initial-fact)
+CLIPS> (assert (level-search 1))
+==> f-1     (level-search 1)
+<Fact-1>
+CLIPS> (run 1)
+==> f-2     (level-search 2)
+CLIPS> (unwatch facts)
+CLIPS> (clear) ; Test Thing #17
+CLIPS> (deftemplate Event (slot value) (slot time))
+CLIPS> 
+(defrule example-failing-2
+  (Event (value 1) (time ?t1))
+  (not (and (Event (value 0) (time ?tn))
+            (test (< ?t1 ?tn))
+            ))
+  (test (< ?t1 3))
+  =>
+  (printout t "Fails 1" crlf))
+CLIPS> 
+(deffacts stuff
+   (Event (value 1) (time 1)))
+CLIPS> (reset)
+CLIPS> (agenda)
+0      example-failing-2: f-1,*
+For a total of 1 activation.
+CLIPS> (clear) ; Test Thing #18
+CLIPS> (deftemplate Event (slot value) (slot time))
+CLIPS> 
+(defrule example-working
+  (Event (value 1) (time ?t1))
+  (Event (value 1) (time ?t2))
+  (test (< ?t1 ?t2))
+  (test (< ?t1 ?t2))
+  (not (and (Event (value 0) (time ?tn))
+            (test (< ?t1 ?tn))))
+ =>
+  (printout t "Works 1" crlf)
+)
+CLIPS> 
+(defrule example-failing-1
+  (Event (value 1) (time ?t1))
+  (Event (value 1) (time ?t2))
+  (test (< ?t1 ?t2))
+  (not (and (Event (value 0) (time ?tn))
+            (test (< ?t1 ?tn))))
+  (test (< ?t1 ?t2))
+=>
+ (printout t "Fails 1" crlf)
+)
+CLIPS> 
+(defrule example-simple-working-2
+  (Event (value 1) (time ?t1))
+  (Event (value 1) (time ?t2))
+  (test (< ?t1 ?t2))
+  (not (Event (value 0) (time ?tn)))
+  (test (< ?t1 ?t2))
+=>
+ (printout t "Works (Simple!) 2" crlf)
+)
+CLIPS> 
+(defrule example-failing-2
+  (Event (value 1) (time ?t1))
+  (Event (value 1) (time ?t2))
+  (not (and (Event (value 0) (time ?tn))
+            (test (< ?t1 ?tn))))
+  (test (< ?t1 ?t2))
+  (test (< ?t1 ?t2))
+=>
+ (printout t "Fails 2" crlf)
+)
+CLIPS> 
+(defrule example-working-3
+  (Event (value 1) (time ?t1))
+  (not (and (Event (value 0) (time ?tn))
+            (test (< ?t1 ?tn))))
+  (Event (value 1) (time ?t2))
+  (test (< ?t1 ?t2))
+  (test (< ?t1 ?t2))
+=>
+ (printout t "Works 3" crlf)
+)
+CLIPS> (assert (Event (value 1) (time 0)))
+<Fact-1>
+CLIPS> (assert (Event (value 1) (time 1)))
+<Fact-2>
+CLIPS> (agenda)
+0      example-working: f-1,f-2,*
+0      example-failing-1: f-1,f-2,*
+0      example-simple-working-2: f-1,f-2,*
+0      example-failing-2: f-1,f-2,*
+0      example-working-3: f-1,*,f-2
+For a total of 5 activations.
+CLIPS> (clear) ; Test Thing #19
+CLIPS> (watch activations)
+CLIPS> 
+(defrule xx
+   (SAD SD SD01 ?val0)
+   (and
+      (exists 
+         (SAD G ?ix G10 ?val1)
+         (SAD G ?ix G10 ?val2)
+         (or
+            (test (eq ?val1 "IQ")) 
+            (test (eq ?val2 "IQ")))) 
+      (test (eq ?val0 "ZAH")))
+=>)
+CLIPS> (assert (SAD SD SD01 "ZAH"))
+==> Activation 0      xx: f-1,*
+<== Activation 0      xx: f-1,*
+<Fact-1>
+CLIPS> (assert (SAD SD SD01 "BAH"))
+<Fact-2>
+CLIPS> (assert (SAD G 10 G10 "BQ"))
+<Fact-3>
+CLIPS> (assert (SAD G 10 G10 "IQ"))
+==> Activation 0      xx: f-1,*
+<Fact-4>
+CLIPS> (unwatch activations)
+CLIPS> (clear) ; Test Thing #20
+CLIPS> (watch activations)
+CLIPS> 
+(deffacts xy
+   (SAD G 1 GX01 "XX")
+   (SAD G 1 GCH 1 GCH03 "AA")
+   (SAD G 2 GX01 "CN")
+   (SAD G 2 GCH 1 GCH03 "AA")
+   (SAD G 3 GX01 "XX")
+   (SAD G 3 GCH 1 GCH03 "B00")
+   (SAD G 4 GX01 "CN")
+   (SAD G 4 GCH 1 GCH03 "B00"))
+CLIPS> 
+(defrule if_exists ""
+   (SAD G ?ix1 GX01 ?var1)
+   (and
+      (test (eq ?var1 "CN"))
+      (exists 
+         (SAD G ?ix1 GCH ?ix2 GCH03 ?var2)
+         (test (eq ?var2 "B00"))))
+   =>)
+CLIPS> (reset)
+==> Activation 0      if_exists: f-7,*
+CLIPS> (unwatch activations)
+CLIPS> (clear) ; Test Thing #21 (Sudoku)
+CLIPS> 
+(deftemplate possible
+   (slot row)
+   (slot value))
+CLIPS> 
+(deftemplate size-value
+   (slot value))
+CLIPS> 
+(defrule issue
+   (size-value (value ?v))
+   (not (and (size-value (value ?v2&:(< ?v2 ?v)))
+             (not (possible (row 1) (value ?v2)))))
+   =>)
+CLIPS> 
+(defrule grid-values
+   =>
+   (assert (size-value (value 5)))
+   (assert (size-value (value 6))))   
+CLIPS> (reset)
+CLIPS> (agenda)
+0      grid-values: *
+For a total of 1 activation.
+CLIPS> (watch activations)
+CLIPS> (watch facts)
+CLIPS> (run 1)
+==> f-1     (size-value (value 5))
+==> Activation 0      issue: f-1,*
+==> f-2     (size-value (value 6))
+CLIPS> (agenda)
+0      issue: f-1,*
+For a total of 1 activation.
+CLIPS> (unwatch facts)
+CLIPS> (unwatch activations)
+CLIPS> (clear) ; Test Thing #22 (Sudoku)
+CLIPS> 
+(deftemplate possible
+   (slot row)
+   (slot value))
+CLIPS> 
+(deftemplate size-value
+   (slot value))
+CLIPS> 
+(defrule issue
+   (x)
+   (size-value (value ?v))
+   (not (and (y)
+             (size-value (value ?v2&:(< ?v2 ?v)))
+             (not (possible (row 1) (value ?v2)))))
+   =>)
+CLIPS> 
+(defrule grid-values
+   =>
+   (assert (x))
+   (assert (y))
+   (assert (size-value (value 5)))
+   (assert (size-value (value 6))))   
+CLIPS> (reset)
+CLIPS> (agenda)
+0      grid-values: *
+For a total of 1 activation.
+CLIPS> (watch activations)
+CLIPS> (watch facts)
+CLIPS> (run 1)
+==> f-1     (x)
+==> f-2     (y)
+==> f-3     (size-value (value 5))
+==> Activation 0      issue: f-1,f-3,*
+==> f-4     (size-value (value 6))
+CLIPS> (agenda)
+0      issue: f-1,f-3,*
+For a total of 1 activation.
+CLIPS> (unwatch facts)
+CLIPS> (unwatch activations)
+CLIPS> (clear) ; Test Thing #23 (User Bug)
+CLIPS> 
+(deftemplate link
+   (slot z)
+   (slot y))
+CLIPS> 
+(deftemplate xfer
+   (slot u)
+   (slot z))
+CLIPS>    
+(deftemplate csp
+   (slot y)
+   (slot u))
+CLIPS>       
+(deffacts start
+   (csp (y A) (u B))
+   (link (z B) (y A))
+   (link (z C) (y A))
+   (xfer (u B) (z C)))
+CLIPS> 
+(defrule rule-bad
+   (link (z ?zzz) (y ?yyy))
+   (forall (csp (y ?yyy) (u ?uuu))
+           (test (progn TRUE))
+           (xfer (u ?uuu) (z ?zzz)))
+   =>)
+CLIPS> (watch facts)
+CLIPS> (watch activations)
+CLIPS> (reset)
+<== f-0     (initial-fact)
+==> f-0     (initial-fact)
+==> f-1     (csp (y A) (u B))
+==> f-2     (link (z B) (y A))
+==> f-3     (link (z C) (y A))
+==> f-4     (xfer (u B) (z C))
+==> Activation 0      rule-bad: f-3,*
+CLIPS> (agenda)
+0      rule-bad: f-3,*
+For a total of 1 activation.
+CLIPS> (unwatch facts)
+CLIPS> (unwatch activations)
+CLIPS> (clear) ; Test Thing #24 (Client Bug)
+CLIPS> 
+(deftemplate thing
+   (slot id))
+CLIPS> 
+(defrule load-data
+   =>
+   (assert
+      (thing
+         (id "GCSS2100-001"))))
+CLIPS> 
+(defrule Rule-1
+   (exists (and (thing (id ?id))
+                (thing (id ~?id))))
+   =>)
+CLIPS>       
+(defrule Rule-2
+   (before)
+   (exists (and (thing (id ?id))
+                (thing (id ~?id))))
+   (after)
+   =>)
+CLIPS> (reset)
+CLIPS> (agenda)
+0      load-data: *
+For a total of 1 activation.
+CLIPS> (run 1)
+CLIPS> (agenda)
+CLIPS> (clear) ; Test Thing #25 (Client Bug)
+CLIPS> 
+(deftemplate thing
+   (slot source)
+   (slot tag-id))
+CLIPS> 
+(defrule load-data
+   =>
+   (assert
+      (thing
+         (source BAR)
+         (tag-id "thing-001"))))
+CLIPS> 
+(deftemplate select-thing
+   (slot tag-id))
+CLIPS>     
+(defrule rule-1
+   (thing (source FOO)
+          (tag-id ?td1))
+   =>)
+CLIPS> 
+(defrule rule-2
+   (exists (and (thing (source BAR) 
+                       (tag-id ?td2))
+                (thing (source GCSS)
+                       (tag-id ?td3&~?td2))))
+   =>)
+CLIPS> 
+(defrule rule-3
+   (thing (source FOO)
+          (tag-id ?td1))
+   (exists (and (thing (source BAR) 
+                       (tag-id ?td2))
+                (thing (source BAR)
+                       (tag-id ?td3&~?td2))))
+   (not (select-thing))
+   =>)
+CLIPS> 
+(defrule rule-4  "This needs to share with rule-2"
+   (thing (source FOO)
+          (tag-id ?td1))
+   (exists (and (thing (source BAR) 
+                       (tag-id ?td2))
+                (thing (source BAR)
+                       (tag-id ?td3&~?td2))))
+   (not (dabble))
+   =>)
+CLIPS> (reset)
+CLIPS> (agenda)
+0      load-data: *
+For a total of 1 activation.
+CLIPS> (run 1)
+CLIPS> (agenda)
+CLIPS> (clear) ; Test Thing #26 (Client Bug)
+CLIPS> 
+(deftemplate thing
+   (slot source)
+   (slot matched (default no)))
+CLIPS> 
+(deftemplate dubob
+   (slot source)
+   (slot matched (default no)))
+CLIPS> 
+(deffacts initial
+   (thing
+      (source BAR)
+      (matched X))
+   (thing
+      (source FOO)
+      (matched X))
+   (dubob
+      (source FOO)
+      (matched Y)))
+CLIPS> 
+(defrule rule-1  ""
+   (compare)
+   (exists (thing (source FOO)
+                  (matched ?match&~no))        
+           (not (thing (source BAR)
+                       (matched ?match))))
+   =>)
+CLIPS> 
+(defrule rule-2 ""
+   (exists (and (thing (source FOO) (matched ~no)) ;; This join should not be shared with the prior join
+                (dubob (source FOO) (matched ~no))))   
+   =>)
+CLIPS> (agenda)
+CLIPS> (reset)
+CLIPS> (agenda)
+0      rule-2: *
+For a total of 1 activation.
+CLIPS> (clear) ; Test Thing #27 (Client Bug)
+CLIPS> 
+(deftemplate thing
+   (slot tag-id))
+CLIPS> 
+(deftemplate dubob)
+CLIPS> 
+(deffacts data
+   (dubob)
+   (thing (tag-id "B")))
+CLIPS>          
+(defrule rule-1 ""
+   (thing (tag-id ?td2)) 
+   (not (and (dubob)  
+             (not (thing (tag-id ~?td2))))) 
+   =>)
+CLIPS> (agenda)
+CLIPS> (reset)
+CLIPS> (agenda)
+CLIPS> (clear)
+CLIPS> (dribble-off)

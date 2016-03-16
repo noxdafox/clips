@@ -1,0 +1,63 @@
+TRUE
+CLIPS> (batch "utf8.bat")
+TRUE
+CLIPS> (clear)
+CLIPS> (str-length "Привет мир")          ; UTF-8 Support
+10
+CLIPS> (str-length "여러분 안녕하세요")       ; UTF-8 Support
+9
+CLIPS> (str-length "Olá Mundo")           ; UTF-8 Support
+9
+CLIPS> (sub-string 8 10 "Привет мир")     ; UTF-8 Support
+"мир"
+CLIPS> (sub-string 5 8 "여러분 안녕하세요")  ; UTF-8 Support
+"안녕하세"
+CLIPS> (sub-string 3 5 "Olá Mundo")       ; UTF-8 Support
+"á M"
+CLIPS> (str-index "" "Привет мир")        ; UTF-8 Support
+11
+CLIPS> (str-index "" "여러분 안녕하세요")     ; UTF-8 Support
+10
+CLIPS> (str-index "" "Olá Mundo")         ; UTF-8 Support
+10
+CLIPS> (str-index "ет" "Привет мир")      ; UTF-8 Support
+5
+CLIPS> (str-index "여러분" "여러분 안녕하세요")  ; UTF-8 Support
+1
+CLIPS> (str-index "á" "Olá Mundo")        ; UTF-8 Support
+3
+CLIPS> Привет мир                         ; UTF-8 Support
+Привет
+CLIPS> 여러분 안녕하세요                      ; UTF-8 Support
+여러분
+CLIPS> Olá Mundo                          ; UTF-8 Support
+Olá
+CLIPS> 78Пр                               ; UTF-8 Support
+78Пр
+CLIPS> 7여                                 ; UTF-8 Support
+7여
+CLIPS> 3.4Пр                              ; UTF-8 Support
+3.4Пр
+CLIPS> 5.1여                               ; UTF-8 Support
+5.1여
+CLIPS> 3eПр                               ; UTF-8 Support
+3eПр
+CLIPS> 5.1e여                              ; UTF-8 Support
+5.1e여
+CLIPS> 3e+Пр                              ; UTF-8 Support
+3e+Пр
+CLIPS> 5.1e-여                             ; UTF-8 Support
+5.1e-여
+CLIPS> ?Привет                            ; UTF-8 Support
+[EVALUATN1] Variable Привет is unbound
+FALSE
+CLIPS> ?여러분                              ; UTF-8 Support
+[EVALUATN1] Variable 여러분 is unbound
+FALSE
+CLIPS> $?Привет                           ; UTF-8 Support
+[EVALUATN1] Variable Привет is unbound
+FALSE
+CLIPS> $?여러분                             ; UTF-8 Support
+[EVALUATN1] Variable 여러분 is unbound
+FALSE
+CLIPS> (dribble-off)

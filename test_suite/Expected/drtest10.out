@@ -1,0 +1,625 @@
+TRUE
+CLIPS> (batch "drtest10.bat")
+TRUE
+CLIPS> (clear)                   ; Memory Leak #1
+CLIPS> (progn (release-mem) TRUE)
+TRUE
+CLIPS> (mem-used)
+1697966  ;; Can be different
+CLIPS> (defclass SOURCE (is-a USER))
+CLIPS> 
+(deffunction foo()
+   (do-for-all-instances ((?x SOURCE)) TRUE
+      (bind ?y 0)
+      (bogus)))
+
+[EXPRNPSR3] Missing function declaration for bogus.
+
+[PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query function.
+
+ERROR:
+(deffunction MAIN::foo
+   ()
+   (do-for-all-instances ((?x SOURCE))
+      TRUE
+      (bind ?y 0)
+      (
+CLIPS> (clear)                   ; Memory Leak #2
+CLIPS> (progn (release-mem) TRUE)
+TRUE
+CLIPS> (mem-used)
+1698150 ;; Reference mem-used number
+CLIPS> (defclass SOURCE (is-a USER))
+CLIPS> 
+(deffunction foo()
+   (do-for-all-instances ((?x SOURCE)) (progn (bind ?y 3) (bogus) TRUE)
+      (+ 3 4)))
+
+[EXPRNPSR3] Missing function declaration for bogus.
+
+ERROR:
+(deffunction MAIN::foo
+   ()
+   (do-for-all-instances ((?x SOURCE))
+      (progn
+         (bind ?y 3)
+         (
+CLIPS> (clear)                   ; Memory Leak #3
+CLIPS> (progn (release-mem) TRUE)
+TRUE
+CLIPS> (mem-used)
+1698150 ;; Should be the same as above
+CLIPS> (deftemplate SOURCE)
+CLIPS> 
+(deffunction foo()
+   (do-for-all-facts ((?x SOURCE)) TRUE
+      (bind ?y 0)
+      (bogus)))
+
+[EXPRNPSR3] Missing function declaration for bogus.
+
+[PRNTUTIL2] Syntax Error:  Check appropriate syntax for fact-set query function.
+
+ERROR:
+(deffunction MAIN::foo
+   ()
+   (do-for-all-facts ((?x SOURCE))
+      TRUE
+      (bind ?y 0)
+      (
+CLIPS> (clear)                   ; Memory Leak #41
+CLIPS> (progn (release-mem) TRUE)
+TRUE
+CLIPS> (mem-used)
+1698150 ;; Should be the same as above
+CLIPS> (deftemplate SOURCE)
+CLIPS> 
+(deffunction foo()
+   (do-for-all-facts ((?x SOURCE)) (progn (bind ?y 3) (bogus) TRUE)
+      (+ 3 4)))
+
+[EXPRNPSR3] Missing function declaration for bogus.
+
+ERROR:
+(deffunction MAIN::foo
+   ()
+   (do-for-all-facts ((?x SOURCE))
+      (progn
+         (bind ?y 3)
+         (
+CLIPS> (clear)                   ; Memory Leak #5
+CLIPS> (progn (release-mem) TRUE)
+TRUE
+CLIPS> (mem-used)
+1698150 ;; Should be the same as above
+CLIPS> 
+(defclass FOO (is-a USER)
+   (slot value1))
+CLIPS> 
+(deffunction foo ()
+   (make-instance of FOO
+      (value1 (bogus))))
+
+[EXPRNPSR3] Missing function declaration for bogus.
+
+ERROR:
+(deffunction MAIN::foo
+   ()
+   (make-instance of FOO
+      (value1 (bogus
+CLIPS> (clear)                   ; Memory Leak #6
+CLIPS> (progn (release-mem) TRUE)
+TRUE
+CLIPS> (mem-used)
+1698150 ;; Should be the same as above
+CLIPS> 
+(deftemplate FOO
+   (slot value1 (type SYMBOL)))
+CLIPS> 
+(defrule foo
+   (FOO (value1 ?x))
+   =>
+   (+ ?x 1)
+   (printout t ?x))
+
+[RULECSTR3] Previous variable bindings of ?x caused the type restrictions
+for argument #1 of the expression (+ ?x 1)
+found in the rule's RHS to be violated.
+
+ERROR:
+(defrule MAIN::foo
+   (FOO (value1 ?x))
+   =>
+   (+ ?x 1)
+   (printout t ?x))
+CLIPS> (clear)
+CLIPS> (progn (release-mem) TRUE)
+TRUE
+CLIPS> (mem-used)
+1698150 ;; Should be the same as above
+CLIPS> (clear)
+CLIPS> 
+(deftemplate nar 
+   (slot bc))
+CLIPS> 
+(defrule migrant 
+   (test (eq 1 1))
+   (nar (bc ?bc))
+   =>
+   (printout t ?bc crlf))
+CLIPS> 
+(deffacts stuff
+   (nar  (bc "US")))
+CLIPS> (reset)
+CLIPS> (run)
+US
+CLIPS> (clear)                   ; SourceForge Bug #12
+CLIPS> (defclass Test (is-a USER) (multislot Contents))
+CLIPS> (make-instance of Test (Contents a b c d e f g h))
+[gen508]
+CLIPS> 
+(defrule BrokenPatternMatchBehavior-Object
+   (object (is-a Test) 
+           (Contents $?first ?second ?third $?fourth ?fifth))
+   =>
+   (printout t ?first " " ?second " " ?third " " ?fourth " " ?fifth crlf))
+CLIPS> (run)
+(a b c d e) f g () h
+(a b c d) e f (g) h
+(a b c) d e (f g) h
+(a b) c d (e f g) h
+(a) b c (d e f g) h
+() a b (c d e f g) h
+CLIPS> (clear) ;; CLIPSESG Bug
+CLIPS> 
+(defclass A (is-a USER)
+  (role concrete)
+  (slot foo)
+  (slot bar))
+CLIPS> (make-instance a of A)
+[a]
+CLIPS> (watch all)
+CLIPS> (modify-instance a (foo 0))
+MSG >> direct-modify ED:1 (<Instance-a> <Pointer-0x608000442070>) ;; Reference Pointer
+HND >> direct-modify primary in class USER
+       ED:1 (<Instance-a> <Pointer-0x608000442070>)               ;; Should be the same as above
+::= local slot foo in instance a <- 0
+HND << direct-modify primary in class USER
+       ED:1 (<Instance-a> <Pointer-0x608000442070>)               ;; Should be the same as above
+MSG << direct-modify ED:1 (<Instance-a> <Pointer-0x608000442070>) ;; Should be the same as above
+TRUE
+CLIPS> (unwatch all)
+CLIPS> (clear) ;; CLIPSESG Bug
+CLIPS> 
+(defclass A
+  (is-a USER)
+  (role concrete)
+  (slot one (type STRING))
+  (slot two (type SYMBOL) (allowed-values TRUE FALSE) (default TRUE)))
+CLIPS> 
+(definstances TEST (a1 of A) (a2 of A) (a3 of A))
+CLIPS> 
+(defrule rule1
+  ?obj <- (object (is-a A) (name [a1]))
+  =>
+  (message-modify-instance ?obj (one "a") (two FALSE))
+  (send ?obj print))
+CLIPS> 
+(defrule rule2
+  ?obj <- (object (is-a A) (name [a2]))
+  =>
+  (message-modify-instance ?obj (two FALSE) (one "a"))
+  (send ?obj print))
+CLIPS> 
+(defrule rule3
+  ?obj <- (object (is-a A) (name [a3]))
+  =>
+  (modify-instance ?obj (two FALSE) (one "a"))
+  (send ?obj print))
+CLIPS> (reset)
+CLIPS> (run)
+[a3] of A
+(one "a")
+(two FALSE)
+[a2] of A
+(one "a")
+(two FALSE)
+[a1] of A
+(one "a")
+(two FALSE)
+CLIPS> (clear) ;; CLIPSESG Crash Bug
+CLIPS> 
+(defrule bug
+   (dummy)
+   (foo ?x)
+   (not (and (huge ?x)
+             (not (and (test (eq ?x 1))
+                       (bar ?x)))))
+   =>)
+CLIPS> (reset)
+CLIPS> (assert (bar 1))
+<Fact-1>
+CLIPS> (assert (huge 1))
+<Fact-2>
+CLIPS> (clear) ; SourceForge Bug
+CLIPS> 
+(defclass FOO
+   (is-a USER)
+   (slot _foo (default ?NONE)))
+CLIPS> (make-instance foo1 of FOO)
+[INSMNGR14] Override required for slot _foo in instance foo1.
+[PRCCODE4] Execution halted during the actions of message-handler init primary in class USER
+[INSMNGR8] An error occurred during the initialization of instance foo1.
+FALSE
+CLIPS> (make-instance foo2 of FOO (_foo))
+[INSMNGR14] Override required for slot _foo in instance foo2.
+[PRCCODE4] Execution halted during the actions of message-handler put-_foo primary in class FOO
+FALSE
+CLIPS> (clear) ; SourceForge Assert/Clear Bug
+CLIPS> (defrule foo (a ?x&:(progn (clear) TRUE)) =>)
+CLIPS> (assert (a 1))
+[CONSTRCT1] Some constructs are still in use. Clear cannot continue.
+<Fact-1>
+CLIPS> (send [initial-object] delete)
+TRUE
+CLIPS> (assert (a 2))
+[CONSTRCT1] Some constructs are still in use. Clear cannot continue.
+<Fact-2>
+CLIPS> (clear)
+CLIPS> (assert (a (clear)))
+[CONSTRCT1] Some constructs are still in use. Clear cannot continue.
+<Fact-1>
+CLIPS> (clear)
+CLIPS> (deffacts FOO (foo bar) (foo (clear)))
+CLIPS> (reset)
+[CONSTRCT1] Some constructs are still in use. Clear cannot continue.
+CLIPS> (clear)
+CLIPS> (assert-string "(a (clear))")
+[CONSTRCT1] Some constructs are still in use. Clear cannot continue.
+<Fact-1>
+CLIPS> (clear)
+CLIPS> (deftemplate foo (multislot x))
+CLIPS> (assert (foo (x (clear) 1)))
+[CONSTRCT1] Some constructs are still in use. Clear cannot continue.
+<Fact-1>
+CLIPS> (facts)
+f-0     (initial-fact)
+f-1     (foo (x 1))
+For a total of 2 facts.
+CLIPS> (modify 1 (x (clear) 2))
+[CONSTRCT1] Some constructs are still in use. Clear cannot continue.
+<Fact-2>
+CLIPS> (facts)
+f-0     (initial-fact)
+f-2     (foo (x 2))
+For a total of 2 facts.
+CLIPS> (clear) ; SourceForge Bug
+CLIPS> 
+(defmodule FOO
+   (export ?ALL))
+CLIPS>    
+(defclass FOO::DUMMY 
+   (is-a USER)
+   (slot foo))
+CLIPS>    
+(defmodule BAR
+   (import FOO ?ALL))
+CLIPS> 
+(defclass BAR::BAR 
+   (is-a USER)
+   (slot bar (allowed-classes DUMMY)))
+CLIPS> (set-dynamic-constraint-checking TRUE)
+FALSE
+CLIPS> 
+(make-instance b of BAR
+   (bar (make-instance f of DUMMY)))
+[b]
+CLIPS> (set-dynamic-constraint-checking FALSE)   
+TRUE
+CLIPS> (clear) ; CLIPSESG Bug
+CLIPS> 
+(deffunction generate (?a ?c)
+   (str-cat ?a ?c))
+CLIPS> 
+(deffunction gm1 ()
+   (progn$ (?ctype (create$ aaa))
+      (generate 2 ?ctype)))
+CLIPS> 
+(deffunction gm2 ()
+   (bind ?ctype aaa)
+   (generate 2 ?ctype))
+CLIPS> (gm1)
+"2aaa"
+CLIPS> (gm2)
+"2aaa"
+CLIPS>    
+(clear) ; Dangling constructs
+CLIPS> 
+(progn
+   (clear)
+   (build "(defrule foo (count) =>)")
+   (assert (count)))
+[CONSTRCT1] Some constructs are still in use. Clear cannot continue.
+<Fact-1>
+CLIPS> (deftemplate blah (slot x))
+CLIPS> 
+(progn 
+   (clear)
+   (assert (blah (x 1))))
+[CONSTRCT1] Some constructs are still in use. Clear cannot continue.
+<Fact-2>
+CLIPS>    
+(defclass BLAH (is-a USER) (slot x))
+CLIPS> 
+(progn
+   (clear)
+   (make-instance of BLAH (x 1)))
+[CONSTRCT1] Some constructs are still in use. Clear cannot continue.
+[gen509]
+CLIPS> (deffunction yabbo () (printout t "Hello, world!" crlf))
+CLIPS> 
+(progn (clear)
+       (yabbo))
+[CONSTRCT1] Some constructs are still in use. Clear cannot continue.
+Hello, world!
+CLIPS> 
+(defmethod blah ((?x STRING))
+   (printout t ?x crlf))
+CLIPS> 
+(progn (clear)
+       (blah "Hello, world!"))
+[CONSTRCT1] Some constructs are still in use. Clear cannot continue.
+Hello, world!
+CLIPS> (clear) ; Sourceforge bug
+CLIPS> (funcall str-cat)
+""
+CLIPS> 
+(deffunction bar1 (?func)
+   (bind $?a (create$))
+   (funcall ?func (expand$ $?a)))
+CLIPS> (bar1 "str-cat")
+""
+CLIPS> (clear)
+CLIPS> 
+(defclass BOO (is-a USER)
+   (multislot foo (cardinality -1 0)))
+
+[CSTRNPSR6] Minimum cardinality value must be greater than or equal to zero
+
+ERROR:
+(defclass MAIN::BOO
+   (is-a USER)
+   (multislot foo
+      (cardinality -1
+CLIPS>    
+(defclass BOO (is-a USER)
+   (multislot foo (cardinality 0 -3)))
+
+[CSTRNPSR2] Minimum cardinality value must be less than
+or equal to the maximum cardinality value
+
+ERROR:
+(defclass MAIN::BOO
+   (is-a USER)
+   (multislot foo
+      (cardinality 0 -3)
+CLIPS> (clear) ; Continuous operation issue
+CLIPS> (defglobal ?*num* = 37)
+CLIPS> (defglobal ?*val* = FALSE)
+CLIPS> 
+(deffunction get-number ()
+   (bind ?*num* (+ ?*num* 1)))
+CLIPS> 
+(deffunction muck ()
+   (bind ?*val* (create$ (get-number) (get-number))))
+CLIPS> 
+(deffacts startup
+   (muck-around))
+CLIPS>    
+(defrule muck-around
+   ?f0 <- (muck-around)
+   =>
+   (retract ?f0) 
+   (muck)
+   (assert (muck-around)))
+CLIPS> (reset)
+CLIPS> (run 1)
+CLIPS> ?*val*
+(38 39)
+CLIPS> (clear) ; SourceForge Crash Bug
+CLIPS> 
+(deftemplate table
+   (slot table-id (type INTEGER)))
+CLIPS> 
+(deftemplate modeler-instance
+   (slot class (type SYMBOL) (default ?NONE))
+   (slot id (type SYMBOL) (default ?NONE)))
+CLIPS> 
+(deftemplate table-modeler-binding
+   (slot modeler (type SYMBOL))
+   (slot table-id))
+CLIPS> 
+(deffacts start
+   (table (table-id 100002))
+   (table (table-id 100003))
+   (modeler-instance (class TIME-PROFILER) (id gen4)) 
+   (table-modeler-binding (modeler gen4) (table-id 100003)) 
+   (modeler-instance (class TIME-PROFILER) (id gen6))
+   (table-modeler-binding (modeler gen6) (table-id 100002)))
+CLIPS> 
+(defrule mark   
+   (modeler-instance (id ?m1))
+   (modeler-instance (id ?m2&~?m1))
+   (not (and (table-modeler-binding (modeler ?m1) (table-id ?t1))
+             (table-modeler-binding (modeler ?m2) (table-id ?t2&~?t1))
+             (table (table-id ?t1))
+             (table (table-id ?t2))))
+   (not (and
+             (table-modeler-binding (modeler ?m2) (table-id ?t3))
+             (table-modeler-binding (modeler ?m1) (table-id ?t4&~?t3))
+             (table (table-id ?t4))))
+   =>)
+CLIPS> 
+(defrule remove 
+   =>)
+CLIPS> (reset)
+CLIPS> (matches mark)
+Matches for Pattern 1
+f-3
+f-5
+Matches for Pattern 2
+f-3
+f-5
+Matches for Pattern 3
+f-4
+f-6
+Matches for Pattern 4
+f-4
+f-6
+Matches for Pattern 5
+f-1
+f-2
+Matches for Pattern 6
+f-1
+f-2
+Matches for Pattern 7
+f-4
+f-6
+Matches for Pattern 8
+f-4
+f-6
+Matches for Pattern 9
+f-1
+f-2
+Partial matches for CEs 1 - 2
+f-3,f-5
+f-5,f-3
+Partial matches for CEs 1 - 3
+f-5,f-3,f-6
+f-3,f-5,f-4
+Partial matches for CEs 1 - 4
+f-5,f-3,f-6,f-4
+f-3,f-5,f-4,f-6
+Partial matches for CEs 1 - 5
+f-3,f-5,f-4,f-6,f-2
+f-5,f-3,f-6,f-4,f-1
+Partial matches for CEs 1 - 6
+f-5,f-3,f-6,f-4,f-1,f-2
+f-3,f-5,f-4,f-6,f-2,f-1
+Partial matches for CEs 1 (P1) - 2 (P2) , 3 (P3 - P6)
+ None
+Partial matches for CEs 1 (P1) - 2 (P2) , 3 (P3 - P6) , 4 (P7)
+ None
+Partial matches for CEs 1 (P1) - 2 (P2) , 3 (P3 - P6) , 4 (P7) - 5 (P8)
+ None
+Partial matches for CEs 1 (P1) - 2 (P2) , 3 (P3 - P6) , 4 (P7) - 6 (P9)
+ None
+Partial matches for CEs 1 (P1) - 2 (P2) , 3 (P3 - P6) , 4 (P7 - P9)
+ None
+Activations
+ None
+(18 10 0)
+CLIPS> (retract 2)
+CLIPS> (matches mark)
+Matches for Pattern 1
+f-3
+f-5
+Matches for Pattern 2
+f-3
+f-5
+Matches for Pattern 3
+f-4
+f-6
+Matches for Pattern 4
+f-4
+f-6
+Matches for Pattern 5
+f-1
+Matches for Pattern 6
+f-1
+Matches for Pattern 7
+f-4
+f-6
+Matches for Pattern 8
+f-4
+f-6
+Matches for Pattern 9
+f-1
+Partial matches for CEs 1 - 2
+f-3,f-5
+f-5,f-3
+Partial matches for CEs 1 - 3
+f-5,f-3,f-6
+f-3,f-5,f-4
+Partial matches for CEs 1 - 4
+f-5,f-3,f-6,f-4
+f-3,f-5,f-4,f-6
+Partial matches for CEs 1 - 5
+f-5,f-3,f-6,f-4,f-1
+Partial matches for CEs 1 - 6
+ None
+Partial matches for CEs 1 (P1) - 2 (P2) , 3 (P3 - P6)
+f-5,f-3,*
+f-3,f-5,*
+Partial matches for CEs 1 (P1) - 2 (P2) , 3 (P3 - P6) , 4 (P7)
+f-3,f-5,*,f-6
+f-5,f-3,*,f-4
+Partial matches for CEs 1 (P1) - 2 (P2) , 3 (P3 - P6) , 4 (P7) - 5 (P8)
+f-5,f-3,*,f-4,f-6
+f-3,f-5,*,f-6,f-4
+Partial matches for CEs 1 (P1) - 2 (P2) , 3 (P3 - P6) , 4 (P7) - 6 (P9)
+f-5,f-3,*,f-4,f-6,f-1
+Partial matches for CEs 1 (P1) - 2 (P2) , 3 (P3 - P6) , 4 (P7 - P9)
+ None
+Activations
+ None
+(15 14 0)
+CLIPS> (retract 3)
+CLIPS> (matches mark)
+Matches for Pattern 1
+f-5
+Matches for Pattern 2
+f-5
+Matches for Pattern 3
+f-4
+f-6
+Matches for Pattern 4
+f-4
+f-6
+Matches for Pattern 5
+f-1
+Matches for Pattern 6
+f-1
+Matches for Pattern 7
+f-4
+f-6
+Matches for Pattern 8
+f-4
+f-6
+Matches for Pattern 9
+f-1
+Partial matches for CEs 1 - 2
+ None
+Partial matches for CEs 1 - 3
+ None
+Partial matches for CEs 1 - 4
+ None
+Partial matches for CEs 1 - 5
+ None
+Partial matches for CEs 1 - 6
+ None
+Partial matches for CEs 1 (P1) - 2 (P2) , 3 (P3 - P6)
+ None
+Partial matches for CEs 1 (P1) - 2 (P2) , 3 (P3 - P6) , 4 (P7)
+ None
+Partial matches for CEs 1 (P1) - 2 (P2) , 3 (P3 - P6) , 4 (P7) - 5 (P8)
+ None
+Partial matches for CEs 1 (P1) - 2 (P2) , 3 (P3 - P6) , 4 (P7) - 6 (P9)
+ None
+Partial matches for CEs 1 (P1) - 2 (P2) , 3 (P3 - P6) , 4 (P7 - P9)
+ None
+Activations
+ None
+(13 0 0)
+CLIPS> (clear)
+CLIPS> (dribble-off)

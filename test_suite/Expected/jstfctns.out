@@ -1,0 +1,241 @@
+TRUE
+CLIPS> (batch "jstfctns.bat")
+TRUE
+CLIPS> (set-rule-justifications 3)
+[ARGACCES5] Function set-rule-justifications expected argument #1 to be of type symbol
+none
+CLIPS> (set-rule-justifications none 3)
+[ARGACCES4] Function set-rule-justifications expected exactly 1 argument(s)
+CLIPS> (set-rule-justifications off)
+[ARGACCES5] Function set-rule-justifications expected argument #1 to be of type symbol with value none, name, or text
+none
+CLIPS> (get-rule-justifications 3)
+[ARGACCES4] Function get-rule-justifications expected exactly 0 argument(s)
+CLIPS> (justification-names)
+[ARGACCES4] Function justification-names expected exactly 1 argument(s)
+CLIPS> (justification-texts)
+[ARGACCES4] Function justification-texts expected exactly 1 argument(s)
+CLIPS> (justification-names 2 2)
+[ARGACCES4] Function justification-names expected exactly 1 argument(s)
+CLIPS> (justification-texts 2 2)
+[ARGACCES4] Function justification-texts expected exactly 1 argument(s)
+CLIPS> (show-justifications)
+[ARGACCES4] Function show-justifications expected exactly 1 argument(s)
+CLIPS> (show-justifications 2)
+[PRNTUTIL1] Unable to find fact f-2.
+CLIPS> (show-justifications 2.1)
+[ARGACCES5] Function show-justifications expected argument #1 to be of type instance address, instance name, fact address, integer, or symbol
+CLIPS> (show-justifications [a])
+[PRNTUTIL1] Unable to find instance a.
+CLIPS> (show-justifications 2 2)
+[ARGACCES4] Function show-justifications expected exactly 1 argument(s)
+CLIPS> (justification-names 2)
+[PRNTUTIL1] Unable to find fact f-2.
+()
+CLIPS> (justification-texts 2)
+[PRNTUTIL1] Unable to find fact f-2.
+()
+CLIPS> (justification-names 2.1)
+[ARGACCES5] Function justification-names expected argument #1 to be of type instance address, instance name, fact address, integer, or symbol
+CLIPS> (justification-texts 2.2)
+[ARGACCES5] Function justification-texts expected argument #1 to be of type instance address, instance name, fact address, integer, or symbol
+CLIPS> (justification-names [a])
+[PRNTUTIL1] Unable to find instance a.
+()
+CLIPS> (justification-texts [a])
+[PRNTUTIL1] Unable to find instance a.
+()
+CLIPS> 
+(deftemplate output
+   (slot value))
+CLIPS>    
+(deftemplate person
+   (slot first-name)
+   (slot last-name))
+CLIPS>    
+(deffacts start
+   (person (first-name Gary) (last-name Riley)))
+CLIPS>    
+(defrule rule-1
+   (declare (justification "Because " ?name " said so"))
+   (person (first-name ?name))
+   =>
+   (assert (output (value 1))))
+CLIPS>    
+(defrule rule-2
+   (person (first-name ?name))
+   =>
+   (assert (output (value 2))))
+CLIPS> (set-rule-justifications none) ;; Fact None
+none
+CLIPS> (get-rule-justifications)
+none
+CLIPS> (reset)
+CLIPS> (run)
+CLIPS> (justification-names 2)
+()
+CLIPS> (justification-texts 2)
+()
+CLIPS> (justification-names 3)
+()
+CLIPS> (justification-texts 3)
+()
+CLIPS> (show-justifications 2)
+None
+CLIPS> (show-justifications 3)
+None
+CLIPS> (set-rule-justifications text) ;; Fact Text
+none
+CLIPS> (get-rule-justifications)
+text
+CLIPS> (reset)
+CLIPS> (run)
+CLIPS> (justification-names 2)
+(MAIN::rule-1)
+CLIPS> (justification-texts 2)
+("Because Gary said so")
+CLIPS> (justification-names 3)
+()
+CLIPS> (justification-texts 3)
+()
+CLIPS> (show-justifications 2)
+MAIN::rule-1: Because Gary said so
+CLIPS> (show-justifications 3)
+None
+CLIPS> (set-rule-justifications name) ;; Fact Name
+text
+CLIPS> (get-rule-justifications)
+name
+CLIPS> (reset)
+CLIPS> (run)
+CLIPS> (duplicate 2 (value 3))
+<Fact-4>
+CLIPS> (duplicate 3 (value 4))
+<Fact-5>
+CLIPS> (modify 5 (value 6))
+<Fact-6>
+CLIPS> (justification-names 2)
+(MAIN::rule-1)
+CLIPS> (justification-texts 2)
+("Because Gary said so")
+CLIPS> (justification-names 3)
+(MAIN::rule-2)
+CLIPS> (justification-texts 3)
+("")
+CLIPS> (show-justifications 2)
+MAIN::rule-1: Because Gary said so
+CLIPS> (show-justifications 3)
+MAIN::rule-2
+CLIPS> (justification-names 4)
+(MAIN::rule-1)
+CLIPS> (justification-texts 4)
+("Because Gary said so")
+CLIPS> (justification-names 6)
+(MAIN::rule-2)
+CLIPS> (justification-texts 6)
+("")
+CLIPS> (show-justifications 4)
+MAIN::rule-1: Because Gary said so
+CLIPS> (show-justifications 6)
+MAIN::rule-2
+CLIPS> (clear)
+CLIPS> (set-rule-justifications none) ;; Instance None
+name
+CLIPS> (get-rule-justifications)
+none
+CLIPS> 
+(defclass OUTPUT
+   (is-a USER)
+   (slot value))
+CLIPS>    
+(defclass PERSON
+   (is-a USER)
+   (slot first-name)
+   (slot last-name))
+CLIPS>    
+(definstances start
+   (of PERSON (first-name Gary) (last-name Riley)))
+CLIPS>    
+(defrule rule-1
+   (declare (justification "Because " ?name " said so"))
+   (object (is-a PERSON) (first-name ?name))
+   =>
+   (make-instance [j1] of OUTPUT (value 1))))
+CLIPS>    
+(defrule rule-2
+   (object (is-a PERSON) (first-name ?name))
+   =>
+   (make-instance [j2] of OUTPUT (value 2))))
+CLIPS> (reset)
+CLIPS> (run)
+CLIPS> (justification-names [j1])
+()
+CLIPS> (justification-texts [j1])
+()
+CLIPS> (justification-names [j2])
+()
+CLIPS> (justification-texts [j2])
+()
+CLIPS> (show-justifications [j1])
+None
+CLIPS> (show-justifications [j2])
+None
+CLIPS> (set-rule-justifications text) ;; Instance Text
+none
+CLIPS> (get-rule-justifications)
+text
+CLIPS> (reset)
+CLIPS> (run)
+CLIPS> (justification-names [j1])
+(MAIN::rule-1)
+CLIPS> (justification-texts [j1])
+("Because Gary said so")
+CLIPS> (justification-names [j2])
+()
+CLIPS> (justification-texts [j2])
+()
+CLIPS> (show-justifications [j1])
+MAIN::rule-1: Because Gary said so
+CLIPS> (show-justifications [j2])
+None
+CLIPS> (set-rule-justifications name) ;; Instance Name
+text
+CLIPS> (get-rule-justifications)
+name
+CLIPS> (reset)
+CLIPS> (run)
+CLIPS> (duplicate-instance [j1] to [j3] (value 3))
+[j3]
+CLIPS> (duplicate-instance [j2] to [j4] (value 4))
+[j4]
+CLIPS> (modify-instance [j4] (value 6))
+TRUE
+CLIPS> (justification-names [j1])
+(MAIN::rule-1)
+CLIPS> (justification-texts [j1])
+("Because Gary said so")
+CLIPS> (justification-names [j2])
+(MAIN::rule-2)
+CLIPS> (justification-texts [j2])
+("")
+CLIPS> (show-justifications [j1])
+MAIN::rule-1: Because Gary said so
+CLIPS> (show-justifications [j2])
+MAIN::rule-2
+CLIPS> (justification-names [j3])
+(MAIN::rule-1)
+CLIPS> (justification-texts [j3])
+("Because Gary said so")
+CLIPS> (justification-names [j4])
+(MAIN::rule-2)
+CLIPS> (justification-texts [j4])
+("")
+CLIPS> (show-justifications [j3])
+MAIN::rule-1: Because Gary said so
+CLIPS> (show-justifications [j4])
+MAIN::rule-2
+CLIPS> (set-rule-justifications none)
+name
+CLIPS> (get-rule-justifications)
+none
+CLIPS> (dribble-off)

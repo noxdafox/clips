@@ -1,0 +1,12 @@
+(unwatch all)
+(clear)
+(set-strategy depth)
+(open "Results//jstfctns.rsl" jstfctns "w")
+(dribble-on "Actual//jstfctns.out")
+(batch "jstfctns.bat")
+(dribble-off)
+(load "compline.clp")
+(printout basicfnx "jstfctns.bat differences are as follows:" crlf)
+(compare-files "Expected//jstfctns.out" "Actual//jstfctns.out" jstfctns)
+; close result file
+(close jstfctns)
