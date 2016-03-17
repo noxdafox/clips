@@ -570,10 +570,10 @@ f-3,f-5,*,f-6,f-4
 Partial matches for CEs 1 (P1) - 2 (P2) , 3 (P3 - P6) , 4 (P7) - 6 (P9)
 f-5,f-3,*,f-4,f-6,f-1
 Partial matches for CEs 1 (P1) - 2 (P2) , 3 (P3 - P6) , 4 (P7 - P9)
- None
+f-3,f-5,*,*
 Activations
- None
-(15 14 0)
+f-3,f-5,*,*
+(15 15 1)
 CLIPS> (retract 3)
 CLIPS> (matches mark)
 Matches for Pattern 1
@@ -668,5 +668,88 @@ CLIPS> (assert (SAD T 3 T08 2))
 ==> Activation 0      if: *,*
 <Fact-5>
 CLIPS> (unwatch activations)
+CLIPS> (clear) ; Matches issue
+CLIPS> (defmodule MAIN (export ?ALL))
+CLIPS> (deffacts start (a) (b) (c))
+CLIPS> (defmodule A (import MAIN ?ALL))
+CLIPS> (defrule A::foo (a) =>)
+CLIPS> (defmodule B (import MAIN ?ALL))
+CLIPS> (defrule B::foo (b) =>)
+CLIPS> (defmodule C (import MAIN ?ALL))
+CLIPS> (defrule C::foo (c) =>)
+CLIPS> (reset)
+CLIPS> (matches A::foo)
+Matches for Pattern 1
+f-1
+Activations
+f-1
+(1 0 1)
+CLIPS> (matches B::foo)
+Matches for Pattern 1
+f-2
+Activations
+f-2
+(1 0 1)
+CLIPS> (matches C::foo)
+Matches for Pattern 1
+f-3
+Activations
+f-3
+(1 0 1)
+CLIPS> (set-current-module MAIN)
+MAIN
+CLIPS> (matches A::foo)
+Matches for Pattern 1
+f-1
+Activations
+f-1
+(1 0 1)
+CLIPS> (clear) ; SourceForge Bug
+CLIPS> 
+(defrule bug 
+   (A)
+   (B ?cot)     
+   (not (and (X)  
+             (C ?cot)))
+   (not (and (D ?cot) 
+             (not (Z))))
+   =>)
+CLIPS> (watch activations)
+CLIPS> (assert (B R))
+<Fact-1>
+CLIPS> (assert (B C))
+<Fact-2>
+CLIPS> (assert (D C))
+<Fact-3>
+CLIPS> (assert (A)))
+==> Activation 0      bug: f-4,f-1,*,*
+<Fact-4>
+CLIPS> (agenda)
+0      bug: f-4,f-1,*,*
+For a total of 1 activation.
+CLIPS> (unwatch activations)
+CLIPS> (clear) ; SourceForge Bug
+CLIPS> (deftemplate C (slot x))
+CLIPS> (deftemplate D (slot x))
+CLIPS> 
+(defrule if ""
+    (not 
+         (and 
+              (not 
+                   (not 
+                        (and (not (and (W) 
+                                       (X)))
+                             (not (and (Y) 
+                                       (Z)))
+                        )
+                   )  
+              )
+              (C (x ?ix_t))
+              (D (x ?ix_t))
+         ) 
+    )
+   =>)
+CLIPS> (assert (C (x 1)))
+<Fact-1>
 CLIPS> (clear)
 CLIPS> (dribble-off)

@@ -2,7 +2,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/22/14            */
+   /*             CLIPS Version 6.31  07/25/15            */
    /*                                                     */
    /*            DEFRULE CONSTRUCTS-TO-C MODULE           */
    /*******************************************************/
@@ -33,6 +33,8 @@
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
+/*                                                           */
+/*      6.31: Fixed disjunct bug in defrule iteration.       */
 /*                                                           */
 /*************************************************************/
 
@@ -110,7 +112,7 @@ static int ConstructToCode(
   {
    int fileCount = 1;
    struct defmodule *theModule;
-   struct defrule *theDefrule;
+   struct defrule *theDefrule, *theDisjunct;
    int joinArrayCount = 0, joinArrayVersion = 1;
    int linkArrayCount = 0, linkArrayVersion = 1;
    int moduleCount = 0, moduleArrayCount = 0, moduleArrayVersion = 1;
@@ -181,48 +183,46 @@ static int ConstructToCode(
       /* their disjuncts) in the current module. */
       /*=========================================*/
 
-      theDefrule = (struct defrule *) EnvGetNextDefrule(theEnv,NULL);
-
-      while (theDefrule != NULL)
+      for (theDefrule = (struct defrule *) EnvGetNextDefrule(theEnv,NULL);
+           theDefrule != NULL;
+           theDefrule = (struct defrule *) EnvGetNextDefrule(theEnv,theDefrule))
         {
-         /*===================================*/
-         /* Save the defrule data structures. */
-         /*===================================*/
-
-         defruleFile = OpenFileIfNeeded(theEnv,defruleFile,fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
-                                        defruleArrayVersion,headerFP,
-                                        "struct defrule",ConstructPrefix(DefruleData(theEnv)->DefruleCodeItem),
-                                        FALSE,NULL);
-         if (defruleFile == NULL)
+         for (theDisjunct = theDefrule;
+              theDisjunct != NULL;
+              theDisjunct = theDisjunct->disjunct)
            {
-            CloseDefruleFiles(theEnv,moduleFile,defruleFile,joinFile,linkFile,maxIndices);
-            return(0);
+            /*===================================*/
+            /* Save the defrule data structures. */
+            /*===================================*/
+
+            defruleFile = OpenFileIfNeeded(theEnv,defruleFile,fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
+                                           defruleArrayVersion,headerFP,
+                                           "struct defrule",ConstructPrefix(DefruleData(theEnv)->DefruleCodeItem),
+                                           FALSE,NULL);
+            if (defruleFile == NULL)
+              {
+               CloseDefruleFiles(theEnv,moduleFile,defruleFile,joinFile,linkFile,maxIndices);
+               return(0);
+              }
+
+            DefruleToCode(theEnv,defruleFile,theDisjunct,imageID,maxIndices,
+                           moduleCount);
+            defruleArrayCount++;
+            defruleFile = CloseFileIfNeeded(theEnv,defruleFile,&defruleArrayCount,&defruleArrayVersion,
+                                            maxIndices,NULL,NULL);
+
+            /*================================*/
+            /* Save the join data structures. */
+            /*================================*/
+
+            if (! RuleCompilerTraverseJoins(theEnv,theDisjunct->lastJoin,fileName,pathName,fileNameBuffer,fileID,headerFP,imageID,
+                                            maxIndices,&joinFile,&linkFile,&fileCount,&joinArrayVersion,&joinArrayCount,
+                                            &linkArrayVersion,&linkArrayCount))
+              {
+               CloseDefruleFiles(theEnv,moduleFile,defruleFile,joinFile,linkFile,maxIndices);
+               return(0);
+              }
            }
-
-         DefruleToCode(theEnv,defruleFile,theDefrule,imageID,maxIndices,
-                        moduleCount);
-         defruleArrayCount++;
-         defruleFile = CloseFileIfNeeded(theEnv,defruleFile,&defruleArrayCount,&defruleArrayVersion,
-                                         maxIndices,NULL,NULL);
-
-         /*================================*/
-         /* Save the join data structures. */
-         /*================================*/
-
-         if (! RuleCompilerTraverseJoins(theEnv,theDefrule->lastJoin,fileName,pathName,fileNameBuffer,fileID,headerFP,imageID,
-                                         maxIndices,&joinFile,&linkFile,&fileCount,&joinArrayVersion,&joinArrayCount,
-                                         &linkArrayVersion,&linkArrayCount))
-           {
-            CloseDefruleFiles(theEnv,moduleFile,defruleFile,joinFile,linkFile,maxIndices);
-            return(0);
-           }
-
-         /*==========================================*/
-         /* Move on to the next disjunct or defrule. */
-         /*==========================================*/
-
-         if (theDefrule->disjunct != NULL) theDefrule = theDefrule->disjunct;
-         else theDefrule = (struct defrule *) EnvGetNextDefrule(theEnv,theDefrule);
         }
 
       moduleCount++;

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  02/04/15            */
+   /*             CLIPS Version 6.31  06/05/15            */
    /*                                                     */
    /*                    ENGINE MODULE                    */
    /*******************************************************/
@@ -59,6 +59,8 @@
 /*                                                           */
 /*            Converted API macros to function calls.        */
 /*                                                           */
+/*            Fixed dangling construct issue.                */
+/*                                                           */
 /*************************************************************/
 
 #define _ENGINE_SOURCE_
@@ -73,6 +75,7 @@
 
 #include "agenda.h"
 #include "argacces.h"
+#include "commline.h"
 #include "constant.h"
 #include "envrnmnt.h"
 #include "factmngr.h"
@@ -168,6 +171,7 @@ globle long long EnvRun(
 #endif
    struct trackedMemory *theTM;
    struct garbageFrame newGarbageFrame, *oldGarbageFrame;
+   int danglingConstructs;
 
    /*=====================================================*/
    /* Make sure the run command is not already executing. */
@@ -343,6 +347,7 @@ globle long long EnvRun(
       EvaluationData(theEnv)->CurrentEvaluationDepth++;
       SetEvaluationError(theEnv,FALSE);
       EngineData(theEnv)->ExecutingRule->executing = TRUE;
+      danglingConstructs = ConstructData(theEnv)->DanglingConstructs;
 
 #if PROFILING_FUNCTIONS
       StartProfile(theEnv,&profileFrame,
@@ -361,6 +366,9 @@ globle long long EnvRun(
       EngineData(theEnv)->ExecutingRule->executing = FALSE;
       SetEvaluationError(theEnv,FALSE);
       EvaluationData(theEnv)->CurrentEvaluationDepth--;
+      if ((! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
+          (EvaluationData(theEnv)->CurrentExpression == NULL))
+        { ConstructData(theEnv)->DanglingConstructs = danglingConstructs; }
       
       /*=====================================*/
       /* Remove information for logical CEs. */

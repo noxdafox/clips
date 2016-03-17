@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  02/05/15            */
+   /*             CLIPS Version 6.31  06/23/15            */
    /*                                                     */
    /*            MEMORY ALLOCATION HEADER FILE            */
    /*******************************************************/
@@ -38,6 +38,8 @@
 /*            EnvReleaseMem.                                 */
 /*                                                           */
 /*            Removed support for BLOCK_MEMORY.              */
+/*                                                           */
+/*      6.31: Fix for get_mem macro.                         */
 /*                                                           */
 /*************************************************************/
 
@@ -127,10 +129,10 @@ struct memoryPtr
 #define get_mem(theEnv,size) \
   (((size <  MEM_TABLE_SIZE) ? \
     (MemoryData(theEnv)->MemoryTable[size] == NULL) : 1) ? \
-   ((struct type *) genalloc(theEnv,(size_t) (size))) :\
+   ((void *) genalloc(theEnv,(size_t) (size))) :\
    ((MemoryData(theEnv)->TempMemoryPtr = MemoryData(theEnv)->MemoryTable[size]),\
     MemoryData(theEnv)->MemoryTable[size] = MemoryData(theEnv)->TempMemoryPtr->next,\
-    ((struct type *) MemoryData(theEnv)->TempMemoryPtr)))
+    ((void *) MemoryData(theEnv)->TempMemoryPtr)))
 
 #define rtn_mem(theEnv,size,ptr) \
   (MemoryData(theEnv)->TempSize = size, \

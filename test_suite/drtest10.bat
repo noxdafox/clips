@@ -336,4 +336,58 @@
 (assert (SAD T 3 T02 "XYZ CDE"))
 (assert (SAD T 3 T08 2))
 (unwatch activations)
+(clear) ; Matches issue
+(defmodule MAIN (export ?ALL))
+(deffacts start (a) (b) (c))
+(defmodule A (import MAIN ?ALL))
+(defrule A::foo (a) =>)
+(defmodule B (import MAIN ?ALL))
+(defrule B::foo (b) =>)
+(defmodule C (import MAIN ?ALL))
+(defrule C::foo (c) =>)
+(reset)
+(matches A::foo)
+(matches B::foo)
+(matches C::foo)
+(set-current-module MAIN)
+(matches A::foo)
+(clear) ; SourceForge Bug
+
+(defrule bug 
+   (A)
+   (B ?cot)     
+   (not (and (X)  
+             (C ?cot)))
+   (not (and (D ?cot) 
+             (not (Z))))
+   =>)
+(watch activations)
+(assert (B R))
+(assert (B C))
+(assert (D C))
+(assert (A)))
+(agenda)
+(unwatch activations)
+(clear) ; SourceForge Bug
+(deftemplate C (slot x))
+(deftemplate D (slot x))
+
+(defrule if ""
+    (not 
+         (and 
+              (not 
+                   (not 
+                        (and (not (and (W) 
+                                       (X)))
+                             (not (and (Y) 
+                                       (Z)))
+                        )
+                   )  
+              )
+              (C (x ?ix_t))
+              (D (x ?ix_t))
+         ) 
+    )
+   =>)
+(assert (C (x 1)))
 (clear)

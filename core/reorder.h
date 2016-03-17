@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.31  07/09/15            */
    /*                                                     */
    /*                 REORDER HEADER FILE                 */
    /*******************************************************/
@@ -34,6 +34,9 @@
 /*            conditional elements.                          */
 /*                                                           */
 /*            Added support for hashed alpha memories.       */
+/*                                                           */
+/*      6.31: Removed the marked flag used for not/and       */
+/*            unification.                                   */
 /*                                                           */
 /*************************************************************/
 
@@ -79,7 +82,7 @@ struct lhsParseNode
    unsigned int derivedConstraints : 1;
    unsigned int userCE : 1;
    unsigned int whichCE : 7;
-   unsigned int marked : 1;
+   //unsigned int marked : 1;
    unsigned int withinMultifieldSlot : 1;
    unsigned short multiFieldsBefore;
    unsigned short multiFieldsAfter;
@@ -122,7 +125,7 @@ struct lhsParseNode
    LOCALE void                           AddInitialPatterns(void *,struct lhsParseNode *);
    LOCALE int                            IsExistsSubjoin(struct lhsParseNode *,int);
    LOCALE struct lhsParseNode           *CombineLHSParseNodes(void *,struct lhsParseNode *,struct lhsParseNode *);
-   LOCALE void                           AssignPatternMarkedFlag(struct lhsParseNode *,short);
+   //LOCALE void                           AssignPatternMarkedFlag(struct lhsParseNode *,short);
 
 #endif /* _H_reorder */
 
