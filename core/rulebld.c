@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.31  03/17/16            */
    /*                                                     */
    /*                  RULE BUILD MODULE                  */
    /*******************************************************/
@@ -29,6 +29,8 @@
 /*      6.30: Changes to constructing join network.          */
 /*                                                           */
 /*            Added support for hashed memories.             */
+/*                                                           */
+/*      6.31: Fix for nand crash                             */
 /*                                                           */
 /*************************************************************/
 
@@ -154,28 +156,35 @@ globle struct joinNode *ConstructJoins(
               { lastIteration = TRUE; }
            }
            
-         if (nextLHS != NULL)
-           { nextLHS = nextLHS->bottom; }
+         if (! lastIteration)
+           {
+            if (nextLHS != NULL)
+              { nextLHS = nextLHS->bottom; }
            
-         if ((nextLHS != NULL) && (nextLHS->type == TEST_CE) && (nextLHS->beginNandDepth >= startDepth))
-           { 
-            secondaryExternalTest = nextLHS->networkTest;
-            nextLHS = nextLHS->bottom; 
-           }
-        }       
+            if ((nextLHS != NULL) &&
+                (nextLHS->type == TEST_CE) &&
+                (nextLHS->beginNandDepth >= startDepth))
+              {
+               if (nextLHS->endNandDepth < startDepth)
+                 { lastIteration = TRUE; }
 
-      /*=======================================*/
-      /* Is this the last pattern to be added? */
-      /*=======================================*/
-      
-      if (nextLHS == NULL)
-        { lastIteration = TRUE; }
-      else if (theLHS->endNandDepth < startDepth)
-        { lastIteration = TRUE; } 
-      else if ((nextLHS->type == TEST_CE) &&
-               (theLHS->beginNandDepth > startDepth) &&
-               (nextLHS->endNandDepth < startDepth))
-        { lastIteration = TRUE; } 
+               secondaryExternalTest = nextLHS->networkTest;
+               nextLHS = nextLHS->bottom; 
+              }
+           }
+        }
+      else if (theLHS->endNandDepth == startDepth)
+        {
+         if (nextLHS == NULL)
+           { lastIteration = TRUE; }
+         else if ((nextLHS->type == TEST_CE) &&
+                  (nextLHS->endNandDepth < startDepth))
+           { lastIteration = TRUE; }
+        }
+      else // theLHS->endNandDepth < startDepth
+        {
+         lastIteration = TRUE;
+        }
 
       /*===============================================*/
       /* If the pattern is a join from the right, then */

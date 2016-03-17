@@ -751,5 +751,83 @@ CLIPS>
    =>)
 CLIPS> (assert (C (x 1)))
 <Fact-1>
+CLIPS> (clear) ; Load Crash
+CLIPS> 
+(defrule bug
+   (X ?a)
+   (Y ?b)
+   (not (and (not (and (A ?a)      
+                       (B ?b)))    
+             (test (eq ?a ?b))))  
+   (Z)
+   =>)
+CLIPS> (assert (Z)) 
+<Fact-1>
+CLIPS> (agenda)
+CLIPS> (assert (X 1))
+<Fact-2>
+CLIPS> (agenda)
+CLIPS> (assert (Y 2))
+<Fact-3>
+CLIPS> (agenda)
+0      bug: f-2,f-3,*,f-1
+For a total of 1 activation.
+CLIPS> (assert (X 2))
+<Fact-4>
+CLIPS> (agenda)
+0      bug: f-2,f-3,*,f-1
+For a total of 1 activation.
+CLIPS> (assert (Y 1))
+<Fact-5>
+CLIPS> (agenda)
+0      bug: f-4,f-5,*,f-1
+0      bug: f-2,f-3,*,f-1
+For a total of 2 activations.
+CLIPS> (assert (A 1))
+<Fact-6>
+CLIPS> (agenda)
+0      bug: f-4,f-5,*,f-1
+0      bug: f-2,f-3,*,f-1
+For a total of 2 activations.
+CLIPS> (assert (B 2))
+<Fact-7>
+CLIPS> (agenda)
+0      bug: f-4,f-5,*,f-1
+0      bug: f-2,f-3,*,f-1
+For a total of 2 activations.
+CLIPS> (assert (A 2))
+<Fact-8>
+CLIPS> (agenda)
+0      bug: f-4,f-3,*,f-1
+0      bug: f-4,f-5,*,f-1
+0      bug: f-2,f-3,*,f-1
+For a total of 3 activations.
+CLIPS> (assert (B 1))
+<Fact-9>
+CLIPS> (agenda)
+0      bug: f-2,f-5,*,f-1
+0      bug: f-4,f-3,*,f-1
+0      bug: f-4,f-5,*,f-1
+0      bug: f-2,f-3,*,f-1
+For a total of 4 activations.
+CLIPS> (clear) ; Load Crash
+CLIPS> 
+(defrule bug
+    (Surname ?surname_1)
+    (PersonSurname ?PersonSurname_1)
+    (exists 
+        (or  
+            (and  
+                (exists 
+                    (Surname ?Surname_2)
+                    (LVAR two ?two)
+                    (test (eq ?Surname_2 ?two))) 
+                (test (eq ?surname_1 ?PersonSurname_1))) 
+            (and  
+                (exists 
+                    (Surname ?Surname_3)
+                    (LVAR three ?three)
+                    (test (eq ?Surname_3 ?three))))))
+=>)
 CLIPS> (clear)
 CLIPS> (dribble-off)
