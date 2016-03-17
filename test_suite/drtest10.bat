@@ -299,3 +299,41 @@
 (retract 3)
 (matches mark)
 (clear)
+(clear) ; DR #882
+(watch activations)
+
+(defrule if 
+   (not (and (not (and (A) (B)))
+             (C)))
+   (not (and (SAD ?v)
+             (SAD ?v)))
+   =>)
+(assert (SAD 2))
+(clear)
+
+(defrule if 
+    (and  
+        (exists 
+            (SAD T ?tx1 T01 ?t01)
+            (SAD T ?tx1 T02 ?t02)
+            (or  
+                (test (not (not (str-index  "ABCD" ?t01)))) 
+                (test (not (not (str-index  "ABCD" ?t02)))))) 
+        (exists 
+            (SAD G ?gx1 G02N ?g02n)
+            (and  
+                (test (eq (str-index  "9900" ?g02n) 1)) 
+                (exists 
+                    (SAD T ?tx2 T08 ?t08)
+                    (SAD G ?gx1 G01 ?g01)
+                    (or  
+                        (test (<= ?t08 0)) 
+                        (test (= ?t08 ?g01)))))))
+   =>)
+(assert (SAD G 2 G01 2))
+(assert (SAD G 2 G02N "99009000"))
+(assert (SAD T 3 T01 "ABCD XYX"))
+(assert (SAD T 3 T02 "XYZ CDE"))
+(assert (SAD T 3 T08 2))
+(unwatch activations)
+(clear)

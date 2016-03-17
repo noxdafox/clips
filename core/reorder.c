@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  06/14/14            */
+   /*             CLIPS Version 6.31  05/12/15            */
    /*                                                     */
    /*                    REORDER MODULE                   */
    /*******************************************************/
@@ -34,6 +34,11 @@
 /*            conditional elements.                          */
 /*                                                           */
 /*            Added support for hashed alpha memories.       */
+/*                                                           */
+/*      6.31: Fixed crash bug that occurred from              */
+/*            AssignPatternIndices incorrectly               */
+/*            assigning the wrong join depth to              */
+/*            multiply nested nand  groups.                  */
 /*                                                           */
 /*************************************************************/
 
@@ -1496,6 +1501,7 @@ static struct lhsParseNode *AssignPatternIndices(
   short joinDepth)
   {
    struct lhsParseNode *theField;
+   short rightJoinDepth = 0, rightStartIndex = 0;
 
    /*====================================*/
    /* Loop through the CEs at this level */
@@ -1516,10 +1522,20 @@ static struct lhsParseNode *AssignPatternIndices(
 
       if (theLHS->beginNandDepth > nandDepth)
         {
-         theLHS = AssignPatternIndices(theLHS,startIndex,theLHS->beginNandDepth,joinDepth);
+         theLHS = AssignPatternIndices(theLHS,startIndex+rightStartIndex,theLHS->beginNandDepth,joinDepth+rightJoinDepth);
          if (theLHS->endNandDepth < nandDepth) return(theLHS);
-         startIndex++;
-         joinDepth++;
+         if (theLHS->endNandDepth == nandDepth)
+           {
+            startIndex++;
+            joinDepth++;
+            rightStartIndex = 0;
+            rightJoinDepth = 0;
+           }
+         else
+           {
+            rightStartIndex++;
+            rightJoinDepth++;
+           }
         }
 
       /*=====================================================*/

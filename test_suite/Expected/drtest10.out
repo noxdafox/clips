@@ -622,4 +622,51 @@ Activations
  None
 (13 0 0)
 CLIPS> (clear)
+CLIPS> (clear) ; DR #882
+CLIPS> (watch activations)
+CLIPS> 
+(defrule if 
+   (not (and (not (and (A) (B)))
+             (C)))
+   (not (and (SAD ?v)
+             (SAD ?v)))
+   =>)
+==> Activation 0      if: *,*
+CLIPS> (assert (SAD 2))
+<== Activation 0      if: *,*
+<Fact-1>
+CLIPS> (clear)
+CLIPS> 
+(defrule if 
+    (and  
+        (exists 
+            (SAD T ?tx1 T01 ?t01)
+            (SAD T ?tx1 T02 ?t02)
+            (or  
+                (test (not (not (str-index  "ABCD" ?t01)))) 
+                (test (not (not (str-index  "ABCD" ?t02)))))) 
+        (exists 
+            (SAD G ?gx1 G02N ?g02n)
+            (and  
+                (test (eq (str-index  "9900" ?g02n) 1)) 
+                (exists 
+                    (SAD T ?tx2 T08 ?t08)
+                    (SAD G ?gx1 G01 ?g01)
+                    (or  
+                        (test (<= ?t08 0)) 
+                        (test (= ?t08 ?g01)))))))
+   =>)
+CLIPS> (assert (SAD G 2 G01 2))
+<Fact-1>
+CLIPS> (assert (SAD G 2 G02N "99009000"))
+<Fact-2>
+CLIPS> (assert (SAD T 3 T01 "ABCD XYX"))
+<Fact-3>
+CLIPS> (assert (SAD T 3 T02 "XYZ CDE"))
+<Fact-4>
+CLIPS> (assert (SAD T 3 T08 2))
+==> Activation 0      if: *,*
+<Fact-5>
+CLIPS> (unwatch activations)
+CLIPS> (clear)
 CLIPS> (dribble-off)

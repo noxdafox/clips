@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/22/14            */
+   /*             CLIPS Version 6.31  05/12/15            */
    /*                                                     */
    /*                RULE COMMANDS MODULE                 */
    /*******************************************************/
@@ -45,6 +45,8 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*            Converted API macros to function calls.        */
+/*                                                           */
+/*      6.31: Fixes for show-joins command.                  */
 /*                                                           */
 /*************************************************************/
 
@@ -1390,15 +1392,27 @@ static void ShowJoins(
    struct joinNode *joinList[MAXIMUM_NUMBER_OF_PATTERNS];
    int numberOfJoins;
    char rhsType;
+   int disjunct = 0;
+   unsigned long count = 0;
 
    rulePtr = (struct defrule *) theRule;
-
+   
+   if ((rulePtr != NULL) && (rulePtr->disjunct != NULL))
+     { disjunct = 1; }
+     
    /*=================================================*/
    /* Loop through each of the disjuncts for the rule */
    /*=================================================*/
 
    while (rulePtr != NULL)
      {
+      if (disjunct > 0)
+        {
+         EnvPrintRouter(theEnv,WDISPLAY,"Disjunct #");
+         PrintLongInteger(theEnv, WDISPLAY, (long long) disjunct++);
+         EnvPrintRouter(theEnv,WDISPLAY,"\n");
+        }
+        
       /*=====================================*/
       /* Determine the number of join nodes. */
       /*=====================================*/
@@ -1476,15 +1490,27 @@ static void ShowJoins(
          if (! joinList[numberOfJoins]->firstJoin)
            {
             EnvPrintRouter(theEnv,WDISPLAY,"    LM : ");
-            if (PrintBetaMemory(theEnv,WDISPLAY,joinList[numberOfJoins]->leftMemory,FALSE,"         ",SUCCINCT) == 0)
+            count = PrintBetaMemory(theEnv,WDISPLAY,joinList[numberOfJoins]->leftMemory,FALSE,"",SUCCINCT);
+            if (count == 0)
               { EnvPrintRouter(theEnv,WDISPLAY,"None\n"); }
+            else
+              {
+               sprintf(buffer,"%lu\n",count);
+               EnvPrintRouter(theEnv,WDISPLAY,buffer);
+              }
            }
          
          if (joinList[numberOfJoins]->joinFromTheRight)
            {
             EnvPrintRouter(theEnv,WDISPLAY,"    RM : ");
-            if (PrintBetaMemory(theEnv,WDISPLAY,joinList[numberOfJoins]->rightMemory,FALSE,"         ",SUCCINCT) == 0)
+            count = PrintBetaMemory(theEnv,WDISPLAY,joinList[numberOfJoins]->rightMemory,FALSE,"",SUCCINCT);
+            if (count == 0)
               { EnvPrintRouter(theEnv,WDISPLAY,"None\n"); }
+            else
+              {
+               sprintf(buffer,"%lu\n",count);
+               EnvPrintRouter(theEnv,WDISPLAY,buffer);
+              }
            }
          
          numberOfJoins--;
