@@ -1,0 +1,6 @@
+﻿# Properties Source File for Russian
+# Generate the properties file from this file using the following command:
+# native2ascii -encoding UTF-8 AutoResources_ru.source AutoResources_ru.properties
+RouterDemo=маршрутизатор Демо
+RestartAnimal=Перезапуск животных
+RestartAuto=Перезапуск Авто

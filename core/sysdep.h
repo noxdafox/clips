@@ -74,6 +74,9 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.31: Added genchdir function for changing the       */
+/*            current directory.                             */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_sysdep
@@ -142,6 +145,7 @@
    LOCALE char                       *genstrncpy(char *,const char *,size_t);
    LOCALE char                       *genstrcat(char *,const char *);
    LOCALE char                       *genstrncat(char *,const char *,size_t);
+   LOCALE int                         genchdir(const char *);
    LOCALE void                        SetJmpBuffer(void *,jmp_buf *);
    LOCALE void                        genprintfile(void *,FILE *,const char *);
    LOCALE int                         gengetchar(void *);

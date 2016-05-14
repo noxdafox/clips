@@ -54,6 +54,11 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.31: Changed restrictions from char * to            */
+/*            symbolHashNode * to support strings            */
+/*            originating from sources that are not          */
+/*            statically allocated.                          */
+/*                                                           */
 /*************************************************************/
 
 #define _CONSCOMP_SOURCE_
@@ -699,8 +704,7 @@ static int FunctionsToCode(
       fprintf(fp,"'%c',",fctnPtr->returnValueType);
       fprintf(fp,"PTIF %s,",fctnPtr->actualFunctionName);
       fprintf(fp,"NULL,");
-      if (fctnPtr->restrictions != NULL) fprintf(fp,"\"%s\",",fctnPtr->restrictions);
-      else fprintf(fp,"NULL,");
+      PrintSymbolReference(theEnv,fp,fctnPtr->restrictions);
       fprintf(fp,"0,0,%d,0,",(fctnPtr->environmentAware ? 1 : 0));
       PrintFunctionReference(theEnv,fp,fctnPtr->next);
 

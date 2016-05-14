@@ -124,6 +124,7 @@
 #if OBJECT_SYSTEM
 #include "classcom.h"
 #include "classexm.h"
+#include "classfun.h"
 #include "classinf.h"
 #include "classini.h"
 #include "classpsr.h"

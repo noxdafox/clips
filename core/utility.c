@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  02/03/15            */
+   /*             CLIPS Version 6.31  12/15/15            */
    /*                                                     */
    /*                   UTILITY MODULE                    */
    /*******************************************************/
@@ -45,6 +45,9 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*            Converted API macros to function calls.        */
+/*                                                           */
+/*      6.31: Added EnvAddPeriodicFunctionWithContext        */
+/*            function.                                      */
 /*                                                           */
 /*************************************************************/
 
@@ -318,11 +321,15 @@ globle void CallPeriodicTasks(
       for (periodPtr = UtilityData(theEnv)->ListOfPeriodicFunctions;
            periodPtr != NULL;
            periodPtr = periodPtr->next)
-        { 
+        {
+         void *oldContext = SetEnvironmentCallbackContext(theEnv,periodPtr->context);
+
          if (periodPtr->environmentAware)
            { (*periodPtr->func)(theEnv); }
          else            
            { (* (void (*)(void)) periodPtr->func)(); }
+
+         SetEnvironmentCallbackContext(theEnv,oldContext);
         }
      }
   }
@@ -343,6 +350,24 @@ globle intBool AddCleanupFunction(
                            (void (*)(void *)) theFunction,
                            UtilityData(theEnv)->ListOfCleanupFunctions,TRUE);
    return(1);
+  }
+
+/******************************************************/
+/* EnvGetPeriodicFunctionContext: Returns the context */
+/*   associated with a periodic function.             */
+/******************************************************/
+void *EnvGetPeriodicFunctionContext(
+  void *theEnv,
+  const char *name)
+  {
+   struct callFunctionItem *theItem;
+   
+   theItem = GetFunctionFromCallList(theEnv,name,
+                                     UtilityData(theEnv)->ListOfPeriodicFunctions);
+                                     
+   if (theItem == NULL) return NULL;
+   
+   return theItem->context;
   }
 
 #if ALLOW_ENVIRONMENT_GLOBALS
@@ -368,6 +393,24 @@ globle intBool AddPeriodicFunction(
   }
 #endif
 
+/*************************************************************/
+/* EnvAddPeriodicFunctionWithContext: Adds a function to the */
+/*   list of functions called to handle periodic tasks.      */
+/*************************************************************/
+globle intBool EnvAddPeriodicFunctionWithContext(
+  void *theEnv,
+  const char *name,
+  void (*theFunction)(void *),
+  int priority,
+  void *context)
+  {
+   UtilityData(theEnv)->ListOfPeriodicFunctions =
+     AddFunctionToCallListWithContext(theEnv,name,priority,
+                           (void (*)(void *)) theFunction,
+                           UtilityData(theEnv)->ListOfPeriodicFunctions,TRUE,context);
+   return(1);
+  }
+
 /*******************************************************/
 /* EnvAddPeriodicFunction: Adds a function to the list */
 /*   of functions called to handle periodic tasks.     */
@@ -378,11 +421,7 @@ globle intBool EnvAddPeriodicFunction(
   void (*theFunction)(void *),
   int priority)
   {
-   UtilityData(theEnv)->ListOfPeriodicFunctions =
-     AddFunctionToCallList(theEnv,name,priority,
-                           (void (*)(void *)) theFunction,
-                           UtilityData(theEnv)->ListOfPeriodicFunctions,TRUE);
-   return(1);
+   return EnvAddPeriodicFunctionWithContext(theEnv,name,theFunction,priority,NULL);
   }
 
 /*******************************************************/
@@ -757,10 +796,14 @@ globle struct callFunctionItem *AddFunctionToCallListWithContext(
   void *context)
   {
    struct callFunctionItem *newPtr, *currentPtr, *lastPtr = NULL;
-
+   char  *nameCopy;
+  
    newPtr = get_struct(theEnv,callFunctionItem);
 
-   newPtr->name = name;
+   nameCopy = (char *) genalloc(theEnv,strlen(name) + 1);
+   genstrcpy(nameCopy,name);     
+   newPtr->name = nameCopy;
+
    newPtr->func = func;
    newPtr->priority = priority;
    newPtr->environmentAware = (short) environmentAware;
@@ -793,6 +836,27 @@ globle struct callFunctionItem *AddFunctionToCallListWithContext(
    return(head);
   }
 
+/****************************************************************/
+/* GetFunctionFromCallList: Retrieves a function from a list of */
+/*   functions which are called to perform certain operations   */
+/*   (e.g. clear, reset, and bload functions).                  */
+/****************************************************************/
+globle struct callFunctionItem *GetFunctionFromCallList(
+  void *theEnv,
+  const char *name,
+  struct callFunctionItem *head)
+  {
+   struct callFunctionItem *currentPtr;
+
+   for (currentPtr = head; currentPtr != NULL; currentPtr = currentPtr->next)
+     {
+      if (strcmp(name,currentPtr->name) == 0)
+        { return currentPtr; }
+     }
+
+   return(NULL);
+  }
+
 /*****************************************************************/
 /* RemoveFunctionFromCallList: Removes a function from a list of */
 /*   functions which are called to perform certain operations    */
@@ -820,6 +884,7 @@ globle struct callFunctionItem *RemoveFunctionFromCallList(
          else
            { lastPtr->next = currentPtr->next; }
 
+         genfree(theEnv,(void *) currentPtr->name,strlen(currentPtr->name) + 1);
          rtn_struct(theEnv,callFunctionItem,currentPtr);
          return(head);
         }
@@ -1071,9 +1136,9 @@ globle void EnvDecrementGCLocks(
      }
   }
  
-/********************************************/
-/* EnablePeriodicFunctions:         */
-/********************************************/
+/****************************/
+/* EnablePeriodicFunctions: */
+/****************************/
 globle short EnablePeriodicFunctions(
   void *theEnv,
   short value)

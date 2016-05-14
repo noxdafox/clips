@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  02/05/15            */
+   /*             CLIPS Version 6.31  09/25/15            */
    /*                                                     */
    /*              EXPRESSION PARSER MODULE               */
    /*******************************************************/
@@ -37,6 +37,11 @@
 /*            Changed find construct functionality so that   */
 /*            imported modules are search when locating a    */
 /*            named construct.                               */
+/*                                                           */
+/*      6.31: Changed restrictions from char * to            */
+/*            symbolHashNode * to support strings            */
+/*            originating from sources that are not          */
+/*            statically allocated.                          */
 /*                                                           */
 /*************************************************************/
 
@@ -293,7 +298,7 @@ globle struct expr *Function2Parse(
 
    if ((top->type == FCALL) && EnvGetStaticConstraintChecking(theEnv))
      {
-      if (CheckExpressionAgainstRestrictions(theEnv,top,theFunction->restrictions,name))
+      if (CheckExpressionAgainstRestrictions(theEnv,top,(theFunction->restrictions == NULL) ? NULL : theFunction->restrictions->contents,name))
         {
          ReturnExpression(theEnv,top);
          return(NULL);
@@ -935,9 +940,9 @@ globle EXPRESSION *ParseConstantArguments(
    return(top);
   }
 
-/*********************************************/
-/* RemoveUnneededProgn:  */
-/*********************************************/
+/************************/
+/* RemoveUnneededProgn: */
+/************************/
 globle struct expr *RemoveUnneededProgn(
   void *theEnv,
   struct expr *theExpression)

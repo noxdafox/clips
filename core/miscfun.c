@@ -63,6 +63,11 @@
 /*                                                           */
 /*            Removed support for BLOCK_MEMORY.              */
 /*                                                           */
+/*      6.31: Changed restrictions from char * to            */
+/*            symbolHashNode * to support strings            */
+/*            originating from sources that are not          */
+/*            statically allocated.                          */
+/*                                                           */
 /*************************************************************/
 
 #define _MISCFUN_SOURCE_
@@ -884,7 +889,8 @@ globle void ExpandFuncCall(
      {
       func = (struct FunctionDefinition *) fcallexp->value;
       if (CheckFunctionArgCount(theEnv,ValueToString(func->callFunctionName),
-                                func->restrictions,CountArguments(newargexp)) == FALSE)
+                                (func->restrictions == NULL) ? NULL : func->restrictions->contents,
+                                CountArguments(newargexp)) == FALSE)
         {
          result->type = SYMBOL;
          result->value = EnvFalseSymbol(theEnv);
@@ -1085,7 +1091,7 @@ globle void *GetFunctionRestrictions(
      }
    if (fptr->restrictions == NULL)
      return((SYMBOL_HN *) EnvAddSymbol(theEnv,"0**"));
-   return((SYMBOL_HN *) EnvAddSymbol(theEnv,fptr->restrictions));
+   return(fptr->restrictions);
   }
 
 /*************************************************/

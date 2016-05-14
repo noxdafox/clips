@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.31  09/25/15            */
    /*                                                     */
    /*            EXTERNAL FUNCTIONS HEADER FILE           */
    /*******************************************************/
@@ -30,6 +30,11 @@
 /*            Replaced ALLOW_ENVIRONMENT_GLOBALS macros      */
 /*            with functions.                                */
 /*                                                           */
+/*      6.31: Changed restrictions from char * to            */
+/*            symbolHashNode * to support strings            */
+/*            originating from sources that are not          */
+/*            statically allocated.                          */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_extnfunc
@@ -52,7 +57,7 @@ struct FunctionDefinition
    char returnValueType;
    int (*functionPointer)(void);
    struct expr *(*parser)(void *,struct expr *,const char *);
-   const char *restrictions;
+   struct symbolHashNode *restrictions;
    short int overloadable;
    short int sequenceuseok;
    short int environmentAware;

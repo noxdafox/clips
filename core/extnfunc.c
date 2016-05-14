@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.31  09/25/15            */
    /*                                                     */
    /*               EXTERNAL FUNCTION MODULE              */
    /*******************************************************/
@@ -30,6 +30,11 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*            Converted API macros to function calls.        */
+/*                                                           */
+/*      6.31: Changed restrictions from char * to            */
+/*            symbolHashNode * to support strings            */
+/*            originating from sources that are not          */
+/*            statically allocated.                          */
 /*                                                           */
 /*************************************************************/
 
@@ -236,15 +241,14 @@ globle int DefineFunction3(
      { return(0); }
 
    newFunction = FindFunction(theEnv,name);
-   if (newFunction == NULL)
-     {
-      newFunction = get_struct(theEnv,FunctionDefinition);
-      newFunction->callFunctionName = (SYMBOL_HN *) EnvAddSymbol(theEnv,name);
-      IncrementSymbolCount(newFunction->callFunctionName);
-      newFunction->next = GetFunctionList(theEnv);
-      ExternalFunctionData(theEnv)->ListOfFunctions = newFunction;
-      AddHashFunction(theEnv,newFunction);
-     }
+   if (newFunction != NULL) return(0);
+   
+   newFunction = get_struct(theEnv,FunctionDefinition);
+   newFunction->callFunctionName = (SYMBOL_HN *) EnvAddSymbol(theEnv,name);
+   IncrementSymbolCount(newFunction->callFunctionName);
+   newFunction->next = GetFunctionList(theEnv);
+   ExternalFunctionData(theEnv)->ListOfFunctions = newFunction;
+   AddHashFunction(theEnv,newFunction);
      
    newFunction->returnValueType = (char) returnType;
    newFunction->functionPointer = (int (*)(void)) pointer;
@@ -256,7 +260,15 @@ globle int DefineFunction3(
            (! isdigit(restrictions[1]) && (restrictions[1] != '*'))))
         restrictions = NULL;
      }
-   newFunction->restrictions = restrictions;
+
+   if (restrictions == NULL)
+     { newFunction->restrictions = NULL; }
+   else
+     {
+      newFunction->restrictions = EnvAddSymbol(theEnv,restrictions);
+      IncrementSymbolCount(newFunction->restrictions);
+     }
+
    newFunction->parser = NULL;
    newFunction->overloadable = TRUE;
    newFunction->sequenceuseok = TRUE;
@@ -294,6 +306,8 @@ globle int UndefineFunction(
          else
            { lastPtr->next = fPtr->next; }
            
+         if (fPtr->restrictions != NULL)
+           { DecrementSymbolCount(theEnv,fPtr->restrictions); }
          ClearUserDataList(theEnv,fPtr->usrData);
          rtn_struct(theEnv,FunctionDefinition,fPtr);
          return(TRUE);
@@ -515,7 +529,7 @@ globle int GetNthRestriction(
    /* an argument to the function.                              */
    /*===========================================================*/
 
-   theLength = strlen(theFunction->restrictions);
+   theLength = strlen(theFunction->restrictions->contents);
 
    if (theLength < 3) return(defaultRestriction);
 
@@ -523,7 +537,7 @@ globle int GetNthRestriction(
    /* Determine the functions default restriction. */
    /*==============================================*/
 
-   defaultRestriction = (int) theFunction->restrictions[i];
+   defaultRestriction = (int) theFunction->restrictions->contents[i];
 
    if (defaultRestriction == '*') defaultRestriction = (int) 'u';
 
@@ -538,7 +552,7 @@ globle int GetNthRestriction(
    /* Return the restriction specified for the nth parameter. */
    /*=========================================================*/
 
-   return((int) theFunction->restrictions[position + 2]);
+   return((int) theFunction->restrictions->contents[position + 2]);
   }
 
 /*************************************************/
@@ -663,8 +677,8 @@ globle int GetMinimumArgs(
    char theChar[2];
    const char *restrictions;
 
-   restrictions = theFunction->restrictions;
-   if (restrictions == NULL) return(-1);
+   if (theFunction->restrictions == NULL) return(-1);
+   restrictions = theFunction->restrictions->contents;
 
    theChar[0] = restrictions[0];
    theChar[1] = '\0';
@@ -687,8 +701,8 @@ globle int GetMaximumArgs(
    char theChar[2];
    const char *restrictions;
 
-   restrictions = theFunction->restrictions;
-   if (restrictions == NULL) return(-1);
+   if (theFunction->restrictions == NULL) return(-1);
+   restrictions = theFunction->restrictions->contents;
    if (restrictions[0] == '\0') return(-1);
 
    theChar[0] = restrictions[1];

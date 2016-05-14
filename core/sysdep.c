@@ -75,6 +75,9 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.31: Added genchdir function for changing the       */
+/*            current directory.                             */
+/*                                                           */
 /*************************************************************/
 
 #define _SYSDEP_SOURCE_
@@ -1156,6 +1159,23 @@ globle char *gengetcwd(
    if (buffer != NULL)
      { buffer[0] = 0; }
    return(buffer);
+  }
+
+/******************************************/
+/* genchdir: Generic function for setting */
+/*   the current directory.               */
+/******************************************/
+int genchdir(
+  const char *directory)
+  {
+#if MAC_XCD || DARWIN || LINUX
+   return(chdir(directory));
+#endif
+#if WIN_MVC
+   return(_chdir(directory));
+#endif
+
+   return -1;
   }
 
 /****************************************************/

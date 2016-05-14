@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.31  11/05/15            */
    /*                                                     */
    /*                 PRETTY PRINT MODULE                 */
    /*******************************************************/
@@ -28,6 +28,8 @@
 /*                                                           */             
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
+/*                                                           */
+/*      6.31: Added NULL pointer check in CopyPPBuffer.      */
 /*                                                           */
 /*************************************************************/
 
@@ -186,11 +188,14 @@ globle char *CopyPPBuffer(
   {
    size_t length;
    char *newString;
+   char *theBuffer = PrettyPrintData(theEnv)->PrettyPrintBuffer;
 
-   length = (1 + strlen(PrettyPrintData(theEnv)->PrettyPrintBuffer)) * (int) sizeof (char);
+   if (theBuffer == NULL) return NULL;
+
+   length = (1 + strlen(theBuffer)) * (int) sizeof (char);
    newString = (char *) gm2(theEnv,length);
 
-   genstrcpy(newString,PrettyPrintData(theEnv)->PrettyPrintBuffer);
+   genstrcpy(newString,theBuffer);
    return(newString);
   }
 

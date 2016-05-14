@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  10/15/15            */
    /*                                                     */
    /*               PARSING FUNCTIONS MODULE              */
    /*******************************************************/
@@ -33,6 +33,9 @@
 /*                                                           */
 /*            Fixed function declaration issue when          */
 /*            BLOAD_ONLY compiler flag is set to 1.          */
+/*                                                           */
+/*      6.31: Changed check-syntax router name because of    */
+/*            a conflict with another error-capture router.  */
 /*                                                           */
 /*************************************************************/
 
@@ -197,9 +200,9 @@ globle int CheckSyntax(
    /* Set up a router to capture the error output. */
    /*==============================================*/
 
-   EnvAddRouter(theEnv,"error-capture",40,
-              FindErrorCapture, PrintErrorCapture,
-              NULL, NULL, NULL);
+   EnvAddRouter(theEnv,"cs-error-capture",40,
+                FindErrorCapture, PrintErrorCapture,
+                NULL, NULL, NULL);
 
    /*================================*/
    /* Determine if it's a construct. */
@@ -300,7 +303,7 @@ static void DeactivateErrorCapture(
    ParseFunctionData(theEnv)->WarningCurrentPosition = 0;
    ParseFunctionData(theEnv)->WarningMaximumPosition = 0;
 
-   EnvDeleteRouter(theEnv,"error-capture");
+   EnvDeleteRouter(theEnv,"cs-error-capture");
   }
 
 /******************************************************************/

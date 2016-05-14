@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*               CLIPS Version 6.31  09/25/15          */
    /*                                                     */
    /*         IMPLICIT SYSTEM METHODS PARSING MODULE      */
    /*******************************************************/
@@ -29,6 +29,11 @@
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
+/*                                                           */
+/*      6.31: Changed restrictions from char * to            */
+/*            symbolHashNode * to support strings            */
+/*            originating from sources that are not          */
+/*            statically allocated.                          */
 /*                                                           */
 /*************************************************************/
 
@@ -98,7 +103,7 @@ globle void AddImplicitMethods(
    action.value = (void *) sysfunc;
    action.nextArg = NULL;
    action.argList = NULL;
-   FormMethodsFromRestrictions(theEnv,gfunc,sysfunc->restrictions,&action);
+   FormMethodsFromRestrictions(theEnv,gfunc,(sysfunc->restrictions == NULL) ? NULL: sysfunc->restrictions->contents,&action);
   }
 
 /* =========================================

@@ -1,0 +1,7 @@
+﻿# Properties Source File for Russian
+# Generate the properties file from this file using the following command:
+# native2ascii -encoding UTF-8 AnimalResources_ru.source AnimalResources_ru.properties
+AnimalDemo=Демонстрация классификации животных
+Next=Далее
+Prev=Назад
+Restart=Начать заново

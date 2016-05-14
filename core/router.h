@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  01/26/15            */
+   /*             CLIPS Version 6.31  09/04/15            */
    /*                                                     */
    /*                 ROUTER HEADER FILE                  */
    /*******************************************************/
@@ -36,6 +36,10 @@
 /*                                                           */
 /*            Added STDOUT and STDIN logical name            */
 /*            definitions.                                   */
+/*                                                           */
+/*      6.31: Added EnvInputBufferCount function.            */
+/*                                                           */
+/*            Added check for reuse of existing router name. */
 /*                                                           */
 /*************************************************************/
 
@@ -135,6 +139,8 @@ struct routerData
    LOCALE void                           UnrecognizedRouterMessage(void *,const char *);
    LOCALE void                           ExitCommand(void *);
    LOCALE int                            PrintNRouter(void *,const char *,const char *,unsigned long);
+   LOCALE size_t                         EnvInputBufferCount(void *);
+   LOCALE struct router                 *EnvFindRouter(void *,const char *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
