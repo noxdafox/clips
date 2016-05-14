@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/22/14            */
+   /*             CLIPS Version 6.31  05/16/15            */
    /*                                                     */
    /*              CONSTRUCT COMMANDS MODULE              */
    /*******************************************************/
@@ -43,6 +43,9 @@
 /*            Change find construct functionality so that    */
 /*            imported modules are search when locating a    */
 /*            named construct.                               */
+/*                                                           */
+/*      6.31: Fixed use after free issue for deallocation    */
+/*            functions passed to DoForAllConstructs.        */
 /*                                                           */
 /*************************************************************/
 
@@ -1271,7 +1274,7 @@ globle long DoForAllConstructs(
   int interruptable,
   void *userBuffer)
   {
-   struct constructHeader *theConstruct;
+   struct constructHeader *theConstruct, *next = NULL;
    struct defmoduleItemHeader *theModuleItem;
    void *theModule;
    long moduleCount = 0L;
@@ -1306,8 +1309,12 @@ globle long DoForAllConstructs(
 
       for (theConstruct = theModuleItem->firstItem;
            theConstruct != NULL;
-           theConstruct = theConstruct->next)
+           theConstruct = next)
         {
+         /*==========================================*/
+         /* Check to see iteration should be halted. */
+         /*==========================================*/
+         
          if (interruptable)
            {
             if (GetHaltExecution(theEnv) == TRUE)
@@ -1316,7 +1323,18 @@ globle long DoForAllConstructs(
                return(-1L);
               }
            }
-
+           
+         /*===============================================*/
+         /* Determine the next construct since the action */
+         /* could delete the current construct.           */
+         /*===============================================*/
+         
+         next = theConstruct->next;
+         
+         /*===============================================*/
+         /* Perform the action for the current construct. */
+         /*===============================================*/
+         
          (*actionFunction)(theEnv,theConstruct,userBuffer);
         }
      }

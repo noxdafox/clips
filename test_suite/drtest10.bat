@@ -299,3 +299,142 @@
 (retract 3)
 (matches mark)
 (clear)
+(clear) ; DR #882
+(watch activations)
+
+(defrule if 
+   (not (and (not (and (A) (B)))
+             (C)))
+   (not (and (SAD ?v)
+             (SAD ?v)))
+   =>)
+(assert (SAD 2))
+(clear)
+
+(defrule if 
+    (and  
+        (exists 
+            (SAD T ?tx1 T01 ?t01)
+            (SAD T ?tx1 T02 ?t02)
+            (or  
+                (test (not (not (str-index  "ABCD" ?t01)))) 
+                (test (not (not (str-index  "ABCD" ?t02)))))) 
+        (exists 
+            (SAD G ?gx1 G02N ?g02n)
+            (and  
+                (test (eq (str-index  "9900" ?g02n) 1)) 
+                (exists 
+                    (SAD T ?tx2 T08 ?t08)
+                    (SAD G ?gx1 G01 ?g01)
+                    (or  
+                        (test (<= ?t08 0)) 
+                        (test (= ?t08 ?g01)))))))
+   =>)
+(assert (SAD G 2 G01 2))
+(assert (SAD G 2 G02N "99009000"))
+(assert (SAD T 3 T01 "ABCD XYX"))
+(assert (SAD T 3 T02 "XYZ CDE"))
+(assert (SAD T 3 T08 2))
+(unwatch activations)
+(clear) ; Matches issue
+(defmodule MAIN (export ?ALL))
+(deffacts start (a) (b) (c))
+(defmodule A (import MAIN ?ALL))
+(defrule A::foo (a) =>)
+(defmodule B (import MAIN ?ALL))
+(defrule B::foo (b) =>)
+(defmodule C (import MAIN ?ALL))
+(defrule C::foo (c) =>)
+(reset)
+(matches A::foo)
+(matches B::foo)
+(matches C::foo)
+(set-current-module MAIN)
+(matches A::foo)
+(clear) ; SourceForge Bug
+
+(defrule bug 
+   (A)
+   (B ?cot)     
+   (not (and (X)  
+             (C ?cot)))
+   (not (and (D ?cot) 
+             (not (Z))))
+   =>)
+(watch activations)
+(assert (B R))
+(assert (B C))
+(assert (D C))
+(assert (A)))
+(agenda)
+(unwatch activations)
+(clear) ; SourceForge Bug
+(deftemplate C (slot x))
+(deftemplate D (slot x))
+
+(defrule if ""
+    (not 
+         (and 
+              (not 
+                   (not 
+                        (and (not (and (W) 
+                                       (X)))
+                             (not (and (Y) 
+                                       (Z)))
+                        )
+                   )  
+              )
+              (C (x ?ix_t))
+              (D (x ?ix_t))
+         ) 
+    )
+   =>)
+(assert (C (x 1)))
+(clear) ; Load Crash
+
+(defrule bug
+   (X ?a)
+   (Y ?b)
+   (not (and (not (and (A ?a)      
+                       (B ?b)))    
+             (test (eq ?a ?b))))  
+   (Z)
+   =>)
+(assert (Z)) 
+(agenda)
+(assert (X 1))
+(agenda)
+(assert (Y 2))
+(agenda)
+(assert (X 2))
+(agenda)
+(assert (Y 1))
+(agenda)
+(assert (A 1))
+(agenda)
+(assert (B 2))
+(agenda)
+(assert (A 2))
+(agenda)
+(assert (B 1))
+(agenda)
+(clear) ; Load Crash
+
+(defrule bug
+    (Surname ?surname_1)
+    (PersonSurname ?PersonSurname_1)
+    (exists 
+        (or  
+            (and  
+                (exists 
+                    (Surname ?Surname_2)
+                    (LVAR two ?two)
+                    (test (eq ?Surname_2 ?two))) 
+                (test (eq ?surname_1 ?PersonSurname_1))) 
+            (and  
+                (exists 
+                    (Surname ?Surname_3)
+                    (LVAR three ?three)
+                    (test (eq ?Surname_3 ?three))))))
+=>)
+(clear)

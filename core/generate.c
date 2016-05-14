@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.31  07/09/15            */
    /*                                                     */
    /*                   GENERATE MODULE                   */
    /*******************************************************/
@@ -25,6 +25,13 @@
 /*                                                           */
 /*            Reimplemented algorithm for comparisons to     */
 /*            variables contained within not/and CEs.        */
+/*                                                           */
+/*      6.31: Not/and unification was only occurring for the */
+/*            first not/and group referencing a variable.    */
+/*            Use of the marked flag was unneccessary since  */
+/*            the referring variable is always the closest   */
+/*            and unification does not occur within the same */
+/*            non/and group.                                 */
 /*                                                           */
 /*************************************************************/
 
@@ -723,8 +730,8 @@ globle void AddNandUnification(
    /* if one has already been generated.      */
    /*=========================================*/
    
-   if (nodeList->referringNode->marked)
-     { return; }
+   // if (nodeList->referringNode->marked)
+   //   { return; }
      
    /*======================================================*/
    /* Find the frame to which the test should be attached. */
@@ -736,7 +743,7 @@ globle void AddNandUnification(
      {
       if (theFrame->depth >= nodeList->referringNode->beginNandDepth)
         {
-         nodeList->referringNode->marked = TRUE;
+         // nodeList->referringNode->marked = TRUE;
       
          tempExpression = GenJNVariableComparison(theEnv,nodeList->referringNode,nodeList->referringNode,TRUE);
 

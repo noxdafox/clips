@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/22/14            */
+   /*             CLIPS Version 6.31  06/04/15            */
    /*                                                     */
    /*                RULE COMMANDS MODULE                 */
    /*******************************************************/
@@ -45,6 +45,13 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*            Converted API macros to function calls.        */
+/*                                                           */
+/*      6.31: Fixes for show-joins command.                  */
+/*                                                           */
+/*            Fixes for matches command where the            */
+/*            activations listed were not correct if the     */
+/*            current module was different than the module   */
+/*            for the specified rule.                        */
 /*                                                           */
 /*************************************************************/
 
@@ -327,7 +334,8 @@ globle void EnvMatches(
   DATA_OBJECT *result)
   {
    struct defrule *rulePtr;
-   long disjunctCount, disjunctIndex, joinIndex;
+   struct defrule *topDisjunct = (struct defrule *) theRule;
+   long joinIndex;
    long arraySize;
    struct joinInformation *theInfo;
    long long alphaMatchCount = 0;
@@ -355,12 +363,8 @@ globle void EnvMatches(
    /* Loop through each of the disjuncts for the rule */
    /*=================================================*/
 
-   disjunctCount = EnvGetDisjunctCount(theEnv,theRule);
-
-   for (disjunctIndex = 1; disjunctIndex <= disjunctCount; disjunctIndex++)
+   for (rulePtr = topDisjunct; rulePtr != NULL; rulePtr = rulePtr->disjunct)
      {
-      rulePtr = (struct defrule *) EnvGetNthDisjunct(theEnv,theRule,disjunctIndex);
-      
       /*===============================================*/
       /* Create the array containing the list of alpha */
       /* join nodes (those connected to a pattern CE). */
@@ -429,13 +433,13 @@ globle void EnvMatches(
    if (output == VERBOSE)
      { EnvPrintRouter(theEnv,WDISPLAY,"Activations\n"); }
      
-   for (agendaPtr = (struct activation *) EnvGetNextActivation(theEnv,NULL);
+   for (agendaPtr = ((struct defruleModule *) topDisjunct->header.whichModule)->agenda;
         agendaPtr != NULL;
         agendaPtr = (struct activation *) EnvGetNextActivation(theEnv,agendaPtr))
      {
       if (GetHaltExecution(theEnv) == TRUE) return;
 
-      if (((struct activation *) agendaPtr)->theRule->header.name == rulePtr->header.name)
+      if (((struct activation *) agendaPtr)->theRule->header.name == topDisjunct->header.name)
         {
          activations++;
       
@@ -1390,15 +1394,27 @@ static void ShowJoins(
    struct joinNode *joinList[MAXIMUM_NUMBER_OF_PATTERNS];
    int numberOfJoins;
    char rhsType;
+   int disjunct = 0;
+   unsigned long count = 0;
 
    rulePtr = (struct defrule *) theRule;
-
+   
+   if ((rulePtr != NULL) && (rulePtr->disjunct != NULL))
+     { disjunct = 1; }
+     
    /*=================================================*/
    /* Loop through each of the disjuncts for the rule */
    /*=================================================*/
 
    while (rulePtr != NULL)
      {
+      if (disjunct > 0)
+        {
+         EnvPrintRouter(theEnv,WDISPLAY,"Disjunct #");
+         PrintLongInteger(theEnv, WDISPLAY, (long long) disjunct++);
+         EnvPrintRouter(theEnv,WDISPLAY,"\n");
+        }
+        
       /*=====================================*/
       /* Determine the number of join nodes. */
       /*=====================================*/
@@ -1476,15 +1492,27 @@ static void ShowJoins(
          if (! joinList[numberOfJoins]->firstJoin)
            {
             EnvPrintRouter(theEnv,WDISPLAY,"    LM : ");
-            if (PrintBetaMemory(theEnv,WDISPLAY,joinList[numberOfJoins]->leftMemory,FALSE,"         ",SUCCINCT) == 0)
+            count = PrintBetaMemory(theEnv,WDISPLAY,joinList[numberOfJoins]->leftMemory,FALSE,"",SUCCINCT);
+            if (count == 0)
               { EnvPrintRouter(theEnv,WDISPLAY,"None\n"); }
+            else
+              {
+               sprintf(buffer,"%lu\n",count);
+               EnvPrintRouter(theEnv,WDISPLAY,buffer);
+              }
            }
          
          if (joinList[numberOfJoins]->joinFromTheRight)
            {
             EnvPrintRouter(theEnv,WDISPLAY,"    RM : ");
-            if (PrintBetaMemory(theEnv,WDISPLAY,joinList[numberOfJoins]->rightMemory,FALSE,"         ",SUCCINCT) == 0)
+            count = PrintBetaMemory(theEnv,WDISPLAY,joinList[numberOfJoins]->rightMemory,FALSE,"",SUCCINCT);
+            if (count == 0)
               { EnvPrintRouter(theEnv,WDISPLAY,"None\n"); }
+            else
+              {
+               sprintf(buffer,"%lu\n",count);
+               EnvPrintRouter(theEnv,WDISPLAY,buffer);
+              }
            }
          
          numberOfJoins--;

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.31  06/10/15            */
    /*                                                     */
    /*                   DEVELOPER MODULE                  */
    /*******************************************************/
@@ -34,6 +34,8 @@
 /*                                                           */
 /*            Replaced deprecated WCLIPS logical name with   */
 /*            WPROMPT.                                       */
+/*                                                           */
+/*      6.31: Crash fix for show-opn.                        */
 /*                                                           */
 /*************************************************************/
 
@@ -477,7 +479,7 @@ static void PrintOPNLevel(
              }
          if (alphaPtr->slotbmp != NULL)
            {
-            sbmp = (SLOT_BITMAP *) ValueToBitMap(pptr->alphaNode->slotbmp);
+            sbmp = (SLOT_BITMAP *) ValueToBitMap(alphaPtr->slotbmp);
             EnvPrintRouter(theEnv,WDISPLAY," *** Slots:");
             for (i = NAME_ID ; i <= sbmp->maxid ; i++)
               if (TestBitMap(sbmp->map,i))
