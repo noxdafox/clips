@@ -18,12 +18,14 @@ import net.sf.clipsrules.jni.*;
 
 public class InstanceBrowserManager implements ActionListener
   {  
-   private List<InstanceBrowserFrame> instanceBrowsers = new ArrayList<InstanceBrowserFrame>();
+   private List<EntityBrowserFrame> browsers = new ArrayList<EntityBrowserFrame>();
    private List<Module> modules;
-   private List<FactInstance> instances;
+   private List<FactInstance> entities;
    private HashMap<Long,BitSet> scopes;
    private CLIPSIDE ide;
- 
+   public static final String ENTITY_NAME = "Instance";
+   private static int entityCount = 1;
+
    /**************************/
    /* InstanceBrowserManager */
    /**************************/
@@ -32,19 +34,19 @@ public class InstanceBrowserManager implements ActionListener
      {  
       ide = theIDE;
       modules = new ArrayList<Module>();
-      instances = new ArrayList<FactInstance>();
+      entities = new ArrayList<FactInstance>();
       scopes = new HashMap<Long,BitSet>();
      }
      
-   /*************************/
-   /* createInstanceBrowser */
-   /*************************/  
-   public void createInstanceBrowser()
+   /*****************/
+   /* createBrowser */
+   /*****************/  
+   public void createBrowser()
      {
-      InstanceBrowserFrame frame = new InstanceBrowserFrame();
+      EntityBrowserFrame frame = new EntityBrowserFrame(ENTITY_NAME,"Name","Class",entityCount++);
       frame.addInternalFrameListener(ide);
       frame.setActionTarget(this);
-      instanceBrowsers.add(frame);
+      browsers.add(frame);
             
       ide.getPlacer().placeInternalFrame(frame);
       
@@ -54,49 +56,49 @@ public class InstanceBrowserManager implements ActionListener
       
       if (! ide.getDialogWindow().isExecuting())
         { 
-         if (instanceBrowsers.size() == 1)
-           { fetchInstances(); }
-         assignInstances(frame); 
+         if (browsers.size() == 1)
+           { fetchData(); }
+         assignEntities(frame); 
         }      
      }
      
-   /*************************/
-   /* removeInstanceBrowser */
-   /*************************/  
-   public void removeInstanceBrowser(
-     InstanceBrowserFrame theBrowser)
+   /*****************/
+   /* removeBrowser */
+   /*****************/  
+   public void removeBrowser(
+     EntityBrowserFrame theBrowser)
      {
-      instanceBrowsers.remove(theBrowser);
+      browsers.remove(theBrowser);
      }
      
-   /******************/
-   /* fetchInstances */
-   /******************/
-   private synchronized void fetchInstances()
+   /*************/
+   /* fetchData */
+   /*************/
+   private synchronized void fetchData()
      {
       modules = ide.getEnvironment().getModuleList();
-      instances = ide.getEnvironment().getInstanceList();
+      entities = ide.getEnvironment().getInstanceList();
       scopes = ide.getEnvironment().getInstanceScopes();
      }
 
-   /*******************/
-   /* assignInstances */
-   /*******************/
-   private synchronized void assignInstances(
-     InstanceBrowserFrame theBrowser)
+   /******************/
+   /* assignEntities */
+   /******************/
+   private synchronized void assignEntities(
+     EntityBrowserFrame theBrowser)
      {
-      theBrowser.assignData(modules,instances,scopes);
+      theBrowser.assignData(modules,entities,scopes);
      }
 
-   /**************************/
-   /* updateInstanceBrowser: */
-   /**************************/
-   private void updateInstanceBrowser(
-     InstanceBrowserFrame theBrowser)
+   /******************/
+   /* updateBrowser: */
+   /******************/
+   private void updateBrowser(
+     EntityBrowserFrame theBrowser)
      {
       if (EventQueue.isDispatchThread())
         { 
-         assignInstances(theBrowser);
+         assignEntities(theBrowser);
          return; 
         }
               
@@ -106,53 +108,53 @@ public class InstanceBrowserManager implements ActionListener
            new Runnable() 
              {  
               public void run() 
-                { assignInstances(theBrowser); }  
+                { assignEntities(theBrowser); }  
              });   
         }
       catch (Exception e) 
         { e.printStackTrace(); }
      }  
   
-   /******************************/
-   /* updateAllInstanceBrowsers: */
-   /******************************/
-   public void updateAllInstanceBrowsers()
+   /**********************/
+   /* updateAllBrowsers: */
+   /**********************/
+   public void updateAllBrowsers()
      {
-      if (instanceBrowsers.size() == 0) return;
+      if (browsers.size() == 0) return;
       
-      fetchInstances();
+      fetchData();
       
-      for (Iterator itr = instanceBrowsers.iterator(); itr.hasNext(); ) 
+      for (Iterator itr = browsers.iterator(); itr.hasNext(); ) 
         { 
-         InstanceBrowserFrame theBrowser = (InstanceBrowserFrame) itr.next();
-         updateInstanceBrowser(theBrowser);
+         EntityBrowserFrame theBrowser = (EntityBrowserFrame) itr.next();
+         updateBrowser(theBrowser);
         }
      }
      
-   /********************************/
-   /* instanceBrowserSelectionText */
-   /********************************/  
-   public String instanceBrowserSelectionText(
-    InstanceBrowserFrame theFrame)
+   /************************/
+   /* browserSelectionText */
+   /************************/  
+   public String browserSelectionText(
+    EntityBrowserFrame theFrame)
     {
-     long classPtr = theFrame.selectedInstanceDefclass();
-     if (classPtr == -1) return "";
-     return ide.getEnvironment().getDefclassText(classPtr);
+     long constructPtr = theFrame.selectedEntityConstruct();
+     if (constructPtr == -1) return "";
+     return ide.getEnvironment().getDefclassText(constructPtr);
     }
 
-   /****************************/
-   /* instanceBrowserSelection */
-   /****************************/  
-   public void instanceBrowserSelection(
+   /********************/
+   /* browserSelection */
+   /********************/  
+   public void browserSelection(
      ActionEvent ae)
      {
       ConstructInspectorFrame constructInspector = ide.getConstructInspector();
       
       if (constructInspector == null) return;
       
-      InstanceBrowserFrame theFrame = (InstanceBrowserFrame) ae.getSource();
+      EntityBrowserFrame theFrame = (EntityBrowserFrame) ae.getSource();
         
-      constructInspector.setText(instanceBrowserSelectionText(theFrame));
+      constructInspector.setText(browserSelectionText(theFrame));
      }
 
    /*################*/
@@ -165,8 +167,8 @@ public class InstanceBrowserManager implements ActionListener
    public void onActionPerformed(
      ActionEvent ae) throws Exception 
      {     
-      if (ae.getActionCommand().equals(InstanceBrowserFrame.BROWSER_SELECTION_ACTION)) 
-        { instanceBrowserSelection(ae); }
+      if (ae.getActionCommand().equals(EntityBrowserFrame.BROWSER_SELECTION_ACTION)) 
+        { browserSelection(ae); }
      }
      
    /*########################*/

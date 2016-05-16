@@ -17,7 +17,7 @@ import net.sf.clipsrules.jni.*;
 
 public class AgendaBrowserManager implements ActionListener
   {  
-   private List<AgendaBrowserFrame> agendaBrowsers = new ArrayList<AgendaBrowserFrame>();
+   private List<AgendaBrowserFrame> browsers = new ArrayList<AgendaBrowserFrame>();
    private FocusStack focusStack;
    private HashMap<Focus,Agenda> agendaMap;
    private CLIPSIDE ide;
@@ -33,15 +33,15 @@ public class AgendaBrowserManager implements ActionListener
       agendaMap = new HashMap<Focus,Agenda>();
      }
      
-   /***********************/
-   /* createAgendaBrowser */
-   /***********************/  
-   public void createAgendaBrowser()
+   /*****************/
+   /* createBrowser */
+   /*****************/  
+   public void createBrowser()
      {
       AgendaBrowserFrame frame = new AgendaBrowserFrame();
       frame.addInternalFrameListener(ide);
       frame.setActionTarget(this);
-      agendaBrowsers.add(frame);
+      browsers.add(frame);
       
       frame.updateButtons(ide.getDialogWindow().isExecuting());
       
@@ -53,25 +53,25 @@ public class AgendaBrowserManager implements ActionListener
       
       if (! ide.getDialogWindow().isExecuting())
         { 
-         if (agendaBrowsers.size() == 1)
-           { fetchAgenda(); }
-         assignAgenda(frame); 
+         if (browsers.size() == 1)
+           { fetchData(); }
+         assignData(frame); 
         }      
      }
      
-   /***********************/
-   /* removeAgendaBrowser */
-   /***********************/  
-   public void removeAgendaBrowser(
+   /*****************/
+   /* removeBrowser */
+   /*****************/  
+   public void removeBrowser(
      AgendaBrowserFrame theBrowser)
      {
-      agendaBrowsers.remove(theBrowser);
+      browsers.remove(theBrowser);
      }
      
-   /***************/
-   /* fetchAgenda */
-   /***************/
-   private synchronized void fetchAgenda()
+   /*************/
+   /* fetchData */
+   /*************/
+   private synchronized void fetchData()
      {
       focusStack = ide.getEnvironment().getFocusStack();
       agendaMap = new HashMap<Focus,Agenda>();
@@ -84,24 +84,24 @@ public class AgendaBrowserManager implements ActionListener
         }
      }
 
-   /****************/
-   /* assignAgenda */
-   /****************/
-   private synchronized void assignAgenda(
+   /**************/
+   /* assignData */
+   /**************/
+   private synchronized void assignData(
      AgendaBrowserFrame theBrowser)
      {
       theBrowser.assignData(focusStack,agendaMap);
      }
 
-   /************************/
-   /* updateAgendaBrowser: */
-   /************************/
-   private void updateAgendaBrowser(
+   /******************/
+   /* updateBrowser: */
+   /******************/
+   private void updateBrowser(
      AgendaBrowserFrame theBrowser)
      {
       if (EventQueue.isDispatchThread())
         { 
-         assignAgenda(theBrowser);
+         assignData(theBrowser);
          return; 
         }
               
@@ -111,26 +111,26 @@ public class AgendaBrowserManager implements ActionListener
            new Runnable() 
              {  
               public void run() 
-                { assignAgenda(theBrowser); }  
+                { assignData(theBrowser); }  
              });   
         }
       catch (Exception e) 
         { e.printStackTrace(); }
      }  
   
-   /****************************/
-   /* updateAllAgendaBrowsers: */
-   /****************************/
-   public void updateAllAgendaBrowsers()
+   /**********************/
+   /* updateAllBrowsers: */
+   /**********************/
+   public void updateAllBrowsers()
      {
-      if (agendaBrowsers.size() == 0) return;
+      if (browsers.size() == 0) return;
       
-      fetchAgenda();
+      fetchData();
       
-      for (Iterator itr = agendaBrowsers.iterator(); itr.hasNext(); ) 
+      for (Iterator itr = browsers.iterator(); itr.hasNext(); ) 
         { 
          AgendaBrowserFrame theBrowser = (AgendaBrowserFrame) itr.next();
-         updateAgendaBrowser(theBrowser);
+         updateBrowser(theBrowser);
         }
      }
 
@@ -140,19 +140,19 @@ public class AgendaBrowserManager implements ActionListener
    public void updateAgendaBrowserButtons(
      boolean isExecuting)
      {
-      if (agendaBrowsers.size() == 0) return;
+      if (browsers.size() == 0) return;
             
-      for (Iterator itr = agendaBrowsers.iterator(); itr.hasNext(); ) 
+      for (Iterator itr = browsers.iterator(); itr.hasNext(); ) 
         { 
          AgendaBrowserFrame theBrowser = (AgendaBrowserFrame) itr.next();
          theBrowser.updateButtons(isExecuting);
         }
      }
      
-   /******************************/
-   /* agendaBrowserSelectionText */
-   /******************************/  
-   public String agendaBrowserSelectionText(
+   /************************/
+   /* browserSelectionText */
+   /************************/  
+   public String browserSelectionText(
     AgendaBrowserFrame theFrame)
     {
      String ruleName = theFrame.selectedActivationRule();
@@ -162,10 +162,10 @@ public class AgendaBrowserManager implements ActionListener
        { return ide.getEnvironment().getDefruleText(ruleName); }
     }
 
-   /**************************/
-   /* agendaBrowserSelection */
-   /**************************/  
-   public void agendaBrowserSelection(
+   /********************/
+   /* browserSelection */
+   /********************/  
+   public void browserSelection(
      ActionEvent ae)
      {
       ConstructInspectorFrame constructInspector = ide.getConstructInspector();
@@ -174,7 +174,7 @@ public class AgendaBrowserManager implements ActionListener
       
       AgendaBrowserFrame theFrame = (AgendaBrowserFrame) ae.getSource();
         
-      constructInspector.setText(agendaBrowserSelectionText(theFrame));
+      constructInspector.setText(browserSelectionText(theFrame));
      }
 
    /*################*/
@@ -196,7 +196,7 @@ public class AgendaBrowserManager implements ActionListener
       else if (ae.getActionCommand().equals(AgendaBrowserFrame.HALT_RULES_ACTION))
         { haltRules(); }
       else if (ae.getActionCommand().equals(AgendaBrowserFrame.BROWSER_SELECTION_ACTION)) 
-        { agendaBrowserSelection(ae); }
+        { browserSelection(ae); }
      }
      
    /*********/

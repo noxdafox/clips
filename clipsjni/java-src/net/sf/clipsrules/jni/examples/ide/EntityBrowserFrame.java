@@ -3,7 +3,6 @@ package net.sf.clipsrules.jni.examples.ide;
 import javax.swing.*;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.table.*;
@@ -17,52 +16,63 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.BitSet;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-
 import net.sf.clipsrules.jni.*;
 
-public class FactBrowserFrame extends JInternalFrame
+public class EntityBrowserFrame extends JInternalFrame
                              implements ActionListener, ListSelectionListener
   {
    private JFrame browserFrame;
-   private JTable modulesTable, factsTable, slotsTable;
+   private JTable modulesTable, entityTable, slotsTable;
    private ModuleTableModel modulesModel;
-   private FactInstanceTableModel factsModel;
+   private FactInstanceTableModel entityModel;
    private SlotValueTableModel slotsModel;
-   private JScrollPane modulesPane, factsPane, slotsPane;
-   private JSplitPane factsSlotsPane, contentPane;
-   private static int factCount = 1;
+   private JScrollPane modulesPane, entitiesPane, slotsPane;
+   private JSplitPane entitiesSlotsPane, contentPane;
+   private JTextField searchField;
    private JCheckBox displayDefaultedValuesCheckBox; 
    private List<Module> modules;
-   private List<FactInstance> facts;
+   private List<FactInstance> entities;
    private HashMap<Long,BitSet> scopes;
+   private String entityName;
    
    public static final String BROWSER_SELECTION_ACTION = "BrowserSelectionAction";
    private static final String DISPLAY_DEFAULTED_VALUES_ACTION = "DisplayDefaultedValues";
-   
+
    private ActionListener actionTarget = null;
 
-   /***************/
-   /* FactBrowser */
-   /***************/
-   FactBrowserFrame()
+   /**********************/
+   /* EntityBrowserFrame */
+   /**********************/
+   EntityBrowserFrame(
+     String theEntityName,
+     String theIDName,
+     String theConstructName,
+     int browserIndex)
      {      
       this(new ArrayList<Module>(),
            new ArrayList<FactInstance>(),
-           new HashMap<Long,BitSet>());
+           new HashMap<Long,BitSet>(),
+           theEntityName,
+           theIDName,
+           theConstructName,
+           browserIndex);
      }
 
-   /***************/
-   /* FactBrowser */
-   /***************/
-   FactBrowserFrame(
+   /**********************/
+   /* EntityBrowserFrame */
+   /**********************/
+   EntityBrowserFrame(
      List<Module> theModules,
-     List<FactInstance> theFacts,
-     HashMap<Long,BitSet> theScopes)
+     List<FactInstance> theEntities,
+     HashMap<Long,BitSet> theScopes,
+     String theEntityName,
+     String theIDName,
+     String theConstructName,
+     int browserIndex)
      {  
-      super("Fact #" + factCount++,true,true,true,true);
-            
+      super(theEntityName + " Browser #" + browserIndex,true,true,true,true);
+      entityName = theEntityName;
+      
       /*===================================*/
       /* Create a new JFrame container and */
       /* assign a layout manager to it.    */
@@ -75,7 +85,7 @@ public class FactBrowserFrame extends JInternalFrame
       /*=================================*/
      
       this.setSize(600,200);  
-      this.setMinimumSize(new Dimension(450,100));
+      this.setMinimumSize(new Dimension(450,150));
       
       /*===========================================*/
       /* The close button closes just the browser. */
@@ -89,28 +99,48 @@ public class FactBrowserFrame extends JInternalFrame
       
       JPanel upperPanel = new JPanel(); 
       upperPanel.setPreferredSize(new Dimension(600,40));
-      upperPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-      
+
       displayDefaultedValuesCheckBox = new JCheckBox("Display Defaulted Values");
       displayDefaultedValuesCheckBox.setEnabled(true);
       displayDefaultedValuesCheckBox.setActionCommand(DISPLAY_DEFAULTED_VALUES_ACTION);
       displayDefaultedValuesCheckBox.addActionListener(this);
+      
       upperPanel.add(displayDefaultedValuesCheckBox);
-/*
-      JTextField searchField = new JTextField(20);
-      TextPrompt searchPrompt = new TextPrompt("Search",searchField);
-      searchPrompt.setForeground( Color.RED );
-      searchPrompt.changeAlpha(0.5f);
-      upperPanel.add(searchPrompt);
-*/
+      
+      JLabel searchLabel = new JLabel("Search:  ");
+      searchField = new JTextField(20);
 
-      JTextField searchField = new JTextField(20);
-      upperPanel.add(searchField);
+      searchField.addActionListener(new ActionListener() 
+        {
+         @Override
+         public void actionPerformed(ActionEvent event) 
+         {
+          performSearch();
+         }
+        });
+        
+      JPanel searchPanel = new JPanel();
+      searchPanel.setLayout(new BoxLayout(searchPanel,BoxLayout.X_AXIS));
+      
+      searchPanel.add(searchLabel);
+      searchPanel.add(searchField);
 
-/*
-      SearchField searchField = new SearchField("Search");
-      upperPanel.add(searchField);
-*/
+      upperPanel.add(searchPanel);
+
+      GroupLayout layout = new GroupLayout(upperPanel);
+      upperPanel.setLayout(layout);
+      layout.setAutoCreateGaps(true);
+      layout.setAutoCreateContainerGaps(true);
+      
+      layout.setHorizontalGroup(layout.createSequentialGroup()
+                                      .addComponent(displayDefaultedValuesCheckBox)
+                                      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                      .addComponent(searchPanel));
+                                      
+      layout.setVerticalGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                                    .addComponent(displayDefaultedValuesCheckBox)
+                                    .addComponent(searchPanel));
+
       this.getContentPane().add(upperPanel); 
 
       /****************************/
@@ -129,21 +159,21 @@ public class FactBrowserFrame extends JInternalFrame
                  
       modulesPane = new JScrollPane(modulesTable);
 
-      /*=============*/
-      /* Facts table */
-      /*=============*/
+      /*==============*/
+      /* Entity table */
+      /*==============*/
       
-      factsModel = new FactInstanceTableModel("Index","Template");
-      factsTable = new JTable(factsModel);
-      factsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-      factsTable.getSelectionModel().addListSelectionListener(this);
+      entityModel = new FactInstanceTableModel(theIDName,theConstructName);
+      entityTable = new JTable(entityModel);
+      entityTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+      entityTable.getSelectionModel().addListSelectionListener(this);
 
-      factsTable.getTableHeader().setReorderingAllowed(false);
+      entityTable.getTableHeader().setReorderingAllowed(false);
 
-      TableRowSorter<FactInstanceTableModel> factSorter 
-         = new TableRowSorter<FactInstanceTableModel>(factsModel);
+      TableRowSorter<FactInstanceTableModel> entitySorter 
+         = new TableRowSorter<FactInstanceTableModel>(entityModel);
 
-      RowFilter<FactInstanceTableModel,Integer> factFilter 
+      RowFilter<FactInstanceTableModel,Integer> entityFilter 
          = new RowFilter<FactInstanceTableModel,Integer>() 
             {
              public boolean include(Entry<? extends FactInstanceTableModel, ? extends Integer> entry) 
@@ -157,24 +187,29 @@ public class FactBrowserFrame extends JInternalFrame
 
                 BitSet theBitSet = scopes.get(new Long(fi.getTypeAddress()));
                 if (theBitSet.get(moduleIndex))
-                  { return true; }
+                  { 
+                   if (fi.searchForString(searchField.getText()))
+                     { return true; }
+                   else
+                     { return false; } 
+                  }
                 else
                   { return false; }
                }
             };
             
-      factSorter.setRowFilter(factFilter);
+      entitySorter.setRowFilter(entityFilter);
       
-      factsTable.setRowSorter(factSorter);
+      entityTable.setRowSorter(entitySorter);
 
-      factsPane = new JScrollPane(factsTable);
+      entitiesPane = new JScrollPane(entityTable);
 
-      factsTable.getColumnModel().getColumn(0).setMinWidth(65);
-      factsTable.getColumnModel().getColumn(0).setPreferredWidth(75);
-      factsTable.getColumnModel().getColumn(1).setPreferredWidth(75);
+      entityTable.getColumnModel().getColumn(0).setMinWidth(65);
+      entityTable.getColumnModel().getColumn(0).setPreferredWidth(75);
+      entityTable.getColumnModel().getColumn(1).setPreferredWidth(75);
 
-      factsTable.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
-      factsTable.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
+      entityTable.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+      entityTable.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
 
       /*=============*/
       /* Slots table */
@@ -222,15 +257,15 @@ public class FactBrowserFrame extends JInternalFrame
       slotsTable.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
       slotsTable.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
 
-      factsSlotsPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,factsPane,slotsPane);
-      factsSlotsPane.setOneTouchExpandable(true);
-      factsSlotsPane.setDividerLocation(200);
-      factsSlotsPane.setDividerSize(15);
+      entitiesSlotsPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,entitiesPane,slotsPane);
+      entitiesSlotsPane.setOneTouchExpandable(true);
+      entitiesSlotsPane.setDividerLocation(200);
+      entitiesSlotsPane.setDividerSize(15);
 
-      factsSlotsPane.setPreferredSize(new Dimension(400,160));
-      factsSlotsPane.setAlignmentX(Component.CENTER_ALIGNMENT);
+      entitiesSlotsPane.setPreferredSize(new Dimension(400,160));
+      entitiesSlotsPane.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-      contentPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,modulesPane,factsSlotsPane);
+      contentPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,modulesPane,entitiesSlotsPane);
       contentPane.setOneTouchExpandable(true);
       contentPane.setDividerLocation(125);
       contentPane.setDividerSize(15);
@@ -240,7 +275,7 @@ public class FactBrowserFrame extends JInternalFrame
 
       this.getContentPane().add(contentPane); 
       
-      assignData(theModules,theFacts,theScopes);
+      assignData(theModules,theEntities,theScopes);
 
       /*====================*/
       /* Display the frame. */
@@ -248,6 +283,14 @@ public class FactBrowserFrame extends JInternalFrame
 
       this.pack();
      }  
+     
+   /*****************/
+   /* getEntityName */
+   /*****************/
+   public String getEntityName()
+     {
+      return entityName;
+     }
  
    /*******************/
    /* setActionTarget */
@@ -263,48 +306,48 @@ public class FactBrowserFrame extends JInternalFrame
    /**************/
    public void assignData(
      List<Module> theModules,
-     List<FactInstance> theFacts,
+     List<FactInstance> theEntities,
      HashMap<Long,BitSet> theScopes)
      {
       modules = theModules;
-      facts = theFacts;
+      entities = theEntities;
       scopes = theScopes;
 
       modulesModel.setModules(theModules);
       if (modules.size() == 0)
         { 
-         factsModel.setItems(null);
+         entityModel.setItems(null);
          slotsModel.setItem(null);
         }
       else
         { 
-         factsModel.setItems(facts); 
-         if (facts.size() == 0)
+         entityModel.setItems(entities); 
+         if (entities.size() == 0)
            { slotsModel.setItem(null); }
          else
-           { slotsModel.setItem(facts.get(0)); }
+           { slotsModel.setItem(entities.get(0)); }
         }
 
       if (modules.size() != 0)
         { 
          modulesTable.setRowSelectionInterval(0,0); 
-         if (factsTable.getRowCount() != 0)
-           { factsTable.setRowSelectionInterval(0,0); }
+         if (entityTable.getRowCount() != 0)
+           { entityTable.setRowSelectionInterval(0,0); }
         }
      }
 
    /***************************/
-   /* selectedFactDeftemplate */
+   /* selectedEntityConstruct */
    /***************************/
-   public long selectedFactDeftemplate() 
+   public long selectedEntityConstruct() 
      {
-      int viewRow = factsTable.getSelectedRow();
+      int viewRow = entityTable.getSelectedRow();
       if (viewRow == -1) return -1;
-      viewRow = factsTable.convertRowIndexToModel(viewRow);
+      viewRow = entityTable.convertRowIndexToModel(viewRow);
          
-      FactInstance theFact = facts.get(viewRow);
+      FactInstance theEntity = entities.get(viewRow);
 
-      return theFact.getTypeAddress();
+      return theEntity.getTypeAddress();
      }
      
    /****************/
@@ -319,26 +362,34 @@ public class FactBrowserFrame extends JInternalFrame
          int moduleIndex = modulesTable.getSelectedRow();
          if (moduleIndex == -1) return;
          moduleIndex = modulesTable.convertRowIndexToModel(moduleIndex);
-         factsModel.fireTableDataChanged();
-         if (factsTable.getRowCount() != 0)
-           { factsTable.setRowSelectionInterval(0,0); }
+         entityModel.fireTableDataChanged();
+         if (entityTable.getRowCount() != 0)
+           { entityTable.setRowSelectionInterval(0,0); }
         }
-      else if (event.getSource().equals(factsTable.getSelectionModel()))
+      else if (event.getSource().equals(entityTable.getSelectionModel()))
         {
-         int viewRow = factsTable.getSelectedRow();
+         int viewRow = entityTable.getSelectedRow();
          if (viewRow == -1) return;
-         viewRow = factsTable.convertRowIndexToModel(viewRow);
+         viewRow = entityTable.convertRowIndexToModel(viewRow);
          
-          if (facts.size() == 0)
+          if (entities.size() == 0)
             { slotsModel.setItem(null); }
           else
             { 
-             FactInstance theFact = facts.get(viewRow);
-             slotsModel.setItem(theFact);
+             FactInstance theEntity = entities.get(viewRow);
+             slotsModel.setItem(theEntity);
             }
         }
 
       actionPerformed(new ActionEvent(this,AWTEvent.RESERVED_ID_MAX + 1,BROWSER_SELECTION_ACTION));
+     }
+     
+   /*****************/
+   /* performSearch */
+   /*****************/
+   private void performSearch() 
+     {
+      entityModel.fireTableDataChanged();
      }
    
    /*########################*/

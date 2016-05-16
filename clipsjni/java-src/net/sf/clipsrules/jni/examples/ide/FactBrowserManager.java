@@ -18,12 +18,14 @@ import net.sf.clipsrules.jni.*;
 
 public class FactBrowserManager implements ActionListener
   {  
-   private List<FactBrowserFrame> factBrowsers = new ArrayList<FactBrowserFrame>();
+   private List<EntityBrowserFrame> browsers = new ArrayList<EntityBrowserFrame>();
    private List<Module> modules;
-   private List<FactInstance> facts;
+   private List<FactInstance> entities;
    private HashMap<Long,BitSet> scopes;
    private CLIPSIDE ide;
- 
+   public static final String ENTITY_NAME = "Fact";
+   private static int entityCount = 1;
+
    /**********************/
    /* FactBrowserManager */
    /**********************/
@@ -32,19 +34,19 @@ public class FactBrowserManager implements ActionListener
      {  
       ide = theIDE;
       modules = new ArrayList<Module>();
-      facts = new ArrayList<FactInstance>();
+      entities = new ArrayList<FactInstance>();
       scopes = new HashMap<Long,BitSet>();
      }
      
-   /*********************/
-   /* createFactBrowser */
-   /*********************/  
-   public void createFactBrowser()
+   /*****************/
+   /* createBrowser */
+   /*****************/  
+   public void createBrowser()
      {
-      FactBrowserFrame frame = new FactBrowserFrame();
+      EntityBrowserFrame frame = new EntityBrowserFrame(ENTITY_NAME,"Index","Template",entityCount++);
       frame.addInternalFrameListener(ide);
       frame.setActionTarget(this);
-      factBrowsers.add(frame);
+      browsers.add(frame);
             
       ide.getPlacer().placeInternalFrame(frame);
       
@@ -54,49 +56,49 @@ public class FactBrowserManager implements ActionListener
       
       if (! ide.getDialogWindow().isExecuting())
         { 
-         if (factBrowsers.size() == 1)
-           { fetchFacts(); }
-         assignFacts(frame); 
+         if (browsers.size() == 1)
+           { fetchData(); }
+         assignData(frame); 
         }      
      }
      
-   /*********************/
-   /* removeFactBrowser */
-   /*********************/  
-   public void removeFactBrowser(
-     FactBrowserFrame theBrowser)
+   /*****************/
+   /* removeBrowser */
+   /*****************/  
+   public void removeBrowser(
+     EntityBrowserFrame theBrowser)
      {
-      factBrowsers.remove(theBrowser);
+      browsers.remove(theBrowser);
      }
      
-   /**************/
-   /* fetchFacts */
-   /**************/
-   private synchronized void fetchFacts()
+   /*************/
+   /* fetchData */
+   /*************/
+   private synchronized void fetchData()
      {
       modules = ide.getEnvironment().getModuleList();
-      facts = ide.getEnvironment().getFactList();
+      entities = ide.getEnvironment().getFactList();
       scopes = ide.getEnvironment().getFactScopes();
      }
 
-   /***************/
-   /* assignFacts */
-   /***************/
-   private synchronized void assignFacts(
-     FactBrowserFrame theBrowser)
+   /**************/
+   /* assignData */
+   /**************/
+   private synchronized void assignData(
+     EntityBrowserFrame theBrowser)
      {
-      theBrowser.assignData(modules,facts,scopes);
+      theBrowser.assignData(modules,entities,scopes);
      }
 
-   /**********************/
-   /* updateFactBrowser: */
-   /**********************/
-   private void updateFactBrowser(
-     FactBrowserFrame theBrowser)
+   /******************/
+   /* updateBrowser: */
+   /******************/
+   private void updateBrowser(
+     EntityBrowserFrame theBrowser)
      {
       if (EventQueue.isDispatchThread())
         { 
-         assignFacts(theBrowser);
+         assignData(theBrowser);
          return; 
         }
               
@@ -106,53 +108,53 @@ public class FactBrowserManager implements ActionListener
            new Runnable() 
              {  
               public void run() 
-                { assignFacts(theBrowser); }  
+                { assignData(theBrowser); }  
              });   
         }
       catch (Exception e) 
         { e.printStackTrace(); }
      }  
   
-   /**************************/
-   /* updateAllFactBrowsers: */
-   /***************************/
-   public void updateAllFactBrowsers()
+   /**********************/
+   /* updateAllBrowsers: */
+   /**********************/
+   public void updateAllBrowsers()
      {
-      if (factBrowsers.size() == 0) return;
+      if (browsers.size() == 0) return;
       
-      fetchFacts();
+      fetchData();
       
-      for (Iterator itr = factBrowsers.iterator(); itr.hasNext(); ) 
+      for (Iterator itr = browsers.iterator(); itr.hasNext(); ) 
         { 
-         FactBrowserFrame theBrowser = (FactBrowserFrame) itr.next();
-         updateFactBrowser(theBrowser);
+         EntityBrowserFrame theBrowser = (EntityBrowserFrame) itr.next();
+         updateBrowser(theBrowser);
         }
      }
      
-   /****************************/
-   /* factBrowserSelectionText */
-   /****************************/  
-   public String factBrowserSelectionText(
-    FactBrowserFrame theFrame)
+   /************************/
+   /* browserSelectionText */
+   /************************/  
+   public String browserSelectionText(
+    EntityBrowserFrame theFrame)
     {
-     long templatePtr = theFrame.selectedFactDeftemplate();
-     if (templatePtr == -1) return "";
-     return ide.getEnvironment().getDeftemplateText(templatePtr);
+     long constructPtr = theFrame.selectedEntityConstruct();
+     if (constructPtr == -1) return "";
+     return ide.getEnvironment().getDeftemplateText(constructPtr);
     }
 
-   /************************/
-   /* factBrowserSelection */
-   /************************/  
-   public void factBrowserSelection(
+   /********************/
+   /* browserSelection */
+   /********************/  
+   public void browserSelection(
      ActionEvent ae)
      {
       ConstructInspectorFrame constructInspector = ide.getConstructInspector();
       
       if (constructInspector == null) return;
       
-      FactBrowserFrame theFrame = (FactBrowserFrame) ae.getSource();
+      EntityBrowserFrame theFrame = (EntityBrowserFrame) ae.getSource();
         
-      constructInspector.setText(factBrowserSelectionText(theFrame));
+      constructInspector.setText(browserSelectionText(theFrame));
      }
 
    /*################*/
@@ -165,8 +167,8 @@ public class FactBrowserManager implements ActionListener
    public void onActionPerformed(
      ActionEvent ae) throws Exception 
      {     
-      if (ae.getActionCommand().equals(FactBrowserFrame.BROWSER_SELECTION_ACTION)) 
-        { factBrowserSelection(ae); }
+      if (ae.getActionCommand().equals(EntityBrowserFrame.BROWSER_SELECTION_ACTION)) 
+        { browserSelection(ae); }
      }
      
    /*########################*/

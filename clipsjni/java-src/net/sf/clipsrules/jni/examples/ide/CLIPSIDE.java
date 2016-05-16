@@ -213,19 +213,19 @@ public class CLIPSIDE extends JFrame
          if (dialogWindow.getEnvironment().getAgendaChanged())
            {
             dialogWindow.getEnvironment().setAgendaChanged(false);
-            agendaBrowserManager.updateAllAgendaBrowsers();
+            agendaBrowserManager.updateAllBrowsers();
            } 
 
          if (dialogWindow.getEnvironment().getFactListChanged())
            {
             dialogWindow.getEnvironment().setFactListChanged(false);
-            factBrowserManager.updateAllFactBrowsers();
+            factBrowserManager.updateAllBrowsers();
            } 
 
          if (dialogWindow.getEnvironment().getInstancesChanged())
            {
             dialogWindow.getEnvironment().setInstancesChanged(false);
-            instanceBrowserManager.updateAllInstanceBrowsers();
+            instanceBrowserManager.updateAllBrowsers();
            } 
         }
      }  
@@ -275,11 +275,11 @@ public class CLIPSIDE extends JFrame
       else if (ae.getActionCommand().equals(quitIDEAction))  
         { quitIDE(); }
       else if (ae.getActionCommand().equals(agendaBrowserAction))  
-        { agendaBrowserManager.createAgendaBrowser(); }
+        { agendaBrowserManager.createBrowser(); }
       else if (ae.getActionCommand().equals(factBrowserAction))  
-        { factBrowserManager.createFactBrowser(); }
+        { factBrowserManager.createBrowser(); }
       else if (ae.getActionCommand().equals(instanceBrowserAction))  
-        { instanceBrowserManager.createInstanceBrowser();  }
+        { instanceBrowserManager.createBrowser();  }
       else if (ae.getActionCommand().equals(constructInspectorAction))  
         { constructInspector(); }
       else if (ae.getActionCommand().equals(selectWindowAction))  
@@ -306,11 +306,16 @@ public class CLIPSIDE extends JFrame
       JInternalFrame selectedPane = ideDesktopPane.getSelectedFrame();
       
       if (selectedPane instanceof AgendaBrowserFrame)
-        { theText = agendaBrowserManager.agendaBrowserSelectionText((AgendaBrowserFrame) selectedPane); } 
-      else if (selectedPane instanceof FactBrowserFrame)
-        { theText = factBrowserManager.factBrowserSelectionText((FactBrowserFrame) selectedPane); } 
-      else if (selectedPane instanceof InstanceBrowserFrame)
-        { theText = instanceBrowserManager.instanceBrowserSelectionText((InstanceBrowserFrame) selectedPane); } 
+        { theText = agendaBrowserManager.browserSelectionText((AgendaBrowserFrame) selectedPane); } 
+      else if (selectedPane instanceof EntityBrowserFrame)
+        {
+         EntityBrowserFrame theEntityFrame = (EntityBrowserFrame) selectedPane;
+      
+         if (theEntityFrame.getEntityName().equals(factBrowserManager.ENTITY_NAME))
+           { theText = factBrowserManager.browserSelectionText(theEntityFrame); }
+         else if (theEntityFrame.getEntityName().equals(instanceBrowserManager.ENTITY_NAME))
+           { theText = instanceBrowserManager.browserSelectionText(theEntityFrame); }
+        }
       
       constructInspector = new ConstructInspectorFrame();
 
@@ -454,11 +459,16 @@ public class CLIPSIDE extends JFrame
         }
 
       if (theFrame instanceof AgendaBrowserFrame)
-        { agendaBrowserManager.removeAgendaBrowser((AgendaBrowserFrame) theFrame); }
-      else if (theFrame instanceof FactBrowserFrame)
-        { factBrowserManager.removeFactBrowser((FactBrowserFrame) theFrame); }
-      else if (theFrame instanceof InstanceBrowserFrame)
-        { instanceBrowserManager.removeInstanceBrowser((InstanceBrowserFrame) theFrame); }
+        { agendaBrowserManager.removeBrowser((AgendaBrowserFrame) theFrame); }
+      else if (theFrame instanceof EntityBrowserFrame)
+        {
+         EntityBrowserFrame theEntityFrame = (EntityBrowserFrame) theFrame;
+         
+         if (theEntityFrame.getEntityName().equals(factBrowserManager.ENTITY_NAME))
+           { factBrowserManager.removeBrowser(theEntityFrame); }
+         else if (theEntityFrame.getEntityName().equals(instanceBrowserManager.ENTITY_NAME))
+           { instanceBrowserManager.removeBrowser(theEntityFrame); }
+        }
 
       JCheckBoxMenuItem jmiWindow = (JCheckBoxMenuItem) theFrame.getClientProperty(menuItemProperty);
       
@@ -533,18 +543,23 @@ public class CLIPSIDE extends JFrame
         {
          if (theFrame instanceof AgendaBrowserFrame)
            { 
-            String theText = agendaBrowserManager.agendaBrowserSelectionText((AgendaBrowserFrame) theFrame); 
+            String theText = agendaBrowserManager.browserSelectionText((AgendaBrowserFrame) theFrame); 
             constructInspector.setText(theText); 
            }
-         else if (theFrame instanceof FactBrowserFrame)
+         else if (theFrame instanceof EntityBrowserFrame)
            {
-            String theText = factBrowserManager.factBrowserSelectionText((FactBrowserFrame) theFrame); 
-            constructInspector.setText(theText); 
-           }
-         else if (theFrame instanceof InstanceBrowserFrame)
-           {
-            String theText = instanceBrowserManager.instanceBrowserSelectionText((InstanceBrowserFrame) theFrame); 
-            constructInspector.setText(theText); 
+            EntityBrowserFrame theEntityFrame = (EntityBrowserFrame) theFrame;
+         
+            if (theEntityFrame.getEntityName().equals(factBrowserManager.ENTITY_NAME))
+              { 
+               String theText = factBrowserManager.browserSelectionText(theEntityFrame); 
+               constructInspector.setText(theText); 
+              }
+            else if (theEntityFrame.getEntityName().equals(instanceBrowserManager.ENTITY_NAME))
+              { 
+               String theText = instanceBrowserManager.browserSelectionText(theEntityFrame); 
+               constructInspector.setText(theText); 
+              }
            }
         } 
 
