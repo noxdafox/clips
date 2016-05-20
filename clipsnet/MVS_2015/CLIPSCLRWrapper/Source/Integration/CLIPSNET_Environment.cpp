@@ -46,6 +46,25 @@ namespace CLIPSNET
    void Environment::CommandLoop()
      { return m_Env->CommandLoop(); }
 
+   /****************************/
+   /* CommandLoopOnceThenBatch */
+   /****************************/
+   void Environment::CommandLoopOnceThenBatch()
+     { return m_Env->CommandLoopOnceThenBatch(); }
+
+
+   /***************/
+   /* PrintBanner */
+   /***************/
+   void Environment::PrintBanner()
+     { return m_Env->PrintBanner(); }
+
+   /***************/
+   /* PrintPrompt */
+   /****************/
+   void Environment::PrintPrompt()
+     { return m_Env->PrintPrompt(); }
+
    /*******/
    /* Run */
    /*******/
@@ -72,9 +91,13 @@ namespace CLIPSNET
      String ^ fileName)
      {
       array<Byte>^ ebFileName = Encoding::UTF8->GetBytes(fileName);
-      pin_ptr<Byte> pbFileName = &ebFileName[0];
-
-      return m_Env->Load((char *) pbFileName);
+      if (ebFileName->Length)
+        {
+         pin_ptr<Byte> pbFileName = &ebFileName[0];
+         return m_Env->Load((char *) pbFileName);
+        }
+      else
+        { return m_Env->Load(""); }
      }
      
    /******************/
@@ -84,9 +107,13 @@ namespace CLIPSNET
      String ^ loadString)
      {
       array<Byte>^ ebLoadString = Encoding::UTF8->GetBytes(loadString);
-      pin_ptr<Byte> pbLoadString = &ebLoadString[0];
-
-      m_Env->LoadFromString((char *) pbLoadString);
+      if (ebLoadString->Length)
+        {
+         pin_ptr<Byte> pbLoadString = &ebLoadString[0];
+         m_Env->LoadFromString((char *) pbLoadString);
+        }
+      else 
+        { m_Env->LoadFromString(""); }
      }
 
    /********************/
@@ -113,9 +140,13 @@ namespace CLIPSNET
      String ^ buildString)
      {
       array<Byte>^ ebBuildString = Encoding::UTF8->GetBytes(buildString);
-      pin_ptr<Byte> pbBuildString = &ebBuildString[0];
-
-      return m_Env->Build((char *) pbBuildString);
+      if (ebBuildString->Length)
+        {
+         pin_ptr<Byte> pbBuildString = &ebBuildString[0];
+         return m_Env->Build((char *) pbBuildString);
+        }
+      else
+        { return m_Env->Build(""); }
      }
      
    /********/
@@ -124,11 +155,15 @@ namespace CLIPSNET
    PrimitiveValue ^ Environment::Eval(
      String ^ evalString)
      {
-      array<Byte>^ ebEvalString = Encoding::UTF8->GetBytes(evalString);
-      pin_ptr<Byte> pbEvalString = &ebEvalString[0];
       PrimitiveValue ^ rv;
-
-      rv = DataObjectToPrimitiveValue(m_Env->Eval((char *) pbEvalString));
+      array<Byte>^ ebEvalString = Encoding::UTF8->GetBytes(evalString);
+      if (ebEvalString->Length)
+        {
+         pin_ptr<Byte> pbEvalString = &ebEvalString[0];
+         rv = DataObjectToPrimitiveValue(m_Env->Eval((char *) pbEvalString));
+        }
+      else
+        {  rv = DataObjectToPrimitiveValue(m_Env->Eval("")); }
 
       return rv;
      }
@@ -139,11 +174,16 @@ namespace CLIPSNET
    FactAddressValue ^ Environment::AssertString(
      String ^ factString)
      {
-      array<Byte>^ ebFactString = Encoding::UTF8->GetBytes(factString);
-      pin_ptr<Byte> pbFactString = &ebFactString[0];
       CLIPS::FactAddressValue *frv;
+      array<Byte>^ ebFactString = Encoding::UTF8->GetBytes(factString);
+      if (ebFactString->Length)
+        {
+         pin_ptr<Byte> pbFactString = &ebFactString[0];
+         frv = m_Env->AssertString((char *) pbFactString);
+        }
+      else
+        { frv = m_Env->AssertString(""); }
 
-      frv = m_Env->AssertString((char *) pbFactString);
       if (frv == NULL) return (nullptr);
       
       return gcnew FactAddressValue(frv);
@@ -158,11 +198,15 @@ namespace CLIPSNET
 	  Router ^ theRouter)
      { 
       array<Byte>^ ebRouterName = Encoding::UTF8->GetBytes(routerName);
-      pin_ptr<Byte> pbRouterName = &ebRouterName[0];
-
-      m_Env->AddRouter((char *) pbRouterName,priority,(CLIPS::CLIPSCPPRouter *) theRouter->RouterBridge());
+      if (ebRouterName->Length)
+        {
+         pin_ptr<Byte> pbRouterName = &ebRouterName[0];
+         m_Env->AddRouter((char *) pbRouterName,priority,(CLIPS::CLIPSCPPRouter *) theRouter->RouterBridge());
+        }
+      else
+        { m_Env->AddRouter("",priority,(CLIPS::CLIPSCPPRouter *) theRouter->RouterBridge()); }
      }
-     
+
    /********************/
    /* InputBufferCount */
    /********************/
@@ -170,6 +214,44 @@ namespace CLIPSNET
      { 
       return m_Env->InputBufferCount();
      }   
+   
+   /*******************/
+   /* getInputBuffer: */
+   /*******************/
+   String ^ Environment::GetInputBuffer()
+     {
+      const char *inputBuffer;
+
+      inputBuffer = m_Env->GetInputBuffer();
+      if (inputBuffer == NULL)
+        { return gcnew String(""); }
+  
+      return gcnew String(inputBuffer);
+     }
+
+   /*******************/
+   /* setInputBuffer: */
+   /*******************/
+   void Environment::SetInputBuffer(
+     String ^ commandString)
+     {
+      array<Byte>^ ebCommandString = Encoding::UTF8->GetBytes(commandString);    
+      if (ebCommandString->Length)
+        {  
+         pin_ptr<Byte> pbCommandString = &ebCommandString[0];
+         m_Env->SetInputBuffer((char *) pbCommandString);
+        }
+      else
+        { m_Env->SetInputBuffer(""); }   
+     }
+
+   /*******************************/
+   /* InputBufferContainsCommand: */
+   /*******************************/
+   bool Environment::InputBufferContainsCommand()
+     {
+      return m_Env->InputBufferContainsCommand();
+     }
 
    /********************/
    /* GetHaltExecution */

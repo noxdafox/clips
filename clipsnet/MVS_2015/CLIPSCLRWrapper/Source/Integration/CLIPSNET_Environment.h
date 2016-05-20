@@ -37,6 +37,12 @@ namespace CLIPSNET
         void AddRouter(String ^,int ,Router ^);
         FactAddressValue ^ AssertString(String ^);
         size_t InputBufferCount();
+        String ^ GetInputBuffer();
+        void SetInputBuffer(String ^);
+        bool InputBufferContainsCommand();
+        void CommandLoopOnceThenBatch();
+        void PrintBanner();
+        void PrintPrompt();
         virtual String^ ToString() override;
 
       protected:
