@@ -73,6 +73,14 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_loadFromString
 
 /*
  * Class:     net_sf_clipsrules_jni_Environment
+ * Method:    loadFromStringWithOutput
+ * Signature: (JLjava/lang/String;)V
+ */
+JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_loadFromStringWithOutput
+  (JNIEnv *, jobject, jlong, jstring);
+
+/*
+ * Class:     net_sf_clipsrules_jni_Environment
  * Method:    load
  * Signature: (JLjava/lang/String;)V
  */
@@ -313,6 +321,14 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_commandLoop
 
 /*
  * Class:     net_sf_clipsrules_jni_Environment
+ * Method:    flushInputBuffer
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_flushInputBuffer
+  (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     net_sf_clipsrules_jni_Environment
  * Method:    getInputBuffer
  * Signature: (J)Ljava/lang/String;
  */
@@ -374,6 +390,22 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_inputBufferCon
  */
 JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_commandLoopOnceThenBatch
   (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     net_sf_clipsrules_jni_Environment
+ * Method:    commandLoopBatchDriver
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_commandLoopBatchDriver
+  (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     net_sf_clipsrules_jni_Environment
+ * Method:    openStringBatch
+ * Signature: (JLjava/lang/String;Ljava/lang/String;Z)Z
+ */
+JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_openStringBatch
+  (JNIEnv *, jobject, jlong, jstring, jstring, jboolean);
 
 /*
  * Class:     net_sf_clipsrules_jni_Environment

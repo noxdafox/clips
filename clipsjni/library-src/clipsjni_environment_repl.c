@@ -41,6 +41,24 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_commandLoopOnceThe
    CommandLoopOnceThenBatch(JLongToPointer(clipsEnv));
   }
 
+/*************************************************************************/
+/* Java_net_sf_clipsrules_jni_Environment_commandLoopBatchDriver: Native */
+/*   function for the CLIPSJNI commandLoopBatchDriver method.            */
+/*                                                                       */
+/* Class:     net_sf_clipsrules_jni_Environment                          */
+/* Method:    commandLoopOnceThenBatch                                   */
+/* Signature: (J)V                                                       */
+/*************************************************************************/
+JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_commandLoopBatchDriver(
+  JNIEnv *env,
+  jobject obj,
+  jlong clipsEnv)
+  {
+   SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
+
+   CommandLoopBatchDriver(JLongToPointer(clipsEnv));
+  }
+
 /**************************************************************/
 /* Java_net_sf_clipsrules_jni_Environment_printBanner: Native */
 /*   function for the CLIPSJNI printBanner method.            */
@@ -114,6 +132,26 @@ JNIEXPORT jstring JNICALL Java_net_sf_clipsrules_jni_Environment_getInputBuffer(
    SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
    
    return rv;
+  }
+  
+/*******************************************************************/
+/* Java_net_sf_clipsrules_jni_Environment_flushInputBuffer: Native */
+/*   function for the CLIPSJNI flushInputBuffer method.            */
+/*                                                                 */
+/* Class:     net_sf_clipsrules_jni_Environment                    */
+/* Method:    flushInputBuffer                                     */
+/* Signature: (J)V                                                 */
+/*******************************************************************/
+JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_flushInputBuffer(
+  JNIEnv *env, 
+  jobject obj,
+  jlong clipsEnv)
+  {
+   void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
+
+   FlushCommandString(JLongToPointer(clipsEnv));
+   
+   SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
   }
 
 /*****************************************************************/

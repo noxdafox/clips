@@ -104,9 +104,9 @@ IDE_FILES = \
 	$(IDE_SRC)/IDEPreferences.java \
 	$(IDE_SRC)/InstanceBrowserManager.java \
 	$(IDE_SRC)/ModuleTableModel.java \
-	$(IDE_SRC)/SearchField.java \
 	$(IDE_SRC)/SlotValueTableModel.java \
-	$(IDE_SRC)/TextPrompt.java \
+	$(IDE_SRC)/TextFrame.java \
+	$(IDE_SRC)/TextMenu.java \
 	$(IDE_SRC)/WatchMenu.java
 
 all: clipsjni animal auto sudoku wine router ide

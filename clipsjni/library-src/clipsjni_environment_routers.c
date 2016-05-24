@@ -159,3 +159,38 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_deactivateRout
    
    return rv;
   }
+
+/**********************************************************/
+/* Java_net_sf_clipsrules_jni_Environment_openStringBatch */
+/* Class:     net_sf_clipsrules_jni_Environment           */
+/* Method:    openStringBatch                             */
+/* Signature: (JLjava/lang/String;Ljava/lang/String;Z)Z   */
+/**********************************************************/
+JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_openStringBatch(
+  JNIEnv *env,
+  jobject obj,
+  jlong clipsEnv,
+  jstring stringName,
+  jstring data,
+  jboolean placeAtEnd)
+  {
+   jboolean rv;
+   const char *cStringName, *cData, *dataCopy;
+   void *theCLIPSEnv = JLongToPointer(clipsEnv);
+   void *oldContext = SetEnvironmentContext(theCLIPSEnv,(void *) env);
+   
+   cStringName = (*env)->GetStringUTFChars(env,stringName,NULL);
+   cData = (*env)->GetStringUTFChars(env,data,NULL);
+
+   dataCopy = CopyString(theCLIPSEnv,cData); // TBD Move copy to OpenStringBatch
+   rv = OpenStringBatch(theCLIPSEnv,cStringName,dataCopy,placeAtEnd);
+   
+   (*env)->ReleaseStringUTFChars(env,stringName,cStringName);
+   (*env)->ReleaseStringUTFChars(env,data,cData);
+   
+   SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
+   
+   return rv;
+  }
+
+

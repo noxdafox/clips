@@ -265,7 +265,23 @@ public class Environment
       setParsingFileName(oldName);
       checkForErrors("LoadFromString");
      }
-     
+      
+   /*****************************/
+   /* loadFromStringWithOutput: */
+   /*****************************/
+   private native void loadFromStringWithOutput(long env,String loadString);
+
+   /*****************************/
+   /* loadFromStringWithOutput: */
+   /*****************************/
+   public void loadFromStringWithOutput(String loadString)
+     {
+      String oldName = getParsingFileName();
+      setParsingFileName("<String>");
+      loadFromStringWithOutput(theEnvironment,loadString);
+      setParsingFileName(oldName);
+     }
+
    /*********/
    /* load: */
    /*********/
@@ -756,6 +772,19 @@ public class Environment
       commandLoop(theEnvironment);
      }
 
+   /*********************/
+   /* flushInputBuffer: */
+   /*********************/
+   private native void flushInputBuffer(long env);
+
+   /*********************/
+   /* flushInputBuffer: */
+   /*********************/
+   public void flushInputBuffer()
+     {
+      flushInputBuffer(theEnvironment);
+     }
+
    /*******************/
    /* getInputBuffer: */
    /*******************/
@@ -862,6 +891,35 @@ public class Environment
    public void commandLoopOnceThenBatch()
      {
       commandLoopOnceThenBatch(theEnvironment);
+     }
+
+   /***************************/
+   /* commandLoopBatchDriver: */
+   /***************************/
+   private native void commandLoopBatchDriver(long env);
+    
+   /***************************/
+   /* commandLoopBatchDriver: */
+   /***************************/
+   public void commandLoopBatchDriver()
+     {
+      commandLoopBatchDriver(theEnvironment);
+     }
+
+   /********************/
+   /* openStringBatch: */
+   /********************/
+   private native boolean openStringBatch(long env,String stringName,String data,boolean placeAtEnd);
+    
+   /********************/
+   /* openStringBatch: */
+   /********************/
+   public boolean openStringBatch(
+     String stringName,
+     String data,
+     boolean placeAtEnd)
+     {
+      return openStringBatch(theEnvironment,stringName,data,placeAtEnd);
      }
 
    /*******************************/

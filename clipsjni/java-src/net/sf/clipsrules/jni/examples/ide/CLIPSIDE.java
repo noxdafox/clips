@@ -9,6 +9,8 @@ import java.awt.event.*;
 import java.util.List; 
 import java.util.Iterator;
 
+import java.io.File;
+
 import net.sf.clipsrules.jni.*;
 
 public class CLIPSIDE extends JFrame 
@@ -19,6 +21,8 @@ public class CLIPSIDE extends JFrame
    private static final String menuItemProperty = "menuItemProperty";
 
    static final String quitIDEAction = "QuitIDE";
+   static final String newAction = "New";
+   static final String openAction = "Open";
    
    static EnvironmentMenu jmEnvironment;
 
@@ -31,8 +35,11 @@ public class CLIPSIDE extends JFrame
 
    private IDEPreferences preferences;
    
+   private TextMenu jmText;
    private JMenu jmWindow;
 
+   private JMenuItem jmiNew;
+   private JMenuItem jmiOpen;
    private JMenuItem jmiQuitIDE;
 
    private JMenuItem jmiCut;
@@ -176,9 +183,9 @@ public class CLIPSIDE extends JFrame
    /* createDialogWindow */
    /**********************/  
    public void createDialogWindow(
-     Environment clips)
+     Environment theEnvironment)
      {
-      dialogWindow = new DialogFrame(clips,preferences.getCurrentDirectory());
+      dialogWindow = new DialogFrame(theEnvironment,preferences.getCurrentDirectory());
       dialogWindow.addInternalFrameListener(this);
       
       placer.placeInternalFrame(dialogWindow);
@@ -230,6 +237,14 @@ public class CLIPSIDE extends JFrame
         }
      }  
 
+   /****************/
+   /* executeBatch */
+   /****************/
+   public void executeBatch()
+     {
+      dialogWindow.executeBatch();
+     }
+     
    /*################*/
    /* Action Methods */
    /*################*/
@@ -251,6 +266,11 @@ public class CLIPSIDE extends JFrame
              DialogFrame theDialogFrame = (DialogFrame) theFrame;
              theDialogFrame.cut(); 
             }
+          else if (theFrame instanceof TextFrame)
+            {
+             TextFrame theTextFrame = (TextFrame) theFrame;
+             theTextFrame.cut(); 
+            }
         }
       else if (ae.getActionCommand().equals("Copy"))  
         { 
@@ -260,6 +280,11 @@ public class CLIPSIDE extends JFrame
             {
              DialogFrame theDialogFrame = (DialogFrame) theFrame;
              theDialogFrame.copy(); 
+            }
+          else if (theFrame instanceof TextFrame)
+            {
+             TextFrame theTextFrame = (TextFrame) theFrame;
+             theTextFrame.copy(); 
             }
         }
       else if (ae.getActionCommand().equals("Paste"))  
@@ -271,9 +296,18 @@ public class CLIPSIDE extends JFrame
              DialogFrame theDialogFrame = (DialogFrame) theFrame;
              theDialogFrame.paste(); 
             }
+          else if (theFrame instanceof TextFrame)
+            {
+             TextFrame theTextFrame = (TextFrame) theFrame;
+             theTextFrame.paste(); 
+            }
         }
       else if (ae.getActionCommand().equals(quitIDEAction))  
         { quitIDE(); }
+      else if (ae.getActionCommand().equals(newAction))  
+        { newTextFile(null); }
+      else if (ae.getActionCommand().equals(openAction))  
+        { openTextFile(); }
       else if (ae.getActionCommand().equals(agendaBrowserAction))  
         { agendaBrowserManager.createBrowser(); }
       else if (ae.getActionCommand().equals(factBrowserAction))  
@@ -292,6 +326,46 @@ public class CLIPSIDE extends JFrame
    public void quitIDE()
      {
       System.exit(0);
+     }
+
+   /****************/
+   /* openTextFile */
+   /****************/  
+   public void openTextFile()
+     {
+      final JFileChooser fc = new JFileChooser();
+
+      File currentDirectory = preferences.getCurrentDirectory();
+      if (currentDirectory != null)
+        { fc.setCurrentDirectory(currentDirectory); }
+
+      int returnVal = fc.showOpenDialog(this);
+      
+      if (returnVal != JFileChooser.APPROVE_OPTION) return;
+      
+      File file = fc.getSelectedFile();
+      if (file == null) return;
+            
+      currentDirectory = fc.getCurrentDirectory();
+      preferences.setCurrentDirectory(currentDirectory);
+      
+      newTextFile(file);      
+     }
+
+   /***************/
+   /* newTextFile */
+   /***************/  
+   public void newTextFile(
+     File theFile)
+     {
+      TextFrame theFrame = new TextFrame(theFile);
+      
+      theFrame.addInternalFrameListener(this);
+      
+      placer.placeInternalFrame(theFrame);
+      
+      ideDesktopPane.add(theFrame);
+      theFrame.setVisible(true);
      }
                
    /**********************/
@@ -416,6 +490,23 @@ public class CLIPSIDE extends JFrame
          else
            { jmiPaste.setEnabled(false); }
         }
+      else if (theFrame instanceof TextFrame)
+        {
+         TextFrame theTextFrame = (TextFrame) theFrame;
+
+         if (theTextFrame.hasSelection())
+           { 
+            jmiCopy.setEnabled(true); 
+            jmiCut.setEnabled(true); 
+           }
+         else
+           { 
+            jmiCopy.setEnabled(false);
+            jmiCut.setEnabled(false);
+           }
+         
+         jmiPaste.setEnabled(true);
+        }
       else
         {
          jmiCut.setEnabled(false);
@@ -458,7 +549,9 @@ public class CLIPSIDE extends JFrame
          return; 
         }
 
-      if (theFrame instanceof AgendaBrowserFrame)
+      if (theFrame instanceof TextFrame)
+        { jmText.setTextFrame(null); }
+      else if (theFrame instanceof AgendaBrowserFrame)
         { agendaBrowserManager.removeBrowser((AgendaBrowserFrame) theFrame); }
       else if (theFrame instanceof EntityBrowserFrame)
         {
@@ -488,7 +581,12 @@ public class CLIPSIDE extends JFrame
       
       if (theFrame instanceof ConstructInspectorFrame)
         { return; }
-
+        
+      if (theFrame instanceof TextFrame)
+        { jmText.setTextFrame((TextFrame) theFrame); }
+      else
+        { jmText.setTextFrame(null); }
+        
       JCheckBoxMenuItem jmiWindow = new JCheckBoxMenuItem(theFrame.getTitle());
       jmiWindow.setState(false);      
       jmiWindow.putClientProperty(windowProperty,theFrame);
@@ -508,6 +606,9 @@ public class CLIPSIDE extends JFrame
 
       if (theFrame instanceof ConstructInspectorFrame)
         { return; }
+        
+      if (theFrame instanceof TextFrame)
+        { jmText.setTextFrame(null); }
 
       JCheckBoxMenuItem jmiWindow = (JCheckBoxMenuItem) theFrame.getClientProperty(menuItemProperty);
       jmiWindow.setState(false);
@@ -523,6 +624,11 @@ public class CLIPSIDE extends JFrame
 
       if (theFrame instanceof ConstructInspectorFrame)
         { return; }
+        
+      if (theFrame instanceof TextFrame)
+        { jmText.setTextFrame((TextFrame) theFrame); }
+      else
+        { jmText.setTextFrame(null); }
 
       JCheckBoxMenuItem jmiWindow = (JCheckBoxMenuItem) theFrame.getClientProperty(menuItemProperty);
       jmiWindow.setState(true);
@@ -538,6 +644,11 @@ public class CLIPSIDE extends JFrame
       
       if (theFrame instanceof ConstructInspectorFrame)
         { return; }
+        
+      if (theFrame instanceof TextFrame)
+        { jmText.setTextFrame((TextFrame) theFrame); }
+      else
+        { jmText.setTextFrame(null); }
 
       if (constructInspector != null)
         {
@@ -578,6 +689,9 @@ public class CLIPSIDE extends JFrame
       if (theFrame instanceof ConstructInspectorFrame)
         { return; }
 
+      if (theFrame instanceof TextFrame)
+        { jmText.setTextFrame(null); }
+
       JCheckBoxMenuItem jmiWindow = (JCheckBoxMenuItem) theFrame.getClientProperty(menuItemProperty);
       jmiWindow.setState(false);
      }
@@ -590,13 +704,14 @@ public class CLIPSIDE extends JFrame
    /* createMenuBar */
    /*****************/
    private void createMenuBar(
-     Environment clips)
+     Environment theEnvironment)
      {
       /*=================================================*/
       /* Get KeyStroke for copy/paste keyboard commands. */
       /*=================================================*/
 
       KeyStroke quitIDE = KeyStroke.getKeyStroke(KeyEvent.VK_Q,KeyEvent.CTRL_MASK);
+      KeyStroke newDoc = KeyStroke.getKeyStroke(KeyEvent.VK_N,KeyEvent.CTRL_MASK);
       KeyStroke cut = KeyStroke.getKeyStroke(KeyEvent.VK_X,KeyEvent.CTRL_MASK);
       KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C,KeyEvent.CTRL_MASK);
       KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V,KeyEvent.CTRL_MASK);
@@ -613,6 +728,17 @@ public class CLIPSIDE extends JFrame
       
       JMenu jmFile = new JMenu("File");
       jmFile.addMenuListener(this);
+
+      jmiNew = new JMenuItem("New");
+      jmiNew.setActionCommand(newAction);
+      jmiNew.setAccelerator(newDoc);
+      jmiNew.addActionListener(this);
+      jmFile.add(jmiNew);
+
+      jmiOpen = new JMenuItem("Open...");
+      jmiOpen.setActionCommand(openAction);
+      jmiOpen.addActionListener(this);
+      jmFile.add(jmiOpen);
 
       jmiQuitIDE = new JMenuItem("Quit CLIPS IDE");
       jmiQuitIDE.setActionCommand(quitIDEAction);
@@ -645,6 +771,13 @@ public class CLIPSIDE extends JFrame
       jmEdit.add(jmiPaste);
       
       jmb.add(jmEdit);
+      
+      /*===========*/
+      /* Text menu */
+      /*===========*/
+
+      jmText = new TextMenu(this);
+      jmb.add(jmText);
 
       /*==================*/
       /* Environment menu */
@@ -664,7 +797,7 @@ public class CLIPSIDE extends JFrame
       /* Watch submenu */
       /*===============*/
 
-      jmDebug.add(new WatchMenu(clips));
+      jmDebug.add(new WatchMenu(theEnvironment));
 
       /*==========*/
       /* Browsers */

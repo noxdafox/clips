@@ -399,5 +399,4 @@ public class EnvironmentMenu extends JMenu
    public void menuDeselected(MenuEvent e)
      {
      }
-
   }  

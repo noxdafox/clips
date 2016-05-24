@@ -509,6 +509,43 @@ public class CommandPromptTextArea extends RouterTextArea
       
       executionThread.start();
      }
+
+   /******************/
+   /* doExecuteBatch */
+   /******************/  
+   private void doExecuteBatch()
+     {
+      Timer periodicTimer = new Timer();
+
+      callExecutionCommandListeners("batch",CommandExecutionEvent.START_EVENT);
+      clips.addPeriodicCallback(periodicName,0,this);      
+      periodicTimer.schedule(new PeriodicTask(),0,periodicTaskFrequency);
+      clips.commandLoopBatchDriver(); 
+      dumpOutput();
+      setExecuting(false);
+      periodicTimer.cancel();
+      clips.removePeriodicCallback(periodicName);      
+      callExecutionCommandListeners("batch",CommandExecutionEvent.FINISH_EVENT);
+     }
+         
+   /****************/
+   /* executeBatch */
+   /****************/  
+   public void executeBatch()
+     {
+      setExecuting(true);
+
+      Runnable runThread = 
+         new Runnable()
+           {
+            public void run() 
+              { doExecuteBatch(); }
+           };
+      
+      Thread executionThread = new Thread(runThread);
+      
+      executionThread.start();
+     }
    
    /************************/
    /* updateCommandHistory */

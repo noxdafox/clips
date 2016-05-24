@@ -102,7 +102,7 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_load(
 
 /******************************************************************/
 /* Java_net_sf_clipsrules_jni_Environment_changeDirectory: Native */ 
-/*   function for the CLIPSJNI loadFromString method.             */
+/*   function for the CLIPSJNI changeDirectory method.            */
 /*                                                                */
 /* Class:     net_sf_clipsrules_jni_Environment                   */
 /* Method:    changeDirectory                                     */
@@ -147,6 +147,37 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_loadFromString(
    OpenStringSource(theEnv,"clipsjniloadfromstring",cLoadString,0); 
    LoadConstructsFromLogicalName(theEnv,"clipsjniloadfromstring");
    CloseStringSource(theEnv,"clipsjniloadfromstring");
+   
+   (*env)->ReleaseStringUTFChars(env,loadString,cLoadString);
+   
+   SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
+  }
+
+/***************************************************************************/
+/* Java_net_sf_clipsrules_jni_Environment_loadFromStringWithOutput: Native */ 
+/*   function for the CLIPSJNI loadFromStringWithOutput method.            */
+/*                                                                         */
+/* Class:     net_sf_clipsrules_jni_Environment                            */
+/* Method:    load                                                         */
+/* Signature: (JLjava/lang/String;)V                                       */
+/***************************************************************************/
+JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_loadFromStringWithOutput(
+  JNIEnv *env, 
+  jobject obj,
+  jlong clipsEnv,
+  jstring loadString)
+  {
+   const char *cLoadString = (*env)->GetStringUTFChars(env,loadString,NULL);
+   void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
+   void *theEnv;
+   
+   theEnv = JLongToPointer(clipsEnv);
+
+   OpenStringSource(theEnv,"clipsjniloadfromstringwo",cLoadString,0); 
+   SetPrintWhileLoading(theEnv,TRUE);
+   LoadConstructsFromLogicalName(theEnv,"clipsjniloadfromstringwo");
+   SetPrintWhileLoading(theEnv,FALSE);
+   CloseStringSource(theEnv,"clipsjniloadfromstringwo");
    
    (*env)->ReleaseStringUTFChars(env,loadString,cLoadString);
    

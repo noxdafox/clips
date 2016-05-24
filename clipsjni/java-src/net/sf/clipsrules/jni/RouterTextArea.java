@@ -95,7 +95,15 @@ public class RouterTextArea extends JTextArea
       this.setBorders(BorderFactory.createEmptyBorder(5,5,5,0),
                       BorderFactory.createEmptyBorder(5,5,5,0));
      }
-         
+     
+   /******************/
+   /* getEnvironment */
+   /******************/
+   public Environment getEnvironment()
+     {
+      return clips;
+     }
+     
    /*########################*/
    /* Router Support Methods */
    /*########################*/

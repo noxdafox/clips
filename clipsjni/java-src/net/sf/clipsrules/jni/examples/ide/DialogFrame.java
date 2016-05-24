@@ -372,6 +372,14 @@ public class DialogFrame extends JInternalFrame
      }
      
    /****************/
+   /* executeBatch */
+   /****************/
+   public void executeBatch()
+     {
+      commandTextArea.executeBatch();
+     }
+     
+   /****************/
    /* setDirectory */
    /****************/  
    public boolean setDirectory(
