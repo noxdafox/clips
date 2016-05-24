@@ -177,6 +177,7 @@ namespace CLIPSIDE
       private CLIPSNET.Environment attachedEnv;
       private TextBoxRouter m_TextBoxRouter;
       private RouterThreadBridge m_ThreadBridge;
+      private bool selectionWasChanged = false;
       
       /*****************/
       /* RouterTextBox */
@@ -190,6 +191,8 @@ namespace CLIPSIDE
          this.IsReadOnly = false;
          DataObject.AddPastingHandler(this,OnPaste);
          CommandBindings.Add(new CommandBinding(ApplicationCommands.Cut,OnCut)); 
+         this.SelectionChanged += new RoutedEventHandler(TextBoxSelectionChanged);
+         this.PreviewMouseLeftButtonUp += new MouseButtonEventHandler(TextBox_PreviewMouseLeftButtonUp);
         }
       
       /****************/
@@ -366,5 +369,68 @@ namespace CLIPSIDE
               }
            }
         }
+
+      /***************************/
+      /* TextBoxSelectionChanged */
+      /***************************/
+      private void TextBoxSelectionChanged(object sender, RoutedEventArgs e)
+        {
+         if (System.Windows.Input.Mouse.LeftButton != MouseButtonState.Pressed)
+           { UpdateSelection(); }
+           else
+           { selectionWasChanged = true; }
+        }    
+        
+      /************************************/
+      /* TextBox_PreviewMouseLeftButtonUp */
+      /************************************/
+      private void TextBox_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+         if (selectionWasChanged)
+           {
+            selectionWasChanged = false; 
+            UpdateSelection(); 
+           }
+        }    
+
+      /*******************/
+      /* UpdateSelection */
+      /*******************/
+      protected virtual void UpdateSelection()
+        {
+         /*==============================================*/
+         /* Attempting to move the caret outside of the  */
+         /* text for the current command is not allowed. */
+         /*==============================================*/
+            
+         if (this.SelectionLength == 0) 
+           { 
+            int tl = this.Text.Length;
+               
+            if (this.SelectionStart < tl)
+              { this.SelectionStart = tl; }
+
+            this.SetCaretVisible(true); 
+           }
+              
+         /*======================================*/
+         /* If text is selected, hide the caret. */
+         /*======================================*/
+            
+         else
+           { this.SetCaretVisible(false); }
+        }
+      
+      /*******************/
+      /* SetCaretVisible */
+      /*******************/
+      protected void SetCaretVisible(
+        bool value)
+        {
+         if (value)
+           { this.CaretBrush = null; }
+         else 
+           { this.CaretBrush =  new SolidColorBrush(Color.FromArgb(0, 0, 0, 0)); }
+        }  
      }
   }

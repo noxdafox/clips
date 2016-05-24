@@ -35,6 +35,8 @@ namespace CLIPSIDE
 
       private bool isExecuting = false;
 
+      int oldDot = 0;
+
       private int maxCommandCount;
       private int currentCommandCount;
       private int currentCommand;
@@ -67,7 +69,7 @@ namespace CLIPSIDE
          commandHistory = new List<String>(DEFAULT_COMMAND_MAX); 
          commandHistory.Add("");
         }
-
+          
       /********************/
       /* OnPreviewKeyDown */
       /********************/
@@ -337,10 +339,8 @@ namespace CLIPSIDE
                   /* Select the matching left parenthesis */
                   /* and hide the carete.                 */
                   /*======================================*/
-                  /*
-                  this.getCaret().setVisible(false);
-                  */
-                  //this.CaretBrush = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
+                  
+                  //this.getCaret().setVisible(false);
 
                   this.Select(cursorLocation,1);
                   
@@ -363,13 +363,10 @@ namespace CLIPSIDE
                   /* make the caret visible.   */
                   /*===========================*/
 
-                 this.Select(selStart,selLength);
-                 //this.CaretBrush = null;
-                 //this.Dispatcher.Invoke(DispatcherPriority.Render,new Action(delegate { }));
-
-                 /*
-                  this.getCaret().setVisible(true);
-		            */
+                  this.Select(selStart,selLength);
+                 
+                  //this.getCaret().setVisible(true);
+		            
                   return;
                  }
                else
@@ -609,6 +606,48 @@ namespace CLIPSIDE
       
          CommandCheck();
         }
+              
+      /*******************/
+      /* UpdateSelection */
+      /*******************/
+      protected override void UpdateSelection()
+        {
+         if (GetExecuting())
+           { 
+            base.UpdateSelection(); 
+            return;
+           }
+          
+         /*==============================================*/
+         /* Attempting to move the caret outside of the  */
+         /* text for the current command is not allowed. */
+         /*==============================================*/
+            
+         if (this.SelectionLength == 0) 
+           { 
+            int tl = this.Text.Length;
+            int il = (int) clips.GetInputBuffer().Length;
+               
+            if (this.SelectionStart < (tl - il))
+              { 
+               if (oldDot < (tl - il))
+                 { this.SelectionStart = tl; }
+               else
+                 { this.SelectionStart = oldDot; }
+              }
+
+            this.SetCaretVisible(true);
+           }
+
+         /*======================================*/
+         /* If text is selected, hide the caret. */
+         /*======================================*/
+            
+         else
+           { this.SetCaretVisible(false); }
+
+         oldDot = this.SelectionStart;
+        }        
 
       /*#################*/
       /* TextBox Methods */
