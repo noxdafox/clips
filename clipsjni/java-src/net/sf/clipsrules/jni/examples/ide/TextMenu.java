@@ -2,12 +2,16 @@ package net.sf.clipsrules.jni.examples.ide;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.Toolkit;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JTextArea;
-
+/*
+import java.awt.Rectangle;
+import javax.swing.text.BadLocationException;
+*/
 import net.sf.clipsrules.jni.*;
 
 public class TextMenu extends JMenu 
@@ -167,6 +171,203 @@ public class TextMenu extends JMenu
    /***********/  
    public void balance()
      {
+      int leftMiddle, rightMiddle, textLength;
+      char characterToCheck;
+      int count, leftCount, rightCount;
+      int i;
+      boolean endReached;
+
+      JTextArea theTextArea = textFrame.getTextArea();
+      String theText = theTextArea.getText();
+      
+      /*====================================*/
+      /* Can't balance if there is no text. */
+      /*====================================*/
+   
+      if (theText.length() == 0)
+        {
+         Toolkit.getDefaultToolkit().beep(); 
+         return;
+        }
+       
+      /*=============================================================*/
+      /* Get information about the current selection to be balanced. */
+      /*=============================================================*/
+
+      leftMiddle = theTextArea.getSelectionStart();
+      rightMiddle = theTextArea.getSelectionEnd();
+      textLength = theText.length(); 
+
+      /*===================================*/
+      /* If the selection is empty then... */
+      /*===================================*/
+
+      if (leftMiddle == rightMiddle)
+        {
+         /*============================================*/
+         /* If '(' is to the right of the cursor, then */
+         /* all balancing should occur to the right.   */
+         /*============================================*/
+
+         if ((leftMiddle < textLength) && (theText.charAt(leftMiddle) == '('))
+           { balanceIt(theText,leftMiddle,leftMiddle + 1,1,0,textLength); }
+
+         /*================================================*/
+         /* Else if ')' is to the left of the cursor, then */
+         /* all balancing should occur to the left.        */
+         /*================================================*/
+
+         else if ((leftMiddle > 0) ? (theText.charAt(leftMiddle - 1) == ')') : false)
+           { 
+            if (leftMiddle < 2)
+              {
+               Toolkit.getDefaultToolkit().beep();
+               return;
+              }
+
+            balanceIt(theText,leftMiddle - 2,leftMiddle,0,-1,textLength); 
+           }
+
+         /*====================================================*/
+         /* Else balancing occurs to left and right of cursor. */
+         /*====================================================*/
+
+         else
+           { balanceIt(theText,leftMiddle - 1,rightMiddle,0,0,textLength); }
+        }
+     
+      /*===================================================*/
+      /* Otherwise the selection is non-empty therefore... */
+      /*===================================================*/
+
+      else
+        {
+         /*===============================================*/
+         /* Determine the number of right parentheses ')' */
+         /* that need to be balanced from the left side.  */
+         /*===============================================*/
+
+         count = 0;
+         leftCount = 0;
+
+         for (i = leftMiddle ; i < rightMiddle ; i++)
+           {
+            characterToCheck = theText.charAt(i);
+
+            if (characterToCheck == '(') count++;
+            else if (characterToCheck == ')') count--;
+            if (count < leftCount) leftCount = count;
+           }
+
+         /*===============================================*/
+         /* Determine the number of left parentheses '('  */
+         /* that need to be balanced from the right side. */
+         /*===============================================*/
+
+         count = 0;
+         rightCount = 0;
+
+         for (endReached = false, i = rightMiddle - 1 ; ! endReached ;)
+           {
+            characterToCheck = theText.charAt(i);
+
+            if (characterToCheck == '(') count++;
+            else if (characterToCheck == ')') count--;
+            if (count > rightCount) rightCount = count;
+         
+            if (i == leftMiddle) endReached = true;
+            else i--;
+           }
+
+         /*==============================================*/
+         /* Balance to the left and right of the cursor. */
+         /*==============================================*/
+
+         balanceIt(theText,((leftMiddle == 0) ? 0 : leftMiddle - 1),
+                   rightMiddle,leftCount,rightCount,textLength); 
+        }
+     }
+
+   /********************************************************/
+   /* balanceIt: Balances a selection of text by extending */ 
+   /* it to the left and right until the number of left    */
+   /* and right parentheses is balanced.                   */
+   /********************************************************/
+   public void balanceIt(
+     String theText,
+     int leftMiddle,
+     int rightMiddle,
+     int leftCount,
+     int rightCount,
+     int textLength)
+     {
+      char characterToCheck;
+      boolean beginningReached = false;
+      
+      /*==========================================================*/
+      /* Balance the left side of the text by moving left and up. */
+      /*==========================================================*/
+
+      while (leftCount <= 0)
+        {
+         if (beginningReached)
+           {
+            Toolkit.getDefaultToolkit().beep();
+            return;
+           }
+        
+         characterToCheck = theText.charAt(leftMiddle);
+      
+         if (characterToCheck == '(') leftCount++;
+         else if (characterToCheck == ')') leftCount--;
+      
+         if (leftCount <= 0)
+           {
+            if (leftMiddle > 0) leftMiddle--;
+            else beginningReached = true;
+           }
+        }
+     
+      /*==============================================================*/
+      /* Balance the right side of the text by moving right and down. */
+      /*==============================================================*/
+
+      while (rightCount >= 0)
+        {
+         if (rightMiddle >= textLength)
+           {
+            Toolkit.getDefaultToolkit().beep();
+            return;
+           }
+
+         characterToCheck = theText.charAt(rightMiddle);
+
+         if (characterToCheck == '(') rightCount++;
+         else if (characterToCheck == ')') rightCount--;
+
+         rightMiddle++;  
+        }
+     
+      /*=============================================*/
+      /* Set the current selection to balanced text. */
+      /*=============================================*/
+         
+      JTextArea theTextArea = textFrame.getTextArea();
+      theTextArea.setCaretPosition(leftMiddle);
+      theTextArea.moveCaretPosition(rightMiddle);
+
+      /*=====================================*/
+      /* Make sure the selection is visible. */
+      /*=====================================*/
+/*
+      try
+        {
+         Rectangle rect = theTextArea.modelToView(leftMiddle);
+         theTextArea.scrollRectToVisible(rect);
+        }
+      catch (BadLocationException e)
+        { e.printStackTrace(); }
+*/
      }
 
    /***********/
@@ -190,7 +391,10 @@ public class TextMenu extends JMenu
          endOffset = theTextArea.getLineEndOffset(endLine);
         }
       catch (Exception e)
-        { return; }
+        { 
+         e.printStackTrace();
+         return; 
+        }
        
       StringBuilder sb; 
        
@@ -205,7 +409,10 @@ public class TextMenu extends JMenu
            }
         }
       catch (Exception e)
-        { return; }
+        { 
+         e.printStackTrace();
+         return;
+        }
          
       theTextArea.replaceRange(sb.toString(),startOffset,endOffset);
       theTextArea.setCaretPosition(startOffset);
@@ -233,7 +440,10 @@ public class TextMenu extends JMenu
          endOffset = theTextArea.getLineEndOffset(endLine);
         }
       catch (Exception e)
-        { return; }
+        {  
+         e.printStackTrace();
+         return;
+        }
        
       StringBuilder sb; 
        
@@ -249,7 +459,10 @@ public class TextMenu extends JMenu
            }
         }
       catch (Exception e)
-        { return; }
+        {
+         e.printStackTrace();
+         return; 
+        }
        
       if (sb.length() == (endOffset-startOffset))
         { return; }
