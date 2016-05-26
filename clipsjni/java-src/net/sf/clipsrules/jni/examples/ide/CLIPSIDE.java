@@ -19,17 +19,8 @@ public class CLIPSIDE extends JFrame
   {  
    private static final String windowProperty = "windowProperty";
    private static final String menuItemProperty = "menuItemProperty";
-
-   static final String quitIDEAction = "QuitIDE";
-   static final String newAction = "New";
-   static final String openAction = "Open";
    
    static EnvironmentMenu jmEnvironment;
-
-   static final String agendaBrowserAction = "AgendaBrowser";
-   static final String factBrowserAction = "FactBrowser";
-   static final String instanceBrowserAction = "InstanceBrowser";
-   static final String constructInspectorAction = "ConstructInspector";
 
    static final String selectWindowAction = "SelectWindow";
 
@@ -42,6 +33,8 @@ public class CLIPSIDE extends JFrame
    private JMenuItem jmiOpen;
    private JMenuItem jmiQuitIDE;
 
+   private JMenuItem jmiUndo;
+   private JMenuItem jmiRedo;
    private JMenuItem jmiCut;
    private JMenuItem jmiCopy;
    private JMenuItem jmiPaste;
@@ -257,7 +250,27 @@ public class CLIPSIDE extends JFrame
      {     
       JInternalFrame theFrame = ideDesktopPane.getSelectedFrame();
 
-      if (ae.getActionCommand().equals("Cut"))  
+      if (ae.getSource() == jmiUndo)
+        { 
+          if ((theFrame == null) || theFrame.isIcon())
+            { /* Do Nothing */ }
+          else if (theFrame instanceof TextFrame)
+            {
+             TextFrame theTextFrame = (TextFrame) theFrame;
+             theTextFrame.undo(); 
+            }
+        }
+      else if (ae.getSource() == jmiRedo)
+        { 
+          if ((theFrame == null) || theFrame.isIcon())
+            { /* Do Nothing */ }
+          else if (theFrame instanceof TextFrame)
+            {
+             TextFrame theTextFrame = (TextFrame) theFrame;
+             theTextFrame.redo(); 
+            }
+        }
+      else if (ae.getSource() == jmiCut)
         { 
           if ((theFrame == null) || theFrame.isIcon())
             { /* Do Nothing */ }
@@ -272,7 +285,7 @@ public class CLIPSIDE extends JFrame
              theTextFrame.cut(); 
             }
         }
-      else if (ae.getActionCommand().equals("Copy"))  
+      else if (ae.getSource() == jmiCopy)  
         { 
           if ((theFrame == null) || theFrame.isIcon())
             { /* Do Nothing */ }
@@ -287,7 +300,7 @@ public class CLIPSIDE extends JFrame
              theTextFrame.copy(); 
             }
         }
-      else if (ae.getActionCommand().equals("Paste"))  
+      else if (ae.getSource() == jmiPaste)  
         { 
           if ((theFrame == null) || theFrame.isIcon())
             { /* Do Nothing */ }
@@ -302,19 +315,19 @@ public class CLIPSIDE extends JFrame
              theTextFrame.paste(); 
             }
         }
-      else if (ae.getActionCommand().equals(quitIDEAction))  
+      else if (ae.getSource() == jmiQuitIDE)  
         { quitIDE(); }
-      else if (ae.getActionCommand().equals(newAction))  
+      else if (ae.getSource() == jmiNew)  
         { newTextFile(null); }
-      else if (ae.getActionCommand().equals(openAction))  
+      else if (ae.getSource() == jmiOpen)  
         { openTextFile(); }
-      else if (ae.getActionCommand().equals(agendaBrowserAction))  
+      else if (ae.getSource() == jmiAgendaBrowser)  
         { agendaBrowserManager.createBrowser(); }
-      else if (ae.getActionCommand().equals(factBrowserAction))  
+      else if (ae.getSource() == jmiFactBrowser)  
         { factBrowserManager.createBrowser(); }
-      else if (ae.getActionCommand().equals(instanceBrowserAction))  
+      else if (ae.getSource() == jmiInstanceBrowser)  
         { instanceBrowserManager.createBrowser();  }
-      else if (ae.getActionCommand().equals(constructInspectorAction))  
+      else if (ae.getSource() == jmiConstructInspector)  
         { constructInspector(); }
       else if (ae.getActionCommand().equals(selectWindowAction))  
         { selectWindow(ae.getSource()); }
@@ -475,6 +488,10 @@ public class CLIPSIDE extends JFrame
       if (theFrame instanceof DialogFrame)
         {
          DialogFrame theDialogFrame = (DialogFrame) theFrame;
+         
+         jmiUndo.setEnabled(false);
+         jmiRedo.setEnabled(false);
+         
          if (theDialogFrame.hasCuttableSelection())
            { jmiCut.setEnabled(true); }
          else
@@ -494,6 +511,16 @@ public class CLIPSIDE extends JFrame
         {
          TextFrame theTextFrame = (TextFrame) theFrame;
 
+         if (theTextFrame.canUndo())
+           { jmiUndo.setEnabled(true); }
+         else
+           { jmiUndo.setEnabled(false); }
+     
+         if (theTextFrame.canRedo())
+           { jmiRedo.setEnabled(true); }
+         else
+           { jmiRedo.setEnabled(false); }
+     
          if (theTextFrame.hasSelection())
            { 
             jmiCopy.setEnabled(true); 
@@ -509,6 +536,8 @@ public class CLIPSIDE extends JFrame
         }
       else
         {
+         jmiUndo.setEnabled(false);
+         jmiRedo.setEnabled(false);
          jmiCut.setEnabled(false);
          jmiCopy.setEnabled(false);
          jmiPaste.setEnabled(false);
@@ -706,12 +735,16 @@ public class CLIPSIDE extends JFrame
    private void createMenuBar(
      Environment theEnvironment)
      {
-      /*=================================================*/
-      /* Get KeyStroke for copy/paste keyboard commands. */
-      /*=================================================*/
+      /*==================================*/
+      /* Get KeyStrokes for accelerators. */
+      /*==================================*/
 
-      KeyStroke quitIDE = KeyStroke.getKeyStroke(KeyEvent.VK_Q,KeyEvent.CTRL_MASK);
       KeyStroke newDoc = KeyStroke.getKeyStroke(KeyEvent.VK_N,KeyEvent.CTRL_MASK);
+      KeyStroke quitIDE = KeyStroke.getKeyStroke(KeyEvent.VK_Q,KeyEvent.CTRL_MASK);
+
+      KeyStroke undo = KeyStroke.getKeyStroke(KeyEvent.VK_Z,KeyEvent.CTRL_MASK);
+      KeyStroke redo = KeyStroke.getKeyStroke(KeyEvent.VK_Z,KeyEvent.CTRL_MASK | KeyEvent.SHIFT_MASK);
+
       KeyStroke cut = KeyStroke.getKeyStroke(KeyEvent.VK_X,KeyEvent.CTRL_MASK);
       KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C,KeyEvent.CTRL_MASK);
       KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V,KeyEvent.CTRL_MASK);
@@ -730,18 +763,15 @@ public class CLIPSIDE extends JFrame
       jmFile.addMenuListener(this);
 
       jmiNew = new JMenuItem("New");
-      jmiNew.setActionCommand(newAction);
       jmiNew.setAccelerator(newDoc);
       jmiNew.addActionListener(this);
       jmFile.add(jmiNew);
 
       jmiOpen = new JMenuItem("Open...");
-      jmiOpen.setActionCommand(openAction);
       jmiOpen.addActionListener(this);
       jmFile.add(jmiOpen);
 
       jmiQuitIDE = new JMenuItem("Quit CLIPS IDE");
-      jmiQuitIDE.setActionCommand(quitIDEAction);
       jmiQuitIDE.setAccelerator(quitIDE);
       jmiQuitIDE.addActionListener(this);
       jmFile.add(jmiQuitIDE);
@@ -754,6 +784,18 @@ public class CLIPSIDE extends JFrame
          
       JMenu jmEdit = new JMenu("Edit");
       jmEdit.addMenuListener(this);
+
+      jmiUndo = new JMenuItem("Undo");
+      jmiUndo.addActionListener(this);
+      jmiUndo.setAccelerator(undo);
+      jmEdit.add(jmiUndo);
+      
+      jmiRedo = new JMenuItem("Redo");
+      jmiRedo.addActionListener(this);
+      jmiRedo.setAccelerator(redo);
+      jmEdit.add(jmiRedo);
+
+      jmEdit.addSeparator();
       
       jmiCut = new JMenuItem("Cut");
       jmiCut.addActionListener(this);
@@ -806,22 +848,18 @@ public class CLIPSIDE extends JFrame
       jmDebug.addSeparator();
 
       jmiAgendaBrowser = new JMenuItem("Agenda Browser"); 
-      jmiAgendaBrowser.setActionCommand(agendaBrowserAction);
       jmiAgendaBrowser.addActionListener(this);
       jmDebug.add(jmiAgendaBrowser);
 
       jmiFactBrowser = new JMenuItem("Fact Browser"); 
-      jmiFactBrowser.setActionCommand(factBrowserAction);
       jmiFactBrowser.addActionListener(this);
       jmDebug.add(jmiFactBrowser);
 
       jmiInstanceBrowser = new JMenuItem("Instance Browser"); 
-      jmiInstanceBrowser.setActionCommand(instanceBrowserAction);
       jmiInstanceBrowser.addActionListener(this);
       jmDebug.add(jmiInstanceBrowser);
 
       jmiConstructInspector = new JMenuItem("Construct Inspector"); 
-      jmiConstructInspector.setActionCommand(constructInspectorAction);
       jmiConstructInspector.addActionListener(this);
       jmDebug.add(jmiConstructInspector);
 

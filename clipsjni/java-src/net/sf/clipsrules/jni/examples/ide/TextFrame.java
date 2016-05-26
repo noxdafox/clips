@@ -1,6 +1,8 @@
 package net.sf.clipsrules.jni.examples.ide;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.*;
 import javax.swing.border.*; 
 import java.awt.*;
@@ -8,13 +10,24 @@ import java.awt.event.*;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import javax.swing.undo.UndoManager;
+import javax.swing.event.UndoableEditListener;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.undo.CannotUndoException;
+import javax.swing.undo.CompoundEdit;
+import javax.swing.text.PlainDocument;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.AttributeSet;
 
 import javax.swing.BorderFactory;
 
-public class TextFrame extends JInternalFrame
+public class TextFrame extends JInternalFrame 
+                    implements DocumentListener
   {
    private JTextArea textArea;
    private static int untitledCount = 1;
+   private boolean changed = false;
+   private UndoManager textAreaUndo;
    
    /*************/
    /* TextFrame */
@@ -65,6 +78,7 @@ public class TextFrame extends JInternalFrame
       try
         { 
          textArea = new JTextArea(); 
+         textArea.setDocument(new CustomUndoPlainDocument());
          textArea.setFont(new Font("monospaced",Font.PLAIN,12));
         }
       catch (Exception e)
@@ -95,6 +109,26 @@ public class TextFrame extends JInternalFrame
       
       if (theFile != null)
         { readContent(theFile); }
+
+      /*============================*/
+      /* Set the document listener. */
+      /*============================*/
+      
+      textArea.getDocument().addDocumentListener(this);
+
+      /***************************/
+      /* Create the undoManager. */
+      /***************************/
+       
+      textAreaUndo = new UndoManager();
+      textArea.getDocument().addUndoableEditListener(new UndoableEditListener() 
+        {
+         @Override
+         public void undoableEditHappened(UndoableEditEvent e) 
+           {
+            textAreaUndo.addEdit(e.getEdit());
+           }
+        });
         
       /*====================*/
       /* Display the frame. */
@@ -144,6 +178,46 @@ public class TextFrame extends JInternalFrame
       return true;
      }
 
+   /***********/
+   /* canUndo */
+   /***********/
+   public boolean canUndo()
+     {
+      return textAreaUndo.canUndo();
+     }
+     
+   /***********/
+   /* canRedo */
+   /***********/
+   public boolean canRedo()
+     {
+      return textAreaUndo.canRedo();     
+     }
+
+   /********/
+   /* undo */
+   /********/     
+   public void undo()
+     {
+      if (! textAreaUndo.canUndo()) return;
+      try 
+        { textAreaUndo.undo(); }
+      catch (CannotUndoException e) 
+        { e.printStackTrace(); }
+     }
+
+   /********/
+   /* redo */
+   /********/     
+   public void redo()
+     {
+      if (! textAreaUndo.canRedo()) return;
+      try 
+        { textAreaUndo.redo(); }
+      catch (CannotUndoException e) 
+        { e.printStackTrace(); }
+     }
+            
    /***************/
    /* getTextArea */
    /***************/
@@ -172,5 +246,65 @@ public class TextFrame extends JInternalFrame
    public void paste()
      {
       textArea.paste(); 
+     }
+     
+   /****************/
+   /* insertUpdate */
+   /****************/
+   public void insertUpdate(DocumentEvent e)
+     {
+      changed = true;
+     }
+  
+   /****************/
+   /* removeUpdate */
+   /****************/
+   public void removeUpdate(DocumentEvent e)
+     {
+      changed = true;
+     }
+  
+   /*****************/
+   /* changedUpdate */
+   /*****************/
+   public void changedUpdate(DocumentEvent e)
+     {      
+      changed = true;
+     }
+     
+   /*#########################*/
+   /* CustomUndoPlainDocument */
+   /*#########################*/
+   class CustomUndoPlainDocument extends PlainDocument 
+     {
+      private CompoundEdit compoundEdit;
+  
+      @Override 
+      protected void fireUndoableEditUpdate(UndoableEditEvent e) 
+        {
+         if (compoundEdit == null) 
+           { super.fireUndoableEditUpdate(e); } 
+         else
+           { compoundEdit.addEdit(e.getEdit()); }
+        }
+        
+      @Override 
+      public void replace(
+        int offset, 
+        int length,
+        String text, 
+        AttributeSet attrs) throws BadLocationException
+        {
+         if (length == 0)
+           { super.replace(offset,length,text,attrs); } 
+         else
+           {
+            compoundEdit = new CompoundEdit();
+            super.fireUndoableEditUpdate(new UndoableEditEvent(this,compoundEdit));
+            super.replace(offset, length, text, attrs);
+            compoundEdit.end();
+            compoundEdit = null;
+           }
+        }
      }
   }
