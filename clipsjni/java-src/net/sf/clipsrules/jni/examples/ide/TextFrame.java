@@ -275,6 +275,56 @@ public class TextFrame extends JInternalFrame
       changed = true;
      }
      
+   /*##################*/
+   /* TextCompoundEdit */
+   /*##################*/
+   class TextCompoundEdit extends CompoundEdit
+     {
+      private boolean isUnDone = false;
+
+      /*************/
+      /* getLength */
+      /*************/
+      public int getLength()
+        {
+         return edits.size();
+        }
+
+      /********/
+      /* undo */
+      /********/
+      public void undo() throws CannotUndoException
+        {
+         super.undo();
+         isUnDone = true;
+        }
+
+      /********/
+      /* redo */
+      /********/
+      public void redo() throws CannotUndoException
+        {
+         super.redo();
+         isUnDone = false;
+        }
+
+      /***********/
+      /* canUndo */
+      /***********/
+      public boolean canUndo()
+        {
+         return (edits.size() > 0) && (! isUnDone);
+        }
+
+      /***********/
+      /* canRedo */
+      /***********/
+      public boolean canRedo()
+        {
+         return (edits.size() > 0) && isUnDone;
+        }
+     }
+     
    /*#################*/
    /* TextUndoManager */
    /*#################*/
