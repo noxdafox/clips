@@ -10,14 +10,17 @@ import java.awt.event.*;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import javax.swing.undo.UndoManager;
-import javax.swing.event.UndoableEditListener;
-import javax.swing.event.UndoableEditEvent;
+import java.util.ArrayList;
+import javax.swing.undo.AbstractUndoableEdit;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.CompoundEdit;
-import javax.swing.text.PlainDocument;
-import javax.swing.text.BadLocationException;
+import javax.swing.undo.UndoableEdit;
+import javax.swing.event.UndoableEditListener;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
 
 import javax.swing.BorderFactory;
 
@@ -27,8 +30,8 @@ public class TextFrame extends JInternalFrame
    private JTextArea textArea;
    private static int untitledCount = 1;
    private boolean changed = false;
-   private UndoManager textAreaUndo;
-   
+   private TextUndoManager textAreaUndo;
+
    /*************/
    /* TextFrame */
    /*************/
@@ -78,7 +81,8 @@ public class TextFrame extends JInternalFrame
       try
         { 
          textArea = new JTextArea(); 
-         textArea.setDocument(new CustomUndoPlainDocument());
+         textAreaUndo = new TextUndoManager();
+         textArea.setDocument(new TextUndoPlainDocument(textAreaUndo));
          textArea.setFont(new Font("monospaced",Font.PLAIN,12));
         }
       catch (Exception e)
@@ -116,19 +120,18 @@ public class TextFrame extends JInternalFrame
       
       textArea.getDocument().addDocumentListener(this);
 
-      /***************************/
-      /* Create the undoManager. */
-      /***************************/
-       
-      textAreaUndo = new UndoManager();
-      textArea.getDocument().addUndoableEditListener(new UndoableEditListener() 
-        {
-         @Override
-         public void undoableEditHappened(UndoableEditEvent e) 
-           {
-            textAreaUndo.addEdit(e.getEdit());
-           }
-        });
+      /*===================================================*/
+      /* Override copy/paste for the CommandPromptTextArea */
+      /* so that we can define our own menu accelerators.  */
+      /*===================================================*/
+
+      KeyStroke cut = KeyStroke.getKeyStroke(KeyEvent.VK_X,KeyEvent.CTRL_MASK);
+      KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C,KeyEvent.CTRL_MASK);
+      KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V,KeyEvent.CTRL_MASK);
+      InputMap map = textArea.getInputMap();
+      map.put(cut,"none");
+      map.put(copy,"none");
+      map.put(paste,"none");
         
       /*====================*/
       /* Display the frame. */
@@ -229,7 +232,7 @@ public class TextFrame extends JInternalFrame
    /*******/
    public void cut()
      {
-      textArea.cut(); 
+      textArea.cut();
      }
 
    /********/
@@ -272,22 +275,203 @@ public class TextFrame extends JInternalFrame
       changed = true;
      }
      
-   /*#########################*/
-   /* CustomUndoPlainDocument */
-   /*#########################*/
-   class CustomUndoPlainDocument extends PlainDocument 
-     {
-      private CompoundEdit compoundEdit;
-  
-      @Override 
-      protected void fireUndoableEditUpdate(UndoableEditEvent e) 
+   /*#################*/
+   /* TextUndoManager */
+   /*#################*/
+   class TextUndoManager extends AbstractUndoableEdit 
+                         implements UndoableEditListener
+     {     
+      private String lastEditName = null;
+      private int lastStart = 0;
+      private ArrayList<TextCompoundEdit> edits = new ArrayList<TextCompoundEdit>();
+      private TextCompoundEdit current;
+      private int pointer = -1;
+      private int groupIndex = 0;
+      private String groupName = null;
+       
+      /************************/
+      /* undoableEditHappened */
+      /************************/
+      public void undoableEditHappened(
+        UndoableEditEvent e)
         {
-         if (compoundEdit == null) 
-           { super.fireUndoableEditUpdate(e); } 
+         boolean isNeedStart = false;
+         UndoableEdit edit = e.getEdit();
+
+         if (! (edit instanceof AbstractDocument.DefaultDocumentEvent))
+           { return; }
+
+         AbstractDocument.DefaultDocumentEvent event = (AbstractDocument.DefaultDocumentEvent) edit;
+                 
+         int start = event.getOffset();
+
+         String editName;
+
+         /*============================================*/
+         /* If an explicit group name is not present,  */
+         /* use the INSERT/REMOVE name from the event. */
+         /*============================================*/
+                 
+         if (groupName != null)
+           { editName = groupName; }
          else
-           { compoundEdit.addEdit(e.getEdit()); }
+           { editName = event.getType().toString(); }
+           
+         /*============================*/
+         /* Create a new compound edit */
+         /* for the very first edit.   */
+         /*============================*/
+         
+         if (current == null)
+           { isNeedStart = true; }
+
+         /*============================*/
+         /* Create a new compound edit */
+         /* for a different operation. */
+         /*============================*/
+         
+         else if ((lastEditName == null) || 
+                  (! lastEditName.equals(editName)))
+           { isNeedStart = true; }
+
+         /*================================================*/
+         /* Only group continuous single character inserts */
+         /* and deletes. Create a new edit if the user has */
+         /* moved the caret from its prior position.       */
+         /*================================================*/
+
+         else if (groupName == null)
+           {            
+            if ((event.getType() == DocumentEvent.EventType.INSERT) &&
+                     (start != (lastStart + 1)))
+              { isNeedStart = true; }
+            else if ((event.getType() == DocumentEvent.EventType.REMOVE) &&
+                     (start != (lastStart - 1)))
+              { isNeedStart = true; }
+           }
+         
+         /*=========================================*/
+         /* Adding a new edit will clear all of the */
+         /* redos forward of the current position.  */
+         /*=========================================*/
+         
+         while (pointer < edits.size() - 1)
+           {
+            edits.remove(edits.size() - 1);
+            isNeedStart = true;
+           }
+                       
+         /*===================*/
+         /* Add the new edit. */
+         /*===================*/
+              
+         if (isNeedStart)
+           { createCompoundEdit(); }
+ 
+         current.addEdit(edit);
+
+         /*=====================================*/
+         /* Remember prior state for next edit. */
+         /*=====================================*/
+         
+         lastEditName = editName;
+         lastStart = start;
         }
         
+      /*********************/
+      /* startEditGrouping */
+      /*********************/
+      public void startEditGrouping()
+        {
+         groupName = "Group-" + groupIndex++;
+        }
+
+      /********************/
+      /* stopEditGrouping */
+      /********************/
+      public void stopEditGrouping()
+        {
+         groupName = null;
+        }
+     
+      /**********************/
+      /* createCompoundEdit */
+      /**********************/
+      private void createCompoundEdit()
+        {
+         if (current == null)
+           { current = new TextCompoundEdit(); }
+         else if (current.getLength() > 0)
+           { current = new TextCompoundEdit(); }
+
+         edits.add(current);
+         pointer++;
+        }
+
+      /********/
+      /* undo */
+      /********/ 
+      public void undo() throws CannotUndoException
+        {
+         if (! canUndo())
+           { throw new CannotUndoException(); }
+ 
+         TextCompoundEdit u = edits.get(pointer);
+         u.undo();
+         pointer--;
+        }
+ 
+      /********/
+      /* redo */
+      /********/
+      public void redo() throws CannotUndoException
+        {
+         if (! canRedo())
+           { throw new CannotUndoException(); }
+ 
+         pointer++;
+         TextCompoundEdit u = edits.get(pointer);
+         u.redo();
+        }
+ 
+      /***********/
+      /* canUndo */
+      /***********/
+      public boolean canUndo()
+        { 
+         return pointer >= 0; 
+        }
+
+      /***********/
+      /* canRedo */
+      /***********/
+      public boolean canRedo()
+        {
+         return (edits.size() > 0) && (pointer < (edits.size() - 1));
+        }
+     }
+     
+   /*#######################*/
+   /* TextUndoPlainDocument */
+   /*#######################*/
+   class TextUndoPlainDocument extends PlainDocument 
+     {    
+      private TextUndoManager undoManager;
+
+      /*************************/
+      /* TextUndoPlainDocument */
+      /*************************/
+      TextUndoPlainDocument(
+        TextUndoManager theManager)
+        {
+         super();
+         undoManager = theManager;
+         this.addUndoableEditListener(undoManager);
+        }
+
+      /***********/
+      /* replace */
+      /***********/
       @Override 
       public void replace(
         int offset, 
@@ -296,14 +480,12 @@ public class TextFrame extends JInternalFrame
         AttributeSet attrs) throws BadLocationException
         {
          if (length == 0)
-           { super.replace(offset,length,text,attrs); } 
+           { super.replace(offset,length,text,attrs); }
          else
            {
-            compoundEdit = new CompoundEdit();
-            super.fireUndoableEditUpdate(new UndoableEditEvent(this,compoundEdit));
-            super.replace(offset, length, text, attrs);
-            compoundEdit.end();
-            compoundEdit = null;
+            undoManager.startEditGrouping();
+            super.replace(offset,length,text,attrs); 
+            undoManager.stopEditGrouping();
            }
         }
      }
