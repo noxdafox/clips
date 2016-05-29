@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.31  08/24/15            */
+   /*             CLIPS Version 6.40  05/21/16            */
    /*                                                     */
    /*                 I/O FUNCTIONS MODULE                */
    /*******************************************************/
@@ -63,7 +63,7 @@
 /*            Added STDOUT and STDIN logical name            */
 /*            definitions.                                   */
 /*                                                           */
-/*      6.31: Modified ReadTokenFromStdin to capture         */
+/*      6.40: Modified ReadTokenFromStdin to capture         */
 /*            carriage returns in the input buffer so that   */
 /*            input buffer count will accurately reflect     */
 /*            the number of characters typed for GUI         */

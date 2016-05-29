@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.31  09/04/15            */
+   /*             CLIPS Version 6.40  05/21/16            */
    /*                                                     */
    /*                 ROUTER HEADER FILE                  */
    /*******************************************************/
@@ -37,7 +37,7 @@
 /*            Added STDOUT and STDIN logical name            */
 /*            definitions.                                   */
 /*                                                           */
-/*      6.31: Added EnvInputBufferCount function.            */
+/*      6.40: Added EnvInputBufferCount function.            */
 /*                                                           */
 /*            Added check for reuse of existing router name. */
 /*                                                           */

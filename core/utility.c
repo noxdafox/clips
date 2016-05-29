@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.31  12/15/15            */
+   /*             CLIPS Version 6.40  05/21/16            */
    /*                                                     */
    /*                   UTILITY MODULE                    */
    /*******************************************************/
@@ -46,7 +46,7 @@
 /*                                                           */
 /*            Converted API macros to function calls.        */
 /*                                                           */
-/*      6.31: Added EnvAddPeriodicFunctionWithContext        */
+/*      6.40: Added EnvAddPeriodicFunctionWithContext        */
 /*            function.                                      */
 /*                                                           */
 /*************************************************************/

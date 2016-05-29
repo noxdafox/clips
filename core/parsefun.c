@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  10/15/15            */
+   /*             CLIPS Version 6.40  05/21/16            */
    /*                                                     */
    /*               PARSING FUNCTIONS MODULE              */
    /*******************************************************/
@@ -34,7 +34,7 @@
 /*            Fixed function declaration issue when          */
 /*            BLOAD_ONLY compiler flag is set to 1.          */
 /*                                                           */
-/*      6.31: Changed check-syntax router name because of    */
+/*      6.40: Changed check-syntax router name because of    */
 /*            a conflict with another error-capture router.  */
 /*                                                           */
 /*************************************************************/

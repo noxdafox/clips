@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.31  11/05/15            */
+   /*             CLIPS Version 6.40  05/21/16            */
    /*                                                     */
    /*                 PRETTY PRINT MODULE                 */
    /*******************************************************/
@@ -29,7 +29,7 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
-/*      6.31: Added NULL pointer check in CopyPPBuffer.      */
+/*      6.40: Added NULL pointer check in CopyPPBuffer.      */
 /*                                                           */
 /*************************************************************/
 

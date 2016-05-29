@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  01/26/15            */
+   /*             CLIPS Version 6.40  05/21/16            */
    /*                                                     */
    /*                 FILE COMMANDS MODULE                */
    /*******************************************************/
@@ -44,6 +44,9 @@
 /*            Added STDOUT and STDIN logical name            */
 /*            definitions.                                   */
 /*                                                           */
+/*      6.40: Split inputSource to fileSource and            */
+/*            logicalSource.                                 */
+/*                                                           */
 /*************************************************************/
 
 #define _FILECOM_SOURCE_
@@ -82,7 +85,8 @@
 struct batchEntry
   {
    int batchType;
-   void *inputSource;
+   FILE *fileSource;
+   const char *logicalSource;
    const char *theString;
    const char *fileName;
    long lineNumber;
@@ -110,7 +114,8 @@ struct fileCommandData
    int (*DribbleStatusFunction)(void *,int);
 #endif
    int BatchType;
-   void *BatchSource;
+   FILE *BatchFileSource;
+   const char *BatchLogicalSource;
    char *BatchBuffer;
    size_t BatchCurrentPosition;
    size_t BatchMaximumPosition;
@@ -137,7 +142,7 @@ struct fileCommandData
    static int                     GetcBatch(void *,const char *);
    static int                     UngetcBatch(void *,int,const char *);
    static int                     ExitBatch(void *,int);
-   static void                    AddBatch(void *,int,void *,int,const char *,const char *);
+   static void                    AddBatch(void *,int,FILE *,const char *,int,const char *,const char *);
    static void                    DeallocateFileCommandData(void *);
 
 /***************************************/
@@ -185,10 +190,11 @@ static void DeallocateFileCommandData(
       nextEntry = theEntry->next;
 
       if (theEntry->batchType == FILE_BATCH)
-        { GenClose(theEnv,(FILE *) FileCommandData(theEnv)->TopOfBatchList->inputSource); }
+        { GenClose(theEnv,FileCommandData(theEnv)->TopOfBatchList->fileSource); }
       else
         { rm(theEnv,(void *) theEntry->theString,strlen(theEntry->theString) + 1); }
 
+      DeleteString(theEnv,(char *) theEntry->logicalSource);
       rtn_struct(theEnv,batchEntry,theEntry);
          
       theEntry = nextEntry;
@@ -615,9 +621,9 @@ globle int LLGetcBatch(
    while ((rv == EOF) && (flag == 1))
      {
       if (FileCommandData(theEnv)->BatchType == FILE_BATCH)
-        { rv = getc((FILE *) FileCommandData(theEnv)->BatchSource); } 
+        { rv = getc(FileCommandData(theEnv)->BatchFileSource); }
       else
-        { rv = EnvGetcRouter(theEnv,(char *) FileCommandData(theEnv)->BatchSource); }
+        { rv = EnvGetcRouter(theEnv,FileCommandData(theEnv)->BatchLogicalSource); }
 
       if (rv == EOF)
         {
@@ -696,9 +702,9 @@ static int UngetcBatch(
    if (FileCommandData(theEnv)->BatchCurrentPosition > 0) FileCommandData(theEnv)->BatchCurrentPosition--;
    if (FileCommandData(theEnv)->BatchBuffer != NULL) FileCommandData(theEnv)->BatchBuffer[FileCommandData(theEnv)->BatchCurrentPosition] = EOS;
    if (FileCommandData(theEnv)->BatchType == FILE_BATCH)
-     { return(ungetc(ch,(FILE *) FileCommandData(theEnv)->BatchSource)); }
+     { return(ungetc(ch,FileCommandData(theEnv)->BatchFileSource)); }
 
-   return(EnvUngetcRouter(theEnv,ch,(char *) FileCommandData(theEnv)->BatchSource));
+   return(EnvUngetcRouter(theEnv,ch,FileCommandData(theEnv)->BatchLogicalSource));
   }
 
 /*************************************************/
@@ -805,7 +811,7 @@ globle int OpenBatch(
    /* the list of batch files opened.    */
    /*====================================*/
 
-   AddBatch(theEnv,placeAtEnd,(void *) theFile,FILE_BATCH,NULL,fileName);
+   AddBatch(theEnv,placeAtEnd,theFile,NULL,FILE_BATCH,NULL,fileName);
 
    /*===================================*/
    /* Return TRUE to indicate the batch */
@@ -839,7 +845,7 @@ globle int OpenStringBatch(
                  ExitBatch);
      }
 
-   AddBatch(theEnv,placeAtEnd,(void *) stringName,STRING_BATCH,theString,NULL);
+   AddBatch(theEnv,placeAtEnd,NULL,stringName,STRING_BATCH,theString,NULL);
 
    return(1);
   }
@@ -851,7 +857,8 @@ globle int OpenStringBatch(
 static void AddBatch(
   void *theEnv,
   int placeAtEnd,
-  void *theSource,
+  FILE *theFileSource,
+  const char *theLogicalSource,
   int type,
   const char *theString,
   const char *theFileName)
@@ -864,7 +871,8 @@ static void AddBatch(
 
    bptr = get_struct(theEnv,batchEntry);
    bptr->batchType = type;
-   bptr->inputSource = theSource;
+   bptr->fileSource = theFileSource;
+   bptr->logicalSource = CopyString(theEnv,theLogicalSource);
    bptr->theString = theString;
    bptr->fileName = CopyString(theEnv,theFileName);
    bptr->lineNumber = 0;
@@ -879,7 +887,8 @@ static void AddBatch(
       FileCommandData(theEnv)->TopOfBatchList = bptr;
       FileCommandData(theEnv)->BottomOfBatchList = bptr;
       FileCommandData(theEnv)->BatchType = type;
-      FileCommandData(theEnv)->BatchSource = theSource;
+      FileCommandData(theEnv)->BatchFileSource = theFileSource;
+      FileCommandData(theEnv)->BatchLogicalSource = bptr->logicalSource;
       FileCommandData(theEnv)->BatchCurrentPosition = 0;
      }
    else if (placeAtEnd == FALSE)
@@ -887,7 +896,8 @@ static void AddBatch(
       bptr->next = FileCommandData(theEnv)->TopOfBatchList;
       FileCommandData(theEnv)->TopOfBatchList = bptr;
       FileCommandData(theEnv)->BatchType = type;
-      FileCommandData(theEnv)->BatchSource = theSource;
+      FileCommandData(theEnv)->BatchFileSource = theFileSource;
+      FileCommandData(theEnv)->BatchLogicalSource = bptr->logicalSource;
       FileCommandData(theEnv)->BatchCurrentPosition = 0;
      }
    else
@@ -915,7 +925,7 @@ globle int RemoveBatch(
    if (FileCommandData(theEnv)->TopOfBatchList->batchType == FILE_BATCH)
      {
       fileBatch = TRUE;
-      GenClose(theEnv,(FILE *) FileCommandData(theEnv)->TopOfBatchList->inputSource);
+      GenClose(theEnv,FileCommandData(theEnv)->TopOfBatchList->fileSource);
 #if (! RUN_TIME) && (! BLOAD_ONLY)
       FlushParsingMessages(theEnv);
       DeleteErrorCaptureRouter(theEnv);
@@ -923,7 +933,7 @@ globle int RemoveBatch(
      }
    else
      {
-      CloseStringSource(theEnv,(char *) FileCommandData(theEnv)->TopOfBatchList->inputSource);
+      CloseStringSource(theEnv,FileCommandData(theEnv)->TopOfBatchList->logicalSource);
       rm(theEnv,(void *) FileCommandData(theEnv)->TopOfBatchList->theString,
          strlen(FileCommandData(theEnv)->TopOfBatchList->theString) + 1);
      }
@@ -936,6 +946,7 @@ globle int RemoveBatch(
    bptr = FileCommandData(theEnv)->TopOfBatchList;
    FileCommandData(theEnv)->TopOfBatchList = FileCommandData(theEnv)->TopOfBatchList->next;
 
+   DeleteString(theEnv,(char *) bptr->logicalSource);
    rtn_struct(theEnv,batchEntry,bptr);
 
    /*========================================================*/
@@ -946,7 +957,8 @@ globle int RemoveBatch(
    if (FileCommandData(theEnv)->TopOfBatchList == NULL)
      {
       FileCommandData(theEnv)->BottomOfBatchList = NULL;
-      FileCommandData(theEnv)->BatchSource = NULL;
+      FileCommandData(theEnv)->BatchFileSource = NULL;
+      FileCommandData(theEnv)->BatchLogicalSource = NULL;
       if (FileCommandData(theEnv)->BatchBuffer != NULL)
         {
          rm(theEnv,FileCommandData(theEnv)->BatchBuffer,FileCommandData(theEnv)->BatchMaximumPosition);
@@ -973,7 +985,8 @@ globle int RemoveBatch(
    else
      {
       FileCommandData(theEnv)->BatchType = FileCommandData(theEnv)->TopOfBatchList->batchType;
-      FileCommandData(theEnv)->BatchSource = FileCommandData(theEnv)->TopOfBatchList->inputSource;
+      FileCommandData(theEnv)->BatchFileSource = FileCommandData(theEnv)->TopOfBatchList->fileSource;
+      FileCommandData(theEnv)->BatchLogicalSource = FileCommandData(theEnv)->TopOfBatchList->logicalSource;
       FileCommandData(theEnv)->BatchCurrentPosition = 0;
       rv = 1;
 #if (! RUN_TIME) && (! BLOAD_ONLY)

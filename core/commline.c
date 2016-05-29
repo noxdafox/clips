@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.31  12/16/15            */
+   /*             CLIPS Version 6.40  05/21/16            */
    /*                                                     */
    /*                COMMAND LINE MODULE                  */
    /*******************************************************/
@@ -57,7 +57,7 @@
 /*            Added STDOUT and STDIN logical name            */
 /*            definitions.                                   */
 /*                                                           */
-/*      6.31: Added call to FlushParsingMessages to clear    */
+/*      6.40: Added call to FlushParsingMessages to clear    */
 /*            message buffer after each command.             */
 /*                                                           */
 /*************************************************************/

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.31  10/31/15            */
+   /*             CLIPS Version 6.40  05/21/16            */
    /*                                                     */
    /*               STRING FUNCTIONS MODULE               */
    /*******************************************************/
@@ -47,7 +47,7 @@
 /*            Fixed str-cat bug that could be invoked by     */
 /*            (funcall str-cat).                             */
 /*                                                           */
-/*      6.31: Prior error flags are cleared before EnvEval   */
+/*      6.40: Prior error flags are cleared before EnvEval   */
 /*            and EnvBuild are processed.                    */
 /*                                                           */
 /*************************************************************/
