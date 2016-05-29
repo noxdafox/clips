@@ -25,7 +25,7 @@ import javax.swing.text.PlainDocument;
 import javax.swing.BorderFactory;
 
 public class TextFrame extends JInternalFrame 
-                    implements DocumentListener
+                    implements DocumentListener, KeyListener
   {
    private JTextArea textArea;
    private static int untitledCount = 1;
@@ -92,6 +92,7 @@ public class TextFrame extends JInternalFrame
         }       
         
       textArea.setBorder(BorderFactory.createEmptyBorder(5,5,5,0));
+      textArea.addKeyListener(this);
 
       /*=======================================*/
       /* Put the text area into a scroll pane. */
@@ -273,6 +274,105 @@ public class TextFrame extends JInternalFrame
    public void changedUpdate(DocumentEvent e)
      {      
       changed = true;
+     }
+     
+   /*#####################*/
+   /* KeyListener Methods */
+   /*#####################*/
+   
+   /**************/
+   /* keyPressed */
+   /**************/     
+   @Override
+   public void keyPressed(KeyEvent e) 
+     {
+     }
+
+   /***************/
+   /* keyReleased */
+   /***************/     
+   @Override
+   public void keyReleased(KeyEvent e) 
+     { 
+     }
+
+   /************/
+   /* keyTyped */
+   /************/
+   @Override
+   public void keyTyped(KeyEvent e) 
+     {
+      if ((e.getModifiers() & 
+          (KeyEvent.ALT_MASK | KeyEvent.CTRL_MASK | KeyEvent.META_MASK)) != 0) 
+        { return; }
+          
+      if (e.getKeyChar() == '\n')
+        {
+         return;
+        }
+        
+      if (e.getKeyChar() == ')') 
+        {
+         int nestingDepth = 0;
+         char characterToCheck;
+         int selStart = textArea.getSelectionStart();
+         int selEnd = textArea.getSelectionEnd();
+         int cursorLocation = Math.min(textArea.getCaret().getDot(),
+                                       textArea.getCaret().getMark());
+                                       
+         while ((cursorLocation--) > 0)
+           {
+            characterToCheck = textArea.getText().charAt(cursorLocation);
+            
+            if (characterToCheck == '(') 
+              {
+               if (nestingDepth == 0) 
+                 {
+                  /*======================================*/
+                  /* Select the matching left parenthesis */
+                  /* and hide the caret.                  */
+                  /*======================================*/
+               
+                  textArea.getCaret().setVisible(false);
+                  textArea.setSelectionStart(cursorLocation);
+                  textArea.setSelectionEnd(cursorLocation + 1);
+
+                  /*========================================*/
+                  /* Force an update to occur otherwise the */
+                  /* changed selection won't be visible.    */
+                  /*========================================*/
+               
+                  textArea.update(textArea.getGraphics());
+
+                  /*============================================*/
+                  /* Pause momentarily so the selected matching */
+                  /* parenthesis can be observed.               */
+                  /*============================================*/
+               
+                  try
+		            { Thread.sleep(200); }
+		          catch (Exception ex)
+		            { ex.printStackTrace(); }
+
+                  /*===========================*/
+                  /* Restore the selection and */
+                  /* make the caret visible.   */
+                  /*===========================*/
+               
+                  textArea.setSelectionStart(selStart);
+                  textArea.setSelectionEnd(selEnd);
+                  textArea.getCaret().setVisible(true);
+	      	      return;
+	      	     }
+               else
+		         { nestingDepth--; }
+	          }
+            else if (characterToCheck == ')') 
+              { nestingDepth++; }
+           }
+           
+         Toolkit.getDefaultToolkit().beep();                                
+        }      
      }
      
    /*##################*/
