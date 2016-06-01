@@ -8,125 +8,115 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.IO;
+using Microsoft.Win32;
 
 using System.Windows.Threading;
 using System.ComponentModel;
 
 namespace CLIPSIDE
   {
-   public partial class MainWindow : Window
+   public static class IDECommands
      {
-      private BackgroundWorker autoBackgroundWorker = new BackgroundWorker();
-      private BackgroundWorker animalBackgroundWorker = new BackgroundWorker();
-      private CLIPSNET.Environment autoEnv = new CLIPSNET.Environment();
-      private CLIPSNET.Environment animalEnv = new CLIPSNET.Environment();
+      public static readonly RoutedCommand LoadConstructs = 
+         new RoutedUICommand("LoadConstructs",
+                             "LoadConstructs", 
+                             typeof(IDECommands),
+                             new InputGestureCollection()
+                               { new KeyGesture(Key.L,ModifierKeys.Control) }
+                            );
 
-      public void RunExample(
-        BackgroundWorker worker,
-        DoWorkEventArgs e,
-        CLIPSNET.Environment theEnv)
-        {
-         Console.WriteLine("RunExample");
-         theEnv.CommandLoop();
-         /*
-         theEnv.Reset();
-         while (theEnv.Run(1) > 0)
-           {
-            if (worker.CancellationPending == true)
-              { 
-               e.Cancel = true; 
-               return;
-              }
-           }
-         */
-        }
+      public static readonly RoutedCommand Clear = 
+         new RoutedUICommand("Clear",
+                             "Clear", 
+                             typeof(IDECommands)
+                            );
+     }
 
+  public partial class MainWindow : Window
+     {
+ 
+      /**************/
+      /* MainWindow */
+      /**************/
       public MainWindow()
         {
          InitializeComponent();
-         /*
-         this.autoBackgroundWorker.WorkerSupportsCancellation = true;
-         this.autoBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(AutoDoWork);
-         this.autoBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(AutoWorkCompleted);
-
-         this.animalBackgroundWorker.WorkerSupportsCancellation = true;
-         this.animalBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(AnimalDoWork);
-         this.animalBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(AnimalWorkCompleted);
-         Console.WriteLine("Program about to start");
-         */
         }
-
-      private void AutoDoWork(object sender, DoWorkEventArgs e)
-         {
-          Console.WriteLine("AutoDoWork");
-          BackgroundWorker worker = sender as BackgroundWorker;
-          RunExample(worker,e,autoEnv);
-         }
-
-      private void AnimalDoWork(object sender, DoWorkEventArgs e)
-         {
-          Console.WriteLine("AnimalDoWork");
-          BackgroundWorker worker = sender as BackgroundWorker;
-          RunExample(worker,e,animalEnv);
-         }
-
-      private void AutoWorkCompleted(object sender, RunWorkerCompletedEventArgs e)
-         {
-          Console.WriteLine("AutoWorkCompleted");
-          if (e.Error != null)
-            { MessageBox.Show(e.Error.Message); }
-          else if (e.Cancelled)
-            { /* Do Nothing */ }
-         }
-
-      private void AnimalWorkCompleted(object sender, RunWorkerCompletedEventArgs e)
-         {
-          Console.WriteLine("AnimalWorkCompleted");
-          if (e.Error != null)
-            { MessageBox.Show(e.Error.Message); }
-          else if (e.Cancelled)
-            { /* Do Nothing */ }
-         }
-
+        
+      /**********/
+      /* OnLoad */
+      /**********/
       private void OnLoad(object sender, RoutedEventArgs e)
         {
-         autoTextBox.Focus();
+         dialog.Focus();
         }
 
-      private void OnDragOver(object sender, DragEventArgs e)
-         {
-          Console.WriteLine("OnDragOver");
-         }
-
+      /*************/
+      /* OnClosing */
+      /*************/
       private void OnClosing(object sender, CancelEventArgs e)
         {
-         Console.WriteLine("RouterMainWindow OnClosing");
-         this.autoTextBox.OnClosing();
-         /*
-         autoBackgroundWorker.CancelAsync();
-         while (autoBackgroundWorker.IsBusy)
-           { this.DoEvents(); }
-           */
-         this.animalTextBox.OnClosing();
-         /*
-         animalBackgroundWorker.CancelAsync();
-         while (animalBackgroundWorker.IsBusy)
-           { this.DoEvents(); }
-           */
-         }
+         this.dialog.OnClosing();
+        }
+         
+      /****************/
+      /* Quit_OnClick */
+      /****************/
+      private void Quit_OnClick(object sender, RoutedEventArgs e)
+        {
+          Application.Current.Shutdown();
+        }
 
-       /*******************************************************************************************/
-       /* DoEvents: Allows events on the UI thread to be processed while waiting for termination. */
-       /*    http://stackoverflow.com/questions/4502037/where-is-the-application-doevents-in-wpf  */
-       /*******************************************************************************************/
-       private void DoEvents()
-         {
-          Application.Current.Dispatcher.Invoke(DispatcherPriority.Background,
-                                                new Action(delegate { }));
-         }
+      /*********************/
+      /* Clear_CanExecute */
+      /********************/
+      private void Clear_CanExecute(
+        object sender, 
+        CanExecuteRoutedEventArgs e)
+        {
+         e.CanExecute = true;
+        }
+
+      /******************/      
+      /* Clear_Executed */
+      /******************/      
+      private void Clear_Executed(
+        object sender, 
+        ExecutedRoutedEventArgs e)
+        {
+         dialog.ReplaceCommand("(clear)\n");
+        }
+        
+      /*****************************/
+      /* LoadConstructs_CanExecute */
+      /*****************************/
+      private void LoadConstructs_CanExecute(
+        object sender, 
+        CanExecuteRoutedEventArgs e)
+        {
+         e.CanExecute = true;
+        }
+
+      /***************************/      
+      /* LoadConstructs_Executed */
+      /***************************/      
+      private void LoadConstructs_Executed(
+        object sender, 
+        ExecutedRoutedEventArgs e)
+        {
+         OpenFileDialog openFileDialog = new OpenFileDialog();
+         if (openFileDialog.ShowDialog() == true)
+           {
+            String dirPath = Path.GetDirectoryName(openFileDialog.FileName);
+            String fileName = Path.GetFileName(openFileDialog.FileName);
+
+            Directory.SetCurrentDirectory(dirPath);
+            dialog.ReplaceCommand("(load \"" + 
+                                  fileName + 
+                                  "\")\n");
+           }
+        }
+  
       }
   }
