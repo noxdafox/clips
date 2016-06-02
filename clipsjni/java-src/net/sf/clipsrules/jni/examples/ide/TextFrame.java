@@ -9,6 +9,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.undo.AbstractUndoableEdit;
@@ -31,6 +33,7 @@ public class TextFrame extends JInternalFrame
    private static int untitledCount = 1;
    private boolean changed = false;
    private TextUndoManager textAreaUndo;
+   private File textFile;
 
    /*************/
    /* TextFrame */
@@ -39,6 +42,8 @@ public class TextFrame extends JInternalFrame
      File theFile)
      {  
       super("",true,true,true,true);
+      
+      textFile = theFile;
       
       if (theFile == null)
         { setTitle("Untitled #" + untitledCount++); }
@@ -92,7 +97,8 @@ public class TextFrame extends JInternalFrame
         }       
         
       textArea.setBorder(BorderFactory.createEmptyBorder(5,5,5,0));
-      textArea.addKeyListener(this);
+      //textArea.addKeyListener(this);
+      setUpKeys();
 
       /*=======================================*/
       /* Put the text area into a scroll pane. */
@@ -140,7 +146,98 @@ public class TextFrame extends JInternalFrame
 
       this.pack();
      }  
+     
+   /*************/
+   /* setUpKeys */
+   /*************/
+   public void setUpKeys()
+     {
+      int condition = WHEN_FOCUSED;  
+
+      InputMap inputMap = textArea.getInputMap(condition);
+      ActionMap actionMap = textArea.getActionMap();
+      
+      KeyStroke rparenStroke = KeyStroke.getKeyStroke(')');
+      
+      inputMap.put(rparenStroke,rparenStroke.toString());
+
+      actionMap.put(rparenStroke.toString(), new AbstractAction() 
+        {
+         @Override
+         public void actionPerformed(ActionEvent ae)
+           {
+            MatchParenthesis();
+            textArea.replaceRange(")",textArea.getSelectionStart(),textArea.getSelectionEnd());
+           }
+      });
+     }
+
+   /********************/
+   /* MatchParenthesis */
+   /********************/
+   public void MatchParenthesis() 
+     {
+      int nestingDepth = 0;
+      char characterToCheck;
+      int selStart = textArea.getSelectionStart();
+      int selEnd = textArea.getSelectionEnd();
+      int cursorLocation = Math.min(textArea.getCaret().getDot(),
+                                    textArea.getCaret().getMark());
+                                       
+      while ((cursorLocation--) > 0)
+        {
+         characterToCheck = textArea.getText().charAt(cursorLocation);
             
+         if (characterToCheck == '(') 
+           {
+            if (nestingDepth == 0) 
+              {
+               /*======================================*/
+               /* Select the matching left parenthesis */
+               /* and hide the caret.                  */
+               /*======================================*/
+
+               textArea.getCaret().setVisible(false);
+               textArea.setSelectionStart(cursorLocation);
+               textArea.setSelectionEnd(cursorLocation + 1);
+
+               /*========================================*/
+               /* Force an update to occur otherwise the */
+               /* changed selection won't be visible.    */
+               /*========================================*/
+
+               textArea.update(textArea.getGraphics());
+
+               /*============================================*/
+               /* Pause momentarily so the selected matching */
+               /* parenthesis can be observed.               */
+               /*============================================*/
+    
+               try
+	             { Thread.sleep(200); }
+	           catch (Exception ex)
+	             { ex.printStackTrace(); }
+
+               /*===========================*/
+               /* Restore the selection and */
+               /* make the caret visible.   */
+               /*===========================*/
+              
+               textArea.setSelectionStart(selStart);
+               textArea.setSelectionEnd(selEnd);
+               textArea.getCaret().setVisible(true);
+	      	   return;
+	          }
+            else
+	          { nestingDepth--; }
+	       }
+         else if (characterToCheck == ')') 
+           { nestingDepth++; }
+        }
+           
+      Toolkit.getDefaultToolkit().beep();                                
+     }    
+       
    /***************/
    /* readContent */
    /***************/
@@ -156,7 +253,7 @@ public class TextFrame extends JInternalFrame
       catch (IOException e)
         {
          JOptionPane.showMessageDialog(getParent(),
-                                       e.getMessage(), "ERROR", 
+                                       e.getMessage(),"ERROR", 
                                        JOptionPane.ERROR_MESSAGE);
         }
       finally
@@ -170,7 +267,92 @@ public class TextFrame extends JInternalFrame
            }
         }
      }
+     
+   /****************/
+   /* writeContent */
+   /****************/
+   public void writeContent(
+     File theFile)
+     {
+      BufferedWriter writer = null;
+      try 
+        { 
+         writer = new BufferedWriter(new FileWriter(theFile));
+         textArea.write(writer);
+         changed = false;
+        }
+      catch (IOException e)
+        {
+         JOptionPane.showMessageDialog(getParent(),
+                                       e.getMessage(),"ERROR", 
+                                       JOptionPane.ERROR_MESSAGE);
+        }
+      finally 
+        {
+         if (writer != null)
+           {
+            try 
+              { writer.close(); } 
+            catch (IOException e) 
+              {}
+           }
+        }
+     }
+     
+   /*******************/
+   /* saveAsTextFrame */
+   /*******************/  
+   public void saveAsTextFrame(
+     IDEPreferences preferences)
+     {
+      final JFileChooser fc = new JFileChooser();
 
+      File currentDirectory = preferences.getCurrentDirectory();
+      if (currentDirectory != null)
+        { fc.setCurrentDirectory(currentDirectory); }
+
+      if (textFile != null)
+        { fc.setSelectedFile(textFile); }
+      else
+        { fc.setSelectedFile(new File(this.getTitle() + ".clp")); }
+        
+      int returnVal = fc.showSaveDialog(this);
+      
+      if (returnVal != JFileChooser.APPROVE_OPTION) return;
+      
+      File selectedFile = fc.getSelectedFile();
+      if (selectedFile == null) return;
+            
+      if (selectedFile.exists()) 
+        {
+         int confirmationResult = JOptionPane.showConfirmDialog(this,"Replace existing file?");
+         if (confirmationResult != JOptionPane.YES_OPTION) return;
+        }
+        
+      setTitle(selectedFile.getName()); 
+        
+      currentDirectory = fc.getCurrentDirectory();
+      preferences.setCurrentDirectory(currentDirectory);
+      textFile = selectedFile;  
+      
+      writeContent(textFile);
+     }
+
+   /*****************/
+   /* saveTextFrame */
+   /*****************/  
+   public void saveTextFrame(
+     IDEPreferences preferences)
+     {
+      if (textFile == null)
+        {
+         saveAsTextFrame(preferences);
+         return;
+        }
+        
+      writeContent(textFile);
+     }
+     
    /****************/
    /* hasSelection */
    /****************/
@@ -196,6 +378,15 @@ public class TextFrame extends JInternalFrame
    public boolean canRedo()
      {
       return textAreaUndo.canRedo();     
+     }
+
+   /***********/
+   /* canSave */
+   /***********/
+   public boolean canSave()
+     {
+      if (textFile == null) return true;
+      else return changed;    
      }
 
    /********/
@@ -248,7 +439,7 @@ public class TextFrame extends JInternalFrame
    /* paste */
    /*********/
    public void paste()
-     {
+     { 
       textArea.paste(); 
      }
      
@@ -310,69 +501,9 @@ public class TextFrame extends JInternalFrame
         {
          return;
         }
-        
+
       if (e.getKeyChar() == ')') 
-        {
-         int nestingDepth = 0;
-         char characterToCheck;
-         int selStart = textArea.getSelectionStart();
-         int selEnd = textArea.getSelectionEnd();
-         int cursorLocation = Math.min(textArea.getCaret().getDot(),
-                                       textArea.getCaret().getMark());
-                                       
-         while ((cursorLocation--) > 0)
-           {
-            characterToCheck = textArea.getText().charAt(cursorLocation);
-            
-            if (characterToCheck == '(') 
-              {
-               if (nestingDepth == 0) 
-                 {
-                  /*======================================*/
-                  /* Select the matching left parenthesis */
-                  /* and hide the caret.                  */
-                  /*======================================*/
-               
-                  textArea.getCaret().setVisible(false);
-                  textArea.setSelectionStart(cursorLocation);
-                  textArea.setSelectionEnd(cursorLocation + 1);
-
-                  /*========================================*/
-                  /* Force an update to occur otherwise the */
-                  /* changed selection won't be visible.    */
-                  /*========================================*/
-               
-                  textArea.update(textArea.getGraphics());
-
-                  /*============================================*/
-                  /* Pause momentarily so the selected matching */
-                  /* parenthesis can be observed.               */
-                  /*============================================*/
-               
-                  try
-		            { Thread.sleep(200); }
-		          catch (Exception ex)
-		            { ex.printStackTrace(); }
-
-                  /*===========================*/
-                  /* Restore the selection and */
-                  /* make the caret visible.   */
-                  /*===========================*/
-               
-                  textArea.setSelectionStart(selStart);
-                  textArea.setSelectionEnd(selEnd);
-                  textArea.getCaret().setVisible(true);
-	      	      return;
-	      	     }
-               else
-		         { nestingDepth--; }
-	          }
-            else if (characterToCheck == ')') 
-              { nestingDepth++; }
-           }
-           
-         Toolkit.getDefaultToolkit().beep();                                
-        }      
+        { MatchParenthesis(); }    
      }
      
    /*##################*/
@@ -466,7 +597,7 @@ public class TextFrame extends JInternalFrame
            { editName = groupName; }
          else
            { editName = event.getType().toString(); }
-           
+
          /*============================*/
          /* Create a new compound edit */
          /* for the very first edit.   */

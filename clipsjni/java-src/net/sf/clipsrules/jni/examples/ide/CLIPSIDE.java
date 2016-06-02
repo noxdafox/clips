@@ -19,20 +19,15 @@ public class CLIPSIDE extends JFrame
   {  
    private static final String windowProperty = "windowProperty";
    private static final String menuItemProperty = "menuItemProperty";
-   
-   static EnvironmentMenu jmEnvironment;
-
    static final String selectWindowAction = "SelectWindow";
+   
+   private FileMenu jmFile;
+   private TextMenu jmText;
+   private EnvironmentMenu jmEnvironment;
+   private JMenu jmWindow;
 
    private IDEPreferences preferences;
    
-   private TextMenu jmText;
-   private JMenu jmWindow;
-
-   private JMenuItem jmiNew;
-   private JMenuItem jmiOpen;
-   private JMenuItem jmiQuitIDE;
-
    private JMenuItem jmiUndo;
    private JMenuItem jmiRedo;
    private JMenuItem jmiCut;
@@ -52,7 +47,7 @@ public class CLIPSIDE extends JFrame
    private InstanceBrowserManager instanceBrowserManager;
    private DialogFrame dialogWindow;
    private JDesktopPane ideDesktopPane;
-
+   
    /************/
    /* CLIPSIDE */
    /************/
@@ -131,6 +126,14 @@ public class CLIPSIDE extends JFrame
 
       UserFunctionExamples.addUserFunctions(clips);
      }  
+
+   /******************/
+   /* getPreferences */
+   /******************/  
+   public IDEPreferences getPreferences()
+     {
+      return preferences;
+     }
 
    /******************/
    /* getEnvironment */
@@ -315,12 +318,6 @@ public class CLIPSIDE extends JFrame
              theTextFrame.paste(); 
             }
         }
-      else if (ae.getSource() == jmiQuitIDE)  
-        { quitIDE(); }
-      else if (ae.getSource() == jmiNew)  
-        { newTextFile(null); }
-      else if (ae.getSource() == jmiOpen)  
-        { openTextFile(); }
       else if (ae.getSource() == jmiAgendaBrowser)  
         { agendaBrowserManager.createBrowser(); }
       else if (ae.getSource() == jmiFactBrowser)  
@@ -331,54 +328,6 @@ public class CLIPSIDE extends JFrame
         { constructInspector(); }
       else if (ae.getActionCommand().equals(selectWindowAction))  
         { selectWindow(ae.getSource()); }
-     }
-
-   /***********/
-   /* quitIDE */
-   /***********/  
-   public void quitIDE()
-     {
-      System.exit(0);
-     }
-
-   /****************/
-   /* openTextFile */
-   /****************/  
-   public void openTextFile()
-     {
-      final JFileChooser fc = new JFileChooser();
-
-      File currentDirectory = preferences.getCurrentDirectory();
-      if (currentDirectory != null)
-        { fc.setCurrentDirectory(currentDirectory); }
-
-      int returnVal = fc.showOpenDialog(this);
-      
-      if (returnVal != JFileChooser.APPROVE_OPTION) return;
-      
-      File file = fc.getSelectedFile();
-      if (file == null) return;
-            
-      currentDirectory = fc.getCurrentDirectory();
-      preferences.setCurrentDirectory(currentDirectory);
-      
-      newTextFile(file);      
-     }
-
-   /***************/
-   /* newTextFile */
-   /***************/  
-   public void newTextFile(
-     File theFile)
-     {
-      TextFrame theFrame = new TextFrame(theFile);
-      
-      theFrame.addInternalFrameListener(this);
-      
-      placer.placeInternalFrame(theFrame);
-      
-      ideDesktopPane.add(theFrame);
-      theFrame.setVisible(true);
      }
                
    /**********************/
@@ -479,6 +428,8 @@ public class CLIPSIDE extends JFrame
      
       if ((theFrame == null) || theFrame.isIcon())
         {
+         jmiUndo.setEnabled(false);
+         jmiRedo.setEnabled(false);
          jmiCut.setEnabled(false);
          jmiCopy.setEnabled(false);
          jmiPaste.setEnabled(false);
@@ -510,7 +461,7 @@ public class CLIPSIDE extends JFrame
       else if (theFrame instanceof TextFrame)
         {
          TextFrame theTextFrame = (TextFrame) theFrame;
-
+         
          if (theTextFrame.canUndo())
            { jmiUndo.setEnabled(true); }
          else
@@ -739,9 +690,6 @@ public class CLIPSIDE extends JFrame
       /* Get KeyStrokes for accelerators. */
       /*==================================*/
 
-      KeyStroke newDoc = KeyStroke.getKeyStroke(KeyEvent.VK_N,KeyEvent.CTRL_MASK);
-      KeyStroke quitIDE = KeyStroke.getKeyStroke(KeyEvent.VK_Q,KeyEvent.CTRL_MASK);
-
       KeyStroke undo = KeyStroke.getKeyStroke(KeyEvent.VK_Z,KeyEvent.CTRL_MASK);
       KeyStroke redo = KeyStroke.getKeyStroke(KeyEvent.VK_Z,KeyEvent.CTRL_MASK | KeyEvent.SHIFT_MASK);
 
@@ -758,26 +706,10 @@ public class CLIPSIDE extends JFrame
       /*===========*/
       /* File menu */
       /*===========*/
-      
-      JMenu jmFile = new JMenu("File");
-      jmFile.addMenuListener(this);
-
-      jmiNew = new JMenuItem("New");
-      jmiNew.setAccelerator(newDoc);
-      jmiNew.addActionListener(this);
-      jmFile.add(jmiNew);
-
-      jmiOpen = new JMenuItem("Open...");
-      jmiOpen.addActionListener(this);
-      jmFile.add(jmiOpen);
-
-      jmiQuitIDE = new JMenuItem("Quit CLIPS IDE");
-      jmiQuitIDE.setAccelerator(quitIDE);
-      jmiQuitIDE.addActionListener(this);
-      jmFile.add(jmiQuitIDE);
-
+        
+      jmFile = new FileMenu(this);
       jmb.add(jmFile);
-
+      
       /*===========*/
       /* Edit menu */
       /*===========*/

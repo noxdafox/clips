@@ -98,6 +98,7 @@ IDE_FILES = \
 	$(IDE_SRC)/EnvironmentMenu.java \
 	$(IDE_SRC)/FactBrowserManager.java \
 	$(IDE_SRC)/FactInstanceTableModel.java \
+	$(IDE_SRC)/FileMenu.java \
 	$(IDE_SRC)/FocusStackTableModel.java \
 	$(IDE_SRC)/FramePlacer.java \
 	$(IDE_SRC)/HelpMenu.java \

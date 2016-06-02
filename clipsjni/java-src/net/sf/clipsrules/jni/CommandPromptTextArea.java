@@ -376,7 +376,7 @@ public class CommandPromptTextArea extends RouterTextArea
               {
                /*======================================*/
                /* Select the matching left parenthesis */
-               /* and hide the carete.                 */
+               /* and hide the caret.                  */
                /*======================================*/
                
                this.getCaret().setVisible(false);
