@@ -189,6 +189,17 @@ public class CLIPSIDE extends JFrame
       ideDesktopPane.add(dialogWindow);
       dialogWindow.setVisible(true);
      }
+     
+   /**********************/
+   /* selectDialogWindow */
+   /**********************/  
+   public void selectDialogWindow()
+     {
+      try
+        { dialogWindow.setSelected(true); }
+      catch (Exception e) 
+        { e.printStackTrace(); }
+     }
           
    /********/
    /* main */

@@ -1,38 +1,43 @@
 package net.sf.clipsrules.jni.examples.ide;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.Toolkit;
+
+import javax.swing.AbstractAction;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JTextArea;
+import javax.swing.KeyStroke;
+
 /*
 import java.awt.Rectangle;
 import javax.swing.text.BadLocationException;
 */
+
 import net.sf.clipsrules.jni.*;
 
 public class TextMenu extends JMenu 
-                   implements ActionListener, MenuListener
+                   implements MenuListener
   {  
-   private static final String loadSelectionAction = "LoadSelection";
-   private static final String batchSelectionAction = "BatchSelection";
-   private static final String loadBufferAction = "LoadBuffer";
-   private static final String balanceAction = "Balance";
-   private static final String commentAction = "Comment";
-   private static final String uncommentAction = "Uncomment";
-
-   private JMenuItem jmiLoadSelection = null;
-   private JMenuItem jmiBatchSelection = null;   
-   private JMenuItem jmiLoadBuffer = null;
-   private JMenuItem jmiBalance = null;
-   private JMenuItem jmiComment = null;
-   private JMenuItem jmiUncomment = null;
-   
    private TextFrame textFrame = null;
    private CLIPSIDE ide = null;
+
+   private JMenuItem jmiLoadSelection;
+   private JMenuItem jmiBatchSelection;
+   private JMenuItem jmiLoadBuffer;
+   private JMenuItem jmiBalance;
+   private JMenuItem jmiComment;
+   private JMenuItem jmiUncomment;
+
+   private LoadSelectionAction loadSelectionAction;
+   private BatchSelectionAction batchSelectionAction;
+   private LoadBufferAction loadBufferAction;
+   private BalanceAction balanceAction;
+   private CommentAction commentAction;
+   private UncommentAction uncommentAction;
 
    /************/
    /* TextMenu */
@@ -46,36 +51,50 @@ public class TextMenu extends JMenu
       
       addMenuListener(this);
       
-      jmiLoadSelection = new JMenuItem("Load Selection");
-      jmiLoadSelection.setActionCommand(loadSelectionAction);
-      jmiLoadSelection.addActionListener(this);
+      /*==================================*/
+      /* Get KeyStrokes for accelerators. */
+      /*==================================*/
+
+      KeyStroke loadSelection = KeyStroke.getKeyStroke(KeyEvent.VK_K,KeyEvent.CTRL_MASK);
+      KeyStroke batchSelection = KeyStroke.getKeyStroke(KeyEvent.VK_K,KeyEvent.CTRL_MASK | KeyEvent.SHIFT_MASK);
+      KeyStroke balance = KeyStroke.getKeyStroke(KeyEvent.VK_B,KeyEvent.CTRL_MASK);
+
+      /*================*/
+      /* Setup actions. */
+      /*================*/
+       
+      loadSelectionAction = new LoadSelectionAction("Load Selection");
+      batchSelectionAction = new BatchSelectionAction("Batch Selection");
+      loadBufferAction = new LoadBufferAction("Load Buffer");
+      balanceAction = new BalanceAction("Balance");
+      commentAction = new CommentAction("Comment");
+      uncommentAction = new UncommentAction("Uncomment");
+
+      /*=================*/
+      /* Add menu items. */
+      /*=================*/
+
+      jmiLoadSelection = new JMenuItem(loadSelectionAction);
+      jmiLoadSelection.setAccelerator(loadSelection);
       add(jmiLoadSelection);
 
-      jmiBatchSelection = new JMenuItem("Batch Selection");
-      jmiBatchSelection.setActionCommand(batchSelectionAction);
-      jmiBatchSelection.addActionListener(this);
+      jmiBatchSelection = new JMenuItem(batchSelectionAction);
+      jmiBatchSelection.setAccelerator(batchSelection);
       add(jmiBatchSelection);
 
-      jmiLoadBuffer = new JMenuItem("Load Buffer");
-      jmiLoadBuffer.setActionCommand(loadBufferAction);
-      jmiLoadBuffer.addActionListener(this);
+      jmiLoadBuffer = new JMenuItem(loadBufferAction);
       add(jmiLoadBuffer);
 
       addSeparator();
 
-      jmiBalance = new JMenuItem("Balance");
-      jmiBalance.setActionCommand(balanceAction);
-      jmiBalance.addActionListener(this);
+      jmiBalance = new JMenuItem(balanceAction);
+      jmiBalance.setAccelerator(balance);
       add(jmiBalance);
 
-      jmiComment = new JMenuItem("Comment");
-      jmiComment.setActionCommand(commentAction);
-      jmiComment.addActionListener(this);
+      jmiComment = new JMenuItem(commentAction);
       add(jmiComment);
 
-      jmiUncomment = new JMenuItem("Uncomment");
-      jmiUncomment.setActionCommand(uncommentAction);
-      jmiUncomment.addActionListener(this);
+      jmiUncomment = new JMenuItem(uncommentAction);
       add(jmiUncomment);
      }  
 
@@ -87,54 +106,39 @@ public class TextMenu extends JMenu
      {
       textFrame = theFrame;
      }
-
+     
    /*################*/
    /* Action Methods */
    /*################*/
-
-   /*********************/
-   /* onActionPerformed */
-   /*********************/  
-   public void onActionPerformed(
-     ActionEvent ae) throws Exception 
-     {     
-      if (ae.getActionCommand().equals(loadSelectionAction))  
-        { loadSelection(); }
-      else if (ae.getActionCommand().equals(batchSelectionAction))  
-        { batchSelection(); }
-      else if (ae.getActionCommand().equals(loadBufferAction))  
-        { loadBuffer(); }
-      else if (ae.getActionCommand().equals(balanceAction))  
-        { balance(); }
-      else if (ae.getActionCommand().equals(commentAction))  
-        { comment(); }
-      else if (ae.getActionCommand().equals(uncommentAction))  
-        { uncomment(); }
-     }
      
    /*****************/
    /* loadSelection */
    /*****************/  
-   public void loadSelection()
+   private void loadSelection()
      {
       if (textFrame == null)
         { return; }
 
       Environment clips = ide.getEnvironment();
-        
+      
       JTextArea theTextArea = textFrame.getTextArea();
       String loadString = theTextArea.getSelectedText();
+      if (loadString == null) return;
+      
+      ide.selectDialogWindow();
       
       clips.flushInputBuffer();
       clips.printRouter(Router.STANDARD_OUTPUT,"Loading Selection...\n");
+
       clips.loadFromStringWithOutput(loadString);
+
       clips.printPrompt();
      }
    
    /******************/
    /* batchSelection */
    /******************/  
-   public void batchSelection()
+   private void batchSelection()
      {
       if (textFrame == null)
         { return; }
@@ -143,6 +147,10 @@ public class TextMenu extends JMenu
        
       JTextArea theTextArea = textFrame.getTextArea();
       String batchString = theTextArea.getSelectedText();
+      if (batchString == null) return;
+
+      ide.selectDialogWindow();
+
       clips.openStringBatch("batchtext",batchString,false); 
       ide.executeBatch();
      }
@@ -150,7 +158,7 @@ public class TextMenu extends JMenu
    /**************/
    /* loadBuffer */
    /**************/  
-   public void loadBuffer()
+   private void loadBuffer()
      {
       if (textFrame == null)
         { return; }
@@ -160,6 +168,8 @@ public class TextMenu extends JMenu
       JTextArea theTextArea = textFrame.getTextArea();
       String loadString = theTextArea.getText();
       
+      ide.selectDialogWindow();
+
       clips.flushInputBuffer();
       clips.printRouter(Router.STANDARD_OUTPUT,"Loading Buffer...\n");
       clips.loadFromStringWithOutput(loadString);
@@ -169,13 +179,16 @@ public class TextMenu extends JMenu
    /***********/
    /* balance */
    /***********/  
-   public void balance()
+   private void balance()
      {
       int leftMiddle, rightMiddle, textLength;
       char characterToCheck;
       int count, leftCount, rightCount;
       int i;
       boolean endReached;
+
+      if (textFrame == null)
+        { return; }
 
       JTextArea theTextArea = textFrame.getTextArea();
       String theText = theTextArea.getText();
@@ -293,7 +306,7 @@ public class TextMenu extends JMenu
    /* it to the left and right until the number of left    */
    /* and right parentheses is balanced.                   */
    /********************************************************/
-   public void balanceIt(
+   private void balanceIt(
      String theText,
      int leftMiddle,
      int rightMiddle,
@@ -373,8 +386,11 @@ public class TextMenu extends JMenu
    /***********/
    /* comment */
    /***********/  
-   public void comment()
+   private void comment()
      {
+      if (textFrame == null)
+        { return; }
+
       JTextArea theTextArea = textFrame.getTextArea();
       
       int startLine, endLine;
@@ -422,8 +438,11 @@ public class TextMenu extends JMenu
    /*************/
    /* uncomment */
    /*************/  
-   public void uncomment()
+   private void uncomment()
      {
+      if (textFrame == null)
+        { return; }
+
       JTextArea theTextArea = textFrame.getTextArea();
       
       int startLine, endLine;
@@ -470,22 +489,6 @@ public class TextMenu extends JMenu
       theTextArea.replaceRange(sb.toString(),startOffset,endOffset);
       theTextArea.setCaretPosition(startOffset);
       theTextArea.moveCaretPosition(startOffset+sb.length()-1); 
-     }
-
-   /*########################*/
-   /* ActionListener Methods */
-   /*########################*/
-
-   /*******************/
-   /* actionPerformed */
-   /*******************/  
-   public void actionPerformed(
-     ActionEvent ae) 
-     {
-      try
-        { onActionPerformed(ae); }
-      catch (Exception e)
-        { e.printStackTrace(); }
      }
   
    /*######################*/
@@ -537,5 +540,119 @@ public class TextMenu extends JMenu
    /******************/  
    public void menuDeselected(MenuEvent e)
      {
+     }
+     
+   /*#####################*/
+   /* LoadSelectionAction */
+   /*#####################*/
+   class LoadSelectionAction extends AbstractAction 
+     {
+      public LoadSelectionAction(
+        String text)
+        {
+         super(text);
+        }
+
+      @Override
+      public void actionPerformed(
+        ActionEvent e)
+        {
+         loadSelection();     
+        }
+     }
+
+   /*######################*/
+   /* BatchSelectionAction */
+   /*######################*/
+   class BatchSelectionAction extends AbstractAction 
+     {
+      public BatchSelectionAction(
+        String text)
+        {
+         super(text);
+        }
+
+      @Override
+      public void actionPerformed(
+        ActionEvent e)
+        {
+         batchSelection();     
+        }
+     }
+
+   /*##################*/
+   /* LoadBufferAction */
+   /*##################*/
+   class LoadBufferAction extends AbstractAction 
+     {
+      public LoadBufferAction(
+        String text)
+        {
+         super(text);
+        }
+
+      @Override
+      public void actionPerformed(
+        ActionEvent e)
+        {
+         loadBuffer();     
+        }
+     }
+
+   /*###############*/
+   /* BalanceAction */
+   /*###############*/
+   class BalanceAction extends AbstractAction 
+     {
+      public BalanceAction(
+        String text)
+        {
+         super(text);
+        }
+
+      @Override
+      public void actionPerformed(
+        ActionEvent e)
+        {
+         balance();     
+        }
+     }
+
+   /*###############*/
+   /* CommentAction */
+   /*###############*/
+   class CommentAction extends AbstractAction 
+     {
+      public CommentAction(
+        String text)
+        {
+         super(text);
+        }
+
+      @Override
+      public void actionPerformed(
+        ActionEvent e)
+        {
+         comment();     
+        }
+     }
+
+   /*#################*/
+   /* UncommentAction */
+   /*#################*/
+   class UncommentAction extends AbstractAction 
+     {
+      public UncommentAction(
+        String text)
+        {
+         super(text);
+        }
+
+      @Override
+      public void actionPerformed(
+        ActionEvent e)
+        {
+         uncomment();     
+        }
      }
   }
