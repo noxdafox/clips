@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/22/14          */
+   /*               CLIPS Version 6.40  06/03/16          */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -29,6 +29,12 @@
 /*            Fixes for run-time use of query functions.     */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
+/*                                                           */
+/*      6.40: Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*            Added Env prefix to GetHaltExecution and       */
+/*            SetHaltExecution functions.                    */
 /*                                                           */
 /*************************************************************/
 
@@ -177,7 +183,7 @@ globle void GetQueryFactSlot(
    if (temp.type != SYMBOL)
      {
       ExpectedTypeError1(theEnv,"get",1,"symbol");
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return;
      }
      
@@ -714,7 +720,7 @@ static QUERY_TEMPLATE *DetermineQueryTemplates(
         {
          SyntaxErrorMessage(theEnv,"fact-set query class restrictions");
          DeleteQueryTemplates(theEnv,clist);
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          return(NULL);
         }
       templateExp = templateExp->nextArg;

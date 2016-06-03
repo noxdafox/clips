@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  05/21/16            */
+   /*             CLIPS Version 6.40  06/03/16            */
    /*                                                     */
    /*               STRING FUNCTIONS MODULE               */
    /*******************************************************/
@@ -49,6 +49,12 @@
 /*                                                           */
 /*      6.40: Prior error flags are cleared before EnvEval   */
 /*            and EnvBuild are processed.                    */
+/*                                                           */
+/*            Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*            Added Env prefix to GetHaltExecution and       */
+/*            SetHaltExecution functions.                    */
 /*                                                           */
 /*************************************************************/
 
@@ -221,7 +227,7 @@ static void StrOrSymCatFunction(
 
          default:
            ExpectedTypeError1(theEnv,functionName,i,"string, instance name, symbol, float, or integer");
-           SetEvaluationError(theEnv,TRUE);
+           EnvSetEvaluationError(theEnv,TRUE);
            break;
         }
 
@@ -790,8 +796,8 @@ globle int EnvEval(
    if ((! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
        (EvaluationData(theEnv)->CurrentExpression == NULL))
      {
-      SetEvaluationError(theEnv,FALSE);
-      SetHaltExecution(theEnv,FALSE);
+      EnvSetEvaluationError(theEnv,FALSE);
+      EnvSetHaltExecution(theEnv,FALSE);
      }
 
    /*======================================================*/
@@ -840,7 +846,7 @@ globle int EnvEval(
 
    if (top == NULL)
      {
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       CloseStringSource(theEnv,logicalNameBuffer);
       SetpType(returnValue,SYMBOL);
       SetpValue(returnValue,EnvFalseSymbol(theEnv));
@@ -858,7 +864,7 @@ globle int EnvEval(
      {
       PrintErrorID(theEnv,"MISCFUN",1,FALSE);
       EnvPrintRouter(theEnv,WERROR,"expand$ must be used in the argument list of a function call.\n");
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       CloseStringSource(theEnv,logicalNameBuffer);
       SetpType(returnValue,SYMBOL);
       SetpValue(returnValue,EnvFalseSymbol(theEnv));
@@ -877,7 +883,7 @@ globle int EnvEval(
      {
       PrintErrorID(theEnv,"STRNGFUN",2,FALSE);
       EnvPrintRouter(theEnv,WERROR,"Some variables could not be accessed by the eval function.\n");
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       CloseStringSource(theEnv,logicalNameBuffer);
       SetpType(returnValue,SYMBOL);
       SetpValue(returnValue,EnvFalseSymbol(theEnv));
@@ -920,7 +926,7 @@ globle int EnvEval(
       CallPeriodicTasks(theEnv);
      }
 
-   if (GetEvaluationError(theEnv)) return(FALSE);
+   if (EnvGetEvaluationError(theEnv)) return(FALSE);
    return(TRUE);
   }
 
@@ -1019,8 +1025,8 @@ globle int EnvBuild(
    if ((! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
        (EvaluationData(theEnv)->CurrentExpression == NULL))
      {
-      SetEvaluationError(theEnv,FALSE);
-      SetHaltExecution(theEnv,FALSE);
+      EnvSetEvaluationError(theEnv,FALSE);
+      EnvSetHaltExecution(theEnv,FALSE);
      }
 
    /*====================================================*/

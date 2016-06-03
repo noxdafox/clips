@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*               CLIPS Version 6.40  06/03/16          */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -42,6 +42,12 @@
 /*            Added const qualifiers to remove C++            */
 /*            deprecation warnings.                           */
 /*                                                            */
+/*      6.40: Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*            Added Env prefix to GetHaltExecution and       */
+/*            SetHaltExecution functions.                    */
+/*                                                           */
 /**************************************************************/
 
 /* =========================================
@@ -1080,7 +1086,7 @@ static void EvaluateProcParameters(
             EnvPrintRouter(theEnv,WERROR,"Functions without a return value are illegal as ");
             EnvPrintRouter(theEnv,WERROR,bodytype);
             EnvPrintRouter(theEnv,WERROR," arguments.\n");
-            SetEvaluationError(theEnv,TRUE);
+            EnvSetEvaluationError(theEnv,TRUE);
            }
          PrintErrorID(theEnv,"PRCCODE",6,FALSE);
          EnvPrintRouter(theEnv,WERROR,"This error occurred while evaluating arguments ");
@@ -1170,7 +1176,7 @@ static intBool GetProcBind(
    if (pvar->second == 0)
      {
       PrintErrorID(theEnv,"PRCCODE",5,FALSE);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       EnvPrintRouter(theEnv,WERROR,"Variable ");
       EnvPrintRouter(theEnv,WERROR,ValueToString(GetFirstArgument()->value));
       if (ProceduralPrimitiveData(theEnv)->ProcUnboundErrFunc != NULL)
@@ -1434,7 +1440,7 @@ static intBool EvaluateBadCall(
    PrintErrorID(theEnv,"PRCCODE",1,FALSE);
    EnvPrintRouter(theEnv,WERROR,"Attempted to call a deffunction/generic function ");
    EnvPrintRouter(theEnv,WERROR,"which does not exist.\n");
-   SetEvaluationError(theEnv,TRUE);
+   EnvSetEvaluationError(theEnv,TRUE);
    SetpType(result,SYMBOL);
    SetpValue(result,EnvFalseSymbol(theEnv));
    return(FALSE);

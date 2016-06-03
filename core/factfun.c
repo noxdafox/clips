@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  01/26/15            */
+   /*             CLIPS Version 6.40  06/03/16            */
    /*                                                     */
    /*               FACT FUNCTIONS MODULE                 */
    /*******************************************************/
@@ -61,6 +61,12 @@
 /*                                                           */
 /*            Added STDOUT and STDIN logical name            */
 /*            definitions.                                   */
+/*                                                           */
+/*      6.40: Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*            Added Env prefix to GetHaltExecution and       */
+/*            SetHaltExecution functions.                    */
 /*                                                           */
 /*************************************************************/
 
@@ -254,7 +260,7 @@ globle void FactSlotValue(
      {
       if (strcmp(theSlotName,"implied") != 0)
         {
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          InvalidDeftemplateSlotMessage(theEnv,theSlotName,
                                        ValueToString(theFact->whichDeftemplate->header.name),FALSE);
          return;
@@ -263,7 +269,7 @@ globle void FactSlotValue(
 
    else if (FindSlot(theFact->whichDeftemplate,(SYMBOL_HN *) EnvAddSymbol(theEnv,theSlotName),&position) == NULL)
      {
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       InvalidDeftemplateSlotMessage(theEnv,theSlotName,
                                     ValueToString(theFact->whichDeftemplate->header.name),FALSE);
       return;
@@ -548,8 +554,8 @@ globle void PPFactFunction(
       if (logicalName == NULL)
         {
          IllegalLogicalNameMessage(theEnv,"ppfact");
-         SetHaltExecution(theEnv,TRUE);
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetHaltExecution(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          return;
         }
      }

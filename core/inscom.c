@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*              CLIPS Version 6.30  08/22/14           */
+   /*              CLIPS Version 6.40  06/03/16           */
    /*                                                     */
    /*                INSTANCE COMMAND MODULE              */
    /*******************************************************/
@@ -43,6 +43,12 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*            Converted API macros to function calls.        */
+/*                                                           */
+/*      6.40: Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*            Added Env prefix to GetHaltExecution and       */
+/*            SetHaltExecution functions.                    */
 /*                                                           */
 /*************************************************************/
 
@@ -427,7 +433,7 @@ globle void InstancesCommand(
       if ((theDefmodule != NULL) ? FALSE :
           (strcmp(DOToString(temp),"*") != 0))
         {
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          ExpectedTypeError1(theEnv,"instances",1,"defmodule name");
          return;
         }
@@ -452,7 +458,7 @@ globle void InstancesCommand(
               return;
             if (strcmp(DOToString(temp),ALL_QUALIFIER) != 0)
               {
-               SetEvaluationError(theEnv,TRUE);
+               EnvSetEvaluationError(theEnv,TRUE);
                ExpectedTypeError1(theEnv,"instances",3,"keyword \"inherit\"");
                return;
               }
@@ -527,7 +533,7 @@ globle void EnvInstances(
       theModule = (struct defmodule *) EnvGetNextDefmodule(theEnv,NULL);
       while (theModule != NULL)
         {
-         if (GetHaltExecution(theEnv) == TRUE)
+         if (EnvGetHaltExecution(theEnv) == TRUE)
            {
             RestoreCurrentModule(theEnv);
             ReleaseTraversalID(theEnv);
@@ -704,7 +710,7 @@ globle void EnvDirectGetSlot(
 
    if (((INSTANCE_TYPE *) ins)->garbage == 1)
      {
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       result->type = SYMBOL;
       result->value = EnvFalseSymbol(theEnv);
       return;
@@ -712,7 +718,7 @@ globle void EnvDirectGetSlot(
    sp = FindISlotByName(theEnv,(INSTANCE_TYPE *) ins,sname);
    if (sp == NULL)
      {
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       result->type = SYMBOL;
       result->value = EnvFalseSymbol(theEnv);
       return;
@@ -753,13 +759,13 @@ globle int EnvDirectPutSlot(
 
    if ((((INSTANCE_TYPE *) ins)->garbage == 1) || (val == NULL))
      {
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return(FALSE);
      }
    sp = FindISlotByName(theEnv,(INSTANCE_TYPE *) ins,sname);
    if (sp == NULL)
      {
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return(FALSE);
      }
 
@@ -1018,7 +1024,7 @@ globle void ClassCommand(
       if (ins->garbage == 1)
         {
          StaleInstanceAddress(theEnv,func,0);
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          return;
         }
       result->value = (void *) GetDefclassNamePointer((void *) ins->cls);
@@ -1053,7 +1059,7 @@ globle void ClassCommand(
                          EnvPrintRouter(theEnv,WERROR,"Undefined type in function ");
                          EnvPrintRouter(theEnv,WERROR,func);
                          EnvPrintRouter(theEnv,WERROR,".\n");
-                         SetEvaluationError(theEnv,TRUE);
+                         EnvSetEvaluationError(theEnv,TRUE);
         }
      }
   }
@@ -1133,14 +1139,14 @@ globle intBool UnmakeInstanceCommand(
          if (ins->garbage)
            {
             StaleInstanceAddress(theEnv,"unmake-instance",0);
-            SetEvaluationError(theEnv,TRUE);
+            EnvSetEvaluationError(theEnv,TRUE);
             return(FALSE);
            }
         }
       else
         {
          ExpectedTypeError1(theEnv,"unmake-instance",argNumber,"instance-address, instance-name, or the symbol *");
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          return(FALSE);
         }
       if (EnvUnmakeInstance(theEnv,ins) == FALSE)
@@ -1221,7 +1227,7 @@ globle void InstanceAddressCommand(
       if ((theModule == NULL) ? (strcmp(DOToString(temp),"*") != 0) : FALSE)
         {
          ExpectedTypeError1(theEnv,"instance-address",1,"module name");
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          return;
         }
       if (theModule == NULL)
@@ -1257,7 +1263,7 @@ globle void InstanceAddressCommand(
          else
            {
             StaleInstanceAddress(theEnv,"instance-address",0);
-            SetEvaluationError(theEnv,TRUE);
+            EnvSetEvaluationError(theEnv,TRUE);
            }
         }
       else
@@ -1299,7 +1305,7 @@ globle void InstanceNameCommand(
       if (ins->garbage == 1)
         {
          StaleInstanceAddress(theEnv,"instance-name",0);
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          return;
         }
      }
@@ -1391,7 +1397,7 @@ globle intBool InstanceExistPCommand(
      return((FindInstanceBySymbol(theEnv,(SYMBOL_HN *) temp.value) != NULL) ?
              TRUE : FALSE);
    ExpectedTypeError1(theEnv,"instance-existp",1,"instance name, instance address or symbol");
-   SetEvaluationError(theEnv,TRUE);
+   EnvSetEvaluationError(theEnv,TRUE);
    return(FALSE);
   }
 
@@ -1462,7 +1468,7 @@ static long ListInstancesInModule(
          theInstance = GetNextInstanceInScope(theEnv,NULL);
          while (theInstance != NULL)
            {
-            if (GetHaltExecution(theEnv) == TRUE)
+            if (EnvGetHaltExecution(theEnv) == TRUE)
               { return(count); }
 
             count++;

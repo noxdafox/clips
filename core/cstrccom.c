@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.31  05/16/15            */
+   /*             CLIPS Version 6.40  06/03/16            */
    /*                                                     */
    /*              CONSTRUCT COMMANDS MODULE              */
    /*******************************************************/
@@ -46,6 +46,12 @@
 /*                                                           */
 /*      6.31: Fixed use after free issue for deallocation    */
 /*            functions passed to DoForAllConstructs.        */
+/*                                                           */
+/*      6.40: Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*            Added Env prefix to GetHaltExecution and       */
+/*            SetHaltExecution functions.                    */
 /*                                                           */
 /*************************************************************/
 
@@ -1317,7 +1323,7 @@ globle long DoForAllConstructs(
          
          if (interruptable)
            {
-            if (GetHaltExecution(theEnv) == TRUE)
+            if (EnvGetHaltExecution(theEnv) == TRUE)
               {
                RestoreCurrentModule(theEnv);
                return(-1L);
@@ -1393,7 +1399,7 @@ globle void DoForAllConstructsInModule(
      {
       if (interruptable)
         {
-         if (GetHaltExecution(theEnv) == TRUE)
+         if (EnvGetHaltExecution(theEnv) == TRUE)
            {
             RestoreCurrentModule(theEnv);
             return;

@@ -265,7 +265,7 @@ globle int DefineFunction3(
      { newFunction->restrictions = NULL; }
    else
      {
-      newFunction->restrictions = EnvAddSymbol(theEnv,restrictions);
+      newFunction->restrictions = (SYMBOL_HN *) EnvAddSymbol(theEnv,restrictions);
       IncrementSymbolCount(newFunction->restrictions);
      }
 

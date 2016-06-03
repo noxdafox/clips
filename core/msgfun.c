@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*               CLIPS Version 6.40  06/03/16          */
    /*                                                     */
    /*                  OBJECT MESSAGE FUNCTIONS           */
    /*******************************************************/
@@ -31,6 +31,12 @@
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
+/*                                                           */
+/*      6.40: Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*            Added Env prefix to GetHaltExecution and       */
+/*            SetHaltExecution functions.                    */
 /*                                                           */
 /*************************************************************/
 
@@ -127,7 +133,7 @@ globle int CheckHandlerArgCount(
    if ((hnd->maxParams == -1) ? (ProceduralPrimitiveData(theEnv)->ProcParamArraySize < hnd->minParams) :
        (ProceduralPrimitiveData(theEnv)->ProcParamArraySize != hnd->minParams))
      {
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       PrintErrorID(theEnv,"MSGFUN",2,FALSE);
       EnvPrintRouter(theEnv,WERROR,"Message-handler ");
       EnvPrintRouter(theEnv,WERROR,ValueToString(hnd->name));
@@ -602,7 +608,7 @@ globle int CheckCurrentMessage(
       PrintErrorID(theEnv,"MSGFUN",4,FALSE);
       EnvPrintRouter(theEnv,WERROR,func);
       EnvPrintRouter(theEnv,WERROR," may only be called from within message-handlers.\n");
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return(FALSE);
      }
    activeMsgArg = GetNthMessageArgument(theEnv,0);
@@ -611,14 +617,14 @@ globle int CheckCurrentMessage(
       PrintErrorID(theEnv,"MSGFUN",5,FALSE);
       EnvPrintRouter(theEnv,WERROR,func);
       EnvPrintRouter(theEnv,WERROR," operates only on instances.\n");
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return(FALSE);
      }
    if ((activeMsgArg->type == INSTANCE_ADDRESS) ?
        (((INSTANCE_TYPE *) activeMsgArg->value)->garbage == 1) : FALSE)
      {
       StaleInstanceAddress(theEnv,func,0);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return(FALSE);
      }
    return(TRUE);

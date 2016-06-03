@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/03/16            */
    /*                                                     */
    /*              CONSTRUCT PARSER MODULE                */
    /*******************************************************/
@@ -40,6 +40,12 @@
 /*                                                           */
 /*            Fixed linkage issue when BLOAD_ONLY compiler   */
 /*            flag is set to 1.                              */
+/*                                                           */
+/*      6.40: Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*            Added Env prefix to GetHaltExecution and       */
+/*            SetHaltExecution functions.                    */
 /*                                                           */
 /*************************************************************/
 
@@ -278,8 +284,8 @@ globle int LoadConstructsFromLogicalName(
    /* error flags in preparation for parsing. */
    /*=========================================*/
 
-   if (UtilityData(theEnv)->CurrentGarbageFrame->topLevel) SetHaltExecution(theEnv,FALSE);
-   SetEvaluationError(theEnv,FALSE);
+   if (UtilityData(theEnv)->CurrentGarbageFrame->topLevel) EnvSetHaltExecution(theEnv,FALSE);
+   EnvSetEvaluationError(theEnv,FALSE);
 
    /*==========================================*/
    /* Set up the frame for garbage collection. */
@@ -301,7 +307,7 @@ globle int LoadConstructsFromLogicalName(
    /* Parse the file until the end of file is reached. */
    /*==================================================*/
 
-   while ((foundConstruct == TRUE) && (GetHaltExecution(theEnv) == FALSE))
+   while ((foundConstruct == TRUE) && (EnvGetHaltExecution(theEnv) == FALSE))
      {
       /*===========================================================*/
       /* Clear the pretty print buffer in preparation for parsing. */
@@ -719,9 +725,9 @@ globle int ParseConstruct(
    /* Prepare the parsing environment. */
    /*==================================*/
 
-   ov = GetHaltExecution(theEnv);
-   SetEvaluationError(theEnv,FALSE);
-   SetHaltExecution(theEnv,FALSE);
+   ov = EnvGetHaltExecution(theEnv);
+   EnvSetEvaluationError(theEnv,FALSE);
+   EnvSetHaltExecution(theEnv,FALSE);
    ClearParsedBindNames(theEnv);
    PushRtnBrkContexts(theEnv);
    ExpressionData(theEnv)->ReturnContext = FALSE;
@@ -743,7 +749,7 @@ globle int ParseConstruct(
 
    ClearParsedBindNames(theEnv);
    SetPPBufferStatus(theEnv,OFF);
-   SetHaltExecution(theEnv,ov);
+   EnvSetHaltExecution(theEnv,ov);
       
    /*======================================*/
    /* Remove the garbage collection frame. */

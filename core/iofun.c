@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  05/21/16            */
+   /*             CLIPS Version 6.40  06/03/16            */
    /*                                                     */
    /*                 I/O FUNCTIONS MODULE                */
    /*******************************************************/
@@ -69,6 +69,12 @@
 /*            the number of characters typed for GUI         */
 /*            interfaces that support deleting carriage      */
 /*            returns.                                       */
+/*                                                           */
+/*            Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*            Added Env prefix to GetHaltExecution and       */
+/*            SetHaltExecution functions.                    */
 /*                                                           */
 /*************************************************************/
 
@@ -199,8 +205,8 @@ globle void PrintoutFunction(
    if (dummyid == NULL)
      {
       IllegalLogicalNameMessage(theEnv,"printout");
-      SetHaltExecution(theEnv,TRUE);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetHaltExecution(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return;
      }
 
@@ -314,8 +320,8 @@ globle void ReadFunction(
       if (logicalName == NULL)
         {
          IllegalLogicalNameMessage(theEnv,"read");
-         SetHaltExecution(theEnv,TRUE);
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetHaltExecution(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          returnValue->type = STRING;
          returnValue->value = (void *) EnvAddSymbol(theEnv,"*** READ ERROR ***");
          return;
@@ -329,8 +335,8 @@ globle void ReadFunction(
    if (QueryRouters(theEnv,logicalName) == FALSE)
      {
       UnrecognizedRouterMessage(theEnv,logicalName);
-      SetHaltExecution(theEnv,TRUE);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetHaltExecution(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       returnValue->type = STRING;
       returnValue->value = (void *) EnvAddSymbol(theEnv,"*** READ ERROR ***");
       return;
@@ -419,7 +425,7 @@ static void ReadTokenFromStdin(
       inchar = EnvGetcRouter(theEnv,STDIN);
      
       while ((inchar != '\n') && (inchar != '\r') && (inchar != EOF) &&
-             (! GetHaltExecution(theEnv)))
+             (! EnvGetHaltExecution(theEnv)))
         {
          inputString = ExpandStringWithChar(theEnv,inchar,inputString,&RouterData(theEnv)->CommandBufferInputCount,
                                             &inputStringSize,inputStringSize + 80);
@@ -451,7 +457,7 @@ static void ReadTokenFromStdin(
       /* aborts the read function.                 */
       /*===========================================*/
 
-      if (GetHaltExecution(theEnv))
+      if (EnvGetHaltExecution(theEnv))
         {
          theToken->type = STRING;
          theToken->value = (void *) EnvAddSymbol(theEnv,"*** READ ERROR ***");
@@ -504,8 +510,8 @@ globle int OpenFunction(
    logicalName = GetLogicalName(theEnv,2,NULL);
    if (logicalName == NULL)
      {
-      SetHaltExecution(theEnv,TRUE);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetHaltExecution(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       IllegalLogicalNameMessage(theEnv,"open");
       return(0);
      }
@@ -517,8 +523,8 @@ globle int OpenFunction(
 
    if (FindFile(theEnv,logicalName))
      {
-      SetHaltExecution(theEnv,TRUE);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetHaltExecution(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       PrintErrorID(theEnv,"IOFUN",2,FALSE);
       EnvPrintRouter(theEnv,WERROR,"Logical name ");
       EnvPrintRouter(theEnv,WERROR,logicalName);
@@ -549,8 +555,8 @@ globle int OpenFunction(
        (strcmp(accessMode,"wb") != 0) &&
        (strcmp(accessMode,"ab") != 0))
      {
-      SetHaltExecution(theEnv,TRUE);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetHaltExecution(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       ExpectedTypeError1(theEnv,"open",3,"string with value \"r\", \"w\", \"a\", \"rb\", \"wb\", or \"ab\"");
       return(0);
      }
@@ -595,8 +601,8 @@ globle int CloseFunction(
    if (logicalName == NULL)
      {
       IllegalLogicalNameMessage(theEnv,"close");
-      SetHaltExecution(theEnv,TRUE);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetHaltExecution(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return(0);
      }
 
@@ -630,8 +636,8 @@ globle int GetCharFunction(
       if (logicalName == NULL)
         {
          IllegalLogicalNameMessage(theEnv,"get-char");
-         SetHaltExecution(theEnv,TRUE);
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetHaltExecution(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          return(-1);
         }
      }
@@ -639,8 +645,8 @@ globle int GetCharFunction(
    if (QueryRouters(theEnv,logicalName) == FALSE)
      {
       UnrecognizedRouterMessage(theEnv,logicalName);
-      SetHaltExecution(theEnv,TRUE);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetHaltExecution(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return(-1);
      }
 
@@ -675,8 +681,8 @@ globle void PutCharFunction(
       if (logicalName == NULL)
         {
          IllegalLogicalNameMessage(theEnv,"put-char");
-         SetHaltExecution(theEnv,TRUE);
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetHaltExecution(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          return;
         }
      }
@@ -684,8 +690,8 @@ globle void PutCharFunction(
    if (QueryRouters(theEnv,logicalName) == FALSE)
      {
       UnrecognizedRouterMessage(theEnv,logicalName);
-      SetHaltExecution(theEnv,TRUE);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetHaltExecution(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return;
      }
 
@@ -813,8 +819,8 @@ globle void *FormatFunction(
    if ((logicalName = GetLogicalName(theEnv,1,STDOUT)) == NULL)
      {
       IllegalLogicalNameMessage(theEnv,"format");
-      SetHaltExecution(theEnv,TRUE);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetHaltExecution(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return(hptr);
      }
 
@@ -916,7 +922,7 @@ static const char *ControlStringCheck(
             EnvPrintRouter(theEnv,WERROR,"Invalid format flag \"");
             EnvPrintRouter(theEnv,WERROR,print_buff);
             EnvPrintRouter(theEnv,WERROR,"\" specified in format function.\n");
-            SetEvaluationError(theEnv,TRUE);
+            EnvSetEvaluationError(theEnv,TRUE);
             return (NULL);
            }
          else if (formatFlag != ' ')
@@ -929,7 +935,7 @@ static const char *ControlStringCheck(
    if (per_count != (argCount - 2))
      {
       ExpectedCountError(theEnv,"format",EXACTLY,per_count+2);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return (NULL);
      }
 
@@ -1183,8 +1189,8 @@ globle void ReadlineFunction(
       if (logicalName == NULL)
         {
          IllegalLogicalNameMessage(theEnv,"readline");
-         SetHaltExecution(theEnv,TRUE);
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetHaltExecution(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          returnValue->value = (void *) EnvAddSymbol(theEnv,"*** READ ERROR ***");
          return;
         }
@@ -1193,8 +1199,8 @@ globle void ReadlineFunction(
    if (QueryRouters(theEnv,logicalName) == FALSE)
      {
       UnrecognizedRouterMessage(theEnv,logicalName);
-      SetHaltExecution(theEnv,TRUE);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetHaltExecution(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       returnValue->value = (void *) EnvAddSymbol(theEnv,"*** READ ERROR ***");
       return;
      }
@@ -1205,7 +1211,7 @@ globle void ReadlineFunction(
    RouterData(theEnv)->CommandBufferInputCount = 0;
    RouterData(theEnv)->AwaitingInput = FALSE;
 
-   if (GetHaltExecution(theEnv))
+   if (EnvGetHaltExecution(theEnv))
      {
       returnValue->value = (void *) EnvAddSymbol(theEnv,"*** READ ERROR ***");
       if (buffer != NULL) rm(theEnv,buffer,(int) sizeof (char) * line_max);
@@ -1252,7 +1258,7 @@ static char *FillBuffer(
    /*==================================*/
 
    while ((c != '\n') && (c != '\r') && (c != EOF) &&
-          (! GetHaltExecution(theEnv)))
+          (! EnvGetHaltExecution(theEnv)))
      {
       buf = ExpandStringWithChar(theEnv,c,buf,currentPosition,maximumSize,*maximumSize+80);
       c = EnvGetcRouter(theEnv,logicalName);
@@ -1362,8 +1368,8 @@ globle void ReadNumberFunction(
       if (logicalName == NULL)
         {
          IllegalLogicalNameMessage(theEnv,"read");
-         SetHaltExecution(theEnv,TRUE);
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetHaltExecution(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          returnValue->type = STRING;
          returnValue->value = (void *) EnvAddSymbol(theEnv,"*** READ ERROR ***");
          return;
@@ -1377,8 +1383,8 @@ globle void ReadNumberFunction(
    if (QueryRouters(theEnv,logicalName) == FALSE)
      {
       UnrecognizedRouterMessage(theEnv,logicalName);
-      SetHaltExecution(theEnv,TRUE);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetHaltExecution(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       returnValue->type = STRING;
       returnValue->value = (void *) EnvAddSymbol(theEnv,"*** READ ERROR ***");
       return;
@@ -1463,7 +1469,7 @@ static void ReadNumber(
    /*====================================*/
       
    while (isspace(inchar) && (inchar != EOF) && 
-          (! GetHaltExecution(theEnv)))
+          (! EnvGetHaltExecution(theEnv)))
      { inchar = EnvGetcRouter(theEnv,logicalName); }
 
    /*=============================================================*/
@@ -1474,7 +1480,7 @@ static void ReadNumber(
    while ((((! isStdin) && (! isspace(inchar))) || 
           (isStdin && (inchar != '\n') && (inchar != '\r'))) &&
           (inchar != EOF) &&
-          (! GetHaltExecution(theEnv)))
+          (! EnvGetHaltExecution(theEnv)))
      {
       inputString = ExpandStringWithChar(theEnv,inchar,inputString,&RouterData(theEnv)->CommandBufferInputCount,
                                          &inputStringSize,inputStringSize + 80);
@@ -1486,7 +1492,7 @@ static void ReadNumber(
    /* aborts the read-number function.          */
    /*===========================================*/
 
-   if (GetHaltExecution(theEnv))
+   if (EnvGetHaltExecution(theEnv))
      {
       theToken->type = STRING;
       theToken->value = (void *) EnvAddSymbol(theEnv,"*** READ ERROR ***");

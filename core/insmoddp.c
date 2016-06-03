@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*              CLIPS Version 6.30  08/16/14           */
+   /*              CLIPS Version 6.40  06/03/16           */
    /*                                                     */
    /*           INSTANCE MODIFY AND DUPLICATE MODULE      */
    /*******************************************************/
@@ -32,6 +32,12 @@
 /*                                                           */
 /*            The return value of DirectMessage indicates    */
 /*            whether an execution error has occurred.       */
+/*                                                           */
+/*      6.40: Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*            Added Env prefix to GetHaltExecution and       */
+/*            SetHaltExecution functions.                    */
 /*                                                           */
 /*************************************************************/
 
@@ -676,7 +682,7 @@ static DATA_OBJECT *EvaluateSlotOverrides(
         {
          ExpectedTypeError1(theEnv,ValueToString(ExpressionFunctionCallName(EvaluationData(theEnv)->CurrentExpression)),
                             ovi+1,"slot name");
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          goto EvaluateOverridesError;
         }
       slotName = ovs[ovi].value;
@@ -755,7 +761,7 @@ static void ModifyMsgHandlerSupport(
      {
       PrintErrorID(theEnv,"INSMODDP",1,FALSE);
       EnvPrintRouter(theEnv,WERROR,"Direct/message-modify message valid only in modify-instance.\n");
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return;
      }
    InstanceData(theEnv)->ObjectModDupMsgValid = FALSE;
@@ -764,7 +770,7 @@ static void ModifyMsgHandlerSupport(
    if (ins->garbage)
      {
       StaleInstanceAddress(theEnv,"modify-instance",0);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return;
      }
 
@@ -786,7 +792,7 @@ static void ModifyMsgHandlerSupport(
       if (insSlot == NULL)
         {
          SlotExistError(theEnv,ValueToString(slotOverrides->supplementalInfo),"modify-instance");
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          return;
         }
       if (msgpass)
@@ -859,7 +865,7 @@ static void DuplicateMsgHandlerSupport(
      {
       PrintErrorID(theEnv,"INSMODDP",2,FALSE);
       EnvPrintRouter(theEnv,WERROR,"Direct/message-duplicate message valid only in duplicate-instance.\n");
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return;
      }
    InstanceData(theEnv)->ObjectModDupMsgValid = FALSE;
@@ -875,14 +881,14 @@ static void DuplicateMsgHandlerSupport(
    if (srcins->garbage)
      {
       StaleInstanceAddress(theEnv,"duplicate-instance",0);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return;
      }
    if (newName == srcins->name)
      {
       PrintErrorID(theEnv,"INSMODDP",3,FALSE);
       EnvPrintRouter(theEnv,WERROR,"Instance copy must have a different name in duplicate-instance.\n");
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return;
      }
 
@@ -1003,7 +1009,7 @@ static void DuplicateMsgHandlerSupport(
      {
       result->type = SYMBOL;
       result->value = EnvFalseSymbol(theEnv);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
      }
    else
      {
@@ -1015,7 +1021,7 @@ static void DuplicateMsgHandlerSupport(
 DuplicateError:
    dstins->busy--;
    QuashInstance(theEnv,dstins);
-   SetEvaluationError(theEnv,TRUE);
+   EnvSetEvaluationError(theEnv,TRUE);
   }
 
 #endif

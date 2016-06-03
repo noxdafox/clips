@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  05/21/16            */
+   /*             CLIPS Version 6.40  06/03/16            */
    /*                                                     */
    /*            MISCELLANEOUS FUNCTIONS MODULE           */
    /*******************************************************/
@@ -67,6 +67,12 @@
 /*            symbolHashNode * to support strings            */
 /*            originating from sources that are not          */
 /*            statically allocated.                          */
+/*                                                           */
+/*            Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*            Added Env prefix to GetHaltExecution and       */
+/*            SetHaltExecution functions.                    */
 /*                                                           */
 /*************************************************************/
 
@@ -398,7 +404,7 @@ globle long long LengthFunction(
    /* multifield value, then generate an error.   */
    /*=============================================*/
 
-   SetEvaluationError(theEnv,TRUE);
+   EnvSetEvaluationError(theEnv,TRUE);
    ExpectedTypeError2(theEnv,"length$",1);
    return(-1L);
   }
@@ -907,7 +913,7 @@ globle void ExpandFuncCall(
          result->type = SYMBOL;
          result->value = EnvFalseSymbol(theEnv);
          ReturnExpression(theEnv,fcallexp);
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          return;
         }
      }
@@ -936,7 +942,7 @@ globle void DummyExpandFuncMultifield(
   {
    result->type = SYMBOL;
    result->value = EnvFalseSymbol(theEnv);
-   SetEvaluationError(theEnv,TRUE);
+   EnvSetEvaluationError(theEnv,TRUE);
    PrintErrorID(theEnv,"MISCFUN",1,FALSE);
    EnvPrintRouter(theEnv,WERROR,"expand$ must be used in the argument list of a function call.\n");
   }
@@ -1037,7 +1043,7 @@ static void ExpandFuncMultifield(
 globle void *CauseEvaluationError(
   void *theEnv)
   {
-   SetEvaluationError(theEnv,TRUE);
+   EnvSetEvaluationError(theEnv,TRUE);
    return((SYMBOL_HN *) EnvFalseSymbol(theEnv));
   }
 
@@ -1086,7 +1092,7 @@ globle void *GetFunctionRestrictions(
    if (fptr == NULL)
      {
       CantFindItemErrorMessage(theEnv,"function",DOToString(temp));
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return((SYMBOL_HN *) EnvAddSymbol(theEnv,""));
      }
    if (fptr->restrictions == NULL)
@@ -1204,7 +1210,7 @@ globle void FuncallFunction(
    for (i = 2; i <= argCount; i++)
      {
       EnvRtnUnknown(theEnv,i,&theValue);
-      if (GetEvaluationError(theEnv))
+      if (EnvGetEvaluationError(theEnv))
         {  
          ExpressionDeinstall(theEnv,&theReference);
          return; 
@@ -1479,7 +1485,7 @@ globle double TimerFunction(
    numa = EnvRtnArgCount(theEnv);
 
    i = 1;
-   while ((i <= numa) && (GetHaltExecution(theEnv) != TRUE))
+   while ((i <= numa) && (EnvGetHaltExecution(theEnv) != TRUE))
      {
       EnvRtnUnknown(theEnv,i,&returnValue);
       i++;

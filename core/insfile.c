@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*              CLIPS Version 6.30  02/04/15           */
+   /*              CLIPS Version 6.40  06/03/16           */
    /*                                                     */
    /*         INSTANCE LOAD/SAVE (ASCII/BINARY) MODULE    */
    /*******************************************************/
@@ -38,6 +38,12 @@
 /*            bload-instances, the class name does not       */
 /*            have to be in scope if the module name is      */
 /*            specified.                                     */
+/*                                                           */
+/*      6.40: Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*            Added Env prefix to GetHaltExecution and       */
+/*            SetHaltExecution functions.                    */
 /*                                                           */
 /*************************************************************/
 
@@ -380,13 +386,13 @@ globle long EnvBinaryLoadInstances(
 
    if (GenOpenReadBinary(theEnv,"bload-instances",theFile) == 0)
      {
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return(-1L);
      }
    if (VerifyBinaryHeader(theEnv,theFile) == FALSE)
      {
       GenCloseBinary(theEnv);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return(-1L);
      }
    
@@ -405,7 +411,7 @@ globle long EnvBinaryLoadInstances(
          FreeReadBuffer(theEnv);
          FreeAtomicValueStorage(theEnv);
          GenCloseBinary(theEnv);
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          EnvDecrementGCLocks(theEnv);
          return(i);
         }
@@ -489,7 +495,7 @@ globle long EnvSaveInstancesDriver(
      {
       OpenErrorMessage(theEnv,"save-instances",file);
       ReturnSaveClassList(theEnv,classList);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return(0L);
      }
 
@@ -594,7 +600,7 @@ globle long EnvBinarySaveInstancesDriver(
      {
       OpenErrorMessage(theEnv,"bsave-instances",file);
       ReturnSaveClassList(theEnv,classList);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return(0L);
      }
    WriteBinaryHeader(theEnv,bsaveFP);
@@ -652,7 +658,7 @@ static long InstancesSaveCommandParser(
       if (EnvArgTypeCheck(theEnv,functionName,2,SYMBOL,&temp) == FALSE)
         {
          ExpectedTypeError1(theEnv,functionName,2,"symbol \"local\" or \"visible\"");
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          return(0L);
         }
       if (strcmp(DOToString(temp),"local") == 0)
@@ -662,7 +668,7 @@ static long InstancesSaveCommandParser(
       else
         {
          ExpectedTypeError1(theEnv,functionName,2,"symbol \"local\" or \"visible\"");
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          return(0L);
         }
       classList = GetFirstArgument()->nextArg->nextArg;
@@ -767,7 +773,7 @@ ProcessClassListError:
    else
      ExpectedTypeError1(theEnv,functionName,argIndex,"valid concrete class name");
    ReturnSaveClassList(theEnv,head);
-   SetEvaluationError(theEnv,TRUE);
+   EnvSetEvaluationError(theEnv,TRUE);
    return(NULL);
   }
 
@@ -1253,7 +1259,7 @@ static long LoadOrRestoreInstances(
    if (isFileName) {
      if ((sfile = GenOpen(theEnv,file,"r")) == NULL)
        {
-        SetEvaluationError(theEnv,TRUE);
+        EnvSetEvaluationError(theEnv,TRUE);
         return(-1L);
        }
      svload = GetFastLoad(theEnv);
@@ -1276,7 +1282,7 @@ static long LoadOrRestoreInstances(
            GenClose(theEnv,sfile);
            SetFastLoad(theEnv,svload);
          }
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          InstanceData(theEnv)->MkInsMsgPass = svoverride;
          return(instanceCount);
         }
@@ -1287,7 +1293,7 @@ static long LoadOrRestoreInstances(
            SetFastLoad(theEnv,svload);
          }
          InstanceData(theEnv)->MkInsMsgPass = svoverride;
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          return(instanceCount);
         }
       ExpressionInstall(theEnv,top);

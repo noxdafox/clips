@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  05/21/16            */
+   /*             CLIPS Version 6.40  06/03/16            */
    /*                                                     */
    /*                  I/O ROUTER MODULE                  */
    /*******************************************************/
@@ -38,6 +38,12 @@
 /*      6.40: Added EnvInputBufferCount function.            */
 /*                                                           */
 /*            Added check for reuse of existing router name. */
+/*                                                           */
+/*            Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*            Added Env prefix to GetHaltExecution and       */
+/*            SetHaltExecution functions.                    */
 /*                                                           */
 /*************************************************************/
 
@@ -346,7 +352,7 @@ globle void ExitCommand(
    else
     {
      status = (int) EnvRtnLong(theEnv,1);
-     if (GetEvaluationError(theEnv)) return;
+     if (EnvGetEvaluationError(theEnv)) return;
      EnvExitRouter(theEnv,status);
     }
 

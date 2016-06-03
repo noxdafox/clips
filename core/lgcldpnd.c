@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/03/16            */
    /*                                                     */
    /*             LOGICAL DEPENDENCIES MODULE             */
    /*******************************************************/
@@ -25,6 +25,12 @@
 /*            DR0867                                         */
 /*                                                           */
 /*      6.30: Added support for hashed memories.             */
+/*                                                           */
+/*      6.40: Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*            Added Env prefix to GetHaltExecution and       */
+/*            SetHaltExecution functions.                    */
 /*                                                           */
 /*************************************************************/
 
@@ -515,7 +521,7 @@ globle void Dependencies(
         fdPtr != NULL;
         fdPtr = fdPtr->next)
      {
-      if (GetHaltExecution(theEnv) == TRUE) return;
+      if (EnvGetHaltExecution(theEnv) == TRUE) return;
       PrintPartialMatch(theEnv,WDISPLAY,(struct partialMatch *) fdPtr->dPtr);
       EnvPrintRouter(theEnv,WDISPLAY,"\n");
      }
@@ -542,7 +548,7 @@ globle void Dependents(
         entityPtr != NULL;
         GetNextPatternEntity(theEnv,&theParser,&entityPtr))
      {
-      if (GetHaltExecution(theEnv) == TRUE) return;
+      if (EnvGetHaltExecution(theEnv) == TRUE) return;
 
       /*====================================*/
       /* Loop through every dependency link */
@@ -553,7 +559,7 @@ globle void Dependents(
            fdPtr != NULL;
            fdPtr = fdPtr->next)
         {
-         if (GetHaltExecution(theEnv) == TRUE) return;
+         if (EnvGetHaltExecution(theEnv) == TRUE) return;
 
          /*=====================================================*/
          /* If the data entity which was the argument passed to */

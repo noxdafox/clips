@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/03/16            */
    /*                                                     */
    /*             MULTIFIELD FUNCTIONS MODULE             */
    /*******************************************************/
@@ -46,6 +46,12 @@
 /*                                                           */
 /*            Fixed linkage issue when DEFMODULE_CONSTRUCT   */
 /*            compiler flag is set to 0.                     */
+/*                                                           */
+/*      6.40: Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*            Added Env prefix to GetHaltExecution and       */
+/*            SetHaltExecution functions.                    */
 /*                                                           */
 /*************************************************************/
 
@@ -182,7 +188,7 @@ globle void DeleteFunction(
        (EnvArgTypeCheck(theEnv,"delete$",2,INTEGER,&value2) == FALSE) ||
        (EnvArgTypeCheck(theEnv,"delete$",3,INTEGER,&value3) == FALSE))
      {
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       EnvSetMultifieldErrorValue(theEnv,returnValue);
       return;
      }
@@ -194,7 +200,7 @@ globle void DeleteFunction(
    if (DeleteMultiValueField(theEnv,returnValue,&value1,
             (long) DOToLong(value2),(long) DOToLong(value3),"delete$") == FALSE)/* TBD */
      {
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       EnvSetMultifieldErrorValue(theEnv,returnValue);
      }
   }
@@ -216,7 +222,7 @@ globle void MVDeleteFunction(
    if ((EnvArgTypeCheck(theEnv,"mv-delete",1,INTEGER,&value1) == FALSE) ||
        (EnvArgTypeCheck(theEnv,"mv-delete",2,MULTIFIELD,&value2) == FALSE))
      {
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       EnvSetMultifieldErrorValue(theEnv,returnValue);
       return;
      }
@@ -228,7 +234,7 @@ globle void MVDeleteFunction(
    if (DeleteMultiValueField(theEnv,returnValue,&value2,
             (long) DOToLong(value1),(long) DOToLong(value1),"mv-delete") == FALSE) /* TBD */
      {
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       EnvSetMultifieldErrorValue(theEnv,returnValue);
      }
   }
@@ -252,7 +258,7 @@ globle void ReplaceFunction(
        (EnvArgTypeCheck(theEnv,"replace$",2,INTEGER,&value2) == FALSE) ||
        (EnvArgTypeCheck(theEnv,"replace$",3,INTEGER,&value3) == FALSE))
      {
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       EnvSetMultifieldErrorValue(theEnv,returnValue);
       return;
      }
@@ -274,7 +280,7 @@ globle void ReplaceFunction(
    if (ReplaceMultiValueField(theEnv,returnValue,&value1,(long) DOToLong(value2),
                    (long) DOToLong(value3),&value4,"replace$") == FALSE) /* TBD */
      {
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       EnvSetMultifieldErrorValue(theEnv,returnValue);
      }
   }
@@ -296,7 +302,7 @@ globle void MVReplaceFunction(
    if ((EnvArgTypeCheck(theEnv,"mv-replace",1,INTEGER,&value1) == FALSE) ||
        (EnvArgTypeCheck(theEnv,"mv-replace",2,MULTIFIELD,&value2) == FALSE))
      {
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       EnvSetMultifieldErrorValue(theEnv,returnValue);
       return;
      }
@@ -314,7 +320,7 @@ globle void MVReplaceFunction(
    if (ReplaceMultiValueField(theEnv,returnValue,&value2,(long) DOToLong(value1),
                    (long) DOToLong(value1),&value3,"mv-replace") == FALSE) /* TBD */
      {
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       EnvSetMultifieldErrorValue(theEnv,returnValue);
      }
   }
@@ -339,7 +345,7 @@ globle void DeleteMemberFunction(
    argCnt = EnvArgCountCheck(theEnv,"delete-member$",AT_LEAST,2);
    if (argCnt == -1)
      {
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       EnvSetMultifieldErrorValue(theEnv,returnValue);
       return;
      }
@@ -349,7 +355,7 @@ globle void DeleteMemberFunction(
    /*=======================================*/
    if (EnvArgTypeCheck(theEnv,"delete-member$",1,MULTIFIELD,&resultValue) == FALSE)
      {
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       EnvSetMultifieldErrorValue(theEnv,returnValue);
       return;
      }
@@ -365,7 +371,7 @@ globle void DeleteMemberFunction(
       if (!EnvRtnUnknown(theEnv,i,&delVals[i-2]))
         {
          rm(theEnv,(void *) delVals,delSize);
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          EnvSetMultifieldErrorValue(theEnv,returnValue);
          return;
         }
@@ -377,7 +383,7 @@ globle void DeleteMemberFunction(
                                 j,k,"delete-member$") == FALSE)
         {
          rm(theEnv,(void *) delVals,delSize);
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          EnvSetMultifieldErrorValue(theEnv,returnValue);
          return;
         }
@@ -407,7 +413,7 @@ globle void ReplaceMemberFunction(
    argCnt = EnvArgCountCheck(theEnv,"replace-member$",AT_LEAST,3);
    if (argCnt == -1)
      {
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       EnvSetMultifieldErrorValue(theEnv,returnValue);
       return;
      }
@@ -417,14 +423,14 @@ globle void ReplaceMemberFunction(
    /*=======================================*/
    if (EnvArgTypeCheck(theEnv,"replace-member$",1,MULTIFIELD,&resultValue) == FALSE)
      {
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       EnvSetMultifieldErrorValue(theEnv,returnValue);
       return;
      }
 
    if (!EnvRtnUnknown(theEnv,2,&replVal))
      {
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       EnvSetMultifieldErrorValue(theEnv,returnValue);
       return;
      }
@@ -443,7 +449,7 @@ globle void ReplaceMemberFunction(
       if (!EnvRtnUnknown(theEnv,i,&delVals[i-3]))
         {
          rm(theEnv,(void *) delVals,delSize);
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          EnvSetMultifieldErrorValue(theEnv,returnValue);
          return;
         }
@@ -455,7 +461,7 @@ globle void ReplaceMemberFunction(
                                  &replVal,"replace-member$") == FALSE)
         {
          rm(theEnv,(void *) delVals,delSize);
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          EnvSetMultifieldErrorValue(theEnv,returnValue);
          return;
         }
@@ -486,7 +492,7 @@ globle void InsertFunction(
    if ((EnvArgTypeCheck(theEnv,"insert$",1,MULTIFIELD,&value1) == FALSE) ||
        (EnvArgTypeCheck(theEnv,"insert$",2,INTEGER,&value2) == FALSE))
      {
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       EnvSetMultifieldErrorValue(theEnv,returnValue);
       return;
      }
@@ -508,7 +514,7 @@ globle void InsertFunction(
    if (InsertMultiValueField(theEnv,returnValue,&value1,(long) DOToLong(value2), /* TBD */
                              &value3,"insert$") == FALSE)
      {
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       EnvSetMultifieldErrorValue(theEnv,returnValue);
      }
   }
@@ -531,8 +537,8 @@ globle void ExplodeFunction(
 
    if (EnvArgCountCheck(theEnv,"explode$",EXACTLY,1) == -1)
      {
-      SetHaltExecution(theEnv,TRUE);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetHaltExecution(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       EnvSetMultifieldErrorValue(theEnv,returnValue);
       return;
      }
@@ -543,8 +549,8 @@ globle void ExplodeFunction(
 
    if (EnvArgTypeCheck(theEnv,"explode$",1,STRING,&value) == FALSE)
      {
-      SetHaltExecution(theEnv,TRUE);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetHaltExecution(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       EnvSetMultifieldErrorValue(theEnv,returnValue);
       return;
      }

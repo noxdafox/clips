@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/03/16            */
    /*                                                     */
    /*            DEFTEMPLATE UTILITIES MODULE             */
    /*******************************************************/
@@ -34,6 +34,12 @@
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
+/*                                                           */
+/*      6.40: Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*            Added Env prefix to GetHaltExecution and       */
+/*            SetHaltExecution functions.                    */
 /*                                                           */
 /*************************************************************/
 
@@ -119,7 +125,7 @@ globle void MultiIntoSingleFieldSlotError(
    else EnvPrintRouter(theEnv,WERROR,"<<unknown>>");
    EnvPrintRouter(theEnv,WERROR,".\n");
 
-   SetEvaluationError(theEnv,TRUE);
+   EnvSetEvaluationError(theEnv,TRUE);
   }
 
 /**************************************************************/
@@ -197,7 +203,7 @@ globle void CheckTemplateFact(
          EnvPrintRouter(theEnv,WERROR," ");
          ConstraintViolationErrorMessage(theEnv,NULL,thePlace,FALSE,0,slotPtr->slotName,
                                          0,rv,slotPtr->constraints,TRUE);
-         SetHaltExecution(theEnv,TRUE);
+         EnvSetHaltExecution(theEnv,TRUE);
          return;
         }
      }

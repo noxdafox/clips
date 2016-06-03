@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/03/16            */
    /*                                                     */
    /*        CLASS INFO PROGRAMMATIC ACCESS MODULE        */
    /*******************************************************/
@@ -39,6 +39,12 @@
 /*                                                            */
 /*            Converted API macros to function calls.         */
 /*                                                            */
+/*      6.40: Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*            Added Env prefix to GetHaltExecution and       */
+/*            SetHaltExecution functions.                    */
+/*                                                           */
 /**************************************************************/
 
 /* =========================================
@@ -166,7 +172,7 @@ globle void *ClassInfoFnxArgs(
    if (EnvRtnArgCount(theEnv) == 0)
      {
       ExpectedCountError(theEnv,fnx,AT_LEAST,1);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return(NULL);
      }
    if (EnvArgTypeCheck(theEnv,fnx,1,SYMBOL,&tmp) == FALSE)
@@ -186,7 +192,7 @@ globle void *ClassInfoFnxArgs(
       else
         {
          SyntaxErrorMessage(theEnv,fnx);
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          return(NULL);
         }
      }
@@ -1136,7 +1142,7 @@ static SLOT_DESC *SlotInfoSlot(
 
    if ((ssym = FindSymbolHN(theEnv,sname)) == NULL)
      {
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       EnvSetMultifieldErrorValue(theEnv,result);
       return(NULL);
      }
@@ -1144,7 +1150,7 @@ static SLOT_DESC *SlotInfoSlot(
    if (i == -1)
      {
       SlotExistError(theEnv,sname,fnxname);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       EnvSetMultifieldErrorValue(theEnv,result);
       return(NULL);
      }

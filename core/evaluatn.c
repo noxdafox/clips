@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  02/04/15            */
+   /*             CLIPS Version 6.40  06/03/16            */
    /*                                                     */
    /*                  EVALUATION MODULE                  */
    /*******************************************************/
@@ -41,6 +41,12 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*            Converted API macros to function calls.        */
+/*                                                           */
+/*      6.40: Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*            Added Env prefix to GetHaltExecution and       */
+/*            SetHaltExecution functions.                    */
 /*                                                           */
 /*************************************************************/
 
@@ -426,7 +432,7 @@ globle int EvaluateExpression(
            EnvPrintRouter(theEnv,WERROR," is unbound\n");
            returnValue->type = SYMBOL;
            returnValue->value = EnvFalseSymbol(theEnv);
-           SetEvaluationError(theEnv,TRUE);
+           EnvSetEvaluationError(theEnv,TRUE);
           }
         break;
 
@@ -515,10 +521,10 @@ globle int InstallExternalAddressType(
    return rv;
   }
 
-/******************************************************/
-/* SetEvaluationError: Sets the EvaluationError flag. */
-/******************************************************/
-globle void SetEvaluationError(
+/*********************************************************/
+/* EnvSetEvaluationError: Sets the EvaluationError flag. */
+/*********************************************************/
+globle void EnvSetEvaluationError(
   void *theEnv,
   int value)
   {
@@ -527,29 +533,29 @@ globle void SetEvaluationError(
      { EvaluationData(theEnv)->HaltExecution = TRUE; }
   }
 
-/*********************************************************/
-/* GetEvaluationError: Returns the EvaluationError flag. */
-/*********************************************************/
-globle int GetEvaluationError(
+/************************************************************/
+/* EnvGetEvaluationError: Returns the EvaluationError flag. */
+/************************************************************/
+globle int EnvGetEvaluationError(
   void *theEnv)
   {
    return(EvaluationData(theEnv)->EvaluationError);
   }
 
-/**************************************************/
-/* SetHaltExecution: Sets the HaltExecution flag. */
-/**************************************************/
-globle void SetHaltExecution(
+/*****************************************************/
+/* EnvSetHaltExecution: Sets the HaltExecution flag. */
+/*****************************************************/
+globle void EnvSetHaltExecution(
   void *theEnv,
   int value)
   { 
    EvaluationData(theEnv)->HaltExecution = value; 
   }
 
-/*****************************************************/
-/* GetHaltExecution: Returns the HaltExecution flag. */
-/*****************************************************/
-globle int GetHaltExecution(
+/********************************************************/
+/* EnvGetHaltExecution: Returns the HaltExecution flag. */
+/********************************************************/
+globle int EnvGetHaltExecution(
   void *theEnv)
   {
    return(EvaluationData(theEnv)->HaltExecution);
@@ -626,8 +632,8 @@ globle void PrintDataObject(
         EnvPrintRouter(theEnv,fileid,"<UnknownPrintType");
         PrintLongInteger(theEnv,fileid,(long int) argPtr->type);
         EnvPrintRouter(theEnv,fileid,">");
-        SetHaltExecution(theEnv,TRUE);
-        SetEvaluationError(theEnv,TRUE);
+        EnvSetHaltExecution(theEnv,TRUE);
+        EnvSetEvaluationError(theEnv,TRUE);
         break;
      }
   }
@@ -834,7 +840,7 @@ globle int FunctionCall2(
    /* Reset the error state. */
    /*========================*/
 
-   if (UtilityData(theEnv)->CurrentGarbageFrame->topLevel) SetHaltExecution(theEnv,FALSE);
+   if (UtilityData(theEnv)->CurrentGarbageFrame->topLevel) EnvSetHaltExecution(theEnv,FALSE);
    EvaluationData(theEnv)->EvaluationError = FALSE;
 
    /*======================================*/
@@ -1223,7 +1229,7 @@ static void NewCAddress(
      {
       PrintErrorID(theEnv,"NEW",1,FALSE);
       EnvPrintRouter(theEnv,WERROR,"Function new expected no additional arguments for the C external language type.\n");
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return;
      }
 

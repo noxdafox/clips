@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*               CLIPS Version 6.40  06/03/16          */
    /*                                                     */
    /*          OBJECT PATTERN MATCHER MODULE              */
    /*******************************************************/
@@ -40,6 +40,12 @@
 /*                                                           */
 /*            Added support for hashed comparisons to        */
 /*            constants.                                     */
+/*                                                           */
+/*      6.40: Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*            Added Env prefix to GetHaltExecution and       */
+/*            SetHaltExecution functions.                    */
 /*                                                           */
 /**************************************************************/
 /* =========================================
@@ -124,10 +130,10 @@ globle void ObjectMatchDelay(
    EvaluateExpression(theEnv,GetFirstArgument(),result);
    if (EvaluationData(theEnv)->EvaluationError)
      {
-      SetHaltExecution(theEnv,FALSE);
-      SetEvaluationError(theEnv,FALSE);
+      EnvSetHaltExecution(theEnv,FALSE);
+      EnvSetEvaluationError(theEnv,FALSE);
       SetDelayObjectPatternMatching(theEnv,ov);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
      }
    else
      SetDelayObjectPatternMatching(theEnv,ov);

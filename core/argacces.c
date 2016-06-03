@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/22/14            */
+   /*             CLIPS Version 6.40  06/03/16            */
    /*                                                     */
    /*               ARGUMENT ACCESS MODULE                */
    /*******************************************************/
@@ -31,6 +31,12 @@
 /*            Converted API macros to function calls.        */
 /*                                                           */
 /*            Support for fact-address arguments.            */
+/*                                                           */
+/*      6.40: Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*            Added Env prefix to GetHaltExecution and       */
+/*            SetHaltExecution functions.                    */
 /*                                                           */
 /*************************************************************/
 
@@ -92,8 +98,8 @@ globle const char *EnvRtnLexeme(
       NonexistantError(theEnv,"RtnLexeme",
                        ValueToString(ExpressionFunctionCallName(EvaluationData(theEnv)->CurrentExpression)),
                        argumentPosition);
-      SetHaltExecution(theEnv,TRUE);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetHaltExecution(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return(NULL);
      }
 
@@ -118,8 +124,8 @@ globle const char *EnvRtnLexeme(
    ExpectedTypeError3(theEnv,"RtnLexeme",
                   ValueToString(ExpressionFunctionCallName(EvaluationData(theEnv)->CurrentExpression)),
                   argumentPosition,"symbol, string, or instance name");
-   SetHaltExecution(theEnv,TRUE);
-   SetEvaluationError(theEnv,TRUE);
+   EnvSetHaltExecution(theEnv,TRUE);
+   EnvSetEvaluationError(theEnv,TRUE);
    return(NULL);
   }
 
@@ -154,8 +160,8 @@ globle double EnvRtnDouble(
       NonexistantError(theEnv,"RtnDouble",
                        ValueToString(ExpressionFunctionCallName(EvaluationData(theEnv)->CurrentExpression)),
                        argumentPosition);
-      SetHaltExecution(theEnv,TRUE);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetHaltExecution(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return(1.0);
      }
 
@@ -178,8 +184,8 @@ globle double EnvRtnDouble(
    ExpectedTypeError3(theEnv,"RtnDouble",
                   ValueToString(ExpressionFunctionCallName(EvaluationData(theEnv)->CurrentExpression)),
                   argumentPosition,"number");
-   SetHaltExecution(theEnv,TRUE);
-   SetEvaluationError(theEnv,TRUE);
+   EnvSetHaltExecution(theEnv,TRUE);
+   EnvSetEvaluationError(theEnv,TRUE);
    return(1.0);
   }
 
@@ -214,8 +220,8 @@ globle long long EnvRtnLong(
       NonexistantError(theEnv,"RtnLong",
                        ValueToString(ExpressionFunctionCallName(EvaluationData(theEnv)->CurrentExpression)),
                        argumentPosition);
-      SetHaltExecution(theEnv,TRUE);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetHaltExecution(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return(1L);
      }
 
@@ -238,8 +244,8 @@ globle long long EnvRtnLong(
    ExpectedTypeError3(theEnv,"RtnLong",
                   ValueToString(ExpressionFunctionCallName(EvaluationData(theEnv)->CurrentExpression)),
                   argumentPosition,"number");
-   SetHaltExecution(theEnv,TRUE);
-   SetEvaluationError(theEnv,TRUE);
+   EnvSetHaltExecution(theEnv,TRUE);
+   EnvSetEvaluationError(theEnv,TRUE);
    return(1L);
   }
 
@@ -272,8 +278,8 @@ globle DATA_OBJECT_PTR EnvRtnUnknown(
       NonexistantError(theEnv,"RtnUnknown",
                        ValueToString(ExpressionFunctionCallName(EvaluationData(theEnv)->CurrentExpression)),
                        argumentPosition);
-      SetHaltExecution(theEnv,TRUE);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetHaltExecution(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return(NULL);
      }
 
@@ -347,8 +353,8 @@ globle int EnvArgCountCheck(
 
    ExpectedCountError(theEnv,functionName,countRelation,expectedNumber);
 
-   SetHaltExecution(theEnv,TRUE);
-   SetEvaluationError(theEnv,TRUE);
+   EnvSetHaltExecution(theEnv,TRUE);
+   EnvSetEvaluationError(theEnv,TRUE);
 
    return(-1);
   }
@@ -378,8 +384,8 @@ globle int EnvArgRangeCheck(
       EnvPrintRouter(theEnv,WERROR," and no more than ");
       PrintLongInteger(theEnv,WERROR,(long) max);
       EnvPrintRouter(theEnv,WERROR," arguments.\n");
-      SetHaltExecution(theEnv,TRUE);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetHaltExecution(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return(-1);
      }
 
@@ -483,8 +489,8 @@ globle int EnvArgTypeCheck(
    else if (expectedType == INSTANCE_OR_INSTANCE_NAME) ExpectedTypeError1(theEnv,functionName,argumentPosition,"instance address or instance name");
 #endif
 
-   SetHaltExecution(theEnv,TRUE);
-   SetEvaluationError(theEnv,TRUE);
+   EnvSetHaltExecution(theEnv,TRUE);
+   EnvSetEvaluationError(theEnv,TRUE);
 
    return(FALSE);
   }
@@ -536,8 +542,8 @@ globle intBool GetNumericArgument(
    if ((theType != FLOAT) && (theType != INTEGER))
      {
       ExpectedTypeError1(theEnv,functionName,whichArgument,"integer or float");
-      SetHaltExecution(theEnv,TRUE);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetHaltExecution(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       result->type = INTEGER;
       result->value = (void *) EnvAddLong(theEnv,0LL);
       return(FALSE);
@@ -846,7 +852,7 @@ globle intBool CheckFunctionArgCount(
       if (argumentCount != minArguments)
         {
          ExpectedCountError(theEnv,functionName,EXACTLY,minArguments);
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          return(FALSE);
         }
       return(TRUE);
@@ -860,7 +866,7 @@ globle intBool CheckFunctionArgCount(
    if (argumentCount < minArguments)
      {
       ExpectedCountError(theEnv,functionName,AT_LEAST,minArguments);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return(FALSE);
      }
 
@@ -872,7 +878,7 @@ globle intBool CheckFunctionArgCount(
    if (argumentCount > maxArguments)
      {
       ExpectedCountError(theEnv,functionName,NO_MORE_THAN,maxArguments);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return(FALSE);
      }
 

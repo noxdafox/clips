@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  05/21/16            */
+   /*             CLIPS Version 6.40  06/03/16            */
    /*                                                     */
    /*                 FILE COMMANDS MODULE                */
    /*******************************************************/
@@ -46,6 +46,12 @@
 /*                                                           */
 /*      6.40: Split inputSource to fileSource and            */
 /*            logicalSource.                                 */
+/*                                                           */
+/*            Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*            Added Env prefix to GetHaltExecution and       */
+/*            SetHaltExecution functions.                    */
 /*                                                           */
 /*************************************************************/
 
@@ -1112,8 +1118,8 @@ globle int EnvBatchStar(
    /* Reset the error state. */
    /*========================*/
 
-   SetHaltExecution(theEnv,FALSE);
-   SetEvaluationError(theEnv,FALSE);
+   EnvSetHaltExecution(theEnv,FALSE);
+   EnvSetEvaluationError(theEnv,FALSE);
 
    /*=============================================*/
    /* Evaluate commands from the file one by one. */
@@ -1130,8 +1136,8 @@ globle int EnvBatchStar(
          SetPPBufferStatus(theEnv,OFF);
          RouteCommand(theEnv,theString,FALSE);
          FlushPPBuffer(theEnv);
-         SetHaltExecution(theEnv,FALSE);
-         SetEvaluationError(theEnv,FALSE);
+         EnvSetHaltExecution(theEnv,FALSE);
+         EnvSetEvaluationError(theEnv,FALSE);
          FlushBindList(theEnv);      
          genfree(theEnv,theString,(unsigned) maxChars);
          theString = NULL;

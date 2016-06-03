@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  02/05/15            */
+   /*             CLIPS Version 6.40  06/03/16            */
    /*                                                     */
    /*            FACT RHS PATTERN PARSER MODULE           */
    /*******************************************************/
@@ -32,6 +32,12 @@
 /*            Added code to keep track of pointers to        */
 /*            constructs that are contained externally to    */
 /*            to constructs, DanglingConstructs.             */
+/*                                                           */
+/*      6.40: Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*            Added Env prefix to GetHaltExecution and       */
+/*            SetHaltExecution functions.                    */
 /*                                                           */
 /*************************************************************/
 
@@ -565,7 +571,7 @@ globle struct fact *StringToFact(
    /* using the router as an input source.    */
    /*=========================================*/
    
-   SetEvaluationError(theEnv,FALSE);
+   EnvSetEvaluationError(theEnv,FALSE);
 
    OpenStringSource(theEnv,"assert_str",str,0);
 
@@ -595,7 +601,7 @@ globle struct fact *StringToFact(
    if (ExpressionContainsVariables(assertArgs,FALSE))
      {
       LocalVariableErrorMessage(theEnv,"the assert-string function");
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       ReturnExpression(theEnv,assertArgs);
       return(NULL);
      }

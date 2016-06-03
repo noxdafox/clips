@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/03/16            */
    /*                                                     */
    /*            EXTENDED MATH FUNCTIONS MODULE           */
    /*******************************************************/
@@ -33,6 +33,12 @@
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
+/*                                                           */
+/*      6.40: Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*            Added Env prefix to GetHaltExecution and       */
+/*            SetHaltExecution functions.                    */
 /*                                                           */
 /*************************************************************/
 
@@ -175,8 +181,8 @@ static void DomainErrorMessage(
    EnvPrintRouter(theEnv,WERROR,"Domain error for ");
    EnvPrintRouter(theEnv,WERROR,functionName);
    EnvPrintRouter(theEnv,WERROR," function.\n");
-   SetHaltExecution(theEnv,TRUE);
-   SetEvaluationError(theEnv,TRUE);
+   EnvSetHaltExecution(theEnv,TRUE);
+   EnvSetEvaluationError(theEnv,TRUE);
   }
 
 /************************************************************/
@@ -192,8 +198,8 @@ static void ArgumentOverflowErrorMessage(
    EnvPrintRouter(theEnv,WERROR,"Argument overflow for ");
    EnvPrintRouter(theEnv,WERROR,functionName);
    EnvPrintRouter(theEnv,WERROR," function.\n");
-   SetHaltExecution(theEnv,TRUE);
-   SetEvaluationError(theEnv,TRUE);
+   EnvSetHaltExecution(theEnv,TRUE);
+   EnvSetEvaluationError(theEnv,TRUE);
   }
 
 /************************************************************/
@@ -209,8 +215,8 @@ static void SingularityErrorMessage(
    EnvPrintRouter(theEnv,WERROR,"Singularity at asymptote in ");
    EnvPrintRouter(theEnv,WERROR,functionName);
    EnvPrintRouter(theEnv,WERROR," function.\n");
-   SetHaltExecution(theEnv,TRUE);
-   SetEvaluationError(theEnv,TRUE);
+   EnvSetHaltExecution(theEnv,TRUE);
+   EnvSetEvaluationError(theEnv,TRUE);
   }
 
 /*************************************/
@@ -723,8 +729,8 @@ globle double PowFunction(
         (dtrunc((double) DOToDouble(value2)) != DOToDouble(value2))))
      {
       DomainErrorMessage(theEnv,"**");
-      SetHaltExecution(theEnv,TRUE);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetHaltExecution(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return(0.0);
      }
 
@@ -768,7 +774,7 @@ globle void ModFunction(
        ((item2.type == FLOAT) ? ValueToDouble(item2.value) == 0.0 : FALSE))
      {
       DivideByZeroErrorMessage(theEnv,"mod");
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       result->type = INTEGER;
       result->value = (void *) EnvAddLong(theEnv,0L);
       return;

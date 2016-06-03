@@ -135,6 +135,7 @@ static void DeallocateUtilityData(
    while (tmpPtr != NULL)
      {
       nextPtr = tmpPtr->next;
+      genfree(theEnv,(void *) tmpPtr->name,strlen(tmpPtr->name) + 1);
       rtn_struct(theEnv,callFunctionItem,tmpPtr);
       tmpPtr = nextPtr;
      }
@@ -143,6 +144,7 @@ static void DeallocateUtilityData(
    while (tmpPtr != NULL)
      {
       nextPtr = tmpPtr->next;
+      genfree(theEnv,(void *) tmpPtr->name,strlen(tmpPtr->name) + 1);
       rtn_struct(theEnv,callFunctionItem,tmpPtr);
       tmpPtr = nextPtr;
      }
@@ -911,6 +913,7 @@ globle void DeallocateCallList(
    while (tmpPtr != NULL)
      {
       nextPtr = tmpPtr->next;
+      genfree(theEnv,(void *) tmpPtr->name,strlen(tmpPtr->name) + 1);
       rtn_struct(theEnv,callFunctionItem,tmpPtr);
       tmpPtr = nextPtr;
      }

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/22/14          */
+   /*               CLIPS Version 6.40  06/03/16          */
    /*                                                     */
    /*                OBJECT MESSAGE COMMANDS              */
    /*******************************************************/
@@ -39,6 +39,12 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*            Converted API macros to function calls.        */
+/*                                                           */
+/*      6.40: Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*            Added Env prefix to GetHaltExecution and       */
+/*            SetHaltExecution functions.                    */
 /*                                                           */
 /*************************************************************/
 
@@ -597,7 +603,7 @@ globle void PPDefmessageHandlerCommand(
    mtype = HandlerType(theEnv,"ppdefmessage-handler",tname);
    if (mtype == MERROR)
      {
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return;
      }
    if (csym != NULL)
@@ -613,7 +619,7 @@ globle void PPDefmessageHandlerCommand(
       EnvPrintRouter(theEnv,WERROR," for class ");
       EnvPrintRouter(theEnv,WERROR,ValueToString(csym));
       EnvPrintRouter(theEnv,WERROR," in function ppdefmessage-handler.\n");
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return;
      }
    if (hnd->ppForm != NULL)

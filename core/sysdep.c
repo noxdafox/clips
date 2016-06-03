@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  05/21/16            */
+   /*             CLIPS Version 6.40  06/03/16            */
    /*                                                     */
    /*               SYSTEM DEPENDENT MODULE               */
    /*******************************************************/
@@ -78,6 +78,12 @@
 /*      6.40: Added genchdir function for changing the       */
 /*            current directory.                             */
 /*                                                           */
+/*            Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*            Added Env prefix to GetHaltExecution and       */
+/*            SetHaltExecution functions.                    */
+/*                                                           */
 /*************************************************************/
 
 #define _SYSDEP_SOURCE_
@@ -128,6 +134,7 @@ extern int LIB$SPAWN();
 #include <limits.h>
 #include <process.h>
 #include <signal.h>
+#include <direct.h>
 #endif
 
 #if   UNIX_7 || WIN_GCC
@@ -782,8 +789,8 @@ globle void gensystem(
       if ((GetType(tempValue) != STRING) &&
           (GetType(tempValue) != SYMBOL))
         {
-         SetHaltExecution(theEnv,TRUE);
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetHaltExecution(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          ExpectedTypeError2(theEnv,"system",i);
          return;
         }
@@ -1000,7 +1007,7 @@ static void CatchCtrlC(
   int sgnl)
   {
 #if ALLOW_ENVIRONMENT_GLOBALS
-   SetHaltExecution(GetCurrentEnvironment(),TRUE);
+   EnvSetHaltExecution(GetCurrentEnvironment(),TRUE);
    CloseAllBatchSources(GetCurrentEnvironment());
 #endif
    signal(SIGINT,CatchCtrlC);
@@ -1016,7 +1023,7 @@ static void CatchCtrlC(
 static void interrupt CatchCtrlC()
   {
 #if ALLOW_ENVIRONMENT_GLOBALS
-   SetHaltExecution(GetCurrentEnvironment(),TRUE);
+   EnvSetHaltExecution(GetCurrentEnvironment(),TRUE);
    CloseAllBatchSources(GetCurrentEnvironment());
 #endif
   }

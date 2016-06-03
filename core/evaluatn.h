@@ -216,10 +216,10 @@ struct evaluationData
 
    LOCALE void                           InitializeEvaluationData(void *);
    LOCALE int                            EvaluateExpression(void *,struct expr *,struct dataObject *);
-   LOCALE void                           SetEvaluationError(void *,intBool);
-   LOCALE int                            GetEvaluationError(void *);
-   LOCALE void                           SetHaltExecution(void *,int);
-   LOCALE int                            GetHaltExecution(void *);
+   LOCALE void                           EnvSetEvaluationError(void *,intBool);
+   LOCALE int                            EnvGetEvaluationError(void *);
+   LOCALE void                           EnvSetHaltExecution(void *,int);
+   LOCALE int                            EnvGetHaltExecution(void *);
    LOCALE void                           ReturnValues(void *,struct dataObject *,intBool);
    LOCALE void                           PrintDataObject(void *,const char *,struct dataObject *);
    LOCALE void                           EnvSetMultifieldErrorValue(void *,struct dataObject *);

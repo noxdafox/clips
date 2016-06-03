@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/22/14            */
+   /*             CLIPS Version 6.40  06/03/16            */
    /*                                                     */
    /*             DEFTEMPLATE FUNCTIONS MODULE            */
    /*******************************************************/
@@ -58,6 +58,12 @@
 /*            Added code to prevent a clear command from     */
 /*            being executed during fact assertions via      */
 /*            Increment/DecrementClearReadyLocks API.        */
+/*                                                           */
+/*      6.40: Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*            Added Env prefix to GetHaltExecution and       */
+/*            SetHaltExecution functions.                    */
 /*                                                           */
 /*************************************************************/
 
@@ -229,7 +235,7 @@ static void DuplicateModifyCommand(
         {
          if (retractIt) ExpectedTypeError2(theEnv,"modify",1);
          else ExpectedTypeError2(theEnv,"duplicate",1);
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          return;
         }
 
@@ -267,7 +273,7 @@ static void DuplicateModifyCommand(
      {
       if (retractIt) ExpectedTypeError2(theEnv,"modify",1);
       else ExpectedTypeError2(theEnv,"duplicate",1);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return;
      }
 
@@ -334,7 +340,7 @@ static void DuplicateModifyCommand(
            {
             InvalidDeftemplateSlotMessage(theEnv,ValueToString(testPtr->value),
                                           ValueToString(templatePtr->header.name),TRUE);
-            SetEvaluationError(theEnv,TRUE);
+            EnvSetEvaluationError(theEnv,TRUE);
             ReturnFact(theEnv,newFact);
             return;
            }
@@ -366,7 +372,7 @@ static void DuplicateModifyCommand(
          
          EnvIncrementClearReadyLocks(theEnv);
          EvaluateExpression(theEnv,testPtr->argList,&computeResult);
-         SetEvaluationError(theEnv,FALSE);
+         EnvSetEvaluationError(theEnv,FALSE);
          EnvDecrementClearReadyLocks(theEnv);
 
          /*====================================================*/
@@ -404,7 +410,7 @@ static void DuplicateModifyCommand(
 
          EnvIncrementClearReadyLocks(theEnv);
          StoreInMultifield(theEnv,&computeResult,testPtr->argList,FALSE);
-         SetEvaluationError(theEnv,FALSE);
+         EnvSetEvaluationError(theEnv,FALSE);
          EnvDecrementClearReadyLocks(theEnv);
 
          /*=============================*/
@@ -675,7 +681,7 @@ globle int EnvDeftemplateSlotDefaultP(
         }
       else
         {
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          InvalidDeftemplateSlotMessage(theEnv,slotName,
                                        ValueToString(theDeftemplate->header.name),FALSE);
          return(NO_DEFAULT);
@@ -689,7 +695,7 @@ globle int EnvDeftemplateSlotDefaultP(
    
    else if ((theSlot = FindSlot(theDeftemplate,(SYMBOL_HN *) EnvAddSymbol(theEnv,slotName),&position)) == NULL)
      {
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       InvalidDeftemplateSlotMessage(theEnv,slotName,
                                     ValueToString(theDeftemplate->header.name),FALSE);
       return(NO_DEFAULT);
@@ -776,7 +782,7 @@ globle intBool EnvDeftemplateSlotDefaultValue(
         }
       else
         {
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          InvalidDeftemplateSlotMessage(theEnv,slotName,
                                        ValueToString(theDeftemplate->header.name),FALSE);
          return(FALSE);
@@ -790,7 +796,7 @@ globle intBool EnvDeftemplateSlotDefaultValue(
 
    else if ((theSlot = FindSlot(theDeftemplate,(SYMBOL_HN *) EnvAddSymbol(theEnv,slotName),&position)) == NULL)
      {
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       InvalidDeftemplateSlotMessage(theEnv,slotName,
                                     ValueToString(theDeftemplate->header.name),FALSE);
       return(FALSE);
@@ -883,7 +889,7 @@ globle void EnvDeftemplateSlotCardinality(
       else
         {     
          EnvSetMultifieldErrorValue(theEnv,result);
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          InvalidDeftemplateSlotMessage(theEnv,slotName,
                                        ValueToString(theDeftemplate->header.name),FALSE);
          return;
@@ -898,7 +904,7 @@ globle void EnvDeftemplateSlotCardinality(
    else if ((theSlot = FindSlot(theDeftemplate,(SYMBOL_HN *) EnvAddSymbol(theEnv,slotName),&position)) == NULL)
      {
       EnvSetMultifieldErrorValue(theEnv,result);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       InvalidDeftemplateSlotMessage(theEnv,slotName,
                                     ValueToString(theDeftemplate->header.name),FALSE);
       return;
@@ -996,7 +1002,7 @@ globle void EnvDeftemplateSlotAllowedValues(
       else
         {     
          EnvSetMultifieldErrorValue(theEnv,result);
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          InvalidDeftemplateSlotMessage(theEnv,slotName,
                                        ValueToString(theDeftemplate->header.name),FALSE);
          return;
@@ -1011,7 +1017,7 @@ globle void EnvDeftemplateSlotAllowedValues(
    else if ((theSlot = FindSlot(theDeftemplate,(SYMBOL_HN *) EnvAddSymbol(theEnv,slotName),&position)) == NULL)
      {
       EnvSetMultifieldErrorValue(theEnv,result);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       InvalidDeftemplateSlotMessage(theEnv,slotName,
                                     ValueToString(theDeftemplate->header.name),FALSE);
       return;
@@ -1109,7 +1115,7 @@ globle void EnvDeftemplateSlotRange(
       else
         {     
          EnvSetMultifieldErrorValue(theEnv,result);
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          InvalidDeftemplateSlotMessage(theEnv,slotName,
                                        ValueToString(theDeftemplate->header.name),FALSE);
          return;
@@ -1124,7 +1130,7 @@ globle void EnvDeftemplateSlotRange(
    else if ((theSlot = FindSlot(theDeftemplate,(SYMBOL_HN *) EnvAddSymbol(theEnv,slotName),&position)) == NULL)
      {
       EnvSetMultifieldErrorValue(theEnv,result);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       InvalidDeftemplateSlotMessage(theEnv,slotName,
                                     ValueToString(theDeftemplate->header.name),FALSE);
       return;
@@ -1209,7 +1215,7 @@ globle void EnvDeftemplateSlotTypes(
       if (strcmp(slotName,"implied") != 0)
         {     
          EnvSetMultifieldErrorValue(theEnv,result);
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          InvalidDeftemplateSlotMessage(theEnv,slotName,
                                        ValueToString(theDeftemplate->header.name),FALSE);
          return;
@@ -1224,7 +1230,7 @@ globle void EnvDeftemplateSlotTypes(
    else if ((theSlot = FindSlot(theDeftemplate,(SYMBOL_HN *) EnvAddSymbol(theEnv,slotName),&position)) == NULL)
      {
       EnvSetMultifieldErrorValue(theEnv,result);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       InvalidDeftemplateSlotMessage(theEnv,slotName,
                                     ValueToString(theDeftemplate->header.name),FALSE);
       return;
@@ -1374,7 +1380,7 @@ globle int EnvDeftemplateSlotMultiP(
         { return(TRUE); }
       else
         {
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          InvalidDeftemplateSlotMessage(theEnv,slotName,
                                        ValueToString(theDeftemplate->header.name),FALSE);
          return(FALSE); 
@@ -1388,7 +1394,7 @@ globle int EnvDeftemplateSlotMultiP(
 
    else if ((theSlot = FindSlot(theDeftemplate,(SYMBOL_HN *) EnvAddSymbol(theEnv,slotName),&position)) == NULL)
      { 
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       InvalidDeftemplateSlotMessage(theEnv,slotName,
                                     ValueToString(theDeftemplate->header.name),FALSE);
       return(FALSE);
@@ -1450,7 +1456,7 @@ globle int EnvDeftemplateSlotSingleP(
         { return(FALSE); }
       else
         {
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          InvalidDeftemplateSlotMessage(theEnv,slotName,
                                        ValueToString(theDeftemplate->header.name),FALSE);
          return(FALSE); 
@@ -1464,7 +1470,7 @@ globle int EnvDeftemplateSlotSingleP(
 
    else if ((theSlot = FindSlot(theDeftemplate,(SYMBOL_HN *) EnvAddSymbol(theEnv,slotName),&position)) == NULL)
      {
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       InvalidDeftemplateSlotMessage(theEnv,slotName,
                                     ValueToString(theDeftemplate->header.name),FALSE);
       return(FALSE); 

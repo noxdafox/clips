@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/22/14          */
+   /*               CLIPS Version 6.40  06/03/16          */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -30,6 +30,12 @@
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
+/*                                                           */
+/*      6.40: Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*            Added Env prefix to GetHaltExecution and       */
+/*            SetHaltExecution functions.                    */
 /*                                                           */
 /*************************************************************/
 
@@ -172,7 +178,7 @@ globle void GetQueryInstanceSlot(
    if (temp.type != SYMBOL)
      {
       ExpectedTypeError1(theEnv,"get",1,"symbol");
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return;
      }
    sp = FindInstanceSlot(theEnv,ins,(SYMBOL_HN *) temp.value);
@@ -696,7 +702,7 @@ static QUERY_CLASS *DetermineQueryClasses(
         {
          SyntaxErrorMessage(theEnv,"instance-set query class restrictions");
          DeleteQueryClasses(theEnv,clist);
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          return(NULL);
         }
       classExp = classExp->nextArg;

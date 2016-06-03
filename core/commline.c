@@ -60,6 +60,12 @@
 /*      6.40: Added call to FlushParsingMessages to clear    */
 /*            message buffer after each command.             */
 /*                                                           */
+/*            Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*            Added Env prefix to GetHaltExecution and       */
+/*            SetHaltExecution functions.                    */
+/*                                                           */
 /*************************************************************/
 
 #define _COMMLINE_SOURCE_
@@ -521,8 +527,8 @@ globle void CommandLoop(
    int inchar;
 
    EnvPrintRouter(theEnv,WPROMPT,CommandLineData(theEnv)->BannerString);
-   SetHaltExecution(theEnv,FALSE);
-   SetEvaluationError(theEnv,FALSE);
+   EnvSetHaltExecution(theEnv,FALSE);
+   EnvSetEvaluationError(theEnv,FALSE);
    
    CleanCurrentGarbageFrame(theEnv,NULL);
    CallPeriodicTasks(theEnv);
@@ -555,10 +561,10 @@ globle void CommandLoop(
       /* from the command buffer.                        */
       /*=================================================*/
 
-      if (GetHaltExecution(theEnv) == TRUE)
+      if (EnvGetHaltExecution(theEnv) == TRUE)
         {
-         SetHaltExecution(theEnv,FALSE);
-         SetEvaluationError(theEnv,FALSE);
+         EnvSetHaltExecution(theEnv,FALSE);
+         EnvSetEvaluationError(theEnv,FALSE);
          FlushCommandString(theEnv);
 #if ! WINDOW_INTERFACE
          fflush(stdin);
@@ -584,8 +590,8 @@ globle void CommandLoop(
 globle void CommandLoopBatch(
   void *theEnv)
   {
-   SetHaltExecution(theEnv,FALSE);
-   SetEvaluationError(theEnv,FALSE);
+   EnvSetHaltExecution(theEnv,FALSE);
+   EnvSetEvaluationError(theEnv,FALSE);
 
    CleanCurrentGarbageFrame(theEnv,NULL);
    CallPeriodicTasks(theEnv);
@@ -650,10 +656,10 @@ globle void CommandLoopBatchDriver(
       /* from the command buffer.                        */
       /*=================================================*/
 
-      if (GetHaltExecution(theEnv) == TRUE)
+      if (EnvGetHaltExecution(theEnv) == TRUE)
         {
-         SetHaltExecution(theEnv,FALSE);
-         SetEvaluationError(theEnv,FALSE);
+         EnvSetHaltExecution(theEnv,FALSE);
+         EnvSetEvaluationError(theEnv,FALSE);
          FlushCommandString(theEnv);
 #if ! WINDOW_INTERFACE
          fflush(stdin);
@@ -696,8 +702,8 @@ globle intBool ExecuteIfCommandComplete(
    RouteCommand(theEnv,CommandLineData(theEnv)->CommandString,TRUE);
    FlushPPBuffer(theEnv);
    FlushParsingMessages(theEnv);
-   SetHaltExecution(theEnv,FALSE);
-   SetEvaluationError(theEnv,FALSE);
+   EnvSetHaltExecution(theEnv,FALSE);
+   EnvSetEvaluationError(theEnv,FALSE);
    FlushCommandString(theEnv);
    
    CleanCurrentGarbageFrame(theEnv,NULL);

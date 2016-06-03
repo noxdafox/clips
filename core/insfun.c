@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*              CLIPS Version 6.30  02/05/15           */
+   /*              CLIPS Version 6.40  06/03/16           */
    /*                                                     */
    /*                INSTANCE FUNCTIONS MODULE            */
    /*******************************************************/
@@ -58,6 +58,12 @@
 /*                                                           */
 /*            Instances of the form [<name>] are now         */
 /*            searched for in all modules.                   */
+/*                                                           */
+/*      6.40: Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*            Added Env prefix to GetHaltExecution and       */
+/*            SetHaltExecution functions.                    */
 /*                                                           */
 /*************************************************************/
 
@@ -611,7 +617,7 @@ globle int DirectPutSlotValue(
          EnvPrintRouter(theEnv,WERROR," in instance ");
          EnvPrintRouter(theEnv,WERROR,ValueToString(ins->name));
          EnvPrintRouter(theEnv,WERROR,".\n");
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          return(FALSE);
         }
      }
@@ -622,7 +628,7 @@ globle int DirectPutSlotValue(
       PrintErrorID(theEnv,"INSFUN",5,FALSE);
       EnvPrintRouter(theEnv,WERROR,"Cannot modify reactive instance slots while\n");
       EnvPrintRouter(theEnv,WERROR,"  pattern-matching is in process.\n");
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return(FALSE);
      }
 
@@ -797,7 +803,7 @@ globle int ValidSlotValue(
       EnvPrintRouter(theEnv,WERROR," illegal for single-field ");
       PrintSlot(theEnv,WERROR,sd,ins,theCommand);
       EnvPrintRouter(theEnv,WERROR,".\n");
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return(FALSE);
      }
    if (val->type == RVOID)
@@ -806,7 +812,7 @@ globle int ValidSlotValue(
       EnvPrintRouter(theEnv,WERROR,"Void function illegal value for ");
       PrintSlot(theEnv,WERROR,sd,ins,theCommand);
       EnvPrintRouter(theEnv,WERROR,".\n");
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return(FALSE);
      }
    if (EnvGetDynamicConstraintChecking(theEnv))
@@ -824,7 +830,7 @@ globle int ValidSlotValue(
          PrintSlot(theEnv,WERROR,sd,ins,theCommand);
          ConstraintViolationErrorMessage(theEnv,NULL,NULL,0,0,NULL,0,
                                          violationCode,sd->constraint,FALSE);
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          return(FALSE);
         }
      }
@@ -855,7 +861,7 @@ globle INSTANCE_TYPE *CheckInstance(
       if (ins->garbage == 1)
         {
          StaleInstanceAddress(theEnv,func,0);
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          return(NULL);
         }
      }
@@ -875,7 +881,7 @@ globle INSTANCE_TYPE *CheckInstance(
       EnvPrintRouter(theEnv,WERROR,"Expected a valid instance in function ");
       EnvPrintRouter(theEnv,WERROR,func);
       EnvPrintRouter(theEnv,WERROR,".\n");
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return(NULL);
      }
    return(ins);
@@ -903,7 +909,7 @@ globle void NoInstanceError(
    EnvPrintRouter(theEnv,WERROR," in function ");
    EnvPrintRouter(theEnv,WERROR,func);
    EnvPrintRouter(theEnv,WERROR,".\n");
-   SetEvaluationError(theEnv,TRUE);
+   EnvSetEvaluationError(theEnv,TRUE);
   }
 
 /***************************************************

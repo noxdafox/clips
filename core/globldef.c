@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  01/25/15            */
+   /*             CLIPS Version 6.40  06/03/16            */
    /*                                                     */
    /*                  DEFGLOBAL MODULE                   */
    /*******************************************************/
@@ -42,6 +42,12 @@
 /*            Changed find construct functionality so that   */
 /*            imported modules are search when locating a    */
 /*            named construct.                               */
+/*                                                           */
+/*      6.40: Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*            Added Env prefix to GetHaltExecution and       */
+/*            SetHaltExecution functions.                    */
 /*                                                           */
 /*************************************************************/
 
@@ -563,7 +569,7 @@ static intBool GetDefglobalValue2(
       EnvPrintRouter(theEnv,WERROR,"* is unbound.\n");
       vPtr->type = SYMBOL;
       vPtr->value = EnvFalseSymbol(theEnv);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return(FALSE);
      }
 
@@ -578,7 +584,7 @@ static intBool GetDefglobalValue2(
       AmbiguousReferenceErrorMessage(theEnv,"defglobal",ValueToString(theValue));
       vPtr->type = SYMBOL;
       vPtr->value = EnvFalseSymbol(theEnv);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return(FALSE);
      }
 

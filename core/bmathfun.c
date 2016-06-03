@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/03/16            */
    /*                                                     */
    /*             BASIC MATH FUNCTIONS MODULE             */
    /*******************************************************/
@@ -25,6 +25,12 @@
 /*      6.30: Support for long long integers.                */
 /*                                                           */
 /*            Converted API macros to function calls.        */
+/*                                                           */
+/*      6.40: Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*            Added Env prefix to GetHaltExecution and       */
+/*            SetHaltExecution functions.                    */
 /*                                                           */
 /*************************************************************/
 
@@ -343,8 +349,8 @@ globle void DivisionFunction(
                                  ((theArgument.type == FLOAT) ? ValueToDouble(theArgument.value) == 0.0 : FALSE))
         {
          DivideByZeroErrorMessage(theEnv,"/");
-         SetHaltExecution(theEnv,TRUE);
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetHaltExecution(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          returnValue->type = FLOAT;
          returnValue->value = (void *) EnvAddDouble(theEnv,1.0);
          return;
@@ -433,8 +439,8 @@ globle long long DivFunction(
       if (theNumber == 0LL)
         {
          DivideByZeroErrorMessage(theEnv,"div");
-         SetHaltExecution(theEnv,TRUE);
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetHaltExecution(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          return(1L);
         }
 

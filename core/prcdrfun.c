@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/03/16            */
    /*                                                     */
    /*             PROCEDURAL FUNCTIONS MODULE             */
    /*******************************************************/
@@ -33,6 +33,12 @@
 /*            Changed garbage collection algorithm.          */
 /*                                                           */
 /*            Support for long long integers.                */
+/*                                                           */
+/*      6.40: Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*            Added Env prefix to GetHaltExecution and       */
+/*            SetHaltExecution functions.                    */
 /*                                                           */
 /*************************************************************/
 
@@ -594,7 +600,7 @@ globle void PrognFunction(
       return;
      }
 
-   while ((argPtr != NULL) && (GetHaltExecution(theEnv) != TRUE))
+   while ((argPtr != NULL) && (EnvGetHaltExecution(theEnv) != TRUE))
      {
       EvaluateExpression(theEnv,argPtr,returnValue);
 
@@ -603,7 +609,7 @@ globle void PrognFunction(
       argPtr = argPtr->nextArg;
      }
 
-   if (GetHaltExecution(theEnv) == TRUE)
+   if (EnvGetHaltExecution(theEnv) == TRUE)
      {
       returnValue->type = SYMBOL;
       returnValue->value = EnvFalseSymbol(theEnv);

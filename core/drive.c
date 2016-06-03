@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/03/16            */
    /*                                                     */
    /*                    DRIVE MODULE                     */
    /*******************************************************/
@@ -34,6 +34,12 @@
 /*            analyze join network performance.              */
 /*                                                           */
 /*            Removed pseudo-facts used in not CE.           */
+/*                                                           */
+/*      6.40: Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*            Added Env prefix to GetHaltExecution and       */
+/*            SetHaltExecution functions.                    */
 /*                                                           */
 /*************************************************************/
 
@@ -238,7 +244,7 @@ globle void NetworkAssertRight(
          if (EvaluationData(theEnv)->EvaluationError)
            {
             if (join->patternIsNegated) exprResult = TRUE;
-            SetEvaluationError(theEnv,FALSE);
+            EnvSetEvaluationError(theEnv,FALSE);
            }
 
 #if DEVELOPER
@@ -252,7 +258,7 @@ globle void NetworkAssertRight(
          EngineData(theEnv)->GlobalLHSBinds = lhsBinds;
          exprResult = EvaluateJoinExpression(theEnv,join->secondaryNetworkTest,join);
          if (EvaluationData(theEnv)->EvaluationError)
-           { SetEvaluationError(theEnv,FALSE); }
+           { EnvSetEvaluationError(theEnv,FALSE); }
         }
 
       /*====================================================*/
@@ -366,7 +372,7 @@ globle void NetworkAssertLeft(
 
          exprResult = EvaluateJoinExpression(theEnv,join->networkTest,join);
          if (EvaluationData(theEnv)->EvaluationError)
-           { SetEvaluationError(theEnv,FALSE); }
+           { EnvSetEvaluationError(theEnv,FALSE); }
           
          EngineData(theEnv)->GlobalLHSBinds = oldLHSBinds;
          EngineData(theEnv)->GlobalRHSBinds = oldRHSBinds;
@@ -454,7 +460,7 @@ globle void NetworkAssertLeft(
          if (EvaluationData(theEnv)->EvaluationError)
            {
             if (join->patternIsNegated) exprResult = TRUE;
-            SetEvaluationError(theEnv,FALSE);
+            EnvSetEvaluationError(theEnv,FALSE);
            }
 
 #if DEVELOPER
@@ -470,7 +476,7 @@ globle void NetworkAssertLeft(
          EngineData(theEnv)->GlobalRHSBinds = rhsBinds;
          exprResult = EvaluateJoinExpression(theEnv,join->secondaryNetworkTest,join);
          if (EvaluationData(theEnv)->EvaluationError)
-           { SetEvaluationError(theEnv,FALSE); }
+           { EnvSetEvaluationError(theEnv,FALSE); }
         }
 
       /*====================================================*/
@@ -554,7 +560,7 @@ globle void NetworkAssertLeft(
          
          exprResult = EvaluateJoinExpression(theEnv,join->secondaryNetworkTest,join);
          if (EvaluationData(theEnv)->EvaluationError)
-           { SetEvaluationError(theEnv,FALSE); }
+           { EnvSetEvaluationError(theEnv,FALSE); }
            
          if (exprResult)
             { PPDrive(theEnv,lhsBinds,NULL,join,operation); }

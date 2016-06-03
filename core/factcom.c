@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  01/25/15            */
+   /*             CLIPS Version 6.40  06/03/16            */
    /*                                                     */
    /*                FACT COMMANDS MODULE                 */
    /*******************************************************/
@@ -44,6 +44,12 @@
 /*            Changed find construct functionality so that   */
 /*            imported modules are search when locating a    */
 /*            named construct.                               */
+/*                                                           */
+/*      6.40: Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*            Added Env prefix to GetHaltExecution and       */
+/*            SetHaltExecution functions.                    */
 /*                                                           */
 /*************************************************************/
 
@@ -366,7 +372,7 @@ globle void RetractCommand(
       else
         {
          ExpectedTypeError1(theEnv,"retract",argNumber,"fact-address, fact-index, or the symbol *");
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
         }
      }
   }
@@ -544,7 +550,7 @@ globle void FactsCommand(
       theModule = (struct defmodule *) EnvFindDefmodule(theEnv,ValueToString(theValue.value));
       if ((theModule == NULL) && (strcmp(ValueToString(theValue.value),"*") != 0))
         {
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          CantFindItemErrorMessage(theEnv,"defmodule",ValueToString(theValue.value));
          return;
         }
@@ -565,8 +571,8 @@ globle void FactsCommand(
       if (start < 0)
         {
          ExpectedTypeError1(theEnv,"facts",1,"symbol or positive number");
-         SetHaltExecution(theEnv,TRUE);
-         SetEvaluationError(theEnv,TRUE);
+         EnvSetHaltExecution(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,TRUE);
          return;
         }
       argOffset = 0;
@@ -579,8 +585,8 @@ globle void FactsCommand(
    else
      {
       ExpectedTypeError1(theEnv,"facts",1,"symbol or positive number");
-      SetHaltExecution(theEnv,TRUE);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetHaltExecution(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return;
      }
 
@@ -647,7 +653,7 @@ globle void EnvFacts(
       /* flag has been set (normally by user action).     */
       /*==================================================*/
 
-      if (GetHaltExecution(theEnv) == TRUE)
+      if (EnvGetHaltExecution(theEnv) == TRUE)
         {
          EnvSetCurrentModule(theEnv,(void *) oldModule);
          return;
@@ -734,8 +740,8 @@ static long long GetFactsArgument(
    if (factIndex < 0)
      {
       ExpectedTypeError1(theEnv,"facts",whichOne,"positive number");
-      SetHaltExecution(theEnv,TRUE);
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetHaltExecution(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       return(INVALID);
      }
 
@@ -1292,7 +1298,7 @@ static struct expr *StandardLoadFact(
    if (error == TRUE)
      {
       EnvPrintRouter(theEnv,WERROR,"Function load-facts encountered an error\n");
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       ReturnExpression(theEnv,temp);
       return(NULL);
      }

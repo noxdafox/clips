@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.31  06/05/15            */
+   /*             CLIPS Version 6.40  06/03/16            */
    /*                                                     */
    /*                    ENGINE MODULE                    */
    /*******************************************************/
@@ -60,6 +60,12 @@
 /*            Converted API macros to function calls.        */
 /*                                                           */
 /*            Fixed dangling construct issue.                */
+/*                                                           */
+/*      6.40: Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*            Added Env prefix to GetHaltExecution and       */
+/*            SetHaltExecution functions.                    */
 /*                                                           */
 /*************************************************************/
 
@@ -214,7 +220,7 @@ globle long long EnvRun(
    /* Set up execution variables. */
    /*=============================*/
 
-   if (UtilityData(theEnv)->CurrentGarbageFrame->topLevel) SetHaltExecution(theEnv,FALSE);
+   if (UtilityData(theEnv)->CurrentGarbageFrame->topLevel) EnvSetHaltExecution(theEnv,FALSE);
    EngineData(theEnv)->HaltRules = FALSE;
 
 #if DEVELOPER
@@ -345,7 +351,7 @@ globle long long EnvRun(
       /*=============================================*/
 
       EvaluationData(theEnv)->CurrentEvaluationDepth++;
-      SetEvaluationError(theEnv,FALSE);
+      EnvSetEvaluationError(theEnv,FALSE);
       EngineData(theEnv)->ExecutingRule->executing = TRUE;
       danglingConstructs = ConstructData(theEnv)->DanglingConstructs;
 
@@ -364,7 +370,7 @@ globle long long EnvRun(
 #endif
 
       EngineData(theEnv)->ExecutingRule->executing = FALSE;
-      SetEvaluationError(theEnv,FALSE);
+      EnvSetEvaluationError(theEnv,FALSE);
       EvaluationData(theEnv)->CurrentEvaluationDepth--;
       if ((! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
           (EvaluationData(theEnv)->CurrentExpression == NULL))
