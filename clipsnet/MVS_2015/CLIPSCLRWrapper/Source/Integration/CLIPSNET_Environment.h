@@ -31,6 +31,7 @@ namespace CLIPSNET
         bool GetEvaluationError();
         void SetEvaluationError(bool);
         int Load(String ^);
+        bool ChangeDirectory(String ^);
         void LoadFromString(String ^);
         bool LoadFromResource(String ^,String ^);
         PrimitiveValue ^ Eval(String ^);

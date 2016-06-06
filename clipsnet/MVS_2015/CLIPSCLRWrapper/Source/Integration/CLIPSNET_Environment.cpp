@@ -307,4 +307,25 @@ namespace CLIPSNET
      {
       m_Env->SetHaltRules(value);
      }
+
+   /********************/
+   /* ChangeDirectory: */
+   /********************/
+   bool Environment::ChangeDirectory(
+     String ^ directoryString)
+     {
+      array<Byte>^ ebDirectoryString = Encoding::UTF8->GetBytes(directoryString);    
+      int rv;
+
+      if (ebDirectoryString->Length)
+        {  
+         pin_ptr<Byte> pbDirectoryString = &ebDirectoryString[0];
+         rv = m_Env->ChangeDirectory((char *) pbDirectoryString);
+        }
+      else
+        { rv =  m_Env->ChangeDirectory(""); }   
+
+      if (rv == 0) return false;
+      else return true;
+     }
   };

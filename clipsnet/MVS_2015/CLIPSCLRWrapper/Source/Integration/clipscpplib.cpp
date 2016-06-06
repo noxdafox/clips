@@ -304,6 +304,23 @@ void CLIPSCPPEnv::SetHaltRules(
 #endif
 }
 
+/*******************/
+/* ChangeDirectory */
+/*******************/
+int CLIPSCPPEnv::ChangeDirectory(
+  char *directory)
+  {
+   int rc;
+   
+#ifndef CLIPS_DLL_WRAPPER
+   rc = genchdir(directory);
+#else
+   rc = __genchdir(directory);
+#endif
+
+   return rc;
+  }
+
 /****************/
 /* AssertString */
 /****************/

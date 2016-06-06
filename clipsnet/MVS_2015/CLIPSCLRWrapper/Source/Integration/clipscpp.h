@@ -41,6 +41,7 @@ class CLIPSCPPEnv
       void SetEvaluationError(int);
       int GetHaltRules();
       void SetHaltRules(int);
+      int ChangeDirectory(char *);
       int Load(char *);
       void LoadFromString(char *);
       void Reset();

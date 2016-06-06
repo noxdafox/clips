@@ -1,12 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.IO;
 using Microsoft.Win32;
@@ -26,6 +19,14 @@ namespace CLIPSIDE
                                { new KeyGesture(Key.L,ModifierKeys.Control) }
                             );
 
+      public static readonly RoutedCommand LoadBatch = 
+         new RoutedUICommand("LoadBatch",
+                             "LoadBatch", 
+                             typeof(IDECommands),
+                             new InputGestureCollection()
+                               { new KeyGesture(Key.L,ModifierKeys.Control | ModifierKeys.Shift) }
+                            );
+
       public static readonly RoutedCommand Clear = 
          new RoutedUICommand("Clear",
                              "Clear", 
@@ -35,13 +36,23 @@ namespace CLIPSIDE
 
   public partial class MainWindow : Window
      {
- 
+      private IDEPreferences preferences;
+
       /**************/
       /* MainWindow */
       /**************/
       public MainWindow()
         {
          InitializeComponent();
+
+         preferences = new IDEPreferences();
+
+         String currentDirectory = preferences.GetCurrentDirectory();
+
+         if (Directory.Exists(currentDirectory))
+           { this.SetDirectory(currentDirectory); }
+         else
+           { this.SetDirectory(Directory.GetCurrentDirectory()); }
         }
         
       /**********/
@@ -106,17 +117,79 @@ namespace CLIPSIDE
         ExecutedRoutedEventArgs e)
         {
          OpenFileDialog openFileDialog = new OpenFileDialog();
-         if (openFileDialog.ShowDialog() == true)
-           {
-            String dirPath = Path.GetDirectoryName(openFileDialog.FileName);
-            String fileName = Path.GetFileName(openFileDialog.FileName);
+         
+         openFileDialog.Filter = "Constructs Files (*.clp)|*.clp|All Files (*.*)|*.*";
 
-            Directory.SetCurrentDirectory(dirPath);
-            dialog.ReplaceCommand("(load \"" + 
-                                  fileName + 
-                                  "\")\n");
-           }
+         String currentDirectory = preferences.GetCurrentDirectory();
+         if (Directory.Exists(currentDirectory))
+           { openFileDialog.InitialDirectory = currentDirectory; } 
+
+         openFileDialog.Title = "Load Constructs";
+
+         if (openFileDialog.ShowDialog() != true) return;
+
+         String dirPath = Path.GetDirectoryName(openFileDialog.FileName);
+         String fileName = Path.GetFileName(openFileDialog.FileName);
+
+         preferences.SaveCurrentDirectory(dirPath);
+         this.SetDirectory(dirPath);
+           
+         dialog.ReplaceCommand("(load \"" + fileName + "\")\n");
         }
-  
-      }
+
+      /************************/
+      /* LoadBatch_CanExecute */
+      /************************/
+      private void LoadBatch_CanExecute(
+        object sender, 
+        CanExecuteRoutedEventArgs e)
+        {
+         e.CanExecute = true;
+        }
+
+      /**********************/      
+      /* LoadBatch_Executed */
+      /**********************/      
+      private void LoadBatch_Executed(
+        object sender, 
+        ExecutedRoutedEventArgs e)
+        {
+         OpenFileDialog openFileDialog = new OpenFileDialog();
+         
+         openFileDialog.Filter = "Batch Files (*.bat, *.tst)|*.bat;*.tst|All Files (*.*)|*.*";
+
+         String currentDirectory = preferences.GetCurrentDirectory();
+         if (Directory.Exists(currentDirectory))
+           { openFileDialog.InitialDirectory = currentDirectory; } 
+
+         openFileDialog.Title = "Load Batch";
+
+         if (openFileDialog.ShowDialog() != true) return;
+
+         String dirPath = Path.GetDirectoryName(openFileDialog.FileName);
+         String fileName = Path.GetFileName(openFileDialog.FileName);
+
+         preferences.SaveCurrentDirectory(dirPath);
+         this.SetDirectory(dirPath);
+           
+         dialog.ReplaceCommand("(batch \"" + fileName + "\")\n");
+        }
+
+      /****************/
+      /* SetDirectory */
+      /****************/  
+      public bool SetDirectory(
+        String newDirectory)
+        {
+         bool dirChanged = dialog.ChangeDirectory(newDirectory);
+
+         if (dirChanged == false)
+           { 
+            this.currentDirectoryLabel.Content = "Dir: " + newDirectory;
+            return true;
+           }
+        
+         return false;
+        }     
+     }
   }

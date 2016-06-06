@@ -22,5 +22,17 @@ namespace CLIPSIDE.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string currentDirectory {
+            get {
+                return ((string)(this["currentDirectory"]));
+            }
+            set {
+                this["currentDirectory"] = value;
+            }
+        }
     }
 }

@@ -116,6 +116,7 @@
     <Compile Include="CommandPromptTextBox.xaml.cs">
       <DependentUpon>CommandPromptTextBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="IDEPreferences.cs" />
     <Compile Include="RouterTextBox.xaml.cs">
       <DependentUpon>RouterTextBox.xaml</DependentUpon>
     </Compile>

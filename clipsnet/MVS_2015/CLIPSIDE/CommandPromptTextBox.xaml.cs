@@ -473,7 +473,16 @@ namespace CLIPSIDE
 
          commandBackgroundWorker.RunWorkerAsync();
         }
-   
+
+      /*******************/
+      /* ChangeDirectory */
+      /*******************/  
+      public bool ChangeDirectory(
+        String newDirectory)
+        {
+         return clips.ChangeDirectory(newDirectory);
+        }     
+  
       /************************/
       /* UpdateCommandHistory */
       /************************/  

@@ -9,9 +9,10 @@
         <Window.CommandBindings>
         <CommandBinding Command="local:IDECommands.Clear" CanExecute="Clear_CanExecute" Executed="Clear_Executed" />
         <CommandBinding Command="local:IDECommands.LoadConstructs" CanExecute="LoadConstructs_CanExecute" Executed="LoadConstructs_Executed" />
-        </Window.CommandBindings>    <Grid Margin="0,1,0,-1">
+        <CommandBinding Command="local:IDECommands.LoadBatch" CanExecute="LoadBatch_CanExecute" Executed="LoadBatch_Executed" />
+    </Window.CommandBindings>    <Grid Margin="0,1,0,-1">
         <Grid HorizontalAlignment="Left" VerticalAlignment="Top"/>
-        <local:CommandPromptTextBox x:Name="dialog" Margin="-1,0,1,0" Grid.Row="1" AcceptsReturn="True" IsReadOnly="False" FontFamily="Consolas" FontSize="16" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
+        <local:CommandPromptTextBox x:Name="dialog" Margin="0" Grid.Row="1" AcceptsReturn="True" IsReadOnly="False" FontFamily="Consolas" FontSize="16" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" BorderThickness="0,1,0,0" Padding="3,0,0,5"/>
         <DockPanel Grid.Row="0">
             <Menu DockPanel.Dock="Top" FontSize="16">
                 <MenuItem Header="_File" Click="Quit_OnClick">
@@ -20,11 +21,13 @@
                 <MenuItem Header="Environment">
                     <MenuItem Header="Clear" Command="local:IDECommands.Clear"/>
                     <MenuItem Header="Load Constructs..." Command="local:IDECommands.LoadConstructs"/>
-                    <MenuItem Header="Load Batch..." />
+                    <MenuItem Header="Load Batch..."  Command="local:IDECommands.LoadBatch"/>
                     <MenuItem Header="Set Directory..." />
                 </MenuItem>
             </Menu>
-            <StackPanel></StackPanel>
+            <StackPanel>
+                <Label x:Name="currentDirectoryLabel" Content="Directory" FontSize="14" VerticalContentAlignment="Center" RenderTransformOrigin="0.496,4" Height="37"/>
+            </StackPanel>
         </DockPanel>
         <Grid.RowDefinitions>
             <RowDefinition Height="60"/>
