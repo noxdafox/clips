@@ -120,6 +120,10 @@ public class TextMenu extends JMenu
         { return; }
 
       Environment clips = ide.getEnvironment();
+      DialogFrame dialog = ide.getDialogWindow();
+      
+      if (dialog.isExecuting())
+        { return; }
       
       JTextArea theTextArea = textFrame.getTextArea();
       String loadString = theTextArea.getSelectedText();
@@ -144,6 +148,10 @@ public class TextMenu extends JMenu
         { return; }
        
       Environment clips = ide.getEnvironment();
+      DialogFrame dialog = ide.getDialogWindow();
+     
+      if (dialog.isExecuting())
+        { return; }
        
       JTextArea theTextArea = textFrame.getTextArea();
       String batchString = theTextArea.getSelectedText();
@@ -164,6 +172,10 @@ public class TextMenu extends JMenu
         { return; }
         
       Environment clips = ide.getEnvironment();
+      DialogFrame dialog = ide.getDialogWindow();
+      
+      if (dialog.isExecuting())
+        { return; }
        
       JTextArea theTextArea = textFrame.getTextArea();
       String loadString = theTextArea.getText();
@@ -507,6 +519,8 @@ public class TextMenu extends JMenu
    /****************/  
    public void menuSelected(MenuEvent e)
      {
+      DialogFrame dialog = ide.getDialogWindow();
+
       if (textFrame == null)
         {
          jmiLoadSelection.setEnabled(false);
@@ -520,8 +534,16 @@ public class TextMenu extends JMenu
 
       if (textFrame.hasSelection())
         {
-         jmiLoadSelection.setEnabled(true);
-         jmiBatchSelection.setEnabled(true);   
+         if (dialog.isExecuting())
+           {
+            jmiLoadSelection.setEnabled(false);
+            jmiBatchSelection.setEnabled(false); 
+           }  
+         else
+           {
+            jmiLoadSelection.setEnabled(true);
+            jmiBatchSelection.setEnabled(true); 
+           }  
         }
       else
         {
@@ -529,7 +551,11 @@ public class TextMenu extends JMenu
          jmiBatchSelection.setEnabled(false);   
         }
         
-      jmiLoadBuffer.setEnabled(true);
+      if (dialog.isExecuting())
+        { jmiLoadBuffer.setEnabled(false); }
+      else
+        { jmiLoadBuffer.setEnabled(true); }
+        
       jmiBalance.setEnabled(true);
       jmiComment.setEnabled(true);
       jmiUncomment.setEnabled(true);
