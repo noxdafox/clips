@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using System.Windows.Threading;
 using System.Threading;
 using CLIPSNET;
 
@@ -20,6 +21,14 @@ namespace RouterWPFExample
   {
    public partial class RouterTextBox : TextBox
      {
+      static readonly int bufferSize = 32768;
+
+      private StringBuilder outputBuffer = new StringBuilder(bufferSize);
+
+      private int maxLines = 1000;
+      
+      private System.Windows.Threading.DispatcherTimer dumpTimer = null;
+
       /*@@@@@@@@@@@@@@@@@@@@*/
       /* RouterThreadBridge */
       /*@@@@@@@@@@@@@@@@@@@@*/
@@ -61,7 +70,13 @@ namespace RouterWPFExample
          public override bool Query(String logicalName)
             {
              if (logicalName.Equals(CLIPSNET.Router.STANDARD_OUTPUT) ||
-                 logicalName.Equals(CLIPSNET.Router.STANDARD_INPUT))
+                 logicalName.Equals(CLIPSNET.Router.STANDARD_INPUT) ||
+                 logicalName.Equals(CLIPSNET.Router.DIALOG) ||
+                 logicalName.Equals(CLIPSNET.Router.DISPLAY) ||
+                 logicalName.Equals(CLIPSNET.Router.ERROR) ||
+                 logicalName.Equals(CLIPSNET.Router.PROMPT) ||
+                 logicalName.Equals(CLIPSNET.Router.TRACE) ||
+                 logicalName.Equals(CLIPSNET.Router.WARNING))
                return true;
              else
                return false;
@@ -104,7 +119,8 @@ namespace RouterWPFExample
 
          public override void Print(String logicalName, String printString)
            {
-            this.AddText(printString); 
+            Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal,
+                                                  new Action(delegate { m_RouterTextBox.CreateTimer(printString); }));
            }
        
          /********/
@@ -126,7 +142,6 @@ namespace RouterWPFExample
                if (theBridge.charList.Count == 0)
                  {
                   theBridge.charNeeded = true;
-
                   try
                     { 
                      Monitor.Wait(theBridge); 
@@ -146,6 +161,7 @@ namespace RouterWPFExample
 
                Byte theByte = theBridge.charList[0];
                theBridge.charList.RemoveAt(0);
+
                return theByte;
               }
            }
@@ -171,6 +187,7 @@ namespace RouterWPFExample
       private CLIPSNET.Environment attachedEnv;
       private TextBoxRouter m_TextBoxRouter;
       private RouterThreadBridge m_ThreadBridge;
+      private bool selectionWasChanged = false;
       
       /*****************/
       /* RouterTextBox */
@@ -184,6 +201,8 @@ namespace RouterWPFExample
          this.IsReadOnly = false;
          DataObject.AddPastingHandler(this,OnPaste);
          CommandBindings.Add(new CommandBinding(ApplicationCommands.Cut,OnCut)); 
+         this.SelectionChanged += new RoutedEventHandler(TextBoxSelectionChanged);
+         this.PreviewMouseLeftButtonUp += new MouseButtonEventHandler(TextBox_PreviewMouseLeftButtonUp);
         }
       
       /****************/
@@ -194,7 +213,7 @@ namespace RouterWPFExample
         int priority)
         {
          attachedEnv = theEnv;
-         theEnv.AddRouter(m_TextBoxRouter.routerName,priority,m_TextBoxRouter);
+         attachedEnv.AddRouter(m_TextBoxRouter.routerName,priority,m_TextBoxRouter);
         }
         
       /****************/
@@ -202,6 +221,10 @@ namespace RouterWPFExample
       /****************/
       public void DetachRouter()
         {
+         if (attachedEnv != null)
+           {
+            attachedEnv.DeleteRouter(m_TextBoxRouter.routerName);
+           }
         }
  
       /*************/
@@ -255,15 +278,15 @@ namespace RouterWPFExample
       /*********/
       /* OnCut */
       /*********/
-      protected void OnCut(object sender, ExecutedRoutedEventArgs e) 
+      protected virtual void OnCut(object sender, ExecutedRoutedEventArgs e) 
         {
          e.Handled = true; 
         } 
-
+        // TBD Paste and Drop DumpOutput support
       /***********/
       /* OnPaste */
       /***********/
-      protected void OnPaste(object sender, DataObjectPastingEventArgs e)
+      protected virtual void OnPaste(object sender, DataObjectPastingEventArgs e)
         {
          bool isText = e.SourceDataObject.GetDataPresent(DataFormats.UnicodeText, true);
          if (! isText) return;
@@ -272,6 +295,7 @@ namespace RouterWPFExample
            {
             if (m_ThreadBridge.charNeeded)
               { 
+               DumpOutput();
                String text = e.SourceDataObject.GetData(DataFormats.UnicodeText) as string;
                m_ThreadBridge.charList.AddRange(Encoding.UTF8.GetBytes(text));
                this.Select(this.Text.Length,this.Text.Length);
@@ -283,7 +307,6 @@ namespace RouterWPFExample
               { e.CancelCommand(); }
            }
         }
-
 
       /********************/
       /* OnPreviewKeyDown */
@@ -297,6 +320,22 @@ namespace RouterWPFExample
                if (m_ThreadBridge.charNeeded)
                  { 
                   m_ThreadBridge.charList.AddRange(Encoding.UTF8.GetBytes("\n"));
+                  this.Select(this.Text.Length,this.Text.Length);
+                  this.ScrollToEnd();
+                  m_ThreadBridge.charNeeded = false;
+                  Monitor.Pulse(m_ThreadBridge);
+                 }
+               else
+                 { e.Handled = true; }
+              }
+           }
+         else if (e.Key == Key.Space)
+           {
+            lock (m_ThreadBridge)
+              {
+               if (m_ThreadBridge.charNeeded)
+                 { 
+                  m_ThreadBridge.charList.AddRange(Encoding.UTF8.GetBytes(" "));
                   this.Select(this.Text.Length,this.Text.Length);
                   this.ScrollToEnd();
                   m_ThreadBridge.charNeeded = false;
@@ -335,6 +374,7 @@ namespace RouterWPFExample
            {
             if (m_ThreadBridge.charNeeded)
               { 
+               DumpOutput();
                m_ThreadBridge.charList.AddRange(Encoding.UTF8.GetBytes(e.Text));
                this.Select(this.Text.Length,this.Text.Length);
                this.ScrollToEnd();
@@ -344,5 +384,144 @@ namespace RouterWPFExample
               }
            }
         }
+
+      /***************************/
+      /* TextBoxSelectionChanged */
+      /***************************/
+      private void TextBoxSelectionChanged(object sender, RoutedEventArgs e)
+        {
+         if (System.Windows.Input.Mouse.LeftButton != MouseButtonState.Pressed)
+           { UpdateSelection(); }
+           else
+           { selectionWasChanged = true; }
+        }    
+        
+      /************************************/
+      /* TextBox_PreviewMouseLeftButtonUp */
+      /************************************/
+      private void TextBox_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+         if (selectionWasChanged)
+           {
+            selectionWasChanged = false; 
+            UpdateSelection(); 
+           }
+        }    
+
+      /*******************/
+      /* UpdateSelection */
+      /*******************/
+      protected virtual void UpdateSelection()
+        {
+         /*==============================================*/
+         /* Attempting to move the caret outside of the  */
+         /* text for the current command is not allowed. */
+         /*==============================================*/
+            
+         if (this.SelectionLength == 0) 
+           { 
+            int tl = this.Text.Length;
+               
+            if (this.SelectionStart < tl)
+              { this.SelectionStart = tl; }
+
+            this.SetCaretVisible(true); 
+           }
+              
+         /*======================================*/
+         /* If text is selected, hide the caret. */
+         /*======================================*/
+            
+         else
+           { this.SetCaretVisible(false); }
+        }
+      
+      /*******************/
+      /* SetCaretVisible */
+      /*******************/
+      protected void SetCaretVisible(
+        bool value)
+        {
+         if (value)
+           { this.CaretBrush = null; }
+         else 
+           { this.CaretBrush =  new SolidColorBrush(Color.FromArgb(0, 0, 0, 0)); }
+        } 
+         
+
+
+      /*********************/
+      /* DumpOutputAction: */
+      /*********************/
+      private void DumpOutputAction(object sender, EventArgs e)
+        {
+         CheckTimer();
+        }
+
+      /****************/
+      /* CreateTimer: */
+      /****************/
+      private bool CreateTimer(
+        String printString)
+        {
+         lock (outputBuffer) 
+           {
+            outputBuffer.Append(printString);
+      
+            if (dumpTimer == null)
+              {
+               dumpTimer = new System.Windows.Threading.DispatcherTimer();    
+               dumpTimer.Tick += new EventHandler(DumpOutputAction);
+               dumpTimer.Interval = new TimeSpan(0,0,0,0,100);  
+               dumpTimer.Start();
+               return true;
+              }
+           }
+         return false;
+        }
+
+      /******************/
+      /* CheckLineCount */
+      /******************/
+      public void CheckLineCount()
+        { 
+         if (this.LineCount > maxLines)
+           {
+            int beginOffset = this.GetCharacterIndexFromLineIndex(0);
+            int endOffset = this.GetCharacterIndexFromLineIndex(this.LineCount - maxLines);
+
+            this.Text = this.Text.Remove(0,endOffset);
+           }
+        }
+
+      /***************/
+      /* CheckTimer: */
+      /***************/
+      private void CheckTimer() 
+        {
+         lock (outputBuffer)
+           {
+            if (dumpTimer != null)
+              { dumpTimer.Stop(); }
+            this.m_TextBoxRouter.AddText(outputBuffer.ToString());
+            CheckLineCount();
+            outputBuffer.Length = 0;
+            outputBuffer.EnsureCapacity(bufferSize);
+      
+            dumpTimer = null;  
+           }   
+        }
+
+      /**************/
+      /* DumpOutput */
+      /**************/
+      protected void DumpOutput()
+        {
+         if (outputBuffer.Length == 0)
+           { return; }
+
+         Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal,
+                                                new Action(delegate { CheckTimer(); }));
+        } 
      }
   }

@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using System.Windows.Threading;
 using System.Threading;
 using CLIPSNET;
 
@@ -20,6 +21,14 @@ namespace CLIPSIDE
   {
    public partial class RouterTextBox : TextBox
      {
+      static readonly int bufferSize = 32768;
+
+      private StringBuilder outputBuffer = new StringBuilder(bufferSize);
+
+      private int maxLines = 1000;
+      
+      private System.Windows.Threading.DispatcherTimer dumpTimer = null;
+
       /*@@@@@@@@@@@@@@@@@@@@*/
       /* RouterThreadBridge */
       /*@@@@@@@@@@@@@@@@@@@@*/
@@ -110,7 +119,8 @@ namespace CLIPSIDE
 
          public override void Print(String logicalName, String printString)
            {
-            this.AddText(printString); 
+            Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal,
+                                                  new Action(delegate { m_RouterTextBox.CreateTimer(printString); }));
            }
        
          /********/
@@ -203,7 +213,7 @@ namespace CLIPSIDE
         int priority)
         {
          attachedEnv = theEnv;
-         theEnv.AddRouter(m_TextBoxRouter.routerName,priority,m_TextBoxRouter);
+         attachedEnv.AddRouter(m_TextBoxRouter.routerName,priority,m_TextBoxRouter);
         }
         
       /****************/
@@ -211,6 +221,10 @@ namespace CLIPSIDE
       /****************/
       public void DetachRouter()
         {
+         if (attachedEnv != null)
+           {
+            attachedEnv.DeleteRouter(m_TextBoxRouter.routerName);
+           }
         }
  
       /*************/
@@ -268,13 +282,12 @@ namespace CLIPSIDE
         {
          e.Handled = true; 
         } 
-
+        // TBD Paste and Drop DumpOutput support
       /***********/
       /* OnPaste */
       /***********/
       protected virtual void OnPaste(object sender, DataObjectPastingEventArgs e)
         {
-         Console.WriteLine("RouterTextBox OnPaste");
          bool isText = e.SourceDataObject.GetDataPresent(DataFormats.UnicodeText, true);
          if (! isText) return;
 
@@ -282,6 +295,7 @@ namespace CLIPSIDE
            {
             if (m_ThreadBridge.charNeeded)
               { 
+               DumpOutput();
                String text = e.SourceDataObject.GetData(DataFormats.UnicodeText) as string;
                m_ThreadBridge.charList.AddRange(Encoding.UTF8.GetBytes(text));
                this.Select(this.Text.Length,this.Text.Length);
@@ -360,6 +374,7 @@ namespace CLIPSIDE
            {
             if (m_ThreadBridge.charNeeded)
               { 
+               DumpOutput();
                m_ThreadBridge.charList.AddRange(Encoding.UTF8.GetBytes(e.Text));
                this.Select(this.Text.Length,this.Text.Length);
                this.ScrollToEnd();
@@ -431,6 +446,82 @@ namespace CLIPSIDE
            { this.CaretBrush = null; }
          else 
            { this.CaretBrush =  new SolidColorBrush(Color.FromArgb(0, 0, 0, 0)); }
-        }  
+        } 
+         
+
+
+      /*********************/
+      /* DumpOutputAction: */
+      /*********************/
+      private void DumpOutputAction(object sender, EventArgs e)
+        {
+         CheckTimer();
+        }
+
+      /****************/
+      /* CreateTimer: */
+      /****************/
+      private bool CreateTimer(
+        String printString)
+        {
+         lock (outputBuffer) 
+           {
+            outputBuffer.Append(printString);
+      
+            if (dumpTimer == null)
+              {
+               dumpTimer = new System.Windows.Threading.DispatcherTimer();    
+               dumpTimer.Tick += new EventHandler(DumpOutputAction);
+               dumpTimer.Interval = new TimeSpan(0,0,0,0,100);  
+               dumpTimer.Start();
+               return true;
+              }
+           }
+         return false;
+        }
+
+      /******************/
+      /* CheckLineCount */
+      /******************/
+      public void CheckLineCount()
+        { 
+         if (this.LineCount > maxLines)
+           {
+            int beginOffset = this.GetCharacterIndexFromLineIndex(0);
+            int endOffset = this.GetCharacterIndexFromLineIndex(this.LineCount - maxLines);
+
+            this.Text = this.Text.Remove(0,endOffset);
+           }
+        }
+
+      /***************/
+      /* CheckTimer: */
+      /***************/
+      private void CheckTimer() 
+        {
+         lock (outputBuffer)
+           {
+            if (dumpTimer != null)
+              { dumpTimer.Stop(); }
+            this.m_TextBoxRouter.AddText(outputBuffer.ToString());
+            CheckLineCount();
+            outputBuffer.Length = 0;
+            outputBuffer.EnsureCapacity(bufferSize);
+      
+            dumpTimer = null;  
+           }   
+        }
+
+      /**************/
+      /* DumpOutput */
+      /**************/
+      protected void DumpOutput()
+        {
+         if (outputBuffer.Length == 0)
+           { return; }
+
+         Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal,
+                                                new Action(delegate { CheckTimer(); }));
+        } 
      }
   }

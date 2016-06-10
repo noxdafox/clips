@@ -458,6 +458,19 @@ int CLIPSCPPEnv::AddRouter(
 #endif
   }
 
+/****************/
+/* DeleteRouter */
+/****************/
+int CLIPSCPPEnv::DeleteRouter(
+  char *routerName)
+  {
+#ifndef CLIPS_DLL_WRAPPER
+   return EnvDeleteRouter(theEnv,routerName);
+#else
+   return __EnvDeleteRouter(theEnv,routerName);
+#endif
+  }
+
 /********************/
 /* InputBufferCount */
 /********************/

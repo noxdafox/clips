@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -110,11 +106,13 @@ namespace RouterWPFExample
 
       private void OnClosing(object sender, CancelEventArgs e)
         {
+         autoTextBox.DetachRouter();
          this.autoTextBox.OnClosing();
          autoBackgroundWorker.CancelAsync();
          while (autoBackgroundWorker.IsBusy)
            { this.DoEvents(); }
 
+         animalTextBox.DetachRouter();
          this.animalTextBox.OnClosing();
          animalBackgroundWorker.CancelAsync();
          while (animalBackgroundWorker.IsBusy)

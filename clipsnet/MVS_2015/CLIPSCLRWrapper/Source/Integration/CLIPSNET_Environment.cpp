@@ -207,6 +207,22 @@ namespace CLIPSNET
         { m_Env->AddRouter("",priority,(CLIPS::CLIPSCPPRouter *) theRouter->RouterBridge()); }
      }
 
+   /****************/
+   /* DeleteRouter */
+   /****************/
+   void Environment::DeleteRouter(
+	  String ^ routerName)
+     { 
+      array<Byte>^ ebRouterName = Encoding::UTF8->GetBytes(routerName);
+      if (ebRouterName->Length)
+        {
+         pin_ptr<Byte> pbRouterName = &ebRouterName[0];
+         m_Env->DeleteRouter((char *) pbRouterName);
+        }
+      else
+        { m_Env->DeleteRouter(""); }
+     }
+
    /********************/
    /* InputBufferCount */
    /********************/

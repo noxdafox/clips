@@ -36,6 +36,7 @@ namespace CLIPSNET
         bool LoadFromResource(String ^,String ^);
         PrimitiveValue ^ Eval(String ^);
         void AddRouter(String ^,int ,Router ^);
+        void DeleteRouter(String ^);
         FactAddressValue ^ AssertString(String ^);
         size_t InputBufferCount();
         String ^ GetInputBuffer();

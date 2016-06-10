@@ -52,6 +52,7 @@ class CLIPSCPPEnv
       bool Build(char *);
       FactAddressValue *AssertString(char *);
       int AddRouter(char *,int,CLIPSCPPRouter *);
+      int DeleteRouter(char *);
       size_t InputBufferCount();
       const char *GetInputBuffer();
       void SetInputBuffer(const char *);
