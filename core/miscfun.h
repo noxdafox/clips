@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.31  06/10/16            */
    /*                                                     */
    /*          MISCELLANEOUS FUNCTIONS HEADER FILE        */
    /*******************************************************/
@@ -57,6 +57,8 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.31: Added local-time and gm-time functions.        */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_miscfun
@@ -100,6 +102,8 @@
    LOCALE void                           CallFunction(void *,DATA_OBJECT *);
    LOCALE double                         TimerFunction(void *);
    LOCALE double                         TimeFunction(void *);
+   LOCALE void                           LocalTimeFunction(void *,DATA_OBJECT *);
+   LOCALE void                           GMTimeFunction(void *,DATA_OBJECT *);
 
 #endif /* _H_miscfun */
 
