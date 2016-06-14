@@ -94,6 +94,7 @@ IDE_FILES = \
 	$(IDE_SRC)/BoundsDesktopManager.java \
 	$(IDE_SRC)/ConstructInspectorFrame.java \
 	$(IDE_SRC)/DialogFrame.java \
+	$(IDE_SRC)/EditMenu.java \
 	$(IDE_SRC)/EntityBrowserFrame.java \
 	$(IDE_SRC)/EnvironmentMenu.java \
 	$(IDE_SRC)/FactBrowserManager.java \

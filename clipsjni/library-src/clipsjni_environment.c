@@ -343,7 +343,7 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_setHaltExecution(
   jlong clipsEnv,
   jboolean value)
   {
-   SetHaltExecution(JLongToPointer(clipsEnv),value);
+   EnvSetHaltExecution(JLongToPointer(clipsEnv),value);
   }
 
 /**************************************************************************/

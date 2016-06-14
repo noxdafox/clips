@@ -48,7 +48,7 @@ void JNIUserFunction(
       EnvPrintRouter(theEnv,WERROR,"Exception occurred during evaluation of JNI User Function.\n");
       (*env)->ExceptionDescribe(env); 
       (*env)->ExceptionClear(env); 
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
      }
    else
      { ConvertPrimitiveValueToDataObject(theEnv,rv,result); }
@@ -406,7 +406,7 @@ void NewJavaAddress(
      {
       if ((*env)->ExceptionOccurred(env))
         { (*env)->ExceptionClear(env); }
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       ExpectedTypeError1(theEnv,"new (with type Java)",2,"Java class name");
       return;
      }
@@ -423,7 +423,7 @@ void NewJavaAddress(
       for (i = 0; i < numberOfArguments - 2; i++)
         {
          EnvRtnUnknown(theEnv,i+3,&newArgs[i]);
-         if (GetEvaluationError(theEnv))
+         if (EnvGetEvaluationError(theEnv))
            {   
             (*env)->DeleteLocalRef(env,theClass);
             return;
@@ -582,7 +582,7 @@ void NewJavaAddress(
    
    if ((*env)->ExceptionOccurred(env))
      { 
-      SetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,TRUE);
       (*env)->ExceptionClear(env); 
      }
 
@@ -660,7 +660,7 @@ int CallJavaMethod(
       for (i = 0; i < numberOfArguments - 2; i++)
         {
          EnvRtnUnknown(theEnv,i+3,&newArgs[i]);
-         if (GetEvaluationError(theEnv))
+         if (EnvGetEvaluationError(theEnv))
            { return FALSE; }
         }
      }

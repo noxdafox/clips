@@ -22,17 +22,12 @@ public class CLIPSIDE extends JFrame
    static final String selectWindowAction = "SelectWindow";
    
    private FileMenu jmFile;
+   private EditMenu jmEdit;
    private TextMenu jmText;
    private EnvironmentMenu jmEnvironment;
    private JMenu jmWindow;
 
    private IDEPreferences preferences;
-   
-   private JMenuItem jmiUndo;
-   private JMenuItem jmiRedo;
-   private JMenuItem jmiCut;
-   private JMenuItem jmiCopy;
-   private JMenuItem jmiPaste;
 
    private JMenuItem jmiAgendaBrowser;
    private JMenuItem jmiFactBrowser;
@@ -200,7 +195,7 @@ public class CLIPSIDE extends JFrame
       catch (Exception e) 
         { e.printStackTrace(); }
      }
-          
+
    /********/
    /* main */
    /********/  
@@ -262,74 +257,7 @@ public class CLIPSIDE extends JFrame
    public void onActionPerformed(
      ActionEvent ae) throws Exception 
      {     
-      JInternalFrame theFrame = ideDesktopPane.getSelectedFrame();
-
-      if (ae.getSource() == jmiUndo)
-        { 
-          if ((theFrame == null) || theFrame.isIcon())
-            { /* Do Nothing */ }
-          else if (theFrame instanceof TextFrame)
-            {
-             TextFrame theTextFrame = (TextFrame) theFrame;
-             theTextFrame.undo(); 
-            }
-        }
-      else if (ae.getSource() == jmiRedo)
-        { 
-          if ((theFrame == null) || theFrame.isIcon())
-            { /* Do Nothing */ }
-          else if (theFrame instanceof TextFrame)
-            {
-             TextFrame theTextFrame = (TextFrame) theFrame;
-             theTextFrame.redo(); 
-            }
-        }
-      else if (ae.getSource() == jmiCut)
-        { 
-          if ((theFrame == null) || theFrame.isIcon())
-            { /* Do Nothing */ }
-          else if (theFrame instanceof DialogFrame)
-            {
-             DialogFrame theDialogFrame = (DialogFrame) theFrame;
-             theDialogFrame.cut(); 
-            }
-          else if (theFrame instanceof TextFrame)
-            {
-             TextFrame theTextFrame = (TextFrame) theFrame;
-             theTextFrame.cut(); 
-            }
-        }
-      else if (ae.getSource() == jmiCopy)  
-        { 
-          if ((theFrame == null) || theFrame.isIcon())
-            { /* Do Nothing */ }
-          else if (theFrame instanceof DialogFrame)
-            {
-             DialogFrame theDialogFrame = (DialogFrame) theFrame;
-             theDialogFrame.copy(); 
-            }
-          else if (theFrame instanceof TextFrame)
-            {
-             TextFrame theTextFrame = (TextFrame) theFrame;
-             theTextFrame.copy(); 
-            }
-        }
-      else if (ae.getSource() == jmiPaste)  
-        { 
-          if ((theFrame == null) || theFrame.isIcon())
-            { /* Do Nothing */ }
-          else if (theFrame instanceof DialogFrame)
-            {
-             DialogFrame theDialogFrame = (DialogFrame) theFrame;
-             theDialogFrame.paste(); 
-            }
-          else if (theFrame instanceof TextFrame)
-            {
-             TextFrame theTextFrame = (TextFrame) theFrame;
-             theTextFrame.paste(); 
-            }
-        }
-      else if (ae.getSource() == jmiAgendaBrowser)  
+      if (ae.getSource() == jmiAgendaBrowser)  
         { agendaBrowserManager.createBrowser(); }
       else if (ae.getSource() == jmiFactBrowser)  
         { factBrowserManager.createBrowser(); }
@@ -438,72 +366,7 @@ public class CLIPSIDE extends JFrame
       JInternalFrame theFrame = ideDesktopPane.getSelectedFrame();
      
       if ((theFrame == null) || theFrame.isIcon())
-        {
-         jmiUndo.setEnabled(false);
-         jmiRedo.setEnabled(false);
-         jmiCut.setEnabled(false);
-         jmiCopy.setEnabled(false);
-         jmiPaste.setEnabled(false);
-         return;
-        }
-       
-      if (theFrame instanceof DialogFrame)
-        {
-         DialogFrame theDialogFrame = (DialogFrame) theFrame;
-         
-         jmiUndo.setEnabled(false);
-         jmiRedo.setEnabled(false);
-         
-         if (theDialogFrame.hasCuttableSelection())
-           { jmiCut.setEnabled(true); }
-         else
-           { jmiCut.setEnabled(false); }
-
-         if (theDialogFrame.hasSelection())
-           { jmiCopy.setEnabled(true); }
-         else
-           { jmiCopy.setEnabled(false); }
-
-         if (theDialogFrame.hasPasteableSelection())
-           { jmiPaste.setEnabled(true); }
-         else
-           { jmiPaste.setEnabled(false); }
-        }
-      else if (theFrame instanceof TextFrame)
-        {
-         TextFrame theTextFrame = (TextFrame) theFrame;
-         
-         if (theTextFrame.canUndo())
-           { jmiUndo.setEnabled(true); }
-         else
-           { jmiUndo.setEnabled(false); }
-     
-         if (theTextFrame.canRedo())
-           { jmiRedo.setEnabled(true); }
-         else
-           { jmiRedo.setEnabled(false); }
-     
-         if (theTextFrame.hasSelection())
-           { 
-            jmiCopy.setEnabled(true); 
-            jmiCut.setEnabled(true); 
-           }
-         else
-           { 
-            jmiCopy.setEnabled(false);
-            jmiCut.setEnabled(false);
-           }
-         
-         jmiPaste.setEnabled(true);
-        }
-      else
-        {
-         jmiUndo.setEnabled(false);
-         jmiRedo.setEnabled(false);
-         jmiCut.setEnabled(false);
-         jmiCopy.setEnabled(false);
-         jmiPaste.setEnabled(false);
-        }
+        { return; }
      }
    
    /******************/
@@ -697,17 +560,6 @@ public class CLIPSIDE extends JFrame
    private void createMenuBar(
      Environment theEnvironment)
      {
-      /*==================================*/
-      /* Get KeyStrokes for accelerators. */
-      /*==================================*/
-
-      KeyStroke undo = KeyStroke.getKeyStroke(KeyEvent.VK_Z,KeyEvent.CTRL_MASK);
-      KeyStroke redo = KeyStroke.getKeyStroke(KeyEvent.VK_Z,KeyEvent.CTRL_MASK | KeyEvent.SHIFT_MASK);
-
-      KeyStroke cut = KeyStroke.getKeyStroke(KeyEvent.VK_X,KeyEvent.CTRL_MASK);
-      KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C,KeyEvent.CTRL_MASK);
-      KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V,KeyEvent.CTRL_MASK);
-
       /*======================*/
       /* Create the menu bar. */
       /*======================*/
@@ -724,39 +576,10 @@ public class CLIPSIDE extends JFrame
       /*===========*/
       /* Edit menu */
       /*===========*/
-         
-      JMenu jmEdit = new JMenu("Edit");
-      jmEdit.addMenuListener(this);
-
-      jmiUndo = new JMenuItem("Undo");
-      jmiUndo.addActionListener(this);
-      jmiUndo.setAccelerator(undo);
-      jmEdit.add(jmiUndo);
       
-      jmiRedo = new JMenuItem("Redo");
-      jmiRedo.addActionListener(this);
-      jmiRedo.setAccelerator(redo);
-      jmEdit.add(jmiRedo);
-
-      jmEdit.addSeparator();
-      
-      jmiCut = new JMenuItem("Cut");
-      jmiCut.addActionListener(this);
-      jmiCut.setAccelerator(cut);
-      jmEdit.add(jmiCut);
-
-      jmiCopy = new JMenuItem("Copy");
-      jmiCopy.addActionListener(this);
-      jmiCopy.setAccelerator(copy);
-      jmEdit.add(jmiCopy);
-
-      jmiPaste = new JMenuItem("Paste");
-      jmiPaste.addActionListener(this);      
-      jmiPaste.setAccelerator(paste);      
-      jmEdit.add(jmiPaste);
-      
+      jmEdit = new EditMenu(this);
       jmb.add(jmEdit);
-      
+            
       /*===========*/
       /* Text menu */
       /*===========*/

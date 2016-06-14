@@ -239,6 +239,11 @@ public class FileMenu extends JMenu
    /****************/  
    public void menuCanceled(MenuEvent e)
      {
+      for (int i = 0; i < this.getItemCount(); i++)
+        { 
+         JMenuItem theItem = this.getItem(i);
+         if (theItem != null) theItem.setEnabled(true);
+        }
      }
    
    /****************/
@@ -283,5 +288,10 @@ public class FileMenu extends JMenu
    /******************/  
    public void menuDeselected(MenuEvent e)
      {
+      for (int i = 0; i < this.getItemCount(); i++)
+        { 
+         JMenuItem theItem = this.getItem(i);
+         if (theItem != null) theItem.setEnabled(true);
+        }
      }
   }  
