@@ -632,7 +632,7 @@ static void ScanNumber(
                    (inchar == '(') || (inchar == ')') ||
                    (inchar == '&') || (inchar == '|') || (inchar == '~') ||
                    (inchar == ' ') || (inchar == ';') ||
-                   (! IsUTF8MultiByteStart(inchar)) && ((isprint(inchar) == 0)) )
+                   ((! IsUTF8MultiByteStart(inchar)) && ((isprint(inchar) == 0))) )
            { phase = 5; }
          else
            {
