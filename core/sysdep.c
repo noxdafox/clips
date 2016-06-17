@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/03/16            */
+   /*             CLIPS Version 6.40  06/17/16            */
    /*                                                     */
    /*               SYSTEM DEPENDENT MODULE               */
    /*******************************************************/
@@ -87,6 +87,9 @@
 /*            Modified gentime to return "comparable" epoch  */
 /*            based values across platforms.                 */
 /*                                                           */
+/*            Refactored code to reduce header dependencies  */
+/*            in sysdep.c.                                   */
+/*                                                           */
 /*************************************************************/
 
 #define _SYSDEP_SOURCE_
@@ -155,77 +158,9 @@ extern int LIB$SPAWN();
 #include <signal.h>
 #endif
 
-#include "argacces.h"
-#include "bmathfun.h"
-#include "commline.h"
-#include "conscomp.h"
-#include "constrnt.h"
-#include "constrct.h"
-#include "cstrcpsr.h"
-#include "emathfun.h"
 #include "envrnmnt.h"
-#include "filecom.h"
-#include "iofun.h"
-#include "memalloc.h"
-#include "miscfun.h"
-#include "multifld.h"
-#include "multifun.h"
-#include "parsefun.h"
-#include "prccode.h"
-#include "prdctfun.h"
-#include "proflfun.h"
-#include "prcdrfun.h"
-#include "router.h"
-#include "sortfun.h"
-#include "strngfun.h"
-#include "textpro.h"
-#include "utility.h"
-#include "watch.h"
 
 #include "sysdep.h"
-
-#if DEFFACTS_CONSTRUCT
-#include "dffctdef.h"
-#endif
-
-#if DEFRULE_CONSTRUCT
-#include "ruledef.h"
-#endif
-
-#if DEFGENERIC_CONSTRUCT
-#include "genrccom.h"
-#endif
-
-#if DEFFUNCTION_CONSTRUCT
-#include "dffnxfun.h"
-#endif
-
-#if DEFGLOBAL_CONSTRUCT
-#include "globldef.h"
-#endif
-
-#if DEFTEMPLATE_CONSTRUCT
-#include "tmpltdef.h"
-#endif
-
-#if OBJECT_SYSTEM
-#include "classini.h"
-#endif
-
-#include "moduldef.h"
-
-#if DEVELOPER
-#include "developr.h"
-#endif
-
-/***************/
-/* DEFINITIONS */
-/***************/
-
-#define NO_SWITCH         0
-#define BATCH_SWITCH      1
-#define BATCH_STAR_SWITCH 2
-#define LOAD_SWITCH       3
 
 /********************/
 /* ENVIRONMENT DATA */
@@ -262,21 +197,10 @@ struct systemDependentData
 
 #define SystemDependentData(theEnv) ((struct systemDependentData *) GetEnvironmentData(theEnv,SYSTEM_DEPENDENT_DATA))
 
-/****************************************/
-/* GLOBAL EXTERNAL FUNCTION DEFINITIONS */
-/****************************************/
-
-   extern void                    UserFunctions(void);
-   extern void                    EnvUserFunctions(void *);
-
 /***************************************/
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    InitializeSystemDependentData(void *);
-   static void                    SystemFunctionDefinitions(void *);
-   static void                    InitializeKeywords(void *);
-   static void                    InitializeNonportableFeatures(void *);
 #if   (VAX_VMS || UNIX_V || LINUX || DARWIN || UNIX_7 || WIN_GCC || WIN_MVC) && (! WINDOW_INTERFACE)
    static void                    CatchCtrlC(int);
 #endif
@@ -291,219 +215,10 @@ struct systemDependentData
 /* InitializeSystemDependentData: Allocates environment */
 /*    data for system dependent routines.               */
 /********************************************************/
-static void InitializeSystemDependentData(
+globle void InitializeSystemDependentData(
   void *theEnv)
   {
    AllocateEnvironmentData(theEnv,SYSTEM_DEPENDENT_DATA,sizeof(struct systemDependentData),NULL);
-  }
-
-/**************************************************/
-/* InitializeEnvironment: Performs initialization */
-/*   of the KB environment.                       */
-/**************************************************/
-#if ALLOW_ENVIRONMENT_GLOBALS
-globle void InitializeEnvironment()
-   {
-    if (GetCurrentEnvironment() == NULL)
-      { CreateEnvironment(); }
-   }
-#endif
-
-/*****************************************************/
-/* EnvInitializeEnvironment: Performs initialization */
-/*   of the KB environment.                          */
-/*****************************************************/
-globle void EnvInitializeEnvironment(
-  void *vtheEnvironment,
-  struct symbolHashNode **symbolTable,
-  struct floatHashNode **floatTable,
-  struct integerHashNode **integerTable,
-  struct bitMapHashNode **bitmapTable,
-  struct externalAddressHashNode **externalAddressTable)
-  {
-   struct environmentData *theEnvironment = (struct environmentData *) vtheEnvironment;
-   
-   /*================================================*/
-   /* Don't allow the initialization to occur twice. */
-   /*================================================*/
-
-   if (theEnvironment->initialized) return;
-     
-   /*================================*/
-   /* Initialize the memory manager. */
-   /*================================*/
-
-   InitializeMemory(theEnvironment);
-
-   /*===================================================*/
-   /* Initialize environment data for various features. */
-   /*===================================================*/
-   
-   InitializeCommandLineData(theEnvironment);
-#if CONSTRUCT_COMPILER && (! RUN_TIME)
-   InitializeConstructCompilerData(theEnvironment);
-#endif
-   InitializeConstructData(theEnvironment);
-   InitializeEvaluationData(theEnvironment);
-   InitializeExternalFunctionData(theEnvironment);
-   InitializePrettyPrintData(theEnvironment);
-   InitializePrintUtilityData(theEnvironment);
-   InitializeScannerData(theEnvironment);
-   InitializeSystemDependentData(theEnvironment);
-   InitializeUserDataData(theEnvironment);
-   InitializeUtilityData(theEnvironment);
-#if DEBUGGING_FUNCTIONS
-   InitializeWatchData(theEnvironment);
-#endif
-   
-   /*===============================================*/
-   /* Initialize the hash tables for atomic values. */
-   /*===============================================*/
-
-   InitializeAtomTables(theEnvironment,symbolTable,floatTable,integerTable,bitmapTable,externalAddressTable);
-
-   /*=========================================*/
-   /* Initialize file and string I/O routers. */
-   /*=========================================*/
-
-   InitializeDefaultRouters(theEnvironment);
-
-   /*=========================================================*/
-   /* Initialize some system dependent features such as time. */
-   /*=========================================================*/
-
-   InitializeNonportableFeatures(theEnvironment);
-
-   /*=============================================*/
-   /* Register system and user defined functions. */
-   /*=============================================*/
-
-   SystemFunctionDefinitions(theEnvironment);
-   UserFunctions();
-   EnvUserFunctions(theEnvironment);
-
-   /*====================================*/
-   /* Initialize the constraint manager. */
-   /*====================================*/
-
-   InitializeConstraints(theEnvironment);
-
-   /*==========================================*/
-   /* Initialize the expression hash table and */
-   /* pointers to specific functions.          */
-   /*==========================================*/
-
-   InitExpressionData(theEnvironment);
-
-   /*===================================*/
-   /* Initialize the construct manager. */
-   /*===================================*/
-
-#if ! RUN_TIME
-   InitializeConstructs(theEnvironment);
-#endif
-
-   /*=====================================*/
-   /* Initialize the defmodule construct. */
-   /*=====================================*/
-
-   AllocateDefmoduleGlobals(theEnvironment);
-
-   /*===================================*/
-   /* Initialize the defrule construct. */
-   /*===================================*/
-
-#if DEFRULE_CONSTRUCT
-   InitializeDefrules(theEnvironment);
-#endif
-
-   /*====================================*/
-   /* Initialize the deffacts construct. */
-   /*====================================*/
-
-#if DEFFACTS_CONSTRUCT
-   InitializeDeffacts(theEnvironment);
-#endif
-
-   /*=====================================================*/
-   /* Initialize the defgeneric and defmethod constructs. */
-   /*=====================================================*/
-
-#if DEFGENERIC_CONSTRUCT
-   SetupGenericFunctions(theEnvironment);
-#endif
-
-   /*=======================================*/
-   /* Initialize the deffunction construct. */
-   /*=======================================*/
-
-#if DEFFUNCTION_CONSTRUCT
-   SetupDeffunctions(theEnvironment);
-#endif
-
-   /*=====================================*/
-   /* Initialize the defglobal construct. */
-   /*=====================================*/
-
-#if DEFGLOBAL_CONSTRUCT
-   InitializeDefglobals(theEnvironment);
-#endif
-
-   /*=======================================*/
-   /* Initialize the deftemplate construct. */
-   /*=======================================*/
-
-#if DEFTEMPLATE_CONSTRUCT
-   InitializeDeftemplates(theEnvironment);
-#endif
-
-   /*=============================*/
-   /* Initialize COOL constructs. */
-   /*=============================*/
-
-#if OBJECT_SYSTEM
-   SetupObjectSystem(theEnvironment);
-#endif
-
-   /*=====================================*/
-   /* Initialize the defmodule construct. */
-   /*=====================================*/
-
-   InitializeDefmodules(theEnvironment);
-
-   /*======================================================*/
-   /* Register commands and functions for development use. */
-   /*======================================================*/
-
-#if DEVELOPER
-   DeveloperCommands(theEnvironment);
-#endif
-
-   /*=========================================*/
-   /* Install the special function primitives */
-   /* used by procedural code in constructs.  */
-   /*=========================================*/
-
-   InstallProcedurePrimitives(theEnvironment);
-
-   /*==============================================*/
-   /* Install keywords in the symbol table so that */
-   /* they are available for command completion.   */
-   /*==============================================*/
-
-   InitializeKeywords(theEnvironment);
-
-   /*========================*/
-   /* Issue a clear command. */
-   /*========================*/
-   
-   EnvClear(theEnvironment);
-
-   /*=============================*/
-   /* Initialization is complete. */
-   /*=============================*/
-
-   theEnvironment->initialized = TRUE;
   }
 
 /******************************************************/
@@ -566,142 +281,6 @@ globle void (*GetContinueEnvFunction(void *theEnv))(void *,int)
    return SystemDependentData(theEnv)->ContinueEnvFunction;
   }
 
-/*************************************************/
-/* RerouteStdin: Processes the -f, -f2, and -l   */
-/*   options available on machines which support */
-/*   argc and arv command line options.          */
-/*************************************************/
-globle void RerouteStdin(
-  void *theEnv,
-  int argc,
-  char *argv[])
-  {
-   int i;
-   int theSwitch = NO_SWITCH;
-
-   /*======================================*/
-   /* If there aren't enough arguments for */
-   /* the -f argument, then return.        */
-   /*======================================*/
-
-   if (argc < 3)
-     { return; }
-
-   /*=====================================*/
-   /* If argv was not passed then return. */
-   /*=====================================*/
-
-   if (argv == NULL) return;
-
-   /*=============================================*/
-   /* Process each of the command line arguments. */
-   /*=============================================*/
-
-   for (i = 1 ; i < argc ; i++)
-     {
-      if (strcmp(argv[i],"-f") == 0) theSwitch = BATCH_SWITCH;
-#if ! RUN_TIME
-      else if (strcmp(argv[i],"-f2") == 0) theSwitch = BATCH_STAR_SWITCH;
-      else if (strcmp(argv[i],"-l") == 0) theSwitch = LOAD_SWITCH;
-#endif
-      else if (theSwitch == NO_SWITCH)
-        {
-         PrintErrorID(theEnv,"SYSDEP",2,FALSE);
-         EnvPrintRouter(theEnv,WERROR,"Invalid option\n");
-        }
-
-      if (i > (argc-1))
-        {
-         PrintErrorID(theEnv,"SYSDEP",1,FALSE);
-         EnvPrintRouter(theEnv,WERROR,"No file found for ");
-
-         switch(theSwitch)
-           {
-            case BATCH_SWITCH:
-               EnvPrintRouter(theEnv,WERROR,"-f");
-               break;
-
-            case BATCH_STAR_SWITCH:
-               EnvPrintRouter(theEnv,WERROR,"-f2");
-               break;
-
-            case LOAD_SWITCH:
-               EnvPrintRouter(theEnv,WERROR,"-l");
-           }
-
-         EnvPrintRouter(theEnv,WERROR," option\n");
-         return;
-        }
-
-      switch(theSwitch)
-        {
-         case BATCH_SWITCH:
-            OpenBatch(theEnv,argv[++i],TRUE);
-            break;
-
-#if (! RUN_TIME) && (! BLOAD_ONLY)
-         case BATCH_STAR_SWITCH:
-            EnvBatchStar(theEnv,argv[++i]);
-            break;
-
-         case LOAD_SWITCH:
-            EnvLoad(theEnv,argv[++i]);
-            break;
-#endif
-        }
-     }
-  }
-
-/**************************************************/
-/* SystemFunctionDefinitions: Sets up definitions */
-/*   of system defined functions.                 */
-/**************************************************/
-static void SystemFunctionDefinitions(
-  void *theEnv)
-  {
-   ProceduralFunctionDefinitions(theEnv);
-   MiscFunctionDefinitions(theEnv);
-
-#if IO_FUNCTIONS
-   IOFunctionDefinitions(theEnv);
-#endif
-
-   PredicateFunctionDefinitions(theEnv);
-   BasicMathFunctionDefinitions(theEnv);
-   FileCommandDefinitions(theEnv);
-   SortFunctionDefinitions(theEnv);
-
-#if DEBUGGING_FUNCTIONS
-   WatchFunctionDefinitions(theEnv);
-#endif
-
-#if MULTIFIELD_FUNCTIONS
-   MultifieldFunctionDefinitions(theEnv);
-#endif
-
-#if STRING_FUNCTIONS
-   StringFunctionDefinitions(theEnv);
-#endif
-
-#if EXTENDED_MATH_FUNCTIONS
-   ExtendedMathFunctionDefinitions(theEnv);
-#endif
-
-#if TEXTPRO_FUNCTIONS
-   HelpFunctionDefinitions(theEnv);
-#endif
-
-#if CONSTRUCT_COMPILER && (! RUN_TIME)
-   ConstructsToCCommandDefinition(theEnv);
-#endif
-
-#if PROFILING_FUNCTIONS
-   ConstructProfilingFunctionDefinitions(theEnv);
-#endif
-
-   ParseFunctionDefinitions(theEnv);
-  }
-  
 /*********************************************************/
 /* gentime: A function to return a floating point number */
 /*   which indicates the present time. Used internally   */
@@ -734,99 +313,14 @@ globle double gentime()
 /*   representing a command to the operating system. */
 /*****************************************************/
 globle void gensystem(
-  void *theEnv)
+  void *theEnv,
+  const char *commandBuffer)
   {
-   char *commandBuffer = NULL;
-   size_t bufferPosition = 0;
-   size_t bufferMaximum = 0;
-   int numa, i;
-   DATA_OBJECT tempValue;
-   const char *theString;
-
-   /*===========================================*/
-   /* Check for the corret number of arguments. */
-   /*===========================================*/
-
-   if ((numa = EnvArgCountCheck(theEnv,"system",AT_LEAST,1)) == -1) return;
-
-   /*============================================================*/
-   /* Concatenate the arguments together to form a single string */
-   /* containing the command to be sent to the operating system. */
-   /*============================================================*/
-
-   for (i = 1 ; i <= numa; i++)
-     {
-      EnvRtnUnknown(theEnv,i,&tempValue);
-      if ((GetType(tempValue) != STRING) &&
-          (GetType(tempValue) != SYMBOL))
-        {
-         EnvSetHaltExecution(theEnv,TRUE);
-         EnvSetEvaluationError(theEnv,TRUE);
-         ExpectedTypeError2(theEnv,"system",i);
-         return;
-        }
-
-     theString = DOToString(tempValue);
-
-     commandBuffer = AppendToString(theEnv,theString,commandBuffer,&bufferPosition,&bufferMaximum);
-    }
-
-   if (commandBuffer == NULL) return;
-
-   /*=======================================*/
-   /* Execute the operating system command. */
-   /*=======================================*/
-
-#if VAX_VMS
-   if (SystemDependentData(theEnv)->PauseEnvFunction != NULL) (*SystemDependentData(theEnv)->PauseEnvFunction)(theEnv);
-   VMSSystem(commandBuffer);
-   putchar('\n');
-   if (SystemDependentData(theEnv)->ContinueEnvFunction != NULL) (*SystemDependentData(theEnv)->ContinueEnvFunction)(theEnv,1);
-   if (SystemDependentData(theEnv)->RedrawScreenFunction != NULL) (*SystemDependentData(theEnv)->RedrawScreenFunction)(theEnv);
-#endif
-
-#if   UNIX_7 || UNIX_V || LINUX || DARWIN || WIN_MVC || WIN_GCC || MAC_XCD
    if (SystemDependentData(theEnv)->PauseEnvFunction != NULL) (*SystemDependentData(theEnv)->PauseEnvFunction)(theEnv);
    system(commandBuffer);
    if (SystemDependentData(theEnv)->ContinueEnvFunction != NULL) (*SystemDependentData(theEnv)->ContinueEnvFunction)(theEnv,1);
    if (SystemDependentData(theEnv)->RedrawScreenFunction != NULL) (*SystemDependentData(theEnv)->RedrawScreenFunction)(theEnv);
-#else
-
-#if ! VAX_VMS
-   EnvPrintRouter(theEnv,WDIALOG,
-            "System function not fully defined for this system.\n");
-#endif
-
-#endif
-
-   /*==================================================*/
-   /* Return the string buffer containing the command. */
-   /*==================================================*/
-
-   rm(theEnv,commandBuffer,bufferMaximum);
-
-   return;
   }
-
-#if   VAX_VMS
-/*************************************************/
-/* VMSSystem: Implements system command for VMS. */
-/*************************************************/
-globle void VMSSystem(
-  char *cmd)
-  {
-   long status, complcode;
-   struct dsc$descriptor_s cmd_desc;
-
-   cmd_desc.dsc$w_length = strlen(cmd);
-   cmd_desc.dsc$a_pointer = cmd;
-   cmd_desc.dsc$b_class = DSC$K_CLASS_S;
-   cmd_desc.dsc$b_dtype = DSC$K_DTYPE_T;
-
-   status = LIB$SPAWN(&cmd_desc,0,0,0,0,0,&complcode,0,0,0);
-  }
-
-#endif
 
 /*******************************************/
 /* gengetchar: Generic routine for getting */
@@ -934,7 +428,7 @@ globle void genprintfile(
 /*   requiring initialization is the interrupt handler     */
 /*   which allows execution to be halted.                  */
 /***********************************************************/
-static void InitializeNonportableFeatures(
+globle void InitializeNonportableFeatures(
   void *theEnv)
   {
 #if MAC_XCD
@@ -1319,7 +813,6 @@ globle int GenOpenReadBinary(
      {
       if (SystemDependentData(theEnv)->AfterOpenFunction != NULL)
         { (*SystemDependentData(theEnv)->AfterOpenFunction)(theEnv); }
-      OpenErrorMessage(theEnv,funcName,fileName);
       return(FALSE);
      }
 #endif
@@ -1330,7 +823,6 @@ globle int GenOpenReadBinary(
      {
       if (SystemDependentData(theEnv)->AfterOpenFunction != NULL)
         { (*SystemDependentData(theEnv)->AfterOpenFunction)(theEnv); }
-      OpenErrorMessage(theEnv,funcName,fileName);
       return(FALSE);
      }
 #endif
@@ -1457,245 +949,5 @@ globle void GenWrite(
    fwrite(dataPtr,size,1,fp);
 #else
    fwrite(dataPtr,size,1,fp);
-#endif
-  }
-
-/*********************************************/
-/* InitializeKeywords: Adds key words to the */
-/*   symbol table so that they are available */
-/*   for command completion.                 */
-/*********************************************/
-static void InitializeKeywords(
-  void *theEnv)
-  {
-#if (! RUN_TIME) && WINDOW_INTERFACE
-   void *ts;
-
-   /*====================*/
-   /* construct keywords */
-   /*====================*/
-
-   ts = EnvAddSymbol(theEnv,"defrule");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"defglobal");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"deftemplate");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"deffacts");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"deffunction");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"defmethod");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"defgeneric");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"defclass");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"defmessage-handler");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"definstances");
-   IncrementSymbolCount(ts);
-
-   /*=======================*/
-   /* set-strategy keywords */
-   /*=======================*/
-
-   ts = EnvAddSymbol(theEnv,"depth");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"breadth");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"lex");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"mea");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"simplicity");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"complexity");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"random");
-   IncrementSymbolCount(ts);
-
-   /*==================================*/
-   /* set-salience-evaluation keywords */
-   /*==================================*/
-
-   ts = EnvAddSymbol(theEnv,"when-defined");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"when-activated");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"every-cycle");
-   IncrementSymbolCount(ts);
-
-   /*======================*/
-   /* deftemplate keywords */
-   /*======================*/
-
-   ts = EnvAddSymbol(theEnv,"field");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"multifield");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"default");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"type");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"allowed-symbols");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"allowed-strings");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"allowed-numbers");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"allowed-integers");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"allowed-floats");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"allowed-values");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"min-number-of-elements");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"max-number-of-elements");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"NONE");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"VARIABLE");
-   IncrementSymbolCount(ts);
-
-   /*==================*/
-   /* defrule keywords */
-   /*==================*/
-
-   ts = EnvAddSymbol(theEnv,"declare");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"salience");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"test");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"or");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"and");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"not");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"logical");
-   IncrementSymbolCount(ts);
-
-   /*===============*/
-   /* COOL keywords */
-   /*===============*/
-
-   ts = EnvAddSymbol(theEnv,"is-a");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"role");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"abstract");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"concrete");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"pattern-match");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"reactive");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"non-reactive");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"slot");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"field");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"multiple");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"single");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"storage");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"shared");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"local");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"access");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"read");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"write");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"read-only");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"read-write");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"initialize-only");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"propagation");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"inherit");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"no-inherit");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"source");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"composite");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"exclusive");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"allowed-lexemes");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"allowed-instances");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"around");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"before");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"primary");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"after");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"of");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"self");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"visibility");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"override-message");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"private");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"public");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"create-accessor");
-   IncrementSymbolCount(ts);
-
-   /*================*/
-   /* watch keywords */
-   /*================*/
-
-   ts = EnvAddSymbol(theEnv,"compilations");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"deffunctions");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"globals");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"rules");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"activations");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"statistics");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"facts");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"generic-functions");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"methods");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"instances");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"slots");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"messages");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"message-handlers");
-   IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"focus");
-   IncrementSymbolCount(ts);
-#else
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
 #endif
   }

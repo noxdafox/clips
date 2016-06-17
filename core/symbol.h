@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  02/03/15            */
+   /*             CLIPS Version 6.40  06/17/16            */
    /*                                                     */
    /*                 SYMBOL HEADER FILE                  */
    /*******************************************************/
@@ -58,6 +58,9 @@
 /*            Added ValueToPointer and EnvValueToPointer     */
 /*            macros.                                        */
 /*                                                           */
+/*      6.40: Refactored code to reduce header dependencies  */
+/*            in sysdep.c.                                   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_symbol
@@ -74,10 +77,6 @@
 #endif
 
 #include <stdlib.h>
-
-#ifndef _H_multifld
-#include "multifld.h"
-#endif
 
 #ifndef SYMBOL_HASH_SIZE
 #define SYMBOL_HASH_SIZE       63559L
@@ -315,7 +314,6 @@ struct symbolData
    LOCALE void                          *EnvFalseSymbol(void *);
    LOCALE void                          *EnvTrueSymbol(void *);
    LOCALE void                           EphemerateValue(void *,int,void *);
-   LOCALE void                           EphemerateMultifield(void *,struct multifield *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 

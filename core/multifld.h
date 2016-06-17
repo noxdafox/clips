@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/19/14            */
+   /*             CLIPS Version 6.40  06/17/16            */
    /*                                                     */
    /*                MULTIFIELD HEADER FILE               */
    /*******************************************************/
@@ -39,6 +39,9 @@
 /*            Fixed issue with StoreInMultifield when        */
 /*            asserting void values in implied deftemplate   */
 /*            facts.                                         */
+/*                                                           */
+/*      6.40: Refactored code to reduce header dependencies  */
+/*            in sysdep.c.                                   */
 /*                                                           */
 /*************************************************************/
 
@@ -114,6 +117,7 @@ typedef struct field * FIELD_PTR;
    LOCALE unsigned long                  HashMultifield(struct multifield *,unsigned long);
    LOCALE struct multifield             *GetMultifieldList(void *);
    LOCALE void                          *ImplodeMultifield(void *,DATA_OBJECT *);
+   LOCALE void                           EphemerateMultifield(void *,struct multifield *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 

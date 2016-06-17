@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*              CLIPS Version 6.40  06/03/16           */
+   /*              CLIPS Version 6.40  06/17/16           */
    /*                                                     */
    /*         INSTANCE LOAD/SAVE (ASCII/BINARY) MODULE    */
    /*******************************************************/
@@ -44,6 +44,9 @@
 /*                                                           */
 /*            Added Env prefix to GetHaltExecution and       */
 /*            SetHaltExecution functions.                    */
+/*                                                           */
+/*            Refactored code to reduce header dependencies  */
+/*            in sysdep.c.                                   */
 /*                                                           */
 /*************************************************************/
 
@@ -386,6 +389,7 @@ globle long EnvBinaryLoadInstances(
 
    if (GenOpenReadBinary(theEnv,"bload-instances",theFile) == 0)
      {
+      OpenErrorMessage(theEnv,"bload-instances",theFile);
       EnvSetEvaluationError(theEnv,TRUE);
       return(-1L);
      }

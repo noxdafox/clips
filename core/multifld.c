@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/19/14            */
+   /*             CLIPS Version 6.40  06/17/16            */
    /*                                                     */
    /*                  MULTIFIELD MODULE                  */
    /*******************************************************/
@@ -39,6 +39,9 @@
 /*            Fixed issue with StoreInMultifield when        */
 /*            asserting void values in implied deftemplate   */
 /*            facts.                                         */
+/*                                                           */
+/*      6.40: Refactored code to reduce header dependencies  */
+/*            in sysdep.c.                                   */
 /*                                                           */
 /*************************************************************/
 
@@ -346,6 +349,27 @@ globle void *CopyMultifield(
    dst = (struct multifield *) CreateMultifield2(theEnv,src->multifieldLength);
    GenCopyMemory(struct field,src->multifieldLength,&(dst->theFields[0]),&(src->theFields[0]));
    return((void *) dst);
+  }
+
+/**********************************************************/
+/* EphemerateMultifield: Marks the values of a multifield */
+/*   as ephemeral if they have not already been marker.   */
+/**********************************************************/
+globle void EphemerateMultifield(
+  void *theEnv,
+  struct multifield *theSegment)
+  {
+   unsigned long length, i;
+   struct field *theFields;
+
+   if (theSegment == NULL) return;
+
+   length = theSegment->multifieldLength;
+
+   theFields = theSegment->theFields;
+
+   for (i = 0 ; i < length ; i++)
+     { EphemerateValue(theEnv,theFields[i].type,theFields[i].value); }
   }
 
 /*********************************************/

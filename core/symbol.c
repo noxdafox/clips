@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  02/03/15            */
+   /*             CLIPS Version 6.40  06/17/16            */
    /*                                                     */
    /*                    SYMBOL MODULE                    */
    /*******************************************************/
@@ -56,6 +56,9 @@
 /*                                                           */
 /*            Converted API macros to function calls.        */
 /*                                                           */
+/*      6.40: Refactored code to reduce header dependencies  */
+/*            in sysdep.c.                                   */
+/*                                                           */
 /*************************************************************/
 
 #define _SYMBOL_SOURCE_
@@ -70,6 +73,7 @@
 #include "constant.h"
 #include "envrnmnt.h"
 #include "memalloc.h"
+#include "multifld.h"
 #include "router.h"
 #include "utility.h"
 #include "argacces.h"
@@ -1157,27 +1161,6 @@ globle void RemoveEphemeralAtoms(
                             sizeof(BITMAP_HN),BITMAPARRAY,AVERAGE_BITMAP_SIZE);
    RemoveEphemeralHashNodes(theEnv,&theGarbageFrame->ephemeralExternalAddressList,(GENERIC_HN **) SymbolData(theEnv)->ExternalAddressTable,
                             sizeof(EXTERNAL_ADDRESS_HN),EXTERNAL_ADDRESS,0);
-  }
-
-/**********************************************************/
-/* EphemerateMultifield: Marks the values of a multifield */
-/*   as ephemeral if they have not already been marker.   */
-/**********************************************************/
-globle void EphemerateMultifield(
-  void *theEnv,
-  struct multifield *theSegment)
-  {
-   unsigned long length, i;
-   struct field *theFields;
-
-   if (theSegment == NULL) return;
-
-   length = theSegment->multifieldLength;
-
-   theFields = theSegment->theFields;
-
-   for (i = 0 ; i < length ; i++)
-     { EphemerateValue(theEnv,theFields[i].type,theFields[i].value); }
   }
 
 /***********************************************/

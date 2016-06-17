@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*               CLIPS Version 6.40  06/17/16          */
    /*                                                     */
    /*                    BLOAD MODULE                     */
    /*******************************************************/
@@ -29,6 +29,9 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*            Converted API macros to function calls.        */
+/*                                                           */
+/*      6.40: Refactored code to reduce header dependencies  */
+/*            in sysdep.c.                                   */
 /*                                                           */
 /*************************************************************/
 
@@ -109,7 +112,11 @@ globle int EnvBload(
    /* Open the file. */
    /*================*/
 
-   if (GenOpenReadBinary(theEnv,"bload",fileName) == 0) return(FALSE);
+   if (GenOpenReadBinary(theEnv,"bload",fileName) == 0)
+     {
+      OpenErrorMessage(theEnv,"bload",fileName);
+      return(FALSE);
+     }
 
    /*=====================================*/
    /* Determine if this is a binary file. */

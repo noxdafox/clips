@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  05/21/16            */
+   /*             CLIPS Version 6.40  06/17/16            */
    /*                                                     */
    /*                COMMAND LINE MODULE                  */
    /*******************************************************/
@@ -66,6 +66,9 @@
 /*            Added Env prefix to GetHaltExecution and       */
 /*            SetHaltExecution functions.                    */
 /*                                                           */
+/*            Refactored code to reduce header dependencies  */
+/*            in sysdep.c.                                   */
+/*                                                           */
 /*************************************************************/
 
 #define _COMMLINE_SOURCE_
@@ -96,6 +99,15 @@
 #include "utility.h"
 
 #include "commline.h"
+
+/***************/
+/* DEFINITIONS */
+/***************/
+
+#define NO_SWITCH         0
+#define BATCH_SWITCH      1
+#define BATCH_STAR_SWITCH 2
+#define LOAD_SWITCH       3
 
 /***************************************/
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
@@ -142,6 +154,92 @@ static void DeallocateCommandLineData(
 #pragma unused(theEnv)
 #endif
 #endif
+  }
+
+/*************************************************/
+/* RerouteStdin: Processes the -f, -f2, and -l   */
+/*   options available on machines which support */
+/*   argc and arv command line options.          */
+/*************************************************/
+globle void RerouteStdin(
+  void *theEnv,
+  int argc,
+  char *argv[])
+  {
+   int i;
+   int theSwitch = NO_SWITCH;
+
+   /*======================================*/
+   /* If there aren't enough arguments for */
+   /* the -f argument, then return.        */
+   /*======================================*/
+
+   if (argc < 3)
+     { return; }
+
+   /*=====================================*/
+   /* If argv was not passed then return. */
+   /*=====================================*/
+
+   if (argv == NULL) return;
+
+   /*=============================================*/
+   /* Process each of the command line arguments. */
+   /*=============================================*/
+
+   for (i = 1 ; i < argc ; i++)
+     {
+      if (strcmp(argv[i],"-f") == 0) theSwitch = BATCH_SWITCH;
+#if ! RUN_TIME
+      else if (strcmp(argv[i],"-f2") == 0) theSwitch = BATCH_STAR_SWITCH;
+      else if (strcmp(argv[i],"-l") == 0) theSwitch = LOAD_SWITCH;
+#endif
+      else if (theSwitch == NO_SWITCH)
+        {
+         PrintErrorID(theEnv,"SYSDEP",2,FALSE);
+         EnvPrintRouter(theEnv,WERROR,"Invalid option\n");
+        }
+
+      if (i > (argc-1))
+        {
+         PrintErrorID(theEnv,"SYSDEP",1,FALSE);
+         EnvPrintRouter(theEnv,WERROR,"No file found for ");
+
+         switch(theSwitch)
+           {
+            case BATCH_SWITCH:
+               EnvPrintRouter(theEnv,WERROR,"-f");
+               break;
+
+            case BATCH_STAR_SWITCH:
+               EnvPrintRouter(theEnv,WERROR,"-f2");
+               break;
+
+            case LOAD_SWITCH:
+               EnvPrintRouter(theEnv,WERROR,"-l");
+           }
+
+         EnvPrintRouter(theEnv,WERROR," option\n");
+         return;
+        }
+
+      switch(theSwitch)
+        {
+         case BATCH_SWITCH:
+            OpenBatch(theEnv,argv[++i],TRUE);
+            break;
+
+#if (! RUN_TIME) && (! BLOAD_ONLY)
+         case BATCH_STAR_SWITCH:
+            EnvBatchStar(theEnv,argv[++i]);
+            break;
+
+         case LOAD_SWITCH:
+            EnvLoad(theEnv,argv[++i]);
+            break;
+#endif
+        }
+     }
   }
 
 #if ! RUN_TIME
