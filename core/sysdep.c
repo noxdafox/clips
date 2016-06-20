@@ -473,7 +473,7 @@ static void CatchCtrlC(
   int sgnl)
   {
 #if ALLOW_ENVIRONMENT_GLOBALS
-   EnvSetHaltExecution(GetCurrentEnvironment(),TRUE);
+   EnvSetHaltExecution(GetCurrentEnvironment(),1);
    CloseAllBatchSources(GetCurrentEnvironment());
 #endif
    signal(SIGINT,CatchCtrlC);
@@ -489,7 +489,7 @@ static void CatchCtrlC(
 static void interrupt CatchCtrlC()
   {
 #if ALLOW_ENVIRONMENT_GLOBALS
-   EnvSetHaltExecution(GetCurrentEnvironment(),TRUE);
+   EnvSetHaltExecution(GetCurrentEnvironment(),1);
    CloseAllBatchSources(GetCurrentEnvironment());
 #endif
   }
@@ -824,7 +824,7 @@ globle int GenOpenReadBinary(
      {
       if (SystemDependentData(theEnv)->AfterOpenFunction != NULL)
         { (*SystemDependentData(theEnv)->AfterOpenFunction)(theEnv); }
-      return(FALSE);
+      return(0);
      }
 #endif
 
