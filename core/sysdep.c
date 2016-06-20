@@ -134,6 +134,7 @@ extern int LIB$SPAWN();
 #endif
 */
 #if WIN_MVC
+#include <Windows.h>
 #include <sys\types.h>
 #include <sys\timeb.h>
 #include <io.h>
@@ -656,9 +657,9 @@ int genchdir(
 globle int genremove(
   const char *fileName)
   {
-   if (remove(fileName)) return(FALSE);
+   if (remove(fileName)) return(0);
 
-   return(TRUE);
+   return(1);
   }
 
 /****************************************************/
@@ -668,9 +669,9 @@ globle int genrename(
   const char *oldFileName,
   const char *newFileName)
   {
-   if (rename(oldFileName,newFileName)) return(FALSE);
+   if (rename(oldFileName,newFileName)) return(0);
 
-   return(TRUE);
+   return(1);
   }
 
 /**************************************/
@@ -813,7 +814,7 @@ globle int GenOpenReadBinary(
      {
       if (SystemDependentData(theEnv)->AfterOpenFunction != NULL)
         { (*SystemDependentData(theEnv)->AfterOpenFunction)(theEnv); }
-      return(FALSE);
+      return(0);
      }
 #endif
 
@@ -830,7 +831,7 @@ globle int GenOpenReadBinary(
    if (SystemDependentData(theEnv)->AfterOpenFunction != NULL)
      { (*SystemDependentData(theEnv)->AfterOpenFunction)(theEnv); }
 
-   return(TRUE);
+   return(1);
   }
 
 /***********************************************/
