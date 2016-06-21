@@ -124,7 +124,7 @@ static void DeallocateInstanceData(void *);
   SIDE EFFECTS : None
   NOTES        : None
  *********************************************************/
-globle void SetupInstances(
+void SetupInstances(
   void *theEnv)
   {
    struct patternEntityRecord instanceInfo = { { "INSTANCE_ADDRESS",
@@ -320,7 +320,7 @@ static void DeallocateInstanceData(
   SIDE EFFECTS : Instance is deallocated
   NOTES        : C interface for deleting instances
  *******************************************************************/
-globle intBool EnvDeleteInstance(
+intBool EnvDeleteInstance(
   void *theEnv,
   void *iptr)
   {
@@ -356,7 +356,7 @@ globle intBool EnvDeleteInstance(
   SIDE EFFECTS : Instance is deallocated
   NOTES        : C interface for deleting instances
  *******************************************************************/
-globle intBool EnvUnmakeInstance(
+intBool EnvUnmakeInstance(
   void *theEnv,
   void *iptr)
   {
@@ -414,7 +414,7 @@ globle intBool EnvUnmakeInstance(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (instances [<class-name> [inherit]])
  *******************************************************************/
-globle void InstancesCommand(
+void InstancesCommand(
   void *theEnv)
   {
    int argno, inheritFlag = FALSE;
@@ -478,7 +478,7 @@ globle void InstancesCommand(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (ppinstance <instance>)
  ********************************************************/
-globle void PPInstanceCommand(
+void PPInstanceCommand(
   void *theEnv)
   {
    INSTANCE_TYPE *ins;
@@ -505,7 +505,7 @@ globle void PPInstanceCommand(
   SIDE EFFECTS : None
   NOTES        : None
  **************************************************************/
-globle void EnvInstances(
+void EnvInstances(
   void *theEnv,
   const char *logicalName,
   void *theVModule,
@@ -578,7 +578,7 @@ globle void EnvInstances(
                     the result in caller's buffer
   NOTES        : None
  *********************************************************/
-globle void *EnvMakeInstance(
+void *EnvMakeInstance(
   void *theEnv,
   const char *mkstr)
   {
@@ -638,7 +638,7 @@ globle void *EnvMakeInstance(
   SIDE EFFECTS : Old instance of same name deleted (if possible)
   NOTES        : None
  ***************************************************************/
-globle void *EnvCreateRawInstance(
+void *EnvCreateRawInstance(
   void *theEnv,
   void *cptr,
   const char *iname)
@@ -654,7 +654,7 @@ globle void *EnvCreateRawInstance(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************************************/
-globle void *EnvFindInstance(
+void *EnvFindInstance(
   void *theEnv,
   void *theModule,
   const char *iname,
@@ -679,7 +679,7 @@ globle void *EnvFindInstance(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************************************/
-globle int EnvValidInstanceAddress(
+int EnvValidInstanceAddress(
   void *theEnv,
   void *iptr)
   {
@@ -700,7 +700,7 @@ globle int EnvValidInstanceAddress(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle void EnvDirectGetSlot(
+void EnvDirectGetSlot(
   void *theEnv,
   void *ins,
   const char *sname,
@@ -748,7 +748,7 @@ globle void EnvDirectGetSlot(
   SIDE EFFECTS : None
   NOTES        : None
  *********************************************************/
-globle int EnvDirectPutSlot(
+int EnvDirectPutSlot(
   void *theEnv,
   void *ins,
   const char *sname,
@@ -790,7 +790,7 @@ globle int EnvDirectPutSlot(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle const char *EnvGetInstanceName(
+const char *EnvGetInstanceName(
   void *theEnv,
   void *iptr)
   {
@@ -811,7 +811,7 @@ globle const char *EnvGetInstanceName(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle void *EnvGetInstanceClass(
+void *EnvGetInstanceClass(
   void *theEnv,
   void *iptr)
   {
@@ -833,7 +833,7 @@ globle void *EnvGetInstanceClass(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle unsigned long GetGlobalNumberOfInstances(
+unsigned long GetGlobalNumberOfInstances(
   void *theEnv)
   {
    return(InstanceData(theEnv)->GlobalNumberOfInstances);
@@ -849,7 +849,7 @@ globle unsigned long GetGlobalNumberOfInstances(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle void *EnvGetNextInstance(
+void *EnvGetNextInstance(
   void *theEnv,
   void *iptr)
   {
@@ -873,7 +873,7 @@ globle void *EnvGetNextInstance(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle void *GetNextInstanceInScope(
+void *GetNextInstanceInScope(
   void *theEnv,
   void *iptr)
   {
@@ -905,7 +905,7 @@ globle void *GetNextInstanceInScope(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle void *EnvGetNextInstanceInClass(
+void *EnvGetNextInstanceInClass(
   void *theEnv,
   void *cptr,
   void *iptr)
@@ -933,7 +933,7 @@ globle void *EnvGetNextInstanceInClass(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle void *EnvGetNextInstanceInClassAndSubclasses(
+void *EnvGetNextInstanceInClassAndSubclasses(
   void *theEnv,
   void **cptr,
   void *iptr,
@@ -979,7 +979,7 @@ globle void *EnvGetNextInstanceInClassAndSubclasses(
   SIDE EFFECTS : Caller's buffer written
   NOTES        : None
  ***************************************************/
-globle void EnvGetInstancePPForm(
+void EnvGetInstancePPForm(
   void *theEnv,
   char *buf,
   size_t buflen,
@@ -1005,7 +1005,7 @@ globle void EnvGetInstancePPForm(
                  Can also be called by (type <object>)
                    if you have generic functions installed
  *********************************************************/
-globle void ClassCommand(
+void ClassCommand(
   void *theEnv,
   DATA_OBJECT *result)
   {
@@ -1073,7 +1073,7 @@ globle void ClassCommand(
   SIDE EFFECTS : None
   NOTES        : Does nothing. Provided so it can be overridden.
  ******************************************************/
-globle intBool CreateInstanceHandler(
+intBool CreateInstanceHandler(
   void *theEnv)
   {
 #if MAC_XCD
@@ -1095,7 +1095,7 @@ globle intBool CreateInstanceHandler(
   NOTES        : This is an internal function that
                    only be called by a handler
  ******************************************************/
-globle intBool DeleteInstanceCommand(
+intBool DeleteInstanceCommand(
   void *theEnv)
   {
    if (CheckCurrentMessage(theEnv,"delete-instance",TRUE))
@@ -1112,7 +1112,7 @@ globle intBool DeleteInstanceCommand(
   SIDE EFFECTS : Instance is deallocated
   NOTES        : Syntax: (unmake-instance <instance-expression>+ | *)
  ********************************************************************/
-globle intBool UnmakeInstanceCommand(
+intBool UnmakeInstanceCommand(
   void *theEnv)
   {
    EXPRESSION *theArgument;
@@ -1168,7 +1168,7 @@ globle intBool UnmakeInstanceCommand(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (symbol-to-instance-name <symbol>)
  *****************************************************************/
-globle void SymbolToInstanceName(
+void SymbolToInstanceName(
   void *theEnv,
   DATA_OBJECT *result)
   {
@@ -1190,7 +1190,7 @@ globle void SymbolToInstanceName(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (instance-name-to-symbol <iname>)
  *****************************************************************/
-globle void *InstanceNameToSymbol(
+void *InstanceNameToSymbol(
   void *theEnv)
   {
    DATA_OBJECT result;
@@ -1208,7 +1208,7 @@ globle void *InstanceNameToSymbol(
   SIDE EFFECTS : Stores instance address in caller's buffer
   NOTES        : H/L Syntax : (instance-address [<module-name>] <instance-name>)
  *********************************************************************************/
-globle void InstanceAddressCommand(
+void InstanceAddressCommand(
   void *theEnv,
   DATA_OBJECT *result)
   {
@@ -1288,7 +1288,7 @@ globle void InstanceAddressCommand(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (instance-name <instance>)
  ***************************************************************/
-globle void InstanceNameCommand(
+void InstanceNameCommand(
   void *theEnv,
   DATA_OBJECT *result)
   {
@@ -1330,7 +1330,7 @@ globle void InstanceNameCommand(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (instance-addressp <arg>)
  **************************************************************/
-globle intBool InstanceAddressPCommand(
+intBool InstanceAddressPCommand(
   void *theEnv)
   {
    DATA_OBJECT temp;
@@ -1347,7 +1347,7 @@ globle intBool InstanceAddressPCommand(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (instance-namep <arg>)
  **************************************************************/
-globle intBool InstanceNamePCommand(
+intBool InstanceNamePCommand(
   void *theEnv)
   {
    DATA_OBJECT temp;
@@ -1366,7 +1366,7 @@ globle intBool InstanceNamePCommand(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (instancep <arg>)
  *****************************************************************/
-globle intBool InstancePCommand(
+intBool InstancePCommand(
   void *theEnv)
   {
    DATA_OBJECT temp;
@@ -1385,7 +1385,7 @@ globle intBool InstancePCommand(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (instance-existp <arg>)
  ********************************************************/
-globle intBool InstanceExistPCommand(
+intBool InstanceExistPCommand(
   void *theEnv)
   {
    DATA_OBJECT temp;
@@ -1623,26 +1623,26 @@ static INSTANCE_SLOT *FindISlotByName(
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-globle const char *GetInstanceName(
+const char *GetInstanceName(
   void *iptr)
   {
    return EnvGetInstanceName(GetCurrentEnvironment(),iptr);
   }
 
-globle void *CreateRawInstance(
+void *CreateRawInstance(
   void *cptr,
   const char *iname)
   {
    return EnvCreateRawInstance(GetCurrentEnvironment(),cptr,iname);
   }
 
-globle intBool DeleteInstance(
+intBool DeleteInstance(
   void *iptr)
   {
    return EnvDeleteInstance(GetCurrentEnvironment(),iptr);
   }
 
-globle void DirectGetSlot(
+void DirectGetSlot(
   void *ins,
   const char *sname,
   DATA_OBJECT *result)
@@ -1650,7 +1650,7 @@ globle void DirectGetSlot(
    EnvDirectGetSlot(GetCurrentEnvironment(),ins,sname,result);
   }
 
-globle int DirectPutSlot(
+int DirectPutSlot(
   void *ins,
   const char *sname,
   DATA_OBJECT *val)
@@ -1658,7 +1658,7 @@ globle int DirectPutSlot(
    return EnvDirectPutSlot(GetCurrentEnvironment(),ins,sname,val);
   }
 
-globle void *FindInstance(
+void *FindInstance(
   void *theModule,
   const char *iname,
   unsigned searchImports)
@@ -1666,13 +1666,13 @@ globle void *FindInstance(
    return EnvFindInstance(GetCurrentEnvironment(),theModule,iname,searchImports);
   }
 
-globle void *GetInstanceClass(
+void *GetInstanceClass(
   void *iptr)
   {
    return EnvGetInstanceClass(GetCurrentEnvironment(),iptr);
   }
 
-globle void GetInstancePPForm(
+void GetInstancePPForm(
   char *buf,
   unsigned buflen,
   void *iptr)
@@ -1680,20 +1680,20 @@ globle void GetInstancePPForm(
    EnvGetInstancePPForm(GetCurrentEnvironment(),buf,buflen,iptr);
   }
 
-globle void *GetNextInstance(
+void *GetNextInstance(
   void *iptr)
   {
    return EnvGetNextInstance(GetCurrentEnvironment(),iptr);
   }
 
-globle void *GetNextInstanceInClass(
+void *GetNextInstanceInClass(
   void *cptr,
   void *iptr)
   {
    return EnvGetNextInstanceInClass(GetCurrentEnvironment(),cptr,iptr);
   }
 
-globle void *GetNextInstanceInClassAndSubclasses(
+void *GetNextInstanceInClassAndSubclasses(
   void **cptr,
   void *iptr,
   DATA_OBJECT *iterationInfo)
@@ -1702,7 +1702,7 @@ globle void *GetNextInstanceInClassAndSubclasses(
   }
 
 #if DEBUGGING_FUNCTIONS
-globle void Instances(
+void Instances(
   const char *logicalName,
   void *theVModule,
   const char *className,
@@ -1712,19 +1712,19 @@ globle void Instances(
   }
 #endif
 
-globle void *MakeInstance(
+void *MakeInstance(
   const char *mkstr)
   {
    return EnvMakeInstance(GetCurrentEnvironment(),mkstr);
   }
 
-globle intBool UnmakeInstance(
+intBool UnmakeInstance(
   void *iptr)
   {
    return EnvUnmakeInstance(GetCurrentEnvironment(),iptr);
   }
 
-globle int ValidInstanceAddress(
+int ValidInstanceAddress(
   void *iptr)
   {
    return EnvValidInstanceAddress(GetCurrentEnvironment(),iptr);

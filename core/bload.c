@@ -68,7 +68,7 @@
 /* InitializeBloadData: Allocates environment */
 /*    data for the bload command.             */
 /**********************************************/
-globle void InitializeBloadData(
+void InitializeBloadData(
   void *theEnv)
   {
    AllocateEnvironmentData(theEnv,BLOAD_DATA,sizeof(struct bloadData),NULL);
@@ -96,7 +96,7 @@ static void DeallocateBloadData(
 /* EnvBload: C access routine */
 /*   for the bload command.   */
 /******************************/
-globle int EnvBload(
+int EnvBload(
   void *theEnv,
   const char *fileName)
   {
@@ -391,7 +391,7 @@ globle int EnvBload(
   NOTES        : Assumes binary file pointer is positioned
                  for bloads of the objects
  ************************************************************/
-globle void BloadandRefresh(
+void BloadandRefresh(
   void *theEnv,
   long objcnt,
   size_t objsz,
@@ -585,7 +585,7 @@ static struct FunctionDefinition *FastFindFunction(
 /*   environment is the result of a bload */
 /*   command, otherwise returns FALSE.    */
 /******************************************/
-globle intBool Bloaded(
+intBool Bloaded(
   void *theEnv)
   {
    return(BloadData(theEnv)->BloadActive);
@@ -711,7 +711,7 @@ static void AbortBload(
 /*   to the list of functions called before */
 /*   a binary load occurs.                  */
 /********************************************/
-globle void AddBeforeBloadFunction(
+void AddBeforeBloadFunction(
   void *theEnv,
   const char *name,
   void (*func)(void *),
@@ -726,7 +726,7 @@ globle void AddBeforeBloadFunction(
 /*   to the list of functions called after */
 /*   a binary load occurs.                 */
 /*******************************************/
-globle void AddAfterBloadFunction(
+void AddAfterBloadFunction(
   void *theEnv,
   const char *name,
   void (*func)(void *),
@@ -741,7 +741,7 @@ globle void AddAfterBloadFunction(
 /*   the list of functions called to determine if */
 /*   a binary image can be cleared.               */
 /**************************************************/
-globle void AddClearBloadReadyFunction(
+void AddClearBloadReadyFunction(
   void *theEnv,
   const char *name,
   int (*func)(void *),
@@ -758,7 +758,7 @@ globle void AddClearBloadReadyFunction(
 /*   the list of functions called if a bload */
 /*   has to be aborted.                      */
 /*********************************************/
-globle void AddAbortBloadFunction(
+void AddAbortBloadFunction(
   void *theEnv,
   const char *name,
   void (*func)(void *),
@@ -794,7 +794,7 @@ static int BloadOutOfMemoryFunction(
 /*   for indicating that a construct can't be loaded */
 /*   when a binary image is active.                  */
 /*****************************************************/
-globle void CannotLoadWithBloadMessage(
+void CannotLoadWithBloadMessage(
   void *theEnv,
   const char *constructName)
   {
@@ -810,7 +810,7 @@ globle void CannotLoadWithBloadMessage(
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-globle int Bload(
+int Bload(
   const char *fileName)
   {
    return EnvBload(GetCurrentEnvironment(),fileName);
@@ -824,7 +824,7 @@ globle int Bload(
 /* BloadCommand: H/L access routine   */
 /*   for the bload command.           */
 /**************************************/
-globle int BloadCommand(
+int BloadCommand(
   void *theEnv)
   {
 #if (! RUN_TIME) && (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE)

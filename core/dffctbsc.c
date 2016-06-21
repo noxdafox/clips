@@ -89,7 +89,7 @@
 /***************************************************************/
 /* DeffactsBasicCommands: Initializes basic deffacts commands. */
 /***************************************************************/
-globle void DeffactsBasicCommands(
+void DeffactsBasicCommands(
   void *theEnv)
   {   
    EnvAddResetFunction(theEnv,"deffacts",ResetDeffacts,0);
@@ -214,7 +214,7 @@ static void SaveDeffacts(
 /* UndeffactsCommand: H/L access routine   */
 /*   for the undeffacts command.           */
 /*******************************************/
-globle void UndeffactsCommand(
+void UndeffactsCommand(
   void *theEnv)
   { 
    UndefconstructCommand(theEnv,"undeffacts",DeffactsData(theEnv)->DeffactsConstruct); 
@@ -224,7 +224,7 @@ globle void UndeffactsCommand(
 /* EnvUndeffacts: C access routine */
 /*   for the undeffacts command.   */
 /***********************************/
-globle intBool EnvUndeffacts(
+intBool EnvUndeffacts(
   void *theEnv,
   void *theDeffacts)
   { 
@@ -235,7 +235,7 @@ globle intBool EnvUndeffacts(
 /* GetDeffactsListFunction: H/L access routine   */
 /*   for the get-deffacts-list function.         */
 /*************************************************/
-globle void GetDeffactsListFunction(
+void GetDeffactsListFunction(
   void *theEnv,
   DATA_OBJECT_PTR returnValue)
   { 
@@ -246,7 +246,7 @@ globle void GetDeffactsListFunction(
 /* EnvGetDeffactsList: C access routine  */
 /*   for the get-deffacts-list function. */
 /*****************************************/
-globle void EnvGetDeffactsList(
+void EnvGetDeffactsList(
   void *theEnv,
   DATA_OBJECT_PTR returnValue,
   void *theModule)
@@ -258,7 +258,7 @@ globle void EnvGetDeffactsList(
 /* DeffactsModuleFunction: H/L access routine   */
 /*   for the deffacts-module function.          */
 /************************************************/
-globle void *DeffactsModuleFunction(
+void *DeffactsModuleFunction(
   void *theEnv)
   { 
    return(GetConstructModuleCommand(theEnv,"deffacts-module",DeffactsData(theEnv)->DeffactsConstruct)); 
@@ -270,7 +270,7 @@ globle void *DeffactsModuleFunction(
 /* PPDeffactsCommand: H/L access routine   */
 /*   for the ppdeffacts command.           */
 /*******************************************/
-globle void PPDeffactsCommand(
+void PPDeffactsCommand(
   void *theEnv)
   { 
    PPConstructCommand(theEnv,"ppdeffacts",DeffactsData(theEnv)->DeffactsConstruct); 
@@ -280,7 +280,7 @@ globle void PPDeffactsCommand(
 /* PPDeffacts: C access routine for */
 /*   the ppdeffacts command.        */
 /************************************/
-globle int PPDeffacts(
+int PPDeffacts(
   void *theEnv,
   const char *deffactsName,
   const char *logicalName)
@@ -292,7 +292,7 @@ globle int PPDeffacts(
 /* ListDeffactsCommand: H/L access routine   */
 /*   for the list-deffacts command.          */
 /*********************************************/
-globle void ListDeffactsCommand(
+void ListDeffactsCommand(
   void *theEnv)
   { 
    ListConstructCommand(theEnv,"list-deffacts",DeffactsData(theEnv)->DeffactsConstruct); 
@@ -302,7 +302,7 @@ globle void ListDeffactsCommand(
 /* EnvListDeffacts: C access routine */
 /*   for the list-deffacts command.  */
 /*************************************/
-globle void EnvListDeffacts(
+void EnvListDeffacts(
   void *theEnv,
   const char *logicalName,
   void *theModule)
@@ -318,14 +318,14 @@ globle void EnvListDeffacts(
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-globle void GetDeffactsList(
+void GetDeffactsList(
   DATA_OBJECT_PTR returnValue,
   void *theModule)
   {
    EnvGetDeffactsList(GetCurrentEnvironment(),returnValue,theModule);
   }
 
-globle intBool Undeffacts(
+intBool Undeffacts(
   void *theDeffacts)
   {
    return EnvUndeffacts(GetCurrentEnvironment(),theDeffacts);
@@ -333,7 +333,7 @@ globle intBool Undeffacts(
 
 #if DEBUGGING_FUNCTIONS
 
-globle void ListDeffacts(
+void ListDeffacts(
   const char *logicalName,
   void *theModule)
   {

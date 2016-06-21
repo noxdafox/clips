@@ -116,7 +116,7 @@ static void PrintClassLinks(void *,const char *,const char *,CLASS_LINK *);
 
                  This routine allocates the space for the list
  ***************************************************************/
-globle PACKED_CLASS_LINKS *ParseSuperclasses(
+PACKED_CLASS_LINKS *ParseSuperclasses(
   void *theEnv,
   const char *readSource,
   SYMBOL_HN *newClassName)
@@ -310,7 +310,7 @@ SuperclassParseError:
                  Computer Programming - Vol. I (Fundamental Algorithms) by
                  Donald Knuth.
  ***************************************************************************/
-globle PACKED_CLASS_LINKS *FindPrecedenceList(
+PACKED_CLASS_LINKS *FindPrecedenceList(
   void *theEnv,
   DEFCLASS *cls,
   PACKED_CLASS_LINKS *supers)
@@ -504,7 +504,7 @@ globle PACKED_CLASS_LINKS *FindPrecedenceList(
                  deleted
   NOTES        : None
  ***************************************************/
-globle void PackClassLinks(
+void PackClassLinks(
   void *theEnv,
   PACKED_CLASS_LINKS *plinks,
   CLASS_LINK *lptop)

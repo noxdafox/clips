@@ -157,7 +157,7 @@ static void CreatePublicSlotMessageHandlers(void *,DEFCLASS *);
 
                <default-expression> ::= ?NONE | ?VARIABLE | <expression>*
   ***************************************************************************************/
-globle int ParseDefclass(
+int ParseDefclass(
   void *theEnv,
   const char *readSource)
   {
@@ -858,7 +858,7 @@ static void PackSlots(
   SIDE EFFECTS : Scope bitmap created and attached
   NOTES        : Uses FindImportedConstruct()
  ********************************************************/
-globle void *CreateClassScopeMap(
+void *CreateClassScopeMap(
   void *theEnv,
   DEFCLASS *theDefclass)
   {

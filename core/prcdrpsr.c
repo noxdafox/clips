@@ -99,7 +99,7 @@ struct procedureParserData
 /*******************************************/
 /* ProceduralFunctionParsers        */
 /*******************************************/
-globle void ProceduralFunctionParsers(
+void ProceduralFunctionParsers(
   void *theEnv)
   {
    AllocateEnvironmentData(theEnv,PRCDRPSR_DATA,sizeof(struct procedureParserData),DeallocateProceduralFunctionData);
@@ -136,7 +136,7 @@ static void DeallocateProceduralFunctionData(
 /********************************************************/
 /* GetParsedBindNames:                                      */
 /********************************************************/
-globle struct BindInfo *GetParsedBindNames(
+struct BindInfo *GetParsedBindNames(
   void *theEnv)
   {
    return(ProcedureParserData(theEnv)->ListOfParsedBindNames);
@@ -145,7 +145,7 @@ globle struct BindInfo *GetParsedBindNames(
 /********************************************************/
 /* SetParsedBindNames:                                      */
 /********************************************************/
-globle void SetParsedBindNames(
+void SetParsedBindNames(
   void *theEnv,
   struct BindInfo *newValue)
   {
@@ -155,7 +155,7 @@ globle void SetParsedBindNames(
 /********************************************************/
 /* ClearParsedBindNames:                                     */
 /********************************************************/
-globle void ClearParsedBindNames(
+void ClearParsedBindNames(
   void *theEnv)
   {
    struct BindInfo *temp_bind;
@@ -172,7 +172,7 @@ globle void ClearParsedBindNames(
 /********************************************************/
 /* ParsedBindNamesEmpty:                                     */
 /********************************************************/
-globle intBool ParsedBindNamesEmpty(
+intBool ParsedBindNamesEmpty(
   void *theEnv)
   {
    if (ProcedureParserData(theEnv)->ListOfParsedBindNames != NULL) return(FALSE);
@@ -908,7 +908,7 @@ SwitchParseError:
 /********************************************************/
 /* SearchParsedBindNames:                               */
 /********************************************************/
-globle int SearchParsedBindNames(
+int SearchParsedBindNames(
   void *theEnv,
   SYMBOL_HN *name_sought)
   {
@@ -930,7 +930,7 @@ globle int SearchParsedBindNames(
 /********************************************************/
 /* FindBindConstraints:                               */
 /********************************************************/
-globle struct constraintRecord *FindBindConstraints(
+struct constraintRecord *FindBindConstraints(
   void *theEnv,
   SYMBOL_HN *nameSought)
   {
@@ -952,7 +952,7 @@ globle struct constraintRecord *FindBindConstraints(
 /*   names that have been bound using the bind function */
 /*   in the current context (e.g. the RHS of a rule).   */
 /********************************************************/
-globle int CountParsedBindNames(
+int CountParsedBindNames(
   void *theEnv)
   {
    struct BindInfo *theVariable;
@@ -1029,7 +1029,7 @@ static int AddBindName(
 /********************************************************/
 /* RemoveParsedBindName:                                     */
 /********************************************************/
-globle void RemoveParsedBindName(
+void RemoveParsedBindName(
   void *theEnv,
   struct symbolHashNode *bname)
   {

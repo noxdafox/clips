@@ -88,7 +88,7 @@
 /* InitializeUtilityData: Allocates environment */
 /*    data for utility routines.                */
 /************************************************/
-globle void InitializeUtilityData(
+void InitializeUtilityData(
   void *theEnv)
   {
    AllocateEnvironmentData(theEnv,UTILITY_DATA,sizeof(struct utilityData),DeallocateUtilityData);
@@ -222,7 +222,7 @@ static void DeallocateUtilityData(
 /*****************************/
 /* CleanCurrentGarbageFrame: */
 /*****************************/
-globle void CleanCurrentGarbageFrame(
+void CleanCurrentGarbageFrame(
   void *theEnv,
   DATA_OBJECT *returnValue)
   {
@@ -254,7 +254,7 @@ globle void CleanCurrentGarbageFrame(
 /*****************************/
 /* RestorePriorGarbageFrame: */
 /*****************************/
-globle void RestorePriorGarbageFrame(
+void RestorePriorGarbageFrame(
   void *theEnv,
   struct garbageFrame *newGarbageFrame,
   struct garbageFrame *oldGarbageFrame,
@@ -293,7 +293,7 @@ globle void RestorePriorGarbageFrame(
 /*************************/
 /* CallCleanupFunctions: */
 /*************************/
-globle void CallCleanupFunctions(
+void CallCleanupFunctions(
   void *theEnv)
   {
    struct callFunctionItem *cleanupPtr;
@@ -313,7 +313,7 @@ globle void CallCleanupFunctions(
 /* CallPeriodicTasks: Calls the list of functions */
 /*   for handling periodic tasks.                 */
 /**************************************************/
-globle void CallPeriodicTasks(
+void CallPeriodicTasks(
   void *theEnv)
   {
    struct callFunctionItem *periodPtr;
@@ -341,7 +341,7 @@ globle void CallPeriodicTasks(
 /*   of functions called to perform cleanup such   */
 /*   as returning free memory to the memory pool.  */
 /***************************************************/
-globle intBool AddCleanupFunction(
+intBool AddCleanupFunction(
   void *theEnv,
   const char *name,
   void (*theFunction)(void *),
@@ -377,7 +377,7 @@ void *EnvGetPeriodicFunctionContext(
 /* AddPeriodicFunction: Adds a function to the list */
 /*   of functions called to handle periodic tasks.  */
 /****************************************************/
-globle intBool AddPeriodicFunction(
+intBool AddPeriodicFunction(
   const char *name,
   void (*theFunction)(void),
   int priority)
@@ -399,7 +399,7 @@ globle intBool AddPeriodicFunction(
 /* EnvAddPeriodicFunctionWithContext: Adds a function to the */
 /*   list of functions called to handle periodic tasks.      */
 /*************************************************************/
-globle intBool EnvAddPeriodicFunctionWithContext(
+intBool EnvAddPeriodicFunctionWithContext(
   void *theEnv,
   const char *name,
   void (*theFunction)(void *),
@@ -417,7 +417,7 @@ globle intBool EnvAddPeriodicFunctionWithContext(
 /* EnvAddPeriodicFunction: Adds a function to the list */
 /*   of functions called to handle periodic tasks.     */
 /*******************************************************/
-globle intBool EnvAddPeriodicFunction(
+intBool EnvAddPeriodicFunction(
   void *theEnv,
   const char *name,
   void (*theFunction)(void *),
@@ -431,7 +431,7 @@ globle intBool EnvAddPeriodicFunction(
 /*   list of functions called to perform cleanup such  */
 /*   as returning free memory to the memory pool.      */
 /*******************************************************/
-globle intBool RemoveCleanupFunction(
+intBool RemoveCleanupFunction(
   void *theEnv,
   const char *name)
   {
@@ -447,7 +447,7 @@ globle intBool RemoveCleanupFunction(
 /* EnvRemovePeriodicFunction: Removes a function from the */
 /*   list of functions called to handle periodic tasks.   */
 /**********************************************************/
-globle intBool EnvRemovePeriodicFunction(
+intBool EnvRemovePeriodicFunction(
   void *theEnv,
   const char *name)
   {
@@ -463,7 +463,7 @@ globle intBool EnvRemovePeriodicFunction(
 /* StringPrintForm: Generates printed representation */
 /*   of a string. Replaces / with // and " with /".  */
 /*****************************************************/
-globle const char *StringPrintForm(
+const char *StringPrintForm(
   void *theEnv,
   const char *str)
   {
@@ -496,7 +496,7 @@ globle const char *StringPrintForm(
 /**************************************************************/
 /* CopyString: Copies a string using CLIPS memory management. */
 /**************************************************************/
-globle char *CopyString(
+char *CopyString(
   void *theEnv,
   const char *theString)
   {
@@ -514,7 +514,7 @@ globle char *CopyString(
 /*****************************************************************/
 /* DeleteString: Deletes a string using CLIPS memory management. */
 /*****************************************************************/
-globle void DeleteString(
+void DeleteString(
   void *theEnv,
   char *theString)
   {
@@ -527,7 +527,7 @@ globle void DeleteString(
 /*   created is added to the SymbolTable, so it is not     */
 /*   necessary to deallocate the string returned.          */
 /***********************************************************/
-globle const char *AppendStrings(
+const char *AppendStrings(
   void *theEnv,
   const char *str1,
   const char *str2)
@@ -549,7 +549,7 @@ globle const char *AppendStrings(
 /* AppendToString: Appends a string to another string */
 /*   (expanding the other string if necessary).       */
 /******************************************************/
-globle char *AppendToString(
+char *AppendToString(
   void *theEnv,
   const char *appendStr,
   char *oldStr,
@@ -589,7 +589,7 @@ globle char *AppendToString(
 /* InsertInString: Inserts a string within another string */
 /*   (expanding the other string if necessary).           */
 /**********************************************************/
-globle char *InsertInString(
+char *InsertInString(
   void *theEnv,
   const char *insertStr,
   size_t position,
@@ -636,7 +636,7 @@ globle char *InsertInString(
 /*******************************************************************/
 /* EnlargeString: Enlarges a string by the specified amount.       */
 /*******************************************************************/
-globle char *EnlargeString(
+char *EnlargeString(
   void *theEnv,
   size_t length,
   char *oldStr,
@@ -669,7 +669,7 @@ globle char *EnlargeString(
 /*   specified number of characters are appended from  */
 /*   the string.                                       */
 /*******************************************************/
-globle char *AppendNToString(
+char *AppendNToString(
   void *theEnv,
   const char *appendStr,
   char *oldStr,
@@ -727,7 +727,7 @@ globle char *AppendNToString(
 /*   size of the string to reduced if it is "added" to */
 /*   the string.                                       */
 /*******************************************************/
-globle char *ExpandStringWithChar(
+char *ExpandStringWithChar(
   void *theEnv,
   int inchar,
   char *str,
@@ -772,7 +772,7 @@ globle char *ExpandStringWithChar(
 /*   which are called to perform certain operations (e.g. clear, */
 /*   reset, and bload functions).                                */
 /*****************************************************************/
-globle struct callFunctionItem *AddFunctionToCallList(
+struct callFunctionItem *AddFunctionToCallList(
   void *theEnv,
   const char *name,
   int priority,
@@ -788,7 +788,7 @@ globle struct callFunctionItem *AddFunctionToCallList(
 /*   list of functions which are called to perform certain */
 /*   operations (e.g. clear, reset, and bload functions).  */
 /***********************************************************/
-globle struct callFunctionItem *AddFunctionToCallListWithContext(
+struct callFunctionItem *AddFunctionToCallListWithContext(
   void *theEnv,
   const char *name,
   int priority,
@@ -843,7 +843,7 @@ globle struct callFunctionItem *AddFunctionToCallListWithContext(
 /*   functions which are called to perform certain operations   */
 /*   (e.g. clear, reset, and bload functions).                  */
 /****************************************************************/
-globle struct callFunctionItem *GetFunctionFromCallList(
+struct callFunctionItem *GetFunctionFromCallList(
   void *theEnv,
   const char *name,
   struct callFunctionItem *head)
@@ -864,7 +864,7 @@ globle struct callFunctionItem *GetFunctionFromCallList(
 /*   functions which are called to perform certain operations    */
 /*   (e.g. clear, reset, and bload functions).                   */
 /*****************************************************************/
-globle struct callFunctionItem *RemoveFunctionFromCallList(
+struct callFunctionItem *RemoveFunctionFromCallList(
   void *theEnv,
   const char *name,
   struct callFunctionItem *head,
@@ -903,7 +903,7 @@ globle struct callFunctionItem *RemoveFunctionFromCallList(
 /*   functions which are called to perform certain operations */
 /*   (e.g. clear, reset, and bload functions).                */
 /**************************************************************/
-globle void DeallocateCallList(
+void DeallocateCallList(
   void *theEnv,
   struct callFunctionItem *theList)
   {
@@ -924,7 +924,7 @@ globle void DeallocateCallList(
 /*   functions which are called to perform certain operations  */
 /*   (e.g. clear,reset, and bload functions).                  */
 /***************************************************************/
-globle struct callFunctionItemWithArg *AddFunctionToCallListWithArg(
+struct callFunctionItemWithArg *AddFunctionToCallListWithArg(
   void *theEnv,
   const char *name,
   int priority,
@@ -940,7 +940,7 @@ globle struct callFunctionItemWithArg *AddFunctionToCallListWithArg(
 /*   a list of functions which are called to perform certain   */
 /*   operations (e.g. clear, reset, and bload functions).      */
 /***************************************************************/
-globle struct callFunctionItemWithArg *AddFunctionToCallListWithArgWithContext(
+struct callFunctionItemWithArg *AddFunctionToCallListWithArgWithContext(
   void *theEnv,
   const char *name,
   int priority,
@@ -991,7 +991,7 @@ globle struct callFunctionItemWithArg *AddFunctionToCallListWithArgWithContext(
 /*   a list of functions which are called to perform certain  */
 /*   operations (e.g. clear, reset, and bload functions).     */
 /**************************************************************/
-globle struct callFunctionItemWithArg *RemoveFunctionFromCallListWithArg(
+struct callFunctionItemWithArg *RemoveFunctionFromCallListWithArg(
   void *theEnv,
   const char *name,
   struct callFunctionItemWithArg *head,
@@ -1029,7 +1029,7 @@ globle struct callFunctionItemWithArg *RemoveFunctionFromCallListWithArg(
 /*   functions which are called to perform certain operations */
 /*   (e.g. clear, reset, and bload functions).                */
 /**************************************************************/
-globle void DeallocateCallListWithArg(
+void DeallocateCallListWithArg(
   void *theEnv,
   struct callFunctionItemWithArg *theList)
   {
@@ -1048,7 +1048,7 @@ globle void DeallocateCallListWithArg(
 /* ItemHashValue: Returns the hash value */
 /*   for the specified value.            */
 /*****************************************/
-globle unsigned long ItemHashValue(
+unsigned long ItemHashValue(
   void *theEnv,
   unsigned short theType,
   void *theValue,
@@ -1104,7 +1104,7 @@ globle unsigned long ItemHashValue(
 /*   application responsiveness when CLIPS  */
 /*   is running in the background.          */
 /********************************************/
-globle void YieldTime(
+void YieldTime(
   void *theEnv)
   {
    if ((UtilityData(theEnv)->YieldTimeFunction != NULL) && UtilityData(theEnv)->YieldFunctionEnabled)
@@ -1115,7 +1115,7 @@ globle void YieldTime(
 /* EnvIncrementGCLocks: Increments the number */
 /*   of garbage collection locks.             */
 /**********************************************/
-globle void EnvIncrementGCLocks(
+void EnvIncrementGCLocks(
   void *theEnv)
   {
    UtilityData(theEnv)->GarbageCollectionLocks++;
@@ -1125,7 +1125,7 @@ globle void EnvIncrementGCLocks(
 /* EnvDecrementGCLocks: Decrements the number */
 /*   of garbage collection locks.             */
 /**********************************************/
-globle void EnvDecrementGCLocks(
+void EnvDecrementGCLocks(
   void *theEnv)
   {
    if (UtilityData(theEnv)->GarbageCollectionLocks > 0)
@@ -1142,7 +1142,7 @@ globle void EnvDecrementGCLocks(
 /****************************/
 /* EnablePeriodicFunctions: */
 /****************************/
-globle short EnablePeriodicFunctions(
+short EnablePeriodicFunctions(
   void *theEnv,
   short value)
   {
@@ -1158,7 +1158,7 @@ globle short EnablePeriodicFunctions(
 /************************/
 /* EnableYieldFunction: */
 /************************/
-globle short EnableYieldFunction(
+short EnableYieldFunction(
   void *theEnv,
   short value)
   {
@@ -1179,7 +1179,7 @@ globle short EnableYieldFunction(
 /*   allows it to be removed later when using longjmp as the code that   */
 /*   would normally deallocate the memory would be bypassed.             */
 /*************************************************************************/
-globle struct trackedMemory *AddTrackedMemory(
+struct trackedMemory *AddTrackedMemory(
   void *theEnv,
   void *theMemory,
   size_t theSize)
@@ -1200,7 +1200,7 @@ globle struct trackedMemory *AddTrackedMemory(
 /************************/
 /* RemoveTrackedMemory: */
 /************************/
-globle void RemoveTrackedMemory(
+void RemoveTrackedMemory(
   void *theEnv,
   struct trackedMemory *theTracker)
   {   
@@ -1219,7 +1219,7 @@ globle void RemoveTrackedMemory(
 /* UTF8Length: Returns the logical number */
 /*   of characters in a UTF8 string.      */
 /******************************************/
-globle size_t UTF8Length(
+size_t UTF8Length(
   const char *s)
   {
    size_t i = 0, length = 0;
@@ -1237,7 +1237,7 @@ globle size_t UTF8Length(
 /* UTF8Increment: Finds the beginning of the */
 /*   next character in a UTF8 string.        */
 /*********************************************/
-globle void UTF8Increment(
+void UTF8Increment(
   const char *s,
   size_t *i)
   {
@@ -1251,7 +1251,7 @@ globle void UTF8Increment(
 /* UTF8Offset: Converts the logical character index */
 /*   in a UTF8 string to the actual byte offset.    */
 /****************************************************/
-globle size_t UTF8Offset(
+size_t UTF8Offset(
   const char *str,
   size_t charnum)
   {
@@ -1274,7 +1274,7 @@ globle size_t UTF8Offset(
 /* UTF8CharNum: Converts the UTF8 character byte */ 
 /*   offset to the logical character index.      */
 /*************************************************/
-globle size_t UTF8CharNum(
+size_t UTF8CharNum(
   const char *s,
   size_t offset)
   {
@@ -1299,17 +1299,17 @@ globle size_t UTF8CharNum(
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-globle void IncrementGCLocks()
+void IncrementGCLocks()
   {
    EnvIncrementGCLocks(GetCurrentEnvironment());
   }
 
-globle void DecrementGCLocks()
+void DecrementGCLocks()
   {
    EnvDecrementGCLocks(GetCurrentEnvironment());
   }
 
-globle intBool RemovePeriodicFunction(
+intBool RemovePeriodicFunction(
   const char *name)
   {
    return EnvRemovePeriodicFunction(GetCurrentEnvironment(),name);

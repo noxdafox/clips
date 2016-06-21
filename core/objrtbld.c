@@ -179,7 +179,7 @@ static void ResetInitialObject(void *);
                  initialized
   NOTES        : None
  ********************************************************/
-globle void SetupObjectPatternStuff(
+void SetupObjectPatternStuff(
   void *theEnv)
   {
 #if (! BLOAD_ONLY) && (! RUN_TIME)

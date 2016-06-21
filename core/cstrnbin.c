@@ -93,7 +93,7 @@ typedef struct bsaveConstraintRecord BSAVE_CONSTRAINT_RECORD;
 /*   in the constraint table to the binary image  */
 /*   currently being saved.                       */
 /**************************************************/
-globle void WriteNeededConstraints(
+void WriteNeededConstraints(
   void *theEnv,
   FILE *fp)
   {
@@ -195,7 +195,7 @@ static void CopyToBsaveConstraintRecord(
 /* ReadNeededConstraints: Reads in the constraints used */
 /*   by the binary image currently being loaded.        */
 /********************************************************/
-globle void ReadNeededConstraints(
+void ReadNeededConstraints(
   void *theEnv)
   {
    GenReadBinary(theEnv,(void *) &ConstraintData(theEnv)->NumberOfConstraints,sizeof(unsigned long int));
@@ -257,7 +257,7 @@ static void CopyFromBsaveConstraintRecord(
 /* ClearBloadedConstraints: Releases memory associated  */
 /*   with constraints loaded from binary image          */
 /********************************************************/
-globle void ClearBloadedConstraints(
+void ClearBloadedConstraints(
   void *theEnv)
   {
    if (ConstraintData(theEnv)->NumberOfConstraints != 0)

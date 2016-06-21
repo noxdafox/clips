@@ -108,7 +108,7 @@ static void DeallocateDeffunctionBloadData(void *);
   SIDE EFFECTS : Routines defined and structures initialized
   NOTES        : None
  ***********************************************************/
-globle void SetupDeffunctionsBload(
+void SetupDeffunctionsBload(
   void *theEnv)
   {
    AllocateEnvironmentData(theEnv,DFFNXBIN_DATA,sizeof(struct deffunctionBinaryData),DeallocateDeffunctionBloadData);
@@ -151,7 +151,7 @@ static void DeallocateDeffunctionBloadData(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle void *BloadDeffunctionModuleReference(
+void *BloadDeffunctionModuleReference(
   void *theEnv,
   int theIndex)
   {

@@ -205,7 +205,7 @@ static intBool CheckTypeConstraint(
 /*   falls within the range of allowed cardinalities    */
 /*   for a constraint record.                           */
 /********************************************************/
-globle intBool CheckCardinalityConstraint(
+intBool CheckCardinalityConstraint(
   void *theEnv,
   long number,
   CONSTRAINT_RECORD *constraints)
@@ -319,7 +319,7 @@ static intBool CheckRangeAgainstCardinalityConstraint(
 /*   record. Returns TRUE if the constraints are satisfied, otherwise */
 /*   FALSE is returned.                                               */
 /**********************************************************************/
-globle intBool CheckAllowedValuesConstraint(
+intBool CheckAllowedValuesConstraint(
   int type,
   void *vPtr,
   CONSTRAINT_RECORD *constraints)
@@ -402,7 +402,7 @@ globle intBool CheckAllowedValuesConstraint(
 /*   record. Returns TRUE if the constraints are satisfied, otherwise */
 /*   FALSE is returned.                                               */
 /**********************************************************************/
-globle intBool CheckAllowedClassesConstraint(
+intBool CheckAllowedClassesConstraint(
   void *theEnv,
   int type,
   void *vPtr,
@@ -549,7 +549,7 @@ static intBool CheckRangeConstraint(
 /* ConstraintViolationErrorMessage: Generalized */
 /*   error message for constraint violations.   */
 /************************************************/
-globle void ConstraintViolationErrorMessage(
+void ConstraintViolationErrorMessage(
   void *theEnv,
   const char *theWhat,
   const char *thePlace,
@@ -671,7 +671,7 @@ static void PrintRange(
 /*   object structure and a constraint record, determines if */
 /*   the data object satisfies the constraint record.        */
 /*************************************************************/
-globle int ConstraintCheckDataObject(
+int ConstraintCheckDataObject(
   void *theEnv,
   DATA_OBJECT *theData,
   CONSTRAINT_RECORD *theConstraints)
@@ -710,7 +710,7 @@ globle int ConstraintCheckDataObject(
 /* ConstraintCheckValue: Given a value and a constraint record, */
 /*   determines if the value satisfies the constraint record.   */
 /****************************************************************/
-globle int ConstraintCheckValue(
+int ConstraintCheckValue(
   void *theEnv,
   int theType,
   void *theValue,
@@ -741,7 +741,7 @@ globle int ConstraintCheckValue(
 /* ConstraintCheckExpressionChain: Checks an expression and nextArg */
 /* links for constraint conflicts (argList is not followed).        */
 /********************************************************************/
-globle int ConstraintCheckExpressionChain(
+int ConstraintCheckExpressionChain(
   void *theEnv,
   struct expr *theExpression,
   CONSTRAINT_RECORD *theConstraints)
@@ -796,7 +796,7 @@ globle int ConstraintCheckExpressionChain(
 /*   for constraint conflicts. Returns TRUE if     */
 /*   conflicts are found, otherwise FALSE.         */
 /***************************************************/
-globle int ConstraintCheckExpression(
+int ConstraintCheckExpression(
   void *theEnv,
   struct expr *theExpression,
   CONSTRAINT_RECORD *theConstraints)
@@ -827,7 +827,7 @@ globle int ConstraintCheckExpression(
 /* UnmatchableConstraint: Determines if a constraint */
 /*  record can still be satisfied by some value.     */
 /*****************************************************/
-globle intBool UnmatchableConstraint(
+intBool UnmatchableConstraint(
   CONSTRAINT_RECORD *theConstraint)
   {
    if (theConstraint == NULL) return(FALSE);

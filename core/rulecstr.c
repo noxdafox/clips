@@ -266,7 +266,7 @@ static intBool MultifieldCardinalityViolation(
 /*   connected constraint searching for constraint */
 /*   violations.                                   */
 /***************************************************/
-globle intBool ProcessConnectedConstraints(
+intBool ProcessConnectedConstraints(
   void *theEnv,
   struct lhsParseNode *theNode,
   struct lhsParseNode *multifieldHeader,
@@ -404,7 +404,7 @@ globle intBool ProcessConnectedConstraints(
 /*   message for LHS constraint violation errors  */
 /*   that occur within an expression.             */
 /**************************************************/
-globle void ConstraintReferenceErrorMessage(
+void ConstraintReferenceErrorMessage(
   void *theEnv,
   struct symbolHashNode *theVariable,
   struct lhsParseNode *theExpression,
@@ -619,7 +619,7 @@ static struct lhsParseNode *UnionVariableConstraints(
 /*   constraint for the variable ?x since the addition function  */
 /*   expects numeric arguments.                                  */
 /*****************************************************************/
-globle struct lhsParseNode *GetExpressionVarConstraints(
+struct lhsParseNode *GetExpressionVarConstraints(
   void *theEnv,
   struct lhsParseNode *theExpression)
   {
@@ -655,7 +655,7 @@ globle struct lhsParseNode *GetExpressionVarConstraints(
 /*   of variable constraints associated with a */
 /*   single connected constraint.              */
 /***********************************************/
-globle struct lhsParseNode *DeriveVariableConstraints(
+struct lhsParseNode *DeriveVariableConstraints(
   void *theEnv,
   struct lhsParseNode *theNode)
   {
@@ -701,7 +701,7 @@ globle struct lhsParseNode *DeriveVariableConstraints(
 /* CheckRHSForConstraintErrors: Checks the */
 /*   RHS of a rule for constraint errors.  */
 /*******************************************/
-globle intBool CheckRHSForConstraintErrors(
+intBool CheckRHSForConstraintErrors(
   void *theEnv,
   struct expr *expressionList,
   struct lhsParseNode *theLHS)

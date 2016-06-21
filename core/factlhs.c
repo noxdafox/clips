@@ -62,7 +62,7 @@
 /*   <ordered-fact-pattern-CE>                 */
 /*             ::= (<symbol> <constraint>+)    */
 /***********************************************/
-globle struct lhsParseNode *SequenceRestrictionParse(
+struct lhsParseNode *SequenceRestrictionParse(
   void *theEnv,
   const char *readSource,
   struct token *theToken)
@@ -150,7 +150,7 @@ globle struct lhsParseNode *SequenceRestrictionParse(
 /* CreateInitialFactPattern: Creates the pattern (initial-fact) */
 /*   for use in rules which have no LHS patterns.               */
 /****************************************************************/
-globle struct lhsParseNode *CreateInitialFactPattern(
+struct lhsParseNode *CreateInitialFactPattern(
   void *theEnv)
   {
    struct lhsParseNode *topNode;
@@ -203,7 +203,7 @@ globle struct lhsParseNode *CreateInitialFactPattern(
 /*   all patterns begin with a symbol, it follows that all patterns   */
 /*   can be parsed as a fact pattern.                                 */
 /**********************************************************************/
-globle int FactPatternParserFind(
+int FactPatternParserFind(
   SYMBOL_HN *theRelation)
   {
 #if MAC_XCD
@@ -216,7 +216,7 @@ globle int FactPatternParserFind(
 /* FactPatternParse: This function is called to parse */
 /*  both deftemplate and ordered fact patterns.       */
 /******************************************************/
-globle struct lhsParseNode *FactPatternParse(
+struct lhsParseNode *FactPatternParse(
   void *theEnv,
   const char *readSource,
   struct token *theToken)

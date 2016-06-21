@@ -91,7 +91,7 @@
 /* FieldConversion: Generates join and pattern network */
 /*   expressions for a field constraint.               */
 /*******************************************************/
-globle void FieldConversion(
+void FieldConversion(
   void *theEnv,
   struct lhsParseNode *theField,
   struct lhsParseNode *thePattern,
@@ -708,7 +708,7 @@ static struct expr *GenPNEq(
 /*   variable bindings that need to match from the left and right paths */
 /*   taken through the join network for not/and CE group.               */
 /************************************************************************/
-globle void AddNandUnification(
+void AddNandUnification(
   void *theEnv,
   struct lhsParseNode *nodeList,
   struct nandFrame *theNandFrames)
@@ -764,7 +764,7 @@ globle void AddNandUnification(
 /*   from a partial match (i.e. from information stored in the     */
 /*   join network or the activation of the rule).                  */
 /*******************************************************************/
-globle struct expr *GetvarReplace(
+struct expr *GetvarReplace(
   void *theEnv,
   struct lhsParseNode *nodeList,
   int isNand,

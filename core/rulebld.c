@@ -75,7 +75,7 @@
 /* ConstructJoins: Integrates a set of pattern and join tests   */
 /*   associated with a rule into the pattern and join networks. */
 /****************************************************************/
-globle struct joinNode *ConstructJoins(
+struct joinNode *ConstructJoins(
   void *theEnv,
   int logicalJoin,
   struct lhsParseNode *theLHS,

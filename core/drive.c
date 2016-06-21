@@ -78,7 +78,7 @@
 /* NetworkAssert: Primary routine for filtering */
 /*   a partial match through the join network.  */
 /************************************************/
-globle void NetworkAssert(
+void NetworkAssert(
   void *theEnv,
   struct partialMatch *binds,
   struct joinNode *join)
@@ -116,7 +116,7 @@ globle void NetworkAssert(
 /*   a partial match through the join network from   */
 /*   the RHS of a join.                              */
 /*****************************************************/
-globle void NetworkAssertRight(
+void NetworkAssertRight(
   void *theEnv,
   struct partialMatch *rhsBinds,
   struct joinNode *join,
@@ -315,7 +315,7 @@ globle void NetworkAssertRight(
 /*   a partial match through the join network when  */
 /*   entering through the left side of a join.      */
 /****************************************************/
-globle void NetworkAssertLeft(
+void NetworkAssertLeft(
   void *theEnv,
   struct partialMatch *lhsBinds,
   struct joinNode *join,
@@ -588,7 +588,7 @@ globle void NetworkAssertLeft(
 /*   Performs a faster evaluation for join expressions */
 /*   than if EvaluateExpression was used directly.     */
 /*******************************************************/
-globle intBool EvaluateJoinExpression(
+intBool EvaluateJoinExpression(
   void *theEnv,
   struct expr *joinExpr,
   struct joinNode *joinPtr)
@@ -728,7 +728,7 @@ globle intBool EvaluateJoinExpression(
 /*******************************************************/
 /* EvaluateSecondaryNetworkTest:     */
 /*******************************************************/
-globle intBool EvaluateSecondaryNetworkTest(
+intBool EvaluateSecondaryNetworkTest(
   void *theEnv,
   struct partialMatch *leftMatch,
   struct joinNode *joinPtr)
@@ -764,7 +764,7 @@ globle intBool EvaluateSecondaryNetworkTest(
 /*******************************************************/
 /* BetaMemoryHashValue:     */
 /*******************************************************/
-globle unsigned long BetaMemoryHashValue(
+unsigned long BetaMemoryHashValue(
   void *theEnv,
   struct expr *hashExpr,
   struct partialMatch *lbinds,
@@ -895,7 +895,7 @@ globle unsigned long BetaMemoryHashValue(
 /*   partial match is sent to each child join of the join from     */
 /*   which the merge took place.                                   */
 /*******************************************************************/
-globle void PPDrive(
+void PPDrive(
   void *theEnv,
   struct partialMatch *lhsBinds,
   struct partialMatch *rhsBinds,
@@ -967,7 +967,7 @@ globle void PPDrive(
 /*   An empty partial match is usually associated with a negated CE    */
 /*   that is the first CE of a rule.                                   */
 /***********************************************************************/
-globle void EPMDrive(
+void EPMDrive(
   void *theEnv,
   struct partialMatch *parent,
   struct joinNode *join,

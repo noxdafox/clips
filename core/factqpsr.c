@@ -124,7 +124,7 @@
 
                  <template-2a> -> <template-2b> -> (QDS) -> ...
  ***********************************************************************/
-globle EXPRESSION *FactParseQueryNoAction(
+EXPRESSION *FactParseQueryNoAction(
   void *theEnv,
   EXPRESSION *top,
   const char *readSource)
@@ -192,7 +192,7 @@ globle EXPRESSION *FactParseQueryNoAction(
 
                  <template-2a> -> <template-2b> -> (QDS) -> ...
  ***********************************************************************/
-globle EXPRESSION *FactParseQueryAction(
+EXPRESSION *FactParseQueryAction(
   void *theEnv,
   EXPRESSION *top,
   const char *readSource)

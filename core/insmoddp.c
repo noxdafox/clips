@@ -102,7 +102,7 @@ static void DuplicateMsgHandlerSupport(void *,DATA_OBJECT *,int);
   SIDE EFFECTS : Functions defined to KB
   NOTES        : None
  ***************************************************/
-globle void SetupInstanceModDupCommands(
+void SetupInstanceModDupCommands(
   void *theEnv)
   {
 #if DEFRULE_CONSTRUCT
@@ -156,7 +156,7 @@ globle void SetupInstanceModDupCommands(
   NOTES        : H/L Syntax:
                  (modify-instance <instance> <slot-override>*)
  *************************************************************/
-globle void ModifyInstance(
+void ModifyInstance(
   void *theEnv,
   DATA_OBJECT *result)
   {
@@ -224,7 +224,7 @@ globle void ModifyInstance(
                  (message-modify-instance <instance>
                     <slot-override>*)
  *************************************************************/
-globle void MsgModifyInstance(
+void MsgModifyInstance(
   void *theEnv,
   DATA_OBJECT *result)
   {
@@ -291,7 +291,7 @@ globle void MsgModifyInstance(
                  (duplicate-instance <instance>
                    [to <instance-name>] <slot-override>*)
  *************************************************************/
-globle void DuplicateInstance(
+void DuplicateInstance(
   void *theEnv,
   DATA_OBJECT *result)
   {
@@ -371,7 +371,7 @@ globle void DuplicateInstance(
                  (duplicate-instance <instance>
                    [to <instance-name>] <slot-override>*)
  *************************************************************/
-globle void MsgDuplicateInstance(
+void MsgDuplicateInstance(
   void *theEnv,
   DATA_OBJECT *result)
   {
@@ -454,7 +454,7 @@ globle void MsgDuplicateInstance(
                  (modify-instance <instance-name>
                    <slot-override>*)
  **************************************************************/
-globle void InactiveModifyInstance(
+void InactiveModifyInstance(
   void *theEnv,
   DATA_OBJECT *result)
   {
@@ -477,7 +477,7 @@ globle void InactiveModifyInstance(
                  (message-modify-instance <instance-name>
                    <slot-override>*)
  **************************************************************/
-globle void InactiveMsgModifyInstance(
+void InactiveMsgModifyInstance(
   void *theEnv,
   DATA_OBJECT *result)
   {
@@ -500,7 +500,7 @@ globle void InactiveMsgModifyInstance(
                  (duplicate-instance <instance> [to <instance-name>]
                    <slot-override>*)
  *******************************************************************/
-globle void InactiveDuplicateInstance(
+void InactiveDuplicateInstance(
   void *theEnv,
   DATA_OBJECT *result)
   {
@@ -524,7 +524,7 @@ globle void InactiveDuplicateInstance(
                    [to <instance-name>]
                    <slot-override>*)
  **************************************************************/
-globle void InactiveMsgDuplicateInstance(
+void InactiveMsgDuplicateInstance(
   void *theEnv,
   DATA_OBJECT *result)
   {
@@ -551,7 +551,7 @@ globle void InactiveMsgDuplicateInstance(
   SIDE EFFECTS : Slot values updated
   NOTES        : None
  *****************************************************/
-globle void DirectDuplicateMsgHandler(
+void DirectDuplicateMsgHandler(
   void *theEnv,
   DATA_OBJECT *result)
   {
@@ -571,7 +571,7 @@ globle void DirectDuplicateMsgHandler(
   SIDE EFFECTS : Slot values updated
   NOTES        : None
  *****************************************************/
-globle void MsgDuplicateMsgHandler(
+void MsgDuplicateMsgHandler(
   void *theEnv,
   DATA_OBJECT *result)
   {
@@ -592,7 +592,7 @@ globle void MsgDuplicateMsgHandler(
   SIDE EFFECTS : Slot values updated
   NOTES        : None
  ***************************************************/
-globle void DirectModifyMsgHandler(
+void DirectModifyMsgHandler(
   void *theEnv,
   DATA_OBJECT *result)
   {
@@ -612,7 +612,7 @@ globle void DirectModifyMsgHandler(
   SIDE EFFECTS : Slot values updated
   NOTES        : None
  ***************************************************/
-globle void MsgModifyMsgHandler(
+void MsgModifyMsgHandler(
   void *theEnv,
   DATA_OBJECT *result)
   {

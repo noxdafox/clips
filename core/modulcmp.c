@@ -70,7 +70,7 @@
 /* DefmoduleCompilerSetup: Initializes the defmodule construct */
 /*    for use with the constructs-to-c command.                */
 /***************************************************************/
-globle void DefmoduleCompilerSetup(
+void DefmoduleCompilerSetup(
   void *theEnv)
   {
    DefmoduleData(theEnv)->DefmoduleCodeItem = 
@@ -99,7 +99,7 @@ static void BeforeDefmodulesToCode(
 /* PrintDefmoduleReference: Writes the C code representation */
 /*   of a reference to a defmodule data structure.           */
 /*************************************************************/
-globle void PrintDefmoduleReference(
+void PrintDefmoduleReference(
   void *theEnv,
   FILE *theFile,
   struct defmodule *theModule)

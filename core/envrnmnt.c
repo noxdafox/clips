@@ -159,7 +159,7 @@
 /* AllocateEnvironmentData: Allocates environment data */
 /*    for the specified environment data record.       */
 /*******************************************************/
-globle intBool AllocateEnvironmentData(
+intBool AllocateEnvironmentData(
   void *vtheEnvironment,
   unsigned int position,
   unsigned long size,
@@ -228,7 +228,7 @@ globle intBool AllocateEnvironmentData(
 /*   stored in the environment hash table and then deallocates */
 /*   the environment hash table.                               */
 /***************************************************************/
-globle intBool DeallocateEnvironmentData()
+intBool DeallocateEnvironmentData()
   {
 #if ALLOW_ENVIRONMENT_GLOBALS
    struct environmentData *theEnvironment, *nextEnvironment;
@@ -364,7 +364,7 @@ static struct environmentData *FindEnvironment(
 /* CreateEnvironment: Creates an environment data structure */
 /*   and initializes its content to zero/null.              */
 /************************************************************/
-globle void *CreateEnvironment()
+void *CreateEnvironment()
   {
    return CreateEnvironmentDriver(NULL,NULL,NULL,NULL,NULL);
   }
@@ -373,7 +373,7 @@ globle void *CreateEnvironment()
 /* CreateRuntimeEnvironment: Creates an environment data  */
 /*   structure and initializes its content to zero/null.  */
 /**********************************************************/
-globle void *CreateRuntimeEnvironment(
+void *CreateRuntimeEnvironment(
   struct symbolHashNode **symbolTable,
   struct floatHashNode **floatTable,
   struct integerHashNode **integerTable,
@@ -386,7 +386,7 @@ globle void *CreateRuntimeEnvironment(
 /* CreateEnvironmentDriver: Creates an environment data  */
 /*   structure and initializes its content to zero/null. */
 /*********************************************************/
-globle void *CreateEnvironmentDriver(
+void *CreateEnvironmentDriver(
   struct symbolHashNode **symbolTable,
   struct floatHashNode **floatTable,
   struct integerHashNode **integerTable,
@@ -461,7 +461,7 @@ globle void *CreateEnvironmentDriver(
 /* SetCurrentEnvironment: Sets the current */
 /*   environment to the one specified.     */
 /*******************************************/
-globle void SetCurrentEnvironment(
+void SetCurrentEnvironment(
   void *theEnvironment)
   {
    CurrentEnvironment = (struct environmentData *) theEnvironment;
@@ -472,7 +472,7 @@ globle void SetCurrentEnvironment(
 /*   environment to the one having the specified  */
 /*   environment index.                           */
 /**************************************************/
-globle intBool SetCurrentEnvironmentByIndex(
+intBool SetCurrentEnvironmentByIndex(
   unsigned long environmentIndex)
   {
    struct environmentData *theEnvironment;
@@ -491,7 +491,7 @@ globle intBool SetCurrentEnvironmentByIndex(
 /* GetEnvironmentByIndex: Returns the environment */
 /*   having the specified environment index.      */
 /**************************************************/
-globle void *GetEnvironmentByIndex(
+void *GetEnvironmentByIndex(
   unsigned long environmentIndex)
   {
    struct environmentData *theEnvironment;
@@ -505,7 +505,7 @@ globle void *GetEnvironmentByIndex(
 /* GetCurrentEnvironment: Returns a pointer */
 /*   to the current environment.            */
 /********************************************/
-globle void *GetCurrentEnvironment()
+void *GetCurrentEnvironment()
   {
    return(CurrentEnvironment);
   }  
@@ -514,7 +514,7 @@ globle void *GetCurrentEnvironment()
 /* GetEnvironmentIndex: Returns the index */
 /*   of the specified environment.        */
 /******************************************/
-globle unsigned long GetEnvironmentIndex(
+unsigned long GetEnvironmentIndex(
   void *theEnvironment)
   {
    return(((struct environmentData *) theEnvironment)->environmentIndex);
@@ -526,7 +526,7 @@ globle unsigned long GetEnvironmentIndex(
 /* GetEnvironmentContext: Returns the context */
 /*   of the specified environment.            */
 /**********************************************/
-globle void *GetEnvironmentContext(
+void *GetEnvironmentContext(
   void *theEnvironment)
   {
    return(((struct environmentData *) theEnvironment)->context);
@@ -536,7 +536,7 @@ globle void *GetEnvironmentContext(
 /* SetEnvironmentContext: Sets the context */
 /*   of the specified environment.         */
 /*******************************************/
-globle void *SetEnvironmentContext(
+void *SetEnvironmentContext(
   void *theEnvironment,
   void *theContext)
   {
@@ -553,7 +553,7 @@ globle void *SetEnvironmentContext(
 /* GetEnvironmentRouterContext: Returns the router */
 /*   context of the specified environment.         */
 /***************************************************/
-globle void *GetEnvironmentRouterContext(
+void *GetEnvironmentRouterContext(
   void *theEnvironment)
   {
    return(((struct environmentData *) theEnvironment)->routerContext);
@@ -563,7 +563,7 @@ globle void *GetEnvironmentRouterContext(
 /* SetEnvironmentRouterContext: Sets the router */
 /*   context of the specified environment.      */
 /************************************************/
-globle void *SetEnvironmentRouterContext(
+void *SetEnvironmentRouterContext(
   void *theEnvironment,
   void *theRouterContext)
   {
@@ -580,7 +580,7 @@ globle void *SetEnvironmentRouterContext(
 /* GetEnvironmentFunctionContext: Returns the function */
 /*   context of the specified environment.             */
 /*******************************************************/
-globle void *GetEnvironmentFunctionContext(
+void *GetEnvironmentFunctionContext(
   void *theEnvironment)
   {
    return(((struct environmentData *) theEnvironment)->functionContext);
@@ -590,7 +590,7 @@ globle void *GetEnvironmentFunctionContext(
 /* SetEnvironmentFunctionContext: Sets the router */
 /*   context of the specified environment.        */
 /**************************************************/
-globle void *SetEnvironmentFunctionContext(
+void *SetEnvironmentFunctionContext(
   void *theEnvironment,
   void *theFunctionContext)
   {
@@ -607,7 +607,7 @@ globle void *SetEnvironmentFunctionContext(
 /* GetEnvironmentCallbackContext: Returns the callback */
 /*   context of the specified environment.             */
 /*******************************************************/
-globle void *GetEnvironmentCallbackContext(
+void *GetEnvironmentCallbackContext(
   void *theEnvironment)
   {
    return(((struct environmentData *) theEnvironment)->callbackContext);
@@ -617,7 +617,7 @@ globle void *GetEnvironmentCallbackContext(
 /* SetEnvironmentCallbackContext: Sets the callback */
 /*   context of the specified environment.          */
 /****************************************************/
-globle void *SetEnvironmentCallbackContext(
+void *SetEnvironmentCallbackContext(
   void *theEnvironment,
   void *theCallbackContext)
   {
@@ -634,7 +634,7 @@ globle void *SetEnvironmentCallbackContext(
 /* DestroyEnvironment: Destroys the specified */
 /*   environment returning all of its memory. */
 /**********************************************/
-globle intBool DestroyEnvironment(
+intBool DestroyEnvironment(
   void *vtheEnvironment)
   {   
    struct environmentCleanupFunction *cleanupPtr;
@@ -713,7 +713,7 @@ globle intBool DestroyEnvironment(
 /* AddEnvironmentCleanupFunction: Adds a function */
 /*   to the ListOfCleanupEnvironmentFunctions.    */
 /**************************************************/
-globle intBool AddEnvironmentCleanupFunction(
+intBool AddEnvironmentCleanupFunction(
   void *vtheEnv,
   const char *name,
   void (*functionPtr)(void *),
@@ -779,7 +779,7 @@ static void RemoveEnvironmentCleanupFunctions(
 /* EnvInitializeEnvironment: Performs initialization */
 /*   of the KB environment.                          */
 /*****************************************************/
-globle void EnvInitializeEnvironment(
+void EnvInitializeEnvironment(
   void *vtheEnvironment,
   struct symbolHashNode **symbolTable,
   struct floatHashNode **floatTable,
@@ -977,7 +977,7 @@ globle void EnvInitializeEnvironment(
 /*   of the KB environment.                       */
 /**************************************************/
 #if ALLOW_ENVIRONMENT_GLOBALS
-globle void InitializeEnvironment()
+void InitializeEnvironment()
    {
     if (GetCurrentEnvironment() == NULL)
       { CreateEnvironment(); }

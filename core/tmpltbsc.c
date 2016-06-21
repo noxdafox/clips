@@ -88,7 +88,7 @@
 /*********************************************************************/
 /* DeftemplateBasicCommands: Initializes basic deftemplate commands. */
 /*********************************************************************/
-globle void DeftemplateBasicCommands(
+void DeftemplateBasicCommands(
   void *theEnv)
   {
 #if ! DEFFACTS_CONSTRUCT
@@ -170,7 +170,7 @@ static void SaveDeftemplates(
 /* UndeftemplateCommand: H/L access routine   */
 /*   for the undeftemplate command.           */
 /**********************************************/
-globle void UndeftemplateCommand(
+void UndeftemplateCommand(
   void *theEnv)
   {   
    UndefconstructCommand(theEnv,"undeftemplate",DeftemplateData(theEnv)->DeftemplateConstruct); 
@@ -180,7 +180,7 @@ globle void UndeftemplateCommand(
 /* EnvUndeftemplate: C access routine */
 /*   for the undeftemplate command.   */
 /**************************************/
-globle intBool EnvUndeftemplate(
+intBool EnvUndeftemplate(
   void *theEnv,
   void *theDeftemplate)
   {   
@@ -191,7 +191,7 @@ globle intBool EnvUndeftemplate(
 /* GetDeftemplateListFunction: H/L access routine   */
 /*   for the get-deftemplate-list function.         */
 /****************************************************/
-globle void GetDeftemplateListFunction(
+void GetDeftemplateListFunction(
   void *theEnv,
   DATA_OBJECT_PTR returnValue)
   {   
@@ -202,7 +202,7 @@ globle void GetDeftemplateListFunction(
 /* EnvGetDeftemplateList: C access routine for */
 /*   the get-deftemplate-list function.        */
 /***********************************************/
-globle void EnvGetDeftemplateList(
+void EnvGetDeftemplateList(
   void *theEnv,
   DATA_OBJECT_PTR returnValue,
   void *theModule)
@@ -214,7 +214,7 @@ globle void EnvGetDeftemplateList(
 /* DeftemplateModuleFunction: H/L access routine   */
 /*   for the deftemplate-module function.          */
 /***************************************************/
-globle void *DeftemplateModuleFunction(
+void *DeftemplateModuleFunction(
   void *theEnv)
   {   
    return(GetConstructModuleCommand(theEnv,"deftemplate-module",DeftemplateData(theEnv)->DeftemplateConstruct)); 
@@ -226,7 +226,7 @@ globle void *DeftemplateModuleFunction(
 /* PPDeftemplateCommand: H/L access routine   */
 /*   for the ppdeftemplate command.           */
 /**********************************************/
-globle void PPDeftemplateCommand(
+void PPDeftemplateCommand(
   void *theEnv)
   {   
    PPConstructCommand(theEnv,"ppdeftemplate",DeftemplateData(theEnv)->DeftemplateConstruct); 
@@ -236,7 +236,7 @@ globle void PPDeftemplateCommand(
 /* PPDeftemplate: C access routine for */
 /*   the ppdeftemplate command.        */
 /***************************************/
-globle int PPDeftemplate(
+int PPDeftemplate(
   void *theEnv,
   const char *deftemplateName,
   const char *logicalName)
@@ -248,7 +248,7 @@ globle int PPDeftemplate(
 /* ListDeftemplatesCommand: H/L access routine   */
 /*   for the list-deftemplates command.          */
 /*************************************************/
-globle void ListDeftemplatesCommand(
+void ListDeftemplatesCommand(
   void *theEnv)
   {    
    ListConstructCommand(theEnv,"list-deftemplates",DeftemplateData(theEnv)->DeftemplateConstruct); 
@@ -258,7 +258,7 @@ globle void ListDeftemplatesCommand(
 /* EnvListDeftemplates: C access routine */
 /*   for the list-deftemplates command.  */
 /*****************************************/
-globle void EnvListDeftemplates(
+void EnvListDeftemplates(
   void *theEnv,
   const char *logicalName,
   void *theModule)
@@ -270,7 +270,7 @@ globle void EnvListDeftemplates(
 /* EnvGetDeftemplateWatch: C access routine for retrieving */
 /*   the current watch value of a deftemplate.             */
 /***********************************************************/
-globle unsigned EnvGetDeftemplateWatch(
+unsigned EnvGetDeftemplateWatch(
   void *theEnv,
   void *theTemplate)
   { 
@@ -285,7 +285,7 @@ globle unsigned EnvGetDeftemplateWatch(
 /* EnvSetDeftemplateWatch:  C access routine for setting */
 /*   the current watch value of a deftemplate.           */
 /*********************************************************/
-globle void EnvSetDeftemplateWatch(
+void EnvSetDeftemplateWatch(
   void *theEnv,
   unsigned newState,
   void *theTemplate)
@@ -301,7 +301,7 @@ globle void EnvSetDeftemplateWatch(
 /* DeftemplateWatchAccess: Access routine for setting the */
 /*   watch flag of a deftemplate via the watch command.   */
 /**********************************************************/
-globle unsigned DeftemplateWatchAccess(
+unsigned DeftemplateWatchAccess(
   void *theEnv,
   int code,
   unsigned newState,
@@ -319,7 +319,7 @@ globle unsigned DeftemplateWatchAccess(
 /* DeftemplateWatchPrint: Access routine for printing which deftemplates */
 /*   have their watch flag set via the list-watch-items command.         */
 /*************************************************************************/
-globle unsigned DeftemplateWatchPrint(
+unsigned DeftemplateWatchPrint(
   void *theEnv,
   const char *logName,
   int code,
@@ -341,7 +341,7 @@ globle unsigned DeftemplateWatchPrint(
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-globle void GetDeftemplateList(
+void GetDeftemplateList(
   DATA_OBJECT_PTR returnValue,
   void *theModule)
   {
@@ -350,20 +350,20 @@ globle void GetDeftemplateList(
 
 #if DEBUGGING_FUNCTIONS
 
-globle unsigned GetDeftemplateWatch(
+unsigned GetDeftemplateWatch(
   void *theTemplate)
   {
    return EnvGetDeftemplateWatch(GetCurrentEnvironment(),theTemplate);
   }
 
-globle void ListDeftemplates(
+void ListDeftemplates(
   const char *logicalName,
   void *theModule)
   {
    EnvListDeftemplates(GetCurrentEnvironment(),logicalName,theModule);
   }
 
-globle void SetDeftemplateWatch(
+void SetDeftemplateWatch(
   unsigned newState,
   void *theTemplate)
   {
@@ -372,7 +372,7 @@ globle void SetDeftemplateWatch(
 
 #endif /* DEBUGGING_FUNCTIONS */
 
-globle intBool Undeftemplate(
+intBool Undeftemplate(
   void *theDeftemplate)
   {
    return EnvUndeftemplate(GetCurrentEnvironment(),theDeftemplate);

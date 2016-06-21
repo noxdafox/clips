@@ -66,7 +66,7 @@
 /**********************************************************/
 /* InitializeStringRouter: Initializes string I/O router. */
 /**********************************************************/
-globle void InitializeStringRouter(
+void InitializeStringRouter(
   void *theEnv)
   {
    AllocateEnvironmentData(theEnv,STRING_ROUTER_DATA,sizeof(struct stringRouterData),DeallocateStringRouterData);
@@ -205,7 +205,7 @@ static int UngetcString(
 /************************************************/
 /* OpenStringSource: Opens a new string router. */
 /************************************************/
-globle int OpenStringSource(
+int OpenStringSource(
   void *theEnv,
   const char *name,
   const char *str,
@@ -228,7 +228,7 @@ globle int OpenStringSource(
 /* OpenTextSource: Opens a new string router for text */
 /*   (which is not NULL terminated).                  */
 /******************************************************/
-globle int OpenTextSource(
+int OpenTextSource(
   void *theEnv,
   const char *name,
   const char *str,
@@ -277,7 +277,7 @@ static int CreateReadStringSource(
 /**********************************************/
 /* CloseStringSource: Closes a string router. */
 /**********************************************/
-globle int CloseStringSource(
+int CloseStringSource(
   void *theEnv,
   const char *name)
   {
@@ -314,7 +314,7 @@ globle int CloseStringSource(
 /******************************************************************/
 /* OpenStringDestination: Opens a new string router for printing. */
 /******************************************************************/
-globle int OpenStringDestination(
+int OpenStringDestination(
   void *theEnv,
   const char *name,
   char *str,
@@ -343,7 +343,7 @@ globle int OpenStringDestination(
 /***************************************************/
 /* CloseStringDestination: Closes a string router. */
 /***************************************************/
-globle int CloseStringDestination(
+int CloseStringDestination(
   void *theEnv,
   const char *name)
   {

@@ -68,7 +68,7 @@
 /* InitializeExternalFunctionData: Allocates environment */
 /*    data for external functions.                       */
 /*********************************************************/
-globle void InitializeExternalFunctionData(
+void InitializeExternalFunctionData(
   void *theEnv)
   {
    AllocateEnvironmentData(theEnv,EXTERNAL_FUNCTION_DATA,sizeof(struct externalFunctionData),DeallocateExternalFunctionData);
@@ -120,7 +120,7 @@ static void DeallocateExternalFunctionData(
 /* EnvDefineFunction: Used to define a system or user */
 /*   external function so that the KB can access it.  */
 /******************************************************/
-globle int EnvDefineFunction(
+int EnvDefineFunction(
   void *theEnv,
   const char *name,
   int returnType,
@@ -134,7 +134,7 @@ globle int EnvDefineFunction(
 /* EnvDefineFunctionWithContext: Used to define a system or */
 /*   user external function so that the KB can access it.   */
 /************************************************************/
-globle int EnvDefineFunctionWithContext(
+int EnvDefineFunctionWithContext(
   void *theEnv,
   const char *name,
   int returnType,
@@ -149,7 +149,7 @@ globle int EnvDefineFunctionWithContext(
 /* EnvDefineFunction2: Used to define a system or user */
 /*   external function so that the KB can access it.   */
 /*******************************************************/
-globle int EnvDefineFunction2(
+int EnvDefineFunction2(
   void *theEnv,
   const char *name,
   int returnType,
@@ -164,7 +164,7 @@ globle int EnvDefineFunction2(
 /* EnvDefineFunction2WithContext: Used to define a system or */
 /*   user external function so that the KB can access it.    */
 /*************************************************************/
-globle int EnvDefineFunction2WithContext(
+int EnvDefineFunction2WithContext(
   void *theEnv,
   const char *name,
   int returnType,
@@ -201,7 +201,7 @@ globle int EnvDefineFunction2WithContext(
 /*     w - symbol                                            */
 /*     x - instance address                                  */
 /*************************************************************/
-globle int DefineFunction3(
+int DefineFunction3(
   void *theEnv,
   const char *name,
   int returnType,
@@ -283,7 +283,7 @@ globle int DefineFunction3(
 /* UndefineFunction: Used to remove a function */
 /*   definition from the list of functions.    */
 /***********************************************/
-globle int UndefineFunction(
+int UndefineFunction(
   void *theEnv,
   const char *functionName)
   {
@@ -362,7 +362,7 @@ static int RemoveHashFunction(
 /*   routines. Generic functions and deffunctions can not have specialized */
 /*   parsing routines.                                                     */
 /***************************************************************************/
-globle int AddFunctionParser(
+int AddFunctionParser(
   void *theEnv,
   const char *functionName,
   struct expr *(*fpPtr)(void *,struct expr *,const char *))
@@ -386,7 +386,7 @@ globle int AddFunctionParser(
 /* RemoveFunctionParser: Removes a specialized expression parsing    */
 /*   function (if it exists) from the function entry for a function. */
 /*********************************************************************/
-globle int RemoveFunctionParser(
+int RemoveFunctionParser(
   void *theEnv,
   const char *functionName)
   {
@@ -408,7 +408,7 @@ globle int RemoveFunctionParser(
 /* FuncSeqOvlFlags: Makes a system function overloadable or not, */
 /* i.e. can the function be a method for a generic function.     */
 /*****************************************************************/
-globle int FuncSeqOvlFlags(
+int FuncSeqOvlFlags(
   void *theEnv,
   const char *functionName,
   int seqp,
@@ -433,7 +433,7 @@ globle int FuncSeqOvlFlags(
 /* GetArgumentTypeName: Returns a descriptive string for */
 /*   a function argument type (used by DefineFunction2). */
 /*********************************************************/
-globle const char *GetArgumentTypeName(
+const char *GetArgumentTypeName(
   int theRestriction)
   {
    switch ((char) theRestriction)
@@ -505,7 +505,7 @@ globle const char *GetArgumentTypeName(
 /* GetNthRestriction: Returns the restriction type */
 /*   for the nth parameter of a function.          */
 /***************************************************/
-globle int GetNthRestriction(
+int GetNthRestriction(
   struct FunctionDefinition *theFunction,
   int position)
   {
@@ -558,7 +558,7 @@ globle int GetNthRestriction(
 /*************************************************/
 /* GetFunctionList: Returns the ListOfFunctions. */
 /*************************************************/
-globle struct FunctionDefinition *GetFunctionList(
+struct FunctionDefinition *GetFunctionList(
   void *theEnv)
   {
    return(ExternalFunctionData(theEnv)->ListOfFunctions);
@@ -568,7 +568,7 @@ globle struct FunctionDefinition *GetFunctionList(
 /* InstallFunctionList: Sets the ListOfFunctions and adds all */
 /*   the function entries to the FunctionHashTable.           */
 /**************************************************************/
-globle void InstallFunctionList(
+void InstallFunctionList(
   void *theEnv,
   struct FunctionDefinition *value)
   {
@@ -604,7 +604,7 @@ globle void InstallFunctionList(
 /*   FunctionDefinition structure if a function name is */
 /*   in the function list, otherwise returns NULL.      */
 /********************************************************/
-globle struct FunctionDefinition *FindFunction(
+struct FunctionDefinition *FindFunction(
   void *theEnv,
   const char *functionName)
   {
@@ -671,7 +671,7 @@ static void AddHashFunction(
 /* GetMinimumArgs: Returns the minimum number of */
 /*   arguments expected by an external function. */
 /*************************************************/
-globle int GetMinimumArgs(
+int GetMinimumArgs(
   struct FunctionDefinition *theFunction)
   {
    char theChar[2];
@@ -695,7 +695,7 @@ globle int GetMinimumArgs(
 /* GetMaximumArgs: Returns the maximum number of */
 /*   arguments expected by an external function. */
 /*************************************************/
-globle int GetMaximumArgs(
+int GetMaximumArgs(
   struct FunctionDefinition *theFunction)
   {
    char theChar[2];
@@ -723,7 +723,7 @@ globle int GetMaximumArgs(
 #if ALLOW_ENVIRONMENT_GLOBALS
 
 #if (! RUN_TIME)
-globle int DefineFunction(
+int DefineFunction(
   const char *name,
   int returnType,
   int (*pointer)(void),
@@ -738,7 +738,7 @@ globle int DefineFunction(
                           actualName,NULL,FALSE,NULL));
   }
 
-globle int DefineFunction2(
+int DefineFunction2(
   const char *name,
   int returnType,
   int (*pointer)(void),

@@ -47,7 +47,7 @@
 /* GetConstraintRecord: Creates and initializes */
 /*   the values of a constraint record.         */
 /************************************************/
-globle struct constraintRecord *GetConstraintRecord(
+struct constraintRecord *GetConstraintRecord(
   void *theEnv)
   {
    CONSTRAINT_RECORD *constraints;
@@ -91,7 +91,7 @@ globle struct constraintRecord *GetConstraintRecord(
 /*   set to TRUE. If passed an argument of FALSE, then  */
 /*   all of the individual type flags are set to TRUE.  */
 /********************************************************/
-globle void SetAnyAllowedFlags(
+void SetAnyAllowedFlags(
   CONSTRAINT_RECORD *theConstraint,
   int justOne)
   {
@@ -123,7 +123,7 @@ globle void SetAnyAllowedFlags(
 /*****************************************************/
 /* CopyConstraintRecord: Copies a constraint record. */
 /*****************************************************/
-globle struct constraintRecord *CopyConstraintRecord(
+struct constraintRecord *CopyConstraintRecord(
   void *theEnv,
   CONSTRAINT_RECORD *sourceConstraint)
   {
@@ -176,7 +176,7 @@ globle struct constraintRecord *CopyConstraintRecord(
 /*   argument of FALSE, then all of the individual type       */
 /*   restriction flags are set to TRUE.                       */
 /**************************************************************/
-globle void SetAnyRestrictionFlags(
+void SetAnyRestrictionFlags(
   CONSTRAINT_RECORD *theConstraint,
   int justOne)
   {
@@ -206,7 +206,7 @@ globle void SetAnyRestrictionFlags(
 /*   constraint, sets the allowed type flags for the */
 /*   specified type in the constraint to TRUE.       */
 /*****************************************************/
-globle int SetConstraintType(
+int SetConstraintType(
   int theType,
   CONSTRAINT_RECORD *constraints)
   {
@@ -300,7 +300,7 @@ globle int SetConstraintType(
 /*   returns the relationship between the numbers (greater   */
 /*   than, less than or equal).                              */
 /*************************************************************/
-globle int CompareNumbers(
+int CompareNumbers(
   void *theEnv,
   int type1,
   void *vptr1,
@@ -397,7 +397,7 @@ globle int CompareNumbers(
 /*   the symbol BLUE would be converted to a  record with       */
 /*   allowed types SYMBOL and allow-values BLUE.                */
 /****************************************************************/
-globle CONSTRAINT_RECORD *ExpressionToConstraintRecord(
+CONSTRAINT_RECORD *ExpressionToConstraintRecord(
   void *theEnv,
   struct expr *theExpression)
   {
@@ -485,7 +485,7 @@ globle CONSTRAINT_RECORD *ExpressionToConstraintRecord(
 /*   function when converted would be a constraint     */
 /*   record with allowed types INTEGER and FLOAT.      */
 /*******************************************************/
-globle CONSTRAINT_RECORD *FunctionCallToConstraintRecord(
+CONSTRAINT_RECORD *FunctionCallToConstraintRecord(
   void *theEnv,
   void *theFunction)
   {
@@ -572,7 +572,7 @@ globle CONSTRAINT_RECORD *FunctionCallToConstraintRecord(
 /*   function argument types (used by DefineFunction2) */
 /*   to a constraint record.                           */
 /*******************************************************/
-globle CONSTRAINT_RECORD *ArgumentTypeToConstraintRecord(
+CONSTRAINT_RECORD *ArgumentTypeToConstraintRecord(
   void *theEnv,
   int theRestriction)
   {

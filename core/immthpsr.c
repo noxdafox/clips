@@ -89,7 +89,7 @@ static EXPRESSION *GenTypeExpression(void *,EXPRESSION *,int,int,const char *);
   NOTES        : Method marked as system
                  Assumes no other methods already present
  ********************************************************/
-globle void AddImplicitMethods(
+void AddImplicitMethods(
   void *theEnv,
   DEFGENERIC *gfunc)
   {

@@ -66,7 +66,7 @@
 /* DeftemplateLHSParse: Parses a LHS pattern */
 /*   that uses the deftemplate format.       */
 /*********************************************/
-globle struct lhsParseNode *DeftemplateLHSParse(
+struct lhsParseNode *DeftemplateLHSParse(
   void *theEnv,
   const char *readSource,
   struct deftemplate *theDeftemplate)

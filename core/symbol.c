@@ -113,7 +113,7 @@
 /*   IntegerTable, and FloatTable. It also initializes */
 /*   the TrueSymbol and FalseSymbol.                   */
 /*******************************************************/
-globle void InitializeAtomTables(
+void InitializeAtomTables(
   void *theEnv,
   struct symbolHashNode **symbolTable,
   struct floatHashNode **floatTable,
@@ -322,7 +322,7 @@ static void DeallocateSymbolData(
 /*   the string is added to the symbol table and then the address    */
 /*   of the string's location in the symbol table is returned.       */
 /*********************************************************************/
-globle void *EnvAddSymbol(
+void *EnvAddSymbol(
   void *theEnv,
   const char *str)
   {
@@ -396,7 +396,7 @@ globle void *EnvAddSymbol(
 /* FindSymbolHN: Searches for the string in the symbol table and */
 /*   returns a pointer to it if found, otherwise returns NULL.   */
 /*****************************************************************/
-globle SYMBOL_HN *FindSymbolHN(
+SYMBOL_HN *FindSymbolHN(
   void *theEnv,
   const char *str)
   {
@@ -422,7 +422,7 @@ globle SYMBOL_HN *FindSymbolHN(
 /*   double is returned. Otherwise, the double is hashed into the  */
 /*   table and the address of the double is also returned.         */
 /*******************************************************************/
-globle void *EnvAddDouble(
+void *EnvAddDouble(
   void *theEnv,
   double number)
   {
@@ -487,7 +487,7 @@ globle void *EnvAddDouble(
 /*   the long is returned. Otherwise, the long is hashed into  */
 /*   the table and the address of the long is also returned.   */
 /***************************************************************/
-globle void *EnvAddLong(
+void *EnvAddLong(
   void *theEnv,
   long long number)
   {
@@ -549,7 +549,7 @@ globle void *EnvAddLong(
 /* FindLongHN: Searches for the integer in the integer table and */
 /*   returns a pointer to it if found, otherwise returns NULL.   */
 /*****************************************************************/
-globle INTEGER_HN *FindLongHN(
+INTEGER_HN *FindLongHN(
   void *theEnv,
   long long theLong)
   {
@@ -572,7 +572,7 @@ globle INTEGER_HN *FindLongHN(
 /*   bitmap is returned. Otherwise, the bitmap is hashed into the  */
 /*   table and the address of the bitmap is also returned.         */
 /*******************************************************************/
-globle void *EnvAddBitMap(
+void *EnvAddBitMap(
   void *theEnv,
   void *vTheBitMap,
   unsigned size)
@@ -656,7 +656,7 @@ globle void *EnvAddBitMap(
 /*   Otherwise, the external address is hashed into the table and  */
 /*   the address of the external address is also returned.         */
 /*******************************************************************/
-globle void *EnvAddExternalAddress(
+void *EnvAddExternalAddress(
   void *theEnv,
   void *theExternalAddress,
   unsigned theType)
@@ -722,7 +722,7 @@ globle void *EnvAddExternalAddress(
 /***************************************************/
 /* HashSymbol: Computes a hash value for a symbol. */
 /***************************************************/
-globle unsigned long HashSymbol(
+unsigned long HashSymbol(
   const char *word,
   unsigned long range)
   {
@@ -741,7 +741,7 @@ globle unsigned long HashSymbol(
 /*************************************************/
 /* HashFloat: Computes a hash value for a float. */
 /*************************************************/
-globle unsigned long HashFloat(
+unsigned long HashFloat(
   double number,
   unsigned long range)
   {
@@ -763,7 +763,7 @@ globle unsigned long HashFloat(
 /******************************************************/
 /* HashInteger: Computes a hash value for an integer. */
 /******************************************************/
-globle unsigned long HashInteger(
+unsigned long HashInteger(
   long long number,
   unsigned long range)
   {
@@ -787,7 +787,7 @@ globle unsigned long HashInteger(
 /* HashExternalAddress: Computes a hash */
 /*   value for an external address.     */
 /****************************************/
-globle unsigned long HashExternalAddress(
+unsigned long HashExternalAddress(
   void *theExternalAddress,
   unsigned long range)
   {
@@ -811,7 +811,7 @@ globle unsigned long HashExternalAddress(
 /***************************************************/
 /* HashBitMap: Computes a hash value for a bitmap. */
 /***************************************************/
-globle unsigned long HashBitMap(
+unsigned long HashBitMap(
   const char *word,
   unsigned long range,
   unsigned length)
@@ -859,7 +859,7 @@ globle unsigned long HashBitMap(
 /*   for a SymbolTable entry. Adds the symbol to the */
 /*   EphemeralSymbolList if the count becomes zero.  */
 /*****************************************************/
-globle void DecrementSymbolCount(
+void DecrementSymbolCount(
   void *theEnv,
   SYMBOL_HN *theValue)
   {
@@ -894,7 +894,7 @@ globle void DecrementSymbolCount(
 /*   for a FloatTable entry. Adds the float to the */
 /*   EphemeralFloatList if the count becomes zero. */
 /***************************************************/
-globle void DecrementFloatCount(
+void DecrementFloatCount(
   void *theEnv,
   FLOAT_HN *theValue)
   {
@@ -923,7 +923,7 @@ globle void DecrementFloatCount(
 /*   an IntegerTable entry. Adds the integer to the      */
 /*   EphemeralIntegerList if the count becomes zero.     */
 /*********************************************************/
-globle void DecrementIntegerCount(
+void DecrementIntegerCount(
   void *theEnv,
   INTEGER_HN *theValue)
   {
@@ -952,7 +952,7 @@ globle void DecrementIntegerCount(
 /*   for a BitmapTable entry. Adds the bitmap to the */
 /*   EphemeralBitMapList if the count becomes zero.  */
 /*****************************************************/
-globle void DecrementBitMapCount(
+void DecrementBitMapCount(
   void *theEnv,
   BITMAP_HN *theValue)
   {
@@ -987,7 +987,7 @@ globle void DecrementBitMapCount(
 /*   for an ExternAddressTable entry. Adds the bitmap to the */
 /*   EphemeralExternalAddressList if the count becomes zero. */
 /*************************************************************/
-globle void DecrementExternalAddressCount(
+void DecrementExternalAddressCount(
   void *theEnv,
   EXTERNAL_ADDRESS_HN *theValue)
   {
@@ -1143,7 +1143,7 @@ static void AddEphemeralHashNode(
 /*   maps that still have a count value of zero,   */
 /*   from their respective storage tables.         */
 /***************************************************/
-globle void RemoveEphemeralAtoms(
+void RemoveEphemeralAtoms(
   void *theEnv)
   {
    struct garbageFrame *theGarbageFrame;
@@ -1167,7 +1167,7 @@ globle void RemoveEphemeralAtoms(
 /* EphemerateValue: Marks a value as ephemeral */
 /*   if it is not already marked.              */
 /***********************************************/
-globle void EphemerateValue(
+void EphemerateValue(
    void *theEnv,
    int theType,
    void *theValue)
@@ -1302,7 +1302,7 @@ static void RemoveEphemeralHashNodes(
 /*********************************************************/
 /* GetSymbolTable: Returns a pointer to the SymbolTable. */
 /*********************************************************/
-globle SYMBOL_HN **GetSymbolTable(
+SYMBOL_HN **GetSymbolTable(
   void *theEnv)
   {
    return(SymbolData(theEnv)->SymbolTable);
@@ -1311,7 +1311,7 @@ globle SYMBOL_HN **GetSymbolTable(
 /******************************************************/
 /* SetSymbolTable: Sets the value of the SymbolTable. */
 /******************************************************/
-globle void SetSymbolTable(
+void SetSymbolTable(
   void *theEnv,
   SYMBOL_HN **value)
   {
@@ -1321,7 +1321,7 @@ globle void SetSymbolTable(
 /*******************************************************/
 /* GetFloatTable: Returns a pointer to the FloatTable. */
 /*******************************************************/
-globle FLOAT_HN **GetFloatTable(
+FLOAT_HN **GetFloatTable(
   void *theEnv)
   {
    return(SymbolData(theEnv)->FloatTable);
@@ -1330,7 +1330,7 @@ globle FLOAT_HN **GetFloatTable(
 /****************************************************/
 /* SetFloatTable: Sets the value of the FloatTable. */
 /****************************************************/
-globle void SetFloatTable(
+void SetFloatTable(
   void *theEnv,
   FLOAT_HN **value)
   {
@@ -1340,7 +1340,7 @@ globle void SetFloatTable(
 /***********************************************************/
 /* GetIntegerTable: Returns a pointer to the IntegerTable. */
 /***********************************************************/
-globle INTEGER_HN **GetIntegerTable(
+INTEGER_HN **GetIntegerTable(
   void *theEnv)
   {
    return(SymbolData(theEnv)->IntegerTable);
@@ -1349,7 +1349,7 @@ globle INTEGER_HN **GetIntegerTable(
 /********************************************************/
 /* SetIntegerTable: Sets the value of the IntegerTable. */
 /********************************************************/
-globle void SetIntegerTable(
+void SetIntegerTable(
   void *theEnv,
   INTEGER_HN **value)
   {
@@ -1359,7 +1359,7 @@ globle void SetIntegerTable(
 /*********************************************************/
 /* GetBitMapTable: Returns a pointer to the BitMapTable. */
 /*********************************************************/
-globle BITMAP_HN **GetBitMapTable(
+BITMAP_HN **GetBitMapTable(
   void *theEnv)
   {
    return(SymbolData(theEnv)->BitMapTable);
@@ -1368,7 +1368,7 @@ globle BITMAP_HN **GetBitMapTable(
 /******************************************************/
 /* SetBitMapTable: Sets the value of the BitMapTable. */
 /******************************************************/
-globle void SetBitMapTable(
+void SetBitMapTable(
   void *theEnv,
   BITMAP_HN **value)
   {
@@ -1378,7 +1378,7 @@ globle void SetBitMapTable(
 /***************************************************************************/
 /* GetExternalAddressTable: Returns a pointer to the ExternalAddressTable. */
 /***************************************************************************/
-globle EXTERNAL_ADDRESS_HN **GetExternalAddressTable(
+EXTERNAL_ADDRESS_HN **GetExternalAddressTable(
   void *theEnv)
   {
    return(SymbolData(theEnv)->ExternalAddressTable);
@@ -1387,7 +1387,7 @@ globle EXTERNAL_ADDRESS_HN **GetExternalAddressTable(
 /************************************************************************/
 /* SetExternalAddressTable: Sets the value of the ExternalAddressTable. */
 /************************************************************************/
-globle void SetExternalAddressTable(
+void SetExternalAddressTable(
   void *theEnv,
   EXTERNAL_ADDRESS_HN **value)
   {
@@ -1399,7 +1399,7 @@ globle void SetExternalAddressTable(
 /*   TrueSymbol, FalseSymbol, Zero, PositiveInfinity, */
 /*   and NegativeInfinity symbols.                    */
 /******************************************************/
-globle void RefreshSpecialSymbols(
+void RefreshSpecialSymbols(
   void *theEnv)
   {
    SymbolData(theEnv)->TrueSymbolHN = (void *) FindSymbolHN(theEnv,TRUE_STRING);
@@ -1415,7 +1415,7 @@ globle void RefreshSpecialSymbols(
 /*   used to implement the command completion feature      */
 /*   found in some of the machine specific interfaces.     */
 /***********************************************************/
-globle struct symbolMatch *FindSymbolMatches(
+struct symbolMatch *FindSymbolMatches(
   void *theEnv,
   const char *searchString,
   unsigned *numberOfMatches,
@@ -1444,7 +1444,7 @@ globle struct symbolMatch *FindSymbolMatches(
 /*********************************************************/
 /* ReturnSymbolMatches: Returns a set of symbol matches. */
 /*********************************************************/
-globle void ReturnSymbolMatches(
+void ReturnSymbolMatches(
   void *theEnv,
   struct symbolMatch *listOfMatches)
   {
@@ -1461,7 +1461,7 @@ globle void ReturnSymbolMatches(
 /***************************************************************/
 /* ClearBitString: Initializes the values of a bitmap to zero. */
 /***************************************************************/
-globle void ClearBitString(
+void ClearBitString(
   void *vTheBitMap,
   unsigned length)
   {
@@ -1477,7 +1477,7 @@ globle void ClearBitString(
 /*   to implement the command completion feature found in some   */
 /*   of the machine specific interfaces.                         */
 /*****************************************************************/
-globle SYMBOL_HN *GetNextSymbolMatch(
+SYMBOL_HN *GetNextSymbolMatch(
   void *theEnv,
   const char *searchString,
   size_t searchLength,
@@ -1651,7 +1651,7 @@ static size_t CommonPrefixLength(
 /*   the hash table in a hash table traversal (e.g. this is the */
 /*   fifth entry in the  hash table.                            */
 /****************************************************************/
-globle void SetAtomicValueIndices(
+void SetAtomicValueIndices(
   void *theEnv,
   int setAll)
   {
@@ -1756,7 +1756,7 @@ globle void SetAtomicValueIndices(
 /*   entries to the appropriate values. Normally called to undo the    */
 /*   effects of a call to the SetAtomicValueIndices function.          */
 /***********************************************************************/
-globle void RestoreAtomicValueBuckets(
+void RestoreAtomicValueBuckets(
   void *theEnv)
   {
    unsigned long i;
@@ -1828,13 +1828,13 @@ globle void RestoreAtomicValueBuckets(
 /* Additional Environment Functions */
 /*##################################*/
 
-globle void *EnvFalseSymbol(
+void *EnvFalseSymbol(
   void *theEnv)
   {
    return SymbolData(theEnv)->FalseSymbolHN;
   }
 
-globle void *EnvTrueSymbol(
+void *EnvTrueSymbol(
   void *theEnv)
   {
    return SymbolData(theEnv)->TrueSymbolHN;
@@ -1846,30 +1846,30 @@ globle void *EnvTrueSymbol(
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-globle void *AddSymbol(
+void *AddSymbol(
   const char *str)
   {
    return EnvAddSymbol(GetCurrentEnvironment(),str);
   }
 
-globle void *AddLong(
+void *AddLong(
   long long number)
   {
    return EnvAddLong(GetCurrentEnvironment(),number);
   }
 
-globle void *AddDouble(
+void *AddDouble(
   double number)
   {
    return EnvAddDouble(GetCurrentEnvironment(),number);
   }
 
-globle void *FalseSymbol()
+void *FalseSymbol()
   {
    return SymbolData(GetCurrentEnvironment())->FalseSymbolHN;
   }
 
-globle void *TrueSymbol()
+void *TrueSymbol()
   {
    return SymbolData(GetCurrentEnvironment())->TrueSymbolHN;
   }

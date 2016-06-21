@@ -90,7 +90,7 @@ static int AlphaPatternNodesToCode(void *,const char *,const char *,char *,int,F
   SIDE EFFECTS : Code generator item added
   NOTES        : None
  ***************************************************/
-globle void ObjectPatternsCompilerSetup(
+void ObjectPatternsCompilerSetup(
   void *theEnv)
   {
    ObjectReteData(theEnv)->ObjectPatternCodeItem =
@@ -116,7 +116,7 @@ globle void ObjectPatternsCompilerSetup(
                  memory printed
   NOTES        : None
  ***************************************************/
-globle void ObjectPatternNodeReference(
+void ObjectPatternNodeReference(
   void *theEnv,
   void *theVPattern,
   FILE *theFile,

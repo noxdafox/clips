@@ -112,7 +112,7 @@
 /*   subsequent references of a variable are made to "point" back */
 /*   to the variable being propagated.                            */
 /******************************************************************/
-globle int VariableAnalysis(
+int VariableAnalysis(
   void *theEnv,
   struct lhsParseNode *patternPtr)
   {

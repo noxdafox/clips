@@ -74,7 +74,7 @@
 /* DeftemplateCompilerSetup: Initializes the deftemplate */
 /*   construct for use with the constructs-to-c command. */
 /*********************************************************/
-globle void DeftemplateCompilerSetup(
+void DeftemplateCompilerSetup(
   void *theEnv)
   {
    DeftemplateData(theEnv)->DeftemplateCodeItem = AddCodeGeneratorItem(theEnv,"deftemplate",0,NULL,InitDeftemplateCode,ConstructToCode,3);
@@ -383,7 +383,7 @@ static void SlotToCode(
 /* DeftemplateCModuleReference: Writes the C code representation */
 /*   of a reference to a deftemplate module data structure.      */
 /*****************************************************************/
-globle void DeftemplateCModuleReference(
+void DeftemplateCModuleReference(
   void *theEnv,
   FILE *theFile,
   int count,
@@ -400,7 +400,7 @@ globle void DeftemplateCModuleReference(
 /* DeftemplateCConstructReference: Writes the C code representation */
 /*   of a reference to a deftemplate data structure.                */
 /********************************************************************/
-globle void DeftemplateCConstructReference(
+void DeftemplateCConstructReference(
   void *theEnv,
   FILE *theFile,
   void *vTheTemplate,

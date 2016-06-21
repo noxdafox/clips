@@ -51,7 +51,7 @@
 /*   record code for a run-time module created */
 /*   using the constructs-to-c function.       */
 /***********************************************/
-globle int ConstraintsToCode(
+int ConstraintsToCode(
   void *theEnv,
   const char *fileName,
   const char *pathName,
@@ -210,7 +210,7 @@ globle int ConstraintsToCode(
 /* PrintConstraintReference: Prints C code representation */
 /*   of a constraint record data structure reference.     */
 /**********************************************************/
-globle void PrintConstraintReference(
+void PrintConstraintReference(
   void *theEnv,
   FILE *fp,
   CONSTRAINT_RECORD *cPtr,

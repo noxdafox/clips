@@ -57,7 +57,7 @@
 /*   environment. Called when parsing a construct after the */
 /*   deffacts keyword has been found.                       */
 /************************************************************/
-globle int ParseDeffacts(
+int ParseDeffacts(
   void *theEnv,
   const char *readSource)
   {

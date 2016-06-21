@@ -69,7 +69,7 @@
 /*****************************************************************************/
 /* InitializePatterns: Initializes the global data associated with patterns. */
 /*****************************************************************************/
-globle void InitializePatterns(
+void InitializePatterns(
   void *theEnv)
   {   
    AllocateEnvironmentData(theEnv,PATTERN_DATA,sizeof(struct patternData),DeallocatePatternData);
@@ -145,7 +145,7 @@ static void DeallocatePatternData(
 /******************************************************************************/
 /* AddHashedPatternNode: Adds a pattern node entry to the pattern hash table. */
 /******************************************************************************/
-globle void AddHashedPatternNode(
+void AddHashedPatternNode(
   void *theEnv,
   void *parent,
   void *child,
@@ -174,7 +174,7 @@ globle void AddHashedPatternNode(
 /* RemoveHashedPatternNode: Removes a pattern node */
 /*   entry from the pattern node hash table.       */
 /***************************************************/
-globle intBool RemoveHashedPatternNode(
+intBool RemoveHashedPatternNode(
   void *theEnv,
   void *parent,
   void *child,
@@ -216,7 +216,7 @@ globle intBool RemoveHashedPatternNode(
 /* FindHashedPatternNode: Finds a pattern node */
 /*   entry in the pattern node hash table.     */
 /***********************************************/
-globle void *FindHashedPatternNode(
+void *FindHashedPatternNode(
   void *theEnv,
   void *parent,
   unsigned short keyType,
@@ -317,7 +317,7 @@ void ReservedPatternSymbolErrorMsg(
 /*   data entities that can match patterns. Currently facts */
 /*   and instances are the only data entities available.    */
 /************************************************************/
-globle void GetNextPatternEntity(
+void GetNextPatternEntity(
   void *theEnv,
   struct patternParser **theParser,
   struct patternEntity **theEntity)
@@ -409,7 +409,7 @@ void DetachPattern(
 /*   list of pattern parsers used to detect valid */
 /*   patterns in the LHS of a rule.               */
 /**************************************************/
-globle intBool AddPatternParser(
+intBool AddPatternParser(
   void *theEnv,
   struct patternParser *newPtr)
   {
@@ -468,7 +468,7 @@ globle intBool AddPatternParser(
 /*  that can parse a pattern beginning with the     */
 /*  specified keyword (e.g. "object").              */
 /****************************************************/
-globle struct patternParser *FindPatternParser(
+struct patternParser *FindPatternParser(
   void *theEnv,
   const char *name)
   {
@@ -501,7 +501,7 @@ struct patternParser *GetPatternParser(
 /* PatternNodeHeaderToCode: Writes the C code representation */
 /*   of a patternNodeHeader data structure.                  */
 /*************************************************************/
-globle void PatternNodeHeaderToCode(
+void PatternNodeHeaderToCode(
   void *theEnv,
   FILE *fp,
   struct patternNodeHeader *theHeader,
@@ -540,7 +540,7 @@ globle void PatternNodeHeaderToCode(
 /*   by the pattern parser after the variable analysis routines */
 /*   have analyzed the LHS patterns.                            */
 /****************************************************************/
-globle intBool PostPatternAnalysis(
+intBool PostPatternAnalysis(
   void *theEnv,
   struct lhsParseNode *theLHS)
   {

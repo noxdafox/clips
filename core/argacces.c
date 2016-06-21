@@ -76,7 +76,7 @@
 /*   value of the argument is returned (i.e. the string "a" would  */
 /*   be returned for a, "a", and [a]).                             */
 /*******************************************************************/
-globle const char *EnvRtnLexeme(
+const char *EnvRtnLexeme(
   void *theEnv,
   int argumentPosition)
   {
@@ -138,7 +138,7 @@ globle const char *EnvRtnLexeme(
 /*   the argument is returned (i.e. the float 3.0 would be         */
 /*   returned for 3.0 and 3).                                      */
 /*******************************************************************/
-globle double EnvRtnDouble(
+double EnvRtnDouble(
   void *theEnv,
   int argumentPosition)
   {
@@ -198,7 +198,7 @@ globle double EnvRtnDouble(
 /*   value of the argument is returned (i.e. the integer 4       */
 /*   would be returned for 4.3 and 4).                           */
 /*****************************************************************/
-globle long long EnvRtnLong(
+long long EnvRtnLong(
   void *theEnv,
   int argumentPosition)
   {
@@ -256,7 +256,7 @@ globle long long EnvRtnLong(
 /*   and type of the argument are returned in a DATA_OBJECT         */
 /*   structure provided by the calling function.                    */
 /********************************************************************/
-globle DATA_OBJECT_PTR EnvRtnUnknown(
+DATA_OBJECT_PTR EnvRtnUnknown(
   void *theEnv,
   int argumentPosition,
   DATA_OBJECT_PTR returnValue)
@@ -295,7 +295,7 @@ globle DATA_OBJECT_PTR EnvRtnUnknown(
 /* EnvRtnArgCount: Returns the length of the argument list */
 /*   for the function call currently being evaluated.      */
 /***********************************************************/
-globle int EnvRtnArgCount(
+int EnvRtnArgCount(
   void *theEnv)
   {
    int count = 0;
@@ -319,7 +319,7 @@ globle int EnvRtnArgCount(
 /*   arguments. The number of arguments is returned if no error occurs, */
 /*   otherwise -1 is returned.                                          */
 /************************************************************************/
-globle int EnvArgCountCheck(
+int EnvArgCountCheck(
   void *theEnv,
   const char *functionName,
   int countRelation,
@@ -365,7 +365,7 @@ globle int EnvArgCountCheck(
 /*   range. The number of arguments passed to the function is   */
 /*   returned if no error occurs, otherwise -1 is returned.     */
 /****************************************************************/
-globle int EnvArgRangeCheck(
+int EnvArgRangeCheck(
   void *theEnv,
   const char *functionName,
   int min,
@@ -399,7 +399,7 @@ globle int EnvArgRangeCheck(
 /*   argument was successfully retrieved and is of the       */
 /*   appropriate type, otherwise returns FALSE.              */
 /*************************************************************/
-globle int EnvArgTypeCheck(
+int EnvArgTypeCheck(
   void *theEnv,
   const char *functionName,
   int argumentPosition,
@@ -503,7 +503,7 @@ globle int EnvArgTypeCheck(
 /*  TRUE is returned if a numeric argument was successfully       */
 /*  retrieved, otherwise FALSE is returned.                       */
 /******************************************************************/
-globle intBool GetNumericArgument(
+intBool GetNumericArgument(
   void *theEnv,
   struct expr *theArgument,
   const char *functionName,
@@ -577,7 +577,7 @@ globle intBool GetNumericArgument(
 /*   logical name. If valid, the logical name is returned, otherwise */
 /*   NULL is returned.                                               */
 /*********************************************************************/
-globle const char *GetLogicalName(
+const char *GetLogicalName(
   void *theEnv,
   int whichArgument,
   const char *defaultLogicalName)
@@ -615,7 +615,7 @@ globle const char *GetLogicalName(
 /*   if it is a valid file name. If valid, the file name is */
 /*   returned, otherwise NULL is returned.                  */
 /************************************************************/
-globle const char *GetFileName(
+const char *GetFileName(
   void *theEnv,
   const char *functionName,
   int whichArgument)
@@ -635,7 +635,7 @@ globle const char *GetFileName(
 /******************************************************************/
 /* OpenErrorMessage: Generalized error message for opening files. */
 /******************************************************************/
-globle void OpenErrorMessage(
+void OpenErrorMessage(
   void *theEnv,
   const char *functionName,
   const char *fileName)
@@ -655,7 +655,7 @@ globle void OpenErrorMessage(
 /*   name is returned or NULL is returned to indicate all   */
 /*   modules.                                               */
 /************************************************************/
-globle struct defmodule *GetModuleName(
+struct defmodule *GetModuleName(
   void *theEnv,
   const char *functionName,
   int whichArgument,
@@ -713,7 +713,7 @@ globle struct defmodule *GetModuleName(
 /*   is used by functions such as ppdeftemplate, undefrule,     */
 /*   etc... to retrieve the construct name on which to operate. */
 /****************************************************************/
-globle const char *GetConstructName(
+const char *GetConstructName(
   void *theEnv,
   const char *functionName,
   const char *constructType)
@@ -760,7 +760,7 @@ static void NonexistantError(
 /* ExpectedCountError: Prints the error message for an   */
 /*   incorrect number of arguments passed to a function. */
 /*********************************************************/
-globle void ExpectedCountError(
+void ExpectedCountError(
   void *theEnv,
   const char *functionName,
   int countRelation,
@@ -797,7 +797,7 @@ globle void ExpectedCountError(
 /*                 function calls which have the sequence    */
 /*                 expansion operator in their argument list */
 /*************************************************************/
-globle intBool CheckFunctionArgCount(
+intBool CheckFunctionArgCount(
   void *theEnv,
   const char *functionName,
   const char *restrictions,
@@ -895,7 +895,7 @@ globle intBool CheckFunctionArgCount(
 /*   of argument passed to a user or system defined function. The  */
 /*   expected type is passed as a string to this function.         */
 /*******************************************************************/
-globle void ExpectedTypeError1(
+void ExpectedTypeError1(
   void *theEnv,
   const char *functionName,
   int whichArg,
@@ -917,7 +917,7 @@ globle void ExpectedTypeError1(
 /*   function. The expected type is derived by examining the  */
 /*   function's argument restriction list.                    */
 /**************************************************************/
-globle void ExpectedTypeError2(
+void ExpectedTypeError2(
   void *theEnv,
   const char *functionName,
   int whichArg)
@@ -1049,7 +1049,7 @@ void IllegalLogicalNameMessage(
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-globle int ArgCountCheck(
+int ArgCountCheck(
   const char *functionName,
   int countRelation,
   int expectedNumber)
@@ -1057,7 +1057,7 @@ globle int ArgCountCheck(
    return EnvArgCountCheck(GetCurrentEnvironment(),functionName,countRelation,expectedNumber);
   }
 
-globle int ArgRangeCheck(
+int ArgRangeCheck(
   const char *functionName,
   int min,
   int max)
@@ -1065,7 +1065,7 @@ globle int ArgRangeCheck(
    return EnvArgRangeCheck(GetCurrentEnvironment(),functionName,min,max);
   }
 
-globle int ArgTypeCheck(
+int ArgTypeCheck(
   const char *functionName,
   int argumentPosition,
   int expectedType,
@@ -1074,30 +1074,30 @@ globle int ArgTypeCheck(
    return EnvArgTypeCheck(GetCurrentEnvironment(),functionName,argumentPosition,expectedType,returnValue);
   }
 
-globle int RtnArgCount()
+int RtnArgCount()
   {
    return EnvRtnArgCount(GetCurrentEnvironment());
   }
 
-globle double RtnDouble(
+double RtnDouble(
   int argumentPosition)
   {
    return EnvRtnDouble(GetCurrentEnvironment(),argumentPosition);
   }
 
-globle const char *RtnLexeme(
+const char *RtnLexeme(
   int argumentPosition)
   {
    return EnvRtnLexeme(GetCurrentEnvironment(),argumentPosition);
   }
 
-globle long long RtnLong(
+long long RtnLong(
   int argumentPosition)
   {
    return EnvRtnLong(GetCurrentEnvironment(),argumentPosition);
   }
 
-globle DATA_OBJECT_PTR RtnUnknown(
+DATA_OBJECT_PTR RtnUnknown(
   int argumentPosition,
   DATA_OBJECT_PTR returnValue)
   {

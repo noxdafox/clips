@@ -89,7 +89,7 @@
 /* ExtendedMathFunctionDefinitions: Initializes */
 /*   the extended math functions.               */
 /************************************************/
-globle void ExtendedMathFunctionDefinitions(
+void ExtendedMathFunctionDefinitions(
   void *theEnv)
   {
 #if ! RUN_TIME
@@ -223,7 +223,7 @@ static void SingularityErrorMessage(
 /* CosFunction: H/L access routine   */
 /*   for the cos function.           */
 /*************************************/
-globle double CosFunction(
+double CosFunction(
   void *theEnv)
   {
    double num;
@@ -236,7 +236,7 @@ globle double CosFunction(
 /* SinFunction: H/L access routine   */
 /*   for the sin function.           */
 /*************************************/
-globle double SinFunction(
+double SinFunction(
   void *theEnv)
   {
    double num;
@@ -249,7 +249,7 @@ globle double SinFunction(
 /* TanFunction: H/L access routine   */
 /*   for the tan function.           */
 /*************************************/
-globle double TanFunction(
+double TanFunction(
   void *theEnv)
   {
    double num, tv;
@@ -269,7 +269,7 @@ globle double TanFunction(
 /* SecFunction: H/L access routine   */
 /*   for the sec function.           */
 /*************************************/
-globle double SecFunction(
+double SecFunction(
   void *theEnv)
   {
    double num, tv;
@@ -290,7 +290,7 @@ globle double SecFunction(
 /* CscFunction: H/L access routine   */
 /*   for the csc function.           */
 /*************************************/
-globle double CscFunction(
+double CscFunction(
   void *theEnv)
   {
    double num, tv;
@@ -310,7 +310,7 @@ globle double CscFunction(
 /* CotFunction: H/L access routine   */
 /*   for the cot function.           */
 /*************************************/
-globle double CotFunction(
+double CotFunction(
   void *theEnv)
   {
     double num, tv;
@@ -331,7 +331,7 @@ globle double CotFunction(
 /* AcosFunction: H/L access routine   */
 /*   for the acos function.           */
 /**************************************/
-globle double AcosFunction(
+double AcosFunction(
   void *theEnv)
   {
    double num;
@@ -349,7 +349,7 @@ globle double AcosFunction(
 /* AsinFunction: H/L access routine   */
 /*   for the asin function.           */
 /**************************************/
-globle double AsinFunction(
+double AsinFunction(
   void *theEnv)
   {
    double num;
@@ -367,7 +367,7 @@ globle double AsinFunction(
 /* AtanFunction: H/L access routine   */
 /*   for the atan function.           */
 /**************************************/
-globle double AtanFunction(
+double AtanFunction(
   void *theEnv)
   {
    double num;
@@ -380,7 +380,7 @@ globle double AtanFunction(
 /* AsecFunction: H/L access routine   */
 /*   for the asec function.           */
 /**************************************/
-globle double AsecFunction(
+double AsecFunction(
   void *theEnv)
   {
    double num;
@@ -399,7 +399,7 @@ globle double AsecFunction(
 /* AcscFunction: H/L access routine   */
 /*   for the acsc function.           */
 /**************************************/
-globle double AcscFunction(
+double AcscFunction(
   void *theEnv)
   {
    double num;
@@ -418,7 +418,7 @@ globle double AcscFunction(
 /* AcotFunction: H/L access routine   */
 /*   for the acot function.           */
 /**************************************/
-globle double AcotFunction(
+double AcotFunction(
   void *theEnv)
   {
    double num;
@@ -433,7 +433,7 @@ globle double AcotFunction(
 /* CoshFunction: H/L access routine   */
 /*   for the cosh function.           */
 /**************************************/
-globle double CoshFunction(
+double CoshFunction(
   void *theEnv)
   {
    double num;
@@ -446,7 +446,7 @@ globle double CoshFunction(
 /* SinhFunction: H/L access routine   */
 /*   for the sinh function.           */
 /**************************************/
-globle double SinhFunction(
+double SinhFunction(
   void *theEnv)
   {
    double num;
@@ -459,7 +459,7 @@ globle double SinhFunction(
 /* TanhFunction: H/L access routine   */
 /*   for the tanh function.           */
 /**************************************/
-globle double TanhFunction(
+double TanhFunction(
   void *theEnv)
   {
    double num;
@@ -472,7 +472,7 @@ globle double TanhFunction(
 /* SechFunction: H/L access routine   */
 /*   for the sech function.           */
 /**************************************/
-globle double SechFunction(
+double SechFunction(
   void *theEnv)
   {
    double num;
@@ -485,7 +485,7 @@ globle double SechFunction(
 /* CschFunction: H/L access routine   */
 /*   for the csch function.           */
 /**************************************/
-globle double CschFunction(
+double CschFunction(
   void *theEnv)
   {
    double num;
@@ -508,7 +508,7 @@ globle double CschFunction(
 /* CothFunction: H/L access routine   */
 /*   for the coth function.           */
 /**************************************/
-globle double CothFunction(
+double CothFunction(
   void *theEnv)
   {
    double num;
@@ -531,7 +531,7 @@ globle double CothFunction(
 /* AcoshFunction: H/L access routine   */
 /*   for the acosh function.           */
 /***************************************/
-globle double AcoshFunction(
+double AcoshFunction(
   void *theEnv)
   {
    double num;
@@ -549,7 +549,7 @@ globle double AcoshFunction(
 /* AsinhFunction: H/L access routine   */
 /*   for the asinh function.           */
 /***************************************/
-globle double AsinhFunction(
+double AsinhFunction(
   void *theEnv)
   {
    double num;
@@ -562,7 +562,7 @@ globle double AsinhFunction(
 /* AtanhFunction: H/L access routine   */
 /*   for the atanh function.           */
 /***************************************/
-globle double AtanhFunction(
+double AtanhFunction(
   void *theEnv)
   {
    double num;
@@ -580,7 +580,7 @@ globle double AtanhFunction(
 /* AsechFunction: H/L access routine   */
 /*   for the asech function.           */
 /***************************************/
-globle double AsechFunction(
+double AsechFunction(
   void *theEnv)
   {
    double num;
@@ -598,7 +598,7 @@ globle double AsechFunction(
 /* AcschFunction: H/L access routine   */
 /*   for the acsch function.           */
 /***************************************/
-globle double AcschFunction(
+double AcschFunction(
   void *theEnv)
   {
    double num;
@@ -616,7 +616,7 @@ globle double AcschFunction(
 /* AcothFunction: H/L access routine   */
 /*   for the acoth function.           */
 /***************************************/
-globle double AcothFunction(
+double AcothFunction(
   void *theEnv)
   {
    double num;
@@ -634,7 +634,7 @@ globle double AcothFunction(
 /* ExpFunction: H/L access routine   */
 /*   for the exp function.           */
 /*************************************/
-globle double ExpFunction(
+double ExpFunction(
   void *theEnv)
   {
    double num;
@@ -647,7 +647,7 @@ globle double ExpFunction(
 /* LogFunction: H/L access routine   */
 /*   for the log function.           */
 /*************************************/
-globle double LogFunction(
+double LogFunction(
   void *theEnv)
   {
    double num;
@@ -671,7 +671,7 @@ globle double LogFunction(
 /* Log10Function: H/L access routine   */
 /*   for the log10 function.           */
 /***************************************/
-globle double Log10Function(
+double Log10Function(
   void *theEnv)
   {
    double num;
@@ -695,7 +695,7 @@ globle double Log10Function(
 /* SqrtFunction: H/L access routine   */
 /*   for the sqrt function.           */
 /**************************************/
-globle double SqrtFunction(
+double SqrtFunction(
   void *theEnv)
   {
    double num;
@@ -713,7 +713,7 @@ globle double SqrtFunction(
 /* PowFunction: H/L access routine   */
 /*   for the pow function.           */
 /*************************************/
-globle double PowFunction(
+double PowFunction(
   void *theEnv)
   {
    DATA_OBJECT value1, value2;
@@ -741,7 +741,7 @@ globle double PowFunction(
 /* ModFunction: H/L access routine   */
 /*   for the mod function.           */
 /*************************************/
-globle void ModFunction(
+void ModFunction(
   void *theEnv,
   DATA_OBJECT_PTR result)
   {
@@ -800,7 +800,7 @@ globle void ModFunction(
 /* PiFunction: H/L access routine   */
 /*   for the pi function.           */
 /************************************/
-globle double PiFunction(
+double PiFunction(
   void *theEnv)
   {
 
@@ -812,7 +812,7 @@ globle double PiFunction(
 /* DegRadFunction: H/L access routine   */
 /*   for the deg-rad function.          */
 /****************************************/
-globle double DegRadFunction(
+double DegRadFunction(
   void *theEnv)
   {
    double num;
@@ -825,7 +825,7 @@ globle double DegRadFunction(
 /* RadDegFunction: H/L access routine   */
 /*   for the rad-deg function.          */
 /****************************************/
-globle double RadDegFunction(
+double RadDegFunction(
   void *theEnv)
   {
    double num;
@@ -838,7 +838,7 @@ globle double RadDegFunction(
 /* DegGradFunction: H/L access routine   */
 /*   for the deg-grad function.          */
 /*****************************************/
-globle double DegGradFunction(
+double DegGradFunction(
   void *theEnv)
   {
    double num;
@@ -851,7 +851,7 @@ globle double DegGradFunction(
 /* GradDegFunction: H/L access routine   */
 /*   for the grad-deg function.          */
 /*****************************************/
-globle double GradDegFunction(
+double GradDegFunction(
   void *theEnv)
   {
    double num;
@@ -864,7 +864,7 @@ globle double GradDegFunction(
 /* RoundFunction: H/L access routine   */
 /*   for the round function.           */
 /***************************************/
-globle long long RoundFunction(
+long long RoundFunction(
   void *theEnv)
   {
    DATA_OBJECT result;

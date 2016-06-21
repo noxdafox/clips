@@ -149,7 +149,7 @@ static void UpdateDefclassesScope(void *);
   SIDE EFFECTS : COOL initialized
   NOTES        : Order of setup calls is important
  **********************************************************/
-globle void SetupObjectSystem(
+void SetupObjectSystem(
   void *theEnv)
   {   
    ENTITY_RECORD defclassEntityRecord = { "DEFCLASS_PTR", DEFCLASS_PTR,1,0,0,
@@ -341,7 +341,7 @@ static void DestroyDefclassAction(
   SIDE EFFECTS : Global pointers set
   NOTES        : None
  ***************************************************/
-globle void ObjectsRunTimeInitialize(
+void ObjectsRunTimeInitialize(
   void *theEnv,
   DEFCLASS *ctable[],
   SLOT_NAME *sntable[],
@@ -465,7 +465,7 @@ static void SearchForHashedPatternNodes(
                    classes match their integer codes.
                 WARNING!!: Assumes no classes exist yet!
  ***************************************************************/
-globle void CreateSystemClasses(
+void CreateSystemClasses(
   void *theEnv)
   {
    DEFCLASS *user,*any,*primitive,*number,*lexeme,*address,*instance;

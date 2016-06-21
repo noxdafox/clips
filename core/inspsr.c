@@ -180,7 +180,7 @@ static intBool ReplaceClassNameWithReference(void *,EXPRESSION *);
                                                            <value-expression>...
 
  *************************************************************************************/
-globle EXPRESSION *ParseInitializeInstance(
+EXPRESSION *ParseInitializeInstance(
   void *theEnv,
   EXPRESSION *top,
   const char *readSource)
@@ -347,7 +347,7 @@ ParseInitializeInstanceError:
 
                  Assumes first token has already been scanned
  ********************************************************************************/
-globle EXPRESSION *ParseSlotOverrides(
+EXPRESSION *ParseSlotOverrides(
   void *theEnv,
   const char *readSource,
   int *error)
@@ -430,7 +430,7 @@ globle EXPRESSION *ParseSlotOverrides(
                                                           <value-expression>...
 
  ****************************************************************************/
-globle EXPRESSION *ParseSimpleInstance(
+EXPRESSION *ParseSimpleInstance(
   void *theEnv,
   EXPRESSION *top,
   const char *readSource)

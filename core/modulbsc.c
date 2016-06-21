@@ -63,7 +63,7 @@
 /*****************************************************************/
 /* DefmoduleBasicCommands: Initializes basic defmodule commands. */
 /*****************************************************************/
-globle void DefmoduleBasicCommands(
+void DefmoduleBasicCommands(
   void *theEnv)
   {
    EnvAddClearFunction(theEnv,"defmodule",ClearDefmodules,2000);
@@ -137,7 +137,7 @@ static void SaveDefmodules(
 /* EnvGetDefmoduleList: H/L and C access routine */
 /*   for the get-defmodule-list function.        */
 /*************************************************/
-globle void EnvGetDefmoduleList(
+void EnvGetDefmoduleList(
   void *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
@@ -190,7 +190,7 @@ globle void EnvGetDefmoduleList(
 /* PPDefmoduleCommand: H/L access routine   */
 /*   for the ppdefmodule command.           */
 /********************************************/
-globle void PPDefmoduleCommand(
+void PPDefmoduleCommand(
   void *theEnv)
   {
    const char *defmoduleName;
@@ -207,7 +207,7 @@ globle void PPDefmoduleCommand(
 /* PPDefmodule: C access routine for */
 /*   the ppdefmodule command.        */
 /*************************************/
-globle int PPDefmodule(
+int PPDefmodule(
   void *theEnv,
   const char *defmoduleName,
   const char *logicalName)
@@ -230,7 +230,7 @@ globle int PPDefmodule(
 /* ListDefmodulesCommand: H/L access routine   */
 /*   for the list-defmodules command.          */
 /***********************************************/
-globle void ListDefmodulesCommand(
+void ListDefmodulesCommand(
   void *theEnv)
   {
    if (EnvArgCountCheck(theEnv,"list-defmodules",EXACTLY,0) == -1) return;
@@ -242,7 +242,7 @@ globle void ListDefmodulesCommand(
 /* EnvListDefmodules: C access routine */
 /*   for the list-defmodules command.  */
 /***************************************/
-globle void EnvListDefmodules(
+void EnvListDefmodules(
   void *theEnv,
   const char *logicalName)
   {
@@ -269,7 +269,7 @@ globle void EnvListDefmodules(
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-globle void GetDefmoduleList(
+void GetDefmoduleList(
   DATA_OBJECT_PTR returnValue)
   {
    EnvGetDefmoduleList(GetCurrentEnvironment(),returnValue);
@@ -277,7 +277,7 @@ globle void GetDefmoduleList(
 
 #if DEBUGGING_FUNCTIONS
 
-globle void ListDefmodules(
+void ListDefmodules(
   const char *logicalName)
   {
    EnvListDefmodules(GetCurrentEnvironment(),logicalName);

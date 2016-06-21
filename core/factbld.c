@@ -74,7 +74,7 @@
 /*   of patterns recognized by the rule pattern parsing  */
 /*   and pattern/join network integration routines.      */
 /*********************************************************/
-globle void InitializeFactPatterns(
+void InitializeFactPatterns(
   void *theEnv)
   {
 #if DEFRULE_CONSTRUCT
@@ -844,7 +844,7 @@ static void DetachFactPattern(
 /* DestroyFactPatternNetwork: Deallocates the data structures */
 /*   associated with a fact pattern network.                  */
 /**************************************************************/
-globle void DestroyFactPatternNetwork(
+void DestroyFactPatternNetwork(
   void *theEnv,
   struct factPatternNode *thePattern)
   {

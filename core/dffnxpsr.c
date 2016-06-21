@@ -109,7 +109,7 @@ static DEFFUNCTION *AddDeffunction(void *,SYMBOL_HN *,EXPRESSION *,int,int,int,i
                     (<single-field-varible>* [<multifield-variable>])
                     <action>*)
  ***************************************************************************/
-globle intBool ParseDeffunction(
+intBool ParseDeffunction(
   void *theEnv,
   const char *readSource)
   {

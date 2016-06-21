@@ -82,7 +82,7 @@
 /*   has any conflicts in the attribute specifications. Returns     */
 /*   TRUE if no conflicts were detected, otherwise FALSE.           */
 /********************************************************************/
-globle intBool CheckConstraintParseConflicts(
+intBool CheckConstraintParseConflicts(
   void *theEnv,
   CONSTRAINT_RECORD *constraints)
   {
@@ -201,7 +201,7 @@ globle intBool CheckConstraintParseConflicts(
 /* AttributeConflictErrorMessage: Generic error message */
 /*   for a constraint attribute conflict.               */
 /********************************************************/
-globle void AttributeConflictErrorMessage(
+void AttributeConflictErrorMessage(
   void *theEnv,
   const char *attribute1,
   const char *attribute2)
@@ -221,7 +221,7 @@ globle void AttributeConflictErrorMessage(
 /*   parse record which is used to determine whether one of the standard   */
 /*   constraint specifications has already been parsed.                    */
 /***************************************************************************/
-globle void InitializeConstraintParseRecord(
+void InitializeConstraintParseRecord(
   CONSTRAINT_PARSE_RECORD *parsedConstraints)
   {
    parsedConstraints->type = FALSE;
@@ -242,7 +242,7 @@ globle void InitializeConstraintParseRecord(
 /* StandardConstraint: Returns TRUE if the specified name is one of the */
 /*   standard constraints parseable by the routines in this module.     */
 /************************************************************************/
-globle intBool StandardConstraint(
+intBool StandardConstraint(
   const char *constraintName)
   {
    if ((strcmp(constraintName,"type") == 0) ||
@@ -267,7 +267,7 @@ globle intBool StandardConstraint(
 /* ParseStandardConstraint: Parses a standard constraint. Returns TRUE */
 /*   if the constraint was successfully parsed, otherwise FALSE.       */
 /***********************************************************************/
-globle intBool ParseStandardConstraint(
+intBool ParseStandardConstraint(
   void *theEnv,
   const char *readSource,
   const char *constraintName,
@@ -348,7 +348,7 @@ globle intBool ParseStandardConstraint(
 /* not yet been called for the destination constraint      */
 /* record.                                                 */
 /***********************************************************/
-globle void OverlayConstraint(
+void OverlayConstraint(
   void *theEnv,
   CONSTRAINT_PARSE_RECORD *pc,
   CONSTRAINT_RECORD *cdst,
@@ -459,7 +459,7 @@ globle void OverlayConstraint(
 /*   field-wise "or" of the destination parse */
 /*   record with the source parse record.     */
 /**********************************************/
-globle void OverlayConstraintParseRecord(
+void OverlayConstraintParseRecord(
   CONSTRAINT_PARSE_RECORD *dst,
   CONSTRAINT_PARSE_RECORD *src)
   {

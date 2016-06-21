@@ -79,7 +79,7 @@
 /*     y - fact address                                       */
 /*     z - fact address, integer, or symbol (*)               */
 /**************************************************************/
-globle int CheckArgumentAgainstRestriction(
+int CheckArgumentAgainstRestriction(
   void *theEnv,
   struct expr *theExpression,
   int theRestriction)
@@ -136,7 +136,7 @@ globle int CheckArgumentAgainstRestriction(
 /* ConstantExpression: Returns TRUE if the expression */
 /*   is a constant, otherwise FALSE.                  */
 /************************************************************/
-globle intBool ConstantExpression(
+intBool ConstantExpression(
   struct expr *testPtr)
   {
    while (testPtr != NULL)
@@ -157,7 +157,7 @@ globle intBool ConstantExpression(
 /* ConstantType: Returns TRUE if the type */
 /*   is a constant, otherwise FALSE.      */
 /************************************************/
-globle intBool ConstantType(
+intBool ConstantType(
   int theType)
   {
    switch (theType)
@@ -180,7 +180,7 @@ globle intBool ConstantType(
 /* IdenticalExpression: Determines if two expressions are identical. Returns */
 /*   TRUE if the expressions are identical, otherwise FALSE is returned.     */
 /*****************************************************************************/
-globle intBool IdenticalExpression(
+intBool IdenticalExpression(
   struct expr *firstList,
   struct expr *secondList)
   {
@@ -232,7 +232,7 @@ globle intBool IdenticalExpression(
 /*   the nextArg pointer but not the argList        */
 /*   pointer.                                       */
 /****************************************************/
-globle int CountArguments(
+int CountArguments(
   struct expr *testPtr)
   {
    int size = 0;
@@ -249,7 +249,7 @@ globle int CountArguments(
 /******************************************/
 /* CopyExpresssion: Copies an expression. */
 /******************************************/
-globle struct expr *CopyExpression(
+struct expr *CopyExpression(
   void *theEnv,
   struct expr *original)
   {
@@ -280,7 +280,7 @@ globle struct expr *CopyExpression(
 /*   contains any variables. Returns TRUE if the expression */
 /*   contains any variables, otherwise FALSE is returned.   */
 /************************************************************/
-globle intBool ExpressionContainsVariables(
+intBool ExpressionContainsVariables(
   struct expr *theExpression,
   intBool globalsAreVariables)
   {
@@ -310,7 +310,7 @@ globle intBool ExpressionContainsVariables(
 /* ExpressionSize: Returns the number of */
 /*   structures stored in an expression. */
 /*****************************************/
-globle long ExpressionSize(
+long ExpressionSize(
   struct expr *testPtr)
   {
    long size = 0;
@@ -329,7 +329,7 @@ globle long ExpressionSize(
 /* GenConstant: Generates a constant expression */
 /*   value of type string, symbol, or number.   */
 /************************************************/
-globle struct expr *GenConstant(
+struct expr *GenConstant(
   void *theEnv,
   unsigned short type,
   void *value)
@@ -348,7 +348,7 @@ globle struct expr *GenConstant(
 /*************************************************/
 /* PrintExpression: Pretty prints an expression. */
 /*************************************************/
-globle void PrintExpression(
+void PrintExpression(
   void *theEnv,
   const char *fileid,
   struct expr *theExpression)
@@ -406,7 +406,7 @@ globle void PrintExpression(
 /*   is more efficient to add the arguments of one of the "and"          */
 /*   expressions to the list of arguments for the other and expression). */
 /*************************************************************************/
-globle struct expr *CombineExpressions(
+struct expr *CombineExpressions(
   void *theEnv,
   struct expr *expr1,
   struct expr *expr2)
@@ -510,7 +510,7 @@ globle struct expr *CombineExpressions(
 /*********************/
 /* NegateExpression: */
 /*********************/
-globle struct expr *NegateExpression(
+struct expr *NegateExpression(
   void *theEnv,
   struct expr *theExpression)
   {
@@ -548,7 +548,7 @@ globle struct expr *NegateExpression(
 /* AppendExpressions: Attaches an expression to the end */
 /*   of another expression's nextArg list.              */
 /********************************************************/
-globle struct expr *AppendExpressions(
+struct expr *AppendExpressions(
   struct expr *expr1,
   struct expr *expr2)
   {

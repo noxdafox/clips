@@ -99,7 +99,7 @@
 /* InitializeConstructData: Allocates environment */
 /*    data for constructs.                        */
 /**************************************************/
-globle void InitializeConstructData(
+void InitializeConstructData(
   void *theEnv)
   {
    AllocateEnvironmentData(theEnv,CONSTRUCT_DATA,sizeof(struct constructData),DeallocateConstructData);
@@ -156,7 +156,7 @@ static void DeallocateConstructData(
 /*   which is called when a construct parsing     */
 /*    error occurs to be changed.                 */
 /**************************************************/
-globle void (*EnvSetParserErrorCallback(void *theEnv,
+void (*EnvSetParserErrorCallback(void *theEnv,
                                         void (*functionPtr)(void *,const char *,const char *,const char *,long)))
             (void *,const char *,const char *,const char*,long)
   {
@@ -171,7 +171,7 @@ globle void (*EnvSetParserErrorCallback(void *theEnv,
 /* FindConstruct: Determines whether a construct */
 /*   type is in the ListOfConstructs.            */
 /*************************************************/
-globle struct construct *FindConstruct(
+struct construct *FindConstruct(
   void *theEnv,
   const char *name)
   {
@@ -194,7 +194,7 @@ globle struct construct *FindConstruct(
 /*   TRUE if the construct type was removed, otherwise     */
 /*   FALSE.                                                */
 /***********************************************************/
-globle int RemoveConstruct(
+int RemoveConstruct(
   void *theEnv,
   const char *name)
   {
@@ -223,7 +223,7 @@ globle int RemoveConstruct(
 /************************************************/
 /* Save: C access routine for the save command. */
 /************************************************/
-globle int EnvSave(
+int EnvSave(
   void *theEnv,
   const char *fileName)
   {
@@ -334,7 +334,7 @@ globle int EnvSave(
 /*   ListOfSaveFunctions. Returns TRUE if the function */
 /*   was successfully removed, otherwise FALSE.        */
 /*******************************************************/
-globle intBool RemoveSaveFunction(
+intBool RemoveSaveFunction(
   void *theEnv,
   const char *name)
   {
@@ -352,7 +352,7 @@ globle intBool RemoveSaveFunction(
 /* SetCompilationsWatch: Sets the */
 /*   value of WatchCompilations.  */
 /**********************************/
-globle void SetCompilationsWatch(
+void SetCompilationsWatch(
   void *theEnv,
   unsigned value)
   {
@@ -363,7 +363,7 @@ globle void SetCompilationsWatch(
 /* GetCompilationsWatch: Returns the */
 /*   value of WatchCompilations.     */
 /*************************************/
-globle unsigned GetCompilationsWatch(
+unsigned GetCompilationsWatch(
   void *theEnv)
   {   
    return(ConstructData(theEnv)->WatchCompilations); 
@@ -373,7 +373,7 @@ globle unsigned GetCompilationsWatch(
 /* SetPrintWhileLoading: Sets the */
 /*   value of PrintWhileLoading.  */
 /**********************************/
-globle void SetPrintWhileLoading(
+void SetPrintWhileLoading(
   void *theEnv,
   intBool value)
   {
@@ -384,7 +384,7 @@ globle void SetPrintWhileLoading(
 /* GetPrintWhileLoading: Returns the */
 /*   value of PrintWhileLoading.     */
 /*************************************/
-globle intBool GetPrintWhileLoading(
+intBool GetPrintWhileLoading(
   void *theEnv)
   {
    return(ConstructData(theEnv)->PrintWhileLoading);
@@ -395,7 +395,7 @@ globle intBool GetPrintWhileLoading(
 /* InitializeConstructs: Initializes */
 /*   the Construct Manager.          */
 /*************************************/
-globle void InitializeConstructs(
+void InitializeConstructs(
   void *theEnv)
   {
 #if (! RUN_TIME)
@@ -416,7 +416,7 @@ globle void InitializeConstructs(
 /* ClearCommand: H/L access routine   */
 /*   for the clear command.           */
 /**************************************/
-globle void ClearCommand(
+void ClearCommand(
   void *theEnv)
   {
    if (EnvArgCountCheck(theEnv,"clear",EXACTLY,0) == -1) return;
@@ -428,7 +428,7 @@ globle void ClearCommand(
 /* ResetCommand: H/L access routine   */
 /*   for the reset command.           */
 /**************************************/
-globle void ResetCommand(
+void ResetCommand(
   void *theEnv)
   {
    if (EnvArgCountCheck(theEnv,"reset",EXACTLY,0) == -1) return;
@@ -440,7 +440,7 @@ globle void ResetCommand(
 /* EnvReset: C access routine */
 /*   for the reset command.   */
 /******************************/
-globle void EnvReset(
+void EnvReset(
   void *theEnv)
   {
    struct callFunctionItem *resetPtr;
@@ -522,7 +522,7 @@ globle void EnvReset(
 /* SetBeforeResetFunction: Sets the */
 /*  value of BeforeResetFunction.   */
 /************************************/
-globle int (*SetBeforeResetFunction(void *theEnv,
+int (*SetBeforeResetFunction(void *theEnv,
                                     int (*theFunction)(void *)))(void *)
   {
    int (*tempFunction)(void *);
@@ -536,7 +536,7 @@ globle int (*SetBeforeResetFunction(void *theEnv,
 /* EnvAddResetFunction: Adds a function */
 /*   to ListOfResetFunctions.           */
 /****************************************/
-globle intBool EnvAddResetFunction(
+intBool EnvAddResetFunction(
   void *theEnv,
   const char *name,
   void (*functionPtr)(void *),
@@ -552,7 +552,7 @@ globle intBool EnvAddResetFunction(
 /* EnvRemoveResetFunction: Removes a function */
 /*   from the ListOfResetFunctions.           */
 /**********************************************/
-globle intBool EnvRemoveResetFunction(
+intBool EnvRemoveResetFunction(
   void *theEnv,
   const char *name)
   {
@@ -570,7 +570,7 @@ globle intBool EnvRemoveResetFunction(
 /* EnvIncrementClearReadyLocks: Increments */
 /*   the number of clear ready locks.      */
 /*******************************************/
-globle void EnvIncrementClearReadyLocks(
+void EnvIncrementClearReadyLocks(
   void *theEnv)
   {
    ConstructData(theEnv)->ClearReadyLocks++;
@@ -580,7 +580,7 @@ globle void EnvIncrementClearReadyLocks(
 /* EnvDecrementClearReadyLocks: Decrements */
 /*   the number of clear locks.            */
 /*******************************************/
-globle void EnvDecrementClearReadyLocks(
+void EnvDecrementClearReadyLocks(
   void *theEnv)
   {
    if (ConstructData(theEnv)->ClearReadyLocks > 0)
@@ -590,7 +590,7 @@ globle void EnvDecrementClearReadyLocks(
 /*****************************************************/
 /* EnvClear: C access routine for the clear command. */
 /*****************************************************/
-globle void EnvClear(
+void EnvClear(
   void *theEnv)
   {
    struct callFunctionItem *theFunction;
@@ -686,7 +686,7 @@ globle void EnvClear(
 /*   determined (e.g. facts will be deleted as part of   */
 /*   the determination).                                 */
 /*********************************************************/
-globle intBool ClearReady(
+intBool ClearReady(
   void *theEnv)
   {
    struct callFunctionItem *theFunction;
@@ -708,7 +708,7 @@ globle intBool ClearReady(
 /* AddClearReadyFunction: Adds a function */
 /*   to ListOfClearReadyFunctions.        */
 /******************************************/
-globle intBool AddClearReadyFunction(
+intBool AddClearReadyFunction(
   void *theEnv,
   const char *name,
   int (*functionPtr)(void *),
@@ -725,7 +725,7 @@ globle intBool AddClearReadyFunction(
 /* RemoveClearReadyFunction: Removes a function */
 /*   from the ListOfClearReadyFunctions.        */
 /************************************************/
-globle intBool RemoveClearReadyFunction(
+intBool RemoveClearReadyFunction(
   void *theEnv,
   const char *name)
   {
@@ -743,7 +743,7 @@ globle intBool RemoveClearReadyFunction(
 /* EnvAddClearFunction: Adds a function */
 /*   to ListOfClearFunctions.           */
 /****************************************/
-globle intBool EnvAddClearFunction(
+intBool EnvAddClearFunction(
   void *theEnv,
   const char *name,
   void (*functionPtr)(void *),
@@ -760,7 +760,7 @@ globle intBool EnvAddClearFunction(
 /* EnvRemoveClearFunction: Removes a function */
 /*    from the ListOfClearFunctions.          */
 /**********************************************/
-globle intBool EnvRemoveClearFunction(
+intBool EnvRemoveClearFunction(
   void *theEnv,
   const char *name)
   {
@@ -779,7 +779,7 @@ globle intBool EnvRemoveClearFunction(
 /*   construct is currently being executed,    */
 /*   otherwise FALSE.                    */
 /***********************************************/
-globle int ExecutingConstruct(
+int ExecutingConstruct(
   void *theEnv)
   {
    return(ConstructData(theEnv)->Executing); 
@@ -791,7 +791,7 @@ globle int ExecutingConstruct(
 /*   actions such as reset, clear, etc      */
 /*   should not be performed.               */
 /********************************************/
-globle void SetExecutingConstruct(
+void SetExecutingConstruct(
   void *theEnv,
   int value)
   {
@@ -804,7 +804,7 @@ globle void SetExecutingConstruct(
 /*   representation string (both of which are stored   */
 /*   in the generic construct header).                 */
 /*******************************************************/
-globle void DeinstallConstructHeader(
+void DeinstallConstructHeader(
   void *theEnv,
   struct constructHeader *theHeader)
   {
@@ -829,7 +829,7 @@ globle void DeinstallConstructHeader(
 /*   which are stored in the generic construct    */
 /*   header).                                     */
 /**************************************************/
-globle void DestroyConstructHeader(
+void DestroyConstructHeader(
   void *theEnv,
   struct constructHeader *theHeader)
   {
@@ -851,7 +851,7 @@ globle void DestroyConstructHeader(
 /* AddConstruct: Adds a construct and its associated */
 /*   parsing function to the ListOfConstructs.       */
 /*****************************************************/
-globle struct construct *AddConstruct(
+struct construct *AddConstruct(
   void *theEnv,
   const char *name,
   const char *pluralName,
@@ -902,7 +902,7 @@ globle struct construct *AddConstruct(
 /* AddSaveFunction: Adds a function */
 /*   to the ListOfSaveFunctions.    */
 /************************************/
-globle intBool AddSaveFunction(
+intBool AddSaveFunction(
   void *theEnv,
   const char *name,
   void (*functionPtr)(void *,void *,const char *),
@@ -928,7 +928,7 @@ globle intBool AddSaveFunction(
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-globle intBool AddClearFunction(
+intBool AddClearFunction(
   const char *name,
   void (*functionPtr)(void),
   int priority)
@@ -944,7 +944,7 @@ globle intBool AddClearFunction(
    return(1);
   }
 
-globle intBool AddResetFunction(
+intBool AddResetFunction(
   const char *name,
   void (*functionPtr)(void),
   int priority)
@@ -959,31 +959,31 @@ globle intBool AddResetFunction(
    return(TRUE);
   }
 
-globle void Clear()
+void Clear()
   {
    EnvClear(GetCurrentEnvironment());
   }  
 
-globle intBool RemoveClearFunction(
+intBool RemoveClearFunction(
   const char *name)
   {
    return EnvRemoveClearFunction(GetCurrentEnvironment(),name);
   }
 
-globle intBool RemoveResetFunction(
+intBool RemoveResetFunction(
   const char *name)
   {
    return EnvRemoveResetFunction(GetCurrentEnvironment(),name);
   }
 
-globle void Reset()
+void Reset()
   {
    EnvReset(GetCurrentEnvironment());
   }  
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
 
-globle int Save(
+int Save(
   const char *fileName)
   {
    return EnvSave(GetCurrentEnvironment(),fileName);

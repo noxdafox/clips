@@ -126,7 +126,7 @@ static void DeallocateObjectReteBinaryData(void *);
   SIDE EFFECTS : Routines defined and structures initialized
   NOTES        : None
  ***********************************************************/
-globle void SetupObjectPatternsBload(
+void SetupObjectPatternsBload(
   void *theEnv)
   {
    AllocateEnvironmentData(theEnv,OBJECTRETEBIN_DATA,sizeof(struct objectReteBinaryData),DeallocateObjectReteBinaryData);

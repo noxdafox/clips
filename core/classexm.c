@@ -120,7 +120,7 @@ static const char *ConstraintCode(CONSTRAINT_RECORD *,unsigned,unsigned);
   SIDE EFFECTS : None
   NOTES        : Syntax : (browse-classes [<class>])
  ****************************************************************/
-globle void BrowseClassesCommand(
+void BrowseClassesCommand(
   void *theEnv)
   {
    register DEFCLASS *cls;
@@ -155,7 +155,7 @@ globle void BrowseClassesCommand(
   SIDE EFFECTS : None
   NOTES        : None
  ****************************************************************/
-globle void EnvBrowseClasses(
+void EnvBrowseClasses(
   void *theEnv,
   const char *logicalName,
   void *clsptr)
@@ -173,7 +173,7 @@ globle void EnvBrowseClasses(
   SIDE EFFECTS : None
   NOTES        : Syntax : (describe-class <class-name>)
  ****************************************************************/
-globle void DescribeClassCommand(
+void DescribeClassCommand(
   void *theEnv)
   {
    const char *cname;
@@ -199,7 +199,7 @@ globle void DescribeClassCommand(
   SIDE EFFECTS : None
   NOTES        : None
  ******************************************************/
-globle void EnvDescribeClass(
+void EnvDescribeClass(
   void *theEnv,
   const char *logicalName,
   void *clsptr)
@@ -307,7 +307,7 @@ globle void EnvDescribeClass(
   SIDE EFFECTS : None
   NOTES        : Used by (describe-class) and (slot-facets)
  **********************************************************/
-globle const char *GetCreateAccessorString(
+const char *GetCreateAccessorString(
   void *vsd)
   {
    SLOT_DESC *sd = (SLOT_DESC *) vsd;
@@ -331,7 +331,7 @@ globle const char *GetCreateAccessorString(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax: (defclass-module <class-name>)
  ************************************************************/
-globle void *GetDefclassModuleCommand(
+void *GetDefclassModuleCommand(
   void *theEnv)
   {
    return(GetConstructModuleCommand(theEnv,"defclass-module",DefclassData(theEnv)->DefclassConstruct));
@@ -345,7 +345,7 @@ globle void *GetDefclassModuleCommand(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (superclassp <class-1> <class-2>)
  *********************************************************************/
-globle intBool SuperclassPCommand(
+intBool SuperclassPCommand(
   void *theEnv)
   {
    DEFCLASS *c1,*c2;
@@ -367,7 +367,7 @@ globle intBool SuperclassPCommand(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle intBool EnvSuperclassP(
+intBool EnvSuperclassP(
   void *theEnv,
   void *firstClass,
   void *secondClass)
@@ -387,7 +387,7 @@ globle intBool EnvSuperclassP(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (subclassp <class-1> <class-2>)
  *********************************************************************/
-globle intBool SubclassPCommand(
+intBool SubclassPCommand(
   void *theEnv)
   {
    DEFCLASS *c1,*c2;
@@ -409,7 +409,7 @@ globle intBool SubclassPCommand(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle intBool EnvSubclassP(
+intBool EnvSubclassP(
   void *theEnv,
   void *firstClass,
   void *secondClass)
@@ -429,7 +429,7 @@ globle intBool EnvSubclassP(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (slot-existp <class> <slot> [inherit])
  *********************************************************************/
-globle int SlotExistPCommand(
+int SlotExistPCommand(
   void *theEnv)
   {
    DEFCLASS *cls;
@@ -467,7 +467,7 @@ globle int SlotExistPCommand(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle intBool EnvSlotExistP(
+intBool EnvSlotExistP(
   void *theEnv,
   void *theDefclass,
   const char *slotName,
@@ -485,7 +485,7 @@ globle intBool EnvSlotExistP(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (message-handler-existp <class> <hnd> [<type>])
  ************************************************************************************/
-globle int MessageHandlerExistPCommand(
+int MessageHandlerExistPCommand(
   void *theEnv)
   {
    DEFCLASS *cls;
@@ -528,7 +528,7 @@ globle int MessageHandlerExistPCommand(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (slot-writablep <class> <slot>)
  **********************************************************************/
-globle intBool SlotWritablePCommand(
+intBool SlotWritablePCommand(
   void *theEnv)
   {
    DEFCLASS *theDefclass;
@@ -550,7 +550,7 @@ globle intBool SlotWritablePCommand(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle intBool EnvSlotWritableP(
+intBool EnvSlotWritableP(
   void *theEnv,
   void *theDefclass,
   const char *slotName)
@@ -571,7 +571,7 @@ globle intBool EnvSlotWritableP(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (slot-initablep <class> <slot>)
  **********************************************************************/
-globle intBool SlotInitablePCommand(
+intBool SlotInitablePCommand(
   void *theEnv)
   {
    DEFCLASS *theDefclass;
@@ -593,7 +593,7 @@ globle intBool SlotInitablePCommand(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle intBool EnvSlotInitableP(
+intBool EnvSlotInitableP(
   void *theEnv,
   void *theDefclass,
   const char *slotName)
@@ -614,7 +614,7 @@ globle intBool EnvSlotInitableP(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (slot-publicp <class> <slot>)
  **********************************************************************/
-globle intBool SlotPublicPCommand(
+intBool SlotPublicPCommand(
   void *theEnv)
   {
    DEFCLASS *theDefclass;
@@ -636,7 +636,7 @@ globle intBool SlotPublicPCommand(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle intBool EnvSlotPublicP(
+intBool EnvSlotPublicP(
   void *theEnv,
   void *theDefclass,
   const char *slotName)
@@ -658,7 +658,7 @@ globle intBool EnvSlotPublicP(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle int EnvSlotDefaultP(
+int EnvSlotDefaultP(
   void *theEnv,
   void *theDefclass,
   const char *slotName)
@@ -688,7 +688,7 @@ globle int EnvSlotDefaultP(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (slot-direct-accessp <class> <slot>)
  **********************************************************************/
-globle intBool SlotDirectAccessPCommand(
+intBool SlotDirectAccessPCommand(
   void *theEnv)
   {
    DEFCLASS *theDefclass;
@@ -712,7 +712,7 @@ globle intBool SlotDirectAccessPCommand(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle intBool EnvSlotDirectAccessP(
+intBool EnvSlotDirectAccessP(
   void *theEnv,
   void *theDefclass,
   const char *slotName)
@@ -734,7 +734,7 @@ globle intBool EnvSlotDirectAccessP(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (slot-default-value <class> <slot>)
  **********************************************************************/
-globle void SlotDefaultValueCommand(
+void SlotDefaultValueCommand(
   void *theEnv,
   DATA_OBJECT_PTR theValue)
   {
@@ -774,7 +774,7 @@ globle void SlotDefaultValueCommand(
                  defaults will cause any side effects
   NOTES        : None
  *********************************************************/
-globle intBool EnvSlotDefaultValue(
+intBool EnvSlotDefaultValue(
   void *theEnv,
   void *theDefclass,
   const char *slotName,
@@ -810,7 +810,7 @@ globle intBool EnvSlotDefaultValue(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (class-existp <arg>)
  ********************************************************/
-globle intBool ClassExistPCommand(
+intBool ClassExistPCommand(
   void *theEnv)
   {
    DATA_OBJECT temp;
@@ -1319,14 +1319,14 @@ static const char *ConstraintCode(
 
 #if DEBUGGING_FUNCTIONS
 
-globle void BrowseClasses(
+void BrowseClasses(
   const char *logicalName,
   void *clsptr)
   {
    EnvBrowseClasses(GetCurrentEnvironment(),logicalName,clsptr);
   }
 
-globle void DescribeClass(
+void DescribeClass(
   const char *logicalName,
   void *clsptr)
   {
@@ -1335,14 +1335,14 @@ globle void DescribeClass(
 
 #endif
 
-globle intBool SlotDirectAccessP(
+intBool SlotDirectAccessP(
   void *theDefclass,
   const char *slotName)
   {
    return EnvSlotDirectAccessP(GetCurrentEnvironment(),theDefclass,slotName);
   }
 
-globle intBool SlotExistP(
+intBool SlotExistP(
   void *theDefclass,
   const char *slotName,
   intBool inheritFlag)
@@ -1350,49 +1350,49 @@ globle intBool SlotExistP(
    return EnvSlotExistP(GetCurrentEnvironment(),theDefclass,slotName,inheritFlag);
   }
 
-globle intBool SlotInitableP(
+intBool SlotInitableP(
   void *theDefclass,
   const char *slotName)
   {
    return EnvSlotInitableP(GetCurrentEnvironment(),theDefclass,slotName);
   }
 
-globle intBool SlotPublicP(
+intBool SlotPublicP(
   void *theDefclass,
   const char *slotName)
   {
    return EnvSlotPublicP(GetCurrentEnvironment(),theDefclass,slotName);
   }
 
-globle int SlotDefaultP(
+int SlotDefaultP(
   void *theDefclass,
   const char *slotName)
   {
    return EnvSlotDefaultP(GetCurrentEnvironment(),theDefclass,slotName);
   }
 
-globle intBool SlotWritableP(
+intBool SlotWritableP(
   void *theDefclass,
   const char *slotName)
   {
    return EnvSlotWritableP(GetCurrentEnvironment(),theDefclass,slotName);
   }
 
-globle intBool SubclassP(
+intBool SubclassP(
   void *firstClass,
   void *secondClass)
   {
    return EnvSubclassP(GetCurrentEnvironment(),firstClass,secondClass);
   }
 
-globle intBool SuperclassP(
+intBool SuperclassP(
   void *firstClass,
   void *secondClass)
   {
    return EnvSuperclassP(GetCurrentEnvironment(),firstClass,secondClass);
   }
 
-globle intBool SlotDefaultValue(
+intBool SlotDefaultValue(
   void *theDefclass,
   const char *slotName,
   DATA_OBJECT_PTR theValue)

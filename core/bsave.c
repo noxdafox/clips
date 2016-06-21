@@ -71,7 +71,7 @@
 /* InitializeBsaveData: Allocates environment */
 /*    data for the bsave command.             */
 /**********************************************/
-globle void InitializeBsaveData(
+void InitializeBsaveData(
   void *theEnv)
   {
    AllocateEnvironmentData(theEnv,BSAVE_DATA,sizeof(struct bsaveData),DeallocateBsaveData);
@@ -99,7 +99,7 @@ static void DeallocateBsaveData(
 /* BsaveCommand: H/L access routine   */
 /*   for the bsave command.           */
 /**************************************/
-globle int BsaveCommand(
+int BsaveCommand(
   void *theEnv)
   {
 #if (! RUN_TIME) && BLOAD_AND_BSAVE
@@ -123,7 +123,7 @@ globle int BsaveCommand(
 /* EnvBsave: C access routine */
 /*   for the bsave command.   */
 /******************************/
-globle intBool EnvBsave(
+intBool EnvBsave(
   void *theEnv,
   const char *fileName)
   {
@@ -401,7 +401,7 @@ static size_t FunctionBinarySize(
 /*   count values when a binary save command is    */
 /*   issued when a binary image is loaded.         */
 /***************************************************/
-globle void SaveBloadCount(
+void SaveBloadCount(
   void *theEnv,
   long cnt)
   {
@@ -427,7 +427,7 @@ globle void SaveBloadCount(
 /*   count values after a binary save command is  */
 /*   completed when a binary image is loaded.     */
 /**************************************************/
-globle void RestoreBloadCount(
+void RestoreBloadCount(
   void *theEnv,
   long *cnt)
   {
@@ -444,7 +444,7 @@ globle void RestoreBloadCount(
 /*   determine which items are needed to save */
 /*   an expression as part of a binary image. */
 /**********************************************/
-globle void MarkNeededItems(
+void MarkNeededItems(
   void *theEnv,
   struct expr *testPtr)
   {
@@ -525,7 +525,7 @@ static void WriteBinaryFooter(
 /*   data structures of a construct or other "item" to a  */
 /*   binary file.                                         */
 /**********************************************************/
-globle intBool AddBinaryItem(
+intBool AddBinaryItem(
   void *theEnv,
   const char *name,
   int priority,
@@ -609,7 +609,7 @@ globle intBool AddBinaryItem(
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-globle intBool Bsave(
+intBool Bsave(
   const char *fileName)
   {
    return EnvBsave(GetCurrentEnvironment(),fileName);

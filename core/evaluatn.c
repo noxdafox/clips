@@ -106,7 +106,7 @@
 /* InitializeEvaluationData: Allocates environment */
 /*    data for expression evaluation.             */
 /**************************************************/
-globle void InitializeEvaluationData(
+void InitializeEvaluationData(
   void *theEnv)
   {
    struct externalAddressType cPointer = { "C", PrintCAddress, PrintCAddress, NULL, NewCAddress, NULL };
@@ -133,7 +133,7 @@ static void DeallocateEvaluationData(
 /* EvaluateExpression: Evaluates an expression. Returns FALSE */
 /*   if no errors occurred during evaluation, otherwise TRUE. */
 /**************************************************************/
-globle int EvaluateExpression(
+int EvaluateExpression(
   void *theEnv,
   struct expr *problem,
   DATA_OBJECT_PTR returnValue)
@@ -482,7 +482,7 @@ globle int EvaluateExpression(
 /* InstallPrimitive: Installs a primitive */
 /*   data type in the primitives array.   */
 /******************************************/
-globle void InstallPrimitive(
+void InstallPrimitive(
   void *theEnv,
   struct entityRecord *thePrimitive,
   int whichPosition)
@@ -500,7 +500,7 @@ globle void InstallPrimitive(
 /* InstallExternalAddressType: Installs an external   */
 /*   address type in the external address type array. */
 /******************************************************/
-globle int InstallExternalAddressType(
+int InstallExternalAddressType(
   void *theEnv,
   struct externalAddressType *theAddressType)
   {
@@ -524,7 +524,7 @@ globle int InstallExternalAddressType(
 /*********************************************************/
 /* EnvSetEvaluationError: Sets the EvaluationError flag. */
 /*********************************************************/
-globle void EnvSetEvaluationError(
+void EnvSetEvaluationError(
   void *theEnv,
   int value)
   {
@@ -536,7 +536,7 @@ globle void EnvSetEvaluationError(
 /************************************************************/
 /* EnvGetEvaluationError: Returns the EvaluationError flag. */
 /************************************************************/
-globle int EnvGetEvaluationError(
+int EnvGetEvaluationError(
   void *theEnv)
   {
    return(EvaluationData(theEnv)->EvaluationError);
@@ -545,7 +545,7 @@ globle int EnvGetEvaluationError(
 /*****************************************************/
 /* EnvSetHaltExecution: Sets the HaltExecution flag. */
 /*****************************************************/
-globle void EnvSetHaltExecution(
+void EnvSetHaltExecution(
   void *theEnv,
   int value)
   { 
@@ -555,7 +555,7 @@ globle void EnvSetHaltExecution(
 /********************************************************/
 /* EnvGetHaltExecution: Returns the HaltExecution flag. */
 /********************************************************/
-globle int EnvGetHaltExecution(
+int EnvGetHaltExecution(
   void *theEnv)
   {
    return(EvaluationData(theEnv)->HaltExecution);
@@ -565,7 +565,7 @@ globle int EnvGetHaltExecution(
 /* ReturnValues: Returns a linked list of DATA_OBJECT */
 /*   structures to the pool of free memory.           */
 /******************************************************/
-globle void ReturnValues(
+void ReturnValues(
   void *theEnv,
   DATA_OBJECT_PTR garbagePtr,
   intBool decrementSupplementalInfo)
@@ -587,7 +587,7 @@ globle void ReturnValues(
 /* PrintDataObject: Prints a DATA_OBJECT structure */
 /*   to the specified logical name.                */
 /***************************************************/
-globle void PrintDataObject(
+void PrintDataObject(
   void *theEnv,
   const char *fileid,
   DATA_OBJECT_PTR argPtr)
@@ -642,7 +642,7 @@ globle void PrintDataObject(
 /* EnvSetMultifieldErrorValue: Creates a multifield */
 /*   value of length zero for error returns.        */
 /****************************************************/
-globle void EnvSetMultifieldErrorValue(
+void EnvSetMultifieldErrorValue(
   void *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
@@ -656,7 +656,7 @@ globle void EnvSetMultifieldErrorValue(
 /* ValueInstall: Increments the appropriate count */
 /*   (in use) values for a DATA_OBJECT structure. */
 /**************************************************/
-globle void ValueInstall(
+void ValueInstall(
   void *theEnv,
   DATA_OBJECT *vPtr)
   {
@@ -668,7 +668,7 @@ globle void ValueInstall(
 /* ValueDeinstall: Decrements the appropriate count */
 /*   (in use) values for a DATA_OBJECT structure.   */
 /****************************************************/
-globle void ValueDeinstall(
+void ValueDeinstall(
   void *theEnv,
   DATA_OBJECT *vPtr)
   {
@@ -680,7 +680,7 @@ globle void ValueDeinstall(
 /* AtomInstall: Increments the reference */
 /*   count of an atomic data type.       */
 /*****************************************/
-globle void AtomInstall(
+void AtomInstall(
   void *theEnv,
   int type,
   void *vPtr)
@@ -730,7 +730,7 @@ globle void AtomInstall(
 /* AtomDeinstall: Decrements the reference */
 /*   count of an atomic data type.         */
 /*******************************************/
-globle void AtomDeinstall(
+void AtomDeinstall(
   void *theEnv,
   int type,
   void *vPtr)
@@ -782,7 +782,7 @@ globle void AtomDeinstall(
 /*   Generic Functions to be called from C. */
 /*   Allows only constants as arguments.    */
 /********************************************/
-globle int EnvFunctionCall(
+int EnvFunctionCall(
   void *theEnv,
   const char *name,
   const char *args,
@@ -815,7 +815,7 @@ globle int EnvFunctionCall(
 /*   Generic Functions to be called from C. */
 /*   Allows only constants as arguments.    */
 /********************************************/
-globle int FunctionCall2(
+int FunctionCall2(
   void *theEnv,
   FUNCTION_REFERENCE *theReference,
   const char *args,
@@ -884,7 +884,7 @@ globle int FunctionCall2(
 /* CopyDataObject: Copies the values from a source */
 /*   DATA_OBJECT to a destination DATA_OBJECT.     */
 /***************************************************/
-globle void CopyDataObject(
+void CopyDataObject(
   void *theEnv,
   DATA_OBJECT *dst,
   DATA_OBJECT *src,
@@ -908,7 +908,7 @@ globle void CopyDataObject(
 /*   directly from a source DATA_OBJECT to a   */
 /*   destination DATA_OBJECT.                  */
 /***********************************************/
-globle void TransferDataObjectValues(
+void TransferDataObjectValues(
   DATA_OBJECT *dst,
   DATA_OBJECT *src)
   {
@@ -926,7 +926,7 @@ globle void TransferDataObjectValues(
 /*   is generated and the chain is linked by the nextArg field. For a   */
 /*   single field value, a single expression is created.                */
 /************************************************************************/
-globle struct expr *ConvertValueToExpression(
+struct expr *ConvertValueToExpression(
   void *theEnv,
   DATA_OBJECT *theValue)
   {
@@ -1018,7 +1018,7 @@ unsigned long GetAtomicHashValue(
 /*   name if it is the name of a deffunction, defgeneric,  */
 /*   or user/system defined function.                      */
 /***********************************************************/
-globle struct expr *FunctionReferenceExpression(
+struct expr *FunctionReferenceExpression(
   void *theEnv,
   const char *name)
   {
@@ -1070,7 +1070,7 @@ globle struct expr *FunctionReferenceExpression(
 /*   name of a deffunction, defgeneric, or user/system defined    */
 /*   function.                                                    */
 /******************************************************************/
-globle intBool GetFunctionReference(
+intBool GetFunctionReference(
   void *theEnv,
   const char *name,
   FUNCTION_REFERENCE *theReference)
@@ -1137,7 +1137,7 @@ globle intBool GetFunctionReference(
 /*******************************************************/
 /* DOsEqual: Determines if two DATA_OBJECTS are equal. */
 /*******************************************************/
-globle intBool DOsEqual(
+intBool DOsEqual(
   DATA_OBJECT_PTR dobj1,
   DATA_OBJECT_PTR dobj2)
   {
@@ -1170,7 +1170,7 @@ globle intBool DOsEqual(
                  multifield values
   NOTES        : None
  ***********************************************************/
-globle int EvaluateAndStoreInDataObject(
+int EvaluateAndStoreInDataObject(
   void *theEnv,
   int mfp,
   EXPRESSION *theExp,
@@ -1257,13 +1257,13 @@ static intBool DiscardCAddress(
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-globle void SetMultifieldErrorValue(
+void SetMultifieldErrorValue(
   DATA_OBJECT_PTR returnValue)
   {
    EnvSetMultifieldErrorValue(GetCurrentEnvironment(),returnValue);
   }
 
-globle int FunctionCall(
+int FunctionCall(
   const char *name,
   const char *args,
   DATA_OBJECT *result)

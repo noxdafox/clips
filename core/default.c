@@ -68,7 +68,7 @@
 /* DeriveDefaultFromConstraints: Returns an appropriate */
 /*   default value for the supplied constraints.        */
 /********************************************************/
-globle void DeriveDefaultFromConstraints(
+void DeriveDefaultFromConstraints(
   void *theEnv,
   CONSTRAINT_RECORD *constraints,
   DATA_OBJECT *theDefault,
@@ -268,7 +268,7 @@ static void *FindDefaultValue(
 /**********************************************/
 /* ParseDefault: Parses a default value list. */
 /**********************************************/
-globle struct expr *ParseDefault(
+struct expr *ParseDefault(
   void *theEnv,
   const char *readSource,
   int multifield,

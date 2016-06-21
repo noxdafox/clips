@@ -51,7 +51,7 @@
 /* PredicateFunctionDefinitions: Defines standard */
 /*   math and predicate functions.                */
 /**************************************************/
-globle void PredicateFunctionDefinitions(
+void PredicateFunctionDefinitions(
   void *theEnv)
   {
 #if ! RUN_TIME
@@ -93,7 +93,7 @@ globle void PredicateFunctionDefinitions(
 /* EqFunction: H/L access routine   */
 /*   for the eq function.           */
 /************************************/
-globle intBool EqFunction(
+intBool EqFunction(
   void *theEnv)
   {
    DATA_OBJECT item, nextItem;
@@ -151,7 +151,7 @@ globle intBool EqFunction(
 /* NeqFunction: H/L access routine   */
 /*   for the neq function.           */
 /*************************************/
-globle intBool NeqFunction(
+intBool NeqFunction(
   void *theEnv)
   {
    DATA_OBJECT item, nextItem;
@@ -206,7 +206,7 @@ globle intBool NeqFunction(
 /* StringpFunction: H/L access routine   */
 /*   for the stringp function.           */
 /*****************************************/
-globle intBool StringpFunction(
+intBool StringpFunction(
   void *theEnv)
   {
    DATA_OBJECT item;
@@ -225,7 +225,7 @@ globle intBool StringpFunction(
 /* SymbolpFunction: H/L access routine   */
 /*   for the symbolp function.           */
 /*****************************************/
-globle intBool SymbolpFunction(
+intBool SymbolpFunction(
   void *theEnv)
   {
    DATA_OBJECT item;
@@ -244,7 +244,7 @@ globle intBool SymbolpFunction(
 /* LexemepFunction: H/L access routine   */
 /*   for the lexemep function.           */
 /*****************************************/
-globle intBool LexemepFunction(
+intBool LexemepFunction(
   void *theEnv)
   {
    DATA_OBJECT item;
@@ -263,7 +263,7 @@ globle intBool LexemepFunction(
 /* NumberpFunction: H/L access routine   */
 /*   for the numberp function.           */
 /*****************************************/
-globle intBool NumberpFunction(
+intBool NumberpFunction(
   void *theEnv)
   {
    DATA_OBJECT item;
@@ -282,7 +282,7 @@ globle intBool NumberpFunction(
 /* FloatpFunction: H/L access routine   */
 /*   for the floatp function.           */
 /****************************************/
-globle intBool FloatpFunction(
+intBool FloatpFunction(
   void *theEnv)
   {
    DATA_OBJECT item;
@@ -301,7 +301,7 @@ globle intBool FloatpFunction(
 /* IntegerpFunction: H/L access routine   */
 /*   for the integerp function.           */
 /******************************************/
-globle intBool IntegerpFunction(
+intBool IntegerpFunction(
   void *theEnv)
   {
    DATA_OBJECT item;
@@ -319,7 +319,7 @@ globle intBool IntegerpFunction(
 /* MultifieldpFunction: H/L access routine   */
 /*   for the multifieldp function.           */
 /*********************************************/
-globle intBool MultifieldpFunction(
+intBool MultifieldpFunction(
   void *theEnv)
   {
    DATA_OBJECT item;
@@ -337,7 +337,7 @@ globle intBool MultifieldpFunction(
 /* PointerpFunction: H/L access routine   */
 /*   for the pointerp function.           */
 /******************************************/
-globle intBool PointerpFunction(
+intBool PointerpFunction(
   void *theEnv)
   {
    DATA_OBJECT item;
@@ -355,7 +355,7 @@ globle intBool PointerpFunction(
 /* NotFunction: H/L access routine   */
 /*   for the not function.           */
 /*************************************/
-globle intBool NotFunction(
+intBool NotFunction(
   void *theEnv)
   {
    EXPRESSION *theArgument;
@@ -376,7 +376,7 @@ globle intBool NotFunction(
 /* AndFunction: H/L access routine   */
 /*   for the and function.           */
 /*************************************/
-globle intBool AndFunction(
+intBool AndFunction(
   void *theEnv)
   {
    EXPRESSION *theArgument;
@@ -398,7 +398,7 @@ globle intBool AndFunction(
 /* OrFunction: H/L access routine   */
 /*   for the or function.           */
 /************************************/
-globle intBool OrFunction(
+intBool OrFunction(
   void *theEnv)
   {
    EXPRESSION *theArgument;
@@ -421,7 +421,7 @@ globle intBool OrFunction(
 /* LessThanOrEqualFunction: H/L access   */
 /*   routine for the <= function.        */
 /*****************************************/
-globle intBool LessThanOrEqualFunction(
+intBool LessThanOrEqualFunction(
   void *theEnv)
   {
    EXPRESSION *theArgument;
@@ -490,7 +490,7 @@ globle intBool LessThanOrEqualFunction(
 /* GreaterThanOrEqualFunction: H/L access   */
 /*   routine for the >= function.           */
 /********************************************/
-globle intBool GreaterThanOrEqualFunction(
+intBool GreaterThanOrEqualFunction(
   void *theEnv)
   {
    EXPRESSION *theArgument;
@@ -559,7 +559,7 @@ globle intBool GreaterThanOrEqualFunction(
 /* LessThanFunction: H/L access   */
 /*   routine for the < function.  */
 /**********************************/
-globle intBool LessThanFunction(
+intBool LessThanFunction(
   void *theEnv)
   {
    EXPRESSION *theArgument;
@@ -629,7 +629,7 @@ globle intBool LessThanFunction(
 /* GreaterThanFunction: H/L access   */
 /*   routine for the > function.     */
 /*************************************/
-globle intBool GreaterThanFunction(
+intBool GreaterThanFunction(
   void *theEnv)
   {
    EXPRESSION *theArgument;
@@ -699,7 +699,7 @@ globle intBool GreaterThanFunction(
 /* NumericEqualFunction: H/L access   */
 /*   routine for the = function.      */
 /**************************************/
-globle intBool NumericEqualFunction(
+intBool NumericEqualFunction(
   void *theEnv)
   {
    EXPRESSION *theArgument;
@@ -766,7 +766,7 @@ globle intBool NumericEqualFunction(
 /* NumericNotEqualFunction: H/L access   */
 /*   routine for the <> function.        */
 /*****************************************/
-globle intBool NumericNotEqualFunction(
+intBool NumericNotEqualFunction(
   void *theEnv)
   {
    EXPRESSION *theArgument;
@@ -832,7 +832,7 @@ globle intBool NumericNotEqualFunction(
 /* OddpFunction: H/L access routine   */
 /*   for the oddp function.           */
 /**************************************/
-globle intBool OddpFunction(
+intBool OddpFunction(
   void *theEnv)
   {
    DATA_OBJECT item;
@@ -853,7 +853,7 @@ globle intBool OddpFunction(
 /* EvenpFunction: H/L access routine   */
 /*   for the evenp function.           */
 /***************************************/
-globle intBool EvenpFunction(
+intBool EvenpFunction(
   void *theEnv)
   {
    DATA_OBJECT item;

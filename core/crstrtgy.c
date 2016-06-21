@@ -83,7 +83,7 @@
 /* PlaceActivation: Coordinates placement of an activation on the */
 /*   Agenda based on the current conflict resolution strategy.    */
 /******************************************************************/
-globle void PlaceActivation(
+void PlaceActivation(
   void *theEnv,
   ACTIVATION **whichAgenda,
   ACTIVATION *newActivation,
@@ -944,7 +944,7 @@ static int ComparePartialMatches(
 /* EnvSetStrategy: C access routine */
 /*   for the set-strategy command.  */
 /************************************/
-globle int EnvSetStrategy(
+int EnvSetStrategy(
   void *theEnv,
   int value)
   {
@@ -962,7 +962,7 @@ globle int EnvSetStrategy(
 /* EnvGetStrategy: C access routine */
 /*   for the get-strategy command.  */
 /************************************/
-globle int EnvGetStrategy(
+int EnvGetStrategy(
   void *theEnv)
   {
    return(AgendaData(theEnv)->Strategy);
@@ -972,7 +972,7 @@ globle int EnvGetStrategy(
 /* GetStrategyCommand: H/L access routine   */
 /*   for the get-strategy command.          */
 /********************************************/
-globle void *GetStrategyCommand(
+void *GetStrategyCommand(
   void *theEnv)
   {
    EnvArgCountCheck(theEnv,"get-strategy",EXACTLY,0);
@@ -984,7 +984,7 @@ globle void *GetStrategyCommand(
 /* SetStrategyCommand: H/L access routine   */
 /*   for the set-strategy command.          */
 /********************************************/
-globle void *SetStrategyCommand(
+void *SetStrategyCommand(
   void *theEnv)
   {
    DATA_OBJECT argPtr;
@@ -1084,13 +1084,13 @@ static const char *GetStrategyName(
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-globle int SetStrategy(
+int SetStrategy(
   int value)
   {
    return EnvSetStrategy(GetCurrentEnvironment(),value);
   }
 
-globle int GetStrategy()
+int GetStrategy()
   {
    return EnvGetStrategy(GetCurrentEnvironment());
   }

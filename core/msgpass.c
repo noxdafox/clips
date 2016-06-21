@@ -119,7 +119,7 @@ static void EarlySlotBindError(void *,INSTANCE_TYPE *,DEFCLASS *,unsigned);
   SIDE EFFECTS : Side effects of message execution
   NOTES        : None
  *****************************************************/
-globle intBool DirectMessage(
+intBool DirectMessage(
   void *theEnv,
   SYMBOL_HN *msg,
   INSTANCE_TYPE *ins,
@@ -152,7 +152,7 @@ globle intBool DirectMessage(
                    caller's buffer
   NOTES        : None
  ***************************************************/
-globle void EnvSend(
+void EnvSend(
   void *theEnv,
   DATA_OBJECT *idata,
   const char *msg,
@@ -200,7 +200,7 @@ globle void EnvSend(
   SIDE EFFECTS : Deallocation of links
   NOTES        : None
  *****************************************************/
-globle void DestroyHandlerLinks(
+void DestroyHandlerLinks(
   void *theEnv,
   HANDLER_LINK *mhead)
   {
@@ -226,7 +226,7 @@ globle void DestroyHandlerLinks(
                    the core framework
   NOTES        : H/L Syntax : (send <instance> <hnd> <args>*)
  ***********************************************************************/
-globle void SendCommand(
+void SendCommand(
   void *theEnv,
   DATA_OBJECT *result)
   {
@@ -264,7 +264,7 @@ globle void SendCommand(
                  stored as the first argument (0) in
                  the call frame of the message
  ***************************************************/
-globle DATA_OBJECT *GetNthMessageArgument(
+DATA_OBJECT *GetNthMessageArgument(
   void *theEnv,
   int n)
   {
@@ -282,7 +282,7 @@ globle DATA_OBJECT *GetNthMessageArgument(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax: (next-handlerp)
  *****************************************************/
-globle int NextHandlerAvailable(
+int NextHandlerAvailable(
   void *theEnv)
   {
    if (MessageHandlerData(theEnv)->CurrentCore == NULL)
@@ -317,7 +317,7 @@ globle int NextHandlerAvailable(
   NOTES        : H/L Syntax: (call-next-handler) OR
                     (override-next-handler <arg> ...)
  ********************************************************/
-globle void CallNextHandler(
+void CallNextHandler(
   void *theEnv,
   DATA_OBJECT *result)
   {
@@ -447,7 +447,7 @@ globle void CallNextHandler(
   SIDE EFFECTS : Modifies the handler lists to include applicable handlers
   NOTES        : None
  *************************************************************************/
-globle void FindApplicableOfName(
+void FindApplicableOfName(
   void *theEnv,
   DEFCLASS *cls,
   HANDLER_LINK *tops[4],
@@ -507,7 +507,7 @@ globle void FindApplicableOfName(
                    lists are destroyed if there are no primary handlers
   NOTES        : None
  *************************************************************************/
-globle HANDLER_LINK *JoinHandlerLinks(
+HANDLER_LINK *JoinHandlerLinks(
   void *theEnv,
   HANDLER_LINK *tops[4],
   HANDLER_LINK *bots[4],
@@ -555,7 +555,7 @@ globle HANDLER_LINK *JoinHandlerLinks(
   SIDE EFFECTS : Expression printed
   NOTES        : None
  ***************************************************/
-globle void PrintHandlerSlotGetFunction(
+void PrintHandlerSlotGetFunction(
   void *theEnv,
   const char *logicalName,
   void *theValue)
@@ -606,7 +606,7 @@ globle void PrintHandlerSlotGetFunction(
                   no-inherit or the subclass
                   overrode the original slot)
  ***************************************************/
-globle intBool HandlerSlotGetFunction(
+intBool HandlerSlotGetFunction(
   void *theEnv,
   void *theValue,
   DATA_OBJECT *theResult)
@@ -675,7 +675,7 @@ HandlerGetError:
   SIDE EFFECTS : Expression printed
   NOTES        : None
  ***************************************************/
-globle void PrintHandlerSlotPutFunction(
+void PrintHandlerSlotPutFunction(
   void *theEnv,
   const char *logicalName,
   void *theValue)
@@ -732,7 +732,7 @@ globle void PrintHandlerSlotPutFunction(
                   no-inherit or the subclass
                   overrode the original slot)
  ***************************************************/
-globle intBool HandlerSlotPutFunction(
+intBool HandlerSlotPutFunction(
   void *theEnv,
   void *theValue,
   DATA_OBJECT *theResult)
@@ -830,7 +830,7 @@ HandlerPutError2:
   SIDE EFFECTS : Caller's result buffer set
   NOTES        : H/L Syntax: (get <slot>)
  *****************************************************/
-globle void DynamicHandlerGetSlot(
+void DynamicHandlerGetSlot(
   void *theEnv,
   DATA_OBJECT *result)
   {
@@ -882,7 +882,7 @@ globle void DynamicHandlerGetSlot(
                  to value (or symbol FALSE on errors)
   NOTES        : H/L Syntax: (put <slot> <value>*)
  ***********************************************************/
-globle void DynamicHandlerPutSlot(
+void DynamicHandlerPutSlot(
   void *theEnv,
   DATA_OBJECT *theResult)
   {
@@ -1416,7 +1416,7 @@ static void EarlySlotBindError(
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-globle void Send(
+void Send(
   DATA_OBJECT *idata,
   const char *msg,
   const char *args,

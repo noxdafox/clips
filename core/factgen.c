@@ -61,19 +61,19 @@
 
 struct factgenData
   {    
-   globle struct entityRecord   FactJNGV1Info;
-   globle struct entityRecord   FactJNGV2Info;
-   globle struct entityRecord   FactJNGV3Info;
-   globle struct entityRecord   FactPNGV1Info;
-   globle struct entityRecord   FactPNGV2Info;
-   globle struct entityRecord   FactPNGV3Info;
-   globle struct entityRecord   FactJNCV1Info;
-   globle struct entityRecord   FactJNCV2Info;
-   globle struct entityRecord   FactPNCV1Info;
-   globle struct entityRecord   FactStoreMFInfo;
-   globle struct entityRecord   FactSlotLengthInfo;
-   globle struct entityRecord   FactPNConstant1Info;
-   globle struct entityRecord   FactPNConstant2Info;
+   struct entityRecord   FactJNGV1Info;
+   struct entityRecord   FactJNGV2Info;
+   struct entityRecord   FactJNGV3Info;
+   struct entityRecord   FactPNGV1Info;
+   struct entityRecord   FactPNGV2Info;
+   struct entityRecord   FactPNGV3Info;
+   struct entityRecord   FactJNCV1Info;
+   struct entityRecord   FactJNCV2Info;
+   struct entityRecord   FactPNCV1Info;
+   struct entityRecord   FactStoreMFInfo;
+   struct entityRecord   FactSlotLengthInfo;
+   struct entityRecord   FactPNConstant1Info;
+   struct entityRecord   FactPNConstant2Info;
   };
   
 #define FactgenData(theEnv) ((struct factgenData *) GetEnvironmentData(theEnv,FACTGEN_DATA))
@@ -95,7 +95,7 @@ struct factgenData
 /* InitializeFactReteFunctions: Installs the fact pattern matching */
 /*   and value access routines as primitive operations.            */
 /*******************************************************************/
-globle void InitializeFactReteFunctions(
+void InitializeFactReteFunctions(
   void *theEnv)
   {
 #if DEFRULE_CONSTRUCT
@@ -220,7 +220,7 @@ globle void InitializeFactReteFunctions(
 /*   pattern network that compares a field from a single field or */
 /*   multifield slot against a constant.                          */
 /******************************************************************/
-globle struct expr *FactGenPNConstant(
+struct expr *FactGenPNConstant(
   void *theEnv,
   struct lhsParseNode *theField)
   {
@@ -319,7 +319,7 @@ globle struct expr *FactGenPNConstant(
 /*   the fact pattern network that retrieves a value   */
 /*   from a single or multifield slot.                 */
 /*******************************************************/
-globle struct expr *FactGenGetfield(
+struct expr *FactGenGetfield(
   void *theEnv,
   struct lhsParseNode *theNode)
   {
@@ -360,7 +360,7 @@ globle struct expr *FactGenGetfield(
 /*   in the join network that retrieves a value   */
 /*   from a single or multifield slot of a fact.  */
 /**************************************************/
-globle struct expr *FactGenGetvar(
+struct expr *FactGenGetvar(
   void *theEnv,
   struct lhsParseNode *theNode,
   int side)
@@ -405,7 +405,7 @@ globle struct expr *FactGenGetvar(
 /*   slot constraints (foo ?x a $? ?y) couldn't be matched    */
 /*   unless the foo slot contained at least 3 fields.         */
 /**************************************************************/
-globle struct expr *FactGenCheckLength(
+struct expr *FactGenCheckLength(
   void *theEnv,
   struct lhsParseNode *theNode)
   {
@@ -462,7 +462,7 @@ globle struct expr *FactGenCheckLength(
 /*   the fact pattern network that determines if the value of */
 /*   a multifield slot is a zero length multifield value.     */
 /**************************************************************/
-globle struct expr *FactGenCheckZeroLength(
+struct expr *FactGenCheckZeroLength(
   void *theEnv,
   unsigned theSlot)
   {
@@ -482,7 +482,7 @@ globle struct expr *FactGenCheckZeroLength(
 /*   with a function call to retrieve the variable using the join    */
 /*   network variable access functions for facts.                    */
 /*********************************************************************/
-globle void FactReplaceGetvar(
+void FactReplaceGetvar(
   void *theEnv,
   struct expr *theItem,
   struct lhsParseNode *theNode,
@@ -538,7 +538,7 @@ globle void FactReplaceGetvar(
 /*   with a function call to retrieve the variable using the pattern   */
 /*   network variable access functions for facts.                      */
 /***********************************************************************/
-globle void FactReplaceGetfield(
+void FactReplaceGetfield(
   void *theEnv,
   struct expr *theItem,
   struct lhsParseNode *theNode)
@@ -1049,7 +1049,7 @@ static void *FactGetVarPN3(
 /*   in the fact pattern network to compare two variables of */
 /*   the same name found in the same pattern.                */
 /*************************************************************/
-globle struct expr *FactPNVariableComparison(
+struct expr *FactPNVariableComparison(
   void *theEnv,
   struct lhsParseNode *selfNode,
   struct lhsParseNode *referringNode)
@@ -1111,7 +1111,7 @@ globle struct expr *FactPNVariableComparison(
 /*   use in the join network to compare two variables of */
 /*   the same name found in different patterns.          */
 /*********************************************************/
-globle struct expr *FactJNVariableComparison(
+struct expr *FactJNVariableComparison(
   void *theEnv,
   struct lhsParseNode *selfNode,
   struct lhsParseNode *referringNode,

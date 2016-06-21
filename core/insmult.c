@@ -91,7 +91,7 @@ static void AssignSlotToDataObject(DATA_OBJECT *,INSTANCE_SLOT *);
   SIDE EFFECTS : Functions defined to KB
   NOTES        : None
  ***************************************************/
-globle void SetupInstanceMultifieldCommands(
+void SetupInstanceMultifieldCommands(
   void *theEnv)
   {
    /* ===================================
@@ -142,7 +142,7 @@ globle void SetupInstanceMultifieldCommands(
   NOTES        : H/L Syntax : (slot-replace$ <instance> <slot>
                                  <range-begin> <range-end> <value>)
  ***********************************************************************************/
-globle void MVSlotReplaceCommand(
+void MVSlotReplaceCommand(
   void *theEnv,
   DATA_OBJECT *result)
   {
@@ -182,7 +182,7 @@ globle void MVSlotReplaceCommand(
   SIDE EFFECTS : Put messsage sent for slot
   NOTES        : H/L Syntax : (slot-insert$ <instance> <slot> <index> <value>)
  ***********************************************************************************/
-globle void MVSlotInsertCommand(
+void MVSlotInsertCommand(
   void *theEnv,
   DATA_OBJECT *result)
   {
@@ -223,7 +223,7 @@ globle void MVSlotInsertCommand(
   NOTES        : H/L Syntax : (slot-delete$ <instance> <slot>
                                  <range-begin> <range-end>)
  ***********************************************************************************/
-globle void MVSlotDeleteCommand(
+void MVSlotDeleteCommand(
   void *theEnv,
   DATA_OBJECT *result)
   {
@@ -261,7 +261,7 @@ globle void MVSlotDeleteCommand(
   NOTES        : H/L Syntax: (direct-slot-replace$ <slot>
                                 <range-begin> <range-end> <value>)
  *****************************************************************/
-globle intBool DirectMVReplaceCommand(
+intBool DirectMVReplaceCommand(
   void *theEnv)
   {
    INSTANCE_SLOT *sp;
@@ -293,7 +293,7 @@ globle intBool DirectMVReplaceCommand(
   SIDE EFFECTS : Slot modified
   NOTES        : H/L Syntax: (direct-slot-insert$ <slot> <index> <value>)
  ************************************************************************/
-globle intBool DirectMVInsertCommand(
+intBool DirectMVInsertCommand(
   void *theEnv)
   {
    INSTANCE_SLOT *sp;
@@ -326,7 +326,7 @@ globle intBool DirectMVInsertCommand(
   NOTES        : H/L Syntax: (direct-slot-delete$ <slot>
                                 <range-begin> <range-end>)
  *****************************************************************/
-globle intBool DirectMVDeleteCommand(
+intBool DirectMVDeleteCommand(
   void *theEnv)
   {
    INSTANCE_SLOT *sp;

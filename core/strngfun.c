@@ -100,7 +100,7 @@
 /* StringFunctionDefinitions: Initializes */
 /*   the string manipulation functions.   */
 /******************************************/
-globle void StringFunctionDefinitions(
+void StringFunctionDefinitions(
   void *theEnv)
   {
 #if ! RUN_TIME
@@ -126,7 +126,7 @@ globle void StringFunctionDefinitions(
 /* StrCatFunction: H/L access routine   */
 /*   for the str-cat function.          */
 /****************************************/
-globle void StrCatFunction(
+void StrCatFunction(
   void *theEnv,
   DATA_OBJECT_PTR returnValue)
   {   
@@ -137,7 +137,7 @@ globle void StrCatFunction(
 /* SymCatFunction: H/L access routine   */
 /*   for the sym-cat function.          */
 /****************************************/
-globle void SymCatFunction(
+void SymCatFunction(
   void *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
@@ -282,7 +282,7 @@ static void StrOrSymCatFunction(
 /* StrLengthFunction: H/L access routine   */
 /*   for the str-length function.          */
 /*******************************************/
-globle long long StrLengthFunction(
+long long StrLengthFunction(
   void *theEnv)
   {
    DATA_OBJECT theArg;
@@ -312,7 +312,7 @@ globle long long StrLengthFunction(
 /* UpcaseFunction: H/L access routine   */
 /*   for the upcase function.           */
 /****************************************/
-globle void UpcaseFunction(
+void UpcaseFunction(
   void *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
@@ -376,7 +376,7 @@ globle void UpcaseFunction(
 /* LowcaseFunction: H/L access routine   */
 /*   for the lowcase function.           */
 /*****************************************/
-globle void LowcaseFunction(
+void LowcaseFunction(
   void *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
@@ -440,7 +440,7 @@ globle void LowcaseFunction(
 /* StrCompareFunction: H/L access routine   */
 /*   for the str-compare function.          */
 /********************************************/
-globle long long StrCompareFunction(
+long long StrCompareFunction(
   void *theEnv)
   {
    int numArgs, length;
@@ -496,7 +496,7 @@ globle long long StrCompareFunction(
 /* SubStringFunction: H/L access routine   */
 /*   for the sub-string function.          */
 /*******************************************/
-globle void *SubStringFunction(
+void *SubStringFunction(
   void *theEnv)
   {
    DATA_OBJECT theArgument;
@@ -580,7 +580,7 @@ globle void *SubStringFunction(
 /* StrIndexFunction: H/L access routine   */
 /*   for the sub-index function.          */
 /******************************************/
-globle void StrIndexFunction(
+void StrIndexFunction(
   void *theEnv,
   DATA_OBJECT_PTR result)
   {
@@ -637,7 +637,7 @@ globle void StrIndexFunction(
 /* StringToFieldFunction: H/L access routine */
 /*   for the string-to-field function.       */
 /********************************************/
-globle void StringToFieldFunction(
+void StringToFieldFunction(
   void *theEnv,
   DATA_OBJECT *returnValue)
   {
@@ -675,7 +675,7 @@ globle void StringToFieldFunction(
 /*************************************************************/
 /* StringToField: Converts a string to an atomic data value. */
 /*************************************************************/
-globle void StringToField(
+void StringToField(
   void *theEnv,
   const char *theString,
   DATA_OBJECT *returnValue)
@@ -725,7 +725,7 @@ globle void StringToField(
 /* EvalFunction: H/L access routine   */
 /*   for the eval function.           */
 /**************************************/
-globle void EvalFunction(
+void EvalFunction(
   void *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
@@ -765,7 +765,7 @@ globle void EvalFunction(
 /*   for the eval function. */
 /****************************/
 #if ALLOW_ENVIRONMENT_GLOBALS
-globle int Eval(
+int Eval(
   const char *theString,
   DATA_OBJECT_PTR returnValue)
   {
@@ -777,7 +777,7 @@ globle int Eval(
 /* EnvEval: C access routine */
 /*   for the eval function.  */
 /*****************************/
-globle int EnvEval(
+int EnvEval(
   void *theEnv,
   const char *theString,
   DATA_OBJECT_PTR returnValue)
@@ -936,7 +936,7 @@ globle int EnvEval(
 /* EvalFunction: This is the non-functional stub */
 /*   provided for use with a run-time version.   */
 /*************************************************/
-globle void EvalFunction(
+void EvalFunction(
   void *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
@@ -950,7 +950,7 @@ globle void EvalFunction(
 /* EnvEval: This is the non-functional stub provided */
 /*   for use with a run-time version.                */
 /*****************************************************/
-globle int EnvEval(
+int EnvEval(
   void *theEnv,
   const char *theString,
   DATA_OBJECT_PTR returnValue)
@@ -969,7 +969,7 @@ globle int EnvEval(
 /* BuildFunction: H/L access routine   */
 /*   for the build function.           */
 /***************************************/
-globle int BuildFunction(
+int BuildFunction(
   void *theEnv)
   {
    DATA_OBJECT theArg;
@@ -999,7 +999,7 @@ globle int BuildFunction(
 /*   for the build function. */
 /*****************************/
 #if ALLOW_ENVIRONMENT_GLOBALS
-globle int Build(
+int Build(
   const char *theString)
   {
    return EnvBuild(GetCurrentEnvironment(),theString);
@@ -1010,7 +1010,7 @@ globle int Build(
 /* EnvBuild: C access routine */
 /*   for the build function.  */
 /******************************/
-globle int EnvBuild(
+int EnvBuild(
   void *theEnv,
   const char *theString)
   {
@@ -1123,7 +1123,7 @@ globle int EnvBuild(
 /* BuildFunction: This is the non-functional stub */
 /*   provided for use with a run-time version.    */
 /**************************************************/
-globle int BuildFunction(
+int BuildFunction(
   void *theEnv)
   {
    PrintErrorID(theEnv,"STRNGFUN",1,FALSE);
@@ -1135,7 +1135,7 @@ globle int BuildFunction(
 /* EnvBuild: This is the non-functional stub provided */
 /*   for use with a run-time version.                 */
 /******************************************************/
-globle int EnvBuild(
+int EnvBuild(
   void *theEnv,
   const char *theString)
   { 

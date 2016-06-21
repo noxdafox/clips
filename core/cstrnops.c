@@ -91,7 +91,7 @@
 /* IntersectConstraints: Creates a new constraint record that */
 /*   is the intersection of two other constraint records.     */
 /**************************************************************/
-globle struct constraintRecord *IntersectConstraints(
+struct constraintRecord *IntersectConstraints(
   void *theEnv,
   CONSTRAINT_RECORD *c1,
   CONSTRAINT_RECORD *c2)
@@ -639,7 +639,7 @@ static int RestrictionOnType(
 /* UnionConstraints: Creates a new constraint record that */
 /*   is the union of two other constraint records.        */
 /**********************************************************/
-globle struct constraintRecord *UnionConstraints(
+struct constraintRecord *UnionConstraints(
   void *theEnv,
   CONSTRAINT_RECORD *c1,
   CONSTRAINT_RECORD *c2)
@@ -1134,7 +1134,7 @@ static struct expr *AddToUnionList(
 /*   value (including any duplicates) from the      */
 /*   restriction list of a constraint record.       */
 /****************************************************/
-globle void RemoveConstantFromConstraint(
+void RemoveConstantFromConstraint(
   void *theEnv,
   int theType,
   void *theValue,

@@ -94,7 +94,7 @@ static const char *GetClassDefaultsModeName(unsigned short);
   SIDE EFFECTS : None
   NOTES        : None
  ******************************************************************/
-globle void *EnvFindDefclass( // TBD Needs to look in imported
+void *EnvFindDefclass( // TBD Needs to look in imported
   void *theEnv,
   const char *classAndModuleName)
   {
@@ -136,7 +136,7 @@ globle void *EnvFindDefclass( // TBD Needs to look in imported
   SIDE EFFECTS : None
   NOTES        : None
  ******************************************************************/
-globle void *EnvFindDefclassInModule(
+void *EnvFindDefclassInModule(
   void *theEnv,
   const char *classAndModuleName)
   {
@@ -181,7 +181,7 @@ globle void *EnvFindDefclassInModule(
   NOTES        : Assumes no two classes of the same
                  name are ever in the same scope
  ***************************************************/
-globle DEFCLASS *LookupDefclassByMdlOrScope(
+DEFCLASS *LookupDefclassByMdlOrScope(
   void *theEnv,
   const char *classAndModuleName)
   {
@@ -224,7 +224,7 @@ globle DEFCLASS *LookupDefclassByMdlOrScope(
   NOTES        : Assumes no two classes of the same
                  name are ever in the same scope
  ****************************************************/
-globle DEFCLASS *LookupDefclassInScope(
+DEFCLASS *LookupDefclassInScope(
   void *theEnv,
   const char *className)
   {
@@ -256,7 +256,7 @@ globle DEFCLASS *LookupDefclassInScope(
                  multiple classes of the same name
                  exist as do the other lookup functions
  ******************************************************/
-globle DEFCLASS *LookupDefclassAnywhere(
+DEFCLASS *LookupDefclassAnywhere(
   void *theEnv,
   struct defmodule *theModule,
   const char *className)
@@ -290,7 +290,7 @@ globle DEFCLASS *LookupDefclassAnywhere(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle intBool DefclassInScope(
+intBool DefclassInScope(
   void *theEnv,
   DEFCLASS *theDefclass,
   struct defmodule *theModule)
@@ -322,7 +322,7 @@ globle intBool DefclassInScope(
   NOTES        : If ptr == NULL, the first defclass
                     is returned.
  ***********************************************************/
-globle void *EnvGetNextDefclass(
+void *EnvGetNextDefclass(
   void *theEnv,
   void *ptr)
   {
@@ -339,7 +339,7 @@ globle void *EnvGetNextDefclass(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle intBool EnvIsDefclassDeletable(
+intBool EnvIsDefclassDeletable(
   void *theEnv,
   void *ptr)
   {
@@ -368,7 +368,7 @@ globle intBool EnvIsDefclassDeletable(
   SIDE EFFECTS : None
   NOTES        : Syntax : (undefclass <class-name> | *)
  *************************************************************/
-globle void UndefclassCommand(
+void UndefclassCommand(
   void *theEnv)
   {
    UndefconstructCommand(theEnv,"undefclass",DefclassData(theEnv)->DefclassConstruct);
@@ -382,7 +382,7 @@ globle void UndefclassCommand(
   SIDE EFFECTS : Defclass and handlers removed
   NOTES        : Interface for AddConstruct()
  ********************************************************/
-globle intBool EnvUndefclass(
+intBool EnvUndefclass(
   void *theEnv,
   void *theDefclass)
   {
@@ -414,7 +414,7 @@ globle intBool EnvUndefclass(
   SIDE EFFECTS : None
   NOTES        : Syntax : (ppdefclass <class-name>)
  *********************************************************/
-globle void PPDefclassCommand(
+void PPDefclassCommand(
   void *theEnv)
   {   
    PPConstructCommand(theEnv,"ppdefclass",DefclassData(theEnv)->DefclassConstruct);
@@ -428,7 +428,7 @@ globle void PPDefclassCommand(
   SIDE EFFECTS : Defclass names printed
   NOTES        : H/L Interface
  ***************************************************/
-globle void ListDefclassesCommand(
+void ListDefclassesCommand(
   void *theEnv)
   {
    ListConstructCommand(theEnv,"list-defclasses",DefclassData(theEnv)->DefclassConstruct);
@@ -443,7 +443,7 @@ globle void ListDefclassesCommand(
   SIDE EFFECTS : Defclass names printed
   NOTES        : C Interface
  ***************************************************/
-globle void EnvListDefclasses(
+void EnvListDefclasses(
   void *theEnv,
   const char *logicalName,
   struct defmodule *theModule)
@@ -462,7 +462,7 @@ globle void EnvListDefclasses(
   SIDE EFFECTS : None
   NOTES        : None
  *********************************************************/
-globle unsigned EnvGetDefclassWatchInstances(
+unsigned EnvGetDefclassWatchInstances(
   void *theEnv,
   void *theClass)
   {
@@ -485,7 +485,7 @@ globle unsigned EnvGetDefclassWatchInstances(
   SIDE EFFECTS : Watch flag for the class set
   NOTES        : None
  *********************************************************/
-globle void EnvSetDefclassWatchInstances(
+void EnvSetDefclassWatchInstances(
   void *theEnv,
   unsigned newState,
   void *theClass)
@@ -510,7 +510,7 @@ globle void EnvSetDefclassWatchInstances(
   SIDE EFFECTS : None
   NOTES        : None
  *********************************************************/
-globle unsigned EnvGetDefclassWatchSlots(
+unsigned EnvGetDefclassWatchSlots(
   void *theEnv,
   void *theClass)
   {
@@ -532,7 +532,7 @@ globle unsigned EnvGetDefclassWatchSlots(
   SIDE EFFECTS : Watch flag for the class set
   NOTES        : None
  **********************************************************/
-globle void EnvSetDefclassWatchSlots(
+void EnvSetDefclassWatchSlots(
   void *theEnv,
   unsigned newState,
   void *theClass)
@@ -558,7 +558,7 @@ globle void EnvSetDefclassWatchSlots(
   SIDE EFFECTS : Watch flags set in specified classes
   NOTES        : Accessory function for AddWatchItem()
  ******************************************************************/
-globle unsigned DefclassWatchAccess(
+unsigned DefclassWatchAccess(
   void *theEnv,
   int code,
   unsigned newState,
@@ -586,7 +586,7 @@ globle unsigned DefclassWatchAccess(
   SIDE EFFECTS : Watch flags displayed for specified classes
   NOTES        : Accessory function for AddWatchItem()
  ***********************************************************************/
-globle unsigned DefclassWatchPrint(
+unsigned DefclassWatchPrint(
   void *theEnv,
   const char *logName,
   int code,
@@ -611,7 +611,7 @@ globle unsigned DefclassWatchPrint(
   SIDE EFFECTS : Multifield set to list of classes
   NOTES        : None
  *********************************************************/
-globle void GetDefclassListFunction(
+void GetDefclassListFunction(
   void *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
@@ -629,7 +629,7 @@ globle void GetDefclassListFunction(
   SIDE EFFECTS : Multifield allocated and filled
   NOTES        : External C access
  ***************************************************************/
-globle void EnvGetDefclassList(
+void EnvGetDefclassList(
   void *theEnv,
   DATA_OBJECT *returnValue,
   struct defmodule *theModule)
@@ -648,7 +648,7 @@ globle void EnvGetDefclassList(
   SIDE EFFECTS : None
   NOTES        : None
  *****************************************************/
-globle int HasSuperclass(
+int HasSuperclass(
   DEFCLASS *c1,
   DEFCLASS *c2)
   {
@@ -669,7 +669,7 @@ globle int HasSuperclass(
   SIDE EFFECTS : None
   NOTES        : None
  ********************************************************************/
-globle SYMBOL_HN *CheckClassAndSlot(
+SYMBOL_HN *CheckClassAndSlot(
    void *theEnv,
    const char *func,
    DEFCLASS **cls)
@@ -700,7 +700,7 @@ globle SYMBOL_HN *CheckClassAndSlot(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle void SaveDefclasses(
+void SaveDefclasses(
   void *theEnv,
   void *theModule,
   const char *logName)
@@ -768,7 +768,7 @@ static void SaveDefclass(
 /* EnvSetClassDefaultsMode: Allows the setting */
 /*    of the class defaults mode.              */
 /***********************************************/
-globle unsigned short EnvSetClassDefaultsMode(
+unsigned short EnvSetClassDefaultsMode(
   void *theEnv,
   unsigned short value)
   {
@@ -783,7 +783,7 @@ globle unsigned short EnvSetClassDefaultsMode(
 /* EnvGetClassDefaultsMode: Returns the */
 /*    value of the class defaults mode. */
 /****************************************/
-globle unsigned short EnvGetClassDefaultsMode(
+unsigned short EnvGetClassDefaultsMode(
   void *theEnv)
   {
    return(DefclassData(theEnv)->ClassDefaultsMode);
@@ -793,7 +793,7 @@ globle unsigned short EnvGetClassDefaultsMode(
 /* GetClassDefaultsModeCommand: H/L access routine */
 /*   for the get-class-defaults-mode command.      */
 /***************************************************/
-globle void *GetClassDefaultsModeCommand(
+void *GetClassDefaultsModeCommand(
   void *theEnv)
   {
    EnvArgCountCheck(theEnv,"get-class-defaults-mode",EXACTLY,0);
@@ -805,7 +805,7 @@ globle void *GetClassDefaultsModeCommand(
 /* SetClassDefaultsModeCommand: H/L access routine */
 /*   for the set-class-defaults-mode command.      */
 /***************************************************/
-globle void *SetClassDefaultsModeCommand(
+void *SetClassDefaultsModeCommand(
   void *theEnv)
   {
    DATA_OBJECT argPtr;
@@ -878,13 +878,13 @@ static const char *GetClassDefaultsModeName(
 /* Additional Access Functions */
 /*#############################*/
 
-globle SYMBOL_HN *GetDefclassNamePointer(
+SYMBOL_HN *GetDefclassNamePointer(
   void *theClass)
   {
    return GetConstructNamePointer((struct constructHeader *) theClass);
   }
 
-globle void SetNextDefclass(
+void SetNextDefclass(
   void *theClass,
   void *targetClass)
   {
@@ -896,35 +896,35 @@ globle void SetNextDefclass(
 /* Additional Environment Functions */
 /*##################################*/
 
-globle const char *EnvGetDefclassName(
+const char *EnvGetDefclassName(
   void *theEnv,
   void *theClass)
   {
    return EnvGetConstructNameString(theEnv,(struct constructHeader *) theClass);
   }
 
-globle const char *EnvGetDefclassPPForm(
+const char *EnvGetDefclassPPForm(
   void *theEnv,
   void *theClass)
   {
    return GetConstructPPForm(theEnv,(struct constructHeader *) theClass);
   }
 
-globle struct defmoduleItemHeader *EnvGetDefclassModule(
+struct defmoduleItemHeader *EnvGetDefclassModule(
   void *theEnv,
   void *theClass)
   {
    return GetConstructModuleItem((struct constructHeader *) theClass);
   }
 
-globle const char *EnvDefclassModule(
+const char *EnvDefclassModule(
   void *theEnv,
   void *theClass)
   {
    return GetConstructModuleName((struct constructHeader *) theClass);
   }
 
-globle void EnvSetDefclassPPForm(
+void EnvSetDefclassPPForm(
   void *theEnv,
   void *theClass,
   char *thePPForm)
@@ -938,67 +938,67 @@ globle void EnvSetDefclassPPForm(
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-globle void *FindDefclass(
+void *FindDefclass(
   const char *classAndModuleName)
   {
    return EnvFindDefclass(GetCurrentEnvironment(),classAndModuleName);
   }
 
-globle void GetDefclassList(
+void GetDefclassList(
   DATA_OBJECT *returnValue,
   struct defmodule *theModule)
   {
    EnvGetDefclassList(GetCurrentEnvironment(),returnValue,theModule);
   }
 
-globle void *GetNextDefclass(
+void *GetNextDefclass(
   void *ptr)
   {
    return EnvGetNextDefclass(GetCurrentEnvironment(),ptr);
   }
 
-globle intBool IsDefclassDeletable(
+intBool IsDefclassDeletable(
   void *ptr)
   {
    return EnvIsDefclassDeletable(GetCurrentEnvironment(),ptr);
   }
 
-globle intBool Undefclass(
+intBool Undefclass(
   void *theDefclass)
   {
    return EnvUndefclass(GetCurrentEnvironment(),theDefclass);
   }
 
-globle unsigned short SetClassDefaultsMode(
+unsigned short SetClassDefaultsMode(
   unsigned short value)
   {
    return EnvSetClassDefaultsMode(GetCurrentEnvironment(),value);
   }
 
-globle unsigned short GetClassDefaultsMode()
+unsigned short GetClassDefaultsMode()
   {
    return EnvGetClassDefaultsMode(GetCurrentEnvironment());
   }
 
-globle const char *GetDefclassName(
+const char *GetDefclassName(
   void *theClass)
   {
    return EnvGetDefclassName(GetCurrentEnvironment(),theClass);
   }
 
-globle const char *GetDefclassPPForm(
+const char *GetDefclassPPForm(
   void *theClass)
   {
    return EnvGetDefclassPPForm(GetCurrentEnvironment(),theClass);
   }
 
-globle struct defmoduleItemHeader *GetDefclassModule(
+struct defmoduleItemHeader *GetDefclassModule(
   void *theClass)
   {
    return EnvGetDefclassModule(GetCurrentEnvironment(),theClass);
   }
 
-globle const char *DefclassModule(
+const char *DefclassModule(
   void *theClass)
   {
    return EnvDefclassModule(GetCurrentEnvironment(),theClass);
@@ -1006,33 +1006,33 @@ globle const char *DefclassModule(
 
 #if DEBUGGING_FUNCTIONS
 
-globle unsigned GetDefclassWatchInstances(
+unsigned GetDefclassWatchInstances(
   void *theClass)
   {
    return EnvGetDefclassWatchInstances(GetCurrentEnvironment(),theClass);
   }
 
-globle unsigned GetDefclassWatchSlots(
+unsigned GetDefclassWatchSlots(
   void *theClass)
   {
    return EnvGetDefclassWatchSlots(GetCurrentEnvironment(),theClass);
   }
 
-globle void ListDefclasses(
+void ListDefclasses(
   const char *logicalName,
   struct defmodule *theModule)
   {
    EnvListDefclasses(GetCurrentEnvironment(),logicalName,theModule);
   }
 
-globle void SetDefclassWatchInstances(
+void SetDefclassWatchInstances(
   unsigned newState,
   void *theClass)
   {
    EnvSetDefclassWatchInstances(GetCurrentEnvironment(),newState,theClass);
   }
 
-globle void SetDefclassWatchSlots(
+void SetDefclassWatchSlots(
   unsigned newState,
   void *theClass)
   {

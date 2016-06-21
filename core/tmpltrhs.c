@@ -65,7 +65,7 @@
 /* ParseAssertTemplate: Parses and builds the list of values that */
 /*   are used for an assert of a fact with a deftemplate.         */
 /******************************************************************/
-globle struct expr *ParseAssertTemplate(
+struct expr *ParseAssertTemplate(
   void *theEnv,
   const char *readSource,
   struct token *theToken,

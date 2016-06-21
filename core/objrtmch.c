@@ -120,7 +120,7 @@ static void TraceErrorToObjectPattern(void *,int,OBJECT_PATTERN_NODE *);
                  delayed until pattern-matching is completed
   NOTES        : H/L Syntax: (object-pattern-match-delay <action>*)
  ***************************************************************************/
-globle void ObjectMatchDelay(
+void ObjectMatchDelay(
   void *theEnv,
   DATA_OBJECT *result)
   {
@@ -151,7 +151,7 @@ globle void ObjectMatchDelay(
                  all pending Rete network updates
                  are performed
  ***************************************************/
-globle intBool SetDelayObjectPatternMatching(
+intBool SetDelayObjectPatternMatching(
   void *theEnv,
   int value)
   {
@@ -178,7 +178,7 @@ globle intBool SetDelayObjectPatternMatching(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle intBool GetDelayObjectPatternMatching(
+intBool GetDelayObjectPatternMatching(
   void *theEnv)
   {
    return(ObjectReteData(theEnv)->DelayObjectPatternMatching);
@@ -193,7 +193,7 @@ globle intBool GetDelayObjectPatternMatching(
   SIDE EFFECTS : None
   NOTES        : None
  ********************************************************/
-globle OBJECT_PATTERN_NODE *ObjectNetworkPointer(
+OBJECT_PATTERN_NODE *ObjectNetworkPointer(
   void *theEnv)
   {
    return(ObjectReteData(theEnv)->ObjectPatternNetworkPointer);
@@ -207,7 +207,7 @@ globle OBJECT_PATTERN_NODE *ObjectNetworkPointer(
   SIDE EFFECTS : None
   NOTES        : None
  ********************************************************/
-globle OBJECT_ALPHA_NODE *ObjectNetworkTerminalPointer(
+OBJECT_ALPHA_NODE *ObjectNetworkTerminalPointer(
   void *theEnv)
   {
    return(ObjectReteData(theEnv)->ObjectPatternNetworkTerminalPointer);
@@ -222,7 +222,7 @@ globle OBJECT_ALPHA_NODE *ObjectNetworkTerminalPointer(
   SIDE EFFECTS : ObjectPatternNetworkPointer set
   NOTES        : None
  ***************************************************/
-globle void SetObjectNetworkPointer(
+void SetObjectNetworkPointer(
   void *theEnv,
   OBJECT_PATTERN_NODE *value)
   {
@@ -239,7 +239,7 @@ globle void SetObjectNetworkPointer(
   SIDE EFFECTS : ObjectPatternNetworkTerminalPointer set
   NOTES        : None
  *******************************************************/
-globle void SetObjectNetworkTerminalPointer(
+void SetObjectNetworkTerminalPointer(
   void *theEnv,
   OBJECT_ALPHA_NODE *value)
   {
@@ -269,7 +269,7 @@ globle void SetObjectNetworkTerminalPointer(
   SIDE EFFECTS : Action queued or Rete network updated
   NOTES        : None
  ************************************************************************/
-globle void ObjectNetworkAction(
+void ObjectNetworkAction(
   void *theEnv,
   int type,
   INSTANCE_TYPE *ins,
@@ -363,7 +363,7 @@ globle void ObjectNetworkAction(
                  valid pattern nodes on a match
   NOTES        : None
  ***************************************************/
-globle void ResetObjectMatchTimeTags(
+void ResetObjectMatchTimeTags(
   void *theEnv)
   {
    OBJECT_ALPHA_NODE *alphaPtr;

@@ -79,7 +79,7 @@
 /*   a pointer to the list of patterns which the data       */
 /*   entity matched.                                        */
 /************************************************************/
-globle void NetworkRetract(
+void NetworkRetract(
   void *theEnv,
   struct patternMatch *listOfMatchedPatterns)
   {
@@ -113,7 +113,7 @@ globle void NetworkRetract(
 /***************************************************************/
 /* PosEntryRetractAlpha:           */
 /***************************************************************/
-globle void PosEntryRetractAlpha(
+void PosEntryRetractAlpha(
   void *theEnv,
   struct partialMatch *alphaMatch,
   int operation)
@@ -245,7 +245,7 @@ static void NegEntryRetractBeta(
 /***************************************************************/
 /* PosEntryRetractBeta:           */
 /***************************************************************/
-globle void PosEntryRetractBeta(
+void PosEntryRetractBeta(
   void *theEnv,
   struct partialMatch *parentMatch,
   struct partialMatch *betaMatch,
@@ -536,7 +536,7 @@ void DeletePartialMatches(
 /* ReturnPartialMatch: Returns the data structures associated */
 /*   with a partial match to the pool of free memory.         */
 /**************************************************************/
-globle void ReturnPartialMatch(
+void ReturnPartialMatch(
   void *theEnv,
   struct partialMatch *waste)
   {
@@ -588,7 +588,7 @@ globle void ReturnPartialMatch(
 /* DestroyPartialMatch: Returns the data structures associated */
 /*   with a partial match to the pool of free memory.          */
 /***************************************************************/
-globle void DestroyPartialMatch(
+void DestroyPartialMatch(
   void *theEnv,
   struct partialMatch *waste)
   {
@@ -650,7 +650,7 @@ static void ReturnMarkers(
 /*   variable bindings directly from the fact and instance   */
 /*   data structures through the alpha memory bindings.      */
 /*************************************************************/
-globle void FlushGarbagePartialMatches(
+void FlushGarbagePartialMatches(
   void *theEnv)
   {
    struct partialMatch *pmPtr;

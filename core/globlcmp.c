@@ -60,7 +60,7 @@
 /* DefglobalCompilerSetup: Initializes the defglobal construct */
 /*    for use with the constructs-to-c command.                */
 /***************************************************************/
-globle void DefglobalCompilerSetup(
+void DefglobalCompilerSetup(
   void *theEnv)
   {
    DefglobalData(theEnv)->DefglobalCodeItem = 
@@ -280,7 +280,7 @@ static void DefglobalToCode(
 /* DefglobalCModuleReference: Writes the C code representation */
 /*   of a reference to a defglobal module data structure.      */
 /***************************************************************/
-globle void DefglobalCModuleReference(
+void DefglobalCModuleReference(
   void *theEnv,
   FILE *theFile,
   int count,
@@ -298,7 +298,7 @@ globle void DefglobalCModuleReference(
 /* DefglobalCConstructReference: Writes the C code representation */
 /*   of a reference to a defglobal data structure.                */
 /******************************************************************/
-globle void DefglobalCConstructReference(
+void DefglobalCConstructReference(
   void *theEnv,
   FILE *theFile,
   void *vTheGlobal,

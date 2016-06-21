@@ -59,7 +59,7 @@
 /************************************************************/
 /* DefglobalCommandDefinitions: Defines defglobal commands. */
 /************************************************************/
-globle void DefglobalCommandDefinitions(
+void DefglobalCommandDefinitions(
   void *theEnv)
   {
 #if ! RUN_TIME
@@ -84,7 +84,7 @@ globle void DefglobalCommandDefinitions(
 /* SetResetGlobalsCommand: H/L access routine   */
 /*   for the get-reset-globals command.         */
 /************************************************/
-globle int SetResetGlobalsCommand(
+int SetResetGlobalsCommand(
   void *theEnv)
   {
    int oldValue;
@@ -125,7 +125,7 @@ globle int SetResetGlobalsCommand(
 /* EnvSetResetGlobals: C access routine */
 /*   for the set-reset-globals command. */
 /****************************************/
-globle intBool EnvSetResetGlobals(
+intBool EnvSetResetGlobals(
   void *theEnv,
   int value)
   {
@@ -140,7 +140,7 @@ globle intBool EnvSetResetGlobals(
 /* GetResetGlobalsCommand: H/L access routine   */
 /*   for the get-reset-globals command.         */
 /************************************************/
-globle int GetResetGlobalsCommand(
+int GetResetGlobalsCommand(
   void *theEnv)
   {
    int oldValue;
@@ -157,7 +157,7 @@ globle int GetResetGlobalsCommand(
 /* EnvGetResetGlobals: C access routine */
 /*   for the get-reset-globals command. */
 /****************************************/
-globle intBool EnvGetResetGlobals(
+intBool EnvGetResetGlobals(
   void *theEnv)
   {   
    return(DefglobalData(theEnv)->ResetGlobals); 
@@ -169,7 +169,7 @@ globle intBool EnvGetResetGlobals(
 /* ShowDefglobalsCommand: H/L access routine   */
 /*   for the show-defglobals command.          */
 /***********************************************/
-globle void ShowDefglobalsCommand(
+void ShowDefglobalsCommand(
   void *theEnv)
   {
    struct defmodule *theModule;
@@ -192,7 +192,7 @@ globle void ShowDefglobalsCommand(
 /* EnvShowDefglobals: C access routine */
 /*   for the show-defglobals command.  */
 /***************************************/
-globle void EnvShowDefglobals(
+void EnvShowDefglobals(
   void *theEnv,
   const char *logicalName,
   void *vTheModule)
@@ -286,12 +286,12 @@ static void PrintDefglobalValueForm(
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-globle intBool GetResetGlobals()
+intBool GetResetGlobals()
   {   
    return EnvGetResetGlobals(GetCurrentEnvironment());
   }
 
-globle intBool SetResetGlobals(
+intBool SetResetGlobals(
   int value)
   {
    return EnvSetResetGlobals(GetCurrentEnvironment(),value);
@@ -299,7 +299,7 @@ globle intBool SetResetGlobals(
 
 #if DEBUGGING_FUNCTIONS
 
-globle void ShowDefglobals(
+void ShowDefglobals(
   const char *logicalName,
   void *vTheModule)
   {

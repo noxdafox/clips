@@ -69,7 +69,7 @@
 /********************************************/
 /* InitializeMemory: Sets up memory tables. */
 /********************************************/
-globle void InitializeMemory(
+void InitializeMemory(
   void *theEnv)
   {
    AllocateEnvironmentData(theEnv,MEMORY_DATA,sizeof(struct memoryData),NULL);
@@ -100,7 +100,7 @@ globle void InitializeMemory(
 /***************************************************/
 /* genalloc: A generic memory allocation function. */
 /***************************************************/
-globle void *genalloc(
+void *genalloc(
   void *theEnv,
   size_t size)
   {
@@ -135,7 +135,7 @@ globle void *genalloc(
 /* DefaultOutOfMemoryFunction: Function called */
 /*   when the KB runs out of memory.           */
 /***********************************************/
-globle int DefaultOutOfMemoryFunction(
+int DefaultOutOfMemoryFunction(
   void *theEnv,
   size_t size)
   {
@@ -153,7 +153,7 @@ globle int DefaultOutOfMemoryFunction(
 /* EnvSetOutOfMemoryFunction: Allows the function which is */
 /*   called when the KB runs out of memory to be changed.  */
 /***********************************************************/
-globle int (*EnvSetOutOfMemoryFunction(void *theEnv,int (*functionPtr)(void *,size_t)))(void *,size_t)
+int (*EnvSetOutOfMemoryFunction(void *theEnv,int (*functionPtr)(void *,size_t)))(void *,size_t)
   {
    int (*tmpPtr)(void *,size_t);
 
@@ -165,7 +165,7 @@ globle int (*EnvSetOutOfMemoryFunction(void *theEnv,int (*functionPtr)(void *,si
 /****************************************************/
 /* genfree: A generic memory deallocation function. */
 /****************************************************/
-globle int genfree(
+int genfree(
   void *theEnv,
   void *waste,
   size_t size)
@@ -181,7 +181,7 @@ globle int genfree(
 /******************************************************/
 /* genrealloc: Simple (i.e. dumb) version of realloc. */
 /******************************************************/
-globle void *genrealloc(
+void *genrealloc(
   void *theEnv,
   void *oldaddr,
   size_t oldsz,
@@ -210,7 +210,7 @@ globle void *genrealloc(
 /* EnvMemUsed: C access routine */
 /*   for the mem-used command.  */
 /********************************/
-globle long int EnvMemUsed(
+long int EnvMemUsed(
   void *theEnv)
   {
    return(MemoryData(theEnv)->MemoryAmount);
@@ -220,7 +220,7 @@ globle long int EnvMemUsed(
 /* EnvMemRequests: C access routine */
 /*   for the mem-requests command.  */
 /************************************/
-globle long int EnvMemRequests(
+long int EnvMemRequests(
   void *theEnv)
   {
    return(MemoryData(theEnv)->MemoryCalls);
@@ -230,7 +230,7 @@ globle long int EnvMemRequests(
 /* UpdateMemoryUsed: Allows the amount */
 /*   of memory used to be updated.     */
 /***************************************/
-globle long int UpdateMemoryUsed(
+long int UpdateMemoryUsed(
   void *theEnv,
   long int value)
   {
@@ -242,7 +242,7 @@ globle long int UpdateMemoryUsed(
 /* UpdateMemoryRequests: Allows the number */
 /*   of memory requests to be updated.     */
 /*******************************************/
-globle long int UpdateMemoryRequests(
+long int UpdateMemoryRequests(
   void *theEnv,
   long int value)
   {
@@ -254,7 +254,7 @@ globle long int UpdateMemoryRequests(
 /* EnvReleaseMem: C access routine */
 /*   for the release-mem command.  */
 /***********************************/
-globle long int EnvReleaseMem(
+long int EnvReleaseMem(
   void *theEnv,
   long int maximum)
   {
@@ -288,7 +288,7 @@ globle long int EnvReleaseMem(
 /*****************************************************/
 /* gm1: Allocates memory and sets all bytes to zero. */
 /*****************************************************/
-globle void *gm1(
+void *gm1(
   void *theEnv,
   size_t size)
   {
@@ -327,7 +327,7 @@ globle void *gm1(
 /*****************************************************/
 /* gm2: Allocates memory and does not initialize it. */
 /*****************************************************/
-globle void *gm2(
+void *gm2(
   void *theEnv,
   size_t size)
   {
@@ -357,7 +357,7 @@ globle void *gm2(
 /*****************************************************/
 /* gm3: Allocates memory and does not initialize it. */
 /*****************************************************/
-globle void *gm3(
+void *gm3(
   void *theEnv,
   size_t size)
   {
@@ -386,7 +386,7 @@ globle void *gm3(
 /* rm: Returns a block of memory to the */
 /*   maintained pool of free memory.    */
 /****************************************/
-globle int rm(
+int rm(
   void *theEnv,
   void *str,
   size_t size)
@@ -421,7 +421,7 @@ globle int rm(
 /*   maintained pool of free memory that's  */
 /*   size is indicated with a long integer. */
 /********************************************/
-globle int rm3(
+int rm3(
   void *theEnv,
   void *str,
   size_t size)
@@ -454,7 +454,7 @@ globle int rm3(
 /***************************************************/
 /* PoolSize: Returns number of bytes in free pool. */
 /***************************************************/
-globle unsigned long PoolSize(
+unsigned long PoolSize(
   void *theEnv)
   {
    unsigned long cnt = 0;
@@ -482,7 +482,7 @@ globle unsigned long PoolSize(
 /*   store the free pool.  This routine is functionally        */
 /*   equivalent to pool_size on anything other than the IBM-PC */
 /***************************************************************/
-globle unsigned long ActualPoolSize(
+unsigned long ActualPoolSize(
   void *theEnv)
   {
    return(PoolSize(theEnv));
@@ -492,7 +492,7 @@ globle unsigned long ActualPoolSize(
 /* EnvSetConserveMemory: Allows the setting */
 /*    of the memory conservation flag.      */
 /********************************************/
-globle intBool EnvSetConserveMemory(
+intBool EnvSetConserveMemory(
   void *theEnv,
   intBool value)
   {
@@ -507,7 +507,7 @@ globle intBool EnvSetConserveMemory(
 /* EnvGetConserveMemory: Returns the value */
 /*    of the memory conservation flag.     */
 /*******************************************/
-globle intBool EnvGetConserveMemory(
+intBool EnvGetConserveMemory(
   void *theEnv)
   {
    return(MemoryData(theEnv)->ConserveMemory);
@@ -516,7 +516,7 @@ globle intBool EnvGetConserveMemory(
 /**************************/
 /* genmemcpy:             */
 /**************************/
-globle void genmemcpy(
+void genmemcpy(
   char *dst,
   char *src,
   unsigned long size)
@@ -533,34 +533,34 @@ globle void genmemcpy(
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-globle intBool GetConserveMemory()
+intBool GetConserveMemory()
   {
    return EnvGetConserveMemory(GetCurrentEnvironment());
   }
 
-globle long int MemRequests()
+long int MemRequests()
   {
    return EnvMemRequests(GetCurrentEnvironment());
   }
 
-globle long int MemUsed()
+long int MemUsed()
   {
    return EnvMemUsed(GetCurrentEnvironment());
   }
 
-globle long int ReleaseMem(
+long int ReleaseMem(
   long int maximum)
   {
    return EnvReleaseMem(GetCurrentEnvironment(),maximum);
   }
 
-globle intBool SetConserveMemory(
+intBool SetConserveMemory(
   intBool value)
   {
    return EnvSetConserveMemory(GetCurrentEnvironment(),value);
   }
 
-globle int (*SetOutOfMemoryFunction(int (*functionPtr)(void *,size_t)))(void *,size_t)
+int (*SetOutOfMemoryFunction(int (*functionPtr)(void *,size_t)))(void *,size_t)
   {
    return EnvSetOutOfMemoryFunction(GetCurrentEnvironment(),functionPtr);
   }

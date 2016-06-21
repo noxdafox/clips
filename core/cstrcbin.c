@@ -49,7 +49,7 @@
   SIDE EFFECTS : Id set and items marked
   NOTES        : None
  ***************************************************/
-globle void MarkConstructHeaderNeededItems(
+void MarkConstructHeaderNeededItems(
   struct constructHeader *theConstruct,
   long theBsaveID)
   {
@@ -74,7 +74,7 @@ globle void MarkConstructHeaderNeededItems(
                  used for the whichModule id of
                  this construct.
  ******************************************************/
-globle void AssignBsaveConstructHeaderVals(
+void AssignBsaveConstructHeaderVals(
   struct bsaveConstructHeader *theBsaveConstruct,
   struct constructHeader *theConstruct)
   {
@@ -143,7 +143,7 @@ LOCALE void UpdateConstructHeader(
   SIDE EFFECTS : Busy counts fo ephemerals decremented
   NOTES        : None
  *******************************************************/
-globle void UnmarkConstructHeader(
+void UnmarkConstructHeader(
   void *theEnv,
   struct constructHeader *theConstruct)
   {

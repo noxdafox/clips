@@ -138,7 +138,7 @@ static DEFGENERIC *NewGeneric(void *,SYMBOL_HN *);
   NOTES        : H/L Syntax :
                  (defgeneric <name> [<comment>])
  ***************************************************************************/
-globle intBool ParseDefgeneric(
+intBool ParseDefgeneric(
   void *theEnv,
   const char *readSource)
   {
@@ -207,7 +207,7 @@ globle intBool ParseDefgeneric(
                  <wildcard>    :== $?<name> |
                                    ($?<name> <type>* [<restriction-query>])
  ***************************************************************************/
-globle intBool ParseDefmethod(
+intBool ParseDefmethod(
   void *theEnv,
   const char *readSource)
   {
@@ -423,7 +423,7 @@ DefmethodParseError:
                    is already present or not.  Arguments #1 and #2
                    should be the values obtained from FindMethod...().
  ************************************************************************/
-globle DEFMETHOD *AddMethod(
+DEFMETHOD *AddMethod(
   void *theEnv,
   DEFGENERIC *gfunc,
   DEFMETHOD *meth,
@@ -550,7 +550,7 @@ globle DEFMETHOD *AddMethod(
   SIDE EFFECTS : Array allocated & expressions freed
   NOTES        : None
  *****************************************************/
-globle void PackRestrictionTypes(
+void PackRestrictionTypes(
   void *theEnv,
   RESTRICTION *rptr,
   EXPRESSION *types)
@@ -579,7 +579,7 @@ globle void PackRestrictionTypes(
   SIDE EFFECTS : List deallocated
   NOTES        : None
  ***************************************************/
-globle void DeleteTempRestricts(
+void DeleteTempRestricts(
   void *theEnv,
   EXPRESSION *phead)
   {
@@ -617,7 +617,7 @@ globle void DeleteTempRestricts(
                    already present
   NOTES        : None
  **********************************************************/
-globle DEFMETHOD *FindMethodByRestrictions(
+DEFMETHOD *FindMethodByRestrictions(
   DEFGENERIC *gfunc,
   EXPRESSION *params,
   int rcnt,

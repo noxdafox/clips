@@ -85,7 +85,7 @@ struct bsaveFactPatternNode
 /* FactBinarySetup: Initializes the binary load/save */
 /*   feature for the fact pattern network.           */
 /*****************************************************/
-globle void FactBinarySetup(
+void FactBinarySetup(
   void *theEnv)
   {
    AllocateEnvironmentData(theEnv,FACTBIN_DATA,sizeof(struct factBinaryData),DeallocateFactBloadData);

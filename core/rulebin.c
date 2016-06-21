@@ -87,7 +87,7 @@
 /* DefruleBinarySetup: Installs the binary save/load */
 /*   feature for the defrule construct.              */
 /*****************************************************/
-globle void DefruleBinarySetup(
+void DefruleBinarySetup(
   void *theEnv)
   {
    AllocateEnvironmentData(theEnv,RULEBIN_DATA,sizeof(struct defruleBinaryData),DeallocateDefruleBloadData);
@@ -745,7 +745,7 @@ static void BsaveLink(
 /* AssignBsavePatternHeaderValues: Assigns the appropriate */
 /*   values to a bsave pattern header record.              */
 /***********************************************************/
-globle void AssignBsavePatternHeaderValues(
+void AssignBsavePatternHeaderValues(
   void *theEnv,
   struct bsavePatternNodeHeader *theBsaveHeader,
   struct patternNodeHeader *theHeader)
@@ -1001,7 +1001,7 @@ static void UpdateLink(
 /* UpdatePatternNodeHeader: Refreshes the values in pattern */
 /*   node headers from the loaded binary image.             */
 /************************************************************/
-globle void UpdatePatternNodeHeader(
+void UpdatePatternNodeHeader(
   void *theEnv,
   struct patternNodeHeader *theHeader,
   struct bsavePatternNodeHeader *theBsaveHeader)
@@ -1120,7 +1120,7 @@ static void ClearBload(
 /* BloadDefruleModuleReference: Returns the defrule    */
 /*   module pointer for using with the bload function. */
 /*******************************************************/
-globle void *BloadDefruleModuleReference(
+void *BloadDefruleModuleReference(
   void *theEnv,
   int theIndex)
   {

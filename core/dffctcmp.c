@@ -60,7 +60,7 @@
 /* DeffactsCompilerSetup: Initializes the deffacts construct */
 /*    for use with the constructs-to-c command.              */
 /*************************************************************/
-globle void DeffactsCompilerSetup(
+void DeffactsCompilerSetup(
   void *theEnv)
   {
    DeffactsData(theEnv)->DeffactsCodeItem = 
@@ -253,7 +253,7 @@ static void DeffactsToCode(
 /* DeffactsCModuleReference: Writes the C code representation */
 /*   of a reference to a deffacts module data structure.      */
 /**************************************************************/
-globle void DeffactsCModuleReference(
+void DeffactsCModuleReference(
   void *theEnv,
   FILE *theFile,
   int count,

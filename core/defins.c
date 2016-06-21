@@ -142,7 +142,7 @@ static void DeallocateDefinstancesData(void *);
   SIDE EFFECTS : Appropriate function lists modified
   NOTES        : None
  ***************************************************/
-globle void SetupDefinstances(
+void SetupDefinstances(
   void *theEnv)
   {
    AllocateEnvironmentData(theEnv,DEFINSTANCES_DATA,sizeof(struct definstancesData),DeallocateDefinstancesData);
@@ -293,7 +293,7 @@ static void DestroyDefinstancesAction(
   NOTES        : If ptr == NULL, the first definstances
                     is returned.
  ***********************************************************/
-globle void *EnvGetNextDefinstances(
+void *EnvGetNextDefinstances(
   void *theEnv,
   void *ptr)
   {
@@ -311,7 +311,7 @@ globle void *EnvGetNextDefinstances(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle void *EnvFindDefinstances(
+void *EnvFindDefinstances(
   void *theEnv,
   const char *name)
   {
@@ -328,7 +328,7 @@ globle void *EnvFindDefinstances(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle void *EnvFindDefinstancesInModule(
+void *EnvFindDefinstancesInModule(
   void *theEnv,
   const char *name)
   {
@@ -344,7 +344,7 @@ globle void *EnvFindDefinstancesInModule(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle int EnvIsDefinstancesDeletable(
+int EnvIsDefinstancesDeletable(
   void *theEnv,
   void *ptr)
   {
@@ -362,7 +362,7 @@ globle int EnvIsDefinstancesDeletable(
   SIDE EFFECTS : Definstance deallocated
   NOTES        : H/L Syntax : (undefinstances <name> | *)
  ***********************************************************/
-globle void UndefinstancesCommand(
+void UndefinstancesCommand(
   void *theEnv)
   {
    UndefconstructCommand(theEnv,"undefinstances",DefinstancesData(theEnv)->DefinstancesConstruct);
@@ -376,7 +376,7 @@ globle void UndefinstancesCommand(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax: (definstances-module <defins-name>)
  *****************************************************************/
-globle void *GetDefinstancesModuleCommand(
+void *GetDefinstancesModuleCommand(
   void *theEnv)
   {
    return(GetConstructModuleCommand(theEnv,"definstances-module",DefinstancesData(theEnv)->DefinstancesConstruct));
@@ -391,7 +391,7 @@ globle void *GetDefinstancesModuleCommand(
   SIDE EFFECTS : Definstance deallocated
   NOTES        : None
  ***********************************************************/
-globle intBool EnvUndefinstances(
+intBool EnvUndefinstances(
   void *theEnv,
   void *vptr)
   {
@@ -429,7 +429,7 @@ globle intBool EnvUndefinstances(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (ppdefinstances <name>)
  ***************************************************************/
-globle void PPDefinstancesCommand(
+void PPDefinstancesCommand(
   void *theEnv)
   {
    PPConstructCommand(theEnv,"ppdefinstances",DefinstancesData(theEnv)->DefinstancesConstruct);
@@ -443,7 +443,7 @@ globle void PPDefinstancesCommand(
   SIDE EFFECTS : Definstances name sprinted
   NOTES        : H/L Interface
  ***************************************************/
-globle void ListDefinstancesCommand(
+void ListDefinstancesCommand(
   void *theEnv)
   {
    ListConstructCommand(theEnv,"list-definstances",DefinstancesData(theEnv)->DefinstancesConstruct);
@@ -458,7 +458,7 @@ globle void ListDefinstancesCommand(
   SIDE EFFECTS : Definstances names printed
   NOTES        : C Interface
  ***************************************************/
-globle void EnvListDefinstances(
+void EnvListDefinstances(
   void *theEnv,
   const char *logicalName,
   struct defmodule *theModule)
@@ -478,7 +478,7 @@ globle void EnvListDefinstances(
   SIDE EFFECTS : Multifield allocated and filled
   NOTES        : H/L Syntax: (get-definstances-list [<module>])
  ****************************************************************/
-globle void GetDefinstancesListFunction(
+void GetDefinstancesListFunction(
   void *theEnv,
   DATA_OBJECT*returnValue)
   {
@@ -496,7 +496,7 @@ globle void GetDefinstancesListFunction(
   SIDE EFFECTS : Multifield allocated and filled
   NOTES        : External C access
  ***************************************************************/
-globle void EnvGetDefinstancesList(
+void EnvGetDefinstancesList(
   void *theEnv,
   DATA_OBJECT *returnValue,
   struct defmodule *theModule)
@@ -971,21 +971,21 @@ static void ResetDefinstancesAction(
 /* Additional Environment Functions */
 /*##################################*/
 
-globle const char *EnvGetDefinstancesName(
+const char *EnvGetDefinstancesName(
   void *theEnv,
   void *theDefinstances)
   {
    return GetConstructNameString((struct constructHeader *) theDefinstances);
   }
 
-globle const char *EnvGetDefinstancesPPForm(
+const char *EnvGetDefinstancesPPForm(
   void *theEnv,
   void *theDefinstances)
   {
    return GetConstructPPForm(theEnv,(struct constructHeader *) theDefinstances);
   }
 
-globle void EnvSetDefinstancesPPForm(
+void EnvSetDefinstancesPPForm(
   void *theEnv,
   void *theDefinstances,
   const char *thePPForm)
@@ -993,21 +993,21 @@ globle void EnvSetDefinstancesPPForm(
    SetConstructPPForm(theEnv,(struct constructHeader *) theDefinstances,thePPForm);
   }
 
-globle const char *EnvDefinstancesModule(
+const char *EnvDefinstancesModule(
   void *theEnv,
   void *theDefinstances)
   {
    return GetConstructModuleName((struct constructHeader *) theDefinstances);
   }
 
-globle SYMBOL_HN *EnvGetDefinstancesNamePointer(
+SYMBOL_HN *EnvGetDefinstancesNamePointer(
   void *theEnv,
   void *theDefinstances)
   {
    return GetConstructNamePointer((struct constructHeader *) theDefinstances);
   }
 
-globle const char *EnvDefinstancesModuleName(
+const char *EnvDefinstancesModuleName(
   void *theEnv,
   void *theDefinstances)
   {
@@ -1020,50 +1020,50 @@ globle const char *EnvDefinstancesModuleName(
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-globle const char *DefinstancesModule(
+const char *DefinstancesModule(
   void *theDefinstances)
   {
    return EnvDefinstancesModule(GetCurrentEnvironment(),theDefinstances);
   }
 
-globle void *FindDefinstances(
+void *FindDefinstances(
   const char *name)
   {
    return EnvFindDefinstances(GetCurrentEnvironment(),name);
   }
 
-globle void GetDefinstancesList(
+void GetDefinstancesList(
   DATA_OBJECT *returnValue,
   struct defmodule *theModule)
   {
    EnvGetDefinstancesList(GetCurrentEnvironment(),returnValue,theModule);
   }
 
-globle const char *GetDefinstancesName(
+const char *GetDefinstancesName(
   void *theDefinstances)
   {
    return EnvGetDefinstancesName(GetCurrentEnvironment(),theDefinstances);
   }
 
-globle const char *GetDefinstancesPPForm(
+const char *GetDefinstancesPPForm(
   void *theDefinstances)
   {
    return EnvGetDefinstancesPPForm(GetCurrentEnvironment(),theDefinstances);
   }
 
-globle void *GetNextDefinstances(
+void *GetNextDefinstances(
   void *ptr)
   {
    return EnvGetNextDefinstances(GetCurrentEnvironment(),ptr);
   }
 
-globle int IsDefinstancesDeletable(
+int IsDefinstancesDeletable(
   void *ptr)
   {
    return EnvIsDefinstancesDeletable(GetCurrentEnvironment(),ptr);
   }
 
-globle intBool Undefinstances(
+intBool Undefinstances(
   void *vptr)
   {
    return EnvUndefinstances(GetCurrentEnvironment(),vptr);
@@ -1071,7 +1071,7 @@ globle intBool Undefinstances(
 
 #if DEBUGGING_FUNCTIONS
 
-globle void ListDefinstances(
+void ListDefinstances(
   const char *logicalName,
   struct defmodule *theModule)
   {

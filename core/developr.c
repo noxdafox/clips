@@ -80,7 +80,7 @@ static void PrintOPNLevel(void *theEnv,OBJECT_PATTERN_NODE *,char *,int);
 /**************************************************/
 /* DeveloperCommands: Sets up developer commands. */
 /**************************************************/
-globle void DeveloperCommands(
+void DeveloperCommands(
   void *theEnv)
   {
 #if ! RUN_TIME
@@ -110,7 +110,7 @@ globle void DeveloperCommands(
 /* PrimitiveTablesInfo: Prints information about the  */
 /*   symbol, float, integer, and bitmap tables.       */
 /******************************************************/
-globle void PrimitiveTablesInfo(
+void PrimitiveTablesInfo(
   void *theEnv)
   {
    unsigned long i;
@@ -196,7 +196,7 @@ globle void PrimitiveTablesInfo(
 /* PrimitiveTablesUsage: Prints information about the  */
 /*   symbol, float, integer, and bitmap tables.       */
 /******************************************************/
-globle void PrimitiveTablesUsage(
+void PrimitiveTablesUsage(
   void *theEnv)
   {
    unsigned long i;
@@ -289,7 +289,7 @@ globle void PrimitiveTablesUsage(
 /* ValidateFactIntegrity: Command for checking */
 /*   the facts for atom value integrity.       */
 /***********************************************/
-globle intBool ValidateFactIntegrity(
+intBool ValidateFactIntegrity(
   void *theEnv)
   {
    struct fact *theFact;
@@ -345,7 +345,7 @@ globle intBool ValidateFactIntegrity(
 /* ShowFactPatternNetwork: Command for displaying the  */
 /*   fact pattern network for a specified deftemplate. */
 /*******************************************************/
-globle void ShowFactPatternNetwork(
+void ShowFactPatternNetwork(
   void *theEnv)
   {
    struct factPatternNode *patternPtr;
@@ -417,7 +417,7 @@ globle void ShowFactPatternNetwork(
   SIDE EFFECTS : Object pattern network displayed
   NOTES        : None
  ***************************************************/
-globle void PrintObjectPatternNetwork(
+void PrintObjectPatternNetwork(
   void *theEnv)
   {
    char indentbuf[80];
@@ -522,7 +522,7 @@ static void PrintOPNLevel(
 /* InstanceTableUsage: Prints information about the  */
 /*   instances in the instance hash table.       */
 /******************************************************/
-globle void InstanceTableUsage(
+void InstanceTableUsage(
   void *theEnv)
   {
    unsigned long i;
@@ -639,7 +639,7 @@ static void ValidateRuleBetaMemoriesAction(
 /************************/
 /* ValidateBetaMemories */
 /************************/
-globle void ValidateBetaMemories(
+void ValidateBetaMemories(
   void *theEnv)
   {
   EnvPrintRouter(theEnv,WPROMPT,"ValidateBetaMemories");

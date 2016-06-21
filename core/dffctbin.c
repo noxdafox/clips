@@ -61,7 +61,7 @@
 /* DeffactsBinarySetup: Installs the binary */
 /*   save/load feature for deffacts.        */
 /********************************************/
-globle void DeffactsBinarySetup(
+void DeffactsBinarySetup(
   void *theEnv)
   {
    AllocateEnvironmentData(theEnv,DFFCTBIN_DATA,sizeof(struct deffactsBinaryData),DeallocateDeffactsBloadData);
@@ -463,7 +463,7 @@ static void ClearBload(
 /* BloadDeffactsModuleReference: Returns the deffacts */
 /*   module pointer for use with the bload function.  */
 /******************************************************/
-globle void *BloadDeffactsModuleReference(
+void *BloadDeffactsModuleReference(
   void *theEnv,
   int theIndex)
   {

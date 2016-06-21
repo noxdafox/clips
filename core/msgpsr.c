@@ -115,7 +115,7 @@ static void GenHandlerSlotReference(void *,EXPRESSION *,unsigned short,SLOT_DESC
 
                  <params> ::= <var>* | <var>* $?<name>
  ***********************************************************************/
-globle int ParseDefmessageHandler(
+int ParseDefmessageHandler(
   void *theEnv,
   const char *readSource)
   {
@@ -326,7 +326,7 @@ globle int ParseDefmessageHandler(
   SIDE EFFECTS : Message-handlers created
   NOTES        : A put handler is not created for read-only slots
  *******************************************************************************/
-globle void CreateGetAndPutHandlers(
+void CreateGetAndPutHandlers(
   void *theEnv,
   SLOT_DESC *sd)
   {

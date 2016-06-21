@@ -82,7 +82,7 @@
 /* ParseDefglobal: Coordinates all actions necessary for the parsing */
 /*   and creation of a defglobal into the current environment.       */
 /*********************************************************************/
-globle intBool ParseDefglobal(
+intBool ParseDefglobal(
   void *theEnv,
   const char *readSource)
   {
@@ -446,7 +446,7 @@ static void AddDefglobal(
 /*   expression with the appropriate primitive data type which   */
 /*   can later be used to retrieve the global variable's value.  */
 /*****************************************************************/
-globle intBool ReplaceGlobalVariable(
+intBool ReplaceGlobalVariable(
   void *theEnv,
   struct expr *ePtr)
   {
@@ -498,7 +498,7 @@ globle intBool ReplaceGlobalVariable(
 /* GlobalReferenceErrorMessage: Prints an error message when a   */
 /*   symbolic reference to a global variable cannot be resolved. */
 /*****************************************************************/
-globle void GlobalReferenceErrorMessage(
+void GlobalReferenceErrorMessage(
   void *theEnv,
   const char *variableName)
   {

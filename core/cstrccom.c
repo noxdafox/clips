@@ -102,7 +102,7 @@
 /* AddConstructToModule: Adds a     */
 /* construct to the current module. */
 /************************************/
-globle void AddConstructToModule(
+void AddConstructToModule(
   struct constructHeader *theConstruct)
   {
    if (theConstruct->whichModule->lastItem == NULL)
@@ -120,7 +120,7 @@ globle void AddConstructToModule(
 /* DeleteNamedConstruct: Generic driver routine for */
 /*   deleting a specific construct from a module.   */
 /****************************************************/
-globle intBool DeleteNamedConstruct(
+intBool DeleteNamedConstruct(
   void *theEnv,
   const char *constructName,
   struct construct *constructClass)
@@ -180,7 +180,7 @@ globle intBool DeleteNamedConstruct(
 /* FindNamedConstructInModuleOrImports: Generic routine */
 /*   for searching for a specified construct.           */
 /********************************************************/
-globle void *FindNamedConstructInModuleOrImports(
+void *FindNamedConstructInModuleOrImports(
   void *theEnv,
   const char *constructName,
   struct construct *constructClass)
@@ -223,7 +223,7 @@ globle void *FindNamedConstructInModuleOrImports(
 /* FindNamedConstructInModule: Generic routine */
 /*   for searching for a specified construct.  */
 /***********************************************/
-globle void *FindNamedConstructInModule(
+void *FindNamedConstructInModule(
   void *theEnv,
   const char *constructName,
   struct construct *constructClass)
@@ -310,7 +310,7 @@ globle void *FindNamedConstructInModule(
 /* UndefconstructCommand: Driver routine */
 /*   for the undef<construct> commands.  */
 /*****************************************/
-globle void UndefconstructCommand(
+void UndefconstructCommand(
   void *theEnv,
   const char *command,
   struct construct *constructClass)
@@ -366,7 +366,7 @@ globle void UndefconstructCommand(
 /* PPConstructCommand: Driver routine for */
 /*   the ppdef<construct> commands.       */
 /******************************************/
-globle void PPConstructCommand(
+void PPConstructCommand(
   void *theEnv,
   const char *command,
   struct construct *constructClass)
@@ -397,7 +397,7 @@ globle void PPConstructCommand(
 /* PPConstruct: Driver routine for */
 /*   pretty printing a construct.  */
 /***********************************/
-globle int PPConstruct(
+int PPConstruct(
   void *theEnv,
   const char *constructName,
   const char *logicalName,
@@ -442,7 +442,7 @@ globle int PPConstruct(
 /* GetConstructModuleCommand: Driver routine */
 /*   for def<construct>-module routines      */
 /*********************************************/
-globle SYMBOL_HN *GetConstructModuleCommand(
+SYMBOL_HN *GetConstructModuleCommand(
   void *theEnv,
   const char *command,
   struct construct *constructClass)
@@ -483,7 +483,7 @@ globle SYMBOL_HN *GetConstructModuleCommand(
 /* GetConstructModule: Driver routine for */
 /*   getting the module for a construct   */
 /******************************************/
-globle struct defmodule *GetConstructModule(
+struct defmodule *GetConstructModule(
   void *theEnv,
   const char *constructName,
   struct construct *constructClass)
@@ -524,7 +524,7 @@ globle struct defmodule *GetConstructModule(
 /* Undefconstruct: Generic C routine */
 /*   for deleting a construct.       */
 /*************************************/
-globle intBool Undefconstruct(
+intBool Undefconstruct(
   void *theEnv,
   void *theConstruct,
   struct construct *constructClass)
@@ -652,7 +652,7 @@ globle intBool Undefconstruct(
 /* SaveConstruct: Generic routine  */
 /*   for saving a construct class. */
 /***********************************/
-globle void SaveConstruct(
+void SaveConstruct(
   void *theEnv,
   void *theModule,
   const char *logicalName,
@@ -708,7 +708,7 @@ globle void SaveConstruct(
 /* GetConstructModuleName: Generic routine for returning */
 /*   the name of the module to which a construct belongs */
 /*********************************************************/
-globle const char *GetConstructModuleName(
+const char *GetConstructModuleName(
   struct constructHeader *theConstruct)
   { return(EnvGetDefmoduleName(NULL,(void *) theConstruct->whichModule->theModule)); }
 
@@ -716,7 +716,7 @@ globle const char *GetConstructModuleName(
 /* GetConstructNameString: Generic routine for returning */
 /*   the name string of a construct.                     */
 /*********************************************************/
-globle const char *GetConstructNameString(
+const char *GetConstructNameString(
   struct constructHeader *theConstruct)
   { return(ValueToString(theConstruct->name)); }
 
@@ -724,7 +724,7 @@ globle const char *GetConstructNameString(
 /* EnvGetConstructNameString: Generic routine for */
 /*   returning the name string of a construct.    */
 /**************************************************/
-globle const char *EnvGetConstructNameString(
+const char *EnvGetConstructNameString(
   void *theEnv,
   struct constructHeader *theConstruct)
   { 
@@ -739,7 +739,7 @@ globle const char *EnvGetConstructNameString(
 /* GetConstructNamePointer: Generic routine for returning */
 /*   the name pointer of a construct.                     */
 /**********************************************************/
-globle SYMBOL_HN *GetConstructNamePointer(
+SYMBOL_HN *GetConstructNamePointer(
   struct constructHeader *theConstruct)
   { return(theConstruct->name); }
 
@@ -747,7 +747,7 @@ globle SYMBOL_HN *GetConstructNamePointer(
 /* GetConstructListFunction: Generic Routine    */
 /*   for retrieving the constructs in a module. */
 /************************************************/
-globle void GetConstructListFunction(
+void GetConstructListFunction(
   void *theEnv,
   const char *functionName,
   DATA_OBJECT_PTR returnValue,
@@ -825,7 +825,7 @@ globle void GetConstructListFunction(
 /* GetConstructList: Generic C Routine for  */
 /*   retrieving the constructs in a module. */
 /********************************************/
-globle void GetConstructList(
+void GetConstructList(
   void *theEnv,
   DATA_OBJECT_PTR returnValue,
   struct construct *constructClass,
@@ -1002,7 +1002,7 @@ globle void GetConstructList(
 /* ListConstructCommand: Generic Routine for */
 /*   listing the constructs in a module.     */
 /*********************************************/
-globle void ListConstructCommand(
+void ListConstructCommand(
   void *theEnv,
   const char *functionName,
   struct construct *constructClass)
@@ -1073,7 +1073,7 @@ globle void ListConstructCommand(
 /* ListConstruct: Generic C Routine for  */
 /*   listing the constructs in a module. */
 /*****************************************/
-globle void ListConstruct(
+void ListConstruct(
   void *theEnv,
   struct construct *constructClass,
   const char *logicalName,
@@ -1172,7 +1172,7 @@ globle void ListConstruct(
 /* SetNextConstruct: Sets the next field of one construct */
 /*   to point to another construct of the same type.      */
 /**********************************************************/
-globle void SetNextConstruct(
+void SetNextConstruct(
   struct constructHeader *theConstruct,
   struct constructHeader *targetConstruct)
   { theConstruct->next = targetConstruct; }
@@ -1183,7 +1183,7 @@ globle void SetNextConstruct(
 /*   like the deffactsModule, not a pointer to an environment       */
 /*   module which contains a number of types of constructs.         */
 /********************************************************************/
-globle struct defmoduleItemHeader *GetConstructModuleItem(
+struct defmoduleItemHeader *GetConstructModuleItem(
   struct constructHeader *theConstruct)
   { return(theConstruct->whichModule); }
 
@@ -1191,7 +1191,7 @@ globle struct defmoduleItemHeader *GetConstructModuleItem(
 /* GetConstructPPForm: Returns the pretty print  */
 /*   representation for the specified construct. */
 /*************************************************/
-globle const char *GetConstructPPForm(
+const char *GetConstructPPForm(
   void *theEnv,
   struct constructHeader *theConstruct)
   { 
@@ -1206,7 +1206,7 @@ globle const char *GetConstructPPForm(
 /* GetNextConstructItem: Returns the next construct */
 /*   items from a list of constructs.               */
 /****************************************************/
-globle struct constructHeader *GetNextConstructItem(
+struct constructHeader *GetNextConstructItem(
   void *theEnv,
   struct constructHeader *theConstruct,
   int moduleIndex)
@@ -1232,7 +1232,7 @@ globle struct constructHeader *GetNextConstructItem(
 /*  construct module item for the specified construct  */
 /*  is returned.                                       */
 /*******************************************************/
-globle struct defmoduleItemHeader *GetConstructModuleItemByIndex(
+struct defmoduleItemHeader *GetConstructModuleItemByIndex(
   void *theEnv,
   struct defmodule *theModule,
   int moduleIndex)
@@ -1252,7 +1252,7 @@ globle struct defmoduleItemHeader *GetConstructModuleItemByIndex(
 /*   the data structures associated with  */
 /*   the construct module item header.    */
 /******************************************/
-globle void FreeConstructHeaderModule(
+void FreeConstructHeaderModule(
   void *theEnv,
   struct defmoduleItemHeader *theModuleItem,
   struct construct *constructClass)
@@ -1273,7 +1273,7 @@ globle void FreeConstructHeaderModule(
 /* DoForAllConstructs: Executes an action for */
 /*   all constructs of a specified type.      */
 /**********************************************/
-globle long DoForAllConstructs(
+long DoForAllConstructs(
   void *theEnv,
   void (*actionFunction)(void *,struct constructHeader *,void *),
   int moduleItemIndex,
@@ -1362,7 +1362,7 @@ globle long DoForAllConstructs(
 /* DoForAllConstructsInModule: Executes an action for */
 /*   all constructs of a specified type in a module.  */
 /******************************************************/
-globle void DoForAllConstructsInModule(
+void DoForAllConstructsInModule(
   void *theEnv,
   void *theModule,
   void (*actionFunction)(void *,struct constructHeader *,void *),
@@ -1421,7 +1421,7 @@ globle void DoForAllConstructsInModule(
 /*   header info, including to which module item the */
 /*   new construct belongs                           */
 /*****************************************************/
-globle void InitializeConstructHeader(
+void InitializeConstructHeader(
   void *theEnv,
   const char *constructType,
   struct constructHeader *theConstruct,
@@ -1446,7 +1446,7 @@ globle void InitializeConstructHeader(
 /* SetConstructPPForm: Sets a construct's pretty */
 /*   print form and deletes the old one.         */
 /*************************************************/
-globle void SetConstructPPForm(
+void SetConstructPPForm(
   void *theEnv,
   struct constructHeader *theConstruct,
   const char *ppForm)
@@ -1465,7 +1465,7 @@ globle void SetConstructPPForm(
 /* ConstructPrintWatchAccess: Provides an interface   */
 /*   to the list-watch-items function for a construct */
 /******************************************************/
-globle unsigned ConstructPrintWatchAccess(
+unsigned ConstructPrintWatchAccess(
   void *theEnv,
   struct construct *constructClass,
   const char *logName,
@@ -1481,7 +1481,7 @@ globle unsigned ConstructPrintWatchAccess(
 /* ConstructSetWatchAccess: Provides an interface */
 /*   to the watch function for a construct        */
 /**************************************************/
-globle unsigned ConstructSetWatchAccess(
+unsigned ConstructSetWatchAccess(
   void *theEnv,
   struct construct *constructClass,
   unsigned newState,
@@ -1668,7 +1668,7 @@ static void ConstructPrintWatch(
 /*   or imported modules. If specified, will also    */
 /*   look for construct in a non-imported module.    */
 /*****************************************************/
-globle void *LookupConstruct(
+void *LookupConstruct(
   void *theEnv,
   struct construct *constructClass,
   const char *constructName,
@@ -1721,7 +1721,7 @@ globle void *LookupConstruct(
 /* ConstructsDeletable: Returns a boolean value indicating */
 /*   whether constructs in general can be deleted.         */
 /***********************************************************/
-globle intBool ConstructsDeletable(
+intBool ConstructsDeletable(
   void *theEnv)
   {
 #if BLOAD_ONLY || RUN_TIME || ((! BLOAD) && (! BLOAD_AND_BSAVE))

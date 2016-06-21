@@ -64,7 +64,7 @@
 /* DefglobalBinarySetup: Installs the binary */
 /*   save/load feature for the defglobals.   */
 /*********************************************/
-globle void DefglobalBinarySetup(
+void DefglobalBinarySetup(
   void *theEnv)
   {
    AllocateEnvironmentData(theEnv,GLOBLBIN_DATA,sizeof(struct defglobalBinaryData),DeallocateDefglobalBloadData);
@@ -444,7 +444,7 @@ static void ClearBload(
 /* BloadDefglobalModuleReference: Returns the defglobal */
 /*   module pointer for using with the bload function.  */
 /********************************************************/
-globle void *BloadDefglobalModuleReference(
+void *BloadDefglobalModuleReference(
   void *theEnv,
   int theIndex)
   {

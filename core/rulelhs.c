@@ -78,7 +78,7 @@
 /*   the LHS of a rule including the reordering of pattern         */
 /*   conditional elements to conform with the KB Rete topology.    */
 /*******************************************************************/
-globle struct lhsParseNode *ParseRuleLHS(
+struct lhsParseNode *ParseRuleLHS(
   void *theEnv,
   const char *readSource,
   struct token *theToken,
@@ -1193,7 +1193,7 @@ static struct lhsParseNode *SimplePatternParse(
 /* PropagatePatternType: Sets the selfPattern field for all   */
 /*   lhsParseNodes in a linked list of those data structures. */
 /**************************************************************/
-globle void PropagatePatternType(
+void PropagatePatternType(
   struct lhsParseNode *theLHS,
   struct patternParser *theParser)
   {

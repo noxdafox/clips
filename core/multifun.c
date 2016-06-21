@@ -130,7 +130,7 @@ struct multiFunctionData
 /* MultifieldFunctionDefinitions: Initializes */
 /*   the multifield functions.                */
 /**********************************************/
-globle void MultifieldFunctionDefinitions(
+void MultifieldFunctionDefinitions(
   void *theEnv)
   {
    AllocateEnvironmentData(theEnv,MULTIFUN_DATA,sizeof(struct multiFunctionData),NULL);
@@ -174,7 +174,7 @@ globle void MultifieldFunctionDefinitions(
 /* DeleteFunction: H/L access routine   */
 /*   for the delete$ function.          */
 /****************************************/
-globle void DeleteFunction(
+void DeleteFunction(
   void *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
@@ -209,7 +209,7 @@ globle void DeleteFunction(
 /* MVDeleteFunction: H/L access routine   */
 /*   for the mv-delete function.          */
 /******************************************/
-globle void MVDeleteFunction(
+void MVDeleteFunction(
   void *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
@@ -243,7 +243,7 @@ globle void MVDeleteFunction(
 /* ReplaceFunction: H/L access routine   */
 /*   for the replace$ function.          */
 /*****************************************/
-globle void ReplaceFunction(
+void ReplaceFunction(
   void *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
@@ -289,7 +289,7 @@ globle void ReplaceFunction(
 /* MVReplaceFunction: H/L access routine   */
 /*   for the mv-replace function.          */
 /*******************************************/
-globle void MVReplaceFunction(
+void MVReplaceFunction(
   void *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
@@ -329,7 +329,7 @@ globle void MVReplaceFunction(
 /* DeleteMemberFunction: H/L access routine   */
 /*   for the delete-member$ function.         */
 /**********************************************/
-globle void DeleteMemberFunction(
+void DeleteMemberFunction(
   void *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
@@ -397,7 +397,7 @@ globle void DeleteMemberFunction(
 /* ReplaceMemberFunction: H/L access routine   */
 /*   for the replace-member$ function.         */
 /***********************************************/
-globle void ReplaceMemberFunction(
+void ReplaceMemberFunction(
   void *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
@@ -478,7 +478,7 @@ globle void ReplaceMemberFunction(
 /* InsertFunction: H/L access routine   */
 /*   for the insert$ function.          */
 /****************************************/
-globle void InsertFunction(
+void InsertFunction(
   void *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
@@ -523,7 +523,7 @@ globle void InsertFunction(
 /* ExplodeFunction: H/L access routine   */
 /*   for the explode$ function.          */
 /*****************************************/
-globle void ExplodeFunction(
+void ExplodeFunction(
   void *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
@@ -583,7 +583,7 @@ globle void ExplodeFunction(
 /* ImplodeFunction: H/L access routine   */
 /*   for the implode$ function.          */
 /*****************************************/
-globle void *ImplodeFunction(
+void *ImplodeFunction(
   void *theEnv)
   {
    DATA_OBJECT value;
@@ -613,7 +613,7 @@ globle void *ImplodeFunction(
 /* SubseqFunction: H/L access routine   */
 /*   for the subseq$ function.          */
 /****************************************/
-globle void SubseqFunction(
+void SubseqFunction(
   void *theEnv,
   DATA_OBJECT_PTR sub_value)
   {
@@ -685,7 +685,7 @@ globle void SubseqFunction(
 /* MVSubseqFunction: H/L access routine   */
 /*   for the mv-subseq function.          */
 /******************************************/
-globle void MVSubseqFunction(
+void MVSubseqFunction(
   void *theEnv,
   DATA_OBJECT_PTR sub_value)
   {
@@ -757,7 +757,7 @@ globle void MVSubseqFunction(
 /* FirstFunction: H/L access routine   */
 /*   for the first$ function.          */
 /***************************************/
-globle void FirstFunction(
+void FirstFunction(
   void *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
@@ -793,7 +793,7 @@ globle void FirstFunction(
 /* RestFunction: H/L access routine   */
 /*   for the rest$ function.          */
 /**************************************/
-globle void RestFunction(
+void RestFunction(
   void *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
@@ -829,7 +829,7 @@ globle void RestFunction(
 /* NthFunction: H/L access routine   */
 /*   for the nth$ function.          */
 /*************************************/
-globle void NthFunction(
+void NthFunction(
   void *theEnv,
   DATA_OBJECT_PTR nth_value)
   {
@@ -884,7 +884,7 @@ globle void NthFunction(
  * ------------------------------------------------------------------
  */
 
-globle intBool SubsetpFunction(
+intBool SubsetpFunction(
   void *theEnv)
   {
    DATA_OBJECT item1, item2, tmpItem;
@@ -919,7 +919,7 @@ globle intBool SubsetpFunction(
 /* MemberFunction: H/L access routine   */
 /*   for the member$ function.          */
 /****************************************/
-globle void MemberFunction(
+void MemberFunction(
   void *theEnv,
   DATA_OBJECT_PTR result)
   {
@@ -1286,7 +1286,7 @@ static void ReplaceMvPrognFieldVars(
 /* MultifieldPrognFunction: H/L access   */
 /*   routine for the progn$ function.    */
 /*****************************************/
-globle void MultifieldPrognFunction(
+void MultifieldPrognFunction(
   void *theEnv,
   DATA_OBJECT_PTR result)
   {
@@ -1297,7 +1297,7 @@ globle void MultifieldPrognFunction(
 /* ForeachFunction: H/L access routine */
 /*   for the foreach function.         */
 /***************************************/
-globle void ForeachFunction(
+void ForeachFunction(
   void *theEnv,
   DATA_OBJECT_PTR result)
   {
@@ -1388,7 +1388,7 @@ static void MultifieldPrognDriver(
 /***************************************************/
 /* GetMvPrognField                                 */
 /***************************************************/
-globle void GetMvPrognField(
+void GetMvPrognField(
   void *theEnv,
   DATA_OBJECT_PTR result)
   {
@@ -1409,7 +1409,7 @@ globle void GetMvPrognField(
 /***************************************************/
 /* GetMvPrognIndex                                 */
 /***************************************************/
-globle long GetMvPrognIndex(
+long GetMvPrognIndex(
   void *theEnv)
   {
    int depth;
@@ -1445,7 +1445,7 @@ globle long GetMvPrognIndex(
   NOTES        : index is NOT guaranteed to be valid
                  src is guaranteed to be a multi-field variable or NULL
  **************************************************************************/
-globle int ReplaceMultiValueField(
+int ReplaceMultiValueField(
   void *theEnv,
   DATA_OBJECT *dst,
   DATA_OBJECT *src,
@@ -1527,7 +1527,7 @@ globle int ReplaceMultiValueField(
   NOTES        : index is NOT guaranteed to be valid
                  src is guaranteed to be a multi-field variable or NULL
  **************************************************************************/
-globle int InsertMultiValueField(
+int InsertMultiValueField(
   void *theEnv,
   DATA_OBJECT *dst,
   DATA_OBJECT *src,
@@ -1660,7 +1660,7 @@ static void MVRangeError(
   NOTES        : index is NOT guaranteed to be valid
                  src is guaranteed to be a multi-field variable or NULL
  **************************************************************************/
-globle int DeleteMultiValueField(
+int DeleteMultiValueField(
   void *theEnv,
   DATA_OBJECT *dst,
   DATA_OBJECT *src,

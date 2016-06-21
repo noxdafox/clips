@@ -216,7 +216,7 @@ struct systemDependentData
 /* InitializeSystemDependentData: Allocates environment */
 /*    data for system dependent routines.               */
 /********************************************************/
-globle void InitializeSystemDependentData(
+void InitializeSystemDependentData(
   void *theEnv)
   {
    AllocateEnvironmentData(theEnv,SYSTEM_DEPENDENT_DATA,sizeof(struct systemDependentData),NULL);
@@ -227,7 +227,7 @@ globle void InitializeSystemDependentData(
 /*   for use with a user interface that may be        */
 /*   overwritten by execution of a command.           */
 /******************************************************/
-globle void SetRedrawFunction(
+void SetRedrawFunction(
   void *theEnv,
   void (*theFunction)(void *))
   {
@@ -238,7 +238,7 @@ globle void SetRedrawFunction(
 /* SetPauseEnvFunction: Set the normal state function */
 /*   which puts terminal in a normal state.           */
 /******************************************************/
-globle void SetPauseEnvFunction(
+void SetPauseEnvFunction(
   void *theEnv,
   void (*theFunction)(void *))
   {
@@ -250,7 +250,7 @@ globle void SetPauseEnvFunction(
 /*   function which returns the terminal to a special    */
 /*   screen interface state.                             */
 /*********************************************************/
-globle void SetContinueEnvFunction(
+void SetContinueEnvFunction(
   void *theEnv,
   void (*theFunction)(void *,int))
   {
@@ -260,7 +260,7 @@ globle void SetContinueEnvFunction(
 /*******************************************************/
 /* GetRedrawFunction: Gets the redraw screen function. */
 /*******************************************************/
-globle void (*GetRedrawFunction(void *theEnv))(void *)
+void (*GetRedrawFunction(void *theEnv))(void *)
   {
    return SystemDependentData(theEnv)->RedrawScreenFunction;
   }
@@ -268,7 +268,7 @@ globle void (*GetRedrawFunction(void *theEnv))(void *)
 /*****************************************************/
 /* GetPauseEnvFunction: Gets the normal state function. */
 /*****************************************************/
-globle void (*GetPauseEnvFunction(void *theEnv))(void *)
+void (*GetPauseEnvFunction(void *theEnv))(void *)
   {
    return SystemDependentData(theEnv)->PauseEnvFunction;
   }
@@ -277,7 +277,7 @@ globle void (*GetPauseEnvFunction(void *theEnv))(void *)
 /* GetContinueEnvFunction: Gets the continue */
 /*   environment function.                   */
 /*********************************************/
-globle void (*GetContinueEnvFunction(void *theEnv))(void *,int)
+void (*GetContinueEnvFunction(void *theEnv))(void *,int)
   {
    return SystemDependentData(theEnv)->ContinueEnvFunction;
   }
@@ -287,7 +287,7 @@ globle void (*GetContinueEnvFunction(void *theEnv))(void *,int)
 /*   which indicates the present time. Used internally   */
 /*   for timing rule firings and debugging.              */
 /*********************************************************/
-globle double gentime()
+double gentime()
   {
 #if MAC_XCD || UNIX_V || DARWIN || LINUX || UNIX_7
    struct timeval now;
@@ -313,7 +313,7 @@ globle double gentime()
 /* gensystem: Generic routine for passing a string   */
 /*   representing a command to the operating system. */
 /*****************************************************/
-globle void gensystem(
+void gensystem(
   void *theEnv,
   const char *commandBuffer)
   {
@@ -327,7 +327,7 @@ globle void gensystem(
 /* gengetchar: Generic routine for getting */
 /*    a character from stdin.              */
 /*******************************************/
-globle int gengetchar(
+int gengetchar(
   void *theEnv)
   {
 /*
@@ -364,7 +364,7 @@ globle int gengetchar(
 /* genungetchar: Generic routine for ungetting */
 /*    a character from stdin.                  */
 /***********************************************/
-globle int genungetchar(
+int genungetchar(
   void *theEnv,
   int theChar)
   {
@@ -389,7 +389,7 @@ globle int genungetchar(
 /* genprintfile: Generic routine for print a single */
 /*   character string to a file (including stdout). */
 /****************************************************/
-globle void genprintfile(
+void genprintfile(
   void *theEnv,
   FILE *fptr,
   const char *str)
@@ -429,7 +429,7 @@ globle void genprintfile(
 /*   requiring initialization is the interrupt handler     */
 /*   which allows execution to be halted.                  */
 /***********************************************************/
-globle void InitializeNonportableFeatures(
+void InitializeNonportableFeatures(
   void *theEnv)
   {
 #if MAC_XCD
@@ -518,7 +518,7 @@ static void RestoreInterruptVectors()
 /**************************************/
 /* genexit:  A generic exit function. */
 /**************************************/
-globle void genexit(
+void genexit(
   void *theEnv,
   int num)
   {
@@ -531,7 +531,7 @@ globle void genexit(
 /**************************************/
 /* SetJmpBuffer: */
 /**************************************/
-globle void SetJmpBuffer(
+void SetJmpBuffer(
   void *theEnv,
   jmp_buf *theJmpBuffer)
   {
@@ -611,7 +611,7 @@ int genrand()
 /**********************************************************************/
 /* genseed: Generic function for seeding the random number generator. */
 /**********************************************************************/
-globle void genseed(
+void genseed(
   int seed)
   {
    srand((unsigned) seed);
@@ -621,7 +621,7 @@ globle void genseed(
 /* gengetcwd: Generic function for returning */
 /*   the current directory.                  */
 /*********************************************/
-globle char *gengetcwd(
+char *gengetcwd(
   char *buffer,
   int buflength)
   {
@@ -654,7 +654,7 @@ int genchdir(
 /****************************************************/
 /* genremove: Generic function for removing a file. */
 /****************************************************/
-globle int genremove(
+int genremove(
   const char *fileName)
   {
    if (remove(fileName)) return(0);
@@ -665,7 +665,7 @@ globle int genremove(
 /****************************************************/
 /* genrename: Generic function for renaming a file. */
 /****************************************************/
-globle int genrename(
+int genrename(
   const char *oldFileName,
   const char *newFileName)
   {
@@ -678,7 +678,7 @@ globle int genrename(
 /* EnvSetBeforeOpenFunction: Sets the */
 /*  value of BeforeOpenFunction.      */
 /**************************************/
-globle int (*EnvSetBeforeOpenFunction(void *theEnv,
+int (*EnvSetBeforeOpenFunction(void *theEnv,
                                       int (*theFunction)(void *)))(void *)
   {
    int (*tempFunction)(void *);
@@ -692,7 +692,7 @@ globle int (*EnvSetBeforeOpenFunction(void *theEnv,
 /* EnvSetAfterOpenFunction: Sets the */
 /*  value of AfterOpenFunction.      */
 /*************************************/
-globle int (*EnvSetAfterOpenFunction(void *theEnv,
+int (*EnvSetAfterOpenFunction(void *theEnv,
                                      int (*theFunction)(void *)))(void *)
   {
    int (*tempFunction)(void *);
@@ -705,7 +705,7 @@ globle int (*EnvSetAfterOpenFunction(void *theEnv,
 /*********************************************/
 /* GenOpen: Trap routine for opening a file. */
 /*********************************************/
-globle FILE *GenOpen(
+FILE *GenOpen(
   void *theEnv,
   const char *fileName,
   const char *accessType)
@@ -776,7 +776,7 @@ globle FILE *GenOpen(
 /**********************************************/
 /* GenClose: Trap routine for closing a file. */
 /**********************************************/
-globle int GenClose(
+int GenClose(
   void *theEnv,
   FILE *theFile)
   {
@@ -799,7 +799,7 @@ globle int GenClose(
 /*   open at a time when using this function since the file */
 /*   pointer is stored in a global variable.                */
 /************************************************************/
-globle int GenOpenReadBinary(
+int GenOpenReadBinary(
   void *theEnv,
   const char *funcName,
   const char *fileName)
@@ -838,7 +838,7 @@ globle int GenOpenReadBinary(
 /* GenReadBinary: Generic and machine specific */
 /*   code for reading from a file.             */
 /***********************************************/
-globle void GenReadBinary(
+void GenReadBinary(
   void *theEnv,
   void *dataPtr,
   size_t size)
@@ -867,7 +867,7 @@ globle void GenReadBinary(
 /* GetSeekCurBinary:  Generic and machine specific */
 /*   code for seeking a position in a file.        */
 /***************************************************/
-globle void GetSeekCurBinary(
+void GetSeekCurBinary(
   void *theEnv,
   long offset)
   {
@@ -884,7 +884,7 @@ globle void GetSeekCurBinary(
 /* GetSeekSetBinary:  Generic and machine specific */
 /*   code for seeking a position in a file.        */
 /***************************************************/
-globle void GetSeekSetBinary(
+void GetSeekSetBinary(
   void *theEnv,
   long offset)
   {
@@ -901,7 +901,7 @@ globle void GetSeekSetBinary(
 /* GenTellBinary:  Generic and machine specific */
 /*   code for telling a position in a file.     */
 /************************************************/
-globle void GenTellBinary(
+void GenTellBinary(
   void *theEnv,
   long *offset)
   {
@@ -918,7 +918,7 @@ globle void GenTellBinary(
 /* GenCloseBinary:  Generic and machine */
 /*   specific code for closing a file.  */
 /****************************************/
-globle void GenCloseBinary(
+void GenCloseBinary(
   void *theEnv)
   {
    if (SystemDependentData(theEnv)->BeforeOpenFunction != NULL)
@@ -940,7 +940,7 @@ globle void GenCloseBinary(
 /* GenWrite: Generic routine for writing to a  */
 /*   file. No machine specific code as of yet. */
 /***********************************************/
-globle void GenWrite(
+void GenWrite(
   void *dataPtr,
   size_t size,
   FILE *fp)

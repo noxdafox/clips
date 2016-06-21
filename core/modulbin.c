@@ -59,7 +59,7 @@
 /* DefmoduleBinarySetup: Installs the binary */
 /*   save/load feature for defmodules.       */
 /*********************************************/
-globle void DefmoduleBinarySetup(
+void DefmoduleBinarySetup(
   void *theEnv)
   {
    AddBeforeBloadFunction(theEnv,"defmodule",RemoveAllDefmodules,2000);
@@ -84,7 +84,7 @@ globle void DefmoduleBinarySetup(
 /* UpdateDefmoduleItemHeader: Updates the values in defmodule */
 /*   item headers for the loaded binary image.                */
 /**************************************************************/
-globle void UpdateDefmoduleItemHeader(
+void UpdateDefmoduleItemHeader(
   void *theEnv,
   struct bsaveDefmoduleItemHeader *theBsaveHeader,
   struct defmoduleItemHeader *theHeader,
@@ -116,7 +116,7 @@ globle void UpdateDefmoduleItemHeader(
 /* AssignBsaveDefmdlItemHdrVals: Assigns the appropriate */
 /*   values to a bsave defmodule item header record.     */
 /*********************************************************/
-globle void AssignBsaveDefmdlItemHdrVals(
+void AssignBsaveDefmdlItemHdrVals(
   struct bsaveDefmoduleItemHeader *theBsaveHeader,
   struct defmoduleItemHeader *theHeader)
   {

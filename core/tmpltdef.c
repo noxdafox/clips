@@ -101,10 +101,10 @@
 /******************************************************************/
 /* InitializeDeftemplates: Initializes the deftemplate construct. */
 /******************************************************************/
-globle void InitializeDeftemplates(
+void InitializeDeftemplates(
   void *theEnv)
   {
-   globle struct entityRecord deftemplatePtrRecord = { "DEFTEMPLATE_PTR",
+   struct entityRecord deftemplatePtrRecord = { "DEFTEMPLATE_PTR",
                                                            DEFTEMPLATE_PTR,1,0,0,
                                                            NULL,
                                                            NULL,NULL,
@@ -235,7 +235,7 @@ static void ReturnModule(
 /* GetDeftemplateModuleItem: Returns a pointer to the defmodule */
 /*  item for the specified deftemplate or defmodule.            */
 /****************************************************************/
-globle struct deftemplateModule *GetDeftemplateModuleItem(
+struct deftemplateModule *GetDeftemplateModuleItem(
   void *theEnv,
   struct defmodule *theModule)
   {   
@@ -247,7 +247,7 @@ globle struct deftemplateModule *GetDeftemplateModuleItem(
 /*   the list of deftemplates. Returns a pointer to  */
 /*   the deftemplate if  found, otherwise NULL.      */
 /*****************************************************/
-globle void *EnvFindDeftemplate(
+void *EnvFindDeftemplate(
   void *theEnv,
   const char *deftemplateName)
   {  
@@ -259,7 +259,7 @@ globle void *EnvFindDeftemplate(
 /*   the list of deftemplates. Returns a pointer to  */
 /*   the deftemplate if  found, otherwise NULL.      */
 /*****************************************************/
-globle void *EnvFindDeftemplateInModule(
+void *EnvFindDeftemplateInModule(
   void *theEnv,
   const char *deftemplateName)
   {  
@@ -271,7 +271,7 @@ globle void *EnvFindDeftemplateInModule(
 /*   deftemplate in the ListOfDeftemplates. Otherwise returns the next */
 /*   deftemplate following the deftemplate passed as an argument.      */
 /***********************************************************************/
-globle void *EnvGetNextDeftemplate(
+void *EnvGetNextDeftemplate(
   void *theEnv,
   void *deftemplatePtr)
   {   
@@ -282,7 +282,7 @@ globle void *EnvGetNextDeftemplate(
 /* EnvIsDeftemplateDeletable: Returns TRUE if a particular */
 /*   deftemplate can be deleted, otherwise returns FALSE.  */
 /***********************************************************/
-globle intBool EnvIsDeftemplateDeletable(
+intBool EnvIsDeftemplateDeletable(
   void *theEnv,
   void *vTheDeftemplate)
   {
@@ -391,7 +391,7 @@ static void DestroyDeftemplate(
 /* ReturnSlots: Returns the slot structures of */
 /*   a deftemplate to free memory.             */
 /***********************************************/
-globle void ReturnSlots(
+void ReturnSlots(
   void *theEnv,
   struct templateSlot *slotPtr)
   {
@@ -414,7 +414,7 @@ globle void ReturnSlots(
 /* DecrementDeftemplateBusyCount: Decrements the */
 /*   busy count of a deftemplate data structure. */
 /*************************************************/
-globle void DecrementDeftemplateBusyCount(
+void DecrementDeftemplateBusyCount(
   void *theEnv,
   void *vTheTemplate)
   {
@@ -427,7 +427,7 @@ globle void DecrementDeftemplateBusyCount(
 /* IncrementDeftemplateBusyCount: Increments the */
 /*   busy count of a deftemplate data structure. */
 /*************************************************/
-globle void IncrementDeftemplateBusyCount(
+void IncrementDeftemplateBusyCount(
   void *theEnv,
   void *vTheTemplate)
   {
@@ -444,7 +444,7 @@ globle void IncrementDeftemplateBusyCount(
 /*   first fact in the template's fact-list. Otherwise returns the */
 /*   next template fact following the fact passed as an argument.  */
 /*******************************************************************/
-globle void *EnvGetNextFactInTemplate(
+void *EnvGetNextFactInTemplate(
   void *theEnv,
   void *theTemplate,
   void *factPtr)
@@ -465,7 +465,7 @@ globle void *EnvGetNextFactInTemplate(
 /******************************/
 /* CreateDeftemplateScopeMap: */
 /******************************/
-globle void *CreateDeftemplateScopeMap(
+void *CreateDeftemplateScopeMap(
   void *theEnv,
   struct deftemplate *theDeftemplate)
   {
@@ -544,7 +544,7 @@ static void SearchForHashedPatternNodes(
 /*******************************************************************/
 /* DeftemplateRunTimeInitialize:    */
 /*******************************************************************/
-globle void DeftemplateRunTimeInitialize(
+void DeftemplateRunTimeInitialize(
   void *theEnv)
   {
    DoForAllConstructs(theEnv,RuntimeDeftemplateAction,DeftemplateData(theEnv)->DeftemplateModuleIndex,TRUE,NULL); 
@@ -556,21 +556,21 @@ globle void DeftemplateRunTimeInitialize(
 /* Additional Environment Functions */
 /*##################################*/
 
-globle const char *EnvDeftemplateModule(
+const char *EnvDeftemplateModule(
   void *theEnv,
   void *theDeftemplate)
   {
    return GetConstructModuleName((struct constructHeader *) theDeftemplate);
   }
 
-globle const char *EnvGetDeftemplateName(
+const char *EnvGetDeftemplateName(
   void *theEnv,
   void *theDeftemplate)
   {
    return GetConstructNameString((struct constructHeader *) theDeftemplate);
   }
 
-globle const char *EnvGetDeftemplatePPForm(
+const char *EnvGetDeftemplatePPForm(
   void *theEnv,
   void *theDeftemplate)
   {
@@ -583,43 +583,43 @@ globle const char *EnvGetDeftemplatePPForm(
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-globle const char *DeftemplateModule(
+const char *DeftemplateModule(
   void *theDeftemplate)
   {
    return EnvDeftemplateModule(GetCurrentEnvironment(),theDeftemplate);
   }
 
-globle void *FindDeftemplate(
+void *FindDeftemplate(
   const char *deftemplateName)
   {
    return EnvFindDeftemplate(GetCurrentEnvironment(),deftemplateName);
   }
 
-globle const char *GetDeftemplateName(
+const char *GetDeftemplateName(
   void *theDeftemplate)
   {
    return EnvGetDeftemplateName(GetCurrentEnvironment(),theDeftemplate);
   }
 
-globle const char *GetDeftemplatePPForm(
+const char *GetDeftemplatePPForm(
   void *theDeftemplate)
   {
    return EnvGetDeftemplatePPForm(GetCurrentEnvironment(),theDeftemplate);
   }
 
-globle void *GetNextDeftemplate(
+void *GetNextDeftemplate(
   void *deftemplatePtr)
   {
    return EnvGetNextDeftemplate(GetCurrentEnvironment(),deftemplatePtr);
   }
 
-globle intBool IsDeftemplateDeletable(
+intBool IsDeftemplateDeletable(
   void *vTheDeftemplate)
   {
    return EnvIsDeftemplateDeletable(GetCurrentEnvironment(),vTheDeftemplate);
   }
 
-globle void *GetNextFactInTemplate(
+void *GetNextFactInTemplate(
   void *theTemplate,
   void *factPtr)
   {

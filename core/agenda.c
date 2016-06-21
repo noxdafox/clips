@@ -98,7 +98,7 @@
 /*   watch item and the H/L commands for         */
 /*   manipulating the agenda.                    */
 /*************************************************/
-globle void InitializeAgenda(
+void InitializeAgenda(
   void *theEnv)
   {   
    AllocateEnvironmentData(theEnv,AGENDA_DATA,sizeof(struct agendaData),NULL);
@@ -137,7 +137,7 @@ globle void InitializeAgenda(
 /*   the activation on the Agenda. Typically called when all     */
 /*   patterns on the LHS of a rule have been satisfied.          */
 /*****************************************************************/
-globle void AddActivation(
+void AddActivation(
   void *theEnv,
   void *vTheRule,
   void *vBinds)
@@ -273,7 +273,7 @@ static struct salienceGroup *FindSalienceGroup(
 /***************************************************************/
 /* ClearRuleFromAgenda: Clears the agenda of a specified rule. */
 /***************************************************************/
-globle void ClearRuleFromAgenda(
+void ClearRuleFromAgenda(
   void *theEnv,
   void *vTheRule)
   {
@@ -323,7 +323,7 @@ globle void ClearRuleFromAgenda(
 /*   Agenda is returned. If its argument is not NULL, the next  */
 /*   activation after the argument is returned.                 */
 /****************************************************************/
-globle void *EnvGetNextActivation(
+void *EnvGetNextActivation(
   void *theEnv,
   void *actPtr)
   {
@@ -343,7 +343,7 @@ globle void *EnvGetNextActivation(
 /* EnvGetActivationBasis: Returns the basis of */
 /*   the rule associated with an activation.   */
 /***********************************************/
-globle struct partialMatch *EnvGetActivationBasis(
+struct partialMatch *EnvGetActivationBasis(
   void *theEnv,
   void *actPtr)
   {
@@ -357,7 +357,7 @@ globle struct partialMatch *EnvGetActivationBasis(
 /* EnvGetActivationName: Returns the name of */
 /*   the rule associated with an activation. */
 /*********************************************/
-globle const char *EnvGetActivationName(
+const char *EnvGetActivationName(
   void *theEnv,
   void *actPtr)
   {
@@ -372,7 +372,7 @@ globle const char *EnvGetActivationName(
 /* EnvGetActivationRule: Returns the rule */
 /*   associated with an activation.       */
 /******************************************/
-globle struct defrule *EnvGetActivationRule(
+struct defrule *EnvGetActivationRule(
   void *theEnv,
   void *actPtr)
   {
@@ -386,7 +386,7 @@ globle struct defrule *EnvGetActivationRule(
 /* EnvGetActivationSalience: Returns the salience */
 /*   of the rule associated with an activation.   */
 /**************************************************/
-globle int EnvGetActivationSalience(
+int EnvGetActivationSalience(
   void *theEnv,
   void *actPtr)
   {
@@ -400,7 +400,7 @@ globle int EnvGetActivationSalience(
 /* EnvSetActivationSalience: Sets the */
 /*   salience value of an activation. */
 /**************************************/
-globle int EnvSetActivationSalience(
+int EnvSetActivationSalience(
   void *theEnv,
   void *actPtr,
   int value)
@@ -419,7 +419,7 @@ globle int EnvSetActivationSalience(
 /* EnvGetActivationPPForm: Returns the pretty */
 /*   print representation of an activation.   */
 /**********************************************/
-globle void EnvGetActivationPPForm(
+void EnvGetActivationPPForm(
   void *theEnv,
   char *buffer,
   size_t bufferLength,
@@ -434,7 +434,7 @@ globle void EnvGetActivationPPForm(
 /* EnvGetActivationBasisPPForm: Returns the pretty  */
 /*   print representation of an activation's basis. */
 /****************************************************/
-globle void EnvGetActivationBasisPPForm(
+void EnvGetActivationBasisPPForm(
   void *theEnv,
   char *buffer,
   size_t bufferLength,
@@ -451,7 +451,7 @@ globle void EnvGetActivationBasisPPForm(
 /* MoveActivationToTop: Moves the specified */
 /*   activation to the top of the agenda.   */
 /********************************************/
-globle intBool MoveActivationToTop(
+intBool MoveActivationToTop(
   void *theEnv,
   void *vtheActivation)
   {
@@ -506,7 +506,7 @@ globle intBool MoveActivationToTop(
 /* EnvDeleteActivation: Removes the specified */
 /*   activation from the agenda.              */
 /**********************************************/
-globle intBool EnvDeleteActivation(
+intBool EnvDeleteActivation(
   void *theEnv,
   void *theActivation)
   {
@@ -520,7 +520,7 @@ globle intBool EnvDeleteActivation(
 /* DetachActivation: Detaches the specified activation */
 /*   from the list of activations on the Agenda.       */
 /*******************************************************/
-globle intBool DetachActivation(
+intBool DetachActivation(
   void *theEnv,
   void *vTheActivation)
   {
@@ -603,7 +603,7 @@ static void PrintActivation(
 /* EnvAgenda: C access routine */
 /*   for the agenda command.   */
 /*******************************/
-globle void EnvAgenda(
+void EnvAgenda(
   void *theEnv,
   const char *logicalName,
   void *vTheModule)
@@ -619,7 +619,7 @@ globle void EnvAgenda(
 /*   structures to the Memory Manager. Links to other activations  */
 /*   and partial matches may also be updated.                      */
 /*******************************************************************/
-globle void RemoveActivation(
+void RemoveActivation(
   void *theEnv,
   void *vTheActivation,
   int updateAgenda,
@@ -771,7 +771,7 @@ static void AgendaClearFunction(
 /* RemoveAllActivations: Removes all activations */
 /*   from the agenda of the current module.      */
 /*************************************************/
-globle void RemoveAllActivations(
+void RemoveAllActivations(
   void *theEnv)
   {
    struct activation *tempPtr, *theActivation;
@@ -799,7 +799,7 @@ globle void RemoveAllActivations(
 /*   flag which indicates whether any changes have been  */
 /*   made to the agenda.                                 */
 /*********************************************************/
-globle int EnvGetAgendaChanged(
+int EnvGetAgendaChanged(
   void *theEnv)
   {
    return(AgendaData(theEnv)->AgendaChanged);
@@ -809,7 +809,7 @@ globle int EnvGetAgendaChanged(
 /* EnvSetAgendaChanged: Sets the value of the boolean flag which */
 /*   indicates whether any changes have been made to the agenda. */
 /*****************************************************************/
-globle void EnvSetAgendaChanged(
+void EnvSetAgendaChanged(
   void *theEnv,
   int value)
   {
@@ -820,7 +820,7 @@ globle void EnvSetAgendaChanged(
 /* EnvReorderAgenda: Completely reorders the agenda based */
 /*   on the current conflict resolution strategy.         */
 /**********************************************************/
-globle void EnvReorderAgenda(
+void EnvReorderAgenda(
   void *theEnv,
   void *vTheModule)
   {
@@ -895,7 +895,7 @@ globle void EnvReorderAgenda(
 /* GetNumberOfActivations: Returns the value of the */
 /*   total number of activations on all agendas.    */
 /****************************************************/
-globle unsigned long GetNumberOfActivations(
+unsigned long GetNumberOfActivations(
   void *theEnv)
   {  
    return(AgendaData(theEnv)->NumberOfActivations); 
@@ -905,7 +905,7 @@ globle unsigned long GetNumberOfActivations(
 /* RefreshCommand: H/L Command for refreshing a rule. */
 /*   Syntax: (refresh <defrule-name>)                 */
 /******************************************************/
-globle void RefreshCommand(
+void RefreshCommand(
   void *theEnv)
   {
    const char *ruleName;
@@ -940,7 +940,7 @@ globle void RefreshCommand(
 /* EnvRefresh: Refreshes a defrule. Activations of the rule */
 /*   that have already been fired are added to the agenda.  */
 /************************************************************/
-globle intBool EnvRefresh(
+intBool EnvRefresh(
   void *theEnv,
   void *theRule)
   {
@@ -990,7 +990,7 @@ globle intBool EnvRefresh(
 /* RefreshAgendaCommand: H/L access routine   */
 /*   for the refresh-agenda command.          */
 /**********************************************/
-globle void RefreshAgendaCommand(
+void RefreshAgendaCommand(
   void *theEnv)
   {
    int numArgs, error;
@@ -1027,7 +1027,7 @@ globle void RefreshAgendaCommand(
 /* EnvRefreshAgenda: C access routine */
 /*   for the refresh-agenda command.  */
 /**************************************/
-globle void EnvRefreshAgenda(
+void EnvRefreshAgenda(
   void *theEnv,
   void *vTheModule)
   {
@@ -1122,7 +1122,7 @@ globle void EnvRefreshAgenda(
 /*   the salience evaluation behavior.                   */
 /*   Syntax: (set-salience-evaluation-behavior <symbol>) */
 /*********************************************************/
-globle void *SetSalienceEvaluationCommand(
+void *SetSalienceEvaluationCommand(
   void *theEnv)
   {
    DATA_OBJECT argPtr;
@@ -1178,7 +1178,7 @@ globle void *SetSalienceEvaluationCommand(
 /*   the salience evaluation behavior.                   */
 /*   Syntax: (get-salience-evaluation-behavior)          */
 /*********************************************************/
-globle void *GetSalienceEvaluationCommand(
+void *GetSalienceEvaluationCommand(
   void *theEnv)
   {
    EnvArgCountCheck(theEnv,"get-salience-evaluation",EXACTLY,0);
@@ -1220,7 +1220,7 @@ static const char *SalienceEvaluationName(
 /*  of salience evaluation (e.g., when defined, when activated, */
 /*  or every cycle).                                            */
 /****************************************************************/
-globle intBool EnvGetSalienceEvaluation(
+intBool EnvGetSalienceEvaluation(
   void *theEnv)
   {   
    return(AgendaData(theEnv)->SalienceEvaluation); 
@@ -1230,7 +1230,7 @@ globle intBool EnvGetSalienceEvaluation(
 /* EnvSetSalienceEvaluation: Sets the value of */
 /*   the current type of salience evaluation.  */
 /***********************************************/
-globle intBool EnvSetSalienceEvaluation(
+intBool EnvSetSalienceEvaluation(
   void *theEnv,
   int value)
   {
@@ -1330,7 +1330,7 @@ static int EvaluateSalience(
 /*   rules that are ready to fire.             */
 /*   Syntax: (agenda)                          */
 /***********************************************/
-globle void AgendaCommand(
+void AgendaCommand(
   void *theEnv)
   {
    int numArgs, error;
@@ -1371,32 +1371,32 @@ globle void AgendaCommand(
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-globle void Agenda(
+void Agenda(
   const char *logicalName,
   void *vTheModule)
   {
    EnvAgenda(GetCurrentEnvironment(),logicalName,vTheModule);
   }
 
-globle intBool DeleteActivation(
+intBool DeleteActivation(
   void *theActivation)
   {
    return EnvDeleteActivation(GetCurrentEnvironment(),theActivation);
   }
   
-globle struct partialMatch *GetActivationBasis(
+struct partialMatch *GetActivationBasis(
   void *actPtr)
   {
    return EnvGetActivationBasis(GetCurrentEnvironment(),actPtr);
   }
 
-globle const char *GetActivationName(
+const char *GetActivationName(
   void *actPtr)
   {
    return EnvGetActivationName(GetCurrentEnvironment(),actPtr);
   }
 
-globle void GetActivationPPForm(
+void GetActivationPPForm(
   char *buffer,
   unsigned bufferLength,
   void *theActivation)
@@ -1404,66 +1404,66 @@ globle void GetActivationPPForm(
    EnvGetActivationPPForm(GetCurrentEnvironment(),buffer,bufferLength,theActivation);
   }
 
-globle struct defrule *GetActivationRule(
+struct defrule *GetActivationRule(
   void *actPtr)
   {
    return EnvGetActivationRule(GetCurrentEnvironment(),actPtr);
   }
 
-globle int GetActivationSalience(
+int GetActivationSalience(
   void *actPtr)
   {
    return EnvGetActivationSalience(GetCurrentEnvironment(),actPtr);
   }
 
-globle int GetAgendaChanged()
+int GetAgendaChanged()
   {
    return EnvGetAgendaChanged(GetCurrentEnvironment());
   }
 
-globle void *GetNextActivation(
+void *GetNextActivation(
   void *actPtr)
   {
    return EnvGetNextActivation(GetCurrentEnvironment(),actPtr);
   }
 
-globle intBool Refresh(
+intBool Refresh(
   void *theRule)
   {
    return EnvRefresh(GetCurrentEnvironment(),theRule);
   }
 
-globle void RefreshAgenda(
+void RefreshAgenda(
   void *vTheModule)
   {
    EnvRefreshAgenda(GetCurrentEnvironment(),vTheModule);
   }
 
-globle void ReorderAgenda(
+void ReorderAgenda(
   void *vTheModule)
   {
    EnvReorderAgenda(GetCurrentEnvironment(),vTheModule);
   }
 
-globle void SetAgendaChanged(
+void SetAgendaChanged(
   int value)
   {
    EnvSetAgendaChanged(GetCurrentEnvironment(),value);
   }
 
-globle int SetActivationSalience(
+int SetActivationSalience(
   void *actPtr,
   int value)
   {
    return EnvSetActivationSalience(GetCurrentEnvironment(),actPtr,value);
   }
 
-globle intBool GetSalienceEvaluation()
+intBool GetSalienceEvaluation()
   {
    return EnvGetSalienceEvaluation(GetCurrentEnvironment());
   }
 
-globle intBool SetSalienceEvaluation(
+intBool SetSalienceEvaluation(
   int value)
   {
    return EnvSetSalienceEvaluation(GetCurrentEnvironment(),value);

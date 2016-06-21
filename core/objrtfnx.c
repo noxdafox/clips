@@ -133,7 +133,7 @@ static void DestroyObjectAlphaNodes(void *,OBJECT_ALPHA_NODE *);
   SIDE EFFECTS : Primitive operations installed
   NOTES        : None
  ***************************************************/
-globle void InstallObjectPrimitives(
+void InstallObjectPrimitives(
   void *theEnv)
   {
    struct entityRecord objectGVInfo1 = { "OBJ_GET_SLOT_JNVAR1", OBJ_GET_SLOT_JNVAR1,0,1,0,
@@ -319,7 +319,7 @@ static void DestroyObjectAlphaNodes(
   NOTES        : Called directly by
                    EvaluatePatternExpression()
  *****************************************************/
-globle intBool ObjectCmpConstantFunction(
+intBool ObjectCmpConstantFunction(
   void *theEnv,
   void *theValue,
   DATA_OBJECT *theResult)

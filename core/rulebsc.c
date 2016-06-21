@@ -89,7 +89,7 @@
 /*************************************************************/
 /* DefruleBasicCommands: Initializes basic defrule commands. */
 /*************************************************************/
-globle void DefruleBasicCommands(
+void DefruleBasicCommands(
   void *theEnv)
   {
    EnvAddResetFunction(theEnv,"defrule",ResetDefrules,70);
@@ -264,7 +264,7 @@ static void SaveDefrules(
 /* UndefruleCommand: H/L access routine   */
 /*   for the undefrule command.           */
 /******************************************/
-globle void UndefruleCommand(
+void UndefruleCommand(
   void *theEnv)
   { 
    UndefconstructCommand(theEnv,"undefrule",DefruleData(theEnv)->DefruleConstruct); 
@@ -274,7 +274,7 @@ globle void UndefruleCommand(
 /* EnvUndefrule: C access routine */
 /*   for the undefrule command.   */
 /**********************************/
-globle intBool EnvUndefrule(
+intBool EnvUndefrule(
   void *theEnv,
   void *theDefrule)
   {
@@ -285,7 +285,7 @@ globle intBool EnvUndefrule(
 /* GetDefruleListFunction: H/L access routine   */
 /*   for the get-defrule-list function.         */
 /************************************************/
-globle void GetDefruleListFunction(
+void GetDefruleListFunction(
   void *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
@@ -296,7 +296,7 @@ globle void GetDefruleListFunction(
 /* EnvGetDefruleList: C access routine  */
 /*   for the get-defrule-list function. */
 /****************************************/
-globle void EnvGetDefruleList(
+void EnvGetDefruleList(
   void *theEnv,
   DATA_OBJECT_PTR returnValue,
   void *theModule)
@@ -308,7 +308,7 @@ globle void EnvGetDefruleList(
 /* DefruleModuleFunction: H/L access routine */
 /*   for the defrule-module function.        */
 /*********************************************/
-globle void *DefruleModuleFunction(
+void *DefruleModuleFunction(
   void *theEnv)
   {
    return(GetConstructModuleCommand(theEnv,"defrule-module",DefruleData(theEnv)->DefruleConstruct)); 
@@ -320,7 +320,7 @@ globle void *DefruleModuleFunction(
 /* PPDefruleCommand: H/L access routine   */
 /*   for the ppdefrule command.           */
 /******************************************/
-globle void PPDefruleCommand(
+void PPDefruleCommand(
   void *theEnv)
   {
    PPConstructCommand(theEnv,"ppdefrule",DefruleData(theEnv)->DefruleConstruct);
@@ -330,7 +330,7 @@ globle void PPDefruleCommand(
 /* PPDefrule: C access routine for */
 /*   the ppdefrule command.        */
 /***********************************/
-globle int PPDefrule(
+int PPDefrule(
   void *theEnv,
   const char *defruleName,
   const char *logicalName)
@@ -342,7 +342,7 @@ globle int PPDefrule(
 /* ListDefrulesCommand: H/L access routine   */
 /*   for the list-defrules command.          */
 /*********************************************/
-globle void ListDefrulesCommand(
+void ListDefrulesCommand(
   void *theEnv)
   {
    ListConstructCommand(theEnv,"list-defrules",DefruleData(theEnv)->DefruleConstruct); 
@@ -352,7 +352,7 @@ globle void ListDefrulesCommand(
 /* EnvListDefrules: C access routine */
 /*   for the list-defrules command.  */
 /*************************************/
-globle void EnvListDefrules(
+void EnvListDefrules(
   void *theEnv,
   const char *logicalName,
   void *theModule)
@@ -365,7 +365,7 @@ globle void EnvListDefrules(
 /*   retrieving the current watch value of a defrule's */
 /*   activations.                                      */
 /*******************************************************/
-globle unsigned EnvGetDefruleWatchActivations(
+unsigned EnvGetDefruleWatchActivations(
   void *theEnv,
   void *rulePtr)
   {
@@ -387,7 +387,7 @@ globle unsigned EnvGetDefruleWatchActivations(
 /*   for retrieving the current watch value of */
 /*   a defrule's firings.                      */
 /***********************************************/
-globle unsigned EnvGetDefruleWatchFirings(
+unsigned EnvGetDefruleWatchFirings(
   void *theEnv,
   void *rulePtr)
   {
@@ -409,7 +409,7 @@ globle unsigned EnvGetDefruleWatchFirings(
 /*   for setting the current watch value of a      */
 /*   defrule's activations.                        */
 /***************************************************/
-globle void EnvSetDefruleWatchActivations(
+void EnvSetDefruleWatchActivations(
   void *theEnv,
   unsigned newState,
   void *rulePtr)
@@ -430,7 +430,7 @@ globle void EnvSetDefruleWatchActivations(
 /*   setting the current watch value of a defrule's */ 
 /*   firings.                                       */
 /****************************************************/
-globle void EnvSetDefruleWatchFirings(
+void EnvSetDefruleWatchFirings(
   void *theEnv,
   unsigned newState,
   void *rulePtr)
@@ -450,7 +450,7 @@ globle void EnvSetDefruleWatchFirings(
 /* DefruleWatchAccess: Access function for setting the watch flags */
 /*   associated with rules (activations and rule firings).         */
 /*******************************************************************/
-globle unsigned DefruleWatchAccess(
+unsigned DefruleWatchAccess(
   void *theEnv,
   int code,
   unsigned newState,
@@ -468,7 +468,7 @@ globle unsigned DefruleWatchAccess(
 /* DefruleWatchPrint: Access routine for printing which defrules */
 /*   have their watch flag set via the list-watch-items command. */
 /*****************************************************************/
-globle unsigned DefruleWatchPrint(
+unsigned DefruleWatchPrint(
   void *theEnv,
   const char *logName,
   int code,
@@ -490,7 +490,7 @@ globle unsigned DefruleWatchPrint(
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-globle void GetDefruleList(
+void GetDefruleList(
   DATA_OBJECT_PTR returnValue,
   void *theModule)
   {
@@ -499,33 +499,33 @@ globle void GetDefruleList(
 
 #if DEBUGGING_FUNCTIONS
 
-globle unsigned GetDefruleWatchActivations(
+unsigned GetDefruleWatchActivations(
   void *rulePtr)
   {
    return EnvGetDefruleWatchActivations(GetCurrentEnvironment(),rulePtr);
   }
 
-globle unsigned GetDefruleWatchFirings(
+unsigned GetDefruleWatchFirings(
   void *rulePtr)
   {
    return EnvGetDefruleWatchFirings(GetCurrentEnvironment(),rulePtr);
   }
 
-globle void ListDefrules(
+void ListDefrules(
   const char *logicalName,
   void *theModule)
   {
    EnvListDefrules(GetCurrentEnvironment(),logicalName,theModule);
   }
 
-globle void SetDefruleWatchActivations(
+void SetDefruleWatchActivations(
   unsigned newState,
   void *rulePtr)
   {
    EnvSetDefruleWatchActivations(GetCurrentEnvironment(),newState,rulePtr);
   }
 
-globle void SetDefruleWatchFirings(
+void SetDefruleWatchFirings(
   unsigned newState,
   void *rulePtr)
   {
@@ -534,7 +534,7 @@ globle void SetDefruleWatchFirings(
 
 #endif
 
-globle intBool Undefrule(
+intBool Undefrule(
   void *theDefrule)
   {
    return EnvUndefrule(GetCurrentEnvironment(),theDefrule);

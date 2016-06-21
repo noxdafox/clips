@@ -141,7 +141,7 @@ static void DeallocateMessageHandlerData(void *);
                  SetupInstanceModDupCommands() in
                  INSMODDP.C
  ***************************************************/
-globle void SetupMessageHandlers(
+void SetupMessageHandlers(
   void *theEnv)
   {
    ENTITY_RECORD handlerGetInfo = { "HANDLER_GET", HANDLER_GET,0,1,1,
@@ -266,7 +266,7 @@ static void DeallocateMessageHandlerData(
   SIDE EFFECTS : None
   NOTES        : None
  *****************************************************/
-globle const char *EnvGetDefmessageHandlerName(
+const char *EnvGetDefmessageHandlerName(
   void *theEnv,
   void *ptr,
   int theIndex)
@@ -288,7 +288,7 @@ globle const char *EnvGetDefmessageHandlerName(
   SIDE EFFECTS : None
   NOTES        : None
  *****************************************************/
-globle const char *EnvGetDefmessageHandlerType(
+const char *EnvGetDefmessageHandlerType(
   void *theEnv,
   void *ptr,
   int theIndex)
@@ -307,7 +307,7 @@ globle const char *EnvGetDefmessageHandlerType(
   NOTES        : If index == 0, the first handler array index
                  (i.e. 1) returned
  **************************************************************/
-globle int EnvGetNextDefmessageHandler(
+int EnvGetNextDefmessageHandler(
   void *theEnv,
   void *ptr,
   int theIndex)
@@ -335,7 +335,7 @@ globle int EnvGetNextDefmessageHandler(
   SIDE EFFECTS : None
   NOTES        : None
  *****************************************************/
-globle HANDLER *GetDefmessageHandlerPointer(
+HANDLER *GetDefmessageHandlerPointer(
   void *ptr,
   int theIndex)
   {
@@ -355,7 +355,7 @@ globle HANDLER *GetDefmessageHandlerPointer(
   SIDE EFFECTS : None
   NOTES        : None
  *********************************************************/
-globle unsigned EnvGetDefmessageHandlerWatch(
+unsigned EnvGetDefmessageHandlerWatch(
   void *theEnv,
   void *theClass,
   int theIndex)
@@ -379,7 +379,7 @@ globle unsigned EnvGetDefmessageHandlerWatch(
   SIDE EFFECTS : Watch flag for the handler set
   NOTES        : None
  *********************************************************/
-globle void EnvSetDefmessageHandlerWatch(
+void EnvSetDefmessageHandlerWatch(
   void *theEnv,
   int newState,
   void *theClass,
@@ -407,7 +407,7 @@ globle void EnvSetDefmessageHandlerWatch(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle unsigned EnvFindDefmessageHandler(
+unsigned EnvFindDefmessageHandler(
   void *theEnv,
   void *ptr,
   const char *hname,
@@ -439,7 +439,7 @@ globle unsigned EnvFindDefmessageHandler(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle int EnvIsDefmessageHandlerDeletable(
+int EnvIsDefmessageHandlerDeletable(
   void *theEnv,
   void *ptr,
   int theIndex)
@@ -468,7 +468,7 @@ globle int EnvIsDefmessageHandlerDeletable(
   SIDE EFFECTS : Handler deleted if possible
   NOTES        : H/L Syntax: (undefmessage-handler <class> <handler> [<type>])
  ******************************************************************************/
-globle void UndefmessageHandlerCommand(
+void UndefmessageHandlerCommand(
   void *theEnv)
   {
 #if RUN_TIME || BLOAD_ONLY
@@ -522,7 +522,7 @@ globle void UndefmessageHandlerCommand(
   SIDE EFFECTS : Handler deleted if possible
   NOTES        : None
  ***********************************************************/
-globle int EnvUndefmessageHandler(
+int EnvUndefmessageHandler(
   void *theEnv,
   void *vptr,
   int mhi)
@@ -576,7 +576,7 @@ globle int EnvUndefmessageHandler(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax: (ppdefmessage-handler <class> <message> [<type>])
  *******************************************************************************/
-globle void PPDefmessageHandlerCommand(
+void PPDefmessageHandlerCommand(
   void *theEnv)
   {
    DATA_OBJECT temp;
@@ -635,7 +635,7 @@ globle void PPDefmessageHandlerCommand(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax: (list-defmessage-handlers [<class> [inherit]]))
  *****************************************************************************/
-globle void ListDefmessageHandlersCommand(
+void ListDefmessageHandlersCommand(
   void *theEnv)
   {
    int inhp;
@@ -661,7 +661,7 @@ globle void ListDefmessageHandlersCommand(
   SIDE EFFECTS : Temporary core created and destroyed
   NOTES        : H/L Syntax: (preview-send <class> <msg>)
  ********************************************************************/
-globle void PreviewSendCommand(
+void PreviewSendCommand(
   void *theEnv)
   {
    DEFCLASS *cls;
@@ -693,7 +693,7 @@ globle void PreviewSendCommand(
   SIDE EFFECTS : None
   NOTES        : None
  ********************************************************/
-globle const char *EnvGetDefmessageHandlerPPForm(
+const char *EnvGetDefmessageHandlerPPForm(
   void *theEnv,
   void *ptr,
   int theIndex)
@@ -716,7 +716,7 @@ globle const char *EnvGetDefmessageHandlerPPForm(
   SIDE EFFECTS : None
   NOTES        : None
  *******************************************************************/
-globle void EnvListDefmessageHandlers(
+void EnvListDefmessageHandlers(
   void *theEnv,
   const char *logName,
   void *vptr,
@@ -764,7 +764,7 @@ globle void EnvListDefmessageHandlers(
   SIDE EFFECTS : Temporary core created and destroyed
   NOTES        : None
  ********************************************************************/
-globle void EnvPreviewSend(
+void EnvPreviewSend(
   void *theEnv,
   const char *logicalName,
   void *clsptr,
@@ -795,7 +795,7 @@ globle void EnvPreviewSend(
   SIDE EFFECTS : None
   NOTES        : Used by DescribeClass()
  ****************************************************/
-globle long DisplayHandlersInLinks(
+long DisplayHandlersInLinks(
   void *theEnv,
   const char *logName,
   PACKED_CLASS_LINKS *plinks,
@@ -1175,7 +1175,7 @@ static void PrintHandlerWatchFlag(
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-globle unsigned FindDefmessageHandler(
+unsigned FindDefmessageHandler(
   void *ptr,
   const char *hname,
   const char *htypestr)
@@ -1183,35 +1183,35 @@ globle unsigned FindDefmessageHandler(
    return EnvFindDefmessageHandler(GetCurrentEnvironment(),ptr,hname,htypestr);
   }
 
-globle const char *GetDefmessageHandlerName(
+const char *GetDefmessageHandlerName(
   void *ptr,
   int theIndex)
   {
    return EnvGetDefmessageHandlerName(GetCurrentEnvironment(),ptr,theIndex);
   }
 
-globle const char *GetDefmessageHandlerType(
+const char *GetDefmessageHandlerType(
   void *ptr,
   int theIndex)
   {
    return EnvGetDefmessageHandlerType(GetCurrentEnvironment(),ptr,theIndex);
   }
 
-globle int GetNextDefmessageHandler(
+int GetNextDefmessageHandler(
   void *ptr,
   int theIndex)
   {
    return EnvGetNextDefmessageHandler(GetCurrentEnvironment(),ptr,theIndex);
   }
 
-globle int IsDefmessageHandlerDeletable(
+int IsDefmessageHandlerDeletable(
   void *ptr,
   int theIndex)
   {
    return EnvIsDefmessageHandlerDeletable(GetCurrentEnvironment(),ptr,theIndex);
   }
 
-globle int UndefmessageHandler(
+int UndefmessageHandler(
   void *vptr,
   int mhi)
   {
@@ -1220,21 +1220,21 @@ globle int UndefmessageHandler(
 
 #if DEBUGGING_FUNCTIONS
 
-globle const char *GetDefmessageHandlerPPForm(
+const char *GetDefmessageHandlerPPForm(
   void *ptr,
   int theIndex)
   {
    return EnvGetDefmessageHandlerPPForm(GetCurrentEnvironment(),ptr,theIndex);
   }
 
-globle unsigned GetDefmessageHandlerWatch(
+unsigned GetDefmessageHandlerWatch(
   void *theClass,
   int theIndex)
   {
    return EnvGetDefmessageHandlerWatch(GetCurrentEnvironment(),theClass,theIndex);
   }
 
-globle void ListDefmessageHandlers(
+void ListDefmessageHandlers(
   const char *logName,
   void *vptr,
   int inhp)
@@ -1242,7 +1242,7 @@ globle void ListDefmessageHandlers(
    EnvListDefmessageHandlers(GetCurrentEnvironment(),logName,vptr,inhp);
   }
 
-globle void PreviewSend(
+void PreviewSend(
   const char *logicalName,
   void *clsptr,
   const char *msgname)
@@ -1250,7 +1250,7 @@ globle void PreviewSend(
    EnvPreviewSend(GetCurrentEnvironment(),logicalName,clsptr,msgname);
   }
 
-globle void SetDefmessageHandlerWatch(
+void SetDefmessageHandlerWatch(
   int newState,
   void *theClass,
   int theIndex)

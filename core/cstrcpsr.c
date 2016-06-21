@@ -84,7 +84,7 @@
 /* Load: C access routine for the load command. */
 /************************************************/
 #if ALLOW_ENVIRONMENT_GLOBALS
-globle int Load(
+int Load(
   const char *fileName)
   {
    return EnvLoad(GetCurrentEnvironment(),fileName);
@@ -98,7 +98,7 @@ globle int Load(
 /*   and 1 if the file was opened and no errors occured     */
 /*   while loading.                                         */
 /************************************************************/
-globle int EnvLoad(
+int EnvLoad(
   void *theEnv,
   const char *fileName)
   {
@@ -150,7 +150,7 @@ globle int EnvLoad(
 /* EnvSetParsingFileName: Sets the file name currently */
 /*   being parsed by the load/batch command.           */
 /*******************************************************/
-globle void EnvSetParsingFileName(
+void EnvSetParsingFileName(
   void *theEnv,
   const char *fileName)
   {
@@ -174,7 +174,7 @@ globle void EnvSetParsingFileName(
 /* EnvGetParsingFileName: Returns the file name currently */
 /*   being parsed by the load/batch command.              */
 /**********************************************************/
-globle char *EnvGetParsingFileName(
+char *EnvGetParsingFileName(
   void *theEnv)
   {
    return ConstructData(theEnv)->ParsingFileName;
@@ -184,7 +184,7 @@ globle char *EnvGetParsingFileName(
 /* EnvSetErrorFileName: Sets the file name    */
 /*   associated with the last error detected. */
 /**********************************************/
-globle void EnvSetErrorFileName(
+void EnvSetErrorFileName(
   void *theEnv,
   const char *fileName)
   {
@@ -208,7 +208,7 @@ globle void EnvSetErrorFileName(
 /* EnvGetErrorFileName: Returns the file name */
 /*   associated with the last error detected. */
 /**********************************************/
-globle char *EnvGetErrorFileName(
+char *EnvGetErrorFileName(
   void *theEnv)
   {
    return ConstructData(theEnv)->ErrorFileName;
@@ -218,7 +218,7 @@ globle char *EnvGetErrorFileName(
 /* EnvSetWarningFileName: Sets the file name    */
 /*   associated with the last warning detected. */
 /************************************************/
-globle void EnvSetWarningFileName(
+void EnvSetWarningFileName(
   void *theEnv,
   const char *fileName)
   {
@@ -242,7 +242,7 @@ globle void EnvSetWarningFileName(
 /* EnvGetWarningFileName: Returns the file name */
 /*   associated with the last warning detected. */
 /************************************************/
-globle char *EnvGetWarningFileName(
+char *EnvGetWarningFileName(
   void *theEnv)
   {
    return ConstructData(theEnv)->WarningFileName;
@@ -252,7 +252,7 @@ globle char *EnvGetWarningFileName(
 /* LoadConstructsFromLogicalName: Loads a set of constructs into */
 /*   the current environment from a specified logical name.      */
 /*****************************************************************/
-globle int LoadConstructsFromLogicalName(
+int LoadConstructsFromLogicalName(
   void *theEnv,
   const char *readSource)
   {
@@ -579,7 +579,7 @@ static int PrintError(
 /* CreateErrorCaptureRouter: Creates the error */
 /*   capture router if it doesn't exists.      */
 /***********************************************/
-globle void CreateErrorCaptureRouter(
+void CreateErrorCaptureRouter(
   void *theEnv)
   {
    /*===========================================================*/
@@ -614,7 +614,7 @@ globle void CreateErrorCaptureRouter(
 /* DeleteErrorCaptureRouter: Deletes the error */
 /*   capture router if it exists.              */
 /***********************************************/
-globle void DeleteErrorCaptureRouter(
+void DeleteErrorCaptureRouter(
    void *theEnv)
    {
    /*===========================================================*/
@@ -636,7 +636,7 @@ globle void DeleteErrorCaptureRouter(
 /* FlushParsingMessages: Invokes the callback routines */
 /*   for any existing warning/error messages.          */
 /*******************************************************/
-globle void FlushParsingMessages(
+void FlushParsingMessages(
   void *theEnv)
   {
    /*===========================================================*/
@@ -694,7 +694,7 @@ globle void FlushParsingMessages(
 /*   if the construct was parsed successfully, and 1 if    */
 /*   the construct was parsed unsuccessfully.              */
 /***********************************************************/
-globle int ParseConstruct(
+int ParseConstruct(
   void *theEnv,
   const char *name,
   const char *logicalName)
@@ -771,7 +771,7 @@ globle int ParseConstruct(
 /*   field of a construct. Returns name of the construct */
 /*   if no errors are detected, otherwise returns NULL.  */
 /*********************************************************/
-globle SYMBOL_HN *GetConstructNameAndComment(
+SYMBOL_HN *GetConstructNameAndComment(
   void *theEnv,
   const char *readSource,
   struct token *inputToken,
@@ -970,7 +970,7 @@ globle SYMBOL_HN *GetConstructNameAndComment(
 /* RemoveConstructFromModule: Removes a */
 /*   construct from its module's list   */
 /****************************************/
-globle void RemoveConstructFromModule(
+void RemoveConstructFromModule(
   void *theEnv,
   struct constructHeader *theConstruct)
   {
@@ -1022,7 +1022,7 @@ globle void RemoveConstructFromModule(
 /*   for an import/export module conflict detected    */
 /*   when a construct is being defined.               */
 /******************************************************/
-globle void ImportExportConflictMessage(
+void ImportExportConflictMessage(
   void *theEnv,
   const char *constructName,
   const char *itemName,

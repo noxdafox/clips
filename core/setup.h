@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  02/05/15            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                  SETUP HEADER FILE                  */
    /*******************************************************/
@@ -75,6 +75,8 @@
 /*            by this flag is deprecated.                    */
 /*                                                           */
 /*            Removed support for BLOCK_MEMORY.              */
+/*                                                           */
+/*      6.40: Removed globle definition.                     */
 /*                                                           */
 /*************************************************************/
 
@@ -151,7 +153,6 @@
 #define STD_SIZE size_t
 
 #define intBool int
-#define globle
 
 /*******************************************/
 /* RUN_TIME:  Specifies whether a run-time */

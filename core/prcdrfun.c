@@ -78,7 +78,7 @@
 /* ProceduralFunctionDefinitions: Initializes */
 /*   the procedural functions.                */
 /**********************************************/
-globle void ProceduralFunctionDefinitions(
+void ProceduralFunctionDefinitions(
   void *theEnv)
   {
    AllocateEnvironmentData(theEnv,PRCDRFUN_DATA,sizeof(struct procedureFunctionData),DeallocateProceduralFunctionData);
@@ -131,7 +131,7 @@ static void DeallocateProceduralFunctionData(
 /* WhileFunction: H/L access routine   */
 /*   for the while function.           */
 /***************************************/
-globle void WhileFunction(
+void WhileFunction(
   void *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
@@ -203,7 +203,7 @@ globle void WhileFunction(
 /* LoopForCountFunction: H/L access routine */
 /*   for the loop-for-count function.       */
 /********************************************/
-globle void LoopForCountFunction(
+void LoopForCountFunction(
   void *theEnv,
   DATA_OBJECT_PTR loopResult)
   {
@@ -281,7 +281,7 @@ globle void LoopForCountFunction(
 /*****************/
 /* GetLoopCount: */
 /*****************/
-globle long long GetLoopCount(
+long long GetLoopCount(
   void *theEnv)
   {
    int depth;
@@ -301,7 +301,7 @@ globle long long GetLoopCount(
 /* IfFunction: H/L access routine   */
 /*   for the if function.           */
 /************************************/
-globle void IfFunction(
+void IfFunction(
   void *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
@@ -425,7 +425,7 @@ globle void IfFunction(
 /* BindFunction: H/L access routine   */
 /*   for the bind function.           */
 /**************************************/
-globle void BindFunction(
+void BindFunction(
   void *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
@@ -548,7 +548,7 @@ globle void BindFunction(
 /* GetBoundVariable: Searches the BindList */
 /*   for a specified variable.             */
 /*******************************************/
-globle intBool GetBoundVariable(
+intBool GetBoundVariable(
   void *theEnv,
   DATA_OBJECT_PTR vPtr,
   SYMBOL_HN *varName)
@@ -574,7 +574,7 @@ globle intBool GetBoundVariable(
 /* FlushBindList: Removes all variables from the */
 /*   list of currently bound local variables.    */
 /*************************************************/
-globle void FlushBindList(
+void FlushBindList(
   void *theEnv)
   {
    ReturnValues(theEnv,ProcedureFunctionData(theEnv)->BindList,TRUE);
@@ -585,7 +585,7 @@ globle void FlushBindList(
 /* PrognFunction: H/L access routine   */
 /*   for the progn function.           */
 /***************************************/
-globle void PrognFunction(
+void PrognFunction(
   void *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
@@ -622,7 +622,7 @@ globle void PrognFunction(
 /*****************************************************************/
 /* ReturnFunction: H/L access routine for the return function.   */
 /*****************************************************************/
-globle void ReturnFunction(
+void ReturnFunction(
   void *theEnv,
   DATA_OBJECT_PTR result)
   {
@@ -639,7 +639,7 @@ globle void ReturnFunction(
 /***************************************************************/
 /* BreakFunction: H/L access routine for the break function.   */
 /***************************************************************/
-globle void BreakFunction(
+void BreakFunction(
   void *theEnv)
   {
    ProcedureFunctionData(theEnv)->BreakFlag = TRUE;
@@ -648,7 +648,7 @@ globle void BreakFunction(
 /*****************************************************************/
 /* SwitchFunction: H/L access routine for the switch function.   */
 /*****************************************************************/
-globle void SwitchFunction(
+void SwitchFunction(
   void *theEnv,
   DATA_OBJECT_PTR result)
   {

@@ -76,7 +76,7 @@
 /*   for the rule's dynamic salience and pretty print form (so these  */
 /*   are only deallocated for the first disjunct).                    */
 /**********************************************************************/
-globle void ReturnDefrule(
+void ReturnDefrule(
   void *theEnv,
   void *vWaste)
   {
@@ -192,7 +192,7 @@ globle void ReturnDefrule(
 /* DestroyDefrule: Action used to remove defrules       */
 /*   as a result of DestroyEnvironment.                 */
 /********************************************************/
-globle void DestroyDefrule(
+void DestroyDefrule(
   void *theEnv,
   void *vTheDefrule)
   {

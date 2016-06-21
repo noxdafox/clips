@@ -88,7 +88,7 @@ struct parseFunctionData
 /* ParseFunctionDefinitions: Initializes */
 /*   the parsing related functions.      */
 /*****************************************/
-globle void ParseFunctionDefinitions(
+void ParseFunctionDefinitions(
   void *theEnv)
   {
    AllocateEnvironmentData(theEnv,PARSEFUN_DATA,sizeof(struct parseFunctionData),NULL);
@@ -103,7 +103,7 @@ globle void ParseFunctionDefinitions(
 /* CheckSyntaxFunction: H/L access routine */
 /*   for the check-syntax function.        */
 /*******************************************/
-globle void CheckSyntaxFunction(
+void CheckSyntaxFunction(
   void *theEnv,
   DATA_OBJECT *returnValue)
   {
@@ -141,7 +141,7 @@ globle void CheckSyntaxFunction(
 /* CheckSyntax: C access routine */
 /*   for the build function.     */
 /*********************************/
-globle int CheckSyntax(
+int CheckSyntax(
   void *theEnv,
   const char *theString,
   DATA_OBJECT_PTR returnValue)
@@ -399,7 +399,7 @@ static int PrintErrorCapture(
 /* CheckSyntaxFunction: This is the non-functional  */
 /*   stub provided for use with a run-time version. */
 /****************************************************/
-globle void CheckSyntaxFunction(
+void CheckSyntaxFunction(
   void *theEnv,
   DATA_OBJECT *returnValue)
   {
@@ -413,7 +413,7 @@ globle void CheckSyntaxFunction(
 /* CheckSyntax: This is the non-functional stub */
 /*   provided for use with a run-time version.  */
 /************************************************/
-globle int CheckSyntax(
+int CheckSyntax(
   void *theEnv,
   const char *theString,
   DATA_OBJECT_PTR returnValue)

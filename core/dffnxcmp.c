@@ -66,7 +66,7 @@ static void SingleDeffunctionToCode(void *,FILE *,DEFFUNCTION *,int,int,int);
   SIDE EFFECTS : Code generator item initialized
   NOTES        : None
  ***************************************************/
-globle void SetupDeffunctionCompiler(
+void SetupDeffunctionCompiler(
   void *theEnv)
   {
    DeffunctionData(theEnv)->DeffunctionCodeItem = AddCodeGeneratorItem(theEnv,"deffunctions",0,ReadyDeffunctionsForCode,
@@ -88,7 +88,7 @@ globle void SetupDeffunctionCompiler(
   SIDE EFFECTS : Reference printed
   NOTES        : None
  ***************************************************/
-globle void PrintDeffunctionReference(
+void PrintDeffunctionReference(
   void *theEnv,
   FILE *fp,
   DEFFUNCTION *dfPtr,
@@ -116,7 +116,7 @@ globle void PrintDeffunctionReference(
   SIDE EFFECTS : Deffunction module reference printed
   NOTES        : None
  ****************************************************/
-globle void DeffunctionCModuleReference(
+void DeffunctionCModuleReference(
   void *theEnv,
   FILE *theFile,
   int count,

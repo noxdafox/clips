@@ -110,7 +110,7 @@ static void TypeToCode(void *,FILE *,int,void *,int);
   SIDE EFFECTS : Code generator item initialized
   NOTES        : None
  ***************************************************/
-globle void SetupGenericsCompiler(
+void SetupGenericsCompiler(
   void *theEnv)
   {
    DefgenericData(theEnv)->DefgenericCodeItem = AddCodeGeneratorItem(theEnv,"generics",0,ReadyDefgenericsForCode,
@@ -131,7 +131,7 @@ globle void SetupGenericsCompiler(
   SIDE EFFECTS : Reference printed
   NOTES        : None
  ***************************************************/
-globle void PrintGenericFunctionReference(
+void PrintGenericFunctionReference(
   void *theEnv,
   FILE *fp,
   DEFGENERIC *gfunc,
@@ -159,7 +159,7 @@ globle void PrintGenericFunctionReference(
   SIDE EFFECTS : Defgeneric module reference printed
   NOTES        : None
  ****************************************************/
-globle void DefgenericCModuleReference(
+void DefgenericCModuleReference(
   void *theEnv,
   FILE *theFile,
   int count,

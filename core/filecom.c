@@ -155,7 +155,7 @@ struct fileCommandData
 /* FileCommandDefinitions: Initializes */
 /*   file commands.                    */
 /***************************************/
-globle void FileCommandDefinitions(
+void FileCommandDefinitions(
   void *theEnv)
   {
    AllocateEnvironmentData(theEnv,FILECOM_DATA,sizeof(struct fileCommandData),DeallocateFileCommandData);
@@ -418,7 +418,7 @@ static int ExitDribble(
 /* DribbleOnCommand: H/L access routine   */
 /*   for the dribble-on command.          */
 /******************************************/
-globle int DribbleOnCommand(
+int DribbleOnCommand(
   void *theEnv)
   {
    const char *fileName;
@@ -433,7 +433,7 @@ globle int DribbleOnCommand(
 /* EnvDribbleOn: C access routine */
 /*   for the dribble-on command.  */
 /**********************************/
-globle intBool EnvDribbleOn(
+intBool EnvDribbleOn(
   void *theEnv,
   const char *fileName)
   {
@@ -490,7 +490,7 @@ globle intBool EnvDribbleOn(
 /* EnvDribbleActive: Returns TRUE if the dribble */
 /*   router is active, otherwise FALSE>          */
 /*************************************************/
-globle intBool EnvDribbleActive(
+intBool EnvDribbleActive(
   void *theEnv)
   {
    if (FileCommandData(theEnv)->DribbleFP != NULL) return(TRUE);
@@ -502,7 +502,7 @@ globle intBool EnvDribbleActive(
 /* DribbleOffCommand: H/L access  routine  */
 /*   for the dribble-off command.          */
 /*******************************************/
-globle int DribbleOffCommand(
+int DribbleOffCommand(
   void *theEnv)
   {
    if (EnvArgCountCheck(theEnv,"dribble-off",EXACTLY,0) == -1) return(FALSE);
@@ -513,7 +513,7 @@ globle int DribbleOffCommand(
 /* EnvDribbleOff: C access routine */
 /*   for the dribble-off command.  */
 /***********************************/
-globle intBool EnvDribbleOff(
+intBool EnvDribbleOff(
   void *theEnv)
   {
    int rv = 0;
@@ -572,7 +572,7 @@ globle intBool EnvDribbleOff(
 /*   is called whenever the dribble router is turned */
 /*   on or off.                                      */
 /*****************************************************/
-globle void SetDribbleStatusFunction(
+void SetDribbleStatusFunction(
   void *theEnv,
   int (*fnptr)(void *,int))
   {
@@ -612,7 +612,7 @@ static int GetcBatch(
 /* LLGetcBatch: Lower level routine for retrieving */
 /*   a character when a batch file is active.      */
 /***************************************************/
-globle int LLGetcBatch(
+int LLGetcBatch(
   void *theEnv,
   const char *logicalName,
   int returnOnEOF)
@@ -731,7 +731,7 @@ static int ExitBatch(
 /* BatchCommand: H/L access routine   */
 /*   for the batch command.           */
 /**************************************/
-globle int BatchCommand(
+int BatchCommand(
   void *theEnv)
   {
    const char *fileName;
@@ -745,7 +745,7 @@ globle int BatchCommand(
 /**************************************************/
 /* Batch: C access routine for the batch command. */
 /**************************************************/
-globle int Batch(
+int Batch(
   void *theEnv,
   const char *fileName)
   { return(OpenBatch(theEnv,fileName,FALSE)); }
@@ -754,7 +754,7 @@ globle int Batch(
 /* OpenBatch: Adds a file to the list of files */
 /*   opened with the batch command.            */
 /***********************************************/
-globle int OpenBatch(
+int OpenBatch(
   void *theEnv,
   const char *fileName,
   int placeAtEnd)
@@ -834,7 +834,7 @@ globle int OpenBatch(
 /*   will be deallocated by the batch routines when batch        */
 /*   processing for the  string is completed.                    */
 /*****************************************************************/
-globle int OpenStringBatch(
+int OpenStringBatch(
   void *theEnv,
   const char *stringName,
   const char *theString,
@@ -916,7 +916,7 @@ static void AddBatch(
 /******************************************************************/
 /* RemoveBatch: Removes the top entry on the list of batch files. */
 /******************************************************************/
-globle int RemoveBatch(
+int RemoveBatch(
   void *theEnv)
   {
    struct batchEntry *bptr;
@@ -1015,7 +1015,7 @@ globle int RemoveBatch(
 /* BatchActive: Returns TRUE if a batch */
 /*   file is open, otherwise FALSE.     */
 /****************************************/
-globle intBool BatchActive(
+intBool BatchActive(
   void *theEnv)
   {
    if (FileCommandData(theEnv)->TopOfBatchList != NULL) return(TRUE);
@@ -1026,7 +1026,7 @@ globle intBool BatchActive(
 /******************************************************/
 /* CloseAllBatchSources: Closes all open batch files. */
 /******************************************************/
-globle void CloseAllBatchSources(
+void CloseAllBatchSources(
   void *theEnv)
   {   
    /*================================================*/
@@ -1060,7 +1060,7 @@ globle void CloseAllBatchSources(
 /* BatchStarCommand: H/L access routine   */
 /*   for the batch* command.              */
 /******************************************/
-globle int BatchStarCommand(
+int BatchStarCommand(
   void *theEnv)
   {
    const char *fileName;
@@ -1076,7 +1076,7 @@ globle int BatchStarCommand(
 /**********************************************************/
 /* EnvBatchStar: C access routine for the batch* command. */
 /**********************************************************/
-globle int EnvBatchStar(
+int EnvBatchStar(
   void *theEnv,
   const char *fileName)
   {
@@ -1184,7 +1184,7 @@ globle int EnvBatchStar(
 /* EnvBatchStar: This is the non-functional stub  */
 /*   provided for use with a run-time version.    */
 /**************************************************/
-globle int EnvBatchStar(
+int EnvBatchStar(
   void *theEnv,
   const char *fileName)
   {
@@ -1198,7 +1198,7 @@ globle int EnvBatchStar(
 /***********************************************************/
 /* LoadCommand: H/L access routine for the load command.   */
 /***********************************************************/
-globle int LoadCommand(
+int LoadCommand(
   void *theEnv)
   {
 #if (! BLOAD_ONLY) && (! RUN_TIME)
@@ -1229,7 +1229,7 @@ globle int LoadCommand(
 /****************************************************************/
 /* LoadStarCommand: H/L access routine for the load* command.   */
 /****************************************************************/
-globle int LoadStarCommand(
+int LoadStarCommand(
   void *theEnv)
   {
 #if (! BLOAD_ONLY) && (! RUN_TIME)
@@ -1257,7 +1257,7 @@ globle int LoadStarCommand(
 /***********************************************************/
 /* SaveCommand: H/L access routine for the save command.   */
 /***********************************************************/
-globle int SaveCommand(
+int SaveCommand(
   void *theEnv)
   {
 #if (! BLOAD_ONLY) && (! RUN_TIME)
@@ -1288,25 +1288,25 @@ globle int SaveCommand(
 
 #if DEBUGGING_FUNCTIONS
 
-globle intBool DribbleActive()
+intBool DribbleActive()
   {
    return EnvDribbleActive(GetCurrentEnvironment());
   }
 
-globle intBool DribbleOn(
+intBool DribbleOn(
   const char *fileName)
   {
    return EnvDribbleOn(GetCurrentEnvironment(),fileName);
   }
 
-globle intBool DribbleOff()
+intBool DribbleOff()
   {
    return EnvDribbleOff(GetCurrentEnvironment());
   }
 
 #endif /* DEBUGGING_FUNCTIONS */
 
-globle int BatchStar(
+int BatchStar(
   const char *fileName)
   {
    return EnvBatchStar(GetCurrentEnvironment(),fileName);

@@ -71,7 +71,7 @@
 /***************************************************************/
 /* InitializeFileRouter: Initializes file input/output router. */
 /***************************************************************/
-globle void InitializeFileRouter(
+void InitializeFileRouter(
   void *theEnv)
   {
    AllocateEnvironmentData(theEnv,FILE_ROUTER_DATA,sizeof(struct fileRouterData),DeallocateFileRouterData);
@@ -105,7 +105,7 @@ static void DeallocateFileRouterData(
 /* FindFptr: Returns a pointer to a file */
 /*   stream for a given logical name.    */
 /*****************************************/
-globle FILE *FindFptr(
+FILE *FindFptr(
   void *theEnv,
   const char *logicalName)
   {
@@ -152,7 +152,7 @@ globle FILE *FindFptr(
 /*   that the logical name can be handled by the     */
 /*   file router). Otherwise, FALSE is returned.     */
 /*****************************************************/
-globle int FindFile(
+int FindFile(
   void *theEnv,
   const char *logicalName)
   {
@@ -249,7 +249,7 @@ static int UngetcFile(
 /*   associated with logical names Returns TRUE if the   */
 /*   file was succesfully opened, otherwise FALSE.       */
 /*********************************************************/
-globle int OpenAFile(
+int OpenAFile(
   void *theEnv,
   const char *fileName,
   const char *accessMode,
@@ -298,7 +298,7 @@ globle int OpenAFile(
 /*   logical name. Returns TRUE if the file was successfully */
 /*   closed, otherwise FALSE.                                */
 /*************************************************************/
-globle int CloseFile(
+int CloseFile(
   void *theEnv,
   const char *fid)
   {
@@ -332,7 +332,7 @@ globle int CloseFile(
 /*   with a file I/O router. Returns TRUE if  */
 /*   any file was closed, otherwise FALSE.    */
 /**********************************************/
-globle int CloseAllFiles(
+int CloseAllFiles(
   void *theEnv)
   {
    struct fileRouter *fptr, *prev;

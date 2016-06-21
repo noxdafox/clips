@@ -110,7 +110,7 @@
 /* FactCommandDefinitions: Initializes */
 /*   fact commands and functions.      */
 /***************************************/
-globle void FactCommandDefinitions(
+void FactCommandDefinitions(
   void *theEnv)
   {
 #if ! RUN_TIME
@@ -145,7 +145,7 @@ globle void FactCommandDefinitions(
 /* AssertCommand: H/L access routine   */
 /*   for the assert function.          */
 /***************************************/
-globle void AssertCommand(
+void AssertCommand(
   void *theEnv,
   DATA_OBJECT_PTR rv)
   {
@@ -281,7 +281,7 @@ globle void AssertCommand(
 /* RetractCommand: H/L access routine   */
 /*   for the retract command.           */
 /****************************************/
-globle void RetractCommand(
+void RetractCommand(
   void *theEnv)
   {
    long long factIndex;
@@ -381,7 +381,7 @@ globle void RetractCommand(
 /* SetFactDuplicationCommand: H/L access routine   */
 /*   for the set-fact-duplication command.         */
 /***************************************************/
-globle int SetFactDuplicationCommand(
+int SetFactDuplicationCommand(
   void *theEnv)
   {
    int oldValue;
@@ -427,7 +427,7 @@ globle int SetFactDuplicationCommand(
 /* GetFactDuplicationCommand: H/L access routine   */
 /*   for the get-fact-duplication command.         */
 /***************************************************/
-globle int GetFactDuplicationCommand(
+int GetFactDuplicationCommand(
   void *theEnv)
   {
    int currentValue;
@@ -456,7 +456,7 @@ globle int GetFactDuplicationCommand(
 /* FactIndexFunction: H/L access routine   */
 /*   for the fact-index function.          */
 /*******************************************/
-globle long long FactIndexFunction(
+long long FactIndexFunction(
   void *theEnv)
   {
    DATA_OBJECT item;
@@ -500,7 +500,7 @@ globle long long FactIndexFunction(
 /* FactsCommand: H/L access routine   */
 /*   for the facts command.           */
 /**************************************/
-globle void FactsCommand(
+void FactsCommand(
   void *theEnv)
   {
    int argumentCount;
@@ -607,7 +607,7 @@ globle void FactsCommand(
 /*****************************************************/
 /* EnvFacts: C access routine for the facts command. */
 /*****************************************************/
-globle void EnvFacts(
+void EnvFacts(
   void *theEnv,
   const char *logicalName,
   void *vTheModule,
@@ -754,7 +754,7 @@ static long long GetFactsArgument(
 /* AssertStringFunction: H/L access routine   */
 /*   for the assert-string function.          */
 /**********************************************/
-globle void AssertStringFunction(
+void AssertStringFunction(
   void *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
@@ -796,7 +796,7 @@ globle void AssertStringFunction(
 /* SaveFactsCommand: H/L access routine   */
 /*   for the save-facts command.          */
 /******************************************/
-globle int SaveFactsCommand(
+int SaveFactsCommand(
   void *theEnv)
   {
    const char *fileName;
@@ -862,7 +862,7 @@ globle int SaveFactsCommand(
 /* LoadFactsCommand: H/L access routine   */
 /*   for the load-facts command.          */
 /******************************************/
-globle int LoadFactsCommand(
+int LoadFactsCommand(
   void *theEnv)
   {
    const char *fileName;
@@ -891,7 +891,7 @@ globle int LoadFactsCommand(
 /**************************************************************/
 /* EnvSaveFacts: C access routine for the save-facts command. */
 /**************************************************************/
-globle intBool EnvSaveFacts(
+intBool EnvSaveFacts(
   void *theEnv,
   const char *fileName,
   int saveCode)
@@ -902,7 +902,7 @@ globle intBool EnvSaveFacts(
 /********************************************************************/
 /* EnvSaveFactsDriver: C access routine for the save-facts command. */
 /********************************************************************/
-globle intBool EnvSaveFactsDriver(
+intBool EnvSaveFactsDriver(
   void *theEnv,
   const char *fileName,
   int saveCode,
@@ -1178,7 +1178,7 @@ static DATA_OBJECT_PTR GetSaveFactsDeftemplateNames(
 /**************************************************************/
 /* EnvLoadFacts: C access routine for the load-facts command. */
 /**************************************************************/
-globle intBool EnvLoadFacts(
+intBool EnvLoadFacts(
   void *theEnv,
   const char *fileName)
   {
@@ -1231,7 +1231,7 @@ globle intBool EnvLoadFacts(
 /*********************************************/
 /* EnvLoadFactsFromString: C access routine. */
 /*********************************************/
-globle intBool EnvLoadFactsFromString(
+intBool EnvLoadFactsFromString(
   void *theEnv,
   const char *theString,
   long theMax)
@@ -1344,7 +1344,7 @@ static struct expr *AssertParse(
 
 #if DEBUGGING_FUNCTIONS
 
-globle void Facts(
+void Facts(
   const char *logicalName,
   void *vTheModule,
   long long start,
@@ -1356,20 +1356,20 @@ globle void Facts(
 
 #endif /* DEBUGGING_FUNCTIONS */
 
-globle intBool LoadFacts(
+intBool LoadFacts(
   const char *fileName)
   {
    return EnvLoadFacts(GetCurrentEnvironment(),fileName);
   }
 
-globle intBool SaveFacts(
+intBool SaveFacts(
   const char *fileName,
   int saveCode)
   {
    return EnvSaveFacts(GetCurrentEnvironment(),fileName,saveCode);
   }
 
-globle intBool LoadFactsFromString(
+intBool LoadFactsFromString(
   const char *theString,
   int theMax)
   {

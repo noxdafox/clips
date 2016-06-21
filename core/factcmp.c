@@ -57,7 +57,7 @@
 /* FactPatternsCompilerSetup: Initializes the constructs-to-c */
 /*   command for use with the fact pattern network.           */
 /**************************************************************/
-globle void FactPatternsCompilerSetup(  
+void FactPatternsCompilerSetup(  
   void *theEnv)
   {
    FactData(theEnv)->FactCodeItem = AddCodeGeneratorItem(theEnv,"facts",0,BeforePatternNetworkToCode,
@@ -357,7 +357,7 @@ static void PatternNodeToCode(
 /* FactPatternNodeReference: Prints C code representation */
 /*   of a fact pattern node data structure reference.     */
 /**********************************************************/
-globle void FactPatternNodeReference(
+void FactPatternNodeReference(
   void *theEnv,
   void *theVPattern,
   FILE *theFile,

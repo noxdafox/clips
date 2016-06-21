@@ -209,7 +209,7 @@ static void DeallocateObjectBinaryData(void *);
   SIDE EFFECTS : Routines defined and structures initialized
   NOTES        : None
  ***********************************************************/
-globle void SetupObjectsBload(
+void SetupObjectsBload(
   void *theEnv)
   {
    AllocateEnvironmentData(theEnv,OBJECTBIN_DATA,sizeof(struct objectBinaryData),DeallocateObjectBinaryData);
@@ -303,7 +303,7 @@ static void DeallocateObjectBinaryData(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle void *BloadDefclassModuleReference(
+void *BloadDefclassModuleReference(
   void *theEnv,
   int theIndex)
   {

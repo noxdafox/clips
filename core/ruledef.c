@@ -106,7 +106,7 @@
 /**********************************************************/
 /* InitializeDefrules: Initializes the defrule construct. */
 /**********************************************************/
-globle void InitializeDefrules(
+void InitializeDefrules(
   void *theEnv)
   {   
    unsigned long i;
@@ -271,7 +271,7 @@ static void ReturnModule(
 /* GetDefruleModuleItem: Returns a pointer to the defmodule */
 /*  item for the specified defrule or defmodule.            */
 /************************************************************/
-globle struct defruleModule *GetDefruleModuleItem(
+struct defruleModule *GetDefruleModuleItem(
   void *theEnv,
   struct defmodule *theModule)
   {   
@@ -282,7 +282,7 @@ globle struct defruleModule *GetDefruleModuleItem(
 /* EnvFindDefrule: Searches for a defrule in the list of defrules. */
 /*   Returns a pointer to the defrule if found, otherwise NULL.    */
 /*******************************************************************/
-globle void *EnvFindDefrule(
+void *EnvFindDefrule(
   void *theEnv,
   const char *defruleName)
   {   
@@ -293,7 +293,7 @@ globle void *EnvFindDefrule(
 /* EnvFindDefruleInModule: Searches for a defrule in the list of defrules. */
 /*   Returns a pointer to the defrule if found, otherwise NULL.    */
 /*******************************************************************/
-globle void *EnvFindDefruleInModule(
+void *EnvFindDefruleInModule(
   void *theEnv,
   const char *defruleName)
   {   
@@ -306,7 +306,7 @@ globle void *EnvFindDefruleInModule(
 /*   the next defrule following the defrule passed as an    */
 /*   argument.                                              */
 /************************************************************/
-globle void *EnvGetNextDefrule(
+void *EnvGetNextDefrule(
   void *theEnv,
   void *defrulePtr)
   {   
@@ -317,7 +317,7 @@ globle void *EnvGetNextDefrule(
 /* EnvIsDefruleDeletable: Returns TRUE if a particular */
 /*   defrule can be deleted, otherwise returns FALSE.  */
 /*******************************************************/
-globle intBool EnvIsDefruleDeletable(
+intBool EnvIsDefruleDeletable(
   void *theEnv,
   void *vTheDefrule)
   {
@@ -340,7 +340,7 @@ globle intBool EnvIsDefruleDeletable(
 /* EnvGetDisjunctCount: Returns the number of disjuncts of */
 /*   a rule (permutations caused by the use of or CEs).    */
 /***********************************************************/
-globle long EnvGetDisjunctCount(
+long EnvGetDisjunctCount(
   void *theEnv,
   void *vTheDefrule)
   {
@@ -360,7 +360,7 @@ globle long EnvGetDisjunctCount(
 /*   The disjunct indices run from 1 to N rather than 0   */
 /*   to N - 1.                                            */
 /**********************************************************/
-globle void *EnvGetNthDisjunct(
+void *EnvGetNthDisjunct(
   void *theEnv,
   void *vTheDefrule,
   long index)
@@ -386,7 +386,7 @@ globle void *EnvGetNthDisjunct(
 /* DefruleRunTimeInitialize:  Initializes */
 /*   defrule in a run-time module.        */
 /******************************************/
-globle void DefruleRunTimeInitialize(
+void DefruleRunTimeInitialize(
   void *theEnv,
   struct joinLink *rightPrime,
   struct joinLink *leftPrime)
@@ -442,7 +442,7 @@ static void AddBetaMemoriesToRule(
 /**************************/
 /* AddBetaMemoriesToJoin: */
 /**************************/
-globle void AddBetaMemoriesToJoin(
+void AddBetaMemoriesToJoin(
   void *theEnv,
   struct joinNode *theNode)
   {   
@@ -524,21 +524,21 @@ globle void AddBetaMemoriesToJoin(
 /* Additional Environment Functions */
 /*##################################*/
 
-globle const char *EnvDefruleModule(
+const char *EnvDefruleModule(
   void *theEnv,
   void *theDefrule)
   {
    return GetConstructModuleName((struct constructHeader *) theDefrule);
   }
 
-globle const char *EnvGetDefruleName(
+const char *EnvGetDefruleName(
   void *theEnv,
   void *theDefrule)
   {
    return GetConstructNameString((struct constructHeader *) theDefrule);
   }
 
-globle const char *EnvGetDefrulePPForm(
+const char *EnvGetDefrulePPForm(
   void *theEnv,
   void *theDefrule)
   {
@@ -551,37 +551,37 @@ globle const char *EnvGetDefrulePPForm(
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-globle const char *DefruleModule(
+const char *DefruleModule(
   void *theDefrule)
   {
    return EnvDefruleModule(GetCurrentEnvironment(),theDefrule);
   }
 
-globle void *FindDefrule(
+void *FindDefrule(
   const char *defruleName)
   {
    return EnvFindDefrule(GetCurrentEnvironment(),defruleName);
   }
 
-globle const char *GetDefruleName(
+const char *GetDefruleName(
   void *theDefrule)
   {
    return EnvGetDefruleName(GetCurrentEnvironment(),theDefrule);
   }
 
-globle const char *GetDefrulePPForm(
+const char *GetDefrulePPForm(
   void *theDefrule)
   {
    return EnvGetDefrulePPForm(GetCurrentEnvironment(),theDefrule);
   }
 
-globle void *GetNextDefrule(
+void *GetNextDefrule(
   void *defrulePtr)
   {
    return EnvGetNextDefrule(GetCurrentEnvironment(),defrulePtr);
   }
 
-globle intBool IsDefruleDeletable(
+intBool IsDefruleDeletable(
   void *vTheDefrule)
   {
    return EnvIsDefruleDeletable(GetCurrentEnvironment(),vTheDefrule);

@@ -92,7 +92,7 @@ static void WatchDeffunction(void *,const char *);
                  stored in data object buffer
   NOTES        : Used in EvaluateExpression(theEnv,)
  ****************************************************/
-globle void CallDeffunction(
+void CallDeffunction(
   void *theEnv,
   DEFFUNCTION *dptr,
   EXPRESSION *args,

@@ -67,7 +67,7 @@ static void SingleDefinstancesToCode(void *,FILE *,DEFINSTANCES *,int,int,int);
   SIDE EFFECTS : Code generator item initialized
   NOTES        : None
  ***************************************************/
-globle void SetupDefinstancesCompiler(
+void SetupDefinstancesCompiler(
   void *theEnv)
   {
    DefinstancesData(theEnv)->DefinstancesCodeItem = AddCodeGeneratorItem(theEnv,"definstances",0,ReadyDefinstancesForCode,
@@ -88,7 +88,7 @@ globle void SetupDefinstancesCompiler(
   SIDE EFFECTS : Definstances module reference printed
   NOTES        : None
  ****************************************************/
-globle void DefinstancesCModuleReference(
+void DefinstancesCModuleReference(
   void *theEnv,
   FILE *theFile,
   int count,

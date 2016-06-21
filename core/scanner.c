@@ -67,7 +67,7 @@
 /* InitializeScannerData: Allocates environment */
 /*    data for scanner routines.                */
 /************************************************/
-globle void InitializeScannerData(
+void InitializeScannerData(
   void *theEnv)
   {
    AllocateEnvironmentData(theEnv,SCANNER_DATA,sizeof(struct scannerData),DeallocateScannerData);
@@ -92,7 +92,7 @@ static void DeallocateScannerData(
 /*   symbol or string, an integer table location if it is an integer), */
 /*   and the pretty print representation.                              */
 /***********************************************************************/
-globle void GetToken(
+void GetToken(
  void *theEnv,
  const char *logicalName,
  struct token *theToken)
@@ -754,7 +754,7 @@ static void ScanNumber(
 /***********************************************************/
 /* CopyToken: Copies values of one token to another token. */
 /***********************************************************/
-globle void CopyToken(
+void CopyToken(
   struct token *destination,
   struct token *source)
   {
@@ -767,7 +767,7 @@ globle void CopyToken(
 /* ResetLineCount: Resets the scanner's */
 /*   line count to zero.                */
 /****************************************/
-globle void ResetLineCount(
+void ResetLineCount(
   void *theEnv)
   {
    ScannerData(theEnv)->LineCount = 0;
@@ -776,7 +776,7 @@ globle void ResetLineCount(
 /***************************************************/
 /* GetLineCount: Returns the scanner's line count. */
 /***************************************************/
-globle long GetLineCount(
+long GetLineCount(
   void *theEnv)
   {
    return(ScannerData(theEnv)->LineCount);
@@ -786,7 +786,7 @@ globle long GetLineCount(
 /* SetLineCount: Sets the scanner's line count */
 /*   and returns the previous value.           */
 /***********************************************/
-globle long SetLineCount(
+long SetLineCount(
   void *theEnv,
   long value)
   {
@@ -803,7 +803,7 @@ globle long SetLineCount(
 /* IncrementLineCount: Increments */
 /*   the scanner's line count.    */
 /**********************************/
-globle void IncrementLineCount(
+void IncrementLineCount(
   void *theEnv)
   {
    ScannerData(theEnv)->LineCount++;
@@ -813,7 +813,7 @@ globle void IncrementLineCount(
 /* DecrementLineCount: Decrements */
 /*   the scanner's line count.    */
 /**********************************/
-globle void DecrementLineCount(
+void DecrementLineCount(
   void *theEnv)
   {
    ScannerData(theEnv)->LineCount--;

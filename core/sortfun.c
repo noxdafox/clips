@@ -65,7 +65,7 @@ struct sortFunctionData
 /* SortFunctionDefinitions: Initializes */
 /*   the sorting functions.             */
 /****************************************/
-globle void SortFunctionDefinitions(
+void SortFunctionDefinitions(
   void *theEnv)
   {
    AllocateEnvironmentData(theEnv,SORTFUN_DATA,sizeof(struct sortFunctionData),DeallocateSortFunctionData);
@@ -113,7 +113,7 @@ static int DefaultCompareSwapFunction(
 /* SortFunction: H/L access routine   */
 /*   for the rest$ function.          */
 /**************************************/
-globle void SortFunction(
+void SortFunction(
   void *theEnv,
   DATA_OBJECT_PTR returnValue)
   {

@@ -70,7 +70,7 @@
 /* DeftemplateBinarySetup: Installs the binary */
 /*   save/load feature for deftemplates.       */
 /***********************************************/
-globle void DeftemplateBinarySetup(
+void DeftemplateBinarySetup(
   void *theEnv)
   {
    AllocateEnvironmentData(theEnv,TMPLTBIN_DATA,sizeof(struct deftemplateBinaryData),DeallocateDeftemplateBloadData);
@@ -598,7 +598,7 @@ static void ClearBload(
 /* BloadDeftemplateModuleReference: Returns the deftemplate */
 /*   module pointer for use with the bload function.        */
 /************************************************************/
-globle void *BloadDeftemplateModuleReference(
+void *BloadDeftemplateModuleReference(
   void *theEnv,
   int theIndex)
   {

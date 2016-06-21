@@ -104,7 +104,7 @@ static void DeallocateDefinstancesBinaryData(void *);
   SIDE EFFECTS : Routines defined and structures initialized
   NOTES        : None
  ***********************************************************/
-globle void SetupDefinstancesBload(
+void SetupDefinstancesBload(
   void *theEnv)
   {
    AllocateEnvironmentData(theEnv,DFINSBIN_DATA,sizeof(struct definstancesBinaryData),DeallocateDefinstancesBinaryData);
@@ -147,7 +147,7 @@ static void DeallocateDefinstancesBinaryData(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle void *BloadDefinstancesModuleRef(
+void *BloadDefinstancesModuleRef(
   void *theEnv,
   int theIndex)
   {

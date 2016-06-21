@@ -139,7 +139,7 @@ static void DeallocateDefgenericBinaryData(void *);
   SIDE EFFECTS : Routines defined and structures initialized
   NOTES        : None
  ***********************************************************/
-globle void SetupGenericsBload(
+void SetupGenericsBload(
   void *theEnv)
   {
    AllocateEnvironmentData(theEnv,GENRCBIN_DATA,sizeof(struct defgenericBinaryData),DeallocateDefgenericBinaryData);
@@ -192,7 +192,7 @@ static void DeallocateDefgenericBinaryData(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle void *BloadDefgenericModuleReference(
+void *BloadDefgenericModuleReference(
   void *theEnv,
   int theIndex)
   {

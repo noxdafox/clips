@@ -76,7 +76,7 @@
 /* AtomicValuesToCode: Driver routine for generating the code */
 /*  used by the symbol, integer, float, and bit map tables.   */
 /**************************************************************/
-globle void AtomicValuesToCode(
+void AtomicValuesToCode(
   void *theEnv,
   const char *fileName,
   const char *pathName,
@@ -744,7 +744,7 @@ static int HashTablesToCode(
 /*   address to the specified symbol (also used for  */
 /*   strings and instance names).                    */
 /*****************************************************/
-globle void PrintSymbolReference(
+void PrintSymbolReference(
   void *theEnv,
   FILE *theFile,
   struct symbolHashNode *theSymbol)
@@ -760,7 +760,7 @@ globle void PrintSymbolReference(
 /* PrintFloatReference: Prints the C code reference */
 /*   address to the specified float.                */
 /****************************************************/
-globle void PrintFloatReference(
+void PrintFloatReference(
   void *theEnv,
   FILE *theFile,
   struct floatHashNode *theFloat)
@@ -775,7 +775,7 @@ globle void PrintFloatReference(
 /* PrintIntegerReference: Prints the C code reference */
 /*   address to the specified integer.                */
 /******************************************************/
-globle void PrintIntegerReference(
+void PrintIntegerReference(
   void *theEnv,
   FILE *theFile,
   struct integerHashNode *theInteger)
@@ -790,7 +790,7 @@ globle void PrintIntegerReference(
 /* PrintBitMapReference: Prints the C code reference */
 /*   address to the specified bit map.               */
 /*****************************************************/
-globle void PrintBitMapReference(
+void PrintBitMapReference(
   void *theEnv,
   FILE *theFile,
   struct bitMapHashNode *theBitMap)

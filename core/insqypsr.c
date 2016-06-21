@@ -120,7 +120,7 @@ static int IsQueryFunction(EXPRESSION *);
 
                  <class-2a> -> <class-2b> -> (QDS) -> ...
  ***********************************************************************/
-globle EXPRESSION *ParseQueryNoAction(
+EXPRESSION *ParseQueryNoAction(
   void *theEnv,
   EXPRESSION *top,
   const char *readSource)
@@ -182,7 +182,7 @@ globle EXPRESSION *ParseQueryNoAction(
 
                  <class-2a> -> <class-2b> -> (QDS) -> ...
  ***********************************************************************/
-globle EXPRESSION *ParseQueryAction(
+EXPRESSION *ParseQueryAction(
   void *theEnv,
   EXPRESSION *top,
   const char *readSource)

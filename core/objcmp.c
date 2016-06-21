@@ -162,7 +162,7 @@ static intBool OrderedHandlersToCode(void *,FILE **,const char *,const char *,ch
   SIDE EFFECTS : Code generator item initialized
   NOTES        : None
  ***************************************************/
-globle void SetupObjectsCompiler(
+void SetupObjectsCompiler(
   void *theEnv)
   {
    AllocateEnvironmentData(theEnv,OBJECT_COMPILER_DATA,sizeof(struct objectCompilerData),NULL);
@@ -184,7 +184,7 @@ globle void SetupObjectsCompiler(
   SIDE EFFECTS : Writes out class array reference to file
   NOTES        : None
  *********************************************************/
-globle void PrintClassReference(
+void PrintClassReference(
   void *theEnv,
   FILE *fp,
   DEFCLASS *cls,
@@ -214,7 +214,7 @@ globle void PrintClassReference(
   SIDE EFFECTS : Defclass module reference printed
   NOTES        : None
  ****************************************************/
-globle void DefclassCModuleReference(
+void DefclassCModuleReference(
   void *theEnv,
   FILE *theFile,
   int count,

@@ -76,7 +76,7 @@
 /* SetNumberOfDefmodules: Sets the number */
 /*   of defmodules currently defined.     */
 /******************************************/
-globle void SetNumberOfDefmodules(
+void SetNumberOfDefmodules(
   void *theEnv,
   long value)
   {
@@ -88,7 +88,7 @@ globle void SetNumberOfDefmodules(
 /*   the list of functions that are to be called    */
 /*   after a module change occurs.                  */
 /****************************************************/
-globle void AddAfterModuleDefinedFunction(
+void AddAfterModuleDefinedFunction(
   void *theEnv,
   const char *name,
   void (*func)(void *),
@@ -102,7 +102,7 @@ globle void AddAfterModuleDefinedFunction(
 /* AddPortConstructItem: Adds an item to the list of  */
 /*   items that can be imported/exported by a module. */
 /******************************************************/
-globle void AddPortConstructItem(
+void AddPortConstructItem(
   void *theEnv,
   const char *theName,
   int theType)
@@ -121,7 +121,7 @@ globle void AddPortConstructItem(
 /*   for the parsing and creation of a defmodule into */
 /*   the current environment.                         */
 /******************************************************/
-globle int ParseDefmodule(
+int ParseDefmodule(
   void *theEnv,
   const char *readSource)
   {
@@ -910,7 +910,7 @@ static int ParseExportSpec(
 /*   name is in the list of constructs which can be exported */
 /*   and imported, otherwise FALSE is returned.              */
 /*************************************************************/
-globle struct portConstructItem *ValidPortConstructItem(
+struct portConstructItem *ValidPortConstructItem(
   void *theEnv,
   const char *theName)
   {
@@ -1056,7 +1056,7 @@ static void NotExportedErrorMessage(
 /*   called. TRUE is returned if an import/export conflicts  */
 /*   is found, otherwise FALSE is returned.                  */
 /*************************************************************/
-globle int FindImportExportConflict(
+int FindImportExportConflict(
   void *theEnv,
   const char *constructName,
   struct defmodule *matchModule,
@@ -1133,7 +1133,7 @@ globle int FindImportExportConflict(
 /* GetNumberOfDefmodules: Returns the number */
 /*   of defmodules currently defined.        */
 /*********************************************/
-globle long GetNumberOfDefmodules(
+long GetNumberOfDefmodules(
   void *theEnv)
   {
 #if DEFMODULE_CONSTRUCT && (! RUN_TIME) && (! BLOAD_ONLY)

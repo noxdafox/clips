@@ -76,7 +76,7 @@
 /* DefruleCompilerSetup: Initializes the defrule construct */
 /*   for use with the constructs-to-c command.             */
 /***********************************************************/
-globle void DefruleCompilerSetup(
+void DefruleCompilerSetup(
   void *theEnv)
   {
    DefruleData(theEnv)->DefruleCodeItem = AddCodeGeneratorItem(theEnv,"defrules",0,BeforeDefrulesCode,
@@ -671,7 +671,7 @@ static void LinkToCode(
 /* DefruleCModuleReference: Writes the C code representation */
 /*   of a reference to a defrule module data structure.      */
 /*************************************************************/
-globle void DefruleCModuleReference(
+void DefruleCModuleReference(
   void *theEnv,
   FILE *theFile,
   int count,

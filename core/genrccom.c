@@ -168,7 +168,7 @@ static void PrintMethodWatchFlag(void *,const char *,void *,long);
   SIDE EFFECTS : Generic function H/L functions set up
   NOTES        : None
  ***********************************************************/
-globle void SetupGenericFunctions(
+void SetupGenericFunctions(
   void *theEnv)
   {
    ENTITY_RECORD genericEntityRecord =
@@ -378,7 +378,7 @@ static void DestroyDefgenericAction(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle void *EnvFindDefgeneric(
+void *EnvFindDefgeneric(
   void *theEnv,
   const char *genericModuleAndName)
   {
@@ -395,7 +395,7 @@ globle void *EnvFindDefgeneric(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle void *EnvFindDefgenericInModule(
+void *EnvFindDefgenericInModule(
   void *theEnv,
   const char *genericModuleAndName)
   {
@@ -413,7 +413,7 @@ globle void *EnvFindDefgenericInModule(
                   ambiguous references
   NOTES        : None
  ***************************************************/
-globle DEFGENERIC *LookupDefgenericByMdlOrScope(
+DEFGENERIC *LookupDefgenericByMdlOrScope(
   void *theEnv,
   const char *defgenericName)
   {
@@ -431,7 +431,7 @@ globle DEFGENERIC *LookupDefgenericByMdlOrScope(
                   ambiguous references
   NOTES        : None
  ***************************************************/
-globle DEFGENERIC *LookupDefgenericInScope(
+DEFGENERIC *LookupDefgenericInScope(
   void *theEnv,
   const char *defgenericName)
   {
@@ -448,7 +448,7 @@ globle DEFGENERIC *LookupDefgenericInScope(
   NOTES        : If ptr == NULL, the first generic function
                     is returned.
  ***********************************************************/
-globle void *EnvGetNextDefgeneric(
+void *EnvGetNextDefgeneric(
   void *theEnv,
   void *ptr)
   {
@@ -466,7 +466,7 @@ globle void *EnvGetNextDefgeneric(
   NOTES        : If index == 0, the index of the first
                    method is returned
  ***********************************************************/
-globle long EnvGetNextDefmethod(
+long EnvGetNextDefmethod(
   void *theEnv,
   void *ptr,
   long theIndex)
@@ -500,7 +500,7 @@ globle long EnvGetNextDefmethod(
   SIDE EFFECTS : None
   NOTES        : None
  *****************************************************/
-globle DEFMETHOD *GetDefmethodPointer(
+DEFMETHOD *GetDefmethodPointer(
   void *ptr,
   long theIndex)
   {
@@ -516,7 +516,7 @@ globle DEFMETHOD *GetDefmethodPointer(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle int EnvIsDefgenericDeletable(
+int EnvIsDefgenericDeletable(
   void *theEnv,
   void *ptr)
   {
@@ -536,7 +536,7 @@ globle int EnvIsDefgenericDeletable(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle int EnvIsDefmethodDeletable(
+int EnvIsDefmethodDeletable(
   void *theEnv,
   void *ptr,
   long theIndex)
@@ -562,7 +562,7 @@ globle int EnvIsDefmethodDeletable(
   SIDE EFFECTS : methods deallocated
   NOTES        : H/L Syntax: (undefgeneric <name> | *)
  **********************************************************/
-globle void UndefgenericCommand(
+void UndefgenericCommand(
   void *theEnv)
   {
    UndefconstructCommand(theEnv,"undefgeneric",DefgenericData(theEnv)->DefgenericConstruct);
@@ -576,7 +576,7 @@ globle void UndefgenericCommand(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax: (defgeneric-module <generic-name>)
  ****************************************************************/
-globle void *GetDefgenericModuleCommand(
+void *GetDefgenericModuleCommand(
   void *theEnv)
   {
    return(GetConstructModuleCommand(theEnv,"defgeneric-module",DefgenericData(theEnv)->DefgenericConstruct));
@@ -590,7 +590,7 @@ globle void *GetDefgenericModuleCommand(
   SIDE EFFECTS : methods deallocated
   NOTES        : H/L Syntax: (undefmethod <name> <index> | *)
  **************************************************************/
-globle void UndefmethodCommand(
+void UndefmethodCommand(
   void *theEnv)
   {
    DATA_OBJECT temp;
@@ -647,7 +647,7 @@ globle void UndefmethodCommand(
   SIDE EFFECTS : methods deallocated
   NOTES        : None
  **************************************************************/
-globle intBool EnvUndefgeneric(
+intBool EnvUndefgeneric(
   void *theEnv,
   void *vptr)
   {
@@ -684,7 +684,7 @@ globle intBool EnvUndefgeneric(
   SIDE EFFECTS : methods deallocated
   NOTES        : None
  **************************************************************/
-globle intBool EnvUndefmethod(
+intBool EnvUndefmethod(
   void *theEnv,
   void *vptr,
   long mi)
@@ -769,7 +769,7 @@ globle intBool EnvUndefmethod(
   SIDE EFFECTS : Caller's buffer written
   NOTES        : Terminating '\n' not written
  *****************************************************/
-globle void EnvGetDefmethodDescription(
+void EnvGetDefmethodDescription(
   void *theEnv,
   char *buf,
   size_t buflen,
@@ -800,7 +800,7 @@ globle void EnvGetDefmethodDescription(
   SIDE EFFECTS : None
   NOTES        : None
  *********************************************************/
-globle unsigned EnvGetDefgenericWatch(
+unsigned EnvGetDefgenericWatch(
   void *theEnv,
   void *theGeneric)
   {
@@ -822,7 +822,7 @@ globle unsigned EnvGetDefgenericWatch(
   SIDE EFFECTS : Watch flag for the generic set
   NOTES        : None
  *********************************************************/
-globle void EnvSetDefgenericWatch(
+void EnvSetDefgenericWatch(
   void *theEnv,
   unsigned newState,
   void *theGeneric)
@@ -845,7 +845,7 @@ globle void EnvSetDefgenericWatch(
   SIDE EFFECTS : None
   NOTES        : None
  *********************************************************/
-globle unsigned EnvGetDefmethodWatch(
+unsigned EnvGetDefmethodWatch(
   void *theEnv,
   void *theGeneric,
   long theIndex)
@@ -873,7 +873,7 @@ globle unsigned EnvGetDefmethodWatch(
   SIDE EFFECTS : Watch flag for the method set
   NOTES        : None
  *********************************************************/
-globle void EnvSetDefmethodWatch(
+void EnvSetDefmethodWatch(
   void *theEnv,
   unsigned newState,
   void *theGeneric,
@@ -900,7 +900,7 @@ globle void EnvSetDefmethodWatch(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax: (ppdefgeneric <name>)
  ********************************************************/
-globle void PPDefgenericCommand(
+void PPDefgenericCommand(
   void *theEnv)
   {
    PPConstructCommand(theEnv,"ppdefgeneric",DefgenericData(theEnv)->DefgenericConstruct);
@@ -915,7 +915,7 @@ globle void PPDefgenericCommand(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax: (ppdefmethod <name> <index>)
  **********************************************************/
-globle void PPDefmethodCommand(
+void PPDefmethodCommand(
   void *theEnv)
   {
    DATA_OBJECT temp;
@@ -947,7 +947,7 @@ globle void PPDefmethodCommand(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax: (list-defmethods <name>)
  ******************************************************/
-globle void ListDefmethodsCommand(
+void ListDefmethodsCommand(
   void *theEnv)
   {
    DATA_OBJECT temp;
@@ -974,7 +974,7 @@ globle void ListDefmethodsCommand(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************************/
-globle const char *EnvGetDefmethodPPForm(
+const char *EnvGetDefmethodPPForm(
   void *theEnv,
   void *ptr,
   long theIndex)
@@ -998,7 +998,7 @@ globle const char *EnvGetDefmethodPPForm(
   SIDE EFFECTS : Defgeneric names printed
   NOTES        : H/L Interface
  ***************************************************/
-globle void ListDefgenericsCommand(
+void ListDefgenericsCommand(
   void *theEnv)
   {
    ListConstructCommand(theEnv,"list-defgenerics",DefgenericData(theEnv)->DefgenericConstruct);
@@ -1013,7 +1013,7 @@ globle void ListDefgenericsCommand(
   SIDE EFFECTS : Defgeneric names printed
   NOTES        : C Interface
  ***************************************************/
-globle void EnvListDefgenerics(
+void EnvListDefgenerics(
   void *theEnv,
   const char *logicalName,
   struct defmodule *theModule)
@@ -1032,7 +1032,7 @@ globle void EnvListDefgenerics(
   SIDE EFFECTS : None
   NOTES        : None
  ******************************************************/
-globle void EnvListDefmethods(
+void EnvListDefmethods(
   void *theEnv,
   const char *logicalName,
   void *vptr)
@@ -1068,7 +1068,7 @@ globle void EnvListDefmethods(
   SIDE EFFECTS : Multifield allocated and filled
   NOTES        : H/L Syntax: (get-defgeneric-list [<module>])
  ***************************************************************/
-globle void GetDefgenericListFunction(
+void GetDefgenericListFunction(
   void *theEnv,
   DATA_OBJECT*returnValue)
   {
@@ -1086,7 +1086,7 @@ globle void GetDefgenericListFunction(
   SIDE EFFECTS : Multifield allocated and filled
   NOTES        : External C access
  ***************************************************************/
-globle void EnvGetDefgenericList(
+void EnvGetDefgenericList(
   void *theEnv,
   DATA_OBJECT *returnValue,
   struct defmodule *theModule)
@@ -1104,7 +1104,7 @@ globle void EnvGetDefgenericList(
   SIDE EFFECTS : Multifield set to list of method indices
   NOTES        : None
  ***********************************************************/
-globle void GetDefmethodListCommand(
+void GetDefmethodListCommand(
   void *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
@@ -1139,7 +1139,7 @@ globle void GetDefmethodListCommand(
   SIDE EFFECTS : Multifield set to list of method indices
   NOTES        : None
  ***********************************************************/
-globle void EnvGetDefmethodList(
+void EnvGetDefmethodList(
   void *theEnv,
   void *vgfunc,
   DATA_OBJECT_PTR returnValue)
@@ -1195,7 +1195,7 @@ globle void EnvGetDefmethodList(
   SIDE EFFECTS : Multifield created (length zero on errors)
   NOTES        : Syntax: (get-method-restrictions <generic-function> <method-index>)
  ***********************************************************************************/
-globle void GetMethodRestrictionsCommand(
+void GetMethodRestrictionsCommand(
   void *theEnv,
   DATA_OBJECT *result)
   {
@@ -1262,7 +1262,7 @@ globle void GetMethodRestrictionsCommand(
 
                   (2 -1 3 7 11 13 FALSE 2 NUMBER SYMBOL TRUE 0 FALSE 0)
  ***********************************************************************/
-globle void EnvGetMethodRestrictions(
+void EnvGetMethodRestrictions(
   void *theEnv,
   void *vgfunc,
   long mi,
@@ -1852,7 +1852,7 @@ static void PrintMethodWatchFlag(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax: (type <primitive>)
  ***************************************************/
-globle void TypeCommand(
+void TypeCommand(
   void *theEnv,
   DATA_OBJECT *result)
   {
@@ -1867,13 +1867,13 @@ globle void TypeCommand(
 /* Additional Access Functions */
 /*#############################*/
 
-globle SYMBOL_HN *GetDefgenericNamePointer(
+SYMBOL_HN *GetDefgenericNamePointer(
   void *theDefgeneric)
   {
    return GetConstructNamePointer((struct constructHeader *) theDefgeneric);
   }
 
-globle void SetNextDefgeneric(
+void SetNextDefgeneric(
   void *theDefgeneric,
   void *targetDefgeneric)
   {
@@ -1885,35 +1885,35 @@ globle void SetNextDefgeneric(
 /* Additional Environment Functions */
 /*##################################*/
 
-globle const char *EnvDefgenericModule(
+const char *EnvDefgenericModule(
   void *theEnv,
   void *theDefgeneric)
   {
    return GetConstructModuleName((struct constructHeader *) theDefgeneric);
   }
 
-globle const char *EnvGetDefgenericName(
+const char *EnvGetDefgenericName(
   void *theEnv,
   void *theDefgeneric)
   {
    return GetConstructNameString((struct constructHeader *) theDefgeneric);
   }
 
-globle const char *EnvGetDefgenericPPForm(
+const char *EnvGetDefgenericPPForm(
   void *theEnv,
   void *theDefgeneric)
   {
    return GetConstructPPForm(theEnv,(struct constructHeader *) theDefgeneric);
   }
 
-globle SYMBOL_HN *EnvGetDefgenericNamePointer(
+SYMBOL_HN *EnvGetDefgenericNamePointer(
   void *theEnv,
   void *theDefgeneric)
   {
    return GetConstructNamePointer((struct constructHeader *) theDefgeneric);
   }
 
-globle void EnvSetDefgenericPPForm(
+void EnvSetDefgenericPPForm(
   void *theEnv,
   void *theDefgeneric,
   const char *thePPForm)
@@ -1927,70 +1927,70 @@ globle void EnvSetDefgenericPPForm(
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-globle void SetDefgenericPPForm(
+void SetDefgenericPPForm(
   void *theDefgeneric,
   const char *thePPForm)
   {
    EnvSetDefgenericPPForm(GetCurrentEnvironment(),theDefgeneric,thePPForm);
   }
 
-globle const char *DefgenericModule(
+const char *DefgenericModule(
   void *theDefgeneric)
   {
    return EnvDefgenericModule(GetCurrentEnvironment(),theDefgeneric);
   }
 
-globle void *FindDefgeneric(
+void *FindDefgeneric(
   const char *genericModuleAndName)
   {
    return EnvFindDefgeneric(GetCurrentEnvironment(),genericModuleAndName);
   }
 
-globle void GetDefgenericList(
+void GetDefgenericList(
   DATA_OBJECT *returnValue,
   struct defmodule *theModule)
   {
    EnvGetDefgenericList(GetCurrentEnvironment(),returnValue,theModule);
   }
 
-globle const char *GetDefgenericName(
+const char *GetDefgenericName(
   void *theDefgeneric)
   {
    return EnvGetDefgenericName(GetCurrentEnvironment(),theDefgeneric);
   }
 
-globle const char *GetDefgenericPPForm(
+const char *GetDefgenericPPForm(
   void *theDefgeneric)
   {
    return EnvGetDefgenericPPForm(GetCurrentEnvironment(),theDefgeneric);
   }
 
-globle void *GetNextDefgeneric(
+void *GetNextDefgeneric(
   void *ptr)
   {
    return EnvGetNextDefgeneric(GetCurrentEnvironment(),ptr);
   }
 
-globle int IsDefgenericDeletable(
+int IsDefgenericDeletable(
   void *ptr)
   {
    return EnvIsDefgenericDeletable(GetCurrentEnvironment(),ptr);
   }
 
-globle intBool Undefgeneric(
+intBool Undefgeneric(
   void *vptr)
   {
    return EnvUndefgeneric(GetCurrentEnvironment(),vptr);
   }
 
-globle void GetDefmethodList(
+void GetDefmethodList(
   void *vgfunc,
   DATA_OBJECT_PTR returnValue)
   {
    EnvGetDefmethodList(GetCurrentEnvironment(),vgfunc,returnValue);
   }
 
-globle void GetMethodRestrictions(
+void GetMethodRestrictions(
   void *vgfunc,
   long mi,
   DATA_OBJECT *result)
@@ -1998,21 +1998,21 @@ globle void GetMethodRestrictions(
    EnvGetMethodRestrictions(GetCurrentEnvironment(),vgfunc,mi,result);
   }
 
-globle long GetNextDefmethod(
+long GetNextDefmethod(
   void *ptr,
   long theIndex)
   {
    return EnvGetNextDefmethod(GetCurrentEnvironment(),ptr,theIndex);
   }
 
-globle int IsDefmethodDeletable(
+int IsDefmethodDeletable(
   void *ptr,
   long theIndex)
   {
    return EnvIsDefmethodDeletable(GetCurrentEnvironment(),ptr,theIndex);
   }
 
-globle intBool Undefmethod(
+intBool Undefmethod(
   void *vptr,
   long mi)
   {
@@ -2021,48 +2021,48 @@ globle intBool Undefmethod(
 
 #if DEBUGGING_FUNCTIONS
 
-globle unsigned GetDefgenericWatch(
+unsigned GetDefgenericWatch(
   void *theGeneric)
   {
    return EnvGetDefgenericWatch(GetCurrentEnvironment(),theGeneric);
   }
 
-globle void ListDefgenerics(
+void ListDefgenerics(
   const char *logicalName,
   struct defmodule *theModule)
   {
    EnvListDefgenerics(GetCurrentEnvironment(),logicalName,theModule);
   }
 
-globle void SetDefgenericWatch(
+void SetDefgenericWatch(
   unsigned newState,
   void *theGeneric)
   {
    EnvSetDefgenericWatch(GetCurrentEnvironment(),newState,theGeneric);
   }
 
-globle const char *GetDefmethodPPForm(
+const char *GetDefmethodPPForm(
   void *ptr,
   long theIndex)
   {
    return EnvGetDefmethodPPForm(GetCurrentEnvironment(),ptr,theIndex);
   }
 
-globle unsigned GetDefmethodWatch(
+unsigned GetDefmethodWatch(
   void *theGeneric,
   long theIndex)
   {
    return EnvGetDefmethodWatch(GetCurrentEnvironment(),theGeneric,theIndex);
   }
 
-globle void ListDefmethods(
+void ListDefmethods(
   const char *logicalName,
   void *vptr)
   {
    EnvListDefmethods(GetCurrentEnvironment(),logicalName,vptr);
   }
 
-globle void SetDefmethodWatch(
+void SetDefmethodWatch(
   unsigned newState,
   void *theGeneric,
   long theIndex)
@@ -2074,7 +2074,7 @@ globle void SetDefmethodWatch(
 
 #if DEBUGGING_FUNCTIONS || PROFILING_FUNCTIONS
 
-globle void GetDefmethodDescription(
+void GetDefmethodDescription(
   char *buf,
   int buflen,
   void *ptr,

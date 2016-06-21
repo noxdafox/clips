@@ -127,7 +127,7 @@ static DEFCLASS *DetermineRestrictionClass(void *,DATA_OBJECT *);
                     method is executed.  Thus, it is possible for a method to be
                     executed multiple times per generic function call.
  ***********************************************************************************/
-globle void GenericDispatch(
+void GenericDispatch(
   void *theEnv,
   DEFGENERIC *gfunc,
   DEFMETHOD *prevmeth,
@@ -272,7 +272,7 @@ globle void GenericDispatch(
   SIDE EFFECTS : Error synopsis printed to WERROR
   NOTES        : None
  *******************************************************/
-globle void UnboundMethodErr(
+void UnboundMethodErr(
   void *theEnv)
   {
    EnvPrintRouter(theEnv,WERROR,"generic function ");
@@ -293,7 +293,7 @@ globle void UnboundMethodErr(
   SIDE EFFECTS : Any query functions are evaluated
   NOTES        : Uses globals ProcParamArraySize and ProcParamArray
  ***********************************************************************/
-globle intBool IsMethodApplicable(
+intBool IsMethodApplicable(
   void *theEnv,
   DEFMETHOD *meth)
   {
@@ -380,7 +380,7 @@ globle intBool IsMethodApplicable(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax: (next-methodp)
  ***************************************************/
-globle int NextMethodP(
+int NextMethodP(
   void *theEnv)
   {
    register DEFMETHOD *meth;
@@ -407,7 +407,7 @@ globle int NextMethodP(
                    is available to execute.
   NOTES        : H/L Syntax: (call-next-method)
  ****************************************************/
-globle void CallNextMethod(
+void CallNextMethod(
   void *theEnv,
   DATA_OBJECT *result)
   {
@@ -484,7 +484,7 @@ globle void CallNextMethod(
   NOTES        : H/L Syntax: (call-specific-method
                                 <generic-function> <method-index> <args>)
  **************************************************************************/
-globle void CallSpecificMethod(
+void CallSpecificMethod(
   void *theEnv,
   DATA_OBJECT *result)
   {
@@ -519,7 +519,7 @@ globle void CallSpecificMethod(
   SIDE EFFECTS : Any of evaluating method restrictions and bodies
   NOTES        : H/L Syntax: (override-next-method <args>)
  ***********************************************************************/
-globle void OverrideNextMethod(
+void OverrideNextMethod(
   void *theEnv,
   DATA_OBJECT *result)
   {
@@ -548,7 +548,7 @@ globle void OverrideNextMethod(
   SIDE EFFECTS : Data-object set
   NOTES        : Useful for queries in wildcard restrictions
  ***********************************************************/
-globle void GetGenericCurrentArgument(
+void GetGenericCurrentArgument(
   void *theEnv,
   DATA_OBJECT *result)
   {

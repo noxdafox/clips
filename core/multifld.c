@@ -69,7 +69,7 @@
 /**********************/
 /* CreateMultifield2: */
 /**********************/
-globle void *CreateMultifield2(
+void *CreateMultifield2(
   void *theEnv,
   long size)
   {
@@ -90,7 +90,7 @@ globle void *CreateMultifield2(
 /*********************/
 /* ReturnMultifield: */
 /*********************/
-globle void ReturnMultifield(
+void ReturnMultifield(
   void *theEnv,
   struct multifield *theSegment)
   {
@@ -107,7 +107,7 @@ globle void ReturnMultifield(
 /**********************/
 /* MultifieldInstall: */
 /**********************/
-globle void MultifieldInstall(
+void MultifieldInstall(
   void *theEnv,
   struct multifield *theSegment)
   {
@@ -128,7 +128,7 @@ globle void MultifieldInstall(
 /************************/
 /* MultifieldDeinstall: */
 /************************/
-globle void MultifieldDeinstall(
+void MultifieldDeinstall(
   void *theEnv,
   struct multifield *theSegment)
   {
@@ -149,7 +149,7 @@ globle void MultifieldDeinstall(
 /* StringToMultifield: Returns a multifield structure  */
 /*    that represents the string sent as the argument. */
 /*******************************************************/
-globle struct multifield *StringToMultifield(
+struct multifield *StringToMultifield(
   void *theEnv,
   const char *theString)
   {
@@ -224,7 +224,7 @@ globle struct multifield *StringToMultifield(
 /* EnvCreateMultifield: Creates a multifield of the specified */
 /*   size and adds it to the list of segments.                */
 /**************************************************************/
-globle void *EnvCreateMultifield(
+void *EnvCreateMultifield(
   void *theEnv,
   long size)
   {
@@ -252,7 +252,7 @@ globle void *EnvCreateMultifield(
 /*******************/
 /* DOToMultifield: */
 /*******************/
-globle void *DOToMultifield(
+void *DOToMultifield(
   void *theEnv,
   DATA_OBJECT *theValue)
   {
@@ -272,7 +272,7 @@ globle void *DOToMultifield(
 /************************/
 /* AddToMultifieldList: */
 /************************/
-globle void AddToMultifieldList(
+void AddToMultifieldList(
   void *theEnv,
   struct multifield *theSegment)
   {
@@ -286,7 +286,7 @@ globle void AddToMultifieldList(
 /*********************/
 /* FlushMultifields: */
 /*********************/
-globle void FlushMultifields(
+void FlushMultifields(
   void *theEnv)
   {
    struct multifield *theSegment, *nextPtr, *lastPtr = NULL;
@@ -324,7 +324,7 @@ globle void FlushMultifields(
 /* DuplicateMultifield: Allocates a new segment and copies results from */
 /*   old value to new. This value is not put on the ListOfMultifields.  */
 /************************************************************************/
-globle void DuplicateMultifield(
+void DuplicateMultifield(
   void *theEnv,
   DATA_OBJECT_PTR dst,
   DATA_OBJECT_PTR src)
@@ -340,7 +340,7 @@ globle void DuplicateMultifield(
 /*******************/
 /* CopyMultifield: */
 /*******************/
-globle void *CopyMultifield(
+void *CopyMultifield(
   void *theEnv,
   struct multifield *src)
   {
@@ -355,7 +355,7 @@ globle void *CopyMultifield(
 /* EphemerateMultifield: Marks the values of a multifield */
 /*   as ephemeral if they have not already been marker.   */
 /**********************************************************/
-globle void EphemerateMultifield(
+void EphemerateMultifield(
   void *theEnv,
   struct multifield *theSegment)
   {
@@ -375,7 +375,7 @@ globle void EphemerateMultifield(
 /*********************************************/
 /* PrintMultifield: Prints out a multifield. */
 /*********************************************/
-globle void PrintMultifield(
+void PrintMultifield(
   void *theEnv,
   const char *fileid,
   struct multifield *segment,
@@ -403,7 +403,7 @@ globle void PrintMultifield(
 /****************************************************/
 /* StoreInMultifield: Append function for segments. */
 /****************************************************/
-globle void StoreInMultifield(
+void StoreInMultifield(
   void *theEnv,
   DATA_OBJECT *returnValue,
   EXPRESSION *expptr,
@@ -527,7 +527,7 @@ globle void StoreInMultifield(
 /*************************************************************/
 /* MultifieldDOsEqual: determines if two segments are equal. */
 /*************************************************************/
-globle intBool MultifieldDOsEqual(
+intBool MultifieldDOsEqual(
   DATA_OBJECT_PTR dobj1,
   DATA_OBJECT_PTR dobj2)
   {
@@ -563,7 +563,7 @@ globle intBool MultifieldDOsEqual(
 /******************************************************************/
 /* MultifieldsEqual: Determines if two multifields are identical. */
 /******************************************************************/
-globle int MultifieldsEqual(
+int MultifieldsEqual(
   struct multifield *segment1,
   struct multifield *segment2)
   {
@@ -605,7 +605,7 @@ globle int MultifieldsEqual(
 /************************************************************/
 /* HashMultifield: Returns the hash value for a multifield. */
 /************************************************************/
-globle unsigned long HashMultifield(
+unsigned long HashMultifield(
   struct multifield *theSegment,
   unsigned long theRange)
   {
@@ -691,7 +691,7 @@ globle unsigned long HashMultifield(
 /**********************/
 /* GetMultifieldList: */
 /**********************/
-globle struct multifield *GetMultifieldList(
+struct multifield *GetMultifieldList(
   void *theEnv)
   {
    return(UtilityData(theEnv)->CurrentGarbageFrame->ListOfMultifields);
@@ -701,7 +701,7 @@ globle struct multifield *GetMultifieldList(
 /* ImplodeMultifield: C access routine */
 /*   for the implode$ function.        */
 /***************************************/
-globle void *ImplodeMultifield(
+void *ImplodeMultifield(
   void *theEnv,
   DATA_OBJECT *value)
   {
@@ -875,7 +875,7 @@ globle void *ImplodeMultifield(
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-globle void *CreateMultifield(
+void *CreateMultifield(
   long size)
   {
    return EnvCreateMultifield(GetCurrentEnvironment(),size);

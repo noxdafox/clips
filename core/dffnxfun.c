@@ -146,7 +146,7 @@ static unsigned DeffunctionWatchPrint(void *,const char *,int,EXPRESSION *);
   SIDE EFFECTS : Deffunction environment initialized
   NOTES        : None
  ***************************************************/
-globle void SetupDeffunctions(
+void SetupDeffunctions(
   void *theEnv)
   {
    ENTITY_RECORD deffunctionEntityRecord =
@@ -311,7 +311,7 @@ static void DestroyDeffunctionAction(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle void *EnvFindDeffunction(
+void *EnvFindDeffunction(
   void *theEnv,
   const char *dfnxModuleAndName)
   {
@@ -328,7 +328,7 @@ globle void *EnvFindDeffunction(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle void *EnvFindDeffunctionInModule(
+void *EnvFindDeffunctionInModule(
   void *theEnv,
   const char *dfnxModuleAndName)
   {
@@ -346,7 +346,7 @@ globle void *EnvFindDeffunctionInModule(
                   ambiguous references
   NOTES        : None
  ***************************************************/
-globle DEFFUNCTION *LookupDeffunctionByMdlOrScope(
+DEFFUNCTION *LookupDeffunctionByMdlOrScope(
   void *theEnv,
   const char *deffunctionName)
   {
@@ -364,7 +364,7 @@ globle DEFFUNCTION *LookupDeffunctionByMdlOrScope(
                   ambiguous references
   NOTES        : None
  ***************************************************/
-globle DEFFUNCTION *LookupDeffunctionInScope(
+DEFFUNCTION *LookupDeffunctionInScope(
   void *theEnv,
   const char *deffunctionName)
   {
@@ -381,7 +381,7 @@ globle DEFFUNCTION *LookupDeffunctionInScope(
   SIDE EFFECTS : Deffunction deleted, if possible
   NOTES        : None
  ***************************************************/
-globle intBool EnvUndeffunction(
+intBool EnvUndeffunction(
   void *theEnv,
   void *vptr)
   {
@@ -413,7 +413,7 @@ globle intBool EnvUndeffunction(
   SIDE EFFECTS : None
   NOTES        : None
  ****************************************************/
-globle void *EnvGetNextDeffunction(
+void *EnvGetNextDeffunction(
   void *theEnv,
   void *ptr)
   {
@@ -431,7 +431,7 @@ globle void *EnvGetNextDeffunction(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle int EnvIsDeffunctionDeletable(
+int EnvIsDeffunctionDeletable(
   void *theEnv,
   void *ptr)
   {
@@ -455,7 +455,7 @@ globle int EnvIsDeffunctionDeletable(
   SIDE EFFECTS : Deffunction deallocated
   NOTES        : Assumes deffunction is not in use!!
  ***************************************************/
-globle void RemoveDeffunction(
+void RemoveDeffunction(
   void *theEnv,
   void *vdptr)
   {
@@ -481,7 +481,7 @@ globle void RemoveDeffunction(
   SIDE EFFECTS : Deffunction(s) removed
   NOTES        : H/L Syntax: (undeffunction <name> | *)
  ********************************************************/
-globle void UndeffunctionCommand(
+void UndeffunctionCommand(
   void *theEnv)
   {
    UndefconstructCommand(theEnv,"undeffunction",DeffunctionData(theEnv)->DeffunctionConstruct);
@@ -495,7 +495,7 @@ globle void UndeffunctionCommand(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax: (deffunction-module <dfnx-name>)
  ****************************************************************/
-globle void *GetDeffunctionModuleCommand(
+void *GetDeffunctionModuleCommand(
   void *theEnv)
   {
    return(GetConstructModuleCommand(theEnv,"deffunction-module",DeffunctionData(theEnv)->DeffunctionConstruct));
@@ -513,7 +513,7 @@ globle void *GetDeffunctionModuleCommand(
                  WDISPLAY logical name
   NOTES        : H/L Syntax: (ppdeffunction <name>)
  ****************************************************/
-globle void PPDeffunctionCommand(
+void PPDeffunctionCommand(
   void *theEnv)
   {
    PPConstructCommand(theEnv,"ppdeffunction",DeffunctionData(theEnv)->DeffunctionConstruct);
@@ -527,7 +527,7 @@ globle void PPDeffunctionCommand(
   SIDE EFFECTS : Deffunction name sprinted
   NOTES        : H/L Interface
  ***************************************************/
-globle void ListDeffunctionsCommand(
+void ListDeffunctionsCommand(
   void *theEnv)
   {
    ListConstructCommand(theEnv,"list-deffunctions",DeffunctionData(theEnv)->DeffunctionConstruct);
@@ -542,7 +542,7 @@ globle void ListDeffunctionsCommand(
   SIDE EFFECTS : Deffunction name sprinted
   NOTES        : C Interface
  ***************************************************/
-globle void EnvListDeffunctions(
+void EnvListDeffunctions(
   void *theEnv,
   const char *logicalName,
   struct defmodule *theModule)
@@ -562,7 +562,7 @@ globle void EnvListDeffunctions(
   SIDE EFFECTS : Multifield allocated and filled
   NOTES        : H/L Syntax: (get-deffunction-list [<module>])
  ***************************************************************/
-globle void GetDeffunctionListFunction(
+void GetDeffunctionListFunction(
   void *theEnv,
   DATA_OBJECT *returnValue)
   {
@@ -580,7 +580,7 @@ globle void GetDeffunctionListFunction(
   SIDE EFFECTS : Multifield allocated and filled
   NOTES        : External C access
  ***************************************************************/
-globle void EnvGetDeffunctionList(
+void EnvGetDeffunctionList(
   void *theEnv,
   DATA_OBJECT *returnValue,
   struct defmodule *theModule)
@@ -598,7 +598,7 @@ globle void EnvGetDeffunctionList(
   SIDE EFFECTS : Message printed on errors
   NOTES        : None
  *******************************************************/
-globle int CheckDeffunctionCall(
+int CheckDeffunctionCall(
   void *theEnv,
   void *vdptr,
   int args)
@@ -1037,7 +1037,7 @@ static unsigned DeffunctionWatchPrint(
   SIDE EFFECTS : Watch flag for the deffunction set
   NOTES        : None
  *********************************************************/
-globle void EnvSetDeffunctionWatch(
+void EnvSetDeffunctionWatch(
   void *theEnv,
   unsigned newState,
   void *dptr)
@@ -1059,7 +1059,7 @@ globle void EnvSetDeffunctionWatch(
   SIDE EFFECTS : None
   NOTES        : None
  *********************************************************/
-globle unsigned EnvGetDeffunctionWatch(
+unsigned EnvGetDeffunctionWatch(
   void *theEnv,
   void *dptr)
   {
@@ -1076,35 +1076,35 @@ globle unsigned EnvGetDeffunctionWatch(
 /* Additional Environment Functions */
 /*##################################*/
 
-globle const char *EnvDeffunctionModule(
+const char *EnvDeffunctionModule(
   void *theEnv,
   void *theDeffunction)
   {
    return GetConstructModuleName((struct constructHeader *) theDeffunction);
   }
 
-globle const char *EnvGetDeffunctionName(
+const char *EnvGetDeffunctionName(
   void *theEnv,
   void *theDeffunction)
   {
    return GetConstructNameString((struct constructHeader *) theDeffunction);
   }
 
-globle const char *EnvGetDeffunctionPPForm(
+const char *EnvGetDeffunctionPPForm(
   void *theEnv,
   void *theDeffunction)
   {
    return GetConstructPPForm(theEnv,(struct constructHeader *) theDeffunction);
   }
 
-globle SYMBOL_HN *EnvGetDeffunctionNamePointer(
+SYMBOL_HN *EnvGetDeffunctionNamePointer(
   void *theEnv,
   void *theDeffunction)
   {
    return GetConstructNamePointer((struct constructHeader *) theDeffunction);
   }
 
-globle void EnvSetDeffunctionPPForm(
+void EnvSetDeffunctionPPForm(
   void *theEnv,
   void *theDeffunction,
   const char *thePPForm)
@@ -1118,49 +1118,49 @@ globle void EnvSetDeffunctionPPForm(
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-globle const char *DeffunctionModule(
+const char *DeffunctionModule(
   void *theDeffunction)
   {
    return EnvDeffunctionModule(GetCurrentEnvironment(),theDeffunction);
   }
 
-globle void *FindDeffunction(
+void *FindDeffunction(
   const char *deffunctionName)
   {
    return EnvFindDeffunction(GetCurrentEnvironment(),deffunctionName);
   }
 
-globle void *GetNextDeffunction(
+void *GetNextDeffunction(
   void *deffunctionPtr)
   {
    return EnvGetNextDeffunction(GetCurrentEnvironment(),deffunctionPtr);
   }
 
-globle intBool IsDeffunctionDeletable(
+intBool IsDeffunctionDeletable(
   void *ptr)
   {
    return EnvIsDeffunctionDeletable(GetCurrentEnvironment(),ptr);
   }
 
-globle const char *GetDeffunctionName(
+const char *GetDeffunctionName(
   void *theDeffunction)
   {
    return EnvGetDeffunctionName(GetCurrentEnvironment(),theDeffunction);
   }
 
-globle const char *GetDeffunctionPPForm(
+const char *GetDeffunctionPPForm(
   void *theDeffunction)
   {
    return EnvGetDeffunctionPPForm(GetCurrentEnvironment(),theDeffunction);
   }
 
-globle intBool Undeffunction(
+intBool Undeffunction(
   void *vptr)
   {
    return EnvUndeffunction(GetCurrentEnvironment(),vptr);
   }
 
-globle void GetDeffunctionList(
+void GetDeffunctionList(
   DATA_OBJECT *returnValue,
   struct defmodule *theModule)
   {
@@ -1169,20 +1169,20 @@ globle void GetDeffunctionList(
 
 #if DEBUGGING_FUNCTIONS
 
-globle void ListDeffunctions(
+void ListDeffunctions(
   const char *logicalName,
   struct defmodule *theModule)
   {
    EnvListDeffunctions(GetCurrentEnvironment(),logicalName,theModule);
   }
 
-globle unsigned GetDeffunctionWatch(
+unsigned GetDeffunctionWatch(
   void *dptr)
   {
    return EnvGetDeffunctionWatch(GetCurrentEnvironment(),dptr);
   }
 
-globle void SetDeffunctionWatch(
+void SetDeffunctionWatch(
   unsigned newState,
   void *dptr)
   {

@@ -74,7 +74,7 @@
 /*   hash table to NULL and defines the static and   */
 /*   dynamic constraint access functions.            */
 /*****************************************************/
-globle void InitializeConstraints(
+void InitializeConstraints(
   void *theEnv)
   {
 #if (! RUN_TIME) && (! BLOAD_ONLY)
@@ -208,7 +208,7 @@ static void DeinstallConstraintRecord(
 /* RemoveConstraint: Removes a constraint */
 /*   from the constraint hash table.      */
 /******************************************/
-globle void RemoveConstraint(
+void RemoveConstraint(
   void *theEnv,
   struct constraintRecord *theConstraint)
   {
@@ -266,7 +266,7 @@ globle void RemoveConstraint(
 /* HashConstraint: Returns a hash  */
 /*   value for a given constraint. */
 /***********************************/
-globle unsigned long HashConstraint(
+unsigned long HashConstraint(
   struct constraintRecord *theConstraint)
   {
    int i = 0;
@@ -423,7 +423,7 @@ static int ConstraintCompare(
 /* AddConstraint: Adds a constraint */
 /*   to the constraint hash table.  */
 /************************************/
-globle struct constraintRecord *AddConstraint(
+struct constraintRecord *AddConstraint(
   void *theEnv,
   struct constraintRecord *theConstraint)
   {
@@ -499,7 +499,7 @@ static void InstallConstraintRecord(
 /* SDCCommand: H/L access routine for the     */
 /*   set-dynamic-constraint-checking command. */
 /**********************************************/
-globle int SDCCommand(
+int SDCCommand(
   void *theEnv)
   {
    int oldValue;
@@ -524,7 +524,7 @@ globle int SDCCommand(
 /* GDCCommand: H/L access routine for the     */
 /*   get-dynamic-constraint-checking command. */
 /**********************************************/
-globle int GDCCommand(
+int GDCCommand(
   void *theEnv)
   {
    int oldValue;
@@ -541,7 +541,7 @@ globle int GDCCommand(
 /* SSCCommand: H/L access routine for the    */
 /*   set-static-constraint-checking command. */
 /*********************************************/
-globle int SSCCommand(
+int SSCCommand(
   void *theEnv)
   {
    int oldValue;
@@ -566,7 +566,7 @@ globle int SSCCommand(
 /* GSCCommand: H/L access routine for the    */
 /*   get-static-constraint-checking command. */
 /*********************************************/
-globle int GSCCommand(
+int GSCCommand(
   void *theEnv)
   {
    int oldValue;
@@ -583,7 +583,7 @@ globle int GSCCommand(
 /* EnvSetDynamicConstraintChecking: C access routine  */
 /*   for the set-dynamic-constraint-checking command. */
 /******************************************************/
-globle intBool EnvSetDynamicConstraintChecking(
+intBool EnvSetDynamicConstraintChecking(
   void *theEnv,
   int value)
   {
@@ -597,7 +597,7 @@ globle intBool EnvSetDynamicConstraintChecking(
 /* EnvGetDynamicConstraintChecking: C access routine  */
 /*   for the get-dynamic-constraint-checking command. */
 /******************************************************/
-globle intBool EnvGetDynamicConstraintChecking(
+intBool EnvGetDynamicConstraintChecking(
   void *theEnv)
   { 
    return(ConstraintData(theEnv)->DynamicConstraintChecking); 
@@ -607,7 +607,7 @@ globle intBool EnvGetDynamicConstraintChecking(
 /* EnvSetStaticConstraintChecking: C access routine  */
 /*   for the set-static-constraint-checking command. */
 /*****************************************************/
-globle intBool EnvSetStaticConstraintChecking(
+intBool EnvSetStaticConstraintChecking(
   void *theEnv,
   int value)
   {
@@ -622,7 +622,7 @@ globle intBool EnvSetStaticConstraintChecking(
 /* EnvGetStaticConstraintChecking: C access routine  */
 /*   for the get-static-constraint-checking command. */
 /*****************************************************/
-globle intBool EnvGetStaticConstraintChecking(
+intBool EnvGetStaticConstraintChecking(
   void *theEnv)
   {    
    return(ConstraintData(theEnv)->StaticConstraintChecking); 
@@ -634,24 +634,24 @@ globle intBool EnvGetStaticConstraintChecking(
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-globle intBool SetDynamicConstraintChecking(
+intBool SetDynamicConstraintChecking(
   int value)
   {
    return EnvSetDynamicConstraintChecking(GetCurrentEnvironment(),value);
   }
 
-globle intBool GetDynamicConstraintChecking()
+intBool GetDynamicConstraintChecking()
   { 
    return EnvGetDynamicConstraintChecking(GetCurrentEnvironment());
   }
 
-globle intBool SetStaticConstraintChecking(
+intBool SetStaticConstraintChecking(
   int value)
   {
    return EnvSetStaticConstraintChecking(GetCurrentEnvironment(),value);
   }
 
-globle intBool GetStaticConstraintChecking()
+intBool GetStaticConstraintChecking()
   {    
    return EnvGetStaticConstraintChecking(GetCurrentEnvironment());
   }

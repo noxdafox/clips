@@ -127,7 +127,7 @@ static void PrintInstanceWatch(void *,const char *,INSTANCE_TYPE *);
                  (active-initialize-instance <instance-name>
                     <slot-override>*)
  ***********************************************************/
-globle void InitializeInstanceCommand(
+void InitializeInstanceCommand(
   void *theEnv,
   DATA_OBJECT *result)
   {
@@ -158,7 +158,7 @@ globle void InitializeInstanceCommand(
                  class that's not in scope if the module name
                  is specified.
  ****************************************************************/
-globle void MakeInstanceCommand(
+void MakeInstanceCommand(
   void *theEnv,
   DATA_OBJECT *result)
   {
@@ -241,7 +241,7 @@ globle void MakeInstanceCommand(
                  necessary to return the full instance
                  name.
  ***************************************************/
-globle SYMBOL_HN *GetFullInstanceName(
+SYMBOL_HN *GetFullInstanceName(
   void *theEnv,
   INSTANCE_TYPE *ins)
   {
@@ -290,7 +290,7 @@ globle SYMBOL_HN *GetFullInstanceName(
   SIDE EFFECTS : Old definition (if any) is deleted
   NOTES        : None
  ***************************************************/
-globle INSTANCE_TYPE *BuildInstance(
+INSTANCE_TYPE *BuildInstance(
   void *theEnv,
   SYMBOL_HN *iname,
   DEFCLASS *cls,
@@ -481,7 +481,7 @@ globle INSTANCE_TYPE *BuildInstance(
                    are deleted.
   NOTES        : H/L Syntax: (init-slots <instance>)
  *****************************************************************************/
-globle void InitSlotsCommand(
+void InitSlotsCommand(
   void *theEnv,
   DATA_OBJECT *result)
   {
@@ -514,7 +514,7 @@ globle void InitSlotsCommand(
                    node in the list is (assuming the
                    instance was garbage collected).
  ******************************************************/
-globle intBool QuashInstance(
+intBool QuashInstance(
   void *theEnv,
   INSTANCE_TYPE *ins)
   {
@@ -634,7 +634,7 @@ globle intBool QuashInstance(
                  (initialize-instance <instance-name>
                     <slot-override>*)
  ****************************************************/
-globle void InactiveInitializeInstance(
+void InactiveInitializeInstance(
   void *theEnv,
   DATA_OBJECT *result)
   {
@@ -658,7 +658,7 @@ globle void InactiveInitializeInstance(
                  (make-instance <instance-name> of <class>
                     <slot-override>*)
  **************************************************************/
-globle void InactiveMakeInstance(
+void InactiveMakeInstance(
   void *theEnv,
   DATA_OBJECT *result)
   {

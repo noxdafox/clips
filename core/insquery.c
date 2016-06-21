@@ -92,7 +92,7 @@ static void PopQuerySoln(void *);
   SIDE EFFECTS : Sets up kernel functions and parsers
   NOTES        : None
  ****************************************************/
-globle void SetupQuery(
+void SetupQuery(
   void *theEnv)
   {
    AllocateEnvironmentData(theEnv,INSTANCE_QUERY_DATA,sizeof(struct instanceQueryData),NULL);
@@ -142,7 +142,7 @@ globle void SetupQuery(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : ((query-instance) <index>)
  *************************************************************/
-globle void *GetQueryInstance(
+void *GetQueryInstance(
   void *theEnv)
   {
    register QUERY_CORE *core;
@@ -160,7 +160,7 @@ globle void *GetQueryInstance(
   SIDE EFFECTS : Caller's result buffer set appropriately
   NOTES        : H/L Syntax : ((query-instance-slot) <index> <slot-name>)
  **************************************************************************/
-globle void GetQueryInstanceSlot(
+void GetQueryInstanceSlot(
   void *theEnv,
   DATA_OBJECT *result)
   {
@@ -260,7 +260,7 @@ globle void GetQueryInstanceSlot(
                    and how early the expression evaulates to TRUE - if at all).
   NOTES        : H/L Syntax : See ParseQueryNoAction()
  ******************************************************************************/
-globle intBool AnyInstances(
+intBool AnyInstances(
   void *theEnv)
   {
    QUERY_CLASS *qclasses;
@@ -296,7 +296,7 @@ globle intBool AnyInstances(
                    and how early the expression evaulates to TRUE - if at all).
   NOTES        : H/L Syntax : See ParseQueryNoAction()
  ******************************************************************************/
-globle void QueryFindInstance(
+void QueryFindInstance(
   void *theEnv,
   DATA_OBJECT *result)
   {
@@ -355,7 +355,7 @@ globle void QueryFindInstance(
                    once for every instance set.
   NOTES        : H/L Syntax : See ParseQueryNoAction()
  ******************************************************************************/
-globle void QueryFindAllInstances(
+void QueryFindAllInstances(
   void *theEnv,
   DATA_OBJECT *result)
   {
@@ -414,7 +414,7 @@ globle void QueryFindAllInstances(
                  Caller's result buffer holds result of user-action
   NOTES        : H/L Syntax : See ParseQueryAction()
  ******************************************************************************/
-globle void QueryDoForInstance(
+void QueryDoForInstance(
   void *theEnv,
   DATA_OBJECT *result)
   {
@@ -455,7 +455,7 @@ globle void QueryDoForInstance(
                  Caller's result buffer holds result of last action executed.
   NOTES        : H/L Syntax : See ParseQueryAction()
  ******************************************************************************/
-globle void QueryDoForAllInstances(
+void QueryDoForAllInstances(
   void *theEnv,
   DATA_OBJECT *result)
   {
@@ -504,7 +504,7 @@ globle void QueryDoForAllInstances(
                  Caller's result buffer holds result of last action executed.
   NOTES        : H/L Syntax : See ParseQueryNoAction()
  ******************************************************************************/
-globle void DelayedQueryDoForAllInstances(
+void DelayedQueryDoForAllInstances(
   void *theEnv,
   DATA_OBJECT *result)
   {

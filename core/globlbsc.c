@@ -81,7 +81,7 @@
 /*****************************************************************/
 /* DefglobalBasicCommands: Initializes basic defglobal commands. */
 /*****************************************************************/
-globle void DefglobalBasicCommands(
+void DefglobalBasicCommands(
   void *theEnv)
   {
    AddSaveFunction(theEnv,"defglobal",SaveDefglobals,40);
@@ -113,7 +113,7 @@ globle void DefglobalBasicCommands(
 /* ResetDefglobals: Defglobal reset routine for use with the */
 /*   reset command. Restores the values of the defglobals.   */
 /*************************************************************/
-globle void ResetDefglobals(
+void ResetDefglobals(
   void *theEnv)
   {
    if (! EnvGetResetGlobals(theEnv)) return;
@@ -160,7 +160,7 @@ static void SaveDefglobals(
 /* UndefglobalCommand: H/L access routine   */
 /*   for the undefglobal command.           */
 /********************************************/
-globle void UndefglobalCommand(
+void UndefglobalCommand(
   void *theEnv)
   {
    UndefconstructCommand(theEnv,"undefglobal",DefglobalData(theEnv)->DefglobalConstruct); 
@@ -170,7 +170,7 @@ globle void UndefglobalCommand(
 /* EnvUndefglobal: C access routine */
 /*   for the undefglobal command.   */
 /************************************/
-globle intBool EnvUndefglobal(
+intBool EnvUndefglobal(
   void *theEnv,
   void *theDefglobal)
   {
@@ -181,7 +181,7 @@ globle intBool EnvUndefglobal(
 /* GetDefglobalListFunction: H/L access routine   */
 /*   for the get-defglobal-list function.         */
 /**************************************************/
-globle void GetDefglobalListFunction(
+void GetDefglobalListFunction(
   void *theEnv,
   DATA_OBJECT_PTR returnValue)
   { 
@@ -192,7 +192,7 @@ globle void GetDefglobalListFunction(
 /* EnvGetDefglobalList: C access routine  */
 /*   for the get-defglobal-list function. */
 /******************************************/
-globle void EnvGetDefglobalList(
+void EnvGetDefglobalList(
   void *theEnv,
   DATA_OBJECT_PTR returnValue,
   void *theModule)
@@ -204,7 +204,7 @@ globle void EnvGetDefglobalList(
 /* DefglobalModuleFunction: H/L access routine   */
 /*   for the defglobal-module function.          */
 /*************************************************/
-globle void *DefglobalModuleFunction(
+void *DefglobalModuleFunction(
   void *theEnv)
   { 
    return(GetConstructModuleCommand(theEnv,"defglobal-module",DefglobalData(theEnv)->DefglobalConstruct)); 
@@ -216,7 +216,7 @@ globle void *DefglobalModuleFunction(
 /* PPDefglobalCommand: H/L access routine   */
 /*   for the ppdefglobal command.           */
 /********************************************/
-globle void PPDefglobalCommand(
+void PPDefglobalCommand(
   void *theEnv)
   {
    PPConstructCommand(theEnv,"ppdefglobal",DefglobalData(theEnv)->DefglobalConstruct); 
@@ -226,7 +226,7 @@ globle void PPDefglobalCommand(
 /* PPDefglobal: C access routine for */
 /*   the ppdefglobal command.        */
 /*************************************/
-globle int PPDefglobal(
+int PPDefglobal(
   void *theEnv,
   const char *defglobalName,
   const char *logicalName)
@@ -238,7 +238,7 @@ globle int PPDefglobal(
 /* ListDefglobalsCommand: H/L access routine   */
 /*   for the list-defglobals command.          */
 /***********************************************/
-globle void ListDefglobalsCommand(
+void ListDefglobalsCommand(
   void *theEnv)
   {
    ListConstructCommand(theEnv,"list-defglobals",DefglobalData(theEnv)->DefglobalConstruct);
@@ -248,7 +248,7 @@ globle void ListDefglobalsCommand(
 /* EnvListDefglobals: C access routine */
 /*   for the list-defglobals command.  */
 /***************************************/
-globle void EnvListDefglobals(
+void EnvListDefglobals(
   void *theEnv,
   const char *logicalName,
   void *vTheModule)
@@ -262,7 +262,7 @@ globle void EnvListDefglobals(
 /* EnvGetDefglobalWatch: C access routine for retrieving */
 /*   the current watch value of a defglobal.             */
 /*********************************************************/
-globle unsigned EnvGetDefglobalWatch(
+unsigned EnvGetDefglobalWatch(
   void *theEnv,
   void *theGlobal)
   { 
@@ -277,7 +277,7 @@ globle unsigned EnvGetDefglobalWatch(
 /* EnvSetDeftemplateWatch: C access routine for setting */
 /*   the current watch value of a deftemplate.          */
 /********************************************************/
-globle void EnvSetDefglobalWatch(
+void EnvSetDefglobalWatch(
   void *theEnv,
   unsigned newState,
   void *theGlobal)
@@ -337,7 +337,7 @@ static unsigned DefglobalWatchPrint(
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-globle void GetDefglobalList(
+void GetDefglobalList(
   DATA_OBJECT_PTR returnValue,
   void *theModule)
   {
@@ -346,20 +346,20 @@ globle void GetDefglobalList(
 
 #if DEBUGGING_FUNCTIONS
 
-globle unsigned GetDefglobalWatch(
+unsigned GetDefglobalWatch(
   void *theGlobal)
   {
    return EnvGetDefglobalWatch(GetCurrentEnvironment(),theGlobal);
   }
 
-globle void ListDefglobals(
+void ListDefglobals(
   const char *logicalName,
   void *vTheModule)
   {
    EnvListDefglobals(GetCurrentEnvironment(),logicalName,vTheModule);
   }
 
-globle void SetDefglobalWatch(
+void SetDefglobalWatch(
   unsigned newState,
   void *theGlobal)
   {
@@ -368,7 +368,7 @@ globle void SetDefglobalWatch(
 
 #endif /* DEBUGGING_FUNCTIONS */
 
-globle intBool Undefglobal(
+intBool Undefglobal(
   void *theDefglobal)
   {
    return EnvUndefglobal(GetCurrentEnvironment(),theDefglobal);

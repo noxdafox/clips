@@ -85,7 +85,7 @@
 /*******************************************************/
 /* ParseDeftemplate: Parses the deftemplate construct. */
 /*******************************************************/
-globle int ParseDeftemplate(
+int ParseDeftemplate(
   void *theEnv,
   const char *readSource)
   {
@@ -225,7 +225,7 @@ globle int ParseDeftemplate(
 /*   table of symbols found in an deftemplate and adds it to  */
 /*   the hash table.                                          */
 /**************************************************************/
-globle void InstallDeftemplate(
+void InstallDeftemplate(
   void *theEnv,
   struct deftemplate *theDeftemplate)
   {

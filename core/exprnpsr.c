@@ -87,7 +87,7 @@
 /* Function0Parse: Parses a function. Assumes that */
 /*   none of the function has been parsed yet.     */
 /***************************************************/
-globle struct expr *Function0Parse(
+struct expr *Function0Parse(
   void *theEnv,
   const char *logicalName)
   {
@@ -117,7 +117,7 @@ globle struct expr *Function0Parse(
 /* Function1Parse: Parses a function. Assumes that the */
 /*   opening left parenthesis has already been parsed. */
 /*******************************************************/
-globle struct expr *Function1Parse(
+struct expr *Function1Parse(
   void *theEnv,
   const char *logicalName)
   {
@@ -149,7 +149,7 @@ globle struct expr *Function1Parse(
 /*   the opening left parenthesis and function name */
 /*   have already been parsed.                      */
 /****************************************************/
-globle struct expr *Function2Parse(
+struct expr *Function2Parse(
   void *theEnv,
   const char *logicalName,
   const char *name)
@@ -343,7 +343,7 @@ globle struct expr *Function2Parse(
                    refernce (i.e. ? instead of $? - the $ is
                    being treated as a special expansion operator)
  **********************************************************************/
-globle intBool ReplaceSequenceExpansionOps(
+intBool ReplaceSequenceExpansionOps(
   void *theEnv,
   EXPRESSION *actions,
   EXPRESSION *fcallexp,
@@ -408,7 +408,7 @@ globle intBool ReplaceSequenceExpansionOps(
 /* PushRtnBrkContexts: Saves the current context */
 /*   for the break/return functions.             */
 /*************************************************/
-globle void PushRtnBrkContexts(
+void PushRtnBrkContexts(
   void *theEnv)
   {
    SAVED_CONTEXTS *svtmp;
@@ -424,7 +424,7 @@ globle void PushRtnBrkContexts(
 /* PopRtnBrkContexts: Restores the current context */
 /*   for the break/return functions.               */
 /***************************************************/
-globle void PopRtnBrkContexts(
+void PopRtnBrkContexts(
   void *theEnv)
   {
    SAVED_CONTEXTS *svtmp;
@@ -442,7 +442,7 @@ globle void PopRtnBrkContexts(
 /*   determine if any incompatibilities exist. If so, the value  */
 /*   TRUE is returned, otherwise FALSE is returned.              */
 /*****************************************************************/
-globle int CheckExpressionAgainstRestrictions(
+int CheckExpressionAgainstRestrictions(
   void *theEnv,
   struct expr *theExpression,
   const char *restrictions,
@@ -570,7 +570,7 @@ globle int CheckExpressionAgainstRestrictions(
 /* CollectArguments: Parses and groups together all of */
 /*   the arguments for a function call expression.     */
 /*******************************************************/
-globle struct expr *CollectArguments(
+struct expr *CollectArguments(
   void *theEnv,
   struct expr *top,
   const char *logicalName)
@@ -618,7 +618,7 @@ globle struct expr *CollectArguments(
 /* ArgumentParse: Parses an argument within */
 /*   a function call expression.            */
 /********************************************/
-globle struct expr *ArgumentParse(
+struct expr *ArgumentParse(
   void *theEnv,
   const char *logicalName,
   int *errorFlag)
@@ -677,7 +677,7 @@ globle struct expr *ArgumentParse(
 /*   a function call, atomic value (string, symbol, etc.),  */
 /*   or variable (local or global).                         */
 /************************************************************/
-globle struct expr *ParseAtomOrExpression(
+struct expr *ParseAtomOrExpression(
   void *theEnv,
   const char *logicalName,
   struct token *useToken)
@@ -723,7 +723,7 @@ globle struct expr *ParseAtomOrExpression(
 /*   actions within a progn expression. Used */
 /*   for example to parse the RHS of a rule. */
 /*********************************************/
-globle struct expr *GroupActions(
+struct expr *GroupActions(
   void *theEnv,
   const char *logicalName,
   struct token *theToken,
@@ -850,7 +850,7 @@ globle struct expr *GroupActions(
 /* EnvSetSequenceOperatorRecognition: C access routine  */
 /*   for the set-sequence-operator-recognition function */
 /********************************************************/
-globle intBool EnvSetSequenceOperatorRecognition(
+intBool EnvSetSequenceOperatorRecognition(
   void *theEnv,
   int value)
   {
@@ -865,7 +865,7 @@ globle intBool EnvSetSequenceOperatorRecognition(
 /* EnvSetSequenceOperatorRecognition: C access routine  */
 /*   for the Get-sequence-operator-recognition function */
 /********************************************************/
-globle intBool EnvGetSequenceOperatorRecognition(
+intBool EnvGetSequenceOperatorRecognition(
   void *theEnv)
   {
    return(ExpressionData(theEnv)->SequenceOpMode);
@@ -875,7 +875,7 @@ globle intBool EnvGetSequenceOperatorRecognition(
 /* ParseConstantArguments: Parses a string */
 /*    into a set of constant expressions.  */
 /*******************************************/
-globle EXPRESSION *ParseConstantArguments(
+EXPRESSION *ParseConstantArguments(
   void *theEnv,
   const char *argstr,
   int *error)
@@ -943,7 +943,7 @@ globle EXPRESSION *ParseConstantArguments(
 /************************/
 /* RemoveUnneededProgn: */
 /************************/
-globle struct expr *RemoveUnneededProgn(
+struct expr *RemoveUnneededProgn(
   void *theEnv,
   struct expr *theExpression)
   {
@@ -978,13 +978,13 @@ globle struct expr *RemoveUnneededProgn(
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-globle intBool SetSequenceOperatorRecognition(
+intBool SetSequenceOperatorRecognition(
   int value)
   {
    return EnvSetSequenceOperatorRecognition(GetCurrentEnvironment(),value);
   }
 
-globle intBool GetSequenceOperatorRecognition()
+intBool GetSequenceOperatorRecognition()
   {
    return EnvGetSequenceOperatorRecognition(GetCurrentEnvironment());
   }

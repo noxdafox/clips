@@ -70,7 +70,7 @@ static EXPRESSION *GenerateSlotComparisonTest(void *,int,int,struct lhsParseNode
   Build functions used by AddPatternParser() to
   provide object access to the join nertwork
  **********************************************/
-globle void ReplaceGetJNObjectValue(
+void ReplaceGetJNObjectValue(
   void *theEnv,
   EXPRESSION *theItem,
   struct lhsParseNode *theNode,
@@ -79,7 +79,7 @@ globle void ReplaceGetJNObjectValue(
    GenObjectGetVar(theEnv,TRUE,theItem,theNode,side);
   }
 
-globle EXPRESSION *GenGetJNObjectValue(
+EXPRESSION *GenGetJNObjectValue(
   void *theEnv,
   struct lhsParseNode *theNode,
   int side)
@@ -91,7 +91,7 @@ globle EXPRESSION *GenGetJNObjectValue(
    return(theItem);
   }
 
-globle EXPRESSION *ObjectJNVariableComparison(
+EXPRESSION *ObjectJNVariableComparison(
   void *theEnv,
   struct lhsParseNode *selfNode,
   struct lhsParseNode *referringNode,
@@ -104,7 +104,7 @@ globle EXPRESSION *ObjectJNVariableComparison(
   Build functions used by AddPatternParser() to
   provide object access to the pattern network
  **********************************************/
-globle EXPRESSION *GenObjectPNConstantCompare(
+EXPRESSION *GenObjectPNConstantCompare(
   void *theEnv,
   struct lhsParseNode *theNode)
   {
@@ -163,7 +163,7 @@ globle EXPRESSION *GenObjectPNConstantCompare(
    return(theExp);
   }
 
-globle void ReplaceGetPNObjectValue(
+void ReplaceGetPNObjectValue(
   void *theEnv,
   EXPRESSION *theItem,
   struct lhsParseNode *theNode)
@@ -171,7 +171,7 @@ globle void ReplaceGetPNObjectValue(
    GenObjectGetVar(theEnv,FALSE,theItem,theNode,-1);
   }
 
-globle EXPRESSION *GenGetPNObjectValue(
+EXPRESSION *GenGetPNObjectValue(
   void *theEnv,
   struct lhsParseNode *theNode)
   {
@@ -182,7 +182,7 @@ globle EXPRESSION *GenGetPNObjectValue(
    return(theItem);
   }
 
-globle EXPRESSION *ObjectPNVariableComparison(
+EXPRESSION *ObjectPNVariableComparison(
   void *theEnv,
   struct lhsParseNode *selfNode,
   struct lhsParseNode *referringNode)
@@ -201,7 +201,7 @@ globle EXPRESSION *ObjectPNVariableComparison(
                  modified to include the length test
   NOTES        : None
  ****************************************************/
-globle void GenObjectLengthTest(
+void GenObjectLengthTest(
   void *theEnv,
   struct lhsParseNode *theNode)
   {
@@ -247,7 +247,7 @@ globle void GenObjectLengthTest(
                  modified to include the length test
   NOTES        : None
  ****************************************************/
-globle void GenObjectZeroLengthTest(
+void GenObjectZeroLengthTest(
   void *theEnv,
   struct lhsParseNode *theNode)
   {

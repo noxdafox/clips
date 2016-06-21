@@ -152,7 +152,7 @@ static intBool EvaluateSlotDefaultValue(void *,SLOT_DESC *,const char *);
   SIDE EFFECTS : The slot list is allocated
   NOTES        : Assumes "(slot" has already been parsed.
  ************************************************************/
-globle TEMP_SLOT_LINK *ParseSlot(
+TEMP_SLOT_LINK *ParseSlot(
   void *theEnv,
   const char *readSource,
   TEMP_SLOT_LINK *slist,
@@ -371,7 +371,7 @@ ParseSlotError:
   SIDE EFFECTS : The slot list is destroyed
   NOTES        : None
  ***************************************************/
-globle void DeleteSlots(
+void DeleteSlots(
   void *theEnv,
   TEMP_SLOT_LINK *slots)
   {

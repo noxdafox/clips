@@ -31,7 +31,7 @@
 /* InitializeUserDataData: Allocates environment */
 /*    data for user data routines.               */
 /*************************************************/
-globle void InitializeUserDataData(
+void InitializeUserDataData(
   void *theEnv)
   {
    AllocateEnvironmentData(theEnv,USER_DATA_DATA,sizeof(struct userDataData),NULL);
@@ -42,7 +42,7 @@ globle void InitializeUserDataData(
 /*   in the user data record array and returns the    */
 /*   integer data ID associated with the record.      */
 /******************************************************/
-globle unsigned char InstallUserDataRecord(
+unsigned char InstallUserDataRecord(
   void *theEnv,
   struct userDataRecord *theRecord)
   {
@@ -56,7 +56,7 @@ globle unsigned char InstallUserDataRecord(
 /*   from a list of user data structures. A new user */
 /*   data structure is created if one is not found.  */
 /*****************************************************/
-globle struct userData *FetchUserData(
+struct userData *FetchUserData(
   void *theEnv,
   unsigned char userDataID,
   struct userData **theList)
@@ -85,7 +85,7 @@ globle struct userData *FetchUserData(
 /*   returned if the appropriate user data structure */
 /*   is not found.                                   */
 /*****************************************************/
-globle struct userData *TestUserData(
+struct userData *TestUserData(
   unsigned char userDataID,
   struct userData *theList)
   {
@@ -105,7 +105,7 @@ globle struct userData *TestUserData(
 /***************************************************************/
 /* ClearUserDataList: Deallocates a linked list of user data.  */
 /***************************************************************/
-globle void ClearUserDataList(
+void ClearUserDataList(
   void *theEnv,
   struct userData *theList)
   {
@@ -123,7 +123,7 @@ globle void ClearUserDataList(
 /* DeleteUserData: Removes user data information */
 /*   from a list of user data structures.        */
 /*************************************************/
-globle struct userData *DeleteUserData(
+struct userData *DeleteUserData(
   void *theEnv,
   unsigned char userDataID,
   struct userData *theList)

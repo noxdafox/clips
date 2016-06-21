@@ -90,7 +90,7 @@
 /*   there is more than one assert command, then a progn command is   */
 /*   wrapped around all of the assert commands.                       */
 /**********************************************************************/
-globle struct expr *BuildRHSAssert(
+struct expr *BuildRHSAssert(
   void *theEnv,
   const char *logicalName,
   struct token *theToken,
@@ -211,7 +211,7 @@ globle struct expr *BuildRHSAssert(
 /*   for no more facts is the first token parsed). If an error */
 /*   occurs, then the error flag passed as an argument is set. */
 /***************************************************************/
-globle struct expr *GetRHSPattern(
+struct expr *GetRHSPattern(
   void *theEnv,
   const char *readSource,
   struct token *tempToken,
@@ -444,7 +444,7 @@ globle struct expr *GetRHSPattern(
 /*   encountered. In the event of a parse error, the error flag     */
 /*   passed as an argument is set.                                  */
 /********************************************************************/
-globle struct expr *GetAssertArgument(
+struct expr *GetAssertArgument(
   void *theEnv,
   const char *logicalName,
   struct token *theToken,
@@ -555,7 +555,7 @@ globle struct expr *GetAssertArgument(
 /* StringToFact: Converts the string representation */
 /*   of a fact to a fact data structure.            */
 /****************************************************/
-globle struct fact *StringToFact(
+struct fact *StringToFact(
   void *theEnv,
   const char *str)
   {

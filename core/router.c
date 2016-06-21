@@ -77,7 +77,7 @@
 /*********************************************************/
 /* InitializeDefaultRouters: Initializes output streams. */
 /*********************************************************/
-globle void InitializeDefaultRouters(
+void InitializeDefaultRouters(
   void *theEnv)
   {
    AllocateEnvironmentData(theEnv,ROUTER_DATA,sizeof(struct routerData),DeallocateRouterData);
@@ -114,7 +114,7 @@ static void DeallocateRouterData(
 /*******************************************/
 /* EnvPrintRouter: Generic print function. */
 /*******************************************/
-globle int EnvPrintRouter(
+int EnvPrintRouter(
   void *theEnv,
   const char *logicalName,
   const char *str)
@@ -166,7 +166,7 @@ globle int EnvPrintRouter(
 /**************************************************/
 /* EnvGetcRouter: Generic get character function. */
 /**************************************************/
-globle int EnvGetcRouter(
+int EnvGetcRouter(
   void *theEnv,
   const char *logicalName)
   {
@@ -258,7 +258,7 @@ globle int EnvGetcRouter(
 /******************************************************/
 /* EnvUngetcRouter: Generic unget character function. */
 /******************************************************/
-globle int EnvUngetcRouter(
+int EnvUngetcRouter(
   void *theEnv,
   int ch,
   const char *logicalName)
@@ -340,7 +340,7 @@ globle int EnvUngetcRouter(
 /*****************************************************/
 /* ExitCommand: H/L command for exiting the program. */
 /*****************************************************/
-globle void ExitCommand(
+void ExitCommand(
   void *theEnv)
   {
    int argCnt;
@@ -363,7 +363,7 @@ globle void ExitCommand(
 /* EnvExitRouter: Generic exit function. Calls */
 /*   all of the router exit functions.         */
 /***********************************************/
-globle void EnvExitRouter(
+void EnvExitRouter(
   void *theEnv,
   int num)
   {
@@ -396,7 +396,7 @@ globle void EnvExitRouter(
 /* AbortExit: Forces ExitRouter to terminate */
 /*   after calling all closing routers.     */
 /********************************************/
-globle void AbortExit(
+void AbortExit(
   void *theEnv)
   {
    RouterData(theEnv)->Abort = TRUE;
@@ -405,7 +405,7 @@ globle void AbortExit(
 /************************************************************/
 /* EnvAddRouter: Adds an I/O router to the list of routers. */
 /************************************************************/
-globle intBool EnvAddRouter(
+intBool EnvAddRouter(
   void *theEnv,
   const char *routerName,
   int priority,
@@ -423,7 +423,7 @@ globle intBool EnvAddRouter(
 /***********************************************************************/
 /* EnvAddRouterWithContext: Adds an I/O router to the list of routers. */
 /***********************************************************************/
-globle intBool EnvAddRouterWithContext(
+intBool EnvAddRouterWithContext(
   void *theEnv,
   const char *routerName,
   int priority,
@@ -497,7 +497,7 @@ globle intBool EnvAddRouterWithContext(
 /********************************************************************/
 /* EnvDeleteRouter: Removes an I/O router from the list of routers. */
 /********************************************************************/
-globle int EnvDeleteRouter(
+int EnvDeleteRouter(
   void *theEnv,
   const char *routerName)
   {
@@ -531,7 +531,7 @@ globle int EnvDeleteRouter(
 /*********************************************************************/
 /* QueryRouters: Determines if any router recognizes a logical name. */
 /*********************************************************************/
-globle int QueryRouters(
+int QueryRouters(
   void *theEnv,
   const char *logicalName)
   {
@@ -592,7 +592,7 @@ static int QueryRouter(
 /*******************************************************/
 /* EnvDeactivateRouter: Deactivates a specific router. */
 /*******************************************************/
-globle int EnvDeactivateRouter(
+int EnvDeactivateRouter(
   void *theEnv,
   const char *routerName)
   {
@@ -616,7 +616,7 @@ globle int EnvDeactivateRouter(
 /***************************************************/
 /* EnvActivateRouter: Activates a specific router. */
 /***************************************************/
-globle int EnvActivateRouter(
+int EnvActivateRouter(
   void *theEnv,
   const char *routerName)
   {
@@ -640,7 +640,7 @@ globle int EnvActivateRouter(
 /********************************************/
 /* EnvFindRouter: Locates the named router. */
 /********************************************/
-globle struct router *EnvFindRouter(
+struct router *EnvFindRouter(
   void *theEnv,
   const char *routerName)
   {
@@ -660,7 +660,7 @@ globle struct router *EnvFindRouter(
 /********************************************************/
 /* SetFastLoad: Used to bypass router system for loads. */
 /********************************************************/
-globle void SetFastLoad(
+void SetFastLoad(
   void *theEnv,
   FILE *filePtr)
   { 
@@ -670,7 +670,7 @@ globle void SetFastLoad(
 /********************************************************/
 /* SetFastSave: Used to bypass router system for saves. */
 /********************************************************/
-globle void SetFastSave(
+void SetFastSave(
   void *theEnv,
   FILE *filePtr)
   { 
@@ -680,7 +680,7 @@ globle void SetFastSave(
 /******************************************************/
 /* GetFastLoad: Returns the "fast load" file pointer. */
 /******************************************************/
-globle FILE *GetFastLoad(
+FILE *GetFastLoad(
   void *theEnv)
   {
    return(RouterData(theEnv)->FastLoadFilePtr); 
@@ -689,7 +689,7 @@ globle FILE *GetFastLoad(
 /******************************************************/
 /* GetFastSave: Returns the "fast save" file pointer. */
 /******************************************************/
-globle FILE *GetFastSave(
+FILE *GetFastSave(
   void *theEnv)
   {
    return(RouterData(theEnv)->FastSaveFilePtr); 
@@ -699,7 +699,7 @@ globle FILE *GetFastSave(
 /* UnrecognizedRouterMessage: Standard error message */
 /*   for an unrecognized router name.                */
 /*****************************************************/
-globle void UnrecognizedRouterMessage(
+void UnrecognizedRouterMessage(
   void *theEnv,
   const char *logicalName)
   {
@@ -712,7 +712,7 @@ globle void UnrecognizedRouterMessage(
 /*****************************************/
 /* PrintNRouter: Generic print function. */
 /*****************************************/
-globle int PrintNRouter(
+int PrintNRouter(
   void *theEnv,
   const char *logicalName,
   const char *str,
@@ -744,13 +744,13 @@ size_t EnvInputBufferCount(
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-globle int ActivateRouter(
+int ActivateRouter(
   const char *routerName)
   {
    return EnvActivateRouter(GetCurrentEnvironment(),routerName);
   }
 
-globle intBool AddRouter(
+intBool AddRouter(
   const char *routerName,
   int priority,
   int (*queryFunction)(const char *),
@@ -810,38 +810,38 @@ globle intBool AddRouter(
    return(1);
   }
 
-globle int DeactivateRouter(
+int DeactivateRouter(
   const char *routerName)
   {
    return EnvDeactivateRouter(GetCurrentEnvironment(),routerName);
   }
 
-globle int DeleteRouter(
+int DeleteRouter(
   const char *routerName)
   {
    return EnvDeleteRouter(GetCurrentEnvironment(),routerName);
   }
 
-globle void ExitRouter(
+void ExitRouter(
   int num)
   {
    EnvExitRouter(GetCurrentEnvironment(),num);
   }
 
-globle int GetcRouter(
+int GetcRouter(
   const char *logicalName)
   {
    return EnvGetcRouter(GetCurrentEnvironment(),logicalName);
   }
 
-globle int PrintRouter(
+int PrintRouter(
   const char *logicalName,
   const char *str)
   {
    return EnvPrintRouter(GetCurrentEnvironment(),logicalName,str);
   }
 
-globle int UngetcRouter(
+int UngetcRouter(
   int ch,
   const char *logicalName)
   {

@@ -114,7 +114,7 @@ static void DisplayGenericCore(void *,DEFGENERIC *);
   SIDE EFFECTS : None
   NOTES        : Used by (clear) and (bload)
  ***************************************************/
-globle intBool ClearDefgenericsReady(
+intBool ClearDefgenericsReady(
   void *theEnv)
   {
    return((DefgenericData(theEnv)->CurrentGeneric != NULL) ? FALSE : TRUE);
@@ -129,7 +129,7 @@ globle intBool ClearDefgenericsReady(
   SIDE EFFECTS : Deffunction module created
   NOTES        : None
  *****************************************************/
-globle void *AllocateDefgenericModule(
+void *AllocateDefgenericModule(
   void *theEnv)
   {
    return((void *) get_struct(theEnv,defgenericModule));
@@ -144,7 +144,7 @@ globle void *AllocateDefgenericModule(
   SIDE EFFECTS : Module and deffunctions deleted
   NOTES        : None
  ***************************************************/
-globle void FreeDefgenericModule(
+void FreeDefgenericModule(
   void *theEnv,
   void *theItem)
   {
@@ -176,7 +176,7 @@ globle void FreeDefgenericModule(
                    mutually refer to generic functions
                    to be cleared
  ************************************************************/
-globle int ClearDefmethods(
+int ClearDefmethods(
   void *theEnv)
   {
    register DEFGENERIC *gfunc;
@@ -206,7 +206,7 @@ globle int ClearDefmethods(
   SIDE EFFECTS : Explicit defmethods deleted
   NOTES        : None
  *****************************************************************/
-globle int RemoveAllExplicitMethods(
+int RemoveAllExplicitMethods(
   void *theEnv,
   DEFGENERIC *gfunc)
   {
@@ -261,7 +261,7 @@ globle int RemoveAllExplicitMethods(
                  Nodes deallocated
   NOTES        : Assumes generic is not in use!!!
  **************************************************/
-globle void RemoveDefgeneric(
+void RemoveDefgeneric(
   void *theEnv,
   void *vgfunc)
   {
@@ -288,7 +288,7 @@ globle void RemoveDefgeneric(
                   function methods)
   NOTES        : None
  ****************************************************************/
-globle int ClearDefgenerics(
+int ClearDefgenerics(
   void *theEnv)
   {
    register DEFGENERIC *gfunc,*gtmp;
@@ -328,7 +328,7 @@ globle int ClearDefgenerics(
   SIDE EFFECTS : None
   NOTES        : None
  ********************************************************/
-globle void MethodAlterError(
+void MethodAlterError(
   void *theEnv,
   DEFGENERIC *gfunc)
   {
@@ -349,7 +349,7 @@ globle void MethodAlterError(
   SIDE EFFECTS : Nodes deallocated
   NOTES        : None
  ***************************************************/
-globle void DeleteMethodInfo(
+void DeleteMethodInfo(
   void *theEnv,
   DEFGENERIC *gfunc,
   DEFMETHOD *meth)
@@ -396,7 +396,7 @@ globle void DeleteMethodInfo(
   SIDE EFFECTS : Nodes deallocated
   NOTES        : None
  ***************************************************/
-globle void DestroyMethodInfo(
+void DestroyMethodInfo(
   void *theEnv,
   DEFGENERIC *gfunc,
   DEFMETHOD *meth)
@@ -437,7 +437,7 @@ globle void DestroyMethodInfo(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle int MethodsExecuting(
+int MethodsExecuting(
   DEFGENERIC *gfunc)
   {
    long i;
@@ -463,7 +463,7 @@ globle int MethodsExecuting(
   SIDE EFFECTS : None
   NOTES        : Used only when COOL is not present
  **************************************************************/
-globle intBool SubsumeType(
+intBool SubsumeType(
   int t1,
   int t2)
   {
@@ -496,7 +496,7 @@ globle intBool SubsumeType(
   SIDE EFFECTS : None
   NOTES        : None
  *****************************************************/
-globle long FindMethodByIndex(
+long FindMethodByIndex(
   DEFGENERIC *gfunc,
   long theIndex)
   {
@@ -520,7 +520,7 @@ globle long FindMethodByIndex(
   SIDE EFFECTS : None
   NOTES        : A terminating newline is NOT included
  ******************************************************************/
-globle void PrintMethod(
+void PrintMethod(
   void *theEnv,
   char *buf,
   size_t buflen,
@@ -591,7 +591,7 @@ globle void PrintMethod(
                    the set of applicable methods
   NOTES        : H/L Syntax: (preview-generic <func> <args>)
  *************************************************************/
-globle void PreviewGeneric(
+void PreviewGeneric(
   void *theEnv)
   {
    DEFGENERIC *gfunc;
@@ -651,7 +651,7 @@ globle void PreviewGeneric(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle DEFGENERIC *CheckGenericExists(
+DEFGENERIC *CheckGenericExists(
   void *theEnv,
   const char *fname,
   const char *gname)
@@ -684,7 +684,7 @@ globle DEFGENERIC *CheckGenericExists(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-globle long CheckMethodExists(
+long CheckMethodExists(
   void *theEnv,
   const char *fname,
   DEFGENERIC *gfunc,
@@ -723,7 +723,7 @@ globle long CheckMethodExists(
                  printed for unrecognized types
   NOTES        : Used only when COOL is not present
  *******************************************************/
-globle const char *TypeName(
+const char *TypeName(
   void *theEnv,
   int tcode)
   {
@@ -764,7 +764,7 @@ globle const char *TypeName(
   SIDE EFFECTS : Generic name printed
   NOTES        : None
  ******************************************************/
-globle void PrintGenericName(
+void PrintGenericName(
   void *theEnv,
   const char *logName,
   DEFGENERIC *gfunc)
