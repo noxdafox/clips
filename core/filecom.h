@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*              FILE COMMANDS HEADER FILE              */
    /*******************************************************/
@@ -39,49 +39,41 @@
 /*            Fixed linkage issue when BLOAD_ONLY compiler   */
 /*            flag is set to 1.                              */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_filecom
 
 #define _H_filecom
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _FILECOM_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                           FileCommandDefinitions(void *);
-   LOCALE intBool                        EnvDribbleOn(void *,const char *);
-   LOCALE intBool                        EnvDribbleActive(void *);
-   LOCALE intBool                        EnvDribbleOff(void *);
-   LOCALE void                           SetDribbleStatusFunction(void *,int (*)(void *,int));
-   LOCALE int                            LLGetcBatch(void *,const char *,int);
-   LOCALE int                            Batch(void *,const char *);
-   LOCALE int                            OpenBatch(void *,const char *,int);
-   LOCALE int                            OpenStringBatch(void *,const char *,const char *,int);
-   LOCALE int                            RemoveBatch(void *);
-   LOCALE intBool                        BatchActive(void *);
-   LOCALE void                           CloseAllBatchSources(void *);
-   LOCALE int                            BatchCommand(void *);
-   LOCALE int                            BatchStarCommand(void *);
-   LOCALE int                            EnvBatchStar(void *,const char *);
-   LOCALE int                            LoadCommand(void *);
-   LOCALE int                            LoadStarCommand(void *);
-   LOCALE int                            SaveCommand(void *);
-   LOCALE int                            DribbleOnCommand(void *);
-   LOCALE int                            DribbleOffCommand(void *);
+   void                           FileCommandDefinitions(void *);
+   intBool                        EnvDribbleOn(void *,const char *);
+   intBool                        EnvDribbleActive(void *);
+   intBool                        EnvDribbleOff(void *);
+   void                           SetDribbleStatusFunction(void *,int (*)(void *,int));
+   int                            LLGetcBatch(void *,const char *,int);
+   int                            Batch(void *,const char *);
+   int                            OpenBatch(void *,const char *,int);
+   int                            OpenStringBatch(void *,const char *,const char *,int);
+   int                            RemoveBatch(void *);
+   intBool                        BatchActive(void *);
+   void                           CloseAllBatchSources(void *);
+   int                            BatchCommand(void *);
+   int                            BatchStarCommand(void *);
+   int                            EnvBatchStar(void *,const char *);
+   int                            LoadCommand(void *);
+   int                            LoadStarCommand(void *);
+   int                            SaveCommand(void *);
+   int                            DribbleOnCommand(void *);
+   int                            DribbleOffCommand(void *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-   LOCALE intBool                        DribbleActive(void);
-   LOCALE intBool                        DribbleOn(const char *);
-   LOCALE intBool                        DribbleOff(void);
-   LOCALE int                            BatchStar(const char *);
+   intBool                        DribbleActive(void);
+   intBool                        DribbleOn(const char *);
+   intBool                        DribbleOff(void);
+   int                            BatchStar(const char *);
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */
 

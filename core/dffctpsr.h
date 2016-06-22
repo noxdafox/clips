@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*             DEFFACTS PARSER HEADER FILE             */
    /*******************************************************/
@@ -26,22 +26,14 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_dffctpsr
 #define _H_dffctpsr
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _DFFCTPSR_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE int                            ParseDeffacts(void *,const char *);
+   int                            ParseDeffacts(void *,const char *);
 
 #endif /* _H_dffctpsr */
 

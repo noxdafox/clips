@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -22,6 +22,8 @@
 /*                                                           */
 /*            Changed integer type/precision.                */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_dffnxbin
@@ -31,18 +33,8 @@
 
 #include "dffnxfun.h"
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _DFFNXBIN_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                           SetupDeffunctionsBload(void *);
-   LOCALE void                          *BloadDeffunctionModuleReference(void *,int);
+   void                           SetupDeffunctionsBload(void *);
+   void                          *BloadDeffunctionModuleReference(void *,int);
 
 #define DFFNXBIN_DATA 24
 

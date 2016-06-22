@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  12/27/07            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*          EXTENDED MATH FUNCTIONS HEADER FILE        */
    /*******************************************************/
@@ -33,60 +33,52 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_emathfun
 
 #define _H_emathfun
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _EMATHFUN_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                           ExtendedMathFunctionDefinitions(void *theEnv);
+   void                           ExtendedMathFunctionDefinitions(void *theEnv);
 #if EXTENDED_MATH_FUNCTIONS
-   LOCALE double                         CosFunction(void *);
-   LOCALE double                         SinFunction(void *);
-   LOCALE double                         TanFunction(void *);
-   LOCALE double                         SecFunction(void *);
-   LOCALE double                         CscFunction(void *);
-   LOCALE double                         CotFunction(void *);
-   LOCALE double                         AcosFunction(void *);
-   LOCALE double                         AsinFunction(void *);
-   LOCALE double                         AtanFunction(void *);
-   LOCALE double                         AsecFunction(void *);
-   LOCALE double                         AcscFunction(void *);
-   LOCALE double                         AcotFunction(void *);
-   LOCALE double                         CoshFunction(void *);
-   LOCALE double                         SinhFunction(void *);
-   LOCALE double                         TanhFunction(void *);
-   LOCALE double                         SechFunction(void *);
-   LOCALE double                         CschFunction(void *);
-   LOCALE double                         CothFunction(void *);
-   LOCALE double                         AcoshFunction(void *);
-   LOCALE double                         AsinhFunction(void *);
-   LOCALE double                         AtanhFunction(void *);
-   LOCALE double                         AsechFunction(void *);
-   LOCALE double                         AcschFunction(void *);
-   LOCALE double                         AcothFunction(void *);
-   LOCALE long long                      RoundFunction(void *);
-   LOCALE void                           ModFunction(void *,DATA_OBJECT_PTR);
-   LOCALE double                         ExpFunction(void *);
-   LOCALE double                         LogFunction(void *);
-   LOCALE double                         Log10Function(void *);
-   LOCALE double                         SqrtFunction(void *);
-   LOCALE double                         PiFunction(void *);
-   LOCALE double                         DegRadFunction(void *);
-   LOCALE double                         RadDegFunction(void *);
-   LOCALE double                         DegGradFunction(void *);
-   LOCALE double                         GradDegFunction(void *);
-   LOCALE double                         PowFunction(void *);
+   double                         CosFunction(void *);
+   double                         SinFunction(void *);
+   double                         TanFunction(void *);
+   double                         SecFunction(void *);
+   double                         CscFunction(void *);
+   double                         CotFunction(void *);
+   double                         AcosFunction(void *);
+   double                         AsinFunction(void *);
+   double                         AtanFunction(void *);
+   double                         AsecFunction(void *);
+   double                         AcscFunction(void *);
+   double                         AcotFunction(void *);
+   double                         CoshFunction(void *);
+   double                         SinhFunction(void *);
+   double                         TanhFunction(void *);
+   double                         SechFunction(void *);
+   double                         CschFunction(void *);
+   double                         CothFunction(void *);
+   double                         AcoshFunction(void *);
+   double                         AsinhFunction(void *);
+   double                         AtanhFunction(void *);
+   double                         AsechFunction(void *);
+   double                         AcschFunction(void *);
+   double                         AcothFunction(void *);
+   long long                      RoundFunction(void *);
+   void                           ModFunction(void *,DATA_OBJECT_PTR);
+   double                         ExpFunction(void *);
+   double                         LogFunction(void *);
+   double                         Log10Function(void *);
+   double                         SqrtFunction(void *);
+   double                         PiFunction(void *);
+   double                         DegRadFunction(void *);
+   double                         RadDegFunction(void *);
+   double                         DegGradFunction(void *);
+   double                         GradDegFunction(void *);
+   double                         PowFunction(void *);
 #endif
 
 #endif /* _H_emathfun */

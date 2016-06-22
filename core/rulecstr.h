@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*             RULE CONSTRAINTS HEADER FILE            */
    /*******************************************************/
@@ -21,31 +21,24 @@
 /*                                                           */
 /*      6.30: Support for long long integers.                */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_rulecstr
 
 #define _H_rulecstr
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-#ifdef _RULECSTR_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE struct lhsParseNode           *GetExpressionVarConstraints(void *,struct lhsParseNode *);
-   LOCALE struct lhsParseNode           *DeriveVariableConstraints(void *,struct lhsParseNode *);
-   LOCALE intBool                        ProcessConnectedConstraints(void *,struct lhsParseNode *,struct lhsParseNode *,struct lhsParseNode *);
-   LOCALE void                           ConstraintReferenceErrorMessage(void *,
+   struct lhsParseNode           *GetExpressionVarConstraints(void *,struct lhsParseNode *);
+   struct lhsParseNode           *DeriveVariableConstraints(void *,struct lhsParseNode *);
+   intBool                        ProcessConnectedConstraints(void *,struct lhsParseNode *,struct lhsParseNode *,struct lhsParseNode *);
+   void                           ConstraintReferenceErrorMessage(void *,
                                                                 struct symbolHashNode *,
                                                                 struct lhsParseNode *,
                                                                 int,int,
                                                                 struct symbolHashNode *,
                                                                 int);
-   LOCALE intBool                        CheckRHSForConstraintErrors(void *,struct expr *,struct lhsParseNode *);
+   intBool                        CheckRHSForConstraintErrors(void *,struct expr *,struct lhsParseNode *);
 
 #endif /* _H_rulecstr */
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*            DEFGLOBAL COMMANDS HEADER FILE           */
    /*******************************************************/
@@ -30,35 +30,27 @@
 /*                                                           */
 /*            Converted API macros to function calls.        */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_globlcom
 #define _H_globlcom
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _GLOBLCOM_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                           DefglobalCommandDefinitions(void *);
-   LOCALE int                            SetResetGlobalsCommand(void *);
-   LOCALE intBool                        EnvSetResetGlobals(void *,int);
-   LOCALE int                            GetResetGlobalsCommand(void *);
-   LOCALE intBool                        EnvGetResetGlobals(void *);
-   LOCALE void                           ShowDefglobalsCommand(void *);
-   LOCALE void                           EnvShowDefglobals(void *,const char *,void *);
+   void                           DefglobalCommandDefinitions(void *);
+   int                            SetResetGlobalsCommand(void *);
+   intBool                        EnvSetResetGlobals(void *,int);
+   int                            GetResetGlobalsCommand(void *);
+   intBool                        EnvGetResetGlobals(void *);
+   void                           ShowDefglobalsCommand(void *);
+   void                           EnvShowDefglobals(void *,const char *,void *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-   LOCALE intBool                        GetResetGlobals(void);
-   LOCALE intBool                        SetResetGlobals(int);
+   intBool                        GetResetGlobals(void);
+   intBool                        SetResetGlobals(int);
 #if DEBUGGING_FUNCTIONS
-   LOCALE void                           ShowDefglobals(const char *,void *);
+   void                           ShowDefglobals(const char *,void *);
 #endif
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */

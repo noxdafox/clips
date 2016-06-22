@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  02/04/15            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                 ENGINE HEADER FILE                  */
    /*******************************************************/
@@ -56,6 +56,8 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*            Converted API macros to function calls.        */
+/*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
 /*************************************************************/
 
@@ -131,79 +133,69 @@ struct engineData
 
 #define MAX_PATTERNS_CHECKED 64
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _ENGINE_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE long long               EnvRun(void *,long long);
-   LOCALE intBool                 EnvAddRunFunction(void *,const char *,
+   long long               EnvRun(void *,long long);
+   intBool                 EnvAddRunFunction(void *,const char *,
                                                     void (*)(void *),int);
-   LOCALE intBool                 EnvAddRunFunctionWithContext(void *,const char *,
+   intBool                 EnvAddRunFunctionWithContext(void *,const char *,
                                                                void (*)(void *),int,void *);
-   LOCALE intBool                 EnvRemoveRunFunction(void *,const char *);
-   LOCALE intBool                 EnvAddBeforeRunFunction(void *,const char *,
+   intBool                 EnvRemoveRunFunction(void *,const char *);
+   intBool                 EnvAddBeforeRunFunction(void *,const char *,
                                                     void (*)(void *,void *),int);
-   LOCALE intBool                 EnvAddBeforeRunFunctionWithContext(void *,const char *,
+   intBool                 EnvAddBeforeRunFunctionWithContext(void *,const char *,
                                                                void (*)(void *, void *),int,void *);
-   LOCALE intBool                 EnvRemoveBeforeRunFunction(void *,const char *);
-   LOCALE void                    InitializeEngine(void *);
-   LOCALE void                    EnvSetBreak(void *,void *);
-   LOCALE void                    EnvHalt(void *);
-   LOCALE intBool                 EnvRemoveBreak(void *,void *);
-   LOCALE void                    RemoveAllBreakpoints(void *);
-   LOCALE void                    EnvShowBreaks(void *,const char *,void *);
-   LOCALE intBool                 EnvDefruleHasBreakpoint(void *,void *);
-   LOCALE void                    RunCommand(void *);
-   LOCALE void                    SetBreakCommand(void *);
-   LOCALE void                    RemoveBreakCommand(void *);
-   LOCALE void                    ShowBreaksCommand(void *);
-   LOCALE void                    HaltCommand(void *);
-   LOCALE int                     FocusCommand(void *);
-   LOCALE void                    ClearFocusStackCommand(void *);
-   LOCALE void                    EnvClearFocusStack(void *);
-   LOCALE void                   *EnvGetNextFocus(void *,void *);
-   LOCALE void                    EnvFocus(void *,void *);
-   LOCALE int                     EnvGetFocusChanged(void *);
-   LOCALE void                    EnvSetFocusChanged(void *,int);
-   LOCALE void                    ListFocusStackCommand(void *);
-   LOCALE void                    EnvListFocusStack(void *,const char *);
-   LOCALE void                    GetFocusStackFunction(void *,DATA_OBJECT_PTR);
-   LOCALE void                    EnvGetFocusStack(void *,DATA_OBJECT_PTR);
-   LOCALE void                   *PopFocusFunction(void *);
-   LOCALE void                   *GetFocusFunction(void *);
-   LOCALE void                   *EnvPopFocus(void *);
-   LOCALE void                   *EnvGetFocus(void *);
-   LOCALE intBool                 EnvGetHaltRules(void *);
-   LOCALE void                    EnvSetHaltRules(void *,intBool);
-   LOCALE struct activation      *NextActivationToFire(void *);
+   intBool                 EnvRemoveBeforeRunFunction(void *,const char *);
+   void                    InitializeEngine(void *);
+   void                    EnvSetBreak(void *,void *);
+   void                    EnvHalt(void *);
+   intBool                 EnvRemoveBreak(void *,void *);
+   void                    RemoveAllBreakpoints(void *);
+   void                    EnvShowBreaks(void *,const char *,void *);
+   intBool                 EnvDefruleHasBreakpoint(void *,void *);
+   void                    RunCommand(void *);
+   void                    SetBreakCommand(void *);
+   void                    RemoveBreakCommand(void *);
+   void                    ShowBreaksCommand(void *);
+   void                    HaltCommand(void *);
+   int                     FocusCommand(void *);
+   void                    ClearFocusStackCommand(void *);
+   void                    EnvClearFocusStack(void *);
+   void                   *EnvGetNextFocus(void *,void *);
+   void                    EnvFocus(void *,void *);
+   int                     EnvGetFocusChanged(void *);
+   void                    EnvSetFocusChanged(void *,int);
+   void                    ListFocusStackCommand(void *);
+   void                    EnvListFocusStack(void *,const char *);
+   void                    GetFocusStackFunction(void *,DATA_OBJECT_PTR);
+   void                    EnvGetFocusStack(void *,DATA_OBJECT_PTR);
+   void                   *PopFocusFunction(void *);
+   void                   *GetFocusFunction(void *);
+   void                   *EnvPopFocus(void *);
+   void                   *EnvGetFocus(void *);
+   intBool                 EnvGetHaltRules(void *);
+   void                    EnvSetHaltRules(void *,intBool);
+   struct activation      *NextActivationToFire(void *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-   LOCALE intBool                 AddBeforeRunFunction(const char *,void (*)(void *),int);
-   LOCALE intBool                 AddRunFunction(const char *,void (*)(void),int);
-   LOCALE void                    ClearFocusStack(void);
-   LOCALE void                    Focus(void *);
-   LOCALE void                    GetFocusStack(DATA_OBJECT_PTR);
-   LOCALE void                   *GetFocus(void);
-   LOCALE int                     GetFocusChanged(void);
-   LOCALE void                   *GetNextFocus(void *);
-   LOCALE void                    Halt(void);
-   LOCALE void                   *PopFocus(void);
-   LOCALE intBool                 RemoveRunFunction(const char *);
-   LOCALE long long               Run(long long);
-   LOCALE void                    SetFocusChanged(int);
+   intBool                 AddBeforeRunFunction(const char *,void (*)(void *),int);
+   intBool                 AddRunFunction(const char *,void (*)(void),int);
+   void                    ClearFocusStack(void);
+   void                    Focus(void *);
+   void                    GetFocusStack(DATA_OBJECT_PTR);
+   void                   *GetFocus(void);
+   int                     GetFocusChanged(void);
+   void                   *GetNextFocus(void *);
+   void                    Halt(void);
+   void                   *PopFocus(void);
+   intBool                 RemoveRunFunction(const char *);
+   long long               Run(long long);
+   void                    SetFocusChanged(int);
 #if DEBUGGING_FUNCTIONS
-   LOCALE intBool                 DefruleHasBreakpoint(void *);
-   LOCALE void                    ListFocusStack(const char *);
-   LOCALE intBool                 RemoveBreak(void *);
-   LOCALE void                    SetBreak(void *);
-   LOCALE void                    ShowBreaks(const char *,void *);
+   intBool                 DefruleHasBreakpoint(void *);
+   void                    ListFocusStack(const char *);
+   intBool                 RemoveBreak(void *);
+   void                    SetBreak(void *);
+   void                    ShowBreaks(const char *,void *);
 #endif
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */

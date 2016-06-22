@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                FACT BUILD HEADER FILE               */
    /*******************************************************/
@@ -25,6 +25,8 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_factlhs
@@ -38,19 +40,9 @@
 #include "scanner.h"
 #endif
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _FACTLHS_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE int                            FactPatternParserFind(SYMBOL_HN *);
-   LOCALE struct lhsParseNode           *FactPatternParse(void *,const char *,struct token *);
-   LOCALE struct lhsParseNode           *SequenceRestrictionParse(void *,const char *,struct token *);
-   LOCALE struct lhsParseNode           *CreateInitialFactPattern(void *);
+   int                            FactPatternParserFind(SYMBOL_HN *);
+   struct lhsParseNode           *FactPatternParse(void *,const char *,struct token *);
+   struct lhsParseNode           *SequenceRestrictionParse(void *,const char *,struct token *);
+   struct lhsParseNode           *CreateInitialFactPattern(void *);
 
 #endif /* _H_factlhs */

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -32,6 +32,8 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_objcmp
@@ -60,19 +62,9 @@ struct objectCompilerData
 
 #define ObjectCompilerData(theEnv) ((struct objectCompilerData *) GetEnvironmentData(theEnv,OBJECT_COMPILER_DATA))
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _OBJCMP_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                    SetupObjectsCompiler(void *);
-   LOCALE void                    PrintClassReference(void *,FILE *,DEFCLASS *,int,int);
-   LOCALE void                    DefclassCModuleReference(void *,FILE *,int,int,int);
+   void                    SetupObjectsCompiler(void *);
+   void                    PrintClassReference(void *,FILE *,DEFCLASS *,int,int);
+   void                    DefclassCModuleReference(void *,FILE *,int,int,int);
 
 #endif /* _H_objcmp */
 

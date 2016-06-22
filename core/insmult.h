@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -25,6 +25,8 @@
 /*                                                           */
 /*            Changed integer type/precision.                */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_insmult
@@ -34,26 +36,16 @@
 #include "evaluatn.h"
 #endif
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _INSMULT_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
 #if (! RUN_TIME)
-   LOCALE void                           SetupInstanceMultifieldCommands(void *);
+   void                           SetupInstanceMultifieldCommands(void *);
 #endif
 
-   LOCALE void                           MVSlotReplaceCommand(void *,DATA_OBJECT *);
-   LOCALE void                           MVSlotInsertCommand(void *,DATA_OBJECT *);
-   LOCALE void                           MVSlotDeleteCommand(void *,DATA_OBJECT *);
-   LOCALE intBool                        DirectMVReplaceCommand(void *);
-   LOCALE intBool                        DirectMVInsertCommand(void *);
-   LOCALE intBool                        DirectMVDeleteCommand(void *);
+   void                           MVSlotReplaceCommand(void *,DATA_OBJECT *);
+   void                           MVSlotInsertCommand(void *,DATA_OBJECT *);
+   void                           MVSlotDeleteCommand(void *,DATA_OBJECT *);
+   intBool                        DirectMVReplaceCommand(void *);
+   intBool                        DirectMVInsertCommand(void *);
+   intBool                        DirectMVDeleteCommand(void *);
 
 #endif /* _H_insmult */
 

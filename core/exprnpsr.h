@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*            EXPRESSION PARSER HEADER FILE            */
    /*******************************************************/
@@ -33,6 +33,8 @@
 /*                                                           */
 /*            Converted API macros to function calls.        */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_exprnpsr
@@ -57,43 +59,33 @@ typedef struct saved_contexts
 #include "scanner.h"
 #endif
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _EXPRNPSR_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE struct expr                   *Function0Parse(void *,const char *);
-   LOCALE struct expr                   *Function1Parse(void *,const char *);
-   LOCALE struct expr                   *Function2Parse(void *,const char *,const char *);
-   LOCALE void                           PushRtnBrkContexts(void *);
-   LOCALE void                           PopRtnBrkContexts(void *);
-   LOCALE intBool                        ReplaceSequenceExpansionOps(void *,struct expr *,struct expr *,
+   struct expr                   *Function0Parse(void *,const char *);
+   struct expr                   *Function1Parse(void *,const char *);
+   struct expr                   *Function2Parse(void *,const char *,const char *);
+   void                           PushRtnBrkContexts(void *);
+   void                           PopRtnBrkContexts(void *);
+   intBool                        ReplaceSequenceExpansionOps(void *,struct expr *,struct expr *,
                                                                      void *,void *);
-   LOCALE struct expr                   *CollectArguments(void *,struct expr *,const char *);
-   LOCALE struct expr                   *ArgumentParse(void *,const char *,int *);
-   LOCALE struct expr                   *ParseAtomOrExpression(void *,const char *,struct token *);
-   LOCALE EXPRESSION                    *ParseConstantArguments(void *,const char *,int *);
-   LOCALE intBool                        EnvSetSequenceOperatorRecognition(void *,int);
-   LOCALE intBool                        EnvGetSequenceOperatorRecognition(void *);
-   LOCALE struct expr                   *GroupActions(void *,const char *,struct token *,
+   struct expr                   *CollectArguments(void *,struct expr *,const char *);
+   struct expr                   *ArgumentParse(void *,const char *,int *);
+   struct expr                   *ParseAtomOrExpression(void *,const char *,struct token *);
+   EXPRESSION                    *ParseConstantArguments(void *,const char *,int *);
+   intBool                        EnvSetSequenceOperatorRecognition(void *,int);
+   intBool                        EnvGetSequenceOperatorRecognition(void *);
+   struct expr                   *GroupActions(void *,const char *,struct token *,
                                                       int,const char *,int);
-   LOCALE struct expr                   *RemoveUnneededProgn(void *,struct expr *);
+   struct expr                   *RemoveUnneededProgn(void *,struct expr *);
 
 #if (! RUN_TIME)
 
-   LOCALE int                            CheckExpressionAgainstRestrictions(void *,struct expr *,
+   int                            CheckExpressionAgainstRestrictions(void *,struct expr *,
                                                                             const char *,const char *);
 #endif
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-   LOCALE intBool                        SetSequenceOperatorRecognition(int);
-   LOCALE intBool                        GetSequenceOperatorRecognition(void);
+   intBool                        SetSequenceOperatorRecognition(int);
+   intBool                        GetSequenceOperatorRecognition(void);
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */
 

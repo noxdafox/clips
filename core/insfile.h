@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  02/04/15          */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -34,6 +34,8 @@
 /*                                                           */
 /*            Converted API macros to function calls.        */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_insfile
@@ -64,49 +66,39 @@ struct instanceFileData
 
 #endif /* BLOAD_INSTANCES || BSAVE_INSTANCES */
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _INSFILE_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                           SetupInstanceFileCommands(void *);
-   LOCALE long                           SaveInstancesCommand(void *);
-   LOCALE long                           LoadInstancesCommand(void *);
-   LOCALE long                           RestoreInstancesCommand(void *);
-   LOCALE long                           EnvSaveInstancesDriver(void *,const char *,int,EXPRESSION *,intBool);
-   LOCALE long                           EnvSaveInstances(void *,const char *,int);
+   void                           SetupInstanceFileCommands(void *);
+   long                           SaveInstancesCommand(void *);
+   long                           LoadInstancesCommand(void *);
+   long                           RestoreInstancesCommand(void *);
+   long                           EnvSaveInstancesDriver(void *,const char *,int,EXPRESSION *,intBool);
+   long                           EnvSaveInstances(void *,const char *,int);
 #if BSAVE_INSTANCES
-   LOCALE long                           BinarySaveInstancesCommand(void *);
-   LOCALE long                           EnvBinarySaveInstancesDriver(void *,const char *,int,EXPRESSION *,intBool);
-   LOCALE long                           EnvBinarySaveInstances(void *,const char *,int);
+   long                           BinarySaveInstancesCommand(void *);
+   long                           EnvBinarySaveInstancesDriver(void *,const char *,int,EXPRESSION *,intBool);
+   long                           EnvBinarySaveInstances(void *,const char *,int);
 #endif
 #if BLOAD_INSTANCES
-   LOCALE long                           BinaryLoadInstancesCommand(void *);
-   LOCALE long                           EnvBinaryLoadInstances(void *,const char *);
+   long                           BinaryLoadInstancesCommand(void *);
+   long                           EnvBinaryLoadInstances(void *,const char *);
 #endif
-   LOCALE long                           EnvLoadInstances(void *,const char *);
-   LOCALE long                           EnvLoadInstancesFromString(void *,const char *,int);
-   LOCALE long                           EnvRestoreInstances(void *,const char *);
-   LOCALE long                           EnvRestoreInstancesFromString(void *,const char *,int);
+   long                           EnvLoadInstances(void *,const char *);
+   long                           EnvLoadInstancesFromString(void *,const char *,int);
+   long                           EnvRestoreInstances(void *,const char *);
+   long                           EnvRestoreInstancesFromString(void *,const char *,int);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
 #if BLOAD_INSTANCES
-   LOCALE long                           BinaryLoadInstances(const char *);
+   long                           BinaryLoadInstances(const char *);
 #endif
 #if BSAVE_INSTANCES
-   LOCALE long                           BinarySaveInstances(const char *,int);
+   long                           BinarySaveInstances(const char *,int);
 #endif
-   LOCALE long                           LoadInstances(const char *);
-   LOCALE long                           LoadInstancesFromString(const char *,int);
-   LOCALE long                           RestoreInstances(const char *);
-   LOCALE long                           RestoreInstancesFromString(const char *,int);
-   LOCALE long                           SaveInstances(const char *,int);
+   long                           LoadInstances(const char *);
+   long                           LoadInstancesFromString(const char *,int);
+   long                           RestoreInstances(const char *);
+   long                           RestoreInstancesFromString(const char *,int);
+   long                           SaveInstances(const char *,int);
    
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*          EXPRESSION OPERATIONS HEADER FILE          */
    /*******************************************************/
@@ -25,6 +25,8 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_exprnops
@@ -35,31 +37,21 @@
 #include "expressn.h"
 #endif
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _EXPRNOPS_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE intBool                        ConstantExpression(struct expr *);
-   LOCALE void                           PrintExpression(void *,const char *,struct expr *);
-   LOCALE long                           ExpressionSize(struct expr *);
-   LOCALE int                            CountArguments(struct expr *);
-   LOCALE struct expr                   *CopyExpression(void *,struct expr *);
-   LOCALE intBool                        ExpressionContainsVariables(struct expr *,int);
-   LOCALE intBool                        IdenticalExpression(struct expr *,struct expr *);
-   LOCALE struct expr                   *GenConstant(void *,unsigned short,void *);
+   intBool                        ConstantExpression(struct expr *);
+   void                           PrintExpression(void *,const char *,struct expr *);
+   long                           ExpressionSize(struct expr *);
+   int                            CountArguments(struct expr *);
+   struct expr                   *CopyExpression(void *,struct expr *);
+   intBool                        ExpressionContainsVariables(struct expr *,int);
+   intBool                        IdenticalExpression(struct expr *,struct expr *);
+   struct expr                   *GenConstant(void *,unsigned short,void *);
 #if ! RUN_TIME
-   LOCALE int                            CheckArgumentAgainstRestriction(void *,struct expr *,int);
+   int                            CheckArgumentAgainstRestriction(void *,struct expr *,int);
 #endif
-   LOCALE intBool                        ConstantType(int);
-   LOCALE struct expr                   *CombineExpressions(void *,struct expr *,struct expr *);
-   LOCALE struct expr                   *AppendExpressions(struct expr *,struct expr *);
-   LOCALE struct expr                   *NegateExpression(void *,struct expr *);
+   intBool                        ConstantType(int);
+   struct expr                   *CombineExpressions(void *,struct expr *,struct expr *);
+   struct expr                   *AppendExpressions(struct expr *,struct expr *);
+   struct expr                   *NegateExpression(void *,struct expr *);
 
 #endif /* _H_exprnops */
 

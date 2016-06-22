@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*          LOGICAL DEPENDENCIES HEADER FILE           */
    /*******************************************************/
@@ -26,6 +26,8 @@
 /*                                                           */
 /*      6.30: Added support for hashed memories.             */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_lgcldpnd
@@ -45,27 +47,18 @@ struct dependency
 #include "pattern.h"
 #endif
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-#ifdef _LGCLDPND_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE intBool                        AddLogicalDependencies(void *,struct patternEntity *,int);
-   LOCALE void                           RemoveEntityDependencies(void *,struct patternEntity *);
-   LOCALE void                           RemovePMDependencies(void *,struct partialMatch *);
-   LOCALE void                           DestroyPMDependencies(void *,struct partialMatch *);
-   LOCALE void                           RemoveLogicalSupport(void *,struct partialMatch *);
-   LOCALE void                           ForceLogicalRetractions(void *);
-   LOCALE void                           Dependencies(void *,struct patternEntity *);
-   LOCALE void                           Dependents(void *,struct patternEntity *);
-   LOCALE void                           DependenciesCommand(void *);
-   LOCALE void                           DependentsCommand(void *);
-   LOCALE void                           ReturnEntityDependencies(void *,struct patternEntity *);
-   LOCALE struct partialMatch           *FindLogicalBind(struct joinNode *,struct partialMatch *);
+   intBool                        AddLogicalDependencies(void *,struct patternEntity *,int);
+   void                           RemoveEntityDependencies(void *,struct patternEntity *);
+   void                           RemovePMDependencies(void *,struct partialMatch *);
+   void                           DestroyPMDependencies(void *,struct partialMatch *);
+   void                           RemoveLogicalSupport(void *,struct partialMatch *);
+   void                           ForceLogicalRetractions(void *);
+   void                           Dependencies(void *,struct patternEntity *);
+   void                           Dependents(void *,struct patternEntity *);
+   void                           DependenciesCommand(void *);
+   void                           DependentsCommand(void *);
+   void                           ReturnEntityDependencies(void *,struct patternEntity *);
+   struct partialMatch           *FindLogicalBind(struct joinNode *,struct partialMatch *);
 
 #endif /* _H_lgcldpnd */
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  05/21/16            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*            EXTERNAL FUNCTIONS HEADER FILE           */
    /*******************************************************/
@@ -34,6 +34,8 @@
 /*            symbolHashNode * to support strings            */
 /*            originating from sources that are not          */
 /*            statically allocated.                          */
+/*                                                           */
+/*            Removed LOCALE definition.                     */
 /*                                                           */
 /*************************************************************/
 
@@ -90,17 +92,7 @@ struct externalFunctionData
 
 #define ExternalFunctionData(theEnv) ((struct externalFunctionData *) GetEnvironmentData(theEnv,EXTERNAL_FUNCTION_DATA))
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
 #ifdef _EXTNFUNC_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-#ifdef LOCALE
 struct FunctionHash
   {
    struct FunctionDefinition *fdPtr;
@@ -110,35 +102,35 @@ struct FunctionHash
 #define SIZE_FUNCTION_HASH 517
 #endif
 
-   LOCALE void                           InitializeExternalFunctionData(void *);
-   LOCALE int                            EnvDefineFunction(void *,const char *,int,
+   void                           InitializeExternalFunctionData(void *);
+   int                            EnvDefineFunction(void *,const char *,int,
                                                            int (*)(void *),const char *);
-   LOCALE int                            EnvDefineFunction2(void *,const char *,int,
+   int                            EnvDefineFunction2(void *,const char *,int,
                                                             int (*)(void *),const char *,const char *);
-   LOCALE int                            EnvDefineFunctionWithContext(void *,const char *,int,
+   int                            EnvDefineFunctionWithContext(void *,const char *,int,
                                                            int (*)(void *),const char *,void *);
-   LOCALE int                            EnvDefineFunction2WithContext(void *,const char *,int,
+   int                            EnvDefineFunction2WithContext(void *,const char *,int,
                                                             int (*)(void *),const char *,const char *,void *);
-   LOCALE int                            DefineFunction3(void *,const char *,int,
+   int                            DefineFunction3(void *,const char *,int,
                                                          int (*)(void *),const char *,const char *,intBool,void *);
-   LOCALE int                            AddFunctionParser(void *,const char *,
+   int                            AddFunctionParser(void *,const char *,
                                                            struct expr *(*)( void *,struct expr *,const char *));
-   LOCALE int                            RemoveFunctionParser(void *,const char *);
-   LOCALE int                            FuncSeqOvlFlags(void *,const char *,int,int);
-   LOCALE struct FunctionDefinition     *GetFunctionList(void *);
-   LOCALE void                           InstallFunctionList(void *,struct FunctionDefinition *);
-   LOCALE struct FunctionDefinition     *FindFunction(void *,const char *);
-   LOCALE int                            GetNthRestriction(struct FunctionDefinition *,int);
-   LOCALE const char                    *GetArgumentTypeName(int);
-   LOCALE int                            UndefineFunction(void *,const char *);
-   LOCALE int                            GetMinimumArgs(struct FunctionDefinition *);
-   LOCALE int                            GetMaximumArgs(struct FunctionDefinition *);
+   int                            RemoveFunctionParser(void *,const char *);
+   int                            FuncSeqOvlFlags(void *,const char *,int,int);
+   struct FunctionDefinition     *GetFunctionList(void *);
+   void                           InstallFunctionList(void *,struct FunctionDefinition *);
+   struct FunctionDefinition     *FindFunction(void *,const char *);
+   int                            GetNthRestriction(struct FunctionDefinition *,int);
+   const char                    *GetArgumentTypeName(int);
+   int                            UndefineFunction(void *,const char *);
+   int                            GetMinimumArgs(struct FunctionDefinition *);
+   int                            GetMaximumArgs(struct FunctionDefinition *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
 #if (! RUN_TIME)
-   LOCALE int                            DefineFunction(const char *,int,int (*)(void),const char *);
-   LOCALE int                            DefineFunction2(const char *,int,int (*)(void),const char *,const char *);
+   int                            DefineFunction(const char *,int,int (*)(void),const char *);
+   int                            DefineFunction2(const char *,int,int (*)(void),const char *,const char *);
 #endif /* (! RUN_TIME) */
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */

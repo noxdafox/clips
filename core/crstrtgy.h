@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*      CONFLICT RESOLUTION STRATEGY HEADER MODULE     */
    /*******************************************************/
@@ -39,6 +39,8 @@
 /*                                                           */
 /*            Converted API macros to function calls.        */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_crstrtgy
@@ -58,26 +60,16 @@
 
 #define DEFAULT_STRATEGY DEPTH_STRATEGY
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _CRSTRTGY_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                           PlaceActivation(void *,ACTIVATION **,ACTIVATION *,struct salienceGroup *);
-   LOCALE int                            EnvSetStrategy(void *,int);
-   LOCALE int                            EnvGetStrategy(void *);
-   LOCALE void                          *SetStrategyCommand(void *);
-   LOCALE void                          *GetStrategyCommand(void *);
+   void                           PlaceActivation(void *,ACTIVATION **,ACTIVATION *,struct salienceGroup *);
+   int                            EnvSetStrategy(void *,int);
+   int                            EnvGetStrategy(void *);
+   void                          *SetStrategyCommand(void *);
+   void                          *GetStrategyCommand(void *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-   LOCALE int                            SetStrategy(int);
-   LOCALE int                            GetStrategy(void);
+   int                            SetStrategy(int);
+   int                            GetStrategy(void);
 
 #endif
 

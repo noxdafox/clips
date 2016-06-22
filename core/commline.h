@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/17/16            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*              COMMAND LINE HEADER FILE               */
    /*******************************************************/
@@ -52,6 +52,8 @@
 /*      6.40: Refactored code to reduce header dependencies  */
 /*            in sysdep.c.                                   */
 /*                                                           */
+/*            Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_commline
@@ -78,43 +80,33 @@ struct commandLineData
 
 #define CommandLineData(theEnv) ((struct commandLineData *) GetEnvironmentData(theEnv,COMMANDLINE_DATA))
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _COMMLINE_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                           InitializeCommandLineData(void *);
-   LOCALE int                            ExpandCommandString(void *,int);
-   LOCALE void                           FlushCommandString(void *);
-   LOCALE void                           SetCommandString(void *,const char *);
-   LOCALE void                           AppendCommandString(void *,const char *);
-   LOCALE void                           InsertCommandString(void *,const char *,unsigned);
-   LOCALE char                          *GetCommandString(void *);
-   LOCALE int                            CompleteCommand(const char *);
-   LOCALE void                           CommandLoop(void *);
-   LOCALE void                           CommandLoopBatch(void *);
-   LOCALE void                           CommandLoopBatchDriver(void *);
-   LOCALE void                           PrintPrompt(void *);
-   LOCALE void                           PrintBanner(void *);
-   LOCALE void                           SetAfterPromptFunction(void *,int (*)(void *));
-   LOCALE void                           SetBeforeCommandExecutionFunction(void *,int (*)(void *));
-   LOCALE intBool                        RouteCommand(void *,const char *,int);
-   LOCALE int                          (*SetEventFunction(void *,int (*)(void *)))(void *);
-   LOCALE intBool                        TopLevelCommand(void *);
-   LOCALE void                           AppendNCommandString(void *,const char *,unsigned);
-   LOCALE void                           SetNCommandString(void *,const char *,unsigned);
-   LOCALE const char                    *GetCommandCompletionString(void *,const char *,size_t);
-   LOCALE intBool                        ExecuteIfCommandComplete(void *);
-   LOCALE void                           CommandLoopOnceThenBatch(void *);
-   LOCALE intBool                        CommandCompleteAndNotEmpty(void *);
-   LOCALE void                           SetHaltCommandLoopBatch(void *,int);
-   LOCALE int                            GetHaltCommandLoopBatch(void *);
-   LOCALE void                           RerouteStdin(void *,int,char *[]);
+   void                           InitializeCommandLineData(void *);
+   int                            ExpandCommandString(void *,int);
+   void                           FlushCommandString(void *);
+   void                           SetCommandString(void *,const char *);
+   void                           AppendCommandString(void *,const char *);
+   void                           InsertCommandString(void *,const char *,unsigned);
+   char                          *GetCommandString(void *);
+   int                            CompleteCommand(const char *);
+   void                           CommandLoop(void *);
+   void                           CommandLoopBatch(void *);
+   void                           CommandLoopBatchDriver(void *);
+   void                           PrintPrompt(void *);
+   void                           PrintBanner(void *);
+   void                           SetAfterPromptFunction(void *,int (*)(void *));
+   void                           SetBeforeCommandExecutionFunction(void *,int (*)(void *));
+   intBool                        RouteCommand(void *,const char *,int);
+   int                          (*SetEventFunction(void *,int (*)(void *)))(void *);
+   intBool                        TopLevelCommand(void *);
+   void                           AppendNCommandString(void *,const char *,unsigned);
+   void                           SetNCommandString(void *,const char *,unsigned);
+   const char                    *GetCommandCompletionString(void *,const char *,size_t);
+   intBool                        ExecuteIfCommandComplete(void *);
+   void                           CommandLoopOnceThenBatch(void *);
+   intBool                        CommandCompleteAndNotEmpty(void *);
+   void                           SetHaltCommandLoopBatch(void *,int);
+   int                            GetHaltCommandLoopBatch(void *);
+   void                           RerouteStdin(void *,int,char *[]);
 
 #endif
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                 BLOAD HEADER FILE                   */
    /*******************************************************/
@@ -28,6 +28,8 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*            Converted API macros to function calls.        */
+/*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
 /*************************************************************/
 
@@ -69,30 +71,21 @@ struct bloadData
 
 #define BloadData(theEnv) ((struct bloadData *) GetEnvironmentData(theEnv,BLOAD_DATA))
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-#ifdef _BLOAD_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
 #define FunctionPointer(i) ((struct FunctionDefinition *) (((i) == -1L) ? NULL : BloadData(theEnv)->FunctionArray[i]))
 
-   LOCALE void                    InitializeBloadData(void *);
-   LOCALE int                     BloadCommand(void *);
-   LOCALE intBool                 EnvBload(void *,const char *);
-   LOCALE void                    BloadandRefresh(void *,long,size_t,void (*)(void *,void *,long));
-   LOCALE intBool                 Bloaded(void *);
-   LOCALE void                    AddBeforeBloadFunction(void *,const char *,void (*)(void *),int);
-   LOCALE void                    AddAfterBloadFunction(void *,const char *,void (*)(void *),int);
-   LOCALE void                    AddClearBloadReadyFunction(void *,const char *,int (*)(void *),int);
-   LOCALE void                    AddAbortBloadFunction(void *,const char *,void (*)(void *),int);
-   LOCALE void                    CannotLoadWithBloadMessage(void *,const char *);
+   void                    InitializeBloadData(void *);
+   int                     BloadCommand(void *);
+   intBool                 EnvBload(void *,const char *);
+   void                    BloadandRefresh(void *,long,size_t,void (*)(void *,void *,long));
+   intBool                 Bloaded(void *);
+   void                    AddBeforeBloadFunction(void *,const char *,void (*)(void *),int);
+   void                    AddAfterBloadFunction(void *,const char *,void (*)(void *),int);
+   void                    AddClearBloadReadyFunction(void *,const char *,int (*)(void *),int);
+   void                    AddAbortBloadFunction(void *,const char *,void (*)(void *),int);
+   void                    CannotLoadWithBloadMessage(void *,const char *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
-   LOCALE int                     Bload(const char *);
+   int                     Bload(const char *);
 #endif
 
 #endif

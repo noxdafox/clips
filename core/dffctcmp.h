@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*        DEFFACTS CONSTRUCT COMPILER HEADER FILE      */
    /*******************************************************/
@@ -23,23 +23,15 @@
 /*            compilers/operating systems (IBM_MCW,          */
 /*            MAC_MCW, and IBM_TBC).                         */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_dffctcmp
 
 #define _H_dffctcmp
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _DFFCTCMP_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                           DeffactsCompilerSetup(void *);
-   LOCALE void                           DeffactsCModuleReference(void *,FILE *,int,int,int);
+   void                           DeffactsCompilerSetup(void *);
+   void                           DeffactsCModuleReference(void *,FILE *,int,int,int);
 
 #endif /* _H_dffctcmp */

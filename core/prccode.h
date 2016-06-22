@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -40,6 +40,8 @@
 /*            Added const qualifiers to remove C++            */
 /*            deprecation warnings.                           */
 /*                                                            */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_prccode
@@ -105,47 +107,37 @@ struct proceduralPrimitiveData
 
 #define ProceduralPrimitiveData(theEnv) ((struct proceduralPrimitiveData *) GetEnvironmentData(theEnv,PROCEDURAL_PRIMITIVE_DATA))
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _PRCCODE_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                           InstallProcedurePrimitives(void *);
+   void                           InstallProcedurePrimitives(void *);
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
 
 #if DEFFUNCTION_CONSTRUCT || OBJECT_SYSTEM
-   LOCALE EXPRESSION                    *ParseProcParameters(void *,const char *,struct token *,EXPRESSION *,
+   EXPRESSION                    *ParseProcParameters(void *,const char *,struct token *,EXPRESSION *,
                                                              SYMBOL_HN **,int *,int *,int *,
                                                              int (*)(void *,const char *));
 #endif
-   LOCALE EXPRESSION                    *ParseProcActions(void *,const char *,const char *,struct token *,EXPRESSION *,SYMBOL_HN *,
+   EXPRESSION                    *ParseProcActions(void *,const char *,const char *,struct token *,EXPRESSION *,SYMBOL_HN *,
                                                           int (*)(void *,EXPRESSION *,void *),
                                                           int (*)(void *,EXPRESSION *,void *),
                                                           int *,void *);
-   LOCALE intBool                        ReplaceProcVars(void *,const char *,EXPRESSION *,EXPRESSION *,SYMBOL_HN *,
+   intBool                        ReplaceProcVars(void *,const char *,EXPRESSION *,EXPRESSION *,SYMBOL_HN *,
                                                          int (*)(void *,EXPRESSION *,void *),void *);
 #if DEFGENERIC_CONSTRUCT
-   LOCALE EXPRESSION                    *GenProcWildcardReference(void *,int);
+   EXPRESSION                    *GenProcWildcardReference(void *,int);
 #endif
 #endif
 
-   LOCALE void                           PushProcParameters(void *,EXPRESSION *,int,const char *,const char *,void (*)(void *));
-   LOCALE void                           PopProcParameters(void *);
+   void                           PushProcParameters(void *,EXPRESSION *,int,const char *,const char *,void (*)(void *));
+   void                           PopProcParameters(void *);
 
 #if DEFGENERIC_CONSTRUCT
-   LOCALE EXPRESSION                    *GetProcParamExpressions(void *);
+   EXPRESSION                    *GetProcParamExpressions(void *);
 #endif
 
-   LOCALE void                           EvaluateProcActions(void *,struct defmodule *,EXPRESSION *,int,
+   void                           EvaluateProcActions(void *,struct defmodule *,EXPRESSION *,int,
                                                              DATA_OBJECT *,void (*)(void *));
-   LOCALE void                           PrintProcParamArray(void *,const char *);
-   LOCALE void                           GrabProcWildargs(void *,DATA_OBJECT *,int);
+   void                           PrintProcParamArray(void *,const char *);
+   void                           GrabProcWildargs(void *,DATA_OBJECT *,int);
 
 #endif /* _H_prccode */
 

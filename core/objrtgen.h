@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -22,6 +22,8 @@
 /*      6.30: Added support for hashed memories and other    */
 /*            join network changes.                          */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_objrtgen
@@ -36,25 +38,15 @@
 #include "reorder.h"
 #endif
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _OBJRTGEN_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void             ReplaceGetJNObjectValue(void *,EXPRESSION *,struct lhsParseNode *,int);
-   LOCALE EXPRESSION      *GenGetJNObjectValue(void *,struct lhsParseNode *,int);
-   LOCALE EXPRESSION      *ObjectJNVariableComparison(void *,struct lhsParseNode *,struct lhsParseNode *,int);
-   LOCALE EXPRESSION      *GenObjectPNConstantCompare(void *,struct lhsParseNode *);
-   LOCALE void             ReplaceGetPNObjectValue(void *,EXPRESSION *,struct lhsParseNode *);
-   LOCALE EXPRESSION      *GenGetPNObjectValue(void *,struct lhsParseNode *); 
-   LOCALE EXPRESSION      *ObjectPNVariableComparison(void *,struct lhsParseNode *,struct lhsParseNode *);
-   LOCALE void             GenObjectLengthTest(void *,struct lhsParseNode *);
-   LOCALE void             GenObjectZeroLengthTest(void *,struct lhsParseNode *);
+   void             ReplaceGetJNObjectValue(void *,EXPRESSION *,struct lhsParseNode *,int);
+   EXPRESSION      *GenGetJNObjectValue(void *,struct lhsParseNode *,int);
+   EXPRESSION      *ObjectJNVariableComparison(void *,struct lhsParseNode *,struct lhsParseNode *,int);
+   EXPRESSION      *GenObjectPNConstantCompare(void *,struct lhsParseNode *);
+   void             ReplaceGetPNObjectValue(void *,EXPRESSION *,struct lhsParseNode *);
+   EXPRESSION      *GenGetPNObjectValue(void *,struct lhsParseNode *); 
+   EXPRESSION      *ObjectPNVariableComparison(void *,struct lhsParseNode *,struct lhsParseNode *);
+   void             GenObjectLengthTest(void *,struct lhsParseNode *);
+   void             GenObjectZeroLengthTest(void *,struct lhsParseNode *);
 
 #endif /* DEFRULE_CONSTRUCT && OBJECT_SYSTEM && (! RUN_TIME) && (! BLOAD_ONLY) */
 

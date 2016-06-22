@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                INSTANCE FUNCTIONS MODULE            */
    /*******************************************************/
@@ -55,7 +55,9 @@
 /*                                                           */
 /*            Fixed slot override default ?NONE bug.         */
 /*                                                           */
-//*************************************************************/
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
+/*************************************************************/
 
 #ifndef _H_insfun
 #define _H_insfun
@@ -83,54 +85,44 @@ typedef struct igarbage
 #define INSTANCE_TABLE_HASH_SIZE 8191
 #define InstanceSizeHeuristic(ins)      sizeof(INSTANCE_TYPE)
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _INSFUN_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                           EnvIncrementInstanceCount(void *,void *);
-   LOCALE void                           EnvDecrementInstanceCount(void *,void *);
-   LOCALE void                           InitializeInstanceTable(void *);
-   LOCALE void                           CleanupInstances(void *);
-   LOCALE unsigned                       HashInstance(SYMBOL_HN *);
-   LOCALE void                           DestroyAllInstances(void *);
-   LOCALE void                           RemoveInstanceData(void *,INSTANCE_TYPE *);
-   LOCALE INSTANCE_TYPE                 *FindInstanceBySymbol(void *,SYMBOL_HN *);
-   LOCALE INSTANCE_TYPE                 *FindInstanceInModule(void *,SYMBOL_HN *,struct defmodule *,
+   void                           EnvIncrementInstanceCount(void *,void *);
+   void                           EnvDecrementInstanceCount(void *,void *);
+   void                           InitializeInstanceTable(void *);
+   void                           CleanupInstances(void *);
+   unsigned                       HashInstance(SYMBOL_HN *);
+   void                           DestroyAllInstances(void *);
+   void                           RemoveInstanceData(void *,INSTANCE_TYPE *);
+   INSTANCE_TYPE                 *FindInstanceBySymbol(void *,SYMBOL_HN *);
+   INSTANCE_TYPE                 *FindInstanceInModule(void *,SYMBOL_HN *,struct defmodule *,
                                            struct defmodule *,unsigned);
-   LOCALE INSTANCE_SLOT                 *FindInstanceSlot(void *,INSTANCE_TYPE *,SYMBOL_HN *);
-   LOCALE int                            FindInstanceTemplateSlot(void *,DEFCLASS *,SYMBOL_HN *);
-   LOCALE int                            PutSlotValue(void *,INSTANCE_TYPE *,INSTANCE_SLOT *,DATA_OBJECT *,DATA_OBJECT *,const char *);
-   LOCALE int                            DirectPutSlotValue(void *,INSTANCE_TYPE *,INSTANCE_SLOT *,DATA_OBJECT *,DATA_OBJECT *);
-   LOCALE intBool                        ValidSlotValue(void *,DATA_OBJECT *,SLOT_DESC *,INSTANCE_TYPE *,const char *);
-   LOCALE INSTANCE_TYPE                 *CheckInstance(void *,const char *);
-   LOCALE void                           NoInstanceError(void *,const char *,const char *);
-   LOCALE void                           StaleInstanceAddress(void *,const char *,int);
-   LOCALE int                            EnvGetInstancesChanged(void *);
-   LOCALE void                           EnvSetInstancesChanged(void *,int);
-   LOCALE void                           PrintSlot(void *,const char *,SLOT_DESC *,INSTANCE_TYPE *,const char *);
-   LOCALE void                           PrintInstanceNameAndClass(void *,const char *,INSTANCE_TYPE *,intBool);
-   LOCALE void                           PrintInstanceName(void *,const char *,void *);
-   LOCALE void                           PrintInstanceLongForm(void *,const char *,void *);
+   INSTANCE_SLOT                 *FindInstanceSlot(void *,INSTANCE_TYPE *,SYMBOL_HN *);
+   int                            FindInstanceTemplateSlot(void *,DEFCLASS *,SYMBOL_HN *);
+   int                            PutSlotValue(void *,INSTANCE_TYPE *,INSTANCE_SLOT *,DATA_OBJECT *,DATA_OBJECT *,const char *);
+   int                            DirectPutSlotValue(void *,INSTANCE_TYPE *,INSTANCE_SLOT *,DATA_OBJECT *,DATA_OBJECT *);
+   intBool                        ValidSlotValue(void *,DATA_OBJECT *,SLOT_DESC *,INSTANCE_TYPE *,const char *);
+   INSTANCE_TYPE                 *CheckInstance(void *,const char *);
+   void                           NoInstanceError(void *,const char *,const char *);
+   void                           StaleInstanceAddress(void *,const char *,int);
+   int                            EnvGetInstancesChanged(void *);
+   void                           EnvSetInstancesChanged(void *,int);
+   void                           PrintSlot(void *,const char *,SLOT_DESC *,INSTANCE_TYPE *,const char *);
+   void                           PrintInstanceNameAndClass(void *,const char *,INSTANCE_TYPE *,intBool);
+   void                           PrintInstanceName(void *,const char *,void *);
+   void                           PrintInstanceLongForm(void *,const char *,void *);
 #if DEFRULE_CONSTRUCT && OBJECT_SYSTEM
-   LOCALE void                           DecrementObjectBasisCount(void *,void *);
-   LOCALE void                           IncrementObjectBasisCount(void *,void *);
-   LOCALE void                           MatchObjectFunction(void *,void *);
-   LOCALE intBool                        NetworkSynchronized(void *,void *);
-   LOCALE intBool                        InstanceIsDeleted(void *,void *);
+   void                           DecrementObjectBasisCount(void *,void *);
+   void                           IncrementObjectBasisCount(void *,void *);
+   void                           MatchObjectFunction(void *,void *);
+   intBool                        NetworkSynchronized(void *,void *);
+   intBool                        InstanceIsDeleted(void *,void *);
 #endif
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-   LOCALE void                           DecrementInstanceCount(void *);
-   LOCALE int                            GetInstancesChanged(void);
-   LOCALE void                           IncrementInstanceCount(void *);
-   LOCALE void                           SetInstancesChanged(int);
+   void                           DecrementInstanceCount(void *);
+   int                            GetInstancesChanged(void);
+   void                           IncrementInstanceCount(void *);
+   void                           SetInstancesChanged(int);
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */
 

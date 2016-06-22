@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*             CONSTRAINT PARSER HEADER FILE           */
    /*******************************************************/
@@ -30,6 +30,8 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_cstrnpsr
@@ -37,16 +39,6 @@
 
 #ifndef _H_constrnt
 #include "constrnt.h"
-#endif
-
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _CSTRNPSR_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
 #endif
 
 struct constraintParseRecord
@@ -67,18 +59,18 @@ struct constraintParseRecord
 
 typedef struct constraintParseRecord CONSTRAINT_PARSE_RECORD;
 
-   LOCALE intBool                        CheckConstraintParseConflicts(void *,CONSTRAINT_RECORD *);
-   LOCALE void                           AttributeConflictErrorMessage(void *,const char *,const char *);
+   intBool                        CheckConstraintParseConflicts(void *,CONSTRAINT_RECORD *);
+   void                           AttributeConflictErrorMessage(void *,const char *,const char *);
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   LOCALE void                           InitializeConstraintParseRecord(CONSTRAINT_PARSE_RECORD *);
-   LOCALE intBool                        StandardConstraint(const char *);
-   LOCALE intBool                        ParseStandardConstraint(void *,const char *,const char *,
+   void                           InitializeConstraintParseRecord(CONSTRAINT_PARSE_RECORD *);
+   intBool                        StandardConstraint(const char *);
+   intBool                        ParseStandardConstraint(void *,const char *,const char *,
                                                                  CONSTRAINT_RECORD *,
                                                                  CONSTRAINT_PARSE_RECORD *,
                                                                  int);
-   LOCALE void                           OverlayConstraint(void *,CONSTRAINT_PARSE_RECORD *,
+   void                           OverlayConstraint(void *,CONSTRAINT_PARSE_RECORD *,
                                                            CONSTRAINT_RECORD *,CONSTRAINT_RECORD *);
-   LOCALE void                           OverlayConstraintParseRecord(CONSTRAINT_PARSE_RECORD *,
+   void                           OverlayConstraintParseRecord(CONSTRAINT_PARSE_RECORD *,
                                                                       CONSTRAINT_PARSE_RECORD *);
 #endif /* (! RUN_TIME) && (! BLOAD_ONLY) */
 

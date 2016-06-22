@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                PATTERN HEADER FILE                  */
    /*******************************************************/
@@ -28,6 +28,8 @@
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
+/*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
 /*************************************************************/
 
@@ -146,35 +148,25 @@ struct patternData
 
 #define PatternData(theEnv) ((struct patternData *) GetEnvironmentData(theEnv,PATTERN_DATA))
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _PATTERN_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                           InitializePatterns(void *);
-   LOCALE int                            AddPatternParser(void *,struct patternParser *);
-   LOCALE struct patternParser          *FindPatternParser(void *,const char *);
-   LOCALE void                           DetachPattern(void *,int,struct patternNodeHeader *);
-   LOCALE void                           GetNextPatternEntity(void *,
+   void                           InitializePatterns(void *);
+   int                            AddPatternParser(void *,struct patternParser *);
+   struct patternParser          *FindPatternParser(void *,const char *);
+   void                           DetachPattern(void *,int,struct patternNodeHeader *);
+   void                           GetNextPatternEntity(void *,
                                                               struct patternParser **,
                                                               struct patternEntity **);
-   LOCALE struct patternParser          *GetPatternParser(void *,int);
-   LOCALE struct lhsParseNode           *RestrictionParse(void *,const char *,struct token *,int,
+   struct patternParser          *GetPatternParser(void *,int);
+   struct lhsParseNode           *RestrictionParse(void *,const char *,struct token *,int,
                                                        struct symbolHashNode *,short,
                                                        struct constraintRecord *,short);
-   LOCALE int                            PostPatternAnalysis(void *,struct lhsParseNode *);
-   LOCALE void                           PatternNodeHeaderToCode(void *,FILE *,struct patternNodeHeader *,int,int);
-   LOCALE void                           AddReservedPatternSymbol(void *,const char *,const char *);
-   LOCALE intBool                        ReservedPatternSymbol(void *,const char *,const char *);
-   LOCALE void                           ReservedPatternSymbolErrorMsg(void *,const char *,const char *);
-   LOCALE void                           AddHashedPatternNode(void *,void *,void *,unsigned short,void *);
-   LOCALE intBool                        RemoveHashedPatternNode(void *,void *,void *,unsigned short,void *);
-   LOCALE void                          *FindHashedPatternNode(void *,void *,unsigned short,void *);
+   int                            PostPatternAnalysis(void *,struct lhsParseNode *);
+   void                           PatternNodeHeaderToCode(void *,FILE *,struct patternNodeHeader *,int,int);
+   void                           AddReservedPatternSymbol(void *,const char *,const char *);
+   intBool                        ReservedPatternSymbol(void *,const char *,const char *);
+   void                           ReservedPatternSymbolErrorMsg(void *,const char *,const char *);
+   void                           AddHashedPatternNode(void *,void *,void *,unsigned short,void *);
+   intBool                        RemoveHashedPatternNode(void *,void *,void *,unsigned short,void *);
+   void                          *FindHashedPatternNode(void *,void *,unsigned short,void *);
 
 #endif /* _H_pattern */
 

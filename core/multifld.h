@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/17/16            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                MULTIFIELD HEADER FILE               */
    /*******************************************************/
@@ -42,6 +42,8 @@
 /*                                                           */
 /*      6.40: Refactored code to reduce header dependencies  */
 /*            in sysdep.c.                                   */
+/*                                                           */
+/*            Removed LOCALE definition.                     */
 /*                                                           */
 /*************************************************************/
 
@@ -90,38 +92,29 @@ typedef struct field * FIELD_PTR;
 #define EnvGetMFType(theEnv,target,index)  (((struct field *) ((struct multifield *) (target))->theFields)[index-1].type)
 #define EnvGetMFValue(theEnv,target,index)  (((struct field *) ((struct multifield *) (target))->theFields)[index-1].value)
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-#ifdef _MULTIFLD_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                          *CreateMultifield2(void *,long);
-   LOCALE void                           ReturnMultifield(void *,struct multifield *);
-   LOCALE void                           MultifieldInstall(void *,struct multifield *);
-   LOCALE void                           MultifieldDeinstall(void *,struct multifield *);
-   LOCALE struct multifield             *StringToMultifield(void *,const char *);
-   LOCALE void                          *EnvCreateMultifield(void *,long);
-   LOCALE void                           AddToMultifieldList(void *,struct multifield *);
-   LOCALE void                           FlushMultifields(void *);
-   LOCALE void                           DuplicateMultifield(void *,struct dataObject *,struct dataObject *);
-   LOCALE void                           PrintMultifield(void *,const char *,SEGMENT_PTR,long,long,int);
-   LOCALE intBool                        MultifieldDOsEqual(DATA_OBJECT_PTR,DATA_OBJECT_PTR);
-   LOCALE void                           StoreInMultifield(void *,DATA_OBJECT *,EXPRESSION *,int);
-   LOCALE void                          *CopyMultifield(void *,struct multifield *);
-   LOCALE intBool                        MultifieldsEqual(struct multifield *,struct multifield *);
-   LOCALE void                          *DOToMultifield(void *,DATA_OBJECT *);
-   LOCALE unsigned long                  HashMultifield(struct multifield *,unsigned long);
-   LOCALE struct multifield             *GetMultifieldList(void *);
-   LOCALE void                          *ImplodeMultifield(void *,DATA_OBJECT *);
-   LOCALE void                           EphemerateMultifield(void *,struct multifield *);
+   void                          *CreateMultifield2(void *,long);
+   void                           ReturnMultifield(void *,struct multifield *);
+   void                           MultifieldInstall(void *,struct multifield *);
+   void                           MultifieldDeinstall(void *,struct multifield *);
+   struct multifield             *StringToMultifield(void *,const char *);
+   void                          *EnvCreateMultifield(void *,long);
+   void                           AddToMultifieldList(void *,struct multifield *);
+   void                           FlushMultifields(void *);
+   void                           DuplicateMultifield(void *,struct dataObject *,struct dataObject *);
+   void                           PrintMultifield(void *,const char *,SEGMENT_PTR,long,long,int);
+   intBool                        MultifieldDOsEqual(DATA_OBJECT_PTR,DATA_OBJECT_PTR);
+   void                           StoreInMultifield(void *,DATA_OBJECT *,EXPRESSION *,int);
+   void                          *CopyMultifield(void *,struct multifield *);
+   intBool                        MultifieldsEqual(struct multifield *,struct multifield *);
+   void                          *DOToMultifield(void *,DATA_OBJECT *);
+   unsigned long                  HashMultifield(struct multifield *,unsigned long);
+   struct multifield             *GetMultifieldList(void *);
+   void                          *ImplodeMultifield(void *,DATA_OBJECT *);
+   void                           EphemerateMultifield(void *,struct multifield *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-   LOCALE void                          *CreateMultifield(long);
+   void                          *CreateMultifield(long);
    
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */
 

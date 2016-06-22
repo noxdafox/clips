@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*               I/O FUNCTIONS HEADER FILE             */
    /*******************************************************/
@@ -56,37 +56,29 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_iofun
 
 #define _H_iofun
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _IOFUN_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                           IOFunctionDefinitions(void *);
+   void                           IOFunctionDefinitions(void *);
 #if IO_FUNCTIONS
-   LOCALE intBool                        SetFullCRLF(void *,intBool);
-   LOCALE void                           PrintoutFunction(void *);
-   LOCALE void                           ReadFunction(void *,DATA_OBJECT_PTR);
-   LOCALE int                            OpenFunction(void *);
-   LOCALE int                            CloseFunction(void *);
-   LOCALE int                            GetCharFunction(void *);
-   LOCALE void                           PutCharFunction(void *);
-   LOCALE void                           ReadlineFunction(void *,DATA_OBJECT_PTR);
-   LOCALE void                          *FormatFunction(void *);
-   LOCALE int                            RemoveFunction(void *);
-   LOCALE int                            RenameFunction(void *);
-   LOCALE void                           SetLocaleFunction(void *,DATA_OBJECT_PTR);
-   LOCALE void                           ReadNumberFunction(void *,DATA_OBJECT_PTR);
+   intBool                        SetFullCRLF(void *,intBool);
+   void                           PrintoutFunction(void *);
+   void                           ReadFunction(void *,DATA_OBJECT_PTR);
+   int                            OpenFunction(void *);
+   int                            CloseFunction(void *);
+   int                            GetCharFunction(void *);
+   void                           PutCharFunction(void *);
+   void                           ReadlineFunction(void *,DATA_OBJECT_PTR);
+   void                          *FormatFunction(void *);
+   int                            RemoveFunction(void *);
+   int                            RenameFunction(void *);
+   void                           SetLocaleFunction(void *,DATA_OBJECT_PTR);
+   void                           ReadNumberFunction(void *,DATA_OBJECT_PTR);
 #endif
 
 #endif /* _H_iofun */

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -39,67 +39,59 @@
 /*                                                           */
 /*            Converted API macros to function calls.        */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_classexm
 #define _H_classexm
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _CLASSEXM_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
 #if DEBUGGING_FUNCTIONS
 
-   LOCALE void                           BrowseClassesCommand(void *);
-   LOCALE void                           EnvBrowseClasses(void *,const char *,void *);
-   LOCALE void                           DescribeClassCommand(void *);
-   LOCALE void                           EnvDescribeClass(void *,const char *,void *);
+   void                           BrowseClassesCommand(void *);
+   void                           EnvBrowseClasses(void *,const char *,void *);
+   void                           DescribeClassCommand(void *);
+   void                           EnvDescribeClass(void *,const char *,void *);
 
 #endif /* DEBUGGING_FUNCTIONS */
 
-   LOCALE const char                    *GetCreateAccessorString(void *);
-   LOCALE void                          *GetDefclassModuleCommand(void *);
-   LOCALE intBool                        SuperclassPCommand(void *);
-   LOCALE intBool                        EnvSuperclassP(void *,void *,void *);
-   LOCALE intBool                        SubclassPCommand(void *);
-   LOCALE intBool                        EnvSubclassP(void *,void *,void *);
-   LOCALE int                            SlotExistPCommand(void *);
-   LOCALE intBool                        EnvSlotExistP(void *,void *,const char *,intBool);
-   LOCALE int                            MessageHandlerExistPCommand(void *);
-   LOCALE intBool                        SlotWritablePCommand(void *);
-   LOCALE intBool                        EnvSlotWritableP(void *,void *,const char *);
-   LOCALE intBool                        SlotInitablePCommand(void *);
-   LOCALE intBool                        EnvSlotInitableP(void *,void *,const char *);
-   LOCALE intBool                        SlotPublicPCommand(void *);
-   LOCALE intBool                        EnvSlotPublicP(void *,void *,const char *);
-   LOCALE intBool                        SlotDirectAccessPCommand(void *);
-   LOCALE intBool                        EnvSlotDirectAccessP(void *,void *,const char *);
-   LOCALE void                           SlotDefaultValueCommand(void *,DATA_OBJECT_PTR);
-   LOCALE intBool                        EnvSlotDefaultValue(void *,void *,const char *,DATA_OBJECT_PTR);
-   LOCALE int                            ClassExistPCommand(void *);
-   LOCALE int                            EnvSlotDefaultP(void *,void *,const char *);
+   const char                    *GetCreateAccessorString(void *);
+   void                          *GetDefclassModuleCommand(void *);
+   intBool                        SuperclassPCommand(void *);
+   intBool                        EnvSuperclassP(void *,void *,void *);
+   intBool                        SubclassPCommand(void *);
+   intBool                        EnvSubclassP(void *,void *,void *);
+   int                            SlotExistPCommand(void *);
+   intBool                        EnvSlotExistP(void *,void *,const char *,intBool);
+   int                            MessageHandlerExistPCommand(void *);
+   intBool                        SlotWritablePCommand(void *);
+   intBool                        EnvSlotWritableP(void *,void *,const char *);
+   intBool                        SlotInitablePCommand(void *);
+   intBool                        EnvSlotInitableP(void *,void *,const char *);
+   intBool                        SlotPublicPCommand(void *);
+   intBool                        EnvSlotPublicP(void *,void *,const char *);
+   intBool                        SlotDirectAccessPCommand(void *);
+   intBool                        EnvSlotDirectAccessP(void *,void *,const char *);
+   void                           SlotDefaultValueCommand(void *,DATA_OBJECT_PTR);
+   intBool                        EnvSlotDefaultValue(void *,void *,const char *,DATA_OBJECT_PTR);
+   int                            ClassExistPCommand(void *);
+   int                            EnvSlotDefaultP(void *,void *,const char *);
   
 #if ALLOW_ENVIRONMENT_GLOBALS
 
 #if DEBUGGING_FUNCTIONS
-   LOCALE void                           BrowseClasses(const char *,void *);
-   LOCALE void                           DescribeClass(const char *,void *);
+   void                           BrowseClasses(const char *,void *);
+   void                           DescribeClass(const char *,void *);
 #endif
-   LOCALE intBool                        SlotDirectAccessP(void *,const char *);
-   LOCALE intBool                        SlotExistP(void *,const char *,intBool);
-   LOCALE intBool                        SlotInitableP(void *,const char *);
-   LOCALE intBool                        SlotPublicP(void *,const char *);
-   LOCALE int                            SlotDefaultP(void *,const char *);
-   LOCALE intBool                        SlotWritableP(void *,const char *);
-   LOCALE intBool                        SubclassP(void *,void *);
-   LOCALE intBool                        SuperclassP(void *,void *);
-   LOCALE intBool                        SlotDefaultValue(void *,const char *,DATA_OBJECT_PTR);
+   intBool                        SlotDirectAccessP(void *,const char *);
+   intBool                        SlotExistP(void *,const char *,intBool);
+   intBool                        SlotInitableP(void *,const char *);
+   intBool                        SlotPublicP(void *,const char *);
+   int                            SlotDefaultP(void *,const char *);
+   intBool                        SlotWritableP(void *,const char *);
+   intBool                        SubclassP(void *,void *);
+   intBool                        SuperclassP(void *,void *);
+   intBool                        SlotDefaultValue(void *,const char *,DATA_OBJECT_PTR);
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */
 

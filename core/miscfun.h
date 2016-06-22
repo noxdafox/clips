@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/17/16            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*          MISCELLANEOUS FUNCTIONS HEADER FILE        */
    /*******************************************************/
@@ -62,52 +62,44 @@
 /*      6.40: Refactored code to reduce header dependencies  */
 /*            in sysdep.c.                                   */
 /*                                                           */
+/*            Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_miscfun
 
 #define _H_miscfun
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _MISCFUN_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                           MiscFunctionDefinitions(void *);
-   LOCALE void                           CreateFunction(void *,DATA_OBJECT_PTR);
-   LOCALE long long                      SetgenFunction(void *);
-   LOCALE void                          *GensymFunction(void *);
-   LOCALE void                          *GensymStarFunction(void *);
-   LOCALE long long                      RandomFunction(void *);
-   LOCALE void                           SeedFunction(void *);
-   LOCALE long long                      LengthFunction(void *);
-   LOCALE void                           ConserveMemCommand(void *);
-   LOCALE long long                      ReleaseMemCommand(void *);
-   LOCALE long long                      MemUsedCommand(void *);
-   LOCALE long long                      MemRequestsCommand(void *);
-   LOCALE void                           OptionsCommand(void *);
-   LOCALE void                          *OperatingSystemFunction(void *);
-   LOCALE void                           ExpandFuncCall(void *,DATA_OBJECT *);
-   LOCALE void                           DummyExpandFuncMultifield(void *,DATA_OBJECT *);
-   LOCALE void                          *CauseEvaluationError(void *);
-   LOCALE intBool                        SetSORCommand(void *);
-   LOCALE void                          *GetFunctionRestrictions(void *);
-   LOCALE void                           AproposCommand(void *);
-   LOCALE void                          *GensymStar(void *);
-   LOCALE void                           GetFunctionListFunction(void *,DATA_OBJECT *);
-   LOCALE void                           FuncallFunction(void *,DATA_OBJECT *);
-   LOCALE void                           NewFunction(void *,DATA_OBJECT *);
-   LOCALE void                           CallFunction(void *,DATA_OBJECT *);
-   LOCALE double                         TimerFunction(void *);
-   LOCALE double                         TimeFunction(void *);
-   LOCALE void                           SystemCommand(void *);
-   LOCALE void                           LocalTimeFunction(void *,DATA_OBJECT *);
-   LOCALE void                           GMTimeFunction(void *,DATA_OBJECT *);
+   void                           MiscFunctionDefinitions(void *);
+   void                           CreateFunction(void *,DATA_OBJECT_PTR);
+   long long                      SetgenFunction(void *);
+   void                          *GensymFunction(void *);
+   void                          *GensymStarFunction(void *);
+   long long                      RandomFunction(void *);
+   void                           SeedFunction(void *);
+   long long                      LengthFunction(void *);
+   void                           ConserveMemCommand(void *);
+   long long                      ReleaseMemCommand(void *);
+   long long                      MemUsedCommand(void *);
+   long long                      MemRequestsCommand(void *);
+   void                           OptionsCommand(void *);
+   void                          *OperatingSystemFunction(void *);
+   void                           ExpandFuncCall(void *,DATA_OBJECT *);
+   void                           DummyExpandFuncMultifield(void *,DATA_OBJECT *);
+   void                          *CauseEvaluationError(void *);
+   intBool                        SetSORCommand(void *);
+   void                          *GetFunctionRestrictions(void *);
+   void                           AproposCommand(void *);
+   void                          *GensymStar(void *);
+   void                           GetFunctionListFunction(void *,DATA_OBJECT *);
+   void                           FuncallFunction(void *,DATA_OBJECT *);
+   void                           NewFunction(void *,DATA_OBJECT *);
+   void                           CallFunction(void *,DATA_OBJECT *);
+   double                         TimerFunction(void *);
+   double                         TimeFunction(void *);
+   void                           SystemCommand(void *);
+   void                           LocalTimeFunction(void *,DATA_OBJECT *);
+   void                           GMTimeFunction(void *,DATA_OBJECT *);
 
 #endif /* _H_miscfun */
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  01/25/15          */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -39,6 +39,8 @@
 /*            imported modules are search when locating a    */
 /*            named construct.                               */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_genrccom
@@ -63,91 +65,81 @@
 #include "symbol.h"
 #endif
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _GENRCCOM_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                           SetupGenericFunctions(void *);
-   LOCALE void                          *EnvFindDefgeneric(void *,const char *);
-   LOCALE void                          *EnvFindDefgenericInModule(void *,const char *);
-   LOCALE DEFGENERIC                    *LookupDefgenericByMdlOrScope(void *,const char *);
-   LOCALE DEFGENERIC                    *LookupDefgenericInScope(void *,const char *);
-   LOCALE void                          *EnvGetNextDefgeneric(void *,void *);
-   LOCALE long                           EnvGetNextDefmethod(void *,void *,long);
-   LOCALE int                            EnvIsDefgenericDeletable(void *,void *);
-   LOCALE int                            EnvIsDefmethodDeletable(void *,void *,long);
-   LOCALE void                           UndefgenericCommand(void *);
-   LOCALE void                          *GetDefgenericModuleCommand(void *);
-   LOCALE void                           UndefmethodCommand(void *);
-   LOCALE DEFMETHOD                     *GetDefmethodPointer(void *,long);
-   LOCALE intBool                        EnvUndefgeneric(void *,void *);
-   LOCALE intBool                        EnvUndefmethod(void *,void *,long);
+   void                           SetupGenericFunctions(void *);
+   void                          *EnvFindDefgeneric(void *,const char *);
+   void                          *EnvFindDefgenericInModule(void *,const char *);
+   DEFGENERIC                    *LookupDefgenericByMdlOrScope(void *,const char *);
+   DEFGENERIC                    *LookupDefgenericInScope(void *,const char *);
+   void                          *EnvGetNextDefgeneric(void *,void *);
+   long                           EnvGetNextDefmethod(void *,void *,long);
+   int                            EnvIsDefgenericDeletable(void *,void *);
+   int                            EnvIsDefmethodDeletable(void *,void *,long);
+   void                           UndefgenericCommand(void *);
+   void                          *GetDefgenericModuleCommand(void *);
+   void                           UndefmethodCommand(void *);
+   DEFMETHOD                     *GetDefmethodPointer(void *,long);
+   intBool                        EnvUndefgeneric(void *,void *);
+   intBool                        EnvUndefmethod(void *,void *,long);
 #if ! OBJECT_SYSTEM
-   LOCALE void                           TypeCommand(void *,DATA_OBJECT *);
+   void                           TypeCommand(void *,DATA_OBJECT *);
 #endif
 #if DEBUGGING_FUNCTIONS || PROFILING_FUNCTIONS
-   LOCALE void                           EnvGetDefmethodDescription(void *,char *,size_t,void *,long);
+   void                           EnvGetDefmethodDescription(void *,char *,size_t,void *,long);
 #endif
 #if DEBUGGING_FUNCTIONS
-   LOCALE unsigned                       EnvGetDefgenericWatch(void *,void *);
-   LOCALE void                           EnvSetDefgenericWatch(void *,unsigned,void *);
-   LOCALE unsigned                       EnvGetDefmethodWatch(void *,void *,long);
-   LOCALE void                           EnvSetDefmethodWatch(void *,unsigned,void *,long);
-   LOCALE void                           PPDefgenericCommand(void *);
-   LOCALE void                           PPDefmethodCommand(void *);
-   LOCALE void                           ListDefmethodsCommand(void *);
-   LOCALE const char                    *EnvGetDefmethodPPForm(void *,void *,long);
-   LOCALE void                           ListDefgenericsCommand(void *);
-   LOCALE void                           EnvListDefgenerics(void *,const char *,struct defmodule *);
-   LOCALE void                           EnvListDefmethods(void *,const char *,void *);
+   unsigned                       EnvGetDefgenericWatch(void *,void *);
+   void                           EnvSetDefgenericWatch(void *,unsigned,void *);
+   unsigned                       EnvGetDefmethodWatch(void *,void *,long);
+   void                           EnvSetDefmethodWatch(void *,unsigned,void *,long);
+   void                           PPDefgenericCommand(void *);
+   void                           PPDefmethodCommand(void *);
+   void                           ListDefmethodsCommand(void *);
+   const char                    *EnvGetDefmethodPPForm(void *,void *,long);
+   void                           ListDefgenericsCommand(void *);
+   void                           EnvListDefgenerics(void *,const char *,struct defmodule *);
+   void                           EnvListDefmethods(void *,const char *,void *);
 #endif
-   LOCALE void                           GetDefgenericListFunction(void *,DATA_OBJECT *);
-   LOCALE void                           EnvGetDefgenericList(void *,DATA_OBJECT *,struct defmodule *);
-   LOCALE void                           GetDefmethodListCommand(void *,DATA_OBJECT *);
-   LOCALE void                           EnvGetDefmethodList(void *,void *,DATA_OBJECT *);
-   LOCALE void                           GetMethodRestrictionsCommand(void *,DATA_OBJECT *);
-   LOCALE void                           EnvGetMethodRestrictions(void *,void *,long,DATA_OBJECT *);
-   LOCALE SYMBOL_HN                     *GetDefgenericNamePointer(void *);
-   LOCALE void                           SetNextDefgeneric(void *,void *);
-   LOCALE const char                    *EnvDefgenericModule(void *,void *);
-   LOCALE const char                    *EnvGetDefgenericName(void *,void *);
-   LOCALE const char                    *EnvGetDefgenericPPForm(void *,void *);
-   LOCALE SYMBOL_HN                     *EnvGetDefgenericNamePointer(void *,void *);
-   LOCALE void                           EnvSetDefgenericPPForm(void *,void *,const char *);
+   void                           GetDefgenericListFunction(void *,DATA_OBJECT *);
+   void                           EnvGetDefgenericList(void *,DATA_OBJECT *,struct defmodule *);
+   void                           GetDefmethodListCommand(void *,DATA_OBJECT *);
+   void                           EnvGetDefmethodList(void *,void *,DATA_OBJECT *);
+   void                           GetMethodRestrictionsCommand(void *,DATA_OBJECT *);
+   void                           EnvGetMethodRestrictions(void *,void *,long,DATA_OBJECT *);
+   SYMBOL_HN                     *GetDefgenericNamePointer(void *);
+   void                           SetNextDefgeneric(void *,void *);
+   const char                    *EnvDefgenericModule(void *,void *);
+   const char                    *EnvGetDefgenericName(void *,void *);
+   const char                    *EnvGetDefgenericPPForm(void *,void *);
+   SYMBOL_HN                     *EnvGetDefgenericNamePointer(void *,void *);
+   void                           EnvSetDefgenericPPForm(void *,void *,const char *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-   LOCALE void                           SetDefgenericPPForm(void *,const char *);
-   LOCALE const char                    *DefgenericModule(void *);
-   LOCALE void                          *FindDefgeneric(const char *);
-   LOCALE void                           GetDefgenericList(DATA_OBJECT *,struct defmodule *);
-   LOCALE const char                    *GetDefgenericName(void *);
-   LOCALE const char                    *GetDefgenericPPForm(void *);
-   LOCALE void                          *GetNextDefgeneric(void *);
-   LOCALE int                            IsDefgenericDeletable(void *);
-   LOCALE intBool                        Undefgeneric(void *);
-   LOCALE void                           GetDefmethodList(void *,DATA_OBJECT_PTR);
-   LOCALE void                           GetMethodRestrictions(void *,long,DATA_OBJECT *);
-   LOCALE long                           GetNextDefmethod(void *,long );
-   LOCALE int                            IsDefmethodDeletable(void *,long );
-   LOCALE intBool                        Undefmethod(void *,long );
+   void                           SetDefgenericPPForm(void *,const char *);
+   const char                    *DefgenericModule(void *);
+   void                          *FindDefgeneric(const char *);
+   void                           GetDefgenericList(DATA_OBJECT *,struct defmodule *);
+   const char                    *GetDefgenericName(void *);
+   const char                    *GetDefgenericPPForm(void *);
+   void                          *GetNextDefgeneric(void *);
+   int                            IsDefgenericDeletable(void *);
+   intBool                        Undefgeneric(void *);
+   void                           GetDefmethodList(void *,DATA_OBJECT_PTR);
+   void                           GetMethodRestrictions(void *,long,DATA_OBJECT *);
+   long                           GetNextDefmethod(void *,long );
+   int                            IsDefmethodDeletable(void *,long );
+   intBool                        Undefmethod(void *,long );
 #if DEBUGGING_FUNCTIONS
-   LOCALE unsigned                       GetDefgenericWatch(void *);
-   LOCALE void                           ListDefgenerics(const char *,struct defmodule *);
-   LOCALE void                           SetDefgenericWatch(unsigned,void *);
-   LOCALE const char                    *GetDefmethodPPForm(void *,long);
-   LOCALE unsigned                       GetDefmethodWatch(void *,long);
-   LOCALE void                           ListDefmethods(const char *,void *);
-   LOCALE void                           SetDefmethodWatch(unsigned,void *,long);
+   unsigned                       GetDefgenericWatch(void *);
+   void                           ListDefgenerics(const char *,struct defmodule *);
+   void                           SetDefgenericWatch(unsigned,void *);
+   const char                    *GetDefmethodPPForm(void *,long);
+   unsigned                       GetDefmethodWatch(void *,long);
+   void                           ListDefmethods(const char *,void *);
+   void                           SetDefmethodWatch(unsigned,void *,long);
 #endif /* DEBUGGING_FUNCTIONS */
 #if DEBUGGING_FUNCTIONS || PROFILING_FUNCTIONS
-   LOCALE void                           GetDefmethodDescription(char *,int,void *,long );
+   void                           GetDefmethodDescription(char *,int,void *,long );
 #endif /* DEBUGGING_FUNCTIONS || PROFILING_FUNCTIONS */
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */

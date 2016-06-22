@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*            SORT FUNCTIONS HEADER MODULE             */
    /*******************************************************/
@@ -25,26 +25,18 @@
 /*      6.30: Added environment cleanup call function        */
 /*            DeallocateSortFunctionData.                    */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_sortfun
 
 #define _H_sortfun
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _SORTFUN_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                           SortFunctionDefinitions(void *);
-   LOCALE void                           MergeSort(void *,unsigned long,DATA_OBJECT *,
+   void                           SortFunctionDefinitions(void *);
+   void                           MergeSort(void *,unsigned long,DATA_OBJECT *,
                                                    int (*)(void *,DATA_OBJECT *,DATA_OBJECT *));
-   LOCALE void                           SortFunction(void *,DATA_OBJECT *);
+   void                           SortFunction(void *,DATA_OBJECT *);
 
 #endif /* _H_sortfun */
 

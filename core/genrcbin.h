@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -21,6 +21,8 @@
 /*            MAC_MCW, and IBM_TBC).                         */
 /*                                                           */
 /*            Changed integer type/precision.                */
+/*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
 /*************************************************************/
 
@@ -49,18 +51,8 @@ struct defgenericBinaryData
 
 #define GenericPointer(i) (((i) == -1L) ? NULL : (DEFGENERIC *) &DefgenericBinaryData(theEnv)->DefgenericArray[i])
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _GENRCBIN_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                           SetupGenericsBload(void *);
-   LOCALE void                          *BloadDefgenericModuleReference(void *,int);
+   void                           SetupGenericsBload(void *);
+   void                          *BloadDefgenericModuleReference(void *,int);
 
 #endif /* _H_genrcbin */
 

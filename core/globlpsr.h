@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*             DEFGLOBAL PARSER HEADER FILE            */
    /*******************************************************/
@@ -30,6 +30,8 @@
 /*                                                           */
 /*            Moved WatchGlobals global to defglobalData.    */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_globlpsr
@@ -44,19 +46,9 @@ struct defglobal;
 #include "expressn.h"
 #endif
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _GLOBLPSR_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE intBool                 ParseDefglobal(void *,const char *);
-   LOCALE intBool                 ReplaceGlobalVariable(void *,struct expr *);
-   LOCALE void                    GlobalReferenceErrorMessage(void *,const char *);
+   intBool                 ParseDefglobal(void *,const char *);
+   intBool                 ReplaceGlobalVariable(void *,struct expr *);
+   void                    GlobalReferenceErrorMessage(void *,const char *);
 
 #endif /* _H_globlpsr */
 

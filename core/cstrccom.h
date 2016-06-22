@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  01/25/15            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*           CONSTRUCT COMMAND HEADER MODULE           */
    /*******************************************************/
@@ -27,6 +27,8 @@
 /*            imported modules are search when locating a    */
 /*            named construct.                               */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_cstrccom
@@ -40,66 +42,56 @@
 #include "constrct.h"
 #endif
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _CSTRCCOM_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
 #if (! RUN_TIME)
-   LOCALE void                           AddConstructToModule(struct constructHeader *);
+   void                           AddConstructToModule(struct constructHeader *);
 #endif
-   LOCALE intBool                        DeleteNamedConstruct(void *,const char *,struct construct *);
-   LOCALE void                          *FindNamedConstructInModule(void *,const char *,struct construct *);
-   LOCALE void                          *FindNamedConstructInModuleOrImports(void *,const char *,struct construct *);
-   LOCALE void                           UndefconstructCommand(void *,const char *,struct construct *);
-   LOCALE int                            PPConstruct(void *,const char *,const char *,struct construct *);
-   LOCALE SYMBOL_HN                     *GetConstructModuleCommand(void *,const char *,struct construct *);
-   LOCALE struct defmodule              *GetConstructModule(void *,const char *,struct construct *);
-   LOCALE intBool                        Undefconstruct(void *,void *,struct construct *);
-   LOCALE void                           SaveConstruct(void *,void *,const char *,struct construct *);
-   LOCALE const char                    *GetConstructNameString(struct constructHeader *);
-   LOCALE const char                    *EnvGetConstructNameString(void *,struct constructHeader *);
-   LOCALE const char                    *GetConstructModuleName(struct constructHeader *);
-   LOCALE SYMBOL_HN                     *GetConstructNamePointer(struct constructHeader *);
-   LOCALE void                           GetConstructListFunction(void *,const char *,DATA_OBJECT_PTR,
+   intBool                        DeleteNamedConstruct(void *,const char *,struct construct *);
+   void                          *FindNamedConstructInModule(void *,const char *,struct construct *);
+   void                          *FindNamedConstructInModuleOrImports(void *,const char *,struct construct *);
+   void                           UndefconstructCommand(void *,const char *,struct construct *);
+   int                            PPConstruct(void *,const char *,const char *,struct construct *);
+   SYMBOL_HN                     *GetConstructModuleCommand(void *,const char *,struct construct *);
+   struct defmodule              *GetConstructModule(void *,const char *,struct construct *);
+   intBool                        Undefconstruct(void *,void *,struct construct *);
+   void                           SaveConstruct(void *,void *,const char *,struct construct *);
+   const char                    *GetConstructNameString(struct constructHeader *);
+   const char                    *EnvGetConstructNameString(void *,struct constructHeader *);
+   const char                    *GetConstructModuleName(struct constructHeader *);
+   SYMBOL_HN                     *GetConstructNamePointer(struct constructHeader *);
+   void                           GetConstructListFunction(void *,const char *,DATA_OBJECT_PTR,
                                                                   struct construct *);
-   LOCALE void                           GetConstructList(void *,DATA_OBJECT_PTR,struct construct *,
+   void                           GetConstructList(void *,DATA_OBJECT_PTR,struct construct *,
                                                           struct defmodule *);
-   LOCALE void                           ListConstructCommand(void *,const char *,struct construct *);
-   LOCALE void                           ListConstruct(void *,struct construct *,const char *,struct defmodule *);
-   LOCALE void                           SetNextConstruct(struct constructHeader *,struct constructHeader *);
-   LOCALE struct defmoduleItemHeader    *GetConstructModuleItem(struct constructHeader *);
-   LOCALE const char                    *GetConstructPPForm(void *,struct constructHeader *);
-   LOCALE void                           PPConstructCommand(void *,const char *,struct construct *);
-   LOCALE struct constructHeader        *GetNextConstructItem(void *,struct constructHeader *,int);
-   LOCALE struct defmoduleItemHeader    *GetConstructModuleItemByIndex(void *,struct defmodule *,int);
-   LOCALE void                           FreeConstructHeaderModule(void *,struct defmoduleItemHeader *,
+   void                           ListConstructCommand(void *,const char *,struct construct *);
+   void                           ListConstruct(void *,struct construct *,const char *,struct defmodule *);
+   void                           SetNextConstruct(struct constructHeader *,struct constructHeader *);
+   struct defmoduleItemHeader    *GetConstructModuleItem(struct constructHeader *);
+   const char                    *GetConstructPPForm(void *,struct constructHeader *);
+   void                           PPConstructCommand(void *,const char *,struct construct *);
+   struct constructHeader        *GetNextConstructItem(void *,struct constructHeader *,int);
+   struct defmoduleItemHeader    *GetConstructModuleItemByIndex(void *,struct defmodule *,int);
+   void                           FreeConstructHeaderModule(void *,struct defmoduleItemHeader *,
                                                                    struct construct *);
-   LOCALE long                           DoForAllConstructs(void *,
+   long                           DoForAllConstructs(void *,
                                                             void (*)(void *,struct constructHeader *,void *),
                                                             int,int,void *);
-   LOCALE void                           DoForAllConstructsInModule(void *,void *,
+   void                           DoForAllConstructsInModule(void *,void *,
                                                             void (*)(void *,struct constructHeader *,void *),
                                                             int,int,void *);
-   LOCALE void                           InitializeConstructHeader(void *,const char *,struct constructHeader *,SYMBOL_HN *);
-   LOCALE void                           SetConstructPPForm(void *,struct constructHeader *,const char *);
-   LOCALE void                          *LookupConstruct(void *,struct construct *,const char *,intBool);
+   void                           InitializeConstructHeader(void *,const char *,struct constructHeader *,SYMBOL_HN *);
+   void                           SetConstructPPForm(void *,struct constructHeader *,const char *);
+   void                          *LookupConstruct(void *,struct construct *,const char *,intBool);
 #if DEBUGGING_FUNCTIONS
-   LOCALE unsigned                       ConstructPrintWatchAccess(void *,struct construct *,const char *,
+   unsigned                       ConstructPrintWatchAccess(void *,struct construct *,const char *,
                                             EXPRESSION *,
                                             unsigned (*)(void *,void *),
                                             void (*)(void *,unsigned,void *));
-   LOCALE unsigned                       ConstructSetWatchAccess(void *,struct construct *,unsigned,
+   unsigned                       ConstructSetWatchAccess(void *,struct construct *,unsigned,
                                             EXPRESSION *,
                                             unsigned (*)(void *,void *),
                                             void (*)(void *,unsigned,void *));
 #endif
-   LOCALE intBool                        ConstructsDeletable(void *);
+   intBool                        ConstructsDeletable(void *);
 
 #endif
 

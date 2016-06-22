@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*              CONSTRUCT PARSER MODULE                */
    /*******************************************************/
@@ -41,6 +41,8 @@
 /*            Fixed linkage issue when BLOAD_ONLY compiler   */
 /*            flag is set to 1.                              */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_cstrcpsr
@@ -57,40 +59,30 @@
 #include "constrct.h"
 #endif
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _CSTRCPSR_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
 #if ALLOW_ENVIRONMENT_GLOBALS
-   LOCALE int                            Load(const char *);
+   int                            Load(const char *);
 #endif
 
-   LOCALE int                            EnvLoad(void *,const char *);
-   LOCALE int                            LoadConstructsFromLogicalName(void *,const char *);
-   LOCALE int                            ParseConstruct(void *,const char *,const char *);
-   LOCALE void                           RemoveConstructFromModule(void *,struct constructHeader *);
-   LOCALE struct symbolHashNode         *GetConstructNameAndComment(void *,const char *,
+   int                            EnvLoad(void *,const char *);
+   int                            LoadConstructsFromLogicalName(void *,const char *);
+   int                            ParseConstruct(void *,const char *,const char *);
+   void                           RemoveConstructFromModule(void *,struct constructHeader *);
+   struct symbolHashNode         *GetConstructNameAndComment(void *,const char *,
                                                                     struct token *,const char *,
                                                                     void *(*)(void *,const char *),
                                                                     int (*)(void *,void *),
                                                                     const char *,int,int,int,int);
-   LOCALE void                           ImportExportConflictMessage(void *,const char *,const char *,const char *,const char *);
+   void                           ImportExportConflictMessage(void *,const char *,const char *,const char *,const char *);
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   LOCALE void                           FlushParsingMessages(void *);
-   LOCALE char                          *EnvGetParsingFileName(void *);
-   LOCALE void                           EnvSetParsingFileName(void *,const char *);
-   LOCALE char                          *EnvGetErrorFileName(void *);
-   LOCALE void                           EnvSetErrorFileName(void *,const char *);
-   LOCALE char                          *EnvGetWarningFileName(void *);
-   LOCALE void                           EnvSetWarningFileName(void *,const char *);
-   LOCALE void                           CreateErrorCaptureRouter(void *);
-   LOCALE void                           DeleteErrorCaptureRouter(void *);
+   void                           FlushParsingMessages(void *);
+   char                          *EnvGetParsingFileName(void *);
+   void                           EnvSetParsingFileName(void *,const char *);
+   char                          *EnvGetErrorFileName(void *);
+   void                           EnvSetErrorFileName(void *,const char *);
+   char                          *EnvGetWarningFileName(void *);
+   void                           EnvSetWarningFileName(void *,const char *);
+   void                           CreateErrorCaptureRouter(void *);
+   void                           DeleteErrorCaptureRouter(void *);
 #endif
 
 #endif

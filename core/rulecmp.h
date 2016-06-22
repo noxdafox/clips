@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*        DEFRULE CONSTRUCT COMPILER HEADER FILE       */
    /*******************************************************/
@@ -32,6 +32,8 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_rulecmp
@@ -45,18 +47,8 @@
 #define JoinPrefix() ArbitraryPrefix(DefruleData(theEnv)->DefruleCodeItem,2)
 #define LinkPrefix() ArbitraryPrefix(DefruleData(theEnv)->DefruleCodeItem,3)
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _RULECMP_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                     DefruleCompilerSetup(void *);
-   LOCALE void                     DefruleCModuleReference(void *,FILE *,int,int,int);
+   void                     DefruleCompilerSetup(void *);
+   void                     DefruleCModuleReference(void *,FILE *,int,int,int);
 
 #endif /* _H_rulecmp */
 

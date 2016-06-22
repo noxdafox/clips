@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  12/04/07            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                  DRIVE HEADER FILE                  */
    /*******************************************************/
@@ -27,6 +27,8 @@
 /*                                                           */
 /*            Removed pseudo-facts used in not CE.           */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_drive
@@ -41,16 +43,6 @@
 #endif
 #ifndef _H_network
 #include "network.h"
-#endif
-
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _DRIVE_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
 #endif
 
    void                           NetworkAssert(void *,struct partialMatch *,struct joinNode *);

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                 DEVELOPER HEADER FILE               */
    /*******************************************************/
@@ -27,37 +27,29 @@
 /*                                                           */
 /*            Changed integer type/precision.                */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_developr
 #define _H_developr
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _DEVELOPR_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                           DeveloperCommands(void *);
-   LOCALE void                           PrimitiveTablesInfo(void *);
-   LOCALE void                           PrimitiveTablesUsage(void *);
+   void                           DeveloperCommands(void *);
+   void                           PrimitiveTablesInfo(void *);
+   void                           PrimitiveTablesUsage(void *);
 
 #if DEFRULE_CONSTRUCT && DEFTEMPLATE_CONSTRUCT
-   LOCALE void                           ShowFactPatternNetwork(void *);
-   LOCALE intBool                        ValidateFactIntegrity(void *);
+   void                           ShowFactPatternNetwork(void *);
+   intBool                        ValidateFactIntegrity(void *);
 #endif
 #if DEFRULE_CONSTRUCT && OBJECT_SYSTEM
-   LOCALE void                           PrintObjectPatternNetwork(void *);
+   void                           PrintObjectPatternNetwork(void *);
 #endif
 #if OBJECT_SYSTEM
-   LOCALE void                           InstanceTableUsage(void *);
+   void                           InstanceTableUsage(void *);
 #endif
 #if DEFRULE_CONSTRUCT
-   LOCALE void                           ValidateBetaMemories(void *);
+   void                           ValidateBetaMemories(void *);
 #endif
 
 #endif /* _H_developr */

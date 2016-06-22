@@ -114,25 +114,10 @@ extern int LIB$SPAWN();
 #endif
 
 #if MAC_XCD
-#include <Carbon/Carbon.h> 
-#define kTwoPower32 (4294967296.0)      /* 2^32 */
-#endif
-
-#if MAC_XCD
-#include <strings.h>
-#endif
-
-#if MAC_XCD 
 #include <sys/time.h>
 #include <unistd.h>
 #endif
-/*
-#if WIN_MVC
-#define _UNICODE
-#define UNICODE 
-#include <Windows.h>
-#endif
-*/
+
 #if WIN_MVC
 #include <Windows.h>
 #include <sys\types.h>

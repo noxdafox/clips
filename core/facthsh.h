@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                 FACT HASHING MODULE                 */
    /*******************************************************/
@@ -28,6 +28,8 @@
 /*                                                           */
 /*            Converted API macros to function calls.        */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_facthsh
@@ -48,29 +50,20 @@ struct factHashEntry
 
 #define SIZE_FACT_HASH 16231
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-#ifdef _FACTHSH_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                           AddHashedFact(void *,struct fact *,unsigned long);
-   LOCALE intBool                        RemoveHashedFact(void *,struct fact *);
-   LOCALE unsigned long                  HandleFactDuplication(void *,void *,intBool *);
-   LOCALE intBool                        EnvGetFactDuplication(void *);
-   LOCALE intBool                        EnvSetFactDuplication(void *,int);
-   LOCALE void                           InitializeFactHashTable(void *);
-   LOCALE void                           ShowFactHashTable(void *);
-   LOCALE unsigned long                  HashFact(struct fact *);
-   LOCALE intBool                        FactWillBeAsserted(void *,void *);
+   void                           AddHashedFact(void *,struct fact *,unsigned long);
+   intBool                        RemoveHashedFact(void *,struct fact *);
+   unsigned long                  HandleFactDuplication(void *,void *,intBool *);
+   intBool                        EnvGetFactDuplication(void *);
+   intBool                        EnvSetFactDuplication(void *,int);
+   void                           InitializeFactHashTable(void *);
+   void                           ShowFactHashTable(void *);
+   unsigned long                  HashFact(struct fact *);
+   intBool                        FactWillBeAsserted(void *,void *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-   LOCALE intBool                        GetFactDuplication(void);
-   LOCALE intBool                        SetFactDuplication(int);
+   intBool                        GetFactDuplication(void);
+   intBool                        SetFactDuplication(int);
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */
 

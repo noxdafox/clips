@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*            FACT BLOAD/BSAVE HEADER FILE             */
    /*******************************************************/
@@ -19,6 +19,8 @@
 /*      6.30: Added support for hashed alpha memories.       */
 /*                                                           */
 /*            Changed integer type/precision.                */
+/*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
 /*************************************************************/
 
@@ -38,17 +40,7 @@ struct factBinaryData
   
 #define FactBinaryData(theEnv) ((struct factBinaryData *) GetEnvironmentData(theEnv,FACTBIN_DATA))
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _FACTBIN_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                           FactBinarySetup(void *);
+   void                           FactBinarySetup(void *);
 
 #define BsaveFactPatternIndex(patPtr) ((patPtr == NULL) ? -1L : ((struct factPatternNode *) patPtr)->bsaveID)
 #define BloadFactPatternPointer(i) ((struct factPatternNode *) ((i == -1L) ? NULL : &FactBinaryData(theEnv)->FactPatternArray[i]))

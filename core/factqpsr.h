@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -32,6 +32,8 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_factqpsr
@@ -43,18 +45,8 @@
 #include "expressn.h"
 #endif
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _FACTQPSR_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE EXPRESSION                    *FactParseQueryNoAction(void *,EXPRESSION *,const char *);
-   LOCALE EXPRESSION                    *FactParseQueryAction(void *,EXPRESSION *,const char *);
+   EXPRESSION                    *FactParseQueryNoAction(void *,EXPRESSION *,const char *);
+   EXPRESSION                    *FactParseQueryAction(void *,EXPRESSION *,const char *);
 
 #endif /* FACT_SET_QUERIES && (! RUN_TIME) */
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                ANALYSIS HEADER FILE                 */
    /*******************************************************/
@@ -23,6 +23,8 @@
 /*                                                           */
 /*      6.30: Join network rework and optimizations.         */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_analysis
@@ -34,15 +36,6 @@
 #endif
 #ifndef _H_reorder
 #include "reorder.h"
-#endif
-
-#ifdef LOCALE
-#undef LOCALE
-#endif
-#ifdef _ANALYSIS_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
 #endif
 
 /*****************************************************/
@@ -57,7 +50,7 @@ struct nandFrame
    struct nandFrame *next;
   };
 
-   LOCALE intBool                        VariableAnalysis(void *,struct lhsParseNode *);
+   intBool                        VariableAnalysis(void *,struct lhsParseNode *);
 
 #endif
 

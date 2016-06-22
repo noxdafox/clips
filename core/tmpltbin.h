@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*         DEFTEMPLATE BSAVE/BLOAD HEADER FILE         */
    /*******************************************************/
@@ -23,6 +23,8 @@
 /*      6.30: Changed integer type/precision.                */
 /*                                                           */
 /*            Support for deftemplate slot facets.           */
+/*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
 /*************************************************************/
 
@@ -86,18 +88,8 @@ struct deftemplateBinaryData
 #include "tmpltdef.h"
 #endif
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _TMPLTBIN_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                           DeftemplateBinarySetup(void *);
-   LOCALE void                          *BloadDeftemplateModuleReference(void *,int);
+   void                           DeftemplateBinarySetup(void *);
+   void                          *BloadDeftemplateModuleReference(void *,int);
 
 #endif /* _H_tmpltbin */
 

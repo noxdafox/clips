@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                USER DATA HEADER FILE                */
    /*******************************************************/
@@ -15,20 +15,12 @@
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_userdata
 #define _H_userdata
-
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _USERDATA_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
 
 struct userData
   {
@@ -61,12 +53,12 @@ struct userDataData
 
 #define UserDataData(theEnv) ((struct userDataData *) GetEnvironmentData(theEnv,USER_DATA_DATA))
 
-   LOCALE void                           InitializeUserDataData(void *);
-   LOCALE unsigned char                  InstallUserDataRecord(void *,struct userDataRecord *);
-   LOCALE struct userData               *FetchUserData(void *,unsigned char,struct userData **);
-   LOCALE struct userData               *TestUserData(unsigned char,struct userData *);
-   LOCALE void                           ClearUserDataList(void *,struct userData *);
-   LOCALE struct userData               *DeleteUserData(void *,unsigned char,struct userData *);
+   void                           InitializeUserDataData(void *);
+   unsigned char                  InstallUserDataRecord(void *,struct userDataRecord *);
+   struct userData               *FetchUserData(void *,unsigned char,struct userData **);
+   struct userData               *TestUserData(unsigned char,struct userData *);
+   void                           ClearUserDataList(void *,struct userData *);
+   struct userData               *DeleteUserData(void *,unsigned char,struct userData *);
 
 #endif
 

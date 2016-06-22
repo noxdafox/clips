@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*           CONSTRUCT CONSTRUCTS-TO-C HEADER          */
    /*******************************************************/
@@ -20,27 +20,19 @@
 /*                                                           */
 /*      6.30: Removed ANSI_COMPILER compilation flag.        */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_cstrccmp
 #define _H_cstrccmp
-
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _CSTRCCMP_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
 
 #ifndef _STDIO_INCLUDED_
 #define _STDIO_INCLUDED_
 #include <stdio.h>
 #endif
 
-   LOCALE void                           MarkConstructHeaders(int);
+   void                           MarkConstructHeaders(int);
 
 #endif /* _H_cstrccmp */
 

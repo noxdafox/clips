@@ -726,7 +726,7 @@ void DeleteSlotName(
                    busy count and all instances' busy
                    counts are 0 and all handlers' busy counts are 0!
  *******************************************************************/
-LOCALE void RemoveDefclass(
+void RemoveDefclass(
   void *theEnv,
   void *vcls)
   {
@@ -809,7 +809,7 @@ LOCALE void RemoveDefclass(
   SIDE EFFECTS : None
   NOTES        : 
  *******************************************************************/
-LOCALE void DestroyDefclass(
+void DestroyDefclass(
   void *theEnv,
   void *vcls)
   {

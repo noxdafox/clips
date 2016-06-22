@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*          DEFTEMPLATE UTILITIES HEADER FILE          */
    /*******************************************************/
@@ -34,6 +34,8 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_tmpltutl
@@ -56,27 +58,17 @@
 #include "symbol.h"
 #endif
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _TMPLTUTL_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                           InvalidDeftemplateSlotMessage(void *,const char *,const char *,int);
-   LOCALE void                           SingleFieldSlotCardinalityError(void *,const char *);
-   LOCALE void                           MultiIntoSingleFieldSlotError(void *,struct templateSlot *,struct deftemplate *);
-   LOCALE void                           CheckTemplateFact(void *,struct fact *);
-   LOCALE intBool                        CheckRHSSlotTypes(void *,struct expr *,struct templateSlot *,const char *);
-   LOCALE struct templateSlot           *GetNthSlot(struct deftemplate *,int);
-   LOCALE int                            FindSlotPosition(struct deftemplate *,struct symbolHashNode *);
-   LOCALE void                           PrintTemplateFact(void *,const char *,struct fact *,int,int);
-   LOCALE void                           UpdateDeftemplateScope(void *);
-   LOCALE struct templateSlot           *FindSlot(struct deftemplate *,struct symbolHashNode *,short *);
-   LOCALE struct deftemplate            *CreateImpliedDeftemplate(void *,SYMBOL_HN *,int);
+   void                           InvalidDeftemplateSlotMessage(void *,const char *,const char *,int);
+   void                           SingleFieldSlotCardinalityError(void *,const char *);
+   void                           MultiIntoSingleFieldSlotError(void *,struct templateSlot *,struct deftemplate *);
+   void                           CheckTemplateFact(void *,struct fact *);
+   intBool                        CheckRHSSlotTypes(void *,struct expr *,struct templateSlot *,const char *);
+   struct templateSlot           *GetNthSlot(struct deftemplate *,int);
+   int                            FindSlotPosition(struct deftemplate *,struct symbolHashNode *);
+   void                           PrintTemplateFact(void *,const char *,struct fact *,int,int);
+   void                           UpdateDeftemplateScope(void *);
+   struct templateSlot           *FindSlot(struct deftemplate *,struct symbolHashNode *,short *);
+   struct deftemplate            *CreateImpliedDeftemplate(void *,SYMBOL_HN *,int);
 
 #endif /* _H_tmpltutl */
 

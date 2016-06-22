@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -19,6 +19,8 @@
 /*      6.30: Added support for path name argument to        */
 /*            constructs-to-c.                               */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_dfinscmp
@@ -31,18 +33,8 @@
 #include <stdio.h>
 #endif
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _DFINSCMP_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                           SetupDefinstancesCompiler(void *);
-   LOCALE void                           DefinstancesCModuleReference(void *,FILE *,int,int,int);
+   void                           SetupDefinstancesCompiler(void *);
+   void                           DefinstancesCModuleReference(void *,FILE *,int,int,int);
 
 #endif /* DEFINSTANCES_CONSTRUCT && CONSTRUCT_COMPILER && (! RUN_TIME) */
 

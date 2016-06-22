@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*           SYMBOL BINARY SAVE HEADER FILE            */
    /*******************************************************/
@@ -22,6 +22,8 @@
 /*                                                           */
 /*            Support for long long integers.                */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_symblbin
@@ -36,32 +38,22 @@
 #include "symbol.h"
 #endif
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _SYMBLBIN_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
 #define BitMapPointer(i) ((BITMAP_HN *) (SymbolData(theEnv)->BitMapArray[i]))
 #define SymbolPointer(i) ((SYMBOL_HN *) (SymbolData(theEnv)->SymbolArray[i]))
 #define FloatPointer(i) ((FLOAT_HN *) (SymbolData(theEnv)->FloatArray[i]))
 #define IntegerPointer(i) ((INTEGER_HN *) (SymbolData(theEnv)->IntegerArray[i]))
 
-   LOCALE void                    MarkNeededAtomicValues(void);
-   LOCALE void                    WriteNeededAtomicValues(void *,FILE *);
-   LOCALE void                    ReadNeededAtomicValues(void *);
-   LOCALE void                    InitAtomicValueNeededFlags(void *);
-   LOCALE void                    FreeAtomicValueStorage(void *);
-   LOCALE void                    WriteNeededSymbols(void *,FILE *);
-   LOCALE void                    WriteNeededFloats(void *,FILE *);
-   LOCALE void                    WriteNeededIntegers(void *,FILE *);
-   LOCALE void                    ReadNeededSymbols(void *);
-   LOCALE void                    ReadNeededFloats(void *);
-   LOCALE void                    ReadNeededIntegers(void *);
+   void                    MarkNeededAtomicValues(void);
+   void                    WriteNeededAtomicValues(void *,FILE *);
+   void                    ReadNeededAtomicValues(void *);
+   void                    InitAtomicValueNeededFlags(void *);
+   void                    FreeAtomicValueStorage(void *);
+   void                    WriteNeededSymbols(void *,FILE *);
+   void                    WriteNeededFloats(void *,FILE *);
+   void                    WriteNeededIntegers(void *,FILE *);
+   void                    ReadNeededSymbols(void *);
+   void                    ReadNeededFloats(void *);
+   void                    ReadNeededIntegers(void *);
 
 #endif /* _H_symblbin */
 

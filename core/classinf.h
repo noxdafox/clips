@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -30,6 +30,8 @@
 /*                                                           */
 /*            Converted API macros to function calls.        */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_classinf
@@ -39,66 +41,56 @@
 #include "evaluatn.h"
 #endif
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _CLASSINF_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE intBool                        ClassAbstractPCommand(void *);
+   intBool                        ClassAbstractPCommand(void *);
 #if DEFRULE_CONSTRUCT
-   LOCALE intBool                        ClassReactivePCommand(void *);
+   intBool                        ClassReactivePCommand(void *);
 #endif
-   LOCALE void                          *ClassInfoFnxArgs(void *,const char *,int *);
-   LOCALE void                           ClassSlotsCommand(void *,DATA_OBJECT *);
-   LOCALE void                           ClassSuperclassesCommand(void *,DATA_OBJECT *);
-   LOCALE void                           ClassSubclassesCommand(void *,DATA_OBJECT *);
-   LOCALE void                           GetDefmessageHandlersListCmd(void *,DATA_OBJECT *);
-   LOCALE void                           SlotFacetsCommand(void *,DATA_OBJECT *);
-   LOCALE void                           SlotSourcesCommand(void *,DATA_OBJECT *);
-   LOCALE void                           SlotTypesCommand(void *,DATA_OBJECT *);
-   LOCALE void                           SlotAllowedValuesCommand(void *,DATA_OBJECT *);
-   LOCALE void                           SlotAllowedClassesCommand(void *,DATA_OBJECT *);
-   LOCALE void                           SlotRangeCommand(void *,DATA_OBJECT *);
-   LOCALE void                           SlotCardinalityCommand(void *,DATA_OBJECT *);
-   LOCALE intBool                        EnvClassAbstractP(void *,void *);
+   void                          *ClassInfoFnxArgs(void *,const char *,int *);
+   void                           ClassSlotsCommand(void *,DATA_OBJECT *);
+   void                           ClassSuperclassesCommand(void *,DATA_OBJECT *);
+   void                           ClassSubclassesCommand(void *,DATA_OBJECT *);
+   void                           GetDefmessageHandlersListCmd(void *,DATA_OBJECT *);
+   void                           SlotFacetsCommand(void *,DATA_OBJECT *);
+   void                           SlotSourcesCommand(void *,DATA_OBJECT *);
+   void                           SlotTypesCommand(void *,DATA_OBJECT *);
+   void                           SlotAllowedValuesCommand(void *,DATA_OBJECT *);
+   void                           SlotAllowedClassesCommand(void *,DATA_OBJECT *);
+   void                           SlotRangeCommand(void *,DATA_OBJECT *);
+   void                           SlotCardinalityCommand(void *,DATA_OBJECT *);
+   intBool                        EnvClassAbstractP(void *,void *);
 #if DEFRULE_CONSTRUCT
-   LOCALE intBool                        EnvClassReactiveP(void *,void *);
+   intBool                        EnvClassReactiveP(void *,void *);
 #endif
-   LOCALE void                           EnvClassSlots(void *,void *,DATA_OBJECT *,int);
-   LOCALE void                           EnvGetDefmessageHandlerList(void *,void *,DATA_OBJECT *,int);
-   LOCALE void                           EnvClassSuperclasses(void *,void *,DATA_OBJECT *,int);
-   LOCALE void                           EnvClassSubclasses(void *,void *,DATA_OBJECT *,int);
-   LOCALE void                           ClassSubclassAddresses(void *,void *,DATA_OBJECT *,int);
-   LOCALE void                           EnvSlotFacets(void *,void *,const char *,DATA_OBJECT *);
-   LOCALE void                           EnvSlotSources(void *,void *,const char *,DATA_OBJECT *);
-   LOCALE void                           EnvSlotTypes(void *,void *,const char *,DATA_OBJECT *);
-   LOCALE void                           EnvSlotAllowedValues(void *,void *,const char *,DATA_OBJECT *);
-   LOCALE void                           EnvSlotAllowedClasses(void *,void *,const char *,DATA_OBJECT *);
-   LOCALE void                           EnvSlotRange(void *,void *,const char *,DATA_OBJECT *);
-   LOCALE void                           EnvSlotCardinality(void *,void *,const char *,DATA_OBJECT *);
+   void                           EnvClassSlots(void *,void *,DATA_OBJECT *,int);
+   void                           EnvGetDefmessageHandlerList(void *,void *,DATA_OBJECT *,int);
+   void                           EnvClassSuperclasses(void *,void *,DATA_OBJECT *,int);
+   void                           EnvClassSubclasses(void *,void *,DATA_OBJECT *,int);
+   void                           ClassSubclassAddresses(void *,void *,DATA_OBJECT *,int);
+   void                           EnvSlotFacets(void *,void *,const char *,DATA_OBJECT *);
+   void                           EnvSlotSources(void *,void *,const char *,DATA_OBJECT *);
+   void                           EnvSlotTypes(void *,void *,const char *,DATA_OBJECT *);
+   void                           EnvSlotAllowedValues(void *,void *,const char *,DATA_OBJECT *);
+   void                           EnvSlotAllowedClasses(void *,void *,const char *,DATA_OBJECT *);
+   void                           EnvSlotRange(void *,void *,const char *,DATA_OBJECT *);
+   void                           EnvSlotCardinality(void *,void *,const char *,DATA_OBJECT *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-   LOCALE intBool                        ClassAbstractP(void *);
+   intBool                        ClassAbstractP(void *);
 #if DEFRULE_CONSTRUCT
-   LOCALE intBool                        ClassReactiveP(void *);
+   intBool                        ClassReactiveP(void *);
 #endif
-   LOCALE void                           ClassSlots(void *,DATA_OBJECT *,int);
-   LOCALE void                           ClassSubclasses(void *,DATA_OBJECT *,int);
-   LOCALE void                           ClassSuperclasses(void *,DATA_OBJECT *,int);
-   LOCALE void                           SlotAllowedValues(void *,const char *,DATA_OBJECT *);
-   LOCALE void                           SlotAllowedClasses(void *,const char *,DATA_OBJECT *);
-   LOCALE void                           SlotCardinality(void *,const char *,DATA_OBJECT *);
-   LOCALE void                           SlotFacets(void *,const char *,DATA_OBJECT *);
-   LOCALE void                           SlotRange(void *,const char *,DATA_OBJECT *);
-   LOCALE void                           SlotSources(void *,const char *,DATA_OBJECT *);
-   LOCALE void                           SlotTypes(void *,const char *,DATA_OBJECT *);
-   LOCALE void                           GetDefmessageHandlerList(void *,DATA_OBJECT *,int);
+   void                           ClassSlots(void *,DATA_OBJECT *,int);
+   void                           ClassSubclasses(void *,DATA_OBJECT *,int);
+   void                           ClassSuperclasses(void *,DATA_OBJECT *,int);
+   void                           SlotAllowedValues(void *,const char *,DATA_OBJECT *);
+   void                           SlotAllowedClasses(void *,const char *,DATA_OBJECT *);
+   void                           SlotCardinality(void *,const char *,DATA_OBJECT *);
+   void                           SlotFacets(void *,const char *,DATA_OBJECT *);
+   void                           SlotRange(void *,const char *,DATA_OBJECT *);
+   void                           SlotSources(void *,const char *,DATA_OBJECT *);
+   void                           SlotTypes(void *,const char *,DATA_OBJECT *);
+   void                           GetDefmessageHandlerList(void *,DATA_OBJECT *,int);
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */
 

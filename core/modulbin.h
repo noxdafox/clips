@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*           DEFMODULE BSAVE/BLOAD HEADER FILE         */
    /*******************************************************/
@@ -18,6 +18,8 @@
 /* Revision History:                                         */
 /*                                                           */
 /*      6.30: Changed integer type/precision.                */
+/*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
 /*************************************************************/
 
@@ -55,23 +57,13 @@ struct bsavePortItem
 
 #define ModulePointer(i) ((struct defmodule *) (&DefmoduleData(theEnv)->DefmoduleArray[i]))
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _MODULBIN_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                           DefmoduleBinarySetup(void *);
-   LOCALE void                           UpdateDefmoduleItemHeader
+   void                           DefmoduleBinarySetup(void *);
+   void                           UpdateDefmoduleItemHeader
                                                  (void *,struct bsaveDefmoduleItemHeader *,
                                                   struct defmoduleItemHeader *,int,void *);
 
 #if BLOAD_AND_BSAVE
-   LOCALE void                           AssignBsaveDefmdlItemHdrVals
+   void                           AssignBsaveDefmdlItemHdrVals
                                                  (struct bsaveDefmoduleItemHeader *,
                                                   struct defmoduleItemHeader *);
 #endif

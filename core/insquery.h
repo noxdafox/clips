@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -29,6 +29,8 @@
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
+/*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
 /*************************************************************/
 
@@ -81,27 +83,17 @@ struct instanceQueryData
 
 #define InstanceQueryData(theEnv) ((struct instanceQueryData *) GetEnvironmentData(theEnv,INSTANCE_QUERY_DATA))
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _INSQUERY_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
 #define QUERY_DELIMETER_STRING     "(QDS)"
 
-   LOCALE void                           SetupQuery(void *);
-   LOCALE void                          *GetQueryInstance(void *);
-   LOCALE void                           GetQueryInstanceSlot(void *,DATA_OBJECT *);
-   LOCALE intBool                        AnyInstances(void *);
-   LOCALE void                           QueryFindInstance(void *,DATA_OBJECT *);
-   LOCALE void                           QueryFindAllInstances(void *,DATA_OBJECT *);
-   LOCALE void                           QueryDoForInstance(void *,DATA_OBJECT *);
-   LOCALE void                           QueryDoForAllInstances(void *,DATA_OBJECT *);
-   LOCALE void                           DelayedQueryDoForAllInstances(void *,DATA_OBJECT *);
+   void                           SetupQuery(void *);
+   void                          *GetQueryInstance(void *);
+   void                           GetQueryInstanceSlot(void *,DATA_OBJECT *);
+   intBool                        AnyInstances(void *);
+   void                           QueryFindInstance(void *,DATA_OBJECT *);
+   void                           QueryFindAllInstances(void *,DATA_OBJECT *);
+   void                           QueryDoForInstance(void *,DATA_OBJECT *);
+   void                           QueryDoForAllInstances(void *,DATA_OBJECT *);
+   void                           DelayedQueryDoForAllInstances(void *,DATA_OBJECT *);
 
 #endif /* INSTANCE_SET_QUERIES */
 

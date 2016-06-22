@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*               RULE BUILD HEADER FILE                */
    /*******************************************************/
@@ -30,6 +30,8 @@
 /*                                                           */
 /*            Added support for hashed memories.             */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_rulebld
@@ -43,17 +45,7 @@
 #include "network.h"
 #endif
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _RULEBLD_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE struct joinNode               *ConstructJoins(void *,int,struct lhsParseNode *,int,struct joinNode *,int,int);
+   struct joinNode               *ConstructJoins(void *,int,struct lhsParseNode *,int,struct joinNode *,int,int);
 
 #endif /* _H_rulebld */
 

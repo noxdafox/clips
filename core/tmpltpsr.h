@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*            DEFTEMPLATE PARSER HEADER FILE           */
    /*******************************************************/
@@ -30,6 +30,8 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_tmpltpsr
@@ -43,18 +45,8 @@
 #include "tmpltdef.h"
 #endif
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _TMPLTPSR_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE int                            ParseDeftemplate(void *,const char *);
-   LOCALE void                           InstallDeftemplate(void *,struct deftemplate *);
+   int                            ParseDeftemplate(void *,const char *);
+   void                           InstallDeftemplate(void *,struct deftemplate *);
 
 #endif /* _H_tmpltpsr */
 

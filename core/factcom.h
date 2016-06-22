@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  02/04/15            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*               FACT COMMANDS HEADER FILE             */
    /*******************************************************/
@@ -40,6 +40,8 @@
 /*            being executed during fact assertions via      */
 /*            Increment/DecrementClearReadyLocks API.        */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_factcom
@@ -49,40 +51,30 @@
 #include "evaluatn.h"
 #endif
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _FACTCOM_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                           FactCommandDefinitions(void *);
-   LOCALE void                           AssertCommand(void *,DATA_OBJECT_PTR);
-   LOCALE void                           RetractCommand(void *);
-   LOCALE void                           AssertStringFunction(void *,DATA_OBJECT_PTR);
-   LOCALE void                           FactsCommand(void *);
-   LOCALE void                           EnvFacts(void *,const char *,void *,long long,long long,long long);
-   LOCALE int                            SetFactDuplicationCommand(void *);
-   LOCALE int                            GetFactDuplicationCommand(void *);
-   LOCALE int                            SaveFactsCommand(void *);
-   LOCALE int                            LoadFactsCommand(void *);
-   LOCALE int                            EnvSaveFacts(void *,const char *,int);
-   LOCALE int                            EnvSaveFactsDriver(void *,const char *,int,struct expr *);
-   LOCALE int                            EnvLoadFacts(void *,const char *);
-   LOCALE int                            EnvLoadFactsFromString(void *,const char *,long);
-   LOCALE long long                      FactIndexFunction(void *);
+   void                           FactCommandDefinitions(void *);
+   void                           AssertCommand(void *,DATA_OBJECT_PTR);
+   void                           RetractCommand(void *);
+   void                           AssertStringFunction(void *,DATA_OBJECT_PTR);
+   void                           FactsCommand(void *);
+   void                           EnvFacts(void *,const char *,void *,long long,long long,long long);
+   int                            SetFactDuplicationCommand(void *);
+   int                            GetFactDuplicationCommand(void *);
+   int                            SaveFactsCommand(void *);
+   int                            LoadFactsCommand(void *);
+   int                            EnvSaveFacts(void *,const char *,int);
+   int                            EnvSaveFactsDriver(void *,const char *,int,struct expr *);
+   int                            EnvLoadFacts(void *,const char *);
+   int                            EnvLoadFactsFromString(void *,const char *,long);
+   long long                      FactIndexFunction(void *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
 #if DEBUGGING_FUNCTIONS
-   LOCALE void                           Facts(const char *,void *,long long,long long,long long);
+   void                           Facts(const char *,void *,long long,long long,long long);
 #endif
-   LOCALE intBool                        LoadFacts(const char *);
-   LOCALE intBool                        SaveFacts(const char *,int);
-   LOCALE intBool                        LoadFactsFromString(const char *,int);
+   intBool                        LoadFacts(const char *);
+   intBool                        SaveFacts(const char *,int);
+   intBool                        LoadFactsFromString(const char *,int);
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */
 

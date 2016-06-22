@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*           DEFFACTS BSAVE/BLOAD HEADER FILE          */
    /*******************************************************/
@@ -18,6 +18,8 @@
 /* Revision History:                                         */
 /*                                                           */
 /*      6.30: Changed integer type/precision.                */
+/*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
 /*************************************************************/
 
@@ -56,18 +58,8 @@ struct deffactsBinaryData
   
 #define DeffactsBinaryData(theEnv) ((struct deffactsBinaryData *) GetEnvironmentData(theEnv,DFFCTBIN_DATA))
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _DFFCTBIN_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                           DeffactsBinarySetup(void *);
-   LOCALE void                          *BloadDeffactsModuleReference(void *,int);
+   void                           DeffactsBinarySetup(void *);
+   void                          *BloadDeffactsModuleReference(void *,int);
 
 #endif /* _H_dffctbin */
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*               PRETTY PRINT HEADER FILE              */
    /*******************************************************/
@@ -24,6 +24,8 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_pprint
@@ -45,31 +47,21 @@ struct prettyPrintData
 
 #define PrettyPrintData(theEnv) ((struct prettyPrintData *) GetEnvironmentData(theEnv,PRETTY_PRINT_DATA))
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _PPRINT_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                           InitializePrettyPrintData(void *);
-   LOCALE void                           FlushPPBuffer(void *);
-   LOCALE void                           DestroyPPBuffer(void *);
-   LOCALE void                           SavePPBuffer(void *,const char *);
-   LOCALE void                           PPBackup(void *);
-   LOCALE char                          *CopyPPBuffer(void *);
-   LOCALE char                          *GetPPBuffer(void *);
-   LOCALE void                           PPCRAndIndent(void *);
-   LOCALE void                           IncrementIndentDepth(void *,int);
-   LOCALE void                           DecrementIndentDepth(void *,int);
-   LOCALE void                           SetIndentDepth(void *,int);
-   LOCALE void                           SetPPBufferStatus(void *,int);
-   LOCALE int                            GetPPBufferStatus(void *);
-   LOCALE int                            SetPPBufferEnabled(void *,int);
-   LOCALE int                            GetPPBufferEnabled(void *);
+   void                           InitializePrettyPrintData(void *);
+   void                           FlushPPBuffer(void *);
+   void                           DestroyPPBuffer(void *);
+   void                           SavePPBuffer(void *,const char *);
+   void                           PPBackup(void *);
+   char                          *CopyPPBuffer(void *);
+   char                          *GetPPBuffer(void *);
+   void                           PPCRAndIndent(void *);
+   void                           IncrementIndentDepth(void *,int);
+   void                           DecrementIndentDepth(void *,int);
+   void                           SetIndentDepth(void *,int);
+   void                           SetPPBufferStatus(void *,int);
+   int                            GetPPBufferStatus(void *);
+   int                            SetPPBufferEnabled(void *,int);
+   int                            GetPPBufferEnabled(void *);
 
 #endif
 

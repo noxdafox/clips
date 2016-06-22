@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -31,20 +31,12 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_genrccmp
 #define _H_genrccmp
-
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _GENRCCMP_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
 
 #ifndef _STDIO_INCLUDED_
 #define _STDIO_INCLUDED_
@@ -53,9 +45,9 @@
 
 #include "genrcfun.h"
 
-   LOCALE void                           SetupGenericsCompiler(void *);
-   LOCALE void                           PrintGenericFunctionReference(void *,FILE *,DEFGENERIC *,int,int);
-   LOCALE void                           DefgenericCModuleReference(void *,FILE *,int,int,int);
+   void                           SetupGenericsCompiler(void *);
+   void                           PrintGenericFunctionReference(void *,FILE *,DEFGENERIC *,int,int);
+   void                           DefgenericCModuleReference(void *,FILE *,int,int,int);
 
 #endif /* _H_genrccmp */
 

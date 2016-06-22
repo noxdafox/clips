@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -41,6 +41,8 @@
 /*                                                           */
 /*            Fixed typing issue when OBJECT_SYSTEM          */
 /*            compiler flag is set to 0.                     */
+/*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
 /*************************************************************/
 
@@ -148,52 +150,42 @@ struct defgenericData
 #define SaveBusyCount(gfunc)    (DefgenericData(theEnv)->OldGenericBusySave = gfunc->busy)
 #define RestoreBusyCount(gfunc) (gfunc->busy = DefgenericData(theEnv)->OldGenericBusySave)
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _GENRCFUN_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
 #if ! RUN_TIME
-   LOCALE intBool                        ClearDefgenericsReady(void *);
-   LOCALE void                          *AllocateDefgenericModule(void *);
-   LOCALE void                           FreeDefgenericModule(void *,void *);
+   intBool                        ClearDefgenericsReady(void *);
+   void                          *AllocateDefgenericModule(void *);
+   void                           FreeDefgenericModule(void *,void *);
 #endif
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
 
-   LOCALE int                            ClearDefmethods(void *);
-   LOCALE int                            RemoveAllExplicitMethods(void *,DEFGENERIC *);
-   LOCALE void                           RemoveDefgeneric(void *,void *);
-   LOCALE int                            ClearDefgenerics(void *);
-   LOCALE void                           MethodAlterError(void *,DEFGENERIC *);
-   LOCALE void                           DeleteMethodInfo(void *,DEFGENERIC *,DEFMETHOD *);
-   LOCALE void                           DestroyMethodInfo(void *,DEFGENERIC *,DEFMETHOD *);
-   LOCALE int                            MethodsExecuting(DEFGENERIC *);
+   int                            ClearDefmethods(void *);
+   int                            RemoveAllExplicitMethods(void *,DEFGENERIC *);
+   void                           RemoveDefgeneric(void *,void *);
+   int                            ClearDefgenerics(void *);
+   void                           MethodAlterError(void *,DEFGENERIC *);
+   void                           DeleteMethodInfo(void *,DEFGENERIC *,DEFMETHOD *);
+   void                           DestroyMethodInfo(void *,DEFGENERIC *,DEFMETHOD *);
+   int                            MethodsExecuting(DEFGENERIC *);
 #endif
 #if ! OBJECT_SYSTEM
-   LOCALE intBool                        SubsumeType(int,int);
+   intBool                        SubsumeType(int,int);
 #endif
 
-   LOCALE long                           FindMethodByIndex(DEFGENERIC *,long);
+   long                           FindMethodByIndex(DEFGENERIC *,long);
 #if DEBUGGING_FUNCTIONS || PROFILING_FUNCTIONS
-   LOCALE void                           PrintMethod(void *,char *,size_t,DEFMETHOD *);
+   void                           PrintMethod(void *,char *,size_t,DEFMETHOD *);
 #endif
 #if DEBUGGING_FUNCTIONS
-   LOCALE void                           PreviewGeneric(void *);
+   void                           PreviewGeneric(void *);
 #endif
-   LOCALE DEFGENERIC                    *CheckGenericExists(void *,const char *,const char *);
-   LOCALE long                           CheckMethodExists(void *,const char *,DEFGENERIC *,long);
+   DEFGENERIC                    *CheckGenericExists(void *,const char *,const char *);
+   long                           CheckMethodExists(void *,const char *,DEFGENERIC *,long);
 
 #if ! OBJECT_SYSTEM
-   LOCALE const char                    *TypeName(void *,int);
+   const char                    *TypeName(void *,int);
 #endif
 
-   LOCALE void                           PrintGenericName(void *,const char *,DEFGENERIC *);
+   void                           PrintGenericName(void *,const char *,DEFGENERIC *);
 
 #endif /* _H_genrcfun */
 

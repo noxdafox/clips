@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  05/21/16            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                 ROUTER HEADER FILE                  */
    /*******************************************************/
@@ -40,6 +40,8 @@
 /*      6.40: Added EnvInputBufferCount function.            */
 /*                                                           */
 /*            Added check for reuse of existing router name. */
+/*                                                           */
+/*            Removed LOCALE definition.                     */
 /*                                                           */
 /*************************************************************/
 
@@ -97,23 +99,13 @@ struct routerData
 
 #define RouterData(theEnv) ((struct routerData *) GetEnvironmentData(theEnv,ROUTER_DATA))
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _ROUTER_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                           InitializeDefaultRouters(void *);
-   LOCALE int                            EnvPrintRouter(void *,const char *,const char *);
-   LOCALE int                            EnvGetcRouter(void *,const char *);
-   LOCALE int                            EnvUngetcRouter(void *,int,const char *);
-   LOCALE void                           EnvExitRouter(void *,int);
-   LOCALE void                           AbortExit(void *);
-   LOCALE intBool                        EnvAddRouterWithContext(void *,
+   void                           InitializeDefaultRouters(void *);
+   int                            EnvPrintRouter(void *,const char *,const char *);
+   int                            EnvGetcRouter(void *,const char *);
+   int                            EnvUngetcRouter(void *,int,const char *);
+   void                           EnvExitRouter(void *,int);
+   void                           AbortExit(void *);
+   intBool                        EnvAddRouterWithContext(void *,
                                                    const char *,int,
                                                    int (*)(void *,const char *),
                                                    int (*)(void *,const char *,const char *),
@@ -121,42 +113,42 @@ struct routerData
                                                    int (*)(void *,int,const char *),
                                                    int (*)(void *,int),
                                                    void *);
-   LOCALE intBool                        EnvAddRouter(void *,
+   intBool                        EnvAddRouter(void *,
                                                    const char *,int,
                                                    int (*)(void *,const char *),
                                                    int (*)(void *,const char *,const char *),
                                                    int (*)(void *,const char *),
                                                    int (*)(void *,int,const char *),
                                                    int (*)(void *,int));
-   LOCALE int                            EnvDeleteRouter(void *,const char *);
-   LOCALE int                            QueryRouters(void *,const char *);
-   LOCALE int                            EnvDeactivateRouter(void *,const char *);
-   LOCALE int                            EnvActivateRouter(void *,const char *);
-   LOCALE void                           SetFastLoad(void *,FILE *);
-   LOCALE void                           SetFastSave(void *,FILE *);
-   LOCALE FILE                          *GetFastLoad(void *);
-   LOCALE FILE                          *GetFastSave(void *);
-   LOCALE void                           UnrecognizedRouterMessage(void *,const char *);
-   LOCALE void                           ExitCommand(void *);
-   LOCALE int                            PrintNRouter(void *,const char *,const char *,unsigned long);
-   LOCALE size_t                         EnvInputBufferCount(void *);
-   LOCALE struct router                 *EnvFindRouter(void *,const char *);
+   int                            EnvDeleteRouter(void *,const char *);
+   int                            QueryRouters(void *,const char *);
+   int                            EnvDeactivateRouter(void *,const char *);
+   int                            EnvActivateRouter(void *,const char *);
+   void                           SetFastLoad(void *,FILE *);
+   void                           SetFastSave(void *,FILE *);
+   FILE                          *GetFastLoad(void *);
+   FILE                          *GetFastSave(void *);
+   void                           UnrecognizedRouterMessage(void *,const char *);
+   void                           ExitCommand(void *);
+   int                            PrintNRouter(void *,const char *,const char *,unsigned long);
+   size_t                         EnvInputBufferCount(void *);
+   struct router                 *EnvFindRouter(void *,const char *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-   LOCALE int                            ActivateRouter(const char *);
-   LOCALE intBool                        AddRouter(const char *,int,
+   int                            ActivateRouter(const char *);
+   intBool                        AddRouter(const char *,int,
                                                    int (*)(const char *),
                                                    int (*)(const char *,const char *),
                                                    int (*)(const char *),
                                                    int (*)(int,const char *),
                                                    int (*)(int));
-   LOCALE int                            DeactivateRouter(const char *);
-   LOCALE int                            DeleteRouter(const char *);
-   LOCALE void                           ExitRouter(int);
-   LOCALE int                            GetcRouter(const char *);
-   LOCALE int                            PrintRouter(const char *,const char *);
-   LOCALE int                            UngetcRouter(int,const char *);
+   int                            DeactivateRouter(const char *);
+   int                            DeleteRouter(const char *);
+   void                           ExitRouter(int);
+   int                            GetcRouter(const char *);
+   int                            PrintRouter(const char *,const char *);
+   int                            UngetcRouter(int,const char *);
    
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */
 

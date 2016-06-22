@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -34,6 +34,8 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_classfun
@@ -55,61 +57,51 @@
 #define ISA_ID  0
 #define NAME_ID 1
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _CLASSFUN_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-LOCALE void IncrementDefclassBusyCount(void *,void *);
-LOCALE void DecrementDefclassBusyCount(void *,void *);
-LOCALE intBool InstancesPurge(void *theEnv);
+void IncrementDefclassBusyCount(void *,void *);
+void DecrementDefclassBusyCount(void *,void *);
+intBool InstancesPurge(void *theEnv);
 
 #if ! RUN_TIME
-LOCALE void InitializeClasses(void *);
+void InitializeClasses(void *);
 #endif
-LOCALE SLOT_DESC *FindClassSlot(DEFCLASS *,SYMBOL_HN *);
-LOCALE void ClassExistError(void *,const char *,const char *);
-LOCALE void DeleteClassLinks(void *,CLASS_LINK *);
-LOCALE void PrintClassName(void *,const char *,DEFCLASS *,intBool);
+SLOT_DESC *FindClassSlot(DEFCLASS *,SYMBOL_HN *);
+void ClassExistError(void *,const char *,const char *);
+void DeleteClassLinks(void *,CLASS_LINK *);
+void PrintClassName(void *,const char *,DEFCLASS *,intBool);
 
 #if DEBUGGING_FUNCTIONS || ((! BLOAD_ONLY) && (! RUN_TIME))
-LOCALE void PrintPackedClassLinks(void *,const char *,const char *,PACKED_CLASS_LINKS *);
+void PrintPackedClassLinks(void *,const char *,const char *,PACKED_CLASS_LINKS *);
 #endif
 
 #if ! RUN_TIME
-LOCALE void PutClassInTable(void *,DEFCLASS *);
-LOCALE void RemoveClassFromTable(void *,DEFCLASS *);
-LOCALE void AddClassLink(void *,PACKED_CLASS_LINKS *,DEFCLASS *,int);
-LOCALE void DeleteSubclassLink(void *,DEFCLASS *,DEFCLASS *);
-LOCALE void DeleteSuperclassLink(void *,DEFCLASS *,DEFCLASS *);
-LOCALE DEFCLASS *NewClass(void *,SYMBOL_HN *);
-LOCALE void DeletePackedClassLinks(void *,PACKED_CLASS_LINKS *,int);
-LOCALE void AssignClassID(void *,DEFCLASS *);
-LOCALE SLOT_NAME *AddSlotName(void *,SYMBOL_HN *,int,int);
-LOCALE void DeleteSlotName(void *,SLOT_NAME *);
-LOCALE void RemoveDefclass(void *,void *);
-LOCALE void InstallClass(void *,DEFCLASS *,int);
+void PutClassInTable(void *,DEFCLASS *);
+void RemoveClassFromTable(void *,DEFCLASS *);
+void AddClassLink(void *,PACKED_CLASS_LINKS *,DEFCLASS *,int);
+void DeleteSubclassLink(void *,DEFCLASS *,DEFCLASS *);
+void DeleteSuperclassLink(void *,DEFCLASS *,DEFCLASS *);
+DEFCLASS *NewClass(void *,SYMBOL_HN *);
+void DeletePackedClassLinks(void *,PACKED_CLASS_LINKS *,int);
+void AssignClassID(void *,DEFCLASS *);
+SLOT_NAME *AddSlotName(void *,SYMBOL_HN *,int,int);
+void DeleteSlotName(void *,SLOT_NAME *);
+void RemoveDefclass(void *,void *);
+void InstallClass(void *,DEFCLASS *,int);
 #endif
-LOCALE void DestroyDefclass(void *,void *);
+void DestroyDefclass(void *,void *);
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-LOCALE int IsClassBeingUsed(DEFCLASS *);
-LOCALE int RemoveAllUserClasses(void *);
-LOCALE int DeleteClassUAG(void *,DEFCLASS *);
-LOCALE void MarkBitMapSubclasses(char *,DEFCLASS *,int);
+int IsClassBeingUsed(DEFCLASS *);
+int RemoveAllUserClasses(void *);
+int DeleteClassUAG(void *,DEFCLASS *);
+void MarkBitMapSubclasses(char *,DEFCLASS *,int);
 #endif
 
-LOCALE short FindSlotNameID(void *,SYMBOL_HN *);
-LOCALE SYMBOL_HN *FindIDSlotName(void *,int);
-LOCALE SLOT_NAME *FindIDSlotNameHash(void *,int);
-LOCALE int GetTraversalID(void *);
-LOCALE void ReleaseTraversalID(void *);
-LOCALE unsigned HashClass(SYMBOL_HN *);
+short FindSlotNameID(void *,SYMBOL_HN *);
+SYMBOL_HN *FindIDSlotName(void *,int);
+SLOT_NAME *FindIDSlotNameHash(void *,int);
+int GetTraversalID(void *);
+void ReleaseTraversalID(void *);
+unsigned HashClass(SYMBOL_HN *);
 
 #ifndef _CLASSFUN_SOURCE_
 

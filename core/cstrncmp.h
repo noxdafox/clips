@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*          CONSTRAINT CONSTRUCTS-TO-C HEADER          */
    /*******************************************************/
@@ -27,6 +27,8 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_cstrncmp
@@ -39,24 +41,14 @@
 #include "constrnt.h"
 #endif
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _CSTRNCMP_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
 #ifndef _STDIO_INCLUDED_
 #define _STDIO_INCLUDED_
 #include <stdio.h>
 #endif
 
-   LOCALE void                           PrintConstraintReference(void *,FILE *,CONSTRAINT_RECORD *,int,int);
-   LOCALE void                           ConstraintRecordToCode(FILE *,CONSTRAINT_RECORD *);
-   LOCALE int                            ConstraintsToCode(void *,const char *,const char *,char *,int,FILE *,int,int);
+   void                           PrintConstraintReference(void *,FILE *,CONSTRAINT_RECORD *,int,int);
+   void                           ConstraintRecordToCode(FILE *,CONSTRAINT_RECORD *);
+   int                            ConstraintsToCode(void *,const char *,const char *,char *,int,FILE *,int,int);
 
 #endif /* _H_cstrncmp */
 

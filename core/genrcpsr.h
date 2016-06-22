@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -42,6 +42,8 @@
 /*            Fixed typing issue when OBJECT_SYSTEM          */
 /*            compiler flag is set to 0.                     */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_genrcpsr
@@ -51,23 +53,13 @@
 
 #include "genrcfun.h"
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _GENRCPSR_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE intBool                        ParseDefgeneric(void *,const char *);
-   LOCALE intBool                        ParseDefmethod(void *,const char *);
-   LOCALE DEFMETHOD                     *AddMethod(void *,DEFGENERIC *,DEFMETHOD *,int,short,EXPRESSION *,
+   intBool                        ParseDefgeneric(void *,const char *);
+   intBool                        ParseDefmethod(void *,const char *);
+   DEFMETHOD                     *AddMethod(void *,DEFGENERIC *,DEFMETHOD *,int,short,EXPRESSION *,
                                                    int,int,SYMBOL_HN *,EXPRESSION *,char *,int);
-   LOCALE void                           PackRestrictionTypes(void *,RESTRICTION *,EXPRESSION *);
-   LOCALE void                           DeleteTempRestricts(void *,EXPRESSION *);
-   LOCALE DEFMETHOD                     *FindMethodByRestrictions(DEFGENERIC *,EXPRESSION *,int,
+   void                           PackRestrictionTypes(void *,RESTRICTION *,EXPRESSION *);
+   void                           DeleteTempRestricts(void *,EXPRESSION *);
+   DEFMETHOD                     *FindMethodByRestrictions(DEFGENERIC *,EXPRESSION *,int,
                                                                   SYMBOL_HN *,int *);
 
 #endif /* DEFGENERIC_CONSTRUCT && (! BLOAD_ONLY) && (! RUN_TIME) */

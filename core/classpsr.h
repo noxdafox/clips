@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -35,6 +35,8 @@
 /*                                                            */
 /*            Converted API macros to function calls.         */
 /*                                                            */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_classpsr
@@ -42,20 +44,10 @@
 
 #if OBJECT_SYSTEM && (! BLOAD_ONLY) && (! RUN_TIME)
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _CLASSPSR_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-LOCALE int ParseDefclass(void *,const char *);
+int ParseDefclass(void *,const char *);
 
 #if DEFMODULE_CONSTRUCT
-LOCALE void *CreateClassScopeMap(void *,DEFCLASS *);
+void *CreateClassScopeMap(void *,DEFCLASS *);
 #endif
 
 #endif

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  02/04/15            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*               EVALUATION HEADER FILE                */
    /*******************************************************/
@@ -40,6 +40,14 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*            Converted API macros to function calls.        */
+/*                                                           */
+/*      6.40: Added Env prefix to GetEvaluationError and     */
+/*            SetEvaluationError functions.                  */
+/*                                                           */
+/*            Added Env prefix to GetHaltExecution and       */
+/*            SetHaltExecution functions.                    */
+/*                                                           */
+/*            Removed LOCALE definition.                     */
 /*                                                           */
 /*************************************************************/
 
@@ -204,48 +212,38 @@ struct evaluationData
 
 #define EvaluationData(theEnv) ((struct evaluationData *) GetEnvironmentData(theEnv,EVALUATION_DATA))
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _EVALUATN_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                           InitializeEvaluationData(void *);
-   LOCALE int                            EvaluateExpression(void *,struct expr *,struct dataObject *);
-   LOCALE void                           EnvSetEvaluationError(void *,intBool);
-   LOCALE int                            EnvGetEvaluationError(void *);
-   LOCALE void                           EnvSetHaltExecution(void *,int);
-   LOCALE int                            EnvGetHaltExecution(void *);
-   LOCALE void                           ReturnValues(void *,struct dataObject *,intBool);
-   LOCALE void                           PrintDataObject(void *,const char *,struct dataObject *);
-   LOCALE void                           EnvSetMultifieldErrorValue(void *,struct dataObject *);
-   LOCALE void                           ValueInstall(void *,struct dataObject *);
-   LOCALE void                           ValueDeinstall(void *,struct dataObject *);
+   void                           InitializeEvaluationData(void *);
+   int                            EvaluateExpression(void *,struct expr *,struct dataObject *);
+   void                           EnvSetEvaluationError(void *,intBool);
+   int                            EnvGetEvaluationError(void *);
+   void                           EnvSetHaltExecution(void *,int);
+   int                            EnvGetHaltExecution(void *);
+   void                           ReturnValues(void *,struct dataObject *,intBool);
+   void                           PrintDataObject(void *,const char *,struct dataObject *);
+   void                           EnvSetMultifieldErrorValue(void *,struct dataObject *);
+   void                           ValueInstall(void *,struct dataObject *);
+   void                           ValueDeinstall(void *,struct dataObject *);
 #if DEFFUNCTION_CONSTRUCT || DEFGENERIC_CONSTRUCT
-   LOCALE int                            EnvFunctionCall(void *,const char *,const char *,DATA_OBJECT *);
-   LOCALE int                            FunctionCall2(void *,FUNCTION_REFERENCE *,const char *,DATA_OBJECT *);
+   int                            EnvFunctionCall(void *,const char *,const char *,DATA_OBJECT *);
+   int                            FunctionCall2(void *,FUNCTION_REFERENCE *,const char *,DATA_OBJECT *);
 #endif
-   LOCALE void                           CopyDataObject(void *,DATA_OBJECT *,DATA_OBJECT *,int);
-   LOCALE void                           AtomInstall(void *,int,void *);
-   LOCALE void                           AtomDeinstall(void *,int,void *);
-   LOCALE struct expr                   *ConvertValueToExpression(void *,DATA_OBJECT *);
-   LOCALE unsigned long                  GetAtomicHashValue(unsigned short,void *,int);
-   LOCALE void                           InstallPrimitive(void *,struct entityRecord *,int);
-   LOCALE int                            InstallExternalAddressType(void *,struct externalAddressType *);
-   LOCALE void                           TransferDataObjectValues(DATA_OBJECT *,DATA_OBJECT *);
-   LOCALE struct expr                   *FunctionReferenceExpression(void *,const char *);
-   LOCALE intBool                        GetFunctionReference(void *,const char *,FUNCTION_REFERENCE *);
-   LOCALE intBool                        DOsEqual(DATA_OBJECT_PTR,DATA_OBJECT_PTR);
-   LOCALE int                            EvaluateAndStoreInDataObject(void *,int,EXPRESSION *,DATA_OBJECT *,int);
+   void                           CopyDataObject(void *,DATA_OBJECT *,DATA_OBJECT *,int);
+   void                           AtomInstall(void *,int,void *);
+   void                           AtomDeinstall(void *,int,void *);
+   struct expr                   *ConvertValueToExpression(void *,DATA_OBJECT *);
+   unsigned long                  GetAtomicHashValue(unsigned short,void *,int);
+   void                           InstallPrimitive(void *,struct entityRecord *,int);
+   int                            InstallExternalAddressType(void *,struct externalAddressType *);
+   void                           TransferDataObjectValues(DATA_OBJECT *,DATA_OBJECT *);
+   struct expr                   *FunctionReferenceExpression(void *,const char *);
+   intBool                        GetFunctionReference(void *,const char *,FUNCTION_REFERENCE *);
+   intBool                        DOsEqual(DATA_OBJECT_PTR,DATA_OBJECT_PTR);
+   int                            EvaluateAndStoreInDataObject(void *,int,EXPRESSION *,DATA_OBJECT *,int);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-   LOCALE void                           SetMultifieldErrorValue(DATA_OBJECT_PTR);
-   LOCALE int                            FunctionCall(const char *,const char *,DATA_OBJECT *);
+   void                           SetMultifieldErrorValue(DATA_OBJECT_PTR);
+   int                            FunctionCall(const char *,const char *,DATA_OBJECT *);
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                FACT BUILD HEADER FILE               */
    /*******************************************************/
@@ -21,6 +21,8 @@
 /*            Added support for hashed comparisons to        */
 /*            constants.                                     */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_factbld
@@ -32,10 +34,6 @@
 #endif
 #ifndef _H_network
 #include "network.h"
-#endif
-
-#ifdef LOCALE
-#undef LOCALE
 #endif
 
 struct factPatternNode
@@ -52,14 +50,8 @@ struct factPatternNode
    struct factPatternNode *rightNode;
   };
 
-#ifdef _FACTBUILD_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                           InitializeFactPatterns(void *);
-   LOCALE void                           DestroyFactPatternNetwork(void *,
+   void                           InitializeFactPatterns(void *);
+   void                           DestroyFactPatternNetwork(void *,
                                                                    struct factPatternNode *);
 
 #endif /* _H_factbld */

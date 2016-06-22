@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.31  06/23/15            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*            MEMORY ALLOCATION HEADER FILE            */
    /*******************************************************/
@@ -41,6 +41,8 @@
 /*                                                           */
 /*      6.31: Fix for get_mem macro.                         */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_memalloc
@@ -55,16 +57,6 @@ struct memoryPtr;
 
 #ifndef MEM_TABLE_SIZE
 #define MEM_TABLE_SIZE 500
-#endif
-
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _MEMORY_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
 #endif
 
 struct chunkInfo
@@ -181,39 +173,39 @@ struct memoryData
 
 #define MemoryData(theEnv) ((struct memoryData *) GetEnvironmentData(theEnv,MEMORY_DATA))
 
-   LOCALE void                           InitializeMemory(void *);
-   LOCALE void                          *genalloc(void *,size_t);
-   LOCALE int                            DefaultOutOfMemoryFunction(void *,size_t);
-   LOCALE int                          (*EnvSetOutOfMemoryFunction(void *,int (*)(void *,size_t)))(void *,size_t);
-   LOCALE int                            genfree(void *,void *,size_t);
-   LOCALE void                          *genrealloc(void *,void *,size_t,size_t);
-   LOCALE long                           EnvMemUsed(void *);
-   LOCALE long                           EnvMemRequests(void *);
-   LOCALE long                           UpdateMemoryUsed(void *,long int);
-   LOCALE long                           UpdateMemoryRequests(void *,long int);
-   LOCALE long                           EnvReleaseMem(void *,long);
-   LOCALE void                          *gm1(void *,size_t);
-   LOCALE void                          *gm2(void *,size_t);
-   LOCALE void                          *gm3(void *,size_t);
-   LOCALE int                            rm(void *,void *,size_t);
-   LOCALE int                            rm3(void *,void *,size_t);
-   LOCALE unsigned long                  PoolSize(void *);
-   LOCALE unsigned long                  ActualPoolSize(void *);
-   LOCALE void                          *RequestChunk(void *,size_t);
-   LOCALE int                            ReturnChunk(void *,void *,size_t);
-   LOCALE intBool                        EnvSetConserveMemory(void *,intBool);
-   LOCALE intBool                        EnvGetConserveMemory(void *);
-   LOCALE void                           genmemcpy(char *,char *,unsigned long);
-   LOCALE void                           ReturnAllBlocks(void *);
+   void                           InitializeMemory(void *);
+   void                          *genalloc(void *,size_t);
+   int                            DefaultOutOfMemoryFunction(void *,size_t);
+   int                          (*EnvSetOutOfMemoryFunction(void *,int (*)(void *,size_t)))(void *,size_t);
+   int                            genfree(void *,void *,size_t);
+   void                          *genrealloc(void *,void *,size_t,size_t);
+   long                           EnvMemUsed(void *);
+   long                           EnvMemRequests(void *);
+   long                           UpdateMemoryUsed(void *,long int);
+   long                           UpdateMemoryRequests(void *,long int);
+   long                           EnvReleaseMem(void *,long);
+   void                          *gm1(void *,size_t);
+   void                          *gm2(void *,size_t);
+   void                          *gm3(void *,size_t);
+   int                            rm(void *,void *,size_t);
+   int                            rm3(void *,void *,size_t);
+   unsigned long                  PoolSize(void *);
+   unsigned long                  ActualPoolSize(void *);
+   void                          *RequestChunk(void *,size_t);
+   int                            ReturnChunk(void *,void *,size_t);
+   intBool                        EnvSetConserveMemory(void *,intBool);
+   intBool                        EnvGetConserveMemory(void *);
+   void                           genmemcpy(char *,char *,unsigned long);
+   void                           ReturnAllBlocks(void *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-   LOCALE intBool                        GetConserveMemory(void);
-   LOCALE long int                       MemRequests(void);
-   LOCALE long int                       MemUsed(void);
-   LOCALE long int                       ReleaseMem(long);
-   LOCALE intBool                        SetConserveMemory(intBool);
-   LOCALE int                          (*SetOutOfMemoryFunction(int (*)(void *,size_t)))(void *,size_t);
+   intBool                        GetConserveMemory(void);
+   long int                       MemRequests(void);
+   long int                       MemUsed(void);
+   long int                       ReleaseMem(long);
+   intBool                        SetConserveMemory(intBool);
+   int                          (*SetOutOfMemoryFunction(int (*)(void *,size_t)))(void *,size_t);
  
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */
 

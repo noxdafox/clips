@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*          DEFTEMPLATE RHS PARSING HEADER FILE        */
    /*******************************************************/
@@ -25,6 +25,8 @@
 /*      6.30: Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_tmpltrhs
@@ -41,17 +43,7 @@
 #include "tmpltdef.h"
 #endif
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _TMPLTRHS_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE struct expr                   *ParseAssertTemplate(void *,const char *,struct token *,int *,
+   struct expr                   *ParseAssertTemplate(void *,const char *,struct token *,int *,
                                                              int,int,struct deftemplate *);
 
 #endif /* _H_tmpltrhs */

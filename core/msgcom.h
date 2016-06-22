@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/22/14          */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -40,6 +40,8 @@
 /*                                                           */
 /*            Converted API macros to function calls.        */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_msgcom
@@ -77,59 +79,48 @@ struct messageHandlerData
 
 #define MessageHandlerData(theEnv) ((struct messageHandlerData *) GetEnvironmentData(theEnv,MESSAGE_HANDLER_DATA))
 
-
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _MSGCOM_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
 #define INIT_STRING   "init"
 #define DELETE_STRING "delete"
 #define PRINT_STRING  "print"
 #define CREATE_STRING "create"
 
-   LOCALE void             SetupMessageHandlers(void *);
-   LOCALE const char      *EnvGetDefmessageHandlerName(void *,void *,int);
-   LOCALE const char      *EnvGetDefmessageHandlerType(void *,void *,int);
-   LOCALE int              EnvGetNextDefmessageHandler(void *,void *,int);
-   LOCALE HANDLER         *GetDefmessageHandlerPointer(void *,int);
+   void             SetupMessageHandlers(void *);
+   const char      *EnvGetDefmessageHandlerName(void *,void *,int);
+   const char      *EnvGetDefmessageHandlerType(void *,void *,int);
+   int              EnvGetNextDefmessageHandler(void *,void *,int);
+   HANDLER         *GetDefmessageHandlerPointer(void *,int);
 #if DEBUGGING_FUNCTIONS
-   LOCALE unsigned         EnvGetDefmessageHandlerWatch(void *,void *,int);
-   LOCALE void             EnvSetDefmessageHandlerWatch(void *,int,void *,int);
+   unsigned         EnvGetDefmessageHandlerWatch(void *,void *,int);
+   void             EnvSetDefmessageHandlerWatch(void *,int,void *,int);
 #endif
-   LOCALE unsigned         EnvFindDefmessageHandler(void *,void *,const char *,const char *);
-   LOCALE int              EnvIsDefmessageHandlerDeletable(void *,void *,int);
-   LOCALE void             UndefmessageHandlerCommand(void *);
-   LOCALE int              EnvUndefmessageHandler(void *,void *,int);
+   unsigned         EnvFindDefmessageHandler(void *,void *,const char *,const char *);
+   int              EnvIsDefmessageHandlerDeletable(void *,void *,int);
+   void             UndefmessageHandlerCommand(void *);
+   int              EnvUndefmessageHandler(void *,void *,int);
 #if DEBUGGING_FUNCTIONS
-   LOCALE void             PPDefmessageHandlerCommand(void *);
-   LOCALE void             ListDefmessageHandlersCommand(void *);
-   LOCALE void             PreviewSendCommand(void *); 
-   LOCALE const char      *EnvGetDefmessageHandlerPPForm(void *,void *,int);
-   LOCALE void             EnvListDefmessageHandlers(void *,const char *,void *,int);
-   LOCALE void             EnvPreviewSend(void *,const char *,void *,const char *);
-   LOCALE long             DisplayHandlersInLinks(void *,const char *,PACKED_CLASS_LINKS *,int);
+   void             PPDefmessageHandlerCommand(void *);
+   void             ListDefmessageHandlersCommand(void *);
+   void             PreviewSendCommand(void *); 
+   const char      *EnvGetDefmessageHandlerPPForm(void *,void *,int);
+   void             EnvListDefmessageHandlers(void *,const char *,void *,int);
+   void             EnvPreviewSend(void *,const char *,void *,const char *);
+   long             DisplayHandlersInLinks(void *,const char *,PACKED_CLASS_LINKS *,int);
 #endif
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-   LOCALE unsigned         FindDefmessageHandler(void *,const char *,const char *);
-   LOCALE const char      *GetDefmessageHandlerName(void *,int);
-   LOCALE const char      *GetDefmessageHandlerType(void *,int);
-   LOCALE int              GetNextDefmessageHandler(void *,int);
-   LOCALE int              IsDefmessageHandlerDeletable(void *,int);
-   LOCALE int              UndefmessageHandler(void *,int);
+   unsigned         FindDefmessageHandler(void *,const char *,const char *);
+   const char      *GetDefmessageHandlerName(void *,int);
+   const char      *GetDefmessageHandlerType(void *,int);
+   int              GetNextDefmessageHandler(void *,int);
+   int              IsDefmessageHandlerDeletable(void *,int);
+   int              UndefmessageHandler(void *,int);
 #if DEBUGGING_FUNCTIONS
-   LOCALE const char      *GetDefmessageHandlerPPForm(void *,int);
-   LOCALE unsigned         GetDefmessageHandlerWatch(void *,int);
-   LOCALE void             ListDefmessageHandlers(const char *,void *,int);
-   LOCALE void             PreviewSend(const char *,void *,const char *);
-   LOCALE void             SetDefmessageHandlerWatch(int,void *,int);
+   const char      *GetDefmessageHandlerPPForm(void *,int);
+   unsigned         GetDefmessageHandlerWatch(void *,int);
+   void             ListDefmessageHandlers(const char *,void *,int);
+   void             PreviewSend(const char *,void *,const char *);
+   void             SetDefmessageHandlerWatch(int,void *,int);
 #endif /* DEBUGGING_FUNCTIONS */
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */

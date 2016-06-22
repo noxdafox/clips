@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  01/25/15            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                  CONSTRUCT MODULE                   */
    /*******************************************************/
@@ -48,6 +48,8 @@
 /*            Added code to keep track of pointers to        */
 /*            constructs that are contained externally to    */
 /*            to constructs, DanglingConstructs.             */
+/*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
 /*************************************************************/
 
@@ -143,32 +145,22 @@ struct constructData
 
 #define ConstructData(theEnv) ((struct constructData *) GetEnvironmentData(theEnv,CONSTRUCT_DATA))
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
+   void                           EnvClear(void *);
+   void                           EnvReset(void *);
+   int                            EnvSave(void *,const char *);
 
-#ifdef _CONSTRCT_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                           EnvClear(void *);
-   LOCALE void                           EnvReset(void *);
-   LOCALE int                            EnvSave(void *,const char *);
-
-   LOCALE void                           InitializeConstructData(void *);
-   LOCALE intBool                        AddSaveFunction(void *,const char *,void (*)(void *,void *,const char *),int);
-   LOCALE intBool                        RemoveSaveFunction(void *,const char *);
-   LOCALE intBool                        EnvAddResetFunction(void *,const char *,void (*)(void *),int);
-   LOCALE intBool                        EnvRemoveResetFunction(void *,const char *);
-   LOCALE intBool                        AddClearReadyFunction(void *,const char *,int (*)(void *),int);
-   LOCALE intBool                        RemoveClearReadyFunction(void *,const char *);
-   LOCALE intBool                        EnvAddClearFunction(void *,const char *,void (*)(void *),int);
-   LOCALE intBool                        EnvRemoveClearFunction(void *,const char *);
-   LOCALE void                           EnvIncrementClearReadyLocks(void *);
-   LOCALE void                           EnvDecrementClearReadyLocks(void *);
-   LOCALE struct construct              *AddConstruct(void *,const char *,const char *,
+   void                           InitializeConstructData(void *);
+   intBool                        AddSaveFunction(void *,const char *,void (*)(void *,void *,const char *),int);
+   intBool                        RemoveSaveFunction(void *,const char *);
+   intBool                        EnvAddResetFunction(void *,const char *,void (*)(void *),int);
+   intBool                        EnvRemoveResetFunction(void *,const char *);
+   intBool                        AddClearReadyFunction(void *,const char *,int (*)(void *),int);
+   intBool                        RemoveClearReadyFunction(void *,const char *);
+   intBool                        EnvAddClearFunction(void *,const char *,void (*)(void *),int);
+   intBool                        EnvRemoveClearFunction(void *,const char *);
+   void                           EnvIncrementClearReadyLocks(void *);
+   void                           EnvDecrementClearReadyLocks(void *);
+   struct construct              *AddConstruct(void *,const char *,const char *,
                                                       int (*)(void *,const char *),
                                                       void *(*)(void *,const char *),
                                                       SYMBOL_HN *(*)(struct constructHeader *),
@@ -179,22 +171,22 @@ struct constructData
                                                       intBool (*)(void *,void *),
                                                       int (*)(void *,void *),
                                                       void (*)(void *,void *));
-   LOCALE int                            RemoveConstruct(void *,const char *);
-   LOCALE void                           SetCompilationsWatch(void *,unsigned);
-   LOCALE unsigned                       GetCompilationsWatch(void *);
-   LOCALE void                           SetPrintWhileLoading(void *,intBool);
-   LOCALE intBool                        GetPrintWhileLoading(void *);
-   LOCALE int                            ExecutingConstruct(void *);
-   LOCALE void                           SetExecutingConstruct(void *,int);
-   LOCALE void                           InitializeConstructs(void *);
-   LOCALE int                          (*SetBeforeResetFunction(void *,int (*)(void *)))(void *);
-   LOCALE void                           ResetCommand(void *);
-   LOCALE void                           ClearCommand(void *);
-   LOCALE intBool                        ClearReady(void *);
-   LOCALE struct construct              *FindConstruct(void *,const char *);
-   LOCALE void                           DeinstallConstructHeader(void *,struct constructHeader *);
-   LOCALE void                           DestroyConstructHeader(void *,struct constructHeader *);
-   LOCALE void                         (*EnvSetParserErrorCallback(void *theEnv,
+   int                            RemoveConstruct(void *,const char *);
+   void                           SetCompilationsWatch(void *,unsigned);
+   unsigned                       GetCompilationsWatch(void *);
+   void                           SetPrintWhileLoading(void *,intBool);
+   intBool                        GetPrintWhileLoading(void *);
+   int                            ExecutingConstruct(void *);
+   void                           SetExecutingConstruct(void *,int);
+   void                           InitializeConstructs(void *);
+   int                          (*SetBeforeResetFunction(void *,int (*)(void *)))(void *);
+   void                           ResetCommand(void *);
+   void                           ClearCommand(void *);
+   intBool                        ClearReady(void *);
+   struct construct              *FindConstruct(void *,const char *);
+   void                           DeinstallConstructHeader(void *,struct constructHeader *);
+   void                           DestroyConstructHeader(void *,struct constructHeader *);
+   void                         (*EnvSetParserErrorCallback(void *theEnv,
                                                                    void (*functionPtr)(void *,const char *,const char *,
                                                                                        const char *,long)))
                                             (void *,const char *,const char *,const char*,long);
@@ -202,14 +194,14 @@ struct constructData
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-   LOCALE intBool                        AddClearFunction(const char *,void (*)(void),int);
-   LOCALE intBool                        AddResetFunction(const char *,void (*)(void),int);
-   LOCALE void                           Clear(void);
-   LOCALE void                           Reset(void);
-   LOCALE intBool                        RemoveClearFunction(const char *);
-   LOCALE intBool                        RemoveResetFunction(const char *);
+   intBool                        AddClearFunction(const char *,void (*)(void),int);
+   intBool                        AddResetFunction(const char *,void (*)(void),int);
+   void                           Clear(void);
+   void                           Reset(void);
+   intBool                        RemoveClearFunction(const char *);
+   intBool                        RemoveResetFunction(const char *);
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   LOCALE int                            Save(const char *);
+   int                            Save(const char *);
 #endif
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */

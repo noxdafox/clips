@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -28,6 +28,8 @@
 /*            Added const qualifiers to remove C++            */
 /*            deprecation warnings.                           */
 /*                                                            */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_clsltpsr
@@ -49,18 +51,8 @@ typedef struct tempSlotLink
    struct tempSlotLink *nxt;
   } TEMP_SLOT_LINK;
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _CLSLTPSR_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-LOCALE TEMP_SLOT_LINK *ParseSlot(void *,const char *,TEMP_SLOT_LINK *,PACKED_CLASS_LINKS *,int,int);
-LOCALE void DeleteSlots(void *,TEMP_SLOT_LINK *);
+TEMP_SLOT_LINK *ParseSlot(void *,const char *,TEMP_SLOT_LINK *,PACKED_CLASS_LINKS *,int,int);
+void DeleteSlots(void *,TEMP_SLOT_LINK *);
 
 #ifndef _CLSLTPSR_SOURCE_
 #endif

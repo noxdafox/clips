@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/17/16            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                 SYMBOL HEADER FILE                  */
    /*******************************************************/
@@ -61,20 +61,12 @@
 /*      6.40: Refactored code to reduce header dependencies  */
 /*            in sysdep.c.                                   */
 /*                                                           */
+/*            Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_symbol
 #define _H_symbol
-
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _SYMBOL_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
 
 #include <stdlib.h>
 
@@ -272,56 +264,56 @@ struct symbolData
 
 #define SymbolData(theEnv) ((struct symbolData *) GetEnvironmentData(theEnv,SYMBOL_DATA))
 
-   LOCALE void                           InitializeAtomTables(void *,struct symbolHashNode **,struct floatHashNode **,
+   void                           InitializeAtomTables(void *,struct symbolHashNode **,struct floatHashNode **,
                                                               struct integerHashNode **,struct bitMapHashNode **,
                                                               struct externalAddressHashNode **);
-   LOCALE void                          *EnvAddSymbol(void *,const char *);
-   LOCALE SYMBOL_HN                     *FindSymbolHN(void *,const char *);
-   LOCALE void                          *EnvAddDouble(void *,double);
-   LOCALE void                          *EnvAddLong(void *,long long);
-   LOCALE void                          *EnvAddBitMap(void *,void *,unsigned);
-   LOCALE void                          *EnvAddExternalAddress(void *,void *,unsigned);
-   LOCALE INTEGER_HN                    *FindLongHN(void *,long long);
-   LOCALE unsigned long                  HashSymbol(const char *,unsigned long);
-   LOCALE unsigned long                  HashFloat(double,unsigned long);
-   LOCALE unsigned long                  HashInteger(long long,unsigned long);
-   LOCALE unsigned long                  HashBitMap(const char *,unsigned long,unsigned);
-   LOCALE unsigned long                  HashExternalAddress(void *,unsigned long);
-   LOCALE void                           DecrementSymbolCount(void *,struct symbolHashNode *);
-   LOCALE void                           DecrementFloatCount(void *,struct floatHashNode *);
-   LOCALE void                           DecrementIntegerCount(void *,struct integerHashNode *);
-   LOCALE void                           DecrementBitMapCount(void *,struct bitMapHashNode *);
-   LOCALE void                           DecrementExternalAddressCount(void *,struct externalAddressHashNode *);
-   LOCALE void                           RemoveEphemeralAtoms(void *);
-   LOCALE struct symbolHashNode        **GetSymbolTable(void *);
-   LOCALE void                           SetSymbolTable(void *,struct symbolHashNode **);
-   LOCALE struct floatHashNode          **GetFloatTable(void *);
-   LOCALE void                           SetFloatTable(void *,struct floatHashNode **);
-   LOCALE struct integerHashNode       **GetIntegerTable(void *);
-   LOCALE void                           SetIntegerTable(void *,struct integerHashNode **);
-   LOCALE struct bitMapHashNode        **GetBitMapTable(void *);
-   LOCALE void                           SetBitMapTable(void *,struct bitMapHashNode **);
-   LOCALE struct externalAddressHashNode        
+   void                          *EnvAddSymbol(void *,const char *);
+   SYMBOL_HN                     *FindSymbolHN(void *,const char *);
+   void                          *EnvAddDouble(void *,double);
+   void                          *EnvAddLong(void *,long long);
+   void                          *EnvAddBitMap(void *,void *,unsigned);
+   void                          *EnvAddExternalAddress(void *,void *,unsigned);
+   INTEGER_HN                    *FindLongHN(void *,long long);
+   unsigned long                  HashSymbol(const char *,unsigned long);
+   unsigned long                  HashFloat(double,unsigned long);
+   unsigned long                  HashInteger(long long,unsigned long);
+   unsigned long                  HashBitMap(const char *,unsigned long,unsigned);
+   unsigned long                  HashExternalAddress(void *,unsigned long);
+   void                           DecrementSymbolCount(void *,struct symbolHashNode *);
+   void                           DecrementFloatCount(void *,struct floatHashNode *);
+   void                           DecrementIntegerCount(void *,struct integerHashNode *);
+   void                           DecrementBitMapCount(void *,struct bitMapHashNode *);
+   void                           DecrementExternalAddressCount(void *,struct externalAddressHashNode *);
+   void                           RemoveEphemeralAtoms(void *);
+   struct symbolHashNode        **GetSymbolTable(void *);
+   void                           SetSymbolTable(void *,struct symbolHashNode **);
+   struct floatHashNode          **GetFloatTable(void *);
+   void                           SetFloatTable(void *,struct floatHashNode **);
+   struct integerHashNode       **GetIntegerTable(void *);
+   void                           SetIntegerTable(void *,struct integerHashNode **);
+   struct bitMapHashNode        **GetBitMapTable(void *);
+   void                           SetBitMapTable(void *,struct bitMapHashNode **);
+   struct externalAddressHashNode        
                                        **GetExternalAddressTable(void *);
-   LOCALE void                           SetExternalAddressTable(void *,struct externalAddressHashNode **);
-   LOCALE void                           RefreshSpecialSymbols(void *);
-   LOCALE struct symbolMatch            *FindSymbolMatches(void *,const char *,unsigned *,size_t *);
-   LOCALE void                           ReturnSymbolMatches(void *,struct symbolMatch *);
-   LOCALE SYMBOL_HN                     *GetNextSymbolMatch(void *,const char *,size_t,SYMBOL_HN *,int,size_t *);
-   LOCALE void                           ClearBitString(void *,unsigned);
-   LOCALE void                           SetAtomicValueIndices(void *,int);
-   LOCALE void                           RestoreAtomicValueBuckets(void *);
-   LOCALE void                          *EnvFalseSymbol(void *);
-   LOCALE void                          *EnvTrueSymbol(void *);
-   LOCALE void                           EphemerateValue(void *,int,void *);
+   void                           SetExternalAddressTable(void *,struct externalAddressHashNode **);
+   void                           RefreshSpecialSymbols(void *);
+   struct symbolMatch            *FindSymbolMatches(void *,const char *,unsigned *,size_t *);
+   void                           ReturnSymbolMatches(void *,struct symbolMatch *);
+   SYMBOL_HN                     *GetNextSymbolMatch(void *,const char *,size_t,SYMBOL_HN *,int,size_t *);
+   void                           ClearBitString(void *,unsigned);
+   void                           SetAtomicValueIndices(void *,int);
+   void                           RestoreAtomicValueBuckets(void *);
+   void                          *EnvFalseSymbol(void *);
+   void                          *EnvTrueSymbol(void *);
+   void                           EphemerateValue(void *,int,void *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-   LOCALE void                          *AddDouble(double);
-   LOCALE void                          *AddLong(long long);
-   LOCALE void                          *AddSymbol(const char *);
-   LOCALE void                          *FalseSymbol(void);
-   LOCALE void                          *TrueSymbol(void);
+   void                          *AddDouble(double);
+   void                          *AddLong(long long);
+   void                          *AddSymbol(const char *);
+   void                          *FalseSymbol(void);
+   void                          *TrueSymbol(void);
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */
 

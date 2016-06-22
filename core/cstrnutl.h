@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*            CONSTRAINT UTILITY HEADER FILE           */
    /*******************************************************/
@@ -18,6 +18,8 @@
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_cstrnutl
@@ -27,30 +29,20 @@
 #include "constrnt.h"
 #endif
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _CSTRNUTL_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
 #ifndef _STDIO_INCLUDED_
 #define _STDIO_INCLUDED_
 #include <stdio.h>
 #endif
 
-   LOCALE struct constraintRecord       *GetConstraintRecord(void *);
-   LOCALE int                            CompareNumbers(void *,int,void *,int,void *);
-   LOCALE struct constraintRecord       *CopyConstraintRecord(void *,CONSTRAINT_RECORD *);
-   LOCALE int                            SetConstraintType(int,CONSTRAINT_RECORD *);
-   LOCALE void                           SetAnyAllowedFlags(CONSTRAINT_RECORD *,int);
-   LOCALE void                           SetAnyRestrictionFlags(CONSTRAINT_RECORD *,int);
-   LOCALE CONSTRAINT_RECORD             *ArgumentTypeToConstraintRecord(void *,int);
-   LOCALE CONSTRAINT_RECORD             *FunctionCallToConstraintRecord(void *,void *);
-   LOCALE CONSTRAINT_RECORD             *ExpressionToConstraintRecord(void *,struct expr *);
+   struct constraintRecord       *GetConstraintRecord(void *);
+   int                            CompareNumbers(void *,int,void *,int,void *);
+   struct constraintRecord       *CopyConstraintRecord(void *,CONSTRAINT_RECORD *);
+   int                            SetConstraintType(int,CONSTRAINT_RECORD *);
+   void                           SetAnyAllowedFlags(CONSTRAINT_RECORD *,int);
+   void                           SetAnyRestrictionFlags(CONSTRAINT_RECORD *,int);
+   CONSTRAINT_RECORD             *ArgumentTypeToConstraintRecord(void *,int);
+   CONSTRAINT_RECORD             *FunctionCallToConstraintRecord(void *,void *);
+   CONSTRAINT_RECORD             *ExpressionToConstraintRecord(void *,struct expr *);
 
 #endif /* _H_cstrnutl */
 

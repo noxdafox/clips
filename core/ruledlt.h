@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*          RULE DELETION MODULE HEADER FILE           */
    /*******************************************************/
@@ -31,24 +31,16 @@
 /*            Fixed linkage issue when BLOAD_ONLY compiler   */
 /*            flag is set to 1.                              */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_ruledlt
 
 #define _H_ruledlt
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _RULEDLT_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                           ReturnDefrule(void *,void *);
-   LOCALE void                           DestroyDefrule(void *,void *);
+   void                           ReturnDefrule(void *,void *);
+   void                           DestroyDefrule(void *,void *);
 
 #endif /* _H_ruledlt */
 

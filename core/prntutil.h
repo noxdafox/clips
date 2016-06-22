@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/22/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*              PRINT UTILITY HEADER FILE              */
    /*******************************************************/
@@ -44,6 +44,8 @@
 /*            Fixed linkage issue when BLOAD_ONLY compiler   */
 /*            flag is set to 1.                              */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_prntutil
@@ -69,39 +71,29 @@ struct printUtilityData
 
 #define PrintUtilityData(theEnv) ((struct printUtilityData *) GetEnvironmentData(theEnv,PRINT_UTILITY_DATA))
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _PRNTUTIL_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                           InitializePrintUtilityData(void *);
-   LOCALE void                           PrintInChunks(void *,const char *,const char *);
-   LOCALE void                           PrintFloat(void *,const char *,double);
-   LOCALE void                           PrintLongInteger(void *,const char *,long long);
-   LOCALE void                           PrintAtom(void *,const char *,int,void *);
-   LOCALE void                           PrintTally(void *,const char *,long long,const char *,const char *);
-   LOCALE const char                    *FloatToString(void *,double);
-   LOCALE const char                    *LongIntegerToString(void *,long long);
-   LOCALE const char                    *DataObjectToString(void *,DATA_OBJECT *);
-   LOCALE void                           SyntaxErrorMessage(void *,const char *);
-   LOCALE void                           SystemError(void *,const char *,int);
-   LOCALE void                           PrintErrorID(void *,const char *,int,int);
-   LOCALE void                           PrintWarningID(void *,const char *,int,int);
-   LOCALE void                           CantFindItemErrorMessage(void *,const char *,const char *);
-   LOCALE void                           CantDeleteItemErrorMessage(void *,const char *,const char *);
-   LOCALE void                           AlreadyParsedErrorMessage(void *,const char *,const char *);
-   LOCALE void                           LocalVariableErrorMessage(void *,const char *);
-   LOCALE void                           DivideByZeroErrorMessage(void *,const char *);
-   LOCALE void                           SalienceInformationError(void *,const char *,const char *);
-   LOCALE void                           SalienceRangeError(void *,int,int);
-   LOCALE void                           SalienceNonIntegerError(void *);
-   LOCALE void                           CantFindItemInFunctionErrorMessage(void *,const char *,const char *,const char *);
-   LOCALE void                           SlotExistError(void *,const char *,const char *);
+   void                           InitializePrintUtilityData(void *);
+   void                           PrintInChunks(void *,const char *,const char *);
+   void                           PrintFloat(void *,const char *,double);
+   void                           PrintLongInteger(void *,const char *,long long);
+   void                           PrintAtom(void *,const char *,int,void *);
+   void                           PrintTally(void *,const char *,long long,const char *,const char *);
+   const char                    *FloatToString(void *,double);
+   const char                    *LongIntegerToString(void *,long long);
+   const char                    *DataObjectToString(void *,DATA_OBJECT *);
+   void                           SyntaxErrorMessage(void *,const char *);
+   void                           SystemError(void *,const char *,int);
+   void                           PrintErrorID(void *,const char *,int,int);
+   void                           PrintWarningID(void *,const char *,int,int);
+   void                           CantFindItemErrorMessage(void *,const char *,const char *);
+   void                           CantDeleteItemErrorMessage(void *,const char *,const char *);
+   void                           AlreadyParsedErrorMessage(void *,const char *,const char *);
+   void                           LocalVariableErrorMessage(void *,const char *);
+   void                           DivideByZeroErrorMessage(void *,const char *);
+   void                           SalienceInformationError(void *,const char *,const char *);
+   void                           SalienceRangeError(void *,int,int);
+   void                           SalienceNonIntegerError(void *);
+   void                           CantFindItemInFunctionErrorMessage(void *,const char *,const char *,const char *);
+   void                           SlotExistError(void *,const char *,const char *);
 
 #endif /* _H_prntutil */
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*      CONSTRUCT PROFILING FUNCTIONS HEADER FILE      */
    /*******************************************************/
@@ -37,21 +37,13 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_proflfun
 
 #define _H_proflfun
-
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _PROFLFUN_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
 
 #include "userdata.h"
 
@@ -92,25 +84,25 @@ struct profileFunctionData
 
 #define ProfileFunctionData(theEnv) ((struct profileFunctionData *) GetEnvironmentData(theEnv,PROFLFUN_DATA))
 
-   LOCALE void                           ConstructProfilingFunctionDefinitions(void *);
-   LOCALE void                           ProfileCommand(void *);
-   LOCALE void                           ProfileInfoCommand(void *);
-   LOCALE void                           StartProfile(void *,
+   void                           ConstructProfilingFunctionDefinitions(void *);
+   void                           ProfileCommand(void *);
+   void                           ProfileInfoCommand(void *);
+   void                           StartProfile(void *,
                                                       struct profileFrameInfo *,
                                                       struct userData **,
                                                       intBool);
-   LOCALE void                           EndProfile(void *,struct profileFrameInfo *);
-   LOCALE void                           ProfileResetCommand(void *);
-   LOCALE void                           ResetProfileInfo(struct constructProfileInfo *);
+   void                           EndProfile(void *,struct profileFrameInfo *);
+   void                           ProfileResetCommand(void *);
+   void                           ResetProfileInfo(struct constructProfileInfo *);
 
-   LOCALE double                         SetProfilePercentThresholdCommand(void *);
-   LOCALE double                         SetProfilePercentThreshold(void *,double);
-   LOCALE double                         GetProfilePercentThresholdCommand(void *);
-   LOCALE double                         GetProfilePercentThreshold(void *);
-   LOCALE intBool                        Profile(void *,const char *);
-   LOCALE void                           DeleteProfileData(void *,void *);
-   LOCALE void                          *CreateProfileData(void *);
-   LOCALE const char                    *SetProfileOutputString(void *,const char *);
+   double                         SetProfilePercentThresholdCommand(void *);
+   double                         SetProfilePercentThreshold(void *,double);
+   double                         GetProfilePercentThresholdCommand(void *);
+   double                         GetProfilePercentThreshold(void *);
+   intBool                        Profile(void *,const char *);
+   void                           DeleteProfileData(void *,void *);
+   void                          *CreateProfileData(void *);
+   const char                    *SetProfileOutputString(void *,const char *);
 
 #endif /* _H_proflfun */
 

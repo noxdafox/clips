@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  07/25/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*           DEFRULE LHS PARSING HEADER FILE           */
    /*******************************************************/
@@ -19,6 +19,8 @@
 /*                                                           */
 /*      6.30: Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
+/*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
 /*************************************************************/
 
@@ -38,18 +40,8 @@
 #include "pattern.h"
 #endif
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _RULELHS_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-LOCALE struct lhsParseNode           *ParseRuleLHS(void *,const char *,struct token *,const char *,int *);
-LOCALE void                           PropagatePatternType(struct lhsParseNode *,struct patternParser *);
+struct lhsParseNode           *ParseRuleLHS(void *,const char *,struct token *,const char *,int *);
+void                           PropagatePatternType(struct lhsParseNode *,struct patternParser *);
 
 #endif
 

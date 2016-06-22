@@ -106,7 +106,7 @@ void AssignBsaveConstructHeaderVals(
   SIDE EFFECTS : Header values set
   NOTES        : None
  ***************************************************/
-LOCALE void UpdateConstructHeader(
+void UpdateConstructHeader(
   void *theEnv,
   struct bsaveConstructHeader *theBsaveConstruct,
   struct constructHeader *theConstruct,

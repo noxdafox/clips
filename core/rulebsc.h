@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  02/04/15            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*         DEFRULE BASIC COMMANDS HEADER FILE          */
    /*******************************************************/
@@ -44,6 +44,8 @@
 /*            being executed during fact assertions via      */
 /*            JoinOperationInProgress mechanism.             */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_rulebsc
@@ -53,46 +55,36 @@
 #include "evaluatn.h"
 #endif
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _RULEBSC_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                           DefruleBasicCommands(void *);
-   LOCALE void                           UndefruleCommand(void *);
-   LOCALE intBool                        EnvUndefrule(void *,void *);
-   LOCALE void                           GetDefruleListFunction(void *,DATA_OBJECT_PTR);
-   LOCALE void                           EnvGetDefruleList(void *,DATA_OBJECT_PTR,void *);
-   LOCALE void                          *DefruleModuleFunction(void *);
+   void                           DefruleBasicCommands(void *);
+   void                           UndefruleCommand(void *);
+   intBool                        EnvUndefrule(void *,void *);
+   void                           GetDefruleListFunction(void *,DATA_OBJECT_PTR);
+   void                           EnvGetDefruleList(void *,DATA_OBJECT_PTR,void *);
+   void                          *DefruleModuleFunction(void *);
 #if DEBUGGING_FUNCTIONS
-   LOCALE void                           PPDefruleCommand(void *);
-   LOCALE int                            PPDefrule(void *,const char *,const char *);
-   LOCALE void                           ListDefrulesCommand(void *);
-   LOCALE void                           EnvListDefrules(void *,const char *,void *);
-   LOCALE unsigned                       EnvGetDefruleWatchFirings(void *,void *);
-   LOCALE unsigned                       EnvGetDefruleWatchActivations(void *,void *);
-   LOCALE void                           EnvSetDefruleWatchFirings(void *,unsigned,void *);
-   LOCALE void                           EnvSetDefruleWatchActivations(void *,unsigned,void *);
-   LOCALE unsigned                       DefruleWatchAccess(void *,int,unsigned,struct expr *);
-   LOCALE unsigned                       DefruleWatchPrint(void *,const char *,int,struct expr *);
+   void                           PPDefruleCommand(void *);
+   int                            PPDefrule(void *,const char *,const char *);
+   void                           ListDefrulesCommand(void *);
+   void                           EnvListDefrules(void *,const char *,void *);
+   unsigned                       EnvGetDefruleWatchFirings(void *,void *);
+   unsigned                       EnvGetDefruleWatchActivations(void *,void *);
+   void                           EnvSetDefruleWatchFirings(void *,unsigned,void *);
+   void                           EnvSetDefruleWatchActivations(void *,unsigned,void *);
+   unsigned                       DefruleWatchAccess(void *,int,unsigned,struct expr *);
+   unsigned                       DefruleWatchPrint(void *,const char *,int,struct expr *);
 #endif
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-   LOCALE void                           GetDefruleList(DATA_OBJECT_PTR,void *);
+   void                           GetDefruleList(DATA_OBJECT_PTR,void *);
 #if DEBUGGING_FUNCTIONS
-   LOCALE unsigned                       GetDefruleWatchActivations(void *);
-   LOCALE unsigned                       GetDefruleWatchFirings(void *);
-   LOCALE void                           ListDefrules(const char *,void *);
-   LOCALE void                           SetDefruleWatchActivations(unsigned,void *);
-   LOCALE void                           SetDefruleWatchFirings(unsigned,void *);
+   unsigned                       GetDefruleWatchActivations(void *);
+   unsigned                       GetDefruleWatchFirings(void *);
+   void                           ListDefrules(const char *,void *);
+   void                           SetDefruleWatchActivations(unsigned,void *);
+   void                           SetDefruleWatchFirings(unsigned,void *);
 #endif
-   LOCALE intBool                        Undefrule(void *);
+   intBool                        Undefrule(void *);
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */
 

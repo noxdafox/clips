@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                GENERATE HEADER FILE                 */
    /*******************************************************/
@@ -26,6 +26,8 @@
 /*            Reimplemented algorithm for comparisons to     */
 /*            variables contained within not/and CEs.        */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_generate
@@ -42,19 +44,9 @@
 #include "analysis.h"
 #endif
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _GENERATE_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                           FieldConversion(void *,struct lhsParseNode *,struct lhsParseNode *,struct nandFrame *);
-   LOCALE struct expr                   *GetvarReplace(void *,struct lhsParseNode *,int,struct nandFrame *);
-   LOCALE void                           AddNandUnification(void *,struct lhsParseNode *,struct nandFrame *);
+   void                           FieldConversion(void *,struct lhsParseNode *,struct lhsParseNode *,struct nandFrame *);
+   struct expr                   *GetvarReplace(void *,struct lhsParseNode *,int,struct nandFrame *);
+   void                           AddNandUnification(void *,struct lhsParseNode *,struct nandFrame *);
 
 #endif /* _H_generate */
 

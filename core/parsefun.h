@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*            PARSING FUNCTIONS HEADER FILE            */
    /*******************************************************/
@@ -34,6 +34,8 @@
 /*            Fixed function declaration issue when          */
 /*            BLOAD_ONLY compiler flag is set to 1.          */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_parsefun
@@ -44,19 +46,9 @@
 #include "evaluatn.h"
 #endif
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _PARSEFUN_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                           ParseFunctionDefinitions(void *);
-   LOCALE void                           CheckSyntaxFunction(void *,DATA_OBJECT *);
-   LOCALE int                            CheckSyntax(void *,const char *,DATA_OBJECT_PTR);
+   void                           ParseFunctionDefinitions(void *);
+   void                           CheckSyntaxFunction(void *,DATA_OBJECT *);
+   int                            CheckSyntax(void *,const char *,DATA_OBJECT_PTR);
 
 #endif /* _H_parsefun */
 

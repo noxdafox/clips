@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -23,6 +23,8 @@
 /*            MAC_MCW, and IBM_TBC).                         */
 /*                                                           */
 /*            Changed integer type/precision.                */
+/*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
 /*************************************************************/
 
@@ -47,18 +49,8 @@ struct definstancesBinaryData
   
 #define DefinstancesBinaryData(theEnv) ((struct definstancesBinaryData *) GetEnvironmentData(theEnv,DFINSBIN_DATA))
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _DFINSBIN_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                           SetupDefinstancesBload(void *);
-   LOCALE void                          *BloadDefinstancesModuleRef(void *,int);
+   void                           SetupDefinstancesBload(void *);
+   void                          *BloadDefinstancesModuleRef(void *,int);
 
 #endif /* DEFINSTANCES_CONSTRUCT && (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE) */
 

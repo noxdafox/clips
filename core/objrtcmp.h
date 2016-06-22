@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -30,6 +30,8 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_objrtcmp
@@ -42,18 +44,8 @@
 #define _STDIO_INCLUDED_
 #endif
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _OBJRTCMP_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE void                    ObjectPatternsCompilerSetup(void *);
-   LOCALE void                    ObjectPatternNodeReference(void *,void *,FILE *,int,int);
+   void                    ObjectPatternsCompilerSetup(void *);
+   void                    ObjectPatternNodeReference(void *,void *,FILE *,int,int);
 
 #endif /* DEFRULE_CONSTRUCT && OBJECT_SYSTEM && (! RUN_TIME) && CONSTRUCT_COMPILER */
 

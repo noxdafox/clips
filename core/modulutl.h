@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*            DEFMODULE UTILITY HEADER FILE            */
    /*******************************************************/
@@ -24,6 +24,8 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_modulutl
@@ -36,36 +38,26 @@
 #include "moduldef.h"
 #endif
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _MODULUTL_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
-   LOCALE unsigned                       FindModuleSeparator(const char *);
-   LOCALE SYMBOL_HN                     *ExtractModuleName(void *,unsigned,const char *);
-   LOCALE SYMBOL_HN                     *ExtractConstructName(void *,unsigned,const char *);
-   LOCALE const char                    *ExtractModuleAndConstructName(void *,const char *);
-   LOCALE void                          *FindImportedConstruct(void *,const char *,struct defmodule *,
+   unsigned                       FindModuleSeparator(const char *);
+   SYMBOL_HN                     *ExtractModuleName(void *,unsigned,const char *);
+   SYMBOL_HN                     *ExtractConstructName(void *,unsigned,const char *);
+   const char                    *ExtractModuleAndConstructName(void *,const char *);
+   void                          *FindImportedConstruct(void *,const char *,struct defmodule *,
                                                                const char *,int *,int,struct defmodule *);
-   LOCALE void                           AmbiguousReferenceErrorMessage(void *,const char *,const char *);
-   LOCALE void                           MarkModulesAsUnvisited(void *);
-   LOCALE intBool                        AllImportedModulesVisited(void *,struct defmodule *);
-   LOCALE void                           ListItemsDriver(void *,
+   void                           AmbiguousReferenceErrorMessage(void *,const char *,const char *);
+   void                           MarkModulesAsUnvisited(void *);
+   intBool                        AllImportedModulesVisited(void *,struct defmodule *);
+   void                           ListItemsDriver(void *,
                                                          const char *,struct defmodule *,
                                                          const char *,const char *,
                                                          void *(*)(void *,void *),
                                                          const char *(*)(void *),
                                                          void (*)(void *,const char *,void *),
                                                          int (*)(void *,void *));
-   LOCALE long                           DoForAllModules(void *,
+   long                           DoForAllModules(void *,
                                                          void (*)(struct defmodule *,void *),
                                                          int,void *);
-   LOCALE intBool                        ConstructExported(void *,const char *,struct symbolHashNode *,struct symbolHashNode *);
+   intBool                        ConstructExported(void *,const char *,struct symbolHashNode *,struct symbolHashNode *);
    
 #endif /* _H_modulutl */
 

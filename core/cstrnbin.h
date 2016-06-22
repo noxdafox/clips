@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*    CONSTRAINT BLOAD/BSAVE/CONSTRUCTS-TO-C HEADER    */
    /*******************************************************/
@@ -21,6 +21,8 @@
 /*                                                           */
 /*      6.30: Changed integer type/precision.                */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_cstrnbin
@@ -33,16 +35,6 @@
 #include "constrnt.h"
 #endif
 
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _CSTRNBIN_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
-#endif
-
 #ifndef _STDIO_INCLUDED_
 #define _STDIO_INCLUDED_
 #include <stdio.h>
@@ -52,10 +44,10 @@
 #define ConstraintPointer(i) (((i) == -1L) ? NULL : (CONSTRAINT_RECORD *) &ConstraintData(theEnv)->ConstraintArray[i])
 
 #if BLOAD_AND_BSAVE
-   LOCALE void                           WriteNeededConstraints(void *,FILE *);
+   void                           WriteNeededConstraints(void *,FILE *);
 #endif
-   LOCALE void                           ReadNeededConstraints(void *);
-   LOCALE void                           ClearBloadedConstraints(void *);
+   void                           ReadNeededConstraints(void *);
+   void                           ClearBloadedConstraints(void *);
 
 #endif /* _H_cstrnbin */
 

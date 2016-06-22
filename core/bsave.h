@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
    /*                 BSAVE HEADER FILE                   */
    /*******************************************************/
@@ -31,6 +31,8 @@
 /*                                                           */
 /*            Converted API macros to function calls.        */
 /*                                                           */
+/*      6.40: Removed LOCALE definition.                     */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_bsave
@@ -45,16 +47,6 @@ struct BinaryItem;
 
 #ifndef _H_expressn
 #include "expressn.h"
-#endif
-
-#ifdef LOCALE
-#undef LOCALE
-#endif
-
-#ifdef _BSAVE_SOURCE_
-#define LOCALE
-#else
-#define LOCALE extern
 #endif
 
 struct BinaryItem
@@ -99,15 +91,15 @@ struct bsaveData
 
 #define BsaveData(theEnv) ((struct bsaveData *) GetEnvironmentData(theEnv,BSAVE_DATA))
 
-   LOCALE void                    InitializeBsaveData(void *);
-   LOCALE int                     BsaveCommand(void *);
+   void                    InitializeBsaveData(void *);
+   int                     BsaveCommand(void *);
 #if BLOAD_AND_BSAVE
-   LOCALE intBool                 EnvBsave(void *,const char *);
-   LOCALE void                    MarkNeededItems(void *,struct expr *);
-   LOCALE void                    SaveBloadCount(void *,long);
-   LOCALE void                    RestoreBloadCount(void *,long *);
+   intBool                 EnvBsave(void *,const char *);
+   void                    MarkNeededItems(void *,struct expr *);
+   void                    SaveBloadCount(void *,long);
+   void                    RestoreBloadCount(void *,long *);
 #endif
-   LOCALE intBool                 AddBinaryItem(void *,const char *,int,
+   intBool                 AddBinaryItem(void *,const char *,int,
                                                 void (*)(void *),
                                                 void (*)(void *,FILE *),
                                                 void (*)(void *,FILE *),
@@ -118,7 +110,7 @@ struct bsaveData
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-   LOCALE intBool                 Bsave(const char *);
+   intBool                 Bsave(const char *);
 
 #endif
 
