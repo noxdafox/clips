@@ -34,7 +34,9 @@ OBJS = agenda.o analysis.o argacces.o bload.o bmathfun.o bsave.o \
  	strngrtr.o symblbin.o symblcmp.o symbol.o sysdep.o textpro.o \
  	tmpltbin.o tmpltbsc.o tmpltcmp.o tmpltdef.o tmpltfun.o tmpltlhs.o \
  	tmpltpsr.o tmpltrhs.o tmpltutl.o userdata.o userfunctions.o \
- 	utility.o watch.o net_sf_clipsrules_jni_Environment.o \
+ 	utility.o watch.o clipsjni_environment.o clipsjni_environment_facts.o \
+ 	clipsjni_environment_rules.o clipsjni_environment_routers.o \
+ 	clipsjni_environment_repl.o clipsjni_environment_instances.o \
  	clipsjni_utilities.o clipsjni_glue.o
 
 .c.o :
@@ -80,8 +82,88 @@ clipsjni_utilities.o: clipsjni_utilities.c \
   globldef.h globlbsc.h globlcom.h dffnxfun.h genrccom.h genrcfun.h \
   object.h classcom.h classexm.h classinf.h classini.h defins.h inscom.h \
   insfun.h insfile.h msgcom.h msgpass.h objrtmch.h
+  
+clipsjni_environment_instances.o: clipsjni_environment_instances.c \
+  net_sf_clipsrules_jni_Environment.h clipsjni_data.h clipsjni_glue.h setup.h \
+  envrnmnt.h symbol.h usrsetup.h clips.h argacces.h \
+  expressn.h exprnops.h exprnpsr.h extnfunc.h userdata.h scanner.h \
+  pprint.h evaluatn.h constant.h moduldef.h conscomp.h constrct.h \
+  symblcmp.h modulpsr.h utility.h memalloc.h cstrcpsr.h filecom.h \
+  strngfun.h commline.h router.h prntutil.h filertr.h sysdep.h bmathfun.h \
+  watch.h modulbsc.h bload.h exprnbin.h symblbin.h bsave.h ruledef.h \
+  constrnt.h cstrccom.h agenda.h match.h network.h pattern.h reorder.h \
+  rulebsc.h engine.h lgcldpnd.h retract.h drive.h incrrset.h rulecom.h \
+  crstrtgy.h dffctdef.h dffctbsc.h tmpltdef.h factbld.h factmngr.h \
+  facthsh.h multifld.h tmpltbsc.h tmpltfun.h factcom.h factfun.h \
+  globldef.h globlbsc.h globlcom.h dffnxfun.h genrccom.h genrcfun.h \
+  object.h classcom.h classexm.h classinf.h classini.h defins.h inscom.h \
+  insfun.h insfile.h msgcom.h msgpass.h objrtmch.h
 
-net_sf_clipsrules_jni_Environment.o: net_sf_clipsrules_jni_Environment.c \
+clipsjni_environment_repl.o: clipsjni_environment_repl.c \
+  net_sf_clipsrules_jni_Environment.h clipsjni_data.h clipsjni_glue.h setup.h \
+  envrnmnt.h symbol.h usrsetup.h clips.h argacces.h \
+  expressn.h exprnops.h exprnpsr.h extnfunc.h userdata.h scanner.h \
+  pprint.h evaluatn.h constant.h moduldef.h conscomp.h constrct.h \
+  symblcmp.h modulpsr.h utility.h memalloc.h cstrcpsr.h filecom.h \
+  strngfun.h commline.h router.h prntutil.h filertr.h sysdep.h bmathfun.h \
+  watch.h modulbsc.h bload.h exprnbin.h symblbin.h bsave.h ruledef.h \
+  constrnt.h cstrccom.h agenda.h match.h network.h pattern.h reorder.h \
+  rulebsc.h engine.h lgcldpnd.h retract.h drive.h incrrset.h rulecom.h \
+  crstrtgy.h dffctdef.h dffctbsc.h tmpltdef.h factbld.h factmngr.h \
+  facthsh.h multifld.h tmpltbsc.h tmpltfun.h factcom.h factfun.h \
+  globldef.h globlbsc.h globlcom.h dffnxfun.h genrccom.h genrcfun.h \
+  object.h classcom.h classexm.h classinf.h classini.h defins.h inscom.h \
+  insfun.h insfile.h msgcom.h msgpass.h objrtmch.h
+
+clipsjni_environment_routers.o: clipsjni_environment_routers.c \
+  net_sf_clipsrules_jni_Environment.h clipsjni_data.h clipsjni_glue.h setup.h \
+  envrnmnt.h symbol.h usrsetup.h clips.h argacces.h \
+  expressn.h exprnops.h exprnpsr.h extnfunc.h userdata.h scanner.h \
+  pprint.h evaluatn.h constant.h moduldef.h conscomp.h constrct.h \
+  symblcmp.h modulpsr.h utility.h memalloc.h cstrcpsr.h filecom.h \
+  strngfun.h commline.h router.h prntutil.h filertr.h sysdep.h bmathfun.h \
+  watch.h modulbsc.h bload.h exprnbin.h symblbin.h bsave.h ruledef.h \
+  constrnt.h cstrccom.h agenda.h match.h network.h pattern.h reorder.h \
+  rulebsc.h engine.h lgcldpnd.h retract.h drive.h incrrset.h rulecom.h \
+  crstrtgy.h dffctdef.h dffctbsc.h tmpltdef.h factbld.h factmngr.h \
+  facthsh.h multifld.h tmpltbsc.h tmpltfun.h factcom.h factfun.h \
+  globldef.h globlbsc.h globlcom.h dffnxfun.h genrccom.h genrcfun.h \
+  object.h classcom.h classexm.h classinf.h classini.h defins.h inscom.h \
+  insfun.h insfile.h msgcom.h msgpass.h objrtmch.h
+
+clipsjni_environment_rules.o: clipsjni_environment_rules.c \
+  net_sf_clipsrules_jni_Environment.h clipsjni_data.h clipsjni_glue.h setup.h \
+  envrnmnt.h symbol.h usrsetup.h clips.h argacces.h \
+  expressn.h exprnops.h exprnpsr.h extnfunc.h userdata.h scanner.h \
+  pprint.h evaluatn.h constant.h moduldef.h conscomp.h constrct.h \
+  symblcmp.h modulpsr.h utility.h memalloc.h cstrcpsr.h filecom.h \
+  strngfun.h commline.h router.h prntutil.h filertr.h sysdep.h bmathfun.h \
+  watch.h modulbsc.h bload.h exprnbin.h symblbin.h bsave.h ruledef.h \
+  constrnt.h cstrccom.h agenda.h match.h network.h pattern.h reorder.h \
+  rulebsc.h engine.h lgcldpnd.h retract.h drive.h incrrset.h rulecom.h \
+  crstrtgy.h dffctdef.h dffctbsc.h tmpltdef.h factbld.h factmngr.h \
+  facthsh.h multifld.h tmpltbsc.h tmpltfun.h factcom.h factfun.h \
+  globldef.h globlbsc.h globlcom.h dffnxfun.h genrccom.h genrcfun.h \
+  object.h classcom.h classexm.h classinf.h classini.h defins.h inscom.h \
+  insfun.h insfile.h msgcom.h msgpass.h objrtmch.h
+
+clipsjni_environment_facts.o: clipsjni_environment_facts.c \
+  net_sf_clipsrules_jni_Environment.h clipsjni_data.h clipsjni_glue.h setup.h \
+  envrnmnt.h symbol.h usrsetup.h clips.h argacces.h \
+  expressn.h exprnops.h exprnpsr.h extnfunc.h userdata.h scanner.h \
+  pprint.h evaluatn.h constant.h moduldef.h conscomp.h constrct.h \
+  symblcmp.h modulpsr.h utility.h memalloc.h cstrcpsr.h filecom.h \
+  strngfun.h commline.h router.h prntutil.h filertr.h sysdep.h bmathfun.h \
+  watch.h modulbsc.h bload.h exprnbin.h symblbin.h bsave.h ruledef.h \
+  constrnt.h cstrccom.h agenda.h match.h network.h pattern.h reorder.h \
+  rulebsc.h engine.h lgcldpnd.h retract.h drive.h incrrset.h rulecom.h \
+  crstrtgy.h dffctdef.h dffctbsc.h tmpltdef.h factbld.h factmngr.h \
+  facthsh.h multifld.h tmpltbsc.h tmpltfun.h factcom.h factfun.h \
+  globldef.h globlbsc.h globlcom.h dffnxfun.h genrccom.h genrcfun.h \
+  object.h classcom.h classexm.h classinf.h classini.h defins.h inscom.h \
+  insfun.h insfile.h msgcom.h msgpass.h objrtmch.h
+
+clipsjni_environment.o: clipsjni_environment.c \
   net_sf_clipsrules_jni_Environment.h clipsjni_data.h clipsjni_glue.h setup.h \
   envrnmnt.h symbol.h usrsetup.h clips.h argacces.h \
   expressn.h exprnops.h exprnpsr.h extnfunc.h userdata.h scanner.h \
@@ -802,20 +884,6 @@ lgcldpnd.o: lgcldpnd.c setup.h envrnmnt.h symbol.h usrsetup.h memalloc.h \
   match.h network.h ruledef.h constrnt.h cstrccom.h agenda.h pattern.h \
   reorder.h retract.h reteutil.h argacces.h factmngr.h facthsh.h \
   multifld.h tmpltdef.h factbld.h insfun.h object.h
-  
-main.o: main.c setup.h envrnmnt.h symbol.h usrsetup.h clips.h argacces.h \
-  expressn.h exprnops.h exprnpsr.h extnfunc.h userdata.h scanner.h \
-  pprint.h evaluatn.h constant.h moduldef.h conscomp.h constrct.h \
-  symblcmp.h modulpsr.h utility.h memalloc.h cstrcpsr.h filecom.h \
-  strngfun.h commline.h router.h prntutil.h filertr.h sysdep.h bmathfun.h \
-  watch.h modulbsc.h bload.h exprnbin.h symblbin.h bsave.h ruledef.h \
-  constrnt.h cstrccom.h agenda.h match.h network.h pattern.h reorder.h \
-  rulebsc.h engine.h lgcldpnd.h retract.h drive.h incrrset.h rulecom.h \
-  crstrtgy.h dffctdef.h dffctbsc.h tmpltdef.h factbld.h factmngr.h \
-  facthsh.h multifld.h tmpltbsc.h tmpltfun.h factcom.h factfun.h \
-  globldef.h globlbsc.h globlcom.h dffnxfun.h genrccom.h genrcfun.h \
-  object.h classcom.h classexm.h classinf.h classini.h defins.h inscom.h \
-  insfun.h insfile.h msgcom.h msgpass.h objrtmch.h
 
 memalloc.o: memalloc.c setup.h envrnmnt.h symbol.h usrsetup.h constant.h \
   memalloc.h router.h prntutil.h moduldef.h conscomp.h constrct.h \
