@@ -4,8 +4,11 @@ JNI_BIN = bin\clipsjni
 JNI_SRC = java-src\$(JNI_CP)
 JNI_DST = $(JNI_BIN)\$(JNI_CP)
 JNI_FILES = \
+	$(JNI_SRC)\Activation.java \
+	$(JNI_SRC)\Agenda.java \
 	$(JNI_SRC)\CaptureRouter.java \
 	$(JNI_SRC)\CLIPSException.java \
+	$(JNI_SRC)\Focus.java \
 	$(JNI_SRC)\CLIPSLineError.java \
 	$(JNI_SRC)\CLIPSLoadException.java \
 	$(JNI_SRC)\CLIPSType.java \
@@ -14,12 +17,16 @@ JNI_FILES = \
 	$(JNI_SRC)\CommandPromptTextArea.java \
 	$(JNI_SRC)\Environment.java \
 	$(JNI_SRC)\ExternalAddressValue.java \
+	$(JNI_SRC)\FactInstance.java \
 	$(JNI_SRC)\FactAddressValue.java \
 	$(JNI_SRC)\FloatValue.java \
+	$(JNI_SRC)\Focus.java \
+	$(JNI_SRC)\FocusStack.java \
 	$(JNI_SRC)\InstanceAddressValue.java \
 	$(JNI_SRC)\InstanceNameValue.java \
 	$(JNI_SRC)\IntegerValue.java \
 	$(JNI_SRC)\LexemeValue.java \
+	$(JNI_SRC)\Module.java \
 	$(JNI_SRC)\MultifieldValue.java \
 	$(JNI_SRC)\NamedRouter.java \
 	$(JNI_SRC)\NumberValue.java \
@@ -27,9 +34,11 @@ JNI_FILES = \
 	$(JNI_SRC)\PrimitiveValue.java \
 	$(JNI_SRC)\Router.java \
 	$(JNI_SRC)\RouterTextArea.java \
+	$(JNI_SRC)\SlotValue.java \
 	$(JNI_SRC)\StringValue.java \
 	$(JNI_SRC)\SymbolValue.java \
 	$(JNI_SRC)\UserFunction.java \
+	$(JNI_SRC)\UserFunctionExamples.java \
 	$(JNI_SRC)\VoidValue.java
 
 ANIMAL_CP = net\sf\clipsrules\jni\examples\animal
@@ -77,10 +86,35 @@ IDE_CLASS = net.sf.clipsrules.jni.examples.ide.CLIPSIDE
 IDE_SRC = java-src\$(IDE_CP)
 IDE_BIN = bin\ide
 IDE_DST = $(IDE_BIN)\$(IDE_CP)
+IDE_FILES = \
+	$(IDE_SRC)\CLIPSIDE.java \
+	$(IDE_SRC)\ActivationTableModel.java \
+	$(IDE_SRC)\AgendaBrowserFrame.java \
+	$(IDE_SRC)\AgendaBrowserManager.java \
+	$(IDE_SRC)\BoundsDesktopManager.java \
+	$(IDE_SRC)\ConstructInspectorFrame.java \
+	$(IDE_SRC)\DialogFrame.java \
+	$(IDE_SRC)\EditMenu.java \
+	$(IDE_SRC)\EntityBrowserFrame.java \
+	$(IDE_SRC)\EnvironmentMenu.java \
+	$(IDE_SRC)\FactBrowserManager.java \
+	$(IDE_SRC)\FactInstanceTableModel.java \
+	$(IDE_SRC)\FileMenu.java \
+	$(IDE_SRC)\FocusStackTableModel.java \
+	$(IDE_SRC)\FramePlacer.java \
+	$(IDE_SRC)\HelpMenu.java \
+	$(IDE_SRC)\IDEPreferences.java \
+	$(IDE_SRC)\InstanceBrowserManager.java \
+	$(IDE_SRC)\ModuleTableModel.java \
+	$(IDE_SRC)\SlotValueTableModel.java \
+	$(IDE_SRC)\TextFrame.java \
+	$(IDE_SRC)\TextMenu.java \
+	$(IDE_SRC)\WatchMenu.java
 
 all: clipsjni animal auto sudoku wine router ide
 
 clipsjni :
+	if not exist $(JNI_BIN) mkdir $(JNI_BIN)
 	javac -d $(JNI_BIN) $(JNI_FILES)
 	jar -cfe CLIPSJNI.jar $(JNI_CLASS) $(JNI_BIN)\$(JNI_CP)\Environment.class -C $(JNI_BIN) net
 
@@ -126,10 +160,10 @@ router :
 
 ide :
 	if not exist $(IDE_DST) mkdir $(IDE_DST)
-	javac -d $(IDE_BIN) -cp CLIPSJNI.jar $(IDE_SRC)\CLIPSIDE.java
+	javac -d $(IDE_BIN) -cp CLIPSJNI.jar $(IDE_FILES)
 	jar -cfe CLIPSIDE.jar $(IDE_CLASS) $(IDE_BIN)\$(IDE_CP)\CLIPSIDE.class -C $(IDE_BIN) net 
 	jar -uf CLIPSIDE.jar -C $(JNI_BIN) net
-
+	
 clean :
 	if exist $(JNI_DST) erase /Q $(JNI_DST)\*.class
 	if exist $(JNI_BIN)\net rmdir /Q /S $(JNI_BIN)\net
@@ -157,5 +191,3 @@ clean :
 	if exist $(IDE_DST) erase /Q $(IDE_DST)\*.class
 	if exist $(IDE_BIN)\net rmdir /Q /S $(IDE_BIN)\net
 	if exist CLIPSIDE.jar erase CLIPSIDE.jar
-
-
