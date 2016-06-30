@@ -35,16 +35,20 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_constrnt
+
+#pragma once
+
 #define _H_constrnt
 
 struct constraintRecord;
+typedef struct constraintRecord CONSTRAINT_RECORD;
 
-#ifndef _H_evaluatn
 #include "evaluatn.h"
-#endif
 
 struct constraintRecord
   {
@@ -79,8 +83,6 @@ struct constraintRecord
    int bucket;
    int count;
   };
-
-typedef struct constraintRecord CONSTRAINT_RECORD;
 
 #define SIZE_CONSTRAINT_HASH  167
 

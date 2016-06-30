@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*            CLIPS Version 6.40  06/25/16             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -25,6 +25,8 @@
 /*            Removed conditional code for unsupported       */
 /*            compilers/operating systems (IBM_MCW,          */
 /*            MAC_MCW, and IBM_TBC).                         */
+/*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
 /*************************************************************/
 
@@ -56,7 +58,6 @@
 #include "prntutil.h"
 #include "router.h"
 
-#define _OBJBIN_SOURCE_
 #include "objbin.h"
 
 /* =========================================

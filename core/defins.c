@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  02/04/15            */
+   /*             CLIPS Version 6.30  06/23/16            */
    /*                                                     */
    /*                  DEFINSTANCES MODULE                */
    /*******************************************************/
@@ -47,6 +47,8 @@
 /*            imported modules are search when locating a    */
 /*            named construct.                               */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 /* =========================================
@@ -86,7 +88,6 @@
 #include "symbol.h"
 #include "utility.h"
 
-#define _DEFINS_SOURCE_
 #include "defins.h"
 
 /* =========================================

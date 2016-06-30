@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.40  06/03/16          */
+   /*               CLIPS Version 6.40  06/25/16          */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -34,8 +34,7 @@
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to GetHaltExecution and       */
-/*            SetHaltExecution functions.                    */
+/*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /*************************************************************/
 
@@ -52,16 +51,15 @@
 #include "classcom.h"
 #include "classfun.h"
 #include "envrnmnt.h"
-#include "memalloc.h"
 #include "exprnpsr.h"
 #include "insfun.h"
 #include "insmngr.h"
 #include "insqypsr.h"
+#include "memalloc.h"
 #include "prcdrfun.h"
 #include "router.h"
 #include "utility.h"
 
-#define _INSQUERY_SOURCE_
 #include "insquery.h"
 
 /* =========================================

@@ -78,9 +78,14 @@
 /*                                                           */
 /*      6.40: Removed globle definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_setup
+
+#pragma once
+
 #define _H_setup
 
 /****************************************************************/

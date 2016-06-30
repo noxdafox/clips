@@ -1,9 +1,9 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*              CLIPS Version 6.40  06/03/16           */
+   /*              CLIPS Version 6.40  06/25/16           */
    /*                                                     */
-   /*                INSTANCE COMMAND MODULE              */
+   /*               INSTANCE COMMAND MODULE               */
    /*******************************************************/
 
 /*************************************************************/
@@ -50,6 +50,8 @@
 /*            Added Env prefix to GetHaltExecution and       */
 /*            SetHaltExecution functions.                    */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 /* =========================================
@@ -65,6 +67,7 @@
 #include "classcom.h"
 #include "classfun.h"
 #include "classinf.h"
+#include "commline.h"
 #include "envrnmnt.h"
 #include "exprnpsr.h"
 #include "evaluatn.h"
@@ -82,9 +85,7 @@
 #include "strngrtr.h"
 #include "sysdep.h"
 #include "utility.h"
-#include "commline.h"
 
-#define _INSCOM_SOURCE_
 #include "inscom.h"
 
 /* =========================================

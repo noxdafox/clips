@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*            CLIPS Version 6.40  06/23/16             */
    /*                                                     */
    /*                  ANALYSIS MODULE                    */
    /*******************************************************/
@@ -23,39 +23,34 @@
 /*                                                           */
 /*      6.30: Join network rework and optimizations.         */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _ANALYSIS_SOURCE_
 
 #include "setup.h"
 
 #if (! RUN_TIME) && (! BLOAD_ONLY) && DEFRULE_CONSTRUCT
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 
 #include "constant.h"
-#include "symbol.h"
-#include "memalloc.h"
-#include "exprnpsr.h"
-#include "reorder.h"
-#include "generate.h"
-#include "pattern.h"
-#include "router.h"
-#include "ruledef.h"
 #include "cstrnchk.h"
 #include "cstrnutl.h"
 #include "cstrnops.h"
-#include "rulecstr.h"
+#include "exprnpsr.h"
+#include "generate.h"
+#include "memalloc.h"
 #include "modulutl.h"
-#include "analysis.h"
-
-#include "watch.h"
+#include "pattern.h"
+#include "reorder.h"
+#include "router.h"
+#include "rulecstr.h"
+#include "ruledef.h"
 #include "rulepsr.h"
+#include "symbol.h"
+#include "watch.h"
 
-#if DEFGLOBAL_CONSTRUCT
-#include "globldef.h"
-#endif
+#include "analysis.h"
 
 /***************************************/
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */

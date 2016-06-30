@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*            CLIPS Version 6.40  06/23/16             */
    /*                                                     */
    /*             CONSTRAINT UTILITY MODULE               */
    /*******************************************************/
@@ -22,24 +22,23 @@
 /*                                                           */
 /*      6.30: Support for long long integers.                */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
-#define _CSTRNUTL_SOURCE_
-
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 #include <stdlib.h>
 
 #include "setup.h"
 
+#include "argacces.h"
 #include "constant.h"
 #include "envrnmnt.h"
-#include "memalloc.h"
-#include "router.h"
 #include "extnfunc.h"
-#include "scanner.h"
+#include "memalloc.h"
 #include "multifld.h"
-#include "argacces.h"
+#include "router.h"
+#include "scanner.h"
 
 #include "cstrnutl.h"
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*            CLIPS Version 6.40  06/23/16             */
    /*                                                     */
    /*            CONSTRAINT OPERATIONS MODULE             */
    /*******************************************************/
@@ -20,28 +20,27 @@
 /*                                                           */
 /*      6.24: Added allowed-classes slot facet.              */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _CSTRNOPS_SOURCE_
 
 #include "setup.h"
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 #include <stdlib.h>
 
 #if (! RUN_TIME)
 
 #include "constant.h"
-#include "envrnmnt.h"
-#include "memalloc.h"
-#include "router.h"
-#include "extnfunc.h"
-#include "scanner.h"
-#include "multifld.h"
 #include "constrnt.h"
 #include "cstrnchk.h"
 #include "cstrnutl.h"
+#include "envrnmnt.h"
+#include "extnfunc.h"
+#include "memalloc.h"
+#include "multifld.h"
+#include "router.h"
+#include "scanner.h"
 
 #include "cstrnops.h"
 

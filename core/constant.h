@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.31  07/10/15            */
+   /*            CLIPS Version 6.40  06/28/16             */
    /*                                                     */
    /*                CONSTANTS HEADER FILE                */
    /*******************************************************/
@@ -24,9 +24,13 @@
 /*                                                           */
 /*            Added NESTED_RHS constant.                     */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_constant
+
+#pragma once
 
 #define _H_constant
 
@@ -83,11 +87,11 @@
 #endif
 
 #ifndef CREATION_DATE_STRING
-#define CREATION_DATE_STRING "6/17/16"
+#define CREATION_DATE_STRING "6/28/16"
 #endif
 
 #ifndef BANNER_STRING
-#define BANNER_STRING "         CLIPS (Cypher Alpha 6/17/16)\n"
+#define BANNER_STRING "         CLIPS (Cypher Alpha 6/28/16)\n"
 #endif
 
 /*************************/

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*              CLIPS Version 6.30  08/16/14           */
+   /*            CLIPS Version 6.40  06/23/16             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -22,6 +22,8 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 /* =========================================
@@ -34,10 +36,9 @@
 #if DEFINSTANCES_CONSTRUCT && CONSTRUCT_COMPILER && (! RUN_TIME)
 
 #include "conscomp.h"
-#include "envrnmnt.h"
 #include "defins.h"
+#include "envrnmnt.h"
 
-#define _DFINSCMP_SOURCE_
 #include "dfinscmp.h"
 
 /* =========================================

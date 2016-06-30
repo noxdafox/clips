@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.40  06/03/16          */
+   /*            CLIPS Version 6.40  06/25/16             */
    /*                                                     */
    /*          OBJECT PATTERN MATCHER MODULE              */
    /*******************************************************/
@@ -47,6 +47,8 @@
 /*            Added Env prefix to GetHaltExecution and       */
 /*            SetHaltExecution functions.                    */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /**************************************************************/
 /* =========================================
    *****************************************
@@ -62,23 +64,18 @@
 #include "drive.h"
 #include "engine.h"
 #include "envrnmnt.h"
-#include "lgcldpnd.h"
-#include "multifld.h"
-
 #if (! RUN_TIME) && (! BLOAD_ONLY)
 #include "incrrset.h"
 #endif
-
+#include "lgcldpnd.h"
+#include "multifld.h"
+#include "objrtfnx.h"
+#include "objrtmch.h"
 #include "reteutil.h"
 #include "ruledlt.h"
 #include "reorder.h"
 #include "retract.h"
 #include "router.h"
-
-#include "objrtfnx.h"
-
-#define _OBJRTMCH_SOURCE_
-#include "objrtmch.h"
 
 #include "insmngr.h"
 

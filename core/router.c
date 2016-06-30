@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/03/16            */
+   /*            CLIPS Version 6.40  06/27/16             */
    /*                                                     */
    /*                  I/O ROUTER MODULE                  */
    /*******************************************************/
@@ -42,15 +42,11 @@
 /*            Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to GetHaltExecution and       */
-/*            SetHaltExecution functions.                    */
+/*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /*************************************************************/
 
-#define _ROUTER_SOURCE_
-
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 #include <stdlib.h>
 #include <string.h>
 

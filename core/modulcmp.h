@@ -31,20 +31,19 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_modulcmp
 
+#pragma once
+
 #define _H_modulcmp
 
-#ifndef _STDIO_INCLUDED_
-#define _STDIO_INCLUDED_
 #include <stdio.h>
-#endif
 
-#ifndef _H_moduldef
 #include "moduldef.h"
-#endif
 
    void                           DefmoduleCompilerSetup(void *);
    void                           PrintDefmoduleReference(void *,FILE *,struct defmodule *);

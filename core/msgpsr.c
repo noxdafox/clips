@@ -1,9 +1,9 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/22/14          */
+   /*            CLIPS Version 6.40  06/25/16             */
    /*                                                     */
-   /*              MESSAGE-HANDLER PARSER FUNCTIONS       */
+   /*           MESSAGE-HANDLER PARSER FUNCTIONS          */
    /*******************************************************/
 
 /*************************************************************/
@@ -37,6 +37,8 @@
 /*            Fixed linkage issue when BLOAD_AND_SAVE        */
 /*            compiler flag is set to 0.                     */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 /* =========================================
@@ -56,13 +58,13 @@
 
 #include "classcom.h"
 #include "classfun.h"
-#include "memalloc.h"
 #include "constrct.h"
 #include "cstrcpsr.h"
 #include "cstrnchk.h"
 #include "envrnmnt.h"
 #include "exprnpsr.h"
 #include "insfun.h"
+#include "memalloc.h"
 #include "msgcom.h"
 #include "msgfun.h"
 #include "pprint.h"
@@ -72,7 +74,6 @@
 #include "strngrtr.h"
 #include "sysdep.h"
 
-#define _MSGPSR_SOURCE_
 #include "msgpsr.h"
 
 /* =========================================

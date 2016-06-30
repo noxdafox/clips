@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/03/16            */
+   /*             CLIPS Version 6.40  06/24/16            */
    /*                                                     */
    /*                 FACT MANAGER MODULE                 */
    /*******************************************************/
@@ -64,60 +64,37 @@
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to GetHaltExecution and       */
-/*            SetHaltExecution functions.                    */
+/*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /*************************************************************/
 
-
-#define _FACTMNGR_SOURCE_
-
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 
 #include "setup.h"
 
 #if DEFTEMPLATE_CONSTRUCT && DEFRULE_CONSTRUCT
 
-#include "constant.h"
-#include "symbol.h"
+#include "commline.h"
+#include "default.h"
+#include "engine.h"
+#include "factbin.h"
+#include "factcmp.h"
+#include "factcom.h"
+#include "factfun.h"
+#include "factmch.h"
+#include "factqury.h"
+#include "factrhs.h"
+#include "lgcldpnd.h"
 #include "memalloc.h"
-#include "exprnpsr.h"
-#include "argacces.h"
-#include "scanner.h"
+#include "retract.h"
 #include "router.h"
 #include "strngrtr.h"
-#include "match.h"
-#include "factbld.h"
-#include "factqury.h"
-#include "reteutil.h"
-#include "retract.h"
-#include "factcmp.h"
-#include "filecom.h"
-#include "factfun.h"
-#include "factcom.h"
-#include "constrct.h"
-#include "factrhs.h"
-#include "factmch.h"
-#include "watch.h"
-#include "utility.h"
-#include "factbin.h"
-#include "factmngr.h"
-#include "facthsh.h"
-#include "default.h"
-#include "commline.h"
-#include "envrnmnt.h"
 #include "sysdep.h"
-
-#include "engine.h"
-#include "lgcldpnd.h"
-#include "drive.h"
-#include "ruledlt.h"
-
 #include "tmpltbsc.h"
-#include "tmpltdef.h"
 #include "tmpltutl.h"
-#include "tmpltfun.h"
+#include "watch.h"
+
+#include "factmngr.h"
 
 /***************************************/
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */

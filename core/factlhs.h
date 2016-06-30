@@ -27,18 +27,18 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_factlhs
 
+#pragma once
+
 #define _H_factlhs
 
-#ifndef _H_symbol
-#include "symbol.h"
-#endif
-#ifndef _H_scanner
 #include "scanner.h"
-#endif
+#include "symbol.h"
 
    int                            FactPatternParserFind(SYMBOL_HN *);
    struct lhsParseNode           *FactPatternParse(void *,const char *,struct token *);

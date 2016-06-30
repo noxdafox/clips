@@ -29,21 +29,19 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_drive
 
+#pragma once
+
 #define _H_drive
 
-#ifndef _H_expressn
 #include "expressn.h"
-#endif
-#ifndef _H_match
 #include "match.h"
-#endif
-#ifndef _H_network
 #include "network.h"
-#endif
 
    void                           NetworkAssert(void *,struct partialMatch *,struct joinNode *);
    intBool                        EvaluateJoinExpression(void *,struct expr *,struct joinNode *);

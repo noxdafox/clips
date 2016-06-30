@@ -24,15 +24,17 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_bmathfun
 
+#pragma once
+
 #define _H_bmathfun
 
-#ifndef _H_evaluatn
 #include "evaluatn.h"
-#endif
 
    void                    BasicMathFunctionDefinitions(void *);
    void                    AdditionFunction(void *,DATA_OBJECT_PTR);

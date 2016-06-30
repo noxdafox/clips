@@ -78,9 +78,6 @@
 /*      6.40: Added genchdir function for changing the       */
 /*            current directory.                             */
 /*                                                           */
-/*            Added Env prefix to GetEvaluationError and     */
-/*            SetEvaluationError functions.                  */
-/*                                                           */
 /*            Added Env prefix to GetHaltExecution and       */
 /*            SetHaltExecution functions.                    */
 /*                                                           */
@@ -90,14 +87,13 @@
 /*            Refactored code to reduce header dependencies  */
 /*            in sysdep.c.                                   */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _SYSDEP_SOURCE_
 
 #include "setup.h"
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 #include <string.h>
 
 #include <stdlib.h>

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/25/16            */
    /*                                                     */
    /*         DEFGLOBAL BASIC COMMANDS HEADER FILE        */
    /*******************************************************/
@@ -41,29 +41,26 @@
 /*                                                           */
 /*            Converted API macros to function calls.        */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _GLOBLBSC_SOURCE_
 
 #include "setup.h"
 
 #if DEFGLOBAL_CONSTRUCT
 
 #include "constrct.h"
-#include "extnfunc.h"
-#include "watch.h"
 #include "envrnmnt.h"
-
-#include "globlcom.h"
-#include "globldef.h"
-
+#include "extnfunc.h"
 #if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE
 #include "globlbin.h"
 #endif
-
 #if CONSTRUCT_COMPILER && (! RUN_TIME)
 #include "globlcmp.h"
 #endif
+#include "globlcom.h"
+#include "globldef.h"
+#include "watch.h"
 
 #include "globlbsc.h"
 

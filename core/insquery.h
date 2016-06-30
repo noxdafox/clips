@@ -32,16 +32,19 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_insquery
+
+#pragma once
+
 #define _H_insquery
 
 #if INSTANCE_SET_QUERIES
 
-#ifndef _H_object
 #include "object.h"
-#endif
 
 typedef struct query_class
   {

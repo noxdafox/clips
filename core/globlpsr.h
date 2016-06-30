@@ -32,19 +32,17 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_globlpsr
 
+#pragma once
+
 #define _H_globlpsr
 
-#ifdef _DEFGLOBL_SOURCE_
-struct defglobal;
-#endif
-
-#ifndef _H_expressn
 #include "expressn.h"
-#endif
 
    intBool                 ParseDefglobal(void *,const char *);
    intBool                 ReplaceGlobalVariable(void *,struct expr *);

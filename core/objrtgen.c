@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*            CLIPS Version 6.40  06/25/16             */
    /*                                                     */
    /*    INFERENCE ENGINE OBJECT PARSING ROUTINES MODULE  */
    /*******************************************************/
@@ -28,6 +28,8 @@
 /*      6.30: Added support for hashed memories and other    */
 /*            join network changes.                          */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 /* =========================================
    *****************************************
@@ -38,16 +40,12 @@
 
 #if DEFRULE_CONSTRUCT && OBJECT_SYSTEM && (! RUN_TIME) && (! BLOAD_ONLY)
 
-#ifndef _STDIO_INCLUDED_
 #include <stdio.h>
-#define _STDIO_INCLUDED_
-#endif
 
 #include "classfun.h"
 #include "envrnmnt.h"
 #include "objrtfnx.h"
 
-#define _OBJRTGEN_SOURCE_
 #include "objrtgen.h"
 
 /* =========================================

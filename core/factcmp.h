@@ -24,18 +24,18 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_factcmp
 
+#pragma once
+
 #define _H_factcmp
 
-#ifndef _H_pattern
-#include "pattern.h"
-#endif
-#ifndef _H_network
 #include "network.h"
-#endif
+#include "pattern.h"
 
    void                           FactPatternsCompilerSetup(void *);
    void                           FactPatternNodeReference(void *,void *,FILE *,int,int);

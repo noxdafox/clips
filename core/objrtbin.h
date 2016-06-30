@@ -31,9 +31,14 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_objrtbin
+
+#pragma once
+
 #define _H_objrtbin
 
 #if DEFRULE_CONSTRUCT && OBJECT_SYSTEM

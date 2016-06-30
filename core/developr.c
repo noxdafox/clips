@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.31  06/10/15            */
+   /*             CLIPS Version 6.40  06/23/16            */
    /*                                                     */
    /*                   DEVELOPER MODULE                  */
    /*******************************************************/
@@ -37,12 +37,11 @@
 /*                                                           */
 /*      6.31: Crash fix for show-opn.                        */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
-#define _DEVELOPR_SOURCE_
-
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 
 #include "setup.h"
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  01/25/15            */
+   /*            CLIPS Version 6.40  06/23/16             */
    /*                                                     */
    /*               CONSTRAINT PARSER MODULE              */
    /*******************************************************/
@@ -33,23 +33,22 @@
 /*                                                           */
 /*            Slot cardinality bug fix for minimum < 0.      */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
-#define _CSTRNPSR_SOURCE_
-
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 #include <stdlib.h>
 
 #include "setup.h"
 
 #include "constant.h"
+#include "cstrnchk.h"
+#include "cstrnutl.h"
 #include "envrnmnt.h"
 #include "memalloc.h"
 #include "router.h"
 #include "scanner.h"
-#include "cstrnutl.h"
-#include "cstrnchk.h"
 #include "sysdep.h"
 
 #include "cstrnpsr.h"

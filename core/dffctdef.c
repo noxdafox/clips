@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  01/25/15            */
+   /*            CLIPS Version 6.40  06/23/16             */
    /*                                                     */
    /*              DEFFACTS DEFINITION MODULE             */
    /*******************************************************/
@@ -37,21 +37,20 @@
 /*            imported modules are search when locating a    */
 /*            named construct.                               */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _DFFCTDEF_SOURCE_
 
 #include "setup.h"
 
 #if DEFFACTS_CONSTRUCT
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 
-#include "memalloc.h"
-#include "dffctpsr.h"
 #include "dffctbsc.h"
+#include "dffctpsr.h"
 #include "envrnmnt.h"
+#include "memalloc.h"
 
 #if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE
 #include "bload.h"

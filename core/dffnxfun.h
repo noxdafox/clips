@@ -50,32 +50,25 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_dffnxfun
+
+#pragma once
+
 #define _H_dffnxfun
 
 typedef struct deffunctionStruct DEFFUNCTION;
 typedef struct deffunctionModule DEFFUNCTION_MODULE;
 
-#ifndef _H_conscomp
 #include "conscomp.h"
-#endif
-#ifndef _H_cstrccom
 #include "cstrccom.h"
-#endif
-#ifndef _H_moduldef
-#include "moduldef.h"
-#endif
-#ifndef _H_evaluatn
 #include "evaluatn.h"
-#endif
-#ifndef _H_expressn
 #include "expressn.h"
-#endif
-#ifndef _H_symbol
+#include "moduldef.h"
 #include "symbol.h"
-#endif
 
 struct deffunctionModule
   {

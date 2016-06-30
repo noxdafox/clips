@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  01/25/15          */
+   /*            CLIPS Version 6.40  06/23/16             */
    /*                                                     */
    /*                  CLASS PARSER MODULE                */
    /*******************************************************/
@@ -39,6 +39,8 @@
 /*            imported modules are search when locating a     */
 /*            named construct.                                */
 /*                                                            */
+/*      6.40: Pragma once and other inclusion changes.        */
+/*                                                            */
 /**************************************************************/
 
 /* =========================================
@@ -67,7 +69,6 @@
 #include "router.h"
 #include "scanner.h"
 
-#define _CLASSPSR_SOURCE_
 #include "classpsr.h"
 
 /* =========================================

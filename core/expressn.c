@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*            CLIPS Version 6.40  06/24/16             */
    /*                                                     */
    /*                  EXPRESSION MODULE                  */
    /*******************************************************/
@@ -33,26 +33,25 @@
 /*                                                           */
 /*            Changed expression hashing value.              */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _EXPRESSN_SOURCE_
 
 #include "setup.h"
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 
 #include "bload.h"
-#include "memalloc.h"
 #include "envrnmnt.h"
-#include "router.h"
-#include "extnfunc.h"
-#include "exprnops.h"
-#include "prntutil.h"
 #include "evaluatn.h"
+#include "exprnops.h"
+#include "extnfunc.h"
+#include "memalloc.h"
+#include "prntutil.h"
+#include "router.h"
 
 #include "expressn.h"
 

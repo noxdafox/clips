@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*            CLIPS Version 6.40  06/25/16             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -30,6 +30,8 @@
 /*                                                           */
 /*            Added support for hashed alpha memories.       */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 /* =========================================
@@ -50,7 +52,6 @@
 #include "reteutil.h"
 #include "rulebin.h"
 
-#define _OBJRTBIN_SOURCE_
 #include "objrtbin.h"
 
 /* =========================================

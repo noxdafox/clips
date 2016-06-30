@@ -44,9 +44,14 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_genrcfun
+
+#pragma once
+
 #define _H_genrcfun
 
 typedef struct defgenericModule DEFGENERIC_MODULE;
@@ -54,34 +59,17 @@ typedef struct restriction RESTRICTION;
 typedef struct method DEFMETHOD;
 typedef struct defgeneric DEFGENERIC;
 
-#ifndef _STDIO_INCLUDED_
-#define _STDIO_INCLUDED_
 #include <stdio.h>
-#endif
 
-#ifndef _H_conscomp
 #include "conscomp.h"
-#endif
-#ifndef _H_constrct
 #include "constrct.h"
-#endif
-#ifndef _H_moduldef
-#include "moduldef.h"
-#endif
-#ifndef _H_symbol
-#include "symbol.h"
-#endif
-#ifndef _H_expressn
 #include "expressn.h"
-#endif
-#ifndef _H_evaluatn
 #include "evaluatn.h"
-#endif
+#include "moduldef.h"
+#include "symbol.h"
 
 #if OBJECT_SYSTEM
-#ifndef _H_object
 #include "object.h"
-#endif
 #endif
 
 struct defgenericModule

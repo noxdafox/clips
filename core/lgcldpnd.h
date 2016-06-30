@@ -28,9 +28,13 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_lgcldpnd
+
+#pragma once
 
 #define _H_lgcldpnd
 
@@ -40,12 +44,8 @@ struct dependency
    struct dependency *next;
   };
 
-#ifndef _H_match
 #include "match.h"
-#endif
-#ifndef _H_pattern
 #include "pattern.h"
-#endif
 
    intBool                        AddLogicalDependencies(void *,struct patternEntity *,int);
    void                           RemoveEntityDependencies(void *,struct patternEntity *);

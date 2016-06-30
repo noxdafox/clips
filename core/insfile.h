@@ -36,14 +36,17 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_insfile
+
+#pragma once
+
 #define _H_insfile
 
-#ifndef _H_expressn
 #include "expressn.h"
-#endif
 
 #define INSTANCE_FILE_DATA 30
 

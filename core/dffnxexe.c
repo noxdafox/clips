@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/23/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -25,6 +25,8 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 /* =========================================
@@ -36,11 +38,7 @@
 
 #if DEFFUNCTION_CONSTRUCT
 
-#ifndef _STDIO_INCLUDED_
-#define _STDIO_INCLUDED_
 #include <stdio.h>
-#endif
-
 #include <string.h>
 
 #include "constrct.h"
@@ -52,7 +50,6 @@
 #include "utility.h"
 #include "watch.h"
 
-#define _DFFNXEXE_SOURCE_
 #include "dffnxexe.h"
 
 /* =========================================

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/03/16            */
+   /*            CLIPS Version 6.40  06/03/16             */
    /*                                                     */
    /*            EXTENDED MATH FUNCTIONS MODULE           */
    /*******************************************************/

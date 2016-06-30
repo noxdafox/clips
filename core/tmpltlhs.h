@@ -25,18 +25,18 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_tmpltlhs
 
+#pragma once
+
 #define _H_tmpltlhs
 
-#ifndef _H_symbol
 #include "symbol.h"
-#endif
-#ifndef _H_tmpltdef
 #include "tmpltdef.h"
-#endif
 
    struct lhsParseNode           *DeftemplateLHSParse(void *,const char *,struct deftemplate *);
 

@@ -2,7 +2,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*            CLIPS Version 6.30  06/24/16             */
    /*                                                     */
    /*     FACT PATTERN NETWORK CONSTRUCTS-TO-C MODULE     */
    /*******************************************************/
@@ -24,9 +24,9 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _FACTCMP_SOURCE_
 
 #include "setup.h"
 
@@ -35,7 +35,6 @@
 #define FactPrefix() ArbitraryPrefix(FactData(theEnv)->FactCodeItem,0)
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 
 #include "factbld.h"
 #include "conscomp.h"

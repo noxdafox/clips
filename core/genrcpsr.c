@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  01/25/15          */
+   /*               CLIPS Version 6.40  06/25/16          */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -46,6 +46,8 @@
 /*            imported modules are search when locating a    */
 /*            named construct.                               */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 /* =========================================
@@ -70,12 +72,12 @@
 #include "classcom.h"
 #endif
 
-#include "memalloc.h"
 #include "cstrcpsr.h"
 #include "envrnmnt.h"
 #include "exprnpsr.h"
 #include "genrccom.h"
 #include "immthpsr.h"
+#include "memalloc.h"
 #include "modulutl.h"
 #include "prcdrpsr.h"
 #include "prccode.h"
@@ -83,7 +85,6 @@
 #include "scanner.h"
 #include "sysdep.h"
 
-#define _GENRCPSR_SOURCE_
 #include "genrcpsr.h"
 
 /* =========================================

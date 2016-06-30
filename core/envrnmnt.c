@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/17/16            */
+   /*            CLIPS Version 6.40  06/23/16             */
    /*                                                     */
    /*                ENVIRONMENT MODULE                   */
    /*******************************************************/
@@ -47,12 +47,9 @@
 /*      6.40: Refactored code to reduce header dependencies  */
 /*            in sysdep.c.                                   */
 /*                                                           */
-/*            Added Env prefix to GetHaltExecution and       */
-/*            SetHaltExecution functions.                    */
+/*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /*************************************************************/
-
-#define _ENVRNMNT_SOURCE_
 
 #include <stdlib.h>
 #include <stdio.h>

@@ -33,21 +33,21 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_bsave
+
+#pragma once
+
 #define _H_bsave
 
 struct BinaryItem;
 
-#ifndef _STDIO_INCLUDED_
-#define _STDIO_INCLUDED_
 #include <stdio.h>
-#endif
 
-#ifndef _H_expressn
 #include "expressn.h"
-#endif
 
 struct BinaryItem
   {

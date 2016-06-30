@@ -38,30 +38,25 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_defins
+
+#pragma once
+
 #define _H_defins
 
 #if DEFINSTANCES_CONSTRUCT
 
 struct definstances;
 
-#ifndef _H_conscomp
 #include "conscomp.h"
-#endif
-#ifndef _H_constrct
 #include "constrct.h"
-#endif
-#ifndef _H_cstrccom
 #include "cstrccom.h"
-#endif
-#ifndef _H_moduldef
 #include "moduldef.h"
-#endif
-#ifndef _H_object
 #include "object.h"
-#endif
 
 typedef struct definstancesModule
   {

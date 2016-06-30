@@ -34,15 +34,18 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_rulecmp
+
+#pragma once
+
 #define _H_rulecmp
 
 #include "conscomp.h"
-#ifndef _H_extnfunc
 #include "extnfunc.h"
-#endif
 
 #define JoinPrefix() ArbitraryPrefix(DefruleData(theEnv)->DefruleCodeItem,2)
 #define LinkPrefix() ArbitraryPrefix(DefruleData(theEnv)->DefruleCodeItem,3)

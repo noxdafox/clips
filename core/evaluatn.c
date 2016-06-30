@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/03/16            */
+   /*             CLIPS Version 6.40  06/23/16            */
    /*                                                     */
    /*                  EVALUATION MODULE                  */
    /*******************************************************/
@@ -48,12 +48,11 @@
 /*            Added Env prefix to GetHaltExecution and       */
 /*            SetHaltExecution functions.                    */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
-#define _EVALUATN_SOURCE_
-
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
@@ -66,10 +65,8 @@
 #include "envrnmnt.h"
 #include "memalloc.h"
 #include "router.h"
-#include "extnfunc.h"
 #include "prcdrfun.h"
 #include "multifld.h"
-#include "factmngr.h"
 #include "prntutil.h"
 #include "exprnpsr.h"
 #include "utility.h"

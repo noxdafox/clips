@@ -1,9 +1,9 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  02/05/15          */
+   /*             CLIPS Version 6.40  06/25/16            */
    /*                                                     */
-   /*          INSTANCE-SET QUERIES PARSER MODULE         */
+   /*         INSTANCE-SET QUERIES PARSER MODULE          */
    /*******************************************************/
 
 /*************************************************************/
@@ -36,6 +36,8 @@
 /*            constructs that are contained externally to    */
 /*            to constructs, DanglingConstructs.             */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 /* =========================================
@@ -52,7 +54,6 @@
 #include "classcom.h"
 #include "envrnmnt.h"
 #include "exprnpsr.h"
-#include "extnfunc.h"
 #include "insquery.h"
 #include "prcdrpsr.h"
 #include "prntutil.h"
@@ -60,7 +61,6 @@
 #include "scanner.h"
 #include "strngrtr.h"
 
-#define _INSQYPSR_SOURCE_
 #include "insqypsr.h"
 
 /* =========================================

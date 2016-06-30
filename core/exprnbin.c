@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*            CLIPS Version 6.40  06/24/16             */
    /*                                                     */
    /*             EXPRESSION BSAVE/BLOAD MODULE           */
    /*******************************************************/
@@ -20,25 +20,24 @@
 /*                                                           */
 /*      6.30: Changed integer type/precision.                */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _EXPRNBIN_SOURCE_
 
 #include "setup.h"
 
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE)
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 
-#include "memalloc.h"
-#include "dffctdef.h"
-#include "moduldef.h"
-#include "constrct.h"
-#include "extnfunc.h"
 #include "bload.h"
 #include "bsave.h"
+#include "constrct.h"
+#include "dffctdef.h"
 #include "envrnmnt.h"
+#include "extnfunc.h"
+#include "memalloc.h"
+#include "moduldef.h"
 
 #if DEFRULE_CONSTRUCT
 #include "network.h"

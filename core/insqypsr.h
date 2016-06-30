@@ -33,16 +33,19 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_insqypsr
+
+#pragma once
+
 #define _H_insqypsr
 
 #if INSTANCE_SET_QUERIES && (! RUN_TIME)
 
-#ifndef _H_expressn
 #include "expressn.h"
-#endif
 
    EXPRESSION                    *ParseQueryNoAction(void *,EXPRESSION *,const char *);
    EXPRESSION                    *ParseQueryAction(void *,EXPRESSION *,const char *);

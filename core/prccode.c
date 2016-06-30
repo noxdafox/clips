@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.40  06/03/16          */
+   /*            CLIPS Version 6.40  06/27/16             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -42,11 +42,10 @@
 /*            Added const qualifiers to remove C++            */
 /*            deprecation warnings.                           */
 /*                                                            */
-/*      6.40: Added Env prefix to GetEvaluationError and     */
-/*            SetEvaluationError functions.                  */
-/*                                                           */
-/*            Added Env prefix to GetHaltExecution and       */
-/*            SetHaltExecution functions.                    */
+/*      6.40: Added Env prefix to GetEvaluationError and      */
+/*            SetEvaluationError functions.                   */
+/*                                                            */
+/*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /**************************************************************/
 
@@ -57,10 +56,7 @@
    ***************************************** */
 #include "setup.h"
 
-#ifndef _STDIO_INCLUDED_
 #include <stdio.h>
-#define _STDIO_INCLUDED_
-#endif
 
 #include <stdlib.h>
 #include <ctype.h>
@@ -80,7 +76,6 @@
 #include "router.h"
 #include "utility.h"
 
-#define _PRCCODE_SOURCE_
 #include "prccode.h"
 
 /* =========================================

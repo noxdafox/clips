@@ -29,22 +29,20 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_cstrncmp
+
+#pragma once
+
 #define _H_cstrncmp
 
-#ifndef _H_evaluatn
 #include "evaluatn.h"
-#endif
-#ifndef _H_constrnt
 #include "constrnt.h"
-#endif
 
-#ifndef _STDIO_INCLUDED_
-#define _STDIO_INCLUDED_
 #include <stdio.h>
-#endif
 
    void                           PrintConstraintReference(void *,FILE *,CONSTRAINT_RECORD *,int,int);
    void                           ConstraintRecordToCode(FILE *,CONSTRAINT_RECORD *);

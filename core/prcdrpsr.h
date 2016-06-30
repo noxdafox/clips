@@ -36,15 +36,17 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_prcdrpsr
 
+#pragma once
+
 #define _H_prcdrpsr
 
-#ifndef _H_constrnt
 #include "constrnt.h"
-#endif
 
 struct BindInfo
   {

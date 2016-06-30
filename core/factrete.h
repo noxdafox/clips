@@ -30,15 +30,17 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_factrete
 
+#pragma once
+
 #define _H_factrete
 
-#ifndef _H_evaluatn
 #include "evaluatn.h"
-#endif
 
    intBool                        FactPNGetVar1(void *,void *,DATA_OBJECT_PTR);
    intBool                        FactPNGetVar2(void *,void *,DATA_OBJECT_PTR);

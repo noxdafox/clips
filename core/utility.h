@@ -48,14 +48,17 @@
 /*                                                           */
 /*            Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_utility
+
+#pragma once
+
 #define _H_utility
 
-#ifndef _H_evaluatn
 #include "evaluatn.h"
-#endif
 
 struct callFunctionItem
   {

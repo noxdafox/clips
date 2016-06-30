@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/17/16            */
+   /*             CLIPS Version 6.40  06/25/16            */
    /*                                                     */
    /*                  MULTIFIELD MODULE                  */
    /*******************************************************/
@@ -43,26 +43,25 @@
 /*      6.40: Refactored code to reduce header dependencies  */
 /*            in sysdep.c.                                   */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
-#define _MULTIFLD_SOURCE_
-
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 
 #include "setup.h"
 
 #include "constant.h"
-#include "memalloc.h"
 #include "envrnmnt.h"
 #include "evaluatn.h"
+#include "memalloc.h"
+#if OBJECT_SYSTEM
+#include "object.h"
+#endif
 #include "scanner.h"
 #include "router.h"
 #include "strngrtr.h"
 #include "utility.h"
-#if OBJECT_SYSTEM
-#include "object.h"
-#endif
 
 #include "multifld.h"
 

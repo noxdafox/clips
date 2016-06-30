@@ -32,21 +32,19 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_argacces
 
+#pragma once
+
 #define _H_argacces
 
-#ifndef _H_expressn
 #include "expressn.h"
-#endif
-#ifndef _H_evaluatn
 #include "evaluatn.h"
-#endif
-#ifndef _H_moduldef
 #include "moduldef.h"
-#endif
 
    int                            EnvRtnArgCount(void *);
    int                            EnvArgCountCheck(void *,const char *,int,int);

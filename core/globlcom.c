@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/25/16            */
    /*                                                     */
    /*              DEFGLOBAL COMMANDS MODULE              */
    /*******************************************************/
@@ -30,21 +30,20 @@
 /*                                                           */
 /*            Converted API macros to function calls.        */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _GLOBLCOM_SOURCE_
 
 #include "setup.h"
 
 #if DEFGLOBAL_CONSTRUCT
 
-#include "extnfunc.h"
 #include "argacces.h"
+#include "envrnmnt.h"
+#include "extnfunc.h"
+#include "globldef.h"
 #include "prntutil.h"
 #include "router.h"
-#include "envrnmnt.h"
-
-#include "globldef.h"
 
 #include "globlcom.h"
 

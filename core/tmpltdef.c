@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  01/25/15            */
+   /*            CLIPS Version 6.40  06/28/16             */
    /*                                                     */
    /*                 DEFTEMPLATE MODULE                  */
    /*******************************************************/
@@ -46,30 +46,29 @@
 /*            imported modules are search when locating a    */
 /*            named construct.                               */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _TMPLTDEF_SOURCE_
 
 #include "setup.h"
 
 #if DEFTEMPLATE_CONSTRUCT
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 
-#include "memalloc.h"
-#include "exprnops.h"
 #include "cstrccom.h"
-#include "network.h"
-#include "tmpltpsr.h"
-#include "tmpltbsc.h"
-#include "tmpltutl.h"
-#include "tmpltfun.h"
-#include "router.h"
-#include "modulpsr.h"
-#include "modulutl.h"
 #include "cstrnchk.h"
 #include "envrnmnt.h"
+#include "exprnops.h"
+#include "memalloc.h"
+#include "modulpsr.h"
+#include "modulutl.h"
+#include "network.h"
+#include "router.h"
+#include "tmpltbsc.h"
+#include "tmpltfun.h"
+#include "tmpltpsr.h"
+#include "tmpltutl.h"
 
 #if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE
 #include "bload.h"

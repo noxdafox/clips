@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/03/16            */
+   /*            CLIPS Version 6.40  06/26/16             */
    /*                                                     */
    /*              INCREMENTAL RESET MODULE               */
    /*******************************************************/
@@ -39,17 +39,13 @@
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to GetHaltExecution and       */
-/*            SetHaltExecution functions.                    */
+/*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /*************************************************************/
-
-#define _INCRRSET_SOURCE_
 
 #include "setup.h"
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 
 #if DEFRULE_CONSTRUCT
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*            CLIPS Version 6.40  06/25/16             */
    /*                                                     */
    /*              DEFMODULE PARSER MODULE                */
    /*******************************************************/
@@ -27,9 +27,9 @@
 /*            Fixed linkage issue when DEFMODULE_CONSTRUCT   */
 /*            compiler flag is set to 0.                     */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _MODULPSR_SOURCE_
 
 #include "setup.h"
 
@@ -37,18 +37,17 @@
 
 #include <stdio.h>
 #include <string.h>
-#define _STDIO_INCLUDED_
 
-#include "memalloc.h"
-#include "constant.h"
-#include "router.h"
-#include "extnfunc.h"
 #include "argacces.h"
-#include "cstrcpsr.h"
+#include "constant.h"
 #include "constrct.h"
-#include "modulutl.h"
-#include "utility.h"
+#include "cstrcpsr.h"
 #include "envrnmnt.h"
+#include "extnfunc.h"
+#include "memalloc.h"
+#include "modulutl.h"
+#include "router.h"
+#include "utility.h"
 
 #if BLOAD || BLOAD_AND_BSAVE
 #include "bload.h"

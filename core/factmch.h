@@ -35,21 +35,19 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_factmch
 
+#pragma once
+
 #define _H_factmch
 
-#ifndef _H_evaluatn
 #include "evaluatn.h"
-#endif
-#ifndef _H_factmngr
-#include "factmngr.h"
-#endif
-#ifndef _H_factbld
 #include "factbld.h"
-#endif
+#include "factmngr.h"
 
    void                           FactPatternMatch(void *,struct fact *,
                                                struct factPatternNode *,int,

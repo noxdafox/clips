@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*            CLIPS Version 6.40  06/27/16             */
    /*                                                     */
    /*                 SYMBOL BSAVE MODULE                 */
    /*******************************************************/
@@ -22,9 +22,9 @@
 /*                                                           */
 /*            Support for long long integers.                */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _BSAVE_SOURCE_
 
 #include "setup.h"
 

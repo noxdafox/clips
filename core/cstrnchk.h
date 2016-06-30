@@ -36,17 +36,18 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_cstrnchk
+
+#pragma once
+
 #define _H_cstrnchk
 
-#ifndef _H_constrnt
 #include "constrnt.h"
-#endif
-#ifndef _H_evaluatn
 #include "evaluatn.h"
-#endif
 
 #define NO_VIOLATION                    0
 #define TYPE_VIOLATION                  1

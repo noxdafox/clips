@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*            CLIPS Version 6.30  06/27/16             */
    /*                                                     */
    /*           SYMBOL CONSTRUCT COMPILER MODULE          */
    /*******************************************************/
@@ -32,29 +32,28 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _SYMBLCMP_SOURCE_
 
 #include "setup.h"
 
 #if CONSTRUCT_COMPILER && (! RUN_TIME)
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 #include <string.h>
 
-#include "envrnmnt.h"
-#include "symbol.h"
-#include "memalloc.h"
-#include "constant.h"
-#include "exprnpsr.h"
-#include "cstrccom.h"
-#include "constrct.h"
 #include "argacces.h"
-#include "cstrncmp.h"
-#include "router.h"
+#include "constant.h"
 #include "conscomp.h"
+#include "constrct.h"
+#include "cstrncmp.h"
+#include "cstrccom.h"
+#include "envrnmnt.h"
+#include "exprnpsr.h"
+#include "memalloc.h"
+#include "router.h"
+#include "symbol.h"
 #include "sysdep.h"
 #include "utility.h"
 

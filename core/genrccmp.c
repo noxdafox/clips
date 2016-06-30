@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/25/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -31,6 +31,8 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 /* =========================================
@@ -42,19 +44,16 @@
 
 #if DEFGENERIC_CONSTRUCT && CONSTRUCT_COMPILER && (! RUN_TIME)
 
+#include "conscomp.h"
+#include "envrnmnt.h"
+#include "genrccom.h"
 #if DEFRULE_CONSTRUCT
 #include "network.h"
 #endif
-
-#include "genrccom.h"
-#include "conscomp.h"
-#include "envrnmnt.h"
-
 #if OBJECT_SYSTEM
 #include "objcmp.h"
 #endif
 
-#define _GENRCCMP_SOURCE_
 #include "genrccmp.h"
 
 /* =========================================

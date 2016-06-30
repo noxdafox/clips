@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  02/05/15            */
+   /*            CLIPS Version 6.40  06/23/16             */
    /*                                                     */
    /*                 DEFFUNCTION MODULE                  */
    /*******************************************************/
@@ -52,6 +52,8 @@
 /*            constructs that are contained externally to    */
 /*            to constructs, DanglingConstructs.             */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 /* =========================================
@@ -92,11 +94,10 @@
 #endif
 
 #include "argacces.h"
-#include "memalloc.h"
 #include "cstrccom.h"
+#include "memalloc.h"
 #include "router.h"
 
-#define _DFFNXFUN_SOURCE_
 #include "dffnxfun.h"
 
 /* =========================================

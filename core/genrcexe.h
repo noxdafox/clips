@@ -29,20 +29,21 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_genrcexe
+
+#pragma once
+
 #define _H_genrcexe
 
 #if DEFGENERIC_CONSTRUCT
 
-#include "genrcfun.h"
-#ifndef _H_expressn
-#include "expressn.h"
-#endif
-#ifndef _H_evaluatn
 #include "evaluatn.h"
-#endif
+#include "expressn.h"
+#include "genrcfun.h"
 
    void                           GenericDispatch(void *,DEFGENERIC *,DEFMETHOD *,DEFMETHOD *,EXPRESSION *,DATA_OBJECT *);
    void                           UnboundMethodErr(void *);

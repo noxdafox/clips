@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*            CLIPS Version 6.40  06/24/16             */
    /*                                                     */
    /*                FACT BSAVE/BLOAD MODULE              */
    /*******************************************************/
@@ -22,25 +22,24 @@
 /*                                                           */
 /*            Changed integer type/precision.                */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _FACTBIN_SOURCE_
 
 #include "setup.h"
 
 #if DEFTEMPLATE_CONSTRUCT && (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE) && (! RUN_TIME)
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 
-#include "memalloc.h"
-#include "tmpltdef.h"
 #include "bload.h"
 #include "bsave.h"
+#include "envrnmnt.h"
+#include "memalloc.h"
+#include "moduldef.h"
 #include "reteutil.h"
 #include "rulebin.h"
-#include "moduldef.h"
-#include "envrnmnt.h"
+#include "tmpltdef.h"
 
 #include "factbin.h"
 

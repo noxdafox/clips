@@ -43,19 +43,19 @@
 /*                                                           */
 /*            Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_router
+
+#pragma once
+
 #define _H_router
 
-#ifndef _H_prntutil
 #include "prntutil.h"
-#endif
 
-#ifndef _STDIO_INCLUDED_
-#define _STDIO_INCLUDED_
 #include <stdio.h>
-#endif
 
 #define WWARNING "wwarning"
 #define WERROR "werror"

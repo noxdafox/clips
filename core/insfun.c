@@ -1,9 +1,9 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*              CLIPS Version 6.40  06/03/16           */
+   /*              CLIPS Version 6.40  06/25/16           */
    /*                                                     */
-   /*                INSTANCE FUNCTIONS MODULE            */
+   /*               INSTANCE FUNCTIONS MODULE             */
    /*******************************************************/
 
 /*************************************************************/
@@ -62,8 +62,7 @@
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to GetHaltExecution and       */
-/*            SetHaltExecution functions.                    */
+/*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /*************************************************************/
 
@@ -83,6 +82,10 @@
 #include "classcom.h"
 #include "classfun.h"
 #include "cstrnchk.h"
+#if DEFRULE_CONSTRUCT
+#include "drive.h"
+#include "objrtmch.h"
+#endif
 #include "engine.h"
 #include "envrnmnt.h"
 #include "inscom.h"
@@ -95,12 +98,6 @@
 #include "router.h"
 #include "utility.h"
 
-#if DEFRULE_CONSTRUCT
-#include "drive.h"
-#include "objrtmch.h"
-#endif
-
-#define _INSFUN_SOURCE_
 #include "insfun.h"
 
 /* =========================================

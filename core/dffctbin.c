@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*            CLIPS Version 6.40  06/23/16             */
    /*                                                     */
    /*             DEFFACTS BSAVE/BLOAD MODULE             */
    /*******************************************************/
@@ -20,23 +20,22 @@
 /*                                                           */
 /*      6.30: Changed integer type/precision.                */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _DFFCTBIN_SOURCE_
 
 #include "setup.h"
 
 #if DEFFACTS_CONSTRUCT && (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE) && (! RUN_TIME)
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 
-#include "memalloc.h"
-#include "dffctdef.h"
-#include "moduldef.h"
 #include "bload.h"
 #include "bsave.h"
+#include "dffctdef.h"
 #include "envrnmnt.h"
+#include "memalloc.h"
+#include "moduldef.h"
 
 #include "dffctbin.h"
 

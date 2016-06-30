@@ -39,9 +39,14 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_moduldef
+
+#pragma once
+
 #define _H_moduldef
 
 struct defmodule;
@@ -49,29 +54,10 @@ struct portItem;
 struct defmoduleItemHeader;
 struct moduleItem;
 
-#ifndef _STDIO_INCLUDED_
 #include <stdio.h>
-#define _STDIO_INCLUDED_
-#endif
 
-#ifndef _H_conscomp
-#include "conscomp.h"
-#endif
-#ifndef _H_modulpsr
-#include "modulpsr.h"
-#endif
-#ifndef _H_utility
-#include "utility.h"
-#endif
-#ifndef _H_symbol
 #include "symbol.h"
-#endif
-#ifndef _H_evaluatn
-#include "evaluatn.h"
-#endif
-#ifndef _H_constrct
-#include "constrct.h"
-#endif
+#include "userdata.h"
 
 /**********************************************************************/
 /* defmodule                                                          */
@@ -92,6 +78,7 @@ struct moduleItem;
 /*                                                                    */
 /* next: A pointer to the next defmodule data structure.              */
 /**********************************************************************/
+
 struct defmodule
   {
    struct symbolHashNode *name;
@@ -173,6 +160,12 @@ typedef struct moduleStackItem
   } MODULE_STACK_ITEM;
 
 #define DEFMODULE_DATA 4
+
+#include "conscomp.h" /* TBD Needed Headers? */
+#include "constrct.h"
+#include "evaluatn.h"
+#include "modulpsr.h"
+#include "utility.h"
 
 struct defmoduleData
   {   

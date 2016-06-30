@@ -20,19 +20,20 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_cstrnops
+
+#pragma once
+
 #define _H_cstrnops
 
 #if (! RUN_TIME)
 
-#ifndef _H_evaluatn
 #include "evaluatn.h"
-#endif
-#ifndef _H_constrnt
 #include "constrnt.h"
-#endif
 
    struct constraintRecord       *IntersectConstraints(void *,struct constraintRecord *,struct constraintRecord *);
 #if (! BLOAD_ONLY)

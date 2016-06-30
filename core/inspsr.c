@@ -1,9 +1,9 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*              CLIPS Version 6.40  06/03/16           */
+   /*              CLIPS Version 6.40  06/25/16           */
    /*                                                     */
-   /*                INSTANCE PARSER MODULE               */
+   /*               INSTANCE PARSER MODULE                */
    /*******************************************************/
 
 /*************************************************************/
@@ -40,8 +40,7 @@
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to GetHaltExecution and       */
-/*            SetHaltExecution functions.                    */
+/*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /*************************************************************/
 
@@ -54,11 +53,7 @@
 
 #if OBJECT_SYSTEM
 
-#ifndef _STDIO_INCLUDED_
-#define _STDIO_INCLUDED_
 #include <stdio.h>
-#endif
-
 #include <string.h>
 
 #include "classcom.h"
@@ -68,12 +63,10 @@
 #include "envrnmnt.h"
 #include "evaluatn.h"
 #include "exprnpsr.h"
-#include "extnfunc.h"
 #include "moduldef.h"
 #include "prntutil.h"
 #include "router.h"
 
-#define _INSPSR_SOURCE_
 #include "inspsr.h"
 
 /* =========================================

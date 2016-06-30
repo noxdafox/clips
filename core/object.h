@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*               CLIPS Version 6.40  06/21/16          */
    /*                                                     */
    /*                OBJECT SYSTEM DEFINITIONS            */
    /*******************************************************/
@@ -21,9 +21,14 @@
 /*                                                           */
 /*            Changed garbage collection algorithm.          */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_object
+
+#pragma once
+
 #define _H_object
 
 typedef struct defclassModule DEFCLASS_MODULE;

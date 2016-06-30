@@ -43,13 +43,17 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_memalloc
 
-#include <string.h>
+#pragma once
 
 #define _H_memalloc
+
+#include <string.h>
 
 struct chunkInfo;
 struct blockInfo;

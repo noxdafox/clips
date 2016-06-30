@@ -18,9 +18,14 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_cstrcbin
+
+#pragma once
+
 #define _H_cstrcbin
 
 #if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE
@@ -32,9 +37,7 @@ struct bsaveConstructHeader
    long next;
   };
 
-#ifndef _H_constrct
 #include "constrct.h"
-#endif
 
 #if BLOAD_AND_BSAVE
 void MarkConstructHeaderNeededItems(struct constructHeader *,long);
@@ -46,9 +49,6 @@ void UpdateConstructHeader(void *,
                                   struct bsaveConstructHeader *,
                                   struct constructHeader *,int,void *,int,void *);
 void UnmarkConstructHeader(void *,struct constructHeader *);
-
-#ifndef _CSTRCBIN_SOURCE_
-#endif
 
 #endif
 

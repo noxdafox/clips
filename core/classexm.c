@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/03/16            */
+   /*            CLIPS Version 6.40  06/23/16             */
    /*                                                     */
    /*                 CLASS EXAMINATION MODULE            */
    /*******************************************************/
@@ -46,14 +46,13 @@
 /*            Added const qualifiers to remove C++            */
 /*            deprecation warnings.                           */
 /*                                                            */
-/*            Converted API macros to function calls.        */
-/*                                                           */
-/*      6.40: Added Env prefix to GetEvaluationError and     */
-/*            SetEvaluationError functions.                  */
-/*                                                           */
-/*            Added Env prefix to GetHaltExecution and       */
-/*            SetHaltExecution functions.                    */
-/*                                                           */
+/*            Converted API macros to function calls.         */
+/*                                                            */
+/*      6.40: Added Env prefix to GetEvaluationError and      */
+/*            SetEvaluationError functions.                   */
+/*                                                            */
+/*            Pragma once and other inclusion changes.        */
+/*                                                            */
 /**************************************************************/
 
 /* =========================================
@@ -80,7 +79,6 @@
 #include "strngrtr.h"
 #include "sysdep.h"
 
-#define _CLASSEXM_SOURCE_
 #include "classexm.h"
 
 /* =========================================

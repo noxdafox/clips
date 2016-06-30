@@ -46,43 +46,31 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_tmpltdef
+
+#pragma once
+
 #define _H_tmpltdef
 
 struct deftemplate;
 struct templateSlot;
 struct deftemplateModule;
 
-#ifndef _H_conscomp
-#include "conscomp.h"
-#endif
-#ifndef _H_symbol
-#include "symbol.h"
-#endif
-#ifndef _H_expressn
-#include "expressn.h"
-#endif
-#ifndef _H_evaluatn
-#include "evaluatn.h"
-#endif
-#ifndef _H_constrct
 #include "constrct.h"
-#endif
-#ifndef _H_moduldef
-#include "moduldef.h"
-#endif
-#ifndef _H_constrnt
-#include "constrnt.h"
-#endif
 #include "factbld.h"
-#ifndef _H_factmngr
 #include "factmngr.h"
-#endif
-#ifndef _H_cstrccom
+#include "expressn.h"
+
+#include "conscomp.h"
+#include "constrnt.h"
 #include "cstrccom.h"
-#endif
+#include "evaluatn.h"
+#include "moduldef.h"
+#include "symbol.h"
 
 struct deftemplate
   {

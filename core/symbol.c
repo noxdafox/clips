@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/17/16            */
+   /*            CLIPS Version 6.40  06/24/16             */
    /*                                                     */
    /*                    SYMBOL MODULE                    */
    /*******************************************************/
@@ -59,25 +59,24 @@
 /*      6.40: Refactored code to reduce header dependencies  */
 /*            in sysdep.c.                                   */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
-#define _SYMBOL_SOURCE_
-                                                                                
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 #include <stdlib.h>
 #include <string.h>
 
 #include "setup.h"
 
+#include "argacces.h"
 #include "constant.h"
 #include "envrnmnt.h"
 #include "memalloc.h"
 #include "multifld.h"
 #include "router.h"
-#include "utility.h"
-#include "argacces.h"
 #include "sysdep.h"
+#include "utility.h"
 
 #include "symbol.h"
 

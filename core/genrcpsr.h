@@ -44,9 +44,14 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_genrcpsr
+
+#pragma once
+
 #define _H_genrcpsr
 
 #if DEFGENERIC_CONSTRUCT && (! BLOAD_ONLY) && (! RUN_TIME)

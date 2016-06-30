@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/24/16            */
    /*                                                     */
    /*          FACT RETE ACCESS FUNCTIONS MODULE          */
    /*******************************************************/
@@ -28,27 +28,26 @@
 /*                                                           */
 /*            Support for hashing optimizations.             */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
-#define _FACTRETE_SOURCE_
-
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 
 #include "setup.h"
 
 #if DEFTEMPLATE_CONSTRUCT && DEFRULE_CONSTRUCT
 
-#include "memalloc.h"
-#include "extnfunc.h"
-#include "router.h"
-#include "incrrset.h"
-#include "reteutil.h"
 #include "drive.h"
 #include "engine.h"
+#include "envrnmnt.h"
+#include "extnfunc.h"
 #include "factgen.h"
 #include "factmch.h"
-#include "envrnmnt.h"
+#include "incrrset.h"
+#include "memalloc.h"
+#include "reteutil.h"
+#include "router.h"
 
 #include "factrete.h"
 

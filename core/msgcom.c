@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.40  06/03/16          */
+   /*            CLIPS Version 6.40  06/25/16             */
    /*                                                     */
    /*                OBJECT MESSAGE COMMANDS              */
    /*******************************************************/
@@ -43,8 +43,7 @@
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to GetHaltExecution and       */
-/*            SetHaltExecution functions.                    */
+/*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /*************************************************************/
 
@@ -60,10 +59,20 @@
 #include <string.h>
 
 #include "argacces.h"
+#if BLOAD || BLOAD_AND_BSAVE
+#include "bload.h"
+#endif
 #include "classcom.h"
 #include "classfun.h"
 #include "classinf.h"
+#if (! BLOAD_ONLY) && (! RUN_TIME)
+#include "constrct.h"
+#include "msgpsr.h"
+#endif
 #include "envrnmnt.h"
+#if ! RUN_TIME
+#include "extnfunc.h"
+#endif
 #include "insfun.h"
 #include "insmoddp.h"
 #include "msgfun.h"
@@ -71,25 +80,10 @@
 #include "memalloc.h"
 #include "prccode.h"
 #include "router.h"
-
-#if BLOAD || BLOAD_AND_BSAVE
-#include "bload.h"
-#endif
-
-#if ! RUN_TIME
-#include "extnfunc.h"
-#endif
-
-#if (! BLOAD_ONLY) && (! RUN_TIME)
-#include "constrct.h"
-#include "msgpsr.h"
-#endif
-
 #if DEBUGGING_FUNCTIONS
 #include "watch.h"
 #endif
 
-#define _MSGCOM_SOURCE_
 #include "msgcom.h"
 
 /* =========================================

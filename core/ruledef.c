@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  01/25/15            */
+   /*            CLIPS Version 6.40  06/27/16             */
    /*                                                     */
    /*                   DEFRULE MODULE                    */
    /*******************************************************/
@@ -55,16 +55,15 @@
 /*            imported modules are search when locating a    */
 /*            named construct.                               */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _RULEDEF_SOURCE_
 
 #include "setup.h"
 
 #if DEFRULE_CONSTRUCT
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 
 #include "agenda.h"
 #include "drive.h"

@@ -30,18 +30,22 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_expressn
+
+#pragma once
 
 #define _H_expressn
 
 struct expr;
 struct exprHashNode;
 
-#ifndef _H_exprnops
+typedef struct expr EXPRESSION;
+
 #include "exprnops.h"
-#endif
 
 /******************************/
 /* Expression Data Structures */
@@ -57,8 +61,6 @@ struct expr
 
 #define arg_list argList
 #define next_arg nextArg
-
-typedef struct expr EXPRESSION;
 
 typedef struct exprHashNode
   {

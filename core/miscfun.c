@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/17/16            */
+   /*             CLIPS Version 6.40  06/25/16            */
    /*                                                     */
    /*            MISCELLANEOUS FUNCTIONS MODULE           */
    /*******************************************************/
@@ -79,12 +79,11 @@
 /*            Refactored code to reduce header dependencies  */
 /*            in sysdep.c.                                   */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
-#define _MISCFUN_SOURCE_
-
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 #include <string.h>
 #include <time.h>
 
@@ -101,6 +100,11 @@
 
 #if DEFFUNCTION_CONSTRUCT
 #include "dffnxfun.h"
+#endif
+
+#if DEFTEMPLATE_CONSTRUCT
+#include "factfun.h"
+#include "tmpltutl.h"
 #endif
 
 #include "miscfun.h"

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  05/21/16            */
+   /*             CLIPS Version 6.40  06/23/16            */
    /*                                                     */
    /*              CONSTRUCT COMPILER MODULE              */
    /*******************************************************/
@@ -59,32 +59,31 @@
 /*            originating from sources that are not          */
 /*            statically allocated.                          */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _CONSCOMP_SOURCE_
 
 #include "setup.h"
 
 #if CONSTRUCT_COMPILER && (! RUN_TIME)
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 #include <stdlib.h>
 #include <string.h>
 
-#include "symbol.h"
-#include "memalloc.h"
-#include "constant.h"
-#include "exprnpsr.h"
-#include "cstrccom.h"
-#include "constrct.h"
 #include "argacces.h"
+#include "constant.h"
+#include "constrct.h"
+#include "cstrccom.h"
 #include "cstrncmp.h"
+#include "exprnpsr.h"
+#include "envrnmnt.h"
+#include "memalloc.h"
+#include "modulcmp.h"
 #include "router.h"
+#include "symbol.h"
 #include "sysdep.h"
 #include "utility.h"
-#include "modulcmp.h"
-#include "envrnmnt.h"
 
 #if DEFRULE_CONSTRUCT
 #include "network.h"

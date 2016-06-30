@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/17/16            */
+   /*             CLIPS Version 6.40  06/21/16            */
    /*                                                     */
    /*            SYSTEM DEPENDENT HEADER FILE             */
    /*******************************************************/
@@ -80,21 +80,18 @@
 /*            Refactored code to reduce header dependencies  */
 /*            in sysdep.c.                                   */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_sysdep
+
+#pragma once
+
 #define _H_sysdep
 
-#ifndef _STDIO_INCLUDED_
-#define _STDIO_INCLUDED_
 #include <stdio.h>
-#endif
-
 #include <setjmp.h>
-
-#if WIN_MVC
-#include <dos.h>
-#endif
 
    void                        SetRedrawFunction(void *,void (*)(void *));
    void                        SetPauseEnvFunction(void *,void (*)(void *));
@@ -134,7 +131,7 @@
    int                         genungetchar(void *,int);
    void                        InitializeSystemDependentData(void *);
    void                        InitializeNonportableFeatures(void *);
- 
+
 #endif /* _H_sysdep */
 
 

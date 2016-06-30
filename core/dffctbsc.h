@@ -35,14 +35,17 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_dffctbsc
+
+#pragma once
+
 #define _H_dffctbsc
 
-#ifndef _H_evaluatn
 #include "evaluatn.h"
-#endif
 
    void                           DeffactsBasicCommands(void *);
    void                           UndeffactsCommand(void *);

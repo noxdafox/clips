@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*            CLIPS Version 6.40  06/28/16             */
    /*                                                     */
    /*          DEFTEMPLATE BASIC COMMANDS MODULE          */
    /*******************************************************/
@@ -41,37 +41,36 @@
 /*                                                           */
 /*            Converted API macros to function calls.        */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _TMPLTBSC_SOURCE_
 
 #include "setup.h"
 
 #if DEFTEMPLATE_CONSTRUCT
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 #include <string.h>
 
 #include "argacces.h"
-#include "memalloc.h"
-#include "scanner.h"
-#include "router.h"
-#include "extnfunc.h"
 #include "constrct.h"
 #include "cstrccom.h"
-#include "factrhs.h"
 #include "cstrcpsr.h"
-#include "tmpltpsr.h"
-#include "tmpltdef.h"
+#include "envrnmnt.h"
+#include "extnfunc.h"
+#include "factrhs.h"
+#include "memalloc.h"
+#include "router.h"
+#include "scanner.h"
 #if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE
 #include "tmpltbin.h"
 #endif
 #if CONSTRUCT_COMPILER && (! RUN_TIME)
 #include "tmpltcmp.h"
 #endif
+#include "tmpltdef.h"
+#include "tmpltpsr.h"
 #include "tmpltutl.h"
-#include "envrnmnt.h"
 
 #include "tmpltbsc.h"
 

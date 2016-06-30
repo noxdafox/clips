@@ -1,9 +1,9 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*              CLIPS Version 6.40  06/03/16           */
+   /*            CLIPS Version 6.40  06/25/16             */
    /*                                                     */
-   /*            INSTANCE PRIMITIVE SUPPORT MODULE        */
+   /*          INSTANCE PRIMITIVE SUPPORT MODULE          */
    /*******************************************************/
 
 /*************************************************************/
@@ -42,8 +42,7 @@
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to GetHaltExecution and       */
-/*            SetHaltExecution functions.                    */
+/*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /*************************************************************/
 
@@ -67,9 +66,9 @@
 #include "classfun.h"
 #include "engine.h"
 #include "envrnmnt.h"
-#include "memalloc.h"
 #include "extnfunc.h"
 #include "insfun.h"
+#include "memalloc.h"
 #include "modulutl.h"
 #include "msgcom.h"
 #include "msgfun.h"
@@ -78,7 +77,6 @@
 #include "sysdep.h"
 #include "utility.h"
 
-#define _INSMNGR_SOURCE_
 #include "insmngr.h"
 
 #include "inscom.h"

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*            CLIPS Version 6.40  06/21/16             */
    /*                                                     */
    /*                  MATCH HEADER FILE                  */
    /*******************************************************/
@@ -21,9 +21,13 @@
 /*            Added additional members to partialMatch to    */
 /*            support changes to the matching algorithm.     */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_match
+
+#pragma once
 
 #define _H_match
 
@@ -33,15 +37,9 @@ struct partialMatch;
 struct alphaMatch;
 struct multifieldMarker;
 
-#ifndef _H_evaluatn
 #include "evaluatn.h"
-#endif
-#ifndef _H_network
 #include "network.h"
-#endif
-#ifndef _H_pattern
 #include "pattern.h"
-#endif
 
 /************************************************************/
 /* PATTERNMATCH STRUCTURE:                                  */

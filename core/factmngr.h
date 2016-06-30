@@ -55,30 +55,24 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_factmngr
+
+#pragma once
 
 #define _H_factmngr
 
 struct fact;
 
-#ifndef _H_facthsh
-#include "facthsh.h"
-#endif
-#ifndef _H_conscomp
 #include "conscomp.h"
-#endif
-#ifndef _H_pattern
-#include "pattern.h"
-#endif
-#include "multifld.h"
-#ifndef _H_evaluatn
 #include "evaluatn.h"
-#endif
-#ifndef _H_tmpltdef
+#include "facthsh.h"
+#include "multifld.h"
+#include "pattern.h"
 #include "tmpltdef.h"
-#endif
 
 struct fact
   {

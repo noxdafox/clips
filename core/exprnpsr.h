@@ -35,9 +35,13 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_exprnpsr
+
+#pragma once
 
 #define _H_exprnpsr
 
@@ -52,12 +56,8 @@ typedef struct saved_contexts
 
 #endif
 
-#ifndef _H_extnfunc
 #include "extnfunc.h"
-#endif
-#ifndef _H_scanner
 #include "scanner.h"
-#endif
 
    struct expr                   *Function0Parse(void *,const char *);
    struct expr                   *Function1Parse(void *,const char *);

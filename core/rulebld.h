@@ -32,18 +32,18 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_rulebld
 
+#pragma once
+
 #define _H_rulebld
 
-#ifndef _H_reorder
-#include "reorder.h"
-#endif
-#ifndef _H_network
 #include "network.h"
-#endif
+#include "reorder.h"
 
    struct joinNode               *ConstructJoins(void *,int,struct lhsParseNode *,int,struct joinNode *,int,int);
 

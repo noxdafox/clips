@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*            CLIPS Version 6.40  06/27/16             */
    /*                                                     */
    /*                    SCANNER MODULE                   */
    /*******************************************************/
@@ -30,29 +30,28 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _SCANNER_SOURCE_
 
 #include <ctype.h>
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 #include <string.h>
 #include <limits.h>
 #include <errno.h>
+#include <stdlib.h>
 
 #include "setup.h"
+
 #include "constant.h"
 #include "envrnmnt.h"
+#include "memalloc.h"
 #include "router.h"
 #include "symbol.h"
-#include "utility.h"
-#include "memalloc.h"
 #include "sysdep.h"
+#include "utility.h"
 
 #include "scanner.h"
-
-#include <stdlib.h>
 
 /***************************************/
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */

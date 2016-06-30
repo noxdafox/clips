@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/17/16            */
+   /*            CLIPS Version 6.40  06/23/16             */
    /*                                                     */
    /*                COMMAND LINE MODULE                  */
    /*******************************************************/
@@ -69,12 +69,11 @@
 /*            Refactored code to reduce header dependencies  */
 /*            in sysdep.c.                                   */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
-#define _COMMLINE_SOURCE_
-
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 #include <string.h>
 #include <ctype.h>
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/03/16            */
+   /*            CLIPS Version 6.40  06/28/16             */
    /*                                                     */
    /*                    WATCH MODULE                     */
    /*******************************************************/
@@ -39,27 +39,24 @@
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to GetHaltExecution and       */
-/*            SetHaltExecution functions.                    */
+/*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /*************************************************************/
-
-#define _WATCH_SOURCE_
 
 #include "setup.h"
 
 #if DEBUGGING_FUNCTIONS
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 #include <string.h>
 
+#include "argacces.h"
 #include "constant.h"
 #include "envrnmnt.h"
+#include "extnfunc.h"
 #include "memalloc.h"
 #include "router.h"
-#include "argacces.h"
-#include "extnfunc.h"
+
 #include "watch.h"
 
 /***************************************/

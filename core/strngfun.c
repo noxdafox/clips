@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/03/16            */
+   /*             CLIPS Version 6.40  06/27/16            */
    /*                                                     */
    /*               STRING FUNCTIONS MODULE               */
    /*******************************************************/
@@ -56,16 +56,15 @@
 /*            Added Env prefix to GetHaltExecution and       */
 /*            SetHaltExecution functions.                    */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _STRNGFUN_SOURCE_
 
 #include "setup.h"
 
 #if STRING_FUNCTIONS
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 #include <ctype.h>
 #include <string.h>
 

@@ -32,17 +32,19 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_objrtcmp
+
+#pragma once
+
 #define _H_objrtcmp
 
 #if DEFRULE_CONSTRUCT && OBJECT_SYSTEM && (! RUN_TIME) && CONSTRUCT_COMPILER
 
-#ifndef _STDIO_INCLUDED_
 #include <stdio.h>
-#define _STDIO_INCLUDED_
-#endif
 
    void                    ObjectPatternsCompilerSetup(void *);
    void                    ObjectPatternNodeReference(void *,void *,FILE *,int,int);

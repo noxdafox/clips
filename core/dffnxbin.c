@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*             CLIPS Version 6.40  06/23/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -22,6 +22,8 @@
 /*                                                           */
 /*            Changed integer type/precision.                */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 /* =========================================
@@ -35,13 +37,11 @@
 
 #include "bload.h"
 #include "bsave.h"
-
-#include "memalloc.h"
 #include "cstrcbin.h"
 #include "envrnmnt.h"
+#include "memalloc.h"
 #include "modulbin.h"
 
-#define _DFFNXBIN_SOURCE_
 #include "dffnxbin.h"
 
 /* =========================================

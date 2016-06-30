@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  02/05/15            */
+   /*             CLIPS Version 6.30  06/25/15            */
    /*                                                     */
    /*                    MEMORY MODULE                    */
    /*******************************************************/
@@ -40,12 +40,11 @@
 /*                                                           */
 /*            Removed support for BLOCK_MEMORY.              */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
-#define _MEMORY_SOURCE_
-
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 
 #include "setup.h"
 

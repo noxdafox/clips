@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/03/16            */
+   /*             CLIPS Version 6.40  06/28/16            */
    /*                                                     */
    /*             DEFTEMPLATE FUNCTIONS MODULE            */
    /*******************************************************/
@@ -62,41 +62,37 @@
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to GetHaltExecution and       */
-/*            SetHaltExecution functions.                    */
+/*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /*************************************************************/
-
-#define _TMPLTFUN_SOURCE_
 
 #include "setup.h"
 
 #if DEFTEMPLATE_CONSTRUCT
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 #include <string.h>
 
-#include "constant.h"
-#include "memalloc.h"
-#include "symbol.h"
-#include "scanner.h"
-#include "exprnpsr.h"
-#include "envrnmnt.h"
 #include "argacces.h"
-#include "router.h"
+#include "commline.h"
+#include "constant.h"
 #include "cstrnchk.h"
 #include "default.h"
+#include "envrnmnt.h"
+#include "exprnpsr.h"
 #include "factmngr.h"
-#include "commline.h"
 #include "factrhs.h"
 #include "modulutl.h"
+#include "prcdrpsr.h"
 #include "reorder.h"
+#include "router.h"
+#include "scanner.h"
+#include "symbol.h"
 #include "sysdep.h"
 #include "tmpltdef.h"
 #include "tmpltlhs.h"
-#include "tmpltutl.h"
 #include "tmpltrhs.h"
+#include "tmpltutl.h"
 
 #include "tmpltfun.h"
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/03/16            */
+   /*            CLIPS Version 6.40  06/23/16             */
    /*                                                     */
    /*                  CONSTRUCT MODULE                   */
    /*******************************************************/
@@ -52,41 +52,37 @@
 /*            constructs that are contained externally to    */
 /*            to constructs, DanglingConstructs.             */
 /*                                                           */
-/*      6.40: Added Env prefix to GetEvaluationError and     */
-/*            SetEvaluationError functions.                  */
-/*                                                           */
-/*            Added Env prefix to GetHaltExecution and       */
+/*      6.40: Added Env prefix to GetHaltExecution and       */
 /*            SetHaltExecution functions.                    */
+/*                                                           */
+/*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /*************************************************************/
 
-#define _CONSTRCT_SOURCE_
-
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 #include <string.h>
 
 #include "setup.h"
 
-#include "constant.h"
-#include "envrnmnt.h"
-#include "memalloc.h"
-#include "router.h"
-#include "scanner.h"
-#include "watch.h"
-#include "prcdrfun.h"
-#include "prcdrpsr.h"
 #include "argacces.h"
+#include "commline.h"
+#include "constant.h"
+#include "cstrcpsr.h"
+#include "envrnmnt.h"
 #include "exprnpsr.h"
-#include "multifld.h"
+#include "memalloc.h"
 #include "moduldef.h"
 #include "modulutl.h"
+#include "multifld.h"
+#include "prcdrfun.h"
+#include "prcdrpsr.h"
+#include "router.h"
+#include "ruledef.h"
+#include "scanner.h"
 #include "sysdep.h"
 #include "utility.h"
-#include "commline.h"
-#include "cstrcpsr.h"
+#include "watch.h"
 
-#include "ruledef.h" /* TBD Remove */
 #include "constrct.h"
 
 /***************************************/

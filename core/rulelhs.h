@@ -22,23 +22,20 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_rulelhs
+
+#pragma once
+
 #define _H_rulelhs
 
-#ifndef _H_expressn
 #include "expressn.h"
-#endif
-#ifndef _H_reorder
-#include "reorder.h"
-#endif
-#ifndef _H_scanner
-#include "scanner.h"
-#endif
-#ifndef _H_pattern
 #include "pattern.h"
-#endif
+#include "reorder.h"
+#include "scanner.h"
 
 struct lhsParseNode           *ParseRuleLHS(void *,const char *,struct token *,const char *,int *);
 void                           PropagatePatternType(struct lhsParseNode *,struct patternParser *);

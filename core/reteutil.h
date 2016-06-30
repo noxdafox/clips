@@ -44,20 +44,19 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_reteutil
+
+#pragma once
+
 #define _H_reteutil
 
-#ifndef _H_evaluatn
 #include "evaluatn.h"
-#endif
-#ifndef _H_match
 #include "match.h"
-#endif
-#ifndef _H_network
 #include "network.h"
-#endif
 
 #define NETWORK_ASSERT  0
 #define NETWORK_RETRACT 1

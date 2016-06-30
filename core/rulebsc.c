@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  02/04/15            */
+   /*             CLIPS Version 6.40  06/27/16            */
    /*                                                     */
    /*          DEFRULE BASIC COMMANDS HEADER FILE         */
    /*******************************************************/
@@ -44,27 +44,27 @@
 /*            being executed during fact assertions via      */
 /*            JoinOperationInProgress mechanism.             */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _RULEBSC_SOURCE_
 
 #include "setup.h"
 
 #if DEFRULE_CONSTRUCT
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 
 #include "argacces.h"
 #include "constrct.h"
-#include "envrnmnt.h"
-#include "router.h"
-#include "watch.h"
-#include "extnfunc.h"
-#include "ruledef.h"
-#include "engine.h"
 #include "drive.h"
+#include "engine.h"
+#include "envrnmnt.h"
+#include "extnfunc.h"
 #include "reteutil.h"
+#include "router.h"
+#include "ruledef.h"
+#include "watch.h"
+
 #if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE
 #include "rulebin.h"
 #endif

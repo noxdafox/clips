@@ -51,23 +51,23 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_constrct
+
+#pragma once
 
 #define _H_constrct
 
 struct constructHeader;
 struct construct;
 
-#ifndef _H_moduldef
-#include "moduldef.h"
-#endif
-#ifndef _H_symbol
 #include "symbol.h"
-#endif
-
 #include "userdata.h"
+
+struct defmoduleItemHeader; // TBD Can this be removed?
 
 struct constructHeader
   {
@@ -78,6 +78,9 @@ struct constructHeader
    struct constructHeader *next;
    struct userData *usrData;
   };
+
+#include "moduldef.h"
+
 
 #define CHS (struct constructHeader *)
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  07/25/14            */
+   /*            CLIPS Version 6.40  06/28/16             */
    /*                                                     */
    /*          DEFTEMPLATE RHS PARSING HEADER FILE        */
    /*******************************************************/
@@ -26,28 +26,27 @@
 /*      6.30: Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _TMPLTRHS_SOURCE_
 
 #include "setup.h"
 
 #if DEFTEMPLATE_CONSTRUCT
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 
+#include "default.h"
+#include "extnfunc.h"
+#include "factrhs.h"
 #include "memalloc.h"
+#include "modulutl.h"
 #include "prntutil.h"
 #include "router.h"
-#include "tmpltfun.h"
 #include "tmpltdef.h"
-#include "factrhs.h"
-#include "extnfunc.h"
-#include "modulutl.h"
-#include "default.h"
-#include "tmpltutl.h"
+#include "tmpltfun.h"
 #include "tmpltlhs.h"
+#include "tmpltutl.h"
 
 #include "tmpltrhs.h"
 

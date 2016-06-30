@@ -43,21 +43,19 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_cstrcpsr
 
+#pragma once
+
 #define _H_cstrcpsr
 
-#ifndef _H_evaluatn
 #include "evaluatn.h"
-#endif
-#ifndef _H_scanner
 #include "scanner.h"
-#endif
-#ifndef _H_constrct
 #include "constrct.h"
-#endif
 
 #if ALLOW_ENVIRONMENT_GLOBALS
    int                            Load(const char *);

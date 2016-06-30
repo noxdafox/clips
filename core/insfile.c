@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*              CLIPS Version 6.40  06/17/16           */
+   /*              CLIPS Version 6.40  06/25/16           */
    /*                                                     */
    /*         INSTANCE LOAD/SAVE (ASCII/BINARY) MODULE    */
    /*******************************************************/
@@ -42,11 +42,10 @@
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to GetHaltExecution and       */
-/*            SetHaltExecution functions.                    */
-/*                                                           */
 /*            Refactored code to reduce header dependencies  */
 /*            in sysdep.c.                                   */
+/*                                                           */
+/*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /*************************************************************/
 
@@ -66,7 +65,11 @@
 #include "classcom.h"
 #include "classfun.h"
 #include "memalloc.h"
+#include "envrnmnt.h"
 #include "extnfunc.h"
+#if DEFTEMPLATE_CONSTRUCT && DEFRULE_CONSTRUCT
+#include "factmngr.h"
+#endif
 #include "inscom.h"
 #include "insfun.h"
 #include "insmngr.h"
@@ -76,13 +79,7 @@
 #include "strngrtr.h"
 #include "symblbin.h"
 #include "sysdep.h"
-#include "envrnmnt.h"
 
-#if DEFTEMPLATE_CONSTRUCT && DEFRULE_CONSTRUCT
-#include "factmngr.h"
-#endif
-
-#define _INSFILE_SOURCE_
 #include "insfile.h"
 
 /* =========================================

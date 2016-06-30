@@ -32,18 +32,21 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
-#if (! RUN_TIME)
 #ifndef _H_rulebin
+
+#pragma once
 
 #define _H_rulebin
 
-#include "modulbin.h"
+#if (! RUN_TIME)
+
 #include "cstrcbin.h"
-#ifndef _H_network
+#include "modulbin.h"
 #include "network.h"
-#endif
 
 struct bsaveDefrule
   {
@@ -137,9 +140,10 @@ struct defruleBinaryData
                                                                         struct patternNodeHeader *);
    void                          *BloadDefruleModuleReference(void *,int);
 
-#endif /* _H_rulebin */ 
-
 #endif /* (! RUN_TIME) */
+
+#endif /* _H_rulebin */
+
 
 
 

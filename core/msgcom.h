@@ -42,18 +42,18 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_msgcom
+
+#pragma once
+
 #define _H_msgcom
 
-#ifndef _H_object
-#include "object.h"
-#endif
-
-#ifndef _H_msgpass
 #include "msgpass.h"
-#endif
+#include "object.h"
 
 #define MESSAGE_HANDLER_DATA 32
 

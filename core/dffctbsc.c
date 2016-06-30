@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/03/16            */
+   /*            CLIPS Version 6.40  06/23/16             */
    /*                                                     */
    /*         DEFFACTS BASIC COMMANDS HEADER FILE         */
    /*******************************************************/
@@ -40,34 +40,31 @@
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to GetHaltExecution and       */
-/*            SetHaltExecution functions.                    */
+/*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /*************************************************************/
-
-#define _DFFCTBSC_SOURCE_
 
 #include "setup.h"
 
 #if DEFFACTS_CONSTRUCT
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 #include <string.h>
 
-#include "envrnmnt.h"
 #include "argacces.h"
-#include "memalloc.h"
-#include "scanner.h"
-#include "router.h"
-#include "extnfunc.h"
 #include "constrct.h"
 #include "cstrccom.h"
-#include "factrhs.h"
-#include "tmpltdef.h"
 #include "cstrcpsr.h"
-#include "dffctpsr.h"
 #include "dffctdef.h"
+#include "dffctpsr.h"
+#include "envrnmnt.h"
+#include "extnfunc.h"
+#include "factrhs.h"
+#include "memalloc.h"
+#include "router.h"
+#include "scanner.h"
+#include "tmpltdef.h"
+
 #if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE
 #include "dffctbin.h"
 #endif

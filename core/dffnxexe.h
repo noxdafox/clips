@@ -27,20 +27,21 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_dffnxexe
+
+#pragma once
+
 #define _H_dffnxexe
 
 #if DEFFUNCTION_CONSTRUCT
 
 #include "dffnxfun.h"
-#ifndef _H_expressn
 #include "expressn.h"
-#endif
-#ifndef _H_evaluatn
 #include "evaluatn.h"
-#endif
 
    void                           CallDeffunction(void *,DEFFUNCTION *,EXPRESSION *,DATA_OBJECT *);
 

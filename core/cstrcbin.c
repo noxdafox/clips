@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*            CLIPS Version 6.40  06/23/16             */
    /*                                                     */
    /*          CONSTRUCT BINARY LOAD/SAVE MODULE          */
    /*******************************************************/
@@ -16,6 +16,8 @@
 /* Contributing Programmer(s):                               */
 /*                                                           */
 /* Revision History:                                         */
+/*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
 /*************************************************************/
 
@@ -32,7 +34,6 @@
 
 #include "moduldef.h"
 
-#define _CSTRCBIN_SOURCE_
 #include "cstrcbin.h"
 
 #if BLOAD_AND_BSAVE

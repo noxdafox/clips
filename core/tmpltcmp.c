@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*            CLIPS Version 6.40  06/28/16             */
    /*                                                     */
    /*          DEFTEMPLATE CONSTRUCTS-TO-C MODULE         */
    /*******************************************************/
@@ -37,9 +37,9 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _TMPLTCMP_SOURCE_
 
 #include "setup.h"
 
@@ -48,13 +48,12 @@
 #define SlotPrefix() ArbitraryPrefix(DeftemplateData(theEnv)->DeftemplateCodeItem,2)
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 
 #include "conscomp.h"
-#include "factcmp.h"
 #include "cstrncmp.h"
-#include "tmpltdef.h"
 #include "envrnmnt.h"
+#include "factcmp.h"
+#include "tmpltdef.h"
 
 #include "tmpltcmp.h"
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/03/16            */
+   /*             CLIPS Version 6.40  06/28/16            */
    /*                                                     */
    /*             LOGICAL DEPENDENCIES MODULE             */
    /*******************************************************/
@@ -26,18 +26,14 @@
 /*                                                           */
 /*      6.30: Added support for hashed memories.             */
 /*                                                           */
-/*      6.40: Added Env prefix to GetEvaluationError and     */
-/*            SetEvaluationError functions.                  */
-/*                                                           */
-/*            Added Env prefix to GetHaltExecution and       */
+/*      6.40: Added Env prefix to GetHaltExecution and       */
 /*            SetHaltExecution functions.                    */
+/*                                                           */
+/*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /*************************************************************/
 
-#define _LGCLDPND_SOURCE_
-
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 
 #include "setup.h"
 

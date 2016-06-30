@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  01/25/15          */
+   /*             CLIPS Version 6.40  06/23/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -13,6 +13,7 @@
 /*      Brian L. Dantes                                      */
 /*                                                           */
 /* Contributing Programmer(s):                               */
+/*      Gary D. Riley                                        */
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
@@ -42,6 +43,8 @@
 /*            Changed find construct functionality so that   */
 /*            imported modules are search when locating a    */
 /*            named construct.                               */
+/*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
 /*************************************************************/
 
@@ -73,14 +76,12 @@
 #include "envrnmnt.h"
 #include "expressn.h"
 #include "exprnpsr.h"
-#include "extnfunc.h"
 #include "memalloc.h"
 #include "prccode.h"
 #include "router.h"
 #include "scanner.h"
 #include "symbol.h"
 
-#define _DFFNXPSR_SOURCE_
 #include "dffnxpsr.h"
 
 /* =========================================

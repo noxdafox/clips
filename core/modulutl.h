@@ -26,17 +26,18 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_modulutl
+
+#pragma once
+
 #define _H_modulutl
 
-#ifndef _H_symbol
-#include "symbol.h"
-#endif
-#ifndef _H_moduldef
 #include "moduldef.h"
-#endif
+#include "symbol.h"
 
    unsigned                       FindModuleSeparator(const char *);
    SYMBOL_HN                     *ExtractModuleName(void *,unsigned,const char *);

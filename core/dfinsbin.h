@@ -26,16 +26,19 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_dfinsbin
+
+#pragma once
+
 #define _H_dfinsbin
 
 #if DEFINSTANCES_CONSTRUCT && (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE)
 
-#ifndef _H_defins
 #include "defins.h"
-#endif
 
 #define DFINSBIN_DATA 25
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/24/16            */
    /*                                                     */
    /*             EXPRESSION OPERATIONS MODULE            */
    /*******************************************************/
@@ -25,26 +25,25 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _EXPRNOPS_SOURCE_
 
 #include "setup.h"
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 
-#include "memalloc.h"
-#include "envrnmnt.h"
-#include "router.h"
-#include "extnfunc.h"
 #include "cstrnchk.h"
-#include "prntutil.h"
-#include "cstrnutl.h"
 #include "cstrnops.h"
+#include "cstrnutl.h"
+#include "envrnmnt.h"
+#include "extnfunc.h"
+#include "memalloc.h"
+#include "prntutil.h"
+#include "router.h"
 
 #include "exprnops.h"
 

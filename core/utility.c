@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  05/21/16            */
+   /*            CLIPS Version 6.40  06/28/16             */
    /*                                                     */
    /*                   UTILITY MODULE                    */
    /*******************************************************/
@@ -49,17 +49,15 @@
 /*      6.40: Added EnvAddPeriodicFunctionWithContext        */
 /*            function.                                      */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _UTILITY_SOURCE_
 
 #include "setup.h"
 
 #include <ctype.h>
 #include <stdlib.h>
-
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 #include <string.h>
 
 #include "commline.h"

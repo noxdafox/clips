@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  01/25/15          */
+   /*            CLIPS Version 6.40  06/23/16             */
    /*                                                     */
    /*               CLASS INITIALIZATION MODULE           */
    /*******************************************************/
@@ -41,6 +41,8 @@
 /*            imported modules are search when locating a     */
 /*            named construct.                                */
 /*                                                            */
+/*      6.40: Pragma once and other inclusion changes.        */
+/*                                                            */
 /**************************************************************/
 
 /* =========================================
@@ -52,10 +54,7 @@
 
 #if OBJECT_SYSTEM
 
-#ifndef _STDIO_INCLUDED_
-#define _STDIO_INCLUDED_
 #include <stdio.h>
-#endif
 
 #include "classcom.h"
 #include "classexm.h"

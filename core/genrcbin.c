@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/25/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -22,6 +22,8 @@
 /*                                                           */
 /*            Changed integer type/precision.                */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 /* =========================================
@@ -33,25 +35,20 @@
 
 #if DEFGENERIC_CONSTRUCT && (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE)
 
-#include "constant.h"
-#include "envrnmnt.h"
-#include "memalloc.h"
 #include "bload.h"
 #include "bsave.h"
-
+#include "constant.h"
 #include "cstrcbin.h"
-
+#include "envrnmnt.h"
+#include "genrccom.h"
+#include "memalloc.h"
+#include "modulbin.h"
 #if OBJECT_SYSTEM
 #include "objbin.h"
 #endif
-
-#include "genrccom.h"
-#include "modulbin.h"
-
-#define _GENRCBIN_SOURCE_
-#include "genrcbin.h"
-
 #include "router.h"
+
+#include "genrcbin.h"
 
 /* =========================================
    *****************************************

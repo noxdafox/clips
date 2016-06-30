@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/03/16            */
+   /*            CLIPS Version 6.40  06/23/16             */
    /*                                                     */
    /*                CLASS FUNCTIONS MODULE               */
    /*******************************************************/
@@ -42,8 +42,7 @@
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to GetHaltExecution and       */
-/*            SetHaltExecution functions.                    */
+/*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /*************************************************************/
 
@@ -82,7 +81,6 @@
 #include "sysdep.h"
 #include "utility.h"
 
-#define _CLASSFUN_SOURCE_
 #include "classfun.h"
 
 /* =========================================

@@ -28,17 +28,18 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_default
+
+#pragma once
+
 #define _H_default
 
-#ifndef _H_constrnt
 #include "constrnt.h"
-#endif
-#ifndef _H_evaluatn
 #include "evaluatn.h"
-#endif
 
    void                           DeriveDefaultFromConstraints(void *,CONSTRAINT_RECORD *,DATA_OBJECT *,int,int);
    struct expr                   *ParseDefault(void *,const char *,int,int,int,int *,int *,int *);

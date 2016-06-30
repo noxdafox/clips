@@ -28,21 +28,19 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_generate
 
+#pragma once
+
 #define _H_generate
 
-#ifndef _H_expressn
-#include "expressn.h"
-#endif
-#ifndef _H_reorder
-#include "reorder.h"
-#endif
-#ifndef _H_analysis
 #include "analysis.h"
-#endif
+#include "expressn.h"
+#include "reorder.h"
 
    void                           FieldConversion(void *,struct lhsParseNode *,struct lhsParseNode *,struct nandFrame *);
    struct expr                   *GetvarReplace(void *,struct lhsParseNode *,int,struct nandFrame *);

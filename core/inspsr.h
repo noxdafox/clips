@@ -31,14 +31,17 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_inspsr
+
+#pragma once
+
 #define _H_inspsr
 
-#ifndef _H_expressn
 #include "expressn.h"
-#endif
 
 #if ! RUN_TIME
    EXPRESSION                    *ParseInitializeInstance(void *,EXPRESSION *,const char *);

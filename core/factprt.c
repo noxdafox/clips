@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/24/16            */
    /*                                                     */
    /*           FACT RETE PRINT FUNCTIONS MODULE          */
    /*******************************************************/
@@ -27,21 +27,20 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
-#define _FACTPRT_SOURCE_
-
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 
 #include "setup.h"
 
 #if DEFTEMPLATE_CONSTRUCT && DEFRULE_CONSTRUCT
 
 #include "envrnmnt.h"
-#include "symbol.h"
-#include "router.h"
 #include "factgen.h"
+#include "router.h"
+#include "symbol.h"
 
 #include "factprt.h"
 

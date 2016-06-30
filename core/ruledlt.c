@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/27/16            */
    /*                                                     */
    /*                 RULE DELETION MODULE                */
    /*******************************************************/
@@ -31,31 +31,29 @@
 /*            Fixed linkage issue when BLOAD_ONLY compiler   */
 /*            flag is set to 1.                              */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _RULEDLT_SOURCE_
 
 #include "setup.h"
 
 #if DEFRULE_CONSTRUCT
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 #include <string.h>
 
-#include "memalloc.h"
-#include "engine.h"
-#include "envrnmnt.h"
-#include "reteutil.h"
-#include "pattern.h"
 #include "agenda.h"
-#include "drive.h"
-#include "retract.h"
-#include "constrct.h"
-
 #if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE
 #include "bload.h"
 #endif
+#include "constrct.h"
+#include "drive.h"
+#include "engine.h"
+#include "envrnmnt.h"
+#include "memalloc.h"
+#include "pattern.h"
+#include "reteutil.h"
+#include "retract.h"
 
 #include "ruledlt.h"
 

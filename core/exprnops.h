@@ -27,15 +27,17 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_exprnops
 
+#pragma once
+
 #define _H_exprnops
 
-#ifndef _H_expressn
 #include "expressn.h"
-#endif
 
    intBool                        ConstantExpression(struct expr *);
    void                           PrintExpression(void *,const char *,struct expr *);

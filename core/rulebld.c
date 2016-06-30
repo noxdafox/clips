@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.31  03/17/16            */
+   /*            CLIPS Version 6.40  06/27/16             */
    /*                                                     */
    /*                  RULE BUILD MODULE                  */
    /*******************************************************/
@@ -32,16 +32,15 @@
 /*                                                           */
 /*      6.31: Fix for nand crash                             */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _RULEBLD_SOURCE_
 
 #include "setup.h"
 
 #if DEFRULE_CONSTRUCT && (! RUN_TIME) && (! BLOAD_ONLY)
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 #include <stdlib.h>
 
 #include "constant.h"

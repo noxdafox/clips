@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*            CLIPS Version 6.40  06/25/16             */
    /*                                                     */
    /*    INFERENCE ENGINE OBJECT ACCESS ROUTINES MODULE   */
    /*******************************************************/
@@ -34,6 +34,8 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 /* =========================================
    *****************************************
@@ -45,7 +47,6 @@
 #if DEFRULE_CONSTRUCT && OBJECT_SYSTEM
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 #include <string.h>
 
 #include "classcom.h"
@@ -67,7 +68,6 @@
 #include "reteutil.h"
 #include "router.h"
 
-#define _OBJRTFNX_SOURCE_
 #include "objrtfnx.h"
 
 /* =========================================

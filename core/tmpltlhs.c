@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*            CLIPS Version 6.40  06/28/16             */
    /*                                                     */
    /*                DEFTEMPLATE LHS MODULE               */
    /*******************************************************/
@@ -23,33 +23,32 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _TMPLTLHS_SOURCE_
 
 #include "setup.h"
 
 #if DEFTEMPLATE_CONSTRUCT && DEFRULE_CONSTRUCT && (! RUN_TIME) && (! BLOAD_ONLY)
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 #include <string.h>
 
 #include "constant.h"
-#include "envrnmnt.h"
-#include "memalloc.h"
-#include "symbol.h"
-#include "scanner.h"
-#include "exprnpsr.h"
-#include "router.h"
-#include "constrnt.h"
 #include "constrct.h"
-#include "reorder.h"
-#include "pattern.h"
+#include "constrnt.h"
+#include "envrnmnt.h"
+#include "exprnpsr.h"
 #include "factrhs.h"
+#include "memalloc.h"
 #include "modulutl.h"
-#include "tmpltutl.h"
+#include "pattern.h"
+#include "reorder.h"
+#include "router.h"
+#include "scanner.h"
+#include "symbol.h"
 #include "tmpltdef.h"
+#include "tmpltutl.h"
 
 #include "tmpltlhs.h"
 

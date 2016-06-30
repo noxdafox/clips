@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.31  07/10/15            */
+   /*            CLIPS Version 6.40  06/27/16             */
    /*                                                     */
    /*                    REORDER MODULE                   */
    /*******************************************************/
@@ -46,16 +46,15 @@
 /*            Fix for incorrect join depth computed by       */
 /*            AssignPatternIndices for not/and groups.       */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _REORDER_SOURCE_
 
 #include "setup.h"
 
 #if (! RUN_TIME) && (! BLOAD_ONLY) && DEFRULE_CONSTRUCT
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 
 #include "cstrnutl.h"
 #include "envrnmnt.h"

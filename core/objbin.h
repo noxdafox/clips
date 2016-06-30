@@ -27,14 +27,17 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_objbin
+
+#pragma once
+
 #define _H_objbin
 
-#ifndef _H_object
 #include "object.h"
-#endif
 
 #define OBJECTBIN_DATA 33
 

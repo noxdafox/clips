@@ -53,18 +53,14 @@
 /*            current module was different than the module   */
 /*            for the specified rule.                        */
 /*                                                           */
-/*      6.40: Added Env prefix to GetEvaluationError and     */
-/*            SetEvaluationError functions.                  */
-/*                                                           */
-/*            Added Env prefix to GetHaltExecution and       */
+/*      6.40: Added Env prefix to GetHaltExecution and       */
 /*            SetHaltExecution functions.                    */
+/*                                                           */
+/*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /*************************************************************/
 
-#define _RULECOM_SOURCE_
-
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 #include <string.h>
 
 #include "setup.h"

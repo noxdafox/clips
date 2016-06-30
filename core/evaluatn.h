@@ -49,24 +49,26 @@
 /*                                                           */
 /*            Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_evaluatn
+
+#pragma once
 
 #define _H_evaluatn
 
 struct entityRecord;
 struct dataObject;
 
-#ifndef _H_constant
+typedef struct dataObject DATA_OBJECT;
+typedef struct dataObject * DATA_OBJECT_PTR;
+typedef struct expr FUNCTION_REFERENCE;
+
 #include "constant.h"
-#endif
-#ifndef _H_symbol
 #include "symbol.h"
-#endif
-#ifndef _H_expressn
 #include "expressn.h"
-#endif
 
 struct dataObject
   {
@@ -77,11 +79,6 @@ struct dataObject
    long end;
    struct dataObject *next;
   };
-
-typedef struct dataObject DATA_OBJECT;
-typedef struct dataObject * DATA_OBJECT_PTR;
-
-typedef struct expr FUNCTION_REFERENCE;
 
 #define DATA_OBJECT_PTR_ARG DATA_OBJECT_PTR
 
@@ -211,6 +208,9 @@ struct evaluationData
   };
 
 #define EvaluationData(theEnv) ((struct evaluationData *) GetEnvironmentData(theEnv,EVALUATION_DATA))
+
+#include "factmngr.h"
+#include "object.h"
 
    void                           InitializeEvaluationData(void *);
    int                            EvaluateExpression(void *,struct expr *,struct dataObject *);

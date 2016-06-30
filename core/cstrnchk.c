@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/22/14            */
+   /*            CLIPS Version 6.40  06/23/16             */
    /*                                                     */
    /*             CONSTRAINT CHECKING MODULE              */
    /*******************************************************/
@@ -39,26 +39,26 @@
 /*            allowed-classes constraint now searches        */
 /*            imported modules.                              */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
-#define _CSTRNCHK_SOURCE_
-
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 #include <stdlib.h>
 
 #include "setup.h"
 
-#include "router.h"
-#include "multifld.h"
+#include "cstrnutl.h"
 #include "envrnmnt.h"
 #include "extnfunc.h"
-#include "cstrnutl.h"
+#include "multifld.h"
+#include "router.h"
+
 #if OBJECT_SYSTEM
-#include "inscom.h"
-#include "insfun.h"
 #include "classcom.h"
 #include "classexm.h"
+#include "inscom.h"
+#include "insfun.h"
 #endif
 
 #include "cstrnchk.h"

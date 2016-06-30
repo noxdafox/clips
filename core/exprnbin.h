@@ -22,18 +22,19 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_exprnbin
+
+#pragma once
+
 #define _H_exprnbin
 
-#ifndef _H_expressn
-#include "expressn.h"
-#endif
-#ifndef _STDIO_INCLUDED_
-#define _STDIO_INCLUDED_
 #include <stdio.h>
-#endif
+
+#include "expressn.h"
 
 #define ExpressionPointer(i) ((struct expr *) (((i) == -1L) ? NULL : &ExpressionData(theEnv)->ExpressionArray[i]))
 #define HashedExpressionPointer(i) ExpressionPointer(i)

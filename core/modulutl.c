@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/03/16            */
+   /*             CLIPS Version 6.40  06/25/16            */
    /*                                                     */
    /*              DEFMODULE UTILITY MODULE               */
    /*******************************************************/
@@ -24,24 +24,21 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
-/*      6.40: Added Env prefix to GetEvaluationError and     */
-/*            SetEvaluationError functions.                  */
-/*                                                           */
-/*            Added Env prefix to GetHaltExecution and       */
+/*      6.40: Added Env prefix to GetHaltExecution and       */
 /*            SetHaltExecution functions.                    */
+/*                                                           */
+/*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /*************************************************************/
 
-#define _MODULUTL_SOURCE_
-
 #include "setup.h"
 
-#include "memalloc.h"
-#include "router.h"
 #include "envrnmnt.h"
+#include "memalloc.h"
+#include "modulpsr.h"
+#include "router.h"
 #include "sysdep.h"
 
-#include "modulpsr.h"
 #include "modulutl.h"
 
 /***************************************/

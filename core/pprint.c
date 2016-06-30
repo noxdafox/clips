@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  05/21/16            */
+   /*            CLIPS Version 6.40  06/27/16             */
    /*                                                     */
    /*                 PRETTY PRINT MODULE                 */
    /*******************************************************/
@@ -31,12 +31,11 @@
 /*                                                           */
 /*      6.40: Added NULL pointer check in CopyPPBuffer.      */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
-#define _PPRINT_SOURCE_
-
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 #include <string.h>
 #include <ctype.h>
 

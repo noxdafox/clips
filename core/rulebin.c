@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.30  06/27/16            */
    /*                                                     */
    /*              DEFRULE BSAVE/BLOAD MODULE             */
    /*******************************************************/
@@ -31,29 +31,28 @@
 /*            with large numbers of activations of different */
 /*            saliences.                                     */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _RULEBIN_SOURCE_
 
 #include "setup.h"
 
 #if DEFRULE_CONSTRUCT && (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE) && (! RUN_TIME)
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 #include <string.h>
 
-#include "memalloc.h"
+#include "agenda.h"
 #include "bload.h"
 #include "bsave.h"
-#include "envrnmnt.h"
-#include "reteutil.h"
-#include "agenda.h"
 #include "engine.h"
+#include "envrnmnt.h"
+#include "memalloc.h"
+#include "moduldef.h"
+#include "pattern.h"
+#include "reteutil.h"
 #include "retract.h"
 #include "rulebsc.h"
-#include "pattern.h"
-#include "moduldef.h"
 
 #include "rulebin.h"
 

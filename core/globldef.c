@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/03/16            */
+   /*             CLIPS Version 6.40  06/25/16            */
    /*                                                     */
    /*                  DEFGLOBAL MODULE                   */
    /*******************************************************/
@@ -46,41 +46,35 @@
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to GetHaltExecution and       */
-/*            SetHaltExecution functions.                    */
+/*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /*************************************************************/
-
-#define _GLOBLDEF_SOURCE_
 
 #include "setup.h"
 
 #if DEFGLOBAL_CONSTRUCT
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
-
-#include "memalloc.h"
-#include "modulpsr.h"
-#include "multifld.h"
-#include "router.h"
-#include "strngrtr.h"
-#include "modulutl.h"
-#include "globlbsc.h"
-#include "globlpsr.h"
-#include "globlcom.h"
-#include "utility.h"
-#include "commline.h"
-#include "envrnmnt.h"
 
 #if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE
 #include "bload.h"
 #include "globlbin.h"
 #endif
-
+#include "commline.h"
+#include "envrnmnt.h"
+#include "globlbsc.h"
 #if CONSTRUCT_COMPILER && (! RUN_TIME)
 #include "globlcmp.h"
 #endif
+#include "globlcom.h"
+#include "globlpsr.h"
+#include "memalloc.h"
+#include "modulpsr.h"
+#include "modulutl.h"
+#include "multifld.h"
+#include "router.h"
+#include "strngrtr.h"
+#include "utility.h"
 
 #include "globldef.h"
 

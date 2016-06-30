@@ -29,18 +29,18 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_cstrccom
 
+#pragma once
+
 #define _H_cstrccom
 
-#ifndef _H_moduldef
 #include "moduldef.h"
-#endif
-#ifndef _H_constrct
 #include "constrct.h"
-#endif
 
 #if (! RUN_TIME)
    void                           AddConstructToModule(struct constructHeader *);

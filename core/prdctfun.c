@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*            CLIPS Version 6.40  06/27/16             */
    /*                                                     */
    /*              PREDICATE FUNCTIONS MODULE             */
    /*******************************************************/
@@ -30,18 +30,17 @@
 /*            compilers/operating systems (IBM_MCW and       */
 /*            MAC_MCW).                                      */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
-#define _PRDCTFUN_SOURCE_
-
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 
 #include "setup.h"
 
+#include "argacces.h"
 #include "envrnmnt.h"
 #include "exprnpsr.h"
-#include "argacces.h"
 #include "multifld.h"
 #include "router.h"
 

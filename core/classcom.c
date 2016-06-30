@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  02/04/15          */
+   /*            CLIPS Version 6.40  06/23/16             */
    /*                                                     */
    /*                  CLASS COMMANDS MODULE              */
    /*******************************************************/
@@ -39,6 +39,8 @@
 /*            imported modules are search when locating a     */
 /*            named construct.                                */
 /*                                                            */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /**************************************************************/
 
 /* =========================================
@@ -65,7 +67,6 @@
 #include "msgcom.h"
 #include "router.h"
 
-#define _CLASSCOM_SOURCE_
 #include "classcom.h"
 
 /* =========================================

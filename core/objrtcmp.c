@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*            CLIPS Version 6.40  06/25/16             */
    /*                                                     */
    /*    OBJECT PATTERN NETWORK CONSTRUCTS-TO-C MODULE    */
    /*******************************************************/
@@ -30,6 +30,8 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 /* =========================================
    *****************************************
@@ -41,7 +43,6 @@
 #if DEFRULE_CONSTRUCT && OBJECT_SYSTEM && (! RUN_TIME) && CONSTRUCT_COMPILER
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 
 #include "conscomp.h"
 #include "envrnmnt.h"
@@ -50,7 +51,6 @@
 #include "pattern.h"
 #include "sysdep.h"
 
-#define _OBJRTCMP_SOURCE_
 #include "objrtcmp.h"
 
 /* =========================================

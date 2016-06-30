@@ -23,16 +23,19 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_inherpsr
+
+#pragma once
+
 #define _H_inherpsr
 
 #if OBJECT_SYSTEM && (! BLOAD_ONLY) && (! RUN_TIME)
 
-#ifndef _H_object
 #include "object.h"
-#endif
 
    PACKED_CLASS_LINKS            *ParseSuperclasses(void *,const char *,SYMBOL_HN *);
    PACKED_CLASS_LINKS            *FindPrecedenceList(void *,DEFCLASS *,PACKED_CLASS_LINKS *);

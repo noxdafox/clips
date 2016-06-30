@@ -38,15 +38,17 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_strngfun
 
+#pragma once
+
 #define _H_strngfun
 
-#ifndef _H_evaluatn
 #include "evaluatn.h"
-#endif
 
 #if ALLOW_ENVIRONMENT_GLOBALS
    int                            Build(const char *);

@@ -59,27 +59,21 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_engine
 
+#pragma once
+
 #define _H_engine
 
-#ifndef _H_lgcldpnd
 #include "lgcldpnd.h"
-#endif
-#ifndef _H_ruledef
 #include "ruledef.h"
-#endif
-#ifndef _H_network
 #include "network.h"
-#endif
-#ifndef _H_moduldef
 #include "moduldef.h"
-#endif
-#ifndef _H_retract
 #include "retract.h"
-#endif
 
 struct focus
   {

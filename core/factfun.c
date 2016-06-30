@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/03/16            */
+   /*             CLIPS Version 6.40  06/24/16            */
    /*                                                     */
    /*               FACT FUNCTIONS MODULE                 */
    /*******************************************************/
@@ -68,25 +68,24 @@
 /*            Added Env prefix to GetHaltExecution and       */
 /*            SetHaltExecution functions.                    */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 #include <string.h>
 
 #include "setup.h"
 
 #if DEFTEMPLATE_CONSTRUCT
 
-#define _FACTFUN_SOURCE_
-
-#include "extnfunc.h"
-#include "envrnmnt.h"
 #include "argacces.h"
+#include "envrnmnt.h"
+#include "extnfunc.h"
 #include "prntutil.h"
-#include "tmpltutl.h"
 #include "router.h"
 #include "sysdep.h"
+#include "tmpltutl.h"
 
 #include "factfun.h"
 

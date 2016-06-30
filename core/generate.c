@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.31  07/09/15            */
+   /*             CLIPS Version 6.40  06/25/16            */
    /*                                                     */
    /*                   GENERATE MODULE                   */
    /*******************************************************/
@@ -33,33 +33,33 @@
 /*            and unification does not occur within the same */
 /*            non/and group.                                 */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
-#define _GENERATE_SOURCE_
-
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 #include <stdlib.h>
 
 #include "setup.h"
 
 #if (! RUN_TIME) && (! BLOAD_ONLY) && DEFRULE_CONSTRUCT
 
+#include "argacces.h"
 #include "constant.h"
 #include "envrnmnt.h"
-#include "memalloc.h"
-#include "symbol.h"
 #include "exprnpsr.h"
-#include "argacces.h"
-#include "extnfunc.h"
-#include "router.h"
-#include "ruledef.h"
-#include "pattern.h"
-#include "generate.h"
 
 #if DEFGLOBAL_CONSTRUCT
 #include "globlpsr.h"
 #endif
+
+#include "memalloc.h"
+#include "pattern.h"
+#include "router.h"
+#include "ruledef.h"
+#include "symbol.h"
+
+#include "generate.h"
 
 /***************************************/
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */

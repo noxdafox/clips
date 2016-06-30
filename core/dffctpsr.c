@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  01/25/15            */
+   /*            CLIPS Version 6.40  06/23/16             */
    /*                                                     */
    /*                DEFFACTS PARSER MODULE               */
    /*******************************************************/
@@ -30,24 +30,25 @@
 /*            imported modules are search when locating a    */
 /*            named construct.                               */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _DFFCTPSR_SOURCE_
 
 #include "setup.h"
 
 #if DEFFACTS_CONSTRUCT
 
-#include "envrnmnt.h"
-#include "memalloc.h"
-#include "router.h"
-#include "cstrcpsr.h"
-#include "factrhs.h"
 #if BLOAD || BLOAD_AND_BSAVE
 #include "bload.h"
 #endif
-#include "dffctdef.h"
+
+#include "cstrcpsr.h"
 #include "dffctbsc.h"
+#include "dffctdef.h"
+#include "envrnmnt.h"
+#include "factrhs.h"
+#include "memalloc.h"
+#include "router.h"
 
 #include "dffctpsr.h"
 

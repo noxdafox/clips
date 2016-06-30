@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.40  05/21/16          */
+   /*            CLIPS Version 6.40  06/25/16             */
    /*                                                     */
    /*         IMPLICIT SYSTEM METHODS PARSING MODULE      */
    /*******************************************************/
@@ -35,6 +35,8 @@
 /*            originating from sources that are not          */
 /*            statically allocated.                          */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 /* =========================================
@@ -52,15 +54,13 @@
 #include "classcom.h"
 #include "classfun.h"
 #endif
-
-#include "envrnmnt.h"
-#include "memalloc.h"
 #include "cstrnutl.h"
+#include "envrnmnt.h"
 #include "extnfunc.h"
 #include "genrcpsr.h"
+#include "memalloc.h"
 #include "prccode.h"
 
-#define _IMMTHPSR_SOURCE_
 #include "immthpsr.h"
 
 /* =========================================

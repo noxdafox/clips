@@ -42,14 +42,17 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_multifun
+
+#pragma once
+
 #define _H_multifun
 
-#ifndef _H_evaluatn
 #include "evaluatn.h"
-#endif
 
    void                    MultifieldFunctionDefinitions(void *);
 #if MULTIFIELD_FUNCTIONS

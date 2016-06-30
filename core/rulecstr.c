@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*            CLIPS Version 6.40  06/27/16             */
    /*                                                     */
    /*              RULE CONSTRAINTS MODULE                */
    /*******************************************************/
@@ -21,16 +21,15 @@
 /*                                                           */
 /*      6.30: Support for long long integers.                */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _RULECSTR_SOURCE_
 
 #include "setup.h"
 
 #if (! RUN_TIME) && (! BLOAD_ONLY) && DEFRULE_CONSTRUCT
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 
 #include "analysis.h"
 #include "cstrnchk.h"

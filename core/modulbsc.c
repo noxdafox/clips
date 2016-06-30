@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/22/14            */
+   /*            CLIPS Version 6.40  06/25/16             */
    /*                                                     */
    /*         DEFMODULE BASIC COMMANDS HEADER FILE        */
    /*******************************************************/
@@ -28,26 +28,25 @@
 /*                                                           */
 /*            Converted API macros to function calls.        */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _MODULBSC_SOURCE_
 
 #include "setup.h"
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 #include <string.h>
 
-#include "constrct.h"
-#include "extnfunc.h"
-#include "modulbin.h"
-#include "prntutil.h"
-#include "modulcmp.h"
-#include "router.h"
 #include "argacces.h"
 #include "bload.h"
-#include "multifld.h"
+#include "constrct.h"
 #include "envrnmnt.h"
+#include "extnfunc.h"
+#include "modulbin.h"
+#include "modulcmp.h"
+#include "multifld.h"
+#include "prntutil.h"
+#include "router.h"
 
 #include "modulbsc.h"
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*            CLIPS Version 6.40  06/23/16             */
    /*                                                     */
    /*            CONSTRAINT BLOAD/BSAVE MODULE            */
    /*******************************************************/
@@ -22,9 +22,9 @@
 /*                                                           */
 /*      6.30: Changed integer type/precision.                */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _CSTRNBIN_SOURCE_
 
 #include "setup.h"
 

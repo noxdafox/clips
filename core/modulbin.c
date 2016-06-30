@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/25/16            */
    /*                                                     */
    /*             DEFMODULE BSAVE/BLOAD MODULE            */
    /*******************************************************/
@@ -20,23 +20,22 @@
 /*                                                           */
 /*      6.30: Changed integer type/precision.                */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _MODULBIN_SOURCE_
 
 #include "setup.h"
 
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE) && (! RUN_TIME)
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 
-#include "memalloc.h"
-#include "constrct.h"
-#include "moduldef.h"
 #include "bload.h"
 #include "bsave.h"
+#include "constrct.h"
 #include "envrnmnt.h"
+#include "memalloc.h"
+#include "moduldef.h"
 
 #include "modulbin.h"
 

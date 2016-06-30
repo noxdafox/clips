@@ -46,14 +46,17 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_rulebsc
+
+#pragma once
+
 #define _H_rulebsc
 
-#ifndef _H_evaluatn
 #include "evaluatn.h"
-#endif
 
    void                           DefruleBasicCommands(void *);
    void                           UndefruleCommand(void *);

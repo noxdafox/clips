@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/22/14            */
+   /*            CLIPS Version 6.40  06/27/16             */
    /*                                                     */
    /*         CONSTRUCT PROFILING FUNCTIONS MODULE        */
    /*******************************************************/
@@ -38,9 +38,9 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _PROFLFUN_SOURCE_
 
 #include "setup.h"
 

@@ -23,18 +23,20 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_factbld
 
+#pragma once
+
 #define _H_factbld
 
-#ifndef _H_pattern
-#include "pattern.h"
-#endif
-#ifndef _H_network
+struct factPatternNode;
+
 #include "network.h"
-#endif
+#include "expressn.h"
 
 struct factPatternNode
   {

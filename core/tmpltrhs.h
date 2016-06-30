@@ -27,21 +27,19 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_tmpltrhs
 
+#pragma once
+
 #define _H_tmpltrhs
 
-#ifndef _H_scanner
-#include "scanner.h"
-#endif
-#ifndef _H_expressn
 #include "expressn.h"
-#endif
-#ifndef _H_tmpltdef
+#include "scanner.h"
 #include "tmpltdef.h"
-#endif
 
    struct expr                   *ParseAssertTemplate(void *,const char *,struct token *,int *,
                                                              int,int,struct deftemplate *);

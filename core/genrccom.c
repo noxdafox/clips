@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/03/16            */
+   /*             CLIPS Version 6.40  06/25/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -57,8 +57,7 @@
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to GetHaltExecution and       */
-/*            SetHaltExecution functions.                    */
+/*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /*************************************************************/
 
@@ -73,47 +72,36 @@
 
 #include <string.h>
 
-#if DEFRULE_CONSTRUCT
-#include "network.h"
-#endif
-
+#include "argacces.h"
 #if BLOAD || BLOAD_AND_BSAVE
 #include "bload.h"
 #endif
-
-#if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE
-#include "genrcbin.h"
-#endif
-
-#if CONSTRUCT_COMPILER
-#include "genrccmp.h"
-#endif
-
-#if (! BLOAD_ONLY) && (! RUN_TIME)
-#include "constrct.h"
-#include "genrcpsr.h"
-#endif
-
 #if OBJECT_SYSTEM
 #include "classcom.h"
 #include "inscom.h"
 #endif
-
-#if DEBUGGING_FUNCTIONS
-#include "watch.h"
-#endif
-
-#include "argacces.h"
+#include "constrct.h"
 #include "cstrcpsr.h"
 #include "envrnmnt.h"
 #include "extnfunc.h"
+#if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE
+#include "genrcbin.h"
+#endif
+#if CONSTRUCT_COMPILER
+#include "genrccmp.h"
+#endif
 #include "genrcexe.h"
+#if (! BLOAD_ONLY) && (! RUN_TIME)
+#include "genrcpsr.h"
+#endif
 #include "memalloc.h"
 #include "modulpsr.h"
 #include "multifld.h"
 #include "router.h"
+#if DEBUGGING_FUNCTIONS
+#include "watch.h"
+#endif
 
-#define _GENRCCOM_SOURCE_
 #include "genrccom.h"
 
 /* =========================================

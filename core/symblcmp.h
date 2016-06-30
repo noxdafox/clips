@@ -33,19 +33,19 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_symblcmp
+
+#pragma once
+
 #define _H_symblcmp
 
-#ifndef _STDIO_INCLUDED_
-#define _STDIO_INCLUDED_
 #include <stdio.h>
-#endif
 
-#ifndef _H_symbol
 #include "symbol.h"
-#endif
 
    void                     PrintSymbolReference(void *,FILE *,SYMBOL_HN *);
    void                     PrintFloatReference(void *,FILE *,FLOAT_HN *);

@@ -1,9 +1,9 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.40  06/03/16          */
+   /*            CLIPS Version 6.40  06/25/16             */
    /*                                                     */
-   /*              OBJECT MESSAGE DISPATCH CODE           */
+   /*             OBJECT MESSAGE DISPATCH CODE            */
    /*******************************************************/
 
 /*************************************************************/
@@ -44,8 +44,7 @@
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to GetHaltExecution and       */
-/*            SetHaltExecution functions.                    */
+/*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /*************************************************************/
 
@@ -58,35 +57,30 @@
 
 #if OBJECT_SYSTEM
 
-#ifndef _STDIO_INCLUDED_
 #include <stdio.h>
-#define _STDIO_INCLUDED_
-#endif
 #include <stdlib.h>
 
 #include "argacces.h"
 #include "classcom.h"
 #include "classfun.h"
-#include "memalloc.h"
+#include "commline.h"
 #include "constrct.h"
 #include "envrnmnt.h"
 #include "exprnpsr.h"
+#include "inscom.h"
 #include "insfun.h"
+#include "memalloc.h"
 #include "msgcom.h"
 #include "msgfun.h"
 #include "multifld.h"
-#include "prcdrfun.h"
 #include "prccode.h"
+#include "prcdrfun.h"
 #include "proflfun.h"
 #include "router.h"
 #include "strngfun.h"
 #include "utility.h"
-#include "commline.h"
 
-#define _MSGPASS_SOURCE_
 #include "msgpass.h"
-
-#include "inscom.h"
 
 /* =========================================
    *****************************************

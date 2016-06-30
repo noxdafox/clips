@@ -3,7 +3,7 @@
    /*                                                     */
    /*             CLIPS Version 6.40  06/03/16            */
    /*                                                     */
-   /*                 I/O FUNCTIONS MODULE                */
+   /*                I/O FUNCTIONS MODULE                 */
    /*******************************************************/
 
 /*************************************************************/
@@ -76,9 +76,9 @@
 /*            Added Env prefix to GetHaltExecution and       */
 /*            SetHaltExecution functions.                    */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _IOFUN_SOURCE_
 
 #include "setup.h"
 
@@ -89,19 +89,18 @@
 #endif
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 #include <string.h>
 
-#include "envrnmnt.h"
-#include "router.h"
-#include "strngrtr.h"
-#include "filertr.h"
 #include "argacces.h"
-#include "extnfunc.h"
-#include "scanner.h"
-#include "constant.h"
-#include "memalloc.h"
 #include "commline.h"
+#include "constant.h"
+#include "envrnmnt.h"
+#include "extnfunc.h"
+#include "filertr.h"
+#include "memalloc.h"
+#include "router.h"
+#include "scanner.h"
+#include "strngrtr.h"
 #include "sysdep.h"
 #include "utility.h"
 

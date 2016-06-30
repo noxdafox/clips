@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.40  06/03/16          */
+   /*               CLIPS Version 6.40  06/24/16          */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -33,8 +33,7 @@
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to GetHaltExecution and       */
-/*            SetHaltExecution functions.                    */
+/*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /*************************************************************/
 
@@ -59,7 +58,6 @@
 #include "router.h"
 #include "utility.h"
 
-#define _FACTQURY_SOURCE_
 #include "factqury.h"
 
 /* =========================================

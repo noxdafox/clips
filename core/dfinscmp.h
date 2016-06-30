@@ -21,17 +21,19 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_dfinscmp
+
+#pragma once
+
 #define _H_dfinscmp
 
 #if DEFINSTANCES_CONSTRUCT && CONSTRUCT_COMPILER && (! RUN_TIME)
 
-#ifndef _STDIO_INCLUDED_
-#define _STDIO_INCLUDED_
 #include <stdio.h>
-#endif
 
    void                           SetupDefinstancesCompiler(void *);
    void                           DefinstancesCModuleReference(void *,FILE *,int,int,int);

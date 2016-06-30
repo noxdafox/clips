@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  05/21/16            */
+   /*             CLIPS Version 6.40  06/24/16            */
    /*                                                     */
    /*               EXTERNAL FUNCTION MODULE              */
    /*******************************************************/
@@ -36,20 +36,20 @@
 /*            originating from sources that are not          */
 /*            statically allocated.                          */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _EXTNFUNC_SOURCE_
 
 #include "setup.h"
 
 #include <ctype.h>
 #include <stdlib.h>
 
+#include "argacces.h"
 #include "constant.h"
 #include "envrnmnt.h"
-#include "router.h"
 #include "memalloc.h"
-#include "evaluatn.h"
+#include "router.h"
 
 #include "extnfunc.h"
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/03/16            */
+   /*             CLIPS Version 6.40  06/27/16            */
    /*                                                     */
    /*                PRINT UTILITY MODULE                 */
    /*******************************************************/
@@ -48,33 +48,29 @@
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to GetHaltExecution and       */
-/*            SetHaltExecution functions.                    */
+/*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /*************************************************************/
 
-#define _PRNTUTIL_SOURCE_
-
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 #include <string.h>
 
 #include "setup.h"
 
-#include "constant.h"
-#include "envrnmnt.h"
-#include "symbol.h"
-#include "utility.h"
-#include "evaluatn.h"
 #include "argacces.h"
-#include "router.h"
-#include "multifun.h"
-#include "factmngr.h"
+#include "constant.h"
 #include "cstrcpsr.h"
+#include "envrnmnt.h"
+#include "evaluatn.h"
+#include "factmngr.h"
 #include "inscom.h"
 #include "insmngr.h"
 #include "memalloc.h"
+#include "multifun.h"
+#include "router.h"
+#include "symbol.h"
 #include "sysdep.h"
+#include "utility.h"
 
 #include "prntutil.h"
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.30  06/24/16            */
    /*                                                     */
    /*                 FACT MATCH MODULE                   */
    /*******************************************************/
@@ -34,12 +34,11 @@
 /*            compilers/operating systems (IBM_MCW,          */
 /*            MAC_MCW, and IBM_TBC).                         */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
-#define _FACTMCH_SOURCE_
-
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 
 #include "setup.h"
 

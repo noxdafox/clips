@@ -30,17 +30,19 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_facthsh
+
+#pragma once
 
 #define _H_facthsh
 
 struct factHashEntry;
 
-#ifndef _H_factmngr
 #include "factmngr.h"
-#endif
 
 struct factHashEntry
   {

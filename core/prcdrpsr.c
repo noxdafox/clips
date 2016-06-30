@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.40  06/27/16            */
    /*                                                     */
    /*          PROCEDURAL FUNCTIONS PARSER MODULE         */
    /*******************************************************/
@@ -34,12 +34,11 @@
 /*            Fixed linkage issue when BLOAD_ONLY compiler   */
 /*            flag is set to 1.                              */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
-#define _PRCDRPSR_SOURCE_
-
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 
 #include "setup.h"
 
@@ -96,9 +95,9 @@ struct procedureParserData
 #endif
 
 #if ! RUN_TIME
-/*******************************************/
-/* ProceduralFunctionParsers        */
-/*******************************************/
+/*****************************/
+/* ProceduralFunctionParsers */
+/*****************************/
 void ProceduralFunctionParsers(
   void *theEnv)
   {

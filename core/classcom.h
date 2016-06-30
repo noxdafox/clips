@@ -35,26 +35,23 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_classcom
+
+#pragma once
+
 #define _H_classcom
 
 #define CONVENIENCE_MODE  0
 #define CONSERVATION_MODE 1
 
-#ifndef _H_cstrccom
 #include "cstrccom.h"
-#endif
-#ifndef _H_moduldef
 #include "moduldef.h"
-#endif
-#ifndef _H_object
 #include "object.h"
-#endif
-#ifndef _H_symbol
 #include "symbol.h"
-#endif
 
    const char             *EnvGetDefclassName(void *,void *);
    const char             *EnvGetDefclassPPForm(void *,void *);

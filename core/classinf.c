@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/03/16            */
+   /*            CLIPS Version 6.40  06/23/16             */
    /*                                                     */
    /*        CLASS INFO PROGRAMMATIC ACCESS MODULE        */
    /*******************************************************/
@@ -42,8 +42,7 @@
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to GetHaltExecution and       */
-/*            SetHaltExecution functions.                    */
+/*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /**************************************************************/
 
@@ -56,11 +55,7 @@
 
 #if OBJECT_SYSTEM
 
-#ifndef _STDIO_INCLUDED_
-#define _STDIO_INCLUDED_
 #include <stdio.h>
-#endif
-
 #include <string.h>
 
 #include "argacces.h"
@@ -76,7 +71,6 @@
 #include "multifld.h"
 #include "prntutil.h"
 
-#define _CLASSINF_SOURCE_
 #include "classinf.h"
 
 /* =========================================

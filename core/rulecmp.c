@@ -2,7 +2,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.31  07/25/15            */
+   /*             CLIPS Version 6.40  06/27/16            */
    /*                                                     */
    /*            DEFRULE CONSTRUCTS-TO-C MODULE           */
    /*******************************************************/
@@ -36,16 +36,15 @@
 /*                                                           */
 /*      6.31: Fixed disjunct bug in defrule iteration.       */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _RULECMP_SOURCE_
 
 #include "setup.h"
 
 #if DEFRULE_CONSTRUCT && (! RUN_TIME) && CONSTRUCT_COMPILER
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 #include <string.h>
 
 #include "envrnmnt.h"

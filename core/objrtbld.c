@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  01/13/15          */
+   /*            CLIPS Version 6.40  06/25/16             */
    /*                                                     */
    /*          OBJECT PATTERN MATCHER MODULE              */
    /*******************************************************/
@@ -38,6 +38,8 @@
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
+/*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
 /*************************************************************/
 /* =========================================
@@ -86,21 +88,20 @@
 #include "reorder.h"
 #include "router.h"
 
-#if CONSTRUCT_COMPILER && (! RUN_TIME)
-#include "objrtcmp.h"
-#endif
-
 #if BLOAD_AND_BSAVE || BLOAD || BLOAD_ONLY
 #include "objrtbin.h"
 #endif
 
-#define _OBJRTBLD_SOURCE_
+#if CONSTRUCT_COMPILER && (! RUN_TIME)
+#include "objrtcmp.h"
+#endif
+
 #include "objrtbld.h"
 
 #if ! DEFINSTANCES_CONSTRUCT
-#include "extnfunc.h"
 #include "classfun.h"
 #include "classcom.h"
+#include "extnfunc.h"
 #endif
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)

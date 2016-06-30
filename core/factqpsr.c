@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  02/05/15          */
+   /*               CLIPS Version 6.40  06/24/16          */
    /*                                                     */
    /*            FACT-SET QUERIES PARSER MODULE           */
    /*******************************************************/
@@ -36,6 +36,8 @@
 /*            constructs that are contained externally to    */
 /*            to constructs, DanglingConstructs.             */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 /* =========================================
@@ -60,7 +62,6 @@
 #include "scanner.h"
 #include "strngrtr.h"
 
-#define _FACTQPSR_SOURCE_
 #include "factqpsr.h"
 
 /* =========================================

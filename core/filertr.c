@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  01/26/15            */
+   /*             CLIPS Version 6.40  06/24/16            */
    /*                                                     */
    /*               FILE I/O ROUTER MODULE                */
    /*******************************************************/
@@ -40,12 +40,11 @@
 /*            Added STDOUT and STDIN logical name            */
 /*            definitions.                                   */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
-#define _FILERTR_SOURCE_
-
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 #include <string.h>
 
 #include "setup.h"

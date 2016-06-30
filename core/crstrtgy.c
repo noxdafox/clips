@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/22/14            */
+   /*            CLIPS Version 6.40  06/23/16             */
    /*                                                     */
    /*         CONFLICT RESOLUTION STRATEGY MODULE         */
    /*******************************************************/
@@ -39,25 +39,24 @@
 /*                                                           */
 /*            Converted API macros to function calls.        */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
-#define _CRSTRTGY_SOURCE_
-
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 #include <string.h>
 
 #include "setup.h"
 
 #if DEFRULE_CONSTRUCT
 
-#include "constant.h"
-#include "pattern.h"
-#include "reteutil.h"
-#include "argacces.h"
 #include "agenda.h"
+#include "argacces.h"
+#include "constant.h"
 #include "envrnmnt.h"
 #include "memalloc.h"
+#include "pattern.h"
+#include "reteutil.h"
 
 #include "crstrtgy.h"
 

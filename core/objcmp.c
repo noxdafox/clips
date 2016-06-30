@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*            CLIPS Version 6.40  06/25/16             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -32,6 +32,8 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 /* =========================================
@@ -52,7 +54,6 @@
 #include "objrtfnx.h"
 #include "sysdep.h"
 
-#define _OBJCMP_SOURCE_
 #include "objcmp.h"
 
 /* =========================================

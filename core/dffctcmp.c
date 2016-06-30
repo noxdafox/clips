@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*            CLIPS Version 6.40  06/23/16             */
    /*                                                     */
    /*            DEFFACTS CONSTRUCTS-TO-C MODULE          */
    /*******************************************************/
@@ -28,16 +28,15 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _DFFCTCMP_SOURCE_
 
 #include "setup.h"
 
 #if DEFFACTS_CONSTRUCT && CONSTRUCT_COMPILER && (! RUN_TIME)
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 
 #include "conscomp.h"
 #include "dffctdef.h"

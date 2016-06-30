@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/03/16            */
+   /*            CLIPS Version 6.40  06/28/16             */
    /*                                                     */
    /*            DEFTEMPLATE UTILITIES MODULE             */
    /*******************************************************/
@@ -41,34 +41,31 @@
 /*            Added Env prefix to GetHaltExecution and       */
 /*            SetHaltExecution functions.                    */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define  _TMPLTUTL_SOURCE_
 
 #include "setup.h"
 
 #if DEFTEMPLATE_CONSTRUCT
 
 #include <stdio.h>
-
-#define _STDIO_INCLUDED_
-
 #include <string.h>
 
-#include "extnfunc.h"
-#include "memalloc.h"
-#include "constrct.h"
-#include "router.h"
 #include "argacces.h"
+#include "constrct.h"
 #include "cstrnchk.h"
 #include "envrnmnt.h"
-#include "tmpltfun.h"
-#include "tmpltpsr.h"
+#include "extnfunc.h"
+#include "memalloc.h"
 #include "modulutl.h"
-#include "watch.h"
+#include "router.h"
 #include "sysdep.h"
 #include "tmpltbsc.h"
 #include "tmpltdef.h"
+#include "tmpltfun.h"
+#include "tmpltpsr.h"
+#include "watch.h"
 
 #include "tmpltutl.h"
 

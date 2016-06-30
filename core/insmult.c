@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*              CLIPS Version 6.40  06/03/16           */
+   /*            CLIPS Version 6.40  06/25/16             */
    /*                                                     */
    /*           INSTANCE MULTIFIELD SLOT MODULE           */
    /*******************************************************/
@@ -28,8 +28,7 @@
 /*      6.40: Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to GetHaltExecution and       */
-/*            SetHaltExecution functions.                    */
+/*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /*************************************************************/
 
@@ -51,7 +50,6 @@
 #include "multifun.h"
 #include "router.h"
 
-#define _INSMULT_SOURCE_
 #include "insmult.h"
 
 /* =========================================

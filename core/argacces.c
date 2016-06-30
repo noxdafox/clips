@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/03/16            */
+   /*            CLIPS Version 6.40  06/23/16             */
    /*                                                     */
    /*               ARGUMENT ACCESS MODULE                */
    /*******************************************************/
@@ -38,25 +38,24 @@
 /*            Added Env prefix to GetHaltExecution and       */
 /*            SetHaltExecution functions.                    */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _ARGACCES_SOURCE_
 
 #include "setup.h"
 
 #include <stdio.h>
-#define _STDIO_INCLUDED_
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
 
+#include "cstrnchk.h"
 #include "envrnmnt.h"
 #include "extnfunc.h"
-#include "router.h"
-#include "cstrnchk.h"
-#include "insfun.h"
 #include "factmngr.h"
+#include "insfun.h"
 #include "prntutil.h"
+#include "router.h"
 #include "sysdep.h"
 
 #include "argacces.h"

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/22/14          */
+   /*             CLIPS Version 6.40  06/23/16            */
    /*                                                     */
    /*                     BSAVE MODULE                    */
    /*******************************************************/
@@ -35,9 +35,9 @@
 /*                                                           */
 /*            Converted API macros to function calls.        */
 /*                                                           */
+/*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
-
-#define _BSAVE_SOURCE_
 
 #include "setup.h"
 

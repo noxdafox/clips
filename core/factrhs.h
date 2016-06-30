@@ -25,23 +25,20 @@
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
+/*            Pragma once and other inclusion changes.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_factrhs
+
+#pragma once
+
 #define _H_factrhs
 
-#ifndef _H_expressn
 #include "expressn.h"
-#endif
-#ifndef _H_scanner
-#include "scanner.h"
-#endif
-#ifndef _H_factmngr
 #include "factmngr.h"
-#endif
-#ifndef _H_symbol
+#include "scanner.h"
 #include "symbol.h"
-#endif
 
    struct expr                   *BuildRHSAssert(void *,const char *,struct token *,int *,int,int,const char *);
    struct expr                   *GetAssertArgument(void *,const char *,struct token *,int *,int,int,int *);
