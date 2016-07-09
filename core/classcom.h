@@ -1,9 +1,9 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/04/16            */
    /*                                                     */
-   /*                                                     */
+   /*              CLASS COMMANDS HEADER FILE             */
    /*******************************************************/
 
 /*************************************************************/
@@ -37,6 +37,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_classcom
@@ -67,9 +69,9 @@
    DEFCLASS               *LookupDefclassByMdlOrScope(void *,const char *);
    DEFCLASS               *LookupDefclassInScope(void *,const char *);
    DEFCLASS               *LookupDefclassAnywhere(void *,struct defmodule *,const char *);
-   intBool                 DefclassInScope(void *,DEFCLASS *,struct defmodule *);
+   bool                    DefclassInScope(void *,DEFCLASS *,struct defmodule *);
    void                   *EnvGetNextDefclass(void *,void *);
-   intBool                 EnvIsDefclassDeletable(void *,void *);
+   bool                    EnvIsDefclassDeletable(void *,void *);
 
    void                    UndefclassCommand(void *);
    unsigned short          EnvSetClassDefaultsMode(void *,unsigned short);
@@ -81,18 +83,18 @@
    void                    PPDefclassCommand(void *);
    void                    ListDefclassesCommand(void *);
    void                    EnvListDefclasses(void *,const char *,struct defmodule *);
-   unsigned                EnvGetDefclassWatchInstances(void *,void *);
-   void                    EnvSetDefclassWatchInstances(void *,unsigned,void *);
-   unsigned                EnvGetDefclassWatchSlots(void *,void *);
-   void                    EnvSetDefclassWatchSlots(void *,unsigned,void *);
-   unsigned                DefclassWatchAccess(void *,int,unsigned,EXPRESSION *);
-   unsigned                DefclassWatchPrint(void *,const char *,int,EXPRESSION *);
+   bool                    EnvGetDefclassWatchInstances(void *,void *);
+   void                    EnvSetDefclassWatchInstances(void *,bool,void *);
+   bool                    EnvGetDefclassWatchSlots(void *,void *);
+   void                    EnvSetDefclassWatchSlots(void *,bool,void *);
+   bool                    DefclassWatchAccess(void *,int,bool,EXPRESSION *);
+   bool                    DefclassWatchPrint(void *,const char *,int,EXPRESSION *);
 #endif
 
    void                    GetDefclassListFunction(void *,DATA_OBJECT *);
    void                    EnvGetDefclassList(void *,DATA_OBJECT *,struct defmodule *);
-   intBool                 EnvUndefclass(void *,void *);
-   intBool                 HasSuperclass(DEFCLASS *,DEFCLASS *);
+   bool                    EnvUndefclass(void *,void *);
+   bool                    HasSuperclass(DEFCLASS *,DEFCLASS *);
 
    SYMBOL_HN              *CheckClassAndSlot(void *,const char *,DEFCLASS **);
 
@@ -113,12 +115,12 @@
    unsigned                GetDefclassWatchInstances(void *);
    unsigned                GetDefclassWatchSlots(void *);
    void                   *GetNextDefclass(void *);
-   intBool                 IsDefclassDeletable(void *);
+   bool                    IsDefclassDeletable(void *);
    void                    ListDefclasses(const char *,struct defmodule *);
    unsigned short          SetClassDefaultsMode(unsigned short);
    void                    SetDefclassWatchInstances(unsigned,void *);
    void                    SetDefclassWatchSlots(unsigned,void *);
-   intBool                 Undefclass(void *);
+   bool                    Undefclass(void *);
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -31,6 +31,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_genrcexe
@@ -47,9 +49,9 @@
 
    void                           GenericDispatch(void *,DEFGENERIC *,DEFMETHOD *,DEFMETHOD *,EXPRESSION *,DATA_OBJECT *);
    void                           UnboundMethodErr(void *);
-   intBool                        IsMethodApplicable(void *,DEFMETHOD *);
+   bool                           IsMethodApplicable(void *,DEFMETHOD *);
 
-   int                            NextMethodP(void *);
+   bool                           NextMethodP(void *);
    void                           CallNextMethod(void *,DATA_OBJECT *);
    void                           CallSpecificMethod(void *,DATA_OBJECT *);
    void                           OverrideNextMethod(void *,DATA_OBJECT *);

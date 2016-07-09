@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/21/16            */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*            SYSTEM DEPENDENT HEADER FILE             */
    /*******************************************************/
@@ -82,6 +82,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_sysdep
@@ -113,8 +115,8 @@
    void                        genexit(void *,int);
    int                         genrand(void);
    void                        genseed(int);
-   int                         genremove(const char *);
-   int                         genrename(const char *,const char *);
+   bool                        genremove(const char *);
+   bool                        genrename(const char *,const char *);
    char                       *gengetcwd(char *,int);
    void                        GenWrite(void *,size_t,FILE *);
    int                       (*EnvSetBeforeOpenFunction(void *,int (*)(void *)))(void *);

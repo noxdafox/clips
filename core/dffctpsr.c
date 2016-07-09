@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/23/16             */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*                DEFFACTS PARSER MODULE               */
    /*******************************************************/
@@ -32,6 +32,8 @@
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -58,7 +60,7 @@
 /*   environment. Called when parsing a construct after the */
 /*   deffacts keyword has been found.                       */
 /************************************************************/
-int ParseDeffacts(
+bool ParseDeffacts(
   void *theEnv,
   const char *readSource)
   {
@@ -66,15 +68,15 @@ int ParseDeffacts(
    SYMBOL_HN *deffactsName;
    struct expr *temp;
    struct deffacts *newDeffacts;
-   int deffactsError;
+   bool deffactsError;
    struct token inputToken;
 
    /*=========================*/
    /* Parsing initialization. */
    /*=========================*/
 
-   deffactsError = FALSE;
-   SetPPBufferStatus(theEnv,ON);
+   deffactsError = false;
+   SetPPBufferStatus(theEnv,true);
 
    FlushPPBuffer(theEnv);
    SetIndentDepth(theEnv,3);
@@ -85,10 +87,10 @@ int ParseDeffacts(
    /*==========================================================*/
 
 #if BLOAD || BLOAD_AND_BSAVE
-   if ((Bloaded(theEnv) == TRUE) && (! ConstructData(theEnv)->CheckSyntaxMode))
+   if ((Bloaded(theEnv) == true) && (! ConstructData(theEnv)->CheckSyntaxMode))
      {
       CannotLoadWithBloadMessage(theEnv,"deffacts");
-      return(TRUE);
+      return true;
      }
 #endif
 
@@ -97,23 +99,23 @@ int ParseDeffacts(
    /*============================*/
 
    deffactsName = GetConstructNameAndComment(theEnv,readSource,&inputToken,"deffacts",
-                                             EnvFindDeffactsInModule,EnvUndeffacts,"$",TRUE,
-                                             TRUE,TRUE,FALSE);
-   if (deffactsName == NULL) { return(TRUE); }
+                                             EnvFindDeffactsInModule,EnvUndeffacts,"$",true,
+                                             true,true,false);
+   if (deffactsName == NULL) { return true; }
 
    /*===============================================*/
    /* Parse the list of facts in the deffacts body. */
    /*===============================================*/
 
-   temp = BuildRHSAssert(theEnv,readSource,&inputToken,&deffactsError,FALSE,FALSE,"deffacts");
+   temp = BuildRHSAssert(theEnv,readSource,&inputToken,&deffactsError,false,false,"deffacts");
 
-   if (deffactsError == TRUE) { return(TRUE); }
+   if (deffactsError == true) { return true; }
 
-   if (ExpressionContainsVariables(temp,FALSE))
+   if (ExpressionContainsVariables(temp,false))
      {
       LocalVariableErrorMessage(theEnv,"a deffacts construct");
       ReturnExpression(theEnv,temp);
-      return(TRUE);
+      return true;
      }
 
    SavePPBuffer(theEnv,"\n");
@@ -126,7 +128,7 @@ int ParseDeffacts(
    if (ConstructData(theEnv)->CheckSyntaxMode)
      {
       ReturnExpression(theEnv,temp);
-      return(FALSE);
+      return false;
      }
 
    /*==========================*/
@@ -149,7 +151,7 @@ int ParseDeffacts(
    /* Save the pretty print representation of the deffacts. */
    /*=======================================================*/
 
-   if (EnvGetConserveMemory(theEnv) == TRUE)
+   if (EnvGetConserveMemory(theEnv) == true)
      { newDeffacts->header.ppForm = NULL; }
    else
      { newDeffacts->header.ppForm = CopyPPBuffer(theEnv); }
@@ -163,10 +165,10 @@ int ParseDeffacts(
 #endif /* (! RUN_TIME) && (! BLOAD_ONLY) */
 
    /*================================================================*/
-   /* Return FALSE to indicate the deffacts was successfully parsed. */
+   /* Return false to indicate the deffacts was successfully parsed. */
    /*================================================================*/
 
-   return(FALSE);
+   return false;
   }
 
 #endif /* DEFFACTS_CONSTRUCT */

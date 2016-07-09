@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/27/16             */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*                  I/O ROUTER MODULE                  */
    /*******************************************************/
@@ -44,6 +44,10 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
+/*            Changed return values for router functions.    */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -67,7 +71,7 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static int                     QueryRouter(void *,const char *,struct router *);
+   static bool                    QueryRouter(void *,const char *,struct router *);
    static void                    DeallocateRouterData(void *);
 
 /*********************************************************/
@@ -79,7 +83,7 @@ void InitializeDefaultRouters(
    AllocateEnvironmentData(theEnv,ROUTER_DATA,sizeof(struct routerData),DeallocateRouterData);
 
    RouterData(theEnv)->CommandBufferInputCount = 0;
-   RouterData(theEnv)->AwaitingInput = TRUE;
+   RouterData(theEnv)->AwaitingInput = true;
    
 #if (! RUN_TIME)
    EnvDefineFunction2(theEnv,"exit",    'v', PTIEF ExitCommand,    "ExitCommand", "*1i");
@@ -110,7 +114,7 @@ static void DeallocateRouterData(
 /*******************************************/
 /* EnvPrintRouter: Generic print function. */
 /*******************************************/
-int EnvPrintRouter(
+int EnvPrintRouter( // TBD Return value 0, 1, 2
   void *theEnv,
   const char *logicalName,
   const char *str)
@@ -127,7 +131,7 @@ int EnvPrintRouter(
    if (((char *) RouterData(theEnv)->FastSaveFilePtr) == logicalName)
      {
       fprintf(RouterData(theEnv)->FastSaveFilePtr,"%s",str);
-      return(2);
+      return 2;
      }
 
    /*==============================================*/
@@ -138,7 +142,7 @@ int EnvPrintRouter(
    currentPtr = RouterData(theEnv)->ListOfRouters;
    while (currentPtr != NULL)
      {
-      if ((currentPtr->printer != NULL) ? QueryRouter(theEnv,logicalName,currentPtr) : FALSE)
+      if ((currentPtr->printer != NULL) ? QueryRouter(theEnv,logicalName,currentPtr) : false)
         {
          SetEnvironmentRouterContext(theEnv,currentPtr->context);
          if (currentPtr->environmentAware)
@@ -146,7 +150,7 @@ int EnvPrintRouter(
          else            
            { ((int (*)(const char *,const char *)) (*currentPtr->printer))(logicalName,str); }
          
-         return(1);
+         return 1;
         }
       currentPtr = currentPtr->next;
      }
@@ -156,7 +160,7 @@ int EnvPrintRouter(
    /*=====================================================*/
 
    if (strcmp(WERROR,logicalName) != 0) UnrecognizedRouterMessage(theEnv,logicalName);
-   return(0);
+   return 0;
   }
 
 /**************************************************/
@@ -223,7 +227,7 @@ int EnvGetcRouter(
    currentPtr = RouterData(theEnv)->ListOfRouters;
    while (currentPtr != NULL)
      {
-      if ((currentPtr->charget != NULL) ? QueryRouter(theEnv,logicalName,currentPtr) : FALSE)
+      if ((currentPtr->charget != NULL) ? QueryRouter(theEnv,logicalName,currentPtr) : false)
         {
          SetEnvironmentRouterContext(theEnv,currentPtr->context);
          if (currentPtr->environmentAware)
@@ -306,7 +310,7 @@ int EnvUngetcRouter(
    currentPtr = RouterData(theEnv)->ListOfRouters;
    while (currentPtr != NULL)
      {
-      if ((currentPtr->charunget != NULL) ? QueryRouter(theEnv,logicalName,currentPtr) : FALSE)
+      if ((currentPtr->charunget != NULL) ? QueryRouter(theEnv,logicalName,currentPtr) : false)
         {
          if ((ch == '\r') || (ch == '\n'))
            {
@@ -365,12 +369,12 @@ void EnvExitRouter(
   {
    struct router *currentPtr, *nextPtr;
 
-   RouterData(theEnv)->Abort = FALSE;
+   RouterData(theEnv)->Abort = false;
    currentPtr = RouterData(theEnv)->ListOfRouters;
    while (currentPtr != NULL)
      {
       nextPtr = currentPtr->next;
-      if (currentPtr->active == TRUE)
+      if (currentPtr->active == true)
         { 
          if (currentPtr->exiter != NULL) 
            {
@@ -395,21 +399,21 @@ void EnvExitRouter(
 void AbortExit(
   void *theEnv)
   {
-   RouterData(theEnv)->Abort = TRUE;
+   RouterData(theEnv)->Abort = true;
   }
 
 /************************************************************/
 /* EnvAddRouter: Adds an I/O router to the list of routers. */
 /************************************************************/
-intBool EnvAddRouter(
+bool EnvAddRouter(
   void *theEnv,
   const char *routerName,
   int priority,
-  int (*queryFunction)(void *,const char *),
-  int (*printFunction)(void *,const char *,const char *),
+  bool (*queryFunction)(void *,const char *),
+  void (*printFunction)(void *,const char *,const char *),
   int (*getcFunction)(void *,const char *),
-  int (*ungetcFunction)(void *,int,const char *),
-  int (*exitFunction)(void *,int))
+  int (*ungetcFunction)(void *,int,const char *), // TBD Should this be bool?
+  void (*exitFunction)(void *,int))
   {
    return EnvAddRouterWithContext(theEnv,routerName,priority,
                                   queryFunction,printFunction,getcFunction,
@@ -419,15 +423,15 @@ intBool EnvAddRouter(
 /***********************************************************************/
 /* EnvAddRouterWithContext: Adds an I/O router to the list of routers. */
 /***********************************************************************/
-intBool EnvAddRouterWithContext(
+bool EnvAddRouterWithContext(
   void *theEnv,
   const char *routerName,
   int priority,
-  int (*queryFunction)(void *,const char *),
-  int (*printFunction)(void *,const char *,const char *),
+  bool (*queryFunction)(void *,const char *),
+  void (*printFunction)(void *,const char *,const char *),
   int (*getcFunction)(void *,const char *),
   int (*ungetcFunction)(void *,int,const char *),
-  int (*exitFunction)(void *,int),
+  void (*exitFunction)(void *,int),
   void *context)
   {
    struct router *newPtr, *lastPtr, *currentPtr;
@@ -442,7 +446,7 @@ intBool EnvAddRouterWithContext(
         currentPtr = currentPtr->next)
      {
       if (strcmp(currentPtr->name,routerName) == 0)
-        { return 0; }
+        { return false; }
      }
      
    newPtr = get_struct(theEnv,router);
@@ -451,8 +455,8 @@ intBool EnvAddRouterWithContext(
    genstrcpy(nameCopy,routerName);     
    newPtr->name = nameCopy;
 
-   newPtr->active = TRUE;
-   newPtr->environmentAware = TRUE;
+   newPtr->active = true;
+   newPtr->environmentAware = true;
    newPtr->context = context;
    newPtr->priority = priority;
    newPtr->query = queryFunction;
@@ -465,12 +469,12 @@ intBool EnvAddRouterWithContext(
    if (RouterData(theEnv)->ListOfRouters == NULL)
      {
       RouterData(theEnv)->ListOfRouters = newPtr;
-      return(1);
+      return true;
      }
 
    lastPtr = NULL;
    currentPtr = RouterData(theEnv)->ListOfRouters;
-   while ((currentPtr != NULL) ? (priority < currentPtr->priority) : FALSE)
+   while ((currentPtr != NULL) ? (priority < currentPtr->priority) : false)
      {
       lastPtr = currentPtr;
       currentPtr = currentPtr->next;
@@ -487,13 +491,13 @@ intBool EnvAddRouterWithContext(
       lastPtr->next = newPtr;
      }
 
-   return(1);
+   return true;
   }
 
 /********************************************************************/
 /* EnvDeleteRouter: Removes an I/O router from the list of routers. */
 /********************************************************************/
-int EnvDeleteRouter(
+bool EnvDeleteRouter(
   void *theEnv,
   const char *routerName)
   {
@@ -511,23 +515,23 @@ int EnvDeleteRouter(
            {
             RouterData(theEnv)->ListOfRouters = currentPtr->next;
             rm(theEnv,currentPtr,(int) sizeof(struct router));
-            return(1);
+            return true;
            }
          lastPtr->next = currentPtr->next;
          rm(theEnv,currentPtr,(int) sizeof(struct router));
-         return(1);
+         return true;
         }
       lastPtr = currentPtr;
       currentPtr = currentPtr->next;
      }
 
-   return(0);
+   return false;
   }
 
 /*********************************************************************/
 /* QueryRouters: Determines if any router recognizes a logical name. */
 /*********************************************************************/
-int QueryRouters(
+bool QueryRouters(
   void *theEnv,
   const char *logicalName)
   {
@@ -536,18 +540,18 @@ int QueryRouters(
    currentPtr = RouterData(theEnv)->ListOfRouters;
    while (currentPtr != NULL)
      {
-      if (QueryRouter(theEnv,logicalName,currentPtr) == TRUE) return(TRUE);
+      if (QueryRouter(theEnv,logicalName,currentPtr) == true) return true;
       currentPtr = currentPtr->next;
      }
 
-   return(FALSE);
+   return false;
   }
 
 /************************************************/
 /* QueryRouter: Determines if a specific router */
 /*    recognizes a logical name.                */
 /************************************************/
-static int QueryRouter(
+static bool QueryRouter(
   void *theEnv,
   const char *logicalName,
   struct router *currentPtr)
@@ -556,14 +560,14 @@ static int QueryRouter(
    /* If the router is inactive, then it can't respond. */
    /*===================================================*/
 
-   if (currentPtr->active == FALSE)
-     { return(FALSE); }
+   if (currentPtr->active == false)
+     { return false; }
 
    /*=============================================================*/
    /* If the router has no query function, then it can't respond. */
    /*=============================================================*/
 
-   if (currentPtr->query == NULL) return(FALSE);
+   if (currentPtr->query == NULL) return false;
 
    /*=========================================*/
    /* Call the router's query function to see */
@@ -573,22 +577,22 @@ static int QueryRouter(
    SetEnvironmentRouterContext(theEnv,currentPtr->context);
    if (currentPtr->environmentAware)
      { 
-      if ((*currentPtr->query)(theEnv,logicalName) == TRUE)
-        { return(TRUE); }
+      if ((*currentPtr->query)(theEnv,logicalName) == true)
+        { return true; }
      }
    else            
      { 
-      if (((int (*)(const char *)) (*currentPtr->query))(logicalName) == TRUE)
-        { return(TRUE); }
+      if (((bool (*)(const char *)) (*currentPtr->query))(logicalName) == true)
+        { return true; }
      }
 
-   return(FALSE);
+   return false;
   }
 
 /*******************************************************/
 /* EnvDeactivateRouter: Deactivates a specific router. */
 /*******************************************************/
-int EnvDeactivateRouter(
+bool EnvDeactivateRouter(
   void *theEnv,
   const char *routerName)
   {
@@ -600,19 +604,19 @@ int EnvDeactivateRouter(
      {
       if (strcmp(currentPtr->name,routerName) == 0)
         {
-         currentPtr->active = FALSE;
-         return(TRUE);
+         currentPtr->active = false;
+         return true;
         }
       currentPtr = currentPtr->next;
      }
 
-   return(FALSE);
+   return false;
   }
 
 /***************************************************/
 /* EnvActivateRouter: Activates a specific router. */
 /***************************************************/
-int EnvActivateRouter(
+bool EnvActivateRouter(
   void *theEnv,
   const char *routerName)
   {
@@ -624,13 +628,13 @@ int EnvActivateRouter(
      {
       if (strcmp(currentPtr->name,routerName) == 0)
         {
-         currentPtr->active = TRUE;
-         return(TRUE);
+         currentPtr->active = true;
+         return true;
         }
       currentPtr = currentPtr->next;
      }
 
-   return(FALSE);
+   return false;
   }
 
 /********************************************/
@@ -699,7 +703,7 @@ void UnrecognizedRouterMessage(
   void *theEnv,
   const char *logicalName)
   {
-   PrintErrorID(theEnv,"ROUTER",1,FALSE);
+   PrintErrorID(theEnv,"ROUTER",1,false);
    EnvPrintRouter(theEnv,WERROR,"Logical name ");
    EnvPrintRouter(theEnv,WERROR,logicalName);
    EnvPrintRouter(theEnv,WERROR," was not recognized by any routers\n");
@@ -740,20 +744,20 @@ size_t EnvInputBufferCount(
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-int ActivateRouter(
+bool ActivateRouter(
   const char *routerName)
   {
    return EnvActivateRouter(GetCurrentEnvironment(),routerName);
   }
 
-intBool AddRouter(
+bool AddRouter(
   const char *routerName,
   int priority,
-  int (*queryFunction)(const char *),
-  int (*printFunction)(const char *,const char *),
+  bool (*queryFunction)(const char *),
+  void (*printFunction)(const char *,const char *),
   int (*getcFunction)(const char *),
   int (*ungetcFunction)(int,const char *),
-  int (*exitFunction)(int))
+  void (*exitFunction)(int))
   {
    struct router *newPtr, *lastPtr, *currentPtr;
    void *theEnv;
@@ -767,13 +771,13 @@ intBool AddRouter(
    genstrcpy(nameCopy,routerName);     
    newPtr->name = nameCopy;   
    
-   newPtr->active = TRUE;
-   newPtr->environmentAware = FALSE;
+   newPtr->active = true;
+   newPtr->environmentAware = false;
    newPtr->priority = priority;
    newPtr->context = NULL;
-   newPtr->query = (int (*)(void *,const char *)) queryFunction;
-   newPtr->printer = (int (*)(void *,const char *,const char *)) printFunction;
-   newPtr->exiter = (int (*)(void *,int)) exitFunction;
+   newPtr->query = (bool (*)(void *,const char *)) queryFunction;
+   newPtr->printer = (void (*)(void *,const char *,const char *)) printFunction;
+   newPtr->exiter = (void (*)(void *,int)) exitFunction;
    newPtr->charget = (int (*)(void *,const char *)) getcFunction;
    newPtr->charunget = (int (*)(void *,int,const char *)) ungetcFunction;
    newPtr->next = NULL;
@@ -781,12 +785,12 @@ intBool AddRouter(
    if (RouterData(theEnv)->ListOfRouters == NULL)
      {
       RouterData(theEnv)->ListOfRouters = newPtr;
-      return(1);
+      return true;
      }
 
    lastPtr = NULL;
    currentPtr = RouterData(theEnv)->ListOfRouters;
-   while ((currentPtr != NULL) ? (priority < currentPtr->priority) : FALSE)
+   while ((currentPtr != NULL) ? (priority < currentPtr->priority) : false)
      {
       lastPtr = currentPtr;
       currentPtr = currentPtr->next;
@@ -803,16 +807,16 @@ intBool AddRouter(
       lastPtr->next = newPtr;
      }
 
-   return(1);
+   return true;
   }
 
-int DeactivateRouter(
+bool DeactivateRouter(
   const char *routerName)
   {
    return EnvDeactivateRouter(GetCurrentEnvironment(),routerName);
   }
 
-int DeleteRouter(
+bool DeleteRouter(
   const char *routerName)
   {
    return EnvDeleteRouter(GetCurrentEnvironment(),routerName);

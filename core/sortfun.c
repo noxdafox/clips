@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/27/16            */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*                SORT FUNCTIONS MODULE                */
    /*******************************************************/
@@ -26,6 +26,8 @@
 /*            DeallocateSortFunctionData.                    */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -57,8 +59,8 @@ struct sortFunctionData
 
    static void                    DoMergeSort(void *,DATA_OBJECT *,DATA_OBJECT *,unsigned long,
                                               unsigned long,unsigned long,unsigned long,
-                                              int (*)(void *,DATA_OBJECT *,DATA_OBJECT *));
-   static int                     DefaultCompareSwapFunction(void *,DATA_OBJECT *,DATA_OBJECT *);
+                                              bool (*)(void *,DATA_OBJECT *,DATA_OBJECT *));
+   static bool                    DefaultCompareSwapFunction(void *,DATA_OBJECT *,DATA_OBJECT *);
    static void                    DeallocateSortFunctionData(void *);
    
 /****************************************/
@@ -84,10 +86,10 @@ static void DeallocateSortFunctionData(
    ReturnExpression(theEnv,SortFunctionData(theEnv)->SortComparisonFunction);
   }
 
-/**************************************/
+/********************************/
 /* DefaultCompareSwapFunction:  */
-/**************************************/
-static int DefaultCompareSwapFunction(
+/********************************/
+static bool DefaultCompareSwapFunction(
   void *theEnv,
   DATA_OBJECT *item1,
   DATA_OBJECT *item2)
@@ -104,15 +106,15 @@ static int DefaultCompareSwapFunction(
 
    if ((GetType(returnValue) == SYMBOL) &&
        (GetValue(returnValue) == EnvFalseSymbol(theEnv)))
-     { return(FALSE); }
+     { return false; }
 
-   return(TRUE);
+   return true;
   }
 
-/**************************************/
-/* SortFunction: H/L access routine   */
-/*   for the rest$ function.          */
-/**************************************/
+/************************************/
+/* SortFunction: H/L access routine */
+/*   for the rest$ function.        */
+/************************************/
 void SortFunction(
   void *theEnv,
   DATA_OBJECT_PTR returnValue)
@@ -147,7 +149,7 @@ void SortFunction(
    /* Verify that the comparison function exists. */
    /*=============================================*/
 
-   if (EnvArgTypeCheck(theEnv,"sort",1,SYMBOL,&theArg) == FALSE)
+   if (EnvArgTypeCheck(theEnv,"sort",1,SYMBOL,&theArg) == false)
      { return; }
 
    functionName = DOToString(theArg);
@@ -300,7 +302,7 @@ void MergeSort(
   void *theEnv,
   unsigned long listSize,
   DATA_OBJECT *theList,
-  int (*swapFunction)(void *,DATA_OBJECT *,DATA_OBJECT  *))
+  bool (*swapFunction)(void *,DATA_OBJECT *,DATA_OBJECT  *))
   {
    DATA_OBJECT *tempList;
    unsigned long middle;
@@ -342,7 +344,7 @@ static void DoMergeSort(
   unsigned long e1,
   unsigned long s2,
   unsigned long e2,
-  int (*swapFunction)(void *,DATA_OBJECT *,DATA_OBJECT *))
+  bool (*swapFunction)(void *,DATA_OBJECT *,DATA_OBJECT *))
   {
    DATA_OBJECT temp;
    unsigned long middle, size;

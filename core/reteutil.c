@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/27/16            */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*                 RETE UTILITY MODULE                 */
    /*******************************************************/
@@ -47,6 +47,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -73,7 +75,7 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                        TraceErrorToRuleDriver(void *,struct joinNode *,const char *,int,int);
+   static void                        TraceErrorToRuleDriver(void *,struct joinNode *,const char *,int,bool);
    static struct alphaMemoryHash     *FindAlphaMemory(void *,struct patternNodeHeader *,unsigned long);
    static unsigned long               AlphaMemoryHashValue(struct patternNodeHeader *,unsigned long);
    static void                        UnlinkAlphaMemory(void *,struct patternNodeHeader *,struct alphaMemoryHash *);
@@ -129,9 +131,9 @@ struct partialMatch *CopyPartialMatch(
                                         (list->bcount - 1));
 
    InitializePMLinks(linker);
-   linker->betaMemory = TRUE;
-   linker->busy = FALSE;
-   linker->rhsMemory = FALSE;
+   linker->betaMemory = true;
+   linker->busy = false;
+   linker->rhsMemory = false;
    linker->bcount = list->bcount;
    linker->hashValue = 0;
 
@@ -151,9 +153,9 @@ struct partialMatch *CreateEmptyPartialMatch(
    linker = get_struct(theEnv,partialMatch);
 
    InitializePMLinks(linker);
-   linker->betaMemory = TRUE;
-   linker->busy = FALSE;
-   linker->rhsMemory = FALSE;
+   linker->betaMemory = true;
+   linker->busy = false;
+   linker->rhsMemory = false;
    linker->bcount = 1;
    linker->hashValue = 0;
    linker->binds[0].gm.theValue = NULL;
@@ -201,12 +203,12 @@ void UpdateBetaPMLinks(
    if (side == LHS)
      { 
       theMemory = join->leftMemory; 
-      thePM->rhsMemory = FALSE;
+      thePM->rhsMemory = false;
      }
    else
      {
       theMemory = join->rightMemory;
-      thePM->rhsMemory = TRUE;
+      thePM->rhsMemory = true;
      }
    
    thePM->hashValue = hashValue;
@@ -577,7 +579,7 @@ struct partialMatch *MergePartialMatches(
   struct partialMatch *rhsBind)
   {
    struct partialMatch *linker;
-   static struct partialMatch mergeTemplate = { 1 }; /* betaMemory is TRUE, remainder are 0 or NULL */
+   static struct partialMatch mergeTemplate = { 1 }; /* betaMemory is true, remainder are 0 or NULL */
   
    /*=================================*/
    /* Allocate the new partial match. */
@@ -626,18 +628,18 @@ void InitializePatternHeader(
    theHeader->lastHash = NULL;
    theHeader->entryJoin = NULL;
    theHeader->rightHash = NULL;
-   theHeader->singlefieldNode = FALSE;
-   theHeader->multifieldNode = FALSE;
-   theHeader->stopNode = FALSE;
+   theHeader->singlefieldNode = false;
+   theHeader->multifieldNode = false;
+   theHeader->stopNode = false;
 #if (! RUN_TIME)
    theHeader->initialize = EnvGetIncrementalReset(theEnv);
 #else
-   theHeader->initialize = FALSE;
+   theHeader->initialize = false;
 #endif
-   theHeader->marked = FALSE;
-   theHeader->beginSlot = FALSE;
-   theHeader->endSlot = FALSE;
-   theHeader->selector = FALSE;
+   theHeader->marked = false;
+   theHeader->beginSlot = false;
+   theHeader->endSlot = false;
+   theHeader->selector = false;
   }
 
 /******************************************************************/
@@ -666,8 +668,8 @@ struct partialMatch *CreateAlphaMatch(
 
    theMatch = get_struct(theEnv,partialMatch);
    InitializePMLinks(theMatch);
-   theMatch->betaMemory = FALSE;
-   theMatch->busy = FALSE;
+   theMatch->betaMemory = false;
+   theMatch->busy = false;
    theMatch->bcount = 1;
    theMatch->hashValue = hashOffset;
 
@@ -825,7 +827,7 @@ void DestroyAlphaBetaMemory(
 /* FindEntityInPartialMatch: Searches for a specified */
 /*   data entity in a partial match.                  */
 /******************************************************/
-int FindEntityInPartialMatch(
+bool FindEntityInPartialMatch(
   struct patternEntity *theEntity,
   struct partialMatch *thePartialMatch)
   {
@@ -835,10 +837,10 @@ int FindEntityInPartialMatch(
      {
       if (thePartialMatch->binds[i].gm.theMatch == NULL) continue;
       if (thePartialMatch->binds[i].gm.theMatch->matchingItem == theEntity)
-        { return(TRUE); }
+        { return true; }
      }
 
-   return(FALSE);
+   return false;
   }
   
 /***********************************************************************/
@@ -881,7 +883,7 @@ void TraceErrorToRule(
 
    patternCount = CountPriorPatterns(joinPtr->lastLevel) + 1;
 
-   TraceErrorToRuleDriver(theEnv,joinPtr,indentSpaces,patternCount,FALSE);
+   TraceErrorToRuleDriver(theEnv,joinPtr,indentSpaces,patternCount,false);
 
    MarkRuleNetwork(theEnv,0);
   }
@@ -895,7 +897,7 @@ static void TraceErrorToRuleDriver(
   struct joinNode *joinPtr,
   const char *indentSpaces,
   int priorRightJoinPatterns,
-  int enteredJoinFromRight)
+  bool enteredJoinFromRight)
   {
    const char *name;
    int priorPatternCount;
@@ -1167,25 +1169,25 @@ void FlushBetaMemory(
      }
  }
   
-/*****************************************************************/
-/* BetaMemoryNotEmpty:  */
-/*****************************************************************/
-intBool BetaMemoryNotEmpty(
+/***********************/
+/* BetaMemoryNotEmpty: */
+/***********************/
+bool BetaMemoryNotEmpty(
   struct joinNode *theJoin)
   {
    if (theJoin->leftMemory != NULL)
      {
       if (theJoin->leftMemory->count > 0)
-        { return(TRUE); }
+        { return true; }
      }
      
    if (theJoin->rightMemory != NULL)
      {
       if (theJoin->rightMemory->count > 0)
-        { return(TRUE); }
+        { return true; }
      }
      
-   return(FALSE);
+   return false;
   }
     
 /*********************************************/
@@ -1228,13 +1230,13 @@ void RemoveAlphaMemoryMatches(
      { UnlinkAlphaMemory(theEnv,theHeader,theAlphaMemory); }
   }
 
-/*****************************************************************/
+/***********************/
 /* DestroyAlphaMemory: */
-/*****************************************************************/
+/***********************/
 void DestroyAlphaMemory(
   void *theEnv,
   struct patternNodeHeader *theHeader,
-  int unlink)
+  bool unlink)
   {
    struct alphaMemoryHash *theAlphaMemory, *tempMemory;
 
@@ -1442,9 +1444,9 @@ unsigned long ComputeRightHashValue(
      return hashValue;
     }
 
-/***********************************************************/
-/* ResizeBetaMemory:                                */
-/***********************************************************/
+/*********************/
+/* ResizeBetaMemory: */
+/*********************/
 void ResizeBetaMemory(
   void *theEnv,
   struct betaMemory *theMemory)
@@ -1496,9 +1498,9 @@ void ResizeBetaMemory(
    genfree(theEnv,oldArray,sizeof(struct partialMatch *) * oldSize);
   }
 
-/***********************************************************/
-/* ResetBetaMemory:                                */
-/***********************************************************/
+/********************/
+/* ResetBetaMemory: */
+/********************/
 static void ResetBetaMemory(
   void *theEnv,
   struct betaMemory *theMemory)
@@ -1534,14 +1536,14 @@ unsigned long PrintBetaMemory(
   void *theEnv,
   const char *logName,
   struct betaMemory *theMemory,
-  int indentFirst,
+  bool indentFirst,
   const char *indentString,
   int output)
   {
    struct partialMatch *listOfMatches;
    unsigned long b, count = 0;
 
-   if (EnvGetHaltExecution(theEnv) == TRUE)
+   if (EnvGetHaltExecution(theEnv) == true)
      { return count; }
 
    for (b = 0; b < theMemory->size; b++)
@@ -1555,7 +1557,7 @@ unsigned long PrintBetaMemory(
          /* to stop the display of partial matches. */
          /*=========================================*/
 
-         if (EnvGetHaltExecution(theEnv) == TRUE)
+         if (EnvGetHaltExecution(theEnv) == true)
            { return count; }
 
          /*=========================================================*/
@@ -1569,7 +1571,7 @@ unsigned long PrintBetaMemory(
             if (indentFirst)
               { EnvPrintRouter(theEnv,logName,indentString); }
             else
-              { indentFirst = TRUE; }
+              { indentFirst = true; }
            }
 
          /*==========================*/

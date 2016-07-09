@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/25/16             */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -31,6 +31,8 @@
 /*            Added support for hashed alpha memories.       */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -157,7 +159,7 @@ static void DeallocateObjectReteBinaryData(
    long i;
 
    for (i = 0; i < ObjectReteBinaryData(theEnv)->AlphaNodeCount; i++)
-     { DestroyAlphaMemory(theEnv,&ObjectReteBinaryData(theEnv)->AlphaArray[i].header,FALSE); }
+     { DestroyAlphaMemory(theEnv,&ObjectReteBinaryData(theEnv)->AlphaArray[i].header,false); }
 
    space = ObjectReteBinaryData(theEnv)->AlphaNodeCount * sizeof(struct objectAlphaNode);
    if (space != 0) genfree(theEnv,(void *) ObjectReteBinaryData(theEnv)->AlphaArray,space);
@@ -201,9 +203,9 @@ static void BsaveObjectPatternsFind(
    alphaPtr = ObjectNetworkTerminalPointer(theEnv);
    while (alphaPtr != NULL)
      {
-      alphaPtr->classbmp->neededBitMap = TRUE;
+      alphaPtr->classbmp->neededBitMap = true;
       if (alphaPtr->slotbmp != NULL)
-        alphaPtr->slotbmp->neededBitMap = TRUE;
+        alphaPtr->slotbmp->neededBitMap = true;
       alphaPtr->bsaveID = ObjectReteBinaryData(theEnv)->AlphaNodeCount++;
       alphaPtr = alphaPtr->nxtTerminal;
      }
@@ -486,7 +488,7 @@ static void UpdatePattern(
    bop = (BSAVE_OBJECT_PATTERN_NODE *) buf;
    op = (OBJECT_PATTERN_NODE *) &ObjectReteBinaryData(theEnv)->PatternArray[obji];
 
-   op->blocked = FALSE;
+   op->blocked = false;
    op->multifieldNode = bop->multifieldNode;
    op->whichField = bop->whichField;
    op->leaveFields = bop->leaveFields;

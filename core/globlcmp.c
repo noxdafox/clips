@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  06/25/16            */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*            DEFGLOBAL CONSTRUCTS-TO-C MODULE         */
    /*******************************************************/
@@ -30,6 +30,8 @@
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -48,7 +50,7 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static int                     ConstructToCode(void *,const char *,const char *,char *,int,FILE *,int,int);
+   static bool                    ConstructToCode(void *,const char *,const char *,char *,int,FILE *,int,int);
    static void                    DefglobalToCode(void *,FILE *,struct defglobal *,
                                                  int,int,int);
    static void                    DefglobalModuleToCode(void *,FILE *,struct defmodule *,int,int,int);
@@ -101,7 +103,7 @@ static void InitDefglobalsCode(
 /* ConstructToCode: Produces defglobal code for a run-time */
 /*   module created using the constructs-to-c function.    */
 /***********************************************************/
-static int ConstructToCode(
+static bool ConstructToCode(
   void *theEnv,
   const char *fileName,
   const char *pathName,
@@ -138,12 +140,12 @@ static int ConstructToCode(
       moduleFile = OpenFileIfNeeded(theEnv,moduleFile,fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
                                     moduleArrayVersion,headerFP,
                                     "struct defglobalModule",ModulePrefix(DefglobalData(theEnv)->DefglobalCodeItem),
-                                    FALSE,NULL);
+                                    false,NULL);
 
       if (moduleFile == NULL)
         {
          CloseDefglobalFiles(theEnv,moduleFile,defglobalFile,maxIndices);
-         return(0);
+         return false;
         }
 
       DefglobalModuleToCode(theEnv,moduleFile,theModule,imageID,maxIndices,moduleCount);
@@ -157,11 +159,11 @@ static int ConstructToCode(
          defglobalFile = OpenFileIfNeeded(theEnv,defglobalFile,fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
                                          defglobalArrayVersion,headerFP,
                                          "struct defglobal",ConstructPrefix(DefglobalData(theEnv)->DefglobalCodeItem),
-                                         FALSE,NULL);
+                                         false,NULL);
          if (defglobalFile == NULL)
            {
             CloseDefglobalFiles(theEnv,moduleFile,defglobalFile,maxIndices);
-            return(0);
+            return false;
            }
 
          DefglobalToCode(theEnv,defglobalFile,theDefglobal,imageID,maxIndices,moduleCount);
@@ -176,7 +178,7 @@ static int ConstructToCode(
 
    CloseDefglobalFiles(theEnv,moduleFile,defglobalFile,maxIndices);
 
-   return(1);
+   return true;
   }
 
 /**********************************************************/

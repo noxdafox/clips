@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/24/16             */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*                FACT BSAVE/BLOAD MODULE              */
    /*******************************************************/
@@ -23,6 +23,8 @@
 /*            Changed integer type/precision.                */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -113,7 +115,7 @@ static void DeallocateFactBloadData(
    int i;
    
    for (i = 0; i < FactBinaryData(theEnv)->NumberOfPatterns; i++)
-     { DestroyAlphaMemory(theEnv,&FactBinaryData(theEnv)->FactPatternArray[i].header,FALSE); }
+     { DestroyAlphaMemory(theEnv,&FactBinaryData(theEnv)->FactPatternArray[i].header,false); }
 
    space = FactBinaryData(theEnv)->NumberOfPatterns * sizeof(struct factPatternNode);
    if (space != 0) genfree(theEnv,(void *) FactBinaryData(theEnv)->FactPatternArray,space);

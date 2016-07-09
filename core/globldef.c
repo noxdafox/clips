@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/25/16            */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*                  DEFGLOBAL MODULE                   */
    /*******************************************************/
@@ -48,6 +48,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -86,7 +88,7 @@
    static void                    ReturnModule(void *,void *);
    static void                    ReturnDefglobal(void *,void *);
    static void                    InitializeDefglobalModules(void *);
-   static intBool                 GetDefglobalValue2(void *,void *,DATA_OBJECT_PTR);
+   static bool                    GetDefglobalValue2(void *,void *,DATA_OBJECT_PTR);
    static void                    IncrementDefglobalBusyCount(void *,void *);
    static void                    DecrementDefglobalBusyCount(void *,void *);
    static void                    DeallocateDefglobalData(void *);
@@ -122,7 +124,7 @@ void InitializeDefglobals(
    memcpy(&DefglobalData(theEnv)->GlobalInfo,&globalInfo,sizeof(struct entityRecord));   
    memcpy(&DefglobalData(theEnv)->DefglobalPtrRecord,&defglobalPtrRecord,sizeof(struct entityRecord));   
 
-   DefglobalData(theEnv)->ResetGlobals = TRUE;
+   DefglobalData(theEnv)->ResetGlobals = true;
    DefglobalData(theEnv)->LastModuleIndex = -1;
    
    InstallPrimitive(theEnv,&DefglobalData(theEnv)->GlobalInfo,GBL_VARIABLE);
@@ -155,7 +157,7 @@ static void DeallocateDefglobalData(
    if (Bloaded(theEnv)) return;
 #endif
 
-   DoForAllConstructs(theEnv,DestroyDefglobalAction,DefglobalData(theEnv)->DefglobalModuleIndex,FALSE,NULL); 
+   DoForAllConstructs(theEnv,DestroyDefglobalAction,DefglobalData(theEnv)->DefglobalModuleIndex,false,NULL);
 
    for (theModule = EnvGetNextDefmodule(theEnv,NULL);
         theModule != NULL;
@@ -167,7 +169,7 @@ static void DeallocateDefglobalData(
       rtn_struct(theEnv,defglobalModule,theModuleItem);
      }
 #else
-   DoForAllConstructs(theEnv,DestroyDefglobalAction,DefglobalData(theEnv)->DefglobalModuleIndex,FALSE,NULL); 
+   DoForAllConstructs(theEnv,DestroyDefglobalAction,DefglobalData(theEnv)->DefglobalModuleIndex,false,NULL);
 #endif
   }
   
@@ -291,19 +293,19 @@ void *EnvGetNextDefglobal(
   }
 
 /*********************************************************/
-/* EnvIsDefglobalDeletable: Returns TRUE if a particular */
-/*   defglobal can be deleted, otherwise returns FALSE.  */
+/* EnvIsDefglobalDeletable: Returns true if a particular */
+/*   defglobal can be deleted, otherwise returns false.  */
 /*********************************************************/
-intBool EnvIsDefglobalDeletable(
+bool EnvIsDefglobalDeletable(
   void *theEnv,
   void *ptr)
   {
    if (! ConstructsDeletable(theEnv))
-     { return FALSE; }
+     { return false; }
 
-   if (((struct defglobal *) ptr)->busyCount) return(FALSE);
+   if (((struct defglobal *) ptr)->busyCount) return false;
 
-   return(TRUE);
+   return true;
   }
 
 /************************************************************/
@@ -352,7 +354,7 @@ static void ReturnDefglobal(
    /* has been made to a global variable.       */
    /*===========================================*/
 
-   DefglobalData(theEnv)->ChangeToGlobals = TRUE;
+   DefglobalData(theEnv)->ChangeToGlobals = true;
 #endif
   }
   
@@ -402,7 +404,7 @@ void QSetDefglobalValue(
   void *theEnv,
   struct defglobal *theGlobal,
   DATA_OBJECT_PTR vPtr,
-  int resetVar)
+  bool resetVar)
   {
    /*====================================================*/
    /* If the new value passed for the defglobal is NULL, */
@@ -460,7 +462,7 @@ void QSetDefglobalValue(
    /* has been made to a global variable.       */
    /*===========================================*/
 
-   DefglobalData(theEnv)->ChangeToGlobals = TRUE;
+   DefglobalData(theEnv)->ChangeToGlobals = true;
 
    if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
        (EvaluationData(theEnv)->CurrentExpression == NULL) && (UtilityData(theEnv)->GarbageCollectionLocks == 0))
@@ -514,7 +516,7 @@ void EnvGetDefglobalValueForm(
 /************************************************************/
 /* EnvGetGlobalsChanged: Returns the defglobal change flag. */
 /************************************************************/
-int EnvGetGlobalsChanged(
+bool EnvGetGlobalsChanged(
   void *theEnv)
   {    
    return(DefglobalData(theEnv)->ChangeToGlobals); 
@@ -525,7 +527,7 @@ int EnvGetGlobalsChanged(
 /*********************************************************/
 void EnvSetGlobalsChanged(
   void *theEnv,
-  int value)
+  bool value)
   {
    DefglobalData(theEnv)->ChangeToGlobals = value; 
   }
@@ -534,7 +536,7 @@ void EnvSetGlobalsChanged(
 /* GetDefglobalValue2: Returns the value of the specified */
 /*   global variable in the supplied DATA_OBJECT.         */
 /**********************************************************/
-static intBool GetDefglobalValue2(
+static bool GetDefglobalValue2(
   void *theEnv,
   void *theValue,
   DATA_OBJECT_PTR vPtr)
@@ -549,7 +551,7 @@ static intBool GetDefglobalValue2(
 
    theGlobal = (struct defglobal *)
                FindImportedConstruct(theEnv,"defglobal",NULL,ValueToString(theValue),
-               &count,TRUE,NULL);
+               &count,true,NULL);
 
    /*=============================================*/
    /* If it wasn't found, print an error message. */
@@ -557,14 +559,14 @@ static intBool GetDefglobalValue2(
 
    if (theGlobal == NULL)
      {
-      PrintErrorID(theEnv,"GLOBLDEF",1,FALSE);
+      PrintErrorID(theEnv,"GLOBLDEF",1,false);
       EnvPrintRouter(theEnv,WERROR,"Global variable ?*");
       EnvPrintRouter(theEnv,WERROR,ValueToString(theValue));
       EnvPrintRouter(theEnv,WERROR,"* is unbound.\n");
       vPtr->type = SYMBOL;
       vPtr->value = EnvFalseSymbol(theEnv);
-      EnvSetEvaluationError(theEnv,TRUE);
-      return(FALSE);
+      EnvSetEvaluationError(theEnv,true);
+      return false;
      }
 
    /*========================================================*/
@@ -578,8 +580,8 @@ static intBool GetDefglobalValue2(
       AmbiguousReferenceErrorMessage(theEnv,"defglobal",ValueToString(theValue));
       vPtr->type = SYMBOL;
       vPtr->value = EnvFalseSymbol(theEnv);
-      EnvSetEvaluationError(theEnv,TRUE);
-      return(FALSE);
+      EnvSetEvaluationError(theEnv,true);
+      return false;
      }
 
    /*=================================*/
@@ -588,13 +590,13 @@ static intBool GetDefglobalValue2(
 
    QGetDefglobalValue(theEnv,theGlobal,vPtr);
 
-   return(TRUE);
+   return true;
   }
 
 /***************************************************************/
 /* QGetDefglobalValue: Returns the value of a global variable. */
 /***************************************************************/
-int QGetDefglobalValue(
+bool QGetDefglobalValue(
   void *theEnv,
   void *vTheGlobal,
   DATA_OBJECT_PTR vPtr)
@@ -624,14 +626,14 @@ int QGetDefglobalValue(
                                 &((struct multifield *) theGlobal->current.value)->theFields[theGlobal->current.begin]);
      }
 
-   return(TRUE);
+   return true;
   }
 
 /************************************************************/
 /* EnvGetDefglobalValue: Returns the value of the specified */
 /*   global variable in the supplied DATA_OBJECT.           */
 /************************************************************/
-intBool EnvGetDefglobalValue(
+bool EnvGetDefglobalValue(
   void *theEnv,
   const char *variableName,
   DATA_OBJECT_PTR vPtr)
@@ -639,18 +641,18 @@ intBool EnvGetDefglobalValue(
    struct defglobal *theDefglobal;
 
    if ((theDefglobal = (struct defglobal *) EnvFindDefglobal(theEnv,variableName)) == NULL)
-     { return(FALSE); }
+     { return false; }
 
    QGetDefglobalValue(theEnv,theDefglobal,vPtr);
 
-   return(TRUE);
+   return true;
   }
 
 /****************************************************************/
 /* EnvSetDefglobalValue: Sets the value of the specified global */
 /*   variable to the value stored in the supplied DATA_OBJECT.  */
 /****************************************************************/
-intBool EnvSetDefglobalValue(
+bool EnvSetDefglobalValue(
   void *theEnv,
   const char *variableName,
   DATA_OBJECT_PTR vPtr)
@@ -658,11 +660,11 @@ intBool EnvSetDefglobalValue(
    struct defglobal *theGlobal;
 
    if ((theGlobal = QFindDefglobal(theEnv,(SYMBOL_HN *) EnvAddSymbol(theEnv,variableName))) == NULL)
-     { return(FALSE); }
+     { return false; }
 
-   QSetDefglobalValue(theEnv,theGlobal,vPtr,FALSE);
+   QSetDefglobalValue(theEnv,theGlobal,vPtr,false);
 
-   return(TRUE);
+   return true;
   }
 
 /**********************************************************/
@@ -732,10 +734,10 @@ void UpdateDefglobalScope(
 
          if (FindImportedConstruct(theEnv,"defglobal",theModule,
                                    ValueToString(theDefglobal->header.name),
-                                   &moduleCount,TRUE,NULL) != NULL)
-           { theDefglobal->inScope = TRUE; }
+                                   &moduleCount,true,NULL) != NULL)
+           { theDefglobal->inScope = true; }
          else
-           { theDefglobal->inScope = FALSE; }
+           { theDefglobal->inScope = false; }
         }
      }
   }
@@ -882,7 +884,7 @@ const char *GetDefglobalPPForm(
    return EnvGetDefglobalPPForm(GetCurrentEnvironment(),theDefglobal);
   }
 
-intBool GetDefglobalValue(
+bool GetDefglobalValue(
   const char *variableName,
   DATA_OBJECT_PTR vPtr)
   {
@@ -897,7 +899,7 @@ void GetDefglobalValueForm(
    EnvGetDefglobalValueForm(GetCurrentEnvironment(),buffer,bufferLength,vTheGlobal);
   }
 
-int GetGlobalsChanged()
+bool GetGlobalsChanged()
   {
    return EnvGetGlobalsChanged(GetCurrentEnvironment());
   }
@@ -908,13 +910,13 @@ void *GetNextDefglobal(
    return EnvGetNextDefglobal(GetCurrentEnvironment(),defglobalPtr);
   }
 
-intBool IsDefglobalDeletable(
+bool IsDefglobalDeletable(
   void *ptr)
   {
    return EnvIsDefglobalDeletable(GetCurrentEnvironment(),ptr);
   }
 
-intBool SetDefglobalValue(
+bool SetDefglobalValue(
   const char *variableName,
   DATA_OBJECT_PTR vPtr)
   {
@@ -922,7 +924,7 @@ intBool SetDefglobalValue(
   }
 
 void SetGlobalsChanged(
-  int value)
+  bool value)
   {
    EnvSetGlobalsChanged(GetCurrentEnvironment(),value);
   }

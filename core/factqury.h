@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -33,6 +33,8 @@
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -80,7 +82,7 @@ struct factQueryData
    SYMBOL_HN *QUERY_DELIMETER_SYMBOL;
    QUERY_CORE *QueryCore;
    QUERY_STACK *QueryCoreStack;
-   int AbortQuery;
+   bool AbortQuery;
   };
 
 #define FactQueryData(theEnv) ((struct factQueryData *) GetEnvironmentData(theEnv,FACT_QUERY_DATA))
@@ -90,7 +92,7 @@ struct factQueryData
    void                           SetupFactQuery(void *);
    void                           GetQueryFact(void *,DATA_OBJECT *);
    void                           GetQueryFactSlot(void *,DATA_OBJECT *);
-   intBool                        AnyFacts(void *);
+   bool                           AnyFacts(void *);
    void                           QueryFindFact(void *,DATA_OBJECT *);
    void                           QueryFindAllFacts(void *,DATA_OBJECT *);
    void                           QueryDoForFact(void *,DATA_OBJECT *);

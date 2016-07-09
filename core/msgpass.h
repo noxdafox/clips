@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -41,6 +41,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_msgpass
@@ -60,14 +62,14 @@ typedef struct messageHandlerLink
    struct messageHandlerLink *nxtInStack;
   } HANDLER_LINK;
 
-   intBool          DirectMessage(void *,SYMBOL_HN *,INSTANCE_TYPE *,
+   bool             DirectMessage(void *,SYMBOL_HN *,INSTANCE_TYPE *,
                                          DATA_OBJECT *,EXPRESSION *);
    void             EnvSend(void *,DATA_OBJECT *,const char *,const char *,DATA_OBJECT *);
    void             DestroyHandlerLinks(void *,HANDLER_LINK *);
    void             SendCommand(void *,DATA_OBJECT *);
    DATA_OBJECT     *GetNthMessageArgument(void *,int);
 
-   int              NextHandlerAvailable(void *);
+   bool             NextHandlerAvailable(void *);
    void             CallNextHandler(void *,DATA_OBJECT *);
 
    void             FindApplicableOfName(void *,DEFCLASS *,HANDLER_LINK *[],
@@ -75,9 +77,9 @@ typedef struct messageHandlerLink
    HANDLER_LINK    *JoinHandlerLinks(void *,HANDLER_LINK *[],HANDLER_LINK *[],SYMBOL_HN *);
 
    void             PrintHandlerSlotGetFunction(void *,const char *,void *);
-   intBool          HandlerSlotGetFunction(void *,void *,DATA_OBJECT *);
+   bool             HandlerSlotGetFunction(void *,void *,DATA_OBJECT *);
    void             PrintHandlerSlotPutFunction(void *,const char *,void *);
-   intBool          HandlerSlotPutFunction(void *,void *,DATA_OBJECT *);
+   bool             HandlerSlotPutFunction(void *,void *,DATA_OBJECT *);
    void             DynamicHandlerGetSlot(void *,DATA_OBJECT *);
    void             DynamicHandlerPutSlot(void *,DATA_OBJECT *);
 

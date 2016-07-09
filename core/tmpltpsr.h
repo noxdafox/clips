@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*            DEFTEMPLATE PARSER HEADER FILE           */
    /*******************************************************/
@@ -34,6 +34,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_tmpltpsr
@@ -45,7 +47,7 @@
 #include "symbol.h"
 #include "tmpltdef.h"
 
-   int                            ParseDeftemplate(void *,const char *);
+   bool                           ParseDeftemplate(void *,const char *);
    void                           InstallDeftemplate(void *,struct deftemplate *);
 
 #endif /* _H_tmpltpsr */

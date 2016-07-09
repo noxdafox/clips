@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/25/16            */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*             DEFMODULE BSAVE/BLOAD MODULE            */
    /*******************************************************/
@@ -21,6 +21,8 @@
 /*      6.30: Changed integer type/precision.                */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -179,7 +181,7 @@ static void BsaveFind(
       /* as being a needed symbol. */
       /*===========================*/
 
-      defmodulePtr->name->neededSymbol = TRUE;
+      defmodulePtr->name->neededSymbol = true;
 
       /*==============================================*/
       /* Loop through each of the port items in the   */
@@ -194,11 +196,11 @@ static void BsaveFind(
         {
          DefmoduleData(theEnv)->NumberOfPortItems++;
          if (theList->moduleName != NULL)
-           { theList->moduleName->neededSymbol = TRUE; }
+           { theList->moduleName->neededSymbol = true; }
          if (theList->constructType != NULL)
-           { theList->constructType->neededSymbol = TRUE; }
+           { theList->constructType->neededSymbol = true; }
          if (theList->constructName != NULL)
-           { theList->constructName->neededSymbol = TRUE; }
+           { theList->constructName->neededSymbol = true; }
         }
 
       /*==============================================*/
@@ -214,11 +216,11 @@ static void BsaveFind(
         {
          DefmoduleData(theEnv)->NumberOfPortItems++;
          if (theList->moduleName != NULL)
-           { theList->moduleName->neededSymbol = TRUE; }
+           { theList->moduleName->neededSymbol = true; }
          if (theList->constructType != NULL)
-           { theList->constructType->neededSymbol = TRUE; }
+           { theList->constructType->neededSymbol = true; }
          if (theList->constructName != NULL)
-           { theList->constructName->neededSymbol = TRUE; }
+           { theList->constructName->neededSymbol = true; }
         }
      }
   }
@@ -600,7 +602,7 @@ static void ClearBload(
 
    SetListOfDefmodules(theEnv,NULL);
    CreateMainModule(theEnv);
-   DefmoduleData(theEnv)->MainModuleRedefinable = TRUE;
+   DefmoduleData(theEnv)->MainModuleRedefinable = true;
   }
 
 #endif /*  (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE) && (! RUN_TIME) */

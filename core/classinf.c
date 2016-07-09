@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/23/16             */
+   /*            CLIPS Version 6.40  07/04/16             */
    /*                                                     */
    /*        CLASS INFO PROGRAMMATIC ACCESS MODULE        */
    /*******************************************************/
@@ -44,6 +44,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /**************************************************************/
 
 /* =========================================
@@ -80,31 +82,31 @@
    ***************************************** */
 
 static void SlotInfoSupportFunction(void *,DATA_OBJECT *,const char *,void (*)(void *,void *,const char *,DATA_OBJECT *));
-static unsigned CountSubclasses(DEFCLASS *,int,int);
-static unsigned StoreSubclasses(void *,unsigned,DEFCLASS *,int,int,short);
+static unsigned CountSubclasses(DEFCLASS *,bool,int);
+static unsigned StoreSubclasses(void *,unsigned,DEFCLASS *,int,int,bool);
 static SLOT_DESC *SlotInfoSlot(void *,DATA_OBJECT *,DEFCLASS *,const char *,const char *);
 
 /*********************************************************************
   NAME         : ClassAbstractPCommand
   DESCRIPTION  : Determines if direct instances of a class can be made
   INPUTS       : None
-  RETURNS      : TRUE (1) if class is abstract, FALSE (0) if concrete
+  RETURNS      : True (1) if class is abstract, false (0) if concrete
   SIDE EFFECTS : None
   NOTES        : Syntax: (class-abstractp <class>)
  *********************************************************************/
-int ClassAbstractPCommand(
+bool ClassAbstractPCommand(
   void *theEnv)
   {
    DATA_OBJECT tmp;
    DEFCLASS *cls;
    
-   if (EnvArgTypeCheck(theEnv,"class-abstractp",1,SYMBOL,&tmp) == FALSE)
-     return(FALSE);
+   if (EnvArgTypeCheck(theEnv,"class-abstractp",1,SYMBOL,&tmp) == false)
+     return false;
    cls = LookupDefclassByMdlOrScope(theEnv,DOToString(tmp));
    if (cls == NULL)
      {
       ClassExistError(theEnv,"class-abstractp",ValueToString(tmp.value));
-      return(FALSE);
+      return false;
      }
    return(EnvClassAbstractP(theEnv,(void *) cls));
   }
@@ -116,24 +118,24 @@ int ClassAbstractPCommand(
   DESCRIPTION  : Determines if instances of a class can match rule
                  patterns
   INPUTS       : None
-  RETURNS      : TRUE (1) if class is reactive, FALSE (0)
+  RETURNS      : True (1) if class is reactive, false (0)
                  if non-reactive
   SIDE EFFECTS : None
   NOTES        : Syntax: (class-reactivep <class>)
  *****************************************************************/
-int ClassReactivePCommand(
+bool ClassReactivePCommand(
   void *theEnv)
   {
    DATA_OBJECT tmp;
    DEFCLASS *cls;
    
-   if (EnvArgTypeCheck(theEnv,"class-reactivep",1,SYMBOL,&tmp) == FALSE)
-     return(FALSE);
+   if (EnvArgTypeCheck(theEnv,"class-reactivep",1,SYMBOL,&tmp) == false)
+     return false;
    cls = LookupDefclassByMdlOrScope(theEnv,DOToString(tmp));
    if (cls == NULL)
      {
       ClassExistError(theEnv,"class-reactivep",ValueToString(tmp.value));
-      return(FALSE);
+      return false;
      }
    return(EnvClassReactiveP(theEnv,(void *) cls));
   }
@@ -157,19 +159,19 @@ int ClassReactivePCommand(
 void *ClassInfoFnxArgs(
   void *theEnv,
   const char *fnx,
-  int *inhp)
+  bool *inhp)
   {
    void *clsptr;
    DATA_OBJECT tmp;
 
-   *inhp = 0;
+   *inhp = false;
    if (EnvRtnArgCount(theEnv) == 0)
      {
       ExpectedCountError(theEnv,fnx,AT_LEAST,1);
-      EnvSetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,true);
       return(NULL);
      }
-   if (EnvArgTypeCheck(theEnv,fnx,1,SYMBOL,&tmp) == FALSE)
+   if (EnvArgTypeCheck(theEnv,fnx,1,SYMBOL,&tmp) == false)
      return(NULL);
    clsptr = (void *) LookupDefclassByMdlOrScope(theEnv,DOToString(tmp));
    if (clsptr == NULL)
@@ -179,14 +181,14 @@ void *ClassInfoFnxArgs(
      }
    if (EnvRtnArgCount(theEnv) == 2)
      {
-      if (EnvArgTypeCheck(theEnv,fnx,2,SYMBOL,&tmp) == FALSE)
+      if (EnvArgTypeCheck(theEnv,fnx,2,SYMBOL,&tmp) == false)
         return(NULL);
       if (strcmp(ValueToString(tmp.value),"inherit") == 0)
-        *inhp = 1;
+        *inhp = true;
       else
         {
          SyntaxErrorMessage(theEnv,fnx);
-         EnvSetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,true);
          return(NULL);
         }
      }
@@ -207,7 +209,7 @@ void ClassSlotsCommand(
   void *theEnv,
   DATA_OBJECT *result)
   {
-   int inhp;
+   bool inhp;
    void *clsptr;
    
    clsptr = ClassInfoFnxArgs(theEnv,"class-slots",&inhp);
@@ -233,7 +235,7 @@ void ClassSuperclassesCommand(
   void *theEnv,
   DATA_OBJECT *result)
   {
-   int inhp;
+   bool inhp;
    void *clsptr;
    
    clsptr = ClassInfoFnxArgs(theEnv,"class-superclasses",&inhp);
@@ -259,7 +261,7 @@ void ClassSubclassesCommand(
   void *theEnv,
   DATA_OBJECT *result)
   {
-   int inhp;
+   bool inhp;
    void *clsptr;
      
    clsptr = ClassInfoFnxArgs(theEnv,"class-subclasses",&inhp);
@@ -285,7 +287,7 @@ void GetDefmessageHandlersListCmd(
   void *theEnv,
   DATA_OBJECT *result)
   {
-   int inhp;
+   bool inhp;
    void *clsptr;
    
    if (EnvRtnArgCount(theEnv) == 0)
@@ -362,7 +364,7 @@ void SlotCardinalityCommand(
   SIDE EFFECTS : None
   NOTES        : None
  ********************************************************************/
-intBool EnvClassAbstractP(
+bool EnvClassAbstractP(
   void *theEnv,
   void *clsptr)
   {
@@ -383,7 +385,7 @@ intBool EnvClassAbstractP(
   SIDE EFFECTS : None
   NOTES        : None
  ********************************************************************/
-intBool EnvClassReactiveP(
+bool EnvClassReactiveP(
   void *theEnv,
   void *clsptr)
   {
@@ -412,7 +414,7 @@ void EnvClassSlots(
   void *theEnv,
   void *clsptr,
   DATA_OBJECT *result,
-  int inhp)
+  bool inhp)
   {
    long size;
    register DEFCLASS *cls;
@@ -461,7 +463,7 @@ void EnvGetDefmessageHandlerList(
   void *theEnv,
   void *clsptr,
   DATA_OBJECT *result,
-  int inhp)
+  bool inhp)
   {
    DEFCLASS *cls,*svcls,*svnxt,*supcls;
    long j;
@@ -537,7 +539,7 @@ void EnvClassSuperclasses(
   void *theEnv,
   void *clsptr,
   DATA_OBJECT *result,
-  int inhp)
+  bool inhp)
   {
    PACKED_CLASS_LINKS *plinks;
    unsigned offset;
@@ -582,7 +584,7 @@ void EnvClassSubclasses(
   void *theEnv,
   void *clsptr,
   DATA_OBJECT *result,
-  int inhp)
+  bool inhp)
   {
    register int i; // Bug fix 2014-07-18: Previously unsigned and SetpDOEnd decremented to -1.
    register int id;
@@ -599,7 +601,7 @@ void EnvClassSubclasses(
      return;
    if ((id = GetTraversalID(theEnv)) == -1)
      return;
-   StoreSubclasses(result->value,1,(DEFCLASS *) clsptr,inhp,id,TRUE);
+   StoreSubclasses(result->value,1,(DEFCLASS *) clsptr,inhp,id,true);
    ReleaseTraversalID(theEnv);
   }
 
@@ -619,7 +621,7 @@ void ClassSubclassAddresses(
   void *theEnv,
   void *clsptr,
   DATA_OBJECT *result,
-  int inhp)
+  bool inhp)
   {
    register int i; // Bug fix 2014-07-18: Previously unsigned and SetpDOEnd decremented to -1.
    register int id;
@@ -636,7 +638,7 @@ void ClassSubclassAddresses(
      return;
    if ((id = GetTraversalID(theEnv)) == -1)
      return;
-   StoreSubclasses(result->value,1,(DEFCLASS *) clsptr,inhp,id,FALSE);
+   StoreSubclasses(result->value,1,(DEFCLASS *) clsptr,inhp,id,false);
    ReleaseTraversalID(theEnv);
   }
 /**************************************************************************
@@ -765,7 +767,7 @@ void EnvSlotSources(
         {
          cls = sp->cls->allSuperclasses.classArray[classi];
          csp = FindClassSlot(cls,sp->slotName->name);
-         if ((csp != NULL) ? (csp->noInherit == 0) : FALSE)
+         if ((csp != NULL) ? (csp->noInherit == 0) : false)
            {
             ctmp = get_struct(theEnv,classLink);
             ctmp->cls = cls;
@@ -800,7 +802,7 @@ void EnvSlotTypes(
 
    if ((sp = SlotInfoSlot(theEnv,result,(DEFCLASS *) clsptr,sname,"slot-types")) == NULL)
      return;
-   if ((sp->constraint != NULL) ? sp->constraint->anyAllowed : TRUE)
+   if ((sp->constraint != NULL) ? sp->constraint->anyAllowed : true)
      {
       typemap[0] = typemap[1] = (char) 0xFF;
       ClearBitMap(typemap,MULTIFIELD);
@@ -881,7 +883,7 @@ void EnvSlotAllowedValues(
 
    if ((sp = SlotInfoSlot(theEnv,result,(DEFCLASS *) clsptr,sname,"slot-allowed-values")) == NULL)
      return;
-   if ((sp->constraint != NULL) ? (sp->constraint->restrictionList == NULL) : TRUE)
+   if ((sp->constraint != NULL) ? (sp->constraint->restrictionList == NULL) : true)
      {
       result->type = SYMBOL;
       result->value = EnvFalseSymbol(theEnv);
@@ -912,7 +914,7 @@ void EnvSlotAllowedClasses(
 
    if ((sp = SlotInfoSlot(theEnv,result,(DEFCLASS *) clsptr,sname,"slot-allowed-classes")) == NULL)
      return;
-   if ((sp->constraint != NULL) ? (sp->constraint->classList == NULL) : TRUE)
+   if ((sp->constraint != NULL) ? (sp->constraint->classList == NULL) : true)
      {
       result->type = SYMBOL;
       result->value = EnvFalseSymbol(theEnv);
@@ -941,7 +943,7 @@ void EnvSlotRange(
 
    if ((sp = SlotInfoSlot(theEnv,result,(DEFCLASS *) clsptr,sname,"slot-range")) == NULL)
      return;
-   if ((sp->constraint == NULL) ? FALSE :
+   if ((sp->constraint == NULL) ? false :
        (sp->constraint->anyAllowed || sp->constraint->floatsAllowed ||
         sp->constraint->integersAllowed))
      {
@@ -1042,7 +1044,7 @@ static void SlotInfoSupportFunction(
  *****************************************************************/
 static unsigned CountSubclasses(
   DEFCLASS *cls,
-  int inhp,
+  bool inhp,
   int tvid)
   {
    long i,cnt;
@@ -1081,7 +1083,7 @@ static unsigned StoreSubclasses(
   DEFCLASS *cls,
   int inhp,
   int tvid,
-  short storeName)
+  bool storeName)
   {
    long i,classi;
    register DEFCLASS *subcls;
@@ -1136,7 +1138,7 @@ static SLOT_DESC *SlotInfoSlot(
 
    if ((ssym = FindSymbolHN(theEnv,sname)) == NULL)
      {
-      EnvSetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,true);
       EnvSetMultifieldErrorValue(theEnv,result);
       return(NULL);
      }
@@ -1144,7 +1146,7 @@ static SLOT_DESC *SlotInfoSlot(
    if (i == -1)
      {
       SlotExistError(theEnv,sname,fnxname);
-      EnvSetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,true);
       EnvSetMultifieldErrorValue(theEnv,result);
       return(NULL);
      }
@@ -1159,14 +1161,14 @@ static SLOT_DESC *SlotInfoSlot(
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-intBool ClassAbstractP(
+bool ClassAbstractP(
   void *clsptr)
   {
    return EnvClassAbstractP(GetCurrentEnvironment(),clsptr);
   }
 
 #if DEFRULE_CONSTRUCT
-intBool ClassReactiveP(
+bool ClassReactiveP(
   void *clsptr)
   {
    return EnvClassReactiveP(GetCurrentEnvironment(),clsptr);

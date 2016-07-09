@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*              PRINT UTILITY HEADER FILE              */
    /*******************************************************/
@@ -48,6 +48,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_prntutil
@@ -64,9 +66,9 @@
 
 struct printUtilityData
   { 
-   intBool PreserveEscapedCharacters;
-   intBool AddressesToStrings;
-   intBool InstanceAddressesToNames;
+   bool PreserveEscapedCharacters;
+   bool AddressesToStrings;
+   bool InstanceAddressesToNames;
   };
 
 #define PrintUtilityData(theEnv) ((struct printUtilityData *) GetEnvironmentData(theEnv,PRINT_UTILITY_DATA))
@@ -82,8 +84,8 @@ struct printUtilityData
    const char                    *DataObjectToString(void *,DATA_OBJECT *);
    void                           SyntaxErrorMessage(void *,const char *);
    void                           SystemError(void *,const char *,int);
-   void                           PrintErrorID(void *,const char *,int,int);
-   void                           PrintWarningID(void *,const char *,int,int);
+   void                           PrintErrorID(void *,const char *,int,bool);
+   void                           PrintWarningID(void *,const char *,int,bool);
    void                           CantFindItemErrorMessage(void *,const char *,const char *);
    void                           CantDeleteItemErrorMessage(void *,const char *,const char *);
    void                           AlreadyParsedErrorMessage(void *,const char *,const char *);

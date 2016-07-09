@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/25/16            */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*                  MULTIFIELD MODULE                  */
    /*******************************************************/
@@ -44,6 +44,8 @@
 /*            in sysdep.c.                                   */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -241,7 +243,7 @@ void *EnvCreateMultifield(
 
    theSegment->next = UtilityData(theEnv)->CurrentGarbageFrame->ListOfMultifields;
    UtilityData(theEnv)->CurrentGarbageFrame->ListOfMultifields = theSegment;
-   UtilityData(theEnv)->CurrentGarbageFrame->dirty = TRUE;
+   UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
    if (UtilityData(theEnv)->CurrentGarbageFrame->LastMultifield == NULL)
      { UtilityData(theEnv)->CurrentGarbageFrame->LastMultifield = theSegment; }
 
@@ -277,7 +279,7 @@ void AddToMultifieldList(
   {
    theSegment->next = UtilityData(theEnv)->CurrentGarbageFrame->ListOfMultifields;
    UtilityData(theEnv)->CurrentGarbageFrame->ListOfMultifields = theSegment;
-   UtilityData(theEnv)->CurrentGarbageFrame->dirty = TRUE;
+   UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
    if (UtilityData(theEnv)->CurrentGarbageFrame->LastMultifield == NULL)
      { UtilityData(theEnv)->CurrentGarbageFrame->LastMultifield = theSegment; }
   }
@@ -380,7 +382,7 @@ void PrintMultifield(
   struct multifield *segment,
   long begin,
   long end,
-  int printParens)
+  bool printParens)
   {
    struct field *theMultifield;
    int i;
@@ -406,7 +408,7 @@ void StoreInMultifield(
   void *theEnv,
   DATA_OBJECT *returnValue,
   EXPRESSION *expptr,
-  int garbageSegment)
+  bool garbageSegment)
   {
    DATA_OBJECT val_ptr;
    DATA_OBJECT *val_arr;
@@ -526,7 +528,7 @@ void StoreInMultifield(
 /*************************************************************/
 /* MultifieldDOsEqual: determines if two segments are equal. */
 /*************************************************************/
-intBool MultifieldDOsEqual(
+bool MultifieldDOsEqual(
   DATA_OBJECT_PTR dobj1,
   DATA_OBJECT_PTR dobj2)
   {
@@ -536,17 +538,17 @@ intBool MultifieldDOsEqual(
    extent1 = GetpDOLength(dobj1);
    extent2 = GetpDOLength(dobj2);
    if (extent1 != extent2)
-     { return(FALSE); }
+     { return false; }
 
    e1 = (FIELD_PTR) GetMFPtr(GetpValue(dobj1),GetpDOBegin(dobj1));
    e2 = (FIELD_PTR) GetMFPtr(GetpValue(dobj2),GetpDOBegin(dobj2));
    while (extent1 != 0)
      {
       if (e1->type != e2->type)
-        { return(FALSE); }
+        { return false; }
 
       if (e1->value != e2->value)
-        { return(FALSE); }
+        { return false; }
 
       extent1--;
 
@@ -556,13 +558,13 @@ intBool MultifieldDOsEqual(
          e2++;
         }
      }
-   return(TRUE);
+   return true;
   }
 
 /******************************************************************/
 /* MultifieldsEqual: Determines if two multifields are identical. */
 /******************************************************************/
-int MultifieldsEqual(
+bool MultifieldsEqual(
   struct multifield *segment1,
   struct multifield *segment2)
   {
@@ -572,7 +574,7 @@ int MultifieldsEqual(
 
    length = segment1->multifieldLength;
    if (length != segment2->multifieldLength)
-     { return(FALSE); }
+     { return false; }
 
    elem1 = segment1->theFields;
    elem2 = segment2->theFields;
@@ -585,20 +587,20 @@ int MultifieldsEqual(
    while (i < length)
      {
       if (elem1[i].type != elem2[i].type)
-        { return(FALSE); }
+        { return false; }
 
       if (elem1[i].type == MULTIFIELD)
         {
          if (MultifieldsEqual((struct multifield *) elem1[i].value,
-                              (struct multifield *) elem2[i].value) == FALSE)
-          { return(FALSE); }
+                              (struct multifield *) elem2[i].value) == false)
+          { return false; }
         }
       else if (elem1[i].value != elem2[i].value)
-        { return(FALSE); }
+        { return false; }
 
       i++;
      }
-   return(TRUE);
+   return true;
   }
 
 /************************************************************/

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/28/16            */
+   /*             CLIPS Version 6.40  07/04/16            */
    /*                                                     */
    /*           CONSTRUCT COMPILER HEADER FILE            */
    /*******************************************************/
@@ -53,6 +53,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_conscomp
@@ -80,7 +82,7 @@ struct CodeGeneratorItem
    const char *name;
    void (*beforeFunction)(void *);
    void (*initFunction)(void *,FILE *,int,int);
-   int (*generateFunction)(void *,const char *,const char *,char *,int,FILE *,int,int);
+   bool (*generateFunction)(void *,const char *,const char *,char *,int,FILE *,int,int);
    int priority;
    char **arrayNames;
    int arrayCount;
@@ -97,7 +99,7 @@ struct constructCompilerData
    const char *FilePrefix;
    const char *PathName;
    char *FileNameBuffer;
-   intBool ExpressionHeader;
+   bool ExpressionHeader;
    long ExpressionCount;
    int ExpressionVersion;
    int CodeGeneratorCount;
@@ -105,8 +107,6 @@ struct constructCompilerData
   };
 
 #define ConstructCompilerData(theEnv) ((struct constructCompilerData *) GetEnvironmentData(theEnv,CONSTRUCT_COMPILER_DATA))
-
-#include <stdio.h>
 
 struct CodeGeneratorFile
  {
@@ -118,16 +118,16 @@ struct CodeGeneratorFile
 
    void                      InitializeConstructCompilerData(void *);
    void                      ConstructsToCCommandDefinition(void *);
-   FILE                     *NewCFile(void *,const char *,const char *,char *,int,int,int);
+   FILE                     *NewCFile(void *,const char *,const char *,char *,int,int,bool);
    int                       ExpressionToCode(void *,FILE *,struct expr *);
    void                      PrintFunctionReference(void *,FILE *,struct FunctionDefinition *);
    struct CodeGeneratorItem *AddCodeGeneratorItem(void *,const char *,int,
                                                          void (*)(void *),
                                                          void (*)(void *,FILE *,int,int),
-                                                         int (*)(void *,const char *,const char *,char *,int,FILE *,int,int),int);
-   FILE                     *CloseFileIfNeeded(void *,FILE *,int *,int *,int,int *,struct CodeGeneratorFile *);
+                                                         bool (*)(void *,const char *,const char *,char *,int,FILE *,int,int),int);
+   FILE                     *CloseFileIfNeeded(void *,FILE *,int *,int *,int,bool *,struct CodeGeneratorFile *);
    FILE                     *OpenFileIfNeeded(void *,FILE *,const char *,const char *,char *,int,int,int *,
-                                                     int,FILE *,const char *,char *,int,struct CodeGeneratorFile *);
+                                                     int,FILE *,const char *,char *,bool,struct CodeGeneratorFile *);
    void                      MarkConstructBsaveIDs(void *,int);
    void                      ConstructHeaderToCode(void *,FILE *,struct constructHeader *,int,int,
                                                          int,const char *,const char *);

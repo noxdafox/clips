@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.40  06/25/16          */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -46,6 +46,8 @@
 /*            SetEvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -107,15 +109,15 @@ static void DisplayGenericCore(void *,DEFGENERIC *);
                  any methods are currently
                  executing
   INPUTS       : None
-  RETURNS      : TRUE if no methods are
-                 executing, FALSE otherwise
+  RETURNS      : True if no methods are
+                 executing, false otherwise
   SIDE EFFECTS : None
   NOTES        : Used by (clear) and (bload)
  ***************************************************/
-intBool ClearDefgenericsReady(
+bool ClearDefgenericsReady(
   void *theEnv)
   {
-   return((DefgenericData(theEnv)->CurrentGeneric != NULL) ? FALSE : TRUE);
+   return((DefgenericData(theEnv)->CurrentGeneric != NULL) ? false : true);
   }
 
 /*****************************************************
@@ -161,7 +163,7 @@ void FreeDefgenericModule(
   DESCRIPTION  : Deletes all defmethods - generic headers
                    are left intact
   INPUTS       : None
-  RETURNS      : TRUE if all methods deleted, FALSE otherwise
+  RETURNS      : True if all methods deleted, false otherwise
   SIDE EFFECTS : Defmethods deleted
   NOTES        : Clearing generic functions is done in
                    two stages
@@ -174,21 +176,21 @@ void FreeDefgenericModule(
                    mutually refer to generic functions
                    to be cleared
  ************************************************************/
-int ClearDefmethods(
+bool ClearDefmethods(
   void *theEnv)
   {
    register DEFGENERIC *gfunc;
-   int success = TRUE;
+   bool success = true;
 
 #if BLOAD || BLOAD_AND_BSAVE
-   if (Bloaded(theEnv) == TRUE) return(FALSE);
+   if (Bloaded(theEnv) == true) return false;
 #endif
 
    gfunc = (DEFGENERIC *) EnvGetNextDefgeneric(theEnv,NULL);
    while (gfunc != NULL)
      {
-      if (RemoveAllExplicitMethods(theEnv,gfunc) == FALSE)
-        success = FALSE;
+      if (RemoveAllExplicitMethods(theEnv,gfunc) == false)
+        success = false;
       gfunc = (DEFGENERIC *) EnvGetNextDefgeneric(theEnv,(void *) gfunc);
      }
    return(success);
@@ -200,11 +202,11 @@ int ClearDefmethods(
                    are left intact (as well as a method for an
                    overloaded system function)
   INPUTS       : None
-  RETURNS      : TRUE if all methods deleted, FALSE otherwise
+  RETURNS      : True if all methods deleted, false otherwise
   SIDE EFFECTS : Explicit defmethods deleted
   NOTES        : None
  *****************************************************************/
-int RemoveAllExplicitMethods(
+bool RemoveAllExplicitMethods(
   void *theEnv,
   DEFGENERIC *gfunc)
   {
@@ -212,7 +214,7 @@ int RemoveAllExplicitMethods(
    unsigned systemMethodCount = 0;
    DEFMETHOD *narr;
 
-   if (MethodsExecuting(gfunc) == FALSE)
+   if (MethodsExecuting(gfunc) == false)
      {
       for (i = 0 ; i < gfunc->mcnt ; i++)
         {
@@ -243,9 +245,9 @@ int RemoveAllExplicitMethods(
          gfunc->mcnt = 0;
          gfunc->methods = NULL;
         }
-      return(TRUE);
+      return true;
      }
-   return(FALSE);
+   return false;
   }
 
 /**************************************************
@@ -281,19 +283,19 @@ void RemoveDefgeneric(
   NAME         : ClearDefgenerics
   DESCRIPTION  : Deletes all generic headers
   INPUTS       : None
-  RETURNS      : TRUE if all methods deleted, FALSE otherwise
+  RETURNS      : True if all methods deleted, false otherwise
   SIDE EFFECTS : Generic headers deleted (and any implicit system
                   function methods)
   NOTES        : None
  ****************************************************************/
-int ClearDefgenerics(
+bool ClearDefgenerics(
   void *theEnv)
   {
    register DEFGENERIC *gfunc,*gtmp;
-   int success = TRUE;
+   bool success = true;
 
 #if BLOAD || BLOAD_AND_BSAVE
-   if (Bloaded(theEnv) == TRUE) return(FALSE);
+   if (Bloaded(theEnv) == true) return false;
 #endif
 
    gfunc = (DEFGENERIC *) EnvGetNextDefgeneric(theEnv,NULL);
@@ -301,10 +303,10 @@ int ClearDefgenerics(
      {
       gtmp = gfunc;
       gfunc = (DEFGENERIC *) EnvGetNextDefgeneric(theEnv,(void *) gfunc);
-      if (RemoveAllExplicitMethods(theEnv,gtmp) == FALSE)
+      if (RemoveAllExplicitMethods(theEnv,gtmp) == false)
         {
          CantDeleteItemErrorMessage(theEnv,"generic function",EnvGetDefgenericName(theEnv,gtmp));
-         success = FALSE;
+         success = false;
         }
       else
         {
@@ -330,7 +332,7 @@ void MethodAlterError(
   void *theEnv,
   DEFGENERIC *gfunc)
   {
-   PrintErrorID(theEnv,"GENRCFUN",1,FALSE);
+   PrintErrorID(theEnv,"GENRCFUN",1,false);
    EnvPrintRouter(theEnv,WERROR,"Defgeneric ");
    EnvPrintRouter(theEnv,WERROR,EnvGetDefgenericName(theEnv,(void *) gfunc));
    EnvPrintRouter(theEnv,WERROR," cannot be modified while one of its methods is executing.\n");
@@ -430,20 +432,20 @@ void DestroyMethodInfo(
                    a generic function are currently
                    executing
   INPUTS       : The generic function address
-  RETURNS      : TRUE if any methods are executing,
-                   FALSE otherwise
+  RETURNS      : True if any methods are executing,
+                   false otherwise
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-int MethodsExecuting(
+bool MethodsExecuting(
   DEFGENERIC *gfunc)
   {
    long i;
 
    for (i = 0 ; i < gfunc->mcnt ; i++)
      if (gfunc->methods[i].busy > 0)
-       return(TRUE);
-   return(FALSE);
+       return true;
+   return false;
   }
   
 #endif
@@ -456,28 +458,28 @@ int MethodsExecuting(
                  the first type
                  (e.g. INTEGER is subsumed by NUMBER_TYPE_CODE)
   INPUTS       : Two type codes
-  RETURNS      : TRUE if type 2 subsumes type 1, FALSE
+  RETURNS      : True if type 2 subsumes type 1, false
                  otherwise
   SIDE EFFECTS : None
   NOTES        : Used only when COOL is not present
  **************************************************************/
-intBool SubsumeType(
+bool SubsumeType(
   int t1,
   int t2)
   {
    if ((t2 == OBJECT_TYPE_CODE) || (t2 == PRIMITIVE_TYPE_CODE))
-     return(TRUE);
+     return true;
    if ((t2 == NUMBER_TYPE_CODE) && ((t1 == INTEGER) || (t1 == FLOAT)))
-     return(TRUE);
+     return true;
    if ((t2 == LEXEME_TYPE_CODE) && ((t1 == STRING) || (t1 == SYMBOL)))
-     return(TRUE);
+     return true;
    if ((t2 == ADDRESS_TYPE_CODE) && ((t1 == EXTERNAL_ADDRESS) ||
        (t1 == FACT_ADDRESS) || (t1 == INSTANCE_ADDRESS)))
-     return(TRUE);
+     return true;
    if ((t2 == LEXEME_TYPE_CODE) &&
        ((t1 == INSTANCE_NAME) || (t1 == INSTANCE_ADDRESS)))
-     return(TRUE);
-   return(FALSE);
+     return true;
+   return false;
   }
 
 #endif
@@ -597,20 +599,20 @@ void PreviewGeneric(
    int oldce;
    DATA_OBJECT temp;
 
-   EvaluationData(theEnv)->EvaluationError = FALSE;
-   if (EnvArgTypeCheck(theEnv,"preview-generic",1,SYMBOL,&temp) == FALSE)
+   EvaluationData(theEnv)->EvaluationError = false;
+   if (EnvArgTypeCheck(theEnv,"preview-generic",1,SYMBOL,&temp) == false)
      return;
    gfunc = LookupDefgenericByMdlOrScope(theEnv,DOToString(temp));
    if (gfunc == NULL)
      {
-      PrintErrorID(theEnv,"GENRCFUN",3,FALSE);
+      PrintErrorID(theEnv,"GENRCFUN",3,false);
       EnvPrintRouter(theEnv,WERROR,"Unable to find generic function ");
       EnvPrintRouter(theEnv,WERROR,DOToString(temp));
       EnvPrintRouter(theEnv,WERROR," in function preview-generic.\n");
       return;
      }
    oldce = ExecutingConstruct(theEnv);
-   SetExecutingConstruct(theEnv,TRUE);
+   SetExecutingConstruct(theEnv,true);
    previousGeneric = DefgenericData(theEnv)->CurrentGeneric;
    DefgenericData(theEnv)->CurrentGeneric = gfunc;
    EvaluationData(theEnv)->CurrentEvaluationDepth++;
@@ -659,13 +661,13 @@ DEFGENERIC *CheckGenericExists(
    gfunc = LookupDefgenericByMdlOrScope(theEnv,gname);
    if (gfunc == NULL)
      {
-      PrintErrorID(theEnv,"GENRCFUN",3,FALSE);
+      PrintErrorID(theEnv,"GENRCFUN",3,false);
       EnvPrintRouter(theEnv,WERROR,"Unable to find generic function ");
       EnvPrintRouter(theEnv,WERROR,gname);
       EnvPrintRouter(theEnv,WERROR," in function ");
       EnvPrintRouter(theEnv,WERROR,fname);
       EnvPrintRouter(theEnv,WERROR,".\n");
-      EnvSetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,true);
      }
    return(gfunc);
   }
@@ -693,7 +695,7 @@ long CheckMethodExists(
    fi = FindMethodByIndex(gfunc,mi);
    if (fi == -1)
      {
-      PrintErrorID(theEnv,"GENRCFUN",2,FALSE);
+      PrintErrorID(theEnv,"GENRCFUN",2,false);
       EnvPrintRouter(theEnv,WERROR,"Unable to find method ");
       EnvPrintRouter(theEnv,WERROR,EnvGetDefgenericName(theEnv,(void *) gfunc));
       EnvPrintRouter(theEnv,WERROR," #");
@@ -701,7 +703,7 @@ long CheckMethodExists(
       EnvPrintRouter(theEnv,WERROR," in function ");
       EnvPrintRouter(theEnv,WERROR,fname);
       EnvPrintRouter(theEnv,WERROR,".\n");
-      EnvSetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,true);
      }
    return(fi);
   }
@@ -742,9 +744,9 @@ const char *TypeName(
       case LEXEME_TYPE_CODE    : return(LEXEME_TYPE_NAME);
       case ADDRESS_TYPE_CODE   : return(ADDRESS_TYPE_NAME);
       case INSTANCE_TYPE_CODE  : return(INSTANCE_TYPE_NAME);
-      default                  : PrintErrorID(theEnv,"INSCOM",1,FALSE);
+      default                  : PrintErrorID(theEnv,"INSCOM",1,false);
                                  EnvPrintRouter(theEnv,WERROR,"Undefined type in function type.\n");
-                                 EnvSetEvaluationError(theEnv,TRUE);
+                                 EnvSetEvaluationError(theEnv,true);
                                  return("<UNKNOWN-TYPE>");
      }
   }
@@ -800,14 +802,14 @@ static void DisplayGenericCore(
   {
    long i;
    char buf[256];
-   int rtn = FALSE;
+   bool rtn = false;
 
    for (i = 0 ; i < gfunc->mcnt ; i++)
      {
       gfunc->methods[i].busy++;
       if (IsMethodApplicable(theEnv,&gfunc->methods[i]))
         {
-         rtn = TRUE;
+         rtn = true;
          EnvPrintRouter(theEnv,WDISPLAY,EnvGetDefgenericName(theEnv,(void *) gfunc));
          EnvPrintRouter(theEnv,WDISPLAY," #");
          PrintMethod(theEnv,buf,255,&gfunc->methods[i]);
@@ -816,7 +818,7 @@ static void DisplayGenericCore(
         }
       gfunc->methods[i].busy--;
      }
-   if (rtn == FALSE)
+   if (rtn == false)
      {
       EnvPrintRouter(theEnv,WDISPLAY,"No applicable methods for ");
       EnvPrintRouter(theEnv,WDISPLAY,EnvGetDefgenericName(theEnv,(void *) gfunc));

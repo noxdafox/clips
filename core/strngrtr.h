@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*            STRING I/O ROUTER HEADER FILE            */
    /*******************************************************/
@@ -31,6 +31,8 @@
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -67,11 +69,11 @@ struct stringRouterData
 /**************************/
 
    void                           InitializeStringRouter(void *);
-   int                            OpenStringSource(void *,const char *,const char *,size_t);
-   int                            OpenTextSource(void *,const char *,const char *,size_t,size_t);
-   int                            CloseStringSource(void *,const char *);
-   int                            OpenStringDestination(void *,const char *,char *,size_t);
-   int                            CloseStringDestination(void *,const char *);
+   bool                           OpenStringSource(void *,const char *,const char *,size_t);
+   bool                           OpenTextSource(void *,const char *,const char *,size_t,size_t);
+   bool                           CloseStringSource(void *,const char *);
+   bool                           OpenStringDestination(void *,const char *,char *,size_t);
+   bool                           CloseStringDestination(void *,const char *);
 
 #endif /* _H_strngrtr */
 

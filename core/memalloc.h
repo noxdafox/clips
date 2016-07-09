@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*            MEMORY ALLOCATION HEADER FILE            */
    /*******************************************************/
@@ -44,6 +44,8 @@
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -168,8 +170,8 @@ struct memoryData
   { 
    long int MemoryAmount;
    long int MemoryCalls;
-   intBool ConserveMemory;
-   int (*OutOfMemoryFunction)(void *,size_t);
+   bool ConserveMemory;
+   bool (*OutOfMemoryFunction)(void *,size_t);
    struct memoryPtr *TempMemoryPtr;
    struct memoryPtr **MemoryTable;
    size_t TempSize;
@@ -179,9 +181,9 @@ struct memoryData
 
    void                           InitializeMemory(void *);
    void                          *genalloc(void *,size_t);
-   int                            DefaultOutOfMemoryFunction(void *,size_t);
-   int                          (*EnvSetOutOfMemoryFunction(void *,int (*)(void *,size_t)))(void *,size_t);
-   int                            genfree(void *,void *,size_t);
+   bool                           DefaultOutOfMemoryFunction(void *,size_t);
+   bool                         (*EnvSetOutOfMemoryFunction(void *,bool (*)(void *,size_t)))(void *,size_t);
+   void                           genfree(void *,void *,size_t);
    void                          *genrealloc(void *,void *,size_t,size_t);
    long                           EnvMemUsed(void *);
    long                           EnvMemRequests(void *);
@@ -191,25 +193,25 @@ struct memoryData
    void                          *gm1(void *,size_t);
    void                          *gm2(void *,size_t);
    void                          *gm3(void *,size_t);
-   int                            rm(void *,void *,size_t);
-   int                            rm3(void *,void *,size_t);
+   void                           rm(void *,void *,size_t);
+   void                           rm3(void *,void *,size_t);
    unsigned long                  PoolSize(void *);
    unsigned long                  ActualPoolSize(void *);
    void                          *RequestChunk(void *,size_t);
    int                            ReturnChunk(void *,void *,size_t);
-   intBool                        EnvSetConserveMemory(void *,intBool);
-   intBool                        EnvGetConserveMemory(void *);
+   bool                           EnvSetConserveMemory(void *,bool);
+   bool                           EnvGetConserveMemory(void *);
    void                           genmemcpy(char *,char *,unsigned long);
    void                           ReturnAllBlocks(void *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-   intBool                        GetConserveMemory(void);
+   bool                           GetConserveMemory(void);
    long int                       MemRequests(void);
    long int                       MemUsed(void);
    long int                       ReleaseMem(long);
-   intBool                        SetConserveMemory(intBool);
-   int                          (*SetOutOfMemoryFunction(int (*)(void *,size_t)))(void *,size_t);
+   bool                           SetConserveMemory(bool);
+   bool                         (*SetOutOfMemoryFunction(bool (*)(void *,size_t)))(void *,size_t);
  
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */
 

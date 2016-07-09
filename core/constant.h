@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/28/16             */
+   /*            CLIPS Version 6.40  07/04/16             */
    /*                                                     */
    /*                CONSTANTS HEADER FILE                */
    /*******************************************************/
@@ -26,6 +26,8 @@
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_constant
@@ -34,20 +36,13 @@
 
 #define _H_constant
 
-#ifndef FALSE
-#define FALSE 0
-#endif
-#ifndef TRUE
-#define TRUE 1
-#endif
+#include <stdbool.h>
 
 #define EXACTLY       0
 #define AT_LEAST      1
 #define NO_MORE_THAN  2
 #define RANGE         3
 
-#define OFF           0
-#define ON            1
 #define LHS           0
 #define RHS           1
 #define NESTED_RHS    2

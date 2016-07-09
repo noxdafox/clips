@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*          MISCELLANEOUS FUNCTIONS HEADER FILE        */
    /*******************************************************/
@@ -66,6 +66,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_miscfun
@@ -91,7 +93,7 @@
    void                           ExpandFuncCall(void *,DATA_OBJECT *);
    void                           DummyExpandFuncMultifield(void *,DATA_OBJECT *);
    void                          *CauseEvaluationError(void *);
-   intBool                        SetSORCommand(void *);
+   bool                           SetSORCommand(void *);
    void                          *GetFunctionRestrictions(void *);
    void                           AproposCommand(void *);
    void                          *GensymStar(void *);

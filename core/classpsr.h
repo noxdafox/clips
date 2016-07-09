@@ -3,7 +3,7 @@
    /*                                                     */
    /*             CLIPS Version 6.40  06/20/16            */
    /*                                                     */
-   /*                                                     */
+   /*               CLASS PARSER HEADER FILE              */
    /*******************************************************/
 
 /*************************************************************/
@@ -39,6 +39,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_classpsr
@@ -49,7 +51,7 @@
 
 #if OBJECT_SYSTEM && (! BLOAD_ONLY) && (! RUN_TIME)
 
-int ParseDefclass(void *,const char *);
+bool ParseDefclass(void *,const char *);
 
 #if DEFMODULE_CONSTRUCT
 void *CreateClassScopeMap(void *,DEFCLASS *);

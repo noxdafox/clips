@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*            SORT FUNCTIONS HEADER MODULE             */
    /*******************************************************/
@@ -29,6 +29,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_sortfun
@@ -39,7 +41,7 @@
 
    void                           SortFunctionDefinitions(void *);
    void                           MergeSort(void *,unsigned long,DATA_OBJECT *,
-                                                   int (*)(void *,DATA_OBJECT *,DATA_OBJECT *));
+                                                   bool (*)(void *,DATA_OBJECT *,DATA_OBJECT *));
    void                           SortFunction(void *,DATA_OBJECT *);
 
 #endif /* _H_sortfun */

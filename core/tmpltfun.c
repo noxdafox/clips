@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/28/16            */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*             DEFTEMPLATE FUNCTIONS MODULE            */
    /*******************************************************/
@@ -64,6 +64,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -82,6 +84,7 @@
 #include "exprnpsr.h"
 #include "factmngr.h"
 #include "factrhs.h"
+#include "memalloc.h"
 #include "modulutl.h"
 #include "prcdrpsr.h"
 #include "reorder.h"
@@ -150,8 +153,8 @@ void DeftemplateFunctions(
    AddFunctionParser(theEnv,"modify",ModifyParse);
    AddFunctionParser(theEnv,"duplicate",DuplicateParse);
 #endif
-   FuncSeqOvlFlags(theEnv,"modify",FALSE,FALSE);
-   FuncSeqOvlFlags(theEnv,"duplicate",FALSE,FALSE);
+   FuncSeqOvlFlags(theEnv,"modify",false,false);
+   FuncSeqOvlFlags(theEnv,"duplicate",false,false);
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -167,7 +170,7 @@ void ModifyCommand(
   void *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
-   DuplicateModifyCommand(theEnv,TRUE,returnValue);
+   DuplicateModifyCommand(theEnv,true,returnValue);
   }
 
 /***************************************************************************/
@@ -178,7 +181,7 @@ void DuplicateCommand(
   void *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
-   DuplicateModifyCommand(theEnv,FALSE,returnValue);
+   DuplicateModifyCommand(theEnv,false,returnValue);
   }
 
 /***************************************************************/
@@ -200,7 +203,8 @@ static void DuplicateModifyCommand(
    DATA_OBJECT computeResult;
    struct deftemplate *templatePtr;
    struct templateSlot *slotPtr;
-   int i, position, found;
+   int i, position;
+   bool found;
 
    /*===================================================*/
    /* Set the default return value to the symbol FALSE. */
@@ -231,7 +235,7 @@ static void DuplicateModifyCommand(
         {
          if (retractIt) ExpectedTypeError2(theEnv,"modify",1);
          else ExpectedTypeError2(theEnv,"duplicate",1);
-         EnvSetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,true);
          return;
         }
 
@@ -269,7 +273,7 @@ static void DuplicateModifyCommand(
      {
       if (retractIt) ExpectedTypeError2(theEnv,"modify",1);
       else ExpectedTypeError2(theEnv,"duplicate",1);
-      EnvSetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,true);
       return;
      }
 
@@ -315,14 +319,14 @@ static void DuplicateModifyCommand(
         { position = (int) ValueToLong(testPtr->value); }
       else
         {
-         found = FALSE;
+         found = false;
          position = 0;
          slotPtr = templatePtr->slotList;
          while (slotPtr != NULL)
            {
             if (slotPtr->slotName == (SYMBOL_HN *) testPtr->value)
               {
-               found = TRUE;
+               found = true;
                slotPtr = NULL;
               }
             else
@@ -335,8 +339,8 @@ static void DuplicateModifyCommand(
          if (! found)
            {
             InvalidDeftemplateSlotMessage(theEnv,ValueToString(testPtr->value),
-                                          ValueToString(templatePtr->header.name),TRUE);
-            EnvSetEvaluationError(theEnv,TRUE);
+                                          ValueToString(templatePtr->header.name),true);
+            EnvSetEvaluationError(theEnv,true);
             ReturnFact(theEnv,newFact);
             return;
            }
@@ -355,7 +359,7 @@ static void DuplicateModifyCommand(
          /* a single value.                                      */
          /*======================================================*/
 
-         if ((testPtr->argList == NULL) ? TRUE : (testPtr->argList->nextArg != NULL))
+         if ((testPtr->argList == NULL) ? true : (testPtr->argList->nextArg != NULL))
            {
             MultiIntoSingleFieldSlotError(theEnv,GetNthSlot(templatePtr,position),templatePtr);
             ReturnFact(theEnv,newFact);
@@ -368,7 +372,7 @@ static void DuplicateModifyCommand(
          
          EnvIncrementClearReadyLocks(theEnv);
          EvaluateExpression(theEnv,testPtr->argList,&computeResult);
-         EnvSetEvaluationError(theEnv,FALSE);
+         EnvSetEvaluationError(theEnv,false);
          EnvDecrementClearReadyLocks(theEnv);
 
          /*====================================================*/
@@ -405,8 +409,8 @@ static void DuplicateModifyCommand(
          /*======================================*/
 
          EnvIncrementClearReadyLocks(theEnv);
-         StoreInMultifield(theEnv,&computeResult,testPtr->argList,FALSE);
-         EnvSetEvaluationError(theEnv,FALSE);
+         StoreInMultifield(theEnv,&computeResult,testPtr->argList,false);
+         EnvSetEvaluationError(theEnv,false);
          EnvDecrementClearReadyLocks(theEnv);
 
          /*=============================*/
@@ -509,7 +513,7 @@ static void DuplicateModifyCommand(
 
    return;
   }
-  
+
 /****************************************************/
 /* DeftemplateSlotNamesFunction: H/L access routine */
 /*   for the deftemplate-slot-names function.       */
@@ -677,9 +681,9 @@ int EnvDeftemplateSlotDefaultP(
         }
       else
         {
-         EnvSetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,true);
          InvalidDeftemplateSlotMessage(theEnv,slotName,
-                                       ValueToString(theDeftemplate->header.name),FALSE);
+                                       ValueToString(theDeftemplate->header.name),false);
          return(NO_DEFAULT);
         }
      }
@@ -691,9 +695,9 @@ int EnvDeftemplateSlotDefaultP(
    
    else if ((theSlot = FindSlot(theDeftemplate,(SYMBOL_HN *) EnvAddSymbol(theEnv,slotName),&position)) == NULL)
      {
-      EnvSetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,true);
       InvalidDeftemplateSlotMessage(theEnv,slotName,
-                                    ValueToString(theDeftemplate->header.name),FALSE);
+                                    ValueToString(theDeftemplate->header.name),false);
       return(NO_DEFAULT);
      }
      
@@ -743,7 +747,7 @@ void DeftemplateSlotDefaultValueFunction(
 /* EnvDeftemplateSlotDefaultValue: C access routine   */
 /*   for the deftemplate-slot-default-value function. */
 /******************************************************/
-intBool EnvDeftemplateSlotDefaultValue(
+bool EnvDeftemplateSlotDefaultValue(
   void *theEnv,
   void *vTheDeftemplate,
   const char *slotName,
@@ -774,14 +778,14 @@ intBool EnvDeftemplateSlotDefaultValue(
          theValue->value = EnvCreateMultifield(theEnv,0L);
          theValue->begin = 1;
          theValue->end = 0;
-         return(TRUE);
+         return true;
         }
       else
         {
-         EnvSetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,true);
          InvalidDeftemplateSlotMessage(theEnv,slotName,
-                                       ValueToString(theDeftemplate->header.name),FALSE);
-         return(FALSE);
+                                       ValueToString(theDeftemplate->header.name),false);
+         return false;
         }
      }
 
@@ -792,10 +796,10 @@ intBool EnvDeftemplateSlotDefaultValue(
 
    else if ((theSlot = FindSlot(theDeftemplate,(SYMBOL_HN *) EnvAddSymbol(theEnv,slotName),&position)) == NULL)
      {
-      EnvSetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,true);
       InvalidDeftemplateSlotMessage(theEnv,slotName,
-                                    ValueToString(theDeftemplate->header.name),FALSE);
-      return(FALSE);
+                                    ValueToString(theDeftemplate->header.name),false);
+      return false;
      }
      
    /*=======================================*/
@@ -807,7 +811,7 @@ intBool EnvDeftemplateSlotDefaultValue(
       SetpType(theValue,SYMBOL);
       SetpValue(theValue,EnvAddSymbol(theEnv,"?NONE"));
      }
-   else if (DeftemplateSlotDefault(theEnv,theDeftemplate,theSlot,&tempDO,TRUE))
+   else if (DeftemplateSlotDefault(theEnv,theDeftemplate,theSlot,&tempDO,true))
      {
       SetpDOBegin(theValue,GetDOBegin(tempDO));
       SetpDOEnd(theValue,GetDOEnd(tempDO));
@@ -815,9 +819,9 @@ intBool EnvDeftemplateSlotDefaultValue(
       SetpValue(theValue,tempDO.value);
      }
    else
-     { return (FALSE); }
+     { return false; }
 
-   return(TRUE);
+   return true;
   }
 
 /**********************************************************/
@@ -885,9 +889,9 @@ void EnvDeftemplateSlotCardinality(
       else
         {     
          EnvSetMultifieldErrorValue(theEnv,result);
-         EnvSetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,true);
          InvalidDeftemplateSlotMessage(theEnv,slotName,
-                                       ValueToString(theDeftemplate->header.name),FALSE);
+                                       ValueToString(theDeftemplate->header.name),false);
          return;
         }
      }
@@ -900,9 +904,9 @@ void EnvDeftemplateSlotCardinality(
    else if ((theSlot = FindSlot(theDeftemplate,(SYMBOL_HN *) EnvAddSymbol(theEnv,slotName),&position)) == NULL)
      {
       EnvSetMultifieldErrorValue(theEnv,result);
-      EnvSetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,true);
       InvalidDeftemplateSlotMessage(theEnv,slotName,
-                                    ValueToString(theDeftemplate->header.name),FALSE);
+                                    ValueToString(theDeftemplate->header.name),false);
       return;
      }
      
@@ -998,9 +1002,9 @@ void EnvDeftemplateSlotAllowedValues(
       else
         {     
          EnvSetMultifieldErrorValue(theEnv,result);
-         EnvSetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,true);
          InvalidDeftemplateSlotMessage(theEnv,slotName,
-                                       ValueToString(theDeftemplate->header.name),FALSE);
+                                       ValueToString(theDeftemplate->header.name),false);
          return;
         }
      }
@@ -1013,9 +1017,9 @@ void EnvDeftemplateSlotAllowedValues(
    else if ((theSlot = FindSlot(theDeftemplate,(SYMBOL_HN *) EnvAddSymbol(theEnv,slotName),&position)) == NULL)
      {
       EnvSetMultifieldErrorValue(theEnv,result);
-      EnvSetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,true);
       InvalidDeftemplateSlotMessage(theEnv,slotName,
-                                    ValueToString(theDeftemplate->header.name),FALSE);
+                                    ValueToString(theDeftemplate->header.name),false);
       return;
      }
      
@@ -1023,7 +1027,7 @@ void EnvDeftemplateSlotAllowedValues(
    /* Return the allowed values of the slot. */
    /*========================================*/
    
-   if ((theSlot->constraints != NULL) ? (theSlot->constraints->restrictionList == NULL) : TRUE)
+   if ((theSlot->constraints != NULL) ? (theSlot->constraints->restrictionList == NULL) : true)
      {
       result->type = SYMBOL;
       result->value = EnvFalseSymbol(theEnv);
@@ -1111,9 +1115,9 @@ void EnvDeftemplateSlotRange(
       else
         {     
          EnvSetMultifieldErrorValue(theEnv,result);
-         EnvSetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,true);
          InvalidDeftemplateSlotMessage(theEnv,slotName,
-                                       ValueToString(theDeftemplate->header.name),FALSE);
+                                       ValueToString(theDeftemplate->header.name),false);
          return;
         }
      }
@@ -1126,9 +1130,9 @@ void EnvDeftemplateSlotRange(
    else if ((theSlot = FindSlot(theDeftemplate,(SYMBOL_HN *) EnvAddSymbol(theEnv,slotName),&position)) == NULL)
      {
       EnvSetMultifieldErrorValue(theEnv,result);
-      EnvSetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,true);
       InvalidDeftemplateSlotMessage(theEnv,slotName,
-                                    ValueToString(theDeftemplate->header.name),FALSE);
+                                    ValueToString(theDeftemplate->header.name),false);
       return;
      }
      
@@ -1136,7 +1140,7 @@ void EnvDeftemplateSlotRange(
    /* Return the range of the slot. */
    /*===============================*/
    
-   if ((theSlot->constraints == NULL) ? FALSE :
+   if ((theSlot->constraints == NULL) ? false :
        (theSlot->constraints->anyAllowed || theSlot->constraints->floatsAllowed ||
         theSlot->constraints->integersAllowed))
      {
@@ -1199,7 +1203,8 @@ void EnvDeftemplateSlotTypes(
    struct deftemplate *theDeftemplate = (struct deftemplate *) vTheDeftemplate;
    short position;
    struct templateSlot *theSlot = NULL;
-   int numTypes, i, allTypes = FALSE;
+   int numTypes, i;
+   bool allTypes = false;
 
    /*===============================================*/
    /* If we're dealing with an implied deftemplate, */
@@ -1211,9 +1216,9 @@ void EnvDeftemplateSlotTypes(
       if (strcmp(slotName,"implied") != 0)
         {     
          EnvSetMultifieldErrorValue(theEnv,result);
-         EnvSetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,true);
          InvalidDeftemplateSlotMessage(theEnv,slotName,
-                                       ValueToString(theDeftemplate->header.name),FALSE);
+                                       ValueToString(theDeftemplate->header.name),false);
          return;
         }
      }
@@ -1226,9 +1231,9 @@ void EnvDeftemplateSlotTypes(
    else if ((theSlot = FindSlot(theDeftemplate,(SYMBOL_HN *) EnvAddSymbol(theEnv,slotName),&position)) == NULL)
      {
       EnvSetMultifieldErrorValue(theEnv,result);
-      EnvSetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,true);
       InvalidDeftemplateSlotMessage(theEnv,slotName,
-                                    ValueToString(theDeftemplate->header.name),FALSE);
+                                    ValueToString(theDeftemplate->header.name),false);
       return;
      }
 
@@ -1239,14 +1244,14 @@ void EnvDeftemplateSlotTypes(
    /*==============================================*/
    
    if ((theDeftemplate->implied) ||
-       ((theSlot->constraints != NULL) ? theSlot->constraints->anyAllowed : TRUE))
+       ((theSlot->constraints != NULL) ? theSlot->constraints->anyAllowed : true))
      {
 #if OBJECT_SYSTEM
       numTypes = 8;
 #else
       numTypes = 6;
 #endif
-      allTypes = TRUE;
+      allTypes = true;
      }
      
    /*==============================================*/
@@ -1331,7 +1336,7 @@ void EnvDeftemplateSlotTypes(
 /* DeftemplateSlotMultiPFunction: H/L access routine */
 /*   for the deftemplate-slot-multip function.       */
 /*****************************************************/
-int DeftemplateSlotMultiPFunction(
+bool DeftemplateSlotMultiPFunction(
   void *theEnv)
   {
    struct deftemplate *theDeftemplate;
@@ -1343,7 +1348,7 @@ int DeftemplateSlotMultiPFunction(
    
    slotName = CheckDeftemplateAndSlotArguments(theEnv,"deftemplate-slot-multip",&theDeftemplate,2);
    if (slotName == NULL)
-     { return(FALSE); }
+     { return false; }
 
    /*================================*/
    /* Is the slot a multifield slot? */
@@ -1356,7 +1361,7 @@ int DeftemplateSlotMultiPFunction(
 /* EnvDeftemplateSlotMultiP: C access routine  */
 /*   for the deftemplate-slot-multip function. */
 /***********************************************/
-int EnvDeftemplateSlotMultiP(
+bool EnvDeftemplateSlotMultiP(
   void *theEnv,
   void *vTheDeftemplate,
   const char *slotName)
@@ -1373,13 +1378,13 @@ int EnvDeftemplateSlotMultiP(
    if (theDeftemplate->implied)
      {
       if (strcmp(slotName,"implied") == 0)
-        { return(TRUE); }
+        { return true; }
       else
         {
-         EnvSetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,true);
          InvalidDeftemplateSlotMessage(theEnv,slotName,
-                                       ValueToString(theDeftemplate->header.name),FALSE);
-         return(FALSE); 
+                                       ValueToString(theDeftemplate->header.name),false);
+         return false;
         }
      }
 
@@ -1390,10 +1395,10 @@ int EnvDeftemplateSlotMultiP(
 
    else if ((theSlot = FindSlot(theDeftemplate,(SYMBOL_HN *) EnvAddSymbol(theEnv,slotName),&position)) == NULL)
      { 
-      EnvSetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,true);
       InvalidDeftemplateSlotMessage(theEnv,slotName,
-                                    ValueToString(theDeftemplate->header.name),FALSE);
-      return(FALSE);
+                                    ValueToString(theDeftemplate->header.name),false);
+      return false;
      }
 
    /*================================*/
@@ -1407,7 +1412,7 @@ int EnvDeftemplateSlotMultiP(
 /* DeftemplateSlotSinglePFunction: H/L access routine */
 /*   for the deftemplate-slot-singlep function.       */
 /******************************************************/
-int DeftemplateSlotSinglePFunction(
+bool DeftemplateSlotSinglePFunction(
   void *theEnv)
   {
    struct deftemplate *theDeftemplate;
@@ -1419,7 +1424,7 @@ int DeftemplateSlotSinglePFunction(
    
    slotName = CheckDeftemplateAndSlotArguments(theEnv,"deftemplate-slot-singlep",&theDeftemplate,2);
    if (slotName == NULL)
-     { return(FALSE); }
+     { return false; }
 
    /*==================================*/
    /* Is the slot a single field slot? */
@@ -1432,7 +1437,7 @@ int DeftemplateSlotSinglePFunction(
 /* EnvDeftemplateSlotSingleP: C access routine  */
 /*   for the deftemplate-slot-singlep function. */
 /************************************************/
-int EnvDeftemplateSlotSingleP(
+bool EnvDeftemplateSlotSingleP(
   void *theEnv,
   void *vTheDeftemplate,
   const char *slotName)
@@ -1449,13 +1454,13 @@ int EnvDeftemplateSlotSingleP(
    if (theDeftemplate->implied)
      {
       if (strcmp(slotName,"implied") == 0)
-        { return(FALSE); }
+        { return false; }
       else
         {
-         EnvSetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,true);
          InvalidDeftemplateSlotMessage(theEnv,slotName,
-                                       ValueToString(theDeftemplate->header.name),FALSE);
-         return(FALSE); 
+                                       ValueToString(theDeftemplate->header.name),false);
+         return false;
         }
      }
 
@@ -1466,10 +1471,10 @@ int EnvDeftemplateSlotSingleP(
 
    else if ((theSlot = FindSlot(theDeftemplate,(SYMBOL_HN *) EnvAddSymbol(theEnv,slotName),&position)) == NULL)
      {
-      EnvSetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,true);
       InvalidDeftemplateSlotMessage(theEnv,slotName,
-                                    ValueToString(theDeftemplate->header.name),FALSE);
-      return(FALSE); 
+                                    ValueToString(theDeftemplate->header.name),false);
+      return false;
      }
 
    /*==================================*/
@@ -1483,7 +1488,7 @@ int EnvDeftemplateSlotSingleP(
 /* DeftemplateSlotExistPFunction: H/L access routine */
 /*   for the deftemplate-slot-existp function.       */
 /*****************************************************/
-int DeftemplateSlotExistPFunction(
+bool DeftemplateSlotExistPFunction(
   void *theEnv)
   {
    struct deftemplate *theDeftemplate;
@@ -1495,7 +1500,7 @@ int DeftemplateSlotExistPFunction(
    
    slotName = CheckDeftemplateAndSlotArguments(theEnv,"deftemplate-slot-existp",&theDeftemplate,2);
    if (slotName == NULL)
-     { return(FALSE); }
+     { return false; }
 
    /*======================*/
    /* Does the slot exist? */
@@ -1508,7 +1513,7 @@ int DeftemplateSlotExistPFunction(
 /* EnvDeftemplateSlotExistP: C access routine  */
 /*   for the deftemplate-slot-existp function. */
 /************************************************/
-int EnvDeftemplateSlotExistP(
+bool EnvDeftemplateSlotExistP(
   void *theEnv,
   void *vTheDeftemplate,
   const char *slotName)
@@ -1524,9 +1529,9 @@ int EnvDeftemplateSlotExistP(
    if (theDeftemplate->implied)
      {
       if (strcmp(slotName,"implied") == 0)
-        { return(TRUE); }
+        { return true; }
       else
-        { return(FALSE); }
+        { return false; }
      }
 
    /*============================================*/
@@ -1535,20 +1540,20 @@ int EnvDeftemplateSlotExistP(
    /*============================================*/
      
    else if (FindSlot(theDeftemplate,(SYMBOL_HN *) EnvAddSymbol(theEnv,slotName),&position) == NULL)
-     { return(FALSE); }
+     { return false; }
 
    /*==================*/
    /* The slot exists. */
    /*==================*/
    
-   return(TRUE);   
+   return true;
   }  
 
 /**********************************************************/
 /* DeftemplateSlotFacetExistPFunction: H/L access routine */
 /*   for the deftemplate-slot-facet-existp function.      */
 /**********************************************************/
-int DeftemplateSlotFacetExistPFunction(
+bool DeftemplateSlotFacetExistPFunction(
   void *theEnv)
   {
    struct deftemplate *theDeftemplate;
@@ -1561,14 +1566,14 @@ int DeftemplateSlotFacetExistPFunction(
    
    slotName = CheckDeftemplateAndSlotArguments(theEnv,"deftemplate-slot-facet-existp",&theDeftemplate,3);
    if (slotName == NULL)
-     { return(FALSE); }
+     { return false; }
 
    /*============================*/
    /* Get the name of the facet. */
    /*============================*/
 
-   if (EnvArgTypeCheck(theEnv,"deftemplate-slot-facet-existp",3,SYMBOL,&facetName) == FALSE)
-     { return(FALSE); }
+   if (EnvArgTypeCheck(theEnv,"deftemplate-slot-facet-existp",3,SYMBOL,&facetName) == false)
+     { return false; }
      
    /*======================*/
    /* Does the slot exist? */
@@ -1581,7 +1586,7 @@ int DeftemplateSlotFacetExistPFunction(
 /* EnvDeftemplateSlotFacetExistP: C access routine   */
 /*   for the deftemplate-slot-facet-existp function. */
 /*****************************************************/
-int EnvDeftemplateSlotFacetExistP(
+bool EnvDeftemplateSlotFacetExistP(
   void *theEnv,
   void *vTheDeftemplate,
   const char *slotName,
@@ -1598,7 +1603,7 @@ int EnvDeftemplateSlotFacetExistP(
    /*=================================================*/
 
    if (theDeftemplate->implied)
-     { return(FALSE); }
+     { return false; }
 
    /*============================================*/
    /* Otherwise search for the slot name in the  */
@@ -1606,7 +1611,7 @@ int EnvDeftemplateSlotFacetExistP(
    /*============================================*/
      
    else if ((theSlot = FindSlot(theDeftemplate,(SYMBOL_HN *) EnvAddSymbol(theEnv,slotName),&position)) == NULL)
-     { return(FALSE); }
+     { return false; }
 
    /*=======================*/
    /* Search for the facet. */
@@ -1618,14 +1623,14 @@ int EnvDeftemplateSlotFacetExistP(
         tempFacet = tempFacet->nextArg)
      {
       if (tempFacet->value == facetHN)
-        { return(TRUE); }
+        { return true; }
      }
    
    /*===========================*/
    /* The facet does not exist. */
    /*===========================*/
    
-   return(FALSE);   
+   return false;
   }  
 
 /*********************************************************/
@@ -1659,7 +1664,7 @@ void DeftemplateSlotFacetValueFunction(
    /* Get the name of the facet. */
    /*============================*/
 
-   if (EnvArgTypeCheck(theEnv,"deftemplate-slot-facet-existp",3,SYMBOL,&facetName) == FALSE)
+   if (EnvArgTypeCheck(theEnv,"deftemplate-slot-facet-existp",3,SYMBOL,&facetName) == false)
      { return; }
      
    /*===========================*/
@@ -1673,7 +1678,7 @@ void DeftemplateSlotFacetValueFunction(
 /* EnvDeftemplateSlotFacetValue: C access routine   */
 /*   for the deftemplate-slot-facet-value function. */
 /****************************************************/
-int EnvDeftemplateSlotFacetValue(
+bool EnvDeftemplateSlotFacetValue(
   void *theEnv,
   void *vTheDeftemplate,
   const char *slotName,
@@ -1691,7 +1696,7 @@ int EnvDeftemplateSlotFacetValue(
    /*=================================================*/
 
    if (theDeftemplate->implied)
-     { return(FALSE); }
+     { return false; }
 
    /*============================================*/
    /* Otherwise search for the slot name in the  */
@@ -1699,7 +1704,7 @@ int EnvDeftemplateSlotFacetValue(
    /*============================================*/
      
    else if ((theSlot = FindSlot(theDeftemplate,(SYMBOL_HN *) EnvAddSymbol(theEnv,slotName),&position)) == NULL)
-     { return(FALSE); }
+     { return false; }
 
    /*=======================*/
    /* Search for the facet. */
@@ -1713,7 +1718,7 @@ int EnvDeftemplateSlotFacetValue(
       if (tempFacet->value == facetHN)
         { 
          EvaluateExpression(theEnv,tempFacet->argList,rv);
-         return(TRUE); 
+         return true;
         }
      }
    
@@ -1721,7 +1726,7 @@ int EnvDeftemplateSlotFacetValue(
    /* The facet does not exist. */
    /*===========================*/
    
-   return(FALSE);   
+   return false;
   }  
   
 /************************************************************/
@@ -1776,7 +1781,7 @@ static SYMBOL_HN *CheckDeftemplateAndSlotArguments(
    /* Get the name of the slot. */
    /*===========================*/
 
-   if (EnvArgTypeCheck(theEnv,functionName,2,SYMBOL,&tempDO) == FALSE)
+   if (EnvArgTypeCheck(theEnv,functionName,2,SYMBOL,&tempDO) == false)
      { return(NULL); }
      
    return((SYMBOL_HN *) GetValue(tempDO));
@@ -1794,7 +1799,7 @@ static SYMBOL_HN *CheckDeftemplateAndSlotArguments(
 /*   know which type of deftemplate is going to be replaced    */
 /*   until you actually do the replacement of slots).          */
 /***************************************************************/
-intBool UpdateModifyDuplicate(
+bool UpdateModifyDuplicate(
   void *theEnv,
   struct expr *top,
   const char *name,
@@ -1816,10 +1821,10 @@ intBool UpdateModifyDuplicate(
      {
       templateName = FindTemplateForFactAddress((SYMBOL_HN *) functionArgs->value,
                                                 (struct lhsParseNode *) vTheLHS);
-      if (templateName == NULL) return(TRUE);
+      if (templateName == NULL) return true;
      }
    else
-     { return(TRUE); }
+     { return true; }
 
    /*========================================*/
    /* Make sure that the fact being modified */
@@ -1829,11 +1834,11 @@ intBool UpdateModifyDuplicate(
    theDeftemplate = (struct deftemplate *)
                     LookupConstruct(theEnv,DeftemplateData(theEnv)->DeftemplateConstruct,
                                     ValueToString(templateName),
-                                    FALSE);
+                                    false);
 
-   if (theDeftemplate == NULL) return(TRUE);
+   if (theDeftemplate == NULL) return true;
 
-   if (theDeftemplate->implied) return(TRUE);
+   if (theDeftemplate->implied) return true;
 
    /*=============================================================*/
    /* Make sure all the slot names are valid for the deftemplate. */
@@ -1849,33 +1854,33 @@ intBool UpdateModifyDuplicate(
       if ((slotPtr = FindSlot(theDeftemplate,(SYMBOL_HN *) tempArg->value,&position)) == NULL)
         {
          InvalidDeftemplateSlotMessage(theEnv,ValueToString(tempArg->value),
-                                       ValueToString(theDeftemplate->header.name),TRUE);
-         return(FALSE);
+                                       ValueToString(theDeftemplate->header.name),true);
+         return false;
         }
 
       /*=========================================================*/
       /* Is a multifield value being put in a single field slot? */
       /*=========================================================*/
 
-      if (slotPtr->multislot == FALSE)
+      if (slotPtr->multislot == false)
         {
          if (tempArg->argList == NULL)
            {
             SingleFieldSlotCardinalityError(theEnv,slotPtr->slotName->contents);
-            return(FALSE);
+            return false;
            }
          else if (tempArg->argList->nextArg != NULL)
            {
             SingleFieldSlotCardinalityError(theEnv,slotPtr->slotName->contents);
-            return(FALSE);
+            return false;
            }
          else if ((tempArg->argList->type == MF_VARIABLE) ||
                   ((tempArg->argList->type == FCALL) ?
                    (((struct FunctionDefinition *) tempArg->argList->value)->returnValueType == 'm') :
-                      FALSE))
+                      false))
            {
             SingleFieldSlotCardinalityError(theEnv,slotPtr->slotName->contents);
-            return(FALSE);
+            return false;
            }
         }
 
@@ -1884,7 +1889,7 @@ intBool UpdateModifyDuplicate(
       /*======================================*/
 
       if (CheckRHSSlotTypes(theEnv,tempArg->argList,slotPtr,name) == 0)
-        return(FALSE);
+        return false;
 
       /*=============================================*/
       /* Replace the slot with the integer position. */
@@ -1896,7 +1901,7 @@ intBool UpdateModifyDuplicate(
       tempArg = tempArg->nextArg;
      }
 
-   return(TRUE);
+   return true;
   }
 
 /**************************************************/
@@ -1982,12 +1987,12 @@ static struct expr *ModAndDupParse(
   const char *logicalName,
   const char *name)
   {
-   int error = FALSE;
+   bool error = false;
    struct token theToken;
    struct expr *nextOne, *tempSlot;
    struct expr *newField, *firstField, *lastField;
-   int printError;
-   short done;
+   bool printError;
+   bool done;
 
    /*==================================================================*/
    /* Parse the fact-address or index to the modify/duplicate command. */
@@ -2002,7 +2007,7 @@ static struct expr *ModAndDupParse(
      {
       if (! TopLevelCommand(theEnv))
         {
-         PrintErrorID(theEnv,"TMPLTFUN",1,TRUE);
+         PrintErrorID(theEnv,"TMPLTFUN",1,true);
          EnvPrintRouter(theEnv,WERROR,"Fact-indexes can only be used by ");
          EnvPrintRouter(theEnv,WERROR,name);
          EnvPrintRouter(theEnv,WERROR," as a top level command.\n");
@@ -2087,12 +2092,12 @@ static struct expr *ModAndDupParse(
 
       firstField = NULL;
       lastField = NULL;
-      done = FALSE;
+      done = false;
       while (! done)
         {
          SavePPBuffer(theEnv," ");
          newField = GetAssertArgument(theEnv,logicalName,&theToken,&error,
-                                      RPAREN,FALSE,&printError);
+                                      RPAREN,false,&printError);
 
          if (error)
            {
@@ -2102,7 +2107,7 @@ static struct expr *ModAndDupParse(
            }
 
          if (newField == NULL)
-           { done = TRUE; }
+           { done = true; }
 
          if (lastField == NULL)
            { firstField = newField; }
@@ -2156,7 +2161,7 @@ void DeftemplateSlotNames(
    EnvDeftemplateSlotNames(GetCurrentEnvironment(),vTheDeftemplate,returnValue);
   }
 
-intBool DeftemplateSlotDefaultValue(
+bool DeftemplateSlotDefaultValue(
   void *vTheDeftemplate,
   const char *slotName,
   DATA_OBJECT_PTR theValue)
@@ -2196,21 +2201,21 @@ void DeftemplateSlotTypes(
    EnvDeftemplateSlotTypes(GetCurrentEnvironment(),vTheDeftemplate,slotName,result);
   }
 
-int DeftemplateSlotMultiP(
+bool DeftemplateSlotMultiP(
   void *vTheDeftemplate,
   const char *slotName)
   {
    return EnvDeftemplateSlotMultiP(GetCurrentEnvironment(),vTheDeftemplate,slotName);
   }
 
-int DeftemplateSlotSingleP(
+bool DeftemplateSlotSingleP(
   void *vTheDeftemplate,
   const char *slotName)
   {
    return EnvDeftemplateSlotSingleP(GetCurrentEnvironment(),vTheDeftemplate,slotName);
   }
 
-int DeftemplateSlotExistP(
+bool DeftemplateSlotExistP(
   void *vTheDeftemplate,
   const char *slotName)
   {

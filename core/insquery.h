@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -33,6 +33,8 @@
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -81,7 +83,7 @@ struct instanceQueryData
    SYMBOL_HN *QUERY_DELIMETER_SYMBOL;
    QUERY_CORE *QueryCore;
    QUERY_STACK *QueryCoreStack;
-   int AbortQuery;
+   bool AbortQuery;
   };
 
 #define InstanceQueryData(theEnv) ((struct instanceQueryData *) GetEnvironmentData(theEnv,INSTANCE_QUERY_DATA))
@@ -91,7 +93,7 @@ struct instanceQueryData
    void                           SetupQuery(void *);
    void                          *GetQueryInstance(void *);
    void                           GetQueryInstanceSlot(void *,DATA_OBJECT *);
-   intBool                        AnyInstances(void *);
+   bool                           AnyInstances(void *);
    void                           QueryFindInstance(void *,DATA_OBJECT *);
    void                           QueryFindAllInstances(void *,DATA_OBJECT *);
    void                           QueryDoForInstance(void *,DATA_OBJECT *);

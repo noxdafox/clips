@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*                 SYMBOL HEADER FILE                  */
    /*******************************************************/
@@ -64,6 +64,8 @@
 /*            Removed LOCALE definition.                     */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -304,9 +306,9 @@ struct symbolData
    void                           RefreshSpecialSymbols(void *);
    struct symbolMatch            *FindSymbolMatches(void *,const char *,unsigned *,size_t *);
    void                           ReturnSymbolMatches(void *,struct symbolMatch *);
-   SYMBOL_HN                     *GetNextSymbolMatch(void *,const char *,size_t,SYMBOL_HN *,int,size_t *);
+   SYMBOL_HN                     *GetNextSymbolMatch(void *,const char *,size_t,SYMBOL_HN *,bool,size_t *);
    void                           ClearBitString(void *,unsigned);
-   void                           SetAtomicValueIndices(void *,int);
+   void                           SetAtomicValueIndices(void *,bool);
    void                           RestoreAtomicValueBuckets(void *);
    void                          *EnvFalseSymbol(void *);
    void                          *EnvTrueSymbol(void *);

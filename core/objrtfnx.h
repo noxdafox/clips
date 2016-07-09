@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -35,6 +35,8 @@
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -191,7 +193,7 @@ struct objectReteData
    OBJECT_MATCH_ACTION *ObjectMatchActionQueue;
    OBJECT_PATTERN_NODE *ObjectPatternNetworkPointer;
    OBJECT_ALPHA_NODE *ObjectPatternNetworkTerminalPointer;
-   intBool DelayObjectPatternMatching;
+   bool DelayObjectPatternMatching;
    unsigned long long CurrentObjectMatchTimeTag;
    long long UseEntityTimeTag;
 #if DEFRULE_CONSTRUCT && OBJECT_SYSTEM && CONSTRUCT_COMPILER && (! RUN_TIME)
@@ -202,7 +204,7 @@ struct objectReteData
 #define ObjectReteData(theEnv) ((struct objectReteData *) GetEnvironmentData(theEnv,OBJECT_RETE_DATA))
 
    void                    InstallObjectPrimitives(void *);
-   intBool                 ObjectCmpConstantFunction(void *,void *,DATA_OBJECT *);
+   bool                    ObjectCmpConstantFunction(void *,void *,DATA_OBJECT *);
 
 #endif /* DEFRULE_CONSTRUCT && OBJECT_SYSTEM */
 

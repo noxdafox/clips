@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/27/16             */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*                 SYMBOL BSAVE MODULE                 */
    /*******************************************************/
@@ -23,6 +23,8 @@
 /*            Support for long long integers.                */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -93,7 +95,7 @@ void InitAtomicValueNeededFlags(
       symbolPtr = symbolArray[i];
       while (symbolPtr != NULL)
         {
-         symbolPtr->neededSymbol = FALSE;
+         symbolPtr->neededSymbol = false;
          symbolPtr = symbolPtr->next;
         }
      }
@@ -109,7 +111,7 @@ void InitAtomicValueNeededFlags(
       floatPtr = floatArray[i];
       while (floatPtr != NULL)
         {
-         floatPtr->neededFloat = FALSE;
+         floatPtr->neededFloat = false;
          floatPtr = floatPtr->next;
         }
      }
@@ -125,7 +127,7 @@ void InitAtomicValueNeededFlags(
       integerPtr = integerArray[i];
       while (integerPtr != NULL)
         {
-         integerPtr->neededInteger = FALSE;
+         integerPtr->neededInteger = false;
          integerPtr = integerPtr->next;
         }
      }
@@ -141,7 +143,7 @@ void InitAtomicValueNeededFlags(
       bitMapPtr = bitMapArray[i];
       while (bitMapPtr != NULL)
         {
-         bitMapPtr->neededBitMap = FALSE;
+         bitMapPtr->neededBitMap = false;
          bitMapPtr = bitMapPtr->next;
         }
      }

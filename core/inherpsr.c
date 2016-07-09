@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/25/16             */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*             MULTIPLE INHERITANCE PARSER MODULE      */
    /*******************************************************/
@@ -22,6 +22,8 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -132,7 +134,7 @@ PACKED_CLASS_LINKS *ParseSuperclasses(
       return(NULL);
      }
    GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
-   if ((GetType(DefclassData(theEnv)->ObjectParseToken) != SYMBOL) ? TRUE :
+   if ((GetType(DefclassData(theEnv)->ObjectParseToken) != SYMBOL) ? true :
        (DefclassData(theEnv)->ObjectParseToken.value != (void *) DefclassData(theEnv)->ISA_SYMBOL))
      {
       SyntaxErrorMessage(theEnv,"defclass inheritance");
@@ -154,7 +156,7 @@ PACKED_CLASS_LINKS *ParseSuperclasses(
         }
       if (GetValue(DefclassData(theEnv)->ObjectParseToken) == (void *) newClassName)
         {
-         PrintErrorID(theEnv,"INHERPSR",1,FALSE);
+         PrintErrorID(theEnv,"INHERPSR",1,false);
          EnvPrintRouter(theEnv,WERROR,"A class may not have itself as a superclass.\n");
          goto SuperclassParseError;
         }
@@ -162,7 +164,7 @@ PACKED_CLASS_LINKS *ParseSuperclasses(
         {
          if (GetValue(DefclassData(theEnv)->ObjectParseToken) == (void *) ctmp->cls->header.name)
            {
-            PrintErrorID(theEnv,"INHERPSR",2,FALSE);
+            PrintErrorID(theEnv,"INHERPSR",2,false);
             EnvPrintRouter(theEnv,WERROR,"A class may inherit from a superclass only once.\n");
             goto SuperclassParseError;
            }
@@ -170,7 +172,7 @@ PACKED_CLASS_LINKS *ParseSuperclasses(
       sclass = LookupDefclassInScope(theEnv,ValueToString(GetValue(DefclassData(theEnv)->ObjectParseToken)));
       if (sclass == NULL)
         {
-         PrintErrorID(theEnv,"INHERPSR",3,FALSE);
+         PrintErrorID(theEnv,"INHERPSR",3,false);
          EnvPrintRouter(theEnv,WERROR,"A class must be defined after all its superclasses.\n");
          goto SuperclassParseError;
         }
@@ -178,7 +180,7 @@ PACKED_CLASS_LINKS *ParseSuperclasses(
           (sclass == DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_ADDRESS]) ||
           (sclass == DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_NAME]->directSuperclasses.classArray[0]))
         {
-         PrintErrorID(theEnv,"INHERPSR",6,FALSE);
+         PrintErrorID(theEnv,"INHERPSR",6,false);
          EnvPrintRouter(theEnv,WERROR,"A user-defined class cannot be a subclass of ");
          EnvPrintRouter(theEnv,WERROR,EnvGetDefclassName(theEnv,(void *) sclass));
          EnvPrintRouter(theEnv,WERROR,".\n");
@@ -198,7 +200,7 @@ PACKED_CLASS_LINKS *ParseSuperclasses(
      }
    if (clink == NULL)
      {
-      PrintErrorID(theEnv,"INHERPSR",4,FALSE);
+      PrintErrorID(theEnv,"INHERPSR",4,false);
       EnvPrintRouter(theEnv,WERROR,"Must have at least one superclass.\n");
       return(NULL);
      }
@@ -447,7 +449,7 @@ PACKED_CLASS_LINKS *FindPrecedenceList(
       ====================================================================== */
    if (po_table != NULL)
      {
-      PrintErrorID(theEnv,"INHERPSR",5,FALSE);
+      PrintErrorID(theEnv,"INHERPSR",5,false);
       PrintClassLinks(theEnv,WERROR,"Partial precedence list formed:",ptop);
       PrintPartialOrderLoop(theEnv,po_table);
       while (po_table != NULL)
@@ -804,12 +806,12 @@ static void PrintPartialOrderLoop(
    while (pop1->pre == 1)
      {
       EnvPrintRouter(theEnv,WERROR," ");
-      PrintClassName(theEnv,WERROR,pop1->cls,FALSE);
+      PrintClassName(theEnv,WERROR,pop1->cls,false);
       pop1->pre = 0;
       pop1 = pop1->suc->po;
      }
    EnvPrintRouter(theEnv,WERROR," ");
-   PrintClassName(theEnv,WERROR,pop1->cls,TRUE);
+   PrintClassName(theEnv,WERROR,pop1->cls,true);
   }
 
 /***************************************************
@@ -834,7 +836,7 @@ static void PrintClassLinks(
    while (clink != NULL)
      {
       EnvPrintRouter(theEnv,logicalName," ");
-      PrintClassName(theEnv,logicalName,clink->cls,FALSE);
+      PrintClassName(theEnv,logicalName,clink->cls,false);
       clink = clink->nxt;
      }
    EnvPrintRouter(theEnv,logicalName,"\n");

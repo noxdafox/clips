@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/26/16             */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*              INCREMENTAL RESET MODULE               */
    /*******************************************************/
@@ -41,6 +41,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -67,8 +69,8 @@
 /***************************************/
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   static void                    MarkNetworkForIncrementalReset(void *,struct defrule *,int);
-   static void                    MarkJoinsForIncrementalReset(void *,struct joinNode *,int);
+   static void                    MarkNetworkForIncrementalReset(void *,struct defrule *,bool);
+   static void                    MarkJoinsForIncrementalReset(void *,struct joinNode *,bool);
    static void                    CheckForPrimableJoins(void *,struct defrule *,struct joinNode *);
    static void                    PrimeJoinFromLeftMemory(void *,struct joinNode *);
    static void                    PrimeJoinFromRightMemory(void *,struct joinNode *);
@@ -97,13 +99,13 @@ void IncrementalReset(
    /* associated with the rule being incrementally reset. */
    /*=====================================================*/
 
-   MarkNetworkForIncrementalReset(theEnv,tempRule,TRUE);
+   MarkNetworkForIncrementalReset(theEnv,tempRule,true);
 
    /*==========================*/
    /* Begin incremental reset. */
    /*==========================*/
 
-   EngineData(theEnv)->IncrementalResetInProgress = TRUE;
+   EngineData(theEnv)->IncrementalResetInProgress = true;
 
    /*============================================================*/
    /* If the new rule shares patterns or joins with other rules, */
@@ -133,13 +135,13 @@ void IncrementalReset(
    /* End incremental reset. */
    /*========================*/
 
-   EngineData(theEnv)->IncrementalResetInProgress = FALSE;
+   EngineData(theEnv)->IncrementalResetInProgress = false;
 
    /*====================================================*/
    /* Remove the marks in the pattern and join networks. */
    /*====================================================*/
 
-   MarkNetworkForIncrementalReset(theEnv,tempRule,FALSE);
+   MarkNetworkForIncrementalReset(theEnv,tempRule,false);
 #endif
   }
 
@@ -153,7 +155,7 @@ void IncrementalReset(
 static void MarkNetworkForIncrementalReset(
   void *theEnv,
   struct defrule *tempRule,
-  int value)
+  bool value)
   {
    /*============================================*/
    /* Loop through each of the rule's disjuncts. */
@@ -173,7 +175,7 @@ static void MarkNetworkForIncrementalReset(
 static void MarkJoinsForIncrementalReset(
   void *theEnv,
   struct joinNode *joinPtr,
-  int value)
+  bool value)
   {
    struct patternNodeHeader *patternPtr;
 
@@ -183,7 +185,7 @@ static void MarkJoinsForIncrementalReset(
      {
       if (joinPtr->ruleToActivate != NULL)
         { 
-         joinPtr->marked = FALSE;
+         joinPtr->marked = false;
          joinPtr->initialize = value;
          continue; 
         }
@@ -195,12 +197,12 @@ static void MarkJoinsForIncrementalReset(
       /* Mark the join. */
       /*================*/
 
-      joinPtr->marked = FALSE; /* GDR 6.05 */
+      joinPtr->marked = false; /* GDR 6.05 */
         
       if (joinPtr->initialize) 
         {
          joinPtr->initialize = value;
-         if (joinPtr->joinFromTheRight == FALSE)
+         if (joinPtr->joinFromTheRight == false)
            {
             patternPtr = (struct patternNodeHeader *) GetPatternForJoin(joinPtr);
             if (patternPtr != NULL)
@@ -237,34 +239,34 @@ static void CheckForPrimableJoins(
 
       if ((joinPtr->initialize) && (! joinPtr->marked))
         {
-         if (joinPtr->firstJoin == TRUE)
+         if (joinPtr->firstJoin == true)
            {
-			if (joinPtr->joinFromTheRight == FALSE)
+			if (joinPtr->joinFromTheRight == false)
               {
                if ((joinPtr->rightSideEntryStructure == NULL) ||
                    (joinPtr->patternIsNegated) ||
-                   (((struct patternNodeHeader *) joinPtr->rightSideEntryStructure)->initialize == FALSE))
+                   (((struct patternNodeHeader *) joinPtr->rightSideEntryStructure)->initialize == false))
                  {
                   PrimeJoinFromLeftMemory(theEnv,joinPtr);
-                  joinPtr->marked = TRUE;
+                  joinPtr->marked = true;
                  }
               }
             else
               {
                PrimeJoinFromRightMemory(theEnv,joinPtr);
-               joinPtr->marked = TRUE;
+               joinPtr->marked = true;
               }
            }
-         else if (joinPtr->lastLevel->initialize == FALSE)
+         else if (joinPtr->lastLevel->initialize == false)
            { 
             PrimeJoinFromLeftMemory(theEnv,joinPtr); 
-            joinPtr->marked = TRUE;
+            joinPtr->marked = true;
            }
          else if ((joinPtr->joinFromTheRight) &&
-                (((struct joinNode *) joinPtr->rightSideEntryStructure)->initialize == FALSE))
+                (((struct joinNode *) joinPtr->rightSideEntryStructure)->initialize == false))
            {
             PrimeJoinFromRightMemory(theEnv,joinPtr);
-            joinPtr->marked = TRUE;
+            joinPtr->marked = true;
            }
         }
         
@@ -300,7 +302,7 @@ static void PrimeJoinFromLeftMemory(
    /* the priming process is then complete.                     */
    /*===========================================================*/
 
-   if (joinPtr->firstJoin == TRUE)
+   if (joinPtr->firstJoin == true)
      {
       if (joinPtr->rightSideEntryStructure == NULL)
         { NetworkAssert(theEnv,joinPtr->rightMemory->beta[0],joinPtr); }
@@ -310,7 +312,7 @@ static void PrimeJoinFromLeftMemory(
          
          if (joinPtr->secondaryNetworkTest != NULL)
            {
-            if (EvaluateSecondaryNetworkTest(theEnv,notParent,joinPtr) == FALSE)
+            if (EvaluateSecondaryNetworkTest(theEnv,notParent,joinPtr) == false)
               { return; }
            }
 
@@ -352,7 +354,7 @@ static void PrimeJoinFromLeftMemory(
    while (tempLink != NULL)
      {
       if ((tempLink->join != joinPtr) &&
-          (tempLink->join->initialize == FALSE))
+          (tempLink->join->initialize == false))
         { break; }
       
       tempLink = tempLink->next;
@@ -413,7 +415,7 @@ static void PrimeJoinFromRightMemory(
    /* This should be a join from the right. */
    /*=======================================*/
    
-   if (joinPtr->joinFromTheRight == FALSE)
+   if (joinPtr->joinFromTheRight == false)
      { return; }
      
    /*========================================*/
@@ -425,7 +427,7 @@ static void PrimeJoinFromRightMemory(
    while (tempLink != NULL)
      {
       if ((tempLink->join != joinPtr) && 
-          (tempLink->join->initialize == FALSE))
+          (tempLink->join->initialize == false))
         { break; }
       
       tempLink = tempLink->next;
@@ -441,7 +443,7 @@ static void PrimeJoinFromRightMemory(
 
          if (joinPtr->secondaryNetworkTest != NULL)
            {
-            if (EvaluateSecondaryNetworkTest(theEnv,notParent,joinPtr) == FALSE)
+            if (EvaluateSecondaryNetworkTest(theEnv,notParent,joinPtr) == false)
               { return; }
            }
 
@@ -487,7 +489,7 @@ static void PrimeJoinFromRightMemory(
 
       if (joinPtr->secondaryNetworkTest != NULL)
         {
-         if (EvaluateSecondaryNetworkTest(theEnv,notParent,joinPtr) == FALSE)
+         if (EvaluateSecondaryNetworkTest(theEnv,notParent,joinPtr) == false)
            { return; }
         }
 
@@ -524,7 +526,7 @@ static void MarkPatternForIncrementalReset(
 /* EnvGetIncrementalReset: C access routine */
 /*   for the get-incremental-reset command. */
 /********************************************/
-intBool EnvGetIncrementalReset(
+bool EnvGetIncrementalReset(
   void *theEnv)
   {   
    return(EngineData(theEnv)->IncrementalResetFlag);
@@ -534,9 +536,9 @@ intBool EnvGetIncrementalReset(
 /* EnvSetIncrementalReset: C access routine */
 /*   for the set-incremental-reset command. */
 /********************************************/
-intBool EnvSetIncrementalReset(
+bool EnvSetIncrementalReset(
   void *theEnv,
-  int value)
+  bool value)
   {
    int ov;
    struct defmodule *theModule;
@@ -575,10 +577,10 @@ intBool EnvSetIncrementalReset(
 /* SetIncrementalResetCommand: H/L access routine   */
 /*   for the set-incremental-reset command.         */
 /****************************************************/
-int SetIncrementalResetCommand(
+bool SetIncrementalResetCommand(
   void *theEnv)
   {
-   int oldValue;
+   bool oldValue;
    DATA_OBJECT argPtr;
    struct defmodule *theModule;
 
@@ -606,9 +608,9 @@ int SetIncrementalResetCommand(
       if (EnvGetNextDefrule(theEnv,NULL) != NULL)
         {
          RestoreCurrentModule(theEnv);
-         PrintErrorID(theEnv,"INCRRSET",1,FALSE);
+         PrintErrorID(theEnv,"INCRRSET",1,false);
          EnvPrintRouter(theEnv,WERROR,"The incremental reset behavior cannot be changed with rules loaded.\n");
-         EnvSetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,true);
          return(oldValue);
         }
      }
@@ -623,9 +625,9 @@ int SetIncrementalResetCommand(
    EnvRtnUnknown(theEnv,1,&argPtr);
 
    if ((argPtr.value == EnvFalseSymbol(theEnv)) && (argPtr.type == SYMBOL))
-     { EnvSetIncrementalReset(theEnv,FALSE); }
+     { EnvSetIncrementalReset(theEnv,false); }
    else
-     { EnvSetIncrementalReset(theEnv,TRUE); }
+     { EnvSetIncrementalReset(theEnv,true); }
 
    /*=======================*/
    /* Return the old value. */
@@ -638,10 +640,10 @@ int SetIncrementalResetCommand(
 /* GetIncrementalResetCommand: H/L access routine   */
 /*   for the get-incremental-reset command.         */
 /****************************************************/
-int GetIncrementalResetCommand(
+bool GetIncrementalResetCommand(
   void *theEnv)
   {
-   int oldValue;
+   bool oldValue;
 
    oldValue = EnvGetIncrementalReset(theEnv);
 
@@ -657,13 +659,13 @@ int GetIncrementalResetCommand(
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-intBool GetIncrementalReset()
+bool GetIncrementalReset()
   {   
    return EnvGetIncrementalReset(GetCurrentEnvironment());
   }
 
-intBool SetIncrementalReset(
-  int value)
+bool SetIncrementalReset(
+  bool value)
   {
    return EnvSetIncrementalReset(GetCurrentEnvironment(),value);
   }

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/04/16            */
    /*                                                     */
    /*                 BLOAD HEADER FILE                   */
    /*******************************************************/
@@ -33,6 +33,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_bload
@@ -55,7 +57,7 @@ struct bloadData
    const char *BinaryPrefixID;
    const char *BinaryVersionID;
    struct FunctionDefinition **FunctionArray;
-   int BloadActive;
+   bool BloadActive;
    struct callFunctionItem *BeforeBloadFunctions;
    struct callFunctionItem *AfterBloadFunctions;
    struct callFunctionItem *ClearBloadReadyFunctions;
@@ -67,10 +69,10 @@ struct bloadData
 #define FunctionPointer(i) ((struct FunctionDefinition *) (((i) == -1L) ? NULL : BloadData(theEnv)->FunctionArray[i]))
 
    void                    InitializeBloadData(void *);
-   int                     BloadCommand(void *);
-   intBool                 EnvBload(void *,const char *);
+   bool                    BloadCommand(void *);
+   bool                    EnvBload(void *,const char *);
    void                    BloadandRefresh(void *,long,size_t,void (*)(void *,void *,long));
-   intBool                 Bloaded(void *);
+   bool                    Bloaded(void *);
    void                    AddBeforeBloadFunction(void *,const char *,void (*)(void *),int);
    void                    AddAfterBloadFunction(void *,const char *,void (*)(void *),int);
    void                    AddClearBloadReadyFunction(void *,const char *,int (*)(void *),int);
@@ -78,7 +80,7 @@ struct bloadData
    void                    CannotLoadWithBloadMessage(void *,const char *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
-   int                     Bload(const char *);
+   bool                    Bload(const char *);
 #endif
 
 #endif

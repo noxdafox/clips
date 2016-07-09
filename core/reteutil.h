@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*              RETE UTILITY HEADER FILE               */
    /*******************************************************/
@@ -46,6 +46,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_reteutil
@@ -72,10 +74,10 @@
    void                           ReturnRightMemory(void *,struct joinNode *);
    void                           DestroyBetaMemory(void *,struct joinNode *,int);
    void                           FlushBetaMemory(void *,struct joinNode *,int);
-   intBool                        BetaMemoryNotEmpty(struct joinNode *);
+   bool                           BetaMemoryNotEmpty(struct joinNode *);
    void                           RemoveAlphaMemoryMatches(void *,struct patternNodeHeader *,struct partialMatch *,
                                                                   struct alphaMatch *); 
-   void                           DestroyAlphaMemory(void *,struct patternNodeHeader *,int);
+   void                           DestroyAlphaMemory(void *,struct patternNodeHeader *,bool);
    void                           FlushAlphaMemory(void *,struct patternNodeHeader *);
    void                           FlushAlphaBetaMemory(void *,struct partialMatch *);
    void                           DestroyAlphaBetaMemory(void *,struct partialMatch *);
@@ -87,7 +89,7 @@
    void                           InitializePatternHeader(void *,struct patternNodeHeader *);
    void                           MarkRuleNetwork(void *,int);
    void                           TagRuleNetwork(void *,long *,long *,long *,long *);
-   int                            FindEntityInPartialMatch(struct patternEntity *,struct partialMatch *);
+   bool                           FindEntityInPartialMatch(struct patternEntity *,struct partialMatch *);
    unsigned long                  ComputeRightHashValue(void *,struct patternNodeHeader *);
    void                           UpdateBetaPMLinks(void *,struct partialMatch *,struct partialMatch *,struct partialMatch *,
                                                        struct joinNode *,unsigned long,int);
@@ -97,7 +99,7 @@
    void                           MarkRuleJoins(struct joinNode *,int);
    void                           AddBlockedLink(struct partialMatch *,struct partialMatch *);
    void                           RemoveBlockedLink(struct partialMatch *);
-   unsigned long                  PrintBetaMemory(void *,const char *,struct betaMemory *,int,const char *,int);
+   unsigned long                  PrintBetaMemory(void *,const char *,struct betaMemory *,bool,const char *,int);
 
 #endif /* _H_reteutil */
 

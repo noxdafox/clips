@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/28/16             */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*                   UTILITY MODULE                    */
    /*******************************************************/
@@ -51,6 +51,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -92,11 +94,11 @@ void InitializeUtilityData(
    AllocateEnvironmentData(theEnv,UTILITY_DATA,sizeof(struct utilityData),DeallocateUtilityData);
 
    UtilityData(theEnv)->CurrentGarbageFrame = &UtilityData(theEnv)->MasterGarbageFrame;
-   UtilityData(theEnv)->CurrentGarbageFrame->topLevel = TRUE;
+   UtilityData(theEnv)->CurrentGarbageFrame->topLevel = true;
    
    UtilityData(theEnv)->GarbageCollectionLocks = 0;
-   UtilityData(theEnv)->PeriodicFunctionsEnabled = TRUE;
-   UtilityData(theEnv)->YieldFunctionEnabled = TRUE;
+   UtilityData(theEnv)->PeriodicFunctionsEnabled = true;
+   UtilityData(theEnv)->YieldFunctionEnabled = true;
   }
   
 /**************************************************/
@@ -246,7 +248,7 @@ void CleanCurrentGarbageFrame(
        (currentGarbageFrame->ephemeralBitMapList == NULL) &&
        (currentGarbageFrame->ephemeralExternalAddressList == NULL) &&
        (currentGarbageFrame->LastMultifield == NULL))
-     { currentGarbageFrame->dirty = FALSE; }
+     { currentGarbageFrame->dirty = false; }
   }
 
 /*****************************/
@@ -278,7 +280,7 @@ void RestorePriorGarbageFrame(
            { oldGarbageFrame->LastMultifield->next = newGarbageFrame->ListOfMultifields; }
            
          oldGarbageFrame->LastMultifield = newGarbageFrame->LastMultifield;
-         oldGarbageFrame->dirty = TRUE;
+         oldGarbageFrame->dirty = true;
         }
         
       if (returnValue != NULL) ValueDeinstall(theEnv,returnValue);
@@ -339,7 +341,7 @@ void CallPeriodicTasks(
 /*   of functions called to perform cleanup such   */
 /*   as returning free memory to the memory pool.  */
 /***************************************************/
-intBool AddCleanupFunction(
+bool AddCleanupFunction(
   void *theEnv,
   const char *name,
   void (*theFunction)(void *),
@@ -348,8 +350,8 @@ intBool AddCleanupFunction(
    UtilityData(theEnv)->ListOfCleanupFunctions =
      AddFunctionToCallList(theEnv,name,priority,
                            (void (*)(void *)) theFunction,
-                           UtilityData(theEnv)->ListOfCleanupFunctions,TRUE);
-   return(1);
+                           UtilityData(theEnv)->ListOfCleanupFunctions,true);
+   return true;
   }
 
 /******************************************************/
@@ -375,7 +377,7 @@ void *EnvGetPeriodicFunctionContext(
 /* AddPeriodicFunction: Adds a function to the list */
 /*   of functions called to handle periodic tasks.  */
 /****************************************************/
-intBool AddPeriodicFunction(
+bool AddPeriodicFunction(
   const char *name,
   void (*theFunction)(void),
   int priority)
@@ -387,9 +389,9 @@ intBool AddPeriodicFunction(
    UtilityData(theEnv)->ListOfPeriodicFunctions =
      AddFunctionToCallList(theEnv,name,priority,
                            (void (*)(void *)) theFunction,
-                           UtilityData(theEnv)->ListOfPeriodicFunctions,FALSE);
+                           UtilityData(theEnv)->ListOfPeriodicFunctions,false);
 
-   return(1);
+   return true;
   }
 #endif
 
@@ -397,7 +399,7 @@ intBool AddPeriodicFunction(
 /* EnvAddPeriodicFunctionWithContext: Adds a function to the */
 /*   list of functions called to handle periodic tasks.      */
 /*************************************************************/
-intBool EnvAddPeriodicFunctionWithContext(
+bool EnvAddPeriodicFunctionWithContext(
   void *theEnv,
   const char *name,
   void (*theFunction)(void *),
@@ -407,15 +409,15 @@ intBool EnvAddPeriodicFunctionWithContext(
    UtilityData(theEnv)->ListOfPeriodicFunctions =
      AddFunctionToCallListWithContext(theEnv,name,priority,
                            (void (*)(void *)) theFunction,
-                           UtilityData(theEnv)->ListOfPeriodicFunctions,TRUE,context);
-   return(1);
+                           UtilityData(theEnv)->ListOfPeriodicFunctions,true,context);
+   return true;
   }
 
 /*******************************************************/
 /* EnvAddPeriodicFunction: Adds a function to the list */
 /*   of functions called to handle periodic tasks.     */
 /*******************************************************/
-intBool EnvAddPeriodicFunction(
+bool EnvAddPeriodicFunction(
   void *theEnv,
   const char *name,
   void (*theFunction)(void *),
@@ -429,11 +431,11 @@ intBool EnvAddPeriodicFunction(
 /*   list of functions called to perform cleanup such  */
 /*   as returning free memory to the memory pool.      */
 /*******************************************************/
-intBool RemoveCleanupFunction(
+bool RemoveCleanupFunction(
   void *theEnv,
   const char *name)
   {
-   intBool found;
+   bool found;
    
    UtilityData(theEnv)->ListOfCleanupFunctions =
       RemoveFunctionFromCallList(theEnv,name,UtilityData(theEnv)->ListOfCleanupFunctions,&found);
@@ -445,11 +447,11 @@ intBool RemoveCleanupFunction(
 /* EnvRemovePeriodicFunction: Removes a function from the */
 /*   list of functions called to handle periodic tasks.   */
 /**********************************************************/
-intBool EnvRemovePeriodicFunction(
+bool EnvRemovePeriodicFunction(
   void *theEnv,
   const char *name)
   {
-   intBool found;
+   bool found;
    
    UtilityData(theEnv)->ListOfPeriodicFunctions =
       RemoveFunctionFromCallList(theEnv,name,UtilityData(theEnv)->ListOfPeriodicFunctions,&found);
@@ -776,7 +778,7 @@ struct callFunctionItem *AddFunctionToCallList(
   int priority,
   void (*func)(void *),
   struct callFunctionItem *head,
-  intBool environmentAware)
+  bool environmentAware)
   {
    return AddFunctionToCallListWithContext(theEnv,name,priority,func,head,environmentAware,NULL);
   }
@@ -792,7 +794,7 @@ struct callFunctionItem *AddFunctionToCallListWithContext(
   int priority,
   void (*func)(void *),
   struct callFunctionItem *head,
-  intBool environmentAware,
+  bool environmentAware,
   void *context)
   {
    struct callFunctionItem *newPtr, *currentPtr, *lastPtr = NULL;
@@ -806,7 +808,7 @@ struct callFunctionItem *AddFunctionToCallListWithContext(
 
    newPtr->func = func;
    newPtr->priority = priority;
-   newPtr->environmentAware = (short) environmentAware;
+   newPtr->environmentAware = environmentAware;
    newPtr->context = context;
 
    if (head == NULL)
@@ -816,7 +818,7 @@ struct callFunctionItem *AddFunctionToCallListWithContext(
      }
 
    currentPtr = head;
-   while ((currentPtr != NULL) ? (priority < currentPtr->priority) : FALSE)
+   while ((currentPtr != NULL) ? (priority < currentPtr->priority) : false)
      {
       lastPtr = currentPtr;
       currentPtr = currentPtr->next;
@@ -866,11 +868,11 @@ struct callFunctionItem *RemoveFunctionFromCallList(
   void *theEnv,
   const char *name,
   struct callFunctionItem *head,
-  int *found)
+  bool *found)
   {
    struct callFunctionItem *currentPtr, *lastPtr;
 
-   *found = FALSE;
+   *found = false;
    lastPtr = NULL;
    currentPtr = head;
 
@@ -878,7 +880,7 @@ struct callFunctionItem *RemoveFunctionFromCallList(
      {
       if (strcmp(name,currentPtr->name) == 0)
         {
-         *found = TRUE;
+         *found = true;
          if (lastPtr == NULL)
            { head = currentPtr->next; }
          else
@@ -928,7 +930,7 @@ struct callFunctionItemWithArg *AddFunctionToCallListWithArg(
   int priority,
   void (*func)(void *, void *),
   struct callFunctionItemWithArg *head,
-  intBool environmentAware)
+  bool environmentAware)
   {
    return AddFunctionToCallListWithArgWithContext(theEnv,name,priority,func,head,environmentAware,NULL);
   }
@@ -944,7 +946,7 @@ struct callFunctionItemWithArg *AddFunctionToCallListWithArgWithContext(
   int priority,
   void (*func)(void *, void *),
   struct callFunctionItemWithArg *head,
-  intBool environmentAware,
+  bool environmentAware,
   void *context)
   {
    struct callFunctionItemWithArg *newPtr, *currentPtr, *lastPtr = NULL;
@@ -954,7 +956,7 @@ struct callFunctionItemWithArg *AddFunctionToCallListWithArgWithContext(
    newPtr->name = name;
    newPtr->func = func;
    newPtr->priority = priority;
-   newPtr->environmentAware = (short) environmentAware;
+   newPtr->environmentAware = environmentAware;
    newPtr->context = context;
 
    if (head == NULL)
@@ -964,7 +966,7 @@ struct callFunctionItemWithArg *AddFunctionToCallListWithArgWithContext(
      }
 
    currentPtr = head;
-   while ((currentPtr != NULL) ? (priority < currentPtr->priority) : FALSE)
+   while ((currentPtr != NULL) ? (priority < currentPtr->priority) : false)
      {
       lastPtr = currentPtr;
       currentPtr = currentPtr->next;
@@ -993,11 +995,11 @@ struct callFunctionItemWithArg *RemoveFunctionFromCallListWithArg(
   void *theEnv,
   const char *name,
   struct callFunctionItemWithArg *head,
-  int *found)
+  bool *found)
   {
    struct callFunctionItemWithArg *currentPtr, *lastPtr;
 
-   *found = FALSE;
+   *found = false;
    lastPtr = NULL;
    currentPtr = head;
 
@@ -1005,7 +1007,7 @@ struct callFunctionItemWithArg *RemoveFunctionFromCallListWithArg(
      {
       if (strcmp(name,currentPtr->name) == 0)
         {
-         *found = TRUE;
+         *found = true;
          if (lastPtr == NULL)
            { head = currentPtr->next; }
          else
@@ -1093,7 +1095,7 @@ unsigned long ItemHashValue(
      }
 
    SystemError(theEnv,"UTILITY",1);
-   return(0);
+   return 0;
   }
 
 /********************************************/
@@ -1140,11 +1142,11 @@ void EnvDecrementGCLocks(
 /****************************/
 /* EnablePeriodicFunctions: */
 /****************************/
-short EnablePeriodicFunctions(
+bool EnablePeriodicFunctions(
   void *theEnv,
-  short value)
+  bool value)
   {
-   short oldValue;
+   bool oldValue;
    
    oldValue = UtilityData(theEnv)->PeriodicFunctionsEnabled;
    
@@ -1307,7 +1309,7 @@ void DecrementGCLocks()
    EnvDecrementGCLocks(GetCurrentEnvironment());
   }
 
-intBool RemovePeriodicFunction(
+bool RemovePeriodicFunction(
   const char *name)
   {
    return EnvRemovePeriodicFunction(GetCurrentEnvironment(),name);

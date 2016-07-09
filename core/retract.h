@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*                RETRACT HEADER FILE                  */
    /*******************************************************/
@@ -36,6 +36,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_retract
@@ -61,7 +63,7 @@ void                           FlushGarbagePartialMatches(void *);
 void                           DeletePartialMatches(void *,struct partialMatch *);
 void                           PosEntryRetractBeta(void *,struct partialMatch *,struct partialMatch *,int);
 void                           PosEntryRetractAlpha(void *,struct partialMatch *,int);
-intBool                        PartialMatchWillBeDeleted(void *,struct partialMatch *);
+bool                           PartialMatchWillBeDeleted(void *,struct partialMatch *);
 
 #endif /* _H_retract */
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*        FACT RETE FUNCTION GENERATION HEADER FILE    */
    /*******************************************************/
@@ -24,6 +24,8 @@
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -212,7 +214,7 @@ struct factCheckLengthPNCall
    struct expr               *FactPNVariableComparison(void *,struct lhsParseNode *,
                                                               struct lhsParseNode *);
    struct expr               *FactJNVariableComparison(void *,struct lhsParseNode *,
-                                                              struct lhsParseNode *,int);
+                                                              struct lhsParseNode *,bool);
    void                       FactReplaceGetvar(void *,struct expr *,struct lhsParseNode *,int);
    void                       FactReplaceGetfield(void *,struct expr *,struct lhsParseNode *);
    struct expr               *FactGenPNConstant(void *,struct lhsParseNode *);

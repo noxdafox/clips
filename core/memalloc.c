@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  06/25/15            */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*                    MEMORY MODULE                    */
    /*******************************************************/
@@ -42,6 +42,8 @@
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -81,7 +83,7 @@ void InitializeMemory(
 
    if (MemoryData(theEnv)->MemoryTable == NULL)
      {
-      PrintErrorID(theEnv,"MEMORY",1,TRUE);
+      PrintErrorID(theEnv,"MEMORY",1,true);
       EnvPrintRouter(theEnv,WERROR,"Out of memory.\n");
       EnvExitRouter(theEnv,EXIT_FAILURE);
      }
@@ -134,7 +136,7 @@ void *genalloc(
 /* DefaultOutOfMemoryFunction: Function called */
 /*   when the KB runs out of memory.           */
 /***********************************************/
-int DefaultOutOfMemoryFunction(
+bool DefaultOutOfMemoryFunction(
   void *theEnv,
   size_t size)
   {
@@ -142,19 +144,19 @@ int DefaultOutOfMemoryFunction(
 #pragma unused(size)
 #endif
 
-   PrintErrorID(theEnv,"MEMORY",1,TRUE);
+   PrintErrorID(theEnv,"MEMORY",1,true);
    EnvPrintRouter(theEnv,WERROR,"Out of memory.\n");
    EnvExitRouter(theEnv,EXIT_FAILURE);
-   return(TRUE);
+   return true;
   }
 
 /***********************************************************/
 /* EnvSetOutOfMemoryFunction: Allows the function which is */
 /*   called when the KB runs out of memory to be changed.  */
 /***********************************************************/
-int (*EnvSetOutOfMemoryFunction(void *theEnv,int (*functionPtr)(void *,size_t)))(void *,size_t)
+bool (*EnvSetOutOfMemoryFunction(void *theEnv,bool (*functionPtr)(void *,size_t)))(void *,size_t)
   {
-   int (*tmpPtr)(void *,size_t);
+   bool (*tmpPtr)(void *,size_t);
 
    tmpPtr = MemoryData(theEnv)->OutOfMemoryFunction;
    MemoryData(theEnv)->OutOfMemoryFunction = functionPtr;
@@ -164,7 +166,7 @@ int (*EnvSetOutOfMemoryFunction(void *theEnv,int (*functionPtr)(void *,size_t)))
 /****************************************************/
 /* genfree: A generic memory deallocation function. */
 /****************************************************/
-int genfree(
+void genfree(
   void *theEnv,
   void *waste,
   size_t size)
@@ -173,8 +175,6 @@ int genfree(
 
    MemoryData(theEnv)->MemoryAmount -= (long) size;
    MemoryData(theEnv)->MemoryCalls--;
-
-   return(0);
   }
 
 /******************************************************/
@@ -385,7 +385,7 @@ void *gm3(
 /* rm: Returns a block of memory to the */
 /*   maintained pool of free memory.    */
 /****************************************/
-int rm(
+void rm(
   void *theEnv,
   void *str,
   size_t size)
@@ -398,21 +398,24 @@ int rm(
      {
       SystemError(theEnv,"MEMORY",1);
       EnvExitRouter(theEnv,EXIT_FAILURE);
+      return;
      }
 
    if (size < sizeof(char *)) size = sizeof(char *);
 
 #if (MEM_TABLE_SIZE > 0)
-   if (size >= MEM_TABLE_SIZE) return(genfree(theEnv,(void *) str,size));
+   if (size >= MEM_TABLE_SIZE)
+     {
+      genfree(theEnv,(void *) str,size);
+      return;
+     }
 
    memPtr = (struct memoryPtr *) str;
    memPtr->next = MemoryData(theEnv)->MemoryTable[size];
    MemoryData(theEnv)->MemoryTable[size] = memPtr;
 #else
-   return(genfree(theEnv,(void *) str,size));
+   genfree(theEnv,(void *) str,size));
 #endif
-
-   return(1);
   }
 
 /********************************************/
@@ -420,7 +423,7 @@ int rm(
 /*   maintained pool of free memory that's  */
 /*   size is indicated with a long integer. */
 /********************************************/
-int rm3(
+void rm3(
   void *theEnv,
   void *str,
   size_t size)
@@ -433,21 +436,24 @@ int rm3(
      {
       SystemError(theEnv,"MEMORY",1);
       EnvExitRouter(theEnv,EXIT_FAILURE);
+      return;
      }
 
    if (size < (long) sizeof(char *)) size = sizeof(char *);
    
 #if (MEM_TABLE_SIZE > 0)
-   if (size >= MEM_TABLE_SIZE) return(genfree(theEnv,(void *) str,size));
+   if (size >= MEM_TABLE_SIZE)
+     {
+      genfree(theEnv,(void *) str,size);
+      return;
+     }
 
    memPtr = (struct memoryPtr *) str;
    memPtr->next = MemoryData(theEnv)->MemoryTable[(int) size];
    MemoryData(theEnv)->MemoryTable[(int) size] = memPtr;
 #else
-   return(genfree(theEnv,(void *) str,size));
+   genfree(theEnv,(void *) str,size);
 #endif
-
-   return(1);
   }
 
 /***************************************************/
@@ -491,11 +497,11 @@ unsigned long ActualPoolSize(
 /* EnvSetConserveMemory: Allows the setting */
 /*    of the memory conservation flag.      */
 /********************************************/
-intBool EnvSetConserveMemory(
+bool EnvSetConserveMemory(
   void *theEnv,
-  intBool value)
+  bool value)
   {
-   int ov;
+   bool ov;
 
    ov = MemoryData(theEnv)->ConserveMemory;
    MemoryData(theEnv)->ConserveMemory = value;
@@ -506,7 +512,7 @@ intBool EnvSetConserveMemory(
 /* EnvGetConserveMemory: Returns the value */
 /*    of the memory conservation flag.     */
 /*******************************************/
-intBool EnvGetConserveMemory(
+bool EnvGetConserveMemory(
   void *theEnv)
   {
    return(MemoryData(theEnv)->ConserveMemory);
@@ -532,7 +538,7 @@ void genmemcpy(
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-intBool GetConserveMemory()
+bool GetConserveMemory()
   {
    return EnvGetConserveMemory(GetCurrentEnvironment());
   }
@@ -553,13 +559,13 @@ long int ReleaseMem(
    return EnvReleaseMem(GetCurrentEnvironment(),maximum);
   }
 
-intBool SetConserveMemory(
-  intBool value)
+bool SetConserveMemory(
+  bool value)
   {
    return EnvSetConserveMemory(GetCurrentEnvironment(),value);
   }
 
-int (*SetOutOfMemoryFunction(int (*functionPtr)(void *,size_t)))(void *,size_t)
+bool (*SetOutOfMemoryFunction(bool (*functionPtr)(void *,size_t)))(void *,size_t)
   {
    return EnvSetOutOfMemoryFunction(GetCurrentEnvironment(),functionPtr);
   }

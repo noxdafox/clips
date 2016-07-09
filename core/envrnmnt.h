@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*                ENVRNMNT HEADER FILE                 */
    /*******************************************************/
@@ -46,6 +46,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_envrnmnt
@@ -53,6 +55,8 @@
 #pragma once
 
 #define _H_envrnmnt
+
+#include <stdbool.h>
 
 #include "symbol.h"
 
@@ -87,11 +91,11 @@ typedef struct environmentData * ENVIRONMENT_DATA_PTR;
 #define GetEnvironmentData(theEnv,position) (((struct environmentData *) theEnv)->theData[position])
 #define SetEnvironmentData(theEnv,position,value) (((struct environmentData *) theEnv)->theData[position] = value)
 
-   intBool                        AllocateEnvironmentData(void *,unsigned int,unsigned long,void (*)(void *));
-   intBool                        DeallocateEnvironmentData(void);
+   bool                           AllocateEnvironmentData(void *,unsigned int,unsigned long,void (*)(void *));
+   bool                           DeallocateEnvironmentData(void);
 #if ALLOW_ENVIRONMENT_GLOBALS
    void                           SetCurrentEnvironment(void *);
-   intBool                        SetCurrentEnvironmentByIndex(unsigned long);
+   bool                           SetCurrentEnvironmentByIndex(unsigned long);
    void                          *GetEnvironmentByIndex(unsigned long);
    void                          *GetCurrentEnvironment(void);
    unsigned long                  GetEnvironmentIndex(void *);
@@ -99,8 +103,8 @@ typedef struct environmentData * ENVIRONMENT_DATA_PTR;
    void                          *CreateEnvironment(void);
    void                          *CreateRuntimeEnvironment(struct symbolHashNode **,struct floatHashNode **,
                                                                   struct integerHashNode **,struct bitMapHashNode **);
-   intBool                        DestroyEnvironment(void *);
-   intBool                        AddEnvironmentCleanupFunction(void *,const char *,void (*)(void *),int);
+   bool                           DestroyEnvironment(void *);
+   bool                           AddEnvironmentCleanupFunction(void *,const char *,void (*)(void *),int);
    void                          *GetEnvironmentContext(void *);
    void                          *SetEnvironmentContext(void *,void *);
    void                          *GetEnvironmentRouterContext(void *);

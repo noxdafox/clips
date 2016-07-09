@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*      CONSTRUCT PROFILING FUNCTIONS HEADER FILE      */
    /*******************************************************/
@@ -40,6 +40,8 @@
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -80,8 +82,8 @@ struct profileFunctionData
    double PercentThreshold;
    struct userDataRecord ProfileDataInfo;
    unsigned char ProfileDataID;
-   int ProfileUserFunctions;
-   int ProfileConstructs;
+   bool ProfileUserFunctions;
+   bool ProfileConstructs;
    struct constructProfileInfo *ActiveProfileFrame;
    const char *OutputString;
   };
@@ -94,7 +96,7 @@ struct profileFunctionData
    void                           StartProfile(void *,
                                                       struct profileFrameInfo *,
                                                       struct userData **,
-                                                      intBool);
+                                                      bool);
    void                           EndProfile(void *,struct profileFrameInfo *);
    void                           ProfileResetCommand(void *);
    void                           ResetProfileInfo(struct constructProfileInfo *);
@@ -103,7 +105,7 @@ struct profileFunctionData
    double                         SetProfilePercentThreshold(void *,double);
    double                         GetProfilePercentThresholdCommand(void *);
    double                         GetProfilePercentThreshold(void *);
-   intBool                        Profile(void *,const char *);
+   bool                           Profile(void *,const char *);
    void                           DeleteProfileData(void *,void *);
    void                          *CreateProfileData(void *);
    const char                    *SetProfileOutputString(void *,const char *);

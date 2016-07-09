@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*                MULTIFIELD HEADER FILE               */
    /*******************************************************/
@@ -46,6 +46,8 @@
 /*            Removed LOCALE definition.                     */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -103,11 +105,11 @@ typedef struct field * FIELD_PTR;
    void                           AddToMultifieldList(void *,struct multifield *);
    void                           FlushMultifields(void *);
    void                           DuplicateMultifield(void *,struct dataObject *,struct dataObject *);
-   void                           PrintMultifield(void *,const char *,SEGMENT_PTR,long,long,int);
-   intBool                        MultifieldDOsEqual(DATA_OBJECT_PTR,DATA_OBJECT_PTR);
-   void                           StoreInMultifield(void *,DATA_OBJECT *,EXPRESSION *,int);
+   void                           PrintMultifield(void *,const char *,SEGMENT_PTR,long,long,bool);
+   bool                           MultifieldDOsEqual(DATA_OBJECT_PTR,DATA_OBJECT_PTR);
+   void                           StoreInMultifield(void *,DATA_OBJECT *,EXPRESSION *,bool);
    void                          *CopyMultifield(void *,struct multifield *);
-   intBool                        MultifieldsEqual(struct multifield *,struct multifield *);
+   bool                           MultifieldsEqual(struct multifield *,struct multifield *);
    void                          *DOToMultifield(void *,DATA_OBJECT *);
    unsigned long                  HashMultifield(struct multifield *,unsigned long);
    struct multifield             *GetMultifieldList(void *);

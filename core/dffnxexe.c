@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/23/16            */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -26,6 +26,8 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -105,7 +107,7 @@ void CallDeffunction(
 
    result->type = SYMBOL;
    result->value = EnvFalseSymbol(theEnv);
-   EvaluationData(theEnv)->EvaluationError = FALSE;
+   EvaluationData(theEnv)->EvaluationError = false;
    if (EvaluationData(theEnv)->HaltExecution)
      return;
      
@@ -115,7 +117,7 @@ void CallDeffunction(
    UtilityData(theEnv)->CurrentGarbageFrame = &newGarbageFrame;
 
    oldce = ExecutingConstruct(theEnv);
-   SetExecutingConstruct(theEnv,TRUE);
+   SetExecutingConstruct(theEnv,true);
    previouslyExecutingDeffunction = DeffunctionData(theEnv)->ExecutingDeffunction;
    DeffunctionData(theEnv)->ExecutingDeffunction = dptr;
    EvaluationData(theEnv)->CurrentEvaluationDepth++;
@@ -158,7 +160,7 @@ void CallDeffunction(
    if (dptr->trace)
      WatchDeffunction(theEnv,END_TRACE);
 #endif
-   ProcedureFunctionData(theEnv)->ReturnFlag = FALSE;
+   ProcedureFunctionData(theEnv)->ReturnFlag = false;
 
    dptr->executing--;
    PopProcParameters(theEnv);

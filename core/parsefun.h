@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*            PARSING FUNCTIONS HEADER FILE            */
    /*******************************************************/
@@ -38,6 +38,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_parsefun
@@ -50,7 +52,7 @@
 
    void                           ParseFunctionDefinitions(void *);
    void                           CheckSyntaxFunction(void *,DATA_OBJECT *);
-   int                            CheckSyntax(void *,const char *,DATA_OBJECT_PTR);
+   bool                           CheckSyntax(void *,const char *,DATA_OBJECT_PTR);
 
 #endif /* _H_parsefun */
 

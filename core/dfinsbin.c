@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/23/16             */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -23,6 +23,8 @@
 /*            Changed integer type/precision.                */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -187,7 +189,7 @@ static void BsaveDefinstancesFind(
 
    DefinstancesBinaryData(theEnv)->ModuleCount = 
       DoForAllConstructs(theEnv,MarkDefinstancesItems,DefinstancesData(theEnv)->DefinstancesModuleIndex,
-                         FALSE,NULL);
+                         false,NULL);
   }
 
 
@@ -229,7 +231,7 @@ static void BsaveDefinstancesExpressions(
   FILE *fp)
   {
    DoForAllConstructs(theEnv,BsaveDefinstancesExpression,DefinstancesData(theEnv)->DefinstancesModuleIndex,
-                      FALSE,(void *) fp);
+                      false,(void *) fp);
   }
 
 /***************************************************
@@ -313,7 +315,7 @@ static void BsaveDefinstancesDriver(
       Write out each definstances
       ========================== */
    DoForAllConstructs(theEnv,BsaveDefinstances,DefinstancesData(theEnv)->DefinstancesModuleIndex,
-                      FALSE,(void *) fp);
+                      false,(void *) fp);
 
    RestoreBloadCount(theEnv,&DefinstancesBinaryData(theEnv)->ModuleCount);
    RestoreBloadCount(theEnv,&DefinstancesBinaryData(theEnv)->DefinstancesCount);

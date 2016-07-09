@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*                 FACT HASHING MODULE                 */
    /*******************************************************/
@@ -32,6 +32,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_facthsh
@@ -53,19 +55,19 @@ struct factHashEntry
 #define SIZE_FACT_HASH 16231
 
    void                           AddHashedFact(void *,struct fact *,unsigned long);
-   intBool                        RemoveHashedFact(void *,struct fact *);
-   unsigned long                  HandleFactDuplication(void *,void *,intBool *);
-   intBool                        EnvGetFactDuplication(void *);
-   intBool                        EnvSetFactDuplication(void *,int);
+   bool                           RemoveHashedFact(void *,struct fact *);
+   unsigned long                  HandleFactDuplication(void *,void *,bool *);
+   bool                           EnvGetFactDuplication(void *);
+   bool                           EnvSetFactDuplication(void *,bool);
    void                           InitializeFactHashTable(void *);
    void                           ShowFactHashTable(void *);
    unsigned long                  HashFact(struct fact *);
-   intBool                        FactWillBeAsserted(void *,void *);
+   bool                           FactWillBeAsserted(void *,void *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-   intBool                        GetFactDuplication(void);
-   intBool                        SetFactDuplication(int);
+   bool                           GetFactDuplication(void);
+   bool                           SetFactDuplication(bool);
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */
 

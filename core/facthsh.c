@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/24/16             */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*                 FACT HASHING MODULE                 */
    /*******************************************************/
@@ -31,6 +31,8 @@
 /*            Converted API macros to function calls.        */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -118,7 +120,7 @@ static struct fact *FactExists(
 
       if ((theFact->whichDeftemplate == theFactHash->theFact->whichDeftemplate) ?
           MultifieldsEqual(&theFact->theProposition,
-                           &theFactHash->theFact->theProposition) : FALSE)
+                           &theFactHash->theFact->theProposition) : false)
         { return(theFactHash->theFact); }
      }
 
@@ -152,7 +154,7 @@ void AddHashedFact(
 /* RemoveHashedFact: Removes a fact entry */
 /*   from the fact hash table.            */
 /******************************************/
-intBool RemoveHashedFact(
+bool RemoveHashedFact(
   void *theEnv,
   struct fact *theFact)
   {
@@ -174,7 +176,7 @@ intBool RemoveHashedFact(
             rtn_struct(theEnv,factHashEntry,hptr);
             if (FactData(theEnv)->NumberOfFacts == 1)
               { ResetFactHashTable(theEnv); }
-            return(1);
+            return true;
            }
          else
            {
@@ -182,34 +184,34 @@ intBool RemoveHashedFact(
             rtn_struct(theEnv,factHashEntry,hptr);
             if (FactData(theEnv)->NumberOfFacts == 1)
               { ResetFactHashTable(theEnv); }
-            return(1);
+            return true;
            }
         }
       prev = hptr;
      }
 
-   return(0);
+   return false;
   }
 
 /****************************************************/
 /* FactWillBeAsserted: Determines if a fact will be */
 /*   asserted based on the duplication settings.    */
 /****************************************************/
-intBool FactWillBeAsserted(
+bool FactWillBeAsserted(
   void *theEnv,
   void *theFact)
   {
    struct fact *tempPtr;
    unsigned long hashValue;
 
-   if (FactData(theEnv)->FactDuplication) return(TRUE);
+   if (FactData(theEnv)->FactDuplication) return true;
 
    hashValue = HashFact((struct fact *) theFact);
 
    tempPtr = FactExists(theEnv,(struct fact *) theFact,hashValue);
-   if (tempPtr == NULL) return(TRUE);
+   if (tempPtr == NULL) return true;
    
-   return(FALSE);
+   return false;
   }
 
 /*****************************************************/
@@ -221,32 +223,34 @@ intBool FactWillBeAsserted(
 unsigned long HandleFactDuplication(
   void *theEnv,
   void *theFact,
-  intBool *duplicate)
+  bool *duplicate)
   {
    struct fact *tempPtr;
    unsigned long hashValue;
-   *duplicate = FALSE;
+   *duplicate = false;
    
    hashValue = HashFact((struct fact *) theFact);
 
-   if (FactData(theEnv)->FactDuplication) return(hashValue);
+   if (FactData(theEnv)->FactDuplication)
+     { return hashValue; }
 
    tempPtr = FactExists(theEnv,(struct fact *) theFact,hashValue);
    if (tempPtr == NULL) return(hashValue);
 
    ReturnFact(theEnv,(struct fact *) theFact);
 #if DEFRULE_CONSTRUCT
-   AddLogicalDependencies(theEnv,(struct patternEntity *) tempPtr,TRUE);
+   AddLogicalDependencies(theEnv,(struct patternEntity *) tempPtr,true);
 #endif
-   *duplicate = TRUE;
-   return(0);
+   *duplicate = true;
+
+   return 0;
   }
 
 /*******************************************/
 /* EnvGetFactDuplication: C access routine */
 /*   for the get-fact-duplication command. */
 /*******************************************/
-intBool EnvGetFactDuplication(
+bool EnvGetFactDuplication(
   void *theEnv)
   {   
    return(FactData(theEnv)->FactDuplication); 
@@ -256,11 +260,11 @@ intBool EnvGetFactDuplication(
 /* EnvSetFactDuplication: C access routine */
 /*   for the set-fact-duplication command. */
 /*******************************************/
-intBool EnvSetFactDuplication(
+bool EnvSetFactDuplication(
   void *theEnv,
-  int value)
+  bool value)
   {
-   int ov;
+   bool ov;
 
    ov = FactData(theEnv)->FactDuplication;
    FactData(theEnv)->FactDuplication = value;
@@ -408,13 +412,13 @@ void ShowFactHashTable(
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-intBool GetFactDuplication()
+bool GetFactDuplication()
   {   
    return EnvGetFactDuplication(GetCurrentEnvironment());
   }
 
-intBool SetFactDuplication(
-  int value)
+bool SetFactDuplication(
+  bool value)
   {
    return EnvSetFactDuplication(GetCurrentEnvironment(),value);
   }

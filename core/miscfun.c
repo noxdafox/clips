@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/25/16            */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*            MISCELLANEOUS FUNCTIONS MODULE           */
    /*******************************************************/
@@ -80,6 +80,8 @@
 /*            in sysdep.c.                                   */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -160,7 +162,7 @@ void MiscFunctionDefinitions(
    EnvDefineFunction2(theEnv,"(expansion-call)", 'u', PTIEF ExpandFuncCall,      "ExpandFuncCall",NULL);
    EnvDefineFunction2(theEnv,"expand$",'u', PTIEF DummyExpandFuncMultifield,
                                            "DummyExpandFuncMultifield","11m");
-   FuncSeqOvlFlags(theEnv,"expand$",FALSE,FALSE);
+   FuncSeqOvlFlags(theEnv,"expand$",false,false);
    EnvDefineFunction2(theEnv,"(set-evaluation-error)",
                                        'w', PTIEF CauseEvaluationError,"CauseEvaluationError",NULL);
    EnvDefineFunction2(theEnv,"set-sequence-operator-recognition",
@@ -187,7 +189,7 @@ void CreateFunction(
   void *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
-   StoreInMultifield(theEnv,returnValue,GetFirstArgument(),TRUE);
+   StoreInMultifield(theEnv,returnValue,GetFirstArgument(),true);
   }
 
 /*****************************************************************/
@@ -204,7 +206,7 @@ long long SetgenFunction(
    /*==========================================================*/
 
    if (EnvArgCountCheck(theEnv,"setgen",EXACTLY,1) == -1) return(MiscFunctionData(theEnv)->GensymNumber);
-   if (EnvArgTypeCheck(theEnv,"setgen",1,INTEGER,&theValue) == FALSE) return(MiscFunctionData(theEnv)->GensymNumber);
+   if (EnvArgTypeCheck(theEnv,"setgen",1,INTEGER,&theValue) == false) return(MiscFunctionData(theEnv)->GensymNumber);
 
    /*========================================*/
    /* The integer must be greater than zero. */
@@ -328,7 +330,7 @@ long long RandomFunction(
    
    if ((argCount != 0) && (argCount != 2))
      {
-      PrintErrorID(theEnv,"MISCFUN",2,FALSE);
+      PrintErrorID(theEnv,"MISCFUN",2,false);
       EnvPrintRouter(theEnv,WERROR,"Function random expected either 0 or 2 arguments\n"); 
      }
 
@@ -340,20 +342,19 @@ long long RandomFunction(
    
    if (argCount == 2)
      {
-      if (EnvArgTypeCheck(theEnv,"random",1,INTEGER,&theValue) == FALSE) return(rv);
+      if (EnvArgTypeCheck(theEnv,"random",1,INTEGER,&theValue) == false) return(rv);
       begin = DOToLong(theValue);
-      if (EnvArgTypeCheck(theEnv,"random",2,INTEGER,&theValue) == FALSE) return(rv);
+      if (EnvArgTypeCheck(theEnv,"random",2,INTEGER,&theValue) == false) return(rv);
       end = DOToLong(theValue);
       if (end < begin)
         {
-         PrintErrorID(theEnv,"MISCFUN",3,FALSE);
+         PrintErrorID(theEnv,"MISCFUN",3,false);
          EnvPrintRouter(theEnv,WERROR,"Function random expected argument #1 to be less than argument #2\n"); 
          return(rv);
         }
         
       rv = begin + (rv % ((end - begin) + 1));
      }
-   
    
    return(rv);
   }
@@ -372,7 +373,7 @@ void SeedFunction(
    /*==========================================================*/
 
    if (EnvArgCountCheck(theEnv,"seed",EXACTLY,1) == -1) return;
-   if (EnvArgTypeCheck(theEnv,"seed",1,INTEGER,&theValue) == FALSE) return;
+   if (EnvArgTypeCheck(theEnv,"seed",1,INTEGER,&theValue) == false) return;
 
    /*=============================================================*/
    /* Seed the random number generator with the provided integer. */
@@ -418,7 +419,7 @@ long long LengthFunction(
    /* multifield value, then generate an error.   */
    /*=============================================*/
 
-   EnvSetEvaluationError(theEnv,TRUE);
+   EnvSetEvaluationError(theEnv,true);
    ExpectedTypeError2(theEnv,"length$",1);
    return(-1L);
   }
@@ -460,7 +461,7 @@ void ConserveMemCommand(
    /*===================================*/
 
    if (EnvArgCountCheck(theEnv,"conserve-mem",EXACTLY,1) == -1) return;
-   if (EnvArgTypeCheck(theEnv,"conserve-mem",1,SYMBOL,&theValue) == FALSE) return;
+   if (EnvArgTypeCheck(theEnv,"conserve-mem",1,SYMBOL,&theValue) == false) return;
 
    argument = DOToString(theValue);
 
@@ -471,7 +472,7 @@ void ConserveMemCommand(
    /*====================================================*/
 
    if (strcmp(argument,"on") == 0)
-     { EnvSetConserveMemory(theEnv,TRUE); }
+     { EnvSetConserveMemory(theEnv,true); }
 
    /*======================================================*/
    /* Otherwise, if the argument is the symbol "off", then */
@@ -480,7 +481,7 @@ void ConserveMemCommand(
    /*======================================================*/
 
    else if (strcmp(argument,"off") == 0)
-     { EnvSetConserveMemory(theEnv,FALSE); }
+     { EnvSetConserveMemory(theEnv,false); }
 
    /*=====================================================*/
    /* Otherwise, generate an error since the only allowed */
@@ -509,7 +510,8 @@ long long MemUsedCommand(
    /* The mem-used function accepts no arguments. */
    /*=============================================*/
 
-   if (EnvArgCountCheck(theEnv,"mem-used",EXACTLY,0) == -1) return(0);
+   if (EnvArgCountCheck(theEnv,"mem-used",EXACTLY,0) == -1)
+     { return 0; }
 
    /*============================================*/
    /* Return the amount of memory currently held */
@@ -530,7 +532,8 @@ long long MemRequestsCommand(
    /* The mem-requests function accepts no arguments. */
    /*=================================================*/
 
-   if (EnvArgCountCheck(theEnv,"mem-requests",EXACTLY,0) == -1) return(0);
+   if (EnvArgCountCheck(theEnv,"mem-requests",EXACTLY,0) == -1)
+     { return 0; }
 
    /*==================================*/
    /* Return the number of outstanding */
@@ -559,7 +562,7 @@ void AproposCommand(
    /*=======================================================*/
 
    if (EnvArgCountCheck(theEnv,"apropos",EXACTLY,1) == -1) return;
-   if (EnvArgTypeCheck(theEnv,"apropos",1,SYMBOL,&argPtr) == FALSE) return;
+   if (EnvArgTypeCheck(theEnv,"apropos",1,SYMBOL,&argPtr) == false) return;
 
    /*=======================================*/
    /* Determine the length of the argument. */
@@ -575,7 +578,7 @@ void AproposCommand(
    /* are printed.                                                       */
    /*====================================================================*/
 
-   while ((hashPtr = GetNextSymbolMatch(theEnv,argument,theLength,hashPtr,TRUE,NULL)) != NULL)
+   while ((hashPtr = GetNextSymbolMatch(theEnv,argument,theLength,hashPtr,true,NULL)) != NULL)
      {
       EnvPrintRouter(theEnv,WDISPLAY,ValueToString(hashPtr));
       EnvPrintRouter(theEnv,WDISPLAY,"\n");
@@ -910,7 +913,7 @@ void ExpandFuncCall(
       func = (struct FunctionDefinition *) fcallexp->value;
       if (CheckFunctionArgCount(theEnv,ValueToString(func->callFunctionName),
                                 (func->restrictions == NULL) ? NULL : func->restrictions->contents,
-                                CountArguments(newargexp)) == FALSE)
+                                CountArguments(newargexp)) == false)
         {
          result->type = SYMBOL;
          result->value = EnvFalseSymbol(theEnv);
@@ -922,12 +925,12 @@ void ExpandFuncCall(
    else if (fcallexp->type == PCALL)
      {
       if (CheckDeffunctionCall(theEnv,fcallexp->value,
-              CountArguments(fcallexp->argList)) == FALSE)
+              CountArguments(fcallexp->argList)) == false)
         {
          result->type = SYMBOL;
          result->value = EnvFalseSymbol(theEnv);
          ReturnExpression(theEnv,fcallexp);
-         EnvSetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,true);
          return;
         }
      }
@@ -956,8 +959,8 @@ void DummyExpandFuncMultifield(
   {
    result->type = SYMBOL;
    result->value = EnvFalseSymbol(theEnv);
-   EnvSetEvaluationError(theEnv,TRUE);
-   PrintErrorID(theEnv,"MISCFUN",1,FALSE);
+   EnvSetEvaluationError(theEnv,true);
+   PrintErrorID(theEnv,"MISCFUN",1,false);
    EnvPrintRouter(theEnv,WERROR,"expand$ must be used in the argument list of a function call.\n");
   }
 
@@ -999,11 +1002,11 @@ static void ExpandFuncMultifield(
          if ((EvaluationData(theEnv)->EvaluationError) || (result->type != MULTIFIELD))
            {
             theExp->argList = NULL;
-            if ((EvaluationData(theEnv)->EvaluationError == FALSE) && (result->type != MULTIFIELD))
+            if ((EvaluationData(theEnv)->EvaluationError == false) && (result->type != MULTIFIELD))
               ExpectedTypeError2(theEnv,"expand$",1);
             theExp->value = (void *) FindFunction(theEnv,"(set-evaluation-error)");
-            EvaluationData(theEnv)->EvaluationError = FALSE;
-            EvaluationData(theEnv)->HaltExecution = FALSE;
+            EvaluationData(theEnv)->EvaluationError = false;
+            EvaluationData(theEnv)->HaltExecution = false;
             return;
            }
          top = bot = NULL;
@@ -1057,13 +1060,13 @@ static void ExpandFuncMultifield(
 void *CauseEvaluationError(
   void *theEnv)
   {
-   EnvSetEvaluationError(theEnv,TRUE);
+   EnvSetEvaluationError(theEnv,true);
    return((SYMBOL_HN *) EnvFalseSymbol(theEnv));
   }
 
 /****************************************************************
   NAME         : SetSORCommand
-  DESCRIPTION  : Toggles SequenceOpMode - if TRUE, multifield
+  DESCRIPTION  : Toggles SequenceOpMode - if true, multifield
                    references are replaced with sequence
                    expansion operators
   INPUTS       : None
@@ -1071,16 +1074,16 @@ void *CauseEvaluationError(
   SIDE EFFECTS : SequenceOpMode toggled
   NOTES        : None
  ****************************************************************/
-intBool SetSORCommand(
+bool SetSORCommand(
   void *theEnv)
   {
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    DATA_OBJECT arg;
 
-   if (EnvArgTypeCheck(theEnv,"set-sequence-operator-recognition",1,SYMBOL,&arg) == FALSE)
+   if (EnvArgTypeCheck(theEnv,"set-sequence-operator-recognition",1,SYMBOL,&arg) == false)
      return(ExpressionData(theEnv)->SequenceOpMode);
    return(EnvSetSequenceOperatorRecognition(theEnv,(arg.value == EnvFalseSymbol(theEnv)) ?
-                                         FALSE : TRUE));
+                                         false : true));
 #else
      return(ExpressionData(theEnv)->SequenceOpMode);
 #endif
@@ -1100,13 +1103,13 @@ void *GetFunctionRestrictions(
    DATA_OBJECT temp;
    struct FunctionDefinition *fptr;
 
-   if (EnvArgTypeCheck(theEnv,"get-function-restrictions",1,SYMBOL,&temp) == FALSE)
+   if (EnvArgTypeCheck(theEnv,"get-function-restrictions",1,SYMBOL,&temp) == false)
      return((SYMBOL_HN *) EnvAddSymbol(theEnv,""));
    fptr = FindFunction(theEnv,DOToString(temp));
    if (fptr == NULL)
      {
       CantFindItemErrorMessage(theEnv,"function",DOToString(temp));
-      EnvSetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,true);
       return((SYMBOL_HN *) EnvAddSymbol(theEnv,""));
      }
    if (fptr->restrictions == NULL)
@@ -1186,7 +1189,7 @@ void FuncallFunction(
    /* Get the name of the function to be called. */
    /*============================================*/
    
-   if (EnvArgTypeCheck(theEnv,"funcall",1,SYMBOL_OR_STRING,&theValue) == FALSE) 
+   if (EnvArgTypeCheck(theEnv,"funcall",1,SYMBOL_OR_STRING,&theValue) == false) 
      { return; }
    
    /*====================*/
@@ -1275,9 +1278,9 @@ void FuncallFunction(
 #if DEFFUNCTION_CONSTRUCT
    if (theReference.type == PCALL)
      {
-      if (CheckDeffunctionCall(theEnv,theReference.value,CountArguments(theReference.argList)) == FALSE)
+      if (CheckDeffunctionCall(theEnv,theReference.value,CountArguments(theReference.argList)) == false)
         {
-         PrintErrorID(theEnv,"MISCFUN",4,FALSE);
+         PrintErrorID(theEnv,"MISCFUN",4,false);
          EnvPrintRouter(theEnv,WERROR,"Function funcall called with the wrong number of arguments for deffunction ");
          EnvPrintRouter(theEnv,WERROR,EnvGetDeffunctionName(theEnv,theReference.value));
          EnvPrintRouter(theEnv,WERROR,"\n");
@@ -1332,7 +1335,7 @@ void NewFunction(
    /* Get the name of the language type. */
    /*====================================*/
    
-   if (EnvArgTypeCheck(theEnv,"new",1,SYMBOL,&theValue) == FALSE) 
+   if (EnvArgTypeCheck(theEnv,"new",1,SYMBOL,&theValue) == false) 
      { return; }
    
    /*=========================*/
@@ -1623,7 +1626,7 @@ double TimerFunction(
    numa = EnvRtnArgCount(theEnv);
 
    i = 1;
-   while ((i <= numa) && (EnvGetHaltExecution(theEnv) != TRUE))
+   while ((i <= numa) && (EnvGetHaltExecution(theEnv) != true))
      {
       EnvRtnUnknown(theEnv,i,&returnValue);
       i++;
@@ -1663,8 +1666,8 @@ void SystemCommand(
       if ((GetType(tempValue) != STRING) &&
           (GetType(tempValue) != SYMBOL))
         {
-         EnvSetHaltExecution(theEnv,TRUE);
-         EnvSetEvaluationError(theEnv,TRUE);
+         EnvSetHaltExecution(theEnv,true);
+         EnvSetEvaluationError(theEnv,true);
          ExpectedTypeError2(theEnv,"system",i);
          return;
         }

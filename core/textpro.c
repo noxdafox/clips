@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/27/16             */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*               TEXT PROCESSING MODULE                */
    /*******************************************************/
@@ -51,6 +51,8 @@
 /*            on Windows with files having unix eol.         */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -158,7 +160,7 @@ struct textProcessingData
 #define TextProcessingData(theEnv) ((struct textProcessingData *) GetEnvironmentData(theEnv,TEXTPRO_DATA))
 
 int TextLookupFetch(void *,const char *);
-int TextLookupToss(void *,const char *);
+bool TextLookupToss(void *,const char *);
 static FILE *GetEntries(void *,const char *,char **,char *,int *);
 static FILE *GetCurrentMenu(void *,const char *,int *);
 static char *grab_string(void *,FILE *,char *,int);
@@ -167,7 +169,7 @@ static int findstr(const char *,const char *);
 static void upper(char *);
 static struct lists *NewFetchFile(void *,const char *);
 static struct entries *AllocateEntryNode(void *,FILE *,const char *,const char *,int);
-static int AttachLeaf(void *,struct lists *,struct entries *,FILE *,const char *,int);
+static bool AttachLeaf(void *,struct lists *,struct entries *,FILE *,const char *,int);
 static long LookupEntry(void *,const char *,char **,char *,int *);
 static void TossFunction(void *,struct entries *);
 static void DeallocateTextProcessingData(void *);
@@ -205,7 +207,7 @@ int TextLookupFetch(
   {
    FILE *fp;                     /*Pointer into stream of input file      */
    char str[256];                /*Buffer for storing input file lines    */
-   int INFO_BEGIN, INFO_END;     /*Flags used to check proper syntax      */
+   bool INFO_BEGIN, INFO_END;    /*Flags used to check proper syntax      */
    struct lists *lnode;          /*Used to store file node in list        */
    struct entries *enode;        /*Used to store entry node in topic list */
    int line_ct;                  /*Line count - used for error messages   */
@@ -215,7 +217,7 @@ int TextLookupFetch(
 
    if (fp == NULL)
      {
-      PrintErrorID(theEnv,"TEXTPRO",1,FALSE);
+      PrintErrorID(theEnv,"TEXTPRO",1,false);
       EnvPrintRouter(theEnv,WERROR,"Could not open file \"");
       EnvPrintRouter(theEnv,WERROR,file);
       EnvPrintRouter(theEnv,WERROR,"\".\n");
@@ -226,7 +228,7 @@ int TextLookupFetch(
      {
       GenClose(theEnv,fp);
 
-      PrintErrorID(theEnv,"TEXTPRO",2,FALSE);
+      PrintErrorID(theEnv,"TEXTPRO",2,false);
       EnvPrintRouter(theEnv,WERROR,"File \"");
       EnvPrintRouter(theEnv,WERROR,file);
       EnvPrintRouter(theEnv,WERROR,"\" already loaded.\n");
@@ -239,8 +241,8 @@ int TextLookupFetch(
    line_ct = 0;
    entries_ct = 0;
 
-   INFO_BEGIN = FALSE;
-   INFO_END = TRUE;
+   INFO_BEGIN = false;
+   INFO_END = true;
    while (fgets(str,256,fp) != NULL)
      {
       line_ct++;
@@ -253,17 +255,17 @@ int TextLookupFetch(
         {
         if (findstr(str,EDELIM) >= 0)
           {
-           if (INFO_BEGIN == TRUE)
+           if (INFO_BEGIN == true)
              {
-              INFO_BEGIN = FALSE;
-              INFO_END = TRUE;
+              INFO_BEGIN = false;
+              INFO_END = true;
               entries_ct++;
              }
            else
              {
               GenClose(theEnv,fp);
               TextLookupToss(theEnv,file);
-              PrintErrorID(theEnv,"TEXTPRO",8,FALSE);
+              PrintErrorID(theEnv,"TEXTPRO",8,false);
               EnvPrintRouter(theEnv,WERROR,"Line ");
               PrintLongInteger(theEnv,WERROR,line_ct);
               EnvPrintRouter(theEnv,WERROR," : Unmatched end marker.\n");
@@ -272,17 +274,17 @@ int TextLookupFetch(
           }
         else if (findstr(str,BDELIM) >= 0)
           {
-           if (INFO_END == TRUE)
+           if (INFO_END == true)
               {
-               INFO_END = FALSE;
-               INFO_BEGIN = TRUE;
+               INFO_END = false;
+               INFO_BEGIN = true;
               }
             else
               {
                GenClose(theEnv,fp);
                TextLookupToss(theEnv,file);
 
-               PrintErrorID(theEnv,"TEXTPRO",4,FALSE);
+               PrintErrorID(theEnv,"TEXTPRO",4,false);
                EnvPrintRouter(theEnv,WERROR,"Line ");
                PrintLongInteger(theEnv,WERROR,line_ct);
                EnvPrintRouter(theEnv,WERROR," : Previous entry not closed.\n");
@@ -296,17 +298,17 @@ int TextLookupFetch(
            /*=================================*/
            /*Store new entry node in the tree */
            /*=================================*/
-           if (AttachLeaf(theEnv,lnode,enode,fp,file,line_ct) == FALSE)
+           if (AttachLeaf(theEnv,lnode,enode,fp,file,line_ct) == false)
              return(-1);
           }
         }
      }
    GenClose(theEnv,fp);
-   if (INFO_END == FALSE)
+   if (INFO_END == false)
      {
       TextLookupToss(theEnv,file);
       
-      PrintErrorID(theEnv,"TEXTPRO",4,FALSE);
+      PrintErrorID(theEnv,"TEXTPRO",4,false);
       EnvPrintRouter(theEnv,WERROR,"Line ");
       PrintLongInteger(theEnv,WERROR,line_ct);
       EnvPrintRouter(theEnv,WERROR," : Previous entry not closed.\n");
@@ -325,7 +327,7 @@ int TextLookupFetch(
 /*          it from the lookup table and returns a boolean flag indicating    */
 /*          failure or success.                                               */
 /******************************************************************************/
-int TextLookupToss(
+bool TextLookupToss(
   void *theEnv,
   const char *file)
   {
@@ -354,7 +356,7 @@ int TextLookupToss(
         l_flag = 0;
      }
    if (clptr == NULL)
-     return(FALSE);
+     return false;
 
    TossFunction(theEnv,clptr->topics);
 
@@ -363,7 +365,7 @@ int TextLookupToss(
    else
      plptr->next = clptr->next;
    rm(theEnv,(void *) clptr,(int) sizeof(struct lists));
-   return(TRUE);
+   return true;
   }
 
 /******************************************************************************/
@@ -631,7 +633,7 @@ static struct entries *AllocateEntryNode(
       GenClose(theEnv,fp);
       TextLookupToss(theEnv,file);
 
-      PrintErrorID(theEnv,"TEXTPRO",5,FALSE);
+      PrintErrorID(theEnv,"TEXTPRO",5,false);
       EnvPrintRouter(theEnv,WERROR,"Line ");
       PrintLongInteger(theEnv,WERROR,line_ct);
       EnvPrintRouter(theEnv,WERROR," : Invalid delimeter string.\n");
@@ -648,7 +650,7 @@ static struct entries *AllocateEntryNode(
       GenClose(theEnv,fp);
       TextLookupToss(theEnv,file);
 
-      PrintErrorID(theEnv,"TEXTPRO",6,FALSE);
+      PrintErrorID(theEnv,"TEXTPRO",6,false);
       EnvPrintRouter(theEnv,WERROR,"Line ");
       PrintLongInteger(theEnv,WERROR,line_ct);
       EnvPrintRouter(theEnv,WERROR," : Invalid entry type.\n");
@@ -661,7 +663,7 @@ static struct entries *AllocateEntryNode(
       GenClose(theEnv,fp);
       TextLookupToss(theEnv,file);
 
-      PrintErrorID(theEnv,"TEXTPRO",5,FALSE);
+      PrintErrorID(theEnv,"TEXTPRO",5,false);
       EnvPrintRouter(theEnv,WERROR,"Line ");
       PrintLongInteger(theEnv,WERROR,line_ct);
       EnvPrintRouter(theEnv,WERROR," : Invalid delimeter string.\n");
@@ -702,7 +704,7 @@ static struct entries *AllocateEntryNode(
 /*message is written to the caller's buffer, the file is closed, and the      */
 /*previous file entries are deleted from the lookup table.                    */
 /******************************************************************************/
-static int AttachLeaf(
+static bool AttachLeaf(
   void *theEnv,
   struct lists *lnode,
   struct entries *enode,
@@ -734,12 +736,12 @@ static int AttachLeaf(
         GenClose(theEnv,fp);
         TextLookupToss(theEnv,file);
 
-        PrintErrorID(theEnv,"TEXTPRO",7,FALSE);
+        PrintErrorID(theEnv,"TEXTPRO",7,false);
         EnvPrintRouter(theEnv,WERROR,"Line ");
         PrintLongInteger(theEnv,WERROR,line_ct);
         EnvPrintRouter(theEnv,WERROR," : Non-menu entries cannot have subtopics.\n");
 
-        return(FALSE);
+        return false;
        }
    /*====================================*/
    /*Brother-topic -- same level in tree */
@@ -804,7 +806,7 @@ static int AttachLeaf(
         }
      }
    TextProcessingData(theEnv)->parent = enode;
-   return(TRUE);
+   return true;
   }
 
 /******************************************************************************/
@@ -1034,14 +1036,14 @@ void FetchCommand(
 
    result->type = SYMBOL;
    result->value = EnvFalseSymbol(theEnv);
-   if (EnvArgTypeCheck(theEnv,"fetch",1,SYMBOL_OR_STRING,&arg_ptr) == FALSE)
+   if (EnvArgTypeCheck(theEnv,"fetch",1,SYMBOL_OR_STRING,&arg_ptr) == false)
       return;
    load_ct = TextLookupFetch(theEnv,DOToString(arg_ptr));
    if (load_ct <= 0)
      {
       if (load_ct == 0)
         {
-         PrintErrorID(theEnv,"TEXTPRO",3,FALSE);
+         PrintErrorID(theEnv,"TEXTPRO",3,false);
          EnvPrintRouter(theEnv,WERROR,"No entries found.\n");
         }
 
@@ -1068,7 +1070,7 @@ void FetchCommand(
 /*                                                                            */
 /* For usage, see the external documentation.                                 */
 /******************************************************************************/
-int PrintRegionCommand(
+bool PrintRegionCommand(
   void *theEnv)
   {
    struct topics *params,    /*Lookup file and list of topic requests  */
@@ -1076,8 +1078,8 @@ int PrintRegionCommand(
    char buf[256];            /*Buffer for the topic entry strings      */
    FILE *fp;                 /*Stream for the input file               */
    char *menu[1];            /*Buffer for the current menu name        */
-   int status,               /*Lookup status return code               */
-       com_code;             /*Completion flag                         */
+   int status;               /*Lookup status return code               */
+   bool com_code;            /*Completion flag                         */
 
    params = GetCommandLineTopics(theEnv);
    fp = FindTopicInEntries(theEnv,params->next->name,params->next->next,menu,&status);
@@ -1088,7 +1090,7 @@ int PrintRegionCommand(
       EnvPrintRouter(theEnv,params->name,"\n");
       while (grab_string(theEnv,fp,buf,256) != NULL)
         EnvPrintRouter(theEnv,params->name,buf);
-      com_code = TRUE;
+      com_code = true;
      }
    else
      {
@@ -1100,7 +1102,7 @@ int PrintRegionCommand(
          ================================================================== */
       if (fp != NULL)
         GenClose(theEnv,fp);
-      com_code = FALSE;
+      com_code = false;
      }
 
    /* =======================================================
@@ -1188,14 +1190,14 @@ void *GetRegionCommand(
 /* Output : This function deletes the named file from the lookup table and */
 /*          returns a (float) boolean flag indicating failure or success.  */
 /***************************************************************************/
-int TossCommand(
+bool TossCommand(
   void *theEnv)
   {
    const char *file;   /*Name of the file */
    DATA_OBJECT arg_ptr;
 
-   if (EnvArgTypeCheck(theEnv,"toss",1,SYMBOL_OR_STRING,&arg_ptr) == FALSE)
-     return (FALSE);
+   if (EnvArgTypeCheck(theEnv,"toss",1,SYMBOL_OR_STRING,&arg_ptr) == false)
+     return false;
    file = DOToString(arg_ptr);
 
    return(TextLookupToss(theEnv,file));

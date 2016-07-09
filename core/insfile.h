@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -38,6 +38,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_insfile
@@ -73,11 +75,11 @@ struct instanceFileData
    long                           SaveInstancesCommand(void *);
    long                           LoadInstancesCommand(void *);
    long                           RestoreInstancesCommand(void *);
-   long                           EnvSaveInstancesDriver(void *,const char *,int,EXPRESSION *,intBool);
+   long                           EnvSaveInstancesDriver(void *,const char *,int,EXPRESSION *,bool);
    long                           EnvSaveInstances(void *,const char *,int);
 #if BSAVE_INSTANCES
    long                           BinarySaveInstancesCommand(void *);
-   long                           EnvBinarySaveInstancesDriver(void *,const char *,int,EXPRESSION *,intBool);
+   long                           EnvBinarySaveInstancesDriver(void *,const char *,int,EXPRESSION *,bool);
    long                           EnvBinarySaveInstances(void *,const char *,int);
 #endif
 #if BLOAD_INSTANCES

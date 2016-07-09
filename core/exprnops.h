@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*          EXPRESSION OPERATIONS HEADER FILE          */
    /*******************************************************/
@@ -29,6 +29,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_exprnops
@@ -39,18 +41,18 @@
 
 #include "expressn.h"
 
-   intBool                        ConstantExpression(struct expr *);
+   bool                           ConstantExpression(struct expr *);
    void                           PrintExpression(void *,const char *,struct expr *);
    long                           ExpressionSize(struct expr *);
    int                            CountArguments(struct expr *);
    struct expr                   *CopyExpression(void *,struct expr *);
-   intBool                        ExpressionContainsVariables(struct expr *,int);
-   intBool                        IdenticalExpression(struct expr *,struct expr *);
+   bool                           ExpressionContainsVariables(struct expr *,bool);
+   bool                           IdenticalExpression(struct expr *,struct expr *);
    struct expr                   *GenConstant(void *,unsigned short,void *);
 #if ! RUN_TIME
-   int                            CheckArgumentAgainstRestriction(void *,struct expr *,int);
+   bool                           CheckArgumentAgainstRestriction(void *,struct expr *,int);
 #endif
-   intBool                        ConstantType(int);
+   bool                           ConstantType(int);
    struct expr                   *CombineExpressions(void *,struct expr *,struct expr *);
    struct expr                   *AppendExpressions(struct expr *,struct expr *);
    struct expr                   *NegateExpression(void *,struct expr *);

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/28/16             */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*           DEFTEMPLATE BSAVE/BLOAD MODULE            */
    /*******************************************************/
@@ -26,6 +26,8 @@
 /*            Support for deftemplate slot facets.           */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -180,7 +182,7 @@ static void BsaveFind(
               theSlot = theSlot->next)
            {
             DeftemplateBinaryData(theEnv)->NumberOfTemplateSlots++;
-            theSlot->slotName->neededSymbol = TRUE;
+            theSlot->slotName->neededSymbol = true;
            }
         }
 
@@ -496,7 +498,7 @@ static void UpdateDeftemplate(
 #if DEBUGGING_FUNCTIONS
    theDeftemplate->watch = FactData(theEnv)->WatchFacts;
 #endif
-   theDeftemplate->inScope = FALSE;
+   theDeftemplate->inScope = false;
    theDeftemplate->numberOfSlots = (unsigned short) bdtPtr->numberOfSlots;
    theDeftemplate->factList = NULL;
    theDeftemplate->lastFact = NULL;
@@ -589,7 +591,7 @@ static void ClearBload(
    /*======================================*/
 
 #if (! BLOAD_ONLY)
-   CreateImpliedDeftemplate(theEnv,(SYMBOL_HN *) EnvAddSymbol(theEnv,"initial-fact"),FALSE);
+   CreateImpliedDeftemplate(theEnv,(SYMBOL_HN *) EnvAddSymbol(theEnv,"initial-fact"),false);
 #endif
   }
 

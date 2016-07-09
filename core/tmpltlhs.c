@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/28/16             */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*                DEFTEMPLATE LHS MODULE               */
    /*******************************************************/
@@ -24,6 +24,8 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -56,10 +58,10 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static struct lhsParseNode    *GetLHSSlots(void *,const char *,struct token *,struct deftemplate *,int *);
+   static struct lhsParseNode    *GetLHSSlots(void *,const char *,struct token *,struct deftemplate *,bool *);
    static struct lhsParseNode    *GetSingleLHSSlot(void *,const char *,struct token *,
-                                                   struct templateSlot *,int *,short);
-   static intBool                 MultiplyDefinedLHSSlots(void *,struct lhsParseNode *,SYMBOL_HN *);
+                                                   struct templateSlot *,bool *,short);
+   static bool                    MultiplyDefinedLHSSlots(void *,struct lhsParseNode *,SYMBOL_HN *);
 
 /*********************************************/
 /* DeftemplateLHSParse: Parses a LHS pattern */
@@ -72,7 +74,7 @@ struct lhsParseNode *DeftemplateLHSParse(
   {
    struct lhsParseNode *head, *firstSlot;
    struct token theToken;
-   int error;
+   bool error;
    
    /*===============================================================*/
    /* Make sure the deftemplate name is not connected to subfields. */
@@ -91,21 +93,21 @@ struct lhsParseNode *DeftemplateLHSParse(
 
    head = GetLHSParseNode(theEnv);
    head->type = SF_WILDCARD;
-   head->negated = FALSE;
-   head->exists = FALSE;
+   head->negated = false;
+   head->exists = false;
    head->index = 0;
    head->slotNumber = 1;
    head->bottom = GetLHSParseNode(theEnv);
    head->bottom->type = SYMBOL;
-   head->bottom->negated = FALSE;
-   head->bottom->exists = FALSE;
+   head->bottom->negated = false;
+   head->bottom->exists = false;
    head->bottom->value = (void *) theDeftemplate->header.name;
 
    /*==========================================*/
    /* Get the other fields in the deftemplate. */
    /*==========================================*/
 
-   error = FALSE;
+   error = false;
    firstSlot = GetLHSSlots(theEnv,readSource,&theToken,theDeftemplate,&error);
    if (error)
      {
@@ -131,7 +133,7 @@ static struct lhsParseNode *GetLHSSlots(
   const char *readSource,
   struct token *tempToken,
   struct deftemplate *theDeftemplate,
-  int *error)
+  bool *error)
   {
    struct lhsParseNode *firstSlot = NULL, *nextSlot, *lastSlot = NULL;
    struct templateSlot *slotPtr;
@@ -154,7 +156,7 @@ static struct lhsParseNode *GetLHSSlots(
 
       if (tempToken->type != LPAREN)
         {
-         *error = TRUE;
+         *error = true;
          SyntaxErrorMessage(theEnv,"deftemplate patterns");
          ReturnLHSParseNodes(theEnv,firstSlot);
          return(NULL);
@@ -167,7 +169,7 @@ static struct lhsParseNode *GetLHSSlots(
       GetToken(theEnv,readSource,tempToken);
       if (tempToken->type != SYMBOL)
         {
-         *error = TRUE;
+         *error = true;
          SyntaxErrorMessage(theEnv,"deftemplate patterns");
          ReturnLHSParseNodes(theEnv,firstSlot);
          return(NULL);
@@ -179,9 +181,9 @@ static struct lhsParseNode *GetLHSSlots(
 
       if ((slotPtr = FindSlot(theDeftemplate,(SYMBOL_HN *) tempToken->value,&position)) == NULL)
         {
-         *error = TRUE;
+         *error = true;
          InvalidDeftemplateSlotMessage(theEnv,ValueToString(tempToken->value),
-                                       ValueToString(theDeftemplate->header.name),TRUE);
+                                       ValueToString(theDeftemplate->header.name),true);
          ReturnLHSParseNodes(theEnv,firstSlot);
          return(NULL);
         }
@@ -190,9 +192,9 @@ static struct lhsParseNode *GetLHSSlots(
       /* Determine if the slot is multiply defined. */
       /*============================================*/
 
-      if (MultiplyDefinedLHSSlots(theEnv,firstSlot,(SYMBOL_HN *) tempToken->value) == TRUE)
+      if (MultiplyDefinedLHSSlots(theEnv,firstSlot,(SYMBOL_HN *) tempToken->value) == true)
         {
-         *error = TRUE;
+         *error = true;
          ReturnLHSParseNodes(theEnv,firstSlot);
          return(NULL);
         }
@@ -245,7 +247,7 @@ static struct lhsParseNode *GetSingleLHSSlot(
   const char *readSource,
   struct token *tempToken,
   struct templateSlot *slotPtr,
-  int *error,
+  bool *error,
   short position)
   {
    struct lhsParseNode *nextSlot;
@@ -263,18 +265,18 @@ static struct lhsParseNode *GetSingleLHSSlot(
    /* Get value for a single field slot. */
    /*====================================*/
 
-   if (slotPtr->multislot == FALSE)
+   if (slotPtr->multislot == false)
      {
       /*=======================*/
       /* Get the single value. */
       /*=======================*/
 
-      nextSlot = RestrictionParse(theEnv,readSource,tempToken,FALSE,
+      nextSlot = RestrictionParse(theEnv,readSource,tempToken,false,
                                   slotPtr->slotName,(short) (position - 1),
                                   slotPtr->constraints,0);
       if (nextSlot == NULL)
         {
-         *error = TRUE;
+         *error = true;
          return(NULL);
         }
 
@@ -287,7 +289,7 @@ static struct lhsParseNode *GetSingleLHSSlot(
           (nextSlot->type == MULTIFIELD))
         {
          SingleFieldSlotCardinalityError(theEnv,slotPtr->slotName->contents);
-         *error = TRUE;
+         *error = true;
          ReturnLHSParseNodes(theEnv,nextSlot);
          return(NULL);
         }
@@ -299,11 +301,11 @@ static struct lhsParseNode *GetSingleLHSSlot(
 
    else
      {
-      nextSlot = RestrictionParse(theEnv,readSource,tempToken,TRUE,slotName,(short) (position - 1),
+      nextSlot = RestrictionParse(theEnv,readSource,tempToken,true,slotName,(short) (position - 1),
                                   slotPtr->constraints,1);
       if (nextSlot == NULL)
         {
-         *error = TRUE;
+         *error = true;
          return(NULL);
         }
      }
@@ -318,7 +320,7 @@ static struct lhsParseNode *GetSingleLHSSlot(
       SavePPBuffer(theEnv," ");
       SavePPBuffer(theEnv,tempToken->printForm);
       SyntaxErrorMessage(theEnv,"deftemplate patterns");
-      *error = TRUE;
+      *error = true;
       ReturnLHSParseNodes(theEnv,nextSlot);
       return(NULL);
      }
@@ -347,7 +349,7 @@ static struct lhsParseNode *GetSingleLHSSlot(
 /* MultiplyDefinedLHSSlots: Determines if a slot name */
 /*   was used more than once in a LHS pattern.        */
 /******************************************************/
-static intBool MultiplyDefinedLHSSlots(
+static bool MultiplyDefinedLHSSlots(
   void *theEnv,
   struct lhsParseNode *theSlots,
   SYMBOL_HN *slotName)
@@ -359,11 +361,11 @@ static intBool MultiplyDefinedLHSSlots(
       if (theSlots->slot == slotName)
         {
          AlreadyParsedErrorMessage(theEnv,"slot ",ValueToString(slotName));
-         return(TRUE);
+         return true;
         }
      }
 
-   return(FALSE);
+   return false;
   }
 
 #endif /* DEFTEMPLATE_CONSTRUCT && DEFRULE_CONSTRUCT && (! RUN_TIME) && (! BLOAD_ONLY) */

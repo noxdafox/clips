@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/23/16             */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*                 DEFFUNCTION MODULE                  */
    /*******************************************************/
@@ -53,6 +53,8 @@
 /*            to constructs, DanglingConstructs.             */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -107,7 +109,7 @@
    ***************************************** */
 
 static void PrintDeffunctionCall(void *,const char *,void *);
-static intBool EvaluateDeffunctionCall(void *,void *,DATA_OBJECT *);
+static bool EvaluateDeffunctionCall(void *,void *,DATA_OBJECT *);
 static void DecrementDeffunctionBusyCount(void *,void *);
 static void IncrementDeffunctionBusyCount(void *,void *);
 static void DeallocateDeffunctionData(void *);
@@ -116,11 +118,11 @@ static void DeallocateDeffunctionData(void *);
 static void DestroyDeffunctionAction(void *,struct constructHeader *,void *);
 static void *AllocateModule(void *);
 static void  ReturnModule(void *,void *);
-static intBool ClearDeffunctionsReady(void *);
+static bool ClearDeffunctionsReady(void *);
 #endif
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-static intBool RemoveAllDeffunctions(void *);
+static bool RemoveAllDeffunctions(void *);
 static void DeffunctionDeleteError(void *,const char *);
 static void SaveDeffunctionHeaders(void *,void *,const char *);
 static void SaveDeffunctionHeader(void *,struct constructHeader *,void *);
@@ -128,8 +130,8 @@ static void SaveDeffunctions(void *,void *,const char *);
 #endif
 
 #if DEBUGGING_FUNCTIONS
-static unsigned DeffunctionWatchAccess(void *,int,unsigned,EXPRESSION *);
-static unsigned DeffunctionWatchPrint(void *,const char *,int,EXPRESSION *);
+static bool DeffunctionWatchAccess(void *,int,bool,EXPRESSION *);
+static bool DeffunctionWatchPrint(void *,const char *,int,EXPRESSION *);
 #endif
 
 /* =========================================
@@ -253,7 +255,7 @@ static void DeallocateDeffunctionData(
    if (Bloaded(theEnv)) return;
 #endif
 
-   DoForAllConstructs(theEnv,DestroyDeffunctionAction,DeffunctionData(theEnv)->DeffunctionModuleIndex,FALSE,NULL); 
+   DoForAllConstructs(theEnv,DestroyDeffunctionAction,DeffunctionData(theEnv)->DeffunctionModuleIndex,false,NULL);
 
    for (theModule = EnvGetNextDefmodule(theEnv,NULL);
         theModule != NULL;
@@ -351,7 +353,7 @@ DEFFUNCTION *LookupDeffunctionByMdlOrScope(
   void *theEnv,
   const char *deffunctionName)
   {
-   return((DEFFUNCTION *) LookupConstruct(theEnv,DeffunctionData(theEnv)->DeffunctionConstruct,deffunctionName,TRUE));
+   return((DEFFUNCTION *) LookupConstruct(theEnv,DeffunctionData(theEnv)->DeffunctionConstruct,deffunctionName,true));
   }
 
 /***************************************************
@@ -369,7 +371,7 @@ DEFFUNCTION *LookupDeffunctionInScope(
   void *theEnv,
   const char *deffunctionName)
   {
-   return((DEFFUNCTION *) LookupConstruct(theEnv,DeffunctionData(theEnv)->DeffunctionConstruct,deffunctionName,FALSE));
+   return((DEFFUNCTION *) LookupConstruct(theEnv,DeffunctionData(theEnv)->DeffunctionConstruct,deffunctionName,false));
   }
 
 /***************************************************
@@ -377,31 +379,31 @@ DEFFUNCTION *LookupDeffunctionInScope(
   DESCRIPTION  : External interface routine for
                  removing a deffunction
   INPUTS       : Deffunction pointer
-  RETURNS      : FALSE if unsuccessful,
-                 TRUE otherwise
+  RETURNS      : False if unsuccessful,
+                 true otherwise
   SIDE EFFECTS : Deffunction deleted, if possible
   NOTES        : None
  ***************************************************/
-intBool EnvUndeffunction(
+bool EnvUndeffunction(
   void *theEnv,
   void *vptr)
   {
 #if BLOAD_ONLY || RUN_TIME
-   return(FALSE);
+   return false;
 #else
 
 #if BLOAD || BLOAD_AND_BSAVE
 
-   if (Bloaded(theEnv) == TRUE)
-     return(FALSE);
+   if (Bloaded(theEnv) == true)
+     return false;
 #endif
    if (vptr == NULL)
       return(RemoveAllDeffunctions(theEnv));
-   if (EnvIsDeffunctionDeletable(theEnv,vptr) == FALSE)
-     return(FALSE);
+   if (EnvIsDeffunctionDeletable(theEnv,vptr) == false)
+     return false;
    RemoveConstructFromModule(theEnv,(struct constructHeader *) vptr);
    RemoveDeffunction(theEnv,vptr);
-   return(TRUE);
+   return true;
 #endif
   }
 
@@ -427,23 +429,23 @@ void *EnvGetNextDeffunction(
                  executing or referenced by another
                  expression
   INPUTS       : Deffunction pointer
-  RETURNS      : TRUE if the deffunction can
-                 be deleted, FALSE otherwise
+  RETURNS      : True if the deffunction can
+                 be deleted, false otherwise
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-int EnvIsDeffunctionDeletable(
+bool EnvIsDeffunctionDeletable(
   void *theEnv,
   void *ptr)
   {
    DEFFUNCTION *dptr;
 
    if (! ConstructsDeletable(theEnv))
-     { return FALSE; }
+     { return false; }
 
    dptr = (DEFFUNCTION *) ptr;
 
-   return(((dptr->busy == 0) && (dptr->executing == 0)) ? TRUE : FALSE);
+   return(((dptr->busy == 0) && (dptr->executing == 0)) ? true : false);
   }
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
@@ -595,11 +597,11 @@ void EnvGetDeffunctionList(
                  passed to a deffunction
   INPUTS       : 1) Deffunction pointer
                  2) The number of arguments
-  RETURNS      : TRUE if OK, FALSE otherwise
+  RETURNS      : True if OK, false otherwise
   SIDE EFFECTS : Message printed on errors
   NOTES        : None
  *******************************************************/
-int CheckDeffunctionCall(
+bool CheckDeffunctionCall(
   void *theEnv,
   void *vdptr,
   int args)
@@ -607,7 +609,7 @@ int CheckDeffunctionCall(
    DEFFUNCTION *dptr;
 
    if (vdptr == NULL)
-     return(FALSE);
+     return false;
    dptr = (DEFFUNCTION *) vdptr;
    if (args < dptr->minNumberOfParameters)
      {
@@ -617,16 +619,16 @@ int CheckDeffunctionCall(
       else
         ExpectedCountError(theEnv,EnvGetDeffunctionName(theEnv,(void *) dptr),
                            EXACTLY,dptr->minNumberOfParameters);
-      return(FALSE);
+      return false;
      }
    else if ((args > dptr->minNumberOfParameters) &&
             (dptr->maxNumberOfParameters != -1))
      {
       ExpectedCountError(theEnv,EnvGetDeffunctionName(theEnv,(void *) dptr),
                          EXACTLY,dptr->minNumberOfParameters);
-      return(FALSE);
+      return false;
      }
-   return(TRUE);
+   return true;
   }
 
 /* =========================================
@@ -676,14 +678,14 @@ static void PrintDeffunctionCall(
   INPUTS       : 1) The deffunction
                  2) A data object buffer to hold
                     the evaluation result
-  RETURNS      : FALSE if the deffunction
-                 returns the symbol FALSE,
-                 TRUE otherwise
+  RETURNS      : False if the deffunction
+                 returns the symbol false,
+                 true otherwise
   SIDE EFFECTS : Data obejct buffer set and any
                  side-effects of calling the deffunction
   NOTES        : None
  *******************************************************/
-static intBool EvaluateDeffunctionCall(
+static bool EvaluateDeffunctionCall(
   void *theEnv,
   void *value,
   DATA_OBJECT *result)
@@ -691,8 +693,8 @@ static intBool EvaluateDeffunctionCall(
    CallDeffunction(theEnv,(DEFFUNCTION *) value,GetFirstArgument(),result);
    if ((GetpType(result) == SYMBOL) &&
        (GetpValue(result) == EnvFalseSymbol(theEnv)))
-     return(FALSE);
-   return(TRUE);
+     return false;
+   return true;
   }
 
 /***************************************************
@@ -788,15 +790,15 @@ static void ReturnModule(
                  any deffunctions are currently
                  executing
   INPUTS       : None
-  RETURNS      : TRUE if no deffunctions are
-                 executing, FALSE otherwise
+  RETURNS      : True if no deffunctions are
+                 executing, false otherwise
   SIDE EFFECTS : None
   NOTES        : Used by (clear) and (bload)
  ***************************************************/
-static intBool ClearDeffunctionsReady(
+static bool ClearDeffunctionsReady(
   void *theEnv)
   {
-   return((DeffunctionData(theEnv)->ExecutingDeffunction != NULL) ? FALSE : TRUE);
+   return((DeffunctionData(theEnv)->ExecutingDeffunction != NULL) ? false : true);
   }
 
 #endif
@@ -807,22 +809,22 @@ static intBool ClearDeffunctionsReady(
   NAME         : RemoveAllDeffunctions
   DESCRIPTION  : Removes all deffunctions
   INPUTS       : None
-  RETURNS      : TRUE if all deffunctions
-                 removed, FALSE otherwise
+  RETURNS      : True if all deffunctions
+                 removed, false otherwise
   SIDE EFFECTS : Deffunctions removed
   NOTES        : None
  ***************************************************/
-static intBool RemoveAllDeffunctions(
+static bool RemoveAllDeffunctions(
   void *theEnv)
   {
    DEFFUNCTION *dptr,*dtmp;
    unsigned oldbusy;
-   intBool success = TRUE;
+   bool success = true;
 
 #if BLOAD || BLOAD_AND_BSAVE
 
-   if (Bloaded(theEnv) == TRUE)
-     return(FALSE);
+   if (Bloaded(theEnv) == true)
+     return false;
 #endif
 
    dptr = (DEFFUNCTION *) EnvGetNextDeffunction(theEnv,NULL);
@@ -831,7 +833,7 @@ static intBool RemoveAllDeffunctions(
       if (dptr->executing > 0)
         {
          DeffunctionDeleteError(theEnv,EnvGetDeffunctionName(theEnv,(void *) dptr));
-         success = FALSE;
+         success = false;
         }
       else
         {
@@ -853,12 +855,12 @@ static intBool RemoveAllDeffunctions(
         {
          if (dtmp->busy > 0)
            {
-            PrintWarningID(theEnv,"DFFNXFUN",1,FALSE);
+            PrintWarningID(theEnv,"DFFNXFUN",1,false);
             EnvPrintRouter(theEnv,WWARNING,"Deffunction ");
             EnvPrintRouter(theEnv,WWARNING,EnvGetDeffunctionName(theEnv,(void *) dtmp));
             EnvPrintRouter(theEnv,WWARNING," only partially deleted due to usage by other constructs.\n");
             EnvSetDeffunctionPPForm(theEnv,(void *) dtmp,NULL);
-            success = FALSE;
+            success = false;
            }
          else
            {
@@ -905,7 +907,7 @@ static void SaveDeffunctionHeaders(
   {
    DoForAllConstructsInModule(theEnv,theModule,SaveDeffunctionHeader,
                               DeffunctionData(theEnv)->DeffunctionModuleIndex,
-                              FALSE,(void *) logicalName);
+                              false,(void *) logicalName);
   }
 
 /***************************************************
@@ -982,14 +984,14 @@ static void SaveDeffunctions(
                  2) The value to which to set the trace flags
                  3) A list of expressions containing the names
                     of the deffunctions for which to set traces
-  RETURNS      : TRUE if all OK, FALSE otherwise
+  RETURNS      : True if all OK, false otherwise
   SIDE EFFECTS : Watch flags set in specified deffunctions
   NOTES        : Accessory function for AddWatchItem()
  ******************************************************************/
-static unsigned DeffunctionWatchAccess(
+static bool DeffunctionWatchAccess(
   void *theEnv,
   int code,
-  unsigned newState,
+  bool newState,
   EXPRESSION *argExprs)
   {
 #if MAC_XCD
@@ -1009,11 +1011,11 @@ static unsigned DeffunctionWatchAccess(
                     Ignored
                  3) A list of expressions containing the names
                     of the deffunctions for which to examine traces
-  RETURNS      : TRUE if all OK, FALSE otherwise
+  RETURNS      : True if all OK, false otherwise
   SIDE EFFECTS : Watch flags displayed for specified deffunctions
   NOTES        : Accessory function for AddWatchItem()
  ***********************************************************************/
-static unsigned DeffunctionWatchPrint(
+static bool DeffunctionWatchPrint(
   void *theEnv,
   const char *logName,
   int code,
@@ -1031,8 +1033,8 @@ static unsigned DeffunctionWatchPrint(
   NAME         : EnvSetDeffunctionWatch
   DESCRIPTION  : Sets the trace to ON/OFF for the
                  deffunction
-  INPUTS       : 1) TRUE to set the trace on,
-                    FALSE to set it off
+  INPUTS       : 1) True to set the trace on,
+                    false to set it off
                  2) A pointer to the deffunction
   RETURNS      : Nothing useful
   SIDE EFFECTS : Watch flag for the deffunction set
@@ -1040,14 +1042,14 @@ static unsigned DeffunctionWatchPrint(
  *********************************************************/
 void EnvSetDeffunctionWatch(
   void *theEnv,
-  unsigned newState,
+  bool newState,
   void *dptr)
   {
 #if MAC_XCD
 #pragma unused(theEnv)
 #endif
 
-   ((DEFFUNCTION *) dptr)->trace = (unsigned short) newState;
+   ((DEFFUNCTION *) dptr)->trace = newState;
   }
 
 /*********************************************************
@@ -1055,12 +1057,12 @@ void EnvSetDeffunctionWatch(
   DESCRIPTION  : Determines if trace messages are
                  gnerated when executing deffunction
   INPUTS       : A pointer to the deffunction
-  RETURNS      : TRUE if a trace is active,
-                 FALSE otherwise
+  RETURNS      : True if a trace is active,
+                 false otherwise
   SIDE EFFECTS : None
   NOTES        : None
  *********************************************************/
-unsigned EnvGetDeffunctionWatch(
+bool EnvGetDeffunctionWatch(
   void *theEnv,
   void *dptr)
   {
@@ -1137,7 +1139,7 @@ void *GetNextDeffunction(
    return EnvGetNextDeffunction(GetCurrentEnvironment(),deffunctionPtr);
   }
 
-intBool IsDeffunctionDeletable(
+bool IsDeffunctionDeletable(
   void *ptr)
   {
    return EnvIsDeffunctionDeletable(GetCurrentEnvironment(),ptr);
@@ -1155,7 +1157,7 @@ const char *GetDeffunctionPPForm(
    return EnvGetDeffunctionPPForm(GetCurrentEnvironment(),theDeffunction);
   }
 
-intBool Undeffunction(
+bool Undeffunction(
   void *vptr)
   {
    return EnvUndeffunction(GetCurrentEnvironment(),vptr);
@@ -1177,14 +1179,14 @@ void ListDeffunctions(
    EnvListDeffunctions(GetCurrentEnvironment(),logicalName,theModule);
   }
 
-unsigned GetDeffunctionWatch(
+bool GetDeffunctionWatch(
   void *dptr)
   {
    return EnvGetDeffunctionWatch(GetCurrentEnvironment(),dptr);
   }
 
 void SetDeffunctionWatch(
-  unsigned newState,
+  bool newState,
   void *dptr)
   {
    EnvSetDeffunctionWatch(GetCurrentEnvironment(),newState,dptr);

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -35,6 +35,8 @@
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -70,8 +72,8 @@ typedef struct handlerSlotReference
 
    void             UnboundHandlerErr(void *);
    void             PrintNoHandlerError(void *,const char *);
-   int              CheckHandlerArgCount(void *);
-   void             SlotAccessViolationError(void *,const char *,intBool,void *);
+   bool             CheckHandlerArgCount(void *);
+   void             SlotAccessViolationError(void *,const char *,bool,void *);
    void             SlotVisibilityViolationError(void *,SLOT_DESC *,DEFCLASS *);
 
 #if ! RUN_TIME
@@ -81,13 +83,13 @@ typedef struct handlerSlotReference
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
    HANDLER         *NewHandler(void);
-   int              HandlersExecuting(DEFCLASS *);
-   int              DeleteHandler(void *,DEFCLASS *,SYMBOL_HN *,int,int);
+   bool             HandlersExecuting(DEFCLASS *);
+   bool             DeleteHandler(void *,DEFCLASS *,SYMBOL_HN *,int,bool);
    void             DeallocateMarkedHandlers(void *,DEFCLASS *);
 #endif
    unsigned         HandlerType(void *,const char *,const char *);
-   int              CheckCurrentMessage(void *,const char *,int);
-   void             PrintHandler(void *,const char *,HANDLER *,int);
+   bool             CheckCurrentMessage(void *,const char *,bool);
+   void             PrintHandler(void *,const char *,HANDLER *,bool);
    HANDLER         *FindHandlerByAddress(DEFCLASS *,SYMBOL_HN *,unsigned);
    int              FindHandlerByIndex(DEFCLASS *,SYMBOL_HN *,unsigned);
    int              FindHandlerNameGroup(DEFCLASS *,SYMBOL_HN *);

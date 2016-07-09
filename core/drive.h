@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*                  DRIVE HEADER FILE                  */
    /*******************************************************/
@@ -31,6 +31,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_drive
@@ -44,12 +46,12 @@
 #include "network.h"
 
    void                           NetworkAssert(void *,struct partialMatch *,struct joinNode *);
-   intBool                        EvaluateJoinExpression(void *,struct expr *,struct joinNode *);
+   bool                           EvaluateJoinExpression(void *,struct expr *,struct joinNode *);
    void                           NetworkAssertLeft(void *,struct partialMatch *,struct joinNode *,int);
    void                           NetworkAssertRight(void *,struct partialMatch *,struct joinNode *,int);
    void                           PPDrive(void *,struct partialMatch *,struct partialMatch *,struct joinNode *,int);
    unsigned long                  BetaMemoryHashValue(void *,struct expr *,struct partialMatch *,struct partialMatch *,struct joinNode *);
-   intBool                        EvaluateSecondaryNetworkTest(void *,struct partialMatch *,struct joinNode *);
+   bool                           EvaluateSecondaryNetworkTest(void *,struct partialMatch *,struct joinNode *);
    void                           EPMDrive(void *,struct partialMatch *,struct joinNode *,int);
    
 #endif /* _H_drive */

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*          INSTANCE PRIMITIVE SUPPORT MODULE          */
    /*******************************************************/
@@ -38,6 +38,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_insmngr
@@ -51,9 +53,9 @@
    void                           InitializeInstanceCommand(void *,DATA_OBJECT *);
    void                           MakeInstanceCommand(void *,DATA_OBJECT *);
    SYMBOL_HN                     *GetFullInstanceName(void *,INSTANCE_TYPE *);
-   INSTANCE_TYPE                 *BuildInstance(void *,SYMBOL_HN *,DEFCLASS *,intBool);
+   INSTANCE_TYPE                 *BuildInstance(void *,SYMBOL_HN *,DEFCLASS *,bool);
    void                           InitSlotsCommand(void *,DATA_OBJECT *);
-   intBool                        QuashInstance(void *,INSTANCE_TYPE *);
+   bool                           QuashInstance(void *,INSTANCE_TYPE *);
 
 #if DEFRULE_CONSTRUCT && OBJECT_SYSTEM
    void                           InactiveInitializeInstance(void *,DATA_OBJECT *);

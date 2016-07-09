@@ -1,9 +1,9 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*            CLIPS Version 6.40  07/04/16             */
    /*                                                     */
-   /*                                                     */
+   /*              CLASS PARSER HEADER FILE               */
    /*******************************************************/
 
 /*************************************************************/
@@ -32,6 +32,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_clsltpsr
@@ -54,7 +56,7 @@ typedef struct tempSlotLink
    struct tempSlotLink *nxt;
   } TEMP_SLOT_LINK;
 
-TEMP_SLOT_LINK *ParseSlot(void *,const char *,TEMP_SLOT_LINK *,PACKED_CLASS_LINKS *,int,int);
+TEMP_SLOT_LINK *ParseSlot(void *,const char *,TEMP_SLOT_LINK *,PACKED_CLASS_LINKS *,bool,bool);
 void DeleteSlots(void *,TEMP_SLOT_LINK *);
 
 #endif

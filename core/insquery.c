@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.40  06/25/16          */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -35,6 +35,8 @@
 /*            SetEvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -74,8 +76,8 @@ static QUERY_CORE *FindQueryCore(void *,int);
 static QUERY_CLASS *DetermineQueryClasses(void *,EXPRESSION *,const char *,unsigned *);
 static QUERY_CLASS *FormChain(void *,const char *,DATA_OBJECT *);
 static void DeleteQueryClasses(void *,QUERY_CLASS *);
-static int TestForFirstInChain(void *,QUERY_CLASS *,int);
-static int TestForFirstInstanceInClass(void *,struct defmodule *,int,DEFCLASS *,QUERY_CLASS *,int);
+static bool TestForFirstInChain(void *,QUERY_CLASS *,int);
+static bool TestForFirstInstanceInClass(void *,struct defmodule *,int,DEFCLASS *,QUERY_CLASS *,int);
 static void TestEntireChain(void *,QUERY_CLASS *,int);
 static void TestEntireClass(void *,struct defmodule *,int,DEFCLASS *,QUERY_CLASS *,int);
 static void AddSolution(void *);
@@ -176,7 +178,7 @@ void GetQueryInstanceSlot(
    if (temp.type != SYMBOL)
      {
       ExpectedTypeError1(theEnv,"get",1,"symbol");
-      EnvSetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,true);
       return;
      }
    sp = FindInstanceSlot(theEnv,ins,(SYMBOL_HN *) temp.value);
@@ -251,30 +253,30 @@ void GetQueryInstanceSlot(
   DESCRIPTION  : Determines if there any existing instances which satisfy
                    the query
   INPUTS       : None
-  RETURNS      : TRUE if the query is satisfied, FALSE otherwise
+  RETURNS      : True if the query is satisfied, false otherwise
   SIDE EFFECTS : The query class-expressions are evaluated once,
                    and the query boolean-expression is evaluated
                    zero or more times (depending on instance restrictions
-                   and how early the expression evaulates to TRUE - if at all).
+                   and how early the expression evaulates to true - if at all).
   NOTES        : H/L Syntax : See ParseQueryNoAction()
  ******************************************************************************/
-intBool AnyInstances(
+bool AnyInstances(
   void *theEnv)
   {
    QUERY_CLASS *qclasses;
    unsigned rcnt;
-   int TestResult;
+   bool TestResult;
 
    qclasses = DetermineQueryClasses(theEnv,GetFirstArgument()->nextArg,
                                       "any-instancep",&rcnt);
    if (qclasses == NULL)
-     return(FALSE);
+     return false;
    PushQueryCore(theEnv);
    InstanceQueryData(theEnv)->QueryCore = get_struct(theEnv,query_core);
    InstanceQueryData(theEnv)->QueryCore->solns = (INSTANCE_TYPE **) gm2(theEnv,(sizeof(INSTANCE_TYPE *) * rcnt));
    InstanceQueryData(theEnv)->QueryCore->query = GetFirstArgument();
    TestResult = TestForFirstInChain(theEnv,qclasses,0);
-   InstanceQueryData(theEnv)->AbortQuery = FALSE;
+   InstanceQueryData(theEnv)->AbortQuery = false;
    rm(theEnv,(void *) InstanceQueryData(theEnv)->QueryCore->solns,(sizeof(INSTANCE_TYPE *) * rcnt));
    rtn_struct(theEnv,query_core,InstanceQueryData(theEnv)->QueryCore);
    PopQueryCore(theEnv);
@@ -287,11 +289,11 @@ intBool AnyInstances(
   DESCRIPTION  : Finds the first set of instances which satisfy the query and
                    stores their names in the user's multi-field variable
   INPUTS       : Caller's result buffer
-  RETURNS      : TRUE if the query is satisfied, FALSE otherwise
+  RETURNS      : True if the query is satisfied, false otherwise
   SIDE EFFECTS : The query class-expressions are evaluated once,
                    and the query boolean-expression is evaluated
                    zero or more times (depending on instance restrictions
-                   and how early the expression evaulates to TRUE - if at all).
+                   and how early the expression evaulates to true - if at all).
   NOTES        : H/L Syntax : See ParseQueryNoAction()
  ******************************************************************************/
 void QueryFindInstance(
@@ -316,7 +318,7 @@ void QueryFindInstance(
    InstanceQueryData(theEnv)->QueryCore->solns = (INSTANCE_TYPE **)
                       gm2(theEnv,(sizeof(INSTANCE_TYPE *) * rcnt));
    InstanceQueryData(theEnv)->QueryCore->query = GetFirstArgument();
-   if (TestForFirstInChain(theEnv,qclasses,0) == TRUE)
+   if (TestForFirstInChain(theEnv,qclasses,0) == true)
      {
       result->value = (void *) EnvCreateMultifield(theEnv,rcnt);
       SetpDOEnd(result,rcnt);
@@ -328,7 +330,7 @@ void QueryFindInstance(
      }
    else
       result->value = (void *) EnvCreateMultifield(theEnv,0L);
-   InstanceQueryData(theEnv)->AbortQuery = FALSE;
+   InstanceQueryData(theEnv)->AbortQuery = false;
    rm(theEnv,(void *) InstanceQueryData(theEnv)->QueryCore->solns,(sizeof(INSTANCE_TYPE *) * rcnt));
    rtn_struct(theEnv,query_core,InstanceQueryData(theEnv)->QueryCore);
    PopQueryCore(theEnv);
@@ -380,7 +382,7 @@ void QueryFindAllInstances(
    InstanceQueryData(theEnv)->QueryCore->soln_size = rcnt;
    InstanceQueryData(theEnv)->QueryCore->soln_cnt = 0;
    TestEntireChain(theEnv,qclasses,0);
-   InstanceQueryData(theEnv)->AbortQuery = FALSE;
+   InstanceQueryData(theEnv)->AbortQuery = false;
    result->value = (void *) EnvCreateMultifield(theEnv,InstanceQueryData(theEnv)->QueryCore->soln_cnt * rcnt);
    while (InstanceQueryData(theEnv)->QueryCore->soln_set != NULL)
      {
@@ -407,7 +409,7 @@ void QueryFindAllInstances(
   SIDE EFFECTS : The query class-expressions are evaluated once,
                    and the query boolean-expression is evaluated
                    zero or more times (depending on instance restrictions
-                   and how early the expression evaulates to TRUE - if at all).
+                   and how early the expression evaulates to true - if at all).
                    Also the action expression is executed zero or once.
                  Caller's result buffer holds result of user-action
   NOTES        : H/L Syntax : See ParseQueryAction()
@@ -430,10 +432,10 @@ void QueryDoForInstance(
    InstanceQueryData(theEnv)->QueryCore->solns = (INSTANCE_TYPE **) gm2(theEnv,(sizeof(INSTANCE_TYPE *) * rcnt));
    InstanceQueryData(theEnv)->QueryCore->query = GetFirstArgument();
    InstanceQueryData(theEnv)->QueryCore->action = GetFirstArgument()->nextArg;
-   if (TestForFirstInChain(theEnv,qclasses,0) == TRUE)
+   if (TestForFirstInChain(theEnv,qclasses,0) == true)
      EvaluateExpression(theEnv,InstanceQueryData(theEnv)->QueryCore->action,result);
-   InstanceQueryData(theEnv)->AbortQuery = FALSE;
-   ProcedureFunctionData(theEnv)->BreakFlag = FALSE;
+   InstanceQueryData(theEnv)->AbortQuery = false;
+   ProcedureFunctionData(theEnv)->BreakFlag = false;
    rm(theEnv,(void *) InstanceQueryData(theEnv)->QueryCore->solns,(sizeof(INSTANCE_TYPE *) * rcnt));
    rtn_struct(theEnv,query_core,InstanceQueryData(theEnv)->QueryCore);
    PopQueryCore(theEnv);
@@ -477,8 +479,8 @@ void QueryDoForAllInstances(
    TestEntireChain(theEnv,qclasses,0);
    ValueDeinstall(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
       
-   InstanceQueryData(theEnv)->AbortQuery = FALSE;
-   ProcedureFunctionData(theEnv)->BreakFlag = FALSE;
+   InstanceQueryData(theEnv)->AbortQuery = false;
+   ProcedureFunctionData(theEnv)->BreakFlag = false;
    rm(theEnv,(void *) InstanceQueryData(theEnv)->QueryCore->solns,(sizeof(INSTANCE_TYPE *) * rcnt));
    rtn_struct(theEnv,query_core,InstanceQueryData(theEnv)->QueryCore);
    PopQueryCore(theEnv);
@@ -528,7 +530,7 @@ void DelayedQueryDoForAllInstances(
    InstanceQueryData(theEnv)->QueryCore->soln_size = rcnt;
    InstanceQueryData(theEnv)->QueryCore->soln_cnt = 0;
    TestEntireChain(theEnv,qclasses,0);
-   InstanceQueryData(theEnv)->AbortQuery = FALSE;
+   InstanceQueryData(theEnv)->AbortQuery = false;
    InstanceQueryData(theEnv)->QueryCore->action = GetFirstArgument()->nextArg;
    
    oldGarbageFrame = UtilityData(theEnv)->CurrentGarbageFrame;
@@ -557,7 +559,7 @@ void DelayedQueryDoForAllInstances(
    RestorePriorGarbageFrame(theEnv,&newGarbageFrame,oldGarbageFrame,result);
    CallPeriodicTasks(theEnv);
 
-   ProcedureFunctionData(theEnv)->BreakFlag = FALSE;
+   ProcedureFunctionData(theEnv)->BreakFlag = false;
    rm(theEnv,(void *) InstanceQueryData(theEnv)->QueryCore->solns,(sizeof(INSTANCE_TYPE *) * rcnt));
    rtn_struct(theEnv,query_core,InstanceQueryData(theEnv)->QueryCore);
    PopQueryCore(theEnv);
@@ -665,7 +667,7 @@ static QUERY_CLASS *DetermineQueryClasses(
   unsigned *rcnt)
   {
    QUERY_CLASS *clist = NULL,*cnxt = NULL,*cchain = NULL,*tmp;
-   int new_list = FALSE;
+   bool new_list = false;
    DATA_OBJECT temp;
 
    *rcnt = 0;
@@ -678,16 +680,16 @@ static QUERY_CLASS *DetermineQueryClasses(
         }
       if ((temp.type == SYMBOL) && (temp.value == (void *) InstanceQueryData(theEnv)->QUERY_DELIMETER_SYMBOL))
         {
-         new_list = TRUE;
+         new_list = true;
          (*rcnt)++;
         }
       else if ((tmp = FormChain(theEnv,func,&temp)) != NULL)
         {
          if (clist == NULL)
            clist = cnxt = cchain = tmp;
-         else if (new_list == TRUE)
+         else if (new_list == true)
            {
-            new_list = FALSE;
+            new_list = false;
             cnxt->nxt = tmp;
             cnxt = cchain = tmp;
            }
@@ -700,7 +702,7 @@ static QUERY_CLASS *DetermineQueryClasses(
         {
          SyntaxErrorMessage(theEnv,"instance-set query class restrictions");
          DeleteQueryClasses(theEnv,clist);
-         EnvSetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,true);
          return(NULL);
         }
       classExp = classExp->nextArg;
@@ -851,12 +853,12 @@ static void DeleteQueryClasses(
   INPUTS       : 1) The current chain
                  2) The index of the chain restriction
                      (e.g. the 4th query-variable)
-  RETURNS      : TRUE if query succeeds, FALSE otherwise
+  RETURNS      : True if query succeeds, false otherwise
   SIDE EFFECTS : Sets current restriction class
                  Instance variable values set
   NOTES        : None
  ************************************************************/
-static int TestForFirstInChain(
+static bool TestForFirstInChain(
   void *theEnv,
   QUERY_CLASS *qchain,
   int indx)
@@ -864,22 +866,22 @@ static int TestForFirstInChain(
    QUERY_CLASS *qptr;
    int id;
 
-   InstanceQueryData(theEnv)->AbortQuery = TRUE;
+   InstanceQueryData(theEnv)->AbortQuery = true;
    for (qptr = qchain ; qptr != NULL ; qptr = qptr->chain)
      {
-      InstanceQueryData(theEnv)->AbortQuery = FALSE;
+      InstanceQueryData(theEnv)->AbortQuery = false;
       if ((id = GetTraversalID(theEnv)) == -1)
-        return(FALSE);
+        return false;
       if (TestForFirstInstanceInClass(theEnv,qptr->theModule,id,qptr->cls,qchain,indx))
         {
          ReleaseTraversalID(theEnv);
-         return(TRUE);
+         return true;
         }
       ReleaseTraversalID(theEnv);
-      if ((EvaluationData(theEnv)->HaltExecution == TRUE) || (InstanceQueryData(theEnv)->AbortQuery == TRUE))
-        return(FALSE);
+      if ((EvaluationData(theEnv)->HaltExecution == true) || (InstanceQueryData(theEnv)->AbortQuery == true))
+        return false;
      }
-   return(FALSE);
+   return false;
   }
 
 /*****************************************************************
@@ -892,11 +894,11 @@ static int TestForFirstInChain(
                  3) The class
                  4) The current class restriction chain
                  5) The index of the current restriction
-  RETURNS      : TRUE if query succeeds, FALSE otherwise
+  RETURNS      : True if query succeeds, false otherwise
   SIDE EFFECTS : Instance variable values set
   NOTES        : None
  *****************************************************************/
-static int TestForFirstInstanceInClass(
+static bool TestForFirstInstanceInClass(
   void *theEnv,
   struct defmodule *theModule,
   int id,
@@ -911,10 +913,10 @@ static int TestForFirstInstanceInClass(
    struct garbageFrame *oldGarbageFrame;
 
    if (TestTraversalID(cls->traversalRecord,id))
-     return(FALSE);
+     return false;
    SetTraversalID(cls->traversalRecord,id);
-   if (DefclassInScope(theEnv,cls,theModule) == FALSE)
-     return(FALSE);
+   if (DefclassInScope(theEnv,cls,theModule) == false)
+     return false;
      
    oldGarbageFrame = UtilityData(theEnv)->CurrentGarbageFrame;
    memset(&newGarbageFrame,0,sizeof(struct garbageFrame));
@@ -928,13 +930,13 @@ static int TestForFirstInstanceInClass(
       if (qchain->nxt != NULL)
         {
          ins->busy++;
-         if (TestForFirstInChain(theEnv,qchain->nxt,indx+1) == TRUE)
+         if (TestForFirstInChain(theEnv,qchain->nxt,indx+1) == true)
            {
             ins->busy--;
             break;
            }
          ins->busy--;
-         if ((EvaluationData(theEnv)->HaltExecution == TRUE) || (InstanceQueryData(theEnv)->AbortQuery == TRUE))
+         if ((EvaluationData(theEnv)->HaltExecution == true) || (InstanceQueryData(theEnv)->AbortQuery == true))
            break;
         }
       else
@@ -942,9 +944,9 @@ static int TestForFirstInstanceInClass(
          ins->busy++;
          EvaluateExpression(theEnv,InstanceQueryData(theEnv)->QueryCore->query,&temp);
          ins->busy--;
-         if (EvaluationData(theEnv)->HaltExecution == TRUE)
+         if (EvaluationData(theEnv)->HaltExecution == true)
            break;
-         if ((temp.type != SYMBOL) ? TRUE :
+         if ((temp.type != SYMBOL) ? true :
              (temp.value != EnvFalseSymbol(theEnv)))
            break;
         }
@@ -953,7 +955,7 @@ static int TestForFirstInstanceInClass(
       CallPeriodicTasks(theEnv);
        
       ins = ins->nxtClass;
-      while ((ins != NULL) ? (ins->garbage == 1) : FALSE)
+      while ((ins != NULL) ? (ins->garbage == 1) : false)
         ins = ins->nxtClass;
      }
 
@@ -961,17 +963,17 @@ static int TestForFirstInstanceInClass(
    CallPeriodicTasks(theEnv);
 
    if (ins != NULL)
-     return(((EvaluationData(theEnv)->HaltExecution == TRUE) || (InstanceQueryData(theEnv)->AbortQuery == TRUE))
-             ? FALSE : TRUE);
+     return(((EvaluationData(theEnv)->HaltExecution == true) || (InstanceQueryData(theEnv)->AbortQuery == true))
+             ? false : true);
    for (i = 0 ; i < cls->directSubclasses.classCount ; i++)
      {
       if (TestForFirstInstanceInClass(theEnv,theModule,id,cls->directSubclasses.classArray[i],
                                       qchain,indx))
-        return(TRUE);
-      if ((EvaluationData(theEnv)->HaltExecution == TRUE) || (InstanceQueryData(theEnv)->AbortQuery == TRUE))
-        return(FALSE);
+        return true;
+      if ((EvaluationData(theEnv)->HaltExecution == true) || (InstanceQueryData(theEnv)->AbortQuery == true))
+        return false;
      }
-   return(FALSE);
+   return false;
   }
 
 /************************************************************
@@ -995,15 +997,15 @@ static void TestEntireChain(
    QUERY_CLASS *qptr;
    int id;
 
-   InstanceQueryData(theEnv)->AbortQuery = TRUE;
+   InstanceQueryData(theEnv)->AbortQuery = true;
    for (qptr = qchain ; qptr != NULL ; qptr = qptr->chain)
      {
-      InstanceQueryData(theEnv)->AbortQuery = FALSE;
+      InstanceQueryData(theEnv)->AbortQuery = false;
       if ((id = GetTraversalID(theEnv)) == -1)
         return;
       TestEntireClass(theEnv,qptr->theModule,id,qptr->cls,qchain,indx);
       ReleaseTraversalID(theEnv);
-      if ((EvaluationData(theEnv)->HaltExecution == TRUE) || (InstanceQueryData(theEnv)->AbortQuery == TRUE))
+      if ((EvaluationData(theEnv)->HaltExecution == true) || (InstanceQueryData(theEnv)->AbortQuery == true))
         return;
      }
   }
@@ -1040,7 +1042,7 @@ static void TestEntireClass(
    if (TestTraversalID(cls->traversalRecord,id))
      return;
    SetTraversalID(cls->traversalRecord,id);
-   if (DefclassInScope(theEnv,cls,theModule) == FALSE)
+   if (DefclassInScope(theEnv,cls,theModule) == false)
      return;
      
    oldGarbageFrame = UtilityData(theEnv)->CurrentGarbageFrame;
@@ -1057,7 +1059,7 @@ static void TestEntireClass(
          ins->busy++;
          TestEntireChain(theEnv,qchain->nxt,indx+1);
          ins->busy--;
-         if ((EvaluationData(theEnv)->HaltExecution == TRUE) || (InstanceQueryData(theEnv)->AbortQuery == TRUE))
+         if ((EvaluationData(theEnv)->HaltExecution == true) || (InstanceQueryData(theEnv)->AbortQuery == true))
            break;
         }
       else
@@ -1067,9 +1069,9 @@ static void TestEntireClass(
          EvaluateExpression(theEnv,InstanceQueryData(theEnv)->QueryCore->query,&temp);
 
          ins->busy--;
-         if (EvaluationData(theEnv)->HaltExecution == TRUE)
+         if (EvaluationData(theEnv)->HaltExecution == true)
            break;
-         if ((temp.type != SYMBOL) ? TRUE :
+         if ((temp.type != SYMBOL) ? true :
              (temp.value != EnvFalseSymbol(theEnv)))
            {
             if (InstanceQueryData(theEnv)->QueryCore->action != NULL)
@@ -1083,10 +1085,10 @@ static void TestEntireClass(
                ins->busy--;
                if (ProcedureFunctionData(theEnv)->BreakFlag || ProcedureFunctionData(theEnv)->ReturnFlag)
                  {
-                  InstanceQueryData(theEnv)->AbortQuery = TRUE;
+                  InstanceQueryData(theEnv)->AbortQuery = true;
                   break;
                  }
-               if (EvaluationData(theEnv)->HaltExecution == TRUE)
+               if (EvaluationData(theEnv)->HaltExecution == true)
                  break;
               }
             else
@@ -1095,7 +1097,7 @@ static void TestEntireClass(
         }
          
       ins = ins->nxtClass;
-      while ((ins != NULL) ? (ins->garbage == 1) : FALSE)
+      while ((ins != NULL) ? (ins->garbage == 1) : false)
         ins = ins->nxtClass;
 
       CleanCurrentGarbageFrame(theEnv,NULL);
@@ -1110,7 +1112,7 @@ static void TestEntireClass(
    for (i = 0 ; i < cls->directSubclasses.classCount ; i++)
      {
       TestEntireClass(theEnv,theModule,id,cls->directSubclasses.classArray[i],qchain,indx);
-      if ((EvaluationData(theEnv)->HaltExecution == TRUE) || (InstanceQueryData(theEnv)->AbortQuery == TRUE))
+      if ((EvaluationData(theEnv)->HaltExecution == true) || (InstanceQueryData(theEnv)->AbortQuery == true))
         return;
      }
   }

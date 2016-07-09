@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/25/16             */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*             OBJECT MESSAGE DISPATCH CODE            */
    /*******************************************************/
@@ -46,6 +46,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 /* =========================================
@@ -88,7 +90,7 @@
    =========================================
    ***************************************** */
 
-static intBool PerformMessage(void *,DATA_OBJECT *,EXPRESSION *,SYMBOL_HN *);
+static bool PerformMessage(void *,DATA_OBJECT *,EXPRESSION *,SYMBOL_HN *);
 static HANDLER_LINK *FindApplicableHandlers(void *,DEFCLASS *,SYMBOL_HN *);
 static void CallHandlers(void *,DATA_OBJECT *);
 static void EarlySlotBindError(void *,INSTANCE_TYPE *,DEFCLASS *,unsigned);
@@ -108,12 +110,12 @@ static void EarlySlotBindError(void *,INSTANCE_TYPE *,DEFCLASS *,unsigned);
                  3) Address of DATA_OBJECT buffer
                     (NULL if don't care)
                  4) Message argument expressions
-  RETURNS      : Returns FALSE is an execution error occurred
-                 or execution is halted, otherwise TRUE
+  RETURNS      : Returns false is an execution error occurred
+                 or execution is halted, otherwise true
   SIDE EFFECTS : Side effects of message execution
   NOTES        : None
  *****************************************************/
-intBool DirectMessage(
+bool DirectMessage(
   void *theEnv,
   SYMBOL_HN *msg,
   INSTANCE_TYPE *ins,
@@ -153,7 +155,7 @@ void EnvSend(
   const char *args,
   DATA_OBJECT *result)
   {
-   int error;
+   bool error;
    EXPRESSION *iexp;
    SYMBOL_HN *msym;
 
@@ -164,22 +166,22 @@ void EnvSend(
       CallPeriodicTasks(theEnv);
      }
 
-   EnvSetEvaluationError(theEnv,FALSE);
+   EnvSetEvaluationError(theEnv,false);
    result->type = SYMBOL;
    result->value = EnvFalseSymbol(theEnv);
    msym = FindSymbolHN(theEnv,msg);
    if (msym == NULL)
      {
       PrintNoHandlerError(theEnv,msg);
-      EnvSetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,true);
       return;
      }
    iexp = GenConstant(theEnv,idata->type,idata->value);
    iexp->nextArg = ParseConstantArguments(theEnv,args,&error);
-   if (error == TRUE)
+   if (error == true)
      {
       ReturnExpression(theEnv,iexp);
-      EnvSetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,true);
       return;
      }
    PerformMessage(theEnv,result,iexp,msym);
@@ -230,7 +232,7 @@ void SendCommand(
 
    result->type = SYMBOL;
    result->value = EnvFalseSymbol(theEnv);
-   if (EnvArgTypeCheck(theEnv,"send",2,SYMBOL,&temp) == FALSE)
+   if (EnvArgTypeCheck(theEnv,"send",2,SYMBOL,&temp) == false)
      return;
    msg = (SYMBOL_HN *) temp.value;
 
@@ -272,20 +274,20 @@ DATA_OBJECT *GetNthMessageArgument(
                    shadowed handler
                  Used before calling call-next-handler
   INPUTS       : None
-  RETURNS      : TRUE if shadow ready, FALSE otherwise
+  RETURNS      : True if shadow ready, false otherwise
   SIDE EFFECTS : None
   NOTES        : H/L Syntax: (next-handlerp)
  *****************************************************/
-int NextHandlerAvailable(
+bool NextHandlerAvailable(
   void *theEnv)
   {
    if (MessageHandlerData(theEnv)->CurrentCore == NULL)
-     return(FALSE);
+     return false;
    if (MessageHandlerData(theEnv)->CurrentCore->hnd->type == MAROUND)
-     return((MessageHandlerData(theEnv)->NextInCore != NULL) ? TRUE : FALSE);
+     return((MessageHandlerData(theEnv)->NextInCore != NULL) ? true : false);
    if ((MessageHandlerData(theEnv)->CurrentCore->hnd->type == MPRIMARY) && (MessageHandlerData(theEnv)->NextInCore != NULL))
-     return((MessageHandlerData(theEnv)->NextInCore->hnd->type == MPRIMARY) ? TRUE : FALSE);
-   return(FALSE);
+     return((MessageHandlerData(theEnv)->NextInCore->hnd->type == MPRIMARY) ? true : false);
+   return false;
   }
 
 /********************************************************
@@ -324,14 +326,14 @@ void CallNextHandler(
 
    SetpType(result,SYMBOL);
    SetpValue(result,EnvFalseSymbol(theEnv));
-   EvaluationData(theEnv)->EvaluationError = FALSE;
+   EvaluationData(theEnv)->EvaluationError = false;
    if (EvaluationData(theEnv)->HaltExecution)
      return;
-   if (NextHandlerAvailable(theEnv) == FALSE)
+   if (NextHandlerAvailable(theEnv) == false)
      {
-      PrintErrorID(theEnv,"MSGPASS",1,FALSE);
+      PrintErrorID(theEnv,"MSGPASS",1,false);
       EnvPrintRouter(theEnv,WERROR,"Shadowed message-handlers not applicable in current context.\n");
-      EnvSetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,true);
       return;
      }
    if (EvaluationData(theEnv)->CurrentExpression->value == (void *) FindFunction(theEnv,"override-next-handler"))
@@ -349,7 +351,7 @@ void CallNextHandler(
                           UnboundHandlerErr);
       if (EvaluationData(theEnv)->EvaluationError)
         {
-         ProcedureFunctionData(theEnv)->ReturnFlag = FALSE;
+         ProcedureFunctionData(theEnv)->ReturnFlag = false;
          return;
         }
      }
@@ -425,7 +427,7 @@ void CallNextHandler(
    MessageHandlerData(theEnv)->CurrentCore = oldCurrent;
    if (overridep)
      PopProcParameters(theEnv);
-   ProcedureFunctionData(theEnv)->ReturnFlag = FALSE;
+   ProcedureFunctionData(theEnv)->ReturnFlag = false;
   }
 
 /*************************************************************************
@@ -515,7 +517,7 @@ HANDLER_LINK *JoinHandlerLinks(
      PrintNoHandlerError(theEnv,ValueToString(mname));
      for (i = MAROUND ; i <= MAFTER ; i++)
        DestroyHandlerLinks(theEnv,tops[i]);
-     EnvSetEvaluationError(theEnv,TRUE);
+     EnvSetEvaluationError(theEnv,true);
      return(NULL);
     }
 
@@ -582,11 +584,11 @@ void PrintHandlerSlotGetFunction(
                  references in message-handlers
   INPUTS       : 1) The bitmap expression
                  2) A data object buffer
-  RETURNS      : TRUE if OK, FALSE
+  RETURNS      : True if OK, false
                  on errors
   SIDE EFFECTS : Data object buffer gets value of
                  slot. On errors, buffer gets
-                 symbol FALSE, EvaluationError
+                 symbol false, EvaluationError
                  is set and error messages are
                  printed
   NOTES        : It is possible for a handler
@@ -600,7 +602,7 @@ void PrintHandlerSlotGetFunction(
                   no-inherit or the subclass
                   overrode the original slot)
  ***************************************************/
-intBool HandlerSlotGetFunction(
+bool HandlerSlotGetFunction(
   void *theEnv,
   void *theValue,
   DATA_OBJECT *theResult)
@@ -620,8 +622,8 @@ intBool HandlerSlotGetFunction(
       StaleInstanceAddress(theEnv,"for slot get",0);
       theResult->type = SYMBOL;
       theResult->value = EnvFalseSymbol(theEnv);
-      EnvSetEvaluationError(theEnv,TRUE);
-      return(FALSE);
+      EnvSetEvaluationError(theEnv,true);
+      return false;
      }
 
    if (theInstance->cls == theDefclass)
@@ -648,14 +650,14 @@ intBool HandlerSlotGetFunction(
       theResult->begin = 0;
       SetpDOEnd(theResult,GetInstanceSlotLength(sp));
      }
-   return(TRUE);
+   return true;
 
 HandlerGetError:
    EarlySlotBindError(theEnv,theInstance,theDefclass,theReference->slotID);
    theResult->type = SYMBOL;
    theResult->value = EnvFalseSymbol(theEnv);
-   EnvSetEvaluationError(theEnv,TRUE);
-   return(FALSE);
+   EnvSetEvaluationError(theEnv,true);
+   return false;
   }
 
 /***************************************************
@@ -708,7 +710,7 @@ void PrintHandlerSlotPutFunction(
                  bindings in message-handlers
   INPUTS       : 1) The bitmap expression
                  2) A data object buffer
-  RETURNS      : TRUE if OK, FALSE
+  RETURNS      : True if OK, false
                  on errors
   SIDE EFFECTS : Data object buffer gets symbol
                  TRUE and slot is set. On errors,
@@ -726,7 +728,7 @@ void PrintHandlerSlotPutFunction(
                   no-inherit or the subclass
                   overrode the original slot)
  ***************************************************/
-intBool HandlerSlotPutFunction(
+bool HandlerSlotPutFunction(
   void *theEnv,
   void *theValue,
   DATA_OBJECT *theResult)
@@ -747,8 +749,8 @@ intBool HandlerSlotPutFunction(
       StaleInstanceAddress(theEnv,"for slot put",0);
       theResult->type = SYMBOL;
       theResult->value = EnvFalseSymbol(theEnv);
-      EnvSetEvaluationError(theEnv,TRUE);
-      return(FALSE);
+      EnvSetEvaluationError(theEnv,true);
+      return false;
      }
 
    if (theInstance->cls == theDefclass)
@@ -778,7 +780,7 @@ intBool HandlerSlotPutFunction(
    if (sp->desc->initializeOnly && (!theInstance->initializeInProgress))
      {
       SlotAccessViolationError(theEnv,ValueToString(sp->desc->slotName->name),
-                               TRUE,(void *) theInstance);
+                               true,(void *) theInstance);
       goto HandlerPutError2;
      }
 
@@ -790,7 +792,7 @@ intBool HandlerSlotPutFunction(
    if (GetFirstArgument())
      {
       if (EvaluateAndStoreInDataObject(theEnv,(int) sp->desc->multiple,
-                                       GetFirstArgument(),&theSetVal,TRUE) == FALSE)
+                                       GetFirstArgument(),&theSetVal,true) == false)
          goto HandlerPutError2;
      }
    else
@@ -800,9 +802,9 @@ intBool HandlerSlotPutFunction(
       SetType(theSetVal,MULTIFIELD);
       SetValue(theSetVal,ProceduralPrimitiveData(theEnv)->NoParamValue);
      }
-   if (PutSlotValue(theEnv,theInstance,sp,&theSetVal,theResult,NULL) == FALSE)
+   if (PutSlotValue(theEnv,theInstance,sp,&theSetVal,theResult,NULL) == false)
       goto HandlerPutError2;
-   return(TRUE);
+   return true;
 
 HandlerPutError:
    EarlySlotBindError(theEnv,theInstance,theDefclass,theReference->slotID);
@@ -810,9 +812,9 @@ HandlerPutError:
 HandlerPutError2:
    theResult->type = SYMBOL;
    theResult->value = EnvFalseSymbol(theEnv);
-   EnvSetEvaluationError(theEnv,TRUE);
+   EnvSetEvaluationError(theEnv,true);
 
-   return(FALSE);
+   return false;
   }
 
 /*****************************************************
@@ -834,13 +836,13 @@ void DynamicHandlerGetSlot(
 
    result->type = SYMBOL;
    result->value = EnvFalseSymbol(theEnv);
-   if (CheckCurrentMessage(theEnv,"dynamic-get",TRUE) == FALSE)
+   if (CheckCurrentMessage(theEnv,"dynamic-get",true) == false)
      return;
    EvaluateExpression(theEnv,GetFirstArgument(),&temp);
    if (temp.type != SYMBOL)
      {
       ExpectedTypeError1(theEnv,"dynamic-get",1,"symbol");
-      EnvSetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,true);
       return;
      }
    ins = GetActiveInstance(theEnv);
@@ -854,7 +856,7 @@ void DynamicHandlerGetSlot(
        (MessageHandlerData(theEnv)->CurrentCore->hnd->cls != sp->desc->cls))
      {
       SlotVisibilityViolationError(theEnv,sp->desc,MessageHandlerData(theEnv)->CurrentCore->hnd->cls);
-      EnvSetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,true);
       return;
      }
    result->type = (unsigned short) sp->type;
@@ -886,13 +888,13 @@ void DynamicHandlerPutSlot(
 
    theResult->type = SYMBOL;
    theResult->value = EnvFalseSymbol(theEnv);
-   if (CheckCurrentMessage(theEnv,"dynamic-put",TRUE) == FALSE)
+   if (CheckCurrentMessage(theEnv,"dynamic-put",true) == false)
      return;
    EvaluateExpression(theEnv,GetFirstArgument(),&temp);
    if (temp.type != SYMBOL)
      {
       ExpectedTypeError1(theEnv,"dynamic-put",1,"symbol");
-      EnvSetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,true);
       return;
      }
    ins = GetActiveInstance(theEnv);
@@ -902,25 +904,25 @@ void DynamicHandlerPutSlot(
       SlotExistError(theEnv,ValueToString(temp.value),"dynamic-put");
       return;
      }
-   if ((sp->desc->noWrite == 0) ? FALSE :
+   if ((sp->desc->noWrite == 0) ? false :
        ((sp->desc->initializeOnly == 0) || (!ins->initializeInProgress)))
      {
       SlotAccessViolationError(theEnv,ValueToString(sp->desc->slotName->name),
-                               TRUE,(void *) ins);
-      EnvSetEvaluationError(theEnv,TRUE);
+                               true,(void *) ins);
+      EnvSetEvaluationError(theEnv,true);
       return;
      }
    if ((sp->desc->publicVisibility == 0) &&
        (MessageHandlerData(theEnv)->CurrentCore->hnd->cls != sp->desc->cls))
      {
       SlotVisibilityViolationError(theEnv,sp->desc,MessageHandlerData(theEnv)->CurrentCore->hnd->cls);
-      EnvSetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,true);
       return;
      }
    if (GetFirstArgument()->nextArg)
      {
       if (EvaluateAndStoreInDataObject(theEnv,(int) sp->desc->multiple,
-                        GetFirstArgument()->nextArg,&temp,TRUE) == FALSE)
+                        GetFirstArgument()->nextArg,&temp,true) == false)
         return;
      }
    else
@@ -946,15 +948,15 @@ void DynamicHandlerPutSlot(
                  2) Message argument expressions
                     (including implicit object)
                  3) Message name
-  RETURNS      : Returns FALSE is an execution error occurred
-                 or execution is halted, otherwise TRUE
+  RETURNS      : Returns false is an execution error occurred
+                 or execution is halted, otherwise true
   SIDE EFFECTS : Any side-effects of message execution
                     and caller's result buffer set
   NOTES        : It's no longer necessary for a defclass
                  to be in scope in order to sent a message
                  to an instance of that class.
  *****************************************************/
-static intBool PerformMessage(
+static bool PerformMessage(
   void *theEnv,
   DATA_OBJECT *result,
   EXPRESSION *args,
@@ -973,16 +975,16 @@ static intBool PerformMessage(
 
    result->type = SYMBOL;
    result->value = EnvFalseSymbol(theEnv);
-   EvaluationData(theEnv)->EvaluationError = FALSE;
+   EvaluationData(theEnv)->EvaluationError = false;
    if (EvaluationData(theEnv)->HaltExecution)
-     return FALSE;
+     return false;
 
    oldGarbageFrame = UtilityData(theEnv)->CurrentGarbageFrame;
    memset(&newGarbageFrame,0,sizeof(struct garbageFrame));
    UtilityData(theEnv)->CurrentGarbageFrame = &newGarbageFrame;
 
    oldce = ExecutingConstruct(theEnv);
-   SetExecutingConstruct(theEnv,TRUE);
+   SetExecutingConstruct(theEnv,true);
    oldName = MessageHandlerData(theEnv)->CurrentMessageName;
    MessageHandlerData(theEnv)->CurrentMessageName = mname;
    EvaluationData(theEnv)->CurrentEvaluationDepth++;
@@ -998,10 +1000,10 @@ static intBool PerformMessage(
       MessageHandlerData(theEnv)->CurrentMessageName = oldName;
       
       RestorePriorGarbageFrame(theEnv,&newGarbageFrame,oldGarbageFrame,result);
-      CallPeriodicTasks(theEnv);      
+      CallPeriodicTasks(theEnv);
       
       SetExecutingConstruct(theEnv,oldce);
-      return FALSE;
+      return false;
      }
 
    if (ProceduralPrimitiveData(theEnv)->ProcParamArray->type == INSTANCE_ADDRESS)
@@ -1010,9 +1012,9 @@ static intBool PerformMessage(
       if (ins->garbage == 1)
         {
          StaleInstanceAddress(theEnv,"send",0);
-         EnvSetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,true);
         }
-      //else if (DefclassInScope(theEnv,ins->cls,(struct defmodule *) EnvGetCurrentModule(theEnv)) == FALSE)
+      //else if (DefclassInScope(theEnv,ins->cls,(struct defmodule *) EnvGetCurrentModule(theEnv)) == false)
       //  NoInstanceError(theEnv,ValueToString(ins->name),"send");
       else
         {
@@ -1025,11 +1027,11 @@ static intBool PerformMessage(
       ins = FindInstanceBySymbol(theEnv,(SYMBOL_HN *) ProceduralPrimitiveData(theEnv)->ProcParamArray->value);
       if (ins == NULL)
         {
-         PrintErrorID(theEnv,"MSGPASS",2,FALSE);
+         PrintErrorID(theEnv,"MSGPASS",2,false);
          EnvPrintRouter(theEnv,WERROR,"No such instance ");
          EnvPrintRouter(theEnv,WERROR,ValueToString((SYMBOL_HN *) ProceduralPrimitiveData(theEnv)->ProcParamArray->value));
          EnvPrintRouter(theEnv,WERROR," in function send.\n");
-         EnvSetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,true);
         }
       else
         {
@@ -1054,7 +1056,7 @@ static intBool PerformMessage(
       CallPeriodicTasks(theEnv);
 
       SetExecutingConstruct(theEnv,oldce);
-      return FALSE;
+      return false;
      }
 
    /* oldCore = MessageHandlerData(theEnv)->TopOfCore; */
@@ -1134,7 +1136,7 @@ static intBool PerformMessage(
    if (MessageHandlerData(theEnv)->OldCore != NULL)
      { MessageHandlerData(theEnv)->OldCore = MessageHandlerData(theEnv)->OldCore->nxtInStack; }
 
-   ProcedureFunctionData(theEnv)->ReturnFlag = FALSE;
+   ProcedureFunctionData(theEnv)->ReturnFlag = false;
 
    if (ins != NULL)
      ins->busy--;
@@ -1155,10 +1157,10 @@ static intBool PerformMessage(
      {
       result->type = SYMBOL;
       result->value = EnvFalseSymbol(theEnv);
-      return FALSE;
+      return false;
      }
      
-   return TRUE;
+   return true;
   }
 
 /*****************************************************************************
@@ -1265,7 +1267,7 @@ static void CallHandlers(
       if (MessageHandlerData(theEnv)->CurrentCore->hnd->trace)
         WatchHandler(theEnv,WTRACE,MessageHandlerData(theEnv)->CurrentCore,END_TRACE);
 #endif
-      ProcedureFunctionData(theEnv)->ReturnFlag = FALSE;
+      ProcedureFunctionData(theEnv)->ReturnFlag = false;
       if ((MessageHandlerData(theEnv)->NextInCore == NULL) || EvaluationData(theEnv)->HaltExecution)
         {
          MessageHandlerData(theEnv)->NextInCore = oldNext;
@@ -1305,7 +1307,7 @@ static void CallHandlers(
       if (MessageHandlerData(theEnv)->CurrentCore->hnd->trace)
         WatchHandler(theEnv,WTRACE,MessageHandlerData(theEnv)->CurrentCore,END_TRACE);
 #endif
-      ProcedureFunctionData(theEnv)->ReturnFlag = FALSE;
+      ProcedureFunctionData(theEnv)->ReturnFlag = false;
 
       if ((MessageHandlerData(theEnv)->NextInCore == NULL) || EvaluationData(theEnv)->HaltExecution)
         {
@@ -1356,7 +1358,7 @@ static void CallHandlers(
       if (MessageHandlerData(theEnv)->CurrentCore->hnd->trace)
         WatchHandler(theEnv,WTRACE,MessageHandlerData(theEnv)->CurrentCore,END_TRACE);
 #endif
-      ProcedureFunctionData(theEnv)->ReturnFlag = FALSE;
+      ProcedureFunctionData(theEnv)->ReturnFlag = false;
       if ((MessageHandlerData(theEnv)->NextInCore == NULL) || EvaluationData(theEnv)->HaltExecution)
         {
          MessageHandlerData(theEnv)->NextInCore = oldNext;
@@ -1395,13 +1397,13 @@ static void EarlySlotBindError(
    SLOT_DESC *sd;
 
    sd = theDefclass->instanceTemplate[theDefclass->slotNameMap[slotID] - 1];
-   PrintErrorID(theEnv,"MSGPASS",3,FALSE);
+   PrintErrorID(theEnv,"MSGPASS",3,false);
    EnvPrintRouter(theEnv,WERROR,"Static reference to slot ");
    EnvPrintRouter(theEnv,WERROR,ValueToString(sd->slotName->name));
    EnvPrintRouter(theEnv,WERROR," of class ");
-   PrintClassName(theEnv,WERROR,theDefclass,FALSE);
+   PrintClassName(theEnv,WERROR,theDefclass,false);
    EnvPrintRouter(theEnv,WERROR," does not apply to ");
-   PrintInstanceNameAndClass(theEnv,WERROR,theInstance,TRUE);
+   PrintInstanceNameAndClass(theEnv,WERROR,theInstance,true);
   }
 
 /*#####################################*/

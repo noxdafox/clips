@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*              FACT FUNCTIONS HEADER FILE             */
    /*******************************************************/
@@ -38,6 +38,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_factfun
@@ -52,8 +54,8 @@
    void                          *FactRelationFunction(void *);
    void                          *FactRelation(void *);
    void                          *EnvFactDeftemplate(void *,void *);
-   int                            FactExistpFunction(void *);
-   int                            EnvFactExistp(void *,void *);
+   bool                           FactExistpFunction(void *);
+   bool                           EnvFactExistp(void *,void *);
    void                           FactSlotValueFunction(void *,DATA_OBJECT *);
    void                           FactSlotValue(void *,void *,const char *,DATA_OBJECT *);
    void                           FactSlotNamesFunction(void *,DATA_OBJECT *);
@@ -61,16 +63,16 @@
    void                           GetFactListFunction(void *,DATA_OBJECT *);
    void                           EnvGetFactList(void *,DATA_OBJECT *,void *);
    void                           PPFactFunction(void *);
-   void                           EnvPPFact(void *,void *,const char *,int);
-   struct fact                   *GetFactAddressOrIndexArgument(void *,const char *,int,int);
+   void                           EnvPPFact(void *,void *,const char *,bool);
+   struct fact                   *GetFactAddressOrIndexArgument(void *,const char *,int,bool);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
    void                          *FactDeftemplate(void *);
-   int                            FactExistp(void *);
+   bool                           FactExistp(void *);
    void                           FactSlotNames(void *,DATA_OBJECT *);
    void                           GetFactList(DATA_OBJECT_PTR,void *);
-   void                           PPFact(void *,const char *,int);
+   void                           PPFact(void *,const char *,bool);
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */
 

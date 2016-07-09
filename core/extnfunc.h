@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*            EXTERNAL FUNCTIONS HEADER FILE           */
    /*******************************************************/
@@ -39,6 +39,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_extnfunc
@@ -62,9 +64,9 @@ struct FunctionDefinition
    int (*functionPointer)(void);
    struct expr *(*parser)(void *,struct expr *,const char *);
    struct symbolHashNode *restrictions;
-   short int overloadable;
-   short int sequenceuseok;
-   short int environmentAware;
+   bool overloadable;
+   bool sequenceuseok;
+   bool environmentAware;
    short int bsaveIndex;
    struct FunctionDefinition *next;
    struct userData *usrData;
@@ -87,7 +89,7 @@ struct FunctionDefinition
 #define EXTERNAL_FUNCTION_DATA 50
 
 struct externalFunctionData
-  { 
+  {
    struct FunctionDefinition *ListOfFunctions;
    struct FunctionHash **FunctionHashtable;
   };
@@ -103,34 +105,34 @@ struct FunctionHash
 #define SIZE_FUNCTION_HASH 517
 
    void                           InitializeExternalFunctionData(void *);
-   int                            EnvDefineFunction(void *,const char *,int,
+   bool                           EnvDefineFunction(void *,const char *,int,
                                                            int (*)(void *),const char *);
-   int                            EnvDefineFunction2(void *,const char *,int,
+   bool                           EnvDefineFunction2(void *,const char *,int,
                                                             int (*)(void *),const char *,const char *);
-   int                            EnvDefineFunctionWithContext(void *,const char *,int,
+   bool                           EnvDefineFunctionWithContext(void *,const char *,int,
                                                            int (*)(void *),const char *,void *);
-   int                            EnvDefineFunction2WithContext(void *,const char *,int,
+   bool                           EnvDefineFunction2WithContext(void *,const char *,int,
                                                             int (*)(void *),const char *,const char *,void *);
-   int                            DefineFunction3(void *,const char *,int,
-                                                         int (*)(void *),const char *,const char *,intBool,void *);
-   int                            AddFunctionParser(void *,const char *,
+   bool                           DefineFunction3(void *,const char *,int,
+                                                         int (*)(void *),const char *,const char *,bool,void *);
+   bool                           AddFunctionParser(void *,const char *,
                                                            struct expr *(*)( void *,struct expr *,const char *));
-   int                            RemoveFunctionParser(void *,const char *);
-   int                            FuncSeqOvlFlags(void *,const char *,int,int);
+   bool                           RemoveFunctionParser(void *,const char *);
+   bool                           FuncSeqOvlFlags(void *,const char *,bool,bool);
    struct FunctionDefinition     *GetFunctionList(void *);
    void                           InstallFunctionList(void *,struct FunctionDefinition *);
    struct FunctionDefinition     *FindFunction(void *,const char *);
    int                            GetNthRestriction(struct FunctionDefinition *,int);
    const char                    *GetArgumentTypeName(int);
-   int                            UndefineFunction(void *,const char *);
+   bool                           UndefineFunction(void *,const char *);
    int                            GetMinimumArgs(struct FunctionDefinition *);
    int                            GetMaximumArgs(struct FunctionDefinition *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
 #if (! RUN_TIME)
-   int                            DefineFunction(const char *,int,int (*)(void),const char *);
-   int                            DefineFunction2(const char *,int,int (*)(void),const char *,const char *);
+   bool                           DefineFunction(const char *,int,int (*)(void),const char *);
+   bool                           DefineFunction2(const char *,int,int (*)(void),const char *,const char *);
 #endif /* (! RUN_TIME) */
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */

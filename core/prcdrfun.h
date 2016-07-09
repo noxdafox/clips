@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*          PROCEDURAL FUNCTIONS HEADER FILE           */
    /*******************************************************/
@@ -36,6 +36,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_prcdrfun
@@ -56,8 +58,8 @@ typedef struct loopCounterStack
 
 struct procedureFunctionData
   { 
-   int ReturnFlag;
-   int BreakFlag;
+   bool ReturnFlag;
+   bool BreakFlag;
    LOOP_COUNTER_STACK *LoopCounterStack;
    struct dataObject *BindList;
   };
@@ -74,7 +76,7 @@ struct procedureFunctionData
    void                           ReturnFunction(void *,DATA_OBJECT_PTR);
    void                           BreakFunction(void *);
    void                           SwitchFunction(void *,DATA_OBJECT_PTR);
-   intBool                        GetBoundVariable(void *,struct dataObject *,struct symbolHashNode *);
+   bool                           GetBoundVariable(void *,struct dataObject *,struct symbolHashNode *);
    void                           FlushBindList(void *);
 
 #endif /* _H_prcdrfun */

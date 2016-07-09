@@ -57,9 +57,9 @@
 
 #if TEXTPRO_FUNCTIONS
    void                           FetchCommand(void *,DATA_OBJECT *);
-   int                            PrintRegionCommand(void *);
+   bool                           PrintRegionCommand(void *);
    void                          *GetRegionCommand(void *);
-   int                                   TossCommand(void *);
+   bool                           TossCommand(void *);
 #endif
 
    void                           HelpFunctionDefinitions(void *);

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*           MULTIFIELD FUNCTIONS HEADER FILE          */
    /*******************************************************/
@@ -44,6 +44,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_multifun
@@ -70,23 +72,23 @@
    void                    FirstFunction(void *,DATA_OBJECT_PTR);
    void                    RestFunction(void *,DATA_OBJECT_PTR);
    void                    NthFunction(void *,DATA_OBJECT_PTR);
-   intBool                 SubsetpFunction(void *);
+   bool                    SubsetpFunction(void *);
    void                    MemberFunction(void *,DATA_OBJECT_PTR);
    void                    MultifieldPrognFunction(void *,DATA_OBJECT_PTR);
    void                    ForeachFunction(void *,DATA_OBJECT_PTR);
    void                    GetMvPrognField(void *,DATA_OBJECT_PTR);
    long                    GetMvPrognIndex(void *);
-   intBool                 FindDOsInSegment(DATA_OBJECT_PTR,int,DATA_OBJECT_PTR,
+   bool                    FindDOsInSegment(DATA_OBJECT_PTR,int,DATA_OBJECT_PTR,
                                                    long *,long *,long *,int);
 #endif
-   int                     ReplaceMultiValueField(void *,struct dataObject *,
+   bool                    ReplaceMultiValueField(void *,struct dataObject *,
                                                          struct dataObject *,
                                                          long,long,
                                                          struct dataObject *,const char *);
-   int                     InsertMultiValueField(void *,struct dataObject *,
+   bool                    InsertMultiValueField(void *,struct dataObject *,
                                                         struct dataObject *,
                                                         long,struct dataObject *,const char *);
-   int                     DeleteMultiValueField(void *,struct dataObject *,struct dataObject *,
+   bool                    DeleteMultiValueField(void *,struct dataObject *,struct dataObject *,
                                                         long,long,const char *);
 
 #endif /* _H_multifun */

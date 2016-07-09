@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*            DEFAULT ATTRIBUTE HEADER FILE            */
    /*******************************************************/
@@ -30,6 +30,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_default
@@ -41,8 +43,8 @@
 #include "constrnt.h"
 #include "evaluatn.h"
 
-   void                           DeriveDefaultFromConstraints(void *,CONSTRAINT_RECORD *,DATA_OBJECT *,int,int);
-   struct expr                   *ParseDefault(void *,const char *,int,int,int,int *,int *,int *);
+   void                           DeriveDefaultFromConstraints(void *,CONSTRAINT_RECORD *,DATA_OBJECT *,bool,bool);
+   struct expr                   *ParseDefault(void *,const char *,bool,bool,bool,bool *,bool *,bool *);
 
 #endif /* _H_default */
 

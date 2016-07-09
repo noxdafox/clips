@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/23/16            */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -23,6 +23,8 @@
 /*            Changed integer type/precision.                */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -190,7 +192,7 @@ static void BsaveDeffunctionFind(
 
    DeffunctionBinaryData(theEnv)->ModuleCount = 
       DoForAllConstructs(theEnv,MarkDeffunctionItems,DeffunctionData(theEnv)->DeffunctionModuleIndex,
-                         FALSE,NULL);
+                         false,NULL);
   }
 
 /***************************************************
@@ -231,7 +233,7 @@ static void BsaveDeffunctionExpressions(
   FILE *fp)
   {
    DoForAllConstructs(theEnv,BsaveDeffunctionExpression,DeffunctionData(theEnv)->DeffunctionModuleIndex,
-                      FALSE,(void *) fp);
+                      false,(void *) fp);
   }
 
 /***************************************************
@@ -315,7 +317,7 @@ static void BsaveDeffunctions(
       Write out each deffunction
       ========================== */
    DoForAllConstructs(theEnv,BsaveDeffunction,DeffunctionData(theEnv)->DeffunctionModuleIndex,
-                      FALSE,(void *) fp);
+                      false,(void *) fp);
 
    RestoreBloadCount(theEnv,&DeffunctionBinaryData(theEnv)->ModuleCount);
    RestoreBloadCount(theEnv,&DeffunctionBinaryData(theEnv)->DeffunctionCount);

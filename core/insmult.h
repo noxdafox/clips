@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -29,6 +29,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_insmult
@@ -46,9 +48,9 @@
    void                           MVSlotReplaceCommand(void *,DATA_OBJECT *);
    void                           MVSlotInsertCommand(void *,DATA_OBJECT *);
    void                           MVSlotDeleteCommand(void *,DATA_OBJECT *);
-   intBool                        DirectMVReplaceCommand(void *);
-   intBool                        DirectMVInsertCommand(void *);
-   intBool                        DirectMVDeleteCommand(void *);
+   bool                           DirectMVReplaceCommand(void *);
+   bool                           DirectMVInsertCommand(void *);
+   bool                           DirectMVDeleteCommand(void *);
 
 #endif /* _H_insmult */
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*              DEFFUNCTION HEADER FILE                */
    /*******************************************************/
@@ -52,6 +52,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_dffnxfun
@@ -80,7 +82,7 @@ struct deffunctionStruct
    struct constructHeader header;
    unsigned busy,
             executing;
-   unsigned short trace;
+   bool trace;
    EXPRESSION *code;
    int minNumberOfParameters,
        maxNumberOfParameters,
@@ -95,7 +97,7 @@ struct deffunctionData
    int DeffunctionModuleIndex;
    ENTITY_RECORD DeffunctionEntityRecord;
 #if DEBUGGING_FUNCTIONS
-   unsigned WatchDeffunctions;
+   bool WatchDeffunctions;
 #endif
    struct CodeGeneratorItem *DeffunctionCodeItem;
    DEFFUNCTION *ExecutingDeffunction;
@@ -106,7 +108,7 @@ struct deffunctionData
 
 #define DeffunctionData(theEnv) ((struct deffunctionData *) GetEnvironmentData(theEnv,DEFFUNCTION_DATA))
 
-   int                            CheckDeffunctionCall(void *,void *,int);
+   bool                           CheckDeffunctionCall(void *,void *,int);
    void                           DeffunctionGetBind(DATA_OBJECT *);
    void                           DFRtnUnknown(DATA_OBJECT *);
    void                           DFWildargs(DATA_OBJECT *);
@@ -118,9 +120,9 @@ struct deffunctionData
    SYMBOL_HN                     *EnvGetDeffunctionNamePointer(void *,void *);
    const char                    *EnvGetDeffunctionPPForm(void *,void *);
    void                          *EnvGetNextDeffunction(void *,void *);
-   int                            EnvIsDeffunctionDeletable(void *,void *);
+   bool                           EnvIsDeffunctionDeletable(void *,void *);
    void                           EnvSetDeffunctionPPForm(void *,void *,const char *);
-   intBool                        EnvUndeffunction(void *,void *);
+   bool                           EnvUndeffunction(void *,void *);
    void                           GetDeffunctionListFunction(void *,DATA_OBJECT *);
    void                          *GetDeffunctionModuleCommand(void *);
    DEFFUNCTION                   *LookupDeffunctionByMdlOrScope(void *,const char *);
@@ -131,9 +133,9 @@ struct deffunctionData
    void                           SetupDeffunctions(void *);
    void                           UndeffunctionCommand(void *);
 #if DEBUGGING_FUNCTIONS
-   unsigned                       EnvGetDeffunctionWatch(void *,void *);
+   bool                           EnvGetDeffunctionWatch(void *,void *);
    void                           EnvListDeffunctions(void *,const char *,struct defmodule *);
-   void                           EnvSetDeffunctionWatch(void *,unsigned,void *);
+   void                           EnvSetDeffunctionWatch(void *,bool,void *);
    void                           ListDeffunctionsCommand(void *);
    void                           PPDeffunctionCommand(void *);
 #endif
@@ -146,12 +148,12 @@ struct deffunctionData
    const char                    *GetDeffunctionName(void *);
    const char                    *GetDeffunctionPPForm(void *);
    void                          *GetNextDeffunction(void *);
-   intBool                        IsDeffunctionDeletable(void *);
-   intBool                        Undeffunction(void *);
+   bool                           IsDeffunctionDeletable(void *);
+   bool                           Undeffunction(void *);
 #if DEBUGGING_FUNCTIONS
-   unsigned                       GetDeffunctionWatch(void *);
+   bool                           GetDeffunctionWatch(void *);
    void                           ListDeffunctions(const char *,struct defmodule *);
-   void                           SetDeffunctionWatch(unsigned,void *);
+   void                           SetDeffunctionWatch(bool,void *);
 #endif 
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */

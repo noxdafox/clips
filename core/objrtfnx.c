@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/25/16             */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*    INFERENCE ENGINE OBJECT ACCESS ROUTINES MODULE   */
    /*******************************************************/
@@ -35,6 +35,8 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 /* =========================================
@@ -85,28 +87,28 @@
    ***************************************** */
 
 static void PrintObjectGetVarJN1(void *,const char *,void *);
-static intBool ObjectGetVarJNFunction1(void *,void *,DATA_OBJECT *);
+static bool ObjectGetVarJNFunction1(void *,void *,DATA_OBJECT *);
 static void PrintObjectGetVarJN2(void *,const char *,void *);
-static intBool ObjectGetVarJNFunction2(void *,void *,DATA_OBJECT *);
+static bool ObjectGetVarJNFunction2(void *,void *,DATA_OBJECT *);
 static void PrintObjectGetVarPN1(void *,const char *,void *);
-static intBool ObjectGetVarPNFunction1(void *,void *,DATA_OBJECT *);
+static bool ObjectGetVarPNFunction1(void *,void *,DATA_OBJECT *);
 static void PrintObjectGetVarPN2(void *,const char *,void *);
-static intBool ObjectGetVarPNFunction2(void *,void *,DATA_OBJECT *);
+static bool ObjectGetVarPNFunction2(void *,void *,DATA_OBJECT *);
 static void PrintObjectCmpConstant(void *,const char *,void *);
 static void PrintSlotLengthTest(void *,const char *,void *);
-static intBool SlotLengthTestFunction(void *,void *,DATA_OBJECT *);
+static bool SlotLengthTestFunction(void *,void *,DATA_OBJECT *);
 static void PrintPNSimpleCompareFunction1(void *,const char *,void *);
-static intBool PNSimpleCompareFunction1(void *,void *,DATA_OBJECT *);
+static bool PNSimpleCompareFunction1(void *,void *,DATA_OBJECT *);
 static void PrintPNSimpleCompareFunction2(void *,const char *,void *);
-static intBool PNSimpleCompareFunction2(void *,void *,DATA_OBJECT *);
+static bool PNSimpleCompareFunction2(void *,void *,DATA_OBJECT *);
 static void PrintPNSimpleCompareFunction3(void *,const char *,void *);
-static intBool PNSimpleCompareFunction3(void *,void *,DATA_OBJECT *);
+static bool PNSimpleCompareFunction3(void *,void *,DATA_OBJECT *);
 static void PrintJNSimpleCompareFunction1(void *,const char *,void *);
-static intBool JNSimpleCompareFunction1(void *,void *,DATA_OBJECT *);
+static bool JNSimpleCompareFunction1(void *,void *,DATA_OBJECT *);
 static void PrintJNSimpleCompareFunction2(void *,const char *,void *);
-static intBool JNSimpleCompareFunction2(void *,void *,DATA_OBJECT *);
+static bool JNSimpleCompareFunction2(void *,void *,DATA_OBJECT *);
 static void PrintJNSimpleCompareFunction3(void *,const char *,void *);
-static intBool JNSimpleCompareFunction3(void *,void *,DATA_OBJECT *);
+static bool JNSimpleCompareFunction3(void *,void *,DATA_OBJECT *);
 static void GetPatternObjectAndMarks(void *,int,int,int,INSTANCE_TYPE **,struct multifieldMarker **);
 static void GetObjectValueGeneral(void *,DATA_OBJECT *,INSTANCE_TYPE *,
                                  struct multifieldMarker *,struct ObjectMatchVar1 *);
@@ -296,7 +298,7 @@ static void DestroyObjectAlphaNodes(
      {
       nodePtr = theNode->nxtInGroup;
        
-      DestroyAlphaMemory(theEnv,&theNode->header,FALSE);
+      DestroyAlphaMemory(theEnv,&theNode->header,false);
 
 #if ! RUN_TIME
       rtn_struct(theEnv,objectAlphaNode,theNode);
@@ -312,14 +314,14 @@ static void DestroyObjectAlphaNodes(
                  against a constant
   INPUTS       : 1) The constant test bitmap
                  2) Data object buffer to hold result
-  RETURNS      : TRUE if test successful,
-                 FALSE otherwise
+  RETURNS      : True if test successful,
+                 false otherwise
   SIDE EFFECTS : Buffer set to symbol TRUE if test
-                 successful, FALSE otherwise
+                 successful, false otherwise
   NOTES        : Called directly by
                    EvaluatePatternExpression()
  *****************************************************/
-intBool ObjectCmpConstantFunction(
+bool ObjectCmpConstantFunction(
   void *theEnv,
   void *theValue,
   DATA_OBJECT *theResult)
@@ -419,7 +421,7 @@ static void PrintObjectGetVarJN1(
 #endif
   }
 
-static intBool ObjectGetVarJNFunction1(
+static bool ObjectGetVarJNFunction1(
   void *theEnv,
   void *theValue,
   DATA_OBJECT *theResult)
@@ -431,7 +433,7 @@ static intBool ObjectGetVarJNFunction1(
    hack = (struct ObjectMatchVar1 *) ValueToBitMap(theValue);
    GetPatternObjectAndMarks(theEnv,((int) hack->whichPattern),hack->lhs,hack->rhs,&theInstance,&theMarks);
    GetObjectValueGeneral(theEnv,theResult,theInstance,theMarks,hack);
-   return(TRUE);
+   return true;
   }
 
 static void PrintObjectGetVarJN2(
@@ -467,7 +469,7 @@ static void PrintObjectGetVarJN2(
 #endif
   }
 
-static intBool ObjectGetVarJNFunction2(
+static bool ObjectGetVarJNFunction2(
   void *theEnv,
   void *theValue,
   DATA_OBJECT *theResult)
@@ -479,7 +481,7 @@ static intBool ObjectGetVarJNFunction2(
    hack = (struct ObjectMatchVar2 *) ValueToBitMap(theValue);
    GetPatternObjectAndMarks(theEnv,((int) hack->whichPattern),hack->lhs,hack->rhs,&theInstance,&theMarks);
    GetObjectValueSimple(theEnv,theResult,theInstance,hack);
-   return(TRUE);
+   return true;
   }
 
 static void PrintObjectGetVarPN1(
@@ -516,7 +518,7 @@ static void PrintObjectGetVarPN1(
 #endif
   }
 
-static intBool ObjectGetVarPNFunction1(
+static bool ObjectGetVarPNFunction1(
   void *theEnv,
   void *theValue,
   DATA_OBJECT *theResult)
@@ -525,7 +527,7 @@ static intBool ObjectGetVarPNFunction1(
 
    hack = (struct ObjectMatchVar1 *) ValueToBitMap(theValue);
    GetObjectValueGeneral(theEnv,theResult,ObjectReteData(theEnv)->CurrentPatternObject,ObjectReteData(theEnv)->CurrentPatternObjectMarks,hack);
-   return(TRUE);
+   return true;
   }
 
 static void PrintObjectGetVarPN2(
@@ -559,7 +561,7 @@ static void PrintObjectGetVarPN2(
 #endif
   }
 
-static intBool ObjectGetVarPNFunction2(
+static bool ObjectGetVarPNFunction2(
   void *theEnv,
   void *theValue,
   DATA_OBJECT *theResult)
@@ -568,7 +570,7 @@ static intBool ObjectGetVarPNFunction2(
 
    hack = (struct ObjectMatchVar2 *) ValueToBitMap(theValue);
    GetObjectValueSimple(theEnv,theResult,ObjectReteData(theEnv)->CurrentPatternObject,hack);
-   return(TRUE);
+   return true;
   }
 
 static void PrintObjectCmpConstant(
@@ -628,7 +630,7 @@ static void PrintSlotLengthTest(
 #endif
   }
 
-static intBool SlotLengthTestFunction(
+static bool SlotLengthTestFunction(
   void *theEnv,
   void *theValue,
   DATA_OBJECT *theResult)
@@ -639,11 +641,11 @@ static intBool SlotLengthTestFunction(
    theResult->value = EnvFalseSymbol(theEnv);
    hack = (struct ObjectMatchLength *) ValueToBitMap(theValue);
    if (ObjectReteData(theEnv)->CurrentObjectSlotLength < hack->minLength)
-     return(FALSE);
+     return false;
    if (hack->exactly && (ObjectReteData(theEnv)->CurrentObjectSlotLength > hack->minLength))
-     return(FALSE);
+     return false;
    theResult->value = EnvTrueSymbol(theEnv);
-   return(TRUE);
+   return true;
   }
 
 static void PrintPNSimpleCompareFunction1(
@@ -671,7 +673,7 @@ static void PrintPNSimpleCompareFunction1(
 #endif
   }
 
-static intBool PNSimpleCompareFunction1(
+static bool PNSimpleCompareFunction1(
   void *theEnv,
   void *theValue,
   DATA_OBJECT *theResult)
@@ -721,7 +723,7 @@ static void PrintPNSimpleCompareFunction2(
 #endif
   }
 
-static intBool PNSimpleCompareFunction2(
+static bool PNSimpleCompareFunction2(
   void *theEnv,
   void *theValue,
   DATA_OBJECT *theResult)
@@ -775,7 +777,7 @@ static void PrintPNSimpleCompareFunction3(
 #endif
   }
 
-static intBool PNSimpleCompareFunction3(
+static bool PNSimpleCompareFunction3(
   void *theEnv,
   void *theValue,
   DATA_OBJECT *theResult)
@@ -829,7 +831,7 @@ static void PrintJNSimpleCompareFunction1(
 #endif
   }
 
-static intBool JNSimpleCompareFunction1(
+static bool JNSimpleCompareFunction1(
   void *theEnv,
   void *theValue,
   DATA_OBJECT *theResult)
@@ -887,7 +889,7 @@ static void PrintJNSimpleCompareFunction2(
 #endif
   }
 
-static intBool JNSimpleCompareFunction2(
+static bool JNSimpleCompareFunction2(
   void *theEnv,
   void *theValue,
   DATA_OBJECT *theResult)
@@ -949,7 +951,7 @@ static void PrintJNSimpleCompareFunction3(
 #endif
   }
 
-static intBool JNSimpleCompareFunction3(
+static bool JNSimpleCompareFunction3(
   void *theEnv,
   void *theValue,
   DATA_OBJECT *theResult)
@@ -1261,7 +1263,7 @@ static long CalculateSlotField(
         break;
       theMarkers = theMarkers->next;
      }
-   while ((theMarkers != NULL) ? (theMarkers->where.whichSlot == theSlotName) : FALSE)
+   while ((theMarkers != NULL) ? (theMarkers->where.whichSlot == theSlotName) : false)
      {
       if (theMarkers->whichField == theIndex)
         {

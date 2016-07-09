@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*                DEFMODULE HEADER FILE                */
    /*******************************************************/
@@ -40,6 +40,8 @@
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -86,7 +88,7 @@ struct defmodule
    struct defmoduleItemHeader **itemsArray;
    struct portItem *importList;
    struct portItem *exportList;
-   unsigned visitedFlag;
+   bool visitedFlag;
    long bsaveID;
    struct userData *usrData;
    struct defmodule *next;
@@ -134,8 +136,8 @@ struct defmoduleItemHeader
 /*   a string and the function returns a pointer to the specified     */
 /*   construct if it exists.                                          */
 /*                                                                    */
-/* exportable: If TRUE, then the specified construct type can be      */
-/*   exported (and hence imported). If FALSE, it can't be exported.   */
+/* exportable: If true, then the specified construct type can be      */
+/*   exported (and hence imported). If false, it can't be exported.   */
 /*                                                                    */
 /* next: A pointer to the next moduleItem data structure.             */
 /**********************************************************************/
@@ -154,7 +156,7 @@ struct moduleItem
 
 typedef struct moduleStackItem
   {
-   intBool changeFlag;
+   bool changeFlag;
    struct defmodule *theModule;
    struct moduleStackItem *next;
   } MODULE_STACK_ITEM;
@@ -172,14 +174,14 @@ struct defmoduleData
    struct moduleItem *LastModuleItem;
    struct callFunctionItem *AfterModuleChangeFunctions;
    MODULE_STACK_ITEM *ModuleStack;
-   intBool CallModuleChangeFunctions;
+   bool CallModuleChangeFunctions;
    struct defmodule *ListOfDefmodules;
    struct defmodule *CurrentModule;
    struct defmodule *LastDefmodule;
    int NumberOfModuleItems;
    struct moduleItem *ListOfModuleItems;
    long ModuleChangeIndex;
-   int MainModuleRedefinable;
+   bool MainModuleRedefinable;
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    struct portConstructItem *ListOfPortConstructItems;
    long NumberOfDefmodules;

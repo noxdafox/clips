@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/27/16            */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*                PRINT UTILITY MODULE                 */
    /*******************************************************/
@@ -49,6 +49,8 @@
 /*            SetEvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -276,7 +278,7 @@ void PrintErrorID(
   void *theEnv,
   const char *module,
   int errorID,
-  int printCR)
+  bool printCR)
   {
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    FlushParsingMessages(theEnv);
@@ -298,7 +300,7 @@ void PrintWarningID(
   void *theEnv,
   const char *module,
   int warningID,
-  int printCR)
+  bool printCR)
   {
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    FlushParsingMessages(theEnv);
@@ -321,7 +323,7 @@ void CantFindItemErrorMessage(
   const char *itemType,
   const char *itemName)
   {
-   PrintErrorID(theEnv,"PRNTUTIL",1,FALSE);
+   PrintErrorID(theEnv,"PRNTUTIL",1,false);
    EnvPrintRouter(theEnv,WERROR,"Unable to find ");
    EnvPrintRouter(theEnv,WERROR,itemType);
    EnvPrintRouter(theEnv,WERROR," ");
@@ -339,7 +341,7 @@ void CantFindItemInFunctionErrorMessage(
   const char *itemName,
   const char *func)
   {
-   PrintErrorID(theEnv,"PRNTUTIL",1,FALSE);
+   PrintErrorID(theEnv,"PRNTUTIL",1,false);
    EnvPrintRouter(theEnv,WERROR,"Unable to find ");
    EnvPrintRouter(theEnv,WERROR,itemType);
    EnvPrintRouter(theEnv,WERROR," ");
@@ -358,7 +360,7 @@ void CantDeleteItemErrorMessage(
   const char *itemType,
   const char *itemName)
   {
-   PrintErrorID(theEnv,"PRNTUTIL",4,FALSE);
+   PrintErrorID(theEnv,"PRNTUTIL",4,false);
    EnvPrintRouter(theEnv,WERROR,"Unable to delete ");
    EnvPrintRouter(theEnv,WERROR,itemType);
    EnvPrintRouter(theEnv,WERROR," ");
@@ -375,7 +377,7 @@ void AlreadyParsedErrorMessage(
   const char *itemType,
   const char *itemName)
   {
-   PrintErrorID(theEnv,"PRNTUTIL",5,TRUE);
+   PrintErrorID(theEnv,"PRNTUTIL",5,true);
    EnvPrintRouter(theEnv,WERROR,"The ");
    if (itemType != NULL) EnvPrintRouter(theEnv,WERROR,itemType);
    if (itemName != NULL) EnvPrintRouter(theEnv,WERROR,itemName);
@@ -389,7 +391,7 @@ void SyntaxErrorMessage(
   void *theEnv,
   const char *location)
   {
-   PrintErrorID(theEnv,"PRNTUTIL",2,TRUE);
+   PrintErrorID(theEnv,"PRNTUTIL",2,true);
    EnvPrintRouter(theEnv,WERROR,"Syntax Error");
    if (location != NULL)
      {
@@ -398,7 +400,7 @@ void SyntaxErrorMessage(
      }
 
    EnvPrintRouter(theEnv,WERROR,".\n");
-   EnvSetEvaluationError(theEnv,TRUE);
+   EnvSetEvaluationError(theEnv,true);
   }
 
 /****************************************************/
@@ -410,7 +412,7 @@ void LocalVariableErrorMessage(
   void *theEnv,
   const char *byWhat)
   {
-   PrintErrorID(theEnv,"PRNTUTIL",6,TRUE);
+   PrintErrorID(theEnv,"PRNTUTIL",6,true);
    EnvPrintRouter(theEnv,WERROR,"Local variables can not be accessed by ");
    EnvPrintRouter(theEnv,WERROR,byWhat);
    EnvPrintRouter(theEnv,WERROR,".\n");
@@ -425,7 +427,7 @@ void SystemError(
   const char *module,
   int errorID)
   {
-   PrintErrorID(theEnv,"PRNTUTIL",3,TRUE);
+   PrintErrorID(theEnv,"PRNTUTIL",3,true);
 
    EnvPrintRouter(theEnv,WERROR,"\n*** ");
    EnvPrintRouter(theEnv,WERROR,APPLICATION_NAME);
@@ -450,7 +452,7 @@ void DivideByZeroErrorMessage(
   void *theEnv,
   const char *functionName)
   {
-   PrintErrorID(theEnv,"PRNTUTIL",7,FALSE);
+   PrintErrorID(theEnv,"PRNTUTIL",7,false);
    EnvPrintRouter(theEnv,WERROR,"Attempt to divide by zero in ");
    EnvPrintRouter(theEnv,WERROR,functionName);
    EnvPrintRouter(theEnv,WERROR," function.\n");
@@ -613,7 +615,7 @@ void SalienceInformationError(
   const char *constructType,
   const char *constructName)
   {
-   PrintErrorID(theEnv,"PRNTUTIL",8,TRUE);
+   PrintErrorID(theEnv,"PRNTUTIL",8,true);
    EnvPrintRouter(theEnv,WERROR,"This error occurred while evaluating the salience");
    if (constructName != NULL)
      {
@@ -635,7 +637,7 @@ void SalienceRangeError(
   int min,
   int max)
   {
-   PrintErrorID(theEnv,"PRNTUTIL",9,TRUE);
+   PrintErrorID(theEnv,"PRNTUTIL",9,true);
    EnvPrintRouter(theEnv,WERROR,"Salience value out of range ");
    PrintLongInteger(theEnv,WERROR,(long int) min);
    EnvPrintRouter(theEnv,WERROR," to ");
@@ -650,7 +652,7 @@ void SalienceRangeError(
 void SalienceNonIntegerError(
   void *theEnv)
   {
-   PrintErrorID(theEnv,"PRNTUTIL",10,TRUE);
+   PrintErrorID(theEnv,"PRNTUTIL",10,true);
    EnvPrintRouter(theEnv,WERROR,"Salience value must be an integer value.\n");
   }
 
@@ -665,11 +667,11 @@ void SlotExistError(
   const char *sname,
   const char *func)
   {
-   PrintErrorID(theEnv,"INSFUN",3,FALSE);
+   PrintErrorID(theEnv,"INSFUN",3,false);
    EnvPrintRouter(theEnv,WERROR,"No such slot ");
    EnvPrintRouter(theEnv,WERROR,sname);
    EnvPrintRouter(theEnv,WERROR," in function ");
    EnvPrintRouter(theEnv,WERROR,func);
    EnvPrintRouter(theEnv,WERROR,".\n");
-   EnvSetEvaluationError(theEnv,TRUE);
+   EnvSetEvaluationError(theEnv,true);
   }

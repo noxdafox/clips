@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -33,6 +33,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_inspsr
@@ -45,7 +47,7 @@
 
 #if ! RUN_TIME
    EXPRESSION                    *ParseInitializeInstance(void *,EXPRESSION *,const char *);
-   EXPRESSION                    *ParseSlotOverrides(void *,const char *,int *);
+   EXPRESSION                    *ParseSlotOverrides(void *,const char *,bool *);
 #endif
 
    EXPRESSION                    *ParseSimpleInstance(void *,EXPRESSION *,const char *);

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/24/16            */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*          FACT RETE FUNCTION GENERATION MODULE       */
    /*******************************************************/
@@ -27,6 +27,8 @@
 /*            indices.                                       */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -237,12 +239,12 @@ struct expr *FactGenPNConstant(
    /* doing the comparison.                                           */
    /*=================================================================*/
 
-   if (theField->withinMultifieldSlot == FALSE)
+   if (theField->withinMultifieldSlot == false)
      {
       ClearBitString(&hack1,sizeof(struct factConstantPN1Call));
 
-      if (theField->negated) hack1.testForEquality = FALSE;
-      else hack1.testForEquality = TRUE;
+      if (theField->negated) hack1.testForEquality = false;
+      else hack1.testForEquality = true;
 
       hack1.whichSlot = (unsigned short) (theField->slotNumber - 1);
 
@@ -265,19 +267,19 @@ struct expr *FactGenPNConstant(
      {
       ClearBitString(&hack2,sizeof(struct factConstantPN2Call));
 
-      if (theField->negated) hack2.testForEquality = FALSE;
-      else hack2.testForEquality = TRUE;
+      if (theField->negated) hack2.testForEquality = false;
+      else hack2.testForEquality = true;
 
       hack2.whichSlot = (unsigned short) (theField->slotNumber - 1);
 
       if (theField->multiFieldsBefore == 0)
         {
-         hack2.fromBeginning = TRUE;
+         hack2.fromBeginning = true;
          hack2.offset = theField->singleFieldsBefore;
         }
       else
         {
-         hack2.fromBeginning = FALSE;
+         hack2.fromBeginning = false;
          hack2.offset = theField->singleFieldsAfter;
         }
 
@@ -330,7 +332,7 @@ struct expr *FactGenGetfield(
    /* or the fact relation name.                        */
    /*===================================================*/
 
-   if ((theNode->slotNumber > 0) && (theNode->withinMultifieldSlot == FALSE))
+   if ((theNode->slotNumber > 0) && (theNode->withinMultifieldSlot == false))
      { return(GenConstant(theEnv,FACT_PN_VAR2,FactGetVarPN2(theEnv,theNode))); }
 
    /*=====================================================*/
@@ -371,7 +373,7 @@ struct expr *FactGenGetvar(
    /* Generate call to retrieve single field slot value. */
    /*====================================================*/
 
-   if ((theNode->slotNumber > 0) && (theNode->withinMultifieldSlot == FALSE))
+   if ((theNode->slotNumber > 0) && (theNode->withinMultifieldSlot == false))
      { return(GenConstant(theEnv,FACT_JN_VAR2,FactGetVarJN2(theEnv,theNode,side))); }
 
    /*=====================================================*/
@@ -494,7 +496,7 @@ void FactReplaceGetvar(
    /* Generate call to retrieve single field slot value. */
    /*====================================================*/
 
-   if ((theNode->slotNumber > 0) && (theNode->withinMultifieldSlot == FALSE))
+   if ((theNode->slotNumber > 0) && (theNode->withinMultifieldSlot == false))
      {
       theItem->type = FACT_JN_VAR2;
       theItem->value = FactGetVarJN2(theEnv,theNode,side);
@@ -549,7 +551,7 @@ void FactReplaceGetfield(
    /* Generate call to retrieve single field slot value. */
    /*====================================================*/
 
-   if (theNode->withinMultifieldSlot == FALSE)
+   if (theNode->withinMultifieldSlot == false)
      {
       theItem->type = FACT_PN_VAR2;
       theItem->value = FactGetVarPN2(theEnv,theNode);
@@ -1070,9 +1072,9 @@ struct expr *FactPNVariableComparison(
    /* then use the following specified variable comparison routine.  */
    /*================================================================*/
 
-   if ((selfNode->withinMultifieldSlot == FALSE) &&
+   if ((selfNode->withinMultifieldSlot == false) &&
        (selfNode->slotNumber > 0) &&
-       (referringNode->withinMultifieldSlot == FALSE) &&
+       (referringNode->withinMultifieldSlot == false) &&
        (referringNode->slotNumber > 0))
      {
       hack.pass = 0;
@@ -1117,7 +1119,7 @@ struct expr *FactJNVariableComparison(
   void *theEnv,
   struct lhsParseNode *selfNode,
   struct lhsParseNode *referringNode,
-  int nandJoin)
+  bool nandJoin)
   {
    struct expr *top;
    struct factCompVarsJN1Call hack1;
@@ -1129,9 +1131,9 @@ struct expr *FactJNVariableComparison(
    /* then use the following specified variable comparison routine.  */
    /*================================================================*/
 
-   if ((selfNode->withinMultifieldSlot == FALSE) &&
+   if ((selfNode->withinMultifieldSlot == false) &&
        (selfNode->slotNumber > 0) &&
-       (referringNode->withinMultifieldSlot == FALSE) &&
+       (referringNode->withinMultifieldSlot == false) &&
        (referringNode->slotNumber > 0))
      {
       ClearBitString(&hack1,sizeof(struct factCompVarsJN1Call));
@@ -1150,8 +1152,8 @@ struct expr *FactJNVariableComparison(
       else
         { hack1.pattern1 = 0; }
         
-      hack1.p1rhs = TRUE;
-      hack1.p2lhs = TRUE;
+      hack1.p1rhs = true;
+      hack1.p2lhs = true;
 
       hack1.pattern2 = (unsigned short) referringNode->joinDepth; 
       
@@ -1198,8 +1200,8 @@ struct expr *FactJNVariableComparison(
       else
         { hack2.pattern1 = 0; }
       
-      hack2.p1rhs = TRUE;
-      hack2.p2lhs = TRUE;
+      hack2.p1rhs = true;
+      hack2.p2lhs = true;
         
       hack2.pattern2 = (unsigned short) referringNode->joinDepth; 
       hack2.slot2 = (unsigned short) (referringNode->slotNumber - 1);

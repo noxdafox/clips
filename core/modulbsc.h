@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*         DEFMODULE BASIC COMMANDS HEADER FILE        */
    /*******************************************************/
@@ -32,6 +32,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_modulbsc
@@ -45,7 +47,7 @@
    void                           DefmoduleBasicCommands(void *);
    void                           EnvGetDefmoduleList(void *,DATA_OBJECT_PTR);
    void                           PPDefmoduleCommand(void *);
-   int                            PPDefmodule(void *,const char *,const char *);
+   bool                           PPDefmodule(void *,const char *,const char *);
    void                           ListDefmodulesCommand(void *);
    void                           EnvListDefmodules(void *,const char *);
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/28/16             */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*          DEFTEMPLATE BASIC COMMANDS MODULE          */
    /*******************************************************/
@@ -42,6 +42,8 @@
 /*            Converted API macros to function calls.        */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -145,7 +147,7 @@ static void ClearDeftemplates(
   {
 #if (! RUN_TIME) && (! BLOAD_ONLY)
 
-   CreateImpliedDeftemplate(theEnv,(SYMBOL_HN *) EnvAddSymbol(theEnv,"initial-fact"),FALSE);
+   CreateImpliedDeftemplate(theEnv,(SYMBOL_HN *) EnvAddSymbol(theEnv,"initial-fact"),false);
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -179,7 +181,7 @@ void UndeftemplateCommand(
 /* EnvUndeftemplate: C access routine */
 /*   for the undeftemplate command.   */
 /**************************************/
-intBool EnvUndeftemplate(
+bool EnvUndeftemplate(
   void *theEnv,
   void *theDeftemplate)
   {   
@@ -269,7 +271,7 @@ void EnvListDeftemplates(
 /* EnvGetDeftemplateWatch: C access routine for retrieving */
 /*   the current watch value of a deftemplate.             */
 /***********************************************************/
-unsigned EnvGetDeftemplateWatch(
+bool EnvGetDeftemplateWatch(
   void *theEnv,
   void *theTemplate)
   { 
@@ -286,7 +288,7 @@ unsigned EnvGetDeftemplateWatch(
 /*********************************************************/
 void EnvSetDeftemplateWatch(
   void *theEnv,
-  unsigned newState,
+  bool newState,
   void *theTemplate)
   {
 #if MAC_XCD
@@ -300,10 +302,10 @@ void EnvSetDeftemplateWatch(
 /* DeftemplateWatchAccess: Access routine for setting the */
 /*   watch flag of a deftemplate via the watch command.   */
 /**********************************************************/
-unsigned DeftemplateWatchAccess(
+bool DeftemplateWatchAccess(
   void *theEnv,
   int code,
-  unsigned newState,
+  bool newState,
   EXPRESSION *argExprs)
   {
 #if MAC_XCD
@@ -318,7 +320,7 @@ unsigned DeftemplateWatchAccess(
 /* DeftemplateWatchPrint: Access routine for printing which deftemplates */
 /*   have their watch flag set via the list-watch-items command.         */
 /*************************************************************************/
-unsigned DeftemplateWatchPrint(
+bool DeftemplateWatchPrint(
   void *theEnv,
   const char *logName,
   int code,
@@ -349,7 +351,7 @@ void GetDeftemplateList(
 
 #if DEBUGGING_FUNCTIONS
 
-unsigned GetDeftemplateWatch(
+bool GetDeftemplateWatch(
   void *theTemplate)
   {
    return EnvGetDeftemplateWatch(GetCurrentEnvironment(),theTemplate);
@@ -363,7 +365,7 @@ void ListDeftemplates(
   }
 
 void SetDeftemplateWatch(
-  unsigned newState,
+  bool newState,
   void *theTemplate)
   {
    EnvSetDeftemplateWatch(GetCurrentEnvironment(),newState,theTemplate);
@@ -371,7 +373,7 @@ void SetDeftemplateWatch(
 
 #endif /* DEBUGGING_FUNCTIONS */
 
-intBool Undeftemplate(
+bool Undeftemplate(
   void *theDeftemplate)
   {
    return EnvUndeftemplate(GetCurrentEnvironment(),theDeftemplate);

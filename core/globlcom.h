@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*            DEFGLOBAL COMMANDS HEADER FILE           */
    /*******************************************************/
@@ -34,6 +34,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_globlcom
@@ -43,17 +45,17 @@
 #define _H_globlcom
 
    void                           DefglobalCommandDefinitions(void *);
-   int                            SetResetGlobalsCommand(void *);
-   intBool                        EnvSetResetGlobals(void *,int);
-   int                            GetResetGlobalsCommand(void *);
-   intBool                        EnvGetResetGlobals(void *);
+   bool                           SetResetGlobalsCommand(void *);
+   bool                           EnvSetResetGlobals(void *,bool);
+   bool                           GetResetGlobalsCommand(void *);
+   bool                           EnvGetResetGlobals(void *);
    void                           ShowDefglobalsCommand(void *);
    void                           EnvShowDefglobals(void *,const char *,void *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-   intBool                        GetResetGlobals(void);
-   intBool                        SetResetGlobals(int);
+   bool                           GetResetGlobals(void);
+   bool                           SetResetGlobals(bool);
 #if DEBUGGING_FUNCTIONS
    void                           ShowDefglobals(const char *,void *);
 #endif

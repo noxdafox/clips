@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*                 SCANNER HEADER FILE                 */
    /*******************************************************/
@@ -32,6 +32,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_scanner
@@ -59,7 +61,7 @@ struct scannerData
    size_t GlobalMax;
    size_t GlobalPos;
    long LineCount;
-   int IgnoreCompletionErrors;
+   bool IgnoreCompletionErrors;
   };
 
 #define ScannerData(theEnv) ((struct scannerData *) GetEnvironmentData(theEnv,SCANNER_DATA))

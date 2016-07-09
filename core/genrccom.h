@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -43,6 +43,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_genrccom
@@ -65,14 +67,14 @@
    DEFGENERIC                    *LookupDefgenericInScope(void *,const char *);
    void                          *EnvGetNextDefgeneric(void *,void *);
    long                           EnvGetNextDefmethod(void *,void *,long);
-   int                            EnvIsDefgenericDeletable(void *,void *);
-   int                            EnvIsDefmethodDeletable(void *,void *,long);
+   bool                           EnvIsDefgenericDeletable(void *,void *);
+   bool                           EnvIsDefmethodDeletable(void *,void *,long);
    void                           UndefgenericCommand(void *);
    void                          *GetDefgenericModuleCommand(void *);
    void                           UndefmethodCommand(void *);
    DEFMETHOD                     *GetDefmethodPointer(void *,long);
-   intBool                        EnvUndefgeneric(void *,void *);
-   intBool                        EnvUndefmethod(void *,void *,long);
+   bool                           EnvUndefgeneric(void *,void *);
+   bool                           EnvUndefmethod(void *,void *,long);
 #if ! OBJECT_SYSTEM
    void                           TypeCommand(void *,DATA_OBJECT *);
 #endif
@@ -80,10 +82,10 @@
    void                           EnvGetDefmethodDescription(void *,char *,size_t,void *,long);
 #endif
 #if DEBUGGING_FUNCTIONS
-   unsigned                       EnvGetDefgenericWatch(void *,void *);
-   void                           EnvSetDefgenericWatch(void *,unsigned,void *);
-   unsigned                       EnvGetDefmethodWatch(void *,void *,long);
-   void                           EnvSetDefmethodWatch(void *,unsigned,void *,long);
+   bool                           EnvGetDefgenericWatch(void *,void *);
+   void                           EnvSetDefgenericWatch(void *,bool,void *);
+   bool                           EnvGetDefmethodWatch(void *,void *,long);
+   void                           EnvSetDefmethodWatch(void *,bool,void *,long);
    void                           PPDefgenericCommand(void *);
    void                           PPDefmethodCommand(void *);
    void                           ListDefmethodsCommand(void *);
@@ -115,21 +117,21 @@
    const char                    *GetDefgenericName(void *);
    const char                    *GetDefgenericPPForm(void *);
    void                          *GetNextDefgeneric(void *);
-   int                            IsDefgenericDeletable(void *);
-   intBool                        Undefgeneric(void *);
+   bool                           IsDefgenericDeletable(void *);
+   bool                           Undefgeneric(void *);
    void                           GetDefmethodList(void *,DATA_OBJECT_PTR);
    void                           GetMethodRestrictions(void *,long,DATA_OBJECT *);
    long                           GetNextDefmethod(void *,long );
-   int                            IsDefmethodDeletable(void *,long );
-   intBool                        Undefmethod(void *,long );
+   bool                           IsDefmethodDeletable(void *,long );
+   bool                           Undefmethod(void *,long );
 #if DEBUGGING_FUNCTIONS
-   unsigned                       GetDefgenericWatch(void *);
+   bool                           GetDefgenericWatch(void *);
    void                           ListDefgenerics(const char *,struct defmodule *);
-   void                           SetDefgenericWatch(unsigned,void *);
+   void                           SetDefgenericWatch(bool,void *);
    const char                    *GetDefmethodPPForm(void *,long);
-   unsigned                       GetDefmethodWatch(void *,long);
+   bool                           GetDefmethodWatch(void *,long);
    void                           ListDefmethods(const char *,void *);
-   void                           SetDefmethodWatch(unsigned,void *,long);
+   void                           SetDefmethodWatch(bool,void *,long);
 #endif /* DEBUGGING_FUNCTIONS */
 #if DEBUGGING_FUNCTIONS || PROFILING_FUNCTIONS
    void                           GetDefmethodDescription(char *,int,void *,long );

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*               EXPRESSION HEADER FILE                */
    /*******************************************************/
@@ -31,6 +31,8 @@
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -120,10 +122,10 @@ struct expressionData
 #endif
 #if (! RUN_TIME)
    SAVED_CONTEXTS *svContexts;
-   int ReturnContext;
-   int BreakContext;
+   bool ReturnContext;
+   bool BreakContext;
 #endif
-   intBool SequenceOpMode;
+   bool SequenceOpMode;
   };
 
 #define ExpressionData(theEnv) ((struct expressionData *) GetEnvironmentData(theEnv,EXPRESSION_DATA))

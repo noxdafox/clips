@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/23/16             */
+   /*            CLIPS Version 6.40  07/04/16             */
    /*                                                     */
    /*              CONSTRUCT PARSER MODULE                */
    /*******************************************************/
@@ -49,6 +49,10 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
+/*            Changed return values for router functions.    */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -77,7 +81,7 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static int                     FindConstructBeginning(void *,const char *,struct token *,int,int *);
+   static bool                    FindConstructBeginning(void *,const char *,struct token *,bool,bool *);
 
 /************************************************/
 /* Load: C access routine for the load command. */
@@ -109,7 +113,8 @@ int EnvLoad(
    /* Open the file specified by file name. */
    /*=======================================*/
 
-   if ((theFile = GenOpen(theEnv,fileName,"r")) == NULL) return(0);
+   if ((theFile = GenOpen(theEnv,fileName,"r")) == NULL)
+     { return 0; }
 
    /*===================================================*/
    /* Read in the constructs. Enabling fast load allows */
@@ -140,9 +145,10 @@ int EnvLoad(
    /* return 1, otherwise return -1.         */
    /*========================================*/
 
-   if (noErrorsDetected) return(1);
+   if (noErrorsDetected)
+     { return 1; }
 
-   return(-1);
+   return -1;
   }
 
 /*******************************************************/
@@ -257,8 +263,8 @@ int LoadConstructsFromLogicalName(
   {
    int constructFlag;
    struct token theToken;
-   int noErrors = TRUE;
-   int foundConstruct;
+   bool noErrors = true;
+   bool foundConstruct;
    struct garbageFrame newGarbageFrame;
    struct garbageFrame *oldGarbageFrame;
    long oldLineCountValue;
@@ -283,8 +289,8 @@ int LoadConstructsFromLogicalName(
    /* error flags in preparation for parsing. */
    /*=========================================*/
 
-   if (UtilityData(theEnv)->CurrentGarbageFrame->topLevel) EnvSetHaltExecution(theEnv,FALSE);
-   EnvSetEvaluationError(theEnv,FALSE);
+   if (UtilityData(theEnv)->CurrentGarbageFrame->topLevel) EnvSetHaltExecution(theEnv,false);
+   EnvSetEvaluationError(theEnv,false);
 
    /*==========================================*/
    /* Set up the frame for garbage collection. */
@@ -300,13 +306,13 @@ int LoadConstructsFromLogicalName(
    /*========================================================*/
 
    GetToken(theEnv,readSource,&theToken);
-   foundConstruct = FindConstructBeginning(theEnv,readSource,&theToken,FALSE,&noErrors);
+   foundConstruct = FindConstructBeginning(theEnv,readSource,&theToken,false,&noErrors);
 
    /*==================================================*/
    /* Parse the file until the end of file is reached. */
    /*==================================================*/
 
-   while ((foundConstruct == TRUE) && (EnvGetHaltExecution(theEnv) == FALSE))
+   while ((foundConstruct == true) && (EnvGetHaltExecution(theEnv) == false))
      {
       /*===========================================================*/
       /* Clear the pretty print buffer in preparation for parsing. */
@@ -335,9 +341,9 @@ int LoadConstructsFromLogicalName(
 
          FlushParsingMessages(theEnv);
 
-         noErrors = FALSE;
+         noErrors = false;
          GetToken(theEnv,readSource,&theToken);
-         foundConstruct = FindConstructBeginning(theEnv,readSource,&theToken,TRUE,&noErrors);
+         foundConstruct = FindConstructBeginning(theEnv,readSource,&theToken,true,&noErrors);
         }
 
       /*======================================================*/
@@ -348,7 +354,7 @@ int LoadConstructsFromLogicalName(
         {
          FlushParsingMessages(theEnv);
          GetToken(theEnv,readSource,&theToken);
-         foundConstruct = FindConstructBeginning(theEnv,readSource,&theToken,FALSE,&noErrors);
+         foundConstruct = FindConstructBeginning(theEnv,readSource,&theToken,false,&noErrors);
         }
 
       /*=====================================================*/
@@ -373,7 +379,7 @@ int LoadConstructsFromLogicalName(
    /*========================================================*/
 
 #if DEBUGGING_FUNCTIONS
-   if ((EnvGetWatchItem(theEnv,"compilations") != TRUE) && GetPrintWhileLoading(theEnv))
+   if ((EnvGetWatchItem(theEnv,"compilations") != true) && GetPrintWhileLoading(theEnv))
 #else
    if (GetPrintWhileLoading(theEnv))
 #endif
@@ -422,18 +428,18 @@ int LoadConstructsFromLogicalName(
 /********************************************************************/
 /* FindConstructBeginning: Searches for a left parenthesis followed */
 /*   by the name of a valid construct. Used by the load command to  */
-/*   find the next construct to be parsed. Returns TRUE is the      */
-/*   beginning of a construct was found, otherwise FALSE.           */
+/*   find the next construct to be parsed. Returns true is the      */
+/*   beginning of a construct was found, otherwise false.           */
 /********************************************************************/
-static int FindConstructBeginning(
+static bool FindConstructBeginning(
   void *theEnv,
   const char *readSource,
   struct token *theToken,
-  int errorCorrection,
-  int *noErrors)
+  bool errorCorrection,
+  bool *noErrors)
   {
-   int leftParenthesisFound = FALSE;
-   int firstAttempt = TRUE;
+   bool leftParenthesisFound = false;
+   bool firstAttempt = true;
 
    /*===================================================*/
    /* Process tokens until the beginning of a construct */
@@ -448,24 +454,24 @@ static int FindConstructBeginning(
       /*=====================================================*/
 
       if (theToken->type == LPAREN)
-        { leftParenthesisFound = TRUE; }
+        { leftParenthesisFound = true; }
 
       /*=================================================================*/
       /* The name of the construct follows the opening left parenthesis. */
-      /* If it is the name of a valid construct, then return TRUE.       */
+      /* If it is the name of a valid construct, then return true.       */
       /* Otherwise, reset the flags to look for the beginning of a       */
       /* construct. If error correction is being performed (i.e. the     */
       /* last construct parsed had an error in it), then don't bother to */
       /* print an error message, otherwise, print an error message.      */
       /*=================================================================*/
 
-      else if ((theToken->type == SYMBOL) && (leftParenthesisFound == TRUE))
+      else if ((theToken->type == SYMBOL) && (leftParenthesisFound == true))
         {
          /*===========================================================*/
          /* Is this a valid construct name (e.g., defrule, deffacts). */
          /*===========================================================*/
 
-         if (FindConstruct(theEnv,ValueToString(theToken->value)) != NULL) return(TRUE);
+         if (FindConstruct(theEnv,ValueToString(theToken->value)) != NULL) return true;
 
          /*===============================================*/
          /* The construct name is invalid. Print an error */
@@ -474,9 +480,9 @@ static int FindConstructBeginning(
 
          if (firstAttempt && (! errorCorrection))
            {
-            errorCorrection = TRUE;
-            *noErrors = FALSE;
-            PrintErrorID(theEnv,"CSTRCPSR",1,TRUE);
+            errorCorrection = true;
+            *noErrors = false;
+            PrintErrorID(theEnv,"CSTRCPSR",1,true);
             EnvPrintRouter(theEnv,WERROR,"Expected the beginning of a construct.\n");
            }
 
@@ -485,8 +491,8 @@ static int FindConstructBeginning(
          /* looking for a left parenthesis again.                */
          /*======================================================*/
 
-         firstAttempt = FALSE;
-         leftParenthesisFound = FALSE;
+         firstAttempt = false;
+         leftParenthesisFound = false;
         }
 
       /*====================================================================*/
@@ -500,14 +506,14 @@ static int FindConstructBeginning(
         {
          if (firstAttempt && (! errorCorrection))
            {
-            errorCorrection = TRUE;
-            *noErrors = FALSE;
-            PrintErrorID(theEnv,"CSTRCPSR",1,TRUE);
+            errorCorrection = true;
+            *noErrors = false;
+            PrintErrorID(theEnv,"CSTRCPSR",1,true);
             EnvPrintRouter(theEnv,WERROR,"Expected the beginning of a construct.\n");
            }
 
-         firstAttempt = FALSE;
-         leftParenthesisFound = FALSE;
+         firstAttempt = false;
+         leftParenthesisFound = false;
         }
 
       /*============================================*/
@@ -518,10 +524,10 @@ static int FindConstructBeginning(
      }
 
    /*===================================================================*/
-   /* Couldn't find the beginning of a construct, so FALSE is returned. */
+   /* Couldn't find the beginning of a construct, so false is returned. */
    /*===================================================================*/
 
-   return(FALSE);
+   return false;
   }
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
@@ -529,7 +535,7 @@ static int FindConstructBeginning(
 /*************************************************/
 /* FindError: Find routine for the error router. */
 /*************************************************/
-static int FindError(
+static bool FindError(
   void *theEnv,
   const char *logicalName)
   {
@@ -537,17 +543,17 @@ static int FindError(
 #pragma unused(theEnv)
 #endif
 
-   if ( (strcmp(logicalName,WERROR) == 0) ||
-        (strcmp(logicalName,WWARNING) == 0) )
-     { return(TRUE); }
+   if ((strcmp(logicalName,WERROR) == 0) ||
+       (strcmp(logicalName,WWARNING) == 0))
+     { return true; }
 
-    return(FALSE);
+    return false;
   }
 
 /***************************************************/
 /* PrintError: Print routine for the error router. */
 /***************************************************/
-static int PrintError(
+static void PrintError(
   void *theEnv,
   const char *logicalName,
   const char *str)
@@ -570,8 +576,6 @@ static int PrintError(
    EnvDeactivateRouter(theEnv,"error-capture");
    EnvPrintRouter(theEnv,logicalName,str);
    EnvActivateRouter(theEnv,"error-capture");
-
-   return(1);
   }
 
 /***********************************************/
@@ -725,20 +729,20 @@ int ParseConstruct(
    /*==================================*/
 
    ov = EnvGetHaltExecution(theEnv);
-   EnvSetEvaluationError(theEnv,FALSE);
-   EnvSetHaltExecution(theEnv,FALSE);
+   EnvSetEvaluationError(theEnv,false);
+   EnvSetHaltExecution(theEnv,false);
    ClearParsedBindNames(theEnv);
    PushRtnBrkContexts(theEnv);
-   ExpressionData(theEnv)->ReturnContext = FALSE;
-   ExpressionData(theEnv)->BreakContext = FALSE;
+   ExpressionData(theEnv)->ReturnContext = false;
+   ExpressionData(theEnv)->BreakContext = false;
 
    /*=======================================*/
    /* Call the construct's parsing routine. */
    /*=======================================*/
 
-   ConstructData(theEnv)->ParsingConstruct = TRUE;
+   ConstructData(theEnv)->ParsingConstruct = true;
    rv = (*currentPtr->parseFunction)(theEnv,logicalName);
-   ConstructData(theEnv)->ParsingConstruct = FALSE;
+   ConstructData(theEnv)->ParsingConstruct = false;
 
    /*===============================*/
    /* Restore environment settings. */
@@ -747,7 +751,7 @@ int ParseConstruct(
    PopRtnBrkContexts(theEnv);
 
    ClearParsedBindNames(theEnv);
-   SetPPBufferStatus(theEnv,OFF);
+   SetPPBufferStatus(theEnv,false);
    EnvSetHaltExecution(theEnv,ov);
       
    /*======================================*/
@@ -776,18 +780,18 @@ SYMBOL_HN *GetConstructNameAndComment(
   struct token *inputToken,
   const char *constructName,
   void *(*findFunction)(void *,const char *),
-  int (*deleteFunction)(void *,void *),
+  bool (*deleteFunction)(void *,void *),
   const char *constructSymbol,
-  int fullMessageCR,
-  int getComment,
-  int moduleNameAllowed,
-  int ignoreRedefinition)
+  bool fullMessageCR,
+  bool getComment,
+  bool moduleNameAllowed,
+  bool ignoreRedefinition)
   {
 #if (MAC_XCD) && (! DEBUGGING_FUNCTIONS)
 #pragma unused(fullMessageCR)
 #endif
    SYMBOL_HN *name, *moduleName;
-   int redefining = FALSE;
+   bool redefining = false;
    void *theConstruct;
    unsigned separatorPosition;
    struct defmodule *theModule;
@@ -800,7 +804,7 @@ SYMBOL_HN *GetConstructNameAndComment(
    GetToken(theEnv,readSource,inputToken);
    if (inputToken->type != SYMBOL)
      {
-      PrintErrorID(theEnv,"CSTRCPSR",2,TRUE);
+      PrintErrorID(theEnv,"CSTRCPSR",2,true);
       EnvPrintRouter(theEnv,WERROR,"Missing name for ");
       EnvPrintRouter(theEnv,WERROR,constructName);
       EnvPrintRouter(theEnv,WERROR," construct\n");
@@ -816,7 +820,7 @@ SYMBOL_HN *GetConstructNameAndComment(
    separatorPosition = FindModuleSeparator(ValueToString(name));
    if (separatorPosition)
      {
-      if (moduleNameAllowed == FALSE)
+      if (moduleNameAllowed == false)
         {
          SyntaxErrorMessage(theEnv,"module specifier");
          return(NULL);
@@ -884,12 +888,12 @@ SYMBOL_HN *GetConstructNameAndComment(
       theConstruct = (*findFunction)(theEnv,ValueToString(name));
       if (theConstruct != NULL)
         {
-         redefining = TRUE;
+         redefining = true;
          if (deleteFunction != NULL)
            {
-            if ((*deleteFunction)(theEnv,theConstruct) == FALSE)
+            if ((*deleteFunction)(theEnv,theConstruct) == false)
               {
-               PrintErrorID(theEnv,"CSTRCPSR",4,TRUE);
+               PrintErrorID(theEnv,"CSTRCPSR",4,true);
                EnvPrintRouter(theEnv,WERROR,"Cannot redefine ");
                EnvPrintRouter(theEnv,WERROR,constructName);
                EnvPrintRouter(theEnv,WERROR," ");
@@ -907,14 +911,14 @@ SYMBOL_HN *GetConstructNameAndComment(
    /*=============================================*/
 
 #if DEBUGGING_FUNCTIONS
-   if ((EnvGetWatchItem(theEnv,"compilations") == TRUE) &&
+   if ((EnvGetWatchItem(theEnv,"compilations") == true) &&
        GetPrintWhileLoading(theEnv) && (! ConstructData(theEnv)->CheckSyntaxMode))
      {
       const char *outRouter = WDIALOG;
       if (redefining && (! ignoreRedefinition))
         {
          outRouter = WWARNING;
-         PrintWarningID(theEnv,"CSTRCPSR",1,TRUE);
+         PrintWarningID(theEnv,"CSTRCPSR",1,true);
          EnvPrintRouter(theEnv,outRouter,"Redefining ");
         }
       else EnvPrintRouter(theEnv,outRouter,"Defining ");
@@ -1028,7 +1032,7 @@ void ImportExportConflictMessage(
   const char *causedByConstruct,
   const char *causedByName)
   {
-   PrintErrorID(theEnv,"CSTRCPSR",3,TRUE);
+   PrintErrorID(theEnv,"CSTRCPSR",3,true);
    EnvPrintRouter(theEnv,WERROR,"Cannot define ");
    EnvPrintRouter(theEnv,WERROR,constructName);
    EnvPrintRouter(theEnv,WERROR," ");

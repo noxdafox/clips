@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/27/16            */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*          PROCEDURAL FUNCTIONS PARSER MODULE         */
    /*******************************************************/
@@ -35,6 +35,8 @@
 /*            flag is set to 1.                              */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -132,18 +134,18 @@ static void DeallocateProceduralFunctionData(
      }
   }
 
-/********************************************************/
-/* GetParsedBindNames:                                      */
-/********************************************************/
+/***********************/
+/* GetParsedBindNames: */
+/***********************/
 struct BindInfo *GetParsedBindNames(
   void *theEnv)
   {
    return(ProcedureParserData(theEnv)->ListOfParsedBindNames);
   }
 
-/********************************************************/
-/* SetParsedBindNames:                                      */
-/********************************************************/
+/***********************/
+/* SetParsedBindNames: */
+/***********************/
 void SetParsedBindNames(
   void *theEnv,
   struct BindInfo *newValue)
@@ -151,9 +153,9 @@ void SetParsedBindNames(
    ProcedureParserData(theEnv)->ListOfParsedBindNames = newValue;
   }
 
-/********************************************************/
-/* ClearParsedBindNames:                                     */
-/********************************************************/
+/*************************/
+/* ClearParsedBindNames: */
+/*************************/
 void ClearParsedBindNames(
   void *theEnv)
   {
@@ -168,15 +170,15 @@ void ClearParsedBindNames(
      }
   }
 
-/********************************************************/
-/* ParsedBindNamesEmpty:                                     */
-/********************************************************/
-intBool ParsedBindNamesEmpty(
+/*************************/
+/* ParsedBindNamesEmpty: */
+/*************************/
+bool ParsedBindNamesEmpty(
   void *theEnv)
   {
-   if (ProcedureParserData(theEnv)->ListOfParsedBindNames != NULL) return(FALSE);
+   if (ProcedureParserData(theEnv)->ListOfParsedBindNames != NULL) return false;
 
-   return(TRUE);
+   return true;
   }
 
 #if (! BLOAD_ONLY)
@@ -192,7 +194,7 @@ static struct expr *WhileParse(
   const char *infile)
   {
    struct token theToken;
-   int read_first_paren;
+   bool read_first_paren;
 
    /*===============================*/
    /* Process the while expression. */
@@ -214,7 +216,7 @@ static struct expr *WhileParse(
    GetToken(theEnv,infile,&theToken);
    if ((theToken.type == SYMBOL) && (strcmp(ValueToString(theToken.value),"do") == 0))
      {
-      read_first_paren = TRUE;
+      read_first_paren = true;
       PPBackup(theEnv);
       SavePPBuffer(theEnv," ");
       SavePPBuffer(theEnv,theToken.printForm);
@@ -223,7 +225,7 @@ static struct expr *WhileParse(
      }
    else if (theToken.type == LPAREN)
      {
-      read_first_paren = FALSE;
+      read_first_paren = false;
       PPBackup(theEnv);
       IncrementIndentDepth(theEnv,3);
       PPCRAndIndent(theEnv);
@@ -239,10 +241,10 @@ static struct expr *WhileParse(
    /*============================*/
    /* Process the while actions. */
    /*============================*/
-   if (ExpressionData(theEnv)->svContexts->rtn == TRUE)
-     ExpressionData(theEnv)->ReturnContext = TRUE;
-   ExpressionData(theEnv)->BreakContext = TRUE;
-   parse->argList->nextArg = GroupActions(theEnv,infile,&theToken,read_first_paren,NULL,FALSE);
+   if (ExpressionData(theEnv)->svContexts->rtn == true)
+     ExpressionData(theEnv)->ReturnContext = true;
+   ExpressionData(theEnv)->BreakContext = true;
+   parse->argList->nextArg = GroupActions(theEnv,infile,&theToken,read_first_paren,NULL,false);
 
    if (parse->argList->nextArg == NULL)
      {
@@ -283,7 +285,7 @@ static struct expr *LoopForCountParse(
    struct token theToken;
    SYMBOL_HN *loopVar = NULL;
    EXPRESSION *tmpexp;
-   int read_first_paren;
+   bool read_first_paren;
    struct BindInfo *oldBindList,*newBindList,*prev;
 
    /*======================================*/
@@ -374,7 +376,7 @@ static struct expr *LoopForCountParse(
    GetToken(theEnv,infile,&theToken);
    if ((theToken.type == SYMBOL) && (strcmp(ValueToString(theToken.value),"do") == 0))
      {
-      read_first_paren = TRUE;
+      read_first_paren = true;
       PPBackup(theEnv);
       SavePPBuffer(theEnv," ");
       SavePPBuffer(theEnv,theToken.printForm);
@@ -383,7 +385,7 @@ static struct expr *LoopForCountParse(
      }
    else if (theToken.type == LPAREN)
      {
-      read_first_paren = FALSE;
+      read_first_paren = false;
       PPBackup(theEnv);
       IncrementIndentDepth(theEnv,3);
       PPCRAndIndent(theEnv);
@@ -395,13 +397,13 @@ static struct expr *LoopForCountParse(
    /*=====================================*/
    /* Process the loop-for-count actions. */
    /*=====================================*/
-   if (ExpressionData(theEnv)->svContexts->rtn == TRUE)
-     ExpressionData(theEnv)->ReturnContext = TRUE;
-   ExpressionData(theEnv)->BreakContext = TRUE;
+   if (ExpressionData(theEnv)->svContexts->rtn == true)
+     ExpressionData(theEnv)->ReturnContext = true;
+   ExpressionData(theEnv)->BreakContext = true;
    oldBindList = GetParsedBindNames(theEnv);
    SetParsedBindNames(theEnv,NULL);
    parse->argList->nextArg->nextArg =
-      GroupActions(theEnv,infile,&theToken,read_first_paren,NULL,FALSE);
+      GroupActions(theEnv,infile,&theToken,read_first_paren,NULL,false);
 
    if (parse->argList->nextArg->nextArg == NULL)
      {
@@ -413,12 +415,12 @@ static struct expr *LoopForCountParse(
    prev = NULL;
    while (newBindList != NULL)
      {
-      if ((loopVar == NULL) ? FALSE :
+      if ((loopVar == NULL) ? false :
           (strcmp(ValueToString(newBindList->name),ValueToString(loopVar)) == 0))
         {
          ClearParsedBindNames(theEnv);
          SetParsedBindNames(theEnv,oldBindList);
-         PrintErrorID(theEnv,"PRCDRPSR",1,TRUE);
+         PrintErrorID(theEnv,"PRCDRPSR",1,true);
          EnvPrintRouter(theEnv,WERROR,"Cannot rebind loop variable in function loop-for-count.\n");
          ReturnExpression(theEnv,parse);
          return(NULL);
@@ -468,7 +470,7 @@ static void ReplaceLoopCountVars(
   {
    while (theExp != NULL)
      {
-      if ((theExp->type != SF_VARIABLE) ? FALSE :
+      if ((theExp->type != SF_VARIABLE) ? false :
           (strcmp(ValueToString(theExp->value),ValueToString(loopVar)) == 0))
         {
          theExp->type = FCALL;
@@ -477,7 +479,7 @@ static void ReplaceLoopCountVars(
         }
       else if (theExp->argList != NULL)
         {
-         if ((theExp->type != FCALL) ? FALSE :
+         if ((theExp->type != FCALL) ? false :
              (theExp->value == (void *) FindFunction(theEnv,"loop-for-count")))
            ReplaceLoopCountVars(theEnv,loopVar,theExp->argList,depth+1);
          else
@@ -534,11 +536,11 @@ static struct expr *IfParse(
    /*==============================*/
 
    PPCRAndIndent(theEnv);
-   if (ExpressionData(theEnv)->svContexts->rtn == TRUE)
-     ExpressionData(theEnv)->ReturnContext = TRUE;
-   if (ExpressionData(theEnv)->svContexts->brk == TRUE)
-     ExpressionData(theEnv)->BreakContext = TRUE;
-   top->argList->nextArg = GroupActions(theEnv,infile,&theToken,TRUE,"else",FALSE);
+   if (ExpressionData(theEnv)->svContexts->rtn == true)
+     ExpressionData(theEnv)->ReturnContext = true;
+   if (ExpressionData(theEnv)->svContexts->brk == true)
+     ExpressionData(theEnv)->BreakContext = true;
+   top->argList->nextArg = GroupActions(theEnv,infile,&theToken,true,"else",false);
 
    if (top->argList->nextArg == NULL)
      {
@@ -577,7 +579,7 @@ static struct expr *IfParse(
    /*==============================*/
 
    PPCRAndIndent(theEnv);
-   top->argList->nextArg->nextArg = GroupActions(theEnv,infile,&theToken,TRUE,NULL,FALSE);
+   top->argList->nextArg->nextArg = GroupActions(theEnv,infile,&theToken,true,NULL,false);
 
    if (top->argList->nextArg->nextArg == NULL)
      {
@@ -627,7 +629,7 @@ static struct expr *PrognParse(
    ExpressionData(theEnv)->ReturnContext = ExpressionData(theEnv)->svContexts->rtn;
    IncrementIndentDepth(theEnv,3);
    PPCRAndIndent(theEnv);
-   tmp = GroupActions(theEnv,infile,&tkn,TRUE,NULL,FALSE);
+   tmp = GroupActions(theEnv,infile,&tkn,true,NULL,false);
    DecrementIndentDepth(theEnv,3);
    PPBackup(theEnv);
    PPBackup(theEnv);
@@ -683,8 +685,8 @@ static struct expr *BindParse(
    if ((theToken.type == GBL_VARIABLE) ?
        ((theGlobal = (struct defglobal *)
                      FindImportedConstruct(theEnv,"defglobal",NULL,ValueToString(variableName),
-                                           &count,TRUE,FALSE)) != NULL) :
-       FALSE)
+                                           &count,true,NULL)) != NULL) :
+       false)
      {
       top->argList->type = DEFGLOBAL_PTR;
       top->argList->value = (void *) theGlobal;
@@ -728,19 +730,19 @@ static struct expr *ReturnParse(
   struct expr *top,
   const char *infile)
   {
-   int error_flag = FALSE;
+   bool error_flag = false;
    struct token theToken;
 
-   if (ExpressionData(theEnv)->svContexts->rtn == TRUE)
-     ExpressionData(theEnv)->ReturnContext = TRUE;
-   if (ExpressionData(theEnv)->ReturnContext == FALSE)
+   if (ExpressionData(theEnv)->svContexts->rtn == true)
+     ExpressionData(theEnv)->ReturnContext = true;
+   if (ExpressionData(theEnv)->ReturnContext == false)
      {
-      PrintErrorID(theEnv,"PRCDRPSR",2,TRUE);
+      PrintErrorID(theEnv,"PRCDRPSR",2,true);
       EnvPrintRouter(theEnv,WERROR,"The return function is not valid in this context.\n");
       ReturnExpression(theEnv,top);
       return(NULL);
      }
-   ExpressionData(theEnv)->ReturnContext = FALSE;
+   ExpressionData(theEnv)->ReturnContext = false;
 
    SavePPBuffer(theEnv," ");
 
@@ -783,9 +785,9 @@ static struct expr *BreakParse(
   {
    struct token theToken;
 
-   if (ExpressionData(theEnv)->svContexts->brk == FALSE)
+   if (ExpressionData(theEnv)->svContexts->brk == false)
      {
-      PrintErrorID(theEnv,"PRCDRPSR",2,TRUE);
+      PrintErrorID(theEnv,"PRCDRPSR",2,true);
       EnvPrintRouter(theEnv,WERROR,"The break function not valid in this context.\n");
       ReturnExpression(theEnv,top);
       return(NULL);
@@ -854,13 +856,13 @@ static struct expr *SwitchParse(
                 (chk->value == theExp->nextArg->value) &&
                 IdenticalExpression(chk->argList,theExp->nextArg->argList))
               {
-               PrintErrorID(theEnv,"PRCDRPSR",3,TRUE);
+               PrintErrorID(theEnv,"PRCDRPSR",3,true);
                EnvPrintRouter(theEnv,WERROR,"Duplicate case found in switch function.\n");
                goto SwitchParseError;
               }
            }
          GetToken(theEnv,infile,&theToken);
-         if ((theToken.type != SYMBOL) ? TRUE :
+         if ((theToken.type != SYMBOL) ? true :
              (strcmp(ValueToString(theToken.value),"then") != 0))
            goto SwitchParseErrorAndMessage;
         }
@@ -875,16 +877,16 @@ static struct expr *SwitchParse(
       else
         goto SwitchParseErrorAndMessage;
       theExp = theExp->nextArg;
-      if (ExpressionData(theEnv)->svContexts->rtn == TRUE)
-        ExpressionData(theEnv)->ReturnContext = TRUE;
-      if (ExpressionData(theEnv)->svContexts->brk == TRUE)
-        ExpressionData(theEnv)->BreakContext = TRUE;
+      if (ExpressionData(theEnv)->svContexts->rtn == true)
+        ExpressionData(theEnv)->ReturnContext = true;
+      if (ExpressionData(theEnv)->svContexts->brk == true)
+        ExpressionData(theEnv)->BreakContext = true;
       IncrementIndentDepth(theEnv,3);
       PPCRAndIndent(theEnv);
-      theExp->nextArg = GroupActions(theEnv,infile,&theToken,TRUE,NULL,FALSE);
+      theExp->nextArg = GroupActions(theEnv,infile,&theToken,true,NULL,false);
       DecrementIndentDepth(theEnv,3);
-      ExpressionData(theEnv)->ReturnContext = FALSE;
-      ExpressionData(theEnv)->BreakContext = FALSE;
+      ExpressionData(theEnv)->ReturnContext = false;
+      ExpressionData(theEnv)->BreakContext = false;
       if (theExp->nextArg == NULL)
         goto SwitchParseError;
       theExp = theExp->nextArg;
@@ -904,9 +906,9 @@ SwitchParseError:
    return(NULL);
   }
 
-/********************************************************/
-/* SearchParsedBindNames:                               */
-/********************************************************/
+/**************************/
+/* SearchParsedBindNames: */
+/**************************/
 int SearchParsedBindNames(
   void *theEnv,
   SYMBOL_HN *name_sought)
@@ -923,12 +925,12 @@ int SearchParsedBindNames(
       theIndex++;
      }
 
-   return(0);
+   return 0;
   }
 
-/********************************************************/
-/* FindBindConstraints:                               */
-/********************************************************/
+/************************/
+/* FindBindConstraints: */
+/************************/
 struct constraintRecord *FindBindConstraints(
   void *theEnv,
   SYMBOL_HN *nameSought)
@@ -1036,7 +1038,7 @@ void RemoveParsedBindName(
 
    prv = NULL;
    tmp = ProcedureParserData(theEnv)->ListOfParsedBindNames;
-   while ((tmp != NULL) ? (tmp->name != bname) : FALSE)
+   while ((tmp != NULL) ? (tmp->name != bname) : false)
      {
       prv = tmp;
       tmp = tmp->next;

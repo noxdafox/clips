@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*             STRING FUNCTIONS HEADER FILE            */
    /*******************************************************/
@@ -40,6 +40,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_strngfun
@@ -51,12 +53,12 @@
 #include "evaluatn.h"
 
 #if ALLOW_ENVIRONMENT_GLOBALS
-   int                            Build(const char *);
-   int                            Eval(const char *,DATA_OBJECT_PTR);
+   bool                           Build(const char *);
+   bool                           Eval(const char *,DATA_OBJECT_PTR);
 #endif
 
-   int                            EnvBuild(void *,const char *);
-   int                            EnvEval(void *,const char *,DATA_OBJECT_PTR);
+   bool                           EnvBuild(void *,const char *);
+   bool                           EnvEval(void *,const char *,DATA_OBJECT_PTR);
    void                           StringFunctionDefinitions(void *);
    void                           StrCatFunction(void *,DATA_OBJECT_PTR);
    void                           SymCatFunction(void *,DATA_OBJECT_PTR);
@@ -67,7 +69,7 @@
    void                          *SubStringFunction(void *);
    void                           StrIndexFunction(void *,DATA_OBJECT_PTR);
    void                           EvalFunction(void *,DATA_OBJECT_PTR);
-   int                            BuildFunction(void *);
+   bool                           BuildFunction(void *);
    void                           StringToFieldFunction(void *,DATA_OBJECT *);
    void                           StringToField(void *,const char *,DATA_OBJECT *);
 

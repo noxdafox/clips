@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*                 DEFRULE HEADER FILE                 */
    /*******************************************************/
@@ -58,6 +58,8 @@
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -122,16 +124,16 @@ struct defruleData
    int DefruleModuleIndex;
    long long CurrentEntityTimeTag;
    struct alphaMemoryHash **AlphaMemoryTable;
-   intBool BetaMemoryResizingFlag;
+   bool BetaMemoryResizingFlag;
    struct joinLink *RightPrimeJoins;
    struct joinLink *LeftPrimeJoins;
 
 #if DEBUGGING_FUNCTIONS
-    unsigned WatchRules;
+    bool WatchRules;
     int DeletedRuleDebugFlags;
 #endif
 #if DEVELOPER && (! RUN_TIME) && (! BLOAD_ONLY)
-    unsigned WatchRuleAnalysis;
+    bool WatchRuleAnalysis;
 #endif
 #if CONSTRUCT_COMPILER && (! RUN_TIME)
    struct CodeGeneratorItem *DefruleCodeItem;
@@ -154,7 +156,7 @@ struct defruleData
    void                          *EnvFindDefruleInModule(void *,const char *);
    void                          *EnvGetNextDefrule(void *,void *);
    struct defruleModule          *GetDefruleModuleItem(void *,struct defmodule *);
-   intBool                        EnvIsDefruleDeletable(void *,void *);
+   bool                           EnvIsDefruleDeletable(void *,void *);
 #if RUN_TIME
    void                           DefruleRunTimeInitialize(void *,struct joinLink *,struct joinLink *);
 #endif
@@ -174,7 +176,7 @@ struct defruleData
    const char                    *GetDefruleName(void *);
    const char                    *GetDefrulePPForm(void *);
    void                          *GetNextDefrule(void *);
-   intBool                        IsDefruleDeletable(void *);
+   bool                           IsDefruleDeletable(void *);
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */
 

@@ -1173,7 +1173,7 @@
    unsigned lineIncrease = 0;
    unichar theChar;
    
-   if (length == 0) return(0);
+   if (length == 0) return 0;
    
    for (lineIncrease = 0; position < length; lineIncrease++)
      {

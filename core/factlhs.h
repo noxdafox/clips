@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*                FACT BUILD HEADER FILE               */
    /*******************************************************/
@@ -29,6 +29,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_factlhs
@@ -40,7 +42,7 @@
 #include "scanner.h"
 #include "symbol.h"
 
-   int                            FactPatternParserFind(SYMBOL_HN *);
+   bool                           FactPatternParserFind(SYMBOL_HN *);
    struct lhsParseNode           *FactPatternParse(void *,const char *,struct token *);
    struct lhsParseNode           *SequenceRestrictionParse(void *,const char *,struct token *);
    struct lhsParseNode           *CreateInitialFactPattern(void *);

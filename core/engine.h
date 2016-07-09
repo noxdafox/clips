@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*                 ENGINE HEADER FILE                  */
    /*******************************************************/
@@ -61,6 +61,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_engine
@@ -87,28 +89,28 @@ struct focus
 struct engineData
   { 
    struct defrule *ExecutingRule;
-   intBool HaltRules;
+   bool HaltRules;
    struct joinNode *TheLogicalJoin;
    struct partialMatch *TheLogicalBind;
    struct dependency *UnsupportedDataEntities;
-   int alreadyEntered;
+   bool alreadyEntered;
    struct callFunctionItem *ListOfRunFunctions;
    struct callFunctionItemWithArg *ListOfBeforeRunFunctions;
    struct focus *CurrentFocus;
-   int FocusChanged;
+   bool FocusChanged;
 #if DEBUGGING_FUNCTIONS
-   unsigned WatchStatistics;
-   unsigned WatchFocus;
+   bool WatchStatistics;
+   bool WatchFocus;
 #endif
-   intBool IncrementalResetInProgress;
-   intBool IncrementalResetFlag;
-   intBool JoinOperationInProgress;
+   bool IncrementalResetInProgress;
+   bool IncrementalResetFlag;
+   bool JoinOperationInProgress;
    struct partialMatch *GlobalLHSBinds;
    struct partialMatch *GlobalRHSBinds;
    struct joinNode *GlobalJoin;
    struct partialMatch *GarbagePartialMatches;
    struct alphaMatch *GarbageAlphaMatches;
-   int AlreadyRunning;
+   bool AlreadyRunning;
 #if DEVELOPER
    long leftToRightComparisons;
    long rightToLeftComparisons;
@@ -128,35 +130,35 @@ struct engineData
 #define MAX_PATTERNS_CHECKED 64
 
    long long               EnvRun(void *,long long);
-   intBool                 EnvAddRunFunction(void *,const char *,
+   bool                    EnvAddRunFunction(void *,const char *,
                                                     void (*)(void *),int);
-   intBool                 EnvAddRunFunctionWithContext(void *,const char *,
+   bool                    EnvAddRunFunctionWithContext(void *,const char *,
                                                                void (*)(void *),int,void *);
-   intBool                 EnvRemoveRunFunction(void *,const char *);
-   intBool                 EnvAddBeforeRunFunction(void *,const char *,
+   bool                    EnvRemoveRunFunction(void *,const char *);
+   bool                    EnvAddBeforeRunFunction(void *,const char *,
                                                     void (*)(void *,void *),int);
-   intBool                 EnvAddBeforeRunFunctionWithContext(void *,const char *,
+   bool                    EnvAddBeforeRunFunctionWithContext(void *,const char *,
                                                                void (*)(void *, void *),int,void *);
-   intBool                 EnvRemoveBeforeRunFunction(void *,const char *);
+   bool                    EnvRemoveBeforeRunFunction(void *,const char *);
    void                    InitializeEngine(void *);
    void                    EnvSetBreak(void *,void *);
    void                    EnvHalt(void *);
-   intBool                 EnvRemoveBreak(void *,void *);
+   bool                    EnvRemoveBreak(void *,void *);
    void                    RemoveAllBreakpoints(void *);
    void                    EnvShowBreaks(void *,const char *,void *);
-   intBool                 EnvDefruleHasBreakpoint(void *,void *);
+   bool                    EnvDefruleHasBreakpoint(void *,void *);
    void                    RunCommand(void *);
    void                    SetBreakCommand(void *);
    void                    RemoveBreakCommand(void *);
    void                    ShowBreaksCommand(void *);
    void                    HaltCommand(void *);
-   int                     FocusCommand(void *);
+   bool                    FocusCommand(void *);
    void                    ClearFocusStackCommand(void *);
    void                    EnvClearFocusStack(void *);
    void                   *EnvGetNextFocus(void *,void *);
    void                    EnvFocus(void *,void *);
-   int                     EnvGetFocusChanged(void *);
-   void                    EnvSetFocusChanged(void *,int);
+   bool                    EnvGetFocusChanged(void *);
+   void                    EnvSetFocusChanged(void *,bool);
    void                    ListFocusStackCommand(void *);
    void                    EnvListFocusStack(void *,const char *);
    void                    GetFocusStackFunction(void *,DATA_OBJECT_PTR);
@@ -165,29 +167,29 @@ struct engineData
    void                   *GetFocusFunction(void *);
    void                   *EnvPopFocus(void *);
    void                   *EnvGetFocus(void *);
-   intBool                 EnvGetHaltRules(void *);
-   void                    EnvSetHaltRules(void *,intBool);
+   bool                    EnvGetHaltRules(void *);
+   void                    EnvSetHaltRules(void *,bool);
    struct activation      *NextActivationToFire(void *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-   intBool                 AddBeforeRunFunction(const char *,void (*)(void *),int);
-   intBool                 AddRunFunction(const char *,void (*)(void),int);
+   bool                    AddBeforeRunFunction(const char *,void (*)(void *),int);
+   bool                    AddRunFunction(const char *,void (*)(void),int);
    void                    ClearFocusStack(void);
    void                    Focus(void *);
    void                    GetFocusStack(DATA_OBJECT_PTR);
    void                   *GetFocus(void);
-   int                     GetFocusChanged(void);
+   bool                    GetFocusChanged(void);
    void                   *GetNextFocus(void *);
    void                    Halt(void);
    void                   *PopFocus(void);
-   intBool                 RemoveRunFunction(const char *);
+   bool                    RemoveRunFunction(const char *);
    long long               Run(long long);
-   void                    SetFocusChanged(int);
+   void                    SetFocusChanged(bool);
 #if DEBUGGING_FUNCTIONS
-   intBool                 DefruleHasBreakpoint(void *);
+   bool                    DefruleHasBreakpoint(void *);
    void                    ListFocusStack(const char *);
-   intBool                 RemoveBreak(void *);
+   bool                    RemoveBreak(void *);
    void                    SetBreak(void *);
    void                    ShowBreaks(const char *,void *);
 #endif

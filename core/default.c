@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/23/16            */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*               DEFAULT ATTRIBUTE MODULE              */
    /*******************************************************/
@@ -31,6 +31,8 @@
 /*            SetEvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -68,8 +70,8 @@ void DeriveDefaultFromConstraints(
   void *theEnv,
   CONSTRAINT_RECORD *constraints,
   DATA_OBJECT *theDefault,
-  int multifield,
-  int garbageMultifield)
+  bool multifield,
+  bool garbageMultifield)
   {
    unsigned short theType;
    unsigned long minFields;
@@ -267,12 +269,12 @@ static void *FindDefaultValue(
 struct expr *ParseDefault(
   void *theEnv,
   const char *readSource,
-  int multifield,
-  int dynamic,
-  int evalStatic,
-  int *noneSpecified,
-  int *deriveSpecified,
-  int *error)
+  bool multifield,
+  bool dynamic,
+  bool evalStatic,
+  bool *noneSpecified,
+  bool *deriveSpecified,
+  bool *error)
   {
    struct expr *defaultList = NULL, *lastDefault = NULL;
    struct expr *newItem, *tmpItem;
@@ -281,8 +283,8 @@ struct expr *ParseDefault(
    CONSTRAINT_RECORD *rv;
    int specialVarCode;
 
-   *noneSpecified = FALSE;
-   *deriveSpecified = FALSE;
+   *noneSpecified = false;
+   *deriveSpecified = false;
 
    SavePPBuffer(theEnv," ");
    GetToken(theEnv,readSource,&theToken);
@@ -302,7 +304,7 @@ struct expr *ParseDefault(
       if (newItem == NULL)
         {
          ReturnExpression(theEnv,defaultList);
-         *error = TRUE;
+         *error = true;
          return(NULL);
         }
 
@@ -330,7 +332,7 @@ struct expr *ParseDefault(
             else SyntaxErrorMessage(theEnv,"default attribute");
             ReturnExpression(theEnv,newItem);
             ReturnExpression(theEnv,defaultList);
-            *error = TRUE;
+            *error = true;
             return(NULL);
            }
 
@@ -350,13 +352,13 @@ struct expr *ParseDefault(
             PPBackup(theEnv);
             SavePPBuffer(theEnv," ");
             SavePPBuffer(theEnv,theToken.printForm);
-            *error = TRUE;
+            *error = true;
            }
 
          if (specialVarCode == 0)
-           *noneSpecified = TRUE;
+           *noneSpecified = true;
          else
-           *deriveSpecified = TRUE;
+           *deriveSpecified = true;
          return(NULL);
         }
 
@@ -365,11 +367,11 @@ struct expr *ParseDefault(
       /* expressions contained within the default list.     */
       /*====================================================*/
 
-      if (ExpressionContainsVariables(newItem,FALSE) == TRUE)
+      if (ExpressionContainsVariables(newItem,false) == true)
         {
          ReturnExpression(theEnv,defaultList);
          ReturnExpression(theEnv,newItem);
-         *error = TRUE;
+         *error = true;
          if (dynamic) SyntaxErrorMessage(theEnv,"default-dynamic attribute");
          else SyntaxErrorMessage(theEnv,"default attribute");
          return(NULL);
@@ -406,23 +408,23 @@ struct expr *ParseDefault(
    /* must contain a single value.            */
    /*=========================================*/
 
-   if (multifield == FALSE)
+   if (multifield == false)
      {
       if (defaultList == NULL)
-        { *error = TRUE; }
+        { *error = true; }
       else if (defaultList->nextArg != NULL)
-        { *error = TRUE; }
+        { *error = true; }
       else
         {
          rv = ExpressionToConstraintRecord(theEnv,defaultList);
-         rv->multifieldsAllowed = FALSE;
-         if (UnmatchableConstraint(rv)) *error = TRUE;
+         rv->multifieldsAllowed = false;
+         if (UnmatchableConstraint(rv)) *error = true;
          RemoveConstraint(theEnv,rv);
         }
 
       if (*error)
         {
-         PrintErrorID(theEnv,"DEFAULT",1,TRUE);
+         PrintErrorID(theEnv,"DEFAULT",1,true);
          EnvPrintRouter(theEnv,WERROR,"The default value for a single field slot must be a single field value\n");
          ReturnExpression(theEnv,defaultList);
          return(NULL);
@@ -443,23 +445,23 @@ struct expr *ParseDefault(
 
    while (newItem != NULL)
      {
-      EnvSetEvaluationError(theEnv,FALSE);
-      if (EvaluateExpression(theEnv,newItem,&theValue)) *error = TRUE;
+      EnvSetEvaluationError(theEnv,false);
+      if (EvaluateExpression(theEnv,newItem,&theValue)) *error = true;
 
       if ((theValue.type == MULTIFIELD) &&
-          (multifield == FALSE) &&
-          (*error == FALSE))
+          (multifield == false) &&
+          (*error == false))
         {
-         PrintErrorID(theEnv,"DEFAULT",1,TRUE);
+         PrintErrorID(theEnv,"DEFAULT",1,true);
          EnvPrintRouter(theEnv,WERROR,"The default value for a single field slot must be a single field value\n");
-         *error = TRUE;
+         *error = true;
         }
 
       if (*error)
         {
          ReturnExpression(theEnv,tmpItem);
          ReturnExpression(theEnv,defaultList);
-         *error = TRUE;
+         *error = true;
          return(NULL);
         }
 

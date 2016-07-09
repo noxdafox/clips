@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/24/16             */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*                    SYMBOL MODULE                    */
    /*******************************************************/
@@ -61,6 +61,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -99,7 +101,7 @@
 
    static void                    RemoveHashNode(void *,GENERIC_HN *,GENERIC_HN **,int,int);
    static void                    AddEphemeralHashNode(void *,GENERIC_HN *,struct ephemeron **,
-                                                       int,int,int);
+                                                       int,int,bool);
    static void                    RemoveEphemeralHashNodes(void *,struct ephemeron **,
                                                            GENERIC_HN **,
                                                            int,int,int);
@@ -374,15 +376,15 @@ void *EnvAddSymbol(
     peek->next = NULL;
     peek->bucket = tally;
     peek->count = 0;
-    peek->permanent = FALSE;
+    peek->permanent = false;
       
     /*================================================*/
     /* Add the string to the list of ephemeral items. */
     /*================================================*/
 
     AddEphemeralHashNode(theEnv,(GENERIC_HN *) peek,&UtilityData(theEnv)->CurrentGarbageFrame->ephemeralSymbolList,
-                         sizeof(SYMBOL_HN),AVERAGE_STRING_SIZE,TRUE);
-    UtilityData(theEnv)->CurrentGarbageFrame->dirty = TRUE;
+                         sizeof(SYMBOL_HN),AVERAGE_STRING_SIZE,true);
+    UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
 
     /*===================================*/
     /* Return the address of the symbol. */
@@ -463,15 +465,15 @@ void *EnvAddDouble(
     peek->next = NULL;
     peek->bucket = tally;
     peek->count = 0;
-    peek->permanent = FALSE;
+    peek->permanent = false;
 
     /*===============================================*/
     /* Add the float to the list of ephemeral items. */
     /*===============================================*/
 
     AddEphemeralHashNode(theEnv,(GENERIC_HN *) peek,&UtilityData(theEnv)->CurrentGarbageFrame->ephemeralFloatList,
-                         sizeof(FLOAT_HN),0,TRUE);
-    UtilityData(theEnv)->CurrentGarbageFrame->dirty = TRUE;
+                         sizeof(FLOAT_HN),0,true);
+    UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
     
     /*==================================*/
     /* Return the address of the float. */
@@ -527,15 +529,15 @@ void *EnvAddLong(
     peek->next = NULL;
     peek->bucket = tally;
     peek->count = 0;
-    peek->permanent = FALSE;
+    peek->permanent = false;
 
     /*=================================================*/
     /* Add the integer to the list of ephemeral items. */
     /*=================================================*/
 
     AddEphemeralHashNode(theEnv,(GENERIC_HN *) peek,&UtilityData(theEnv)->CurrentGarbageFrame->ephemeralIntegerList,
-                         sizeof(INTEGER_HN),0,TRUE);
-    UtilityData(theEnv)->CurrentGarbageFrame->dirty = TRUE;
+                         sizeof(INTEGER_HN),0,true);
+    UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
 
     /*====================================*/
     /* Return the address of the integer. */
@@ -630,7 +632,7 @@ void *EnvAddBitMap(
     peek->next = NULL;
     peek->bucket = tally;
     peek->count = 0;
-    peek->permanent = FALSE;
+    peek->permanent = false;
     peek->size = (unsigned short) size;
 
     /*================================================*/
@@ -638,8 +640,8 @@ void *EnvAddBitMap(
     /*================================================*/
 
     AddEphemeralHashNode(theEnv,(GENERIC_HN *) peek,&UtilityData(theEnv)->CurrentGarbageFrame->ephemeralBitMapList,
-                         sizeof(BITMAP_HN),sizeof(long),TRUE);
-    UtilityData(theEnv)->CurrentGarbageFrame->dirty = TRUE;
+                         sizeof(BITMAP_HN),sizeof(long),true);
+    UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
 
     /*===================================*/
     /* Return the address of the bitmap. */
@@ -701,15 +703,15 @@ void *EnvAddExternalAddress(
     peek->next = NULL;
     peek->bucket = tally;
     peek->count = 0;
-    peek->permanent = FALSE;
+    peek->permanent = false;
 
     /*================================================*/
     /* Add the bitmap to the list of ephemeral items. */
     /*================================================*/
 
     AddEphemeralHashNode(theEnv,(GENERIC_HN *) peek,&UtilityData(theEnv)->CurrentGarbageFrame->ephemeralExternalAddressList,
-                         sizeof(EXTERNAL_ADDRESS_HN),sizeof(long),TRUE);
-    UtilityData(theEnv)->CurrentGarbageFrame->dirty = TRUE;
+                         sizeof(EXTERNAL_ADDRESS_HN),sizeof(long),true);
+    UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
 
     /*=============================================*/
     /* Return the address of the external address. */
@@ -878,11 +880,11 @@ void DecrementSymbolCount(
 
    if (theValue->count != 0) return;
 
-   if (theValue->markedEphemeral == FALSE)
+   if (theValue->markedEphemeral == false)
      {
       AddEphemeralHashNode(theEnv,(GENERIC_HN *) theValue,&UtilityData(theEnv)->CurrentGarbageFrame->ephemeralSymbolList,
-                           sizeof(SYMBOL_HN),AVERAGE_STRING_SIZE,TRUE);
-      UtilityData(theEnv)->CurrentGarbageFrame->dirty = TRUE;
+                           sizeof(SYMBOL_HN),AVERAGE_STRING_SIZE,true);
+      UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
      }
 
    return;
@@ -907,11 +909,11 @@ void DecrementFloatCount(
 
    if (theValue->count != 0) return;
 
-   if (theValue->markedEphemeral == FALSE)
+   if (theValue->markedEphemeral == false)
      {
       AddEphemeralHashNode(theEnv,(GENERIC_HN *) theValue,&UtilityData(theEnv)->CurrentGarbageFrame->ephemeralFloatList,
-                           sizeof(FLOAT_HN),0,TRUE);
-      UtilityData(theEnv)->CurrentGarbageFrame->dirty = TRUE;
+                           sizeof(FLOAT_HN),0,true);
+      UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
      }
 
    return;
@@ -936,11 +938,11 @@ void DecrementIntegerCount(
 
    if (theValue->count != 0) return;
 
-   if (theValue->markedEphemeral == FALSE)
+   if (theValue->markedEphemeral == false)
      {
       AddEphemeralHashNode(theEnv,(GENERIC_HN *) theValue,&UtilityData(theEnv)->CurrentGarbageFrame->ephemeralIntegerList,
-                           sizeof(INTEGER_HN),0,TRUE);
-      UtilityData(theEnv)->CurrentGarbageFrame->dirty = TRUE;
+                           sizeof(INTEGER_HN),0,true);
+      UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
      }
 
    return;
@@ -971,11 +973,11 @@ void DecrementBitMapCount(
 
    if (theValue->count != 0) return;
 
-   if (theValue->markedEphemeral == FALSE)
+   if (theValue->markedEphemeral == false)
      {
       AddEphemeralHashNode(theEnv,(GENERIC_HN *) theValue,&UtilityData(theEnv)->CurrentGarbageFrame->ephemeralBitMapList,
-                           sizeof(BITMAP_HN),sizeof(long),TRUE);
-      UtilityData(theEnv)->CurrentGarbageFrame->dirty = TRUE;
+                           sizeof(BITMAP_HN),sizeof(long),true);
+      UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
      }
 
    return;
@@ -1006,11 +1008,11 @@ void DecrementExternalAddressCount(
 
    if (theValue->count != 0) return;
 
-   if (theValue->markedEphemeral == FALSE)
+   if (theValue->markedEphemeral == false)
      {
       AddEphemeralHashNode(theEnv,(GENERIC_HN *) theValue,&UtilityData(theEnv)->CurrentGarbageFrame->ephemeralExternalAddressList,
-                           sizeof(EXTERNAL_ADDRESS_HN),sizeof(long),TRUE);
-      UtilityData(theEnv)->CurrentGarbageFrame->dirty = TRUE;
+                           sizeof(EXTERNAL_ADDRESS_HN),sizeof(long),true);
+      UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
      }
 
    return;
@@ -1104,7 +1106,7 @@ static void AddEphemeralHashNode(
   struct ephemeron **theEphemeralList,
   int hashNodeSize,
   int averageContentsSize,
-  int checkCount)
+  bool checkCount)
   {
    struct ephemeron *temp;
 
@@ -1123,7 +1125,7 @@ static void AddEphemeralHashNode(
    /* Mark the atomic value as ephemeral. */
    /*=====================================*/
 
-   theHashNode->markedEphemeral = TRUE;
+   theHashNode->markedEphemeral = true;
 
    /*=============================*/
    /* Add the atomic value to the */
@@ -1187,8 +1189,8 @@ void EphemerateValue(
         if (theSymbol->markedEphemeral) return;
         AddEphemeralHashNode(theEnv,(GENERIC_HN *) theValue,
                              &UtilityData(theEnv)->CurrentGarbageFrame->ephemeralSymbolList,
-                             sizeof(SYMBOL_HN),AVERAGE_STRING_SIZE,FALSE);
-        UtilityData(theEnv)->CurrentGarbageFrame->dirty = TRUE;
+                             sizeof(SYMBOL_HN),AVERAGE_STRING_SIZE,false);
+        UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
         break;
 
       case FLOAT:
@@ -1196,8 +1198,8 @@ void EphemerateValue(
         if (theFloat->markedEphemeral) return;
         AddEphemeralHashNode(theEnv,(GENERIC_HN *) theValue,
                              &UtilityData(theEnv)->CurrentGarbageFrame->ephemeralFloatList,
-                             sizeof(FLOAT_HN),0,FALSE);
-        UtilityData(theEnv)->CurrentGarbageFrame->dirty = TRUE;
+                             sizeof(FLOAT_HN),0,false);
+        UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
         break;
 
       case INTEGER:
@@ -1205,8 +1207,8 @@ void EphemerateValue(
         if (theInteger->markedEphemeral) return;
         AddEphemeralHashNode(theEnv,(GENERIC_HN *) theValue,
                              &UtilityData(theEnv)->CurrentGarbageFrame->ephemeralIntegerList,
-                             sizeof(INTEGER_HN),0,FALSE);
-        UtilityData(theEnv)->CurrentGarbageFrame->dirty = TRUE;
+                             sizeof(INTEGER_HN),0,false);
+        UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
         break;
 
       case EXTERNAL_ADDRESS:
@@ -1214,8 +1216,8 @@ void EphemerateValue(
         if (theExternalAddress->markedEphemeral) return;
         AddEphemeralHashNode(theEnv,(GENERIC_HN *) theValue,
                              &UtilityData(theEnv)->CurrentGarbageFrame->ephemeralExternalAddressList,
-                             sizeof(EXTERNAL_ADDRESS_HN),sizeof(long),FALSE);
-        UtilityData(theEnv)->CurrentGarbageFrame->dirty = TRUE;
+                             sizeof(EXTERNAL_ADDRESS_HN),sizeof(long),false);
+        UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
         break;
         
       case MULTIFIELD:
@@ -1279,7 +1281,7 @@ static void RemoveEphemeralHashNodes(
 
       else if (edPtr->associatedValue->count > 0)
         {
-         edPtr->associatedValue->markedEphemeral = FALSE;
+         edPtr->associatedValue->markedEphemeral = false;
 
          rtn_struct(theEnv,ephemeron,edPtr);
 
@@ -1428,7 +1430,7 @@ struct symbolMatch *FindSymbolMatches(
    *numberOfMatches = 0;
 
    while ((hashPtr = GetNextSymbolMatch(theEnv,searchString,searchLength,hashPtr,
-                                        FALSE,commonPrefixLength)) != NULL)
+                                        false,commonPrefixLength)) != NULL)
      {
       *numberOfMatches = *numberOfMatches + 1;
       temp = get_struct(theEnv,symbolMatch);
@@ -1481,12 +1483,12 @@ SYMBOL_HN *GetNextSymbolMatch(
   const char *searchString,
   size_t searchLength,
   SYMBOL_HN *prevSymbol,
-  int anywhere,
+  bool anywhere,
   size_t *commonPrefixLength)
   {
    register unsigned long i;
    SYMBOL_HN *hashPtr;
-   int flag = TRUE;
+   bool flag = true;
    size_t prefixLength;
 
    /*==========================================*/
@@ -1596,7 +1598,7 @@ SYMBOL_HN *GetNextSymbolMatch(
       /* Move on to the next bucket in the symbol table. */
       /*=================================================*/
 
-      if (++i >= SYMBOL_HASH_SIZE) flag = FALSE;
+      if (++i >= SYMBOL_HASH_SIZE) flag = false;
       else hashPtr = SymbolData(theEnv)->SymbolTable[i];
      }
 
@@ -1652,7 +1654,7 @@ static size_t CommonPrefixLength(
 /****************************************************************/
 void SetAtomicValueIndices(
   void *theEnv,
-  int setAll)
+  bool setAll)
   {
    unsigned long count;
    unsigned long i;
@@ -1674,7 +1676,7 @@ void SetAtomicValueIndices(
            symbolPtr != NULL;
            symbolPtr = symbolPtr->next)
         {
-         if ((symbolPtr->neededSymbol == TRUE) || setAll)
+         if ((symbolPtr->neededSymbol == true) || setAll)
            {
             symbolPtr->bucket = count++;
             if (symbolPtr->bucket != (count - 1))
@@ -1696,7 +1698,7 @@ void SetAtomicValueIndices(
            floatPtr != NULL;
            floatPtr = floatPtr->next)
         {
-         if ((floatPtr->neededFloat == TRUE) || setAll)
+         if ((floatPtr->neededFloat == true) || setAll)
            {
             floatPtr->bucket = count++;
             if (floatPtr->bucket != (count - 1))
@@ -1718,7 +1720,7 @@ void SetAtomicValueIndices(
            integerPtr != NULL;
            integerPtr = integerPtr->next)
         {
-         if ((integerPtr->neededInteger == TRUE) || setAll)
+         if ((integerPtr->neededInteger == true) || setAll)
            {
             integerPtr->bucket = count++;
             if (integerPtr->bucket != (count - 1))
@@ -1740,7 +1742,7 @@ void SetAtomicValueIndices(
            bitMapPtr != NULL;
            bitMapPtr = bitMapPtr->next)
         {
-         if ((bitMapPtr->neededBitMap == TRUE) || setAll)
+         if ((bitMapPtr->neededBitMap == true) || setAll)
            {
             bitMapPtr->bucket = count++;
             if (bitMapPtr->bucket != (count - 1))

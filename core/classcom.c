@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/23/16             */
+   /*            CLIPS Version 6.40  07/04/16             */
    /*                                                     */
    /*                  CLASS COMMANDS MODULE              */
    /*******************************************************/
@@ -40,6 +40,8 @@
 /*            named construct.                                */
 /*                                                            */
 /*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /**************************************************************/
 
@@ -191,7 +193,7 @@ DEFCLASS *LookupDefclassByMdlOrScope(
    SYMBOL_HN *classSymbol;
    struct defmodule *theModule;
 
-   if (FindModuleSeparator(classAndModuleName) == FALSE)
+   if (FindModuleSeparator(classAndModuleName) == 0)
      return(LookupDefclassInScope(theEnv,classAndModuleName));
 
    SaveCurrentModule(theEnv);
@@ -286,12 +288,12 @@ DEFCLASS *LookupDefclassAnywhere(
   INPUTS       : 1) The defclass
                  2) The module (NULL for current
                     module)
-  RETURNS      : TRUE if in scope,
-                 FALSE otherwise
+  RETURNS      : True if in scope,
+                 false otherwise
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-intBool DefclassInScope(
+bool DefclassInScope(
   void *theEnv,
   DEFCLASS *theDefclass,
   struct defmodule *theModule)
@@ -304,12 +306,12 @@ intBool DefclassInScope(
    if (theModule == NULL)
      theModule = ((struct defmodule *) EnvGetCurrentModule(theEnv));
    moduleID = (int) theModule->bsaveID;
-   return(TestBitMap(scopeMap,moduleID) ? TRUE : FALSE);
+   return(TestBitMap(scopeMap,moduleID) ? true : false);
 #else
 #if MAC_XCD
 #pragma unused(theEnv,theDefclass,theModule)
 #endif
-   return(TRUE);
+   return true;
 #endif
   }
 
@@ -335,28 +337,28 @@ void *EnvGetNextDefclass(
   DESCRIPTION  : Determines if a defclass
                    can be deleted
   INPUTS       : Address of the defclass
-  RETURNS      : TRUE if deletable,
-                 FALSE otherwise
+  RETURNS      : True if deletable,
+                 false otherwise
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-intBool EnvIsDefclassDeletable(
+bool EnvIsDefclassDeletable(
   void *theEnv,
   void *ptr)
   {
    DEFCLASS *cls;
 
    if (! ConstructsDeletable(theEnv))
-     { return FALSE; }
+     { return false; }
 
    cls = (DEFCLASS *) ptr;
    if (cls->system == 1)
-     return(FALSE);
+     return false;
    
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-   return((IsClassBeingUsed(cls) == FALSE) ? TRUE : FALSE);
+   return((IsClassBeingUsed(cls) == false) ? true : false);
 #else
-   return FALSE;
+   return false;
 #endif
   }
 
@@ -379,23 +381,23 @@ void UndefclassCommand(
   NAME         : EnvUndefclass
   DESCRIPTION  : Deletes the named defclass
   INPUTS       : None
-  RETURNS      : TRUE if deleted, or FALSE
+  RETURNS      : True if deleted, or false
   SIDE EFFECTS : Defclass and handlers removed
   NOTES        : Interface for AddConstruct()
  ********************************************************/
-intBool EnvUndefclass(
+bool EnvUndefclass(
   void *theEnv,
   void *theDefclass)
   {
 #if RUN_TIME || BLOAD_ONLY
-   return(FALSE);
+   return false;
 #else
    DEFCLASS *cls;
 
    cls = (DEFCLASS *) theDefclass;
 #if BLOAD || BLOAD_AND_BSAVE
    if (Bloaded(theEnv))
-     return(FALSE);
+     return false;
 #endif
    if (cls == NULL)
      return(RemoveAllUserClasses(theEnv));
@@ -458,12 +460,12 @@ void EnvListDefclasses(
                  instances of this class will generate
                  trace messages or not
   INPUTS       : A pointer to the class
-  RETURNS      : TRUE if a trace is active,
-                 FALSE otherwise
+  RETURNS      : True if a trace is active,
+                 false otherwise
   SIDE EFFECTS : None
   NOTES        : None
  *********************************************************/
-unsigned EnvGetDefclassWatchInstances(
+bool EnvGetDefclassWatchInstances(
   void *theEnv,
   void *theClass)
   {
@@ -479,8 +481,8 @@ unsigned EnvGetDefclassWatchInstances(
   DESCRIPTION  : Sets the trace to ON/OFF for the
                  creation/deletion of instances
                  of the class
-  INPUTS       : 1) TRUE to set the trace on,
-                    FALSE to set it off
+  INPUTS       : 1) true to set the trace on,
+                    false to set it off
                  2) A pointer to the class
   RETURNS      : Nothing useful
   SIDE EFFECTS : Watch flag for the class set
@@ -488,7 +490,7 @@ unsigned EnvGetDefclassWatchInstances(
  *********************************************************/
 void EnvSetDefclassWatchInstances(
   void *theEnv,
-  unsigned newState,
+  bool newState,
   void *theClass)
   {
 #if MAC_XCD
@@ -506,12 +508,12 @@ void EnvSetDefclassWatchInstances(
                  instances of this class will generate
                  trace messages or not
   INPUTS       : A pointer to the class
-  RETURNS      : TRUE if a trace is active,
-                 FALSE otherwise
+  RETURNS      : True if a trace is active,
+                 false otherwise
   SIDE EFFECTS : None
   NOTES        : None
  *********************************************************/
-unsigned EnvGetDefclassWatchSlots(
+bool EnvGetDefclassWatchSlots(
   void *theEnv,
   void *theClass)
   {
@@ -526,8 +528,8 @@ unsigned EnvGetDefclassWatchSlots(
   NAME         : EnvSetDefclassWatchSlots
   DESCRIPTION  : Sets the trace to ON/OFF for the
                  changes to slots of instances of the class
-  INPUTS       : 1) TRUE to set the trace on,
-                    FALSE to set it off
+  INPUTS       : 1) true to set the trace on,
+                    false to set it off
                  2) A pointer to the class
   RETURNS      : Nothing useful
   SIDE EFFECTS : Watch flag for the class set
@@ -535,7 +537,7 @@ unsigned EnvGetDefclassWatchSlots(
  **********************************************************/
 void EnvSetDefclassWatchSlots(
   void *theEnv,
-  unsigned newState,
+  bool newState,
   void *theClass)
   {
 #if MAC_XCD
@@ -555,14 +557,14 @@ void EnvSetDefclassWatchSlots(
                  2) The value to which to set the trace flags
                  3) A list of expressions containing the names
                     of the classes for which to set traces
-  RETURNS      : TRUE if all OK, FALSE otherwise
+  RETURNS      : True if all OK, false otherwise
   SIDE EFFECTS : Watch flags set in specified classes
   NOTES        : Accessory function for AddWatchItem()
  ******************************************************************/
-unsigned DefclassWatchAccess(
+bool DefclassWatchAccess(
   void *theEnv,
   int code,
-  unsigned newState,
+  bool newState,
   EXPRESSION *argExprs)
   {
    if (code)
@@ -583,11 +585,11 @@ unsigned DefclassWatchAccess(
                     1 - Watch slot changes to instances
                  3) A list of expressions containing the names
                     of the classes for which to examine traces
-  RETURNS      : TRUE if all OK, FALSE otherwise
+  RETURNS      : True if all OK, false otherwise
   SIDE EFFECTS : Watch flags displayed for specified classes
   NOTES        : Accessory function for AddWatchItem()
  ***********************************************************************/
-unsigned DefclassWatchPrint(
+bool DefclassWatchPrint(
   void *theEnv,
   const char *logName,
   int code,
@@ -644,12 +646,12 @@ void EnvGetDefclassList(
                    of class-1
   INPUTS       : 1) Class-1
                  2) Class-2
-  RETURNS      : TRUE if class-2 is a superclass of
-                   class-1, FALSE otherwise
+  RETURNS      : True if class-2 is a superclass of
+                   class-1, false otherwise
   SIDE EFFECTS : None
   NOTES        : None
  *****************************************************/
-int HasSuperclass(
+bool HasSuperclass(
   DEFCLASS *c1,
   DEFCLASS *c2)
   {
@@ -657,8 +659,8 @@ int HasSuperclass(
 
    for (i = 1 ; i < c1->allSuperclasses.classCount ; i++)
      if (c1->allSuperclasses.classArray[i] == c2)
-       return(TRUE);
-   return(FALSE);
+       return true;
+   return false;
   }
 
 /********************************************************************
@@ -677,7 +679,7 @@ SYMBOL_HN *CheckClassAndSlot(
   {
    DATA_OBJECT temp;
 
-   if (EnvArgTypeCheck(theEnv,func,1,SYMBOL,&temp) == FALSE)
+   if (EnvArgTypeCheck(theEnv,func,1,SYMBOL,&temp) == false)
      return(NULL);
    *cls = LookupDefclassByMdlOrScope(theEnv,DOToString(temp));
    if (*cls == NULL)
@@ -685,7 +687,7 @@ SYMBOL_HN *CheckClassAndSlot(
       ClassExistError(theEnv,func,DOToString(temp));
       return(NULL);
      }
-   if (EnvArgTypeCheck(theEnv,func,2,SYMBOL,&temp) == FALSE)
+   if (EnvArgTypeCheck(theEnv,func,2,SYMBOL,&temp) == false)
      return(NULL);
    return((SYMBOL_HN *) GetValue(temp));
   }
@@ -707,7 +709,7 @@ void SaveDefclasses(
   const char *logName)
   {
 #if DEBUGGING_FUNCTIONS
-   DoForAllConstructsInModule(theEnv,theModule,SaveDefclass,DefclassData(theEnv)->DefclassModuleIndex,FALSE,(void *) logName);
+   DoForAllConstructsInModule(theEnv,theModule,SaveDefclass,DefclassData(theEnv)->DefclassModuleIndex,false,(void *) logName);
 #else
 #if MAC_XCD
 #pragma unused(theEnv,theModule,logName)
@@ -822,7 +824,7 @@ void *SetClassDefaultsModeCommand(
    if (EnvArgCountCheck(theEnv,"set-class-defaults-mode",EXACTLY,1) == -1)
      { return((SYMBOL_HN *) EnvAddSymbol(theEnv,GetClassDefaultsModeName(EnvGetClassDefaultsMode(theEnv)))); }
 
-   if (EnvArgTypeCheck(theEnv,"set-class-defaults-mode",1,SYMBOL,&argPtr) == FALSE)
+   if (EnvArgTypeCheck(theEnv,"set-class-defaults-mode",1,SYMBOL,&argPtr) == false)
      { return((SYMBOL_HN *) EnvAddSymbol(theEnv,GetClassDefaultsModeName(EnvGetClassDefaultsMode(theEnv)))); }
 
    argument = DOToString(argPtr);
@@ -958,13 +960,13 @@ void *GetNextDefclass(
    return EnvGetNextDefclass(GetCurrentEnvironment(),ptr);
   }
 
-intBool IsDefclassDeletable(
+bool IsDefclassDeletable(
   void *ptr)
   {
    return EnvIsDefclassDeletable(GetCurrentEnvironment(),ptr);
   }
 
-intBool Undefclass(
+bool Undefclass(
   void *theDefclass)
   {
    return EnvUndefclass(GetCurrentEnvironment(),theDefclass);

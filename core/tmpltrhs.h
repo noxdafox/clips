@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*          DEFTEMPLATE RHS PARSING HEADER FILE        */
    /*******************************************************/
@@ -29,6 +29,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_tmpltrhs
@@ -41,8 +43,8 @@
 #include "scanner.h"
 #include "tmpltdef.h"
 
-   struct expr                   *ParseAssertTemplate(void *,const char *,struct token *,int *,
-                                                             int,int,struct deftemplate *);
+   struct expr                   *ParseAssertTemplate(void *,const char *,struct token *,bool *,
+                                                             int,bool,struct deftemplate *);
 
 #endif /* _H_tmpltrhs */
 

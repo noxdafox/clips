@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*       PROCEDURAL FUNCTIONS PARSER HEADER FILE       */
    /*******************************************************/
@@ -38,6 +38,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_prcdrpsr
@@ -60,7 +62,7 @@ struct BindInfo
    struct BindInfo               *GetParsedBindNames(void *);
    void                           SetParsedBindNames(void *,struct BindInfo *);
    void                           ClearParsedBindNames(void *);
-   intBool                        ParsedBindNamesEmpty(void *);
+   bool                           ParsedBindNamesEmpty(void *);
 #endif
 #if (! BLOAD_ONLY) && (! RUN_TIME)
    int                            SearchParsedBindNames(void *,struct symbolHashNode *);

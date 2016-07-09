@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/23/16             */
+   /*            CLIPS Version 6.40  07/04/16             */
    /*                                                     */
    /*             CONSTRAINT CHECKING MODULE              */
    /*******************************************************/
@@ -41,6 +41,8 @@
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -67,90 +69,90 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static intBool                 CheckRangeAgainstCardinalityConstraint(void *,int,int,CONSTRAINT_RECORD *);
-   static int                     CheckFunctionReturnType(int,CONSTRAINT_RECORD *);
-   static intBool                 CheckTypeConstraint(int,CONSTRAINT_RECORD *);
-   static intBool                 CheckRangeConstraint(void *,int,void *,CONSTRAINT_RECORD *);
+   static bool                    CheckRangeAgainstCardinalityConstraint(void *,int,int,CONSTRAINT_RECORD *);
+   static bool                    CheckFunctionReturnType(int,CONSTRAINT_RECORD *);
+   static bool                    CheckTypeConstraint(int,CONSTRAINT_RECORD *);
+   static bool                    CheckRangeConstraint(void *,int,void *,CONSTRAINT_RECORD *);
    static void                    PrintRange(void *,const char *,CONSTRAINT_RECORD *);
 
 /******************************************************/
 /* CheckFunctionReturnType: Checks a functions return */
 /*   type against a set of permissable return values. */
-/*   Returns TRUE if the return type is included      */
-/*   among the permissible values, otherwise FALSE.   */
+/*   Returns true if the return type is included      */
+/*   among the permissible values, otherwise false.   */
 /******************************************************/
-static int CheckFunctionReturnType(
+static bool CheckFunctionReturnType(
   int functionReturnType,
   CONSTRAINT_RECORD *constraints)
   {
-   if (constraints == NULL) return(TRUE);
+   if (constraints == NULL) return true;
 
-   if (constraints->anyAllowed) return(TRUE);
+   if (constraints->anyAllowed) return true;
 
    switch(functionReturnType)
      {
       case 'c':
       case 'w':
       case 'b':
-        if (constraints->symbolsAllowed) return(TRUE);
-        else return(FALSE);
+        if (constraints->symbolsAllowed) return true;
+        else return false;
 
       case 's':
-        if (constraints->stringsAllowed) return(TRUE);
-        else return(FALSE);
+        if (constraints->stringsAllowed) return true;
+        else return false;
 
       case 'j':
         if ((constraints->symbolsAllowed) ||
             (constraints->stringsAllowed) ||
-            (constraints->instanceNamesAllowed)) return(TRUE);
-        else return(FALSE);
+            (constraints->instanceNamesAllowed)) return true;
+        else return false;
 
       case 'k':
-        if ((constraints->symbolsAllowed) || (constraints->stringsAllowed)) return(TRUE);
-        else return(FALSE);
+        if ((constraints->symbolsAllowed) || (constraints->stringsAllowed)) return true;
+        else return false;
 
       case 'd':
       case 'f':
-        if (constraints->floatsAllowed) return(TRUE);
-        else return(FALSE);
+        if (constraints->floatsAllowed) return true;
+        else return false;
 
       case 'i':
       case 'l':
-        if (constraints->integersAllowed) return(TRUE);
-        else return(FALSE);
+        if (constraints->integersAllowed) return true;
+        else return false;
 
       case 'n':
-        if ((constraints->integersAllowed) || (constraints->floatsAllowed)) return(TRUE);
-        else return(FALSE);
+        if ((constraints->integersAllowed) || (constraints->floatsAllowed)) return true;
+        else return false;
 
       case 'm':
-        if (constraints->multifieldsAllowed) return(TRUE);
-        else return(FALSE);
+        if (constraints->multifieldsAllowed) return true;
+        else return false;
 
       case 'a':
-        if (constraints->externalAddressesAllowed) return(TRUE);
-        else return(FALSE);
+        if (constraints->externalAddressesAllowed) return true;
+        else return false;
 
       case 'x':
-        if (constraints->instanceAddressesAllowed) return(TRUE);
-        else return(FALSE);
+        if (constraints->instanceAddressesAllowed) return true;
+        else return false;
 
       case 'y':
-        if (constraints->factAddressesAllowed) return(TRUE);
-        else return(FALSE);
+        if (constraints->factAddressesAllowed) return true;
+        else return false;
 
       case 'o':
-        if (constraints->instanceNamesAllowed) return(TRUE);
-        else return(FALSE);
+        if (constraints->instanceNamesAllowed) return true;
+        else return false;
 
       case 'u':
-        return(TRUE);
+        return true;
 
       case 'v':
-        if (constraints->voidAllowed) return(TRUE);
+        if (constraints->voidAllowed) return true;
      }
 
-   return(TRUE);
+   return true;
   }
 
 /****************************************************/
@@ -158,46 +160,46 @@ static int CheckFunctionReturnType(
 /*   data type satisfies the type constraint fields */
 /*   of aconstraint record.                         */
 /****************************************************/
-static intBool CheckTypeConstraint(
+static bool CheckTypeConstraint(
   int type,
   CONSTRAINT_RECORD *constraints)
   {
-   if (type == RVOID) return(FALSE);
+   if (type == RVOID) return false;
 
-   if (constraints == NULL) return(TRUE);
+   if (constraints == NULL) return true;
 
-   if (constraints->anyAllowed == TRUE) return(TRUE);
+   if (constraints->anyAllowed == true) return true;
 
-   if ((type == SYMBOL) && (constraints->symbolsAllowed != TRUE))
-     { return(FALSE); }
+   if ((type == SYMBOL) && (constraints->symbolsAllowed != true))
+     { return false; }
 
-   if ((type == STRING) && (constraints->stringsAllowed != TRUE))
-     { return(FALSE); }
+   if ((type == STRING) && (constraints->stringsAllowed != true))
+     { return false; }
 
-   if ((type == FLOAT) && (constraints->floatsAllowed != TRUE))
-     { return(FALSE); }
+   if ((type == FLOAT) && (constraints->floatsAllowed != true))
+     { return false; }
 
-   if ((type == INTEGER) && (constraints->integersAllowed != TRUE))
-     { return(FALSE); }
+   if ((type == INTEGER) && (constraints->integersAllowed != true))
+     { return false; }
 
 #if OBJECT_SYSTEM
-   if ((type == INSTANCE_NAME) && (constraints->instanceNamesAllowed != TRUE))
-     { return(FALSE); }
+   if ((type == INSTANCE_NAME) && (constraints->instanceNamesAllowed != true))
+     { return false; }
 
-   if ((type == INSTANCE_ADDRESS) && (constraints->instanceAddressesAllowed != TRUE))
-     { return(FALSE); }
+   if ((type == INSTANCE_ADDRESS) && (constraints->instanceAddressesAllowed != true))
+     { return false; }
 #endif
 
-   if ((type == EXTERNAL_ADDRESS) && (constraints->externalAddressesAllowed != TRUE))
-     { return(FALSE); }
+   if ((type == EXTERNAL_ADDRESS) && (constraints->externalAddressesAllowed != true))
+     { return false; }
 
-   if ((type == RVOID) && (constraints->voidAllowed != TRUE))
-     { return(FALSE); }
+   if ((type == RVOID) && (constraints->voidAllowed != true))
+     { return false; }
 
-   if ((type == FACT_ADDRESS) && (constraints->factAddressesAllowed != TRUE))
-     { return(FALSE); }
+   if ((type == FACT_ADDRESS) && (constraints->factAddressesAllowed != true))
+     { return false; }
 
-   return(TRUE);
+   return true;
   }
 
 /********************************************************/
@@ -205,7 +207,7 @@ static intBool CheckTypeConstraint(
 /*   falls within the range of allowed cardinalities    */
 /*   for a constraint record.                           */
 /********************************************************/
-intBool CheckCardinalityConstraint(
+bool CheckCardinalityConstraint(
   void *theEnv,
   long number,
   CONSTRAINT_RECORD *constraints)
@@ -215,7 +217,7 @@ intBool CheckCardinalityConstraint(
    /* are no cardinality restrictions.        */
    /*=========================================*/
 
-   if (constraints == NULL) return(TRUE);
+   if (constraints == NULL) return true;
 
    /*==================================*/
    /* Determine if the integer is less */
@@ -227,7 +229,7 @@ intBool CheckCardinalityConstraint(
       if (constraints->minFields->value != SymbolData(theEnv)->NegativeInfinity)
         {
          if (number < ValueToLong(constraints->minFields->value))
-           { return(FALSE); }
+           { return false; }
         }
      }
 
@@ -241,7 +243,7 @@ intBool CheckCardinalityConstraint(
       if (constraints->maxFields->value != SymbolData(theEnv)->PositiveInfinity)
         {
          if (number > ValueToLong(constraints->maxFields->value))
-           { return(FALSE); }
+           { return false; }
         }
      }
 
@@ -249,17 +251,17 @@ intBool CheckCardinalityConstraint(
    /* The integer falls within the allowed cardinality range. */
    /*=========================================================*/
 
-   return(TRUE);
+   return true;
   }
 
 /*****************************************************************/
 /* CheckRangeAgainstCardinalityConstraint: Determines if a range */
 /*   of numbers could possibly fall within the range of allowed  */
-/*   cardinalities for a constraint record. Returns TRUE if at   */
+/*   cardinalities for a constraint record. Returns true if at   */
 /*   least one of the numbers in the range is within the allowed */
-/*   cardinality, otherwise FALSE is returned.                   */
+/*   cardinality, otherwise false is returned.                   */
 /*****************************************************************/
-static intBool CheckRangeAgainstCardinalityConstraint(
+static bool CheckRangeAgainstCardinalityConstraint(
   void *theEnv,
   int min,
   int max,
@@ -270,13 +272,13 @@ static intBool CheckRangeAgainstCardinalityConstraint(
    /* are no cardinality restrictions.        */
    /*=========================================*/
 
-   if (constraints == NULL) return(TRUE);
+   if (constraints == NULL) return true;
 
    /*===============================================================*/
    /* If the minimum value of the range is greater than the maximum */
    /* value of the cardinality, then there are no numbers in the    */
    /* range which could fall within the cardinality range, and so   */
-   /* FALSE is returned.                                            */
+   /* false is returned.                                            */
    /*===============================================================*/
 
    if (constraints->maxFields != NULL)
@@ -284,7 +286,7 @@ static intBool CheckRangeAgainstCardinalityConstraint(
       if (constraints->maxFields->value != SymbolData(theEnv)->PositiveInfinity)
         {
          if (min > ValueToLong(constraints->maxFields->value))
-           { return(FALSE); }
+           { return false; }
         }
      }
 
@@ -292,7 +294,7 @@ static intBool CheckRangeAgainstCardinalityConstraint(
    /* If the maximum value of the range is less than the minimum    */
    /* value of the cardinality, then there are no numbers in the    */
    /* range which could fall within the cardinality range, and so   */
-   /* FALSE is returned. A maximum range value of -1 indicates that */
+   /* false is returned. A maximum range value of -1 indicates that */
    /* the maximum possible value of the range is positive infinity. */
    /*===============================================================*/
 
@@ -301,7 +303,7 @@ static intBool CheckRangeAgainstCardinalityConstraint(
       if (constraints->minFields->value != SymbolData(theEnv)->NegativeInfinity)
         {
          if (max < ValueToLong(constraints->minFields->value))
-           { return(FALSE); }
+           { return false; }
         }
      }
 
@@ -310,16 +312,16 @@ static intBool CheckRangeAgainstCardinalityConstraint(
    /* falls within the allowed cardinality range. */
    /*=============================================*/
 
-   return(TRUE);
+   return true;
   }
 
 /**********************************************************************/
 /* CheckAllowedValuesConstraint: Determines if a primitive data type  */
 /*   satisfies the allowed-... constraint fields of a constraint      */
-/*   record. Returns TRUE if the constraints are satisfied, otherwise */
-/*   FALSE is returned.                                               */
+/*   record. Returns true if the constraints are satisfied, otherwise */
+/*   false is returned.                                               */
 /**********************************************************************/
-intBool CheckAllowedValuesConstraint(
+bool CheckAllowedValuesConstraint(
   int type,
   void *vPtr,
   CONSTRAINT_RECORD *constraints)
@@ -331,7 +333,7 @@ intBool CheckAllowedValuesConstraint(
    /* are no allowed-... restrictions.        */
    /*=========================================*/
 
-   if (constraints == NULL) return(TRUE);
+   if (constraints == NULL) return true;
 
    /*=====================================================*/
    /* Determine if there are any allowed-... restrictions */
@@ -341,39 +343,39 @@ intBool CheckAllowedValuesConstraint(
    switch (type)
      {
       case SYMBOL:
-        if ((constraints->symbolRestriction == FALSE) &&
-            (constraints->anyRestriction == FALSE))
-          { return(TRUE); }
+        if ((constraints->symbolRestriction == false) &&
+            (constraints->anyRestriction == false))
+          { return true; }
         break;
 
 #if OBJECT_SYSTEM
       case INSTANCE_NAME:
-        if ((constraints->instanceNameRestriction == FALSE) &&
-            (constraints->anyRestriction == FALSE))
-          { return(TRUE); }
+        if ((constraints->instanceNameRestriction == false) &&
+            (constraints->anyRestriction == false))
+          { return true; }
         break;
 #endif
 
       case STRING:
-        if ((constraints->stringRestriction == FALSE) &&
-            (constraints->anyRestriction == FALSE))
-          { return(TRUE); }
+        if ((constraints->stringRestriction == false) &&
+            (constraints->anyRestriction == false))
+          { return true; }
         break;
 
       case INTEGER:
-        if ((constraints->integerRestriction == FALSE) &&
-            (constraints->anyRestriction == FALSE))
-          { return(TRUE); }
+        if ((constraints->integerRestriction == false) &&
+            (constraints->anyRestriction == false))
+          { return true; }
         break;
 
       case FLOAT:
-        if ((constraints->floatRestriction == FALSE) &&
-            (constraints->anyRestriction == FALSE))
-          { return(TRUE); }
+        if ((constraints->floatRestriction == false) &&
+            (constraints->anyRestriction == false))
+          { return true; }
         break;
 
       default:
-        return(TRUE);
+        return true;
      }
 
    /*=========================================================*/
@@ -385,24 +387,24 @@ intBool CheckAllowedValuesConstraint(
         tmpPtr != NULL;
         tmpPtr = tmpPtr->nextArg)
      {
-      if ((tmpPtr->type == type) && (tmpPtr->value == vPtr)) return(TRUE);
+      if ((tmpPtr->type == type) && (tmpPtr->value == vPtr)) return true;
      }
 
    /*====================================================*/
    /* If the value wasn't found in the list, then return */
-   /* FALSE because the constraint has been violated.    */
+   /* false because the constraint has been violated.    */
    /*====================================================*/
 
-   return(FALSE);
+   return false;
   }
 
 /**********************************************************************/
 /* CheckAllowedClassesConstraint: Determines if a primitive data type */
 /*   satisfies the allowed-classes constraint fields of a constraint  */
-/*   record. Returns TRUE if the constraints are satisfied, otherwise */
-/*   FALSE is returned.                                               */
+/*   record. Returns true if the constraints are satisfied, otherwise */
+/*   false is returned.                                               */
 /**********************************************************************/
-intBool CheckAllowedClassesConstraint(
+bool CheckAllowedClassesConstraint(
   void *theEnv,
   int type,
   void *vPtr,
@@ -418,7 +420,7 @@ intBool CheckAllowedClassesConstraint(
    /* is no allowed-classes restriction.      */
    /*=========================================*/
 
-   if (constraints == NULL) return(TRUE);
+   if (constraints == NULL) return true;
 
    /*======================================*/
    /* The constraint is satisfied if there */
@@ -426,7 +428,7 @@ intBool CheckAllowedClassesConstraint(
    /*======================================*/
    
    if (constraints->classList == NULL)
-     { return(TRUE); }
+     { return true; }
 
    /*==================================*/
    /* Class restrictions only apply to */
@@ -434,7 +436,7 @@ intBool CheckAllowedClassesConstraint(
    /*==================================*/
     
    if ((type != INSTANCE_ADDRESS) && (type != INSTANCE_NAME))
-     { return(TRUE); }
+     { return true; }
 
    /*=============================================*/
    /* If an instance name is specified, determine */
@@ -447,7 +449,7 @@ intBool CheckAllowedClassesConstraint(
      { ins = FindInstanceBySymbol(theEnv,(SYMBOL_HN *) vPtr); }
     
    if (ins == NULL)
-     { return(FALSE); }
+     { return false; }
    
    /*======================================================*/
    /* Search through the class list to see if the instance */
@@ -462,16 +464,16 @@ intBool CheckAllowedClassesConstraint(
       //cmpClass = (DEFCLASS *) EnvFindDefclass(theEnv,ValueToString(tmpPtr->value));
       cmpClass = (DEFCLASS *) LookupDefclassByMdlOrScope(theEnv,ValueToString(tmpPtr->value));
       if (cmpClass == NULL) continue;
-      if (cmpClass == insClass) return(TRUE);
-      if (EnvSubclassP(theEnv,insClass,cmpClass)) return(TRUE);
+      if (cmpClass == insClass) return true;
+      if (EnvSubclassP(theEnv,insClass,cmpClass)) return true;
      }
 
    /*=========================================================*/
    /* If a parent class wasn't found in the list, then return */
-   /* FALSE because the constraint has been violated.         */
+   /* false because the constraint has been violated.         */
    /*=========================================================*/
 
-   return(FALSE);
+   return false;
 #else
 
 #if MAC_XCD
@@ -481,7 +483,7 @@ intBool CheckAllowedClassesConstraint(
 #pragma unused(constraints)
 #endif
 
-   return(TRUE);
+   return true;
 #endif     
   }
 
@@ -489,7 +491,7 @@ intBool CheckAllowedClassesConstraint(
 /* CheckRangeConstraint: Determines if a primitive data type */
 /*   satisfies the range constraint of a constraint record.  */
 /*************************************************************/
-static intBool CheckRangeConstraint(
+static bool CheckRangeConstraint(
   void *theEnv,
   int type,
   void *vPtr,
@@ -502,20 +504,20 @@ static intBool CheckRangeConstraint(
    /* there are no range restrictions.  */
    /*===================================*/
 
-   if (constraints == NULL) return(TRUE);
+   if (constraints == NULL) return true;
 
    /*============================================*/
    /* If the value being checked isn't a number, */
    /* then the range restrictions don't apply.   */
    /*============================================*/
 
-   if ((type != INTEGER) && (type != FLOAT)) return(TRUE);
+   if ((type != INTEGER) && (type != FLOAT)) return true;
 
    /*=====================================================*/
    /* Check each of the range restrictions to see if the  */
    /* number falls within at least one of the allowed     */
    /* ranges. If it falls within one of the ranges, then  */
-   /* return TRUE since the constraint is satisifed.      */
+   /* return true since the constraint is satisifed.      */
    /*=====================================================*/
 
    minList = constraints->minValue;
@@ -534,15 +536,15 @@ static intBool CheckRangeConstraint(
          maxList = maxList->nextArg;
         }
       else
-        { return(TRUE); }
+        { return true; }
      }
 
    /*===========================================*/
-   /* Return FALSE since the number didn't fall */
+   /* Return false since the number didn't fall */
    /* within one of the allowed numeric ranges. */
    /*===========================================*/
 
-   return(FALSE);
+   return false;
   }
 
 /************************************************/
@@ -553,13 +555,13 @@ void ConstraintViolationErrorMessage(
   void *theEnv,
   const char *theWhat,
   const char *thePlace,
-  int command,
+  bool command,
   int thePattern,
   struct symbolHashNode *theSlot,
   int theField,
   int violationType,
   CONSTRAINT_RECORD *theConstraint,
-  int printPrelude)
+  bool printPrelude)
   {
    /*======================================================*/
    /* Don't print anything other than the tail explanation */
@@ -575,12 +577,12 @@ void ConstraintViolationErrorMessage(
 
       if (violationType == FUNCTION_RETURN_TYPE_VIOLATION)
         {
-         PrintErrorID(theEnv,"CSTRNCHK",1,TRUE);
+         PrintErrorID(theEnv,"CSTRNCHK",1,true);
          EnvPrintRouter(theEnv,WERROR,"The function return value ");
         }
       else if (theWhat != NULL)
         {
-         PrintErrorID(theEnv,"CSTRNCHK",1,TRUE);
+         PrintErrorID(theEnv,"CSTRNCHK",1,true);
          EnvPrintRouter(theEnv,WERROR,theWhat);
          EnvPrintRouter(theEnv,WERROR," ");
         }
@@ -685,7 +687,7 @@ int ConstraintCheckDataObject(
    if (theData->type == MULTIFIELD)
      {
       if (CheckCardinalityConstraint(theEnv,(theData->end - theData->begin) + 1,
-                                     theConstraints) == FALSE)
+                                     theConstraints) == false)
         { return(CARDINALITY_VIOLATION); }
 
       theMultifield = ((struct multifield *) theData->value)->theFields;
@@ -700,7 +702,7 @@ int ConstraintCheckDataObject(
       return(NO_VIOLATION);
      }
 
-   if (CheckCardinalityConstraint(theEnv,1L,theConstraints) == FALSE)
+   if (CheckCardinalityConstraint(theEnv,1L,theConstraints) == false)
     { return(CARDINALITY_VIOLATION); }
 
    return(ConstraintCheckValue(theEnv,theData->type,theData->value,theConstraints));
@@ -716,21 +718,21 @@ int ConstraintCheckValue(
   void *theValue,
   CONSTRAINT_RECORD *theConstraints)
   {
-   if (CheckTypeConstraint(theType,theConstraints) == FALSE)
+   if (CheckTypeConstraint(theType,theConstraints) == false)
      { return(TYPE_VIOLATION); }
 
-   else if (CheckAllowedValuesConstraint(theType,theValue,theConstraints) == FALSE)
+   else if (CheckAllowedValuesConstraint(theType,theValue,theConstraints) == false)
      { return(ALLOWED_VALUES_VIOLATION); }
 
-   else if (CheckAllowedClassesConstraint(theEnv,theType,theValue,theConstraints) == FALSE)
+   else if (CheckAllowedClassesConstraint(theEnv,theType,theValue,theConstraints) == false)
      { return(ALLOWED_CLASSES_VIOLATION); }
 
-   else if (CheckRangeConstraint(theEnv,theType,theValue,theConstraints) == FALSE)
+   else if (CheckRangeConstraint(theEnv,theType,theValue,theConstraints) == false)
      { return(RANGE_VIOLATION); }
 
    else if (theType == FCALL)
      {
-      if (CheckFunctionReturnType((int) ValueFunctionType(theValue),theConstraints) == FALSE)
+      if (CheckFunctionReturnType((int) ValueFunctionType(theValue),theConstraints) == false)
         { return(FUNCTION_RETURN_TYPE_VIOLATION); }
      }
 
@@ -772,7 +774,7 @@ int ConstraintCheckExpressionChain(
    /*====================================*/
 
    if (max == 0) max = min;
-   if (CheckRangeAgainstCardinalityConstraint(theEnv,min,max,theConstraints) == FALSE)
+   if (CheckRangeAgainstCardinalityConstraint(theEnv,min,max,theConstraints) == false)
      { return(CARDINALITY_VIOLATION); }
 
    /*========================================*/
@@ -793,8 +795,8 @@ int ConstraintCheckExpressionChain(
 
 /***************************************************/
 /* ConstraintCheckExpression: Checks an expression */
-/*   for constraint conflicts. Returns TRUE if     */
-/*   conflicts are found, otherwise FALSE.         */
+/*   for constraint conflicts. Returns zero if     */
+/*   conflicts are found, otherwise non-zero.      */
 /***************************************************/
 int ConstraintCheckExpression(
   void *theEnv,
@@ -827,10 +829,10 @@ int ConstraintCheckExpression(
 /* UnmatchableConstraint: Determines if a constraint */
 /*  record can still be satisfied by some value.     */
 /*****************************************************/
-intBool UnmatchableConstraint(
+bool UnmatchableConstraint(
   CONSTRAINT_RECORD *theConstraint)
   {
-   if (theConstraint == NULL) return(FALSE);
+   if (theConstraint == NULL) return false;
 
    if ((! theConstraint->anyAllowed) &&
        (! theConstraint->symbolsAllowed) &&
@@ -843,9 +845,9 @@ intBool UnmatchableConstraint(
        (! theConstraint->externalAddressesAllowed) &&
        (! theConstraint->voidAllowed) &&
        (! theConstraint->factAddressesAllowed))
-     { return(TRUE); }
+     { return true; }
 
-   return(FALSE);
+   return false;
   }
 
 #endif /* (! RUN_TIME) */

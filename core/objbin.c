@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/25/16             */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -27,6 +27,8 @@
 /*            MAC_MCW, and IBM_TBC).                         */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -365,7 +367,7 @@ static void BsaveObjectsFind(
       ============================================== */
    ObjectBinaryData(theEnv)->ModuleCount = 
       DoForAllConstructs(theEnv,MarkDefclassItems,DefclassData(theEnv)->DefclassModuleIndex,
-                                    FALSE,NULL);
+                                    false,NULL);
 
    /* =============================================
       Mark items needed by canonicalized slot names
@@ -376,8 +378,8 @@ static void BsaveObjectsFind(
         if ((snp->id != ISA_ID) && (snp->id != NAME_ID))
           {
            snp->bsaveIndex = ObjectBinaryData(theEnv)->SlotNameCount++;
-           snp->name->neededSymbol = TRUE;
-           snp->putHandlerName->neededSymbol = TRUE;
+           snp->name->neededSymbol = true;
+           snp->putHandlerName->neededSymbol = true;
           }
        }
   }
@@ -410,7 +412,7 @@ static void MarkDefclassItems(
                 cls->allSuperclasses.classCount;
 
 #if DEFMODULE_CONSTRUCT
-   cls->scopeMap->neededBitMap = TRUE;
+   cls->scopeMap->neededBitMap = true;
 #endif
 
    /* ===================================================
@@ -419,7 +421,7 @@ static void MarkDefclassItems(
    for (i = 0 ; i < cls->slotCount ; i++)
      {
       cls->slots[i].bsaveIndex = ObjectBinaryData(theEnv)->SlotCount++;
-      cls->slots[i].overrideMessage->neededSymbol = TRUE;
+      cls->slots[i].overrideMessage->neededSymbol = true;
       if (cls->slots[i].defaultValue != NULL)
         {
          if (cls->slots[i].dynamicDefault)
@@ -455,7 +457,7 @@ static void MarkDefclassItems(
       =============================================== */
    for (i = 0 ; i < cls->handlerCount ; i++)
      {
-      cls->handlers[i].name->neededSymbol = TRUE;
+      cls->handlers[i].name->neededSymbol = true;
       ExpressionData(theEnv)->ExpressionCount += ExpressionSize(cls->handlers[i].actions);
       MarkNeededItems(theEnv,cls->handlers[i].actions);
      }
@@ -482,13 +484,13 @@ static void BsaveObjectsExpressions(
       Save the defclass slot default value expressions
       ================================================ */
    DoForAllConstructs(theEnv,BsaveDefaultSlotExpressions,DefclassData(theEnv)->DefclassModuleIndex,
-                      FALSE,(void *) fp);
+                      false,(void *) fp);
 
    /* ==============================================
       Save the defmessage-handler action expressions
       ============================================== */
    DoForAllConstructs(theEnv,BsaveHandlerActionExpressions,DefclassData(theEnv)->DefclassModuleIndex,
-                      FALSE,(void *) fp);
+                      false,(void *) fp);
   }
 
 /***************************************************
@@ -659,13 +661,13 @@ static void BsaveObjects(
    /* =====================
       Write out the classes
       ===================== */
-   DoForAllConstructs(theEnv,BsaveDefclass,DefclassData(theEnv)->DefclassModuleIndex,FALSE,(void *) fp);
+   DoForAllConstructs(theEnv,BsaveDefclass,DefclassData(theEnv)->DefclassModuleIndex,false,(void *) fp);
 
    /* =========================
       Write out the class links
       ========================= */
    ObjectBinaryData(theEnv)->LinkCount = 0L;
-   DoForAllConstructs(theEnv,BsaveClassLinks,DefclassData(theEnv)->DefclassModuleIndex,FALSE,(void *) fp);
+   DoForAllConstructs(theEnv,BsaveClassLinks,DefclassData(theEnv)->DefclassModuleIndex,false,(void *) fp);
 
    /* ===============================
       Write out the slot name entries
@@ -686,27 +688,27 @@ static void BsaveObjects(
    /* ===================
       Write out the slots
       =================== */
-   DoForAllConstructs(theEnv,BsaveSlots,DefclassData(theEnv)->DefclassModuleIndex,FALSE,(void *) fp);
+   DoForAllConstructs(theEnv,BsaveSlots,DefclassData(theEnv)->DefclassModuleIndex,false,(void *) fp);
 
    /* =====================================
       Write out the template instance slots
       ===================================== */
-   DoForAllConstructs(theEnv,BsaveTemplateSlots,DefclassData(theEnv)->DefclassModuleIndex,FALSE,(void *) fp);
+   DoForAllConstructs(theEnv,BsaveTemplateSlots,DefclassData(theEnv)->DefclassModuleIndex,false,(void *) fp);
 
    /* =============================================
       Write out the ordered instance slot name maps
       ============================================= */
-   DoForAllConstructs(theEnv,BsaveSlotMap,DefclassData(theEnv)->DefclassModuleIndex,FALSE,(void *) fp);
+   DoForAllConstructs(theEnv,BsaveSlotMap,DefclassData(theEnv)->DefclassModuleIndex,false,(void *) fp);
 
    /* ==============================
       Write out the message-handlers
       ============================== */
-   DoForAllConstructs(theEnv,BsaveHandlers,DefclassData(theEnv)->DefclassModuleIndex,FALSE,(void *) fp);
+   DoForAllConstructs(theEnv,BsaveHandlers,DefclassData(theEnv)->DefclassModuleIndex,false,(void *) fp);
 
    /* ==========================================
       Write out the ordered message-handler maps
       ========================================== */
-   DoForAllConstructs(theEnv,BsaveHandlerMap,DefclassData(theEnv)->DefclassModuleIndex,FALSE,(void *) fp);
+   DoForAllConstructs(theEnv,BsaveHandlerMap,DefclassData(theEnv)->DefclassModuleIndex,false,(void *) fp);
 
       RestoreBloadCount(theEnv,&ObjectBinaryData(theEnv)->ModuleCount);
       RestoreBloadCount(theEnv,&ObjectBinaryData(theEnv)->ClassCount);
@@ -1278,7 +1280,7 @@ static void UpdateSlot(
         {
          sp->defaultValue = (void *) get_struct(theEnv,dataObject);
          EvaluateAndStoreInDataObject(theEnv,(int) sp->multiple,ExpressionPointer(bsp->defaultValue),
-                                      (DATA_OBJECT *) sp->defaultValue,TRUE);
+                                      (DATA_OBJECT *) sp->defaultValue,true);
          ValueInstall(theEnv,(DATA_OBJECT *) sp->defaultValue);
         }
      }

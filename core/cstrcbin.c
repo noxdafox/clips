@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/23/16             */
+   /*            CLIPS Version 6.40  07/04/16             */
    /*                                                     */
    /*          CONSTRUCT BINARY LOAD/SAVE MODULE          */
    /*******************************************************/
@@ -18,6 +18,8 @@
 /* Revision History:                                         */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -54,7 +56,7 @@ void MarkConstructHeaderNeededItems(
   struct constructHeader *theConstruct,
   long theBsaveID)
   {
-   theConstruct->name->neededSymbol = TRUE;
+   theConstruct->name->neededSymbol = true;
    theConstruct->bsaveID = theBsaveID;
   }
 

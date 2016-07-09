@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/04/16            */
    /*                                                     */
    /*                 BSAVE HEADER FILE                   */
    /*******************************************************/
@@ -34,6 +34,8 @@
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -92,14 +94,14 @@ struct bsaveData
 #define BsaveData(theEnv) ((struct bsaveData *) GetEnvironmentData(theEnv,BSAVE_DATA))
 
    void                    InitializeBsaveData(void *);
-   int                     BsaveCommand(void *);
+   bool                    BsaveCommand(void *);
 #if BLOAD_AND_BSAVE
-   intBool                 EnvBsave(void *,const char *);
+   bool                    EnvBsave(void *,const char *);
    void                    MarkNeededItems(void *,struct expr *);
    void                    SaveBloadCount(void *,long);
    void                    RestoreBloadCount(void *,long *);
 #endif
-   intBool                 AddBinaryItem(void *,const char *,int,
+   bool                    AddBinaryItem(void *,const char *,int,
                                                 void (*)(void *),
                                                 void (*)(void *,FILE *),
                                                 void (*)(void *,FILE *),
@@ -110,7 +112,7 @@ struct bsaveData
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-   intBool                 Bsave(const char *);
+   bool                    Bsave(const char *);
 
 #endif
 

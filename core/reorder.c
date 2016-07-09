@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/27/16             */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*                    REORDER MODULE                   */
    /*******************************************************/
@@ -48,6 +48,8 @@
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -91,12 +93,12 @@ struct groupReference
 /***************************************/
 
    static struct lhsParseNode    *ReverseAndOr(void *,struct lhsParseNode *,struct lhsParseNode *,int);
-   static struct lhsParseNode    *PerformReorder1(void *,struct lhsParseNode *,int *,int);
-   static struct lhsParseNode    *PerformReorder2(void *,struct lhsParseNode *,int *,int);
-   static struct lhsParseNode    *CompressCEs(void *,struct lhsParseNode *,int *,int);
-   static void                    IncrementNandDepth(void *,struct lhsParseNode *,int);
+   static struct lhsParseNode    *PerformReorder1(void *,struct lhsParseNode *,bool *,int);
+   static struct lhsParseNode    *PerformReorder2(void *,struct lhsParseNode *,bool *,int);
+   static struct lhsParseNode    *CompressCEs(void *,struct lhsParseNode *,bool *,int);
+   static void                    IncrementNandDepth(void *,struct lhsParseNode *,bool);
    static struct lhsParseNode    *CreateInitialPattern(void *);
-   static struct lhsParseNode    *ReorderDriver(void *,struct lhsParseNode *,int *,int,int);
+   static struct lhsParseNode    *ReorderDriver(void *,struct lhsParseNode *,bool *,int,int);
    static struct lhsParseNode    *AddRemainingInitialPatterns(void *,struct lhsParseNode *);
    static struct lhsParseNode    *AssignPatternIndices(struct lhsParseNode *,short,int,short);
    static void                    PropagateIndexSlotPatternValues(struct lhsParseNode *,
@@ -118,7 +120,7 @@ struct groupReference
 struct lhsParseNode *ReorderPatterns(
   void *theEnv,
   struct lhsParseNode *theLHS,
-  int *anyChange)
+  bool *anyChange)
   {
    struct lhsParseNode *newLHS, *tempLHS, *lastLHS;
 
@@ -237,28 +239,28 @@ struct lhsParseNode *ReorderPatterns(
 static struct lhsParseNode *ReorderDriver(
   void *theEnv,
   struct lhsParseNode *theLHS,
-  int *anyChange,
+  bool *anyChange,
   int pass,
   int depth)
   {
    struct lhsParseNode *argPtr;
    struct lhsParseNode *before, *save;
-   int change, newChange;
-   *anyChange = FALSE;
+   bool change, newChange;
+   *anyChange = false;
 
    /*===================================*/
    /* Continue processing the LHS until */
    /* no more changes have been made.   */
    /*===================================*/
 
-   change = TRUE;
+   change = true;
    while (change)
      {
       /*==================================*/
       /* No change yet on this iteration. */
       /*==================================*/
 
-      change = FALSE;
+      change = false;
 
       /*=======================================*/
       /* Reorder the current level of the LHS. */
@@ -273,16 +275,16 @@ static struct lhsParseNode *ReorderDriver(
 
          if (newChange)
            {
-            *anyChange = TRUE;
-            change = TRUE;
+            *anyChange = true;
+            change = true;
            }
 
          theLHS = CompressCEs(theEnv,theLHS,&newChange,depth);
 
          if (newChange)
            {
-            *anyChange = TRUE;
-            change = TRUE;
+            *anyChange = true;
+            change = true;
            }
         }
 
@@ -326,8 +328,8 @@ static struct lhsParseNode *ReorderDriver(
 
             if (newChange)
               {
-               *anyChange = TRUE;
-               change = TRUE;
+               *anyChange = true;
+               change = true;
               }
            }
          else
@@ -361,7 +363,7 @@ static void MarkExistsNands(
      {
       if (IsExistsSubjoin(theLHS,currentDepth))
         {
-         theLHS->existsNand = TRUE;
+         theLHS->existsNand = true;
          
          for (tmpLHS = theLHS;
               tmpLHS != NULL;
@@ -421,24 +423,24 @@ void AddInitialPatterns(
 static struct lhsParseNode *PerformReorder1(
   void *theEnv,
   struct lhsParseNode *theLHS,
-  int *newChange,
+  bool *newChange,
   int depth)
   {
    struct lhsParseNode *argPtr, *lastArg, *nextArg;
    struct lhsParseNode *tempArg, *newNode;
    int count;
-   int change;
+   bool change;
 
    /*======================================================*/
    /* Loop through the CEs as long as changes can be made. */
    /*======================================================*/
 
-   change = TRUE;
-   *newChange = FALSE;
+   change = true;
+   *newChange = false;
 
    while (change)
      {
-      change = FALSE;
+      change = false;
       count = 1;
       lastArg = NULL;
 
@@ -453,8 +455,8 @@ static struct lhsParseNode *PerformReorder1(
            {
             theLHS = ReverseAndOr(theEnv,theLHS,argPtr->right,count);
 
-            change = TRUE;
-            *newChange = TRUE;
+            change = true;
+            *newChange = true;
             break;
            }
 
@@ -464,8 +466,8 @@ static struct lhsParseNode *PerformReorder1(
 
          else if ((theLHS->type == NOT_CE) && (argPtr->type == OR_CE))
            {
-            change = TRUE;
-            *newChange = TRUE;
+            change = true;
+            *newChange = true;
 
             tempArg = argPtr->right;
 
@@ -478,15 +480,15 @@ static struct lhsParseNode *PerformReorder1(
             while (tempArg != NULL)
               {
                newNode = GetLHSParseNode(theEnv);
-               CopyLHSParseNode(theEnv,newNode,tempArg,FALSE);
+               CopyLHSParseNode(theEnv,newNode,tempArg,false);
                newNode->right = tempArg->right;
                newNode->bottom = NULL;
 
                tempArg->type = NOT_CE;
-               tempArg->negated = FALSE;
-               tempArg->exists = FALSE;
-               tempArg->existsNand = FALSE;
-               tempArg->logical = FALSE;
+               tempArg->negated = false;
+               tempArg->exists = false;
+               tempArg->existsNand = false;
+               tempArg->logical = false;
                tempArg->value = NULL;
                tempArg->expression = NULL;
                tempArg->secondaryExpression = NULL;
@@ -506,10 +508,10 @@ static struct lhsParseNode *PerformReorder1(
          else if (((theLHS->type == OR_CE) && (argPtr->type == OR_CE)) ||
                   ((theLHS->type == AND_CE) && (argPtr->type == AND_CE)))
            {
-            if (argPtr->logical) theLHS->logical = TRUE;
+            if (argPtr->logical) theLHS->logical = true;
 
-            change = TRUE;
-            *newChange = TRUE;
+            change = true;
+            *newChange = true;
             tempArg = argPtr->right;
             nextArg = argPtr->bottom;
             argPtr->right = NULL;
@@ -554,22 +556,22 @@ static struct lhsParseNode *PerformReorder1(
 static struct lhsParseNode *PerformReorder2(
   void *theEnv,
   struct lhsParseNode *theLHS,
-  int *newChange,
+  bool *newChange,
   int depth)
   {
    struct lhsParseNode *argPtr;
-   int change;
+   bool change;
 
    /*======================================================*/
    /* Loop through the CEs as long as changes can be made. */
    /*======================================================*/
 
-   change = TRUE;
-   *newChange = FALSE;
+   change = true;
+   *newChange = false;
 
    while (change)
      {
-      change = FALSE;
+      change = false;
 
       for (argPtr = theLHS->right;
            argPtr != NULL;)
@@ -585,8 +587,8 @@ static struct lhsParseNode *PerformReorder2(
              (argPtr->right != NULL) &&
              (argPtr->right->type == NOT_CE))
            {
-            change = TRUE;
-            *newChange = TRUE; 
+            change = true;
+            *newChange = true;
             
             theLHS->right = argPtr->right->right;
 
@@ -606,14 +608,14 @@ static struct lhsParseNode *PerformReorder2(
                   (argPtr->right != NULL) &&
                   (argPtr->right->type == PATTERN_CE))
            {
-            change = TRUE;
-            *newChange = TRUE;
+            change = true;
+            *newChange = true;
 
-            CopyLHSParseNode(theEnv,theLHS,argPtr->right,FALSE);
+            CopyLHSParseNode(theEnv,theLHS,argPtr->right,false);
 
-            theLHS->negated = TRUE;
-            theLHS->exists = TRUE;
-            theLHS->existsNand = FALSE;
+            theLHS->negated = true;
+            theLHS->exists = true;
+            theLHS->existsNand = false;
             theLHS->right = argPtr->right->right;
 
             argPtr->right->networkTest = NULL; 
@@ -640,14 +642,14 @@ static struct lhsParseNode *PerformReorder2(
 
          else if ((theLHS->type == NOT_CE) && (argPtr->type == PATTERN_CE))
            {
-            change = TRUE;
-            *newChange = TRUE;
+            change = true;
+            *newChange = true;
 
-            CopyLHSParseNode(theEnv,theLHS,argPtr,FALSE);
+            CopyLHSParseNode(theEnv,theLHS,argPtr,false);
 
-            theLHS->negated = TRUE;
-            theLHS->exists = FALSE;
-            theLHS->existsNand = FALSE;
+            theLHS->negated = true;
+            theLHS->exists = false;
+            theLHS->existsNand = false;
             theLHS->right = argPtr->right;
 
             argPtr->networkTest = NULL; 
@@ -678,8 +680,8 @@ static struct lhsParseNode *PerformReorder2(
          else if ((theLHS->type == NOT_CE) &&
                   ((argPtr->type == AND_CE) ||  (argPtr->type == NOT_CE)))
            {
-            change = TRUE;
-            *newChange = TRUE;
+            change = true;
+            *newChange = true;
 
             theLHS->type = argPtr->type;
 
@@ -693,7 +695,7 @@ static struct lhsParseNode *PerformReorder2(
             argPtr->bottom = NULL;
             ReturnLHSParseNodes(theEnv,argPtr);
 
-            IncrementNandDepth(theEnv,theLHS->right,TRUE);
+            IncrementNandDepth(theEnv,theLHS->right,true);
             break;
            }
 
@@ -781,7 +783,7 @@ static struct lhsParseNode *ReverseAndOr(
       /* the "b" pattern from the "or" CE was being examined. */
       /*======================================================*/
 
-      CopyLHSParseNode(theEnv,replaceCE,orCE,TRUE);
+      CopyLHSParseNode(theEnv,replaceCE,orCE,true);
       replaceCE->right = CopyLHSParseNodes(theEnv,orCE->right);
 
       /*====================================*/
@@ -836,24 +838,24 @@ static struct lhsParseNode *ReverseAndOr(
 static struct lhsParseNode *CompressCEs(
   void *theEnv,
   struct lhsParseNode *theLHS,
-  int *newChange,
+  bool *newChange,
   int depth)
   {
    struct lhsParseNode *argPtr, *lastArg, *nextArg;
    struct lhsParseNode *tempArg;
-   int change;
+   bool change;
    struct expr *e1, *e2;
 
    /*======================================================*/
    /* Loop through the CEs as long as changes can be made. */
    /*======================================================*/
 
-   change = TRUE;
-   *newChange = FALSE;
+   change = true;
+   *newChange = false;
 
    while (change)
      {
-      change = FALSE;
+      change = false;
       lastArg = NULL;
 
       for (argPtr = theLHS->right;
@@ -867,10 +869,10 @@ static struct lhsParseNode *CompressCEs(
          if (((theLHS->type == OR_CE) && (argPtr->type == OR_CE)) ||
              ((theLHS->type == AND_CE) && (argPtr->type == AND_CE)))
            {
-            if (argPtr->logical) theLHS->logical = TRUE;
+            if (argPtr->logical) theLHS->logical = true;
 
-            change = TRUE;
-            *newChange = TRUE;
+            change = true;
+            *newChange = true;
             tempArg = argPtr->right;
             nextArg = argPtr->bottom;
             argPtr->right = NULL;
@@ -894,8 +896,8 @@ static struct lhsParseNode *CompressCEs(
 
          else if ((theLHS->type == NOT_CE) && (argPtr->type == TEST_CE))
            {
-            change = TRUE;
-            *newChange = TRUE;
+            change = true;
+            *newChange = true;
 
             tempArg = GetLHSParseNode(theEnv);
             tempArg->type = FCALL;
@@ -903,7 +905,7 @@ static struct lhsParseNode *CompressCEs(
             tempArg->bottom = argPtr->expression;
             argPtr->expression = tempArg;
 
-            CopyLHSParseNode(theEnv,theLHS,argPtr,TRUE);
+            CopyLHSParseNode(theEnv,theLHS,argPtr,true);
             ReturnLHSParseNodes(theEnv,argPtr);
             theLHS->right = NULL;
             break;
@@ -916,12 +918,12 @@ static struct lhsParseNode *CompressCEs(
 
          else if ((theLHS->type == AND_CE) && (argPtr->type == TEST_CE) &&
                   ((argPtr->bottom != NULL) ? argPtr->bottom->type == TEST_CE :
-                                              FALSE) &&
+                                              false) &&
                    (argPtr->beginNandDepth == argPtr->endNandDepth) &&
                    (argPtr->endNandDepth == argPtr->bottom->beginNandDepth))
            {
-            change = TRUE;
-            *newChange = TRUE;
+            change = true;
+            *newChange = true;
 
             argPtr->expression = CombineLHSParseNodes(theEnv,argPtr->expression,argPtr->bottom->expression);
             argPtr->bottom->expression = NULL;
@@ -939,15 +941,15 @@ static struct lhsParseNode *CompressCEs(
 
          else if ((theLHS->type == AND_CE) && (argPtr->type == PATTERN_CE) &&
                   ((argPtr->bottom != NULL) ? argPtr->bottom->type == TEST_CE :
-                                              FALSE) &&
-                   (argPtr->negated == FALSE) &&
-                   (argPtr->exists == FALSE) &&
+                                              false) &&
+                   (argPtr->negated == false) &&
+                   (argPtr->exists == false) &&
                    (argPtr->beginNandDepth == argPtr->endNandDepth) &&
                    (argPtr->endNandDepth == argPtr->bottom->beginNandDepth))
            {
             int endNandDepth;
-            change = TRUE;
-            *newChange = TRUE;
+            change = true;
+            *newChange = true;
             
             endNandDepth = argPtr->bottom->endNandDepth;
             
@@ -970,8 +972,8 @@ static struct lhsParseNode *CompressCEs(
               {
                if (argPtr->negated)
                  {
-                  argPtr->negated = FALSE;
-                  argPtr->exists = TRUE;
+                  argPtr->negated = false;
+                  argPtr->exists = true;
                   e1 = LHSParseNodesToExpression(theEnv,argPtr->secondaryExpression);
                   e1 = NegateExpression(theEnv,e1);
                   ReturnLHSParseNodes(theEnv,argPtr->secondaryExpression);
@@ -980,8 +982,8 @@ static struct lhsParseNode *CompressCEs(
                  }
                else if (argPtr->exists)
                  {
-                  argPtr->negated = TRUE;
-                  argPtr->exists = FALSE;
+                  argPtr->negated = true;
+                  argPtr->exists = false;
                   e1 = LHSParseNodesToExpression(theEnv,argPtr->secondaryExpression);
                   e1 = NegateExpression(theEnv,e1);
                   ReturnLHSParseNodes(theEnv,argPtr->secondaryExpression);
@@ -990,7 +992,7 @@ static struct lhsParseNode *CompressCEs(
                  }
                else
                  {
-                  argPtr->negated = TRUE;
+                  argPtr->negated = true;
                  }
                PropagateNandDepth(argPtr,endNandDepth,endNandDepth);
               }
@@ -1015,10 +1017,10 @@ static struct lhsParseNode *CompressCEs(
          else if ((theLHS->type == AND_CE) && (argPtr->type == TEST_CE) &&
                   (theLHS->right == argPtr) && (argPtr->bottom == NULL))
            {
-            change = TRUE;
-            *newChange = TRUE;
+            change = true;
+            *newChange = true;
 
-            CopyLHSParseNode(theEnv,theLHS,argPtr,TRUE);
+            CopyLHSParseNode(theEnv,theLHS,argPtr,true);
             theLHS->right = NULL;
             ReturnLHSParseNodes(theEnv,argPtr);
             break;
@@ -1032,10 +1034,10 @@ static struct lhsParseNode *CompressCEs(
          else if ((theLHS->type == AND_CE) && (argPtr->type == PATTERN_CE) &&
                   (theLHS->right == argPtr) && (argPtr->bottom == NULL) && (depth > 1))
            {
-            change = TRUE;
-            *newChange = TRUE;
+            change = true;
+            *newChange = true;
 
-            CopyLHSParseNode(theEnv,theLHS,argPtr,FALSE);
+            CopyLHSParseNode(theEnv,theLHS,argPtr,false);
 
             theLHS->right = argPtr->right;
 
@@ -1090,7 +1092,7 @@ struct lhsParseNode *CopyLHSParseNodes(
      { return(NULL); }
 
    newList = get_struct(theEnv,lhsParseNode);
-   CopyLHSParseNode(theEnv,newList,listOfCEs,TRUE);
+   CopyLHSParseNode(theEnv,newList,listOfCEs,true);
 
    newList->right = CopyLHSParseNodes(theEnv,listOfCEs->right);
    newList->bottom = CopyLHSParseNodes(theEnv,listOfCEs->bottom);
@@ -1105,7 +1107,7 @@ void CopyLHSParseNode(
   void *theEnv,
   struct lhsParseNode *dest,
   struct lhsParseNode *src,
-  int duplicate)
+  bool duplicate)
   {
    dest->type = src->type;
    dest->value = src->value;
@@ -1160,8 +1162,8 @@ void CopyLHSParseNode(
       dest->expression = CopyLHSParseNodes(theEnv,src->expression);
       dest->secondaryExpression = CopyLHSParseNodes(theEnv,src->secondaryExpression);
       dest->constraints = CopyConstraintRecord(theEnv,src->constraints);
-      if (dest->constraints != NULL) dest->derivedConstraints = TRUE;
-      else dest->derivedConstraints = FALSE;
+      if (dest->constraints != NULL) dest->derivedConstraints = true;
+      else dest->derivedConstraints = false;
      }
    else
      {
@@ -1178,7 +1180,7 @@ void CopyLHSParseNode(
       dest->userData = src->userData;
       dest->expression = src->expression;
       dest->secondaryExpression = src->secondaryExpression;
-      dest->derivedConstraints = FALSE;
+      dest->derivedConstraints = false;
       dest->constraints = src->constraints;
      }
   }
@@ -1195,20 +1197,20 @@ struct lhsParseNode *GetLHSParseNode(
    newNode = get_struct(theEnv,lhsParseNode);
    newNode->type = UNKNOWN_VALUE;
    newNode->value = NULL;
-   newNode->negated = FALSE;
-   newNode->exists = FALSE;
-   newNode->existsNand = FALSE;
-   newNode->bindingVariable = FALSE;
-   newNode->withinMultifieldSlot = FALSE;
-   newNode->multifieldSlot = FALSE;
+   newNode->negated = false;
+   newNode->exists = false;
+   newNode->existsNand = false;
+   newNode->bindingVariable = false;
+   newNode->withinMultifieldSlot = false;
+   newNode->multifieldSlot = false;
    newNode->multiFieldsBefore = 0;
    newNode->multiFieldsAfter = 0;
    newNode->singleFieldsBefore = 0;
    newNode->singleFieldsAfter = 0;
-   newNode->logical = FALSE;
-   newNode->derivedConstraints = FALSE;
-   newNode->userCE = TRUE;
-   //newNode->marked = FALSE;
+   newNode->logical = false;
+   newNode->derivedConstraints = false;
+   newNode->userCE = true;
+   //newNode->marked = false;
    newNode->whichCE = 0;
    newNode->constraints = NULL;
    newNode->referringNode = NULL;
@@ -1317,7 +1319,7 @@ struct lhsParseNode *ExpressionToLHSParseNodes(
         {
          theRestriction = GetNthRestriction(theFunction,i);
          theList->constraints = ArgumentTypeToConstraintRecord(theEnv,theRestriction);
-         theList->derivedConstraints = TRUE;
+         theList->derivedConstraints = true;
         }
      }
 
@@ -1371,7 +1373,7 @@ struct expr *LHSParseNodesToExpression(
 static void IncrementNandDepth(
   void *theEnv,
   struct lhsParseNode *theLHS,
-  int lastCE)
+  bool lastCE)
   {
    /*======================================*/
    /* Loop through each CE in the group of */
@@ -1396,7 +1398,7 @@ static void IncrementNandDepth(
         {
          theLHS->beginNandDepth++;
 
-         if (lastCE == FALSE) theLHS->endNandDepth++;
+         if (lastCE == false) theLHS->endNandDepth++;
          else if (theLHS->bottom != NULL) theLHS->endNandDepth++;
         }
 
@@ -1409,7 +1411,7 @@ static void IncrementNandDepth(
       else if ((theLHS->type == AND_CE) || (theLHS->type == NOT_CE))
         {
          IncrementNandDepth(theEnv,theLHS->right,
-                            (lastCE ? (theLHS->bottom == NULL) : FALSE));
+                            (lastCE ? (theLHS->bottom == NULL) : false));
         }
 
       /*=====================================*/
@@ -1439,7 +1441,7 @@ static struct lhsParseNode *CreateInitialPattern(
 
    topNode = GetLHSParseNode(theEnv);
    topNode->type = PATTERN_CE;
-   topNode->userCE = FALSE;
+   topNode->userCE = false;
    topNode->bottom = NULL;
    
    return(topNode);
@@ -1468,7 +1470,7 @@ static struct lhsParseNode *AddRemainingInitialPatterns(
          thePattern->endNandDepth = theLHS->beginNandDepth;
          thePattern->logical = theLHS->logical;
          thePattern->existsNand = theLHS->existsNand;
-         theLHS->existsNand = FALSE;
+         theLHS->existsNand = false;
      
          thePattern->bottom = theLHS;
                
@@ -1759,22 +1761,22 @@ static int PropagateWhichCE(
 /********************/
 /* IsExistsSubjoin: */
 /********************/
-int IsExistsSubjoin(
+bool IsExistsSubjoin(
   struct lhsParseNode *theLHS,
   int parentDepth)
   {
    int startDepth = theLHS->beginNandDepth;
    
    if ((startDepth - parentDepth) != 2)
-     { return(FALSE); }
+     { return false; }
      
    while (theLHS->endNandDepth >= startDepth)
      { theLHS = theLHS->bottom; }
    
    if (theLHS->endNandDepth <= parentDepth)
-     { return(TRUE); }
+     { return true; }
 
-   return(FALSE);
+   return false;
   }
 
 /***************************************************************************/

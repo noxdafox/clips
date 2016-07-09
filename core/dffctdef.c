@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/23/16             */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*              DEFFACTS DEFINITION MODULE             */
    /*******************************************************/
@@ -38,6 +38,8 @@
 /*            named construct.                               */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -110,7 +112,7 @@ static void DeallocateDeffactsData(
    if (Bloaded(theEnv)) return;
 #endif
 
-   DoForAllConstructs(theEnv,DestroyDeffactsAction,DeffactsData(theEnv)->DeffactsModuleIndex,FALSE,NULL); 
+   DoForAllConstructs(theEnv,DestroyDeffactsAction,DeffactsData(theEnv)->DeffactsModuleIndex,false,NULL);
 
    for (theModule = EnvGetNextDefmodule(theEnv,NULL);
         theModule != NULL;
@@ -252,10 +254,10 @@ void *EnvGetNextDeffacts(
   }
 
 /********************************************************/
-/* EnvIsDeffactsDeletable: Returns TRUE if a particular */
-/*   deffacts can be deleted, otherwise returns FALSE.  */
+/* EnvIsDeffactsDeletable: Returns true if a particular */
+/*   deffacts can be deleted, otherwise returns false.  */
 /********************************************************/
-intBool EnvIsDeffactsDeletable(
+bool EnvIsDeffactsDeletable(
   void *theEnv,
   void *ptr)
   {
@@ -263,11 +265,11 @@ intBool EnvIsDeffactsDeletable(
 #pragma unused(ptr)
 #endif
    if (! ConstructsDeletable(theEnv))
-     { return FALSE; }
+     { return false; }
 
-   if (ConstructData(theEnv)->ResetInProgress) return(FALSE);
+   if (ConstructData(theEnv)->ResetInProgress) return false;
 
-   return(TRUE);
+   return true;
   }
 
 /***********************************************************/
@@ -335,7 +337,7 @@ void *GetNextDeffacts(
    return EnvGetNextDeffacts(GetCurrentEnvironment(),deffactsPtr);
   }
 
-intBool IsDeffactsDeletable(
+bool IsDeffactsDeletable(
   void *ptr)
   {
    return EnvIsDeffactsDeletable(GetCurrentEnvironment(),ptr);

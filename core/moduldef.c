@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/25/16            */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*                  DEFMODULE MODULE                   */
    /*******************************************************/
@@ -39,6 +39,8 @@
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -69,20 +71,21 @@
 /***************************************/
 
 #if (! RUN_TIME)
-   static void                       ReturnDefmodule(void *,struct defmodule *,intBool);
+   static void                       ReturnDefmodule(void *,struct defmodule *,bool);
 #endif
    static void                       DeallocateDefmoduleData(void *);
 
-/**************************************************************/
-/* InitializeDefmodules: Initializes the defmodule construct. */
-/**************************************************************/
+/************************************************/
+/* AllocateDefmoduleGlobals: Initializes global */
+/*   variables used by the defmodule construct. */
+/************************************************/
 void AllocateDefmoduleGlobals(
   void *theEnv)
   {
    AllocateEnvironmentData(theEnv,DEFMODULE_DATA,sizeof(struct defmoduleData),NULL);
    AddEnvironmentCleanupFunction(theEnv,"defmodules",DeallocateDefmoduleData,-1000);
-   DefmoduleData(theEnv)->CallModuleChangeFunctions = TRUE;
-   DefmoduleData(theEnv)->MainModuleRedefinable = TRUE;
+   DefmoduleData(theEnv)->CallModuleChangeFunctions = true;
+   DefmoduleData(theEnv)->MainModuleRedefinable = true;
   }
 
 /****************************************************/
@@ -129,7 +132,7 @@ static void DeallocateDefmoduleData(
    while (tmpDMPtr != NULL)
      {
       nextDMPtr = tmpDMPtr->next;
-      ReturnDefmodule(theEnv,tmpDMPtr,TRUE);
+      ReturnDefmodule(theEnv,tmpDMPtr,true);
       tmpDMPtr = nextDMPtr;
      }
 
@@ -336,7 +339,7 @@ void SaveCurrentModule(
 
    tmp = get_struct(theEnv,moduleStackItem);
    tmp->changeFlag = DefmoduleData(theEnv)->CallModuleChangeFunctions;
-   DefmoduleData(theEnv)->CallModuleChangeFunctions = FALSE;
+   DefmoduleData(theEnv)->CallModuleChangeFunctions = false;
    tmp->theModule = DefmoduleData(theEnv)->CurrentModule;
    tmp->next = DefmoduleData(theEnv)->ModuleStack;
    DefmoduleData(theEnv)->ModuleStack = tmp;
@@ -545,7 +548,7 @@ void RemoveAllDefmodules(
    while (DefmoduleData(theEnv)->ListOfDefmodules != NULL)
      {
       nextDefmodule = DefmoduleData(theEnv)->ListOfDefmodules->next;
-      ReturnDefmodule(theEnv,DefmoduleData(theEnv)->ListOfDefmodules,FALSE);
+      ReturnDefmodule(theEnv,DefmoduleData(theEnv)->ListOfDefmodules,false);
       DefmoduleData(theEnv)->ListOfDefmodules = nextDefmodule;
      }
 
@@ -560,7 +563,7 @@ void RemoveAllDefmodules(
 static void ReturnDefmodule(
   void *theEnv,
   struct defmodule *theDefmodule,
-  intBool environmentClear)
+  bool environmentClear)
   {
    int i;
    struct moduleItem *theItem;
@@ -731,7 +734,7 @@ void *SetCurrentModuleCommand(
    if (EnvArgCountCheck(theEnv,"set-current-module",EXACTLY,1) == -1)
      { return(defaultReturn); }
 
-   if (EnvArgTypeCheck(theEnv,"set-current-module",1,SYMBOL,&argPtr) == FALSE)
+   if (EnvArgTypeCheck(theEnv,"set-current-module",1,SYMBOL,&argPtr) == false)
      { return(defaultReturn); }
 
    argument = DOToString(argPtr);
@@ -769,7 +772,7 @@ void AddAfterModuleChangeFunction(
   int priority)
   {
    DefmoduleData(theEnv)->AfterModuleChangeFunctions =
-     AddFunctionToCallList(theEnv,name,priority,func,DefmoduleData(theEnv)->AfterModuleChangeFunctions,TRUE);
+     AddFunctionToCallList(theEnv,name,priority,func,DefmoduleData(theEnv)->AfterModuleChangeFunctions,true);
   }
 
 /************************************************/
@@ -779,7 +782,7 @@ void AddAfterModuleChangeFunction(
 void IllegalModuleSpecifierMessage(
   void *theEnv)
   {
-   PrintErrorID(theEnv,"MODULDEF",1,TRUE);
+   PrintErrorID(theEnv,"MODULDEF",1,true);
    EnvPrintRouter(theEnv,WERROR,"Illegal use of the module specifier.\n");
   }
 

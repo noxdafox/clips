@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -26,6 +26,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_objrtgen
@@ -41,7 +43,7 @@
 
    void             ReplaceGetJNObjectValue(void *,EXPRESSION *,struct lhsParseNode *,int);
    EXPRESSION      *GenGetJNObjectValue(void *,struct lhsParseNode *,int);
-   EXPRESSION      *ObjectJNVariableComparison(void *,struct lhsParseNode *,struct lhsParseNode *,int);
+   EXPRESSION      *ObjectJNVariableComparison(void *,struct lhsParseNode *,struct lhsParseNode *,bool);
    EXPRESSION      *GenObjectPNConstantCompare(void *,struct lhsParseNode *);
    void             ReplaceGetPNObjectValue(void *,EXPRESSION *,struct lhsParseNode *);
    EXPRESSION      *GenGetPNObjectValue(void *,struct lhsParseNode *); 

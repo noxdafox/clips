@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/04/16            */
    /*                                                     */
    /*              CONSTRUCT PARSER MODULE                */
    /*******************************************************/
@@ -45,6 +45,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_cstrcpsr
@@ -68,8 +70,8 @@
    struct symbolHashNode         *GetConstructNameAndComment(void *,const char *,
                                                                     struct token *,const char *,
                                                                     void *(*)(void *,const char *),
-                                                                    int (*)(void *,void *),
-                                                                    const char *,int,int,int,int);
+                                                                    bool (*)(void *,void *),
+                                                                    const char *,bool,bool,bool,bool);
    void                           ImportExportConflictMessage(void *,const char *,const char *,const char *,const char *);
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    void                           FlushParsingMessages(void *);

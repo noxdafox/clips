@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*             DEFMODULE PARSER HEADER FILE            */
    /*******************************************************/
@@ -30,6 +30,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_modulpsr
@@ -52,10 +54,10 @@ struct portConstructItem
    long                           GetNumberOfDefmodules(void *);
    void                           SetNumberOfDefmodules(void *,long);
    void                           AddAfterModuleDefinedFunction(void *,const char *,void (*)(void *),int);
-   int                            ParseDefmodule(void *,const char *);
+   bool                           ParseDefmodule(void *,const char *);
    void                           AddPortConstructItem(void *,const char *,int);
    struct portConstructItem      *ValidPortConstructItem(void *,const char *);
-   int                            FindImportExportConflict(void *,const char *,struct defmodule *,const char *);
+   bool                           FindImportExportConflict(void *,const char *,struct defmodule *,const char *);
 
 #endif /* _H_modulpsr */
 

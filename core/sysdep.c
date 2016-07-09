@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/17/16            */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*               SYSTEM DEPENDENT MODULE               */
    /*******************************************************/
@@ -78,9 +78,6 @@
 /*      6.40: Added genchdir function for changing the       */
 /*            current directory.                             */
 /*                                                           */
-/*            Added Env prefix to GetHaltExecution and       */
-/*            SetHaltExecution functions.                    */
-/*                                                           */
 /*            Modified gentime to return "comparable" epoch  */
 /*            based values across platforms.                 */
 /*                                                           */
@@ -88,6 +85,8 @@
 /*            in sysdep.c.                                   */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -635,24 +634,24 @@ int genchdir(
 /****************************************************/
 /* genremove: Generic function for removing a file. */
 /****************************************************/
-int genremove(
+bool genremove(
   const char *fileName)
   {
-   if (remove(fileName)) return(0);
+   if (remove(fileName)) return false;
 
-   return(1);
+   return true;
   }
 
 /****************************************************/
 /* genrename: Generic function for renaming a file. */
 /****************************************************/
-int genrename(
+bool genrename(
   const char *oldFileName,
   const char *newFileName)
   {
-   if (rename(oldFileName,newFileName)) return(0);
+   if (rename(oldFileName,newFileName)) return false;
 
-   return(1);
+   return true;
   }
 
 /**************************************/
@@ -789,30 +788,28 @@ int GenOpenReadBinary(
      { (*SystemDependentData(theEnv)->BeforeOpenFunction)(theEnv); }
 
 #if WIN_MVC
-
    SystemDependentData(theEnv)->BinaryFileHandle = _open(fileName,O_RDONLY | O_BINARY);
    if (SystemDependentData(theEnv)->BinaryFileHandle == -1)
      {
       if (SystemDependentData(theEnv)->AfterOpenFunction != NULL)
         { (*SystemDependentData(theEnv)->AfterOpenFunction)(theEnv); }
-      return(0);
+      return 0;
      }
 #endif
 
 #if (! WIN_MVC)
-
    if ((SystemDependentData(theEnv)->BinaryFP = fopen(fileName,"rb")) == NULL)
      {
       if (SystemDependentData(theEnv)->AfterOpenFunction != NULL)
         { (*SystemDependentData(theEnv)->AfterOpenFunction)(theEnv); }
-      return(0);
+      return 0;
      }
 #endif
 
    if (SystemDependentData(theEnv)->AfterOpenFunction != NULL)
      { (*SystemDependentData(theEnv)->AfterOpenFunction)(theEnv); }
 
-   return(1);
+   return 1;
   }
 
 /***********************************************/

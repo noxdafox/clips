@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  06/27/16            */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*              DEFRULE BSAVE/BLOAD MODULE             */
    /*******************************************************/
@@ -32,6 +32,8 @@
 /*            saliences.                                     */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -453,15 +455,15 @@ static void BsaveDisjuncts(
    struct defrule *theDisjunct;
    struct bsaveDefrule tempDefrule;
    long int disjunctExpressionCount = 0L;
-   int first;
+   bool first;
 
    /*=========================================*/
    /* Loop through each disjunct of the rule. */
    /*=========================================*/
 
-   for (theDisjunct = theDefrule, first = TRUE;
+   for (theDisjunct = theDefrule, first = true;
         theDisjunct != NULL;
-        theDisjunct = theDisjunct->disjunct, first = FALSE)
+        theDisjunct = theDisjunct->disjunct, first = false)
      {
       DefruleBinaryData(theEnv)->NumberOfDefrules++;
 
@@ -963,7 +965,7 @@ static void UpdateJoin(
    DefruleBinaryData(theEnv)->JoinArray[obji].nextLinks = BloadJoinLinkPointer(bj->nextLinks);
    DefruleBinaryData(theEnv)->JoinArray[obji].lastLevel = BloadJoinPointer(bj->lastLevel);
 
-   if (bj->joinFromTheRight == TRUE)
+   if (bj->joinFromTheRight == true)
      { DefruleBinaryData(theEnv)->JoinArray[obji].rightSideEntryStructure =  (void *) BloadJoinPointer(bj->rightSideEntryStructure); }
    else
      { DefruleBinaryData(theEnv)->JoinArray[obji].rightSideEntryStructure = NULL; }

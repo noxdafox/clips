@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*             DEFRULE COMMANDS HEADER FILE            */
    /*******************************************************/
@@ -51,6 +51,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_rulecom
@@ -76,10 +78,10 @@ struct joinInformation
 #define SUCCINCT 1
 #define TERSE    2
 
-   intBool                        EnvGetBetaMemoryResizing(void *);
-   intBool                        EnvSetBetaMemoryResizing(void *,intBool);
-   int                            GetBetaMemoryResizingCommand(void *);
-   int                            SetBetaMemoryResizingCommand(void *);
+   bool                           EnvGetBetaMemoryResizing(void *);
+   bool                           EnvSetBetaMemoryResizing(void *,bool);
+   bool                           GetBetaMemoryResizingCommand(void *);
+   bool                           SetBetaMemoryResizingCommand(void *);
 
    void                           EnvMatches(void *,void *,int,DATA_OBJECT *);
    void                           EnvJoinActivity(void *,void *,int,DATA_OBJECT *);
@@ -106,8 +108,8 @@ struct joinInformation
    void                           Matches(void *,int,DATA_OBJECT *);
    void                           JoinActivity(void *,int,DATA_OBJECT *);
 #endif
-   intBool                        GetBetaMemoryResizing(void);
-   intBool                        SetBetaMemoryResizing(int);
+   bool                           GetBetaMemoryResizing(void);
+   bool                           SetBetaMemoryResizing(bool);
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */
 

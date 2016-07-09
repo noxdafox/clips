@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*          DEFTEMPLATE UTILITIES HEADER FILE          */
    /*******************************************************/
@@ -38,6 +38,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_tmpltutl
@@ -52,17 +54,17 @@
 #include "factmngr.h"
 #include "symbol.h"
 
-   void                           InvalidDeftemplateSlotMessage(void *,const char *,const char *,int);
+   void                           InvalidDeftemplateSlotMessage(void *,const char *,const char *,bool);
    void                           SingleFieldSlotCardinalityError(void *,const char *);
    void                           MultiIntoSingleFieldSlotError(void *,struct templateSlot *,struct deftemplate *);
    void                           CheckTemplateFact(void *,struct fact *);
-   intBool                        CheckRHSSlotTypes(void *,struct expr *,struct templateSlot *,const char *);
+   bool                           CheckRHSSlotTypes(void *,struct expr *,struct templateSlot *,const char *);
    struct templateSlot           *GetNthSlot(struct deftemplate *,int);
    int                            FindSlotPosition(struct deftemplate *,struct symbolHashNode *);
-   void                           PrintTemplateFact(void *,const char *,struct fact *,int,int);
+   void                           PrintTemplateFact(void *,const char *,struct fact *,bool,bool);
    void                           UpdateDeftemplateScope(void *);
    struct templateSlot           *FindSlot(struct deftemplate *,struct symbolHashNode *,short *);
-   struct deftemplate            *CreateImpliedDeftemplate(void *,SYMBOL_HN *,int);
+   struct deftemplate            *CreateImpliedDeftemplate(void *,SYMBOL_HN *,bool);
 
 #endif /* _H_tmpltutl */
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/23/16             */
+   /*            CLIPS Version 6.40  07/04/16             */
    /*                                                     */
    /*          CONSTRAINT CONSTRUCTS-TO-C MODULE          */
    /*******************************************************/
@@ -29,6 +29,8 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -62,7 +64,7 @@ int ConstraintsToCode(
   int maxIndices)
   {
    int i, j, count;
-   int newHeader = TRUE;
+   bool newHeader = true;
    FILE *fp;
    int version = 1;
    int arrayVersion = 1;
@@ -90,12 +92,13 @@ int ConstraintsToCode(
    if ((! EnvGetDynamicConstraintChecking(theEnv)) && (numberOfConstraints != 0))
      {
       numberOfConstraints = 0;
-      PrintWarningID(theEnv,"CSTRNCMP",1,FALSE);
+      PrintWarningID(theEnv,"CSTRNCMP",1,false);
       EnvPrintRouter(theEnv,WWARNING,"Constraints are not saved with a constructs-to-c image\n");
       EnvPrintRouter(theEnv,WWARNING,"  when dynamic constraint checking is disabled.\n");
      }
 
-   if (numberOfConstraints == 0) return(-1);
+   if (numberOfConstraints == 0)
+     { return -1; }
 
    /*=================================================*/
    /* Print the extern definition in the header file. */
@@ -108,7 +111,7 @@ int ConstraintsToCode(
    /* Create the file. */
    /*==================*/
 
-   if ((fp = NewCFile(theEnv,fileName,pathName,fileNameBuffer,fileID,version,FALSE)) == NULL) return(-1);
+   if ((fp = NewCFile(theEnv,fileName,pathName,fileNameBuffer,fileID,version,false)) == NULL) return(-1);
 
    /*===================*/
    /* List the entries. */
@@ -126,7 +129,7 @@ int ConstraintsToCode(
          if (newHeader)
            {
             fprintf(fp,"CONSTRAINT_RECORD C%d_%d[] = {\n",imageID,arrayVersion);
-            newHeader = FALSE;
+            newHeader = false;
            }
 
          fprintf(fp,"{%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d",
@@ -194,8 +197,9 @@ int ConstraintsToCode(
             arrayVersion++;
             if (count < numberOfConstraints)
               {
-               if ((fp = NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,version,FALSE)) == NULL) return(0);
-               newHeader = TRUE;
+               if ((fp = NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,version,false)) == NULL)
+                 { return 0; }
+               newHeader = true;
               }
            }
          else
@@ -203,7 +207,7 @@ int ConstraintsToCode(
         }
      }
 
-   return(version);
+   return version;
   }
 
 /**********************************************************/

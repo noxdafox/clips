@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/23/16             */
+   /*            CLIPS Version 6.40  07/04/16             */
    /*                                                     */
    /*                    AGENDA MODULE                    */
    /*******************************************************/
@@ -46,6 +46,8 @@
 /*            SetEvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -304,7 +306,7 @@ void ClearRuleFromAgenda(
         {
          if (agendaPtr->theRule == tempRule)
            {
-            RemoveActivation(theEnv,agendaPtr,TRUE,TRUE);
+            RemoveActivation(theEnv,agendaPtr,true,true);
             break;
            }
         }
@@ -447,7 +449,7 @@ void EnvGetActivationBasisPPForm(
 /* MoveActivationToTop: Moves the specified */
 /*   activation to the top of the agenda.   */
 /********************************************/
-intBool MoveActivationToTop(
+bool MoveActivationToTop(
   void *theEnv,
   void *vtheActivation)
   {
@@ -467,7 +469,7 @@ intBool MoveActivationToTop(
    /* the agenda, then nothing needs to be done. */
    /*============================================*/
 
-   if (theActivation == theModuleItem->agenda) return(FALSE);
+   if (theActivation == theModuleItem->agenda) return false;
 
    /*=================================================*/
    /* Update the pointers of the activation preceding */
@@ -493,30 +495,30 @@ intBool MoveActivationToTop(
    /* Mark the agenda as changed. */
    /*=============================*/
 
-   AgendaData(theEnv)->AgendaChanged = TRUE;
+   AgendaData(theEnv)->AgendaChanged = true;
 
-   return(TRUE);
+   return true;
   }
 
 /**********************************************/
 /* EnvDeleteActivation: Removes the specified */
 /*   activation from the agenda.              */
 /**********************************************/
-intBool EnvDeleteActivation(
+bool EnvDeleteActivation(
   void *theEnv,
   void *theActivation)
   {
    if (theActivation == NULL) RemoveAllActivations(theEnv);
-   else RemoveActivation(theEnv,(struct activation *) theActivation,TRUE,TRUE);
+   else RemoveActivation(theEnv,(struct activation *) theActivation,true,true);
 
-   return(TRUE);
+   return true;
   }
 
 /*******************************************************/
 /* DetachActivation: Detaches the specified activation */
 /*   from the list of activations on the Agenda.       */
 /*******************************************************/
-intBool DetachActivation(
+bool DetachActivation(
   void *theEnv,
   void *vTheActivation)
   {
@@ -571,9 +573,9 @@ intBool DetachActivation(
    /* Mark the agenda as changed. */
    /*=============================*/
 
-   AgendaData(theEnv)->AgendaChanged = TRUE;
+   AgendaData(theEnv)->AgendaChanged = true;
 
-   return(TRUE);
+   return true;
   }
 
 /****************************************************************************/
@@ -618,8 +620,8 @@ void EnvAgenda(
 void RemoveActivation(
   void *theEnv,
   void *vTheActivation,
-  int updateAgenda,
-  int updateLinks)
+  bool updateAgenda,
+  bool updateLinks)
   {
    struct defruleModule *theModuleItem;
    struct activation *theActivation = (struct activation *) vTheActivation;
@@ -635,7 +637,7 @@ void RemoveActivation(
    /* Update the agenda if necessary. */
    /*=================================*/
 
-   if (updateAgenda == TRUE)
+   if (updateAgenda == true)
      {
       RemoveActivationFromGroup(theEnv,theActivation,theModuleItem);
 
@@ -673,14 +675,14 @@ void RemoveActivation(
       /* Mark the agenda as changed. */
       /*=============================*/
 
-      AgendaData(theEnv)->AgendaChanged = TRUE;
+      AgendaData(theEnv)->AgendaChanged = true;
      }
 
    /*============================================*/
    /* Update join and agenda links if necessary. */
    /*============================================*/
 
-   if ((updateLinks == TRUE) && (theActivation->basis != NULL))
+   if ((updateLinks == true) && (theActivation->basis != NULL))
      { theActivation->basis->marker = NULL; }
 
    /*================================================*/
@@ -777,7 +779,7 @@ void RemoveAllActivations(
    while (theActivation != NULL)
      {
       tempPtr = theActivation->next;
-      RemoveActivation(theEnv,theActivation,TRUE,TRUE);
+      RemoveActivation(theEnv,theActivation,true,true);
       theActivation = tempPtr;
      }
 
@@ -795,7 +797,7 @@ void RemoveAllActivations(
 /*   flag which indicates whether any changes have been  */
 /*   made to the agenda.                                 */
 /*********************************************************/
-int EnvGetAgendaChanged(
+bool EnvGetAgendaChanged(
   void *theEnv)
   {
    return(AgendaData(theEnv)->AgendaChanged);
@@ -807,7 +809,7 @@ int EnvGetAgendaChanged(
 /*****************************************************************/
 void EnvSetAgendaChanged(
   void *theEnv,
-  int value)
+  bool value)
   {
    AgendaData(theEnv)->AgendaChanged = value;
   }
@@ -822,7 +824,7 @@ void EnvReorderAgenda(
   {
    struct activation *theActivation, *tempPtr;
    struct defmodule *theModule = (struct defmodule *) vTheModule;
-   int allModules = FALSE;
+   bool allModules = false;
    struct defruleModule *theModuleItem;
    struct salienceGroup *theGroup, *tempGroup;
 
@@ -833,7 +835,7 @@ void EnvReorderAgenda(
 
    if (theModule == NULL)
      {
-      allModules = TRUE;
+      allModules = true;
       theModule = (struct defmodule *) EnvGetNextDefmodule(theEnv,NULL);
      }
 
@@ -936,7 +938,7 @@ void RefreshCommand(
 /* EnvRefresh: Refreshes a defrule. Activations of the rule */
 /*   that have already been fired are added to the agenda.  */
 /************************************************************/
-intBool EnvRefresh(
+bool EnvRefresh(
   void *theEnv,
   void *theRule)
   {
@@ -979,7 +981,7 @@ intBool EnvRefresh(
         }
      }
 
-   return(TRUE);
+   return true;
   }
 
 /**********************************************/
@@ -989,7 +991,8 @@ intBool EnvRefresh(
 void RefreshAgendaCommand(
   void *theEnv)
   {
-   int numArgs, error;
+   int numArgs;
+   bool error;
    struct defmodule *theModule;
 
    /*==============================================*/
@@ -1029,8 +1032,8 @@ void EnvRefreshAgenda(
   {
    struct activation *theActivation;
    struct defmodule *theModule = (struct defmodule *) vTheModule;
-   intBool oldValue;
-   int allModules = FALSE;
+   int oldValue;
+   bool allModules = false;
    
    /*==========================*/
    /* Save the current module. */
@@ -1045,7 +1048,7 @@ void EnvRefreshAgenda(
 
    if (theModule == NULL)
      {
-      allModules = TRUE;
+      allModules = true;
       theModule = (struct defmodule *) EnvGetNextDefmodule(theEnv,NULL);
      }
 
@@ -1139,7 +1142,7 @@ void *SetSalienceEvaluationCommand(
    if (EnvArgCountCheck(theEnv,"set-salience-evaluation",EXACTLY,1) == -1)
      { return((SYMBOL_HN *) EnvAddSymbol(theEnv,oldValue)); }
 
-   if (EnvArgTypeCheck(theEnv,"set-salience-evaluation",1,SYMBOL,&argPtr) == FALSE)
+   if (EnvArgTypeCheck(theEnv,"set-salience-evaluation",1,SYMBOL,&argPtr) == false)
      { return((SYMBOL_HN *) EnvAddSymbol(theEnv,oldValue)); }
 
    /*=============================================================*/
@@ -1216,7 +1219,7 @@ static const char *SalienceEvaluationName(
 /*  of salience evaluation (e.g., when defined, when activated, */
 /*  or every cycle).                                            */
 /****************************************************************/
-intBool EnvGetSalienceEvaluation(
+int EnvGetSalienceEvaluation(
   void *theEnv)
   {   
    return(AgendaData(theEnv)->SalienceEvaluation); 
@@ -1226,7 +1229,7 @@ intBool EnvGetSalienceEvaluation(
 /* EnvSetSalienceEvaluation: Sets the value of */
 /*   the current type of salience evaluation.  */
 /***********************************************/
-intBool EnvSetSalienceEvaluation(
+int EnvSetSalienceEvaluation(
   void *theEnv,
   int value)
   {
@@ -1276,7 +1279,7 @@ static int EvaluateSalience(
   /* during evaluation, print an error message.         */
   /*====================================================*/
 
-  EnvSetEvaluationError(theEnv,FALSE);
+  EnvSetEvaluationError(theEnv,false);
   if (EvaluateExpression(theEnv,rPtr->dynamicSalience,&salienceValue))
     {
      SalienceInformationError(theEnv,"defrule",ValueToString(rPtr->header.name));
@@ -1291,7 +1294,7 @@ static int EvaluateSalience(
     {
      SalienceNonIntegerError(theEnv);
      SalienceInformationError(theEnv,"defrule",ValueToString(rPtr->header.name));
-     EnvSetEvaluationError(theEnv,TRUE);
+     EnvSetEvaluationError(theEnv,true);
      return(rPtr->salience);
     }
 
@@ -1305,7 +1308,7 @@ static int EvaluateSalience(
   if ((salience > MAX_DEFRULE_SALIENCE) || (salience < MIN_DEFRULE_SALIENCE))
     {
      SalienceRangeError(theEnv,MIN_DEFRULE_SALIENCE,MAX_DEFRULE_SALIENCE);
-     EnvSetEvaluationError(theEnv,TRUE);
+     EnvSetEvaluationError(theEnv,true);
      SalienceInformationError(theEnv,"defrule",ValueToString(((struct defrule *) rPtr)->header.name));
      return(rPtr->salience);
     }
@@ -1329,7 +1332,8 @@ static int EvaluateSalience(
 void AgendaCommand(
   void *theEnv)
   {
-   int numArgs, error;
+   int numArgs;
+   bool error;
    struct defmodule *theModule;
 
    /*==============================================*/
@@ -1374,7 +1378,7 @@ void Agenda(
    EnvAgenda(GetCurrentEnvironment(),logicalName,vTheModule);
   }
 
-intBool DeleteActivation(
+bool DeleteActivation(
   void *theActivation)
   {
    return EnvDeleteActivation(GetCurrentEnvironment(),theActivation);
@@ -1423,7 +1427,7 @@ void *GetNextActivation(
    return EnvGetNextActivation(GetCurrentEnvironment(),actPtr);
   }
 
-intBool Refresh(
+bool Refresh(
   void *theRule)
   {
    return EnvRefresh(GetCurrentEnvironment(),theRule);
@@ -1442,7 +1446,7 @@ void ReorderAgenda(
   }
 
 void SetAgendaChanged(
-  int value)
+  bool value)
   {
    EnvSetAgendaChanged(GetCurrentEnvironment(),value);
   }
@@ -1454,12 +1458,12 @@ int SetActivationSalience(
    return EnvSetActivationSalience(GetCurrentEnvironment(),actPtr,value);
   }
 
-intBool GetSalienceEvaluation()
+int GetSalienceEvaluation()
   {
    return EnvGetSalienceEvaluation(GetCurrentEnvironment());
   }
 
-intBool SetSalienceEvaluation(
+int SetSalienceEvaluation(
   int value)
   {
    return EnvSetSalienceEvaluation(GetCurrentEnvironment(),value);

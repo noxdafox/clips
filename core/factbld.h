@@ -53,7 +53,6 @@ struct factPatternNode
   };
 
    void                           InitializeFactPatterns(void *);
-   void                           DestroyFactPatternNetwork(void *,
-                                                                   struct factPatternNode *);
+   void                           DestroyFactPatternNetwork(void *,struct factPatternNode *);
 
 #endif /* _H_factbld */

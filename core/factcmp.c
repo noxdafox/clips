@@ -2,7 +2,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.30  06/24/16             */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*     FACT PATTERN NETWORK CONSTRUCTS-TO-C MODULE     */
    /*******************************************************/
@@ -26,6 +26,8 @@
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -46,7 +48,7 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static int                     PatternNetworkToCode(void *,const char *,const char *,char *,int,FILE *,int,int);
+   static bool                    PatternNetworkToCode(void *,const char *,const char *,char *,int,FILE *,int,int);
    static void                    BeforePatternNetworkToCode(void *);
    static struct factPatternNode *GetNextPatternNode(struct factPatternNode *);
    static void                    CloseNetworkFiles(void *,FILE *,int);
@@ -159,7 +161,7 @@ static struct factPatternNode *GetNextPatternNode(
 /* PatternNetworkToCode: Produces the fact pattern network code for */
 /*   a run-time module created using the constructs-to-c function.  */
 /********************************************************************/
-static int PatternNetworkToCode(
+static bool PatternNetworkToCode(
   void *theEnv,
   const char *fileName,
   const char *pathName,
@@ -217,11 +219,11 @@ static int PatternNetworkToCode(
            {
             networkFile = OpenFileIfNeeded(theEnv,networkFile,fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
                                          networkArrayVersion,headerFP,
-                                         "struct factPatternNode",FactPrefix(),FALSE,NULL);
+                                         "struct factPatternNode",FactPrefix(),false,NULL);
             if (networkFile == NULL)
               {
                CloseNetworkFiles(theEnv,networkFile,maxIndices);
-               return(0);
+               return false;
               }
 
             PatternNodeToCode(theEnv,networkFile,thePatternNode,imageID,maxIndices);
@@ -239,11 +241,11 @@ static int PatternNetworkToCode(
    CloseNetworkFiles(theEnv,networkFile,maxIndices);
 
    /*===============================*/
-   /* Return TRUE to indicate the C */
+   /* Return true to indicate the C */
    /* code was successfully saved.  */
    /*===============================*/
 
-   return(TRUE);
+   return true;
   }
 
 /****************************************************************/

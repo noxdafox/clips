@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*         DEFGLOBAL BASIC COMMANDS HEADER FILE        */
    /*******************************************************/
@@ -42,6 +42,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_globlbsc
@@ -54,7 +56,7 @@
 
    void                           DefglobalBasicCommands(void *);
    void                           UndefglobalCommand(void *);
-   intBool                        EnvUndefglobal(void *,void *);
+   bool                           EnvUndefglobal(void *,void *);
    void                           GetDefglobalListFunction(void *,DATA_OBJECT_PTR);
    void                           EnvGetDefglobalList(void *,DATA_OBJECT_PTR,void *);
    void                          *DefglobalModuleFunction(void *);
@@ -62,9 +64,9 @@
    int                            PPDefglobal(void *,const char *,const char *);
    void                           ListDefglobalsCommand(void *);
 #if DEBUGGING_FUNCTIONS
-   unsigned                       EnvGetDefglobalWatch(void *,void *);
+   bool                           EnvGetDefglobalWatch(void *,void *);
    void                           EnvListDefglobals(void *,const char *,void *);
-   void                           EnvSetDefglobalWatch(void *,unsigned,void *);
+   void                           EnvSetDefglobalWatch(void *,bool,void *);
 #endif
    void                           ResetDefglobals(void *);
 
@@ -72,11 +74,11 @@
 
    void                           GetDefglobalList(DATA_OBJECT_PTR,void *);
 #if DEBUGGING_FUNCTIONS
-   unsigned                       GetDefglobalWatch(void *);
+   bool                           GetDefglobalWatch(void *);
    void                           ListDefglobals(const char *,void *);
-   void                           SetDefglobalWatch(unsigned,void *);
+   void                           SetDefglobalWatch(bool,void *);
 #endif
-   intBool                        Undefglobal(void *);
+   bool                           Undefglobal(void *);
    
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */
 

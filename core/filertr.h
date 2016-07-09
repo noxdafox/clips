@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*             FILE I/O ROUTER HEADER FILE             */
    /*******************************************************/
@@ -40,6 +40,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_filertr
@@ -68,10 +70,10 @@ struct fileRouterData
 
    void                           InitializeFileRouter(void *);
    FILE                          *FindFptr(void *,const char *);
-   int                            OpenAFile(void *,const char *,const char *,const char *);
-   int                            CloseAllFiles(void *);
-   int                            CloseFile(void *,const char *);
-   int                            FindFile(void *,const char *);
+   bool                           OpenAFile(void *,const char *,const char *,const char *);
+   bool                           CloseAllFiles(void *);
+   bool                           CloseFile(void *,const char *);
+   bool                           FindFile(void *,const char *);
 
 #endif /* _H_filertr */
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*                GENERATE HEADER FILE                 */
    /*******************************************************/
@@ -30,6 +30,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_generate
@@ -43,7 +45,7 @@
 #include "reorder.h"
 
    void                           FieldConversion(void *,struct lhsParseNode *,struct lhsParseNode *,struct nandFrame *);
-   struct expr                   *GetvarReplace(void *,struct lhsParseNode *,int,struct nandFrame *);
+   struct expr                   *GetvarReplace(void *,struct lhsParseNode *,bool,struct nandFrame *);
    void                           AddNandUnification(void *,struct lhsParseNode *,struct nandFrame *);
 
 #endif /* _H_generate */

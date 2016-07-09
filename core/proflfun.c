@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/27/16             */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*         CONSTRUCT PROFILING FUNCTIONS MODULE        */
    /*******************************************************/
@@ -40,6 +40,8 @@
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -72,7 +74,7 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static intBool                     OutputProfileInfo(void *,const char *,struct constructProfileInfo *,
+   static bool                        OutputProfileInfo(void *,const char *,struct constructProfileInfo *,
                                                         const char *,const char *,const char *,const char **);
    static void                        OutputUserFunctionsInfo(void *);
    static void                        OutputConstructsCodeInfo(void *);
@@ -128,7 +130,7 @@ void *CreateProfileData(
              genalloc(theEnv,sizeof(struct constructProfileInfo));
 
    theInfo->numberOfEntries = 0;
-   theInfo->childCall = FALSE;
+   theInfo->childCall = false;
    theInfo->startTime = 0.0;
    theInfo->totalSelfTime = 0.0;
    theInfo->totalWithChildrenTime = 0.0;
@@ -157,7 +159,7 @@ void ProfileCommand(
    DATA_OBJECT theValue;
 
    if (EnvArgCountCheck(theEnv,"profile",EXACTLY,1) == -1) return;
-   if (EnvArgTypeCheck(theEnv,"profile",1,SYMBOL,&theValue) == FALSE) return;
+   if (EnvArgTypeCheck(theEnv,"profile",1,SYMBOL,&theValue) == false) return;
 
    argument = DOToString(theValue);
 
@@ -174,7 +176,7 @@ void ProfileCommand(
 /* Profile: C access routine  */
 /*   for the profile command. */
 /******************************/
-intBool Profile(
+bool Profile(
   void *theEnv,
   const char *argument)
   {
@@ -189,16 +191,16 @@ intBool Profile(
    if (strcmp(argument,"user-functions") == 0)
      {
       ProfileFunctionData(theEnv)->ProfileStartTime = gentime();
-      ProfileFunctionData(theEnv)->ProfileUserFunctions = TRUE;
-      ProfileFunctionData(theEnv)->ProfileConstructs = FALSE;
+      ProfileFunctionData(theEnv)->ProfileUserFunctions = true;
+      ProfileFunctionData(theEnv)->ProfileConstructs = false;
       ProfileFunctionData(theEnv)->LastProfileInfo = USER_FUNCTIONS;
      }
 
    else if (strcmp(argument,"constructs") == 0)
      {
       ProfileFunctionData(theEnv)->ProfileStartTime = gentime();
-      ProfileFunctionData(theEnv)->ProfileUserFunctions = FALSE;
-      ProfileFunctionData(theEnv)->ProfileConstructs = TRUE;
+      ProfileFunctionData(theEnv)->ProfileUserFunctions = false;
+      ProfileFunctionData(theEnv)->ProfileConstructs = true;
       ProfileFunctionData(theEnv)->LastProfileInfo = CONSTRUCTS_CODE;
      }
 
@@ -211,8 +213,8 @@ intBool Profile(
      {
       ProfileFunctionData(theEnv)->ProfileEndTime = gentime();
       ProfileFunctionData(theEnv)->ProfileTotalTime += (ProfileFunctionData(theEnv)->ProfileEndTime - ProfileFunctionData(theEnv)->ProfileStartTime);
-      ProfileFunctionData(theEnv)->ProfileUserFunctions = FALSE;
-      ProfileFunctionData(theEnv)->ProfileConstructs = FALSE;
+      ProfileFunctionData(theEnv)->ProfileUserFunctions = false;
+      ProfileFunctionData(theEnv)->ProfileConstructs = false;
      }
 
    /*=====================================================*/
@@ -221,9 +223,9 @@ intBool Profile(
    /*=====================================================*/
 
    else
-     { return(FALSE); }
+     { return false; }
 
-   return(TRUE);
+   return true;
   }
 
 /******************************************/
@@ -251,7 +253,7 @@ void ProfileInfoCommand(
 
    if (argCount == 1)
      {
-      if (EnvArgTypeCheck(theEnv,"profile",1,SYMBOL,&theValue) == FALSE) return;
+      if (EnvArgTypeCheck(theEnv,"profile",1,SYMBOL,&theValue) == false) return;
      }
 
    /*==================================*/
@@ -302,21 +304,21 @@ void StartProfile(
   void *theEnv,
   struct profileFrameInfo *theFrame,
   struct userData **theList,
-  intBool checkFlag)
+  bool checkFlag)
   {
    double startTime, addTime;
    struct constructProfileInfo *profileInfo;
 
    if (! checkFlag)
      {
-      theFrame->profileOnExit = FALSE;
+      theFrame->profileOnExit = false;
       return;
      }
 
    profileInfo = (struct constructProfileInfo *) FetchUserData(theEnv,ProfileFunctionData(theEnv)->ProfileDataID,theList);
                 
-   theFrame->profileOnExit = TRUE;
-   theFrame->parentCall = FALSE;
+   theFrame->profileOnExit = true;
+   theFrame->parentCall = false;
 
    startTime = gentime();
    theFrame->oldProfileFrame = ProfileFunctionData(theEnv)->ActiveProfileFrame;
@@ -334,9 +336,9 @@ void StartProfile(
 
    if (! ProfileFunctionData(theEnv)->ActiveProfileFrame->childCall)
      {
-      theFrame->parentCall = TRUE;
+      theFrame->parentCall = true;
       theFrame->parentStartTime = startTime;
-      ProfileFunctionData(theEnv)->ActiveProfileFrame->childCall = TRUE;
+      ProfileFunctionData(theEnv)->ActiveProfileFrame->childCall = true;
      }
   }
 
@@ -358,7 +360,7 @@ void EndProfile(
      {
       addTime = endTime - theFrame->parentStartTime;
       ProfileFunctionData(theEnv)->ActiveProfileFrame->totalWithChildrenTime += addTime;
-      ProfileFunctionData(theEnv)->ActiveProfileFrame->childCall = FALSE;
+      ProfileFunctionData(theEnv)->ActiveProfileFrame->childCall = false;
      }
 
    ProfileFunctionData(theEnv)->ActiveProfileFrame->totalSelfTime += (endTime - ProfileFunctionData(theEnv)->ActiveProfileFrame->startTime);
@@ -373,7 +375,7 @@ void EndProfile(
 /* OutputProfileInfo: Prints out a single */
 /*   line of profile information.         */
 /******************************************/
-static intBool OutputProfileInfo(
+static bool OutputProfileInfo(
   void *theEnv,
   const char *itemName,
   struct constructProfileInfo *profileInfo,
@@ -385,9 +387,9 @@ static intBool OutputProfileInfo(
    double percent = 0.0, percentWithKids = 0.0;
    char buffer[512];
    
-   if (profileInfo == NULL) return(FALSE);
+   if (profileInfo == NULL) return false;
    
-   if (profileInfo->numberOfEntries == 0) return(FALSE);
+   if (profileInfo->numberOfEntries == 0) return false;
 
    if (ProfileFunctionData(theEnv)->ProfileTotalTime != 0.0)
      {
@@ -397,7 +399,7 @@ static intBool OutputProfileInfo(
       if (percentWithKids < 0.005) percentWithKids = 0.0;
      }
 
-   if (percent < ProfileFunctionData(theEnv)->PercentThreshold) return(FALSE);
+   if (percent < ProfileFunctionData(theEnv)->PercentThreshold) return false;
 
    if ((banner != NULL) && (*banner != NULL))
      {
@@ -432,7 +434,7 @@ static intBool OutputProfileInfo(
                         (double) percentWithKids);
    EnvPrintRouter(theEnv,WDISPLAY,buffer);
 
-   return(TRUE);
+   return true;
   }
 
 /*******************************************/
@@ -552,7 +554,7 @@ void ResetProfileInfo(
    if (profileInfo == NULL) return;
    
    profileInfo->numberOfEntries = 0;
-   profileInfo->childCall = FALSE;
+   profileInfo->childCall = false;
    profileInfo->startTime = 0.0;
    profileInfo->totalSelfTime = 0.0;
    profileInfo->totalWithChildrenTime = 0.0;
@@ -725,7 +727,7 @@ double SetProfilePercentThresholdCommand(
    if (EnvArgCountCheck(theEnv,"set-profile-percent-threshold",EXACTLY,1) == -1)
      { return(ProfileFunctionData(theEnv)->PercentThreshold); }
 
-   if (EnvArgTypeCheck(theEnv,"set-profile-percent-threshold",1,INTEGER_OR_FLOAT,&theValue) == FALSE)
+   if (EnvArgTypeCheck(theEnv,"set-profile-percent-threshold",1,INTEGER_OR_FLOAT,&theValue) == false)
       { return(ProfileFunctionData(theEnv)->PercentThreshold); }
 
    if (GetType(theValue) == INTEGER)

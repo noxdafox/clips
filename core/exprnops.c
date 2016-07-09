@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/24/16            */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*             EXPRESSION OPERATIONS MODULE            */
    /*******************************************************/
@@ -26,6 +26,8 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -53,7 +55,7 @@
 /* CheckArgumentAgainstRestriction: Compares an argument to a */
 /*   function to the set of restrictions for that function to */
 /*   determine if any incompatibilities exist. If so, the     */
-/*   value TRUE is returned, otherwise FALSE is returned.     */
+/*   value true is returned, otherwise false is returned.     */
 /*   Restrictions checked are:                                */
 /*     a - external address                                   */
 /*     d - float                                              */
@@ -78,7 +80,7 @@
 /*     y - fact address                                       */
 /*     z - fact address, integer, or symbol (*)               */
 /**************************************************************/
-int CheckArgumentAgainstRestriction(
+bool CheckArgumentAgainstRestriction(
   void *theEnv,
   struct expr *theExpression,
   int theRestriction)
@@ -118,7 +120,7 @@ int CheckArgumentAgainstRestriction(
    if (UnmatchableConstraint(cr3))
      {
       RemoveConstraint(theEnv,cr3);
-      return(TRUE);
+      return true;
      }
 
    /*===================================================*/
@@ -126,16 +128,16 @@ int CheckArgumentAgainstRestriction(
    /*===================================================*/
 
    RemoveConstraint(theEnv,cr3);
-   return(FALSE);
+   return false;
   }
 
 #endif /* (! RUN_TIME) */
 
-/************************************************************/
-/* ConstantExpression: Returns TRUE if the expression */
-/*   is a constant, otherwise FALSE.                  */
-/************************************************************/
-intBool ConstantExpression(
+/******************************************************/
+/* ConstantExpression: Returns true if the expression */
+/*   is a constant, otherwise false.                  */
+/******************************************************/
+bool ConstantExpression(
   struct expr *testPtr)
   {
    while (testPtr != NULL)
@@ -145,18 +147,18 @@ intBool ConstantExpression(
           (testPtr->type != INSTANCE_NAME) && (testPtr->type != INSTANCE_ADDRESS) &&
 #endif
           (testPtr->type != INTEGER) && (testPtr->type != FLOAT))
-        { return(FALSE); }
+        { return false; }
       testPtr = testPtr->nextArg;
      }
 
-   return(TRUE);
+   return true;
   }
 
-/************************************************/
-/* ConstantType: Returns TRUE if the type */
-/*   is a constant, otherwise FALSE.      */
-/************************************************/
-intBool ConstantType(
+/******************************************/
+/* ConstantType: Returns true if the type */
+/*   is a constant, otherwise false.      */
+/******************************************/
+bool ConstantType(
   int theType)
   {
    switch (theType)
@@ -169,17 +171,17 @@ intBool ConstantType(
       case INSTANCE_NAME:
       case INSTANCE_ADDRESS:
 #endif
-        return(TRUE);
+        return true;
      }
 
-   return(FALSE);
+   return false;
   }
 
 /*****************************************************************************/
 /* IdenticalExpression: Determines if two expressions are identical. Returns */
-/*   TRUE if the expressions are identical, otherwise FALSE is returned.     */
+/*   true if the expressions are identical, otherwise false is returned.     */
 /*****************************************************************************/
-intBool IdenticalExpression(
+bool IdenticalExpression(
   struct expr *firstList,
   struct expr *secondList)
   {
@@ -197,17 +199,17 @@ intBool IdenticalExpression(
       /*=========================*/
 
       if (firstList->type != secondList->type)
-        { return(FALSE); }
+        { return false; }
 
       if (firstList->value != secondList->value)
-        { return (FALSE); }
+        { return false; }
 
       /*==============================*/
       /* Compare the arguments lists. */
       /*==============================*/
 
-      if (IdenticalExpression(firstList->argList,secondList->argList) == FALSE)
-        { return(FALSE); }
+      if (IdenticalExpression(firstList->argList,secondList->argList) == false)
+        { return false; }
      }
 
    /*=====================================================*/
@@ -216,13 +218,13 @@ intBool IdenticalExpression(
    /* other.                                              */
    /*=====================================================*/
 
-   if (firstList != secondList) return(FALSE);
+   if (firstList != secondList) return false;
 
    /*============================*/
    /* Expressions are identical. */
    /*============================*/
 
-   return(TRUE);
+   return true;
   }
 
 /****************************************************/
@@ -276,19 +278,19 @@ struct expr *CopyExpression(
 
 /************************************************************/
 /* ExpressionContainsVariables: Determines if an expression */
-/*   contains any variables. Returns TRUE if the expression */
-/*   contains any variables, otherwise FALSE is returned.   */
+/*   contains any variables. Returns true if the expression */
+/*   contains any variables, otherwise false is returned.   */
 /************************************************************/
-intBool ExpressionContainsVariables(
+bool ExpressionContainsVariables(
   struct expr *theExpression,
-  intBool globalsAreVariables)
+  bool globalsAreVariables)
   {
    while (theExpression != NULL)
      {
       if (theExpression->argList != NULL)
         {
          if (ExpressionContainsVariables(theExpression->argList,globalsAreVariables))
-           { return(TRUE); }
+           { return true; }
         }
 
       if ((theExpression->type == MF_VARIABLE) ||
@@ -296,13 +298,13 @@ intBool ExpressionContainsVariables(
           (theExpression->type == FACT_ADDRESS) ||
           (((theExpression->type == GBL_VARIABLE) ||
             (theExpression->type == MF_GBL_VARIABLE)) &&
-           (globalsAreVariables == TRUE)))
-        { return(TRUE); }
+           (globalsAreVariables == true)))
+        { return true; }
 
       theExpression = theExpression->nextArg;
      }
 
-   return(FALSE);
+   return false;
   }
 
 /*****************************************/

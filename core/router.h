@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*                 ROUTER HEADER FILE                  */
    /*******************************************************/
@@ -45,6 +45,10 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
+/*            Changed return values for router functions.    */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_router
@@ -71,13 +75,13 @@
 struct router
   {
    const char *name;
-   int active;
+   bool active;
    int priority;
-   short int environmentAware;
+   bool environmentAware;
    void *context;
-   int (*query)(void *,const char *);
-   int (*printer)(void *,const char *,const char *);
-   int (*exiter)(void *,int);
+   bool (*query)(void *,const char *);
+   void (*printer)(void *,const char *,const char *);
+   void (*exiter)(void *,int);
    int (*charget)(void *,const char *);
    int (*charunget)(void *,int,const char *);
    struct router *next;
@@ -86,7 +90,7 @@ struct router
 struct routerData
   { 
    size_t CommandBufferInputCount;
-   int AwaitingInput;
+   bool AwaitingInput;
    const char *LineCountRouter;
    const char *FastCharGetRouter;
    char *FastCharGetString;
@@ -94,7 +98,7 @@ struct routerData
    struct router *ListOfRouters;
    FILE *FastLoadFilePtr;
    FILE *FastSaveFilePtr;
-   int Abort;
+   bool Abort;
   };
 
 #define RouterData(theEnv) ((struct routerData *) GetEnvironmentData(theEnv,ROUTER_DATA))
@@ -105,25 +109,25 @@ struct routerData
    int                            EnvUngetcRouter(void *,int,const char *);
    void                           EnvExitRouter(void *,int);
    void                           AbortExit(void *);
-   intBool                        EnvAddRouterWithContext(void *,
+   bool                           EnvAddRouterWithContext(void *,
                                                    const char *,int,
-                                                   int (*)(void *,const char *),
-                                                   int (*)(void *,const char *,const char *),
+                                                   bool (*)(void *,const char *),
+                                                   void (*)(void *,const char *,const char *),
                                                    int (*)(void *,const char *),
                                                    int (*)(void *,int,const char *),
-                                                   int (*)(void *,int),
+                                                   void (*)(void *,int),
                                                    void *);
-   intBool                        EnvAddRouter(void *,
+   bool                           EnvAddRouter(void *,
                                                    const char *,int,
-                                                   int (*)(void *,const char *),
-                                                   int (*)(void *,const char *,const char *),
+                                                   bool (*)(void *,const char *),
+                                                   void (*)(void *,const char *,const char *),
                                                    int (*)(void *,const char *),
                                                    int (*)(void *,int,const char *),
-                                                   int (*)(void *,int));
-   int                            EnvDeleteRouter(void *,const char *);
-   int                            QueryRouters(void *,const char *);
-   int                            EnvDeactivateRouter(void *,const char *);
-   int                            EnvActivateRouter(void *,const char *);
+                                                   void (*)(void *,int));
+   bool                           EnvDeleteRouter(void *,const char *);
+   bool                           QueryRouters(void *,const char *);
+   bool                           EnvDeactivateRouter(void *,const char *);
+   bool                           EnvActivateRouter(void *,const char *);
    void                           SetFastLoad(void *,FILE *);
    void                           SetFastSave(void *,FILE *);
    FILE                          *GetFastLoad(void *);
@@ -136,15 +140,15 @@ struct routerData
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-   int                            ActivateRouter(const char *);
-   intBool                        AddRouter(const char *,int,
-                                                   int (*)(const char *),
-                                                   int (*)(const char *,const char *),
+   bool                           ActivateRouter(const char *);
+   bool                           AddRouter(const char *,int,
+                                                   bool (*)(const char *),
+                                                   void (*)(const char *,const char *),
                                                    int (*)(const char *),
                                                    int (*)(int,const char *),
-                                                   int (*)(int));
-   int                            DeactivateRouter(const char *);
-   int                            DeleteRouter(const char *);
+                                                   void (*)(int));
+   bool                           DeactivateRouter(const char *);
+   bool                           DeleteRouter(const char *);
    void                           ExitRouter(int);
    int                            GetcRouter(const char *);
    int                            PrintRouter(const char *,const char *);
@@ -153,5 +157,3 @@ struct routerData
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* _H_router */
-
-

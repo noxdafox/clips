@@ -1,9 +1,9 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/04/16            */
    /*                                                     */
-   /*                                                     */
+   /*             CLASS EXAMINATION HEADER FILE           */
    /*******************************************************/
 
 /*************************************************************/
@@ -43,6 +43,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_classexm
@@ -62,24 +64,24 @@
 
    const char                    *GetCreateAccessorString(void *);
    void                          *GetDefclassModuleCommand(void *);
-   intBool                        SuperclassPCommand(void *);
-   intBool                        EnvSuperclassP(void *,void *,void *);
-   intBool                        SubclassPCommand(void *);
-   intBool                        EnvSubclassP(void *,void *,void *);
-   int                            SlotExistPCommand(void *);
-   intBool                        EnvSlotExistP(void *,void *,const char *,intBool);
-   int                            MessageHandlerExistPCommand(void *);
-   intBool                        SlotWritablePCommand(void *);
-   intBool                        EnvSlotWritableP(void *,void *,const char *);
-   intBool                        SlotInitablePCommand(void *);
-   intBool                        EnvSlotInitableP(void *,void *,const char *);
-   intBool                        SlotPublicPCommand(void *);
-   intBool                        EnvSlotPublicP(void *,void *,const char *);
-   intBool                        SlotDirectAccessPCommand(void *);
-   intBool                        EnvSlotDirectAccessP(void *,void *,const char *);
+   bool                           SuperclassPCommand(void *);
+   bool                           EnvSuperclassP(void *,void *,void *);
+   bool                           SubclassPCommand(void *);
+   bool                           EnvSubclassP(void *,void *,void *);
+   bool                           SlotExistPCommand(void *);
+   bool                           EnvSlotExistP(void *,void *,const char *,bool);
+   bool                           MessageHandlerExistPCommand(void *);
+   bool                           SlotWritablePCommand(void *);
+   bool                           EnvSlotWritableP(void *,void *,const char *);
+   bool                           SlotInitablePCommand(void *);
+   bool                           EnvSlotInitableP(void *,void *,const char *);
+   bool                           SlotPublicPCommand(void *);
+   bool                           EnvSlotPublicP(void *,void *,const char *);
+   bool                           SlotDirectAccessPCommand(void *);
+   bool                           EnvSlotDirectAccessP(void *,void *,const char *);
    void                           SlotDefaultValueCommand(void *,DATA_OBJECT_PTR);
-   intBool                        EnvSlotDefaultValue(void *,void *,const char *,DATA_OBJECT_PTR);
-   int                            ClassExistPCommand(void *);
+   bool                           EnvSlotDefaultValue(void *,void *,const char *,DATA_OBJECT_PTR);
+   bool                           ClassExistPCommand(void *);
    int                            EnvSlotDefaultP(void *,void *,const char *);
   
 #if ALLOW_ENVIRONMENT_GLOBALS
@@ -88,15 +90,15 @@
    void                           BrowseClasses(const char *,void *);
    void                           DescribeClass(const char *,void *);
 #endif
-   intBool                        SlotDirectAccessP(void *,const char *);
-   intBool                        SlotExistP(void *,const char *,intBool);
-   intBool                        SlotInitableP(void *,const char *);
-   intBool                        SlotPublicP(void *,const char *);
+   bool                           SlotDirectAccessP(void *,const char *);
+   bool                           SlotExistP(void *,const char *,bool);
+   bool                           SlotInitableP(void *,const char *);
+   bool                           SlotPublicP(void *,const char *);
    int                            SlotDefaultP(void *,const char *);
-   intBool                        SlotWritableP(void *,const char *);
-   intBool                        SubclassP(void *,void *);
-   intBool                        SuperclassP(void *,void *);
-   intBool                        SlotDefaultValue(void *,const char *,DATA_OBJECT_PTR);
+   bool                           SlotWritableP(void *,const char *);
+   bool                           SubclassP(void *,void *);
+   bool                           SuperclassP(void *,void *);
+   bool                           SlotDefaultValue(void *,const char *,DATA_OBJECT_PTR);
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */
 

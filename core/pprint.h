@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*               PRETTY PRINT HEADER FILE              */
    /*******************************************************/
@@ -28,6 +28,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_pprint
@@ -40,8 +42,8 @@
 
 struct prettyPrintData
   { 
-   int PPBufferStatus;
-   int PPBufferEnabled;
+   bool PPBufferStatus;
+   bool PPBufferEnabled;
    int IndentationDepth;
    size_t PPBufferPos;
    size_t PPBufferMax;
@@ -63,8 +65,8 @@ struct prettyPrintData
    void                           IncrementIndentDepth(void *,int);
    void                           DecrementIndentDepth(void *,int);
    void                           SetIndentDepth(void *,int);
-   void                           SetPPBufferStatus(void *,int);
-   int                            GetPPBufferStatus(void *);
+   void                           SetPPBufferStatus(void *,bool);
+   bool                           GetPPBufferStatus(void *);
    int                            SetPPBufferEnabled(void *,int);
    int                            GetPPBufferEnabled(void *);
 

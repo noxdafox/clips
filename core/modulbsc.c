@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/25/16             */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*         DEFMODULE BASIC COMMANDS HEADER FILE        */
    /*******************************************************/
@@ -29,6 +29,8 @@
 /*            Converted API macros to function calls.        */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -97,13 +99,13 @@ static void ClearDefmodules(
   void *theEnv)
   {
 #if (BLOAD || BLOAD_AND_BSAVE || BLOAD_ONLY) && (! RUN_TIME)
-   if (Bloaded(theEnv) == TRUE) return;
+   if (Bloaded(theEnv) == true) return;
 #endif
 #if (! RUN_TIME)
    RemoveAllDefmodules(theEnv);
 
    CreateMainModule(theEnv);
-   DefmoduleData(theEnv)->MainModuleRedefinable = TRUE;
+   DefmoduleData(theEnv)->MainModuleRedefinable = true;
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -173,7 +175,7 @@ void EnvGetDefmoduleList(
         theConstruct != NULL;
         theConstruct = EnvGetNextDefmodule(theEnv,theConstruct), count++)
      {
-      if (EvaluationData(theEnv)->HaltExecution == TRUE)
+      if (EvaluationData(theEnv)->HaltExecution == true)
         {
          EnvSetMultifieldErrorValue(theEnv,returnValue);
          return;
@@ -206,7 +208,7 @@ void PPDefmoduleCommand(
 /* PPDefmodule: C access routine for */
 /*   the ppdefmodule command.        */
 /*************************************/
-int PPDefmodule(
+bool PPDefmodule(
   void *theEnv,
   const char *defmoduleName,
   const char *logicalName)
@@ -217,12 +219,12 @@ int PPDefmodule(
    if (defmodulePtr == NULL)
      {
       CantFindItemErrorMessage(theEnv,"defmodule",defmoduleName);
-      return(FALSE);
+      return false;
      }
 
-   if (EnvGetDefmodulePPForm(theEnv,defmodulePtr) == NULL) return(TRUE);
+   if (EnvGetDefmodulePPForm(theEnv,defmodulePtr) == NULL) return true;
    PrintInChunks(theEnv,logicalName,EnvGetDefmodulePPForm(theEnv,defmodulePtr));
-   return(TRUE);
+   return true;
   }
 
 /***********************************************/

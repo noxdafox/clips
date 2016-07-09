@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*          LOGICAL DEPENDENCIES HEADER FILE           */
    /*******************************************************/
@@ -30,6 +30,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_lgcldpnd
@@ -47,7 +49,7 @@ struct dependency
 #include "match.h"
 #include "pattern.h"
 
-   intBool                        AddLogicalDependencies(void *,struct patternEntity *,int);
+   bool                           AddLogicalDependencies(void *,struct patternEntity *,bool);
    void                           RemoveEntityDependencies(void *,struct patternEntity *);
    void                           RemovePMDependencies(void *,struct partialMatch *);
    void                           DestroyPMDependencies(void *,struct partialMatch *);

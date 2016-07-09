@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*              CLIPS Version 6.40  06/25/16           */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*               INSTANCE COMMAND MODULE               */
    /*******************************************************/
@@ -51,6 +51,8 @@
 /*            SetHaltExecution functions.                    */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -102,8 +104,8 @@
    ***************************************** */
 
 #if DEBUGGING_FUNCTIONS
-static long ListInstancesInModule(void *,int,const char *,const char *,intBool,intBool);
-static long TabulateInstances(void *,int,const char *,DEFCLASS *,intBool,intBool);
+static long ListInstancesInModule(void *,int,const char *,const char *,bool,bool);
+static long TabulateInstances(void *,int,const char *,DEFCLASS *,bool,bool);
 #endif
 
 static void PrintInstance(void *,const char *,INSTANCE_TYPE *,const char *);
@@ -157,7 +159,7 @@ void SetupInstances(
 
    AllocateEnvironmentData(theEnv,INSTANCE_DATA,sizeof(struct instanceData),DeallocateInstanceData);
    
-   InstanceData(theEnv)->MkInsMsgPass = TRUE;
+   InstanceData(theEnv)->MkInsMsgPass = true;
    memcpy(&InstanceData(theEnv)->InstanceInfo,&instanceInfo,sizeof(struct patternEntityRecord)); 
    dummyInstance.header.theInfo = &InstanceData(theEnv)->InstanceInfo;    
    memcpy(&InstanceData(theEnv)->DummyInstance,&dummyInstance,sizeof(INSTANCE_TYPE));  
@@ -274,7 +276,7 @@ static void DeallocateInstanceData(
         {
          sp = tmpIPtr->slotAddresses[i];
          if ((sp == &sp->desc->sharedValue) ?
-             (--sp->desc->sharedCount == 0) : TRUE)
+             (--sp->desc->sharedCount == 0) : true)
            {
             if (sp->desc->multiple)
               { ReturnMultifield(theEnv,(MULTIFIELD_PTR) sp->value); }
@@ -321,7 +323,7 @@ static void DeallocateInstanceData(
   SIDE EFFECTS : Instance is deallocated
   NOTES        : C interface for deleting instances
  *******************************************************************/
-intBool EnvDeleteInstance(
+bool EnvDeleteInstance(
   void *theEnv,
   void *iptr)
   {
@@ -357,7 +359,7 @@ intBool EnvDeleteInstance(
   SIDE EFFECTS : Instance is deallocated
   NOTES        : C interface for deleting instances
  *******************************************************************/
-intBool EnvUnmakeInstance(
+bool EnvUnmakeInstance(
   void *theEnv,
   void *iptr)
   {
@@ -365,7 +367,7 @@ intBool EnvUnmakeInstance(
    int success = 1,svmaintain;
 
    svmaintain = InstanceData(theEnv)->MaintainGarbageInstances;
-   InstanceData(theEnv)->MaintainGarbageInstances = TRUE;
+   InstanceData(theEnv)->MaintainGarbageInstances = true;
    ins = (INSTANCE_TYPE *) iptr;
    if (ins != NULL)
      {
@@ -387,7 +389,7 @@ intBool EnvUnmakeInstance(
          if (ins->garbage == 0)
            success = 0;
          ins = ins->nxtList;
-         while ((ins != NULL) ? ins->garbage : FALSE)
+         while ((ins != NULL) ? ins->garbage : false)
            ins = ins->nxtList;
         }
      }
@@ -418,7 +420,8 @@ intBool EnvUnmakeInstance(
 void InstancesCommand(
   void *theEnv)
   {
-   int argno, inheritFlag = FALSE;
+   int argno;
+   bool inheritFlag = false;
    void *theDefmodule;
    const char *className = NULL;
    DATA_OBJECT temp;
@@ -428,19 +431,19 @@ void InstancesCommand(
    argno = EnvRtnArgCount(theEnv);
    if (argno > 0)
      {
-      if (EnvArgTypeCheck(theEnv,"instances",1,SYMBOL,&temp) == FALSE)
+      if (EnvArgTypeCheck(theEnv,"instances",1,SYMBOL,&temp) == false)
         return;
       theDefmodule = EnvFindDefmodule(theEnv,DOToString(temp));
-      if ((theDefmodule != NULL) ? FALSE :
+      if ((theDefmodule != NULL) ? false :
           (strcmp(DOToString(temp),"*") != 0))
         {
-         EnvSetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,true);
          ExpectedTypeError1(theEnv,"instances",1,"defmodule name");
          return;
         }
       if (argno > 1)
         {
-         if (EnvArgTypeCheck(theEnv,"instances",2,SYMBOL,&temp) == FALSE)
+         if (EnvArgTypeCheck(theEnv,"instances",2,SYMBOL,&temp) == false)
            return;
          className = DOToString(temp);
          if (LookupDefclassAnywhere(theEnv,(struct defmodule *) theDefmodule,className) == NULL)
@@ -455,15 +458,15 @@ void InstancesCommand(
            }
          if (argno > 2)
            {
-            if (EnvArgTypeCheck(theEnv,"instances",3,SYMBOL,&temp) == FALSE)
+            if (EnvArgTypeCheck(theEnv,"instances",3,SYMBOL,&temp) == false)
               return;
             if (strcmp(DOToString(temp),ALL_QUALIFIER) != 0)
               {
-               EnvSetEvaluationError(theEnv,TRUE);
+               EnvSetEvaluationError(theEnv,true);
                ExpectedTypeError1(theEnv,"instances",3,"keyword \"inherit\"");
                return;
               }
-            inheritFlag = TRUE;
+            inheritFlag = true;
            }
         }
      }
@@ -484,7 +487,7 @@ void PPInstanceCommand(
   {
    INSTANCE_TYPE *ins;
 
-   if (CheckCurrentMessage(theEnv,"ppinstance",TRUE) == FALSE)
+   if (CheckCurrentMessage(theEnv,"ppinstance",true) == false)
      return;
    ins = GetActiveInstance(theEnv);
    if (ins->garbage == 1)
@@ -511,7 +514,7 @@ void EnvInstances(
   const char *logicalName,
   void *theVModule,
   const char *className,
-  int inheritFlag)
+  bool inheritFlag)
   {
    int id;
    struct defmodule *theModule;
@@ -534,7 +537,7 @@ void EnvInstances(
       theModule = (struct defmodule *) EnvGetNextDefmodule(theEnv,NULL);
       while (theModule != NULL)
         {
-         if (EnvGetHaltExecution(theEnv) == TRUE)
+         if (EnvGetHaltExecution(theEnv) == true)
            {
             RestoreCurrentModule(theEnv);
             ReleaseTraversalID(theEnv);
@@ -544,7 +547,7 @@ void EnvInstances(
          EnvPrintRouter(theEnv,logicalName,EnvGetDefmoduleName(theEnv,(void *) theModule));
          EnvPrintRouter(theEnv,logicalName,":\n");
          EnvSetCurrentModule(theEnv,(void *) theModule);
-         count += ListInstancesInModule(theEnv,id,logicalName,className,inheritFlag,TRUE);
+         count += ListInstancesInModule(theEnv,id,logicalName,className,inheritFlag,true);
          theModule = (struct defmodule *) EnvGetNextDefmodule(theEnv,(void *) theModule);
         }
      }
@@ -556,12 +559,12 @@ void EnvInstances(
    else
      {
       EnvSetCurrentModule(theEnv,(void *) theVModule);
-      count = ListInstancesInModule(theEnv,id,logicalName,className,inheritFlag,FALSE);
+      count = ListInstancesInModule(theEnv,id,logicalName,className,inheritFlag,false);
      }
 
    RestoreCurrentModule(theEnv);
    ReleaseTraversalID(theEnv);
-   if (EvaluationData(theEnv)->HaltExecution == FALSE)
+   if (EvaluationData(theEnv)->HaltExecution == false)
      PrintTally(theEnv,logicalName,count,"instance","instances");
   }
 
@@ -644,7 +647,7 @@ void *EnvCreateRawInstance(
   void *cptr,
   const char *iname)
   {
-   return((void *) BuildInstance(theEnv,(SYMBOL_HN *) EnvAddSymbol(theEnv,iname),(DEFCLASS *) cptr,FALSE));
+   return((void *) BuildInstance(theEnv,(SYMBOL_HN *) EnvAddSymbol(theEnv,iname),(DEFCLASS *) cptr,false));
   }
 
 /***************************************************************************
@@ -659,7 +662,7 @@ void *EnvFindInstance(
   void *theEnv,
   void *theModule,
   const char *iname,
-  unsigned searchImports)
+  bool searchImports)
   {
    SYMBOL_HN *isym;
 
@@ -680,7 +683,7 @@ void *EnvFindInstance(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************************************/
-int EnvValidInstanceAddress(
+bool EnvValidInstanceAddress(
   void *theEnv,
   void *iptr)
   {
@@ -688,7 +691,7 @@ int EnvValidInstanceAddress(
 #pragma unused(theEnv)
 #endif
 
-   return((((INSTANCE_TYPE *) iptr)->garbage == 0) ? 1 : 0);
+   return((((INSTANCE_TYPE *) iptr)->garbage == 0) ? true : false);
   }
 
 /***************************************************
@@ -711,7 +714,7 @@ void EnvDirectGetSlot(
 
    if (((INSTANCE_TYPE *) ins)->garbage == 1)
      {
-      EnvSetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,true);
       result->type = SYMBOL;
       result->value = EnvFalseSymbol(theEnv);
       return;
@@ -719,7 +722,7 @@ void EnvDirectGetSlot(
    sp = FindISlotByName(theEnv,(INSTANCE_TYPE *) ins,sname);
    if (sp == NULL)
      {
-      EnvSetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,true);
       result->type = SYMBOL;
       result->value = EnvFalseSymbol(theEnv);
       return;
@@ -745,11 +748,11 @@ void EnvDirectGetSlot(
   INPUTS       : 1) Instance address
                  2) Slot name
                  3) Caller's new value buffer
-  RETURNS      : TRUE if put successful, FALSE otherwise
+  RETURNS      : True if put successful, false otherwise
   SIDE EFFECTS : None
   NOTES        : None
  *********************************************************/
-int EnvDirectPutSlot(
+bool EnvDirectPutSlot(
   void *theEnv,
   void *ins,
   const char *sname,
@@ -760,14 +763,14 @@ int EnvDirectPutSlot(
 
    if ((((INSTANCE_TYPE *) ins)->garbage == 1) || (val == NULL))
      {
-      EnvSetEvaluationError(theEnv,TRUE);
-      return(FALSE);
+      EnvSetEvaluationError(theEnv,true);
+      return false;
      }
    sp = FindISlotByName(theEnv,(INSTANCE_TYPE *) ins,sname);
    if (sp == NULL)
      {
-      EnvSetEvaluationError(theEnv,TRUE);
-      return(FALSE);
+      EnvSetEvaluationError(theEnv,true);
+      return false;
      }
 
    if (PutSlotValue(theEnv,(INSTANCE_TYPE *) ins,sp,val,&junk,"external put"))
@@ -778,9 +781,9 @@ int EnvDirectPutSlot(
          CleanCurrentGarbageFrame(theEnv,NULL);
          CallPeriodicTasks(theEnv);
         }
-      return(TRUE);
+      return true;
      }
-   return(FALSE);
+   return false;
   }
 
 /***************************************************
@@ -947,7 +950,7 @@ void *EnvGetNextInstanceInClassAndSubclasses(
    
    if (iptr == NULL)
      {
-      ClassSubclassAddresses(theEnv,theClass,iterationInfo,TRUE);
+      ClassSubclassAddresses(theEnv,theClass,iterationInfo,true);
       nextInstance = theClass->instanceList;
      }
    else if (((INSTANCE_TYPE *) iptr)->garbage == 1)
@@ -1025,7 +1028,7 @@ void ClassCommand(
       if (ins->garbage == 1)
         {
          StaleInstanceAddress(theEnv,func,0);
-         EnvSetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,true);
          return;
         }
       result->value = (void *) GetDefclassNamePointer((void *) ins->cls);
@@ -1056,11 +1059,11 @@ void ClassCommand(
                                             DefclassData(theEnv)->PrimitiveClassMap[temp.type]);
                          return;
 
-         default       : PrintErrorID(theEnv,"INSCOM",1,FALSE);
+         default       : PrintErrorID(theEnv,"INSCOM",1,false);
                          EnvPrintRouter(theEnv,WERROR,"Undefined type in function ");
                          EnvPrintRouter(theEnv,WERROR,func);
                          EnvPrintRouter(theEnv,WERROR,".\n");
-                         EnvSetEvaluationError(theEnv,TRUE);
+                         EnvSetEvaluationError(theEnv,true);
         }
      }
   }
@@ -1069,19 +1072,19 @@ void ClassCommand(
   NAME         : CreateInstanceHandler
   DESCRIPTION  : Message handler called after instance creation
   INPUTS       : None
-  RETURNS      : TRUE if successful,
-                 FALSE otherwise
+  RETURNS      : True if successful,
+                 false otherwise
   SIDE EFFECTS : None
   NOTES        : Does nothing. Provided so it can be overridden.
  ******************************************************/
-intBool CreateInstanceHandler(
+bool CreateInstanceHandler(
   void *theEnv)
   {
 #if MAC_XCD
 #pragma unused(theEnv)
 #endif
 
-   return(TRUE);
+   return true;
   }
 
 /******************************************************
@@ -1090,18 +1093,18 @@ intBool CreateInstanceHandler(
                    hash table and its class's
                    instance list
   INPUTS       : None
-  RETURNS      : TRUE if successful,
-                 FALSE otherwise
+  RETURNS      : True if successful,
+                 false otherwise
   SIDE EFFECTS : Instance is deallocated
   NOTES        : This is an internal function that
                    only be called by a handler
  ******************************************************/
-intBool DeleteInstanceCommand(
+bool DeleteInstanceCommand(
   void *theEnv)
   {
-   if (CheckCurrentMessage(theEnv,"delete-instance",TRUE))
+   if (CheckCurrentMessage(theEnv,"delete-instance",true))
      return(QuashInstance(theEnv,GetActiveInstance(theEnv)));
-   return(FALSE);
+   return false;
   }
 
 /********************************************************************
@@ -1109,17 +1112,18 @@ intBool DeleteInstanceCommand(
   DESCRIPTION  : Uses message-passing to delete the
                    specified instance
   INPUTS       : None
-  RETURNS      : TRUE if successful, FALSE otherwise
+  RETURNS      : True if successful, false otherwise
   SIDE EFFECTS : Instance is deallocated
   NOTES        : Syntax: (unmake-instance <instance-expression>+ | *)
  ********************************************************************/
-intBool UnmakeInstanceCommand(
+bool UnmakeInstanceCommand(
   void *theEnv)
   {
    EXPRESSION *theArgument;
    DATA_OBJECT theResult;
    INSTANCE_TYPE *ins;
-   int argNumber = 1,rtn = TRUE;
+   int argNumber = 1;
+   bool rtn = true;
 
    theArgument = GetFirstArgument();
    while (theArgument != NULL)
@@ -1128,10 +1132,10 @@ intBool UnmakeInstanceCommand(
       if ((theResult.type == INSTANCE_NAME) || (theResult.type == SYMBOL))
         {
          ins = FindInstanceBySymbol(theEnv,(SYMBOL_HN *) theResult.value);
-         if ((ins == NULL) ? (strcmp(DOToString(theResult),"*") != 0) : FALSE)
+         if ((ins == NULL) ? (strcmp(DOToString(theResult),"*") != 0) : false)
            {
             NoInstanceError(theEnv,DOToString(theResult),"unmake-instance");
-            return(FALSE);
+            return false;
            }
          }
       else if (theResult.type == INSTANCE_ADDRESS)
@@ -1140,18 +1144,18 @@ intBool UnmakeInstanceCommand(
          if (ins->garbage)
            {
             StaleInstanceAddress(theEnv,"unmake-instance",0);
-            EnvSetEvaluationError(theEnv,TRUE);
-            return(FALSE);
+            EnvSetEvaluationError(theEnv,true);
+            return false;
            }
         }
       else
         {
          ExpectedTypeError1(theEnv,"unmake-instance",argNumber,"instance-address, instance-name, or the symbol *");
-         EnvSetEvaluationError(theEnv,TRUE);
-         return(FALSE);
+         EnvSetEvaluationError(theEnv,true);
+         return false;
         }
-      if (EnvUnmakeInstance(theEnv,ins) == FALSE)
-        rtn = FALSE;
+      if (EnvUnmakeInstance(theEnv,ins) == false)
+        rtn = false;
       if (ins == NULL)
         return(rtn);
       argNumber++;
@@ -1173,7 +1177,7 @@ void SymbolToInstanceName(
   void *theEnv,
   DATA_OBJECT *result)
   {
-   if (EnvArgTypeCheck(theEnv,"symbol-to-instance-name",1,SYMBOL,result) == FALSE)
+   if (EnvArgTypeCheck(theEnv,"symbol-to-instance-name",1,SYMBOL,result) == false)
      {
       SetpType(result,SYMBOL);
       SetpValue(result,EnvFalseSymbol(theEnv));
@@ -1196,7 +1200,7 @@ void *InstanceNameToSymbol(
   {
    DATA_OBJECT result;
 
-   if (EnvArgTypeCheck(theEnv,"instance-name-to-symbol",1,INSTANCE_NAME,&result) == FALSE)
+   if (EnvArgTypeCheck(theEnv,"instance-name-to-symbol",1,INSTANCE_NAME,&result) == false)
      return((SYMBOL_HN *) EnvFalseSymbol(theEnv));
    return((SYMBOL_HN *) result.value);
   }
@@ -1216,30 +1220,30 @@ void InstanceAddressCommand(
    INSTANCE_TYPE *ins;
    DATA_OBJECT temp;
    struct defmodule *theModule;
-   unsigned searchImports;
+   bool searchImports;
 
    result->type = SYMBOL;
    result->value = EnvFalseSymbol(theEnv);
    if (EnvRtnArgCount(theEnv) > 1)
      {
-      if (EnvArgTypeCheck(theEnv,"instance-address",1,SYMBOL,&temp) == FALSE)
+      if (EnvArgTypeCheck(theEnv,"instance-address",1,SYMBOL,&temp) == false)
         return;
       theModule = (struct defmodule *) EnvFindDefmodule(theEnv,DOToString(temp));
-      if ((theModule == NULL) ? (strcmp(DOToString(temp),"*") != 0) : FALSE)
+      if ((theModule == NULL) ? (strcmp(DOToString(temp),"*") != 0) : false)
         {
          ExpectedTypeError1(theEnv,"instance-address",1,"module name");
-         EnvSetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,true);
          return;
         }
       if (theModule == NULL)
         {
-         searchImports = TRUE;
+         searchImports = true;
          theModule = ((struct defmodule *) EnvGetCurrentModule(theEnv));
         }
       else
-        searchImports = FALSE;
+        searchImports = false;
       if (EnvArgTypeCheck(theEnv,"instance-address",2,INSTANCE_NAME,&temp)
-             == FALSE)
+             == false)
         return;
       ins = FindInstanceInModule(theEnv,(SYMBOL_HN *) temp.value,theModule,
                                  ((struct defmodule *) EnvGetCurrentModule(theEnv)),searchImports);
@@ -1264,7 +1268,7 @@ void InstanceAddressCommand(
          else
            {
             StaleInstanceAddress(theEnv,"instance-address",0);
-            EnvSetEvaluationError(theEnv,TRUE);
+            EnvSetEvaluationError(theEnv,true);
            }
         }
       else
@@ -1298,7 +1302,7 @@ void InstanceNameCommand(
 
    result->type = SYMBOL;
    result->value = EnvFalseSymbol(theEnv);
-   if (EnvArgTypeCheck(theEnv,"instance-name",1,INSTANCE_OR_INSTANCE_NAME,&temp) == FALSE)
+   if (EnvArgTypeCheck(theEnv,"instance-name",1,INSTANCE_OR_INSTANCE_NAME,&temp) == false)
      return;
    if (temp.type == INSTANCE_ADDRESS)
      {
@@ -1306,7 +1310,7 @@ void InstanceNameCommand(
       if (ins->garbage == 1)
         {
          StaleInstanceAddress(theEnv,"instance-name",0);
-         EnvSetEvaluationError(theEnv,TRUE);
+         EnvSetEvaluationError(theEnv,true);
          return;
         }
      }
@@ -1327,34 +1331,34 @@ void InstanceNameCommand(
   NAME         : InstanceAddressPCommand
   DESCRIPTION  : Determines if a value is of type INSTANCE
   INPUTS       : None
-  RETURNS      : TRUE if type INSTANCE_ADDRESS, FALSE otherwise
+  RETURNS      : True if type INSTANCE_ADDRESS, false otherwise
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (instance-addressp <arg>)
  **************************************************************/
-intBool InstanceAddressPCommand(
+bool InstanceAddressPCommand(
   void *theEnv)
   {
    DATA_OBJECT temp;
 
    EvaluateExpression(theEnv,GetFirstArgument(),&temp);
-   return((GetType(temp) == INSTANCE_ADDRESS) ? TRUE : FALSE);
+   return((GetType(temp) == INSTANCE_ADDRESS) ? true : false);
   }
 
 /**************************************************************
   NAME         : InstanceNamePCommand
   DESCRIPTION  : Determines if a value is of type INSTANCE_NAME
   INPUTS       : None
-  RETURNS      : TRUE if type INSTANCE_NAME, FALSE otherwise
+  RETURNS      : True if type INSTANCE_NAME, false otherwise
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (instance-namep <arg>)
  **************************************************************/
-intBool InstanceNamePCommand(
+bool InstanceNamePCommand(
   void *theEnv)
   {
    DATA_OBJECT temp;
 
    EvaluateExpression(theEnv,GetFirstArgument(),&temp);
-   return((GetType(temp) == INSTANCE_NAME) ? TRUE : FALSE);
+   return((GetType(temp) == INSTANCE_NAME) ? true : false);
   }
 
 /*****************************************************************
@@ -1362,44 +1366,44 @@ intBool InstanceNamePCommand(
   DESCRIPTION  : Determines if a value is of type INSTANCE_ADDRESS
                    or INSTANCE_NAME
   INPUTS       : None
-  RETURNS      : TRUE if type INSTANCE_NAME or INSTANCE_ADDRESS,
-                     FALSE otherwise
+  RETURNS      : True if type INSTANCE_NAME or INSTANCE_ADDRESS,
+                     false otherwise
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (instancep <arg>)
  *****************************************************************/
-intBool InstancePCommand(
+bool InstancePCommand(
   void *theEnv)
   {
    DATA_OBJECT temp;
 
    EvaluateExpression(theEnv,GetFirstArgument(),&temp);
    if ((GetType(temp) == INSTANCE_NAME) || (GetType(temp) == INSTANCE_ADDRESS))
-     return(TRUE);
-   return(FALSE);
+     return true;
+   return false;
   }
 
 /********************************************************
   NAME         : InstanceExistPCommand
   DESCRIPTION  : Determines if an instance exists
   INPUTS       : None
-  RETURNS      : TRUE if instance exists, FALSE otherwise
+  RETURNS      : True if instance exists, false otherwise
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (instance-existp <arg>)
  ********************************************************/
-intBool InstanceExistPCommand(
+bool InstanceExistPCommand(
   void *theEnv)
   {
    DATA_OBJECT temp;
 
    EvaluateExpression(theEnv,GetFirstArgument(),&temp);
    if (temp.type == INSTANCE_ADDRESS)
-     return((((INSTANCE_TYPE *) temp.value)->garbage == 0) ? TRUE : FALSE);
+     return((((INSTANCE_TYPE *) temp.value)->garbage == 0) ? true : false);
    if ((temp.type == INSTANCE_NAME) || (temp.type == SYMBOL))
      return((FindInstanceBySymbol(theEnv,(SYMBOL_HN *) temp.value) != NULL) ?
-             TRUE : FALSE);
+             true : false);
    ExpectedTypeError1(theEnv,"instance-existp",1,"instance name, instance address or symbol");
-   EnvSetEvaluationError(theEnv,TRUE);
-   return(FALSE);
+   EnvSetEvaluationError(theEnv,true);
+   return false;
   }
 
 /* =========================================
@@ -1433,8 +1437,8 @@ static long ListInstancesInModule(
   int id,
   const char *logicalName,
   const char *className,
-  intBool inheritFlag,
-  intBool allModulesFlag)
+  bool inheritFlag,
+  bool allModulesFlag)
   {
    void *theDefclass,*theInstance;
    long count = 0L;
@@ -1456,7 +1460,7 @@ static long ListInstancesInModule(
               theDefclass != NULL ;
               theDefclass = EnvGetNextDefclass(theEnv,theDefclass))
            count += TabulateInstances(theEnv,id,logicalName,
-                        (DEFCLASS *) theDefclass,FALSE,allModulesFlag);
+                        (DEFCLASS *) theDefclass,false,allModulesFlag);
         }
 
       /* ===================================================
@@ -1469,11 +1473,11 @@ static long ListInstancesInModule(
          theInstance = GetNextInstanceInScope(theEnv,NULL);
          while (theInstance != NULL)
            {
-            if (EnvGetHaltExecution(theEnv) == TRUE)
+            if (EnvGetHaltExecution(theEnv) == true)
               { return(count); }
 
             count++;
-            PrintInstanceNameAndClass(theEnv,logicalName,(INSTANCE_TYPE *) theInstance,TRUE);
+            PrintInstanceNameAndClass(theEnv,logicalName,(INSTANCE_TYPE *) theInstance,true);
             theInstance = GetNextInstanceInScope(theEnv,theInstance);
            }
         }
@@ -1518,8 +1522,8 @@ static long TabulateInstances(
   int id,
   const char *logicalName,
   DEFCLASS *cls,
-  intBool inheritFlag,
-  intBool allModulesFlag)
+  bool inheritFlag,
+  bool allModulesFlag)
   {
    INSTANCE_TYPE *ins;
    long i;
@@ -1534,7 +1538,7 @@ static long TabulateInstances(
         return(count);
       if (allModulesFlag)
         EnvPrintRouter(theEnv,logicalName,"   ");
-      PrintInstanceNameAndClass(theEnv,logicalName,ins,TRUE);
+      PrintInstanceNameAndClass(theEnv,logicalName,ins,true);
       count++;
      }
    if (inheritFlag)
@@ -1572,7 +1576,7 @@ static void PrintInstance(
    long i;
    register INSTANCE_SLOT *sp;
 
-   PrintInstanceNameAndClass(theEnv,logicalName,ins,FALSE);
+   PrintInstanceNameAndClass(theEnv,logicalName,ins,false);
    for (i = 0 ; i < ins->cls->instanceSlotCount ; i++)
      {
       EnvPrintRouter(theEnv,logicalName,separator);
@@ -1588,7 +1592,7 @@ static void PrintInstance(
         {
          EnvPrintRouter(theEnv,logicalName," ");
          PrintMultifield(theEnv,logicalName,(MULTIFIELD_PTR) sp->value,0,
-                         (long) (GetInstanceSlotLength(sp) - 1),FALSE);
+                         (long) (GetInstanceSlotLength(sp) - 1),false);
         }
       EnvPrintRouter(theEnv,logicalName,")");
      }
@@ -1637,7 +1641,7 @@ void *CreateRawInstance(
    return EnvCreateRawInstance(GetCurrentEnvironment(),cptr,iname);
   }
 
-intBool DeleteInstance(
+bool DeleteInstance(
   void *iptr)
   {
    return EnvDeleteInstance(GetCurrentEnvironment(),iptr);
@@ -1707,7 +1711,7 @@ void Instances(
   const char *logicalName,
   void *theVModule,
   const char *className,
-  int inheritFlag)
+  bool inheritFlag)
   {
    EnvInstances(GetCurrentEnvironment(),logicalName,theVModule,className,inheritFlag);
   }
@@ -1719,13 +1723,13 @@ void *MakeInstance(
    return EnvMakeInstance(GetCurrentEnvironment(),mkstr);
   }
 
-intBool UnmakeInstance(
+bool UnmakeInstance(
   void *iptr)
   {
    return EnvUnmakeInstance(GetCurrentEnvironment(),iptr);
   }
 
-int ValidInstanceAddress(
+bool ValidInstanceAddress(
   void *iptr)
   {
    return EnvValidInstanceAddress(GetCurrentEnvironment(),iptr);

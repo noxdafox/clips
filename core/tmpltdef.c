@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/28/16             */
+   /*            CLIPS Version 6.40  07/05/16             */
    /*                                                     */
    /*                 DEFTEMPLATE MODULE                  */
    /*******************************************************/
@@ -47,6 +47,8 @@
 /*            named construct.                               */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
 /*************************************************************/
 
@@ -148,7 +150,7 @@ static void DeallocateDeftemplateData(
    if (Bloaded(theEnv)) return;
 #endif
 
-   DoForAllConstructs(theEnv,DestroyDeftemplateAction,DeftemplateData(theEnv)->DeftemplateModuleIndex,FALSE,NULL); 
+   DoForAllConstructs(theEnv,DestroyDeftemplateAction,DeftemplateData(theEnv)->DeftemplateModuleIndex,false,NULL);
 
 #if ! RUN_TIME
    for (theModule = EnvGetNextDefmodule(theEnv,NULL);
@@ -278,22 +280,22 @@ void *EnvGetNextDeftemplate(
   }
 
 /***********************************************************/
-/* EnvIsDeftemplateDeletable: Returns TRUE if a particular */
-/*   deftemplate can be deleted, otherwise returns FALSE.  */
+/* EnvIsDeftemplateDeletable: Returns true if a particular */
+/*   deftemplate can be deleted, otherwise returns false.  */
 /***********************************************************/
-intBool EnvIsDeftemplateDeletable(
+bool EnvIsDeftemplateDeletable(
   void *theEnv,
   void *vTheDeftemplate)
   {
    struct deftemplate *theDeftemplate = (struct deftemplate *) vTheDeftemplate;
 
    if (! ConstructsDeletable(theEnv))
-     { return FALSE; }
+     { return false; }
 
-   if (theDeftemplate->busyCount > 0) return(FALSE);
-   if (theDeftemplate->patternNetwork != NULL) return(FALSE);
+   if (theDeftemplate->busyCount > 0) return false;
+   if (theDeftemplate->patternNetwork != NULL) return false;
 
-   return(TRUE);
+   return true;
   }
 
 /**************************************************************/
@@ -490,7 +492,7 @@ void *CreateDeftemplateScopeMap(
       EnvSetCurrentModule(theEnv,(void *) theModule);
       moduleID = (int) theModule->bsaveID;
       if (FindImportedConstruct(theEnv,"deftemplate",matchModule,
-                                templateName,&count,TRUE,NULL) != NULL)
+                                templateName,&count,true,NULL) != NULL)
         SetBitMap(scopeMap,moduleID);
      }
    RestoreCurrentModule(theEnv);
@@ -546,7 +548,7 @@ static void SearchForHashedPatternNodes(
 void DeftemplateRunTimeInitialize(
   void *theEnv)
   {
-   DoForAllConstructs(theEnv,RuntimeDeftemplateAction,DeftemplateData(theEnv)->DeftemplateModuleIndex,TRUE,NULL); 
+   DoForAllConstructs(theEnv,RuntimeDeftemplateAction,DeftemplateData(theEnv)->DeftemplateModuleIndex,true,NULL);
   }
 
 #endif /* RUN_TIME */
@@ -612,7 +614,7 @@ void *GetNextDeftemplate(
    return EnvGetNextDeftemplate(GetCurrentEnvironment(),deftemplatePtr);
   }
 
-intBool IsDeftemplateDeletable(
+bool IsDeftemplateDeletable(
   void *vTheDeftemplate)
   {
    return EnvIsDeftemplateDeletable(GetCurrentEnvironment(),vTheDeftemplate);

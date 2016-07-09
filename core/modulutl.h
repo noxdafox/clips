@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/05/16            */
    /*                                                     */
    /*            DEFMODULE UTILITY HEADER FILE            */
    /*******************************************************/
@@ -28,6 +28,8 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_modulutl
@@ -44,21 +46,21 @@
    SYMBOL_HN                     *ExtractConstructName(void *,unsigned,const char *);
    const char                    *ExtractModuleAndConstructName(void *,const char *);
    void                          *FindImportedConstruct(void *,const char *,struct defmodule *,
-                                                               const char *,int *,int,struct defmodule *);
+                                                               const char *,int *,bool,struct defmodule *);
    void                           AmbiguousReferenceErrorMessage(void *,const char *,const char *);
    void                           MarkModulesAsUnvisited(void *);
-   intBool                        AllImportedModulesVisited(void *,struct defmodule *);
+   bool                           AllImportedModulesVisited(void *,struct defmodule *);
    void                           ListItemsDriver(void *,
                                                          const char *,struct defmodule *,
                                                          const char *,const char *,
                                                          void *(*)(void *,void *),
                                                          const char *(*)(void *),
                                                          void (*)(void *,const char *,void *),
-                                                         int (*)(void *,void *));
+                                                         bool (*)(void *,void *));
    long                           DoForAllModules(void *,
                                                          void (*)(struct defmodule *,void *),
                                                          int,void *);
-   intBool                        ConstructExported(void *,const char *,struct symbolHashNode *,struct symbolHashNode *);
+   bool                           ConstructExported(void *,const char *,struct symbolHashNode *,struct symbolHashNode *);
    
 #endif /* _H_modulutl */
 
