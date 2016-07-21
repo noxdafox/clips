@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  08/16/14            */
+   /*             CLIPS Version 6.31  07/20/16            */
    /*                                                     */
    /*              INCREMENTAL RESET MODULE               */
    /*******************************************************/
@@ -35,6 +35,9 @@
 /*            the existance of rules.                        */
 /*                                                           */
 /*            Converted API macros to function calls.        */
+/*                                                           */
+/*      6.31: Fix for slow incremental reset of rule with    */
+/*            several dozen nand joins.                      */
 /*                                                           */
 /*************************************************************/
 
@@ -177,7 +180,7 @@ static void MarkJoinsForIncrementalReset(
 
    for (;
         joinPtr != NULL;
-        joinPtr = joinPtr->lastLevel)
+        joinPtr = GetPreviousJoin(joinPtr))
      {
       if (joinPtr->ruleToActivate != NULL)
         { 
@@ -186,8 +189,8 @@ static void MarkJoinsForIncrementalReset(
          continue; 
         }
         
-      if (joinPtr->joinFromTheRight)
-        { MarkJoinsForIncrementalReset(theEnv,(struct joinNode *) joinPtr->rightSideEntryStructure,value); }
+      //if (joinPtr->joinFromTheRight)
+      //  { MarkJoinsForIncrementalReset(theEnv,(struct joinNode *) joinPtr->rightSideEntryStructure,value); }
 
       /*================*/
       /* Mark the join. */
@@ -227,7 +230,7 @@ static void CheckForPrimableJoins(
 
    for (;
         joinPtr != NULL;
-        joinPtr = joinPtr->lastLevel)
+        joinPtr = GetPreviousJoin(joinPtr))
      {
       /*===============================*/
       /* Update the join if necessary. */
@@ -266,8 +269,8 @@ static void CheckForPrimableJoins(
            }
         }
         
-      if (joinPtr->joinFromTheRight)
-        { CheckForPrimableJoins(theEnv,tempRule,(struct joinNode *) joinPtr->rightSideEntryStructure); }
+      //if (joinPtr->joinFromTheRight)
+      //  { CheckForPrimableJoins(theEnv,tempRule,(struct joinNode *) joinPtr->rightSideEntryStructure); }
      }
   }
 
