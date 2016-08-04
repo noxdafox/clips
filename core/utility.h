@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                 UTILITY HEADER FILE                 */
    /*******************************************************/
@@ -52,6 +52,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_utility
@@ -65,7 +68,7 @@
 struct callFunctionItem
   {
    const char *name;
-   void (*func)(void *);
+   void (*func)(Environment *);
    int priority;
    struct callFunctionItem *next;
    bool environmentAware;
@@ -75,7 +78,7 @@ struct callFunctionItem
 struct callFunctionItemWithArg
   {
    const char *name;
-   void (*func)(void *,void *);
+   void (*func)(Environment *,void *);
    int priority;
    struct callFunctionItemWithArg *next;
    bool environmentAware;
@@ -126,56 +129,56 @@ struct utilityData
 #define IsUTF8MultiByteStart(ch) ((((unsigned char) ch) >= 0xC0) && (((unsigned char) ch) <= 0xF7))
 #define IsUTF8MultiByteContinuation(ch) ((((unsigned char) ch) >= 0x80) && (((unsigned char) ch) <= 0xBF))
 
-   void                           InitializeUtilityData(void *);
-   bool                           AddCleanupFunction(void *,const char *,void (*)(void *),int);
-   bool                           EnvAddPeriodicFunction(void *,const char *,void (*)(void *),int);
-   bool                           EnvAddPeriodicFunctionWithContext(void *,const char *,void (*)(void *),int,void *);
+   void                           InitializeUtilityData(Environment *);
+   bool                           AddCleanupFunction(Environment *,const char *,void (*)(Environment *),int);
+   bool                           EnvAddPeriodicFunction(Environment *,const char *,void (*)(Environment *),int);
+   bool                           EnvAddPeriodicFunctionWithContext(Environment *,const char *,void (*)(Environment *),int,void *);
    bool                           AddPeriodicFunction(const char *,void (*)(void),int);
-   bool                           RemoveCleanupFunction(void *,const char *);
-   bool                           EnvRemovePeriodicFunction(void *,const char *);
-   char                          *CopyString(void *,const char *);
-   void                           DeleteString(void *,char *);
-   const char                    *AppendStrings(void *,const char *,const char *);
-   const char                    *StringPrintForm(void *,const char *);
-   char                          *AppendToString(void *,const char *,char *,size_t *,size_t *);
-   char                          *InsertInString(void *,const char *,size_t,char *,size_t *,size_t *);
-   char                          *AppendNToString(void *,const char *,char *,size_t,size_t *,size_t *);
-   char                          *EnlargeString(void *,size_t,char *,size_t *,size_t *);
-   char                          *ExpandStringWithChar(void *,int,char *,size_t *,size_t *,size_t);
-   struct callFunctionItem       *AddFunctionToCallList(void *,const char *,int,void (*)(void *),
+   bool                           RemoveCleanupFunction(Environment *,const char *);
+   bool                           EnvRemovePeriodicFunction(Environment *,const char *);
+   char                          *CopyString(Environment *,const char *);
+   void                           DeleteString(Environment *,char *);
+   const char                    *AppendStrings(Environment *,const char *,const char *);
+   const char                    *StringPrintForm(Environment *,const char *);
+   char                          *AppendToString(Environment *,const char *,char *,size_t *,size_t *);
+   char                          *InsertInString(Environment *,const char *,size_t,char *,size_t *,size_t *);
+   char                          *AppendNToString(Environment *,const char *,char *,size_t,size_t *,size_t *);
+   char                          *EnlargeString(Environment *,size_t,char *,size_t *,size_t *);
+   char                          *ExpandStringWithChar(Environment *,int,char *,size_t *,size_t *,size_t);
+   struct callFunctionItem       *AddFunctionToCallList(Environment *,const char *,int,void (*)(Environment *),
                                                                struct callFunctionItem *,bool);
-   struct callFunctionItem       *AddFunctionToCallListWithContext(void *,const char *,int,void (*)(void *),
+   struct callFunctionItem       *AddFunctionToCallListWithContext(Environment *,const char *,int,void (*)(Environment *),
                                                                           struct callFunctionItem *,bool,void *);
-   struct callFunctionItem       *RemoveFunctionFromCallList(void *,const char *,
+   struct callFunctionItem       *RemoveFunctionFromCallList(Environment *,const char *,
                                                              struct callFunctionItem *,
                                                              bool *);
-   void                           DeallocateCallList(void *,struct callFunctionItem *);
-   struct callFunctionItemWithArg *AddFunctionToCallListWithArg(void *,const char *,int,void (*)(void *, void *),
+   void                           DeallocateCallList(Environment *,struct callFunctionItem *);
+   struct callFunctionItemWithArg *AddFunctionToCallListWithArg(Environment *,const char *,int,void (*)(Environment *, void *),
                                                                        struct callFunctionItemWithArg *,bool);
-   struct callFunctionItemWithArg *AddFunctionToCallListWithArgWithContext(void *,const char *,int,void (*)(void *, void *),
+   struct callFunctionItemWithArg *AddFunctionToCallListWithArgWithContext(Environment *,const char *,int,void (*)(Environment *, void *),
                                                                                   struct callFunctionItemWithArg *,bool,void *);
-   struct callFunctionItemWithArg *RemoveFunctionFromCallListWithArg(void *,const char *,
+   struct callFunctionItemWithArg *RemoveFunctionFromCallListWithArg(Environment *,const char *,
                                                                             struct callFunctionItemWithArg *,
                                                                             bool *);
-   void                           DeallocateCallListWithArg(void *,struct callFunctionItemWithArg *);
-   struct callFunctionItem       *GetFunctionFromCallList(void *,const char *,struct callFunctionItem *);
-   void                          *EnvGetPeriodicFunctionContext(void *,const char *);
-   unsigned long                  ItemHashValue(void *,unsigned short,void *,unsigned long);
-   void                           YieldTime(void *);
-   void                           EnvIncrementGCLocks(void *);
-   void                           EnvDecrementGCLocks(void *);
-   bool                           EnablePeriodicFunctions(void *,bool);
-   short                          EnableYieldFunction(void *,short);
-   struct trackedMemory          *AddTrackedMemory(void *,void *,size_t);
-   void                           RemoveTrackedMemory(void *,struct trackedMemory *);
+   void                           DeallocateCallListWithArg(Environment *,struct callFunctionItemWithArg *);
+   struct callFunctionItem       *GetFunctionFromCallList(Environment *,const char *,struct callFunctionItem *);
+   void                          *EnvGetPeriodicFunctionContext(Environment *,const char *);
+   unsigned long                  ItemHashValue(Environment *,unsigned short,void *,unsigned long);
+   void                           YieldTime(Environment *);
+   void                           EnvIncrementGCLocks(Environment *);
+   void                           EnvDecrementGCLocks(Environment *);
+   bool                           EnablePeriodicFunctions(Environment *,bool);
+   short                          EnableYieldFunction(Environment *,short);
+   struct trackedMemory          *AddTrackedMemory(Environment *,void *,size_t);
+   void                           RemoveTrackedMemory(Environment *,struct trackedMemory *);
    void                           UTF8Increment(const char *,size_t *);
    size_t                         UTF8Offset(const char *,size_t);
    size_t                         UTF8Length(const char *);
    size_t                         UTF8CharNum(const char *,size_t);
-   void                           RestorePriorGarbageFrame(void *,struct garbageFrame *,struct garbageFrame *,struct dataObject *);
-   void                           CallCleanupFunctions(void *);
-   void                           CallPeriodicTasks(void *);
-   void                           CleanCurrentGarbageFrame(void *,struct dataObject *);
+   void                           RestorePriorGarbageFrame(Environment *,struct garbageFrame *,struct garbageFrame *,struct dataObject *);
+   void                           CallCleanupFunctions(Environment *);
+   void                           CallPeriodicTasks(Environment *);
+   void                           CleanCurrentGarbageFrame(Environment *,struct dataObject *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*                SORT FUNCTIONS MODULE                */
    /*******************************************************/
@@ -28,6 +28,9 @@
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -57,18 +60,18 @@ struct sortFunctionData
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    DoMergeSort(void *,DATA_OBJECT *,DATA_OBJECT *,unsigned long,
+   static void                    DoMergeSort(Environment *,DATA_OBJECT *,DATA_OBJECT *,unsigned long,
                                               unsigned long,unsigned long,unsigned long,
-                                              bool (*)(void *,DATA_OBJECT *,DATA_OBJECT *));
-   static bool                    DefaultCompareSwapFunction(void *,DATA_OBJECT *,DATA_OBJECT *);
-   static void                    DeallocateSortFunctionData(void *);
+                                              bool (*)(Environment *,DATA_OBJECT *,DATA_OBJECT *));
+   static bool                    DefaultCompareSwapFunction(Environment *,DATA_OBJECT *,DATA_OBJECT *);
+   static void                    DeallocateSortFunctionData(Environment *);
    
 /****************************************/
 /* SortFunctionDefinitions: Initializes */
 /*   the sorting functions.             */
 /****************************************/
 void SortFunctionDefinitions(
-  void *theEnv)
+  Environment *theEnv)
   {
    AllocateEnvironmentData(theEnv,SORTFUN_DATA,sizeof(struct sortFunctionData),DeallocateSortFunctionData);
 #if ! RUN_TIME
@@ -81,7 +84,7 @@ void SortFunctionDefinitions(
 /*    data for the sort function.                      */
 /*******************************************************/
 static void DeallocateSortFunctionData(
-  void *theEnv)
+  Environment *theEnv)
   {
    ReturnExpression(theEnv,SortFunctionData(theEnv)->SortComparisonFunction);
   }
@@ -90,7 +93,7 @@ static void DeallocateSortFunctionData(
 /* DefaultCompareSwapFunction:  */
 /********************************/
 static bool DefaultCompareSwapFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *item1,
   DATA_OBJECT *item2)
   {
@@ -116,19 +119,19 @@ static bool DefaultCompareSwapFunction(
 /*   for the rest$ function.        */
 /************************************/
 void SortFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
    long argumentCount, i, j, k = 0;
    DATA_OBJECT *theArguments, *theArguments2;
    DATA_OBJECT theArg;
-   struct multifield *theMultifield, *tempMultifield;
+   Multifield *theMultifield, *tempMultifield;
    const char *functionName;
    struct expr *functionReference;
    int argumentSize = 0;
    struct FunctionDefinition *fptr;
 #if DEFFUNCTION_CONSTRUCT
-   DEFFUNCTION *dptr;
+   Deffunction *dptr;
 #endif
 
    /*==================================*/
@@ -186,7 +189,7 @@ void SortFunction(
 #if DEFFUNCTION_CONSTRUCT
    if (functionReference->type == PCALL)
      {
-      dptr = (DEFFUNCTION *) functionReference->value;
+      dptr = (Deffunction *) functionReference->value;
       if ((dptr->minNumberOfParameters > 2) ||
           (dptr->maxNumberOfParameters == 0) ||
           (dptr->maxNumberOfParameters == 1))
@@ -277,7 +280,7 @@ void SortFunction(
    functionReference->nextArg = NULL;
    ReturnExpression(theEnv,functionReference);
 
-   theMultifield = (struct multifield *) EnvCreateMultifield(theEnv,(unsigned long) argumentSize);
+   theMultifield = EnvCreateMultifield(theEnv,(unsigned long) argumentSize);
 
    for (i = 0; i < argumentSize; i++)
      {
@@ -290,7 +293,7 @@ void SortFunction(
    SetpType(returnValue,MULTIFIELD);
    SetpDOBegin(returnValue,1);
    SetpDOEnd(returnValue,argumentSize);
-   SetpValue(returnValue,(void *) theMultifield);
+   SetpValue(returnValue,theMultifield);
   }
 
 
@@ -299,10 +302,10 @@ void SortFunction(
 /*   according to user specified criteria. */
 /*******************************************/
 void MergeSort(
-  void *theEnv,
+  Environment *theEnv,
   unsigned long listSize,
   DATA_OBJECT *theList,
-  bool (*swapFunction)(void *,DATA_OBJECT *,DATA_OBJECT  *))
+  bool (*swapFunction)(Environment *,DATA_OBJECT *,DATA_OBJECT  *))
   {
    DATA_OBJECT *tempList;
    unsigned long middle;
@@ -337,14 +340,14 @@ void MergeSort(
 /*   sort on an array of DATA_OBJECT structures.      */
 /******************************************************/
 static void DoMergeSort(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *theList,
   DATA_OBJECT *tempList,
   unsigned long s1,
   unsigned long e1,
   unsigned long s2,
   unsigned long e2,
-  bool (*swapFunction)(void *,DATA_OBJECT *,DATA_OBJECT *))
+  bool (*swapFunction)(Environment *,DATA_OBJECT *,DATA_OBJECT *))
   {
    DATA_OBJECT temp;
    unsigned long middle, size;

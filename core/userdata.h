@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                USER DATA HEADER FILE                */
    /*******************************************************/
@@ -18,6 +18,9 @@
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -39,8 +42,8 @@ typedef struct userData * USER_DATA_PTR;
 struct userDataRecord
   {
    unsigned char dataID;
-   void *(*createUserData)(void *);
-   void (*deleteUserData)(void *,void *);
+   void *(*createUserData)(Environment *);
+   void (*deleteUserData)(Environment *,void *);
   };
   
 typedef struct userDataRecord USER_DATA_RECORD;
@@ -58,12 +61,12 @@ struct userDataData
 
 #define UserDataData(theEnv) ((struct userDataData *) GetEnvironmentData(theEnv,USER_DATA_DATA))
 
-   void                           InitializeUserDataData(void *);
-   unsigned char                  InstallUserDataRecord(void *,struct userDataRecord *);
-   struct userData               *FetchUserData(void *,unsigned char,struct userData **);
+   void                           InitializeUserDataData(Environment *);
+   unsigned char                  InstallUserDataRecord(Environment *,struct userDataRecord *);
+   struct userData               *FetchUserData(Environment *,unsigned char,struct userData **);
    struct userData               *TestUserData(unsigned char,struct userData *);
-   void                           ClearUserDataList(void *,struct userData *);
-   struct userData               *DeleteUserData(void *,unsigned char,struct userData *);
+   void                           ClearUserDataList(Environment *,struct userData *);
+   struct userData               *DeleteUserData(Environment *,unsigned char,struct userData *);
 
 #endif
 

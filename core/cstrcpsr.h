@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/04/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*              CONSTRUCT PARSER MODULE                */
    /*******************************************************/
@@ -47,6 +47,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_cstrcpsr
@@ -63,26 +66,26 @@
    int                            Load(const char *);
 #endif
 
-   int                            EnvLoad(void *,const char *);
-   int                            LoadConstructsFromLogicalName(void *,const char *);
-   int                            ParseConstruct(void *,const char *,const char *);
-   void                           RemoveConstructFromModule(void *,struct constructHeader *);
-   struct symbolHashNode         *GetConstructNameAndComment(void *,const char *,
-                                                                    struct token *,const char *,
-                                                                    void *(*)(void *,const char *),
-                                                                    bool (*)(void *,void *),
-                                                                    const char *,bool,bool,bool,bool);
-   void                           ImportExportConflictMessage(void *,const char *,const char *,const char *,const char *);
+   int                            EnvLoad(Environment *,const char *);
+   int                            LoadConstructsFromLogicalName(Environment *,const char *);
+   int                            ParseConstruct(Environment *,const char *,const char *);
+   void                           RemoveConstructFromModule(Environment *,struct constructHeader *);
+   struct symbolHashNode         *GetConstructNameAndComment(Environment *,const char *,
+                                                             struct token *,const char *,
+                                                             FindConstructFunction *,
+                                                             DeleteConstructFunction *,
+                                                             const char *,bool,bool,bool,bool);
+   void                           ImportExportConflictMessage(Environment *,const char *,const char *,const char *,const char *);
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   void                           FlushParsingMessages(void *);
-   char                          *EnvGetParsingFileName(void *);
-   void                           EnvSetParsingFileName(void *,const char *);
-   char                          *EnvGetErrorFileName(void *);
-   void                           EnvSetErrorFileName(void *,const char *);
-   char                          *EnvGetWarningFileName(void *);
-   void                           EnvSetWarningFileName(void *,const char *);
-   void                           CreateErrorCaptureRouter(void *);
-   void                           DeleteErrorCaptureRouter(void *);
+   void                           FlushParsingMessages(Environment *);
+   char                          *EnvGetParsingFileName(Environment *);
+   void                           EnvSetParsingFileName(Environment *,const char *);
+   char                          *EnvGetErrorFileName(Environment *);
+   void                           EnvSetErrorFileName(Environment *,const char *);
+   char                          *EnvGetWarningFileName(Environment *);
+   void                           EnvSetWarningFileName(Environment *,const char *);
+   void                           CreateErrorCaptureRouter(Environment *);
+   void                           DeleteErrorCaptureRouter(Environment *);
 #endif
 
 #endif

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -28,6 +28,9 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_dfinsbin
@@ -44,7 +47,7 @@
 
 struct definstancesBinaryData
   { 
-   DEFINSTANCES *DefinstancesArray;
+   Definstances *DefinstancesArray;
    long DefinstancesCount;
    long ModuleCount;
    DEFINSTANCES_MODULE *ModuleArray;
@@ -52,8 +55,8 @@ struct definstancesBinaryData
   
 #define DefinstancesBinaryData(theEnv) ((struct definstancesBinaryData *) GetEnvironmentData(theEnv,DFINSBIN_DATA))
 
-   void                           SetupDefinstancesBload(void *);
-   void                          *BloadDefinstancesModuleRef(void *,int);
+   void                           SetupDefinstancesBload(Environment *);
+   void                          *BloadDefinstancesModuleRef(Environment *,int);
 
 #endif /* DEFINSTANCES_CONSTRUCT && (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE) */
 

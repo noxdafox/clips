@@ -76,7 +76,7 @@
 /************/    
 - (void) dealloc
   {
-   void *theEnvironment = [environment environment];
+   Environment *theEnvironment = [environment environment];
    struct priorCommand *nextCommand;
    
    /*=================================*/
@@ -102,7 +102,7 @@
 /*****************/
 - (void) awakeFromNib
   {
-   void *theEnvironment = [environment environment];
+   Environment *theEnvironment = [environment environment];
    AppController *theDelegate = [NSApp delegate];
 
    [textView setEnvironment: environment];
@@ -552,7 +552,7 @@
            break;
         }
         
-      EnablePeriodicFunctions([environment environment],TRUE);
+      EnablePeriodicFunctions([environment environment],true);
       return;
      }
 
@@ -666,7 +666,7 @@
 
    NSArray *filesToOpen = [sheet URLs];
    NSString *theFileName;
-   void *theEnv = [environment environment];
+   Environment *theEnv = [environment environment];
    AppController *theDelegate = [NSApp delegate];
       
    if ([filesToOpen count] != 1) return;
@@ -761,7 +761,7 @@
 
    NSArray *filesToOpen = [sheet URLs];
    NSString *theFileName;
-   void *theEnv = [environment environment];
+   Environment *theEnv = [environment environment];
       
    if ([filesToOpen count] != 1) return;
       
@@ -897,7 +897,7 @@
   {
    char *theCString;
    NSString *theStr;
-   void *theEnvironment = [environment environment];
+   Environment *theEnvironment = [environment environment];
    
    /*==============================================*/
    /* Select all of the text in the dialog window. */
@@ -967,7 +967,7 @@
 - (void) setWatchFlagsFromPreferences
   {
    NSUserDefaultsController *theValues;
-   void *theEnv = [environment environment];
+   Environment *theEnv = [environment environment];
 
    theValues = [[NSUserDefaultsController sharedUserDefaultsController] values];
    
@@ -1304,7 +1304,7 @@
 /*********/
 - (IBAction) halt: (id) sender
   {
-   EnvSetHaltRules([environment environment],TRUE);
+   EnvSetHaltRules([environment environment],true);
   }
 
 /*********************/    
@@ -1314,8 +1314,8 @@
   {
    /* Need to abort waitForChar */
    /* Need to abort batch */
-   SetHaltCommandLoopBatch([environment environment],TRUE);
-   EnvSetHaltExecution([environment environment],TRUE);
+   SetHaltCommandLoopBatch([environment environment],true);
+   EnvSetHaltExecution([environment environment],true);
   }
       
 /*%%%%%%%%%%%%%%%%%%%%%%%%%*/

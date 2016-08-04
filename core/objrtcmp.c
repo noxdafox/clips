@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*    OBJECT PATTERN NETWORK CONSTRUCTS-TO-C MODULE    */
    /*******************************************************/
@@ -34,6 +34,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 /* =========================================
    *****************************************
@@ -63,19 +66,17 @@
 #define ObjectPNPrefix() ArbitraryPrefix(ObjectReteData(theEnv)->ObjectPatternCodeItem,0)
 #define ObjectANPrefix() ArbitraryPrefix(ObjectReteData(theEnv)->ObjectPatternCodeItem,1)
 
-/* =========================================
-   *****************************************
-      INTERNALLY VISIBLE FUNCTION HEADERS
-   =========================================
-   ***************************************** */
+/***************************************/
+/* LOCAL INTERNAL FUNCTION DEFINITIONS */
+/***************************************/
 
-static void BeforeObjectPatternsToCode(void *);
-static OBJECT_PATTERN_NODE *GetNextObjectPatternNode(OBJECT_PATTERN_NODE *);
-static void InitObjectPatternsCode(void *,FILE *,int,int);
-static bool ObjectPatternsToCode(void *,const char *,const char *,char *,int,FILE *,int,int);
-static void IntermediatePatternNodeReference(void *,OBJECT_PATTERN_NODE *,FILE *,int,int);
-static int IntermediatePatternNodesToCode(void *,const char *,const char *,char *,int,FILE *,int,int,int);
-static int AlphaPatternNodesToCode(void *,const char *,const char *,char *,int,FILE *,int,int,int);
+   static void                    BeforeObjectPatternsToCode(Environment *);
+   static OBJECT_PATTERN_NODE    *GetNextObjectPatternNode(OBJECT_PATTERN_NODE *);
+   static void                    InitObjectPatternsCode(Environment *,FILE *,int,int);
+   static bool                    ObjectPatternsToCode(Environment *,const char *,const char *,char *,int,FILE *,int,int);
+   static void                    IntermediatePatternNodeReference(Environment *,OBJECT_PATTERN_NODE *,FILE *,int,int);
+   static int                     IntermediatePatternNodesToCode(Environment *,const char *,const char *,char *,int,FILE *,int,int,int);
+   static int                     AlphaPatternNodesToCode(Environment *,const char *,const char *,char *,int,FILE *,int,int,int);
 
 /* =========================================
    *****************************************
@@ -93,7 +94,7 @@ static int AlphaPatternNodesToCode(void *,const char *,const char *,char *,int,F
   NOTES        : None
  ***************************************************/
 void ObjectPatternsCompilerSetup(
-  void *theEnv)
+  Environment *theEnv)
   {
    ObjectReteData(theEnv)->ObjectPatternCodeItem =
          AddCodeGeneratorItem(theEnv,"object-patterns",0,BeforeObjectPatternsToCode,
@@ -119,7 +120,7 @@ void ObjectPatternsCompilerSetup(
   NOTES        : None
  ***************************************************/
 void ObjectPatternNodeReference(
-  void *theEnv,
+  Environment *theEnv,
   void *theVPattern,
   FILE *theFile,
   int imageID,
@@ -157,7 +158,7 @@ void ObjectPatternNodeReference(
   NOTES        : None
  *****************************************************/
 static void BeforeObjectPatternsToCode(
-  void *theEnv)
+  Environment *theEnv)
   {
    long whichPattern;
    OBJECT_PATTERN_NODE *intermediateNode;
@@ -199,7 +200,7 @@ static OBJECT_PATTERN_NODE *GetNextObjectPatternNode(
      {
       thePattern = thePattern->lastLevel;
       if (thePattern == NULL)
-        return(NULL);
+        return NULL;
      }
    return(thePattern->rightNode);
   }
@@ -218,7 +219,7 @@ static OBJECT_PATTERN_NODE *GetNextObjectPatternNode(
   NOTES        : None
  ***************************************************/
 static void InitObjectPatternsCode(
-  void *theEnv,
+  Environment *theEnv,
   FILE *initFP,
   int imageID,
   int maxIndices)
@@ -261,7 +262,7 @@ static void InitObjectPatternsCode(
   NOTES        : None
  ***********************************************************/
 static bool ObjectPatternsToCode(
-  void *theEnv,
+  Environment *theEnv,
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
@@ -298,7 +299,7 @@ static bool ObjectPatternsToCode(
   NOTES        : None
  ***************************************************/
 static void IntermediatePatternNodeReference(
-  void *theEnv,
+  Environment *theEnv,
   OBJECT_PATTERN_NODE *thePattern,
   FILE *theFile,
   int imageID,
@@ -331,7 +332,7 @@ static void IntermediatePatternNodeReference(
   NOTES        : None
  *************************************************************/
 static int IntermediatePatternNodesToCode(
-  void *theEnv,
+  Environment *theEnv,
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
@@ -393,7 +394,7 @@ static int IntermediatePatternNodesToCode(
       fprintf(fp,",");
       IntermediatePatternNodeReference(theEnv,thePattern->rightNode,fp,imageID,maxIndices);
       fprintf(fp,",");
-      ObjectPatternNodeReference(theEnv,(void *) thePattern->alphaNode,fp,imageID,maxIndices);
+      ObjectPatternNodeReference(theEnv,thePattern->alphaNode,fp,imageID,maxIndices);
       fprintf(fp,",0L}");
 
       i++;
@@ -436,7 +437,7 @@ static int IntermediatePatternNodesToCode(
   NOTES        : None
  ***********************************************************/
 static int AlphaPatternNodesToCode(
-  void *theEnv,
+  Environment *theEnv,
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/28/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*                  USER DATA MODULE                   */
    /*******************************************************/
@@ -16,6 +16,9 @@
 /* Revision History:                                         */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -32,7 +35,7 @@
 /*    data for user data routines.               */
 /*************************************************/
 void InitializeUserDataData(
-  void *theEnv)
+  Environment *theEnv)
   {
    AllocateEnvironmentData(theEnv,USER_DATA_DATA,sizeof(struct userDataData),NULL);
   }
@@ -43,7 +46,7 @@ void InitializeUserDataData(
 /*   integer data ID associated with the record.      */
 /******************************************************/
 unsigned char InstallUserDataRecord(
-  void *theEnv,
+  Environment *theEnv,
   struct userDataRecord *theRecord)
   {
    theRecord->dataID = UserDataData(theEnv)->UserDataRecordCount;
@@ -57,7 +60,7 @@ unsigned char InstallUserDataRecord(
 /*   data structure is created if one is not found.  */
 /*****************************************************/
 struct userData *FetchUserData(
-  void *theEnv,
+  Environment *theEnv,
   unsigned char userDataID,
   struct userData **theList)
   {
@@ -99,14 +102,14 @@ struct userData *TestUserData(
         { return(theData); }
      }
         
-   return(NULL);   
+   return NULL;   
   }
 
 /***************************************************************/
 /* ClearUserDataList: Deallocates a linked list of user data.  */
 /***************************************************************/
 void ClearUserDataList(
-  void *theEnv,
+  Environment *theEnv,
   struct userData *theList)
   {
    struct userData *nextData;
@@ -124,7 +127,7 @@ void ClearUserDataList(
 /*   from a list of user data structures.        */
 /*************************************************/
 struct userData *DeleteUserData(
-  void *theEnv,
+  Environment *theEnv,
   unsigned char userDataID,
   struct userData *theList)
   {

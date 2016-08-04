@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*            SORT FUNCTIONS HEADER MODULE             */
    /*******************************************************/
@@ -31,6 +31,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_sortfun
@@ -39,10 +42,10 @@
 
 #define _H_sortfun
 
-   void                           SortFunctionDefinitions(void *);
-   void                           MergeSort(void *,unsigned long,DATA_OBJECT *,
-                                                   bool (*)(void *,DATA_OBJECT *,DATA_OBJECT *));
-   void                           SortFunction(void *,DATA_OBJECT *);
+   void                           SortFunctionDefinitions(Environment *);
+   void                           MergeSort(Environment *,unsigned long,DATA_OBJECT *,
+                                            bool (*)(Environment *,DATA_OBJECT *,DATA_OBJECT *));
+   void                           SortFunction(Environment *,DATA_OBJECT *);
 
 #endif /* _H_sortfun */
 

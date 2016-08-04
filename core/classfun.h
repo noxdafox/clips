@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/04/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*             CLASS FUNCTIONS HEADER FILE             */
    /*******************************************************/
@@ -40,6 +40,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_classfun
@@ -62,51 +65,51 @@
 #define ISA_ID  0
 #define NAME_ID 1
 
-void IncrementDefclassBusyCount(void *,void *);
-void DecrementDefclassBusyCount(void *,void *);
-bool InstancesPurge(void *theEnv);
+   void                           IncrementDefclassBusyCount(Environment *,Defclass *);
+   void                           DecrementDefclassBusyCount(Environment *,Defclass *);
+   bool                           InstancesPurge(Environment *);
 
 #if ! RUN_TIME
-void InitializeClasses(void *);
+   void                           InitializeClasses(Environment *);
 #endif
-SLOT_DESC *FindClassSlot(DEFCLASS *,SYMBOL_HN *);
-void ClassExistError(void *,const char *,const char *);
-void DeleteClassLinks(void *,CLASS_LINK *);
-void PrintClassName(void *,const char *,DEFCLASS *,bool);
+   SlotDescriptor                *FindClassSlot(Defclass *,SYMBOL_HN *);
+   void                           ClassExistError(Environment *,const char *,const char *);
+   void                           DeleteClassLinks(Environment *,CLASS_LINK *);
+   void                           PrintClassName(Environment *,const char *,Defclass *,bool);
 
 #if DEBUGGING_FUNCTIONS || ((! BLOAD_ONLY) && (! RUN_TIME))
-void PrintPackedClassLinks(void *,const char *,const char *,PACKED_CLASS_LINKS *);
+   void                           PrintPackedClassLinks(Environment *,const char *,const char *,PACKED_CLASS_LINKS *);
 #endif
 
 #if ! RUN_TIME
-void PutClassInTable(void *,DEFCLASS *);
-void RemoveClassFromTable(void *,DEFCLASS *);
-void AddClassLink(void *,PACKED_CLASS_LINKS *,DEFCLASS *,int);
-void DeleteSubclassLink(void *,DEFCLASS *,DEFCLASS *);
-void DeleteSuperclassLink(void *,DEFCLASS *,DEFCLASS *);
-DEFCLASS *NewClass(void *,SYMBOL_HN *);
-void DeletePackedClassLinks(void *,PACKED_CLASS_LINKS *,bool);
-void AssignClassID(void *,DEFCLASS *);
-SLOT_NAME *AddSlotName(void *,SYMBOL_HN *,int,bool);
-void DeleteSlotName(void *,SLOT_NAME *);
-void RemoveDefclass(void *,void *);
-void InstallClass(void *,DEFCLASS *,bool);
+   void                           PutClassInTable(Environment *,Defclass *);
+   void                           RemoveClassFromTable(Environment *,Defclass *);
+   void                           AddClassLink(Environment *,PACKED_CLASS_LINKS *,Defclass *,int);
+   void                           DeleteSubclassLink(Environment *,Defclass *,Defclass *);
+   void                           DeleteSuperclassLink(Environment *,Defclass *,Defclass *);
+   Defclass                      *NewClass(Environment *,SYMBOL_HN *);
+   void                           DeletePackedClassLinks(Environment *,PACKED_CLASS_LINKS *,bool);
+   void                           AssignClassID(Environment *,Defclass *);
+   SLOT_NAME                     *AddSlotName(Environment *,SYMBOL_HN *,int,bool);
+   void                           DeleteSlotName(Environment *,SLOT_NAME *);
+   void                           RemoveDefclass(Environment *,Defclass *);
+   void                           InstallClass(Environment *,Defclass *,bool);
 #endif
-void DestroyDefclass(void *,void *);
+   void                           DestroyDefclass(Environment *,Defclass *);
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-bool IsClassBeingUsed(DEFCLASS *);
-bool RemoveAllUserClasses(void *);
-bool DeleteClassUAG(void *,DEFCLASS *);
-void MarkBitMapSubclasses(char *,DEFCLASS *,int);
+   bool                           IsClassBeingUsed(Defclass *);
+   bool                           RemoveAllUserClasses(Environment *);
+   bool                           DeleteClassUAG(Environment *,Defclass *);
+   void                           MarkBitMapSubclasses(char *,Defclass *,int);
 #endif
 
-short FindSlotNameID(void *,SYMBOL_HN *);
-SYMBOL_HN *FindIDSlotName(void *,int);
-SLOT_NAME *FindIDSlotNameHash(void *,int);
-int GetTraversalID(void *);
-void ReleaseTraversalID(void *);
-unsigned HashClass(SYMBOL_HN *);
+   short                          FindSlotNameID(Environment *,SYMBOL_HN *);
+   SYMBOL_HN                     *FindIDSlotName(Environment *,int);
+   SLOT_NAME                     *FindIDSlotNameHash(Environment *,int);
+   int                            GetTraversalID(Environment *);
+   void                           ReleaseTraversalID(Environment *);
+   unsigned                       HashClass(SYMBOL_HN *);
 
 #define DEFCLASS_DATA 21
 
@@ -117,9 +120,9 @@ struct defclassData
    struct construct *DefclassConstruct;
    int DefclassModuleIndex;
    ENTITY_RECORD DefclassEntityRecord;
-   DEFCLASS *PrimitiveClassMap[PRIMITIVE_CLASSES];
-   DEFCLASS **ClassIDMap;
-   DEFCLASS **ClassTable;
+   Defclass *PrimitiveClassMap[PRIMITIVE_CLASSES];
+   Defclass **ClassIDMap;
+   Defclass **ClassTable;
    unsigned short MaxClassID;
    unsigned short AvailClassID;
    SLOT_NAME **SlotNameTable;

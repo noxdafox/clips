@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*        INSTANCE MODIFY AND DUPLICATE MODULE         */
    /*******************************************************/
@@ -40,6 +40,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 /* =========================================
@@ -72,16 +75,14 @@
 
 #include "insmoddp.h"
 
-/* =========================================
-   *****************************************
-      INTERNALLY VISIBLE FUNCTION HEADERS
-   =========================================
-   ***************************************** */
+/***************************************/
+/* LOCAL INTERNAL FUNCTION DEFINITIONS */
+/***************************************/
 
-static DATA_OBJECT *EvaluateSlotOverrides(void *,EXPRESSION *,int *,bool *);
-static void DeleteSlotOverrideEvaluations(void *,DATA_OBJECT *,int);
-static void ModifyMsgHandlerSupport(void *,DATA_OBJECT *,bool);
-static void DuplicateMsgHandlerSupport(void *,DATA_OBJECT *,bool);
+   static DATA_OBJECT            *EvaluateSlotOverrides(Environment *,EXPRESSION *,int *,bool *);
+   static void                    DeleteSlotOverrideEvaluations(Environment *,DATA_OBJECT *,int);
+   static void                    ModifyMsgHandlerSupport(Environment *,DATA_OBJECT *,bool);
+   static void                    DuplicateMsgHandlerSupport(Environment *,DATA_OBJECT *,bool);
 
 /* =========================================
    *****************************************
@@ -102,7 +103,7 @@ static void DuplicateMsgHandlerSupport(void *,DATA_OBJECT *,bool);
   NOTES        : None
  ***************************************************/
 void SetupInstanceModDupCommands(
-  void *theEnv)
+  Environment *theEnv)
   {
 #if DEFRULE_CONSTRUCT
    EnvDefineFunction2(theEnv,"modify-instance",'u',PTIEF InactiveModifyInstance,"InactiveModifyInstance",NULL);
@@ -156,10 +157,10 @@ void SetupInstanceModDupCommands(
                  (modify-instance <instance> <slot-override>*)
  *************************************************************/
 void ModifyInstance(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *result)
   {
-   INSTANCE_TYPE *ins;
+   Instance *ins;
    EXPRESSION theExp;
    DATA_OBJECT *overrides;
    bool oldOMDMV;
@@ -202,7 +203,7 @@ void ModifyInstance(
       the modify
       ====================================== */
    theExp.type = DATA_OBJECT_ARRAY;
-   theExp.value = (void *) overrides;
+   theExp.value = overrides;
    theExp.argList = NULL;
    theExp.nextArg = NULL;
 
@@ -226,10 +227,10 @@ void ModifyInstance(
                     <slot-override>*)
  *************************************************************/
 void MsgModifyInstance(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *result)
   {
-   INSTANCE_TYPE *ins;
+   Instance *ins;
    EXPRESSION theExp;
    DATA_OBJECT *overrides;
    bool oldOMDMV;
@@ -271,7 +272,7 @@ void MsgModifyInstance(
       the modify
       ====================================== */
    theExp.type = DATA_OBJECT_ARRAY;
-   theExp.value = (void *) overrides;
+   theExp.value = overrides;
    theExp.argList = NULL;
    theExp.nextArg = NULL;
 
@@ -295,10 +296,10 @@ void MsgModifyInstance(
                    [to <instance-name>] <slot-override>*)
  *************************************************************/
 void DuplicateInstance(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *result)
   {
-   INSTANCE_TYPE *ins;
+   Instance *ins;
    DATA_OBJECT newName;
    EXPRESSION theExp[2];
    DATA_OBJECT *overrides;
@@ -353,7 +354,7 @@ void DuplicateInstance(
    theExp[0].argList = NULL;
    theExp[0].nextArg = &theExp[1];
    theExp[1].type = DATA_OBJECT_ARRAY;
-   theExp[1].value = (void *) overrides;
+   theExp[1].value = overrides;
    theExp[1].argList = NULL;
    theExp[1].nextArg = NULL;
 
@@ -377,10 +378,10 @@ void DuplicateInstance(
                    [to <instance-name>] <slot-override>*)
  *************************************************************/
 void MsgDuplicateInstance(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *result)
   {
-   INSTANCE_TYPE *ins;
+   Instance *ins;
    DATA_OBJECT newName;
    EXPRESSION theExp[2];
    DATA_OBJECT *overrides;
@@ -435,7 +436,7 @@ void MsgDuplicateInstance(
    theExp[0].argList = NULL;
    theExp[0].nextArg = &theExp[1];
    theExp[1].type = DATA_OBJECT_ARRAY;
-   theExp[1].value = (void *) overrides;
+   theExp[1].value = overrides;
    theExp[1].argList = NULL;
    theExp[1].nextArg = NULL;
 
@@ -462,7 +463,7 @@ void MsgDuplicateInstance(
                    <slot-override>*)
  **************************************************************/
 void InactiveModifyInstance(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *result)
   {
    bool ov;
@@ -485,7 +486,7 @@ void InactiveModifyInstance(
                    <slot-override>*)
  **************************************************************/
 void InactiveMsgModifyInstance(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *result)
   {
    bool ov;
@@ -508,7 +509,7 @@ void InactiveMsgModifyInstance(
                    <slot-override>*)
  *******************************************************************/
 void InactiveDuplicateInstance(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *result)
   {
    bool ov;
@@ -532,7 +533,7 @@ void InactiveDuplicateInstance(
                    <slot-override>*)
  **************************************************************/
 void InactiveMsgDuplicateInstance(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *result)
   {
    bool ov;
@@ -559,7 +560,7 @@ void InactiveMsgDuplicateInstance(
   NOTES        : None
  *****************************************************/
 void DirectDuplicateMsgHandler(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *result)
   {
    DuplicateMsgHandlerSupport(theEnv,result,false);
@@ -579,7 +580,7 @@ void DirectDuplicateMsgHandler(
   NOTES        : None
  *****************************************************/
 void MsgDuplicateMsgHandler(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *result)
   {
    DuplicateMsgHandlerSupport(theEnv,result,true);
@@ -600,7 +601,7 @@ void MsgDuplicateMsgHandler(
   NOTES        : None
  ***************************************************/
 void DirectModifyMsgHandler(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *result)
   {
    ModifyMsgHandlerSupport(theEnv,result,false);
@@ -620,7 +621,7 @@ void DirectModifyMsgHandler(
   NOTES        : None
  ***************************************************/
 void MsgModifyMsgHandler(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *result)
   {
    ModifyMsgHandlerSupport(theEnv,result,true);
@@ -655,7 +656,7 @@ void MsgModifyMsgHandler(
                  references to an outer frame
  ***********************************************************/
 static DATA_OBJECT *EvaluateSlotOverrides(
-  void *theEnv,
+  Environment *theEnv,
   EXPRESSION *ovExprs,
   int *ovCnt,
   bool *error)
@@ -673,7 +674,7 @@ static DATA_OBJECT *EvaluateSlotOverrides(
       ========================================== */
    *ovCnt = CountArguments(ovExprs) / 2;
    if (*ovCnt == 0)
-     return(NULL);
+     return NULL;
 
    /* ===============================================
       Evaluate all the slot override names and values
@@ -714,9 +715,9 @@ static DATA_OBJECT *EvaluateSlotOverrides(
    return(ovs);
 
 EvaluateOverridesError:
-   rm(theEnv,(void *) ovs,(sizeof(DATA_OBJECT) * (*ovCnt)));
+   rm(theEnv,ovs,(sizeof(DATA_OBJECT) * (*ovCnt)));
    *error = true;
-   return(NULL);
+   return NULL;
   }
 
 /**********************************************************
@@ -730,12 +731,12 @@ EvaluateOverridesError:
   NOTES        : None
  **********************************************************/
 static void DeleteSlotOverrideEvaluations(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *ovEvals,
   int ovCnt)
   {
    if (ovEvals != NULL)
-     rm(theEnv,(void *) ovEvals,(sizeof(DATA_OBJECT) * ovCnt));
+     rm(theEnv,ovEvals,(sizeof(DATA_OBJECT) * ovCnt));
   }
 
 /**********************************************************
@@ -753,13 +754,13 @@ static void DeleteSlotOverrideEvaluations(
   NOTES        : None
  **********************************************************/
 static void ModifyMsgHandlerSupport(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *result,
   bool msgpass)
   {
    DATA_OBJECT *slotOverrides,*newval,temp,junk;
    EXPRESSION msgExp;
-   INSTANCE_TYPE *ins;
+   Instance *ins;
    INSTANCE_SLOT *insSlot;
 
    result->type = SYMBOL;
@@ -808,7 +809,7 @@ static void ModifyMsgHandlerSupport(
          if (msgExp.type != MULTIFIELD)
            msgExp.value = slotOverrides->value;
          else
-           msgExp.value = (void *) slotOverrides;
+           msgExp.value = slotOverrides;
          msgExp.argList = NULL;
          msgExp.nextArg = NULL;
          if (! DirectMessage(theEnv,insSlot->desc->overrideMessage,ins,&temp,&msgExp))
@@ -852,11 +853,11 @@ static void ModifyMsgHandlerSupport(
   NOTES        : None
  *************************************************************/
 static void DuplicateMsgHandlerSupport(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *result,
   bool msgpass)
   {
-   INSTANCE_TYPE *srcins,*dstins;
+   Instance *srcins,*dstins;
    SYMBOL_HN *newName;
    DATA_OBJECT *slotOverrides;
    EXPRESSION *valArg,msgExp;
@@ -934,7 +935,7 @@ static void DuplicateMsgHandlerSupport(
          if (msgExp.type != MULTIFIELD)
            msgExp.value = slotOverrides->value;
          else
-           msgExp.value = (void *) slotOverrides;
+           msgExp.value = slotOverrides;
          msgExp.argList = NULL;
          msgExp.nextArg = NULL;
          if (! DirectMessage(theEnv,dstInsSlot->desc->overrideMessage,dstins,&temp,&msgExp))
@@ -1021,7 +1022,7 @@ static void DuplicateMsgHandlerSupport(
    else
      {
       result->type = INSTANCE_NAME;
-      result->value = (void *) GetFullInstanceName(theEnv,dstins);
+      result->value = GetFullInstanceName(theEnv,dstins);
      }
    return;
 

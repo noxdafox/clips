@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*           SYMBOL BINARY SAVE HEADER FILE            */
    /*******************************************************/
@@ -26,6 +26,9 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_symblbin
@@ -43,17 +46,17 @@
 #define FloatPointer(i) ((FLOAT_HN *) (SymbolData(theEnv)->FloatArray[i]))
 #define IntegerPointer(i) ((INTEGER_HN *) (SymbolData(theEnv)->IntegerArray[i]))
 
-   void                    MarkNeededAtomicValues(void);
-   void                    WriteNeededAtomicValues(void *,FILE *);
-   void                    ReadNeededAtomicValues(void *);
-   void                    InitAtomicValueNeededFlags(void *);
-   void                    FreeAtomicValueStorage(void *);
-   void                    WriteNeededSymbols(void *,FILE *);
-   void                    WriteNeededFloats(void *,FILE *);
-   void                    WriteNeededIntegers(void *,FILE *);
-   void                    ReadNeededSymbols(void *);
-   void                    ReadNeededFloats(void *);
-   void                    ReadNeededIntegers(void *);
+   void                    MarkNeededAtomicValues(Environment);
+   void                    WriteNeededAtomicValues(Environment *,FILE *);
+   void                    ReadNeededAtomicValues(Environment *);
+   void                    InitAtomicValueNeededFlags(Environment *);
+   void                    FreeAtomicValueStorage(Environment *);
+   void                    WriteNeededSymbols(Environment *,FILE *);
+   void                    WriteNeededFloats(Environment *,FILE *);
+   void                    WriteNeededIntegers(Environment *,FILE *);
+   void                    ReadNeededSymbols(Environment *);
+   void                    ReadNeededFloats(Environment *);
+   void                    ReadNeededIntegers(Environment *);
 
 #endif /* _H_symblbin */
 

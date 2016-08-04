@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*               EXPRESSION HEADER FILE                */
    /*******************************************************/
@@ -33,6 +33,9 @@
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -85,8 +88,8 @@ typedef struct exprHashNode
 #define SetpType(target,val)    ((target)->type = (unsigned short) (val))
 #define GetValue(target)        ((target).value)
 #define GetpValue(target)       ((target)->value)
-#define SetValue(target,val)    ((target).value = (void *) (val))
-#define SetpValue(target,val)   ((target)->value = (void *) (val))
+#define SetValue(target,val)    ((target).value = (val))
+#define SetpValue(target,val)   ((target)->value = (val))
 
 #define EnvGetType(theEnv,target)         ((target).type)
 #define EnvGetpType(theEnv,target)        ((target)->type)
@@ -95,7 +98,7 @@ typedef struct exprHashNode
 #define EnvGetValue(theEnv,target)        ((target).value)
 #define EnvGetpValue(theEnv,target)       ((target)->value)
 #define EnvSetValue(theEnv,target,val)    ((target).value = (void *) (val))
-#define EnvSetpValue(theEnv,target,val)   ((target)->value = (void *) (val))
+#define EnvSetpValue(theEnv,target,val)   ((target)->value = (val))
 
 /********************/
 /* ENVIRONMENT DATA */
@@ -109,11 +112,11 @@ typedef struct exprHashNode
 
 struct expressionData
   { 
-   void *PTR_AND;
-   void *PTR_OR;
-   void *PTR_EQ;
-   void *PTR_NEQ;
-   void *PTR_NOT;
+   struct FunctionDefinition *PTR_AND;
+   struct FunctionDefinition *PTR_OR;
+   struct FunctionDefinition *PTR_EQ;
+   struct FunctionDefinition *PTR_NEQ;
+   struct FunctionDefinition *PTR_NOT;
    EXPRESSION_HN **ExpressionHashTable;
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE)
    long NumberOfExpressions;
@@ -134,21 +137,21 @@ struct expressionData
 /* Global Functions */
 /********************/
 
-   void                           ReturnExpression(void *,struct expr *);
-   void                           ExpressionInstall(void *,struct expr *);
-   void                           ExpressionDeinstall(void *,struct expr *);
-   struct expr                   *PackExpression(void *,struct expr *);
-   void                           ReturnPackedExpression(void *,struct expr *);
-   void                           InitExpressionData(void *);
-   void                           InitExpressionPointers(void *);
+   void                           ReturnExpression(Environment *,struct expr *);
+   void                           ExpressionInstall(Environment *,struct expr *);
+   void                           ExpressionDeinstall(Environment *,struct expr *);
+   struct expr                   *PackExpression(Environment *,struct expr *);
+   void                           ReturnPackedExpression(Environment *,struct expr *);
+   void                           InitExpressionData(Environment *);
+   void                           InitExpressionPointers(Environment *);
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-   EXPRESSION                    *AddHashedExpression(void *,EXPRESSION *);
+   EXPRESSION                    *AddHashedExpression(Environment *,EXPRESSION *);
 #endif
 #if (! RUN_TIME)
-   void                           RemoveHashedExpression(void *,EXPRESSION *);
+   void                           RemoveHashedExpression(Environment *,EXPRESSION *);
 #endif
 #if BLOAD_AND_BSAVE || BLOAD_ONLY || BLOAD || CONSTRUCT_COMPILER
-   long                           HashedExpressionIndex(void *,EXPRESSION *);
+   long                           HashedExpressionIndex(Environment *,EXPRESSION *);
 #endif
 
 #endif

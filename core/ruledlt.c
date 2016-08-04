@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*                 RULE DELETION MODULE                */
    /*******************************************************/
@@ -35,6 +35,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -64,10 +67,10 @@
 /***************************************/
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   static void                    RemoveIntranetworkLink(void *,struct joinNode *);
+   static void                    RemoveIntranetworkLink(Environment *,struct joinNode *);
 #endif
-   static void                    DetachJoins(void *,struct joinNode *,bool);
-   static void                    DetachJoinsDriver(void *,struct defrule *,bool);
+   static void                    DetachJoins(Environment *,struct joinNode *,bool);
+   static void                    DetachJoinsDriver(Environment *,Defrule *,bool);
 
 /**********************************************************************/
 /* ReturnDefrule: Returns a defrule data structure and its associated */
@@ -77,15 +80,14 @@
 /*   are only deallocated for the first disjunct).                    */
 /**********************************************************************/
 void ReturnDefrule(
-  void *theEnv,
-  void *vWaste)
+  Environment *theEnv,
+  Defrule *theDefrule)
   {
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   struct defrule *waste = (struct defrule *) vWaste;
    bool first = true;
-   struct defrule *nextPtr, *tmpPtr;
+   Defrule *nextPtr, *tmpPtr;
 
-   if (waste == NULL) return;
+   if (theDefrule == NULL) return;
 
    /*======================================*/
    /* If a rule is redefined, then we want */
@@ -94,9 +96,9 @@ void ReturnDefrule(
 
 #if DEBUGGING_FUNCTIONS
    DefruleData(theEnv)->DeletedRuleDebugFlags = 0;
-   if (waste->afterBreakpoint) BitwiseSet(DefruleData(theEnv)->DeletedRuleDebugFlags,0);
-   if (waste->watchActivation) BitwiseSet(DefruleData(theEnv)->DeletedRuleDebugFlags,1);
-   if (waste->watchFiring) BitwiseSet(DefruleData(theEnv)->DeletedRuleDebugFlags,2);
+   if (theDefrule->afterBreakpoint) BitwiseSet(DefruleData(theEnv)->DeletedRuleDebugFlags,0);
+   if (theDefrule->watchActivation) BitwiseSet(DefruleData(theEnv)->DeletedRuleDebugFlags,1);
+   if (theDefrule->watchFiring) BitwiseSet(DefruleData(theEnv)->DeletedRuleDebugFlags,2);
 #endif
 
    /*================================*/
@@ -104,19 +106,19 @@ void ReturnDefrule(
    /* activations added by the rule. */
    /*================================*/
 
-   ClearRuleFromAgenda(theEnv,waste);
+   ClearRuleFromAgenda(theEnv,theDefrule);
 
    /*======================*/
    /* Get rid of the rule. */
    /*======================*/
 
-   while (waste != NULL)
+   while (theDefrule != NULL)
      {
       /*================================================*/
       /* Remove the rule's joins from the join network. */
       /*================================================*/
 
-      DetachJoinsDriver(theEnv,waste,false);
+      DetachJoinsDriver(theEnv,theDefrule,false);
 
       /*=============================================*/
       /* If this is the first disjunct, get rid of   */
@@ -125,23 +127,23 @@ void ReturnDefrule(
 
       if (first)
         {
-         if (waste->dynamicSalience != NULL)
+         if (theDefrule->dynamicSalience != NULL)
           {
-           ExpressionDeinstall(theEnv,waste->dynamicSalience);
-           ReturnPackedExpression(theEnv,waste->dynamicSalience);
-           waste->dynamicSalience = NULL;
+           ExpressionDeinstall(theEnv,theDefrule->dynamicSalience);
+           ReturnPackedExpression(theEnv,theDefrule->dynamicSalience);
+           theDefrule->dynamicSalience = NULL;
           }
-         if (waste->header.ppForm != NULL)
+         if (theDefrule->header.ppForm != NULL)
            {
-            rm(theEnv,(void *) waste->header.ppForm,strlen(waste->header.ppForm) + 1);
-            waste->header.ppForm = NULL;
+            rm(theEnv,(void *) theDefrule->header.ppForm,strlen(theDefrule->header.ppForm) + 1);
+            theDefrule->header.ppForm = NULL;
             
             /*=======================================================*/
             /* All of the rule disjuncts share the same pretty print */
             /* form, so we want to avoid deleting it again.          */
             /*=======================================================*/
             
-            for (tmpPtr = waste->disjunct; tmpPtr != NULL; tmpPtr = tmpPtr->disjunct)
+            for (tmpPtr = theDefrule->disjunct; tmpPtr != NULL; tmpPtr = tmpPtr->disjunct)
               { tmpPtr->header.ppForm = NULL; }
            }
 
@@ -152,32 +154,32 @@ void ReturnDefrule(
       /* Get rid of any user data. */
       /*===========================*/
       
-      if (waste->header.usrData != NULL)
-        { ClearUserDataList(theEnv,waste->header.usrData); }
+      if (theDefrule->header.usrData != NULL)
+        { ClearUserDataList(theEnv,theDefrule->header.usrData); }
         
       /*===========================================*/
       /* Decrement the count for the defrule name. */
       /*===========================================*/
 
-      DecrementSymbolCount(theEnv,waste->header.name);
+      DecrementSymbolCount(theEnv,theDefrule->header.name);
 
       /*========================================*/
       /* Get rid of the the rule's RHS actions. */
       /*========================================*/
 
-      if (waste->actions != NULL)
+      if (theDefrule->actions != NULL)
         {
-         ExpressionDeinstall(theEnv,waste->actions);
-         ReturnPackedExpression(theEnv,waste->actions);
+         ExpressionDeinstall(theEnv,theDefrule->actions);
+         ReturnPackedExpression(theEnv,theDefrule->actions);
         }
 
       /*===============================*/
       /* Move on to the next disjunct. */
       /*===============================*/
 
-      nextPtr = waste->disjunct;
-      rtn_struct(theEnv,defrule,waste);
-      waste = nextPtr;
+      nextPtr = theDefrule->disjunct;
+      rtn_struct(theEnv,defrule,theDefrule);
+      theDefrule = nextPtr;
      }
 
    /*==========================*/
@@ -193,11 +195,10 @@ void ReturnDefrule(
 /*   as a result of DestroyEnvironment.                 */
 /********************************************************/
 void DestroyDefrule(
-  void *theEnv,
-  void *vTheDefrule)
+  Environment *theEnv,
+  Defrule *theDefrule)
   {
-   struct defrule *theDefrule = (struct defrule *) vTheDefrule;
-   struct defrule *nextDisjunct;
+   Defrule *nextDisjunct;
    bool first = true;
    
    if (theDefrule == NULL) return;
@@ -214,7 +215,7 @@ void DestroyDefrule(
 
          if (theDefrule->header.ppForm != NULL)
            {
-            struct defrule *tmpPtr;
+            Defrule *tmpPtr;
 
             rm(theEnv,(void *) theDefrule->header.ppForm,strlen(theDefrule->header.ppForm) + 1);
             
@@ -249,12 +250,12 @@ void DestroyDefrule(
      }
   }
 
-/**********************************************************************/
-/* DetachJoinsDriver:                           */
-/**********************************************************************/
+/**********************/
+/* DetachJoinsDriver: */
+/**********************/
 static void DetachJoinsDriver(
-  void *theEnv,
-  struct defrule *theRule,
+  Environment *theEnv,
+  Defrule *theRule,
   bool destroy)
   {
    struct joinNode *join;
@@ -290,7 +291,7 @@ static void DetachJoinsDriver(
 /*   are not shared by other rules.                                   */
 /**********************************************************************/
 static void DetachJoins(
-  void *theEnv,
+  Environment *theEnv,
   struct joinNode *join,
   bool destroy)
   {
@@ -541,7 +542,7 @@ static void DetachJoins(
 /*   any other joins, it is removed using the function DetachPattern.  */
 /***********************************************************************/
 static void RemoveIntranetworkLink(
-  void *theEnv,
+  Environment *theEnv,
   struct joinNode *join)
   {
    struct patternNodeHeader *patternPtr;

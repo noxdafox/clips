@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*                 RULE PATTERN MODULE                 */
    /*******************************************************/
@@ -31,6 +31,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -59,19 +62,19 @@
 /***************************************/
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   static struct lhsParseNode            *ConjuctiveRestrictionParse(void *,const char *,struct token *,bool *);
-   static struct lhsParseNode            *LiteralRestrictionParse(void *,const char *,struct token *,bool *);
-   static bool                            CheckForVariableMixing(void *,struct lhsParseNode *);
+   static struct lhsParseNode            *ConjuctiveRestrictionParse(Environment *,const char *,struct token *,bool *);
+   static struct lhsParseNode            *LiteralRestrictionParse(Environment *,const char *,struct token *,bool *);
+   static bool                            CheckForVariableMixing(Environment *,struct lhsParseNode *);
    static void                            TallyFieldTypes(struct lhsParseNode *);
 #endif
-   static void                            DeallocatePatternData(void *);
-   static struct patternNodeHashEntry   **CreatePatternHashTable(void *,unsigned long);
+   static void                            DeallocatePatternData(Environment *);
+   static struct patternNodeHashEntry   **CreatePatternHashTable(Environment *,unsigned long);
    
 /*****************************************************************************/
 /* InitializePatterns: Initializes the global data associated with patterns. */
 /*****************************************************************************/
 void InitializePatterns(
-  void *theEnv)
+  Environment *theEnv)
   {   
    AllocateEnvironmentData(theEnv,PATTERN_DATA,sizeof(struct patternData),DeallocatePatternData);
    PatternData(theEnv)->NextPosition = 1;
@@ -83,7 +86,7 @@ void InitializePatterns(
 /* CreatePatternHashTable: Creates and initializes a fact hash table. */
 /*******************************************************************/
 static struct patternNodeHashEntry **CreatePatternHashTable(
-   void *theEnv,
+   Environment *theEnv,
    unsigned long tableSize)
    {
     unsigned long i;
@@ -104,7 +107,7 @@ static struct patternNodeHashEntry **CreatePatternHashTable(
 /*    data for rule pattern registration.         */
 /**************************************************/
 static void DeallocatePatternData(
-  void *theEnv)
+  Environment *theEnv)
   {
    struct reservedSymbol *tmpRSPtr, *nextRSPtr;
    struct patternParser *tmpPPPtr, *nextPPPtr;
@@ -147,7 +150,7 @@ static void DeallocatePatternData(
 /* AddHashedPatternNode: Adds a pattern node entry to the pattern hash table. */
 /******************************************************************************/
 void AddHashedPatternNode(
-  void *theEnv,
+  Environment *theEnv,
   void *parent,
   void *child,
   unsigned short keyType,
@@ -176,7 +179,7 @@ void AddHashedPatternNode(
 /*   entry from the pattern node hash table.       */
 /***************************************************/
 bool RemoveHashedPatternNode(
-  void *theEnv,
+  Environment *theEnv,
   void *parent,
   void *child,
   unsigned short keyType,
@@ -218,7 +221,7 @@ bool RemoveHashedPatternNode(
 /*   entry in the pattern node hash table.     */
 /***********************************************/
 void *FindHashedPatternNode(
-  void *theEnv,
+  Environment *theEnv,
   void *parent,
   unsigned short keyType,
   void *keyValue)
@@ -239,7 +242,7 @@ void *FindHashedPatternNode(
         { return(hptr->child); }
      }
 
-   return(NULL);
+   return NULL;
   }
   
 /******************************************************************/
@@ -251,7 +254,7 @@ void *FindHashedPatternNode(
 /*  to start any type of pattern CE.                              */
 /******************************************************************/
 void AddReservedPatternSymbol(
-  void *theEnv,
+  Environment *theEnv,
   const char *theSymbol,
   const char *reservedBy)
   {
@@ -271,7 +274,7 @@ void AddReservedPatternSymbol(
 /*   construct that reserved the symbol, then false is returned.  */
 /******************************************************************/
 bool ReservedPatternSymbol(
-  void *theEnv,
+  Environment *theEnv,
   const char *theSymbol,
   const char *checkedBy)
   {
@@ -300,7 +303,7 @@ bool ReservedPatternSymbol(
 /*   for attempting to use a reserved pattern symbol.   */
 /********************************************************/
 void ReservedPatternSymbolErrorMsg(
-  void *theEnv,
+  Environment *theEnv,
   const char *theSymbol,
   const char *usedFor)
   {
@@ -319,7 +322,7 @@ void ReservedPatternSymbolErrorMsg(
 /*   and instances are the only data entities available.    */
 /************************************************************/
 void GetNextPatternEntity(
-  void *theEnv,
+  Environment *theEnv,
   struct patternParser **theParser,
   struct patternEntity **theEntity)
   {
@@ -392,7 +395,7 @@ void GetNextPatternEntity(
 /*   associated with the pattern.                             */
 /**************************************************************/
 void DetachPattern(
-  void *theEnv,
+  Environment *theEnv,
   int rhsType,
   struct patternNodeHeader *theHeader)
   {
@@ -411,7 +414,7 @@ void DetachPattern(
 /*   patterns in the LHS of a rule.               */
 /**************************************************/
 bool AddPatternParser(
-  void *theEnv,
+  Environment *theEnv,
   struct patternParser *newPtr)
   {
    struct patternParser *currentPtr, *lastPtr = NULL;
@@ -470,7 +473,7 @@ bool AddPatternParser(
 /*  specified keyword (e.g. "object").              */
 /****************************************************/
 struct patternParser *FindPatternParser(
-  void *theEnv,
+  Environment *theEnv,
   const char *name)
   {
    struct patternParser *tempParser;
@@ -480,7 +483,7 @@ struct patternParser *FindPatternParser(
         tempParser = tempParser->next)
      { if (strcmp(tempParser->name,name) == 0) return(tempParser); }
 
-   return(NULL);
+   return NULL;
   }
 
 /******************************************************/
@@ -488,10 +491,10 @@ struct patternParser *FindPatternParser(
 /*    parser for the specified data entity.           */
 /******************************************************/
 struct patternParser *GetPatternParser(
-  void *theEnv,
+  Environment *theEnv,
   int rhsType)
   {
-   if (rhsType == 0) return(NULL);
+   if (rhsType == 0) return NULL;
    
    return(PatternData(theEnv)->PatternParserArray[rhsType-1]);
   }
@@ -503,7 +506,7 @@ struct patternParser *GetPatternParser(
 /*   of a patternNodeHeader data structure.                  */
 /*************************************************************/
 void PatternNodeHeaderToCode(
-  void *theEnv,
+  Environment *theEnv,
   FILE *fp,
   struct patternNodeHeader *theHeader,
   int imageID,
@@ -542,7 +545,7 @@ void PatternNodeHeaderToCode(
 /*   have analyzed the LHS patterns.                            */
 /****************************************************************/
 bool PostPatternAnalysis(
-  void *theEnv,
+  Environment *theEnv,
   struct lhsParseNode *theLHS)
   {
    struct lhsParseNode *patternPtr;
@@ -572,7 +575,7 @@ bool PostPatternAnalysis(
 /*                  <connected-constraint>                        */
 /******************************************************************/
 struct lhsParseNode *RestrictionParse(
-  void *theEnv,
+  Environment *theEnv,
   const char *readSource,
   struct token *theToken,
   bool multifieldSlot,
@@ -617,7 +620,7 @@ struct lhsParseNode *RestrictionParse(
          if (nextNode == NULL)
            {
             ReturnLHSParseNodes(theEnv,topNode);
-            return(NULL);
+            return NULL;
            }
         }
 
@@ -690,7 +693,7 @@ struct lhsParseNode *RestrictionParse(
    if ((topNode == NULL) && (! multifieldSlot))
      {
       SyntaxErrorMessage(theEnv,"defrule");
-      return(NULL);
+      return NULL;
      }
 
    /*===============================================*/
@@ -891,7 +894,7 @@ static void TallyFieldTypes(
 /*                <single-constraint> | <connected-constraint>     */
 /*******************************************************************/
 static struct lhsParseNode *ConjuctiveRestrictionParse(
-  void *theEnv,
+  Environment *theEnv,
   const char *readSource,
   struct token *theToken,
   bool *error)
@@ -908,7 +911,7 @@ static struct lhsParseNode *ConjuctiveRestrictionParse(
    theNode = LiteralRestrictionParse(theEnv,readSource,theToken,error);
 
    if (*error == true)
-     { return(NULL); }
+     { return NULL; }
 
    GetToken(theEnv,readSource,theToken);
 
@@ -951,7 +954,7 @@ static struct lhsParseNode *ConjuctiveRestrictionParse(
       if (*error == true)
         {
          ReturnLHSParseNodes(theEnv,bindNode);
-         return(NULL);
+         return NULL;
         }
 
       /*=======================================*/
@@ -1002,7 +1005,7 @@ static struct lhsParseNode *ConjuctiveRestrictionParse(
      {
       *error = true;
       ReturnLHSParseNodes(theEnv,bindNode);
-      return(NULL);
+      return NULL;
      }
 
    /*========================*/
@@ -1018,7 +1021,7 @@ static struct lhsParseNode *ConjuctiveRestrictionParse(
 /*   are illegally mixed within it.                  */
 /*****************************************************/
 static bool CheckForVariableMixing(
-  void *theEnv,
+  Environment *theEnv,
   struct lhsParseNode *theRestriction)
   {
    struct lhsParseNode *tempRestriction;
@@ -1119,7 +1122,7 @@ static bool CheckForVariableMixing(
 /*                             =<function-call>            */
 /***********************************************************/
 static struct lhsParseNode *LiteralRestrictionParse(
-  void *theEnv,
+  Environment *theEnv,
   const char *readSource,
   struct token *theToken,
   bool *error)
@@ -1176,7 +1179,7 @@ static struct lhsParseNode *LiteralRestrictionParse(
            {
             *error = true;
             ReturnLHSParseNodes(theEnv,topNode);
-            return(NULL);
+            return NULL;
            }
          topNode->type = RETURN_VALUE_CONSTRAINT;
          topNode->expression = ExpressionToLHSParseNodes(theEnv,theExpression);
@@ -1195,7 +1198,7 @@ static struct lhsParseNode *LiteralRestrictionParse(
            {
             *error = true;
             ReturnLHSParseNodes(theEnv,topNode);
-            return(NULL);
+            return NULL;
            }
          topNode->type = PREDICATE_CONSTRAINT;
          topNode->expression = ExpressionToLHSParseNodes(theEnv,theExpression);
@@ -1232,7 +1235,7 @@ static struct lhsParseNode *LiteralRestrictionParse(
       SyntaxErrorMessage(theEnv,"defrule");
       *error = true;
       ReturnLHSParseNodes(theEnv,topNode);
-      return(NULL);
+      return NULL;
      }
 
    /*===============================*/

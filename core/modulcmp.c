@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*           DEFMODULE CONSTRUCTS-TO-C MODULE          */
    /*******************************************************/
@@ -33,6 +33,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -60,19 +63,19 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static bool                    ConstructToCode(void *,const char *,const char *,char *,int,FILE *,int,int);
-   static void                    InitDefmoduleCode(void *,FILE *,int,int);
-   static struct portItem        *GetNextPortItem(void *,struct defmodule **,struct portItem **,
+   static bool                    ConstructToCode(Environment *,const char *,const char *,char *,int,FILE *,int,int);
+   static void                    InitDefmoduleCode(Environment *,FILE *,int,int);
+   static struct portItem        *GetNextPortItem(Environment *,Defmodule **,struct portItem **,
                                                   bool *,bool *);
-   static bool                    PortItemsToCode(void *,const char *,const char *,char *,int,FILE *,int,int,int *);
-   static void                    BeforeDefmodulesToCode(void *);
+   static bool                    PortItemsToCode(Environment *,const char *,const char *,char *,int,FILE *,int,int,int *);
+   static void                    BeforeDefmodulesToCode(Environment *);
 
 /***************************************************************/
 /* DefmoduleCompilerSetup: Initializes the defmodule construct */
 /*    for use with the constructs-to-c command.                */
 /***************************************************************/
 void DefmoduleCompilerSetup(
-  void *theEnv)
+  Environment *theEnv)
   {
    DefmoduleData(theEnv)->DefmoduleCodeItem = 
       AddCodeGeneratorItem(theEnv,"defmodule",200,BeforeDefmodulesToCode,
@@ -85,14 +88,14 @@ void DefmoduleCompilerSetup(
 /*   data structures are written to a file as C code       */
 /***********************************************************/
 static void BeforeDefmodulesToCode(
-  void *theEnv)
+  Environment *theEnv)
   {
    int value = 0;
-   struct defmodule *theModule;
+   Defmodule *theModule;
 
-   for (theModule = (struct defmodule *) EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = (struct defmodule *) EnvGetNextDefmodule(theEnv,theModule))
+        theModule = EnvGetNextDefmodule(theEnv,theModule))
      { theModule->bsaveID = value++; }
   }
 
@@ -101,9 +104,9 @@ static void BeforeDefmodulesToCode(
 /*   of a reference to a defmodule data structure.           */
 /*************************************************************/
 void PrintDefmoduleReference(
-  void *theEnv,
+  Environment *theEnv,
   FILE *theFile,
-  struct defmodule *theModule)
+  Defmodule *theModule)
   {
    if (theModule == NULL) fprintf(theFile,"NULL");
    else fprintf(theFile,"&%s%d_%ld[%ld]",DefmodulePrefix(),ConstructCompilerData(theEnv)->ImageID,
@@ -116,7 +119,7 @@ void PrintDefmoduleReference(
 /*   code for defmodules for a run-time module. */
 /************************************************/
 static void InitDefmoduleCode(
-  void *theEnv,
+  Environment *theEnv,
   FILE *initFP,
   int imageID,
   int maxIndices)
@@ -126,10 +129,10 @@ static void InitDefmoduleCode(
 #endif
 
    if (EnvGetNextDefmodule(theEnv,NULL) != NULL)
-     { fprintf(initFP,"   SetListOfDefmodules(theEnv,(void *) %s%d_1);\n",DefmodulePrefix(),imageID); }
+     { fprintf(initFP,"   SetListOfDefmodules(theEnv,%s%d_1);\n",DefmodulePrefix(),imageID); }
    else
      { fprintf(initFP,"   SetListOfDefmodules(theEnv,NULL);\n"); }
-   fprintf(initFP,"   EnvSetCurrentModule(theEnv,(void *) EnvGetNextDefmodule(theEnv,NULL));\n");
+   fprintf(initFP,"   EnvSetCurrentModule(theEnv,EnvGetNextDefmodule(theEnv,NULL));\n");
   }
 
 /***********************************************************/
@@ -137,7 +140,7 @@ static void InitDefmoduleCode(
 /*   module created using the constructs-to-c function.    */
 /***********************************************************/
 static bool ConstructToCode(
-  void *theEnv,
+  Environment *theEnv,
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
@@ -146,7 +149,7 @@ static bool ConstructToCode(
   int imageID,
   int maxIndices)
   {
-   struct defmodule *theConstruct;
+   Defmodule *theConstruct;
    FILE *moduleFile = NULL, *itemsFile;
    int portItemCount = 0;
    struct portItem *portItemPtr;
@@ -178,9 +181,9 @@ static bool ConstructToCode(
    /* representation to the file as they are traversed.    */
    /*======================================================*/
 
-   for (theConstruct = (struct defmodule *) EnvGetNextDefmodule(theEnv,NULL);
+   for (theConstruct = EnvGetNextDefmodule(theEnv,NULL);
         theConstruct != NULL;
-        theConstruct = (struct defmodule *) EnvGetNextDefmodule(theEnv,theConstruct))
+        theConstruct = EnvGetNextDefmodule(theEnv,theConstruct))
      {
       /*===========================================*/
       /* Open a new file to write to if necessary. */
@@ -188,7 +191,7 @@ static bool ConstructToCode(
 
       moduleFile = OpenFileIfNeeded(theEnv,moduleFile,fileName,pathName,fileNameBuffer,fileID,imageID,
                                     &fileCount,moduleArrayVersion,headerFP,
-                                    "struct defmodule",DefmodulePrefix(),
+                                    "Defmodule",DefmodulePrefix(),
                                     false,NULL);
 
       if (moduleFile == NULL)
@@ -321,7 +324,7 @@ static bool ConstructToCode(
 /*   portItem data structure nodes the specified file.      */
 /************************************************************/
 static bool PortItemsToCode(
-  void *theEnv,
+  Environment *theEnv,
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
@@ -331,7 +334,7 @@ static bool PortItemsToCode(
   int maxIndices,
   int *fileCount)
   {
-   struct defmodule *theDefmodule = NULL;
+   Defmodule *theDefmodule = NULL;
    struct portItem *thePortItem = NULL;
    int portItemCount = 0;
    bool importChecked = false;
@@ -415,8 +418,8 @@ static bool PortItemsToCode(
 /*   data structure, it returns the "first" portItem data structure. */
 /*********************************************************************/
 static struct portItem *GetNextPortItem(
-  void *theEnv,
-  struct defmodule **theDefmodule,
+  Environment *theEnv,
+  Defmodule **theDefmodule,
   struct portItem **thePortItem,
   bool *importChecked,
   bool *exportChecked)
@@ -429,7 +432,7 @@ static struct portItem *GetNextPortItem(
 
    if (*theDefmodule == NULL)
      {
-      *theDefmodule = (struct defmodule *) EnvGetNextDefmodule(theEnv,NULL);
+      *theDefmodule = EnvGetNextDefmodule(theEnv,NULL);
       *thePortItem = NULL;
       *importChecked = false;
       *exportChecked = false;
@@ -491,7 +494,7 @@ static struct portItem *GetNextPortItem(
       /* for a portItem data structure.   */
       /*==================================*/
 
-      *theDefmodule = (struct defmodule *) EnvGetNextDefmodule(theEnv,*theDefmodule);
+      *theDefmodule = EnvGetNextDefmodule(theEnv,*theDefmodule);
       *importChecked = false;
       *exportChecked = false;
      }
@@ -501,7 +504,7 @@ static struct portItem *GetNextPortItem(
    /* Return NULL to indicate that none are left.           */
    /*=======================================================*/
 
-   return(NULL);
+   return NULL;
   }
 
 #endif /* CONSTRUCT_COMPILER && (! RUN_TIME) */

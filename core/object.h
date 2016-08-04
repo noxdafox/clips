@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.40  06/21/16          */
+   /*               CLIPS Version 6.40  07/30/16          */
    /*                                                     */
    /*                OBJECT SYSTEM DEFINITIONS            */
    /*******************************************************/
@@ -23,6 +23,9 @@
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_object
@@ -32,13 +35,14 @@
 #define _H_object
 
 typedef struct defclassModule DEFCLASS_MODULE;
-typedef struct defclass DEFCLASS;
+typedef struct defclass Defclass;
 typedef struct packedClassLinks PACKED_CLASS_LINKS;
 typedef struct classLink CLASS_LINK;
 typedef struct slotName SLOT_NAME;
-typedef struct slotDescriptor SLOT_DESC;
-typedef struct messageHandler HANDLER;
-typedef struct instance INSTANCE_TYPE;
+typedef struct slotDescriptor SlotDescriptor;
+typedef struct defmessageHandler DefmessageHandler;
+typedef struct instance Instance;
+
 typedef struct instanceSlot INSTANCE_SLOT;
 
 /* Maximum # of simultaneous class hierarchy traversals
@@ -85,7 +89,7 @@ typedef struct instanceSlot INSTANCE_SLOT;
 struct packedClassLinks
   {
    long classCount;
-   DEFCLASS **classArray;
+   Defclass **classArray;
   };
 
 struct defclassModule
@@ -108,26 +112,26 @@ struct defclass
    PACKED_CLASS_LINKS directSuperclasses,
                       directSubclasses,
                       allSuperclasses;
-   SLOT_DESC *slots,
+   SlotDescriptor *slots,
              **instanceTemplate;
    unsigned *slotNameMap;
    short slotCount;
    short localInstanceSlotCount;
    short instanceSlotCount;
    short maxSlotNameID;
-   INSTANCE_TYPE *instanceList,
+   Instance *instanceList,
                  *instanceListBottom;
-   HANDLER *handlers;
+   DefmessageHandler *handlers;
    unsigned *handlerOrderMap;
    short handlerCount;
-   DEFCLASS *nxtHash;
+   Defclass *nxtHash;
    BITMAP_HN *scopeMap;
    char traversalRecord[TRAVERSAL_BYTES];
   };
 
 struct classLink
   {
-   DEFCLASS *cls;
+   Defclass *cls;
    struct classLink *nxt;
   };
 
@@ -144,7 +148,7 @@ struct slotName
 
 struct instanceSlot
   {
-   SLOT_DESC *desc;
+   SlotDescriptor *desc;
    unsigned valueRequired : 1;
    unsigned override      : 1;
    unsigned short type;
@@ -167,7 +171,7 @@ struct slotDescriptor
    unsigned createReadAccessor       : 1;
    unsigned createWriteAccessor      : 1;
    unsigned overrideMessageSpecified : 1;
-   DEFCLASS *cls;
+   Defclass *cls;
    SLOT_NAME *slotName;
    SYMBOL_HN *overrideMessage;
    void *defaultValue;
@@ -190,15 +194,15 @@ struct instance
    SYMBOL_HN *name;
    unsigned hashTableIndex;
    unsigned busy;
-   DEFCLASS *cls;
-   INSTANCE_TYPE *prvClass,*nxtClass,
+   Defclass *cls;
+   Instance *prvClass,*nxtClass,
                  *prvHash,*nxtHash,
                  *prvList,*nxtList;
    INSTANCE_SLOT **slotAddresses,
                  *slots;
   };
 
-struct messageHandler
+struct defmessageHandler
   {
    unsigned system         : 1;
    unsigned type           : 2;
@@ -206,7 +210,7 @@ struct messageHandler
    unsigned trace          : 1;
    unsigned busy;
    SYMBOL_HN *name;
-   DEFCLASS *cls;
+   Defclass *cls;
    short minParams;
    short maxParams;
    short localVarCount;

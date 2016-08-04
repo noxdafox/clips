@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -36,6 +36,9 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_objcmp
@@ -60,9 +63,9 @@ struct objectCompilerData
 
 #define ObjectCompilerData(theEnv) ((struct objectCompilerData *) GetEnvironmentData(theEnv,OBJECT_COMPILER_DATA))
 
-   void                    SetupObjectsCompiler(void *);
-   void                    PrintClassReference(void *,FILE *,DEFCLASS *,int,int);
-   void                    DefclassCModuleReference(void *,FILE *,int,int,int);
+   void                    SetupObjectsCompiler(Environment *);
+   void                    PrintClassReference(Environment *,FILE *,Defclass *,int,int);
+   void                    DefclassCModuleReference(Environment *,FILE *,int,int,int);
 
 #endif /* _H_objcmp */
 

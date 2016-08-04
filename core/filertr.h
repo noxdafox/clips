@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*             FILE I/O ROUTER HEADER FILE             */
    /*******************************************************/
@@ -42,6 +42,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_filertr
@@ -68,12 +71,12 @@ struct fileRouterData
 
 #define FileRouterData(theEnv) ((struct fileRouterData *) GetEnvironmentData(theEnv,FILE_ROUTER_DATA))
 
-   void                           InitializeFileRouter(void *);
-   FILE                          *FindFptr(void *,const char *);
-   bool                           OpenAFile(void *,const char *,const char *,const char *);
-   bool                           CloseAllFiles(void *);
-   bool                           CloseFile(void *,const char *);
-   bool                           FindFile(void *,const char *);
+   void                           InitializeFileRouter(Environment *);
+   FILE                          *FindFptr(Environment *,const char *);
+   bool                           OpenAFile(Environment *,const char *,const char *,const char *);
+   bool                           CloseAllFiles(Environment *);
+   bool                           CloseFile(Environment *,const char *);
+   bool                           FindFile(Environment *,const char *);
 
 #endif /* _H_filertr */
 

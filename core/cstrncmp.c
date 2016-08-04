@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/04/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*          CONSTRAINT CONSTRUCTS-TO-C MODULE          */
    /*******************************************************/
@@ -32,6 +32,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -54,7 +57,7 @@
 /*   using the constructs-to-c function.       */
 /***********************************************/
 int ConstraintsToCode(
-  void *theEnv,
+  Environment *theEnv,
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
@@ -215,7 +218,7 @@ int ConstraintsToCode(
 /*   of a constraint record data structure reference.     */
 /**********************************************************/
 void PrintConstraintReference(
-  void *theEnv,
+  Environment *theEnv,
   FILE *fp,
   CONSTRAINT_RECORD *cPtr,
   int imageID,

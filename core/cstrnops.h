@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*           CONSTRAINT OPERATIONS HEADER FILE         */
    /*******************************************************/
@@ -22,6 +22,9 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_cstrnops
@@ -35,10 +38,10 @@
 #include "evaluatn.h"
 #include "constrnt.h"
 
-   struct constraintRecord       *IntersectConstraints(void *,struct constraintRecord *,struct constraintRecord *);
+   struct constraintRecord       *IntersectConstraints(Environment *,struct constraintRecord *,struct constraintRecord *);
 #if (! BLOAD_ONLY)
-   struct constraintRecord       *UnionConstraints(void *,struct constraintRecord *,struct constraintRecord *);
-   void                           RemoveConstantFromConstraint(void *,int,void *,CONSTRAINT_RECORD *);
+   struct constraintRecord       *UnionConstraints(Environment *,struct constraintRecord *,struct constraintRecord *);
+   void                           RemoveConstantFromConstraint(Environment *,int,void *,CONSTRAINT_RECORD *);
 #endif
 
 #endif /* (! RUN_TIME) */

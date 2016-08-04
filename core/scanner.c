@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*                    SCANNER MODULE                   */
    /*******************************************************/
@@ -34,6 +34,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include <ctype.h>
@@ -59,17 +62,17 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                   *ScanSymbol(void *,const char *,int,unsigned short *);
-   static void                   *ScanString(void *,const char *);
-   static void                    ScanNumber(void *,const char *,struct token *);
-   static void                    DeallocateScannerData(void *);
+   static void                   *ScanSymbol(Environment *,const char *,int,unsigned short *);
+   static void                   *ScanString(Environment *,const char *);
+   static void                    ScanNumber(Environment *,const char *,struct token *);
+   static void                    DeallocateScannerData(Environment *);
 
 /************************************************/
 /* InitializeScannerData: Allocates environment */
 /*    data for scanner routines.                */
 /************************************************/
 void InitializeScannerData(
-  void *theEnv)
+  Environment *theEnv)
   {
    AllocateEnvironmentData(theEnv,SCANNER_DATA,sizeof(struct scannerData),DeallocateScannerData);
   }
@@ -79,7 +82,7 @@ void InitializeScannerData(
 /*    data for scanner routines.                  */
 /**************************************************/
 static void DeallocateScannerData(
-  void *theEnv)
+  Environment *theEnv)
   {
    if (ScannerData(theEnv)->GlobalMax !=  0)
      { genfree(theEnv,ScannerData(theEnv)->GlobalString,ScannerData(theEnv)->GlobalMax); }
@@ -94,7 +97,7 @@ static void DeallocateScannerData(
 /*   and the pretty print representation.                              */
 /***********************************************************************/
 void GetToken(
- void *theEnv,
+ Environment *theEnv,
  const char *logicalName,
  struct token *theToken)
  {
@@ -141,7 +144,7 @@ void GetToken(
      {
       theToken->type = SYMBOL;
       EnvUngetcRouter(theEnv,inchar,logicalName);
-      theToken->value = (void *) ScanSymbol(theEnv,logicalName,0,&type);
+      theToken->value = ScanSymbol(theEnv,logicalName,0,&type);
       theToken->printForm = ValueToString(theToken->value);
      }
 
@@ -162,7 +165,7 @@ void GetToken(
       /*========================*/
 
       case '"':
-         theToken->value = (void *) ScanString(theEnv,logicalName);
+         theToken->value = ScanString(theEnv,logicalName);
          theToken->type = STRING;
          theToken->printForm = StringPrintForm(theEnv,ValueToString(theToken->value));
          break;
@@ -192,7 +195,7 @@ void GetToken(
 #endif
             {
              EnvUngetcRouter(theEnv,inchar,logicalName);
-             theToken->value = (void *) ScanSymbol(theEnv,logicalName,0,&type);
+             theToken->value = ScanSymbol(theEnv,logicalName,0,&type);
              theToken->type = SF_VARIABLE;
 #if DEFGLOBAL_CONSTRUCT
              if ((ValueToString(theToken->value)[0] == '*') &&
@@ -216,7 +219,7 @@ void GetToken(
           else
             {
              theToken->type = SF_WILDCARD;
-             theToken->value = (void *) EnvAddSymbol(theEnv,"?");
+             theToken->value = EnvAddSymbol(theEnv,"?");
              EnvUngetcRouter(theEnv,inchar,logicalName);
              theToken->printForm = "?";
             }
@@ -238,7 +241,7 @@ void GetToken(
 #endif
               {
                EnvUngetcRouter(theEnv,inchar,logicalName);
-               theToken->value = (void *) ScanSymbol(theEnv,logicalName,0,&type);
+               theToken->value = ScanSymbol(theEnv,logicalName,0,&type);
                theToken->type = MF_VARIABLE;
 #if DEFGLOBAL_CONSTRUCT
              if ((ValueToString(theToken->value)[0] == '*') &&
@@ -261,7 +264,7 @@ void GetToken(
             else
               {
                theToken->type = MF_WILDCARD;
-               theToken->value = (void *) EnvAddSymbol(theEnv,"$?");
+               theToken->value = EnvAddSymbol(theEnv,"$?");
                theToken->printForm = "$?";
                EnvUngetcRouter(theEnv,inchar,logicalName);
               }
@@ -271,7 +274,7 @@ void GetToken(
             theToken->type = SYMBOL;
             ScannerData(theEnv)->GlobalString = ExpandStringWithChar(theEnv,'$',ScannerData(theEnv)->GlobalString,&ScannerData(theEnv)->GlobalPos,&ScannerData(theEnv)->GlobalMax,ScannerData(theEnv)->GlobalMax+80);
             EnvUngetcRouter(theEnv,inchar,logicalName);
-            theToken->value = (void *) ScanSymbol(theEnv,logicalName,1,&type);
+            theToken->value = ScanSymbol(theEnv,logicalName,1,&type);
             theToken->printForm = ValueToString(theToken->value);
            }
          break;
@@ -283,7 +286,7 @@ void GetToken(
       case '<':
          theToken->type = SYMBOL;
          ScannerData(theEnv)->GlobalString = ExpandStringWithChar(theEnv,'<',ScannerData(theEnv)->GlobalString,&ScannerData(theEnv)->GlobalPos,&ScannerData(theEnv)->GlobalMax,ScannerData(theEnv)->GlobalMax+80);
-         theToken->value = (void *) ScanSymbol(theEnv,logicalName,1,&type);
+         theToken->value = ScanSymbol(theEnv,logicalName,1,&type);
          theToken->printForm = ValueToString(theToken->value);
          break;
 
@@ -293,31 +296,31 @@ void GetToken(
 
       case '(':
          theToken->type = LPAREN;
-         theToken->value = (void *) EnvAddSymbol(theEnv,"(");
+         theToken->value = EnvAddSymbol(theEnv,"(");
          theToken->printForm = "(";
          break;
 
       case ')':
          theToken->type= RPAREN;
-         theToken->value = (void *) EnvAddSymbol(theEnv,")");
+         theToken->value = EnvAddSymbol(theEnv,")");
          theToken->printForm = ")";
          break;
 
       case '~':
          theToken->type = NOT_CONSTRAINT;
-         theToken->value = (void *) EnvAddSymbol(theEnv,"~");
+         theToken->value = EnvAddSymbol(theEnv,"~");
          theToken->printForm = "~";
          break;
 
       case '|':
          theToken->type = OR_CONSTRAINT;
-         theToken->value = (void *) EnvAddSymbol(theEnv,"|");
+         theToken->value = EnvAddSymbol(theEnv,"|");
          theToken->printForm = "|";
          break;
 
       case '&':
          theToken->type =  AND_CONSTRAINT;
-         theToken->value = (void *) EnvAddSymbol(theEnv,"&");
+         theToken->value = EnvAddSymbol(theEnv,"&");
          theToken->printForm = "&";
          break;
 
@@ -329,7 +332,7 @@ void GetToken(
       case 0:
       case 3:
          theToken->type = STOP;
-         theToken->value = (void *) EnvAddSymbol(theEnv,"stop");
+         theToken->value = EnvAddSymbol(theEnv,"stop");
          theToken->printForm = "";
          break;
 
@@ -341,7 +344,7 @@ void GetToken(
          if (isprint(inchar))
            {
             EnvUngetcRouter(theEnv,inchar,logicalName);
-            theToken->value = (void *) ScanSymbol(theEnv,logicalName,0,&type);
+            theToken->value = ScanSymbol(theEnv,logicalName,0,&type);
             theToken->type = type;
             theToken->printForm = ValueToString(theToken->value);
            }
@@ -384,7 +387,7 @@ void GetToken(
 /* ScanSymbol: Scans a symbol token. */
 /*************************************/
 static void *ScanSymbol(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
   int count,
   unsigned short *type)
@@ -462,7 +465,7 @@ static void *ScanSymbol(
 /* ScanString: Scans a string token. */
 /*************************************/
 static void *ScanString(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName)
   {
    int inchar;
@@ -512,7 +515,7 @@ static void *ScanString(
 /* ScanNumber: Scans a numeric token. */
 /**************************************/
 static void ScanNumber(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
   struct token *theToken)
   {
@@ -703,7 +706,7 @@ static void ScanNumber(
 
    if (phase == 9)
      {
-      theToken->value = (void *) ScanSymbol(theEnv,logicalName,count,&type);
+      theToken->value = ScanSymbol(theEnv,logicalName,count,&type);
       theToken->type = type;
       theToken->printForm = ValueToString(theToken->value);
       return;
@@ -719,7 +722,7 @@ static void ScanNumber(
    if (! digitFound)
      {
       theToken->type = SYMBOL;
-      theToken->value = (void *) EnvAddSymbol(theEnv,ScannerData(theEnv)->GlobalString);
+      theToken->value = EnvAddSymbol(theEnv,ScannerData(theEnv)->GlobalString);
       theToken->printForm = ValueToString(theToken->value);
       return;
      }
@@ -728,7 +731,7 @@ static void ScanNumber(
      {
       fvalue = atof(ScannerData(theEnv)->GlobalString);
       theToken->type = FLOAT;
-      theToken->value = (void *) EnvAddDouble(theEnv,fvalue);
+      theToken->value = EnvAddDouble(theEnv,fvalue);
       theToken->printForm = FloatToString(theEnv,ValueToDouble(theToken->value));
      }
    else
@@ -745,7 +748,7 @@ static void ScanNumber(
          EnvPrintRouter(theEnv,WWARNING,"Over or underflow of long long integer.\n");
         }
       theToken->type = INTEGER;
-      theToken->value = (void *) EnvAddLong(theEnv,lvalue);
+      theToken->value = EnvAddLong(theEnv,lvalue);
       theToken->printForm = LongIntegerToString(theEnv,ValueToLong(theToken->value));
      }
 
@@ -769,7 +772,7 @@ void CopyToken(
 /*   line count to zero.                */
 /****************************************/
 void ResetLineCount(
-  void *theEnv)
+  Environment *theEnv)
   {
    ScannerData(theEnv)->LineCount = 0;
   }
@@ -778,7 +781,7 @@ void ResetLineCount(
 /* GetLineCount: Returns the scanner's line count. */
 /***************************************************/
 long GetLineCount(
-  void *theEnv)
+  Environment *theEnv)
   {
    return(ScannerData(theEnv)->LineCount);
   }
@@ -788,7 +791,7 @@ long GetLineCount(
 /*   and returns the previous value.           */
 /***********************************************/
 long SetLineCount(
-  void *theEnv,
+  Environment *theEnv,
   long value)
   {
    long oldValue;
@@ -805,7 +808,7 @@ long SetLineCount(
 /*   the scanner's line count.    */
 /**********************************/
 void IncrementLineCount(
-  void *theEnv)
+  Environment *theEnv)
   {
    ScannerData(theEnv)->LineCount++;
   }
@@ -815,7 +818,7 @@ void IncrementLineCount(
 /*   the scanner's line count.    */
 /**********************************/
 void DecrementLineCount(
-  void *theEnv)
+  Environment *theEnv)
   {
    ScannerData(theEnv)->LineCount--;
   }

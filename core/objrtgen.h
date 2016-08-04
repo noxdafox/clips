@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -28,6 +28,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_objrtgen
@@ -41,15 +44,15 @@
 #include "expressn.h"
 #include "reorder.h"
 
-   void             ReplaceGetJNObjectValue(void *,EXPRESSION *,struct lhsParseNode *,int);
-   EXPRESSION      *GenGetJNObjectValue(void *,struct lhsParseNode *,int);
-   EXPRESSION      *ObjectJNVariableComparison(void *,struct lhsParseNode *,struct lhsParseNode *,bool);
-   EXPRESSION      *GenObjectPNConstantCompare(void *,struct lhsParseNode *);
-   void             ReplaceGetPNObjectValue(void *,EXPRESSION *,struct lhsParseNode *);
-   EXPRESSION      *GenGetPNObjectValue(void *,struct lhsParseNode *); 
-   EXPRESSION      *ObjectPNVariableComparison(void *,struct lhsParseNode *,struct lhsParseNode *);
-   void             GenObjectLengthTest(void *,struct lhsParseNode *);
-   void             GenObjectZeroLengthTest(void *,struct lhsParseNode *);
+   void             ReplaceGetJNObjectValue(Environment *,EXPRESSION *,struct lhsParseNode *,int);
+   EXPRESSION      *GenGetJNObjectValue(Environment *,struct lhsParseNode *,int);
+   EXPRESSION      *ObjectJNVariableComparison(Environment *,struct lhsParseNode *,struct lhsParseNode *,bool);
+   EXPRESSION      *GenObjectPNConstantCompare(Environment *,struct lhsParseNode *);
+   void             ReplaceGetPNObjectValue(Environment *,EXPRESSION *,struct lhsParseNode *);
+   EXPRESSION      *GenGetPNObjectValue(Environment *,struct lhsParseNode *);
+   EXPRESSION      *ObjectPNVariableComparison(Environment *,struct lhsParseNode *,struct lhsParseNode *);
+   void             GenObjectLengthTest(Environment *,struct lhsParseNode *);
+   void             GenObjectZeroLengthTest(Environment *,struct lhsParseNode *);
 
 #endif /* DEFRULE_CONSTRUCT && OBJECT_SYSTEM && (! RUN_TIME) && (! BLOAD_ONLY) */
 

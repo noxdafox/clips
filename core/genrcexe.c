@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -34,6 +34,9 @@
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -81,15 +84,15 @@
    =========================================
    ***************************************** */
 
-static DEFMETHOD *FindApplicableMethod(void *,DEFGENERIC *,DEFMETHOD *);
+   static Defmethod              *FindApplicableMethod(Environment *,Defgeneric *,Defmethod *);
 
 #if DEBUGGING_FUNCTIONS
-static void WatchGeneric(void *,const char *);
-static void WatchMethod(void *,const char *);
+   static void                    WatchGeneric(Environment *,const char *);
+   static void                    WatchMethod(Environment *,const char *);
 #endif
 
 #if OBJECT_SYSTEM
-static DEFCLASS *DetermineRestrictionClass(void *,DATA_OBJECT *);
+   static Defclass               *DetermineRestrictionClass(Environment *,DATA_OBJECT *);
 #endif
 
 /* =========================================
@@ -128,15 +131,15 @@ static DEFCLASS *DetermineRestrictionClass(void *,DATA_OBJECT *);
                     executed multiple times per generic function call.
  ***********************************************************************************/
 void GenericDispatch(
-  void *theEnv,
-  DEFGENERIC *gfunc,
-  DEFMETHOD *prevmeth,
-  DEFMETHOD *meth,
+  Environment *theEnv,
+  Defgeneric *gfunc,
+  Defmethod *prevmeth,
+  Defmethod *meth,
   EXPRESSION *params,
   DATA_OBJECT *result)
   {
-   DEFGENERIC *previousGeneric;
-   DEFMETHOD *previousMethod;
+   Defgeneric *previousGeneric;
+   Defmethod *previousMethod;
    int oldce;
 #if PROFILING_FUNCTIONS
    struct profileFrameInfo profileFrame;
@@ -163,7 +166,7 @@ void GenericDispatch(
    EvaluationData(theEnv)->CurrentEvaluationDepth++;
    gfunc->busy++;
    PushProcParameters(theEnv,params,CountArguments(params),
-                      EnvGetDefgenericName(theEnv,(void *) gfunc),
+                      EnvGetDefgenericName(theEnv,gfunc),
                       "generic function",UnboundMethodErr);
    if (EvaluationData(theEnv)->EvaluationError)
      {
@@ -191,7 +194,7 @@ void GenericDispatch(
          EnvSetEvaluationError(theEnv,true);
          DefgenericData(theEnv)->CurrentMethod = NULL;
          EnvPrintRouter(theEnv,WERROR,"Generic function ");
-         EnvPrintRouter(theEnv,WERROR,EnvGetDefgenericName(theEnv,(void *) gfunc));
+         EnvPrintRouter(theEnv,WERROR,EnvGetDefgenericName(theEnv,gfunc));
          EnvPrintRouter(theEnv,WERROR," method #");
          PrintLongInteger(theEnv,WERROR,(long long) meth->index);
          EnvPrintRouter(theEnv,WERROR," is not applicable to the given arguments.\n");
@@ -245,7 +248,7 @@ void GenericDispatch(
      {
       PrintErrorID(theEnv,"GENRCEXE",1,false);
       EnvPrintRouter(theEnv,WERROR,"No applicable methods for ");
-      EnvPrintRouter(theEnv,WERROR,EnvGetDefgenericName(theEnv,(void *) gfunc));
+      EnvPrintRouter(theEnv,WERROR,EnvGetDefgenericName(theEnv,gfunc));
       EnvPrintRouter(theEnv,WERROR,".\n");
       EnvSetEvaluationError(theEnv,true);
      }
@@ -273,10 +276,10 @@ void GenericDispatch(
   NOTES        : None
  *******************************************************/
 void UnboundMethodErr(
-  void *theEnv)
+  Environment *theEnv)
   {
    EnvPrintRouter(theEnv,WERROR,"generic function ");
-   EnvPrintRouter(theEnv,WERROR,EnvGetDefgenericName(theEnv,(void *) DefgenericData(theEnv)->CurrentGeneric));
+   EnvPrintRouter(theEnv,WERROR,EnvGetDefgenericName(theEnv,DefgenericData(theEnv)->CurrentGeneric));
    EnvPrintRouter(theEnv,WERROR," method #");
    PrintLongInteger(theEnv,WERROR,(long long) DefgenericData(theEnv)->CurrentMethod->index);
    EnvPrintRouter(theEnv,WERROR,".\n");
@@ -294,14 +297,14 @@ void UnboundMethodErr(
   NOTES        : Uses globals ProcParamArraySize and ProcParamArray
  ***********************************************************************/
 bool IsMethodApplicable(
-  void *theEnv,
-  DEFMETHOD *meth)
+  Environment *theEnv,
+  Defmethod *meth)
   {
    DATA_OBJECT temp;
    short i,j,k;
-   register RESTRICTION *rp;
+   RESTRICTION *rp;
 #if OBJECT_SYSTEM
-   void *type;
+   Defclass *type;
 #else
    int type;
 #endif
@@ -315,14 +318,14 @@ bool IsMethodApplicable(
       if (rp->tcnt != 0)
         {
 #if OBJECT_SYSTEM
-         type = (void *) DetermineRestrictionClass(theEnv,&ProceduralPrimitiveData(theEnv)->ProcParamArray[i]);
+         type = DetermineRestrictionClass(theEnv,&ProceduralPrimitiveData(theEnv)->ProcParamArray[i]);
          if (type == NULL)
            return false;
          for (j = 0 ; j < rp->tcnt ; j++)
            {
             if (type == rp->types[j])
               break;
-            if (HasSuperclass((DEFCLASS *) type,(DEFCLASS *) rp->types[j]))
+            if (HasSuperclass(type,(Defclass *) rp->types[j]))
               break;
             if (rp->types[j] == (void *) DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_ADDRESS])
               {
@@ -335,7 +338,7 @@ bool IsMethodApplicable(
                  break;
               }
             else if (rp->types[j] ==
-                (void *) DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_NAME]->directSuperclasses.classArray[0])
+                DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_NAME]->directSuperclasses.classArray[0])
               {
                if ((ProceduralPrimitiveData(theEnv)->ProcParamArray[i].type == INSTANCE_NAME) ||
                    (ProceduralPrimitiveData(theEnv)->ProcParamArray[i].type == INSTANCE_ADDRESS))
@@ -381,9 +384,9 @@ bool IsMethodApplicable(
   NOTES        : H/L Syntax: (next-methodp)
  ***************************************************/
 bool NextMethodP(
-  void *theEnv)
+  Environment *theEnv)
   {
-   register DEFMETHOD *meth;
+   Defmethod *meth;
 
    if (DefgenericData(theEnv)->CurrentMethod == NULL)
      return false;
@@ -408,10 +411,10 @@ bool NextMethodP(
   NOTES        : H/L Syntax: (call-next-method)
  ****************************************************/
 void CallNextMethod(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *result)
   {
-   DEFMETHOD *oldMethod;
+   Defmethod *oldMethod;
 #if PROFILING_FUNCTIONS
    struct profileFrameInfo profileFrame;
 #endif
@@ -485,11 +488,11 @@ void CallNextMethod(
                                 <generic-function> <method-index> <args>)
  **************************************************************************/
 void CallSpecificMethod(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *result)
   {
    DATA_OBJECT temp;
-   DEFGENERIC *gfunc;
+   Defgeneric *gfunc;
    int mi;
 
    result->type = SYMBOL;
@@ -520,7 +523,7 @@ void CallSpecificMethod(
   NOTES        : H/L Syntax: (override-next-method <args>)
  ***********************************************************************/
 void OverrideNextMethod(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *result)
   {
    result->type = SYMBOL;
@@ -549,7 +552,7 @@ void OverrideNextMethod(
   NOTES        : Useful for queries in wildcard restrictions
  ***********************************************************/
 void GetGenericCurrentArgument(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *result)
   {
    result->type = DefgenericData(theEnv)->GenericCurrentArgument->type;
@@ -577,10 +580,10 @@ void GetGenericCurrentArgument(
                  Methoid busy count incremented if applicable
   NOTES        : None
  ************************************************************/
-static DEFMETHOD *FindApplicableMethod(
-  void *theEnv,
-  DEFGENERIC *gfunc,
-  DEFMETHOD *meth)
+static Defmethod *FindApplicableMethod(
+  Environment *theEnv,
+  Defgeneric *gfunc,
+  Defmethod *meth)
   {
    if (meth != NULL)
      meth++;
@@ -593,7 +596,7 @@ static DEFMETHOD *FindApplicableMethod(
         return(meth);
       meth->busy--;
      }
-   return(NULL);
+   return NULL;
   }
 
 #if DEBUGGING_FUNCTIONS
@@ -609,19 +612,19 @@ static DEFMETHOD *FindApplicableMethod(
                    ProcParamArray for other trace info
  **********************************************************************/
 static void WatchGeneric(
-  void *theEnv,
+  Environment *theEnv,
   const char *tstring)
   {
    EnvPrintRouter(theEnv,WTRACE,"GNC ");
    EnvPrintRouter(theEnv,WTRACE,tstring);
    EnvPrintRouter(theEnv,WTRACE," ");
-   if (DefgenericData(theEnv)->CurrentGeneric->header.whichModule->theModule != ((struct defmodule *) EnvGetCurrentModule(theEnv)))
+   if (DefgenericData(theEnv)->CurrentGeneric->header.whichModule->theModule != EnvGetCurrentModule(theEnv))
      {
-      EnvPrintRouter(theEnv,WTRACE,EnvGetDefmoduleName(theEnv,(void *)
+      EnvPrintRouter(theEnv,WTRACE,EnvGetDefmoduleName(theEnv,
                         DefgenericData(theEnv)->CurrentGeneric->header.whichModule->theModule));
       EnvPrintRouter(theEnv,WTRACE,"::");
      }
-   EnvPrintRouter(theEnv,WTRACE,ValueToString((void *) DefgenericData(theEnv)->CurrentGeneric->header.name));
+   EnvPrintRouter(theEnv,WTRACE,ValueToString(DefgenericData(theEnv)->CurrentGeneric->header.name));
    EnvPrintRouter(theEnv,WTRACE," ");
    EnvPrintRouter(theEnv,WTRACE," ED:");
    PrintLongInteger(theEnv,WTRACE,(long long) EvaluationData(theEnv)->CurrentEvaluationDepth);
@@ -641,19 +644,19 @@ static void WatchGeneric(
                    other trace info
  **********************************************************************/
 static void WatchMethod(
-  void *theEnv,
+  Environment *theEnv,
   const char *tstring)
   {
    EnvPrintRouter(theEnv,WTRACE,"MTH ");
    EnvPrintRouter(theEnv,WTRACE,tstring);
    EnvPrintRouter(theEnv,WTRACE," ");
-   if (DefgenericData(theEnv)->CurrentGeneric->header.whichModule->theModule != ((struct defmodule *) EnvGetCurrentModule(theEnv)))
+   if (DefgenericData(theEnv)->CurrentGeneric->header.whichModule->theModule != EnvGetCurrentModule(theEnv))
      {
-      EnvPrintRouter(theEnv,WTRACE,EnvGetDefmoduleName(theEnv,(void *)
+      EnvPrintRouter(theEnv,WTRACE,EnvGetDefmoduleName(theEnv,
                         DefgenericData(theEnv)->CurrentGeneric->header.whichModule->theModule));
       EnvPrintRouter(theEnv,WTRACE,"::");
      }
-   EnvPrintRouter(theEnv,WTRACE,ValueToString((void *) DefgenericData(theEnv)->CurrentGeneric->header.name));
+   EnvPrintRouter(theEnv,WTRACE,ValueToString(DefgenericData(theEnv)->CurrentGeneric->header.name));
    EnvPrintRouter(theEnv,WTRACE,":#");
    if (DefgenericData(theEnv)->CurrentMethod->system)
      EnvPrintRouter(theEnv,WTRACE,"SYS");
@@ -677,12 +680,12 @@ static void WatchMethod(
   SIDE EFFECTS : EvaluationError set on errors
   NOTES        : None
  ***************************************************/
-static DEFCLASS *DetermineRestrictionClass(
-  void *theEnv,
+static Defclass *DetermineRestrictionClass(
+  Environment *theEnv,
   DATA_OBJECT *dobj)
   {
-   INSTANCE_TYPE *ins;
-   DEFCLASS *cls;
+   Instance *ins;
+   Defclass *cls;
 
    if (dobj->type == INSTANCE_NAME)
      {
@@ -691,7 +694,7 @@ static DEFCLASS *DetermineRestrictionClass(
      }
    else if (dobj->type == INSTANCE_ADDRESS)
      {
-      ins = (INSTANCE_TYPE *) dobj->value;
+      ins = (Instance *) dobj->value;
       cls = (ins->garbage == 0) ? ins->cls : NULL;
      }
    else
@@ -703,7 +706,7 @@ static DEFCLASS *DetermineRestrictionClass(
       EnvPrintRouter(theEnv,WERROR,"Unable to determine class of ");
       PrintDataObject(theEnv,WERROR,dobj);
       EnvPrintRouter(theEnv,WERROR," in generic function ");
-      EnvPrintRouter(theEnv,WERROR,EnvGetDefgenericName(theEnv,(void *) DefgenericData(theEnv)->CurrentGeneric));
+      EnvPrintRouter(theEnv,WERROR,EnvGetDefgenericName(theEnv,DefgenericData(theEnv)->CurrentGeneric));
       EnvPrintRouter(theEnv,WERROR,".\n");
      }
    return(cls);

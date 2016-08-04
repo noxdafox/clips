@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/04/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                 BLOAD HEADER FILE                   */
    /*******************************************************/
@@ -34,6 +34,9 @@
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -68,16 +71,16 @@ struct bloadData
 
 #define FunctionPointer(i) ((struct FunctionDefinition *) (((i) == -1L) ? NULL : BloadData(theEnv)->FunctionArray[i]))
 
-   void                    InitializeBloadData(void *);
-   bool                    BloadCommand(void *);
-   bool                    EnvBload(void *,const char *);
-   void                    BloadandRefresh(void *,long,size_t,void (*)(void *,void *,long));
-   bool                    Bloaded(void *);
-   void                    AddBeforeBloadFunction(void *,const char *,void (*)(void *),int);
-   void                    AddAfterBloadFunction(void *,const char *,void (*)(void *),int);
-   void                    AddClearBloadReadyFunction(void *,const char *,int (*)(void *),int);
-   void                    AddAbortBloadFunction(void *,const char *,void (*)(void *),int);
-   void                    CannotLoadWithBloadMessage(void *,const char *);
+   void                    InitializeBloadData(Environment *);
+   bool                    BloadCommand(Environment *);
+   bool                    EnvBload(Environment *,const char *);
+   void                    BloadandRefresh(Environment *,long,size_t,void (*)(Environment *,void *,long));
+   bool                    Bloaded(Environment *);
+   void                    AddBeforeBloadFunction(Environment *,const char *,void (*)(Environment *),int);
+   void                    AddAfterBloadFunction(Environment *,const char *,void (*)(Environment *),int);
+   void                    AddClearBloadReadyFunction(Environment *,const char *,int (*)(Environment *),int);
+   void                    AddAbortBloadFunction(Environment *,const char *,void (*)(Environment *),int);
+   void                    CannotLoadWithBloadMessage(Environment *,const char *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
    bool                    Bload(const char *);

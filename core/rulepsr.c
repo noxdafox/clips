@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*                 RULE PARSING MODULE                 */
    /*******************************************************/
@@ -39,6 +39,9 @@
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -91,15 +94,15 @@
 /***************************************/
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   static struct expr            *ParseRuleRHS(void *,const char *);
-   static int                     ReplaceRHSVariable(void *,struct expr *,void *);
-   static struct defrule         *ProcessRuleLHS(void *,struct lhsParseNode *,struct expr *,SYMBOL_HN *,bool *);
-   static struct defrule         *CreateNewDisjunct(void *,SYMBOL_HN *,int,struct expr *,
+   static struct expr            *ParseRuleRHS(Environment *,const char *);
+   static int                     ReplaceRHSVariable(Environment *,struct expr *,void *);
+   static Defrule                *ProcessRuleLHS(Environment *,struct lhsParseNode *,struct expr *,SYMBOL_HN *,bool *);
+   static Defrule                *CreateNewDisjunct(Environment *,SYMBOL_HN *,int,struct expr *,
                                                     int,unsigned,struct joinNode *);
-   static int                     RuleComplexity(void *,struct lhsParseNode *);
-   static int                     ExpressionComplexity(void *,struct expr *);
-   static int                     LogicalAnalysis(void *,struct lhsParseNode *);
-   static void                    AddToDefruleList(struct defrule *);
+   static int                     RuleComplexity(Environment *,struct lhsParseNode *);
+   static int                     ExpressionComplexity(Environment *,struct expr *);
+   static int                     LogicalAnalysis(Environment *,struct lhsParseNode *);
+   static void                    AddToDefruleList(Defrule *);
 #endif
 
 /****************************************************/
@@ -108,7 +111,7 @@
 /*   the current environment.                       */
 /****************************************************/
 bool ParseDefrule(
-  void *theEnv,
+  Environment *theEnv,
   const char *readSource)
   {
 #if (! RUN_TIME) && (! BLOAD_ONLY)
@@ -116,7 +119,7 @@ bool ParseDefrule(
    struct lhsParseNode *theLHS;
    struct expr *actions;
    struct token theToken;
-   struct defrule *topDisjunct, *tempPtr;
+   Defrule *topDisjunct, *tempPtr;
    struct defruleModule *theModuleItem;
    bool error;
 
@@ -152,7 +155,9 @@ bool ParseDefrule(
 #endif
 
    ruleName = GetConstructNameAndComment(theEnv,readSource,&theToken,"defrule",
-                                         EnvFindDefruleInModule,EnvUndefrule,"*",false,
+                                         (FindConstructFunction *) EnvFindDefruleInModule,
+                                         (DeleteConstructFunction *) EnvUndefrule,
+                                         "*",false,
                                          true,true,false);
 
    if (ruleName == NULL) return true;
@@ -253,9 +258,9 @@ bool ParseDefrule(
    if (BitwiseTest(DefruleData(theEnv)->DeletedRuleDebugFlags,0))
      { EnvSetBreak(theEnv,topDisjunct); }
    if (BitwiseTest(DefruleData(theEnv)->DeletedRuleDebugFlags,1) || EnvGetWatchItem(theEnv,"activations"))
-     { EnvSetDefruleWatchActivations(theEnv,true,(void *) topDisjunct); }
+     { EnvSetDefruleWatchActivations(theEnv,true,topDisjunct); }
    if (BitwiseTest(DefruleData(theEnv)->DeletedRuleDebugFlags,2) || EnvGetWatchItem(theEnv,"rules"))
-     { EnvSetDefruleWatchFirings(theEnv,true,(void *) topDisjunct); }
+     { EnvSetDefruleWatchFirings(theEnv,true,topDisjunct); }
 #endif
 
    /*================================*/
@@ -277,15 +282,15 @@ bool ParseDefrule(
 /**************************************************************/
 /* ProcessRuleLHS: Processes each of the disjuncts of a rule. */
 /**************************************************************/
-static struct defrule *ProcessRuleLHS(
-  void *theEnv,
+static Defrule *ProcessRuleLHS(
+  Environment *theEnv,
   struct lhsParseNode *theLHS,
   struct expr *actions,
   SYMBOL_HN *ruleName,
   bool *error)
   {
    struct lhsParseNode *tempNode = NULL;
-   struct defrule *topDisjunct = NULL, *currentDisjunct, *lastDisjunct = NULL;
+   Defrule *topDisjunct = NULL, *currentDisjunct, *lastDisjunct = NULL;
    struct expr *newActions, *packPtr;
    int logicalJoin;
    int localVarCnt;
@@ -337,7 +342,7 @@ static struct defrule *ProcessRuleLHS(
         {
          *error = true;
          ReturnDefrule(theEnv,topDisjunct);
-         return(NULL);
+         return NULL;
         }
 
       /*=========================================*/
@@ -348,7 +353,7 @@ static struct defrule *ProcessRuleLHS(
         {
          *error = true;
          ReturnDefrule(theEnv,topDisjunct);
-         return(NULL);
+         return NULL;
         }
 
       /*========================================================*/
@@ -369,7 +374,7 @@ static struct defrule *ProcessRuleLHS(
         {
          *error = true;
          ReturnDefrule(theEnv,topDisjunct);
-         return(NULL);
+         return NULL;
         }
 
       /*======================================================*/
@@ -380,7 +385,7 @@ static struct defrule *ProcessRuleLHS(
         {
          *error = true;
          ReturnDefrule(theEnv,topDisjunct);
-         return(NULL);
+         return NULL;
         }
 
       /*=================================================*/
@@ -390,12 +395,12 @@ static struct defrule *ProcessRuleLHS(
 
       newActions = CopyExpression(theEnv,actions);
       if (ReplaceProcVars(theEnv,"RHS of defrule",newActions,NULL,NULL,
-                          ReplaceRHSVariable,(void *) tempNode))
+                          ReplaceRHSVariable,tempNode))
         {
          *error = true;
          ReturnDefrule(theEnv,topDisjunct);
          ReturnExpression(theEnv,newActions);
-         return(NULL);
+         return NULL;
         }
 
       /*==================================*/
@@ -475,8 +480,8 @@ static struct defrule *ProcessRuleLHS(
 /************************************************************************/
 /* CreateNewDisjunct: Creates and initializes a defrule data structure. */
 /************************************************************************/
-static struct defrule *CreateNewDisjunct(
-  void *theEnv,
+static Defrule *CreateNewDisjunct(
+  Environment *theEnv,
   SYMBOL_HN *ruleName,
   int localVarCnt,
   struct expr *theActions,
@@ -485,7 +490,7 @@ static struct defrule *CreateNewDisjunct(
   struct joinNode *lastJoin)
   {
    struct joinNode *tempJoin;
-   struct defrule *newDisjunct;
+   Defrule *newDisjunct;
 
    /*===================================================*/
    /* Create and initialize the defrule data structure. */
@@ -556,7 +561,7 @@ static struct defrule *CreateNewDisjunct(
 /*   duplicate commands.                                        */
 /****************************************************************/
 static int ReplaceRHSVariable(
-  void *theEnv,
+  Environment *theEnv,
   struct expr *list,
   void *VtheLHS)
   {
@@ -617,7 +622,7 @@ static int ReplaceRHSVariable(
 /*   for parsing the RHS of a rule.                    */
 /*******************************************************/
 static struct expr *ParseRuleRHS(
-  void *theEnv,
+  Environment *theEnv,
   const char *readSource)
   {
    struct expr *actions;
@@ -632,7 +637,7 @@ static struct expr *ParseRuleRHS(
 
    actions = GroupActions(theEnv,readSource,&theToken,true,NULL,false);
 
-   if (actions == NULL) return(NULL);
+   if (actions == NULL) return NULL;
 
    /*=============================*/
    /* Reformat the closing token. */
@@ -650,7 +655,7 @@ static struct expr *ParseRuleRHS(
      {
       SyntaxErrorMessage(theEnv,"defrule");
       ReturnExpression(theEnv,actions);
-      return(NULL);
+      return NULL;
      }
 
    /*========================*/
@@ -665,7 +670,7 @@ static struct expr *ParseRuleRHS(
 /*   by the LEX and MEA conflict resolution strategies.     */
 /************************************************************/
 static int RuleComplexity(
-  void *theEnv,
+  Environment *theEnv,
   struct lhsParseNode *theLHS)
   {
    struct lhsParseNode *thePattern, *tempPattern;
@@ -701,7 +706,7 @@ static int RuleComplexity(
 /* ExpressionComplexity: Determines the complexity of a expression. */
 /********************************************************************/
 static int ExpressionComplexity(
-   void *theEnv,
+  Environment *theEnv,
   struct expr *exprPtr)
   {
    int complexity = 0;
@@ -743,7 +748,7 @@ static int ExpressionComplexity(
 /*   logical CE within the LHS of a rule.   */
 /********************************************/
 static int LogicalAnalysis(
-  void *theEnv,
+  Environment *theEnv,
   struct lhsParseNode *patternList)
   {
    bool firstLogical, logicalsFound = false;
@@ -938,9 +943,9 @@ struct lhsParseNode *FindVariable(
 /* AddToDefruleList: Adds a defrule to the list of rules. */
 /**********************************************************/
 static void AddToDefruleList(
-  struct defrule *rulePtr)
+  Defrule *rulePtr)
   {
-   struct defrule *tempRule;
+   Defrule *tempRule;
    struct defruleModule *theModuleItem;
 
    theModuleItem = (struct defruleModule *) rulePtr->header.whichModule;
@@ -949,7 +954,7 @@ static void AddToDefruleList(
      { theModuleItem->header.firstItem = (struct constructHeader *) rulePtr; }
    else
      {
-      tempRule = (struct defrule *) theModuleItem->header.lastItem; // Note: Only the first disjunct
+      tempRule = (Defrule *) theModuleItem->header.lastItem; // Note: Only the first disjunct
       tempRule->header.next = (struct constructHeader *) rulePtr;   // points to the next rule
      }
 
@@ -963,7 +968,7 @@ static void AddToDefruleList(
 /*   expressions generated from the analysis of the rule.   */
 /************************************************************/
 void DumpRuleAnalysis(
-  void *theEnv,
+  Environment *theEnv,
   struct lhsParseNode *tempNode)
   {
    struct lhsParseNode *traceNode;

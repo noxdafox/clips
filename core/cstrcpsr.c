@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/04/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*              CONSTRUCT PARSER MODULE                */
    /*******************************************************/
@@ -53,6 +53,9 @@
 /*                                                           */
 /*            Changed return values for router functions.    */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -81,7 +84,7 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static bool                    FindConstructBeginning(void *,const char *,struct token *,bool,bool *);
+   static bool                    FindConstructBeginning(Environment *,const char *,struct token *,bool,bool *);
 
 /************************************************/
 /* Load: C access routine for the load command. */
@@ -102,7 +105,7 @@ int Load(
 /*   while loading.                                         */
 /************************************************************/
 int EnvLoad(
-  void *theEnv,
+  Environment *theEnv,
   const char *fileName)
   {
    FILE *theFile;
@@ -156,7 +159,7 @@ int EnvLoad(
 /*   being parsed by the load/batch command.           */
 /*******************************************************/
 void EnvSetParsingFileName(
-  void *theEnv,
+  Environment *theEnv,
   const char *fileName)
   {
    char *fileNameCopy = NULL;
@@ -180,7 +183,7 @@ void EnvSetParsingFileName(
 /*   being parsed by the load/batch command.              */
 /**********************************************************/
 char *EnvGetParsingFileName(
-  void *theEnv)
+  Environment *theEnv)
   {
    return ConstructData(theEnv)->ParsingFileName;
   }
@@ -190,7 +193,7 @@ char *EnvGetParsingFileName(
 /*   associated with the last error detected. */
 /**********************************************/
 void EnvSetErrorFileName(
-  void *theEnv,
+  Environment *theEnv,
   const char *fileName)
   {
    char *fileNameCopy = NULL;
@@ -214,7 +217,7 @@ void EnvSetErrorFileName(
 /*   associated with the last error detected. */
 /**********************************************/
 char *EnvGetErrorFileName(
-  void *theEnv)
+  Environment *theEnv)
   {
    return ConstructData(theEnv)->ErrorFileName;
   }
@@ -224,7 +227,7 @@ char *EnvGetErrorFileName(
 /*   associated with the last warning detected. */
 /************************************************/
 void EnvSetWarningFileName(
-  void *theEnv,
+  Environment *theEnv,
   const char *fileName)
   {
    char *fileNameCopy = NULL;
@@ -248,7 +251,7 @@ void EnvSetWarningFileName(
 /*   associated with the last warning detected. */
 /************************************************/
 char *EnvGetWarningFileName(
-  void *theEnv)
+  Environment *theEnv)
   {
    return ConstructData(theEnv)->WarningFileName;
   }
@@ -258,7 +261,7 @@ char *EnvGetWarningFileName(
 /*   the current environment from a specified logical name.      */
 /*****************************************************************/
 int LoadConstructsFromLogicalName(
-  void *theEnv,
+  Environment *theEnv,
   const char *readSource)
   {
    int constructFlag;
@@ -432,7 +435,7 @@ int LoadConstructsFromLogicalName(
 /*   beginning of a construct was found, otherwise false.           */
 /********************************************************************/
 static bool FindConstructBeginning(
-  void *theEnv,
+  Environment *theEnv,
   const char *readSource,
   struct token *theToken,
   bool errorCorrection,
@@ -536,7 +539,7 @@ static bool FindConstructBeginning(
 /* FindError: Find routine for the error router. */
 /*************************************************/
 static bool FindError(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName)
   {
 #if MAC_XCD
@@ -554,7 +557,7 @@ static bool FindError(
 /* PrintError: Print routine for the error router. */
 /***************************************************/
 static void PrintError(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
   const char *str)
   {
@@ -583,7 +586,7 @@ static void PrintError(
 /*   capture router if it doesn't exists.      */
 /***********************************************/
 void CreateErrorCaptureRouter(
-  void *theEnv)
+  Environment *theEnv)
   {
    /*===========================================================*/
    /* Don't bother creating the error capture router if there's */
@@ -618,7 +621,7 @@ void CreateErrorCaptureRouter(
 /*   capture router if it exists.              */
 /***********************************************/
 void DeleteErrorCaptureRouter(
-   void *theEnv)
+   Environment *theEnv)
    {
    /*===========================================================*/
    /* Don't bother deleting the error capture router if there's */
@@ -640,7 +643,7 @@ void DeleteErrorCaptureRouter(
 /*   for any existing warning/error messages.          */
 /*******************************************************/
 void FlushParsingMessages(
-  void *theEnv)
+  Environment *theEnv)
   {
    /*===========================================================*/
    /* Don't bother flushing the error capture router if there's */
@@ -698,7 +701,7 @@ void FlushParsingMessages(
 /*   the construct was parsed unsuccessfully.              */
 /***********************************************************/
 int ParseConstruct(
-  void *theEnv,
+  Environment *theEnv,
   const char *name,
   const char *logicalName)
   {
@@ -775,12 +778,12 @@ int ParseConstruct(
 /*   if no errors are detected, otherwise returns NULL.  */
 /*********************************************************/
 SYMBOL_HN *GetConstructNameAndComment(
-  void *theEnv,
+  Environment *theEnv,
   const char *readSource,
   struct token *inputToken,
   const char *constructName,
-  void *(*findFunction)(void *,const char *),
-  bool (*deleteFunction)(void *,void *),
+  FindConstructFunction *findFunction,
+  DeleteConstructFunction *deleteFunction,
   const char *constructSymbol,
   bool fullMessageCR,
   bool getComment,
@@ -794,7 +797,7 @@ SYMBOL_HN *GetConstructNameAndComment(
    bool redefining = false;
    void *theConstruct;
    unsigned separatorPosition;
-   struct defmodule *theModule;
+   Defmodule *theModule;
 
    /*==========================*/
    /* Next token should be the */
@@ -808,7 +811,7 @@ SYMBOL_HN *GetConstructNameAndComment(
       EnvPrintRouter(theEnv,WERROR,"Missing name for ");
       EnvPrintRouter(theEnv,WERROR,constructName);
       EnvPrintRouter(theEnv,WERROR," construct\n");
-      return(NULL);
+      return NULL;
      }
 
    name = (SYMBOL_HN *) inputToken->value;
@@ -823,29 +826,29 @@ SYMBOL_HN *GetConstructNameAndComment(
       if (moduleNameAllowed == false)
         {
          SyntaxErrorMessage(theEnv,"module specifier");
-         return(NULL);
+         return NULL;
         }
 
       moduleName = ExtractModuleName(theEnv,separatorPosition,ValueToString(name));
       if (moduleName == NULL)
         {
          SyntaxErrorMessage(theEnv,"construct name");
-         return(NULL);
+         return NULL;
         }
 
-      theModule = (struct defmodule *) EnvFindDefmodule(theEnv,ValueToString(moduleName));
+      theModule = EnvFindDefmodule(theEnv,ValueToString(moduleName));
       if (theModule == NULL)
         {
          CantFindItemErrorMessage(theEnv,"defmodule",ValueToString(moduleName));
-         return(NULL);
+         return NULL;
         }
 
-      EnvSetCurrentModule(theEnv,(void *) theModule);
+      EnvSetCurrentModule(theEnv,theModule);
       name = ExtractConstructName(theEnv,separatorPosition,ValueToString(name));
       if (name == NULL)
         {
          SyntaxErrorMessage(theEnv,"construct name");
-         return(NULL);
+         return NULL;
         }
      }
 
@@ -856,7 +859,7 @@ SYMBOL_HN *GetConstructNameAndComment(
 
    else
      {
-      theModule = ((struct defmodule *) EnvGetCurrentModule(theEnv));
+      theModule = EnvGetCurrentModule(theEnv);
       if (moduleNameAllowed)
         {
          PPBackup(theEnv);
@@ -874,7 +877,7 @@ SYMBOL_HN *GetConstructNameAndComment(
    if (FindImportExportConflict(theEnv,constructName,theModule,ValueToString(name)))
      {
       ImportExportConflictMessage(theEnv,constructName,ValueToString(name),NULL,NULL);
-      return(NULL);
+      return NULL;
      }
 #endif
 
@@ -899,7 +902,7 @@ SYMBOL_HN *GetConstructNameAndComment(
                EnvPrintRouter(theEnv,WERROR," ");
                EnvPrintRouter(theEnv,WERROR,ValueToString(name));
                EnvPrintRouter(theEnv,WERROR," while it is in use.\n");
-               return(NULL);
+               return NULL;
               }
            }
         }
@@ -974,7 +977,7 @@ SYMBOL_HN *GetConstructNameAndComment(
 /*   construct from its module's list   */
 /****************************************/
 void RemoveConstructFromModule(
-  void *theEnv,
+  Environment *theEnv,
   struct constructHeader *theConstruct)
   {
    struct constructHeader *lastConstruct,*currentConstruct;
@@ -1026,7 +1029,7 @@ void RemoveConstructFromModule(
 /*   when a construct is being defined.               */
 /******************************************************/
 void ImportExportConflictMessage(
-  void *theEnv,
+  Environment *theEnv,
   const char *constructName,
   const char *itemName,
   const char *causedByConstruct,

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*           MESSAGE-HANDLER PARSER FUNCTIONS          */
    /*******************************************************/
@@ -40,6 +40,9 @@
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -86,17 +89,15 @@
 #define SELF_LEN         4
 #define SELF_SLOT_REF   ':'
 
-/* =========================================
-   *****************************************
-      INTERNALLY VISIBLE FUNCTION HEADERS
-   =========================================
-   ***************************************** */
+/***************************************/
+/* LOCAL INTERNAL FUNCTION DEFINITIONS */
+/***************************************/
 
-static bool IsParameterSlotReference(void *,const char *);
-static int SlotReferenceVar(void *,EXPRESSION *,void *);
-static int BindSlotReference(void *,EXPRESSION *,void *);
-static SLOT_DESC *CheckSlotReference(void *,DEFCLASS *,int,void *,bool,EXPRESSION *);
-static void GenHandlerSlotReference(void *,EXPRESSION *,unsigned short,SLOT_DESC *);
+   static bool                    IsParameterSlotReference(Environment *,const char *);
+   static int                     SlotReferenceVar(Environment *,EXPRESSION *,void *);
+   static int                     BindSlotReference(Environment *,EXPRESSION *,void *);
+   static SlotDescriptor         *CheckSlotReference(Environment *,Defclass *,int,void *,bool,EXPRESSION *);
+   static void                    GenHandlerSlotReference(Environment *,EXPRESSION *,unsigned short,SlotDescriptor *);
 
 /* =========================================
    *****************************************
@@ -119,16 +120,16 @@ static void GenHandlerSlotReference(void *,EXPRESSION *,unsigned short,SLOT_DESC
                  <params> ::= <var>* | <var>* $?<name>
  ***********************************************************************/
 bool ParseDefmessageHandler(
-  void *theEnv,
+  Environment *theEnv,
   const char *readSource)
   {
-   DEFCLASS *cls;
+   Defclass *cls;
    SYMBOL_HN *cname,*mname,*wildcard;
    unsigned mtype = MPRIMARY;
    int min,max,lvars;
    bool error;
    EXPRESSION *hndParams,*actions;
-   HANDLER *hnd;
+   DefmessageHandler *hnd;
 
    SetPPBufferStatus(theEnv,true);
    FlushPPBuffer(theEnv);
@@ -159,7 +160,7 @@ bool ParseDefmessageHandler(
      {
       PrintErrorID(theEnv,"MSGPSR",8,false);
       EnvPrintRouter(theEnv,WERROR,"Message-handlers cannot be attached to the class ");
-      EnvPrintRouter(theEnv,WERROR,EnvGetDefclassName(theEnv,(void *) cls));
+      EnvPrintRouter(theEnv,WERROR,EnvGetDefclassName(theEnv,cls));
       EnvPrintRouter(theEnv,WERROR,".\n");
       return true;
      }
@@ -234,7 +235,7 @@ bool ParseDefmessageHandler(
       return true;
      }
 
-   hndParams = GenConstant(theEnv,SYMBOL,(void *) MessageHandlerData(theEnv)->SELF_SYMBOL);
+   hndParams = GenConstant(theEnv,SYMBOL,MessageHandlerData(theEnv)->SELF_SYMBOL);
    hndParams = ParseProcParameters(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken,hndParams,
                                     &wildcard,&min,&max,&error,IsParameterSlotReference);
    if (error)
@@ -244,7 +245,7 @@ bool ParseDefmessageHandler(
    actions = ParseProcActions(theEnv,"message-handler",readSource,
                               &DefclassData(theEnv)->ObjectParseToken,hndParams,wildcard,
                               SlotReferenceVar,BindSlotReference,&lvars,
-                              (void *) cls);
+                              cls);
    if (actions == NULL)
      {
       ReturnExpression(theEnv,hndParams);
@@ -279,7 +280,7 @@ bool ParseDefmessageHandler(
       ExpressionDeinstall(theEnv,hnd->actions);
       ReturnPackedExpression(theEnv,hnd->actions);
       if (hnd->ppForm != NULL)
-        rm(theEnv,(void *) hnd->ppForm,
+        rm(theEnv,hnd->ppForm,
            (sizeof(char) * (strlen(hnd->ppForm)+1)));
      }
    else
@@ -331,8 +332,8 @@ bool ParseDefmessageHandler(
   NOTES        : A put handler is not created for read-only slots
  *******************************************************************************/
 void CreateGetAndPutHandlers(
-  void *theEnv,
-  SLOT_DESC *sd)
+  Environment *theEnv,
+  SlotDescriptor *sd)
   {
    const char *className,*slotName;
    size_t bufsz;
@@ -414,7 +415,7 @@ void CreateGetAndPutHandlers(
    SetPrintWhileLoading(theEnv,oldPWL);
    EnvSetConserveMemory(theEnv,oldCM);
 
-   rm(theEnv,(void *) buf,bufsz);
+   rm(theEnv,buf,bufsz);
   }
 
 /* =========================================
@@ -435,7 +436,7 @@ void CreateGetAndPutHandlers(
   NOTES        : None
  *****************************************************************/
 static bool IsParameterSlotReference(
-  void *theEnv,
+  Environment *theEnv,
   const char *pname)
   {
    if ((strncmp(pname,SELF_STRING,SELF_LEN) == 0) ?
@@ -469,13 +470,13 @@ static bool IsParameterSlotReference(
                  violate the encapsulation principle of OOP.
  ****************************************************************************/
 static int SlotReferenceVar(
-  void *theEnv,
+  Environment *theEnv,
   EXPRESSION *varexp,
   void *userBuffer)
   {
    struct token itkn;
    bool oldpp;
-   SLOT_DESC *sd;
+   SlotDescriptor *sd;
 
    if ((varexp->type != SF_VARIABLE) && (varexp->type != MF_VARIABLE))
      { return 0; }
@@ -490,7 +491,7 @@ static int SlotReferenceVar(
       CloseStringSource(theEnv,"hnd-var");
       if (itkn.type != STOP)
         {
-         sd = CheckSlotReference(theEnv,(DEFCLASS *) userBuffer,itkn.type,itkn.value,
+         sd = CheckSlotReference(theEnv,(Defclass *) userBuffer,itkn.type,itkn.value,
                                  false,NULL);
          if (sd == NULL)
            { return -1; }
@@ -522,14 +523,14 @@ static int SlotReferenceVar(
                  violate the encapsulation principle of OOP.
  ****************************************************************************/
 static int BindSlotReference(
-  void *theEnv,
+  Environment *theEnv,
   EXPRESSION *bindExp,
   void *userBuffer)
   {
    const char *bindName;
    struct token itkn;
    bool oldpp;
-   SLOT_DESC *sd;
+   SlotDescriptor *sd;
    EXPRESSION *saveExp;
 
    bindName = ValueToString(bindExp->argList->value);
@@ -551,7 +552,7 @@ static int BindSlotReference(
       if (itkn.type != STOP)
         {
          saveExp = bindExp->argList->nextArg;
-         sd = CheckSlotReference(theEnv,(DEFCLASS *) userBuffer,itkn.type,itkn.value,
+         sd = CheckSlotReference(theEnv,(Defclass *) userBuffer,itkn.type,itkn.value,
                                  true,saveExp);
          if (sd == NULL)
            { return -1; }
@@ -592,23 +593,23 @@ static int BindSlotReference(
                  is being attached to the same class in
                  which the private slot is defined.
  *********************************************************/
-static SLOT_DESC *CheckSlotReference(
-  void *theEnv,
-  DEFCLASS *theDefclass,
+static SlotDescriptor *CheckSlotReference(
+  Environment *theEnv,
+  Defclass *theDefclass,
   int theType,
   void *theValue,
   bool writeFlag,
   EXPRESSION *writeExpression)
   {
    int slotIndex;
-   SLOT_DESC *sd;
+   SlotDescriptor *sd;
    int vCode;
 
    if (theType != SYMBOL)
      {
       PrintErrorID(theEnv,"MSGPSR",7,false);
       EnvPrintRouter(theEnv,WERROR,"Illegal value for ?self reference.\n");
-      return(NULL);
+      return NULL;
      }
    slotIndex = FindInstanceTemplateSlot(theEnv,theDefclass,(SYMBOL_HN *) theValue);
    if (slotIndex == -1)
@@ -617,15 +618,15 @@ static SLOT_DESC *CheckSlotReference(
       EnvPrintRouter(theEnv,WERROR,"No such slot ");
       EnvPrintRouter(theEnv,WERROR,ValueToString(theValue));
       EnvPrintRouter(theEnv,WERROR," in class ");
-      EnvPrintRouter(theEnv,WERROR,EnvGetDefclassName(theEnv,(void *) theDefclass));
+      EnvPrintRouter(theEnv,WERROR,EnvGetDefclassName(theEnv,theDefclass));
       EnvPrintRouter(theEnv,WERROR," for ?self reference.\n");
-      return(NULL);
+      return NULL;
      }
    sd = theDefclass->instanceTemplate[slotIndex];
    if ((sd->publicVisibility == 0) && (sd->cls != theDefclass))
      {
       SlotVisibilityViolationError(theEnv,sd,theDefclass);
-      return(NULL);
+      return NULL;
      }
    if (! writeFlag)
      return(sd);
@@ -639,8 +640,8 @@ static SLOT_DESC *CheckSlotReference(
    if (sd->noWrite && (sd->initializeOnly == 0))
      {
       SlotAccessViolationError(theEnv,ValueToString(theValue),
-                               false,(void *) theDefclass);
-      return(NULL);
+                               false,theDefclass);
+      return NULL;
      }
 
    if (EnvGetStaticConstraintChecking(theEnv))
@@ -653,7 +654,7 @@ static SLOT_DESC *CheckSlotReference(
          PrintSlot(theEnv,WERROR,sd,NULL,"direct slot write");
          ConstraintViolationErrorMessage(theEnv,NULL,NULL,0,0,NULL,0,
                                          vCode,sd->constraint,false);
-         return(NULL);
+         return NULL;
         }
      }
    return(sd);
@@ -675,10 +676,10 @@ static SLOT_DESC *CheckSlotReference(
   NOTES        : None
  ***************************************************/
 static void GenHandlerSlotReference(
-  void *theEnv,
+  Environment *theEnv,
   EXPRESSION *theExp,
   unsigned short theType,
-  SLOT_DESC *sd)
+  SlotDescriptor *sd)
   {
    HANDLER_SLOT_REFERENCE handlerReference;
 
@@ -686,7 +687,7 @@ static void GenHandlerSlotReference(
    handlerReference.classID = (unsigned short) sd->cls->id;
    handlerReference.slotID = (unsigned) sd->slotName->id;
    theExp->type = theType;
-   theExp->value =  EnvAddBitMap(theEnv,(void *) &handlerReference,
+   theExp->value =  EnvAddBitMap(theEnv,&handlerReference,
                            (int) sizeof(HANDLER_SLOT_REFERENCE));
   }
 

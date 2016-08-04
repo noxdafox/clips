@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -37,6 +37,9 @@
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -174,7 +177,7 @@ struct ObjectCmpJoinSingleSlotVars3
 
 struct objectReteData
   { 
-   INSTANCE_TYPE *CurrentPatternObject;
+   Instance *CurrentPatternObject;
    INSTANCE_SLOT *CurrentPatternObjectSlot;
    unsigned CurrentObjectSlotLength;
    struct multifieldMarker *CurrentPatternObjectMarks;
@@ -203,8 +206,8 @@ struct objectReteData
 
 #define ObjectReteData(theEnv) ((struct objectReteData *) GetEnvironmentData(theEnv,OBJECT_RETE_DATA))
 
-   void                    InstallObjectPrimitives(void *);
-   bool                    ObjectCmpConstantFunction(void *,void *,DATA_OBJECT *);
+   void                    InstallObjectPrimitives(Environment *);
+   bool                    ObjectCmpConstantFunction(Environment *,void *,DATA_OBJECT *);
 
 #endif /* DEFRULE_CONSTRUCT && OBJECT_SYSTEM */
 

@@ -377,7 +377,7 @@
    /* Move the text to a C string. */
    /*==============================*/
    
-   void *theEnvironment = [[theDelegate mainEnvironment] environment];
+   Environment *theEnvironment = [[theDelegate mainEnvironment] environment];
 
    length = [theSelection lengthOfBytesUsingEncoding: NSUTF8StringEncoding];
    
@@ -400,9 +400,9 @@
    FlushCommandString(theEnvironment);
    
    OpenTextSource(theEnvironment,"aecompiletext",theString,0,(unsigned) length); // TBD Make the name unique
-   SetPrintWhileLoading(theEnvironment,TRUE);
+   SetPrintWhileLoading(theEnvironment,true);
    LoadConstructsFromLogicalName(theEnvironment,"aecompiletext");
-   SetPrintWhileLoading(theEnvironment,FALSE);
+   SetPrintWhileLoading(theEnvironment,false);
    CloseStringSource(theEnvironment,"aecompiletext");
    
    rm(theEnvironment,theString,(unsigned int) length+1);
@@ -436,7 +436,7 @@
    /* Move the text to a C string. */
    /*==============================*/
    
-   void *theEnvironment = [[theDelegate mainEnvironment] environment];
+   Environment *theEnvironment = [[theDelegate mainEnvironment] environment];
 
    length = [theSelection lengthOfBytesUsingEncoding: NSUTF8StringEncoding];
    
@@ -455,7 +455,7 @@
    /* Batch the selected text. */
    /*==========================*/
       
-   OpenStringBatch(theEnvironment,"batchtext",theString,FALSE); // TBD generate unique name
+   OpenStringBatch(theEnvironment,"batchtext",theString,false); // TBD generate unique name
   }
 
 /************************************************/
@@ -472,7 +472,7 @@
    /* Move the text to a C string. */
    /*==============================*/
    
-   void *theEnvironment = [[theDelegate mainEnvironment] environment];
+   Environment *theEnvironment = [[theDelegate mainEnvironment] environment];
 
    length = [entireString lengthOfBytesUsingEncoding: NSUTF8StringEncoding];
 
@@ -495,9 +495,9 @@
    FlushCommandString(theEnvironment);
    
    OpenTextSource(theEnvironment,"aecompiletext",theString,0,(unsigned) length); // TBD Make the name unique
-   SetPrintWhileLoading(theEnvironment,TRUE);
+   SetPrintWhileLoading(theEnvironment,true);
    LoadConstructsFromLogicalName(theEnvironment,"aecompiletext");
-   SetPrintWhileLoading(theEnvironment,FALSE);
+   SetPrintWhileLoading(theEnvironment,false);
    CloseStringSource(theEnvironment,"aecompiletext");
    
    rm(theEnvironment,theString,(unsigned int) length+1);

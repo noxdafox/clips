@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*                DEFTEMPLATE LHS MODULE               */
    /*******************************************************/
@@ -26,6 +26,9 @@
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -58,19 +61,19 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static struct lhsParseNode    *GetLHSSlots(void *,const char *,struct token *,struct deftemplate *,bool *);
-   static struct lhsParseNode    *GetSingleLHSSlot(void *,const char *,struct token *,
+   static struct lhsParseNode    *GetLHSSlots(Environment *,const char *,struct token *,Deftemplate *,bool *);
+   static struct lhsParseNode    *GetSingleLHSSlot(Environment *,const char *,struct token *,
                                                    struct templateSlot *,bool *,short);
-   static bool                    MultiplyDefinedLHSSlots(void *,struct lhsParseNode *,SYMBOL_HN *);
+   static bool                    MultiplyDefinedLHSSlots(Environment *,struct lhsParseNode *,SYMBOL_HN *);
 
 /*********************************************/
 /* DeftemplateLHSParse: Parses a LHS pattern */
 /*   that uses the deftemplate format.       */
 /*********************************************/
 struct lhsParseNode *DeftemplateLHSParse(
-  void *theEnv,
+  Environment *theEnv,
   const char *readSource,
-  struct deftemplate *theDeftemplate)
+  Deftemplate *theDeftemplate)
   {
    struct lhsParseNode *head, *firstSlot;
    struct token theToken;
@@ -84,7 +87,7 @@ struct lhsParseNode *DeftemplateLHSParse(
    if ((theToken.type == OR_CONSTRAINT) || (theToken.type == AND_CONSTRAINT))
      {
       SyntaxErrorMessage(theEnv,"deftemplate patterns");
-      return(NULL);
+      return NULL;
      }
 
    /*===================================================*/
@@ -101,7 +104,7 @@ struct lhsParseNode *DeftemplateLHSParse(
    head->bottom->type = SYMBOL;
    head->bottom->negated = false;
    head->bottom->exists = false;
-   head->bottom->value = (void *) theDeftemplate->header.name;
+   head->bottom->value = theDeftemplate->header.name;
 
    /*==========================================*/
    /* Get the other fields in the deftemplate. */
@@ -113,7 +116,7 @@ struct lhsParseNode *DeftemplateLHSParse(
      {
       ReturnLHSParseNodes(theEnv,firstSlot);
       ReturnLHSParseNodes(theEnv,head);
-      return(NULL);
+      return NULL;
      }
 
    /*=========================*/
@@ -129,10 +132,10 @@ struct lhsParseNode *DeftemplateLHSParse(
 /*   values used in a LHS pattern.        */
 /******************************************/
 static struct lhsParseNode *GetLHSSlots(
-  void *theEnv,
+  Environment *theEnv,
   const char *readSource,
   struct token *tempToken,
-  struct deftemplate *theDeftemplate,
+  Deftemplate *theDeftemplate,
   bool *error)
   {
    struct lhsParseNode *firstSlot = NULL, *nextSlot, *lastSlot = NULL;
@@ -159,7 +162,7 @@ static struct lhsParseNode *GetLHSSlots(
          *error = true;
          SyntaxErrorMessage(theEnv,"deftemplate patterns");
          ReturnLHSParseNodes(theEnv,firstSlot);
-         return(NULL);
+         return NULL;
         }
 
       /*====================*/
@@ -172,7 +175,7 @@ static struct lhsParseNode *GetLHSSlots(
          *error = true;
          SyntaxErrorMessage(theEnv,"deftemplate patterns");
          ReturnLHSParseNodes(theEnv,firstSlot);
-         return(NULL);
+         return NULL;
         }
 
       /*==========================================================*/
@@ -185,7 +188,7 @@ static struct lhsParseNode *GetLHSSlots(
          InvalidDeftemplateSlotMessage(theEnv,ValueToString(tempToken->value),
                                        ValueToString(theDeftemplate->header.name),true);
          ReturnLHSParseNodes(theEnv,firstSlot);
-         return(NULL);
+         return NULL;
         }
 
       /*============================================*/
@@ -196,7 +199,7 @@ static struct lhsParseNode *GetLHSSlots(
         {
          *error = true;
          ReturnLHSParseNodes(theEnv,firstSlot);
-         return(NULL);
+         return NULL;
         }
 
       /*==============================================================*/
@@ -208,7 +211,7 @@ static struct lhsParseNode *GetLHSSlots(
         {
          ReturnLHSParseNodes(theEnv,firstSlot);
          ReturnLHSParseNodes(theEnv,nextSlot);
-         return(NULL);
+         return NULL;
         }
 
       /*=====================================*/
@@ -243,7 +246,7 @@ static struct lhsParseNode *GetLHSSlots(
 /*   to be associated with a slot name.              */
 /*****************************************************/
 static struct lhsParseNode *GetSingleLHSSlot(
-  void *theEnv,
+  Environment *theEnv,
   const char *readSource,
   struct token *tempToken,
   struct templateSlot *slotPtr,
@@ -277,7 +280,7 @@ static struct lhsParseNode *GetSingleLHSSlot(
       if (nextSlot == NULL)
         {
          *error = true;
-         return(NULL);
+         return NULL;
         }
 
       /*======================================*/
@@ -291,7 +294,7 @@ static struct lhsParseNode *GetSingleLHSSlot(
          SingleFieldSlotCardinalityError(theEnv,slotPtr->slotName->contents);
          *error = true;
          ReturnLHSParseNodes(theEnv,nextSlot);
-         return(NULL);
+         return NULL;
         }
      }
 
@@ -306,7 +309,7 @@ static struct lhsParseNode *GetSingleLHSSlot(
       if (nextSlot == NULL)
         {
          *error = true;
-         return(NULL);
+         return NULL;
         }
      }
 
@@ -322,7 +325,7 @@ static struct lhsParseNode *GetSingleLHSSlot(
       SyntaxErrorMessage(theEnv,"deftemplate patterns");
       *error = true;
       ReturnLHSParseNodes(theEnv,nextSlot);
-      return(NULL);
+      return NULL;
      }
 
    /*===============================================*/
@@ -350,7 +353,7 @@ static struct lhsParseNode *GetSingleLHSSlot(
 /*   was used more than once in a LHS pattern.        */
 /******************************************************/
 static bool MultiplyDefinedLHSSlots(
-  void *theEnv,
+  Environment *theEnv,
   struct lhsParseNode *theSlots,
   SYMBOL_HN *slotName)
   {

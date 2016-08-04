@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*                RULE COMMANDS MODULE                 */
    /*******************************************************/
@@ -60,6 +60,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -99,27 +102,27 @@
 /***************************************/
 
 #if DEVELOPER
-   static void                    ShowJoins(void *,void *);
+   static void                    ShowJoins(Environment *,Defrule *);
 #endif
 #if DEBUGGING_FUNCTIONS
-   static long long               ListAlphaMatches(void *,struct joinInformation *,int);
-   static long long               ListBetaMatches(void *,struct joinInformation *,long,long,int);
-   static void                    ListBetaJoinActivity(void *,struct joinInformation *,long,long,int,DATA_OBJECT *);
-   static long                    AlphaJoinCountDriver(void *,struct joinNode *);
-   static long                    BetaJoinCountDriver(void *,struct joinNode *);
-   static void                    AlphaJoinsDriver(void *,struct joinNode *,long,struct joinInformation *);
-   static void                    BetaJoinsDriver(void *,struct joinNode *,long,struct joinInformation *,struct betaMemory *,struct joinNode *);
-   static int                     CountPatterns(void *,struct joinNode *,bool);
-   static const char             *BetaHeaderString(void *,struct joinInformation *,long,long);
-   static const char             *ActivityHeaderString(void *,struct joinInformation *,long,long);
-   static void                    JoinActivityReset(void *,struct constructHeader *,void *);
+   static long long               ListAlphaMatches(Environment *,struct joinInformation *,int);
+   static long long               ListBetaMatches(Environment *,struct joinInformation *,long,long,int);
+   static void                    ListBetaJoinActivity(Environment *,struct joinInformation *,long,long,int,DATA_OBJECT *);
+   static long                    AlphaJoinCountDriver(Environment *,struct joinNode *);
+   static long                    BetaJoinCountDriver(Environment *,struct joinNode *);
+   static void                    AlphaJoinsDriver(Environment *,struct joinNode *,long,struct joinInformation *);
+   static void                    BetaJoinsDriver(Environment *,struct joinNode *,long,struct joinInformation *,struct betaMemory *,struct joinNode *);
+   static int                     CountPatterns(Environment *,struct joinNode *,bool);
+   static const char             *BetaHeaderString(Environment *,struct joinInformation *,long,long);
+   static const char             *ActivityHeaderString(Environment *,struct joinInformation *,long,long);
+   static void                    JoinActivityReset(Environment *,struct constructHeader *,void *);
 #endif
 
 /****************************************************************/
 /* DefruleCommands: Initializes defrule commands and functions. */
 /****************************************************************/
 void DefruleCommands(
-  void *theEnv)
+  Environment *theEnv)
   {
 #if ! RUN_TIME
    EnvDefineFunction2(theEnv,"run",'v', PTIEF RunCommand,"RunCommand", "*1i");
@@ -188,7 +191,7 @@ void DefruleCommands(
 /*   for the get-beta-memory-resizing command. */
 /***********************************************/
 bool EnvGetBetaMemoryResizing(
-  void *theEnv)
+  Environment *theEnv)
   {   
    return(DefruleData(theEnv)->BetaMemoryResizingFlag);
   }
@@ -198,7 +201,7 @@ bool EnvGetBetaMemoryResizing(
 /*   for the set-beta-memory-resizing command. */
 /***********************************************/
 bool EnvSetBetaMemoryResizing(
-  void *theEnv,
+  Environment *theEnv,
   bool value)
   {
    bool ov;
@@ -215,7 +218,7 @@ bool EnvSetBetaMemoryResizing(
 /*   for the set-beta-memory-resizing command.      */
 /****************************************************/
 bool SetBetaMemoryResizingCommand(
-  void *theEnv)
+  Environment *theEnv)
   {
    bool oldValue;
    DATA_OBJECT argPtr;
@@ -253,7 +256,7 @@ bool SetBetaMemoryResizingCommand(
 /*   for the get-beta-memory-resizing command.      */
 /****************************************************/
 bool GetBetaMemoryResizingCommand(
-  void *theEnv)
+  Environment *theEnv)
   {
    bool oldValue;
 
@@ -272,7 +275,7 @@ bool GetBetaMemoryResizingCommand(
 /*   for the matches command.           */
 /****************************************/
 void MatchesCommand(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *result)
   {
    const char *ruleName, *argument;
@@ -332,20 +335,20 @@ void MatchesCommand(
 /*   for the matches command.   */
 /********************************/
 void EnvMatches(
-  void *theEnv,
-  void *theRule,
+  Environment *theEnv,
+  Defrule *theRule,
   int output,
   DATA_OBJECT *result)
   {
-   struct defrule *rulePtr;
-   struct defrule *topDisjunct = (struct defrule *) theRule;
+   Defrule *rulePtr;
+   Defrule *topDisjunct = theRule;
    long joinIndex;
    long arraySize;
    struct joinInformation *theInfo;
    long long alphaMatchCount = 0;
    long long betaMatchCount = 0;
    long long activations = 0;
-   ACTIVATION *agendaPtr;
+   Activation *agendaPtr;
 
    /*==========================*/
    /* Set up the return value. */
@@ -474,7 +477,7 @@ void EnvMatches(
 /*   alpha joins.                                   */
 /****************************************************/
 static long AlphaJoinCountDriver(
-  void *theEnv,
+  Environment *theEnv,
   struct joinNode *theJoin)
   {
    long alphaCount = 0;
@@ -497,11 +500,9 @@ static long AlphaJoinCountDriver(
 /*   joins associated with the specified rule.    */
 /**************************************************/
 long EnvAlphaJoinCount(
-  void *theEnv,
-  void *vTheDefrule)
+  Environment *theEnv,
+  Defrule *theDefrule)
   {
-   struct defrule *theDefrule = (struct defrule *) vTheDefrule;
-   
    return AlphaJoinCountDriver(theEnv,theDefrule->lastJoin->lastLevel);
   }
 
@@ -510,7 +511,7 @@ long EnvAlphaJoinCount(
 /*   retrieve a rule's alpha joins.    */
 /***************************************/
 static void AlphaJoinsDriver(
-  void *theEnv,
+  Environment *theEnv,
   struct joinNode *theJoin,
   long alphaIndex,
   struct joinInformation *theInfo)
@@ -537,13 +538,11 @@ static void AlphaJoinsDriver(
 /*   associated with the specified rule.    */
 /********************************************/
 void EnvAlphaJoins(
-  void *theEnv,
-  void *vTheDefrule,
+  Environment *theEnv,
+  Defrule *theDefrule,
   long alphaCount,
   struct joinInformation *theInfo)
   {
-   struct defrule *theDefrule = (struct defrule *) vTheDefrule;
-   
    AlphaJoinsDriver(theEnv,theDefrule->lastJoin->lastLevel,alphaCount,theInfo);
   }
 
@@ -553,7 +552,7 @@ void EnvAlphaJoins(
 /*   beta joins.                                   */
 /****************************************************/
 static long BetaJoinCountDriver(
-  void *theEnv,
+  Environment *theEnv,
   struct joinNode *theJoin)
   {
    long betaCount = 0;
@@ -576,11 +575,9 @@ static long BetaJoinCountDriver(
 /*   joins associated with the specified rule.  */
 /************************************************/
 long EnvBetaJoinCount(
-  void *theEnv,
-  void *vTheDefrule)
+  Environment *theEnv,
+  Defrule *theDefrule)
   {
-   struct defrule *theDefrule = (struct defrule *) vTheDefrule;
-   
    return BetaJoinCountDriver(theEnv,theDefrule->lastJoin->lastLevel);
   }
 
@@ -589,7 +586,7 @@ long EnvBetaJoinCount(
 /*   retrieve a rule's beta joins.    */
 /**************************************/
 static void BetaJoinsDriver(
-  void *theEnv,
+  Environment *theEnv,
   struct joinNode *theJoin,
   long betaIndex,
   struct joinInformation *theJoinInfoArray,
@@ -654,13 +651,11 @@ static void BetaJoinsDriver(
 /*   associated with the specified rule.  */
 /******************************************/
 void EnvBetaJoins(
-  void *theEnv,
-  void *vTheDefrule,
+  Environment *theEnv,
+  Defrule *theDefrule,
   long betaArraySize,
   struct joinInformation *theInfo)
   {
-   struct defrule *theDefrule = (struct defrule *) vTheDefrule;
-      
    BetaJoinsDriver(theEnv,theDefrule->lastJoin->lastLevel,betaArraySize,theInfo,theDefrule->lastJoin->leftMemory,theDefrule->lastJoin);
   }
 
@@ -669,7 +664,7 @@ void EnvBetaJoins(
 /*    array of the specified size.                */
 /**************************************************/
 struct joinInformation *EnvCreateJoinArray(
-   void *theEnv,
+   Environment *theEnv,
    long size)
    {
     if (size == 0) return (NULL);
@@ -682,7 +677,7 @@ struct joinInformation *EnvCreateJoinArray(
 /*    array of the specified size.            */
 /**********************************************/
 void EnvFreeJoinArray(
-   void *theEnv,
+   Environment *theEnv,
    struct joinInformation *theArray,
    long size)
    {
@@ -695,7 +690,7 @@ void EnvFreeJoinArray(
 /* ListAlphaMatches: */
 /*********************/
 static long long ListAlphaMatches(
-  void *theEnv,
+  Environment *theEnv,
   struct joinInformation *theInfo,
   int output)
   {
@@ -788,7 +783,7 @@ static long long ListAlphaMatches(
 /* BetaHeaderString */
 /********************/
 static const char *BetaHeaderString(
-  void *theEnv,
+  Environment *theEnv,
   struct joinInformation *infoArray,
   long joinIndex,
   long arraySize)
@@ -918,7 +913,7 @@ static const char *BetaHeaderString(
 /* ListBetaMatches: */
 /********************/
 static long long ListBetaMatches(
-  void *theEnv,
+  Environment *theEnv,
   struct joinInformation *infoArray,
   long joinIndex,
   long arraySize,
@@ -964,7 +959,7 @@ static long long ListBetaMatches(
 /* CountPatterns: */
 /******************/
 static int CountPatterns(
-  void *theEnv,
+  Environment *theEnv,
   struct joinNode *theJoin,
   bool followRight)
   {
@@ -1001,7 +996,7 @@ static int CountPatterns(
 /*   for the join-activity command.        */
 /*******************************************/
 void JoinActivityCommand(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *result)
   {
    const char *ruleName, *argument;
@@ -1061,12 +1056,12 @@ void JoinActivityCommand(
 /*   for the join-activity command.  */
 /*************************************/
 void EnvJoinActivity(
-  void *theEnv,
-  void *theRule,
+  Environment *theEnv,
+  Defrule *theRule,
   int output,
   DATA_OBJECT *result)
   {
-   struct defrule *rulePtr;
+   Defrule *rulePtr;
    long disjunctCount, disjunctIndex, joinIndex;
    long arraySize;
    struct joinInformation *theInfo;
@@ -1095,7 +1090,7 @@ void EnvJoinActivity(
 
    for (disjunctIndex = 1; disjunctIndex <= disjunctCount; disjunctIndex++)
      {
-      rulePtr = (struct defrule *) EnvGetNthDisjunct(theEnv,theRule,disjunctIndex);
+      rulePtr = EnvGetNthDisjunct(theEnv,theRule,disjunctIndex);
       
       /*==============================================*/
       /* Create the array containing the list of beta */
@@ -1129,7 +1124,7 @@ void EnvJoinActivity(
 /* ActivityHeaderString */
 /************************/
 static const char *ActivityHeaderString(
-  void *theEnv,
+  Environment *theEnv,
   struct joinInformation *infoArray,
   long joinIndex,
   long arraySize)
@@ -1203,7 +1198,7 @@ static const char *ActivityHeaderString(
 /* ListBetaJoinActivity: */
 /*************************/
 static void ListBetaJoinActivity(
-  void *theEnv,
+  Environment *theEnv,
   struct joinInformation *infoArray,
   long joinIndex,
   long arraySize,
@@ -1280,14 +1275,14 @@ static void ListBetaJoinActivity(
 /*   counts for each rule back to 0.         */
 /*********************************************/
 static void JoinActivityReset(
-  void *theEnv,
+  Environment *theEnv,
   struct constructHeader *theConstruct,
   void *buffer)
   {
 #if MAC_XCD
 #pragma unused(buffer)
 #endif
-   struct defrule *theDefrule = (struct defrule *) theConstruct;
+   Defrule *theDefrule = (Defrule *) theConstruct;
    struct joinNode *theJoin = theDefrule->lastJoin;
    
    while (theJoin != NULL)
@@ -1310,9 +1305,11 @@ static void JoinActivityReset(
 /*   for the reset-join-activity command.       */
 /************************************************/
 void JoinActivityResetCommand(
-  void *theEnv)
+  Environment *theEnv)
   { 
-   DoForAllConstructs(theEnv,JoinActivityReset,DefruleData(theEnv)->DefruleModuleIndex,true,NULL);
+   DoForAllConstructs(theEnv,
+                      JoinActivityReset,
+                      DefruleData(theEnv)->DefruleModuleIndex,true,NULL);
   }
 
 /***************************************/
@@ -1320,7 +1317,7 @@ void JoinActivityResetCommand(
 /*   for the timetag function.         */
 /***************************************/
 long long TimetagFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    DATA_OBJECT item;
    void *ptr;
@@ -1342,15 +1339,15 @@ long long TimetagFunction(
 /*   for the rule-complexity function.         */
 /***********************************************/
 long RuleComplexityCommand(
-  void *theEnv)
+  Environment *theEnv)
   {
    const char *ruleName;
-   struct defrule *rulePtr;
+   Defrule *rulePtr;
 
    ruleName = GetConstructName(theEnv,"rule-complexity","rule name");
    if (ruleName == NULL) return(-1);
 
-   rulePtr = (struct defrule *) EnvFindDefrule(theEnv,ruleName);
+   rulePtr = EnvFindDefrule(theEnv,ruleName);
    if (rulePtr == NULL)
      {
       CantFindItemErrorMessage(theEnv,"defrule",ruleName);
@@ -1365,7 +1362,7 @@ long RuleComplexityCommand(
 /*   for the show-joins command.          */
 /******************************************/
 void ShowJoinsCommand(
-  void *theEnv)
+  Environment *theEnv)
   {
    const char *ruleName;
    void *rulePtr;
@@ -1390,10 +1387,10 @@ void ShowJoinsCommand(
 /*   for the show-joins command. */
 /*********************************/
 static void ShowJoins(
-  void *theEnv,
-  void *theRule)
+  Environment *theEnv,
+  Defrule *theRule)
   {
-   struct defrule *rulePtr;
+   Defrule *rulePtr;
    struct joinNode *theJoin;
    struct joinNode *joinList[MAXIMUM_NUMBER_OF_PATTERNS];
    int numberOfJoins;
@@ -1401,7 +1398,7 @@ static void ShowJoins(
    int disjunct = 0;
    unsigned long count = 0;
 
-   rulePtr = (struct defrule *) theRule;
+   rulePtr = theRule;
    
    if ((rulePtr != NULL) && (rulePtr->disjunct != NULL))
      { disjunct = 1; }
@@ -1536,7 +1533,7 @@ static void ShowJoins(
 /*   in each slot of the alpha hash table.            */
 /******************************************************/
 void ShowAlphaHashTable(
-   void *theEnv)
+   Environment *theEnv)
    {
     int i, count;
     long totalCount = 0;
@@ -1590,7 +1587,7 @@ void ShowAlphaHashTable(
 #if DEBUGGING_FUNCTIONS
 
 void Matches(
-  void *theRule,
+  Defrule *theRule,
   int output,
   DATA_OBJECT *result)
   {
@@ -1598,7 +1595,7 @@ void Matches(
   }
 
 void JoinActivity(
-  void *theRule,
+  Defrule *theRule,
   int output,
   DATA_OBJECT *result)
   {

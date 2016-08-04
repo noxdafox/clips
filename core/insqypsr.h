@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -35,6 +35,9 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_insqypsr
@@ -47,8 +50,8 @@
 
 #include "expressn.h"
 
-   EXPRESSION                    *ParseQueryNoAction(void *,EXPRESSION *,const char *);
-   EXPRESSION                    *ParseQueryAction(void *,EXPRESSION *,const char *);
+   EXPRESSION                    *ParseQueryNoAction(Environment *,EXPRESSION *,const char *);
+   EXPRESSION                    *ParseQueryAction(Environment *,EXPRESSION *,const char *);
 
 #endif /* INSTANCE_SET_QUERIES && (! RUN_TIME) */
 

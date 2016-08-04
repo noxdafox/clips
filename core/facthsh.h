@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                 FACT HASHING MODULE                 */
    /*******************************************************/
@@ -34,6 +34,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_facthsh
@@ -54,15 +57,15 @@ struct factHashEntry
 
 #define SIZE_FACT_HASH 16231
 
-   void                           AddHashedFact(void *,struct fact *,unsigned long);
-   bool                           RemoveHashedFact(void *,struct fact *);
-   unsigned long                  HandleFactDuplication(void *,void *,bool *);
-   bool                           EnvGetFactDuplication(void *);
-   bool                           EnvSetFactDuplication(void *,bool);
-   void                           InitializeFactHashTable(void *);
-   void                           ShowFactHashTable(void *);
-   unsigned long                  HashFact(struct fact *);
-   bool                           FactWillBeAsserted(void *,void *);
+   void                           AddHashedFact(Environment *,Fact *,unsigned long);
+   bool                           RemoveHashedFact(Environment *,Fact *);
+   unsigned long                  HandleFactDuplication(Environment *,Fact *,bool *);
+   bool                           EnvGetFactDuplication(Environment *);
+   bool                           EnvSetFactDuplication(Environment *,bool);
+   void                           InitializeFactHashTable(Environment *);
+   void                           ShowFactHashTable(Environment *);
+   unsigned long                  HashFact(Fact *);
+   bool                           FactWillBeAsserted(Environment *,Fact *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 

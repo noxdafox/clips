@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/04/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*            CONSTRAINT CHECKING HEADER FILE          */
    /*******************************************************/
@@ -40,6 +40,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_cstrnchk
@@ -59,20 +62,20 @@
 #define CARDINALITY_VIOLATION           5
 #define ALLOWED_CLASSES_VIOLATION       6
 
-   bool                           CheckCardinalityConstraint(void *,long,CONSTRAINT_RECORD *);
+   bool                           CheckCardinalityConstraint(Environment *,long,CONSTRAINT_RECORD *);
    bool                           CheckAllowedValuesConstraint(int,void *,CONSTRAINT_RECORD *);
-   bool                           CheckAllowedClassesConstraint(void *,int,void *,CONSTRAINT_RECORD *);
-   int                            ConstraintCheckExpressionChain(void *,struct expr *,
+   bool                           CheckAllowedClassesConstraint(Environment *,int,void *,CONSTRAINT_RECORD *);
+   int                            ConstraintCheckExpressionChain(Environment *,struct expr *,
                                                                      CONSTRAINT_RECORD *);
-   void                           ConstraintViolationErrorMessage(void *,const char *,const char *,bool,int,
+   void                           ConstraintViolationErrorMessage(Environment *,const char *,const char *,bool,int,
                                                                       struct symbolHashNode *,
                                                                       int,int,CONSTRAINT_RECORD *,
                                                                       bool);
-   int                            ConstraintCheckValue(void *,int,void *,CONSTRAINT_RECORD *);
-   int                            ConstraintCheckDataObject(void *,DATA_OBJECT *,CONSTRAINT_RECORD *);
+   int                            ConstraintCheckValue(Environment *,int,void *,CONSTRAINT_RECORD *);
+   int                            ConstraintCheckDataObject(Environment *,DATA_OBJECT *,CONSTRAINT_RECORD *);
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-   int                            ConstraintCheckExpression(void *,struct expr *,
-                                                                CONSTRAINT_RECORD *);
+   int                            ConstraintCheckExpression(Environment *,struct expr *,
+                                                            CONSTRAINT_RECORD *);
 #endif
 #if (! RUN_TIME)
    bool                           UnmatchableConstraint(struct constraintRecord *);

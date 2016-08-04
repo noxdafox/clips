@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*                    MEMORY MODULE                    */
    /*******************************************************/
@@ -44,6 +44,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -71,11 +74,11 @@
 /* InitializeMemory: Sets up memory tables. */
 /********************************************/
 void InitializeMemory(
-  void *theEnv)
+  Environment *theEnv)
   {
    AllocateEnvironmentData(theEnv,MEMORY_DATA,sizeof(struct memoryData),NULL);
 
-   MemoryData(theEnv)->OutOfMemoryFunction = DefaultOutOfMemoryFunction;
+   MemoryData(theEnv)->OutOfMemoryCallback = DefaultOutOfMemoryFunction;
 
 #if (MEM_TABLE_SIZE > 0)
    MemoryData(theEnv)->MemoryTable = (struct memoryPtr **)
@@ -102,26 +105,26 @@ void InitializeMemory(
 /* genalloc: A generic memory allocation function. */
 /***************************************************/
 void *genalloc(
-  void *theEnv,
+  Environment *theEnv,
   size_t size)
   {
-   char *memPtr;
+   void *memPtr;
       
-   memPtr = (char *) malloc(size);
+   memPtr = malloc(size);
         
    if (memPtr == NULL)
      {
       EnvReleaseMem(theEnv,(long) ((size * 5 > 4096) ? size * 5 : 4096));
-      memPtr = (char *) malloc(size);
+      memPtr = malloc(size);
       if (memPtr == NULL)
         {
          EnvReleaseMem(theEnv,-1L);
-         memPtr = (char *) malloc(size);
+         memPtr = malloc(size);
          while (memPtr == NULL)
            {
-            if ((*MemoryData(theEnv)->OutOfMemoryFunction)(theEnv,size))
-              return(NULL);
-            memPtr = (char *) malloc(size);
+            if ((*MemoryData(theEnv)->OutOfMemoryCallback)(theEnv,size))
+              return NULL;
+            memPtr = malloc(size);
            }
         }
      }
@@ -129,7 +132,7 @@ void *genalloc(
    MemoryData(theEnv)->MemoryAmount += (long) size;
    MemoryData(theEnv)->MemoryCalls++;
 
-   return((void *) memPtr);
+   return memPtr;
   }
 
 /***********************************************/
@@ -137,7 +140,7 @@ void *genalloc(
 /*   when the KB runs out of memory.           */
 /***********************************************/
 bool DefaultOutOfMemoryFunction(
-  void *theEnv,
+  Environment *theEnv,
   size_t size)
   {
 #if MAC_XCD
@@ -154,20 +157,22 @@ bool DefaultOutOfMemoryFunction(
 /* EnvSetOutOfMemoryFunction: Allows the function which is */
 /*   called when the KB runs out of memory to be changed.  */
 /***********************************************************/
-bool (*EnvSetOutOfMemoryFunction(void *theEnv,bool (*functionPtr)(void *,size_t)))(void *,size_t)
+OutOfMemoryFunction *EnvSetOutOfMemoryFunction(
+  Environment *theEnv,
+  OutOfMemoryFunction *functionPtr)
   {
-   bool (*tmpPtr)(void *,size_t);
+   OutOfMemoryFunction *tmpPtr;
 
-   tmpPtr = MemoryData(theEnv)->OutOfMemoryFunction;
-   MemoryData(theEnv)->OutOfMemoryFunction = functionPtr;
-   return(tmpPtr);
+   tmpPtr = MemoryData(theEnv)->OutOfMemoryCallback;
+   MemoryData(theEnv)->OutOfMemoryCallback = functionPtr;
+   return tmpPtr;
   }
 
 /****************************************************/
 /* genfree: A generic memory deallocation function. */
 /****************************************************/
 void genfree(
-  void *theEnv,
+  Environment *theEnv,
   void *waste,
   size_t size)
   {   
@@ -181,7 +186,7 @@ void genfree(
 /* genrealloc: Simple (i.e. dumb) version of realloc. */
 /******************************************************/
 void *genrealloc(
-  void *theEnv,
+  Environment *theEnv,
   void *oldaddr,
   size_t oldsz,
   size_t newsz)
@@ -199,7 +204,7 @@ void *genrealloc(
         { newaddr[i] = ((char *) oldaddr)[i]; }
       for ( ; i < newsz; i++)
         { newaddr[i] = '\0'; }
-      rm(theEnv,(void *) oldaddr,oldsz);
+      rm(theEnv,oldaddr,oldsz);
      }
 
    return((void *) newaddr);
@@ -210,7 +215,7 @@ void *genrealloc(
 /*   for the mem-used command.  */
 /********************************/
 long int EnvMemUsed(
-  void *theEnv)
+  Environment *theEnv)
   {
    return(MemoryData(theEnv)->MemoryAmount);
   }
@@ -220,7 +225,7 @@ long int EnvMemUsed(
 /*   for the mem-requests command.  */
 /************************************/
 long int EnvMemRequests(
-  void *theEnv)
+  Environment *theEnv)
   {
    return(MemoryData(theEnv)->MemoryCalls);
   }
@@ -230,7 +235,7 @@ long int EnvMemRequests(
 /*   of memory used to be updated.     */
 /***************************************/
 long int UpdateMemoryUsed(
-  void *theEnv,
+  Environment *theEnv,
   long int value)
   {
    MemoryData(theEnv)->MemoryAmount += value;
@@ -242,7 +247,7 @@ long int UpdateMemoryUsed(
 /*   of memory requests to be updated.     */
 /*******************************************/
 long int UpdateMemoryRequests(
-  void *theEnv,
+  Environment *theEnv,
   long int value)
   {
    MemoryData(theEnv)->MemoryCalls += value;
@@ -254,7 +259,7 @@ long int UpdateMemoryRequests(
 /*   for the release-mem command.  */
 /***********************************/
 long int EnvReleaseMem(
-  void *theEnv,
+  Environment *theEnv,
   long int maximum)
   {
    struct memoryPtr *tmpPtr, *memPtr;
@@ -269,7 +274,7 @@ long int EnvReleaseMem(
       while (memPtr != NULL)
         {
          tmpPtr = memPtr->next;
-         genfree(theEnv,(void *) memPtr,(unsigned) i);
+         genfree(theEnv,memPtr,(unsigned) i);
          memPtr = tmpPtr;
          amount += i;
          returns++;
@@ -288,7 +293,7 @@ long int EnvReleaseMem(
 /* gm1: Allocates memory and sets all bytes to zero. */
 /*****************************************************/
 void *gm1(
-  void *theEnv,
+  Environment *theEnv,
   size_t size)
   {
    struct memoryPtr *memPtr;
@@ -327,7 +332,7 @@ void *gm1(
 /* gm2: Allocates memory and does not initialize it. */
 /*****************************************************/
 void *gm2(
-  void *theEnv,
+  Environment *theEnv,
   size_t size)
   {
 #if (MEM_TABLE_SIZE > 0)
@@ -357,7 +362,7 @@ void *gm2(
 /* gm3: Allocates memory and does not initialize it. */
 /*****************************************************/
 void *gm3(
-  void *theEnv,
+  Environment *theEnv,
   size_t size)
   {
 #if (MEM_TABLE_SIZE > 0)
@@ -386,7 +391,7 @@ void *gm3(
 /*   maintained pool of free memory.    */
 /****************************************/
 void rm(
-  void *theEnv,
+  Environment *theEnv,
   void *str,
   size_t size)
   {
@@ -406,7 +411,7 @@ void rm(
 #if (MEM_TABLE_SIZE > 0)
    if (size >= MEM_TABLE_SIZE)
      {
-      genfree(theEnv,(void *) str,size);
+      genfree(theEnv,str,size);
       return;
      }
 
@@ -414,7 +419,7 @@ void rm(
    memPtr->next = MemoryData(theEnv)->MemoryTable[size];
    MemoryData(theEnv)->MemoryTable[size] = memPtr;
 #else
-   genfree(theEnv,(void *) str,size));
+   genfree(theEnv,str,size));
 #endif
   }
 
@@ -424,7 +429,7 @@ void rm(
 /*   size is indicated with a long integer. */
 /********************************************/
 void rm3(
-  void *theEnv,
+  Environment *theEnv,
   void *str,
   size_t size)
   {
@@ -444,7 +449,7 @@ void rm3(
 #if (MEM_TABLE_SIZE > 0)
    if (size >= MEM_TABLE_SIZE)
      {
-      genfree(theEnv,(void *) str,size);
+      genfree(theEnv,str,size);
       return;
      }
 
@@ -452,7 +457,7 @@ void rm3(
    memPtr->next = MemoryData(theEnv)->MemoryTable[(int) size];
    MemoryData(theEnv)->MemoryTable[(int) size] = memPtr;
 #else
-   genfree(theEnv,(void *) str,size);
+   genfree(theEnv,str,size);
 #endif
   }
 
@@ -460,12 +465,12 @@ void rm3(
 /* PoolSize: Returns number of bytes in free pool. */
 /***************************************************/
 unsigned long PoolSize(
-  void *theEnv)
+  Environment *theEnv)
   {
    unsigned long cnt = 0;
 
 #if (MEM_TABLE_SIZE > 0)
-   register int i;
+   int i;
    struct memoryPtr *memPtr;
 
    for (i = sizeof(char *) ; i < MEM_TABLE_SIZE ; i++)
@@ -488,7 +493,7 @@ unsigned long PoolSize(
 /*   equivalent to pool_size on anything other than the IBM-PC */
 /***************************************************************/
 unsigned long ActualPoolSize(
-  void *theEnv)
+  Environment *theEnv)
   {
    return(PoolSize(theEnv));
   }
@@ -498,7 +503,7 @@ unsigned long ActualPoolSize(
 /*    of the memory conservation flag.      */
 /********************************************/
 bool EnvSetConserveMemory(
-  void *theEnv,
+  Environment *theEnv,
   bool value)
   {
    bool ov;
@@ -513,7 +518,7 @@ bool EnvSetConserveMemory(
 /*    of the memory conservation flag.     */
 /*******************************************/
 bool EnvGetConserveMemory(
-  void *theEnv)
+  Environment *theEnv)
   {
    return(MemoryData(theEnv)->ConserveMemory);
   }
@@ -563,11 +568,6 @@ bool SetConserveMemory(
   bool value)
   {
    return EnvSetConserveMemory(GetCurrentEnvironment(),value);
-  }
-
-bool (*SetOutOfMemoryFunction(bool (*functionPtr)(void *,size_t)))(void *,size_t)
-  {
-   return EnvSetOutOfMemoryFunction(GetCurrentEnvironment(),functionPtr);
   }
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */

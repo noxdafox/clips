@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*             DEFGLOBAL PARSER HEADER FILE            */
    /*******************************************************/
@@ -36,6 +36,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_globlpsr
@@ -46,9 +49,9 @@
 
 #include "expressn.h"
 
-   bool                    ParseDefglobal(void *,const char *);
-   bool                    ReplaceGlobalVariable(void *,struct expr *);
-   void                    GlobalReferenceErrorMessage(void *,const char *);
+   bool                    ParseDefglobal(Environment *,const char *);
+   bool                    ReplaceGlobalVariable(Environment *,struct expr *);
+   void                    GlobalReferenceErrorMessage(Environment *,const char *);
 
 #endif /* _H_globlpsr */
 

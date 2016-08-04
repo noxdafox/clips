@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                DEFFACTS HEADER FILE                 */
    /*******************************************************/
@@ -38,6 +38,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_dffctdef
@@ -45,6 +48,8 @@
 #pragma once
 
 #define _H_dffctdef
+
+typedef struct deffacts Deffacts;
 
 #include "constrct.h"
 #include "conscomp.h"
@@ -78,25 +83,25 @@ struct deffactsModule
 
 #define DeffactsData(theEnv) ((struct deffactsData *) GetEnvironmentData(theEnv,DEFFACTS_DATA))
 
-   void                           InitializeDeffacts(void *);
-   void                          *EnvFindDeffacts(void *,const char *);
-   void                          *EnvFindDeffactsInModule(void *,const char *);
-   void                          *EnvGetNextDeffacts(void *,void *);
+   void                           InitializeDeffacts(Environment *);
+   Deffacts                      *EnvFindDeffacts(Environment *,const char *);
+   Deffacts                      *EnvFindDeffactsInModule(Environment *,const char *);
+   Deffacts                      *EnvGetNextDeffacts(Environment *,Deffacts *);
    void                           CreateInitialFactDeffacts(void);
-   bool                           EnvIsDeffactsDeletable(void *,void *);
-   struct deffactsModule         *GetDeffactsModuleItem(void *,struct defmodule *);
-   const char                    *EnvDeffactsModule(void *,void *);
-   const char                    *EnvGetDeffactsName(void *,void *);
-   const char                    *EnvGetDeffactsPPForm(void *,void *);
+   bool                           EnvIsDeffactsDeletable(Environment *,Deffacts *);
+   struct deffactsModule         *GetDeffactsModuleItem(Environment *,Defmodule *);
+   const char                    *EnvDeffactsModule(Environment *,Deffacts *);
+   const char                    *EnvGetDeffactsName(Environment *,Deffacts *);
+   const char                    *EnvGetDeffactsPPForm(Environment *,Deffacts *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-   void                          *FindDeffacts(const char *);
-   void                          *GetNextDeffacts(void *);
-   bool                           IsDeffactsDeletable(void *);
-   const char                    *DeffactsModule(void *);
-   const char                    *GetDeffactsName(void *);
-   const char                    *GetDeffactsPPForm(void *);
+   Deffacts                      *FindDeffacts(const char *);
+   Deffacts                      *GetNextDeffacts(Deffacts *);
+   bool                           IsDeffactsDeletable(Deffacts *);
+   const char                    *DeffactsModule(Deffacts *);
+   const char                    *GetDeffactsName(Deffacts *);
+   const char                    *GetDeffactsPPForm(Deffacts *);
    
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */
 

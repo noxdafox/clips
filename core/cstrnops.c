@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/04/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*            CONSTRAINT OPERATIONS MODULE             */
    /*******************************************************/
@@ -23,6 +23,9 @@
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -50,38 +53,38 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                     IntersectNumericExpressions(void *,
+   static void                     IntersectNumericExpressions(Environment *,
                                                                CONSTRAINT_RECORD *,
                                                                CONSTRAINT_RECORD *,
                                                                CONSTRAINT_RECORD *,bool);
-   static void                     IntersectAllowedValueExpressions(void *,
+   static void                     IntersectAllowedValueExpressions(Environment *,
                                                                     CONSTRAINT_RECORD *,
                                                                     CONSTRAINT_RECORD *,
                                                                     CONSTRAINT_RECORD *);
-   static void                     IntersectAllowedClassExpressions(void *,
+   static void                     IntersectAllowedClassExpressions(Environment *,
                                                                     CONSTRAINT_RECORD *,
                                                                     CONSTRAINT_RECORD *,
                                                                     CONSTRAINT_RECORD *);
    static bool                     FindItemInExpression(int,void *,bool,struct expr *);
    static void                     UpdateRestrictionFlags(CONSTRAINT_RECORD *);
 #if (! BLOAD_ONLY)
-   static void                     UnionRangeMinMaxValueWithList(void *,
+   static void                     UnionRangeMinMaxValueWithList(Environment *,
                                                                  struct expr *,
                                                                  struct expr *,
                                                                  struct expr **,
                                                                  struct expr **);
-   static void                     UnionNumericExpressions(void *,
+   static void                     UnionNumericExpressions(Environment *,
                                                          CONSTRAINT_RECORD *,
                                                          CONSTRAINT_RECORD *,
                                                          CONSTRAINT_RECORD *,bool);
-   static struct expr             *AddToUnionList(void *,
+   static struct expr             *AddToUnionList(Environment *,
                                                   struct expr *,struct expr *,
                                                   CONSTRAINT_RECORD *);
-   static void                     UnionAllowedValueExpressions(void *,
+   static void                     UnionAllowedValueExpressions(Environment *,
                                                                 CONSTRAINT_RECORD *,
                                                                 CONSTRAINT_RECORD *,
                                                                 CONSTRAINT_RECORD *);
-   static void                     UnionAllowedClassExpressions(void *,
+   static void                     UnionAllowedClassExpressions(Environment *,
                                                                 CONSTRAINT_RECORD *,
                                                                 CONSTRAINT_RECORD *,
                                                                 CONSTRAINT_RECORD *);
@@ -93,7 +96,7 @@
 /*   is the intersection of two other constraint records.     */
 /**************************************************************/
 struct constraintRecord *IntersectConstraints(
-  void *theEnv,
+  Environment *theEnv,
   CONSTRAINT_RECORD *c1,
   CONSTRAINT_RECORD *c2)
   {
@@ -238,7 +241,7 @@ struct constraintRecord *IntersectConstraints(
 /*   intersection of two allowed-values lists.   */
 /*************************************************/
 static void IntersectAllowedValueExpressions(
-  void *theEnv,
+  Environment *theEnv,
   CONSTRAINT_RECORD *constraint1,
   CONSTRAINT_RECORD *constraint2,
   CONSTRAINT_RECORD *newConstraint)
@@ -302,7 +305,7 @@ static void IntersectAllowedValueExpressions(
 /*   intersection of two allowed-classes lists.  */
 /*************************************************/
 static void IntersectAllowedClassExpressions(
-  void *theEnv,
+  Environment *theEnv,
   CONSTRAINT_RECORD *constraint1,
   CONSTRAINT_RECORD *constraint2,
   CONSTRAINT_RECORD *newConstraint)
@@ -366,7 +369,7 @@ static void IntersectAllowedClassExpressions(
 /*   of two range or two min/max-fields constraints.     */
 /*********************************************************/
 static void IntersectNumericExpressions(
-  void *theEnv,
+  Environment *theEnv,
   CONSTRAINT_RECORD *constraint1,
   CONSTRAINT_RECORD *constraint2,
   CONSTRAINT_RECORD *newConstraint,
@@ -641,7 +644,7 @@ static bool RestrictionOnType(
 /*   is the union of two other constraint records.        */
 /**********************************************************/
 struct constraintRecord *UnionConstraints(
-  void *theEnv,
+  Environment *theEnv,
   CONSTRAINT_RECORD *c1,
   CONSTRAINT_RECORD *c2)
   {
@@ -760,7 +763,7 @@ struct constraintRecord *UnionConstraints(
 /*   two range or two min/max-fields constraints. */
 /**************************************************/
 static void UnionNumericExpressions(
-  void *theEnv,
+  Environment *theEnv,
   CONSTRAINT_RECORD *constraint1,
   CONSTRAINT_RECORD *constraint2,
   CONSTRAINT_RECORD *newConstraint,
@@ -881,7 +884,7 @@ static void UnionNumericExpressions(
 /*   pair of values with a list of such values.          */
 /*********************************************************/
 static void UnionRangeMinMaxValueWithList(
-  void *theEnv,
+  Environment *theEnv,
   struct expr *addmin,
   struct expr *addmax,
   struct expr **theMinList,
@@ -1036,7 +1039,7 @@ static void UnionRangeMinMaxValueWithList(
 /*   of two sets of allowed-classes expressions.   */
 /***************************************************/
 static void UnionAllowedClassExpressions(
-  void *theEnv,
+  Environment *theEnv,
   CONSTRAINT_RECORD *constraint1,
   CONSTRAINT_RECORD *constraint2,
   CONSTRAINT_RECORD *newConstraint)
@@ -1054,7 +1057,7 @@ static void UnionAllowedClassExpressions(
 /*   of two sets of allowed value expressions.     */
 /***************************************************/
 static void UnionAllowedValueExpressions(
-  void *theEnv,
+  Environment *theEnv,
   CONSTRAINT_RECORD *constraint1,
   CONSTRAINT_RECORD *constraint2,
   CONSTRAINT_RECORD *newConstraint)
@@ -1073,7 +1076,7 @@ static void UnionAllowedValueExpressions(
 /*   value added satisfies the constraints for the list.    */
 /************************************************************/
 static struct expr *AddToUnionList(
-  void *theEnv,
+  Environment *theEnv,
   struct expr *theList1,
   struct expr *theHead,
   CONSTRAINT_RECORD *theConstraint)
@@ -1136,7 +1139,7 @@ static struct expr *AddToUnionList(
 /*   restriction list of a constraint record.       */
 /****************************************************/
 void RemoveConstantFromConstraint(
-  void *theEnv,
+  Environment *theEnv,
   int theType,
   void *theValue,
   CONSTRAINT_RECORD *theConstraint)

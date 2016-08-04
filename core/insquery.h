@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -36,6 +36,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_insquery
@@ -50,20 +53,20 @@
 
 typedef struct query_class
   {
-   DEFCLASS *cls;
-   struct defmodule *theModule;
+   Defclass *cls;
+   Defmodule *theModule;
    struct query_class *chain,*nxt;
   } QUERY_CLASS;
 
 typedef struct query_soln
   {
-   INSTANCE_TYPE **soln;
+   Instance **soln;
    struct query_soln *nxt;
   } QUERY_SOLN;
 
 typedef struct query_core
   {
-   INSTANCE_TYPE **solns;
+   Instance **solns;
    EXPRESSION *query,*action;
    QUERY_SOLN *soln_set,*soln_bottom;
    unsigned soln_size,soln_cnt;
@@ -90,15 +93,15 @@ struct instanceQueryData
 
 #define QUERY_DELIMETER_STRING     "(QDS)"
 
-   void                           SetupQuery(void *);
-   void                          *GetQueryInstance(void *);
-   void                           GetQueryInstanceSlot(void *,DATA_OBJECT *);
-   bool                           AnyInstances(void *);
-   void                           QueryFindInstance(void *,DATA_OBJECT *);
-   void                           QueryFindAllInstances(void *,DATA_OBJECT *);
-   void                           QueryDoForInstance(void *,DATA_OBJECT *);
-   void                           QueryDoForAllInstances(void *,DATA_OBJECT *);
-   void                           DelayedQueryDoForAllInstances(void *,DATA_OBJECT *);
+   void                           SetupQuery(Environment *);
+   void                          *GetQueryInstance(Environment *);
+   void                           GetQueryInstanceSlot(Environment *,DATA_OBJECT *);
+   bool                           AnyInstances(Environment *);
+   void                           QueryFindInstance(Environment *,DATA_OBJECT *);
+   void                           QueryFindAllInstances(Environment *,DATA_OBJECT *);
+   void                           QueryDoForInstance(Environment *,DATA_OBJECT *);
+   void                           QueryDoForAllInstances(Environment *,DATA_OBJECT *);
+   void                           DelayedQueryDoForAllInstances(Environment *,DATA_OBJECT *);
 
 #endif /* INSTANCE_SET_QUERIES */
 

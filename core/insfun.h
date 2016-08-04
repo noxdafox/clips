@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*               INSTANCE FUNCTIONS MODULE             */
    /*******************************************************/
@@ -61,6 +61,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_insfun
@@ -76,50 +79,50 @@
 
 typedef struct igarbage
   {
-   INSTANCE_TYPE *ins;
+   Instance *ins;
    struct igarbage *nxt;
   } IGARBAGE;
 
 #define INSTANCE_TABLE_HASH_SIZE 8191
-#define InstanceSizeHeuristic(ins)      sizeof(INSTANCE_TYPE)
+#define InstanceSizeHeuristic(ins)      sizeof(Instance)
 
-   void                           EnvIncrementInstanceCount(void *,void *);
-   void                           EnvDecrementInstanceCount(void *,void *);
-   void                           InitializeInstanceTable(void *);
-   void                           CleanupInstances(void *);
+   void                           EnvIncrementInstanceCount(Environment *,Instance *);
+   void                           EnvDecrementInstanceCount(Environment *,Instance *);
+   void                           InitializeInstanceTable(Environment *);
+   void                           CleanupInstances(Environment *);
    unsigned                       HashInstance(SYMBOL_HN *);
-   void                           DestroyAllInstances(void *);
-   void                           RemoveInstanceData(void *,INSTANCE_TYPE *);
-   INSTANCE_TYPE                 *FindInstanceBySymbol(void *,SYMBOL_HN *);
-   INSTANCE_TYPE                 *FindInstanceInModule(void *,SYMBOL_HN *,struct defmodule *,
-                                           struct defmodule *,bool);
-   INSTANCE_SLOT                 *FindInstanceSlot(void *,INSTANCE_TYPE *,SYMBOL_HN *);
-   int                            FindInstanceTemplateSlot(void *,DEFCLASS *,SYMBOL_HN *);
-   bool                           PutSlotValue(void *,INSTANCE_TYPE *,INSTANCE_SLOT *,DATA_OBJECT *,DATA_OBJECT *,const char *);
-   bool                           DirectPutSlotValue(void *,INSTANCE_TYPE *,INSTANCE_SLOT *,DATA_OBJECT *,DATA_OBJECT *);
-   bool                           ValidSlotValue(void *,DATA_OBJECT *,SLOT_DESC *,INSTANCE_TYPE *,const char *);
-   INSTANCE_TYPE                 *CheckInstance(void *,const char *);
-   void                           NoInstanceError(void *,const char *,const char *);
-   void                           StaleInstanceAddress(void *,const char *,int);
-   bool                           EnvGetInstancesChanged(void *);
-   void                           EnvSetInstancesChanged(void *,bool);
-   void                           PrintSlot(void *,const char *,SLOT_DESC *,INSTANCE_TYPE *,const char *);
-   void                           PrintInstanceNameAndClass(void *,const char *,INSTANCE_TYPE *,bool);
-   void                           PrintInstanceName(void *,const char *,void *);
-   void                           PrintInstanceLongForm(void *,const char *,void *);
+   void                           DestroyAllInstances(Environment *);
+   void                           RemoveInstanceData(Environment *,Instance *);
+   Instance                      *FindInstanceBySymbol(Environment *,SYMBOL_HN *);
+   Instance                      *FindInstanceInModule(Environment *,SYMBOL_HN *,Defmodule *,
+                                                       Defmodule *,bool);
+   INSTANCE_SLOT                 *FindInstanceSlot(Environment *,Instance *,SYMBOL_HN *);
+   int                            FindInstanceTemplateSlot(Environment *,Defclass *,SYMBOL_HN *);
+   bool                           PutSlotValue(Environment *,Instance *,INSTANCE_SLOT *,DATA_OBJECT *,DATA_OBJECT *,const char *);
+   bool                           DirectPutSlotValue(Environment *,Instance *,INSTANCE_SLOT *,DATA_OBJECT *,DATA_OBJECT *);
+   bool                           ValidSlotValue(Environment *,DATA_OBJECT *,SlotDescriptor *,Instance *,const char *);
+   Instance                      *CheckInstance(Environment *,const char *);
+   void                           NoInstanceError(Environment *,const char *,const char *);
+   void                           StaleInstanceAddress(Environment *,const char *,int);
+   bool                           EnvGetInstancesChanged(Environment *);
+   void                           EnvSetInstancesChanged(Environment *,bool);
+   void                           PrintSlot(Environment *,const char *,SlotDescriptor *,Instance *,const char *);
+   void                           PrintInstanceNameAndClass(Environment *,const char *,Instance *,bool);
+   void                           PrintInstanceName(Environment *,const char *,Instance *);
+   void                           PrintInstanceLongForm(Environment *,const char *,Instance *);
 #if DEFRULE_CONSTRUCT && OBJECT_SYSTEM
-   void                           DecrementObjectBasisCount(void *,void *);
-   void                           IncrementObjectBasisCount(void *,void *);
-   void                           MatchObjectFunction(void *,void *);
-   bool                           NetworkSynchronized(void *,void *);
-   bool                           InstanceIsDeleted(void *,void *);
+   void                           DecrementObjectBasisCount(Environment *,Instance *);
+   void                           IncrementObjectBasisCount(Environment *,Instance *);
+   void                           MatchObjectFunction(Environment *,Instance *);
+   bool                           NetworkSynchronized(Environment *,Instance *);
+   bool                           InstanceIsDeleted(Environment *,Instance *);
 #endif
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-   void                           DecrementInstanceCount(void *);
+   void                           DecrementInstanceCount(Instance *);
    bool                           GetInstancesChanged(void);
-   void                           IncrementInstanceCount(void *);
+   void                           IncrementInstanceCount(Instance *);
    void                           SetInstancesChanged(bool);
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */

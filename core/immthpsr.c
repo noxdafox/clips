@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*         IMPLICIT SYSTEM METHODS PARSING MODULE      */
    /*******************************************************/
@@ -39,6 +39,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 /* =========================================
@@ -71,9 +74,9 @@
    =========================================
    ***************************************** */
 
-static void FormMethodsFromRestrictions(void *,DEFGENERIC *,const char *,EXPRESSION *);
-static RESTRICTION *ParseRestrictionType(void *,int);
-static EXPRESSION *GenTypeExpression(void *,EXPRESSION *,int,int,const char *);
+   static void                    FormMethodsFromRestrictions(Environment *,Defgeneric *,const char *,EXPRESSION *);
+   static RESTRICTION            *ParseRestrictionType(Environment *,int);
+   static EXPRESSION             *GenTypeExpression(Environment *,EXPRESSION *,int,int,const char *);
 
 /* =========================================
    *****************************************
@@ -92,8 +95,8 @@ static EXPRESSION *GenTypeExpression(void *,EXPRESSION *,int,int,const char *);
                  Assumes no other methods already present
  ********************************************************/
 void AddImplicitMethods(
-  void *theEnv,
-  DEFGENERIC *gfunc)
+  Environment *theEnv,
+  Defgeneric *gfunc)
   {
    struct FunctionDefinition *sysfunc;
    EXPRESSION action;
@@ -102,7 +105,7 @@ void AddImplicitMethods(
    if (sysfunc == NULL)
      return;
    action.type = FCALL;
-   action.value = (void *) sysfunc;
+   action.value = sysfunc;
    action.nextArg = NULL;
    action.argList = NULL;
    FormMethodsFromRestrictions(theEnv,gfunc,(sysfunc->restrictions == NULL) ? NULL: sysfunc->restrictions->contents,&action);
@@ -127,18 +130,18 @@ void AddImplicitMethods(
   NOTES        : None
  **********************************************************************/
 static void FormMethodsFromRestrictions(
-  void *theEnv,
-  DEFGENERIC *gfunc,
+  Environment *theEnv,
+  Defgeneric *gfunc,
   const char *rstring,
   EXPRESSION *actions)
   {
-   DEFMETHOD *meth;
+   Defmethod *meth;
    EXPRESSION *plist,*tmp,*bot,*svBot;
    RESTRICTION *rptr;
    char theChar[2],defaultc;
    int min,max,mposn;
    bool needMinimumMethod;
-   register int i,j;
+   int i,j;
 
    /* ===================================
       The system function will accept any
@@ -208,19 +211,20 @@ static void FormMethodsFromRestrictions(
       bot = tmp;
      }
 
-   /* ===============================
-      Remember where restrictions end
-      for minimum number of arguments
-      =============================== */
+   /*==================================*/
+   /* Remember where restrictions end  */
+   /* for minimum number of arguments. */
+   /*==================================*/
+   
    svBot = bot;
    needMinimumMethod = true;
 
-   /* =======================================================
-      Attach one or more new methods to correspond
-      to the possible variations of the extra arguments
-
-      Add a separate method for each specified extra argument
-      ======================================================= */
+   /*=====================================================*/
+   /* Attach one or more new methods to correspond to the */
+   /* possible variations of the extra arguments. Add a   */
+   /* separate method for each specified extra argument.  */
+   /*=====================================================*/
+   
    i = 0;
    while (rstring[j] != '\0')
      {
@@ -249,29 +253,31 @@ static void FormMethodsFromRestrictions(
         }
      }
 
-   /* ==============================================
-      Add a method to account for wildcard arguments
-      and attach a query in case there is a limit
-      ============================================== */
+   /*================================================*/
+   /* Add a method to account for wildcard arguments */
+   /* and attach a query in case there is a limit.   */
+   /*================================================*/
+   
    if ((min + i) != max)
      {
-      /* ================================================
-         If a wildcard is present immediately after the
-         minimum number of args - then the minimum case
-         will already be handled by this method. We don't
-         need to add an extra method for that case
-         ================================================ */
+      /*==================================================*/
+      /* If a wildcard is present immediately after the   */
+      /* minimum number of args - then the minimum case   */
+      /* will already be handled by this method. We don't */
+      /* need to add an extra method for that case.       */
+      /*==================================================*/
+      
       if (i == 0)
         { needMinimumMethod = false; }
 
       rptr = ParseRestrictionType(theEnv,(int) defaultc);
       if (max != -1)
         {
-         rptr->query = GenConstant(theEnv,FCALL,(void *) FindFunction(theEnv,"<="));
-         rptr->query->argList = GenConstant(theEnv,FCALL,(void *) FindFunction(theEnv,"length$"));
+         rptr->query = GenConstant(theEnv,FCALL,FindFunction(theEnv,"<="));
+         rptr->query->argList = GenConstant(theEnv,FCALL,FindFunction(theEnv,"length$"));
          rptr->query->argList->argList = GenProcWildcardReference(theEnv,min + i + 1);
          rptr->query->argList->nextArg =
-               GenConstant(theEnv,INTEGER,(void *) EnvAddLong(theEnv,(long long) (max - min - i)));
+               GenConstant(theEnv,INTEGER,EnvAddLong(theEnv,(long long) (max - min - i)));
         }
       tmp = get_struct(theEnv,expr);
       tmp->argList = (EXPRESSION *) rptr;
@@ -286,13 +292,14 @@ static void FormMethodsFromRestrictions(
       meth->system = 1;
      }
 
-   /* ===================================================
-      When extra methods had to be added because of
-      different restrictions on the optional arguments OR
-      the system function accepts a fixed number of args,
-      we must add a specific method for the minimum case.
-      Otherwise, the method with the wildcard covers it.
-      =================================================== */
+   /*=====================================================*/
+   /* When extra methods had to be added because of       */
+   /* different restrictions on the optional arguments OR */
+   /* the system function accepts a fixed number of args, */
+   /* we must add a specific method for the minimum case. */
+   /* Otherwise, the method with the wildcard covers it.  */
+   /*=====================================================*/
+      
    if (needMinimumMethod)
      {
       if (svBot != NULL)
@@ -320,7 +327,7 @@ static void FormMethodsFromRestrictions(
   NOTES        : None
  *******************************************************************/
 static RESTRICTION *ParseRestrictionType(
-  void *theEnv,
+  Environment *theEnv,
   int code)
   {
    RESTRICTION *rptr;
@@ -396,7 +403,7 @@ static RESTRICTION *ParseRestrictionType(
                  to classes
  ***************************************************/
 static EXPRESSION *GenTypeExpression(
-  void *theEnv,
+  Environment *theEnv,
   EXPRESSION *top,
   int nonCOOLCode,
   int primitiveCode,
@@ -416,9 +423,9 @@ static EXPRESSION *GenTypeExpression(
 
 #if OBJECT_SYSTEM
    if (primitiveCode != -1)
-     tmp = GenConstant(theEnv,0,(void *) DefclassData(theEnv)->PrimitiveClassMap[primitiveCode]);
+     tmp = GenConstant(theEnv,0,DefclassData(theEnv)->PrimitiveClassMap[primitiveCode]);
    else
-     tmp = GenConstant(theEnv,0,(void *) LookupDefclassByMdlOrScope(theEnv,COOLName));
+     tmp = GenConstant(theEnv,0,LookupDefclassByMdlOrScope(theEnv,COOLName));
 #else
    tmp = GenConstant(theEnv,0,EnvAddLong(theEnv,(long long) nonCOOLCode));
 #endif

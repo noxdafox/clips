@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/04/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*          CONSTRUCT BINARY LOAD/SAVE MODULE          */
    /*******************************************************/
@@ -20,6 +20,9 @@
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -110,7 +113,7 @@ void AssignBsaveConstructHeaderVals(
   NOTES        : None
  ***************************************************/
 void UpdateConstructHeader(
-  void *theEnv,
+  Environment *theEnv,
   struct bsaveConstructHeader *theBsaveConstruct,
   struct constructHeader *theConstruct,
   int itemModuleSize,
@@ -147,7 +150,7 @@ void UpdateConstructHeader(
   NOTES        : None
  *******************************************************/
 void UnmarkConstructHeader(
-  void *theEnv,
+  Environment *theEnv,
   struct constructHeader *theConstruct)
   {
    DecrementSymbolCount(theEnv,theConstruct->name);

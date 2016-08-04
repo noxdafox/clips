@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*             LOGICAL DEPENDENCIES MODULE             */
    /*******************************************************/
@@ -33,6 +33,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -57,7 +60,7 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static struct dependency      *DetachAssociatedDependencies(void *,struct dependency *,void *);
+   static struct dependency      *DetachAssociatedDependencies(Environment *,struct dependency *,void *);
 
 /***********************************************************************/
 /* AddLogicalDependencies: Adds the logical dependency links between a */
@@ -75,7 +78,7 @@
 /*   with the make-instance command.                                   */
 /***********************************************************************/
 bool AddLogicalDependencies(
-  void *theEnv,
+  Environment *theEnv,
   struct patternEntity *theEntity,
   bool existingEntity)
   {
@@ -117,18 +120,18 @@ bool AddLogicalDependencies(
    /*==============================================================*/
 
    newDependency = get_struct(theEnv,dependency);
-   newDependency->dPtr = (void *) theEntity;
+   newDependency->dPtr = theEntity;
    newDependency->next = (struct dependency *) theBinds->dependents;
-   theBinds->dependents = (void *) newDependency;
+   theBinds->dependents = newDependency;
 
    /*================================================================*/
    /* Add a dependency link between the entity and the partialMatch. */
    /*================================================================*/
 
    newDependency = get_struct(theEnv,dependency);
-   newDependency->dPtr = (void *) theBinds;
+   newDependency->dPtr = theBinds;
    newDependency->next = (struct dependency *) theEntity->dependents;
-   theEntity->dependents = (void *) newDependency;
+   theEntity->dependents = newDependency;
 
    /*==================================================================*/
    /* Return true to indicate that the data entity should be asserted. */
@@ -165,7 +168,7 @@ struct partialMatch *FindLogicalBind(
         { return(compPtr); }
      }
 
-   return(NULL);
+   return NULL;
   }
 
 /*********************************************************************/
@@ -176,7 +179,7 @@ struct partialMatch *FindLogicalBind(
 /*   entities.                                                       */
 /*********************************************************************/
 void RemoveEntityDependencies(
-  void *theEnv,
+  Environment *theEnv,
   struct patternEntity *theEntity)
   {
    struct dependency *fdPtr, *nextPtr, *theList;
@@ -206,8 +209,8 @@ void RemoveEntityDependencies(
 
       theBinds = (struct partialMatch *) fdPtr->dPtr;
       theList = (struct dependency *) theBinds->dependents;
-      theList = DetachAssociatedDependencies(theEnv,theList,(void *) theEntity);
-      theBinds->dependents = (void *) theList;
+      theList = DetachAssociatedDependencies(theEnv,theList,theEntity);
+      theBinds->dependents = theList;
 
       /*========================*/
       /* Return the dependency. */
@@ -235,7 +238,7 @@ void RemoveEntityDependencies(
 /*   the partial match to the entity are not removed.               */
 /********************************************************************/
 void ReturnEntityDependencies(
-  void *theEnv,
+  Environment *theEnv,
   struct patternEntity *theEntity)
   {
    struct dependency *fdPtr, *nextPtr;
@@ -260,7 +263,7 @@ void ReturnEntityDependencies(
 /*   the other direction.                                          */
 /*******************************************************************/
 static struct dependency *DetachAssociatedDependencies(
-  void *theEnv,
+  Environment *theEnv,
   struct dependency *theList,
   void *theEntity)
   {
@@ -294,7 +297,7 @@ static struct dependency *DetachAssociatedDependencies(
 /*   links from the data entities which point back to the partial match.  */
 /**************************************************************************/
 void RemovePMDependencies(
-  void *theEnv,
+  Environment *theEnv,
   struct partialMatch *theBinds)
   {
    struct dependency *fdPtr, *nextPtr, *theList;
@@ -309,8 +312,8 @@ void RemovePMDependencies(
       theEntity = (struct patternEntity *) fdPtr->dPtr;
 
       theList = (struct dependency *) theEntity->dependents;
-      theList = DetachAssociatedDependencies(theEnv,theList,(void *) theBinds);
-      theEntity->dependents = (void *) theList;
+      theList = DetachAssociatedDependencies(theEnv,theList,theBinds);
+      theEntity->dependents = theList;
 
       rtn_struct(theEnv,dependency,fdPtr);
       fdPtr = nextPtr;
@@ -324,7 +327,7 @@ void RemovePMDependencies(
 /*   from a partial match that point to any data entities.  */
 /************************************************************/
 void DestroyPMDependencies(
-  void *theEnv,
+  Environment *theEnv,
   struct partialMatch *theBinds)
   {
    struct dependency *fdPtr, *nextPtr;
@@ -353,7 +356,7 @@ void DestroyPMDependencies(
 /*   will be deleted as a result of losing its logical support.         */
 /************************************************************************/
 void RemoveLogicalSupport(
-  void *theEnv,
+  Environment *theEnv,
   struct partialMatch *theBinds)
   {
    struct dependency *dlPtr, *tempPtr, *theList;
@@ -390,8 +393,8 @@ void RemoveLogicalSupport(
       theEntity = (struct patternEntity *) dlPtr->dPtr;
 
       theList = (struct dependency *) theEntity->dependents;
-      theList = DetachAssociatedDependencies(theEnv,theList,(void *) theBinds);
-      theEntity->dependents = (void *) theList;
+      theList = DetachAssociatedDependencies(theEnv,theList,theBinds);
+      theEntity->dependents = theList;
 
       /*==============================================================*/
       /* If the data entity has lost all of its logical support, then */
@@ -433,7 +436,7 @@ void RemoveLogicalSupport(
 /*   lost their logical support.                                    */
 /********************************************************************/
 void ForceLogicalRetractions(
-  void *theEnv)
+  Environment *theEnv)
   {
    struct dependency *tempPtr;
    struct patternEntity *theEntity;
@@ -490,7 +493,7 @@ void ForceLogicalRetractions(
 /* Dependencies: C access routine for the dependencies command. */
 /****************************************************************/
 void Dependencies(
-  void *theEnv,
+  Environment *theEnv,
   struct patternEntity *theEntity)
   {
    struct dependency *fdPtr;
@@ -525,7 +528,7 @@ void Dependencies(
 /* Dependents: C access routine for the dependents command. */
 /************************************************************/
 void Dependents(
-  void *theEnv,
+  Environment *theEnv,
   struct patternEntity *theEntity)
   {
    struct patternEntity *entityPtr = NULL;
@@ -592,7 +595,7 @@ void Dependents(
 /*   for the dependencies command.           */
 /*********************************************/
 void DependenciesCommand(
-  void *theEnv)
+  Environment *theEnv)
   {
    DATA_OBJECT item;
    void *ptr;
@@ -615,7 +618,7 @@ void DependenciesCommand(
 /*   for the dependents command.           */
 /*******************************************/
 void DependentsCommand(
-  void *theEnv)
+  Environment *theEnv)
   {
    DATA_OBJECT item;
    void *ptr;

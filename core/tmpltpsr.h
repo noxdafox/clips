@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*            DEFTEMPLATE PARSER HEADER FILE           */
    /*******************************************************/
@@ -36,6 +36,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_tmpltpsr
@@ -47,8 +50,8 @@
 #include "symbol.h"
 #include "tmpltdef.h"
 
-   bool                           ParseDeftemplate(void *,const char *);
-   void                           InstallDeftemplate(void *,struct deftemplate *);
+   bool                           ParseDeftemplate(Environment *,const char *);
+   void                           InstallDeftemplate(Environment *,Deftemplate *);
 
 #endif /* _H_tmpltpsr */
 

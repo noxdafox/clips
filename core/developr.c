@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*                   DEVELOPER MODULE                  */
    /*******************************************************/
@@ -41,6 +41,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -75,21 +78,21 @@
 #if DEVELOPER
 
 #if DEFRULE_CONSTRUCT && OBJECT_SYSTEM
-static void PrintOPNLevel(void *theEnv,OBJECT_PATTERN_NODE *,char *,int);
+   static void                    PrintOPNLevel(Environment *,OBJECT_PATTERN_NODE *,char *,int);
 #endif
 
 /**************************************************/
 /* DeveloperCommands: Sets up developer commands. */
 /**************************************************/
 void DeveloperCommands(
-  void *theEnv)
+  Environment *theEnv)
   {
 #if ! RUN_TIME
    EnvDefineFunction2(theEnv,"primitives-info",'v', PTIEF PrimitiveTablesInfo,"PrimitiveTablesInfo","00");
    EnvDefineFunction2(theEnv,"primitives-usage",'v', PTIEF PrimitiveTablesUsage,"PrimitiveTablesUsage","00");
 
 #if DEFRULE_CONSTRUCT && DEFTEMPLATE_CONSTRUCT
-   EnvDefineFunction2(theEnv,"validate-fact-integrity", 'b', ValidateFactIntegrity, "ValidateFactIntegrity", "00");
+   EnvDefineFunction2(theEnv,"validate-fact-integrity", 'b', PTIEF ValidateFactIntegrity, "ValidateFactIntegrity", "00");
 
    EnvDefineFunction2(theEnv,"show-fpn",'v', PTIEF ShowFactPatternNetwork,"ShowFactPatternNetwork","11w");
    EnvDefineFunction2(theEnv,"show-fht",'v', PTIEF ShowFactHashTable,"ShowFactHashTable","00");
@@ -112,7 +115,7 @@ void DeveloperCommands(
 /*   symbol, float, integer, and bitmap tables.       */
 /******************************************************/
 void PrimitiveTablesInfo(
-  void *theEnv)
+  Environment *theEnv)
   {
    unsigned long i;
    SYMBOL_HN **symbolArray, *symbolPtr;
@@ -198,7 +201,7 @@ void PrimitiveTablesInfo(
 /*   symbol, float, integer, and bitmap tables.       */
 /******************************************************/
 void PrimitiveTablesUsage(
-  void *theEnv)
+  Environment *theEnv)
   {
    unsigned long i;
    int symbolCounts[COUNT_SIZE], floatCounts[COUNT_SIZE];
@@ -291,9 +294,9 @@ void PrimitiveTablesUsage(
 /*   the facts for atom value integrity.       */
 /***********************************************/
 bool ValidateFactIntegrity(
-  void *theEnv)
+  Environment *theEnv)
   {
-   struct fact *theFact;
+   Fact *theFact;
    struct multifield *theSegment;
    int i;
    SYMBOL_HN *theSymbol;
@@ -303,9 +306,9 @@ bool ValidateFactIntegrity(
    if (((struct environmentData *) theEnv)->initialized == false)
      { return true; }
 
-   for (theFact = (struct fact *) EnvGetNextFact(theEnv,NULL);
+   for (theFact = EnvGetNextFact(theEnv,NULL);
         theFact != NULL;
-        theFact = (struct fact *) EnvGetNextFact(theEnv,theFact))
+        theFact = EnvGetNextFact(theEnv,theFact))
      {
       if (theFact->factHeader.busyCount <= 0)
         { return false; }
@@ -347,17 +350,17 @@ bool ValidateFactIntegrity(
 /*   fact pattern network for a specified deftemplate. */
 /*******************************************************/
 void ShowFactPatternNetwork(
-  void *theEnv)
+  Environment *theEnv)
   {
    struct factPatternNode *patternPtr;
-   struct deftemplate *theDeftemplate;
+   Deftemplate *theDeftemplate;
    const char *theName;
    int depth = 0, i;
 
    theName = GetConstructName(theEnv,"show-fpn","template name");
    if (theName == NULL) return;
 
-   theDeftemplate = (struct deftemplate *) EnvFindDeftemplate(theEnv,theName);
+   theDeftemplate = EnvFindDeftemplate(theEnv,theName);
    if (theDeftemplate == NULL) return;
 
    patternPtr = theDeftemplate->patternNetwork;
@@ -419,7 +422,7 @@ void ShowFactPatternNetwork(
   NOTES        : None
  ***************************************************/
 void PrintObjectPatternNetwork(
-  void *theEnv)
+  Environment *theEnv)
   {
    char indentbuf[80];
 
@@ -439,14 +442,14 @@ void PrintObjectPatternNetwork(
   NOTES        : None
  **********************************************************/
 static void PrintOPNLevel(
-  void *theEnv,
+  Environment *theEnv,
   OBJECT_PATTERN_NODE *pptr,
   char *indentbuf,
   int ilen)
   {
    CLASS_BITMAP *cbmp;
    SLOT_BITMAP *sbmp;
-   register unsigned i;
+   unsigned i;
    OBJECT_PATTERN_NODE *uptr;
    OBJECT_ALPHA_NODE *alphaPtr;
 
@@ -476,7 +479,7 @@ static void PrintOPNLevel(
            if (TestBitMap(cbmp->map,i))
              {
               EnvPrintRouter(theEnv,WDISPLAY," ");
-              EnvPrintRouter(theEnv,WDISPLAY,EnvGetDefclassName(theEnv,(void *) DefclassData(theEnv)->ClassIDMap[i]));
+              EnvPrintRouter(theEnv,WDISPLAY,EnvGetDefclassName(theEnv,DefclassData(theEnv)->ClassIDMap[i]));
              }
          if (alphaPtr->slotbmp != NULL)
            {
@@ -524,11 +527,11 @@ static void PrintOPNLevel(
 /*   instances in the instance hash table.       */
 /******************************************************/
 void InstanceTableUsage(
-  void *theEnv)
+  Environment *theEnv)
   {
    unsigned long i;
    int instanceCounts[COUNT_SIZE];
-   INSTANCE_TYPE *ins;
+   Instance *ins;
    unsigned long int instanceCount, totalInstanceCount = 0;
 
    EnvArgCountCheck(theEnv,"instance-table-usage",EXACTLY,0);
@@ -579,7 +582,7 @@ void InstanceTableUsage(
 /* ExamineMemory: */
 /******************/
 static void ExamineMemory(
-  void *theEnv,
+  Environment *theEnv,
   struct joinNode *theJoin,
   struct betaMemory *theMemory)  
   {
@@ -596,7 +599,7 @@ static void ExamineMemory(
 /* TraverseBetaMemories: */
 /*************************/
 static void TraverseBetaMemories(
-  void *theEnv,
+  Environment *theEnv,
   struct joinNode *theJoin)
   {
    if (theJoin == NULL) 
@@ -620,16 +623,16 @@ static void TraverseBetaMemories(
 /* ValidateRuleBetaMemoriesAction: */
 /***********************************/  
 static void ValidateRuleBetaMemoriesAction(
-  void *theEnv,
+  Environment *theEnv,
   struct constructHeader *theConstruct,
   void *buffer)
   {
 #if MAC_XCD
 #pragma unused(buffer)
 #endif
-   struct defrule *rulePtr, *tmpPtr;
+   Defrule *rulePtr, *tmpPtr;
 
-   for (rulePtr = (struct defrule *) theConstruct, tmpPtr = rulePtr;
+   for (rulePtr = (Defrule *) theConstruct, tmpPtr = rulePtr;
         rulePtr != NULL;
         rulePtr = rulePtr->disjunct)
      {
@@ -641,10 +644,10 @@ static void ValidateRuleBetaMemoriesAction(
 /* ValidateBetaMemories */
 /************************/
 void ValidateBetaMemories(
-  void *theEnv)
+  Environment *theEnv)
   {
    EnvPrintRouter(theEnv,WPROMPT,"ValidateBetaMemories");
-   DoForAllConstructs(theEnv,ValidateRuleBetaMemoriesAction,DefruleData(theEnv)->DefruleModuleIndex,false,NULL); 
+   DoForAllConstructs(theEnv,ValidateRuleBetaMemoriesAction,DefruleData(theEnv)->DefruleModuleIndex,false,NULL);
   }
 
 #endif

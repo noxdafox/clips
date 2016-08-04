@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*               EXTERNAL FUNCTION MODULE              */
    /*******************************************************/
@@ -40,6 +40,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -59,11 +62,11 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    AddHashFunction(void *,struct FunctionDefinition *);
-   static void                    InitializeFunctionHashTable(void *);
-   static void                    DeallocateExternalFunctionData(void *);
+   static void                    AddHashFunction(Environment *,struct FunctionDefinition *);
+   static void                    InitializeFunctionHashTable(Environment *);
+   static void                    DeallocateExternalFunctionData(Environment *);
 #if (! RUN_TIME)
-   static bool                    RemoveHashFunction(void *,struct FunctionDefinition *);
+   static bool                    RemoveHashFunction(Environment *,struct FunctionDefinition *);
 #endif
 
 /*********************************************************/
@@ -71,7 +74,7 @@
 /*    data for external functions.                       */
 /*********************************************************/
 void InitializeExternalFunctionData(
-  void *theEnv)
+  Environment *theEnv)
   {
    AllocateEnvironmentData(theEnv,EXTERNAL_FUNCTION_DATA,sizeof(struct externalFunctionData),DeallocateExternalFunctionData);
   }
@@ -81,7 +84,7 @@ void InitializeExternalFunctionData(
 /*    data for external functions.                         */
 /***********************************************************/
 static void DeallocateExternalFunctionData(
-  void *theEnv)
+  Environment *theEnv)
   {
    struct FunctionHash *fhPtr, *nextFHPtr;
    int i;
@@ -123,10 +126,10 @@ static void DeallocateExternalFunctionData(
 /*   external function so that the KB can access it.  */
 /******************************************************/
 bool EnvDefineFunction(
-  void *theEnv,
+  Environment *theEnv,
   const char *name,
   int returnType,
-  int (*pointer)(void *),
+  int (*pointer)(Environment *),
   const char *actualName)
   {
    return(DefineFunction3(theEnv,name,returnType,pointer,actualName,NULL,true,NULL));
@@ -137,10 +140,10 @@ bool EnvDefineFunction(
 /*   user external function so that the KB can access it.   */
 /************************************************************/
 bool EnvDefineFunctionWithContext(
-  void *theEnv,
+  Environment *theEnv,
   const char *name,
   int returnType,
-  int (*pointer)(void *),
+  int (*pointer)(Environment *),
   const char *actualName,
   void *context)
   {
@@ -152,10 +155,10 @@ bool EnvDefineFunctionWithContext(
 /*   external function so that the KB can access it.   */
 /*******************************************************/
 bool EnvDefineFunction2(
-  void *theEnv,
+  Environment *theEnv,
   const char *name,
   int returnType,
-  int (*pointer)(void *),
+  int (*pointer)(Environment *),
   const char *actualName,
   const char *restrictions)
   {
@@ -167,10 +170,10 @@ bool EnvDefineFunction2(
 /*   user external function so that the KB can access it.    */
 /*************************************************************/
 bool EnvDefineFunction2WithContext(
-  void *theEnv,
+  Environment *theEnv,
   const char *name,
   int returnType,
-  int (*pointer)(void *),
+  int (*pointer)(Environment *),
   const char *actualName,
   const char *restrictions,
   void *context)
@@ -204,10 +207,10 @@ bool EnvDefineFunction2WithContext(
 /*     x - instance address                                  */
 /*************************************************************/
 bool DefineFunction3(
-  void *theEnv,
+  Environment *theEnv,
   const char *name,
   int returnType,
-  int (*pointer)(void *),
+  int (*pointer)(Environment *),
   const char *actualName,
   const char *restrictions,
   bool environmentAware,
@@ -286,7 +289,7 @@ bool DefineFunction3(
 /*   definition from the list of functions.    */
 /***********************************************/
 bool UndefineFunction(
-  void *theEnv,
+  Environment *theEnv,
   const char *functionName)
   {
    SYMBOL_HN *findValue;
@@ -326,7 +329,7 @@ bool UndefineFunction(
 /*   from the function hash table.        */
 /******************************************/
 static bool RemoveHashFunction(
-  void *theEnv,
+  Environment *theEnv,
   struct FunctionDefinition *fdPtr)
   {
    struct FunctionHash *fhPtr, *lastPtr = NULL;
@@ -365,9 +368,9 @@ static bool RemoveHashFunction(
 /*   parsing routines.                                                     */
 /***************************************************************************/
 bool AddFunctionParser(
-  void *theEnv,
+  Environment *theEnv,
   const char *functionName,
-  struct expr *(*fpPtr)(void *,struct expr *,const char *))
+  struct expr *(*fpPtr)(Environment *,struct expr *,const char *))
   {
    struct FunctionDefinition *fdPtr;
 
@@ -389,7 +392,7 @@ bool AddFunctionParser(
 /*   function (if it exists) from the function entry for a function. */
 /*********************************************************************/
 bool RemoveFunctionParser(
-  void *theEnv,
+  Environment *theEnv,
   const char *functionName)
   {
    struct FunctionDefinition *fdPtr;
@@ -411,7 +414,7 @@ bool RemoveFunctionParser(
 /* i.e. can the function be a method for a generic function.     */
 /*****************************************************************/
 bool FuncSeqOvlFlags(
-  void *theEnv,
+  Environment *theEnv,
   const char *functionName,
   bool seqp,
   bool ovlp)
@@ -561,7 +564,7 @@ int GetNthRestriction(
 /* GetFunctionList: Returns the ListOfFunctions. */
 /*************************************************/
 struct FunctionDefinition *GetFunctionList(
-  void *theEnv)
+  Environment *theEnv)
   {
    return(ExternalFunctionData(theEnv)->ListOfFunctions);
   }
@@ -571,7 +574,7 @@ struct FunctionDefinition *GetFunctionList(
 /*   the function entries to the FunctionHashTable.           */
 /**************************************************************/
 void InstallFunctionList(
-  void *theEnv,
+  Environment *theEnv,
   struct FunctionDefinition *value)
   {
    int i;
@@ -607,14 +610,14 @@ void InstallFunctionList(
 /*   in the function list, otherwise returns NULL.      */
 /********************************************************/
 struct FunctionDefinition *FindFunction(
-  void *theEnv,
+  Environment *theEnv,
   const char *functionName)
   {
    struct FunctionHash *fhPtr;
    unsigned hashValue;
    SYMBOL_HN *findValue;
 
-   if (ExternalFunctionData(theEnv)->FunctionHashtable == NULL) return(NULL);
+   if (ExternalFunctionData(theEnv)->FunctionHashtable == NULL) return NULL;
    
    hashValue = HashSymbol(functionName,SIZE_FUNCTION_HASH);
 
@@ -628,7 +631,7 @@ struct FunctionDefinition *FindFunction(
         { return(fhPtr->fdPtr); }
      }
 
-   return(NULL);
+   return NULL;
   }
 
 /*********************************************************/
@@ -636,7 +639,7 @@ struct FunctionDefinition *FindFunction(
 /*   the function hash table to NULL.                    */
 /*********************************************************/
 static void InitializeFunctionHashTable(
-  void *theEnv)
+  Environment *theEnv)
   {
    int i;
 
@@ -651,7 +654,7 @@ static void InitializeFunctionHashTable(
 /* AddHashFunction: Adds a function to the function hash table. */
 /****************************************************************/
 static void AddHashFunction(
-  void *theEnv,
+  Environment *theEnv,
   struct FunctionDefinition *fdPtr)
   {
    struct FunctionHash *newhash, *temp;
@@ -731,12 +734,12 @@ bool DefineFunction(
   int (*pointer)(void),
   const char *actualName)
   {
-   void *theEnv;
+   Environment *theEnv;
    
    theEnv = GetCurrentEnvironment();
 
    return(DefineFunction3(theEnv,name,returnType,
-                          (int (*)(void *)) pointer,
+                          (int (*)(Environment *)) pointer,
                           actualName,NULL,false,NULL));
   }
 
@@ -747,12 +750,12 @@ bool DefineFunction2(
   const char *actualName,
   const char *restrictions)
   {
-   void *theEnv;
+   Environment *theEnv;
    
    theEnv = GetCurrentEnvironment();
 
    return(DefineFunction3(theEnv,name,returnType,
-                          (int (*)(void *)) pointer,
+                          (int (*)(Environment *)) pointer,
                           actualName,restrictions,false,NULL));
   }
 

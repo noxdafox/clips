@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*    INFERENCE ENGINE OBJECT ACCESS ROUTINES MODULE   */
    /*******************************************************/
@@ -37,6 +37,9 @@
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 /* =========================================
@@ -80,44 +83,42 @@
 
 #define GetInsSlot(ins,si) ins->slotAddresses[ins->cls->slotNameMap[si]-1]
 
-/* =========================================
-   *****************************************
-      INTERNALLY VISIBLE FUNCTION HEADERS
-   =========================================
-   ***************************************** */
+/***************************************/
+/* LOCAL INTERNAL FUNCTION DEFINITIONS */
+/***************************************/
 
-static void PrintObjectGetVarJN1(void *,const char *,void *);
-static bool ObjectGetVarJNFunction1(void *,void *,DATA_OBJECT *);
-static void PrintObjectGetVarJN2(void *,const char *,void *);
-static bool ObjectGetVarJNFunction2(void *,void *,DATA_OBJECT *);
-static void PrintObjectGetVarPN1(void *,const char *,void *);
-static bool ObjectGetVarPNFunction1(void *,void *,DATA_OBJECT *);
-static void PrintObjectGetVarPN2(void *,const char *,void *);
-static bool ObjectGetVarPNFunction2(void *,void *,DATA_OBJECT *);
-static void PrintObjectCmpConstant(void *,const char *,void *);
-static void PrintSlotLengthTest(void *,const char *,void *);
-static bool SlotLengthTestFunction(void *,void *,DATA_OBJECT *);
-static void PrintPNSimpleCompareFunction1(void *,const char *,void *);
-static bool PNSimpleCompareFunction1(void *,void *,DATA_OBJECT *);
-static void PrintPNSimpleCompareFunction2(void *,const char *,void *);
-static bool PNSimpleCompareFunction2(void *,void *,DATA_OBJECT *);
-static void PrintPNSimpleCompareFunction3(void *,const char *,void *);
-static bool PNSimpleCompareFunction3(void *,void *,DATA_OBJECT *);
-static void PrintJNSimpleCompareFunction1(void *,const char *,void *);
-static bool JNSimpleCompareFunction1(void *,void *,DATA_OBJECT *);
-static void PrintJNSimpleCompareFunction2(void *,const char *,void *);
-static bool JNSimpleCompareFunction2(void *,void *,DATA_OBJECT *);
-static void PrintJNSimpleCompareFunction3(void *,const char *,void *);
-static bool JNSimpleCompareFunction3(void *,void *,DATA_OBJECT *);
-static void GetPatternObjectAndMarks(void *,int,int,int,INSTANCE_TYPE **,struct multifieldMarker **);
-static void GetObjectValueGeneral(void *,DATA_OBJECT *,INSTANCE_TYPE *,
-                                 struct multifieldMarker *,struct ObjectMatchVar1 *);
-static void GetObjectValueSimple(void *,DATA_OBJECT *,INSTANCE_TYPE *,struct ObjectMatchVar2 *);
-static long CalculateSlotField(struct multifieldMarker *,INSTANCE_SLOT *,long,long *); /* 6.04 Bug Fix */
-static void GetInsMultiSlotField(FIELD *,INSTANCE_TYPE *,unsigned,unsigned,unsigned);
-static void DeallocateObjectReteData(void *);
-static void DestroyObjectPatternNetwork(void *,OBJECT_PATTERN_NODE *);
-static void DestroyObjectAlphaNodes(void *,OBJECT_ALPHA_NODE *);
+   static void                    PrintObjectGetVarJN1(Environment *,const char *,void *);
+   static bool                    ObjectGetVarJNFunction1(Environment *,void *,DATA_OBJECT *);
+   static void                    PrintObjectGetVarJN2(Environment *,const char *,void *);
+   static bool                    ObjectGetVarJNFunction2(Environment *,void *,DATA_OBJECT *);
+   static void                    PrintObjectGetVarPN1(Environment *,const char *,void *);
+   static bool                    ObjectGetVarPNFunction1(Environment *,void *,DATA_OBJECT *);
+   static void                    PrintObjectGetVarPN2(Environment *,const char *,void *);
+   static bool                    ObjectGetVarPNFunction2(Environment *,void *,DATA_OBJECT *);
+   static void                    PrintObjectCmpConstant(Environment *,const char *,void *);
+   static void                    PrintSlotLengthTest(Environment *,const char *,void *);
+   static bool                    SlotLengthTestFunction(Environment *,void *,DATA_OBJECT *);
+   static void                    PrintPNSimpleCompareFunction1(Environment *,const char *,void *);
+   static bool                    PNSimpleCompareFunction1(Environment *,void *,DATA_OBJECT *);
+   static void                    PrintPNSimpleCompareFunction2(Environment *,const char *,void *);
+   static bool                    PNSimpleCompareFunction2(Environment *,void *,DATA_OBJECT *);
+   static void                    PrintPNSimpleCompareFunction3(Environment *,const char *,void *);
+   static bool                    PNSimpleCompareFunction3(Environment *,void *,DATA_OBJECT *);
+   static void                    PrintJNSimpleCompareFunction1(Environment *,const char *,void *);
+   static bool                    JNSimpleCompareFunction1(Environment *,void *,DATA_OBJECT *);
+   static void                    PrintJNSimpleCompareFunction2(Environment *,const char *,void *);
+   static bool                    JNSimpleCompareFunction2(Environment *,void *,DATA_OBJECT *);
+   static void                    PrintJNSimpleCompareFunction3(Environment *,const char *,void *);
+   static bool                    JNSimpleCompareFunction3(Environment *,void *,DATA_OBJECT *);
+   static void                    GetPatternObjectAndMarks(Environment *,int,int,int,Instance **,struct multifieldMarker **);
+   static void                    GetObjectValueGeneral(Environment *,DATA_OBJECT *,Instance *,
+                                                        struct multifieldMarker *,struct ObjectMatchVar1 *);
+   static void                    GetObjectValueSimple(Environment *,DATA_OBJECT *,Instance *,struct ObjectMatchVar2 *);
+   static long                    CalculateSlotField(struct multifieldMarker *,INSTANCE_SLOT *,long,long *); /* 6.04 Bug Fix */
+   static void                    GetInsMultiSlotField(FIELD *,Instance *,unsigned,unsigned,unsigned);
+   static void                    DeallocateObjectReteData(Environment *);
+   static void                    DestroyObjectPatternNetwork(Environment *,OBJECT_PATTERN_NODE *);
+   static void                    DestroyObjectAlphaNodes(Environment *,OBJECT_ALPHA_NODE *);
 
 /* =========================================
    *****************************************
@@ -136,7 +137,7 @@ static void DestroyObjectAlphaNodes(void *,OBJECT_ALPHA_NODE *);
   NOTES        : None
  ***************************************************/
 void InstallObjectPrimitives(
-  void *theEnv)
+  Environment *theEnv)
   {
    struct entityRecord objectGVInfo1 = { "OBJ_GET_SLOT_JNVAR1", OBJ_GET_SLOT_JNVAR1,0,1,0,
                                              PrintObjectGetVarJN1,
@@ -245,7 +246,7 @@ void InstallObjectPrimitives(
 /*    data for the object rete network.              */
 /*****************************************************/
 static void DeallocateObjectReteData(
-  void *theEnv)
+  Environment *theEnv)
   {
    OBJECT_PATTERN_NODE *theNetwork;
    
@@ -262,7 +263,7 @@ static void DeallocateObjectReteData(
 /*   associated with the object pattern network.                */
 /****************************************************************/
 static void DestroyObjectPatternNetwork(
-  void *theEnv,
+  Environment *theEnv,
   OBJECT_PATTERN_NODE *thePattern)
   {
    OBJECT_PATTERN_NODE *patternPtr;
@@ -287,7 +288,7 @@ static void DestroyObjectPatternNetwork(
 /*   associated with the object alpha nodes.                */
 /************************************************************/
 static void DestroyObjectAlphaNodes(
-  void *theEnv,
+  Environment *theEnv,
   OBJECT_ALPHA_NODE *theNode)
   {
    OBJECT_ALPHA_NODE *nodePtr;
@@ -322,7 +323,7 @@ static void DestroyObjectAlphaNodes(
                    EvaluatePatternExpression()
  *****************************************************/
 bool ObjectCmpConstantFunction(
-  void *theEnv,
+  Environment *theEnv,
   void *theValue,
   DATA_OBJECT *theResult)
   {
@@ -381,7 +382,7 @@ bool ObjectCmpConstantFunction(
    ***************************************** */
 
 static void PrintObjectGetVarJN1(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
   void *theValue)
   {
@@ -422,12 +423,12 @@ static void PrintObjectGetVarJN1(
   }
 
 static bool ObjectGetVarJNFunction1(
-  void *theEnv,
+  Environment *theEnv,
   void *theValue,
   DATA_OBJECT *theResult)
   {
    struct ObjectMatchVar1 *hack;
-   INSTANCE_TYPE *theInstance;
+   Instance *theInstance;
    struct multifieldMarker *theMarks;
    
    hack = (struct ObjectMatchVar1 *) ValueToBitMap(theValue);
@@ -437,7 +438,7 @@ static bool ObjectGetVarJNFunction1(
   }
 
 static void PrintObjectGetVarJN2(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
   void *theValue)
   {
@@ -470,12 +471,12 @@ static void PrintObjectGetVarJN2(
   }
 
 static bool ObjectGetVarJNFunction2(
-  void *theEnv,
+  Environment *theEnv,
   void *theValue,
   DATA_OBJECT *theResult)
   {
    struct ObjectMatchVar2 *hack;
-   INSTANCE_TYPE *theInstance;
+   Instance *theInstance;
    struct multifieldMarker *theMarks;
    
    hack = (struct ObjectMatchVar2 *) ValueToBitMap(theValue);
@@ -485,7 +486,7 @@ static bool ObjectGetVarJNFunction2(
   }
 
 static void PrintObjectGetVarPN1(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
   void *theValue)
   {
@@ -519,7 +520,7 @@ static void PrintObjectGetVarPN1(
   }
 
 static bool ObjectGetVarPNFunction1(
-  void *theEnv,
+  Environment *theEnv,
   void *theValue,
   DATA_OBJECT *theResult)
   {
@@ -531,7 +532,7 @@ static bool ObjectGetVarPNFunction1(
   }
 
 static void PrintObjectGetVarPN2(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
   void *theValue)
   {
@@ -562,7 +563,7 @@ static void PrintObjectGetVarPN2(
   }
 
 static bool ObjectGetVarPNFunction2(
-  void *theEnv,
+  Environment *theEnv,
   void *theValue,
   DATA_OBJECT *theResult)
   {
@@ -574,7 +575,7 @@ static bool ObjectGetVarPNFunction2(
   }
 
 static void PrintObjectCmpConstant(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
   void *theValue)
   {
@@ -605,7 +606,7 @@ static void PrintObjectCmpConstant(
   }
 
 static void PrintSlotLengthTest(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
   void *theValue)
   {
@@ -631,7 +632,7 @@ static void PrintSlotLengthTest(
   }
 
 static bool SlotLengthTestFunction(
-  void *theEnv,
+  Environment *theEnv,
   void *theValue,
   DATA_OBJECT *theResult)
   {
@@ -649,7 +650,7 @@ static bool SlotLengthTestFunction(
   }
 
 static void PrintPNSimpleCompareFunction1(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
   void *theValue)
   {
@@ -674,7 +675,7 @@ static void PrintPNSimpleCompareFunction1(
   }
 
 static bool PNSimpleCompareFunction1(
-  void *theEnv,
+  Environment *theEnv,
   void *theValue,
   DATA_OBJECT *theResult)
   {
@@ -697,7 +698,7 @@ static bool PNSimpleCompareFunction1(
   }
 
 static void PrintPNSimpleCompareFunction2(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
   void *theValue)
   {
@@ -724,7 +725,7 @@ static void PrintPNSimpleCompareFunction2(
   }
 
 static bool PNSimpleCompareFunction2(
-  void *theEnv,
+  Environment *theEnv,
   void *theValue,
   DATA_OBJECT *theResult)
   {
@@ -749,7 +750,7 @@ static bool PNSimpleCompareFunction2(
   }
 
 static void PrintPNSimpleCompareFunction3(
-  void *theEnv,
+  Environment*theEnv,
   const char *logicalName,
   void *theValue)
   {
@@ -778,7 +779,7 @@ static void PrintPNSimpleCompareFunction3(
   }
 
 static bool PNSimpleCompareFunction3(
-  void *theEnv,
+  Environment *theEnv,
   void *theValue,
   DATA_OBJECT *theResult)
   {
@@ -803,7 +804,7 @@ static bool PNSimpleCompareFunction3(
   }
 
 static void PrintJNSimpleCompareFunction1(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
   void *theValue)
   {
@@ -832,11 +833,11 @@ static void PrintJNSimpleCompareFunction1(
   }
 
 static bool JNSimpleCompareFunction1(
-  void *theEnv,
+  Environment *theEnv,
   void *theValue,
   DATA_OBJECT *theResult)
   {
-   INSTANCE_TYPE *ins1,*ins2;
+   Instance *ins1,*ins2;
    struct multifieldMarker *theMarks;
    struct ObjectCmpJoinSingleSlotVars1 *hack;
    int rv;
@@ -859,7 +860,7 @@ static bool JNSimpleCompareFunction1(
   }
 
 static void PrintJNSimpleCompareFunction2(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
   void *theValue)
   {
@@ -890,11 +891,11 @@ static void PrintJNSimpleCompareFunction2(
   }
 
 static bool JNSimpleCompareFunction2(
-  void *theEnv,
+  Environment *theEnv,
   void *theValue,
   DATA_OBJECT *theResult)
   {
-   INSTANCE_TYPE *ins1,*ins2;
+   Instance *ins1,*ins2;
    struct multifieldMarker *theMarks;
    struct ObjectCmpJoinSingleSlotVars2 *hack;
    int rv;
@@ -919,7 +920,7 @@ static bool JNSimpleCompareFunction2(
   }
 
 static void PrintJNSimpleCompareFunction3(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
   void *theValue)
   {
@@ -952,11 +953,11 @@ static void PrintJNSimpleCompareFunction3(
   }
 
 static bool JNSimpleCompareFunction3(
-  void *theEnv,
+  Environment *theEnv,
   void *theValue,
   DATA_OBJECT *theResult)
   {
-   INSTANCE_TYPE *ins1,*ins2;
+   Instance *ins1,*ins2;
    struct multifieldMarker *theMarks;
    struct ObjectCmpJoinSingleSlotVars3 *hack;
    int rv;
@@ -997,43 +998,43 @@ static bool JNSimpleCompareFunction3(
   NOTES        : None
  ****************************************************/
 static void GetPatternObjectAndMarks(
-  void *theEnv,
+  Environment *theEnv,
   int pattern,
   int lhs,
   int rhs,
-  INSTANCE_TYPE **theInstance,
+  Instance **theInstance,
   struct multifieldMarker **theMarkers)
   {
    if (lhs)
      {
-      *theInstance = (INSTANCE_TYPE *)
+      *theInstance = (Instance *)
         get_nth_pm_match(EngineData(theEnv)->GlobalLHSBinds,pattern)->matchingItem;
       *theMarkers =
         get_nth_pm_match(EngineData(theEnv)->GlobalLHSBinds,pattern)->markers;
      }
    else if (rhs)
      {
-      *theInstance = (INSTANCE_TYPE *)
+      *theInstance = (Instance *)
         get_nth_pm_match(EngineData(theEnv)->GlobalRHSBinds,pattern)->matchingItem;
       *theMarkers =
         get_nth_pm_match(EngineData(theEnv)->GlobalRHSBinds,pattern)->markers;
      }
    else if (EngineData(theEnv)->GlobalRHSBinds == NULL)
      {
-      *theInstance = (INSTANCE_TYPE *)
+      *theInstance = (Instance *)
         get_nth_pm_match(EngineData(theEnv)->GlobalLHSBinds,pattern)->matchingItem;
       *theMarkers =
         get_nth_pm_match(EngineData(theEnv)->GlobalLHSBinds,pattern)->markers;
      }
    else if ((((int) EngineData(theEnv)->GlobalJoin->depth) - 1) == pattern)
      {
-      *theInstance = (INSTANCE_TYPE *) 
+      *theInstance = (Instance *) 
         get_nth_pm_match(EngineData(theEnv)->GlobalRHSBinds,0)->matchingItem;
       *theMarkers = get_nth_pm_match(EngineData(theEnv)->GlobalRHSBinds,0)->markers;
      }
    else
      {
-      *theInstance = (INSTANCE_TYPE *)
+      *theInstance = (Instance *)
         get_nth_pm_match(EngineData(theEnv)->GlobalLHSBinds,pattern)->matchingItem;
       *theMarkers =
         get_nth_pm_match(EngineData(theEnv)->GlobalLHSBinds,pattern)->markers;
@@ -1056,9 +1057,9 @@ static void GetPatternObjectAndMarks(
   NOTES        : None
  ***************************************************/
 static void GetObjectValueGeneral(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *result,
-  INSTANCE_TYPE *theInstance,
+  Instance *theInstance,
   struct multifieldMarker *theMarks,
   struct ObjectMatchVar1 *matchVar)
   {
@@ -1068,19 +1069,19 @@ static void GetObjectValueGeneral(
    if (matchVar->objectAddress)
      {
       result->type = INSTANCE_ADDRESS;
-      result->value = (void *) theInstance;
+      result->value = theInstance;
       return;
      }
    if (matchVar->whichSlot == ISA_ID)
      {
       result->type = SYMBOL;
-      result->value = (void *) GetDefclassNamePointer((void *) theInstance->cls);
+      result->value = GetDefclassNamePointer(theInstance->cls);
       return;
      }
    if (matchVar->whichSlot == NAME_ID)
      {
       result->type = INSTANCE_NAME;
-      result->value = (void *) theInstance->name;
+      result->value = theInstance->name;
       return;
      }
    insSlot =
@@ -1163,9 +1164,9 @@ static void GetObjectValueGeneral(
   NOTES        : None
  ***************************************************/
 static void GetObjectValueSimple(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *result,
-  INSTANCE_TYPE *theInstance,
+  Instance *theInstance,
   struct ObjectMatchVar2 *matchVar)
   {
    INSTANCE_SLOT **insSlot,*basisSlot;
@@ -1202,7 +1203,7 @@ static void GetObjectValueSimple(
          if (matchVar->fromEnd)
            {
             result->type = MULTIFIELD;
-            result->value = (void *) segmentPtr;
+            result->value = segmentPtr;
             result->begin = matchVar->beginningOffset;
             SetpDOEnd(result,GetMFLength(segmentPtr) - matchVar->endOffset);
            }
@@ -1249,14 +1250,14 @@ static long CalculateSlotField(
   long theIndex,
   long *extent)
   {
-   register long actualIndex;
+   long actualIndex;
    void *theSlotName;
 
    actualIndex = theIndex;
    *extent = -1;
    if (theSlot == NULL)
      return(actualIndex);
-   theSlotName = (void *) theSlot->desc->slotName->name;
+   theSlotName = theSlot->desc->slotName->name;
    while (theMarkers != NULL)
      {
       if (theMarkers->where.whichSlot == theSlotName)
@@ -1300,14 +1301,14 @@ static long CalculateSlotField(
  ****************************************************/
 static void GetInsMultiSlotField(
   FIELD *theField,
-  INSTANCE_TYPE *theInstance,
+  Instance *theInstance,
   unsigned theSlotID,
   unsigned fromBeginning,
   unsigned offset)
   {
-   register INSTANCE_SLOT * insSlot;
-   register SEGMENT *theSegment;
-   register FIELD *tmpField;
+   INSTANCE_SLOT * insSlot;
+   SEGMENT *theSegment;
+   FIELD *tmpField;
 
    insSlot = theInstance->slotAddresses
                [theInstance->cls->slotNameMap[theSlotID] - 1];

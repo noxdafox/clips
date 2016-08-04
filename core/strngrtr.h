@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*            STRING I/O ROUTER HEADER FILE            */
    /*******************************************************/
@@ -33,6 +33,9 @@
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -68,12 +71,12 @@ struct stringRouterData
 /* I/O ROUTER DEFINITIONS */
 /**************************/
 
-   void                           InitializeStringRouter(void *);
-   bool                           OpenStringSource(void *,const char *,const char *,size_t);
-   bool                           OpenTextSource(void *,const char *,const char *,size_t,size_t);
-   bool                           CloseStringSource(void *,const char *);
-   bool                           OpenStringDestination(void *,const char *,char *,size_t);
-   bool                           CloseStringDestination(void *,const char *);
+   void                           InitializeStringRouter(Environment *);
+   bool                           OpenStringSource(Environment *,const char *,const char *,size_t);
+   bool                           OpenTextSource(Environment *,const char *,const char *,size_t,size_t);
+   bool                           CloseStringSource(Environment *,const char *);
+   bool                           OpenStringDestination(Environment *,const char *,char *,size_t);
+   bool                           CloseStringDestination(Environment *,const char *);
 
 #endif /* _H_strngrtr */
 

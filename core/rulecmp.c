@@ -2,7 +2,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*            DEFRULE CONSTRUCTS-TO-C MODULE           */
    /*******************************************************/
@@ -40,6 +40,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -59,18 +62,18 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static bool                    ConstructToCode(void *,const char *,const char *,char *,int,FILE *,int,int);
-   static void                    JoinToCode(void *,FILE *,struct joinNode *,int,int);
-   static void                    LinkToCode(void *,FILE *,struct joinLink *,int,int);
-   static void                    DefruleModuleToCode(void *,FILE *,struct defmodule *,int,int,int);
-   static void                    DefruleToCode(void *,FILE *,struct defrule *,int,int,int);
-   static void                    CloseDefruleFiles(void *,FILE *,FILE *,FILE *,FILE*,int);
-   static void                    BeforeDefrulesCode(void *);
-   static void                    InitDefruleCode(void *,FILE *,int,int);
-   static bool                    RuleCompilerTraverseJoins(void *,struct joinNode *,const char *,const char *,char *,int,
+   static bool                    ConstructToCode(Environment *,const char *,const char *,char *,int,FILE *,int,int);
+   static void                    JoinToCode(Environment *,FILE *,struct joinNode *,int,int);
+   static void                    LinkToCode(Environment *,FILE *,struct joinLink *,int,int);
+   static void                    DefruleModuleToCode(Environment *,FILE *,Defmodule *,int,int,int);
+   static void                    DefruleToCode(Environment *,FILE *,Defrule *,int,int,int);
+   static void                    CloseDefruleFiles(Environment *,FILE *,FILE *,FILE *,FILE*,int);
+   static void                    BeforeDefrulesCode(Environment *);
+   static void                    InitDefruleCode(Environment *,FILE *,int,int);
+   static bool                    RuleCompilerTraverseJoins(Environment *,struct joinNode *,const char *,const char *,char *,int,
                                                             FILE *,int,int,FILE **,FILE **,
                                                             int *,int *,int *,int *,int *);
-   static bool                    TraverseJoinLinks(void *,struct joinLink *,const char *,const char *,char *,int,FILE *,
+   static bool                    TraverseJoinLinks(Environment *,struct joinLink *,const char *,const char *,char *,int,FILE *,
                                                     int,int,FILE **,int *,int *, int *);
   
 /***********************************************************/
@@ -78,7 +81,7 @@
 /*   for use with the constructs-to-c command.             */
 /***********************************************************/
 void DefruleCompilerSetup(
-  void *theEnv)
+  Environment *theEnv)
   {
    DefruleData(theEnv)->DefruleCodeItem = AddCodeGeneratorItem(theEnv,"defrules",0,BeforeDefrulesCode,
                                           InitDefruleCode,ConstructToCode,4);
@@ -90,7 +93,7 @@ void DefruleCompilerSetup(
 /*   the data structures are written to a file as C code      */
 /**************************************************************/
 static void BeforeDefrulesCode(
-  void *theEnv)
+  Environment *theEnv)
   {
    long int moduleCount, ruleCount, joinCount, linkCount;
 
@@ -102,7 +105,7 @@ static void BeforeDefrulesCode(
 /*   module created using the constructs-to-c function.  */
 /*********************************************************/
 static bool ConstructToCode(
-  void *theEnv,
+  Environment *theEnv,
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
@@ -112,8 +115,8 @@ static bool ConstructToCode(
   int maxIndices)
   {
    int fileCount = 1;
-   struct defmodule *theModule;
-   struct defrule *theDefrule, *theDisjunct;
+   Defmodule *theModule;
+   Defrule *theDefrule, *theDisjunct;
    int joinArrayCount = 0, joinArrayVersion = 1;
    int linkArrayCount = 0, linkArrayVersion = 1;
    int moduleCount = 0, moduleArrayCount = 0, moduleArrayVersion = 1;
@@ -150,15 +153,15 @@ static bool ConstructToCode(
    /* the file as they are traversed.                         */
    /*=========================================================*/
 
-   for (theModule = (struct defmodule *) EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = (struct defmodule *) EnvGetNextDefmodule(theEnv,theModule))
+        theModule = EnvGetNextDefmodule(theEnv,theModule))
      {
       /*=========================*/
       /* Set the current module. */
       /*=========================*/
 
-      EnvSetCurrentModule(theEnv,(void *) theModule);
+      EnvSetCurrentModule(theEnv,theModule);
 
       /*==========================*/
       /* Save the defrule module. */
@@ -184,9 +187,9 @@ static bool ConstructToCode(
       /* their disjuncts) in the current module. */
       /*=========================================*/
 
-      for (theDefrule = (struct defrule *) EnvGetNextDefrule(theEnv,NULL);
+      for (theDefrule = EnvGetNextDefrule(theEnv,NULL);
            theDefrule != NULL;
-           theDefrule = (struct defrule *) EnvGetNextDefrule(theEnv,theDefrule))
+           theDefrule = EnvGetNextDefrule(theEnv,theDefrule))
         {
          for (theDisjunct = theDefrule;
               theDisjunct != NULL;
@@ -198,7 +201,7 @@ static bool ConstructToCode(
 
             defruleFile = OpenFileIfNeeded(theEnv,defruleFile,fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
                                            defruleArrayVersion,headerFP,
-                                           "struct defrule",ConstructPrefix(DefruleData(theEnv)->DefruleCodeItem),
+                                           "Defrule",ConstructPrefix(DefruleData(theEnv)->DefruleCodeItem),
                                            false,NULL);
             if (defruleFile == NULL)
               {
@@ -239,7 +242,7 @@ static bool ConstructToCode(
 /* RuleCompilerTraverseJoins: Traverses the join network for a rule. */
 /*********************************************************************/
 static bool RuleCompilerTraverseJoins(
-  void *theEnv,
+  Environment *theEnv,
   struct joinNode *joinPtr,
   const char *fileName,
   const char *pathName,
@@ -296,7 +299,7 @@ static bool RuleCompilerTraverseJoins(
 /* TraverseJoinLinks: Writes out a list of join links. */
 /*******************************************************/
 static bool TraverseJoinLinks(
-  void *theEnv,
+  Environment *theEnv,
   struct joinLink *linkPtr,
   const char *fileName,
   const char *pathName,
@@ -336,7 +339,7 @@ static bool TraverseJoinLinks(
 /*   the defrules have all been written to the files.   */
 /********************************************************/
 static void CloseDefruleFiles(
-  void *theEnv,
+  Environment *theEnv,
   FILE *moduleFile,
   FILE *defruleFile,
   FILE *joinFile,
@@ -376,9 +379,9 @@ static void CloseDefruleFiles(
 /*   of a single defrule module to the specified file.   */
 /*********************************************************/
 static void DefruleModuleToCode(
-  void *theEnv,
+  Environment *theEnv,
   FILE *theFile,
-  struct defmodule *theModule,
+  Defmodule *theModule,
   int imageID,
   int maxIndices,
   int moduleCount)
@@ -400,9 +403,9 @@ static void DefruleModuleToCode(
 /*   single defrule data structure to the specified file. */
 /**********************************************************/
 static void DefruleToCode(
-  void *theEnv,
+  Environment *theEnv,
   FILE *theFile,
-  struct defrule *theDefrule,
+  Defrule *theDefrule,
   int imageID,
   int maxIndices,
   int moduleCount)
@@ -486,7 +489,7 @@ static void DefruleToCode(
 /*   a single join node to the specified file.     */
 /***************************************************/
 static void JoinToCode(
-  void *theEnv,
+  Environment *theEnv,
   FILE *joinFile,
   struct joinNode *theJoin,
   int imageID,
@@ -623,7 +626,7 @@ static void JoinToCode(
 /*   a single join node to the specified file.     */
 /***************************************************/
 static void LinkToCode(
-  void *theEnv,
+  Environment *theEnv,
   FILE *theFile,
   struct joinLink *theLink,
   int imageID,
@@ -673,7 +676,7 @@ static void LinkToCode(
 /*   of a reference to a defrule module data structure.      */
 /*************************************************************/
 void DefruleCModuleReference(
-  void *theEnv,
+  Environment *theEnv,
   FILE *theFile,
   int count,
   int imageID,
@@ -690,7 +693,7 @@ void DefruleCModuleReference(
 /* InitDefruleCode: Writes out initialization code for defrules. */
 /*****************************************************************/
 static void InitDefruleCode(
-  void *theEnv,
+  Environment *theEnv,
   FILE *initFP,
   int imageID,
   int maxIndices)

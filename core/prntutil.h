@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*              PRINT UTILITY HEADER FILE              */
    /*******************************************************/
@@ -50,6 +50,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_prntutil
@@ -73,29 +76,29 @@ struct printUtilityData
 
 #define PrintUtilityData(theEnv) ((struct printUtilityData *) GetEnvironmentData(theEnv,PRINT_UTILITY_DATA))
 
-   void                           InitializePrintUtilityData(void *);
-   void                           PrintInChunks(void *,const char *,const char *);
-   void                           PrintFloat(void *,const char *,double);
-   void                           PrintLongInteger(void *,const char *,long long);
-   void                           PrintAtom(void *,const char *,int,void *);
-   void                           PrintTally(void *,const char *,long long,const char *,const char *);
-   const char                    *FloatToString(void *,double);
-   const char                    *LongIntegerToString(void *,long long);
-   const char                    *DataObjectToString(void *,DATA_OBJECT *);
-   void                           SyntaxErrorMessage(void *,const char *);
-   void                           SystemError(void *,const char *,int);
-   void                           PrintErrorID(void *,const char *,int,bool);
-   void                           PrintWarningID(void *,const char *,int,bool);
-   void                           CantFindItemErrorMessage(void *,const char *,const char *);
-   void                           CantDeleteItemErrorMessage(void *,const char *,const char *);
-   void                           AlreadyParsedErrorMessage(void *,const char *,const char *);
-   void                           LocalVariableErrorMessage(void *,const char *);
-   void                           DivideByZeroErrorMessage(void *,const char *);
-   void                           SalienceInformationError(void *,const char *,const char *);
-   void                           SalienceRangeError(void *,int,int);
-   void                           SalienceNonIntegerError(void *);
-   void                           CantFindItemInFunctionErrorMessage(void *,const char *,const char *,const char *);
-   void                           SlotExistError(void *,const char *,const char *);
+   void                           InitializePrintUtilityData(Environment *);
+   void                           PrintInChunks(Environment *,const char *,const char *);
+   void                           PrintFloat(Environment *,const char *,double);
+   void                           PrintLongInteger(Environment *,const char *,long long);
+   void                           PrintAtom(Environment *,const char *,int,void *);
+   void                           PrintTally(Environment *,const char *,long long,const char *,const char *);
+   const char                    *FloatToString(Environment *,double);
+   const char                    *LongIntegerToString(Environment *,long long);
+   const char                    *DataObjectToString(Environment *,DATA_OBJECT *);
+   void                           SyntaxErrorMessage(Environment *,const char *);
+   void                           SystemError(Environment *,const char *,int);
+   void                           PrintErrorID(Environment *,const char *,int,bool);
+   void                           PrintWarningID(Environment *,const char *,int,bool);
+   void                           CantFindItemErrorMessage(Environment *,const char *,const char *);
+   void                           CantDeleteItemErrorMessage(Environment *,const char *,const char *);
+   void                           AlreadyParsedErrorMessage(Environment *,const char *,const char *);
+   void                           LocalVariableErrorMessage(Environment *,const char *);
+   void                           DivideByZeroErrorMessage(Environment *,const char *);
+   void                           SalienceInformationError(Environment *,const char *,const char *);
+   void                           SalienceRangeError(Environment *,int,int);
+   void                           SalienceNonIntegerError(Environment *);
+   void                           CantFindItemInFunctionErrorMessage(Environment *,const char *,const char *,const char *);
+   void                           SlotExistError(Environment *,const char *,const char *);
 
 #endif /* _H_prntutil */
 

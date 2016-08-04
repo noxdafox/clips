@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*               CLASS PARSER HEADER FILE              */
    /*******************************************************/
@@ -41,6 +41,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_classpsr
@@ -51,10 +54,10 @@
 
 #if OBJECT_SYSTEM && (! BLOAD_ONLY) && (! RUN_TIME)
 
-bool ParseDefclass(void *,const char *);
+   bool                    ParseDefclass(Environment *,const char *);
 
 #if DEFMODULE_CONSTRUCT
-void *CreateClassScopeMap(void *,DEFCLASS *);
+   void                   *CreateClassScopeMap(Environment *,Defclass *);
 #endif
 
 #endif

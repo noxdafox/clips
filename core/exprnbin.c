@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/24/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*             EXPRESSION BSAVE/BLOAD MODULE           */
    /*******************************************************/
@@ -21,6 +21,9 @@
 /*      6.30: Changed integer type/precision.                */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -71,7 +74,7 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                        UpdateExpression(void *,void *,long);
+   static void                        UpdateExpression(Environment *,void *,long);
 
 /***********************************************************/
 /* AllocateExpressions: Determines the amount of space     */
@@ -79,11 +82,11 @@
 /*   and allocates that amount of space.                   */
 /***********************************************************/
 void AllocateExpressions(
-  void *theEnv)
+  Environment *theEnv)
   {
    size_t space;
 
-   GenReadBinary(theEnv,(void *) &ExpressionData(theEnv)->NumberOfExpressions,sizeof(long));
+   GenReadBinary(theEnv,&ExpressionData(theEnv)->NumberOfExpressions,sizeof(long));
    if (ExpressionData(theEnv)->NumberOfExpressions == 0L)
      ExpressionData(theEnv)->ExpressionArray = NULL;
    else
@@ -98,7 +101,7 @@ void AllocateExpressions(
 /*   used by the expression binary image.     */
 /**********************************************/
 void RefreshExpressions(
-  void *theEnv)
+  Environment *theEnv)
   {
    if (ExpressionData(theEnv)->ExpressionArray == NULL) return;
 
@@ -118,7 +121,7 @@ void RefreshExpressions(
   NOTES        : None
  *********************************************************/
 static void UpdateExpression(
-  void *theEnv,
+  Environment *theEnv,
   void *buf,
   long obji)
   {
@@ -130,12 +133,12 @@ static void UpdateExpression(
    switch(bexp->type)
      {
       case FCALL:
-        ExpressionData(theEnv)->ExpressionArray[obji].value = (void *) BloadData(theEnv)->FunctionArray[bexp->value];
+        ExpressionData(theEnv)->ExpressionArray[obji].value = BloadData(theEnv)->FunctionArray[bexp->value];
         break;
 
       case GCALL:
 #if DEFGENERIC_CONSTRUCT
-        ExpressionData(theEnv)->ExpressionArray[obji].value = (void *) GenericPointer(bexp->value);
+        ExpressionData(theEnv)->ExpressionArray[obji].value = GenericPointer(bexp->value);
 #else
         ExpressionData(theEnv)->ExpressionArray[obji].value = NULL;
 #endif
@@ -143,7 +146,7 @@ static void UpdateExpression(
 
       case PCALL:
 #if DEFFUNCTION_CONSTRUCT
-        ExpressionData(theEnv)->ExpressionArray[obji].value = (void *) DeffunctionPointer(bexp->value);
+        ExpressionData(theEnv)->ExpressionArray[obji].value = DeffunctionPointer(bexp->value);
 #else
         ExpressionData(theEnv)->ExpressionArray[obji].value = NULL;
 #endif
@@ -151,7 +154,7 @@ static void UpdateExpression(
 
       case DEFTEMPLATE_PTR:
 #if DEFTEMPLATE_CONSTRUCT
-        ExpressionData(theEnv)->ExpressionArray[obji].value = (void *) DeftemplatePointer(bexp->value);
+        ExpressionData(theEnv)->ExpressionArray[obji].value = DeftemplatePointer(bexp->value);
 #else
         ExpressionData(theEnv)->ExpressionArray[obji].value = NULL;
 #endif
@@ -159,7 +162,7 @@ static void UpdateExpression(
 
      case DEFCLASS_PTR:
 #if OBJECT_SYSTEM
-        ExpressionData(theEnv)->ExpressionArray[obji].value = (void *) DefclassPointer(bexp->value);
+        ExpressionData(theEnv)->ExpressionArray[obji].value = DefclassPointer(bexp->value);
 #else
         ExpressionData(theEnv)->ExpressionArray[obji].value = NULL;
 #endif
@@ -168,7 +171,7 @@ static void UpdateExpression(
       case DEFGLOBAL_PTR:
 
 #if DEFGLOBAL_CONSTRUCT
-        ExpressionData(theEnv)->ExpressionArray[obji].value = (void *) DefglobalPointer(bexp->value);
+        ExpressionData(theEnv)->ExpressionArray[obji].value = DefglobalPointer(bexp->value);
 #else
         ExpressionData(theEnv)->ExpressionArray[obji].value = NULL;
 #endif
@@ -176,12 +179,12 @@ static void UpdateExpression(
 
 
       case INTEGER:
-        ExpressionData(theEnv)->ExpressionArray[obji].value = (void *) SymbolData(theEnv)->IntegerArray[bexp->value];
+        ExpressionData(theEnv)->ExpressionArray[obji].value = SymbolData(theEnv)->IntegerArray[bexp->value];
         IncrementIntegerCount((INTEGER_HN *) ExpressionData(theEnv)->ExpressionArray[obji].value);
         break;
 
       case FLOAT:
-        ExpressionData(theEnv)->ExpressionArray[obji].value = (void *) SymbolData(theEnv)->FloatArray[bexp->value];
+        ExpressionData(theEnv)->ExpressionArray[obji].value = SymbolData(theEnv)->FloatArray[bexp->value];
         IncrementFloatCount((FLOAT_HN *) ExpressionData(theEnv)->ExpressionArray[obji].value);
         break;
 
@@ -192,20 +195,20 @@ static void UpdateExpression(
       case GBL_VARIABLE:
       case SYMBOL:
       case STRING:
-        ExpressionData(theEnv)->ExpressionArray[obji].value = (void *) SymbolData(theEnv)->SymbolArray[bexp->value];
+        ExpressionData(theEnv)->ExpressionArray[obji].value = SymbolData(theEnv)->SymbolArray[bexp->value];
         IncrementSymbolCount((SYMBOL_HN *) ExpressionData(theEnv)->ExpressionArray[obji].value);
         break;
 
 #if DEFTEMPLATE_CONSTRUCT
       case FACT_ADDRESS:
-        ExpressionData(theEnv)->ExpressionArray[obji].value = (void *) &FactData(theEnv)->DummyFact;
+        ExpressionData(theEnv)->ExpressionArray[obji].value = &FactData(theEnv)->DummyFact;
         EnvIncrementFactCount(theEnv,ExpressionData(theEnv)->ExpressionArray[obji].value);
         break;
 #endif
 
 #if OBJECT_SYSTEM
       case INSTANCE_ADDRESS:
-        ExpressionData(theEnv)->ExpressionArray[obji].value = (void *) &InstanceData(theEnv)->DummyInstance;
+        ExpressionData(theEnv)->ExpressionArray[obji].value = &InstanceData(theEnv)->DummyInstance;
         EnvIncrementInstanceCount(theEnv,ExpressionData(theEnv)->ExpressionArray[obji].value);
         break;
 #endif
@@ -221,7 +224,7 @@ static void UpdateExpression(
         if (EvaluationData(theEnv)->PrimitivesArray[bexp->type] == NULL) break;
         if (EvaluationData(theEnv)->PrimitivesArray[bexp->type]->bitMap)
           {
-           ExpressionData(theEnv)->ExpressionArray[obji].value = (void *) SymbolData(theEnv)->BitMapArray[bexp->value];
+           ExpressionData(theEnv)->ExpressionArray[obji].value = SymbolData(theEnv)->BitMapArray[bexp->value];
            IncrementBitMapCount((BITMAP_HN *) ExpressionData(theEnv)->ExpressionArray[obji].value);
           }
         break;
@@ -245,7 +248,7 @@ static void UpdateExpression(
 /*   utilized by an expression binary image. */
 /*********************************************/
 void ClearBloadedExpressions(
-  void *theEnv)
+  Environment *theEnv)
   {
    unsigned long int i;
    size_t space;
@@ -299,7 +302,7 @@ void ClearBloadedExpressions(
    /*===================================*/
 
    space = ExpressionData(theEnv)->NumberOfExpressions * sizeof(struct expr);
-   if (space != 0) genfree(theEnv,(void *) ExpressionData(theEnv)->ExpressionArray,space);
+   if (space != 0) genfree(theEnv,ExpressionData(theEnv)->ExpressionArray,space);
    ExpressionData(theEnv)->ExpressionArray = 0;
   }
 
@@ -318,9 +321,9 @@ void ClearBloadedExpressions(
   NOTES        : None
  ***************************************************/
 void FindHashedExpressions(
-  void *theEnv)
+  Environment *theEnv)
   {
-   register unsigned i;
+   unsigned i;
    EXPRESSION_HN *exphash;
 
    for (i = 0 ; i < EXPRESSION_HASH_SIZE ; i++)
@@ -341,10 +344,10 @@ void FindHashedExpressions(
   NOTES        : None
  ***************************************************/
 void BsaveHashedExpressions(
-  void *theEnv,
+  Environment *theEnv,
   FILE *fp)
   {
-   register unsigned i;
+   unsigned i;
    EXPRESSION_HN *exphash;
 
    for (i = 0 ; i < EXPRESSION_HASH_SIZE ; i++)
@@ -357,7 +360,7 @@ void BsaveHashedExpressions(
 /*   constructs for this binary image to the binary save file. */
 /***************************************************************/
 void BsaveConstructExpressions(
-  void *theEnv,
+  Environment *theEnv,
   FILE *fp)
   {
    struct BinaryItem *biPtr;
@@ -376,7 +379,7 @@ void BsaveConstructExpressions(
 /*   an expression to the binary file. */
 /***************************************/
 void BsaveExpression(
-  void *theEnv,
+  Environment *theEnv,
   struct expr *testPtr,
   FILE *fp)
   {
@@ -472,7 +475,7 @@ void BsaveExpression(
          case DEFGLOBAL_PTR:
 #if DEFGLOBAL_CONSTRUCT
            if (testPtr->value != NULL)
-             newTest.value = ((struct defglobal *) testPtr->value)->header.bsaveID;
+             newTest.value = ((Defglobal *) testPtr->value)->header.bsaveID;
            else
 #endif
              newTest.value = -1L;

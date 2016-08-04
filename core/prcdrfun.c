@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*             PROCEDURAL FUNCTIONS MODULE             */
    /*******************************************************/
@@ -41,6 +41,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -70,14 +73,14 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    DeallocateProceduralFunctionData(void *);
+   static void                    DeallocateProceduralFunctionData(Environment *);
 
 /**********************************************/
 /* ProceduralFunctionDefinitions: Initializes */
 /*   the procedural functions.                */
 /**********************************************/
 void ProceduralFunctionDefinitions(
-  void *theEnv)
+  Environment *theEnv)
   {
    AllocateEnvironmentData(theEnv,PRCDRFUN_DATA,sizeof(struct procedureFunctionData),DeallocateProceduralFunctionData);
 
@@ -111,7 +114,7 @@ void ProceduralFunctionDefinitions(
 /*    data for procedural functions.                         */
 /*************************************************************/
 static void DeallocateProceduralFunctionData(
-  void *theEnv)
+  Environment *theEnv)
   {
    DATA_OBJECT_PTR nextPtr, garbagePtr;
 
@@ -130,7 +133,7 @@ static void DeallocateProceduralFunctionData(
 /*   for the while function.           */
 /***************************************/
 void WhileFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
    DATA_OBJECT theResult;
@@ -202,7 +205,7 @@ void WhileFunction(
 /*   for the loop-for-count function.       */
 /********************************************/
 void LoopForCountFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT_PTR loopResult)
   {
    DATA_OBJECT arg_ptr;
@@ -280,7 +283,7 @@ void LoopForCountFunction(
 /* GetLoopCount: */
 /*****************/
 long long GetLoopCount(
-  void *theEnv)
+  Environment *theEnv)
   {
    int depth;
    LOOP_COUNTER_STACK *tmpCounter;
@@ -300,7 +303,7 @@ long long GetLoopCount(
 /*   for the if function.           */
 /************************************/
 void IfFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
    int numArgs;
@@ -424,7 +427,7 @@ void IfFunction(
 /*   for the bind function.           */
 /**************************************/
 void BindFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
    DATA_OBJECT *theBind, *lastBind;
@@ -432,7 +435,7 @@ void BindFunction(
        unbindVar = false;
    SYMBOL_HN *variableName = NULL;
 #if DEFGLOBAL_CONSTRUCT
-   struct defglobal *theGlobal = NULL;
+   Defglobal *theGlobal = NULL;
 #endif
 
    /*===============================================*/
@@ -441,7 +444,7 @@ void BindFunction(
 
 #if DEFGLOBAL_CONSTRUCT
    if (GetFirstArgument()->type == DEFGLOBAL_PTR)
-     { theGlobal = (struct defglobal *) GetFirstArgument()->value; }
+     { theGlobal = (Defglobal *) GetFirstArgument()->value; }
    else
 #endif
      {
@@ -547,7 +550,7 @@ void BindFunction(
 /*   for a specified variable.             */
 /*******************************************/
 bool GetBoundVariable(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT_PTR vPtr,
   SYMBOL_HN *varName)
   {
@@ -573,7 +576,7 @@ bool GetBoundVariable(
 /*   list of currently bound local variables.    */
 /*************************************************/
 void FlushBindList(
-  void *theEnv)
+  Environment *theEnv)
   {
    ReturnValues(theEnv,ProcedureFunctionData(theEnv)->BindList,true);
    ProcedureFunctionData(theEnv)->BindList = NULL;
@@ -584,7 +587,7 @@ void FlushBindList(
 /*   for the progn function.           */
 /***************************************/
 void PrognFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
    struct expr *argPtr;
@@ -621,7 +624,7 @@ void PrognFunction(
 /* ReturnFunction: H/L access routine for the return function.   */
 /*****************************************************************/
 void ReturnFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT_PTR result)
   {
    if (EnvRtnArgCount(theEnv) == 0)
@@ -638,7 +641,7 @@ void ReturnFunction(
 /* BreakFunction: H/L access routine for the break function.   */
 /***************************************************************/
 void BreakFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    ProcedureFunctionData(theEnv)->BreakFlag = true;
   }
@@ -647,7 +650,7 @@ void BreakFunction(
 /* SwitchFunction: H/L access routine for the switch function.   */
 /*****************************************************************/
 void SwitchFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT_PTR result)
   {
    DATA_OBJECT switch_val,case_val;

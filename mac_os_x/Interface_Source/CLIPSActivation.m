@@ -83,7 +83,7 @@
 /******************/
 /* setActivation: */
 /******************/
-- (void) setActivation: (void *) theActivation
+- (void) setActivation: (Activation *) theActivation
   {
    activation = theActivation;
   }
@@ -91,7 +91,7 @@
 /***************/
 /* activation: */
 /***************/
-- (void *) activation
+- (Activation *) activation
   {
    return activation;
   }

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*            MEMORY ALLOCATION HEADER FILE            */
    /*******************************************************/
@@ -47,6 +47,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_memalloc
@@ -60,6 +63,8 @@
 struct chunkInfo;
 struct blockInfo;
 struct memoryPtr;
+
+typedef bool OutOfMemoryFunction(Environment *,size_t);
 
 #ifndef MEM_TABLE_SIZE
 #define MEM_TABLE_SIZE 500
@@ -122,7 +127,7 @@ struct memoryPtr
     (MemoryData(theEnv)->TempMemoryPtr = (struct memoryPtr *) struct_ptr,\
      MemoryData(theEnv)->TempMemoryPtr->next = MemoryData(theEnv)->MemoryTable[MemoryData(theEnv)->TempSize], \
      MemoryData(theEnv)->MemoryTable[MemoryData(theEnv)->TempSize] =  MemoryData(theEnv)->TempMemoryPtr) : \
-    (genfree(theEnv,(void *) struct_ptr,MemoryData(theEnv)->TempSize),(struct memoryPtr *) struct_ptr)))
+    (genfree(theEnv,struct_ptr,MemoryData(theEnv)->TempSize),(struct memoryPtr *) struct_ptr)))
 
 #define get_mem(theEnv,size) \
   (((size <  MEM_TABLE_SIZE) ? \
@@ -138,7 +143,7 @@ struct memoryPtr
     (MemoryData(theEnv)->TempMemoryPtr = (struct memoryPtr *) ptr,\
      MemoryData(theEnv)->TempMemoryPtr->next = MemoryData(theEnv)->MemoryTable[MemoryData(theEnv)->TempSize], \
      MemoryData(theEnv)->MemoryTable[MemoryData(theEnv)->TempSize] =  MemoryData(theEnv)->TempMemoryPtr) : \
-    (genfree(theEnv,(void *) ptr,MemoryData(theEnv)->TempSize),(struct memoryPtr *) ptr)))
+    (genfree(theEnv,ptr,MemoryData(theEnv)->TempSize),(struct memoryPtr *) ptr)))
 
 #else // MEM_TABLE_SIZE == 0
 /*
@@ -171,7 +176,7 @@ struct memoryData
    long int MemoryAmount;
    long int MemoryCalls;
    bool ConserveMemory;
-   bool (*OutOfMemoryFunction)(void *,size_t);
+   OutOfMemoryFunction *OutOfMemoryCallback;
    struct memoryPtr *TempMemoryPtr;
    struct memoryPtr **MemoryTable;
    size_t TempSize;
@@ -179,30 +184,29 @@ struct memoryData
 
 #define MemoryData(theEnv) ((struct memoryData *) GetEnvironmentData(theEnv,MEMORY_DATA))
 
-   void                           InitializeMemory(void *);
-   void                          *genalloc(void *,size_t);
-   bool                           DefaultOutOfMemoryFunction(void *,size_t);
-   bool                         (*EnvSetOutOfMemoryFunction(void *,bool (*)(void *,size_t)))(void *,size_t);
-   void                           genfree(void *,void *,size_t);
-   void                          *genrealloc(void *,void *,size_t,size_t);
-   long                           EnvMemUsed(void *);
-   long                           EnvMemRequests(void *);
-   long                           UpdateMemoryUsed(void *,long int);
-   long                           UpdateMemoryRequests(void *,long int);
-   long                           EnvReleaseMem(void *,long);
-   void                          *gm1(void *,size_t);
-   void                          *gm2(void *,size_t);
-   void                          *gm3(void *,size_t);
-   void                           rm(void *,void *,size_t);
-   void                           rm3(void *,void *,size_t);
-   unsigned long                  PoolSize(void *);
-   unsigned long                  ActualPoolSize(void *);
-   void                          *RequestChunk(void *,size_t);
-   int                            ReturnChunk(void *,void *,size_t);
-   bool                           EnvSetConserveMemory(void *,bool);
-   bool                           EnvGetConserveMemory(void *);
+   void                           InitializeMemory(Environment *);
+   void                          *genalloc(Environment *,size_t);
+   bool                           DefaultOutOfMemoryFunction(Environment *,size_t);
+   OutOfMemoryFunction           *EnvSetOutOfMemoryFunction(Environment *,OutOfMemoryFunction *);
+   void                           genfree(Environment *,void *,size_t);
+   void                          *genrealloc(Environment *,void *,size_t,size_t);
+   long                           EnvMemUsed(Environment *);
+   long                           EnvMemRequests(Environment *);
+   long                           UpdateMemoryUsed(Environment *,long int);
+   long                           UpdateMemoryRequests(Environment *,long int);
+   long                           EnvReleaseMem(Environment *,long);
+   void                          *gm1(Environment *,size_t);
+   void                          *gm2(Environment *,size_t);
+   void                          *gm3(Environment *,size_t);
+   void                           rm(Environment *,void *,size_t);
+   void                           rm3(Environment *,void *,size_t);
+   unsigned long                  PoolSize(Environment *);
+   unsigned long                  ActualPoolSize(Environment *);
+   void                          *RequestChunk(Environment *,size_t);
+   int                            ReturnChunk(Environment *,void *,size_t);
+   bool                           EnvSetConserveMemory(Environment *,bool);
+   bool                           EnvGetConserveMemory(Environment *);
    void                           genmemcpy(char *,char *,unsigned long);
-   void                           ReturnAllBlocks(void *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
@@ -211,7 +215,6 @@ struct memoryData
    long int                       MemUsed(void);
    long int                       ReleaseMem(long);
    bool                           SetConserveMemory(bool);
-   bool                         (*SetOutOfMemoryFunction(bool (*)(void *,size_t)))(void *,size_t);
  
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */
 

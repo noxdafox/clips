@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*                  DEFGLOBAL MODULE                   */
    /*******************************************************/
@@ -50,6 +50,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -84,39 +87,39 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                   *AllocateModule(void *);
-   static void                    ReturnModule(void *,void *);
-   static void                    ReturnDefglobal(void *,void *);
-   static void                    InitializeDefglobalModules(void *);
-   static bool                    GetDefglobalValue2(void *,void *,DATA_OBJECT_PTR);
-   static void                    IncrementDefglobalBusyCount(void *,void *);
-   static void                    DecrementDefglobalBusyCount(void *,void *);
-   static void                    DeallocateDefglobalData(void *);
-   static void                    DestroyDefglobalAction(void *,struct constructHeader *,void *);
+   static void                   *AllocateModule(Environment *);
+   static void                    ReturnModule(Environment *,void *);
+   static void                    ReturnDefglobal(Environment *,Defglobal *);
+   static void                    InitializeDefglobalModules(Environment *);
+   static bool                    GetDefglobalValue2(Environment *,void *,DATA_OBJECT_PTR);
+   static void                    IncrementDefglobalBusyCount(Environment *,Defglobal *);
+   static void                    DecrementDefglobalBusyCount(Environment *,Defglobal *);
+   static void                    DeallocateDefglobalData(Environment *);
+   static void                    DestroyDefglobalAction(Environment *,struct constructHeader *,void *);
 #if (! BLOAD_ONLY)
-   static void                    DestroyDefglobal(void *,void *);
+   static void                    DestroyDefglobal(Environment *,Defglobal *);
 #endif
 
 /**************************************************************/
 /* InitializeDefglobals: Initializes the defglobal construct. */
 /**************************************************************/
 void InitializeDefglobals(
-  void *theEnv)
+  Environment *theEnv)
   {  
    struct entityRecord globalInfo = { "GBL_VARIABLE", GBL_VARIABLE,0,0,0,
                                                        NULL,
                                                        NULL,
                                                        NULL,
-                                                       GetDefglobalValue2,
+                                                       (EntityEvaluationFunction *)  GetDefglobalValue2,
                                                        NULL,NULL,
                                                        NULL,NULL,NULL,NULL,NULL,NULL };
 
    struct entityRecord defglobalPtrRecord = { "DEFGLOBAL_PTR", DEFGLOBAL_PTR,0,0,0,
                                                        NULL,NULL,NULL,
-                                                       QGetDefglobalValue,
+                                                       (EntityEvaluationFunction *) QGetDefglobalValue,
                                                        NULL,
-                                                       DecrementDefglobalBusyCount,
-                                                       IncrementDefglobalBusyCount,
+                                                       (EntityBusyCountFunction *) DecrementDefglobalBusyCount,
+                                                       (EntityBusyCountFunction *) IncrementDefglobalBusyCount,
                                                        NULL,NULL,NULL,NULL,NULL };
    
    AllocateEnvironmentData(theEnv,DEFGLOBAL_DATA,sizeof(struct defglobalData),DeallocateDefglobalData);
@@ -136,10 +139,15 @@ void InitializeDefglobals(
    DefglobalCommandDefinitions(theEnv);
 
    DefglobalData(theEnv)->DefglobalConstruct =
-      AddConstruct(theEnv,"defglobal","defglobals",ParseDefglobal,EnvFindDefglobal,
+      AddConstruct(theEnv,"defglobal","defglobals",ParseDefglobal,
+                   (FindConstructFunction *) EnvFindDefglobal,
                    GetConstructNamePointer,GetConstructPPForm,
-                   GetConstructModuleItem,EnvGetNextDefglobal,SetNextConstruct,
-                   EnvIsDefglobalDeletable,EnvUndefglobal,ReturnDefglobal);
+                   GetConstructModuleItem,
+                   (GetNextConstructFunction *) EnvGetNextDefglobal,
+                   SetNextConstruct,
+                   (IsConstructDeletableFunction *) EnvIsDefglobalDeletable,
+                   (DeleteConstructFunction *) EnvUndefglobal,
+                   (FreeConstructFunction *) ReturnDefglobal);
   }
 
 /****************************************************/
@@ -147,24 +155,25 @@ void InitializeDefglobals(
 /*    data for the defglobal construct.             */
 /****************************************************/
 static void DeallocateDefglobalData(
-  void *theEnv)
+  Environment *theEnv)
   {
 #if ! RUN_TIME
    struct defglobalModule *theModuleItem;
-   void *theModule;
+   Defmodule *theModule;
    
 #if BLOAD || BLOAD_AND_BSAVE
    if (Bloaded(theEnv)) return;
 #endif
 
-   DoForAllConstructs(theEnv,DestroyDefglobalAction,DefglobalData(theEnv)->DefglobalModuleIndex,false,NULL);
+   DoForAllConstructs(theEnv,DestroyDefglobalAction,
+                      DefglobalData(theEnv)->DefglobalModuleIndex,false,NULL);
 
    for (theModule = EnvGetNextDefmodule(theEnv,NULL);
         theModule != NULL;
         theModule = EnvGetNextDefmodule(theEnv,theModule))
      {
       theModuleItem = (struct defglobalModule *)
-                      GetModuleItem(theEnv,(struct defmodule *) theModule,
+                      GetModuleItem(theEnv,theModule,
                                     DefglobalData(theEnv)->DefglobalModuleIndex);
       rtn_struct(theEnv,defglobalModule,theModuleItem);
      }
@@ -178,7 +187,7 @@ static void DeallocateDefglobalData(
 /*   defglobals as a result of DestroyEnvironment. */
 /***************************************************/
 static void DestroyDefglobalAction(
-  void *theEnv,
+  Environment *theEnv,
   struct constructHeader *theConstruct,
   void *buffer)
   {
@@ -186,7 +195,7 @@ static void DestroyDefglobalAction(
 #pragma unused(buffer)
 #endif
 #if (! BLOAD_ONLY)
-   struct defglobal *theDefglobal = (struct defglobal *) theConstruct;
+   Defglobal *theDefglobal = (Defglobal *) theConstruct;
    
    if (theDefglobal == NULL) return;
 
@@ -203,7 +212,7 @@ static void DestroyDefglobalAction(
 /*   construct for use with the defmodule construct.     */
 /*********************************************************/
 static void InitializeDefglobalModules(
-  void *theEnv)
+  Environment *theEnv)
   {
    DefglobalData(theEnv)->DefglobalModuleIndex = RegisterModuleItem(theEnv,"defglobal",
                                     AllocateModule,
@@ -218,7 +227,7 @@ static void InitializeDefglobalModules(
 #else
                                     NULL,
 #endif
-                                    EnvFindDefglobalInModule);
+                                    (FindConstructFunction *) EnvFindDefglobalInModule);
 
 #if (! BLOAD_ONLY) && (! RUN_TIME) && DEFMODULE_CONSTRUCT
    AddPortConstructItem(theEnv,"defglobal",SYMBOL);
@@ -229,16 +238,16 @@ static void InitializeDefglobalModules(
 /* AllocateModule: Allocates a defglobal module. */
 /*************************************************/
 static void *AllocateModule(
-  void *theEnv)
+  Environment *theEnv)
   {   
-   return((void *) get_struct(theEnv,defglobalModule)); 
+   return (void *) get_struct(theEnv,defglobalModule);
   }
 
-/***********************************************/
+/*************************************************/
 /* ReturnModule: Deallocates a defglobal module. */
-/***********************************************/
+/*************************************************/
 static void ReturnModule(
-  void *theEnv,
+  Environment *theEnv,
   void *theItem)
   {
    FreeConstructHeaderModule(theEnv,(struct defmoduleItemHeader *) theItem,DefglobalData(theEnv)->DefglobalConstruct);
@@ -250,8 +259,8 @@ static void ReturnModule(
 /*  item for the specified defglobal or defmodule.            */
 /**************************************************************/
 struct defglobalModule *GetDefglobalModuleItem(
-  void *theEnv,
-  struct defmodule *theModule)
+  Environment *theEnv,
+  Defmodule *theModule)
   {
    return((struct defglobalModule *) GetConstructModuleItemByIndex(theEnv,theModule,DefglobalData(theEnv)->DefglobalModuleIndex));
   }
@@ -261,8 +270,8 @@ struct defglobalModule *GetDefglobalModuleItem(
 /*   list of defglobals. Returns a pointer to the    */
 /*   defglobal if found, otherwise NULL.             */
 /*****************************************************/
-void *EnvFindDefglobal(
-  void *theEnv,
+Defglobal *EnvFindDefglobal(
+  Environment *theEnv,
   const char *defglobalName)
   { 
    return(FindNamedConstructInModuleOrImports(theEnv,defglobalName,DefglobalData(theEnv)->DefglobalConstruct)); 
@@ -273,8 +282,8 @@ void *EnvFindDefglobal(
 /*   list of defglobals. Returns a pointer to the    */
 /*   defglobal if found, otherwise NULL.             */
 /*****************************************************/
-void *EnvFindDefglobalInModule(
-  void *theEnv,
+Defglobal *EnvFindDefglobalInModule(
+  Environment *theEnv,
   const char *defglobalName)
   { 
    return(FindNamedConstructInModule(theEnv,defglobalName,DefglobalData(theEnv)->DefglobalConstruct)); 
@@ -285,11 +294,11 @@ void *EnvFindDefglobalInModule(
 /*   defglobal in the defglobal list. Otherwise returns the next    */
 /*   defglobal following the defglobal passed as an argument.       */
 /********************************************************************/
-void *EnvGetNextDefglobal(
-  void *theEnv,
-  void *defglobalPtr)
+Defglobal *EnvGetNextDefglobal(
+  Environment *theEnv,
+  Defglobal *defglobalPtr)
   { 
-   return((void *) GetNextConstructItem(theEnv,(struct constructHeader *) defglobalPtr,DefglobalData(theEnv)->DefglobalModuleIndex)); 
+   return (Defglobal *) GetNextConstructItem(theEnv,(struct constructHeader *) defglobalPtr,DefglobalData(theEnv)->DefglobalModuleIndex);
   }
 
 /*********************************************************/
@@ -297,13 +306,13 @@ void *EnvGetNextDefglobal(
 /*   defglobal can be deleted, otherwise returns false.  */
 /*********************************************************/
 bool EnvIsDefglobalDeletable(
-  void *theEnv,
-  void *ptr)
+  Environment *theEnv,
+  Defglobal *theDefglobal)
   {
    if (! ConstructsDeletable(theEnv))
      { return false; }
 
-   if (((struct defglobal *) ptr)->busyCount) return false;
+   if (theDefglobal->busyCount) return false;
 
    return true;
   }
@@ -313,12 +322,10 @@ bool EnvIsDefglobalDeletable(
 /*   with a defglobal construct to the pool of free memory. */
 /************************************************************/
 static void ReturnDefglobal(
-  void *theEnv,
-  void *vTheDefglobal)
+  Environment *theEnv,
+  Defglobal *theDefglobal)
   {
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-   struct defglobal *theDefglobal = (struct defglobal *) vTheDefglobal;
-   
    if (theDefglobal == NULL) return;
 
    /*====================================*/
@@ -364,11 +371,9 @@ static void ReturnDefglobal(
 /************************************************************/
 #if (! BLOAD_ONLY)
 static void DestroyDefglobal(
-  void *theEnv,
-  void *vTheDefglobal)
+  Environment *theEnv,
+  Defglobal *theDefglobal)
   {
-   struct defglobal *theDefglobal = (struct defglobal *) vTheDefglobal;
-   
    if (theDefglobal == NULL) return;
 
    /*====================================*/
@@ -401,8 +406,8 @@ static void DestroyDefglobal(
 /*   setting a defglobal's value.               */
 /************************************************/
 void QSetDefglobalValue(
-  void *theEnv,
-  struct defglobal *theGlobal,
+  Environment *theEnv,
+  Defglobal *theGlobal,
   DATA_OBJECT_PTR vPtr,
   bool resetVar)
   {
@@ -477,18 +482,18 @@ void QSetDefglobalValue(
 /*   defglobals. Returns a pointer to the defglobal if found, */
 /*   otherwise NULL.                                          */
 /**************************************************************/
-struct defglobal *QFindDefglobal(
-  void *theEnv,
+Defglobal *QFindDefglobal(
+  Environment *theEnv,
   SYMBOL_HN *defglobalName)
   {
-   struct defglobal *theDefglobal;
+   Defglobal *theDefglobal;
 
-   for (theDefglobal = (struct defglobal *) EnvGetNextDefglobal(theEnv,NULL);
+   for (theDefglobal = EnvGetNextDefglobal(theEnv,NULL);
         theDefglobal != NULL;
-        theDefglobal = (struct defglobal *) EnvGetNextDefglobal(theEnv,theDefglobal))
+        theDefglobal = EnvGetNextDefglobal(theEnv,theDefglobal))
      { if (defglobalName == theDefglobal->header.name) return (theDefglobal); }
 
-   return(NULL);
+   return NULL;
   }
 
 /*********************************************************************/
@@ -498,13 +503,11 @@ struct defglobal *QFindDefglobal(
 /*   be returned.                                                    */
 /*********************************************************************/
 void EnvGetDefglobalValueForm(
-  void *theEnv,
+  Environment *theEnv,
   char *buffer,
   size_t bufferLength,
-  void *vTheGlobal)
+  Defglobal *theGlobal)
   {
-   struct defglobal *theGlobal = (struct defglobal *) vTheGlobal;
-
    OpenStringDestination(theEnv,"GlobalValueForm",buffer,bufferLength);
    EnvPrintRouter(theEnv,"GlobalValueForm","?*");
    EnvPrintRouter(theEnv,"GlobalValueForm",ValueToString(theGlobal->header.name));
@@ -517,7 +520,7 @@ void EnvGetDefglobalValueForm(
 /* EnvGetGlobalsChanged: Returns the defglobal change flag. */
 /************************************************************/
 bool EnvGetGlobalsChanged(
-  void *theEnv)
+  Environment *theEnv)
   {    
    return(DefglobalData(theEnv)->ChangeToGlobals); 
   }
@@ -526,7 +529,7 @@ bool EnvGetGlobalsChanged(
 /* EnvSetGlobalsChanged: Sets the defglobal change flag. */
 /*********************************************************/
 void EnvSetGlobalsChanged(
-  void *theEnv,
+  Environment *theEnv,
   bool value)
   {
    DefglobalData(theEnv)->ChangeToGlobals = value; 
@@ -537,11 +540,11 @@ void EnvSetGlobalsChanged(
 /*   global variable in the supplied DATA_OBJECT.         */
 /**********************************************************/
 static bool GetDefglobalValue2(
-  void *theEnv,
+  Environment *theEnv,
   void *theValue,
   DATA_OBJECT_PTR vPtr)
   {
-   struct defglobal *theGlobal;
+   Defglobal *theGlobal;
    int count;
 
    /*===========================================*/
@@ -549,7 +552,7 @@ static bool GetDefglobalValue2(
    /* modules visible to the current module.    */
    /*===========================================*/
 
-   theGlobal = (struct defglobal *)
+   theGlobal = (Defglobal *)
                FindImportedConstruct(theEnv,"defglobal",NULL,ValueToString(theValue),
                &count,true,NULL);
 
@@ -597,12 +600,10 @@ static bool GetDefglobalValue2(
 /* QGetDefglobalValue: Returns the value of a global variable. */
 /***************************************************************/
 bool QGetDefglobalValue(
-  void *theEnv,
-  void *vTheGlobal,
+  Environment *theEnv,
+  Defglobal *theGlobal,
   DATA_OBJECT_PTR vPtr)
   {
-   struct defglobal *theGlobal = (struct defglobal *) vTheGlobal;
-
    /*===============================================*/
    /* Transfer values which can be copied directly. */
    /*===============================================*/
@@ -634,13 +635,13 @@ bool QGetDefglobalValue(
 /*   global variable in the supplied DATA_OBJECT.           */
 /************************************************************/
 bool EnvGetDefglobalValue(
-  void *theEnv,
+  Environment *theEnv,
   const char *variableName,
   DATA_OBJECT_PTR vPtr)
   {
-   struct defglobal *theDefglobal;
+   Defglobal *theDefglobal;
 
-   if ((theDefglobal = (struct defglobal *) EnvFindDefglobal(theEnv,variableName)) == NULL)
+   if ((theDefglobal = EnvFindDefglobal(theEnv,variableName)) == NULL)
      { return false; }
 
    QGetDefglobalValue(theEnv,theDefglobal,vPtr);
@@ -653,11 +654,11 @@ bool EnvGetDefglobalValue(
 /*   variable to the value stored in the supplied DATA_OBJECT.  */
 /****************************************************************/
 bool EnvSetDefglobalValue(
-  void *theEnv,
+  Environment *theEnv,
   const char *variableName,
   DATA_OBJECT_PTR vPtr)
   {
-   struct defglobal *theGlobal;
+   Defglobal *theGlobal;
 
    if ((theGlobal = QFindDefglobal(theEnv,(SYMBOL_HN *) EnvAddSymbol(theEnv,variableName))) == NULL)
      { return false; }
@@ -672,11 +673,9 @@ bool EnvSetDefglobalValue(
 /*   of a defglobal data structure.                       */
 /**********************************************************/
 static void DecrementDefglobalBusyCount(
-  void *theEnv,
-  void *vTheGlobal)
+  Environment *theEnv,
+  Defglobal *theGlobal)
   {
-   struct defglobal *theGlobal = (struct defglobal *) vTheGlobal;
-
    if (! ConstructData(theEnv)->ClearInProgress) theGlobal->busyCount--;
   }
 
@@ -685,10 +684,9 @@ static void DecrementDefglobalBusyCount(
 /*   of a defglobal data structure.                       */
 /**********************************************************/
 static void IncrementDefglobalBusyCount(
-  void *theEnv,
-  void *vTheGlobal)
+  Environment *theEnv,
+  Defglobal *theGlobal)
   {
-   struct defglobal *theGlobal = (struct defglobal *) vTheGlobal;
 #if MAC_XCD
 #pragma unused(theEnv)
 #endif
@@ -700,20 +698,20 @@ static void IncrementDefglobalBusyCount(
 /* UpdateDefglobalScope: Updates the scope flag of all the defglobals. */
 /***********************************************************************/
 void UpdateDefglobalScope(
-  void *theEnv)
+  Environment *theEnv)
   {
-   struct defglobal *theDefglobal;
+   Defglobal *theDefglobal;
    int moduleCount;
-   struct defmodule *theModule;
+   Defmodule *theModule;
    struct defmoduleItemHeader *theItem;
    
    /*============================*/
    /* Loop through every module. */
    /*============================*/
 
-   for (theModule = (struct defmodule *) EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = (struct defmodule *) EnvGetNextDefmodule(theEnv,theModule))
+        theModule = EnvGetNextDefmodule(theEnv,theModule))
      {
       /*============================================================*/
       /* Loop through every defglobal in the module being examined. */
@@ -722,9 +720,9 @@ void UpdateDefglobalScope(
       theItem = (struct defmoduleItemHeader *)
                 GetModuleItem(theEnv,theModule,DefglobalData(theEnv)->DefglobalModuleIndex);
 
-      for (theDefglobal = (struct defglobal *) theItem->firstItem;
+      for (theDefglobal = (Defglobal *) theItem->firstItem;
            theDefglobal != NULL ;
-           theDefglobal = (struct defglobal *) EnvGetNextDefglobal(theEnv,theDefglobal))
+           theDefglobal = EnvGetNextDefglobal(theEnv,theDefglobal))
         {
          /*====================================================*/
          /* If the defglobal is visible to the current module, */
@@ -748,11 +746,10 @@ void UpdateDefglobalScope(
 /*   similar fashion to GetNextDefglobal, but skips    */
 /*   defglobals that are out of scope.                 */
 /*******************************************************/
-void *GetNextDefglobalInScope(
-  void *theEnv,
-  void *vTheGlobal)
+Defglobal *GetNextDefglobalInScope(
+  Environment *theEnv,
+  Defglobal *theGlobal)
   {
-   struct defglobal *theGlobal = (struct defglobal *) vTheGlobal;
    struct defmoduleItemHeader *theItem;
 
    /*=======================================*/
@@ -779,10 +776,10 @@ void *GetNextDefglobalInScope(
       /* to start the search with.                */
       /*==========================================*/
 
-      DefglobalData(theEnv)->TheDefmodule = (struct defmodule *) EnvGetNextDefmodule(theEnv,NULL);
+      DefglobalData(theEnv)->TheDefmodule = EnvGetNextDefmodule(theEnv,NULL);
       theItem = (struct defmoduleItemHeader *)
                 GetModuleItem(theEnv,DefglobalData(theEnv)->TheDefmodule,DefglobalData(theEnv)->DefglobalModuleIndex);
-      theGlobal = (struct defglobal *) theItem->firstItem;
+      theGlobal = (Defglobal *) theItem->firstItem;
      }
 
    /*==================================================*/
@@ -791,7 +788,7 @@ void *GetNextDefglobalInScope(
    /*==================================================*/
 
    else
-     { theGlobal = (struct defglobal *) EnvGetNextDefglobal(theEnv,theGlobal); }
+     { theGlobal = EnvGetNextDefglobal(theEnv,theGlobal); }
 
    /*======================================*/
    /* Continue looping through the modules */
@@ -807,18 +804,18 @@ void *GetNextDefglobalInScope(
 
       for (;
            theGlobal != NULL;
-           theGlobal = (struct defglobal *) EnvGetNextDefglobal(theEnv,theGlobal))
-        { if (theGlobal->inScope) return((void *) theGlobal); }
+           theGlobal = EnvGetNextDefglobal(theEnv,theGlobal))
+        { if (theGlobal->inScope) return theGlobal; }
 
       /*================================================*/
       /* If a global in scope couldn't be found in this */
       /* module, then move on to the next module.       */
       /*================================================*/
 
-      DefglobalData(theEnv)->TheDefmodule = (struct defmodule *) EnvGetNextDefmodule(theEnv,DefglobalData(theEnv)->TheDefmodule);
+      DefglobalData(theEnv)->TheDefmodule = EnvGetNextDefmodule(theEnv,DefglobalData(theEnv)->TheDefmodule);
       theItem = (struct defmoduleItemHeader *)
                 GetModuleItem(theEnv,DefglobalData(theEnv)->TheDefmodule,DefglobalData(theEnv)->DefglobalModuleIndex);
-      theGlobal = (struct defglobal *) theItem->firstItem;
+      theGlobal = (Defglobal *) theItem->firstItem;
      }
 
    /*====================================*/
@@ -826,7 +823,7 @@ void *GetNextDefglobalInScope(
    /* traversed and there are none left. */
    /*====================================*/
 
-   return(NULL);
+   return NULL;
   }
 
 /*##################################*/
@@ -834,22 +831,22 @@ void *GetNextDefglobalInScope(
 /*##################################*/
 
 const char *EnvDefglobalModule(
-  void *theEnv,
-  void *theDefglobal)
+  Environment *theEnv,
+  Defglobal *theDefglobal)
   {
    return GetConstructModuleName((struct constructHeader *) theDefglobal);
   }
 
 const char *EnvGetDefglobalName(
-  void *theEnv,
-  void *theDefglobal)
+  Environment *theEnv,
+  Defglobal *theDefglobal)
   {
    return GetConstructNameString((struct constructHeader *) theDefglobal);
   }
 
 const char *EnvGetDefglobalPPForm(
-  void *theEnv,
-  void *theDefglobal)
+  Environment *theEnv,
+  Defglobal *theDefglobal)
   {
    return GetConstructPPForm(theEnv,(struct constructHeader *) theDefglobal);
   }
@@ -861,25 +858,25 @@ const char *EnvGetDefglobalPPForm(
 #if ALLOW_ENVIRONMENT_GLOBALS
 
 const char *DefglobalModule(
-  void *theDefglobal)
+  Defglobal *theDefglobal)
   {
    return EnvDefglobalModule(GetCurrentEnvironment(),theDefglobal);
   }
 
-void *FindDefglobal(
+Defglobal *FindDefglobal(
   const char *defglobalName)
   {
    return EnvFindDefglobal(GetCurrentEnvironment(),defglobalName);
   }
 
 const char *GetDefglobalName(
-  void *theDefglobal)
+  Defglobal *theDefglobal)
   {
    return EnvGetDefglobalName(GetCurrentEnvironment(),theDefglobal);
   }
 
 const char *GetDefglobalPPForm(
-  void *theDefglobal)
+  Defglobal *theDefglobal)
   {
    return EnvGetDefglobalPPForm(GetCurrentEnvironment(),theDefglobal);
   }
@@ -894,9 +891,9 @@ bool GetDefglobalValue(
 void GetDefglobalValueForm(
   char *buffer,
   unsigned bufferLength,
-  void *vTheGlobal)
+  Defglobal *theGlobal)
   {
-   EnvGetDefglobalValueForm(GetCurrentEnvironment(),buffer,bufferLength,vTheGlobal);
+   EnvGetDefglobalValueForm(GetCurrentEnvironment(),buffer,bufferLength,theGlobal);
   }
 
 bool GetGlobalsChanged()
@@ -904,14 +901,14 @@ bool GetGlobalsChanged()
    return EnvGetGlobalsChanged(GetCurrentEnvironment());
   }
 
-void *GetNextDefglobal(
-  void *defglobalPtr)
+Defglobal *GetNextDefglobal(
+  Defglobal *defglobalPtr)
   {
    return EnvGetNextDefglobal(GetCurrentEnvironment(),defglobalPtr);
   }
 
 bool IsDefglobalDeletable(
-  void *ptr)
+  Defglobal *ptr)
   {
    return EnvIsDefglobalDeletable(GetCurrentEnvironment(),ptr);
   }

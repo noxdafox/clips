@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/04/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*                 CLASS PARSER MODULE                 */
    /*******************************************************/
@@ -31,6 +31,9 @@
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /**************************************************************/
 
@@ -114,21 +117,19 @@
 #define CREATE_ACCESSOR_BIT   9
 #define OVERRIDE_MSG_BIT      10
 
-/* =========================================
-   *****************************************
-      INTERNALLY VISIBLE FUNCTION HEADERS
-   =========================================
-   ***************************************** */
+/***************************************/
+/* LOCAL INTERNAL FUNCTION DEFINITIONS */
+/***************************************/
 
-static SLOT_DESC *NewSlot(void *,SYMBOL_HN *);
-static TEMP_SLOT_LINK *InsertSlot(void *,TEMP_SLOT_LINK *,SLOT_DESC *);
-static int ParseSimpleFacet(void *,const char *,char*,const char *,int,const char *,
-                            const char *,const char *,const char *,SYMBOL_HN **);
-static bool ParseDefaultFacet(void *,const char *,char *,SLOT_DESC *);
-static void BuildCompositeFacets(void *,SLOT_DESC *,PACKED_CLASS_LINKS *,const char *,
-                                 CONSTRAINT_PARSE_RECORD *);
-static bool CheckForFacetConflicts(void *,SLOT_DESC *,CONSTRAINT_PARSE_RECORD *);
-static bool EvaluateSlotDefaultValue(void *,SLOT_DESC *,const char *);
+   static SlotDescriptor          *NewSlot(Environment *,SYMBOL_HN *);
+   static TEMP_SLOT_LINK          *InsertSlot(Environment *,TEMP_SLOT_LINK *,SlotDescriptor *);
+   static int                      ParseSimpleFacet(Environment *,const char *,char*,const char *,int,const char *,
+                                                    const char *,const char *,const char *,SYMBOL_HN **);
+   static bool                    ParseDefaultFacet(Environment *,const char *,char *,SlotDescriptor *);
+   static void                    BuildCompositeFacets(Environment *,SlotDescriptor *,PACKED_CLASS_LINKS *,const char *,
+                                                       CONSTRAINT_PARSE_RECORD *);
+   static bool                    CheckForFacetConflicts(Environment *,SlotDescriptor *,CONSTRAINT_PARSE_RECORD *);
+   static bool                    EvaluateSlotDefaultValue(Environment *,SlotDescriptor *,const char *);
 
 /* =========================================
    *****************************************
@@ -156,14 +157,14 @@ static bool EvaluateSlotDefaultValue(void *,SLOT_DESC *,const char *);
   NOTES        : Assumes "(slot" has already been parsed.
  ************************************************************/
 TEMP_SLOT_LINK *ParseSlot(
-  void *theEnv,
+  Environment *theEnv,
   const char *readSource,
   TEMP_SLOT_LINK *slist,
   PACKED_CLASS_LINKS *preclist,
   bool multiSlot,
   bool fieldSpecified)
   {
-   SLOT_DESC *slot;
+   SlotDescriptor *slot;
    CONSTRAINT_PARSE_RECORD parsedConstraint;
    char specbits[2];
    int rtnCode;
@@ -191,19 +192,19 @@ TEMP_SLOT_LINK *ParseSlot(
      {
       DeleteSlots(theEnv,slist);
       SyntaxErrorMessage(theEnv,"defclass slot");
-      return(NULL);
+      return NULL;
      }
    if ((DefclassData(theEnv)->ObjectParseToken.value == (void *) DefclassData(theEnv)->ISA_SYMBOL) ||
        (DefclassData(theEnv)->ObjectParseToken.value == (void *) DefclassData(theEnv)->NAME_SYMBOL))
      {
       DeleteSlots(theEnv,slist);
       SyntaxErrorMessage(theEnv,"defclass slot");
-      return(NULL);
+      return NULL;
      }
    slot = NewSlot(theEnv,(SYMBOL_HN *) GetValue(DefclassData(theEnv)->ObjectParseToken));
    slist = InsertSlot(theEnv,slist,slot);
    if (slist == NULL)
-     return(NULL);
+     return NULL;
    if (multiSlot)
      slot->multiple = true;
    if (fieldSpecified)
@@ -362,7 +363,7 @@ TEMP_SLOT_LINK *ParseSlot(
 ParseSlotError:
    DecrementIndentDepth(theEnv,3);
    DeleteSlots(theEnv,slist);
-   return(NULL);
+   return NULL;
   }
 
 /***************************************************
@@ -375,7 +376,7 @@ ParseSlotError:
   NOTES        : None
  ***************************************************/
 void DeleteSlots(
-  void *theEnv,
+  Environment *theEnv,
   TEMP_SLOT_LINK *slots)
   {
    TEMP_SLOT_LINK *stmp;
@@ -417,11 +418,11 @@ void DeleteSlots(
   NOTES        : Also adds symbols of the form get-<name> and
                    put-<name> for slot accessors
  **************************************************************/
-static SLOT_DESC *NewSlot(
-  void *theEnv,
+static SlotDescriptor *NewSlot(
+  Environment *theEnv,
   SYMBOL_HN *name)
   {
-   SLOT_DESC *slot;
+   SlotDescriptor *slot;
 
    slot = get_struct(theEnv,slotDescriptor);
    slot->dynamicDefault = 1;
@@ -462,9 +463,9 @@ static SLOT_DESC *NewSlot(
   NOTES        : None
  **********************************************************/
 static TEMP_SLOT_LINK *InsertSlot(
-  void *theEnv,
+  Environment *theEnv,
   TEMP_SLOT_LINK *slist,
-  SLOT_DESC *slot)
+  SlotDescriptor *slot)
   {
    TEMP_SLOT_LINK *stmp,*sprv,*tmp;
 
@@ -485,7 +486,7 @@ static TEMP_SLOT_LINK *InsertSlot(
             DeleteSlots(theEnv,tmp);
             PrintErrorID(theEnv,"CLSLTPSR",1,false);
             EnvPrintRouter(theEnv,WERROR,"Duplicate slots not allowed.\n");
-            return(NULL);
+            return NULL;
            }
          sprv = stmp;
          stmp = stmp->nxt;
@@ -529,7 +530,7 @@ static TEMP_SLOT_LINK *InsertSlot(
   NOTES        : None
  *****************************************************************/
 static int ParseSimpleFacet(
-  void *theEnv,
+  Environment *theEnv,
   const char *readSource,
   char *specbits,
   const char *facetName,
@@ -614,10 +615,10 @@ ParseSimpleFacetError:
                          (default-dynamic <expression>*)
  *************************************************************/
 static bool ParseDefaultFacet(
-  void *theEnv,
+  Environment *theEnv,
   const char *readSource,
   char *specbits,
-  SLOT_DESC *slot)
+  SlotDescriptor *slot)
   {
    EXPRESSION *tmp;
    bool error, noneSpecified, deriveSpecified;
@@ -646,7 +647,7 @@ static bool ParseDefaultFacet(
      }
    else
      {
-      slot->defaultValue = (void *) PackExpression(theEnv,tmp);
+      slot->defaultValue = PackExpression(theEnv,tmp);
       ReturnExpression(theEnv,tmp);
       ExpressionInstall(theEnv,(EXPRESSION *) slot->defaultValue);
       slot->defaultSpecified = 1;
@@ -681,13 +682,13 @@ static bool ParseDefaultFacet(
   NOTES        : Assumes slot is composite
  *************************************************************************/
 static void BuildCompositeFacets(
-  void *theEnv,
-  SLOT_DESC *sd,
+  Environment *theEnv,
+  SlotDescriptor *sd,
   PACKED_CLASS_LINKS *preclist,
   const char *specbits,
   CONSTRAINT_PARSE_RECORD *parsedConstraint)
   {
-   SLOT_DESC *compslot = NULL;
+   SlotDescriptor *compslot = NULL;
    long i;
 
    for (i = 1 ; i < preclist->classCount ; i++)
@@ -707,12 +708,12 @@ static void BuildCompositeFacets(
            {
             if (sd->dynamicDefault)
               {
-               sd->defaultValue = (void *) PackExpression(theEnv,(EXPRESSION *) compslot->defaultValue);
+               sd->defaultValue = PackExpression(theEnv,(EXPRESSION *) compslot->defaultValue);
                ExpressionInstall(theEnv,(EXPRESSION *) sd->defaultValue);
               }
             else
               {
-               sd->defaultValue = (void *) get_struct(theEnv,dataObject);
+               sd->defaultValue = get_struct(theEnv,dataObject);
                GenCopyMemory(DATA_OBJECT,1,sd->defaultValue,compslot->defaultValue);
                ValueInstall(theEnv,(DATA_OBJECT *) sd->defaultValue);
               }
@@ -765,8 +766,8 @@ static void BuildCompositeFacets(
   NOTES        : None
  ***************************************************/
 static bool CheckForFacetConflicts(
-  void *theEnv,
-  SLOT_DESC *sd,
+  Environment *theEnv,
+  SlotDescriptor *sd,
   CONSTRAINT_PARSE_RECORD *parsedConstraint)
   {
    if (sd->multiple == 0)
@@ -820,8 +821,8 @@ static bool CheckForFacetConflicts(
                  DeleteSlots() will erase the slot expression
  ********************************************************************/
 static bool EvaluateSlotDefaultValue(
-  void *theEnv,
-  SLOT_DESC *sd,
+  Environment *theEnv,
+  SlotDescriptor *sd,
   const char *specbits)
   {
    DATA_OBJECT temp;
@@ -857,7 +858,7 @@ static bool EvaluateSlotDefaultValue(
            {
             ExpressionDeinstall(theEnv,(EXPRESSION *) sd->defaultValue);
             ReturnPackedExpression(theEnv,(EXPRESSION *) sd->defaultValue);
-            sd->defaultValue = (void *) get_struct(theEnv,dataObject);
+            sd->defaultValue = get_struct(theEnv,dataObject);
             GenCopyMemory(DATA_OBJECT,1,sd->defaultValue,&temp);
             ValueInstall(theEnv,(DATA_OBJECT *) sd->defaultValue);
            }
@@ -869,7 +870,7 @@ static bool EvaluateSlotDefaultValue(
         }
       else if (sd->defaultSpecified == 0)
         {
-         sd->defaultValue = (void *) get_struct(theEnv,dataObject);
+         sd->defaultValue = get_struct(theEnv,dataObject);
          DeriveDefaultFromConstraints(theEnv,sd->constraint,
                                       (DATA_OBJECT *) sd->defaultValue,(int) sd->multiple,true);
          ValueInstall(theEnv,(DATA_OBJECT *) sd->defaultValue);

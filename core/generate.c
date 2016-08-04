@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*                   GENERATE MODULE                   */
    /*******************************************************/
@@ -37,6 +37,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -67,22 +70,22 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    ExtractAnds(void *,struct lhsParseNode *,int,
+   static void                    ExtractAnds(Environment *,struct lhsParseNode *,int,
                                               struct expr **,struct expr **,struct expr **,
                                               struct expr **,struct nandFrame *);
-   static void                    ExtractFieldTest(void *,struct lhsParseNode *,bool,
+   static void                    ExtractFieldTest(Environment *,struct lhsParseNode *,bool,
                                                    struct expr **,struct expr **,struct expr **,
                                                    struct expr **,struct nandFrame *);
-   static struct expr            *GetfieldReplace(void *,struct lhsParseNode *);
-   static struct expr            *GenPNConstant(void *,struct lhsParseNode *);
-   static struct expr            *GenJNConstant(void *,struct lhsParseNode *,bool);
-   static struct expr            *GenJNColon(void *,struct lhsParseNode *,bool,struct nandFrame *);
-   static struct expr            *GenPNColon(void *,struct lhsParseNode *);
-   static struct expr            *GenJNEq(void *,struct lhsParseNode *,bool,struct nandFrame *);
-   static struct expr            *GenPNEq(void *,struct lhsParseNode *);
-   static struct expr            *GenJNVariableComparison(void *,struct lhsParseNode *,
+   static struct expr            *GetfieldReplace(Environment *,struct lhsParseNode *);
+   static struct expr            *GenPNConstant(Environment *,struct lhsParseNode *);
+   static struct expr            *GenJNConstant(Environment *,struct lhsParseNode *,bool);
+   static struct expr            *GenJNColon(Environment *,struct lhsParseNode *,bool,struct nandFrame *);
+   static struct expr            *GenPNColon(Environment *,struct lhsParseNode *);
+   static struct expr            *GenJNEq(Environment *,struct lhsParseNode *,bool,struct nandFrame *);
+   static struct expr            *GenPNEq(Environment *,struct lhsParseNode *);
+   static struct expr            *GenJNVariableComparison(Environment *,struct lhsParseNode *,
                                                           struct lhsParseNode *,bool);
-   static struct expr            *GenPNVariableComparison(void *,struct lhsParseNode *,
+   static struct expr            *GenPNVariableComparison(Environment *,struct lhsParseNode *,
                                                           struct lhsParseNode *);
    static bool                    AllVariablesInPattern(struct lhsParseNode *,
                                                         int);
@@ -94,7 +97,7 @@
 /*   expressions for a field constraint.               */
 /*******************************************************/
 void FieldConversion(
-  void *theEnv,
+  Environment *theEnv,
   struct lhsParseNode *theField,
   struct lhsParseNode *thePattern,
   struct nandFrame *theNandFrames)
@@ -308,7 +311,7 @@ void FieldConversion(
 /*   for testing conditions in the pattern and join network.                */
 /****************************************************************************/
 static void ExtractAnds(
-  void *theEnv,
+  Environment *theEnv,
   struct lhsParseNode *andField,
   int testInPatternNetwork,
   struct expr **patternNetTest,
@@ -375,7 +378,7 @@ static void ExtractAnds(
 /*   performed in the join network).                                    */
 /************************************************************************/
 static void ExtractFieldTest(
-  void *theEnv,
+  Environment *theEnv,
   struct lhsParseNode *theField,
   bool testInPatternNetwork,
   struct expr **patternNetTest,
@@ -466,7 +469,7 @@ static void ExtractFieldTest(
 /*  the data entity for equality or inequality.          */
 /*********************************************************/
 static struct expr *GenPNConstant(
-  void *theEnv,
+  Environment *theEnv,
   struct lhsParseNode *theField)
   {
    struct expr *top;
@@ -505,7 +508,7 @@ static struct expr *GenPNConstant(
 /*  data entity for equality or inequality.                 */
 /************************************************************/
 static struct expr *GenJNConstant(
-  void *theEnv,
+  Environment *theEnv,
   struct lhsParseNode *theField,
   bool isNand)
   {
@@ -553,7 +556,7 @@ static struct expr *GenJNConstant(
 /*  predicate field constraint (the : constraint).    */
 /******************************************************/
 static struct expr *GenJNColon(
-  void *theEnv,
+  Environment *theEnv,
   struct lhsParseNode *theField,
   bool isNand,
   struct nandFrame *theNandFrames)
@@ -594,7 +597,7 @@ static struct expr *GenJNColon(
 /*  a predicate field constraint (the : constraint).  */
 /******************************************************/
 static struct expr *GenPNColon(
-  void *theEnv,
+  Environment *theEnv,
   struct lhsParseNode *theField)
   {
    struct expr *top, *conversion;
@@ -630,7 +633,7 @@ static struct expr *GenPNColon(
 /*  return value field constraint (the = constraint). */
 /******************************************************/
 static struct expr *GenJNEq(
-  void *theEnv,
+  Environment *theEnv,
   struct lhsParseNode *theField,
   bool isNand,
   struct nandFrame *theNandFrames)
@@ -675,7 +678,7 @@ static struct expr *GenJNEq(
 /*  return value field constraint (the = constraint).  */
 /*******************************************************/
 static struct expr *GenPNEq(
-  void *theEnv,
+  Environment *theEnv,
   struct lhsParseNode *theField)
   {
    struct expr *top, *conversion;
@@ -711,7 +714,7 @@ static struct expr *GenPNEq(
 /*   taken through the join network for not/and CE group.               */
 /************************************************************************/
 void AddNandUnification(
-  void *theEnv,
+  Environment *theEnv,
   struct lhsParseNode *nodeList,
   struct nandFrame *theNandFrames)
   {
@@ -767,7 +770,7 @@ void AddNandUnification(
 /*   join network or the activation of the rule).                  */
 /*******************************************************************/
 struct expr *GetvarReplace(
-  void *theEnv,
+  Environment *theEnv,
   struct lhsParseNode *nodeList,
   bool isNand,
   struct nandFrame *theNandFrames)
@@ -779,7 +782,7 @@ struct expr *GetvarReplace(
    /* (i.e. nothing has to be replaced). */
    /*====================================*/
 
-   if (nodeList == NULL) return(NULL);
+   if (nodeList == NULL) return NULL;
      
    /*=====================================================*/
    /* Create an expression data structure and recursively */
@@ -855,7 +858,7 @@ struct expr *GetvarReplace(
 /*   from information stored in the pattern network).                 */
 /**********************************************************************/
 static struct expr *GetfieldReplace(
-  void *theEnv,
+  Environment *theEnv,
   struct lhsParseNode *nodeList)
   {
    struct expr *newList;
@@ -865,7 +868,7 @@ static struct expr *GetfieldReplace(
    /* (i.e. nothing has to be replaced). */
    /*====================================*/
 
-   if (nodeList == NULL) return(NULL);
+   if (nodeList == NULL) return NULL;
 
    /*=====================================================*/
    /* Create an expression data structure and recursively */
@@ -907,7 +910,7 @@ static struct expr *GetfieldReplace(
 /*   comparing two variables found in different patterns.     */
 /**************************************************************/
 static struct expr *GenJNVariableComparison(
-  void *theEnv,
+  Environment *theEnv,
   struct lhsParseNode *selfNode,
   struct lhsParseNode *referringNode,
   bool isNand)
@@ -921,7 +924,7 @@ static struct expr *GenJNVariableComparison(
 
    if ((selfNode->patternType->genCompareJNValuesFunction == NULL) ||
        (referringNode->patternType->genCompareJNValuesFunction == NULL))
-     { return(NULL); }
+     { return NULL; }
 
    /*=====================================================*/
    /* If both patterns are of the same type, then use the */
@@ -957,7 +960,7 @@ static struct expr *GenJNVariableComparison(
 /*   for comparing two variables found in the same pattern.  */
 /*************************************************************/
 static struct expr *GenPNVariableComparison(
-  void *theEnv,
+  Environment *theEnv,
   struct lhsParseNode *selfNode,
   struct lhsParseNode *referringNode)
   {
@@ -966,7 +969,7 @@ static struct expr *GenPNVariableComparison(
       return (*selfNode->patternType->genComparePNValuesFunction)(theEnv,selfNode,referringNode);
      }
 
-   return(NULL);
+   return NULL;
   }
 
 /************************************************************/

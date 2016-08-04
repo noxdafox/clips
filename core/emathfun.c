@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*            EXTENDED MATH FUNCTIONS MODULE           */
    /*******************************************************/
@@ -42,6 +42,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -75,11 +78,11 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static bool                    SingleNumberCheck(void *,const char *,double *);
+   static bool                    SingleNumberCheck(Environment *,const char *,double *);
    static bool                    TestProximity(double,double);
-   static void                    DomainErrorMessage(void *,const char *);
-   static void                    ArgumentOverflowErrorMessage(void *,const char *);
-   static void                    SingularityErrorMessage(void *,const char *);
+   static void                    DomainErrorMessage(Environment *,const char *);
+   static void                    ArgumentOverflowErrorMessage(Environment *,const char *);
+   static void                    SingularityErrorMessage(Environment *,const char *);
    static double                  genacosh(double);
    static double                  genasinh(double);
    static double                  genatanh(double);
@@ -92,7 +95,7 @@
 /*   the extended math functions.               */
 /************************************************/
 void ExtendedMathFunctionDefinitions(
-  void *theEnv)
+  Environment *theEnv)
   {
 #if ! RUN_TIME
    EnvDefineFunction2(theEnv,"cos",      'd', PTIEF CosFunction,      "CosFunction", "11n");
@@ -145,7 +148,7 @@ void ExtendedMathFunctionDefinitions(
 /*   point argument.                                        */
 /************************************************************/
 static bool SingleNumberCheck(
-  void *theEnv,
+  Environment *theEnv,
   const char *functionName,
   double *theNumber)
   {
@@ -176,7 +179,7 @@ static bool TestProximity(
 /*   the extended math functions.                       */
 /********************************************************/
 static void DomainErrorMessage(
-  void *theEnv,
+  Environment *theEnv,
   const char *functionName)
   {
    PrintErrorID(theEnv,"EMATHFUN",1,false);
@@ -193,7 +196,7 @@ static void DomainErrorMessage(
 /*   one of the extended math functions.                    */
 /************************************************************/
 static void ArgumentOverflowErrorMessage(
-  void *theEnv,
+  Environment *theEnv,
   const char *functionName)
   {
    PrintErrorID(theEnv,"EMATHFUN",2,false);
@@ -210,7 +213,7 @@ static void ArgumentOverflowErrorMessage(
 /*   extended math functions.                               */
 /************************************************************/
 static void SingularityErrorMessage(
-  void *theEnv,
+  Environment *theEnv,
   const char *functionName)
   {
    PrintErrorID(theEnv,"EMATHFUN",3,false);
@@ -226,7 +229,7 @@ static void SingularityErrorMessage(
 /*   for the cos function.           */
 /*************************************/
 double CosFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    double num;
 
@@ -239,7 +242,7 @@ double CosFunction(
 /*   for the sin function.           */
 /*************************************/
 double SinFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    double num;
 
@@ -252,7 +255,7 @@ double SinFunction(
 /*   for the tan function.           */
 /*************************************/
 double TanFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    double num, tv;
 
@@ -272,7 +275,7 @@ double TanFunction(
 /*   for the sec function.           */
 /*************************************/
 double SecFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    double num, tv;
 
@@ -293,7 +296,7 @@ double SecFunction(
 /*   for the csc function.           */
 /*************************************/
 double CscFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    double num, tv;
 
@@ -313,7 +316,7 @@ double CscFunction(
 /*   for the cot function.           */
 /*************************************/
 double CotFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
     double num, tv;
 
@@ -334,7 +337,7 @@ double CotFunction(
 /*   for the acos function.           */
 /**************************************/
 double AcosFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    double num;
 
@@ -352,7 +355,7 @@ double AcosFunction(
 /*   for the asin function.           */
 /**************************************/
 double AsinFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    double num;
 
@@ -370,7 +373,7 @@ double AsinFunction(
 /*   for the atan function.           */
 /**************************************/
 double AtanFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    double num;
 
@@ -383,7 +386,7 @@ double AtanFunction(
 /*   for the asec function.           */
 /**************************************/
 double AsecFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    double num;
 
@@ -402,7 +405,7 @@ double AsecFunction(
 /*   for the acsc function.           */
 /**************************************/
 double AcscFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    double num;
 
@@ -421,7 +424,7 @@ double AcscFunction(
 /*   for the acot function.           */
 /**************************************/
 double AcotFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    double num;
 
@@ -436,7 +439,7 @@ double AcotFunction(
 /*   for the cosh function.           */
 /**************************************/
 double CoshFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    double num;
 
@@ -449,7 +452,7 @@ double CoshFunction(
 /*   for the sinh function.           */
 /**************************************/
 double SinhFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    double num;
 
@@ -462,7 +465,7 @@ double SinhFunction(
 /*   for the tanh function.           */
 /**************************************/
 double TanhFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    double num;
 
@@ -475,7 +478,7 @@ double TanhFunction(
 /*   for the sech function.           */
 /**************************************/
 double SechFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    double num;
 
@@ -488,7 +491,7 @@ double SechFunction(
 /*   for the csch function.           */
 /**************************************/
 double CschFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    double num;
 
@@ -511,7 +514,7 @@ double CschFunction(
 /*   for the coth function.           */
 /**************************************/
 double CothFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    double num;
 
@@ -534,7 +537,7 @@ double CothFunction(
 /*   for the acosh function.           */
 /***************************************/
 double AcoshFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    double num;
 
@@ -552,7 +555,7 @@ double AcoshFunction(
 /*   for the asinh function.           */
 /***************************************/
 double AsinhFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    double num;
 
@@ -565,7 +568,7 @@ double AsinhFunction(
 /*   for the atanh function.           */
 /***************************************/
 double AtanhFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    double num;
 
@@ -583,7 +586,7 @@ double AtanhFunction(
 /*   for the asech function.           */
 /***************************************/
 double AsechFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    double num;
 
@@ -601,7 +604,7 @@ double AsechFunction(
 /*   for the acsch function.           */
 /***************************************/
 double AcschFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    double num;
 
@@ -619,7 +622,7 @@ double AcschFunction(
 /*   for the acoth function.           */
 /***************************************/
 double AcothFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    double num;
 
@@ -637,7 +640,7 @@ double AcothFunction(
 /*   for the exp function.           */
 /*************************************/
 double ExpFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    double num;
 
@@ -650,7 +653,7 @@ double ExpFunction(
 /*   for the log function.           */
 /*************************************/
 double LogFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    double num;
 
@@ -674,7 +677,7 @@ double LogFunction(
 /*   for the log10 function.           */
 /***************************************/
 double Log10Function(
-  void *theEnv)
+  Environment *theEnv)
   {
    double num;
 
@@ -698,7 +701,7 @@ double Log10Function(
 /*   for the sqrt function.           */
 /**************************************/
 double SqrtFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    double num;
 
@@ -716,7 +719,7 @@ double SqrtFunction(
 /*   for the pow function.           */
 /*************************************/
 double PowFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    DATA_OBJECT value1, value2;
 
@@ -744,7 +747,7 @@ double PowFunction(
 /*   for the mod function.           */
 /*************************************/
 void ModFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT_PTR result)
   {
    DATA_OBJECT item1, item2;
@@ -754,21 +757,21 @@ void ModFunction(
    if (EnvArgCountCheck(theEnv,"mod",EXACTLY,2) == -1)
      {
       result->type = INTEGER;
-      result->value = (void *) EnvAddLong(theEnv,0L);
+      result->value = EnvAddLong(theEnv,0L);
       return;
      }
 
    if (EnvArgTypeCheck(theEnv,"mod",1,INTEGER_OR_FLOAT,&item1) == false)
      {
       result->type = INTEGER;
-      result->value = (void *) EnvAddLong(theEnv,0L);
+      result->value = EnvAddLong(theEnv,0L);
       return;
      }
 
    if (EnvArgTypeCheck(theEnv,"mod",2,INTEGER_OR_FLOAT,&item2) == false)
      {
       result->type = INTEGER;
-      result->value = (void *) EnvAddLong(theEnv,0L);
+      result->value = EnvAddLong(theEnv,0L);
       return;
      }
 
@@ -778,7 +781,7 @@ void ModFunction(
       DivideByZeroErrorMessage(theEnv,"mod");
       EnvSetEvaluationError(theEnv,true);
       result->type = INTEGER;
-      result->value = (void *) EnvAddLong(theEnv,0L);
+      result->value = EnvAddLong(theEnv,0L);
       return;
      }
 
@@ -787,14 +790,14 @@ void ModFunction(
       fnum1 = CoerceToDouble(item1.type,item1.value);
       fnum2 = CoerceToDouble(item2.type,item2.value);
       result->type = FLOAT;
-      result->value = (void *) EnvAddDouble(theEnv,fnum1 - (dtrunc(fnum1 / fnum2) * fnum2));
+      result->value = EnvAddDouble(theEnv,fnum1 - (dtrunc(fnum1 / fnum2) * fnum2));
      }
    else
      {
       lnum1 = DOToLong(item1);
       lnum2 = DOToLong(item2);
       result->type = INTEGER;
-      result->value = (void *) EnvAddLong(theEnv,lnum1 - (lnum1 / lnum2) * lnum2);
+      result->value = EnvAddLong(theEnv,lnum1 - (lnum1 / lnum2) * lnum2);
      }
   }
 
@@ -803,7 +806,7 @@ void ModFunction(
 /*   for the pi function.           */
 /************************************/
 double PiFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
 
    if (EnvArgCountCheck(theEnv,"pi",EXACTLY,0) == -1) return(acos(-1.0));
@@ -815,7 +818,7 @@ double PiFunction(
 /*   for the deg-rad function.          */
 /****************************************/
 double DegRadFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    double num;
 
@@ -828,7 +831,7 @@ double DegRadFunction(
 /*   for the rad-deg function.          */
 /****************************************/
 double RadDegFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    double num;
 
@@ -841,7 +844,7 @@ double RadDegFunction(
 /*   for the deg-grad function.          */
 /*****************************************/
 double DegGradFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    double num;
 
@@ -854,7 +857,7 @@ double DegGradFunction(
 /*   for the grad-deg function.          */
 /*****************************************/
 double GradDegFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    double num;
 
@@ -867,7 +870,7 @@ double GradDegFunction(
 /*   for the round function.           */
 /***************************************/
 long long RoundFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    DATA_OBJECT result;
 

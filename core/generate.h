@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                GENERATE HEADER FILE                 */
    /*******************************************************/
@@ -32,6 +32,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_generate
@@ -44,9 +47,9 @@
 #include "expressn.h"
 #include "reorder.h"
 
-   void                           FieldConversion(void *,struct lhsParseNode *,struct lhsParseNode *,struct nandFrame *);
-   struct expr                   *GetvarReplace(void *,struct lhsParseNode *,bool,struct nandFrame *);
-   void                           AddNandUnification(void *,struct lhsParseNode *,struct nandFrame *);
+   void                           FieldConversion(Environment *,struct lhsParseNode *,struct lhsParseNode *,struct nandFrame *);
+   struct expr                   *GetvarReplace(Environment *,struct lhsParseNode *,bool,struct nandFrame *);
+   void                           AddNandUnification(Environment *,struct lhsParseNode *,struct nandFrame *);
 
 #endif /* _H_generate */
 

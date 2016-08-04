@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -31,6 +31,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_insmult
@@ -42,15 +45,15 @@
 #include "evaluatn.h"
 
 #if (! RUN_TIME)
-   void                           SetupInstanceMultifieldCommands(void *);
+   void                           SetupInstanceMultifieldCommands(Environment *);
 #endif
 
-   void                           MVSlotReplaceCommand(void *,DATA_OBJECT *);
-   void                           MVSlotInsertCommand(void *,DATA_OBJECT *);
-   void                           MVSlotDeleteCommand(void *,DATA_OBJECT *);
-   bool                           DirectMVReplaceCommand(void *);
-   bool                           DirectMVInsertCommand(void *);
-   bool                           DirectMVDeleteCommand(void *);
+   void                           MVSlotReplaceCommand(Environment *,DATA_OBJECT *);
+   void                           MVSlotInsertCommand(Environment *,DATA_OBJECT *);
+   void                           MVSlotDeleteCommand(Environment *,DATA_OBJECT *);
+   bool                           DirectMVReplaceCommand(Environment *);
+   bool                           DirectMVInsertCommand(Environment *);
+   bool                           DirectMVDeleteCommand(Environment *);
 
 #endif /* _H_insmult */
 

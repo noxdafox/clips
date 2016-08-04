@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*         DEFTEMPLATE BSAVE/BLOAD HEADER FILE         */
    /*******************************************************/
@@ -27,6 +27,9 @@
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -76,7 +79,7 @@ struct bsaveDeftemplateModule
 
 struct deftemplateBinaryData
   { 
-   struct deftemplate *DeftemplateArray;
+   Deftemplate *DeftemplateArray;
    long NumberOfDeftemplates;
    long NumberOfTemplateSlots;
    long NumberOfTemplateModules;
@@ -86,14 +89,14 @@ struct deftemplateBinaryData
   
 #define DeftemplateBinaryData(theEnv) ((struct deftemplateBinaryData *) GetEnvironmentData(theEnv,TMPLTBIN_DATA))
 
-#define DeftemplatePointer(i) ((struct deftemplate *) (&DeftemplateBinaryData(theEnv)->DeftemplateArray[i]))
+#define DeftemplatePointer(i) ((Deftemplate *) (&DeftemplateBinaryData(theEnv)->DeftemplateArray[i]))
 
 #ifndef _H_tmpltdef
 #include "tmpltdef.h"
 #endif
 
-   void                           DeftemplateBinarySetup(void *);
-   void                          *BloadDeftemplateModuleReference(void *,int);
+   void                           DeftemplateBinarySetup(Environment *);
+   void                          *BloadDeftemplateModuleReference(Environment *,int);
 
 #endif /* (! RUN_TIME) */
 

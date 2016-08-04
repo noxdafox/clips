@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*               DEFINSTANCES HEADER FILE              */
    /*******************************************************/
@@ -42,6 +42,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_defins
@@ -70,7 +73,7 @@ typedef struct definstances
    struct constructHeader header;
    unsigned busy;
    EXPRESSION *mkinstance;
-  } DEFINSTANCES;
+  } Definstances;
 
 #define DEFINSTANCES_DATA 22
 
@@ -85,41 +88,41 @@ struct definstancesData
 
 #define DefinstancesData(theEnv) ((struct definstancesData *) GetEnvironmentData(theEnv,DEFINSTANCES_DATA))
 
-   const char                    *EnvDefinstancesModule(void *,void *);
-   const char                    *EnvDefinstancesModuleName(void *,void *);
-   void                          *EnvFindDefinstances(void *,const char *);
-   void                          *EnvFindDefinstancesInModule(void *,const char *);
-   void                           EnvGetDefinstancesList(void *,DATA_OBJECT *,struct defmodule *);
-   const char                    *EnvGetDefinstancesName(void *,void *);
-   SYMBOL_HN                     *EnvGetDefinstancesNamePointer(void *,void *);
-   const char                    *EnvGetDefinstancesPPForm(void *,void *);
-   void                          *EnvGetNextDefinstances(void *,void *);
-   bool                           EnvIsDefinstancesDeletable(void *,void *);
-   void                           EnvSetDefinstancesPPForm(void *,void *,const char *);
-   bool                           EnvUndefinstances(void *,void *);
-   void                           GetDefinstancesListFunction(void *,DATA_OBJECT *);
-   void                          *GetDefinstancesModuleCommand(void *);
-   void                           SetupDefinstances(void *);
-   void                           UndefinstancesCommand(void *);
+   const char                    *EnvDefinstancesModule(Environment *,Definstances *);
+   const char                    *EnvDefinstancesModuleName(Environment *,Definstances *);
+   Definstances                  *EnvFindDefinstances(Environment *,const char *);
+   Definstances                  *EnvFindDefinstancesInModule(Environment *,const char *);
+   void                           EnvGetDefinstancesList(Environment *,DATA_OBJECT *,Defmodule *);
+   const char                    *EnvGetDefinstancesName(Environment *,Definstances *);
+   SYMBOL_HN                     *EnvGetDefinstancesNamePointer(Environment *,Definstances *);
+   const char                    *EnvGetDefinstancesPPForm(Environment *,Definstances *);
+   Definstances                  *EnvGetNextDefinstances(Environment *,Definstances *);
+   bool                           EnvIsDefinstancesDeletable(Environment *,Definstances *);
+   void                           EnvSetDefinstancesPPForm(Environment *,Definstances *,const char *);
+   bool                           EnvUndefinstances(Environment *,Definstances *);
+   void                           GetDefinstancesListFunction(Environment *,DATA_OBJECT *);
+   void                          *GetDefinstancesModuleCommand(Environment *);
+   void                           SetupDefinstances(Environment *);
+   void                           UndefinstancesCommand(Environment *);
 #if DEBUGGING_FUNCTIONS
-   void                           PPDefinstancesCommand(void *);
-   void                           ListDefinstancesCommand(void *);
-   void                           EnvListDefinstances(void *,const char *,struct defmodule *);
+   void                           PPDefinstancesCommand(Environment *);
+   void                           ListDefinstancesCommand(Environment *);
+   void                           EnvListDefinstances(Environment *,const char *,Defmodule *);
 #endif
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-   const char                    *DefinstancesModule(void *);
-   void                          *FindDefinstances(const char *);
-   void                           GetDefinstancesList(DATA_OBJECT *,struct defmodule *);
-   const char                    *GetDefinstancesName(void *);
-   const char                    *GetDefinstancesPPForm(void *);
-   void                          *GetNextDefinstances(void *);
-   bool                           IsDefinstancesDeletable(void *);
+   const char                    *DefinstancesModule(Definstances *);
+   Definstances                  *FindDefinstances(const char *);
+   void                           GetDefinstancesList(DATA_OBJECT *,Defmodule *);
+   const char                    *GetDefinstancesName(Definstances *);
+   const char                    *GetDefinstancesPPForm(Definstances *);
+   Definstances                  *GetNextDefinstances(Definstances *);
+   bool                           IsDefinstancesDeletable(Definstances *);
 #if DEBUGGING_FUNCTIONS
-   void                           ListDefinstances(const char *,struct defmodule *);
+   void                           ListDefinstances(const char *,Defmodule *);
 #endif
-   bool                           Undefinstances(void *);
+   bool                           Undefinstances(Definstances *);
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */
 

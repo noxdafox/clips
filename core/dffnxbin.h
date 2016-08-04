@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -26,6 +26,9 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_dffnxbin
@@ -38,22 +41,22 @@
 
 #include "dffnxfun.h"
 
-   void                           SetupDeffunctionsBload(void *);
-   void                          *BloadDeffunctionModuleReference(void *,int);
+   void                           SetupDeffunctionsBload(Environment *);
+   void                          *BloadDeffunctionModuleReference(Environment *,int);
 
 #define DFFNXBIN_DATA 24
 
 struct deffunctionBinaryData
   { 
-   DEFFUNCTION *DeffunctionArray;
+   Deffunction *DeffunctionArray;
    long DeffunctionCount;
    long ModuleCount;
-   DEFFUNCTION_MODULE *ModuleArray;
+   DeffunctionModuleData *ModuleArray;
   };
   
 #define DeffunctionBinaryData(theEnv) ((struct deffunctionBinaryData *) GetEnvironmentData(theEnv,DFFNXBIN_DATA))
 
-#define DeffunctionPointer(i) (((i) == -1L) ? NULL : (DEFFUNCTION *) &DeffunctionBinaryData(theEnv)->DeffunctionArray[i])
+#define DeffunctionPointer(i) (((i) == -1L) ? NULL : &DeffunctionBinaryData(theEnv)->DeffunctionArray[i])
 
 #endif /* DEFFUNCTION_CONSTRUCT && (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE) */
 

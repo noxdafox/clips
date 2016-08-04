@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*             RULE CONSTRAINTS HEADER FILE            */
    /*******************************************************/
@@ -27,6 +27,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_rulecstr
@@ -35,16 +38,16 @@
 
 #define _H_rulecstr
 
-   struct lhsParseNode           *GetExpressionVarConstraints(void *,struct lhsParseNode *);
-   struct lhsParseNode           *DeriveVariableConstraints(void *,struct lhsParseNode *);
-   bool                           ProcessConnectedConstraints(void *,struct lhsParseNode *,struct lhsParseNode *,struct lhsParseNode *);
-   void                           ConstraintReferenceErrorMessage(void *,
-                                                                struct symbolHashNode *,
-                                                                struct lhsParseNode *,
-                                                                int,int,
-                                                                struct symbolHashNode *,
-                                                                int);
-   bool                           CheckRHSForConstraintErrors(void *,struct expr *,struct lhsParseNode *);
+   struct lhsParseNode           *GetExpressionVarConstraints(Environment *,struct lhsParseNode *);
+   struct lhsParseNode           *DeriveVariableConstraints(Environment *,struct lhsParseNode *);
+   bool                           ProcessConnectedConstraints(Environment *,struct lhsParseNode *,struct lhsParseNode *,struct lhsParseNode *);
+   void                           ConstraintReferenceErrorMessage(Environment *,
+                                                                  struct symbolHashNode *,
+                                                                  struct lhsParseNode *,
+                                                                  int,int,
+                                                                  struct symbolHashNode *,
+                                                                  int);
+   bool                           CheckRHSForConstraintErrors(Environment *,struct expr *,struct lhsParseNode *);
 
 #endif /* _H_rulecstr */
 

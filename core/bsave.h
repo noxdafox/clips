@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/04/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                 BSAVE HEADER FILE                   */
    /*******************************************************/
@@ -37,6 +37,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_bsave
@@ -54,13 +57,13 @@ struct BinaryItem;
 struct BinaryItem
   {
    const char *name;
-   void (*findFunction)(void *);
-   void (*bloadStorageFunction)(void *);
-   void (*bloadFunction)(void *);
-   void (*clearFunction)(void *);
-   void (*expressionFunction)(void *,FILE *);
-   void (*bsaveStorageFunction)(void *,FILE *);
-   void (*bsaveFunction)(void *,FILE *);
+   void (*findFunction)(Environment *);
+   void (*bloadStorageFunction)(Environment *);
+   void (*bloadFunction)(Environment *);
+   void (*clearFunction)(Environment *);
+   void (*expressionFunction)(Environment *,FILE *);
+   void (*bsaveStorageFunction)(Environment *,FILE *);
+   void (*bsaveFunction)(Environment *,FILE *);
    int priority;
    struct BinaryItem *next;
   };
@@ -93,22 +96,22 @@ struct bsaveData
 
 #define BsaveData(theEnv) ((struct bsaveData *) GetEnvironmentData(theEnv,BSAVE_DATA))
 
-   void                    InitializeBsaveData(void *);
-   bool                    BsaveCommand(void *);
+   void                    InitializeBsaveData(Environment *);
+   bool                    BsaveCommand(Environment *);
 #if BLOAD_AND_BSAVE
-   bool                    EnvBsave(void *,const char *);
-   void                    MarkNeededItems(void *,struct expr *);
-   void                    SaveBloadCount(void *,long);
-   void                    RestoreBloadCount(void *,long *);
+   bool                    EnvBsave(Environment *,const char *);
+   void                    MarkNeededItems(Environment *,struct expr *);
+   void                    SaveBloadCount(Environment *,long);
+   void                    RestoreBloadCount(Environment *,long *);
 #endif
-   bool                    AddBinaryItem(void *,const char *,int,
-                                                void (*)(void *),
-                                                void (*)(void *,FILE *),
-                                                void (*)(void *,FILE *),
-                                                void (*)(void *,FILE *),
-                                                void (*)(void *),
-                                                void (*)(void *),
-                                                void (*)(void *));
+   bool                    AddBinaryItem(Environment *,const char *,int,
+                                         void (*)(Environment *),
+                                         void (*)(Environment *,FILE *),
+                                         void (*)(Environment *,FILE *),
+                                         void (*)(Environment *,FILE *),
+                                         void (*)(Environment *),
+                                         void (*)(Environment *),
+                                         void (*)(Environment *));
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -28,6 +28,9 @@
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -68,10 +71,10 @@
    =========================================
    ***************************************** */
 
-static void UnboundDeffunctionErr(void *);
+   static void                    UnboundDeffunctionErr(Environment *);
 
 #if DEBUGGING_FUNCTIONS
-static void WatchDeffunction(void *,const char *);
+   static void                    WatchDeffunction(Environment *,const char *);
 #endif
 
 /* =========================================
@@ -92,13 +95,13 @@ static void WatchDeffunction(void *,const char *);
   NOTES        : Used in EvaluateExpression(theEnv,)
  ****************************************************/
 void CallDeffunction(
-  void *theEnv,
-  DEFFUNCTION *dptr,
+  Environment *theEnv,
+  Deffunction *dptr,
   EXPRESSION *args,
   DATA_OBJECT *result)
   {
    int oldce;
-   DEFFUNCTION *previouslyExecutingDeffunction;
+   Deffunction *previouslyExecutingDeffunction;
    struct garbageFrame newGarbageFrame;
    struct garbageFrame *oldGarbageFrame;
 #if PROFILING_FUNCTIONS
@@ -122,7 +125,7 @@ void CallDeffunction(
    DeffunctionData(theEnv)->ExecutingDeffunction = dptr;
    EvaluationData(theEnv)->CurrentEvaluationDepth++;
    dptr->executing++;
-   PushProcParameters(theEnv,args,CountArguments(args),EnvGetDeffunctionName(theEnv,(void *) dptr),
+   PushProcParameters(theEnv,args,CountArguments(args),EnvGetDeffunctionName(theEnv,dptr),
                       "deffunction",UnboundDeffunctionErr);
    if (EvaluationData(theEnv)->EvaluationError)
      {
@@ -190,10 +193,10 @@ void CallDeffunction(
   NOTES        : None
  *******************************************************/
 static void UnboundDeffunctionErr(
-  void *theEnv)
+  Environment *theEnv)
   {
    EnvPrintRouter(theEnv,WERROR,"deffunction ");
-   EnvPrintRouter(theEnv,WERROR,EnvGetDeffunctionName(theEnv,(void *) DeffunctionData(theEnv)->ExecutingDeffunction));
+   EnvPrintRouter(theEnv,WERROR,EnvGetDeffunctionName(theEnv,DeffunctionData(theEnv)->ExecutingDeffunction));
    EnvPrintRouter(theEnv,WERROR,".\n");
   }
 
@@ -212,14 +215,14 @@ static void UnboundDeffunctionErr(
   NOTES        : None
  ***************************************************/
 static void WatchDeffunction(
-  void *theEnv,
+  Environment *theEnv,
   const char *tstring)
   {
    EnvPrintRouter(theEnv,WTRACE,"DFN ");
    EnvPrintRouter(theEnv,WTRACE,tstring);
-   if (DeffunctionData(theEnv)->ExecutingDeffunction->header.whichModule->theModule != ((struct defmodule *) EnvGetCurrentModule(theEnv)))
+   if (DeffunctionData(theEnv)->ExecutingDeffunction->header.whichModule->theModule != EnvGetCurrentModule(theEnv))
      {
-      EnvPrintRouter(theEnv,WTRACE,EnvGetDefmoduleName(theEnv,(void *)
+      EnvPrintRouter(theEnv,WTRACE,EnvGetDefmoduleName(theEnv,
                         DeffunctionData(theEnv)->ExecutingDeffunction->header.whichModule->theModule));
       EnvPrintRouter(theEnv,WTRACE,"::");
      }

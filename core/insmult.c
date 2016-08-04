@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*           INSTANCE MULTIFIELD SLOT MODULE           */
    /*******************************************************/
@@ -31,6 +31,9 @@
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -63,16 +66,14 @@
 #define REPLACE        1
 #define DELETE_OP      2
 
-/* =========================================
-   *****************************************
-      INTERNALLY VISIBLE FUNCTION HEADERS
-   =========================================
-   ***************************************** */
+/***************************************/
+/* LOCAL INTERNAL FUNCTION DEFINITIONS */
+/***************************************/
 
-static INSTANCE_TYPE *CheckMultifieldSlotInstance(void *,const char *);
-static INSTANCE_SLOT *CheckMultifieldSlotModify(void *,int,const char *,INSTANCE_TYPE *,
-                                       EXPRESSION *,long *,long *,DATA_OBJECT *);
-static void AssignSlotToDataObject(DATA_OBJECT *,INSTANCE_SLOT *);
+   static Instance               *CheckMultifieldSlotInstance(Environment *,const char *);
+   static INSTANCE_SLOT          *CheckMultifieldSlotModify(Environment *,int,const char *,Instance *,
+                                                            EXPRESSION *,long *,long *,DATA_OBJECT *);
+   static void                    AssignSlotToDataObject(DATA_OBJECT *,INSTANCE_SLOT *);
 
 /* =========================================
    *****************************************
@@ -92,7 +93,7 @@ static void AssignSlotToDataObject(DATA_OBJECT *,INSTANCE_SLOT *);
   NOTES        : None
  ***************************************************/
 void SetupInstanceMultifieldCommands(
-  void *theEnv)
+  Environment *theEnv)
   {
    /* ===================================
       Old version 5.1 compatibility names
@@ -143,11 +144,11 @@ void SetupInstanceMultifieldCommands(
                                  <range-begin> <range-end> <value>)
  ***********************************************************************************/
 void MVSlotReplaceCommand(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *result)
   {
    DATA_OBJECT newval,newseg,oldseg;
-   INSTANCE_TYPE *ins;
+   Instance *ins;
    INSTANCE_SLOT *sp;
    long rb,re;
    EXPRESSION arg;
@@ -165,7 +166,7 @@ void MVSlotReplaceCommand(
    if (ReplaceMultiValueField(theEnv,&newseg,&oldseg,rb,re,&newval,"slot-replace$") == false)
      return;
    arg.type = MULTIFIELD;
-   arg.value = (void *) &newseg;
+   arg.value = &newseg;
    arg.nextArg = NULL;
    arg.argList = NULL;
    DirectMessage(theEnv,sp->desc->overrideMessage,ins,result,&arg);
@@ -183,11 +184,11 @@ void MVSlotReplaceCommand(
   NOTES        : H/L Syntax : (slot-insert$ <instance> <slot> <index> <value>)
  ***********************************************************************************/
 void MVSlotInsertCommand(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *result)
   {
    DATA_OBJECT newval,newseg,oldseg;
-   INSTANCE_TYPE *ins;
+   Instance *ins;
    INSTANCE_SLOT *sp;
    long theIndex;
    EXPRESSION arg;
@@ -205,7 +206,7 @@ void MVSlotInsertCommand(
    if (InsertMultiValueField(theEnv,&newseg,&oldseg,theIndex,&newval,"slot-insert$") == false)
      return;
    arg.type = MULTIFIELD;
-   arg.value = (void *) &newseg;
+   arg.value = &newseg;
    arg.nextArg = NULL;
    arg.argList = NULL;
    DirectMessage(theEnv,sp->desc->overrideMessage,ins,result,&arg);
@@ -224,11 +225,11 @@ void MVSlotInsertCommand(
                                  <range-begin> <range-end>)
  ***********************************************************************************/
 void MVSlotDeleteCommand(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *result)
   {
    DATA_OBJECT newseg,oldseg;
-   INSTANCE_TYPE *ins;
+   Instance *ins;
    INSTANCE_SLOT *sp;
    long rb,re;
    EXPRESSION arg;
@@ -246,7 +247,7 @@ void MVSlotDeleteCommand(
    if (DeleteMultiValueField(theEnv,&newseg,&oldseg,rb,re,"slot-delete$") == false)
      return;
    arg.type = MULTIFIELD;
-   arg.value = (void *) &newseg;
+   arg.value = &newseg;
    arg.nextArg = NULL;
    arg.argList = NULL;
    DirectMessage(theEnv,sp->desc->overrideMessage,ins,result,&arg);
@@ -262,10 +263,10 @@ void MVSlotDeleteCommand(
                                 <range-begin> <range-end> <value>)
  *****************************************************************/
 bool DirectMVReplaceCommand(
-  void *theEnv)
+  Environment *theEnv)
   {
    INSTANCE_SLOT *sp;
-   INSTANCE_TYPE *ins;
+   Instance *ins;
    long rb,re;
    DATA_OBJECT newval,newseg,oldseg;
 
@@ -294,10 +295,10 @@ bool DirectMVReplaceCommand(
   NOTES        : H/L Syntax: (direct-slot-insert$ <slot> <index> <value>)
  ************************************************************************/
 bool DirectMVInsertCommand(
-  void *theEnv)
+  Environment *theEnv)
   {
    INSTANCE_SLOT *sp;
-   INSTANCE_TYPE *ins;
+   Instance *ins;
    long theIndex;
    DATA_OBJECT newval,newseg,oldseg;
 
@@ -327,10 +328,10 @@ bool DirectMVInsertCommand(
                                 <range-begin> <range-end>)
  *****************************************************************/
 bool DirectMVDeleteCommand(
-  void *theEnv)
+  Environment *theEnv)
   {
    INSTANCE_SLOT *sp;
-   INSTANCE_TYPE *ins;
+   Instance *ins;
    long rb,re;
    DATA_OBJECT newseg,oldseg;
 
@@ -365,26 +366,26 @@ bool DirectMVDeleteCommand(
   SIDE EFFECTS : None
   NOTES        : None
  **********************************************************************/
-static INSTANCE_TYPE *CheckMultifieldSlotInstance(
-  void *theEnv,
+static Instance *CheckMultifieldSlotInstance(
+  Environment *theEnv,
   const char *func)
   {
-   INSTANCE_TYPE *ins;
+   Instance *ins;
    DATA_OBJECT temp;
 
    if (EnvArgTypeCheck(theEnv,func,1,INSTANCE_OR_INSTANCE_NAME,&temp) == false)
      {
       EnvSetEvaluationError(theEnv,true);
-      return(NULL);
+      return NULL;
      }
    if (temp.type == INSTANCE_ADDRESS)
      {
-      ins = (INSTANCE_TYPE *) temp.value;
+      ins = (Instance *) temp.value;
       if (ins->garbage == 1)
         {
          StaleInstanceAddress(theEnv,func,0);
          EnvSetEvaluationError(theEnv,true);
-         return(NULL);
+         return NULL;
         }
      }
    else
@@ -425,10 +426,10 @@ static INSTANCE_TYPE *CheckMultifieldSlotInstance(
                    expressions deep - slot, index, and optional values
  *********************************************************************/
 static INSTANCE_SLOT *CheckMultifieldSlotModify(
-  void *theEnv,
+  Environment *theEnv,
   int code,
   const char *func,
-  INSTANCE_TYPE *ins,
+  Instance *ins,
   EXPRESSION *args,
   long *rb,
   long *re,
@@ -445,13 +446,13 @@ static INSTANCE_SLOT *CheckMultifieldSlotModify(
      {
       ExpectedTypeError1(theEnv,func,start,"symbol");
       EnvSetEvaluationError(theEnv,true);
-      return(NULL);
+      return NULL;
      }
    sp = FindInstanceSlot(theEnv,ins,(SYMBOL_HN *) temp.value);
    if (sp == NULL)
      {
       SlotExistError(theEnv,ValueToString(temp.value),func);
-      return(NULL);
+      return NULL;
      }
    if (sp->desc->multiple == 0)
      {
@@ -464,14 +465,14 @@ static INSTANCE_SLOT *CheckMultifieldSlotModify(
       EnvPrintRouter(theEnv,WERROR,ValueToString(ins->name));
       EnvPrintRouter(theEnv,WERROR,".\n");
       EnvSetEvaluationError(theEnv,true);
-      return(NULL);
+      return NULL;
      }
    EvaluateExpression(theEnv,args->nextArg,&temp);
    if (temp.type != INTEGER)
      {
       ExpectedTypeError1(theEnv,func,start+1,"integer");
       EnvSetEvaluationError(theEnv,true);
-      return(NULL);
+      return NULL;
      }
    args = args->nextArg->nextArg;
    *rb = (long) ValueToLong(temp.value);
@@ -482,7 +483,7 @@ static INSTANCE_SLOT *CheckMultifieldSlotModify(
         {
          ExpectedTypeError1(theEnv,func,start+2,"integer");
          EnvSetEvaluationError(theEnv,true);
-         return(NULL);
+         return NULL;
         }
       *re = (long) ValueToLong(temp.value);
       args = args->nextArg;
@@ -490,7 +491,7 @@ static INSTANCE_SLOT *CheckMultifieldSlotModify(
    if ((code == INSERT) || (code == REPLACE))
      {
       if (EvaluateAndStoreInDataObject(theEnv,1,args,newval,true) == false)
-        return(NULL);
+        return NULL;
      }
    return(sp);
   }

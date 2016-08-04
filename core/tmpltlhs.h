@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*              DEFTEMPLATE LHS HEADER FILE            */
    /*******************************************************/
@@ -27,6 +27,9 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_tmpltlhs
@@ -38,7 +41,7 @@
 #include "symbol.h"
 #include "tmpltdef.h"
 
-   struct lhsParseNode           *DeftemplateLHSParse(void *,const char *,struct deftemplate *);
+   struct lhsParseNode           *DeftemplateLHSParse(Environment *,const char *,Deftemplate *);
 
 #endif /* _H_tmpltlhs */
 

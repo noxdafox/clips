@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*         DEFMODULE BASIC COMMANDS HEADER FILE        */
    /*******************************************************/
@@ -32,6 +32,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -56,16 +59,16 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    ClearDefmodules(void *);
+   static void                    ClearDefmodules(Environment *);
 #if DEFMODULE_CONSTRUCT
-   static void                    SaveDefmodules(void *,void *,const char *);
+   static void                    SaveDefmodules(Environment *,Defmodule *,const char *);
 #endif
 
 /*****************************************************************/
 /* DefmoduleBasicCommands: Initializes basic defmodule commands. */
 /*****************************************************************/
 void DefmoduleBasicCommands(
-  void *theEnv)
+  Environment *theEnv)
   {
    EnvAddClearFunction(theEnv,"defmodule",ClearDefmodules,2000);
 
@@ -73,7 +76,7 @@ void DefmoduleBasicCommands(
    AddSaveFunction(theEnv,"defmodule",SaveDefmodules,1100);
 
 #if ! RUN_TIME
-   EnvDefineFunction2(theEnv,"get-defmodule-list",'m',PTIEF EnvGetDefmoduleList,"EnvGetDefmoduleList","00");
+   EnvDefineFunction2(theEnv,"get-defmodule-list",'m',PTIEF GetDefmoduleListFunction,"GetDefmoduleListFunction","00");
 
 #if DEBUGGING_FUNCTIONS
    EnvDefineFunction2(theEnv,"list-defmodules",'v', PTIEF ListDefmodulesCommand,"ListDefmodulesCommand","00");
@@ -96,7 +99,7 @@ void DefmoduleBasicCommands(
 /*   the clear command. Creates the MAIN module.         */
 /*********************************************************/
 static void ClearDefmodules(
-  void *theEnv)
+  Environment *theEnv)
   {
 #if (BLOAD || BLOAD_AND_BSAVE || BLOAD_ONLY) && (! RUN_TIME)
    if (Bloaded(theEnv) == true) return;
@@ -120,8 +123,8 @@ static void ClearDefmodules(
 /*   for use with the save command.       */
 /******************************************/
 static void SaveDefmodules(
-  void *theEnv,
-  void *theModule,
+  Environment *theEnv,
+  Defmodule *theModule,
   const char *logicalName)
   {
    const char *ppform;
@@ -134,17 +137,30 @@ static void SaveDefmodules(
      }
   }
 
-/*************************************************/
-/* EnvGetDefmoduleList: H/L and C access routine */
-/*   for the get-defmodule-list function.        */
-/*************************************************/
+/************************************************/
+/* GetDefmoduleListFunction: H/L access routine */
+/*   for the get-defmodule-list.     .          */
+/************************************************/
+void GetDefmoduleListFunction(
+  Environment *theEnv,
+  DATA_OBJECT_PTR returnValue)
+  {
+   if (EnvArgCountCheck(theEnv,"get-defmodule-list",EXACTLY,0) == -1) return;
+
+   EnvGetDefmoduleList(theEnv,returnValue);
+  }
+
+/******************************************/
+/* EnvGetDefmoduleList: C access routine  */
+/*   for the get-defmodule-list function. */
+/******************************************/
 void EnvGetDefmoduleList(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
    void *theConstruct;
    unsigned long count = 0;
-   struct multifield *theList;
+   Multifield *theList;
 
    /*====================================*/
    /* Determine the number of constructs */
@@ -164,8 +180,8 @@ void EnvGetDefmoduleList(
    SetpType(returnValue,MULTIFIELD);
    SetpDOBegin(returnValue,1);
    SetpDOEnd(returnValue,(long) count);
-   theList = (struct multifield *) EnvCreateMultifield(theEnv,count);
-   SetpValue(returnValue,(void *) theList);
+   theList = EnvCreateMultifield(theEnv,count);
+   SetpValue(returnValue,theList);
 
    /*====================================*/
    /* Store the names in the multifield. */
@@ -192,7 +208,7 @@ void EnvGetDefmoduleList(
 /*   for the ppdefmodule command.           */
 /********************************************/
 void PPDefmoduleCommand(
-  void *theEnv)
+  Environment *theEnv)
   {
    const char *defmoduleName;
 
@@ -209,11 +225,11 @@ void PPDefmoduleCommand(
 /*   the ppdefmodule command.        */
 /*************************************/
 bool PPDefmodule(
-  void *theEnv,
+  Environment *theEnv,
   const char *defmoduleName,
   const char *logicalName)
   {
-   void *defmodulePtr;
+   Defmodule *defmodulePtr;
 
    defmodulePtr = EnvFindDefmodule(theEnv,defmoduleName);
    if (defmodulePtr == NULL)
@@ -224,6 +240,7 @@ bool PPDefmodule(
 
    if (EnvGetDefmodulePPForm(theEnv,defmodulePtr) == NULL) return true;
    PrintInChunks(theEnv,logicalName,EnvGetDefmodulePPForm(theEnv,defmodulePtr));
+   
    return true;
   }
 
@@ -232,7 +249,7 @@ bool PPDefmodule(
 /*   for the list-defmodules command.          */
 /***********************************************/
 void ListDefmodulesCommand(
-  void *theEnv)
+  Environment *theEnv)
   {
    if (EnvArgCountCheck(theEnv,"list-defmodules",EXACTLY,0) == -1) return;
 
@@ -244,10 +261,10 @@ void ListDefmodulesCommand(
 /*   for the list-defmodules command.  */
 /***************************************/
 void EnvListDefmodules(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName)
   {
-   void *theModule;
+   Defmodule *theModule;
    int count = 0;
 
    for (theModule = EnvGetNextDefmodule(theEnv,NULL);

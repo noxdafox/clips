@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*             DEFGLOBAL BINARY HEADER FILE            */
    /*******************************************************/
@@ -52,7 +52,7 @@ struct bsaveDefglobalModule
 
 struct defglobalBinaryData
   { 
-   struct defglobal *DefglobalArray;
+   Defglobal *DefglobalArray;
    long NumberOfDefglobals;
    struct defglobalModule *ModuleArray;
    long NumberOfDefglobalModules;
@@ -60,10 +60,10 @@ struct defglobalBinaryData
   
 #define DefglobalBinaryData(theEnv) ((struct defglobalBinaryData *) GetEnvironmentData(theEnv,GLOBLBIN_DATA))
 
-#define DefglobalPointer(i) ((struct defglobal *) (&DefglobalBinaryData(theEnv)->DefglobalArray[i]))
+#define DefglobalPointer(i) (&DefglobalBinaryData(theEnv)->DefglobalArray[i])
 
-   void                           DefglobalBinarySetup(void *);
-   void                          *BloadDefglobalModuleReference(void *,int);
+   void                           DefglobalBinarySetup(Environment *);
+   void                          *BloadDefglobalModuleReference(Environment *,int);
 
 #endif /* _H_globlbin */
 

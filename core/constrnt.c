@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/04/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*                 CONSTRAINT MODULE                   */
    /*******************************************************/
@@ -38,6 +38,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -61,14 +64,14 @@
 /***************************************/
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   static void                     InstallConstraintRecord(void *,CONSTRAINT_RECORD *);
+   static void                     InstallConstraintRecord(Environment *,CONSTRAINT_RECORD *);
    static bool                     ConstraintCompare(struct constraintRecord *,struct constraintRecord *);
 #endif
 #if (! RUN_TIME)
-   static void                     ReturnConstraintRecord(void *,CONSTRAINT_RECORD *);
-   static void                     DeinstallConstraintRecord(void *,CONSTRAINT_RECORD *);
+   static void                     ReturnConstraintRecord(Environment *,CONSTRAINT_RECORD *);
+   static void                     DeinstallConstraintRecord(Environment *,CONSTRAINT_RECORD *);
 #endif
-   static void                     DeallocateConstraintData(void *);
+   static void                     DeallocateConstraintData(Environment *);
 
 /*****************************************************/
 /* InitializeConstraints: Initializes the constraint */
@@ -76,7 +79,7 @@
 /*   dynamic constraint access functions.            */
 /*****************************************************/
 void InitializeConstraints(
-  void *theEnv)
+  Environment *theEnv)
   {
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    int i;
@@ -111,7 +114,7 @@ void InitializeConstraints(
 /*    data for constraints.                          */
 /*****************************************************/
 static void DeallocateConstraintData(
-  void *theEnv)
+  Environment *theEnv)
   {
 #if ! RUN_TIME   
    struct constraintRecord *tmpPtr, *nextPtr;
@@ -139,7 +142,7 @@ static void DeallocateConstraintData(
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE) && (! RUN_TIME)
    if (ConstraintData(theEnv)->NumberOfConstraints != 0)
      {
-      genfree(theEnv,(void *) ConstraintData(theEnv)->ConstraintArray,
+      genfree(theEnv,ConstraintData(theEnv)->ConstraintArray,
               (sizeof(CONSTRAINT_RECORD) * ConstraintData(theEnv)->NumberOfConstraints));
      }
 #endif
@@ -153,7 +156,7 @@ static void DeallocateConstraintData(
 /*   is false, then the constraint record is also freed.     */
 /*************************************************************/
 static void ReturnConstraintRecord(
-  void *theEnv,
+  Environment *theEnv,
   CONSTRAINT_RECORD *constraints)
   {
    if (constraints == NULL) return;
@@ -179,7 +182,7 @@ static void ReturnConstraintRecord(
 /*   types found in a constraint record.           */
 /***************************************************/
 static void DeinstallConstraintRecord(
-  void *theEnv,
+  Environment *theEnv,
   CONSTRAINT_RECORD *constraints)
   {
    if (constraints->bucket >= 0)
@@ -210,7 +213,7 @@ static void DeinstallConstraintRecord(
 /*   from the constraint hash table.      */
 /******************************************/
 void RemoveConstraint(
-  void *theEnv,
+  Environment *theEnv,
   struct constraintRecord *theConstraint)
   {
    struct constraintRecord *tmpPtr, *prevPtr = NULL;
@@ -425,13 +428,13 @@ static bool ConstraintCompare(
 /*   to the constraint hash table.  */
 /************************************/
 struct constraintRecord *AddConstraint(
-  void *theEnv,
+  Environment *theEnv,
   struct constraintRecord *theConstraint)
   {
    struct constraintRecord *tmpPtr;
    unsigned long hashValue;
 
-   if (theConstraint == NULL) return(NULL);
+   if (theConstraint == NULL) return NULL;
 
    hashValue = HashConstraint(theConstraint);
 
@@ -461,7 +464,7 @@ struct constraintRecord *AddConstraint(
 /*   types found in a constraint record.         */
 /*************************************************/
 static void InstallConstraintRecord(
-  void *theEnv,
+  Environment *theEnv,
   CONSTRAINT_RECORD *constraints)
   {
    struct expr *tempExpr;
@@ -501,7 +504,7 @@ static void InstallConstraintRecord(
 /*   set-dynamic-constraint-checking command. */
 /**********************************************/
 bool SDCCommand(
-  void *theEnv)
+  Environment *theEnv)
   {
    bool oldValue;
    DATA_OBJECT arg_ptr;
@@ -526,7 +529,7 @@ bool SDCCommand(
 /*   get-dynamic-constraint-checking command. */
 /**********************************************/
 bool GDCCommand(
-  void *theEnv)
+  Environment *theEnv)
   {
    bool oldValue;
 
@@ -543,7 +546,7 @@ bool GDCCommand(
 /*   set-static-constraint-checking command. */
 /*********************************************/
 bool SSCCommand(
-  void *theEnv)
+  Environment *theEnv)
   {
    bool oldValue;
    DATA_OBJECT arg_ptr;
@@ -568,7 +571,7 @@ bool SSCCommand(
 /*   get-static-constraint-checking command. */
 /*********************************************/
 bool GSCCommand(
-  void *theEnv)
+  Environment *theEnv)
   {
    bool oldValue;
 
@@ -585,7 +588,7 @@ bool GSCCommand(
 /*   for the set-dynamic-constraint-checking command. */
 /******************************************************/
 bool EnvSetDynamicConstraintChecking(
-  void *theEnv,
+  Environment *theEnv,
   bool value)
   {
    bool ov;
@@ -599,7 +602,7 @@ bool EnvSetDynamicConstraintChecking(
 /*   for the get-dynamic-constraint-checking command. */
 /******************************************************/
 bool EnvGetDynamicConstraintChecking(
-  void *theEnv)
+  Environment *theEnv)
   { 
    return(ConstraintData(theEnv)->DynamicConstraintChecking); 
   }
@@ -609,7 +612,7 @@ bool EnvGetDynamicConstraintChecking(
 /*   for the set-static-constraint-checking command. */
 /*****************************************************/
 bool EnvSetStaticConstraintChecking(
-  void *theEnv,
+  Environment *theEnv,
   bool value)
   {
    bool ov;
@@ -624,7 +627,7 @@ bool EnvSetStaticConstraintChecking(
 /*   for the get-static-constraint-checking command. */
 /*****************************************************/
 bool EnvGetStaticConstraintChecking(
-  void *theEnv)
+  Environment *theEnv)
   {    
    return(ConstraintData(theEnv)->StaticConstraintChecking); 
   }

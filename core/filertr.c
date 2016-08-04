@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*               FILE I/O ROUTER MODULE                */
    /*******************************************************/
@@ -46,6 +46,9 @@
 /*                                                           */
 /*            Changed return values for router functions.    */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -65,17 +68,17 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    ExitFile(void *,int);
-   static void                    PrintFile(void *,const char *,const char *);
-   static int                     GetcFile(void *,const char *);
-   static int                     UngetcFile(void *,int,const char *);
-   static void                    DeallocateFileRouterData(void *);
+   static void                    ExitFile(Environment *,int);
+   static void                    PrintFile(Environment *,const char *,const char *);
+   static int                     GetcFile(Environment *,const char *);
+   static int                     UngetcFile(Environment *,int,const char *);
+   static void                    DeallocateFileRouterData(Environment *);
 
 /***************************************************************/
 /* InitializeFileRouter: Initializes file input/output router. */
 /***************************************************************/
 void InitializeFileRouter(
-  void *theEnv)
+  Environment *theEnv)
   {
    AllocateEnvironmentData(theEnv,FILE_ROUTER_DATA,sizeof(struct fileRouterData),DeallocateFileRouterData);
 
@@ -89,7 +92,7 @@ void InitializeFileRouter(
 /*    environment data for file routers. */
 /*****************************************/
 static void DeallocateFileRouterData(
-  void *theEnv)
+  Environment *theEnv)
   {
    struct fileRouter *tmpPtr, *nextPtr;
 
@@ -109,7 +112,7 @@ static void DeallocateFileRouterData(
 /*   stream for a given logical name.    */
 /*****************************************/
 FILE *FindFptr(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName)
   {
    struct fileRouter *fptr;
@@ -145,7 +148,7 @@ FILE *FindFptr(
 
    if (fptr != NULL) return(fptr->stream);
 
-   return(NULL);
+   return NULL;
   }
 
 /*****************************************************/
@@ -156,7 +159,7 @@ FILE *FindFptr(
 /*   file router). Otherwise, false is returned.     */
 /*****************************************************/
 bool FindFile(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName)
   {
    if (FindFptr(theEnv,logicalName) != NULL) return true;
@@ -168,7 +171,7 @@ bool FindFile(
 /* ExitFile:  Exit routine for file router. */
 /********************************************/
 static void ExitFile(
-  void *theEnv,
+  Environment *theEnv,
   int num)
   {
 #if MAC_XCD
@@ -187,7 +190,7 @@ static void ExitFile(
 /* PrintFile: Print routine for file router. */
 /*********************************************/
 static void PrintFile(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
   const char *str)
   {
@@ -202,7 +205,7 @@ static void PrintFile(
 /* GetcFile: Getc routine for file router. */
 /*******************************************/
 static int GetcFile(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName)
   {
    FILE *fptr;
@@ -229,7 +232,7 @@ static int GetcFile(
 /* UngetcFile: Ungetc routine for file router. */
 /***********************************************/
 static int UngetcFile(
-  void *theEnv,
+  Environment *theEnv,
   int ch,
   const char *logicalName)
   {
@@ -250,7 +253,7 @@ static int UngetcFile(
 /*   file was succesfully opened, otherwise false.       */
 /*********************************************************/
 bool OpenAFile(
-  void *theEnv,
+  Environment *theEnv,
   const char *fileName,
   const char *accessMode,
   const char *logicalName)
@@ -299,7 +302,7 @@ bool OpenAFile(
 /*   closed, otherwise false.                                */
 /*************************************************************/
 bool CloseFile(
-  void *theEnv,
+  Environment *theEnv,
   const char *fid)
   {
    struct fileRouter *fptr, *prev;
@@ -333,7 +336,7 @@ bool CloseFile(
 /*   any file was closed, otherwise false.    */
 /**********************************************/
 bool CloseAllFiles(
-  void *theEnv)
+  Environment *theEnv)
   {
    struct fileRouter *fptr, *prev;
 

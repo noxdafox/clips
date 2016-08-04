@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*               I/O FUNCTIONS HEADER FILE             */
    /*******************************************************/
@@ -62,6 +62,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_iofun
@@ -70,21 +73,21 @@
 
 #define _H_iofun
 
-   void                           IOFunctionDefinitions(void *);
+   void                           IOFunctionDefinitions(Environment *);
 #if IO_FUNCTIONS
-   bool                           SetFullCRLF(void *,bool);
-   void                           PrintoutFunction(void *);
-   void                           ReadFunction(void *,DATA_OBJECT_PTR);
-   bool                           OpenFunction(void *);
-   bool                           CloseFunction(void *);
-   int                            GetCharFunction(void *);
-   void                           PutCharFunction(void *);
-   void                           ReadlineFunction(void *,DATA_OBJECT_PTR);
-   void                          *FormatFunction(void *);
-   bool                           RemoveFunction(void *);
-   bool                           RenameFunction(void *);
-   void                           SetLocaleFunction(void *,DATA_OBJECT_PTR);
-   void                           ReadNumberFunction(void *,DATA_OBJECT_PTR);
+   bool                           SetFullCRLF(Environment *,bool);
+   void                           PrintoutFunction(Environment *);
+   void                           ReadFunction(Environment *,DATA_OBJECT_PTR);
+   bool                           OpenFunction(Environment *);
+   bool                           CloseFunction(Environment *);
+   int                            GetCharFunction(Environment *);
+   void                           PutCharFunction(Environment *);
+   void                           ReadlineFunction(Environment *,DATA_OBJECT_PTR);
+   void                          *FormatFunction(Environment *);
+   bool                           RemoveFunction(Environment *);
+   bool                           RenameFunction(Environment *);
+   void                           SetLocaleFunction(Environment *,DATA_OBJECT_PTR);
+   void                           ReadNumberFunction(Environment *,DATA_OBJECT_PTR);
 #endif
 
 #endif /* _H_iofun */

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*                I/O FUNCTIONS MODULE                 */
    /*******************************************************/
@@ -80,6 +80,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -134,12 +137,12 @@ struct IOFunctionData
 /****************************************/
 
 #if IO_FUNCTIONS
-   static void             ReadTokenFromStdin(void *,struct token *);
-   static const char      *ControlStringCheck(void *,int);
+   static void             ReadTokenFromStdin(Environment *,struct token *);
+   static const char      *ControlStringCheck(Environment *,int);
    static char             FindFormatFlag(const char *,size_t *,char *,size_t);
-   static const char      *PrintFormatFlag(void *,const char *,int,int);
-   static char            *FillBuffer(void *,const char *,size_t *,size_t *);
-   static void             ReadNumber(void *,const char *,struct token *,bool);
+   static const char      *PrintFormatFlag(Environment *,const char *,int,int);
+   static char            *FillBuffer(Environment *,const char *,size_t *,size_t *);
+   static void             ReadNumber(Environment *,const char *,struct token *,bool);
 #endif
 
 /**************************************/
@@ -147,7 +150,7 @@ struct IOFunctionData
 /*   the I/O functions.               */
 /**************************************/
 void IOFunctionDefinitions(
-  void *theEnv)
+  Environment *theEnv)
   {
    AllocateEnvironmentData(theEnv,IO_FUNCTION_DATA,sizeof(struct IOFunctionData),NULL);
 
@@ -186,7 +189,7 @@ void IOFunctionDefinitions(
 /*   for the printout function.           */
 /******************************************/
 void PrintoutFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    const char *dummyid;
    int i, argCount;
@@ -277,7 +280,7 @@ void PrintoutFunction(
 /*   crlf is treated just as '\n' or '\r\n'.         */
 /*****************************************************/
 bool SetFullCRLF(
-  void *theEnv,
+  Environment *theEnv,
   bool value)
   {
    bool oldValue = IOFunctionData(theEnv)->useFullCRLF;
@@ -291,7 +294,7 @@ bool SetFullCRLF(
 /* ReadFunction: H/L access routine for the read function.   */
 /*************************************************************/
 void ReadFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
    struct token theToken;
@@ -305,7 +308,7 @@ void ReadFunction(
    if ((numberOfArguments = EnvArgCountCheck(theEnv,"read",NO_MORE_THAN,1)) == -1)
      {
       returnValue->type = STRING;
-      returnValue->value = (void *) EnvAddSymbol(theEnv,"*** READ ERROR ***");
+      returnValue->value = EnvAddSymbol(theEnv,"*** READ ERROR ***");
       return;
      }
 
@@ -324,7 +327,7 @@ void ReadFunction(
          EnvSetHaltExecution(theEnv,true);
          EnvSetEvaluationError(theEnv,true);
          returnValue->type = STRING;
-         returnValue->value = (void *) EnvAddSymbol(theEnv,"*** READ ERROR ***");
+         returnValue->value = EnvAddSymbol(theEnv,"*** READ ERROR ***");
          return;
         }
      }
@@ -339,7 +342,7 @@ void ReadFunction(
       EnvSetHaltExecution(theEnv,true);
       EnvSetEvaluationError(theEnv,true);
       returnValue->type = STRING;
-      returnValue->value = (void *) EnvAddSymbol(theEnv,"*** READ ERROR ***");
+      returnValue->value = EnvAddSymbol(theEnv,"*** READ ERROR ***");
       return;
      }
 
@@ -370,17 +373,17 @@ void ReadFunction(
    else if (theToken.type == STOP)
      {
       returnValue->type = SYMBOL;
-      returnValue->value = (void *) EnvAddSymbol(theEnv,"EOF");
+      returnValue->value = EnvAddSymbol(theEnv,"EOF");
      }
    else if (theToken.type == UNKNOWN_VALUE)
      {
       returnValue->type = STRING;
-      returnValue->value = (void *) EnvAddSymbol(theEnv,"*** READ ERROR ***");
+      returnValue->value = EnvAddSymbol(theEnv,"*** READ ERROR ***");
      }
    else
      {
       returnValue->type = STRING;
-      returnValue->value = (void *) EnvAddSymbol(theEnv,theToken.printForm);
+      returnValue->value = EnvAddSymbol(theEnv,theToken.printForm);
      }
 
    return;
@@ -391,7 +394,7 @@ void ReadFunction(
 /*   function to read a token from standard input.      */
 /********************************************************/
 static void ReadTokenFromStdin(
-  void *theEnv,
+  Environment *theEnv,
   struct token *theToken)
   {
    char *inputString;
@@ -461,7 +464,7 @@ static void ReadTokenFromStdin(
       if (EnvGetHaltExecution(theEnv))
         {
          theToken->type = STRING;
-         theToken->value = (void *) EnvAddSymbol(theEnv,"*** READ ERROR ***");
+         theToken->value = EnvAddSymbol(theEnv,"*** READ ERROR ***");
         }
 
       /*====================================================*/
@@ -474,7 +477,7 @@ static void ReadTokenFromStdin(
       if ((theToken->type == STOP) && (inchar == EOF))
         {
          theToken->type = SYMBOL;
-         theToken->value = (void *) EnvAddSymbol(theEnv,"EOF");
+         theToken->value = EnvAddSymbol(theEnv,"EOF");
         }
      }
      
@@ -485,7 +488,7 @@ static void ReadTokenFromStdin(
 /* OpenFunction: H/L access routine for the open function.   */
 /*************************************************************/
 bool OpenFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    int numberOfArguments;
    const char *fileName, *logicalName, *accessMode = NULL;
@@ -576,7 +579,7 @@ bool OpenFunction(
 /* CloseFunction: H/L access routine for the close function.   */
 /***************************************************************/
 bool CloseFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    int numberOfArguments;
    const char *logicalName;
@@ -623,7 +626,7 @@ bool CloseFunction(
 /*   for the get-char function.        */
 /***************************************/
 int GetCharFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    int numberOfArguments;
    const char *logicalName;
@@ -661,7 +664,7 @@ int GetCharFunction(
 /*   for the put-char function.        */
 /***************************************/
 void PutCharFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    int numberOfArguments;
    const char *logicalName;
@@ -726,7 +729,7 @@ void PutCharFunction(
 /*   for the remove function.           */
 /****************************************/
 bool RemoveFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    const char *theFileName;
 
@@ -755,7 +758,7 @@ bool RemoveFunction(
 /*   for the rename function.           */
 /****************************************/
 bool RenameFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    const char *oldFileName, *newFileName;
 
@@ -785,7 +788,7 @@ bool RenameFunction(
 /*   for the format function.           */
 /****************************************/
 void *FormatFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    int argCount;
    size_t start_pos;
@@ -899,7 +902,7 @@ void *FormatFunction(
 /*   control string to see if there are enough matching arguments.   */
 /*********************************************************************/
 static const char *ControlStringCheck(
-  void *theEnv,
+  Environment *theEnv,
   int argCount)
   {
    DATA_OBJECT t_ptr;
@@ -909,7 +912,7 @@ static const char *ControlStringCheck(
    int per_count;
    char formatFlag;
 
-   if (EnvArgTypeCheck(theEnv,"format",2,STRING,&t_ptr) == false) return(NULL);
+   if (EnvArgTypeCheck(theEnv,"format",2,STRING,&t_ptr) == false) return NULL;
 
    per_count = 0;
    str_array = ValueToString(t_ptr.value);
@@ -1067,7 +1070,7 @@ static char FindFormatFlag(
 /*   with the argument for that part of the format string.            */
 /**********************************************************************/
 static const char *PrintFormatFlag(
-  void *theEnv,
+  Environment *theEnv,
   const char *formatString,
   int whichArg,
   int formatType)
@@ -1085,7 +1088,7 @@ static const char *PrintFormatFlag(
    switch (formatType)
      {
       case 's':
-        if (EnvArgTypeCheck(theEnv,"format",whichArg,SYMBOL_OR_STRING,&theResult) == false) return(NULL);
+        if (EnvArgTypeCheck(theEnv,"format",whichArg,SYMBOL_OR_STRING,&theResult) == false) return NULL;
         theLength = strlen(formatString) + strlen(ValueToString(theResult.value)) + 200;
         printBuffer = (char *) gm2(theEnv,(sizeof(char) * theLength));
         gensprintf(printBuffer,formatString,ValueToString(theResult.value));
@@ -1109,7 +1112,7 @@ static const char *PrintFormatFlag(
         else
           {
            ExpectedTypeError1(theEnv,"format",whichArg,"symbol, string, or integer");
-           return(NULL);
+           return NULL;
           }
         break;
 
@@ -1117,7 +1120,7 @@ static const char *PrintFormatFlag(
       case 'x':
       case 'o':
       case 'u':
-        if (EnvArgTypeCheck(theEnv,"format",whichArg,INTEGER_OR_FLOAT,&theResult) == false) return(NULL);
+        if (EnvArgTypeCheck(theEnv,"format",whichArg,INTEGER_OR_FLOAT,&theResult) == false) return NULL;
         theLength = strlen(formatString) + 200;
         printBuffer = (char *) gm2(theEnv,(sizeof(char) * theLength));
         
@@ -1135,7 +1138,7 @@ static const char *PrintFormatFlag(
       case 'f':
       case 'g':
       case 'e':
-        if (EnvArgTypeCheck(theEnv,"format",whichArg,INTEGER_OR_FLOAT,&theResult) == false) return(NULL);
+        if (EnvArgTypeCheck(theEnv,"format",whichArg,INTEGER_OR_FLOAT,&theResult) == false) return NULL;
         theLength = strlen(formatString) + 200;
         printBuffer = (char *) gm2(theEnv,(sizeof(char) * theLength));
 
@@ -1168,7 +1171,7 @@ static const char *PrintFormatFlag(
 /*   for the readline function.           */
 /******************************************/
 void ReadlineFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
    char *buffer;
@@ -1180,7 +1183,7 @@ void ReadlineFunction(
 
    if ((numberOfArguments = EnvArgCountCheck(theEnv,"readline",NO_MORE_THAN,1)) == -1)
      {
-      returnValue->value = (void *) EnvAddSymbol(theEnv,"*** READ ERROR ***");
+      returnValue->value = EnvAddSymbol(theEnv,"*** READ ERROR ***");
       return;
      }
 
@@ -1194,7 +1197,7 @@ void ReadlineFunction(
          IllegalLogicalNameMessage(theEnv,"readline");
          EnvSetHaltExecution(theEnv,true);
          EnvSetEvaluationError(theEnv,true);
-         returnValue->value = (void *) EnvAddSymbol(theEnv,"*** READ ERROR ***");
+         returnValue->value = EnvAddSymbol(theEnv,"*** READ ERROR ***");
          return;
         }
      }
@@ -1204,7 +1207,7 @@ void ReadlineFunction(
       UnrecognizedRouterMessage(theEnv,logicalName);
       EnvSetHaltExecution(theEnv,true);
       EnvSetEvaluationError(theEnv,true);
-      returnValue->value = (void *) EnvAddSymbol(theEnv,"*** READ ERROR ***");
+      returnValue->value = EnvAddSymbol(theEnv,"*** READ ERROR ***");
       return;
      }
 
@@ -1216,19 +1219,19 @@ void ReadlineFunction(
 
    if (EnvGetHaltExecution(theEnv))
      {
-      returnValue->value = (void *) EnvAddSymbol(theEnv,"*** READ ERROR ***");
+      returnValue->value = EnvAddSymbol(theEnv,"*** READ ERROR ***");
       if (buffer != NULL) rm(theEnv,buffer,(int) sizeof (char) * line_max);
       return;
      }
 
    if (buffer == NULL)
      {
-      returnValue->value = (void *) EnvAddSymbol(theEnv,"EOF");
+      returnValue->value = EnvAddSymbol(theEnv,"EOF");
       returnValue->type = SYMBOL;
       return;
      }
 
-   returnValue->value = (void *) EnvAddSymbol(theEnv,buffer);
+   returnValue->value = EnvAddSymbol(theEnv,buffer);
    rm(theEnv,buffer,(int) sizeof (char) * line_max);
    return;
   }
@@ -1239,7 +1242,7 @@ void ReadlineFunction(
 /*   or end-of-file character is read.                       */
 /*************************************************************/
 static char *FillBuffer(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
   size_t *currentPosition,
   size_t *maximumSize)
@@ -1254,7 +1257,7 @@ static char *FillBuffer(
    c = EnvGetcRouter(theEnv,logicalName);
 
    if (c == EOF)
-     { return(NULL); }
+     { return NULL; }
 
    /*==================================*/
    /* Grab characters until cr or eof. */
@@ -1280,7 +1283,7 @@ static char *FillBuffer(
 /*   for the set-locale function.        */
 /*****************************************/
 void SetLocaleFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
    DATA_OBJECT theResult;
@@ -1341,7 +1344,7 @@ void SetLocaleFunction(
 /*   for the read-number function.        */
 /******************************************/
 void ReadNumberFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
    struct token theToken;
@@ -1355,7 +1358,7 @@ void ReadNumberFunction(
    if ((numberOfArguments = EnvArgCountCheck(theEnv,"read",NO_MORE_THAN,1)) == -1)
      {
       returnValue->type = STRING;
-      returnValue->value = (void *) EnvAddSymbol(theEnv,"*** READ ERROR ***");
+      returnValue->value = EnvAddSymbol(theEnv,"*** READ ERROR ***");
       return;
      }
 
@@ -1374,7 +1377,7 @@ void ReadNumberFunction(
          EnvSetHaltExecution(theEnv,true);
          EnvSetEvaluationError(theEnv,true);
          returnValue->type = STRING;
-         returnValue->value = (void *) EnvAddSymbol(theEnv,"*** READ ERROR ***");
+         returnValue->value = EnvAddSymbol(theEnv,"*** READ ERROR ***");
          return;
         }
      }
@@ -1389,7 +1392,7 @@ void ReadNumberFunction(
       EnvSetHaltExecution(theEnv,true);
       EnvSetEvaluationError(theEnv,true);
       returnValue->type = STRING;
-      returnValue->value = (void *) EnvAddSymbol(theEnv,"*** READ ERROR ***");
+      returnValue->value = EnvAddSymbol(theEnv,"*** READ ERROR ***");
       return;
      }
 
@@ -1420,17 +1423,17 @@ void ReadNumberFunction(
    else if (theToken.type == STOP)
      {
       returnValue->type = SYMBOL;
-      returnValue->value = (void *) EnvAddSymbol(theEnv,"EOF");
+      returnValue->value = EnvAddSymbol(theEnv,"EOF");
      }
    else if (theToken.type == UNKNOWN_VALUE)
      {
       returnValue->type = STRING;
-      returnValue->value = (void *) EnvAddSymbol(theEnv,"*** READ ERROR ***");
+      returnValue->value = EnvAddSymbol(theEnv,"*** READ ERROR ***");
      }
    else
      {
       returnValue->type = STRING;
-      returnValue->value = (void *) EnvAddSymbol(theEnv,theToken.printForm);
+      returnValue->value = EnvAddSymbol(theEnv,theToken.printForm);
      }
 
    return;
@@ -1441,7 +1444,7 @@ void ReadNumberFunction(
 /*   read-number function to read a number. */
 /********************************************/
 static void ReadNumber(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
   struct token *theToken,
   bool isStdin)
@@ -1498,7 +1501,7 @@ static void ReadNumber(
    if (EnvGetHaltExecution(theEnv))
      {
       theToken->type = STRING;
-      theToken->value = (void *) EnvAddSymbol(theEnv,"*** READ ERROR ***");
+      theToken->value = EnvAddSymbol(theEnv,"*** READ ERROR ***");
       if (inputStringSize > 0) rm(theEnv,inputString,inputStringSize);
       return;
      }
@@ -1513,7 +1516,7 @@ static void ReadNumber(
    if (inchar == EOF)
      {
       theToken->type = SYMBOL;
-      theToken->value = (void *) EnvAddSymbol(theEnv,"EOF");
+      theToken->value = EnvAddSymbol(theEnv,"EOF");
       if (inputStringSize > 0) rm(theEnv,inputString,inputStringSize);
       return;
      }
@@ -1548,7 +1551,7 @@ static void ReadNumber(
        (isspace(*charPtr) || (*charPtr == '\0')))
      {
       theToken->type = INTEGER;
-      theToken->value = (void *) EnvAddLong(theEnv,theLong);
+      theToken->value = EnvAddLong(theEnv,theLong);
       if (inputStringSize > 0) rm(theEnv,inputString,inputStringSize);
       setlocale(LC_NUMERIC,ValueToString(oldLocale));
       return;
@@ -1565,7 +1568,7 @@ static void ReadNumber(
        (isspace(*charPtr) || (*charPtr == '\0')))
      {
       theToken->type = FLOAT;
-      theToken->value = (void *) EnvAddDouble(theEnv,theDouble);
+      theToken->value = EnvAddDouble(theEnv,theDouble);
       if (inputStringSize > 0) rm(theEnv,inputString,inputStringSize);
       setlocale(LC_NUMERIC,ValueToString(oldLocale));
       return;
@@ -1584,7 +1587,7 @@ static void ReadNumber(
    /*=========================================*/
          
    theToken->type = STRING;
-   theToken->value = (void *) EnvAddSymbol(theEnv,"*** READ ERROR ***");
+   theToken->value = EnvAddSymbol(theEnv,"*** READ ERROR ***");
   }
 
 #endif

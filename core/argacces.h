@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/04/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*             ARGUMENT ACCESS HEADER FILE             */
    /*******************************************************/
@@ -36,6 +36,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_argacces
@@ -48,26 +51,26 @@
 #include "evaluatn.h"
 #include "moduldef.h"
 
-   int                            EnvRtnArgCount(void *);
-   int                            EnvArgCountCheck(void *,const char *,int,int);
-   int                            EnvArgRangeCheck(void *,const char *,int,int);
-   const char                    *EnvRtnLexeme(void *,int);
-   double                         EnvRtnDouble(void *,int);
-   long long                      EnvRtnLong(void *,int);
-   struct dataObject             *EnvRtnUnknown(void *,int,struct dataObject *);
-   bool                           EnvArgTypeCheck(void *,const char *,int,int,struct dataObject *);
-   bool                           GetNumericArgument(void *,struct expr *,const char *,struct dataObject *,bool,int);
-   const char                    *GetLogicalName(void *,int,const char *);
-   const char                    *GetFileName(void *,const char *,int);
-   const char                    *GetConstructName(void *,const char *,const char *);
-   void                           ExpectedCountError(void *,const char *,int,int);
-   void                           OpenErrorMessage(void *,const char *,const char *);
-   bool                           CheckFunctionArgCount(void *,const char *,const char *,int);
-   void                           ExpectedTypeError1(void *,const char *,int,const char *);
-   void                           ExpectedTypeError2(void *,const char *,int);
-   struct defmodule              *GetModuleName(void *,const char *,int,bool *);
-   void                          *GetFactOrInstanceArgument(void *,int,DATA_OBJECT *,const char *);
-   void                           IllegalLogicalNameMessage(void *,const char *);
+   int                            EnvRtnArgCount(Environment *);
+   int                            EnvArgCountCheck(Environment *,const char *,int,int);
+   int                            EnvArgRangeCheck(Environment *,const char *,int,int);
+   const char                    *EnvRtnLexeme(Environment *,int);
+   double                         EnvRtnDouble(Environment *,int);
+   long long                      EnvRtnLong(Environment *,int);
+   struct dataObject             *EnvRtnUnknown(Environment *,int,struct dataObject *);
+   bool                           EnvArgTypeCheck(Environment *,const char *,int,int,struct dataObject *);
+   bool                           GetNumericArgument(Environment *,struct expr *,const char *,struct dataObject *,bool,int);
+   const char                    *GetLogicalName(Environment *,int,const char *);
+   const char                    *GetFileName(Environment *,const char *,int);
+   const char                    *GetConstructName(Environment *,const char *,const char *);
+   void                           ExpectedCountError(Environment *,const char *,int,int);
+   void                           OpenErrorMessage(Environment *,const char *,const char *);
+   bool                           CheckFunctionArgCount(Environment *,const char *,const char *,int);
+   void                           ExpectedTypeError1(Environment *,const char *,int,const char *);
+   void                           ExpectedTypeError2(Environment *,const char *,int);
+   Defmodule                     *GetModuleName(Environment *,const char *,int,bool *);
+   void                          *GetFactOrInstanceArgument(Environment *,int,DATA_OBJECT *,const char *);
+   void                           IllegalLogicalNameMessage(Environment *,const char *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 

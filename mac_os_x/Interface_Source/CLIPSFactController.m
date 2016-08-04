@@ -277,7 +277,7 @@
    theRow = [factList selectedRow];
    if (theRow != -1)
      {
-      void *theEnvironment = [environment environment];
+      Environment *theEnvironment = [environment environment];
       struct fact *clipsFact;
       long long theFactIndex;
       NSArray *theArray = [factListController arrangedObjects];

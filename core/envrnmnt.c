@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*                ENVIRONMENT MODULE                   */
    /*******************************************************/
@@ -51,6 +51,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include <stdlib.h>
@@ -81,6 +84,10 @@
 #include "textpro.h"
 #include "utility.h"
 #include "watch.h"
+
+#if DEVELOPER
+#include "developr.h"
+#endif
 
 #if DEFFACTS_CONSTRUCT
 #include "dffctdef.h"
@@ -119,7 +126,7 @@
 /****************************************/
 
    extern void                    UserFunctions(void);
-   extern void                    EnvUserFunctions(void *);
+   extern void                    EnvUserFunctions(Environment *);
 
 /***************************************/
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
@@ -135,12 +142,12 @@
    static void                   *CreateEnvironmentDriver(struct symbolHashNode **,struct floatHashNode **,
                                                           struct integerHashNode **,struct bitMapHashNode **,
                                                           struct externalAddressHashNode **);
-   static void                    SystemFunctionDefinitions(void *);
-   static void                    InitializeKeywords(void *);
+   static void                    SystemFunctionDefinitions(Environment *);
+   static void                    InitializeKeywords(Environment *);
 #if ALLOW_ENVIRONMENT_GLOBALS
-   static void                    InitializeEnvironment(void);
+   static void                    InitializeEnvironment(Environment);
 #endif
-   static void                    EnvInitializeEnvironment(void *,struct symbolHashNode **,struct floatHashNode **,
+   static void                    EnvInitializeEnvironment(Environment *,struct symbolHashNode **,struct floatHashNode **,
 					   								       struct integerHashNode **,struct bitMapHashNode **,
 														   struct externalAddressHashNode **);
 
@@ -159,13 +166,11 @@
 /*    for the specified environment data record.       */
 /*******************************************************/
 bool AllocateEnvironmentData(
-  void *vtheEnvironment,
+  Environment *theEnvironment,
   unsigned int position,
   unsigned long size,
-  void (*cleanupFunction)(void *))
-  {      
-   struct environmentData *theEnvironment = (struct environmentData *) vtheEnvironment;
-
+  void (*cleanupFunction)(Environment *))
+  {
    /*===========================================*/
    /* Environment data can't be of length zero. */
    /*===========================================*/
@@ -355,7 +360,7 @@ static struct environmentData *FindEnvironment(
         { return(theEnvironment); }
      }
 
-   return(NULL);
+   return NULL;
   }
 #endif
 
@@ -400,7 +405,7 @@ void *CreateEnvironmentDriver(
    if (theEnvironment == NULL)
      {
       printf("\n[ENVRNMNT5] Unable to create new environment.\n");
-      return(NULL);
+      return NULL;
      }
 
    theData = malloc(sizeof(void *) * MAXIMUM_ENVIRONMENT_POSITIONS);
@@ -409,7 +414,7 @@ void *CreateEnvironmentDriver(
      {
       free(theEnvironment);
       printf("\n[ENVRNMNT6] Unable to create environment data.\n");
-      return(NULL);
+      return NULL;
      }
 
    memset(theData,0,sizeof(void *) * MAXIMUM_ENVIRONMENT_POSITIONS);
@@ -439,11 +444,11 @@ void *CreateEnvironmentDriver(
       free(theEnvironment->theData);
       free(theEnvironment);
       printf("\n[ENVRNMNT7] Unable to create environment data.\n");
-      return(NULL);
+      return NULL;
      }
 
    memset(theData,0,sizeof(void (*)(struct environmentData *)) * MAXIMUM_ENVIRONMENT_POSITIONS);
-   theEnvironment->cleanupFunctions = (void (**)(void *))theData;
+   theEnvironment->cleanupFunctions = (void (**)(Environment *)) theData;
 
 #if ALLOW_ENVIRONMENT_GLOBALS
    AddHashedEnvironment(theEnvironment);
@@ -461,7 +466,7 @@ void *CreateEnvironmentDriver(
 /*   environment to the one specified.     */
 /*******************************************/
 void SetCurrentEnvironment(
-  void *theEnvironment)
+  Environment *theEnvironment)
   {
    CurrentEnvironment = (struct environmentData *) theEnvironment;
   }
@@ -504,7 +509,7 @@ void *GetEnvironmentByIndex(
 /* GetCurrentEnvironment: Returns a pointer */
 /*   to the current environment.            */
 /********************************************/
-void *GetCurrentEnvironment()
+Environment *GetCurrentEnvironment()
   {
    return(CurrentEnvironment);
   }  
@@ -514,7 +519,7 @@ void *GetCurrentEnvironment()
 /*   of the specified environment.        */
 /******************************************/
 unsigned long GetEnvironmentIndex(
-  void *theEnvironment)
+  Environment *theEnvironment)
   {
    return(((struct environmentData *) theEnvironment)->environmentIndex);
   } 
@@ -526,7 +531,7 @@ unsigned long GetEnvironmentIndex(
 /*   of the specified environment.            */
 /**********************************************/
 void *GetEnvironmentContext(
-  void *theEnvironment)
+  Environment *theEnvironment)
   {
    return(((struct environmentData *) theEnvironment)->context);
   } 
@@ -536,7 +541,7 @@ void *GetEnvironmentContext(
 /*   of the specified environment.         */
 /*******************************************/
 void *SetEnvironmentContext(
-  void *theEnvironment,
+  Environment *theEnvironment,
   void *theContext)
   {
    void *oldContext;
@@ -553,7 +558,7 @@ void *SetEnvironmentContext(
 /*   context of the specified environment.         */
 /***************************************************/
 void *GetEnvironmentRouterContext(
-  void *theEnvironment)
+  Environment *theEnvironment)
   {
    return(((struct environmentData *) theEnvironment)->routerContext);
   } 
@@ -563,7 +568,7 @@ void *GetEnvironmentRouterContext(
 /*   context of the specified environment.      */
 /************************************************/
 void *SetEnvironmentRouterContext(
-  void *theEnvironment,
+  Environment *theEnvironment,
   void *theRouterContext)
   {
    void *oldRouterContext;
@@ -580,7 +585,7 @@ void *SetEnvironmentRouterContext(
 /*   context of the specified environment.             */
 /*******************************************************/
 void *GetEnvironmentFunctionContext(
-  void *theEnvironment)
+  Environment *theEnvironment)
   {
    return(((struct environmentData *) theEnvironment)->functionContext);
   } 
@@ -590,7 +595,7 @@ void *GetEnvironmentFunctionContext(
 /*   context of the specified environment.        */
 /**************************************************/
 void *SetEnvironmentFunctionContext(
-  void *theEnvironment,
+  Environment *theEnvironment,
   void *theFunctionContext)
   {
    void *oldFunctionContext;
@@ -607,7 +612,7 @@ void *SetEnvironmentFunctionContext(
 /*   context of the specified environment.             */
 /*******************************************************/
 void *GetEnvironmentCallbackContext(
-  void *theEnvironment)
+  Environment *theEnvironment)
   {
    return(((struct environmentData *) theEnvironment)->callbackContext);
   } 
@@ -617,7 +622,7 @@ void *GetEnvironmentCallbackContext(
 /*   context of the specified environment.          */
 /****************************************************/
 void *SetEnvironmentCallbackContext(
-  void *theEnvironment,
+  Environment *theEnvironment,
   void *theCallbackContext)
   {
    void *oldCallbackContext;
@@ -634,13 +639,12 @@ void *SetEnvironmentCallbackContext(
 /*   environment returning all of its memory. */
 /**********************************************/
 bool DestroyEnvironment(
-  void *vtheEnvironment)
+  Environment *theEnvironment)
   {   
    struct environmentCleanupFunction *cleanupPtr;
    int i;
    struct memoryData *theMemData;
    bool rv = true;
-   struct environmentData *theEnvironment = (struct environmentData *) vtheEnvironment;
    /*
    if (EvaluationData(theEnvironment)->CurrentExpression != NULL)
      { return false; }
@@ -713,13 +717,12 @@ bool DestroyEnvironment(
 /*   to the ListOfCleanupEnvironmentFunctions.    */
 /**************************************************/
 bool AddEnvironmentCleanupFunction(
-  void *vtheEnv,
+  Environment *theEnv,
   const char *name,
-  void (*functionPtr)(void *),
+  void (*functionPtr)(Environment *),
   int priority)
   {
    struct environmentCleanupFunction *newPtr, *currentPtr, *lastPtr = NULL;
-   struct environmentData *theEnv = (struct environmentData *) vtheEnv;
      
    newPtr = (struct environmentCleanupFunction *) malloc(sizeof(struct environmentCleanupFunction));
    if (newPtr == NULL)
@@ -779,15 +782,13 @@ static void RemoveEnvironmentCleanupFunctions(
 /*   of the KB environment.                          */
 /*****************************************************/
 void EnvInitializeEnvironment(
-  void *vtheEnvironment,
+  Environment *theEnvironment,
   struct symbolHashNode **symbolTable,
   struct floatHashNode **floatTable,
   struct integerHashNode **integerTable,
   struct bitMapHashNode **bitmapTable,
   struct externalAddressHashNode **externalAddressTable)
-  {
-   struct environmentData *theEnvironment = (struct environmentData *) vtheEnvironment;
-   
+  {   
    /*================================================*/
    /* Don't allow the initialization to occur twice. */
    /*================================================*/
@@ -988,7 +989,7 @@ void InitializeEnvironment()
 /*   of system defined functions.                 */
 /**************************************************/
 static void SystemFunctionDefinitions(
-  void *theEnv)
+  Environment *theEnv)
   {
    ProceduralFunctionDefinitions(theEnv);
    MiscFunctionDefinitions(theEnv);
@@ -1039,7 +1040,7 @@ static void SystemFunctionDefinitions(
 /*   for command completion.                 */
 /*********************************************/
 static void InitializeKeywords(
-  void *theEnv)
+  Environment *theEnv)
   {
 #if (! RUN_TIME) && WINDOW_INTERFACE
    void *ts;

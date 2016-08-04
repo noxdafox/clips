@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/04/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*               CLASS INITIALIZATION MODULE           */
    /*******************************************************/
@@ -44,6 +44,9 @@
 /*      6.40: Pragma once and other inclusion changes.        */
 /*                                                            */
 /*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /**************************************************************/
 
@@ -119,20 +122,20 @@
    =========================================
    ***************************************** */
 
-static void SetupDefclasses(void *);
-static void DeallocateDefclassData(void *);
+   static void                    SetupDefclasses(Environment *);
+   static void                    DeallocateDefclassData(Environment *);
 
 #if (! RUN_TIME)
-static void DestroyDefclassAction(void *,struct constructHeader *,void *);
-static DEFCLASS *AddSystemClass(void *,const char *,DEFCLASS *);
-static void *AllocateModule(void *);
-static void  ReturnModule(void *,void *);
+   static void                    DestroyDefclassAction(Environment *,struct constructHeader *,void *);
+   static Defclass               *AddSystemClass(Environment *,const char *,Defclass *);
+   static void                   *AllocateModule(Environment *);
+   static void                    ReturnModule(Environment *,void *);
 #else
-static void SearchForHashedPatternNodes(void *,OBJECT_PATTERN_NODE *);
+   static void                    SearchForHashedPatternNodes(Environment *,OBJECT_PATTERN_NODE *);
 #endif
 
 #if (! BLOAD_ONLY) && (! RUN_TIME) && DEFMODULE_CONSTRUCT
-static void UpdateDefclassesScope(void *);
+   static void                    UpdateDefclassesScope(Environment *);
 #endif
 
 /* =========================================
@@ -151,12 +154,12 @@ static void UpdateDefclassesScope(void *);
   NOTES        : Order of setup calls is important
  **********************************************************/
 void SetupObjectSystem(
-  void *theEnv)
+  Environment *theEnv)
   {   
    ENTITY_RECORD defclassEntityRecord = { "DEFCLASS_PTR", DEFCLASS_PTR,1,0,0,
                                               NULL,NULL,NULL,NULL,NULL,
-                                              DecrementDefclassBusyCount,
-                                              IncrementDefclassBusyCount,
+                                              (EntityBusyCountFunction *) DecrementDefclassBusyCount,
+                                              (EntityBusyCountFunction *) IncrementDefclassBusyCount,
                                               NULL,NULL,NULL,NULL,NULL };
 
    AllocateEnvironmentData(theEnv,DEFCLASS_DATA,sizeof(struct defclassData),NULL);
@@ -206,13 +209,13 @@ void SetupObjectSystem(
 /*    data for the defclass construct.             */
 /***************************************************/
 static void DeallocateDefclassData(
-  void *theEnv)
+  Environment *theEnv)
   {
 #if ! RUN_TIME   
    SLOT_NAME *tmpSNPPtr, *nextSNPPtr;
    int i;
    struct defclassModule *theModuleItem;
-   void *theModule;
+   Defmodule *theModule;
    bool bloaded = false;
    
 #if BLOAD || BLOAD_AND_BSAVE
@@ -232,7 +235,7 @@ static void DeallocateDefclassData(
            theModule = EnvGetNextDefmodule(theEnv,theModule))
         {
          theModuleItem = (struct defclassModule *)
-                         GetModuleItem(theEnv,(struct defmodule *) theModule,
+                         GetModuleItem(theEnv,theModule,
                                        DefclassData(theEnv)->DefclassModuleIndex);
          rtn_struct(theEnv,defclassModule,theModuleItem);
         }
@@ -246,13 +249,13 @@ static void DeallocateDefclassData(
      {
       if (DefclassData(theEnv)->ClassIDMap != NULL)
         {
-         genfree(theEnv,DefclassData(theEnv)->ClassIDMap,DefclassData(theEnv)->AvailClassID * sizeof(DEFCLASS *));
+         genfree(theEnv,DefclassData(theEnv)->ClassIDMap,DefclassData(theEnv)->AvailClassID * sizeof(Defclass *));
         }
      }
      
    if (DefclassData(theEnv)->ClassTable != NULL)
      {
-      genfree(theEnv,DefclassData(theEnv)->ClassTable,sizeof(DEFCLASS *) * CLASS_TABLE_HASH_SIZE);
+      genfree(theEnv,DefclassData(theEnv)->ClassTable,sizeof(Defclass *) * CLASS_TABLE_HASH_SIZE);
      }
 
    /*==============================*/
@@ -279,10 +282,10 @@ static void DeallocateDefclassData(
       genfree(theEnv,DefclassData(theEnv)->SlotNameTable,sizeof(SLOT_NAME *) * SLOT_NAME_TABLE_HASH_SIZE);
      }
 #else
-   DEFCLASS *cls;
+   Defclass *cls;
    void *tmpexp;
-   register unsigned int i;
-   register int j;
+   unsigned int i;
+   int j;
    
    if (DefclassData(theEnv)->ClassTable != NULL)
      {
@@ -309,14 +312,14 @@ static void DeallocateDefclassData(
 /*   as a result of DestroyEnvironment.                  */
 /*********************************************************/
 static void DestroyDefclassAction(
-  void *theEnv,
+  Environment *theEnv,
   struct constructHeader *theConstruct,
   void *buffer)
   {
 #if MAC_XCD
 #pragma unused(buffer)
 #endif
-   struct defclass *theDefclass = (struct defclass *) theConstruct;
+   Defclass *theDefclass = (Defclass *) theConstruct;
 
    if (theDefclass == NULL) return;
 
@@ -343,15 +346,15 @@ static void DestroyDefclassAction(
   NOTES        : None
  ***************************************************/
 void ObjectsRunTimeInitialize(
-  void *theEnv,
-  DEFCLASS *ctable[],
+  Environment *theEnv,
+  Defclass *ctable[],
   SLOT_NAME *sntable[],
-  DEFCLASS **cidmap,
+  Defclass **cidmap,
   unsigned mid)
   {
-   DEFCLASS *cls;
+   Defclass *cls;
    void *tmpexp;
-   register unsigned int i,j;
+   unsigned int i,j;
 
    if (DefclassData(theEnv)->ClassTable != NULL)
      {
@@ -386,9 +389,9 @@ void ObjectsRunTimeInitialize(
    DefclassData(theEnv)->INITIAL_OBJECT_SYMBOL = FindSymbolHN(theEnv,INITIAL_OBJECT_NAME);
 #endif
 
-   DefclassData(theEnv)->ClassTable = (DEFCLASS **) ctable;
+   DefclassData(theEnv)->ClassTable = (Defclass **) ctable;
    DefclassData(theEnv)->SlotNameTable = (SLOT_NAME **) sntable;
-   DefclassData(theEnv)->ClassIDMap = (DEFCLASS **) cidmap;
+   DefclassData(theEnv)->ClassIDMap = (Defclass **) cidmap;
    DefclassData(theEnv)->MaxClassID = (unsigned short) mid;
    DefclassData(theEnv)->PrimitiveClassMap[FLOAT] =
      LookupDefclassByMdlOrScope(theEnv,FLOAT_TYPE_NAME);
@@ -417,7 +420,7 @@ void ObjectsRunTimeInitialize(
          if ((cls->slots[i].defaultValue != NULL) && (cls->slots[i].dynamicDefault == 0))
            {
             tmpexp = cls->slots[i].defaultValue;
-            cls->slots[i].defaultValue = (void *) get_struct(theEnv,dataObject);
+            cls->slots[i].defaultValue = get_struct(theEnv,dataObject);
             EvaluateAndStoreInDataObject(theEnv,(int) cls->slots[i].multiple,(EXPRESSION *) tmpexp,
                                          (DATA_OBJECT *) cls->slots[i].defaultValue,true);
             ValueInstall(theEnv,(DATA_OBJECT *) cls->slots[i].defaultValue);
@@ -429,11 +432,11 @@ void ObjectsRunTimeInitialize(
    SearchForHashedPatternNodes(theEnv,ObjectReteData(theEnv)->ObjectPatternNetworkPointer);
   }
   
-/*******************************************************************/
-/* SearchForHashedPatternNodes:    */
-/*******************************************************************/
+/********************************/
+/* SearchForHashedPatternNodes: */
+/********************************/
 static void SearchForHashedPatternNodes(
-   void *theEnv,
+   Environment *theEnv,
    OBJECT_PATTERN_NODE *theNode)
    {
     while (theNode != NULL)
@@ -467,11 +470,11 @@ static void SearchForHashedPatternNodes(
                 WARNING!!: Assumes no classes exist yet!
  ***************************************************************/
 void CreateSystemClasses(
-  void *theEnv)
+  Environment *theEnv)
   {
-   DEFCLASS *user,*any,*primitive,*number,*lexeme,*address,*instance;
+   Defclass *user,*any,*primitive,*number,*lexeme,*address,*instance;
 #if DEFRULE_CONSTRUCT
-   DEFCLASS *initialObject;
+   Defclass *initialObject;
 #endif
    
    /* ===================================
@@ -545,9 +548,9 @@ void CreateSystemClasses(
 #if DEFRULE_CONSTRUCT
    AddConstructToModule((struct constructHeader *) initialObject);
 #endif
-   for (any = (DEFCLASS *) EnvGetNextDefclass(theEnv,NULL) ;
+   for (any = EnvGetNextDefclass(theEnv,NULL) ;
         any != NULL ;
-        any = (DEFCLASS *) EnvGetNextDefclass(theEnv,(void *) any))
+        any = EnvGetNextDefclass(theEnv,any))
      AssignClassID(theEnv,any);
   }
 
@@ -569,14 +572,15 @@ void CreateSystemClasses(
   NOTES        : None
  *********************************************************/
 static void SetupDefclasses(
-  void *theEnv)
+  Environment *theEnv)
   {
    InstallPrimitive(theEnv,&DefclassData(theEnv)->DefclassEntityRecord,DEFCLASS_PTR);
 
    DefclassData(theEnv)->DefclassModuleIndex =
                 RegisterModuleItem(theEnv,"defclass",
 #if (! RUN_TIME)
-                                    AllocateModule,ReturnModule,
+                                    AllocateModule,
+                                    ReturnModule,
 #else
                                     NULL,NULL,
 #endif
@@ -590,7 +594,7 @@ static void SetupDefclasses(
 #else
                                     NULL,
 #endif
-                                    EnvFindDefclassInModule);
+                                    (FindConstructFunction *) EnvFindDefclassInModule);
 
    DefclassData(theEnv)->DefclassConstruct =  AddConstruct(theEnv,"defclass","defclasses",
 #if (! BLOAD_ONLY) && (! RUN_TIME)
@@ -598,13 +602,15 @@ static void SetupDefclasses(
 #else
                                      NULL,
 #endif
-                                     EnvFindDefclass,
+                                     (FindConstructFunction *) EnvFindDefclass,
                                      GetConstructNamePointer,GetConstructPPForm,
-                                     GetConstructModuleItem,EnvGetNextDefclass,
-                                     SetNextConstruct,EnvIsDefclassDeletable,
-                                     EnvUndefclass,
+                                     GetConstructModuleItem,
+                                     (GetNextConstructFunction *) EnvGetNextDefclass,
+                                     SetNextConstruct,
+                                     (IsConstructDeletableFunction *) EnvIsDefclassDeletable,
+                                     (DeleteConstructFunction *) EnvUndefclass,
 #if (! RUN_TIME)
-                                     RemoveDefclass
+                                     (FreeConstructFunction *) RemoveDefclass
 #else
                                      NULL
 #endif
@@ -697,12 +703,12 @@ static void SetupDefclasses(
                   class list (this is responsibility
                   of caller)
  *********************************************************/
-static DEFCLASS *AddSystemClass(
-  void *theEnv,
+static Defclass *AddSystemClass(
+  Environment *theEnv,
   const char *name,
-  DEFCLASS *parent)
+  Defclass *parent)
   {
-   DEFCLASS *sys;
+   Defclass *sys;
    long i;
    char defaultScopeMap[1];
 
@@ -733,10 +739,10 @@ static DEFCLASS *AddSystemClass(
       There is only one module (MAIN) so far -
       which has an id of 0
       ========================================= */
-   ClearBitString((void *) defaultScopeMap,(int) sizeof(char));
+   ClearBitString(defaultScopeMap,(int) sizeof(char));
    SetBitMap(defaultScopeMap,0);
 #if DEFMODULE_CONSTRUCT
-   sys->scopeMap = (BITMAP_HN *) EnvAddBitMap(theEnv,(void *) defaultScopeMap,(int) sizeof(char));
+   sys->scopeMap = (BITMAP_HN *) EnvAddBitMap(theEnv,defaultScopeMap,(int) sizeof(char));
    IncrementBitMapCount(sys->scopeMap);
 #endif
    return(sys);
@@ -752,9 +758,9 @@ static DEFCLASS *AddSystemClass(
   NOTES        : None
  *****************************************************/
 static void *AllocateModule(
-  void *theEnv)
+  Environment *theEnv)
   {
-   return((void *) get_struct(theEnv,defclassModule));
+   return (void *) get_struct(theEnv,defclassModule);
   }
 
 /***************************************************
@@ -767,7 +773,7 @@ static void *AllocateModule(
   NOTES        : None
  ***************************************************/
 static void ReturnModule(
-  void *theEnv,
+  Environment *theEnv,
   void *theItem)
   {
    FreeConstructHeaderModule(theEnv,(struct defmoduleItemHeader *) theItem,DefclassData(theEnv)->DefclassConstruct);
@@ -791,17 +797,17 @@ static void ReturnModule(
   NOTES        : None
  ***************************************************/
 static void UpdateDefclassesScope(
-  void *theEnv)
+  Environment *theEnv)
   {
-   register unsigned i;
-   DEFCLASS *theDefclass;
+   unsigned i;
+   Defclass *theDefclass;
    int newModuleID,count;
    char *newScopeMap;
    unsigned newScopeMapSize;
    const char *className;
-   struct defmodule *matchModule;
+   Defmodule *matchModule;
 
-   newModuleID = (int) ((struct defmodule *) EnvGetCurrentModule(theEnv))->bsaveID;
+   newModuleID = (int) EnvGetCurrentModule(theEnv)->bsaveID;
    newScopeMapSize = (sizeof(char) * ((GetNumberOfDefmodules(theEnv) / BITS_PER_BYTE) + 1));
    newScopeMap = (char *) gm2(theEnv,newScopeMapSize);
    for (i = 0 ; i < CLASS_TABLE_HASH_SIZE ; i++)
@@ -811,7 +817,7 @@ static void UpdateDefclassesScope(
        {
         matchModule = theDefclass->header.whichModule->theModule;
         className = ValueToString(theDefclass->header.name);
-        ClearBitString((void *) newScopeMap,newScopeMapSize);
+        ClearBitString(newScopeMap,newScopeMapSize);
         GenCopyMemory(char,theDefclass->scopeMap->size,
                    newScopeMap,ValueToBitMap(theDefclass->scopeMap));
         DecrementBitMapCount(theEnv,theDefclass->scopeMap);
@@ -820,10 +826,10 @@ static void UpdateDefclassesScope(
         else if (FindImportedConstruct(theEnv,"defclass",matchModule,
                                        className,&count,true,NULL) != NULL)
           SetBitMap(newScopeMap,newModuleID);
-        theDefclass->scopeMap = (BITMAP_HN *) EnvAddBitMap(theEnv,(void *) newScopeMap,newScopeMapSize);
+        theDefclass->scopeMap = (BITMAP_HN *) EnvAddBitMap(theEnv,newScopeMap,newScopeMapSize);
         IncrementBitMapCount(theDefclass->scopeMap);
        }
-   rm(theEnv,(void *) newScopeMap,newScopeMapSize);
+   rm(theEnv,newScopeMap,newScopeMapSize);
   }
 
 #endif

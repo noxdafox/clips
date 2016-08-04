@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -43,6 +43,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_msgpass
@@ -51,37 +54,37 @@
 
 #define _H_msgpass
 
-#define GetActiveInstance(theEnv) ((INSTANCE_TYPE *) GetNthMessageArgument(theEnv,0)->value)
+#define GetActiveInstance(theEnv) ((Instance *) GetNthMessageArgument(theEnv,0)->value)
 
 #include "object.h"
 
 typedef struct messageHandlerLink
   {
-   HANDLER *hnd;
+   DefmessageHandler *hnd;
    struct messageHandlerLink *nxt;
    struct messageHandlerLink *nxtInStack;
   } HANDLER_LINK;
 
-   bool             DirectMessage(void *,SYMBOL_HN *,INSTANCE_TYPE *,
-                                         DATA_OBJECT *,EXPRESSION *);
-   void             EnvSend(void *,DATA_OBJECT *,const char *,const char *,DATA_OBJECT *);
-   void             DestroyHandlerLinks(void *,HANDLER_LINK *);
-   void             SendCommand(void *,DATA_OBJECT *);
-   DATA_OBJECT     *GetNthMessageArgument(void *,int);
+   bool             DirectMessage(Environment *,SYMBOL_HN *,Instance *,
+                                  DATA_OBJECT *,EXPRESSION *);
+   void             EnvSend(Environment *,DATA_OBJECT *,const char *,const char *,DATA_OBJECT *);
+   void             DestroyHandlerLinks(Environment *,HANDLER_LINK *);
+   void             SendCommand(Environment *,DATA_OBJECT *);
+   DATA_OBJECT     *GetNthMessageArgument(Environment *,int);
 
-   bool             NextHandlerAvailable(void *);
-   void             CallNextHandler(void *,DATA_OBJECT *);
+   bool             NextHandlerAvailable(Environment *);
+   void             CallNextHandler(Environment *,DATA_OBJECT *);
 
-   void             FindApplicableOfName(void *,DEFCLASS *,HANDLER_LINK *[],
-                                                HANDLER_LINK *[],SYMBOL_HN *);
-   HANDLER_LINK    *JoinHandlerLinks(void *,HANDLER_LINK *[],HANDLER_LINK *[],SYMBOL_HN *);
+   void             FindApplicableOfName(Environment *,Defclass *,HANDLER_LINK *[],
+                                         HANDLER_LINK *[],SYMBOL_HN *);
+   HANDLER_LINK    *JoinHandlerLinks(Environment *,HANDLER_LINK *[],HANDLER_LINK *[],SYMBOL_HN *);
 
-   void             PrintHandlerSlotGetFunction(void *,const char *,void *);
-   bool             HandlerSlotGetFunction(void *,void *,DATA_OBJECT *);
-   void             PrintHandlerSlotPutFunction(void *,const char *,void *);
-   bool             HandlerSlotPutFunction(void *,void *,DATA_OBJECT *);
-   void             DynamicHandlerGetSlot(void *,DATA_OBJECT *);
-   void             DynamicHandlerPutSlot(void *,DATA_OBJECT *);
+   void             PrintHandlerSlotGetFunction(Environment *,const char *,void *);
+   bool             HandlerSlotGetFunction(Environment *,void *,DATA_OBJECT *);
+   void             PrintHandlerSlotPutFunction(Environment *,const char *,void *);
+   bool             HandlerSlotPutFunction(Environment *,void *,DATA_OBJECT *);
+   void             DynamicHandlerGetSlot(Environment *,DATA_OBJECT *);
+   void             DynamicHandlerPutSlot(Environment *,DATA_OBJECT *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 

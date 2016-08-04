@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*               PARSING FUNCTIONS MODULE              */
    /*******************************************************/
@@ -43,6 +43,9 @@
 /*                                                           */
 /*            Changed return values for router functions.    */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -81,10 +84,10 @@ struct parseFunctionData
 /***************************************/
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   static bool                    FindErrorCapture(void *,const char *);
-   static void                    PrintErrorCapture(void *,const char *,const char *);
-   static void                    DeactivateErrorCapture(void *);
-   static void                    SetErrorCaptureValues(void *,DATA_OBJECT_PTR);
+   static bool                    FindErrorCapture(Environment *,const char *);
+   static void                    PrintErrorCapture(Environment *,const char *,const char *);
+   static void                    DeactivateErrorCapture(Environment *);
+   static void                    SetErrorCaptureValues(Environment *,DATA_OBJECT_PTR);
 #endif
 
 /*****************************************/
@@ -92,7 +95,7 @@ struct parseFunctionData
 /*   the parsing related functions.      */
 /*****************************************/
 void ParseFunctionDefinitions(
-  void *theEnv)
+  Environment *theEnv)
   {
    AllocateEnvironmentData(theEnv,PARSEFUN_DATA,sizeof(struct parseFunctionData),NULL);
 
@@ -107,7 +110,7 @@ void ParseFunctionDefinitions(
 /*   for the check-syntax function.        */
 /*******************************************/
 void CheckSyntaxFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *returnValue)
   {
    DATA_OBJECT theArg;
@@ -145,7 +148,7 @@ void CheckSyntaxFunction(
 /*   for the build function.     */
 /*********************************/
 bool CheckSyntax(
-  void *theEnv,
+  Environment *theEnv,
   const char *theString,
   DATA_OBJECT_PTR returnValue)
   {
@@ -287,7 +290,7 @@ bool CheckSyntax(
 /*   the captured information.                    */
 /**************************************************/
 static void DeactivateErrorCapture(
-  void *theEnv)
+  Environment *theEnv)
   {   
    if (ParseFunctionData(theEnv)->ErrorString != NULL)
      {
@@ -318,12 +321,12 @@ static void DeactivateErrorCapture(
 /*   either position if no output was sent to those logical names. */
 /*******************************************************************/
 static void SetErrorCaptureValues(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
-   struct multifield *theMultifield;
+   Multifield *theMultifield;
 
-   theMultifield = (struct multifield *) EnvCreateMultifield(theEnv,2L);
+   theMultifield = EnvCreateMultifield(theEnv,2L);
 
    if (ParseFunctionData(theEnv)->ErrorString != NULL)
      {
@@ -350,7 +353,7 @@ static void SetErrorCaptureValues(
    SetpType(returnValue,MULTIFIELD);
    SetpDOBegin(returnValue,1);
    SetpDOEnd(returnValue,2);
-   SetpValue(returnValue,(void *) theMultifield);
+   SetpValue(returnValue,theMultifield);
   }
 
 /**********************************/
@@ -358,7 +361,7 @@ static void SetErrorCaptureValues(
 /*   for the check-syntax router. */
 /**********************************/
 static bool FindErrorCapture(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName)
   {
 #if MAC_XCD
@@ -377,7 +380,7 @@ static bool FindErrorCapture(
 /*   for the check-syntax router.   */
 /************************************/
 static void PrintErrorCapture(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
   const char *str)
   {
@@ -401,7 +404,7 @@ static void PrintErrorCapture(
 /*   stub provided for use with a run-time version. */
 /****************************************************/
 void CheckSyntaxFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *returnValue)
   {
    PrintErrorID(theEnv,"PARSEFUN",1,false);
@@ -415,7 +418,7 @@ void CheckSyntaxFunction(
 /*   provided for use with a run-time version.  */
 /************************************************/
 bool CheckSyntax(
-  void *theEnv,
+  Environment *theEnv,
   const char *theString,
   DATA_OBJECT_PTR returnValue)
   {

@@ -23,7 +23,7 @@
 /* Initialization/Deallocation Methods */
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-- initWithFact: (struct fact *) theFact
+- initWithFact: (Fact *) theFact
   fromEnvironment: (void *) theEnvironment;
 
 - initWithInstance: (struct instance *) theInstance

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/04/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*              CLASS COMMANDS HEADER FILE             */
    /*******************************************************/
@@ -39,6 +39,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_classcom
@@ -55,72 +58,72 @@
 #include "object.h"
 #include "symbol.h"
 
-   const char             *EnvGetDefclassName(void *,void *);
-   const char             *EnvGetDefclassPPForm(void *,void *);
+   const char             *EnvGetDefclassName(Environment *,Defclass *);
+   const char             *EnvGetDefclassPPForm(Environment *,Defclass *);
    struct defmoduleItemHeader 
-                                 *EnvGetDefclassModule(void *,void *);
-   const char             *EnvDefclassModule(void *,void *);
-   SYMBOL_HN              *GetDefclassNamePointer(void *);
-   void                    SetNextDefclass(void *,void *);
-   void                    EnvSetDefclassPPForm(void *,void *,char *);
+                          *EnvGetDefclassModule(Environment *,Defclass *);
+   const char             *EnvDefclassModule(Environment *,Defclass *);
+   SYMBOL_HN              *GetDefclassNamePointer(Defclass *);
+   void                    SetNextDefclass(Defclass *,Defclass *);
+   void                    EnvSetDefclassPPForm(Environment *,Defclass *,char *);
 
-   void                   *EnvFindDefclass(void *,const char *);
-   void                   *EnvFindDefclassInModule(void *,const char *);
-   DEFCLASS               *LookupDefclassByMdlOrScope(void *,const char *);
-   DEFCLASS               *LookupDefclassInScope(void *,const char *);
-   DEFCLASS               *LookupDefclassAnywhere(void *,struct defmodule *,const char *);
-   bool                    DefclassInScope(void *,DEFCLASS *,struct defmodule *);
-   void                   *EnvGetNextDefclass(void *,void *);
-   bool                    EnvIsDefclassDeletable(void *,void *);
+   Defclass               *EnvFindDefclass(Environment *,const char *);
+   Defclass               *EnvFindDefclassInModule(Environment *,const char *);
+   Defclass               *LookupDefclassByMdlOrScope(Environment *,const char *);
+   Defclass               *LookupDefclassInScope(Environment *,const char *);
+   Defclass               *LookupDefclassAnywhere(Environment *,Defmodule *,const char *);
+   bool                    DefclassInScope(Environment *,Defclass *,Defmodule *);
+   Defclass               *EnvGetNextDefclass(Environment *,Defclass *);
+   bool                    EnvIsDefclassDeletable(Environment *,Defclass *);
 
-   void                    UndefclassCommand(void *);
-   unsigned short          EnvSetClassDefaultsMode(void *,unsigned short);
-   unsigned short          EnvGetClassDefaultsMode(void *);
-   void                   *GetClassDefaultsModeCommand(void *);
-   void                   *SetClassDefaultsModeCommand(void *);
+   void                    UndefclassCommand(Environment *);
+   unsigned short          EnvSetClassDefaultsMode(Environment *,unsigned short);
+   unsigned short          EnvGetClassDefaultsMode(Environment *);
+   void                   *GetClassDefaultsModeCommand(Environment *);
+   void                   *SetClassDefaultsModeCommand(Environment *);
 
 #if DEBUGGING_FUNCTIONS
-   void                    PPDefclassCommand(void *);
-   void                    ListDefclassesCommand(void *);
-   void                    EnvListDefclasses(void *,const char *,struct defmodule *);
-   bool                    EnvGetDefclassWatchInstances(void *,void *);
-   void                    EnvSetDefclassWatchInstances(void *,bool,void *);
-   bool                    EnvGetDefclassWatchSlots(void *,void *);
-   void                    EnvSetDefclassWatchSlots(void *,bool,void *);
-   bool                    DefclassWatchAccess(void *,int,bool,EXPRESSION *);
-   bool                    DefclassWatchPrint(void *,const char *,int,EXPRESSION *);
+   void                    PPDefclassCommand(Environment *);
+   void                    ListDefclassesCommand(Environment *);
+   void                    EnvListDefclasses(Environment *,const char *,Defmodule *);
+   bool                    EnvGetDefclassWatchInstances(Environment *,Defclass *);
+   void                    EnvSetDefclassWatchInstances(Environment *,bool,Defclass *);
+   bool                    EnvGetDefclassWatchSlots(Environment *,Defclass *);
+   void                    EnvSetDefclassWatchSlots(Environment *,bool,Defclass *);
+   bool                    DefclassWatchAccess(Environment *,int,bool,EXPRESSION *);
+   bool                    DefclassWatchPrint(Environment *,const char *,int,EXPRESSION *);
 #endif
 
-   void                    GetDefclassListFunction(void *,DATA_OBJECT *);
-   void                    EnvGetDefclassList(void *,DATA_OBJECT *,struct defmodule *);
-   bool                    EnvUndefclass(void *,void *);
-   bool                    HasSuperclass(DEFCLASS *,DEFCLASS *);
+   void                    GetDefclassListFunction(Environment *,DATA_OBJECT *);
+   void                    EnvGetDefclassList(Environment *,DATA_OBJECT *,Defmodule *);
+   bool                    EnvUndefclass(Environment *,Defclass *);
+   bool                    HasSuperclass(Defclass *,Defclass *);
 
-   SYMBOL_HN              *CheckClassAndSlot(void *,const char *,DEFCLASS **);
+   SYMBOL_HN              *CheckClassAndSlot(Environment *,const char *,Defclass **);
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-   void                    SaveDefclasses(void *,void *,const char *);
+   void                    SaveDefclasses(Environment *,Defmodule *,const char *);
 #endif
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-   const char             *DefclassModule(void *);
-   void                   *FindDefclass(const char *);
-   void                    GetDefclassList(DATA_OBJECT *,struct defmodule *);
+   const char             *DefclassModule(Defclass *);
+   Defclass               *FindDefclass(const char *);
+   void                    GetDefclassList(DATA_OBJECT *,Defmodule *);
    unsigned short          GetClassDefaultsMode(void);
    struct defmoduleItemHeader 
-                                 *GetDefclassModule(void *);
-   const char             *GetDefclassName(void *);
-   const char             *GetDefclassPPForm(void *);
-   unsigned                GetDefclassWatchInstances(void *);
-   unsigned                GetDefclassWatchSlots(void *);
-   void                   *GetNextDefclass(void *);
-   bool                    IsDefclassDeletable(void *);
-   void                    ListDefclasses(const char *,struct defmodule *);
+                          *GetDefclassModule(Defclass *);
+   const char             *GetDefclassName(Defclass *);
+   const char             *GetDefclassPPForm(Defclass *);
+   unsigned                GetDefclassWatchInstances(Defclass *);
+   unsigned                GetDefclassWatchSlots(Defclass *);
+   Defclass               *GetNextDefclass(Defclass *);
+   bool                    IsDefclassDeletable(Defclass *);
+   void                    ListDefclasses(const char *,Defmodule *);
    unsigned short          SetClassDefaultsMode(unsigned short);
-   void                    SetDefclassWatchInstances(unsigned,void *);
-   void                    SetDefclassWatchSlots(unsigned,void *);
-   bool                    Undefclass(void *);
+   void                    SetDefclassWatchInstances(unsigned,Defclass *);
+   void                    SetDefclassWatchSlots(unsigned,Defclass *);
+   bool                    Undefclass(Defclass *);
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */
 

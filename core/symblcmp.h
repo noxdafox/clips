@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*        SYMBOL CONSTRUCT COMPILER HEADER FILE        */
    /*******************************************************/
@@ -35,6 +35,9 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_symblcmp
@@ -47,11 +50,11 @@
 
 #include "symbol.h"
 
-   void                     PrintSymbolReference(void *,FILE *,SYMBOL_HN *);
-   void                     PrintFloatReference(void *,FILE *,FLOAT_HN *);
-   void                     PrintIntegerReference(void *,FILE *,INTEGER_HN *);
-   void                     PrintBitMapReference(void *,FILE *,BITMAP_HN *);
-   void                     AtomicValuesToCode(void *,const char *,const char *,char *);
+   void                     PrintSymbolReference(Environment *,FILE *,SYMBOL_HN *);
+   void                     PrintFloatReference(Environment *,FILE *,FLOAT_HN *);
+   void                     PrintIntegerReference(Environment *,FILE *,INTEGER_HN *);
+   void                     PrintBitMapReference(Environment *,FILE *,BITMAP_HN *);
+   void                     AtomicValuesToCode(Environment *,const char *,const char *,char *);
 
 #endif /* _H_symblcmp */
 

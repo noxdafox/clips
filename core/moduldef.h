@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                DEFMODULE HEADER FILE                */
    /*******************************************************/
@@ -43,6 +43,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_moduldef
@@ -51,10 +54,13 @@
 
 #define _H_moduldef
 
-struct defmodule;
+typedef struct defmodule Defmodule;
 struct portItem;
 struct defmoduleItemHeader;
 struct moduleItem;
+
+typedef void *AllocateModuleFunction(Environment *);
+typedef void FreeModuleFunction(Environment *,void *);
 
 #include <stdio.h>
 
@@ -91,7 +97,7 @@ struct defmodule
    bool visitedFlag;
    long bsaveID;
    struct userData *usrData;
-   struct defmodule *next;
+   Defmodule *next;
   };
 
 struct portItem
@@ -104,7 +110,7 @@ struct portItem
 
 struct defmoduleItemHeader
   {
-   struct defmodule *theModule;
+   Defmodule *theModule;
    struct constructHeader *firstItem;
    struct constructHeader *lastItem;
   };
@@ -146,18 +152,18 @@ struct moduleItem
   {
    const char *name;
    int moduleIndex;
-   void *(*allocateFunction)(void *);
-   void  (*freeFunction)(void *,void *);
-   void *(*bloadModuleReference)(void *,int);
-   void  (*constructsToCModuleReference)(void *,FILE *,int,int,int);
-   void *(*findFunction)(void *,const char *);
+   void *(*allocateFunction)(Environment *);
+   void  (*freeFunction)(Environment *,void *);
+   void *(*bloadModuleReference)(Environment *,int);
+   void  (*constructsToCModuleReference)(Environment *,FILE *,int,int,int);
+   void *(*findFunction)(Environment *,const char *);
    struct moduleItem *next;
   };
 
 typedef struct moduleStackItem
   {
    bool changeFlag;
-   struct defmodule *theModule;
+   Defmodule *theModule;
    struct moduleStackItem *next;
   } MODULE_STACK_ITEM;
 
@@ -175,9 +181,9 @@ struct defmoduleData
    struct callFunctionItem *AfterModuleChangeFunctions;
    MODULE_STACK_ITEM *ModuleStack;
    bool CallModuleChangeFunctions;
-   struct defmodule *ListOfDefmodules;
-   struct defmodule *CurrentModule;
-   struct defmodule *LastDefmodule;
+   Defmodule *ListOfDefmodules;
+   Defmodule *CurrentModule;
+   Defmodule *LastDefmodule;
    int NumberOfModuleItems;
    struct moduleItem *ListOfModuleItems;
    long ModuleChangeIndex;
@@ -194,50 +200,50 @@ struct defmoduleData
    long BNumberOfDefmodules;
    long NumberOfPortItems;
    struct portItem *PortItemArray;
-   struct defmodule *DefmoduleArray;
+   Defmodule *DefmoduleArray;
 #endif
   };
   
 #define DefmoduleData(theEnv) ((struct defmoduleData *) GetEnvironmentData(theEnv,DEFMODULE_DATA))
 
-   void                           InitializeDefmodules(void *);
-   void                          *EnvFindDefmodule(void *,const char *);
-   const char                    *EnvGetDefmoduleName(void *,void *);
-   const char                    *EnvGetDefmodulePPForm(void *,void *);
-   void                          *EnvGetNextDefmodule(void *,void *);
-   void                           RemoveAllDefmodules(void *);
+   void                           InitializeDefmodules(Environment *);
+   Defmodule                     *EnvFindDefmodule(Environment *,const char *);
+   const char                    *EnvGetDefmoduleName(Environment *,Defmodule *);
+   const char                    *EnvGetDefmodulePPForm(Environment *,Defmodule *);
+   Defmodule                     *EnvGetNextDefmodule(Environment *,Defmodule *);
+   void                           RemoveAllDefmodules(Environment *);
    int                            AllocateModuleStorage(void);
-   int                            RegisterModuleItem(void *,const char *,
-                                                            void *(*)(void *),
-                                                            void (*)(void *,void *),
-                                                            void *(*)(void *,int),
-                                                            void (*)(void *,FILE *,int,int,int),
-                                                            void *(*)(void *,const char *));
-   void                          *GetModuleItem(void *,struct defmodule *,int);
-   void                           SetModuleItem(void *,struct defmodule *,int,void *);
-   void                          *EnvGetCurrentModule(void *);
-   void                          *EnvSetCurrentModule(void *,void *);
-   void                          *GetCurrentModuleCommand(void *);
-   void                          *SetCurrentModuleCommand(void *);
-   int                            GetNumberOfModuleItems(void *);
-   void                           CreateMainModule(void *);
-   void                           SetListOfDefmodules(void *,void *);
-   struct moduleItem             *GetListOfModuleItems(void *);
-   struct moduleItem             *FindModuleItem(void *,const char *);
-   void                           SaveCurrentModule(void *);
-   void                           RestoreCurrentModule(void *);
-   void                           AddAfterModuleChangeFunction(void *,const char *,void (*)(void *),int);
-   void                           IllegalModuleSpecifierMessage(void *);
-   void                           AllocateDefmoduleGlobals(void *);
+   int                            RegisterModuleItem(Environment *,const char *,
+                                                     AllocateModuleFunction *,
+                                                     FreeModuleFunction *,
+                                                     void *(*)(Environment *,int),
+                                                     void (*)(Environment *,FILE *,int,int,int),
+                                                     FindConstructFunction *);
+   void                          *GetModuleItem(Environment *,Defmodule *,int);
+   void                           SetModuleItem(Environment *,Defmodule *,int,void *);
+   Defmodule                     *EnvGetCurrentModule(Environment *);
+   Defmodule                     *EnvSetCurrentModule(Environment *,Defmodule *);
+   void                          *GetCurrentModuleCommand(Environment *);
+   void                          *SetCurrentModuleCommand(Environment *);
+   int                            GetNumberOfModuleItems(Environment *);
+   void                           CreateMainModule(Environment *);
+   void                           SetListOfDefmodules(Environment *,Defmodule *);
+   struct moduleItem             *GetListOfModuleItems(Environment *);
+   struct moduleItem             *FindModuleItem(Environment *,const char *);
+   void                           SaveCurrentModule(Environment *);
+   void                           RestoreCurrentModule(Environment *);
+   void                           AddAfterModuleChangeFunction(Environment *,const char *,void (*)(Environment *),int);
+   void                           IllegalModuleSpecifierMessage(Environment *);
+   void                           AllocateDefmoduleGlobals(Environment *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-   void                          *FindDefmodule(const char *);
-   void                          *GetCurrentModule(void);
-   const char                    *GetDefmoduleName(void *);
-   const char                    *GetDefmodulePPForm(void *);
-   void                          *GetNextDefmodule(void *);
-   void                          *SetCurrentModule(void *);
+   Defmodule                     *FindDefmodule(const char *);
+   Defmodule                     *GetCurrentModule(void);
+   const char                    *GetDefmoduleName(Defmodule *);
+   const char                    *GetDefmodulePPForm(Defmodule *);
+   Defmodule                     *GetNextDefmodule(Defmodule *);
+   Defmodule                     *SetCurrentModule(Defmodule *);
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */
 

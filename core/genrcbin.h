@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -26,6 +26,9 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_genrcbin
@@ -40,24 +43,24 @@
 
 struct defgenericBinaryData
   { 
-   DEFGENERIC *DefgenericArray;
+   Defgeneric *DefgenericArray;
    long ModuleCount;
    long GenericCount;
    long MethodCount;
    long RestrictionCount;
    long TypeCount;
    DEFGENERIC_MODULE *ModuleArray;
-   DEFMETHOD *MethodArray;
+   Defmethod *MethodArray;
    RESTRICTION *RestrictionArray;
    void **TypeArray;
   };
   
 #define DefgenericBinaryData(theEnv) ((struct defgenericBinaryData *) GetEnvironmentData(theEnv,GENRCBIN_DATA))
 
-#define GenericPointer(i) (((i) == -1L) ? NULL : (DEFGENERIC *) &DefgenericBinaryData(theEnv)->DefgenericArray[i])
+#define GenericPointer(i) (((i) == -1L) ? NULL : &DefgenericBinaryData(theEnv)->DefgenericArray[i])
 
-   void                           SetupGenericsBload(void *);
-   void                          *BloadDefgenericModuleReference(void *,int);
+   void                           SetupGenericsBload(Environment *);
+   void                          *BloadDefgenericModuleReference(Environment *,int);
 
 #endif /* _H_genrcbin */
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*      CONSTRUCT PROFILING FUNCTIONS HEADER FILE      */
    /*******************************************************/
@@ -42,6 +42,9 @@
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -90,25 +93,25 @@ struct profileFunctionData
 
 #define ProfileFunctionData(theEnv) ((struct profileFunctionData *) GetEnvironmentData(theEnv,PROFLFUN_DATA))
 
-   void                           ConstructProfilingFunctionDefinitions(void *);
-   void                           ProfileCommand(void *);
-   void                           ProfileInfoCommand(void *);
-   void                           StartProfile(void *,
+   void                           ConstructProfilingFunctionDefinitions(Environment *);
+   void                           ProfileCommand(Environment *);
+   void                           ProfileInfoCommand(Environment *);
+   void                           StartProfile(Environment *,
                                                       struct profileFrameInfo *,
                                                       struct userData **,
                                                       bool);
-   void                           EndProfile(void *,struct profileFrameInfo *);
-   void                           ProfileResetCommand(void *);
+   void                           EndProfile(Environment *,struct profileFrameInfo *);
+   void                           ProfileResetCommand(Environment *);
    void                           ResetProfileInfo(struct constructProfileInfo *);
 
-   double                         SetProfilePercentThresholdCommand(void *);
-   double                         SetProfilePercentThreshold(void *,double);
-   double                         GetProfilePercentThresholdCommand(void *);
-   double                         GetProfilePercentThreshold(void *);
-   bool                           Profile(void *,const char *);
-   void                           DeleteProfileData(void *,void *);
-   void                          *CreateProfileData(void *);
-   const char                    *SetProfileOutputString(void *,const char *);
+   double                         SetProfilePercentThresholdCommand(Environment *);
+   double                         SetProfilePercentThreshold(Environment *,double);
+   double                         GetProfilePercentThresholdCommand(Environment *);
+   double                         GetProfilePercentThreshold(Environment *);
+   bool                           Profile(Environment *,const char *);
+   void                           DeleteProfileData(Environment *,void *);
+   void                          *CreateProfileData(Environment *);
+   const char                    *SetProfileOutputString(Environment *,const char *);
 
 #endif /* _H_proflfun */
 

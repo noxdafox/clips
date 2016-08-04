@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                 REORDER HEADER FILE                 */
    /*******************************************************/
@@ -43,6 +43,9 @@
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -108,16 +111,16 @@ struct lhsParseNode
    struct lhsParseNode *bottom;
   };
 
-   struct lhsParseNode           *ReorderPatterns(void *,struct lhsParseNode *,bool *);
-   struct lhsParseNode           *CopyLHSParseNodes(void *,struct lhsParseNode *);
-   void                           CopyLHSParseNode(void *,struct lhsParseNode *,struct lhsParseNode *,bool);
-   struct lhsParseNode           *GetLHSParseNode(void *);
-   void                           ReturnLHSParseNodes(void *,struct lhsParseNode *);
-   struct lhsParseNode           *ExpressionToLHSParseNodes(void *,struct expr *);
-   struct expr                   *LHSParseNodesToExpression(void *,struct lhsParseNode *);
-   void                           AddInitialPatterns(void *,struct lhsParseNode *);
+   struct lhsParseNode           *ReorderPatterns(Environment *,struct lhsParseNode *,bool *);
+   struct lhsParseNode           *CopyLHSParseNodes(Environment *,struct lhsParseNode *);
+   void                           CopyLHSParseNode(Environment *,struct lhsParseNode *,struct lhsParseNode *,bool);
+   struct lhsParseNode           *GetLHSParseNode(Environment *);
+   void                           ReturnLHSParseNodes(Environment *,struct lhsParseNode *);
+   struct lhsParseNode           *ExpressionToLHSParseNodes(Environment *,struct expr *);
+   struct expr                   *LHSParseNodesToExpression(Environment *,struct lhsParseNode *);
+   void                           AddInitialPatterns(Environment *,struct lhsParseNode *);
    bool                           IsExistsSubjoin(struct lhsParseNode *,int);
-   struct lhsParseNode           *CombineLHSParseNodes(void *,struct lhsParseNode *,struct lhsParseNode *);
+   struct lhsParseNode           *CombineLHSParseNodes(Environment *,struct lhsParseNode *,struct lhsParseNode *);
    //void                           AssignPatternMarkedFlag(struct lhsParseNode *,short);
 
 #endif /* _H_reorder */

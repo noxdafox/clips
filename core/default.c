@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*               DEFAULT ATTRIBUTE MODULE              */
    /*******************************************************/
@@ -34,6 +34,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -60,14 +63,14 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    *FindDefaultValue(void *,int,CONSTRAINT_RECORD *,void *);
+   static void                    *FindDefaultValue(Environment *,int,CONSTRAINT_RECORD *,void *);
 
 /********************************************************/
 /* DeriveDefaultFromConstraints: Returns an appropriate */
 /*   default value for the supplied constraints.        */
 /********************************************************/
 void DeriveDefaultFromConstraints(
-  void *theEnv,
+  Environment *theEnv,
   CONSTRAINT_RECORD *constraints,
   DATA_OBJECT *theDefault,
   bool multifield,
@@ -90,8 +93,8 @@ void DeriveDefaultFromConstraints(
          SetpType(theDefault,MULTIFIELD);
          SetpDOBegin(theDefault,1);
          SetpDOEnd(theDefault,0);
-         if (garbageMultifield) SetpValue(theDefault,(void *) EnvCreateMultifield(theEnv,0L));
-         else SetpValue(theDefault,(void *) CreateMultifield2(theEnv,0L)); 
+         if (garbageMultifield) SetpValue(theDefault,EnvCreateMultifield(theEnv,0L));
+         else SetpValue(theDefault,CreateMultifield2(theEnv,0L));
         }
       else
         {
@@ -139,14 +142,14 @@ void DeriveDefaultFromConstraints(
    else if (constraints->instanceAddressesAllowed)
      {
       theType = INSTANCE_ADDRESS;
-      theValue = (void *) &InstanceData(theEnv)->DummyInstance;
+      theValue = &InstanceData(theEnv)->DummyInstance;
      }
 #endif
 #if DEFTEMPLATE_CONSTRUCT
    else if (constraints->factAddressesAllowed)
      {
       theType = FACT_ADDRESS;
-      theValue = (void *) &FactData(theEnv)->DummyFact;
+      theValue = &FactData(theEnv)->DummyFact;
      }
 #endif
    else if (constraints->externalAddressesAllowed)
@@ -177,8 +180,8 @@ void DeriveDefaultFromConstraints(
       SetpType(theDefault,MULTIFIELD);
       SetpDOBegin(theDefault,1);
       SetpDOEnd(theDefault,(long) minFields);
-      if (garbageMultifield) SetpValue(theDefault,(void *) EnvCreateMultifield(theEnv,minFields));
-      else SetpValue(theDefault,(void *) CreateMultifield2(theEnv,minFields));
+      if (garbageMultifield) SetpValue(theDefault,EnvCreateMultifield(theEnv,minFields));
+      else SetpValue(theDefault,CreateMultifield2(theEnv,minFields));
 
       for (; minFields > 0; minFields--)
         {
@@ -204,7 +207,7 @@ void DeriveDefaultFromConstraints(
 /*   maximum value.                                                    */
 /************************************************************************/
 static void *FindDefaultValue(
-  void *theEnv,
+  Environment *theEnv,
   int theType,
   CONSTRAINT_RECORD *theConstraints,
   void *standardDefault)
@@ -267,7 +270,7 @@ static void *FindDefaultValue(
 /* ParseDefault: Parses a default value list. */
 /**********************************************/
 struct expr *ParseDefault(
-  void *theEnv,
+  Environment *theEnv,
   const char *readSource,
   bool multifield,
   bool dynamic,
@@ -305,7 +308,7 @@ struct expr *ParseDefault(
         {
          ReturnExpression(theEnv,defaultList);
          *error = true;
-         return(NULL);
+         return NULL;
         }
 
       /*===========================================================*/
@@ -333,7 +336,7 @@ struct expr *ParseDefault(
             ReturnExpression(theEnv,newItem);
             ReturnExpression(theEnv,defaultList);
             *error = true;
-            return(NULL);
+            return NULL;
            }
 
          ReturnExpression(theEnv,newItem);
@@ -359,7 +362,7 @@ struct expr *ParseDefault(
            *noneSpecified = true;
          else
            *deriveSpecified = true;
-         return(NULL);
+         return NULL;
         }
 
       /*====================================================*/
@@ -374,7 +377,7 @@ struct expr *ParseDefault(
          *error = true;
          if (dynamic) SyntaxErrorMessage(theEnv,"default-dynamic attribute");
          else SyntaxErrorMessage(theEnv,"default attribute");
-         return(NULL);
+         return NULL;
         }
 
       /*============================================*/
@@ -427,7 +430,7 @@ struct expr *ParseDefault(
          PrintErrorID(theEnv,"DEFAULT",1,true);
          EnvPrintRouter(theEnv,WERROR,"The default value for a single field slot must be a single field value\n");
          ReturnExpression(theEnv,defaultList);
-         return(NULL);
+         return NULL;
         }
      }
 
@@ -462,7 +465,7 @@ struct expr *ParseDefault(
          ReturnExpression(theEnv,tmpItem);
          ReturnExpression(theEnv,defaultList);
          *error = true;
-         return(NULL);
+         return NULL;
         }
 
       lastDefault = ConvertValueToExpression(theEnv,&theValue);

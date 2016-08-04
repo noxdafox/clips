@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -37,6 +37,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 /* =========================================
@@ -62,24 +65,22 @@
 
 #include "factqury.h"
 
-/* =========================================
-   *****************************************
-      INTERNALLY VISIBLE FUNCTION HEADERS
-   =========================================
-   ***************************************** */
+/***************************************/
+/* LOCAL INTERNAL FUNCTION DEFINITIONS */
+/***************************************/
 
-static void PushQueryCore(void *);
-static void PopQueryCore(void *);
-static QUERY_CORE *FindQueryCore(void *,int);
-static QUERY_TEMPLATE *DetermineQueryTemplates(void *,EXPRESSION *,const char *,unsigned *);
-static QUERY_TEMPLATE *FormChain(void *,const char *,DATA_OBJECT *);
-static void DeleteQueryTemplates(void *,QUERY_TEMPLATE *);
-static bool TestForFirstInChain(void *,QUERY_TEMPLATE *,int);
-static bool TestForFirstFactInTemplate(void *,struct deftemplate *,QUERY_TEMPLATE *,int);
-static void TestEntireChain(void *,QUERY_TEMPLATE *,int);
-static void TestEntireTemplate(void *,struct deftemplate *,QUERY_TEMPLATE *,int);
-static void AddSolution(void *);
-static void PopQuerySoln(void *);
+   static void                    PushQueryCore(Environment *);
+   static void                    PopQueryCore(Environment *);
+   static QUERY_CORE             *FindQueryCore(Environment *,int);
+   static QUERY_TEMPLATE         *DetermineQueryTemplates(Environment *,EXPRESSION *,const char *,unsigned *);
+   static QUERY_TEMPLATE         *FormChain(Environment *,const char *,DATA_OBJECT *);
+   static void                    DeleteQueryTemplates(Environment *,QUERY_TEMPLATE *);
+   static bool                    TestForFirstInChain(Environment *,QUERY_TEMPLATE *,int);
+   static bool                    TestForFirstFactInTemplate(Environment *,Deftemplate *,QUERY_TEMPLATE *,int);
+   static void                    TestEntireChain(Environment *,QUERY_TEMPLATE *,int);
+   static void                    TestEntireTemplate(Environment *,Deftemplate *,QUERY_TEMPLATE *,int);
+   static void                    AddSolution(Environment *);
+   static void                    PopQuerySoln(Environment *);
 
 /****************************************************
   NAME         : SetupFactQuery
@@ -91,7 +92,7 @@ static void PopQuerySoln(void *);
   NOTES        : None
  ****************************************************/
 void SetupFactQuery(
-  void *theEnv)
+  Environment *theEnv)
   {
    AllocateEnvironmentData(theEnv,FACT_QUERY_DATA,sizeof(struct factQueryData),NULL);
 
@@ -145,10 +146,10 @@ void SetupFactQuery(
   NOTES        : H/L Syntax : ((query-fact) <index>)
  *************************************************************/
 void GetQueryFact(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *result)
   {
-   register QUERY_CORE *core;
+   QUERY_CORE *core;
 
    core = FindQueryCore(theEnv,ValueToInteger(GetpValue(GetFirstArgument())));
    
@@ -166,7 +167,7 @@ void GetQueryFact(
   NOTES        : H/L Syntax : ((query-fact-slot) <index> <slot-name>)
  **************************************************************************/
 void GetQueryFactSlot(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *result)
   {
    struct fact *theFact;
@@ -202,7 +203,7 @@ void GetQueryFactSlot(
       position = 1;
      }
 
-   else if (FindSlot((struct deftemplate *) theFact->whichDeftemplate,
+   else if (FindSlot(theFact->whichDeftemplate,
                      (struct symbolHashNode *) temp.value,&position) == NULL)
      {
       SlotExistError(theEnv,ValueToString(temp.value),"fact-set query");
@@ -278,7 +279,7 @@ void GetQueryFactSlot(
   NOTES        : H/L Syntax : See FactParseQueryNoAction()
  ******************************************************************************/
 bool AnyFacts(
-  void *theEnv)
+  Environment *theEnv)
   {
    QUERY_TEMPLATE *qtemplates;
    unsigned rcnt;
@@ -294,7 +295,7 @@ bool AnyFacts(
    FactQueryData(theEnv)->QueryCore->query = GetFirstArgument();
    testResult = TestForFirstInChain(theEnv,qtemplates,0);
    FactQueryData(theEnv)->AbortQuery = false;
-   rm(theEnv,(void *) FactQueryData(theEnv)->QueryCore->solns,(sizeof(struct fact *) * rcnt));
+   rm(theEnv,FactQueryData(theEnv)->QueryCore->solns,(sizeof(struct fact *) * rcnt));
    rtn_struct(theEnv,query_core,FactQueryData(theEnv)->QueryCore);
    PopQueryCore(theEnv);
    DeleteQueryTemplates(theEnv,qtemplates);
@@ -314,7 +315,7 @@ bool AnyFacts(
   NOTES        : H/L Syntax : See ParseQueryNoAction()
  ******************************************************************************/
 void QueryFindFact(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *result)
   {
    QUERY_TEMPLATE *qtemplates;
@@ -327,7 +328,7 @@ void QueryFindFact(
                                       "find-fact",&rcnt);
    if (qtemplates == NULL)
      {
-      result->value = (void *) EnvCreateMultifield(theEnv,0L);
+      result->value = EnvCreateMultifield(theEnv,0L);
       return;
      }
    PushQueryCore(theEnv);
@@ -337,7 +338,7 @@ void QueryFindFact(
    FactQueryData(theEnv)->QueryCore->query = GetFirstArgument();
    if (TestForFirstInChain(theEnv,qtemplates,0) == true)
      {
-      result->value = (void *) EnvCreateMultifield(theEnv,rcnt);
+      result->value = EnvCreateMultifield(theEnv,rcnt);
       SetpDOEnd(result,rcnt);
       for (i = 1 ; i <= rcnt ; i++)
         {
@@ -346,9 +347,9 @@ void QueryFindFact(
         }
      }
    else
-      result->value = (void *) EnvCreateMultifield(theEnv,0L);
+      result->value = EnvCreateMultifield(theEnv,0L);
    FactQueryData(theEnv)->AbortQuery = false;
-   rm(theEnv,(void *) FactQueryData(theEnv)->QueryCore->solns,(sizeof(struct fact *) * rcnt));
+   rm(theEnv,FactQueryData(theEnv)->QueryCore->solns,(sizeof(struct fact *) * rcnt));
    rtn_struct(theEnv,query_core,FactQueryData(theEnv)->QueryCore);
    PopQueryCore(theEnv);
    DeleteQueryTemplates(theEnv,qtemplates);
@@ -373,12 +374,12 @@ void QueryFindFact(
   NOTES        : H/L Syntax : See ParseQueryNoAction()
  ******************************************************************************/
 void QueryFindAllFacts(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *result)
   {
    QUERY_TEMPLATE *qtemplates;
    unsigned rcnt;
-   register unsigned i,j;
+   unsigned i,j;
 
    result->type = MULTIFIELD;
    result->begin = 0;
@@ -387,7 +388,7 @@ void QueryFindAllFacts(
                                       "find-all-facts",&rcnt);
    if (qtemplates == NULL)
      {
-      result->value = (void *) EnvCreateMultifield(theEnv,0L);
+      result->value = EnvCreateMultifield(theEnv,0L);
       return;
      }
    PushQueryCore(theEnv);
@@ -400,7 +401,7 @@ void QueryFindAllFacts(
    FactQueryData(theEnv)->QueryCore->soln_cnt = 0;
    TestEntireChain(theEnv,qtemplates,0);
    FactQueryData(theEnv)->AbortQuery = false;
-   result->value = (void *) EnvCreateMultifield(theEnv,FactQueryData(theEnv)->QueryCore->soln_cnt * rcnt);
+   result->value = EnvCreateMultifield(theEnv,FactQueryData(theEnv)->QueryCore->soln_cnt * rcnt);
    while (FactQueryData(theEnv)->QueryCore->soln_set != NULL)
      {
       for (i = 0 , j = (unsigned) (result->end + 2) ; i < rcnt ; i++ , j++)
@@ -411,7 +412,7 @@ void QueryFindAllFacts(
       result->end = (long) j-2;
       PopQuerySoln(theEnv);
      }
-   rm(theEnv,(void *) FactQueryData(theEnv)->QueryCore->solns,(sizeof(struct fact *) * rcnt));
+   rm(theEnv,FactQueryData(theEnv)->QueryCore->solns,(sizeof(struct fact *) * rcnt));
    rtn_struct(theEnv,query_core,FactQueryData(theEnv)->QueryCore);
    PopQueryCore(theEnv);
    DeleteQueryTemplates(theEnv,qtemplates);
@@ -432,7 +433,7 @@ void QueryFindAllFacts(
   NOTES        : H/L Syntax : See ParseQueryAction()
  ******************************************************************************/
 void QueryDoForFact(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *result)
   {
    QUERY_TEMPLATE *qtemplates;
@@ -453,7 +454,7 @@ void QueryDoForFact(
      EvaluateExpression(theEnv,FactQueryData(theEnv)->QueryCore->action,result);
    FactQueryData(theEnv)->AbortQuery = false;
    ProcedureFunctionData(theEnv)->BreakFlag = false;
-   rm(theEnv,(void *) FactQueryData(theEnv)->QueryCore->solns,(sizeof(struct fact *) * rcnt));
+   rm(theEnv,FactQueryData(theEnv)->QueryCore->solns,(sizeof(struct fact *) * rcnt));
    rtn_struct(theEnv,query_core,FactQueryData(theEnv)->QueryCore);
    PopQueryCore(theEnv);
    DeleteQueryTemplates(theEnv,qtemplates);
@@ -473,7 +474,7 @@ void QueryDoForFact(
   NOTES        : H/L Syntax : See FactParseQueryAction()
  ******************************************************************************/
 void QueryDoForAllFacts(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *result)
   {
    QUERY_TEMPLATE *qtemplates;
@@ -499,7 +500,7 @@ void QueryDoForAllFacts(
 
    FactQueryData(theEnv)->AbortQuery = false;
    ProcedureFunctionData(theEnv)->BreakFlag = false;
-   rm(theEnv,(void *) FactQueryData(theEnv)->QueryCore->solns,(sizeof(struct fact *) * rcnt));
+   rm(theEnv,FactQueryData(theEnv)->QueryCore->solns,(sizeof(struct fact *) * rcnt));
    rtn_struct(theEnv,query_core,FactQueryData(theEnv)->QueryCore);
    PopQueryCore(theEnv);
    DeleteQueryTemplates(theEnv,qtemplates);
@@ -523,12 +524,12 @@ void QueryDoForAllFacts(
   NOTES        : H/L Syntax : See FactParseQueryNoAction()
  ******************************************************************************/
 void DelayedQueryDoForAllFacts(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *result)
   {
    QUERY_TEMPLATE *qtemplates;
    unsigned rcnt;
-   register unsigned i;
+   unsigned i;
    struct garbageFrame newGarbageFrame, *oldGarbageFrame;
 
    result->type = SYMBOL;
@@ -578,7 +579,7 @@ void DelayedQueryDoForAllFacts(
    CallPeriodicTasks(theEnv);
 
    ProcedureFunctionData(theEnv)->BreakFlag = false;
-   rm(theEnv,(void *) FactQueryData(theEnv)->QueryCore->solns,(sizeof(struct fact *) * rcnt));
+   rm(theEnv,FactQueryData(theEnv)->QueryCore->solns,(sizeof(struct fact *) * rcnt));
    rtn_struct(theEnv,query_core,FactQueryData(theEnv)->QueryCore);
    PopQueryCore(theEnv);
    DeleteQueryTemplates(theEnv,qtemplates);
@@ -600,7 +601,7 @@ void DelayedQueryDoForAllFacts(
   NOTES        : None
  *******************************************************/
 static void PushQueryCore(
-  void *theEnv)
+  Environment *theEnv)
   {
    QUERY_STACK *qptr;
 
@@ -621,7 +622,7 @@ static void PushQueryCore(
   NOTES        : Assumes stack is not empty
  ******************************************************/
 static void PopQueryCore(
-  void *theEnv)
+  Environment *theEnv)
   {
    QUERY_STACK *qptr;
 
@@ -642,7 +643,7 @@ static void PopQueryCore(
   NOTES        : None
  ***************************************************/
 static QUERY_CORE *FindQueryCore(
-  void *theEnv,
+  Environment *theEnv,
   int depth)
   {
    QUERY_STACK *qptr;
@@ -679,7 +680,7 @@ static QUERY_CORE *FindQueryCore(
                    the QUERY_DELIMITER_SYMBOL "(QDS)"
  **********************************************************/
 static QUERY_TEMPLATE *DetermineQueryTemplates(
-  void *theEnv,
+  Environment *theEnv,
   EXPRESSION *templateExp,
   const char *func,
   unsigned *rcnt)
@@ -694,7 +695,7 @@ static QUERY_TEMPLATE *DetermineQueryTemplates(
       if (EvaluateExpression(theEnv,templateExp,&temp))
         {
          DeleteQueryTemplates(theEnv,clist);
-         return(NULL);
+         return NULL;
         }
       if ((temp.type == SYMBOL) && (temp.value == (void *) FactQueryData(theEnv)->QUERY_DELIMETER_SYMBOL))
         {
@@ -721,7 +722,7 @@ static QUERY_TEMPLATE *DetermineQueryTemplates(
          SyntaxErrorMessage(theEnv,"fact-set query class restrictions");
          DeleteQueryTemplates(theEnv,clist);
          EnvSetEvaluationError(theEnv,true);
-         return(NULL);
+         return NULL;
         }
       templateExp = templateExp->nextArg;
      }
@@ -742,21 +743,21 @@ static QUERY_TEMPLATE *DetermineQueryTemplates(
   NOTES        : None
  *************************************************************/
 static QUERY_TEMPLATE *FormChain(
-  void *theEnv,
+  Environment *theEnv,
   const char *func,
   DATA_OBJECT *val)
   {
-   struct deftemplate *templatePtr;
+   Deftemplate *templatePtr;
    QUERY_TEMPLATE *head,*bot,*tmp;
-   register long i,end; /* 6.04 Bug Fix */
+   long i,end; /* 6.04 Bug Fix */
    const char *templateName;
    int count;
 
    if (val->type == DEFTEMPLATE_PTR)
      {
-      IncrementDeftemplateBusyCount(theEnv,(void *) val->value);
+      IncrementDeftemplateBusyCount(theEnv,(Deftemplate *) val->value);
       head = get_struct(theEnv,query_template);
-      head->templatePtr = (struct deftemplate *) val->value;
+      head->templatePtr = (Deftemplate *) val->value;
 
       head->chain = NULL;
       head->nxt = NULL;
@@ -771,15 +772,15 @@ static QUERY_TEMPLATE *FormChain(
          module specifier is not given
          =============================================== */
          
-      templatePtr = (struct deftemplate *)
+      templatePtr = (Deftemplate *)
                        FindImportedConstruct(theEnv,"deftemplate",NULL,DOPToString(val),
                                              &count,true,NULL);
       if (templatePtr == NULL)
         {
          CantFindItemInFunctionErrorMessage(theEnv,"deftemplate",DOPToString(val),func);
-         return(NULL);
+         return NULL;
         }
-      IncrementDeftemplateBusyCount(theEnv,(void *) templatePtr);
+      IncrementDeftemplateBusyCount(theEnv,templatePtr);
       head = get_struct(theEnv,query_template);
       head->templatePtr = templatePtr;
 
@@ -797,23 +798,23 @@ static QUERY_TEMPLATE *FormChain(
            {
             templateName = ValueToString(GetMFValue(val->value,i));
             
-            templatePtr = (struct deftemplate *)
-                       FindImportedConstruct(theEnv,"deftemplate",NULL,templateName,
-                                             &count,true,NULL);
+            templatePtr = (Deftemplate *)
+                          FindImportedConstruct(theEnv,"deftemplate",NULL,templateName,
+                                                &count,true,NULL);
 
             if (templatePtr == NULL)
               {
                CantFindItemInFunctionErrorMessage(theEnv,"deftemplate",templateName,func);
                DeleteQueryTemplates(theEnv,head);
-               return(NULL);
+               return NULL;
               }
            }
          else
            {
             DeleteQueryTemplates(theEnv,head);
-            return(NULL);
+            return NULL;
            }
-         IncrementDeftemplateBusyCount(theEnv,(void *) templatePtr);
+         IncrementDeftemplateBusyCount(theEnv,templatePtr);
          tmp = get_struct(theEnv,query_template);
          tmp->templatePtr = templatePtr;
 
@@ -827,7 +828,7 @@ static QUERY_TEMPLATE *FormChain(
         }
       return(head);
      }
-   return(NULL);
+   return NULL;
   }
 
 /******************************************************
@@ -840,7 +841,7 @@ static QUERY_TEMPLATE *FormChain(
   NOTES        : None
  ******************************************************/
 static void DeleteQueryTemplates(
-  void *theEnv,
+  Environment *theEnv,
   QUERY_TEMPLATE *qlist)
   {
    QUERY_TEMPLATE *tmp;
@@ -851,12 +852,12 @@ static void DeleteQueryTemplates(
         {
          tmp = qlist->chain;
          qlist->chain = qlist->chain->chain;
-         DecrementDeftemplateBusyCount(theEnv,(void *) tmp->templatePtr);
+         DecrementDeftemplateBusyCount(theEnv,tmp->templatePtr);
          rtn_struct(theEnv,query_template,tmp);
         }
       tmp = qlist;
       qlist = qlist->nxt;
-      DecrementDeftemplateBusyCount(theEnv,(void *) tmp->templatePtr);
+      DecrementDeftemplateBusyCount(theEnv,tmp->templatePtr);
       rtn_struct(theEnv,query_template,tmp);
      }
   }
@@ -874,7 +875,7 @@ static void DeleteQueryTemplates(
   NOTES        : None
  ************************************************************/
 static bool TestForFirstInChain(
-  void *theEnv,
+  Environment *theEnv,
   QUERY_TEMPLATE *qchain,
   int indx)
   {
@@ -906,8 +907,8 @@ static bool TestForFirstInChain(
   NOTES        : None
  *****************************************************************/
 static bool TestForFirstFactInTemplate(
-  void *theEnv,
-  struct deftemplate *templatePtr,
+  Environment *theEnv,
+  Deftemplate *templatePtr,
   QUERY_TEMPLATE *qchain,
   int indx)
   {
@@ -981,7 +982,7 @@ static bool TestForFirstFactInTemplate(
   NOTES        : None
  ************************************************************/
 static void TestEntireChain(
-  void *theEnv,
+  Environment *theEnv,
   QUERY_TEMPLATE *qchain,
   int indx)
   {
@@ -1013,8 +1014,8 @@ static void TestEntireChain(
   NOTES        : None
  *****************************************************************/
 static void TestEntireTemplate(
-  void *theEnv,
-  struct deftemplate *templatePtr,
+  Environment *theEnv,
+  Deftemplate *templatePtr,
   QUERY_TEMPLATE *qchain,
   int indx)
   {
@@ -1095,10 +1096,10 @@ static void TestEntireTemplate(
   NOTES        : Solutions are stored as sequential arrays of struct fact *
  ***************************************************************************/
 static void AddSolution(
-  void *theEnv)
+  Environment *theEnv)
   {
    QUERY_SOLN *new_soln;
-   register unsigned i;
+   unsigned i;
 
    new_soln = (QUERY_SOLN *) gm2(theEnv,(int) sizeof(QUERY_SOLN));
    new_soln->soln = (struct fact **)
@@ -1124,13 +1125,13 @@ static void AddSolution(
   NOTES        : Assumes QueryCore->soln_set != 0
  ***************************************************/
 static void PopQuerySoln(
-  void *theEnv)
+  Environment *theEnv)
   {
    FactQueryData(theEnv)->QueryCore->soln_bottom = FactQueryData(theEnv)->QueryCore->soln_set;
    FactQueryData(theEnv)->QueryCore->soln_set = FactQueryData(theEnv)->QueryCore->soln_set->nxt;
-   rm(theEnv,(void *) FactQueryData(theEnv)->QueryCore->soln_bottom->soln,
+   rm(theEnv,FactQueryData(theEnv)->QueryCore->soln_bottom->soln,
       (sizeof(struct fact *) * FactQueryData(theEnv)->QueryCore->soln_size));
-   rm(theEnv,(void *) FactQueryData(theEnv)->QueryCore->soln_bottom,sizeof(QUERY_SOLN));
+   rm(theEnv,FactQueryData(theEnv)->QueryCore->soln_bottom,sizeof(QUERY_SOLN));
   }
   
 #endif

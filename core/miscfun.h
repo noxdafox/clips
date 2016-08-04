@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*          MISCELLANEOUS FUNCTIONS HEADER FILE        */
    /*******************************************************/
@@ -68,6 +68,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_miscfun
@@ -76,36 +79,37 @@
 
 #define _H_miscfun
 
-   void                           MiscFunctionDefinitions(void *);
-   void                           CreateFunction(void *,DATA_OBJECT_PTR);
-   long long                      SetgenFunction(void *);
-   void                          *GensymFunction(void *);
-   void                          *GensymStarFunction(void *);
-   long long                      RandomFunction(void *);
-   void                           SeedFunction(void *);
-   long long                      LengthFunction(void *);
-   void                           ConserveMemCommand(void *);
-   long long                      ReleaseMemCommand(void *);
-   long long                      MemUsedCommand(void *);
-   long long                      MemRequestsCommand(void *);
-   void                           OptionsCommand(void *);
-   void                          *OperatingSystemFunction(void *);
-   void                           ExpandFuncCall(void *,DATA_OBJECT *);
-   void                           DummyExpandFuncMultifield(void *,DATA_OBJECT *);
-   void                          *CauseEvaluationError(void *);
-   bool                           SetSORCommand(void *);
-   void                          *GetFunctionRestrictions(void *);
-   void                           AproposCommand(void *);
-   void                          *GensymStar(void *);
-   void                           GetFunctionListFunction(void *,DATA_OBJECT *);
-   void                           FuncallFunction(void *,DATA_OBJECT *);
-   void                           NewFunction(void *,DATA_OBJECT *);
-   void                           CallFunction(void *,DATA_OBJECT *);
-   double                         TimerFunction(void *);
-   double                         TimeFunction(void *);
-   void                           SystemCommand(void *);
-   void                           LocalTimeFunction(void *,DATA_OBJECT *);
-   void                           GMTimeFunction(void *,DATA_OBJECT *);
+   void                           MiscFunctionDefinitions(Environment *);
+   void                           CreateFunction(Environment *,DATA_OBJECT_PTR);
+   long long                      SetgenFunction(Environment *);
+   void                          *GensymFunction(Environment *);
+   void                          *GensymStarFunction(Environment *);
+   long long                      RandomFunction(Environment *);
+   void                           SeedFunction(Environment *);
+   long long                      LengthFunction(Environment *);
+   void                           ConserveMemCommand(Environment *);
+   long long                      ReleaseMemCommand(Environment *);
+   long long                      MemUsedCommand(Environment *);
+   long long                      MemRequestsCommand(Environment *);
+   void                           OptionsCommand(Environment *);
+   void                          *OperatingSystemFunction(Environment *);
+   void                           ExpandFuncCall(Environment *,DATA_OBJECT *);
+   void                           DummyExpandFuncMultifield(Environment *,DATA_OBJECT *);
+   void                          *CauseEvaluationError(Environment *);
+   bool                           SetSequenceOperatorRecognitionCommand(Environment *);
+   bool                           GetSequenceOperatorRecognitionCommand(Environment *);
+   void                          *GetFunctionRestrictions(Environment *);
+   void                           AproposCommand(Environment *);
+   void                          *GensymStar(Environment *);
+   void                           GetFunctionListFunction(Environment *,DATA_OBJECT *);
+   void                           FuncallFunction(Environment *,DATA_OBJECT *);
+   void                           NewFunction(Environment *,DATA_OBJECT *);
+   void                           CallFunction(Environment *,DATA_OBJECT *);
+   double                         TimerFunction(Environment *);
+   double                         TimeFunction(Environment *);
+   void                           SystemCommand(Environment *);
+   void                           LocalTimeFunction(Environment *,DATA_OBJECT *);
+   void                           GMTimeFunction(Environment *,DATA_OBJECT *);
 
 #endif /* _H_miscfun */
 

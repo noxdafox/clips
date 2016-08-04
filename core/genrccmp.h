@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -35,6 +35,9 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_genrccmp
@@ -47,9 +50,9 @@
 
 #include "genrcfun.h"
 
-   void                           SetupGenericsCompiler(void *);
-   void                           PrintGenericFunctionReference(void *,FILE *,DEFGENERIC *,int,int);
-   void                           DefgenericCModuleReference(void *,FILE *,int,int,int);
+   void                           SetupGenericsCompiler(Environment *);
+   void                           PrintGenericFunctionReference(Environment *,FILE *,Defgeneric *,int,int);
+   void                           DefgenericCModuleReference(Environment *,FILE *,int,int,int);
 
 #endif /* _H_genrccmp */
 

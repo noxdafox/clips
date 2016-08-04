@@ -278,7 +278,7 @@
    theRow = [instanceList selectedRow];
    if (theRow != -1)
      {
-      void *theEnvironment = [environment environment];
+      Environment *theEnvironment = [environment environment];
       struct instance *clipsInstance = NULL;
       char *theInstanceName;
       NSArray *theArray = [instanceListController arrangedObjects];

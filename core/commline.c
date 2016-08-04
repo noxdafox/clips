@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/04/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*                COMMAND LINE MODULE                  */
    /*******************************************************/
@@ -73,6 +73,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -118,22 +121,22 @@
    static int                     DoString(const char *,int,bool *);
    static int                     DoComment(const char *,int);
    static int                     DoWhiteSpace(const char *,int);
-   static int                     DefaultGetNextEvent(void *);
+   static void                    DefaultGetNextEvent(Environment *);
 #endif
-   static void                    DeallocateCommandLineData(void *);
+   static void                    DeallocateCommandLineData(Environment *);
 
 /****************************************************/
 /* InitializeCommandLineData: Allocates environment */
 /*    data for command line functionality.          */
 /****************************************************/
 void InitializeCommandLineData(
-  void *theEnv)
+  Environment *theEnv)
   {
    AllocateEnvironmentData(theEnv,COMMANDLINE_DATA,sizeof(struct commandLineData),DeallocateCommandLineData);
 
 #if ! RUN_TIME   
    CommandLineData(theEnv)->BannerString = BANNER_STRING;
-   CommandLineData(theEnv)->EventFunction = DefaultGetNextEvent;
+   CommandLineData(theEnv)->EventCallback = DefaultGetNextEvent;
 #endif
   }
   
@@ -142,7 +145,7 @@ void InitializeCommandLineData(
 /*    data for the command line functionality.        */
 /******************************************************/
 static void DeallocateCommandLineData(
-  void *theEnv)
+  Environment *theEnv)
   {
 #if ! RUN_TIME
    if (CommandLineData(theEnv)->CommandString != NULL) 
@@ -163,7 +166,7 @@ static void DeallocateCommandLineData(
 /*   argc and arv command line options.          */
 /*************************************************/
 void RerouteStdin(
-  void *theEnv,
+  Environment *theEnv,
   int argc,
   char *argv[])
   {
@@ -254,7 +257,7 @@ void RerouteStdin(
 /*   string's length.                              */
 /***************************************************/
 bool ExpandCommandString(
-  void *theEnv,
+  Environment *theEnv,
   int inchar)
   {
    size_t k;
@@ -269,7 +272,7 @@ bool ExpandCommandString(
 /* FlushCommandString: Empties the contents of the CommandString. */
 /******************************************************************/
 void FlushCommandString(
-  void *theEnv)
+  Environment *theEnv)
   {
    if (CommandLineData(theEnv)->CommandString != NULL) rm(theEnv,CommandLineData(theEnv)->CommandString,CommandLineData(theEnv)->MaximumCharacters);
    CommandLineData(theEnv)->CommandString = NULL;
@@ -282,7 +285,7 @@ void FlushCommandString(
 /* SetCommandString: Sets the contents of the CommandString to a specific value. */
 /*********************************************************************************/
 void SetCommandString(
-  void *theEnv,
+  Environment *theEnv,
   const char *str)
   {
    size_t length;
@@ -303,7 +306,7 @@ void SetCommandString(
 /*   to a specific value up to N characters.                 */
 /*************************************************************/
 void SetNCommandString(
-  void *theEnv,
+  Environment *theEnv,
   const char *str,
   unsigned length)
   {
@@ -322,7 +325,7 @@ void SetNCommandString(
 /* AppendCommandString: Appends a value to the contents of the CommandString. */
 /******************************************************************************/
 void AppendCommandString(
-  void *theEnv,
+  Environment *theEnv,
   const char *str)
   {
    CommandLineData(theEnv)->CommandString = AppendToString(theEnv,str,CommandLineData(theEnv)->CommandString,&RouterData(theEnv)->CommandBufferInputCount,&CommandLineData(theEnv)->MaximumCharacters);
@@ -332,7 +335,7 @@ void AppendCommandString(
 /* InsertCommandString: Inserts a value in the contents of the CommandString. */
 /******************************************************************************/
 void InsertCommandString(
-  void *theEnv,
+  Environment *theEnv,
   const char *str,
   unsigned int position)
   {
@@ -346,7 +349,7 @@ void InsertCommandString(
 /*   to the contents of the CommandString.                  */
 /************************************************************/
 void AppendNCommandString(
-  void *theEnv,
+  Environment *theEnv,
   const char *str,
   unsigned length)
   {
@@ -357,7 +360,7 @@ void AppendNCommandString(
 /* GetCommandString: Returns a pointer to the contents of the CommandString. */
 /*****************************************************************************/
 char *GetCommandString(
-  void *theEnv)
+  Environment *theEnv)
   {
    return(CommandLineData(theEnv)->CommandString);
   }
@@ -621,7 +624,7 @@ static int DoWhiteSpace(
 /*   if there is an active batch file.                              */
 /********************************************************************/
 void CommandLoop(
-  void *theEnv)
+  Environment *theEnv)
   {
    int inchar;
 
@@ -648,12 +651,12 @@ void CommandLoop(
         {
          inchar = LLGetcBatch(theEnv,STDIN,true);
          if (inchar == EOF)
-           { (*CommandLineData(theEnv)->EventFunction)(theEnv); }
+           { (*CommandLineData(theEnv)->EventCallback)(theEnv); }
          else
            { ExpandCommandString(theEnv,(char) inchar); }
         }
       else
-        { (*CommandLineData(theEnv)->EventFunction)(theEnv); }
+        { (*CommandLineData(theEnv)->EventCallback)(theEnv); }
 
       /*=================================================*/
       /* If execution was halted, then remove everything */
@@ -687,7 +690,7 @@ void CommandLoop(
 /*   are no longer any active batch files.                 */
 /***********************************************************/
 void CommandLoopBatch(
-  void *theEnv)
+  Environment *theEnv)
   {
    EnvSetHaltExecution(theEnv,false);
    EnvSetEvaluationError(theEnv,false);
@@ -708,7 +711,7 @@ void CommandLoopBatch(
 /*   there are no longer any active batch files.            */
 /************************************************************/
 void CommandLoopOnceThenBatch(
-  void *theEnv)
+  Environment *theEnv)
   {
    if (! ExecuteIfCommandComplete(theEnv)) return;
 
@@ -721,7 +724,7 @@ void CommandLoopOnceThenBatch(
 /*   when there are no longer any active batch files.    */
 /*********************************************************/
 void CommandLoopBatchDriver(
-  void *theEnv)
+  Environment *theEnv)
   {
    int inchar;
 
@@ -781,16 +784,16 @@ void CommandLoopBatchDriver(
 /*   is a completed command and if so executes it.        */
 /**********************************************************/
 bool ExecuteIfCommandComplete(
-  void *theEnv)
+  Environment *theEnv)
   {
    if ((CompleteCommand(CommandLineData(theEnv)->CommandString) == 0) || 
        (RouterData(theEnv)->CommandBufferInputCount == 0) ||
        (RouterData(theEnv)->AwaitingInput == false))
      { return false; }
      
-   if (CommandLineData(theEnv)->BeforeCommandExecutionFunction != NULL)
+   if (CommandLineData(theEnv)->BeforeCommandExecutionCallback != NULL)
      { 
-      if (! (*CommandLineData(theEnv)->BeforeCommandExecutionFunction)(theEnv))
+      if (! (*CommandLineData(theEnv)->BeforeCommandExecutionCallback)(theEnv))
         { return false; }
      }
        
@@ -817,7 +820,7 @@ bool ExecuteIfCommandComplete(
 /* CommandCompleteAndNotEmpty: */
 /*******************************/
 bool CommandCompleteAndNotEmpty(
-  void *theEnv)
+  Environment *theEnv)
   {
    if ((CompleteCommand(CommandLineData(theEnv)->CommandString) == 0) || 
        (RouterData(theEnv)->CommandBufferInputCount == 0) ||
@@ -831,19 +834,19 @@ bool CommandCompleteAndNotEmpty(
 /* PrintPrompt: Prints the command prompt. */
 /*******************************************/
 void PrintPrompt(
-   void *theEnv)
+   Environment *theEnv)
    {
     EnvPrintRouter(theEnv,WPROMPT,COMMAND_PROMPT);
 
-    if (CommandLineData(theEnv)->AfterPromptFunction != NULL)
-      { (*CommandLineData(theEnv)->AfterPromptFunction)(theEnv); }
+    if (CommandLineData(theEnv)->AfterPromptCallback != NULL)
+      { (*CommandLineData(theEnv)->AfterPromptCallback)(theEnv); }
    }
 
 /*****************************************/
 /* PrintBanner: Prints the CLIPS banner. */
 /*****************************************/
 void PrintBanner(
-   void *theEnv)
+   Environment *theEnv)
    {
     EnvPrintRouter(theEnv,WPROMPT,CommandLineData(theEnv)->BannerString);
    }
@@ -853,10 +856,10 @@ void PrintBanner(
 /*   value of AfterPromptFunction.              */
 /************************************************/
 void SetAfterPromptFunction(
-  void *theEnv,
-  int (*funptr)(void *))
+  Environment *theEnv,
+  AfterPromptFunction *funptr)
   {
-   CommandLineData(theEnv)->AfterPromptFunction = funptr;
+   CommandLineData(theEnv)->AfterPromptCallback = funptr;
   }
 
 /***********************************************************/
@@ -864,10 +867,10 @@ void SetAfterPromptFunction(
 /*   value of BeforeCommandExecutionFunction.              */
 /***********************************************************/
 void SetBeforeCommandExecutionFunction(
-  void *theEnv,
-  int (*funptr)(void *))
+  Environment *theEnv,
+  BeforeCommandExecutionFunction *funptr)
   {
-   CommandLineData(theEnv)->BeforeCommandExecutionFunction = funptr;
+   CommandLineData(theEnv)->BeforeCommandExecutionCallback = funptr;
   }
   
 /********************************************************/
@@ -875,7 +878,7 @@ void SetBeforeCommandExecutionFunction(
 /*   1 if a command could be parsed, otherwise 0.       */
 /********************************************************/
 bool RouteCommand(
-  void *theEnv,
+  Environment *theEnv,
   const char *command,
   bool printResult)
   {
@@ -1045,8 +1048,8 @@ bool RouteCommand(
 /*   character and then calling ExpandCommandString to add the   */
 /*   character to the CommandString.                             */
 /*****************************************************************/
-static int DefaultGetNextEvent(
-  void *theEnv)
+static void DefaultGetNextEvent(
+  Environment *theEnv)
   {
    int inchar;
 
@@ -1055,21 +1058,21 @@ static int DefaultGetNextEvent(
    if (inchar == EOF) inchar = '\n';
 
    ExpandCommandString(theEnv,(char) inchar);
-   
-   return 0;
   }
 
 /*************************************/
 /* SetEventFunction: Replaces the    */
 /*   current value of EventFunction. */
 /*************************************/
-int (*SetEventFunction(void *theEnv,int (*theFunction)(void *)))(void *)
+EventFunction *SetEventFunction(
+  Environment *theEnv,
+  EventFunction *theFunction)
   {
-   int (*tmp_ptr)(void *);
+   EventFunction *tmp_ptr;
 
-   tmp_ptr = CommandLineData(theEnv)->EventFunction;
-   CommandLineData(theEnv)->EventFunction = theFunction;
-   return(tmp_ptr);
+   tmp_ptr = CommandLineData(theEnv)->EventCallback;
+   CommandLineData(theEnv)->EventCallback = theFunction;
+   return tmp_ptr;
   }
 
 /****************************************/
@@ -1077,7 +1080,7 @@ int (*SetEventFunction(void *theEnv,int (*theFunction)(void *)))(void *)
 /*   top-level command is being parsed. */
 /****************************************/
 bool TopLevelCommand(
-  void *theEnv)
+  Environment *theEnv)
   {
    return(CommandLineData(theEnv)->ParsingTopLevelCommand);
   }
@@ -1087,7 +1090,7 @@ bool TopLevelCommand(
 /*   string if it is a valid token for command completion. */
 /***********************************************************/
 const char *GetCommandCompletionString(
-  void *theEnv,
+  Environment *theEnv,
   const char *theString,
   size_t maxPosition)
   {
@@ -1146,14 +1149,14 @@ const char *GetCommandCompletionString(
      { return(ValueToString(lastToken.value)); }
    else if ((lastToken.type == GBL_VARIABLE) || (lastToken.type == MF_GBL_VARIABLE) ||
             (lastToken.type == INSTANCE_NAME))
-     { return(NULL); }
+     { return NULL; }
    else if (lastToken.type == STRING)
      {
       length = strlen(ValueToString(lastToken.value));
       return(GetCommandCompletionString(theEnv,ValueToString(lastToken.value),length));
      }
    else if ((lastToken.type == FLOAT) || (lastToken.type == INTEGER))
-     { return(NULL); }
+     { return NULL; }
 
    return("");
   }
@@ -1162,7 +1165,7 @@ const char *GetCommandCompletionString(
 /* SetHaltCommandLoopBatch: Sets the HaltCommandLoopBatch flag. */
 /****************************************************************/
 void SetHaltCommandLoopBatch(
-  void *theEnv,
+  Environment *theEnv,
   bool value)
   { 
    CommandLineData(theEnv)->HaltCommandLoopBatch = value; 
@@ -1172,7 +1175,7 @@ void SetHaltCommandLoopBatch(
 /* GetHaltCommandLoopBatch: Returns the HaltCommandLoopBatch flag. */
 /*******************************************************************/
 bool GetHaltCommandLoopBatch(
-  void *theEnv)
+  Environment *theEnv)
   {
    return(CommandLineData(theEnv)->HaltCommandLoopBatch);
   }

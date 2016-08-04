@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/04/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*          CLASS INITIALIZATION HEADER FILE           */
    /*******************************************************/
@@ -41,6 +41,9 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_classini
@@ -54,16 +57,17 @@
 
 #if OBJECT_SYSTEM
 
-void SetupObjectSystem(void *);
+   void                           SetupObjectSystem(Environment *);
+
 #if RUN_TIME
-void ObjectsRunTimeInitialize(void *,DEFCLASS *[],SLOT_NAME *[],DEFCLASS *[],unsigned);
+   void                           ObjectsRunTimeInitialize(Environment *,Defclass *[],SLOT_NAME *[],Defclass *[],unsigned);
 #else
-void CreateSystemClasses(void *);
-#endif
+   void                           CreateSystemClasses(Environment *);
+#endif /* RUN_TIME */
 
-#endif
+#endif /* OBJECT_SYSTEM */
 
-#endif
+#endif /* _H_classini */
 
 
 

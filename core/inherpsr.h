@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -25,6 +25,9 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_inherpsr
@@ -37,9 +40,9 @@
 
 #include "object.h"
 
-   PACKED_CLASS_LINKS            *ParseSuperclasses(void *,const char *,SYMBOL_HN *);
-   PACKED_CLASS_LINKS            *FindPrecedenceList(void *,DEFCLASS *,PACKED_CLASS_LINKS *);
-   void                           PackClassLinks(void *,PACKED_CLASS_LINKS *,CLASS_LINK *);
+   PACKED_CLASS_LINKS            *ParseSuperclasses(Environment *,const char *,SYMBOL_HN *);
+   PACKED_CLASS_LINKS            *FindPrecedenceList(Environment *,Defclass *,PACKED_CLASS_LINKS *);
+   void                           PackClassLinks(Environment *,PACKED_CLASS_LINKS *,CLASS_LINK *);
 
 #endif /* OBJECT_SYSTEM && (! BLOAD_ONLY) && (! RUN_TIME) */
 

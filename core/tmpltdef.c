@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*                 DEFTEMPLATE MODULE                  */
    /*******************************************************/
@@ -50,6 +50,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -87,33 +90,34 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                   *AllocateModule(void *);
-   static void                    ReturnModule(void *,void *);
-   static void                    ReturnDeftemplate(void *,void *);
-   static void                    InitializeDeftemplateModules(void *);
-   static void                    DeallocateDeftemplateData(void *);
-   static void                    DestroyDeftemplateAction(void *,struct constructHeader *,void *);
-   static void                    DestroyDeftemplate(void *,void *);
+   static void                   *AllocateModule(Environment *);
+   static void                    ReturnModule(Environment *,void *);
+   static void                    ReturnDeftemplate(Environment *,Deftemplate *);
+   static void                    InitializeDeftemplateModules(Environment *);
+   static void                    DeallocateDeftemplateData(Environment *);
+   static void                    DestroyDeftemplateAction(Environment *,struct constructHeader *,void *);
+   static void                    DestroyDeftemplate(Environment *,Deftemplate *);
 #if RUN_TIME
-   static void                    RuntimeDeftemplateAction(void *,struct constructHeader *,void *);
-   static void                    SearchForHashedPatternNodes(void *,struct factPatternNode *);
+   static void                    RuntimeDeftemplateAction(Environment *,struct constructHeader *,void *);
+   static void                    SearchForHashedPatternNodes(Environment *,struct factPatternNode *);
 #endif
 
 /******************************************************************/
 /* InitializeDeftemplates: Initializes the deftemplate construct. */
 /******************************************************************/
 void InitializeDeftemplates(
-  void *theEnv)
+  Environment *theEnv)
   {
-   struct entityRecord deftemplatePtrRecord = { "DEFTEMPLATE_PTR",
-                                                           DEFTEMPLATE_PTR,1,0,0,
-                                                           NULL,
-                                                           NULL,NULL,
-                                                           NULL,
-                                                           NULL,
-                                                           DecrementDeftemplateBusyCount,
-                                                           IncrementDeftemplateBusyCount,
-                                                           NULL,NULL,NULL,NULL,NULL };
+   struct entityRecord deftemplatePtrRecord =
+      { "DEFTEMPLATE_PTR",
+        DEFTEMPLATE_PTR,1,0,0,
+        NULL,
+        NULL,NULL,
+        NULL,
+        NULL,
+        (EntityBusyCountFunction *) DecrementDeftemplateBusyCount,
+        (EntityBusyCountFunction *) IncrementDeftemplateBusyCount,
+        NULL,NULL,NULL,NULL,NULL };
    AllocateEnvironmentData(theEnv,DEFTEMPLATE_DATA,sizeof(struct deftemplateData),DeallocateDeftemplateData);
 
    memcpy(&DeftemplateData(theEnv)->DeftemplatePtrRecord,&deftemplatePtrRecord,sizeof(struct entityRecord));   
@@ -127,24 +131,29 @@ void InitializeDeftemplates(
    DeftemplateFunctions(theEnv);
 
    DeftemplateData(theEnv)->DeftemplateConstruct =
-      AddConstruct(theEnv,"deftemplate","deftemplates",ParseDeftemplate,EnvFindDeftemplate,
+      AddConstruct(theEnv,"deftemplate","deftemplates",ParseDeftemplate,
+                   (FindConstructFunction *) EnvFindDeftemplate,
                    GetConstructNamePointer,GetConstructPPForm,
-                   GetConstructModuleItem,EnvGetNextDeftemplate,SetNextConstruct,
-                   EnvIsDeftemplateDeletable,EnvUndeftemplate,ReturnDeftemplate);
+                   GetConstructModuleItem,
+                   (GetNextConstructFunction *) EnvGetNextDeftemplate,
+                   SetNextConstruct,
+                   (IsConstructDeletableFunction *) EnvIsDeftemplateDeletable,
+                   (DeleteConstructFunction *) EnvUndeftemplate,
+                   (FreeConstructFunction *) ReturnDeftemplate);
 
    InstallPrimitive(theEnv,(ENTITY_RECORD_PTR) &DeftemplateData(theEnv)->DeftemplatePtrRecord,DEFTEMPLATE_PTR);
   }
-  
+
 /******************************************************/
 /* DeallocateDeftemplateData: Deallocates environment */
 /*    data for the deftemplate construct.             */
 /******************************************************/
 static void DeallocateDeftemplateData(
-  void *theEnv)
+  Environment *theEnv)
   {
 #if ! RUN_TIME
    struct deftemplateModule *theModuleItem;
-   void *theModule;
+   Defmodule *theModule;
 #endif
 #if BLOAD || BLOAD_AND_BSAVE
    if (Bloaded(theEnv)) return;
@@ -158,7 +167,7 @@ static void DeallocateDeftemplateData(
         theModule = EnvGetNextDefmodule(theEnv,theModule))
      {
       theModuleItem = (struct deftemplateModule *)
-                      GetModuleItem(theEnv,(struct defmodule *) theModule,
+                      GetModuleItem(theEnv,theModule,
                                     DeftemplateData(theEnv)->DeftemplateModuleIndex);
       rtn_struct(theEnv,deftemplateModule,theModuleItem);
      }
@@ -170,14 +179,14 @@ static void DeallocateDeftemplateData(
 /*   deftemplates as a result of DestroyEnvironment. */
 /*****************************************************/
 static void DestroyDeftemplateAction(
-  void *theEnv,
+  Environment *theEnv,
   struct constructHeader *theConstruct,
   void *buffer)
   {
 #if MAC_XCD
 #pragma unused(buffer)
 #endif
-   struct deftemplate *theDeftemplate = (struct deftemplate *) theConstruct;
+   Deftemplate *theDeftemplate = (Deftemplate *) theConstruct;
    
    if (theDeftemplate == NULL) return;
    
@@ -190,7 +199,7 @@ static void DestroyDeftemplateAction(
 /*   construct for use with the defmodule construct.         */
 /*************************************************************/
 static void InitializeDeftemplateModules(
-  void *theEnv)
+  Environment *theEnv)
   {
    DeftemplateData(theEnv)->DeftemplateModuleIndex = RegisterModuleItem(theEnv,"deftemplate",
                                     AllocateModule,
@@ -205,7 +214,7 @@ static void InitializeDeftemplateModules(
 #else
                                     NULL,
 #endif
-                                    EnvFindDeftemplateInModule);
+                                    (FindConstructFunction *) EnvFindDeftemplateInModule);
 
 #if (! BLOAD_ONLY) && (! RUN_TIME) && DEFMODULE_CONSTRUCT
    AddPortConstructItem(theEnv,"deftemplate",SYMBOL);
@@ -216,7 +225,7 @@ static void InitializeDeftemplateModules(
 /* AllocateModule: Allocates a deftemplate module. */
 /***************************************************/
 static void *AllocateModule(
-  void *theEnv)
+  Environment *theEnv)
   {    
    return((void *) get_struct(theEnv,deftemplateModule)); 
   }
@@ -225,7 +234,7 @@ static void *AllocateModule(
 /* ReturnModule: Deallocates a deftemplate module. */
 /*************************************************/
 static void ReturnModule(
-  void *theEnv,
+  Environment *theEnv,
   void *theItem)
   {   
    FreeConstructHeaderModule(theEnv,(struct defmoduleItemHeader *) theItem,DeftemplateData(theEnv)->DeftemplateConstruct);
@@ -237,8 +246,8 @@ static void ReturnModule(
 /*  item for the specified deftemplate or defmodule.            */
 /****************************************************************/
 struct deftemplateModule *GetDeftemplateModuleItem(
-  void *theEnv,
-  struct defmodule *theModule)
+  Environment *theEnv,
+  Defmodule *theModule)
   {   
    return((struct deftemplateModule *) GetConstructModuleItemByIndex(theEnv,theModule,DeftemplateData(theEnv)->DeftemplateModuleIndex)); 
   }
@@ -248,8 +257,8 @@ struct deftemplateModule *GetDeftemplateModuleItem(
 /*   the list of deftemplates. Returns a pointer to  */
 /*   the deftemplate if  found, otherwise NULL.      */
 /*****************************************************/
-void *EnvFindDeftemplate(
-  void *theEnv,
+Deftemplate *EnvFindDeftemplate(
+  Environment *theEnv,
   const char *deftemplateName)
   {  
    return(FindNamedConstructInModuleOrImports(theEnv,deftemplateName,DeftemplateData(theEnv)->DeftemplateConstruct)); 
@@ -260,8 +269,8 @@ void *EnvFindDeftemplate(
 /*   the list of deftemplates. Returns a pointer to  */
 /*   the deftemplate if  found, otherwise NULL.      */
 /*****************************************************/
-void *EnvFindDeftemplateInModule(
-  void *theEnv,
+Deftemplate *EnvFindDeftemplateInModule(
+  Environment *theEnv,
   const char *deftemplateName)
   {  
    return(FindNamedConstructInModule(theEnv,deftemplateName,DeftemplateData(theEnv)->DeftemplateConstruct));
@@ -272,9 +281,9 @@ void *EnvFindDeftemplateInModule(
 /*   deftemplate in the ListOfDeftemplates. Otherwise returns the next */
 /*   deftemplate following the deftemplate passed as an argument.      */
 /***********************************************************************/
-void *EnvGetNextDeftemplate(
-  void *theEnv,
-  void *deftemplatePtr)
+Deftemplate *EnvGetNextDeftemplate(
+  Environment *theEnv,
+  Deftemplate *deftemplatePtr)
   {   
    return((void *) GetNextConstructItem(theEnv,(struct constructHeader *) deftemplatePtr,DeftemplateData(theEnv)->DeftemplateModuleIndex)); 
   }
@@ -284,11 +293,9 @@ void *EnvGetNextDeftemplate(
 /*   deftemplate can be deleted, otherwise returns false.  */
 /***********************************************************/
 bool EnvIsDeftemplateDeletable(
-  void *theEnv,
-  void *vTheDeftemplate)
+  Environment *theEnv,
+  Deftemplate *theDeftemplate)
   {
-   struct deftemplate *theDeftemplate = (struct deftemplate *) vTheDeftemplate;
-
    if (! ConstructsDeletable(theEnv))
      { return false; }
 
@@ -303,14 +310,13 @@ bool EnvIsDeftemplateDeletable(
 /*   with a deftemplate construct to the pool of free memory. */
 /**************************************************************/
 static void ReturnDeftemplate(
-  void *theEnv,
-  void *vTheConstruct)
+  Environment *theEnv,
+  Deftemplate *theDeftemplate)
   {
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-   struct deftemplate *theConstruct = (struct deftemplate *) vTheConstruct;
    struct templateSlot *slotPtr;
 
-   if (theConstruct == NULL) return;
+   if (theDeftemplate == NULL) return;
 
    /*====================================================================*/
    /* If a template is redefined, then we want to save its debug status. */
@@ -318,14 +324,14 @@ static void ReturnDeftemplate(
 
 #if DEBUGGING_FUNCTIONS
    DeftemplateData(theEnv)->DeletedTemplateDebugFlags = 0;
-   if (theConstruct->watch) BitwiseSet(DeftemplateData(theEnv)->DeletedTemplateDebugFlags,0);
+   if (theDeftemplate->watch) BitwiseSet(DeftemplateData(theEnv)->DeletedTemplateDebugFlags,0);
 #endif
 
    /*===========================================*/
    /* Free storage used by the templates slots. */
    /*===========================================*/
 
-   slotPtr = theConstruct->slotList;
+   slotPtr = theDeftemplate->slotList;
    while (slotPtr != NULL)
      {
       DecrementSymbolCount(theEnv,slotPtr->slotName);
@@ -338,15 +344,15 @@ static void ReturnDeftemplate(
       slotPtr = slotPtr->next;
      }
 
-   ReturnSlots(theEnv,theConstruct->slotList);
+   ReturnSlots(theEnv,theDeftemplate->slotList);
 
    /*==================================*/
    /* Free storage used by the header. */
    /*==================================*/
 
-   DeinstallConstructHeader(theEnv,&theConstruct->header);
+   DeinstallConstructHeader(theEnv,&theDeftemplate->header);
 
-   rtn_struct(theEnv,deftemplate,theConstruct);
+   rtn_struct(theEnv,deftemplate,theDeftemplate);
 #endif
   }
   
@@ -355,17 +361,16 @@ static void ReturnDeftemplate(
 /*   with a deftemplate construct to the pool of free memory. */
 /**************************************************************/
 static void DestroyDeftemplate(
-  void *theEnv,
-  void *vTheConstruct)
+  Environment *theEnv,
+  Deftemplate *theDeftemplate)
   {
-   struct deftemplate *theConstruct = (struct deftemplate *) vTheConstruct;
 #if (! BLOAD_ONLY) && (! RUN_TIME)
    struct templateSlot *slotPtr, *nextSlot;
 #endif
-   if (theConstruct == NULL) return;
+   if (theDeftemplate == NULL) return;
   
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-   slotPtr = theConstruct->slotList;
+   slotPtr = theDeftemplate->slotList;
 
    while (slotPtr != NULL)
      {
@@ -375,16 +380,16 @@ static void DestroyDeftemplate(
      }
 #endif
 
-   DestroyFactPatternNetwork(theEnv,theConstruct->patternNetwork);
+   DestroyFactPatternNetwork(theEnv,theDeftemplate->patternNetwork);
    
    /*==================================*/
    /* Free storage used by the header. */
    /*==================================*/
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-   DeinstallConstructHeader(theEnv,&theConstruct->header);
+   DeinstallConstructHeader(theEnv,&theDeftemplate->header);
 
-   rtn_struct(theEnv,deftemplate,theConstruct);
+   rtn_struct(theEnv,deftemplate,theDeftemplate);
 #endif
   }
   
@@ -393,7 +398,7 @@ static void DestroyDeftemplate(
 /*   a deftemplate to free memory.             */
 /***********************************************/
 void ReturnSlots(
-  void *theEnv,
+  Environment *theEnv,
   struct templateSlot *slotPtr)
   {
 #if (! BLOAD_ONLY) && (! RUN_TIME)
@@ -416,11 +421,9 @@ void ReturnSlots(
 /*   busy count of a deftemplate data structure. */
 /*************************************************/
 void DecrementDeftemplateBusyCount(
-  void *theEnv,
-  void *vTheTemplate)
+  Environment *theEnv,
+  Deftemplate *theTemplate)
   {
-   struct deftemplate *theTemplate = (struct deftemplate *) vTheTemplate;
-
    if (! ConstructData(theEnv)->ClearInProgress) theTemplate->busyCount--;
   }
 
@@ -429,10 +432,9 @@ void DecrementDeftemplateBusyCount(
 /*   busy count of a deftemplate data structure. */
 /*************************************************/
 void IncrementDeftemplateBusyCount(
-  void *theEnv,
-  void *vTheTemplate)
+  Environment *theEnv,
+  Deftemplate *theTemplate)
   {
-   struct deftemplate *theTemplate = (struct deftemplate *) vTheTemplate;
 #if MAC_XCD
 #pragma unused(theEnv)
 #endif
@@ -445,20 +447,20 @@ void IncrementDeftemplateBusyCount(
 /*   first fact in the template's fact-list. Otherwise returns the */
 /*   next template fact following the fact passed as an argument.  */
 /*******************************************************************/
-void *EnvGetNextFactInTemplate(
-  void *theEnv,
-  void *theTemplate,
-  void *factPtr)
+Fact *EnvGetNextFactInTemplate(
+  Environment *theEnv,
+  Deftemplate *theTemplate,
+  Fact *factPtr)
   {
 #if MAC_XCD
 #pragma unused(theEnv)
 #endif
    if (factPtr == NULL)
-     { return((void *) ((struct deftemplate *) theTemplate)->factList); }
+     { return(theTemplate->factList); }
 
-   if (((struct fact *) factPtr)->garbage) return(NULL);
+   if (factPtr->garbage) return NULL;
 
-   return((void *) ((struct fact *) factPtr)->nextTemplateFact);
+   return(factPtr->nextTemplateFact);
   }
 
 #if ! RUN_TIME
@@ -467,13 +469,13 @@ void *EnvGetNextFactInTemplate(
 /* CreateDeftemplateScopeMap: */
 /******************************/
 void *CreateDeftemplateScopeMap(
-  void *theEnv,
-  struct deftemplate *theDeftemplate)
+  Environment *theEnv,
+  Deftemplate *theDeftemplate)
   {
    unsigned scopeMapSize;
    char *scopeMap;
    const char *templateName;
-   struct defmodule *matchModule, *theModule;
+   Defmodule *matchModule, *theModule;
    int moduleID,count;
    void *theBitMap;
 
@@ -485,11 +487,11 @@ void *CreateDeftemplateScopeMap(
 
    ClearBitString((void *) scopeMap,scopeMapSize);
    SaveCurrentModule(theEnv);
-   for (theModule = (struct defmodule *) EnvGetNextDefmodule(theEnv,NULL) ;
+   for (theModule = EnvGetNextDefmodule(theEnv,NULL) ;
         theModule != NULL ;
-        theModule = (struct defmodule *) EnvGetNextDefmodule(theEnv,(void *) theModule))
+        theModule = EnvGetNextDefmodule(theEnv,theModule))
      {
-      EnvSetCurrentModule(theEnv,(void *) theModule);
+      EnvSetCurrentModule(theEnv,theModule);
       moduleID = (int) theModule->bsaveID;
       if (FindImportedConstruct(theEnv,"deftemplate",matchModule,
                                 templateName,&count,true,NULL) != NULL)
@@ -498,7 +500,7 @@ void *CreateDeftemplateScopeMap(
    RestoreCurrentModule(theEnv);
    theBitMap = EnvAddBitMap(theEnv,scopeMap,scopeMapSize);
    IncrementBitMapCount(theBitMap);
-   rm(theEnv,(void *) scopeMap,scopeMapSize);
+   rm(theEnv,scopeMap,scopeMapSize);
    return(theBitMap);
   }
 
@@ -512,23 +514,23 @@ void *CreateDeftemplateScopeMap(
 /*   initialization occurs.                       */
 /**************************************************/
 static void RuntimeDeftemplateAction(
-  void *theEnv,
+  Environment *theEnv,
   struct constructHeader *theConstruct,
   void *buffer)
   {
 #if MAC_XCD
 #pragma unused(buffer)
 #endif
-   struct deftemplate *theDeftemplate = (struct deftemplate *) theConstruct;
+   Deftemplate *theDeftemplate = (Deftemplate *) theConstruct;
    
    SearchForHashedPatternNodes(theEnv,theDeftemplate->patternNetwork);
   }
 
-/*******************************************************************/
-/* SearchForHashedPatternNodes:    */
-/*******************************************************************/
+/********************************/
+/* SearchForHashedPatternNodes: */
+/********************************/
 static void SearchForHashedPatternNodes(
-   void *theEnv,
+   Environment *theEnv,
    struct factPatternNode *theNode)
    {
     while (theNode != NULL)
@@ -542,11 +544,11 @@ static void SearchForHashedPatternNodes(
       }
    }
 
-/*******************************************************************/
-/* DeftemplateRunTimeInitialize:    */
-/*******************************************************************/
+/*********************************/
+/* DeftemplateRunTimeInitialize: */
+/*********************************/
 void DeftemplateRunTimeInitialize(
-  void *theEnv)
+  Environment *theEnv)
   {
    DoForAllConstructs(theEnv,RuntimeDeftemplateAction,DeftemplateData(theEnv)->DeftemplateModuleIndex,true,NULL);
   }
@@ -558,22 +560,22 @@ void DeftemplateRunTimeInitialize(
 /*##################################*/
 
 const char *EnvDeftemplateModule(
-  void *theEnv,
-  void *theDeftemplate)
+  Environment *theEnv,
+  Deftemplate *theDeftemplate)
   {
    return GetConstructModuleName((struct constructHeader *) theDeftemplate);
   }
 
 const char *EnvGetDeftemplateName(
-  void *theEnv,
-  void *theDeftemplate)
+  Environment *theEnv,
+  Deftemplate *theDeftemplate)
   {
    return GetConstructNameString((struct constructHeader *) theDeftemplate);
   }
 
 const char *EnvGetDeftemplatePPForm(
-  void *theEnv,
-  void *theDeftemplate)
+  Environment *theEnv,
+  Deftemplate *theDeftemplate)
   {
    return GetConstructPPForm(theEnv,(struct constructHeader *) theDeftemplate);
   }
@@ -585,44 +587,44 @@ const char *EnvGetDeftemplatePPForm(
 #if ALLOW_ENVIRONMENT_GLOBALS
 
 const char *DeftemplateModule(
-  void *theDeftemplate)
+  Deftemplate *theDeftemplate)
   {
    return EnvDeftemplateModule(GetCurrentEnvironment(),theDeftemplate);
   }
 
-void *FindDeftemplate(
+Deftemplate *FindDeftemplate(
   const char *deftemplateName)
   {
    return EnvFindDeftemplate(GetCurrentEnvironment(),deftemplateName);
   }
 
 const char *GetDeftemplateName(
-  void *theDeftemplate)
+  Deftemplate *theDeftemplate)
   {
    return EnvGetDeftemplateName(GetCurrentEnvironment(),theDeftemplate);
   }
 
 const char *GetDeftemplatePPForm(
-  void *theDeftemplate)
+  Deftemplate *theDeftemplate)
   {
    return EnvGetDeftemplatePPForm(GetCurrentEnvironment(),theDeftemplate);
   }
 
-void *GetNextDeftemplate(
-  void *deftemplatePtr)
+Deftemplate *GetNextDeftemplate(
+  Deftemplate *deftemplatePtr)
   {
    return EnvGetNextDeftemplate(GetCurrentEnvironment(),deftemplatePtr);
   }
 
 bool IsDeftemplateDeletable(
-  void *vTheDeftemplate)
+  Deftemplate *theDeftemplate)
   {
-   return EnvIsDeftemplateDeletable(GetCurrentEnvironment(),vTheDeftemplate);
+   return EnvIsDeftemplateDeletable(GetCurrentEnvironment(),theDeftemplate);
   }
 
-void *GetNextFactInTemplate(
-  void *theTemplate,
-  void *factPtr)
+Fact *GetNextFactInTemplate(
+  Deftemplate *theTemplate,
+  Fact *factPtr)
   {
    return EnvGetNextFactInTemplate(GetCurrentEnvironment(),theTemplate,factPtr);
   }

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*              PREDICATE FUNCTIONS MODULE             */
    /*******************************************************/
@@ -34,6 +34,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -53,7 +56,7 @@
 /*   math and predicate functions.                */
 /**************************************************/
 void PredicateFunctionDefinitions(
-  void *theEnv)
+  Environment *theEnv)
   {
 #if ! RUN_TIME
    EnvDefineFunction2(theEnv,"not", 'b', PTIEF NotFunction, "NotFunction", "11");
@@ -95,7 +98,7 @@ void PredicateFunctionDefinitions(
 /*   for the eq function.           */
 /************************************/
 bool EqFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    DATA_OBJECT item, nextItem;
    int numArgs, i;
@@ -153,7 +156,7 @@ bool EqFunction(
 /*   for the neq function.           */
 /*************************************/
 bool NeqFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    DATA_OBJECT item, nextItem;
    int numArgs, i;
@@ -208,7 +211,7 @@ bool NeqFunction(
 /*   for the stringp function.           */
 /*****************************************/
 bool StringpFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    DATA_OBJECT item;
 
@@ -227,7 +230,7 @@ bool StringpFunction(
 /*   for the symbolp function.           */
 /*****************************************/
 bool SymbolpFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    DATA_OBJECT item;
 
@@ -246,7 +249,7 @@ bool SymbolpFunction(
 /*   for the lexemep function.           */
 /*****************************************/
 bool LexemepFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    DATA_OBJECT item;
 
@@ -265,7 +268,7 @@ bool LexemepFunction(
 /*   for the numberp function.           */
 /*****************************************/
 bool NumberpFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    DATA_OBJECT item;
 
@@ -284,7 +287,7 @@ bool NumberpFunction(
 /*   for the floatp function.           */
 /****************************************/
 bool FloatpFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    DATA_OBJECT item;
 
@@ -303,7 +306,7 @@ bool FloatpFunction(
 /*   for the integerp function.           */
 /******************************************/
 bool IntegerpFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    DATA_OBJECT item;
 
@@ -321,7 +324,7 @@ bool IntegerpFunction(
 /*   for the multifieldp function.           */
 /*********************************************/
 bool MultifieldpFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    DATA_OBJECT item;
 
@@ -339,7 +342,7 @@ bool MultifieldpFunction(
 /*   for the pointerp function.           */
 /******************************************/
 bool PointerpFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    DATA_OBJECT item;
 
@@ -357,7 +360,7 @@ bool PointerpFunction(
 /*   for the not function.           */
 /*************************************/
 bool NotFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    EXPRESSION *theArgument;
    DATA_OBJECT result;
@@ -378,7 +381,7 @@ bool NotFunction(
 /*   for the and function.           */
 /*************************************/
 bool AndFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    EXPRESSION *theArgument;
    DATA_OBJECT result;
@@ -400,7 +403,7 @@ bool AndFunction(
 /*   for the or function.           */
 /************************************/
 bool OrFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    EXPRESSION *theArgument;
    DATA_OBJECT result;
@@ -423,7 +426,7 @@ bool OrFunction(
 /*   routine for the <= function.        */
 /*****************************************/
 bool LessThanOrEqualFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    EXPRESSION *theArgument;
    DATA_OBJECT rv1, rv2;
@@ -492,7 +495,7 @@ bool LessThanOrEqualFunction(
 /*   routine for the >= function.           */
 /********************************************/
 bool GreaterThanOrEqualFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    EXPRESSION *theArgument;
    DATA_OBJECT rv1, rv2;
@@ -561,7 +564,7 @@ bool GreaterThanOrEqualFunction(
 /*   routine for the < function.  */
 /**********************************/
 bool LessThanFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    EXPRESSION *theArgument;
    DATA_OBJECT rv1, rv2;
@@ -631,7 +634,7 @@ bool LessThanFunction(
 /*   routine for the > function.     */
 /*************************************/
 bool GreaterThanFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    EXPRESSION *theArgument;
    DATA_OBJECT rv1, rv2;
@@ -701,7 +704,7 @@ bool GreaterThanFunction(
 /*   routine for the = function.      */
 /**************************************/
 bool NumericEqualFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    EXPRESSION *theArgument;
    DATA_OBJECT rv1, rv2;
@@ -768,7 +771,7 @@ bool NumericEqualFunction(
 /*   routine for the <> function.        */
 /*****************************************/
 bool NumericNotEqualFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    EXPRESSION *theArgument;
    DATA_OBJECT rv1, rv2;
@@ -834,7 +837,7 @@ bool NumericNotEqualFunction(
 /*   for the oddp function.           */
 /**************************************/
 bool OddpFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    DATA_OBJECT item;
    long long num, halfnum;
@@ -855,7 +858,7 @@ bool OddpFunction(
 /*   for the evenp function.           */
 /***************************************/
 bool EvenpFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    DATA_OBJECT item;
    long long num, halfnum;

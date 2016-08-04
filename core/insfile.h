@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -40,6 +40,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_insfile
@@ -71,25 +74,25 @@ struct instanceFileData
 
 #endif /* BLOAD_INSTANCES || BSAVE_INSTANCES */
 
-   void                           SetupInstanceFileCommands(void *);
-   long                           SaveInstancesCommand(void *);
-   long                           LoadInstancesCommand(void *);
-   long                           RestoreInstancesCommand(void *);
-   long                           EnvSaveInstancesDriver(void *,const char *,int,EXPRESSION *,bool);
-   long                           EnvSaveInstances(void *,const char *,int);
+   void                           SetupInstanceFileCommands(Environment *);
+   long                           SaveInstancesCommand(Environment *);
+   long                           LoadInstancesCommand(Environment *);
+   long                           RestoreInstancesCommand(Environment *);
+   long                           EnvSaveInstancesDriver(Environment *,const char *,int,EXPRESSION *,bool);
+   long                           EnvSaveInstances(Environment *,const char *,int);
 #if BSAVE_INSTANCES
-   long                           BinarySaveInstancesCommand(void *);
-   long                           EnvBinarySaveInstancesDriver(void *,const char *,int,EXPRESSION *,bool);
-   long                           EnvBinarySaveInstances(void *,const char *,int);
+   long                           BinarySaveInstancesCommand(Environment *);
+   long                           EnvBinarySaveInstancesDriver(Environment *,const char *,int,EXPRESSION *,bool);
+   long                           EnvBinarySaveInstances(Environment *,const char *,int);
 #endif
 #if BLOAD_INSTANCES
-   long                           BinaryLoadInstancesCommand(void *);
-   long                           EnvBinaryLoadInstances(void *,const char *);
+   long                           BinaryLoadInstancesCommand(Environment *);
+   long                           EnvBinaryLoadInstances(Environment *,const char *);
 #endif
-   long                           EnvLoadInstances(void *,const char *);
-   long                           EnvLoadInstancesFromString(void *,const char *,int);
-   long                           EnvRestoreInstances(void *,const char *);
-   long                           EnvRestoreInstancesFromString(void *,const char *,int);
+   long                           EnvLoadInstances(Environment *,const char *);
+   long                           EnvLoadInstancesFromString(Environment *,const char *,size_t);
+   long                           EnvRestoreInstances(Environment *,const char *);
+   long                           EnvRestoreInstancesFromString(Environment *,const char *,size_t);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 

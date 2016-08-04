@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*         DEFMODULE BASIC COMMANDS HEADER FILE        */
    /*******************************************************/
@@ -34,6 +34,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_modulbsc
@@ -44,12 +47,13 @@
 
 #include "evaluatn.h"
 
-   void                           DefmoduleBasicCommands(void *);
-   void                           EnvGetDefmoduleList(void *,DATA_OBJECT_PTR);
-   void                           PPDefmoduleCommand(void *);
-   bool                           PPDefmodule(void *,const char *,const char *);
-   void                           ListDefmodulesCommand(void *);
-   void                           EnvListDefmodules(void *,const char *);
+   void                           DefmoduleBasicCommands(Environment *);
+   void                           EnvGetDefmoduleList(Environment *,DATA_OBJECT_PTR);
+   void                           PPDefmoduleCommand(Environment *);
+   bool                           PPDefmodule(Environment *,const char *,const char *);
+   void                           ListDefmodulesCommand(Environment *);
+   void                           EnvListDefmodules(Environment *,const char *);
+   void                           GetDefmoduleListFunction(Environment *,DATA_OBJECT_PTR);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 

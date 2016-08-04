@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/04/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*              CLASS PARSER HEADER FILE               */
    /*******************************************************/
@@ -34,6 +34,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_clsltpsr
@@ -52,12 +55,12 @@
 
 typedef struct tempSlotLink
   {
-   SLOT_DESC *desc;
+   SlotDescriptor *desc;
    struct tempSlotLink *nxt;
   } TEMP_SLOT_LINK;
 
-TEMP_SLOT_LINK *ParseSlot(void *,const char *,TEMP_SLOT_LINK *,PACKED_CLASS_LINKS *,bool,bool);
-void DeleteSlots(void *,TEMP_SLOT_LINK *);
+   TEMP_SLOT_LINK                *ParseSlot(Environment *,const char *,TEMP_SLOT_LINK *,PACKED_CLASS_LINKS *,bool,bool);
+   void                           DeleteSlots(Environment *,TEMP_SLOT_LINK *);
 
 #endif
 

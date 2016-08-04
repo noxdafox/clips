@@ -6,6 +6,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import <CLIPS/clips.h>
 
 @interface CLIPSActivation : NSObject 
   {
@@ -24,7 +25,7 @@
 - (void)                         setBindings: (NSString *) theBindings;
 - (NSString *)                   bindings;
 
-- (void)                         setActivation: (void *) theActivation;
-- (void *)                       activation;
+- (void)                         setActivation: (Activation *) theActivation;
+- (Activation *)                 activation;
 
 @end

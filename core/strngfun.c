@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*               STRING FUNCTIONS MODULE               */
    /*******************************************************/
@@ -60,6 +60,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -95,14 +98,14 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    StrOrSymCatFunction(void *,DATA_OBJECT_PTR,unsigned short);
+   static void                    StrOrSymCatFunction(Environment *,DATA_OBJECT_PTR,unsigned short);
 
 /******************************************/
 /* StringFunctionDefinitions: Initializes */
 /*   the string manipulation functions.   */
 /******************************************/
 void StringFunctionDefinitions(
-  void *theEnv)
+  Environment *theEnv)
   {
 #if ! RUN_TIME
    EnvDefineFunction2(theEnv,"str-cat", 'k', PTIEF StrCatFunction, "StrCatFunction", "1*");
@@ -128,7 +131,7 @@ void StringFunctionDefinitions(
 /*   for the str-cat function.          */
 /****************************************/
 void StrCatFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT_PTR returnValue)
   {   
    StrOrSymCatFunction(theEnv,returnValue,STRING);
@@ -139,7 +142,7 @@ void StrCatFunction(
 /*   for the sym-cat function.          */
 /****************************************/
 void SymCatFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
    StrOrSymCatFunction(theEnv,returnValue,SYMBOL);
@@ -150,7 +153,7 @@ void SymCatFunction(
 /*   the str-cat and sym-cat functions.                 */
 /********************************************************/
 static void StrOrSymCatFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT_PTR returnValue,
   unsigned short returnType)
   {
@@ -171,12 +174,12 @@ static void StrOrSymCatFunction(
    if (returnType == STRING)
      {
       functionName = "str-cat";
-      SetpValue(returnValue,(void *) EnvAddSymbol(theEnv,""));
+      SetpValue(returnValue,EnvAddSymbol(theEnv,""));
      }
    else
      {
       functionName = "sym-cat";
-      SetpValue(returnValue,(void *) EnvAddSymbol(theEnv,"nil"));
+      SetpValue(returnValue,EnvAddSymbol(theEnv,"nil"));
      }
 
    /*===============================================*/
@@ -267,7 +270,7 @@ static void StrOrSymCatFunction(
    /* up the temporary memory used.           */
    /*=========================================*/
 
-   SetpValue(returnValue,(void *) EnvAddSymbol(theEnv,theString));
+   SetpValue(returnValue,EnvAddSymbol(theEnv,theString));
    rm(theEnv,theString,sizeof(char) * total);
 
    for (i = 0; i < numArgs; i++)
@@ -284,7 +287,7 @@ static void StrOrSymCatFunction(
 /*   for the str-length function.          */
 /*******************************************/
 long long StrLengthFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    DATA_OBJECT theArg;
 
@@ -314,7 +317,7 @@ long long StrLengthFunction(
 /*   for the upcase function.           */
 /****************************************/
 void UpcaseFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
    DATA_OBJECT theArg;
@@ -330,7 +333,7 @@ void UpcaseFunction(
    if (EnvArgCountCheck(theEnv,"upcase",EXACTLY,1) == -1)
      {
       SetpType(returnValue,STRING);
-      SetpValue(returnValue,(void *) EnvAddSymbol(theEnv,""));
+      SetpValue(returnValue,EnvAddSymbol(theEnv,""));
       return;
      }
 
@@ -341,7 +344,7 @@ void UpcaseFunction(
    if (EnvArgTypeCheck(theEnv,"upcase",1,SYMBOL_OR_STRING,&theArg) == false)
      {
       SetpType(returnValue,STRING);
-      SetpValue(returnValue,(void *) EnvAddSymbol(theEnv,""));
+      SetpValue(returnValue,EnvAddSymbol(theEnv,""));
       return;
      }
 
@@ -369,7 +372,7 @@ void UpcaseFunction(
    /*========================================*/
 
    SetpType(returnValue,GetType(theArg));
-   SetpValue(returnValue,(void *) EnvAddSymbol(theEnv,nsptr));
+   SetpValue(returnValue,EnvAddSymbol(theEnv,nsptr));
    rm(theEnv,nsptr,slen);
   }
 
@@ -378,7 +381,7 @@ void UpcaseFunction(
 /*   for the lowcase function.           */
 /*****************************************/
 void LowcaseFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
    DATA_OBJECT theArg;
@@ -394,7 +397,7 @@ void LowcaseFunction(
    if (EnvArgCountCheck(theEnv,"lowcase",EXACTLY,1) == -1)
      {
       SetpType(returnValue,STRING);
-      SetpValue(returnValue,(void *) EnvAddSymbol(theEnv,""));
+      SetpValue(returnValue,EnvAddSymbol(theEnv,""));
       return;
      }
 
@@ -405,7 +408,7 @@ void LowcaseFunction(
    if (EnvArgTypeCheck(theEnv,"lowcase",1,SYMBOL_OR_STRING,&theArg) == false)
      {
       SetpType(returnValue,STRING);
-      SetpValue(returnValue,(void *) EnvAddSymbol(theEnv,""));
+      SetpValue(returnValue,EnvAddSymbol(theEnv,""));
       return;
      }
 
@@ -433,7 +436,7 @@ void LowcaseFunction(
    /*========================================*/
 
    SetpType(returnValue,GetType(theArg));
-   SetpValue(returnValue,(void *) EnvAddSymbol(theEnv,nsptr));
+   SetpValue(returnValue,EnvAddSymbol(theEnv,nsptr));
    rm(theEnv,nsptr,slen);
   }
 
@@ -442,7 +445,7 @@ void LowcaseFunction(
 /*   for the str-compare function.          */
 /********************************************/
 long long StrCompareFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    int numArgs, length;
    DATA_OBJECT arg1, arg2, arg3;
@@ -498,7 +501,7 @@ long long StrCompareFunction(
 /*   for the sub-string function.          */
 /*******************************************/
 void *SubStringFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    DATA_OBJECT theArgument;
    const char *tempString;
@@ -582,7 +585,7 @@ void *SubStringFunction(
 /*   for the sub-index function.          */
 /******************************************/
 void StrIndexFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT_PTR result)
   {
    DATA_OBJECT theArgument1, theArgument2;
@@ -613,7 +616,7 @@ void StrIndexFunction(
    if (strlen(strg1) == 0)
      {
       result->type = INTEGER;
-      result->value = (void *) EnvAddLong(theEnv,(long long) UTF8Length(strg2) + 1LL);
+      result->value = EnvAddLong(theEnv,(long long) UTF8Length(strg2) + 1LL);
       return;
      }
      
@@ -626,7 +629,7 @@ void StrIndexFunction(
       if (*(strg1+j) == '\0')
         {
          result->type = INTEGER;
-         result->value = (void *) EnvAddLong(theEnv,(long long) UTF8CharNum(strg3,i));
+         result->value = EnvAddLong(theEnv,(long long) UTF8CharNum(strg3,i));
          return;
         }
      }
@@ -639,7 +642,7 @@ void StrIndexFunction(
 /*   for the string-to-field function.       */
 /********************************************/
 void StringToFieldFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *returnValue)
   {
    DATA_OBJECT theArg;
@@ -651,7 +654,7 @@ void StringToFieldFunction(
    if (EnvArgCountCheck(theEnv,"string-to-field",EXACTLY,1) == -1)
      {
       returnValue->type = STRING;
-      returnValue->value = (void *) EnvAddSymbol(theEnv,"*** ERROR ***");
+      returnValue->value = EnvAddSymbol(theEnv,"*** ERROR ***");
       return;
      }
 
@@ -662,7 +665,7 @@ void StringToFieldFunction(
    if (EnvArgTypeCheck(theEnv,"string-to-field",1,SYMBOL_OR_STRING,&theArg) == false)
      {
       returnValue->type = STRING;
-      returnValue->value = (void *) EnvAddSymbol(theEnv,"*** ERROR ***");
+      returnValue->value = EnvAddSymbol(theEnv,"*** ERROR ***");
       return;
      }
 
@@ -677,7 +680,7 @@ void StringToFieldFunction(
 /* StringToField: Converts a string to an atomic data value. */
 /*************************************************************/
 void StringToField(
-  void *theEnv,
+  Environment *theEnv,
   const char *theString,
   DATA_OBJECT *returnValue)
   {
@@ -706,17 +709,17 @@ void StringToField(
    else if (theToken.type == STOP)
      {
       returnValue->type = SYMBOL;
-      returnValue->value = (void *) EnvAddSymbol(theEnv,"EOF");
+      returnValue->value = EnvAddSymbol(theEnv,"EOF");
      }
    else if (theToken.type == UNKNOWN_VALUE)
      {
       returnValue->type = STRING;
-      returnValue->value = (void *) EnvAddSymbol(theEnv,"*** ERROR ***");
+      returnValue->value = EnvAddSymbol(theEnv,"*** ERROR ***");
      }
    else
      {
       returnValue->type = STRING;
-      returnValue->value = (void *) EnvAddSymbol(theEnv,theToken.printForm);
+      returnValue->value = EnvAddSymbol(theEnv,theToken.printForm);
      }
   }
   
@@ -727,7 +730,7 @@ void StringToField(
 /*   for the eval function.           */
 /**************************************/
 void EvalFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
    DATA_OBJECT theArg;
@@ -779,7 +782,7 @@ bool Eval(
 /*   for the eval function.  */
 /*****************************/
 bool EnvEval(
-  void *theEnv,
+  Environment *theEnv,
   const char *theString,
   DATA_OBJECT_PTR returnValue)
   {
@@ -938,7 +941,7 @@ bool EnvEval(
 /*   provided for use with a run-time version.   */
 /*************************************************/
 void EvalFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
    PrintErrorID(theEnv,"STRNGFUN",1,false);
@@ -952,7 +955,7 @@ void EvalFunction(
 /*   for use with a run-time version.                */
 /*****************************************************/
 bool EnvEval(
-  void *theEnv,
+  Environment *theEnv,
   const char *theString,
   DATA_OBJECT_PTR returnValue)
   {
@@ -971,7 +974,7 @@ bool EnvEval(
 /*   for the build function.           */
 /***************************************/
 bool BuildFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    DATA_OBJECT theArg;
 
@@ -1012,7 +1015,7 @@ bool Build(
 /*   for the build function.  */
 /******************************/
 bool EnvBuild(
-  void *theEnv,
+  Environment *theEnv,
   const char *theString)
   {
    const char *constructType;
@@ -1125,7 +1128,7 @@ bool EnvBuild(
 /*   provided for use with a run-time version.    */
 /**************************************************/
 bool BuildFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    PrintErrorID(theEnv,"STRNGFUN",1,false);
    EnvPrintRouter(theEnv,WERROR,"Function build does not work in run time modules.\n");
@@ -1137,7 +1140,7 @@ bool BuildFunction(
 /*   for use with a run-time version.                 */
 /******************************************************/
 bool EnvBuild(
-  void *theEnv,
+  Environment *theEnv,
   const char *theString)
   { 
    PrintErrorID(theEnv,"STRNGFUN",1,false);

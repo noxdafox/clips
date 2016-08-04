@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*            DEFGLOBAL COMMANDS HEADER FILE           */
    /*******************************************************/
@@ -36,6 +36,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_globlcom
@@ -44,20 +47,20 @@
 
 #define _H_globlcom
 
-   void                           DefglobalCommandDefinitions(void *);
-   bool                           SetResetGlobalsCommand(void *);
-   bool                           EnvSetResetGlobals(void *,bool);
-   bool                           GetResetGlobalsCommand(void *);
-   bool                           EnvGetResetGlobals(void *);
-   void                           ShowDefglobalsCommand(void *);
-   void                           EnvShowDefglobals(void *,const char *,void *);
+   void                           DefglobalCommandDefinitions(Environment *);
+   bool                           SetResetGlobalsCommand(Environment *);
+   bool                           EnvSetResetGlobals(Environment *,bool);
+   bool                           GetResetGlobalsCommand(Environment *);
+   bool                           EnvGetResetGlobals(Environment *);
+   void                           ShowDefglobalsCommand(Environment *);
+   void                           EnvShowDefglobals(Environment *,const char *,Defmodule *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
    bool                           GetResetGlobals(void);
    bool                           SetResetGlobals(bool);
 #if DEBUGGING_FUNCTIONS
-   void                           ShowDefglobals(const char *,void *);
+   void                           ShowDefglobals(const char *,Defmodule *);
 #endif
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */

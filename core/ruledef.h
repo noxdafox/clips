@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                 DEFRULE HEADER FILE                 */
    /*******************************************************/
@@ -61,6 +61,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_ruledef
@@ -71,7 +74,7 @@
 
 #define GetDisjunctIndex(r) ((struct constructHeader *) r)->bsaveID
 
-struct defrule;
+typedef struct defrule Defrule;
 struct defruleModule;
 
 #include "constrct.h"
@@ -94,7 +97,7 @@ struct defrule
    struct expr *actions;
    struct joinNode *logicalJoin;
    struct joinNode *lastJoin;
-   struct defrule *disjunct;
+   Defrule *disjunct;
   };
 
 #include "agenda.h"
@@ -151,32 +154,32 @@ struct defruleData
     NULL : \
     ((theJoin)->rightSideEntryStructure))
 
-   void                           InitializeDefrules(void *);
-   void                          *EnvFindDefrule(void *,const char *);
-   void                          *EnvFindDefruleInModule(void *,const char *);
-   void                          *EnvGetNextDefrule(void *,void *);
-   struct defruleModule          *GetDefruleModuleItem(void *,struct defmodule *);
-   bool                           EnvIsDefruleDeletable(void *,void *);
+   void                           InitializeDefrules(Environment *);
+   Defrule                       *EnvFindDefrule(Environment *,const char *);
+   Defrule                       *EnvFindDefruleInModule(Environment *,const char *);
+   Defrule                       *EnvGetNextDefrule(Environment *,Defrule *);
+   struct defruleModule          *GetDefruleModuleItem(Environment *,Defmodule *);
+   bool                           EnvIsDefruleDeletable(Environment *,Defrule *);
 #if RUN_TIME
-   void                           DefruleRunTimeInitialize(void *,struct joinLink *,struct joinLink *);
+   void                           DefruleRunTimeInitialize(Environment *,struct joinLink *,struct joinLink *);
 #endif
 #if RUN_TIME || BLOAD_ONLY || BLOAD || BLOAD_AND_BSAVE
-   void                           AddBetaMemoriesToJoin(void *,struct joinNode *);
+   void                           AddBetaMemoriesToJoin(Environment *,struct joinNode *);
 #endif
-   long                           EnvGetDisjunctCount(void *,void *);
-   void                          *EnvGetNthDisjunct(void *,void *,long);
-   const char                    *EnvDefruleModule(void *,void *);
-   const char                    *EnvGetDefruleName(void *,void *);
-   const char                    *EnvGetDefrulePPForm(void *,void *);
+   long                           EnvGetDisjunctCount(Environment *,Defrule *);
+   Defrule                       *EnvGetNthDisjunct(Environment *,Defrule *,long);
+   const char                    *EnvDefruleModule(Environment *,Defrule *);
+   const char                    *EnvGetDefruleName(Environment *,Defrule *);
+   const char                    *EnvGetDefrulePPForm(Environment *,Defrule *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-   const char                    *DefruleModule(void *);
-   void                          *FindDefrule(const char *);
-   const char                    *GetDefruleName(void *);
-   const char                    *GetDefrulePPForm(void *);
-   void                          *GetNextDefrule(void *);
-   bool                           IsDefruleDeletable(void *);
+   const char                    *DefruleModule(Defrule *);
+   Defrule                       *FindDefrule(const char *);
+   const char                    *GetDefruleName(Defrule *);
+   const char                    *GetDefrulePPForm(Defrule *);
+   Defrule                       *GetNextDefrule(Defrule *);
+   bool                           IsDefruleDeletable(Defrule *);
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */
 

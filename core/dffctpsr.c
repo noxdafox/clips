@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*                DEFFACTS PARSER MODULE               */
    /*******************************************************/
@@ -34,6 +34,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -61,13 +64,13 @@
 /*   deffacts keyword has been found.                       */
 /************************************************************/
 bool ParseDeffacts(
-  void *theEnv,
+  Environment *theEnv,
   const char *readSource)
   {
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    SYMBOL_HN *deffactsName;
    struct expr *temp;
-   struct deffacts *newDeffacts;
+   Deffacts *newDeffacts;
    bool deffactsError;
    struct token inputToken;
 
@@ -99,7 +102,8 @@ bool ParseDeffacts(
    /*============================*/
 
    deffactsName = GetConstructNameAndComment(theEnv,readSource,&inputToken,"deffacts",
-                                             EnvFindDeffactsInModule,EnvUndeffacts,"$",true,
+                                             (FindConstructFunction *) EnvFindDeffactsInModule,
+                                             (DeleteConstructFunction *) EnvUndeffacts,"$",true,
                                              true,true,false);
    if (deffactsName == NULL) { return true; }
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*               RULE PARSING HEADER FILE              */
    /*******************************************************/
@@ -38,6 +38,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_rulepsr
@@ -46,11 +49,11 @@
 
 #define _H_rulepsr
 
-   bool                           ParseDefrule(void *,const char *);
+   bool                           ParseDefrule(Environment *,const char *);
    struct lhsParseNode           *FindVariable(struct symbolHashNode *,
-                                                      struct lhsParseNode *);
+                                               struct lhsParseNode *);
 #if DEVELOPER && DEBUGGING_FUNCTIONS
-   void                           DumpRuleAnalysis(void *,struct lhsParseNode *);
+   void                           DumpRuleAnalysis(Environment *,struct lhsParseNode *);
 #endif
 
 #endif /* _H_rulepsr */

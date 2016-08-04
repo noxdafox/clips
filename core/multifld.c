@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*                  MULTIFIELD MODULE                  */
    /*******************************************************/
@@ -47,6 +47,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -70,11 +73,11 @@
 /**********************/
 /* CreateMultifield2: */
 /**********************/
-void *CreateMultifield2(
-  void *theEnv,
+Multifield *CreateMultifield2(
+  Environment *theEnv,
   long size)
   {
-   struct multifield *theSegment;
+   Multifield *theSegment;
    long newSize = size;
 
    if (size <= 0) newSize = 1;
@@ -85,15 +88,15 @@ void *CreateMultifield2(
    theSegment->busyCount = 0;
    theSegment->next = NULL;
 
-   return((void *) theSegment);
+   return theSegment;
   }
 
 /*********************/
 /* ReturnMultifield: */
 /*********************/
 void ReturnMultifield(
-  void *theEnv,
-  struct multifield *theSegment)
+  Environment *theEnv,
+  Multifield *theSegment)
   {
    unsigned long newSize;
 
@@ -109,7 +112,7 @@ void ReturnMultifield(
 /* MultifieldInstall: */
 /**********************/
 void MultifieldInstall(
-  void *theEnv,
+  Environment *theEnv,
   struct multifield *theSegment)
   {
    unsigned long length, i;
@@ -130,7 +133,7 @@ void MultifieldInstall(
 /* MultifieldDeinstall: */
 /************************/
 void MultifieldDeinstall(
-  void *theEnv,
+  Environment *theEnv,
   struct multifield *theSegment)
   {
    unsigned long length, i;
@@ -151,11 +154,11 @@ void MultifieldDeinstall(
 /*    that represents the string sent as the argument. */
 /*******************************************************/
 struct multifield *StringToMultifield(
-  void *theEnv,
+  Environment *theEnv,
   const char *theString)
   {
    struct token theToken;
-   struct multifield *theSegment;
+   Multifield *theSegment;
    struct field *theFields;
    unsigned long numberOfFields = 0;
    struct expr *topAtom = NULL, *lastAtom = NULL, *theAtom;
@@ -191,7 +194,7 @@ struct multifield *StringToMultifield(
    /* Create a multifield of the appropriate size for the values parsed. */
    /*====================================================================*/
 
-   theSegment = (struct multifield *) EnvCreateMultifield(theEnv,numberOfFields);
+   theSegment = EnvCreateMultifield(theEnv,numberOfFields);
    theFields = theSegment->theFields;
 
    /*====================================*/
@@ -225,11 +228,11 @@ struct multifield *StringToMultifield(
 /* EnvCreateMultifield: Creates a multifield of the specified */
 /*   size and adds it to the list of segments.                */
 /**************************************************************/
-void *EnvCreateMultifield(
-  void *theEnv,
+Multifield *EnvCreateMultifield(
+  Environment *theEnv,
   long size)
   {
-   struct multifield *theSegment;
+   Multifield *theSegment;
    long newSize;
 
    if (size <= 0) newSize = 1;
@@ -247,34 +250,34 @@ void *EnvCreateMultifield(
    if (UtilityData(theEnv)->CurrentGarbageFrame->LastMultifield == NULL)
      { UtilityData(theEnv)->CurrentGarbageFrame->LastMultifield = theSegment; }
 
-   return((void *) theSegment);
+   return theSegment;
   }
 
 /*******************/
 /* DOToMultifield: */
 /*******************/
-void *DOToMultifield(
-  void *theEnv,
+Multifield *DOToMultifield(
+  Environment *theEnv,
   DATA_OBJECT *theValue)
   {
-   struct multifield *dst, *src;
+   Multifield *dst, *src;
 
-   if (theValue->type != MULTIFIELD) return(NULL);
+   if (theValue->type != MULTIFIELD) return NULL;
 
-   dst = (struct multifield *) CreateMultifield2(theEnv,(unsigned long) GetpDOLength(theValue));
+   dst = CreateMultifield2(theEnv,(unsigned long) GetpDOLength(theValue));
 
-   src = (struct multifield *) theValue->value;
+   src = (Multifield *) theValue->value;
    GenCopyMemory(struct field,dst->multifieldLength,
               &(dst->theFields[0]),&(src->theFields[GetpDOBegin(theValue) - 1]));
 
-   return((void *) dst);
+   return dst;
   }
 
 /************************/
 /* AddToMultifieldList: */
 /************************/
 void AddToMultifieldList(
-  void *theEnv,
+  Environment *theEnv,
   struct multifield *theSegment)
   {
    theSegment->next = UtilityData(theEnv)->CurrentGarbageFrame->ListOfMultifields;
@@ -288,7 +291,7 @@ void AddToMultifieldList(
 /* FlushMultifields: */
 /*********************/
 void FlushMultifields(
-  void *theEnv)
+  Environment *theEnv)
   {
    struct multifield *theSegment, *nextPtr, *lastPtr = NULL;
    unsigned long newSize;
@@ -326,14 +329,14 @@ void FlushMultifields(
 /*   old value to new. This value is not put on the ListOfMultifields.  */
 /************************************************************************/
 void DuplicateMultifield(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT_PTR dst,
   DATA_OBJECT_PTR src)
   {
    dst->type = MULTIFIELD;
    dst->begin = 0;
    dst->end = src->end - src->begin;
-   dst->value = (void *) CreateMultifield2(theEnv,(unsigned long) dst->end + 1);
+   dst->value = CreateMultifield2(theEnv,(unsigned long) dst->end + 1);
    GenCopyMemory(struct field,dst->end + 1,&((struct multifield *) dst->value)->theFields[0],
                                         &((struct multifield *) src->value)->theFields[src->begin]);
   }
@@ -341,15 +344,15 @@ void DuplicateMultifield(
 /*******************/
 /* CopyMultifield: */
 /*******************/
-void *CopyMultifield(
-  void *theEnv,
-  struct multifield *src)
+Multifield *CopyMultifield(
+  Environment *theEnv,
+  Multifield *src)
   {
-   struct multifield *dst;
+   Multifield *dst;
 
-   dst = (struct multifield *) CreateMultifield2(theEnv,src->multifieldLength);
+   dst = CreateMultifield2(theEnv,src->multifieldLength);
    GenCopyMemory(struct field,src->multifieldLength,&(dst->theFields[0]),&(src->theFields[0]));
-   return((void *) dst);
+   return dst;
   }
 
 /**********************************************************/
@@ -357,7 +360,7 @@ void *CopyMultifield(
 /*   as ephemeral if they have not already been marker.   */
 /**********************************************************/
 void EphemerateMultifield(
-  void *theEnv,
+  Environment *theEnv,
   struct multifield *theSegment)
   {
    unsigned long length, i;
@@ -377,7 +380,7 @@ void EphemerateMultifield(
 /* PrintMultifield: Prints out a multifield. */
 /*********************************************/
 void PrintMultifield(
-  void *theEnv,
+  Environment *theEnv,
   const char *fileid,
   struct multifield *segment,
   long begin,
@@ -405,15 +408,15 @@ void PrintMultifield(
 /* StoreInMultifield: Append function for segments. */
 /****************************************************/
 void StoreInMultifield(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *returnValue,
   EXPRESSION *expptr,
   bool garbageSegment)
   {
    DATA_OBJECT val_ptr;
    DATA_OBJECT *val_arr;
-   struct multifield *theMultifield;
-   struct multifield *orig_ptr;
+   Multifield *theMultifield;
+   Multifield *orig_ptr;
    long start, end, i,j, k, argCount;
    unsigned long seg_size;
 
@@ -429,9 +432,9 @@ void StoreInMultifield(
       SetpType(returnValue,MULTIFIELD);
       SetpDOBegin(returnValue,1);
       SetpDOEnd(returnValue,0);
-      if (garbageSegment) theMultifield = (struct multifield *) EnvCreateMultifield(theEnv,0L);
-      else theMultifield = (struct multifield *) CreateMultifield2(theEnv,0L);
-      SetpValue(returnValue,(void *) theMultifield);
+      if (garbageSegment) theMultifield = EnvCreateMultifield(theEnv,0L);
+      else theMultifield = CreateMultifield2(theEnv,0L);
+      SetpValue(returnValue,theMultifield);
       return;
      }
    else
@@ -453,9 +456,9 @@ void StoreInMultifield(
             SetpDOBegin(returnValue,1);
             SetpDOEnd(returnValue,0);
             if (garbageSegment)
-              { theMultifield = (struct multifield *) EnvCreateMultifield(theEnv,0L); }
-            else theMultifield = (struct multifield *) CreateMultifield2(theEnv,0L);
-            SetpValue(returnValue,(void *) theMultifield);
+              { theMultifield = EnvCreateMultifield(theEnv,0L); }
+            else theMultifield = CreateMultifield2(theEnv,0L);
+            SetpValue(returnValue,theMultifield);
             rm3(theEnv,val_arr,(long) sizeof(DATA_OBJECT) * argCount);
             return;
            }
@@ -484,8 +487,8 @@ void StoreInMultifield(
         }
 
       if (garbageSegment)
-        { theMultifield = (struct multifield *) EnvCreateMultifield(theEnv,seg_size); }
-      else theMultifield = (struct multifield *) CreateMultifield2(theEnv,seg_size);
+        { theMultifield = EnvCreateMultifield(theEnv,seg_size); }
+      else theMultifield = CreateMultifield2(theEnv,seg_size);
 
       /*========================================*/
       /* Copy each argument into new segment.  */
@@ -519,7 +522,7 @@ void StoreInMultifield(
       SetpType(returnValue,MULTIFIELD);
       SetpDOBegin(returnValue,1);
       SetpDOEnd(returnValue,(long) seg_size);
-      SetpValue(returnValue,(void *) theMultifield);
+      SetpValue(returnValue,theMultifield);
       rm3(theEnv,val_arr,(long) sizeof(DATA_OBJECT) * argCount);
       return;
      }
@@ -692,8 +695,8 @@ unsigned long HashMultifield(
 /**********************/
 /* GetMultifieldList: */
 /**********************/
-struct multifield *GetMultifieldList(
-  void *theEnv)
+Multifield *GetMultifieldList(
+  Environment *theEnv)
   {
    return(UtilityData(theEnv)->CurrentGarbageFrame->ListOfMultifields);
   }
@@ -703,7 +706,7 @@ struct multifield *GetMultifieldList(
 /*   for the implode$ function.        */
 /***************************************/
 void *ImplodeMultifield(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *value)
   {
    size_t strsize = 0;
@@ -748,7 +751,7 @@ void *ImplodeMultifield(
       else if (GetMFType(theMultifield,i) == INSTANCE_NAME)
         { strsize += strlen(ValueToString(GetMFValue(theMultifield,i))) + 3; }
       else if (GetMFType(theMultifield,i) == INSTANCE_ADDRESS)
-        { strsize += strlen(ValueToString(((INSTANCE_TYPE *)
+        { strsize += strlen(ValueToString(((Instance *)
                             GetMFValue(theMultifield,i))->name)) + 3; }
 #endif
 
@@ -835,7 +838,7 @@ void *ImplodeMultifield(
         }
       else if (GetMFType(theMultifield,i) == INSTANCE_ADDRESS)
         {
-         tmp_str = ValueToString(((INSTANCE_TYPE *) GetMFValue(theMultifield,i))->name);
+         tmp_str = ValueToString(((Instance *) GetMFValue(theMultifield,i))->name);
          *(ret_str + j++) = '[';
          while(*tmp_str)
            {
@@ -876,7 +879,7 @@ void *ImplodeMultifield(
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-void *CreateMultifield(
+Multifield *CreateMultifield(
   long size)
   {
    return EnvCreateMultifield(GetCurrentEnvironment(),size);

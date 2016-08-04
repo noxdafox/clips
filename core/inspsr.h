@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -35,6 +35,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_inspsr
@@ -46,11 +49,11 @@
 #include "expressn.h"
 
 #if ! RUN_TIME
-   EXPRESSION                    *ParseInitializeInstance(void *,EXPRESSION *,const char *);
-   EXPRESSION                    *ParseSlotOverrides(void *,const char *,bool *);
+   EXPRESSION                    *ParseInitializeInstance(Environment *,EXPRESSION *,const char *);
+   EXPRESSION                    *ParseSlotOverrides(Environment *,const char *,bool *);
 #endif
 
-   EXPRESSION                    *ParseSimpleInstance(void *,EXPRESSION *,const char *);
+   EXPRESSION                    *ParseSimpleInstance(Environment *,EXPRESSION *,const char *);
 
 #endif /* _H_inspsr */
 

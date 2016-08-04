@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*            INCREMENTAL RESET HEADER FILE            */
    /*******************************************************/
@@ -42,6 +42,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_incrrset
@@ -52,11 +55,11 @@
 
 #include "ruledef.h"
 
-   void                           IncrementalReset(void *,struct defrule *);
-   bool                           EnvGetIncrementalReset(void *);
-   bool                           EnvSetIncrementalReset(void *,bool);
-   bool                           GetIncrementalResetCommand(void *);
-   bool                           SetIncrementalResetCommand(void *);
+   void                           IncrementalReset(Environment *,Defrule *);
+   bool                           EnvGetIncrementalReset(Environment *);
+   bool                           EnvSetIncrementalReset(Environment *,bool);
+   bool                           GetIncrementalResetCommand(Environment *);
+   bool                           SetIncrementalResetCommand(Environment *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 

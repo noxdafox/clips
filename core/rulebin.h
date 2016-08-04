@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*           DEFRULE BSAVE/BLOAD HEADER FILE           */
    /*******************************************************/
@@ -33,6 +33,9 @@
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -120,25 +123,25 @@ struct defruleBinaryData
    long RightPrimeIndex;
    long LeftPrimeIndex; 
    struct defruleModule *ModuleArray;
-   struct defrule *DefruleArray;
+   Defrule *DefruleArray;
    struct joinNode *JoinArray;
    struct joinLink *LinkArray;
   };
 
 #define DefruleBinaryData(theEnv) ((struct defruleBinaryData *) GetEnvironmentData(theEnv,RULEBIN_DATA))
 
-#define BloadDefrulePointer(x,i) ((struct defrule *) ((i == -1L) ? NULL : &x[i]))
+#define BloadDefrulePointer(x,i) ((Defrule *) ((i == -1L) ? NULL : &x[i]))
 #define BsaveJoinIndex(joinPtr) ((joinPtr == NULL) ? -1L :  ((struct joinNode *) joinPtr)->bsaveID)
 #define BloadJoinPointer(i) ((struct joinNode *) ((i == -1L) ? NULL : &DefruleBinaryData(theEnv)->JoinArray[i]))
 #define BsaveJoinLinkIndex(linkPtr) ((linkPtr == NULL) ? -1L :  ((struct joinLink *) linkPtr)->bsaveID)
 #define BloadJoinLinkPointer(i) ((struct joinLink *) ((i == -1L) ? NULL : &DefruleBinaryData(theEnv)->LinkArray[i]))
 
-   void                           DefruleBinarySetup(void *);
-   void                           UpdatePatternNodeHeader(void *,struct patternNodeHeader *,
+   void                           DefruleBinarySetup(Environment *);
+   void                           UpdatePatternNodeHeader(Environment *,struct patternNodeHeader *,
                                                                  struct bsavePatternNodeHeader *);
-   void                           AssignBsavePatternHeaderValues(void *,struct bsavePatternNodeHeader *,
+   void                           AssignBsavePatternHeaderValues(Environment *,struct bsavePatternNodeHeader *,
                                                                         struct patternNodeHeader *);
-   void                          *BloadDefruleModuleReference(void *,int);
+   void                          *BloadDefruleModuleReference(Environment *,int);
 
 #endif /* (! RUN_TIME) */
 

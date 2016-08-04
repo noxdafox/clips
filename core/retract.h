@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                RETRACT HEADER FILE                  */
    /*******************************************************/
@@ -38,6 +38,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_retract
@@ -56,14 +59,14 @@ struct rdriveinfo
    struct rdriveinfo *next;
   };
 
-void                           NetworkRetract(void *,struct patternMatch *);
-void                           ReturnPartialMatch(void *,struct partialMatch *);
-void                           DestroyPartialMatch(void *,struct partialMatch *);
-void                           FlushGarbagePartialMatches(void *);
-void                           DeletePartialMatches(void *,struct partialMatch *);
-void                           PosEntryRetractBeta(void *,struct partialMatch *,struct partialMatch *,int);
-void                           PosEntryRetractAlpha(void *,struct partialMatch *,int);
-bool                           PartialMatchWillBeDeleted(void *,struct partialMatch *);
+void                           NetworkRetract(Environment *,struct patternMatch *);
+void                           ReturnPartialMatch(Environment *,struct partialMatch *);
+void                           DestroyPartialMatch(Environment *,struct partialMatch *);
+void                           FlushGarbagePartialMatches(Environment *);
+void                           DeletePartialMatches(Environment *,struct partialMatch *);
+void                           PosEntryRetractBeta(Environment *,struct partialMatch *,struct partialMatch *,int);
+void                           PosEntryRetractAlpha(Environment *,struct partialMatch *,int);
+bool                           PartialMatchWillBeDeleted(Environment *,struct partialMatch *);
 
 #endif /* _H_retract */
 

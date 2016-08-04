@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*      DEFTEMPLATE CONSTRUCT COMPILER HEADER FILE     */
    /*******************************************************/
@@ -47,8 +47,8 @@
 
 #define _H_tmpltcmp
 
-   void                           DeftemplateCompilerSetup(void *);
-   void                           DeftemplateCModuleReference(void *,FILE *,int,int,int);
-   void                           DeftemplateCConstructReference(void *,FILE *,void *,int,int);
+   void                           DeftemplateCompilerSetup(Environment *);
+   void                           DeftemplateCModuleReference(Environment *,FILE *,int,int,int);
+   void                           DeftemplateCConstructReference(Environment *,FILE *,Deftemplate *,int,int);
 
 #endif /* _H_tmpltcmp */

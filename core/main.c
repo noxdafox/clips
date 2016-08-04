@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*               CLIPS Version 6.40  07/30/16          */
    /*                                                     */
    /*                     MAIN MODULE                     */
    /*******************************************************/
@@ -18,6 +18,9 @@
 /*                                                           */
 /*      6.24: Moved UserFunctions and EnvUserFunctions to    */
 /*            the new userfunctions.c file.                  */
+/*                                                           */
+/*      6.40: Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -51,7 +54,7 @@ int main(
   int argc,
   char *argv[])
   {
-   void *theEnv;
+   Environment *theEnv;
 
    theEnv = CreateEnvironment();
    RerouteStdin(theEnv,argc,argv);

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                FACT BUILD HEADER FILE               */
    /*******************************************************/
@@ -24,6 +24,9 @@
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -52,7 +55,7 @@ struct factPatternNode
    struct factPatternNode *rightNode;
   };
 
-   void                           InitializeFactPatterns(void *);
-   void                           DestroyFactPatternNetwork(void *,struct factPatternNode *);
+   void                           InitializeFactPatterns(Environment *);
+   void                           DestroyFactPatternNetwork(Environment *,struct factPatternNode *);
 
 #endif /* _H_factbld */

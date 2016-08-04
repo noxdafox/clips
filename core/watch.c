@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*                    WATCH MODULE                     */
    /*******************************************************/
@@ -45,6 +45,9 @@
 /*                                                           */
 /*            Changed return values for router functions.    */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -67,17 +70,17 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static struct watchItem       *ValidWatchItem(void *,const char *,bool *);
-   static bool                    RecognizeWatchRouters(void *,const char *);
-   static void                    CaptureWatchPrints(void *,const char *,const char *);
-   static void                    DeallocateWatchData(void *);
+   static struct watchItem       *ValidWatchItem(Environment *,const char *,bool *);
+   static bool                    RecognizeWatchRouters(Environment *,const char *);
+   static void                    CaptureWatchPrints(Environment *,const char *,const char *);
+   static void                    DeallocateWatchData(Environment *);
 
 /**********************************************/
 /* InitializeWatchData: Allocates environment */
 /*    data for watch items.                   */
 /**********************************************/
 void InitializeWatchData(
-  void *theEnv)
+  Environment *theEnv)
   {
    AllocateEnvironmentData(theEnv,WATCH_DATA,sizeof(struct watchData),DeallocateWatchData);
   }
@@ -87,7 +90,7 @@ void InitializeWatchData(
 /*    data for watch items.                     */
 /************************************************/
 static void DeallocateWatchData(
-  void *theEnv)
+  Environment *theEnv)
   {
    struct watchItem *tmpPtr, *nextPtr;
 
@@ -107,13 +110,13 @@ static void DeallocateWatchData(
 /*   otherwise returns true.                                 */
 /*************************************************************/
 bool AddWatchItem(
-  void *theEnv,
+  Environment *theEnv,
   const char *name,
   int code,
   bool *flag,
   int priority,
-  bool (*accessFunc)(void *,int,bool,struct expr *),
-  bool (*printFunc)(void *,const char *,int,struct expr *))
+  bool (*accessFunc)(Environment *,int,bool,struct expr *),
+  bool (*printFunc)(Environment *,const char *,int,struct expr *))
   {
    struct watchItem *newPtr, *currentPtr, *lastPtr;
 
@@ -168,7 +171,7 @@ bool AddWatchItem(
 /* EnvWatch: C access routine for the watch command. */
 /*****************************************************/
 bool EnvWatch(
-  void *theEnv,
+  Environment *theEnv,
   const char *itemName)
   {
    return(EnvSetWatchItem(theEnv,itemName,true,NULL));
@@ -178,7 +181,7 @@ bool EnvWatch(
 /* EnvUnwatch: C access routine for the unwatch command. */
 /*********************************************************/
 bool EnvUnwatch(
-  void *theEnv,
+  Environment *theEnv,
   const char *itemName)
   {
    return(EnvSetWatchItem(theEnv,itemName,false,NULL));
@@ -189,7 +192,7 @@ bool EnvUnwatch(
 /*   on or off. Returns true if the item was set, otherwise false.     */
 /***********************************************************************/
 bool EnvSetWatchItem(
-  void *theEnv,
+  Environment *theEnv,
   const char *itemName,
   bool newState,
   struct expr *argExprs)
@@ -274,7 +277,7 @@ bool EnvSetWatchItem(
 /*   items, otherwise -1 is returned.                             */
 /******************************************************************/
 int EnvGetWatchItem(
-  void *theEnv,
+  Environment *theEnv,
   const char *itemName)
   {
    struct watchItem *wPtr;
@@ -293,7 +296,7 @@ int EnvGetWatchItem(
 /*   in the list of watch items, otherwise returns false.      */
 /***************************************************************/
 static struct watchItem *ValidWatchItem(
-  void *theEnv,
+  Environment *theEnv,
   const char *itemName,
   bool *recognized)
   {
@@ -301,13 +304,13 @@ static struct watchItem *ValidWatchItem(
 
    *recognized = true;
    if (strcmp(itemName,"all") == 0)
-     return(NULL);
+     return NULL;
 
    for (wPtr = WatchData(theEnv)->ListOfWatchItems; wPtr != NULL; wPtr = wPtr->next)
      { if (strcmp(itemName,wPtr->name) == 0) return(wPtr); }
 
    *recognized = false;
-   return(NULL);
+   return NULL;
   }
 
 /*************************************************************/
@@ -316,7 +319,7 @@ static struct watchItem *ValidWatchItem(
 /*   does not exist, then NULL is returned.                  */
 /*************************************************************/
 const char *GetNthWatchName(
-  void *theEnv,
+  Environment *theEnv,
   int whichItem)
   {
    int i;
@@ -327,7 +330,7 @@ const char *GetNthWatchName(
         wPtr = wPtr->next, i++)
      { if (i == whichItem) return(wPtr->name); }
 
-   return(NULL);
+   return NULL;
   }
 
 /***************************************************************/
@@ -336,7 +339,7 @@ const char *GetNthWatchName(
 /*   item does not exist, then -1 is returned.                 */
 /***************************************************************/
 int GetNthWatchValue(
-  void *theEnv,
+  Environment *theEnv,
   int whichItem)
   {
    int i;
@@ -355,7 +358,7 @@ int GetNthWatchValue(
 /*   for the watch command.           */
 /**************************************/
 void WatchCommand(
-  void *theEnv)
+  Environment *theEnv)
   {
    DATA_OBJECT theValue;
    const char *argument;
@@ -402,7 +405,7 @@ void WatchCommand(
 /*   for the unwatch command.           */
 /****************************************/
 void UnwatchCommand(
-  void *theEnv)
+  Environment *theEnv)
   {
    DATA_OBJECT theValue;
    const char *argument;
@@ -449,7 +452,7 @@ void UnwatchCommand(
 /*   for the list-watch-items command.          */
 /************************************************/
 void ListWatchItemsCommand(
-  void *theEnv)
+  Environment *theEnv)
   {
    struct watchItem *wPtr;
    DATA_OBJECT theValue;
@@ -520,7 +523,7 @@ void ListWatchItemsCommand(
 /*   for the get-watch-item command.       */
 /*******************************************/
 bool GetWatchItemCommand(
-  void *theEnv)
+  Environment *theEnv)
   {
    DATA_OBJECT theValue;
    const char *argument;
@@ -563,7 +566,7 @@ bool GetWatchItemCommand(
 /* WatchFunctionDefinitions: Initializes the watch commands. */
 /*************************************************************/
 void WatchFunctionDefinitions(
-  void *theEnv)
+  Environment *theEnv)
   {
 #if ! RUN_TIME
    EnvDefineFunction2(theEnv,"watch",   'v', PTIEF WatchCommand,   "WatchCommand", "1**w");
@@ -581,7 +584,7 @@ void WatchFunctionDefinitions(
 /* RecognizeWatchRouters: Looks for WTRACE prints */
 /**************************************************/
 static bool RecognizeWatchRouters(
-  void *theEnv,
+  Environment *theEnv,
   const char *logName)
   {
 #if MAC_XCD
@@ -597,7 +600,7 @@ static bool RecognizeWatchRouters(
 /* CaptureWatchPrints: Suppresses WTRACE messages */
 /**************************************************/
 static void CaptureWatchPrints(
-  void *theEnv,
+  Environment *theEnv,
   const char *logName,
   const char *str)
   {

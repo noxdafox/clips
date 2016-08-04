@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                  WATCH HEADER FILE                  */
    /*******************************************************/
@@ -40,6 +40,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_watch
@@ -57,8 +60,8 @@ struct watchItem
    const char *name;
    bool *flag;
    int code,priority;
-   bool (*accessFunc)(void *,int,bool,struct expr *);
-   bool (*printFunc)(void *,const char *,int,struct expr *);
+   bool (*accessFunc)(Environment *,int,bool,struct expr *);
+   bool (*printFunc)(Environment *,const char *,int,struct expr *);
    struct watchItem *next;
   };
 
@@ -69,21 +72,21 @@ struct watchData
 
 #define WatchData(theEnv) ((struct watchData *) GetEnvironmentData(theEnv,WATCH_DATA))
 
-   bool                           EnvWatch(void *,const char *);
-   bool                           EnvUnwatch(void *,const char *);
-   void                           InitializeWatchData(void *);   
-   bool                           EnvSetWatchItem(void *,const char *,bool,struct expr *);
-   int                            EnvGetWatchItem(void *,const char *);
-   bool                           AddWatchItem(void *,const char *,int,bool *,int,
-                                                      bool (*)(void *,int,bool,struct expr *),
-                                                      bool (*)(void *,const char *,int,struct expr *));
-   const char                    *GetNthWatchName(void *,int);
-   int                            GetNthWatchValue(void *,int);
-   void                           WatchCommand(void *);
-   void                           UnwatchCommand(void *);
-   void                           ListWatchItemsCommand(void *);
-   void                           WatchFunctionDefinitions(void *);
-   bool                           GetWatchItemCommand(void *);
+   bool                           EnvWatch(Environment *,const char *);
+   bool                           EnvUnwatch(Environment *,const char *);
+   void                           InitializeWatchData(Environment *);   
+   bool                           EnvSetWatchItem(Environment *,const char *,bool,struct expr *);
+   int                            EnvGetWatchItem(Environment *,const char *);
+   bool                           AddWatchItem(Environment *,const char *,int,bool *,int,
+                                                      bool (*)(Environment *,int,bool,struct expr *),
+                                                      bool (*)(Environment *,const char *,int,struct expr *));
+   const char                    *GetNthWatchName(Environment *,int);
+   int                            GetNthWatchValue(Environment *,int);
+   void                           WatchCommand(Environment *);
+   void                           UnwatchCommand(Environment *);
+   void                           ListWatchItemsCommand(Environment *);
+   void                           WatchFunctionDefinitions(Environment *);
+   bool                           GetWatchItemCommand(Environment *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 

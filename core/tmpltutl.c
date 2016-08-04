@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*            DEFTEMPLATE UTILITIES MODULE             */
    /*******************************************************/
@@ -45,6 +45,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -77,7 +80,7 @@
 /*   in its corresponding deftemplate.                  */
 /********************************************************/
 void InvalidDeftemplateSlotMessage(
-  void *theEnv,
+  Environment *theEnv,
   const char *slotName,
   const char *deftemplateName,
   bool printCR)
@@ -96,7 +99,7 @@ void InvalidDeftemplateSlotMessage(
 /*   value into a single field slot.                      */
 /**********************************************************/
 void SingleFieldSlotCardinalityError(
-  void *theEnv,
+  Environment *theEnv,
   const char *slotName)
   {
    PrintErrorID(theEnv,"TMPLTDEF",2,true);
@@ -110,9 +113,9 @@ void SingleFieldSlotCardinalityError(
 /*   being placed into a single field slot of a deftemplate fact.     */
 /**********************************************************************/
 void MultiIntoSingleFieldSlotError(
-  void *theEnv,
+  Environment *theEnv,
   struct templateSlot *theSlot,
-  struct deftemplate *theDeftemplate)
+  Deftemplate *theDeftemplate)
   {
    PrintErrorID(theEnv,"TMPLTFUN",2,true);
    EnvPrintRouter(theEnv,WERROR,"Attempted to assert a multifield value \n");
@@ -132,12 +135,12 @@ void MultiIntoSingleFieldSlotError(
 /*   deftemplate type, allowed-..., or range specifications.  */
 /**************************************************************/
 void CheckTemplateFact(
-  void *theEnv,
-  struct fact *theFact)
+  Environment *theEnv,
+  Fact *theFact)
   {
    struct field *sublist;
    int i;
-   struct deftemplate *theDeftemplate;
+   Deftemplate *theDeftemplate;
    struct templateSlot *slotPtr;
    DATA_OBJECT theData;
    char thePlace[20];
@@ -216,7 +219,7 @@ void CheckTemplateFact(
 /*   is performed statically (i.e. when the command is being parsed).  */
 /***********************************************************************/
 bool CheckRHSSlotTypes(
-  void *theEnv,
+  Environment *theEnv,
   struct expr *rhsSlots,
   struct templateSlot *slotPtr,
   const char *thePlace)
@@ -243,7 +246,7 @@ bool CheckRHSSlotTypes(
 /*   returns the nth slot of a deftemplate.              */
 /*********************************************************/
 struct templateSlot *GetNthSlot(
-  struct deftemplate *theDeftemplate,
+  Deftemplate *theDeftemplate,
   int position)
   {
    struct templateSlot *slotPtr;
@@ -257,7 +260,7 @@ struct templateSlot *GetNthSlot(
       i++;
      }
 
-   return(NULL);
+   return NULL;
   }
 
 /*******************************************************/
@@ -265,7 +268,7 @@ struct templateSlot *GetNthSlot(
 /*   slot in a deftemplate structure.                  */
 /*******************************************************/
 int FindSlotPosition(
-  struct deftemplate *theDeftemplate,
+  Deftemplate *theDeftemplate,
   SYMBOL_HN *name)
   {
    struct templateSlot *slotPtr;
@@ -288,15 +291,15 @@ int FindSlotPosition(
 /*   otherwise false.                                        */
 /*******************************************************************/
 void PrintTemplateFact(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
-  struct fact *theFact,
+  Fact *theFact,
   bool separateLines,
   bool ignoreDefaults)
   {
    struct field *sublist;
    int i;
-   struct deftemplate *theDeftemplate;
+   Deftemplate *theDeftemplate;
    struct templateSlot *slotPtr;
    DATA_OBJECT tempDO;
    bool slotPrinted = false;
@@ -414,20 +417,20 @@ void PrintTemplateFact(
 /* UpdateDeftemplateScope: Updates the scope flag of all the deftemplates. */
 /***************************************************************************/
 void UpdateDeftemplateScope(
-  void *theEnv)
+  Environment *theEnv)
   {
-   struct deftemplate *theDeftemplate;
+   Deftemplate *theDeftemplate;
    int moduleCount;
-   struct defmodule *theModule;
+   Defmodule *theModule;
    struct defmoduleItemHeader *theItem;
 
    /*==================================*/
    /* Loop through all of the modules. */
    /*==================================*/
 
-   for (theModule = (struct defmodule *) EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = (struct defmodule *) EnvGetNextDefmodule(theEnv,theModule))
+        theModule = EnvGetNextDefmodule(theEnv,theModule))
      {
       /*======================================================*/
       /* Loop through each of the deftemplates in the module. */
@@ -436,9 +439,9 @@ void UpdateDeftemplateScope(
       theItem = (struct defmoduleItemHeader *)
                 GetModuleItem(theEnv,theModule,DeftemplateData(theEnv)->DeftemplateModuleIndex);
 
-      for (theDeftemplate = (struct deftemplate *) theItem->firstItem;
+      for (theDeftemplate = (Deftemplate *) theItem->firstItem;
            theDeftemplate != NULL ;
-           theDeftemplate = (struct deftemplate *) EnvGetNextDeftemplate(theEnv,theDeftemplate))
+           theDeftemplate = EnvGetNextDeftemplate(theEnv,theDeftemplate))
         {
          /*=======================================*/
          /* If the deftemplate can be seen by the */
@@ -459,7 +462,7 @@ void UpdateDeftemplateScope(
 /* FindSlot: Finds a specified slot in a deftemplate structure. */
 /****************************************************************/
 struct templateSlot *FindSlot(
-  struct deftemplate *theDeftemplate,
+  Deftemplate *theDeftemplate,
   SYMBOL_HN *name,
   short *whichOne)
   {
@@ -476,7 +479,7 @@ struct templateSlot *FindSlot(
      }
 
    *whichOne = -1;
-   return(NULL);
+   return NULL;
   }
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
@@ -485,12 +488,12 @@ struct templateSlot *FindSlot(
 /* CreateImpliedDeftemplate: Creates an implied deftemplate */
 /*   and adds it to the list of deftemplates.               */
 /************************************************************/
-struct deftemplate *CreateImpliedDeftemplate(
-  void *theEnv,
+Deftemplate *CreateImpliedDeftemplate(
+  Environment *theEnv,
   SYMBOL_HN *deftemplateName,
   bool setFlag)
   {
-   struct deftemplate *newDeftemplate;
+   Deftemplate *newDeftemplate;
 
    newDeftemplate = get_struct(theEnv,deftemplate);
    newDeftemplate->header.name = deftemplateName;
@@ -509,7 +512,7 @@ struct deftemplate *CreateImpliedDeftemplate(
 
 #if DEBUGGING_FUNCTIONS
    if (EnvGetWatchItem(theEnv,"facts"))
-     { EnvSetDeftemplateWatch(theEnv,true,(void *) newDeftemplate); }
+     { EnvSetDeftemplateWatch(theEnv,true,newDeftemplate); }
 #endif
 
    newDeftemplate->header.whichModule = (struct defmoduleItemHeader *)

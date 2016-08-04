@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*          PROCEDURAL FUNCTIONS HEADER FILE           */
    /*******************************************************/
@@ -38,6 +38,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_prcdrfun
@@ -66,18 +69,18 @@ struct procedureFunctionData
 
 #define ProcedureFunctionData(theEnv) ((struct procedureFunctionData *) GetEnvironmentData(theEnv,PRCDRFUN_DATA))
 
-   void                           ProceduralFunctionDefinitions(void *);
-   void                           WhileFunction(void *,DATA_OBJECT_PTR);
-   void                           LoopForCountFunction(void *,DATA_OBJECT_PTR);
-   long long                      GetLoopCount(void *);
-   void                           IfFunction(void *,DATA_OBJECT_PTR);
-   void                           BindFunction(void *,DATA_OBJECT_PTR);
-   void                           PrognFunction(void *,DATA_OBJECT_PTR);
-   void                           ReturnFunction(void *,DATA_OBJECT_PTR);
-   void                           BreakFunction(void *);
-   void                           SwitchFunction(void *,DATA_OBJECT_PTR);
-   bool                           GetBoundVariable(void *,struct dataObject *,struct symbolHashNode *);
-   void                           FlushBindList(void *);
+   void                           ProceduralFunctionDefinitions(Environment *);
+   void                           WhileFunction(Environment *,DATA_OBJECT_PTR);
+   void                           LoopForCountFunction(Environment *,DATA_OBJECT_PTR);
+   long long                      GetLoopCount(Environment *);
+   void                           IfFunction(Environment *,DATA_OBJECT_PTR);
+   void                           BindFunction(Environment *,DATA_OBJECT_PTR);
+   void                           PrognFunction(Environment *,DATA_OBJECT_PTR);
+   void                           ReturnFunction(Environment *,DATA_OBJECT_PTR);
+   void                           BreakFunction(Environment *);
+   void                           SwitchFunction(Environment *,DATA_OBJECT_PTR);
+   bool                           GetBoundVariable(Environment *,struct dataObject *,struct symbolHashNode *);
+   void                           FlushBindList(Environment *);
 
 #endif /* _H_prcdrfun */
 

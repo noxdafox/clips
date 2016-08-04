@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*           SYMBOL CONSTRUCT COMPILER MODULE          */
    /*******************************************************/
@@ -36,6 +36,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -65,12 +68,12 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static int                         SymbolHashNodesToCode(void *,const char *,const char *,char *,int);
-   static int                         BitMapHashNodesToCode(void *,const char *,const char *,char *,int);
-   static int                         BitMapValuesToCode(void *,const char *,const char *, char *,int);
-   static int                         FloatHashNodesToCode(void *,const char *,const char *,char *,int);
-   static int                         IntegerHashNodesToCode(void *,const char *,const char *,char *,int);
-   static int                         HashTablesToCode(void *,const char *,const char *,char *);
+   static int                         SymbolHashNodesToCode(Environment *,const char *,const char *,char *,int);
+   static int                         BitMapHashNodesToCode(Environment *,const char *,const char *,char *,int);
+   static int                         BitMapValuesToCode(Environment *,const char *,const char *, char *,int);
+   static int                         FloatHashNodesToCode(Environment *,const char *,const char *,char *,int);
+   static int                         IntegerHashNodesToCode(Environment *,const char *,const char *,char *,int);
+   static int                         HashTablesToCode(Environment *,const char *,const char *,char *);
    static void                        PrintCString(FILE *,const char *);
 
 /**************************************************************/
@@ -78,7 +81,7 @@
 /*  used by the symbol, integer, float, and bit map tables.   */
 /**************************************************************/
 void AtomicValuesToCode(
-  void *theEnv,
+  Environment *theEnv,
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer)
@@ -102,7 +105,7 @@ void AtomicValuesToCode(
 /*   created using the constructs-to-c function.     */
 /*****************************************************/
 static int SymbolHashNodesToCode(
-  void *theEnv,
+  Environment *theEnv,
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
@@ -205,7 +208,7 @@ static int SymbolHashNodesToCode(
 /*   created using the constructs-to-c function.      */
 /******************************************************/
 static int BitMapHashNodesToCode(
-  void *theEnv,
+  Environment *theEnv,
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
@@ -320,7 +323,7 @@ static int BitMapHashNodesToCode(
 /*   the constructs-to-c function.                   */
 /*****************************************************/
 static int BitMapValuesToCode(
-  void *theEnv,
+  Environment *theEnv,
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
@@ -434,7 +437,7 @@ static int BitMapValuesToCode(
 /*   created using the constructs-to-c function.    */
 /****************************************************/
 static int FloatHashNodesToCode(
-  void *theEnv,
+  Environment *theEnv,
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
@@ -537,7 +540,7 @@ static int FloatHashNodesToCode(
 /*   created using the constructs-to-c function.      */
 /******************************************************/
 static int IntegerHashNodesToCode(
-  void *theEnv,
+  Environment *theEnv,
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
@@ -640,7 +643,7 @@ static int IntegerHashNodesToCode(
 /*   created using the constructs-to-c function.                */
 /****************************************************************/
 static int HashTablesToCode(
-  void *theEnv,
+  Environment *theEnv,
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer)
@@ -755,7 +758,7 @@ static int HashTablesToCode(
 /*   strings and instance names).                    */
 /*****************************************************/
 void PrintSymbolReference(
-  void *theEnv,
+  Environment *theEnv,
   FILE *theFile,
   struct symbolHashNode *theSymbol)
   {
@@ -771,7 +774,7 @@ void PrintSymbolReference(
 /*   address to the specified float.                */
 /****************************************************/
 void PrintFloatReference(
-  void *theEnv,
+  Environment *theEnv,
   FILE *theFile,
   struct floatHashNode *theFloat)
   {
@@ -786,7 +789,7 @@ void PrintFloatReference(
 /*   address to the specified integer.                */
 /******************************************************/
 void PrintIntegerReference(
-  void *theEnv,
+  Environment *theEnv,
   FILE *theFile,
   struct integerHashNode *theInteger)
   {
@@ -801,7 +804,7 @@ void PrintIntegerReference(
 /*   address to the specified bit map.               */
 /*****************************************************/
 void PrintBitMapReference(
-  void *theEnv,
+  Environment *theEnv,
   FILE *theFile,
   struct bitMapHashNode *theBitMap)
   {

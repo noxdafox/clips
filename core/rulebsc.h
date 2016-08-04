@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*         DEFRULE BASIC COMMANDS HEADER FILE          */
    /*******************************************************/
@@ -50,6 +50,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_rulebsc
@@ -60,36 +63,36 @@
 
 #include "evaluatn.h"
 
-   void                           DefruleBasicCommands(void *);
-   void                           UndefruleCommand(void *);
-   bool                           EnvUndefrule(void *,void *);
-   void                           GetDefruleListFunction(void *,DATA_OBJECT_PTR);
-   void                           EnvGetDefruleList(void *,DATA_OBJECT_PTR,void *);
-   void                          *DefruleModuleFunction(void *);
+   void                           DefruleBasicCommands(Environment *);
+   void                           UndefruleCommand(Environment *);
+   bool                           EnvUndefrule(Environment *,Defrule *);
+   void                           GetDefruleListFunction(Environment *,DATA_OBJECT_PTR);
+   void                           EnvGetDefruleList(Environment *,DATA_OBJECT_PTR,Defmodule *);
+   void                          *DefruleModuleFunction(Environment *);
 #if DEBUGGING_FUNCTIONS
-   void                           PPDefruleCommand(void *);
-   int                            PPDefrule(void *,const char *,const char *);
-   void                           ListDefrulesCommand(void *);
-   void                           EnvListDefrules(void *,const char *,void *);
-   bool                           EnvGetDefruleWatchFirings(void *,void *);
-   bool                           EnvGetDefruleWatchActivations(void *,void *);
-   void                           EnvSetDefruleWatchFirings(void *,bool,void *);
-   void                           EnvSetDefruleWatchActivations(void *,bool,void *);
-   bool                           DefruleWatchAccess(void *,int,bool,struct expr *);
-   bool                           DefruleWatchPrint(void *,const char *,int,struct expr *);
+   void                           PPDefruleCommand(Environment *);
+   bool                           PPDefrule(Environment *,const char *,const char *);
+   void                           ListDefrulesCommand(Environment *);
+   void                           EnvListDefrules(Environment *,const char *,Defmodule *);
+   bool                           EnvGetDefruleWatchFirings(Environment *,Defrule *);
+   bool                           EnvGetDefruleWatchActivations(Environment *,Defrule *);
+   void                           EnvSetDefruleWatchFirings(Environment *,bool,Defrule *);
+   void                           EnvSetDefruleWatchActivations(Environment *,bool,Defrule *);
+   bool                           DefruleWatchAccess(Environment *,int,bool,struct expr *);
+   bool                           DefruleWatchPrint(Environment *,const char *,int,struct expr *);
 #endif
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-   void                           GetDefruleList(DATA_OBJECT_PTR,void *);
+   void                           GetDefruleList(DATA_OBJECT_PTR,Defmodule *);
 #if DEBUGGING_FUNCTIONS
-   bool                           GetDefruleWatchActivations(void *);
-   bool                           GetDefruleWatchFirings(void *);
-   void                           ListDefrules(const char *,void *);
-   void                           SetDefruleWatchActivations(bool,void *);
-   void                           SetDefruleWatchFirings(bool,void *);
+   bool                           GetDefruleWatchActivations(Defrule *);
+   bool                           GetDefruleWatchFirings(Defrule *);
+   void                           ListDefrules(const char *,Defmodule *);
+   void                           SetDefruleWatchActivations(bool,Defrule *);
+   void                           SetDefruleWatchFirings(bool,Defrule *);
 #endif
-   bool                           Undefrule(void *);
+   bool                           Undefrule(Defrule *);
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/04/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*             CONSTRAINT CHECKING MODULE              */
    /*******************************************************/
@@ -43,6 +43,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -69,11 +72,11 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static bool                    CheckRangeAgainstCardinalityConstraint(void *,int,int,CONSTRAINT_RECORD *);
+   static bool                    CheckRangeAgainstCardinalityConstraint(Environment *,int,int,CONSTRAINT_RECORD *);
    static bool                    CheckFunctionReturnType(int,CONSTRAINT_RECORD *);
    static bool                    CheckTypeConstraint(int,CONSTRAINT_RECORD *);
-   static bool                    CheckRangeConstraint(void *,int,void *,CONSTRAINT_RECORD *);
-   static void                    PrintRange(void *,const char *,CONSTRAINT_RECORD *);
+   static bool                    CheckRangeConstraint(Environment *,int,void *,CONSTRAINT_RECORD *);
+   static void                    PrintRange(Environment *,const char *,CONSTRAINT_RECORD *);
 
 /******************************************************/
 /* CheckFunctionReturnType: Checks a functions return */
@@ -208,7 +211,7 @@ static bool CheckTypeConstraint(
 /*   for a constraint record.                           */
 /********************************************************/
 bool CheckCardinalityConstraint(
-  void *theEnv,
+  Environment *theEnv,
   long number,
   CONSTRAINT_RECORD *constraints)
   {
@@ -262,7 +265,7 @@ bool CheckCardinalityConstraint(
 /*   cardinality, otherwise false is returned.                   */
 /*****************************************************************/
 static bool CheckRangeAgainstCardinalityConstraint(
-  void *theEnv,
+  Environment *theEnv,
   int min,
   int max,
   CONSTRAINT_RECORD *constraints)
@@ -405,15 +408,15 @@ bool CheckAllowedValuesConstraint(
 /*   false is returned.                                               */
 /**********************************************************************/
 bool CheckAllowedClassesConstraint(
-  void *theEnv,
+  Environment *theEnv,
   int type,
   void *vPtr,
   CONSTRAINT_RECORD *constraints)
   {
 #if OBJECT_SYSTEM
    struct expr *tmpPtr;
-   INSTANCE_TYPE *ins;
-   DEFCLASS *insClass, *cmpClass;
+   Instance *ins;
+   Defclass *insClass, *cmpClass;
 
    /*=========================================*/
    /* If the constraint record is NULL, there */
@@ -444,7 +447,7 @@ bool CheckAllowedClassesConstraint(
    /*=============================================*/
    
    if (type == INSTANCE_ADDRESS)
-     { ins = (INSTANCE_TYPE *) vPtr; }
+     { ins = (Instance *) vPtr; }
    else
      { ins = FindInstanceBySymbol(theEnv,(SYMBOL_HN *) vPtr); }
     
@@ -456,13 +459,13 @@ bool CheckAllowedClassesConstraint(
    /* belongs to one of the allowed classes in the list.   */
    /*======================================================*/
 
-   insClass = (DEFCLASS *) EnvGetInstanceClass(theEnv,ins);
+   insClass = EnvGetInstanceClass(theEnv,ins);
    for (tmpPtr = constraints->classList;
         tmpPtr != NULL;
         tmpPtr = tmpPtr->nextArg)
      {
-      //cmpClass = (DEFCLASS *) EnvFindDefclass(theEnv,ValueToString(tmpPtr->value));
-      cmpClass = (DEFCLASS *) LookupDefclassByMdlOrScope(theEnv,ValueToString(tmpPtr->value));
+      //cmpClass = EnvFindDefclass(theEnv,ValueToString(tmpPtr->value));
+      cmpClass = LookupDefclassByMdlOrScope(theEnv,ValueToString(tmpPtr->value));
       if (cmpClass == NULL) continue;
       if (cmpClass == insClass) return true;
       if (EnvSubclassP(theEnv,insClass,cmpClass)) return true;
@@ -492,7 +495,7 @@ bool CheckAllowedClassesConstraint(
 /*   satisfies the range constraint of a constraint record.  */
 /*************************************************************/
 static bool CheckRangeConstraint(
-  void *theEnv,
+  Environment *theEnv,
   int type,
   void *vPtr,
   CONSTRAINT_RECORD *constraints)
@@ -552,7 +555,7 @@ static bool CheckRangeConstraint(
 /*   error message for constraint violations.   */
 /************************************************/
 void ConstraintViolationErrorMessage(
-  void *theEnv,
+  Environment *theEnv,
   const char *theWhat,
   const char *thePlace,
   bool command,
@@ -655,7 +658,7 @@ void ConstraintViolationErrorMessage(
 /*   For example, 8 to +00 (eight to positive infinity).            */
 /********************************************************************/
 static void PrintRange(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
   CONSTRAINT_RECORD *theConstraint)
   {
@@ -674,7 +677,7 @@ static void PrintRange(
 /*   the data object satisfies the constraint record.        */
 /*************************************************************/
 int ConstraintCheckDataObject(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *theData,
   CONSTRAINT_RECORD *theConstraints)
   {
@@ -713,7 +716,7 @@ int ConstraintCheckDataObject(
 /*   determines if the value satisfies the constraint record.   */
 /****************************************************************/
 int ConstraintCheckValue(
-  void *theEnv,
+  Environment *theEnv,
   int theType,
   void *theValue,
   CONSTRAINT_RECORD *theConstraints)
@@ -744,7 +747,7 @@ int ConstraintCheckValue(
 /* links for constraint conflicts (argList is not followed).        */
 /********************************************************************/
 int ConstraintCheckExpressionChain(
-  void *theEnv,
+  Environment *theEnv,
   struct expr *theExpression,
   CONSTRAINT_RECORD *theConstraints)
   {
@@ -799,7 +802,7 @@ int ConstraintCheckExpressionChain(
 /*   conflicts are found, otherwise non-zero.      */
 /***************************************************/
 int ConstraintCheckExpression(
-  void *theEnv,
+  Environment *theEnv,
   struct expr *theExpression,
   CONSTRAINT_RECORD *theConstraints)
   {

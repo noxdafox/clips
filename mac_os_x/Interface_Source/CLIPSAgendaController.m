@@ -260,7 +260,7 @@
 /*********/
 - (IBAction) halt: (id) sender
   {
-   EnvSetHaltRules([environment environment],TRUE);
+   EnvSetHaltRules([environment environment],true);
   }
 
 /*********************/    
@@ -270,8 +270,8 @@
   {
    /* TBD Need to abort waitForChar */
    /* TBD Need to abort batch */
-   SetHaltCommandLoopBatch([environment environment],TRUE);
-   EnvSetHaltExecution([environment environment],TRUE);
+   SetHaltCommandLoopBatch([environment environment],true);
+   EnvSetHaltExecution([environment environment],true);
   }
  
 /*%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -358,7 +358,7 @@
      { [theDelegate setValue: nil forKey: @"constructInspectorText"]; }
    else
      {   
-      void *theEnvironment = [environment environment];
+      Environment *theEnvironment = [environment environment];
       NSArray *theArray = [focusStackController valueForKeyPath: @"selection.agenda"];
          
       struct activation *theActivation = (struct activation *) [[theArray objectAtIndex: theRow] activation];

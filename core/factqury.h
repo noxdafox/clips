@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -36,6 +36,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_factqury
@@ -50,7 +53,7 @@
 
 typedef struct query_template
   {
-   struct deftemplate *templatePtr;
+   Deftemplate *templatePtr;
    struct query_template *chain, *nxt;
   } QUERY_TEMPLATE;
 
@@ -89,15 +92,15 @@ struct factQueryData
 
 #define QUERY_DELIMETER_STRING     "(QDS)"
 
-   void                           SetupFactQuery(void *);
-   void                           GetQueryFact(void *,DATA_OBJECT *);
-   void                           GetQueryFactSlot(void *,DATA_OBJECT *);
-   bool                           AnyFacts(void *);
-   void                           QueryFindFact(void *,DATA_OBJECT *);
-   void                           QueryFindAllFacts(void *,DATA_OBJECT *);
-   void                           QueryDoForFact(void *,DATA_OBJECT *);
-   void                           QueryDoForAllFacts(void *,DATA_OBJECT *);
-   void                           DelayedQueryDoForAllFacts(void *,DATA_OBJECT *);
+   void                           SetupFactQuery(Environment *);
+   void                           GetQueryFact(Environment *,DATA_OBJECT *);
+   void                           GetQueryFactSlot(Environment *,DATA_OBJECT *);
+   bool                           AnyFacts(Environment *);
+   void                           QueryFindFact(Environment *,DATA_OBJECT *);
+   void                           QueryFindAllFacts(Environment *,DATA_OBJECT *);
+   void                           QueryDoForFact(Environment *,DATA_OBJECT *);
+   void                           QueryDoForAllFacts(Environment *,DATA_OBJECT *);
+   void                           DelayedQueryDoForAllFacts(Environment *,DATA_OBJECT *);
 
 #endif /* FACT_SET_QUERIES */
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -33,6 +33,9 @@
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -95,23 +98,21 @@ typedef struct bsaveObjectAlphaNode
 #define ObjectPatternPointer(i) ((i == -1L) ? NULL : (OBJECT_PATTERN_NODE *) &ObjectReteBinaryData(theEnv)->PatternArray[i])
 #define ObjectAlphaPointer(i)   ((i == -1L) ? NULL : (OBJECT_ALPHA_NODE *) &ObjectReteBinaryData(theEnv)->AlphaArray[i])
 
-/* =========================================
-   *****************************************
-      INTERNALLY VISIBLE FUNCTION HEADERS
-   =========================================
-   ***************************************** */
+/***************************************/
+/* LOCAL INTERNAL FUNCTION DEFINITIONS */
+/***************************************/
 
 #if BLOAD_AND_BSAVE
-static void BsaveObjectPatternsFind(void *);
-static void BsaveStorageObjectPatterns(void *,FILE *);
-static void BsaveObjectPatterns(void *,FILE *);
+   static void                    BsaveObjectPatternsFind(Environment *);
+   static void                    BsaveStorageObjectPatterns(Environment *,FILE *);
+   static void                    BsaveObjectPatterns(Environment *,FILE *);
 #endif
-static void BloadStorageObjectPatterns(void *);
-static void BloadObjectPatterns(void *);
-static void UpdateAlpha(void *,void *,long);
-static void UpdatePattern(void *,void *,long);
-static void ClearBloadObjectPatterns(void *);
-static void DeallocateObjectReteBinaryData(void *);
+   static void                    BloadStorageObjectPatterns(Environment *);
+   static void                    BloadObjectPatterns(Environment *);
+   static void                    UpdateAlpha(Environment *,void *,long);
+   static void                    UpdatePattern(Environment *,void *,long);
+   static void                    ClearBloadObjectPatterns(Environment *);
+   static void                    DeallocateObjectReteBinaryData(Environment *);
 
 /* =========================================
    *****************************************
@@ -130,7 +131,7 @@ static void DeallocateObjectReteBinaryData(void *);
   NOTES        : None
  ***********************************************************/
 void SetupObjectPatternsBload(
-  void *theEnv)
+  Environment *theEnv)
   {
    AllocateEnvironmentData(theEnv,OBJECTRETEBIN_DATA,sizeof(struct objectReteBinaryData),DeallocateObjectReteBinaryData);
 
@@ -152,7 +153,7 @@ void SetupObjectPatternsBload(
 /*    data for object rete binary functionality.           */
 /***********************************************************/
 static void DeallocateObjectReteBinaryData(
-  void *theEnv)
+  Environment *theEnv)
   {
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE) && (! RUN_TIME)
    size_t space;
@@ -162,10 +163,10 @@ static void DeallocateObjectReteBinaryData(
      { DestroyAlphaMemory(theEnv,&ObjectReteBinaryData(theEnv)->AlphaArray[i].header,false); }
 
    space = ObjectReteBinaryData(theEnv)->AlphaNodeCount * sizeof(struct objectAlphaNode);
-   if (space != 0) genfree(theEnv,(void *) ObjectReteBinaryData(theEnv)->AlphaArray,space);
+   if (space != 0) genfree(theEnv,ObjectReteBinaryData(theEnv)->AlphaArray,space);
 
    space = ObjectReteBinaryData(theEnv)->PatternNodeCount * sizeof(struct objectPatternNode);
-   if (space != 0) genfree(theEnv,(void *) ObjectReteBinaryData(theEnv)->PatternArray,space);
+   if (space != 0) genfree(theEnv,ObjectReteBinaryData(theEnv)->PatternArray,space);
 
 #endif
   }
@@ -191,7 +192,7 @@ static void DeallocateObjectReteBinaryData(
   NOTES        : None
  ***************************************************/
 static void BsaveObjectPatternsFind(
-  void *theEnv)
+  Environment *theEnv)
   {
    OBJECT_ALPHA_NODE *alphaPtr;
    OBJECT_PATTERN_NODE *patternPtr;
@@ -242,7 +243,7 @@ static void BsaveObjectPatternsFind(
   NOTES        : None
  ****************************************************/
 static void BsaveStorageObjectPatterns(
-  void *theEnv,
+  Environment *theEnv,
   FILE *fp)
   {
    size_t space;
@@ -265,7 +266,7 @@ static void BsaveStorageObjectPatterns(
                  alignment of structues on bload
  ***************************************************/
 static void BsaveObjectPatterns(
-  void *theEnv,
+  Environment *theEnv,
   FILE *fp)
   {
    size_t space;
@@ -352,13 +353,13 @@ static void BsaveObjectPatterns(
   NOTES        : None
  ***************************************************/
 static void BloadStorageObjectPatterns(
-  void *theEnv)
+  Environment *theEnv)
   {
    size_t space;
    long counts[2];
 
-   GenReadBinary(theEnv,(void *) &space,sizeof(size_t));
-   GenReadBinary(theEnv,(void *) counts,space);
+   GenReadBinary(theEnv,&space,sizeof(size_t));
+   GenReadBinary(theEnv,counts,space);
    ObjectReteBinaryData(theEnv)->AlphaNodeCount = counts[0];
    ObjectReteBinaryData(theEnv)->PatternNodeCount = counts[1];
 
@@ -389,12 +390,12 @@ static void BloadStorageObjectPatterns(
   NOTES        : Assumes storage allocated previously
  ****************************************************/
 static void BloadObjectPatterns(
-  void *theEnv)
+  Environment *theEnv)
   {
    size_t space;
    long i;
 
-   GenReadBinary(theEnv,(void *) &space,sizeof(size_t));
+   GenReadBinary(theEnv,&space,sizeof(size_t));
    if (space == 0L)
      return;
 
@@ -437,7 +438,7 @@ static void BloadObjectPatterns(
   NOTES        : None
  ***************************************************/
 static void UpdateAlpha(
-  void *theEnv,
+  Environment *theEnv,
   void *buf,
   long obji)
   {
@@ -478,7 +479,7 @@ static void UpdateAlpha(
   NOTES        : None
  ***************************************************/
 static void UpdatePattern(
-  void *theEnv,
+  Environment *theEnv,
   void *buf,
   long obji)
   {
@@ -516,10 +517,10 @@ static void UpdatePattern(
   NOTES        : None
  ***************************************************/
 static void ClearBloadObjectPatterns(
-  void *theEnv)
+  Environment *theEnv)
   {
    size_t space;
-   register long i;
+   long i;
 
    for (i = 0; i < ObjectReteBinaryData(theEnv)->PatternNodeCount; i++)
      {
@@ -548,11 +549,11 @@ static void ClearBloadObjectPatterns(
    if (ObjectReteBinaryData(theEnv)->AlphaNodeCount != 0L)
      {
       space = (ObjectReteBinaryData(theEnv)->AlphaNodeCount * sizeof(OBJECT_ALPHA_NODE));
-      genfree(theEnv,(void *) ObjectReteBinaryData(theEnv)->AlphaArray,space);
+      genfree(theEnv,ObjectReteBinaryData(theEnv)->AlphaArray,space);
       ObjectReteBinaryData(theEnv)->AlphaArray = NULL;
       ObjectReteBinaryData(theEnv)->AlphaNodeCount = 0;
       space = (ObjectReteBinaryData(theEnv)->PatternNodeCount * sizeof(OBJECT_PATTERN_NODE));
-      genfree(theEnv,(void *) ObjectReteBinaryData(theEnv)->PatternArray,space);
+      genfree(theEnv,ObjectReteBinaryData(theEnv)->PatternArray,space);
       ObjectReteBinaryData(theEnv)->PatternArray = NULL;
       ObjectReteBinaryData(theEnv)->PatternNodeCount = 0;
      }

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*                 FACT MANAGER MODULE                 */
    /*******************************************************/
@@ -68,6 +68,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -102,10 +105,10 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    ResetFacts(void *);
-   static bool                    ClearFactsReady(void *);
-   static void                    RemoveGarbageFacts(void *);
-   static void                    DeallocateFactData(void *);
+   static void                    ResetFacts(Environment *);
+   static bool                    ClearFactsReady(Environment *);
+   static void                    RemoveGarbageFacts(Environment *);
+   static void                    DeallocateFactData(Environment *);
 
 /**************************************************************/
 /* InitializeFacts: Initializes the fact data representation. */
@@ -113,26 +116,28 @@
 /*   deftemplate constructs are available.                    */
 /**************************************************************/
 void InitializeFacts(
-  void *theEnv)
+  Environment *theEnv)
   {
-   struct patternEntityRecord factInfo = { { "FACT_ADDRESS", FACT_ADDRESS,1,0,0,
-                                                     PrintFactIdentifier,
-                                                     PrintFactIdentifierInLongForm,
-                                                     EnvRetract,
-                                                     NULL,
-                                                     EnvGetNextFact,
-                                                     EnvDecrementFactCount,
-                                                     EnvIncrementFactCount,NULL,NULL,NULL,NULL,NULL
-                                                   },
-                                                   DecrementFactBasisCount,
-                                                   IncrementFactBasisCount,
-                                                   MatchFactFunction,
-                                                   NULL,
-                                                   FactIsDeleted
-                                                 };
-                                                 
-   struct fact dummyFact = { { NULL, NULL, 0, 0L }, NULL, NULL, -1L, 0, 1,
-                                  NULL, NULL, NULL, NULL, { 1, 0UL, NULL, { { 0, NULL } } } };
+   struct patternEntityRecord factInfo =
+      { { "FACT_ADDRESS", FACT_ADDRESS,1,0,0,
+          (EntityPrintFunction *) PrintFactIdentifier,
+          (EntityPrintFunction *) PrintFactIdentifierInLongForm,
+          (bool (*)(void *,void *)) EnvRetract,
+          NULL,
+          (void *(*)(void *,void *)) EnvGetNextFact,
+          (EntityBusyCountFunction *) EnvDecrementFactCount,
+          (EntityBusyCountFunction *) EnvIncrementFactCount,
+          NULL,NULL,NULL,NULL,NULL
+        },
+        (void (*)(void *,void *)) DecrementFactBasisCount,
+        (void (*)(void *,void *)) IncrementFactBasisCount,
+        (void (*)(void *,void *)) MatchFactFunction,
+        NULL,
+        (bool (*)(void *,void *)) FactIsDeleted
+      };
+   
+   Fact dummyFact = { { NULL, NULL, 0, 0L }, NULL, NULL, -1L, 0, 1,
+                      NULL, NULL, NULL, NULL, { 1, 0UL, NULL, { { 0, NULL } } } };
 
    AllocateEnvironmentData(theEnv,FACTS_DATA,sizeof(struct factsData),DeallocateFactData);
 
@@ -175,7 +180,8 @@ void InitializeFacts(
    /*==================================*/
 
 #if DEBUGGING_FUNCTIONS
-   AddWatchItem(theEnv,"facts",0,&FactData(theEnv)->WatchFacts,80,DeftemplateWatchAccess,DeftemplateWatchPrint);
+   AddWatchItem(theEnv,"facts",0,&FactData(theEnv)->WatchFacts,80,
+                DeftemplateWatchAccess,DeftemplateWatchPrint);
 #endif
 
    /*=========================================*/
@@ -217,7 +223,7 @@ void InitializeFacts(
 /*   environment data for facts.   */
 /***********************************/
 static void DeallocateFactData(
-  void *theEnv)
+  Environment *theEnv)
   {
    struct factHashEntry *tmpFHEPtr, *nextFHEPtr;
    struct fact *tmpFactPtr, *nextFactPtr;
@@ -277,9 +283,9 @@ static void DeallocateFactData(
 /*   fact preceded by its fact identifier.    */
 /**********************************************/
 void PrintFactWithIdentifier(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
-  struct fact *factPtr)
+  Fact *factPtr)
   {
    char printSpace[20];
 
@@ -292,13 +298,13 @@ void PrintFactWithIdentifier(
 /* PrintFactIdentifier: Displays a fact identifier. */
 /****************************************************/
 void PrintFactIdentifier(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
-  void *factPtr)
+  Fact *factPtr)
   {
    char printSpace[20];
 
-   gensprintf(printSpace,"f-%lld",((struct fact *) factPtr)->factIndex);
+   gensprintf(printSpace,"f-%lld",factPtr->factIndex);
    EnvPrintRouter(theEnv,logicalName,printSpace);
   }
 
@@ -307,15 +313,15 @@ void PrintFactIdentifier(
 /*   fact identifier in a longer format.    */
 /********************************************/
 void PrintFactIdentifierInLongForm(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
-  void *factPtr)
+  Fact *factPtr)
   {
    if (PrintUtilityData(theEnv)->AddressesToStrings) EnvPrintRouter(theEnv,logicalName,"\"");
-   if (factPtr != (void *) &FactData(theEnv)->DummyFact)
+   if (factPtr != &FactData(theEnv)->DummyFact)
      {
       EnvPrintRouter(theEnv,logicalName,"<Fact-");
-      PrintLongInteger(theEnv,logicalName,((struct fact *) factPtr)->factIndex);
+      PrintLongInteger(theEnv,logicalName,factPtr->factIndex);
       EnvPrintRouter(theEnv,logicalName,">");
      }
    else
@@ -329,10 +335,9 @@ void PrintFactIdentifierInLongForm(
 /*   partial match busy count of a fact    */
 /*******************************************/
 void DecrementFactBasisCount(
-  void *theEnv,
-  void *vFactPtr)
+  Environment *theEnv,
+  Fact *factPtr)
   {
-   struct fact *factPtr = (struct fact *) vFactPtr;
    struct multifield *theSegment;
    int i;
 
@@ -341,9 +346,7 @@ void DecrementFactBasisCount(
    theSegment = &factPtr->theProposition;
 
    for (i = 0 ; i < (int) theSegment->multifieldLength ; i++)
-     {
-      AtomDeinstall(theEnv,theSegment->theFields[i].type,theSegment->theFields[i].value);
-     }
+     { AtomDeinstall(theEnv,theSegment->theFields[i].type,theSegment->theFields[i].value); }
   }
 
 /*******************************************/
@@ -351,10 +354,9 @@ void DecrementFactBasisCount(
 /*   partial match busy count of a fact.   */
 /*******************************************/
 void IncrementFactBasisCount(
-  void *theEnv,
-  void *vFactPtr)
+  Environment *theEnv,
+  Fact *factPtr)
   {
-   struct fact *factPtr = (struct fact *) vFactPtr;
    struct multifield *theSegment;
    int i;
 
@@ -372,14 +374,14 @@ void IncrementFactBasisCount(
 /* FactIsDeleted: */
 /******************/
 bool FactIsDeleted(
-  void *theEnv,
-  void *theFact)
+  Environment *theEnv,
+  Fact *theFact)
   {
 #if MAC_XCD
 #pragma unused(theEnv)
 #endif
 
-   return(((struct fact *) theFact)->garbage);
+   return theFact->garbage;
   }
 
 /**************************************************/
@@ -388,9 +390,9 @@ bool FactIsDeleted(
 /*   all of the fact's slots or fields.           */
 /**************************************************/
 void PrintFact(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
-  struct fact *factPtr,
+  Fact *factPtr,
   bool separateLines,
   bool ignoreDefaults)
   {
@@ -432,11 +434,9 @@ void PrintFact(
 /*   the appropriate fact pattern network.   */
 /*********************************************/
 void MatchFactFunction(
-  void *theEnv,
-  void *vTheFact)
+  Environment *theEnv,
+  Fact *theFact)
   {
-   struct fact *theFact = (struct fact *) vTheFact;
-
    FactPatternMatch(theEnv,theFact,theFact->whichDeftemplate->patternNetwork,0,NULL,NULL);
   }
 
@@ -444,11 +444,10 @@ void MatchFactFunction(
 /* EnvRetract: C access routine for the retract command. */
 /*********************************************************/
 bool EnvRetract(
-  void *theEnv,
-  void *vTheFact)
+  Environment *theEnv,
+  Fact *theFact)
   {
-   struct fact *theFact = (struct fact *) vTheFact;
-   struct deftemplate *theTemplate = theFact->whichDeftemplate;
+   Deftemplate *theTemplate = theFact->whichDeftemplate;
    struct callFunctionItemWithArg *theRetractFunction;
 
    /*===========================================*/
@@ -644,7 +643,7 @@ bool EnvRetract(
 /*   and the facts may be in use in other data structures.         */
 /*******************************************************************/
 static void RemoveGarbageFacts(
-  void *theEnv)
+  Environment *theEnv)
   {
    struct fact *factPtr, *nextPtr, *lastPtr = NULL;
 
@@ -669,14 +668,13 @@ static void RemoveGarbageFacts(
 /********************************************************/
 /* EnvAssert: C access routine for the assert function. */
 /********************************************************/
-void *EnvAssert(
-  void *theEnv,
-  void *vTheFact)
+Fact *EnvAssert(
+  Environment *theEnv,
+  Fact *theFact)
   {
    unsigned long hashValue;
    unsigned long length, i;
    struct field *theField;
-   struct fact *theFact = (struct fact *) vTheFact;
    bool duplicate;
    struct callFunctionItemWithArg *theAssertFunction;
 
@@ -690,7 +688,7 @@ void *EnvAssert(
       ReturnFact(theEnv,theFact);
       PrintErrorID(theEnv,"FACTMNGR",2,true);
       EnvPrintRouter(theEnv,WERROR,"Facts may not be asserted during pattern-matching\n");
-      return(NULL);
+      return NULL;
      }
 
    /*=============================================================*/
@@ -705,7 +703,7 @@ void *EnvAssert(
       if (theField[i].type == RVOID)
         {
          theField[i].type = SYMBOL;
-         theField[i].value = (void *) EnvAddSymbol(theEnv,"nil");
+         theField[i].value = EnvAddSymbol(theEnv,"nil");
         }
      }
 
@@ -715,7 +713,7 @@ void *EnvAssert(
    /*========================================================*/
 
    hashValue = HandleFactDuplication(theEnv,theFact,&duplicate);
-   if (duplicate) return(NULL);
+   if (duplicate) return NULL;
 
    /*==========================================================*/
    /* If necessary, add logical dependency links between the   */
@@ -725,7 +723,7 @@ void *EnvAssert(
    if (AddLogicalDependencies(theEnv,(struct patternEntity *) theFact,false) == false)
      {
       ReturnFact(theEnv,theFact);
-      return(NULL);
+      return NULL;
      }
 
    /*======================================*/
@@ -863,7 +861,7 @@ void *EnvAssert(
    /* Return a pointer to the fact. */
    /*===============================*/
 
-   return((void *) theFact);
+   return theFact;
   }
 
 /**************************************/
@@ -871,22 +869,21 @@ void *EnvAssert(
 /*   fact-list and removes each fact. */
 /**************************************/
 void RemoveAllFacts(
-  void *theEnv)
+  Environment *theEnv)
   {
    while (FactData(theEnv)->FactList != NULL)
-     { EnvRetract(theEnv,(void *) FactData(theEnv)->FactList); }
+     { EnvRetract(theEnv,FactData(theEnv)->FactList); }
   }
 
 /************************************************/
 /* EnvCreateFact: Creates a fact data structure */
 /*   of the specified deftemplate.              */
 /************************************************/
-struct fact *EnvCreateFact(
-  void *theEnv,
-  void *vTheDeftemplate)
+Fact *EnvCreateFact(
+  Environment *theEnv,
+  Deftemplate *theDeftemplate)
   {
-   struct deftemplate *theDeftemplate = (struct deftemplate *) vTheDeftemplate;
-   struct fact *newFact;
+   Fact *newFact;
    int i;
 
    /*=================================*/
@@ -894,7 +891,7 @@ struct fact *EnvCreateFact(
    /* in order to create a fact.      */
    /*=================================*/
 
-   if (theDeftemplate == NULL) return(NULL);
+   if (theDeftemplate == NULL) return NULL;
 
    /*============================================*/
    /* Create a fact for an explicit deftemplate. */
@@ -934,13 +931,12 @@ struct fact *EnvCreateFact(
 /*   from the specified slot of a fact.   */
 /******************************************/
 bool EnvGetFactSlot(
-  void *theEnv,
-  void *vTheFact,
+  Environment *theEnv,
+  Fact *theFact,
   const char *slotName,
   DATA_OBJECT *theValue)
   {
-   struct fact *theFact = (struct fact *) vTheFact;
-   struct deftemplate *theDeftemplate;
+   Deftemplate *theDeftemplate;
    short whichSlot;
 
    /*===============================================*/
@@ -997,13 +993,12 @@ bool EnvGetFactSlot(
 /*   of the specified slot of a fact.  */
 /***************************************/
 bool EnvPutFactSlot(
-  void *theEnv,
-  void *vTheFact,
+  Environment *theEnv,
+  Fact *theFact,
   const char *slotName,
   DATA_OBJECT *theValue)
   {
-   struct fact *theFact = (struct fact *) vTheFact;
-   struct deftemplate *theDeftemplate;
+   Deftemplate *theDeftemplate;
    struct templateSlot *theSlot;
    short whichSlot;
 
@@ -1073,11 +1068,10 @@ bool EnvPutFactSlot(
 /*   not yet been set.                                  */
 /********************************************************/
 bool EnvAssignFactSlotDefaults(
-  void *theEnv,
-  void *vTheFact)
+  Environment *theEnv,
+  Fact *theFact)
   {
-   struct fact *theFact = (struct fact *) vTheFact;
-   struct deftemplate *theDeftemplate;
+   Deftemplate *theDeftemplate;
    struct templateSlot *slotPtr;
    int i;
    DATA_OBJECT theResult;
@@ -1135,8 +1129,8 @@ bool EnvAssignFactSlotDefaults(
 /*   for the specified slot of a deftemplate.           */
 /********************************************************/
 bool DeftemplateSlotDefault(
-  void *theEnv,
-  struct deftemplate *theDeftemplate,
+  Environment *theEnv,
+  Deftemplate *theDeftemplate,
   struct templateSlot *slotPtr,
   DATA_OBJECT *theResult,
   bool garbageMultifield)
@@ -1213,13 +1207,11 @@ bool DeftemplateSlotDefault(
 /*   another. Both facts must have the same relation name.     */
 /***************************************************************/
 bool CopyFactSlotValues(
-  void *theEnv,
-  void *vTheDestFact,
-  void *vTheSourceFact)
+  Environment *theEnv,
+  Fact *theDestFact,
+  Fact *theSourceFact)
   {
-   struct fact *theDestFact = (struct fact *) vTheDestFact;
-   struct fact *theSourceFact = (struct fact *) vTheSourceFact;
-   struct deftemplate *theDeftemplate;
+   Deftemplate *theDeftemplate;
    struct templateSlot *slotPtr;
    int i;
 
@@ -1266,8 +1258,8 @@ bool CopyFactSlotValues(
 /* CreateFactBySize: Allocates a fact data   */
 /*   structure based on the number of slots. */
 /*********************************************/
-struct fact *CreateFactBySize(
-  void *theEnv,
+Fact *CreateFactBySize(
+  Environment *theEnv,
   unsigned size)
   {
    struct fact *theFact;
@@ -1301,8 +1293,8 @@ struct fact *CreateFactBySize(
 /*   to the pool of free memory.             */
 /*********************************************/
 void ReturnFact(
-  void *theEnv,
-  struct fact *theFact)
+  Environment *theEnv,
+  Fact *theFact)
   {
    struct multifield *theSegment, *subSegment;
    long newSize, i;
@@ -1332,8 +1324,8 @@ void ReturnFact(
 /*   data value busy counts associated with the fact.        */
 /*************************************************************/
 void FactInstall(
-  void *theEnv,
-  struct fact *newFact)
+  Environment *theEnv,
+  Fact *newFact)
   {
    struct multifield *theSegment;
    int i;
@@ -1355,8 +1347,8 @@ void FactInstall(
 /*   data value busy counts associated with the fact.          */
 /***************************************************************/
 void FactDeinstall(
-  void *theEnv,
-  struct fact *newFact)
+  Environment *theEnv,
+  Fact *newFact)
   {
    struct multifield *theSegment;
    int i;
@@ -1378,14 +1370,14 @@ void FactDeinstall(
 /*   of references to a specified fact.         */
 /************************************************/
 void EnvIncrementFactCount(
-  void *theEnv,
-  void *factPtr)
+  Environment *theEnv,
+  Fact *factPtr)
   {
 #if MAC_XCD
 #pragma unused(theEnv)
 #endif
 
-   ((struct fact *) factPtr)->factHeader.busyCount++;
+   factPtr->factHeader.busyCount++;
   }
 
 /************************************************/
@@ -1393,14 +1385,14 @@ void EnvIncrementFactCount(
 /*   of references to a specified fact.         */
 /************************************************/
 void EnvDecrementFactCount(
-  void *theEnv,
-  void *factPtr)
+  Environment *theEnv,
+  Fact *factPtr)
   {
 #if MAC_XCD
 #pragma unused(theEnv)
 #endif
 
-   ((struct fact *) factPtr)->factHeader.busyCount--;
+   factPtr->factHeader.busyCount--;
   }
 
 /*********************************************************/
@@ -1408,16 +1400,16 @@ void EnvDecrementFactCount(
 /*   first fact in the fact-list. Otherwise returns the  */
 /*   next fact following the fact passed as an argument. */
 /*********************************************************/
-void *EnvGetNextFact(
-  void *theEnv,
-  void *factPtr)
+Fact *EnvGetNextFact(
+  Environment *theEnv,
+  Fact *factPtr)
   {
    if (factPtr == NULL)
-     { return((void *) FactData(theEnv)->FactList); }
+     { return FactData(theEnv)->FactList; }
 
-   if (((struct fact *) factPtr)->garbage) return(NULL);
+   if (factPtr->garbage) return NULL;
 
-   return((void *) ((struct fact *) factPtr)->nextFact);
+   return factPtr->nextFact;
   }
 
 /**************************************************/
@@ -1426,12 +1418,10 @@ void *EnvGetNextFact(
 /*   a similar fashion to GetNextFact, but skips  */
 /*   facts that are out of scope.                 */
 /**************************************************/
-void *GetNextFactInScope(
-  void *theEnv,
-  void *vTheFact)
+Fact *GetNextFactInScope(
+  Environment *theEnv,
+  Fact *theFact)
   {
-   struct fact *theFact = (struct fact *) vTheFact;
-
    /*=======================================================*/
    /* If fact passed as an argument is a NULL pointer, then */
    /* we're just beginning a traversal of the fact list. If */
@@ -1457,8 +1447,8 @@ void *GetNextFactInScope(
    /* the next fact, so return a NULL pointer.         */
    /*==================================================*/
 
-   else if (((struct fact *) theFact)->garbage)
-     { return(NULL); }
+   else if (theFact->garbage)
+     { return NULL; }
 
    /*==================================================*/
    /* Otherwise, start the search for the next fact in */
@@ -1477,12 +1467,12 @@ void *GetNextFactInScope(
 
    while (theFact != NULL)
      {
-      if (theFact->whichDeftemplate->inScope) return((void *) theFact);
+      if (theFact->whichDeftemplate->inScope) return theFact;
 
       theFact = theFact->nextFact;
      }
 
-   return(NULL);
+   return NULL;
   }
 
 /****************************************/
@@ -1490,13 +1480,13 @@ void *GetNextFactInScope(
 /*   print representation of a fact.    */
 /****************************************/
 void EnvGetFactPPForm(
-  void *theEnv,
+  Environment *theEnv,
   char *buffer,
   size_t bufferLength,
-  void *theFact)
+  Fact *theFact)
   {
    OpenStringDestination(theEnv,"FactPPForm",buffer,bufferLength);
-   PrintFactWithIdentifier(theEnv,"FactPPForm",(struct fact *) theFact);
+   PrintFactWithIdentifier(theEnv,"FactPPForm",theFact);
    CloseStringDestination(theEnv,"FactPPForm");
   }
 
@@ -1505,35 +1495,35 @@ void EnvGetFactPPForm(
 /*   for the fact-index function. */
 /**********************************/
 long long EnvFactIndex(
-  void *theEnv,
-  void *factPtr)
+  Environment *theEnv,
+  Fact *factPtr)
   {
 #if MAC_XCD
 #pragma unused(theEnv)
 #endif
 
-   return(((struct fact *) factPtr)->factIndex);
+   return factPtr->factIndex;
   }
 
 /*************************************/
 /* EnvAssertString: C access routine */
 /*   for the assert-string function. */
 /*************************************/
-void *EnvAssertString(
-  void *theEnv,
+Fact *EnvAssertString(
+  Environment *theEnv,
   const char *theString)
   {
    struct fact *theFact;
    int danglingConstructs;
    danglingConstructs = ConstructData(theEnv)->DanglingConstructs;
 
-   if ((theFact = StringToFact(theEnv,theString)) == NULL) return(NULL);
+   if ((theFact = StringToFact(theEnv,theString)) == NULL) return NULL;
    
    if ((! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
        (EvaluationData(theEnv)->CurrentExpression == NULL))
      { ConstructData(theEnv)->DanglingConstructs = danglingConstructs; }
 
-   return((void *) EnvAssert(theEnv,(void *) theFact));
+   return EnvAssert(theEnv,theFact);
   }
 
 /******************************************************/
@@ -1541,7 +1531,7 @@ void *EnvAssertString(
 /*   whether a change to the fact-list has been made. */
 /******************************************************/
 bool EnvGetFactListChanged(
-  void *theEnv)
+  Environment *theEnv)
   {
    return(FactData(theEnv)->ChangeToFactList); 
   }
@@ -1551,7 +1541,7 @@ bool EnvGetFactListChanged(
 /*   a change to the fact-list has been made.              */
 /***********************************************************/
 void EnvSetFactListChanged(
-  void *theEnv,
+  Environment *theEnv,
   bool value)
   {
    FactData(theEnv)->ChangeToFactList = value;
@@ -1562,7 +1552,7 @@ void EnvSetFactListChanged(
 /* of facts in the fact-list.           */
 /****************************************/
 unsigned long GetNumberOfFacts(
-  void *theEnv)
+  Environment *theEnv)
   {   
    return(FactData(theEnv)->NumberOfFacts); 
   }
@@ -1572,7 +1562,7 @@ unsigned long GetNumberOfFacts(
 /*   fact index to zero and removes all facts.             */
 /***********************************************************/
 static void ResetFacts(
-  void *theEnv)
+  Environment *theEnv)
   {
    /*====================================*/
    /* Initialize the fact index to zero. */
@@ -1593,7 +1583,7 @@ static void ResetFacts(
 /*   command can continue, otherwise false.                 */
 /************************************************************/
 static bool ClearFactsReady(
-  void *theEnv)
+  Environment *theEnv)
   {
    /*======================================*/
    /* Facts can not be deleted when a join */
@@ -1633,21 +1623,21 @@ static bool ClearFactsReady(
 /* FindIndexedFact: Returns a pointer to a fact in */
 /*   the fact list with the specified fact index.  */
 /***************************************************/
-struct fact *FindIndexedFact(
-  void *theEnv,
+Fact *FindIndexedFact(
+  Environment *theEnv,
   long long factIndexSought)
   {
-   struct fact *theFact;
+   Fact *theFact;
 
-   for (theFact = (struct fact *) EnvGetNextFact(theEnv,NULL);
+   for (theFact = EnvGetNextFact(theEnv,NULL);
         theFact != NULL;
-        theFact = (struct fact *) EnvGetNextFact(theEnv,theFact))
+        theFact = EnvGetNextFact(theEnv,theFact))
      {
       if (theFact->factIndex == factIndexSought)
         { return(theFact); }
      }
 
-   return(NULL);
+   return NULL;
   }
 
 /*****************************************/
@@ -1655,9 +1645,9 @@ struct fact *FindIndexedFact(
 /*   to the ListOfAssertFunctions.       */
 /*****************************************/
 bool EnvAddAssertFunction(
-  void *theEnv,
+  Environment *theEnv,
   const char *name,
-  void (*functionPtr)(void *, void *),
+  void (*functionPtr)(Environment *, void *),
   int priority)
   {
    FactData(theEnv)->ListOfAssertFunctions =
@@ -1672,9 +1662,9 @@ bool EnvAddAssertFunction(
 /*   function to the ListOfAssertFunctions. */
 /********************************************/
 bool EnvAddAssertFunctionWithContext(
-  void *theEnv,
+  Environment *theEnv,
   const char *name,
-  void (*functionPtr)(void *, void *),
+  void (*functionPtr)(Environment *, void *),
   int priority,
   void *context)
   {
@@ -1690,7 +1680,7 @@ bool EnvAddAssertFunctionWithContext(
 /*   from the ListOfAssertFunctions.           */
 /***********************************************/
 bool EnvRemoveAssertFunction(
-  void *theEnv,
+  Environment *theEnv,
   const char *name)
   {
    bool found;
@@ -1708,9 +1698,9 @@ bool EnvRemoveAssertFunction(
 /*   to the ListOfRetractFunctions.       */
 /******************************************/
 bool EnvAddRetractFunction(
-  void *theEnv,
+  Environment *theEnv,
   const char *name,
-  void (*functionPtr)(void *, void *),
+  void (*functionPtr)(Environment *, void *),
   int priority)
   {
    FactData(theEnv)->ListOfRetractFunctions =
@@ -1725,9 +1715,9 @@ bool EnvAddRetractFunction(
 /*   function to the ListOfRetractFunctions. */
 /*********************************************/
 bool EnvAddRetractFunctionWithContext(
-  void *theEnv,
+  Environment *theEnv,
   const char *name,
-  void (*functionPtr)(void *, void *),
+  void (*functionPtr)(Environment *, void *),
   int priority,
   void *context)
   {
@@ -1743,7 +1733,7 @@ bool EnvAddRetractFunctionWithContext(
 /*   from the ListOfRetractFunctions.           */
 /************************************************/
 bool EnvRemoveRetractFunction(
-  void *theEnv,
+  Environment *theEnv,
   const char *name)
   {
    bool found;
@@ -1761,14 +1751,14 @@ bool EnvRemoveRetractFunction(
 /*   to the ListOfModifyFunctions.       */
 /*****************************************/
 bool EnvAddModifyFunction(
-  void *theEnv,
+  Environment *theEnv,
   const char *name,
-  void (*functionPtr)(void *, void *, void *),
+  void (*functionPtr)(Environment *, void *, void *),
   int priority)
   {
    FactData(theEnv)->ListOfModifyFunctions =
       AddFunctionToCallListWithArg(theEnv,name,priority,
-                                              (void (*)(void *, void *)) functionPtr,
+                                              (void (*)(Environment *, void *)) functionPtr,
                                               FactData(theEnv)->ListOfModifyFunctions,true);
    return true;
   }
@@ -1778,15 +1768,15 @@ bool EnvAddModifyFunction(
 /*   function to the ListOfModifyFunctions. */
 /********************************************/
 bool EnvAddModifyFunctionWithContext(
-  void *theEnv,
+  Environment *theEnv,
   const char *name,
-  void (*functionPtr)(void *, void *, void *),
+  void (*functionPtr)(Environment *, void *, void *),
   int priority,
   void *context)
   {
    FactData(theEnv)->ListOfModifyFunctions =
       AddFunctionToCallListWithArgWithContext(theEnv,name,priority,
-                                       (void (*)(void *, void *)) functionPtr,
+                                       (void (*)(Environment *, void *)) functionPtr,
                                        FactData(theEnv)->ListOfModifyFunctions,
                                        true,context);
    return true;
@@ -1797,7 +1787,7 @@ bool EnvAddModifyFunctionWithContext(
 /*   from the ListOfModifyFunctions.           */
 /***********************************************/
 bool EnvRemoveModifyFunction(
-  void *theEnv,
+  Environment *theEnv,
   const char *name)
   {
    bool found;
@@ -1821,12 +1811,12 @@ bool AddAssertFunction(
   void (*functionPtr)(void *,void *),
   int priority)
   {
-   void *theEnv;
+   Environment *theEnv;
    
    theEnv = GetCurrentEnvironment();
 
    FactData(theEnv)->ListOfAssertFunctions =
-       AddFunctionToCallListWithArg(theEnv,name,priority,(void (*)(void *, void *)) functionPtr,
+       AddFunctionToCallListWithArg(theEnv,name,priority,(void (*)(Environment *, void *)) functionPtr,
                              FactData(theEnv)->ListOfAssertFunctions,true);
    return true;
   }
@@ -1836,35 +1826,35 @@ bool AddModifyFunction(
   void (*functionPtr)(void *,void *,void *),
   int priority)
   {
-   void *theEnv;
+   Environment *theEnv;
    
    theEnv = GetCurrentEnvironment();
 
    FactData(theEnv)->ListOfModifyFunctions =
-       AddFunctionToCallListWithArg(theEnv,name,priority,(void (*)(void *, void *)) functionPtr,
+       AddFunctionToCallListWithArg(theEnv,name,priority,(void (*)(Environment *, void *)) functionPtr,
                              FactData(theEnv)->ListOfModifyFunctions,true);
    return true;
   }
 
 bool AddRetractFunction(
   const char *name,
-  void (*functionPtr)(void *,void *),
+  void (*functionPtr)(Environment *,void *),
   int priority)
   {
-   void *theEnv;
+   Environment *theEnv;
    
    theEnv = GetCurrentEnvironment();
 
    FactData(theEnv)->ListOfRetractFunctions =
-       AddFunctionToCallListWithArg(theEnv,name,priority,(void (*)(void *, void *)) functionPtr,
+       AddFunctionToCallListWithArg(theEnv,name,priority,(void (*)(Environment *, void *)) functionPtr,
                              FactData(theEnv)->ListOfRetractFunctions,true);
    return true;
   }
 
 void *Assert(
-  void *vTheFact)
+  Fact *theFact)
   {
-   return EnvAssert(GetCurrentEnvironment(),vTheFact);
+   return EnvAssert(GetCurrentEnvironment(),theFact);
   }
 
 void *AssertString(
@@ -1874,25 +1864,25 @@ void *AssertString(
   }
 
 bool AssignFactSlotDefaults(
-  void *vTheFact)
+  Fact *theFact)
   {
-   return EnvAssignFactSlotDefaults(GetCurrentEnvironment(),vTheFact);
+   return EnvAssignFactSlotDefaults(GetCurrentEnvironment(),theFact);
   }
 
 struct fact *CreateFact(
-  void *vTheDeftemplate)
+  Deftemplate *theDeftemplate)
   {
-   return EnvCreateFact(GetCurrentEnvironment(),vTheDeftemplate);
+   return EnvCreateFact(GetCurrentEnvironment(),theDeftemplate);
   }
 
 void DecrementFactCount(
-  void *factPtr)
+  Fact *factPtr)
   {
    EnvDecrementFactCount(GetCurrentEnvironment(),factPtr);
   }
 
 long long FactIndex(
-  void *factPtr)
+  Fact *factPtr)
   {
    return(EnvFactIndex(GetCurrentEnvironment(),factPtr));
   }
@@ -1905,37 +1895,37 @@ bool GetFactListChanged()
 void GetFactPPForm(
   char *buffer,
   unsigned bufferLength,
-  void *theFact)
+  Fact *theFact)
   {
    EnvGetFactPPForm(GetCurrentEnvironment(),buffer,bufferLength,theFact);
   }
 
 bool GetFactSlot(
-  void *vTheFact,
+  Fact *theFact,
   const char *slotName,
   DATA_OBJECT *theValue)
   {
-   return(EnvGetFactSlot(GetCurrentEnvironment(),vTheFact,slotName,theValue));
+   return(EnvGetFactSlot(GetCurrentEnvironment(),theFact,slotName,theValue));
   }
 
-void *GetNextFact(
-  void *factPtr)
+Fact *GetNextFact(
+  Fact *factPtr)
   {
    return EnvGetNextFact(GetCurrentEnvironment(),factPtr);
   }
 
 void IncrementFactCount(
-  void *factPtr)
+  Fact *factPtr)
   {
    EnvIncrementFactCount(GetCurrentEnvironment(),factPtr);
   }
 
 bool PutFactSlot(
-  void *vTheFact,
+  Fact *theFact,
   const char *slotName,
   DATA_OBJECT *theValue)
   {
-   return EnvPutFactSlot(GetCurrentEnvironment(),vTheFact,slotName,theValue);
+   return EnvPutFactSlot(GetCurrentEnvironment(),theFact,slotName,theValue);
   }
 
 bool RemoveAssertFunction(
@@ -1957,9 +1947,9 @@ bool RemoveRetractFunction(
   }
 
 bool Retract(
-  void *vTheFact)
+  Fact *theFact)
   {
-   return EnvRetract(GetCurrentEnvironment(),vTheFact);
+   return EnvRetract(GetCurrentEnvironment(),theFact);
   }
 
 void SetFactListChanged(

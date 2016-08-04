@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*       DEFTEMPLATE BASIC COMMANDS HEADER FILE        */
    /*******************************************************/
@@ -47,6 +47,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_tmpltbsc
@@ -57,32 +60,32 @@
 
 #include "evaluatn.h"
 
-   void                           DeftemplateBasicCommands(void *);
-   void                           UndeftemplateCommand(void *);
-   bool                           EnvUndeftemplate(void *,void *);
-   void                           GetDeftemplateListFunction(void *,DATA_OBJECT_PTR);
-   void                           EnvGetDeftemplateList(void *,DATA_OBJECT_PTR,void *);
-   void                          *DeftemplateModuleFunction(void *);
+   void                           DeftemplateBasicCommands(Environment *);
+   void                           UndeftemplateCommand(Environment *);
+   bool                           EnvUndeftemplate(Environment *,Deftemplate *);
+   void                           GetDeftemplateListFunction(Environment *,DATA_OBJECT_PTR);
+   void                           EnvGetDeftemplateList(Environment *,DATA_OBJECT_PTR,Defmodule *);
+   void                          *DeftemplateModuleFunction(Environment *);
 #if DEBUGGING_FUNCTIONS
-   void                           PPDeftemplateCommand(void *);
-   int                            PPDeftemplate(void *,const char *,const char *);
-   void                           ListDeftemplatesCommand(void *);
-   void                           EnvListDeftemplates(void *,const char *,void *);
-   bool                           EnvGetDeftemplateWatch(void *,void *);
-   void                           EnvSetDeftemplateWatch(void *,bool,void *);
-   bool                           DeftemplateWatchAccess(void *,int,bool,struct expr *);
-   bool                           DeftemplateWatchPrint(void *,const char *,int,struct expr *);
+   void                           PPDeftemplateCommand(Environment *);
+   bool                           PPDeftemplate(Environment *,const char *,const char *);
+   void                           ListDeftemplatesCommand(Environment *);
+   void                           EnvListDeftemplates(Environment *,const char *,Defmodule *);
+   bool                           EnvGetDeftemplateWatch(Environment *,Deftemplate *);
+   void                           EnvSetDeftemplateWatch(Environment *,bool,Deftemplate *);
+   bool                           DeftemplateWatchAccess(Environment *,int,bool,struct expr *);
+   bool                           DeftemplateWatchPrint(Environment *,const char *,int,struct expr *);
 #endif
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-   void                           GetDeftemplateList(DATA_OBJECT_PTR,void *);
+   void                           GetDeftemplateList(DATA_OBJECT_PTR,Defmodule *);
 #if DEBUGGING_FUNCTIONS
-   bool                           GetDeftemplateWatch(void *);
-   void                           ListDeftemplates(const char *,void *);
-   void                           SetDeftemplateWatch(bool,void *);
+   bool                           GetDeftemplateWatch(Deftemplate *);
+   void                           ListDeftemplates(const char *,Defmodule *);
+   void                           SetDeftemplateWatch(bool,Deftemplate *);
 #endif
-   bool                           Undeftemplate(void *);
+   bool                           Undeftemplate(Deftemplate *);
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */
 

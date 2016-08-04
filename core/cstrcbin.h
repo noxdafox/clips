@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -19,6 +19,9 @@
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -42,13 +45,12 @@ struct bsaveConstructHeader
 #if BLOAD_AND_BSAVE
 void MarkConstructHeaderNeededItems(struct constructHeader *,long);
 void AssignBsaveConstructHeaderVals(struct bsaveConstructHeader *,
-                                             struct constructHeader *);
+                                    struct constructHeader *);
 #endif
 
-void UpdateConstructHeader(void *,
-                                  struct bsaveConstructHeader *,
-                                  struct constructHeader *,int,void *,int,void *);
-void UnmarkConstructHeader(void *,struct constructHeader *);
+void UpdateConstructHeader(Environment *,struct bsaveConstructHeader *,
+                           struct constructHeader *,int,void *,int,void *);
+void UnmarkConstructHeader(Environment *,struct constructHeader *);
 
 #endif
 

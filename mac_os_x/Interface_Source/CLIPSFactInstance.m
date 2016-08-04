@@ -16,7 +16,7 @@
 /*****************/
 /* initWithFact: */
 /*****************/
-- initWithFact: (struct fact *) theFact 
+- initWithFact: (Fact *) theFact
   fromEnvironment: (void *) theEnvironment
   {
    if (self = [super init])
@@ -107,7 +107,7 @@
       NSMutableDictionary *theMD;
       NSNumber *theNumber;
       BITMAP_HN *theScopeMap;
-      void *theClass;
+      Defclass *theClass;
 
       theClass = EnvGetInstanceClass(theEnvironment,theInstance);
       [self setValue: [NSString stringWithUTF8String: EnvGetDefclassName(theEnvironment,theClass)] forKey: @"relationName"]; 
@@ -122,11 +122,11 @@
       
       theCPointer = theInstance; 
             
-      EnvClassSlots(theEnvironment,theClass,&slotNames,TRUE);
+      EnvClassSlots(theEnvironment,theClass,&slotNames,true);
       
       environment = theEnvironment;
 
-      theScopeMap = (BITMAP_HN *) CreateClassScopeMap(theEnvironment,(DEFCLASS *) theClass);
+      theScopeMap = (BITMAP_HN *) CreateClassScopeMap(theEnvironment,theClass);
       
       scopeMap = malloc(theScopeMap->size);
       

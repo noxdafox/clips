@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                MULTIFIELD HEADER FILE               */
    /*******************************************************/
@@ -49,6 +49,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_multifld
@@ -58,7 +61,7 @@
 #define _H_multifld
 
 struct field;
-struct multifield;
+typedef struct multifield Multifield;
 
 #include "evaluatn.h"
 
@@ -96,29 +99,29 @@ typedef struct field * FIELD_PTR;
 #define EnvGetMFType(theEnv,target,index)  (((struct field *) ((struct multifield *) (target))->theFields)[index-1].type)
 #define EnvGetMFValue(theEnv,target,index)  (((struct field *) ((struct multifield *) (target))->theFields)[index-1].value)
 
-   void                          *CreateMultifield2(void *,long);
-   void                           ReturnMultifield(void *,struct multifield *);
-   void                           MultifieldInstall(void *,struct multifield *);
-   void                           MultifieldDeinstall(void *,struct multifield *);
-   struct multifield             *StringToMultifield(void *,const char *);
-   void                          *EnvCreateMultifield(void *,long);
-   void                           AddToMultifieldList(void *,struct multifield *);
-   void                           FlushMultifields(void *);
-   void                           DuplicateMultifield(void *,struct dataObject *,struct dataObject *);
-   void                           PrintMultifield(void *,const char *,SEGMENT_PTR,long,long,bool);
+   Multifield                    *CreateMultifield2(Environment *,long);
+   void                           ReturnMultifield(Environment *,struct multifield *);
+   void                           MultifieldInstall(Environment *,struct multifield *);
+   void                           MultifieldDeinstall(Environment *,struct multifield *);
+   Multifield                    *StringToMultifield(Environment *,const char *);
+   Multifield                    *EnvCreateMultifield(Environment *,long);
+   void                           AddToMultifieldList(Environment *,struct multifield *);
+   void                           FlushMultifields(Environment *);
+   void                           DuplicateMultifield(Environment *,struct dataObject *,struct dataObject *);
+   void                           PrintMultifield(Environment *,const char *,SEGMENT_PTR,long,long,bool);
    bool                           MultifieldDOsEqual(DATA_OBJECT_PTR,DATA_OBJECT_PTR);
-   void                           StoreInMultifield(void *,DATA_OBJECT *,EXPRESSION *,bool);
-   void                          *CopyMultifield(void *,struct multifield *);
+   void                           StoreInMultifield(Environment *,DATA_OBJECT *,EXPRESSION *,bool);
+   Multifield                    *CopyMultifield(Environment *,struct multifield *);
    bool                           MultifieldsEqual(struct multifield *,struct multifield *);
-   void                          *DOToMultifield(void *,DATA_OBJECT *);
+   Multifield                    *DOToMultifield(Environment *,DATA_OBJECT *);
    unsigned long                  HashMultifield(struct multifield *,unsigned long);
-   struct multifield             *GetMultifieldList(void *);
-   void                          *ImplodeMultifield(void *,DATA_OBJECT *);
-   void                           EphemerateMultifield(void *,struct multifield *);
+   Multifield                    *GetMultifieldList(Environment *);
+   void                          *ImplodeMultifield(Environment *,DATA_OBJECT *);
+   void                           EphemerateMultifield(Environment *,struct multifield *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-   void                          *CreateMultifield(long);
+   Multifield                    *CreateMultifield(long);
    
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */
 

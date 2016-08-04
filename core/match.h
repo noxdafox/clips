@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/21/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*                  MATCH HEADER FILE                  */
    /*******************************************************/
@@ -23,6 +23,9 @@
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_match
@@ -33,7 +36,7 @@
 
 struct genericMatch;
 struct patternMatch;
-struct partialMatch;
+typedef struct partialMatch PartialMatch;
 struct alphaMatch;
 struct multifieldMarker;
 

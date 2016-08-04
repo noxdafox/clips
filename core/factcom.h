@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*               FACT COMMANDS HEADER FILE             */
    /*******************************************************/
@@ -46,6 +46,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_factcom
@@ -56,26 +59,26 @@
 
 #include "evaluatn.h"
 
-   void                           FactCommandDefinitions(void *);
-   void                           AssertCommand(void *,DATA_OBJECT_PTR);
-   void                           RetractCommand(void *);
-   void                           AssertStringFunction(void *,DATA_OBJECT_PTR);
-   void                           FactsCommand(void *);
-   void                           EnvFacts(void *,const char *,void *,long long,long long,long long);
-   bool                           SetFactDuplicationCommand(void *);
-   bool                           GetFactDuplicationCommand(void *);
-   bool                           SaveFactsCommand(void *);
-   bool                           LoadFactsCommand(void *);
-   bool                           EnvSaveFacts(void *,const char *,int);
-   bool                           EnvSaveFactsDriver(void *,const char *,int,struct expr *);
-   bool                           EnvLoadFacts(void *,const char *);
-   bool                           EnvLoadFactsFromString(void *,const char *,long);
-   long long                      FactIndexFunction(void *);
+   void                           FactCommandDefinitions(Environment *);
+   void                           AssertCommand(Environment *,DATA_OBJECT_PTR);
+   void                           RetractCommand(Environment *);
+   void                           AssertStringFunction(Environment *,DATA_OBJECT_PTR);
+   void                           FactsCommand(Environment *);
+   void                           EnvFacts(Environment *,const char *,Defmodule *,long long,long long,long long);
+   bool                           SetFactDuplicationCommand(Environment *);
+   bool                           GetFactDuplicationCommand(Environment *);
+   bool                           SaveFactsCommand(Environment *);
+   bool                           LoadFactsCommand(Environment *);
+   bool                           EnvSaveFacts(Environment *,const char *,int);
+   bool                           EnvSaveFactsDriver(Environment *,const char *,int,struct expr *);
+   bool                           EnvLoadFacts(Environment *,const char *);
+   bool                           EnvLoadFactsFromString(Environment *,const char *,long);
+   long long                      FactIndexFunction(Environment *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
 #if DEBUGGING_FUNCTIONS
-   void                           Facts(const char *,void *,long long,long long,long long);
+   void                           Facts(const char *,Defmodule *,long long,long long,long long);
 #endif
    bool                           LoadFacts(const char *);
    bool                           SaveFacts(const char *,int);

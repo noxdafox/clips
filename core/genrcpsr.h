@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -48,6 +48,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_genrcpsr
@@ -60,14 +63,14 @@
 
 #include "genrcfun.h"
 
-   bool                           ParseDefgeneric(void *,const char *);
-   bool                           ParseDefmethod(void *,const char *);
-   DEFMETHOD                     *AddMethod(void *,DEFGENERIC *,DEFMETHOD *,int,short,EXPRESSION *,
-                                                   int,int,SYMBOL_HN *,EXPRESSION *,char *,bool);
-   void                           PackRestrictionTypes(void *,RESTRICTION *,EXPRESSION *);
-   void                           DeleteTempRestricts(void *,EXPRESSION *);
-   DEFMETHOD                     *FindMethodByRestrictions(DEFGENERIC *,EXPRESSION *,int,
-                                                                  SYMBOL_HN *,int *);
+   bool                           ParseDefgeneric(Environment *,const char *);
+   bool                           ParseDefmethod(Environment *,const char *);
+   Defmethod                     *AddMethod(Environment *,Defgeneric *,Defmethod *,int,short,EXPRESSION *,
+                                            int,int,SYMBOL_HN *,EXPRESSION *,char *,bool);
+   void                           PackRestrictionTypes(Environment *,RESTRICTION *,EXPRESSION *);
+   void                           DeleteTempRestricts(Environment *,EXPRESSION *);
+   Defmethod                     *FindMethodByRestrictions(Defgeneric *,EXPRESSION *,int,
+                                                           SYMBOL_HN *,int *);
 
 #endif /* DEFGENERIC_CONSTRUCT && (! BLOAD_ONLY) && (! RUN_TIME) */
 

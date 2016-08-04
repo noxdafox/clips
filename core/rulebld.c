@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*                  RULE BUILD MODULE                  */
    /*******************************************************/
@@ -36,6 +36,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -68,16 +71,16 @@
    static bool                    TestJoinForReuse(struct joinNode *,bool,bool,
                                                    bool,bool,struct expr *,struct expr *,
                                                    struct expr *,struct expr *);
-   static struct joinNode        *CreateNewJoin(void *,struct expr *,struct expr *,struct joinNode *,void *,
+   static struct joinNode        *CreateNewJoin(Environment *,struct expr *,struct expr *,struct joinNode *,void *,
                                                 bool,bool,bool,struct expr *,struct expr *);
-   static void                    AttachTestCEsToPatternCEs(void *,struct lhsParseNode *);
+   static void                    AttachTestCEsToPatternCEs(Environment *,struct lhsParseNode *);
 
 /****************************************************************/
 /* ConstructJoins: Integrates a set of pattern and join tests   */
 /*   associated with a rule into the pattern and join networks. */
 /****************************************************************/
 struct joinNode *ConstructJoins(
-  void *theEnv,
+  Environment *theEnv,
   int logicalJoin,
   struct lhsParseNode *theLHS,
   int startDepth,
@@ -356,7 +359,7 @@ struct joinNode *ConstructJoins(
 /*   negated and is at the same not/and depth.                  */
 /****************************************************************/
 static void AttachTestCEsToPatternCEs(
-  void *theEnv,
+  Environment *theEnv,
   struct lhsParseNode *theLHS)
   {
    struct lhsParseNode *lastNode, *tempNode, *lastLastNode;
@@ -978,7 +981,7 @@ static struct joinNode *FindShareableJoin(
    /* reusable join was not found.   */
    /*================================*/
 
-   return(NULL);
+   return NULL;
   }
 
 /**************************************************************/
@@ -1064,7 +1067,7 @@ static bool TestJoinForReuse(
 /* CreateNewJoin: Creates a new join and links it into the join network. */
 /*************************************************************************/
 static struct joinNode *CreateNewJoin(
-  void *theEnv,
+  Environment *theEnv,
   struct expr *joinTest,
   struct expr *secondaryJoinTest,
   struct joinNode *lhsEntryStruct,

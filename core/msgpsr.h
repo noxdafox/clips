@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -43,6 +43,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_msgpsr
@@ -57,8 +60,8 @@
 
 #include "object.h"
 
-   bool             ParseDefmessageHandler(void *,const char *);
-   void             CreateGetAndPutHandlers(void *,SLOT_DESC *);
+   bool             ParseDefmessageHandler(Environment *,const char *);
+   void             CreateGetAndPutHandlers(Environment *,SlotDescriptor *);
 
 #endif /* OBJECT_SYSTEM && (! BLOAD_ONLY) && (! RUN_TIME) */
 

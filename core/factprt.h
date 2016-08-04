@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*         FACT RETE PRINT FUNCTIONS HEADER FILE       */
    /*******************************************************/
@@ -31,6 +31,9 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_factprt
@@ -39,18 +42,18 @@
 
 #define _H_factprt
 
-   void                           PrintFactJNCompVars1(void *,const char *,void *);
-   void                           PrintFactJNCompVars2(void *,const char *,void *);
-   void                           PrintFactPNCompVars1(void *,const char *,void *);
-   void                           PrintFactJNGetVar1(void *,const char *,void *);
-   void                           PrintFactJNGetVar2(void *,const char *,void *);
-   void                           PrintFactJNGetVar3(void *,const char *,void *);
-   void                           PrintFactPNGetVar1(void *,const char *,void *);
-   void                           PrintFactPNGetVar2(void *,const char *,void *);
-   void                           PrintFactPNGetVar3(void *,const char *,void *);
-   void                           PrintFactSlotLength(void *,const char *,void *);
-   void                           PrintFactPNConstant1(void *,const char *,void *);
-   void                           PrintFactPNConstant2(void *,const char *,void *);
+   void                           PrintFactJNCompVars1(Environment *,const char *,void *);
+   void                           PrintFactJNCompVars2(Environment *,const char *,void *);
+   void                           PrintFactPNCompVars1(Environment *,const char *,void *);
+   void                           PrintFactJNGetVar1(Environment *,const char *,void *);
+   void                           PrintFactJNGetVar2(Environment *,const char *,void *);
+   void                           PrintFactJNGetVar3(Environment *,const char *,void *);
+   void                           PrintFactPNGetVar1(Environment *,const char *,void *);
+   void                           PrintFactPNGetVar2(Environment *,const char *,void *);
+   void                           PrintFactPNGetVar3(Environment *,const char *,void *);
+   void                           PrintFactSlotLength(Environment *,const char *,void *);
+   void                           PrintFactPNConstant1(Environment *,const char *,void *);
+   void                           PrintFactPNConstant2(Environment *,const char *,void *);
 
 #endif /* _H_factprt */
 

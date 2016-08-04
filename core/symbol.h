@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                 SYMBOL HEADER FILE                  */
    /*******************************************************/
@@ -66,6 +66,9 @@
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -271,48 +274,48 @@ struct symbolData
 
 #define SymbolData(theEnv) ((struct symbolData *) GetEnvironmentData(theEnv,SYMBOL_DATA))
 
-   void                           InitializeAtomTables(void *,struct symbolHashNode **,struct floatHashNode **,
+   void                           InitializeAtomTables(Environment *,struct symbolHashNode **,struct floatHashNode **,
                                                               struct integerHashNode **,struct bitMapHashNode **,
                                                               struct externalAddressHashNode **);
-   void                          *EnvAddSymbol(void *,const char *);
-   SYMBOL_HN                     *FindSymbolHN(void *,const char *);
-   void                          *EnvAddDouble(void *,double);
-   void                          *EnvAddLong(void *,long long);
-   void                          *EnvAddBitMap(void *,void *,unsigned);
-   void                          *EnvAddExternalAddress(void *,void *,unsigned);
-   INTEGER_HN                    *FindLongHN(void *,long long);
+   void                          *EnvAddSymbol(Environment *,const char *);
+   SYMBOL_HN                     *FindSymbolHN(Environment *,const char *);
+   void                          *EnvAddDouble(Environment *,double);
+   void                          *EnvAddLong(Environment *,long long);
+   void                          *EnvAddBitMap(Environment *,void *,unsigned);
+   void                          *EnvAddExternalAddress(Environment *,void *,unsigned);
+   INTEGER_HN                    *FindLongHN(Environment *,long long);
    unsigned long                  HashSymbol(const char *,unsigned long);
    unsigned long                  HashFloat(double,unsigned long);
    unsigned long                  HashInteger(long long,unsigned long);
    unsigned long                  HashBitMap(const char *,unsigned long,unsigned);
-   unsigned long                  HashExternalAddress(void *,unsigned long);
-   void                           DecrementSymbolCount(void *,struct symbolHashNode *);
-   void                           DecrementFloatCount(void *,struct floatHashNode *);
-   void                           DecrementIntegerCount(void *,struct integerHashNode *);
-   void                           DecrementBitMapCount(void *,struct bitMapHashNode *);
-   void                           DecrementExternalAddressCount(void *,struct externalAddressHashNode *);
-   void                           RemoveEphemeralAtoms(void *);
-   struct symbolHashNode        **GetSymbolTable(void *);
-   void                           SetSymbolTable(void *,struct symbolHashNode **);
-   struct floatHashNode          **GetFloatTable(void *);
-   void                           SetFloatTable(void *,struct floatHashNode **);
-   struct integerHashNode       **GetIntegerTable(void *);
-   void                           SetIntegerTable(void *,struct integerHashNode **);
-   struct bitMapHashNode        **GetBitMapTable(void *);
-   void                           SetBitMapTable(void *,struct bitMapHashNode **);
+   unsigned long                  HashExternalAddress(Environment *,unsigned long);
+   void                           DecrementSymbolCount(Environment *,struct symbolHashNode *);
+   void                           DecrementFloatCount(Environment *,struct floatHashNode *);
+   void                           DecrementIntegerCount(Environment *,struct integerHashNode *);
+   void                           DecrementBitMapCount(Environment *,struct bitMapHashNode *);
+   void                           DecrementExternalAddressCount(Environment *,struct externalAddressHashNode *);
+   void                           RemoveEphemeralAtoms(Environment *);
+   struct symbolHashNode        **GetSymbolTable(Environment *);
+   void                           SetSymbolTable(Environment *,struct symbolHashNode **);
+   struct floatHashNode          **GetFloatTable(Environment *);
+   void                           SetFloatTable(Environment *,struct floatHashNode **);
+   struct integerHashNode       **GetIntegerTable(Environment *);
+   void                           SetIntegerTable(Environment *,struct integerHashNode **);
+   struct bitMapHashNode        **GetBitMapTable(Environment *);
+   void                           SetBitMapTable(Environment *,struct bitMapHashNode **);
    struct externalAddressHashNode        
-                                       **GetExternalAddressTable(void *);
-   void                           SetExternalAddressTable(void *,struct externalAddressHashNode **);
-   void                           RefreshSpecialSymbols(void *);
-   struct symbolMatch            *FindSymbolMatches(void *,const char *,unsigned *,size_t *);
-   void                           ReturnSymbolMatches(void *,struct symbolMatch *);
-   SYMBOL_HN                     *GetNextSymbolMatch(void *,const char *,size_t,SYMBOL_HN *,bool,size_t *);
+                                **GetExternalAddressTable(Environment *);
+   void                           SetExternalAddressTable(Environment *,struct externalAddressHashNode **);
+   void                           RefreshSpecialSymbols(Environment *);
+   struct symbolMatch            *FindSymbolMatches(Environment *,const char *,unsigned *,size_t *);
+   void                           ReturnSymbolMatches(Environment *,struct symbolMatch *);
+   SYMBOL_HN                     *GetNextSymbolMatch(Environment *,const char *,size_t,SYMBOL_HN *,bool,size_t *);
    void                           ClearBitString(void *,unsigned);
-   void                           SetAtomicValueIndices(void *,bool);
-   void                           RestoreAtomicValueBuckets(void *);
-   void                          *EnvFalseSymbol(void *);
-   void                          *EnvTrueSymbol(void *);
-   void                           EphemerateValue(void *,int,void *);
+   void                           SetAtomicValueIndices(Environment *,bool);
+   void                           RestoreAtomicValueBuckets(Environment *);
+   void                          *EnvFalseSymbol(Environment *);
+   void                          *EnvTrueSymbol(Environment *);
+   void                           EphemerateValue(Environment *,int,void *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 

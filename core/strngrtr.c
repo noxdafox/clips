@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*              STRING I/O ROUTER MODULE               */
    /*******************************************************/
@@ -58,19 +58,19 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static bool                    FindString(void *,const char *);
-   static void                    PrintString(void *,const char *,const char *);
-   static int                     GetcString(void *,const char *);
-   static int                     UngetcString(void *,int,const char *);
-   static struct stringRouter    *FindStringRouter(void *,const char *);
-   static bool                    CreateReadStringSource(void *,const char *,const char *,size_t,size_t);
-   static void                    DeallocateStringRouterData(void *);
+   static bool                    FindString(Environment *,const char *);
+   static void                    PrintString(Environment *,const char *,const char *);
+   static int                     GetcString(Environment *,const char *);
+   static int                     UngetcString(Environment *,int,const char *);
+   static struct stringRouter    *FindStringRouter(Environment *,const char *);
+   static bool                    CreateReadStringSource(Environment *,const char *,const char *,size_t,size_t);
+   static void                    DeallocateStringRouterData(Environment *);
 
 /**********************************************************/
 /* InitializeStringRouter: Initializes string I/O router. */
 /**********************************************************/
 void InitializeStringRouter(
-  void *theEnv)
+  Environment *theEnv)
   {
    AllocateEnvironmentData(theEnv,STRING_ROUTER_DATA,sizeof(struct stringRouterData),DeallocateStringRouterData);
 
@@ -82,7 +82,7 @@ void InitializeStringRouter(
 /*    environment data for string routers. */
 /*******************************************/
 static void DeallocateStringRouterData(
-  void *theEnv)
+  Environment *theEnv)
   {
    struct stringRouter *tmpPtr, *nextPtr;
    
@@ -100,7 +100,7 @@ static void DeallocateStringRouterData(
 /* FindString: Find routine for string router logical names. */
 /*************************************************************/
 static bool FindString(
-  void *theEnv,
+  Environment *theEnv,
   const char *fileid)
   {
    struct stringRouter *head;
@@ -120,7 +120,7 @@ static bool FindString(
 /* PrintString: Print routine for string routers. */
 /**************************************************/
 static void PrintString(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
   const char *str)
   {
@@ -150,7 +150,7 @@ static void PrintString(
 /* GetcString: Getc routine for string routers. */
 /************************************************/
 static int GetcString(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName)
   {
    struct stringRouter *head;
@@ -180,7 +180,7 @@ static int GetcString(
 /* UngetcString: Ungetc routine for string routers. */
 /****************************************************/
 static int UngetcString(
-  void *theEnv,
+  Environment *theEnv,
   int ch,
   const char *logicalName)
   {
@@ -208,7 +208,7 @@ static int UngetcString(
 /* OpenStringSource: Opens a new string router. */
 /************************************************/
 bool OpenStringSource(
-  void *theEnv,
+  Environment *theEnv,
   const char *name,
   const char *str,
   size_t currentPosition)
@@ -231,7 +231,7 @@ bool OpenStringSource(
 /*   (which is not NULL terminated).                  */
 /******************************************************/
 bool OpenTextSource(
-  void *theEnv,
+  Environment *theEnv,
   const char *name,
   const char *str,
   size_t currentPosition,
@@ -243,14 +243,14 @@ bool OpenTextSource(
       maximumPosition = 0;
      }
 
-   return(CreateReadStringSource(theEnv,name,str,currentPosition,maximumPosition));
+   return CreateReadStringSource(theEnv,name,str,currentPosition,maximumPosition);
   }
 
 /******************************************************************/
 /* CreateReadStringSource: Creates a new string router for input. */
 /******************************************************************/
 static bool CreateReadStringSource(
-  void *theEnv,
+  Environment *theEnv,
   const char *name,
   const char *str,
   size_t currentPosition,
@@ -280,7 +280,7 @@ static bool CreateReadStringSource(
 /* CloseStringSource: Closes a string router. */
 /**********************************************/
 bool CloseStringSource(
-  void *theEnv,
+  Environment *theEnv,
   const char *name)
   {
    struct stringRouter *head, *last;
@@ -317,7 +317,7 @@ bool CloseStringSource(
 /* OpenStringDestination: Opens a new string router for printing. */
 /******************************************************************/
 bool OpenStringDestination(
-  void *theEnv,
+  Environment *theEnv,
   const char *name,
   char *str,
   size_t maximumPosition)
@@ -346,7 +346,7 @@ bool OpenStringDestination(
 /* CloseStringDestination: Closes a string router. */
 /***************************************************/
 bool CloseStringDestination(
-  void *theEnv,
+  Environment *theEnv,
   const char *name)
   {
    return(CloseStringSource(theEnv,name));
@@ -356,7 +356,7 @@ bool CloseStringDestination(
 /* FindStringRouter: Returns a pointer to the named string router. */
 /*******************************************************************/
 static struct stringRouter *FindStringRouter(
-  void *theEnv,
+  Environment *theEnv,
   const char *name)
   {
    struct stringRouter *head;
@@ -369,7 +369,7 @@ static struct stringRouter *FindStringRouter(
       head = head->next;
      }
 
-   return(NULL);
+   return NULL;
   }
 
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*               TEXT PROCESSING MODULE                */
    /*******************************************************/
@@ -53,6 +53,9 @@
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -159,20 +162,24 @@ struct textProcessingData
 
 #define TextProcessingData(theEnv) ((struct textProcessingData *) GetEnvironmentData(theEnv,TEXTPRO_DATA))
 
-int TextLookupFetch(void *,const char *);
-bool TextLookupToss(void *,const char *);
-static FILE *GetEntries(void *,const char *,char **,char *,int *);
-static FILE *GetCurrentMenu(void *,const char *,int *);
-static char *grab_string(void *,FILE *,char *,int);
+/***************************************/
+/* LOCAL INTERNAL FUNCTION DEFINITIONS */
+/***************************************/
 
-static int findstr(const char *,const char *);
-static void upper(char *);
-static struct lists *NewFetchFile(void *,const char *);
-static struct entries *AllocateEntryNode(void *,FILE *,const char *,const char *,int);
-static bool AttachLeaf(void *,struct lists *,struct entries *,FILE *,const char *,int);
-static long LookupEntry(void *,const char *,char **,char *,int *);
-static void TossFunction(void *,struct entries *);
-static void DeallocateTextProcessingData(void *);
+   static int                     TextLookupFetch(Environment *,const char *);
+   static bool                    TextLookupToss(Environment *,const char *);
+   static FILE                   *GetEntries(Environment *,const char *,char **,char *,int *);
+   static FILE                   *GetCurrentMenu(Environment *,const char *,int *);
+   static char                   *GrabString(Environment *,FILE *,char *,int);
+
+   static int                     findstr(const char *,const char *);
+   static void                    upper(char *);
+   static struct lists           *NewFetchFile(Environment *,const char *);
+   static struct entries         *AllocateEntryNode(Environment *,FILE *,const char *,const char *,int);
+   static bool                    AttachLeaf(Environment *,struct lists *,struct entries *,FILE *,const char *,int);
+   static long                    LookupEntry(Environment *,const char *,char **,char *,int *);
+   static void                    TossFunction(Environment *,struct entries *);
+   static void                    DeallocateTextProcessingData(Environment *);
 
 /******************************************************************************/
 /*============================================================================*/
@@ -201,8 +208,8 @@ static void DeallocateTextProcessingData(void *);
 /* The function returns the number of entries loaded if the entire file was */
 /*   was correctly formatted, else it returns -1.                           */
 /****************************************************************************/
-int TextLookupFetch(
-  void *theEnv,
+static int TextLookupFetch(
+  Environment *theEnv,
   const char *file)
   {
    FILE *fp;                     /*Pointer into stream of input file      */
@@ -327,8 +334,8 @@ int TextLookupFetch(
 /*          it from the lookup table and returns a boolean flag indicating    */
 /*          failure or success.                                               */
 /******************************************************************************/
-bool TextLookupToss(
-  void *theEnv,
+static bool TextLookupToss(
+  Environment *theEnv,
   const char *file)
   {
    struct lists *plptr, *clptr;
@@ -364,7 +371,7 @@ bool TextLookupToss(
      TextProcessingData(theEnv)->headings = clptr->next;
    else
      plptr->next = clptr->next;
-   rm(theEnv,(void *) clptr,(int) sizeof(struct lists));
+   rm(theEnv,clptr,(int) sizeof(struct lists));
    return true;
   }
 
@@ -382,7 +389,7 @@ bool TextLookupToss(
 /*                                                                            */
 /******************************************************************************/
 static FILE *GetEntries(
-  void *theEnv,
+  Environment *theEnv,
   const char *file,
   char **menu,
   char *name,
@@ -393,18 +400,18 @@ static FILE *GetEntries(
 
    offset = LookupEntry(theEnv,file,menu,name,code);
    if (offset < 0)
-     return(NULL);
+     return NULL;
    fp = GenOpen(theEnv,file,OPEN_READ_BINARY);
    if (fp == NULL)
      {
       *code = NO_FILE;
-      return(NULL);
+      return NULL;
      }
    if (fseek(fp,offset,0) < 0)
      {
       GenClose(theEnv,fp);
       *code = NO_FILE;
-      return(NULL);
+      return NULL;
      }
    return(fp);
   }
@@ -420,7 +427,7 @@ static FILE *GetEntries(
 /*             (returns NULL if there is no current menu)                     */
 /******************************************************************************/
 static FILE *GetCurrentMenu(
-  void *theEnv,
+  Environment *theEnv,
   const char *file,
   int *status)
   {
@@ -453,7 +460,7 @@ static FILE *GetCurrentMenu(
    if (lptr == NULL)
      {
       *status = NO_FILE;
-      return(NULL);
+      return NULL;
      }
 
    /*============================================================*/
@@ -462,25 +469,25 @@ static FILE *GetCurrentMenu(
    if (lptr->curr_menu == NULL)
      {
       *status = NO_TOPIC;
-      return(NULL);
+      return NULL;
      }
    if ((fp = GenOpen(theEnv,file,OPEN_READ_BINARY)) == NULL)
      {
       *status = NO_FILE;
-      return(NULL);
+      return NULL;
      }
    if (fseek(fp,lptr->curr_menu->offset,0) < 0)
      {
       GenClose(theEnv,fp);
       *status = NO_FILE;
-      return(NULL);
+      return NULL;
      }
    *status = NORMAL;
    return(fp);
   }
 
 /******************************************************************************/
-/*FUNCTION GRAB_STRING :                                                      */
+/*FUNCTION GrabString :                                                       */
 /* Input : 1) file stream pointer                                             */
 /*         2) caller allocated buffer for storage of read string              */
 /*         3) size of caller's buffer                                         */
@@ -495,8 +502,8 @@ static FILE *GetCurrentMenu(
 /*         2) The caller must close the file himself if he wishes to          */
 /*            prematurely abort the complete reading of an entry.             */
 /******************************************************************************/
-static char *grab_string(
-  void *theEnv,
+static char *GrabString(
+  Environment *theEnv,
   FILE *fp,
   char *buf,
   int bufsize)
@@ -504,7 +511,7 @@ static char *grab_string(
    if (fgets(buf,bufsize,fp) == NULL)
      {
       GenClose(theEnv,fp);
-      return(NULL);
+      return NULL;
      }
    if ((buf[0] == LIT_DELIM) && (buf[1] == LIT_DELIM))
      {
@@ -563,7 +570,7 @@ static void upper(
 /*          2) returns the null address, if the file was already present      */
 /******************************************************************************/
 static struct lists *NewFetchFile(
-  void *theEnv,
+  Environment *theEnv,
   const char *file)
   {
    struct lists *lptr = NULL, *lnode;
@@ -574,11 +581,11 @@ static struct lists *NewFetchFile(
       while (lptr->next != NULL)
         {
          if (strcmp(lptr->file,file) == 0)
-           return(NULL);
+           return NULL;
          lptr = lptr->next;
         }
       if (strcmp(lptr->file,file) == 0)
-        return(NULL);
+        return NULL;
      }
    lnode = (struct lists *) gm2(theEnv,(int) sizeof(struct lists));
    genstrcpy(lnode->file,file);
@@ -610,7 +617,7 @@ static struct lists *NewFetchFile(
 /*address.                                                                    */
 /******************************************************************************/
 static struct entries *AllocateEntryNode(
-  void *theEnv,
+  Environment *theEnv,
   FILE *fp,
   const char *file,
   const char *str,
@@ -629,7 +636,7 @@ static struct entries *AllocateEntryNode(
    if (sscanf(str,BFORMAT,
               &enode->level,t_code,bmarker,enode->name) != 4)
      {
-      rm(theEnv,(void *) enode,(int) sizeof(struct entries));
+      rm(theEnv,enode,(int) sizeof(struct entries));
       GenClose(theEnv,fp);
       TextLookupToss(theEnv,file);
 
@@ -638,7 +645,7 @@ static struct entries *AllocateEntryNode(
       PrintLongInteger(theEnv,WERROR,line_ct);
       EnvPrintRouter(theEnv,WERROR," : Invalid delimeter string.\n");
 
-      return(NULL);
+      return NULL;
      }
    if (t_code[0] == 'M')
      enode->type = MENU;
@@ -646,7 +653,7 @@ static struct entries *AllocateEntryNode(
      enode->type = INFO;
    else
      {
-      rm(theEnv,(void *) enode,(int) sizeof(struct entries));
+      rm(theEnv,enode,(int) sizeof(struct entries));
       GenClose(theEnv,fp);
       TextLookupToss(theEnv,file);
 
@@ -655,11 +662,11 @@ static struct entries *AllocateEntryNode(
       PrintLongInteger(theEnv,WERROR,line_ct);
       EnvPrintRouter(theEnv,WERROR," : Invalid entry type.\n");
 
-      return(NULL);
+      return NULL;
      }
    if (strcmp(bmarker,BDELIM) != 0)
      {
-      rm(theEnv,(void *) enode,(int) sizeof(struct entries));
+      rm(theEnv,enode,(int) sizeof(struct entries));
       GenClose(theEnv,fp);
       TextLookupToss(theEnv,file);
 
@@ -668,7 +675,7 @@ static struct entries *AllocateEntryNode(
       PrintLongInteger(theEnv,WERROR,line_ct);
       EnvPrintRouter(theEnv,WERROR," : Invalid delimeter string.\n");
 
-      return(NULL);
+      return NULL;
      }
 
    /*===============================================================*/
@@ -705,7 +712,7 @@ static struct entries *AllocateEntryNode(
 /*previous file entries are deleted from the lookup table.                    */
 /******************************************************************************/
 static bool AttachLeaf(
-  void *theEnv,
+  Environment *theEnv,
   struct lists *lnode,
   struct entries *enode,
   FILE *fp,
@@ -732,7 +739,7 @@ static bool AttachLeaf(
        }
      else
        {
-        rm(theEnv,(void *) enode,(int) sizeof(struct entries));
+        rm(theEnv,enode,(int) sizeof(struct entries));
         GenClose(theEnv,fp);
         TextLookupToss(theEnv,file);
 
@@ -829,7 +836,7 @@ static bool AttachLeaf(
 /*            main topic (or menu) is returned (status NO_TOPIC).             */
 /******************************************************************************/
 static long int LookupEntry(
-  void *theEnv,
+  Environment *theEnv,
   const char *file,
   char **menu,
   char *name,
@@ -957,7 +964,7 @@ static long int LookupEntry(
 /* Output : This function recursively deletes a node and all child nodes      */
 /******************************************************************************/
 static void TossFunction(
-  void *theEnv,
+  Environment *theEnv,
   struct entries *eptr)
   {
    struct entries *prev;
@@ -968,7 +975,7 @@ static void TossFunction(
         TossFunction(theEnv,eptr->child);
       prev = eptr;
       eptr = eptr->next;
-      rm(theEnv,(void *) prev,(int) sizeof(struct entries));
+      rm(theEnv,prev,(int) sizeof(struct entries));
      }
   }
 
@@ -1009,8 +1016,8 @@ struct topics
 /*============================================================================*/
 /******************************************************************************/
 
-static struct topics *GetCommandLineTopics(void *);
-static FILE *FindTopicInEntries(void *,const char *,struct topics *,char **,int *);
+   static struct topics          *GetCommandLineTopics(Environment *);
+   static FILE                   *FindTopicInEntries(Environment *,const char *,struct topics *,char **,int *);
 
 /******************************************************************************/
 /*============================================================================*/
@@ -1028,7 +1035,7 @@ static FILE *FindTopicInEntries(void *,const char *,struct topics *,char **,int 
 /*          returns a (float) boolean flag indicating failure or success.  */
 /***************************************************************************/
 void FetchCommand(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *result)
   {
    int load_ct;          /*Number of entries loaded */
@@ -1050,7 +1057,7 @@ void FetchCommand(
       return;
      }
    result->type = INTEGER;
-   result->value = (void *) EnvAddLong(theEnv,(long long) load_ct);
+   result->value = EnvAddLong(theEnv,(long long) load_ct);
   }
 
 /******************************************************************************/
@@ -1071,7 +1078,7 @@ void FetchCommand(
 /* For usage, see the external documentation.                                 */
 /******************************************************************************/
 bool PrintRegionCommand(
-  void *theEnv)
+  Environment *theEnv)
   {
    struct topics *params,    /*Lookup file and list of topic requests  */
                  *tptr;      /*Used in deallocating the parameter list */
@@ -1088,7 +1095,7 @@ bool PrintRegionCommand(
       if (strcmp(params->name,"t") == 0)
         genstrcpy(params->name,STDOUT);
       EnvPrintRouter(theEnv,params->name,"\n");
-      while (grab_string(theEnv,fp,buf,256) != NULL)
+      while (GrabString(theEnv,fp,buf,256) != NULL)
         EnvPrintRouter(theEnv,params->name,buf);
       com_code = true;
      }
@@ -1112,16 +1119,16 @@ bool PrintRegionCommand(
      {
       tptr = params;
       params = params->next;
-      rm(theEnv,(void *) tptr,(int) sizeof(struct topics));
+      rm(theEnv,tptr,(int) sizeof(struct topics));
      }
    return(com_code);
   }
 
-/******************************************************************************/
-/*FUNCTION GetRegionCommand : (H/L functionget-region)                 */
-/******************************************************************************/
+/***********************************************/
+/* GetRegionCommand : (H/L functionget-region) */
+/***********************************************/
 void *GetRegionCommand(
-  void *theEnv)
+  Environment *theEnv)
   {
    struct topics *params,    /*Lookup file and list of topic requests  */
                  *tptr;      /*Used in deallocating the parameter list */
@@ -1139,7 +1146,7 @@ void *GetRegionCommand(
    fp = FindTopicInEntries(theEnv,params->name,params->next,menu,&status);
    if ((status != NO_FILE) && (status != NO_TOPIC) && (status != EXIT))
      {
-      while (grab_string(theEnv,fp,buf,256) != NULL)
+      while (GrabString(theEnv,fp,buf,256) != NULL)
         theString = AppendToString(theEnv,buf,theString,&oldPos,&oldMax);
      }
    else
@@ -1161,7 +1168,7 @@ void *GetRegionCommand(
      {
       tptr = params;
       params = params->next;
-      rm(theEnv,(void *) tptr,(int) sizeof(struct topics));
+      rm(theEnv,tptr,(int) sizeof(struct topics));
      }
 
    if (theString == NULL)
@@ -1191,7 +1198,7 @@ void *GetRegionCommand(
 /*          returns a (float) boolean flag indicating failure or success.  */
 /***************************************************************************/
 bool TossCommand(
-  void *theEnv)
+  Environment *theEnv)
   {
    const char *file;   /*Name of the file */
    DATA_OBJECT arg_ptr;
@@ -1220,7 +1227,7 @@ bool TossCommand(
 /*          the list or NULL if there were no command line topics.            */
 /******************************************************************************/
 static struct topics *GetCommandLineTopics(
-  void *theEnv)
+  Environment *theEnv)
   {
    int topic_num,         /*Number of topics specified by the user */
        theIndex;             /*Used to loop through the topic list    */
@@ -1273,7 +1280,7 @@ static struct topics *GetCommandLineTopics(
 /*          nature of the final lookup is indicated in the status buffer.     */
 /******************************************************************************/
 static FILE *FindTopicInEntries(
-  void *theEnv,
+  Environment *theEnv,
   const char *file,
   struct topics *main_topic,
   char **menu,
@@ -1329,7 +1336,7 @@ static FILE *FindTopicInEntries(
 /* HelpFunctionDefinitions:                */
 /*******************************************/
 void HelpFunctionDefinitions(
-  void *theEnv)
+  Environment *theEnv)
   {
    AllocateEnvironmentData(theEnv,TEXTPRO_DATA,sizeof(struct textProcessingData),DeallocateTextProcessingData);
 #if ! RUN_TIME
@@ -1347,7 +1354,7 @@ void HelpFunctionDefinitions(
 /*    data for text processing routines.                 */
 /*********************************************************/
 static void DeallocateTextProcessingData(
-  void *theEnv)
+  Environment *theEnv)
   {
    struct lists *nextptr, *clptr;
 
@@ -1357,7 +1364,7 @@ static void DeallocateTextProcessingData(
       nextptr = clptr->next;
      
       TossFunction(theEnv,clptr->topics);
-      rm(theEnv,(void *) clptr,(int) sizeof(struct lists));
+      rm(theEnv,clptr,(int) sizeof(struct lists));
 
       clptr = nextptr;
      }

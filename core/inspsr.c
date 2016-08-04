@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*               INSTANCE PARSER MODULE                */
    /*******************************************************/
@@ -44,6 +44,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 /* =========================================
@@ -84,13 +87,11 @@
 #define CLASS_RLN          "of"
 #define DUPLICATE_NAME_REF "to"
 
-/* =========================================
-   *****************************************
-      INTERNALLY VISIBLE FUNCTION HEADERS
-   =========================================
-   ***************************************** */
+/***************************************/
+/* LOCAL INTERNAL FUNCTION DEFINITIONS */
+/***************************************/
 
-static bool ReplaceClassNameWithReference(void *,EXPRESSION *);
+   static bool                    ReplaceClassNameWithReference(Environment *,EXPRESSION *);
 
 /* =========================================
    *****************************************
@@ -176,7 +177,7 @@ static bool ReplaceClassNameWithReference(void *,EXPRESSION *);
 
  *************************************************************************************/
 EXPRESSION *ParseInitializeInstance(
-  void *theEnv,
+  Environment *theEnv,
   EXPRESSION *top,
   const char *readSource)
   {
@@ -184,16 +185,16 @@ EXPRESSION *ParseInitializeInstance(
    int fcalltype;
    bool readclass;
 
-   if ((top->value == (void *) FindFunction(theEnv,"make-instance")) ||
-       (top->value == (void *) FindFunction(theEnv,"active-make-instance")))
+   if ((top->value == FindFunction(theEnv,"make-instance")) ||
+       (top->value == FindFunction(theEnv,"active-make-instance")))
      fcalltype = MAKE_TYPE;
-   else if ((top->value == (void *) FindFunction(theEnv,"initialize-instance")) ||
-            (top->value == (void *) FindFunction(theEnv,"active-initialize-instance")))
+   else if ((top->value == FindFunction(theEnv,"initialize-instance")) ||
+            (top->value == FindFunction(theEnv,"active-initialize-instance")))
      fcalltype = INITIALIZE_TYPE;
-   else if ((top->value == (void *) FindFunction(theEnv,"modify-instance")) ||
-            (top->value == (void *) FindFunction(theEnv,"active-modify-instance")) ||
-            (top->value == (void *) FindFunction(theEnv,"message-modify-instance")) ||
-            (top->value == (void *) FindFunction(theEnv,"active-message-modify-instance")))
+   else if ((top->value == FindFunction(theEnv,"modify-instance")) ||
+            (top->value == FindFunction(theEnv,"active-modify-instance")) ||
+            (top->value == FindFunction(theEnv,"message-modify-instance")) ||
+            (top->value == FindFunction(theEnv,"active-message-modify-instance")))
      fcalltype = MODIFY_TYPE;
    else
      fcalltype = DUPLICATE_TYPE;
@@ -234,7 +235,7 @@ EXPRESSION *ParseInitializeInstance(
              (strcmp(ValueToString(top->argList->nextArg->value),CLASS_RLN) != 0))
            {
             top->argList->type = FCALL;
-            top->argList->value = (void *) FindFunction(theEnv,"gensym*");
+            top->argList->value = FindFunction(theEnv,"gensym*");
             readclass = false;
            }
          else
@@ -301,7 +302,7 @@ EXPRESSION *ParseInitializeInstance(
             GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
            }
          else
-           top->argList->nextArg = GenConstant(theEnv,FCALL,(void *) FindFunction(theEnv,"gensym*"));
+           top->argList->nextArg = GenConstant(theEnv,FCALL,FindFunction(theEnv,"gensym*"));
          top->argList->nextArg->nextArg = ParseSlotOverrides(theEnv,readSource,&error);
         }
       else
@@ -321,7 +322,7 @@ ParseInitializeInstanceError:
    EnvSetEvaluationError(theEnv,true);
    ReturnExpression(theEnv,top);
    DecrementIndentDepth(theEnv,3);
-   return(NULL);
+   return NULL;
   }
 
 /********************************************************************************
@@ -345,7 +346,7 @@ ParseInitializeInstanceError:
                  Assumes first token has already been scanned
  ********************************************************************************/
 EXPRESSION *ParseSlotOverrides(
-  void *theEnv,
+  Environment *theEnv,
   const char *readSource,
   bool *error)
   {
@@ -359,7 +360,7 @@ EXPRESSION *ParseSlotOverrides(
       if (*error == true)
         {
          ReturnExpression(theEnv,top);
-         return(NULL);
+         return NULL;
         }
       else if (theExp == NULL)
         {
@@ -367,7 +368,7 @@ EXPRESSION *ParseSlotOverrides(
          *error = true;
          ReturnExpression(theEnv,top);
          EnvSetEvaluationError(theEnv,true);
-         return(NULL);
+         return NULL;
         }
       theExpNext = GenConstant(theEnv,SYMBOL,EnvTrueSymbol(theEnv));
       if (CollectArguments(theEnv,theExpNext,readSource) == NULL)
@@ -375,7 +376,7 @@ EXPRESSION *ParseSlotOverrides(
          *error = true;
          ReturnExpression(theEnv,top);
          ReturnExpression(theEnv,theExp);
-         return(NULL);
+         return NULL;
         }
       theExp->nextArg = theExpNext;
       if (top == NULL)
@@ -428,7 +429,7 @@ EXPRESSION *ParseSlotOverrides(
 
  ****************************************************************************/
 EXPRESSION *ParseSimpleInstance(
-  void *theEnv,
+  Environment *theEnv,
   EXPRESSION *top,
   const char *readSource)
   {
@@ -460,7 +461,7 @@ EXPRESSION *ParseSimpleInstance(
    if (GetType(DefclassData(theEnv)->ObjectParseToken) != SYMBOL)
      goto MakeInstanceError;
    top->argList->nextArg =
-        GenConstant(theEnv,SYMBOL,(void *) GetValue(DefclassData(theEnv)->ObjectParseToken));
+        GenConstant(theEnv,SYMBOL,GetValue(DefclassData(theEnv)->ObjectParseToken));
    theExp = top->argList->nextArg;
    if (ReplaceClassNameWithReference(theEnv,theExp) == false)
      goto MakeInstanceError;
@@ -470,7 +471,7 @@ EXPRESSION *ParseSimpleInstance(
       GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
       if (GetType(DefclassData(theEnv)->ObjectParseToken) != SYMBOL)
         goto SlotOverrideError;
-      theExp->nextArg = GenConstant(theEnv,SYMBOL,(void *) GetValue(DefclassData(theEnv)->ObjectParseToken));
+      theExp->nextArg = GenConstant(theEnv,SYMBOL,GetValue(DefclassData(theEnv)->ObjectParseToken));
       theExp->nextArg->nextArg = GenConstant(theEnv,SYMBOL,EnvTrueSymbol(theEnv));
       theExp = theExp->nextArg->nextArg;
       GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
@@ -487,14 +488,14 @@ EXPRESSION *ParseSimpleInstance(
             GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
             if (GetType(DefclassData(theEnv)->ObjectParseToken) != RPAREN)
               goto SlotOverrideError;
-            tval = GenConstant(theEnv,FCALL,(void *) FindFunction(theEnv,"create$"));
+            tval = GenConstant(theEnv,FCALL,FindFunction(theEnv,"create$"));
            }
          else
            {
             if ((type != SYMBOL) && (type != STRING) &&
                 (type != FLOAT) && (type != INTEGER) && (type != INSTANCE_NAME))
               goto SlotOverrideError;
-            tval = GenConstant(theEnv,type,(void *) GetValue(DefclassData(theEnv)->ObjectParseToken));
+            tval = GenConstant(theEnv,type,GetValue(DefclassData(theEnv)->ObjectParseToken));
            }
          if (vals == NULL)
            vals = tval;
@@ -515,14 +516,14 @@ MakeInstanceError:
    SyntaxErrorMessage(theEnv,"make-instance");
    EnvSetEvaluationError(theEnv,true);
    ReturnExpression(theEnv,top);
-   return(NULL);
+   return NULL;
 
 SlotOverrideError:
    SyntaxErrorMessage(theEnv,"slot-override");
    EnvSetEvaluationError(theEnv,true);
    ReturnExpression(theEnv,top);
    ReturnExpression(theEnv,vals);
-   return(NULL);
+   return NULL;
   }
 
 /* =========================================
@@ -549,7 +550,7 @@ SlotOverrideError:
                  is specified.
  ***************************************************/
 static bool ReplaceClassNameWithReference(
-  void *theEnv,
+  Environment *theEnv,
   EXPRESSION *theExp)
   {
    const char *theClassName;

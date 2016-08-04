@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/04/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*     CLASS INFO PROGRAMMATIC ACCESS HEADER FILE      */
    /*******************************************************/
@@ -36,6 +36,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_classinf
@@ -46,56 +49,56 @@
 
 #include "evaluatn.h"
 
-   bool                           ClassAbstractPCommand(void *);
+   bool                           ClassAbstractPCommand(Environment *);
 #if DEFRULE_CONSTRUCT
-   bool                           ClassReactivePCommand(void *);
+   bool                           ClassReactivePCommand(Environment *);
 #endif
-   void                          *ClassInfoFnxArgs(void *,const char *,bool *);
-   void                           ClassSlotsCommand(void *,DATA_OBJECT *);
-   void                           ClassSuperclassesCommand(void *,DATA_OBJECT *);
-   void                           ClassSubclassesCommand(void *,DATA_OBJECT *);
-   void                           GetDefmessageHandlersListCmd(void *,DATA_OBJECT *);
-   void                           SlotFacetsCommand(void *,DATA_OBJECT *);
-   void                           SlotSourcesCommand(void *,DATA_OBJECT *);
-   void                           SlotTypesCommand(void *,DATA_OBJECT *);
-   void                           SlotAllowedValuesCommand(void *,DATA_OBJECT *);
-   void                           SlotAllowedClassesCommand(void *,DATA_OBJECT *);
-   void                           SlotRangeCommand(void *,DATA_OBJECT *);
-   void                           SlotCardinalityCommand(void *,DATA_OBJECT *);
-   bool                           EnvClassAbstractP(void *,void *);
+   Defclass                      *ClassInfoFnxArgs(Environment *,const char *,bool *);
+   void                           ClassSlotsCommand(Environment *,DATA_OBJECT *);
+   void                           ClassSuperclassesCommand(Environment *,DATA_OBJECT *);
+   void                           ClassSubclassesCommand(Environment *,DATA_OBJECT *);
+   void                           GetDefmessageHandlersListCmd(Environment *,DATA_OBJECT *);
+   void                           SlotFacetsCommand(Environment *,DATA_OBJECT *);
+   void                           SlotSourcesCommand(Environment *,DATA_OBJECT *);
+   void                           SlotTypesCommand(Environment *,DATA_OBJECT *);
+   void                           SlotAllowedValuesCommand(Environment *,DATA_OBJECT *);
+   void                           SlotAllowedClassesCommand(Environment *,DATA_OBJECT *);
+   void                           SlotRangeCommand(Environment *,DATA_OBJECT *);
+   void                           SlotCardinalityCommand(Environment *,DATA_OBJECT *);
+   bool                           EnvClassAbstractP(Environment *,Defclass *);
 #if DEFRULE_CONSTRUCT
-   bool                           EnvClassReactiveP(void *,void *);
+   bool                           EnvClassReactiveP(Environment *,Defclass *);
 #endif
-   void                           EnvClassSlots(void *,void *,DATA_OBJECT *,bool);
-   void                           EnvGetDefmessageHandlerList(void *,void *,DATA_OBJECT *,bool);
-   void                           EnvClassSuperclasses(void *,void *,DATA_OBJECT *,bool);
-   void                           EnvClassSubclasses(void *,void *,DATA_OBJECT *,bool);
-   void                           ClassSubclassAddresses(void *,void *,DATA_OBJECT *,bool);
-   void                           EnvSlotFacets(void *,void *,const char *,DATA_OBJECT *);
-   void                           EnvSlotSources(void *,void *,const char *,DATA_OBJECT *);
-   void                           EnvSlotTypes(void *,void *,const char *,DATA_OBJECT *);
-   void                           EnvSlotAllowedValues(void *,void *,const char *,DATA_OBJECT *);
-   void                           EnvSlotAllowedClasses(void *,void *,const char *,DATA_OBJECT *);
-   void                           EnvSlotRange(void *,void *,const char *,DATA_OBJECT *);
-   void                           EnvSlotCardinality(void *,void *,const char *,DATA_OBJECT *);
+   void                           EnvClassSlots(Environment *,Defclass *,DATA_OBJECT *,bool);
+   void                           EnvGetDefmessageHandlerList(Environment *,Defclass *,DATA_OBJECT *,bool);
+   void                           EnvClassSuperclasses(Environment *,Defclass *,DATA_OBJECT *,bool);
+   void                           EnvClassSubclasses(Environment *,Defclass *,DATA_OBJECT *,bool);
+   void                           ClassSubclassAddresses(Environment *,Defclass *,DATA_OBJECT *,bool);
+   void                           EnvSlotFacets(Environment *,Defclass *,const char *,DATA_OBJECT *);
+   void                           EnvSlotSources(Environment *,Defclass *,const char *,DATA_OBJECT *);
+   void                           EnvSlotTypes(Environment *,Defclass *,const char *,DATA_OBJECT *);
+   void                           EnvSlotAllowedValues(Environment *,Defclass *,const char *,DATA_OBJECT *);
+   void                           EnvSlotAllowedClasses(Environment *,Defclass *,const char *,DATA_OBJECT *);
+   void                           EnvSlotRange(Environment *,Defclass *,const char *,DATA_OBJECT *);
+   void                           EnvSlotCardinality(Environment *,Defclass *,const char *,DATA_OBJECT *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-   bool                           ClassAbstractP(void *);
+   bool                           ClassAbstractP(Defclass *);
 #if DEFRULE_CONSTRUCT
-   bool                           ClassReactiveP(void *);
+   bool                           ClassReactiveP(Defclass *);
 #endif
-   void                           ClassSlots(void *,DATA_OBJECT *,int);
-   void                           ClassSubclasses(void *,DATA_OBJECT *,int);
-   void                           ClassSuperclasses(void *,DATA_OBJECT *,int);
-   void                           SlotAllowedValues(void *,const char *,DATA_OBJECT *);
-   void                           SlotAllowedClasses(void *,const char *,DATA_OBJECT *);
-   void                           SlotCardinality(void *,const char *,DATA_OBJECT *);
-   void                           SlotFacets(void *,const char *,DATA_OBJECT *);
-   void                           SlotRange(void *,const char *,DATA_OBJECT *);
-   void                           SlotSources(void *,const char *,DATA_OBJECT *);
-   void                           SlotTypes(void *,const char *,DATA_OBJECT *);
-   void                           GetDefmessageHandlerList(void *,DATA_OBJECT *,int);
+   void                           ClassSlots(Defclass *,DATA_OBJECT *,bool);
+   void                           ClassSubclasses(Defclass *,DATA_OBJECT *,bool);
+   void                           ClassSuperclasses(Defclass *,DATA_OBJECT *,bool);
+   void                           SlotAllowedValues(Defclass *,const char *,DATA_OBJECT *);
+   void                           SlotAllowedClasses(Defclass *,const char *,DATA_OBJECT *);
+   void                           SlotCardinality(Defclass *,const char *,DATA_OBJECT *);
+   void                           SlotFacets(Defclass *,const char *,DATA_OBJECT *);
+   void                           SlotRange(Defclass *,const char *,DATA_OBJECT *);
+   void                           SlotSources(Defclass *,const char *,DATA_OBJECT *);
+   void                           SlotTypes(Defclass *,const char *,DATA_OBJECT *);
+   void                           GetDefmessageHandlerList(Defclass *,DATA_OBJECT *,bool);
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */
 

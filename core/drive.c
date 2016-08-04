@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*                    DRIVE MODULE                     */
    /*******************************************************/
@@ -42,6 +42,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -69,15 +72,15 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    EmptyDrive(void *,struct joinNode *,struct partialMatch *,int);
-   static void                    JoinNetErrorMessage(void *,struct joinNode *);
+   static void                    EmptyDrive(Environment *,struct joinNode *,struct partialMatch *,int);
+   static void                    JoinNetErrorMessage(Environment *,struct joinNode *);
    
 /************************************************/
 /* NetworkAssert: Primary routine for filtering */
 /*   a partial match through the join network.  */
 /************************************************/
 void NetworkAssert(
-  void *theEnv,
+  Environment *theEnv,
   struct partialMatch *binds,
   struct joinNode *join)
   {
@@ -115,7 +118,7 @@ void NetworkAssert(
 /*   the RHS of a join.                              */
 /*****************************************************/
 void NetworkAssertRight(
-  void *theEnv,
+  Environment *theEnv,
   struct partialMatch *rhsBinds,
   struct joinNode *join,
   int operation)
@@ -314,7 +317,7 @@ void NetworkAssertRight(
 /*   entering through the left side of a join.      */
 /****************************************************/
 void NetworkAssertLeft(
-  void *theEnv,
+  Environment *theEnv,
   struct partialMatch *lhsBinds,
   struct joinNode *join,
   int operation)
@@ -587,7 +590,7 @@ void NetworkAssertLeft(
 /*   than if EvaluateExpression was used directly.     */
 /*******************************************************/
 bool EvaluateJoinExpression(
-  void *theEnv,
+  Environment *theEnv,
   struct expr *joinExpr,
   struct joinNode *joinPtr)
   {
@@ -727,7 +730,7 @@ bool EvaluateJoinExpression(
 /* EvaluateSecondaryNetworkTest: */
 /*********************************/
 bool EvaluateSecondaryNetworkTest(
-  void *theEnv,
+  Environment *theEnv,
   struct partialMatch *leftMatch,
   struct joinNode *joinPtr)
   {
@@ -763,7 +766,7 @@ bool EvaluateSecondaryNetworkTest(
 /* BetaMemoryHashValue: */
 /************************/
 unsigned long BetaMemoryHashValue(
-  void *theEnv,
+  Environment *theEnv,
   struct expr *hashExpr,
   struct partialMatch *lbinds,
   struct partialMatch *rbinds,
@@ -895,7 +898,7 @@ unsigned long BetaMemoryHashValue(
 /*   which the merge took place.                                   */
 /*******************************************************************/
 void PPDrive(
-  void *theEnv,
+  Environment *theEnv,
   struct partialMatch *lhsBinds,
   struct partialMatch *rhsBinds,
   struct joinNode *join,
@@ -967,7 +970,7 @@ void PPDrive(
 /*   that is the first CE of a rule.                                   */
 /***********************************************************************/
 void EPMDrive(
-  void *theEnv,
+  Environment *theEnv,
   struct partialMatch *parent,
   struct joinNode *join,
   int operation)
@@ -999,7 +1002,7 @@ void EPMDrive(
 /*   a rule (i.e. a join that cannot be entered from the LHS). */
 /***************************************************************/
 static void EmptyDrive(
-  void *theEnv,
+  Environment *theEnv,
   struct joinNode *join,
   struct partialMatch *rhsBinds,
   int operation)
@@ -1173,7 +1176,7 @@ static void EmptyDrive(
 /*   was being evaluated.                                           */
 /********************************************************************/
 static void JoinNetErrorMessage(
-  void *theEnv,
+  Environment *theEnv,
   struct joinNode *joinPtr)
   {
    PrintErrorID(theEnv,"DRIVE",1,true);

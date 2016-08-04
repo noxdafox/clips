@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*       PROCEDURAL FUNCTIONS PARSER HEADER FILE       */
    /*******************************************************/
@@ -40,6 +40,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_prcdrpsr
@@ -58,17 +61,17 @@ struct BindInfo
   };
 
 #if (! RUN_TIME)
-   void                           ProceduralFunctionParsers(void *);
-   struct BindInfo               *GetParsedBindNames(void *);
-   void                           SetParsedBindNames(void *,struct BindInfo *);
-   void                           ClearParsedBindNames(void *);
-   bool                           ParsedBindNamesEmpty(void *);
+   void                           ProceduralFunctionParsers(Environment *);
+   struct BindInfo               *GetParsedBindNames(Environment *);
+   void                           SetParsedBindNames(Environment *,struct BindInfo *);
+   void                           ClearParsedBindNames(Environment *);
+   bool                           ParsedBindNamesEmpty(Environment *);
 #endif
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-   int                            SearchParsedBindNames(void *,struct symbolHashNode *);
-   int                            CountParsedBindNames(void *);
-   void                           RemoveParsedBindName(void *,struct symbolHashNode *);
-   struct constraintRecord       *FindBindConstraints(void *,struct symbolHashNode *);
+   int                            SearchParsedBindNames(Environment *,struct symbolHashNode *);
+   int                            CountParsedBindNames(Environment *);
+   void                           RemoveParsedBindName(Environment *,struct symbolHashNode *);
+   struct constraintRecord       *FindBindConstraints(Environment *,struct symbolHashNode *);
 #endif
 
 #endif /* _H_prcdrpsr */

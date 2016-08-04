@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/04/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*               CONSTRAINT PARSER MODULE              */
    /*******************************************************/
@@ -37,6 +37,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -60,14 +63,14 @@
 /***************************************/
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   static bool                    ParseRangeCardinalityAttribute(void *,
+   static bool                    ParseRangeCardinalityAttribute(Environment *,
                                                                  const char *,CONSTRAINT_RECORD *,
                                                                  CONSTRAINT_PARSE_RECORD *,
                                                                  const char *,bool);
-   static bool                    ParseTypeAttribute(void *,const char *,CONSTRAINT_RECORD *);
-   static void                    AddToRestrictionList(void *,int,CONSTRAINT_RECORD *,
+   static bool                    ParseTypeAttribute(Environment *,const char *,CONSTRAINT_RECORD *);
+   static void                    AddToRestrictionList(Environment *,int,CONSTRAINT_RECORD *,
                                                        CONSTRAINT_RECORD *);
-   static bool                    ParseAllowedValuesAttribute(void *,const char *,const char *,
+   static bool                    ParseAllowedValuesAttribute(Environment *,const char *,const char *,
                                                               CONSTRAINT_RECORD *,
                                                               CONSTRAINT_PARSE_RECORD *);
    static int                     GetConstraintTypeFromAllowedName(const char *);
@@ -75,7 +78,7 @@
    static bool                    GetAttributeParseValue(const char *,CONSTRAINT_PARSE_RECORD *);
    static void                    SetRestrictionFlag(int,CONSTRAINT_RECORD *,bool);
    static void                    SetParseFlag(CONSTRAINT_PARSE_RECORD *,const char *);
-   static void                    NoConjunctiveUseError(void *,const char *,const char *);
+   static void                    NoConjunctiveUseError(Environment *,const char *,const char *);
 #endif
 
 /********************************************************************/
@@ -84,7 +87,7 @@
 /*   true if no conflicts were detected, otherwise false.           */
 /********************************************************************/
 bool CheckConstraintParseConflicts(
-  void *theEnv,
+  Environment *theEnv,
   CONSTRAINT_RECORD *constraints)
   {
    /*===================================================*/
@@ -203,7 +206,7 @@ bool CheckConstraintParseConflicts(
 /*   for a constraint attribute conflict.               */
 /********************************************************/
 void AttributeConflictErrorMessage(
-  void *theEnv,
+  Environment *theEnv,
   const char *attribute1,
   const char *attribute2)
   {
@@ -269,7 +272,7 @@ bool StandardConstraint(
 /*   if the constraint was successfully parsed, otherwise false.       */
 /***********************************************************************/
 bool ParseStandardConstraint(
-  void *theEnv,
+  Environment *theEnv,
   const char *readSource,
   const char *constraintName,
   CONSTRAINT_RECORD *constraints,
@@ -350,7 +353,7 @@ bool ParseStandardConstraint(
 /* record.                                                 */
 /***********************************************************/
 void OverlayConstraint(
-  void *theEnv,
+  Environment *theEnv,
   CONSTRAINT_PARSE_RECORD *pc,
   CONSTRAINT_RECORD *cdst,
   CONSTRAINT_RECORD *csrc)
@@ -483,7 +486,7 @@ void OverlayConstraintParseRecord(
 /* type from the source restriction list to the destination */
 /************************************************************/
 static void AddToRestrictionList(
-  void *theEnv,
+  Environment *theEnv,
   int type,
   CONSTRAINT_RECORD *cdst,
   CONSTRAINT_RECORD *csrc)
@@ -505,7 +508,7 @@ static void AddToRestrictionList(
 /* ParseAllowedValuesAttribute: Parses the allowed-... attributes. */
 /*******************************************************************/
 static bool ParseAllowedValuesAttribute(
-  void *theEnv,
+  Environment *theEnv,
   const char *readSource,
   const char *constraintName,
   CONSTRAINT_RECORD *constraints,
@@ -860,7 +863,7 @@ static bool ParseAllowedValuesAttribute(
 /*   that two attributes can't be used in conjunction.     */
 /***********************************************************/
 static void NoConjunctiveUseError(
-  void *theEnv,
+  Environment *theEnv,
   const char *attribute1,
   const char *attribute2)
   {
@@ -877,7 +880,7 @@ static void NoConjunctiveUseError(
 /* ParseTypeAttribute: Parses the type attribute. */
 /**************************************************/
 static bool ParseTypeAttribute(
-  void *theEnv,
+  Environment *theEnv,
   const char *readSource,
   CONSTRAINT_RECORD *constraints)
   {
@@ -1023,7 +1026,7 @@ static bool ParseTypeAttribute(
 /* ParseRangeCardinalityAttribute: Parses the range/cardinality attribute. */
 /***************************************************************************/
 static bool ParseRangeCardinalityAttribute(
-  void *theEnv,
+  Environment *theEnv,
   const char *readSource,
   CONSTRAINT_RECORD *constraints,
   CONSTRAINT_PARSE_RECORD *parsedConstraints,

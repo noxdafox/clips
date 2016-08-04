@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/04/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*                CLASS FUNCTIONS MODULE               */
    /*******************************************************/
@@ -45,6 +45,9 @@
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -97,17 +100,15 @@
 #define PUT_PREFIX         "put-"
 #define PUT_PREFIX_LENGTH  4
 
-/* =========================================
-   *****************************************
-      INTERNALLY VISIBLE FUNCTION HEADERS
-   =========================================
-   ***************************************** */
+/***************************************/
+/* LOCAL INTERNAL FUNCTION DEFINITIONS */
+/***************************************/
 
-static unsigned HashSlotName(SYMBOL_HN *);
+   static unsigned                HashSlotName(SYMBOL_HN *);
 
 #if (! RUN_TIME)
-static int NewSlotNameID(void *);
-static void DeassignClassID(void *,unsigned);
+   static int                     NewSlotNameID(Environment *);
+   static void                    DeassignClassID(Environment *,unsigned);
 #endif
 
 /* =========================================
@@ -125,14 +126,14 @@ static void DeassignClassID(void *,unsigned);
   NOTES        : None
  ***************************************************/
 void IncrementDefclassBusyCount(
-  void *theEnv,
-  void *theDefclass)
+  Environment *theEnv,
+  Defclass *theDefclass)
   {
 #if MAC_XCD
 #pragma unused(theEnv)
 #endif
 
-   ((DEFCLASS *) theDefclass)->busy++;
+   theDefclass->busy++;
   }
 
 /***************************************************
@@ -147,11 +148,11 @@ void IncrementDefclassBusyCount(
                  a no-op on a clear
  ***************************************************/
 void DecrementDefclassBusyCount(
-  void *theEnv,
-  void *theDefclass)
+  Environment *theEnv,
+  Defclass *theDefclass)
   {   
    if (! ConstructData(theEnv)->ClearInProgress)
-     ((DEFCLASS *) theDefclass)->busy--;
+     { theDefclass->busy--; }
   }
 
 /****************************************************
@@ -164,7 +165,7 @@ void DecrementDefclassBusyCount(
   NOTES        : None
  ****************************************************/
 bool InstancesPurge(
-  void *theEnv)
+  Environment *theEnv)
   {
    DestroyAllInstances(theEnv);
    CleanupInstances(theEnv);
@@ -185,12 +186,12 @@ bool InstancesPurge(
   NOTES        : None
  ***************************************************/
 void InitializeClasses(
-  void *theEnv)
+  Environment *theEnv)
   {
-   register int i;
+   int i;
 
    DefclassData(theEnv)->ClassTable =
-      (DEFCLASS **) gm2(theEnv,(int) (sizeof(DEFCLASS *) * CLASS_TABLE_HASH_SIZE));
+      (Defclass **) gm2(theEnv,(int) (sizeof(Defclass *) * CLASS_TABLE_HASH_SIZE));
    for (i = 0 ; i < CLASS_TABLE_HASH_SIZE ; i++)
      DefclassData(theEnv)->ClassTable[i] = NULL;
    DefclassData(theEnv)->SlotNameTable =
@@ -211,8 +212,8 @@ void InitializeClasses(
   NOTES        : Only looks in class defn, does not
                    examine inheritance paths
  ********************************************************/
-SLOT_DESC *FindClassSlot(
-  DEFCLASS *cls,
+SlotDescriptor *FindClassSlot(
+  Defclass *cls,
   SYMBOL_HN *sname)
   {
    long i;
@@ -222,7 +223,7 @@ SLOT_DESC *FindClassSlot(
       if (cls->slots[i].slotName->name == sname)
         return(&cls->slots[i]);
      }
-   return(NULL);
+   return NULL;
   }
 
 /***************************************************************
@@ -235,7 +236,7 @@ SLOT_DESC *FindClassSlot(
   NOTES        : None
  ***************************************************************/
 void ClassExistError(
-  void *theEnv,
+  Environment *theEnv,
   const char *func,
   const char *cname)
   {
@@ -257,7 +258,7 @@ void ClassExistError(
   NOTES        : None
  *********************************************/
 void DeleteClassLinks(
-  void *theEnv,
+  Environment *theEnv,
   CLASS_LINK *clink)
   {
    CLASS_LINK *ctmp;
@@ -282,12 +283,12 @@ void DeleteClassLinks(
   NOTES        : None
  ******************************************************/
 void PrintClassName(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
-  DEFCLASS *theDefclass,
+  Defclass *theDefclass,
   bool linefeedFlag)
   {
-   if ((theDefclass->header.whichModule->theModule != ((struct defmodule *) EnvGetCurrentModule(theEnv))) &&
+   if ((theDefclass->header.whichModule->theModule != EnvGetCurrentModule(theEnv)) &&
        (theDefclass->system == 0))
      {
       EnvPrintRouter(theEnv,logicalName,
@@ -313,7 +314,7 @@ void PrintClassName(
   NOTES        : None
  ***************************************************/
 void PrintPackedClassLinks(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
   const char *title,
   PACKED_CLASS_LINKS *plinks)
@@ -342,10 +343,10 @@ void PrintPackedClassLinks(
   NOTES        : None
  *******************************************************/
 void PutClassInTable(
-  void *theEnv,
-  DEFCLASS *cls)
+  Environment *theEnv,
+  Defclass *cls)
   {
-   cls->hashTableIndex = HashClass(GetDefclassNamePointer((void *) cls));
+   cls->hashTableIndex = HashClass(GetDefclassNamePointer(cls));
    cls->nxtHash = DefclassData(theEnv)->ClassTable[cls->hashTableIndex];
    DefclassData(theEnv)->ClassTable[cls->hashTableIndex] = cls;
   }
@@ -359,10 +360,10 @@ void PutClassInTable(
   NOTES        : None
  *********************************************************/
 void RemoveClassFromTable(
-  void *theEnv,
-  DEFCLASS *cls)
+  Environment *theEnv,
+  Defclass *cls)
   {
-   DEFCLASS *prvhsh,*hshptr;
+   Defclass *prvhsh,*hshptr;
 
    prvhsh = NULL;
    hshptr = DefclassData(theEnv)->ClassTable[cls->hashTableIndex];
@@ -393,25 +394,25 @@ void RemoveClassFromTable(
                  be deallocated
  ***************************************************/
 void AddClassLink(
-  void *theEnv,
+  Environment *theEnv,
   PACKED_CLASS_LINKS *src,
-  DEFCLASS *cls,
+  Defclass *cls,
   int posn)
   {
    PACKED_CLASS_LINKS dst;
 
-   dst.classArray = (DEFCLASS **) gm2(theEnv,(sizeof(DEFCLASS *) * (src->classCount + 1)));
+   dst.classArray = (Defclass **) gm2(theEnv,(sizeof(Defclass *) * (src->classCount + 1)));
 
    if (posn == -1)
      {
-      GenCopyMemory(DEFCLASS *,src->classCount,dst.classArray,src->classArray);
+      GenCopyMemory(Defclass *,src->classCount,dst.classArray,src->classArray);
       dst.classArray[src->classCount] = cls;
      }
    else
      {
       if (posn != 0)
-        GenCopyMemory(DEFCLASS *,posn,dst.classArray,src->classArray);
-      GenCopyMemory(DEFCLASS *,src->classCount - posn,
+        GenCopyMemory(Defclass *,posn,dst.classArray,src->classArray);
+      GenCopyMemory(Defclass *,src->classCount - posn,
                  dst.classArray + posn + 1,src->classArray + posn);
       dst.classArray[posn] = cls;
      }
@@ -433,9 +434,9 @@ void AddClassLink(
   NOTES        : None
  ***************************************************/
 void DeleteSubclassLink(
-  void *theEnv,
-  DEFCLASS *sclass,
-  DEFCLASS *cls)
+  Environment *theEnv,
+  Defclass *sclass,
+  Defclass *cls)
   {
    long deletedIndex;
    PACKED_CLASS_LINKS *src,dst;
@@ -449,10 +450,10 @@ void DeleteSubclassLink(
      return;
    if (src->classCount > 1)
      {
-      dst.classArray = (DEFCLASS **) gm2(theEnv,(sizeof(DEFCLASS *) * (src->classCount - 1)));
+      dst.classArray = (Defclass **) gm2(theEnv,(sizeof(Defclass *) * (src->classCount - 1)));
       if (deletedIndex != 0)
-        GenCopyMemory(DEFCLASS *,deletedIndex,dst.classArray,src->classArray);
-      GenCopyMemory(DEFCLASS *,src->classCount - deletedIndex - 1,
+        GenCopyMemory(Defclass *,deletedIndex,dst.classArray,src->classArray);
+      GenCopyMemory(Defclass *,src->classCount - deletedIndex - 1,
                  dst.classArray + deletedIndex,src->classArray + deletedIndex + 1);
      }
    else
@@ -476,9 +477,9 @@ void DeleteSubclassLink(
   NOTES        : None
  ***************************************************/
 void DeleteSuperclassLink(
-  void *theEnv,
-  DEFCLASS *sclass,
-  DEFCLASS *cls)
+  Environment *theEnv,
+  Defclass *sclass,
+  Defclass *cls)
   {
    long deletedIndex;
    PACKED_CLASS_LINKS *src,dst;
@@ -492,10 +493,10 @@ void DeleteSuperclassLink(
      return;
    if (src->classCount > 1)
      {
-      dst.classArray = (DEFCLASS **) gm2(theEnv,(sizeof(DEFCLASS *) * (src->classCount - 1)));
+      dst.classArray = (Defclass **) gm2(theEnv,(sizeof(Defclass *) * (src->classCount - 1)));
       if (deletedIndex != 0)
-        GenCopyMemory(DEFCLASS *,deletedIndex,dst.classArray,src->classArray);
-      GenCopyMemory(DEFCLASS *,src->classCount - deletedIndex - 1,
+        GenCopyMemory(Defclass *,deletedIndex,dst.classArray,src->classArray);
+      GenCopyMemory(Defclass *,src->classCount - deletedIndex - 1,
                  dst.classArray + deletedIndex,src->classArray + deletedIndex + 1);
      }
    else
@@ -514,11 +515,11 @@ void DeleteSuperclassLink(
   SIDE EFFECTS : None
   NOTES        : None
  **************************************************************/
-DEFCLASS *NewClass(
-  void *theEnv,
+Defclass *NewClass(
+  Environment *theEnv,
   SYMBOL_HN *className)
   {
-   register DEFCLASS *cls;
+   Defclass *cls;
 
    cls = get_struct(theEnv,defclass);
    InitializeConstructHeader(theEnv,"defclass",(struct constructHeader *) cls,className);
@@ -570,13 +571,13 @@ DEFCLASS *NewClass(
   NOTES        : None
  ***************************************************/
 void DeletePackedClassLinks(
-  void *theEnv,
+  Environment *theEnv,
   PACKED_CLASS_LINKS *plp,
   bool deleteTop)
   {
    if (plp->classCount > 0)
      {
-      rm(theEnv,(void *) plp->classArray,(sizeof(DEFCLASS *) * plp->classCount));
+      rm(theEnv,plp->classArray,(sizeof(Defclass *) * plp->classCount));
       plp->classCount = 0;
       plp->classArray = NULL;
      }
@@ -595,16 +596,16 @@ void DeletePackedClassLinks(
   NOTES        : None
  ***************************************************/
 void AssignClassID(
-  void *theEnv,
-  DEFCLASS *cls)
+  Environment *theEnv,
+  Defclass *cls)
   {
-   register unsigned i;
+   unsigned i;
 
    if ((DefclassData(theEnv)->MaxClassID % CLASS_ID_MAP_CHUNK) == 0)
      {
-      DefclassData(theEnv)->ClassIDMap = (DEFCLASS **) genrealloc(theEnv,(void *) DefclassData(theEnv)->ClassIDMap,
-                       (unsigned) (DefclassData(theEnv)->MaxClassID * sizeof(DEFCLASS *)),
-                       (unsigned) ((DefclassData(theEnv)->MaxClassID + CLASS_ID_MAP_CHUNK) * sizeof(DEFCLASS *)));
+      DefclassData(theEnv)->ClassIDMap = (Defclass **) genrealloc(theEnv,DefclassData(theEnv)->ClassIDMap,
+                       (unsigned) (DefclassData(theEnv)->MaxClassID * sizeof(Defclass *)),
+                       (unsigned) ((DefclassData(theEnv)->MaxClassID + CLASS_ID_MAP_CHUNK) * sizeof(Defclass *)));
       DefclassData(theEnv)->AvailClassID += (unsigned short) CLASS_ID_MAP_CHUNK;
 
       for (i = DefclassData(theEnv)->MaxClassID ; i < (unsigned) (DefclassData(theEnv)->MaxClassID + CLASS_ID_MAP_CHUNK) ; i++)
@@ -628,7 +629,7 @@ void AssignClassID(
   NOTES        : None
  *********************************************************/
 SLOT_NAME *AddSlotName(
-  void *theEnv,
+  Environment *theEnv,
   SYMBOL_HN *slotName,
   int newid,
   bool usenewid)
@@ -668,7 +669,7 @@ SLOT_NAME *AddSlotName(
       genstrcat(buf,ValueToString(slotName));
       snp->putHandlerName = (SYMBOL_HN *) EnvAddSymbol(theEnv,buf);
       IncrementSymbolCount(snp->putHandlerName);
-      rm(theEnv,(void *) buf,bufsz);
+      rm(theEnv,buf,bufsz);
       snp->bsaveIndex = 0L;
     }
    return(snp);
@@ -686,7 +687,7 @@ SLOT_NAME *AddSlotName(
   NOTES        : None
  ***************************************************/
 void DeleteSlotName(
-  void *theEnv,
+  Environment *theEnv,
   SLOT_NAME *slotName)
   {
    SLOT_NAME *snp,*prv;
@@ -727,11 +728,10 @@ void DeleteSlotName(
                    counts are 0 and all handlers' busy counts are 0!
  *******************************************************************/
 void RemoveDefclass(
-  void *theEnv,
-  void *vcls)
+  Environment *theEnv,
+  Defclass *cls)
   {
-   DEFCLASS *cls = (DEFCLASS *) vcls;
-   HANDLER *hnd;
+   DefmessageHandler *hnd;
    long i;
 
    /* ====================================================
@@ -769,13 +769,13 @@ void RemoveDefclass(
 
    if (cls->instanceSlotCount != 0)
      {
-      rm(theEnv,(void *) cls->instanceTemplate,
-         (sizeof(SLOT_DESC *) * cls->instanceSlotCount));
-      rm(theEnv,(void *) cls->slotNameMap,
+      rm(theEnv,cls->instanceTemplate,
+         (sizeof(SlotDescriptor *) * cls->instanceSlotCount));
+      rm(theEnv,cls->slotNameMap,
          (sizeof(unsigned) * (cls->maxSlotNameID + 1)));
      }
    if (cls->slotCount != 0)
-     rm(theEnv,(void *) cls->slots,(sizeof(SLOT_DESC) * cls->slotCount));
+     rm(theEnv,cls->slots,(sizeof(SlotDescriptor) * cls->slotCount));
 
    for (i = 0 ; i < cls->handlerCount ; i++)
      {
@@ -783,17 +783,17 @@ void RemoveDefclass(
       if (hnd->actions != NULL)
         ReturnPackedExpression(theEnv,hnd->actions);
       if (hnd->ppForm != NULL)
-        rm(theEnv,(void *) hnd->ppForm,(sizeof(char) * (strlen(hnd->ppForm)+1)));
+        rm(theEnv,hnd->ppForm,(sizeof(char) * (strlen(hnd->ppForm)+1)));
       if (hnd->usrData != NULL)
         { ClearUserDataList(theEnv,hnd->usrData); }
      }
    if (cls->handlerCount != 0)
      {
-      rm(theEnv,(void *) cls->handlers,(sizeof(HANDLER) * cls->handlerCount));
-      rm(theEnv,(void *) cls->handlerOrderMap,(sizeof(unsigned) * cls->handlerCount));
+      rm(theEnv,cls->handlers,(sizeof(DefmessageHandler) * cls->handlerCount));
+      rm(theEnv,cls->handlerOrderMap,(sizeof(unsigned) * cls->handlerCount));
      }
      
-   EnvSetDefclassPPForm(theEnv,(void *) cls,NULL);
+   EnvSetDefclassPPForm(theEnv,cls,NULL);
    DeassignClassID(theEnv,(unsigned) cls->id);
    rtn_struct(theEnv,defclass,cls);
   }
@@ -810,13 +810,12 @@ void RemoveDefclass(
   NOTES        : 
  *******************************************************************/
 void DestroyDefclass(
-  void *theEnv,
-  void *vcls)
+  Environment *theEnv,
+  Defclass *cls)
   {
-   DEFCLASS *cls = (DEFCLASS *) vcls;
    long i;
 #if ! RUN_TIME
-   HANDLER *hnd;
+   DefmessageHandler *hnd;
    DeletePackedClassLinks(theEnv,&cls->directSuperclasses,false);
    DeletePackedClassLinks(theEnv,&cls->allSuperclasses,false);
    DeletePackedClassLinks(theEnv,&cls->directSubclasses,false);
@@ -840,14 +839,14 @@ void DestroyDefclass(
 #if ! RUN_TIME
    if (cls->instanceSlotCount != 0)
      {
-      rm(theEnv,(void *) cls->instanceTemplate,
-         (sizeof(SLOT_DESC *) * cls->instanceSlotCount));
-      rm(theEnv,(void *) cls->slotNameMap,
+      rm(theEnv,cls->instanceTemplate,
+         (sizeof(SlotDescriptor *) * cls->instanceSlotCount));
+      rm(theEnv,cls->slotNameMap,
          (sizeof(unsigned) * (cls->maxSlotNameID + 1)));
      }
 
    if (cls->slotCount != 0)
-     rm(theEnv,(void *) cls->slots,(sizeof(SLOT_DESC) * cls->slotCount));
+     rm(theEnv,cls->slots,(sizeof(SlotDescriptor) * cls->slotCount));
 
    for (i = 0 ; i < cls->handlerCount ; i++)
      {
@@ -856,7 +855,7 @@ void DestroyDefclass(
         ReturnPackedExpression(theEnv,hnd->actions);
 
       if (hnd->ppForm != NULL)
-        rm(theEnv,(void *) hnd->ppForm,(sizeof(char) * (strlen(hnd->ppForm)+1)));
+        rm(theEnv,hnd->ppForm,(sizeof(char) * (strlen(hnd->ppForm)+1)));
       
       if (hnd->usrData != NULL)
         { ClearUserDataList(theEnv,hnd->usrData); }
@@ -864,8 +863,8 @@ void DestroyDefclass(
 
    if (cls->handlerCount != 0)
      {
-      rm(theEnv,(void *) cls->handlers,(sizeof(HANDLER) * cls->handlerCount));
-      rm(theEnv,(void *) cls->handlerOrderMap,(sizeof(unsigned) * cls->handlerCount));
+      rm(theEnv,cls->handlers,(sizeof(DefmessageHandler) * cls->handlerCount));
+      rm(theEnv,cls->handlerOrderMap,(sizeof(unsigned) * cls->handlerCount));
      }
      
    DestroyConstructHeader(theEnv,&cls->header);
@@ -893,12 +892,12 @@ void DestroyDefclass(
   NOTES        : None
  ***************************************************/
 void InstallClass(
-  void *theEnv,
-  DEFCLASS *cls,
+  Environment *theEnv,
+  Defclass *cls,
   bool set)
   {
-   SLOT_DESC *slot;
-   HANDLER *hnd;
+   SlotDescriptor *slot;
+   DefmessageHandler *hnd;
    long i;
 
    if ((set && cls->installed) ||
@@ -966,7 +965,7 @@ void InstallClass(
   NOTES        : Recursively examines all subclasses
  ***************************************************/
 bool IsClassBeingUsed(
-  DEFCLASS *cls)
+  Defclass *cls)
   {
    long i;
 
@@ -987,9 +986,9 @@ bool IsClassBeingUsed(
   NOTES        : None
  ***************************************************/
 bool RemoveAllUserClasses(
-  void *theEnv)
+  Environment *theEnv)
   {
-   void *userClasses,*ctmp;
+   Defclass *userClasses, *ctmp;
    bool success = true;
 
 #if BLOAD || BLOAD_AND_BSAVE
@@ -1002,7 +1001,7 @@ bool RemoveAllUserClasses(
    userClasses = EnvGetNextDefclass(theEnv,NULL);
    while (userClasses != NULL)
      {
-      if (((DEFCLASS *) userClasses)->system == 0)
+      if (userClasses->system == 0)
         break;
       userClasses = EnvGetNextDefclass(theEnv,userClasses);
      }
@@ -1035,8 +1034,8 @@ bool RemoveAllUserClasses(
   NOTES        : None
  ****************************************************/
 bool DeleteClassUAG(
-  void *theEnv,
-  DEFCLASS *cls)
+  Environment *theEnv,
+  Defclass *cls)
   {
    long subCount;
 
@@ -1047,10 +1046,10 @@ bool DeleteClassUAG(
       if (cls->directSubclasses.classCount == subCount)
         return false;
      }
-   if (EnvIsDefclassDeletable(theEnv,(void *) cls))
+   if (EnvIsDefclassDeletable(theEnv,cls))
      {
       RemoveConstructFromModule(theEnv,(struct constructHeader *) cls);
-      RemoveDefclass(theEnv,(void *) cls);
+      RemoveDefclass(theEnv,cls);
       return true;
      }
    return false;
@@ -1072,7 +1071,7 @@ bool DeleteClassUAG(
  *********************************************************/
 void MarkBitMapSubclasses(
   char *map,
-  DEFCLASS *cls,
+  Defclass *cls,
   int set)
   {
    long i;
@@ -1105,7 +1104,7 @@ void MarkBitMapSubclasses(
                  matching uses this).
  ***************************************************/
 short FindSlotNameID(
-  void *theEnv,
+  Environment *theEnv,
   SYMBOL_HN *slotName)
   {
    SLOT_NAME *snp;
@@ -1125,7 +1124,7 @@ short FindSlotNameID(
   NOTES        : None
  ***************************************************/
 SYMBOL_HN *FindIDSlotName(
-  void *theEnv,
+  Environment *theEnv,
   int id)
   {
    SLOT_NAME *snp;
@@ -1143,10 +1142,10 @@ SYMBOL_HN *FindIDSlotName(
   NOTES        : None
  ***************************************************/
 SLOT_NAME *FindIDSlotNameHash(
-  void *theEnv,
+  Environment *theEnv,
   int id)
   {
-   register int i;
+   int i;
    SLOT_NAME *snp;
 
    for (i = 0 ; i < SLOT_NAME_TABLE_HASH_SIZE ; i++)
@@ -1159,7 +1158,7 @@ SLOT_NAME *FindIDSlotNameHash(
          snp = snp->nxt;
         }
      }
-   return(NULL);
+   return NULL;
   }
 
 /***************************************************
@@ -1175,10 +1174,10 @@ SLOT_NAME *FindIDSlotNameHash(
                   class is only visited once
  ***************************************************/
 int GetTraversalID(
-  void *theEnv)
+  Environment *theEnv)
   {
-   register unsigned i;
-   register DEFCLASS *cls;
+   unsigned i;
+   Defclass *cls;
 
    if (DefclassData(theEnv)->CTID >= MAX_TRAVERSALS)
      {
@@ -1207,7 +1206,7 @@ int GetTraversalID(
                    call to GetTraversalID()
  ***************************************************/
 void ReleaseTraversalID(
-  void *theEnv)
+  Environment *theEnv)
   {
    DefclassData(theEnv)->CTID--;
   }
@@ -1272,10 +1271,10 @@ static unsigned HashSlotName(
   NOTES        : None
  ***********************************************/
 static int NewSlotNameID(
-  void *theEnv)
+  Environment *theEnv)
   {
    int newid = 0;
-   register unsigned i;
+   unsigned i;
    SLOT_NAME *snp;
 
    while (true)
@@ -1308,7 +1307,7 @@ static int NewSlotNameID(
   NOTES        : None
  ***************************************************/
 static void DeassignClassID(
-  void *theEnv,
+  Environment *theEnv,
   unsigned id)
   {
    int i;
@@ -1338,9 +1337,9 @@ static void DeassignClassID(
      }
    if (reallocReqd)
      {
-      DefclassData(theEnv)->ClassIDMap = (DEFCLASS **) genrealloc(theEnv,(void *) DefclassData(theEnv)->ClassIDMap,
-                       (unsigned) (oldChunk * sizeof(DEFCLASS *)),
-                       (unsigned) (newChunk * sizeof(DEFCLASS *)));
+      DefclassData(theEnv)->ClassIDMap = (Defclass **) genrealloc(theEnv,DefclassData(theEnv)->ClassIDMap,
+                       (unsigned) (oldChunk * sizeof(Defclass *)),
+                       (unsigned) (newChunk * sizeof(Defclass *)));
                        
       DefclassData(theEnv)->AvailClassID = newChunk;
      }

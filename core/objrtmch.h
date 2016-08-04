@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -46,6 +46,9 @@
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -121,20 +124,20 @@ struct objectAlphaNode
 typedef struct objectMatchAction
   {
    int type;
-   INSTANCE_TYPE *ins;
+   Instance *ins;
    SLOT_BITMAP *slotNameIDs;
    struct objectMatchAction *nxt;
   } OBJECT_MATCH_ACTION;
 
-   void                  ObjectMatchDelay(void *,DATA_OBJECT *);
-   bool                  SetDelayObjectPatternMatching(void *,bool);
-   bool                  GetDelayObjectPatternMatching(void *);
-   OBJECT_PATTERN_NODE  *ObjectNetworkPointer(void *);
-   OBJECT_ALPHA_NODE    *ObjectNetworkTerminalPointer(void *);
-   void                  SetObjectNetworkPointer(void *,OBJECT_PATTERN_NODE *);
-   void                  SetObjectNetworkTerminalPointer(void *,OBJECT_ALPHA_NODE *);
-   void                  ObjectNetworkAction(void *,int,INSTANCE_TYPE *,int);
-   void                  ResetObjectMatchTimeTags(void *);
+   void                  ObjectMatchDelay(Environment *,DATA_OBJECT *);
+   bool                  SetDelayObjectPatternMatching(Environment *,bool);
+   bool                  GetDelayObjectPatternMatching(Environment *);
+   OBJECT_PATTERN_NODE  *ObjectNetworkPointer(Environment *);
+   OBJECT_ALPHA_NODE    *ObjectNetworkTerminalPointer(Environment *);
+   void                  SetObjectNetworkPointer(Environment *,OBJECT_PATTERN_NODE *);
+   void                  SetObjectNetworkTerminalPointer(Environment *,OBJECT_ALPHA_NODE *);
+   void                  ObjectNetworkAction(Environment *,int,Instance *,int);
+   void                  ResetObjectMatchTimeTags(Environment *);
 
 #endif /* DEFRULE_CONSTRUCT && OBJECT_SYSTEM */
 

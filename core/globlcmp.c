@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*            DEFGLOBAL CONSTRUCTS-TO-C MODULE         */
    /*******************************************************/
@@ -32,6 +32,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -50,20 +53,20 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static bool                    ConstructToCode(void *,const char *,const char *,char *,int,FILE *,int,int);
-   static void                    DefglobalToCode(void *,FILE *,struct defglobal *,
+   static bool                    ConstructToCode(Environment *,const char *,const char *,char *,int,FILE *,int,int);
+   static void                    DefglobalToCode(Environment *,FILE *,Defglobal *,
                                                  int,int,int);
-   static void                    DefglobalModuleToCode(void *,FILE *,struct defmodule *,int,int,int);
-   static void                    CloseDefglobalFiles(void *,FILE *,FILE *,int);
-   static void                    BeforeDefglobalsToCode(void *);
-   static void                    InitDefglobalsCode(void *,FILE *,int,int);
+   static void                    DefglobalModuleToCode(Environment *,FILE *,Defmodule *,int,int,int);
+   static void                    CloseDefglobalFiles(Environment *,FILE *,FILE *,int);
+   static void                    BeforeDefglobalsToCode(Environment *);
+   static void                    InitDefglobalsCode(Environment *,FILE *,int,int);
 
 /***************************************************************/
 /* DefglobalCompilerSetup: Initializes the defglobal construct */
 /*    for use with the constructs-to-c command.                */
 /***************************************************************/
 void DefglobalCompilerSetup(
-  void *theEnv)
+  Environment *theEnv)
   {
    DefglobalData(theEnv)->DefglobalCodeItem = 
       AddCodeGeneratorItem(theEnv,"defglobal",0,BeforeDefglobalsToCode,
@@ -76,7 +79,7 @@ void DefglobalCompilerSetup(
 /*   structures are written to a file as C code               */
 /**************************************************************/
 static void BeforeDefglobalsToCode(
-  void *theEnv)
+  Environment *theEnv)
   {
    MarkConstructBsaveIDs(theEnv,DefglobalData(theEnv)->DefglobalModuleIndex);
   }
@@ -86,7 +89,7 @@ static void BeforeDefglobalsToCode(
 /*   code for defglobals for a run-time module.  */
 /*************************************************/
 static void InitDefglobalsCode(
-  void *theEnv,
+  Environment *theEnv,
   FILE *initFP,
   int imageID,
   int maxIndices)
@@ -104,7 +107,7 @@ static void InitDefglobalsCode(
 /*   module created using the constructs-to-c function.    */
 /***********************************************************/
 static bool ConstructToCode(
-  void *theEnv,
+  Environment *theEnv,
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
@@ -114,8 +117,8 @@ static bool ConstructToCode(
   int maxIndices)
   {
    int fileCount = 1;
-   struct defmodule *theModule;
-   struct defglobal *theDefglobal;
+   Defmodule *theModule;
+   Defglobal *theDefglobal;
    int moduleCount = 0, moduleArrayCount = 0, moduleArrayVersion = 1;
    int defglobalArrayCount = 0, defglobalArrayVersion = 1;
    FILE *moduleFile = NULL, *defglobalFile = NULL;
@@ -131,11 +134,11 @@ static bool ConstructToCode(
    /*  C code representation to the file as they are traversed.         */
    /*===================================================================*/
 
-   for (theModule = (struct defmodule *) EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = (struct defmodule *) EnvGetNextDefmodule(theEnv,theModule))
+        theModule = EnvGetNextDefmodule(theEnv,theModule))
      {
-      EnvSetCurrentModule(theEnv,(void *) theModule);
+      EnvSetCurrentModule(theEnv,theModule);
 
       moduleFile = OpenFileIfNeeded(theEnv,moduleFile,fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
                                     moduleArrayVersion,headerFP,
@@ -152,13 +155,13 @@ static bool ConstructToCode(
       moduleFile = CloseFileIfNeeded(theEnv,moduleFile,&moduleArrayCount,&moduleArrayVersion,
                                      maxIndices,NULL,NULL);
 
-      for (theDefglobal = (struct defglobal *) EnvGetNextDefglobal(theEnv,NULL);
+      for (theDefglobal = EnvGetNextDefglobal(theEnv,NULL);
            theDefglobal != NULL;
-           theDefglobal = (struct defglobal *) EnvGetNextDefglobal(theEnv,theDefglobal))
+           theDefglobal = EnvGetNextDefglobal(theEnv,theDefglobal))
         {
          defglobalFile = OpenFileIfNeeded(theEnv,defglobalFile,fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
                                          defglobalArrayVersion,headerFP,
-                                         "struct defglobal",ConstructPrefix(DefglobalData(theEnv)->DefglobalCodeItem),
+                                         "Defglobal",ConstructPrefix(DefglobalData(theEnv)->DefglobalCodeItem),
                                          false,NULL);
          if (defglobalFile == NULL)
            {
@@ -187,7 +190,7 @@ static bool ConstructToCode(
 /*   the defglobals have all been written to the files.   */
 /**********************************************************/
 static void CloseDefglobalFiles(
-  void *theEnv,
+  Environment *theEnv,
   FILE *moduleFile,
   FILE *defglobalFile,
   int maxIndices)
@@ -213,9 +216,9 @@ static void CloseDefglobalFiles(
 /*   of a single defglobal module to the specified file.   */
 /***********************************************************/
 static void DefglobalModuleToCode(
-  void *theEnv,
+  Environment *theEnv,
   FILE *theFile,
-  struct defmodule *theModule,
+  Defmodule *theModule,
   int imageID,
   int maxIndices,
   int moduleCount)
@@ -237,9 +240,9 @@ static void DefglobalModuleToCode(
 /*   single defglobal construct to the specified file.    */
 /**********************************************************/
 static void DefglobalToCode(
-  void *theEnv,
+  Environment *theEnv,
   FILE *theFile,
-  struct defglobal *theDefglobal,
+  Defglobal *theDefglobal,
   int imageID,
   int maxIndices,
   int moduleCount)
@@ -283,7 +286,7 @@ static void DefglobalToCode(
 /*   of a reference to a defglobal module data structure.      */
 /***************************************************************/
 void DefglobalCModuleReference(
-  void *theEnv,
+  Environment *theEnv,
   FILE *theFile,
   int count,
   int imageID,
@@ -301,13 +304,12 @@ void DefglobalCModuleReference(
 /*   of a reference to a defglobal data structure.                */
 /******************************************************************/
 void DefglobalCConstructReference(
-  void *theEnv,
+  Environment *theEnv,
   FILE *theFile,
-  void *vTheGlobal,
+  Defglobal *theGlobal,
   int imageID,
   int maxIndices)
   {
-   struct defglobal *theGlobal = (struct defglobal *) vTheGlobal;
 
    if (theGlobal == NULL)
      { fprintf(theFile,"NULL"); }

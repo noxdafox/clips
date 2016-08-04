@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*              FACT FUNCTIONS HEADER FILE             */
    /*******************************************************/
@@ -40,6 +40,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_factfun
@@ -50,29 +53,29 @@
 
 #include "factmngr.h"
 
-   void                           FactFunctionDefinitions(void *);
-   void                          *FactRelationFunction(void *);
-   void                          *FactRelation(void *);
-   void                          *EnvFactDeftemplate(void *,void *);
-   bool                           FactExistpFunction(void *);
-   bool                           EnvFactExistp(void *,void *);
-   void                           FactSlotValueFunction(void *,DATA_OBJECT *);
-   void                           FactSlotValue(void *,void *,const char *,DATA_OBJECT *);
-   void                           FactSlotNamesFunction(void *,DATA_OBJECT *);
-   void                           EnvFactSlotNames(void *,void *,DATA_OBJECT *);
-   void                           GetFactListFunction(void *,DATA_OBJECT *);
-   void                           EnvGetFactList(void *,DATA_OBJECT *,void *);
-   void                           PPFactFunction(void *);
-   void                           EnvPPFact(void *,void *,const char *,bool);
-   struct fact                   *GetFactAddressOrIndexArgument(void *,const char *,int,bool);
+   void                           FactFunctionDefinitions(Environment *);
+   void                          *FactRelationFunction(Environment *);
+   struct symbolHashNode         *FactRelation(Fact *);
+   Deftemplate                   *EnvFactDeftemplate(Environment *,Fact *);
+   bool                           FactExistpFunction(Environment *);
+   bool                           EnvFactExistp(Environment *,Fact *);
+   void                           FactSlotValueFunction(Environment *,DATA_OBJECT *);
+   void                           FactSlotValue(Environment *,Fact *,const char *,DATA_OBJECT *);
+   void                           FactSlotNamesFunction(Environment *,DATA_OBJECT *);
+   void                           EnvFactSlotNames(Environment *,Fact *,DATA_OBJECT *);
+   void                           GetFactListFunction(Environment *,DATA_OBJECT *);
+   void                           EnvGetFactList(Environment *,DATA_OBJECT *,Defmodule *);
+   void                           PPFactFunction(Environment *);
+   void                           EnvPPFact(Environment *,Fact *,const char *,bool);
+   struct fact                   *GetFactAddressOrIndexArgument(Environment *,const char *,int,bool);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-   void                          *FactDeftemplate(void *);
-   bool                           FactExistp(void *);
-   void                           FactSlotNames(void *,DATA_OBJECT *);
-   void                           GetFactList(DATA_OBJECT_PTR,void *);
-   void                           PPFact(void *,const char *,bool);
+   Deftemplate                   *FactDeftemplate(Fact *);
+   bool                           FactExistp(Fact *);
+   void                           FactSlotNames(Fact *,DATA_OBJECT *);
+   void                           GetFactList(DATA_OBJECT_PTR,Defmodule *);
+   void                           PPFact(Fact *,const char *,bool);
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                FACT BUILD HEADER FILE               */
    /*******************************************************/
@@ -31,6 +31,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_factlhs
@@ -43,8 +46,8 @@
 #include "symbol.h"
 
    bool                           FactPatternParserFind(SYMBOL_HN *);
-   struct lhsParseNode           *FactPatternParse(void *,const char *,struct token *);
-   struct lhsParseNode           *SequenceRestrictionParse(void *,const char *,struct token *);
-   struct lhsParseNode           *CreateInitialFactPattern(void *);
+   struct lhsParseNode           *FactPatternParse(Environment *,const char *,struct token *);
+   struct lhsParseNode           *SequenceRestrictionParse(Environment *,const char *,struct token *);
+   struct lhsParseNode           *CreateInitialFactPattern(Environment *);
 
 #endif /* _H_factlhs */

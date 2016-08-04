@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*               FACT MATCH HEADER FILE                */
    /*******************************************************/
@@ -37,6 +37,9 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_factmch
@@ -49,12 +52,12 @@
 #include "factbld.h"
 #include "factmngr.h"
 
-   void                           FactPatternMatch(void *,struct fact *,
+   void                           FactPatternMatch(Environment *,struct fact *,
                                                struct factPatternNode *,int,
                                                struct multifieldMarker *,
                                                struct multifieldMarker *);
-   void                           MarkFactPatternForIncrementalReset(void *,struct patternNodeHeader *,int);
-   void                           FactsIncrementalReset(void *);
+   void                           MarkFactPatternForIncrementalReset(Environment *,struct patternNodeHeader *,int);
+   void                           FactsIncrementalReset(Environment *);
 
 #endif /* _H_factmch */
 

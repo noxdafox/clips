@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                 ENGINE HEADER FILE                  */
    /*******************************************************/
@@ -63,6 +63,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_engine
@@ -79,7 +82,7 @@
 
 struct focus
   {
-   struct defmodule *theModule;
+   Defmodule *theModule;
    struct defruleModule *theDefruleModule;
    struct focus *next;
   };
@@ -88,7 +91,7 @@ struct focus
 
 struct engineData
   { 
-   struct defrule *ExecutingRule;
+   Defrule *ExecutingRule;
    bool HaltRules;
    struct joinNode *TheLogicalJoin;
    struct partialMatch *TheLogicalBind;
@@ -129,69 +132,69 @@ struct engineData
 
 #define MAX_PATTERNS_CHECKED 64
 
-   long long               EnvRun(void *,long long);
-   bool                    EnvAddRunFunction(void *,const char *,
-                                                    void (*)(void *),int);
-   bool                    EnvAddRunFunctionWithContext(void *,const char *,
-                                                               void (*)(void *),int,void *);
-   bool                    EnvRemoveRunFunction(void *,const char *);
-   bool                    EnvAddBeforeRunFunction(void *,const char *,
-                                                    void (*)(void *,void *),int);
-   bool                    EnvAddBeforeRunFunctionWithContext(void *,const char *,
-                                                               void (*)(void *, void *),int,void *);
-   bool                    EnvRemoveBeforeRunFunction(void *,const char *);
-   void                    InitializeEngine(void *);
-   void                    EnvSetBreak(void *,void *);
-   void                    EnvHalt(void *);
-   bool                    EnvRemoveBreak(void *,void *);
-   void                    RemoveAllBreakpoints(void *);
-   void                    EnvShowBreaks(void *,const char *,void *);
-   bool                    EnvDefruleHasBreakpoint(void *,void *);
-   void                    RunCommand(void *);
-   void                    SetBreakCommand(void *);
-   void                    RemoveBreakCommand(void *);
-   void                    ShowBreaksCommand(void *);
-   void                    HaltCommand(void *);
-   bool                    FocusCommand(void *);
-   void                    ClearFocusStackCommand(void *);
-   void                    EnvClearFocusStack(void *);
-   void                   *EnvGetNextFocus(void *,void *);
-   void                    EnvFocus(void *,void *);
-   bool                    EnvGetFocusChanged(void *);
-   void                    EnvSetFocusChanged(void *,bool);
-   void                    ListFocusStackCommand(void *);
-   void                    EnvListFocusStack(void *,const char *);
-   void                    GetFocusStackFunction(void *,DATA_OBJECT_PTR);
-   void                    EnvGetFocusStack(void *,DATA_OBJECT_PTR);
-   void                   *PopFocusFunction(void *);
-   void                   *GetFocusFunction(void *);
-   void                   *EnvPopFocus(void *);
-   void                   *EnvGetFocus(void *);
-   bool                    EnvGetHaltRules(void *);
-   void                    EnvSetHaltRules(void *,bool);
-   struct activation      *NextActivationToFire(void *);
+   long long               EnvRun(Environment *,long long);
+   bool                    EnvAddRunFunction(Environment *,const char *,
+                                                    void (*)(Environment *),int);
+   bool                    EnvAddRunFunctionWithContext(Environment *,const char *,
+                                                               void (*)(Environment *),int,void *);
+   bool                    EnvRemoveRunFunction(Environment *,const char *);
+   bool                    EnvAddBeforeRunFunction(Environment *,const char *,
+                                                    void (*)(Environment *,void *),int);
+   bool                    EnvAddBeforeRunFunctionWithContext(Environment *,const char *,
+                                                               void (*)(Environment *, void *),int,void *);
+   bool                    EnvRemoveBeforeRunFunction(Environment *,const char *);
+   void                    InitializeEngine(Environment *);
+   void                    EnvSetBreak(Environment *,Defrule *);
+   void                    EnvHalt(Environment *);
+   bool                    EnvRemoveBreak(Environment *,Defrule *);
+   void                    RemoveAllBreakpoints(Environment *);
+   void                    EnvShowBreaks(Environment *,const char *,Defmodule *);
+   bool                    EnvDefruleHasBreakpoint(Environment *,Defrule *);
+   void                    RunCommand(Environment *);
+   void                    SetBreakCommand(Environment *);
+   void                    RemoveBreakCommand(Environment *);
+   void                    ShowBreaksCommand(Environment *);
+   void                    HaltCommand(Environment *);
+   bool                    FocusCommand(Environment *);
+   void                    ClearFocusStackCommand(Environment *);
+   void                    EnvClearFocusStack(Environment *);
+   struct focus           *EnvGetNextFocus(Environment *,struct focus *);
+   void                    EnvFocus(Environment *,Defmodule *);
+   bool                    EnvGetFocusChanged(Environment *);
+   void                    EnvSetFocusChanged(Environment *,bool);
+   void                    ListFocusStackCommand(Environment *);
+   void                    EnvListFocusStack(Environment *,const char *);
+   void                    GetFocusStackFunction(Environment *,DATA_OBJECT_PTR);
+   void                    EnvGetFocusStack(Environment *,DATA_OBJECT_PTR);
+   void                   *PopFocusFunction(Environment *);
+   void                   *GetFocusFunction(Environment *);
+   Defmodule              *EnvPopFocus(Environment *);
+   Defmodule              *EnvGetFocus(Environment *);
+   bool                    EnvGetHaltRules(Environment *);
+   void                    EnvSetHaltRules(Environment *,bool);
+   Activation             *NextActivationToFire(Environment *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-   bool                    AddBeforeRunFunction(const char *,void (*)(void *),int);
+   bool                    AddBeforeRunFunction(const char *,void (*)(void),int);
    bool                    AddRunFunction(const char *,void (*)(void),int);
    void                    ClearFocusStack(void);
-   void                    Focus(void *);
+   void                    Focus(Defmodule *);
    void                    GetFocusStack(DATA_OBJECT_PTR);
-   void                   *GetFocus(void);
+   Defmodule              *GetFocus(void);
    bool                    GetFocusChanged(void);
-   void                   *GetNextFocus(void *);
+   struct focus           *GetNextFocus(struct focus *);
    void                    Halt(void);
-   void                   *PopFocus(void);
+   Defmodule               *PopFocus(void);
    bool                    RemoveRunFunction(const char *);
    long long               Run(long long);
    void                    SetFocusChanged(bool);
 #if DEBUGGING_FUNCTIONS
-   bool                    DefruleHasBreakpoint(void *);
+   bool                    DefruleHasBreakpoint(Defrule *);
    void                    ListFocusStack(const char *);
-   bool                    RemoveBreak(void *);
-   void                    SetBreak(void *);
-   void                    ShowBreaks(const char *,void *);
+   bool                    RemoveBreak(Defrule *);
+   void                    SetBreak(Defrule *);
+   void                    ShowBreaks(const char *,Defmodule *);
 #endif
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */

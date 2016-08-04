@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*             MULTIPLE INHERITANCE PARSER MODULE      */
    /*******************************************************/
@@ -24,6 +24,9 @@
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -56,7 +59,7 @@ typedef struct successor SUCCESSOR;
 
 struct partialOrder
   {
-   DEFCLASS *cls;
+   Defclass *cls;
    unsigned pre;
    SUCCESSOR *suc;
    struct partialOrder *nxt;
@@ -68,17 +71,15 @@ struct successor
    struct successor *nxt;
   };
 
-/* =========================================
-   *****************************************
-      INTERNALLY VISIBLE FUNCTION HEADERS
-   =========================================
-   ***************************************** */
+/***************************************/
+/* LOCAL INTERNAL FUNCTION DEFINITIONS */
+/***************************************/
 
-static PARTIAL_ORDER *InitializePartialOrderTable(void *,PARTIAL_ORDER *,PACKED_CLASS_LINKS *);
-static void RecordPartialOrders(void *,PARTIAL_ORDER *,DEFCLASS *,PACKED_CLASS_LINKS *,long);
-static PARTIAL_ORDER *FindPartialOrder(PARTIAL_ORDER *,DEFCLASS *);
-static void PrintPartialOrderLoop(void *,PARTIAL_ORDER *);
-static void PrintClassLinks(void *,const char *,const char *,CLASS_LINK *);
+   static PARTIAL_ORDER          *InitializePartialOrderTable(Environment *,PARTIAL_ORDER *,PACKED_CLASS_LINKS *);
+   static void                    RecordPartialOrders(Environment *,PARTIAL_ORDER *,Defclass *,PACKED_CLASS_LINKS *,long);
+   static PARTIAL_ORDER          *FindPartialOrder(PARTIAL_ORDER *,Defclass *);
+   static void                    PrintPartialOrderLoop(Environment *,PARTIAL_ORDER *);
+   static void                    PrintClassLinks(Environment *,const char *,const char *,CLASS_LINK *);
 
 /* =========================================
    *****************************************
@@ -120,25 +121,25 @@ static void PrintClassLinks(void *,const char *,const char *,CLASS_LINK *);
                  This routine allocates the space for the list
  ***************************************************************/
 PACKED_CLASS_LINKS *ParseSuperclasses(
-  void *theEnv,
+  Environment *theEnv,
   const char *readSource,
   SYMBOL_HN *newClassName)
   {
    CLASS_LINK *clink = NULL,*cbot = NULL,*ctmp;
-   DEFCLASS *sclass;
+   Defclass *sclass;
    PACKED_CLASS_LINKS *plinks;
 
    if (GetType(DefclassData(theEnv)->ObjectParseToken) != LPAREN)
      {
       SyntaxErrorMessage(theEnv,"defclass inheritance");
-      return(NULL);
+      return NULL;
      }
    GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
    if ((GetType(DefclassData(theEnv)->ObjectParseToken) != SYMBOL) ? true :
        (DefclassData(theEnv)->ObjectParseToken.value != (void *) DefclassData(theEnv)->ISA_SYMBOL))
      {
       SyntaxErrorMessage(theEnv,"defclass inheritance");
-      return(NULL);
+      return NULL;
      }
    SavePPBuffer(theEnv," ");
    GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
@@ -182,7 +183,7 @@ PACKED_CLASS_LINKS *ParseSuperclasses(
         {
          PrintErrorID(theEnv,"INHERPSR",6,false);
          EnvPrintRouter(theEnv,WERROR,"A user-defined class cannot be a subclass of ");
-         EnvPrintRouter(theEnv,WERROR,EnvGetDefclassName(theEnv,(void *) sclass));
+         EnvPrintRouter(theEnv,WERROR,EnvGetDefclassName(theEnv,sclass));
          EnvPrintRouter(theEnv,WERROR,".\n");
          goto SuperclassParseError;
         }
@@ -202,7 +203,7 @@ PACKED_CLASS_LINKS *ParseSuperclasses(
      {
       PrintErrorID(theEnv,"INHERPSR",4,false);
       EnvPrintRouter(theEnv,WERROR,"Must have at least one superclass.\n");
-      return(NULL);
+      return NULL;
      }
    PPBackup(theEnv);
    PPBackup(theEnv);
@@ -213,7 +214,7 @@ PACKED_CLASS_LINKS *ParseSuperclasses(
 
 SuperclassParseError:
    DeleteClassLinks(theEnv,clink);
-   return(NULL);
+   return NULL;
   }
 
 /***************************************************************************
@@ -314,8 +315,8 @@ SuperclassParseError:
                  Donald Knuth.
  ***************************************************************************/
 PACKED_CLASS_LINKS *FindPrecedenceList(
-  void *theEnv,
-  DEFCLASS *cls,
+  Environment *theEnv,
+  Defclass *cls,
   PACKED_CLASS_LINKS *supers)
   {
    PARTIAL_ORDER *po_table = NULL,*start,*pop,*poprv,*potmp;
@@ -465,7 +466,7 @@ PACKED_CLASS_LINKS *FindPrecedenceList(
          rtn_struct(theEnv,partialOrder,potmp);
         }
       DeleteClassLinks(theEnv,ptop);
-      return(NULL);
+      return NULL;
      }
 
    /* =============================================================================
@@ -508,17 +509,17 @@ PACKED_CLASS_LINKS *FindPrecedenceList(
   NOTES        : None
  ***************************************************/
 void PackClassLinks(
-  void *theEnv,
+  Environment *theEnv,
   PACKED_CLASS_LINKS *plinks,
   CLASS_LINK *lptop)
   {
-   register unsigned count;
-   register CLASS_LINK *lp;
+   unsigned count;
+   CLASS_LINK *lp;
 
    for (count = 0 , lp = lptop ; lp != NULL ; lp = lp->nxt)
      count++;
    if (count > 0)
-     plinks->classArray = (DEFCLASS **) gm2(theEnv,(sizeof(DEFCLASS *) * count));
+     plinks->classArray = (Defclass **) gm2(theEnv,(sizeof(Defclass *) * count));
    else
      plinks->classArray = NULL;
    for (count = 0 , lp = lptop ; lp != NULL ; lp = lp->nxt , count++)
@@ -550,11 +551,11 @@ void PackClassLinks(
   NOTES        : None
  **************************************************************************/
 static PARTIAL_ORDER *InitializePartialOrderTable(
-  void *theEnv,
+  Environment *theEnv,
   PARTIAL_ORDER *po_table,
   PACKED_CLASS_LINKS *supers)
   {
-   register PARTIAL_ORDER *pop,*poprv;
+   PARTIAL_ORDER *pop,*poprv;
    long i;
 
    for (i = 0 ; i < supers->classCount ; i++)
@@ -630,14 +631,14 @@ static PARTIAL_ORDER *InitializePartialOrderTable(
   NOTES        : None
  ***********************************************************************************/
 static void RecordPartialOrders(
-  void *theEnv,
+  Environment *theEnv,
   PARTIAL_ORDER *po_table,
-  DEFCLASS *cls,
+  Defclass *cls,
   PACKED_CLASS_LINKS *successors,
   long starti)
   {
-   register PARTIAL_ORDER *clspo;
-   register SUCCESSOR *stmp;
+   PARTIAL_ORDER *clspo;
+   SUCCESSOR *stmp;
 
    clspo = FindPartialOrder(po_table,cls);
    while (starti < successors->classCount)
@@ -662,7 +663,7 @@ static void RecordPartialOrders(
  ***************************************************/
 static PARTIAL_ORDER *FindPartialOrder(
   PARTIAL_ORDER *po_table,
-  DEFCLASS *cls)
+  Defclass *cls)
   {
    while (po_table != NULL)
      {
@@ -726,10 +727,10 @@ static PARTIAL_ORDER *FindPartialOrder(
                  (Fundamental Algorithms).
  **************************************************************************/
 static void PrintPartialOrderLoop(
-  void *theEnv,
+  Environment *theEnv,
   PARTIAL_ORDER *po_table)
   {
-   register PARTIAL_ORDER *pop1,*pop2;
+   PARTIAL_ORDER *pop1,*pop2;
    SUCCESSOR *prc,*stmp;
 
    /* ====================================================
@@ -826,7 +827,7 @@ static void PrintPartialOrderLoop(
   NOTES        : None
  ***************************************************/
 static void PrintClassLinks(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
   const char *title,
   CLASS_LINK *clink)

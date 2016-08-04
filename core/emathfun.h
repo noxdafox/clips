@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*          EXTENDED MATH FUNCTIONS HEADER FILE        */
    /*******************************************************/
@@ -37,6 +37,9 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_emathfun
@@ -45,44 +48,44 @@
 
 #define _H_emathfun
 
-   void                           ExtendedMathFunctionDefinitions(void *theEnv);
+   void                           ExtendedMathFunctionDefinitions(Environment *);
 #if EXTENDED_MATH_FUNCTIONS
-   double                         CosFunction(void *);
-   double                         SinFunction(void *);
-   double                         TanFunction(void *);
-   double                         SecFunction(void *);
-   double                         CscFunction(void *);
-   double                         CotFunction(void *);
-   double                         AcosFunction(void *);
-   double                         AsinFunction(void *);
-   double                         AtanFunction(void *);
-   double                         AsecFunction(void *);
-   double                         AcscFunction(void *);
-   double                         AcotFunction(void *);
-   double                         CoshFunction(void *);
-   double                         SinhFunction(void *);
-   double                         TanhFunction(void *);
-   double                         SechFunction(void *);
-   double                         CschFunction(void *);
-   double                         CothFunction(void *);
-   double                         AcoshFunction(void *);
-   double                         AsinhFunction(void *);
-   double                         AtanhFunction(void *);
-   double                         AsechFunction(void *);
-   double                         AcschFunction(void *);
-   double                         AcothFunction(void *);
-   long long                      RoundFunction(void *);
-   void                           ModFunction(void *,DATA_OBJECT_PTR);
-   double                         ExpFunction(void *);
-   double                         LogFunction(void *);
-   double                         Log10Function(void *);
-   double                         SqrtFunction(void *);
-   double                         PiFunction(void *);
-   double                         DegRadFunction(void *);
-   double                         RadDegFunction(void *);
-   double                         DegGradFunction(void *);
-   double                         GradDegFunction(void *);
-   double                         PowFunction(void *);
+   double                         CosFunction(Environment *);
+   double                         SinFunction(Environment *);
+   double                         TanFunction(Environment *);
+   double                         SecFunction(Environment *);
+   double                         CscFunction(Environment *);
+   double                         CotFunction(Environment *);
+   double                         AcosFunction(Environment *);
+   double                         AsinFunction(Environment *);
+   double                         AtanFunction(Environment *);
+   double                         AsecFunction(Environment *);
+   double                         AcscFunction(Environment *);
+   double                         AcotFunction(Environment *);
+   double                         CoshFunction(Environment *);
+   double                         SinhFunction(Environment *);
+   double                         TanhFunction(Environment *);
+   double                         SechFunction(Environment *);
+   double                         CschFunction(Environment *);
+   double                         CothFunction(Environment *);
+   double                         AcoshFunction(Environment *);
+   double                         AsinhFunction(Environment *);
+   double                         AtanhFunction(Environment *);
+   double                         AsechFunction(Environment *);
+   double                         AcschFunction(Environment *);
+   double                         AcothFunction(Environment *);
+   long long                      RoundFunction(Environment *);
+   void                           ModFunction(Environment *,DATA_OBJECT_PTR);
+   double                         ExpFunction(Environment *);
+   double                         LogFunction(Environment *);
+   double                         Log10Function(Environment *);
+   double                         SqrtFunction(Environment *);
+   double                         PiFunction(Environment *);
+   double                         DegRadFunction(Environment *);
+   double                         RadDegFunction(Environment *);
+   double                         DegGradFunction(Environment *);
+   double                         GradDegFunction(Environment *);
+   double                         PowFunction(Environment *);
 #endif
 
 #endif /* _H_emathfun */

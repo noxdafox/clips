@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*                 DEFFUNCTION MODULE                  */
    /*******************************************************/
@@ -56,6 +56,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 /* =========================================
@@ -108,30 +111,30 @@
    =========================================
    ***************************************** */
 
-static void PrintDeffunctionCall(void *,const char *,void *);
-static bool EvaluateDeffunctionCall(void *,void *,DATA_OBJECT *);
-static void DecrementDeffunctionBusyCount(void *,void *);
-static void IncrementDeffunctionBusyCount(void *,void *);
-static void DeallocateDeffunctionData(void *);
+   static void                    PrintDeffunctionCall(Environment *,const char *,Deffunction *);
+   static bool                    EvaluateDeffunctionCall(Environment *,Deffunction *,DATA_OBJECT *);
+   static void                    DecrementDeffunctionBusyCount(Environment *,Deffunction *);
+   static void                    IncrementDeffunctionBusyCount(Environment *,Deffunction *);
+   static void                    DeallocateDeffunctionData(Environment *);
 
 #if ! RUN_TIME
-static void DestroyDeffunctionAction(void *,struct constructHeader *,void *);
-static void *AllocateModule(void *);
-static void  ReturnModule(void *,void *);
-static bool ClearDeffunctionsReady(void *);
+   static void                    DestroyDeffunctionAction(Environment *,struct constructHeader *,void *);
+   static void                   *AllocateModule(Environment *);
+   static void                    ReturnModule(Environment *,void *);
+   static bool                    ClearDeffunctionsReady(Environment *);
 #endif
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-static bool RemoveAllDeffunctions(void *);
-static void DeffunctionDeleteError(void *,const char *);
-static void SaveDeffunctionHeaders(void *,void *,const char *);
-static void SaveDeffunctionHeader(void *,struct constructHeader *,void *);
-static void SaveDeffunctions(void *,void *,const char *);
+   static bool                    RemoveAllDeffunctions(Environment *);
+   static void                    DeffunctionDeleteError(Environment *,const char *);
+   static void                    SaveDeffunctionHeaders(Environment *,Defmodule *,const char *);
+   static void                    SaveDeffunctionHeader(Environment *,struct constructHeader *,void *);
+   static void                    SaveDeffunctions(Environment *,Defmodule *,const char *);
 #endif
 
 #if DEBUGGING_FUNCTIONS
-static bool DeffunctionWatchAccess(void *,int,bool,EXPRESSION *);
-static bool DeffunctionWatchPrint(void *,const char *,int,EXPRESSION *);
+   static bool                    DeffunctionWatchAccess(Environment *,int,bool,EXPRESSION *);
+   static bool                    DeffunctionWatchPrint(Environment *,const char *,int,EXPRESSION *);
 #endif
 
 /* =========================================
@@ -150,13 +153,17 @@ static bool DeffunctionWatchPrint(void *,const char *,int,EXPRESSION *);
   NOTES        : None
  ***************************************************/
 void SetupDeffunctions(
-  void *theEnv)
+  Environment *theEnv)
   {
    ENTITY_RECORD deffunctionEntityRecord =
                      { "PCALL", PCALL,0,0,1,
-                       PrintDeffunctionCall,PrintDeffunctionCall,
-                       NULL,EvaluateDeffunctionCall,NULL,
-                       DecrementDeffunctionBusyCount,IncrementDeffunctionBusyCount,
+                       (EntityPrintFunction *) PrintDeffunctionCall,
+                       (EntityPrintFunction *) PrintDeffunctionCall,
+                       NULL,
+                       (EntityEvaluationFunction *) EvaluateDeffunctionCall,
+                       NULL,
+                       (EntityBusyCountFunction *) DecrementDeffunctionBusyCount,
+                       (EntityBusyCountFunction *) IncrementDeffunctionBusyCount,
                        NULL,NULL,NULL,NULL,NULL };
 
    AllocateEnvironmentData(theEnv,DEFFUNCTION_DATA,sizeof(struct deffunctionData),DeallocateDeffunctionData);
@@ -167,7 +174,8 @@ void SetupDeffunctions(
    DeffunctionData(theEnv)->DeffunctionModuleIndex =
                 RegisterModuleItem(theEnv,"deffunction",
 #if (! RUN_TIME)
-                                    AllocateModule,ReturnModule,
+                                    AllocateModule,
+                                    ReturnModule,
 #else
                                     NULL,NULL,
 #endif
@@ -181,25 +189,27 @@ void SetupDeffunctions(
 #else
                                     NULL,
 #endif
-                                    EnvFindDeffunctionInModule);
-
+                                    (FindConstructFunction *) EnvFindDeffunctionInModule);
    DeffunctionData(theEnv)->DeffunctionConstruct = AddConstruct(theEnv,"deffunction","deffunctions",
 #if (! BLOAD_ONLY) && (! RUN_TIME)
                                        ParseDeffunction,
 #else
                                        NULL,
 #endif
-                                       EnvFindDeffunction,
+                                       (FindConstructFunction *) EnvFindDeffunction,
                                        GetConstructNamePointer,GetConstructPPForm,
-                                       GetConstructModuleItem,EnvGetNextDeffunction,
-                                       SetNextConstruct,EnvIsDeffunctionDeletable,
-                                       EnvUndeffunction,
+                                       GetConstructModuleItem,
+                                       (GetNextConstructFunction *) EnvGetNextDeffunction,
+                                       SetNextConstruct,
+                                       (IsConstructDeletableFunction *) EnvIsDeffunctionDeletable,
+                                       (DeleteConstructFunction *) EnvUndeffunction,
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-                                       RemoveDeffunction
+                                       (FreeConstructFunction *) RemoveDeffunction
 #else
                                        NULL
 #endif
                                        );
+
 #if ! RUN_TIME
    AddClearReadyFunction(theEnv,"deffunction",ClearDeffunctionsReady,0);
 
@@ -245,26 +255,28 @@ void SetupDeffunctions(
 /*    data for the deffunction construct.             */
 /******************************************************/
 static void DeallocateDeffunctionData(
-  void *theEnv)
+  Environment *theEnv)
   {
 #if ! RUN_TIME
-   struct deffunctionModule *theModuleItem;
-   void *theModule;
+   DeffunctionModuleData *theModuleItem;
+   Defmodule *theModule;
 
 #if BLOAD || BLOAD_AND_BSAVE
    if (Bloaded(theEnv)) return;
 #endif
 
-   DoForAllConstructs(theEnv,DestroyDeffunctionAction,DeffunctionData(theEnv)->DeffunctionModuleIndex,false,NULL);
+   DoForAllConstructs(theEnv,
+                      DestroyDeffunctionAction,
+                      DeffunctionData(theEnv)->DeffunctionModuleIndex,false,NULL);
 
    for (theModule = EnvGetNextDefmodule(theEnv,NULL);
         theModule != NULL;
         theModule = EnvGetNextDefmodule(theEnv,theModule))
      {
-      theModuleItem = (struct deffunctionModule *)
-                      GetModuleItem(theEnv,(struct defmodule *) theModule,
+      theModuleItem = (struct deffunctionModuleData *)
+                      GetModuleItem(theEnv,theModule,
                                     DeffunctionData(theEnv)->DeffunctionModuleIndex);
-      rtn_struct(theEnv,deffunctionModule,theModuleItem);
+      rtn_struct(theEnv,deffunctionModuleData,theModuleItem);
      }
 #else
 #if MAC_XCD
@@ -279,7 +291,7 @@ static void DeallocateDeffunctionData(
 /*   deffunctions as a result of DestroyEnvironment. */
 /*****************************************************/
 static void DestroyDeffunctionAction(
-  void *theEnv,
+  Environment *theEnv,
   struct constructHeader *theConstruct,
   void *buffer)
   {
@@ -287,7 +299,7 @@ static void DestroyDeffunctionAction(
 #pragma unused(buffer)
 #endif
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-   struct deffunctionStruct *theDeffunction = (struct deffunctionStruct *) theConstruct;
+   Deffunction *theDeffunction = (Deffunction *) theConstruct;
    
    if (theDeffunction == NULL) return;
    
@@ -295,7 +307,7 @@ static void DestroyDeffunctionAction(
 
    DestroyConstructHeader(theEnv,&theDeffunction->header);
    
-   rtn_struct(theEnv,deffunctionStruct,theDeffunction);
+   rtn_struct(theEnv,deffunction,theDeffunction);
 #else
 #if MAC_XCD
 #pragma unused(theConstruct,theEnv)
@@ -314,8 +326,8 @@ static void DestroyDeffunctionAction(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-void *EnvFindDeffunction(
-  void *theEnv,
+Deffunction *EnvFindDeffunction(
+  Environment *theEnv,
   const char *dfnxModuleAndName)
   {
    return(FindNamedConstructInModuleOrImports(theEnv,dfnxModuleAndName,DeffunctionData(theEnv)->DeffunctionConstruct));
@@ -331,8 +343,8 @@ void *EnvFindDeffunction(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-void *EnvFindDeffunctionInModule(
-  void *theEnv,
+Deffunction *EnvFindDeffunctionInModule(
+  Environment *theEnv,
   const char *dfnxModuleAndName)
   {
    return(FindNamedConstructInModule(theEnv,dfnxModuleAndName,DeffunctionData(theEnv)->DeffunctionConstruct));
@@ -349,11 +361,11 @@ void *EnvFindDeffunctionInModule(
                   ambiguous references
   NOTES        : None
  ***************************************************/
-DEFFUNCTION *LookupDeffunctionByMdlOrScope(
-  void *theEnv,
+Deffunction *LookupDeffunctionByMdlOrScope(
+  Environment *theEnv,
   const char *deffunctionName)
   {
-   return((DEFFUNCTION *) LookupConstruct(theEnv,DeffunctionData(theEnv)->DeffunctionConstruct,deffunctionName,true));
+   return((Deffunction *) LookupConstruct(theEnv,DeffunctionData(theEnv)->DeffunctionConstruct,deffunctionName,true));
   }
 
 /***************************************************
@@ -367,11 +379,11 @@ DEFFUNCTION *LookupDeffunctionByMdlOrScope(
                   ambiguous references
   NOTES        : None
  ***************************************************/
-DEFFUNCTION *LookupDeffunctionInScope(
-  void *theEnv,
+Deffunction *LookupDeffunctionInScope(
+  Environment *theEnv,
   const char *deffunctionName)
   {
-   return((DEFFUNCTION *) LookupConstruct(theEnv,DeffunctionData(theEnv)->DeffunctionConstruct,deffunctionName,false));
+   return (Deffunction *) LookupConstruct(theEnv,DeffunctionData(theEnv)->DeffunctionConstruct,deffunctionName,false);
   }
 
 /***************************************************
@@ -385,8 +397,8 @@ DEFFUNCTION *LookupDeffunctionInScope(
   NOTES        : None
  ***************************************************/
 bool EnvUndeffunction(
-  void *theEnv,
-  void *vptr)
+  Environment *theEnv,
+  Deffunction *theDeffunction)
   {
 #if BLOAD_ONLY || RUN_TIME
    return false;
@@ -397,12 +409,12 @@ bool EnvUndeffunction(
    if (Bloaded(theEnv) == true)
      return false;
 #endif
-   if (vptr == NULL)
+   if (theDeffunction == NULL)
       return(RemoveAllDeffunctions(theEnv));
-   if (EnvIsDeffunctionDeletable(theEnv,vptr) == false)
+   if (EnvIsDeffunctionDeletable(theEnv,theDeffunction) == false)
      return false;
-   RemoveConstructFromModule(theEnv,(struct constructHeader *) vptr);
-   RemoveDeffunction(theEnv,vptr);
+   RemoveConstructFromModule(theEnv,(struct constructHeader *) theDeffunction);
+   RemoveDeffunction(theEnv,theDeffunction);
    return true;
 #endif
   }
@@ -416,11 +428,13 @@ bool EnvUndeffunction(
   SIDE EFFECTS : None
   NOTES        : None
  ****************************************************/
-void *EnvGetNextDeffunction(
-  void *theEnv,
-  void *ptr)
+Deffunction *EnvGetNextDeffunction(
+  Environment *theEnv,
+  Deffunction *theDeffunction)
   {
-   return((void *) GetNextConstructItem(theEnv,(struct constructHeader *) ptr,DeffunctionData(theEnv)->DeffunctionModuleIndex));
+   return (Deffunction *)
+          GetNextConstructItem(theEnv,(struct constructHeader *) theDeffunction,
+                               DeffunctionData(theEnv)->DeffunctionModuleIndex);
   }
 
 /***************************************************
@@ -435,17 +449,13 @@ void *EnvGetNextDeffunction(
   NOTES        : None
  ***************************************************/
 bool EnvIsDeffunctionDeletable(
-  void *theEnv,
-  void *ptr)
+  Environment *theEnv,
+  Deffunction *theDeffunction)
   {
-   DEFFUNCTION *dptr;
-
    if (! ConstructsDeletable(theEnv))
      { return false; }
 
-   dptr = (DEFFUNCTION *) ptr;
-
-   return(((dptr->busy == 0) && (dptr->executing == 0)) ? true : false);
+   return(((theDeffunction->busy == 0) && (theDeffunction->executing == 0)) ? true : false);
   }
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
@@ -459,19 +469,17 @@ bool EnvIsDeffunctionDeletable(
   NOTES        : Assumes deffunction is not in use!!
  ***************************************************/
 void RemoveDeffunction(
-  void *theEnv,
-  void *vdptr)
+  Environment *theEnv,
+  Deffunction *theDeffunction)
   {
-   DEFFUNCTION *dptr = (DEFFUNCTION *) vdptr;
-
-   if (dptr == NULL)
+   if (theDeffunction == NULL)
      return;
-   DecrementSymbolCount(theEnv,EnvGetDeffunctionNamePointer(theEnv,(void *) dptr));
-   ExpressionDeinstall(theEnv,dptr->code);
-   ReturnPackedExpression(theEnv,dptr->code);
-   EnvSetDeffunctionPPForm(theEnv,(void *) dptr,NULL);
-   ClearUserDataList(theEnv,dptr->header.usrData);
-   rtn_struct(theEnv,deffunctionStruct,dptr);
+   DecrementSymbolCount(theEnv,EnvGetDeffunctionNamePointer(theEnv,theDeffunction));
+   ExpressionDeinstall(theEnv,theDeffunction->code);
+   ReturnPackedExpression(theEnv,theDeffunction->code);
+   EnvSetDeffunctionPPForm(theEnv,theDeffunction,NULL);
+   ClearUserDataList(theEnv,theDeffunction->header.usrData);
+   rtn_struct(theEnv,deffunction,theDeffunction);
   }
 
 #endif
@@ -485,7 +493,7 @@ void RemoveDeffunction(
   NOTES        : H/L Syntax: (undeffunction <name> | *)
  ********************************************************/
 void UndeffunctionCommand(
-  void *theEnv)
+  Environment *theEnv)
   {
    UndefconstructCommand(theEnv,"undeffunction",DeffunctionData(theEnv)->DeffunctionConstruct);
   }
@@ -499,7 +507,7 @@ void UndeffunctionCommand(
   NOTES        : H/L Syntax: (deffunction-module <dfnx-name>)
  ****************************************************************/
 void *GetDeffunctionModuleCommand(
-  void *theEnv)
+  Environment *theEnv)
   {
    return(GetConstructModuleCommand(theEnv,"deffunction-module",DeffunctionData(theEnv)->DeffunctionConstruct));
   }
@@ -517,7 +525,7 @@ void *GetDeffunctionModuleCommand(
   NOTES        : H/L Syntax: (ppdeffunction <name>)
  ****************************************************/
 void PPDeffunctionCommand(
-  void *theEnv)
+  Environment *theEnv)
   {
    PPConstructCommand(theEnv,"ppdeffunction",DeffunctionData(theEnv)->DeffunctionConstruct);
   }
@@ -531,7 +539,7 @@ void PPDeffunctionCommand(
   NOTES        : H/L Interface
  ***************************************************/
 void ListDeffunctionsCommand(
-  void *theEnv)
+  Environment *theEnv)
   {
    ListConstructCommand(theEnv,"list-deffunctions",DeffunctionData(theEnv)->DeffunctionConstruct);
   }
@@ -546,9 +554,9 @@ void ListDeffunctionsCommand(
   NOTES        : C Interface
  ***************************************************/
 void EnvListDeffunctions(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
-  struct defmodule *theModule)
+  Defmodule *theModule)
   {
    ListConstruct(theEnv,DeffunctionData(theEnv)->DeffunctionConstruct,logicalName,theModule);
   }
@@ -566,7 +574,7 @@ void EnvListDeffunctions(
   NOTES        : H/L Syntax: (get-deffunction-list [<module>])
  ***************************************************************/
 void GetDeffunctionListFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *returnValue)
   {
    GetConstructListFunction(theEnv,"get-deffunction-list",returnValue,DeffunctionData(theEnv)->DeffunctionConstruct);
@@ -584,9 +592,9 @@ void GetDeffunctionListFunction(
   NOTES        : External C access
  ***************************************************************/
 void EnvGetDeffunctionList(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *returnValue,
-  struct defmodule *theModule)
+  Defmodule *theModule)
   {
    GetConstructList(theEnv,returnValue,DeffunctionData(theEnv)->DeffunctionConstruct,theModule);
   }
@@ -602,30 +610,28 @@ void EnvGetDeffunctionList(
   NOTES        : None
  *******************************************************/
 bool CheckDeffunctionCall(
-  void *theEnv,
-  void *vdptr,
+  Environment *theEnv,
+  Deffunction *theDeffunction,
   int args)
   {
-   DEFFUNCTION *dptr;
-
-   if (vdptr == NULL)
+   if (theDeffunction == NULL)
      return false;
-   dptr = (DEFFUNCTION *) vdptr;
-   if (args < dptr->minNumberOfParameters)
+
+   if (args < theDeffunction->minNumberOfParameters)
      {
-      if (dptr->maxNumberOfParameters == -1)
-        ExpectedCountError(theEnv,EnvGetDeffunctionName(theEnv,(void *) dptr),
-                           AT_LEAST,dptr->minNumberOfParameters);
+      if (theDeffunction->maxNumberOfParameters == -1)
+        ExpectedCountError(theEnv,EnvGetDeffunctionName(theEnv,theDeffunction),
+                           AT_LEAST,theDeffunction->minNumberOfParameters);
       else
-        ExpectedCountError(theEnv,EnvGetDeffunctionName(theEnv,(void *) dptr),
-                           EXACTLY,dptr->minNumberOfParameters);
+        ExpectedCountError(theEnv,EnvGetDeffunctionName(theEnv,theDeffunction),
+                           EXACTLY,theDeffunction->minNumberOfParameters);
       return false;
      }
-   else if ((args > dptr->minNumberOfParameters) &&
-            (dptr->maxNumberOfParameters != -1))
+   else if ((args > theDeffunction->minNumberOfParameters) &&
+            (theDeffunction->maxNumberOfParameters != -1))
      {
-      ExpectedCountError(theEnv,EnvGetDeffunctionName(theEnv,(void *) dptr),
-                         EXACTLY,dptr->minNumberOfParameters);
+      ExpectedCountError(theEnv,EnvGetDeffunctionName(theEnv,theDeffunction),
+                         EXACTLY,theDeffunction->minNumberOfParameters);
       return false;
      }
    return true;
@@ -648,14 +654,14 @@ bool CheckDeffunctionCall(
   NOTES        : None
  ***************************************************/
 static void PrintDeffunctionCall(
-  void *theEnv,
+  Environment *theEnv,
   const char *logName,
-  void *value)
+  Deffunction *theDeffunction)
   {
 #if DEVELOPER
 
    EnvPrintRouter(theEnv,logName,"(");
-   EnvPrintRouter(theEnv,logName,EnvGetDeffunctionName(theEnv,value));
+   EnvPrintRouter(theEnv,logName,EnvGetDeffunctionName(theEnv,theDeffunction));
    if (GetFirstArgument() != NULL)
      {
       EnvPrintRouter(theEnv,logName," ");
@@ -666,7 +672,7 @@ static void PrintDeffunctionCall(
 #if MAC_XCD
 #pragma unused(theEnv)
 #pragma unused(logName)
-#pragma unused(value)
+#pragma unused(theDeffunction)
 #endif
 #endif
   }
@@ -686,11 +692,11 @@ static void PrintDeffunctionCall(
   NOTES        : None
  *******************************************************/
 static bool EvaluateDeffunctionCall(
-  void *theEnv,
-  void *value,
+  Environment *theEnv,
+  Deffunction *theDeffunction,
   DATA_OBJECT *result)
   {
-   CallDeffunction(theEnv,(DEFFUNCTION *) value,GetFirstArgument(),result);
+   CallDeffunction(theEnv,theDeffunction,GetFirstArgument(),result);
    if ((GetpType(result) == SYMBOL) &&
        (GetpValue(result) == EnvFalseSymbol(theEnv)))
      return false;
@@ -708,8 +714,8 @@ static bool EvaluateDeffunctionCall(
   NOTES        : None
  ***************************************************/
 static void DecrementDeffunctionBusyCount(
-  void *theEnv,
-  void *value)
+  Environment *theEnv,
+  Deffunction *theDeffunction)
   {
    /* ==============================================
       The deffunctions to which expressions in other
@@ -718,7 +724,7 @@ static void DecrementDeffunctionBusyCount(
       the busy flag during a clear.
       ============================================== */
    if (! ConstructData(theEnv)->ClearInProgress)
-     ((DEFFUNCTION *) value)->busy--;
+     theDeffunction->busy--;
   }
 
 /***************************************************
@@ -731,8 +737,8 @@ static void DecrementDeffunctionBusyCount(
   NOTES        : None
  ***************************************************/
 static void IncrementDeffunctionBusyCount(
-  void *theEnv,
-  void *value)
+  Environment *theEnv,
+  Deffunction *theDeffunction)
   {
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -742,7 +748,7 @@ static void IncrementDeffunctionBusyCount(
      { ConstructData(theEnv)->DanglingConstructs++; }
 #endif
 
-   ((DEFFUNCTION *) value)->busy++;
+   theDeffunction->busy++;
   }
 
 #if ! RUN_TIME
@@ -757,9 +763,9 @@ static void IncrementDeffunctionBusyCount(
   NOTES        : None
  *****************************************************/
 static void *AllocateModule(
-  void *theEnv)
+  Environment *theEnv)
   {
-   return((void *) get_struct(theEnv,deffunctionModule));
+   return (void *) get_struct(theEnv,deffunctionModuleData);
   }
 
 /***************************************************
@@ -772,13 +778,13 @@ static void *AllocateModule(
   NOTES        : None
  ***************************************************/
 static void ReturnModule(
-  void *theEnv,
+  Environment *theEnv,
   void *theItem)
   {
 #if (! BLOAD_ONLY)
    FreeConstructHeaderModule(theEnv,(struct defmoduleItemHeader *) theItem,DeffunctionData(theEnv)->DeffunctionConstruct);
 #endif
-   rtn_struct(theEnv,deffunctionModule,theItem);
+   rtn_struct(theEnv,deffunctionModuleData,theItem);
   }
 
 /***************************************************
@@ -796,7 +802,7 @@ static void ReturnModule(
   NOTES        : Used by (clear) and (bload)
  ***************************************************/
 static bool ClearDeffunctionsReady(
-  void *theEnv)
+  Environment *theEnv)
   {
    return((DeffunctionData(theEnv)->ExecutingDeffunction != NULL) ? false : true);
   }
@@ -815,9 +821,9 @@ static bool ClearDeffunctionsReady(
   NOTES        : None
  ***************************************************/
 static bool RemoveAllDeffunctions(
-  void *theEnv)
+  Environment *theEnv)
   {
-   DEFFUNCTION *dptr,*dtmp;
+   Deffunction *dptr, *dtmp;
    unsigned oldbusy;
    bool success = true;
 
@@ -827,12 +833,12 @@ static bool RemoveAllDeffunctions(
      return false;
 #endif
 
-   dptr = (DEFFUNCTION *) EnvGetNextDeffunction(theEnv,NULL);
+   dptr = EnvGetNextDeffunction(theEnv,NULL);
    while (dptr != NULL)
      {
       if (dptr->executing > 0)
         {
-         DeffunctionDeleteError(theEnv,EnvGetDeffunctionName(theEnv,(void *) dptr));
+         DeffunctionDeleteError(theEnv,EnvGetDeffunctionName(theEnv,dptr));
          success = false;
         }
       else
@@ -843,23 +849,23 @@ static bool RemoveAllDeffunctions(
          ReturnPackedExpression(theEnv,dptr->code);
          dptr->code = NULL;
         }
-      dptr = (DEFFUNCTION *) EnvGetNextDeffunction(theEnv,(void *) dptr);
+      dptr = EnvGetNextDeffunction(theEnv,dptr);
      }
 
-   dptr = (DEFFUNCTION *) EnvGetNextDeffunction(theEnv,NULL);
+   dptr = EnvGetNextDeffunction(theEnv,NULL);
    while (dptr != NULL)
      {
       dtmp = dptr;
-      dptr = (DEFFUNCTION *) EnvGetNextDeffunction(theEnv,(void *) dptr);
+      dptr = EnvGetNextDeffunction(theEnv,dptr);
       if (dtmp->executing == 0)
         {
          if (dtmp->busy > 0)
            {
             PrintWarningID(theEnv,"DFFNXFUN",1,false);
             EnvPrintRouter(theEnv,WWARNING,"Deffunction ");
-            EnvPrintRouter(theEnv,WWARNING,EnvGetDeffunctionName(theEnv,(void *) dtmp));
+            EnvPrintRouter(theEnv,WWARNING,EnvGetDeffunctionName(theEnv,dtmp));
             EnvPrintRouter(theEnv,WWARNING," only partially deleted due to usage by other constructs.\n");
-            EnvSetDeffunctionPPForm(theEnv,(void *) dtmp,NULL);
+            EnvSetDeffunctionPPForm(theEnv,dtmp,NULL);
             success = false;
            }
          else
@@ -882,7 +888,7 @@ static bool RemoveAllDeffunctions(
   NOTES        : None
  ****************************************************/
 static void DeffunctionDeleteError(
-  void *theEnv,
+  Environment *theEnv,
   const char *dfnxName)
   {
    CantDeleteItemErrorMessage(theEnv,"deffunction",dfnxName);
@@ -901,11 +907,12 @@ static void DeffunctionDeleteError(
                  constructs
  ***************************************************/
 static void SaveDeffunctionHeaders(
-  void *theEnv,
-  void *theModule,
+  Environment *theEnv,
+  Defmodule *theModule,
   const char *logicalName)
   {
-   DoForAllConstructsInModule(theEnv,theModule,SaveDeffunctionHeader,
+   DoForAllConstructsInModule(theEnv,theModule,
+                              SaveDeffunctionHeader,
                               DeffunctionData(theEnv)->DeffunctionModuleIndex,
                               false,(void *) logicalName);
   }
@@ -921,20 +928,20 @@ static void SaveDeffunctionHeaders(
   NOTES        : None
  ***************************************************/
 static void SaveDeffunctionHeader(
-  void *theEnv,
+  Environment *theEnv,
   struct constructHeader *theDeffunction,
   void *userBuffer)
   {
-   DEFFUNCTION *dfnxPtr = (DEFFUNCTION *) theDeffunction;
+   Deffunction *dfnxPtr = (Deffunction *) theDeffunction;
    const char *logicalName = (const char *) userBuffer;
-   register int i;
+   int i;
 
-   if (EnvGetDeffunctionPPForm(theEnv,(void *) dfnxPtr) != NULL)
+   if (EnvGetDeffunctionPPForm(theEnv,dfnxPtr) != NULL)
      {
       EnvPrintRouter(theEnv,logicalName,"(deffunction ");
-      EnvPrintRouter(theEnv,logicalName,EnvDeffunctionModule(theEnv,(void *) dfnxPtr));
+      EnvPrintRouter(theEnv,logicalName,EnvDeffunctionModule(theEnv,dfnxPtr));
       EnvPrintRouter(theEnv,logicalName,"::");      
-      EnvPrintRouter(theEnv,logicalName,EnvGetDeffunctionName(theEnv,(void *) dfnxPtr));
+      EnvPrintRouter(theEnv,logicalName,EnvGetDeffunctionName(theEnv,dfnxPtr));
       EnvPrintRouter(theEnv,logicalName," (");
       for (i = 0 ; i < dfnxPtr->minNumberOfParameters ; i++)
         {
@@ -964,8 +971,8 @@ static void SaveDeffunctionHeader(
   NOTES        : None
  ***************************************************/
 static void SaveDeffunctions(
-  void *theEnv,
-  void *theModule,
+  Environment *theEnv,
+  Defmodule *theModule,
   const char *logicalName)
   {
    SaveConstruct(theEnv,theModule,logicalName,DeffunctionData(theEnv)->DeffunctionConstruct);
@@ -989,7 +996,7 @@ static void SaveDeffunctions(
   NOTES        : Accessory function for AddWatchItem()
  ******************************************************************/
 static bool DeffunctionWatchAccess(
-  void *theEnv,
+  Environment *theEnv,
   int code,
   bool newState,
   EXPRESSION *argExprs)
@@ -999,7 +1006,8 @@ static bool DeffunctionWatchAccess(
 #endif
 
    return(ConstructSetWatchAccess(theEnv,DeffunctionData(theEnv)->DeffunctionConstruct,newState,argExprs,
-                                    EnvGetDeffunctionWatch,EnvSetDeffunctionWatch));
+                                  (bool (*)(Environment *,void *)) EnvGetDeffunctionWatch,
+                                  (void (*)(Environment *,bool,void *)) EnvSetDeffunctionWatch));
   }
 
 /***********************************************************************
@@ -1016,7 +1024,7 @@ static bool DeffunctionWatchAccess(
   NOTES        : Accessory function for AddWatchItem()
  ***********************************************************************/
 static bool DeffunctionWatchPrint(
-  void *theEnv,
+  Environment *theEnv,
   const char *logName,
   int code,
   EXPRESSION *argExprs)
@@ -1026,7 +1034,8 @@ static bool DeffunctionWatchPrint(
 #endif
 
    return(ConstructPrintWatchAccess(theEnv,DeffunctionData(theEnv)->DeffunctionConstruct,logName,argExprs,
-                                    EnvGetDeffunctionWatch,EnvSetDeffunctionWatch));
+                                    (bool (*)(Environment *,void *)) EnvGetDeffunctionWatch,
+                                    (void (*)(Environment *,bool,void *)) EnvSetDeffunctionWatch));
   }
 
 /*********************************************************
@@ -1041,15 +1050,15 @@ static bool DeffunctionWatchPrint(
   NOTES        : None
  *********************************************************/
 void EnvSetDeffunctionWatch(
-  void *theEnv,
+  Environment *theEnv,
   bool newState,
-  void *dptr)
+  Deffunction *theDeffunction)
   {
 #if MAC_XCD
 #pragma unused(theEnv)
 #endif
 
-   ((DEFFUNCTION *) dptr)->trace = newState;
+   theDeffunction->trace = newState;
   }
 
 /*********************************************************
@@ -1063,14 +1072,14 @@ void EnvSetDeffunctionWatch(
   NOTES        : None
  *********************************************************/
 bool EnvGetDeffunctionWatch(
-  void *theEnv,
-  void *dptr)
+  Environment *theEnv,
+  Deffunction *theDeffunction)
   {
 #if MAC_XCD
 #pragma unused(theEnv)
 #endif
 
-   return(((DEFFUNCTION *) dptr)->trace);
+   return theDeffunction->trace;
   }
 
 #endif
@@ -1080,36 +1089,36 @@ bool EnvGetDeffunctionWatch(
 /*##################################*/
 
 const char *EnvDeffunctionModule(
-  void *theEnv,
-  void *theDeffunction)
+  Environment *theEnv,
+  Deffunction *theDeffunction)
   {
    return GetConstructModuleName((struct constructHeader *) theDeffunction);
   }
 
 const char *EnvGetDeffunctionName(
-  void *theEnv,
-  void *theDeffunction)
+  Environment *theEnv,
+  Deffunction *theDeffunction)
   {
    return GetConstructNameString((struct constructHeader *) theDeffunction);
   }
 
 const char *EnvGetDeffunctionPPForm(
-  void *theEnv,
-  void *theDeffunction)
+  Environment *theEnv,
+  Deffunction *theDeffunction)
   {
    return GetConstructPPForm(theEnv,(struct constructHeader *) theDeffunction);
   }
 
 SYMBOL_HN *EnvGetDeffunctionNamePointer(
-  void *theEnv,
-  void *theDeffunction)
+  Environment *theEnv,
+  Deffunction *theDeffunction)
   {
    return GetConstructNamePointer((struct constructHeader *) theDeffunction);
   }
 
 void EnvSetDeffunctionPPForm(
-  void *theEnv,
-  void *theDeffunction,
+  Environment *theEnv,
+  Deffunction *theDeffunction,
   const char *thePPForm)
   {
    SetConstructPPForm(theEnv,(struct constructHeader *) theDeffunction,thePPForm);
@@ -1122,50 +1131,50 @@ void EnvSetDeffunctionPPForm(
 #if ALLOW_ENVIRONMENT_GLOBALS
 
 const char *DeffunctionModule(
-  void *theDeffunction)
+  Deffunction *theDeffunction)
   {
    return EnvDeffunctionModule(GetCurrentEnvironment(),theDeffunction);
   }
 
-void *FindDeffunction(
+Deffunction *FindDeffunction(
   const char *deffunctionName)
   {
    return EnvFindDeffunction(GetCurrentEnvironment(),deffunctionName);
   }
 
-void *GetNextDeffunction(
-  void *deffunctionPtr)
+Deffunction *GetNextDeffunction(
+  Deffunction *deffunctionPtr)
   {
    return EnvGetNextDeffunction(GetCurrentEnvironment(),deffunctionPtr);
   }
 
 bool IsDeffunctionDeletable(
-  void *ptr)
+  Deffunction *ptr)
   {
    return EnvIsDeffunctionDeletable(GetCurrentEnvironment(),ptr);
   }
 
 const char *GetDeffunctionName(
-  void *theDeffunction)
+  Deffunction *theDeffunction)
   {
    return EnvGetDeffunctionName(GetCurrentEnvironment(),theDeffunction);
   }
 
 const char *GetDeffunctionPPForm(
-  void *theDeffunction)
+  Deffunction *theDeffunction)
   {
    return EnvGetDeffunctionPPForm(GetCurrentEnvironment(),theDeffunction);
   }
 
 bool Undeffunction(
-  void *vptr)
+  Deffunction *vptr)
   {
    return EnvUndeffunction(GetCurrentEnvironment(),vptr);
   }
 
 void GetDeffunctionList(
   DATA_OBJECT *returnValue,
-  struct defmodule *theModule)
+  Defmodule *theModule)
   {
    EnvGetDeffunctionList(GetCurrentEnvironment(),returnValue,theModule);
   }
@@ -1174,20 +1183,20 @@ void GetDeffunctionList(
 
 void ListDeffunctions(
   const char *logicalName,
-  struct defmodule *theModule)
+  Defmodule *theModule)
   {
    EnvListDeffunctions(GetCurrentEnvironment(),logicalName,theModule);
   }
 
 bool GetDeffunctionWatch(
-  void *dptr)
+  Deffunction *dptr)
   {
    return EnvGetDeffunctionWatch(GetCurrentEnvironment(),dptr);
   }
 
 void SetDeffunctionWatch(
   bool newState,
-  void *dptr)
+  Deffunction *dptr)
   {
    EnvSetDeffunctionWatch(GetCurrentEnvironment(),newState,dptr);
   }

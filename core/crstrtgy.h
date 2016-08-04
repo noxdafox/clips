@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*      CONFLICT RESOLUTION STRATEGY HEADER MODULE     */
    /*******************************************************/
@@ -43,6 +43,9 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_crstrtgy
@@ -64,11 +67,11 @@
 
 #define DEFAULT_STRATEGY DEPTH_STRATEGY
 
-   void                           PlaceActivation(void *,ACTIVATION **,ACTIVATION *,struct salienceGroup *);
-   int                            EnvSetStrategy(void *,int);
-   int                            EnvGetStrategy(void *);
-   void                          *SetStrategyCommand(void *);
-   void                          *GetStrategyCommand(void *);
+   void                           PlaceActivation(Environment *,Activation **,Activation *,struct salienceGroup *);
+   int                            EnvSetStrategy(Environment *,int);
+   int                            EnvGetStrategy(Environment *);
+   void                          *SetStrategyCommand(Environment *);
+   void                          *GetStrategyCommand(Environment *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 

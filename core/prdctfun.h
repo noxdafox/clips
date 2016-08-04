@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*            PREDICATE FUNCTIONS HEADER FILE          */
    /*******************************************************/
@@ -32,6 +32,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_prdctfun
@@ -40,28 +43,28 @@
 
 #define _H_prdctfun
 
-   void                           PredicateFunctionDefinitions(void *);
-   bool                           EqFunction(void *);
-   bool                           NeqFunction(void *);
-   bool                           StringpFunction(void *);
-   bool                           SymbolpFunction(void *);
-   bool                           LexemepFunction(void *);
-   bool                           NumberpFunction(void *);
-   bool                           FloatpFunction(void *);
-   bool                           IntegerpFunction(void *);
-   bool                           MultifieldpFunction(void *);
-   bool                           PointerpFunction(void *);
-   bool                           NotFunction(void *);
-   bool                           AndFunction(void *);
-   bool                           OrFunction(void *);
-   bool                           LessThanOrEqualFunction(void *);
-   bool                           GreaterThanOrEqualFunction(void *);
-   bool                           LessThanFunction(void *);
-   bool                           GreaterThanFunction(void *);
-   bool                           NumericEqualFunction(void *);
-   bool                           NumericNotEqualFunction(void *);
-   bool                           OddpFunction(void *);
-   bool                           EvenpFunction(void *);
+   void                           PredicateFunctionDefinitions(Environment *);
+   bool                           EqFunction(Environment *);
+   bool                           NeqFunction(Environment *);
+   bool                           StringpFunction(Environment *);
+   bool                           SymbolpFunction(Environment *);
+   bool                           LexemepFunction(Environment *);
+   bool                           NumberpFunction(Environment *);
+   bool                           FloatpFunction(Environment *);
+   bool                           IntegerpFunction(Environment *);
+   bool                           MultifieldpFunction(Environment *);
+   bool                           PointerpFunction(Environment *);
+   bool                           NotFunction(Environment *);
+   bool                           AndFunction(Environment *);
+   bool                           OrFunction(Environment *);
+   bool                           LessThanOrEqualFunction(Environment *);
+   bool                           GreaterThanOrEqualFunction(Environment *);
+   bool                           LessThanFunction(Environment *);
+   bool                           GreaterThanFunction(Environment *);
+   bool                           NumericEqualFunction(Environment *);
+   bool                           NumericNotEqualFunction(Environment *);
+   bool                           OddpFunction(Environment *);
+   bool                           EvenpFunction(Environment *);
 
 #endif /* _H_prdctfun */
 

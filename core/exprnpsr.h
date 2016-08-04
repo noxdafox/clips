@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*            EXPRESSION PARSER HEADER FILE            */
    /*******************************************************/
@@ -39,6 +39,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_exprnpsr
@@ -61,26 +64,26 @@ typedef struct saved_contexts
 #include "extnfunc.h"
 #include "scanner.h"
 
-   struct expr                   *Function0Parse(void *,const char *);
-   struct expr                   *Function1Parse(void *,const char *);
-   struct expr                   *Function2Parse(void *,const char *,const char *);
-   void                           PushRtnBrkContexts(void *);
-   void                           PopRtnBrkContexts(void *);
-   bool                           ReplaceSequenceExpansionOps(void *,struct expr *,struct expr *,
+   struct expr                   *Function0Parse(Environment *,const char *);
+   struct expr                   *Function1Parse(Environment *,const char *);
+   struct expr                   *Function2Parse(Environment *,const char *,const char *);
+   void                           PushRtnBrkContexts(Environment *);
+   void                           PopRtnBrkContexts(Environment *);
+   bool                           ReplaceSequenceExpansionOps(Environment *,struct expr *,struct expr *,
                                                                      void *,void *);
-   struct expr                   *CollectArguments(void *,struct expr *,const char *);
-   struct expr                   *ArgumentParse(void *,const char *,bool *);
-   struct expr                   *ParseAtomOrExpression(void *,const char *,struct token *);
-   EXPRESSION                    *ParseConstantArguments(void *,const char *,bool *);
-   bool                           EnvSetSequenceOperatorRecognition(void *,bool);
-   bool                           EnvGetSequenceOperatorRecognition(void *);
-   struct expr                   *GroupActions(void *,const char *,struct token *,
+   struct expr                   *CollectArguments(Environment *,struct expr *,const char *);
+   struct expr                   *ArgumentParse(Environment *,const char *,bool *);
+   struct expr                   *ParseAtomOrExpression(Environment *,const char *,struct token *);
+   EXPRESSION                    *ParseConstantArguments(Environment *,const char *,bool *);
+   bool                           EnvSetSequenceOperatorRecognition(Environment *,bool);
+   bool                           EnvGetSequenceOperatorRecognition(Environment *);
+   struct expr                   *GroupActions(Environment *,const char *,struct token *,
                                                       bool,const char *,bool);
-   struct expr                   *RemoveUnneededProgn(void *,struct expr *);
+   struct expr                   *RemoveUnneededProgn(Environment *,struct expr *);
 
 #if (! RUN_TIME)
 
-   bool                           CheckExpressionAgainstRestrictions(void *,struct expr *,
+   bool                           CheckExpressionAgainstRestrictions(Environment *,struct expr *,
                                                                             const char *,const char *);
 #endif
 

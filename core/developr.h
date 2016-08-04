@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                 DEVELOPER HEADER FILE               */
    /*******************************************************/
@@ -33,6 +33,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_developr
@@ -41,22 +44,22 @@
 
 #define _H_developr
 
-   void                           DeveloperCommands(void *);
-   void                           PrimitiveTablesInfo(void *);
-   void                           PrimitiveTablesUsage(void *);
+   void                           DeveloperCommands(Environment *);
+   void                           PrimitiveTablesInfo(Environment *);
+   void                           PrimitiveTablesUsage(Environment *);
 
 #if DEFRULE_CONSTRUCT && DEFTEMPLATE_CONSTRUCT
-   void                           ShowFactPatternNetwork(void *);
-   bool                           ValidateFactIntegrity(void *);
+   void                           ShowFactPatternNetwork(Environment *);
+   bool                           ValidateFactIntegrity(Environment *);
 #endif
 #if DEFRULE_CONSTRUCT && OBJECT_SYSTEM
-   void                           PrintObjectPatternNetwork(void *);
+   void                           PrintObjectPatternNetwork(Environment *);
 #endif
 #if OBJECT_SYSTEM
-   void                           InstanceTableUsage(void *);
+   void                           InstanceTableUsage(Environment *);
 #endif
 #if DEFRULE_CONSTRUCT
-   void                           ValidateBetaMemories(void *);
+   void                           ValidateBetaMemories(Environment *);
 #endif
 
 #endif /* _H_developr */

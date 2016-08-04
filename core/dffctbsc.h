@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*         DEFFACTS BASIC COMMANDS HEADER FILE         */
    /*******************************************************/
@@ -39,6 +39,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_dffctbsc
@@ -47,25 +50,26 @@
 
 #define _H_dffctbsc
 
+#include "dffctdef.h"
 #include "evaluatn.h"
 
-   void                           DeffactsBasicCommands(void *);
-   void                           UndeffactsCommand(void *);
-   bool                           EnvUndeffacts(void *,void *);
-   void                           GetDeffactsListFunction(void *,DATA_OBJECT_PTR);
-   void                           EnvGetDeffactsList(void *,DATA_OBJECT_PTR,void *);
-   void                          *DeffactsModuleFunction(void *);
-   void                           PPDeffactsCommand(void *);
-   int                            PPDeffacts(void *,const char *,const char *);
-   void                           ListDeffactsCommand(void *);
-   void                           EnvListDeffacts(void *,const char *,void *);
+   void                           DeffactsBasicCommands(Environment *);
+   void                           UndeffactsCommand(Environment *);
+   bool                           EnvUndeffacts(Environment *,Deffacts *);
+   void                           GetDeffactsListFunction(Environment *,DATA_OBJECT_PTR);
+   void                           EnvGetDeffactsList(Environment *,DATA_OBJECT_PTR,Defmodule *);
+   void                          *DeffactsModuleFunction(Environment *);
+   void                           PPDeffactsCommand(Environment *);
+   bool                           PPDeffacts(Environment *,const char *,const char *);
+   void                           ListDeffactsCommand(Environment *);
+   void                           EnvListDeffacts(Environment *,const char *,Defmodule *);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-   void                           GetDeffactsList(DATA_OBJECT_PTR,void *);
-   bool                           Undeffacts(void *);
+   void                           GetDeffactsList(DATA_OBJECT_PTR,Defmodule *);
+   bool                           Undeffacts(Deffacts *);
 #if DEBUGGING_FUNCTIONS
-   void                           ListDeffacts(const char *,void *);
+   void                           ListDeffacts(const char *,Defmodule *);
 #endif
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */

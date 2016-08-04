@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*               FACT FUNCTIONS MODULE                 */
    /*******************************************************/
@@ -72,6 +72,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -95,7 +98,7 @@
 /* FactFunctionDefinitions: Defines fact functions. */
 /****************************************************/
 void FactFunctionDefinitions(
-  void *theEnv)
+  Environment *theEnv)
   {
 #if ! RUN_TIME
    EnvDefineFunction2(theEnv,"fact-existp",  'b', PTIEF FactExistpFunction,  "FactExistpFunction", "11z");
@@ -116,7 +119,7 @@ void FactFunctionDefinitions(
 /*   for the fact-relation function.          */
 /**********************************************/
 void *FactRelationFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    struct fact *theFact;
 
@@ -133,29 +136,25 @@ void *FactRelationFunction(
 /* FactRelation: C access routine for */
 /*   the fact-relation function.      */
 /**************************************/
-void *FactRelation(
-  void *vTheFact)
+struct symbolHashNode *FactRelation(
+  Fact *theFact)
   {
-   struct fact *theFact = (struct fact *) vTheFact;
-
-   return((void *) theFact->whichDeftemplate->header.name);
+   return theFact->whichDeftemplate->header.name;
   }
   
 /****************************************/
 /* EnvFactDeftemplate: C access routine */
 /*   to retrieve a fact's deftemplate.  */
 /****************************************/
-void *EnvFactDeftemplate(
-  void *theEnv,
-  void *vTheFact)
+Deftemplate *EnvFactDeftemplate(
+  Environment *theEnv,
+  Fact *theFact)
   {
 #if MAC_XCD
 #pragma unused(theEnv)
 #endif
 
-   struct fact *theFact = (struct fact *) vTheFact;
-
-   return((void *) theFact->whichDeftemplate);
+   return theFact->whichDeftemplate;
   }
 
 /********************************************/
@@ -163,7 +162,7 @@ void *EnvFactDeftemplate(
 /*   for the fact-existp function.          */
 /********************************************/
 bool FactExistpFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    struct fact *theFact;
 
@@ -179,14 +178,12 @@ bool FactExistpFunction(
 /*   for the fact-existp function. */
 /***********************************/
 bool EnvFactExistp(
-  void *theEnv,
-  void *vTheFact)
+  Environment *theEnv,
+  Fact *theFact)
   {
 #if MAC_XCD
 #pragma unused(theEnv)
 #endif
-   struct fact *theFact = (struct fact *) vTheFact;
-
    if (theFact == NULL) return false;
 
    if (theFact->garbage) return false;
@@ -199,7 +196,7 @@ bool EnvFactExistp(
 /*   for the fact-slot-value function.         */
 /***********************************************/
 void FactSlotValueFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *returnValue)
   {
    struct fact *theFact;
@@ -244,12 +241,11 @@ void FactSlotValueFunction(
 /*   the fact-slot-value function.     */
 /***************************************/
 void FactSlotValue(
-  void *theEnv,
-  void *vTheFact,
+  Environment *theEnv,
+  Fact *theFact,
   const char *theSlotName,
   DATA_OBJECT *returnValue)
   {
-   struct fact *theFact = (struct fact *) vTheFact;
    short position;
 
    /*==================================================*/
@@ -291,7 +287,7 @@ void FactSlotValue(
 /*   for the fact-slot-names function.         */
 /***********************************************/
 void FactSlotNamesFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *returnValue)
   {
    struct fact *theFact;
@@ -328,12 +324,11 @@ void FactSlotNamesFunction(
 /*   for the fact-slot-names function. */
 /***************************************/
 void EnvFactSlotNames(
-  void *theEnv,
-  void *vTheFact,
+  Environment *theEnv,
+  Fact *theFact,
   DATA_OBJECT *returnValue)
   {
-   struct fact *theFact = (struct fact *) vTheFact;
-   struct multifield *theList;
+   Multifield *theList;
    struct templateSlot *theSlot;
    unsigned long count;
 
@@ -347,10 +342,10 @@ void EnvFactSlotNames(
       SetpType(returnValue,MULTIFIELD);
       SetpDOBegin(returnValue,1);
       SetpDOEnd(returnValue,1);
-      theList = (struct multifield *) EnvCreateMultifield(theEnv,(int) 1);
+      theList = EnvCreateMultifield(theEnv,(int) 1);
       SetMFType(theList,1,SYMBOL);
       SetMFValue(theList,1,EnvAddSymbol(theEnv,"implied"));
-      SetpValue(returnValue,(void *) theList);
+      SetpValue(returnValue,theList);
       return;
      }
 
@@ -370,8 +365,8 @@ void EnvFactSlotNames(
    SetpType(returnValue,MULTIFIELD);
    SetpDOBegin(returnValue,1);
    SetpDOEnd(returnValue,(long) count);
-   theList = (struct multifield *) EnvCreateMultifield(theEnv,count);
-   SetpValue(returnValue,(void *) theList);
+   theList = EnvCreateMultifield(theEnv,count);
+   SetpValue(returnValue,theList);
 
    /*===============================================*/
    /* Store the slot names in the multifield value. */
@@ -391,10 +386,10 @@ void EnvFactSlotNames(
 /*   for the get-fact-list function.         */
 /*********************************************/
 void GetFactListFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
-   struct defmodule *theModule;
+   Defmodule *theModule;
    DATA_OBJECT result;
    int numArgs;
 
@@ -419,7 +414,7 @@ void GetFactListFunction(
          return;
         }
 
-      if ((theModule = (struct defmodule *) EnvFindDefmodule(theEnv,DOToString(result))) == NULL)
+      if ((theModule = EnvFindDefmodule(theEnv,DOToString(result))) == NULL)
         {
          if (strcmp("*",DOToString(result)) != 0)
            {
@@ -432,7 +427,7 @@ void GetFactListFunction(
         }
      }
    else
-     { theModule = ((struct defmodule *) EnvGetCurrentModule(theEnv)); }
+     { theModule = EnvGetCurrentModule(theEnv); }
 
    /*=====================*/
    /* Get the constructs. */
@@ -446,14 +441,13 @@ void GetFactListFunction(
 /*   for the get-fact-list function. */
 /*************************************/
 void EnvGetFactList(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT_PTR returnValue,
-  void *vTheModule)
+  Defmodule *theModule)
   {
-   struct fact *theFact;
+   Fact *theFact;
    unsigned long count;
-   struct multifield *theList;
-   struct defmodule *theModule = (struct defmodule *) vTheModule;
+   Multifield *theList;
 
    /*==========================*/
    /* Save the current module. */
@@ -467,18 +461,18 @@ void EnvGetFactList(
 
    if (theModule == NULL)
      {
-      for (theFact = (struct fact *) EnvGetNextFact(theEnv,NULL), count = 0;
+      for (theFact = EnvGetNextFact(theEnv,NULL), count = 0;
            theFact != NULL;
-           theFact = (struct fact *) EnvGetNextFact(theEnv,theFact), count++)
+           theFact = EnvGetNextFact(theEnv,theFact), count++)
         { /* Do Nothing */ }
      }
    else
      {
-      EnvSetCurrentModule(theEnv,(void *) theModule);
+      EnvSetCurrentModule(theEnv,theModule);
       UpdateDeftemplateScope(theEnv);
-      for (theFact = (struct fact *) GetNextFactInScope(theEnv,NULL), count = 0;
+      for (theFact = GetNextFactInScope(theEnv,NULL), count = 0;
            theFact != NULL;
-           theFact = (struct fact *) GetNextFactInScope(theEnv,theFact), count++)
+           theFact = GetNextFactInScope(theEnv,theFact), count++)
         { /* Do Nothing */ }
      }
 
@@ -489,8 +483,8 @@ void EnvGetFactList(
    SetpType(returnValue,MULTIFIELD);
    SetpDOBegin(returnValue,1);
    SetpDOEnd(returnValue,(long) count);
-   theList = (struct multifield *) EnvCreateMultifield(theEnv,count);
-   SetpValue(returnValue,(void *) theList);
+   theList = EnvCreateMultifield(theEnv,count);
+   SetpValue(returnValue,theList);
 
    /*==================================================*/
    /* Store the fact pointers in the multifield value. */
@@ -498,22 +492,22 @@ void EnvGetFactList(
 
    if (theModule == NULL)
      {
-      for (theFact = (struct fact *) EnvGetNextFact(theEnv,NULL), count = 1;
+      for (theFact = EnvGetNextFact(theEnv,NULL), count = 1;
            theFact != NULL;
-           theFact = (struct fact *) EnvGetNextFact(theEnv,theFact), count++)
+           theFact = EnvGetNextFact(theEnv,theFact), count++)
         {
          SetMFType(theList,count,FACT_ADDRESS);
-         SetMFValue(theList,count,(void *) theFact);
+         SetMFValue(theList,count,theFact);
         }
      }
    else
      {
-      for (theFact = (struct fact *) GetNextFactInScope(theEnv,NULL), count = 1;
+      for (theFact = GetNextFactInScope(theEnv,NULL), count = 1;
            theFact != NULL;
-           theFact = (struct fact *) GetNextFactInScope(theEnv,theFact), count++)
+           theFact = GetNextFactInScope(theEnv,theFact), count++)
         {
          SetMFType(theList,count,FACT_ADDRESS);
-         SetMFValue(theList,count,(void *) theFact);
+         SetMFValue(theList,count,theFact);
         }
      }
 
@@ -530,7 +524,7 @@ void EnvGetFactList(
 /*   for the ppfact function.         */
 /**************************************/
 void PPFactFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    struct fact *theFact;
    int numberOfArguments;
@@ -596,15 +590,14 @@ void PPFactFunction(
 /*   for the ppfact function.  */
 /*******************************/
 void EnvPPFact(
-  void *theEnv,
-  void *vTheFact,
+  Environment *theEnv,
+  Fact *theFact,
   const char *logicalName,
   bool ignoreDefaults)
   {
 #if MAC_XCD
 #pragma unused(theEnv)
 #endif
-   struct fact *theFact = (struct fact *) vTheFact;
 
    if (theFact == NULL) return;
 
@@ -620,22 +613,22 @@ void EnvPPFact(
 /*   function which should be a reference to a valid fact.    */
 /**************************************************************/
 struct fact *GetFactAddressOrIndexArgument(
-  void *theEnv,
+  Environment *theEnv,
   const char *theFunction,
   int position,
   bool noFactError)
   {
    DATA_OBJECT item;
    long long factIndex;
-   struct fact *theFact;
+   Fact *theFact;
    char tempBuffer[20];
 
    EnvRtnUnknown(theEnv,position,&item);
 
    if (GetType(item) == FACT_ADDRESS)
      {
-      if (((struct fact *) GetValue(item))->garbage) return(NULL);
-      else return (((struct fact *) GetValue(item)));
+      if (((Fact *) GetValue(item))->garbage) return NULL;
+      else return (((Fact *) GetValue(item)));
      }
    else if (GetType(item) == INTEGER)
      {
@@ -643,7 +636,7 @@ struct fact *GetFactAddressOrIndexArgument(
       if (factIndex < 0)
         {
          ExpectedTypeError1(theEnv,theFunction,position,"fact-address or fact-index");
-         return(NULL);
+         return NULL;
         }
 
       theFact = FindIndexedFact(theEnv,factIndex);
@@ -651,14 +644,14 @@ struct fact *GetFactAddressOrIndexArgument(
         {
          gensprintf(tempBuffer,"f-%lld",factIndex);
          CantFindItemErrorMessage(theEnv,"fact",tempBuffer);
-         return(NULL);
+         return NULL;
         }
 
       return(theFact);
      }
 
    ExpectedTypeError1(theEnv,theFunction,position,"fact-address or fact-index");
-   return(NULL);
+   return NULL;
   }
 
 /*#####################################*/
@@ -667,38 +660,38 @@ struct fact *GetFactAddressOrIndexArgument(
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 
-void *FactDeftemplate(
-  void *vTheFact)
+Deftemplate *FactDeftemplate(
+  Fact *theFact)
   {
-   return EnvFactDeftemplate(GetCurrentEnvironment(),vTheFact);
+   return EnvFactDeftemplate(GetCurrentEnvironment(),theFact);
   }
 
 bool FactExistp(
-  void *vTheFact)
+  Fact *theFact)
   {
-   return EnvFactExistp(GetCurrentEnvironment(),vTheFact);
+   return EnvFactExistp(GetCurrentEnvironment(),theFact);
   }
 
 void FactSlotNames(
-  void *vTheFact,
+  Fact *theFact,
   DATA_OBJECT *returnValue)
   {
-   EnvFactSlotNames(GetCurrentEnvironment(),vTheFact,returnValue);
+   EnvFactSlotNames(GetCurrentEnvironment(),theFact,returnValue);
   }
 
 void GetFactList(
   DATA_OBJECT_PTR returnValue,
-  void *vTheModule)
+  Defmodule *theModule)
   {
-   EnvGetFactList(GetCurrentEnvironment(),returnValue,vTheModule);
+   EnvGetFactList(GetCurrentEnvironment(),returnValue,theModule);
   }
 
 void PPFact(
-  void *vTheFact,
+  Fact *theFact,
   const char *logicalName,
   bool ignoreDefaults)
   {
-   EnvPPFact(GetCurrentEnvironment(),vTheFact,logicalName,ignoreDefaults);
+   EnvPPFact(GetCurrentEnvironment(),theFact,logicalName,ignoreDefaults);
   }
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */

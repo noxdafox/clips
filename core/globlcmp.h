@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*       DEFGLOBAL CONSTRUCT COMPILER HEADER FILE      */
    /*******************************************************/
@@ -30,6 +30,9 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_globlcmp
@@ -38,9 +41,11 @@
 
 #define _H_globlcmp
 
-   void                           DefglobalCompilerSetup(void *);
-   void                           DefglobalCModuleReference(void *,FILE *,int,int,int);
-   void                           DefglobalCConstructReference(void *,FILE *,void *,int,int);
+#include "globldef.h"
+
+   void                           DefglobalCompilerSetup(Environment *);
+   void                           DefglobalCModuleReference(Environment *,FILE *,int,int,int);
+   void                           DefglobalCConstructReference(Environment *,FILE *,Defglobal *,int,int);
 
 #endif /* _H_globlcmp */
 

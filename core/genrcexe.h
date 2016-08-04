@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -33,6 +33,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_genrcexe
@@ -47,16 +50,16 @@
 #include "expressn.h"
 #include "genrcfun.h"
 
-   void                           GenericDispatch(void *,DEFGENERIC *,DEFMETHOD *,DEFMETHOD *,EXPRESSION *,DATA_OBJECT *);
-   void                           UnboundMethodErr(void *);
-   bool                           IsMethodApplicable(void *,DEFMETHOD *);
+   void                           GenericDispatch(Environment *,Defgeneric *,Defmethod *,Defmethod *,EXPRESSION *,DATA_OBJECT *);
+   void                           UnboundMethodErr(Environment *);
+   bool                           IsMethodApplicable(Environment *,Defmethod *);
 
-   bool                           NextMethodP(void *);
-   void                           CallNextMethod(void *,DATA_OBJECT *);
-   void                           CallSpecificMethod(void *,DATA_OBJECT *);
-   void                           OverrideNextMethod(void *,DATA_OBJECT *);
+   bool                           NextMethodP(Environment *);
+   void                           CallNextMethod(Environment *,DATA_OBJECT *);
+   void                           CallSpecificMethod(Environment *,DATA_OBJECT *);
+   void                           OverrideNextMethod(Environment *,DATA_OBJECT *);
 
-   void                           GetGenericCurrentArgument(void *,DATA_OBJECT *);
+   void                           GetGenericCurrentArgument(Environment *,DATA_OBJECT *);
 
 #endif /* DEFGENERIC_CONSTRUCT */
 

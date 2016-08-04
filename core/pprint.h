@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*               PRETTY PRINT HEADER FILE              */
    /*******************************************************/
@@ -30,6 +30,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_pprint
@@ -54,21 +57,21 @@ struct prettyPrintData
 
 #define PrettyPrintData(theEnv) ((struct prettyPrintData *) GetEnvironmentData(theEnv,PRETTY_PRINT_DATA))
 
-   void                           InitializePrettyPrintData(void *);
-   void                           FlushPPBuffer(void *);
-   void                           DestroyPPBuffer(void *);
-   void                           SavePPBuffer(void *,const char *);
-   void                           PPBackup(void *);
-   char                          *CopyPPBuffer(void *);
-   char                          *GetPPBuffer(void *);
-   void                           PPCRAndIndent(void *);
-   void                           IncrementIndentDepth(void *,int);
-   void                           DecrementIndentDepth(void *,int);
-   void                           SetIndentDepth(void *,int);
-   void                           SetPPBufferStatus(void *,bool);
-   bool                           GetPPBufferStatus(void *);
-   int                            SetPPBufferEnabled(void *,int);
-   int                            GetPPBufferEnabled(void *);
+   void                           InitializePrettyPrintData(Environment *);
+   void                           FlushPPBuffer(Environment *);
+   void                           DestroyPPBuffer(Environment *);
+   void                           SavePPBuffer(Environment *,const char *);
+   void                           PPBackup(Environment *);
+   char                          *CopyPPBuffer(Environment *);
+   char                          *GetPPBuffer(Environment *);
+   void                           PPCRAndIndent(Environment *);
+   void                           IncrementIndentDepth(Environment *,int);
+   void                           DecrementIndentDepth(Environment *,int);
+   void                           SetIndentDepth(Environment *,int);
+   void                           SetPPBufferStatus(Environment *,bool);
+   bool                           GetPPBufferStatus(Environment *);
+   int                            SetPPBufferEnabled(Environment *,int);
+   int                            GetPPBufferEnabled(Environment *);
 
 #endif
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*           DEFTEMPLATE BSAVE/BLOAD MODULE            */
    /*******************************************************/
@@ -29,6 +29,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -55,24 +58,24 @@
 /***************************************/
 
 #if BLOAD_AND_BSAVE
-   static void                    BsaveFind(void *);
-   static void                    BsaveStorage(void *,FILE *);
-   static void                    BsaveBinaryItem(void *,FILE *);
+   static void                    BsaveFind(Environment *);
+   static void                    BsaveStorage(Environment *,FILE *);
+   static void                    BsaveBinaryItem(Environment *,FILE *);
 #endif
-   static void                    BloadStorage(void *);
-   static void                    BloadBinaryItem(void *);
-   static void                    UpdateDeftemplateModule(void *,void *,long);
-   static void                    UpdateDeftemplate(void *,void *,long);
-   static void                    UpdateDeftemplateSlot(void *,void *,long);
-   static void                    ClearBload(void *);
-   static void                    DeallocateDeftemplateBloadData(void *);
+   static void                    BloadStorage(Environment *);
+   static void                    BloadBinaryItem(Environment *);
+   static void                    UpdateDeftemplateModule(Environment *,void *,long);
+   static void                    UpdateDeftemplate(Environment *,void *,long);
+   static void                    UpdateDeftemplateSlot(Environment *,void *,long);
+   static void                    ClearBload(Environment *);
+   static void                    DeallocateDeftemplateBloadData(Environment *);
 
 /***********************************************/
 /* DeftemplateBinarySetup: Installs the binary */
 /*   save/load feature for deftemplates.       */
 /***********************************************/
 void DeftemplateBinarySetup(
-  void *theEnv)
+  Environment *theEnv)
   {
    AllocateEnvironmentData(theEnv,TMPLTBIN_DATA,sizeof(struct deftemplateBinaryData),DeallocateDeftemplateBloadData);
 #if BLOAD_AND_BSAVE
@@ -93,18 +96,18 @@ void DeftemplateBinarySetup(
 /*    data for the deftemplate bsave functionality.        */
 /***********************************************************/
 static void DeallocateDeftemplateBloadData(
-  void *theEnv)
+  Environment *theEnv)
   {
    size_t space;
 
    space =  DeftemplateBinaryData(theEnv)->NumberOfTemplateModules * sizeof(struct deftemplateModule);
-   if (space != 0) genfree(theEnv,(void *) DeftemplateBinaryData(theEnv)->ModuleArray,space);
+   if (space != 0) genfree(theEnv,DeftemplateBinaryData(theEnv)->ModuleArray,space);
    
-   space = DeftemplateBinaryData(theEnv)->NumberOfDeftemplates * sizeof(struct deftemplate);
-   if (space != 0) genfree(theEnv,(void *) DeftemplateBinaryData(theEnv)->DeftemplateArray,space);
+   space = DeftemplateBinaryData(theEnv)->NumberOfDeftemplates * sizeof(Deftemplate);
+   if (space != 0) genfree(theEnv,DeftemplateBinaryData(theEnv)->DeftemplateArray,space);
 
    space =  DeftemplateBinaryData(theEnv)->NumberOfTemplateSlots * sizeof(struct templateSlot);
-   if (space != 0) genfree(theEnv,(void *) DeftemplateBinaryData(theEnv)->SlotArray,space);
+   if (space != 0) genfree(theEnv,DeftemplateBinaryData(theEnv)->SlotArray,space);
   }
 
 #if BLOAD_AND_BSAVE
@@ -115,11 +118,11 @@ static void DeallocateDeftemplateBloadData(
 /*   current environment.                                     */
 /**************************************************************/
 static void BsaveFind(
-  void *theEnv)
+  Environment *theEnv)
   {
-   struct deftemplate *theDeftemplate;
+   Deftemplate *theDeftemplate;
    struct templateSlot *theSlot;
-   struct defmodule *theModule;
+   Defmodule *theModule;
 
    /*=======================================================*/
    /* If a binary image is already loaded, then temporarily */
@@ -144,9 +147,9 @@ static void BsaveFind(
    /* Loop through each module. */
    /*===========================*/
 
-   for (theModule = (struct defmodule *) EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = (struct defmodule *) EnvGetNextDefmodule(theEnv,theModule))
+        theModule = EnvGetNextDefmodule(theEnv,theModule))
      {
       /*============================================*/
       /* Set the current module to the module being */
@@ -154,16 +157,16 @@ static void BsaveFind(
       /* deftemplate modules encountered.           */
       /*============================================*/
 
-      EnvSetCurrentModule(theEnv,(void *) theModule);
+      EnvSetCurrentModule(theEnv,theModule);
       DeftemplateBinaryData(theEnv)->NumberOfTemplateModules++;
 
       /*======================================================*/
       /* Loop through each deftemplate in the current module. */
       /*======================================================*/
 
-      for (theDeftemplate = (struct deftemplate *) EnvGetNextDeftemplate(theEnv,NULL);
+      for (theDeftemplate = EnvGetNextDeftemplate(theEnv,NULL);
            theDeftemplate != NULL;
-           theDeftemplate = (struct deftemplate *) EnvGetNextDeftemplate(theEnv,theDeftemplate))
+           theDeftemplate = EnvGetNextDeftemplate(theEnv,theDeftemplate))
         {
          /*======================================================*/
          /* Initialize the construct header for the binary save. */
@@ -194,7 +197,7 @@ static void BsaveFind(
 /*    all deftemplate structures to the binary file.     */
 /*********************************************************/
 static void BsaveStorage(
-  void *theEnv,
+  Environment *theEnv,
   FILE *fp)
   {
    size_t space;
@@ -219,16 +222,16 @@ static void BsaveStorage(
 /*   structures to the binary file.            */
 /***********************************************/
 static void BsaveBinaryItem(
-  void *theEnv,
+  Environment *theEnv,
   FILE *fp)
   {
    size_t space;
-   struct deftemplate *theDeftemplate;
+   Deftemplate *theDeftemplate;
    struct bsaveDeftemplate tempDeftemplate;
    struct templateSlot *theSlot;
    struct bsaveTemplateSlot tempTemplateSlot;
    struct bsaveDeftemplateModule tempTemplateModule;
-   struct defmodule *theModule;
+   Defmodule *theModule;
    struct deftemplateModule *theModuleItem;
 
    /*============================================================*/
@@ -247,11 +250,11 @@ static void BsaveBinaryItem(
    /*===================================================*/
 
    DeftemplateBinaryData(theEnv)->NumberOfDeftemplates = 0;
-   for (theModule = (struct defmodule *) EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = (struct defmodule *) EnvGetNextDefmodule(theEnv,theModule))
+        theModule = EnvGetNextDefmodule(theEnv,theModule))
      {
-      EnvSetCurrentModule(theEnv,(void *) theModule);
+      EnvSetCurrentModule(theEnv,theModule);
 
       theModuleItem = (struct deftemplateModule *)
                       GetModuleItem(theEnv,NULL,FindModuleItem(theEnv,"deftemplate")->moduleIndex);
@@ -265,15 +268,15 @@ static void BsaveBinaryItem(
    /*============================================*/
 
    DeftemplateBinaryData(theEnv)->NumberOfTemplateSlots = 0;
-   for (theModule = (struct defmodule *) EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = (struct defmodule *) EnvGetNextDefmodule(theEnv,theModule))
+        theModule = EnvGetNextDefmodule(theEnv,theModule))
      {
-      EnvSetCurrentModule(theEnv,(void *) theModule);
+      EnvSetCurrentModule(theEnv,theModule);
 
-      for (theDeftemplate = (struct deftemplate *) EnvGetNextDeftemplate(theEnv,NULL);
+      for (theDeftemplate = EnvGetNextDeftemplate(theEnv,NULL);
            theDeftemplate != NULL;
-           theDeftemplate = (struct deftemplate *) EnvGetNextDeftemplate(theEnv,theDeftemplate))
+           theDeftemplate = EnvGetNextDeftemplate(theEnv,theDeftemplate))
         {
          AssignBsaveConstructHeaderVals(&tempDeftemplate.header,
                                           &theDeftemplate->header);
@@ -295,15 +298,15 @@ static void BsaveBinaryItem(
    /* Write out each templateSlot data structure. */
    /*=============================================*/
 
-   for (theModule = (struct defmodule *) EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = (struct defmodule *) EnvGetNextDefmodule(theEnv,theModule))
+        theModule = EnvGetNextDefmodule(theEnv,theModule))
      {
-      EnvSetCurrentModule(theEnv,(void *) theModule);
+      EnvSetCurrentModule(theEnv,theModule);
 
-      for (theDeftemplate = (struct deftemplate *) EnvGetNextDeftemplate(theEnv,NULL);
+      for (theDeftemplate = EnvGetNextDeftemplate(theEnv,NULL);
            theDeftemplate != NULL;
-           theDeftemplate = (struct deftemplate *) EnvGetNextDeftemplate(theEnv,theDeftemplate))
+           theDeftemplate = EnvGetNextDeftemplate(theEnv,theDeftemplate))
         {
          for (theSlot = theDeftemplate->slotList;
               theSlot != NULL;
@@ -346,7 +349,7 @@ static void BsaveBinaryItem(
 /*   the deftemplates used by this binary image.    */
 /****************************************************/
 static void BloadStorage(
-  void *theEnv)
+  Environment *theEnv)
   {
    size_t space;
 
@@ -388,8 +391,8 @@ static void BloadStorage(
       return;
      }
 
-   space = DeftemplateBinaryData(theEnv)->NumberOfDeftemplates * sizeof(struct deftemplate);
-   DeftemplateBinaryData(theEnv)->DeftemplateArray = (struct deftemplate *) genalloc(theEnv,space);
+   space = DeftemplateBinaryData(theEnv)->NumberOfDeftemplates * sizeof(Deftemplate);
+   DeftemplateBinaryData(theEnv)->DeftemplateArray = (Deftemplate *) genalloc(theEnv,space);
 
    /*===================================*/
    /* Allocate the space needed for the */
@@ -411,7 +414,7 @@ static void BloadStorage(
 /*   constructs used by this binary image.              */
 /********************************************************/
 static void BloadBinaryItem(
-  void *theEnv)
+  Environment *theEnv)
   {
    size_t space;
 
@@ -453,7 +456,7 @@ static void BloadBinaryItem(
 /*   for deftemplateModule data structures.       */
 /**************************************************/
 static void UpdateDeftemplateModule(
-  void *theEnv,
+  Environment *theEnv,
   void *buf,
   long obji)
   {
@@ -461,7 +464,7 @@ static void UpdateDeftemplateModule(
 
    bdmPtr = (struct bsaveDeftemplateModule *) buf;
    UpdateDefmoduleItemHeader(theEnv,&bdmPtr->header,&DeftemplateBinaryData(theEnv)->ModuleArray[obji].header,
-                             (int) sizeof(struct deftemplate),
+                             (int) sizeof(Deftemplate),
                              (void *) DeftemplateBinaryData(theEnv)->DeftemplateArray);
   }
 
@@ -470,19 +473,19 @@ static void UpdateDeftemplateModule(
 /*   for deftemplate data structures.       */
 /********************************************/
 static void UpdateDeftemplate(
-  void *theEnv,
+  Environment *theEnv,
   void *buf,
   long obji)
   {
-   struct deftemplate *theDeftemplate;
+   Deftemplate *theDeftemplate;
    struct bsaveDeftemplate *bdtPtr;
 
    bdtPtr = (struct bsaveDeftemplate *) buf;
-   theDeftemplate = (struct deftemplate *) &DeftemplateBinaryData(theEnv)->DeftemplateArray[obji];
+   theDeftemplate = &DeftemplateBinaryData(theEnv)->DeftemplateArray[obji];
 
    UpdateConstructHeader(theEnv,&bdtPtr->header,&theDeftemplate->header,
-                         (int) sizeof(struct deftemplateModule),(void *) DeftemplateBinaryData(theEnv)->ModuleArray,
-                         (int) sizeof(struct deftemplate),(void *) DeftemplateBinaryData(theEnv)->DeftemplateArray);
+                         (int) sizeof(struct deftemplateModule),DeftemplateBinaryData(theEnv)->ModuleArray,
+                         (int) sizeof(Deftemplate),DeftemplateBinaryData(theEnv)->DeftemplateArray);
 
    if (bdtPtr->slotList != -1L)
      { theDeftemplate->slotList = (struct templateSlot *) &DeftemplateBinaryData(theEnv)->SlotArray[bdtPtr->slotList]; }
@@ -509,7 +512,7 @@ static void UpdateDeftemplate(
 /*   for templateSlot data structures.          */
 /************************************************/
 static void UpdateDeftemplateSlot(
-  void *theEnv,
+  Environment *theEnv,
   void *buf,
   long obji)
   {
@@ -541,7 +544,7 @@ static void UpdateDeftemplateSlot(
 /*   when a binary load is in effect.    */
 /*****************************************/
 static void ClearBload(
-  void *theEnv)
+  Environment *theEnv)
   {
    size_t space;
    int i;
@@ -567,15 +570,15 @@ static void ClearBload(
    /*======================================================================*/
 
    space =  DeftemplateBinaryData(theEnv)->NumberOfTemplateModules * sizeof(struct deftemplateModule);
-   if (space != 0) genfree(theEnv,(void *) DeftemplateBinaryData(theEnv)->ModuleArray,space);
+   if (space != 0) genfree(theEnv,DeftemplateBinaryData(theEnv)->ModuleArray,space);
    DeftemplateBinaryData(theEnv)->NumberOfTemplateModules = 0;
    
    /*================================================================*/
    /* Deallocate the space used for the deftemplate data structures. */
    /*================================================================*/
 
-   space = DeftemplateBinaryData(theEnv)->NumberOfDeftemplates * sizeof(struct deftemplate);
-   if (space != 0) genfree(theEnv,(void *) DeftemplateBinaryData(theEnv)->DeftemplateArray,space);
+   space = DeftemplateBinaryData(theEnv)->NumberOfDeftemplates * sizeof(Deftemplate);
+   if (space != 0) genfree(theEnv,DeftemplateBinaryData(theEnv)->DeftemplateArray,space);
    DeftemplateBinaryData(theEnv)->NumberOfDeftemplates = 0;
    
    /*=================================================================*/
@@ -583,7 +586,7 @@ static void ClearBload(
    /*=================================================================*/
 
    space =  DeftemplateBinaryData(theEnv)->NumberOfTemplateSlots * sizeof(struct templateSlot);
-   if (space != 0) genfree(theEnv,(void *) DeftemplateBinaryData(theEnv)->SlotArray,space);
+   if (space != 0) genfree(theEnv,DeftemplateBinaryData(theEnv)->SlotArray,space);
    DeftemplateBinaryData(theEnv)->NumberOfTemplateSlots = 0;
    
    /*======================================*/
@@ -600,7 +603,7 @@ static void ClearBload(
 /*   module pointer for use with the bload function.        */
 /************************************************************/
 void *BloadDeftemplateModuleReference(
-  void *theEnv,
+  Environment *theEnv,
   int theIndex)
   {
    return ((void *) &DeftemplateBinaryData(theEnv)->ModuleArray[theIndex]);

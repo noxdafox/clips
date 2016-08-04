@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -38,6 +38,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_msgfun
@@ -70,36 +73,39 @@ typedef struct handlerSlotReference
 #define LOOKUP_HANDLER_INDEX   0
 #define LOOKUP_HANDLER_ADDRESS 1
 
-   void             UnboundHandlerErr(void *);
-   void             PrintNoHandlerError(void *,const char *);
-   bool             CheckHandlerArgCount(void *);
-   void             SlotAccessViolationError(void *,const char *,bool,void *);
-   void             SlotVisibilityViolationError(void *,SLOT_DESC *,DEFCLASS *);
+   void             UnboundHandlerErr(Environment *);
+   void             PrintNoHandlerError(Environment *,const char *);
+   bool             CheckHandlerArgCount(Environment *);
+   void             SlotAccessViolationError(Environment *,const char *,bool,void *);
+   void             SlotVisibilityViolationError(Environment *,SlotDescriptor *,Defclass *);
 
 #if ! RUN_TIME
-   void             NewSystemHandler(void *,const char *,const char *,const char *,int);
-   HANDLER         *InsertHandlerHeader(void *,DEFCLASS *,SYMBOL_HN *,int);
+   void             NewSystemHandler(Environment *,const char *,const char *,const char *,int);
+   DefmessageHandler
+                   *InsertHandlerHeader(Environment *,Defclass *,SYMBOL_HN *,int);
 #endif
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-   HANDLER         *NewHandler(void);
-   bool             HandlersExecuting(DEFCLASS *);
-   bool             DeleteHandler(void *,DEFCLASS *,SYMBOL_HN *,int,bool);
-   void             DeallocateMarkedHandlers(void *,DEFCLASS *);
+   DefmessageHandler
+                   *NewHandler(void);
+   bool             HandlersExecuting(Defclass *);
+   bool             DeleteHandler(Environment *,Defclass *,SYMBOL_HN *,int,bool);
+   void             DeallocateMarkedHandlers(Environment *,Defclass *);
 #endif
-   unsigned         HandlerType(void *,const char *,const char *);
-   bool             CheckCurrentMessage(void *,const char *,bool);
-   void             PrintHandler(void *,const char *,HANDLER *,bool);
-   HANDLER         *FindHandlerByAddress(DEFCLASS *,SYMBOL_HN *,unsigned);
-   int              FindHandlerByIndex(DEFCLASS *,SYMBOL_HN *,unsigned);
-   int              FindHandlerNameGroup(DEFCLASS *,SYMBOL_HN *);
-   void             HandlerDeleteError(void *,const char *);
+   unsigned         HandlerType(Environment *,const char *,const char *);
+   bool             CheckCurrentMessage(Environment *,const char *,bool);
+   void             PrintHandler(Environment *,const char *,DefmessageHandler *,bool);
+   DefmessageHandler
+                   *FindHandlerByAddress(Defclass *,SYMBOL_HN *,unsigned);
+   int              FindHandlerByIndex(Defclass *,SYMBOL_HN *,unsigned);
+   int              FindHandlerNameGroup(Defclass *,SYMBOL_HN *);
+   void             HandlerDeleteError(Environment *,const char *);
 
 #if DEBUGGING_FUNCTIONS
-   void             DisplayCore(void *,const char *,HANDLER_LINK *,int);
-   HANDLER_LINK    *FindPreviewApplicableHandlers(void *,DEFCLASS *,SYMBOL_HN *);
-   void             WatchMessage(void *,const char *,const char *);
-   void             WatchHandler(void *,const char *,HANDLER_LINK *,const char *);
+   void             DisplayCore(Environment *,const char *,HANDLER_LINK *,int);
+   HANDLER_LINK    *FindPreviewApplicableHandlers(Environment *,Defclass *,SYMBOL_HN *);
+   void             WatchMessage(Environment *,const char *,const char *);
+   void             WatchHandler(Environment *,const char *,HANDLER_LINK *,const char *);
 #endif
 
 #endif /* _H_msgfun */

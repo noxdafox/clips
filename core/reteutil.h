@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*              RETE UTILITY HEADER FILE               */
    /*******************************************************/
@@ -48,6 +48,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_reteutil
@@ -63,43 +66,43 @@
 #define NETWORK_ASSERT  0
 #define NETWORK_RETRACT 1
 
-   void                           PrintPartialMatch(void *,const char *,struct partialMatch *);
-   struct partialMatch           *CopyPartialMatch(void *,struct partialMatch *);
-   struct partialMatch           *MergePartialMatches(void *,struct partialMatch *,struct partialMatch *);
+   void                           PrintPartialMatch(Environment *,const char *,struct partialMatch *);
+   struct partialMatch           *CopyPartialMatch(Environment *,struct partialMatch *);
+   struct partialMatch           *MergePartialMatches(Environment *,struct partialMatch *,struct partialMatch *);
    long int                       IncrementPseudoFactIndex(void);
-   struct partialMatch           *GetAlphaMemory(void *,struct patternNodeHeader *,unsigned long);
+   struct partialMatch           *GetAlphaMemory(Environment *,struct patternNodeHeader *,unsigned long);
    struct partialMatch           *GetLeftBetaMemory(struct joinNode *,unsigned long);
    struct partialMatch           *GetRightBetaMemory(struct joinNode *,unsigned long);
-   void                           ReturnLeftMemory(void *,struct joinNode *);
-   void                           ReturnRightMemory(void *,struct joinNode *);
-   void                           DestroyBetaMemory(void *,struct joinNode *,int);
-   void                           FlushBetaMemory(void *,struct joinNode *,int);
+   void                           ReturnLeftMemory(Environment *,struct joinNode *);
+   void                           ReturnRightMemory(Environment *,struct joinNode *);
+   void                           DestroyBetaMemory(Environment *,struct joinNode *,int);
+   void                           FlushBetaMemory(Environment *,struct joinNode *,int);
    bool                           BetaMemoryNotEmpty(struct joinNode *);
-   void                           RemoveAlphaMemoryMatches(void *,struct patternNodeHeader *,struct partialMatch *,
+   void                           RemoveAlphaMemoryMatches(Environment *,struct patternNodeHeader *,struct partialMatch *,
                                                                   struct alphaMatch *); 
-   void                           DestroyAlphaMemory(void *,struct patternNodeHeader *,bool);
-   void                           FlushAlphaMemory(void *,struct patternNodeHeader *);
-   void                           FlushAlphaBetaMemory(void *,struct partialMatch *);
-   void                           DestroyAlphaBetaMemory(void *,struct partialMatch *);
+   void                           DestroyAlphaMemory(Environment *,struct patternNodeHeader *,bool);
+   void                           FlushAlphaMemory(Environment *,struct patternNodeHeader *);
+   void                           FlushAlphaBetaMemory(Environment *,struct partialMatch *);
+   void                           DestroyAlphaBetaMemory(Environment *,struct partialMatch *);
    int                            GetPatternNumberFromJoin(struct joinNode *);
-   struct multifieldMarker       *CopyMultifieldMarkers(void *,struct multifieldMarker *);
-   struct partialMatch           *CreateAlphaMatch(void *,void *,struct multifieldMarker *,
+   struct multifieldMarker       *CopyMultifieldMarkers(Environment *,struct multifieldMarker *);
+   struct partialMatch           *CreateAlphaMatch(Environment *,void *,struct multifieldMarker *,
                                                           struct patternNodeHeader *,unsigned long);
-   void                           TraceErrorToRule(void *,struct joinNode *,const char *);
-   void                           InitializePatternHeader(void *,struct patternNodeHeader *);
-   void                           MarkRuleNetwork(void *,int);
-   void                           TagRuleNetwork(void *,long *,long *,long *,long *);
+   void                           TraceErrorToRule(Environment *,struct joinNode *,const char *);
+   void                           InitializePatternHeader(Environment *,struct patternNodeHeader *);
+   void                           MarkRuleNetwork(Environment *,int);
+   void                           TagRuleNetwork(Environment *,long *,long *,long *,long *);
    bool                           FindEntityInPartialMatch(struct patternEntity *,struct partialMatch *);
-   unsigned long                  ComputeRightHashValue(void *,struct patternNodeHeader *);
-   void                           UpdateBetaPMLinks(void *,struct partialMatch *,struct partialMatch *,struct partialMatch *,
+   unsigned long                  ComputeRightHashValue(Environment *,struct patternNodeHeader *);
+   void                           UpdateBetaPMLinks(Environment *,struct partialMatch *,struct partialMatch *,struct partialMatch *,
                                                        struct joinNode *,unsigned long,int);
-   void                           UnlinkBetaPMFromNodeAndLineage(void *,struct joinNode *,struct partialMatch *,int);
-   void                           UnlinkNonLeftLineage(void *,struct joinNode *,struct partialMatch *,int);
-   struct partialMatch           *CreateEmptyPartialMatch(void *);
+   void                           UnlinkBetaPMFromNodeAndLineage(Environment *,struct joinNode *,struct partialMatch *,int);
+   void                           UnlinkNonLeftLineage(Environment *,struct joinNode *,struct partialMatch *,int);
+   struct partialMatch           *CreateEmptyPartialMatch(Environment *);
    void                           MarkRuleJoins(struct joinNode *,int);
    void                           AddBlockedLink(struct partialMatch *,struct partialMatch *);
    void                           RemoveBlockedLink(struct partialMatch *);
-   unsigned long                  PrintBetaMemory(void *,const char *,struct betaMemory *,bool,const char *,int);
+   unsigned long                  PrintBetaMemory(Environment *,const char *,struct betaMemory *,bool,const char *,int);
 
 #endif /* _H_reteutil */
 

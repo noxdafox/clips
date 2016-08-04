@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*             DEFFACTS PARSER HEADER FILE             */
    /*******************************************************/
@@ -32,6 +32,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_dffctpsr
@@ -40,7 +43,7 @@
 
 #define _H_dffctpsr
 
-   bool                           ParseDeffacts(void *,const char *);
+   bool                           ParseDeffacts(Environment *,const char *);
 
 #endif /* _H_dffctpsr */
 

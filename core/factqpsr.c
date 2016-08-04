@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*            FACT-SET QUERIES PARSER MODULE           */
    /*******************************************************/
@@ -39,6 +39,9 @@
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -83,12 +86,12 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static EXPRESSION             *ParseQueryRestrictions(void *,EXPRESSION *,const char *,struct token *);
-   static bool                    ReplaceTemplateNameWithReference(void *,EXPRESSION *);
-   static bool                    ParseQueryTestExpression(void *,EXPRESSION *,const char *);
-   static bool                    ParseQueryActionExpression(void *,EXPRESSION *,const char *,EXPRESSION *,struct token *);
-   static void                    ReplaceFactVariables(void *,EXPRESSION *,EXPRESSION *,bool,int);
-   static void                    ReplaceSlotReference(void *,EXPRESSION *,EXPRESSION *,
+   static EXPRESSION             *ParseQueryRestrictions(Environment *,EXPRESSION *,const char *,struct token *);
+   static bool                    ReplaceTemplateNameWithReference(Environment *,EXPRESSION *);
+   static bool                    ParseQueryTestExpression(Environment *,EXPRESSION *,const char *);
+   static bool                    ParseQueryActionExpression(Environment *,EXPRESSION *,const char *,EXPRESSION *,struct token *);
+   static void                    ReplaceFactVariables(Environment *,EXPRESSION *,EXPRESSION *,bool,int);
+   static void                    ReplaceSlotReference(Environment *,EXPRESSION *,EXPRESSION *,
                                                        struct FunctionDefinition *,int);
    static bool                    IsQueryFunction(EXPRESSION *);
 
@@ -128,7 +131,7 @@
                  <template-2a> -> <template-2b> -> (QDS) -> ...
  ***********************************************************************/
 EXPRESSION *FactParseQueryNoAction(
-  void *theEnv,
+  Environment *theEnv,
   EXPRESSION *top,
   const char *readSource)
   {
@@ -137,7 +140,7 @@ EXPRESSION *FactParseQueryNoAction(
 
    factQuerySetVars = ParseQueryRestrictions(theEnv,top,readSource,&queryInputToken);
    if (factQuerySetVars == NULL)
-     { return(NULL); }
+     { return NULL; }
      
    IncrementIndentDepth(theEnv,3);
    PPCRAndIndent(theEnv);
@@ -146,7 +149,7 @@ EXPRESSION *FactParseQueryNoAction(
      {
       DecrementIndentDepth(theEnv,3);
       ReturnExpression(theEnv,factQuerySetVars);
-      return(NULL);
+      return NULL;
      }
      
    DecrementIndentDepth(theEnv,3);
@@ -157,7 +160,7 @@ EXPRESSION *FactParseQueryNoAction(
       SyntaxErrorMessage(theEnv,"fact-set query function");
       ReturnExpression(theEnv,top);
       ReturnExpression(theEnv,factQuerySetVars);
-      return(NULL);
+      return NULL;
      }
      
    ReplaceFactVariables(theEnv,factQuerySetVars,top->argList,true,0);
@@ -196,7 +199,7 @@ EXPRESSION *FactParseQueryNoAction(
                  <template-2a> -> <template-2b> -> (QDS) -> ...
  ***********************************************************************/
 EXPRESSION *FactParseQueryAction(
-  void *theEnv,
+  Environment *theEnv,
   EXPRESSION *top,
   const char *readSource)
   {
@@ -205,7 +208,7 @@ EXPRESSION *FactParseQueryAction(
 
    factQuerySetVars = ParseQueryRestrictions(theEnv,top,readSource,&queryInputToken);
    if (factQuerySetVars == NULL)
-     { return(NULL); }
+     { return NULL; }
      
    IncrementIndentDepth(theEnv,3);
    PPCRAndIndent(theEnv);
@@ -214,7 +217,7 @@ EXPRESSION *FactParseQueryAction(
      {
       DecrementIndentDepth(theEnv,3);
       ReturnExpression(theEnv,factQuerySetVars);
-      return(NULL);
+      return NULL;
      }
      
    PPCRAndIndent(theEnv);
@@ -223,7 +226,7 @@ EXPRESSION *FactParseQueryAction(
      {
       DecrementIndentDepth(theEnv,3);
       ReturnExpression(theEnv,factQuerySetVars);
-      return(NULL);
+      return NULL;
      }
      
    DecrementIndentDepth(theEnv,3);
@@ -233,7 +236,7 @@ EXPRESSION *FactParseQueryAction(
       SyntaxErrorMessage(theEnv,"fact-set query function");
       ReturnExpression(theEnv,top);
       ReturnExpression(theEnv,factQuerySetVars);
-      return(NULL);
+      return NULL;
      }
      
    ReplaceFactVariables(theEnv,factQuerySetVars,top->argList,true,0);
@@ -264,7 +267,7 @@ EXPRESSION *FactParseQueryAction(
   NOTES        : Expects top != NULL
  ***************************************************************/
 static EXPRESSION *ParseQueryRestrictions(
-  void *theEnv,
+  Environment *theEnv,
   EXPRESSION *top,
   const char *readSource,
   struct token *queryInputToken)
@@ -344,7 +347,7 @@ static EXPRESSION *ParseQueryRestrictions(
       PPBackup(theEnv);
       SavePPBuffer(theEnv,")");
       
-      tmp = GenConstant(theEnv,SYMBOL,(void *) FactQueryData(theEnv)->QUERY_DELIMETER_SYMBOL);
+      tmp = GenConstant(theEnv,SYMBOL,FactQueryData(theEnv)->QUERY_DELIMETER_SYMBOL);
       
       lastTemplateExp->nextArg = tmp;
       lastTemplateExp = tmp;
@@ -375,7 +378,7 @@ ParseQueryRestrictionsError2:
    ReturnExpression(theEnv,templateExp);
    ReturnExpression(theEnv,top);
    ReturnExpression(theEnv,factQuerySetVars);
-   return(NULL);
+   return NULL;
   }
 
 /***************************************************
@@ -393,7 +396,7 @@ ParseQueryRestrictionsError2:
                  modules for reference
  ***************************************************/
 static bool ReplaceTemplateNameWithReference(
-  void *theEnv,
+  Environment *theEnv,
   EXPRESSION *theExp)
   {
    const char *theTemplateName;
@@ -404,7 +407,7 @@ static bool ReplaceTemplateNameWithReference(
      {
       theTemplateName = ValueToString(theExp->value);
       
-      theDeftemplate = (struct deftemplate *)
+      theDeftemplate = (Deftemplate *)
                        FindImportedConstruct(theEnv,"deftemplate",NULL,theTemplateName,
                                              &count,true,NULL);
 
@@ -445,7 +448,7 @@ static bool ReplaceTemplateNameWithReference(
   NOTES        : Expects top != NULL
  *************************************************************/
 static bool ParseQueryTestExpression(
-  void *theEnv,
+  Environment *theEnv,
   EXPRESSION *top,
   const char *readSource)
   {
@@ -511,7 +514,7 @@ static bool ParseQueryTestExpression(
   NOTES        : Expects top != NULL && top->argList != NULL
  *************************************************************/
 static bool ParseQueryActionExpression(
-  void *theEnv,
+  Environment *theEnv,
   EXPRESSION *top,
   const char *readSource,
   EXPRESSION *factQuerySetVars,
@@ -600,7 +603,7 @@ static bool ParseQueryActionExpression(
                    where they do not conflict with fact-variable names.
  ***********************************************************************************/
 static void ReplaceFactVariables(
-  void *theEnv,
+  Environment *theEnv,
   EXPRESSION *vlist,
   EXPRESSION *bexp,
   bool sdirect,
@@ -626,9 +629,9 @@ static void ReplaceFactVariables(
          if (eptr != NULL)
            {
             bexp->type = FCALL;
-            bexp->value = (void *) rindx_func;
-            eptr = GenConstant(theEnv,INTEGER,(void *) EnvAddLong(theEnv,(long long) ndepth));
-            eptr->nextArg = GenConstant(theEnv,INTEGER,(void *) EnvAddLong(theEnv,(long long) posn));
+            bexp->value = rindx_func;
+            eptr = GenConstant(theEnv,INTEGER,EnvAddLong(theEnv,(long long) ndepth));
+            eptr->nextArg = GenConstant(theEnv,INTEGER,EnvAddLong(theEnv,(long long) posn));
             bexp->argList = eptr;
            }
          else if (sdirect == true)
@@ -661,7 +664,7 @@ static void ReplaceFactVariables(
   NOTES        : None
  *************************************************************************/
 static void ReplaceSlotReference(
-  void *theEnv,
+  Environment *theEnv,
   EXPRESSION *vlist,
   EXPRESSION *theExp,
   struct FunctionDefinition *func,
@@ -701,10 +704,10 @@ static void ReplaceSlotReference(
             SetPPBufferStatus(theEnv,oldpp);
             CloseStringSource(theEnv,"query-var");
             theExp->type = FCALL;
-            theExp->value = (void *) func;
-            theExp->argList = GenConstant(theEnv,INTEGER,(void *) EnvAddLong(theEnv,(long long) ndepth));
+            theExp->value = func;
+            theExp->argList = GenConstant(theEnv,INTEGER,EnvAddLong(theEnv,(long long) ndepth));
             theExp->argList->nextArg =
-              GenConstant(theEnv,INTEGER,(void *) EnvAddLong(theEnv,(long long) posn));
+              GenConstant(theEnv,INTEGER,EnvAddLong(theEnv,(long long) posn));
             theExp->argList->nextArg->nextArg = GenConstant(theEnv,itkn.type,itkn.value);
             break;
            }

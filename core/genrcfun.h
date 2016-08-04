@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  067/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -48,6 +48,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_genrcfun
@@ -58,8 +61,8 @@
 
 typedef struct defgenericModule DEFGENERIC_MODULE;
 typedef struct restriction RESTRICTION;
-typedef struct method DEFMETHOD;
-typedef struct defgeneric DEFGENERIC;
+typedef struct defmethod Defmethod;
+typedef struct defgeneric Defgeneric;
 
 #include <stdio.h>
 
@@ -86,7 +89,7 @@ struct restriction
    short tcnt;
   };
 
-struct method
+struct defmethod
   {
    short index;
    unsigned busy;
@@ -107,7 +110,7 @@ struct defgeneric
    struct constructHeader header;
    unsigned busy;
    bool trace;
-   DEFMETHOD *methods;
+   Defmethod *methods;
    short mcnt;
    short new_index;
   };
@@ -123,8 +126,8 @@ struct defgenericData
    bool WatchGenerics;
    bool WatchMethods;
 #endif
-   DEFGENERIC *CurrentGeneric;
-   DEFMETHOD *CurrentMethod;
+   Defgeneric *CurrentGeneric;
+   Defmethod *CurrentMethod;
    DATA_OBJECT *GenericCurrentArgument;
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    unsigned OldGenericBusySave;
@@ -142,41 +145,41 @@ struct defgenericData
 #define RestoreBusyCount(gfunc) (gfunc->busy = DefgenericData(theEnv)->OldGenericBusySave)
 
 #if ! RUN_TIME
-   bool                           ClearDefgenericsReady(void *);
-   void                          *AllocateDefgenericModule(void *);
-   void                           FreeDefgenericModule(void *,void *);
+   bool                           ClearDefgenericsReady(Environment *);
+   void                          *AllocateDefgenericModule(Environment *);
+   void                           FreeDefgenericModule(Environment *,void *);
 #endif
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
 
-   bool                           ClearDefmethods(void *);
-   bool                           RemoveAllExplicitMethods(void *,DEFGENERIC *);
-   void                           RemoveDefgeneric(void *,void *);
-   bool                           ClearDefgenerics(void *);
-   void                           MethodAlterError(void *,DEFGENERIC *);
-   void                           DeleteMethodInfo(void *,DEFGENERIC *,DEFMETHOD *);
-   void                           DestroyMethodInfo(void *,DEFGENERIC *,DEFMETHOD *);
-   bool                           MethodsExecuting(DEFGENERIC *);
+   bool                           ClearDefmethods(Environment *);
+   bool                           RemoveAllExplicitMethods(Environment *,Defgeneric *);
+   void                           RemoveDefgeneric(Environment *,Defgeneric *);
+   bool                           ClearDefgenerics(Environment *);
+   void                           MethodAlterError(Environment *,Defgeneric *);
+   void                           DeleteMethodInfo(Environment *,Defgeneric *,Defmethod *);
+   void                           DestroyMethodInfo(Environment *,Defgeneric *,Defmethod *);
+   bool                           MethodsExecuting(Defgeneric *);
 #endif
 #if ! OBJECT_SYSTEM
    bool                           SubsumeType(int,int);
 #endif
 
-   long                           FindMethodByIndex(DEFGENERIC *,long);
+   long                           FindMethodByIndex(Defgeneric *,long);
 #if DEBUGGING_FUNCTIONS || PROFILING_FUNCTIONS
-   void                           PrintMethod(void *,char *,size_t,DEFMETHOD *);
+   void                           PrintMethod(Environment *,char *,size_t,Defmethod *);
 #endif
 #if DEBUGGING_FUNCTIONS
-   void                           PreviewGeneric(void *);
+   void                           PreviewGeneric(Environment *);
 #endif
-   DEFGENERIC                    *CheckGenericExists(void *,const char *,const char *);
-   long                           CheckMethodExists(void *,const char *,DEFGENERIC *,long);
+   Defgeneric                    *CheckGenericExists(Environment *,const char *,const char *);
+   long                           CheckMethodExists(Environment *,const char *,Defgeneric *,long);
 
 #if ! OBJECT_SYSTEM
-   const char                    *TypeName(void *,int);
+   const char                    *TypeName(Environment *,int);
 #endif
 
-   void                           PrintGenericName(void *,const char *,DEFGENERIC *);
+   void                           PrintGenericName(Environment *,const char *,Defgeneric *);
 
 #endif /* _H_genrcfun */
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/04/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*             CONSTRAINT UTILITY MODULE               */
    /*******************************************************/
@@ -26,6 +26,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -49,7 +52,7 @@
 /*   the values of a constraint record.         */
 /************************************************/
 struct constraintRecord *GetConstraintRecord(
-  void *theEnv)
+  Environment *theEnv)
   {
    CONSTRAINT_RECORD *constraints;
    unsigned i;
@@ -125,12 +128,12 @@ void SetAnyAllowedFlags(
 /* CopyConstraintRecord: Copies a constraint record. */
 /*****************************************************/
 struct constraintRecord *CopyConstraintRecord(
-  void *theEnv,
+  Environment *theEnv,
   CONSTRAINT_RECORD *sourceConstraint)
   {
    CONSTRAINT_RECORD *theConstraint;
 
-   if (sourceConstraint == NULL) return(NULL);
+   if (sourceConstraint == NULL) return NULL;
 
    theConstraint = get_struct(theEnv,constraintRecord);
 
@@ -302,7 +305,7 @@ bool SetConstraintType(
 /*   than, less than or equal).                              */
 /*************************************************************/
 int CompareNumbers(
-  void *theEnv,
+  Environment *theEnv,
   int type1,
   void *vptr1,
   int type2,
@@ -399,7 +402,7 @@ int CompareNumbers(
 /*   allowed types SYMBOL and allow-values BLUE.                */
 /****************************************************************/
 CONSTRAINT_RECORD *ExpressionToConstraintRecord(
-  void *theEnv,
+  Environment *theEnv,
   struct expr *theExpression)
   {
    CONSTRAINT_RECORD *rv;
@@ -487,7 +490,7 @@ CONSTRAINT_RECORD *ExpressionToConstraintRecord(
 /*   record with allowed types INTEGER and FLOAT.      */
 /*******************************************************/
 CONSTRAINT_RECORD *FunctionCallToConstraintRecord(
-  void *theEnv,
+  Environment *theEnv,
   void *theFunction)
   {
    CONSTRAINT_RECORD *rv;
@@ -574,7 +577,7 @@ CONSTRAINT_RECORD *FunctionCallToConstraintRecord(
 /*   to a constraint record.                           */
 /*******************************************************/
 CONSTRAINT_RECORD *ArgumentTypeToConstraintRecord(
-  void *theEnv,
+  Environment *theEnv,
   int theRestriction)
   {
    CONSTRAINT_RECORD *rv;

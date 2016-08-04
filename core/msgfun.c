@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*              OBJECT MESSAGE FUNCTIONS               */
    /*******************************************************/
@@ -39,6 +39,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 /* =========================================
@@ -62,15 +65,13 @@
 
 #include "msgfun.h"
 
-/* =========================================
-   *****************************************
-      INTERNALLY VISIBLE FUNCTION HEADERS
-   =========================================
-   ***************************************** */
+/***************************************/
+/* LOCAL INTERNAL FUNCTION DEFINITIONS */
+/***************************************/
 
 #if DEBUGGING_FUNCTIONS
-static HANDLER_LINK *DisplayPrimaryCore(void *,const char *,HANDLER_LINK *,int);
-static void PrintPreviewHandler(void *,const char *,HANDLER_LINK *,int,const char *);
+   static HANDLER_LINK           *DisplayPrimaryCore(Environment *,const char *,HANDLER_LINK *,int);
+   static void                    PrintPreviewHandler(Environment *,const char *,HANDLER_LINK *,int,const char *);
 #endif
 
 /* =========================================
@@ -90,7 +91,7 @@ static void PrintPreviewHandler(void *,const char *,HANDLER_LINK *,int,const cha
   NOTES        : None
  ********************************************************/
 void UnboundHandlerErr(
-  void *theEnv)
+  Environment *theEnv)
   {
    EnvPrintRouter(theEnv,WERROR,"message-handler ");
    PrintHandler(theEnv,WERROR,MessageHandlerData(theEnv)->CurrentCore->hnd,true);
@@ -105,7 +106,7 @@ void UnboundHandlerErr(
   NOTES        : None
  *****************************************************************/
 void PrintNoHandlerError(
-  void *theEnv,
+  Environment *theEnv,
   const char *msg)
   {
    PrintErrorID(theEnv,"MSGFUN",1,false);
@@ -125,9 +126,9 @@ void PrintNoHandlerError(
   NOTES        : Uses ProcParamArraySize and CurrentCore globals
  ***************************************************************/
 bool CheckHandlerArgCount(
-  void *theEnv)
+  Environment *theEnv)
   {
-   HANDLER *hnd;
+   DefmessageHandler *hnd;
 
    hnd = MessageHandlerData(theEnv)->CurrentCore->hnd;
    if ((hnd->maxParams == -1) ? (ProceduralPrimitiveData(theEnv)->ProcParamArraySize < hnd->minParams) :
@@ -140,7 +141,7 @@ bool CheckHandlerArgCount(
       EnvPrintRouter(theEnv,WERROR," ");
       EnvPrintRouter(theEnv,WERROR,MessageHandlerData(theEnv)->hndquals[hnd->type]);
       EnvPrintRouter(theEnv,WERROR," in class ");
-      EnvPrintRouter(theEnv,WERROR,EnvGetDefclassName(theEnv,(void *) hnd->cls));
+      EnvPrintRouter(theEnv,WERROR,EnvGetDefclassName(theEnv,hnd->cls));
       EnvPrintRouter(theEnv,WERROR," expected ");
       if (hnd->maxParams == -1)
         EnvPrintRouter(theEnv,WERROR,"at least ");
@@ -168,7 +169,7 @@ bool CheckHandlerArgCount(
   NOTES        : None
  ***************************************************/
 void SlotAccessViolationError(
-  void *theEnv,
+  Environment *theEnv,
   const char *slotName,
   bool instanceFlag,
   void *theInstanceOrClass)
@@ -177,11 +178,11 @@ void SlotAccessViolationError(
    EnvPrintRouter(theEnv,WERROR,slotName);
    EnvPrintRouter(theEnv,WERROR," slot in ");
    if (instanceFlag)
-     PrintInstanceNameAndClass(theEnv,WERROR,(INSTANCE_TYPE *) theInstanceOrClass,false);
+     PrintInstanceNameAndClass(theEnv,WERROR,(Instance *) theInstanceOrClass,false);
    else
      {
       EnvPrintRouter(theEnv,WERROR,"class ");
-      PrintClassName(theEnv,WERROR,(DEFCLASS *) theInstanceOrClass,false);
+      PrintClassName(theEnv,WERROR,(Defclass *) theInstanceOrClass,false);
      }
    EnvPrintRouter(theEnv,WERROR,": write access denied.\n");
   }
@@ -198,9 +199,9 @@ void SlotAccessViolationError(
   NOTES        : None
  ***************************************************/
 void SlotVisibilityViolationError(
-  void *theEnv,
-  SLOT_DESC *sd,
-  DEFCLASS *theDefclass)
+  Environment *theEnv,
+  SlotDescriptor *sd,
+  Defclass *theDefclass)
   {
    PrintErrorID(theEnv,"MSGFUN",6,false);
    EnvPrintRouter(theEnv,WERROR,"Private slot ");
@@ -235,14 +236,14 @@ void SlotVisibilityViolationError(
   NOTES        : Does not check to see if handler already exists
  *******************************************************************************/
 void NewSystemHandler(
-  void *theEnv,
+  Environment *theEnv,
   const char *cname,
   const char *mname,
   const char *fname,
   int extraargs)
   {
-   DEFCLASS *cls;
-   HANDLER *hnd;
+   Defclass *cls;
+   DefmessageHandler *hnd;
 
    cls = LookupDefclassInScope(theEnv,cname);
    hnd = InsertHandlerHeader(theEnv,cls,(SYMBOL_HN *) EnvAddSymbol(theEnv,mname),MPRIMARY);
@@ -253,7 +254,7 @@ void NewSystemHandler(
    hnd->actions = get_struct(theEnv,expr);
    hnd->actions->argList = NULL;
    hnd->actions->type = FCALL;
-   hnd->actions->value = (void *) FindFunction(theEnv,fname);
+   hnd->actions->value = FindFunction(theEnv,fname);
    hnd->actions->nextArg = NULL;
   }
 
@@ -271,22 +272,22 @@ void NewSystemHandler(
                    and resorted
   NOTES        : Assumes handler does not exist
  ***************************************************/
-HANDLER *InsertHandlerHeader(
-  void *theEnv,
-  DEFCLASS *cls,
+DefmessageHandler *InsertHandlerHeader(
+  Environment *theEnv,
+  Defclass *cls,
   SYMBOL_HN *mname,
   int mtype)
   {
-   HANDLER *nhnd,*hnd;
+   DefmessageHandler *nhnd,*hnd;
    unsigned *narr,*arr;
    long i;
    long j,ni = -1;
 
    hnd = cls->handlers;
    arr = cls->handlerOrderMap;
-   nhnd = (HANDLER *) gm2(theEnv,(sizeof(HANDLER) * (cls->handlerCount+1)));
+   nhnd = (DefmessageHandler *) gm2(theEnv,(sizeof(DefmessageHandler) * (cls->handlerCount+1)));
    narr = (unsigned *) gm2(theEnv,(sizeof(unsigned) * (cls->handlerCount+1)));
-   GenCopyMemory(HANDLER,cls->handlerCount,nhnd,hnd);
+   GenCopyMemory(DefmessageHandler,cls->handlerCount,nhnd,hnd);
    for (i = 0 , j = 0 ; i < cls->handlerCount ; i++ , j++)
      {
       if (ni == -1)
@@ -320,8 +321,8 @@ HANDLER *InsertHandlerHeader(
    nhnd[cls->handlerCount].usrData = NULL;
    if (cls->handlerCount != 0)
      {
-      rm(theEnv,(void *) hnd,(sizeof(HANDLER) * cls->handlerCount));
-      rm(theEnv,(void *) arr,(sizeof(unsigned) * cls->handlerCount));
+      rm(theEnv,hnd,(sizeof(DefmessageHandler) * cls->handlerCount));
+      rm(theEnv,arr,(sizeof(unsigned) * cls->handlerCount));
      }
    cls->handlers = nhnd;
    cls->handlerOrderMap = narr;
@@ -344,7 +345,7 @@ HANDLER *InsertHandlerHeader(
   NOTES        : None
  *****************************************************/
 bool HandlersExecuting(
-  DEFCLASS *cls)
+  Defclass *cls)
   {
    long i;
 
@@ -375,28 +376,28 @@ bool HandlersExecuting(
                    will fail
  **********************************************************************/
 bool DeleteHandler(
-   void *theEnv,
-   DEFCLASS *cls,
+   Environment *theEnv,
+   Defclass *cls,
    SYMBOL_HN *mname,
    int mtype,
    bool indicate_missing)
   {
    long i;
-   HANDLER *hnd;
+   DefmessageHandler *hnd;
    bool found,success = true;
 
    if (cls->handlerCount == 0)
      {
       if (indicate_missing)
         {
-         HandlerDeleteError(theEnv,EnvGetDefclassName(theEnv,(void *) cls));
+         HandlerDeleteError(theEnv,EnvGetDefclassName(theEnv,cls));
          return false;
         }
       return true;
      }
    if (HandlersExecuting(cls))
      {
-      HandlerDeleteError(theEnv,EnvGetDefclassName(theEnv,(void *) cls));
+      HandlerDeleteError(theEnv,EnvGetDefclassName(theEnv,cls));
       return false;
      }
    if (mtype == -1)
@@ -440,7 +441,7 @@ bool DeleteHandler(
          else
            {
             if (indicate_missing)
-              HandlerDeleteError(theEnv,EnvGetDefclassName(theEnv,(void *) cls));
+              HandlerDeleteError(theEnv,EnvGetDefclassName(theEnv,cls));
             success = false;
            }
         }
@@ -473,11 +474,11 @@ bool DeleteHandler(
                    busy count != 0 for any reason
  ***************************************************/
 void DeallocateMarkedHandlers(
-  void *theEnv,
-  DEFCLASS *cls)
+  Environment *theEnv,
+  Defclass *cls)
   {
    short count;
-   HANDLER *hnd,*nhnd;
+   DefmessageHandler *hnd,*nhnd;
    unsigned *arr,*narr;
    long i,j;
 
@@ -492,7 +493,7 @@ void DeallocateMarkedHandlers(
          ReturnPackedExpression(theEnv,hnd->actions);
          ClearUserDataList(theEnv,hnd->usrData);
          if (hnd->ppForm != NULL)
-           rm(theEnv,(void *) hnd->ppForm,
+           rm(theEnv,hnd->ppForm,
               (sizeof(char) * (strlen(hnd->ppForm)+1)));
         }
       else
@@ -506,8 +507,8 @@ void DeallocateMarkedHandlers(
      return;
    if (count == cls->handlerCount)
      {
-      rm(theEnv,(void *) cls->handlers,(sizeof(HANDLER) * cls->handlerCount));
-      rm(theEnv,(void *) cls->handlerOrderMap,(sizeof(unsigned) * cls->handlerCount));
+      rm(theEnv,cls->handlers,(sizeof(DefmessageHandler) * cls->handlerCount));
+      rm(theEnv,cls->handlerOrderMap,(sizeof(unsigned) * cls->handlerCount));
       cls->handlers = NULL;
       cls->handlerOrderMap = NULL;
       cls->handlerCount = 0;
@@ -517,7 +518,7 @@ void DeallocateMarkedHandlers(
       count = (short) (cls->handlerCount - count);
       hnd = cls->handlers;
       arr = cls->handlerOrderMap;
-      nhnd = (HANDLER *) gm2(theEnv,(sizeof(HANDLER) * count));
+      nhnd = (DefmessageHandler *) gm2(theEnv,(sizeof(DefmessageHandler) * count));
       narr = (unsigned *) gm2(theEnv,(sizeof(unsigned) * count));
       for (i = 0 , j = 0 ; j < count ; i++)
         {
@@ -537,12 +538,12 @@ void DeallocateMarkedHandlers(
          if (hnd[i].mark == 0)
            {
             hnd[i].busy = 0;
-            GenCopyMemory(HANDLER,1,&nhnd[j],&hnd[i]);
+            GenCopyMemory(DefmessageHandler,1,&nhnd[j],&hnd[i]);
             j++;
            }
         }
-      rm(theEnv,(void *) hnd,(sizeof(HANDLER) * cls->handlerCount));
-      rm(theEnv,(void *) arr,(sizeof(unsigned) * cls->handlerCount));
+      rm(theEnv,hnd,(sizeof(DefmessageHandler) * cls->handlerCount));
+      rm(theEnv,arr,(sizeof(unsigned) * cls->handlerCount));
       cls->handlers = nhnd;
       cls->handlerOrderMap = narr;
       cls->handlerCount = count;
@@ -565,11 +566,11 @@ void DeallocateMarkedHandlers(
   NOTES        : None
  *****************************************************/
 unsigned HandlerType(
-  void *theEnv,
+  Environment *theEnv,
   const char *func,
   const char *str)
   {
-   register unsigned i;
+   unsigned i;
 
    for (i = MAROUND ; i <= MAFTER ; i++)
      if (strcmp(str,MessageHandlerData(theEnv)->hndquals[i]) == 0)
@@ -597,11 +598,11 @@ unsigned HandlerType(
   NOTES        : None
  *****************************************************************/
 bool CheckCurrentMessage(
-  void *theEnv,
+  Environment *theEnv,
   const char *func,
   bool ins_reqd)
   {
-   register DATA_OBJECT *activeMsgArg;
+   DATA_OBJECT *activeMsgArg;
 
    if (!MessageHandlerData(theEnv)->CurrentCore || (MessageHandlerData(theEnv)->CurrentCore->hnd->actions != ProceduralPrimitiveData(theEnv)->CurrentProcActions))
      {
@@ -621,7 +622,7 @@ bool CheckCurrentMessage(
       return false;
      }
    if ((activeMsgArg->type == INSTANCE_ADDRESS) ?
-       (((INSTANCE_TYPE *) activeMsgArg->value)->garbage == 1) : false)
+       (((Instance *) activeMsgArg->value)->garbage == 1) : false)
      {
       StaleInstanceAddress(theEnv,func,0);
       EnvSetEvaluationError(theEnv,true);
@@ -642,9 +643,9 @@ bool CheckCurrentMessage(
   NOTES        : None
  ***************************************************/
 void PrintHandler(
-  void *theEnv,
+  Environment *theEnv,
   const char *logName,
-  HANDLER *theHandler,
+  DefmessageHandler *theHandler,
   bool crtn)
   {
    EnvPrintRouter(theEnv,logName,ValueToString(theHandler->name));
@@ -668,28 +669,28 @@ void PrintHandler(
                    1st key: symbolic name of handler
                    2nd key: type of handler
  ***********************************************************/
-HANDLER *FindHandlerByAddress(
-  DEFCLASS *cls,
+DefmessageHandler *FindHandlerByAddress(
+  Defclass *cls,
   SYMBOL_HN *name,
   unsigned type)
   {
-   register int b;
+   int b;
    long i;
-   HANDLER *hnd;
+   DefmessageHandler *hnd;
    unsigned *arr;
 
    if ((b = FindHandlerNameGroup(cls,name)) == -1)
-     return(NULL);
+     return NULL;
    arr = cls->handlerOrderMap;
    hnd = cls->handlers;
    for (i = (unsigned) b ; i < cls->handlerCount ; i++)
      {
       if (hnd[arr[i]].name != name)
-        return(NULL);
+        return NULL;
       if (hnd[arr[i]].type == type)
         return(&hnd[arr[i]]);
      }
-   return(NULL);
+   return NULL;
   }
 
 /***********************************************************
@@ -707,13 +708,13 @@ HANDLER *FindHandlerByAddress(
                    2nd key: type of handler
  ***********************************************************/
 int FindHandlerByIndex(
-  DEFCLASS *cls,
+  Defclass *cls,
   SYMBOL_HN *name,
   unsigned type)
   {
-   register int b;
+   int b;
    long i;
-   HANDLER *hnd;
+   DefmessageHandler *hnd;
    unsigned *arr;
 
    if ((b = FindHandlerNameGroup(cls,name)) == -1)
@@ -743,11 +744,11 @@ int FindHandlerByIndex(
                    1st key: handler name symbol bucket
  *****************************************************/
 int FindHandlerNameGroup(
-  DEFCLASS *cls,
+  Defclass *cls,
   SYMBOL_HN *name)
   {
-   register int b,e,i,j;
-   HANDLER *hnd;
+   int b,e,i,j;
+   DefmessageHandler *hnd;
    unsigned *arr;
    int start;
 
@@ -800,7 +801,7 @@ int FindHandlerNameGroup(
   NOTES        : None
  ***************************************************/
 void HandlerDeleteError(
-  void *theEnv,
+  Environment *theEnv,
   const char *cname)
   {
    PrintErrorID(theEnv,"MSGFUN",8,false);
@@ -826,12 +827,12 @@ void HandlerDeleteError(
   RETURNS      : Nothing useful
   SIDE EFFECTS : None
   NOTES        : Expects that the core was created in PREVIEW mode,
-                   i.e. implicit handlers are SLOT_DESC addresses
+                   i.e. implicit handlers are SlotDescriptor addresses
                    (in PERFORM mode they are INSTANCE_SLOT addresses)
                  Assumes (partial) core is not empty
  ********************************************************************/
 void DisplayCore(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
   HANDLER_LINK *core,
   int sdepth)
@@ -877,11 +878,11 @@ void DisplayCore(
   NOTES        : None
  ******************************************************************/
 HANDLER_LINK *FindPreviewApplicableHandlers(
-  void *theEnv,
-  DEFCLASS *cls,
+  Environment *theEnv,
+  Defclass *cls,
   SYMBOL_HN *mname)
   {
-   register int i;
+   int i;
    HANDLER_LINK *tops[4],*bots[4];
 
    for (i = MAROUND ; i <= MAFTER ; i++)
@@ -904,7 +905,7 @@ HANDLER_LINK *FindPreviewApplicableHandlers(
                    and CurrentMessageName
  ***********************************************************/
 void WatchMessage(
-  void *theEnv,
+  Environment *theEnv,
   const char *logName,
   const char *tstring)
   {
@@ -930,12 +931,12 @@ void WatchMessage(
                    and CurrentMessageName
  ***********************************************************/
 void WatchHandler(
-  void *theEnv,
+  Environment *theEnv,
   const char *logName,
   HANDLER_LINK *hndl,
   const char *tstring)
   {
-   HANDLER *hnd;
+   DefmessageHandler *hnd;
    
    EnvPrintRouter(theEnv,logName,"HND ");
    EnvPrintRouter(theEnv,logName,tstring);
@@ -972,17 +973,17 @@ void WatchHandler(
                    group of handlers in the core
   SIDE EFFECTS : None
   NOTES        : Expects that the core was created in PREVIEW mode,
-                   i.e. implicit handlers are SLOT_DESC addresses
+                   i.e. implicit handlers are SlotDescriptor addresses
                    (in PERFORM mode they are INSTANCE_SLOT addresses)
                  Assumes (partial) core is not empty
  ********************************************************************/
 static HANDLER_LINK *DisplayPrimaryCore(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
   HANDLER_LINK *core,
   int pdepth)
   {
-   register HANDLER_LINK *rtn;
+   HANDLER_LINK *rtn;
 
    PrintPreviewHandler(theEnv,logicalName,core,pdepth,BEGIN_TRACE);
    if ((core->nxt != NULL) ? (core->nxt->hnd->type == MPRIMARY) : false)
@@ -1005,13 +1006,13 @@ static HANDLER_LINK *DisplayPrimaryCore(
   NOTES        : None
  ***************************************************/
 static void PrintPreviewHandler(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
   HANDLER_LINK *cptr,
   int sdepth,
   const char *tstr)
   {
-   register int i;
+   int i;
 
    for (i = 0 ; i < sdepth ; i++)
      EnvPrintRouter(theEnv,logicalName,"| ");

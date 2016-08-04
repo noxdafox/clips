@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  06/21/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*                 NETWORK HEADER FILE                 */
    /*******************************************************/
@@ -19,6 +19,9 @@
 /*      6.30: Added support for hashed memories.             */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -129,7 +132,7 @@ struct joinNode
    struct joinLink *nextLinks;
    struct joinNode *lastLevel;
    struct joinNode *rightMatchNode;
-   struct defrule *ruleToActivate;
+   Defrule *ruleToActivate;
   };
 
 #endif /* _H_network */

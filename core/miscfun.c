@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*            MISCELLANEOUS FUNCTIONS MODULE           */
    /*******************************************************/
@@ -83,6 +83,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -124,16 +127,16 @@ struct miscFunctionData
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    ExpandFuncMultifield(void *,DATA_OBJECT *,EXPRESSION *,
+   static void                    ExpandFuncMultifield(Environment *,DATA_OBJECT *,EXPRESSION *,
                                                        EXPRESSION **,void *);
-   static int                     FindLanguageType(void *,const char *);
-   static void                    ConvertTime(void *,DATA_OBJECT_PTR,struct tm *);
+   static int                     FindLanguageType(Environment *,const char *);
+   static void                    ConvertTime(Environment *,DATA_OBJECT_PTR,struct tm *);
 
 /*****************************************************************/
 /* MiscFunctionDefinitions: Initializes miscellaneous functions. */
 /*****************************************************************/
 void MiscFunctionDefinitions(
-  void *theEnv)
+  Environment *theEnv)
   {
    AllocateEnvironmentData(theEnv,MISCFUN_DATA,sizeof(struct miscFunctionData),NULL);
    MiscFunctionData(theEnv)->GensymNumber = 1;
@@ -166,9 +169,9 @@ void MiscFunctionDefinitions(
    EnvDefineFunction2(theEnv,"(set-evaluation-error)",
                                        'w', PTIEF CauseEvaluationError,"CauseEvaluationError",NULL);
    EnvDefineFunction2(theEnv,"set-sequence-operator-recognition",
-                                       'b', PTIEF SetSORCommand,"SetSORCommand","11w");
+                                       'b', PTIEF SetSequenceOperatorRecognitionCommand, "SetSequenceOperatorRecognitionCommand","11w");
    EnvDefineFunction2(theEnv,"get-sequence-operator-recognition",'b',
-                    PTIEF EnvGetSequenceOperatorRecognition,"EnvGetSequenceOperatorRecognition","00");
+                    PTIEF GetSequenceOperatorRecognitionCommand,"GetSequenceOperatorRecognitionCommand","00");
    EnvDefineFunction2(theEnv,"get-function-restrictions",'s',
                    PTIEF GetFunctionRestrictions,"GetFunctionRestrictions","11w");
    EnvDefineFunction2(theEnv,"create$",     'm', PTIEF CreateFunction,  "CreateFunction", NULL);
@@ -186,7 +189,7 @@ void MiscFunctionDefinitions(
 /* CreateFunction: H/L access routine for the create$ function.   */
 /******************************************************************/
 void CreateFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
    StoreInMultifield(theEnv,returnValue,GetFirstArgument(),true);
@@ -196,7 +199,7 @@ void CreateFunction(
 /* SetgenFunction: H/L access routine for the setgen function.   */
 /*****************************************************************/
 long long SetgenFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    long long theLong;
    DATA_OBJECT theValue;
@@ -234,7 +237,7 @@ long long SetgenFunction(
 /*   for the gensym function.           */
 /****************************************/
 void *GensymFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    char genstring[128];
    
@@ -264,7 +267,7 @@ void *GensymFunction(
 /*   the gensym* function.                      */
 /************************************************/
 void *GensymStarFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    /*============================================*/
    /* The gensym* function accepts no arguments. */
@@ -284,7 +287,7 @@ void *GensymStarFunction(
 /*   the gensym* function.          */
 /************************************/
 void *GensymStar(
-  void *theEnv)
+  Environment *theEnv)
   {
    char genstring[128];
    
@@ -314,7 +317,7 @@ void *GensymStar(
 /*   the random function.                   */
 /********************************************/
 long long RandomFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    int argCount;
    long long rv;
@@ -364,7 +367,7 @@ long long RandomFunction(
 /*   the seed function.                   */
 /******************************************/
 void SeedFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    DATA_OBJECT theValue;
 
@@ -387,7 +390,7 @@ void SeedFunction(
 /*   the length$ function.                  */
 /********************************************/
 long long LengthFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    DATA_OBJECT item;
 
@@ -429,7 +432,7 @@ long long LengthFunction(
 /*   for the release-mem function.         */
 /*******************************************/
 long long ReleaseMemCommand(
-  void *theEnv)
+  Environment *theEnv)
   {
    /*================================================*/
    /* The release-mem function accepts no arguments. */
@@ -450,7 +453,7 @@ long long ReleaseMemCommand(
 /*   for the conserve-mem command.        */
 /******************************************/
 void ConserveMemCommand(
-  void *theEnv)
+  Environment *theEnv)
   {
    const char *argument;
    DATA_OBJECT theValue;
@@ -504,7 +507,7 @@ void ConserveMemCommand(
 /*   for the mem-used command.          */
 /****************************************/
 long long MemUsedCommand(
-  void *theEnv)
+  Environment *theEnv)
   {
    /*=============================================*/
    /* The mem-used function accepts no arguments. */
@@ -526,7 +529,7 @@ long long MemUsedCommand(
 /*   for the mem-requests command.          */
 /********************************************/
 long long MemRequestsCommand(
-  void *theEnv)
+  Environment *theEnv)
   {
    /*=================================================*/
    /* The mem-requests function accepts no arguments. */
@@ -550,7 +553,7 @@ long long MemRequestsCommand(
 /*   for the apropos command.           */
 /****************************************/
 void AproposCommand(
-  void *theEnv)
+  Environment *theEnv)
   {
    const char *argument;
    DATA_OBJECT argPtr;
@@ -590,7 +593,7 @@ void AproposCommand(
 /*   for the options command.           */
 /****************************************/
 void OptionsCommand(
-  void *theEnv)
+  Environment *theEnv)
   {
    /*===========================================*/
    /* The options command accepts no arguments. */
@@ -824,7 +827,7 @@ EnvPrintRouter(theEnv,WDISPLAY,"Run time module is ");
 /*   for the operating system function.        */
 /***********************************************/
 void *OperatingSystemFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    EnvArgCountCheck(theEnv,"operating-system",EXACTLY,0);
 
@@ -883,7 +886,7 @@ void *OperatingSystemFunction(
   NOTES        : None
  *******************************************************************/
 void ExpandFuncCall(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *result)
   {
    EXPRESSION *newargexp,*fcallexp;
@@ -897,7 +900,7 @@ void ExpandFuncCall(
       ====================================================================== */
    newargexp = CopyExpression(theEnv,GetFirstArgument()->argList);
    ExpandFuncMultifield(theEnv,result,newargexp,&newargexp,
-                        (void *) FindFunction(theEnv,"expand$"));
+                        FindFunction(theEnv,"expand$"));
 
    /* ===================================================================
       Build the new function call expression with the expanded arguments.
@@ -954,7 +957,7 @@ void ExpandFuncCall(
   NOTES        : None
  **********************************************************************/
 void DummyExpandFuncMultifield(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *result)
   {
    result->type = SYMBOL;
@@ -984,14 +987,14 @@ void DummyExpandFuncMultifield(
                  SURE THAT THE EXPRESSION PASSED IS SAFE TO CHANGE!!
  **********************************************************************/
 static void ExpandFuncMultifield(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *result,
   EXPRESSION *theExp,
   EXPRESSION **sto,
   void *expmult)
   {
    EXPRESSION *newexp,*top,*bot;
-   register long i; /* 6.04 Bug Fix */
+   long i; /* 6.04 Bug Fix */
 
    while (theExp != NULL)
      {
@@ -1004,7 +1007,7 @@ static void ExpandFuncMultifield(
             theExp->argList = NULL;
             if ((EvaluationData(theEnv)->EvaluationError == false) && (result->type != MULTIFIELD))
               ExpectedTypeError2(theEnv,"expand$",1);
-            theExp->value = (void *) FindFunction(theEnv,"(set-evaluation-error)");
+            theExp->value = FindFunction(theEnv,"(set-evaluation-error)");
             EvaluationData(theEnv)->EvaluationError = false;
             EvaluationData(theEnv)->HaltExecution = false;
             return;
@@ -1058,35 +1061,76 @@ static void ExpandFuncMultifield(
   NOTES        : None
  ****************************************************************/
 void *CauseEvaluationError(
-  void *theEnv)
+  Environment *theEnv)
   {
    EnvSetEvaluationError(theEnv,true);
    return((SYMBOL_HN *) EnvFalseSymbol(theEnv));
   }
 
-/****************************************************************
-  NAME         : SetSORCommand
-  DESCRIPTION  : Toggles SequenceOpMode - if true, multifield
-                   references are replaced with sequence
-                   expansion operators
-  INPUTS       : None
-  RETURNS      : The old value of SequenceOpMode
-  SIDE EFFECTS : SequenceOpMode toggled
-  NOTES        : None
- ****************************************************************/
-bool SetSORCommand(
-  void *theEnv)
+/*************************************************************/
+/* SetSequenceOperatorRecognitionCommand: H/L access routine */
+/*   for the set-sequence-operator-recognition command.      */
+/*************************************************************/
+bool SetSequenceOperatorRecognitionCommand(
+  Environment *theEnv)
   {
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   DATA_OBJECT arg;
+   DATA_OBJECT theValue;
 
-   if (EnvArgTypeCheck(theEnv,"set-sequence-operator-recognition",1,SYMBOL,&arg) == false)
-     return(ExpressionData(theEnv)->SequenceOpMode);
-   return(EnvSetSequenceOperatorRecognition(theEnv,(arg.value == EnvFalseSymbol(theEnv)) ?
-                                         false : true));
+   /*============================================*/
+   /* Check for the correct number of arguments. */
+   /*============================================*/
+
+   if (EnvArgCountCheck(theEnv,"set-sequence-operator-recognition",EXACTLY,1) == -1)
+     { return ExpressionData(theEnv)->SequenceOpMode; }
+
+   /*========================*/
+   /* Evaluate the argument. */
+   /*========================*/
+
+   EnvRtnUnknown(theEnv,1,&theValue);
+
+   /*================================================*/
+   /* If the argument evaluated to false, then the   */
+   /* behavior is disabled, otherwise it is enabled. */
+   /*================================================*/
+
+   if ((theValue.value == EnvFalseSymbol(theEnv)) && (theValue.type == SYMBOL))
+     { return EnvSetSequenceOperatorRecognition(theEnv,false); }
+   else
+     { return EnvSetSequenceOperatorRecognition(theEnv,true); }
 #else
-     return(ExpressionData(theEnv)->SequenceOpMode);
+   return ExpressionData(theEnv)->SequenceOpMode;
 #endif
+  }
+
+/*************************************************************/
+/* GetSequenceOperatorRecognitionCommand: H/L access routine */
+/*   for the get-sequence-operator-recognition command.      */
+/*************************************************************/
+bool GetSequenceOperatorRecognitionCommand(
+  Environment *theEnv)
+  {
+   bool currentValue;
+
+   /*========================================*/
+   /* Get the current value of the behavior. */
+   /*========================================*/
+
+   currentValue = EnvGetSequenceOperatorRecognition(theEnv);
+
+   /*============================================*/
+   /* Check for the correct number of arguments. */
+   /*============================================*/
+
+   if (EnvArgCountCheck(theEnv,"get-sequence-operator-recognition",EXACTLY,0) == -1)
+     { return(currentValue); }
+
+   /*===========================================*/
+   /* Return the current value of the behavior. */
+   /*===========================================*/
+
+   return(currentValue);
   }
 
 /********************************************************************
@@ -1098,7 +1142,7 @@ bool SetSORCommand(
   NOTES        : None
  ********************************************************************/
 void *GetFunctionRestrictions(
-  void *theEnv)
+  Environment *theEnv)
   {
    DATA_OBJECT temp;
    struct FunctionDefinition *fptr;
@@ -1122,11 +1166,11 @@ void *GetFunctionRestrictions(
 /*   for the get-function-list function.         */
 /*************************************************/
 void GetFunctionListFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *returnValue)
   {
    struct FunctionDefinition *theFunction;
-   struct multifield *theList;
+   Multifield *theList;
    unsigned long functionCount = 0;
 
    if (EnvArgCountCheck(theEnv,"get-function-list",EXACTLY,0) == -1)
@@ -1143,8 +1187,8 @@ void GetFunctionListFunction(
    SetpType(returnValue,MULTIFIELD);
    SetpDOBegin(returnValue,1);
    SetpDOEnd(returnValue,functionCount);
-   theList = (struct multifield *) EnvCreateMultifield(theEnv,functionCount);
-   SetpValue(returnValue,(void *) theList);
+   theList = EnvCreateMultifield(theEnv,functionCount);
+   SetpValue(returnValue,theList);
 
    for (theFunction = GetFunctionList(theEnv), functionCount = 1;
         theFunction != NULL;
@@ -1160,7 +1204,7 @@ void GetFunctionListFunction(
 /*   for the funcall function.         */
 /***************************************/
 void FuncallFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *returnValue)
   {
    int argCount, i, j;
@@ -1236,7 +1280,7 @@ void FuncallFunction(
       switch(GetType(theValue))
         {
          case MULTIFIELD:
-           nextAdd = GenConstant(theEnv,FCALL,(void *) FindFunction(theEnv,"create$"));
+           nextAdd = GenConstant(theEnv,FCALL,FindFunction(theEnv,"create$"));
 
            if (lastAdd == NULL)
              { theReference.argList = nextAdd; }
@@ -1310,7 +1354,7 @@ void FuncallFunction(
 /*   for the new function.         */
 /***********************************/
 void NewFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *returnValue)
   {
    int theType;
@@ -1366,7 +1410,7 @@ void NewFunction(
 /*   for the new function.          */
 /************************************/
 void CallFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT *returnValue)
   {
    int theType;
@@ -1448,11 +1492,11 @@ void CallFunction(
    ExpectedTypeError1(theEnv,"call",1,"external language symbol or external address");
   }
 
-/************************************/
-/* FindLanguageType:    */
-/************************************/
+/*********************/
+/* FindLanguageType: */
+/*********************/
 static int FindLanguageType(
-  void *theEnv,
+  Environment *theEnv,
   const char *languageName)
   {
    int theType;
@@ -1471,7 +1515,7 @@ static int FindLanguageType(
 /*   for the time function.         */
 /************************************/
 double TimeFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    /*=========================================*/
    /* The time function accepts no arguments. */
@@ -1491,7 +1535,7 @@ double TimeFunction(
 /*   time for local-time and gm-time.   */
 /****************************************/
 static void ConvertTime(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT_PTR returnValue,
   struct tm *info)
   {
@@ -1561,7 +1605,7 @@ static void ConvertTime(
 /*   for the local-time function.        */
 /*****************************************/
 void LocalTimeFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
    time_t rawtime;
@@ -1588,7 +1632,7 @@ void LocalTimeFunction(
 /*   for the gm-time function.        */
 /**************************************/
 void GMTimeFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
    time_t rawtime;
@@ -1615,7 +1659,7 @@ void GMTimeFunction(
 /*   for the timer function.           */
 /***************************************/
 double TimerFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    int numa, i;
    double startTime;
@@ -1640,7 +1684,7 @@ double TimerFunction(
 /*   for the system function.          */
 /***************************************/
 void SystemCommand(
-  void *theEnv)
+  Environment *theEnv)
   {
    char *commandBuffer = NULL;
    size_t bufferPosition = 0;

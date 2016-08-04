@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/04/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*              CONSTRUCT COMPILER MODULE              */
    /*******************************************************/
@@ -62,6 +62,9 @@
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -143,22 +146,22 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   void                               ConstructsToCCommand(void *);
-   static bool                        ConstructsToC(void *,const char *,const char *,char *,long long,long long);
-   static void                        WriteFunctionExternDeclarations(void *,FILE *);
-   static bool                        FunctionsToCode(void *theEnv,const char *,const char *,char *);
-   static bool                        WriteInitializationFunction(void *,const char *,const char *,char *);
-   static void                        DumpExpression(void *,struct expr *);
-   static void                        MarkConstruct(void *,struct constructHeader *,void *);
-   static void                        HashedExpressionsToCode(void *);
-   static void                        DeallocateConstructCompilerData(void *);
+   void                               ConstructsToCCommand(Environment *);
+   static bool                        ConstructsToC(Environment *,const char *,const char *,char *,long long,long long);
+   static void                        WriteFunctionExternDeclarations(Environment *,FILE *);
+   static bool                        FunctionsToCode(Environment *theEnv,const char *,const char *,char *);
+   static bool                        WriteInitializationFunction(Environment *,const char *,const char *,char *);
+   static void                        DumpExpression(Environment *,struct expr *);
+   static void                        MarkConstruct(Environment *,struct constructHeader *,void *);
+   static void                        HashedExpressionsToCode(Environment *);
+   static void                        DeallocateConstructCompilerData(Environment *);
 
 /**********************************************************/
 /* InitializeConstructCompilerData: Allocates environment */
 /*    data for the constructs-to-c command.               */
 /**********************************************************/
 void InitializeConstructCompilerData(
-  void *theEnv)
+  Environment *theEnv)
   {
    AllocateEnvironmentData(theEnv,CONSTRUCT_COMPILER_DATA,sizeof(struct constructCompilerData),DeallocateConstructCompilerData);
    
@@ -171,7 +174,7 @@ void InitializeConstructCompilerData(
 /*    data for the constructs-to-c command.                 */
 /************************************************************/
 static void DeallocateConstructCompilerData(
-  void *theEnv)
+  Environment *theEnv)
   {
    struct CodeGeneratorItem *tmpPtr, *nextPtr;
    int i;
@@ -197,7 +200,7 @@ static void DeallocateConstructCompilerData(
 /*   for the constructs-to-c command.         */
 /**********************************************/
 void ConstructsToCCommand(
-  void *theEnv)
+  Environment *theEnv)
   {
    const char *fileName;
    char *fileNameBuffer;
@@ -347,7 +350,7 @@ void ConstructsToCCommand(
 /*   the constructs-to-c command.      */
 /***************************************/
 static bool ConstructsToC(
-  void *theEnv,
+  Environment *theEnv,
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
@@ -445,7 +448,7 @@ static bool ConstructsToC(
    fprintf(ConstructCompilerData(theEnv)->FixupFP,"/**********************************/\n");
 
    fprintf(ConstructCompilerData(theEnv)->FixupFP,"\nvoid FixupCImage_%d(\n",ConstructCompilerData(theEnv)->ImageID);
-   fprintf(ConstructCompilerData(theEnv)->FixupFP,"  void *theEnv)\n");
+   fprintf(ConstructCompilerData(theEnv)->FixupFP,"  Environment *theEnv)\n");
    fprintf(ConstructCompilerData(theEnv)->FixupFP,"  {\n");
 
    /*==================================*/
@@ -535,7 +538,7 @@ static bool ConstructsToC(
 /*   declarations for them in the specified file.      */
 /*******************************************************/
 static void WriteFunctionExternDeclarations(
-  void *theEnv,
+  Environment *theEnv,
   FILE *fp)
   {
    struct FunctionDefinition *theFunction;
@@ -625,7 +628,7 @@ static void WriteFunctionExternDeclarations(
          case 'y':
          case 'v':
            if (theFunction->environmentAware) 
-             { fprintf(fp,"void *"); }
+             { fprintf(fp,"Environment *"); }
            else
              { fprintf(fp,"void"); }
            break;
@@ -636,7 +639,7 @@ static void WriteFunctionExternDeclarations(
          case 'j':
          case 'k':
            if (theFunction->environmentAware) 
-             { fprintf(fp,"void *,DATA_OBJECT_PTR_ARG"); }
+             { fprintf(fp,"Environment *,DATA_OBJECT_PTR_ARG"); }
            else
              { fprintf(fp,"DATA_OBJECT_PTR_ARG"); }
            break;
@@ -652,7 +655,7 @@ static void WriteFunctionExternDeclarations(
 /*   to declare system and user defined functions). */
 /****************************************************/
 static bool FunctionsToCode(
-  void *theEnv,
+  Environment *theEnv,
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer)
@@ -738,7 +741,7 @@ static bool FunctionsToCode(
 /*   of a pointer to a function definition data structure.  */
 /************************************************************/
 void PrintFunctionReference(
-  void *theEnv,
+  Environment *theEnv,
   FILE *fp,
   struct FunctionDefinition *funcPtr)
   {
@@ -755,7 +758,7 @@ void PrintFunctionReference(
 /*   this constructs-to-c module.         */
 /******************************************/
 static bool WriteInitializationFunction(
-  void *theEnv,
+  Environment *theEnv,
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer)
@@ -789,7 +792,7 @@ static bool WriteInitializationFunction(
    fprintf(fp,"#include \"rulebld.h\"\n\n");
 
    fprintf(ConstructCompilerData(theEnv)->HeaderFP,"   void *InitCImage_%d(void);\n",ConstructCompilerData(theEnv)->ImageID);
-   fprintf(ConstructCompilerData(theEnv)->HeaderFP,"   void FixupCImage_%d(void *);\n",ConstructCompilerData(theEnv)->ImageID);
+   fprintf(ConstructCompilerData(theEnv)->HeaderFP,"   void FixupCImage_%d(Environment *);\n",ConstructCompilerData(theEnv)->ImageID);
 
    /*============================================*/
    /* Begin writing the initialization function. */
@@ -802,8 +805,8 @@ static bool WriteInitializationFunction(
 
    fprintf(fp,"\nvoid *InitCImage_%d()\n",ConstructCompilerData(theEnv)->ImageID);
    fprintf(fp,"  {\n");
-   fprintf(fp,"   static void *theEnv = NULL;\n\n");
-   fprintf(fp,"   if (theEnv != NULL) return(NULL);\n\n");
+   fprintf(fp,"   static Environment *theEnv = NULL;\n\n");
+   fprintf(fp,"   if (theEnv != NULL) return NULL;\n\n");
    fprintf(fp,"   theEnv = CreateRuntimeEnvironment(sht%d,fht%d,iht%d,bmht%d);\n\n",
            ConstructCompilerData(theEnv)->ImageID,ConstructCompilerData(theEnv)->ImageID,
            ConstructCompilerData(theEnv)->ImageID,ConstructCompilerData(theEnv)->ImageID);   
@@ -852,7 +855,7 @@ static bool WriteInitializationFunction(
 /* NewCFile: Opens a new file for writing C code. */
 /**************************************************/
 FILE *NewCFile(
-  void *theEnv,
+  Environment *theEnv,
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
@@ -872,7 +875,7 @@ FILE *NewCFile(
    if (newFP == NULL)
      {
       OpenErrorMessage(theEnv,"constructs-to-c",fileNameBuffer);
-      return(NULL);
+      return NULL;
      }
 
    if (reopenOldFile == false)
@@ -891,7 +894,7 @@ FILE *NewCFile(
 /*   the table.                                           */
 /**********************************************************/
 static void HashedExpressionsToCode(
-  void *theEnv)
+  Environment *theEnv)
   {
    unsigned i;
    EXPRESSION_HN *exphash;
@@ -914,7 +917,7 @@ static void HashedExpressionsToCode(
 /*   stored in the expression hash table.            */
 /*****************************************************/
 void PrintHashedExpressionReference(
-  void *theEnv,
+  Environment *theEnv,
   FILE *theFile,
   struct expr *theExpression,
   int imageID,
@@ -941,7 +944,7 @@ void PrintHashedExpressionReference(
 /*   the C code for the expression to the expression file.    */
 /**************************************************************/
 int ExpressionToCode(
-  void *theEnv,
+  Environment *theEnv,
   FILE *fp,
   struct expr *exprPtr)
   {
@@ -1010,7 +1013,7 @@ int ExpressionToCode(
 /*   expression data structure to the expression file.    */
 /**********************************************************/
 static void DumpExpression(
-  void *theEnv,
+  Environment *theEnv,
   struct expr *exprPtr)
   {
    while (exprPtr != NULL)
@@ -1034,7 +1037,7 @@ static void DumpExpression(
 
          case PCALL:
 #if DEFFUNCTION_CONSTRUCT
-           PrintDeffunctionReference(theEnv,ConstructCompilerData(theEnv)->ExpressionFP,(DEFFUNCTION *) exprPtr->value,
+           PrintDeffunctionReference(theEnv,ConstructCompilerData(theEnv)->ExpressionFP,(Deffunction *) exprPtr->value,
                                      ConstructCompilerData(theEnv)->ImageID,ConstructCompilerData(theEnv)->MaxIndices);
 #else
            fprintf(ConstructCompilerData(theEnv)->ExpressionFP,"NULL");
@@ -1043,7 +1046,7 @@ static void DumpExpression(
 
          case GCALL:
 #if DEFGENERIC_CONSTRUCT
-           PrintGenericFunctionReference(theEnv,ConstructCompilerData(theEnv)->ExpressionFP,(DEFGENERIC *) exprPtr->value,
+           PrintGenericFunctionReference(theEnv,ConstructCompilerData(theEnv)->ExpressionFP,(Defgeneric *) exprPtr->value,
                                          ConstructCompilerData(theEnv)->ImageID,ConstructCompilerData(theEnv)->MaxIndices);
 #else
            fprintf(ConstructCompilerData(theEnv)->ExpressionFP,"NULL");
@@ -1068,7 +1071,7 @@ static void DumpExpression(
 
          case DEFCLASS_PTR:
 #if OBJECT_SYSTEM
-           PrintClassReference(theEnv,ConstructCompilerData(theEnv)->ExpressionFP,(DEFCLASS *) exprPtr->value,ConstructCompilerData(theEnv)->ImageID,ConstructCompilerData(theEnv)->MaxIndices);
+           PrintClassReference(theEnv,ConstructCompilerData(theEnv)->ExpressionFP,(Defclass *) exprPtr->value,ConstructCompilerData(theEnv)->ImageID,ConstructCompilerData(theEnv)->MaxIndices);
 #else
            fprintf(ConstructCompilerData(theEnv)->ExpressionFP,"NULL");
 #endif
@@ -1156,7 +1159,7 @@ static void DumpExpression(
 /*   the constructs-to-c command.              */
 /***********************************************/
 void ConstructsToCCommandDefinition(
-  void *theEnv)
+  Environment *theEnv)
   {
    EnvDefineFunction2(theEnv,"constructs-to-c",'v',
                    PTIEF ConstructsToCCommand,
@@ -1170,16 +1173,16 @@ void ConstructsToCCommandDefinition(
 /*   each construct has its own code generator item.     */
 /*********************************************************/
 struct CodeGeneratorItem *AddCodeGeneratorItem(
-  void *theEnv,
+  Environment *theEnv,
   const char *name,
   int priority,
-  void (*beforeFunction)(void *),
-  void (*initFunction)(void *,FILE *,int,int),
-  bool (*generateFunction)(void *,const char *,const char *,char *,int,FILE *,int,int),
+  void (*beforeFunction)(Environment *),
+  void (*initFunction)(Environment *,FILE *,int,int),
+  bool (*generateFunction)(Environment *,const char *,const char *,char *,int,FILE *,int,int),
   int arrayCount)
   {
    struct CodeGeneratorItem *newPtr, *currentPtr, *lastPtr = NULL;
-   register int i;
+   int i;
    char theBuffer[3];
 
    /*======================================*/
@@ -1274,7 +1277,7 @@ struct CodeGeneratorItem *AddCodeGeneratorItem(
 /*   exceeded.                                              */
 /************************************************************/
 FILE *CloseFileIfNeeded(
-  void *theEnv,
+  Environment *theEnv,
   FILE *theFile,
   int *theCount,
   int *arrayVersion,
@@ -1298,7 +1301,7 @@ FILE *CloseFileIfNeeded(
         {
          *canBeReopened = true;
          GenClose(theEnv,theFile);
-         return(NULL);
+         return NULL;
         }
 
       return(theFile);
@@ -1327,7 +1330,7 @@ FILE *CloseFileIfNeeded(
         }
 
       if (codeFile->filePrefix == NULL)
-        { return(NULL); }
+        { return NULL; }
 
       theFile = NewCFile(theEnv,codeFile->filePrefix,codeFile->pathName,codeFile->fileNameBuffer,codeFile->id,codeFile->version,true);
       if (theFile == NULL)
@@ -1357,7 +1360,7 @@ FILE *CloseFileIfNeeded(
    /* the file is closed.     */
    /*=========================*/
 
-   return(NULL);
+   return NULL;
   }
 
 /**************************************************************/
@@ -1369,7 +1372,7 @@ FILE *CloseFileIfNeeded(
 /*   exceeded.                                              */
 /******************************************************************/
 FILE *OpenFileIfNeeded(
-  void *theEnv,
+  Environment *theEnv,
   FILE *theFile,
   const char *fileName,
   const char *pathName,
@@ -1441,7 +1444,7 @@ FILE *OpenFileIfNeeded(
    /*================*/
 
    if ((theFile = NewCFile(theEnv,newName,pathName,fileNameBuffer,newID,newVersion,reopenOldFile)) == NULL)
-     { return(NULL); }
+     { return NULL; }
 
    /*=========================================*/
    /* If this is the first time the file has  */
@@ -1471,7 +1474,7 @@ FILE *OpenFileIfNeeded(
 /*  a specific construct with a unique ID.       */
 /*************************************************/
 void MarkConstructBsaveIDs(
-  void *theEnv,
+  Environment *theEnv,
   int constructModuleIndex)
   {
    long theCount = 0;
@@ -1485,7 +1488,7 @@ void MarkConstructBsaveIDs(
 /*  occurences of a specific construct with a unique ID.     */
 /*************************************************************/
 static void MarkConstruct(
-  void *theEnv,
+  Environment *theEnv,
   struct constructHeader *theConstruct,
   void *vTheBuffer)
   {
@@ -1502,7 +1505,7 @@ static void MarkConstruct(
 /*   of a single construct header to the specified file.   */
 /***********************************************************/
 void ConstructHeaderToCode(
-  void *theEnv,
+  Environment *theEnv,
   FILE *theFile,
   struct constructHeader *theConstruct,
   int imageID,
@@ -1562,9 +1565,9 @@ void ConstructHeaderToCode(
 /*   of a single construct module to the specified file.   */
 /***********************************************************/
 void ConstructModuleToCode(
-  void *theEnv,
+  Environment *theEnv,
   FILE *theFile,
-  struct defmodule *theModule,
+  Defmodule *theModule,
   int imageID,
   int maxIndices,
   int constructIndex,
@@ -1612,14 +1615,14 @@ void ConstructModuleToCode(
 
 #else /* CONSTRUCT_COMPILER && (! RUN_TIME) */
 
-   void                               ConstructsToCCommand(void *);
+   void                               ConstructsToCCommand(Environment *);
 
 /************************************/
 /* ConstructsToCCommand: Definition */
 /*   for rule compiler stub.        */
 /************************************/
 void ConstructsToCCommand(
-  void *theEnv) 
+  Environment *theEnv)
   {
 #if MAC_XCD
 #pragma unused(theEnv)

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*             STRING FUNCTIONS HEADER FILE            */
    /*******************************************************/
@@ -42,6 +42,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_strngfun
@@ -57,21 +60,21 @@
    bool                           Eval(const char *,DATA_OBJECT_PTR);
 #endif
 
-   bool                           EnvBuild(void *,const char *);
-   bool                           EnvEval(void *,const char *,DATA_OBJECT_PTR);
-   void                           StringFunctionDefinitions(void *);
-   void                           StrCatFunction(void *,DATA_OBJECT_PTR);
-   void                           SymCatFunction(void *,DATA_OBJECT_PTR);
-   long long                      StrLengthFunction(void *);
-   void                           UpcaseFunction(void *,DATA_OBJECT_PTR);
-   void                           LowcaseFunction(void *,DATA_OBJECT_PTR);
-   long long                      StrCompareFunction(void *);
-   void                          *SubStringFunction(void *);
-   void                           StrIndexFunction(void *,DATA_OBJECT_PTR);
-   void                           EvalFunction(void *,DATA_OBJECT_PTR);
-   bool                           BuildFunction(void *);
-   void                           StringToFieldFunction(void *,DATA_OBJECT *);
-   void                           StringToField(void *,const char *,DATA_OBJECT *);
+   bool                           EnvBuild(Environment *,const char *);
+   bool                           EnvEval(Environment *,const char *,DATA_OBJECT_PTR);
+   void                           StringFunctionDefinitions(Environment *);
+   void                           StrCatFunction(Environment *,DATA_OBJECT_PTR);
+   void                           SymCatFunction(Environment *,DATA_OBJECT_PTR);
+   long long                      StrLengthFunction(Environment *);
+   void                           UpcaseFunction(Environment *,DATA_OBJECT_PTR);
+   void                           LowcaseFunction(Environment *,DATA_OBJECT_PTR);
+   long long                      StrCompareFunction(Environment *);
+   void                          *SubStringFunction(Environment *);
+   void                           StrIndexFunction(Environment *,DATA_OBJECT_PTR);
+   void                           EvalFunction(Environment *,DATA_OBJECT_PTR);
+   bool                           BuildFunction(Environment *);
+   void                           StringToFieldFunction(Environment *,DATA_OBJECT *);
+   void                           StringToField(Environment *,const char *,DATA_OBJECT *);
 
 #endif /* _H_strngfun */
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/04/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*                  CLASS PARSER MODULE                */
    /*******************************************************/
@@ -42,6 +42,9 @@
 /*      6.40: Pragma once and other inclusion changes.        */
 /*                                                            */
 /*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /**************************************************************/
 
@@ -91,22 +94,21 @@
 #define DIRECT               0
 #define INHERIT              1
 
-/* =========================================
-   *****************************************
-      INTERNALLY VISIBLE FUNCTION HEADERS
-   =========================================
-   ***************************************** */
+/***************************************/
+/* LOCAL INTERNAL FUNCTION DEFINITIONS */
+/***************************************/
 
-static bool ValidClassName(void *,const char *,DEFCLASS **);
-static bool ParseSimpleQualifier(void *,const char *,const char *,const char *,const char *,bool *,bool *);
-static bool ReadUntilClosingParen(void *,const char *,struct token *);
-static void AddClass(void *,DEFCLASS *);
-static void BuildSubclassLinks(void *,DEFCLASS *);
-static void FormInstanceTemplate(void *,DEFCLASS *);
-static void FormSlotNameMap(void *,DEFCLASS *);
-static TEMP_SLOT_LINK *MergeSlots(void *,TEMP_SLOT_LINK *,DEFCLASS *,short *,int);
-static void PackSlots(void *,DEFCLASS *,TEMP_SLOT_LINK *);
-static void CreatePublicSlotMessageHandlers(void *,DEFCLASS *);
+   static bool                    ValidClassName(Environment *,const char *,Defclass **);
+   static bool                    ParseSimpleQualifier(Environment *,const char *,const char *,const char *,const char *,bool *,bool *);
+   static bool                    ReadUntilClosingParen(Environment *,const char *,struct token *);
+   static void                    AddClass(Environment *,Defclass *);
+   static void                    BuildSubclassLinks(Environment *,Defclass *);
+   static void                    FormInstanceTemplate(Environment *,Defclass *);
+   static void                    FormSlotNameMap(Environment *,Defclass *);
+   static TEMP_SLOT_LINK         *MergeSlots(Environment *,TEMP_SLOT_LINK *,Defclass *,short *,int);
+   static void                    PackSlots(Environment *,Defclass *,TEMP_SLOT_LINK *);
+   static void                    CreatePublicSlotMessageHandlers(Environment *,Defclass *);
+
 
 /* =========================================
    *****************************************
@@ -161,11 +163,11 @@ static void CreatePublicSlotMessageHandlers(void *,DEFCLASS *);
                <default-expression> ::= ?NONE | ?VARIABLE | <expression>*
   ***************************************************************************************/
 bool ParseDefclass(
-  void *theEnv,
+  Environment *theEnv,
   const char *readSource)
   {
    SYMBOL_HN *cname;
-   DEFCLASS *cls;
+   Defclass *cls;
    PACKED_CLASS_LINKS *sclasses,*preclist;
    TEMP_SLOT_LINK *slots = NULL;
    bool parseError;
@@ -189,7 +191,7 @@ bool ParseDefclass(
 #endif
 
    cname = GetConstructNameAndComment(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken,"defclass",
-                                      EnvFindDefclassInModule,NULL,"#",true,
+                                      (FindConstructFunction *) EnvFindDefclassInModule,NULL,"#",true,
                                       true,true,false);
    if (cname == NULL)
      return true;
@@ -401,11 +403,11 @@ bool ParseDefclass(
                  another module
  ***********************************************************/
 static bool ValidClassName(
-  void *theEnv,
+  Environment *theEnv,
   const char *theClassName,
-  DEFCLASS **theDefclass)
+  Defclass **theDefclass)
   {
-   *theDefclass = (DEFCLASS *) EnvFindDefclassInModule(theEnv,theClassName);
+   *theDefclass = EnvFindDefclassInModule(theEnv,theClassName);
    if (*theDefclass != NULL)
      {
       /* ===================================
@@ -424,11 +426,11 @@ static bool ValidClassName(
          redefined if it is not in use, e.g., instances,
          generic function method restrictions, etc.
          =============================================== */
-      if ((EnvIsDefclassDeletable(theEnv,(void *) *theDefclass) == false) &&
+      if ((EnvIsDefclassDeletable(theEnv,*theDefclass) == false) &&
           (! ConstructData(theEnv)->CheckSyntaxMode))
         {
          PrintErrorID(theEnv,"CLASSPSR",3,false);
-         EnvPrintRouter(theEnv,WERROR,EnvGetDefclassName(theEnv,(void *) *theDefclass));
+         EnvPrintRouter(theEnv,WERROR,EnvGetDefclassName(theEnv,*theDefclass));
          EnvPrintRouter(theEnv,WERROR," class cannot be redefined while\n");
          EnvPrintRouter(theEnv,WERROR,"    outstanding references to it still exist.\n");
          return false;
@@ -456,7 +458,7 @@ static bool ValidClassName(
   NOTES        : None
  ***************************************************************/
 static bool ParseSimpleQualifier(
-  void *theEnv,
+  Environment *theEnv,
   const char *readSource,
   const char *classQualifier,
   const char *clearRelation,
@@ -506,7 +508,7 @@ ParseSimpleQualifierError:
                  paren has already been scanned
  ***************************************************/
 static bool ReadUntilClosingParen(
-  void *theEnv,
+  Environment *theEnv,
   const char *readSource,
   struct token *inputToken)
   {
@@ -565,10 +567,10 @@ static bool ReadUntilClosingParen(
                  Assumes class is not busy!!!
  *****************************************************************************/
 static void AddClass(
-  void *theEnv,
-  DEFCLASS *cls)
+  Environment *theEnv,
+  Defclass *cls)
   {
-   DEFCLASS *ctmp;
+   Defclass *ctmp;
 #if DEBUGGING_FUNCTIONS
    bool oldTraceInstances = false,
        oldTraceSlots = false;
@@ -578,8 +580,8 @@ static void AddClass(
       If class does not already exist, insert and
       form progeny links with all direct superclasses
       =============================================== */
-   cls->hashTableIndex = HashClass(GetDefclassNamePointer((void *) cls));
-   ctmp = (DEFCLASS *) EnvFindDefclassInModule(theEnv,EnvGetDefclassName(theEnv,(void *) cls));
+   cls->hashTableIndex = HashClass(GetDefclassNamePointer(cls));
+   ctmp = EnvFindDefclassInModule(theEnv,EnvGetDefclassName(theEnv,cls));
 
    if (ctmp != NULL)
      {
@@ -617,7 +619,7 @@ static void AddClass(
 
 #if DEBUGGING_FUNCTIONS
    if (EnvGetConserveMemory(theEnv) == false)
-     EnvSetDefclassPPForm(theEnv,(void *) cls,CopyPPBuffer(theEnv));
+     EnvSetDefclassPPForm(theEnv,cls,CopyPPBuffer(theEnv));
 #endif
 
 #if DEFMODULE_CONSTRUCT
@@ -649,8 +651,8 @@ static void AddClass(
   NOTES        : Assumes the superclass list is formed.
  *******************************************************/
 static void BuildSubclassLinks(
-  void *theEnv,
-  DEFCLASS *cls)
+  Environment *theEnv,
+  Defclass *cls)
   {
    long i;
 
@@ -670,8 +672,8 @@ static void BuildSubclassLinks(
   NOTES        : None
  **********************************************************/
 static void FormInstanceTemplate(
-  void *theEnv,
-  DEFCLASS *cls)
+  Environment *theEnv,
+  Defclass *cls)
   {
    TEMP_SLOT_LINK *islots = NULL,*stmp;
    short scnt = 0;
@@ -696,7 +698,7 @@ static void FormInstanceTemplate(
    cls->instanceSlotCount = scnt;
    cls->localInstanceSlotCount = 0;
    if (scnt > 0)
-     cls->instanceTemplate = (SLOT_DESC **) gm2(theEnv,(scnt * sizeof(SLOT_DESC *)));
+     cls->instanceTemplate = (SlotDescriptor **) gm2(theEnv,(scnt * sizeof(SlotDescriptor *)));
    for (i = 0 ; i < scnt ; i++)
      {
       stmp = islots;
@@ -731,8 +733,8 @@ static void FormInstanceTemplate(
                  been formed
  **********************************************************/
 static void FormSlotNameMap(
-  void *theEnv,
-  DEFCLASS *cls)
+  Environment *theEnv,
+  Defclass *cls)
   {
    long i;
 
@@ -766,15 +768,15 @@ static void FormSlotNameMap(
   NOTES        : Lists are assumed to contain no duplicates
  *******************************************************************/
 static TEMP_SLOT_LINK *MergeSlots(
-  void *theEnv,
+  Environment *theEnv,
   TEMP_SLOT_LINK *old,
-  DEFCLASS *cls,
+  Defclass *cls,
   short *scnt,
   int src)
   {
    TEMP_SLOT_LINK *cur,*tmp;
-   register int i;
-   SLOT_DESC *newSlot;
+   int i;
+   SlotDescriptor *newSlot;
 
    /* ======================================
       Process the slots in reverse order
@@ -820,8 +822,8 @@ static TEMP_SLOT_LINK *MergeSlots(
   NOTES        : Assumes class->slotCount == 0 && class->slots == NULL
  ***********************************************************************/
 static void PackSlots(
-  void *theEnv,
-  DEFCLASS *cls,
+  Environment *theEnv,
+  Defclass *cls,
   TEMP_SLOT_LINK *slots)
   {
    TEMP_SLOT_LINK *stmp,*sprv;
@@ -834,13 +836,13 @@ static void PackSlots(
       cls->slotCount++;
       stmp = stmp->nxt;
      }
-   cls->slots = (SLOT_DESC *) gm2(theEnv,(sizeof(SLOT_DESC) * cls->slotCount));
+   cls->slots = (SlotDescriptor *) gm2(theEnv,(sizeof(SlotDescriptor) * cls->slotCount));
    stmp = slots;
    for (i = 0 ; i < cls->slotCount ; i++)
      {
       sprv = stmp;
       stmp = stmp->nxt;
-      GenCopyMemory(SLOT_DESC,1,&(cls->slots[i]),sprv->desc);
+      GenCopyMemory(SlotDescriptor,1,&(cls->slots[i]),sprv->desc);
       cls->slots[i].sharedValue.desc = &(cls->slots[i]);
       cls->slots[i].sharedValue.value = NULL;
       rtn_struct(theEnv,slotDescriptor,sprv->desc);
@@ -862,14 +864,13 @@ static void PackSlots(
   NOTES        : Uses FindImportedConstruct()
  ********************************************************/
 void *CreateClassScopeMap(
-  void *theEnv,
-  DEFCLASS *theDefclass)
+  Environment *theEnv,
+  Defclass *theDefclass)
   {
    unsigned scopeMapSize;
    char *scopeMap;
    const char *className;
-   struct defmodule *matchModule,
-                    *theModule;
+   Defmodule *matchModule, *theModule;
    int moduleID,count;
    void *theBitMap;
 
@@ -879,13 +880,13 @@ void *CreateClassScopeMap(
    scopeMapSize = (sizeof(char) * ((GetNumberOfDefmodules(theEnv) / BITS_PER_BYTE) + 1));
    scopeMap = (char *) gm2(theEnv,scopeMapSize);
 
-   ClearBitString((void *) scopeMap,scopeMapSize);
+   ClearBitString(scopeMap,scopeMapSize);
    SaveCurrentModule(theEnv);
-   for (theModule = (struct defmodule *) EnvGetNextDefmodule(theEnv,NULL) ;
+   for (theModule = EnvGetNextDefmodule(theEnv,NULL) ;
         theModule != NULL ;
-        theModule = (struct defmodule *) EnvGetNextDefmodule(theEnv,(void *) theModule))
+        theModule = EnvGetNextDefmodule(theEnv,theModule))
      {
-      EnvSetCurrentModule(theEnv,(void *) theModule);
+      EnvSetCurrentModule(theEnv,theModule);
       moduleID = (int) theModule->bsaveID;
       if (FindImportedConstruct(theEnv,"defclass",matchModule,
                                 className,&count,true,NULL) != NULL)
@@ -894,7 +895,7 @@ void *CreateClassScopeMap(
    RestoreCurrentModule(theEnv);
    theBitMap = (BITMAP_HN *) EnvAddBitMap(theEnv,scopeMap,scopeMapSize);
    IncrementBitMapCount(theBitMap);
-   rm(theEnv,(void *) scopeMap,scopeMapSize);
+   rm(theEnv,scopeMap,scopeMapSize);
    return(theBitMap);
   }
 
@@ -927,11 +928,11 @@ void *CreateClassScopeMap(
   NOTES        : None
  ******************************************************************************/
 static void CreatePublicSlotMessageHandlers(
-  void *theEnv,
-  DEFCLASS *theDefclass)
+  Environment *theEnv,
+  Defclass *theDefclass)
   {
    long i;
-   register SLOT_DESC *sd;
+   SlotDescriptor *sd;
 
    for (i = 0 ; i < theDefclass->slotCount ; i++)
      {

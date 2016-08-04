@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/20/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*       DEFMODULE CONSTRUCT COMPILER HEADER FILE      */
    /*******************************************************/
@@ -33,6 +33,9 @@
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_modulcmp
@@ -45,7 +48,7 @@
 
 #include "moduldef.h"
 
-   void                           DefmoduleCompilerSetup(void *);
-   void                           PrintDefmoduleReference(void *,FILE *,struct defmodule *);
+   void                           DefmoduleCompilerSetup(Environment *);
+   void                           PrintDefmoduleReference(Environment *,FILE *,Defmodule *);
 
 #endif /* _H_modulcmp */

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*               EVALUATION HEADER FILE                */
    /*******************************************************/
@@ -53,6 +53,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_evaluatn
@@ -67,6 +70,10 @@ struct dataObject;
 typedef struct dataObject DATA_OBJECT;
 typedef struct dataObject * DATA_OBJECT_PTR;
 typedef struct expr FUNCTION_REFERENCE;
+
+typedef void EntityPrintFunction(Environment *,const char *,void *);
+typedef bool EntityEvaluationFunction(Environment *,void *,DATA_OBJECT *);
+typedef void EntityBusyCountFunction(Environment *,void *);
 
 #include "constant.h"
 #include "symbol.h"
@@ -95,13 +102,13 @@ struct entityRecord
    unsigned int copyToEvaluate : 1;
    unsigned int bitMap : 1;
    unsigned int addsToRuleComplexity : 1;
-   void (*shortPrintFunction)(void *,const char *,void *);
-   void (*longPrintFunction)(void *,const char *,void *);
+   EntityPrintFunction *shortPrintFunction;
+   EntityPrintFunction *longPrintFunction;
    bool (*deleteFunction)(void *,void *);
-   bool (*evaluateFunction)(void *,void *,DATA_OBJECT *);
+   EntityEvaluationFunction *evaluateFunction;
    void *(*getNextFunction)(void *,void *);
-   void (*decrementBusyCount)(void *,void *);
-   void (*incrementBusyCount)(void *,void *);
+   EntityBusyCountFunction *decrementBusyCount;
+   EntityBusyCountFunction *incrementBusyCount;
    void (*propagateDepth)(void *,void *);
    void (*markNeeded)(void *,void *);
    void (*install)(void *,void *);
@@ -112,11 +119,11 @@ struct entityRecord
 struct externalAddressType
   {
    const  char *name;
-   void (*shortPrintFunction)(void *,const char *,void *);
-   void (*longPrintFunction)(void *,const char *,void *);
-   bool (*discardFunction)(void *,void *);
-   void (*newFunction)(void *,DATA_OBJECT *);
-   bool (*callFunction)(void *,DATA_OBJECT *,DATA_OBJECT *);
+   void (*shortPrintFunction)(Environment *,const char *,void *);
+   void (*longPrintFunction)(Environment *,const char *,void *);
+   bool (*discardFunction)(Environment *,void *);
+   void (*newFunction)(Environment *,DATA_OBJECT *);
+   bool (*callFunction)(Environment *,DATA_OBJECT *,DATA_OBJECT *);
   };
 
 typedef struct entityRecord ENTITY_RECORD;
@@ -214,33 +221,33 @@ struct evaluationData
 #include "factmngr.h"
 #include "object.h"
 
-   void                           InitializeEvaluationData(void *);
-   bool                           EvaluateExpression(void *,struct expr *,struct dataObject *);
-   void                           EnvSetEvaluationError(void *,bool);
-   bool                           EnvGetEvaluationError(void *);
-   void                           EnvSetHaltExecution(void *,bool);
-   bool                           EnvGetHaltExecution(void *);
-   void                           ReturnValues(void *,struct dataObject *,bool);
-   void                           PrintDataObject(void *,const char *,struct dataObject *);
-   void                           EnvSetMultifieldErrorValue(void *,struct dataObject *);
-   void                           ValueInstall(void *,struct dataObject *);
-   void                           ValueDeinstall(void *,struct dataObject *);
+   void                           InitializeEvaluationData(Environment *);
+   bool                           EvaluateExpression(Environment *,struct expr *,struct dataObject *);
+   void                           EnvSetEvaluationError(Environment *,bool);
+   bool                           EnvGetEvaluationError(Environment *);
+   void                           EnvSetHaltExecution(Environment *,bool);
+   bool                           EnvGetHaltExecution(Environment *);
+   void                           ReturnValues(Environment *,struct dataObject *,bool);
+   void                           PrintDataObject(Environment *,const char *,struct dataObject *);
+   void                           EnvSetMultifieldErrorValue(Environment *,struct dataObject *);
+   void                           ValueInstall(Environment *,struct dataObject *);
+   void                           ValueDeinstall(Environment *,struct dataObject *);
 #if DEFFUNCTION_CONSTRUCT || DEFGENERIC_CONSTRUCT
-   bool                           EnvFunctionCall(void *,const char *,const char *,DATA_OBJECT *);
-   bool                           FunctionCall2(void *,FUNCTION_REFERENCE *,const char *,DATA_OBJECT *);
+   bool                           EnvFunctionCall(Environment *,const char *,const char *,DATA_OBJECT *);
+   bool                           FunctionCall2(Environment *,FUNCTION_REFERENCE *,const char *,DATA_OBJECT *);
 #endif
-   void                           CopyDataObject(void *,DATA_OBJECT *,DATA_OBJECT *,int);
-   void                           AtomInstall(void *,int,void *);
-   void                           AtomDeinstall(void *,int,void *);
-   struct expr                   *ConvertValueToExpression(void *,DATA_OBJECT *);
+   void                           CopyDataObject(Environment *,DATA_OBJECT *,DATA_OBJECT *,int);
+   void                           AtomInstall(Environment *,int,void *);
+   void                           AtomDeinstall(Environment *,int,void *);
+   struct expr                   *ConvertValueToExpression(Environment *,DATA_OBJECT *);
    unsigned long                  GetAtomicHashValue(unsigned short,void *,int);
-   void                           InstallPrimitive(void *,struct entityRecord *,int);
-   int                            InstallExternalAddressType(void *,struct externalAddressType *);
+   void                           InstallPrimitive(Environment *,struct entityRecord *,int);
+   int                            InstallExternalAddressType(Environment *,struct externalAddressType *);
    void                           TransferDataObjectValues(DATA_OBJECT *,DATA_OBJECT *);
-   struct expr                   *FunctionReferenceExpression(void *,const char *);
-   bool                           GetFunctionReference(void *,const char *,FUNCTION_REFERENCE *);
+   struct expr                   *FunctionReferenceExpression(Environment *,const char *);
+   bool                           GetFunctionReference(Environment *,const char *,FUNCTION_REFERENCE *);
    bool                           DOsEqual(DATA_OBJECT_PTR,DATA_OBJECT_PTR);
-   bool                           EvaluateAndStoreInDataObject(void *,bool,EXPRESSION *,DATA_OBJECT *,bool);
+   bool                           EvaluateAndStoreInDataObject(Environment *,bool,EXPRESSION *,DATA_OBJECT *,bool);
 
 #if ALLOW_ENVIRONMENT_GLOBALS
 

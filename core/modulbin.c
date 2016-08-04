@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*             DEFMODULE BSAVE/BLOAD MODULE            */
    /*******************************************************/
@@ -23,6 +23,9 @@
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -46,22 +49,22 @@
 /***************************************/
 
 #if BLOAD_AND_BSAVE
-   static void                    BsaveFind(void *);
-   static void                    BsaveStorage(void *,FILE *);
-   static void                    BsaveBinaryItem(void *,FILE *);
+   static void                    BsaveFind(Environment *);
+   static void                    BsaveStorage(Environment *,FILE *);
+   static void                    BsaveBinaryItem(Environment *,FILE *);
 #endif
-   static void                    BloadStorage(void *);
-   static void                    BloadBinaryItem(void *);
-   static void                    UpdateDefmodule(void *,void *,long);
-   static void                    UpdatePortItem(void *,void *,long);
-   static void                    ClearBload(void *);
+   static void                    BloadStorage(Environment *);
+   static void                    BloadBinaryItem(Environment *);
+   static void                    UpdateDefmodule(Environment *,void *,long);
+   static void                    UpdatePortItem(Environment *,void *,long);
+   static void                    ClearBload(Environment *);
 
 /*********************************************/
 /* DefmoduleBinarySetup: Installs the binary */
 /*   save/load feature for defmodules.       */
 /*********************************************/
 void DefmoduleBinarySetup(
-  void *theEnv)
+  Environment *theEnv)
   {
    AddBeforeBloadFunction(theEnv,"defmodule",RemoveAllDefmodules,2000);
 
@@ -86,7 +89,7 @@ void DefmoduleBinarySetup(
 /*   item headers for the loaded binary image.                */
 /**************************************************************/
 void UpdateDefmoduleItemHeader(
-  void *theEnv,
+  Environment *theEnv,
   struct bsaveDefmoduleItemHeader *theBsaveHeader,
   struct defmoduleItemHeader *theHeader,
   int itemSize,
@@ -140,9 +143,9 @@ void AssignBsaveDefmdlItemHdrVals(
 /*   in the current environment.                          */
 /**********************************************************/
 static void BsaveFind(
-  void *theEnv)
+  Environment *theEnv)
   {
-   struct defmodule *defmodulePtr;
+   Defmodule *defmodulePtr;
    struct portItem *theList;
 
    /*=======================================================*/
@@ -166,9 +169,9 @@ static void BsaveFind(
    /* Loop through each module. */
    /*===========================*/
 
-   for (defmodulePtr = (struct defmodule *) EnvGetNextDefmodule(theEnv,NULL);
+   for (defmodulePtr = EnvGetNextDefmodule(theEnv,NULL);
         defmodulePtr != NULL;
-        defmodulePtr = (struct defmodule *) EnvGetNextDefmodule(theEnv,defmodulePtr))
+        defmodulePtr = EnvGetNextDefmodule(theEnv,defmodulePtr))
      {
       /*==============================================*/
       /* Increment the number of modules encountered. */
@@ -230,7 +233,7 @@ static void BsaveFind(
 /*    all defmodule structures to the binary file.       */
 /*********************************************************/
 static void BsaveStorage(
-  void *theEnv,
+  Environment *theEnv,
   FILE *fp)
   {
    size_t space;
@@ -246,11 +249,11 @@ static void BsaveStorage(
 /*   structures to the binary file.          */
 /*********************************************/
 static void BsaveBinaryItem(
-  void *theEnv,
+  Environment *theEnv,
   FILE *fp)
   {
    size_t space;
-   struct defmodule *defmodulePtr;
+   Defmodule *defmodulePtr;
    struct bsaveDefmodule newDefmodule;
    struct bsavePortItem newPortItem;
    struct portItem *theList;
@@ -270,9 +273,9 @@ static void BsaveBinaryItem(
 
    DefmoduleData(theEnv)->BNumberOfDefmodules = 0;
    DefmoduleData(theEnv)->NumberOfPortItems = 0;
-   for (defmodulePtr = (struct defmodule *) EnvGetNextDefmodule(theEnv,NULL);
+   for (defmodulePtr = EnvGetNextDefmodule(theEnv,NULL);
         defmodulePtr != NULL;
-        defmodulePtr = (struct defmodule *) EnvGetNextDefmodule(theEnv,defmodulePtr))
+        defmodulePtr = EnvGetNextDefmodule(theEnv,defmodulePtr))
      {
       newDefmodule.name = defmodulePtr->name->bucket;
 
@@ -313,7 +316,7 @@ static void BsaveBinaryItem(
    /*==========================================*/
 
    DefmoduleData(theEnv)->NumberOfPortItems = 0;
-   defmodulePtr = (struct defmodule *) EnvGetNextDefmodule(theEnv,NULL);
+   defmodulePtr = EnvGetNextDefmodule(theEnv,NULL);
    while (defmodulePtr != NULL)
      {
       for (theList = defmodulePtr->importList;
@@ -356,7 +359,7 @@ static void BsaveBinaryItem(
          GenWrite(&newPortItem,sizeof(struct bsavePortItem),fp);
         }
 
-      defmodulePtr = (struct defmodule *) EnvGetNextDefmodule(theEnv,defmodulePtr);
+      defmodulePtr = EnvGetNextDefmodule(theEnv,defmodulePtr);
      }
 
    /*=============================================================*/
@@ -377,7 +380,7 @@ static void BsaveBinaryItem(
 /*   defmodules and port items used by this binary image. */
 /**********************************************************/
 static void BloadStorage(
-  void *theEnv)
+  Environment *theEnv)
   {
    size_t space;
 
@@ -401,8 +404,8 @@ static void BloadStorage(
       return;
      }
 
-   space = (DefmoduleData(theEnv)->BNumberOfDefmodules * sizeof(struct defmodule));
-   DefmoduleData(theEnv)->DefmoduleArray = (struct defmodule *) genalloc(theEnv,space);
+   space = (DefmoduleData(theEnv)->BNumberOfDefmodules * sizeof(Defmodule));
+   DefmoduleData(theEnv)->DefmoduleArray = (Defmodule *) genalloc(theEnv,space);
 
    /*================================*/
    /* Allocate the space needed for  */
@@ -424,7 +427,7 @@ static void BloadStorage(
 /*   defmodules used by this binary image.  */
 /********************************************/
 static void BloadBinaryItem(
-  void *theEnv)
+  Environment *theEnv)
   {
    size_t space;
 
@@ -434,8 +437,8 @@ static void BloadBinaryItem(
    BloadandRefresh(theEnv,DefmoduleData(theEnv)->BNumberOfDefmodules,sizeof(struct bsaveDefmodule),UpdateDefmodule);
    BloadandRefresh(theEnv,DefmoduleData(theEnv)->NumberOfPortItems,sizeof(struct bsavePortItem),UpdatePortItem);
 
-   SetListOfDefmodules(theEnv,(void *) DefmoduleData(theEnv)->DefmoduleArray);
-   EnvSetCurrentModule(theEnv,(void *) EnvGetNextDefmodule(theEnv,NULL));
+   SetListOfDefmodules(theEnv,DefmoduleData(theEnv)->DefmoduleArray);
+   EnvSetCurrentModule(theEnv,EnvGetNextDefmodule(theEnv,NULL));
   }
 
 /******************************************/
@@ -443,7 +446,7 @@ static void BloadBinaryItem(
 /*   for defmodule data structure.        */
 /******************************************/
 static void UpdateDefmodule(
-  void *theEnv,
+  Environment *theEnv,
   void *buf,
   long obji)
   {
@@ -455,7 +458,7 @@ static void UpdateDefmodule(
    DefmoduleData(theEnv)->DefmoduleArray[obji].name = SymbolPointer(bdp->name);
    IncrementSymbolCount(DefmoduleData(theEnv)->DefmoduleArray[obji].name);
    if (bdp->next != -1L)
-     { DefmoduleData(theEnv)->DefmoduleArray[obji].next = (struct defmodule *) &DefmoduleData(theEnv)->DefmoduleArray[bdp->next]; }
+     { DefmoduleData(theEnv)->DefmoduleArray[obji].next = &DefmoduleData(theEnv)->DefmoduleArray[bdp->next]; }
    else
      { DefmoduleData(theEnv)->DefmoduleArray[obji].next = NULL; }
 
@@ -500,7 +503,7 @@ static void UpdateDefmodule(
 /*   for port item data structure.       */
 /*****************************************/
 static void UpdatePortItem(
-  void *theEnv,
+  Environment *theEnv,
   void *buf,
   long obji)
   {
@@ -543,7 +546,7 @@ static void UpdatePortItem(
 /*   when a binary load is in effect.  */
 /***************************************/
 static void ClearBload(
-  void *theEnv)
+  Environment *theEnv)
   {
    long i;
    size_t space;
@@ -583,8 +586,8 @@ static void ClearBload(
    /* the defmodule data structures. */
    /*================================*/
 
-   space = DefmoduleData(theEnv)->BNumberOfDefmodules * sizeof(struct defmodule);
-   if (space != 0) genfree(theEnv,(void *) DefmoduleData(theEnv)->DefmoduleArray,space);
+   space = DefmoduleData(theEnv)->BNumberOfDefmodules * sizeof(Defmodule);
+   if (space != 0) genfree(theEnv,DefmoduleData(theEnv)->DefmoduleArray,space);
    DefmoduleData(theEnv)->BNumberOfDefmodules = 0;
    
    /*================================*/
@@ -593,7 +596,7 @@ static void ClearBload(
    /*================================*/
 
    space = DefmoduleData(theEnv)->NumberOfPortItems * sizeof(struct portItem);
-   if (space != 0) genfree(theEnv,(void *) DefmoduleData(theEnv)->PortItemArray,space);
+   if (space != 0) genfree(theEnv,DefmoduleData(theEnv)->PortItemArray,space);
    DefmoduleData(theEnv)->NumberOfPortItems = 0;
    
    /*===========================*/

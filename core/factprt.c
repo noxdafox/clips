@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*           FACT RETE PRINT FUNCTIONS MODULE          */
    /*******************************************************/
@@ -31,6 +31,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -51,7 +54,7 @@
 /*   for the FactJNCompVars1 function. */
 /***************************************/
 void PrintFactJNCompVars1(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
   void *theValue)
   {
@@ -99,7 +102,7 @@ void PrintFactJNCompVars1(
 /*   for the FactJNCompVars2 function. */
 /***************************************/
 void PrintFactJNCompVars2(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
   void *theValue)
   {
@@ -159,7 +162,7 @@ void PrintFactJNCompVars2(
 /*   for the FactPNCompVars1 function. */
 /***************************************/
 void PrintFactPNCompVars1(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
   void *theValue)
   {
@@ -188,7 +191,7 @@ void PrintFactPNCompVars1(
 /*   for the FactSlotLength function. */
 /**************************************/
 void PrintFactSlotLength(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
   void *theValue)
   {
@@ -218,7 +221,7 @@ void PrintFactSlotLength(
 /*   for the FactJNGetvar1 function. */
 /*************************************/
 void PrintFactJNGetVar1(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
   void *theValue)
   {
@@ -258,7 +261,7 @@ void PrintFactJNGetVar1(
 /*   for the FactJNGetvar2 function. */
 /*************************************/
 void PrintFactJNGetVar2(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
   void *theValue)
   {
@@ -291,7 +294,7 @@ void PrintFactJNGetVar2(
 /*   for the FactJNGetVar3 function. */
 /*************************************/
 void PrintFactJNGetVar3(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
   void *theValue)
   {
@@ -334,7 +337,7 @@ void PrintFactJNGetVar3(
 /*   for the FactPNGetvar1 function. */
 /*************************************/
 void PrintFactPNGetVar1(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
   void *theValue)
   {
@@ -366,7 +369,7 @@ void PrintFactPNGetVar1(
 /*   for the FactPNGetvar2 function. */
 /*************************************/
 void PrintFactPNGetVar2(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
   void *theValue)
   {
@@ -391,7 +394,7 @@ void PrintFactPNGetVar2(
 /*   for the FactPNGetvar3 function. */
 /*************************************/
 void PrintFactPNGetVar3(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
   void *theValue)
   {
@@ -426,7 +429,7 @@ void PrintFactPNGetVar3(
 /*   for the FactPNConstant1 function. */
 /***************************************/
 void PrintFactPNConstant1(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
   void *theValue)
   {
@@ -458,7 +461,7 @@ void PrintFactPNConstant1(
 /*   for the FactPNConstant2 function. */
 /***************************************/
 void PrintFactPNConstant2(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
   void *theValue)
   {

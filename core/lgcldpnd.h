@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*          LOGICAL DEPENDENCIES HEADER FILE           */
    /*******************************************************/
@@ -32,6 +32,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_lgcldpnd
@@ -49,17 +52,17 @@ struct dependency
 #include "match.h"
 #include "pattern.h"
 
-   bool                           AddLogicalDependencies(void *,struct patternEntity *,bool);
-   void                           RemoveEntityDependencies(void *,struct patternEntity *);
-   void                           RemovePMDependencies(void *,struct partialMatch *);
-   void                           DestroyPMDependencies(void *,struct partialMatch *);
-   void                           RemoveLogicalSupport(void *,struct partialMatch *);
-   void                           ForceLogicalRetractions(void *);
-   void                           Dependencies(void *,struct patternEntity *);
-   void                           Dependents(void *,struct patternEntity *);
-   void                           DependenciesCommand(void *);
-   void                           DependentsCommand(void *);
-   void                           ReturnEntityDependencies(void *,struct patternEntity *);
+   bool                           AddLogicalDependencies(Environment *,struct patternEntity *,bool);
+   void                           RemoveEntityDependencies(Environment *,struct patternEntity *);
+   void                           RemovePMDependencies(Environment *,struct partialMatch *);
+   void                           DestroyPMDependencies(Environment *,struct partialMatch *);
+   void                           RemoveLogicalSupport(Environment *,struct partialMatch *);
+   void                           ForceLogicalRetractions(Environment *);
+   void                           Dependencies(Environment *,struct patternEntity *);
+   void                           Dependents(Environment *,struct patternEntity *);
+   void                           DependenciesCommand(Environment *);
+   void                           DependentsCommand(Environment *);
+   void                           ReturnEntityDependencies(Environment *,struct patternEntity *);
    struct partialMatch           *FindLogicalBind(struct joinNode *,struct partialMatch *);
 
 #endif /* _H_lgcldpnd */

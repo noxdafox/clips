@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*            PARSING FUNCTIONS HEADER FILE            */
    /*******************************************************/
@@ -40,6 +40,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_parsefun
@@ -50,9 +53,9 @@
 
 #include "evaluatn.h"
 
-   void                           ParseFunctionDefinitions(void *);
-   void                           CheckSyntaxFunction(void *,DATA_OBJECT *);
-   bool                           CheckSyntax(void *,const char *,DATA_OBJECT_PTR);
+   void                           ParseFunctionDefinitions(Environment *);
+   void                           CheckSyntaxFunction(Environment *,DATA_OBJECT *);
+   bool                           CheckSyntax(Environment *,const char *,DATA_OBJECT_PTR);
 
 #endif /* _H_parsefun */
 

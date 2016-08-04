@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*          DEFTEMPLATE RHS PARSING HEADER FILE        */
    /*******************************************************/
@@ -30,6 +30,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -56,24 +59,24 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static struct expr            *ParseAssertSlotValues(void *,const char *,struct token *,struct templateSlot *,bool *,int);
-   static struct expr            *ReorderAssertSlotValues(void *,struct templateSlot *,struct expr *,bool *);
-   static struct expr            *GetSlotAssertValues(void *,struct templateSlot *,struct expr *,bool *);
+   static struct expr            *ParseAssertSlotValues(Environment *,const char *,struct token *,struct templateSlot *,bool *,int);
+   static struct expr            *ReorderAssertSlotValues(Environment *,struct templateSlot *,struct expr *,bool *);
+   static struct expr            *GetSlotAssertValues(Environment *,struct templateSlot *,struct expr *,bool *);
    static struct expr            *FindAssertSlotItem(struct templateSlot *,struct expr *);
-   static struct templateSlot    *ParseSlotLabel(void *,const char *,struct token *,struct deftemplate *,bool *,int);
+   static struct templateSlot    *ParseSlotLabel(Environment *,const char *,struct token *,Deftemplate *,bool *,int);
 
 /******************************************************************/
 /* ParseAssertTemplate: Parses and builds the list of values that */
 /*   are used for an assert of a fact with a deftemplate.         */
 /******************************************************************/
 struct expr *ParseAssertTemplate(
-  void *theEnv,
+  Environment *theEnv,
   const char *readSource,
   struct token *theToken,
   bool *error,
   int endType,
   bool constantsOnly,
-  struct deftemplate *theDeftemplate)
+  Deftemplate *theDeftemplate)
   {
    struct expr *firstSlot, *lastSlot, *nextSlot;
    struct expr *firstArg, *tempSlot;
@@ -101,7 +104,7 @@ struct expr *ParseAssertTemplate(
             AlreadyParsedErrorMessage(theEnv,"slot ",ValueToString(slotPtr->slotName));
             *error = true;
             ReturnExpression(theEnv,firstSlot);
-            return(NULL);
+            return NULL;
            }
         }
 
@@ -115,7 +118,7 @@ struct expr *ParseAssertTemplate(
       if (*error)
         {
          ReturnExpression(theEnv,firstSlot);
-         return(NULL);
+         return NULL;
         }
 
       /*============================================*/
@@ -128,7 +131,7 @@ struct expr *ParseAssertTemplate(
          *error = true;
          ReturnExpression(theEnv,firstSlot);
          ReturnExpression(theEnv,nextSlot);
-         return(NULL);
+         return NULL;
         }
 
       /*===================================================*/
@@ -150,7 +153,7 @@ struct expr *ParseAssertTemplate(
    if (*error)
      {
       ReturnExpression(theEnv,firstSlot);
-      return(NULL);
+      return NULL;
      }
 
    /*=============================================================*/
@@ -172,10 +175,10 @@ struct expr *ParseAssertTemplate(
 /*   Checks for opening left parenthesis and a valid slot name. */
 /****************************************************************/
 static struct templateSlot *ParseSlotLabel(
-  void *theEnv,
+  Environment *theEnv,
   const char *inputSource,
   struct token *tempToken,
-  struct deftemplate *theDeftemplate,
+  Deftemplate *theDeftemplate,
   bool *error,
   int endType)
   {
@@ -195,7 +198,7 @@ static struct templateSlot *ParseSlotLabel(
 
    GetToken(theEnv,inputSource,tempToken);
    if (tempToken->type == endType)
-     { return(NULL); }
+     { return NULL; }
 
    /*=======================================*/
    /* Put a space between the template name */
@@ -214,7 +217,7 @@ static struct templateSlot *ParseSlotLabel(
      {
       SyntaxErrorMessage(theEnv,"deftemplate pattern");
       *error = true;
-      return(NULL);
+      return NULL;
      }
 
    /*=============================*/
@@ -226,7 +229,7 @@ static struct templateSlot *ParseSlotLabel(
      {
       SyntaxErrorMessage(theEnv,"deftemplate pattern");
       *error = true;
-      return(NULL);
+      return NULL;
      }
 
    /*======================================================*/
@@ -238,7 +241,7 @@ static struct templateSlot *ParseSlotLabel(
       InvalidDeftemplateSlotMessage(theEnv,ValueToString(tempToken->value),
                                     ValueToString(theDeftemplate->header.name),true);
       *error = true;
-      return(NULL);
+      return NULL;
      }
 
    /*====================================*/
@@ -252,7 +255,7 @@ static struct templateSlot *ParseSlotLabel(
 /* ParseAssertSlotValues: Gets a single assert slot value for a template. */
 /**************************************************************************/
 static struct expr *ParseAssertSlotValues(
-  void *theEnv,
+  Environment *theEnv,
   const char *inputSource,
   struct token *tempToken,
   struct templateSlot *slotPtr,
@@ -280,7 +283,7 @@ static struct expr *ParseAssertSlotValues(
       if (*error)
         {
          if (printError) SyntaxErrorMessage(theEnv,"deftemplate pattern");
-         return(NULL);
+         return NULL;
         }
 
       /*=================================================*/
@@ -292,7 +295,7 @@ static struct expr *ParseAssertSlotValues(
        {
         *error = true;
         SingleFieldSlotCardinalityError(theEnv,slotPtr->slotName->contents);
-        return(NULL);
+        return NULL;
        }
 
       /*==============================================*/
@@ -306,7 +309,7 @@ static struct expr *ParseAssertSlotValues(
         *error = true;
         SingleFieldSlotCardinalityError(theEnv,slotPtr->slotName->contents);
         ReturnExpression(theEnv,newField);
-        return(NULL);
+        return NULL;
        }
 
       /*============================*/
@@ -329,7 +332,7 @@ static struct expr *ParseAssertSlotValues(
       if (*error)
         {
          if (printError) SyntaxErrorMessage(theEnv,"deftemplate pattern");
-         return(NULL);
+         return NULL;
         }
 
       if (valueList == NULL)
@@ -357,7 +360,7 @@ static struct expr *ParseAssertSlotValues(
            {
             if (printError) SyntaxErrorMessage(theEnv,"deftemplate pattern");
             ReturnExpression(theEnv,valueList);
-            return(NULL);
+            return NULL;
            }
 
          if (newField == NULL)
@@ -383,7 +386,7 @@ static struct expr *ParseAssertSlotValues(
       SingleFieldSlotCardinalityError(theEnv,slotPtr->slotName->contents);
       *error = true;
       ReturnExpression(theEnv,newField);
-      return(NULL);
+      return NULL;
      }
 
    /*=========================================================*/
@@ -401,7 +404,7 @@ static struct expr *ParseAssertSlotValues(
 /*   to the order of the values described by the deftemplate.            */
 /*************************************************************************/
 static struct expr *ReorderAssertSlotValues(
-  void *theEnv,
+  Environment *theEnv,
   struct templateSlot *slotPtr,
   struct expr *firstSlot,
   bool *error)
@@ -428,7 +431,7 @@ static struct expr *ReorderAssertSlotValues(
       if (*error)
         {
          ReturnExpression(theEnv,firstArg);
-         return(NULL);
+         return NULL;
         }
 
       /*=====================================*/
@@ -462,7 +465,7 @@ static struct expr *ReorderAssertSlotValues(
 /*   default value will be used.                               */
 /***************************************************************/
 static struct expr *GetSlotAssertValues(
-  void *theEnv,
+  Environment *theEnv,
   struct templateSlot *slotPtr,
   struct expr *firstSlot,
   bool *error)
@@ -506,7 +509,7 @@ static struct expr *GetSlotAssertValues(
          EnvPrintRouter(theEnv,WERROR,slotPtr->slotName->contents);
          EnvPrintRouter(theEnv,WERROR," requires a value because of its (default ?NONE) attribute.\n");
          *error = true;
-         return(NULL);
+         return NULL;
         }
 
       /*===================================================*/
@@ -566,7 +569,7 @@ static struct expr *FindAssertSlotItem(
       listOfSlots = listOfSlots->nextArg;
      }
 
-   return(NULL);
+   return NULL;
   }
 
 #endif /* DEFTEMPLATE_CONSTRUCT */

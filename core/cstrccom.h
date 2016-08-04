@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/04/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*           CONSTRUCT COMMAND HEADER MODULE           */
    /*******************************************************/
@@ -33,6 +33,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_cstrccom
@@ -41,59 +44,64 @@
 
 #define _H_cstrccom
 
+typedef bool ConstructGetWatchFunction(Environment *,void *);
+typedef void ConstructSetWatchFunction(Environment *,bool,void *);
+
 #include "moduldef.h"
 #include "constrct.h"
+
+typedef void ConstructActionFunction(Environment *,struct constructHeader *,void *);
 
 #if (! RUN_TIME)
    void                           AddConstructToModule(struct constructHeader *);
 #endif
-   bool                           DeleteNamedConstruct(void *,const char *,struct construct *);
-   void                          *FindNamedConstructInModule(void *,const char *,struct construct *);
-   void                          *FindNamedConstructInModuleOrImports(void *,const char *,struct construct *);
-   void                           UndefconstructCommand(void *,const char *,struct construct *);
-   bool                           PPConstruct(void *,const char *,const char *,struct construct *);
-   SYMBOL_HN                     *GetConstructModuleCommand(void *,const char *,struct construct *);
-   struct defmodule              *GetConstructModule(void *,const char *,struct construct *);
-   bool                           Undefconstruct(void *,void *,struct construct *);
-   void                           SaveConstruct(void *,void *,const char *,struct construct *);
+   bool                           DeleteNamedConstruct(Environment *,const char *,struct construct *);
+   void                          *FindNamedConstructInModule(Environment *,const char *,struct construct *);
+   void                          *FindNamedConstructInModuleOrImports(Environment *,const char *,struct construct *);
+   void                           UndefconstructCommand(Environment *,const char *,struct construct *);
+   bool                           PPConstruct(Environment *,const char *,const char *,struct construct *);
+   SYMBOL_HN                     *GetConstructModuleCommand(Environment *,const char *,struct construct *);
+   Defmodule                     *GetConstructModule(Environment *,const char *,struct construct *);
+   bool                           Undefconstruct(Environment *,void *,struct construct *);
+   void                           SaveConstruct(Environment *,Defmodule *,const char *,struct construct *);
    const char                    *GetConstructNameString(struct constructHeader *);
-   const char                    *EnvGetConstructNameString(void *,struct constructHeader *);
+   const char                    *EnvGetConstructNameString(Environment *,struct constructHeader *);
    const char                    *GetConstructModuleName(struct constructHeader *);
    SYMBOL_HN                     *GetConstructNamePointer(struct constructHeader *);
-   void                           GetConstructListFunction(void *,const char *,DATA_OBJECT_PTR,
+   void                           GetConstructListFunction(Environment *,const char *,DATA_OBJECT_PTR,
                                                                   struct construct *);
-   void                           GetConstructList(void *,DATA_OBJECT_PTR,struct construct *,
-                                                          struct defmodule *);
-   void                           ListConstructCommand(void *,const char *,struct construct *);
-   void                           ListConstruct(void *,struct construct *,const char *,struct defmodule *);
+   void                           GetConstructList(Environment *,DATA_OBJECT_PTR,struct construct *,
+                                                   Defmodule *);
+   void                           ListConstructCommand(Environment *,const char *,struct construct *);
+   void                           ListConstruct(Environment *,struct construct *,const char *,Defmodule *);
    void                           SetNextConstruct(struct constructHeader *,struct constructHeader *);
    struct defmoduleItemHeader    *GetConstructModuleItem(struct constructHeader *);
-   const char                    *GetConstructPPForm(void *,struct constructHeader *);
-   void                           PPConstructCommand(void *,const char *,struct construct *);
-   struct constructHeader        *GetNextConstructItem(void *,struct constructHeader *,int);
-   struct defmoduleItemHeader    *GetConstructModuleItemByIndex(void *,struct defmodule *,int);
-   void                           FreeConstructHeaderModule(void *,struct defmoduleItemHeader *,
+   const char                    *GetConstructPPForm(Environment *,struct constructHeader *);
+   void                           PPConstructCommand(Environment *,const char *,struct construct *);
+   struct constructHeader        *GetNextConstructItem(Environment *,struct constructHeader *,int);
+   struct defmoduleItemHeader    *GetConstructModuleItemByIndex(Environment *,Defmodule *,int);
+   void                           FreeConstructHeaderModule(Environment *,struct defmoduleItemHeader *,
                                                                    struct construct *);
-   long                           DoForAllConstructs(void *,
-                                                            void (*)(void *,struct constructHeader *,void *),
-                                                            int,bool,void *);
-   void                           DoForAllConstructsInModule(void *,void *,
-                                                            void (*)(void *,struct constructHeader *,void *),
-                                                            int,int,void *);
-   void                           InitializeConstructHeader(void *,const char *,struct constructHeader *,SYMBOL_HN *);
-   void                           SetConstructPPForm(void *,struct constructHeader *,const char *);
-   void                          *LookupConstruct(void *,struct construct *,const char *,bool);
+   long                           DoForAllConstructs(Environment *,
+                                                     ConstructActionFunction *,
+                                                     int,bool,void *);
+   void                           DoForAllConstructsInModule(Environment *,Defmodule *,
+                                                             ConstructActionFunction *,
+                                                             int,int,void *);
+   void                           InitializeConstructHeader(Environment *,const char *,struct constructHeader *,SYMBOL_HN *);
+   void                           SetConstructPPForm(Environment *,struct constructHeader *,const char *);
+   void                          *LookupConstruct(Environment *,struct construct *,const char *,bool);
 #if DEBUGGING_FUNCTIONS
-   bool                           ConstructPrintWatchAccess(void *,struct construct *,const char *,
+   bool                           ConstructPrintWatchAccess(Environment *,struct construct *,const char *,
                                             EXPRESSION *,
-                                            bool (*)(void *,void *),
-                                            void (*)(void *,bool,void *));
-   bool                           ConstructSetWatchAccess(void *,struct construct *,bool,
+                                            bool (*)(Environment *,void *),
+                                            void (*)(Environment *,bool,void *));
+   bool                           ConstructSetWatchAccess(Environment *,struct construct *,bool,
                                             EXPRESSION *,
-                                            bool (*)(void *,void *),
-                                            void (*)(void *,bool,void *));
+                                            ConstructGetWatchFunction *,
+                                            ConstructSetWatchFunction *);
 #endif
-   bool                           ConstructsDeletable(void *);
+   bool                           ConstructsDeletable(Environment *);
 
 #endif
 

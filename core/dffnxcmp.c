@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -26,6 +26,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 /* =========================================
@@ -42,17 +45,15 @@
 
 #include "dffnxcmp.h"
 
-/* =========================================
-   *****************************************
-      INTERNALLY VISIBLE FUNCTION HEADERS
-   =========================================
-   ***************************************** */
+/***************************************/
+/* LOCAL INTERNAL FUNCTION DEFINITIONS */
+/***************************************/
 
-static void ReadyDeffunctionsForCode(void *);
-static bool DeffunctionsToCode(void *,const char *,const char *,char *,int,FILE *,int,int);
-static void CloseDeffunctionFiles(void *,FILE *,FILE *,int);
-static void DeffunctionModuleToCode(void *,FILE *,struct defmodule *,int,int);
-static void SingleDeffunctionToCode(void *,FILE *,DEFFUNCTION *,int,int,int);
+   static void                    ReadyDeffunctionsForCode(Environment *);
+   static bool                    DeffunctionsToCode(Environment *,const char *,const char *,char *,int,FILE *,int,int);
+   static void                    CloseDeffunctionFiles(Environment *,FILE *,FILE *,int);
+   static void                    DeffunctionModuleToCode(Environment *,FILE *,Defmodule *,int,int);
+   static void                    SingleDeffunctionToCode(Environment *,FILE *,Deffunction *,int,int,int);
 
 /* =========================================
    *****************************************
@@ -70,7 +71,7 @@ static void SingleDeffunctionToCode(void *,FILE *,DEFFUNCTION *,int,int,int);
   NOTES        : None
  ***************************************************/
 void SetupDeffunctionCompiler(
-  void *theEnv)
+  Environment *theEnv)
   {
    DeffunctionData(theEnv)->DeffunctionCodeItem = AddCodeGeneratorItem(theEnv,"deffunctions",0,ReadyDeffunctionsForCode,
                                               NULL,DeffunctionsToCode,2);
@@ -92,9 +93,9 @@ void SetupDeffunctionCompiler(
   NOTES        : None
  ***************************************************/
 void PrintDeffunctionReference(
-  void *theEnv,
+  Environment *theEnv,
   FILE *fp,
-  DEFFUNCTION *dfPtr,
+  Deffunction *dfPtr,
   int imageID,
   int maxIndices)
   {
@@ -120,7 +121,7 @@ void PrintDeffunctionReference(
   NOTES        : None
  ****************************************************/
 void DeffunctionCModuleReference(
-  void *theEnv,
+  Environment *theEnv,
   FILE *theFile,
   int count,
   int imageID,
@@ -149,7 +150,7 @@ void DeffunctionCModuleReference(
   NOTES        : None
  ***************************************************/
 static void ReadyDeffunctionsForCode(
-  void *theEnv)
+  Environment *theEnv)
   {
    MarkConstructBsaveIDs(theEnv,DeffunctionData(theEnv)->DeffunctionModuleIndex);
   }
@@ -170,7 +171,7 @@ static void ReadyDeffunctionsForCode(
   NOTES        : None
  *******************************************************/
 static bool DeffunctionsToCode(
-  void *theEnv,
+  Environment *theEnv,
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
@@ -180,8 +181,8 @@ static bool DeffunctionsToCode(
   int maxIndices)
   {
    int fileCount = 1;
-   struct defmodule *theModule;
-   DEFFUNCTION *theDeffunction;
+   Defmodule *theModule;
+   Deffunction *theDeffunction;
    int moduleCount = 0, moduleArrayCount = 0, moduleArrayVersion = 1;
    int deffunctionArrayCount = 0, deffunctionArrayVersion = 1;
    FILE *moduleFile = NULL, *deffunctionFile = NULL;
@@ -195,15 +196,15 @@ static bool DeffunctionsToCode(
       Loop through all the modules and all the deffunctions writing
       their C code representation to the file as they are traversed
       ============================================================= */
-   theModule = (struct defmodule *) EnvGetNextDefmodule(theEnv,NULL);
+   theModule = EnvGetNextDefmodule(theEnv,NULL);
 
    while (theModule != NULL)
      {
-      EnvSetCurrentModule(theEnv,(void *) theModule);
+      EnvSetCurrentModule(theEnv,theModule);
 
       moduleFile = OpenFileIfNeeded(theEnv,moduleFile,fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
                                     moduleArrayVersion,headerFP,
-                                    "DEFFUNCTION_MODULE",ModulePrefix(DeffunctionData(theEnv)->DeffunctionCodeItem),
+                                    "DeffunctionModuleData",ModulePrefix(DeffunctionData(theEnv)->DeffunctionCodeItem),
                                     false,NULL);
 
       if (moduleFile == NULL)
@@ -216,13 +217,13 @@ static bool DeffunctionsToCode(
       moduleFile = CloseFileIfNeeded(theEnv,moduleFile,&moduleArrayCount,&moduleArrayVersion,
                                      maxIndices,NULL,NULL);
 
-      theDeffunction = (DEFFUNCTION *) EnvGetNextDeffunction(theEnv,NULL);
+      theDeffunction = EnvGetNextDeffunction(theEnv,NULL);
 
       while (theDeffunction != NULL)
         {
          deffunctionFile = OpenFileIfNeeded(theEnv,deffunctionFile,fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
                                             deffunctionArrayVersion,headerFP,
-                                            "DEFFUNCTION",ConstructPrefix(DeffunctionData(theEnv)->DeffunctionCodeItem),
+                                            "Deffunction",ConstructPrefix(DeffunctionData(theEnv)->DeffunctionCodeItem),
                                             false,NULL);
          if (deffunctionFile == NULL)
            {
@@ -236,10 +237,10 @@ static bool DeffunctionsToCode(
          deffunctionFile = CloseFileIfNeeded(theEnv,deffunctionFile,&deffunctionArrayCount,
                                              &deffunctionArrayVersion,maxIndices,NULL,NULL);
 
-         theDeffunction = (DEFFUNCTION *) EnvGetNextDeffunction(theEnv,theDeffunction);
+         theDeffunction = EnvGetNextDeffunction(theEnv,theDeffunction);
         }
 
-      theModule = (struct defmodule *) EnvGetNextDefmodule(theEnv,theModule);
+      theModule = EnvGetNextDefmodule(theEnv,theModule);
       moduleCount++;
       moduleArrayCount++;
      }
@@ -262,7 +263,7 @@ static bool DeffunctionsToCode(
   NOTES        : None
  ***************************************************/
 static void CloseDeffunctionFiles(
-  void *theEnv,
+  Environment *theEnv,
   FILE *moduleFile,
   FILE *deffunctionFile,
   int maxIndices)
@@ -297,9 +298,9 @@ static void CloseDeffunctionFiles(
   NOTES        : None
  ***************************************************/
 static void DeffunctionModuleToCode(
-  void *theEnv,
+  Environment *theEnv,
   FILE *theFile,
-  struct defmodule *theModule,
+  Defmodule *theModule,
   int imageID,
   int maxIndices)
   {
@@ -324,9 +325,9 @@ static void DeffunctionModuleToCode(
   NOTES        : None
  ***************************************************/
 static void SingleDeffunctionToCode(
-  void *theEnv,
+  Environment *theEnv,
   FILE *theFile,
-  DEFFUNCTION *theDeffunction,
+  Deffunction *theDeffunction,
   int imageID,
   int maxIndices,
   int moduleCount)
@@ -354,12 +355,3 @@ static void SingleDeffunctionToCode(
   }
 
 #endif
-
-/***************************************************
-  NAME         :
-  DESCRIPTION  :
-  INPUTS       :
-  RETURNS      :
-  SIDE EFFECTS :
-  NOTES        :
- ***************************************************/

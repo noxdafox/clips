@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/04/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*             BASIC MATH FUNCTIONS MODULE             */
    /*******************************************************/
@@ -37,6 +37,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -63,7 +66,7 @@ struct basicMathFunctionData
 /* BasicMathFunctionDefinitions: Defines basic math functions. */
 /***************************************************************/
 void BasicMathFunctionDefinitions(
-  void *theEnv)
+  Environment *theEnv)
   {
    AllocateEnvironmentData(theEnv,BMATHFUN_DATA,sizeof(struct basicMathFunctionData),NULL);
    
@@ -94,7 +97,7 @@ void BasicMathFunctionDefinitions(
 /*   routine for the + function.  */
 /**********************************/
 void AdditionFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
    double ftotal = 0.0;
@@ -142,12 +145,12 @@ void AdditionFunction(
    if (useFloatTotal)
      {
       returnValue->type = FLOAT;
-      returnValue->value = (void *) EnvAddDouble(theEnv,ftotal);
+      returnValue->value = EnvAddDouble(theEnv,ftotal);
      }
    else
      {
       returnValue->type = INTEGER;
-      returnValue->value = (void *) EnvAddLong(theEnv,ltotal);
+      returnValue->value = EnvAddLong(theEnv,ltotal);
      }
   }
 
@@ -156,7 +159,7 @@ void AdditionFunction(
 /*   routine for the * function.        */
 /****************************************/
 void MultiplicationFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
    double ftotal = 1.0;
@@ -203,12 +206,12 @@ void MultiplicationFunction(
    if (useFloatTotal)
      {
       returnValue->type = FLOAT;
-      returnValue->value = (void *) EnvAddDouble(theEnv,ftotal);
+      returnValue->value = EnvAddDouble(theEnv,ftotal);
      }
    else
      {
       returnValue->type = INTEGER;
-      returnValue->value = (void *) EnvAddLong(theEnv,ltotal);
+      returnValue->value = EnvAddLong(theEnv,ltotal);
      }
   }
 
@@ -217,7 +220,7 @@ void MultiplicationFunction(
 /*   routine for the - function.     */
 /*************************************/
 void SubtractionFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
    double ftotal = 0.0;
@@ -284,12 +287,12 @@ void SubtractionFunction(
    if (useFloatTotal)
      {
       returnValue->type = FLOAT;
-      returnValue->value = (void *) EnvAddDouble(theEnv,ftotal);
+      returnValue->value = EnvAddDouble(theEnv,ftotal);
      }
    else
      {
       returnValue->type = INTEGER;
-      returnValue->value = (void *) EnvAddLong(theEnv,ltotal);
+      returnValue->value = EnvAddLong(theEnv,ltotal);
      }
   }
 
@@ -298,7 +301,7 @@ void SubtractionFunction(
 /*   routine for the / function.   */
 /***********************************/
 void DivisionFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
    double ftotal = 1.0;
@@ -354,7 +357,7 @@ void DivisionFunction(
          EnvSetHaltExecution(theEnv,true);
          EnvSetEvaluationError(theEnv,true);
          returnValue->type = FLOAT;
-         returnValue->value = (void *) EnvAddDouble(theEnv,1.0);
+         returnValue->value = EnvAddDouble(theEnv,1.0);
          return;
         }
 
@@ -381,12 +384,12 @@ void DivisionFunction(
    if (useFloatTotal)
      {
       returnValue->type = FLOAT;
-      returnValue->value = (void *) EnvAddDouble(theEnv,ftotal);
+      returnValue->value = EnvAddDouble(theEnv,ftotal);
      }
    else
      {
       returnValue->type = INTEGER;
-      returnValue->value = (void *) EnvAddLong(theEnv,ltotal);
+      returnValue->value = EnvAddLong(theEnv,ltotal);
      }
   }
 
@@ -395,7 +398,7 @@ void DivisionFunction(
 /*   for the div function.           */
 /*************************************/
 long long DivFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    long long total = 1LL;
    EXPRESSION *theExpression;
@@ -466,7 +469,7 @@ long long DivFunction(
 /*   for the set-auto-float-dividend command.        */
 /*****************************************************/
 bool SetAutoFloatDividendCommand(
-  void *theEnv)
+  Environment *theEnv)
   {
    bool oldValue;
    DATA_OBJECT theArgument;
@@ -507,7 +510,7 @@ bool SetAutoFloatDividendCommand(
 /*   for the get-auto-float-dividend command.        */
 /*****************************************************/
 bool GetAutoFloatDividendCommand(
-  void *theEnv)
+  Environment *theEnv)
   {
    /*============================================*/
    /* Check for the correct number of arguments. */
@@ -527,7 +530,7 @@ bool GetAutoFloatDividendCommand(
 /*   the get-auto-float-dividend command.        */
 /*************************************************/
 bool EnvGetAutoFloatDividend(
-  void *theEnv)
+  Environment *theEnv)
   {
    return(BasicMathFunctionData(theEnv)->AutoFloatDividend);
   }
@@ -537,7 +540,7 @@ bool EnvGetAutoFloatDividend(
 /*   the set-auto-float-dividend command.        */
 /*************************************************/
 bool EnvSetAutoFloatDividend(
-  void *theEnv,
+  Environment *theEnv,
   bool value)
   {
    bool ov;
@@ -552,7 +555,7 @@ bool EnvSetAutoFloatDividend(
 /*   for the integer function.           */
 /*****************************************/
 long long IntegerFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    DATA_OBJECT valstruct;
 
@@ -582,7 +585,7 @@ long long IntegerFunction(
 /*   for the float function.           */
 /***************************************/
 double FloatFunction(
-  void *theEnv)
+  Environment *theEnv)
   {
    DATA_OBJECT valstruct;
 
@@ -612,7 +615,7 @@ double FloatFunction(
 /*   for the abs function.           */
 /*************************************/
 void AbsFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
    /*============================================*/
@@ -622,7 +625,7 @@ void AbsFunction(
    if (EnvArgCountCheck(theEnv,"abs",EXACTLY,1) == -1)
      {
       returnValue->type = INTEGER;
-      returnValue->value = (void *) EnvAddLong(theEnv,0L);
+      returnValue->value = EnvAddLong(theEnv,0L);
       return;
      }
 
@@ -633,7 +636,7 @@ void AbsFunction(
    if (EnvArgTypeCheck(theEnv,"abs",1,INTEGER_OR_FLOAT,returnValue) == false)
      {
       returnValue->type = INTEGER;
-      returnValue->value = (void *) EnvAddLong(theEnv,0L);
+      returnValue->value = EnvAddLong(theEnv,0L);
       return;
      }
 
@@ -644,10 +647,10 @@ void AbsFunction(
    if (returnValue->type == INTEGER)
      {
       if (ValueToLong(returnValue->value) < 0L)
-        { returnValue->value = (void *) EnvAddLong(theEnv,- ValueToLong(returnValue->value)); }
+        { returnValue->value = EnvAddLong(theEnv,- ValueToLong(returnValue->value)); }
      }
    else if (ValueToDouble(returnValue->value) < 0.0)
-     { returnValue->value = (void *) EnvAddDouble(theEnv,- ValueToDouble(returnValue->value)); }
+     { returnValue->value = EnvAddDouble(theEnv,- ValueToDouble(returnValue->value)); }
   }
 
 /*************************************/
@@ -655,7 +658,7 @@ void AbsFunction(
 /*   for the min function.           */
 /*************************************/
 void MinFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
    DATA_OBJECT argValue;
@@ -668,7 +671,7 @@ void MinFunction(
    if ((numberOfArguments = EnvArgCountCheck(theEnv,"min",AT_LEAST,1)) == -1)
      {
       returnValue->type = INTEGER;
-      returnValue->value = (void *) EnvAddLong(theEnv,0L);
+      returnValue->value = EnvAddLong(theEnv,0L);
       return;
      }
 
@@ -679,7 +682,7 @@ void MinFunction(
    if (EnvArgTypeCheck(theEnv,"min",1,INTEGER_OR_FLOAT,returnValue) == false)
      {
       returnValue->type = INTEGER;
-      returnValue->value = (void *) EnvAddLong(theEnv,0L);
+      returnValue->value = EnvAddLong(theEnv,0L);
       return;
      }
 
@@ -744,7 +747,7 @@ void MinFunction(
 /*   for the max function.           */
 /*************************************/
 void MaxFunction(
-  void *theEnv,
+  Environment *theEnv,
   DATA_OBJECT_PTR returnValue)
   {
    DATA_OBJECT argValue;
@@ -757,7 +760,7 @@ void MaxFunction(
    if ((numberOfArguments = EnvArgCountCheck(theEnv,"max",AT_LEAST,1)) == -1)
      {
       returnValue->type = INTEGER;
-      returnValue->value = (void *) EnvAddLong(theEnv,0L);
+      returnValue->value = EnvAddLong(theEnv,0L);
       return;
      }
 
@@ -768,7 +771,7 @@ void MaxFunction(
    if (EnvArgTypeCheck(theEnv,"max",1,INTEGER_OR_FLOAT,returnValue) == false)
      {
       returnValue->type = INTEGER;
-      returnValue->value = (void *) EnvAddLong(theEnv,0L);
+      returnValue->value = EnvAddLong(theEnv,0L);
       return;
      }
 

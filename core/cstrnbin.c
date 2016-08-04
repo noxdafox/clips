@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/04/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*            CONSTRAINT BLOAD/BSAVE MODULE            */
    /*******************************************************/
@@ -25,6 +25,9 @@
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -84,9 +87,9 @@ typedef struct bsaveConstraintRecord BSAVE_CONSTRAINT_RECORD;
 /***************************************/
 
 #if BLOAD_AND_BSAVE
-   static void                    CopyToBsaveConstraintRecord(void *,CONSTRAINT_RECORD *,BSAVE_CONSTRAINT_RECORD *);
+   static void                    CopyToBsaveConstraintRecord(Environment *,CONSTRAINT_RECORD *,BSAVE_CONSTRAINT_RECORD *);
 #endif
-   static void                    CopyFromBsaveConstraintRecord(void *,void *,long);
+   static void                    CopyFromBsaveConstraintRecord(Environment *,void *,long);
 
 #if BLOAD_AND_BSAVE
 
@@ -96,7 +99,7 @@ typedef struct bsaveConstraintRecord BSAVE_CONSTRAINT_RECORD;
 /*   currently being saved.                       */
 /**************************************************/
 void WriteNeededConstraints(
-  void *theEnv,
+  Environment *theEnv,
   FILE *fp)
   {
    int i;
@@ -160,7 +163,7 @@ void WriteNeededConstraints(
 /*   constraints in a binary image.                 */
 /****************************************************/
 static void CopyToBsaveConstraintRecord(
-  void *theEnv,
+  Environment *theEnv,
   CONSTRAINT_RECORD *constraints,
   BSAVE_CONSTRAINT_RECORD *bsaveConstraints)
   {
@@ -198,9 +201,9 @@ static void CopyToBsaveConstraintRecord(
 /*   by the binary image currently being loaded.        */
 /********************************************************/
 void ReadNeededConstraints(
-  void *theEnv)
+  Environment *theEnv)
   {
-   GenReadBinary(theEnv,(void *) &ConstraintData(theEnv)->NumberOfConstraints,sizeof(unsigned long int));
+   GenReadBinary(theEnv,&ConstraintData(theEnv)->NumberOfConstraints,sizeof(unsigned long int));
    if (ConstraintData(theEnv)->NumberOfConstraints == 0) return;
 
    ConstraintData(theEnv)->ConstraintArray = (CONSTRAINT_RECORD *)
@@ -216,7 +219,7 @@ void ReadNeededConstraints(
 /*   for storing constraints in a binary image.      */
 /*****************************************************/
 static void CopyFromBsaveConstraintRecord(
-  void *theEnv,
+  Environment *theEnv,
   void *buf,
   long theIndex)
   {
@@ -260,11 +263,11 @@ static void CopyFromBsaveConstraintRecord(
 /*   with constraints loaded from binary image          */
 /********************************************************/
 void ClearBloadedConstraints(
-  void *theEnv)
+  Environment *theEnv)
   {
    if (ConstraintData(theEnv)->NumberOfConstraints != 0)
      {
-      genfree(theEnv,(void *) ConstraintData(theEnv)->ConstraintArray,
+      genfree(theEnv,ConstraintData(theEnv)->ConstraintArray,
                      (sizeof(CONSTRAINT_RECORD) * ConstraintData(theEnv)->NumberOfConstraints));
       ConstraintData(theEnv)->NumberOfConstraints = 0;
      }

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*            DEFFACTS CONSTRUCTS-TO-C MODULE          */
    /*******************************************************/
@@ -32,6 +32,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -50,19 +53,19 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static bool                    ConstructToCode(void *,const char *,const char *,char *,int,FILE *,int,int);
-   static void                    DeffactsToCode(void *,FILE *,struct deffacts *,
+   static bool                    ConstructToCode(Environment *,const char *,const char *,char *,int,FILE *,int,int);
+   static void                    DeffactsToCode(Environment *,FILE *,Deffacts *,
                                                  int,int,int);
-   static void                    DeffactsModuleToCode(void *,FILE *,struct defmodule *,int,int,int);
-   static void                    CloseDeffactsFiles(void *,FILE *,FILE *,int);
-   static void                    BeforeDeffactsToCode(void *);
+   static void                    DeffactsModuleToCode(Environment *,FILE *,Defmodule *,int,int,int);
+   static void                    CloseDeffactsFiles(Environment *,FILE *,FILE *,int);
+   static void                    BeforeDeffactsToCode(Environment *);
 
 /*************************************************************/
 /* DeffactsCompilerSetup: Initializes the deffacts construct */
 /*    for use with the constructs-to-c command.              */
 /*************************************************************/
 void DeffactsCompilerSetup(
-  void *theEnv)
+  Environment *theEnv)
   {
    DeffactsData(theEnv)->DeffactsCodeItem = 
       AddCodeGeneratorItem(theEnv,"deffacts",0,BeforeDeffactsToCode,
@@ -75,7 +78,7 @@ void DeffactsCompilerSetup(
 /*   structures are written to a file as C code              */
 /*************************************************************/
 static void BeforeDeffactsToCode(
-  void *theEnv)
+  Environment *theEnv)
   {
    MarkConstructBsaveIDs(theEnv,DeffactsData(theEnv)->DeffactsModuleIndex);
   }
@@ -85,7 +88,7 @@ static void BeforeDeffactsToCode(
 /*   module created using the constructs-to-c function.   */
 /**********************************************************/
 static bool ConstructToCode(
-  void *theEnv,
+  Environment *theEnv,
   const char *fileName,
   const char *pathName,
   char *fileNameBuffer,
@@ -95,8 +98,8 @@ static bool ConstructToCode(
   int maxIndices)
   {
    int fileCount = 1;
-   struct defmodule *theModule;
-   struct deffacts *theDeffacts;
+   Defmodule *theModule;
+   Deffacts *theDeffacts;
    int moduleCount = 0, moduleArrayCount = 0, moduleArrayVersion = 1;
    int deffactsArrayCount = 0, deffactsArrayVersion = 1;
    FILE *moduleFile = NULL, *deffactsFile = NULL;
@@ -112,11 +115,11 @@ static bool ConstructToCode(
    /* C code representation to the file as they are traversed.        */
    /*=================================================================*/
 
-   for (theModule = (struct defmodule *) EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = (struct defmodule *) EnvGetNextDefmodule(theEnv,theModule))
+        theModule = EnvGetNextDefmodule(theEnv,theModule))
      {
-      EnvSetCurrentModule(theEnv,(void *) theModule);
+      EnvSetCurrentModule(theEnv,theModule);
 
       moduleFile = OpenFileIfNeeded(theEnv,moduleFile,fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
                                     moduleArrayVersion,headerFP,
@@ -137,13 +140,13 @@ static bool ConstructToCode(
       /* Loop through each of the deffacts in this module. */
       /*===================================================*/
 
-      for (theDeffacts = (struct deffacts *) EnvGetNextDeffacts(theEnv,NULL);
+      for (theDeffacts = EnvGetNextDeffacts(theEnv,NULL);
            theDeffacts != NULL;
-           theDeffacts = (struct deffacts *) EnvGetNextDeffacts(theEnv,theDeffacts))
+           theDeffacts = EnvGetNextDeffacts(theEnv,theDeffacts))
         {
          deffactsFile = OpenFileIfNeeded(theEnv,deffactsFile,fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
                                          deffactsArrayVersion,headerFP,
-                                         "struct deffacts",ConstructPrefix(DeffactsData(theEnv)->DeffactsCodeItem),
+                                         "Deffacts",ConstructPrefix(DeffactsData(theEnv)->DeffactsCodeItem),
                                          false,NULL);
          if (deffactsFile == NULL)
            {
@@ -172,7 +175,7 @@ static bool ConstructToCode(
 /*   the deffacts have all been written to the files.    */
 /*********************************************************/
 static void CloseDeffactsFiles(
-  void *theEnv,
+  Environment *theEnv,
   FILE *moduleFile,
   FILE *deffactsFile,
   int maxIndices)
@@ -198,9 +201,9 @@ static void CloseDeffactsFiles(
 /*   of a single deffacts module to the specified file.   */
 /**********************************************************/
 static void DeffactsModuleToCode(
-  void *theEnv,
+  Environment *theEnv,
   FILE *theFile,
-  struct defmodule *theModule,
+  Defmodule *theModule,
   int imageID,
   int maxIndices,
   int moduleCount)
@@ -223,9 +226,9 @@ static void DeffactsModuleToCode(
 /*   single deffacts construct to the specified file.    */
 /*********************************************************/
 static void DeffactsToCode(
-  void *theEnv,
+  Environment *theEnv,
   FILE *theFile,
-  struct deffacts *theDeffacts,
+  Deffacts *theDeffacts,
   int imageID,
   int maxIndices,
   int moduleCount)
@@ -255,7 +258,7 @@ static void DeffactsToCode(
 /*   of a reference to a deffacts module data structure.      */
 /**************************************************************/
 void DeffactsCModuleReference(
-  void *theEnv,
+  Environment *theEnv,
   FILE *theFile,
   int count,
   int imageID,

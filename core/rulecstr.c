@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*              RULE CONSTRAINTS MODULE                */
    /*******************************************************/
@@ -24,6 +24,9 @@
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -50,15 +53,15 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static bool                    CheckForUnmatchableConstraints(void *,struct lhsParseNode *,int);
-   static bool                    MultifieldCardinalityViolation(void *,struct lhsParseNode *);
-   static struct lhsParseNode    *UnionVariableConstraints(void *,struct lhsParseNode *,
-                                                     struct lhsParseNode *);
-   static struct lhsParseNode    *AddToVariableConstraints(void *,struct lhsParseNode *,
-                                                    struct lhsParseNode *);
-   static void                    ConstraintConflictMessage(void *,struct symbolHashNode *,
+   static bool                    CheckForUnmatchableConstraints(Environment *,struct lhsParseNode *,int);
+   static bool                    MultifieldCardinalityViolation(Environment *,struct lhsParseNode *);
+   static struct lhsParseNode    *UnionVariableConstraints(Environment *,struct lhsParseNode *,
+                                                           struct lhsParseNode *);
+   static struct lhsParseNode    *AddToVariableConstraints(Environment *,struct lhsParseNode *,
+                                                           struct lhsParseNode *);
+   static void                    ConstraintConflictMessage(Environment *,struct symbolHashNode *,
                                                             int,int,struct symbolHashNode *);
-   static bool                    CheckArgumentForConstraintError(void *,struct expr *,struct expr*,
+   static bool                    CheckArgumentForConstraintError(Environment *,struct expr *,struct expr*,
                                                                   int,struct FunctionDefinition *,
                                                                   struct lhsParseNode *);
 
@@ -68,7 +71,7 @@
 /*   there are unmatchable constraints, otherwise false.   */
 /***********************************************************/
 static bool CheckForUnmatchableConstraints(
-  void *theEnv,
+  Environment *theEnv,
   struct lhsParseNode *theNode,
   int whichCE)
   {
@@ -90,7 +93,7 @@ static bool CheckForUnmatchableConstraints(
 /*   value from matching the pattern constraint.      */
 /******************************************************/
 static void ConstraintConflictMessage(
-  void *theEnv,
+  Environment *theEnv,
   struct symbolHashNode *variableName,
   int thePattern,
   int theField,
@@ -148,7 +151,7 @@ static void ConstraintConflictMessage(
 /*   violation has occurred for a LHS CE node.                 */
 /***************************************************************/
 static bool MultifieldCardinalityViolation(
-  void *theEnv,
+  Environment *theEnv,
   struct lhsParseNode *theNode)
   {
    struct lhsParseNode *tmpNode;
@@ -268,7 +271,7 @@ static bool MultifieldCardinalityViolation(
 /*   violations.                                   */
 /***************************************************/
 bool ProcessConnectedConstraints(
-  void *theEnv,
+  Environment *theEnv,
   struct lhsParseNode *theNode,
   struct lhsParseNode *multifieldHeader,
   struct lhsParseNode *patternHead)
@@ -406,7 +409,7 @@ bool ProcessConnectedConstraints(
 /*   that occur within an expression.             */
 /**************************************************/
 void ConstraintReferenceErrorMessage(
-  void *theEnv,
+  Environment *theEnv,
   struct symbolHashNode *theVariable,
   struct lhsParseNode *theExpression,
   int whichArgument,
@@ -477,7 +480,7 @@ void ConstraintReferenceErrorMessage(
 /*   variable are intersected with the new constraints. */
 /********************************************************/
 static struct lhsParseNode *AddToVariableConstraints(
-  void *theEnv,
+  Environment *theEnv,
   struct lhsParseNode *oldList,
   struct lhsParseNode *newItems)
   {
@@ -551,7 +554,7 @@ static struct lhsParseNode *AddToVariableConstraints(
 /*   thus not included in the unioned list.                */
 /***********************************************************/
 static struct lhsParseNode *UnionVariableConstraints(
-  void *theEnv,
+  Environment *theEnv,
   struct lhsParseNode *list1,
   struct lhsParseNode *list2)
   {
@@ -621,7 +624,7 @@ static struct lhsParseNode *UnionVariableConstraints(
 /*   expects numeric arguments.                                  */
 /*****************************************************************/
 struct lhsParseNode *GetExpressionVarConstraints(
-  void *theEnv,
+  Environment *theEnv,
   struct lhsParseNode *theExpression)
   {
    struct lhsParseNode *list1 = NULL, *list2;
@@ -657,7 +660,7 @@ struct lhsParseNode *GetExpressionVarConstraints(
 /*   single connected constraint.              */
 /***********************************************/
 struct lhsParseNode *DeriveVariableConstraints(
-  void *theEnv,
+  Environment *theEnv,
   struct lhsParseNode *theNode)
   {
    struct lhsParseNode *orNode, *andNode;
@@ -703,7 +706,7 @@ struct lhsParseNode *DeriveVariableConstraints(
 /*   RHS of a rule for constraint errors.  */
 /*******************************************/
 bool CheckRHSForConstraintErrors(
-  void *theEnv,
+  Environment *theEnv,
   struct expr *expressionList,
   struct lhsParseNode *theLHS)
   {
@@ -755,7 +758,7 @@ bool CheckRHSForConstraintErrors(
 /*   Returns true if an error is detected, otherwise false.  */
 /*************************************************************/
 static bool CheckArgumentForConstraintError(
-  void *theEnv,
+  Environment *theEnv,
   struct expr *expressionList,
   struct expr *lastOne,
   int i,

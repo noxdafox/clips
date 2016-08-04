@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/05/16             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*          PROCEDURAL FUNCTIONS PARSER MODULE         */
    /*******************************************************/
@@ -37,6 +37,9 @@
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -81,18 +84,18 @@ struct procedureParserData
 /***************************************/
 
 #if (! RUN_TIME)
-   static void                    DeallocateProceduralFunctionData(void *);
+   static void                    DeallocateProceduralFunctionData(Environment *);
 #if (! BLOAD_ONLY)
-   static struct expr            *WhileParse(void *,struct expr *,const char *);
-   static struct expr            *LoopForCountParse(void *,struct expr *,const char *);
-   static void                    ReplaceLoopCountVars(void *,SYMBOL_HN *,EXPRESSION *,int);
-   static struct expr            *IfParse(void *,struct expr *,const char *);
-   static struct expr            *PrognParse(void *,struct expr *,const char *);
-   static struct expr            *BindParse(void *,struct expr *,const char *);
-   static int                     AddBindName(void *,struct symbolHashNode *,CONSTRAINT_RECORD *);
-   static struct expr            *ReturnParse(void *,struct expr *,const char *);
-   static struct expr            *BreakParse(void *,struct expr *,const char *);
-   static struct expr            *SwitchParse(void *,struct expr *,const char *);
+   static struct expr            *WhileParse(Environment *,struct expr *,const char *);
+   static struct expr            *LoopForCountParse(Environment *,struct expr *,const char *);
+   static void                    ReplaceLoopCountVars(Environment *,SYMBOL_HN *,EXPRESSION *,int);
+   static struct expr            *IfParse(Environment *,struct expr *,const char *);
+   static struct expr            *PrognParse(Environment *,struct expr *,const char *);
+   static struct expr            *BindParse(Environment *,struct expr *,const char *);
+   static int                     AddBindName(Environment *,struct symbolHashNode *,CONSTRAINT_RECORD *);
+   static struct expr            *ReturnParse(Environment *,struct expr *,const char *);
+   static struct expr            *BreakParse(Environment *,struct expr *,const char *);
+   static struct expr            *SwitchParse(Environment *,struct expr *,const char *);
 #endif
 #endif
 
@@ -101,7 +104,7 @@ struct procedureParserData
 /* ProceduralFunctionParsers */
 /*****************************/
 void ProceduralFunctionParsers(
-  void *theEnv)
+  Environment *theEnv)
   {
    AllocateEnvironmentData(theEnv,PRCDRPSR_DATA,sizeof(struct procedureParserData),DeallocateProceduralFunctionData);
 
@@ -122,7 +125,7 @@ void ProceduralFunctionParsers(
 /*    data for procedural functions.                         */
 /*************************************************************/
 static void DeallocateProceduralFunctionData(
-  void *theEnv)
+  Environment *theEnv)
   { 
    struct BindInfo *temp_bind;
 
@@ -138,7 +141,7 @@ static void DeallocateProceduralFunctionData(
 /* GetParsedBindNames: */
 /***********************/
 struct BindInfo *GetParsedBindNames(
-  void *theEnv)
+  Environment *theEnv)
   {
    return(ProcedureParserData(theEnv)->ListOfParsedBindNames);
   }
@@ -147,7 +150,7 @@ struct BindInfo *GetParsedBindNames(
 /* SetParsedBindNames: */
 /***********************/
 void SetParsedBindNames(
-  void *theEnv,
+  Environment *theEnv,
   struct BindInfo *newValue)
   {
    ProcedureParserData(theEnv)->ListOfParsedBindNames = newValue;
@@ -157,7 +160,7 @@ void SetParsedBindNames(
 /* ClearParsedBindNames: */
 /*************************/
 void ClearParsedBindNames(
-  void *theEnv)
+  Environment *theEnv)
   {
    struct BindInfo *temp_bind;
 
@@ -174,7 +177,7 @@ void ClearParsedBindNames(
 /* ParsedBindNamesEmpty: */
 /*************************/
 bool ParsedBindNamesEmpty(
-  void *theEnv)
+  Environment *theEnv)
   {
    if (ProcedureParserData(theEnv)->ListOfParsedBindNames != NULL) return false;
 
@@ -189,7 +192,7 @@ bool ParsedBindNamesEmpty(
 /*   Syntax: (while <expression> do <action>+)           */
 /*********************************************************/
 static struct expr *WhileParse(
-  void *theEnv,
+  Environment *theEnv,
   struct expr *parse,
   const char *infile)
   {
@@ -206,7 +209,7 @@ static struct expr *WhileParse(
    if (parse->argList == NULL)
      {
       ReturnExpression(theEnv,parse);
-      return(NULL);
+      return NULL;
      }
 
    /*====================================*/
@@ -235,7 +238,7 @@ static struct expr *WhileParse(
      {
       SyntaxErrorMessage(theEnv,"while function");
       ReturnExpression(theEnv,parse);
-      return(NULL);
+      return NULL;
      }
 
    /*============================*/
@@ -249,7 +252,7 @@ static struct expr *WhileParse(
    if (parse->argList->nextArg == NULL)
      {
       ReturnExpression(theEnv,parse);
-      return(NULL);
+      return NULL;
      }
    PPBackup(theEnv);
    PPBackup(theEnv);
@@ -263,7 +266,7 @@ static struct expr *WhileParse(
      {
       SyntaxErrorMessage(theEnv,"while function");
       ReturnExpression(theEnv,parse);
-      return(NULL);
+      return NULL;
      }
 
    DecrementIndentDepth(theEnv,3);
@@ -278,7 +281,7 @@ static struct expr *WhileParse(
 /*           <range> ::= (<sf-var> [<start-integer-expression>] <end-integer-expression>) */
 /******************************************************************************************/
 static struct expr *LoopForCountParse(
-  void *theEnv,
+  Environment *theEnv,
   struct expr *parse,
   const char *infile)
   {
@@ -305,7 +308,7 @@ static struct expr *LoopForCountParse(
       if (parse->argList->nextArg == NULL)
         {
          ReturnExpression(theEnv,parse);
-         return(NULL);
+         return NULL;
         }
      }
    else
@@ -320,7 +323,7 @@ static struct expr *LoopForCountParse(
          if (parse->argList->nextArg == NULL)
            {
             ReturnExpression(theEnv,parse);
-            return(NULL);
+            return NULL;
            }
         }
 
@@ -335,7 +338,7 @@ static struct expr *LoopForCountParse(
          if (parse->argList == NULL)
            {
             ReturnExpression(theEnv,parse);
-            return(NULL);
+            return NULL;
            }
          if (CheckArgumentAgainstRestriction(theEnv,parse->argList,(int) 'i'))
            goto LoopForCountParseError;
@@ -356,7 +359,7 @@ static struct expr *LoopForCountParse(
             if (parse->argList->nextArg == NULL)
               {
                ReturnExpression(theEnv,parse);
-               return(NULL);
+               return NULL;
               }
             GetToken(theEnv,infile,&theToken);
             if (theToken.type != RPAREN)
@@ -409,7 +412,7 @@ static struct expr *LoopForCountParse(
      {
       SetParsedBindNames(theEnv,oldBindList);
       ReturnExpression(theEnv,parse);
-      return(NULL);
+      return NULL;
      }
    newBindList = GetParsedBindNames(theEnv);
    prev = NULL;
@@ -423,7 +426,7 @@ static struct expr *LoopForCountParse(
          PrintErrorID(theEnv,"PRCDRPSR",1,true);
          EnvPrintRouter(theEnv,WERROR,"Cannot rebind loop variable in function loop-for-count.\n");
          ReturnExpression(theEnv,parse);
-         return(NULL);
+         return NULL;
         }
       prev = newBindList;
       newBindList = newBindList->next;
@@ -446,7 +449,7 @@ static struct expr *LoopForCountParse(
      {
       SyntaxErrorMessage(theEnv,"loop-for-count function");
       ReturnExpression(theEnv,parse);
-      return(NULL);
+      return NULL;
      }
 
    DecrementIndentDepth(theEnv,3);
@@ -456,14 +459,14 @@ static struct expr *LoopForCountParse(
 LoopForCountParseError:
    SyntaxErrorMessage(theEnv,"loop-for-count function");
    ReturnExpression(theEnv,parse);
-   return(NULL);
+   return NULL;
   }
 
-/***************************************************/
-/* ReplaceLoopCountVars                            */
-/***************************************************/
+/*************************/
+/* ReplaceLoopCountVars: */
+/*************************/
 static void ReplaceLoopCountVars(
-  void *theEnv,
+  Environment *theEnv,
   SYMBOL_HN *loopVar,
   EXPRESSION *theExp,
   int depth)
@@ -474,7 +477,7 @@ static void ReplaceLoopCountVars(
           (strcmp(ValueToString(theExp->value),ValueToString(loopVar)) == 0))
         {
          theExp->type = FCALL;
-         theExp->value = (void *) FindFunction(theEnv,"(get-loop-count)");
+         theExp->value = FindFunction(theEnv,"(get-loop-count)");
          theExp->argList = GenConstant(theEnv,INTEGER,EnvAddLong(theEnv,(long long) depth));
         }
       else if (theExp->argList != NULL)
@@ -496,7 +499,7 @@ static void ReplaceLoopCountVars(
 /*               [ else <action>+ ] )                    */
 /*********************************************************/
 static struct expr *IfParse(
-  void *theEnv,
+  Environment *theEnv,
   struct expr *top,
   const char *infile)
   {
@@ -513,7 +516,7 @@ static struct expr *IfParse(
    if (top->argList == NULL)
      {
       ReturnExpression(theEnv,top);
-      return(NULL);
+      return NULL;
      }
 
    /*========================================*/
@@ -528,7 +531,7 @@ static struct expr *IfParse(
      {
       SyntaxErrorMessage(theEnv,"if function");
       ReturnExpression(theEnv,top);
-      return(NULL);
+      return NULL;
      }
 
    /*==============================*/
@@ -545,7 +548,7 @@ static struct expr *IfParse(
    if (top->argList->nextArg == NULL)
      {
       ReturnExpression(theEnv,top);
-      return(NULL);
+      return NULL;
      }
 
    top->argList->nextArg = RemoveUnneededProgn(theEnv,top->argList->nextArg);
@@ -571,7 +574,7 @@ static struct expr *IfParse(
      {
       SyntaxErrorMessage(theEnv,"if function");
       ReturnExpression(theEnv,top);
-      return(NULL);
+      return NULL;
      }
 
    /*==============================*/
@@ -584,7 +587,7 @@ static struct expr *IfParse(
    if (top->argList->nextArg->nextArg == NULL)
      {
       ReturnExpression(theEnv,top);
-      return(NULL);
+      return NULL;
      }
 
    top->argList->nextArg->nextArg = RemoveUnneededProgn(theEnv,top->argList->nextArg->nextArg);
@@ -597,7 +600,7 @@ static struct expr *IfParse(
      {
       SyntaxErrorMessage(theEnv,"if function");
       ReturnExpression(theEnv,top);
-      return(NULL);
+      return NULL;
      }
 
    /*===========================================*/
@@ -617,7 +620,7 @@ static struct expr *IfParse(
 /*   Syntax:  (progn <expression>*)                     */
 /********************************************************/
 static struct expr *PrognParse(
-  void *theEnv,
+  Environment *theEnv,
   struct expr *top,
   const char *infile)
   {
@@ -643,7 +646,7 @@ static struct expr *PrognParse(
 /*   Syntax:  (bind ?var <expression>)                     */
 /***********************************************************/
 static struct expr *BindParse(
-  void *theEnv,
+  Environment *theEnv,
   struct expr *top,
   const char *infile)
   {
@@ -652,7 +655,7 @@ static struct expr *BindParse(
    struct expr *texp;
    CONSTRAINT_RECORD *theConstraint = NULL;
 #if DEFGLOBAL_CONSTRUCT
-   struct defglobal *theGlobal;
+   Defglobal *theGlobal;
    int count;
 #endif
 
@@ -670,7 +673,7 @@ static struct expr *BindParse(
         {
          SyntaxErrorMessage(theEnv,"bind function");
          ReturnExpression(theEnv,top);
-         return(NULL);
+         return NULL;
         }
      }
 
@@ -683,19 +686,19 @@ static struct expr *BindParse(
 
 #if DEFGLOBAL_CONSTRUCT
    if ((theToken.type == GBL_VARIABLE) ?
-       ((theGlobal = (struct defglobal *)
+       ((theGlobal = (Defglobal *)
                      FindImportedConstruct(theEnv,"defglobal",NULL,ValueToString(variableName),
                                            &count,true,NULL)) != NULL) :
        false)
      {
       top->argList->type = DEFGLOBAL_PTR;
-      top->argList->value = (void *) theGlobal;
+      top->argList->value = theGlobal;
      }
    else if (theToken.type == GBL_VARIABLE)
      {
       GlobalReferenceErrorMessage(theEnv,ValueToString(variableName));
       ReturnExpression(theEnv,top);
-      return(NULL);
+      return NULL;
      }
 #endif
 
@@ -704,7 +707,7 @@ static struct expr *BindParse(
    if (CollectArguments(theEnv,texp,infile) == NULL)
      {
       ReturnExpression(theEnv,top);
-      return(NULL);
+      return NULL;
      }
 
    top->argList->nextArg = texp->argList;
@@ -726,7 +729,7 @@ static struct expr *BindParse(
 /* ReturnParse: Parses the return function. */
 /********************************************/
 static struct expr *ReturnParse(
-  void *theEnv,
+  Environment *theEnv,
   struct expr *top,
   const char *infile)
   {
@@ -740,7 +743,7 @@ static struct expr *ReturnParse(
       PrintErrorID(theEnv,"PRCDRPSR",2,true);
       EnvPrintRouter(theEnv,WERROR,"The return function is not valid in this context.\n");
       ReturnExpression(theEnv,top);
-      return(NULL);
+      return NULL;
      }
    ExpressionData(theEnv)->ReturnContext = false;
 
@@ -750,7 +753,7 @@ static struct expr *ReturnParse(
    if (error_flag)
      {
       ReturnExpression(theEnv,top);
-      return(NULL);
+      return NULL;
      }
    else if (top->argList == NULL)
      {
@@ -766,7 +769,7 @@ static struct expr *ReturnParse(
         {
          SyntaxErrorMessage(theEnv,"return function");
          ReturnExpression(theEnv,top);
-         return(NULL);
+         return NULL;
         }
       PPBackup(theEnv);
       PPBackup(theEnv);
@@ -775,11 +778,11 @@ static struct expr *ReturnParse(
    return(top);
   }
 
-/**********************************************/
-/* BreakParse:                                */
-/**********************************************/
+/***************/
+/* BreakParse: */
+/***************/
 static struct expr *BreakParse(
-  void *theEnv,
+  Environment *theEnv,
   struct expr *top,
   const char *infile)
   {
@@ -790,7 +793,7 @@ static struct expr *BreakParse(
       PrintErrorID(theEnv,"PRCDRPSR",2,true);
       EnvPrintRouter(theEnv,WERROR,"The break function not valid in this context.\n");
       ReturnExpression(theEnv,top);
-      return(NULL);
+      return NULL;
      }
 
    SavePPBuffer(theEnv," ");
@@ -799,7 +802,7 @@ static struct expr *BreakParse(
      {
       SyntaxErrorMessage(theEnv,"break function");
       ReturnExpression(theEnv,top);
-      return(NULL);
+      return NULL;
      }
    PPBackup(theEnv);
    PPBackup(theEnv);
@@ -807,11 +810,11 @@ static struct expr *BreakParse(
    return(top);
   }
 
-/**********************************************/
-/* SwitchParse:                               */
-/**********************************************/
+/****************/
+/* SwitchParse: */
+/****************/
 static struct expr *SwitchParse(
-  void *theEnv,
+  Environment *theEnv,
   struct expr *top,
   const char *infile)
   {
@@ -903,14 +906,14 @@ SwitchParseErrorAndMessage:
 SwitchParseError:
    ReturnExpression(theEnv,top);
    DecrementIndentDepth(theEnv,3);
-   return(NULL);
+   return NULL;
   }
 
 /**************************/
 /* SearchParsedBindNames: */
 /**************************/
 int SearchParsedBindNames(
-  void *theEnv,
+  Environment *theEnv,
   SYMBOL_HN *name_sought)
   {
    struct BindInfo *var_ptr;
@@ -932,7 +935,7 @@ int SearchParsedBindNames(
 /* FindBindConstraints: */
 /************************/
 struct constraintRecord *FindBindConstraints(
-  void *theEnv,
+  Environment *theEnv,
   SYMBOL_HN *nameSought)
   {
    struct BindInfo *theVariable;
@@ -945,7 +948,7 @@ struct constraintRecord *FindBindConstraints(
       theVariable = theVariable->next;
      }
 
-   return(NULL);
+   return NULL;
   }
 
 /********************************************************/
@@ -954,7 +957,7 @@ struct constraintRecord *FindBindConstraints(
 /*   in the current context (e.g. the RHS of a rule).   */
 /********************************************************/
 int CountParsedBindNames(
-  void *theEnv)
+  Environment *theEnv)
   {
    struct BindInfo *theVariable;
    int theIndex = 0;
@@ -975,7 +978,7 @@ int CountParsedBindNames(
 /*   within the current semantic context (e.g. RHS of a rule).  */
 /****************************************************************/
 static int AddBindName(
-  void *theEnv,
+  Environment *theEnv,
   SYMBOL_HN *variableName,
   CONSTRAINT_RECORD *theConstraint)
   {
@@ -1027,11 +1030,11 @@ static int AddBindName(
    return(theIndex);
   }
 
-/********************************************************/
-/* RemoveParsedBindName:                                     */
-/********************************************************/
+/*************************/
+/* RemoveParsedBindName: */
+/*************************/
 void RemoveParsedBindName(
-  void *theEnv,
+  Environment *theEnv,
   struct symbolHashNode *bname)
   {
    struct BindInfo *prv,*tmp;

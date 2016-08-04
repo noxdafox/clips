@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/04/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*             CLASS EXAMINATION HEADER FILE           */
    /*******************************************************/
@@ -45,6 +45,9 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_classexm
@@ -55,50 +58,50 @@
 
 #if DEBUGGING_FUNCTIONS
 
-   void                           BrowseClassesCommand(void *);
-   void                           EnvBrowseClasses(void *,const char *,void *);
-   void                           DescribeClassCommand(void *);
-   void                           EnvDescribeClass(void *,const char *,void *);
+   void                           BrowseClassesCommand(Environment *);
+   void                           EnvBrowseClasses(Environment *,const char *,Defclass *);
+   void                           DescribeClassCommand(Environment *);
+   void                           EnvDescribeClass(Environment *,const char *,Defclass *);
 
 #endif /* DEBUGGING_FUNCTIONS */
 
-   const char                    *GetCreateAccessorString(void *);
-   void                          *GetDefclassModuleCommand(void *);
-   bool                           SuperclassPCommand(void *);
-   bool                           EnvSuperclassP(void *,void *,void *);
-   bool                           SubclassPCommand(void *);
-   bool                           EnvSubclassP(void *,void *,void *);
-   bool                           SlotExistPCommand(void *);
-   bool                           EnvSlotExistP(void *,void *,const char *,bool);
-   bool                           MessageHandlerExistPCommand(void *);
-   bool                           SlotWritablePCommand(void *);
-   bool                           EnvSlotWritableP(void *,void *,const char *);
-   bool                           SlotInitablePCommand(void *);
-   bool                           EnvSlotInitableP(void *,void *,const char *);
-   bool                           SlotPublicPCommand(void *);
-   bool                           EnvSlotPublicP(void *,void *,const char *);
-   bool                           SlotDirectAccessPCommand(void *);
-   bool                           EnvSlotDirectAccessP(void *,void *,const char *);
-   void                           SlotDefaultValueCommand(void *,DATA_OBJECT_PTR);
-   bool                           EnvSlotDefaultValue(void *,void *,const char *,DATA_OBJECT_PTR);
-   bool                           ClassExistPCommand(void *);
-   int                            EnvSlotDefaultP(void *,void *,const char *);
+   const char                    *GetCreateAccessorString(SlotDescriptor *);
+   void                          *GetDefclassModuleCommand(Environment *);
+   bool                           SuperclassPCommand(Environment *);
+   bool                           EnvSuperclassP(Environment *,Defclass *,Defclass *);
+   bool                           SubclassPCommand(Environment *);
+   bool                           EnvSubclassP(Environment *,Defclass *,Defclass *);
+   bool                           SlotExistPCommand(Environment *);
+   bool                           EnvSlotExistP(Environment *,Defclass *,const char *,bool);
+   bool                           MessageHandlerExistPCommand(Environment *);
+   bool                           SlotWritablePCommand(Environment *);
+   bool                           EnvSlotWritableP(Environment *,Defclass *,const char *);
+   bool                           SlotInitablePCommand(Environment *);
+   bool                           EnvSlotInitableP(Environment *,Defclass *,const char *);
+   bool                           SlotPublicPCommand(Environment *);
+   bool                           EnvSlotPublicP(Environment *,Defclass *,const char *);
+   bool                           SlotDirectAccessPCommand(Environment *);
+   bool                           EnvSlotDirectAccessP(Environment *,Defclass *,const char *);
+   void                           SlotDefaultValueCommand(Environment *,DATA_OBJECT_PTR);
+   bool                           EnvSlotDefaultValue(Environment *,Defclass *,const char *,DATA_OBJECT_PTR);
+   bool                           ClassExistPCommand(Environment *);
+   int                            EnvSlotDefaultP(Environment *,Defclass *,const char *);
   
 #if ALLOW_ENVIRONMENT_GLOBALS
 
 #if DEBUGGING_FUNCTIONS
-   void                           BrowseClasses(const char *,void *);
-   void                           DescribeClass(const char *,void *);
+   void                           BrowseClasses(const char *,Defclass *);
+   void                           DescribeClass(const char *,Defclass *);
 #endif
-   bool                           SlotDirectAccessP(void *,const char *);
-   bool                           SlotExistP(void *,const char *,bool);
-   bool                           SlotInitableP(void *,const char *);
-   bool                           SlotPublicP(void *,const char *);
-   int                            SlotDefaultP(void *,const char *);
-   bool                           SlotWritableP(void *,const char *);
-   bool                           SubclassP(void *,void *);
-   bool                           SuperclassP(void *,void *);
-   bool                           SlotDefaultValue(void *,const char *,DATA_OBJECT_PTR);
+   bool                           SlotDirectAccessP(Defclass *,const char *);
+   bool                           SlotExistP(Defclass *,const char *,bool);
+   bool                           SlotInitableP(Defclass *,const char *);
+   bool                           SlotPublicP(Defclass *,const char *);
+   int                            SlotDefaultP(Defclass *,const char *);
+   bool                           SlotWritableP(Defclass *,const char *);
+   bool                           SubclassP(Defclass *,Defclass *);
+   bool                           SuperclassP(Defclass *,Defclass *);
+   bool                           SlotDefaultValue(Defclass *,const char *,DATA_OBJECT_PTR);
 
 #endif /* ALLOW_ENVIRONMENT_GLOBALS */
 

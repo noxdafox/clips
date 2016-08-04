@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/05/16            */
+   /*             CLIPS Version 6.40  07/30/16            */
    /*                                                     */
    /*                 SCANNER HEADER FILE                 */
    /*******************************************************/
@@ -33,6 +33,9 @@
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -66,14 +69,14 @@ struct scannerData
 
 #define ScannerData(theEnv) ((struct scannerData *) GetEnvironmentData(theEnv,SCANNER_DATA))
 
-   void                           InitializeScannerData(void *);
-   void                           GetToken(void *,const char *,struct token *);
+   void                           InitializeScannerData(Environment *);
+   void                           GetToken(Environment *,const char *,struct token *);
    void                           CopyToken(struct token *,struct token *);
-   void                           ResetLineCount(void *);
-   long                           GetLineCount(void *);
-   long                           SetLineCount(void *,long);
-   void                           IncrementLineCount(void *);
-   void                           DecrementLineCount(void *);
+   void                           ResetLineCount(Environment *);
+   long                           GetLineCount(Environment *);
+   long                           SetLineCount(Environment *,long);
+   void                           IncrementLineCount(Environment *);
+   void                           DecrementLineCount(Environment *);
 
 #endif /* _H_scanner */
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.30  08/16/14             */
+   /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
    /*                USER FUNCTIONS MODULE                */
    /*******************************************************/
@@ -22,6 +22,9 @@
 /*      6.30: Removed conditional code for unsupported       */
 /*            compilers/operating systems (IBM_MCW,          */
 /*            MAC_MCW, and IBM_TBC).                         */
+/*                                                           */
+/*            Removed use of void pointers for specific      */
+/*            data structures.                               */
 /*                                                           */
 /*************************************************************/
 
@@ -48,7 +51,7 @@
 #include "clips.h"
 
 void UserFunctions(void);
-void EnvUserFunctions(void *);
+void EnvUserFunctions(Environment *);
 
 /*********************************************************/
 /* UserFunctions: Informs the expert system environment  */
@@ -75,7 +78,7 @@ void UserFunctions()
 /*   included in another file.                             */
 /***********************************************************/
 void EnvUserFunctions(
-  void *environment)
+  Environment *environment)
   {
 #if MAC_XCD
 #pragma unused(environment)
