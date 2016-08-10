@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*                 CONSTRAINT MODULE                   */
    /*******************************************************/
@@ -40,6 +40,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -631,33 +633,3 @@ bool EnvGetStaticConstraintChecking(
   {    
    return(ConstraintData(theEnv)->StaticConstraintChecking); 
   }
-
-/*#####################################*/
-/* ALLOW_ENVIRONMENT_GLOBALS Functions */
-/*#####################################*/
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-bool SetDynamicConstraintChecking(
-  int value)
-  {
-   return EnvSetDynamicConstraintChecking(GetCurrentEnvironment(),value);
-  }
-
-bool GetDynamicConstraintChecking()
-  { 
-   return EnvGetDynamicConstraintChecking(GetCurrentEnvironment());
-  }
-
-bool SetStaticConstraintChecking(
-  int value)
-  {
-   return EnvSetStaticConstraintChecking(GetCurrentEnvironment(),value);
-  }
-
-bool GetStaticConstraintChecking()
-  {    
-   return EnvGetStaticConstraintChecking(GetCurrentEnvironment());
-  }
-
-#endif

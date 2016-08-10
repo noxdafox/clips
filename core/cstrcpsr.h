@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*              CONSTRUCT PARSER MODULE                */
    /*******************************************************/
@@ -50,6 +50,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_cstrcpsr
@@ -61,10 +63,6 @@
 #include "evaluatn.h"
 #include "scanner.h"
 #include "constrct.h"
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-   int                            Load(const char *);
-#endif
 
    int                            EnvLoad(Environment *,const char *);
    int                            LoadConstructsFromLogicalName(Environment *,const char *);

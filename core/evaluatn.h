@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*               EVALUATION HEADER FILE                */
    /*******************************************************/
@@ -55,6 +55,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -248,12 +250,5 @@ struct evaluationData
    bool                           GetFunctionReference(Environment *,const char *,FUNCTION_REFERENCE *);
    bool                           DOsEqual(DATA_OBJECT_PTR,DATA_OBJECT_PTR);
    bool                           EvaluateAndStoreInDataObject(Environment *,bool,EXPRESSION *,DATA_OBJECT *,bool);
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-   void                           SetMultifieldErrorValue(DATA_OBJECT_PTR);
-   bool                           FunctionCall(const char *,const char *,DATA_OBJECT *);
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* _H_evaluatn */

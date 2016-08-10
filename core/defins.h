@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*               DEFINSTANCES HEADER FILE              */
    /*******************************************************/
@@ -44,6 +44,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -109,22 +111,6 @@ struct definstancesData
    void                           ListDefinstancesCommand(Environment *);
    void                           EnvListDefinstances(Environment *,const char *,Defmodule *);
 #endif
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-   const char                    *DefinstancesModule(Definstances *);
-   Definstances                  *FindDefinstances(const char *);
-   void                           GetDefinstancesList(DATA_OBJECT *,Defmodule *);
-   const char                    *GetDefinstancesName(Definstances *);
-   const char                    *GetDefinstancesPPForm(Definstances *);
-   Definstances                  *GetNextDefinstances(Definstances *);
-   bool                           IsDefinstancesDeletable(Definstances *);
-#if DEBUGGING_FUNCTIONS
-   void                           ListDefinstances(const char *,Defmodule *);
-#endif
-   bool                           Undefinstances(Definstances *);
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* DEFINSTANCES_CONSTRUCT */
 

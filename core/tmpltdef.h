@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*               DEFTEMPLATE HEADER FILE               */
    /*******************************************************/
@@ -52,6 +52,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -147,18 +149,6 @@ struct deftemplateData
    const char                    *EnvDeftemplateModule(Environment *,Deftemplate *);
    const char                    *EnvGetDeftemplateName(Environment *,Deftemplate *);
    const char                    *EnvGetDeftemplatePPForm(Environment *,Deftemplate *);
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-   const char                    *DeftemplateModule(Deftemplate *);
-   Deftemplate                   *FindDeftemplate(const char *);
-   const char                    *GetDeftemplateName(Deftemplate *);
-   const char                    *GetDeftemplatePPForm(Deftemplate *);
-   Deftemplate                   *GetNextDeftemplate(Deftemplate *);
-   bool                           IsDeftemplateDeletable(Deftemplate *);
-   Fact                          *GetNextFactInTemplate(Deftemplate *,Fact *);
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* _H_tmpltdef */
 

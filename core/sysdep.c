@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*               SYSTEM DEPENDENT MODULE               */
    /*******************************************************/
@@ -91,6 +91,10 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            Moved CatchCtrlC to main.c.                    */
+/*                                                           */
+/*            Removed VAX_VMS support.                       */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -102,30 +106,16 @@
 #include <time.h>
 #include <stdarg.h>
 
-#if   VAX_VMS
-#include timeb
-#include <descrip.h>
-#include <ssdef.h>
-#include <stsdef.h>
-#include signal
-extern int LIB$SPAWN();
-#endif
-
 #if MAC_XCD
 #include <sys/time.h>
 #include <unistd.h>
 #endif
 
 #if WIN_MVC
-#include <Windows.h>
-#include <sys\types.h>
-#include <sys\timeb.h>
+#include <windows.h>
 #include <io.h>
 #include <fcntl.h>
-#include <limits.h>
-#include <process.h>
 #include <signal.h>
-#include <direct.h>
 #endif
 
 #if   UNIX_7 || WIN_GCC
@@ -135,11 +125,9 @@ extern int LIB$SPAWN();
 #endif
 
 #if   UNIX_V || LINUX || DARWIN
-#include <sys/types.h>
 #include <sys/time.h>
-#include <sys/times.h>
-#include <unistd.h>
 #include <signal.h>
+#include <unistd.h>
 #endif
 
 #include "envrnmnt.h"
@@ -157,14 +145,7 @@ struct systemDependentData
    void (*RedrawScreenFunction)(Environment *);
    void (*PauseEnvFunction)(Environment *);
    void (*ContinueEnvFunction)(Environment *,int);
-/*
-#if ! WINDOW_INTERFACE
-#if WIN_MVC
-   void (interrupt *OldCtrlC)(void);
-   void (interrupt *OldBreak)(void);
-#endif
-#endif
-*/
+
 #if WIN_MVC
    int BinaryFileHandle;
    unsigned char getcBuffer[7];
@@ -180,20 +161,6 @@ struct systemDependentData
   };
 
 #define SystemDependentData(theEnv) ((struct systemDependentData *) GetEnvironmentData(theEnv,SYSTEM_DEPENDENT_DATA))
-
-/***************************************/
-/* LOCAL INTERNAL FUNCTION DEFINITIONS */
-/***************************************/
-
-#if   (VAX_VMS || UNIX_V || LINUX || DARWIN || UNIX_7 || WIN_GCC || WIN_MVC) && (! WINDOW_INTERFACE)
-   static void                    CatchCtrlC(int);
-#endif
-/*
-#if   (WIN_MVC) && (! WINDOW_INTERFACE)
-   static void interrupt          CatchCtrlC(void);
-   static void                    RestoreInterruptVectors(void);
-#endif
-*/
 
 /********************************************************/
 /* InitializeSystemDependentData: Allocates environment */
@@ -418,85 +385,7 @@ void InitializeNonportableFeatures(
 #if MAC_XCD
 #pragma unused(theEnv)
 #endif
-#if ! WINDOW_INTERFACE
-
-#if VAX_VMS || UNIX_V || LINUX || DARWIN || UNIX_7 || WIN_GCC || WIN_MVC
-   signal(SIGINT,CatchCtrlC);
-#endif
-
-/*
-#if WIN_MVC
-   SystemDependentData(theEnv)->OldCtrlC = _dos_getvect(0x23);
-   SystemDependentData(theEnv)->OldBreak = _dos_getvect(0x1b);
-   _dos_setvect(0x23,CatchCtrlC);
-   _dos_setvect(0x1b,CatchCtrlC);
-   atexit(RestoreInterruptVectors);
-#endif
-*/
-#endif
   }
-
-/*************************************************************/
-/* Functions For Handling Control C Interrupt: The following */
-/*   functions handle interrupt processing for several       */
-/*   machines. For the Macintosh control-c is not handle,    */
-/*   but a function is provided to call periodically which   */
-/*   calls SystemTask (allowing periodic tasks to be handled */
-/*   by the operating system).                               */
-/*************************************************************/
-
-#if ! WINDOW_INTERFACE
-
-#if   VAX_VMS || UNIX_V || LINUX || DARWIN || UNIX_7 || WIN_GCC || WIN_MVC || DARWIN
-/**********************************************/
-/* CatchCtrlC: VMS and UNIX specific function */
-/*   to allow control-c interrupts.           */
-/**********************************************/
-static void CatchCtrlC(
-  int sgnl)
-  {
-#if ALLOW_ENVIRONMENT_GLOBALS
-   EnvSetHaltExecution(GetCurrentEnvironment(),1);
-   CloseAllBatchSources(GetCurrentEnvironment());
-#endif
-   signal(SIGINT,CatchCtrlC);
-  }
-#endif
-
-#if   WIN_MVC
-/******************************************************/
-/* CatchCtrlC: IBM Microsoft C and Borland Turbo C    */
-/*   specific function to allow control-c interrupts. */
-/******************************************************/
-/*
-static void interrupt CatchCtrlC()
-  {
-#if ALLOW_ENVIRONMENT_GLOBALS
-   EnvSetHaltExecution(GetCurrentEnvironment(),1);
-   CloseAllBatchSources(GetCurrentEnvironment());
-#endif
-  }
-*/
-/**************************************************************/
-/* RestoreInterruptVectors: IBM Microsoft C and Borland Turbo */
-/*   C specific function for restoring interrupt vectors.     */
-/**************************************************************/
-/*
-static void RestoreInterruptVectors()
-  {
-#if ALLOW_ENVIRONMENT_GLOBALS
-   Environment *theEnv;
-   
-   theEnv = GetCurrentEnvironment();
-
-   _dos_setvect(0x23,SystemDependentData(theEnv)->OldCtrlC);
-   _dos_setvect(0x1b,SystemDependentData(theEnv)->OldBreak);
-#endif
-  }
-*/
-#endif
-
-#endif
 
 /**************************************/
 /* genexit:  A generic exit function. */

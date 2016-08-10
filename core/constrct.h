@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*                  CONSTRUCT MODULE                   */
    /*******************************************************/
@@ -57,6 +57,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -203,20 +205,6 @@ struct constructData
    void                           DeinstallConstructHeader(Environment *,struct constructHeader *);
    void                           DestroyConstructHeader(Environment *,struct constructHeader *);
    ParserErrorFunction           *EnvSetParserErrorCallback(Environment *,ParserErrorFunction *);
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-   bool                           AddClearFunction(const char *,void (*)(void),int);
-   bool                           AddResetFunction(const char *,void (*)(void),int);
-   void                           Clear(void);
-   void                           Reset(void);
-   bool                           RemoveClearFunction(const char *);
-   bool                           RemoveResetFunction(const char *);
-#if (! RUN_TIME) && (! BLOAD_ONLY)
-   int                            Save(const char *);
-#endif
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* _H_constrct */
 

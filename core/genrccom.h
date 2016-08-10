@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -47,6 +47,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -110,37 +112,6 @@
    const char                    *EnvGetDefgenericPPForm(Environment *,Defgeneric *);
    SYMBOL_HN                     *EnvGetDefgenericNamePointer(Environment *,Defgeneric *);
    void                           EnvSetDefgenericPPForm(Environment *,Defgeneric *,const char *);
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-   void                           SetDefgenericPPForm(Defgeneric *,const char *);
-   const char                    *DefgenericModule(Defgeneric *);
-   Defgeneric                    *FindDefgeneric(const char *);
-   void                           GetDefgenericList(DATA_OBJECT *,Defmodule *);
-   const char                    *GetDefgenericName(Defgeneric *);
-   const char                    *GetDefgenericPPForm(Defgeneric *);
-   Defgeneric                    *GetNextDefgeneric(Defgeneric *);
-   bool                           IsDefgenericDeletable(Defgeneric *);
-   bool                           Undefgeneric(Defgeneric *);
-   void                           GetDefmethodList(Defgeneric *,DATA_OBJECT_PTR);
-   void                           GetMethodRestrictions(Defgeneric *,long,DATA_OBJECT *);
-   long                           GetNextDefmethod(Defgeneric *,long );
-   bool                           IsDefmethodDeletable(Defgeneric *,long );
-   bool                           Undefmethod(Defgeneric *,long );
-#if DEBUGGING_FUNCTIONS
-   bool                           GetDefgenericWatch(Defgeneric *);
-   void                           ListDefgenerics(const char *,Defmodule *);
-   void                           SetDefgenericWatch(bool,Defgeneric *);
-   const char                    *GetDefmethodPPForm(Defgeneric *,long);
-   bool                           GetDefmethodWatch(Defgeneric *,long);
-   void                           ListDefmethods(const char *,Defgeneric *);
-   void                           SetDefmethodWatch(bool,Defgeneric *,long);
-#endif /* DEBUGGING_FUNCTIONS */
-#if DEBUGGING_FUNCTIONS || PROFILING_FUNCTIONS
-   void                           GetDefmethodDescription(char *,int,Defgeneric *,long );
-#endif /* DEBUGGING_FUNCTIONS || PROFILING_FUNCTIONS */
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* _H_genrccom */
 

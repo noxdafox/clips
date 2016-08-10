@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*                DEFGLOBAL HEADER FILE                */
    /*******************************************************/
@@ -50,6 +50,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -126,22 +128,6 @@ struct defglobalModule
    const char                    *EnvDefglobalModule(Environment *,Defglobal *);
    const char                    *EnvGetDefglobalName(Environment *,Defglobal *);
    const char                    *EnvGetDefglobalPPForm(Environment *,Defglobal *);
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-   const char                    *DefglobalModule(Defglobal *);
-   Defglobal                     *FindDefglobal(const char *);
-   const char                    *GetDefglobalName(Defglobal *);
-   const char                    *GetDefglobalPPForm(Defglobal *);
-   bool                           GetDefglobalValue(const char *,DATA_OBJECT_PTR);
-   void                           GetDefglobalValueForm(char *,unsigned,Defglobal *);
-   bool                           GetGlobalsChanged(void);
-   Defglobal                     *GetNextDefglobal(Defglobal *);
-   bool                           IsDefglobalDeletable(Defglobal *);
-   bool                           SetDefglobalValue(const char *,DATA_OBJECT_PTR);
-   void                           SetGlobalsChanged(bool);
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* _H_globldef */
 

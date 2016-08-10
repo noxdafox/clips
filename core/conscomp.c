@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*              CONSTRUCT COMPILER MODULE              */
    /*******************************************************/
@@ -65,6 +65,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            Removed VAX_VMS support.                       */
 /*                                                           */
 /*************************************************************/
 
@@ -209,7 +211,7 @@ void ConstructsToCCommand(
    int argCount;
    long long id, max; 
    int nameLength, pathLength;
-#if VAX_VMS || WIN_MVC
+#if WIN_MVC
    int i;
 #endif
 
@@ -234,7 +236,7 @@ void ConstructsToCCommand(
    /* PCs can't contain a period.    */
    /*================================*/
 
-#if VAX_VMS || WIN_MVC
+#if WIN_MVC
    for (i = 0 ; *(fileName+i) ; i++)
      {
       if (*(fileName+i) == '.')

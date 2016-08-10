@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*              INCREMENTAL RESET MODULE               */
    /*******************************************************/
@@ -48,6 +48,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -658,24 +660,5 @@ bool GetIncrementalResetCommand(
 
    return(oldValue);
   }
-
-/*#####################################*/
-/* ALLOW_ENVIRONMENT_GLOBALS Functions */
-/*#####################################*/
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-bool GetIncrementalReset()
-  {   
-   return EnvGetIncrementalReset(GetCurrentEnvironment());
-  }
-
-bool SetIncrementalReset(
-  bool value)
-  {
-   return EnvSetIncrementalReset(GetCurrentEnvironment(),value);
-  }
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* DEFRULE_CONSTRUCT */

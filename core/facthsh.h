@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*                 FACT HASHING MODULE                 */
    /*******************************************************/
@@ -37,6 +37,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_facthsh
@@ -66,13 +68,6 @@ struct factHashEntry
    void                           ShowFactHashTable(Environment *);
    unsigned long                  HashFact(Fact *);
    bool                           FactWillBeAsserted(Environment *,Fact *);
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-   bool                           GetFactDuplication(void);
-   bool                           SetFactDuplication(bool);
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* _H_facthsh */
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*             BASIC MATH FUNCTIONS MODULE             */
    /*******************************************************/
@@ -31,6 +31,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_bmathfun
@@ -56,13 +58,6 @@
    void                    AbsFunction(Environment *,DATA_OBJECT_PTR);
    void                    MinFunction(Environment *,DATA_OBJECT_PTR);
    void                    MaxFunction(Environment *,DATA_OBJECT_PTR);
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-   bool                    GetAutoFloatDividend(void);
-   bool                    SetAutoFloatDividend(int);
-
-#endif
 
 #endif
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*                 BSAVE HEADER FILE                   */
    /*******************************************************/
@@ -39,6 +39,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -113,11 +115,6 @@ struct bsaveData
                                          void (*)(Environment *),
                                          void (*)(Environment *));
 
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-   bool                    Bsave(const char *);
-
-#endif
 
 #endif /* _H_bsave */
 

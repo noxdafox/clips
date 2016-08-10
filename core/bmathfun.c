@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*             BASIC MATH FUNCTIONS MODULE             */
    /*******************************************************/
@@ -39,6 +39,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -831,17 +833,3 @@ void MaxFunction(
    return;
   }
 
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-bool GetAutoFloatDividend()
-  {
-   return EnvGetAutoFloatDividend(GetCurrentEnvironment());
-  }
-
-bool SetAutoFloatDividend(
-  int value)
-  {
-   return EnvSetAutoFloatDividend(GetCurrentEnvironment(),value);
-  }
-
-#endif

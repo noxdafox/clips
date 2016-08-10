@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*                  CONSTRUCT MODULE                   */
    /*******************************************************/
@@ -61,6 +61,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -919,75 +921,4 @@ bool AddSaveFunction(
 
    return true;
   }
-
-/*#####################################*/
-/* ALLOW_ENVIRONMENT_GLOBALS Functions */
-/*#####################################*/
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-bool AddClearFunction(
-  const char *name,
-  void (*functionPtr)(void),
-  int priority)
-  {
-   Environment *theEnv;
-   
-   theEnv = GetCurrentEnvironment();
-   
-   ConstructData(theEnv)->ListOfClearFunctions =
-      AddFunctionToCallList(theEnv,name,priority,
-                            (void (*)(Environment *)) functionPtr,
-                            ConstructData(theEnv)->ListOfClearFunctions,false);
-   return true;
-  }
-
-bool AddResetFunction(
-  const char *name,
-  void (*functionPtr)(void),
-  int priority)
-  {
-   Environment *theEnv;
-   
-   theEnv = GetCurrentEnvironment();
-   
-   ConstructData(theEnv)->ListOfResetFunctions = 
-      AddFunctionToCallList(theEnv,name,priority,(void (*)(Environment *)) functionPtr,
-                            ConstructData(theEnv)->ListOfResetFunctions,false);
-   return true;
-  }
-
-void Clear()
-  {
-   EnvClear(GetCurrentEnvironment());
-  }  
-
-bool RemoveClearFunction(
-  const char *name)
-  {
-   return EnvRemoveClearFunction(GetCurrentEnvironment(),name);
-  }
-
-bool RemoveResetFunction(
-  const char *name)
-  {
-   return EnvRemoveResetFunction(GetCurrentEnvironment(),name);
-  }
-
-void Reset()
-  {
-   EnvReset(GetCurrentEnvironment());
-  }  
-
-#if (! RUN_TIME) && (! BLOAD_ONLY)
-
-int Save(
-  const char *fileName)
-  {
-   return EnvSave(GetCurrentEnvironment(),fileName);
-  }  
-#endif
-
-#endif
-
 

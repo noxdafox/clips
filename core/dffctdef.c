@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*              DEFFACTS DEFINITION MODULE             */
    /*******************************************************/
@@ -43,6 +43,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -328,49 +330,6 @@ const char *EnvGetDeffactsPPForm(
    return GetConstructPPForm(theEnv,(struct constructHeader *) theDeffacts);
   }
 
-/*#####################################*/
-/* ALLOW_ENVIRONMENT_GLOBALS Functions */
-/*#####################################*/
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-Deffacts *FindDeffacts(
-  const char *deffactsName)
-  {
-   return EnvFindDeffacts(GetCurrentEnvironment(),deffactsName);
-  }
-
-Deffacts *GetNextDeffacts(
-  Deffacts *deffactsPtr)
-  {
-   return EnvGetNextDeffacts(GetCurrentEnvironment(),deffactsPtr);
-  }
-
-bool IsDeffactsDeletable(
-  Deffacts *ptr)
-  {
-   return EnvIsDeffactsDeletable(GetCurrentEnvironment(),ptr);
-  }
-
-const char *DeffactsModule(
-  Deffacts *theDeffacts)
-  {
-   return EnvDeffactsModule(GetCurrentEnvironment(),theDeffacts);
-  }
-
-const char *GetDeffactsName(
-  Deffacts *theDeffacts)
-  {
-   return EnvGetDeffactsName(GetCurrentEnvironment(),theDeffacts);
-  }
-
-const char *GetDeffactsPPForm(
-  Deffacts *theDeffacts)
-  {
-   return EnvGetDeffactsPPForm(GetCurrentEnvironment(),theDeffacts);
-  }
-
-#endif
 
 #endif /* DEFFACTS_CONSTRUCT */
 

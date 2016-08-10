@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*                  DEFMODULE MODULE                   */
    /*******************************************************/
@@ -43,6 +43,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -788,47 +790,3 @@ void IllegalModuleSpecifierMessage(
    PrintErrorID(theEnv,"MODULDEF",1,true);
    EnvPrintRouter(theEnv,WERROR,"Illegal use of the module specifier.\n");
   }
-
-/*#####################################*/
-/* ALLOW_ENVIRONMENT_GLOBALS Functions */
-/*#####################################*/
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-Defmodule *FindDefmodule(
-  const char *defmoduleName)
-  {
-   return EnvFindDefmodule(GetCurrentEnvironment(),defmoduleName);
-  }
-
-Defmodule *GetCurrentModule()
-  {
-   return EnvGetCurrentModule(GetCurrentEnvironment());
-  }
-
-const char *GetDefmoduleName(
-  Defmodule *theDefmodule)
-  {
-   return EnvGetDefmoduleName(GetCurrentEnvironment(),theDefmodule);
-  }
-
-const char *GetDefmodulePPForm(
-  Defmodule *theDefmodule)
-  {
-   return EnvGetDefmodulePPForm(GetCurrentEnvironment(),theDefmodule);
-  }
-
-Defmodule *GetNextDefmodule(
-  Defmodule *theDefmodule)
-  {
-   return EnvGetNextDefmodule(GetCurrentEnvironment(),theDefmodule);
-  }
-
-Defmodule *SetCurrentModule(
-  Defmodule *theDefmodule)
-  {
-   return EnvSetCurrentModule(GetCurrentEnvironment(),theDefmodule);
-  }
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
-

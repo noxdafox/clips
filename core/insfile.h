@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -42,6 +42,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -93,22 +95,6 @@ struct instanceFileData
    long                           EnvLoadInstancesFromString(Environment *,const char *,size_t);
    long                           EnvRestoreInstances(Environment *,const char *);
    long                           EnvRestoreInstancesFromString(Environment *,const char *,size_t);
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-#if BLOAD_INSTANCES
-   long                           BinaryLoadInstances(const char *);
-#endif
-#if BSAVE_INSTANCES
-   long                           BinarySaveInstances(const char *,int);
-#endif
-   long                           LoadInstances(const char *);
-   long                           LoadInstancesFromString(const char *,int);
-   long                           RestoreInstances(const char *);
-   long                           RestoreInstancesFromString(const char *,int);
-   long                           SaveInstances(const char *,int);
-   
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* _H_insfile */
 

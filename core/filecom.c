@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*                 FILE COMMANDS MODULE                */
    /*******************************************************/
@@ -61,6 +61,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -1279,39 +1281,5 @@ bool SaveCommand(
 #endif
   }
 #endif
-
-/*#####################################*/
-/* ALLOW_ENVIRONMENT_GLOBALS Functions */
-/*#####################################*/
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-#if DEBUGGING_FUNCTIONS
-
-bool DribbleActive()
-  {
-   return EnvDribbleActive(GetCurrentEnvironment());
-  }
-
-bool DribbleOn(
-  const char *fileName)
-  {
-   return EnvDribbleOn(GetCurrentEnvironment(),fileName);
-  }
-
-bool DribbleOff()
-  {
-   return EnvDribbleOff(GetCurrentEnvironment());
-  }
-
-#endif /* DEBUGGING_FUNCTIONS */
-
-bool BatchStar(
-  const char *fileName)
-  {
-   return EnvBatchStar(GetCurrentEnvironment(),fileName);
-  }
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 

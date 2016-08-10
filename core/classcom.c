@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*                  CLASS COMMANDS MODULE              */
    /*******************************************************/
@@ -45,6 +45,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /**************************************************************/
 
@@ -958,116 +960,5 @@ void EnvSetDefclassPPForm(
   {
    SetConstructPPForm(theEnv,(struct constructHeader *) theClass,thePPForm);
   }
-
-/*#####################################*/
-/* ALLOW_ENVIRONMENT_GLOBALS Functions */
-/*#####################################*/
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-Defclass *FindDefclass(
-  const char *classAndModuleName)
-  {
-   return EnvFindDefclass(GetCurrentEnvironment(),classAndModuleName);
-  }
-
-void GetDefclassList(
-  DATA_OBJECT *returnValue,
-  Defmodule *theModule)
-  {
-   EnvGetDefclassList(GetCurrentEnvironment(),returnValue,theModule);
-  }
-
-Defclass *GetNextDefclass(
-  Defclass *ptr)
-  {
-   return EnvGetNextDefclass(GetCurrentEnvironment(),ptr);
-  }
-
-bool IsDefclassDeletable(
-  Defclass *ptr)
-  {
-   return EnvIsDefclassDeletable(GetCurrentEnvironment(),ptr);
-  }
-
-bool Undefclass(
-  Defclass *theDefclass)
-  {
-   return EnvUndefclass(GetCurrentEnvironment(),theDefclass);
-  }
-
-unsigned short SetClassDefaultsMode(
-  unsigned short value)
-  {
-   return EnvSetClassDefaultsMode(GetCurrentEnvironment(),value);
-  }
-
-unsigned short GetClassDefaultsMode()
-  {
-   return EnvGetClassDefaultsMode(GetCurrentEnvironment());
-  }
-
-const char *GetDefclassName(
-  Defclass *theClass)
-  {
-   return EnvGetDefclassName(GetCurrentEnvironment(),theClass);
-  }
-
-const char *GetDefclassPPForm(
-  Defclass *theClass)
-  {
-   return EnvGetDefclassPPForm(GetCurrentEnvironment(),theClass);
-  }
-
-struct defmoduleItemHeader *GetDefclassModule(
-  Defclass *theClass)
-  {
-   return EnvGetDefclassModule(GetCurrentEnvironment(),theClass);
-  }
-
-const char *DefclassModule(
-  Defclass *theClass)
-  {
-   return EnvDefclassModule(GetCurrentEnvironment(),theClass);
-  }
-
-#if DEBUGGING_FUNCTIONS
-
-unsigned GetDefclassWatchInstances(
-  Defclass *theClass)
-  {
-   return EnvGetDefclassWatchInstances(GetCurrentEnvironment(),theClass);
-  }
-
-unsigned GetDefclassWatchSlots(
-  Defclass *theClass)
-  {
-   return EnvGetDefclassWatchSlots(GetCurrentEnvironment(),theClass);
-  }
-
-void ListDefclasses(
-  const char *logicalName,
-  Defmodule *theModule)
-  {
-   EnvListDefclasses(GetCurrentEnvironment(),logicalName,theModule);
-  }
-
-void SetDefclassWatchInstances(
-  unsigned newState,
-  Defclass *theClass)
-  {
-   EnvSetDefclassWatchInstances(GetCurrentEnvironment(),newState,theClass);
-  }
-
-void SetDefclassWatchSlots(
-  unsigned newState,
-  Defclass *theClass)
-  {
-   EnvSetDefclassWatchSlots(GetCurrentEnvironment(),newState,theClass);
-  }
-
-#endif /* DEBUGGING_FUNCTIONS */
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* OBJECT_SYSTEM */

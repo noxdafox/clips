@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*         DEFFACTS BASIC COMMANDS HEADER FILE         */
    /*******************************************************/
@@ -46,6 +46,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -315,38 +317,6 @@ void EnvListDeffacts(
   }
 
 #endif /* DEBUGGING_FUNCTIONS */
-
-/*#####################################*/
-/* ALLOW_ENVIRONMENT_GLOBALS Functions */
-/*#####################################*/
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-void GetDeffactsList(
-  DATA_OBJECT_PTR returnValue,
-  Defmodule *theModule)
-  {
-   EnvGetDeffactsList(GetCurrentEnvironment(),returnValue,theModule);
-  }
-
-bool Undeffacts(
-  Deffacts *theDeffacts)
-  {
-   return EnvUndeffacts(GetCurrentEnvironment(),theDeffacts);
-  }
-
-#if DEBUGGING_FUNCTIONS
-
-void ListDeffacts(
-  const char *logicalName,
-  Defmodule *theModule)
-  {
-   EnvListDeffacts(GetCurrentEnvironment(),logicalName,theModule);
-  }
-
-#endif
-
-#endif
 
 #endif /* DEFFACTS_CONSTRUCT */
 

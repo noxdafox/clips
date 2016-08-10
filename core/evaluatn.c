@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*                  EVALUATION MODULE                  */
    /*******************************************************/
@@ -54,6 +54,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -1252,26 +1254,4 @@ static bool DiscardCAddress(
    return true;
   }
 */
-
-/*##################################*/
-/* Additional Environment Functions */
-/*##################################*/
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-void SetMultifieldErrorValue(
-  DATA_OBJECT_PTR returnValue)
-  {
-   EnvSetMultifieldErrorValue(GetCurrentEnvironment(),returnValue);
-  }
-
-bool FunctionCall(
-  const char *name,
-  const char *args,
-  DATA_OBJECT *result)
-  {
-   return EnvFunctionCall(GetCurrentEnvironment(),name,args,result);
-  }
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 

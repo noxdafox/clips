@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*            MEMORY ALLOCATION HEADER FILE            */
    /*******************************************************/
@@ -49,6 +49,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -207,16 +209,6 @@ struct memoryData
    bool                           EnvSetConserveMemory(Environment *,bool);
    bool                           EnvGetConserveMemory(Environment *);
    void                           genmemcpy(char *,char *,unsigned long);
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-   bool                           GetConserveMemory(void);
-   long int                       MemRequests(void);
-   long int                       MemUsed(void);
-   long int                       ReleaseMem(long);
-   bool                           SetConserveMemory(bool);
- 
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* _H_memalloc */
 

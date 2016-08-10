@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*                    MEMORY MODULE                    */
    /*******************************************************/
@@ -46,6 +46,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -536,39 +538,3 @@ void genmemcpy(
    for (i = 0L ; i < size ; i++)
      dst[i] = src[i];
   }
-
-/*#####################################*/
-/* ALLOW_ENVIRONMENT_GLOBALS Functions */
-/*#####################################*/
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-bool GetConserveMemory()
-  {
-   return EnvGetConserveMemory(GetCurrentEnvironment());
-  }
-
-long int MemRequests()
-  {
-   return EnvMemRequests(GetCurrentEnvironment());
-  }
-
-long int MemUsed()
-  {
-   return EnvMemUsed(GetCurrentEnvironment());
-  }
-
-long int ReleaseMem(
-  long int maximum)
-  {
-   return EnvReleaseMem(GetCurrentEnvironment(),maximum);
-  }
-
-bool SetConserveMemory(
-  bool value)
-  {
-   return EnvSetConserveMemory(GetCurrentEnvironment(),value);
-  }
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
-

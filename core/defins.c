@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*                  DEFINSTANCES MODULE                */
    /*******************************************************/
@@ -53,6 +53,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -1022,73 +1024,6 @@ const char *EnvDefinstancesModuleName(
   {
    return GetConstructModuleName((struct constructHeader *) theDefinstances);
   }
-
-/*#####################################*/
-/* ALLOW_ENVIRONMENT_GLOBALS Functions */
-/*#####################################*/
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-const char *DefinstancesModule(
-  Definstances *theDefinstances)
-  {
-   return EnvDefinstancesModule(GetCurrentEnvironment(),theDefinstances);
-  }
-
-Definstances *FindDefinstances(
-  const char *name)
-  {
-   return EnvFindDefinstances(GetCurrentEnvironment(),name);
-  }
-
-void GetDefinstancesList(
-  DATA_OBJECT *returnValue,
-  Defmodule *theModule)
-  {
-   EnvGetDefinstancesList(GetCurrentEnvironment(),returnValue,theModule);
-  }
-
-const char *GetDefinstancesName(
-  Definstances *theDefinstances)
-  {
-   return EnvGetDefinstancesName(GetCurrentEnvironment(),theDefinstances);
-  }
-
-const char *GetDefinstancesPPForm(
-  Definstances *theDefinstances)
-  {
-   return EnvGetDefinstancesPPForm(GetCurrentEnvironment(),theDefinstances);
-  }
-
-Definstances *GetNextDefinstances(
-  Definstances *ptr)
-  {
-   return EnvGetNextDefinstances(GetCurrentEnvironment(),ptr);
-  }
-
-bool IsDefinstancesDeletable(
-  Definstances *ptr)
-  {
-   return EnvIsDefinstancesDeletable(GetCurrentEnvironment(),ptr);
-  }
-
-bool Undefinstances(
-  Definstances *vptr)
-  {
-   return EnvUndefinstances(GetCurrentEnvironment(),vptr);
-  }
-
-#if DEBUGGING_FUNCTIONS
-
-void ListDefinstances(
-  const char *logicalName,
-  Defmodule *theModule)
-  {
-   EnvListDefinstances(GetCurrentEnvironment(),logicalName,theModule);
-  }
-#endif
-
-#endif
 
 #endif
 

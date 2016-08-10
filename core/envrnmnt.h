@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*                ENVRNMNT HEADER FILE                 */
    /*******************************************************/
@@ -51,6 +51,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_envrnmnt
@@ -79,7 +81,6 @@ struct environmentCleanupFunction
 struct environmentData
   {   
    unsigned int initialized : 1;
-   unsigned long environmentIndex;
    void *context;
    void *routerContext;
    void *functionContext;
@@ -94,14 +95,6 @@ struct environmentData
 #define SetEnvironmentData(theEnv,position,value) (((struct environmentData *) theEnv)->theData[position] = value)
 
    bool                           AllocateEnvironmentData(Environment *,unsigned int,unsigned long,void (*)(Environment *));
-   bool                           DeallocateEnvironmentData(void);
-#if ALLOW_ENVIRONMENT_GLOBALS
-   void                           SetCurrentEnvironment(Environment *);
-   bool                           SetCurrentEnvironmentByIndex(unsigned long);
-   void                          *GetEnvironmentByIndex(unsigned long);
-   Environment                   *GetCurrentEnvironment(void);
-   unsigned long                  GetEnvironmentIndex(Environment *);
-#endif
    void                          *CreateEnvironment(void);
    void                          *CreateRuntimeEnvironment(struct symbolHashNode **,struct floatHashNode **,
                                                                   struct integerHashNode **,struct bitMapHashNode **);

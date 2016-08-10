@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*         DEFGLOBAL BASIC COMMANDS HEADER FILE        */
    /*******************************************************/
@@ -47,6 +47,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_globlbsc
@@ -73,18 +75,6 @@
    void                           EnvSetDefglobalWatch(Environment *,bool,Defglobal *);
 #endif
    void                           ResetDefglobals(Environment *);
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-   void                           GetDefglobalList(DATA_OBJECT_PTR,Defmodule *);
-#if DEBUGGING_FUNCTIONS
-   bool                           GetDefglobalWatch(Defglobal *);
-   void                           ListDefglobals(const char *,Defmodule *);
-   void                           SetDefglobalWatch(bool,Defglobal *);
-#endif
-   bool                           Undefglobal(Defglobal *);
-   
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* _H_globlbsc */
 

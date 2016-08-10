@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*         DEFRULE BASIC COMMANDS HEADER FILE          */
    /*******************************************************/
@@ -53,6 +53,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_rulebsc
@@ -81,20 +83,6 @@
    bool                           DefruleWatchAccess(Environment *,int,bool,struct expr *);
    bool                           DefruleWatchPrint(Environment *,const char *,int,struct expr *);
 #endif
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-   void                           GetDefruleList(DATA_OBJECT_PTR,Defmodule *);
-#if DEBUGGING_FUNCTIONS
-   bool                           GetDefruleWatchActivations(Defrule *);
-   bool                           GetDefruleWatchFirings(Defrule *);
-   void                           ListDefrules(const char *,Defmodule *);
-   void                           SetDefruleWatchActivations(bool,Defrule *);
-   void                           SetDefruleWatchFirings(bool,Defrule *);
-#endif
-   bool                           Undefrule(Defrule *);
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* _H_rulebsc */
 

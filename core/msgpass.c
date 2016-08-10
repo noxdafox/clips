@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*             OBJECT MESSAGE DISPATCH CODE            */
    /*******************************************************/
@@ -50,6 +50,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -1412,23 +1414,6 @@ static void EarlySlotBindError(
    EnvPrintRouter(theEnv,WERROR," does not apply to ");
    PrintInstanceNameAndClass(theEnv,WERROR,theInstance,true);
   }
-
-/*#####################################*/
-/* ALLOW_ENVIRONMENT_GLOBALS Functions */
-/*#####################################*/
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-void Send(
-  DATA_OBJECT *idata,
-  const char *msg,
-  const char *args,
-  DATA_OBJECT *result)
-  {
-   EnvSend(GetCurrentEnvironment(),idata,msg,args,result);
-  }
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* OBJECT_SYSTEM */
 

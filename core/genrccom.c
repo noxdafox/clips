@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -63,6 +63,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -1912,171 +1914,6 @@ void EnvSetDefgenericPPForm(
    SetConstructPPForm(theEnv,(struct constructHeader *) theDefgeneric,thePPForm);
   }
 
-/*#####################################*/
-/* ALLOW_ENVIRONMENT_GLOBALS Functions */
-/*#####################################*/
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-void SetDefgenericPPForm(
-  Defgeneric *theDefgeneric,
-  const char *thePPForm)
-  {
-   EnvSetDefgenericPPForm(GetCurrentEnvironment(),theDefgeneric,thePPForm);
-  }
-
-const char *DefgenericModule(
-  Defgeneric *theDefgeneric)
-  {
-   return EnvDefgenericModule(GetCurrentEnvironment(),theDefgeneric);
-  }
-
-Defgeneric *FindDefgeneric(
-  const char *genericModuleAndName)
-  {
-   return EnvFindDefgeneric(GetCurrentEnvironment(),genericModuleAndName);
-  }
-
-void GetDefgenericList(
-  DATA_OBJECT *returnValue,
-  Defmodule *theModule)
-  {
-   EnvGetDefgenericList(GetCurrentEnvironment(),returnValue,theModule);
-  }
-
-const char *GetDefgenericName(
-  Defgeneric *theDefgeneric)
-  {
-   return EnvGetDefgenericName(GetCurrentEnvironment(),theDefgeneric);
-  }
-
-const char *GetDefgenericPPForm(
-  Defgeneric *theDefgeneric)
-  {
-   return EnvGetDefgenericPPForm(GetCurrentEnvironment(),theDefgeneric);
-  }
-
-Defgeneric *GetNextDefgeneric(
-  Defgeneric *ptr)
-  {
-   return EnvGetNextDefgeneric(GetCurrentEnvironment(),ptr);
-  }
-
-bool IsDefgenericDeletable(
-  Defgeneric *ptr)
-  {
-   return EnvIsDefgenericDeletable(GetCurrentEnvironment(),ptr);
-  }
-
-bool Undefgeneric(
-  Defgeneric *vptr)
-  {
-   return EnvUndefgeneric(GetCurrentEnvironment(),vptr);
-  }
-
-void GetDefmethodList(
-  Defgeneric *vgfunc,
-  DATA_OBJECT_PTR returnValue)
-  {
-   EnvGetDefmethodList(GetCurrentEnvironment(),vgfunc,returnValue);
-  }
-
-void GetMethodRestrictions(
-  Defgeneric *vgfunc,
-  long mi,
-  DATA_OBJECT *result)
-  {
-   EnvGetMethodRestrictions(GetCurrentEnvironment(),vgfunc,mi,result);
-  }
-
-long GetNextDefmethod(
-  Defgeneric *ptr,
-  long theIndex)
-  {
-   return EnvGetNextDefmethod(GetCurrentEnvironment(),ptr,theIndex);
-  }
-
-bool IsDefmethodDeletable(
-  Defgeneric *ptr,
-  long theIndex)
-  {
-   return EnvIsDefmethodDeletable(GetCurrentEnvironment(),ptr,theIndex);
-  }
-
-bool Undefmethod(
-  Defgeneric *vptr,
-  long mi)
-  {
-  return EnvUndefmethod(GetCurrentEnvironment(),vptr,mi);
-  }
-
-#if DEBUGGING_FUNCTIONS
-
-bool GetDefgenericWatch(
-  Defgeneric *theGeneric)
-  {
-   return EnvGetDefgenericWatch(GetCurrentEnvironment(),theGeneric);
-  }
-
-void ListDefgenerics(
-  const char *logicalName,
-  Defmodule *theModule)
-  {
-   EnvListDefgenerics(GetCurrentEnvironment(),logicalName,theModule);
-  }
-
-void SetDefgenericWatch(
-  bool newState,
-  Defgeneric *theGeneric)
-  {
-   EnvSetDefgenericWatch(GetCurrentEnvironment(),newState,theGeneric);
-  }
-
-const char *GetDefmethodPPForm(
-  Defgeneric *ptr,
-  long theIndex)
-  {
-   return EnvGetDefmethodPPForm(GetCurrentEnvironment(),ptr,theIndex);
-  }
-
-bool GetDefmethodWatch(
-  Defgeneric *theGeneric,
-  long theIndex)
-  {
-   return EnvGetDefmethodWatch(GetCurrentEnvironment(),theGeneric,theIndex);
-  }
-
-void ListDefmethods(
-  const char *logicalName,
-  Defgeneric *vptr)
-  {
-   EnvListDefmethods(GetCurrentEnvironment(),logicalName,vptr);
-  }
-
-void SetDefmethodWatch(
-  bool newState,
-  Defgeneric *theGeneric,
-  long theIndex)
-  {
-   EnvSetDefmethodWatch(GetCurrentEnvironment(),newState,theGeneric,theIndex);
-  }
-
-#endif /* DEBUGGING_FUNCTIONS */
-
-#if DEBUGGING_FUNCTIONS || PROFILING_FUNCTIONS
-
-void GetDefmethodDescription(
-  char *buf,
-  int buflen,
-  Defgeneric *ptr,
-  long theIndex)
-  {
-   EnvGetDefmethodDescription(GetCurrentEnvironment(),buf,buflen,ptr,theIndex);
-  }
-
-#endif /* DEBUGGING_FUNCTIONS || PROFILING_FUNCTIONS */
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* DEFGENERIC_CONSTRUCT */
 

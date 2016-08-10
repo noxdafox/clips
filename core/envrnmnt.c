@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*                ENVIRONMENT MODULE                   */
    /*******************************************************/
@@ -54,6 +54,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
 /*************************************************************/
 
 #include <stdlib.h>
@@ -85,10 +87,6 @@
 #include "utility.h"
 #include "watch.h"
 
-#if DEVELOPER
-#include "developr.h"
-#endif
-
 #if DEFFACTS_CONSTRUCT
 #include "dffctdef.h"
 #endif
@@ -117,6 +115,10 @@
 #include "classini.h"
 #endif
 
+#if DEVELOPER
+#include "developr.h"
+#endif
+
 #include "envrnmnt.h"
 
 #define SIZE_ENVIRONMENT_HASH  131
@@ -132,34 +134,15 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-#if ALLOW_ENVIRONMENT_GLOBALS
-   static void                    AddHashedEnvironment(struct environmentData *);
-   static struct environmentData *FindEnvironment(unsigned long);
-   static bool                    RemoveHashedEnvironment(struct environmentData *);
-   static void                    InitializeEnvironmentHashTable(void);
-#endif
    static void                    RemoveEnvironmentCleanupFunctions(struct environmentData *);
    static void                   *CreateEnvironmentDriver(struct symbolHashNode **,struct floatHashNode **,
                                                           struct integerHashNode **,struct bitMapHashNode **,
                                                           struct externalAddressHashNode **);
    static void                    SystemFunctionDefinitions(Environment *);
    static void                    InitializeKeywords(Environment *);
-#if ALLOW_ENVIRONMENT_GLOBALS
-   static void                    InitializeEnvironment(Environment);
-#endif
    static void                    EnvInitializeEnvironment(Environment *,struct symbolHashNode **,struct floatHashNode **,
 					   								       struct integerHashNode **,struct bitMapHashNode **,
 														   struct externalAddressHashNode **);
-
-/***************************************/
-/* LOCAL INTERNAL VARIABLE DEFINITIONS */
-/***************************************/
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-   static unsigned long              NextEnvironmentIndex = 0;
-   static struct environmentData   **EnvironmentHashTable = NULL;
-   static struct environmentData    *CurrentEnvironment = NULL;
-#endif
 
 /*******************************************************/
 /* AllocateEnvironmentData: Allocates environment data */
@@ -227,143 +210,6 @@ bool AllocateEnvironmentData(
    return true;
   }
 
-/***************************************************************/
-/* DeallocateEnvironmentData: Deallocates all environments     */
-/*   stored in the environment hash table and then deallocates */
-/*   the environment hash table.                               */
-/***************************************************************/
-bool DeallocateEnvironmentData()
-  {
-#if ALLOW_ENVIRONMENT_GLOBALS
-   struct environmentData *theEnvironment, *nextEnvironment;
-   int i, rv = true;
-   
-   for (i = 0; i < SIZE_ENVIRONMENT_HASH; i++)
-     {
-      for (theEnvironment = EnvironmentHashTable[i];
-           theEnvironment != NULL;
-          )
-        {
-         nextEnvironment = theEnvironment->next;
-         
-         if (! DestroyEnvironment(theEnvironment))
-           { rv = false; }
-         
-         theEnvironment = nextEnvironment;
-        }
-     }
-
-   free(EnvironmentHashTable);
-   
-   return(rv);
-#else
-   return false;
-#endif
-  }
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-/*********************************************************/
-/* InitializeEnvironmentHashTable: Initializes the table */
-/*   entries in the environment hash table to NULL.      */
-/*********************************************************/
-static void InitializeEnvironmentHashTable()
-  {
-   int i;
-    
-   if (EnvironmentHashTable != NULL)
-     { return; }
-
-   EnvironmentHashTable = (struct environmentData **)
-                          malloc(sizeof (struct environmentData *) * SIZE_ENVIRONMENT_HASH);
-
-   if (EnvironmentHashTable == NULL)
-     {
-      printf("\n[ENVRNMNT4] Unable to initialize environment hash table.\n");      
-      return;
-     }
-
-   for (i = 0; i < SIZE_ENVIRONMENT_HASH; i++) EnvironmentHashTable[i] = NULL;
-  }
-
-/*********************************************/
-/* AddHashedEnvironment: Adds an environment */
-/*    entry to the environment hash table.   */
-/*********************************************/
-static void AddHashedEnvironment(
-  struct environmentData *theEnvironment)
-  {
-   struct environmentData *temp;
-   unsigned long hashValue;
-   
-   if (EnvironmentHashTable == NULL)
-     { InitializeEnvironmentHashTable(); }
-     
-   hashValue = theEnvironment->environmentIndex % SIZE_ENVIRONMENT_HASH;
-
-   temp = EnvironmentHashTable[hashValue];
-   EnvironmentHashTable[hashValue] = theEnvironment;
-   theEnvironment->next = temp;
-  }
-  
-/***************************************************/
-/* RemoveHashedEnvironment: Removes an environment */
-/*   entry from the environment hash table.        */
-/***************************************************/
-static bool RemoveHashedEnvironment(
-  struct environmentData *theEnvironment)
-  {
-   unsigned long hashValue;
-   struct environmentData *hptr, *prev;
-
-   hashValue = theEnvironment->environmentIndex % SIZE_ENVIRONMENT_HASH;
-
-   for (hptr = EnvironmentHashTable[hashValue], prev = NULL;
-        hptr != NULL;
-        hptr = hptr->next)
-     {
-      if (hptr == theEnvironment)
-        {
-         if (prev == NULL)
-           {
-            EnvironmentHashTable[hashValue] = hptr->next;
-            return true;
-           }
-         else
-           {
-            prev->next = hptr->next;
-            return true;
-           }
-        }
-      prev = hptr;
-     }
-
-   return false;
-  }
-
-/**********************************************************/
-/* FindEnvironment: Determines if a specified environment */
-/*   index has an entry in the environment hash table.    */
-/**********************************************************/
-static struct environmentData *FindEnvironment(
-  unsigned long environmentIndex)
-  {
-   struct environmentData *theEnvironment;
-   unsigned long hashValue;
-   
-   hashValue = environmentIndex % SIZE_ENVIRONMENT_HASH;
-   
-   for (theEnvironment = EnvironmentHashTable[hashValue];
-        theEnvironment != NULL;
-        theEnvironment = theEnvironment->next)
-     {
-      if (theEnvironment->environmentIndex == environmentIndex)
-        { return(theEnvironment); }
-     }
-
-   return NULL;
-  }
-#endif
-
 /************************************************************/
 /* CreateEnvironment: Creates an environment data structure */
 /*   and initializes its content to zero/null.              */
@@ -423,11 +269,6 @@ void *CreateEnvironmentDriver(
    theEnvironment->theData = (void **) theData;
    theEnvironment->next = NULL;
    theEnvironment->listOfCleanupEnvironmentFunctions = NULL;
-#if ALLOW_ENVIRONMENT_GLOBALS
-   theEnvironment->environmentIndex = NextEnvironmentIndex++;
-#else
-   theEnvironment->environmentIndex = 0;
-#endif
    theEnvironment->context = NULL;
    theEnvironment->routerContext = NULL;
    theEnvironment->functionContext = NULL;
@@ -448,83 +289,12 @@ void *CreateEnvironmentDriver(
      }
 
    memset(theData,0,sizeof(void (*)(struct environmentData *)) * MAXIMUM_ENVIRONMENT_POSITIONS);
-   theEnvironment->cleanupFunctions = (void (**)(Environment *)) theData;
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-   AddHashedEnvironment(theEnvironment);
-   CurrentEnvironment = theEnvironment;
-#endif
+   theEnvironment->cleanupFunctions = (void (**)(Environment *))theData;
 
    EnvInitializeEnvironment(theEnvironment,symbolTable,floatTable,integerTable,bitmapTable,externalAddressTable);
 
    return(theEnvironment);
   }
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-/*******************************************/
-/* SetCurrentEnvironment: Sets the current */
-/*   environment to the one specified.     */
-/*******************************************/
-void SetCurrentEnvironment(
-  Environment *theEnvironment)
-  {
-   CurrentEnvironment = (struct environmentData *) theEnvironment;
-  }
-  
-/**************************************************/
-/* SetCurrentEnvironmentByIndex: Sets the current */
-/*   environment to the one having the specified  */
-/*   environment index.                           */
-/**************************************************/
-bool SetCurrentEnvironmentByIndex(
-  unsigned long environmentIndex)
-  {
-   struct environmentData *theEnvironment;
-
-   theEnvironment = FindEnvironment(environmentIndex);
-   
-   if (theEnvironment == NULL)
-     { return false; }
-     
-   SetCurrentEnvironment(theEnvironment);
-   
-   return true;
-  }     
-   
-/**************************************************/
-/* GetEnvironmentByIndex: Returns the environment */
-/*   having the specified environment index.      */
-/**************************************************/
-void *GetEnvironmentByIndex(
-  unsigned long environmentIndex)
-  {
-   struct environmentData *theEnvironment;
-
-   theEnvironment = FindEnvironment(environmentIndex);
-      
-   return(theEnvironment);
-  }     
-   
-/********************************************/
-/* GetCurrentEnvironment: Returns a pointer */
-/*   to the current environment.            */
-/********************************************/
-Environment *GetCurrentEnvironment()
-  {
-   return(CurrentEnvironment);
-  }  
-  
-/******************************************/
-/* GetEnvironmentIndex: Returns the index */
-/*   of the specified environment.        */
-/******************************************/
-unsigned long GetEnvironmentIndex(
-  Environment *theEnvironment)
-  {
-   return(((struct environmentData *) theEnvironment)->environmentIndex);
-  } 
-  
-#endif
 
 /**********************************************/
 /* GetEnvironmentContext: Returns the context */
@@ -674,10 +444,6 @@ bool DestroyEnvironment(
    RemoveEnvironmentCleanupFunctions(theEnvironment);
    
    EnvReleaseMem(theEnvironment,-1);
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-   RemoveHashedEnvironment(theEnvironment);
-#endif
      
    if ((theMemData->MemoryAmount != 0) || (theMemData->MemoryCalls != 0))
      {
@@ -702,11 +468,6 @@ bool DestroyEnvironment(
      
    free(theEnvironment->theData);
    
-#if ALLOW_ENVIRONMENT_GLOBALS
-   if (CurrentEnvironment == theEnvironment)
-     { CurrentEnvironment = NULL; }
-#endif
-
    free(theEnvironment);
    
    return(rv);
@@ -781,7 +542,7 @@ static void RemoveEnvironmentCleanupFunctions(
 /* EnvInitializeEnvironment: Performs initialization */
 /*   of the KB environment.                          */
 /*****************************************************/
-void EnvInitializeEnvironment(
+static void EnvInitializeEnvironment(
   Environment *theEnvironment,
   struct symbolHashNode **symbolTable,
   struct floatHashNode **floatTable,
@@ -971,18 +732,6 @@ void EnvInitializeEnvironment(
 
    theEnvironment->initialized = true;
   }
-
-/**************************************************/
-/* InitializeEnvironment: Performs initialization */
-/*   of the KB environment.                       */
-/**************************************************/
-#if ALLOW_ENVIRONMENT_GLOBALS
-void InitializeEnvironment()
-   {
-    if (GetCurrentEnvironment() == NULL)
-      { CreateEnvironment(); }
-   }
-#endif
 
 /**************************************************/
 /* SystemFunctionDefinitions: Sets up definitions */

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*            EXPRESSION PARSER HEADER FILE            */
    /*******************************************************/
@@ -41,6 +41,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -86,13 +88,6 @@ typedef struct saved_contexts
    bool                           CheckExpressionAgainstRestrictions(Environment *,struct expr *,
                                                                             const char *,const char *);
 #endif
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-   bool                           SetSequenceOperatorRecognition(bool);
-   bool                           GetSequenceOperatorRecognition(void);
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* _H_exprnpsr */
 

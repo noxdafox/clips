@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*               ARGUMENT ACCESS MODULE                */
    /*******************************************************/
@@ -44,6 +44,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -1046,67 +1048,3 @@ void IllegalLogicalNameMessage(
    EnvPrintRouter(theEnv,WERROR,theFunction);
    EnvPrintRouter(theEnv,WERROR," function.\n");
   }
-
-/*#####################################*/
-/* ALLOW_ENVIRONMENT_GLOBALS Functions */
-/*#####################################*/
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-int ArgCountCheck(
-  const char *functionName,
-  int countRelation,
-  int expectedNumber)
-  {
-   return EnvArgCountCheck(GetCurrentEnvironment(),functionName,countRelation,expectedNumber);
-  }
-
-int ArgRangeCheck(
-  const char *functionName,
-  int min,
-  int max)
-  {
-   return EnvArgRangeCheck(GetCurrentEnvironment(),functionName,min,max);
-  }
-
-int ArgTypeCheck(
-  const char *functionName,
-  int argumentPosition,
-  int expectedType,
-  DATA_OBJECT_PTR returnValue)
-  {
-   return EnvArgTypeCheck(GetCurrentEnvironment(),functionName,argumentPosition,expectedType,returnValue);
-  }
-
-int RtnArgCount()
-  {
-   return EnvRtnArgCount(GetCurrentEnvironment());
-  }
-
-double RtnDouble(
-  int argumentPosition)
-  {
-   return EnvRtnDouble(GetCurrentEnvironment(),argumentPosition);
-  }
-
-const char *RtnLexeme(
-  int argumentPosition)
-  {
-   return EnvRtnLexeme(GetCurrentEnvironment(),argumentPosition);
-  }
-
-long long RtnLong(
-  int argumentPosition)
-  {
-   return EnvRtnLong(GetCurrentEnvironment(),argumentPosition);
-  }
-
-DATA_OBJECT_PTR RtnUnknown(
-  int argumentPosition,
-  DATA_OBJECT_PTR returnValue)
-  {
-   return EnvRtnUnknown(GetCurrentEnvironment(),argumentPosition,returnValue);
-  }
-
-#endif
-

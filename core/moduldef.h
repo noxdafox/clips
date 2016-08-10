@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*                DEFMODULE HEADER FILE                */
    /*******************************************************/
@@ -45,6 +45,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -235,17 +237,7 @@ struct defmoduleData
    void                           AddAfterModuleChangeFunction(Environment *,const char *,void (*)(Environment *),int);
    void                           IllegalModuleSpecifierMessage(Environment *);
    void                           AllocateDefmoduleGlobals(Environment *);
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-   Defmodule                     *FindDefmodule(const char *);
-   Defmodule                     *GetCurrentModule(void);
-   const char                    *GetDefmoduleName(Defmodule *);
-   const char                    *GetDefmodulePPForm(Defmodule *);
-   Defmodule                     *GetNextDefmodule(Defmodule *);
-   Defmodule                     *SetCurrentModule(Defmodule *);
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
+   long                           GetNumberOfDefmodules(Environment *);
 
 #endif /* _H_moduldef */
 

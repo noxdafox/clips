@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*                   DEFRULE MODULE                    */
    /*******************************************************/
@@ -61,6 +61,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -550,50 +552,6 @@ const char *EnvGetDefrulePPForm(
   {
    return GetConstructPPForm(theEnv,(struct constructHeader *) theDefrule);
   }
-
-/*#####################################*/
-/* ALLOW_ENVIRONMENT_GLOBALS Functions */
-/*#####################################*/
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-const char *DefruleModule(
-  Defrule *theDefrule)
-  {
-   return EnvDefruleModule(GetCurrentEnvironment(),theDefrule);
-  }
-
-Defrule *FindDefrule(
-  const char *defruleName)
-  {
-   return EnvFindDefrule(GetCurrentEnvironment(),defruleName);
-  }
-
-const char *GetDefruleName(
-  Defrule *theDefrule)
-  {
-   return EnvGetDefruleName(GetCurrentEnvironment(),theDefrule);
-  }
-
-const char *GetDefrulePPForm(
-  Defrule *theDefrule)
-  {
-   return EnvGetDefrulePPForm(GetCurrentEnvironment(),theDefrule);
-  }
-
-Defrule *GetNextDefrule(
-  Defrule *defrulePtr)
-  {
-   return EnvGetNextDefrule(GetCurrentEnvironment(),defrulePtr);
-  }
-
-bool IsDefruleDeletable(
-  Defrule *theDefrule)
-  {
-   return EnvIsDefruleDeletable(GetCurrentEnvironment(),theDefrule);
-  }
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* DEFRULE_CONSTRUCT */
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*                    AGENDA MODULE                    */
    /*******************************************************/
@@ -51,6 +51,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -1356,112 +1358,6 @@ void AgendaCommand(
   }
 
 #endif /* DEBUGGING_FUNCTIONS */
-
-/*#####################################*/
-/* ALLOW_ENVIRONMENT_GLOBALS Functions */
-/*#####################################*/
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-void Agenda(
-  const char *logicalName,
-  Defmodule *theModule)
-  {
-   EnvAgenda(GetCurrentEnvironment(),logicalName,theModule);
-  }
-
-bool DeleteActivation(
-  Activation *theActivation)
-  {
-   return EnvDeleteActivation(GetCurrentEnvironment(),theActivation);
-  }
-  
-struct partialMatch *GetActivationBasis(
-  Activation *theActivation)
-  {
-   return EnvGetActivationBasis(GetCurrentEnvironment(),theActivation);
-  }
-
-const char *GetActivationName(
-  Activation *theActivation)
-  {
-   return EnvGetActivationName(GetCurrentEnvironment(),theActivation);
-  }
-
-void GetActivationPPForm(
-  char *buffer,
-  unsigned bufferLength,
-  Activation *theActivation)
-  {
-   EnvGetActivationPPForm(GetCurrentEnvironment(),buffer,bufferLength,theActivation);
-  }
-
-Defrule *GetActivationRule(
-  Activation *theActivation)
-  {
-   return EnvGetActivationRule(GetCurrentEnvironment(),theActivation);
-  }
-
-int GetActivationSalience(
-  Activation *theActivation)
-  {
-   return EnvGetActivationSalience(GetCurrentEnvironment(),theActivation);
-  }
-
-int GetAgendaChanged()
-  {
-   return EnvGetAgendaChanged(GetCurrentEnvironment());
-  }
-
-Activation *GetNextActivation(
-  Activation *theActivation)
-  {
-   return EnvGetNextActivation(GetCurrentEnvironment(),theActivation);
-  }
-
-bool Refresh(
-  Defrule *theRule)
-  {
-   return EnvRefresh(GetCurrentEnvironment(),theRule);
-  }
-
-void RefreshAgenda(
-  Defmodule *theModule)
-  {
-   EnvRefreshAgenda(GetCurrentEnvironment(),theModule);
-  }
-
-void ReorderAgenda(
-  Defmodule *theModule)
-  {
-   EnvReorderAgenda(GetCurrentEnvironment(),theModule);
-  }
-
-void SetAgendaChanged(
-  bool value)
-  {
-   EnvSetAgendaChanged(GetCurrentEnvironment(),value);
-  }
-
-int SetActivationSalience(
-  Activation *theActivation,
-  int value)
-  {
-   return EnvSetActivationSalience(GetCurrentEnvironment(),theActivation,value);
-  }
-
-int GetSalienceEvaluation()
-  {
-   return EnvGetSalienceEvaluation(GetCurrentEnvironment());
-  }
-
-int SetSalienceEvaluation(
-  int value)
-  {
-   return EnvSetSalienceEvaluation(GetCurrentEnvironment(),value);
-  }
-
-#endif
 
 #endif /* DEFRULE_CONSTRUCT */
 

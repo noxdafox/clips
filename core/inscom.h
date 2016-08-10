@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -52,6 +52,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -118,28 +120,6 @@ struct instanceData
    bool                           InstancePCommand(Environment *);
    bool                           InstanceExistPCommand(Environment *);
    bool                           CreateInstanceHandler(Environment *);
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-   const char                    *GetInstanceName(Instance *);
-   Instance                      *CreateRawInstance(Defclass *,const char *);
-   bool                           DeleteInstance(Instance *);
-   void                           DirectGetSlot(Instance *,const char *,DATA_OBJECT *);
-   int                            DirectPutSlot(Instance *,const char *,DATA_OBJECT *);
-   Instance                      *FindInstance(Defmodule *,const char *,unsigned);
-   Defclass                      *GetInstanceClass(Instance *);
-   void                           GetInstancePPForm(char *,unsigned,Instance *);
-   Instance                      *GetNextInstance(Instance *);
-   Instance                      *GetNextInstanceInClass(Defclass *,Instance *);
-   Instance                      *GetNextInstanceInClassAndSubclasses(Defclass **,Instance *,DATA_OBJECT *);
-   void                           Instances(const char *,Defmodule *,const char *,bool);
-#if DEBUGGING_FUNCTIONS
-   Instance                      *MakeInstance(const char *);
-#endif
-   bool                           UnmakeInstance(Instance *);
-   bool                           ValidInstanceAddress(Instance *);
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* _H_inscom */
 

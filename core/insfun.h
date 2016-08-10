@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*               INSTANCE FUNCTIONS MODULE             */
    /*******************************************************/
@@ -64,6 +64,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_insfun
@@ -117,15 +119,6 @@ typedef struct igarbage
    bool                           NetworkSynchronized(Environment *,Instance *);
    bool                           InstanceIsDeleted(Environment *,Instance *);
 #endif
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-   void                           DecrementInstanceCount(Instance *);
-   bool                           GetInstancesChanged(void);
-   void                           IncrementInstanceCount(Instance *);
-   void                           SetInstancesChanged(bool);
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* _H_insfun */
 

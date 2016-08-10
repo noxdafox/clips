@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*          DEFTEMPLATE FUNCTION HEADER FILE           */
    /*******************************************************/
@@ -64,6 +64,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_tmpltfun
@@ -108,21 +110,7 @@
    bool                           EnvDeftemplateSlotFacetExistP(Environment *,Deftemplate *,const char *,const char *);
    void                           DeftemplateSlotFacetValueFunction(Environment *,DATA_OBJECT *);
    bool                           EnvDeftemplateSlotFacetValue(Environment *,Deftemplate *,const char *,const char *,DATA_OBJECT *);
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-   void                           DeftemplateSlotNames(Deftemplate *,DATA_OBJECT *);
-   bool                           DeftemplateSlotDefaultValue(Deftemplate *,const char *,DATA_OBJECT_PTR);
-   void                           DeftemplateSlotCardinality(Deftemplate *,const char *,DATA_OBJECT *);
-   void                           DeftemplateSlotAllowedValues(Deftemplate *,const char *,DATA_OBJECT *);
-   void                           DeftemplateSlotRange(Deftemplate *,const char *,DATA_OBJECT *);
-   void                           DeftemplateSlotTypes(Deftemplate *,const char *,DATA_OBJECT *);
-   bool                           DeftemplateSlotMultiP(Deftemplate *,const char *);
-   bool                           DeftemplateSlotSingleP(Deftemplate *,const char *);
-   bool                           DeftemplateSlotExistP(Deftemplate *,const char *);
-   int                            DeftemplateSlotDefaultP(Deftemplate *,const char *);
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
+   SYMBOL_HN                     *FindTemplateForFactAddress(SYMBOL_HN *,struct lhsParseNode *);
 
 #endif /* _H_tmpltfun */
 

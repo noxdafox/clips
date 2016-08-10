@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*               INSTANCE COMMAND MODULE               */
    /*******************************************************/
@@ -57,6 +57,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -1643,121 +1645,6 @@ static INSTANCE_SLOT *FindISlotByName(
      
    return FindInstanceSlot(theEnv,theInstance,ssym);
   }
-
-/*#####################################*/
-/* ALLOW_ENVIRONMENT_GLOBALS Functions */
-/*#####################################*/
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-const char *GetInstanceName(
-  Instance *theInstance)
-  {
-   return EnvGetInstanceName(GetCurrentEnvironment(),theInstance);
-  }
-
-Instance *CreateRawInstance(
-  Defclass *theDefclass,
-  const char *iname)
-  {
-   return EnvCreateRawInstance(GetCurrentEnvironment(),theDefclass,iname);
-  }
-
-bool DeleteInstance(
-  Instance *theInstance)
-  {
-   return EnvDeleteInstance(GetCurrentEnvironment(),theInstance);
-  }
-
-void DirectGetSlot(
-  Instance *theInstance,
-  const char *sname,
-  DATA_OBJECT *result)
-  {
-   EnvDirectGetSlot(GetCurrentEnvironment(),theInstance,sname,result);
-  }
-
-int DirectPutSlot(
-  Instance *theInstance,
-  const char *sname,
-  DATA_OBJECT *val)
-  {
-   return EnvDirectPutSlot(GetCurrentEnvironment(),theInstance,sname,val);
-  }
-
-Instance *FindInstance(
-  Defmodule *theModule,
-  const char *iname,
-  unsigned searchImports)
-  {
-   return EnvFindInstance(GetCurrentEnvironment(),theModule,iname,searchImports);
-  }
-
-Defclass *GetInstanceClass(
-  Instance *theInstance)
-  {
-   return EnvGetInstanceClass(GetCurrentEnvironment(),theInstance);
-  }
-
-void GetInstancePPForm(
-  char *buf,
-  unsigned buflen,
-  Instance *theInstance)
-  {
-   EnvGetInstancePPForm(GetCurrentEnvironment(),buf,buflen,theInstance);
-  }
-
-Instance *GetNextInstance(
-  Instance *theInstance)
-  {
-   return EnvGetNextInstance(GetCurrentEnvironment(),theInstance);
-  }
-
-Instance *GetNextInstanceInClass(
-  Defclass *theDefclass,
-  Instance *theInstance)
-  {
-   return EnvGetNextInstanceInClass(GetCurrentEnvironment(),theDefclass,theInstance);
-  }
-
-Instance *GetNextInstanceInClassAndSubclasses(
-  Defclass **cptr,
-  Instance *theInstance,
-  DATA_OBJECT *iterationInfo)
-  {
-   return EnvGetNextInstanceInClassAndSubclasses(GetCurrentEnvironment(),cptr,theInstance,iterationInfo);
-  }
-
-#if DEBUGGING_FUNCTIONS
-void Instances(
-  const char *logicalName,
-  Defmodule *theModule,
-  const char *className,
-  bool inheritFlag)
-  {
-   EnvInstances(GetCurrentEnvironment(),logicalName,theModule,className,inheritFlag);
-  }
-#endif
-
-Instance *MakeInstance(
-  const char *mkstr)
-  {
-   return EnvMakeInstance(GetCurrentEnvironment(),mkstr);
-  }
-
-bool UnmakeInstance(
-  Instance *theInstance)
-  {
-   return EnvUnmakeInstance(GetCurrentEnvironment(),theInstance);
-  }
-
-bool ValidInstanceAddress(
-  Instance *theInstance)
-  {
-   return EnvValidInstanceAddress(GetCurrentEnvironment(),theInstance);
-  }
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* OBJECT_SYSTEM */
 

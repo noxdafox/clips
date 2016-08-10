@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*          DEFTEMPLATE BASIC COMMANDS MODULE          */
    /*******************************************************/
@@ -47,6 +47,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -340,52 +342,6 @@ bool DeftemplateWatchPrint(
   }
 
 #endif /* DEBUGGING_FUNCTIONS */
-
-/*#####################################*/
-/* ALLOW_ENVIRONMENT_GLOBALS Functions */
-/*#####################################*/
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-void GetDeftemplateList(
-  DATA_OBJECT_PTR returnValue,
-  Defmodule *theModule)
-  {
-   EnvGetDeftemplateList(GetCurrentEnvironment(),returnValue,theModule);
-  }
-
-#if DEBUGGING_FUNCTIONS
-
-bool GetDeftemplateWatch(
-  Deftemplate *theTemplate)
-  {
-   return EnvGetDeftemplateWatch(GetCurrentEnvironment(),theTemplate);
-  }
-
-void ListDeftemplates(
-  const char *logicalName,
-  Defmodule *theModule)
-  {
-   EnvListDeftemplates(GetCurrentEnvironment(),logicalName,theModule);
-  }
-
-void SetDeftemplateWatch(
-  bool newState,
-  Deftemplate *theTemplate)
-  {
-   EnvSetDeftemplateWatch(GetCurrentEnvironment(),newState,theTemplate);
-  }
-
-#endif /* DEBUGGING_FUNCTIONS */
-
-bool Undeftemplate(
-  Deftemplate *theDeftemplate)
-  {
-   return EnvUndeftemplate(GetCurrentEnvironment(),theDeftemplate);
-  }
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
-
 
 #endif /* DEFTEMPLATE_CONSTRUCT */
 

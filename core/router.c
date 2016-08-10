@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*                  I/O ROUTER MODULE                  */
    /*******************************************************/
@@ -50,6 +50,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -740,116 +742,3 @@ size_t EnvInputBufferCount(
    {
     return RouterData(theEnv)->CommandBufferInputCount;
    }
-
-/*#####################################*/
-/* ALLOW_ENVIRONMENT_GLOBALS Functions */
-/*#####################################*/
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-bool ActivateRouter(
-  const char *routerName)
-  {
-   return EnvActivateRouter(GetCurrentEnvironment(),routerName);
-  }
-
-bool AddRouter(
-  const char *routerName,
-  int priority,
-  bool (*queryFunction)(const char *),
-  void (*printFunction)(const char *,const char *),
-  int (*getcFunction)(const char *),
-  int (*ungetcFunction)(int,const char *),
-  void (*exitFunction)(int))
-  {
-   struct router *newPtr, *lastPtr, *currentPtr;
-   Environment *theEnv;
-   char *nameCopy;
-      
-   theEnv = GetCurrentEnvironment();
-
-   newPtr = get_struct(theEnv,router);
-
-   nameCopy = (char *) genalloc(theEnv,strlen(routerName) + 1);
-   genstrcpy(nameCopy,routerName);     
-   newPtr->name = nameCopy;   
-   
-   newPtr->active = true;
-   newPtr->environmentAware = false;
-   newPtr->priority = priority;
-   newPtr->context = NULL;
-   newPtr->queryCallback = (RouterQueryFunction *) queryFunction;
-   newPtr->printCallback = (RouterPrintFunction *) printFunction;
-   newPtr->exitCallback = (RouterExitFunction *) exitFunction;
-   newPtr->getcCallback = (RouterGetcFunction *) getcFunction;
-   newPtr->ungetcCallback = (RouterUngetcFunction *) ungetcFunction;
-   newPtr->next = NULL;
-
-   if (RouterData(theEnv)->ListOfRouters == NULL)
-     {
-      RouterData(theEnv)->ListOfRouters = newPtr;
-      return true;
-     }
-
-   lastPtr = NULL;
-   currentPtr = RouterData(theEnv)->ListOfRouters;
-   while ((currentPtr != NULL) ? (priority < currentPtr->priority) : false)
-     {
-      lastPtr = currentPtr;
-      currentPtr = currentPtr->next;
-     }
-
-   if (lastPtr == NULL)
-     {
-      newPtr->next = RouterData(theEnv)->ListOfRouters;
-      RouterData(theEnv)->ListOfRouters = newPtr;
-     }
-   else
-     {
-      newPtr->next = currentPtr;
-      lastPtr->next = newPtr;
-     }
-
-   return true;
-  }
-
-bool DeactivateRouter(
-  const char *routerName)
-  {
-   return EnvDeactivateRouter(GetCurrentEnvironment(),routerName);
-  }
-
-bool DeleteRouter(
-  const char *routerName)
-  {
-   return EnvDeleteRouter(GetCurrentEnvironment(),routerName);
-  }
-
-void ExitRouter(
-  int num)
-  {
-   EnvExitRouter(GetCurrentEnvironment(),num);
-  }
-
-int GetcRouter(
-  const char *logicalName)
-  {
-   return EnvGetcRouter(GetCurrentEnvironment(),logicalName);
-  }
-
-int PrintRouter(
-  const char *logicalName,
-  const char *str)
-  {
-   return EnvPrintRouter(GetCurrentEnvironment(),logicalName,str);
-  }
-
-int UngetcRouter(
-  int ch,
-  const char *logicalName)
-  {
-   return EnvUngetcRouter(GetCurrentEnvironment(),ch,logicalName);
-  }
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
-

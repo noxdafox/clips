@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*                    SYMBOL MODULE                    */
    /*******************************************************/
@@ -65,6 +65,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -1843,40 +1845,3 @@ void *EnvTrueSymbol(
   {
    return SymbolData(theEnv)->TrueSymbolHN;
   }
-
-/*#####################################*/
-/* ALLOW_ENVIRONMENT_GLOBALS Functions */
-/*#####################################*/
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-void *AddSymbol(
-  const char *str)
-  {
-   return EnvAddSymbol(GetCurrentEnvironment(),str);
-  }
-
-void *AddLong(
-  long long number)
-  {
-   return EnvAddLong(GetCurrentEnvironment(),number);
-  }
-
-void *AddDouble(
-  double number)
-  {
-   return EnvAddDouble(GetCurrentEnvironment(),number);
-  }
-
-void *FalseSymbol()
-  {
-   return SymbolData(GetCurrentEnvironment())->FalseSymbolHN;
-  }
-
-void *TrueSymbol()
-  {
-   return SymbolData(GetCurrentEnvironment())->TrueSymbolHN;
-  }
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
-

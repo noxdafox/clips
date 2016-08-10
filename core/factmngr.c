@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*                 FACT MANAGER MODULE                 */
    /*******************************************************/
@@ -70,6 +70,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -1799,166 +1801,6 @@ bool EnvRemoveModifyFunction(
 
    return false;
   }
-
-/*#####################################*/
-/* ALLOW_ENVIRONMENT_GLOBALS Functions */
-/*#####################################*/
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-bool AddAssertFunction(
-  const char *name,
-  void (*functionPtr)(void *,void *),
-  int priority)
-  {
-   Environment *theEnv;
-   
-   theEnv = GetCurrentEnvironment();
-
-   FactData(theEnv)->ListOfAssertFunctions =
-       AddFunctionToCallListWithArg(theEnv,name,priority,(void (*)(Environment *, void *)) functionPtr,
-                             FactData(theEnv)->ListOfAssertFunctions,true);
-   return true;
-  }
-
-bool AddModifyFunction(
-  const char *name,
-  void (*functionPtr)(void *,void *,void *),
-  int priority)
-  {
-   Environment *theEnv;
-   
-   theEnv = GetCurrentEnvironment();
-
-   FactData(theEnv)->ListOfModifyFunctions =
-       AddFunctionToCallListWithArg(theEnv,name,priority,(void (*)(Environment *, void *)) functionPtr,
-                             FactData(theEnv)->ListOfModifyFunctions,true);
-   return true;
-  }
-
-bool AddRetractFunction(
-  const char *name,
-  void (*functionPtr)(Environment *,void *),
-  int priority)
-  {
-   Environment *theEnv;
-   
-   theEnv = GetCurrentEnvironment();
-
-   FactData(theEnv)->ListOfRetractFunctions =
-       AddFunctionToCallListWithArg(theEnv,name,priority,(void (*)(Environment *, void *)) functionPtr,
-                             FactData(theEnv)->ListOfRetractFunctions,true);
-   return true;
-  }
-
-void *Assert(
-  Fact *theFact)
-  {
-   return EnvAssert(GetCurrentEnvironment(),theFact);
-  }
-
-void *AssertString(
-  const char *theString)
-  {
-   return EnvAssertString(GetCurrentEnvironment(),theString);
-  }
-
-bool AssignFactSlotDefaults(
-  Fact *theFact)
-  {
-   return EnvAssignFactSlotDefaults(GetCurrentEnvironment(),theFact);
-  }
-
-struct fact *CreateFact(
-  Deftemplate *theDeftemplate)
-  {
-   return EnvCreateFact(GetCurrentEnvironment(),theDeftemplate);
-  }
-
-void DecrementFactCount(
-  Fact *factPtr)
-  {
-   EnvDecrementFactCount(GetCurrentEnvironment(),factPtr);
-  }
-
-long long FactIndex(
-  Fact *factPtr)
-  {
-   return(EnvFactIndex(GetCurrentEnvironment(),factPtr));
-  }
-
-bool GetFactListChanged()
-  {
-   return EnvGetFactListChanged(GetCurrentEnvironment());
-  }
-
-void GetFactPPForm(
-  char *buffer,
-  unsigned bufferLength,
-  Fact *theFact)
-  {
-   EnvGetFactPPForm(GetCurrentEnvironment(),buffer,bufferLength,theFact);
-  }
-
-bool GetFactSlot(
-  Fact *theFact,
-  const char *slotName,
-  DATA_OBJECT *theValue)
-  {
-   return(EnvGetFactSlot(GetCurrentEnvironment(),theFact,slotName,theValue));
-  }
-
-Fact *GetNextFact(
-  Fact *factPtr)
-  {
-   return EnvGetNextFact(GetCurrentEnvironment(),factPtr);
-  }
-
-void IncrementFactCount(
-  Fact *factPtr)
-  {
-   EnvIncrementFactCount(GetCurrentEnvironment(),factPtr);
-  }
-
-bool PutFactSlot(
-  Fact *theFact,
-  const char *slotName,
-  DATA_OBJECT *theValue)
-  {
-   return EnvPutFactSlot(GetCurrentEnvironment(),theFact,slotName,theValue);
-  }
-
-bool RemoveAssertFunction(
-  const char *name)
-  {
-   return EnvRemoveAssertFunction(GetCurrentEnvironment(),name);
-  }
-
-bool RemoveModifyFunction(
-  const char *name)
-  {
-   return EnvRemoveModifyFunction(GetCurrentEnvironment(),name);
-  }
-
-bool RemoveRetractFunction(
-  const char *name)
-  {
-   return EnvRemoveRetractFunction(GetCurrentEnvironment(),name);
-  }
-
-bool Retract(
-  Fact *theFact)
-  {
-   return EnvRetract(GetCurrentEnvironment(),theFact);
-  }
-
-void SetFactListChanged(
-  bool value)
-  {
-   EnvSetFactListChanged(GetCurrentEnvironment(),value);
-  }
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* DEFTEMPLATE_CONSTRUCT && DEFRULE_CONSTRUCT */
 

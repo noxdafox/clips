@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*               FACT COMMANDS HEADER FILE             */
    /*******************************************************/
@@ -49,6 +49,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_factcom
@@ -74,17 +76,6 @@
    bool                           EnvLoadFacts(Environment *,const char *);
    bool                           EnvLoadFactsFromString(Environment *,const char *,long);
    long long                      FactIndexFunction(Environment *);
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-#if DEBUGGING_FUNCTIONS
-   void                           Facts(const char *,Defmodule *,long long,long long,long long);
-#endif
-   bool                           LoadFacts(const char *);
-   bool                           SaveFacts(const char *,int);
-   bool                           LoadFactsFromString(const char *,int);
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* _H_factcom */
 

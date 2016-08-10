@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*               FACT FUNCTIONS MODULE                 */
    /*******************************************************/
@@ -74,6 +74,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -653,48 +655,6 @@ struct fact *GetFactAddressOrIndexArgument(
    ExpectedTypeError1(theEnv,theFunction,position,"fact-address or fact-index");
    return NULL;
   }
-
-/*#####################################*/
-/* ALLOW_ENVIRONMENT_GLOBALS Functions */
-/*#####################################*/
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-Deftemplate *FactDeftemplate(
-  Fact *theFact)
-  {
-   return EnvFactDeftemplate(GetCurrentEnvironment(),theFact);
-  }
-
-bool FactExistp(
-  Fact *theFact)
-  {
-   return EnvFactExistp(GetCurrentEnvironment(),theFact);
-  }
-
-void FactSlotNames(
-  Fact *theFact,
-  DATA_OBJECT *returnValue)
-  {
-   EnvFactSlotNames(GetCurrentEnvironment(),theFact,returnValue);
-  }
-
-void GetFactList(
-  DATA_OBJECT_PTR returnValue,
-  Defmodule *theModule)
-  {
-   EnvGetFactList(GetCurrentEnvironment(),returnValue,theModule);
-  }
-
-void PPFact(
-  Fact *theFact,
-  const char *logicalName,
-  bool ignoreDefaults)
-  {
-   EnvPPFact(GetCurrentEnvironment(),theFact,logicalName,ignoreDefaults);
-  }
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* DEFTEMPLATE_CONSTRUCT */
 

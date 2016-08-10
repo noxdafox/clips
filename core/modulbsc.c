@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*         DEFMODULE BASIC COMMANDS HEADER FILE        */
    /*******************************************************/
@@ -34,6 +34,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -280,30 +282,6 @@ void EnvListDefmodules(
   }
 
 #endif /* DEBUGGING_FUNCTIONS */
-
-/*#####################################*/
-/* ALLOW_ENVIRONMENT_GLOBALS Functions */
-/*#####################################*/
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-void GetDefmoduleList(
-  DATA_OBJECT_PTR returnValue)
-  {
-   EnvGetDefmoduleList(GetCurrentEnvironment(),returnValue);
-  }
-
-#if DEBUGGING_FUNCTIONS
-
-void ListDefmodules(
-  const char *logicalName)
-  {
-   EnvListDefmodules(GetCurrentEnvironment(),logicalName);
-  }
-
-#endif /* DEBUGGING_FUNCTIONS */
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* DEFMODULE_CONSTRUCT */
 

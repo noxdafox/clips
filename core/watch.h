@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*                  WATCH HEADER FILE                  */
    /*******************************************************/
@@ -42,6 +42,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -87,15 +89,6 @@ struct watchData
    void                           ListWatchItemsCommand(Environment *);
    void                           WatchFunctionDefinitions(Environment *);
    bool                           GetWatchItemCommand(Environment *);
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-   bool                           Watch(const char *);
-   bool                           Unwatch(const char *);
-   int                            GetWatchItem(const char *);
-   int                            SetWatchItem(const char *,unsigned,struct expr *);
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* _H_watch */
 

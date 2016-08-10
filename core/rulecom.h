@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*             DEFRULE COMMANDS HEADER FILE            */
    /*******************************************************/
@@ -56,6 +56,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_rulecom
@@ -104,16 +106,5 @@ struct joinInformation
    long                           RuleComplexityCommand(Environment *);
    void                           ShowAlphaHashTable(Environment *);
 #endif
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-#if DEBUGGING_FUNCTIONS
-   void                           Matches(Defrule *,int,DATA_OBJECT *);
-   void                           JoinActivity(Defrule *,int,DATA_OBJECT *);
-#endif
-   bool                           GetBetaMemoryResizing(void);
-   bool                           SetBetaMemoryResizing(bool);
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* _H_rulecom */

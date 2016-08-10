@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*              CONSTRUCT PARSER MODULE                */
    /*******************************************************/
@@ -56,6 +56,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -85,17 +87,6 @@
 /***************************************/
 
    static bool                    FindConstructBeginning(Environment *,const char *,struct token *,bool,bool *);
-
-/************************************************/
-/* Load: C access routine for the load command. */
-/************************************************/
-#if ALLOW_ENVIRONMENT_GLOBALS
-int Load(
-  const char *fileName)
-  {
-   return EnvLoad(GetCurrentEnvironment(),fileName);
-  }
-#endif
   
 /************************************************************/
 /* EnvLoad: C access routine for the load command. Returns  */

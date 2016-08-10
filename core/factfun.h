@@ -69,15 +69,5 @@
    void                           EnvPPFact(Environment *,Fact *,const char *,bool);
    struct fact                   *GetFactAddressOrIndexArgument(Environment *,const char *,int,bool);
 
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-   Deftemplate                   *FactDeftemplate(Fact *);
-   bool                           FactExistp(Fact *);
-   void                           FactSlotNames(Fact *,DATA_OBJECT *);
-   void                           GetFactList(DATA_OBJECT_PTR,Defmodule *);
-   void                           PPFact(Fact *,const char *,bool);
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
-
 #endif /* _H_factfun */
 

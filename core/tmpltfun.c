@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*             DEFTEMPLATE FUNCTIONS MODULE            */
    /*******************************************************/
@@ -69,6 +69,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -111,7 +113,6 @@
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    static struct expr            *ModAndDupParse(Environment *,struct expr *,const char *,const char *);
-   static SYMBOL_HN              *FindTemplateForFactAddress(SYMBOL_HN *,struct lhsParseNode *);
 #endif
 
 /****************************************************************/
@@ -1900,7 +1901,7 @@ bool UpdateModifyDuplicate(
 /*   deftemplate name associated with the pattern */
 /*   to which a fact address has been bound.      */
 /**************************************************/
-static SYMBOL_HN *FindTemplateForFactAddress(
+SYMBOL_HN *FindTemplateForFactAddress(
   SYMBOL_HN *factAddress,
   struct lhsParseNode *theLHS)
   {
@@ -2138,89 +2139,6 @@ static struct expr *ModAndDupParse(
   }
 
 #endif /* (! RUN_TIME) && (! BLOAD_ONLY) */
-
-/*#####################################*/
-/* ALLOW_ENVIRONMENT_GLOBALS Functions */
-/*#####################################*/
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-void DeftemplateSlotNames(
-  Deftemplate *theDeftemplate,
-  DATA_OBJECT *returnValue)
-  {
-   EnvDeftemplateSlotNames(GetCurrentEnvironment(),theDeftemplate,returnValue);
-  }
-
-bool DeftemplateSlotDefaultValue(
-  Deftemplate *theDeftemplate,
-  const char *slotName,
-  DATA_OBJECT_PTR theValue)
-  {
-   return EnvDeftemplateSlotDefaultValue(GetCurrentEnvironment(),theDeftemplate,slotName,theValue);
-  }
-
-void DeftemplateSlotCardinality(
-  Deftemplate *theDeftemplate,
-  const char *slotName,
-  DATA_OBJECT *result)
-  {
-   EnvDeftemplateSlotCardinality(GetCurrentEnvironment(),theDeftemplate,slotName,result);
-  }
-
-void DeftemplateSlotAllowedValues(
-  Deftemplate *theDeftemplate,
-  const char *slotName,
-  DATA_OBJECT *result)
-  {
-   EnvDeftemplateSlotAllowedValues(GetCurrentEnvironment(),theDeftemplate,slotName,result);
-  }
-
-void DeftemplateSlotRange(
-  Deftemplate *theDeftemplate,
-  const char *slotName,
-  DATA_OBJECT *result)
-  {
-   EnvDeftemplateSlotRange(GetCurrentEnvironment(),theDeftemplate,slotName,result);
-  }
-
-void DeftemplateSlotTypes(
-  Deftemplate *theDeftemplate,
-  const char *slotName,
-  DATA_OBJECT *result)
-  {
-   EnvDeftemplateSlotTypes(GetCurrentEnvironment(),theDeftemplate,slotName,result);
-  }
-
-bool DeftemplateSlotMultiP(
-  Deftemplate *theDeftemplate,
-  const char *slotName)
-  {
-   return EnvDeftemplateSlotMultiP(GetCurrentEnvironment(),theDeftemplate,slotName);
-  }
-
-bool DeftemplateSlotSingleP(
-  Deftemplate *theDeftemplate,
-  const char *slotName)
-  {
-   return EnvDeftemplateSlotSingleP(GetCurrentEnvironment(),theDeftemplate,slotName);
-  }
-
-bool DeftemplateSlotExistP(
-  Deftemplate *theDeftemplate,
-  const char *slotName)
-  {
-   return EnvDeftemplateSlotExistP(GetCurrentEnvironment(),theDeftemplate,slotName);
-  }
-
-int DeftemplateSlotDefaultP(
-  Deftemplate *theDeftemplate,
-  const char *slotName)
-  {
-   return EnvDeftemplateSlotDefaultP(GetCurrentEnvironment(),theDeftemplate,slotName);
-  }
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* DEFTEMPLATE_CONSTRUCT */
 

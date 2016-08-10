@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*              FILE COMMANDS HEADER FILE              */
    /*******************************************************/
@@ -48,6 +48,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_filecom
@@ -76,15 +78,6 @@
    bool                           SaveCommand(Environment *);
    bool                           DribbleOnCommand(Environment *);
    bool                           DribbleOffCommand(Environment *);
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-   bool                           DribbleActive(void);
-   bool                           DribbleOn(const char *);
-   bool                           DribbleOff(void);
-   bool                           BatchStar(const char *);
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* _H_filecom */
 

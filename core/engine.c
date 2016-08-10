@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*                    ENGINE MODULE                    */
    /*******************************************************/
@@ -73,6 +73,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -1482,140 +1484,6 @@ bool EnvGetHaltRules(
   {
    return(EngineData(theEnv)->HaltRules);
   }
-
-/*#####################################*/
-/* ALLOW_ENVIRONMENT_GLOBALS Functions */
-/*#####################################*/
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-bool AddBeforeRunFunction(
-  const char *name,
-  void (*functionPtr)(void),
-  int priority)
-  {
-   Environment *theEnv;
-   
-   theEnv = GetCurrentEnvironment();
-
-   EngineData(theEnv)->ListOfBeforeRunFunctions = 
-       AddFunctionToCallListWithArg(theEnv,name,priority,(void (*)(Environment *,void *)) functionPtr,
-                             EngineData(theEnv)->ListOfBeforeRunFunctions,true);
-   return true;
-  }
-
-bool AddRunFunction(
-  const char *name,
-  void (*functionPtr)(void),
-  int priority)
-  {
-   Environment *theEnv;
-   
-   theEnv = GetCurrentEnvironment();
-
-   EngineData(theEnv)->ListOfRunFunctions = 
-       AddFunctionToCallList(theEnv,name,priority,(void (*)(Environment *)) functionPtr,
-                             EngineData(theEnv)->ListOfRunFunctions,true);
-   return true;
-  }
-
-void ClearFocusStack()
-  {
-   EnvClearFocusStack(GetCurrentEnvironment());
-  }
-
-void Focus(
-  Defmodule *theModule)
-  {
-   EnvFocus(GetCurrentEnvironment(),theModule);
-  }
-
-void GetFocusStack(
-  DATA_OBJECT_PTR returnValue)
-  {
-   EnvGetFocusStack(GetCurrentEnvironment(),returnValue);
-  }
-
-Defmodule *GetFocus()
-  {
-   return EnvGetFocus(GetCurrentEnvironment());
-  }
-
-bool GetFocusChanged()
-  {
-   return EnvGetFocusChanged(GetCurrentEnvironment());
-  }
-
-struct focus *GetNextFocus(
-  struct focus *theFocus)
-  {
-   return EnvGetNextFocus(GetCurrentEnvironment(),theFocus);
-  }
-
-void Halt()
-  {
-   EnvHalt(GetCurrentEnvironment());
-  }
-
-Defmodule *PopFocus()
-  {
-   return EnvPopFocus(GetCurrentEnvironment());
-  }
-
-bool RemoveRunFunction(
-  const char *name)
-  {
-   return EnvRemoveRunFunction(GetCurrentEnvironment(),name);
-  }
-
-long long Run(
-  long long runLimit)
-  {
-   return EnvRun(GetCurrentEnvironment(),runLimit);
-  }
-
-void SetFocusChanged(
-  bool value)
-  {
-   EnvSetFocusChanged(GetCurrentEnvironment(),value);
-  }
-
-#if DEBUGGING_FUNCTIONS
-
-void ListFocusStack(
-  const char *logicalName)
-  {
-   EnvListFocusStack(GetCurrentEnvironment(),logicalName);
-  }
-
-bool DefruleHasBreakpoint(
-  Defrule *theRule)
-  {
-   return EnvDefruleHasBreakpoint(GetCurrentEnvironment(),theRule);
-  }
-
-bool RemoveBreak(
-  Defrule *theRule)
-  {
-   return EnvRemoveBreak(GetCurrentEnvironment(),theRule);
-  }
-
-void SetBreak(
-  Defrule *theRule)
-  {
-   EnvSetBreak(GetCurrentEnvironment(),theRule);
-  }
-
-void ShowBreaks(
-  const char *logicalName,
-  Defmodule *theModule)
-  {
-   EnvShowBreaks(GetCurrentEnvironment(),logicalName,theModule);
-  }
-
-#endif /* DEBUGGING_FUNCTIONS */
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* DEFRULE_CONSTRUCT */
 

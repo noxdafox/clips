@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*            DEFGLOBAL COMMANDS HEADER FILE           */
    /*******************************************************/
@@ -39,6 +39,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_globlcom
@@ -54,16 +56,6 @@
    bool                           EnvGetResetGlobals(Environment *);
    void                           ShowDefglobalsCommand(Environment *);
    void                           EnvShowDefglobals(Environment *,const char *,Defmodule *);
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-   bool                           GetResetGlobals(void);
-   bool                           SetResetGlobals(bool);
-#if DEBUGGING_FUNCTIONS
-   void                           ShowDefglobals(const char *,Defmodule *);
-#endif
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* _H_globlcom */
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*              CLASS COMMANDS HEADER FILE             */
    /*******************************************************/
@@ -41,6 +41,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -104,27 +106,5 @@
 #if (! BLOAD_ONLY) && (! RUN_TIME)
    void                    SaveDefclasses(Environment *,Defmodule *,const char *);
 #endif
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-   const char             *DefclassModule(Defclass *);
-   Defclass               *FindDefclass(const char *);
-   void                    GetDefclassList(DATA_OBJECT *,Defmodule *);
-   unsigned short          GetClassDefaultsMode(void);
-   struct defmoduleItemHeader 
-                          *GetDefclassModule(Defclass *);
-   const char             *GetDefclassName(Defclass *);
-   const char             *GetDefclassPPForm(Defclass *);
-   unsigned                GetDefclassWatchInstances(Defclass *);
-   unsigned                GetDefclassWatchSlots(Defclass *);
-   Defclass               *GetNextDefclass(Defclass *);
-   bool                    IsDefclassDeletable(Defclass *);
-   void                    ListDefclasses(const char *,Defmodule *);
-   unsigned short          SetClassDefaultsMode(unsigned short);
-   void                    SetDefclassWatchInstances(unsigned,Defclass *);
-   void                    SetDefclassWatchSlots(unsigned,Defclass *);
-   bool                    Undefclass(Defclass *);
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* _H_classcom */

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*                  MULTIFIELD MODULE                  */
    /*******************************************************/
@@ -49,6 +49,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -872,19 +874,4 @@ void *ImplodeMultifield(
    rm(theEnv,ret_str,strsize);
    return(rv);
   }
-
-/*#####################################*/
-/* ALLOW_ENVIRONMENT_GLOBALS Functions */
-/*#####################################*/
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-Multifield *CreateMultifield(
-  long size)
-  {
-   return EnvCreateMultifield(GetCurrentEnvironment(),size);
-  }
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
-
 

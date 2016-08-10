@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*                 DEFFUNCTION MODULE                  */
    /*******************************************************/
@@ -58,6 +58,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -1123,88 +1125,6 @@ void EnvSetDeffunctionPPForm(
   {
    SetConstructPPForm(theEnv,(struct constructHeader *) theDeffunction,thePPForm);
   }
-
-/*#####################################*/
-/* ALLOW_ENVIRONMENT_GLOBALS Functions */
-/*#####################################*/
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-const char *DeffunctionModule(
-  Deffunction *theDeffunction)
-  {
-   return EnvDeffunctionModule(GetCurrentEnvironment(),theDeffunction);
-  }
-
-Deffunction *FindDeffunction(
-  const char *deffunctionName)
-  {
-   return EnvFindDeffunction(GetCurrentEnvironment(),deffunctionName);
-  }
-
-Deffunction *GetNextDeffunction(
-  Deffunction *deffunctionPtr)
-  {
-   return EnvGetNextDeffunction(GetCurrentEnvironment(),deffunctionPtr);
-  }
-
-bool IsDeffunctionDeletable(
-  Deffunction *ptr)
-  {
-   return EnvIsDeffunctionDeletable(GetCurrentEnvironment(),ptr);
-  }
-
-const char *GetDeffunctionName(
-  Deffunction *theDeffunction)
-  {
-   return EnvGetDeffunctionName(GetCurrentEnvironment(),theDeffunction);
-  }
-
-const char *GetDeffunctionPPForm(
-  Deffunction *theDeffunction)
-  {
-   return EnvGetDeffunctionPPForm(GetCurrentEnvironment(),theDeffunction);
-  }
-
-bool Undeffunction(
-  Deffunction *vptr)
-  {
-   return EnvUndeffunction(GetCurrentEnvironment(),vptr);
-  }
-
-void GetDeffunctionList(
-  DATA_OBJECT *returnValue,
-  Defmodule *theModule)
-  {
-   EnvGetDeffunctionList(GetCurrentEnvironment(),returnValue,theModule);
-  }
-
-#if DEBUGGING_FUNCTIONS
-
-void ListDeffunctions(
-  const char *logicalName,
-  Defmodule *theModule)
-  {
-   EnvListDeffunctions(GetCurrentEnvironment(),logicalName,theModule);
-  }
-
-bool GetDeffunctionWatch(
-  Deffunction *dptr)
-  {
-   return EnvGetDeffunctionWatch(GetCurrentEnvironment(),dptr);
-  }
-
-void SetDeffunctionWatch(
-  bool newState,
-  Deffunction *dptr)
-  {
-   EnvSetDeffunctionWatch(GetCurrentEnvironment(),newState,dptr);
-  }
-
-#endif /* DEBUGGING_FUNCTIONS */
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
-
 
 #endif
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*            MISCELLANEOUS FUNCTIONS MODULE           */
    /*******************************************************/
@@ -85,6 +85,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            Removed VAX_VMS support.                       */
 /*                                                           */
 /*************************************************************/
 
@@ -611,9 +613,6 @@ void OptionsCommand(
 #if GENERIC
    EnvPrintRouter(theEnv,WDISPLAY,"Generic ");
 #endif
-#if VAX_VMS
-   EnvPrintRouter(theEnv,WDISPLAY,"VAX VMS ");
-#endif
 #if UNIX_V
    EnvPrintRouter(theEnv,WDISPLAY,"UNIX System V or 4.2BSD ");
 #endif
@@ -833,10 +832,6 @@ void *OperatingSystemFunction(
 
 #if GENERIC
    return(EnvAddSymbol(theEnv,"UNKNOWN"));
-#endif
-
-#if VAX_VMS
-   return(EnvAddSymbol(theEnv,"VMS"));
 #endif
 
 #if UNIX_V

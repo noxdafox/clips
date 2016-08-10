@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*              FACTS MANAGER HEADER FILE              */
    /*******************************************************/
@@ -61,6 +61,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -180,32 +182,6 @@ struct factsData
    bool                           EnvAddModifyFunctionWithContext(Environment *,const char *,
                                                                   void (*)(Environment *,void *,void *),int,void *);
    bool                           EnvRemoveModifyFunction(Environment *,const char *);
-
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-   bool                           AddAssertFunction(const char *,void (*)(void *,void *),int);
-   bool                           AddModifyFunction(const char *,void (*)(void *,void *,void *),int);
-   bool                           AddRetractFunction(const char *,void (*)(Environment *,void *),int);
-   void                          *Assert(Fact *);
-   void                          *AssertString(const char *);
-   bool                           AssignFactSlotDefaults(Fact *);
-   struct fact                   *CreateFact(Deftemplate *);
-   void                           DecrementFactCount(Fact *);
-   long long                      FactIndex(Fact *);
-   bool                           GetFactListChanged(void);
-   void                           GetFactPPForm(char *,unsigned,Fact *);
-   bool                           GetFactSlot(Fact *,const char *,DATA_OBJECT *);
-   Fact                          *GetNextFact(Fact *);
-   void                           IncrementFactCount(Fact *);
-   bool                           PutFactSlot(Fact *,const char *,DATA_OBJECT *);
-   bool                           RemoveAssertFunction(const char *);
-   bool                           RemoveModifyFunction(const char *);
-   bool                           RemoveRetractFunction(const char *);
-   bool                           Retract(Fact *);
-   void                           SetFactListChanged(bool);
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* _H_factmngr */
 

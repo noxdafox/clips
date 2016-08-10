@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*                 ROUTER HEADER FILE                  */
    /*******************************************************/
@@ -51,6 +51,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -147,23 +149,5 @@ struct routerData
    int                            PrintNRouter(Environment *,const char *,const char *,unsigned long);
    size_t                         EnvInputBufferCount(Environment *);
    Router                        *EnvFindRouter(Environment *,const char *);
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-   bool                           ActivateRouter(const char *);
-   bool                           AddRouter(const char *,int,
-                                                   bool (*)(const char *),
-                                                   void (*)(const char *,const char *),
-                                                   int (*)(const char *),
-                                                   int (*)(int,const char *),
-                                                   void (*)(int));
-   bool                           DeactivateRouter(const char *);
-   bool                           DeleteRouter(const char *);
-   void                           ExitRouter(int);
-   int                            GetcRouter(const char *);
-   int                            PrintRouter(const char *,const char *);
-   int                            UngetcRouter(int,const char *);
-   
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* _H_router */

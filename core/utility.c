@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*                   UTILITY MODULE                    */
    /*******************************************************/
@@ -55,6 +55,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -373,29 +375,6 @@ void *EnvGetPeriodicFunctionContext(
    
    return theItem->context;
   }
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-/****************************************************/
-/* AddPeriodicFunction: Adds a function to the list */
-/*   of functions called to handle periodic tasks.  */
-/****************************************************/
-bool AddPeriodicFunction(
-  const char *name,
-  void (*theFunction)(void),
-  int priority)
-  {
-   Environment *theEnv;
-   
-   theEnv = GetCurrentEnvironment();
-   
-   UtilityData(theEnv)->ListOfPeriodicFunctions =
-     AddFunctionToCallList(theEnv,name,priority,
-                           (void (*)(Environment *)) theFunction,
-                           UtilityData(theEnv)->ListOfPeriodicFunctions,false);
-
-   return true;
-  }
-#endif
 
 /*************************************************************/
 /* EnvAddPeriodicFunctionWithContext: Adds a function to the */
@@ -1295,26 +1274,3 @@ size_t UTF8CharNum(
    return charnum;
   }
 
-/*#####################################*/
-/* ALLOW_ENVIRONMENT_GLOBALS Functions */
-/*#####################################*/
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-void IncrementGCLocks()
-  {
-   EnvIncrementGCLocks(GetCurrentEnvironment());
-  }
-
-void DecrementGCLocks()
-  {
-   EnvDecrementGCLocks(GetCurrentEnvironment());
-  }
-
-bool RemovePeriodicFunction(
-  const char *name)
-  {
-   return EnvRemovePeriodicFunction(GetCurrentEnvironment(),name);
-  }
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*         DEFFACTS BASIC COMMANDS HEADER FILE         */
    /*******************************************************/
@@ -42,6 +42,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_dffctbsc
@@ -63,16 +65,6 @@
    bool                           PPDeffacts(Environment *,const char *,const char *);
    void                           ListDeffactsCommand(Environment *);
    void                           EnvListDeffacts(Environment *,const char *,Defmodule *);
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-   void                           GetDeffactsList(DATA_OBJECT_PTR,Defmodule *);
-   bool                           Undeffacts(Deffacts *);
-#if DEBUGGING_FUNCTIONS
-   void                           ListDeffacts(const char *,Defmodule *);
-#endif
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* _H_dffctbsc */
 

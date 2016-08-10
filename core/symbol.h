@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*                 SYMBOL HEADER FILE                  */
    /*******************************************************/
@@ -69,6 +69,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -316,16 +318,6 @@ struct symbolData
    void                          *EnvFalseSymbol(Environment *);
    void                          *EnvTrueSymbol(Environment *);
    void                           EphemerateValue(Environment *,int,void *);
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-   void                          *AddDouble(double);
-   void                          *AddLong(long long);
-   void                          *AddSymbol(const char *);
-   void                          *FalseSymbol(void);
-   void                          *TrueSymbol(void);
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* _H_symbol */
 

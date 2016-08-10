@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*                 BLOAD HEADER FILE                   */
    /*******************************************************/
@@ -37,6 +37,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -81,10 +83,6 @@ struct bloadData
    void                    AddClearBloadReadyFunction(Environment *,const char *,int (*)(Environment *),int);
    void                    AddAbortBloadFunction(Environment *,const char *,void (*)(Environment *),int);
    void                    CannotLoadWithBloadMessage(Environment *,const char *);
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-   bool                    Bload(const char *);
-#endif
 
 #endif
 

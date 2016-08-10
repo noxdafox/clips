@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*                DEFFACTS HEADER FILE                 */
    /*******************************************************/
@@ -40,6 +40,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -93,17 +95,6 @@ struct deffactsModule
    const char                    *EnvDeffactsModule(Environment *,Deffacts *);
    const char                    *EnvGetDeffactsName(Environment *,Deffacts *);
    const char                    *EnvGetDeffactsPPForm(Environment *,Deffacts *);
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-   Deffacts                      *FindDeffacts(const char *);
-   Deffacts                      *GetNextDeffacts(Deffacts *);
-   bool                           IsDeffactsDeletable(Deffacts *);
-   const char                    *DeffactsModule(Deffacts *);
-   const char                    *GetDeffactsName(Deffacts *);
-   const char                    *GetDeffactsPPForm(Deffacts *);
-   
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* _H_dffctdef */
 

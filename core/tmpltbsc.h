@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*       DEFTEMPLATE BASIC COMMANDS HEADER FILE        */
    /*******************************************************/
@@ -50,6 +50,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_tmpltbsc
@@ -76,18 +78,6 @@
    bool                           DeftemplateWatchAccess(Environment *,int,bool,struct expr *);
    bool                           DeftemplateWatchPrint(Environment *,const char *,int,struct expr *);
 #endif
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-   void                           GetDeftemplateList(DATA_OBJECT_PTR,Defmodule *);
-#if DEBUGGING_FUNCTIONS
-   bool                           GetDeftemplateWatch(Deftemplate *);
-   void                           ListDeftemplates(const char *,Defmodule *);
-   void                           SetDeftemplateWatch(bool,Deftemplate *);
-#endif
-   bool                           Undeftemplate(Deftemplate *);
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* _H_tmpltbsc */
 

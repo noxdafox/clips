@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*               EXTERNAL FUNCTION MODULE              */
    /*******************************************************/
@@ -42,6 +42,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -720,45 +722,3 @@ int GetMaximumArgs(
    
    return(-1); 
   }
-
-/*#####################################*/
-/* ALLOW_ENVIRONMENT_GLOBALS Functions */
-/*#####################################*/
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-#if (! RUN_TIME)
-bool DefineFunction(
-  const char *name,
-  int returnType,
-  int (*pointer)(void),
-  const char *actualName)
-  {
-   Environment *theEnv;
-   
-   theEnv = GetCurrentEnvironment();
-
-   return(DefineFunction3(theEnv,name,returnType,
-                          (int (*)(Environment *)) pointer,
-                          actualName,NULL,false,NULL));
-  }
-
-bool DefineFunction2(
-  const char *name,
-  int returnType,
-  int (*pointer)(void),
-  const char *actualName,
-  const char *restrictions)
-  {
-   Environment *theEnv;
-   
-   theEnv = GetCurrentEnvironment();
-
-   return(DefineFunction3(theEnv,name,returnType,
-                          (int (*)(Environment *)) pointer,
-                          actualName,restrictions,false,NULL));
-  }
-
-#endif /* (! RUN_TIME) */
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */

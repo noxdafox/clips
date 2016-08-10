@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*                 DEFTEMPLATE MODULE                  */
    /*******************************************************/
@@ -52,6 +52,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -579,57 +581,6 @@ const char *EnvGetDeftemplatePPForm(
   {
    return GetConstructPPForm(theEnv,(struct constructHeader *) theDeftemplate);
   }
-
-/*#####################################*/
-/* ALLOW_ENVIRONMENT_GLOBALS Functions */
-/*#####################################*/
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-const char *DeftemplateModule(
-  Deftemplate *theDeftemplate)
-  {
-   return EnvDeftemplateModule(GetCurrentEnvironment(),theDeftemplate);
-  }
-
-Deftemplate *FindDeftemplate(
-  const char *deftemplateName)
-  {
-   return EnvFindDeftemplate(GetCurrentEnvironment(),deftemplateName);
-  }
-
-const char *GetDeftemplateName(
-  Deftemplate *theDeftemplate)
-  {
-   return EnvGetDeftemplateName(GetCurrentEnvironment(),theDeftemplate);
-  }
-
-const char *GetDeftemplatePPForm(
-  Deftemplate *theDeftemplate)
-  {
-   return EnvGetDeftemplatePPForm(GetCurrentEnvironment(),theDeftemplate);
-  }
-
-Deftemplate *GetNextDeftemplate(
-  Deftemplate *deftemplatePtr)
-  {
-   return EnvGetNextDeftemplate(GetCurrentEnvironment(),deftemplatePtr);
-  }
-
-bool IsDeftemplateDeletable(
-  Deftemplate *theDeftemplate)
-  {
-   return EnvIsDeftemplateDeletable(GetCurrentEnvironment(),theDeftemplate);
-  }
-
-Fact *GetNextFactInTemplate(
-  Deftemplate *theTemplate,
-  Fact *factPtr)
-  {
-   return EnvGetNextFactInTemplate(GetCurrentEnvironment(),theTemplate,factPtr);
-  }
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* DEFTEMPLATE_CONSTRUCT */
 

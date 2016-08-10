@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -48,6 +48,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -112,24 +114,6 @@ struct messageHandlerData
    void             EnvPreviewSend(Environment *,const char *,Defclass *,const char *);
    long             DisplayHandlersInLinks(Environment *,const char *,PACKED_CLASS_LINKS *,int);
 #endif
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-   unsigned         FindDefmessageHandler(Defclass *,const char *,const char *);
-   const char      *GetDefmessageHandlerName(Defclass *,int);
-   const char      *GetDefmessageHandlerType(Defclass *,int);
-   int              GetNextDefmessageHandler(Defclass *,int);
-   bool             IsDefmessageHandlerDeletable(Defclass *,int);
-   bool             UndefmessageHandler(Defclass *,int);
-#if DEBUGGING_FUNCTIONS
-   const char      *GetDefmessageHandlerPPForm(Defclass *,int);
-   bool             GetDefmessageHandlerWatch(Defclass *,int);
-   void             ListDefmessageHandlers(const char *,Defclass *,bool);
-   void             PreviewSend(const char *,Defclass *,const char *);
-   void             SetDefmessageHandlerWatch(bool,Defclass *,int);
-#endif /* DEBUGGING_FUNCTIONS */
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* _H_msgcom */
 

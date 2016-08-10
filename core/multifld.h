@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*                MULTIFIELD HEADER FILE               */
    /*******************************************************/
@@ -51,6 +51,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -118,12 +120,6 @@ typedef struct field * FIELD_PTR;
    Multifield                    *GetMultifieldList(Environment *);
    void                          *ImplodeMultifield(Environment *,DATA_OBJECT *);
    void                           EphemerateMultifield(Environment *,struct multifield *);
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-   Multifield                    *CreateMultifield(long);
-   
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* _H_multifld */
 

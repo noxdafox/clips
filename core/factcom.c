@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*                FACT COMMANDS MODULE                 */
    /*******************************************************/
@@ -57,6 +57,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -1339,48 +1341,6 @@ static struct expr *AssertParse(
   }
 
 #endif /* (! RUN_TIME) */
-
-/*#####################################*/
-/* ALLOW_ENVIRONMENT_GLOBALS Functions */
-/*#####################################*/
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-#if DEBUGGING_FUNCTIONS
-
-void Facts(
-  const char *logicalName,
-  Defmodule *theModule,
-  long long start,
-  long long end,
-  long long max)
-  {
-   EnvFacts(GetCurrentEnvironment(),logicalName,theModule,start,end,max);
-  }
-
-#endif /* DEBUGGING_FUNCTIONS */
-
-bool LoadFacts(
-  const char *fileName)
-  {
-   return EnvLoadFacts(GetCurrentEnvironment(),fileName);
-  }
-
-bool SaveFacts(
-  const char *fileName,
-  int saveCode)
-  {
-   return EnvSaveFacts(GetCurrentEnvironment(),fileName,saveCode);
-  }
-
-bool LoadFactsFromString(
-  const char *theString,
-  int theMax)
-  {
-   return EnvLoadFactsFromString(GetCurrentEnvironment(),theString,theMax);
-  }
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* DEFTEMPLATE_CONSTRUCT */
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*               INSTANCE FUNCTIONS MODULE             */
    /*******************************************************/
@@ -68,6 +68,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -1378,37 +1380,6 @@ static void NetworkModifyForSharedSlot(
   }
 
 #endif /* DEFRULE_CONSTRUCT */
-
-/*#####################################*/
-/* ALLOW_ENVIRONMENT_GLOBALS Functions */
-/*#####################################*/
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-void DecrementInstanceCount(
-  Instance *theInstance)
-  {
-   EnvDecrementInstanceCount(GetCurrentEnvironment(),theInstance);
-  }
-
-bool GetInstancesChanged()
-  {
-   return EnvGetInstancesChanged(GetCurrentEnvironment());
-  }
-
-void IncrementInstanceCount(
-  Instance *theInstance)
-  {
-   EnvIncrementInstanceCount(GetCurrentEnvironment(),theInstance);
-  }
-
-void SetInstancesChanged(
-  bool changed)
-  {
-   EnvSetInstancesChanged(GetCurrentEnvironment(),changed);
-  }
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* OBJECT_SYSTEM */
 

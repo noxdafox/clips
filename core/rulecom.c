@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*                RULE COMMANDS MODULE                 */
    /*******************************************************/
@@ -62,6 +62,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -1577,44 +1579,5 @@ void ShowAlphaHashTable(
    }
 
 #endif /* DEVELOPER */
-
-/*#####################################*/
-/* ALLOW_ENVIRONMENT_GLOBALS Functions */
-/*#####################################*/
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-#if DEBUGGING_FUNCTIONS
-
-void Matches(
-  Defrule *theRule,
-  int output,
-  DATA_OBJECT *result)
-  {
-   EnvMatches(GetCurrentEnvironment(),theRule,output,result);
-  }
-
-void JoinActivity(
-  Defrule *theRule,
-  int output,
-  DATA_OBJECT *result)
-  {
-   EnvJoinActivity(GetCurrentEnvironment(),theRule,output,result);
-  }
-
-#endif /* DEBUGGING_FUNCTIONS */
-
-bool GetBetaMemoryResizing()
-  {   
-   return EnvGetBetaMemoryResizing(GetCurrentEnvironment());
-  }
-
-bool SetBetaMemoryResizing(
-  bool value)
-  {
-   return EnvSetBetaMemoryResizing(GetCurrentEnvironment(),value);
-  }
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* DEFRULE_CONSTRUCT */

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  06/29/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*                  SETUP HEADER FILE                  */
    /*******************************************************/
@@ -82,6 +82,10 @@
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
+/*            Removed VAX_VMS support.                       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_setup
@@ -129,17 +133,12 @@
 #define WIN_GCC 0   /* Windows XP, with DJGPP 3.21 */
 #endif
 
-#ifndef VAX_VMS                    
-#define VAX_VMS 0   /* VAX VMS */
-#endif
-
 /* Use GENERIC if nothing else is used. */
 
 #ifndef GENERIC
 #if (! UNIX_V) && (! LINUX) && (! UNIX_7) && \
     (! MAC_XCD) && (! DARWIN) && \
-    (! WIN_MVC) && (! WIN_GCC) && \
-    (! VAX_VMS)
+    (! WIN_MVC) && (! WIN_GCC) 
 #define GENERIC 1   /* Generic (any machine)                   */
 #else
 #define GENERIC 0   /* Generic (any machine)                   */
@@ -441,17 +440,6 @@
 
 #ifndef WINDOW_INTERFACE
 #define WINDOW_INTERFACE 0
-#endif
-
-/*************************************************************/
-/* ALLOW_ENVIRONMENT_GLOBALS: If enabled, tracks the current */
-/*   environment and allows environments to be referred to   */
-/*   by index. If disabled, CLIPS makes no use of global     */
-/*   variables.                                              */
-/*************************************************************/
-
-#ifndef ALLOW_ENVIRONMENT_GLOBALS
-#define ALLOW_ENVIRONMENT_GLOBALS 1
 #endif
 
 /********************************************/

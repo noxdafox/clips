@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*              DEFGLOBAL COMMANDS MODULE              */
    /*******************************************************/
@@ -36,6 +36,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -281,36 +283,6 @@ static void PrintDefglobalValueForm(
   }
 
 #endif /* DEBUGGING_FUNCTIONS */
-
-/*#####################################*/
-/* ALLOW_ENVIRONMENT_GLOBALS Functions */
-/*#####################################*/
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-bool GetResetGlobals()
-  {   
-   return EnvGetResetGlobals(GetCurrentEnvironment());
-  }
-
-bool SetResetGlobals(
-  bool value)
-  {
-   return EnvSetResetGlobals(GetCurrentEnvironment(),value);
-  }
-
-#if DEBUGGING_FUNCTIONS
-
-void ShowDefglobals(
-  const char *logicalName,
-  Defmodule *theModule)
-  {
-   EnvShowDefglobals(GetCurrentEnvironment(),logicalName,theModule);
-  }
-
-#endif /* DEBUGGING_FUNCTIONS */
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* DEFGLOBAL_CONSTRUCT */
 

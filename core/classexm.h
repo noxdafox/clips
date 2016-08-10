@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*             CLASS EXAMINATION HEADER FILE           */
    /*******************************************************/
@@ -48,6 +48,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_classexm
@@ -87,22 +89,4 @@
    bool                           ClassExistPCommand(Environment *);
    int                            EnvSlotDefaultP(Environment *,Defclass *,const char *);
   
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-#if DEBUGGING_FUNCTIONS
-   void                           BrowseClasses(const char *,Defclass *);
-   void                           DescribeClass(const char *,Defclass *);
-#endif
-   bool                           SlotDirectAccessP(Defclass *,const char *);
-   bool                           SlotExistP(Defclass *,const char *,bool);
-   bool                           SlotInitableP(Defclass *,const char *);
-   bool                           SlotPublicP(Defclass *,const char *);
-   int                            SlotDefaultP(Defclass *,const char *);
-   bool                           SlotWritableP(Defclass *,const char *);
-   bool                           SubclassP(Defclass *,Defclass *);
-   bool                           SuperclassP(Defclass *,Defclass *);
-   bool                           SlotDefaultValue(Defclass *,const char *,DATA_OBJECT_PTR);
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
-
 #endif /* _H_classexm */

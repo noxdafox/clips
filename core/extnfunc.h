@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*            EXTERNAL FUNCTIONS HEADER FILE           */
    /*******************************************************/
@@ -43,6 +43,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -130,15 +132,6 @@ struct FunctionHash
    bool                           UndefineFunction(Environment *,const char *);
    int                            GetMinimumArgs(struct FunctionDefinition *);
    int                            GetMaximumArgs(struct FunctionDefinition *);
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-#if (! RUN_TIME)
-   bool                           DefineFunction(const char *,int,int (*)(void),const char *);
-   bool                           DefineFunction2(const char *,int,int (*)(void),const char *,const char *);
-#endif /* (! RUN_TIME) */
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* _H_extnfunc */
 

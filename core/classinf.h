@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*     CLASS INFO PROGRAMMATIC ACCESS HEADER FILE      */
    /*******************************************************/
@@ -38,6 +38,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -81,26 +83,6 @@
    void                           EnvSlotAllowedClasses(Environment *,Defclass *,const char *,DATA_OBJECT *);
    void                           EnvSlotRange(Environment *,Defclass *,const char *,DATA_OBJECT *);
    void                           EnvSlotCardinality(Environment *,Defclass *,const char *,DATA_OBJECT *);
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-   bool                           ClassAbstractP(Defclass *);
-#if DEFRULE_CONSTRUCT
-   bool                           ClassReactiveP(Defclass *);
-#endif
-   void                           ClassSlots(Defclass *,DATA_OBJECT *,bool);
-   void                           ClassSubclasses(Defclass *,DATA_OBJECT *,bool);
-   void                           ClassSuperclasses(Defclass *,DATA_OBJECT *,bool);
-   void                           SlotAllowedValues(Defclass *,const char *,DATA_OBJECT *);
-   void                           SlotAllowedClasses(Defclass *,const char *,DATA_OBJECT *);
-   void                           SlotCardinality(Defclass *,const char *,DATA_OBJECT *);
-   void                           SlotFacets(Defclass *,const char *,DATA_OBJECT *);
-   void                           SlotRange(Defclass *,const char *,DATA_OBJECT *);
-   void                           SlotSources(Defclass *,const char *,DATA_OBJECT *);
-   void                           SlotTypes(Defclass *,const char *,DATA_OBJECT *);
-   void                           GetDefmessageHandlerList(Defclass *,DATA_OBJECT *,bool);
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* _H_classinf */
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*                 DEFRULE HEADER FILE                 */
    /*******************************************************/
@@ -63,6 +63,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -171,18 +173,6 @@ struct defruleData
    const char                    *EnvDefruleModule(Environment *,Defrule *);
    const char                    *EnvGetDefruleName(Environment *,Defrule *);
    const char                    *EnvGetDefrulePPForm(Environment *,Defrule *);
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-   const char                    *DefruleModule(Defrule *);
-   Defrule                       *FindDefrule(const char *);
-   const char                    *GetDefruleName(Defrule *);
-   const char                    *GetDefrulePPForm(Defrule *);
-   Defrule                       *GetNextDefrule(Defrule *);
-   bool                           IsDefruleDeletable(Defrule *);
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
-
 
 #endif /* _H_ruledef */
 

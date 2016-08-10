@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*                 AGENDA HEADER FILE                  */
    /*******************************************************/
@@ -49,6 +49,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -146,27 +148,6 @@ struct agendaData
    bool                    EnvRefresh(Environment *,Defrule *);
 #if DEBUGGING_FUNCTIONS
    void                    AgendaCommand(Environment *);
-#endif
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-   void                    Agenda(const char *,Defmodule *);
-   bool                    DeleteActivation(Activation *);
-   struct partialMatch    *GetActivationBasis(Activation *);
-   const char             *GetActivationName(Activation *);
-   void                    GetActivationPPForm(char *,unsigned,Activation *);
-   Defrule                *GetActivationRule(Activation *);
-   int                     GetActivationSalience(Activation *);
-   int                     GetAgendaChanged(void);
-   Activation             *GetNextActivation(Activation *);
-   int                     GetSalienceEvaluation(void);
-   bool                    Refresh(Defrule *);
-   void                    RefreshAgenda(Defmodule *);
-   void                    ReorderAgenda(Defmodule *);
-   int                     SetActivationSalience(Activation *,int);
-   void                    SetAgendaChanged(bool);
-   int                     SetSalienceEvaluation(int);
-
 #endif
 
 #endif

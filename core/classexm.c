@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*                 CLASS EXAMINATION MODULE            */
    /*******************************************************/
@@ -57,6 +57,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /**************************************************************/
 
@@ -1322,97 +1324,6 @@ static const char *ConstraintCode(
       else return " +  ";
      }
    return("    ");
-  }
-
-#endif
-
-/*##################################*/
-/* Additional Environment Functions */
-/*##################################*/
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-#if DEBUGGING_FUNCTIONS
-
-void BrowseClasses(
-  const char *logicalName,
-  Defclass *clsptr)
-  {
-   EnvBrowseClasses(GetCurrentEnvironment(),logicalName,clsptr);
-  }
-
-void DescribeClass(
-  const char *logicalName,
-  Defclass *clsptr)
-  {
-   EnvDescribeClass(GetCurrentEnvironment(),logicalName,clsptr);
-  }
-
-#endif
-
-bool SlotDirectAccessP(
-  Defclass *theDefclass,
-  const char *slotName)
-  {
-   return EnvSlotDirectAccessP(GetCurrentEnvironment(),theDefclass,slotName);
-  }
-
-bool SlotExistP(
-  Defclass *theDefclass,
-  const char *slotName,
-  bool inheritFlag)
-  {
-   return EnvSlotExistP(GetCurrentEnvironment(),theDefclass,slotName,inheritFlag);
-  }
-
-bool SlotInitableP(
-  Defclass *theDefclass,
-  const char *slotName)
-  {
-   return EnvSlotInitableP(GetCurrentEnvironment(),theDefclass,slotName);
-  }
-
-bool SlotPublicP(
-  Defclass *theDefclass,
-  const char *slotName)
-  {
-   return EnvSlotPublicP(GetCurrentEnvironment(),theDefclass,slotName);
-  }
-
-int SlotDefaultP(
-  Defclass *theDefclass,
-  const char *slotName)
-  {
-   return EnvSlotDefaultP(GetCurrentEnvironment(),theDefclass,slotName);
-  }
-
-bool SlotWritableP(
-  Defclass *theDefclass,
-  const char *slotName)
-  {
-   return EnvSlotWritableP(GetCurrentEnvironment(),theDefclass,slotName);
-  }
-
-bool SubclassP(
-  Defclass *firstClass,
-  Defclass *secondClass)
-  {
-   return EnvSubclassP(GetCurrentEnvironment(),firstClass,secondClass);
-  }
-
-bool SuperclassP(
-  Defclass *firstClass,
-  Defclass *secondClass)
-  {
-   return EnvSuperclassP(GetCurrentEnvironment(),firstClass,secondClass);
-  }
-
-bool SlotDefaultValue(
-  Defclass *theDefclass,
-  const char *slotName,
-  DATA_OBJECT_PTR theValue)
-  {
-   return EnvSlotDefaultValue(GetCurrentEnvironment(),theDefclass,slotName,theValue);
   }
 
 #endif

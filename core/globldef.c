@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/06/16             */
    /*                                                     */
    /*                  DEFGLOBAL MODULE                   */
    /*******************************************************/
@@ -52,6 +52,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*************************************************************/
 
@@ -850,83 +852,6 @@ const char *EnvGetDefglobalPPForm(
   {
    return GetConstructPPForm(theEnv,(struct constructHeader *) theDefglobal);
   }
-
-/*#####################################*/
-/* ALLOW_ENVIRONMENT_GLOBALS Functions */
-/*#####################################*/
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-const char *DefglobalModule(
-  Defglobal *theDefglobal)
-  {
-   return EnvDefglobalModule(GetCurrentEnvironment(),theDefglobal);
-  }
-
-Defglobal *FindDefglobal(
-  const char *defglobalName)
-  {
-   return EnvFindDefglobal(GetCurrentEnvironment(),defglobalName);
-  }
-
-const char *GetDefglobalName(
-  Defglobal *theDefglobal)
-  {
-   return EnvGetDefglobalName(GetCurrentEnvironment(),theDefglobal);
-  }
-
-const char *GetDefglobalPPForm(
-  Defglobal *theDefglobal)
-  {
-   return EnvGetDefglobalPPForm(GetCurrentEnvironment(),theDefglobal);
-  }
-
-bool GetDefglobalValue(
-  const char *variableName,
-  DATA_OBJECT_PTR vPtr)
-  {
-   return EnvGetDefglobalValue(GetCurrentEnvironment(),variableName,vPtr);
-  }
-
-void GetDefglobalValueForm(
-  char *buffer,
-  unsigned bufferLength,
-  Defglobal *theGlobal)
-  {
-   EnvGetDefglobalValueForm(GetCurrentEnvironment(),buffer,bufferLength,theGlobal);
-  }
-
-bool GetGlobalsChanged()
-  {
-   return EnvGetGlobalsChanged(GetCurrentEnvironment());
-  }
-
-Defglobal *GetNextDefglobal(
-  Defglobal *defglobalPtr)
-  {
-   return EnvGetNextDefglobal(GetCurrentEnvironment(),defglobalPtr);
-  }
-
-bool IsDefglobalDeletable(
-  Defglobal *ptr)
-  {
-   return EnvIsDefglobalDeletable(GetCurrentEnvironment(),ptr);
-  }
-
-bool SetDefglobalValue(
-  const char *variableName,
-  DATA_OBJECT_PTR vPtr)
-  {
-   return EnvSetDefglobalValue(GetCurrentEnvironment(),variableName,vPtr);
-  }
-
-void SetGlobalsChanged(
-  bool value)
-  {
-   EnvSetGlobalsChanged(GetCurrentEnvironment(),value);
-  }
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* DEFGLOBAL_CONSTRUCT */
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/06/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -46,6 +46,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_msgpass
@@ -85,12 +87,6 @@ typedef struct messageHandlerLink
    bool             HandlerSlotPutFunction(Environment *,void *,DATA_OBJECT *);
    void             DynamicHandlerGetSlot(Environment *,DATA_OBJECT *);
    void             DynamicHandlerPutSlot(Environment *,DATA_OBJECT *);
-
-#if ALLOW_ENVIRONMENT_GLOBALS
-
-   void             Send(DATA_OBJECT *,const char *,const char *,DATA_OBJECT *);
-
-#endif /* ALLOW_ENVIRONMENT_GLOBALS */
 
 #endif /* _H_object */
 
