@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/06/16             */
+   /*            CLIPS Version 6.40  08/10/16             */
    /*                                                     */
    /*                  EVALUATION MODULE                  */
    /*******************************************************/
@@ -56,6 +56,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
+/*            Callbacks must be environment aware.           */
 /*                                                           */
 /*************************************************************/
 
@@ -193,179 +195,78 @@ bool EvaluateExpression(
          switch(fptr->returnValueType)
            {
             case 'v' :
-              if (fptr->environmentAware)
-                { (* (void (*)(void *)) fptr->functionPointer)(theEnv); }
-              else
-                { (* (void (*)(void)) fptr->functionPointer)(); }
+              (* (void (*)(Environment *)) fptr->functionPointer)(theEnv);
               returnValue->type = RVOID;
               returnValue->value = EnvFalseSymbol(theEnv);
               break;
             case 'b' :
               returnValue->type = SYMBOL;
-              if (fptr->environmentAware)
-                {
-                 if ((* (bool (*)(void *)) fptr->functionPointer)(theEnv))
-                   returnValue->value = EnvTrueSymbol(theEnv);
-                 else
-                   returnValue->value = EnvFalseSymbol(theEnv);
-                }
+              if ((* (bool (*)(Environment *)) fptr->functionPointer)(theEnv))
+                returnValue->value = EnvTrueSymbol(theEnv);
               else
-                {
-                 if ((* (bool (*)(void)) fptr->functionPointer)())
-                   returnValue->value = EnvTrueSymbol(theEnv);
-                 else
-                   returnValue->value = EnvFalseSymbol(theEnv);
-                }
+                returnValue->value = EnvFalseSymbol(theEnv);
               break;
             case 'a' :
               returnValue->type = EXTERNAL_ADDRESS;
-              if (fptr->environmentAware)
-                {
-                 returnValue->value =
-                                (* (void *(*)(void *)) fptr->functionPointer)(theEnv);
-                }
-              else
-                {
-                 returnValue->value =
-                                (* (void *(*)(void)) fptr->functionPointer)();
-                }
+              returnValue->value =
+                             (* (void *(*)(Environment *)) fptr->functionPointer)(theEnv);
               break;
             case 'g' :
               returnValue->type = INTEGER;
-              if (fptr->environmentAware)
-                {
-                 returnValue->value =
-                   EnvAddLong(theEnv,(* (long long (*)(void *)) fptr->functionPointer)(theEnv));
-                }
-              else
-                {
-                 returnValue->value =
-                   EnvAddLong(theEnv,(* (long long (*)(void)) fptr->functionPointer)());
-                }
+              returnValue->value =
+                EnvAddLong(theEnv,(* (long long (*)(Environment *)) fptr->functionPointer)(theEnv));
               break;
             case 'i' :
               returnValue->type = INTEGER;
-              if (fptr->environmentAware)
-                {
-                 returnValue->value =
-                   EnvAddLong(theEnv,(long long) (* (int (*)(void *)) fptr->functionPointer)(theEnv));
-                }
-              else
-                {
-                 returnValue->value =
-                   EnvAddLong(theEnv,(long long) (* (int (*)(void)) fptr->functionPointer)());
-                }
+              returnValue->value =
+                EnvAddLong(theEnv,(long long) (* (int (*)(Environment *)) fptr->functionPointer)(theEnv));
               break;
             case 'l' :
               returnValue->type = INTEGER;
-              if (fptr->environmentAware)
-                {
-                 returnValue->value =
-                    EnvAddLong(theEnv,(long long) (* (long int (*)(void *)) fptr->functionPointer)(theEnv));
-                }
-              else
-                {
-                 returnValue->value =
-                    EnvAddLong(theEnv,(long long) (* (long int (*)(void)) fptr->functionPointer)());
-                }
+              returnValue->value =
+                 EnvAddLong(theEnv,(long long) (* (long int (*)(Environment *)) fptr->functionPointer)(theEnv));
               break;
             case 'f' :
               returnValue->type = FLOAT;
-              if (fptr->environmentAware)
-                {
-                 returnValue->value =
-                    EnvAddDouble(theEnv,(double) (* (float (*)(void *)) fptr->functionPointer)(theEnv));
-                }
-              else
-                {
-                 returnValue->value =
-                    EnvAddDouble(theEnv,(double) (* (float (*)(void)) fptr->functionPointer)());
-                }
+              returnValue->value =
+                 EnvAddDouble(theEnv,(double) (* (float (*)(Environment *)) fptr->functionPointer)(theEnv));
               break;
             case 'd' :
               returnValue->type = FLOAT;
-              if (fptr->environmentAware)
-                {
-                 returnValue->value =
-                    EnvAddDouble(theEnv,(* (double (*)(void *)) fptr->functionPointer)(theEnv));
-                }
-              else
-                {
-                 returnValue->value =
-                    EnvAddDouble(theEnv,(* (double (*)(void)) fptr->functionPointer)());
-                }
+              returnValue->value =
+                 EnvAddDouble(theEnv,(* (double (*)(Environment *)) fptr->functionPointer)(theEnv));
               break;
             case 's' :
               returnValue->type = STRING;
-              if (fptr->environmentAware)
-                {
-                 returnValue->value =
-                   (* (SYMBOL_HN *(*)(void *)) fptr->functionPointer)(theEnv);
-                }
-              else
-                {
-                 returnValue->value =
-                   (* (SYMBOL_HN *(*)(void)) fptr->functionPointer)();
-                }
+              returnValue->value =
+                (* (SYMBOL_HN *(*)(Environment *)) fptr->functionPointer)(theEnv);
               break;
             case 'w' :
               returnValue->type = SYMBOL;
-              if (fptr->environmentAware)
-                {
-                 returnValue->value =
-                   (* (SYMBOL_HN *(*)(void *)) fptr->functionPointer)(theEnv);
-                }
-              else
-                {
-                 returnValue->value =
-                   (* (SYMBOL_HN *(*)(void)) fptr->functionPointer)();
-                }
+              returnValue->value =
+                (* (SYMBOL_HN *(*)(Environment *)) fptr->functionPointer)(theEnv);
               break;
 #if OBJECT_SYSTEM
             case 'x' :
               returnValue->type = INSTANCE_ADDRESS;
-              if (fptr->environmentAware)
-                {
-                 returnValue->value =
-                                (* (void *(*)(void *)) fptr->functionPointer)(theEnv);
-                }
-              else
-                {
-                 returnValue->value =
-                                (* (void *(*)(void)) fptr->functionPointer)();
-                }
+              returnValue->value =
+                             (* (void *(*)(Environment *)) fptr->functionPointer)(theEnv);
               if (returnValue->value == NULL)
                 { returnValue->value = &InstanceData(theEnv)->DummyInstance; }
                 
               break;
             case 'o' :
               returnValue->type = INSTANCE_NAME;
-              if (fptr->environmentAware)
-                {
-                 returnValue->value =
-                   (* (SYMBOL_HN *(*)(void *)) fptr->functionPointer)(theEnv);
-                }
-              else
-                {
-                 returnValue->value =
-                   (* (SYMBOL_HN *(*)(void)) fptr->functionPointer)();
-                }
+              returnValue->value =
+                (* (SYMBOL_HN *(*)(Environment *)) fptr->functionPointer)(theEnv);
               break;
 #endif
 
 #if DEFTEMPLATE_CONSTRUCT
             case 'y' :
               returnValue->type = FACT_ADDRESS;
-              if (fptr->environmentAware)
-                {
-                 returnValue->value =
-                                (* (void *(*)(void *)) fptr->functionPointer)(theEnv);
-                }
-              else
-                {
-                 returnValue->value =
-                                (* (void *(*)(void)) fptr->functionPointer)();
-                }
+              returnValue->value =
+                             (* (void *(*)(Environment *)) fptr->functionPointer)(theEnv);
               if (returnValue->value == NULL)
                 { returnValue->value = &FactData(theEnv)->DummyFact; }
                 
@@ -375,14 +276,7 @@ bool EvaluateExpression(
             case 'c' :
               {
                char cbuff[2];
-               if (fptr->environmentAware)
-                 {
-                  cbuff[0] = (* (char (*)(void *)) fptr->functionPointer)(theEnv);
-                 }
-               else
-                 {
-                  cbuff[0] = (* (char (*)(void)) fptr->functionPointer)();
-                 }
+               cbuff[0] = (* (char (*)(Environment *)) fptr->functionPointer)(theEnv);
                cbuff[1] = EOS;
                returnValue->type = SYMBOL;
                returnValue->value = EnvAddSymbol(theEnv,cbuff);
@@ -394,14 +288,7 @@ bool EvaluateExpression(
             case 'm' :
             case 'n' :
             case 'u' :
-               if (fptr->environmentAware)
-                 {
-                  (* (void (*)(void *,DATA_OBJECT_PTR)) fptr->functionPointer)(theEnv,returnValue);
-                 }
-               else
-                 {
-                  (* (void (*)(DATA_OBJECT_PTR)) fptr->functionPointer)(returnValue);
-                 }
+              (* (void (*)(Environment *,DATA_OBJECT_PTR)) fptr->functionPointer)(theEnv,returnValue);
               break;
 
             default :

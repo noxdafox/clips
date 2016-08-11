@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/06/16             */
+   /*            CLIPS Version 6.40  08/10/16             */
    /*                                                     */
    /*               EXTERNAL FUNCTION MODULE              */
    /*******************************************************/
@@ -44,6 +44,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
+/*            Callbacks must be environment aware.           */
 /*                                                           */
 /*************************************************************/
 
@@ -134,7 +136,7 @@ bool EnvDefineFunction(
   int (*pointer)(Environment *),
   const char *actualName)
   {
-   return(DefineFunction3(theEnv,name,returnType,pointer,actualName,NULL,true,NULL));
+   return(DefineFunction3(theEnv,name,returnType,pointer,actualName,NULL,NULL));
   }
   
 /************************************************************/
@@ -149,7 +151,7 @@ bool EnvDefineFunctionWithContext(
   const char *actualName,
   void *context)
   {
-   return(DefineFunction3(theEnv,name,returnType,pointer,actualName,NULL,true,context));
+   return(DefineFunction3(theEnv,name,returnType,pointer,actualName,NULL,context));
   }
   
 /*******************************************************/
@@ -164,7 +166,7 @@ bool EnvDefineFunction2(
   const char *actualName,
   const char *restrictions)
   {
-   return(DefineFunction3(theEnv,name,returnType,pointer,actualName,restrictions,true,NULL));
+   return(DefineFunction3(theEnv,name,returnType,pointer,actualName,restrictions,NULL));
   }
 
 /*************************************************************/
@@ -180,7 +182,7 @@ bool EnvDefineFunction2WithContext(
   const char *restrictions,
   void *context)
   {
-   return(DefineFunction3(theEnv,name,returnType,pointer,actualName,restrictions,true,context));
+   return(DefineFunction3(theEnv,name,returnType,pointer,actualName,restrictions,context));
   }
 
 /*************************************************************/
@@ -215,7 +217,6 @@ bool DefineFunction3(
   int (*pointer)(Environment *),
   const char *actualName,
   const char *restrictions,
-  bool environmentAware,
   void *context)
   {
    struct FunctionDefinition *newFunction;
@@ -258,7 +259,7 @@ bool DefineFunction3(
    AddHashFunction(theEnv,newFunction);
      
    newFunction->returnValueType = (char) returnType;
-   newFunction->functionPointer = (int (*)(void)) pointer;
+   newFunction->functionPointer = pointer;
    newFunction->actualFunctionName = actualName;
    if (restrictions != NULL)
      {
@@ -279,7 +280,6 @@ bool DefineFunction3(
    newFunction->parser = NULL;
    newFunction->overloadable = true;
    newFunction->sequenceuseok = true;
-   newFunction->environmentAware = (short) environmentAware;
    newFunction->usrData = NULL;
    newFunction->context = context;
 

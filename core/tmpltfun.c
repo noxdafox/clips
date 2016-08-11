@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/06/16             */
+   /*            CLIPS Version 6.40  08/10/16             */
    /*                                                     */
    /*             DEFTEMPLATE FUNCTIONS MODULE            */
    /*******************************************************/
@@ -70,6 +70,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
+/*            Callbacks must be environment aware.           */
 /*                                                           */
 /*************************************************************/
 
@@ -489,10 +491,7 @@ static void DuplicateModifyCommand(
            theModifyFunction = theModifyFunction->next)
         {
          SetEnvironmentCallbackContext(theEnv,theModifyFunction->context);
-         if (theModifyFunction->environmentAware)
-           { ((void (*)(void *,void *,void *))(*theModifyFunction->func))(theEnv,oldFact,replacement); }
-         else
-           { ((void (*)(void *,void *))(*theModifyFunction->func))(oldFact,replacement); }
+         ((void (*)(void *,void *,void *))(*theModifyFunction->func))(theEnv,oldFact,replacement);
         }
      }
      

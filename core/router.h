@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  08/10/16            */
    /*                                                     */
    /*                 ROUTER HEADER FILE                  */
    /*******************************************************/
@@ -54,6 +54,8 @@
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
+/*            Callbacks must be environment aware.           */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_router
@@ -89,7 +91,6 @@ struct router
    const char *name;
    bool active;
    int priority;
-   bool environmentAware;
    void *context;
    RouterQueryFunction *queryCallback;
    RouterPrintFunction *printCallback;

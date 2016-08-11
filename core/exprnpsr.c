@@ -962,7 +962,7 @@ struct expr *RemoveUnneededProgn(
 
    fptr = (struct FunctionDefinition *) theExpression->value;
 
-   if (fptr->functionPointer != PTIF PrognFunction)
+   if (fptr->functionPointer != PTIEF PrognFunction)
      { return(theExpression); }
 
    if ((theExpression->argList != NULL) &&

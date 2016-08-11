@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  08/10/16            */
    /*                                                     */
    /*            EXTERNAL FUNCTIONS HEADER FILE           */
    /*******************************************************/
@@ -46,6 +46,8 @@
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
+/*            Callbacks must be environment aware.           */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_extnfunc
@@ -66,12 +68,11 @@ struct FunctionDefinition
    struct symbolHashNode *callFunctionName;
    const char *actualFunctionName;
    char returnValueType;
-   int (*functionPointer)(void);
+   int (*functionPointer)(Environment *);
    struct expr *(*parser)(Environment *,struct expr *,const char *);
    struct symbolHashNode *restrictions;
    bool overloadable;
    bool sequenceuseok;
-   bool environmentAware;
    short int bsaveIndex;
    struct FunctionDefinition *next;
    struct userData *usrData;
@@ -84,7 +85,6 @@ struct FunctionDefinition
 #define ExpressionFunctionCallName(target) (((struct FunctionDefinition *) ((target)->value))->callFunctionName)
 #define ExpressionFunctionRealName(target) (((struct FunctionDefinition *) ((target)->value))->actualFunctionName)
 
-#define PTIF (int (*)(void))
 #define PTIEF (int (*)(Environment *))
 
 /*==================*/
@@ -119,7 +119,7 @@ struct FunctionHash
    bool                           EnvDefineFunction2WithContext(Environment *,const char *,int,
                                                                 int (*)(Environment *),const char *,const char *,void *);
    bool                           DefineFunction3(Environment *,const char *,int,
-                                                         int (*)(Environment *),const char *,const char *,bool,void *);
+                                                         int (*)(Environment *),const char *,const char *,void *);
    bool                           AddFunctionParser(Environment *,const char *,
                                                            struct expr *(*)( Environment *,struct expr *,const char *));
    bool                           RemoveFunctionParser(Environment *,const char *);

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/06/16             */
+   /*            CLIPS Version 6.40  08/10/16             */
    /*                                                     */
    /*                  I/O ROUTER MODULE                  */
    /*******************************************************/
@@ -52,6 +52,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
+/*            Callbacks must be environment aware.           */
 /*                                                           */
 /*************************************************************/
 
@@ -150,11 +152,7 @@ int EnvPrintRouter( // TBD Return value 0, 1, 2
       if ((currentPtr->printCallback != NULL) ? QueryRouter(theEnv,logicalName,currentPtr) : false)
         {
          SetEnvironmentRouterContext(theEnv,currentPtr->context);
-         if (currentPtr->environmentAware)
-           { (*currentPtr->printCallback)(theEnv,logicalName,str); }
-         else            
-           { ((int (*)(const char *,const char *)) (*currentPtr->printCallback))(logicalName,str); }
-         
+         (*currentPtr->printCallback)(theEnv,logicalName,str);
          return 1;
         }
       currentPtr = currentPtr->next;
@@ -235,10 +233,7 @@ int EnvGetcRouter(
       if ((currentPtr->getcCallback != NULL) ? QueryRouter(theEnv,logicalName,currentPtr) : false)
         {
          SetEnvironmentRouterContext(theEnv,currentPtr->context);
-         if (currentPtr->environmentAware)
-           { inchar = (*currentPtr->getcCallback)(theEnv,logicalName); }
-         else            
-           { inchar = ((int (*)(const char *)) (*currentPtr->getcCallback))(logicalName); }
+         inchar = (*currentPtr->getcCallback)(theEnv,logicalName);
 
          if ((inchar == '\r') || (inchar == '\n'))
            {
@@ -325,10 +320,7 @@ int EnvUngetcRouter(
            }
            
          SetEnvironmentRouterContext(theEnv,currentPtr->context);
-         if (currentPtr->environmentAware)
-           { return((*currentPtr->ungetcCallback)(theEnv,ch,logicalName)); }
-         else            
-           { return(((int (*)(int,const char *)) (*currentPtr->ungetcCallback))(ch,logicalName)); }
+         return((*currentPtr->ungetcCallback)(theEnv,ch,logicalName));
         }
 
       currentPtr = currentPtr->next;
@@ -384,10 +376,7 @@ void EnvExitRouter(
          if (currentPtr->exitCallback != NULL)
            {
             SetEnvironmentRouterContext(theEnv,currentPtr->context);
-            if (currentPtr->environmentAware)
-              { (*currentPtr->exitCallback)(theEnv,num); }
-            else            
-              { ((int (*)(int))(*currentPtr->exitCallback))(num); }
+            (*currentPtr->exitCallback)(theEnv,num);
            }
         }
       currentPtr = nextPtr;
@@ -461,7 +450,6 @@ bool EnvAddRouterWithContext(
    newPtr->name = nameCopy;
 
    newPtr->active = true;
-   newPtr->environmentAware = true;
    newPtr->context = context;
    newPtr->priority = priority;
    newPtr->queryCallback = queryFunction;
@@ -580,16 +568,8 @@ static bool QueryRouter(
    /*=========================================*/
    
    SetEnvironmentRouterContext(theEnv,currentPtr->context);
-   if (currentPtr->environmentAware)
-     { 
-      if ((*currentPtr->queryCallback)(theEnv,logicalName) == true)
-        { return true; }
-     }
-   else            
-     { 
-      if (((bool (*)(const char *)) (*currentPtr->queryCallback))(logicalName) == true)
-        { return true; }
-     }
+   if ((*currentPtr->queryCallback)(theEnv,logicalName) == true)
+     { return true; }
 
    return false;
   }

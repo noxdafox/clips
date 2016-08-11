@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/06/16             */
+   /*            CLIPS Version 6.40  08/10/16             */
    /*                                                     */
    /*                 FACT MANAGER MODULE                 */
    /*******************************************************/
@@ -72,6 +72,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
+/*            Callbacks must be environment aware.           */
 /*                                                           */
 /*************************************************************/
 
@@ -481,20 +483,17 @@ bool EnvRetract(
 
    if (theFact->garbage) return false;
    
-   /*==========================================*/
-   /* Execute the list of functions that are   */
-   /* to be called before each fact assertion. */
-   /*==========================================*/
+   /*===========================================*/
+   /* Execute the list of functions that are    */
+   /* to be called before each fact retraction. */
+   /*===========================================*/
 
    for (theRetractFunction = FactData(theEnv)->ListOfRetractFunctions;
         theRetractFunction != NULL;
         theRetractFunction = theRetractFunction->next)
      {
       SetEnvironmentCallbackContext(theEnv,theRetractFunction->context);
-      if (theRetractFunction->environmentAware)
-        { (*theRetractFunction->func)(theEnv,theFact); }
-      else
-        { ((void (*)(void *))(*theRetractFunction->func))(theFact); }
+      (*theRetractFunction->func)(theEnv,theFact);
      }
 
    /*============================*/
@@ -784,10 +783,7 @@ Fact *EnvAssert(
         theAssertFunction = theAssertFunction->next)
      {
       SetEnvironmentCallbackContext(theEnv,theAssertFunction->context);
-      if (theAssertFunction->environmentAware)
-        { (*theAssertFunction->func)(theEnv,theFact); }
-      else
-        { ((void (*)(void *))(*theAssertFunction->func))(theFact); }
+      (*theAssertFunction->func)(theEnv,theFact);
      }
 
    /*==========================*/
@@ -1655,7 +1651,7 @@ bool EnvAddAssertFunction(
    FactData(theEnv)->ListOfAssertFunctions =
       AddFunctionToCallListWithArg(theEnv,name,priority,
                                               functionPtr,
-                                              FactData(theEnv)->ListOfAssertFunctions,true);
+                                              FactData(theEnv)->ListOfAssertFunctions);
    return true;
   }
     
@@ -1673,7 +1669,7 @@ bool EnvAddAssertFunctionWithContext(
    FactData(theEnv)->ListOfAssertFunctions =
       AddFunctionToCallListWithArgWithContext(theEnv,name,priority,functionPtr,
                                        FactData(theEnv)->ListOfAssertFunctions,
-                                       true,context);
+                                       context);
    return true;
   }
     
@@ -1708,7 +1704,7 @@ bool EnvAddRetractFunction(
    FactData(theEnv)->ListOfRetractFunctions =
       AddFunctionToCallListWithArg(theEnv,name,priority,
                                               functionPtr,
-                                              FactData(theEnv)->ListOfRetractFunctions,true);
+                                              FactData(theEnv)->ListOfRetractFunctions);
    return true;
   }
     
@@ -1726,7 +1722,7 @@ bool EnvAddRetractFunctionWithContext(
    FactData(theEnv)->ListOfRetractFunctions =
       AddFunctionToCallListWithArgWithContext(theEnv,name,priority,functionPtr,
                                        FactData(theEnv)->ListOfRetractFunctions,
-                                       true,context);
+                                       context);
    return true;
   }
     
@@ -1761,7 +1757,7 @@ bool EnvAddModifyFunction(
    FactData(theEnv)->ListOfModifyFunctions =
       AddFunctionToCallListWithArg(theEnv,name,priority,
                                               (void (*)(Environment *, void *)) functionPtr,
-                                              FactData(theEnv)->ListOfModifyFunctions,true);
+                                              FactData(theEnv)->ListOfModifyFunctions);
    return true;
   }
     
@@ -1780,7 +1776,7 @@ bool EnvAddModifyFunctionWithContext(
       AddFunctionToCallListWithArgWithContext(theEnv,name,priority,
                                        (void (*)(Environment *, void *)) functionPtr,
                                        FactData(theEnv)->ListOfModifyFunctions,
-                                       true,context);
+                                       context);
    return true;
   }
     

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/06/16             */
+   /*            CLIPS Version 6.40  08/10/16             */
    /*                                                     */
    /*                  DEFMODULE MODULE                   */
    /*******************************************************/
@@ -45,6 +45,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
+/*            Callbacks must be environment aware.           */
 /*                                                           */
 /*************************************************************/
 
@@ -777,7 +779,7 @@ void AddAfterModuleChangeFunction(
   int priority)
   {
    DefmoduleData(theEnv)->AfterModuleChangeFunctions =
-     AddFunctionToCallList(theEnv,name,priority,func,DefmoduleData(theEnv)->AfterModuleChangeFunctions,true);
+     AddFunctionToCallList(theEnv,name,priority,func,DefmoduleData(theEnv)->AfterModuleChangeFunctions);
   }
 
 /************************************************/

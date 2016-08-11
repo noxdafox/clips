@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  08/10/16            */
    /*                                                     */
    /*                 UTILITY HEADER FILE                 */
    /*******************************************************/
@@ -57,6 +57,8 @@
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
+/*            Callbacks must be environment aware.           */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_utility
@@ -73,7 +75,6 @@ struct callFunctionItem
    void (*func)(Environment *);
    int priority;
    struct callFunctionItem *next;
-   bool environmentAware;
    void *context;
   };
 
@@ -83,7 +84,6 @@ struct callFunctionItemWithArg
    void (*func)(Environment *,void *);
    int priority;
    struct callFunctionItemWithArg *next;
-   bool environmentAware;
    void *context;
   };
   
@@ -148,17 +148,17 @@ struct utilityData
    char                          *EnlargeString(Environment *,size_t,char *,size_t *,size_t *);
    char                          *ExpandStringWithChar(Environment *,int,char *,size_t *,size_t *,size_t);
    struct callFunctionItem       *AddFunctionToCallList(Environment *,const char *,int,void (*)(Environment *),
-                                                               struct callFunctionItem *,bool);
+                                                               struct callFunctionItem *);
    struct callFunctionItem       *AddFunctionToCallListWithContext(Environment *,const char *,int,void (*)(Environment *),
-                                                                          struct callFunctionItem *,bool,void *);
+                                                                          struct callFunctionItem *,void *);
    struct callFunctionItem       *RemoveFunctionFromCallList(Environment *,const char *,
                                                              struct callFunctionItem *,
                                                              bool *);
    void                           DeallocateCallList(Environment *,struct callFunctionItem *);
    struct callFunctionItemWithArg *AddFunctionToCallListWithArg(Environment *,const char *,int,void (*)(Environment *, void *),
-                                                                       struct callFunctionItemWithArg *,bool);
+                                                                       struct callFunctionItemWithArg *);
    struct callFunctionItemWithArg *AddFunctionToCallListWithArgWithContext(Environment *,const char *,int,void (*)(Environment *, void *),
-                                                                                  struct callFunctionItemWithArg *,bool,void *);
+                                                                                  struct callFunctionItemWithArg *,void *);
    struct callFunctionItemWithArg *RemoveFunctionFromCallListWithArg(Environment *,const char *,
                                                                             struct callFunctionItemWithArg *,
                                                                             bool *);

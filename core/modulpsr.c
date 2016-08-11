@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/10/16             */
    /*                                                     */
    /*              DEFMODULE PARSER MODULE                */
    /*******************************************************/
@@ -33,6 +33,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            Callbacks must be environment aware.           */
 /*                                                           */
 /*************************************************************/
 
@@ -99,7 +101,7 @@ void AddAfterModuleDefinedFunction(
   int priority)
   {
    DefmoduleData(theEnv)->AfterModuleDefinedFunctions =
-     AddFunctionToCallList(theEnv,name,priority,func,DefmoduleData(theEnv)->AfterModuleDefinedFunctions,true);
+     AddFunctionToCallList(theEnv,name,priority,func,DefmoduleData(theEnv)->AfterModuleDefinedFunctions);
   }
 
 /******************************************************/

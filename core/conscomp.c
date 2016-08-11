@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  08/10/16            */
    /*                                                     */
    /*              CONSTRUCT COMPILER MODULE              */
    /*******************************************************/
@@ -67,6 +67,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            Removed VAX_VMS support.                       */
+/*                                                           */
+/*            Callbacks must be environment aware.           */
 /*                                                           */
 /*************************************************************/
 
@@ -629,10 +631,7 @@ static void WriteFunctionExternDeclarations(
          case 'x':
          case 'y':
          case 'v':
-           if (theFunction->environmentAware) 
-             { fprintf(fp,"Environment *"); }
-           else
-             { fprintf(fp,"void"); }
+           fprintf(fp,"Environment *");
            break;
 
          case 'm':
@@ -640,10 +639,7 @@ static void WriteFunctionExternDeclarations(
          case 'n':
          case 'j':
          case 'k':
-           if (theFunction->environmentAware) 
-             { fprintf(fp,"Environment *,DATA_OBJECT_PTR_ARG"); }
-           else
-             { fprintf(fp,"DATA_OBJECT_PTR_ARG"); }
+           fprintf(fp,"Environment *,DATA_OBJECT_PTR_ARG");
            break;
         }
 
@@ -714,7 +710,7 @@ static bool FunctionsToCode(
       fprintf(fp,"PTIF %s,",fctnPtr->actualFunctionName);
       fprintf(fp,"NULL,");
       PrintSymbolReference(theEnv,fp,fctnPtr->restrictions);
-      fprintf(fp,",0,0,%d,0,",(fctnPtr->environmentAware ? 1 : 0));
+      fprintf(fp,",0,0,0,");
       PrintFunctionReference(theEnv,fp,fctnPtr->next);
 
       i++;
