@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  08/11/16            */
    /*                                                     */
    /*                CONSTRAINT HEADER FILE               */
    /*******************************************************/
@@ -43,6 +43,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
+/*            Static constraint checking is always enabled.  */
 /*                                                           */
 /*************************************************************/
 
@@ -98,7 +100,6 @@ struct constraintRecord
 struct constraintData
   { 
    struct constraintRecord **ConstraintHashtable;
-   bool StaticConstraintChecking;
    bool DynamicConstraintChecking;
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE) && (! RUN_TIME)
    struct constraintRecord *ConstraintArray;
@@ -111,12 +112,8 @@ struct constraintData
    void                           InitializeConstraints(Environment *);
    bool                           GDCCommand(Environment *);
    bool                           SDCCommand(Environment *);
-   bool                           GSCCommand(Environment *);
-   bool                           SSCCommand(Environment *);
    bool                           EnvSetDynamicConstraintChecking(Environment *,bool);
    bool                           EnvGetDynamicConstraintChecking(Environment *);
-   bool                           EnvSetStaticConstraintChecking(Environment *,bool);
-   bool                           EnvGetStaticConstraintChecking(Environment *);
 #if (! BLOAD_ONLY) && (! RUN_TIME)
    unsigned long                  HashConstraint(struct constraintRecord *);
    struct constraintRecord       *AddConstraint(Environment *,struct constraintRecord *);

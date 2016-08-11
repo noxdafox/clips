@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/11/16             */
    /*                                                     */
    /*              RULE CONSTRAINTS MODULE                */
    /*******************************************************/
@@ -27,6 +27,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            Static constraint checking is always enabled.  */
 /*                                                           */
 /*************************************************************/
 
@@ -75,8 +77,6 @@ static bool CheckForUnmatchableConstraints(
   struct lhsParseNode *theNode,
   int whichCE)
   {
-   if (EnvGetStaticConstraintChecking(theEnv) == false) return false;
-
    if (UnmatchableConstraint(theNode->constraints))
      {
       ConstraintConflictMessage(theEnv,(SYMBOL_HN *) theNode->value,whichCE,
@@ -259,7 +259,6 @@ static bool MultifieldCardinalityViolation(
    /* Determine if the final cardinality for the slot can be satisfied. */
    /*===================================================================*/
 
-   if (EnvGetStaticConstraintChecking(theEnv) == false) return false;
    if (UnmatchableConstraint(newConstraint)) return true;
 
    return false;
@@ -835,7 +834,7 @@ static bool CheckArgumentForConstraintError(
    /* Check for unmatchable constraints. */
    /*====================================*/
 
-   if (UnmatchableConstraint(constraint4) && EnvGetStaticConstraintChecking(theEnv))
+   if (UnmatchableConstraint(constraint4))
      {
       PrintErrorID(theEnv,"RULECSTR",3,true);
       EnvPrintRouter(theEnv,WERROR,"Previous variable bindings of ?");

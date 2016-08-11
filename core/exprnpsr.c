@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/06/16             */
+   /*            CLIPS Version 6.40  08/11/16             */
    /*                                                     */
    /*              EXPRESSION PARSER MODULE               */
    /*******************************************************/
@@ -51,6 +51,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
+/*            Static constraint checking is always enabled.  */
 /*                                                           */
 /*************************************************************/
 
@@ -302,7 +304,7 @@ struct expr *Function2Parse(
    /* Check for argument errors. */
    /*============================*/
 
-   if ((top->type == FCALL) && EnvGetStaticConstraintChecking(theEnv))
+   if (top->type == FCALL)
      {
       if (CheckExpressionAgainstRestrictions(theEnv,top,(theFunction->restrictions == NULL) ? NULL : theFunction->restrictions->contents,name))
         {

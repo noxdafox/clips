@@ -1,6 +1,5 @@
 (unwatch all)
 (clear)
-(set-static-constraint-checking TRUE)
 (dribble-on "Actual//stobjcst.out")
 (batch "stobjcst.bat")
 (dribble-off)

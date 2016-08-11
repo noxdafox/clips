@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/11/16             */
    /*                                                     */
    /*                  ANALYSIS MODULE                    */
    /*******************************************************/
@@ -916,8 +916,7 @@ static bool UnboundVariablesInPattern(
 
          else if (((andField->type == INTEGER) || (andField->type == FLOAT) ||
                    (andField->type == SYMBOL) || (andField->type == STRING) ||
-                   (andField->type == INSTANCE_NAME)) &&
-                  EnvGetStaticConstraintChecking(theEnv))
+                   (andField->type == INSTANCE_NAME)))
            {
             result = ConstraintCheckValue(theEnv,andField->type,andField->value,theConstraints);
             if (result != NO_VIOLATION)
@@ -972,8 +971,7 @@ static struct lhsParseNode *CheckExpression(
                                           whichCE,slotName,theField);
             return(exprPtr);
            }
-         else if ((UnmatchableConstraint(exprPtr->constraints)) &&
-                  EnvGetStaticConstraintChecking(theEnv))
+         else if (UnmatchableConstraint(exprPtr->constraints))
            {
             ConstraintReferenceErrorMessage(theEnv,(SYMBOL_HN *) exprPtr->value,lastOne,i,
                                             whichCE,slotName,theField);

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/11/16             */
    /*                                                     */
    /*            DEFTEMPLATE UTILITIES MODULE             */
    /*******************************************************/
@@ -47,6 +47,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            Static constraint checking is always enabled.  */
 /*                                                           */
 /*************************************************************/
 
@@ -227,7 +229,6 @@ bool CheckRHSSlotTypes(
    int rv;
    const char *theName;
 
-   if (EnvGetStaticConstraintChecking(theEnv) == false) return true;
    rv = ConstraintCheckExpressionChain(theEnv,rhsSlots,slotPtr->constraints);
    if (rv != NO_VIOLATION)
      {

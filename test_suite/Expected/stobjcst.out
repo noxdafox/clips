@@ -471,13 +471,5 @@ ERROR:
    (slot foo
       (type INTEGER)
       (default-dynamic abc))
-CLIPS> (set-static-constraint-checking FALSE)
-TRUE
-CLIPS> (defclass A (is-a USER)
-   (slot foo (type INTEGER) (default abc)))
-CLIPS> (defclass B (is-a USER)
-   (slot foo (type INTEGER) (default-dynamic abc)))
-CLIPS> (set-static-constraint-checking TRUE)
-FALSE
 CLIPS> (clear)
 CLIPS> (dribble-off)

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/11/16             */
    /*                                                     */
    /*           MESSAGE-HANDLER PARSER FUNCTIONS          */
    /*******************************************************/
@@ -43,6 +43,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            Static constraint checking is always enabled.  */
 /*                                                           */
 /*************************************************************/
 
@@ -644,18 +646,15 @@ static SlotDescriptor *CheckSlotReference(
       return NULL;
      }
 
-   if (EnvGetStaticConstraintChecking(theEnv))
+   vCode = ConstraintCheckExpressionChain(theEnv,writeExpression,sd->constraint);
+   if (vCode != NO_VIOLATION)
      {
-      vCode = ConstraintCheckExpressionChain(theEnv,writeExpression,sd->constraint);
-      if (vCode != NO_VIOLATION)
-        {
-         PrintErrorID(theEnv,"CSTRNCHK",1,false);
-         EnvPrintRouter(theEnv,WERROR,"Expression for ");
-         PrintSlot(theEnv,WERROR,sd,NULL,"direct slot write");
-         ConstraintViolationErrorMessage(theEnv,NULL,NULL,0,0,NULL,0,
-                                         vCode,sd->constraint,false);
-         return NULL;
-        }
+      PrintErrorID(theEnv,"CSTRNCHK",1,false);
+      EnvPrintRouter(theEnv,WERROR,"Expression for ");
+      PrintSlot(theEnv,WERROR,sd,NULL,"direct slot write");
+      ConstraintViolationErrorMessage(theEnv,NULL,NULL,0,0,NULL,0,
+                                      vCode,sd->constraint,false);
+      return NULL;
      }
    return(sd);
   }
