@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/10/16             */
+   /*            CLIPS Version 6.40  08/11/16             */
    /*                                                     */
    /*                    ENGINE MODULE                    */
    /*******************************************************/
@@ -78,6 +78,8 @@
 /*                                                           */
 /*            Callbacks must be environment aware.           */
 /*                                                           */
+/*            Incremental reset is always enabled.           */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -123,8 +125,6 @@ void InitializeEngine(
   Environment *theEnv)
   {   
    AllocateEnvironmentData(theEnv,ENGINE_DATA,sizeof(struct engineData),DeallocateEngineData);
-
-   EngineData(theEnv)->IncrementalResetFlag = true;
    
 #if DEBUGGING_FUNCTIONS
    AddWatchItem(theEnv,"statistics",0,&EngineData(theEnv)->WatchStatistics,20,NULL,NULL);

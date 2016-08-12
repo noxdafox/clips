@@ -142,13 +142,6 @@
 (clear)                            ; DR0543
 (deffunction blah () (if a b))     ; DR0543 - Error
 (blah)                             ; DR0543 - Undefined
-(clear)                            ; DR0548
-(set-incremental-reset FALSE)      ; DR0548
-(defrule foo (not (a)) =>)         ; DR0548
-(reset)                            ; DR0548
-(agenda)                           ; DR0548 - 1 Activation
-(clear)                            ; DR0548
-(set-incremental-reset TRUE)       ; DR0548
 (clear)                            ; DR0549
 (defclass A (is-a USER) (role concrete) (slot xy (create-accessor read-write)))
 (make-instance a of A 

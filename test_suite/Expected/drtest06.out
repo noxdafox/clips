@@ -273,17 +273,6 @@ ERROR:
 CLIPS> (blah)                             ; DR0543 - Undefined
 
 [EXPRNPSR3] Missing function declaration for blah.
-CLIPS> (clear)                            ; DR0548
-CLIPS> (set-incremental-reset FALSE)      ; DR0548
-TRUE
-CLIPS> (defrule foo (not (a)) =>)         ; DR0548
-CLIPS> (reset)                            ; DR0548
-CLIPS> (agenda)                           ; DR0548 - 1 Activation
-0      foo: *
-For a total of 1 activation.
-CLIPS> (clear)                            ; DR0548
-CLIPS> (set-incremental-reset TRUE)       ; DR0548
-FALSE
 CLIPS> (clear)                            ; DR0549
 CLIPS> (defclass A (is-a USER) (role concrete) (slot xy (create-accessor read-write)))
 CLIPS> (make-instance a of A 

@@ -30,6 +30,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            Static constraint checking is always enabled.  */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"

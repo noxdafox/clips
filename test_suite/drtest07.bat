@@ -130,14 +130,6 @@
    =>)
 (facts)                            ; DR0630
 (agenda)                           ; DR0630
-(clear)                            ; DR0633
-(set-incremental-reset FALSE)      ; DR0633
-(defrule not-fire (not (color)) =>)
-(agenda)                           ; DR0633
-(assert (color))                   ; DR0633
-(agenda)                           ; DR0633
-(clear)                            ; DR0633
-(set-incremental-reset TRUE)       ; DR0633
 (clear)                            ; DR0634
 (deffunction foo ()                ; DR0634
    (bind ?i 1000)                  ; DR0634

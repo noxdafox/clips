@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/11/16             */
    /*                                                     */
    /*                 RETE UTILITY MODULE                 */
    /*******************************************************/
@@ -51,6 +51,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            Incremental reset is always enabled.           */
 /*                                                           */
 /*************************************************************/
 
@@ -635,7 +637,7 @@ void InitializePatternHeader(
    theHeader->multifieldNode = false;
    theHeader->stopNode = false;
 #if (! RUN_TIME)
-   theHeader->initialize = EnvGetIncrementalReset(theEnv);
+   theHeader->initialize = true;
 #else
    theHeader->initialize = false;
 #endif

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  08/11/16            */
    /*                                                     */
    /*                 ENGINE HEADER FILE                  */
    /*******************************************************/
@@ -68,6 +68,8 @@
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
+/*            Incremental reset is always enabled.           */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_engine
@@ -108,7 +110,6 @@ struct engineData
    bool WatchFocus;
 #endif
    bool IncrementalResetInProgress;
-   bool IncrementalResetFlag;
    bool JoinOperationInProgress;
    struct partialMatch *GlobalLHSBinds;
    struct partialMatch *GlobalRHSBinds;

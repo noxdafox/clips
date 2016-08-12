@@ -106,7 +106,6 @@
    void                        (*GetContinueEnvFunction(Environment *))(Environment *,int);
    double                      gentime(void);
    void                        gensystem(Environment *,const char *);
-   void                        VMSSystem(char *);
    int                         GenOpenReadBinary(Environment *,const char *,const char *);
    void                        GetSeekCurBinary(Environment *,long);
    void                        GetSeekSetBinary(Environment *,long);

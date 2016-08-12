@@ -521,29 +521,6 @@ every-cycle
 CLIPS> (clear) ; refresh-agenda command
 CLIPS> (refresh-agenda 10)
 [ARGACCES5] Function refresh-agenda expected argument #1 to be of type symbol
-CLIPS> (clear) ; incremental-reset command
-CLIPS> (set-incremental-reset TRUE)
-TRUE
-CLIPS> (get-incremental-reset)
-TRUE
-CLIPS> (set-incremental-reset)
-[ARGACCES4] Function set-incremental-reset expected exactly 1 argument(s)
-CLIPS> (get-incremental-reset)
-TRUE
-CLIPS> (get-incremental-reset 20)
-[ARGACCES4] Function get-incremental-reset expected exactly 0 argument(s)
-CLIPS> (set-incremental-reset 10)
-TRUE
-CLIPS> (get-incremental-reset)
-TRUE
-CLIPS> (set-incremental-reset FALSE)
-TRUE
-CLIPS> (get-incremental-reset)
-FALSE
-CLIPS> (set-incremental-reset TRUE)
-FALSE
-CLIPS> (get-incremental-reset)
-TRUE
 CLIPS> (clear) ; Some new 6.0 features
 CLIPS> (defrule BOGUS::d5 =>)
 [PRNTUTIL1] Unable to find defmodule BOGUS.

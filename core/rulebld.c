@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/11/16             */
    /*                                                     */
    /*                  RULE BUILD MODULE                  */
    /*******************************************************/
@@ -38,6 +38,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            Incremental reset is always enabled.           */
 /*                                                           */
 /*************************************************************/
 
@@ -1190,7 +1192,7 @@ static struct joinNode *CreateNewJoin(
    newJoin->patternIsExists = existsRHSPattern;
 
    newJoin->marked = false;
-   newJoin->initialize = EnvGetIncrementalReset(theEnv);
+   newJoin->initialize = true;
    newJoin->logicalJoin = false;
    newJoin->ruleToActivate = NULL;
    newJoin->memoryLeftAdds = 0;

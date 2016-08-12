@@ -192,18 +192,6 @@
 (set-salience-evaluation when-defined)
 (clear) ; refresh-agenda command
 (refresh-agenda 10)
-(clear) ; incremental-reset command
-(set-incremental-reset TRUE)
-(get-incremental-reset)
-(set-incremental-reset)
-(get-incremental-reset)
-(get-incremental-reset 20)
-(set-incremental-reset 10)
-(get-incremental-reset)
-(set-incremental-reset FALSE)
-(get-incremental-reset)
-(set-incremental-reset TRUE)
-(get-incremental-reset)
 (clear) ; Some new 6.0 features
 (defrule BOGUS::d5 =>)
 (defmodule FOO)

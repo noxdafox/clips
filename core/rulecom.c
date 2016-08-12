@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/06/16             */
+   /*            CLIPS Version 6.40  08/11/16             */
    /*                                                     */
    /*                RULE COMMANDS MODULE                 */
    /*******************************************************/
@@ -64,6 +64,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
+/*            Incremental reset is always enabled.           */
 /*                                                           */
 /*************************************************************/
 
@@ -158,11 +160,6 @@ void DefruleCommands(
    EnvDefineFunction2(theEnv,"timetag",   'g', PTIEF TimetagFunction,
                                    "TimetagFunction", "11h");
 #endif /* DEBUGGING_FUNCTIONS */
-
-   EnvDefineFunction2(theEnv,"get-incremental-reset",'b',
-                   PTIEF GetIncrementalResetCommand,"GetIncrementalResetCommand","00");
-   EnvDefineFunction2(theEnv,"set-incremental-reset",'b',
-                   PTIEF SetIncrementalResetCommand,"SetIncrementalResetCommand","11");
 
    EnvDefineFunction2(theEnv,"get-beta-memory-resizing",'b',
                    PTIEF GetBetaMemoryResizingCommand,"GetBetaMemoryResizingCommand","00");

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  08/11/16            */
    /*                                                     */
    /*            INCREMENTAL RESET HEADER FILE            */
    /*******************************************************/
@@ -47,6 +47,8 @@
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
+/*            Incremental reset is always enabled.           */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_incrrset
@@ -58,10 +60,6 @@
 #include "ruledef.h"
 
    void                           IncrementalReset(Environment *,Defrule *);
-   bool                           EnvGetIncrementalReset(Environment *);
-   bool                           EnvSetIncrementalReset(Environment *,bool);
-   bool                           GetIncrementalResetCommand(Environment *);
-   bool                           SetIncrementalResetCommand(Environment *);
 
 #endif /* _H_incrrset */
 
