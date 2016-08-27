@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -32,6 +32,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_dffnxexe
@@ -46,7 +48,7 @@
 #include "expressn.h"
 #include "evaluatn.h"
 
-   void                           CallDeffunction(Environment *,Deffunction *,EXPRESSION *,DATA_OBJECT *);
+   void                           CallDeffunction(Environment *,Deffunction *,EXPRESSION *,CLIPSValue *);
 
 #endif /* DEFFUNCTION_CONSTRUCT */
 

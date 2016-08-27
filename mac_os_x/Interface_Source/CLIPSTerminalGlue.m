@@ -17,11 +17,12 @@
 /*   routine for the clear-window command.   */
 /*********************************************/
 void ClearEnvironmentWindowCommand(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    CLIPSTerminalController *theObject;
-
-   if (EnvArgCountCheck(theEnv,"clear-window",EXACTLY,0) == -1) return;
+   
    theObject = (__bridge CLIPSTerminalController *) GetEnvironmentContext(theEnv);
    
    [theObject clearScrollbackFunction];

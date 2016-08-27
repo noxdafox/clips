@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/06/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*                  MULTIFIELD MODULE                  */
    /*******************************************************/
@@ -51,6 +51,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -260,7 +262,7 @@ Multifield *EnvCreateMultifield(
 /*******************/
 Multifield *DOToMultifield(
   Environment *theEnv,
-  DATA_OBJECT *theValue)
+  CLIPSValue *theValue)
   {
    Multifield *dst, *src;
 
@@ -332,8 +334,8 @@ void FlushMultifields(
 /************************************************************************/
 void DuplicateMultifield(
   Environment *theEnv,
-  DATA_OBJECT_PTR dst,
-  DATA_OBJECT_PTR src)
+  CLIPSValue *dst,
+  CLIPSValue *src)
   {
    dst->type = MULTIFIELD;
    dst->begin = 0;
@@ -411,12 +413,12 @@ void PrintMultifield(
 /****************************************************/
 void StoreInMultifield(
   Environment *theEnv,
-  DATA_OBJECT *returnValue,
+  CLIPSValue *returnValue,
   EXPRESSION *expptr,
   bool garbageSegment)
   {
-   DATA_OBJECT val_ptr;
-   DATA_OBJECT *val_arr;
+   CLIPSValue val_ptr;
+   CLIPSValue *val_arr;
    Multifield *theMultifield;
    Multifield *orig_ptr;
    long start, end, i,j, k, argCount;
@@ -446,7 +448,7 @@ void StoreInMultifield(
       /* the total length of all the arguments. */
       /*========================================*/
 
-      val_arr = (DATA_OBJECT *) gm3(theEnv,(long) sizeof(DATA_OBJECT) * argCount);
+      val_arr = (CLIPSValue *) gm3(theEnv,(long) sizeof(CLIPSValue) * argCount);
       seg_size = 0;
       
       for (i = 1; i <= argCount; i++, expptr = expptr->nextArg)
@@ -461,7 +463,7 @@ void StoreInMultifield(
               { theMultifield = EnvCreateMultifield(theEnv,0L); }
             else theMultifield = CreateMultifield2(theEnv,0L);
             SetpValue(returnValue,theMultifield);
-            rm3(theEnv,val_arr,(long) sizeof(DATA_OBJECT) * argCount);
+            rm3(theEnv,val_arr,(long) sizeof(CLIPSValue) * argCount);
             return;
            }
          SetpType(val_arr+i-1,GetType(val_ptr));
@@ -525,7 +527,7 @@ void StoreInMultifield(
       SetpDOBegin(returnValue,1);
       SetpDOEnd(returnValue,(long) seg_size);
       SetpValue(returnValue,theMultifield);
-      rm3(theEnv,val_arr,(long) sizeof(DATA_OBJECT) * argCount);
+      rm3(theEnv,val_arr,(long) sizeof(CLIPSValue) * argCount);
       return;
      }
   }
@@ -534,8 +536,8 @@ void StoreInMultifield(
 /* MultifieldDOsEqual: determines if two segments are equal. */
 /*************************************************************/
 bool MultifieldDOsEqual(
-  DATA_OBJECT_PTR dobj1,
-  DATA_OBJECT_PTR dobj2)
+  CLIPSValue *dobj1,
+  CLIPSValue *dobj2)
   {
    long extent1,extent2; /* 6.04 Bug Fix */
    FIELD_PTR e1,e2;
@@ -709,7 +711,7 @@ Multifield *GetMultifieldList(
 /***************************************/
 void *ImplodeMultifield(
   Environment *theEnv,
-  DATA_OBJECT *value)
+  CLIPSValue *value)
   {
    size_t strsize = 0;
    long i, j;
@@ -717,7 +719,7 @@ void *ImplodeMultifield(
    char *ret_str;
    void *rv;
    struct multifield *theMultifield;
-   DATA_OBJECT tempDO;
+   CLIPSValue tempDO;
 
    /*===================================================*/
    /* Determine the size of the string to be allocated. */

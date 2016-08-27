@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*              OBJECT MESSAGE FUNCTIONS               */
    /*******************************************************/
@@ -41,6 +41,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -602,7 +604,7 @@ bool CheckCurrentMessage(
   const char *func,
   bool ins_reqd)
   {
-   DATA_OBJECT *activeMsgArg;
+   CLIPSValue *activeMsgArg;
 
    if (!MessageHandlerData(theEnv)->CurrentCore || (MessageHandlerData(theEnv)->CurrentCore->hnd->actions != ProceduralPrimitiveData(theEnv)->CurrentProcActions))
      {

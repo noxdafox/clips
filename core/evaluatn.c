@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/10/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*                  EVALUATION MODULE                  */
    /*******************************************************/
@@ -59,6 +59,8 @@
 /*                                                           */
 /*            Callbacks must be environment aware.           */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -103,7 +105,7 @@
 
    static void                    DeallocateEvaluationData(Environment *);
    static void                    PrintCAddress(Environment *,const char *,void *);
-   static void                    NewCAddress(Environment *,DATA_OBJECT *);
+   static void                    NewCAddress(Environment *,CLIPSValue *);
    /*
    static bool                    DiscardCAddress(void *,void *);
    */
@@ -142,15 +144,18 @@ static void DeallocateEvaluationData(
 bool EvaluateExpression(
   Environment *theEnv,
   struct expr *problem,
-  DATA_OBJECT_PTR returnValue)
+  CLIPSValue *returnValue)
   {
    struct expr *oldArgument;
    void *oldContext;
    struct FunctionDefinition *fptr;
+   UDFContext theUDFContext;
 #if PROFILING_FUNCTIONS
    struct profileFrameInfo profileFrame;
 #endif
 
+   returnValue->type = RVOID;
+   
    if (problem == NULL)
      {
       returnValue->type = SYMBOL;
@@ -192,110 +197,7 @@ bool EvaluateExpression(
          oldArgument = EvaluationData(theEnv)->CurrentExpression;
          EvaluationData(theEnv)->CurrentExpression = problem;
 
-         switch(fptr->returnValueType)
-           {
-            case 'v' :
-              (* (void (*)(Environment *)) fptr->functionPointer)(theEnv);
-              returnValue->type = RVOID;
-              returnValue->value = EnvFalseSymbol(theEnv);
-              break;
-            case 'b' :
-              returnValue->type = SYMBOL;
-              if ((* (bool (*)(Environment *)) fptr->functionPointer)(theEnv))
-                returnValue->value = EnvTrueSymbol(theEnv);
-              else
-                returnValue->value = EnvFalseSymbol(theEnv);
-              break;
-            case 'a' :
-              returnValue->type = EXTERNAL_ADDRESS;
-              returnValue->value =
-                             (* (void *(*)(Environment *)) fptr->functionPointer)(theEnv);
-              break;
-            case 'g' :
-              returnValue->type = INTEGER;
-              returnValue->value =
-                EnvAddLong(theEnv,(* (long long (*)(Environment *)) fptr->functionPointer)(theEnv));
-              break;
-            case 'i' :
-              returnValue->type = INTEGER;
-              returnValue->value =
-                EnvAddLong(theEnv,(long long) (* (int (*)(Environment *)) fptr->functionPointer)(theEnv));
-              break;
-            case 'l' :
-              returnValue->type = INTEGER;
-              returnValue->value =
-                 EnvAddLong(theEnv,(long long) (* (long int (*)(Environment *)) fptr->functionPointer)(theEnv));
-              break;
-            case 'f' :
-              returnValue->type = FLOAT;
-              returnValue->value =
-                 EnvAddDouble(theEnv,(double) (* (float (*)(Environment *)) fptr->functionPointer)(theEnv));
-              break;
-            case 'd' :
-              returnValue->type = FLOAT;
-              returnValue->value =
-                 EnvAddDouble(theEnv,(* (double (*)(Environment *)) fptr->functionPointer)(theEnv));
-              break;
-            case 's' :
-              returnValue->type = STRING;
-              returnValue->value =
-                (* (SYMBOL_HN *(*)(Environment *)) fptr->functionPointer)(theEnv);
-              break;
-            case 'w' :
-              returnValue->type = SYMBOL;
-              returnValue->value =
-                (* (SYMBOL_HN *(*)(Environment *)) fptr->functionPointer)(theEnv);
-              break;
-#if OBJECT_SYSTEM
-            case 'x' :
-              returnValue->type = INSTANCE_ADDRESS;
-              returnValue->value =
-                             (* (void *(*)(Environment *)) fptr->functionPointer)(theEnv);
-              if (returnValue->value == NULL)
-                { returnValue->value = &InstanceData(theEnv)->DummyInstance; }
-                
-              break;
-            case 'o' :
-              returnValue->type = INSTANCE_NAME;
-              returnValue->value =
-                (* (SYMBOL_HN *(*)(Environment *)) fptr->functionPointer)(theEnv);
-              break;
-#endif
-
-#if DEFTEMPLATE_CONSTRUCT
-            case 'y' :
-              returnValue->type = FACT_ADDRESS;
-              returnValue->value =
-                             (* (void *(*)(Environment *)) fptr->functionPointer)(theEnv);
-              if (returnValue->value == NULL)
-                { returnValue->value = &FactData(theEnv)->DummyFact; }
-                
-              break;
-#endif
-
-            case 'c' :
-              {
-               char cbuff[2];
-               cbuff[0] = (* (char (*)(Environment *)) fptr->functionPointer)(theEnv);
-               cbuff[1] = EOS;
-               returnValue->type = SYMBOL;
-               returnValue->value = EnvAddSymbol(theEnv,cbuff);
-               break;
-              }
-
-            case 'j' :
-            case 'k' :
-            case 'm' :
-            case 'n' :
-            case 'u' :
-              (* (void (*)(Environment *,DATA_OBJECT_PTR)) fptr->functionPointer)(theEnv,returnValue);
-              break;
-
-            default :
-               SystemError(theEnv,"EVALUATN",2);
-               EnvExitRouter(theEnv,EXIT_FAILURE);
-               break;
-            }
+         fptr->functionPointer(theEnv,&theUDFContext,returnValue);
 
 #if PROFILING_FUNCTIONS 
         EndProfile(theEnv,&profileFrame);
@@ -308,9 +210,9 @@ bool EvaluateExpression(
 
      case MULTIFIELD:
         returnValue->type = MULTIFIELD;
-        returnValue->value = ((DATA_OBJECT_PTR) (problem->value))->value;
-        returnValue->begin = ((DATA_OBJECT_PTR) (problem->value))->begin;
-        returnValue->end = ((DATA_OBJECT_PTR) (problem->value))->end;
+        returnValue->value = ((CLIPSValue *) (problem->value))->value;
+        returnValue->begin = ((CLIPSValue *) (problem->value))->begin;
+        returnValue->end = ((CLIPSValue *) (problem->value))->end;
         break;
 
      case MF_VARIABLE:
@@ -452,16 +354,16 @@ bool EnvGetHaltExecution(
    return(EvaluationData(theEnv)->HaltExecution);
   }
 
-/******************************************************/
-/* ReturnValues: Returns a linked list of DATA_OBJECT */
-/*   structures to the pool of free memory.           */
-/******************************************************/
+/*****************************************************/
+/* ReturnValues: Returns a linked list of CLIPSValue */
+/*   structures to the pool of free memory.          */
+/*****************************************************/
 void ReturnValues(
   Environment *theEnv,
-  DATA_OBJECT_PTR garbagePtr,
+  CLIPSValue *garbagePtr,
   bool decrementSupplementalInfo)
   {
-   DATA_OBJECT_PTR nextPtr;
+   CLIPSValue *nextPtr;
 
    while (garbagePtr != NULL)
      {
@@ -474,14 +376,14 @@ void ReturnValues(
      }
   }
 
-/***************************************************/
-/* PrintDataObject: Prints a DATA_OBJECT structure */
-/*   to the specified logical name.                */
-/***************************************************/
+/**************************************************/
+/* PrintDataObject: Prints a CLIPSValue structure */
+/*   to the specified logical name.               */
+/**************************************************/
 void PrintDataObject(
   Environment *theEnv,
   const char *fileid,
-  DATA_OBJECT_PTR argPtr)
+  CLIPSValue *argPtr)
   {
    switch(argPtr->type)
      {
@@ -535,7 +437,7 @@ void PrintDataObject(
 /****************************************************/
 void EnvSetMultifieldErrorValue(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue)
+  CLIPSValue *returnValue)
   {
    returnValue->type = MULTIFIELD;
    returnValue->value = EnvCreateMultifield(theEnv,0L);
@@ -545,11 +447,11 @@ void EnvSetMultifieldErrorValue(
 
 /**************************************************/
 /* ValueInstall: Increments the appropriate count */
-/*   (in use) values for a DATA_OBJECT structure. */
+/*   (in use) values for a CLIPSValue structure.  */
 /**************************************************/
 void ValueInstall(
   Environment *theEnv,
-  DATA_OBJECT *vPtr)
+  CLIPSValue *vPtr)
   {
    if (vPtr->type == MULTIFIELD) MultifieldInstall(theEnv,(struct multifield *) vPtr->value);
    else AtomInstall(theEnv,vPtr->type,vPtr->value);
@@ -557,11 +459,11 @@ void ValueInstall(
 
 /****************************************************/
 /* ValueDeinstall: Decrements the appropriate count */
-/*   (in use) values for a DATA_OBJECT structure.   */
+/*   (in use) values for a CLIPSValue structure.    */
 /****************************************************/
 void ValueDeinstall(
   Environment *theEnv,
-  DATA_OBJECT *vPtr)
+  CLIPSValue *vPtr)
   {
    if (vPtr->type == MULTIFIELD) MultifieldDeinstall(theEnv,(struct multifield *) vPtr->value);
    else AtomDeinstall(theEnv,vPtr->type,vPtr->value);
@@ -677,7 +579,7 @@ bool EnvFunctionCall(
   Environment *theEnv,
   const char *name,
   const char *args,
-  DATA_OBJECT *result)
+  CLIPSValue *returnValue)
   {
    FUNCTION_REFERENCE theReference;
 
@@ -686,7 +588,7 @@ bool EnvFunctionCall(
    /*=======================================*/
 
    if (GetFunctionReference(theEnv,name,&theReference))
-     { return(FunctionCall2(theEnv,&theReference,args,result)); }
+     { return(FunctionCall2(theEnv,&theReference,args,returnValue)); }
 
    /*=========================================================*/
    /* Otherwise signal an error if a deffunction, defgeneric, */
@@ -710,7 +612,7 @@ bool FunctionCall2(
   Environment *theEnv,
   FUNCTION_REFERENCE *theReference,
   const char *args,
-  DATA_OBJECT *result)
+  CLIPSValue *returnValue)
   {
    EXPRESSION *argexps;
    bool error = false;
@@ -738,8 +640,8 @@ bool FunctionCall2(
    /* Initialize the default return value. */
    /*======================================*/
 
-   result->type = SYMBOL;
-   result->value = EnvFalseSymbol(theEnv);
+   returnValue->type = SYMBOL;
+   returnValue->value = EnvFalseSymbol(theEnv);
 
    /*============================*/
    /* Parse the argument string. */
@@ -753,7 +655,7 @@ bool FunctionCall2(
    /*====================*/
 
    theReference->argList = argexps;
-   error = EvaluateExpression(theEnv,theReference,result);
+   error = EvaluateExpression(theEnv,theReference,returnValue);
 
    /*========================*/
    /* Return the expression. */
@@ -773,12 +675,12 @@ bool FunctionCall2(
 
 /***************************************************/
 /* CopyDataObject: Copies the values from a source */
-/*   DATA_OBJECT to a destination DATA_OBJECT.     */
+/*   CLIPSValue to a destination CLIPSValue.       */
 /***************************************************/
 void CopyDataObject(
   Environment *theEnv,
-  DATA_OBJECT *dst,
-  DATA_OBJECT *src,
+  CLIPSValue *dst,
+  CLIPSValue *src,
   int garbageMultifield)
   {
    if (src->type != MULTIFIELD)
@@ -796,12 +698,12 @@ void CopyDataObject(
 
 /***********************************************/
 /* TransferDataObjectValues: Copies the values */
-/*   directly from a source DATA_OBJECT to a   */
-/*   destination DATA_OBJECT.                  */
+/*   directly from a source CLIPSValue to a    */
+/*   destination CLIPSValue.                   */
 /***********************************************/
 void TransferDataObjectValues(
-  DATA_OBJECT *dst,
-  DATA_OBJECT *src)
+  CLIPSValue *dst,
+  CLIPSValue *src)
   {
    dst->type = src->type;
    dst->value = src->value;
@@ -819,7 +721,7 @@ void TransferDataObjectValues(
 /************************************************************************/
 struct expr *ConvertValueToExpression(
   Environment *theEnv,
-  DATA_OBJECT *theValue)
+  CLIPSValue *theValue)
   {
    long i;
    struct expr *head = NULL, *last = NULL, *newItem;
@@ -1029,8 +931,8 @@ bool GetFunctionReference(
 /* DOsEqual: Determines if two DATA_OBJECTS are equal. */
 /*******************************************************/
 bool DOsEqual(
-  DATA_OBJECT_PTR dobj1,
-  DATA_OBJECT_PTR dobj2)
+  CLIPSValue *dobj1,
+  CLIPSValue *dobj2)
   {
    if (GetpType(dobj1) != GetpType(dobj2))
      { return false; }
@@ -1065,7 +967,7 @@ bool EvaluateAndStoreInDataObject(
   Environment *theEnv,
   bool mfp,
   EXPRESSION *theExp,
-  DATA_OBJECT *val,
+  CLIPSValue *val,
   bool garbageSegment)
   {
    val->type = MULTIFIELD;
@@ -1110,7 +1012,7 @@ static void PrintCAddress(
 /****************/
 static void NewCAddress(
   Environment *theEnv,
-  DATA_OBJECT *rv)
+  CLIPSValue *rv)
   {
    int numberOfArguments;
 

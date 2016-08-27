@@ -234,7 +234,7 @@ ERROR:
    =>
    (modify ?f (x 3 4)))
 CLIPS> (deftemplate example (field x))
-CLIPS> (assert (example (x =(mv-append a b c))))
+CLIPS> (assert (example (x =(create$ a b c))))
 
 [TMPLTDEF2] The single field slot x can only contain a single field value.
 CLIPS> (deftemplate example (field x))
@@ -323,7 +323,7 @@ ERROR:
 (deftemplate MAIN::example3
    (field x (type SYMBOL) (range 1 5))
 CLIPS> (deftemplate example (field x))
-CLIPS> (defglobal ?*x* = (mv-append a b c))
+CLIPS> (defglobal ?*x* = (create$ a b c))
 CLIPS> (assert (example (x ?*x*)))
 
 [TMPLTFUN2] Attempted to assert a multifield value 

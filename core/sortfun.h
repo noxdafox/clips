@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*            SORT FUNCTIONS HEADER MODULE             */
    /*******************************************************/
@@ -34,6 +34,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_sortfun
@@ -43,9 +45,9 @@
 #define _H_sortfun
 
    void                           SortFunctionDefinitions(Environment *);
-   void                           MergeSort(Environment *,unsigned long,DATA_OBJECT *,
-                                            bool (*)(Environment *,DATA_OBJECT *,DATA_OBJECT *));
-   void                           SortFunction(Environment *,DATA_OBJECT *);
+   void                           MergeSort(Environment *,unsigned long,CLIPSValue *,
+                                            bool (*)(Environment *,CLIPSValue *,CLIPSValue *));
+   void                           SortFunction(Environment *,UDFContext *,CLIPSValue *);
 
 #endif /* _H_sortfun */
 

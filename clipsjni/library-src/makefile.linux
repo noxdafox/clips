@@ -40,7 +40,7 @@ OBJS = agenda.o analysis.o argacces.o bload.o bmathfun.o bsave.o \
  	clipsjni_utilities.o clipsjni_glue.o
 
 .c.o :
-	gcc -c -O3 -fPIC -DLINUX -DALLOW_ENVIRONMENT_GLOBALS=0 \
+	gcc -c -O3 -fPIC -DLINUX \
 	    -I$(JAVA_INCLUDE) -I$(JAVA_INCLUDE_OS) \
 	    -Wall -Wundef -Wpointer-arith -Wshadow \
 	    -Winline -Wmissing-declarations -Wredundant-decls \

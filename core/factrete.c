@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*          FACT RETE ACCESS FUNCTIONS MODULE          */
    /*******************************************************/
@@ -35,6 +35,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -63,7 +65,7 @@
 bool FactPNGetVar1(
   Environment *theEnv,
   void *theValue,
-  DATA_OBJECT_PTR returnValue)
+  CLIPSValue *returnValue)
   {
    unsigned short theField, theSlot;
    struct fact *factPtr;
@@ -174,7 +176,7 @@ bool FactPNGetVar1(
 bool FactPNGetVar2(
   Environment *theEnv,
   void *theValue,
-  DATA_OBJECT_PTR returnValue)
+  CLIPSValue *returnValue)
   {
    struct fact *factPtr;
    struct factGetVarPN2Call *hack;
@@ -212,7 +214,7 @@ bool FactPNGetVar2(
 bool FactPNGetVar3(
   Environment *theEnv,
   void *theValue,
-  DATA_OBJECT_PTR returnValue)
+  CLIPSValue *returnValue)
   {
    struct fact *factPtr;
    struct multifield *segmentPtr;
@@ -274,7 +276,7 @@ bool FactPNGetVar3(
 bool FactPNConstant1(
   Environment *theEnv,
   void *theValue,
-  DATA_OBJECT_PTR returnValue)
+  CLIPSValue *returnValue)
   {
 #if MAC_XCD
 #pragma unused(returnValue)
@@ -315,7 +317,7 @@ bool FactPNConstant1(
 bool FactPNConstant2(
   Environment *theEnv,
   void *theValue,
-  DATA_OBJECT_PTR returnValue)
+  CLIPSValue *returnValue)
   {
 #if MAC_XCD
 #pragma unused(returnValue)
@@ -370,7 +372,7 @@ bool FactPNConstant2(
 bool FactJNGetVar1(
   Environment *theEnv,
   void *theValue,
-  DATA_OBJECT_PTR returnValue)
+  CLIPSValue *returnValue)
   {
    unsigned short theField, theSlot;
    struct fact *factPtr;
@@ -511,7 +513,7 @@ bool FactJNGetVar1(
 bool FactJNGetVar2(
   Environment *theEnv,
   void *theValue,
-  DATA_OBJECT_PTR returnValue)
+  CLIPSValue *returnValue)
   {
    struct fact *factPtr;
    struct factGetVarJN2Call *hack;
@@ -558,7 +560,7 @@ bool FactJNGetVar2(
 bool FactJNGetVar3(
   Environment *theEnv,
   void *theValue,
-  DATA_OBJECT_PTR returnValue)
+  CLIPSValue *returnValue)
   {
    struct fact *factPtr;
    struct multifield *segmentPtr;
@@ -628,7 +630,7 @@ bool FactJNGetVar3(
 bool FactSlotLength(
   Environment *theEnv,
   void *theValue,
-  DATA_OBJECT_PTR returnValue)
+  CLIPSValue *returnValue)
   {
    struct factCheckLengthPNCall *hack;
    struct multifield *segmentPtr;
@@ -667,7 +669,7 @@ bool FactSlotLength(
 bool FactJNCompVars1(
   Environment *theEnv,
   void *theValue,
-  DATA_OBJECT *theResult)
+  CLIPSValue *theResult)
   {
 #if MAC_XCD
 #pragma unused(theResult)
@@ -724,7 +726,7 @@ bool FactJNCompVars1(
 bool FactJNCompVars2(
   Environment *theEnv,
   void *theValue,
-  DATA_OBJECT *theResult)
+  CLIPSValue *theResult)
   {
 #if MAC_XCD
 #pragma unused(theResult)
@@ -805,7 +807,7 @@ bool FactJNCompVars2(
 bool FactPNCompVars1(
   Environment *theEnv,
   void *theValue,
-  DATA_OBJECT *theResult)
+  CLIPSValue *theResult)
   {
    int rv;
    struct field *fieldPtr1, *fieldPtr2;
@@ -918,7 +920,7 @@ unsigned short AdjustFieldPosition(
 bool FactStoreMultifield(
   Environment *theEnv,
   void *theValue,
-  DATA_OBJECT *theResult)
+  CLIPSValue *theResult)
   {
 #if MAC_XCD
 #pragma unused(theValue)

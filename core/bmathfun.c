@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/06/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*             BASIC MATH FUNCTIONS MODULE             */
    /*******************************************************/
@@ -42,6 +42,8 @@
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -75,22 +77,20 @@ void BasicMathFunctionDefinitions(
    BasicMathFunctionData(theEnv)->AutoFloatDividend = true;
 
 #if ! RUN_TIME
-   EnvDefineFunction2(theEnv,"+", 'n',PTIEF AdditionFunction, "AdditionFunction", "2*n");
-   EnvDefineFunction2(theEnv,"*", 'n', PTIEF MultiplicationFunction, "MultiplicationFunction", "2*n");
-   EnvDefineFunction2(theEnv,"-", 'n', PTIEF SubtractionFunction, "SubtractionFunction", "2*n");
-    
-   EnvDefineFunction2(theEnv,"/", 'n', PTIEF DivisionFunction, "DivisionFunction", "2*n");
-   EnvDefineFunction2(theEnv,"div", 'g', PTIEF DivFunction, "DivFunction", "2*n");
-   EnvDefineFunction2(theEnv,"set-auto-float-dividend", 'b',
-                   PTIEF SetAutoFloatDividendCommand, "SetAutoFloatDividendCommand", "11");
-   EnvDefineFunction2(theEnv,"get-auto-float-dividend", 'b',
-                  PTIEF GetAutoFloatDividendCommand, "GetAutoFloatDividendCommand", "00");
+   EnvAddUDF(theEnv,"+","ld",2,UNBOUNDED,"ld",AdditionFunction,"AdditionFunction",NULL);
+   EnvAddUDF(theEnv,"*","ld",2,UNBOUNDED,"ld",MultiplicationFunction,"MultiplicationFunction",NULL);
+   EnvAddUDF(theEnv,"-","ld",2,UNBOUNDED,"ld",SubtractionFunction,"SubtractionFunction",NULL);
+   EnvAddUDF(theEnv,"/","ld",2,UNBOUNDED,"ld",DivisionFunction,"DivisionFunction",NULL);
+   EnvAddUDF(theEnv,"div","l",2,UNBOUNDED,"ld",DivFunction,"DivFunction",NULL);
+   
+   EnvAddUDF(theEnv,"set-auto-float-dividend","b",1,1,NULL,SetAutoFloatDividendCommand,"SetAutoFloatDividendCommand",NULL);
+   EnvAddUDF(theEnv,"get-auto-float-dividend","b",0,0,NULL,GetAutoFloatDividendCommand,"GetAutoFloatDividendCommand",NULL);
 
-   EnvDefineFunction2(theEnv,"integer", 'g', PTIEF IntegerFunction, "IntegerFunction", "11n");
-   EnvDefineFunction2(theEnv,"float", 'd', PTIEF FloatFunction, "FloatFunction", "11n");
-   EnvDefineFunction2(theEnv,"abs", 'n', PTIEF AbsFunction, "AbsFunction", "11n");
-   EnvDefineFunction2(theEnv,"min", 'n', PTIEF MinFunction, "MinFunction", "2*n");
-   EnvDefineFunction2(theEnv,"max", 'n', PTIEF MaxFunction, "MaxFunction", "2*n");
+   EnvAddUDF(theEnv,"integer","l",1,1,"ld",IntegerFunction,"IntegerFunction",NULL);
+   EnvAddUDF(theEnv,"float","d",1,1,"ld",FloatFunction,"FloatFunction",NULL);
+   EnvAddUDF(theEnv,"abs","ld",1,1,"ld",AbsFunction,"AbsFunction",NULL);
+   EnvAddUDF(theEnv,"min","ld",1,UNBOUNDED,"ld",MinFunction,"MinFunction",NULL);
+   EnvAddUDF(theEnv,"max","ld",1,UNBOUNDED,"ld",MaxFunction,"MaxFunction",NULL);
 #endif
   }
 
@@ -100,13 +100,14 @@ void BasicMathFunctionDefinitions(
 /**********************************/
 void AdditionFunction(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    double ftotal = 0.0;
    long long ltotal = 0LL;
    bool useFloatTotal = false;
    EXPRESSION *theExpression;
-   DATA_OBJECT theArgument;
+   CLIPSValue theArgument;
    int pos = 1;
 
    /*=================================================*/
@@ -162,13 +163,14 @@ void AdditionFunction(
 /****************************************/
 void MultiplicationFunction(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    double ftotal = 1.0;
    long long ltotal = 1LL;
    bool useFloatTotal = false;
    EXPRESSION *theExpression;
-   DATA_OBJECT theArgument;
+   CLIPSValue theArgument;
    int pos = 1;
 
    /*===================================================*/
@@ -223,13 +225,14 @@ void MultiplicationFunction(
 /*************************************/
 void SubtractionFunction(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    double ftotal = 0.0;
    long long ltotal = 0LL;
    bool useFloatTotal = false;
    EXPRESSION *theExpression;
-   DATA_OBJECT theArgument;
+   CLIPSValue theArgument;
    int pos = 1;
 
    /*=================================================*/
@@ -304,13 +307,14 @@ void SubtractionFunction(
 /***********************************/
 void DivisionFunction(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    double ftotal = 1.0;
    long long ltotal = 1LL;
    bool useFloatTotal;
    EXPRESSION *theExpression;
-   DATA_OBJECT theArgument;
+   CLIPSValue theArgument;
    int pos = 1;
 
    useFloatTotal = BasicMathFunctionData(theEnv)->AutoFloatDividend;
@@ -399,15 +403,19 @@ void DivisionFunction(
 /* DivFunction: H/L access routine   */
 /*   for the div function.           */
 /*************************************/
-long long DivFunction(
-  Environment *theEnv)
+void DivFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    long long total = 1LL;
    EXPRESSION *theExpression;
-   DATA_OBJECT theArgument;
+   CLIPSValue theArgument;
    int pos = 1;
    long long theNumber;
 
+   returnValue->type = INTEGER;
+   
    /*===================================================*/
    /* Get the first argument. This number which will be */
    /* the starting product from which all subsequent    */
@@ -448,7 +456,8 @@ long long DivFunction(
          DivideByZeroErrorMessage(theEnv,"div");
          EnvSetHaltExecution(theEnv,true);
          EnvSetEvaluationError(theEnv,true);
-         return(1L);
+         returnValue->value = EnvAddLong(theEnv,1);
+         return;
         }
 
       if (theArgument.type == INTEGER)
@@ -463,31 +472,33 @@ long long DivFunction(
    /* The result of the div function is always an integer. */
    /*======================================================*/
 
-   return(total);
+   returnValue->value = EnvAddLong(theEnv,total);
   }
 
 /*****************************************************/
 /* SetAutoFloatDividendCommand: H/L access routine   */
 /*   for the set-auto-float-dividend command.        */
 /*****************************************************/
-bool SetAutoFloatDividendCommand(
-  Environment *theEnv)
+void SetAutoFloatDividendCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   bool oldValue;
-   DATA_OBJECT theArgument;
+   CLIPSValue theArgument;
 
    /*===============================*/
    /* Remember the present setting. */
    /*===============================*/
 
-   oldValue = BasicMathFunctionData(theEnv)->AutoFloatDividend;
+   returnValue->type = SYMBOL;
+   if (BasicMathFunctionData(theEnv)->AutoFloatDividend)
+     { returnValue->value = EnvTrueSymbol(theEnv); }
+   else
+     { returnValue->value = EnvFalseSymbol(theEnv); }
 
    /*============================================*/
    /* Check for the correct number of arguments. */
    /*============================================*/
-
-   if (EnvArgCountCheck(theEnv,"set-auto-float-dividend",EXACTLY,1) == -1)
-     { return(oldValue); }
 
    EnvRtnUnknown(theEnv,1,&theArgument);
 
@@ -499,32 +510,26 @@ bool SetAutoFloatDividendCommand(
      { BasicMathFunctionData(theEnv)->AutoFloatDividend = false; }
    else
      { BasicMathFunctionData(theEnv)->AutoFloatDividend = true; }
-
-   /*======================================*/
-   /* Return the old value of the feature. */
-   /*======================================*/
-
-   return(oldValue);
   }
 
 /*****************************************************/
 /* GetAutoFloatDividendCommand: H/L access routine   */
 /*   for the get-auto-float-dividend command.        */
 /*****************************************************/
-bool GetAutoFloatDividendCommand(
-  Environment *theEnv)
+void GetAutoFloatDividendCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   /*============================================*/
-   /* Check for the correct number of arguments. */
-   /*============================================*/
-
-   EnvArgCountCheck(theEnv,"get-auto-float-dividend",EXACTLY,0);
-
    /*=============================*/
    /* Return the current setting. */
    /*=============================*/
 
-   return(BasicMathFunctionData(theEnv)->AutoFloatDividend);
+   returnValue->type = SYMBOL;
+   if (BasicMathFunctionData(theEnv)->AutoFloatDividend)
+     { returnValue->value = EnvTrueSymbol(theEnv); }
+   else
+     { returnValue->value = EnvFalseSymbol(theEnv); }
   }
 
 /*************************************************/
@@ -556,60 +561,45 @@ bool EnvSetAutoFloatDividend(
 /* IntegerFunction: H/L access routine   */
 /*   for the integer function.           */
 /*****************************************/
-long long IntegerFunction(
-  Environment *theEnv)
+void IntegerFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT valstruct;
-
-   /*============================================*/
-   /* Check for the correct number of arguments. */
-   /*============================================*/
-
-   if (EnvArgCountCheck(theEnv,"integer",EXACTLY,1) == -1) return(0LL);
-
    /*================================================================*/
    /* Check for the correct type of argument. Note that ArgTypeCheck */
    /* will convert floats to integers when an integer is requested   */
    /* (which is the purpose of the integer function).                */
    /*================================================================*/
 
-   if (EnvArgTypeCheck(theEnv,"integer",1,INTEGER,&valstruct) == false) return(0LL);
-
-   /*===================================================*/
-   /* Return the numeric value converted to an integer. */
-   /*===================================================*/
-
-   return(ValueToLong(valstruct.value));
+   if (EnvArgTypeCheck(theEnv,"integer",1,INTEGER,returnValue) == false)
+     {
+      returnValue->type = INTEGER;
+      returnValue->value = EnvAddLong(theEnv,0);
+     }
   }
 
 /***************************************/
 /* FloatFunction: H/L access routine   */
 /*   for the float function.           */
 /***************************************/
-double FloatFunction(
-  Environment *theEnv)
+void FloatFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT valstruct;
-
-   /*============================================*/
-   /* Check for the correct number of arguments. */
-   /*============================================*/
-
-   if (EnvArgCountCheck(theEnv,"float",EXACTLY,1) == -1) return(0.0);
-
    /*================================================================*/
    /* Check for the correct type of argument. Note that ArgTypeCheck */
    /* will convert integers to floats when a float is requested      */
    /* (which is the purpose of the float function).                  */
    /*================================================================*/
 
-   if (EnvArgTypeCheck(theEnv,"float",1,FLOAT,&valstruct) == false) return(0.0);
-
-   /*================================================*/
-   /* Return the numeric value converted to a float. */
-   /*================================================*/
-
-   return(ValueToDouble(valstruct.value));
+   if (EnvArgTypeCheck(theEnv,"float",1,FLOAT,returnValue) == false)
+     {
+      returnValue->type = FLOAT;
+      returnValue->value = EnvAddDouble(theEnv,0.0);
+      return;
+     }
   }
 
 /*************************************/
@@ -618,19 +608,9 @@ double FloatFunction(
 /*************************************/
 void AbsFunction(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   /*============================================*/
-   /* Check for the correct number of arguments. */
-   /*============================================*/
-
-   if (EnvArgCountCheck(theEnv,"abs",EXACTLY,1) == -1)
-     {
-      returnValue->type = INTEGER;
-      returnValue->value = EnvAddLong(theEnv,0L);
-      return;
-     }
-
    /*======================================*/
    /* Check that the argument is a number. */
    /*======================================*/
@@ -661,9 +641,10 @@ void AbsFunction(
 /*************************************/
 void MinFunction(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT argValue;
+   CLIPSValue argValue;
    int numberOfArguments, i;
 
    /*============================================*/
@@ -750,9 +731,10 @@ void MinFunction(
 /*************************************/
 void MaxFunction(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT argValue;
+   CLIPSValue argValue;
    int numberOfArguments, i;
 
    /*============================================*/

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/11/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*                 RETE UTILITY MODULE                 */
    /*******************************************************/
@@ -53,6 +53,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            Incremental reset is always enabled.           */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -1405,7 +1407,7 @@ unsigned long ComputeRightHashValue(
         tempExpr != NULL; 
         tempExpr = tempExpr->nextArg, multiplier = multiplier * 509)
       {
-       DATA_OBJECT theResult;
+       CLIPSValue theResult;
        struct expr *oldArgument;
         
        oldArgument = EvaluationData(theEnv)->CurrentExpression;

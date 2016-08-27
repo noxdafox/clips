@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -51,6 +51,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -594,13 +596,15 @@ void PrintMethod(
   NOTES        : H/L Syntax: (preview-generic <func> <args>)
  *************************************************************/
 void PreviewGeneric(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    Defgeneric *gfunc;
    Defgeneric *previousGeneric;
    int oldce;
-   DATA_OBJECT temp;
-
+   CLIPSValue temp;
+   
    EvaluationData(theEnv)->EvaluationError = false;
    if (EnvArgTypeCheck(theEnv,"preview-generic",1,SYMBOL,&temp) == false)
      return;

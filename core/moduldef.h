@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*                DEFMODULE HEADER FILE                */
    /*******************************************************/
@@ -47,6 +47,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -225,8 +227,8 @@ struct defmoduleData
    void                           SetModuleItem(Environment *,Defmodule *,int,void *);
    Defmodule                     *EnvGetCurrentModule(Environment *);
    Defmodule                     *EnvSetCurrentModule(Environment *,Defmodule *);
-   void                          *GetCurrentModuleCommand(Environment *);
-   void                          *SetCurrentModuleCommand(Environment *);
+   void                           GetCurrentModuleCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           SetCurrentModuleCommand(Environment *,UDFContext *,CLIPSValue *);
    int                            GetNumberOfModuleItems(Environment *);
    void                           CreateMainModule(Environment *);
    void                           SetListOfDefmodules(Environment *,Defmodule *);

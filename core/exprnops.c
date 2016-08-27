@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*             EXPRESSION OPERATIONS MODULE            */
    /*******************************************************/
@@ -32,6 +32,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -54,39 +56,13 @@
 
 #if (! RUN_TIME)
 
-/**************************************************************/
-/* CheckArgumentAgainstRestriction: Compares an argument to a */
-/*   function to the set of restrictions for that function to */
-/*   determine if any incompatibilities exist. If so, the     */
-/*   value true is returned, otherwise false is returned.     */
-/*   Restrictions checked are:                                */
-/*     a - external address                                   */
-/*     d - float                                              */
-/*     e - instance address, instance name, or symbol         */
-/*     f - float                                              */
-/*     g - integer, float, or symbol                          */
-/*     h - instance address, instance name, fact address,     */
-/*         integer, or symbol                                 */
-/*     i - integer                                            */
-/*     j - symbol, string, or instance name                   */
-/*     k - symbol or string                                   */
-/*     l - integer                                            */
-/*     m - multifield                                         */
-/*     n - float or integer                                   */
-/*     o - instance name                                      */
-/*     p - instance name or symbol                            */
-/*     q - string, symbol, or multifield                      */
-/*     s - string                                             */
-/*     u - unknown (any type allowed)                         */
-/*     w - symbol                                             */
-/*     x - instance address                                   */
-/*     y - fact address                                       */
-/*     z - fact address, integer, or symbol (*)               */
-/**************************************************************/
+/************************************/
+/* CheckArgumentAgainstRestriction: */
+/************************************/
 bool CheckArgumentAgainstRestriction(
   Environment *theEnv,
   struct expr *theExpression,
-  int theRestriction)
+  unsigned theRestriction)
   {
    CONSTRAINT_RECORD *cr1, *cr2, *cr3;
 

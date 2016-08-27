@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/06/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*               ARGUMENT ACCESS MODULE                */
    /*******************************************************/
@@ -47,6 +47,8 @@
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -72,200 +74,18 @@
 /***************************************/
 
    static void                    NonexistantError(Environment *,const char *,const char *,int);
-   static void                    ExpectedTypeError3(Environment *,const char *,const char *,int,const char *);
-
-/*******************************************************************/
-/* EnvRtnLexeme: Access function to retrieve the nth argument from */
-/*   a user or system function defined using the DefineFunction    */
-/*   protocol. The argument retrieved must be a symbol, string, or */
-/*   instance name, otherwise an error is generated. Only the      */
-/*   value of the argument is returned (i.e. the string "a" would  */
-/*   be returned for a, "a", and [a]).                             */
-/*******************************************************************/
-const char *EnvRtnLexeme(
-  Environment *theEnv,
-  int argumentPosition)
-  {
-   int count = 1;
-   DATA_OBJECT result;
-   struct expr *argPtr;
-
-   /*=====================================================*/
-   /* Find the appropriate argument in the argument list. */
-   /*=====================================================*/
-
-   for (argPtr = EvaluationData(theEnv)->CurrentExpression->argList;
-        (argPtr != NULL) && (count < argumentPosition);
-        argPtr = argPtr->nextArg)
-     { count++; }
-
-   if (argPtr == NULL)
-     {
-      NonexistantError(theEnv,"RtnLexeme",
-                       ValueToString(ExpressionFunctionCallName(EvaluationData(theEnv)->CurrentExpression)),
-                       argumentPosition);
-      EnvSetHaltExecution(theEnv,true);
-      EnvSetEvaluationError(theEnv,true);
-      return NULL;
-     }
-
-   /*============================================*/
-   /* Return the value of the nth argument if it */
-   /* is a symbol, string, or instance name.     */
-   /*============================================*/
-
-   EvaluateExpression(theEnv,argPtr,&result);
-
-   if ((result.type == SYMBOL) ||
-#if OBJECT_SYSTEM
-       (result.type == INSTANCE_NAME) ||
-#endif
-       (result.type == STRING))
-     { return(ValueToString(result.value));}
-
-   /*======================================================*/
-   /* Generate an error if the argument is the wrong type. */
-   /*======================================================*/
-
-   ExpectedTypeError3(theEnv,"RtnLexeme",
-                  ValueToString(ExpressionFunctionCallName(EvaluationData(theEnv)->CurrentExpression)),
-                  argumentPosition,"symbol, string, or instance name");
-   EnvSetHaltExecution(theEnv,true);
-   EnvSetEvaluationError(theEnv,true);
-   return NULL;
-  }
-
-/*******************************************************************/
-/* EnvRtnDouble: Access function to retrieve the nth argument from */
-/*   a user or system function defined using the DefineFunction    */
-/*   protocol. The argument retrieved must be a either a float or  */
-/*   an integer (type conversion to a float is performed for       */
-/*   integers), otherwise an error is generated. Only the value of */
-/*   the argument is returned (i.e. the float 3.0 would be         */
-/*   returned for 3.0 and 3).                                      */
-/*******************************************************************/
-double EnvRtnDouble(
-  Environment *theEnv,
-  int argumentPosition)
-  {
-   int count = 1;
-   DATA_OBJECT result;
-   struct expr *argPtr;
-
-   /*=====================================================*/
-   /* Find the appropriate argument in the argument list. */
-   /*=====================================================*/
-
-   for (argPtr = EvaluationData(theEnv)->CurrentExpression->argList;
-        (argPtr != NULL) && (count < argumentPosition);
-        argPtr = argPtr->nextArg)
-     { count++; }
-
-   if (argPtr == NULL)
-     {
-      NonexistantError(theEnv,"RtnDouble",
-                       ValueToString(ExpressionFunctionCallName(EvaluationData(theEnv)->CurrentExpression)),
-                       argumentPosition);
-      EnvSetHaltExecution(theEnv,true);
-      EnvSetEvaluationError(theEnv,true);
-      return(1.0);
-     }
-
-   /*======================================*/
-   /* Return the value of the nth argument */
-   /* if it is a float or integer.         */
-   /*======================================*/
-
-   EvaluateExpression(theEnv,argPtr,&result);
-
-   if (result.type == FLOAT)
-     { return(ValueToDouble(result.value)); }
-   else if (result.type == INTEGER)
-     { return((double) ValueToLong(result.value)); }
-
-   /*======================================================*/
-   /* Generate an error if the argument is the wrong type. */
-   /*======================================================*/
-
-   ExpectedTypeError3(theEnv,"RtnDouble",
-                  ValueToString(ExpressionFunctionCallName(EvaluationData(theEnv)->CurrentExpression)),
-                  argumentPosition,"number");
-   EnvSetHaltExecution(theEnv,true);
-   EnvSetEvaluationError(theEnv,true);
-   return(1.0);
-  }
-
-/*****************************************************************/
-/* EnvRtnLong: Access function to retrieve the nth argument from */
-/*   a user or system function defined using the DefineFunction  */
-/*   protocol. The argument retrieved must be a either a float   */
-/*   or an integer (type conversion to an integer is performed   */
-/*   for floats), otherwise an error is generated. Only the      */
-/*   value of the argument is returned (i.e. the integer 4       */
-/*   would be returned for 4.3 and 4).                           */
-/*****************************************************************/
-long long EnvRtnLong(
-  Environment *theEnv,
-  int argumentPosition)
-  {
-   int count = 1;
-   DATA_OBJECT result;
-   struct expr *argPtr;
-
-   /*=====================================================*/
-   /* Find the appropriate argument in the argument list. */
-   /*=====================================================*/
-
-   for (argPtr = EvaluationData(theEnv)->CurrentExpression->argList;
-        (argPtr != NULL) && (count < argumentPosition);
-        argPtr = argPtr->nextArg)
-     { count++; }
-
-   if (argPtr == NULL)
-     {
-      NonexistantError(theEnv,"RtnLong",
-                       ValueToString(ExpressionFunctionCallName(EvaluationData(theEnv)->CurrentExpression)),
-                       argumentPosition);
-      EnvSetHaltExecution(theEnv,true);
-      EnvSetEvaluationError(theEnv,true);
-      return(1L);
-     }
-
-   /*======================================*/
-   /* Return the value of the nth argument */
-   /* if it is a float or integer.         */
-   /*======================================*/
-
-   EvaluateExpression(theEnv,argPtr,&result);
-
-   if (result.type == FLOAT)
-     { return((long) ValueToDouble(result.value)); }
-   else if (result.type == INTEGER)
-     { return(ValueToLong(result.value)); }
-
-   /*======================================================*/
-   /* Generate an error if the argument is the wrong type. */
-   /*======================================================*/
-
-   ExpectedTypeError3(theEnv,"RtnLong",
-                  ValueToString(ExpressionFunctionCallName(EvaluationData(theEnv)->CurrentExpression)),
-                  argumentPosition,"number");
-   EnvSetHaltExecution(theEnv,true);
-   EnvSetEvaluationError(theEnv,true);
-   return(1L);
-  }
 
 /********************************************************************/
 /* EnvRtnUnknown: Access function to retrieve the nth argument from */
 /*   a user or system function defined using the DefineFunction     */
 /*   protocol. The argument retrieved can be of any type. The value */
-/*   and type of the argument are returned in a DATA_OBJECT         */
+/*   and type of the argument are returned in a CLIPSValue          */
 /*   structure provided by the calling function.                    */
 /********************************************************************/
-DATA_OBJECT_PTR EnvRtnUnknown(
+CLIPSValue *EnvRtnUnknown(
   Environment *theEnv,
   int argumentPosition,
-  DATA_OBJECT_PTR returnValue)
+  CLIPSValue *returnValue)
   {
    int count = 1;
    struct expr *argPtr;
@@ -410,7 +230,7 @@ bool EnvArgTypeCheck(
   const char *functionName,
   int argumentPosition,
   int expectedType,
-  DATA_OBJECT_PTR returnValue)
+  CLIPSValue *returnValue)
   {
    /*========================*/
    /* Retrieve the argument. */
@@ -505,7 +325,7 @@ bool EnvArgTypeCheck(
 /* GetNumericArgument: Evaluates an expression to yield a numeric */
 /*  argument. This provides quicker retrieval than using some of  */
 /*  the other argument access routines. The numeric argument is   */
-/*  returned in a DATA_OBJECT supplied by the calling function.   */
+/*  returned in a CLIPSValue supplied by the calling function.    */
 /*  true is returned if a numeric argument was successfully       */
 /*  retrieved, otherwise false is returned.                       */
 /******************************************************************/
@@ -513,7 +333,7 @@ bool GetNumericArgument(
   Environment *theEnv,
   struct expr *theArgument,
   const char *functionName,
-  DATA_OBJECT *result,
+  CLIPSValue *returnValue,
   bool convertToFloat,
   int whichArgument)
   {
@@ -534,9 +354,9 @@ bool GetNumericArgument(
         break;
 
       default:
-        EvaluateExpression(theEnv,theArgument,result);
-        theType = result->type;
-        theValue = result->value;
+        EvaluateExpression(theEnv,theArgument,returnValue);
+        theType = returnValue->type;
+        theValue = returnValue->value;
         break;
      }
 
@@ -550,8 +370,8 @@ bool GetNumericArgument(
       ExpectedTypeError1(theEnv,functionName,whichArgument,"integer or float");
       EnvSetHaltExecution(theEnv,true);
       EnvSetEvaluationError(theEnv,true);
-      result->type = INTEGER;
-      result->value = EnvAddLong(theEnv,0LL);
+      returnValue->type = INTEGER;
+      returnValue->value = EnvAddLong(theEnv,0LL);
       return false;
      }
 
@@ -568,11 +388,11 @@ bool GetNumericArgument(
 
    /*============================================================*/
    /* The numeric argument was successfully retrieved. Store the */
-   /* argument in the user supplied DATA_OBJECT and return true. */
+   /* argument in the user supplied CLIPSValue and return true.  */
    /*============================================================*/
 
-   result->type = theType;
-   result->value = theValue;
+   returnValue->type = theType;
+   returnValue->value = theValue;
 
    return true;
   }
@@ -589,7 +409,7 @@ const char *GetLogicalName(
   const char *defaultLogicalName)
   {
    const char *logicalName;
-   DATA_OBJECT result;
+   CLIPSValue result;
 
    EnvRtnUnknown(theEnv,whichArgument,&result);
 
@@ -626,7 +446,7 @@ const char *GetFileName(
   const char *functionName,
   int whichArgument)
   {
-   DATA_OBJECT result;
+   CLIPSValue result;
 
    EnvRtnUnknown(theEnv,whichArgument,&result);
    if ((GetType(result) != STRING) && (GetType(result) != SYMBOL))
@@ -667,7 +487,7 @@ Defmodule *GetModuleName(
   int whichArgument,
   bool *error)
   {
-   DATA_OBJECT result;
+   CLIPSValue returnValue;
    Defmodule *theModule;
 
    *error = false;
@@ -676,13 +496,13 @@ Defmodule *GetModuleName(
    /* Retrieve the argument. */
    /*========================*/
 
-   EnvRtnUnknown(theEnv,whichArgument,&result);
+   EnvRtnUnknown(theEnv,whichArgument,&returnValue);
 
    /*=================================*/
    /* A module name must be a symbol. */
    /*=================================*/
 
-   if (GetType(result) != SYMBOL)
+   if (GetType(returnValue) != SYMBOL)
      {
       ExpectedTypeError1(theEnv,functionName,whichArgument,"defmodule name");
       *error = true;
@@ -694,9 +514,9 @@ Defmodule *GetModuleName(
    /* corresponds to a defined module.      */
    /*=======================================*/
 
-   if ((theModule = EnvFindDefmodule(theEnv,DOToString(result))) == NULL)
+   if ((theModule = EnvFindDefmodule(theEnv,DOToString(returnValue))) == NULL)
      {
-      if (strcmp("*",DOToString(result)) != 0)
+      if (strcmp("*",DOToString(returnValue)) != 0)
         {
          ExpectedTypeError1(theEnv,functionName,whichArgument,"defmodule name");
          *error = true;
@@ -724,7 +544,7 @@ const char *GetConstructName(
   const char *functionName,
   const char *constructType)
   {
-   DATA_OBJECT result;
+   CLIPSValue returnValue;
 
    if (EnvRtnArgCount(theEnv) != 1)
      {
@@ -732,15 +552,15 @@ const char *GetConstructName(
       return NULL;
      }
 
-   EnvRtnUnknown(theEnv,1,&result);
+   EnvRtnUnknown(theEnv,1,&returnValue);
 
-   if (GetType(result) != SYMBOL)
+   if (GetType(returnValue) != SYMBOL)
      {
       ExpectedTypeError1(theEnv,functionName,1,constructType);
       return NULL;
      }
 
-   return(DOToString(result));
+   return(DOToString(returnValue));
   }
 
 /**************************************************************************/
@@ -805,48 +625,42 @@ void ExpectedCountError(
 /*************************************************************/
 bool CheckFunctionArgCount(
   Environment *theEnv,
-  const char *functionName,
-  const char *restrictions,
+  struct FunctionDefinition *func,
   int argumentCount)
   {
    int minArguments, maxArguments;
+   const char *functionName;
+   const char *restrictions;
    char theChar[2];
 
    theChar[0] = '0';
    theChar[1] = EOS;
 
-   /*=====================================================*/
-   /* If there are no restrictions, then there is no need */
-   /* to check for the correct number of arguments.       */
-   /*=====================================================*/
-
-   if (restrictions == NULL) return true;
-
+   functionName = func->callFunctionName->contents;
+   if (func->restrictions == NULL) restrictions = NULL;
+   else restrictions = func->restrictions->contents;
+     
    /*===========================================*/
    /* Determine the minimum number of arguments */
    /* required by the function.                 */
    /*===========================================*/
 
-   if (isdigit(restrictions[0]))
-     {
-      theChar[0] = restrictions[0];
-      minArguments = atoi(theChar);
-     }
-   else
-     { minArguments = -1; }
+   minArguments = func->minArgs;
 
    /*===========================================*/
    /* Determine the maximum number of arguments */
    /* required by the function.                 */
    /*===========================================*/
 
-   if (isdigit(restrictions[1]))
-     {
-      theChar[0] = restrictions[1];
-      maxArguments = atoi(theChar);
-     }
-   else
-     { maxArguments = 10000; }
+   maxArguments = func->maxArgs;
+
+   /*=====================================*/
+   /* If the function has no restrictions */
+   /* on function arguments, return true. */
+   /*=====================================*/
+
+   if ((minArguments == UNBOUNDED) && (maxArguments == UNBOUNDED))
+     { return true; }
 
    /*==============================================*/
    /* If the function expects exactly N arguments, */
@@ -881,7 +695,7 @@ bool CheckFunctionArgCount(
    /* arguments passed than expected. */
    /*=================================*/
 
-   if (argumentCount > maxArguments)
+   if ((maxArguments != UNBOUNDED) && (argumentCount > maxArguments))
      {
       ExpectedCountError(theEnv,functionName,NO_MORE_THAN,maxArguments);
       EnvSetEvaluationError(theEnv,true);
@@ -894,6 +708,23 @@ bool CheckFunctionArgCount(
    /*===============================*/
 
    return true;
+  }
+
+/*******************************************************************/
+/* ExpectedTypeError0: Prints the error message for the wrong type */
+/*   of argument passed to a user or system defined function.      */
+/*******************************************************************/
+void ExpectedTypeError0(
+  Environment *theEnv,
+  const char *functionName,
+  int whichArg)
+  {
+   PrintErrorID(theEnv,"ARGACCES",5,false);
+   EnvPrintRouter(theEnv,WERROR,"Function ");
+   EnvPrintRouter(theEnv,WERROR,functionName);
+   EnvPrintRouter(theEnv,WERROR," expected argument #");
+   PrintLongInteger(theEnv,WERROR,(long int) whichArg);
+   EnvPrintRouter(theEnv,WERROR," to be of type ");
   }
 
 /*******************************************************************/
@@ -940,31 +771,6 @@ void ExpectedTypeError2(
    ExpectedTypeError1(theEnv,functionName,whichArg,theType);
   }
 
-/*******************************************************************/
-/* ExpectedTypeError3: Prints the error message for the wrong type */
-/*   of argument passed to a user or system defined function when  */
-/*   the argument was requested by calling RtnLexeme, RtnLong, or  */
-/*   RtnDouble.                                                    */
-/*******************************************************************/
-static void ExpectedTypeError3(
-  Environment *theEnv,
-  const char *accessFunction,
-  const char *functionName,
-  int argumentPosition,
-  const char *type)
-  {
-   PrintErrorID(theEnv,"ARGACCES",6,false);
-   EnvPrintRouter(theEnv,WERROR,"Function ");
-   EnvPrintRouter(theEnv,WERROR,accessFunction);
-   EnvPrintRouter(theEnv,WERROR," received a request from function ");
-   EnvPrintRouter(theEnv,WERROR,functionName);
-   EnvPrintRouter(theEnv,WERROR," for argument #");
-   PrintLongInteger(theEnv,WERROR,(long int) argumentPosition);
-   EnvPrintRouter(theEnv,WERROR," which is not of type ");
-   EnvPrintRouter(theEnv,WERROR,type);
-   EnvPrintRouter(theEnv,WERROR,"\n");
-  }
-
 /***************************************************/
 /* GetFactOrInstanceArgument: Utility routine for  */
 /*   retrieving a fact or instance argument        */
@@ -972,7 +778,7 @@ static void ExpectedTypeError3(
 void *GetFactOrInstanceArgument(
   Environment *theEnv,
   int thePosition,
-  DATA_OBJECT *item,
+  CLIPSValue *item,
   const char *functionName)
   {
 #if DEFTEMPLATE_CONSTRUCT || OBJECT_SYSTEM

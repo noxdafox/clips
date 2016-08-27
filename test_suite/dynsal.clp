@@ -31,9 +31,9 @@
 
 (deffunction print-order ($?x)
   (bind ?s (get-salience-evaluation))
-  (if (eq ?s when-defined) then (bind ?r (nth 1 ?x)))
-  (if (eq ?s when-activated) then (bind ?r (nth 2 ?x)))
-  (if (eq ?s every-cycle) then (bind ?r (nth 3 ?x)))
+  (if (eq ?s when-defined) then (bind ?r (nth$ 1 ?x)))
+  (if (eq ?s when-activated) then (bind ?r (nth$ 2 ?x)))
+  (if (eq ?s every-cycle) then (bind ?r (nth$ 3 ?x)))
   (printout t "This rule should fire " ?r crlf))
 
 (defglobal ?*x* = 0)

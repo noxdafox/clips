@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*                 SYMBOL HEADER FILE                  */
    /*******************************************************/
@@ -71,6 +71,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -299,7 +301,7 @@ struct symbolData
    void                           RemoveEphemeralAtoms(Environment *);
    struct symbolHashNode        **GetSymbolTable(Environment *);
    void                           SetSymbolTable(Environment *,struct symbolHashNode **);
-   struct floatHashNode          **GetFloatTable(Environment *);
+   struct floatHashNode         **GetFloatTable(Environment *);
    void                           SetFloatTable(Environment *,struct floatHashNode **);
    struct integerHashNode       **GetIntegerTable(Environment *);
    void                           SetIntegerTable(Environment *,struct integerHashNode **);

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -36,6 +36,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_genrcexe
@@ -50,16 +52,17 @@
 #include "expressn.h"
 #include "genrcfun.h"
 
-   void                           GenericDispatch(Environment *,Defgeneric *,Defmethod *,Defmethod *,EXPRESSION *,DATA_OBJECT *);
+   void                           GenericDispatch(Environment *,Defgeneric *,Defmethod *,Defmethod *,EXPRESSION *,CLIPSValue *);
    void                           UnboundMethodErr(Environment *);
    bool                           IsMethodApplicable(Environment *,Defmethod *);
 
    bool                           NextMethodP(Environment *);
-   void                           CallNextMethod(Environment *,DATA_OBJECT *);
-   void                           CallSpecificMethod(Environment *,DATA_OBJECT *);
-   void                           OverrideNextMethod(Environment *,DATA_OBJECT *);
+   void                           NextMethodPCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           CallNextMethod(Environment *,UDFContext *,CLIPSValue *);
+   void                           CallSpecificMethod(Environment *,UDFContext *,CLIPSValue *);
+   void                           OverrideNextMethod(Environment *,UDFContext *,CLIPSValue *);
 
-   void                           GetGenericCurrentArgument(Environment *,DATA_OBJECT *);
+   void                           GetGenericCurrentArgument(Environment *,UDFContext *,CLIPSValue *);
 
 #endif /* DEFGENERIC_CONSTRUCT */
 

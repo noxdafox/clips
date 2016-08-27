@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*                 FILE COMMANDS MODULE                */
    /*******************************************************/
@@ -63,6 +63,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -168,21 +170,21 @@ void FileCommandDefinitions(
 
 #if ! RUN_TIME
 #if DEBUGGING_FUNCTIONS
-   EnvDefineFunction2(theEnv,"batch",'b',PTIEF BatchCommand,"BatchCommand","11k");
-   EnvDefineFunction2(theEnv,"batch*",'b',PTIEF BatchStarCommand,"BatchStarCommand","11k");
-   EnvDefineFunction2(theEnv,"dribble-on",'b',PTIEF DribbleOnCommand,"DribbleOnCommand","11k");
-   EnvDefineFunction2(theEnv,"dribble-off",'b',PTIEF DribbleOffCommand,"DribbleOffCommand","00");
-   EnvDefineFunction2(theEnv,"save",'b',PTIEF SaveCommand,"SaveCommand","11k");
+   EnvAddUDF(theEnv,"batch","b",1,1,"sy",BatchCommand,"BatchCommand",NULL);
+   EnvAddUDF(theEnv,"batch*","b",1,1,"sy",BatchStarCommand,"BatchStarCommand",NULL);
+   EnvAddUDF(theEnv,"dribble-on","b",1,1,"sy",DribbleOnCommand,"DribbleOnCommand",NULL);
+   EnvAddUDF(theEnv,"dribble-off","b",0,0,NULL,DribbleOffCommand,"DribbleOffCommand",NULL);
+   EnvAddUDF(theEnv,"save","b",1,1,"sy",SaveCommand,"SaveCommand",NULL);
 #endif
-   EnvDefineFunction2(theEnv,"load",'b',PTIEF LoadCommand,"LoadCommand","11k");
-   EnvDefineFunction2(theEnv,"load*",'b',PTIEF LoadStarCommand,"LoadStarCommand","11k");
+   EnvAddUDF(theEnv,"load","b",1,1,"sy",LoadCommand,"LoadCommand",NULL);
+   EnvAddUDF(theEnv,"load*","b",1,1,"sy",LoadStarCommand,"LoadStarCommand",NULL);
 #if BLOAD_AND_BSAVE
-   EnvDefineFunction2(theEnv,"bsave",'b', PTIEF BsaveCommand,"BsaveCommand","11k");
+   EnvAddUDF(theEnv,"bsave","b",1,1,"sy",BsaveCommand,"BsaveCommand",NULL);
 #endif
 #if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE
    InitializeBsaveData(theEnv);
    InitializeBloadData(theEnv);
-   EnvDefineFunction2(theEnv,"bload",'b',PTIEF BloadCommand,"BloadCommand","11k");
+   EnvAddUDF(theEnv,"bload","b",1,1,"sy",BloadCommand,"BloadCommand",NULL);
 #endif
 #endif
   }
@@ -421,15 +423,25 @@ static void ExitDribble(
 /* DribbleOnCommand: H/L access routine   */
 /*   for the dribble-on command.          */
 /******************************************/
-bool DribbleOnCommand(
-  Environment *theEnv)
+void DribbleOnCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    const char *fileName;
 
-   if (EnvArgCountCheck(theEnv,"dribble-on",EXACTLY,1) == -1) return false;
-   if ((fileName = GetFileName(theEnv,"dribble-on",1)) == NULL) return false;
+   returnValue->type = SYMBOL;
+   
+   if ((fileName = GetFileName(theEnv,"dribble-on",1)) == NULL)
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
 
-   return (EnvDribbleOn(theEnv,fileName));
+   if (EnvDribbleOn(theEnv,fileName))
+     { returnValue->value = EnvTrueSymbol(theEnv); }
+   else
+     { returnValue->value = EnvFalseSymbol(theEnv); }
   }
 
 /**********************************/
@@ -505,11 +517,17 @@ bool EnvDribbleActive(
 /* DribbleOffCommand: H/L access  routine  */
 /*   for the dribble-off command.          */
 /*******************************************/
-bool DribbleOffCommand(
-  Environment *theEnv)
+void DribbleOffCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   if (EnvArgCountCheck(theEnv,"dribble-off",EXACTLY,0) == -1) return false;
-   return(EnvDribbleOff(theEnv));
+   returnValue->type = SYMBOL;
+
+   if (EnvDribbleOff(theEnv))
+     { returnValue->value = EnvTrueSymbol(theEnv); }
+   else
+     { returnValue->value = EnvFalseSymbol(theEnv); }
   }
 
 /***********************************/
@@ -733,15 +751,25 @@ static void ExitBatch(
 /* BatchCommand: H/L access routine   */
 /*   for the batch command.           */
 /**************************************/
-bool BatchCommand(
-  Environment *theEnv)
+void BatchCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    const char *fileName;
 
-   if (EnvArgCountCheck(theEnv,"batch",EXACTLY,1) == -1) return false;
-   if ((fileName = GetFileName(theEnv,"batch",1)) == NULL) return false;
+   returnValue->type = SYMBOL;
+      
+   if ((fileName = GetFileName(theEnv,"batch",1)) == NULL)
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
 
-   return(OpenBatch(theEnv,fileName,false));
+   if (OpenBatch(theEnv,fileName,false))
+     { returnValue->value = EnvTrueSymbol(theEnv); }
+   else
+     { returnValue->value = EnvFalseSymbol(theEnv); }
   }
 
 /**************************************************/
@@ -1062,15 +1090,25 @@ void CloseAllBatchSources(
 /* BatchStarCommand: H/L access routine   */
 /*   for the batch* command.              */
 /******************************************/
-bool BatchStarCommand(
-  Environment *theEnv)
+void BatchStarCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    const char *fileName;
+   
+   returnValue->type = SYMBOL;
 
-   if (EnvArgCountCheck(theEnv,"batch*",EXACTLY,1) == -1) return false;
-   if ((fileName = GetFileName(theEnv,"batch*",1)) == NULL) return false;
+   if ((fileName = GetFileName(theEnv,"batch*",1)) == NULL)
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
 
-   return(EnvBatchStar(theEnv,fileName));
+   if (EnvBatchStar(theEnv,fileName))
+     { returnValue->value = EnvTrueSymbol(theEnv); }
+   else
+     { returnValue->value = EnvFalseSymbol(theEnv); }
   }
 
 #if ! RUN_TIME
@@ -1200,15 +1238,22 @@ bool EnvBatchStar(
 /***********************************************************/
 /* LoadCommand: H/L access routine for the load command.   */
 /***********************************************************/
-bool LoadCommand(
-  Environment *theEnv)
+void LoadCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
 #if (! BLOAD_ONLY) && (! RUN_TIME)
    const char *theFileName;
    int rv;
 
-   if (EnvArgCountCheck(theEnv,"load",EXACTLY,1) == -1) return false;
-   if ((theFileName = GetFileName(theEnv,"load",1)) == NULL) return false;
+   returnValue->type = SYMBOL;
+      
+   if ((theFileName = GetFileName(theEnv,"load",1)) == NULL)
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
 
    SetPrintWhileLoading(theEnv,true);
 
@@ -1216,42 +1261,57 @@ bool LoadCommand(
      {
       SetPrintWhileLoading(theEnv,false);
       OpenErrorMessage(theEnv,"load",theFileName);
-      return false;
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
      }
 
    SetPrintWhileLoading(theEnv,false);
-   if (rv == -1) return false;
-   return true;
+   if (rv == -1)
+     { returnValue->value = EnvFalseSymbol(theEnv); }
+   else
+     { returnValue->value = EnvTrueSymbol(theEnv); }
 #else
    EnvPrintRouter(theEnv,WDIALOG,"Load is not available in this environment\n");
-   return false;
+   returnValue->type = SYMBOL;
+   returnValue->value = EnvFalseSymbol(theEnv);
 #endif
   }
 
 /****************************************************************/
 /* LoadStarCommand: H/L access routine for the load* command.   */
 /****************************************************************/
-bool LoadStarCommand(
-  Environment *theEnv)
+void LoadStarCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
 #if (! BLOAD_ONLY) && (! RUN_TIME)
    const char *theFileName;
    int rv;
 
-   if (EnvArgCountCheck(theEnv,"load*",EXACTLY,1) == -1) return false;
-   if ((theFileName = GetFileName(theEnv,"load*",1)) == NULL) return false;
+   returnValue->type = SYMBOL;
+
+   if ((theFileName = GetFileName(theEnv,"load*",1)) == NULL)
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
 
    if ((rv = EnvLoad(theEnv,theFileName)) == 0)
      {
       OpenErrorMessage(theEnv,"load*",theFileName);
-      return false;
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
      }
 
-   if (rv == -1) return false;
-   return true;
+   if (rv == -1)
+     { returnValue->value = EnvFalseSymbol(theEnv); }
+   else
+     { returnValue->value = EnvTrueSymbol(theEnv); }
 #else
    EnvPrintRouter(theEnv,WDIALOG,"Load* is not available in this environment\n");
-   return false;
+   returnValue->type = SYMBOL;
+   returnValue->value = EnvFalseSymbol(theEnv);
 #endif
   }
 
@@ -1259,25 +1319,33 @@ bool LoadStarCommand(
 /***********************************************************/
 /* SaveCommand: H/L access routine for the save command.   */
 /***********************************************************/
-bool SaveCommand(
-  Environment *theEnv)
+void SaveCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
 #if (! BLOAD_ONLY) && (! RUN_TIME)
    const char *theFileName;
 
-   if (EnvArgCountCheck(theEnv,"save",EXACTLY,1) == -1) return false;
-   if ((theFileName = GetFileName(theEnv,"save",1)) == NULL) return false;
+   returnValue->type = SYMBOL;
+        
+   if ((theFileName = GetFileName(theEnv,"save",1)) == NULL)
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
 
    if (EnvSave(theEnv,theFileName) == false)
      {
       OpenErrorMessage(theEnv,"save",theFileName);
-      return false;
+      returnValue->value = EnvFalseSymbol(theEnv);
      }
-
-   return true;
+   else
+     { returnValue->value = EnvTrueSymbol(theEnv); }
 #else
    EnvPrintRouter(theEnv,WDIALOG,"Save is not available in this environment\n");
-   return false;
+   returnValue->type = SYMBOL;
+   returnValue->value = EnvFalseSymbol(theEnv);
 #endif
   }
 #endif

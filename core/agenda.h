@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*                 AGENDA HEADER FILE                  */
    /*******************************************************/
@@ -51,6 +51,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -141,13 +143,13 @@ struct agendaData
    void                    EnvRefreshAgenda(Environment *,Defmodule *);
    void                    EnvReorderAgenda(Environment *,Defmodule *);
    void                    InitializeAgenda(Environment *);
-   void                   *SetSalienceEvaluationCommand(Environment *);
-   void                   *GetSalienceEvaluationCommand(Environment *);
-   void                    RefreshAgendaCommand(Environment *);
-   void                    RefreshCommand(Environment *);
+   void                    SetSalienceEvaluationCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                    GetSalienceEvaluationCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                    RefreshAgendaCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                    RefreshCommand(Environment *,UDFContext *,CLIPSValue *);
    bool                    EnvRefresh(Environment *,Defrule *);
 #if DEBUGGING_FUNCTIONS
-   void                    AgendaCommand(Environment *);
+   void                    AgendaCommand(Environment *,UDFContext *,CLIPSValue *);
 #endif
 
 #endif

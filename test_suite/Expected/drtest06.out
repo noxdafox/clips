@@ -32,10 +32,10 @@ CLIPS> (defmessage-handler a get-bar ())  ; DR0502
 CLIPS> (defclass a (is-a USER) (slot bar (create-accessor ?NONE))) ;; Update 1/1/93
 CLIPS> (list-defmessage-handlers a)       ; DR0502 - None
 CLIPS> (clear)                            ; DR0503
-CLIPS> (defglobal ?*global-list* = (mv-append 1 2 3 4))
+CLIPS> (defglobal ?*global-list* = (create$ 1 2 3 4))
 CLIPS> (defrule foo                       ; DR0503
    (items $?list)
-   (test (subset ?list ?*global-list*))
+   (test (subsetp ?list ?*global-list*))
    =>
    (printout t "Success!" crlf))
 CLIPS> (assert (items 2 3))               ; DR0503
@@ -66,7 +66,7 @@ CLIPS> (deffacts list-fact                ; DR0508
 CLIPS> (defrule test-member               ; DR0508
    (list $?list)
    =>
-   (printout t "position=" (member i2 ?list) crlf))
+   (printout t "position=" (member$ i2 ?list) crlf))
 CLIPS> (reset)                            ; DR0508
 CLIPS> (run)                              ; DR0508 - position=4
 position=4
@@ -173,10 +173,10 @@ CLIPS> (print-region 3 "foo.lis" ROOT SUBTOPIC)
 CLIPS> (print-region t 3 ROOT SUBTOPIC)   ; DR0524 - Error
 [ARGACCES5] Function print-region expected argument #2 to be of type symbol or string
 CLIPS> (deffunction mftest ()             ; DR0525
-   (bind ?result (mv-append))
+   (bind ?result (create$))
    (bind ?i 140)
    (while (> ?i 0) do
-      (bind ?result (mv-append ?i ?result))
+      (bind ?result (create$ ?i ?result))
       (bind ?i (- ?i 1)))
    ?result)
 CLIPS> (mftest)                           ; DR0525
@@ -196,12 +196,11 @@ ERROR:
 CLIPS> (seed (5))                         ; DR0527
 
 [EXPRNPSR1] A function name must be a symbol
-CLIPS> (sym-cat (str-explode "a s d g e f")) ; DR0528 - Error
-[ARGACCES5] Function sym-cat expected argument #1 to be of type string, instance name, symbol, float, or integer
-nil
+CLIPS> (sym-cat (explode$ "a s d g e f")) ; DR0528 - Error
+[ARGACCES5] Function sym-cat expected argument #1 to be of type integer, float, symbol, string, or instance name
 CLIPS> (str-length                        ; DR0529 - Error
-   (str-implode ((mv-append 1 2 3 4)
-						           (mv-append 4 3 2 1))))
+   (implode$ ((create$ 1 2 3 4)
+			  (create$ 4 3 2 1))))
 
 [EXPRNPSR1] A function name must be a symbol
 CLIPS> (deg-grad 90)                      ; DR0532 - 100.0

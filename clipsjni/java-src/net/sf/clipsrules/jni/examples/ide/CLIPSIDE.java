@@ -105,7 +105,7 @@ public class CLIPSIDE extends JFrame
       /* Create the clear-window user function. */
       /*========================================*/
       
-      clips.addUserFunction("clear-window","00",
+      clips.addUserFunction("clear-window","v",0,0,null,
             new UserFunction()
               {
                public PrimitiveValue evaluate(List<PrimitiveValue> arguments)

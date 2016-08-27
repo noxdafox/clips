@@ -36,8 +36,7 @@ CLIPS> (deftemplate-slot-names huh)
 [PRNTUTIL1] Unable to find deftemplate huh.
 FALSE
 CLIPS> (deftemplate-slot-names 3)
-[ARGACCES5] Function deftemplate-slot-names expected argument #1 to be of type deftemplate name
-FALSE
+[ARGACCES5] Function deftemplate-slot-names expected argument #1 to be of type symbol
 CLIPS> (deftemplate-slot-names foo bar)
 [ARGACCES4] Function deftemplate-slot-names expected exactly 1 argument(s)
 CLIPS> (deftemplate-slot-names)

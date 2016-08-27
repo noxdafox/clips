@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*            CONSTRAINT UTILITY HEADER FILE           */
    /*******************************************************/
@@ -27,6 +27,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_cstrnutl
@@ -43,9 +45,9 @@
    bool                           SetConstraintType(int,CONSTRAINT_RECORD *);
    void                           SetAnyAllowedFlags(CONSTRAINT_RECORD *,bool);
    void                           SetAnyRestrictionFlags(CONSTRAINT_RECORD *,bool);
-   CONSTRAINT_RECORD             *ArgumentTypeToConstraintRecord(Environment *,int);
    CONSTRAINT_RECORD             *FunctionCallToConstraintRecord(Environment *,void *);
    CONSTRAINT_RECORD             *ExpressionToConstraintRecord(Environment *,struct expr *);
+   CONSTRAINT_RECORD             *ArgumentTypeToConstraintRecord(Environment *,unsigned);
 
 #endif /* _H_cstrnutl */
 

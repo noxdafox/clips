@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*               I/O FUNCTIONS HEADER FILE             */
    /*******************************************************/
@@ -65,6 +65,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_iofun
@@ -76,18 +78,18 @@
    void                           IOFunctionDefinitions(Environment *);
 #if IO_FUNCTIONS
    bool                           SetFullCRLF(Environment *,bool);
-   void                           PrintoutFunction(Environment *);
-   void                           ReadFunction(Environment *,DATA_OBJECT_PTR);
-   bool                           OpenFunction(Environment *);
-   bool                           CloseFunction(Environment *);
-   int                            GetCharFunction(Environment *);
-   void                           PutCharFunction(Environment *);
-   void                           ReadlineFunction(Environment *,DATA_OBJECT_PTR);
-   void                          *FormatFunction(Environment *);
-   bool                           RemoveFunction(Environment *);
-   bool                           RenameFunction(Environment *);
-   void                           SetLocaleFunction(Environment *,DATA_OBJECT_PTR);
-   void                           ReadNumberFunction(Environment *,DATA_OBJECT_PTR);
+   void                           PrintoutFunction(Environment *,UDFContext *,CLIPSValue *);
+   void                           ReadFunction(Environment *,UDFContext *,CLIPSValue *);
+   void                           OpenFunction(Environment *,UDFContext *,CLIPSValue *);
+   void                           CloseFunction(Environment *,UDFContext *,CLIPSValue *);
+   void                           GetCharFunction(Environment *,UDFContext *,CLIPSValue *);
+   void                           PutCharFunction(Environment *,UDFContext *,CLIPSValue *);
+   void                           ReadlineFunction(Environment *,UDFContext *,CLIPSValue *);
+   void                           FormatFunction(Environment *,UDFContext *,CLIPSValue *);
+   void                           RemoveFunction(Environment *,UDFContext *,CLIPSValue *);
+   void                           RenameFunction(Environment *,UDFContext *,CLIPSValue *);
+   void                           SetLocaleFunction(Environment *,UDFContext *,CLIPSValue *);
+   void                           ReadNumberFunction(Environment *,UDFContext *,CLIPSValue *);
 #endif
 
 #endif /* _H_iofun */

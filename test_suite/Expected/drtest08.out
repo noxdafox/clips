@@ -146,16 +146,16 @@ CLIPS>
 CLIPS> (clear)
 CLIPS> 
 (defrule foo ; This should fail
-   (bbb ?x&:(member a ?x))
+   (bbb ?x&:(member$ a ?x))
    =>)
 
 [RULECSTR2] Previous variable bindings of ?x caused the type restrictions
-for argument #2 of the expression (member a ?x)
+for argument #2 of the expression (member$ a ?x)
 found in CE #1 field #1 to be violated.
 
 ERROR:
 (defrule MAIN::foo
-   (bbb ?x&:(member a ?x))
+   (bbb ?x&:(member$ a ?x))
    =>)
 CLIPS> (clear)
 CLIPS> 

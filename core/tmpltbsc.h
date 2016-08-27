@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*       DEFTEMPLATE BASIC COMMANDS HEADER FILE        */
    /*******************************************************/
@@ -52,6 +52,8 @@
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_tmpltbsc
@@ -63,15 +65,15 @@
 #include "evaluatn.h"
 
    void                           DeftemplateBasicCommands(Environment *);
-   void                           UndeftemplateCommand(Environment *);
+   void                           UndeftemplateCommand(Environment *,UDFContext *,CLIPSValue *);
    bool                           EnvUndeftemplate(Environment *,Deftemplate *);
-   void                           GetDeftemplateListFunction(Environment *,DATA_OBJECT_PTR);
-   void                           EnvGetDeftemplateList(Environment *,DATA_OBJECT_PTR,Defmodule *);
-   void                          *DeftemplateModuleFunction(Environment *);
+   void                           GetDeftemplateListFunction(Environment *,UDFContext *,CLIPSValue *);
+   void                           EnvGetDeftemplateList(Environment *,CLIPSValue *,Defmodule *);
+   void                           DeftemplateModuleFunction(Environment *,UDFContext *,CLIPSValue *);
 #if DEBUGGING_FUNCTIONS
-   void                           PPDeftemplateCommand(Environment *);
+   void                           PPDeftemplateCommand(Environment *,UDFContext *,CLIPSValue *);
    bool                           PPDeftemplate(Environment *,const char *,const char *);
-   void                           ListDeftemplatesCommand(Environment *);
+   void                           ListDeftemplatesCommand(Environment *,UDFContext *,CLIPSValue *);
    void                           EnvListDeftemplates(Environment *,const char *,Defmodule *);
    bool                           EnvGetDeftemplateWatch(Environment *,Deftemplate *);
    void                           EnvSetDeftemplateWatch(Environment *,bool,Deftemplate *);

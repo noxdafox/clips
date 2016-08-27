@@ -26,6 +26,8 @@ public class Environment
    public static final String GLOBALS = "globals";
    public static final String MESSAGES = "messages";
    public static final String MESSAGE_HANDLERS = "message-handlers";
+   
+   public static final int UNBOUNDED = -1;
       
    private List<Router> routerList = new ArrayList<Router>(); 
    private List<CLIPSLineError> errorList = new ArrayList<CLIPSLineError>();
@@ -185,6 +187,9 @@ public class Environment
    /******************************************/
    private native boolean addUserFunction(long env,
                                           String functionName,
+                                          String returnTypes,
+                                          int minArgs,
+                                          int maxArgs,
                                           String restrictions,
                                           UserFunction callback);
      
@@ -195,7 +200,7 @@ public class Environment
      String functionName,
      UserFunction callback)
      {
-      return addUserFunction(theEnvironment,functionName,null,callback);
+      return addUserFunction(theEnvironment,functionName,"*",0,UNBOUNDED,null,callback);
      } 
 
    /*******************/
@@ -203,10 +208,14 @@ public class Environment
    /*******************/
    public boolean addUserFunction(
      String functionName,
+     String returnTypes,
+     int minArgs,
+     int maxArgs,
      String restrictions,
      UserFunction callback)
      {
-      return addUserFunction(theEnvironment,functionName,restrictions,callback);
+      return addUserFunction(theEnvironment,functionName,returnTypes,
+                             minArgs,maxArgs,restrictions,callback);
      } 
 
    /**************************/

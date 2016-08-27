@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/11/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*                CONSTRAINT HEADER FILE               */
    /*******************************************************/
@@ -45,6 +45,8 @@
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*            Static constraint checking is always enabled.  */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -110,8 +112,8 @@ struct constraintData
 #define ConstraintData(theEnv) ((struct constraintData *) GetEnvironmentData(theEnv,CONSTRAINT_DATA))
 
    void                           InitializeConstraints(Environment *);
-   bool                           GDCCommand(Environment *);
-   bool                           SDCCommand(Environment *);
+   void                           GDCCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           SDCCommand(Environment *,UDFContext *,CLIPSValue *);
    bool                           EnvSetDynamicConstraintChecking(Environment *,bool);
    bool                           EnvGetDynamicConstraintChecking(Environment *);
 #if (! BLOAD_ONLY) && (! RUN_TIME)

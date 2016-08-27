@@ -8,7 +8,7 @@
 (make-instance a of A)
 (defmessage-handler A print-args (?a ?b $?c)
 	(printout t (instance-name ?self) " " ?a " " ?b 
-		" and " (length ?c) " extras: " ?c crlf))
+		" and " (length$ ?c) " extras: " ?c crlf))
 (send [a] print-args 1 2)
 (send [a] print-args a b c d)
 (clear) 

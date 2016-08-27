@@ -19,7 +19,7 @@ CLIPS> (make-instance a of A)
 [a]
 CLIPS> (defmessage-handler A print-args (?a ?b $?c)
 	(printout t (instance-name ?self) " " ?a " " ?b 
-		" and " (length ?c) " extras: " ?c crlf))
+		" and " (length$ ?c) " extras: " ?c crlf))
 CLIPS> (send [a] print-args 1 2)
 [a] 1 2 and 0 extras: ()
 CLIPS> (send [a] print-args a b c d)

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*          LOGICAL DEPENDENCIES HEADER FILE           */
    /*******************************************************/
@@ -35,6 +35,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_lgcldpnd
@@ -60,8 +62,8 @@ struct dependency
    void                           ForceLogicalRetractions(Environment *);
    void                           Dependencies(Environment *,struct patternEntity *);
    void                           Dependents(Environment *,struct patternEntity *);
-   void                           DependenciesCommand(Environment *);
-   void                           DependentsCommand(Environment *);
+   void                           DependenciesCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           DependentsCommand(Environment *,UDFContext *,CLIPSValue *);
    void                           ReturnEntityDependencies(Environment *,struct patternEntity *);
    struct partialMatch           *FindLogicalBind(struct joinNode *,struct partialMatch *);
 

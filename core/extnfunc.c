@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/10/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*               EXTERNAL FUNCTION MODULE              */
    /*******************************************************/
@@ -47,6 +47,8 @@
 /*                                                           */
 /*            Callbacks must be environment aware.           */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -72,6 +74,10 @@
 #if (! RUN_TIME)
    static bool                    RemoveHashFunction(Environment *,struct FunctionDefinition *);
 #endif
+   static void                    PrintType(Environment *,const char *,int,int *,const char *);
+   static bool                    DefineFunction(Environment *,const char *,unsigned,
+                                                 void (*)(Environment *,UDFContext *,CLIPSValue *),
+                                                 const char *,int,int,const char *,void *);
 
 /*********************************************************/
 /* InitializeExternalFunctionData: Allocates environment */
@@ -125,128 +131,49 @@ static void DeallocateExternalFunctionData(
 
 #if (! RUN_TIME)
 
-/******************************************************/
-/* EnvDefineFunction: Used to define a system or user */
-/*   external function so that the KB can access it.  */
-/******************************************************/
-bool EnvDefineFunction(
+/*******************************************************/
+/* EnvAddUDF: Used to define a system or user external */
+/*   function so that the KB can access it.            */
+/*******************************************************/
+bool EnvAddUDF(
   Environment *theEnv,
-  const char *name,
-  int returnType,
-  int (*pointer)(Environment *),
-  const char *actualName)
-  {
-   return(DefineFunction3(theEnv,name,returnType,pointer,actualName,NULL,NULL));
-  }
-  
-/************************************************************/
-/* EnvDefineFunctionWithContext: Used to define a system or */
-/*   user external function so that the KB can access it.   */
-/************************************************************/
-bool EnvDefineFunctionWithContext(
-  Environment *theEnv,
-  const char *name,
-  int returnType,
-  int (*pointer)(Environment *),
-  const char *actualName,
+  const char *clipsFunctionName,
+  const char *returnTypes,
+  int minArgs,
+  int maxArgs,
+  const char *argumentTypes,
+  void (*cFunctionPointer)(Environment *,UDFContext *,CLIPSValue *),
+  const char *cFunctionName,
   void *context)
   {
-   return(DefineFunction3(theEnv,name,returnType,pointer,actualName,NULL,context));
-  }
-  
-/*******************************************************/
-/* EnvDefineFunction2: Used to define a system or user */
-/*   external function so that the KB can access it.   */
-/*******************************************************/
-bool EnvDefineFunction2(
-  Environment *theEnv,
-  const char *name,
-  int returnType,
-  int (*pointer)(Environment *),
-  const char *actualName,
-  const char *restrictions)
-  {
-   return(DefineFunction3(theEnv,name,returnType,pointer,actualName,restrictions,NULL));
+   unsigned returnTypeBits;
+   
+   if (returnTypes != NULL)
+     { PopulateRestriction(theEnv,&returnTypeBits,ANY_TYPE,returnTypes,0); }
+   else
+     { returnTypeBits = ANY_TYPE; }
+
+   return DefineFunction(theEnv,clipsFunctionName,returnTypeBits,cFunctionPointer,
+                         cFunctionName,minArgs,maxArgs,argumentTypes,context);
   }
 
 /*************************************************************/
-/* EnvDefineFunction2WithContext: Used to define a system or */
-/*   user external function so that the KB can access it.    */
-/*************************************************************/
-bool EnvDefineFunction2WithContext(
-  Environment *theEnv,
-  const char *name,
-  int returnType,
-  int (*pointer)(Environment *),
-  const char *actualName,
-  const char *restrictions,
-  void *context)
-  {
-   return(DefineFunction3(theEnv,name,returnType,pointer,actualName,restrictions,context));
-  }
-
-/*************************************************************/
-/* DefineFunction3: Used to define a system or user external */
+/* DefineFunction: Used to define a system or user external  */
 /*   function so that the KB can access it. Allows argument  */
 /*   restrictions to be attached to the function.            */
-/*   Return types are:                                       */
-/*     a - external address                                  */
-/*     b - boolean integer (converted to symbol)             */
-/*     c - character (converted to symbol)                   */
-/*     d - double precision float                            */
-/*     f - single precision float (converted to double)      */
-/*     g - long long integer                                 */
-/*     i - integer (converted to long long integer)          */
-/*     j - unknown (symbol, string,                          */
-/*                  or instance name by convention)          */
-/*     k - unknown (symbol or string by convention)          */
-/*     l - long integer (converted to long long integer)     */
-/*     m - unknown (multifield by convention)                */
-/*     n - unknown (integer or float by convention)          */
-/*     o - instance name                                     */
-/*     s - string                                            */
-/*     u - unknown                                           */
-/*     v - void                                              */
-/*     w - symbol                                            */
-/*     x - instance address                                  */
 /*************************************************************/
-bool DefineFunction3(
+static bool DefineFunction(
   Environment *theEnv,
   const char *name,
-  int returnType,
-  int (*pointer)(Environment *),
+  unsigned returnTypeBits,
+  void (*pointer)(Environment *,UDFContext *,CLIPSValue *),
   const char *actualName,
+  int minArgs,
+  int maxArgs,
   const char *restrictions,
   void *context)
   {
    struct FunctionDefinition *newFunction;
-
-   if ( (returnType != 'a') &&
-        (returnType != 'b') &&
-        (returnType != 'c') &&
-        (returnType != 'd') &&
-        (returnType != 'f') &&
-        (returnType != 'g') &&
-        (returnType != 'i') &&
-        (returnType != 'j') &&
-        (returnType != 'k') &&
-        (returnType != 'l') &&
-        (returnType != 'm') &&
-        (returnType != 'n') &&
-#if OBJECT_SYSTEM
-        (returnType != 'o') &&
-#endif
-        (returnType != 's') &&
-        (returnType != 'u') &&
-        (returnType != 'v') &&
-#if OBJECT_SYSTEM
-        (returnType != 'x') &&
-#endif
-#if DEFTEMPLATE_CONSTRUCT
-        (returnType != 'y') &&
-#endif
-        (returnType != 'w') )
-     { return false; }
 
    newFunction = FindFunction(theEnv,name);
    if (newFunction != NULL) return false;
@@ -258,22 +185,18 @@ bool DefineFunction3(
    ExternalFunctionData(theEnv)->ListOfFunctions = newFunction;
    AddHashFunction(theEnv,newFunction);
      
-   newFunction->returnValueType = (char) returnType;
+   newFunction->unknownReturnValueType = returnTypeBits;
    newFunction->functionPointer = pointer;
    newFunction->actualFunctionName = actualName;
-   if (restrictions != NULL)
-     {
-      if (((int) (strlen(restrictions)) < 2) ? true :
-          ((! isdigit(restrictions[0]) && (restrictions[0] != '*')) ||
-           (! isdigit(restrictions[1]) && (restrictions[1] != '*'))))
-        restrictions = NULL;
-     }
-
+   
+   newFunction->minArgs = minArgs;
+   newFunction->maxArgs = maxArgs;
+   
    if (restrictions == NULL)
      { newFunction->restrictions = NULL; }
    else
      {
-      newFunction->restrictions = (SYMBOL_HN *) EnvAddSymbol(theEnv,restrictions);
+      newFunction->restrictions = EnvAddSymbol(theEnv,restrictions);
       IncrementSymbolCount(newFunction->restrictions);
      }
 
@@ -286,11 +209,11 @@ bool DefineFunction3(
    return true;
   }
   
-/***********************************************/
-/* UndefineFunction: Used to remove a function */
-/*   definition from the list of functions.    */
-/***********************************************/
-bool UndefineFunction(
+/********************************************/
+/* EnvRemoveUDF: Used to remove a function  */
+/*   definition from the list of functions. */
+/********************************************/
+bool EnvRemoveUDF(
   Environment *theEnv,
   const char *functionName)
   {
@@ -562,6 +485,29 @@ int GetNthRestriction(
    return((int) theFunction->restrictions->contents[position + 2]);
   }
 
+/***************************************************/
+/* GetNthRestriction2: Returns the restriction type */
+/*   for the nth parameter of a function.          */
+/***************************************************/
+unsigned GetNthRestriction2(
+  Environment *theEnv,
+  struct FunctionDefinition *theFunction,
+  int position)
+  {
+   unsigned rv, df;
+   const char *restrictions;
+   
+   if (theFunction == NULL) return(ANY_TYPE);
+
+   if (theFunction->restrictions == NULL) return(ANY_TYPE);
+   restrictions = theFunction->restrictions->contents;
+   
+   PopulateRestriction(theEnv,&df,ANY_TYPE,restrictions,0);
+   PopulateRestriction(theEnv,&rv,df,restrictions,position);
+
+   return rv;
+  }
+
 /*************************************************/
 /* GetFunctionList: Returns the ListOfFunctions. */
 /*************************************************/
@@ -681,21 +627,7 @@ static void AddHashFunction(
 int GetMinimumArgs(
   struct FunctionDefinition *theFunction)
   {
-   char theChar[2];
-   const char *restrictions;
-
-   if (theFunction->restrictions == NULL) return(-1);
-   restrictions = theFunction->restrictions->contents;
-
-   theChar[0] = restrictions[0];
-   theChar[1] = '\0';
-
-   if (isdigit(theChar[0]))
-     { return atoi(theChar); }
-   else if (theChar[0] == '*')
-     { return(-1); }
-   
-   return(-1); 
+   return theFunction->minArgs;
   }
   
 /*************************************************/
@@ -705,20 +637,87 @@ int GetMinimumArgs(
 int GetMaximumArgs(
   struct FunctionDefinition *theFunction)
   {
-   char theChar[2];
-   const char *restrictions;
+   return theFunction->maxArgs;
+  }
 
-   if (theFunction->restrictions == NULL) return(-1);
-   restrictions = theFunction->restrictions->contents;
-   if (restrictions[0] == '\0') return(-1);
+/**************/
+/* PrintType: */
+/**************/
+static void PrintType(
+  Environment *theEnv,
+  const char *logicalName,
+  int typeCount,
+  int *typesPrinted,
+  const char *typeName)
+  {
+   if (*typesPrinted == 0)
+     {
+      EnvPrintRouter(theEnv,logicalName,typeName);
+      (*typesPrinted)++;
+      return;
+     }
 
-   theChar[0] = restrictions[1];
-   theChar[1] = '\0';
+   if (typeCount == 2)
+     { EnvPrintRouter(theEnv,logicalName," or "); }
+   else if (((*typesPrinted) + 1) == typeCount)
+     { EnvPrintRouter(theEnv,logicalName,", or "); }
+   else
+     { EnvPrintRouter(theEnv,logicalName,", "); }
+     
+   EnvPrintRouter(theEnv,logicalName,typeName);
+   (*typesPrinted)++;
+  }
 
-   if (isdigit(theChar[0]))
-     { return atoi(theChar); }
-   else if (theChar[0] == '*')
-     { return(-1); }
+/********************/
+/* PrintTypesString */
+/********************/
+void PrintTypesString(
+  Environment *theEnv,
+  const char *logicalName,
+  unsigned expectedType,
+  bool printCRLF)
+  {
+   int typeCount, typesPrinted;
+
+   typeCount = 0;
+   if (expectedType & INTEGER_TYPE) typeCount++;
+   if (expectedType & FLOAT_TYPE) typeCount++;
+   if (expectedType & SYMBOL_TYPE) typeCount++;
+   if (expectedType & STRING_TYPE) typeCount++;
+   if (expectedType & INSTANCE_NAME_TYPE) typeCount++;
+   if (expectedType & INSTANCE_ADDRESS_TYPE) typeCount++;
+   if (expectedType & FACT_ADDRESS_TYPE) typeCount++;
+   if (expectedType & EXTERNAL_ADDRESS_TYPE) typeCount++;
+   if (expectedType & MULTIFIELD_TYPE) typeCount++;
    
-   return(-1); 
+   typesPrinted = 0;
+   if (expectedType & INTEGER_TYPE)
+     { PrintType(theEnv,logicalName,typeCount,&typesPrinted,"integer"); }
+  
+    if (expectedType & FLOAT_TYPE)
+     { PrintType(theEnv,logicalName,typeCount,&typesPrinted,"float"); }
+
+   if (expectedType & SYMBOL_TYPE)
+     { PrintType(theEnv,logicalName,typeCount,&typesPrinted,"symbol"); }
+
+   if (expectedType & STRING_TYPE)
+     { PrintType(theEnv,logicalName,typeCount,&typesPrinted,"string"); }
+
+   if (expectedType & INSTANCE_NAME_TYPE) 
+     { PrintType(theEnv,logicalName,typeCount,&typesPrinted,"instance name"); }
+
+   if (expectedType & INSTANCE_ADDRESS_TYPE) 
+     { PrintType(theEnv,logicalName,typeCount,&typesPrinted,"instance address"); }
+
+   if (expectedType & FACT_ADDRESS_TYPE) 
+     { PrintType(theEnv,logicalName,typeCount,&typesPrinted,"fact address"); }
+
+   if (expectedType & EXTERNAL_ADDRESS_TYPE) 
+     { PrintType(theEnv,logicalName,typeCount,&typesPrinted,"external address"); }
+
+   if (expectedType & MULTIFIELD_TYPE) 
+     { PrintType(theEnv,logicalName,typeCount,&typesPrinted,"multifield"); }
+   
+   if (printCRLF)
+     { EnvPrintRouter(theEnv,logicalName,"\n"); }
   }

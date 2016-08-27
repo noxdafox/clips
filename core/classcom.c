@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/06/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*                  CLASS COMMANDS MODULE              */
    /*******************************************************/
@@ -47,6 +47,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /**************************************************************/
 
@@ -388,7 +390,9 @@ bool EnvIsDefclassDeletable(
   NOTES        : Syntax : (undefclass <class-name> | *)
  *************************************************************/
 void UndefclassCommand(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    UndefconstructCommand(theEnv,"undefclass",DefclassData(theEnv)->DefclassConstruct);
   }
@@ -433,8 +437,10 @@ bool EnvUndefclass(
   NOTES        : Syntax : (ppdefclass <class-name>)
  *********************************************************/
 void PPDefclassCommand(
-  Environment *theEnv)
-  {   
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
+  {
    PPConstructCommand(theEnv,"ppdefclass",DefclassData(theEnv)->DefclassConstruct);
   }
 
@@ -447,7 +453,9 @@ void PPDefclassCommand(
   NOTES        : H/L Interface
  ***************************************************/
 void ListDefclassesCommand(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    ListConstructCommand(theEnv,"list-defclasses",DefclassData(theEnv)->DefclassConstruct);
   }
@@ -636,7 +644,8 @@ bool DefclassWatchPrint(
  *********************************************************/
 void GetDefclassListFunction(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    GetConstructListFunction(theEnv,"get-defclass-list",returnValue,DefclassData(theEnv)->DefclassConstruct);
   }
@@ -654,7 +663,7 @@ void GetDefclassListFunction(
  ***************************************************************/
 void EnvGetDefclassList(
   Environment *theEnv,
-  DATA_OBJECT *returnValue,
+  CLIPSValue *returnValue,
   Defmodule *theModule)
   {
    GetConstructList(theEnv,returnValue,DefclassData(theEnv)->DefclassConstruct,theModule);
@@ -697,7 +706,7 @@ SYMBOL_HN *CheckClassAndSlot(
    const char *func,
    Defclass **cls)
   {
-   DATA_OBJECT temp;
+   CLIPSValue temp;
 
    if (EnvArgTypeCheck(theEnv,func,1,SYMBOL,&temp) == false)
      { return NULL; }
@@ -822,24 +831,29 @@ unsigned short EnvGetClassDefaultsMode(
 /* GetClassDefaultsModeCommand: H/L access routine */
 /*   for the get-class-defaults-mode command.      */
 /***************************************************/
-void *GetClassDefaultsModeCommand(
-  Environment *theEnv)
+void GetClassDefaultsModeCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   EnvArgCountCheck(theEnv,"get-class-defaults-mode",EXACTLY,0);
-
-   return((SYMBOL_HN *) EnvAddSymbol(theEnv,GetClassDefaultsModeName(EnvGetClassDefaultsMode(theEnv))));
+   returnValue->type = SYMBOL;
+   returnValue->value = EnvAddSymbol(theEnv,GetClassDefaultsModeName(EnvGetClassDefaultsMode(theEnv)));
   }
 
 /***************************************************/
 /* SetClassDefaultsModeCommand: H/L access routine */
 /*   for the set-class-defaults-mode command.      */
 /***************************************************/
-void *SetClassDefaultsModeCommand(
-  Environment *theEnv)
+void SetClassDefaultsModeCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT argPtr;
+   CLIPSValue theArg;
    const char *argument;
    unsigned short oldMode;
+   
+   returnValue->type = SYMBOL;
    
    oldMode = DefclassData(theEnv)->ClassDefaultsMode;
 
@@ -847,13 +861,13 @@ void *SetClassDefaultsModeCommand(
    /* Check for the correct number and type of arguments. */
    /*=====================================================*/
 
-   if (EnvArgCountCheck(theEnv,"set-class-defaults-mode",EXACTLY,1) == -1)
-     { return((SYMBOL_HN *) EnvAddSymbol(theEnv,GetClassDefaultsModeName(EnvGetClassDefaultsMode(theEnv)))); }
+   if (EnvArgTypeCheck(theEnv,"set-class-defaults-mode",1,SYMBOL,&theArg) == false)
+     {
+      returnValue->value = EnvAddSymbol(theEnv,GetClassDefaultsModeName(EnvGetClassDefaultsMode(theEnv)));
+      return;
+     }
 
-   if (EnvArgTypeCheck(theEnv,"set-class-defaults-mode",1,SYMBOL,&argPtr) == false)
-     { return((SYMBOL_HN *) EnvAddSymbol(theEnv,GetClassDefaultsModeName(EnvGetClassDefaultsMode(theEnv)))); }
-
-   argument = DOToString(argPtr);
+   argument = DOToString(theArg);
 
    /*=============================================*/
    /* Set the strategy to the specified strategy. */
@@ -867,14 +881,14 @@ void *SetClassDefaultsModeCommand(
      {
       ExpectedTypeError1(theEnv,"set-class-defaults-mode",1,
       "symbol with value conservation or convenience");
-      return((SYMBOL_HN *) EnvAddSymbol(theEnv,GetClassDefaultsModeName(EnvGetClassDefaultsMode(theEnv))));
+      returnValue->value = EnvAddSymbol(theEnv,GetClassDefaultsModeName(EnvGetClassDefaultsMode(theEnv)));
      }
 
    /*===================================*/
    /* Return the old value of the mode. */
    /*===================================*/
 
-   return((SYMBOL_HN *) EnvAddSymbol(theEnv,GetClassDefaultsModeName(oldMode)));
+   returnValue->value = EnvAddSymbol(theEnv,GetClassDefaultsModeName(oldMode));
   }
 
 /*******************************************************************/

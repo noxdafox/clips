@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*            EXPRESSION PARSER HEADER FILE            */
    /*******************************************************/
@@ -44,6 +44,8 @@
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_exprnpsr
@@ -82,11 +84,14 @@ typedef struct saved_contexts
    struct expr                   *GroupActions(Environment *,const char *,struct token *,
                                                       bool,const char *,bool);
    struct expr                   *RemoveUnneededProgn(Environment *,struct expr *);
+   void                           PopulateRestriction(Environment *,unsigned *,unsigned,const char *,int);
 
 #if (! RUN_TIME)
 
    bool                           CheckExpressionAgainstRestrictions(Environment *,struct expr *,
-                                                                            const char *,const char *);
+                                                                     struct FunctionDefinition *,const char *);
+   bool                           RestrictionExists(const char *,int);
+   
 #endif
 
 #endif /* _H_exprnpsr */

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*                SORT FUNCTIONS MODULE                */
    /*******************************************************/
@@ -32,6 +32,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -60,10 +62,10 @@ struct sortFunctionData
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    DoMergeSort(Environment *,DATA_OBJECT *,DATA_OBJECT *,unsigned long,
+   static void                    DoMergeSort(Environment *,CLIPSValue *,CLIPSValue *,unsigned long,
                                               unsigned long,unsigned long,unsigned long,
-                                              bool (*)(Environment *,DATA_OBJECT *,DATA_OBJECT *));
-   static bool                    DefaultCompareSwapFunction(Environment *,DATA_OBJECT *,DATA_OBJECT *);
+                                              bool (*)(Environment *,CLIPSValue *,CLIPSValue *));
+   static bool                    DefaultCompareSwapFunction(Environment *,CLIPSValue *,CLIPSValue *);
    static void                    DeallocateSortFunctionData(Environment *);
    
 /****************************************/
@@ -75,7 +77,7 @@ void SortFunctionDefinitions(
   {
    AllocateEnvironmentData(theEnv,SORTFUN_DATA,sizeof(struct sortFunctionData),DeallocateSortFunctionData);
 #if ! RUN_TIME
-   EnvDefineFunction2(theEnv,"sort",'u', PTIEF SortFunction,"SortFunction","1**w");
+   EnvAddUDF(theEnv,"sort","bm",1,UNBOUNDED,"*;y",SortFunction,"SortFunction",NULL);
 #endif
   }
 
@@ -94,10 +96,10 @@ static void DeallocateSortFunctionData(
 /********************************/
 static bool DefaultCompareSwapFunction(
   Environment *theEnv,
-  DATA_OBJECT *item1,
-  DATA_OBJECT *item2)
+  CLIPSValue *item1,
+  CLIPSValue *item2)
   {
-   DATA_OBJECT returnValue;
+   CLIPSValue returnValue;
 
    SortFunctionData(theEnv)->SortComparisonFunction->argList = GenConstant(theEnv,item1->type,item1->value);
    SortFunctionData(theEnv)->SortComparisonFunction->argList->nextArg = GenConstant(theEnv,item2->type,item2->value);
@@ -120,11 +122,12 @@ static bool DefaultCompareSwapFunction(
 /************************************/
 void SortFunction(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    long argumentCount, i, j, k = 0;
-   DATA_OBJECT *theArguments, *theArguments2;
-   DATA_OBJECT theArg;
+   CLIPSValue *theArguments, *theArguments2;
+   CLIPSValue theArg;
    Multifield *theMultifield, *tempMultifield;
    const char *functionName;
    struct expr *functionReference;
@@ -218,7 +221,7 @@ void SortFunction(
    /* and determine how many there are.   */
    /*=====================================*/
 
-   theArguments = (DATA_OBJECT *) genalloc(theEnv,(argumentCount - 1) * sizeof(DATA_OBJECT));
+   theArguments = (CLIPSValue *) genalloc(theEnv,(argumentCount - 1) * sizeof(CLIPSValue));
 
    for (i = 2; i <= argumentCount; i++)
      {
@@ -231,7 +234,7 @@ void SortFunction(
      
    if (argumentSize == 0)
      {   
-      genfree(theEnv,theArguments,(argumentCount - 1) * sizeof(DATA_OBJECT)); /* Bug Fix */
+      genfree(theEnv,theArguments,(argumentCount - 1) * sizeof(CLIPSValue)); /* Bug Fix */
       EnvSetMultifieldErrorValue(theEnv,returnValue);
       ReturnExpression(theEnv,functionReference);
       return;
@@ -242,7 +245,7 @@ void SortFunction(
    /* into a data object array.          */
    /*====================================*/
    
-   theArguments2 = (DATA_OBJECT *) genalloc(theEnv,argumentSize * sizeof(DATA_OBJECT));
+   theArguments2 = (CLIPSValue *) genalloc(theEnv,argumentSize * sizeof(CLIPSValue));
 
    for (i = 2; i <= argumentCount; i++)
      {
@@ -263,7 +266,7 @@ void SortFunction(
         }
      }
      
-   genfree(theEnv,theArguments,(argumentCount - 1) * sizeof(DATA_OBJECT));
+   genfree(theEnv,theArguments,(argumentCount - 1) * sizeof(CLIPSValue));
 
    functionReference->nextArg = SortFunctionData(theEnv)->SortComparisonFunction;
    SortFunctionData(theEnv)->SortComparisonFunction = functionReference;
@@ -288,7 +291,7 @@ void SortFunction(
       SetMFValue(theMultifield,i+1,GetValue(theArguments2[i]));
      }
      
-   genfree(theEnv,theArguments2,argumentSize * sizeof(DATA_OBJECT));
+   genfree(theEnv,theArguments2,argumentSize * sizeof(CLIPSValue));
 
    SetpType(returnValue,MULTIFIELD);
    SetpDOBegin(returnValue,1);
@@ -304,10 +307,10 @@ void SortFunction(
 void MergeSort(
   Environment *theEnv,
   unsigned long listSize,
-  DATA_OBJECT *theList,
-  bool (*swapFunction)(Environment *,DATA_OBJECT *,DATA_OBJECT  *))
+  CLIPSValue *theList,
+  bool (*swapFunction)(Environment *,CLIPSValue *,CLIPSValue *))
   {
-   DATA_OBJECT *tempList;
+   CLIPSValue *tempList;
    unsigned long middle;
 
    if (listSize <= 1) return;
@@ -317,7 +320,7 @@ void MergeSort(
    /* needed for the merge sort.   */
    /*==============================*/
 
-   tempList = (DATA_OBJECT *) genalloc(theEnv,listSize * sizeof(DATA_OBJECT));
+   tempList = (CLIPSValue *) genalloc(theEnv,listSize * sizeof(CLIPSValue));
 
    /*=====================================*/
    /* Call the merge sort driver routine. */
@@ -331,25 +334,25 @@ void MergeSort(
    /* needed by the merge sort.        */
    /*==================================*/
 
-   genfree(theEnv,tempList,listSize * sizeof(DATA_OBJECT));
+   genfree(theEnv,tempList,listSize * sizeof(CLIPSValue));
   }
 
 
 /******************************************************/
 /* DoMergeSort: Driver routine for performing a merge */
-/*   sort on an array of DATA_OBJECT structures.      */
+/*   sort on an array of CLIPSValue structures.       */
 /******************************************************/
 static void DoMergeSort(
   Environment *theEnv,
-  DATA_OBJECT *theList,
-  DATA_OBJECT *tempList,
+  CLIPSValue *theList,
+  CLIPSValue *tempList,
   unsigned long s1,
   unsigned long e1,
   unsigned long s2,
   unsigned long e2,
-  bool (*swapFunction)(Environment *,DATA_OBJECT *,DATA_OBJECT *))
+  bool (*swapFunction)(Environment *,CLIPSValue *,CLIPSValue *))
   {
-   DATA_OBJECT temp;
+   CLIPSValue temp;
    unsigned long middle, size;
    unsigned long c1, c2, mergePoint;
 

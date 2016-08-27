@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*         DEFFACTS BASIC COMMANDS HEADER FILE         */
    /*******************************************************/
@@ -44,6 +44,8 @@
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_dffctbsc
@@ -56,14 +58,14 @@
 #include "evaluatn.h"
 
    void                           DeffactsBasicCommands(Environment *);
-   void                           UndeffactsCommand(Environment *);
+   void                           UndeffactsCommand(Environment *,UDFContext *,CLIPSValue *);
    bool                           EnvUndeffacts(Environment *,Deffacts *);
-   void                           GetDeffactsListFunction(Environment *,DATA_OBJECT_PTR);
-   void                           EnvGetDeffactsList(Environment *,DATA_OBJECT_PTR,Defmodule *);
-   void                          *DeffactsModuleFunction(Environment *);
-   void                           PPDeffactsCommand(Environment *);
+   void                           GetDeffactsListFunction(Environment *,UDFContext *,CLIPSValue *);
+   void                           EnvGetDeffactsList(Environment *,CLIPSValue *,Defmodule *);
+   void                           DeffactsModuleFunction(Environment *,UDFContext *,CLIPSValue *);
+   void                           PPDeffactsCommand(Environment *,UDFContext *,CLIPSValue *);
    bool                           PPDeffacts(Environment *,const char *,const char *);
-   void                           ListDeffactsCommand(Environment *);
+   void                           ListDeffactsCommand(Environment *,UDFContext *,CLIPSValue *);
    void                           EnvListDeffacts(Environment *,const char *,Defmodule *);
 
 #endif /* _H_dffctbsc */

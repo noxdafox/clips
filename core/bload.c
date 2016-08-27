@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/10/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*                    BLOAD MODULE                     */
    /*******************************************************/
@@ -43,6 +43,8 @@
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*            Callbacks must be environment aware.           */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -802,19 +804,31 @@ void CannotLoadWithBloadMessage(
 /* BloadCommand: H/L access routine   */
 /*   for the bload command.           */
 /**************************************/
-bool BloadCommand(
-  Environment *theEnv)
+void BloadCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
 #if (! RUN_TIME) && (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE)
    const char *fileName;
-
-   if (EnvArgCountCheck(theEnv,"bload",EXACTLY,1) == -1) return false;
+   
+   returnValue->type = SYMBOL;
+   
    fileName = GetFileName(theEnv,"bload",1);
-   if (fileName != NULL) return(EnvBload(theEnv,fileName));
+   if (fileName != NULL)
+     {
+      if (EnvBload(theEnv,fileName))
+        { returnValue->value = EnvTrueSymbol(theEnv); }
+      else
+        { returnValue->value = EnvFalseSymbol(theEnv); }
+     }
+   else
+     { returnValue->value = EnvFalseSymbol(theEnv); }
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
 #endif
+   returnValue->type = SYMBOL;
+   returnValue->value = EnvFalseSymbol(theEnv);
 #endif
-   return false;
   }

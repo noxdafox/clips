@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/10/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*                  CONSTRUCT MODULE                   */
    /*******************************************************/
@@ -65,6 +65,8 @@
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*            Callbacks must be environment aware.           */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -404,8 +406,8 @@ void InitializeConstructs(
   Environment *theEnv)
   {
 #if (! RUN_TIME)
-   EnvDefineFunction2(theEnv,"clear",   'v', PTIEF ClearCommand,   "ClearCommand", "00");
-   EnvDefineFunction2(theEnv,"reset",   'v', PTIEF ResetCommand,   "ResetCommand", "00");
+   EnvAddUDF(theEnv,"clear","v",0,0,NULL,ClearCommand,"ClearCommand",NULL);
+   EnvAddUDF(theEnv,"reset","v",0,0,NULL,ResetCommand,"ResetCommand",NULL);
 
 #if DEBUGGING_FUNCTIONS && (! BLOAD_ONLY)
    AddWatchItem(theEnv,"compilations",0,&ConstructData(theEnv)->WatchCompilations,30,NULL,NULL);
@@ -422,11 +424,11 @@ void InitializeConstructs(
 /*   for the clear command.           */
 /**************************************/
 void ClearCommand(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   if (EnvArgCountCheck(theEnv,"clear",EXACTLY,0) == -1) return;
    EnvClear(theEnv);
-   return;
   }
 
 /**************************************/
@@ -434,11 +436,11 @@ void ClearCommand(
 /*   for the reset command.           */
 /**************************************/
 void ResetCommand(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   if (EnvArgCountCheck(theEnv,"reset",EXACTLY,0) == -1) return;
    EnvReset(theEnv);
-   return;
   }
 
 /******************************/

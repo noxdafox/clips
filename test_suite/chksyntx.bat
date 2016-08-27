@@ -14,7 +14,7 @@
 (check-syntax "?*x*")      
 (check-syntax "(facts)")                   
 (check-syntax "(+ 3 4)")                
-(check-syntax "(mv-append a b c)")         
+(check-syntax "(create$ a b c)")         
 (check-syntax "(+ 3 (* 4 5))")   
 (check-syntax "(+ a b)")
 (check-syntax "(+ 3 4")

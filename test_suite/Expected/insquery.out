@@ -364,12 +364,12 @@ CLIPS> (any-instancep ((?b 34)) TRUE)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query class restrictions.
 FALSE
-CLIPS> (any-instancep ((?b (mv-append BOGUS USER))) TRUE)
+CLIPS> (any-instancep ((?b (create$ BOGUS USER))) TRUE)
 [CLASSFUN1] Unable to find class BOGUS in function any-instancep.
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query class restrictions.
 FALSE
-CLIPS> (any-instancep ((?b (mv-append USER 34))) TRUE)
+CLIPS> (any-instancep ((?b (create$ USER 34))) TRUE)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query class restrictions.
 FALSE
@@ -396,12 +396,12 @@ CLIPS> (find-instance ((?b 34)) TRUE)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query class restrictions.
 ()
-CLIPS> (find-instance ((?b (mv-append BOGUS USER))) TRUE)
+CLIPS> (find-instance ((?b (create$ BOGUS USER))) TRUE)
 [CLASSFUN1] Unable to find class BOGUS in function find-instance.
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query class restrictions.
 ()
-CLIPS> (find-instance ((?b (mv-append USER 34))) TRUE)
+CLIPS> (find-instance ((?b (create$ USER 34))) TRUE)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query class restrictions.
 ()
@@ -428,12 +428,12 @@ CLIPS> (find-all-instances ((?b 34)) TRUE)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query class restrictions.
 ()
-CLIPS> (find-all-instances ((?b (mv-append BOGUS USER))) TRUE)
+CLIPS> (find-all-instances ((?b (create$ BOGUS USER))) TRUE)
 [CLASSFUN1] Unable to find class BOGUS in function find-all-instances.
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query class restrictions.
 ()
-CLIPS> (find-all-instances ((?b (mv-append USER 34))) TRUE)
+CLIPS> (find-all-instances ((?b (create$ USER 34))) TRUE)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query class restrictions.
 ()
@@ -462,12 +462,12 @@ CLIPS> (do-for-instance ((?b 34)) TRUE abc)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query class restrictions.
 FALSE
-CLIPS> (do-for-instance ((?b (mv-append BOGUS USER))) TRUE abc)
+CLIPS> (do-for-instance ((?b (create$ BOGUS USER))) TRUE abc)
 [CLASSFUN1] Unable to find class BOGUS in function do-for-instance.
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query class restrictions.
 FALSE
-CLIPS> (do-for-instance ((?b (mv-append USER 34))) TRUE abc)
+CLIPS> (do-for-instance ((?b (create$ USER 34))) TRUE abc)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query class restrictions.
 FALSE
@@ -496,12 +496,12 @@ CLIPS> (do-for-all-instances ((?b 34)) TRUE abc)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query class restrictions.
 FALSE
-CLIPS> (do-for-all-instances ((?b (mv-append BOGUS USER))) TRUE abc)
+CLIPS> (do-for-all-instances ((?b (create$ BOGUS USER))) TRUE abc)
 [CLASSFUN1] Unable to find class BOGUS in function do-for-all-instances.
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query class restrictions.
 FALSE
-CLIPS> (do-for-all-instances ((?b (mv-append USER 34))) TRUE abc)
+CLIPS> (do-for-all-instances ((?b (create$ USER 34))) TRUE abc)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query class restrictions.
 FALSE
@@ -530,12 +530,12 @@ CLIPS> (delayed-do-for-all-instances ((?b 34)) TRUE abc)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query class restrictions.
 FALSE
-CLIPS> (delayed-do-for-all-instances ((?b (mv-append BOGUS USER))) TRUE abc)
+CLIPS> (delayed-do-for-all-instances ((?b (create$ BOGUS USER))) TRUE abc)
 [CLASSFUN1] Unable to find class BOGUS in function delayed-do-for-all-instances.
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query class restrictions.
 FALSE
-CLIPS> (delayed-do-for-all-instances ((?b (mv-append USER 34))) TRUE abc)
+CLIPS> (delayed-do-for-all-instances ((?b (create$ USER 34))) TRUE abc)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for instance-set query class restrictions.
 FALSE
@@ -551,8 +551,8 @@ CLIPS> (make-instance y of Y)
 [y]
 CLIPS> (make-instance z of Z)
 [z]
-CLIPS> (do-for-all-instances ((?ins1 ?*list* X (mv-append Y Z)) 
-                       (?ins2 X (mv-append Y Z) ?*list*))
+CLIPS> (do-for-all-instances ((?ins1 ?*list* X (create$ Y Z)) 
+                       (?ins2 X (create$ Y Z) ?*list*))
   TRUE
   (printout t ?ins1 " " ?ins2 crlf))
 [v] [x]

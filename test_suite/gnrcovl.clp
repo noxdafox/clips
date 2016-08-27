@@ -1,19 +1,19 @@
 (defmethod + ((?a SYMBOL) $?any)
   (bind ?i 1)
-  (bind ?len (length ?any))
+  (bind ?len (length$ ?any))
   (while (<= ?i ?len) do
-     (bind ?a (sym-cat ?a (nth ?i ?any)))
+     (bind ?a (sym-cat ?a (nth$ ?i ?any)))
      (bind ?i (+ ?i 1)))
   ?a)
 
-(defmethod sym-cat (?a ?b)
+(defmethod sym-cat ((?a SYMBOL) (?b SYMBOL))
   (sym-cat my- ?a ?b))
 
 (defmethod + ((?a STRING) $?any)
   (bind ?i 1)
-  (bind ?len (length ?any))
+  (bind ?len (length$ ?any))
   (while (<= ?i ?len) do
-     (bind ?a (str-cat ?a (nth ?i ?any)))
+     (bind ?a (str-cat ?a (nth$ ?i ?any)))
      (bind ?i (+ ?i 1)))
   ?a)
 
@@ -21,7 +21,7 @@
   (str-cat $?any))
   
 (defmethod + ((?a MULTIFIELD) $?any)
-  (mv-append ?a ?any))
+  (create$ ?a ?any))
 
 (defglobal ?*success* = TRUE)
 
@@ -38,7 +38,7 @@
   (print-result (eq (+ a b c d e f) abcdef) 3)
   (print-result (eq (+ "a" "bc" "d" "ef") (alt-str-cat "a" "bc" "d" "ef") "abcdef") 4)
   (print-result 
-    (eq (+ (mv-append a) (mv-append b c)) (mv-append a b c)) 5)
+    (eq (+ (create$ a) (create$ b c)) (create$ a b c)) 5)
   (if ?*success* then
      (printout t "No errors detected." crlf)
    else

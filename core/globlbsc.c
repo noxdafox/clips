@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/06/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*         DEFGLOBAL BASIC COMMANDS HEADER FILE        */
    /*******************************************************/
@@ -50,6 +50,8 @@
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -92,13 +94,13 @@ void DefglobalBasicCommands(
    EnvAddResetFunction(theEnv,"defglobal",ResetDefglobals,50);
 
 #if ! RUN_TIME
-   EnvDefineFunction2(theEnv,"get-defglobal-list",'m',PTIEF GetDefglobalListFunction,"GetDefglobalListFunction","01w");
-   EnvDefineFunction2(theEnv,"undefglobal",'v',PTIEF UndefglobalCommand,"UndefglobalCommand","11w");
-   EnvDefineFunction2(theEnv,"defglobal-module",'w',PTIEF DefglobalModuleFunction,"DefglobalModuleFunction","11w");
+   EnvAddUDF(theEnv,"get-defglobal-list","m",0,1,"y",GetDefglobalListFunction,"GetDefglobalListFunction",NULL);
+   EnvAddUDF(theEnv,"undefglobal","v",1,1,"y",UndefglobalCommand,"UndefglobalCommand",NULL);
+   EnvAddUDF(theEnv,"defglobal-module","y",1,1,"y",DefglobalModuleFunction,"DefglobalModuleFunction",NULL);
 
 #if DEBUGGING_FUNCTIONS
-   EnvDefineFunction2(theEnv,"list-defglobals",'v', PTIEF ListDefglobalsCommand,"ListDefglobalsCommand","01w");
-   EnvDefineFunction2(theEnv,"ppdefglobal",'v',PTIEF PPDefglobalCommand,"PPDefglobalCommand","11w");
+   EnvAddUDF(theEnv,"list-defglobals","v",0,1,"y",ListDefglobalsCommand,"ListDefglobalsCommand",NULL);
+   EnvAddUDF(theEnv,"ppdefglobal","v",1,1,"y",PPDefglobalCommand,"PPDefglobalCommand",NULL);
    AddWatchItem(theEnv,"globals",0,&DefglobalData(theEnv)->WatchGlobals,0,DefglobalWatchAccess,DefglobalWatchPrint);
 #endif
 
@@ -138,7 +140,7 @@ static void ResetDefglobalAction(
 #pragma unused(buffer)
 #endif
    Defglobal *theDefglobal = (Defglobal *) theConstruct;
-   DATA_OBJECT assignValue;
+   CLIPSValue assignValue;
 
    if (EvaluateExpression(theEnv,theDefglobal->initial,&assignValue))
      {
@@ -166,9 +168,11 @@ static void SaveDefglobals(
 /*   for the undefglobal command.           */
 /********************************************/
 void UndefglobalCommand(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   UndefconstructCommand(theEnv,"undefglobal",DefglobalData(theEnv)->DefglobalConstruct); 
+   UndefconstructCommand(theEnv,"undefglobal",DefglobalData(theEnv)->DefglobalConstruct);
   }
 
 /************************************/
@@ -188,7 +192,8 @@ bool EnvUndefglobal(
 /**************************************************/
 void GetDefglobalListFunction(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   { 
    GetConstructListFunction(theEnv,"get-defglobal-list",returnValue,DefglobalData(theEnv)->DefglobalConstruct); 
   }
@@ -199,7 +204,7 @@ void GetDefglobalListFunction(
 /******************************************/
 void EnvGetDefglobalList(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue,
+  CLIPSValue *returnValue,
   Defmodule *theModule)
   {
    GetConstructList(theEnv,returnValue,DefglobalData(theEnv)->DefglobalConstruct,theModule); 
@@ -209,10 +214,13 @@ void EnvGetDefglobalList(
 /* DefglobalModuleFunction: H/L access routine   */
 /*   for the defglobal-module function.          */
 /*************************************************/
-void *DefglobalModuleFunction(
-  Environment *theEnv)
-  { 
-   return(GetConstructModuleCommand(theEnv,"defglobal-module",DefglobalData(theEnv)->DefglobalConstruct)); 
+void DefglobalModuleFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
+  {
+   returnValue->type = SYMBOL;
+   returnValue->value = GetConstructModuleCommand(theEnv,"defglobal-module",DefglobalData(theEnv)->DefglobalConstruct);
   }
 
 #if DEBUGGING_FUNCTIONS
@@ -222,9 +230,11 @@ void *DefglobalModuleFunction(
 /*   for the ppdefglobal command.           */
 /********************************************/
 void PPDefglobalCommand(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   PPConstructCommand(theEnv,"ppdefglobal",DefglobalData(theEnv)->DefglobalConstruct); 
+   PPConstructCommand(theEnv,"ppdefglobal",DefglobalData(theEnv)->DefglobalConstruct);
   }
 
 /*************************************/
@@ -244,7 +254,9 @@ bool PPDefglobal(
 /*   for the list-defglobals command.          */
 /***********************************************/
 void ListDefglobalsCommand(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    ListConstructCommand(theEnv,"list-defglobals",DefglobalData(theEnv)->DefglobalConstruct);
   }

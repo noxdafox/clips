@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*             PROCEDURAL FUNCTIONS MODULE             */
    /*******************************************************/
@@ -44,6 +44,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -85,15 +87,15 @@ void ProceduralFunctionDefinitions(
    AllocateEnvironmentData(theEnv,PRCDRFUN_DATA,sizeof(struct procedureFunctionData),DeallocateProceduralFunctionData);
 
 #if ! RUN_TIME
-   EnvDefineFunction2(theEnv,"if", 'u', PTIEF IfFunction, "IfFunction", NULL);
-   EnvDefineFunction2(theEnv,"while", 'u', PTIEF WhileFunction, "WhileFunction", NULL);
-   EnvDefineFunction2(theEnv,"loop-for-count",'u', PTIEF LoopForCountFunction, "LoopForCountFunction", NULL);
-   EnvDefineFunction2(theEnv,"(get-loop-count)",'g', PTIEF GetLoopCount, "GetLoopCount", NULL);
-   EnvDefineFunction2(theEnv,"bind", 'u', PTIEF BindFunction, "BindFunction", NULL);
-   EnvDefineFunction2(theEnv,"progn", 'u', PTIEF PrognFunction, "PrognFunction", NULL);
-   EnvDefineFunction2(theEnv,"return", 'u', PTIEF ReturnFunction, "ReturnFunction",NULL);
-   EnvDefineFunction2(theEnv,"break", 'v', PTIEF BreakFunction, "BreakFunction",NULL);
-   EnvDefineFunction2(theEnv,"switch", 'u', PTIEF SwitchFunction, "SwitchFunction",NULL);
+   EnvAddUDF(theEnv,"if","*",0,UNBOUNDED,NULL,IfFunction,"IfFunction",NULL);
+   EnvAddUDF(theEnv,"while","*",0,UNBOUNDED,NULL,WhileFunction,"WhileFunction",NULL);
+   EnvAddUDF(theEnv,"loop-for-count","*",0,UNBOUNDED,NULL,LoopForCountFunction,"LoopForCountFunction",NULL);
+   EnvAddUDF(theEnv,"(get-loop-count)","l",1,1,NULL,GetLoopCount,"GetLoopCount",NULL);
+   EnvAddUDF(theEnv,"bind","*",0,UNBOUNDED,NULL,BindFunction,"BindFunction",NULL);
+   EnvAddUDF(theEnv,"progn","*",0,UNBOUNDED,NULL,PrognFunction,"PrognFunction",NULL);
+   EnvAddUDF(theEnv,"return","*",0,UNBOUNDED,NULL,ReturnFunction,"ReturnFunction",NULL);
+   EnvAddUDF(theEnv,"break","v",0,0,NULL,BreakFunction,"BreakFunction",NULL);
+   EnvAddUDF(theEnv,"switch","*",0,UNBOUNDED,NULL,SwitchFunction,"SwitchFunction",NULL);
 
    ProceduralFunctionParsers(theEnv);
 
@@ -116,7 +118,7 @@ void ProceduralFunctionDefinitions(
 static void DeallocateProceduralFunctionData(
   Environment *theEnv)
   {
-   DATA_OBJECT_PTR nextPtr, garbagePtr;
+   CLIPSValue *nextPtr, *garbagePtr;
 
    garbagePtr = ProcedureFunctionData(theEnv)->BindList;
 
@@ -134,9 +136,10 @@ static void DeallocateProceduralFunctionData(
 /***************************************/
 void WhileFunction(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT theResult;
+   CLIPSValue theResult;
    struct garbageFrame newGarbageFrame;
    struct garbageFrame *oldGarbageFrame;
   
@@ -206,9 +209,10 @@ void WhileFunction(
 /********************************************/
 void LoopForCountFunction(
   Environment *theEnv,
-  DATA_OBJECT_PTR loopResult)
+  UDFContext *context,
+  CLIPSValue *loopResult)
   {
-   DATA_OBJECT arg_ptr;
+   CLIPSValue theArg;
    long long iterationEnd;
    LOOP_COUNTER_STACK *tmpCounter;
    struct garbageFrame newGarbageFrame;
@@ -218,7 +222,7 @@ void LoopForCountFunction(
    tmpCounter->loopCounter = 0L;
    tmpCounter->nxt = ProcedureFunctionData(theEnv)->LoopCounterStack;
    ProcedureFunctionData(theEnv)->LoopCounterStack = tmpCounter;
-   if (EnvArgTypeCheck(theEnv,"loop-for-count",1,INTEGER,&arg_ptr) == false)
+   if (EnvArgTypeCheck(theEnv,"loop-for-count",1,INTEGER,&theArg) == false)
      {
       loopResult->type = SYMBOL;
       loopResult->value = EnvFalseSymbol(theEnv);
@@ -226,8 +230,8 @@ void LoopForCountFunction(
       rtn_struct(theEnv,loopCounterStack,tmpCounter);
       return;
      }
-   tmpCounter->loopCounter = DOToLong(arg_ptr);
-   if (EnvArgTypeCheck(theEnv,"loop-for-count",2,INTEGER,&arg_ptr) == false)
+   tmpCounter->loopCounter = DOToLong(theArg);
+   if (EnvArgTypeCheck(theEnv,"loop-for-count",2,INTEGER,&theArg) == false)
      {
       loopResult->type = SYMBOL;
       loopResult->value = EnvFalseSymbol(theEnv);
@@ -241,14 +245,14 @@ void LoopForCountFunction(
    newGarbageFrame.priorFrame = oldGarbageFrame;
    UtilityData(theEnv)->CurrentGarbageFrame = &newGarbageFrame;
 
-   iterationEnd = DOToLong(arg_ptr);
+   iterationEnd = DOToLong(theArg);
    while ((tmpCounter->loopCounter <= iterationEnd) &&
           (EvaluationData(theEnv)->HaltExecution != true))
      {
       if ((ProcedureFunctionData(theEnv)->BreakFlag == true) || (ProcedureFunctionData(theEnv)->ReturnFlag == true))
         break;
 
-      EnvRtnUnknown(theEnv,3,&arg_ptr);
+      EnvRtnUnknown(theEnv,3,&theArg);
 
       if ((ProcedureFunctionData(theEnv)->BreakFlag == true) || (ProcedureFunctionData(theEnv)->ReturnFlag == true))
         break;
@@ -262,10 +266,10 @@ void LoopForCountFunction(
    ProcedureFunctionData(theEnv)->BreakFlag = false;
    if (ProcedureFunctionData(theEnv)->ReturnFlag == true)
      {
-      loopResult->type = arg_ptr.type;
-      loopResult->value = arg_ptr.value;
-      loopResult->begin = arg_ptr.begin;
-      loopResult->end = arg_ptr.end;
+      loopResult->type = theArg.type;
+      loopResult->value = theArg.value;
+      loopResult->begin = theArg.begin;
+      loopResult->end = theArg.end;
      }
    else
      {
@@ -282,8 +286,10 @@ void LoopForCountFunction(
 /*****************/
 /* GetLoopCount: */
 /*****************/
-long long GetLoopCount(
-  Environment *theEnv)
+void GetLoopCount(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    int depth;
    LOOP_COUNTER_STACK *tmpCounter;
@@ -295,7 +301,9 @@ long long GetLoopCount(
       tmpCounter = tmpCounter->nxt;
       depth--;
      }
-   return(tmpCounter->loopCounter);
+
+   returnValue->type = INTEGER;
+   returnValue->value = EnvAddLong(theEnv,tmpCounter->loopCounter);
   }
 
 /************************************/
@@ -304,7 +312,8 @@ long long GetLoopCount(
 /************************************/
 void IfFunction(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    int numArgs;
    struct expr *theExpr;
@@ -428,9 +437,10 @@ void IfFunction(
 /**************************************/
 void BindFunction(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT *theBind, *lastBind;
+   CLIPSValue *theBind, *lastBind;
    bool found = false,
        unbindVar = false;
    SYMBOL_HN *variableName = NULL;
@@ -551,10 +561,10 @@ void BindFunction(
 /*******************************************/
 bool GetBoundVariable(
   Environment *theEnv,
-  DATA_OBJECT_PTR vPtr,
+  CLIPSValue *vPtr,
   SYMBOL_HN *varName)
   {
-   DATA_OBJECT_PTR bindPtr;
+   CLIPSValue *bindPtr;
    
    for (bindPtr = ProcedureFunctionData(theEnv)->BindList; bindPtr != NULL; bindPtr = bindPtr->next)
      {
@@ -588,7 +598,8 @@ void FlushBindList(
 /***************************************/
 void PrognFunction(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    struct expr *argPtr;
 
@@ -625,15 +636,16 @@ void PrognFunction(
 /*****************************************************************/
 void ReturnFunction(
   Environment *theEnv,
-  DATA_OBJECT_PTR result)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    if (EnvRtnArgCount(theEnv) == 0)
      {
-      result->type = RVOID;
-      result->value = EnvFalseSymbol(theEnv);
+      returnValue->type = RVOID;
+      returnValue->value = EnvFalseSymbol(theEnv);
      }
    else
-     EnvRtnUnknown(theEnv,1,result);
+     EnvRtnUnknown(theEnv,1,returnValue);
    ProcedureFunctionData(theEnv)->ReturnFlag = true;
   }
 
@@ -641,7 +653,9 @@ void ReturnFunction(
 /* BreakFunction: H/L access routine for the break function.   */
 /***************************************************************/
 void BreakFunction(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    ProcedureFunctionData(theEnv)->BreakFlag = true;
   }
@@ -651,13 +665,14 @@ void BreakFunction(
 /*****************************************************************/
 void SwitchFunction(
   Environment *theEnv,
-  DATA_OBJECT_PTR result)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT switch_val,case_val;
+   CLIPSValue switch_val,case_val;
    EXPRESSION *theExp;
 
-   result->type = SYMBOL;
-   result->value = EnvFalseSymbol(theEnv);
+   returnValue->type = SYMBOL;
+   returnValue->value = EnvFalseSymbol(theEnv);
 
    /* ==========================
       Get the value to switch on
@@ -672,7 +687,7 @@ void SwitchFunction(
          ================================================= */
       if (theExp->type == RVOID)
         {
-         EvaluateExpression(theEnv,theExp->nextArg,result);
+         EvaluateExpression(theEnv,theExp->nextArg,returnValue);
          return;
         }
 
@@ -687,7 +702,7 @@ void SwitchFunction(
          if ((case_val.type == MULTIFIELD) ? MultifieldDOsEqual(&switch_val,&case_val) :
              (switch_val.value == case_val.value))
            {
-            EvaluateExpression(theEnv,theExp->nextArg,result);
+            EvaluateExpression(theEnv,theExp->nextArg,returnValue);
             return;
            }
         }

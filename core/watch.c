@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/06/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*                    WATCH MODULE                     */
    /*******************************************************/
@@ -49,6 +49,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -360,9 +362,11 @@ int GetNthWatchValue(
 /*   for the watch command.           */
 /**************************************/
 void WatchCommand(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT theValue;
+   CLIPSValue theValue;
    const char *argument;
    bool recognized;
    struct watchItem *wPtr;
@@ -407,13 +411,15 @@ void WatchCommand(
 /*   for the unwatch command.           */
 /****************************************/
 void UnwatchCommand(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT theValue;
+   CLIPSValue theValue;
    const char *argument;
    bool recognized;
    struct watchItem *wPtr;
-
+   
    /*==========================================*/
    /* Determine which item is to be unwatched. */
    /*==========================================*/
@@ -454,10 +460,12 @@ void UnwatchCommand(
 /*   for the list-watch-items command.          */
 /************************************************/
 void ListWatchItemsCommand(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    struct watchItem *wPtr;
-   DATA_OBJECT theValue;
+   CLIPSValue theValue;
    bool recognized;
 
    /*=======================*/
@@ -524,26 +532,26 @@ void ListWatchItemsCommand(
 /* GetWatchItemCommand: H/L access routine */
 /*   for the get-watch-item command.       */
 /*******************************************/
-bool GetWatchItemCommand(
-  Environment *theEnv)
+void GetWatchItemCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT theValue;
+   CLIPSValue theValue;
    const char *argument;
    bool recognized;
 
-   /*============================================*/
-   /* Check for the correct number of arguments. */
-   /*============================================*/
-
-   if (EnvArgCountCheck(theEnv,"get-watch-item",EXACTLY,1) == -1)
-     { return false; }
-
+   returnValue->type = SYMBOL;
+   
    /*========================================*/
    /* Determine which item is to be watched. */
    /*========================================*/
 
    if (EnvArgTypeCheck(theEnv,"get-watch-item",1,SYMBOL,&theValue) == false)
-     { return false; }
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
 
    argument = DOToString(theValue);
    ValidWatchItem(theEnv,argument,&recognized);
@@ -551,7 +559,8 @@ bool GetWatchItemCommand(
      {
       EnvSetEvaluationError(theEnv,true);
       ExpectedTypeError1(theEnv,"get-watch-item",1,"watchable symbol");
-      return false;
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
      }
 
    /*===========================*/
@@ -559,9 +568,9 @@ bool GetWatchItemCommand(
    /*===========================*/
 
    if (EnvGetWatchItem(theEnv,argument) == 1)
-     { return true; }
-
-   return false;
+     { returnValue->value = EnvTrueSymbol(theEnv); }
+   else
+     { returnValue->value = EnvFalseSymbol(theEnv); }
   }
 
 /*************************************************************/
@@ -571,11 +580,10 @@ void WatchFunctionDefinitions(
   Environment *theEnv)
   {
 #if ! RUN_TIME
-   EnvDefineFunction2(theEnv,"watch",   'v', PTIEF WatchCommand,   "WatchCommand", "1**w");
-   EnvDefineFunction2(theEnv,"unwatch", 'v', PTIEF UnwatchCommand, "UnwatchCommand", "1**w");
-   EnvDefineFunction2(theEnv,"get-watch-item", 'b', PTIEF GetWatchItemCommand,   "GetWatchItemCommand", "11w");
-   EnvDefineFunction2(theEnv,"list-watch-items", 'v', PTIEF ListWatchItemsCommand,
-                   "ListWatchItemsCommand", "0**w");
+   EnvAddUDF(theEnv,"watch","v",1,UNBOUNDED,"*;y",WatchCommand,"WatchCommand",NULL);
+   EnvAddUDF(theEnv,"unwatch","v",1,UNBOUNDED,"*;y",UnwatchCommand,"UnwatchCommand",NULL);
+   EnvAddUDF(theEnv,"get-watch-item","b",1,1,"y",GetWatchItemCommand,"GetWatchItemCommand",NULL);
+   EnvAddUDF(theEnv,"list-watch-items","v",0,UNBOUNDED,"*;y",ListWatchItemsCommand,"ListWatchItemsCommand",NULL);
 #endif
 
    EnvAddRouter(theEnv,WTRACE,1000,RecognizeWatchRouters,CaptureWatchPrints,NULL,NULL,NULL);

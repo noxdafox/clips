@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*              FILE COMMANDS HEADER FILE              */
    /*******************************************************/
@@ -50,6 +50,8 @@
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_filecom
@@ -70,14 +72,14 @@
    bool                           RemoveBatch(Environment *);
    bool                           BatchActive(Environment *);
    void                           CloseAllBatchSources(Environment *);
-   bool                           BatchCommand(Environment *);
-   bool                           BatchStarCommand(Environment *);
+   void                           BatchCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           BatchStarCommand(Environment *,UDFContext *,CLIPSValue *);
    bool                           EnvBatchStar(Environment *,const char *);
-   bool                           LoadCommand(Environment *);
-   bool                           LoadStarCommand(Environment *);
-   bool                           SaveCommand(Environment *);
-   bool                           DribbleOnCommand(Environment *);
-   bool                           DribbleOffCommand(Environment *);
+   void                           LoadCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           LoadStarCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           SaveCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           DribbleOnCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           DribbleOffCommand(Environment *,UDFContext *,CLIPSValue *);
 
 #endif /* _H_filecom */
 

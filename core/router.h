@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/10/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*                 ROUTER HEADER FILE                  */
    /*******************************************************/
@@ -55,6 +55,8 @@
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*            Callbacks must be environment aware.           */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -146,7 +148,7 @@ struct routerData
    FILE                          *GetFastLoad(Environment *);
    FILE                          *GetFastSave(Environment *);
    void                           UnrecognizedRouterMessage(Environment *,const char *);
-   void                           ExitCommand(Environment *);
+   void                           ExitCommand(Environment *,UDFContext *,CLIPSValue *);
    int                            PrintNRouter(Environment *,const char *,const char *,unsigned long);
    size_t                         EnvInputBufferCount(Environment *);
    Router                        *EnvFindRouter(Environment *,const char *);

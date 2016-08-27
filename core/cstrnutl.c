@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*             CONSTRAINT UTILITY MODULE               */
    /*******************************************************/
@@ -28,6 +28,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -493,205 +495,48 @@ CONSTRAINT_RECORD *FunctionCallToConstraintRecord(
   Environment *theEnv,
   void *theFunction)
   {
-   CONSTRAINT_RECORD *rv;
-
-   rv = GetConstraintRecord(theEnv);
-   rv->anyAllowed = false;
-
-   switch ((char) ValueFunctionType(theFunction))
-     {
-      case 'a':
-        rv->externalAddressesAllowed = true;
-        break;
-
-      case 'f':
-      case 'd':
-        rv->floatsAllowed = true;
-        break;
-
-      case 'i':
-      case 'g':
-      case 'l':
-        rv->integersAllowed = true;
-        break;
-
-      case 'j':
-        rv->instanceNamesAllowed = true;
-        rv->symbolsAllowed = true;
-        rv->stringsAllowed = true;
-        break;
-
-      case 'k':
-        rv->symbolsAllowed = true;
-        rv->stringsAllowed = true;
-        break;
-
-      case 'm':
-        rv->singlefieldsAllowed = false;
-        rv->multifieldsAllowed = true;
-        break;
-
-      case 'n':
-        rv->floatsAllowed = true;
-        rv->integersAllowed = true;
-        break;
-
-      case 'o':
-        rv->instanceNamesAllowed = true;
-        break;
-
-      case 's':
-        rv->stringsAllowed = true;
-        break;
-
-      case 'u':
-        rv->anyAllowed = true;
-        rv->multifieldsAllowed = true;
-        break;
-
-      case 'w':
-      case 'c':
-      case 'b':
-        rv->symbolsAllowed = true;
-        break;
-
-      case 'x':
-        rv->instanceAddressesAllowed = true;
-        break;
-
-      case 'y':
-        rv->factAddressesAllowed = true;
-        break;
-
-      case 'v':
-        rv->voidAllowed = true;
-        break;
-     }
-
-   return(rv);
+   return ArgumentTypeToConstraintRecord(theEnv,UnknownFunctionType(theFunction));
   }
 
-/*******************************************************/
-/* ArgumentTypeToConstraintRecord: Converts one of the */
-/*   function argument types (used by DefineFunction2) */
-/*   to a constraint record.                           */
-/*******************************************************/
+/*********************************************/
+/* ArgumentTypeToConstraintRecord2: Uses the */
+/*   new argument type codes for 6.4.        */
+/*********************************************/
 CONSTRAINT_RECORD *ArgumentTypeToConstraintRecord(
   Environment *theEnv,
-  int theRestriction)
+  unsigned bitTypes)
   {
    CONSTRAINT_RECORD *rv;
 
    rv = GetConstraintRecord(theEnv);
    rv->anyAllowed = false;
 
-   switch (theRestriction)
-     {
-      case 'a':
-        rv->externalAddressesAllowed = true;
-        break;
-
-      case 'e':
-        rv->symbolsAllowed = true;
-        rv->instanceNamesAllowed = true;
-        rv->instanceAddressesAllowed = true;
-        break;
-
-      case 'd':
-      case 'f':
-        rv->floatsAllowed = true;
-        break;
-
-      case 'g':
-        rv->integersAllowed = true;
-        rv->floatsAllowed = true;
-        rv->symbolsAllowed = true;
-        break;
-
-      case 'h':
-        rv->factAddressesAllowed = true;
-        rv->integersAllowed = true;
-        rv->symbolsAllowed = true;
-        rv->instanceNamesAllowed = true;
-        rv->instanceAddressesAllowed = true;
-        break;
-
-      case 'i':
-      case 'l':
-        rv->integersAllowed = true;
-        break;
-
-      case 'j':
-        rv->symbolsAllowed = true;
-        rv->stringsAllowed = true;
-        rv->instanceNamesAllowed = true;
-        break;
-
-      case 'k':
-        rv->symbolsAllowed = true;
-        rv->stringsAllowed = true;
-        break;
-
-      case 'm':
-        rv->singlefieldsAllowed = false;
-        rv->multifieldsAllowed = true;
-        break;
-
-      case 'n':
-        rv->floatsAllowed = true;
-        rv->integersAllowed = true;
-        break;
-
-      case 'o':
-        rv->instanceNamesAllowed = true;
-        break;
-
-      case 'p':
-        rv->instanceNamesAllowed = true;
-        rv->symbolsAllowed = true;
-        break;
-
-      case 'q':
-        rv->symbolsAllowed = true;
-        rv->stringsAllowed = true;
-        rv->multifieldsAllowed = true;
-        break;
-
-      case 's':
-        rv->stringsAllowed = true;
-        break;
-
-      case 'w':
-        rv->symbolsAllowed = true;
-        break;
-
-      case 'x':
-        rv->instanceAddressesAllowed = true;
-        break;
-
-      case 'y':
-        rv->factAddressesAllowed = true;
-        break;
-
-      case 'z':
-        rv->symbolsAllowed = true;
-        rv->factAddressesAllowed = true;
-        rv->integersAllowed = true;
-        break;
-
-      case 'u':
-        rv->anyAllowed = true;
-        rv->multifieldsAllowed = true;
-        break;
-
-      case 'v':
-        rv->voidAllowed = true;
-        break;
-     }
+   if (bitTypes & VOID_TYPE)
+     { rv->voidAllowed = true; }
+   if (bitTypes & FLOAT_TYPE)
+     { rv->floatsAllowed = true; }
+   if (bitTypes & INTEGER_TYPE)
+     { rv->integersAllowed = true; }
+   if (bitTypes & SYMBOL_TYPE)
+     { rv->symbolsAllowed = true; }
+   if (bitTypes & STRING_TYPE)
+     { rv->stringsAllowed = true; }
+   if (bitTypes & MULTIFIELD_TYPE)
+     { rv->multifieldsAllowed = true; }
+   if (bitTypes & EXTERNAL_ADDRESS_TYPE)
+     { rv->externalAddressesAllowed = true; }
+   if (bitTypes & FACT_ADDRESS_TYPE)
+     { rv->factAddressesAllowed = true; }
+   if (bitTypes & INSTANCE_ADDRESS_TYPE)
+     { rv->instanceAddressesAllowed = true; }
+   if (bitTypes & INSTANCE_NAME_TYPE)
+     { rv->instanceNamesAllowed = true; }
+   if (bitTypes & BOOLEAN_TYPE)
+     { rv->symbolsAllowed = true; }
+     
+   if (bitTypes == ANY_TYPE)
+     { rv->anyAllowed = true; }
 
    return(rv);
   }
-
-
-
 

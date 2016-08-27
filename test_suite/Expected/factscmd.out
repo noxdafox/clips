@@ -215,7 +215,7 @@ CLIPS> (clear) ;; New 6.24 stuff
 CLIPS> (ppfact)
 [ARGACCES4] Function ppfact expected at least 1 argument(s)
 CLIPS> (ppfact a)
-[ARGACCES5] Function ppfact expected argument #1 to be of type fact-address or fact-index
+[ARGACCES5] Function ppfact expected argument #1 to be of type integer or fact address
 CLIPS> (ppfact 2)
 [PRNTUTIL1] Unable to find fact f-2.
 CLIPS> (assert (foo a b c d))

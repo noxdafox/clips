@@ -296,12 +296,12 @@ CLIPS> (any-factp ((?b 34)) TRUE)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for fact-set query class restrictions.
 FALSE
-CLIPS> (any-factp ((?b (mv-append BOGUS USER))) TRUE)
+CLIPS> (any-factp ((?b (create$ BOGUS USER))) TRUE)
 [PRNTUTIL1] Unable to find deftemplate BOGUS in function any-factp.
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for fact-set query class restrictions.
 FALSE
-CLIPS> (any-factp ((?b (mv-append USER 34))) TRUE)
+CLIPS> (any-factp ((?b (create$ USER 34))) TRUE)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for fact-set query class restrictions.
 FALSE
@@ -328,12 +328,12 @@ CLIPS> (find-fact ((?b 34)) TRUE)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for fact-set query class restrictions.
 ()
-CLIPS> (find-fact ((?b (mv-append BOGUS USER))) TRUE)
+CLIPS> (find-fact ((?b (create$ BOGUS USER))) TRUE)
 [PRNTUTIL1] Unable to find deftemplate BOGUS in function find-fact.
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for fact-set query class restrictions.
 ()
-CLIPS> (find-fact ((?b (mv-append USER 34))) TRUE)
+CLIPS> (find-fact ((?b (create$ USER 34))) TRUE)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for fact-set query class restrictions.
 ()
@@ -360,12 +360,12 @@ CLIPS> (find-all-facts ((?b 34)) TRUE)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for fact-set query class restrictions.
 ()
-CLIPS> (find-all-facts ((?b (mv-append BOGUS USER))) TRUE)
+CLIPS> (find-all-facts ((?b (create$ BOGUS USER))) TRUE)
 [PRNTUTIL1] Unable to find deftemplate BOGUS in function find-all-facts.
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for fact-set query class restrictions.
 ()
-CLIPS> (find-all-facts ((?b (mv-append USER 34))) TRUE)
+CLIPS> (find-all-facts ((?b (create$ USER 34))) TRUE)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for fact-set query class restrictions.
 ()
@@ -394,12 +394,12 @@ CLIPS> (do-for-fact ((?b 34)) TRUE abc)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for fact-set query class restrictions.
 FALSE
-CLIPS> (do-for-fact ((?b (mv-append BOGUS USER))) TRUE abc)
+CLIPS> (do-for-fact ((?b (create$ BOGUS USER))) TRUE abc)
 [PRNTUTIL1] Unable to find deftemplate BOGUS in function do-for-fact.
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for fact-set query class restrictions.
 FALSE
-CLIPS> (do-for-fact ((?b (mv-append USER 34))) TRUE abc)
+CLIPS> (do-for-fact ((?b (create$ USER 34))) TRUE abc)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for fact-set query class restrictions.
 FALSE
@@ -428,12 +428,12 @@ CLIPS> (do-for-all-facts ((?b 34)) TRUE abc)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for fact-set query class restrictions.
 FALSE
-CLIPS> (do-for-all-facts ((?b (mv-append BOGUS USER))) TRUE abc)
+CLIPS> (do-for-all-facts ((?b (create$ BOGUS USER))) TRUE abc)
 [PRNTUTIL1] Unable to find deftemplate BOGUS in function do-for-all-facts.
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for fact-set query class restrictions.
 FALSE
-CLIPS> (do-for-all-facts ((?b (mv-append USER 34))) TRUE abc)
+CLIPS> (do-for-all-facts ((?b (create$ USER 34))) TRUE abc)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for fact-set query class restrictions.
 FALSE
@@ -462,12 +462,12 @@ CLIPS> (delayed-do-for-all-facts ((?b 34)) TRUE abc)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for fact-set query class restrictions.
 FALSE
-CLIPS> (delayed-do-for-all-facts ((?b (mv-append BOGUS USER))) TRUE abc)
+CLIPS> (delayed-do-for-all-facts ((?b (create$ BOGUS USER))) TRUE abc)
 [PRNTUTIL1] Unable to find deftemplate BOGUS in function delayed-do-for-all-facts.
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for fact-set query class restrictions.
 FALSE
-CLIPS> (delayed-do-for-all-facts ((?b (mv-append USER 34))) TRUE abc)
+CLIPS> (delayed-do-for-all-facts ((?b (create$ USER 34))) TRUE abc)
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for fact-set query class restrictions.
 FALSE
@@ -483,8 +483,8 @@ CLIPS> (assert (Y (name [y])))
 <Fact-38>
 CLIPS> (assert (Z (name [z]))))
 <Fact-39>
-CLIPS> (do-for-all-facts ((?ins1 ?*list* X (mv-append Y Z)) 
-                       (?ins2 X (mv-append Y Z) ?*list*))
+CLIPS> (do-for-all-facts ((?ins1 ?*list* X (create$ Y Z)) 
+                       (?ins2 X (create$ Y Z) ?*list*))
   TRUE
   (printout t ?ins1:name " " ?ins2:name crlf))
 [v] [x]

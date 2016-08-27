@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/06/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*         DEFMODULE BASIC COMMANDS HEADER FILE        */
    /*******************************************************/
@@ -36,6 +36,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -78,11 +80,11 @@ void DefmoduleBasicCommands(
    AddSaveFunction(theEnv,"defmodule",SaveDefmodules,1100);
 
 #if ! RUN_TIME
-   EnvDefineFunction2(theEnv,"get-defmodule-list",'m',PTIEF GetDefmoduleListFunction,"GetDefmoduleListFunction","00");
+   EnvAddUDF(theEnv,"get-defmodule-list","m",0,0,NULL,GetDefmoduleListFunction,"GetDefmoduleListFunction",NULL);
 
 #if DEBUGGING_FUNCTIONS
-   EnvDefineFunction2(theEnv,"list-defmodules",'v', PTIEF ListDefmodulesCommand,"ListDefmodulesCommand","00");
-   EnvDefineFunction2(theEnv,"ppdefmodule",'v',PTIEF PPDefmoduleCommand,"PPDefmoduleCommand","11w");
+   EnvAddUDF(theEnv,"list-defmodules","v",0,0,NULL,ListDefmodulesCommand,"ListDefmodulesCommand",NULL);
+   EnvAddUDF(theEnv,"ppdefmodule","v",1,1,"y",PPDefmoduleCommand,"PPDefmoduleCommand",NULL);
 #endif
 #endif
 #endif
@@ -141,14 +143,13 @@ static void SaveDefmodules(
 
 /************************************************/
 /* GetDefmoduleListFunction: H/L access routine */
-/*   for the get-defmodule-list.     .          */
+/*   for the get-defmodule-list function.       */
 /************************************************/
 void GetDefmoduleListFunction(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   if (EnvArgCountCheck(theEnv,"get-defmodule-list",EXACTLY,0) == -1) return;
-
    EnvGetDefmoduleList(theEnv,returnValue);
   }
 
@@ -158,7 +159,7 @@ void GetDefmoduleListFunction(
 /******************************************/
 void EnvGetDefmoduleList(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue)
+  CLIPSValue *returnValue)
   {
    void *theConstruct;
    unsigned long count = 0;
@@ -210,7 +211,9 @@ void EnvGetDefmoduleList(
 /*   for the ppdefmodule command.           */
 /********************************************/
 void PPDefmoduleCommand(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    const char *defmoduleName;
 
@@ -251,10 +254,10 @@ bool PPDefmodule(
 /*   for the list-defmodules command.          */
 /***********************************************/
 void ListDefmodulesCommand(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   if (EnvArgCountCheck(theEnv,"list-defmodules",EXACTLY,0) == -1) return;
-
    EnvListDefmodules(theEnv,WDISPLAY);
   }
 

@@ -11,7 +11,7 @@
 (defrule foo                       ; DR0411
    (fact ?x)
    (fact $?y)
-   (test (eq ?y (str-explode ?x)))
+   (test (eq ?y (explode$ ?x)))
    =>)
 (reset)                            ; DR0411
 (assert (fact "a b c"))            ; DR0411
@@ -109,7 +109,7 @@
 (make-instance foo of FOO)         ; DR0479 - [foo]
 (send [foo] put-BAR a b c)         ; DR0479 - TRUE
 (find-instance ((?x FOO))          ; DR0479
-    (member d (send ?x get-BAR)))  ; DR0479 - ()
+    (member$ d (send ?x get-BAR))) ; DR0479 - ()
 (clear)                            ; DR0480
 (defclass mineral (is-a USER)      ; DR0480
    (role concrete)

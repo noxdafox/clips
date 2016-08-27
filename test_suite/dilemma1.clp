@@ -182,11 +182,11 @@
   =>
   (retract ?mv)
   (printout t crlf "Solution found: " crlf crlf)
-  (bind ?length (length ?m))
+  (bind ?length (length$ ?m))
   (bind ?i 1)
   (bind ?shore shore-2)
   (while (<= ?i ?length)
-     (bind ?thing (nth ?i ?m))
+     (bind ?thing (nth$ ?i ?m))
      (if (eq ?thing alone)
         then (printout t "Farmer moves alone to " ?shore "." crlf)
         else (printout t "Farmer moves with " ?thing " to " ?shore "." crlf))

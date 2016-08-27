@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*                  SETUP HEADER FILE                  */
    /*******************************************************/
@@ -86,6 +86,8 @@
 /*                                                           */
 /*            Removed VAX_VMS support.                       */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_setup
@@ -155,7 +157,6 @@
 /* Some definitions for use with declarations. */
 /***********************************************/
 
-#define VOID_ARG void
 #define STD_SIZE size_t
 
 /*******************************************/
@@ -448,7 +449,7 @@
 /********************************************/
 
 #ifndef DEVELOPER
-#define DEVELOPER 0
+#define DEVELOPER 1
 #endif
 
 #if DEVELOPER

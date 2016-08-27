@@ -6,7 +6,7 @@
 ;;;     This example selects an appropriate wine
 ;;;     to drink with a meal.
 ;;;
-;;;     CLIPS Version 6.3 Example
+;;;     CLIPS Version 6.4 Example
 ;;;
 ;;;     For use with the CLIPSJNI
 ;;;======================================================
@@ -91,7 +91,7 @@
               (if)
               (then ?attribute is ?value $?rest))
   (test (or (eq (length$ ?rest) 0)
-            (neq (nth 1 ?rest) with)))
+            (neq (nth$ 1 ?rest) with)))
   =>
   (modify ?f (then ?rest))
   (assert (attribute (name ?attribute) (value ?value) (certainty ?c1))))

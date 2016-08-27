@@ -481,7 +481,7 @@ CLIPS> (save-instances 34)
 [ARGACCES5] Function save-instances expected argument #1 to be of type symbol or string
 CLIPS> (send [t2] put-z (instance-address t1))
 <Instance-t1>
-CLIPS> (mv-slot-replace t1 y 2 2 (instance-address t2))
+CLIPS> (slot-replace$ t1 y 2 2 (instance-address t2))
 (a <Instance-t2> c d e f)
 CLIPS> (save-instances "Actual//coolcmd2.out")
 3

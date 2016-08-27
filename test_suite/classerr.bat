@@ -89,7 +89,7 @@
 (defclass JUNK (is-a USER)
    (slot bad (default abc def)))
 (defclass JUNK (is-a USER)
-   (slot bad (default (mv-append))))
+   (slot bad (default (create$))))
 (defclass GOOD2 (is-a USER) (role concrete)
    (slot bad (default-dynamic abc def)))
 (make-instance gd2 of GOOD2)

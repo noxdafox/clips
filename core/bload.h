@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*                 BLOAD HEADER FILE                   */
    /*******************************************************/
@@ -40,6 +40,8 @@
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_bload
@@ -74,7 +76,7 @@ struct bloadData
 #define FunctionPointer(i) ((struct FunctionDefinition *) (((i) == -1L) ? NULL : BloadData(theEnv)->FunctionArray[i]))
 
    void                    InitializeBloadData(Environment *);
-   bool                    BloadCommand(Environment *);
+   void                    BloadCommand(Environment *,UDFContext *,CLIPSValue *);
    bool                    EnvBload(Environment *,const char *);
    void                    BloadandRefresh(Environment *,long,size_t,void (*)(Environment *,void *,long));
    bool                    Bloaded(Environment *);

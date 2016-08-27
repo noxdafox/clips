@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -55,6 +55,8 @@
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_inscom
@@ -90,36 +92,36 @@ struct instanceData
    bool                           EnvDeleteInstance(Environment *,Instance *);
    bool                           EnvUnmakeInstance(Environment *,Instance *);
 #if DEBUGGING_FUNCTIONS
-   void                           InstancesCommand(Environment *);
-   void                           PPInstanceCommand(Environment *);
+   void                           InstancesCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           PPInstanceCommand(Environment *,UDFContext *,CLIPSValue *);
    void                           EnvInstances(Environment *,const char *,Defmodule *,const char *,bool);
 #endif
    Instance                      *EnvMakeInstance(Environment *,const char *);
    Instance                      *EnvCreateRawInstance(Environment *,Defclass *,const char *);
    Instance                      *EnvFindInstance(Environment *,Defmodule *,const char *,bool);
    bool                           EnvValidInstanceAddress(Environment *,Instance *);
-   void                           EnvDirectGetSlot(Environment *,Instance *,const char *,DATA_OBJECT *);
-   bool                           EnvDirectPutSlot(Environment *,Instance *,const char *,DATA_OBJECT *);
+   void                           EnvDirectGetSlot(Environment *,Instance *,const char *,CLIPSValue *);
+   bool                           EnvDirectPutSlot(Environment *,Instance *,const char *,CLIPSValue *);
    const char                    *EnvGetInstanceName(Environment *,Instance *);
    Defclass                      *EnvGetInstanceClass(Environment *,Instance *);
    unsigned long                  GetGlobalNumberOfInstances(Environment *);
    Instance                      *EnvGetNextInstance(Environment *,Instance *);
    Instance                      *GetNextInstanceInScope(Environment *,Instance *);
    Instance                      *EnvGetNextInstanceInClass(Environment *,Defclass *,Instance *);
-   Instance                      *EnvGetNextInstanceInClassAndSubclasses(Environment *,Defclass **,Instance *,DATA_OBJECT *);
+   Instance                      *EnvGetNextInstanceInClassAndSubclasses(Environment *,Defclass **,Instance *,CLIPSValue *);
    void                           EnvGetInstancePPForm(Environment *,char *,size_t,Instance *);
-   void                           ClassCommand(Environment *,DATA_OBJECT *);
-   bool                           DeleteInstanceCommand(Environment *);
-   bool                           UnmakeInstanceCommand(Environment *);
-   void                           SymbolToInstanceNameFunction(Environment *,DATA_OBJECT *);
-   void                          *InstanceNameToSymbolFunction(Environment *);
-   void                           InstanceAddressCommand(Environment *,DATA_OBJECT *);
-   void                           InstanceNameCommand(Environment *,DATA_OBJECT *);
-   bool                           InstanceAddressPCommand(Environment *);
-   bool                           InstanceNamePCommand(Environment *);
-   bool                           InstancePCommand(Environment *);
-   bool                           InstanceExistPCommand(Environment *);
-   bool                           CreateInstanceHandler(Environment *);
+   void                           ClassCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           DeleteInstanceCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           UnmakeInstanceCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           SymbolToInstanceNameFunction(Environment *,UDFContext *,CLIPSValue *);
+   void                           InstanceNameToSymbolFunction(Environment *,UDFContext *,CLIPSValue *);
+   void                           InstanceAddressCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           InstanceNameCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           InstanceAddressPCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           InstanceNamePCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           InstancePCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           InstanceExistPCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           CreateInstanceHandler(Environment *,UDFContext *,CLIPSValue *);
 
 #endif /* _H_inscom */
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*               EVALUATION HEADER FILE                */
    /*******************************************************/
@@ -58,6 +58,8 @@
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_evaluatn
@@ -69,12 +71,12 @@
 struct entityRecord;
 struct dataObject;
 
-typedef struct dataObject DATA_OBJECT;
-typedef struct dataObject * DATA_OBJECT_PTR;
+typedef struct dataObject CLIPSValue;
+typedef struct dataObject * CLIPSValuePtr;
 typedef struct expr FUNCTION_REFERENCE;
 
 typedef void EntityPrintFunction(Environment *,const char *,void *);
-typedef bool EntityEvaluationFunction(Environment *,void *,DATA_OBJECT *);
+typedef bool EntityEvaluationFunction(Environment *,void *,CLIPSValue *);
 typedef void EntityBusyCountFunction(Environment *,void *);
 
 #include "constant.h"
@@ -90,8 +92,6 @@ struct dataObject
    long end;
    struct dataObject *next;
   };
-
-#define DATA_OBJECT_PTR_ARG DATA_OBJECT_PTR
 
 #define C_POINTER_EXTERNAL_ADDRESS 0
 
@@ -124,8 +124,8 @@ struct externalAddressType
    void (*shortPrintFunction)(Environment *,const char *,void *);
    void (*longPrintFunction)(Environment *,const char *,void *);
    bool (*discardFunction)(Environment *,void *);
-   void (*newFunction)(Environment *,DATA_OBJECT *);
-   bool (*callFunction)(Environment *,DATA_OBJECT *,DATA_OBJECT *);
+   void (*newFunction)(Environment *,CLIPSValue *);
+   bool (*callFunction)(Environment *,CLIPSValue *,CLIPSValue *);
   };
 
 typedef struct entityRecord ENTITY_RECORD;
@@ -224,31 +224,31 @@ struct evaluationData
 #include "object.h"
 
    void                           InitializeEvaluationData(Environment *);
-   bool                           EvaluateExpression(Environment *,struct expr *,struct dataObject *);
+   bool                           EvaluateExpression(Environment *,struct expr *,CLIPSValue *);
    void                           EnvSetEvaluationError(Environment *,bool);
    bool                           EnvGetEvaluationError(Environment *);
    void                           EnvSetHaltExecution(Environment *,bool);
    bool                           EnvGetHaltExecution(Environment *);
-   void                           ReturnValues(Environment *,struct dataObject *,bool);
-   void                           PrintDataObject(Environment *,const char *,struct dataObject *);
-   void                           EnvSetMultifieldErrorValue(Environment *,struct dataObject *);
-   void                           ValueInstall(Environment *,struct dataObject *);
-   void                           ValueDeinstall(Environment *,struct dataObject *);
+   void                           ReturnValues(Environment *,CLIPSValue *,bool);
+   void                           PrintDataObject(Environment *,const char *,CLIPSValue *);
+   void                           EnvSetMultifieldErrorValue(Environment *,CLIPSValue *);
+   void                           ValueInstall(Environment *,CLIPSValue *);
+   void                           ValueDeinstall(Environment *,CLIPSValue *);
 #if DEFFUNCTION_CONSTRUCT || DEFGENERIC_CONSTRUCT
-   bool                           EnvFunctionCall(Environment *,const char *,const char *,DATA_OBJECT *);
-   bool                           FunctionCall2(Environment *,FUNCTION_REFERENCE *,const char *,DATA_OBJECT *);
+   bool                           EnvFunctionCall(Environment *,const char *,const char *,CLIPSValue *);
+   bool                           FunctionCall2(Environment *,FUNCTION_REFERENCE *,const char *,CLIPSValue *);
 #endif
-   void                           CopyDataObject(Environment *,DATA_OBJECT *,DATA_OBJECT *,int);
+   void                           CopyDataObject(Environment *,CLIPSValue *,CLIPSValue *,int);
    void                           AtomInstall(Environment *,int,void *);
    void                           AtomDeinstall(Environment *,int,void *);
-   struct expr                   *ConvertValueToExpression(Environment *,DATA_OBJECT *);
+   struct expr                   *ConvertValueToExpression(Environment *,CLIPSValue *);
    unsigned long                  GetAtomicHashValue(unsigned short,void *,int);
    void                           InstallPrimitive(Environment *,struct entityRecord *,int);
    int                            InstallExternalAddressType(Environment *,struct externalAddressType *);
-   void                           TransferDataObjectValues(DATA_OBJECT *,DATA_OBJECT *);
+   void                           TransferDataObjectValues(CLIPSValue *,CLIPSValue *);
    struct expr                   *FunctionReferenceExpression(Environment *,const char *);
    bool                           GetFunctionReference(Environment *,const char *,FUNCTION_REFERENCE *);
-   bool                           DOsEqual(DATA_OBJECT_PTR,DATA_OBJECT_PTR);
-   bool                           EvaluateAndStoreInDataObject(Environment *,bool,EXPRESSION *,DATA_OBJECT *,bool);
+   bool                           DOsEqual(CLIPSValue *,CLIPSValue *);
+   bool                           EvaluateAndStoreInDataObject(Environment *,bool,EXPRESSION *,CLIPSValue *,bool);
 
 #endif /* _H_evaluatn */

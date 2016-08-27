@@ -98,9 +98,9 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getFactList(
    int i;
    jobject arrayList, slotValueList, javaSlotValueObject, theJavaFact, factName, factRelation;
    jobject theJavaSlotName, theJavaSlotValue;
-   DATA_OBJECT slotNames;
-   DATA_OBJECT slotValue;
-   DATA_OBJECT defaultValue;
+   CLIPSValue slotNames;
+   CLIPSValue slotValue;
+   CLIPSValue defaultValue;
    char factNameBuffer[32]; 
    void *theCLIPSEnv = JLongToPointer(clipsEnv);
    
@@ -134,7 +134,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getFactList(
       for (i = 1; i <= GetDOLength(slotNames); i++)
         {
          const char *theCSlotName, *theCSlotValue;
-         jboolean defaulted = FALSE;
+         jboolean defaulted = false;
          
          theCSlotName = ValueToString(GetMFValue(GetValue(slotNames),i));
          
@@ -147,7 +147,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getFactList(
                                            theCSlotName,&defaultValue);
                                            
             if (DOsEqual(&slotValue,&defaultValue))
-              { defaulted = TRUE; }
+              { defaulted = true; }
            }
 
          theCSlotValue = DataObjectToString(theCLIPSEnv,&slotValue);
@@ -274,7 +274,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getFactSlot(
   jstring slotName)
   {
    jobject rv;
-   DATA_OBJECT theDO;
+   CLIPSValue theDO;
    void *theCLIPSEnv = JLongToPointer(clipsEnv);
    const char *cSlotName = (*env)->GetStringUTFChars(env,slotName,NULL);
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/06/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*               INSTANCE FUNCTIONS MODULE             */
    /*******************************************************/
@@ -70,6 +70,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -537,7 +539,7 @@ int FindInstanceTemplateSlot(
                     (NULL if no trace-messages desired)
                  2) The address of the slot
                  3) The address of the value
-                 4) DATA_OBJECT_PTR to store the
+                 4) CLIPSValue pointer to store the
                     set value
                  5) The command doing the put-
   RETURNS      : False on errors, or true
@@ -550,8 +552,8 @@ bool PutSlotValue(
   Environment *theEnv,
   Instance *ins,
   INSTANCE_SLOT *sp,
-  DATA_OBJECT *val,
-  DATA_OBJECT *setVal,
+  CLIPSValue *val,
+  CLIPSValue *setVal,
   const char *theCommand)
   {
    if (ValidSlotValue(theEnv,val,sp->desc,ins,theCommand) == false)
@@ -572,7 +574,7 @@ bool PutSlotValue(
                     (NULL if no trace-messages desired)
                  2) The address of the slot
                  3) The address of the value
-                 4) DATA_OBJECT_PTR to store the
+                 4) CLIPSValue pointer to store the
                     set value
   RETURNS      : False on errors, or true
   SIDE EFFECTS : Old value deleted and new one allocated
@@ -584,15 +586,15 @@ bool DirectPutSlotValue(
   Environment *theEnv,
   Instance *ins,
   INSTANCE_SLOT *sp,
-  DATA_OBJECT *val,
-  DATA_OBJECT *setVal)
+  CLIPSValue *val,
+  CLIPSValue *setVal)
   {
    long i,j; /* 6.04 Bug Fix */
 #if DEFRULE_CONSTRUCT
    int sharedTraversalID;
    INSTANCE_SLOT *bsp,**spaddr;
 #endif
-   DATA_OBJECT tmpVal;
+   CLIPSValue tmpVal;
 
    SetpType(setVal,SYMBOL);
    SetpValue(setVal,EnvFalseSymbol(theEnv));
@@ -611,7 +613,7 @@ bool DirectPutSlotValue(
            return false;
         }
       else if (sp->desc->defaultValue != NULL)
-        { val = (DATA_OBJECT *) sp->desc->defaultValue; }
+        { val = (CLIPSValue *) sp->desc->defaultValue; }
       else
         {
          PrintErrorID(theEnv,"INSMNGR",14,false);
@@ -785,7 +787,7 @@ bool DirectPutSlotValue(
  *******************************************************************/
 bool ValidSlotValue(
   Environment *theEnv,
-  DATA_OBJECT *val,
+  CLIPSValue *val,
   SlotDescriptor *sd,
   Instance *ins,
   const char *theCommand)
@@ -855,7 +857,7 @@ Instance *CheckInstance(
   const char *func)
   {
    Instance *ins;
-   DATA_OBJECT temp;
+   CLIPSValue temp;
 
    EvaluateExpression(theEnv,GetFirstArgument(),&temp);
    if (temp.type == INSTANCE_ADDRESS)

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/06/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -66,6 +66,8 @@
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 /* =========================================
@@ -118,7 +120,7 @@
    ***************************************** */
 
    static void                    PrintGenericCall(Environment *,const char *,Defgeneric *);
-   static bool                    EvaluateGenericCall(Environment *,Defgeneric *,DATA_OBJECT *);
+   static bool                    EvaluateGenericCall(Environment *,Defgeneric *,CLIPSValue *);
    static void                    DecrementGenericBusyCount(Environment *,Defgeneric *);
    static void                    IncrementGenericBusyCount(Environment *,Defgeneric *);
    static void                    DeallocateDefgenericData(Environment *);
@@ -251,45 +253,38 @@ void SetupGenericFunctions(
      ================================================================ */
    AddSaveFunction(theEnv,"defgeneric",SaveDefgenerics,1000);
    AddSaveFunction(theEnv,"defmethod",SaveDefmethods,-1000);
-   EnvDefineFunction2(theEnv,"undefgeneric",'v',PTIEF UndefgenericCommand,"UndefgenericCommand","11w");
-   EnvDefineFunction2(theEnv,"undefmethod",'v',PTIEF UndefmethodCommand,"UndefmethodCommand","22*wg");
+   EnvAddUDF(theEnv,"undefgeneric","v",1,1,"y",UndefgenericCommand,"UndefgenericCommand",NULL);
+   EnvAddUDF(theEnv,"undefmethod","v",2,2,"*;y;ly",UndefmethodCommand,"UndefmethodCommand",NULL);
 #endif
 
-   EnvDefineFunction2(theEnv,"call-next-method",'u',PTIEF CallNextMethod,"CallNextMethod","00");
+   EnvAddUDF(theEnv,"call-next-method","*",0,0,NULL,CallNextMethod,"CallNextMethod",NULL);
    FuncSeqOvlFlags(theEnv,"call-next-method",true,false);
-   EnvDefineFunction2(theEnv,"call-specific-method",'u',PTIEF CallSpecificMethod,
-                   "CallSpecificMethod","2**wi");
+   EnvAddUDF(theEnv,"call-specific-method","*",2,UNBOUNDED,"*;y;l",CallSpecificMethod,"CallSpecificMethod",NULL);
    FuncSeqOvlFlags(theEnv,"call-specific-method",true,false);
-   EnvDefineFunction2(theEnv,"override-next-method",'u',PTIEF OverrideNextMethod,
-                   "OverrideNextMethod",NULL);
+   EnvAddUDF(theEnv,"override-next-method","*",0,UNBOUNDED,NULL,OverrideNextMethod,"OverrideNextMethod",NULL);
    FuncSeqOvlFlags(theEnv,"override-next-method",true,false);
-   EnvDefineFunction2(theEnv,"next-methodp",'b',PTIEF NextMethodP,"NextMethodP","00");
+   EnvAddUDF(theEnv,"next-methodp","b",0,0,NULL,NextMethodPCommand,"NextMethodP",NULL);
    FuncSeqOvlFlags(theEnv,"next-methodp",true,false);
 
-   EnvDefineFunction2(theEnv,"(gnrc-current-arg)",'u',PTIEF GetGenericCurrentArgument,
-                   "GetGenericCurrentArgument",NULL);
+   EnvAddUDF(theEnv,"(gnrc-current-arg)","*",0,UNBOUNDED,NULL,GetGenericCurrentArgument,"GetGenericCurrentArgument",NULL);
 
 #if DEBUGGING_FUNCTIONS
-   EnvDefineFunction2(theEnv,"ppdefgeneric",'v',PTIEF PPDefgenericCommand,"PPDefgenericCommand","11w");
-   EnvDefineFunction2(theEnv,"list-defgenerics",'v',PTIEF ListDefgenericsCommand,"ListDefgenericsCommand","01");
-   EnvDefineFunction2(theEnv,"ppdefmethod",'v',PTIEF PPDefmethodCommand,"PPDefmethodCommand","22*wi");
-   EnvDefineFunction2(theEnv,"list-defmethods",'v',PTIEF ListDefmethodsCommand,"ListDefmethodsCommand","01w");
-   EnvDefineFunction2(theEnv,"preview-generic",'v',PTIEF PreviewGeneric,"PreviewGeneric","1**w");
+   EnvAddUDF(theEnv,"ppdefgeneric","v",1,1,"y",PPDefgenericCommand,"PPDefgenericCommand",NULL);
+   EnvAddUDF(theEnv,"list-defgenerics","v",0,1,"y",ListDefgenericsCommand,"ListDefgenericsCommand",NULL);
+   EnvAddUDF(theEnv,"ppdefmethod","v",2,2,"*;y;l",PPDefmethodCommand,"PPDefmethodCommand",NULL);
+   EnvAddUDF(theEnv,"list-defmethods","v",0,1,"y",ListDefmethodsCommand,"ListDefmethodsCommand",NULL);
+   EnvAddUDF(theEnv,"preview-generic","v",1,UNBOUNDED,"*;y",PreviewGeneric,"PreviewGeneric",NULL);
 #endif
 
-   EnvDefineFunction2(theEnv,"get-defgeneric-list",'m',PTIEF GetDefgenericListFunction,
-                   "GetDefgenericListFunction","01");
-   EnvDefineFunction2(theEnv,"get-defmethod-list",'m',PTIEF GetDefmethodListCommand,
-                   "GetDefmethodListCommand","01w");
-   EnvDefineFunction2(theEnv,"get-method-restrictions",'m',PTIEF GetMethodRestrictionsCommand,
-                   "GetMethodRestrictionsCommand","22iw");
-   EnvDefineFunction2(theEnv,"defgeneric-module",'w',PTIEF GetDefgenericModuleCommand,
-                   "GetDefgenericModuleCommand","11w");
+   EnvAddUDF(theEnv,"get-defgeneric-list","m",0,1,"y",GetDefgenericListFunction,"GetDefgenericListFunction",NULL);
+   EnvAddUDF(theEnv,"get-defmethod-list","m",0,1,"y",GetDefmethodListCommand,"GetDefmethodListCommand",NULL);
+   EnvAddUDF(theEnv,"get-method-restrictions","m",2,2,"l;y",GetMethodRestrictionsCommand,"GetMethodRestrictionsCommand",NULL);
+   EnvAddUDF(theEnv,"defgeneric-module","y",1,1,"y",GetDefgenericModuleCommand,"GetDefgenericModuleCommand",NULL);
 
 #if OBJECT_SYSTEM
-   EnvDefineFunction2(theEnv,"type",'u',PTIEF ClassCommand,"ClassCommand","11u");
+   EnvAddUDF(theEnv,"type","*",1,1,"*",ClassCommand,"ClassCommand",NULL);
 #else
-   EnvDefineFunction2(theEnv,"type",'u',PTIEF TypeCommand,"TypeCommand","11u");
+   EnvAddUDF(theEnv,"type","*",1,1,"*",TypeCommand,"TypeCommand",NULL);
 #endif
 
 #endif
@@ -567,7 +562,9 @@ bool EnvIsDefmethodDeletable(
   NOTES        : H/L Syntax: (undefgeneric <name> | *)
  **********************************************************/
 void UndefgenericCommand(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    UndefconstructCommand(theEnv,"undefgeneric",DefgenericData(theEnv)->DefgenericConstruct);
   }
@@ -580,10 +577,13 @@ void UndefgenericCommand(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax: (defgeneric-module <generic-name>)
  ****************************************************************/
-void *GetDefgenericModuleCommand(
-  Environment *theEnv)
+void GetDefgenericModuleCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   return(GetConstructModuleCommand(theEnv,"defgeneric-module",DefgenericData(theEnv)->DefgenericConstruct));
+   returnValue->type = SYMBOL;
+   returnValue->value = GetConstructModuleCommand(theEnv,"defgeneric-module",DefgenericData(theEnv)->DefgenericConstruct);
   }
 
 /**************************************************************
@@ -595,12 +595,14 @@ void *GetDefgenericModuleCommand(
   NOTES        : H/L Syntax: (undefmethod <name> <index> | *)
  **************************************************************/
 void UndefmethodCommand(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT temp;
+   CLIPSValue temp;
    Defgeneric *gfunc;
    long mi;
-
+   
    if (EnvArgTypeCheck(theEnv,"undefmethod",1,SYMBOL,&temp) == false)
      return;
    gfunc = LookupDefgenericByMdlOrScope(theEnv,DOToString(temp));
@@ -893,7 +895,9 @@ void EnvSetDefmethodWatch(
   NOTES        : H/L Syntax: (ppdefgeneric <name>)
  ********************************************************/
 void PPDefgenericCommand(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    PPConstructCommand(theEnv,"ppdefgeneric",DefgenericData(theEnv)->DefgenericConstruct);
   }
@@ -908,13 +912,15 @@ void PPDefgenericCommand(
   NOTES        : H/L Syntax: (ppdefmethod <name> <index>)
  **********************************************************/
 void PPDefmethodCommand(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT temp;
+   CLIPSValue temp;
    const char *gname;
    Defgeneric *gfunc;
    int gi;
-   
+      
    if (EnvArgTypeCheck(theEnv,"ppdefmethod",1,SYMBOL,&temp) == false)
      return;
    gname = DOToString(temp);
@@ -940,11 +946,13 @@ void PPDefmethodCommand(
   NOTES        : H/L Syntax: (list-defmethods <name>)
  ******************************************************/
 void ListDefmethodsCommand(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT temp;
+   CLIPSValue temp;
    Defgeneric *gfunc;
-   
+      
    if (EnvRtnArgCount(theEnv) == 0)
      EnvListDefmethods(theEnv,WDISPLAY,NULL);
    else
@@ -989,7 +997,9 @@ const char *EnvGetDefmethodPPForm(
   NOTES        : H/L Interface
  ***************************************************/
 void ListDefgenericsCommand(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    ListConstructCommand(theEnv,"list-defgenerics",DefgenericData(theEnv)->DefgenericConstruct);
   }
@@ -1060,7 +1070,8 @@ void EnvListDefmethods(
  ***************************************************************/
 void GetDefgenericListFunction(
   Environment *theEnv,
-  DATA_OBJECT*returnValue)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    GetConstructListFunction(theEnv,"get-defgeneric-list",returnValue,DefgenericData(theEnv)->DefgenericConstruct);
   }
@@ -1078,7 +1089,7 @@ void GetDefgenericListFunction(
  ***************************************************************/
 void EnvGetDefgenericList(
   Environment *theEnv,
-  DATA_OBJECT *returnValue,
+  CLIPSValue *returnValue,
   Defmodule *theModule)
   {
    GetConstructList(theEnv,returnValue,DefgenericData(theEnv)->DefgenericConstruct,theModule);
@@ -1096,9 +1107,10 @@ void EnvGetDefgenericList(
  ***********************************************************/
 void GetDefmethodListCommand(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT temp;
+   CLIPSValue temp;
    Defgeneric *gfunc;
    
    if (EnvRtnArgCount(theEnv) == 0)
@@ -1132,7 +1144,7 @@ void GetDefmethodListCommand(
 void EnvGetDefmethodList(
   Environment *theEnv,
   Defgeneric *theDefgeneric,
-  DATA_OBJECT_PTR returnValue)
+  CLIPSValue *returnValue)
   {
    Defgeneric *gfunc, *svg, *svnxt;
    long i,j;
@@ -1187,33 +1199,34 @@ void EnvGetDefmethodList(
  ***********************************************************************************/
 void GetMethodRestrictionsCommand(
   Environment *theEnv,
-  DATA_OBJECT *result)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT temp;
+   CLIPSValue temp;
    Defgeneric *gfunc;
 
    if (EnvArgTypeCheck(theEnv,"get-method-restrictions",1,SYMBOL,&temp) == false)
      {
-      EnvSetMultifieldErrorValue(theEnv,result);
+      EnvSetMultifieldErrorValue(theEnv,returnValue);
       return;
      }
    gfunc = CheckGenericExists(theEnv,"get-method-restrictions",DOToString(temp));
    if (gfunc == NULL)
      {
-      EnvSetMultifieldErrorValue(theEnv,result);
+      EnvSetMultifieldErrorValue(theEnv,returnValue);
       return;
      }
    if (EnvArgTypeCheck(theEnv,"get-method-restrictions",2,INTEGER,&temp) == false)
      {
-      EnvSetMultifieldErrorValue(theEnv,result);
+      EnvSetMultifieldErrorValue(theEnv,returnValue);
       return;
      }
    if (CheckMethodExists(theEnv,"get-method-restrictions",gfunc,(long) DOToLong(temp)) == -1)
      {
-      EnvSetMultifieldErrorValue(theEnv,result);
+      EnvSetMultifieldErrorValue(theEnv,returnValue);
       return;
      }
-   EnvGetMethodRestrictions(theEnv,gfunc,(unsigned) DOToLong(temp),result);
+   EnvGetMethodRestrictions(theEnv,gfunc,(unsigned) DOToLong(temp),returnValue);
   }
 
 /***********************************************************************
@@ -1256,7 +1269,7 @@ void EnvGetMethodRestrictions(
   Environment *theEnv,
   Defgeneric *theDefgeneric,
   long mi,
-  DATA_OBJECT *result)
+  CLIPSValue *returnValue)
   {
    short i,j;
    Defmethod *meth;
@@ -1270,10 +1283,10 @@ void EnvGetMethodRestrictions(
    for (i = 0 ; i < meth->restrictionCount ; i++)
      count += meth->restrictions[i].tcnt + 3;
    theList = (MULTIFIELD_PTR) EnvCreateMultifield(theEnv,count);
-   SetpType(result,MULTIFIELD);
-   SetpValue(result,theList);
-   SetpDOBegin(result,1);
-   SetpDOEnd(result,count);
+   SetpType(returnValue,MULTIFIELD);
+   SetpValue(returnValue,theList);
+   SetpDOBegin(returnValue,1);
+   SetpDOEnd(returnValue,count);
    SetMFType(theList,1,INTEGER);
    SetMFValue(theList,1,EnvAddLong(theEnv,(long long) meth->minRestrictions));
    SetMFType(theList,2,INTEGER);
@@ -1360,11 +1373,11 @@ static void PrintGenericCall(
 static bool EvaluateGenericCall(
   Environment *theEnv,
   Defgeneric *theDefgeneric,
-  DATA_OBJECT *result)
+  CLIPSValue *returnValue)
   {
-   GenericDispatch(theEnv,theDefgeneric,NULL,NULL,GetFirstArgument(),result);
-   if ((GetpType(result) == SYMBOL) &&
-       (GetpValue(result) == EnvFalseSymbol(theEnv)))
+   GenericDispatch(theEnv,theDefgeneric,NULL,NULL,GetFirstArgument(),returnValue);
+   if ((GetpType(returnValue) == SYMBOL) &&
+       (GetpValue(returnValue) == EnvFalseSymbol(theEnv)))
      return false;
    return true;
   }
@@ -1705,7 +1718,7 @@ static bool DefmethodWatchSupport(
    Defgeneric *theGeneric;
    unsigned long theMethod = 0;
    int argIndex = 2;
-   DATA_OBJECT genericName,methodIndex;
+   CLIPSValue genericName, methodIndex;
    Defmodule *theModule;
 
    /* ==============================
@@ -1847,11 +1860,11 @@ static void PrintMethodWatchFlag(
  ***************************************************/
 void TypeCommand(
   Environment *theEnv,
-  DATA_OBJECT *result)
+  CLIPSValue *returnValue)
   {
-   EvaluateExpression(theEnv,GetFirstArgument(),result);
-   result->value = EnvAddSymbol(theEnv,TypeName(theEnv,result->type));
-   result->type = SYMBOL;
+   EvaluateExpression(theEnv,GetFirstArgument(),returnValue);
+   returnValue->value = EnvAddSymbol(theEnv,TypeName(theEnv,returnValue->type));
+   returnValue->type = SYMBOL;
   }
 
 #endif

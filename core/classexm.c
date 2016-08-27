@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/06/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*                 CLASS EXAMINATION MODULE            */
    /*******************************************************/
@@ -59,6 +59,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /**************************************************************/
 
@@ -124,10 +126,12 @@
   NOTES        : Syntax : (browse-classes [<class>])
  ****************************************************************/
 void BrowseClassesCommand(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    Defclass *cls;
-   
+
    if (EnvRtnArgCount(theEnv) == 0)
       /* ================================================
          Find the OBJECT root class (has no superclasses)
@@ -135,14 +139,14 @@ void BrowseClassesCommand(
       cls = LookupDefclassByMdlOrScope(theEnv,OBJECT_TYPE_NAME);
    else
      {
-      DATA_OBJECT tmp;
+      CLIPSValue theArg;
 
-      if (EnvArgTypeCheck(theEnv,"browse-classes",1,SYMBOL,&tmp) == false)
+      if (EnvArgTypeCheck(theEnv,"browse-classes",1,SYMBOL,&theArg) == false)
         return;
-      cls = LookupDefclassByMdlOrScope(theEnv,DOToString(tmp));
+      cls = LookupDefclassByMdlOrScope(theEnv,DOToString(theArg));
       if (cls == NULL)
         {
-         ClassExistError(theEnv,"browse-classes",DOToString(tmp));
+         ClassExistError(theEnv,"browse-classes",DOToString(theArg));
          return;
         }
      }
@@ -177,11 +181,13 @@ void EnvBrowseClasses(
   NOTES        : Syntax : (describe-class <class-name>)
  ****************************************************************/
 void DescribeClassCommand(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    const char *className;
    Defclass *theDefclass;
-   
+
    className = GetClassNameArgument(theEnv,"describe-class");
    
    if (className == NULL)
@@ -335,10 +341,13 @@ const char *GetCreateAccessorString(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax: (defclass-module <class-name>)
  ************************************************************/
-void *GetDefclassModuleCommand(
-  Environment *theEnv)
+void GetDefclassModuleCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   return(GetConstructModuleCommand(theEnv,"defclass-module",DefclassData(theEnv)->DefclassConstruct));
+   returnValue->type = SYMBOL;
+   returnValue->value = GetConstructModuleCommand(theEnv,"defclass-module",DefclassData(theEnv)->DefclassConstruct);
   }
 
 /*********************************************************************
@@ -349,15 +358,21 @@ void *GetDefclassModuleCommand(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (superclassp <class-1> <class-2>)
  *********************************************************************/
-bool SuperclassPCommand(
-  Environment *theEnv)
+void SuperclassPCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    Defclass *c1, *c2;
    
+   returnValue->type = SYMBOL;
+   
    if (CheckTwoClasses(theEnv,"superclassp",&c1,&c2) == false)
-     { return false; }
-     
-   return EnvSuperclassP(theEnv,c1,c2);
+     { returnValue->value = EnvFalseSymbol(theEnv); }
+   else if (EnvSuperclassP(theEnv,c1,c2))
+     { returnValue->value = EnvTrueSymbol(theEnv); }
+   else
+     { returnValue->value = EnvFalseSymbol(theEnv); }
   }
 
 /***************************************************
@@ -392,15 +407,20 @@ bool EnvSuperclassP(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (subclassp <class-1> <class-2>)
  *********************************************************************/
-bool SubclassPCommand(
-  Environment *theEnv)
+void SubclassPCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    Defclass *c1, *c2;
    
+   returnValue->type = SYMBOL;
    if (CheckTwoClasses(theEnv,"subclassp",&c1,&c2) == false)
-     { return false; }
-     
-   return EnvSubclassP(theEnv,c1,c2);
+     { returnValue->value = EnvFalseSymbol(theEnv); }
+   else if (EnvSubclassP(theEnv,c1,c2))
+     { returnValue->value = EnvTrueSymbol(theEnv); }
+   else
+     { returnValue->value = EnvFalseSymbol(theEnv); }
   }
 
 /***************************************************
@@ -435,30 +455,46 @@ bool EnvSubclassP(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (slot-existp <class> <slot> [inherit])
  *********************************************************************/
-bool SlotExistPCommand(
-  Environment *theEnv)
+void SlotExistPCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    Defclass *cls;
    SlotDescriptor *sd;
    bool inheritFlag = false;
-   DATA_OBJECT dobj;
+   CLIPSValue theArg;
    
+   returnValue->type = SYMBOL;
    sd = CheckSlotExists(theEnv,"slot-existp",&cls,false,true);
    if (sd == NULL)
-     return false;
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
+      
    if (EnvRtnArgCount(theEnv) == 3)
      {
-      if (EnvArgTypeCheck(theEnv,"slot-existp",3,SYMBOL,&dobj) == false)
-        return false;
-      if (strcmp(DOToString(dobj),"inherit") != 0)
+      if (EnvArgTypeCheck(theEnv,"slot-existp",3,SYMBOL,&theArg) == false)
+        {
+         returnValue->value = EnvFalseSymbol(theEnv);
+         return;
+        }
+      
+      if (strcmp(DOToString(theArg),"inherit") != 0)
         {
          ExpectedTypeError1(theEnv,"slot-existp",3,"keyword \"inherit\"");
          EnvSetEvaluationError(theEnv,true);
-         return false;
+         returnValue->value = EnvFalseSymbol(theEnv);
+         return;
         }
       inheritFlag = true;
      }
-   return((sd->cls == cls) ? true : inheritFlag);
+     
+   if ((sd->cls == cls) || inheritFlag)
+     { returnValue->value = EnvTrueSymbol(theEnv); }
+   else
+     { returnValue->value = EnvFalseSymbol(theEnv); }
   }
 
 /***************************************************
@@ -491,40 +527,60 @@ bool EnvSlotExistP(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (message-handler-existp <class> <hnd> [<type>])
  ************************************************************************************/
-bool MessageHandlerExistPCommand(
-  Environment *theEnv)
+void MessageHandlerExistPCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    Defclass *cls;
    SYMBOL_HN *mname;
-   DATA_OBJECT temp;
+   CLIPSValue theArg;
    unsigned mtype = MPRIMARY;
    
-   if (EnvArgTypeCheck(theEnv,"message-handler-existp",1,SYMBOL,&temp) == false)
-     return false;
-   cls = LookupDefclassByMdlOrScope(theEnv,DOToString(temp));
+   returnValue->type = SYMBOL;
+   
+   if (EnvArgTypeCheck(theEnv,"message-handler-existp",1,SYMBOL,&theArg) == false)
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
+     
+   cls = LookupDefclassByMdlOrScope(theEnv,DOToString(theArg));
    if (cls == NULL)
      {
-      ClassExistError(theEnv,"message-handler-existp",DOToString(temp));
-      return false;
+      ClassExistError(theEnv,"message-handler-existp",DOToString(theArg));
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
      }
-   if (EnvArgTypeCheck(theEnv,"message-handler-existp",2,SYMBOL,&temp) == false)
-     return false;
-   mname = (SYMBOL_HN *) GetValue(temp);
+   
+   if (EnvArgTypeCheck(theEnv,"message-handler-existp",2,SYMBOL,&theArg) == false)
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
+     
+   mname = (SYMBOL_HN *) GetValue(theArg);
    if (EnvRtnArgCount(theEnv) == 3)
      {
-      if (EnvArgTypeCheck(theEnv,"message-handler-existp",3,SYMBOL,&temp) == false)
-        return false;
-      mtype = HandlerType(theEnv,"message-handler-existp",DOToString(temp));
+      if (EnvArgTypeCheck(theEnv,"message-handler-existp",3,SYMBOL,&theArg) == false)
+        {
+         returnValue->value = EnvFalseSymbol(theEnv);
+         return;
+        }
+        
+      mtype = HandlerType(theEnv,"message-handler-existp",DOToString(theArg));
       if (mtype == MERROR)
         {
          EnvSetEvaluationError(theEnv,true);
-         return false;
+         returnValue->value = EnvFalseSymbol(theEnv);
+         return;
         }
      }
      
    if (FindHandlerByAddress(cls,mname,mtype) != NULL)
-     return true;
-   return false;
+     { returnValue->value = EnvTrueSymbol(theEnv); }
+   else
+     { returnValue->value = EnvFalseSymbol(theEnv); }
   }
 
 /**********************************************************************
@@ -535,16 +591,26 @@ bool MessageHandlerExistPCommand(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (slot-writablep <class> <slot>)
  **********************************************************************/
-bool SlotWritablePCommand(
-  Environment *theEnv)
+void SlotWritablePCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    Defclass *theDefclass;
    SlotDescriptor *sd;
    
+   returnValue->type = SYMBOL;
    sd = CheckSlotExists(theEnv,"slot-writablep",&theDefclass,true,true);
    if (sd == NULL)
-     return false;
-   return((sd->noWrite || sd->initializeOnly) ? false : true);
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
+     
+   if (sd->noWrite || sd->initializeOnly)
+     { returnValue->value = EnvFalseSymbol(theEnv); }
+   else
+     { returnValue->value = EnvTrueSymbol(theEnv); }
   }
 
 /***************************************************
@@ -578,16 +644,26 @@ bool EnvSlotWritableP(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (slot-initablep <class> <slot>)
  **********************************************************************/
-bool SlotInitablePCommand(
-  Environment *theEnv)
+void SlotInitablePCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    Defclass *theDefclass;
    SlotDescriptor *sd;
    
+   returnValue->type = SYMBOL;
    sd = CheckSlotExists(theEnv,"slot-initablep",&theDefclass,true,true);
    if (sd == NULL)
-     return false;
-   return((sd->noWrite && (sd->initializeOnly == 0)) ? false : true);
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
+     
+   if (sd->noWrite && (sd->initializeOnly == 0))
+     { returnValue->value = EnvFalseSymbol(theEnv); }
+   else
+     { returnValue->value = EnvTrueSymbol(theEnv); }
   }
 
 /***************************************************
@@ -621,16 +697,26 @@ bool EnvSlotInitableP(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (slot-publicp <class> <slot>)
  **********************************************************************/
-bool SlotPublicPCommand(
-  Environment *theEnv)
+void SlotPublicPCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    Defclass *theDefclass;
    SlotDescriptor *sd;
    
+   returnValue->type = SYMBOL;
    sd = CheckSlotExists(theEnv,"slot-publicp",&theDefclass,true,false);
    if (sd == NULL)
-     return false;
-   return(sd->publicVisibility ? true : false);
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
+     
+   if (sd->publicVisibility)
+     { returnValue->value = EnvTrueSymbol(theEnv); }
+   else
+     { returnValue->value = EnvFalseSymbol(theEnv); }
   }
 
 /***************************************************
@@ -695,16 +781,26 @@ int EnvSlotDefaultP(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (slot-direct-accessp <class> <slot>)
  **********************************************************************/
-bool SlotDirectAccessPCommand(
-  Environment *theEnv)
+void SlotDirectAccessPCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    Defclass *theDefclass;
    SlotDescriptor *sd;
    
+   returnValue->type = SYMBOL;
    sd = CheckSlotExists(theEnv,"slot-direct-accessp",&theDefclass,true,true);
    if (sd == NULL)
-     return false;
-   return((sd->publicVisibility || (sd->cls == theDefclass)) ? true : false);
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
+     
+   if (sd->publicVisibility || (sd->cls == theDefclass))
+     { returnValue->value = EnvTrueSymbol(theEnv); }
+   else
+     { returnValue->value = EnvFalseSymbol(theEnv); }
   }
 
 /***************************************************
@@ -743,30 +839,31 @@ bool EnvSlotDirectAccessP(
  **********************************************************************/
 void SlotDefaultValueCommand(
   Environment *theEnv,
-  DATA_OBJECT_PTR theValue)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    Defclass *theDefclass;
    SlotDescriptor *sd;
 
-   SetpType(theValue,SYMBOL);
-   SetpValue(theValue,EnvFalseSymbol(theEnv));
+   SetpType(returnValue,SYMBOL);
+   SetpValue(returnValue,EnvFalseSymbol(theEnv));
    sd = CheckSlotExists(theEnv,"slot-default-value",&theDefclass,true,true);
    if (sd == NULL)
      return;
    
    if (sd->noDefault)
      {
-      SetpType(theValue,SYMBOL);
-      SetpValue(theValue,EnvAddSymbol(theEnv,"?NONE"));
+      SetpType(returnValue,SYMBOL);
+      SetpValue(returnValue,EnvAddSymbol(theEnv,"?NONE"));
       return; 
      }
      
    if (sd->dynamicDefault)
      EvaluateAndStoreInDataObject(theEnv,(int) sd->multiple,
                                   (EXPRESSION *) sd->defaultValue,
-                                  theValue,true);
+                                  returnValue,true);
    else
-     GenCopyMemory(DATA_OBJECT,1,theValue,sd->defaultValue);
+     GenCopyMemory(CLIPSValue,1,returnValue,sd->defaultValue);
   }
 
 /*********************************************************
@@ -785,7 +882,7 @@ bool EnvSlotDefaultValue(
   Environment *theEnv,
   Defclass *theDefclass,
   const char *slotName,
-  DATA_OBJECT_PTR theValue)
+  CLIPSValue *theValue)
   {
    SlotDescriptor *sd;
 
@@ -805,7 +902,7 @@ bool EnvSlotDefaultValue(
      return(EvaluateAndStoreInDataObject(theEnv,(int) sd->multiple,
                                          (EXPRESSION *) sd->defaultValue,
                                          theValue,true));
-   GenCopyMemory(DATA_OBJECT,1,theValue,sd->defaultValue);
+   GenCopyMemory(CLIPSValue,1,theValue,sd->defaultValue);
    return true;
   }
 
@@ -817,14 +914,25 @@ bool EnvSlotDefaultValue(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (class-existp <arg>)
  ********************************************************/
-bool ClassExistPCommand(
-  Environment *theEnv)
+void ClassExistPCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT temp;
+   CLIPSValue theArg;
    
-   if (EnvArgTypeCheck(theEnv,"class-existp",1,SYMBOL,&temp) == false)
-     return false;
-   return((LookupDefclassByMdlOrScope(theEnv,DOToString(temp)) != NULL) ? true : false);
+   returnValue->type = SYMBOL;
+
+   if (EnvArgTypeCheck(theEnv,"class-existp",1,SYMBOL,&theArg) == false)
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
+     
+   if (LookupDefclassByMdlOrScope(theEnv,DOToString(theArg)) != NULL)
+     { returnValue->value = EnvTrueSymbol(theEnv); }
+   else
+     { returnValue->value = EnvFalseSymbol(theEnv); }
   }
 
 /* =========================================
@@ -850,25 +958,25 @@ static bool CheckTwoClasses(
   Defclass **c1,
   Defclass **c2)
   {
-   DATA_OBJECT temp;
+   CLIPSValue theArg;
 
-   if (EnvArgTypeCheck(theEnv,func,1,SYMBOL,&temp) == false)
+   if (EnvArgTypeCheck(theEnv,func,1,SYMBOL,&theArg) == false)
      { return false; }
      
-   *c1 = LookupDefclassByMdlOrScope(theEnv,DOToString(temp));
+   *c1 = LookupDefclassByMdlOrScope(theEnv,DOToString(theArg));
    if (*c1 == NULL)
      {
-      ClassExistError(theEnv,func,ValueToString(temp.value));
+      ClassExistError(theEnv,func,ValueToString(theArg.value));
       return false;
      }
      
-   if (EnvArgTypeCheck(theEnv,func,2,SYMBOL,&temp) == false)
+   if (EnvArgTypeCheck(theEnv,func,2,SYMBOL,&theArg) == false)
      { return false; }
      
-   *c2 = LookupDefclassByMdlOrScope(theEnv,DOToString(temp));
+   *c2 = LookupDefclassByMdlOrScope(theEnv,DOToString(theArg));
    if (*c2 == NULL)
      {
-      ClassExistError(theEnv,func,ValueToString(temp.value));
+      ClassExistError(theEnv,func,ValueToString(theArg.value));
       return false;
      }
      
@@ -1011,7 +1119,7 @@ static const char *GetClassNameArgument(
   Environment *theEnv,
   const char *fname)
   {
-   DATA_OBJECT temp;
+   CLIPSValue temp;
 
    if (EnvArgTypeCheck(theEnv,fname,1,SYMBOL,&temp) == false)
      return NULL;

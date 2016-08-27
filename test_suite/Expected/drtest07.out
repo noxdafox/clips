@@ -2,10 +2,10 @@ TRUE
 CLIPS> (batch "drtest07.bat")
 TRUE
 CLIPS> (clear)                            ; DR0602
-CLIPS> (subset (mv-append bar)            ; DR0602
-        (mv-append "bar"))         ; DR0602 - FALSE
+CLIPS> (subsetp (create$ bar)             ; DR0602
+         (create$ "bar"))          ; DR0602 - FALSE
 FALSE
-CLIPS> (member fox (mv-append "fox"))     ; DR0602 - FALSE
+CLIPS> (member$ fox (create$ "fox"))      ; DR0602 - FALSE
 FALSE
 CLIPS> (clear)                            ; DR0604
 CLIPS> (defrule foo => (assert (x)))      ; DR0604
@@ -110,10 +110,10 @@ CLIPS> (clear)                            ; DR0617
 CLIPS> (progn (release-mem) TRUE)         ; DR0617 - Memory Loss
 TRUE
 CLIPS> (clear)                            ; DR0619
-CLIPS> (str-explode "")                   ; DR0619
+CLIPS> (explode$ "")                      ; DR0619
 ()
 CLIPS> (deftemplate foo (field x) (field y))
-CLIPS> (str-explode "foo")                ; DR0619
+CLIPS> (explode$ "foo")                   ; DR0619
 (foo)
 CLIPS> (format t "%s"                     ; DR0621
    "The allowed-values attribute cannot be used in conjunction with
@@ -215,7 +215,7 @@ CLIPS> (deffunction foo (?ins)            ; DR0629
    (bind ?a (send ?ins get-foo))
    (printout t ?a " ")
    (printout t (send ?ins get-foo) " ")
-   (mv-slot-replace ?ins foo 1 1 1)
+   (slot-replace$ ?ins foo 1 1 1)
    (printout t ?a " ")
    (printout t (send ?ins get-foo) crlf))
 CLIPS> (make-instance a of A)             ; DR0629
@@ -258,7 +258,7 @@ CLIPS> (clear)                            ; DR0634
 CLIPS> (deffunction foo ()                ; DR0634
    (bind ?i 1000)                  ; DR0634
    (while (> ?i 0) do              ; DR0634
-      (bind ?a (mv-append))        ; DR0634
+      (bind ?a (create$))          ; DR0634
       (bind ?i (- ?i 1))))         ; DR0634
 CLIPS> (foo)                              ; DR0634
 FALSE
@@ -271,7 +271,7 @@ CLIPS> (defrule blah (fact $?x here $?x) =>)
 CLIPS> (assert (fact 1 2 here 3 4))       ; DR0636
 <Fact-1>
 CLIPS> (agenda)                           ; DR0636
-CLIPS> (subsetp (mv-append a a b) (mv-append a b)) ; DR0637
+CLIPS> (subsetp (create$ a a b) (create$ a b)) ; DR0637
 TRUE
 CLIPS> (clear)                            ; DR0639
 CLIPS> (defrule foo (or (a) (b) (c)) =>)  ; DR0639
@@ -316,7 +316,7 @@ CLIPS> (defrule print-responses
    (result $?input # $?response)
    =>
    (while (neq ?response (create$)) do
-      (nth 1 ?response)
+      (nth$ 1 ?response)
       (bind ?response (create$))))
 CLIPS> (reset)                            ; DR0645
 CLIPS> (run)                              ; DR0645
@@ -459,7 +459,7 @@ CLIPS> (clear)                            ; DR0658
 CLIPS> (defclass A (is-a USER) (role concrete) (multislot x (create-accessor read-write)))
 CLIPS> (make-instance a of A)             ; DR0658
 [a]
-CLIPS> (mv-slot-insert [a] x 1 abc)       ; DR0658
+CLIPS> (slot-insert$ [a] x 1 abc)         ; DR0658
 (abc)
 CLIPS> (clear)                            ; DR0659
 CLIPS> (defclass a (is-a USER) ())        ; DR0659
@@ -867,7 +867,7 @@ CLIPS> (make-instance quoxnar of A)
 [quoxnar]
 CLIPS> (send [quoxnar] put-foo (instance-address [fribban]))
 <Instance-fribban>
-CLIPS> (send [quoxnar] put-bar (mv-append))
+CLIPS> (send [quoxnar] put-bar (create$))
 ()
 CLIPS> (unmake-instance [fribban])
 TRUE
@@ -886,7 +886,7 @@ CLIPS> (send [quoxnar] print)
 CLIPS> (clear)
 CLIPS> (defglobal ?*x* = 0) ;; DR0698 and DR0701
 CLIPS> (deffunction create-number-2 ()
-  (bind ?*x* (nth 1 (str-explode "2.0")))
+  (bind ?*x* (nth$ 1 (explode$ "2.0")))
   BOGUS)
 CLIPS> (deffunction create-number ()
   (create-number-2))
@@ -895,7 +895,7 @@ CLIPS> (deffunction force-garbage-collection ()
   (while (< ?i 10000) do
     (gensym*)
     (bind ?i (+ ?i 1))))
-CLIPS> (mv-append (create-number) ?*x* (bind ?*x* 0)
+CLIPS> (create$ (create-number) ?*x* (bind ?*x* 0)
   (force-garbage-collection) (float (random))
      (float (random)))
 (BOGUS 2.0 0 FALSE 29601.0 26138.0) ;; Last two fields can be different
@@ -912,7 +912,7 @@ FALSE
 CLIPS> (ppdeffunction foo)
 CLIPS> (clear) ;; DR0700
 CLIPS> (defclass A (is-a USER) (role concrete) (multislot foo (create-accessor read-write)))
-CLIPS> (make-instance a of A (foo (mv-append)))
+CLIPS> (make-instance a of A (foo (create$)))
 [a]
 CLIPS> (send [a] print)
 [a] of A

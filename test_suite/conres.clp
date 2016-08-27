@@ -57,12 +57,12 @@
 
 (deffunction print-order ($?x)
   (bind ?s (get-strategy))
-  (if (eq ?s depth) then (bind ?r (nth 1 ?x)))
-  (if (eq ?s breadth) then (bind ?r (nth 2 ?x)))
-  (if (eq ?s simplicity) then (bind ?r (nth 3 ?x)))
-  (if (eq ?s complexity) then (bind ?r (nth 4 ?x)))
-  (if (eq ?s lex) then (bind ?r (nth 5 ?x)))
-  (if (eq ?s mea) then (bind ?r (nth 6 ?x)))
+  (if (eq ?s depth) then (bind ?r (nth$ 1 ?x)))
+  (if (eq ?s breadth) then (bind ?r (nth$ 2 ?x)))
+  (if (eq ?s simplicity) then (bind ?r (nth$ 3 ?x)))
+  (if (eq ?s complexity) then (bind ?r (nth$ 4 ?x)))
+  (if (eq ?s lex) then (bind ?r (nth$ 5 ?x)))
+  (if (eq ?s mea) then (bind ?r (nth$ 6 ?x)))
   (printout t "This rule should fire " ?r crlf))
 
 ;;;************************

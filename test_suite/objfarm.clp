@@ -215,7 +215,7 @@
   =>
   (unmake-instance ?mv)
   (printout t crlf "Solution found: " crlf crlf)
-  (bind ?length (length ?m))
+  (bind ?length (length$ ?m))
   (bind ?i 1)
   (bind ?shore shore-2)
   (while (<= ?i ?length)

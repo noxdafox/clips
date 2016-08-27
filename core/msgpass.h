@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -48,6 +48,8 @@
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_msgpass
@@ -68,25 +70,24 @@ typedef struct messageHandlerLink
   } HANDLER_LINK;
 
    bool             DirectMessage(Environment *,SYMBOL_HN *,Instance *,
-                                  DATA_OBJECT *,EXPRESSION *);
-   void             EnvSend(Environment *,DATA_OBJECT *,const char *,const char *,DATA_OBJECT *);
+                                  CLIPSValue *,EXPRESSION *);
+   void             EnvSend(Environment *,CLIPSValue *,const char *,const char *,CLIPSValue *);
    void             DestroyHandlerLinks(Environment *,HANDLER_LINK *);
-   void             SendCommand(Environment *,DATA_OBJECT *);
-   DATA_OBJECT     *GetNthMessageArgument(Environment *,int);
+   void             SendCommand(Environment *,UDFContext *,CLIPSValue *);
+   CLIPSValue      *GetNthMessageArgument(Environment *,int);
 
-   bool             NextHandlerAvailable(Environment *);
-   void             CallNextHandler(Environment *,DATA_OBJECT *);
-
+   void             NextHandlerAvailableFunction(Environment *,UDFContext *,CLIPSValue *);
+   void             CallNextHandler(Environment *,UDFContext *,CLIPSValue *);
    void             FindApplicableOfName(Environment *,Defclass *,HANDLER_LINK *[],
                                          HANDLER_LINK *[],SYMBOL_HN *);
    HANDLER_LINK    *JoinHandlerLinks(Environment *,HANDLER_LINK *[],HANDLER_LINK *[],SYMBOL_HN *);
 
    void             PrintHandlerSlotGetFunction(Environment *,const char *,void *);
-   bool             HandlerSlotGetFunction(Environment *,void *,DATA_OBJECT *);
+   bool             HandlerSlotGetFunction(Environment *,void *,CLIPSValue *);
    void             PrintHandlerSlotPutFunction(Environment *,const char *,void *);
-   bool             HandlerSlotPutFunction(Environment *,void *,DATA_OBJECT *);
-   void             DynamicHandlerGetSlot(Environment *,DATA_OBJECT *);
-   void             DynamicHandlerPutSlot(Environment *,DATA_OBJECT *);
+   bool             HandlerSlotPutFunction(Environment *,void *,CLIPSValue *);
+   void             DynamicHandlerGetSlot(Environment *,UDFContext *,CLIPSValue *);
+   void             DynamicHandlerPutSlot(Environment *,UDFContext *,CLIPSValue *);
 
 #endif /* _H_object */
 

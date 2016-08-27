@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -50,6 +50,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -128,7 +130,7 @@ struct defgenericData
 #endif
    Defgeneric *CurrentGeneric;
    Defmethod *CurrentMethod;
-   DATA_OBJECT *GenericCurrentArgument;
+   CLIPSValue *GenericCurrentArgument;
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    unsigned OldGenericBusySave;
 #endif
@@ -170,7 +172,7 @@ struct defgenericData
    void                           PrintMethod(Environment *,char *,size_t,Defmethod *);
 #endif
 #if DEBUGGING_FUNCTIONS
-   void                           PreviewGeneric(Environment *);
+   void                           PreviewGeneric(Environment *,UDFContext *,CLIPSValue *);
 #endif
    Defgeneric                    *CheckGenericExists(Environment *,const char *,const char *);
    long                           CheckMethodExists(Environment *,const char *,Defgeneric *,long);

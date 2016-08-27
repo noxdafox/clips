@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -49,6 +49,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -129,7 +131,7 @@ typedef struct objectMatchAction
    struct objectMatchAction *nxt;
   } OBJECT_MATCH_ACTION;
 
-   void                  ObjectMatchDelay(Environment *,DATA_OBJECT *);
+   void                  ObjectMatchDelay(Environment *,UDFContext *,CLIPSValue *);
    bool                  SetDelayObjectPatternMatching(Environment *,bool);
    bool                  GetDelayObjectPatternMatching(Environment *);
    OBJECT_PATTERN_NODE  *ObjectNetworkPointer(Environment *);

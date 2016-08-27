@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*          PROCEDURAL FUNCTIONS PARSER MODULE         */
    /*******************************************************/
@@ -40,6 +40,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -340,8 +342,10 @@ static struct expr *LoopForCountParse(
             ReturnExpression(theEnv,parse);
             return NULL;
            }
-         if (CheckArgumentAgainstRestriction(theEnv,parse->argList,(int) 'i'))
+
+         if (CheckArgumentAgainstRestriction(theEnv,parse->argList,INTEGER_TYPE))
            goto LoopForCountParseError;
+           
          SavePPBuffer(theEnv," ");
          GetToken(theEnv,infile,&theToken);
          if (theToken.type == RPAREN)
@@ -369,7 +373,7 @@ static struct expr *LoopForCountParse(
         }
      }
 
-   if (CheckArgumentAgainstRestriction(theEnv,parse->argList->nextArg,(int) 'i'))
+   if (CheckArgumentAgainstRestriction(theEnv,parse->argList->nextArg,INTEGER_TYPE))
      goto LoopForCountParseError;
 
    /*====================================*/

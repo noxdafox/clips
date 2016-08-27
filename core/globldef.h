@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*                DEFGLOBAL HEADER FILE                */
    /*******************************************************/
@@ -53,6 +53,8 @@
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_globldef
@@ -97,7 +99,7 @@ struct defglobal
    unsigned int watch   : 1;
    unsigned int inScope : 1;
    long busyCount;
-   DATA_OBJECT current;
+   CLIPSValue current;
    struct expr *initial;
   };
 
@@ -115,16 +117,16 @@ struct defglobalModule
    void                           CreateInitialFactDefglobal(void);
    bool                           EnvIsDefglobalDeletable(Environment *,Defglobal *);
    struct defglobalModule        *GetDefglobalModuleItem(Environment *,Defmodule *);
-   void                           QSetDefglobalValue(Environment *,Defglobal *,DATA_OBJECT_PTR,bool);
+   void                           QSetDefglobalValue(Environment *,Defglobal *,CLIPSValue *,bool);
    Defglobal                     *QFindDefglobal(Environment *,struct symbolHashNode *);
    void                           EnvGetDefglobalValueForm(Environment *,char *,size_t,Defglobal *);
    bool                           EnvGetGlobalsChanged(Environment *);
    void                           EnvSetGlobalsChanged(Environment *,bool);
-   bool                           EnvGetDefglobalValue(Environment *,const char *,DATA_OBJECT_PTR);
-   bool                           EnvSetDefglobalValue(Environment *,const char *,DATA_OBJECT_PTR);
+   bool                           EnvGetDefglobalValue(Environment *,const char *,CLIPSValue *);
+   bool                           EnvSetDefglobalValue(Environment *,const char *,CLIPSValue *);
    void                           UpdateDefglobalScope(Environment *);
    Defglobal                     *GetNextDefglobalInScope(Environment *,Defglobal *);
-   bool                           QGetDefglobalValue(Environment *,Defglobal *,DATA_OBJECT_PTR);
+   bool                           QGetDefglobalValue(Environment *,Defglobal *,CLIPSValue *);
    const char                    *EnvDefglobalModule(Environment *,Defglobal *);
    const char                    *EnvGetDefglobalName(Environment *,Defglobal *);
    const char                    *EnvGetDefglobalPPForm(Environment *,Defglobal *);

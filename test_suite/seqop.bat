@@ -1,4 +1,4 @@
-(defglobal ?*x* = (mv-append 1 2 3))
+(defglobal ?*x* = (create$ 1 2 3))
 (deffunction foo (?a ?b)
   (printout t "Foo arguments: " ?a " " ?b crlf))
 (batch "seqop2.bat")

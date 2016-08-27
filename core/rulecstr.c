@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/11/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*              RULE CONSTRAINTS MODULE                */
    /*******************************************************/
@@ -29,6 +29,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            Static constraint checking is always enabled.  */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -764,7 +766,7 @@ static bool CheckArgumentForConstraintError(
   struct FunctionDefinition *theFunction,
   struct lhsParseNode *theLHS)
   {
-   int theRestriction;
+   unsigned theRestriction2;
    CONSTRAINT_RECORD *constraint1, *constraint2, *constraint3, *constraint4;
    struct lhsParseNode *theVariable;
    struct expr *tmpPtr;
@@ -784,8 +786,8 @@ static bool CheckArgumentForConstraintError(
    /* convert them to a constraint record.      */
    /*===========================================*/
 
-   theRestriction = GetNthRestriction(theFunction,i);
-   constraint1 = ArgumentTypeToConstraintRecord(theEnv,theRestriction);
+   theRestriction2 = GetNthRestriction2(theEnv,theFunction,i);
+   constraint1 = ArgumentTypeToConstraintRecord(theEnv,theRestriction2);
 
    /*================================================*/
    /* Look for the constraint record associated with */

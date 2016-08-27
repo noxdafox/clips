@@ -1,7 +1,7 @@
 #include "clipsjni_utilities.h"
 #include "clipsjni_data.h"
 
-static void      *ConvertSingleFieldPrimitiveValue(void *,int,jobject);
+static void      *ConvertSingleFieldPrimitiveValue(Environment *,int,jobject);
 
 /******************/
 /* JLongToPointer */
@@ -28,7 +28,7 @@ jobject ConvertDataObject(
   JNIEnv *env,
   jobject javaEnv,
   void *clipsEnv,
-  DATA_OBJECT *theDO)
+  CLIPSValue *theDO)
   {
    jobject result = NULL, tresult;
    jint mfLength;
@@ -185,7 +185,7 @@ jobject ConvertSingleFieldValue(
 /* ConvertSingleFieldPrimitiveValue: */
 /*************************************/
 static void *ConvertSingleFieldPrimitiveValue(
-  void *theEnv,
+  Environment *theEnv,
   int theType,
   jobject theValue)
   {
@@ -243,9 +243,9 @@ static void *ConvertSingleFieldPrimitiveValue(
 /* ConvertPrimitiveValueToDataObject: */
 /**************************************/
 void ConvertPrimitiveValueToDataObject(
-  void *theEnv,
+  Environment *theEnv,
   jobject theValue,
-  DATA_OBJECT_PTR theDO)
+  CLIPSValue *theDO)
   {
    void *result = NULL;
    JNIEnv *env = (JNIEnv *) GetEnvironmentContext(theEnv);

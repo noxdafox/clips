@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*                 DEVELOPER HEADER FILE               */
    /*******************************************************/
@@ -36,6 +36,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_developr
@@ -45,21 +47,21 @@
 #define _H_developr
 
    void                           DeveloperCommands(Environment *);
-   void                           PrimitiveTablesInfo(Environment *);
-   void                           PrimitiveTablesUsage(Environment *);
+   void                           PrimitiveTablesInfoCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           PrimitiveTablesUsageCommand(Environment *,UDFContext *,CLIPSValue *);
 
 #if DEFRULE_CONSTRUCT && DEFTEMPLATE_CONSTRUCT
-   void                           ShowFactPatternNetwork(Environment *);
-   bool                           ValidateFactIntegrity(Environment *);
+   void                           ShowFactPatternNetworkCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           ValidateFactIntegrityCommand(Environment *,UDFContext *,CLIPSValue *);
 #endif
 #if DEFRULE_CONSTRUCT && OBJECT_SYSTEM
-   void                           PrintObjectPatternNetwork(Environment *);
+   void                           PrintObjectPatternNetworkCommand(Environment *,UDFContext *,CLIPSValue *);
 #endif
 #if OBJECT_SYSTEM
-   void                           InstanceTableUsage(Environment *);
+   void                           InstanceTableUsageCommand(Environment *,UDFContext *,CLIPSValue *);
 #endif
 #if DEFRULE_CONSTRUCT
-   void                           ValidateBetaMemories(Environment *);
+   void                           ValidateBetaMemoriesCommand(Environment *,UDFContext *,CLIPSValue *);
 #endif
 
 #endif /* _H_developr */

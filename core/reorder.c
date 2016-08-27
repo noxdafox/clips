@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*                    REORDER MODULE                   */
    /*******************************************************/
@@ -52,6 +52,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -1286,7 +1288,8 @@ struct lhsParseNode *ExpressionToLHSParseNodes(
   {
    struct lhsParseNode *newList, *theList;
    struct FunctionDefinition *theFunction;
-   int i, theRestriction;
+   int i;
+   unsigned theRestriction2;
 
    /*===========================================*/
    /* A NULL expression requires no conversion. */
@@ -1320,8 +1323,8 @@ struct lhsParseNode *ExpressionToLHSParseNodes(
      {
       if (theList->type == SF_VARIABLE)
         {
-         theRestriction = GetNthRestriction(theFunction,i);
-         theList->constraints = ArgumentTypeToConstraintRecord(theEnv,theRestriction);
+         theRestriction2 = GetNthRestriction2(theEnv,theFunction,i);
+         theList->constraints = ArgumentTypeToConstraintRecord(theEnv,theRestriction2);         
          theList->derivedConstraints = true;
         }
      }

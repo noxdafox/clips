@@ -7,6 +7,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+#undef net_sf_clipsrules_jni_Environment_UNBOUNDED
+#define net_sf_clipsrules_jni_Environment_UNBOUNDED -1L
 /*
  * Class:     net_sf_clipsrules_jni_Environment
  * Method:    getCLIPSVersion
@@ -50,10 +52,10 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_removeUserFunc
 /*
  * Class:     net_sf_clipsrules_jni_Environment
  * Method:    addUserFunction
- * Signature: (JLjava/lang/String;Ljava/lang/String;Lnet/sf/clipsrules/jni/UserFunction;)Z
+ * Signature: (JLjava/lang/String;Ljava/lang/String;IILjava/lang/String;Lnet/sf/clipsrules/jni/UserFunction;)Z
  */
 JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_addUserFunction
-  (JNIEnv *, jobject, jlong, jstring, jstring, jobject);
+  (JNIEnv *, jobject, jlong, jstring, jstring, jint, jint, jstring, jobject);
 
 /*
  * Class:     net_sf_clipsrules_jni_Environment

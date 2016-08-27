@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*               DEFINSTANCES HEADER FILE              */
    /*******************************************************/
@@ -46,6 +46,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -94,7 +96,7 @@ struct definstancesData
    const char                    *EnvDefinstancesModuleName(Environment *,Definstances *);
    Definstances                  *EnvFindDefinstances(Environment *,const char *);
    Definstances                  *EnvFindDefinstancesInModule(Environment *,const char *);
-   void                           EnvGetDefinstancesList(Environment *,DATA_OBJECT *,Defmodule *);
+   void                           EnvGetDefinstancesList(Environment *,CLIPSValue *,Defmodule *);
    const char                    *EnvGetDefinstancesName(Environment *,Definstances *);
    SYMBOL_HN                     *EnvGetDefinstancesNamePointer(Environment *,Definstances *);
    const char                    *EnvGetDefinstancesPPForm(Environment *,Definstances *);
@@ -102,13 +104,13 @@ struct definstancesData
    bool                           EnvIsDefinstancesDeletable(Environment *,Definstances *);
    void                           EnvSetDefinstancesPPForm(Environment *,Definstances *,const char *);
    bool                           EnvUndefinstances(Environment *,Definstances *);
-   void                           GetDefinstancesListFunction(Environment *,DATA_OBJECT *);
-   void                          *GetDefinstancesModuleCommand(Environment *);
+   void                           GetDefinstancesListFunction(Environment *,UDFContext *,CLIPSValue *);
+   void                           GetDefinstancesModuleCommand(Environment *,UDFContext *,CLIPSValue *);
    void                           SetupDefinstances(Environment *);
-   void                           UndefinstancesCommand(Environment *);
+   void                           UndefinstancesCommand(Environment *,UDFContext *,CLIPSValue *);
 #if DEBUGGING_FUNCTIONS
-   void                           PPDefinstancesCommand(Environment *);
-   void                           ListDefinstancesCommand(Environment *);
+   void                           PPDefinstancesCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           ListDefinstancesCommand(Environment *,UDFContext *,CLIPSValue *);
    void                           EnvListDefinstances(Environment *,const char *,Defmodule *);
 #endif
 

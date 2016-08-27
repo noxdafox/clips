@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -32,6 +32,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -438,7 +440,7 @@ static void MarkDefclassItems(
                and must be converted into expressions
                ================================================= */
             tmpexp =
-              ConvertValueToExpression(theEnv,(DATA_OBJECT *) cls->slots[i].defaultValue);
+              ConvertValueToExpression(theEnv,(CLIPSValue *) cls->slots[i].defaultValue);
             ExpressionData(theEnv)->ExpressionCount += ExpressionSize(tmpexp);
             MarkNeededItems(theEnv,tmpexp);
             ReturnExpression(theEnv,tmpexp);
@@ -526,7 +528,7 @@ static void BsaveDefaultSlotExpressions(
                and must be converted into expressions
                ================================================= */
             tmpexp =
-              ConvertValueToExpression(theEnv,(DATA_OBJECT *) cls->slots[i].defaultValue);
+              ConvertValueToExpression(theEnv,(CLIPSValue *) cls->slots[i].defaultValue);
             BsaveExpression(theEnv,tmpexp,(FILE *) buf);
             ReturnExpression(theEnv,tmpexp);
            }
@@ -889,7 +891,7 @@ static void BsaveSlots(
            ExpressionData(theEnv)->ExpressionCount += ExpressionSize((EXPRESSION *) sp->defaultValue);
          else
            {
-            tmpexp = ConvertValueToExpression(theEnv,(DATA_OBJECT *) sp->defaultValue);
+            tmpexp = ConvertValueToExpression(theEnv,(CLIPSValue *) sp->defaultValue);
             ExpressionData(theEnv)->ExpressionCount += ExpressionSize(tmpexp);
             ReturnExpression(theEnv,tmpexp);
            }
@@ -1281,8 +1283,8 @@ static void UpdateSlot(
         {
          sp->defaultValue = get_struct(theEnv,dataObject);
          EvaluateAndStoreInDataObject(theEnv,(int) sp->multiple,ExpressionPointer(bsp->defaultValue),
-                                      (DATA_OBJECT *) sp->defaultValue,true);
-         ValueInstall(theEnv,(DATA_OBJECT *) sp->defaultValue);
+                                      (CLIPSValue *) sp->defaultValue,true);
+         ValueInstall(theEnv,(CLIPSValue *) sp->defaultValue);
         }
      }
    else
@@ -1396,7 +1398,7 @@ static void ClearBloadObjects(
          DecrementSymbolCount(theEnv,ObjectBinaryData(theEnv)->SlotArray[i].overrideMessage);
          if ((ObjectBinaryData(theEnv)->SlotArray[i].defaultValue != NULL) && (ObjectBinaryData(theEnv)->SlotArray[i].dynamicDefault == 0))
            {
-            ValueDeinstall(theEnv,(DATA_OBJECT *) ObjectBinaryData(theEnv)->SlotArray[i].defaultValue);
+            ValueDeinstall(theEnv,(CLIPSValue *) ObjectBinaryData(theEnv)->SlotArray[i].defaultValue);
             rtn_struct(theEnv,dataObject,ObjectBinaryData(theEnv)->SlotArray[i].defaultValue);
            }
         }

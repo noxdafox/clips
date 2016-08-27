@@ -248,7 +248,7 @@ CLIPS> (send [a22] print)
 (bar gen1)
 CLIPS> (make-instance a3 of A3)
 [a3]
-CLIPS> (nth 2 (send [a3] get-foo))
+CLIPS> (nth$ 2 (send [a3] get-foo))
 def
 CLIPS> (send [a3] put-bar 45)
 45

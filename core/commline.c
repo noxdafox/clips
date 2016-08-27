@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*                COMMAND LINE MODULE                  */
    /*******************************************************/
@@ -75,6 +75,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -882,7 +884,7 @@ bool RouteCommand(
   const char *command,
   bool printResult)
   {
-   DATA_OBJECT result;
+   CLIPSValue returnValue;
    struct expr *top;
    const char *commandName;
    struct token theToken;
@@ -927,11 +929,11 @@ bool RouteCommand(
      {
       CloseStringSource(theEnv,"command");
       top = GenConstant(theEnv,theToken.type,theToken.value);
-      EvaluateExpression(theEnv,top,&result);
+      EvaluateExpression(theEnv,top,&returnValue);
       rtn_struct(theEnv,expr,top);
       if (printResult)
         {
-         PrintDataObject(theEnv,STDOUT,&result);
+         PrintDataObject(theEnv,STDOUT,&returnValue);
          EnvPrintRouter(theEnv,STDOUT,"\n");
         }
       return true;
@@ -1021,7 +1023,7 @@ bool RouteCommand(
    
    CommandLineData(theEnv)->EvaluatingTopLevelCommand = true;
    CommandLineData(theEnv)->CurrentCommand = top;
-   EvaluateExpression(theEnv,top,&result);
+   EvaluateExpression(theEnv,top,&returnValue);
    CommandLineData(theEnv)->CurrentCommand = NULL;
    CommandLineData(theEnv)->EvaluatingTopLevelCommand = false;
    
@@ -1033,9 +1035,9 @@ bool RouteCommand(
    /* Print the return value of the function/command. */
    /*=================================================*/
    
-   if ((result.type != RVOID) && printResult)
+   if ((returnValue.type != RVOID) && printResult)
      {
-      PrintDataObject(theEnv,STDOUT,&result);
+      PrintDataObject(theEnv,STDOUT,&returnValue);
       EnvPrintRouter(theEnv,STDOUT,"\n");
      }
 

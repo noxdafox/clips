@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*              CONSTRUCT COMMANDS MODULE              */
    /*******************************************************/
@@ -56,6 +56,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -752,11 +754,11 @@ SYMBOL_HN *GetConstructNamePointer(
 void GetConstructListFunction(
   Environment *theEnv,
   const char *functionName,
-  DATA_OBJECT_PTR returnValue,
+  CLIPSValue *returnValue,
   struct construct *constructClass)
   {
    Defmodule *theModule;
-   DATA_OBJECT result;
+   CLIPSValue result;
    int numArgs;
 
    /*============================================*/
@@ -829,7 +831,7 @@ void GetConstructListFunction(
 /********************************************/
 void GetConstructList(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue,
+  CLIPSValue *returnValue,
   struct construct *constructClass,
   Defmodule *theModule)
   {
@@ -1010,7 +1012,7 @@ void ListConstructCommand(
   struct construct *constructClass)
   {
    Defmodule *theModule;
-   DATA_OBJECT result;
+   CLIPSValue result;
    int numArgs;
 
    /*============================================*/
@@ -1512,7 +1514,7 @@ static bool ConstructWatchSupport(
   {
    Defmodule *theModule;
    void *theConstruct;
-   DATA_OBJECT constructName;
+   CLIPSValue constructName;
    int argIndex = 2;
 
    /*========================================*/

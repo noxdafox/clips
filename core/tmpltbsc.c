@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/06/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*          DEFTEMPLATE BASIC COMMANDS MODULE          */
    /*******************************************************/
@@ -49,6 +49,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -104,13 +106,13 @@ void DeftemplateBasicCommands(
    AddSaveFunction(theEnv,"deftemplate",SaveDeftemplates,10);
 
 #if ! RUN_TIME
-   EnvDefineFunction2(theEnv,"get-deftemplate-list",'m',PTIEF GetDeftemplateListFunction,"GetDeftemplateListFunction","01w");
-   EnvDefineFunction2(theEnv,"undeftemplate",'v',PTIEF UndeftemplateCommand,"UndeftemplateCommand","11w");
-   EnvDefineFunction2(theEnv,"deftemplate-module",'w',PTIEF DeftemplateModuleFunction,"DeftemplateModuleFunction","11w");
+   EnvAddUDF(theEnv,"get-deftemplate-list","m",0,1,"y",GetDeftemplateListFunction,"GetDeftemplateListFunction",NULL);
+   EnvAddUDF(theEnv,"undeftemplate","v",1,1,"y",UndeftemplateCommand,"UndeftemplateCommand",NULL);
+   EnvAddUDF(theEnv,"deftemplate-module","y",1,1,"y",DeftemplateModuleFunction,"DeftemplateModuleFunction",NULL);
 
 #if DEBUGGING_FUNCTIONS
-   EnvDefineFunction2(theEnv,"list-deftemplates",'v', PTIEF ListDeftemplatesCommand,"ListDeftemplatesCommand","01w");
-   EnvDefineFunction2(theEnv,"ppdeftemplate",'v',PTIEF PPDeftemplateCommand,"PPDeftemplateCommand","11w");
+   EnvAddUDF(theEnv,"list-deftemplates","v",0,1,"y",ListDeftemplatesCommand,"ListDeftemplatesCommand",NULL);
+   EnvAddUDF(theEnv,"ppdeftemplate","v",1,1,"y",PPDeftemplateCommand,"PPDeftemplateCommand",NULL);
 #endif
 
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE)
@@ -177,9 +179,11 @@ static void SaveDeftemplates(
 /*   for the undeftemplate command.           */
 /**********************************************/
 void UndeftemplateCommand(
-  Environment *theEnv)
-  {   
-   UndefconstructCommand(theEnv,"undeftemplate",DeftemplateData(theEnv)->DeftemplateConstruct); 
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
+  {
+   UndefconstructCommand(theEnv,"undeftemplate",DeftemplateData(theEnv)->DeftemplateConstruct);
   }
 
 /**************************************/
@@ -199,8 +203,9 @@ bool EnvUndeftemplate(
 /****************************************************/
 void GetDeftemplateListFunction(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue)
-  {   
+  UDFContext *context,
+  CLIPSValue *returnValue)
+  {
    GetConstructListFunction(theEnv,"get-deftemplate-list",returnValue,DeftemplateData(theEnv)->DeftemplateConstruct); 
   }
 
@@ -210,7 +215,7 @@ void GetDeftemplateListFunction(
 /***********************************************/
 void EnvGetDeftemplateList(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue,
+  CLIPSValue *returnValue,
   Defmodule *theModule)
   {   
    GetConstructList(theEnv,returnValue,DeftemplateData(theEnv)->DeftemplateConstruct,theModule); 
@@ -220,10 +225,13 @@ void EnvGetDeftemplateList(
 /* DeftemplateModuleFunction: H/L access routine   */
 /*   for the deftemplate-module function.          */
 /***************************************************/
-void *DeftemplateModuleFunction(
-  Environment *theEnv)
-  {   
-   return(GetConstructModuleCommand(theEnv,"deftemplate-module",DeftemplateData(theEnv)->DeftemplateConstruct)); 
+void DeftemplateModuleFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
+  {
+   returnValue->type = SYMBOL;
+   returnValue->value = GetConstructModuleCommand(theEnv,"deftemplate-module",DeftemplateData(theEnv)->DeftemplateConstruct);
   }
 
 #if DEBUGGING_FUNCTIONS
@@ -233,9 +241,11 @@ void *DeftemplateModuleFunction(
 /*   for the ppdeftemplate command.           */
 /**********************************************/
 void PPDeftemplateCommand(
-  Environment *theEnv)
-  {   
-   PPConstructCommand(theEnv,"ppdeftemplate",DeftemplateData(theEnv)->DeftemplateConstruct); 
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
+  {
+   PPConstructCommand(theEnv,"ppdeftemplate",DeftemplateData(theEnv)->DeftemplateConstruct);
   }
 
 /***************************************/
@@ -255,8 +265,10 @@ bool PPDeftemplate(
 /*   for the list-deftemplates command.          */
 /*************************************************/
 void ListDeftemplatesCommand(
-  Environment *theEnv)
-  {    
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
+  {
    ListConstructCommand(theEnv,"list-deftemplates",DeftemplateData(theEnv)->DeftemplateConstruct); 
   }
 

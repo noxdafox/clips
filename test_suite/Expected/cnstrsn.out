@@ -57,11 +57,11 @@ ziggle #1
 For a total of 4 methods.
 CLIPS> (get-defmethod-list)
 (oof 51 oof 50 rab 1 ziggle 1)
-CLIPS> (list-defmethods (nth 1 (get-defmethod-list)))
+CLIPS> (list-defmethods (nth$ 1 (get-defmethod-list)))
 oof #51 
 oof #50 (INTEGER SYMBOL) (<qry>) $?
 For a total of 2 methods.
-CLIPS> (get-defmethod-list (nth 1 (get-defmethod-list)))
+CLIPS> (get-defmethod-list (nth$ 1 (get-defmethod-list)))
 (oof 51 oof 50)
 CLIPS> (get-method-restrictions oof 50)
 (2 -1 3 7 11 13 FALSE 2 INTEGER SYMBOL TRUE 0 FALSE 0)

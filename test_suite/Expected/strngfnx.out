@@ -5,8 +5,7 @@ CLIPS> (clear)                            ; 10.4.1
 CLIPS> (str-cat)                          ; 10.4.1
 [ARGACCES4] Function str-cat expected at least 1 argument(s)
 CLIPS> (str-cat (create$))                ; 10.4.1
-[ARGACCES5] Function str-cat expected argument #1 to be of type string, instance name, symbol, float, or integer
-""
+[ARGACCES5] Function str-cat expected argument #1 to be of type integer, float, symbol, string, or instance name
 CLIPS> (str-cat a)                        ; 10.4.1
 "a"
 CLIPS> (str-cat "this one")               ; 10.4.1
@@ -26,8 +25,7 @@ CLIPS> (str-cat "foo" bar)                ; 10.4.1
 CLIPS> (sym-cat)                          ; 10.4.2
 [ARGACCES4] Function sym-cat expected at least 1 argument(s)
 CLIPS> (sym-cat (create$))                ; 10.4.2
-[ARGACCES5] Function sym-cat expected argument #1 to be of type string, instance name, symbol, float, or integer
-nil
+[ARGACCES5] Function sym-cat expected argument #1 to be of type integer, float, symbol, string, or instance name
 CLIPS> (sym-cat a)                        ; 10.4.2
 a
 CLIPS> (sym-cat "this one")               ; 10.4.2
@@ -166,7 +164,7 @@ CLIPS> (eval "(defrule foo =>)")          ; 10.4.5
 FALSE
 CLIPS> (eval "(+ 3 4)")                   ; 10.4.5
 7
-CLIPS> (eval "(mv-append a b c)")         ; 10.4.5
+CLIPS> (eval "(create$ a b c)")           ; 10.4.5
 (a b c)
 CLIPS> (build)                            ; 10.4.6
 [ARGACCES4] Function build expected exactly 1 argument(s)

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*            FACT RHS PATTERN PARSER MODULE           */
    /*******************************************************/
@@ -42,6 +42,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -564,7 +566,7 @@ struct fact *StringToFact(
    unsigned numberOfFields = 0, whichField;
    struct expr *assertArgs, *tempPtr;
    bool error = false;
-   DATA_OBJECT theResult;
+   CLIPSValue theResult;
 
    /*=========================================*/
    /* Open a string router and parse the fact */

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*               FACT COMMANDS HEADER FILE             */
    /*******************************************************/
@@ -51,6 +51,8 @@
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_factcom
@@ -62,20 +64,20 @@
 #include "evaluatn.h"
 
    void                           FactCommandDefinitions(Environment *);
-   void                           AssertCommand(Environment *,DATA_OBJECT_PTR);
-   void                           RetractCommand(Environment *);
-   void                           AssertStringFunction(Environment *,DATA_OBJECT_PTR);
-   void                           FactsCommand(Environment *);
+   void                           AssertCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           RetractCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           AssertStringFunction(Environment *,UDFContext *,CLIPSValue *);
+   void                           FactsCommand(Environment *,UDFContext *,CLIPSValue *);
    void                           EnvFacts(Environment *,const char *,Defmodule *,long long,long long,long long);
-   bool                           SetFactDuplicationCommand(Environment *);
-   bool                           GetFactDuplicationCommand(Environment *);
-   bool                           SaveFactsCommand(Environment *);
-   bool                           LoadFactsCommand(Environment *);
+   void                           SetFactDuplicationCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           GetFactDuplicationCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           SaveFactsCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           LoadFactsCommand(Environment *,UDFContext *,CLIPSValue *);
    bool                           EnvSaveFacts(Environment *,const char *,int);
    bool                           EnvSaveFactsDriver(Environment *,const char *,int,struct expr *);
    bool                           EnvLoadFacts(Environment *,const char *);
    bool                           EnvLoadFactsFromString(Environment *,const char *,long);
-   long long                      FactIndexFunction(Environment *);
+   void                           FactIndexFunction(Environment *,UDFContext *,CLIPSValue *);
 
 #endif /* _H_factcom */
 

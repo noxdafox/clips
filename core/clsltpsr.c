@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/11/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*                 CLASS PARSER MODULE                 */
    /*******************************************************/
@@ -37,6 +37,8 @@
 /*                                                           */
 /*            Static constraint checking is always enabled.   */
 /*                                                            */
+/*            UDF redesign.                                  */
+/*                                                           */
 /**************************************************************/
 
 /* =========================================
@@ -397,7 +399,7 @@ void DeleteSlots(
         }
       else if (stmp->desc->defaultValue != NULL)
         {
-         ValueDeinstall(theEnv,(DATA_OBJECT *) stmp->desc->defaultValue);
+         ValueDeinstall(theEnv,(CLIPSValue *) stmp->desc->defaultValue);
          rtn_struct(theEnv,dataObject,stmp->desc->defaultValue);
         }
       rtn_struct(theEnv,slotDescriptor,stmp->desc);
@@ -716,8 +718,8 @@ static void BuildCompositeFacets(
             else
               {
                sd->defaultValue = get_struct(theEnv,dataObject);
-               GenCopyMemory(DATA_OBJECT,1,sd->defaultValue,compslot->defaultValue);
-               ValueInstall(theEnv,(DATA_OBJECT *) sd->defaultValue);
+               GenCopyMemory(CLIPSValue,1,sd->defaultValue,compslot->defaultValue);
+               ValueInstall(theEnv,(CLIPSValue *) sd->defaultValue);
               }
            }
         }
@@ -827,7 +829,7 @@ static bool EvaluateSlotDefaultValue(
   SlotDescriptor *sd,
   const char *specbits)
   {
-   DATA_OBJECT temp;
+   CLIPSValue temp;
    bool oldce,olddcc, vPass;
    int vCode;
 
@@ -861,8 +863,8 @@ static bool EvaluateSlotDefaultValue(
             ExpressionDeinstall(theEnv,(EXPRESSION *) sd->defaultValue);
             ReturnPackedExpression(theEnv,(EXPRESSION *) sd->defaultValue);
             sd->defaultValue = get_struct(theEnv,dataObject);
-            GenCopyMemory(DATA_OBJECT,1,sd->defaultValue,&temp);
-            ValueInstall(theEnv,(DATA_OBJECT *) sd->defaultValue);
+            GenCopyMemory(CLIPSValue,1,sd->defaultValue,&temp);
+            ValueInstall(theEnv,(CLIPSValue *) sd->defaultValue);
            }
          else
            {
@@ -874,8 +876,8 @@ static bool EvaluateSlotDefaultValue(
         {
          sd->defaultValue = get_struct(theEnv,dataObject);
          DeriveDefaultFromConstraints(theEnv,sd->constraint,
-                                      (DATA_OBJECT *) sd->defaultValue,(int) sd->multiple,true);
-         ValueInstall(theEnv,(DATA_OBJECT *) sd->defaultValue);
+                                      (CLIPSValue *) sd->defaultValue,(int) sd->multiple,true);
+         ValueInstall(theEnv,(CLIPSValue *) sd->defaultValue);
         }
      }
    else

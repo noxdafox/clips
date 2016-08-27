@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*        FACT RETE ACCESS FUNCTIONS HEADER FILE       */
    /*******************************************************/
@@ -37,6 +37,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_factrete
@@ -47,19 +49,19 @@
 
 #include "evaluatn.h"
 
-   bool                           FactPNGetVar1(Environment *,void *,DATA_OBJECT_PTR);
-   bool                           FactPNGetVar2(Environment *,void *,DATA_OBJECT_PTR);
-   bool                           FactPNGetVar3(Environment *,void *,DATA_OBJECT_PTR);
-   bool                           FactJNGetVar1(Environment *,void *,DATA_OBJECT_PTR);
-   bool                           FactJNGetVar2(Environment *,void *,DATA_OBJECT_PTR);
-   bool                           FactJNGetVar3(Environment *,void *,DATA_OBJECT_PTR);
-   bool                           FactSlotLength(Environment *,void *,DATA_OBJECT_PTR);
-   bool                           FactJNCompVars1(Environment *,void *,DATA_OBJECT_PTR);
-   bool                           FactJNCompVars2(Environment *,void *,DATA_OBJECT_PTR);
-   bool                           FactPNCompVars1(Environment *,void *,DATA_OBJECT_PTR);
-   bool                           FactPNConstant1(Environment *,void *,DATA_OBJECT_PTR);
-   bool                           FactPNConstant2(Environment *,void *,DATA_OBJECT_PTR);
-   bool                           FactStoreMultifield(Environment *,void *,DATA_OBJECT_PTR);
+   bool                           FactPNGetVar1(Environment *,void *,CLIPSValue *);
+   bool                           FactPNGetVar2(Environment *,void *,CLIPSValue *);
+   bool                           FactPNGetVar3(Environment *,void *,CLIPSValue *);
+   bool                           FactJNGetVar1(Environment *,void *,CLIPSValue *);
+   bool                           FactJNGetVar2(Environment *,void *,CLIPSValue *);
+   bool                           FactJNGetVar3(Environment *,void *,CLIPSValue *);
+   bool                           FactSlotLength(Environment *,void *,CLIPSValue *);
+   bool                           FactJNCompVars1(Environment *,void *,CLIPSValue *);
+   bool                           FactJNCompVars2(Environment *,void *,CLIPSValue *);
+   bool                           FactPNCompVars1(Environment *,void *,CLIPSValue *);
+   bool                           FactPNConstant1(Environment *,void *,CLIPSValue *);
+   bool                           FactPNConstant2(Environment *,void *,CLIPSValue *);
+   bool                           FactStoreMultifield(Environment *,void *,CLIPSValue *);
    unsigned short                 AdjustFieldPosition(Environment *,struct multifieldMarker *,
                                                       unsigned short,unsigned short,int *);
 

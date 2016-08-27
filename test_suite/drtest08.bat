@@ -108,7 +108,7 @@ Whatever
 (clear)
 
 (defrule foo ; This should fail
-   (bbb ?x&:(member a ?x))
+   (bbb ?x&:(member$ a ?x))
    =>)
 (clear)
 

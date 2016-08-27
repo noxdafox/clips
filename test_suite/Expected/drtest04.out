@@ -47,8 +47,7 @@ For a total of 3 facts.
 CLIPS> (clear)                            ; DR0380
 CLIPS> (if (= 2 2)                        ; DR0380
     then (eval (str-cat (run))))   ; DR0380
-[ARGACCES5] Function str-cat expected argument #1 to be of type string, instance name, symbol, float, or integer
-FALSE
+[ARGACCES5] Function str-cat expected argument #1 to be of type integer, float, symbol, string, or instance name
 CLIPS> (clear)                            ; DR0381
 CLIPS> (deftemplate a                     ; DR0381
    (field one
@@ -76,8 +75,7 @@ CLIPS> (create$)                        ; DR0396
 ()
 CLIPS> (str-compare (str-cat (create$)) 
              (str-cat (create$)))
-[ARGACCES5] Function str-cat expected argument #1 to be of type string, instance name, symbol, float, or integer
-0
+[ARGACCES5] Function str-cat expected argument #1 to be of type integer, float, symbol, string, or instance name
 CLIPS> (clear)                            ; DR0397
 CLIPS> (assert-string (str-cat " (" (bind ?var (read)) ")"))
 anything

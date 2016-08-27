@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*                  CONSTRUCT MODULE                   */
    /*******************************************************/
@@ -59,6 +59,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -198,8 +200,8 @@ struct constructData
    void                           SetExecutingConstruct(Environment *,bool);
    void                           InitializeConstructs(Environment *);
    BeforeResetFunction           *SetBeforeResetFunction(Environment *,BeforeResetFunction *);
-   void                           ResetCommand(Environment *);
-   void                           ClearCommand(Environment *);
+   void                           ResetCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           ClearCommand(Environment *,UDFContext *,CLIPSValue *);
    bool                           ClearReady(Environment *);
    struct construct              *FindConstruct(Environment *,const char *);
    void                           DeinstallConstructHeader(Environment *,struct constructHeader *);

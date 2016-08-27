@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*             CONSTRAINT CHECKING MODULE              */
    /*******************************************************/
@@ -46,6 +46,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -73,7 +75,7 @@
 /***************************************/
 
    static bool                    CheckRangeAgainstCardinalityConstraint(Environment *,int,int,CONSTRAINT_RECORD *);
-   static bool                    CheckFunctionReturnType(int,CONSTRAINT_RECORD *);
+   static bool                    CheckFunctionReturnType(unsigned,CONSTRAINT_RECORD *);
    static bool                    CheckTypeConstraint(int,CONSTRAINT_RECORD *);
    static bool                    CheckRangeConstraint(Environment *,int,void *,CONSTRAINT_RECORD *);
    static void                    PrintRange(Environment *,const char *,CONSTRAINT_RECORD *);
@@ -85,77 +87,44 @@
 /*   among the permissible values, otherwise false.   */
 /******************************************************/
 static bool CheckFunctionReturnType(
-  int functionReturnType,
+  unsigned functionReturnType,
   CONSTRAINT_RECORD *constraints)
   {
    if (constraints == NULL) return true;
 
    if (constraints->anyAllowed) return true;
 
-   switch(functionReturnType)
-     {
-      case 'c':
-      case 'w':
-      case 'b':
-        if (constraints->symbolsAllowed) return true;
-        else return false;
+   if (constraints->voidAllowed)
+     { if (functionReturnType & VOID_TYPE) return true; }
 
-      case 's':
-        if (constraints->stringsAllowed) return true;
-        else return false;
+   if (constraints->symbolsAllowed)
+     { if (functionReturnType & SYMBOL_TYPE) return true; }
 
-      case 'j':
-        if ((constraints->symbolsAllowed) ||
-            (constraints->stringsAllowed) ||
-            (constraints->instanceNamesAllowed)) return true;
-        else return false;
+   if (constraints->stringsAllowed)
+     { if (functionReturnType & STRING_TYPE) return true; }
 
-      case 'k':
-        if ((constraints->symbolsAllowed) || (constraints->stringsAllowed)) return true;
-        else return false;
+   if (constraints->instanceNamesAllowed)
+     { if (functionReturnType & INSTANCE_NAME_TYPE) return true; }
 
-      case 'd':
-      case 'f':
-        if (constraints->floatsAllowed) return true;
-        else return false;
+   if (constraints->floatsAllowed)
+     { if (functionReturnType & FLOAT_TYPE) return true; }
 
-      case 'i':
-      case 'l':
-        if (constraints->integersAllowed) return true;
-        else return false;
+   if (constraints->integersAllowed)
+     { if (functionReturnType & INTEGER_TYPE) return true; }
 
-      case 'n':
-        if ((constraints->integersAllowed) || (constraints->floatsAllowed)) return true;
-        else return false;
+   if (constraints->multifieldsAllowed)
+     { if (functionReturnType & MULTIFIELD_TYPE) return true; }
 
-      case 'm':
-        if (constraints->multifieldsAllowed) return true;
-        else return false;
+   if (constraints->externalAddressesAllowed)
+     { if (functionReturnType & EXTERNAL_ADDRESS_TYPE) return true; }
 
-      case 'a':
-        if (constraints->externalAddressesAllowed) return true;
-        else return false;
+   if (constraints->factAddressesAllowed)
+     { if (functionReturnType & FACT_ADDRESS_TYPE) return true; }
 
-      case 'x':
-        if (constraints->instanceAddressesAllowed) return true;
-        else return false;
+   if (constraints->instanceAddressesAllowed)
+     { if (functionReturnType & INSTANCE_ADDRESS_TYPE) return true; }
 
-      case 'y':
-        if (constraints->factAddressesAllowed) return true;
-        else return false;
-
-      case 'o':
-        if (constraints->instanceNamesAllowed) return true;
-        else return false;
-
-      case 'u':
-        return true;
-
-      case 'v':
-        if (constraints->voidAllowed) return true;
-     }
-
-   return true;
+   return false;
   }
 
 /****************************************************/
@@ -678,7 +647,7 @@ static void PrintRange(
 /*************************************************************/
 int ConstraintCheckDataObject(
   Environment *theEnv,
-  DATA_OBJECT *theData,
+  CLIPSValue *theData,
   CONSTRAINT_RECORD *theConstraints)
   {
    long i; /* 6.04 Bug Fix */
@@ -735,7 +704,7 @@ int ConstraintCheckValue(
 
    else if (theType == FCALL)
      {
-      if (CheckFunctionReturnType((int) ValueFunctionType(theValue),theConstraints) == false)
+      if (CheckFunctionReturnType((unsigned) UnknownFunctionType(theValue),theConstraints) == false)
         { return(FUNCTION_RETURN_TYPE_VIOLATION); }
      }
 
@@ -765,9 +734,11 @@ int ConstraintCheckExpressionChain(
       if (ConstantType(theExp->type)) min++;
       else if (theExp->type == FCALL)
         {
-         if ((ExpressionFunctionType(theExp) != 'm') &&
-             (ExpressionFunctionType(theExp) != 'u')) min++;
-         else max = -1;
+         unsigned restriction = ExpressionUnknownFunctionType(theExp);
+         if (restriction & MULTIFIELD_TYPE)
+           { max = -1; }
+         else
+           { min++; }
         }
       else max = -1;
      }

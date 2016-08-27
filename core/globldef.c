@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/06/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*                  DEFGLOBAL MODULE                   */
    /*******************************************************/
@@ -55,6 +55,8 @@
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -93,7 +95,7 @@
    static void                    ReturnModule(Environment *,void *);
    static void                    ReturnDefglobal(Environment *,Defglobal *);
    static void                    InitializeDefglobalModules(Environment *);
-   static bool                    GetDefglobalValue2(Environment *,void *,DATA_OBJECT_PTR);
+   static bool                    GetDefglobalValue2(Environment *,void *,CLIPSValue *);
    static void                    IncrementDefglobalBusyCount(Environment *,Defglobal *);
    static void                    DecrementDefglobalBusyCount(Environment *,Defglobal *);
    static void                    DeallocateDefglobalData(Environment *);
@@ -410,7 +412,7 @@ static void DestroyDefglobal(
 void QSetDefglobalValue(
   Environment *theEnv,
   Defglobal *theGlobal,
-  DATA_OBJECT_PTR vPtr,
+  CLIPSValue *vPtr,
   bool resetVar)
   {
    /*====================================================*/
@@ -539,12 +541,12 @@ void EnvSetGlobalsChanged(
 
 /**********************************************************/
 /* GetDefglobalValue2: Returns the value of the specified */
-/*   global variable in the supplied DATA_OBJECT.         */
+/*   global variable in the supplied CLIPSValue.          */
 /**********************************************************/
 static bool GetDefglobalValue2(
   Environment *theEnv,
   void *theValue,
-  DATA_OBJECT_PTR vPtr)
+  CLIPSValue *vPtr)
   {
    Defglobal *theGlobal;
    int count;
@@ -604,7 +606,7 @@ static bool GetDefglobalValue2(
 bool QGetDefglobalValue(
   Environment *theEnv,
   Defglobal *theGlobal,
-  DATA_OBJECT_PTR vPtr)
+  CLIPSValue *vPtr)
   {
    /*===============================================*/
    /* Transfer values which can be copied directly. */
@@ -634,12 +636,12 @@ bool QGetDefglobalValue(
 
 /************************************************************/
 /* EnvGetDefglobalValue: Returns the value of the specified */
-/*   global variable in the supplied DATA_OBJECT.           */
+/*   global variable in the supplied CLIPSValue.            */
 /************************************************************/
 bool EnvGetDefglobalValue(
   Environment *theEnv,
   const char *variableName,
-  DATA_OBJECT_PTR vPtr)
+  CLIPSValue *vPtr)
   {
    Defglobal *theDefglobal;
 
@@ -653,12 +655,12 @@ bool EnvGetDefglobalValue(
 
 /****************************************************************/
 /* EnvSetDefglobalValue: Sets the value of the specified global */
-/*   variable to the value stored in the supplied DATA_OBJECT.  */
+/*   variable to the value stored in the supplied CLIPSValue.   */
 /****************************************************************/
 bool EnvSetDefglobalValue(
   Environment *theEnv,
   const char *variableName,
-  DATA_OBJECT_PTR vPtr)
+  CLIPSValue *vPtr)
   {
    Defglobal *theGlobal;
 

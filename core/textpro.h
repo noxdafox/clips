@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*             TEXT PROCESSING HEADER FILE             */
    /*******************************************************/
@@ -50,6 +50,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_textpro
@@ -59,10 +61,10 @@
 #define _H_textpro
 
 #if TEXTPRO_FUNCTIONS
-   void                           FetchCommand(Environment *,DATA_OBJECT *);
-   bool                           PrintRegionCommand(Environment *);
-   void                          *GetRegionCommand(Environment *);
-   bool                           TossCommand(Environment *);
+   void                           FetchCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           PrintRegionCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           GetRegionCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           TossCommand(Environment *,UDFContext *,CLIPSValue *);
 #endif
 
    void                           HelpFunctionDefinitions(Environment *);

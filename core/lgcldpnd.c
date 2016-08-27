@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*             LOGICAL DEPENDENCIES MODULE             */
    /*******************************************************/
@@ -35,6 +35,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -595,12 +597,12 @@ void Dependents(
 /*   for the dependencies command.           */
 /*********************************************/
 void DependenciesCommand(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT item;
+   CLIPSValue item;
    void *ptr;
-
-   if (EnvArgCountCheck(theEnv,"dependencies",EXACTLY,1) == -1) return;
 
    ptr = GetFactOrInstanceArgument(theEnv,1,&item,"dependencies");
 
@@ -618,12 +620,12 @@ void DependenciesCommand(
 /*   for the dependents command.           */
 /*******************************************/
 void DependentsCommand(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT item;
+   CLIPSValue item;
    void *ptr;
-
-   if (EnvArgCountCheck(theEnv,"dependents",EXACTLY,1) == -1) return;
 
    ptr = GetFactOrInstanceArgument(theEnv,1,&item,"dependents");
 

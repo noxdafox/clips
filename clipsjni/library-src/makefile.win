@@ -36,7 +36,7 @@ OBJS = agenda.obj analysis.obj argacces.obj bload.obj bmathfun.obj bsave.obj \
  	clipsjni_utilities.obj clipsjni_glue.obj
 
 .c.obj :
-	cl -c -DWIN_MVC -DALLOW_ENVIRONMENT_GLOBALS=0 /I"$(JAVA_INCLUDE)" /I"$(JAVA_INCLUDE)\win32" $<
+	cl -c -DWIN_MVC /I"$(JAVA_INCLUDE)" /I"$(JAVA_INCLUDE)\win32" $<
 
 CLIPSJNI.dll : $(OBJS)
 	link /libpath:"$(JAVA_LIB)" *.obj /dll /out:CLIPSJNI.dll

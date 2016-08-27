@@ -135,11 +135,11 @@ CLIPS> (div 19 2 2)                       ; 10.6.1.5 : 4
 CLIPS> (div 7.5 1.5)                      ; 10.6.1.5 : 7
 7
 CLIPS> (max)                              ; 10.6.1.6
-[ARGACCES4] Function max expected at least 2 argument(s)
+[ARGACCES4] Function max expected at least 1 argument(s)
 CLIPS> (max a)                            ; 10.6.1.7
-[ARGACCES4] Function max expected at least 2 argument(s)
+[ARGACCES5] Function max expected argument #1 to be of type integer or float
 CLIPS> (max 1)                            ; 10.6.1.7
-[ARGACCES4] Function max expected at least 2 argument(s)
+1
 CLIPS> (max 1 2.0)                        ; 10.6.1.7 : 2.0
 2.0
 CLIPS> (max 2.0 1)                        ; 10.6.1.7 : 2.0
@@ -161,11 +161,11 @@ CLIPS> (max 4.0 -3.0 2.0)                 ; 10.6.1.7 : 4.0
 CLIPS> (max 2.0 3.0 4.0)                  ; 10.6.1.6 : 4.0
 4.0
 CLIPS> (min)                              ; 10.6.1.7
-[ARGACCES4] Function min expected at least 2 argument(s)
+[ARGACCES4] Function min expected at least 1 argument(s)
 CLIPS> (min a)                            ; 10.6.1.7
-[ARGACCES4] Function min expected at least 2 argument(s)
+[ARGACCES5] Function min expected argument #1 to be of type integer or float
 CLIPS> (min 1)                            ; 10.6.1.7
-[ARGACCES4] Function min expected at least 2 argument(s)
+1
 CLIPS> (min 1 2.0)                        ; 10.6.1.7 : 1
 1
 CLIPS> (min 2.0 1)                        ; 10.6.1.7 : 1

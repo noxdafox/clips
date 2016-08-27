@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -50,6 +50,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -103,12 +105,12 @@ struct messageHandlerData
 #endif
    unsigned         EnvFindDefmessageHandler(Environment *,Defclass *,const char *,const char *);
    bool             EnvIsDefmessageHandlerDeletable(Environment *,Defclass *,int);
-   void             UndefmessageHandlerCommand(Environment *);
+   void             UndefmessageHandlerCommand(Environment *,UDFContext *,CLIPSValue *);
    bool             EnvUndefmessageHandler(Environment *,Defclass *,int);
 #if DEBUGGING_FUNCTIONS
-   void             PPDefmessageHandlerCommand(Environment *);
-   void             ListDefmessageHandlersCommand(Environment *);
-   void             PreviewSendCommand(Environment *); 
+   void             PPDefmessageHandlerCommand(Environment *,UDFContext *,CLIPSValue *);
+   void             ListDefmessageHandlersCommand(Environment *,UDFContext *,CLIPSValue *);
+   void             PreviewSendCommand(Environment *,UDFContext *,CLIPSValue *);
    const char      *EnvGetDefmessageHandlerPPForm(Environment *,Defclass *,int);
    void             EnvListDefmessageHandlers(Environment *,const char *,Defclass *,bool);
    void             EnvPreviewSend(Environment *,const char *,Defclass *,const char *);

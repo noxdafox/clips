@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -38,6 +38,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -1139,7 +1141,7 @@ static bool SlotsToCode(
            ExpressionToCode(theEnv,*slotFile,(EXPRESSION *) sd->defaultValue);
          else
            {
-            tmpexp = ConvertValueToExpression(theEnv,(DATA_OBJECT *) sd->defaultValue);
+            tmpexp = ConvertValueToExpression(theEnv,(CLIPSValue *) sd->defaultValue);
             ExpressionToCode(theEnv,*slotFile,tmpexp);
             ReturnExpression(theEnv,tmpexp);
            }

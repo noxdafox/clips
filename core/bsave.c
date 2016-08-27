@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/06/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*                     BSAVE MODULE                    */
    /*******************************************************/
@@ -43,6 +43,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -106,22 +108,33 @@ static void DeallocateBsaveData(
 /* BsaveCommand: H/L access routine   */
 /*   for the bsave command.           */
 /**************************************/
-bool BsaveCommand(
-  Environment *theEnv)
+void BsaveCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
 #if (! RUN_TIME) && BLOAD_AND_BSAVE
    const char *fileName;
 
-   if (EnvArgCountCheck(theEnv,"bsave",EXACTLY,1) == -1) return false;
+   returnValue->type = SYMBOL;
+
    fileName = GetFileName(theEnv,"bsave",1);
    if (fileName != NULL)
-     { if (EnvBsave(theEnv,fileName)) return true; }
+     {
+      if (EnvBsave(theEnv,fileName))
+        { returnValue->value = EnvTrueSymbol(theEnv); }
+      else
+        { returnValue->value = EnvFalseSymbol(theEnv); }
+     }
+   else
+     { returnValue->value = EnvFalseSymbol(theEnv); }
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
 #endif
+   returnValue->type = SYMBOL;
+   returnValue->value = EnvFalseSymbol(theEnv);
 #endif
-   return false;
   }
 
 #if BLOAD_AND_BSAVE

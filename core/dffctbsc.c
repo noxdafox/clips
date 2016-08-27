@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/06/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*         DEFFACTS BASIC COMMANDS HEADER FILE         */
    /*******************************************************/
@@ -48,6 +48,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -100,13 +102,13 @@ void DeffactsBasicCommands(
    AddSaveFunction(theEnv,"deffacts",SaveDeffacts,10);
 
 #if ! RUN_TIME
-   EnvDefineFunction2(theEnv,"get-deffacts-list",'m',PTIEF GetDeffactsListFunction,"GetDeffactsListFunction","01w");
-   EnvDefineFunction2(theEnv,"undeffacts",'v',PTIEF UndeffactsCommand,"UndeffactsCommand","11w");
-   EnvDefineFunction2(theEnv,"deffacts-module",'w',PTIEF DeffactsModuleFunction,"DeffactsModuleFunction","11w");
+   EnvAddUDF(theEnv,"get-deffacts-list","m",0,1,"y",GetDeffactsListFunction,"GetDeffactsListFunction",NULL);
+   EnvAddUDF(theEnv,"undeffacts","v",1,1,"y",UndeffactsCommand,"UndeffactsCommand",NULL);
+   EnvAddUDF(theEnv,"deffacts-module","y",1,1,"y",DeffactsModuleFunction,"DeffactsModuleFunction",NULL);
 
 #if DEBUGGING_FUNCTIONS
-   EnvDefineFunction2(theEnv,"list-deffacts",'v', PTIEF ListDeffactsCommand,"ListDeffactsCommand","01w");
-   EnvDefineFunction2(theEnv,"ppdeffacts",'v',PTIEF PPDeffactsCommand,"PPDeffactsCommand","11w");
+   EnvAddUDF(theEnv,"list-deffacts","v",0,1,"y",ListDeffactsCommand,"ListDeffactsCommand",NULL);
+   EnvAddUDF(theEnv,"ppdeffacts","v",1,1,"y",PPDeffactsCommand,"PPDeffactsCommand",NULL);
 #endif
 
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE)
@@ -146,14 +148,14 @@ static void ResetDeffactsAction(
 #if MAC_XCD
 #pragma unused(buffer)
 #endif
-   DATA_OBJECT result;
+   CLIPSValue returnValue;
    Deffacts *theDeffacts = (Deffacts *) theConstruct;
 
    if (theDeffacts->assertList == NULL) return;
 
    EnvSetEvaluationError(theEnv,false);
 
-   EvaluateExpression(theEnv,theDeffacts->assertList,&result);
+   EvaluateExpression(theEnv,theDeffacts->assertList,&returnValue);
   }
 
 /**********************************************************/
@@ -221,9 +223,11 @@ static void SaveDeffacts(
 /*   for the undeffacts command.           */
 /*******************************************/
 void UndeffactsCommand(
-  Environment *theEnv)
-  { 
-   UndefconstructCommand(theEnv,"undeffacts",DeffactsData(theEnv)->DeffactsConstruct); 
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
+  {
+   UndefconstructCommand(theEnv,"undeffacts",DeffactsData(theEnv)->DeffactsConstruct);
   }
 
 /***********************************/
@@ -243,9 +247,10 @@ bool EnvUndeffacts(
 /*************************************************/
 void GetDeffactsListFunction(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue)
-  { 
-   GetConstructListFunction(theEnv,"get-deffacts-list",returnValue,DeffactsData(theEnv)->DeffactsConstruct); 
+  UDFContext *context,
+  CLIPSValue *returnValue)
+  {
+   GetConstructListFunction(theEnv,"get-deffacts-list",returnValue,DeffactsData(theEnv)->DeffactsConstruct);
   }
 
 /*****************************************/
@@ -254,7 +259,7 @@ void GetDeffactsListFunction(
 /*****************************************/
 void EnvGetDeffactsList(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue,
+  CLIPSValue *returnValue,
   Defmodule *theModule)
   { 
    GetConstructList(theEnv,returnValue,DeffactsData(theEnv)->DeffactsConstruct,theModule); 
@@ -264,10 +269,13 @@ void EnvGetDeffactsList(
 /* DeffactsModuleFunction: H/L access routine   */
 /*   for the deffacts-module function.          */
 /************************************************/
-void *DeffactsModuleFunction(
-  Environment *theEnv)
-  { 
-   return(GetConstructModuleCommand(theEnv,"deffacts-module",DeffactsData(theEnv)->DeffactsConstruct)); 
+void DeffactsModuleFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
+  {
+   returnValue->type = SYMBOL;
+   returnValue->value = GetConstructModuleCommand(theEnv,"deffacts-module",DeffactsData(theEnv)->DeffactsConstruct);
   }
 
 #if DEBUGGING_FUNCTIONS
@@ -277,9 +285,11 @@ void *DeffactsModuleFunction(
 /*   for the ppdeffacts command.           */
 /*******************************************/
 void PPDeffactsCommand(
-  Environment *theEnv)
-  { 
-   PPConstructCommand(theEnv,"ppdeffacts",DeffactsData(theEnv)->DeffactsConstruct); 
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
+  {
+   PPConstructCommand(theEnv,"ppdeffacts",DeffactsData(theEnv)->DeffactsConstruct);
   }
 
 /************************************/
@@ -299,8 +309,10 @@ bool PPDeffacts(
 /*   for the list-deffacts command.          */
 /*********************************************/
 void ListDeffactsCommand(
-  Environment *theEnv)
-  { 
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
+  {
    ListConstructCommand(theEnv,"list-deffacts",DeffactsData(theEnv)->DeffactsConstruct); 
   }
 

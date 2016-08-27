@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*              PRINT UTILITY HEADER FILE              */
    /*******************************************************/
@@ -53,6 +53,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_prntutil
@@ -84,7 +86,7 @@ struct printUtilityData
    void                           PrintTally(Environment *,const char *,long long,const char *,const char *);
    const char                    *FloatToString(Environment *,double);
    const char                    *LongIntegerToString(Environment *,long long);
-   const char                    *DataObjectToString(Environment *,DATA_OBJECT *);
+   const char                    *DataObjectToString(Environment *,CLIPSValue *);
    void                           SyntaxErrorMessage(Environment *,const char *);
    void                           SystemError(Environment *,const char *,int);
    void                           PrintErrorID(Environment *,const char *,int,bool);

@@ -32,7 +32,7 @@
    (test (and (test-arg $?multi) (test-arg $?multi2)))
 =>
    (retract ?f ?g)
-   (bind ?a (mv-append abc def ghi))
+   (bind ?a (create$ abc def ghi))
    (printout t ?a " --> " $?a " ; " (expand$ ?a) crlf)
    (printout t "Success:" crlf ?multi  " --> " $?multi  crlf
                                ?multi2 " --> " $?multi2 crlf)
@@ -47,13 +47,13 @@
 )
 
 (deffunction dfnx-seqop-test (?a $?b)
-   (bind ?a (mv-append abc def ghi))
+   (bind ?a (create$ abc def ghi))
    (printout t ?a " --> " $?a " ; " (expand$ ?a) crlf)
    (printout t ?b " --> " $?b crlf)
 )
 
 (defmessage-handler SEQOP-TEST-CLASS seqop-test (?a $?b)
-   (bind ?a (mv-append abc def ghi))
+   (bind ?a (create$ abc def ghi))
    (printout t ?a " --> " $?a " ; " (expand$ ?a) crlf)
    (printout t ?b " --> " $?b crlf)
    (printout t ?self:woz " --> " (expand$ ?self:woz) crlf)
@@ -63,7 +63,7 @@
 )
 
 (defmethod + (($?b STRING))
-   (bind ?a (mv-append abc def ghi))
+   (bind ?a (create$ abc def ghi))
    (printout t ?a " --> " $?a " ; " (expand$ ?a) crlf)
    (printout t ?b " --> " $?b crlf)
    (str-cat $?b)

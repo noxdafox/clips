@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*          EXPRESSION OPERATIONS HEADER FILE          */
    /*******************************************************/
@@ -34,6 +34,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_exprnops
@@ -53,7 +55,7 @@
    bool                           IdenticalExpression(struct expr *,struct expr *);
    struct expr                   *GenConstant(Environment *,unsigned short,void *);
 #if ! RUN_TIME
-   bool                           CheckArgumentAgainstRestriction(Environment *,struct expr *,int);
+   bool                           CheckArgumentAgainstRestriction(Environment *,struct expr *,unsigned);
 #endif
    bool                           ConstantType(int);
    struct expr                   *CombineExpressions(Environment *,struct expr *,struct expr *);

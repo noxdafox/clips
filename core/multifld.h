@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*                MULTIFIELD HEADER FILE               */
    /*******************************************************/
@@ -53,6 +53,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -109,16 +111,16 @@ typedef struct field * FIELD_PTR;
    Multifield                    *EnvCreateMultifield(Environment *,long);
    void                           AddToMultifieldList(Environment *,struct multifield *);
    void                           FlushMultifields(Environment *);
-   void                           DuplicateMultifield(Environment *,struct dataObject *,struct dataObject *);
+   void                           DuplicateMultifield(Environment *,CLIPSValue *,CLIPSValue *);
    void                           PrintMultifield(Environment *,const char *,SEGMENT_PTR,long,long,bool);
-   bool                           MultifieldDOsEqual(DATA_OBJECT_PTR,DATA_OBJECT_PTR);
-   void                           StoreInMultifield(Environment *,DATA_OBJECT *,EXPRESSION *,bool);
+   bool                           MultifieldDOsEqual(CLIPSValue *,CLIPSValue *);
+   void                           StoreInMultifield(Environment *,CLIPSValue *,EXPRESSION *,bool);
    Multifield                    *CopyMultifield(Environment *,struct multifield *);
    bool                           MultifieldsEqual(struct multifield *,struct multifield *);
-   Multifield                    *DOToMultifield(Environment *,DATA_OBJECT *);
+   Multifield                    *DOToMultifield(Environment *,CLIPSValue *);
    unsigned long                  HashMultifield(struct multifield *,unsigned long);
    Multifield                    *GetMultifieldList(Environment *);
-   void                          *ImplodeMultifield(Environment *,DATA_OBJECT *);
+   void                          *ImplodeMultifield(Environment *,CLIPSValue *);
    void                           EphemerateMultifield(Environment *,struct multifield *);
 
 #endif /* _H_multifld */

@@ -17,7 +17,7 @@
 (send [a21] print)
 (send [a22] print)
 (make-instance a3 of A3)
-(nth 2 (send [a3] get-foo))
+(nth$ 2 (send [a3] get-foo))
 (send [a3] put-bar 45)
 (send [a3] get-bar)
 (make-instance a4 of A4)

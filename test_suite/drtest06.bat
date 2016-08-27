@@ -19,10 +19,10 @@
 (defclass a (is-a USER) (slot bar (create-accessor ?NONE))) ;; Update 1/1/93
 (list-defmessage-handlers a)       ; DR0502 - None
 (clear)                            ; DR0503
-(defglobal ?*global-list* = (mv-append 1 2 3 4))
+(defglobal ?*global-list* = (create$ 1 2 3 4))
 (defrule foo                       ; DR0503
    (items $?list)
-   (test (subset ?list ?*global-list*))
+   (test (subsetp ?list ?*global-list*))
    =>
    (printout t "Success!" crlf))
 (assert (items 2 3))               ; DR0503
@@ -46,7 +46,7 @@
 (defrule test-member               ; DR0508
    (list $?list)
    =>
-   (printout t "position=" (member i2 ?list) crlf))
+   (printout t "position=" (member$ i2 ?list) crlf))
 (reset)                            ; DR0508
 (run)                              ; DR0508 - position=4
 (clear)                            ; DR0511
@@ -100,10 +100,10 @@
 (print-region 3 "foo.lis" ROOT SUBTOPIC)    
 (print-region t 3 ROOT SUBTOPIC)   ; DR0524 - Error
 (deffunction mftest ()             ; DR0525
-   (bind ?result (mv-append))
+   (bind ?result (create$))
    (bind ?i 140)
    (while (> ?i 0) do
-      (bind ?result (mv-append ?i ?result))
+      (bind ?result (create$ ?i ?result))
       (bind ?i (- ?i 1)))
    ?result)
 (mftest)                           ; DR0525
@@ -114,10 +114,10 @@
    (if (and (< ?a 0.000245)  (>=  ?a 0.000244))
        then (assert (DR0384 OK))))
 (seed (5))                         ; DR0527
-(sym-cat (str-explode "a s d g e f")) ; DR0528 - Error
+(sym-cat (explode$ "a s d g e f")) ; DR0528 - Error
 (str-length                        ; DR0529 - Error
-   (str-implode ((mv-append 1 2 3 4)
-						           (mv-append 4 3 2 1))))
+   (implode$ ((create$ 1 2 3 4)
+			  (create$ 4 3 2 1))))
 (deg-grad 90)                      ; DR0532 - 100.0
 (* 3.6 15.0)                       ; DR0533 - 54.0
 (* 3.0 15.0)                       ; DR0533 - 45.0

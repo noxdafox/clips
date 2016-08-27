@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*      CONFLICT RESOLUTION STRATEGY HEADER MODULE     */
    /*******************************************************/
@@ -48,6 +48,8 @@
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_crstrtgy
@@ -72,8 +74,8 @@
    void                           PlaceActivation(Environment *,Activation **,Activation *,struct salienceGroup *);
    int                            EnvSetStrategy(Environment *,int);
    int                            EnvGetStrategy(Environment *);
-   void                          *SetStrategyCommand(Environment *);
-   void                          *GetStrategyCommand(Environment *);
+   void                           SetStrategyCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           GetStrategyCommand(Environment *,UDFContext *,CLIPSValue *);
 
 #endif /* _H_crstrtgy */
 

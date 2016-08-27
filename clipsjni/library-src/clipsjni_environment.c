@@ -174,9 +174,9 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_loadFromStringWith
    theEnv = JLongToPointer(clipsEnv);
 
    OpenStringSource(theEnv,"clipsjniloadfromstringwo",cLoadString,0); 
-   SetPrintWhileLoading(theEnv,TRUE);
+   SetPrintWhileLoading(theEnv,true);
    LoadConstructsFromLogicalName(theEnv,"clipsjniloadfromstringwo");
-   SetPrintWhileLoading(theEnv,FALSE);
+   SetPrintWhileLoading(theEnv,false);
    CloseStringSource(theEnv,"clipsjniloadfromstringwo");
    
    (*env)->ReleaseStringUTFChars(env,loadString,cLoadString);
@@ -269,8 +269,8 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_getWatchItem(
    
    SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
    
-   if (rv == 1) return TRUE;
-   else return FALSE;
+   if (rv == 1) return true;
+   else return false;
   }
 
 /********************************************************/
@@ -361,7 +361,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_eval(
   jlong clipsEnv,
   jstring evalStr)
   {
-   DATA_OBJECT theDO;
+   CLIPSValue theDO;
    jobject result = NULL;
    const char *cEvalStr;
    void *theCLIPSEnv = JLongToPointer(clipsEnv);
@@ -609,7 +609,7 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_removePeriodic
 
    return rv;
   }
-  
+
 /******************************************************************/
 /* Java_net_sf_clipsrules_jni_Environment_addUserFunction: Native */
 /*   function for the CLIPSJNI addUserFunction method.            */
@@ -625,6 +625,9 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_addUserFunctio
   jobject obj, 
   jlong clipsEnv, 
   jstring functionName, 
+  jstring returnTypes, 
+  jint minArgs,
+  jint maxArgs,
   jstring restrictions, 
   jobject context)
   {
@@ -633,23 +636,32 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_addUserFunctio
 
    const char *cFunctionName = (*env)->GetStringUTFChars(env,functionName,NULL);
    const char *cRestrictions;
-   
+   const char *cReturnTypes;
+
    if (restrictions != NULL)
      { cRestrictions = (*env)->GetStringUTFChars(env,restrictions,NULL); }
    else 
      { cRestrictions = NULL; }
 
+   if (returnTypes != NULL)
+     { cReturnTypes = (*env)->GetStringUTFChars(env,returnTypes,NULL); }
+   else 
+     { cReturnTypes = NULL; }
+
    void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env); 
 
    nobj = (*env)->NewGlobalRef(env,context);
-    
-   rv = EnvDefineFunction2WithContext(JLongToPointer(clipsEnv),
-                                     cFunctionName,'u',PTIEF JNIUserFunction,
-                                     "JNIUserFunction",cRestrictions,nobj);
+ 
+   rv = EnvAddUDF(JLongToPointer(clipsEnv),cFunctionName,"*",minArgs,maxArgs,
+                  cRestrictions,JNIUserFunction,"JNIUserFunction",nobj);
 
    (*env)->ReleaseStringUTFChars(env,functionName,cFunctionName);
+
    if (restrictions != NULL)
      { (*env)->ReleaseStringUTFChars(env,restrictions,cRestrictions); }
+     
+   if (returnTypes != NULL)
+     { (*env)->ReleaseStringUTFChars(env,returnTypes,cReturnTypes); }
                                      
    SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext); 
 
@@ -683,9 +695,9 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_removeUserFunc
    context = GetEnvironmentFunctionContext(theEnv);
    if (context != NULL)
      {  (*env)->DeleteGlobalRef(env,context); }
-     
-   rv = UndefineFunction(JLongToPointer(clipsEnv),cFunctionName);
 
+   rv = EnvRemoveUDF(JLongToPointer(clipsEnv),cFunctionName);
+   
    (*env)->ReleaseStringUTFChars(env,functionName,cFunctionName);
                                      
    SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext); 

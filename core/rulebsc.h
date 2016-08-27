@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*         DEFRULE BASIC COMMANDS HEADER FILE          */
    /*******************************************************/
@@ -55,6 +55,8 @@
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_rulebsc
@@ -66,15 +68,15 @@
 #include "evaluatn.h"
 
    void                           DefruleBasicCommands(Environment *);
-   void                           UndefruleCommand(Environment *);
+   void                           UndefruleCommand(Environment *,UDFContext *,CLIPSValue *);
    bool                           EnvUndefrule(Environment *,Defrule *);
-   void                           GetDefruleListFunction(Environment *,DATA_OBJECT_PTR);
-   void                           EnvGetDefruleList(Environment *,DATA_OBJECT_PTR,Defmodule *);
-   void                          *DefruleModuleFunction(Environment *);
+   void                           GetDefruleListFunction(Environment *,UDFContext *,CLIPSValue *);
+   void                           EnvGetDefruleList(Environment *,CLIPSValue *,Defmodule *);
+   void                           DefruleModuleFunction(Environment *,UDFContext *,CLIPSValue *);
 #if DEBUGGING_FUNCTIONS
-   void                           PPDefruleCommand(Environment *);
+   void                           PPDefruleCommand(Environment *,UDFContext *,CLIPSValue *);
    bool                           PPDefrule(Environment *,const char *,const char *);
-   void                           ListDefrulesCommand(Environment *);
+   void                           ListDefrulesCommand(Environment *,UDFContext *,CLIPSValue *);
    void                           EnvListDefrules(Environment *,const char *,Defmodule *);
    bool                           EnvGetDefruleWatchFirings(Environment *,Defrule *);
    bool                           EnvGetDefruleWatchActivations(Environment *,Defrule *);

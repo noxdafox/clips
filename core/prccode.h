@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -49,6 +49,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_prccode
@@ -65,14 +67,14 @@
 
 typedef struct ProcParamStack
   {
-   DATA_OBJECT *ParamArray;
+   CLIPSValue *ParamArray;
 
 #if DEFGENERIC_CONSTRUCT
    EXPRESSION *ParamExpressions;
 #endif
 
    int ParamArraySize;
-   DATA_OBJECT *WildcardValue;
+   CLIPSValue *WildcardValue;
    void (*UnboundErrFunc)(Environment *);
    struct ProcParamStack *nxt;
   } PROC_PARAM_STACK;
@@ -82,15 +84,15 @@ typedef struct ProcParamStack
 struct proceduralPrimitiveData
   { 
    void *NoParamValue;
-   DATA_OBJECT *ProcParamArray;
+   CLIPSValue *ProcParamArray;
    int ProcParamArraySize;
    EXPRESSION *CurrentProcActions;
 #if DEFGENERIC_CONSTRUCT
    EXPRESSION *ProcParamExpressions;
 #endif
    PROC_PARAM_STACK *pstack;
-   DATA_OBJECT *WildcardValue;
-   DATA_OBJECT *LocalVarArray;
+   CLIPSValue *WildcardValue;
+   CLIPSValue *LocalVarArray;
    void (*ProcUnboundErrFunc)(Environment *);
    ENTITY_RECORD ProcParameterInfo; 
    ENTITY_RECORD ProcWildInfo;
@@ -135,9 +137,9 @@ struct proceduralPrimitiveData
 #endif
 
    void                           EvaluateProcActions(Environment *,Defmodule *,EXPRESSION *,int,
-                                                      DATA_OBJECT *,void (*)(Environment *));
+                                                      CLIPSValue *,void (*)(Environment *));
    void                           PrintProcParamArray(Environment *,const char *);
-   void                           GrabProcWildargs(Environment *,DATA_OBJECT *,int);
+   void                           GrabProcWildargs(Environment *,CLIPSValue *,int);
 
 #endif /* _H_prccode */
 

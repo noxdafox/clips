@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/10/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*                  I/O ROUTER MODULE                  */
    /*******************************************************/
@@ -55,6 +55,8 @@
 /*                                                           */
 /*            Callbacks must be environment aware.           */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -93,7 +95,7 @@ void InitializeDefaultRouters(
    RouterData(theEnv)->AwaitingInput = true;
    
 #if (! RUN_TIME)
-   EnvDefineFunction2(theEnv,"exit",    'v', PTIEF ExitCommand,    "ExitCommand", "*1i");
+   EnvAddUDF(theEnv,"exit","v",0,1,"l",ExitCommand,"ExitCommand",NULL);
 #endif
    InitializeFileRouter(theEnv);
    InitializeStringRouter(theEnv);
@@ -338,17 +340,24 @@ int EnvUngetcRouter(
 /* ExitCommand: H/L command for exiting the program. */
 /*****************************************************/
 void ExitCommand(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    int argCnt;
    int status;
-
+   CLIPSValue theArg;
+   
    if ((argCnt = EnvArgCountCheck(theEnv,"exit",NO_MORE_THAN,1)) == -1) return;
+   
    if (argCnt == 0)
      { EnvExitRouter(theEnv,EXIT_SUCCESS); }
    else
     {
-     status = (int) EnvRtnLong(theEnv,1);
+     if (! EnvArgTypeCheck(theEnv,"exit",1,INTEGER,&theArg) == false)
+       { EnvExitRouter(theEnv,EXIT_SUCCESS); }
+
+     status = DOToLong(theArg);
      if (EnvGetEvaluationError(theEnv)) return;
      EnvExitRouter(theEnv,status);
     }

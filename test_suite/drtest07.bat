@@ -1,7 +1,7 @@
 (clear)                            ; DR0602
-(subset (mv-append bar)            ; DR0602
-        (mv-append "bar"))         ; DR0602 - FALSE
-(member fox (mv-append "fox"))     ; DR0602 - FALSE
+(subsetp (create$ bar)             ; DR0602
+         (create$ "bar"))          ; DR0602 - FALSE
+(member$ fox (create$ "fox"))      ; DR0602 - FALSE
 (clear)                            ; DR0604
 (defrule foo => (assert (x)))      ; DR0604
 (bsave "Temp//foo.bin")            ; DR0604
@@ -65,9 +65,9 @@
 (clear)                            ; DR0617
 (progn (release-mem) TRUE)         ; DR0617 - Memory Loss
 (clear)                            ; DR0619
-(str-explode "")                   ; DR0619
+(explode$ "")                      ; DR0619
 (deftemplate foo (field x) (field y))
-(str-explode "foo")                ; DR0619
+(explode$ "foo")                   ; DR0619
 (format t "%s"                     ; DR0621
    "The allowed-values attribute cannot be used in conjunction with
                       other value restriction attributes")
@@ -109,7 +109,7 @@
    (bind ?a (send ?ins get-foo))
    (printout t ?a " ")
    (printout t (send ?ins get-foo) " ")
-   (mv-slot-replace ?ins foo 1 1 1)
+   (slot-replace$ ?ins foo 1 1 1)
    (printout t ?a " ")
    (printout t (send ?ins get-foo) crlf))
 (make-instance a of A)             ; DR0629
@@ -134,7 +134,7 @@
 (deffunction foo ()                ; DR0634
    (bind ?i 1000)                  ; DR0634
    (while (> ?i 0) do              ; DR0634
-      (bind ?a (mv-append))        ; DR0634
+      (bind ?a (create$))          ; DR0634
       (bind ?i (- ?i 1))))         ; DR0634
 (foo)                              ; DR0634
 (clear)                            ; DR0635
@@ -143,7 +143,7 @@
 (defrule blah (fact $?x here $?x) =>)
 (assert (fact 1 2 here 3 4))       ; DR0636
 (agenda)                           ; DR0636
-(subsetp (mv-append a a b) (mv-append a b)) ; DR0637
+(subsetp (create$ a a b) (create$ a b)) ; DR0637
 (clear)                            ; DR0639
 (defrule foo (or (a) (b) (c)) =>)  ; DR0639
 (assert (a) (b) (c))               ; DR0639
@@ -169,7 +169,7 @@
    (result $?input # $?response)
    =>
    (while (neq ?response (create$)) do
-      (nth 1 ?response)
+      (nth$ 1 ?response)
       (bind ?response (create$))))
 (reset)                            ; DR0645
 (run)                              ; DR0645
@@ -220,7 +220,7 @@
 (clear)                            ; DR0658
 (defclass A (is-a USER) (role concrete) (multislot x (create-accessor read-write)))
 (make-instance a of A)             ; DR0658
-(mv-slot-insert [a] x 1 abc)       ; DR0658
+(slot-insert$ [a] x 1 abc)         ; DR0658
 (clear)                            ; DR0659
 (defclass a (is-a USER) ())        ; DR0659
 (defclass b (is-a USER) (slot))    ; DR0659
@@ -388,7 +388,7 @@
 (make-instance fribban of A)
 (make-instance quoxnar of A)
 (send [quoxnar] put-foo (instance-address [fribban]))
-(send [quoxnar] put-bar (mv-append))
+(send [quoxnar] put-bar (create$))
 (unmake-instance [fribban])
 (send (send [quoxnar] get-foo) print)
 (save-instances "Temp//badfile.tmp")
@@ -398,7 +398,7 @@
 (clear)
 (defglobal ?*x* = 0) ;; DR0698 and DR0701
 (deffunction create-number-2 ()
-  (bind ?*x* (nth 1 (str-explode "2.0")))
+  (bind ?*x* (nth$ 1 (explode$ "2.0")))
   BOGUS)
 (deffunction create-number ()
   (create-number-2))
@@ -407,7 +407,7 @@
   (while (< ?i 10000) do
     (gensym*)
     (bind ?i (+ ?i 1))))
-(mv-append (create-number) ?*x* (bind ?*x* 0)
+(create$ (create-number) ?*x* (bind ?*x* 0)
   (force-garbage-collection) (float (random))
      (float (random)))
 (clear)
@@ -420,7 +420,7 @@
 (ppdeffunction foo)
 (clear) ;; DR0700
 (defclass A (is-a USER) (role concrete) (multislot foo (create-accessor read-write)))
-(make-instance a of A (foo (mv-append)))
+(make-instance a of A (foo (create$)))
 (send [a] print)
 (save-instances "Temp//ins.tmp")
 (unmake-instance [a])

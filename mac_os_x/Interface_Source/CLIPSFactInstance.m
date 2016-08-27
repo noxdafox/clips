@@ -22,9 +22,9 @@
    if (self = [super init])
      {
       int i;
-      DATA_OBJECT slotNames;
-      DATA_OBJECT slotValue;
-      DATA_OBJECT defaultValue;
+      CLIPSValue slotNames;
+      CLIPSValue slotValue;
+      CLIPSValue defaultValue;
       NSMutableArray *tempArray;
       NSMutableDictionary *theMD;
       NSNumber *theNumber;
@@ -100,9 +100,9 @@
    if (self = [super init])
      {
       int i;
-      DATA_OBJECT slotNames;
-      DATA_OBJECT slotValue;
-      DATA_OBJECT defaultValue;
+      CLIPSValue slotNames;
+      CLIPSValue slotValue;
+      CLIPSValue defaultValue;
       NSMutableArray *tempArray;
       NSMutableDictionary *theMD;
       NSNumber *theNumber;

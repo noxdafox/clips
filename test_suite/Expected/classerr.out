@@ -417,14 +417,14 @@ ERROR:
    (slot bad
       (default abc def))
 CLIPS> (defclass JUNK (is-a USER)
-   (slot bad (default (mv-append))))
+   (slot bad (default (create$))))
 [INSFUN7] () illegal for single-field slot bad found in slot default value.
 
 ERROR:
 (defclass MAIN::JUNK
    (is-a USER)
    (slot bad
-      (default (mv-append)))
+      (default (create$)))
 CLIPS> (defclass GOOD2 (is-a USER) (role concrete)
    (slot bad (default-dynamic abc def)))
 [CSTRNCHK1] Expression for slot bad found in dynamic default value

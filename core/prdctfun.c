@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*              PREDICATE FUNCTIONS MODULE             */
    /*******************************************************/
@@ -37,6 +37,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -59,33 +61,33 @@ void PredicateFunctionDefinitions(
   Environment *theEnv)
   {
 #if ! RUN_TIME
-   EnvDefineFunction2(theEnv,"not", 'b', PTIEF NotFunction, "NotFunction", "11");
-   EnvDefineFunction2(theEnv,"and", 'b', PTIEF AndFunction, "AndFunction", "2*");
-   EnvDefineFunction2(theEnv,"or", 'b', PTIEF OrFunction, "OrFunction", "2*");
+   EnvAddUDF(theEnv,"not","b",1,1,NULL,NotFunction,"NotFunction",NULL);
+   EnvAddUDF(theEnv,"and","b",2,UNBOUNDED ,NULL,AndFunction,"AndFunction",NULL);
+   EnvAddUDF(theEnv,"or","b",2,UNBOUNDED ,NULL,OrFunction,"OrFunction",NULL);
 
-   EnvDefineFunction2(theEnv,"eq", 'b', PTIEF EqFunction, "EqFunction", "2*");
-   EnvDefineFunction2(theEnv,"neq", 'b', PTIEF NeqFunction, "NeqFunction", "2*");
+   EnvAddUDF(theEnv,"eq","b",2,UNBOUNDED,NULL,EqFunction,"EqFunction",NULL);
+   EnvAddUDF(theEnv,"neq","b",2,UNBOUNDED,NULL,NeqFunction,"NeqFunction",NULL);
 
-   EnvDefineFunction2(theEnv,"<=", 'b', PTIEF LessThanOrEqualFunction, "LessThanOrEqualFunction", "2*n");
-   EnvDefineFunction2(theEnv,">=", 'b', PTIEF GreaterThanOrEqualFunction, "GreaterThanOrEqualFunction", "2*n");
-   EnvDefineFunction2(theEnv,"<", 'b', PTIEF LessThanFunction, "LessThanFunction", "2*n");
-   EnvDefineFunction2(theEnv,">", 'b', PTIEF GreaterThanFunction, "GreaterThanFunction", "2*n");
-   EnvDefineFunction2(theEnv,"=", 'b', PTIEF NumericEqualFunction, "NumericEqualFunction", "2*n");
-   EnvDefineFunction2(theEnv,"<>", 'b', PTIEF NumericNotEqualFunction, "NumericNotEqualFunction", "2*n");
-   EnvDefineFunction2(theEnv,"!=", 'b', PTIEF NumericNotEqualFunction, "NumericNotEqualFunction", "2*n");
+   EnvAddUDF(theEnv,"<=","b",2,UNBOUNDED ,"ld",LessThanOrEqualFunction,"LessThanOrEqualFunction",NULL);
+   EnvAddUDF(theEnv,">=","b",2,UNBOUNDED ,"ld",GreaterThanOrEqualFunction,"GreaterThanOrEqualFunction",NULL);
+   EnvAddUDF(theEnv,"<","b",2,UNBOUNDED ,"ld",LessThanFunction,"LessThanFunction",NULL);
+   EnvAddUDF(theEnv,">","b",2,UNBOUNDED ,"ld",GreaterThanFunction,"GreaterThanFunction",NULL);
+   EnvAddUDF(theEnv,"=","b",2,UNBOUNDED ,"ld",NumericEqualFunction,"NumericEqualFunction",NULL);
+   EnvAddUDF(theEnv,"<>","b",2,UNBOUNDED ,"ld",NumericNotEqualFunction,"NumericNotEqualFunction",NULL);
+   EnvAddUDF(theEnv,"!=","b",2,UNBOUNDED ,"ld",NumericNotEqualFunction,"NumericNotEqualFunction",NULL);
 
-   EnvDefineFunction2(theEnv,"symbolp", 'b', PTIEF SymbolpFunction, "SymbolpFunction", "11");
-   EnvDefineFunction2(theEnv,"wordp", 'b', PTIEF SymbolpFunction, "SymbolpFunction", "11");
-   EnvDefineFunction2(theEnv,"stringp", 'b', PTIEF StringpFunction, "StringpFunction", "11");
-   EnvDefineFunction2(theEnv,"lexemep", 'b', PTIEF LexemepFunction, "LexemepFunction", "11");
-   EnvDefineFunction2(theEnv,"numberp", 'b', PTIEF NumberpFunction, "NumberpFunction", "11");
-   EnvDefineFunction2(theEnv,"integerp", 'b', PTIEF IntegerpFunction, "IntegerpFunction", "11");
-   EnvDefineFunction2(theEnv,"floatp", 'b', PTIEF FloatpFunction, "FloatpFunction", "11");
-   EnvDefineFunction2(theEnv,"oddp", 'b', PTIEF OddpFunction, "OddpFunction", "11i");
-   EnvDefineFunction2(theEnv,"evenp", 'b', PTIEF EvenpFunction, "EvenpFunction", "11i");
-   EnvDefineFunction2(theEnv,"multifieldp",'b', PTIEF MultifieldpFunction, "MultifieldpFunction", "11");
-   EnvDefineFunction2(theEnv,"sequencep",'b', PTIEF MultifieldpFunction, "MultifieldpFunction", "11");
-   EnvDefineFunction2(theEnv,"pointerp", 'b', PTIEF PointerpFunction, "PointerpFunction", "11");
+   EnvAddUDF(theEnv,"symbolp","b",1,1,NULL,SymbolpFunction,"SymbolpFunction",NULL);
+   EnvAddUDF(theEnv,"wordp","b",1,1,NULL,SymbolpFunction,"SymbolpFunction",NULL);  // TBD Remove?
+   EnvAddUDF(theEnv,"stringp","b",1,1,NULL,StringpFunction,"StringpFunction",NULL);
+   EnvAddUDF(theEnv,"lexemep","b",1,1,NULL,LexemepFunction,"LexemepFunction",NULL);
+   EnvAddUDF(theEnv,"numberp","b",1,1,NULL,NumberpFunction,"NumberpFunction",NULL);
+   EnvAddUDF(theEnv,"integerp","b",1,1,NULL,IntegerpFunction,"IntegerpFunction",NULL);
+   EnvAddUDF(theEnv,"floatp","b",1,1,NULL,FloatpFunction,"FloatpFunction",NULL);
+   EnvAddUDF(theEnv,"oddp","b",1,1,"l",OddpFunction,"OddpFunction",NULL);
+   EnvAddUDF(theEnv,"evenp","b",1,1,"l",EvenpFunction,"EvenpFunction",NULL);
+   EnvAddUDF(theEnv,"multifieldp","b",1,1,NULL,MultifieldpFunction,"MultifieldpFunction",NULL);
+   EnvAddUDF(theEnv,"sequencep","b",1,1,NULL,MultifieldpFunction,"MultifieldpFunction",NULL); // TBD Remove?
+   EnvAddUDF(theEnv,"pointerp","b",1,1,NULL,PointerpFunction,"PointerpFunction",NULL);
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -97,19 +99,27 @@ void PredicateFunctionDefinitions(
 /* EqFunction: H/L access routine   */
 /*   for the eq function.           */
 /************************************/
-bool EqFunction(
-  Environment *theEnv)
+void EqFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT item, nextItem;
+   CLIPSValue item, nextItem;
    int numArgs, i;
    struct expr *theExpression;
 
+   returnValue->type = SYMBOL;
+   
    /*====================================*/
    /* Determine the number of arguments. */
    /*====================================*/
 
    numArgs = EnvRtnArgCount(theEnv);
-   if (numArgs == 0) return false;
+   if (numArgs == 0)
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
 
    /*==============================================*/
    /* Get the value of the first argument against  */
@@ -130,15 +140,24 @@ bool EqFunction(
       EvaluateExpression(theEnv,theExpression,&nextItem);
 
       if (GetType(nextItem) != GetType(item))
-        { return false; }
+        {
+         returnValue->value = EnvFalseSymbol(theEnv);
+         return;
+        }
 
       if (GetType(nextItem) == MULTIFIELD)
         {
          if (MultifieldDOsEqual(&nextItem,&item) == false)
-           { return false; }
+           {
+            returnValue->value = EnvFalseSymbol(theEnv);
+            return;
+           }
         }
       else if (nextItem.value != item.value)
-        { return false; }
+        {
+         returnValue->value = EnvFalseSymbol(theEnv);
+         return;
+        }
 
       theExpression = GetNextArgument(theExpression);
      }
@@ -148,26 +167,34 @@ bool EqFunction(
    /* from the first. Return TRUE.        */
    /*=====================================*/
 
-   return true;
+   returnValue->value = EnvTrueSymbol(theEnv);
   }
 
 /*************************************/
 /* NeqFunction: H/L access routine   */
 /*   for the neq function.           */
 /*************************************/
-bool NeqFunction(
-  Environment *theEnv)
+void NeqFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT item, nextItem;
+   CLIPSValue item, nextItem;
    int numArgs, i;
    struct expr *theExpression;
 
+   returnValue->type = SYMBOL;
+   
    /*====================================*/
    /* Determine the number of arguments. */
    /*====================================*/
 
    numArgs = EnvRtnArgCount(theEnv);
-   if (numArgs == 0) return false;
+   if (numArgs == 0)
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
 
    /*==============================================*/
    /* Get the value of the first argument against  */
@@ -192,10 +219,16 @@ bool NeqFunction(
       else if (nextItem.type == MULTIFIELD)
         {
          if (MultifieldDOsEqual(&nextItem,&item) == true)
-           { return false; }
+           {
+            returnValue->value = EnvFalseSymbol(theEnv);
+            return;
+           }
         }
       else if (nextItem.value == item.value)
-        { return false; }
+        {
+         returnValue->value = EnvFalseSymbol(theEnv);
+         return;
+        }
      }
 
    /*=====================================*/
@@ -203,242 +236,307 @@ bool NeqFunction(
    /* to the first. Return TRUE.          */
    /*=====================================*/
 
-   return true;
+   returnValue->value = EnvTrueSymbol(theEnv);
   }
 
 /*****************************************/
 /* StringpFunction: H/L access routine   */
 /*   for the stringp function.           */
 /*****************************************/
-bool StringpFunction(
-  Environment *theEnv)
+void StringpFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT item;
+   CLIPSValue item;
 
-   if (EnvArgCountCheck(theEnv,"stringp",EXACTLY,1) == -1) return false;
-
+   returnValue->type = SYMBOL;
+   
    EnvRtnUnknown(theEnv,1,&item);
 
    if (GetType(item) == STRING)
-     { return true; }
+     { returnValue->value = EnvTrueSymbol(theEnv); }
    else
-     { return false; }
+     { returnValue->value = EnvFalseSymbol(theEnv); }
   }
 
 /*****************************************/
 /* SymbolpFunction: H/L access routine   */
 /*   for the symbolp function.           */
 /*****************************************/
-bool SymbolpFunction(
-  Environment *theEnv)
+void SymbolpFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT item;
+   CLIPSValue item;
 
-   if (EnvArgCountCheck(theEnv,"symbolp",EXACTLY,1) == -1) return false;
-
+   returnValue->type = SYMBOL;
+   
    EnvRtnUnknown(theEnv,1,&item);
 
    if (GetType(item) == SYMBOL)
-     { return true; }
+     { returnValue->value = EnvTrueSymbol(theEnv); }
    else
-     { return false; }
+     { returnValue->value = EnvFalseSymbol(theEnv); }
   }
 
 /*****************************************/
 /* LexemepFunction: H/L access routine   */
 /*   for the lexemep function.           */
 /*****************************************/
-bool LexemepFunction(
-  Environment *theEnv)
+void LexemepFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT item;
+   CLIPSValue item;
 
-   if (EnvArgCountCheck(theEnv,"lexemep",EXACTLY,1) == -1) return false;
-
+   returnValue->type = SYMBOL;
+   
    EnvRtnUnknown(theEnv,1,&item);
 
    if ((GetType(item) == SYMBOL) || (GetType(item) == STRING))
-     { return true; }
+     { returnValue->value = EnvTrueSymbol(theEnv); }
    else
-     { return false; }
+     { returnValue->value = EnvFalseSymbol(theEnv); }
   }
 
 /*****************************************/
 /* NumberpFunction: H/L access routine   */
 /*   for the numberp function.           */
 /*****************************************/
-bool NumberpFunction(
-  Environment *theEnv)
+void NumberpFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT item;
+   CLIPSValue item;
 
-   if (EnvArgCountCheck(theEnv,"numberp",EXACTLY,1) == -1) return false;
-
+   returnValue->type = SYMBOL;
+   
    EnvRtnUnknown(theEnv,1,&item);
 
    if ((GetType(item) == FLOAT) || (GetType(item) == INTEGER))
-     { return true; }
+     { returnValue->value = EnvTrueSymbol(theEnv); }
    else
-     { return false; }
+     { returnValue->value = EnvFalseSymbol(theEnv); }
   }
 
 /****************************************/
 /* FloatpFunction: H/L access routine   */
 /*   for the floatp function.           */
 /****************************************/
-bool FloatpFunction(
-  Environment *theEnv)
+void FloatpFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT item;
+   CLIPSValue item;
 
-   if (EnvArgCountCheck(theEnv,"floatp",EXACTLY,1) == -1) return false;
-
+   returnValue->type = SYMBOL;
+   
    EnvRtnUnknown(theEnv,1,&item);
 
    if (GetType(item) == FLOAT)
-     { return true; }
+     { returnValue->value = EnvTrueSymbol(theEnv); }
    else
-     { return false; }
+     { returnValue->value = EnvFalseSymbol(theEnv); }
   }
 
 /******************************************/
 /* IntegerpFunction: H/L access routine   */
 /*   for the integerp function.           */
 /******************************************/
-bool IntegerpFunction(
-  Environment *theEnv)
+void IntegerpFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT item;
+   CLIPSValue item;
 
-   if (EnvArgCountCheck(theEnv,"integerp",EXACTLY,1) == -1) return false;
-
+   returnValue->type = SYMBOL;
+   
    EnvRtnUnknown(theEnv,1,&item);
 
-   if (GetType(item) != INTEGER) return false;
-
-   return true;
+   if (GetType(item) != INTEGER)
+     { returnValue->value = EnvFalseSymbol(theEnv); }
+   else
+     { returnValue->value = EnvTrueSymbol(theEnv); }
   }
 
 /*********************************************/
 /* MultifieldpFunction: H/L access routine   */
 /*   for the multifieldp function.           */
 /*********************************************/
-bool MultifieldpFunction(
-  Environment *theEnv)
+void MultifieldpFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT item;
+   CLIPSValue item;
 
-   if (EnvArgCountCheck(theEnv,"multifieldp",EXACTLY,1) == -1) return false;
-
+   returnValue->type = SYMBOL;
+   
    EnvRtnUnknown(theEnv,1,&item);
 
-   if (GetType(item) != MULTIFIELD) return false;
-
-   return true;
+   if (GetType(item) != MULTIFIELD)
+     { returnValue->value = EnvFalseSymbol(theEnv); }
+   else
+     { returnValue->value = EnvTrueSymbol(theEnv); }
   }
 
 /******************************************/
 /* PointerpFunction: H/L access routine   */
 /*   for the pointerp function.           */
 /******************************************/
-bool PointerpFunction(
-  Environment *theEnv)
+void PointerpFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT item;
+   CLIPSValue item;
 
-   if (EnvArgCountCheck(theEnv,"pointerp",EXACTLY,1) == -1) return false;
-
+   returnValue->type = SYMBOL;
+   
    EnvRtnUnknown(theEnv,1,&item);
 
-   if (GetType(item) != EXTERNAL_ADDRESS) return false;
-
-   return true;
+   if (GetType(item) != EXTERNAL_ADDRESS)
+     { returnValue->value = EnvFalseSymbol(theEnv); }
+   else
+     { returnValue->value = EnvTrueSymbol(theEnv); }
   }
 
 /*************************************/
 /* NotFunction: H/L access routine   */
 /*   for the not function.           */
 /*************************************/
-bool NotFunction(
-  Environment *theEnv)
+void NotFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    EXPRESSION *theArgument;
-   DATA_OBJECT result;
+   CLIPSValue result;
 
+   returnValue->type = SYMBOL;
+   
    theArgument = GetFirstArgument();
-   if (theArgument == NULL) { return false; }
+   if (theArgument == NULL)
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
 
-   if (EvaluateExpression(theEnv,theArgument,&result)) return false;
+   if (EvaluateExpression(theEnv,theArgument,&result))
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
 
    if ((result.value == EnvFalseSymbol(theEnv)) && (result.type == SYMBOL))
-     { return true; }
-   
-   return false;
+     { returnValue->value = EnvTrueSymbol(theEnv); }
+   else
+     { returnValue->value = EnvFalseSymbol(theEnv); }
   }
 
 /*************************************/
 /* AndFunction: H/L access routine   */
 /*   for the and function.           */
 /*************************************/
-bool AndFunction(
-  Environment *theEnv)
+void AndFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    EXPRESSION *theArgument;
-   DATA_OBJECT result;
+   CLIPSValue result;
 
+   returnValue->type = SYMBOL;
+   
    for (theArgument = GetFirstArgument();
         theArgument != NULL;
         theArgument = GetNextArgument(theArgument))
      {
-      if (EvaluateExpression(theEnv,theArgument,&result)) return false;
+      if (EvaluateExpression(theEnv,theArgument,&result))
+        {
+         returnValue->value = EnvFalseSymbol(theEnv);
+         return;
+        }
       if ((result.value == EnvFalseSymbol(theEnv)) && (result.type == SYMBOL))
-        { return false; }
+        {
+         returnValue->value = EnvFalseSymbol(theEnv);
+         return;
+        }
      }
 
-   return true;
+   returnValue->value = EnvTrueSymbol(theEnv);
   }
 
 /************************************/
 /* OrFunction: H/L access routine   */
 /*   for the or function.           */
 /************************************/
-bool OrFunction(
-  Environment *theEnv)
+void OrFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    EXPRESSION *theArgument;
-   DATA_OBJECT result;
+   CLIPSValue result;
 
+   returnValue->type = SYMBOL;
+   
    for (theArgument = GetFirstArgument();
         theArgument != NULL;
         theArgument = GetNextArgument(theArgument))
      {
-      if (EvaluateExpression(theEnv,theArgument,&result)) return false;
+      if (EvaluateExpression(theEnv,theArgument,&result))
+        {
+         returnValue->value = EnvFalseSymbol(theEnv);
+         return;
+        }
 
       if ((result.value != EnvFalseSymbol(theEnv)) || (result.type != SYMBOL))
-        { return true; }
+        {
+         returnValue->value = EnvTrueSymbol(theEnv);
+         return;
+        }
      }
 
-   return false;
+   returnValue->value = EnvFalseSymbol(theEnv);
   }
 
 /*****************************************/
 /* LessThanOrEqualFunction: H/L access   */
 /*   routine for the <= function.        */
 /*****************************************/
-bool LessThanOrEqualFunction(
-  Environment *theEnv)
+void LessThanOrEqualFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    EXPRESSION *theArgument;
-   DATA_OBJECT rv1, rv2;
+   CLIPSValue rv1, rv2;
    int pos = 1;
 
+   returnValue->type = SYMBOL;
+   
    /*=========================*/
    /* Get the first argument. */
    /*=========================*/
 
    theArgument = GetFirstArgument();
-   if (theArgument == NULL) { return true; }
-   if (! GetNumericArgument(theEnv,theArgument,"<=",&rv1,false,pos)) return false;
+   if (theArgument == NULL)
+     {
+      returnValue->value = EnvTrueSymbol(theEnv);
+      return;
+     }
+   if (! GetNumericArgument(theEnv,theArgument,"<=",&rv1,false,pos))
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
    pos++;
 
    /*====================================================*/
@@ -450,18 +548,29 @@ bool LessThanOrEqualFunction(
         theArgument != NULL;
         theArgument = GetNextArgument(theArgument), pos++)
      {
-      if (! GetNumericArgument(theEnv,theArgument,"<=",&rv2,false,pos)) return false;
+      if (! GetNumericArgument(theEnv,theArgument,"<=",&rv2,false,pos))
+        {
+         returnValue->value = EnvFalseSymbol(theEnv);
+         return;
+        }
+        
       if (rv1.type == INTEGER)
         {
          if (rv2.type == INTEGER)
            {
             if (ValueToLong(rv1.value) > ValueToLong(rv2.value))
-              { return false; }
+              {
+               returnValue->value = EnvFalseSymbol(theEnv);
+               return;
+              }
            }
          else
            {
             if ((double) ValueToLong(rv1.value) > ValueToDouble(rv2.value))
-              { return false; }
+              {
+               returnValue->value = EnvFalseSymbol(theEnv);
+               return;
+              }
            }
         }
       else
@@ -469,12 +578,18 @@ bool LessThanOrEqualFunction(
          if (rv2.type == INTEGER)
            {
             if (ValueToDouble(rv1.value) > (double) ValueToLong(rv2.value))
-              { return false; }
+              {
+               returnValue->value = EnvFalseSymbol(theEnv);
+               return;
+              }
            }
          else
            {
             if (ValueToDouble(rv1.value) > ValueToDouble(rv2.value))
-              { return false; }
+              {
+               returnValue->value = EnvFalseSymbol(theEnv);
+               return;
+              }
            }
         }
 
@@ -487,27 +602,40 @@ bool LessThanOrEqualFunction(
    /* to its predecessor. Return TRUE.     */
    /*======================================*/
 
-   return true;
+   returnValue->value = EnvTrueSymbol(theEnv);
   }
 
 /********************************************/
 /* GreaterThanOrEqualFunction: H/L access   */
 /*   routine for the >= function.           */
 /********************************************/
-bool GreaterThanOrEqualFunction(
-  Environment *theEnv)
+void GreaterThanOrEqualFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    EXPRESSION *theArgument;
-   DATA_OBJECT rv1, rv2;
+   CLIPSValue rv1, rv2;
    int pos = 1;
 
+   returnValue->type = SYMBOL;
+   
    /*=========================*/
    /* Get the first argument. */
    /*=========================*/
 
    theArgument = GetFirstArgument();
-   if (theArgument == NULL) { return true; }
-   if (! GetNumericArgument(theEnv,theArgument,">=",&rv1,false,pos)) return false;
+   if (theArgument == NULL)
+     {
+      returnValue->value = EnvTrueSymbol(theEnv);
+      return;
+     }
+
+   if (! GetNumericArgument(theEnv,theArgument,">=",&rv1,false,pos))
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
    pos++;
 
    /*===================================================*/
@@ -519,18 +647,29 @@ bool GreaterThanOrEqualFunction(
         theArgument != NULL;
         theArgument = GetNextArgument(theArgument), pos++)
      {
-      if (! GetNumericArgument(theEnv,theArgument,">=",&rv2,false,pos)) return false;
+      if (! GetNumericArgument(theEnv,theArgument,">=",&rv2,false,pos))
+        {
+         returnValue->value = EnvFalseSymbol(theEnv);
+         return;
+        }
+        
       if (rv1.type == INTEGER)
         {
          if (rv2.type == INTEGER)
            {
             if (ValueToLong(rv1.value) < ValueToLong(rv2.value))
-              { return false; }
+              {
+               returnValue->value = EnvFalseSymbol(theEnv);
+               return;
+              }
            }
          else
            {
             if ((double) ValueToLong(rv1.value) < ValueToDouble(rv2.value))
-              { return false; }
+              {
+               returnValue->value = EnvFalseSymbol(theEnv);
+               return;
+              }
            }
         }
       else
@@ -538,12 +677,18 @@ bool GreaterThanOrEqualFunction(
          if (rv2.type == INTEGER)
            {
             if (ValueToDouble(rv1.value) < (double) ValueToLong(rv2.value))
-              { return false; }
+              {
+               returnValue->value = EnvFalseSymbol(theEnv);
+               return;
+              }
            }
          else
            {
             if (ValueToDouble(rv1.value) < ValueToDouble(rv2.value))
-              { return false; }
+              {
+               returnValue->value = EnvFalseSymbol(theEnv);
+               return;
+              }
            }
         }
 
@@ -556,27 +701,40 @@ bool GreaterThanOrEqualFunction(
    /* to its predecessor. Return TRUE.        */
    /*=========================================*/
 
-   return true;
+   returnValue->value = EnvTrueSymbol(theEnv);
   }
 
 /**********************************/
 /* LessThanFunction: H/L access   */
 /*   routine for the < function.  */
 /**********************************/
-bool LessThanFunction(
-  Environment *theEnv)
+void LessThanFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    EXPRESSION *theArgument;
-   DATA_OBJECT rv1, rv2;
+   CLIPSValue rv1, rv2;
    int pos = 1;
 
+   returnValue->type = SYMBOL;
+   
    /*=========================*/
    /* Get the first argument. */
    /*=========================*/
 
    theArgument = GetFirstArgument();
-   if (theArgument == NULL) { return true; }
-   if (! GetNumericArgument(theEnv,theArgument,"<",&rv1,false,pos)) return false;
+   if (theArgument == NULL)
+     {
+      returnValue->value = EnvTrueSymbol(theEnv);
+      return;
+     }
+
+   if (! GetNumericArgument(theEnv,theArgument,"<",&rv1,false,pos))
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
    pos++;
 
    /*==========================================*/
@@ -589,18 +747,29 @@ bool LessThanFunction(
         theArgument != NULL;
         theArgument = GetNextArgument(theArgument), pos++)
      {
-      if (! GetNumericArgument(theEnv,theArgument,"<",&rv2,false,pos)) return false;
+      if (! GetNumericArgument(theEnv,theArgument,"<",&rv2,false,pos))
+        {
+         returnValue->value = EnvFalseSymbol(theEnv);
+         return;
+        }
+        
       if (rv1.type == INTEGER)
         {
          if (rv2.type == INTEGER)
            {
             if (ValueToLong(rv1.value) >= ValueToLong(rv2.value))
-              { return false; }
+              {
+               returnValue->value = EnvFalseSymbol(theEnv);
+               return;
+              }
            }
          else
            {
             if ((double) ValueToLong(rv1.value) >= ValueToDouble(rv2.value))
-              { return false; }
+              {
+               returnValue->value = EnvFalseSymbol(theEnv);
+               return;
+              }
            }
         }
       else
@@ -608,12 +777,18 @@ bool LessThanFunction(
          if (rv2.type == INTEGER)
            {
             if (ValueToDouble(rv1.value) >= (double) ValueToLong(rv2.value))
-              { return false; }
+              {
+               returnValue->value = EnvFalseSymbol(theEnv);
+               return;
+              }
            }
          else
            {
             if (ValueToDouble(rv1.value) >= ValueToDouble(rv2.value))
-              { return false; }
+              {
+               returnValue->value = EnvFalseSymbol(theEnv);
+               return;
+              }
            }
         }
 
@@ -626,27 +801,40 @@ bool LessThanFunction(
    /* predecessor. Return TRUE.       */
    /*=================================*/
 
-   return true;
+   returnValue->value = EnvTrueSymbol(theEnv);
   }
 
 /*************************************/
 /* GreaterThanFunction: H/L access   */
 /*   routine for the > function.     */
 /*************************************/
-bool GreaterThanFunction(
-  Environment *theEnv)
+void GreaterThanFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    EXPRESSION *theArgument;
-   DATA_OBJECT rv1, rv2;
+   CLIPSValue rv1, rv2;
    int pos = 1;
 
+   returnValue->type = SYMBOL;
+   
    /*=========================*/
    /* Get the first argument. */
    /*=========================*/
 
    theArgument = GetFirstArgument();
-   if (theArgument == NULL) { return true; }
-   if (! GetNumericArgument(theEnv,theArgument,">",&rv1,false,pos)) return false;
+   if (theArgument == NULL)
+     {
+      returnValue->value = EnvTrueSymbol(theEnv);
+      return;
+     }
+
+   if (! GetNumericArgument(theEnv,theArgument,">",&rv1,false,pos))
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
    pos++;
 
    /*==========================================*/
@@ -659,18 +847,29 @@ bool GreaterThanFunction(
         theArgument != NULL;
         theArgument = GetNextArgument(theArgument), pos++)
      {
-      if (! GetNumericArgument(theEnv,theArgument,">",&rv2,false,pos)) return false;
+      if (! GetNumericArgument(theEnv,theArgument,">",&rv2,false,pos))
+        {
+         returnValue->value = EnvFalseSymbol(theEnv);
+         return;
+        }
+        
       if (rv1.type == INTEGER)
         {
          if (rv2.type == INTEGER)
            {
             if (ValueToLong(rv1.value) <= ValueToLong(rv2.value))
-              { return false; }
+              {
+               returnValue->value = EnvFalseSymbol(theEnv);
+               return;
+              }
            }
          else
            {
             if ((double) ValueToLong(rv1.value) <= ValueToDouble(rv2.value))
-              { return false; }
+              {
+               returnValue->value = EnvFalseSymbol(theEnv);
+               return;
+              }
            }
         }
       else
@@ -678,12 +877,18 @@ bool GreaterThanFunction(
          if (rv2.type == INTEGER)
            {
             if (ValueToDouble(rv1.value) <= (double) ValueToLong(rv2.value))
-              { return false; }
+              {
+               returnValue->value = EnvFalseSymbol(theEnv);
+               return;
+              }
            }
          else
            {
             if (ValueToDouble(rv1.value) <= ValueToDouble(rv2.value))
-              { return false; }
+              {
+               returnValue->value = EnvFalseSymbol(theEnv);
+               return;
+              }
            }
         }
 
@@ -696,28 +901,41 @@ bool GreaterThanFunction(
    /* its predecessor. Return TRUE.  */
    /*================================*/
 
-   return true;
+   returnValue->value = EnvTrueSymbol(theEnv);
   }
 
 /**************************************/
 /* NumericEqualFunction: H/L access   */
 /*   routine for the = function.      */
 /**************************************/
-bool NumericEqualFunction(
-  Environment *theEnv)
+void NumericEqualFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    EXPRESSION *theArgument;
-   DATA_OBJECT rv1, rv2;
+   CLIPSValue rv1, rv2;
    int pos = 1;
 
+   returnValue->type = SYMBOL;
+   
    /*=========================*/
    /* Get the first argument. */
    /*=========================*/
 
    theArgument = GetFirstArgument();
 
-   if (theArgument == NULL) { return true; }
-   if (! GetNumericArgument(theEnv,theArgument,"=",&rv1,false,pos)) return false;
+   if (theArgument == NULL)
+     {
+      returnValue->value = EnvTrueSymbol(theEnv);
+      return;
+     }
+
+   if (! GetNumericArgument(theEnv,theArgument,"=",&rv1,false,pos))
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
    pos++;
 
    /*=================================================*/
@@ -729,18 +947,29 @@ bool NumericEqualFunction(
         theArgument != NULL;
         theArgument = GetNextArgument(theArgument), pos++)
      {
-      if (! GetNumericArgument(theEnv,theArgument,"=",&rv2,false,pos)) return false;
+      if (! GetNumericArgument(theEnv,theArgument,"=",&rv2,false,pos))
+        {
+         returnValue->value = EnvFalseSymbol(theEnv);
+         return;
+        }
+        
       if (rv1.type == INTEGER)
         {
          if (rv2.type == INTEGER)
            {
             if (ValueToLong(rv1.value) != ValueToLong(rv2.value))
-              { return false; }
+              {
+               returnValue->value = EnvFalseSymbol(theEnv);
+               return;
+              }
            }
          else
            {
             if ((double) ValueToLong(rv1.value) != ValueToDouble(rv2.value))
-              { return false; }
+              {
+               returnValue->value = EnvFalseSymbol(theEnv);
+               return;
+              }
            }
         }
       else
@@ -748,12 +977,18 @@ bool NumericEqualFunction(
          if (rv2.type == INTEGER)
            {
             if (ValueToDouble(rv1.value) != (double) ValueToLong(rv2.value))
-              { return false; }
+              {
+               returnValue->value = EnvFalseSymbol(theEnv);
+               return;
+              }
            }
          else
            {
             if (ValueToDouble(rv1.value) != ValueToDouble(rv2.value))
-              { return false; }
+              {
+               returnValue->value = EnvFalseSymbol(theEnv);
+               return;
+              }
            }
         }
      }
@@ -763,27 +998,40 @@ bool NumericEqualFunction(
    /* first argument. Return TRUE.    */
    /*=================================*/
 
-   return true;
+   returnValue->value = EnvTrueSymbol(theEnv);
   }
 
 /*****************************************/
 /* NumericNotEqualFunction: H/L access   */
 /*   routine for the <> function.        */
 /*****************************************/
-bool NumericNotEqualFunction(
-  Environment *theEnv)
+void NumericNotEqualFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    EXPRESSION *theArgument;
-   DATA_OBJECT rv1, rv2;
+   CLIPSValue rv1, rv2;
    int pos = 1;
 
+   returnValue->type = SYMBOL;
+   
    /*=========================*/
    /* Get the first argument. */
    /*=========================*/
 
    theArgument = GetFirstArgument();
-   if (theArgument == NULL) { return true; }
-   if (! GetNumericArgument(theEnv,theArgument,"<>",&rv1,false,pos)) return false;
+   if (theArgument == NULL)
+     {
+      returnValue->value = EnvTrueSymbol(theEnv);
+      return;
+     }
+
+   if (! GetNumericArgument(theEnv,theArgument,"<>",&rv1,false,pos))
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
    pos++;
 
    /*=================================================*/
@@ -795,18 +1043,29 @@ bool NumericNotEqualFunction(
         theArgument != NULL;
         theArgument = GetNextArgument(theArgument), pos++)
      {
-      if (! GetNumericArgument(theEnv,theArgument,"<>",&rv2,false,pos)) return false;
+      if (! GetNumericArgument(theEnv,theArgument,"<>",&rv2,false,pos))
+        {
+         returnValue->value = EnvFalseSymbol(theEnv);
+         return;
+        }
+        
       if (rv1.type == INTEGER)
         {
          if (rv2.type == INTEGER)
            {
             if (ValueToLong(rv1.value) == ValueToLong(rv2.value))
-              { return false; }
+              {
+               returnValue->value = EnvFalseSymbol(theEnv);
+               return;
+              }
            }
          else
            {
             if ((double) ValueToLong(rv1.value) == ValueToDouble(rv2.value))
-              { return false; }
+              {
+               returnValue->value = EnvFalseSymbol(theEnv);
+               return;
+              }
            }
         }
       else
@@ -814,12 +1073,18 @@ bool NumericNotEqualFunction(
          if (rv2.type == INTEGER)
            {
             if (ValueToDouble(rv1.value) == (double) ValueToLong(rv2.value))
-              { return false; }
+              {
+               returnValue->value = EnvFalseSymbol(theEnv);
+               return;
+              }
            }
          else
            {
             if (ValueToDouble(rv1.value) == ValueToDouble(rv2.value))
-              { return false; }
+              {
+               returnValue->value = EnvFalseSymbol(theEnv);
+               return;
+              }
            }
         }
      }
@@ -829,49 +1094,71 @@ bool NumericNotEqualFunction(
    /* first argument. Return TRUE.      */
    /*===================================*/
 
-   return true;
+   returnValue->value = EnvTrueSymbol(theEnv);
   }
 
 /**************************************/
 /* OddpFunction: H/L access routine   */
 /*   for the oddp function.           */
 /**************************************/
-bool OddpFunction(
-  Environment *theEnv)
+void OddpFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT item;
+   CLIPSValue item;
    long long num, halfnum;
 
-   if (EnvArgCountCheck(theEnv,"oddp",EXACTLY,1) == -1) return false;
-   if (EnvArgTypeCheck(theEnv,"oddp",1,INTEGER,&item) == false) return false;
+   returnValue->type = SYMBOL;
+      
+   if (EnvArgTypeCheck(theEnv,"oddp",1,INTEGER,&item) == false)
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
 
    num = DOToLong(item);
 
    halfnum = (num / 2) * 2;
-   if (num == halfnum) return false;
+   if (num == halfnum)
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
 
-   return true;
+   returnValue->value = EnvTrueSymbol(theEnv);
   }
 
 /***************************************/
 /* EvenpFunction: H/L access routine   */
 /*   for the evenp function.           */
 /***************************************/
-bool EvenpFunction(
-  Environment *theEnv)
+void EvenpFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT item;
+   CLIPSValue item;
    long long num, halfnum;
 
-   if (EnvArgCountCheck(theEnv,"evenp",EXACTLY,1) == -1) return false;
-   if (EnvArgTypeCheck(theEnv,"evenp",1,INTEGER,&item) == false) return false;
+   returnValue->type = SYMBOL;
+        
+   if (EnvArgTypeCheck(theEnv,"evenp",1,INTEGER,&item) == false)
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
 
    num = DOToLong(item);
 
    halfnum = (num / 2) * 2;
-   if (num != halfnum) return false;
+   if (num != halfnum)
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
 
-   return true;
+   returnValue->value = EnvTrueSymbol(theEnv);
   }
 
 

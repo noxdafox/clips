@@ -137,7 +137,7 @@
 (save-instances)
 (save-instances 34)
 (send [t2] put-z (instance-address t1))
-(mv-slot-replace t1 y 2 2 (instance-address t2))
+(slot-replace$ t1 y 2 2 (instance-address t2))
 (save-instances "Actual//coolcmd2.out")
 (reset)
 (load-instances "Actual//coolcmd2.out")

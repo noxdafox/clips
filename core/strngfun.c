@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/06/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*               STRING FUNCTIONS MODULE               */
    /*******************************************************/
@@ -63,6 +63,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -98,7 +100,7 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    StrOrSymCatFunction(Environment *,DATA_OBJECT_PTR,unsigned short);
+   static void                    StrOrSymCatFunction(Environment *,CLIPSValue *,unsigned short);
 
 /******************************************/
 /* StringFunctionDefinitions: Initializes */
@@ -108,17 +110,17 @@ void StringFunctionDefinitions(
   Environment *theEnv)
   {
 #if ! RUN_TIME
-   EnvDefineFunction2(theEnv,"str-cat", 'k', PTIEF StrCatFunction, "StrCatFunction", "1*");
-   EnvDefineFunction2(theEnv,"sym-cat", 'k', PTIEF SymCatFunction, "SymCatFunction", "1*");
-   EnvDefineFunction2(theEnv,"str-length", 'g', PTIEF StrLengthFunction, "StrLengthFunction", "11j");
-   EnvDefineFunction2(theEnv,"str-compare", 'g', PTIEF StrCompareFunction, "StrCompareFunction", "23*jji");
-   EnvDefineFunction2(theEnv,"upcase", 'j', PTIEF UpcaseFunction, "UpcaseFunction", "11j");
-   EnvDefineFunction2(theEnv,"lowcase", 'j', PTIEF LowcaseFunction, "LowcaseFunction", "11j");
-   EnvDefineFunction2(theEnv,"sub-string", 's', PTIEF SubStringFunction, "SubStringFunction", "33*iij");
-   EnvDefineFunction2(theEnv,"str-index", 'u', PTIEF StrIndexFunction, "StrIndexFunction", "22j");
-   EnvDefineFunction2(theEnv,"eval", 'u', PTIEF EvalFunction, "EvalFunction", "11k");
-   EnvDefineFunction2(theEnv,"build", 'b', PTIEF BuildFunction, "BuildFunction", "11k");
-   EnvDefineFunction2(theEnv,"string-to-field", 'u', PTIEF StringToFieldFunction, "StringToFieldFunction", "11j");
+   EnvAddUDF(theEnv,"str-cat","sy",1,UNBOUNDED,"synld" ,StrCatFunction,"StrCatFunction",NULL);
+   EnvAddUDF(theEnv,"sym-cat","sy",1,UNBOUNDED,"synld" ,SymCatFunction,"SymCatFunction",NULL);
+   EnvAddUDF(theEnv,"str-length","l",1,1,"syn",StrLengthFunction,"StrLengthFunction",NULL);
+   EnvAddUDF(theEnv,"str-compare","l",2,3,"*;syn;syn;l" ,StrCompareFunction,"StrCompareFunction",NULL);
+   EnvAddUDF(theEnv,"upcase","syn",1,1,"syn",UpcaseFunction,"UpcaseFunction",NULL);
+   EnvAddUDF(theEnv,"lowcase","syn",1,1,"syn",LowcaseFunction,"LowcaseFunction",NULL);
+   EnvAddUDF(theEnv,"sub-string","s",3,3,"*;l;l;syn",SubStringFunction,"SubStringFunction",NULL);
+   EnvAddUDF(theEnv,"str-index","bl",2,2,"syn",StrIndexFunction,"StrIndexFunction",NULL);
+   EnvAddUDF(theEnv,"eval","*",1,1,"sy",EvalFunction,"EvalFunction",NULL);
+   EnvAddUDF(theEnv,"build","b",1,1,"sy",BuildFunction,"BuildFunction",NULL);
+   EnvAddUDF(theEnv,"string-to-field","*",1,1,"syn",StringToFieldFunction,"StringToFieldFunction",NULL);
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -132,7 +134,8 @@ void StringFunctionDefinitions(
 /****************************************/
 void StrCatFunction(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {   
    StrOrSymCatFunction(theEnv,returnValue,STRING);
   }
@@ -143,7 +146,8 @@ void StrCatFunction(
 /****************************************/
 void SymCatFunction(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    StrOrSymCatFunction(theEnv,returnValue,SYMBOL);
   }
@@ -154,10 +158,10 @@ void SymCatFunction(
 /********************************************************/
 static void StrOrSymCatFunction(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue,
+  CLIPSValue *returnValue,
   unsigned short returnType)
   {
-   DATA_OBJECT theArg;
+   CLIPSValue theArg;
    int numArgs, i, total, j;
    char *theString;
    SYMBOL_HN **arrayOfStrings;
@@ -286,30 +290,30 @@ static void StrOrSymCatFunction(
 /* StrLengthFunction: H/L access routine   */
 /*   for the str-length function.          */
 /*******************************************/
-long long StrLengthFunction(
-  Environment *theEnv)
+void StrLengthFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT theArg;
+   CLIPSValue theArg;
 
-   /*===================================================*/
-   /* Function str-length expects exactly one argument. */
-   /*===================================================*/
-
-   if (EnvArgCountCheck(theEnv,"str-length",EXACTLY,1) == -1)
-     { return(-1LL); }
-
+   returnValue->type = INTEGER;
+   
    /*==================================================*/
    /* The argument should be of type symbol or string. */
    /*==================================================*/
 
    if (EnvArgTypeCheck(theEnv,"str-length",1,SYMBOL_OR_STRING,&theArg) == false)
-     { return(-1LL); }
+     {
+      returnValue->value = EnvAddLong(theEnv,-1);
+      return;
+     }
 
    /*============================================*/
    /* Return the length of the string or symbol. */
    /*============================================*/
    
-   return(UTF8Length(DOToString(theArg)));
+   returnValue->value = EnvAddLong(theEnv,UTF8Length(DOToString(theArg)));
   }
 
 /****************************************/
@@ -318,24 +322,14 @@ long long StrLengthFunction(
 /****************************************/
 void UpcaseFunction(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT theArg;
+   CLIPSValue theArg;
    unsigned i;
    size_t slen;
    const char *osptr;
    char *nsptr;
-
-   /*===============================================*/
-   /* Function upcase expects exactly one argument. */
-   /*===============================================*/
-
-   if (EnvArgCountCheck(theEnv,"upcase",EXACTLY,1) == -1)
-     {
-      SetpType(returnValue,STRING);
-      SetpValue(returnValue,EnvAddSymbol(theEnv,""));
-      return;
-     }
 
    /*==================================================*/
    /* The argument should be of type symbol or string. */
@@ -382,24 +376,14 @@ void UpcaseFunction(
 /*****************************************/
 void LowcaseFunction(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT theArg;
+   CLIPSValue theArg;
    unsigned i;
    size_t slen;
    const char *osptr;
    char *nsptr;
-
-   /*================================================*/
-   /* Function lowcase expects exactly one argument. */
-   /*================================================*/
-
-   if (EnvArgCountCheck(theEnv,"lowcase",EXACTLY,1) == -1)
-     {
-      SetpType(returnValue,STRING);
-      SetpValue(returnValue,EnvAddSymbol(theEnv,""));
-      return;
-     }
 
    /*==================================================*/
    /* The argument should be of type symbol or string. */
@@ -444,28 +428,42 @@ void LowcaseFunction(
 /* StrCompareFunction: H/L access routine   */
 /*   for the str-compare function.          */
 /********************************************/
-long long StrCompareFunction(
-  Environment *theEnv)
+void StrCompareFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    int numArgs, length;
-   DATA_OBJECT arg1, arg2, arg3;
-   long long returnValue;
+   CLIPSValue arg1, arg2, arg3;
+   long long compareValue;
 
+   returnValue->type = INTEGER;
+   
    /*=======================================================*/
    /* Function str-compare expects either 2 or 3 arguments. */
    /*=======================================================*/
 
-   if ((numArgs = EnvArgRangeCheck(theEnv,"str-compare",2,3)) == -1) return(0L);
+   if ((numArgs = EnvArgRangeCheck(theEnv,"str-compare",2,3)) == -1)
+     {
+      returnValue->value = EnvAddLong(theEnv,0);
+      return;
+     }
 
    /*=============================================================*/
    /* The first two arguments should be of type symbol or string. */
    /*=============================================================*/
 
    if (EnvArgTypeCheck(theEnv,"str-compare",1,SYMBOL_OR_STRING,&arg1) == false)
-     { return(0L); }
+     {
+      returnValue->value = EnvAddLong(theEnv,0);
+      return;
+     }
 
    if (EnvArgTypeCheck(theEnv,"str-compare",2,SYMBOL_OR_STRING,&arg2) == false)
-     { return(0L); }
+     {
+      returnValue->value = EnvAddLong(theEnv,0);
+      return;
+     }
 
    /*===================================================*/
    /* Compare the strings. Use the 3rd argument for the */
@@ -475,14 +473,17 @@ long long StrCompareFunction(
    if (numArgs == 3)
      {
       if (EnvArgTypeCheck(theEnv,"str-compare",3,INTEGER,&arg3) == false)
-        { return(0L); }
+        {
+         returnValue->value = EnvAddLong(theEnv,0);
+         return;
+        }
 
       length = CoerceToInteger(GetType(arg3),GetValue(arg3));
-      returnValue = strncmp(DOToString(arg1),DOToString(arg2),
-                            (STD_SIZE) length);
+      compareValue = strncmp(DOToString(arg1),DOToString(arg2),
+                             (STD_SIZE) length);
      }
    else
-     { returnValue = strcmp(DOToString(arg1),DOToString(arg2)); }
+     { compareValue = strcmp(DOToString(arg1),DOToString(arg2)); }
 
    /*========================================================*/
    /* Return Values are as follows:                          */
@@ -491,33 +492,39 @@ long long StrCompareFunction(
    /*  0 is returned if <string-1> is equal to <string-2>.   */
    /*========================================================*/
 
-   if (returnValue < 0) returnValue = -1;
-   else if (returnValue > 0) returnValue = 1;
-   return(returnValue);
+   if (compareValue < 0)
+     { returnValue->value = EnvAddLong(theEnv,-1); }
+   else if (compareValue > 0)
+     { returnValue->value = EnvAddLong(theEnv,1); }
+   else
+     { returnValue->value = EnvAddLong(theEnv,0); }
   }
 
 /*******************************************/
 /* SubStringFunction: H/L access routine   */
 /*   for the sub-string function.          */
 /*******************************************/
-void *SubStringFunction(
-  Environment *theEnv)
+void SubStringFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT theArgument;
+   CLIPSValue theArgument;
    const char *tempString;
    char *returnString;
    size_t start, end, i, j, length;
-   void *returnValue;
 
+   returnValue->type = STRING;
+   
    /*===================================*/
    /* Check and retrieve the arguments. */
    /*===================================*/
 
-   if (EnvArgCountCheck(theEnv,"sub-string",EXACTLY,3) == -1)
-     { return((void *) EnvAddSymbol(theEnv,"")); }
-
    if (EnvArgTypeCheck(theEnv,"sub-string",1,INTEGER,&theArgument) == false)
-     { return((void *) EnvAddSymbol(theEnv,"")); }
+     {
+      returnValue->value = EnvAddSymbol(theEnv,"");
+      return;
+     }
 
    if (CoerceToLongInteger(theArgument.type,theArgument.value) < 1)
      { start = 0; }
@@ -525,15 +532,24 @@ void *SubStringFunction(
      { start = (size_t) CoerceToLongInteger(theArgument.type,theArgument.value) - 1; }
 
    if (EnvArgTypeCheck(theEnv,"sub-string",2,INTEGER,&theArgument) == false)
-     {  return((void *) EnvAddSymbol(theEnv,"")); }
+     {
+      returnValue->value = EnvAddSymbol(theEnv,"");
+      return;
+     }
 
    if (CoerceToLongInteger(theArgument.type,theArgument.value) < 1)
-     { return((void *) EnvAddSymbol(theEnv,"")); }
+     {
+      returnValue->value = EnvAddSymbol(theEnv,"");
+      return;
+     }
    else
      { end = (size_t) CoerceToLongInteger(theArgument.type,theArgument.value) - 1; }
 
    if (EnvArgTypeCheck(theEnv,"sub-string",3,SYMBOL_OR_STRING,&theArgument) == false)
-     { return((void *) EnvAddSymbol(theEnv,"")); }
+     {
+      returnValue->value = EnvAddSymbol(theEnv,"");
+      return;
+     }
    
    tempString = DOToString(theArgument);
    
@@ -552,7 +568,10 @@ void *SubStringFunction(
    /*==================================*/
 
    if ((start > end) || (length == 0))
-     { return((void *) EnvAddSymbol(theEnv,"")); }
+     {
+      returnValue->value = EnvAddSymbol(theEnv,"");
+      return;
+     }
 
    /*=============================================*/
    /* Otherwise, allocate the string and copy the */
@@ -575,9 +594,8 @@ void *SubStringFunction(
    /* Return the new string. */
    /*========================*/
 
-   returnValue = (void *) EnvAddSymbol(theEnv,returnString);
+   returnValue->value = EnvAddSymbol(theEnv,returnString);
    rm(theEnv,returnString,(unsigned) (end - start + 2));
-   return(returnValue);
   }
 
 /******************************************/
@@ -586,20 +604,19 @@ void *SubStringFunction(
 /******************************************/
 void StrIndexFunction(
   Environment *theEnv,
-  DATA_OBJECT_PTR result)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT theArgument1, theArgument2;
+   CLIPSValue theArgument1, theArgument2;
    const char *strg1, *strg2, *strg3;
    size_t i, j;
 
-   result->type = SYMBOL;
-   result->value = EnvFalseSymbol(theEnv);
+   returnValue->type = SYMBOL;
+   returnValue->value = EnvFalseSymbol(theEnv);
 
    /*===================================*/
    /* Check and retrieve the arguments. */
    /*===================================*/
-
-   if (EnvArgCountCheck(theEnv,"str-index",EXACTLY,2) == -1) return;
 
    if (EnvArgTypeCheck(theEnv,"str-index",1,SYMBOL_OR_STRING,&theArgument1) == false) return;
 
@@ -615,8 +632,8 @@ void StrIndexFunction(
 
    if (strlen(strg1) == 0)
      {
-      result->type = INTEGER;
-      result->value = EnvAddLong(theEnv,(long long) UTF8Length(strg2) + 1LL);
+      returnValue->type = INTEGER;
+      returnValue->value = EnvAddLong(theEnv,(long long) UTF8Length(strg2) + 1LL);
       return;
      }
      
@@ -628,8 +645,8 @@ void StrIndexFunction(
 
       if (*(strg1+j) == '\0')
         {
-         result->type = INTEGER;
-         result->value = EnvAddLong(theEnv,(long long) UTF8CharNum(strg3,i));
+         returnValue->type = INTEGER;
+         returnValue->value = EnvAddLong(theEnv,(long long) UTF8CharNum(strg3,i));
          return;
         }
      }
@@ -643,20 +660,10 @@ void StrIndexFunction(
 /********************************************/
 void StringToFieldFunction(
   Environment *theEnv,
-  DATA_OBJECT *returnValue)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT theArg;
-
-   /*========================================================*/
-   /* Function string-to-field expects exactly one argument. */
-   /*========================================================*/
-
-   if (EnvArgCountCheck(theEnv,"string-to-field",EXACTLY,1) == -1)
-     {
-      returnValue->type = STRING;
-      returnValue->value = EnvAddSymbol(theEnv,"*** ERROR ***");
-      return;
-     }
+   CLIPSValue theArg;
 
    /*==================================================*/
    /* The argument should be of type symbol or string. */
@@ -682,7 +689,7 @@ void StringToFieldFunction(
 void StringToField(
   Environment *theEnv,
   const char *theString,
-  DATA_OBJECT *returnValue)
+  CLIPSValue *returnValue)
   {
    struct token theToken;
 
@@ -731,20 +738,10 @@ void StringToField(
 /**************************************/
 void EvalFunction(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT theArg;
-
-   /*=============================================*/
-   /* Function eval expects exactly one argument. */
-   /*=============================================*/
-
-   if (EnvArgCountCheck(theEnv,"eval",EXACTLY,1) == -1)
-     {
-      SetpType(returnValue,SYMBOL);
-      SetpValue(returnValue,EnvFalseSymbol(theEnv));
-      return;
-     }
+   CLIPSValue theArg;
 
    /*==================================================*/
    /* The argument should be of type SYMBOL or STRING. */
@@ -771,7 +768,7 @@ void EvalFunction(
 bool EnvEval(
   Environment *theEnv,
   const char *theString,
-  DATA_OBJECT_PTR returnValue)
+  CLIPSValue *returnValue)
   {
    struct expr *top;
    bool ov;
@@ -929,7 +926,8 @@ bool EnvEval(
 /*************************************************/
 void EvalFunction(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    PrintErrorID(theEnv,"STRNGFUN",1,false);
    EnvPrintRouter(theEnv,WERROR,"Function eval does not work in run time modules.\n");
@@ -944,7 +942,7 @@ void EvalFunction(
 bool EnvEval(
   Environment *theEnv,
   const char *theString,
-  DATA_OBJECT_PTR returnValue)
+  CLIPSValue *returnValue)
   {
    PrintErrorID(theEnv,"STRNGFUN",1,false);
    EnvPrintRouter(theEnv,WERROR,"Function eval does not work in run time modules.\n");
@@ -960,29 +958,33 @@ bool EnvEval(
 /* BuildFunction: H/L access routine   */
 /*   for the build function.           */
 /***************************************/
-bool BuildFunction(
-  Environment *theEnv)
+void BuildFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT theArg;
+   CLIPSValue theArg;
 
-   /*==============================================*/
-   /* Function build expects exactly one argument. */
-   /*==============================================*/
-
-   if (EnvArgCountCheck(theEnv,"build",EXACTLY,1) == -1) return false;
-
+   returnValue->type = SYMBOL;
+   
    /*==================================================*/
    /* The argument should be of type SYMBOL or STRING. */
    /*==================================================*/
 
    if (EnvArgTypeCheck(theEnv,"build",1,SYMBOL_OR_STRING,&theArg) == false)
-     { return false; }
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
 
    /*======================*/
    /* Build the construct. */
    /*======================*/
 
-   return(EnvBuild(theEnv,DOToString(theArg)));
+   if (EnvBuild(theEnv,DOToString(theArg)))
+     { returnValue->value = EnvTrueSymbol(theEnv); }
+   else
+     { returnValue->value = EnvFalseSymbol(theEnv); }
   }
   
 /******************************/
@@ -1102,12 +1104,15 @@ bool EnvBuild(
 /* BuildFunction: This is the non-functional stub */
 /*   provided for use with a run-time version.    */
 /**************************************************/
-bool BuildFunction(
-  Environment *theEnv)
+void BuildFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    PrintErrorID(theEnv,"STRNGFUN",1,false);
    EnvPrintRouter(theEnv,WERROR,"Function build does not work in run time modules.\n");
-   return false;
+   returnValue->type = SYMBOL;
+   returnValue->value = EnvFalseSymbol(theEnv);
   }
 
 /******************************************************/

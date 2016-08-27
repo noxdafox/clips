@@ -6,7 +6,7 @@
 ;;;     This example selects an appropriate wine
 ;;;     to drink with a meal.
 ;;;
-;;;     CLIPS Version 6.0 Example
+;;;     CLIPS Version 6.4 Example
 ;;;
 ;;;     To execute, merely load, reset and run.
 ;;;======================================================
@@ -21,7 +21,7 @@
    (printout t ?question)
    (bind ?answer (read))
    (if (lexemep ?answer) then (bind ?answer (lowcase ?answer)))
-   (while (not (member ?answer ?allowed-values)) do
+   (while (not (member$ ?answer ?allowed-values)) do
       (printout t ?question)
       (bind ?answer (read))
       (if (lexemep ?answer) then (bind ?answer (lowcase ?answer))))
@@ -81,7 +81,7 @@
                    (precursors ?name is ?value $?rest))
          (attribute (name ?name) (value ?value))
    =>
-   (if (eq (nth 1 ?rest) and) 
+   (if (eq (nth$ 1 ?rest) and) 
     then (modify ?f (precursors (rest$ ?rest)))
     else (modify ?f (precursors ?rest))))
 
@@ -90,7 +90,7 @@
                    (precursors ?name is-not ?value $?rest))
          (attribute (name ?name) (value ~?value))
    =>
-   (if (eq (nth 1 ?rest) and) 
+   (if (eq (nth$ 1 ?rest) and) 
     then (modify ?f (precursors (rest$ ?rest)))
     else (modify ?f (precursors ?rest))))
 
@@ -105,7 +105,7 @@
             (the-question "Is the main component of the meal meat, fish, or poultry? ")
             (valid-answers meat fish poultry unknown))
   (question (attribute has-turkey)
-            (precursors main-component is turkey)
+            (precursors main-component is poultry)
             (the-question "Does the meal have turkey in it? ")
             (valid-answers yes no unknown))
   (question (attribute has-sauce)
@@ -180,7 +180,7 @@
               (if)
               (then ?attribute is ?value $?rest))
   (test (or (eq (length$ ?rest) 0)
-            (neq (nth 1 ?rest) with)))
+            (neq (nth$ 1 ?rest) with)))
   =>
   (modify ?f (then ?rest))
   (assert (attribute (name ?attribute) (value ?value) (certainty ?c1))))
@@ -364,10 +364,10 @@
 (defrule PRINT-RESULTS::header ""
    (declare (salience 10))
    =>
-   (printout t t)
-   (printout t "        SELECTED WINES" t t)
-   (printout t " WINE                  CERTAINTY" t)
-   (printout t " -------------------------------" t)
+   (printout t crlf)
+   (printout t "        SELECTED WINES" crlf crlf)
+   (printout t " WINE                  CERTAINTY" crlf)
+   (printout t " -------------------------------" crlf)
    (assert (phase print-wines)))
 
 (defrule PRINT-RESULTS::print-wine ""
@@ -385,7 +385,7 @@
 (defrule PRINT-RESULTS::end-spaces ""
    (not (attribute (name wine)))
    =>
-   (printout t t))
+   (printout t crlf))
 
 
 

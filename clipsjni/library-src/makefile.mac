@@ -36,7 +36,7 @@ OBJS = agenda.o analysis.o argacces.o bload.o bmathfun.o bsave.o \
  	clipsjni_utilities.o clipsjni_glue.o
 
 .c.o :
-	gcc -c -DDARWIN -DALLOW_ENVIRONMENT_GLOBALS=0 -std=c99 -arch i386 -arch x86_64 \
+	gcc -c -DDARWIN -std=c99 -arch i386 -arch x86_64 \
 	    -I$(JAVA_INCLUDE) -I$(JAVA_INCLUDE_OS) \
 	    -Wall -Wundef -Wpointer-arith -Wshadow \
 	    -Winline -Wmissing-declarations -Wredundant-decls \

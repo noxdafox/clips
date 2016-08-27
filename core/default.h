@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*            DEFAULT ATTRIBUTE HEADER FILE            */
    /*******************************************************/
@@ -35,6 +35,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_default
@@ -46,7 +48,7 @@
 #include "constrnt.h"
 #include "evaluatn.h"
 
-   void                           DeriveDefaultFromConstraints(Environment *,CONSTRAINT_RECORD *,DATA_OBJECT *,bool,bool);
+   void                           DeriveDefaultFromConstraints(Environment *,CONSTRAINT_RECORD *,CLIPSValue *,bool,bool);
    struct expr                   *ParseDefault(Environment *,const char *,bool,bool,bool,bool *,bool *,bool *);
 
 #endif /* _H_default */

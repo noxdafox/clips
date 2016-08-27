@@ -102,7 +102,7 @@ CLIPS> (defclass A (is-a USER) (role concrete)
   (multislot foo (create-accessor write)))
 CLIPS> (make-instance a of A)
 [a]
-CLIPS> (mv-slot-insert a foo 1 (instances))
+CLIPS> (slot-insert$ a foo 1 (instances))
 [initial-object] of INITIAL-OBJECT
 [a] of A
 For a total of 2 instances.
@@ -112,7 +112,7 @@ CLIPS> (defclass A (is-a USER) (role concrete)
   (slot foo (create-accessor write)))
 CLIPS> (make-instance a of A)
 [a]
-CLIPS> (mv-slot-insert a foo 1 abc def)
+CLIPS> (slot-insert$ a foo 1 abc def)
 [INSMULT1] Function slot-insert$ cannot be used on single-field slot foo in instance a.
 FALSE
 CLIPS> (clear)

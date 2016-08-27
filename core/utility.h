@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/10/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*                 UTILITY HEADER FILE                 */
    /*******************************************************/
@@ -58,6 +58,8 @@
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*            Callbacks must be environment aware.           */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -177,10 +179,10 @@ struct utilityData
    size_t                         UTF8Offset(const char *,size_t);
    size_t                         UTF8Length(const char *);
    size_t                         UTF8CharNum(const char *,size_t);
-   void                           RestorePriorGarbageFrame(Environment *,struct garbageFrame *,struct garbageFrame *,struct dataObject *);
+   void                           RestorePriorGarbageFrame(Environment *,struct garbageFrame *,struct garbageFrame *,CLIPSValue *);
    void                           CallCleanupFunctions(Environment *);
    void                           CallPeriodicTasks(Environment *);
-   void                           CleanCurrentGarbageFrame(Environment *,struct dataObject *);
+   void                           CleanCurrentGarbageFrame(Environment *,CLIPSValue *);
 
 #endif /* _H_utility */
 

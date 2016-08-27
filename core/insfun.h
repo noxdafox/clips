@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*               INSTANCE FUNCTIONS MODULE             */
    /*******************************************************/
@@ -66,6 +66,8 @@
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_insfun
@@ -100,9 +102,9 @@ typedef struct igarbage
                                                        Defmodule *,bool);
    INSTANCE_SLOT                 *FindInstanceSlot(Environment *,Instance *,SYMBOL_HN *);
    int                            FindInstanceTemplateSlot(Environment *,Defclass *,SYMBOL_HN *);
-   bool                           PutSlotValue(Environment *,Instance *,INSTANCE_SLOT *,DATA_OBJECT *,DATA_OBJECT *,const char *);
-   bool                           DirectPutSlotValue(Environment *,Instance *,INSTANCE_SLOT *,DATA_OBJECT *,DATA_OBJECT *);
-   bool                           ValidSlotValue(Environment *,DATA_OBJECT *,SlotDescriptor *,Instance *,const char *);
+   bool                           PutSlotValue(Environment *,Instance *,INSTANCE_SLOT *,CLIPSValue *,CLIPSValue *,const char *);
+   bool                           DirectPutSlotValue(Environment *,Instance *,INSTANCE_SLOT *,CLIPSValue *,CLIPSValue *);
+   bool                           ValidSlotValue(Environment *,CLIPSValue *,SlotDescriptor *,Instance *,const char *);
    Instance                      *CheckInstance(Environment *,const char *);
    void                           NoInstanceError(Environment *,const char *,const char *);
    void                           StaleInstanceAddress(Environment *,const char *,int);

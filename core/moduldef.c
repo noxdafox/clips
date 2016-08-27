@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/10/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*                  DEFMODULE MODULE                   */
    /*******************************************************/
@@ -47,6 +47,8 @@
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*            Callbacks must be environment aware.           */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -192,13 +194,9 @@ void InitializeDefmodules(
 #endif
 
 #if (! RUN_TIME) && DEFMODULE_CONSTRUCT
-   EnvDefineFunction2(theEnv,"get-current-module", 'w',
-                   PTIEF GetCurrentModuleCommand,
-                   "GetCurrentModuleCommand", "00");
+   EnvAddUDF(theEnv,"get-current-module","y",0,0,NULL,GetCurrentModuleCommand,"GetCurrentModuleCommand",NULL);
 
-   EnvDefineFunction2(theEnv,"set-current-module", 'w',
-                   PTIEF SetCurrentModuleCommand,
-                   "SetCurrentModuleCommand", "11w");
+   EnvAddUDF(theEnv,"set-current-module","y",1,1,"y",SetCurrentModuleCommand,"SetCurrentModuleCommand",NULL);
 #endif
   }
 
@@ -703,48 +701,54 @@ Defmodule *EnvFindDefmodule(
 /* GetCurrentModuleCommand: H/L access routine   */
 /*   for the get-current-module command.         */
 /*************************************************/
-void *GetCurrentModuleCommand(
-  Environment *theEnv)
+void GetCurrentModuleCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    Defmodule *theModule;
-
-   EnvArgCountCheck(theEnv,"get-current-module",EXACTLY,0);
+   returnValue->type = SYMBOL;
 
    theModule = EnvGetCurrentModule(theEnv);
 
-   if (theModule == NULL) return((SYMBOL_HN *) EnvFalseSymbol(theEnv));
-
-   return((SYMBOL_HN *) EnvAddSymbol(theEnv,ValueToString(theModule->name)));
+   if (theModule == NULL)
+     { returnValue->value = EnvFalseSymbol(theEnv); }
+   else
+     { returnValue->value = EnvAddSymbol(theEnv,ValueToString(theModule->name)); }
   }
 
 /*************************************************/
 /* SetCurrentModuleCommand: H/L access routine   */
 /*   for the set-current-module command.         */
 /*************************************************/
-void *SetCurrentModuleCommand(
-  Environment *theEnv)
+void SetCurrentModuleCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT argPtr;
+   CLIPSValue theArg;
    const char *argument;
    Defmodule *theModule;
-   SYMBOL_HN *defaultReturn;
 
+   returnValue->type = SYMBOL;
+   
    /*=====================================================*/
    /* Check for the correct number and type of arguments. */
    /*=====================================================*/
 
    theModule = EnvGetCurrentModule(theEnv);
-   if (theModule == NULL) return((SYMBOL_HN *) EnvFalseSymbol(theEnv));
+   if (theModule == NULL)
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
 
-   defaultReturn = (SYMBOL_HN *) EnvAddSymbol(theEnv,ValueToString(EnvGetCurrentModule(theEnv)->name));
+   returnValue->value = EnvAddSymbol(theEnv,ValueToString(EnvGetCurrentModule(theEnv)->name));
 
-   if (EnvArgCountCheck(theEnv,"set-current-module",EXACTLY,1) == -1)
-     { return(defaultReturn); }
+   if (EnvArgTypeCheck(theEnv,"set-current-module",1,SYMBOL,&theArg) == false)
+     { return; }
 
-   if (EnvArgTypeCheck(theEnv,"set-current-module",1,SYMBOL,&argPtr) == false)
-     { return(defaultReturn); }
-
-   argument = DOToString(argPtr);
+   argument = DOToString(theArg);
 
    /*================================================*/
    /* Set the current module to the specified value. */
@@ -755,16 +759,10 @@ void *SetCurrentModuleCommand(
    if (theModule == NULL)
      {
       CantFindItemErrorMessage(theEnv,"defmodule",argument);
-      return(defaultReturn);
+      return;
      }
 
    EnvSetCurrentModule(theEnv,theModule);
-
-   /*================================*/
-   /* Return the new current module. */
-   /*================================*/
-
-   return((SYMBOL_HN *) defaultReturn);
   }
 
 /*************************************************/

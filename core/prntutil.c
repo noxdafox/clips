@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*                PRINT UTILITY MODULE                 */
    /*******************************************************/
@@ -54,6 +54,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -506,12 +508,12 @@ const char *LongIntegerToString(
    return(ValueToString(thePtr));
   }
 
-/*******************************************************************/
-/* DataObjectToString: Converts a DATA_OBJECT to KB string format. */
-/*******************************************************************/
+/******************************************************************/
+/* DataObjectToString: Converts a CLIPSValue to KB string format. */
+/******************************************************************/
 const char *DataObjectToString(
   Environment *theEnv,
-  DATA_OBJECT *theDO)
+  CLIPSValue *theDO)
   {
    void *thePtr;
    const char *theString;

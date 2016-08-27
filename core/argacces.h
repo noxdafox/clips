@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*             ARGUMENT ACCESS HEADER FILE             */
    /*******************************************************/
@@ -41,6 +41,8 @@
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_argacces
@@ -56,22 +58,20 @@
    int                            EnvRtnArgCount(Environment *);
    int                            EnvArgCountCheck(Environment *,const char *,int,int);
    int                            EnvArgRangeCheck(Environment *,const char *,int,int);
-   const char                    *EnvRtnLexeme(Environment *,int);
-   double                         EnvRtnDouble(Environment *,int);
-   long long                      EnvRtnLong(Environment *,int);
-   struct dataObject             *EnvRtnUnknown(Environment *,int,struct dataObject *);
-   bool                           EnvArgTypeCheck(Environment *,const char *,int,int,struct dataObject *);
-   bool                           GetNumericArgument(Environment *,struct expr *,const char *,struct dataObject *,bool,int);
+   CLIPSValue                    *EnvRtnUnknown(Environment *,int,CLIPSValue *);
+   bool                           EnvArgTypeCheck(Environment *,const char *,int,int,CLIPSValue *);
+   bool                           GetNumericArgument(Environment *,struct expr *,const char *,CLIPSValue *,bool,int);
    const char                    *GetLogicalName(Environment *,int,const char *);
    const char                    *GetFileName(Environment *,const char *,int);
    const char                    *GetConstructName(Environment *,const char *,const char *);
    void                           ExpectedCountError(Environment *,const char *,int,int);
    void                           OpenErrorMessage(Environment *,const char *,const char *);
-   bool                           CheckFunctionArgCount(Environment *,const char *,const char *,int);
+   bool                           CheckFunctionArgCount(Environment *,struct FunctionDefinition *,int);
+   void                           ExpectedTypeError0(Environment *,const char *,int);
    void                           ExpectedTypeError1(Environment *,const char *,int,const char *);
    void                           ExpectedTypeError2(Environment *,const char *,int);
    Defmodule                     *GetModuleName(Environment *,const char *,int,bool *);
-   void                          *GetFactOrInstanceArgument(Environment *,int,DATA_OBJECT *,const char *);
+   void                          *GetFactOrInstanceArgument(Environment *,int,CLIPSValue *,const char *);
    void                           IllegalLogicalNameMessage(Environment *,const char *);
 
 #endif

@@ -40,9 +40,9 @@
 (defclass PHLEGM (is-a THINGO) (role concrete))
 
 (defmessage-handler THINGO quoxnar ()
-   (printout t (str-implode ?self:q) " " (str-cat ?self:r) " " 
-               (str-implode ?self:s) " " (str-cat ?self:x) " "
-               (str-cat ?self:y) " " (str-implode ?self:z) crlf))
+   (printout t (implode$ ?self:q) " " (str-cat ?self:r) " " 
+               (implode$ ?self:s) " " (str-cat ?self:x) " "
+               (str-cat ?self:y) " " (implode$ ?self:z) crlf))
 
 (defmessage-handler THINGO fribban ()
    (send ?self put-r ?self:x)
@@ -51,9 +51,9 @@
    (send ?self put-q ?self:s)
    (send ?self put-s (create$ k 1 9.4))
    (send ?self put-z ?*q*)
-   (printout t (str-implode ?self:q) " " (str-cat ?self:r) " " 
-               (str-implode ?self:s) " " (str-cat ?self:x) " "
-               (str-cat ?self:y) " " (str-implode ?self:z) crlf))
+   (printout t (implode$ ?self:q) " " (str-cat ?self:r) " " 
+               (implode$ ?self:s) " " (str-cat ?self:x) " "
+               (str-cat ?self:y) " " (implode$ ?self:z) crlf))
 
 (defmessage-handler PHLEGM get-x around ()
    (printout t "This message should appear first" crlf)

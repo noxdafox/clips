@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/06/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*             OBJECT MESSAGE DISPATCH CODE            */
    /*******************************************************/
@@ -53,6 +53,8 @@
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 /* =========================================
@@ -93,9 +95,9 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static bool                    PerformMessage(Environment *,DATA_OBJECT *,EXPRESSION *,SYMBOL_HN *);
+   static bool                    PerformMessage(Environment *,CLIPSValue *,EXPRESSION *,SYMBOL_HN *);
    static HANDLER_LINK           *FindApplicableHandlers(Environment *,Defclass *,SYMBOL_HN *);
-   static void                    CallHandlers(Environment *,DATA_OBJECT *);
+   static void                    CallHandlers(Environment *,CLIPSValue *);
    static void                    EarlySlotBindError(Environment *,Instance *,Defclass *,unsigned);
 
 /* =========================================
@@ -110,7 +112,7 @@
                   performs specified message
   INPUTS       : 1) Message symbolic name
                  2) The instance address
-                 3) Address of DATA_OBJECT buffer
+                 3) Address of CLIPSValue buffer
                     (NULL if don't care)
                  4) Message argument expressions
   RETURNS      : Returns false is an execution error occurred
@@ -122,11 +124,11 @@ bool DirectMessage(
   Environment *theEnv,
   SYMBOL_HN *msg,
   Instance *ins,
-  DATA_OBJECT *resultbuf,
+  CLIPSValue *resultbuf,
   EXPRESSION *remargs)
   {
    EXPRESSION args;
-   DATA_OBJECT temp;
+   CLIPSValue temp;
 
    if (resultbuf == NULL)
      resultbuf = &temp;
@@ -155,10 +157,10 @@ bool DirectMessage(
  ***************************************************/
 void EnvSend(
   Environment *theEnv,
-  DATA_OBJECT *idata,
+  CLIPSValue *idata,
   const char *msg,
   const char *args,
-  DATA_OBJECT *result)
+  CLIPSValue *returnValue)
   {
    bool error;
    EXPRESSION *iexp;
@@ -172,8 +174,8 @@ void EnvSend(
      }
 
    EnvSetEvaluationError(theEnv,false);
-   result->type = SYMBOL;
-   result->value = EnvFalseSymbol(theEnv);
+   returnValue->type = SYMBOL;
+   returnValue->value = EnvFalseSymbol(theEnv);
    msym = FindSymbolHN(theEnv,msg);
    if (msym == NULL)
      {
@@ -189,7 +191,7 @@ void EnvSend(
       EnvSetEvaluationError(theEnv,true);
       return;
      }
-   PerformMessage(theEnv,result,iexp,msym);
+   PerformMessage(theEnv,returnValue,iexp,msym);
    ReturnExpression(theEnv,iexp);
   }
 
@@ -229,14 +231,15 @@ void DestroyHandlerLinks(
  ***********************************************************************/
 void SendCommand(
   Environment *theEnv,
-  DATA_OBJECT *result)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    EXPRESSION args;
    SYMBOL_HN *msg;
-   DATA_OBJECT temp;
+   CLIPSValue temp;
 
-   result->type = SYMBOL;
-   result->value = EnvFalseSymbol(theEnv);
+   returnValue->type = SYMBOL;
+   returnValue->value = EnvFalseSymbol(theEnv);
    if (EnvArgTypeCheck(theEnv,"send",2,SYMBOL,&temp) == false)
      return;
    msg = (SYMBOL_HN *) temp.value;
@@ -249,7 +252,7 @@ void SendCommand(
    args.argList = GetFirstArgument()->argList;
    args.nextArg = GetFirstArgument()->nextArg->nextArg;
 
-   PerformMessage(theEnv,result,&args,msg);
+   PerformMessage(theEnv,returnValue,&args,msg);
   }
 
 /***************************************************
@@ -265,7 +268,7 @@ void SendCommand(
                  stored as the first argument (0) in
                  the call frame of the message
  ***************************************************/
-DATA_OBJECT *GetNthMessageArgument(
+CLIPSValue *GetNthMessageArgument(
   Environment *theEnv,
   int n)
   {
@@ -273,7 +276,7 @@ DATA_OBJECT *GetNthMessageArgument(
   }
 
 /*****************************************************
-  NAME         : NextHandlerAvailable
+  NAME         : NextHandlerAvailableFunction
   DESCRIPTION  : Determines if there the currently
                    executing handler can call a
                    shadowed handler
@@ -283,20 +286,39 @@ DATA_OBJECT *GetNthMessageArgument(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax: (next-handlerp)
  *****************************************************/
-bool NextHandlerAvailable(
-  Environment *theEnv)
+void NextHandlerAvailableFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
+   returnValue->type = SYMBOL;
+   
    if (MessageHandlerData(theEnv)->CurrentCore == NULL)
-     { return false; }
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
    
    if (MessageHandlerData(theEnv)->CurrentCore->hnd->type == MAROUND)
-     { return (MessageHandlerData(theEnv)->NextInCore != NULL) ? true : false; }
+     {
+      if (MessageHandlerData(theEnv)->NextInCore != NULL)
+        { returnValue->value = EnvTrueSymbol(theEnv); }
+      else
+        { returnValue->value = EnvFalseSymbol(theEnv); }
+      return;
+     }
    
    if ((MessageHandlerData(theEnv)->CurrentCore->hnd->type == MPRIMARY) &&
        (MessageHandlerData(theEnv)->NextInCore != NULL))
-     { return (MessageHandlerData(theEnv)->NextInCore->hnd->type == MPRIMARY) ? true : false; }
+     {
+      if (MessageHandlerData(theEnv)->NextInCore->hnd->type == MPRIMARY)
+        { returnValue->value = EnvTrueSymbol(theEnv); }
+      else
+        { returnValue->value = EnvFalseSymbol(theEnv); }
+      return;
+     }
    
-   return false;
+   returnValue->value = EnvFalseSymbol(theEnv);
   }
 
 /********************************************************
@@ -324,7 +346,8 @@ bool NextHandlerAvailable(
  ********************************************************/
 void CallNextHandler(
   Environment *theEnv,
-  DATA_OBJECT *result)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    EXPRESSION args;
    int overridep;
@@ -332,13 +355,15 @@ void CallNextHandler(
 #if PROFILING_FUNCTIONS
    struct profileFrameInfo profileFrame;
 #endif
+   CLIPSValue temp;
 
-   SetpType(result,SYMBOL);
-   SetpValue(result,EnvFalseSymbol(theEnv));
+   SetpType(returnValue,SYMBOL);
+   SetpValue(returnValue,EnvFalseSymbol(theEnv));
    EvaluationData(theEnv)->EvaluationError = false;
    if (EvaluationData(theEnv)->HaltExecution)
      return;
-   if (NextHandlerAvailable(theEnv) == false)
+   NextHandlerAvailableFunction(theEnv,context,&temp);
+   if (temp.value == EnvFalseSymbol(theEnv))
      {
       PrintErrorID(theEnv,"MSGPASS",1,false);
       EnvPrintRouter(theEnv,WERROR,"Shadowed message-handlers not applicable in current context.\n");
@@ -389,7 +414,7 @@ void CallNextHandler(
             EvaluateProcActions(theEnv,MessageHandlerData(theEnv)->CurrentCore->hnd->cls->header.whichModule->theModule,
                                MessageHandlerData(theEnv)->CurrentCore->hnd->actions,
                                MessageHandlerData(theEnv)->CurrentCore->hnd->localVarCount,
-                               result,UnboundHandlerErr);
+                               returnValue,UnboundHandlerErr);
 #if PROFILING_FUNCTIONS
             EndProfile(theEnv,&profileFrame);
 #endif
@@ -400,7 +425,7 @@ void CallNextHandler(
 #endif
         }
       else
-        CallHandlers(theEnv,result);
+        CallHandlers(theEnv,returnValue);
      }
    else
      {
@@ -421,7 +446,7 @@ void CallNextHandler(
         EvaluateProcActions(theEnv,MessageHandlerData(theEnv)->CurrentCore->hnd->cls->header.whichModule->theModule,
                             MessageHandlerData(theEnv)->CurrentCore->hnd->actions,
                             MessageHandlerData(theEnv)->CurrentCore->hnd->localVarCount,
-                            result,UnboundHandlerErr);
+                            returnValue,UnboundHandlerErr);
 #if PROFILING_FUNCTIONS
          EndProfile(theEnv,&profileFrame);
 #endif
@@ -614,7 +639,7 @@ void PrintHandlerSlotGetFunction(
 bool HandlerSlotGetFunction(
   Environment *theEnv,
   void *theValue,
-  DATA_OBJECT *theResult)
+  CLIPSValue *theResult)
   {
    HANDLER_SLOT_REFERENCE *theReference;
    Defclass *theDefclass;
@@ -740,14 +765,14 @@ void PrintHandlerSlotPutFunction(
 bool HandlerSlotPutFunction(
   Environment *theEnv,
   void *theValue,
-  DATA_OBJECT *theResult)
+  CLIPSValue *theResult)
   {
    HANDLER_SLOT_REFERENCE *theReference;
    Defclass *theDefclass;
    Instance *theInstance;
    INSTANCE_SLOT *sp;
    unsigned instanceSlotIndex;
-   DATA_OBJECT theSetVal;
+   CLIPSValue theSetVal;
 
    theReference = (HANDLER_SLOT_REFERENCE *) ValueToBitMap(theValue);
    theInstance = (Instance *) ProceduralPrimitiveData(theEnv)->ProcParamArray[0].value;
@@ -837,14 +862,15 @@ HandlerPutError2:
  *****************************************************/
 void DynamicHandlerGetSlot(
   Environment *theEnv,
-  DATA_OBJECT *result)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    INSTANCE_SLOT *sp;
    Instance *ins;
-   DATA_OBJECT temp;
+   CLIPSValue temp;
 
-   result->type = SYMBOL;
-   result->value = EnvFalseSymbol(theEnv);
+   returnValue->type = SYMBOL;
+   returnValue->value = EnvFalseSymbol(theEnv);
    if (CheckCurrentMessage(theEnv,"dynamic-get",true) == false)
      return;
    EvaluateExpression(theEnv,GetFirstArgument(),&temp);
@@ -868,12 +894,12 @@ void DynamicHandlerGetSlot(
       EnvSetEvaluationError(theEnv,true);
       return;
      }
-   result->type = (unsigned short) sp->type;
-   result->value = sp->value;
+   returnValue->type = (unsigned short) sp->type;
+   returnValue->value = sp->value;
    if (sp->type == MULTIFIELD)
      {
-      result->begin = 0;
-      SetpDOEnd(result,GetInstanceSlotLength(sp));
+      returnValue->begin = 0;
+      SetpDOEnd(returnValue,GetInstanceSlotLength(sp));
      }
   }
 
@@ -889,11 +915,12 @@ void DynamicHandlerGetSlot(
  ***********************************************************/
 void DynamicHandlerPutSlot(
   Environment *theEnv,
-  DATA_OBJECT *theResult)
+  UDFContext *context,
+  CLIPSValue *theResult)
   {
    INSTANCE_SLOT *sp;
    Instance *ins;
-   DATA_OBJECT temp;
+   CLIPSValue temp;
 
    theResult->type = SYMBOL;
    theResult->value = EnvFalseSymbol(theEnv);
@@ -967,7 +994,7 @@ void DynamicHandlerPutSlot(
  *****************************************************/
 static bool PerformMessage(
   Environment *theEnv,
-  DATA_OBJECT *result,
+  CLIPSValue *returnValue,
   EXPRESSION *args,
   SYMBOL_HN *mname)
   {
@@ -982,8 +1009,8 @@ static bool PerformMessage(
    struct garbageFrame newGarbageFrame;
    struct garbageFrame *oldGarbageFrame;
 
-   result->type = SYMBOL;
-   result->value = EnvFalseSymbol(theEnv);
+   returnValue->type = SYMBOL;
+   returnValue->value = EnvFalseSymbol(theEnv);
    EvaluationData(theEnv)->EvaluationError = false;
    if (EvaluationData(theEnv)->HaltExecution)
      return false;
@@ -1008,7 +1035,7 @@ static bool PerformMessage(
       EvaluationData(theEnv)->CurrentEvaluationDepth--;
       MessageHandlerData(theEnv)->CurrentMessageName = oldName;
       
-      RestorePriorGarbageFrame(theEnv,&newGarbageFrame,oldGarbageFrame,result);
+      RestorePriorGarbageFrame(theEnv,&newGarbageFrame,oldGarbageFrame,returnValue);
       CallPeriodicTasks(theEnv);
       
       SetExecutingConstruct(theEnv,oldce);
@@ -1061,7 +1088,7 @@ static bool PerformMessage(
       EvaluationData(theEnv)->CurrentEvaluationDepth--;
       MessageHandlerData(theEnv)->CurrentMessageName = oldName;
          
-      RestorePriorGarbageFrame(theEnv,&newGarbageFrame,oldGarbageFrame,result);
+      RestorePriorGarbageFrame(theEnv,&newGarbageFrame,oldGarbageFrame,returnValue);
       CallPeriodicTasks(theEnv);
 
       SetExecutingConstruct(theEnv,oldce);
@@ -1105,7 +1132,7 @@ static bool PerformMessage(
            EvaluateProcActions(theEnv,MessageHandlerData(theEnv)->CurrentCore->hnd->cls->header.whichModule->theModule,
                                MessageHandlerData(theEnv)->CurrentCore->hnd->actions,
                                MessageHandlerData(theEnv)->CurrentCore->hnd->localVarCount,
-                               result,UnboundHandlerErr);
+                               returnValue,UnboundHandlerErr);
 
 
 #if PROFILING_FUNCTIONS
@@ -1128,7 +1155,7 @@ static bool PerformMessage(
          if (MessageHandlerData(theEnv)->WatchMessages)
            WatchMessage(theEnv,WTRACE,BEGIN_TRACE);
 #endif
-         CallHandlers(theEnv,result);
+         CallHandlers(theEnv,returnValue);
 #if DEBUGGING_FUNCTIONS
          if (MessageHandlerData(theEnv)->WatchMessages)
            WatchMessage(theEnv,WTRACE,END_TRACE);
@@ -1157,15 +1184,15 @@ static bool PerformMessage(
    EvaluationData(theEnv)->CurrentEvaluationDepth--;
    MessageHandlerData(theEnv)->CurrentMessageName = oldName;
 
-   RestorePriorGarbageFrame(theEnv,&newGarbageFrame,oldGarbageFrame,result);
+   RestorePriorGarbageFrame(theEnv,&newGarbageFrame,oldGarbageFrame,returnValue);
    CallPeriodicTasks(theEnv);
 
    SetExecutingConstruct(theEnv,oldce);
 
    if (EvaluationData(theEnv)->EvaluationError)
      {
-      result->type = SYMBOL;
-      result->value = EnvFalseSymbol(theEnv);
+      returnValue->type = SYMBOL;
+      returnValue->value = EnvFalseSymbol(theEnv);
       return false;
      }
      
@@ -1231,10 +1258,10 @@ static HANDLER_LINK *FindApplicableHandlers(
  ***************************************************************/
 static void CallHandlers(
   Environment *theEnv,
-  DATA_OBJECT *result)
+  CLIPSValue *returnValue)
   {
    HANDLER_LINK *oldCurrent = NULL,*oldNext = NULL;  /* prevents warning */
-   DATA_OBJECT temp;
+   CLIPSValue temp;
 #if PROFILING_FUNCTIONS
    struct profileFrameInfo profileFrame;
 #endif
@@ -1304,7 +1331,7 @@ static void CallHandlers(
         EvaluateProcActions(theEnv,MessageHandlerData(theEnv)->CurrentCore->hnd->cls->header.whichModule->theModule,
                             MessageHandlerData(theEnv)->CurrentCore->hnd->actions,
                             MessageHandlerData(theEnv)->CurrentCore->hnd->localVarCount,
-                            result,UnboundHandlerErr);
+                            returnValue,UnboundHandlerErr);
 
 #if PROFILING_FUNCTIONS
          EndProfile(theEnv,&profileFrame);

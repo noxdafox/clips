@@ -99,9 +99,9 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getInstanceList
    int i;
    jobject arrayList, slotValueList, javaSlotValueObject, theJavaInstance, instanceName, instanceClass;
    jobject theJavaSlotName, theJavaSlotValue;
-   DATA_OBJECT slotNames;
-   DATA_OBJECT slotValue;
-   DATA_OBJECT defaultValue;
+   CLIPSValue slotNames;
+   CLIPSValue slotValue;
+   CLIPSValue defaultValue;
    void *theCLIPSEnv = JLongToPointer(clipsEnv);
    void *theClass;
   
@@ -124,7 +124,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getInstanceList
      {
       theClass = EnvGetInstanceClass(theCLIPSEnv,instancePtr);
       
-      EnvClassSlots(theCLIPSEnv,theClass,&slotNames,TRUE);
+      EnvClassSlots(theCLIPSEnv,theClass,&slotNames,true);
    
       slotValueList = (*env)->NewObject(env,
                                         CLIPSJNIData(clipsEnv)->arrayListClass,
@@ -137,7 +137,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getInstanceList
       for (i = 1; i <= GetDOLength(slotNames); i++)
         {
          const char *theCSlotName, *theCSlotValue;
-         jboolean defaulted = FALSE;
+         jboolean defaulted = false;
          
          theCSlotName = ValueToString(GetMFValue(GetValue(slotNames),i));
          
@@ -148,7 +148,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getInstanceList
             EnvSlotDefaultValue(theCLIPSEnv,theClass,theCSlotName,&defaultValue);
                                            
             if (DOsEqual(&slotValue,&defaultValue))
-              { defaulted = TRUE; }
+              { defaulted = true; }
            }
 
          theCSlotValue = DataObjectToString(theCLIPSEnv,&slotValue);
@@ -356,7 +356,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_directGetSlot(
   jstring slotName)
   {
    jobject rv;
-   DATA_OBJECT theDO;
+   CLIPSValue theDO;
    void *theCLIPSEnv = JLongToPointer(clipsEnv);
    const char *cSlotName = (*env)->GetStringUTFChars(env,slotName,NULL);
 

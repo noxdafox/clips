@@ -40,7 +40,7 @@
   (run))
 
 (deffunction print-order ($?x)
-  (bind ?r (nth ?*which-test* ?x))
+  (bind ?r (nth$ ?*which-test* ?x))
   (printout t "This rule should fire " ?r crlf))
 
 ;;;**************************

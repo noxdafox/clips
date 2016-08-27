@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*                  WATCH HEADER FILE                  */
    /*******************************************************/
@@ -45,6 +45,8 @@
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_watch
@@ -84,11 +86,11 @@ struct watchData
                                                       bool (*)(Environment *,const char *,int,struct expr *));
    const char                    *GetNthWatchName(Environment *,int);
    int                            GetNthWatchValue(Environment *,int);
-   void                           WatchCommand(Environment *);
-   void                           UnwatchCommand(Environment *);
-   void                           ListWatchItemsCommand(Environment *);
+   void                           WatchCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           UnwatchCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           ListWatchItemsCommand(Environment *,UDFContext *,CLIPSValue *);
    void                           WatchFunctionDefinitions(Environment *);
-   bool                           GetWatchItemCommand(Environment *);
+   void                           GetWatchItemCommand(Environment *,UDFContext *,CLIPSValue *);
 
 #endif /* _H_watch */
 

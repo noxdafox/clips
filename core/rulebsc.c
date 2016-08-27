@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/06/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*          DEFRULE BASIC COMMANDS HEADER FILE         */
    /*******************************************************/
@@ -52,6 +52,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -112,14 +114,14 @@ void DefruleBasicCommands(
 #endif
 
 #if ! RUN_TIME
-   EnvDefineFunction2(theEnv,"get-defrule-list",'m',PTIEF GetDefruleListFunction,"GetDefruleListFunction","01w");
-   EnvDefineFunction2(theEnv,"undefrule",'v',PTIEF UndefruleCommand,"UndefruleCommand","11w");
-   EnvDefineFunction2(theEnv,"defrule-module",'w',PTIEF DefruleModuleFunction,"DefruleModuleFunction","11w");
+   EnvAddUDF(theEnv,"get-defrule-list","m",0,1,"y",GetDefruleListFunction,"GetDefruleListFunction",NULL);
+   EnvAddUDF(theEnv,"undefrule","v",1,1,"y",UndefruleCommand,"UndefruleCommand",NULL);
+   EnvAddUDF(theEnv,"defrule-module","y",1,1,"y",DefruleModuleFunction,"DefruleModuleFunction",NULL);
 
 #if DEBUGGING_FUNCTIONS
-   EnvDefineFunction2(theEnv,"rules",'v', PTIEF ListDefrulesCommand,"ListDefrulesCommand","01w");
-   EnvDefineFunction2(theEnv,"list-defrules",'v', PTIEF ListDefrulesCommand,"ListDefrulesCommand","01w");
-   EnvDefineFunction2(theEnv,"ppdefrule",'v',PTIEF PPDefruleCommand,"PPDefruleCommand","11w");
+   EnvAddUDF(theEnv,"rules","v",0,1,"y",ListDefrulesCommand,"ListDefrulesCommand",NULL);
+   EnvAddUDF(theEnv,"list-defrules","v",0,1,"y",ListDefrulesCommand,"ListDefrulesCommand",NULL);
+   EnvAddUDF(theEnv,"ppdefrule","v",1,1,"y",PPDefruleCommand,"PPDefruleCommand",NULL);
 #endif
 
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE)
@@ -272,9 +274,11 @@ static void SaveDefrules(
 /*   for the undefrule command.           */
 /******************************************/
 void UndefruleCommand(
-  Environment *theEnv)
-  { 
-   UndefconstructCommand(theEnv,"undefrule",DefruleData(theEnv)->DefruleConstruct); 
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
+  {
+   UndefconstructCommand(theEnv,"undefrule",DefruleData(theEnv)->DefruleConstruct);
   }
 
 /**********************************/
@@ -294,7 +298,8 @@ bool EnvUndefrule(
 /************************************************/
 void GetDefruleListFunction(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    GetConstructListFunction(theEnv,"get-defrule-list",returnValue,DefruleData(theEnv)->DefruleConstruct); 
   }
@@ -305,7 +310,7 @@ void GetDefruleListFunction(
 /****************************************/
 void EnvGetDefruleList(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue,
+  CLIPSValue *returnValue,
   Defmodule *theModule)
   {
    GetConstructList(theEnv,returnValue,DefruleData(theEnv)->DefruleConstruct,theModule);
@@ -315,10 +320,13 @@ void EnvGetDefruleList(
 /* DefruleModuleFunction: H/L access routine */
 /*   for the defrule-module function.        */
 /*********************************************/
-void *DefruleModuleFunction(
-  Environment *theEnv)
+void DefruleModuleFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   return(GetConstructModuleCommand(theEnv,"defrule-module",DefruleData(theEnv)->DefruleConstruct)); 
+   returnValue->type = SYMBOL;
+   returnValue->value = GetConstructModuleCommand(theEnv,"defrule-module",DefruleData(theEnv)->DefruleConstruct);
   }
 
 #if DEBUGGING_FUNCTIONS
@@ -328,7 +336,9 @@ void *DefruleModuleFunction(
 /*   for the ppdefrule command.           */
 /******************************************/
 void PPDefruleCommand(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    PPConstructCommand(theEnv,"ppdefrule",DefruleData(theEnv)->DefruleConstruct);
   }
@@ -350,7 +360,9 @@ bool PPDefrule(
 /*   for the list-defrules command.          */
 /*********************************************/
 void ListDefrulesCommand(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    ListConstructCommand(theEnv,"list-defrules",DefruleData(theEnv)->DefruleConstruct); 
   }

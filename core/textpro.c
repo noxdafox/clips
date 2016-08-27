@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*               TEXT PROCESSING MODULE                */
    /*******************************************************/
@@ -56,6 +56,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -1036,16 +1038,17 @@ struct topics
 /***************************************************************************/
 void FetchCommand(
   Environment *theEnv,
-  DATA_OBJECT *result)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    int load_ct;          /*Number of entries loaded */
-   DATA_OBJECT arg_ptr;
+   CLIPSValue theArg;
 
-   result->type = SYMBOL;
-   result->value = EnvFalseSymbol(theEnv);
-   if (EnvArgTypeCheck(theEnv,"fetch",1,SYMBOL_OR_STRING,&arg_ptr) == false)
+   returnValue->type = SYMBOL;
+   returnValue->value = EnvFalseSymbol(theEnv);
+   if (EnvArgTypeCheck(theEnv,"fetch",1,SYMBOL_OR_STRING,&theArg) == false)
       return;
-   load_ct = TextLookupFetch(theEnv,DOToString(arg_ptr));
+   load_ct = TextLookupFetch(theEnv,DOToString(theArg));
    if (load_ct <= 0)
      {
       if (load_ct == 0)
@@ -1056,8 +1059,8 @@ void FetchCommand(
 
       return;
      }
-   result->type = INTEGER;
-   result->value = EnvAddLong(theEnv,(long long) load_ct);
+   returnValue->type = INTEGER;
+   returnValue->value = EnvAddLong(theEnv,(long long) load_ct);
   }
 
 /******************************************************************************/
@@ -1077,8 +1080,10 @@ void FetchCommand(
 /*                                                                            */
 /* For usage, see the external documentation.                                 */
 /******************************************************************************/
-bool PrintRegionCommand(
-  Environment *theEnv)
+void PrintRegionCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    struct topics *params,    /*Lookup file and list of topic requests  */
                  *tptr;      /*Used in deallocating the parameter list */
@@ -1088,6 +1093,8 @@ bool PrintRegionCommand(
    int status;               /*Lookup status return code               */
    bool com_code;            /*Completion flag                         */
 
+   returnValue->type = SYMBOL;
+   
    params = GetCommandLineTopics(theEnv);
    fp = FindTopicInEntries(theEnv,params->next->name,params->next->next,menu,&status);
    if ((status != NO_FILE) && (status != NO_TOPIC) && (status != EXIT))
@@ -1121,14 +1128,20 @@ bool PrintRegionCommand(
       params = params->next;
       rm(theEnv,tptr,(int) sizeof(struct topics));
      }
-   return(com_code);
+     
+   if (com_code)
+     { returnValue->value = EnvTrueSymbol(theEnv); }
+   else
+     { returnValue->value = EnvFalseSymbol(theEnv); }
   }
 
 /***********************************************/
 /* GetRegionCommand : (H/L functionget-region) */
 /***********************************************/
-void *GetRegionCommand(
-  Environment *theEnv)
+void GetRegionCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    struct topics *params,    /*Lookup file and list of topic requests  */
                  *tptr;      /*Used in deallocating the parameter list */
@@ -1137,11 +1150,12 @@ void *GetRegionCommand(
    char *menu[1];            /*Buffer for the current menu name        */
    int status;               /*Lookup status return code               */
    char *theString = NULL;
-   void *theResult;
    size_t oldPos = 0;
    size_t oldMax = 0;
    size_t sLength;
 
+   returnValue->type = STRING;
+   
    params = GetCommandLineTopics(theEnv);
    fp = FindTopicInEntries(theEnv,params->name,params->next,menu,&status);
    if ((status != NO_FILE) && (status != NO_TOPIC) && (status != EXIT))
@@ -1172,7 +1186,7 @@ void *GetRegionCommand(
      }
 
    if (theString == NULL)
-     { theResult = EnvAddSymbol(theEnv,""); }
+     { returnValue->value = EnvAddSymbol(theEnv,""); }
    else
      {
       sLength = strlen(theString);
@@ -1181,13 +1195,11 @@ void *GetRegionCommand(
 		   ||
            ((theString[sLength-1] == '\n') && (theString[sLength-2] == '\r'))))
         { theString[sLength-2] = 0; }
-      theResult = EnvAddSymbol(theEnv,theString);
+      returnValue->value = EnvAddSymbol(theEnv,theString);
      }
 
    if (theString != NULL)
      { genfree(theEnv,theString,oldMax); }
-
-   return(theResult);
   }
 
 /***************************************************************************/
@@ -1197,17 +1209,28 @@ void *GetRegionCommand(
 /* Output : This function deletes the named file from the lookup table and */
 /*          returns a (float) boolean flag indicating failure or success.  */
 /***************************************************************************/
-bool TossCommand(
-  Environment *theEnv)
+void TossCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    const char *file;   /*Name of the file */
-   DATA_OBJECT arg_ptr;
+   CLIPSValue theArg;
 
-   if (EnvArgTypeCheck(theEnv,"toss",1,SYMBOL_OR_STRING,&arg_ptr) == false)
-     return false;
-   file = DOToString(arg_ptr);
+   returnValue->type = SYMBOL;
+   
+   if (EnvArgTypeCheck(theEnv,"toss",1,SYMBOL_OR_STRING,&theArg) == false)
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
+     
+   file = DOToString(theArg);
 
-   return(TextLookupToss(theEnv,file));
+   if (TextLookupToss(theEnv,file))
+     { returnValue->value = EnvTrueSymbol(theEnv); }
+   else
+     { returnValue->value = EnvFalseSymbol(theEnv); }
   }
 
 #endif
@@ -1234,7 +1257,7 @@ static struct topics *GetCommandLineTopics(
    struct topics *head,   /*Address of the top of the topic list   */
                  *tnode,  /*Address of new topic node              */
                  *tptr;   /*Used to attach new node to the list    */
-   DATA_OBJECT val;       /*Unknown-type H/L data structure        */
+   CLIPSValue val;       /*Unknown-type H/L data structure        */
 
    head = NULL;
    topic_num = EnvRtnArgCount(theEnv);
@@ -1341,10 +1364,10 @@ void HelpFunctionDefinitions(
    AllocateEnvironmentData(theEnv,TEXTPRO_DATA,sizeof(struct textProcessingData),DeallocateTextProcessingData);
 #if ! RUN_TIME
 #if TEXTPRO_FUNCTIONS
-   EnvDefineFunction2(theEnv,"fetch",'u', PTIEF FetchCommand,"FetchCommand","11k");
-   EnvDefineFunction2(theEnv,"toss",'b', PTIEF TossCommand,"TossCommand","11k");
-   EnvDefineFunction2(theEnv,"print-region",'b', PTIEF PrintRegionCommand,"PrintRegionCommand","2**wk");
-   EnvDefineFunction2(theEnv,"get-region",'s', PTIEF GetRegionCommand,"GetRegionCommand","1**k");
+   EnvAddUDF(theEnv,"fetch","bl",1,1,"sy",FetchCommand,"FetchCommand",NULL);
+   EnvAddUDF(theEnv,"toss","b",1,1,"sy",TossCommand,"TossCommand",NULL);
+   EnvAddUDF(theEnv,"print-region","b",2,UNBOUNDED,"*;y;sy",PrintRegionCommand,"PrintRegionCommand",NULL);
+   EnvAddUDF(theEnv,"get-region","s",1,UNBOUNDED,"*;sy",GetRegionCommand,"GetRegionCommand", NULL);
 #endif
 #endif
   }

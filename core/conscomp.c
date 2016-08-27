@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/10/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*              CONSTRUCT COMPILER MODULE              */
    /*******************************************************/
@@ -70,11 +70,11 @@
 /*                                                           */
 /*            Callbacks must be environment aware.           */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
-
-#if CONSTRUCT_COMPILER && (! RUN_TIME)
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -120,6 +120,8 @@
 
 #include "conscomp.h"
 
+#if CONSTRUCT_COMPILER && (! RUN_TIME)
+
 /***************/
 /* DEFINITIONS */
 /***************/
@@ -150,7 +152,7 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   void                               ConstructsToCCommand(Environment *);
+   void                               ConstructsToCCommand(Environment *,UDFContext *,CLIPSValue *);
    static bool                        ConstructsToC(Environment *,const char *,const char *,char *,long long,long long);
    static void                        WriteFunctionExternDeclarations(Environment *,FILE *);
    static bool                        FunctionsToCode(Environment *theEnv,const char *,const char *,char *);
@@ -204,12 +206,14 @@ static void DeallocateConstructCompilerData(
 /*   for the constructs-to-c command.         */
 /**********************************************/
 void ConstructsToCCommand(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    const char *fileName;
    char *fileNameBuffer;
    const char *pathName;
-   DATA_OBJECT theArg;
+   CLIPSValue theArg;
    int argCount;
    long long id, max; 
    int nameLength, pathLength;
@@ -557,91 +561,11 @@ static void WriteFunctionExternDeclarations(
         theFunction = theFunction->next)
      {
       fprintf(fp,"extern ");
-      switch(theFunction->returnValueType)
-        {
-         case 'i':
-           fprintf(fp,"int ");
-           break;
-           
-         case 'b':
-           fprintf(fp,"bool ");
-           break;
-           
-         case 'g':
-           fprintf(fp,"long long ");
-           break;
-
-         case 'l':
-           fprintf(fp,"long ");
-           break;
-
-         case 'f':
-           fprintf(fp,"float ");
-           break;
-
-         case 'd':
-           fprintf(fp,"double ");
-           break;
-
-         case 'w':
-         case 's':
-         case 'o':
-           fprintf(fp,"void *");
-           break;
-
-         case 'c':
-           fprintf(fp,"char ");
-           break;
-
-         case 'a':
-         case 'x':
-         case 'y':
-           fprintf(fp,"void * ");
-           break;
-
-         case 'v':
-         case 'm':
-         case 'u':
-         case 'n':
-         case 'j':
-         case 'k':
-           fprintf(fp,"void ");
-           break;
-
-         default:
-           SystemError(theEnv,"CONSCOMP",1);
-           break;
-        }
+      fprintf(fp,"void ");
 
       fprintf(fp,"%s(",theFunction->actualFunctionName);
       
-      switch(theFunction->returnValueType)
-        {
-         case 'i':
-         case 'b':
-         case 'g':
-         case 'l':
-         case 'f':
-         case 'd':
-         case 'w':
-         case 's':
-         case 'o':
-         case 'c':
-         case 'a':
-         case 'x':
-         case 'y':
-         case 'v':
-           fprintf(fp,"Environment *");
-           break;
-
-         case 'm':
-         case 'u':
-         case 'n':
-         case 'j':
-         case 'k':
-           fprintf(fp,"Environment *,DATA_OBJECT_PTR_ARG");
-           break;
-        }
+      fprintf(fp,"Environment *,UDFContext *,CLIPSValue *");
 
       fprintf(fp,");\n");
      }
@@ -706,11 +630,14 @@ static bool FunctionsToCode(
       fprintf(fp,"{");
       PrintSymbolReference(theEnv,fp,fctnPtr->callFunctionName);
       fprintf(fp,",\"%s\",",fctnPtr->actualFunctionName);
-      fprintf(fp,"'%c',",fctnPtr->returnValueType);
-      fprintf(fp,"PTIF %s,",fctnPtr->actualFunctionName);
+      fprintf(fp,"%u,",fctnPtr->unknownReturnValueType);
+      fprintf(fp,"%s,",fctnPtr->actualFunctionName);
       fprintf(fp,"NULL,");
+      
       PrintSymbolReference(theEnv,fp,fctnPtr->restrictions);
-      fprintf(fp,",0,0,0,");
+         
+      fprintf(fp,",%d,%d,0,0,0,",fctnPtr->minArgs,fctnPtr->maxArgs);
+      
       PrintFunctionReference(theEnv,fp,fctnPtr->next);
 
       i++;
@@ -789,7 +716,7 @@ static bool WriteInitializationFunction(
    fprintf(fp,"#include \"objrtmch.h\"\n");
    fprintf(fp,"#include \"rulebld.h\"\n\n");
 
-   fprintf(ConstructCompilerData(theEnv)->HeaderFP,"   void *InitCImage_%d(void);\n",ConstructCompilerData(theEnv)->ImageID);
+   fprintf(ConstructCompilerData(theEnv)->HeaderFP,"   Environment *InitCImage_%d(void);\n",ConstructCompilerData(theEnv)->ImageID);
    fprintf(ConstructCompilerData(theEnv)->HeaderFP,"   void FixupCImage_%d(Environment *);\n",ConstructCompilerData(theEnv)->ImageID);
 
    /*============================================*/
@@ -801,7 +728,7 @@ static bool WriteInitializationFunction(
    fprintf(fp,"/* CONSTRUCT IMAGE INITIALIZATION FUNCTION */\n");
    fprintf(fp,"/*******************************************/\n");
 
-   fprintf(fp,"\nvoid *InitCImage_%d()\n",ConstructCompilerData(theEnv)->ImageID);
+   fprintf(fp,"\nEnvironment *InitCImage_%d()\n",ConstructCompilerData(theEnv)->ImageID);
    fprintf(fp,"  {\n");
    fprintf(fp,"   static Environment *theEnv = NULL;\n\n");
    fprintf(fp,"   if (theEnv != NULL) return NULL;\n\n");
@@ -1159,9 +1086,7 @@ static void DumpExpression(
 void ConstructsToCCommandDefinition(
   Environment *theEnv)
   {
-   EnvDefineFunction2(theEnv,"constructs-to-c",'v',
-                   PTIEF ConstructsToCCommand,
-                   "ConstructsToCCommand", "24*kiki");
+   EnvAddUDF(theEnv,"constructs-to-c","v",2,4,"*;sy;l;sy;l",ConstructsToCCommand,"ConstructsToCCommand",NULL);
   }
 
 /*********************************************************/
@@ -1613,14 +1538,16 @@ void ConstructModuleToCode(
 
 #else /* CONSTRUCT_COMPILER && (! RUN_TIME) */
 
-   void                               ConstructsToCCommand(Environment *);
+   void                               ConstructsToCCommand(Environment *,UDFContext *,CLIPSValue *);
 
 /************************************/
 /* ConstructsToCCommand: Definition */
 /*   for rule compiler stub.        */
 /************************************/
 void ConstructsToCCommand(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
 #if MAC_XCD
 #pragma unused(theEnv)

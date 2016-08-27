@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*            PARSING FUNCTIONS HEADER FILE            */
    /*******************************************************/
@@ -43,6 +43,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_parsefun
@@ -54,8 +56,8 @@
 #include "evaluatn.h"
 
    void                           ParseFunctionDefinitions(Environment *);
-   void                           CheckSyntaxFunction(Environment *,DATA_OBJECT *);
-   bool                           CheckSyntax(Environment *,const char *,DATA_OBJECT_PTR);
+   void                           CheckSyntaxFunction(Environment *,UDFContext *,CLIPSValue *);
+   bool                           CheckSyntax(Environment *,const char *,CLIPSValue *);
 
 #endif /* _H_parsefun */
 

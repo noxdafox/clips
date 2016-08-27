@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/06/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*                 FACT HASHING MODULE                 */
    /*******************************************************/
@@ -38,6 +38,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -383,31 +385,33 @@ static void ResetFactHashTable(
       
 #if DEVELOPER
 
-/*****************************************************/
-/* ShowFactHashTable: Displays the number of entries */
-/*   in each slot of the fact hash table.            */
-/*****************************************************/
-void ShowFactHashTable(
-   Environment *theEnv)
-   {
-    int i, count;
-    struct factHashEntry *theEntry;
-    char buffer[20];
+/****************************************************/
+/* ShowFactHashTableCommand: Displays the number of */
+/*   entries in each slot of the fact hash table.   */
+/****************************************************/
+void ShowFactHashTableCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
+  {
+   int i, count;
+   struct factHashEntry *theEntry;
+   char buffer[20];
 
-    for (i = 0; i < FactData(theEnv)->FactHashTableSize; i++)
-      {
-       for (theEntry =  FactData(theEnv)->FactHashTable[i], count = 0;
-            theEntry != NULL;
-            theEntry = theEntry->next)
-         { count++; }
+   for (i = 0; i < FactData(theEnv)->FactHashTableSize; i++)
+     {
+      for (theEntry =  FactData(theEnv)->FactHashTable[i], count = 0;
+           theEntry != NULL;
+           theEntry = theEntry->next)
+        { count++; }
 
-       if (count != 0)
-         {
-          gensprintf(buffer,"%4d: %4d\n",i,count);
-          EnvPrintRouter(theEnv,WDISPLAY,buffer);
-         }
-      }
-   }
+      if (count != 0)
+        {
+         gensprintf(buffer,"%4d: %4d\n",i,count);
+         EnvPrintRouter(theEnv,WDISPLAY,buffer);
+        }
+     }
+  }
 
 #endif /* DEVELOPER */
 

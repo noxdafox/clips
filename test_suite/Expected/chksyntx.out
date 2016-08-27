@@ -32,7 +32,7 @@ CLIPS> (check-syntax "(facts)")
 FALSE
 CLIPS> (check-syntax "(+ 3 4)")                
 FALSE
-CLIPS> (check-syntax "(mv-append a b c)")         
+CLIPS> (check-syntax "(create$ a b c)")         
 FALSE
 CLIPS> (check-syntax "(+ 3 (* 4 5))")   
 FALSE

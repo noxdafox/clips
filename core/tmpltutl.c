@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/11/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*            DEFTEMPLATE UTILITIES MODULE             */
    /*******************************************************/
@@ -49,6 +49,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            Static constraint checking is always enabled.  */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -144,7 +146,7 @@ void CheckTemplateFact(
    int i;
    Deftemplate *theDeftemplate;
    struct templateSlot *slotPtr;
-   DATA_OBJECT theData;
+   CLIPSValue theData;
    char thePlace[20];
    int rv;
 
@@ -302,7 +304,7 @@ void PrintTemplateFact(
    int i;
    Deftemplate *theDeftemplate;
    struct templateSlot *slotPtr;
-   DATA_OBJECT tempDO;
+   CLIPSValue tempDO;
    bool slotPrinted = false;
    
    /*==============================*/

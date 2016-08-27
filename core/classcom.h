@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*              CLASS COMMANDS HEADER FILE             */
    /*******************************************************/
@@ -44,6 +44,8 @@
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_classcom
@@ -78,15 +80,15 @@
    Defclass               *EnvGetNextDefclass(Environment *,Defclass *);
    bool                    EnvIsDefclassDeletable(Environment *,Defclass *);
 
-   void                    UndefclassCommand(Environment *);
+   void                    UndefclassCommand(Environment *,UDFContext *,CLIPSValue *);
    unsigned short          EnvSetClassDefaultsMode(Environment *,unsigned short);
    unsigned short          EnvGetClassDefaultsMode(Environment *);
-   void                   *GetClassDefaultsModeCommand(Environment *);
-   void                   *SetClassDefaultsModeCommand(Environment *);
+   void                    GetClassDefaultsModeCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                    SetClassDefaultsModeCommand(Environment *,UDFContext *,CLIPSValue *);
 
 #if DEBUGGING_FUNCTIONS
-   void                    PPDefclassCommand(Environment *);
-   void                    ListDefclassesCommand(Environment *);
+   void                    PPDefclassCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                    ListDefclassesCommand(Environment *,UDFContext *,CLIPSValue *);
    void                    EnvListDefclasses(Environment *,const char *,Defmodule *);
    bool                    EnvGetDefclassWatchInstances(Environment *,Defclass *);
    void                    EnvSetDefclassWatchInstances(Environment *,bool,Defclass *);
@@ -96,8 +98,8 @@
    bool                    DefclassWatchPrint(Environment *,const char *,int,EXPRESSION *);
 #endif
 
-   void                    GetDefclassListFunction(Environment *,DATA_OBJECT *);
-   void                    EnvGetDefclassList(Environment *,DATA_OBJECT *,Defmodule *);
+   void                    GetDefclassListFunction(Environment *,UDFContext *,CLIPSValue *);
+   void                    EnvGetDefclassList(Environment *,CLIPSValue *,Defmodule *);
    bool                    EnvUndefclass(Environment *,Defclass *);
    bool                    HasSuperclass(Defclass *,Defclass *);
 

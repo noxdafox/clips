@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/11/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*                    ENGINE MODULE                    */
    /*******************************************************/
@@ -79,6 +79,8 @@
 /*            Callbacks must be environment aware.           */
 /*                                                           */
 /*            Incremental reset is always enabled.           */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -161,7 +163,7 @@ long long EnvRun(
   long long runLimit)
   {
    long long rulesFired = 0;
-   DATA_OBJECT result;
+   CLIPSValue returnValue;
    struct callFunctionItemWithArg *theBeforeRunFunction;
    struct callFunctionItem *theRunFunction;
 #if DEBUGGING_FUNCTIONS
@@ -369,7 +371,7 @@ long long EnvRun(
 
       EvaluateProcActions(theEnv,EngineData(theEnv)->ExecutingRule->header.whichModule->theModule,
                           EngineData(theEnv)->ExecutingRule->actions,EngineData(theEnv)->ExecutingRule->localVarCnt,
-                          &result,NULL);
+                          &returnValue,NULL);
 
 #if PROFILING_FUNCTIONS
       EndProfile(theEnv,&profileFrame);
@@ -894,10 +896,10 @@ void EnvFocus(
 /*   for the clear-focus-stack command.         */
 /************************************************/
 void ClearFocusStackCommand(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   if (EnvArgCountCheck(theEnv,"list-focus-stack",EXACTLY,0) == -1) return;
-
    EnvClearFocusStack(theEnv);
   }
 
@@ -1017,34 +1019,35 @@ bool EnvRemoveBeforeRunFunction(
 /* RunCommand: H/L access routine for the run command.   */
 /*********************************************************/
 void RunCommand(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    int numArgs;
    long long runLimit = -1LL;
-   DATA_OBJECT argPtr;
-
+   CLIPSValue theArg;
+   
    if ((numArgs = EnvArgCountCheck(theEnv,"run",NO_MORE_THAN,1)) == -1) return;
 
    if (numArgs == 0)
      { runLimit = -1LL; }
    else if (numArgs == 1)
      {
-      if (EnvArgTypeCheck(theEnv,"run",1,INTEGER,&argPtr) == false) return;
-      runLimit = DOToLong(argPtr);
+      if (EnvArgTypeCheck(theEnv,"run",1,INTEGER,&theArg) == false) return;
+      runLimit = DOToLong(theArg);
      }
 
    EnvRun(theEnv,runLimit);
-
-   return;
   }
 
 /***********************************************/
 /* HaltCommand: Causes rule execution to halt. */
 /***********************************************/
 void HaltCommand(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   EnvArgCountCheck(theEnv,"halt",EXACTLY,0);
    EnvHalt(theEnv);
   }
 
@@ -1161,17 +1164,17 @@ bool EnvDefruleHasBreakpoint(
 /*   for the set-break command.          */
 /*****************************************/
 void SetBreakCommand(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT argPtr;
+   CLIPSValue theArg;
    const char *argument;
-   void *defrulePtr;
+   Defrule *defrulePtr;
 
-   if (EnvArgCountCheck(theEnv,"set-break",EXACTLY,1) == -1) return;
+   if (EnvArgTypeCheck(theEnv,"set-break",1,SYMBOL,&theArg) == false) return;
 
-   if (EnvArgTypeCheck(theEnv,"set-break",1,SYMBOL,&argPtr) == false) return;
-
-   argument = DOToString(argPtr);
+   argument = DOToString(theArg);
 
    if ((defrulePtr = EnvFindDefrule(theEnv,argument)) == NULL)
      {
@@ -1187,13 +1190,15 @@ void SetBreakCommand(
 /*   for the remove-break command.          */
 /********************************************/
 void RemoveBreakCommand(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT argPtr;
+   CLIPSValue theArg;
    const char *argument;
    int nargs;
-   void *defrulePtr;
-
+   Defrule *defrulePtr;
+   
    if ((nargs = EnvArgCountCheck(theEnv,"remove-break",NO_MORE_THAN,1)) == -1)
      { return; }
 
@@ -1203,9 +1208,9 @@ void RemoveBreakCommand(
       return;
      }
 
-   if (EnvArgTypeCheck(theEnv,"remove-break",1,SYMBOL,&argPtr) == false) return;
+   if (EnvArgTypeCheck(theEnv,"remove-break",1,SYMBOL,&theArg) == false) return;
 
-   argument = DOToString(argPtr);
+   argument = DOToString(theArg);
 
    if ((defrulePtr = EnvFindDefrule(theEnv,argument)) == NULL)
      {
@@ -1226,12 +1231,14 @@ void RemoveBreakCommand(
 /*   for the show-breaks command.          */
 /*******************************************/
 void ShowBreaksCommand(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    int numArgs;
    bool error;
    Defmodule *theModule;
-
+   
    if ((numArgs = EnvArgCountCheck(theEnv,"show-breaks",NO_MORE_THAN,1)) == -1) return;
 
    if (numArgs == 1)
@@ -1250,10 +1257,10 @@ void ShowBreaksCommand(
 /*   for the list-focus-stack command.         */
 /***********************************************/
 void ListFocusStackCommand(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   if (EnvArgCountCheck(theEnv,"list-focus-stack",EXACTLY,0) == -1) return;
-
    EnvListFocusStack(theEnv,WDISPLAY);
   }
 
@@ -1284,10 +1291,9 @@ void EnvListFocusStack(
 /***********************************************/
 void GetFocusStackFunction(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   if (EnvArgCountCheck(theEnv,"get-focus-stack",EXACTLY,0) == -1) return;
-
    EnvGetFocusStack(theEnv,returnValue);
   }
 
@@ -1297,7 +1303,7 @@ void GetFocusStackFunction(
 /***************************************/
 void EnvGetFocusStack(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue)
+  CLIPSValue *returnValue)
   {
    struct focus *theFocus;
    struct multifield *theList;
@@ -1352,31 +1358,40 @@ void EnvGetFocusStack(
 /* PopFocusFunction: H/L access routine   */
 /*   for the pop-focus function.          */
 /******************************************/
-void *PopFocusFunction(
-  Environment *theEnv)
+void PopFocusFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    Defmodule *theModule;
-
-   EnvArgCountCheck(theEnv,"pop-focus",EXACTLY,0);
-
+   returnValue->type = SYMBOL;
+   
    theModule = EnvPopFocus(theEnv);
-   if (theModule == NULL) return((SYMBOL_HN *) EnvFalseSymbol(theEnv));
-   return(theModule->name);
+   if (theModule == NULL)
+     { returnValue->value = EnvFalseSymbol(theEnv); }
+   else
+     { returnValue->value = theModule->name; }
   }
 
 /******************************************/
 /* GetFocusFunction: H/L access routine   */
 /*   for the get-focus function.          */
 /******************************************/
-void *GetFocusFunction(
-  Environment *theEnv)
+void GetFocusFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    Defmodule *rv;
 
-   EnvArgCountCheck(theEnv,"get-focus",EXACTLY,0);
+   returnValue->type = SYMBOL;
+   
    rv = EnvGetFocus(theEnv);
-   if (rv == NULL) return((SYMBOL_HN *) EnvFalseSymbol(theEnv));
-   return(rv->name);
+   
+   if (rv == NULL)
+     { returnValue->value = EnvFalseSymbol(theEnv); }
+   else
+     { returnValue->value = rv->name; }
   }
 
 /*********************************/
@@ -1395,20 +1410,27 @@ Defmodule *EnvGetFocus(
 /* FocusCommand: H/L access routine   */
 /*   for the focus function.          */
 /**************************************/
-bool FocusCommand(
-  Environment *theEnv)
+void FocusCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT argPtr;
+   CLIPSValue theArg;
    const char *argument;
    Defmodule *theModule;
    int argCount, i;
 
+   returnValue->type = SYMBOL;
+   
    /*=====================================================*/
    /* Check for the correct number and type of arguments. */
    /*=====================================================*/
 
    if ((argCount = EnvArgCountCheck(theEnv,"focus",AT_LEAST,1)) == -1)
-     { return false; }
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
 
    /*===========================================*/
    /* Focus on the specified defrule module(s). */
@@ -1416,16 +1438,20 @@ bool FocusCommand(
 
    for (i = argCount; i > 0; i--)
      {
-      if (EnvArgTypeCheck(theEnv,"focus",i,SYMBOL,&argPtr) == false)
-        { return false; }
+      if (EnvArgTypeCheck(theEnv,"focus",i,SYMBOL,&theArg) == false)
+        {
+         returnValue->value = EnvFalseSymbol(theEnv);
+         return;
+        }
 
-      argument = DOToString(argPtr);
+      argument = DOToString(theArg);
       theModule = EnvFindDefmodule(theEnv,argument);
 
       if (theModule == NULL)
         {
          CantFindItemErrorMessage(theEnv,"defmodule",argument);
-         return false;
+         returnValue->value = EnvFalseSymbol(theEnv);
+         return;
         }
 
       EnvFocus(theEnv,theModule);
@@ -1435,7 +1461,7 @@ bool FocusCommand(
    /* Return true to indicate success of focus command. */
    /*===================================================*/
 
-   return true;
+   returnValue->value = EnvTrueSymbol(theEnv);
   }
 
 /***********************************************************************/

@@ -372,13 +372,15 @@ CLIPS>
 Hello, world!
 CLIPS> (clear) ; Sourceforge bug
 CLIPS> (funcall str-cat)
-""
+[ARGACCES4] Function str-cat expected at least 1 argument(s)
+FALSE
 CLIPS> 
 (deffunction bar1 (?func)
    (bind $?a (create$))
    (funcall ?func (expand$ $?a)))
 CLIPS> (bar1 "str-cat")
-""
+[ARGACCES4] Function str-cat expected at least 1 argument(s)
+FALSE
 CLIPS> (clear)
 CLIPS> 
 (defclass BOO (is-a USER)

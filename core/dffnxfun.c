@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/06/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*                 DEFFUNCTION MODULE                  */
    /*******************************************************/
@@ -61,6 +61,8 @@
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 /* =========================================
@@ -114,7 +116,7 @@
    ***************************************** */
 
    static void                    PrintDeffunctionCall(Environment *,const char *,Deffunction *);
-   static bool                    EvaluateDeffunctionCall(Environment *,Deffunction *,DATA_OBJECT *);
+   static bool                    EvaluateDeffunctionCall(Environment *,Deffunction *,CLIPSValue *);
    static void                    DecrementDeffunctionBusyCount(Environment *,Deffunction *);
    static void                    IncrementDeffunctionBusyCount(Environment *,Deffunction *);
    static void                    DeallocateDeffunctionData(Environment *);
@@ -221,19 +223,16 @@ void SetupDeffunctions(
 #endif
    AddSaveFunction(theEnv,"deffunction-headers",SaveDeffunctionHeaders,1000);
    AddSaveFunction(theEnv,"deffunctions",SaveDeffunctions,0);
-   EnvDefineFunction2(theEnv,"undeffunction",'v',PTIEF UndeffunctionCommand,"UndeffunctionCommand","11w");
+   EnvAddUDF(theEnv,"undeffunction","v",1,1,"y",UndeffunctionCommand,"UndeffunctionCommand",NULL);
 #endif
 
 #if DEBUGGING_FUNCTIONS
-   EnvDefineFunction2(theEnv,"list-deffunctions",'v',PTIEF ListDeffunctionsCommand,"ListDeffunctionsCommand","01");
-   EnvDefineFunction2(theEnv,"ppdeffunction",'v',PTIEF PPDeffunctionCommand,"PPDeffunctionCommand","11w");
+   EnvAddUDF(theEnv,"list-deffunctions","v",0,1,"y",ListDeffunctionsCommand,"ListDeffunctionsCommand",NULL);
+   EnvAddUDF(theEnv,"ppdeffunction","v",1,1,"y",PPDeffunctionCommand,"PPDeffunctionCommand",NULL);
 #endif
 
-   EnvDefineFunction2(theEnv,"get-deffunction-list",'m',PTIEF GetDeffunctionListFunction,
-                   "GetDeffunctionListFunction","01");
-
-   EnvDefineFunction2(theEnv,"deffunction-module",'w',PTIEF GetDeffunctionModuleCommand,
-                   "GetDeffunctionModuleCommand","11w");
+   EnvAddUDF(theEnv,"get-deffunction-list","m",0,1,"y",GetDeffunctionListFunction,"GetDeffunctionListFunction",NULL);
+   EnvAddUDF(theEnv,"deffunction-module","y",1,1,"y",GetDeffunctionModuleCommand,"GetDeffunctionModuleCommand",NULL);
 
 #if BLOAD_AND_BSAVE || BLOAD || BLOAD_ONLY
    SetupDeffunctionsBload(theEnv);
@@ -495,7 +494,9 @@ void RemoveDeffunction(
   NOTES        : H/L Syntax: (undeffunction <name> | *)
  ********************************************************/
 void UndeffunctionCommand(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    UndefconstructCommand(theEnv,"undeffunction",DeffunctionData(theEnv)->DeffunctionConstruct);
   }
@@ -508,10 +509,13 @@ void UndeffunctionCommand(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax: (deffunction-module <dfnx-name>)
  ****************************************************************/
-void *GetDeffunctionModuleCommand(
-  Environment *theEnv)
+void GetDeffunctionModuleCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   return(GetConstructModuleCommand(theEnv,"deffunction-module",DeffunctionData(theEnv)->DeffunctionConstruct));
+   returnValue->type = SYMBOL;
+   returnValue->value = GetConstructModuleCommand(theEnv,"deffunction-module",DeffunctionData(theEnv)->DeffunctionConstruct);
   }
 
 #if DEBUGGING_FUNCTIONS
@@ -527,7 +531,9 @@ void *GetDeffunctionModuleCommand(
   NOTES        : H/L Syntax: (ppdeffunction <name>)
  ****************************************************/
 void PPDeffunctionCommand(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    PPConstructCommand(theEnv,"ppdeffunction",DeffunctionData(theEnv)->DeffunctionConstruct);
   }
@@ -541,7 +547,9 @@ void PPDeffunctionCommand(
   NOTES        : H/L Interface
  ***************************************************/
 void ListDeffunctionsCommand(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    ListConstructCommand(theEnv,"list-deffunctions",DeffunctionData(theEnv)->DeffunctionConstruct);
   }
@@ -577,7 +585,8 @@ void EnvListDeffunctions(
  ***************************************************************/
 void GetDeffunctionListFunction(
   Environment *theEnv,
-  DATA_OBJECT *returnValue)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    GetConstructListFunction(theEnv,"get-deffunction-list",returnValue,DeffunctionData(theEnv)->DeffunctionConstruct);
   }
@@ -595,7 +604,7 @@ void GetDeffunctionListFunction(
  ***************************************************************/
 void EnvGetDeffunctionList(
   Environment *theEnv,
-  DATA_OBJECT *returnValue,
+  CLIPSValue *returnValue,
   Defmodule *theModule)
   {
    GetConstructList(theEnv,returnValue,DeffunctionData(theEnv)->DeffunctionConstruct,theModule);
@@ -696,11 +705,11 @@ static void PrintDeffunctionCall(
 static bool EvaluateDeffunctionCall(
   Environment *theEnv,
   Deffunction *theDeffunction,
-  DATA_OBJECT *result)
+  CLIPSValue *returnValue)
   {
-   CallDeffunction(theEnv,theDeffunction,GetFirstArgument(),result);
-   if ((GetpType(result) == SYMBOL) &&
-       (GetpValue(result) == EnvFalseSymbol(theEnv)))
+   CallDeffunction(theEnv,theDeffunction,GetFirstArgument(),returnValue);
+   if ((GetpType(returnValue) == SYMBOL) &&
+       (GetpValue(returnValue) == EnvFalseSymbol(theEnv)))
      return false;
    return true;
   }

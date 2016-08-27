@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*              FACTS MANAGER HEADER FILE              */
    /*******************************************************/
@@ -63,6 +63,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -138,7 +140,7 @@ struct factsData
    Fact                          *EnvCreateFact(Environment *,Deftemplate *);
    void                           EnvDecrementFactCount(Environment *,Fact *);
    long long                      EnvFactIndex(Environment *,Fact *);
-   bool                           EnvGetFactSlot(Environment *,Fact *,const char *,DATA_OBJECT *);
+   bool                           EnvGetFactSlot(Environment *,Fact *,const char *,CLIPSValue *);
    void                           PrintFactWithIdentifier(Environment *,const char *,Fact *);
    void                           PrintFact(Environment *,const char *,Fact *,bool,bool);
    void                           PrintFactIdentifierInLongForm(Environment *,const char *,Fact *);
@@ -162,11 +164,11 @@ struct factsData
    bool                           FactIsDeleted(Environment *,Fact *);
    void                           ReturnFact(Environment *,Fact *);
    void                           MatchFactFunction(Environment *,Fact *);
-   bool                           EnvPutFactSlot(Environment *,Fact *,const char *,DATA_OBJECT *);
+   bool                           EnvPutFactSlot(Environment *,Fact *,const char *,CLIPSValue *);
    bool                           EnvAssignFactSlotDefaults(Environment *,Fact *);
    bool                           CopyFactSlotValues(Environment *,Fact *,Fact *);
    bool                           DeftemplateSlotDefault(Environment *,Deftemplate *,
-                                                         struct templateSlot *,DATA_OBJECT *,bool);
+                                                         struct templateSlot *,CLIPSValue *,bool);
    bool                           EnvAddAssertFunction(Environment *,const char *,
                                                        void (*)(Environment *,void *),int);
    bool                           EnvAddAssertFunctionWithContext(Environment *,const char *,

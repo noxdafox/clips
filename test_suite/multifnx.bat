@@ -87,18 +87,18 @@
 (delete$ (create$ computer printer hard-disk floppy-drive) 2 4)
 (delete$ (create$ computer printer hard-disk floppy-drive) 3 4)
 (delete$ (create$ computer printer hard-disk floppy-drive) 3 2)
-(length)                           ; 10.3.6
-(length "x" 3)                     ; 10.3.6
-(length [def])                     ; 10.3.6
-(length 4.3)                       ; 10.3.6
-(length 567)                       ; 10.3.6
-(length blah-blah-blah)            ; 10.3.6
-(length "")                        ; 10.3.6
-(length "Hello world")             ; 10.3.6
-(length (create$))                 ; 10.3.6
-(length (create$ a b c))           ; 10.3.6
-(length (create$ a b c d e f g)) ; 10.3.6
-(length "cat")                     ; 10.3.6
+(length$)                           ; 10.3.6
+(length$ "x" 3)                     ; 10.3.6
+(length$ [def])                     ; 10.3.6
+(length$ 4.3)                       ; 10.3.6
+(length$ 567)                       ; 10.3.6
+(length$ blah-blah-blah)            ; 10.3.6
+(length$ "")                        ; 10.3.6
+(length$ "Hello world")             ; 10.3.6
+(length$ (create$))                 ; 10.3.6
+(length$ (create$ a b c))           ; 10.3.6
+(length$ (create$ a b c d e f g))   ; 10.3.6
+(length$ "cat")                     ; 10.3.6
 (explode$)                      ; 10.3.7
 (explode$ "x" 3)                ; 10.3.7
 (explode$ [jocko])              ; 10.3.7
@@ -213,58 +213,3 @@
 (rest$ (create$ a b c))
 (rest$ (create$ a))
 (rest$ (create$))
-(mv-delete)                        
-(mv-delete 1)                        
-(mv-delete 3 (create$ a b c) [x])    
-(mv-delete 3.4 (create$ a b c d))    
-(mv-delete a (create$ a b c d))      
-(mv-delete 3 "a b")                
-(mv-delete -1 (create$ x 1 z))     
-(mv-delete 0 (create$ x 4.2 z))    
-(mv-delete 1 (create$ [ab] cd ef)) 
-(mv-delete 2 (create$ abc d ef))   
-(mv-delete 3 (create$ abcd 2 e))   
-(mv-delete 4 (create$ q 3 "tx"))   
-(mv-delete -1 (create$))             
-(mv-delete 0 (create$))              
-(mv-delete 1 (create$))              
-(mv-delete 2 (create$))              
-(mv-delete 3 (create$ hammer drill saw pliers wrench))
-(mv-delete 1 (create$ computer printer hard-disk))
-(mv-subseq)                        
-(mv-subseq 1)                      
-(mv-subseq 1 3)                    
-(mv-subseq 1 2 (create$ a c d) 3)  
-(mv-subseq a 2 (create$ a b c))    
-(mv-subseq 2 a (create$ d e))      
-(mv-subseq 1 2 this)               
-(mv-subseq 1 2 (create$ a b c))  
-(mv-subseq 1 2 (create$ a b c))  
-(mv-subseq 1 2.5 (create$ a b c))  
-(mv-subseq 1 3 (create$ a b c))    
-(mv-subseq -1 3 (create$ a b c))   
-(mv-subseq 1 4 (create$ a "b" c))  
-(mv-subseq 3 1 (create$ a b c))    
-(mv-subseq 1 1 (create$ 3 b c))    
-(mv-subseq 2 2 (create$ a 4.1 c))  
-(mv-subseq 3 3 (create$ a b [x]))  
-(mv-subseq 0 0 (create$ a b c))    
-(mv-subseq 4 4 (create$ a b c))    
-(mv-subseq 2 3 (create$ a b c d))  
-(mv-subseq 5 7 (create$ a b c))    
-(mv-subseq -1 0 (create$ a b c))   
-(mv-subseq 3 4 (create$ hammer drill wrench pliers))
-(mv-subseq 1 1 (create$ a "abc" def "ghi" 2))
-(mv-replace)                       
-(mv-replace 1)                     
-(mv-replace 1 (create$ a b))       
-(mv-replace 1 (create$ a b) 3 4)   
-(mv-replace 1.5 (create$ a) [x])   
-(mv-replace 1 3.5 a)               
-(mv-replace 2 (create$ a b) (create$))
-(mv-replace -1 (create$ a b) x)    
-(mv-replace 0 (create$ c d) 3.5)   
-(mv-replace 1 (create$ "c" "d") 13)
-(mv-replace 2 (create$ 3 5) "x")   
-(mv-replace 3 (create$ [a] [b]) 3) 
-(mv-replace 3 (create$ drill wrench pliers) machete)

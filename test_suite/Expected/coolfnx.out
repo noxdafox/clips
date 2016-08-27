@@ -170,7 +170,7 @@ bogus
 CLIPS> (instance-name-to-symbol bogus)
 bogus
 CLIPS> (instance-name-to-symbol 42)
-[ARGACCES5] Function instance-name-to-symbol expected argument #1 to be of type instance name or symbol
+[ARGACCES5] Function instance-name-to-symbol expected argument #1 to be of type symbol or instance name
 CLIPS> (instancep)
 [ARGACCES4] Function instancep expected exactly 1 argument(s)
 CLIPS> (instancep 42)
@@ -276,15 +276,15 @@ CLIPS> (send [junk] my-get x)
 (a b c d e)
 CLIPS> (send [junk] my-get y)
 0
-CLIPS> (mv-slot-replace junk x 2 4 2 3 4)
+CLIPS> (slot-replace$ junk x 2 4 2 3 4)
 (a 2 3 4 e)
 CLIPS> (send [junk] get-x)
 (a 2 3 4 e)
-CLIPS> (mv-slot-insert junk x 2 4 2 3 4)
+CLIPS> (slot-insert$ junk x 2 4 2 3 4)
 (a 4 2 3 4 2 3 4 e)
 CLIPS> (send [junk] get-x)
 (a 4 2 3 4 2 3 4 e)
-CLIPS> (mv-slot-delete junk x 2 4)
+CLIPS> (slot-delete$ junk x 2 4)
 (a 4 2 3 4 e)
 CLIPS> (send [junk] get-x)
 (a 4 2 3 4 e)
@@ -304,27 +304,27 @@ CLIPS> (send [junk] get-x)
 (a 4 2 3 4 e)
 CLIPS> (send [junk] put-x)
 ()
-CLIPS> (mv-slot-insert junk x 1 abc)
+CLIPS> (slot-insert$ junk x 1 abc)
 (abc)
-CLIPS> (mv-slot-insert)
-[ARGACCES4] Function mv-slot-insert expected at least 4 argument(s)
-CLIPS> (mv-slot-delete)
-[ARGACCES4] Function mv-slot-delete expected exactly 4 argument(s)
-CLIPS> (mv-slot-replace)
-[ARGACCES4] Function mv-slot-replace expected at least 5 argument(s)
-CLIPS> (mv-slot-replace bogus x 1 2 abc)
+CLIPS> (slot-insert$)
+[ARGACCES4] Function slot-insert$ expected at least 4 argument(s)
+CLIPS> (slot-delete$)
+[ARGACCES4] Function slot-delete$ expected exactly 4 argument(s)
+CLIPS> (slot-replace$)
+[ARGACCES4] Function slot-replace$ expected at least 5 argument(s)
+CLIPS> (slot-replace$ bogus x 1 2 abc)
 [INSFUN2] No such instance bogus in function slot-replace$.
 FALSE
-CLIPS> (mv-slot-replace junk bogus 1 2 abc)
+CLIPS> (slot-replace$ junk bogus 1 2 abc)
 [INSFUN3] No such slot bogus in function slot-replace$.
 FALSE
-CLIPS> (mv-slot-replace junk x 1 100 abc)
+CLIPS> (slot-replace$ junk x 1 100 abc)
 [MULTIFUN1] Multifield index range 1..100 out of range 1..1 in function slot-replace$.
 FALSE
 CLIPS> (send [junk] my-replace x 1 100 abc)
 [MULTIFUN1] Multifield index range 1..100 out of range 1..1 in function direct-slot-replace$.
 FALSE
-CLIPS> (mv-slot-replace junk y 1 2 def)
+CLIPS> (slot-replace$ junk y 1 2 def)
 [INSMULT1] Function slot-replace$ cannot be used on single-field slot y in instance junk.
 FALSE
 CLIPS> (class-existp)

@@ -13,7 +13,7 @@ public class UserFunctionExamples
      {
       // (upcase "ßuzäöü")
       theEnv.removeUserFunction("upcase");
-      theEnv.addUserFunction("upcase","11j",
+      theEnv.addUserFunction("upcase","syn",1,1,"syn",
             new UserFunction()
               {
                public PrimitiveValue evaluate(List<PrimitiveValue> arguments)
@@ -33,7 +33,7 @@ public class UserFunctionExamples
               });
                                
       theEnv.removeUserFunction("lowcase");
-      theEnv.addUserFunction("lowcase","11j",
+      theEnv.addUserFunction("lowcase","syn",1,1,"syn",
             new UserFunction()
               {
                public PrimitiveValue evaluate(List<PrimitiveValue> arguments)
@@ -52,7 +52,7 @@ public class UserFunctionExamples
                  }
               });
 
-      theEnv.addUserFunction("cbrt","11n",
+      theEnv.addUserFunction("cbrt","d",1,1,"ld",
             new UserFunction()
               {
                public PrimitiveValue evaluate(List<PrimitiveValue> arguments)
@@ -62,7 +62,7 @@ public class UserFunctionExamples
                  }
               });
 
-       theEnv.addUserFunction("get-year","00",
+       theEnv.addUserFunction("get-year","v",0,0,null,
              new UserFunction()
                {
                 public PrimitiveValue evaluate(List<PrimitiveValue> arguments)
@@ -72,7 +72,7 @@ public class UserFunctionExamples
                   }
                });
       
-      theEnv.addUserFunction("get-properties","00",
+      theEnv.addUserFunction("get-properties","m",0,0,null,
             new UserFunction()
               {
                public PrimitiveValue evaluate(List<PrimitiveValue> arguments)
@@ -87,7 +87,7 @@ public class UserFunctionExamples
                  }
               });
       
-      theEnv.addUserFunction("hello","00",
+      theEnv.addUserFunction("hello","v",0,0,null,
             new UserFunction()
               {
                public PrimitiveValue evaluate(List<PrimitiveValue> arguments)
@@ -97,7 +97,7 @@ public class UserFunctionExamples
                  }
               });
 
-      theEnv.addUserFunction("make-instoid","00",
+      theEnv.addUserFunction("make-instoid","bi",0,0,null,
             new UserFunction()
               {
                public PrimitiveValue evaluate(List<PrimitiveValue> arguments)
@@ -111,7 +111,7 @@ public class UserFunctionExamples
                  }
               });
 
-      theEnv.addUserFunction("make-factoid","00",
+      theEnv.addUserFunction("make-factoid","bf",0,0,null,
             new UserFunction()
               {
                public PrimitiveValue evaluate(List<PrimitiveValue> arguments)

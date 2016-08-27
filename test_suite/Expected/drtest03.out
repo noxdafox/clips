@@ -175,7 +175,7 @@ ERROR:
 (defrule MAIN::one "test the naked assert & modify"
    ?f1 <- (auto (name nil))
    (not (auto (mane
-CLIPS> (str-implode (create$))          ; DR0256
+CLIPS> (implode$ (create$))               ; DR0256
 ""
 CLIPS> (clear)                            ; DR0257
 CLIPS> (defrule foo                       ; DR0257

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*            CONSTRAINT CHECKING HEADER FILE          */
    /*******************************************************/
@@ -43,6 +43,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_cstrnchk
@@ -72,7 +74,7 @@
                                                                       int,int,CONSTRAINT_RECORD *,
                                                                       bool);
    int                            ConstraintCheckValue(Environment *,int,void *,CONSTRAINT_RECORD *);
-   int                            ConstraintCheckDataObject(Environment *,DATA_OBJECT *,CONSTRAINT_RECORD *);
+   int                            ConstraintCheckDataObject(Environment *,CLIPSValue *,CONSTRAINT_RECORD *);
 #if (! BLOAD_ONLY) && (! RUN_TIME)
    int                            ConstraintCheckExpression(Environment *,struct expr *,
                                                             CONSTRAINT_RECORD *);

@@ -148,7 +148,7 @@ CLIPS> (clear)                           ; DR0063
 CLIPS> (defrule foo                      ; DR0063
   (data foo $?x)
   =>
-  (printout t (nth 3 ?x) crlf))  ; DR0063
+  (printout t (nth$ 3 ?x) crlf))  ; DR0063
 CLIPS> (assert (data foo a b here d))    ; DR0063
 <Fact-1>
 CLIPS> (run)                             ; DR0063
@@ -227,13 +227,13 @@ f-0     (initial-fact)
 f-1     (x q)
 f-2     (z q)
 For a total of 3 facts.
-CLIPS> (subseq$ a 2 4)                 ; DR0090
+CLIPS> (subseq$ a 2 4)                   ; DR0090
 [ARGACCES5] Function subseq$ expected argument #1 to be of type multifield
 CLIPS> (sub-string)                      ; DR0092
 [ARGACCES4] Function sub-string expected exactly 3 argument(s)
-CLIPS> (str-explode "a b c")             ; DR0093
+CLIPS> (explode$ "a b c")                ; DR0093
 (a b c)
-CLIPS> (length (str-explode "a b c"))    ; DR0093
+CLIPS> (length$ (explode$ "a b c"))      ; DR0093
 3
 CLIPS> (tan 0)                           ; DR0096
 0.0

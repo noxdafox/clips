@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -45,6 +45,8 @@
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_insfile
@@ -77,18 +79,18 @@ struct instanceFileData
 #endif /* BLOAD_INSTANCES || BSAVE_INSTANCES */
 
    void                           SetupInstanceFileCommands(Environment *);
-   long                           SaveInstancesCommand(Environment *);
-   long                           LoadInstancesCommand(Environment *);
-   long                           RestoreInstancesCommand(Environment *);
+   void                           SaveInstancesCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           LoadInstancesCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           RestoreInstancesCommand(Environment *,UDFContext *,CLIPSValue *);
    long                           EnvSaveInstancesDriver(Environment *,const char *,int,EXPRESSION *,bool);
    long                           EnvSaveInstances(Environment *,const char *,int);
 #if BSAVE_INSTANCES
-   long                           BinarySaveInstancesCommand(Environment *);
+   void                           BinarySaveInstancesCommand(Environment *,UDFContext *,CLIPSValue *);
    long                           EnvBinarySaveInstancesDriver(Environment *,const char *,int,EXPRESSION *,bool);
    long                           EnvBinarySaveInstances(Environment *,const char *,int);
 #endif
 #if BLOAD_INSTANCES
-   long                           BinaryLoadInstancesCommand(Environment *);
+   void                           BinaryLoadInstancesCommand(Environment *,UDFContext *,CLIPSValue *);
    long                           EnvBinaryLoadInstances(Environment *,const char *);
 #endif
    long                           EnvLoadInstances(Environment *,const char *);

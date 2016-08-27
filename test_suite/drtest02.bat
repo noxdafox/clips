@@ -1,12 +1,12 @@
 (str-index "" "")                 ; DR0103 - 1
 (str-index "" "a")                ; DR0103 - 2
-(str-explode "")                  ; DR0104 - ()
+(explode$ "")                     ; DR0104 - ()
 (sub-string 1 2 "a")              ; DR0105 - "a"
 (sub-string 2 2 "a")              ; DR0105 - ""
 (subseq$ (create$ a) 2 2)     ; DR0106 - ()
 (subseq$ (create$ a) 1 2)     ; DR0106 - (a)
 (str-index "a" "aba")             ; DR0109 - 1
-(str-implode)                     ; DR0112 - Error
+(implode$)                        ; DR0112 - Error
 (sub-string 1 3 "abc")            ; DR0113 - memory loss
 (sub-string 1 3 "abc")            ; DR0113 - memory loss
 (setgen 1)                        ; DR0114 - Error
@@ -27,13 +27,13 @@
 (defrule a 
    (x ?string) 
    => 
-   (bind ?m (str-explode ?string)) 
-   (bind ?str (str-implode ?m))
+   (bind ?m (explode$ ?string)) 
+   (bind ?str (implode$ ?m))
    (printout t ?m " " ?str crlf))
 (defrule b 
    => 
-   (bind ?m (str-explode "a b c 1 2 3"))
-   (bind ?s (str-implode ?m))
+   (bind ?m (explode$ "a b c 1 2 3"))
+   (bind ?s (implode$ ?m))
    (printout t ?m " " ?s crlf))
 (reset)                           ; DR0120
 (assert (x "a b c 1 2 3"))        ; DR0120

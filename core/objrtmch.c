@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*          OBJECT PATTERN MATCHER MODULE              */
    /*******************************************************/
@@ -53,6 +53,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /**************************************************************/
 /* =========================================
@@ -122,12 +124,13 @@
  ***************************************************************************/
 void ObjectMatchDelay(
   Environment *theEnv,
-  DATA_OBJECT *result)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    bool ov;
 
    ov = SetDelayObjectPatternMatching(theEnv,true);
-   EvaluateExpression(theEnv,GetFirstArgument(),result);
+   EvaluateExpression(theEnv,GetFirstArgument(),returnValue);
    if (EvaluationData(theEnv)->EvaluationError)
      {
       EnvSetHaltExecution(theEnv,false);
@@ -910,7 +913,7 @@ static void ProcessPatternNode(
    int repeatCount;
    INSTANCE_SLOT *objectSlot;
    struct multifieldMarker *newMark;
-   DATA_OBJECT theResult;
+   CLIPSValue theResult;
    OBJECT_PATTERN_NODE *tempPtr;
 
    patternSlotField = patternNode->whichField;
@@ -1182,7 +1185,7 @@ static bool EvaluateObjectPatternTest(
   EXPRESSION *networkTest,
   OBJECT_PATTERN_NODE *patternNode)
   {
-   DATA_OBJECT vresult;
+   CLIPSValue vresult;
    int rv;
 
    if (networkTest == NULL) return true;

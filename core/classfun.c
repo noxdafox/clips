@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*                CLASS FUNCTIONS MODULE               */
    /*******************************************************/
@@ -48,6 +48,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -931,7 +933,7 @@ void InstallClass(
             if (slot->dynamicDefault)
               ExpressionDeinstall(theEnv,(EXPRESSION *) slot->defaultValue);
             else
-              ValueDeinstall(theEnv,(DATA_OBJECT *) slot->defaultValue);
+              ValueDeinstall(theEnv,(CLIPSValue *) slot->defaultValue);
            }
         }
       for (i = 0 ; i < cls->handlerCount ; i++)

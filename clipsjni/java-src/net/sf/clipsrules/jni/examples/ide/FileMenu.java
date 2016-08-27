@@ -2,6 +2,9 @@ package net.sf.clipsrules.jni.examples.ide;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.print.PageFormat;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
 
 import java.io.File;
 
@@ -21,12 +24,26 @@ import javax.swing.KeyStroke;
 public class FileMenu extends JMenu 
                       implements MenuListener
   {  
+   private CLIPSIDE ide;
+   
+   private PrinterJob job;
+   private PageFormat format;
+
    private NewAction newAction;
    private OpenAction openAction;
    private SaveAction saveAction;
    private SaveAsAction saveAsAction;
+   private PageSetupAction pageSetupAction;
+   private PrintAction printAction;
    private QuitAction quitAction;
-   private CLIPSIDE ide;
+
+   private JMenuItem jmiNew;
+   private JMenuItem jmiOpen;
+   private JMenuItem jmiSave;
+   private JMenuItem jmiSaveAs;
+   private JMenuItem jmiPageSetup;
+   private JMenuItem jmiPrint;
+   private JMenuItem jmiQuitIDE;
 
    /************/
    /* FileMenu */
@@ -58,29 +75,43 @@ public class FileMenu extends JMenu
       openAction = new OpenAction("Open...");
       saveAction = new SaveAction("Save");
       saveAsAction = new SaveAsAction("Save As...");
+      pageSetupAction = new PageSetupAction("Page Setup...");
+      printAction = new PrintAction("Print...");
       quitAction = new QuitAction("Quit CLIPS IDE");
 
       /*=================*/
       /* Add menu items. */
       /*=================*/
       
-      JMenuItem jmiNew = new JMenuItem(newAction);
+      jmiNew = new JMenuItem(newAction);
       jmiNew.setAccelerator(newDoc);
       this.add(jmiNew);
 
-      JMenuItem jmiOpen = new JMenuItem(openAction);
+      jmiOpen = new JMenuItem(openAction);
       jmiOpen.setAccelerator(openDoc);
       this.add(jmiOpen);
 
-      JMenuItem jmiSave = new JMenuItem(saveAction);
+      this.addSeparator();
+
+      jmiSave = new JMenuItem(saveAction);
       jmiSave.setAccelerator(saveDoc);
       this.add(jmiSave);
 
-      JMenuItem jmiSaveAs = new JMenuItem(saveAsAction);
+      jmiSaveAs = new JMenuItem(saveAsAction);
       jmiSaveAs.setAccelerator(saveAsDoc);
       this.add(jmiSaveAs);
+      
+      this.addSeparator();
 
-      JMenuItem jmiQuitIDE = new JMenuItem(quitAction);
+      jmiPageSetup = new JMenuItem(pageSetupAction);
+      this.add(jmiPageSetup);
+
+      jmiPrint = new JMenuItem(printAction);
+      this.add(jmiPrint);
+
+      this.addSeparator();
+
+      jmiQuitIDE = new JMenuItem(quitAction);
       jmiQuitIDE.setAccelerator(quitIDE);
       this.add(jmiQuitIDE);
      }
@@ -195,6 +226,53 @@ public class FileMenu extends JMenu
         }
      }
 
+   /*******************/
+   /* PageSetupAction */
+   /*******************/
+   class PageSetupAction extends AbstractAction 
+     {
+      public PageSetupAction(
+        String text)
+        {
+         super(text);
+        }
+
+      @Override
+      public void actionPerformed(
+        ActionEvent e)
+        {
+         job = PrinterJob.getPrinterJob();
+         format = job.pageDialog(job.defaultPage());    
+        }
+     }
+
+   /***************/
+   /* PrintAction */
+   /***************/
+   class PrintAction extends AbstractAction 
+     {
+      public PrintAction(
+        String text)
+        {
+         super(text);
+        }
+
+      @Override
+      public void actionPerformed(
+        ActionEvent e)
+        {
+         job = PrinterJob.getPrinterJob();
+
+         if (job.printDialog())
+           {
+            try
+              { job.print(); } 
+            catch (PrinterException err)
+              { err.printStackTrace(); }
+           }
+        }
+     }
+
    /**************/
    /* QuitAction */
    /**************/
@@ -255,31 +333,31 @@ public class FileMenu extends JMenu
      
       if ((theFrame == null) || theFrame.isIcon())
         {
-         saveAction.setEnabled(false);
-         saveAsAction.setEnabled(false);
+         jmiSave.setEnabled(false);
+         jmiSaveAs.setEnabled(false);
          return;
         }
        
       if (theFrame instanceof DialogFrame)
         {
-         saveAction.setEnabled(false);
-         saveAsAction.setEnabled(false);
+         jmiSave.setEnabled(false);
+         jmiSaveAs.setEnabled(false);
         }
       else if (theFrame instanceof TextFrame)
         {
          TextFrame theTextFrame = (TextFrame) theFrame;
          
-         saveAsAction.setEnabled(true);
+         jmiSaveAs.setEnabled(true);
 
          if (theTextFrame.canSave())
-           { saveAction.setEnabled(true); }
+           { jmiSave.setEnabled(true); }
          else
-           { saveAction.setEnabled(false); }
+           { jmiSave.setEnabled(false); }
         }
       else
         {
-         saveAction.setEnabled(false);
-         saveAsAction.setEnabled(false);
+         jmiSave.setEnabled(false);
+         jmiSaveAs.setEnabled(false);
         }
      }
    

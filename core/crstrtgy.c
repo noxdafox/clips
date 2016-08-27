@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/06/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*         CONFLICT RESOLUTION STRATEGY MODULE         */
    /*******************************************************/
@@ -47,6 +47,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -978,38 +980,44 @@ int EnvGetStrategy(
 /* GetStrategyCommand: H/L access routine   */
 /*   for the get-strategy command.          */
 /********************************************/
-void *GetStrategyCommand(
-  Environment *theEnv)
-  {
-   EnvArgCountCheck(theEnv,"get-strategy",EXACTLY,0);
-
-   return((SYMBOL_HN *) EnvAddSymbol(theEnv,GetStrategyName(EnvGetStrategy(theEnv))));
+void GetStrategyCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
+  {   
+   returnValue->type = SYMBOL;
+   returnValue->value = EnvAddSymbol(theEnv,GetStrategyName(EnvGetStrategy(theEnv)));
   }
 
 /********************************************/
 /* SetStrategyCommand: H/L access routine   */
 /*   for the set-strategy command.          */
 /********************************************/
-void *SetStrategyCommand(
-  Environment *theEnv)
+void SetStrategyCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT argPtr;
+   CLIPSValue theArg;
    const char *argument;
    int oldStrategy;
    
+   /*=======================*/
+   /* Set the return value. */
+   /*=======================*/
+   
    oldStrategy = AgendaData(theEnv)->Strategy;
+   returnValue->type = SYMBOL;
+   returnValue->value = EnvAddSymbol(theEnv,GetStrategyName(EnvGetStrategy(theEnv)));
 
    /*=====================================================*/
    /* Check for the correct number and type of arguments. */
    /*=====================================================*/
 
-   if (EnvArgCountCheck(theEnv,"set-strategy",EXACTLY,1) == -1)
-     { return((SYMBOL_HN *) EnvAddSymbol(theEnv,GetStrategyName(EnvGetStrategy(theEnv)))); }
+   if (EnvArgTypeCheck(theEnv,"set-strategy",1,SYMBOL,&theArg) == false)
+     { return; }
 
-   if (EnvArgTypeCheck(theEnv,"set-strategy",1,SYMBOL,&argPtr) == false)
-     { return((SYMBOL_HN *) EnvAddSymbol(theEnv,GetStrategyName(EnvGetStrategy(theEnv)))); }
-
-   argument = DOToString(argPtr);
+   argument = DOToString(theArg);
 
    /*=============================================*/
    /* Set the strategy to the specified strategy. */
@@ -1033,14 +1041,7 @@ void *SetStrategyCommand(
      {
       ExpectedTypeError1(theEnv,"set-strategy",1,
       "symbol with value depth, breadth, lex, mea, complexity, simplicity, or random");
-      return((SYMBOL_HN *) EnvAddSymbol(theEnv,GetStrategyName(EnvGetStrategy(theEnv))));
      }
-
-   /*=======================================*/
-   /* Return the old value of the strategy. */
-   /*=======================================*/
-
-   return((SYMBOL_HN *) EnvAddSymbol(theEnv,GetStrategyName(oldStrategy)));
   }
 
 /**********************************************************/

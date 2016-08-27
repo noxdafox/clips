@@ -5,9 +5,9 @@ CLIPS> (clear)                            ; 10.9.1
 CLIPS> (fact-index)                       ; 10.9.1
 [ARGACCES4] Function fact-index expected exactly 1 argument(s)
 CLIPS> (fact-index a)                     ; 10.9.1
-[ARGACCES5] Function fact-index expected argument #1 to be of type fact-address
+[ARGACCES5] Function fact-index expected argument #1 to be of type fact address
 CLIPS> (fact-index 1)                     ; 10.9.1
-[ARGACCES5] Function fact-index expected argument #1 to be of type fact-address
+[ARGACCES5] Function fact-index expected argument #1 to be of type fact address
 CLIPS> (defglobal ?*gfi* = 1)             ; 10.9.1
 CLIPS> (defrule foo
   ?f <- (the item)
@@ -221,7 +221,7 @@ CLIPS> (iterate (return))
 
 [PRCDRPSR2] The return function is not valid in this context.
 CLIPS> (get-function-restrictions +)
-"2*n"
+"2*ld"
 CLIPS> (get-function-restrictions make-instance)
 "0**"
 CLIPS> (get-function-restrictions)

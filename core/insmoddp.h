@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*           INSTANCE MODIFY AND DUPLICATE MODULE      */
    /*******************************************************/
@@ -39,6 +39,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_insmoddp
@@ -60,22 +62,22 @@
    void                           SetupInstanceModDupCommands(Environment *);
 #endif
 
-   void                           ModifyInstance(Environment *,DATA_OBJECT *);
-   void                           MsgModifyInstance(Environment *,DATA_OBJECT *);
-   void                           DuplicateInstance(Environment *,DATA_OBJECT *);
-   void                           MsgDuplicateInstance(Environment *,DATA_OBJECT *);
+   void                           ModifyInstance(Environment *,UDFContext *,CLIPSValue *);
+   void                           MsgModifyInstance(Environment *,UDFContext *,CLIPSValue *);
+   void                           DuplicateInstance(Environment *,UDFContext *,CLIPSValue *);
+   void                           MsgDuplicateInstance(Environment *,UDFContext *,CLIPSValue *);
 
 #if DEFRULE_CONSTRUCT && OBJECT_SYSTEM
-   void                           InactiveModifyInstance(Environment *,DATA_OBJECT *);
-   void                           InactiveMsgModifyInstance(Environment *,DATA_OBJECT *);
-   void                           InactiveDuplicateInstance(Environment *,DATA_OBJECT *);
-   void                           InactiveMsgDuplicateInstance(Environment *,DATA_OBJECT *);
+   void                           InactiveModifyInstance(Environment *,UDFContext *,CLIPSValue *);
+   void                           InactiveMsgModifyInstance(Environment *,UDFContext *,CLIPSValue *);
+   void                           InactiveDuplicateInstance(Environment *,UDFContext *,CLIPSValue *);
+   void                           InactiveMsgDuplicateInstance(Environment *,UDFContext *,CLIPSValue *);
 #endif
 
-   void                           DirectModifyMsgHandler(Environment *,DATA_OBJECT *);
-   void                           MsgModifyMsgHandler(Environment *,DATA_OBJECT *);
-   void                           DirectDuplicateMsgHandler(Environment *,DATA_OBJECT *);
-   void                           MsgDuplicateMsgHandler(Environment *,DATA_OBJECT *);
+   void                           DirectModifyMsgHandler(Environment *,UDFContext *,CLIPSValue *);
+   void                           MsgModifyMsgHandler(Environment *,UDFContext *,CLIPSValue *);
+   void                           DirectDuplicateMsgHandler(Environment *,UDFContext *,CLIPSValue *);
+   void                           MsgDuplicateMsgHandler(Environment *,UDFContext *,CLIPSValue *);
 
 #endif /* _H_insmoddp */
 

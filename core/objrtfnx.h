@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -40,6 +40,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -207,7 +209,7 @@ struct objectReteData
 #define ObjectReteData(theEnv) ((struct objectReteData *) GetEnvironmentData(theEnv,OBJECT_RETE_DATA))
 
    void                    InstallObjectPrimitives(Environment *);
-   bool                    ObjectCmpConstantFunction(Environment *,void *,DATA_OBJECT *);
+   bool                    ObjectCmpConstantFunction(Environment *,void *,CLIPSValue *);
 
 #endif /* DEFRULE_CONSTRUCT && OBJECT_SYSTEM */
 

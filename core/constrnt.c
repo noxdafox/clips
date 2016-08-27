@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/11/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*                 CONSTRAINT MODULE                   */
    /*******************************************************/
@@ -44,6 +44,8 @@
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*            Static constraint checking is always enabled.  */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -103,8 +105,8 @@ void InitializeConstraints(
 #endif
 
 #if (! RUN_TIME)
-   EnvDefineFunction2(theEnv,"get-dynamic-constraint-checking",'b',PTIEF GDCCommand,"GDCCommand", "00");
-   EnvDefineFunction2(theEnv,"set-dynamic-constraint-checking",'b',PTIEF SDCCommand,"SDCCommand", "11");
+   EnvAddUDF(theEnv,"get-dynamic-constraint-checking","b",0,0,NULL,GDCCommand,"GDCCommand",NULL);
+   EnvAddUDF(theEnv,"set-dynamic-constraint-checking","b",1,1,NULL,SDCCommand,"SDCCommand",NULL);
 #endif
   }
   
@@ -502,42 +504,41 @@ static void InstallConstraintRecord(
 /* SDCCommand: H/L access routine for the     */
 /*   set-dynamic-constraint-checking command. */
 /**********************************************/
-bool SDCCommand(
-  Environment *theEnv)
+void SDCCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   bool oldValue;
-   DATA_OBJECT arg_ptr;
+   CLIPSValue theArg;
 
-   oldValue = EnvGetDynamicConstraintChecking(theEnv);
+   returnValue->type = SYMBOL;
+   if (EnvGetDynamicConstraintChecking(theEnv))
+     { returnValue->value = EnvTrueSymbol(theEnv); }
+   else
+     { returnValue->value = EnvFalseSymbol(theEnv); }
 
-   if (EnvArgCountCheck(theEnv,"set-dynamic-constraint-checking",EXACTLY,1) == -1)
-     { return(oldValue); }
+   EnvRtnUnknown(theEnv,1,&theArg);
 
-   EnvRtnUnknown(theEnv,1,&arg_ptr);
-
-   if ((arg_ptr.value == EnvFalseSymbol(theEnv)) && (arg_ptr.type == SYMBOL))
+   if ((theArg.value == EnvFalseSymbol(theEnv)) && (theArg.type == SYMBOL))
      { EnvSetDynamicConstraintChecking(theEnv,false); }
    else
      { EnvSetDynamicConstraintChecking(theEnv,true); }
-
-   return(oldValue);
   }
 
 /**********************************************/
 /* GDCCommand: H/L access routine for the     */
 /*   get-dynamic-constraint-checking command. */
 /**********************************************/
-bool GDCCommand(
-  Environment *theEnv)
+void GDCCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   bool oldValue;
-
-   oldValue = EnvGetDynamicConstraintChecking(theEnv);
-
-   if (EnvArgCountCheck(theEnv,"get-dynamic-constraint-checking",EXACTLY,0) == -1)
-     { return(oldValue); }
-
-   return(oldValue);
+   returnValue->type = SYMBOL;
+   if (EnvGetDynamicConstraintChecking(theEnv))
+     { returnValue->value = EnvTrueSymbol(theEnv); }
+   else
+     { returnValue->value = EnvFalseSymbol(theEnv); }
   }
 
 /******************************************************/

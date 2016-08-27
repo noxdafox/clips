@@ -43,10 +43,10 @@ t2 #2  (MULTIFIELD STRING)
 t3 #1  (INTEGER LEXEME)
 t3 #2  (STRING NUMBER)
 
-mv-slot-replace #2  (INSTANCE-ADDRESS)
-mv-slot-replace #SYS1  (INSTANCE SYMBOL) (SYMBOL) (INTEGER) (INTEGER) () $?
-mv-slot-replace #4  (INSTANCE SYMBOL) (SYMBOL) (NUMBER) (NUMBER) ()
-mv-slot-replace #3  (PRIMITIVE)
+slot-replace$ #2  (INSTANCE-ADDRESS)
+slot-replace$ #SYS1  (INSTANCE SYMBOL) (SYMBOL) (INTEGER) (INTEGER) () $?
+slot-replace$ #4  (INSTANCE SYMBOL) (SYMBOL) (NUMBER) (NUMBER) ()
+slot-replace$ #3  (PRIMITIVE)
 
 class-slots #2  (SYMBOL) (LEXEME)
 class-slots #SYS1  (SYMBOL) ($? SYMBOL <qry>)

@@ -1,7 +1,7 @@
 TRUE
 CLIPS> (batch "seqop.bat")
 TRUE
-CLIPS> (defglobal ?*x* = (mv-append 1 2 3))
+CLIPS> (defglobal ?*x* = (create$ 1 2 3))
 CLIPS> (deffunction foo (?a ?b)
   (printout t "Foo arguments: " ?a " " ?b crlf))
 CLIPS> (batch "seqop2.bat")

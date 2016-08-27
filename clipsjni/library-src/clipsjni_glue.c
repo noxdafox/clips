@@ -2,20 +2,21 @@
 #include "clipsjni_data.h"
 #include "clipsjni_utilities.h"
 
-static void       DeallocateJNIData(void *);
+static void       DeallocateJNIData(Environment *);
 
 /********************/
 /* JNIUserFunction: */
 /********************/
 void JNIUserFunction(
-  void *theEnv,
-  DATA_OBJECT_PTR result)
+  Environment *theEnv,
+  UDFContext *theUDFContext,
+  CLIPSValue *result)
   {
    JNIEnv *env;
    jobject context;
    jobject arguments, targ, rv;
    int i, argCount;
-   DATA_OBJECT theArg;
+   CLIPSValue theArg;
    
    result->type = RVOID;
 
@@ -48,7 +49,7 @@ void JNIUserFunction(
       EnvPrintRouter(theEnv,WERROR,"Exception occurred during evaluation of JNI User Function.\n");
       (*env)->ExceptionDescribe(env); 
       (*env)->ExceptionClear(env); 
-      EnvSetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,true);
      }
    else
      { ConvertPrimitiveValueToDataObject(theEnv,rv,result); }
@@ -60,7 +61,7 @@ void JNIUserFunction(
 /* JNIPeriodicCallback: */
 /************************/
 void JNIPeriodicCallback(
-  void *theEnv)
+  Environment *theEnv)
   {
    jobject context;
    jclass cls;
@@ -87,7 +88,7 @@ void JNIPeriodicCallback(
 /* JNIParserErrorCallback: */
 /***************************/
 void JNIParserErrorCallback(
-  void *theEnv,
+  Environment *theEnv,
   const char *fileName,
   const char *warningString,
   const char *errorString,
@@ -119,8 +120,8 @@ void JNIParserErrorCallback(
 /*************************************************/
 /* FindJNIRouter: Query routine for JNI routers. */
 /*************************************************/
-int QueryJNIRouter(
-  void *theEnv,
+bool QueryJNIRouter(
+  Environment *theEnv,
   const char *logicalName)
   {
    jobject context;
@@ -141,7 +142,7 @@ int QueryJNIRouter(
    (*env)->DeleteLocalRef(env,cls);
 
    if (mid == NULL)
-     { return FALSE; }
+     { return false; }
 
    str = (*env)->NewStringUTF(env,logicalName);
 
@@ -155,8 +156,8 @@ int QueryJNIRouter(
 /*************************************************/
 /* ExitJNIRouter:  Exit routine for JNI routers. */
 /*************************************************/
-int ExitJNIRouter(
-  void *theEnv,
+void ExitJNIRouter(
+  Environment *theEnv,
   int num)
   {
 #if MAC_XCD
@@ -166,14 +167,13 @@ int ExitJNIRouter(
 #pragma unused(theEnv)
 #endif
    /* TBD deallocate global context reference */
-   return(1);
   }
 
 /**************************************************/
 /* PrintJNIRouter: Print routine for JNI routers. */
 /**************************************************/
-int PrintJNIRouter(
-  void *theEnv,
+void PrintJNIRouter(
+  Environment *theEnv,
   const char *logicalName,
   const char *str)
   {
@@ -194,7 +194,7 @@ int PrintJNIRouter(
    (*env)->DeleteLocalRef(env,cls);
 
    if (mid == NULL)
-     { return 0; }
+     { return; }
 
    str1 = (*env)->NewStringUTF(env,logicalName);
    str2 = (*env)->NewStringUTF(env,str);
@@ -203,15 +203,13 @@ int PrintJNIRouter(
 
    (*env)->DeleteLocalRef(env,str1);
    (*env)->DeleteLocalRef(env,str2);
-   
-   return(1);
   }
 
 /************************************************/
 /* GetcJNIRouter: Getc routine for JNI routers. */
 /************************************************/
 int GetcJNIRouter(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName)
   {
    jint theChar;
@@ -247,7 +245,7 @@ int GetcJNIRouter(
 /* UngetcJNIRouter: Ungetc routine for JNI routers. */
 /****************************************************/
 int UngetcJNIRouter(
-  void *theEnv,
+  Environment *theEnv,
   int ch,
   const char *logicalName)
   {
@@ -284,7 +282,7 @@ int UngetcJNIRouter(
 /* PrintJavaAddress: */
 /*********************/
 void PrintJavaAddress(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName,
   void *theValue)
   {
@@ -326,23 +324,23 @@ void PrintJavaAddress(
 /* NewJavaAddress:  */
 /********************/
 void NewJavaAddress(
-  void *theEnv,
-  DATA_OBJECT *rv)
+  Environment *theEnv,
+  CLIPSValue *rv)
   {
    jclass theClass, tempClass;
    int i, numberOfArguments;
    JNIEnv *env;
    const char *className;
    char *classDescriptor;
-   DATA_OBJECT theValue;
+   CLIPSValue theValue;
    size_t length;
    jmethodID mid;
    jobjectArray constructorList, parameterList;
    jsize theSize, c; 
    jsize paramCount, p; 
    jobject theConstructor, theObject, oldObject; 
-   intBool found = FALSE, matches;
-   DATA_OBJECT_PTR newArgs;
+   bool found = false, matches;
+   CLIPSValue *newArgs;
    jvalue *javaArgs;
    
    /*=============================================*/
@@ -364,7 +362,7 @@ void NewJavaAddress(
    /* The Java class name must be a symbol. */
    /*=======================================*/
    
-   if (EnvArgTypeCheck(theEnv,"new (with type Java)",2,SYMBOL,&theValue) == FALSE) 
+   if (EnvArgTypeCheck(theEnv,"new (with type Java)",2,SYMBOL,&theValue) == false) 
      { return; }
    
    className = DOToString(theValue);
@@ -406,7 +404,7 @@ void NewJavaAddress(
      {
       if ((*env)->ExceptionOccurred(env))
         { (*env)->ExceptionClear(env); }
-      EnvSetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,true);
       ExpectedTypeError1(theEnv,"new (with type Java)",2,"Java class name");
       return;
      }
@@ -419,7 +417,7 @@ void NewJavaAddress(
      { newArgs = NULL; }
    else
      {
-      newArgs = (DATA_OBJECT_PTR) genalloc(theEnv,sizeof(DATA_OBJECT) * (numberOfArguments - 2));
+      newArgs = (CLIPSValue *) genalloc(theEnv,sizeof(CLIPSValue) * (numberOfArguments - 2));
       for (i = 0; i < numberOfArguments - 2; i++)
         {
          EnvRtnUnknown(theEnv,i+3,&newArgs[i]);
@@ -481,7 +479,7 @@ void NewJavaAddress(
       if (paramCount != (numberOfArguments - 2))
         { continue; }
         
-      matches = TRUE;
+      matches = true;
       
       for (p = 0; (p < paramCount) && matches; p++)
         {
@@ -507,10 +505,10 @@ void NewJavaAddress(
                javaArgs[p].i = DOToLong(newArgs[p]);
               }
             else
-              { matches = FALSE; }
+              { matches = false; }
            }
          else
-           { matches = FALSE; }
+           { matches = false; }
          
          (*env)->ReleaseStringUTFChars(env,str,cStr);
       
@@ -519,7 +517,7 @@ void NewJavaAddress(
       
       if (matches)
         { 
-         found = TRUE;
+         found = true;
          break; 
         }
      } 
@@ -564,13 +562,13 @@ void NewJavaAddress(
       (*env)->DeleteLocalRef(env,oldObject);
      }
 
-   /*=============================================*/
-   /* Return the array containing the DATA_OBJECT */
-   /* arguments to the new function.              */
-   /*=============================================*/
+   /*============================================*/
+   /* Return the array containing the CLIPSValue */
+   /* arguments to the new function.             */
+   /*============================================*/
    
    if (newArgs != NULL)
-     { genfree(theEnv,newArgs,sizeof(DATA_OBJECT) * (numberOfArguments - 2)); }
+     { genfree(theEnv,newArgs,sizeof(CLIPSValue) * (numberOfArguments - 2)); }
      
    if (javaArgs != NULL)
      { genfree(theEnv,javaArgs,sizeof(jvalue) * (numberOfArguments - 2)); }
@@ -582,7 +580,7 @@ void NewJavaAddress(
    
    if ((*env)->ExceptionOccurred(env))
      { 
-      EnvSetEvaluationError(theEnv,TRUE);
+      EnvSetEvaluationError(theEnv,true);
       (*env)->ExceptionClear(env); 
      }
 
@@ -602,10 +600,10 @@ void NewJavaAddress(
 /*******************/
 /* CallJavaMethod: */
 /*******************/
-int CallJavaMethod(
-  void *theEnv,
-  DATA_OBJECT *target,
-  DATA_OBJECT *rv)
+bool CallJavaMethod(
+  Environment *theEnv,
+  CLIPSValue *target,
+  CLIPSValue *rv)
   {
    int numberOfArguments;
    jobject theObject, theMethod;
@@ -615,12 +613,12 @@ int CallJavaMethod(
    jobjectArray methodList, parameterList;
    jsize theSize, c; 
    jsize paramCount, p; 
-   DATA_OBJECT theValue;
+   CLIPSValue theValue;
    const char *methodName;
    jstring str;
    char *cStr;
-   intBool matches;
-   DATA_OBJECT_PTR newArgs;
+   bool matches;
+   CLIPSValue *newArgs;
    jvalue *javaArgs;
    int i;
    
@@ -637,14 +635,14 @@ int CallJavaMethod(
    /*=================================================================*/
    
    if ((numberOfArguments = EnvArgCountCheck(theEnv,"call (with type Java)",AT_LEAST,2)) == -1) 
-     { return FALSE; }
+     { return false; }
 
    /*========================================*/
    /* The Java method name must be a symbol. */
    /*========================================*/
    
-   if (EnvArgTypeCheck(theEnv,"call (with type Java)",2,SYMBOL,&theValue) == FALSE) 
-     { return FALSE; }
+   if (EnvArgTypeCheck(theEnv,"call (with type Java)",2,SYMBOL,&theValue) == false) 
+     { return false; }
    
    methodName = DOToString(theValue);
 
@@ -656,12 +654,12 @@ int CallJavaMethod(
      { newArgs = NULL; }
    else
      {
-      newArgs = (DATA_OBJECT_PTR) genalloc(theEnv,sizeof(DATA_OBJECT) * (numberOfArguments - 2));
+      newArgs = (CLIPSValue *) genalloc(theEnv,sizeof(CLIPSValue) * (numberOfArguments - 2));
       for (i = 0; i < numberOfArguments - 2; i++)
         {
          EnvRtnUnknown(theEnv,i+3,&newArgs[i]);
          if (EnvGetEvaluationError(theEnv))
-           { return FALSE; }
+           { return false; }
         }
      }
 
@@ -754,7 +752,7 @@ int CallJavaMethod(
             continue; 
            }
 
-         matches = TRUE;
+         matches = true;
       
          for (p = 0; (p < paramCount) && matches; p++)
            {
@@ -779,10 +777,10 @@ int CallJavaMethod(
                   javaArgs[p].i = DOToLong(newArgs[p]);
                  }
                else
-                 { matches = FALSE; }
+                 { matches = false; }
               }
             else
-              { matches = FALSE; }
+              { matches = false; }
 
             (*env)->ReleaseStringUTFChars(env,str,cStr);
          
@@ -794,19 +792,19 @@ int CallJavaMethod(
      }
 
    if (newArgs != NULL)
-     { genfree(theEnv,newArgs,sizeof(DATA_OBJECT) * (numberOfArguments - 2)); }
+     { genfree(theEnv,newArgs,sizeof(CLIPSValue) * (numberOfArguments - 2)); }
 
    if (javaArgs != NULL)
      { genfree(theEnv,javaArgs,sizeof(jvalue) * (numberOfArguments - 2)); }
      
-   return TRUE;
+   return true;
   }
   
 /***********************/
 /* DiscardJavaAddress: */
 /***********************/
-int DiscardJavaAddress(
-  void *theEnv,
+bool DiscardJavaAddress(
+  Environment *theEnv,
   void *theValue)
   {
    JNIEnv *env;
@@ -819,7 +817,7 @@ int DiscardJavaAddress(
       (*env)->DeleteGlobalRef(env,theValue);
      }
    
-   return TRUE;
+   return true;
   }
   
 /**********************************************/
@@ -827,7 +825,7 @@ int DiscardJavaAddress(
 /*    data for the JNI functionality.         */
 /**********************************************/
 static void DeallocateJNIData(
-  void *theEnv)
+  Environment *theEnv)
   {
    JNIEnv *env;
    

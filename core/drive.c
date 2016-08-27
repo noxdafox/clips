@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*                    DRIVE MODULE                     */
    /*******************************************************/
@@ -44,6 +44,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -594,7 +596,7 @@ bool EvaluateJoinExpression(
   struct expr *joinExpr,
   struct joinNode *joinPtr)
   {
-   DATA_OBJECT theResult;
+   CLIPSValue theResult;
    bool andLogic, result = true;
 
    /*======================================*/
@@ -772,7 +774,7 @@ unsigned long BetaMemoryHashValue(
   struct partialMatch *rbinds,
   struct joinNode *joinPtr)
   {
-   DATA_OBJECT theResult;
+   CLIPSValue theResult;
    struct partialMatch *oldLHSBinds;
    struct partialMatch *oldRHSBinds;
    struct joinNode *oldJoin;

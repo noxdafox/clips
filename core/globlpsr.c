@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*              DEFGLOBAL PARSER MODULE                */
    /*******************************************************/
@@ -41,6 +41,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -76,7 +78,7 @@
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    static bool                    GetVariableDefinition(Environment *,const char *,bool *,bool,struct token *);
-   static void                    AddDefglobal(Environment *,SYMBOL_HN *,DATA_OBJECT_PTR,struct expr *);
+   static void                    AddDefglobal(Environment *,SYMBOL_HN *,CLIPSValue *,struct expr *);
 #endif
 
 /*********************************************************************/
@@ -213,7 +215,7 @@ static bool GetVariableDefinition(
   {
    SYMBOL_HN *variableName;
    struct expr *assignPtr;
-   DATA_OBJECT assignValue;
+   CLIPSValue assignValue;
 
    /*========================================*/
    /* Get next token, which should either be */
@@ -340,7 +342,7 @@ static bool GetVariableDefinition(
 static void AddDefglobal(
   Environment *theEnv,
   SYMBOL_HN *name,
-  DATA_OBJECT_PTR vPtr,
+  CLIPSValue *vPtr,
   struct expr *ePtr)
   {
    Defglobal *defglobalPtr;

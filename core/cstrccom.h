@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*           CONSTRUCT COMMAND HEADER MODULE           */
    /*******************************************************/
@@ -36,6 +36,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_cstrccom
@@ -68,9 +70,9 @@ typedef void ConstructActionFunction(Environment *,struct constructHeader *,void
    const char                    *EnvGetConstructNameString(Environment *,struct constructHeader *);
    const char                    *GetConstructModuleName(struct constructHeader *);
    SYMBOL_HN                     *GetConstructNamePointer(struct constructHeader *);
-   void                           GetConstructListFunction(Environment *,const char *,DATA_OBJECT_PTR,
+   void                           GetConstructListFunction(Environment *,const char *,CLIPSValue *,
                                                                   struct construct *);
-   void                           GetConstructList(Environment *,DATA_OBJECT_PTR,struct construct *,
+   void                           GetConstructList(Environment *,CLIPSValue *,struct construct *,
                                                    Defmodule *);
    void                           ListConstructCommand(Environment *,const char *,struct construct *);
    void                           ListConstruct(Environment *,struct construct *,const char *,Defmodule *);

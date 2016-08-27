@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*                 BSAVE HEADER FILE                   */
    /*******************************************************/
@@ -41,6 +41,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -99,7 +101,7 @@ struct bsaveData
 #define BsaveData(theEnv) ((struct bsaveData *) GetEnvironmentData(theEnv,BSAVE_DATA))
 
    void                    InitializeBsaveData(Environment *);
-   bool                    BsaveCommand(Environment *);
+   void                    BsaveCommand(Environment *,UDFContext *,CLIPSValue *);
 #if BLOAD_AND_BSAVE
    bool                    EnvBsave(Environment *,const char *);
    void                    MarkNeededItems(Environment *,struct expr *);

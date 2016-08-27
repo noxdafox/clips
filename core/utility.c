@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/10/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*                   UTILITY MODULE                    */
    /*******************************************************/
@@ -59,6 +59,8 @@
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*            Callbacks must be environment aware.           */
+/*                                                           */
+/*            UDF redesign.                                  */
 /*                                                           */
 /*************************************************************/
 
@@ -231,7 +233,7 @@ static void DeallocateUtilityData(
 /*****************************/
 void CleanCurrentGarbageFrame(
   Environment *theEnv,
-  DATA_OBJECT *returnValue)
+  CLIPSValue *returnValue)
   {
    struct garbageFrame *currentGarbageFrame;
    
@@ -265,7 +267,7 @@ void RestorePriorGarbageFrame(
   Environment *theEnv,
   struct garbageFrame *newGarbageFrame,
   struct garbageFrame *oldGarbageFrame,
-  DATA_OBJECT *returnValue)
+  CLIPSValue *returnValue)
   {
    if (newGarbageFrame->dirty)
      {

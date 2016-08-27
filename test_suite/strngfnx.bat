@@ -78,7 +78,7 @@
 (eval "?x")                        ; 10.4.5
 (eval "(defrule foo =>)")          ; 10.4.5
 (eval "(+ 3 4)")                   ; 10.4.5
-(eval "(mv-append a b c)")         ; 10.4.5
+(eval "(create$ a b c)")           ; 10.4.5
 (build)                            ; 10.4.6
 (build "(defrule foo =>)" "dog")   ; 10.4.6
 (build 7.8)                        ; 10.4.6

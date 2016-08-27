@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/10/16            */
+   /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
    /*            EXTERNAL FUNCTIONS HEADER FILE           */
    /*******************************************************/
@@ -48,6 +48,8 @@
 /*                                                           */
 /*            Callbacks must be environment aware.           */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_extnfunc
@@ -57,6 +59,8 @@
 #define _H_extnfunc
 
 struct FunctionDefinition;
+struct UDFContext_t;
+typedef struct UDFContext_t UDFContext;
 
 #include "evaluatn.h"
 #include "expressn.h"
@@ -67,10 +71,12 @@ struct FunctionDefinition
   {
    struct symbolHashNode *callFunctionName;
    const char *actualFunctionName;
-   char returnValueType;
-   int (*functionPointer)(Environment *);
+   unsigned unknownReturnValueType;
+   void (*functionPointer)(Environment *,UDFContext *,CLIPSValue *);
    struct expr *(*parser)(Environment *,struct expr *,const char *);
    struct symbolHashNode *restrictions;
+   int minArgs;
+   int maxArgs;
    bool overloadable;
    bool sequenceuseok;
    short int bsaveIndex;
@@ -80,12 +86,11 @@ struct FunctionDefinition
   };
 
 #define ValueFunctionType(target) (((struct FunctionDefinition *) target)->returnValueType)
-#define ExpressionFunctionType(target) (((struct FunctionDefinition *) ((target)->value))->returnValueType)
+#define UnknownFunctionType(target) (((struct FunctionDefinition *) target)->unknownReturnValueType)
 #define ExpressionFunctionPointer(target) (((struct FunctionDefinition *) ((target)->value))->functionPointer)
 #define ExpressionFunctionCallName(target) (((struct FunctionDefinition *) ((target)->value))->callFunctionName)
 #define ExpressionFunctionRealName(target) (((struct FunctionDefinition *) ((target)->value))->actualFunctionName)
-
-#define PTIEF (int (*)(Environment *))
+#define ExpressionUnknownFunctionType(target) (((struct FunctionDefinition *) ((target)->value))->unknownReturnValueType)
 
 /*==================*/
 /* ENVIRONMENT DATA */
@@ -99,6 +104,13 @@ struct externalFunctionData
    struct FunctionHash **FunctionHashtable;
   };
 
+struct UDFContext_t
+  {
+   struct FunctionDefinition *theFunction;
+   int lastPosition;
+   struct expr *lastArg;
+  };
+
 #define ExternalFunctionData(theEnv) ((struct externalFunctionData *) GetEnvironmentData(theEnv,EXTERNAL_FUNCTION_DATA))
 
 struct FunctionHash
@@ -110,16 +122,10 @@ struct FunctionHash
 #define SIZE_FUNCTION_HASH 517
 
    void                           InitializeExternalFunctionData(Environment *);
-   bool                           EnvDefineFunction(Environment *,const char *,int,
-                                                    int (*)(Environment *),const char *);
-   bool                           EnvDefineFunction2(Environment *,const char *,int,
-                                                            int (*)(Environment *),const char *,const char *);
-   bool                           EnvDefineFunctionWithContext(Environment *,const char *,int,
-                                                               int (*)(Environment *),const char *,void *);
-   bool                           EnvDefineFunction2WithContext(Environment *,const char *,int,
-                                                                int (*)(Environment *),const char *,const char *,void *);
-   bool                           DefineFunction3(Environment *,const char *,int,
-                                                         int (*)(Environment *),const char *,const char *,void *);
+   bool                           EnvAddUDF(Environment *,const char *,const char *,
+                                            int,int,const char *,
+                                            void (*)(Environment *,UDFContext *,CLIPSValue *),
+                                            const char *,void *);
    bool                           AddFunctionParser(Environment *,const char *,
                                                            struct expr *(*)( Environment *,struct expr *,const char *));
    bool                           RemoveFunctionParser(Environment *,const char *);
@@ -128,10 +134,12 @@ struct FunctionHash
    void                           InstallFunctionList(Environment *,struct FunctionDefinition *);
    struct FunctionDefinition     *FindFunction(Environment *,const char *);
    int                            GetNthRestriction(struct FunctionDefinition *,int);
+   unsigned                       GetNthRestriction2(Environment *,struct FunctionDefinition *,int);
    const char                    *GetArgumentTypeName(int);
-   bool                           UndefineFunction(Environment *,const char *);
+   bool                           EnvRemoveUDF(Environment *,const char *);
    int                            GetMinimumArgs(struct FunctionDefinition *);
    int                            GetMaximumArgs(struct FunctionDefinition *);
+   void                           PrintTypesString(Environment *,const char *,unsigned,bool);
 
 #endif /* _H_extnfunc */
 

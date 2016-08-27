@@ -47,7 +47,7 @@
 
 (defmethod lots-of-arguments 
   ((?a INTEGER) (?b STRING) ?c ?d ?e ?f (?g MY-CLASS) $?more)
-  (str-implode (mv-append ?a ?b ?c ?d ?e ?f ?g ?more)))
+  (implode$ (create$ ?a ?b ?c ?d ?e ?f ?g ?more)))
 
 (defmethod foo ()
    (bind ?b 10)
@@ -63,7 +63,7 @@
 (defclass A (is-a USER) (role concrete))
 
 (defglobal ?*success* = TRUE)
-(defglobal ?*sevar* = (mv-append))
+(defglobal ?*sevar* = (create$))
 
 (deffunction print-result (?flag ?test-no)
   (if ?flag then
@@ -72,13 +72,13 @@
      (printout t "EXECUTION TEST #" ?test-no " BAD." crlf)
      (bind ?*success* FALSE)))
 
-(defmethod side-effects ((?a (bind ?*sevar* (mv-append ?*sevar* 1))))
-   (bind ?*sevar* (mv-append ?*sevar* 3))
+(defmethod side-effects ((?a (bind ?*sevar* (create$ ?*sevar* 1))))
+   (bind ?*sevar* (create$ ?*sevar* 3))
    (call-next-method)
    ?*sevar*)
 
-(defmethod side-effects ((?a (bind ?*sevar* (mv-append ?*sevar* 2))))
-   (bind ?*sevar* (mv-append ?*sevar* 4)))
+(defmethod side-effects ((?a (bind ?*sevar* (create$ ?*sevar* 2))))
+   (bind ?*sevar* (create$ ?*sevar* 4)))
 
 (defmethod - ((?a INTEGER) (?b INTEGER) ($?c INTEGER))
    (override-next-method (* ?a 2) (* ?b 3) (expand$ ?c)))
@@ -108,10 +108,10 @@
   (print-result (eq (+ a b c d e f) abcdef) 15)
   (print-result (eq (+ "a b c" "d e f") "a b cd e f") 16)
   (print-result (eq (+ "a b c" "d e f") "a b cd e f") 17)
-  (print-result (eq (+ (mv-append a b c) (mv-append) (mv-append d e f)) (mv-append a b c d e f)) 18)
+  (print-result (eq (+ (create$ a b c) (create$) (create$ d e f)) (create$ a b c d e f)) 18)
   (print-result (= (foo) 10) 19)
   (print-result (= (foo [a] [a] (instance-address [a])) 42) 20)
-  (print-result (eq (side-effects 1) (mv-append 1 3 2 4)) 21)
+  (print-result (eq (side-effects 1) (create$ 1 3 2 4)) 21)
   (print-result (= (- 1 2) -5) 22)
   (print-result (= (call-specific-method - 2 1 2) -4) 23)
   (print-result (= (call-specific-method - 1 1 2) -1) 24)

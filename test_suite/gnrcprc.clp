@@ -63,11 +63,11 @@
   (if (next-methodp) then
      (call-next-method)))
 
-(defgeneric mv-slot-replace)
+(defgeneric slot-replace$)
 (defgeneric class-slots)
-(defmethod mv-slot-replace ((?a INSTANCE-ADDRESS)))
-(defmethod mv-slot-replace ((?a PRIMITIVE)))
-(defmethod mv-slot-replace ((?a INSTANCE SYMBOL) (?b SYMBOL) (?c NUMBER) (?d NUMBER) ?e))
+(defmethod slot-replace$ ((?a INSTANCE-ADDRESS)))
+(defmethod slot-replace$ ((?a PRIMITIVE)))
+(defmethod slot-replace$ ((?a INSTANCE SYMBOL) (?b SYMBOL) (?c NUMBER) (?d NUMBER) ?e))
 (defmethod class-slots ((?a SYMBOL) (?b LEXEME)))
 (defmethod class-slots ((?a SYMBOL) ($?b SYMBOL)))
 

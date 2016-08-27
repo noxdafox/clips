@@ -3,11 +3,11 @@
 
 (deffunction retract-many ($?x)
   (bind ?i 1)
-  (bind ?f (nth ?i ?x))
+  (bind ?f (nth$ ?i ?x))
   (while (neq ?f nil) do
      (retract ?f)
      (bind ?i (+ 1 ?i))
-     (bind ?f (nth ?i ?x))
+     (bind ?f (nth$ ?i ?x))
      (if (neq ?f nil) then (printout t "..." crlf))))
 
 (deffunction test-1 (?x)

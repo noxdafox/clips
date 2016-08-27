@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*                I/O FUNCTIONS MODULE                 */
    /*******************************************************/
@@ -83,6 +83,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            UDF redesign.                                  */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -162,18 +164,18 @@ void IOFunctionDefinitions(
 
 #if ! RUN_TIME
 #if IO_FUNCTIONS
-   EnvDefineFunction2(theEnv,"printout",   'v', PTIEF PrintoutFunction, "PrintoutFunction", "1*");
-   EnvDefineFunction2(theEnv,"read",       'u', PTIEF ReadFunction,  "ReadFunction", "*1");
-   EnvDefineFunction2(theEnv,"open",       'b', PTIEF OpenFunction,  "OpenFunction", "23*k");
-   EnvDefineFunction2(theEnv,"close",      'b', PTIEF CloseFunction, "CloseFunction", "*1");
-   EnvDefineFunction2(theEnv,"get-char",   'i', GetCharFunction, "GetCharFunction", "*1");
-   EnvDefineFunction2(theEnv,"put-char",   'v', PTIEF PutCharFunction, "PutCharFunction", "12");
-   EnvDefineFunction2(theEnv,"remove",   'b', PTIEF RemoveFunction,  "RemoveFunction", "11k");
-   EnvDefineFunction2(theEnv,"rename",   'b', PTIEF RenameFunction, "RenameFunction", "22k");
-   EnvDefineFunction2(theEnv,"format",   's', PTIEF FormatFunction, "FormatFunction", "2**us");
-   EnvDefineFunction2(theEnv,"readline", 'k', PTIEF ReadlineFunction, "ReadlineFunction", "*1");
-   EnvDefineFunction2(theEnv,"set-locale", 'u', PTIEF SetLocaleFunction,  "SetLocaleFunction", "*1");
-   EnvDefineFunction2(theEnv,"read-number",       'u', PTIEF ReadNumberFunction,  "ReadNumberFunction", "*1");
+   EnvAddUDF(theEnv,"printout","v",1,UNBOUNDED,NULL,PrintoutFunction,"PrintoutFunction",NULL);
+   EnvAddUDF(theEnv,"read","synldfie",0,1,NULL,ReadFunction,"ReadFunction",NULL);
+   EnvAddUDF(theEnv,"open","b",2,3,"*;sy",OpenFunction,"OpenFunction",NULL);
+   EnvAddUDF(theEnv,"close","b",0,1,NULL,CloseFunction,"CloseFunction",NULL);
+   EnvAddUDF(theEnv,"get-char","l",0,1,NULL,GetCharFunction,"GetCharFunction",NULL);
+   EnvAddUDF(theEnv,"put-char","v",1,2,NULL,PutCharFunction,"PutCharFunction",NULL);
+   EnvAddUDF(theEnv,"remove","b",1,1,"sy",RemoveFunction,"RemoveFunction",NULL);
+   EnvAddUDF(theEnv,"rename","b",2,2,"sy",RenameFunction,"RenameFunction",NULL);
+   EnvAddUDF(theEnv,"format","s",2,UNBOUNDED,"*;*;s",FormatFunction,"FormatFunction",NULL);
+   EnvAddUDF(theEnv,"readline","sy",0,1,NULL,ReadlineFunction,"ReadlineFunction",NULL);
+   EnvAddUDF(theEnv,"set-locale","sy",0,1,NULL,SetLocaleFunction,"SetLocaleFunction",NULL);
+   EnvAddUDF(theEnv,"read-number","syld",0,1,NULL,ReadNumberFunction,"ReadNumberFunction",NULL);
 #endif
 #else
 #if MAC_XCD
@@ -189,12 +191,14 @@ void IOFunctionDefinitions(
 /*   for the printout function.           */
 /******************************************/
 void PrintoutFunction(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    const char *dummyid;
    int i, argCount;
-   DATA_OBJECT theArgument;
-
+   CLIPSValue theArgument;
+   
    /*=======================================================*/
    /* The printout function requires at least one argument. */
    /*=======================================================*/
@@ -295,7 +299,8 @@ bool SetFullCRLF(
 /*************************************************************/
 void ReadFunction(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    struct token theToken;
    int numberOfArguments;
@@ -487,24 +492,36 @@ static void ReadTokenFromStdin(
 /*************************************************************/
 /* OpenFunction: H/L access routine for the open function.   */
 /*************************************************************/
-bool OpenFunction(
-  Environment *theEnv)
+void OpenFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    int numberOfArguments;
    const char *fileName, *logicalName, *accessMode = NULL;
-   DATA_OBJECT theArgument;
+   CLIPSValue theArgument;
 
+   returnValue->type = SYMBOL;
+   
    /*========================================*/
    /* Check for a valid number of arguments. */
    /*========================================*/
 
-   if ((numberOfArguments = EnvArgRangeCheck(theEnv,"open",2,3)) == -1) return false;
+   if ((numberOfArguments = EnvArgRangeCheck(theEnv,"open",2,3)) == -1)
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
 
    /*====================*/
    /* Get the file name. */
    /*====================*/
 
-   if ((fileName = GetFileName(theEnv,"open",1)) == NULL) return false;
+   if ((fileName = GetFileName(theEnv,"open",1)) == NULL)
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
 
    /*=======================================*/
    /* Get the logical name to be associated */
@@ -517,7 +534,8 @@ bool OpenFunction(
       EnvSetHaltExecution(theEnv,true);
       EnvSetEvaluationError(theEnv,true);
       IllegalLogicalNameMessage(theEnv,"open");
-      return false;
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
      }
 
    /*==================================*/
@@ -533,7 +551,8 @@ bool OpenFunction(
       EnvPrintRouter(theEnv,WERROR,"Logical name ");
       EnvPrintRouter(theEnv,WERROR,logicalName);
       EnvPrintRouter(theEnv,WERROR," already in use.\n");
-      return false;
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
      }
 
    /*===========================*/
@@ -545,7 +564,10 @@ bool OpenFunction(
    else if (numberOfArguments == 3)
      {
       if (EnvArgTypeCheck(theEnv,"open",3,STRING,&theArgument) == false)
-        { return false; }
+        {
+         returnValue->value = EnvFalseSymbol(theEnv);
+         return;
+        }
       accessMode = DOToString(theArgument);
      }
 
@@ -563,7 +585,8 @@ bool OpenFunction(
       EnvSetHaltExecution(theEnv,true);
       EnvSetEvaluationError(theEnv,true);
       ExpectedTypeError1(theEnv,"open",3,"string with value \"r\", \"w\", \"a\", \"rb\", \"wb\", or \"ab\"");
-      return false;
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
      }
 
    /*================================================*/
@@ -572,24 +595,34 @@ bool OpenFunction(
    /* file was opened successfully, otherwise FALSE. */
    /*================================================*/
 
-   return(OpenAFile(theEnv,fileName,accessMode,logicalName));
+   if (OpenAFile(theEnv,fileName,accessMode,logicalName))
+     { returnValue->value = EnvTrueSymbol(theEnv); }
+   else
+     { returnValue->value = EnvFalseSymbol(theEnv); }
   }
 
 /***************************************************************/
 /* CloseFunction: H/L access routine for the close function.   */
 /***************************************************************/
-bool CloseFunction(
-  Environment *theEnv)
+void CloseFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    int numberOfArguments;
    const char *logicalName;
 
+   returnValue->type = SYMBOL;
+   
    /*======================================*/
    /* Check for valid number of arguments. */
    /*======================================*/
 
    if ((numberOfArguments = EnvArgCountCheck(theEnv,"close",NO_MORE_THAN,1)) == -1)
-     { return false; }
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
 
    /*=====================================================*/
    /* If no arguments are specified, then close all files */
@@ -597,7 +630,14 @@ bool CloseFunction(
    /* files were closed successfully, otherwise false.    */
    /*=====================================================*/
 
-   if (numberOfArguments == 0) return(CloseAllFiles(theEnv));
+   if (numberOfArguments == 0)
+     {
+      if (CloseAllFiles(theEnv))
+        { returnValue->value = EnvTrueSymbol(theEnv); }
+      else
+        { returnValue->value = EnvFalseSymbol(theEnv); }
+      return;
+     }
 
    /*================================*/
    /* Get the logical name argument. */
@@ -609,7 +649,8 @@ bool CloseFunction(
       IllegalLogicalNameMessage(theEnv,"close");
       EnvSetHaltExecution(theEnv,true);
       EnvSetEvaluationError(theEnv,true);
-      return false;
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
      }
 
    /*========================================================*/
@@ -618,21 +659,31 @@ bool CloseFunction(
    /* otherwise false.                                       */
    /*========================================================*/
 
-   return(CloseFile(theEnv,logicalName));
+   if (CloseFile(theEnv,logicalName))
+     { returnValue->value = EnvTrueSymbol(theEnv); }
+   else
+     { returnValue->value = EnvFalseSymbol(theEnv); }
   }
 
 /***************************************/
 /* GetCharFunction: H/L access routine */
 /*   for the get-char function.        */
 /***************************************/
-int GetCharFunction(
-  Environment *theEnv)
+void GetCharFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    int numberOfArguments;
    const char *logicalName;
 
+   returnValue->type = INTEGER;
+   
    if ((numberOfArguments = EnvArgCountCheck(theEnv,"get-char",NO_MORE_THAN,1)) == -1)
-     { return(-1); }
+     {
+      returnValue->value = EnvAddLong(theEnv,-1);
+      return;
+     }
 
    if (numberOfArguments == 0 )
      { logicalName = STDIN; }
@@ -644,7 +695,8 @@ int GetCharFunction(
          IllegalLogicalNameMessage(theEnv,"get-char");
          EnvSetHaltExecution(theEnv,true);
          EnvSetEvaluationError(theEnv,true);
-         return(-1);
+         returnValue->value = EnvAddLong(theEnv,-1);
+         return;
         }
      }
 
@@ -653,10 +705,11 @@ int GetCharFunction(
       UnrecognizedRouterMessage(theEnv,logicalName);
       EnvSetHaltExecution(theEnv,true);
       EnvSetEvaluationError(theEnv,true);
-      return(-1);
+      returnValue->value = EnvAddLong(theEnv,-1);
+      return;
      }
 
-   return(EnvGetcRouter(theEnv,logicalName));
+   returnValue->value = EnvAddLong(theEnv,EnvGetcRouter(theEnv,logicalName));
   }
 
 /***************************************/
@@ -664,14 +717,16 @@ int GetCharFunction(
 /*   for the put-char function.        */
 /***************************************/
 void PutCharFunction(
-  Environment *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    int numberOfArguments;
    const char *logicalName;
-   DATA_OBJECT theValue;
+   CLIPSValue theValue;
    long long theChar;
    FILE *theFile;
-
+   
    if ((numberOfArguments = EnvArgRangeCheck(theEnv,"put-char",1,2)) == -1)
      { return; }
      
@@ -728,67 +783,84 @@ void PutCharFunction(
 /* RemoveFunction: H/L access routine   */
 /*   for the remove function.           */
 /****************************************/
-bool RemoveFunction(
-  Environment *theEnv)
+void RemoveFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    const char *theFileName;
 
-   /*======================================*/
-   /* Check for valid number of arguments. */
-   /*======================================*/
-
-   if (EnvArgCountCheck(theEnv,"remove",EXACTLY,1) == -1) return false;
-
+   returnValue->type = SYMBOL;
+   
    /*====================*/
    /* Get the file name. */
    /*====================*/
 
-   if ((theFileName = GetFileName(theEnv,"remove",1)) == NULL) return false;
+   if ((theFileName = GetFileName(theEnv,"remove",1)) == NULL)
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
 
    /*==============================================*/
    /* Remove the file. Return true if the file was */
    /* sucessfully removed, otherwise false.        */
    /*==============================================*/
 
-   return(genremove(theFileName));
+   if (genremove(theFileName))
+     { returnValue->value = EnvTrueSymbol(theEnv); }
+   else
+     { returnValue->value = EnvFalseSymbol(theEnv); }
   }
 
 /****************************************/
 /* RenameFunction: H/L access routine   */
 /*   for the rename function.           */
 /****************************************/
-bool RenameFunction(
-  Environment *theEnv)
+void RenameFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    const char *oldFileName, *newFileName;
 
-   /*========================================*/
-   /* Check for a valid number of arguments. */
-   /*========================================*/
-
-   if (EnvArgCountCheck(theEnv,"rename",EXACTLY,2) == -1) return false;
-
+   returnValue->type = SYMBOL;
+   
    /*===========================*/
    /* Check for the file names. */
    /*===========================*/
 
-   if ((oldFileName = GetFileName(theEnv,"rename",1)) == NULL) return false;
-   if ((newFileName = GetFileName(theEnv,"rename",2)) == NULL) return false;
+   if ((oldFileName = GetFileName(theEnv,"rename",1)) == NULL)
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
+
+   if ((newFileName = GetFileName(theEnv,"rename",2)) == NULL)
+     {
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
 
    /*==============================================*/
    /* Rename the file. Return true if the file was */
    /* sucessfully renamed, otherwise false.        */
    /*==============================================*/
 
-   return(genrename(oldFileName,newFileName));
+   if (genrename(oldFileName,newFileName))
+     { returnValue->value = EnvTrueSymbol(theEnv); }
+   else
+     { returnValue->value = EnvFalseSymbol(theEnv); }
   }
 
 /****************************************/
 /* FormatFunction: H/L access routine   */
 /*   for the format function.           */
 /****************************************/
-void *FormatFunction(
-  Environment *theEnv)
+void FormatFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    int argCount;
    size_t start_pos;
@@ -801,14 +873,15 @@ void *FormatFunction(
    char *fstr = NULL;
    size_t fmaxm = 0;
    size_t fpos = 0;
-   void *hptr;
    const char *theString;
 
+   
    /*======================================*/
    /* Set default return value for errors. */
    /*======================================*/
 
-   hptr = EnvAddSymbol(theEnv,"");
+   returnValue->type = STRING;
+   returnValue->value = EnvAddSymbol(theEnv,"");
 
    /*=========================================*/
    /* Format requires at least two arguments: */
@@ -816,7 +889,7 @@ void *FormatFunction(
    /*=========================================*/
 
    if ((argCount = EnvArgCountCheck(theEnv,"format",AT_LEAST,2)) == -1)
-     { return(hptr); }
+     { return; }
 
    /*========================================*/
    /* First argument must be a logical name. */
@@ -827,7 +900,7 @@ void *FormatFunction(
       IllegalLogicalNameMessage(theEnv,"format");
       EnvSetHaltExecution(theEnv,true);
       EnvSetEvaluationError(theEnv,true);
-      return(hptr);
+      return;
      }
 
    if (strcmp(logicalName,"nil") == 0)
@@ -835,7 +908,7 @@ void *FormatFunction(
    else if (QueryRouters(theEnv,logicalName) == false)
      {
       UnrecognizedRouterMessage(theEnv,logicalName);
-      return(hptr);
+      return;
      }
 
    /*=====================================================*/
@@ -845,7 +918,7 @@ void *FormatFunction(
    /*=====================================================*/
 
    if ((formatString = ControlStringCheck(theEnv,argCount)) == NULL)
-     { return (hptr); }
+     { return; }
 
    /*========================================*/
    /* Search the format string, printing the */
@@ -871,30 +944,26 @@ void *FormatFunction(
             if ((theString = PrintFormatFlag(theEnv,percentBuffer,f_cur_arg,formatFlagType)) == NULL)
               {
                if (fstr != NULL) rm(theEnv,fstr,fmaxm);
-               return (hptr);
+               return;
               }
             fstr = AppendToString(theEnv,theString,fstr,&fpos,&fmaxm);
-            if (fstr == NULL) return(hptr);
+            if (fstr == NULL) return;
             f_cur_arg++;
            }
          else
            {
             fstr = AppendToString(theEnv,percentBuffer,fstr,&fpos,&fmaxm);
-            if (fstr == NULL) return(hptr);
+            if (fstr == NULL) return;
            }
         }
      }
 
    if (fstr != NULL)
      {
-      hptr = EnvAddSymbol(theEnv,fstr);
+      returnValue->value = EnvAddSymbol(theEnv,fstr);
       if (strcmp(logicalName,"nil") != 0) EnvPrintRouter(theEnv,logicalName,fstr);
       rm(theEnv,fstr,fmaxm);
      }
-   else
-     { hptr = EnvAddSymbol(theEnv,""); }
-
-   return(hptr);
   }
 
 /*********************************************************************/
@@ -905,7 +974,7 @@ static const char *ControlStringCheck(
   Environment *theEnv,
   int argCount)
   {
-   DATA_OBJECT t_ptr;
+   CLIPSValue t_ptr;
    const char *str_array;
    char print_buff[FLAG_MAX];
    size_t i;
@@ -1075,7 +1144,7 @@ static const char *PrintFormatFlag(
   int whichArg,
   int formatType)
   {
-   DATA_OBJECT theResult;
+   CLIPSValue theResult;
    const char *theString;
    char *printBuffer;
    size_t theLength;
@@ -1172,7 +1241,8 @@ static const char *PrintFormatFlag(
 /******************************************/
 void ReadlineFunction(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    char *buffer;
    size_t line_max = 0;
@@ -1284,9 +1354,10 @@ static char *FillBuffer(
 /*****************************************/
 void SetLocaleFunction(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
-   DATA_OBJECT theResult;
+   CLIPSValue theResult;
    int numArgs;
    
    /*======================================*/
@@ -1345,7 +1416,8 @@ void SetLocaleFunction(
 /******************************************/
 void ReadNumberFunction(
   Environment *theEnv,
-  DATA_OBJECT_PTR returnValue)
+  UDFContext *context,
+  CLIPSValue *returnValue)
   {
    struct token theToken;
    int numberOfArguments;
