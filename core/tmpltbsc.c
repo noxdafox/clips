@@ -183,7 +183,7 @@ void UndeftemplateCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   UndefconstructCommand(theEnv,"undeftemplate",DeftemplateData(theEnv)->DeftemplateConstruct);
+   UndefconstructCommand(context,"undeftemplate",DeftemplateData(theEnv)->DeftemplateConstruct);
   }
 
 /**************************************/
@@ -206,7 +206,7 @@ void GetDeftemplateListFunction(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   GetConstructListFunction(theEnv,"get-deftemplate-list",returnValue,DeftemplateData(theEnv)->DeftemplateConstruct); 
+   GetConstructListFunction(context,returnValue,DeftemplateData(theEnv)->DeftemplateConstruct);
   }
 
 /***********************************************/
@@ -231,7 +231,7 @@ void DeftemplateModuleFunction(
   CLIPSValue *returnValue)
   {
    returnValue->type = SYMBOL;
-   returnValue->value = GetConstructModuleCommand(theEnv,"deftemplate-module",DeftemplateData(theEnv)->DeftemplateConstruct);
+   returnValue->value = GetConstructModuleCommand(context,"deftemplate-module",DeftemplateData(theEnv)->DeftemplateConstruct);
   }
 
 #if DEBUGGING_FUNCTIONS
@@ -245,7 +245,7 @@ void PPDeftemplateCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   PPConstructCommand(theEnv,"ppdeftemplate",DeftemplateData(theEnv)->DeftemplateConstruct);
+   PPConstructCommand(context,"ppdeftemplate",DeftemplateData(theEnv)->DeftemplateConstruct);
   }
 
 /***************************************/
@@ -269,7 +269,7 @@ void ListDeftemplatesCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   ListConstructCommand(theEnv,"list-deftemplates",DeftemplateData(theEnv)->DeftemplateConstruct); 
+   ListConstructCommand(context,DeftemplateData(theEnv)->DeftemplateConstruct); 
   }
 
 /*****************************************/

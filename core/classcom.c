@@ -394,7 +394,7 @@ void UndefclassCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   UndefconstructCommand(theEnv,"undefclass",DefclassData(theEnv)->DefclassConstruct);
+   UndefconstructCommand(context,"undefclass",DefclassData(theEnv)->DefclassConstruct);
   }
 
 /********************************************************
@@ -441,7 +441,7 @@ void PPDefclassCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   PPConstructCommand(theEnv,"ppdefclass",DefclassData(theEnv)->DefclassConstruct);
+   PPConstructCommand(context,"ppdefclass",DefclassData(theEnv)->DefclassConstruct);
   }
 
 /***************************************************
@@ -457,7 +457,7 @@ void ListDefclassesCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   ListConstructCommand(theEnv,"list-defclasses",DefclassData(theEnv)->DefclassConstruct);
+   ListConstructCommand(context,DefclassData(theEnv)->DefclassConstruct);
   }
 
 /***************************************************
@@ -647,7 +647,7 @@ void GetDefclassListFunction(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   GetConstructListFunction(theEnv,"get-defclass-list",returnValue,DefclassData(theEnv)->DefclassConstruct);
+   GetConstructListFunction(context,returnValue,DefclassData(theEnv)->DefclassConstruct);
   }
 
 /***************************************************************
@@ -702,26 +702,27 @@ bool HasSuperclass(
   NOTES        : None
  ********************************************************************/
 SYMBOL_HN *CheckClassAndSlot(
-   Environment *theEnv,
+   UDFContext *context,
    const char *func,
    Defclass **cls)
   {
-   CLIPSValue temp;
+   CLIPSValue theArg;
+   Environment *theEnv = context->environment;
 
-   if (EnvArgTypeCheck(theEnv,func,1,SYMBOL,&temp) == false)
-     { return NULL; }
-     
-   *cls = LookupDefclassByMdlOrScope(theEnv,DOToString(temp));
+   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
+     return NULL;
+
+   *cls = LookupDefclassByMdlOrScope(theEnv,DOToString(theArg));
    if (*cls == NULL)
      {
-      ClassExistError(theEnv,func,DOToString(temp));
+      ClassExistError(theEnv,func,DOToString(theArg));
       return NULL;
      }
-     
-   if (EnvArgTypeCheck(theEnv,func,2,SYMBOL,&temp) == false)
-     { return NULL; }
-     
-   return (SYMBOL_HN *) GetValue(temp);
+
+   if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg))
+     return NULL;
+
+   return (SYMBOL_HN *) GetValue(theArg);
   }
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
@@ -861,11 +862,8 @@ void SetClassDefaultsModeCommand(
    /* Check for the correct number and type of arguments. */
    /*=====================================================*/
 
-   if (EnvArgTypeCheck(theEnv,"set-class-defaults-mode",1,SYMBOL,&theArg) == false)
-     {
-      returnValue->value = EnvAddSymbol(theEnv,GetClassDefaultsModeName(EnvGetClassDefaultsMode(theEnv)));
-      return;
-     }
+   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
+     { return; }
 
    argument = DOToString(theArg);
 
@@ -879,9 +877,9 @@ void SetClassDefaultsModeCommand(
      { EnvSetClassDefaultsMode(theEnv,CONVENIENCE_MODE); }
    else
      {
-      ExpectedTypeError1(theEnv,"set-class-defaults-mode",1,
-      "symbol with value conservation or convenience");
+      UDFInvalidArgumentMessage(context,"symbol with value conservation or convenience");
       returnValue->value = EnvAddSymbol(theEnv,GetClassDefaultsModeName(EnvGetClassDefaultsMode(theEnv)));
+      return;
      }
 
    /*===================================*/

@@ -375,13 +375,13 @@ void WatchCommand(
    /* Determine which item is to be watched. */
    /*========================================*/
 
-   if (EnvArgTypeCheck(theEnv,"watch",1,SYMBOL,&theValue) == false) return;
+   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theValue)) return;
    argument = DOToString(theValue);
    wPtr = ValidWatchItem(theEnv,argument,&recognized);
    if (recognized == false)
      {
       EnvSetEvaluationError(theEnv,true);
-      ExpectedTypeError1(theEnv,"watch",1,"watchable symbol");
+      UDFInvalidArgumentMessage(context,"watchable symbol");
       return;
      }
 
@@ -419,18 +419,18 @@ void UnwatchCommand(
    const char *argument;
    bool recognized;
    struct watchItem *wPtr;
-   
+
    /*==========================================*/
    /* Determine which item is to be unwatched. */
    /*==========================================*/
 
-   if (EnvArgTypeCheck(theEnv,"unwatch",1,SYMBOL,&theValue) == false) return;
+   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theValue)) return;
    argument = DOToString(theValue);
    wPtr = ValidWatchItem(theEnv,argument,&recognized);
    if (recognized == false)
      {
       EnvSetEvaluationError(theEnv,true);
-      ExpectedTypeError1(theEnv,"unwatch",1,"watchable symbol");
+      UDFInvalidArgumentMessage(context,"watchable symbol");
       return;
      }
 
@@ -487,7 +487,7 @@ void ListWatchItemsCommand(
    /* Determine which item is to be listed. */
    /*=======================================*/
 
-   if (EnvArgTypeCheck(theEnv,"list-watch-items",1,SYMBOL,&theValue) == false) return;
+   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theValue)) return;
    wPtr = ValidWatchItem(theEnv,DOToString(theValue),&recognized);
    if ((recognized == false) || (wPtr == NULL))
      {
@@ -547,11 +547,8 @@ void GetWatchItemCommand(
    /* Determine which item is to be watched. */
    /*========================================*/
 
-   if (EnvArgTypeCheck(theEnv,"get-watch-item",1,SYMBOL,&theValue) == false)
-     {
-      returnValue->value = EnvFalseSymbol(theEnv);
-      return;
-     }
+   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theValue))
+     { return; }
 
    argument = DOToString(theValue);
    ValidWatchItem(theEnv,argument,&recognized);

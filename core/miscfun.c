@@ -207,29 +207,24 @@ void SetgenFunction(
   CLIPSValue *returnValue)
   {
    long long theLong;
-   CLIPSValue theValue;
 
-   returnValue->type = INTEGER;
-   
    /*==========================================================*/
    /* Check to see that a single integer argument is provided. */
    /*==========================================================*/
 
-   if (EnvArgTypeCheck(theEnv,"setgen",1,INTEGER,&theValue) == false)
-     {
-      returnValue->value = EnvAddLong(theEnv,MiscFunctionData(theEnv)->GensymNumber);
-      return;
-     }
+   if (! UDFNthArgument(context,1,INTEGER_TYPE,returnValue))
+     { return; }
 
    /*========================================*/
    /* The integer must be greater than zero. */
    /*========================================*/
 
-   theLong = ValueToLong(theValue.value);
+   theLong = ValueToLong(returnValue->value);
 
    if (theLong < 1LL)
      {
-      ExpectedTypeError1(theEnv,"setgen",1,"number (greater than or equal to 1)");
+      UDFInvalidArgumentMessage(context,"integer (greater than or equal to 1)");
+      returnValue->type = INTEGER;
       returnValue->value = EnvAddLong(theEnv,MiscFunctionData(theEnv)->GensymNumber);
       return;
      }
@@ -240,7 +235,6 @@ void SetgenFunction(
    /*====================================*/
 
    MiscFunctionData(theEnv)->GensymNumber = theLong;
-   returnValue->value = EnvAddLong(theEnv,theLong);
   }
 
 /****************************************/
@@ -329,7 +323,7 @@ void RandomFunction(
   {
    int argCount;
    long long rv;
-   CLIPSValue theValue;
+   CLIPSValue theArg;
    long long begin, end;
 
    returnValue->type = INTEGER;
@@ -339,7 +333,7 @@ void RandomFunction(
    /* zero or two arguments.             */
    /*====================================*/
 
-   argCount = EnvRtnArgCount(theEnv);
+   argCount = UDFArgumentCount(context);
    
    if ((argCount != 0) && (argCount != 2))
      {
@@ -355,20 +349,14 @@ void RandomFunction(
    
    if (argCount == 2)
      {
-      if (EnvArgTypeCheck(theEnv,"random",1,INTEGER,&theValue) == false)
-        {
-         returnValue->value = EnvAddLong(theEnv,rv);
-         return;
-        }
+      if (! UDFFirstArgument(context,INTEGER_TYPE,&theArg))
+        { return; }
         
-      begin = DOToLong(theValue);
-      if (EnvArgTypeCheck(theEnv,"random",2,INTEGER,&theValue) == false)
-        {
-         returnValue->value = EnvAddLong(theEnv,rv);
-         return;
-        }
+      begin = DOToLong(theArg);
+      if (! UDFNextArgument(context,INTEGER_TYPE,&theArg))
+        { return; }
 
-      end = DOToLong(theValue);
+      end = DOToLong(theArg);
       if (end < begin)
         {
          PrintErrorID(theEnv,"MISCFUN",3,false);
@@ -393,12 +381,13 @@ void SeedFunction(
   CLIPSValue *returnValue)
   {
    CLIPSValue theValue;
-   
+
    /*==========================================================*/
    /* Check to see that a single integer argument is provided. */
    /*==========================================================*/
 
-   if (EnvArgTypeCheck(theEnv,"seed",1,INTEGER,&theValue) == false) return;
+   if (! UDFFirstArgument(context,INTEGER_TYPE,&theValue))
+     { return; }
 
    /*=============================================================*/
    /* Seed the random number generator with the provided integer. */
@@ -416,24 +405,25 @@ void LengthFunction(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   CLIPSValue item;
+   CLIPSValue theArg;
 
    returnValue->type = INTEGER;
    
    /*====================================================*/
    /* The length$ function expects exactly one argument. */
    /*====================================================*/
-     
-   EnvRtnUnknown(theEnv,1,&item);
+
+   if (! UDFFirstArgument(context, LEXEME_TYPES | MULTIFIELD_TYPE, &theArg))
+     { return; }
 
    /*====================================================*/
    /* If the argument is a string or symbol, then return */
    /* the number of characters in the argument.          */
    /*====================================================*/
 
-   if ((GetType(item) == STRING) || (GetType(item) == SYMBOL))
+   if ((GetType(theArg) == STRING) || (GetType(theArg) == SYMBOL))
      {
-      returnValue->value = EnvAddLong(theEnv,strlen(DOToString(item)));
+      returnValue->value = EnvAddLong(theEnv,strlen(DOToString(theArg)));
       return;
      }
 
@@ -442,9 +432,9 @@ void LengthFunction(
    /* the number of fields in the argument.              */
    /*====================================================*/
 
-   if (GetType(item) == MULTIFIELD)
+   if (GetType(theArg) == MULTIFIELD)
      {
-      returnValue->value = EnvAddLong(theEnv,GetDOLength(item));
+      returnValue->value = EnvAddLong(theEnv,GetDOLength(theArg));
       return;
      }
 
@@ -455,7 +445,7 @@ void LengthFunction(
 
    EnvSetEvaluationError(theEnv,true);
    ExpectedTypeError2(theEnv,"length$",1);
-      returnValue->value = EnvAddLong(theEnv,-1);
+   returnValue->value = EnvAddLong(theEnv,-1);
   }
 
 /*******************************************/
@@ -487,13 +477,14 @@ void ConserveMemCommand(
   {
    const char *argument;
    CLIPSValue theValue;
-   
+
    /*===================================*/
    /* The conserve-mem function expects */
    /* a single symbol argument.         */
    /*===================================*/
 
-   if (EnvArgTypeCheck(theEnv,"conserve-mem",1,SYMBOL,&theValue) == false) return;
+   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theValue))
+     { return; }
 
    argument = DOToString(theValue);
 
@@ -522,7 +513,7 @@ void ConserveMemCommand(
 
    else
      {
-      ExpectedTypeError1(theEnv,"conserve-mem",1,"symbol with value on or off");
+      UDFInvalidArgumentMessage(context,"symbol with value on or off");
       return;
      }
 
@@ -584,12 +575,13 @@ void AproposCommand(
    CLIPSValue theArg;
    struct symbolHashNode *hashPtr = NULL;
    size_t theLength;
-   
+
    /*=======================================================*/
    /* The apropos command expects a single symbol argument. */
    /*=======================================================*/
 
-   if (EnvArgTypeCheck(theEnv,"apropos",1,SYMBOL,&theArg) == false) return;
+   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
+     { return; }
 
    /*=======================================*/
    /* Determine the length of the argument. */
@@ -1070,52 +1062,10 @@ void CauseEvaluationError(
    returnValue->value = EnvFalseSymbol(theEnv);
   }
 
-/*************************************************************/
-/* SetSORCommand: H/L access routine */
-/*   for the set-sequence-operator-recognition command.      */
-/*************************************************************/
-void SetSORCommand(
-  Environment *theEnv,
-  UDFContext *context,
-  CLIPSValue *returnValue)
-  {
-#if (! RUN_TIME) && (! BLOAD_ONLY)
-   CLIPSValue theValue;
-
-   returnValue->type = SYMBOL;
-   if (ExpressionData(theEnv)->SequenceOpMode)
-     { returnValue->value = EnvTrueSymbol(theEnv); }
-   else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
-   
-   /*========================*/
-   /* Evaluate the argument. */
-   /*========================*/
-
-   EnvRtnUnknown(theEnv,1,&theValue);
-
-   /*================================================*/
-   /* If the argument evaluated to false, then the   */
-   /* behavior is disabled, otherwise it is enabled. */
-   /*================================================*/
-
-   if ((theValue.value == EnvFalseSymbol(theEnv)) && (theValue.type == SYMBOL))
-     { EnvSetSequenceOperatorRecognition(theEnv,false); }
-   else
-     { EnvSetSequenceOperatorRecognition(theEnv,true); }
-#else
-   returnValue->type = SYMBOL;
-   if (ExpressionData(theEnv)->SequenceOpMode)
-     { returnValue->value = EnvTrueSymbol(theEnv); }
-   else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
-#endif
-  }
-
-/*************************************************************/
-/* GetSORCommand: H/L access routine for the */
-/*   get-sequence-operator-recognition command.      */
-/*************************************************************/
+/************************************************/
+/* GetSORCommand: H/L access routine for the    */
+/*   get-sequence-operator-recognition command. */
+/************************************************/
 void GetSORCommand(
   Environment *theEnv,
   UDFContext *context,
@@ -1130,6 +1080,49 @@ void GetSORCommand(
      { returnValue->value = EnvTrueSymbol(theEnv); }
    else
      { returnValue->value = EnvFalseSymbol(theEnv); }
+  }
+
+/************************************************/
+/* SetSORCommand: H/L access routine for the    */
+/*   set-sequence-operator-recognition command. */
+/************************************************/
+void SetSORCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
+  {
+#if (! RUN_TIME) && (! BLOAD_ONLY)
+   CLIPSValue theArg;
+
+   returnValue->type = SYMBOL;
+   if (ExpressionData(theEnv)->SequenceOpMode)
+     { returnValue->value = EnvTrueSymbol(theEnv); }
+   else
+     { returnValue->value = EnvFalseSymbol(theEnv); }
+   
+   /*========================*/
+   /* Evaluate the argument. */
+   /*========================*/
+
+   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
+     { return; }
+
+   /*================================================*/
+   /* If the argument evaluated to false, then the   */
+   /* behavior is disabled, otherwise it is enabled. */
+   /*================================================*/
+
+   if ((theArg.value == EnvFalseSymbol(theEnv)) && (theArg.type == SYMBOL))
+     { EnvSetSequenceOperatorRecognition(theEnv,false); }
+   else
+     { EnvSetSequenceOperatorRecognition(theEnv,true); }
+#else
+   returnValue->type = SYMBOL;
+   if (ExpressionData(theEnv)->SequenceOpMode)
+     { returnValue->value = EnvTrueSymbol(theEnv); }
+   else
+     { returnValue->value = EnvFalseSymbol(theEnv); }
+#endif
   }
 
 /********************************************************************
@@ -1151,14 +1144,10 @@ void GetFunctionRestrictions(
    size_t bufferPosition = 0;
    size_t bufferMaximum = 0;
 
+   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
+     { return; }
+   
    returnValue->type = STRING;
-   
-   if (EnvArgTypeCheck(theEnv,"get-function-restrictions",1,SYMBOL,&theArg) == false)
-     {
-      returnValue->value = EnvAddSymbol(theEnv,"");
-      return;
-     }
-   
    fptr = FindFunction(theEnv,DOToString(theArg));
    if (fptr == NULL)
      {
@@ -1167,7 +1156,7 @@ void GetFunctionRestrictions(
       returnValue->value = EnvAddSymbol(theEnv,"");
       return;
      }
-     
+
    if (fptr->minArgs == UNBOUNDED)
      {
       stringBuffer = AppendToString(theEnv,"0",
@@ -1248,8 +1237,8 @@ void FuncallFunction(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   int argCount, i, j;
-   CLIPSValue theValue;
+   int j;
+   CLIPSValue theArg;
    FUNCTION_REFERENCE theReference;
    const char *name;
    struct multifield *theMultifield;
@@ -1263,25 +1252,18 @@ void FuncallFunction(
    SetpType(returnValue,SYMBOL);
    SetpValue(returnValue,EnvFalseSymbol(theEnv));
    
-   /*=================================================*/
-   /* The funcall function has at least one argument: */
-   /* the name of the function being called.          */
-   /*=================================================*/
-   
-   if ((argCount = EnvArgCountCheck(theEnv,"funcall",AT_LEAST,1)) == -1) return;
-   
    /*============================================*/
    /* Get the name of the function to be called. */
    /*============================================*/
    
-   if (EnvArgTypeCheck(theEnv,"funcall",1,SYMBOL_OR_STRING,&theValue) == false) 
+   if (! UDFFirstArgument(context,LEXEME_TYPES,&theArg))
      { return; }
    
    /*====================*/
    /* Find the function. */
    /*====================*/
 
-   name = DOToString(theValue);
+   name = DOToString(theArg);
    if (! GetFunctionReference(theEnv,name,&theReference))
      {
       ExpectedTypeError1(theEnv,"funcall",1,"function, deffunction, or generic function name");
@@ -1309,16 +1291,15 @@ void FuncallFunction(
      
    ExpressionInstall(theEnv,&theReference);
 
-   for (i = 2; i <= argCount; i++)
+   while (UDFHasNextArgument(context))
      {
-      EnvRtnUnknown(theEnv,i,&theValue);
-      if (EnvGetEvaluationError(theEnv))
-        {  
+      if (! UDFNextArgument(context,ANY_TYPE,&theArg))
+        {
          ExpressionDeinstall(theEnv,&theReference);
          return; 
         }
       
-      switch(GetType(theValue))
+      switch(GetType(theArg))
         {
          case MULTIFIELD:
            nextAdd = GenConstant(theEnv,FCALL,FindFunction(theEnv,"create$"));
@@ -1330,8 +1311,8 @@ void FuncallFunction(
            lastAdd = nextAdd;
 
            multiAdd = NULL;
-           theMultifield = (struct multifield *) GetValue(theValue);
-           for (j = GetDOBegin(theValue); j <= GetDOEnd(theValue); j++)
+           theMultifield = (struct multifield *) GetValue(theArg);
+           for (j = GetDOBegin(theArg); j <= GetDOEnd(theArg); j++)
              {
               nextAdd = GenConstant(theEnv,GetMFType(theMultifield,j),GetMFValue(theMultifield,j));
               if (multiAdd == NULL)
@@ -1345,7 +1326,7 @@ void FuncallFunction(
            break;
          
          default:
-           nextAdd = GenConstant(theEnv,GetType(theValue),GetValue(theValue));
+           nextAdd = GenConstant(theEnv,GetType(theArg),GetValue(theArg));
            if (lastAdd == NULL)
              { theReference.argList = nextAdd; }
            else
@@ -1431,7 +1412,7 @@ void NewFunction(
    /* Get the name of the language type. */
    /*====================================*/
    
-   if (EnvArgTypeCheck(theEnv,"new",1,SYMBOL,&theValue) == false) 
+   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theValue))
      { return; }
    
    /*=========================*/
@@ -1454,7 +1435,7 @@ void NewFunction(
    
    if ((EvaluationData(theEnv)->ExternalAddressTypes[theType] != NULL) &&
        (EvaluationData(theEnv)->ExternalAddressTypes[theType]->newFunction != NULL))
-     { (*EvaluationData(theEnv)->ExternalAddressTypes[theType]->newFunction)(theEnv,returnValue); }
+     { (*EvaluationData(theEnv)->ExternalAddressTypes[theType]->newFunction)(context,returnValue); }
   }
   
 /************************************/
@@ -1469,7 +1450,6 @@ void CallFunction(
    int theType;
    CLIPSValue theValue;
    const char *name;
-   int argumentCount;
    struct externalAddressHashNode *theEA;
     
    /*==================================*/
@@ -1479,19 +1459,12 @@ void CallFunction(
    SetpType(returnValue,SYMBOL);
    SetpValue(returnValue,EnvFalseSymbol(theEnv));
    
-   /*=====================================================*/
-   /* The call function has at least one argument: either */
-   /* an external address or the language type of the     */
-   /* method being called (e.g. java, .net, c++).         */
-   /*=====================================================*/
-   
-   if ((argumentCount = EnvArgCountCheck(theEnv,"call",AT_LEAST,1)) == -1) return;
-      
    /*=========================*/
    /* Get the first argument. */
    /*=========================*/
    
-   EnvRtnUnknown(theEnv,1,&theValue);
+   if (! UDFFirstArgument(context,SYMBOL_TYPE | EXTERNAL_ADDRESS_TYPE,&theValue))
+     { return; }
 
    /*============================================*/
    /* If the first argument is a symbol, then it */
@@ -1518,7 +1491,7 @@ void CallFunction(
       
       if ((EvaluationData(theEnv)->ExternalAddressTypes[theType] != NULL) &&
           (EvaluationData(theEnv)->ExternalAddressTypes[theType]->callFunction != NULL))
-        { (*EvaluationData(theEnv)->ExternalAddressTypes[theType]->callFunction)(theEnv,&theValue,returnValue); }
+        { (*EvaluationData(theEnv)->ExternalAddressTypes[theType]->callFunction)(context,&theValue,returnValue); }
         
       return;
      }
@@ -1537,12 +1510,10 @@ void CallFunction(
       
       if ((EvaluationData(theEnv)->ExternalAddressTypes[theType] != NULL) &&
           (EvaluationData(theEnv)->ExternalAddressTypes[theType]->callFunction != NULL))
-        { (*EvaluationData(theEnv)->ExternalAddressTypes[theType]->callFunction)(theEnv,&theValue,returnValue); }
+        { (*EvaluationData(theEnv)->ExternalAddressTypes[theType]->callFunction)(context,&theValue,returnValue); }
         
       return;
      }
-     
-   ExpectedTypeError1(theEnv,"call",1,"external language symbol or external address");
   }
 
 /*********************/
@@ -1703,20 +1674,14 @@ void TimerFunction(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   int numa, i;
    double startTime;
-   CLIPSValue value;
+   CLIPSValue theArg;
 
    startTime = gentime();
    
-   numa = EnvRtnArgCount(theEnv);
-
-   i = 1;
-   while ((i <= numa) && (EnvGetHaltExecution(theEnv) != true))
-     {
-      EnvRtnUnknown(theEnv,i,&value);
-      i++;
-     }
+   while (UDFHasNextArgument(context) &&
+          (! EnvGetHaltExecution(theEnv)))
+     { UDFNextArgument(context,ANY_TYPE,&theArg); }
 
    returnValue->type = FLOAT;
    returnValue->value = EnvAddDouble(theEnv,gentime() - startTime);
@@ -1734,32 +1699,18 @@ void SystemCommand(
    char *commandBuffer = NULL;
    size_t bufferPosition = 0;
    size_t bufferMaximum = 0;
-   int numa, i;
    CLIPSValue tempValue;
    const char *theString;
-   
-   /*===========================================*/
-   /* Check for the corret number of arguments. */
-   /*===========================================*/
-
-   if ((numa = EnvArgCountCheck(theEnv,"system",AT_LEAST,1)) == -1) return;
 
    /*============================================================*/
    /* Concatenate the arguments together to form a single string */
    /* containing the command to be sent to the operating system. */
    /*============================================================*/
 
-   for (i = 1 ; i <= numa; i++)
+   while (UDFHasNextArgument(context))
      {
-      EnvRtnUnknown(theEnv,i,&tempValue);
-      if ((GetType(tempValue) != STRING) &&
-          (GetType(tempValue) != SYMBOL))
-        {
-         EnvSetHaltExecution(theEnv,true);
-         EnvSetEvaluationError(theEnv,true);
-         ExpectedTypeError2(theEnv,"system",i);
-         return;
-        }
+      if (! UDFNextArgument(context,LEXEME_TYPES,&tempValue))
+        { return; }
 
      theString = DOToString(tempValue);
 

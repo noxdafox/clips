@@ -1010,18 +1010,18 @@ void SetStrategyCommand(
    returnValue->type = SYMBOL;
    returnValue->value = EnvAddSymbol(theEnv,GetStrategyName(EnvGetStrategy(theEnv)));
 
-   /*=====================================================*/
-   /* Check for the correct number and type of arguments. */
-   /*=====================================================*/
+   /*=========================================*/
+   /* Check for the correct type of argument. */
+   /*=========================================*/
 
-   if (EnvArgTypeCheck(theEnv,"set-strategy",1,SYMBOL,&theArg) == false)
+   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
      { return; }
-
-   argument = DOToString(theArg);
 
    /*=============================================*/
    /* Set the strategy to the specified strategy. */
    /*=============================================*/
+
+   argument = DOToString(theArg);
 
    if (strcmp(argument,"depth") == 0)
      { EnvSetStrategy(theEnv,DEPTH_STRATEGY); }
@@ -1039,8 +1039,8 @@ void SetStrategyCommand(
      { EnvSetStrategy(theEnv,RANDOM_STRATEGY); }
    else
      {
-      ExpectedTypeError1(theEnv,"set-strategy",1,
-      "symbol with value depth, breadth, lex, mea, complexity, simplicity, or random");
+      UDFInvalidArgumentMessage(context,
+         "symbol with value depth, breadth, lex, mea, complexity, simplicity, or random");
      }
   }
 

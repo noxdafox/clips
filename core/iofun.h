@@ -67,6 +67,8 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Added print and println functions.             */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_iofun
@@ -79,6 +81,8 @@
 #if IO_FUNCTIONS
    bool                           SetFullCRLF(Environment *,bool);
    void                           PrintoutFunction(Environment *,UDFContext *,CLIPSValue *);
+   void                           PrintFunction(Environment *,UDFContext *,CLIPSValue *);
+   void                           PrintlnFunction(Environment *,UDFContext *,CLIPSValue *);
    void                           ReadFunction(Environment *,UDFContext *,CLIPSValue *);
    void                           OpenFunction(Environment *,UDFContext *,CLIPSValue *);
    void                           CloseFunction(Environment *,UDFContext *,CLIPSValue *);

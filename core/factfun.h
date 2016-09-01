@@ -69,7 +69,7 @@
    void                           EnvGetFactList(Environment *,CLIPSValue *,Defmodule *);
    void                           PPFactFunction(Environment *,UDFContext *,CLIPSValue *);
    void                           EnvPPFact(Environment *,Fact *,const char *,bool);
-   struct fact                   *GetFactAddressOrIndexArgument(Environment *,const char *,int,bool);
+   struct fact                   *GetFactAddressOrIndexArgument(UDFContext *,bool);
 
 #endif /* _H_factfun */
 

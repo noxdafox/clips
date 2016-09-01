@@ -745,7 +745,7 @@ void SetCurrentModuleCommand(
 
    returnValue->value = EnvAddSymbol(theEnv,ValueToString(EnvGetCurrentModule(theEnv)->name));
 
-   if (EnvArgTypeCheck(theEnv,"set-current-module",1,SYMBOL,&theArg) == false)
+   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
      { return; }
 
    argument = DOToString(theArg);

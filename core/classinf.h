@@ -57,7 +57,7 @@
 #if DEFRULE_CONSTRUCT
    void                           ClassReactivePCommand(Environment *,UDFContext *,CLIPSValue *);
 #endif
-   Defclass                      *ClassInfoFnxArgs(Environment *,const char *,bool *);
+   Defclass                      *ClassInfoFnxArgs(UDFContext *,const char *,bool *);
    void                           ClassSlotsCommand(Environment *,UDFContext *,CLIPSValue *);
    void                           ClassSuperclassesCommand(Environment *,UDFContext *,CLIPSValue *);
    void                           ClassSubclassesCommand(Environment *,UDFContext *,CLIPSValue *);

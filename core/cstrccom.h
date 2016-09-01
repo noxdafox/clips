@@ -60,9 +60,9 @@ typedef void ConstructActionFunction(Environment *,struct constructHeader *,void
    bool                           DeleteNamedConstruct(Environment *,const char *,struct construct *);
    void                          *FindNamedConstructInModule(Environment *,const char *,struct construct *);
    void                          *FindNamedConstructInModuleOrImports(Environment *,const char *,struct construct *);
-   void                           UndefconstructCommand(Environment *,const char *,struct construct *);
+   void                           UndefconstructCommand(UDFContext *,const char *,struct construct *);
    bool                           PPConstruct(Environment *,const char *,const char *,struct construct *);
-   SYMBOL_HN                     *GetConstructModuleCommand(Environment *,const char *,struct construct *);
+   SYMBOL_HN                     *GetConstructModuleCommand(UDFContext *,const char *,struct construct *);
    Defmodule                     *GetConstructModule(Environment *,const char *,struct construct *);
    bool                           Undefconstruct(Environment *,void *,struct construct *);
    void                           SaveConstruct(Environment *,Defmodule *,const char *,struct construct *);
@@ -70,16 +70,15 @@ typedef void ConstructActionFunction(Environment *,struct constructHeader *,void
    const char                    *EnvGetConstructNameString(Environment *,struct constructHeader *);
    const char                    *GetConstructModuleName(struct constructHeader *);
    SYMBOL_HN                     *GetConstructNamePointer(struct constructHeader *);
-   void                           GetConstructListFunction(Environment *,const char *,CLIPSValue *,
-                                                                  struct construct *);
+   void                           GetConstructListFunction(UDFContext *,CLIPSValue *,struct construct *);
    void                           GetConstructList(Environment *,CLIPSValue *,struct construct *,
                                                    Defmodule *);
-   void                           ListConstructCommand(Environment *,const char *,struct construct *);
+   void                           ListConstructCommand(UDFContext *,struct construct *);
    void                           ListConstruct(Environment *,struct construct *,const char *,Defmodule *);
    void                           SetNextConstruct(struct constructHeader *,struct constructHeader *);
    struct defmoduleItemHeader    *GetConstructModuleItem(struct constructHeader *);
    const char                    *GetConstructPPForm(Environment *,struct constructHeader *);
-   void                           PPConstructCommand(Environment *,const char *,struct construct *);
+   void                           PPConstructCommand(UDFContext *,const char *,struct construct *);
    struct constructHeader        *GetNextConstructItem(Environment *,struct constructHeader *,int);
    struct defmoduleItemHeader    *GetConstructModuleItemByIndex(Environment *,Defmodule *,int);
    void                           FreeConstructHeaderModule(Environment *,struct defmoduleItemHeader *,

@@ -566,7 +566,7 @@ void UndefgenericCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   UndefconstructCommand(theEnv,"undefgeneric",DefgenericData(theEnv)->DefgenericConstruct);
+   UndefconstructCommand(context,"undefgeneric",DefgenericData(theEnv)->DefgenericConstruct);
   }
 
 /****************************************************************
@@ -583,7 +583,7 @@ void GetDefgenericModuleCommand(
   CLIPSValue *returnValue)
   {
    returnValue->type = SYMBOL;
-   returnValue->value = GetConstructModuleCommand(theEnv,"defgeneric-module",DefgenericData(theEnv)->DefgenericConstruct);
+   returnValue->value = GetConstructModuleCommand(context,"defgeneric-module",DefgenericData(theEnv)->DefgenericConstruct);
   }
 
 /**************************************************************
@@ -599,25 +599,27 @@ void UndefmethodCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   CLIPSValue temp;
+   CLIPSValue theArg;
    Defgeneric *gfunc;
    long mi;
-   
-   if (EnvArgTypeCheck(theEnv,"undefmethod",1,SYMBOL,&temp) == false)
-     return;
-   gfunc = LookupDefgenericByMdlOrScope(theEnv,DOToString(temp));
-   if ((gfunc == NULL) ? (strcmp(DOToString(temp),"*") != 0) : false)
+
+   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg)) return;
+
+   gfunc = LookupDefgenericByMdlOrScope(theEnv,DOToString(theArg));
+   if ((gfunc == NULL) ? (strcmp(DOToString(theArg),"*") != 0) : false)
      {
       PrintErrorID(theEnv,"GENRCCOM",1,false);
       EnvPrintRouter(theEnv,WERROR,"No such generic function ");
-      EnvPrintRouter(theEnv,WERROR,DOToString(temp));
+      EnvPrintRouter(theEnv,WERROR,DOToString(theArg));
       EnvPrintRouter(theEnv,WERROR," in function undefmethod.\n");
       return;
      }
-   EnvRtnUnknown(theEnv,2,&temp);
-   if (temp.type == SYMBOL)
+     
+   if (! UDFNextArgument(context,ANY_TYPE,&theArg)) return;
+
+   if (theArg.type == SYMBOL)
      {
-      if (strcmp(DOToString(temp),"*") != 0)
+      if (strcmp(DOToString(theArg),"*") != 0)
         {
          PrintErrorID(theEnv,"GENRCCOM",2,false);
          EnvPrintRouter(theEnv,WERROR,"Expected a valid method index in function undefmethod.\n");
@@ -625,9 +627,9 @@ void UndefmethodCommand(
         }
       mi = 0;
      }
-   else if (temp.type == INTEGER)
+   else if (theArg.type == INTEGER)
      {
-      mi = (long) DOToLong(temp);
+      mi = (long) DOToLong(theArg);
       if (mi == 0)
         {
          PrintErrorID(theEnv,"GENRCCOM",2,false);
@@ -899,7 +901,7 @@ void PPDefgenericCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   PPConstructCommand(theEnv,"ppdefgeneric",DefgenericData(theEnv)->DefgenericConstruct);
+   PPConstructCommand(context,"ppdefgeneric",DefgenericData(theEnv)->DefgenericConstruct);
   }
 
 /**********************************************************
@@ -916,20 +918,20 @@ void PPDefmethodCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   CLIPSValue temp;
+   CLIPSValue theArg;
    const char *gname;
    Defgeneric *gfunc;
    int gi;
-      
-   if (EnvArgTypeCheck(theEnv,"ppdefmethod",1,SYMBOL,&temp) == false)
-     return;
-   gname = DOToString(temp);
-   if (EnvArgTypeCheck(theEnv,"ppdefmethod",2,INTEGER,&temp) == false)
-     return;
+
+   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg)) return;
+   gname = DOToString(theArg);
+
+   if (! UDFNextArgument(context,INTEGER_TYPE,&theArg)) return;
+
    gfunc = CheckGenericExists(theEnv,"ppdefmethod",gname);
    if (gfunc == NULL)
      return;
-   gi = CheckMethodExists(theEnv,"ppdefmethod",gfunc,(long) DOToLong(temp));
+   gi = CheckMethodExists(theEnv,"ppdefmethod",gfunc,(long) DOToLong(theArg));
    if (gi == -1)
      return;
    if (gfunc->methods[gi].ppForm != NULL)
@@ -950,18 +952,18 @@ void ListDefmethodsCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   CLIPSValue temp;
+   CLIPSValue theArg;
    Defgeneric *gfunc;
-      
-   if (EnvRtnArgCount(theEnv) == 0)
-     EnvListDefmethods(theEnv,WDISPLAY,NULL);
+
+   if (! UDFHasNextArgument(context))
+     { EnvListDefmethods(theEnv,WDISPLAY,NULL); }
    else
      {
-      if (EnvArgTypeCheck(theEnv,"list-defmethods",1,SYMBOL,&temp) == false)
-        return;
-      gfunc = CheckGenericExists(theEnv,"list-defmethods",DOToString(temp));
+      if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg)) return;
+
+      gfunc = CheckGenericExists(theEnv,"list-defmethods",DOToString(theArg));
       if (gfunc != NULL)
-        EnvListDefmethods(theEnv,WDISPLAY,gfunc);
+        { EnvListDefmethods(theEnv,WDISPLAY,gfunc); }
      }
   }
 
@@ -1001,7 +1003,7 @@ void ListDefgenericsCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   ListConstructCommand(theEnv,"list-defgenerics",DefgenericData(theEnv)->DefgenericConstruct);
+   ListConstructCommand(context,DefgenericData(theEnv)->DefgenericConstruct);
   }
 
 /***************************************************
@@ -1073,7 +1075,7 @@ void GetDefgenericListFunction(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   GetConstructListFunction(theEnv,"get-defgeneric-list",returnValue,DefgenericData(theEnv)->DefgenericConstruct);
+   GetConstructListFunction(context,returnValue,DefgenericData(theEnv)->DefgenericConstruct);
   }
 
 /***************************************************************
@@ -1110,19 +1112,16 @@ void GetDefmethodListCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   CLIPSValue temp;
+   CLIPSValue theArg;
    Defgeneric *gfunc;
    
-   if (EnvRtnArgCount(theEnv) == 0)
-     EnvGetDefmethodList(theEnv,NULL,returnValue);
+   if (! UDFHasNextArgument(context))
+     { EnvGetDefmethodList(theEnv,NULL,returnValue); }
    else
      {
-      if (EnvArgTypeCheck(theEnv,"get-defmethod-list",1,SYMBOL,&temp) == false)
-        {
-         EnvSetMultifieldErrorValue(theEnv,returnValue);
-         return;
-        }
-      gfunc = CheckGenericExists(theEnv,"get-defmethod-list",DOToString(temp));
+      if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
+        { return; }
+      gfunc = CheckGenericExists(theEnv,"get-defmethod-list",DOToString(theArg));
       if (gfunc != NULL)
         { EnvGetDefmethodList(theEnv,gfunc,returnValue); }
       else
@@ -1202,31 +1201,27 @@ void GetMethodRestrictionsCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   CLIPSValue temp;
+   CLIPSValue theArg;
    Defgeneric *gfunc;
 
-   if (EnvArgTypeCheck(theEnv,"get-method-restrictions",1,SYMBOL,&temp) == false)
-     {
-      EnvSetMultifieldErrorValue(theEnv,returnValue);
-      return;
-     }
-   gfunc = CheckGenericExists(theEnv,"get-method-restrictions",DOToString(temp));
+   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
+     { return; }
+   gfunc = CheckGenericExists(theEnv,"get-method-restrictions",DOToString(theArg));
    if (gfunc == NULL)
      {
       EnvSetMultifieldErrorValue(theEnv,returnValue);
       return;
      }
-   if (EnvArgTypeCheck(theEnv,"get-method-restrictions",2,INTEGER,&temp) == false)
+
+   if (! UDFNextArgument(context,INTEGER_TYPE,&theArg))
+     { return; }
+
+   if (CheckMethodExists(theEnv,"get-method-restrictions",gfunc,(long) DOToLong(theArg)) == -1)
      {
       EnvSetMultifieldErrorValue(theEnv,returnValue);
       return;
      }
-   if (CheckMethodExists(theEnv,"get-method-restrictions",gfunc,(long) DOToLong(temp)) == -1)
-     {
-      EnvSetMultifieldErrorValue(theEnv,returnValue);
-      return;
-     }
-   EnvGetMethodRestrictions(theEnv,gfunc,(unsigned) DOToLong(temp),returnValue);
+   EnvGetMethodRestrictions(theEnv,gfunc,(unsigned) DOToLong(theArg),returnValue);
   }
 
 /***********************************************************************
@@ -1860,6 +1855,7 @@ static void PrintMethodWatchFlag(
  ***************************************************/
 void TypeCommand(
   Environment *theEnv,
+  UDFContext *context,
   CLIPSValue *returnValue)
   {
    EvaluateExpression(theEnv,GetFirstArgument(),returnValue);

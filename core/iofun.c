@@ -85,6 +85,8 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Added print and println functions.             */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -140,11 +142,12 @@ struct IOFunctionData
 
 #if IO_FUNCTIONS
    static void             ReadTokenFromStdin(Environment *,struct token *);
-   static const char      *ControlStringCheck(Environment *,int);
+   static const char      *ControlStringCheck(UDFContext *,int);
    static char             FindFormatFlag(const char *,size_t *,char *,size_t);
-   static const char      *PrintFormatFlag(Environment *,const char *,int,int);
+   static const char      *PrintFormatFlag(UDFContext *,const char *,int,int);
    static char            *FillBuffer(Environment *,const char *,size_t *,size_t *);
    static void             ReadNumber(Environment *,const char *,struct token *,bool);
+   static void             PrintDriver(UDFContext *,const char *,bool);
 #endif
 
 /**************************************/
@@ -165,6 +168,8 @@ void IOFunctionDefinitions(
 #if ! RUN_TIME
 #if IO_FUNCTIONS
    EnvAddUDF(theEnv,"printout","v",1,UNBOUNDED,NULL,PrintoutFunction,"PrintoutFunction",NULL);
+   EnvAddUDF(theEnv,"print","v",0,UNBOUNDED,NULL,PrintFunction,"PrintFunction",NULL);
+   EnvAddUDF(theEnv,"println","v",0,UNBOUNDED,NULL,PrintlnFunction,"PrintlnFunction",NULL);
    EnvAddUDF(theEnv,"read","synldfie",0,1,NULL,ReadFunction,"ReadFunction",NULL);
    EnvAddUDF(theEnv,"open","b",2,3,"*;sy",OpenFunction,"OpenFunction",NULL);
    EnvAddUDF(theEnv,"close","b",0,1,NULL,CloseFunction,"CloseFunction",NULL);
@@ -195,22 +200,14 @@ void PrintoutFunction(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   const char *dummyid;
-   int i, argCount;
-   CLIPSValue theArgument;
-   
-   /*=======================================================*/
-   /* The printout function requires at least one argument. */
-   /*=======================================================*/
-
-   if ((argCount = EnvArgCountCheck(theEnv,"printout",AT_LEAST,1)) == -1) return;
+   const char *logicalName;
 
    /*=====================================================*/
    /* Get the logical name to which output is to be sent. */
    /*=====================================================*/
 
-   dummyid = GetLogicalName(theEnv,1,STDOUT);
-   if (dummyid == NULL)
+   logicalName = GetLogicalName(context,STDOUT);
+   if (logicalName == NULL)
      {
       IllegalLogicalNameMessage(theEnv,"printout");
       EnvSetHaltExecution(theEnv,true);
@@ -222,60 +219,104 @@ void PrintoutFunction(
    /* Determine if any router recognizes the output destination. */
    /*============================================================*/
 
-   if (strcmp(dummyid,"nil") == 0)
+   if (strcmp(logicalName,"nil") == 0)
      { return; }
-   else if (QueryRouters(theEnv,dummyid) == false)
+   else if (QueryRouters(theEnv,logicalName) == false)
      {
-      UnrecognizedRouterMessage(theEnv,dummyid);
+      UnrecognizedRouterMessage(theEnv,logicalName);
       return;
      }
 
-   /*===============================================*/
-   /* Print each of the arguments sent to printout. */
-   /*===============================================*/
+   /*========================*/
+   /* Call the print driver. */
+   /*========================*/
+   
+   PrintDriver(context,logicalName,false);
+  }
 
-   for (i = 2; i <= argCount; i++)
+/*************************************/
+/* PrintFunction: H/L access routine */
+/*   for the print function.         */
+/*************************************/
+void PrintFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
+  {
+   PrintDriver(context,STDOUT,false);
+  }
+
+/*************************************/
+/* PrintlnFunction: H/L access routine */
+/*   for the println function.         */
+/*************************************/
+void PrintlnFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
+  {
+   PrintDriver(context,STDOUT,true);
+  }
+
+/*************************************************/
+/* PrintDriver: Driver routine for the printout, */
+/*   print, and println functions.               */
+/*************************************************/
+static void PrintDriver(
+  UDFContext *context,
+  const char *logicalName,
+  bool endCRLF)
+  {
+   CLIPSValue theArg;
+   Environment *theEnv = context->environment;
+
+   /*==============================*/
+   /* Print each of the arguments. */
+   /*==============================*/
+
+   while (UDFHasNextArgument(context))
      {
-      EnvRtnUnknown(theEnv,i,&theArgument);
+      if (! UDFNextArgument(context,ANY_TYPE,&theArg))
+        { break; }
+      
       if (EvaluationData(theEnv)->HaltExecution) break;
 
-      switch(GetType(theArgument))
+      switch(GetType(theArg))
         {
          case SYMBOL:
-           if (strcmp(DOToString(theArgument),"crlf") == 0)
+           if (strcmp(DOToString(theArg),"crlf") == 0)
              {    
               if (IOFunctionData(theEnv)->useFullCRLF)
-                { EnvPrintRouter(theEnv,dummyid,"\r\n"); }
+                { EnvPrintRouter(theEnv,logicalName,"\r\n"); }
               else
-                { EnvPrintRouter(theEnv,dummyid,"\n"); }
+                { EnvPrintRouter(theEnv,logicalName,"\n"); }
              }
-           else if (strcmp(DOToString(theArgument),"tab") == 0)
-             { EnvPrintRouter(theEnv,dummyid,"\t"); }
-           else if (strcmp(DOToString(theArgument),"vtab") == 0)
-             { EnvPrintRouter(theEnv,dummyid,"\v"); }
-           else if (strcmp(DOToString(theArgument),"ff") == 0)
-             { EnvPrintRouter(theEnv,dummyid,"\f"); }
-             /*
-           else if (strcmp(DOToString(theArgument),"t") == 0)
-             { 
-              if (IOFunctionData(theEnv)->useFullCRLF)
-                { EnvPrintRouter(theEnv,dummyid,"\r\n"); }
-              else
-                { EnvPrintRouter(theEnv,dummyid,"\n"); }
-             }
-             */
+           else if (strcmp(DOToString(theArg),"tab") == 0)
+             { EnvPrintRouter(theEnv,logicalName,"\t"); }
+           else if (strcmp(DOToString(theArg),"vtab") == 0)
+             { EnvPrintRouter(theEnv,logicalName,"\v"); }
+           else if (strcmp(DOToString(theArg),"ff") == 0)
+             { EnvPrintRouter(theEnv,logicalName,"\f"); }
            else
-             { EnvPrintRouter(theEnv,dummyid,DOToString(theArgument)); }
+             { EnvPrintRouter(theEnv,logicalName,DOToString(theArg)); }
            break;
 
          case STRING:
-           EnvPrintRouter(theEnv,dummyid,DOToString(theArgument));
+           EnvPrintRouter(theEnv,logicalName,DOToString(theArg));
            break;
 
          default:
-           PrintDataObject(theEnv,dummyid,&theArgument);
+           PrintDataObject(theEnv,logicalName,&theArg);
            break;
         }
+     }
+     
+   if (endCRLF)
+     {
+      if (IOFunctionData(theEnv)->useFullCRLF)
+        { EnvPrintRouter(theEnv,logicalName,"\r\n"); }
+      else
+        { EnvPrintRouter(theEnv,logicalName,"\n"); }
      }
   }
 
@@ -303,29 +344,17 @@ void ReadFunction(
   CLIPSValue *returnValue)
   {
    struct token theToken;
-   int numberOfArguments;
    const char *logicalName = NULL;
-
-   /*===============================================*/
-   /* Check for an appropriate number of arguments. */
-   /*===============================================*/
-
-   if ((numberOfArguments = EnvArgCountCheck(theEnv,"read",NO_MORE_THAN,1)) == -1)
-     {
-      returnValue->type = STRING;
-      returnValue->value = EnvAddSymbol(theEnv,"*** READ ERROR ***");
-      return;
-     }
 
    /*======================================================*/
    /* Determine the logical name from which input is read. */
    /*======================================================*/
 
-   if (numberOfArguments == 0)
+   if (! UDFHasNextArgument(context))
      { logicalName = STDIN; }
-   else if (numberOfArguments == 1)
+   else
      {
-      logicalName = GetLogicalName(theEnv,1,STDIN);
+      logicalName = GetLogicalName(context,STDIN);
       if (logicalName == NULL)
         {
          IllegalLogicalNameMessage(theEnv,"read");
@@ -497,27 +526,16 @@ void OpenFunction(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   int numberOfArguments;
    const char *fileName, *logicalName, *accessMode = NULL;
-   CLIPSValue theArgument;
+   CLIPSValue theArg;
 
    returnValue->type = SYMBOL;
    
-   /*========================================*/
-   /* Check for a valid number of arguments. */
-   /*========================================*/
-
-   if ((numberOfArguments = EnvArgRangeCheck(theEnv,"open",2,3)) == -1)
-     {
-      returnValue->value = EnvFalseSymbol(theEnv);
-      return;
-     }
-
    /*====================*/
    /* Get the file name. */
    /*====================*/
 
-   if ((fileName = GetFileName(theEnv,"open",1)) == NULL)
+   if ((fileName = GetFileName(context)) == NULL)
      {
       returnValue->value = EnvFalseSymbol(theEnv);
       return;
@@ -528,7 +546,7 @@ void OpenFunction(
    /* with the opened file.                 */
    /*=======================================*/
 
-   logicalName = GetLogicalName(theEnv,2,NULL);
+   logicalName = GetLogicalName(context,NULL);
    if (logicalName == NULL)
      {
       EnvSetHaltExecution(theEnv,true);
@@ -559,16 +577,13 @@ void OpenFunction(
    /* Get the file access mode. */
    /*===========================*/
 
-   if (numberOfArguments == 2)
+   if (! UDFHasNextArgument(context))
      { accessMode = "r"; }
-   else if (numberOfArguments == 3)
+   else
      {
-      if (EnvArgTypeCheck(theEnv,"open",3,STRING,&theArgument) == false)
-        {
-         returnValue->value = EnvFalseSymbol(theEnv);
-         return;
-        }
-      accessMode = DOToString(theArgument);
+      if (! UDFNextArgument(context,STRING_TYPE,&theArg))
+        { return; }
+      accessMode = DOToString(theArg);
      }
 
    /*=====================================*/
@@ -609,28 +624,17 @@ void CloseFunction(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   int numberOfArguments;
    const char *logicalName;
 
    returnValue->type = SYMBOL;
    
-   /*======================================*/
-   /* Check for valid number of arguments. */
-   /*======================================*/
-
-   if ((numberOfArguments = EnvArgCountCheck(theEnv,"close",NO_MORE_THAN,1)) == -1)
-     {
-      returnValue->value = EnvFalseSymbol(theEnv);
-      return;
-     }
-
    /*=====================================================*/
    /* If no arguments are specified, then close all files */
    /* opened with the open command. Return true if all    */
    /* files were closed successfully, otherwise false.    */
    /*=====================================================*/
 
-   if (numberOfArguments == 0)
+   if (! UDFHasNextArgument(context))
      {
       if (CloseAllFiles(theEnv))
         { returnValue->value = EnvTrueSymbol(theEnv); }
@@ -643,7 +647,7 @@ void CloseFunction(
    /* Get the logical name argument. */
    /*================================*/
 
-   logicalName = GetLogicalName(theEnv,1,NULL);
+   logicalName = GetLogicalName(context,NULL);
    if (logicalName == NULL)
      {
       IllegalLogicalNameMessage(theEnv,"close");
@@ -674,22 +678,15 @@ void GetCharFunction(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   int numberOfArguments;
    const char *logicalName;
 
    returnValue->type = INTEGER;
    
-   if ((numberOfArguments = EnvArgCountCheck(theEnv,"get-char",NO_MORE_THAN,1)) == -1)
-     {
-      returnValue->value = EnvAddLong(theEnv,-1);
-      return;
-     }
-
-   if (numberOfArguments == 0 )
+   if (! UDFHasNextArgument(context))
      { logicalName = STDIN; }
    else
      {
-      logicalName = GetLogicalName(theEnv,1,STDIN);
+      logicalName = GetLogicalName(context,STDIN);
       if (logicalName == NULL)
         {
          IllegalLogicalNameMessage(theEnv,"get-char");
@@ -723,12 +720,11 @@ void PutCharFunction(
   {
    int numberOfArguments;
    const char *logicalName;
-   CLIPSValue theValue;
+   CLIPSValue theArg;
    long long theChar;
    FILE *theFile;
-   
-   if ((numberOfArguments = EnvArgRangeCheck(theEnv,"put-char",1,2)) == -1)
-     { return; }
+
+   numberOfArguments = UDFArgumentCount(context);
      
    /*=======================*/
    /* Get the logical name. */
@@ -738,7 +734,7 @@ void PutCharFunction(
      { logicalName = STDOUT; }
    else
      {
-      logicalName = GetLogicalName(theEnv,1,STDOUT);
+      logicalName = GetLogicalName(context,STDOUT);
       if (logicalName == NULL)
         {
          IllegalLogicalNameMessage(theEnv,"put-char");
@@ -760,12 +756,10 @@ void PutCharFunction(
    /* Get the character to put. */
    /*===========================*/
    
-   if (numberOfArguments == 1)
-     { if (EnvArgTypeCheck(theEnv,"put-char",1,INTEGER,&theValue) == false) return; }
-   else
-     { if (EnvArgTypeCheck(theEnv,"put-char",2,INTEGER,&theValue) == false) return; }
+   if (! UDFNextArgument(context,INTEGER_TYPE,&theArg))
+     { return; }
      
-   theChar = DOToLong(theValue);
+   theChar = DOToLong(theArg);
    
    /*===================================================*/
    /* If the "fast load" option is being used, then the */
@@ -796,7 +790,7 @@ void RemoveFunction(
    /* Get the file name. */
    /*====================*/
 
-   if ((theFileName = GetFileName(theEnv,"remove",1)) == NULL)
+   if ((theFileName = GetFileName(context)) == NULL)
      {
       returnValue->value = EnvFalseSymbol(theEnv);
       return;
@@ -830,13 +824,13 @@ void RenameFunction(
    /* Check for the file names. */
    /*===========================*/
 
-   if ((oldFileName = GetFileName(theEnv,"rename",1)) == NULL)
+   if ((oldFileName = GetFileName(context)) == NULL)
      {
       returnValue->value = EnvFalseSymbol(theEnv);
       return;
      }
 
-   if ((newFileName = GetFileName(theEnv,"rename",2)) == NULL)
+   if ((newFileName = GetFileName(context)) == NULL)
      {
       returnValue->value = EnvFalseSymbol(theEnv);
       return;
@@ -875,7 +869,6 @@ void FormatFunction(
    size_t fpos = 0;
    const char *theString;
 
-   
    /*======================================*/
    /* Set default return value for errors. */
    /*======================================*/
@@ -888,14 +881,13 @@ void FormatFunction(
    /* a logical name and a format string.     */
    /*=========================================*/
 
-   if ((argCount = EnvArgCountCheck(theEnv,"format",AT_LEAST,2)) == -1)
-     { return; }
+   argCount = UDFArgumentCount(context);
 
    /*========================================*/
    /* First argument must be a logical name. */
    /*========================================*/
 
-   if ((logicalName = GetLogicalName(theEnv,1,STDOUT)) == NULL)
+   if ((logicalName = GetLogicalName(context,STDOUT)) == NULL)
      {
       IllegalLogicalNameMessage(theEnv,"format");
       EnvSetHaltExecution(theEnv,true);
@@ -917,7 +909,7 @@ void FormatFunction(
    /* present in the argument list.                       */
    /*=====================================================*/
 
-   if ((formatString = ControlStringCheck(theEnv,argCount)) == NULL)
+   if ((formatString = ControlStringCheck(context,argCount)) == NULL)
      { return; }
 
    /*========================================*/
@@ -941,7 +933,7 @@ void FormatFunction(
          formatFlagType = FindFormatFlag(formatString,&form_pos,percentBuffer,FLAG_MAX);
          if (formatFlagType != ' ')
            {
-            if ((theString = PrintFormatFlag(theEnv,percentBuffer,f_cur_arg,formatFlagType)) == NULL)
+            if ((theString = PrintFormatFlag(context,percentBuffer,f_cur_arg,formatFlagType)) == NULL)
               {
                if (fstr != NULL) rm(theEnv,fstr,fmaxm);
                return;
@@ -971,7 +963,7 @@ void FormatFunction(
 /*   control string to see if there are enough matching arguments.   */
 /*********************************************************************/
 static const char *ControlStringCheck(
-  Environment *theEnv,
+  UDFContext *context,
   int argCount)
   {
    CLIPSValue t_ptr;
@@ -980,8 +972,10 @@ static const char *ControlStringCheck(
    size_t i;
    int per_count;
    char formatFlag;
+   Environment *theEnv = context->environment;
 
-   if (EnvArgTypeCheck(theEnv,"format",2,STRING,&t_ptr) == false) return NULL;
+   if (! UDFNthArgument(context,2,STRING_TYPE,&t_ptr))
+     { return NULL; }
 
    per_count = 0;
    str_array = ValueToString(t_ptr.value);
@@ -1139,7 +1133,7 @@ static char FindFormatFlag(
 /*   with the argument for that part of the format string.            */
 /**********************************************************************/
 static const char *PrintFormatFlag(
-  Environment *theEnv,
+  UDFContext *context,
   const char *formatString,
   int whichArg,
   int formatType)
@@ -1149,6 +1143,7 @@ static const char *PrintFormatFlag(
    char *printBuffer;
    size_t theLength;
    void *oldLocale;
+   Environment *theEnv = context->environment;
       
    /*=================*/
    /* String argument */
@@ -1157,14 +1152,15 @@ static const char *PrintFormatFlag(
    switch (formatType)
      {
       case 's':
-        if (EnvArgTypeCheck(theEnv,"format",whichArg,SYMBOL_OR_STRING,&theResult) == false) return NULL;
+        if (! UDFNthArgument(context,whichArg,LEXEME_TYPES,&theResult))
+          { return(NULL); }
         theLength = strlen(formatString) + strlen(ValueToString(theResult.value)) + 200;
         printBuffer = (char *) gm2(theEnv,(sizeof(char) * theLength));
         gensprintf(printBuffer,formatString,ValueToString(theResult.value));
         break;
 
       case 'c':
-        EnvRtnUnknown(theEnv,whichArg,&theResult);
+        UDFNthArgument(context,whichArg,ANY_TYPE,&theResult);
         if ((GetType(theResult) == STRING) ||
             (GetType(theResult) == SYMBOL))
           {
@@ -1189,7 +1185,8 @@ static const char *PrintFormatFlag(
       case 'x':
       case 'o':
       case 'u':
-        if (EnvArgTypeCheck(theEnv,"format",whichArg,INTEGER_OR_FLOAT,&theResult) == false) return NULL;
+        if (! UDFNthArgument(context,whichArg,NUMBER_TYPES,&theResult))
+          { return(NULL); }
         theLength = strlen(formatString) + 200;
         printBuffer = (char *) gm2(theEnv,(sizeof(char) * theLength));
         
@@ -1207,7 +1204,8 @@ static const char *PrintFormatFlag(
       case 'f':
       case 'g':
       case 'e':
-        if (EnvArgTypeCheck(theEnv,"format",whichArg,INTEGER_OR_FLOAT,&theResult) == false) return NULL;
+        if (! UDFNthArgument(context,whichArg,NUMBER_TYPES,&theResult))
+          { return(NULL); }
         theLength = strlen(formatString) + 200;
         printBuffer = (char *) gm2(theEnv,(sizeof(char) * theLength));
 
@@ -1246,22 +1244,15 @@ void ReadlineFunction(
   {
    char *buffer;
    size_t line_max = 0;
-   int numberOfArguments;
    const char *logicalName;
 
    returnValue->type = STRING;
 
-   if ((numberOfArguments = EnvArgCountCheck(theEnv,"readline",NO_MORE_THAN,1)) == -1)
-     {
-      returnValue->value = EnvAddSymbol(theEnv,"*** READ ERROR ***");
-      return;
-     }
-
-   if (numberOfArguments == 0 )
+   if (! UDFHasNextArgument(context))
      { logicalName = STDIN; }
    else
      {
-      logicalName = GetLogicalName(theEnv,1,STDIN);
+      logicalName = GetLogicalName(context,STDIN);
       if (logicalName == NULL)
         {
          IllegalLogicalNameMessage(theEnv,"readline");
@@ -1357,26 +1348,14 @@ void SetLocaleFunction(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   CLIPSValue theResult;
-   int numArgs;
-   
-   /*======================================*/
-   /* Check for valid number of arguments. */
-   /*======================================*/
-   
-   if ((numArgs = EnvArgCountCheck(theEnv,"set-locale",NO_MORE_THAN,1)) == -1)
-     {
-      returnValue->type = SYMBOL;
-      returnValue->value = EnvFalseSymbol(theEnv);
-      return;
-     }
-     
+   CLIPSValue theArg;
+
    /*=================================*/
    /* If there are no arguments, just */
    /* return the current locale.      */
    /*=================================*/
    
-   if (numArgs == 0)
+   if (! UDFHasNextArgument(context))
      {
       returnValue->type = STRING;
       returnValue->value = IOFunctionData(theEnv)->locale;
@@ -1387,12 +1366,8 @@ void SetLocaleFunction(
    /* Get the locale. */
    /*=================*/
    
-   if (EnvArgTypeCheck(theEnv,"set-locale",1,STRING,&theResult) == false)
-     {
-      returnValue->type = SYMBOL;
-      returnValue->value = EnvFalseSymbol(theEnv);
-      return;
-     }
+   if (! UDFFirstArgument(context,STRING_TYPE,&theArg))
+     { return; }
      
    /*=====================================*/
    /* Return the old value of the locale. */
@@ -1406,7 +1381,7 @@ void SetLocaleFunction(
    /*======================================================*/
    
    DecrementSymbolCount(theEnv,(struct symbolHashNode *) IOFunctionData(theEnv)->locale);
-   IOFunctionData(theEnv)->locale = DOToPointer(theResult);
+   IOFunctionData(theEnv)->locale = DOToPointer(theArg);
    IncrementSymbolCount(IOFunctionData(theEnv)->locale);
   }
 
@@ -1420,29 +1395,17 @@ void ReadNumberFunction(
   CLIPSValue *returnValue)
   {
    struct token theToken;
-   int numberOfArguments;
    const char *logicalName = NULL;
-
-   /*===============================================*/
-   /* Check for an appropriate number of arguments. */
-   /*===============================================*/
-
-   if ((numberOfArguments = EnvArgCountCheck(theEnv,"read",NO_MORE_THAN,1)) == -1)
-     {
-      returnValue->type = STRING;
-      returnValue->value = EnvAddSymbol(theEnv,"*** READ ERROR ***");
-      return;
-     }
 
    /*======================================================*/
    /* Determine the logical name from which input is read. */
    /*======================================================*/
 
-   if (numberOfArguments == 0)
+   if (! UDFHasNextArgument(context))
      { logicalName = STDIN; }
-   else if (numberOfArguments == 1)
+   else
      {
-      logicalName = GetLogicalName(theEnv,1,STDIN);
+      logicalName = GetLogicalName(context,STDIN);
       if (logicalName == NULL)
         {
          IllegalLogicalNameMessage(theEnv,"read");

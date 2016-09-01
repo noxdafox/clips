@@ -183,7 +183,7 @@ void ModifyInstance(
       Find the instance and make sure it
       wasn't deleted by the overrides
       ================================== */
-   ins = CheckInstance(theEnv,ValueToString(ExpressionFunctionCallName(EvaluationData(theEnv)->CurrentExpression)));
+   ins = CheckInstance(context);
    if (ins == NULL)
      {
       SetpType(returnValue,SYMBOL);
@@ -253,7 +253,7 @@ void MsgModifyInstance(
       Find the instance and make sure it
       wasn't deleted by the overrides
       ================================== */
-   ins = CheckInstance(theEnv,ValueToString(ExpressionFunctionCallName(EvaluationData(theEnv)->CurrentExpression)));
+   ins = CheckInstance(context);
    if (ins == NULL)
      {
       SetpType(returnValue,SYMBOL);
@@ -324,7 +324,7 @@ void DuplicateInstance(
       Find the instance and make sure it
       wasn't deleted by the overrides
       ================================== */
-   ins = CheckInstance(theEnv,ValueToString(ExpressionFunctionCallName(EvaluationData(theEnv)->CurrentExpression)));
+   ins = CheckInstance(context);
    if (ins == NULL)
      {
       SetpType(returnValue,SYMBOL);
@@ -332,8 +332,8 @@ void DuplicateInstance(
       DeleteSlotOverrideEvaluations(theEnv,overrides,overrideCount);
       return;
      }
-   if (EnvArgTypeCheck(theEnv,ValueToString(ExpressionFunctionCallName(EvaluationData(theEnv)->CurrentExpression)),
-                    2,INSTANCE_NAME,&newName) == false)
+     
+   if (! UDFNextArgument(context,INSTANCE_NAME_TYPE | SYMBOL_TYPE,&newName))
      {
       SetpType(returnValue,SYMBOL);
       SetpValue(returnValue,EnvFalseSymbol(theEnv));
@@ -407,7 +407,7 @@ void MsgDuplicateInstance(
       Find the instance and make sure it
       wasn't deleted by the overrides
       ================================== */
-   ins = CheckInstance(theEnv,ValueToString(ExpressionFunctionCallName(EvaluationData(theEnv)->CurrentExpression)));
+   ins = CheckInstance(context);
    if (ins == NULL)
      {
       SetpType(returnValue,SYMBOL);
@@ -415,8 +415,7 @@ void MsgDuplicateInstance(
       DeleteSlotOverrideEvaluations(theEnv,overrides,overrideCount);
       return;
      }
-   if (EnvArgTypeCheck(theEnv,ValueToString(ExpressionFunctionCallName(EvaluationData(theEnv)->CurrentExpression)),
-                    2,INSTANCE_NAME,&newName) == false)
+   if (! UDFNextArgument(context,INSTANCE_NAME_TYPE | SYMBOL_TYPE,&newName))
      {
       SetpType(returnValue,SYMBOL);
       SetpValue(returnValue,EnvFalseSymbol(theEnv));

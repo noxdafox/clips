@@ -153,7 +153,7 @@ void WhileFunction(
    newGarbageFrame.priorFrame = oldGarbageFrame;
    UtilityData(theEnv)->CurrentGarbageFrame = &newGarbageFrame;
 
-   EnvRtnUnknown(theEnv,1,&theResult);
+   UDFNthArgument(context,1,ANY_TYPE,&theResult);
    while (((theResult.value != EnvFalseSymbol(theEnv)) ||
            (theResult.type != SYMBOL)) &&
            (EvaluationData(theEnv)->HaltExecution != true))
@@ -161,7 +161,7 @@ void WhileFunction(
       if ((ProcedureFunctionData(theEnv)->BreakFlag == true) || (ProcedureFunctionData(theEnv)->ReturnFlag == true))
         break;
         
-      EnvRtnUnknown(theEnv,2,&theResult);
+      UDFNthArgument(context,2,ANY_TYPE,&theResult);
 
       if ((ProcedureFunctionData(theEnv)->BreakFlag == true) || (ProcedureFunctionData(theEnv)->ReturnFlag == true))
         break;
@@ -169,7 +169,7 @@ void WhileFunction(
       CleanCurrentGarbageFrame(theEnv,NULL);
       CallPeriodicTasks(theEnv);
 
-      EnvRtnUnknown(theEnv,1,&theResult);
+      UDFNthArgument(context,1,ANY_TYPE,&theResult);
      }
 
    /*=====================================================*/
@@ -222,7 +222,8 @@ void LoopForCountFunction(
    tmpCounter->loopCounter = 0L;
    tmpCounter->nxt = ProcedureFunctionData(theEnv)->LoopCounterStack;
    ProcedureFunctionData(theEnv)->LoopCounterStack = tmpCounter;
-   if (EnvArgTypeCheck(theEnv,"loop-for-count",1,INTEGER,&theArg) == false)
+   
+   if (! UDFNthArgument(context,1,INTEGER_TYPE,&theArg))
      {
       loopResult->type = SYMBOL;
       loopResult->value = EnvFalseSymbol(theEnv);
@@ -231,7 +232,7 @@ void LoopForCountFunction(
       return;
      }
    tmpCounter->loopCounter = DOToLong(theArg);
-   if (EnvArgTypeCheck(theEnv,"loop-for-count",2,INTEGER,&theArg) == false)
+   if (! UDFNthArgument(context,2,INTEGER_TYPE,&theArg))
      {
       loopResult->type = SYMBOL;
       loopResult->value = EnvFalseSymbol(theEnv);
@@ -252,7 +253,7 @@ void LoopForCountFunction(
       if ((ProcedureFunctionData(theEnv)->BreakFlag == true) || (ProcedureFunctionData(theEnv)->ReturnFlag == true))
         break;
 
-      EnvRtnUnknown(theEnv,3,&theArg);
+      UDFNthArgument(context,3,ANY_TYPE,&theArg);
 
       if ((ProcedureFunctionData(theEnv)->BreakFlag == true) || (ProcedureFunctionData(theEnv)->ReturnFlag == true))
         break;
@@ -292,9 +293,13 @@ void GetLoopCount(
   CLIPSValue *returnValue)
   {
    int depth;
+   CLIPSValue theArg;
    LOOP_COUNTER_STACK *tmpCounter;
+   
+   if (! UDFFirstArgument(context,INTEGER_TYPE,&theArg))
+     { return; }
 
-   depth = ValueToInteger(GetFirstArgument()->value);
+   depth = DOToInteger(theArg);
    tmpCounter = ProcedureFunctionData(theEnv)->LoopCounterStack;
    while (depth > 0)
      {
@@ -316,40 +321,20 @@ void IfFunction(
   CLIPSValue *returnValue)
   {
    int numArgs;
-   struct expr *theExpr;
-
-   /*============================================*/
-   /* Check for the correct number of arguments. */
-   /*============================================*/
-
-   if ((EvaluationData(theEnv)->CurrentExpression->argList == NULL) ||
-       (EvaluationData(theEnv)->CurrentExpression->argList->nextArg == NULL))
-     {
-      EnvArgRangeCheck(theEnv,"if",2,3);
-      returnValue->type = SYMBOL;
-      returnValue->value = EnvFalseSymbol(theEnv);
-      return;
-     }
-
-   if (EvaluationData(theEnv)->CurrentExpression->argList->nextArg->nextArg == NULL)
-     { numArgs = 2; }
-   else if (EvaluationData(theEnv)->CurrentExpression->argList->nextArg->nextArg->nextArg == NULL)
-     { numArgs = 3; }
-   else
-     {
-      EnvArgRangeCheck(theEnv,"if",2,3);
-      returnValue->type = SYMBOL;
-      returnValue->value = EnvFalseSymbol(theEnv);
-      return;
-     }
 
    /*=========================*/
    /* Evaluate the condition. */
    /*=========================*/
 
-   EvaluateExpression(theEnv,EvaluationData(theEnv)->CurrentExpression->argList,returnValue);
+   if (! UDFNthArgument(context,1,ANY_TYPE,returnValue))
+     {
+      returnValue->type = SYMBOL;
+      returnValue->value = EnvFalseSymbol(theEnv);
+      return;
+     }
 
-   if ((ProcedureFunctionData(theEnv)->BreakFlag == true) || (ProcedureFunctionData(theEnv)->ReturnFlag == true))
+   if ((ProcedureFunctionData(theEnv)->BreakFlag == true) ||
+       (ProcedureFunctionData(theEnv)->ReturnFlag == true))
      {
       returnValue->type = SYMBOL;
       returnValue->value = EnvFalseSymbol(theEnv);
@@ -362,30 +347,12 @@ void IfFunction(
    /* and return the value.                   */
    /*=========================================*/
 
+   numArgs = UDFArgumentCount(context);
    if ((returnValue->value == EnvFalseSymbol(theEnv)) &&
        (returnValue->type == SYMBOL) &&
        (numArgs == 3))
      {
-      theExpr = EvaluationData(theEnv)->CurrentExpression->argList->nextArg->nextArg;
-      switch (theExpr->type)
-        {
-         case INTEGER:
-         case FLOAT:
-         case SYMBOL:
-         case STRING:
-#if OBJECT_SYSTEM
-         case INSTANCE_NAME:
-         case INSTANCE_ADDRESS:
-#endif
-         case EXTERNAL_ADDRESS:
-           returnValue->type = theExpr->type;
-           returnValue->value = theExpr->value;
-           break;
-
-         default:
-           EvaluateExpression(theEnv,theExpr,returnValue);
-           break;
-        }
+      UDFNthArgument(context,3,ANY_TYPE,returnValue);
       return;
      }
 
@@ -397,26 +364,7 @@ void IfFunction(
    else if ((returnValue->value != EnvFalseSymbol(theEnv)) ||
             (returnValue->type != SYMBOL))
      {
-      theExpr = EvaluationData(theEnv)->CurrentExpression->argList->nextArg;
-      switch (theExpr->type)
-        {
-         case INTEGER:
-         case FLOAT:
-         case SYMBOL:
-         case STRING:
-#if OBJECT_SYSTEM
-         case INSTANCE_NAME:
-         case INSTANCE_ADDRESS:
-#endif
-         case EXTERNAL_ADDRESS:
-           returnValue->type = theExpr->type;
-           returnValue->value = theExpr->value;
-           break;
-           
-         default:
-           EvaluateExpression(theEnv,theExpr,returnValue);
-           break;
-        }
+      UDFNthArgument(context,2,ANY_TYPE,returnValue);
       return;
      }
 
@@ -428,7 +376,6 @@ void IfFunction(
 
    returnValue->type = SYMBOL;
    returnValue->value = EnvFalseSymbol(theEnv);
-   return;
   }
 
 /**************************************/
@@ -639,13 +586,13 @@ void ReturnFunction(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   if (EnvRtnArgCount(theEnv) == 0)
+   if (! UDFHasNextArgument(context))
      {
       returnValue->type = RVOID;
       returnValue->value = EnvFalseSymbol(theEnv);
      }
    else
-     EnvRtnUnknown(theEnv,1,returnValue);
+     { UDFNextArgument(context,ANY_TYPE,returnValue); }
    ProcedureFunctionData(theEnv)->ReturnFlag = true;
   }
 

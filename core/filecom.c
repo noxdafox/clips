@@ -432,7 +432,7 @@ void DribbleOnCommand(
 
    returnValue->type = SYMBOL;
    
-   if ((fileName = GetFileName(theEnv,"dribble-on",1)) == NULL)
+   if ((fileName = GetFileName(context)) == NULL)
      {
       returnValue->value = EnvFalseSymbol(theEnv);
       return;
@@ -760,7 +760,7 @@ void BatchCommand(
 
    returnValue->type = SYMBOL;
       
-   if ((fileName = GetFileName(theEnv,"batch",1)) == NULL)
+   if ((fileName = GetFileName(context)) == NULL)
      {
       returnValue->value = EnvFalseSymbol(theEnv);
       return;
@@ -1099,7 +1099,7 @@ void BatchStarCommand(
    
    returnValue->type = SYMBOL;
 
-   if ((fileName = GetFileName(theEnv,"batch*",1)) == NULL)
+   if ((fileName = GetFileName(context)) == NULL)
      {
       returnValue->value = EnvFalseSymbol(theEnv);
       return;
@@ -1249,7 +1249,7 @@ void LoadCommand(
 
    returnValue->type = SYMBOL;
       
-   if ((theFileName = GetFileName(theEnv,"load",1)) == NULL)
+   if ((theFileName = GetFileName(context)) == NULL)
      {
       returnValue->value = EnvFalseSymbol(theEnv);
       return;
@@ -1291,7 +1291,7 @@ void LoadStarCommand(
 
    returnValue->type = SYMBOL;
 
-   if ((theFileName = GetFileName(theEnv,"load*",1)) == NULL)
+   if ((theFileName = GetFileName(context)) == NULL)
      {
       returnValue->value = EnvFalseSymbol(theEnv);
       return;
@@ -1329,7 +1329,7 @@ void SaveCommand(
 
    returnValue->type = SYMBOL;
         
-   if ((theFileName = GetFileName(theEnv,"save",1)) == NULL)
+   if ((theFileName = GetFileName(context)) == NULL)
      {
       returnValue->value = EnvFalseSymbol(theEnv);
       return;
@@ -1349,5 +1349,3 @@ void SaveCommand(
 #endif
   }
 #endif
-
-

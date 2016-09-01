@@ -418,32 +418,29 @@ void InstancesCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   int argno;
    bool inheritFlag = false;
    Defmodule *theDefmodule;
    const char *className = NULL;
-   CLIPSValue temp;
-   
+   CLIPSValue theArg;
+
    theDefmodule = EnvGetCurrentModule(theEnv);
 
-   argno = EnvRtnArgCount(theEnv);
-   if (argno > 0)
+   if (UDFHasNextArgument(context))
      {
-      if (EnvArgTypeCheck(theEnv,"instances",1,SYMBOL,&temp) == false)
-        return;
-      theDefmodule = EnvFindDefmodule(theEnv,DOToString(temp));
+      if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg)) return;
+
+      theDefmodule = EnvFindDefmodule(theEnv,DOToString(theArg));
       if ((theDefmodule != NULL) ? false :
-          (strcmp(DOToString(temp),"*") != 0))
+          (strcmp(DOToString(theArg),"*") != 0))
         {
          EnvSetEvaluationError(theEnv,true);
          ExpectedTypeError1(theEnv,"instances",1,"defmodule name");
          return;
         }
-      if (argno > 1)
+      if (UDFHasNextArgument(context))
         {
-         if (EnvArgTypeCheck(theEnv,"instances",2,SYMBOL,&temp) == false)
-           return;
-         className = DOToString(temp);
+         if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg)) return;
+         className = DOToString(theArg);
          if (LookupDefclassAnywhere(theEnv,theDefmodule,className) == NULL)
            {
             if (strcmp(className,"*") == 0)
@@ -454,11 +451,11 @@ void InstancesCommand(
                  return;
               }
            }
-         if (argno > 2)
+         if (UDFHasNextArgument(context))
            {
-            if (EnvArgTypeCheck(theEnv,"instances",3,SYMBOL,&temp) == false)
-              return;
-            if (strcmp(DOToString(temp),ALL_QUALIFIER) != 0)
+            if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg)) return;
+
+            if (strcmp(DOToString(theArg),ALL_QUALIFIER) != 0)
               {
                EnvSetEvaluationError(theEnv,true);
                ExpectedTypeError1(theEnv,"instances",3,"keyword \"inherit\"");
@@ -591,10 +588,10 @@ Instance *EnvMakeInstance(
    const char *router = "***MKINS***";
    struct token tkn;
    EXPRESSION *top;
-   CLIPSValue result;
+   CLIPSValue returnValue;
 
-   result.type = SYMBOL;
-   result.value = EnvFalseSymbol(theEnv);
+   returnValue.type = SYMBOL;
+   returnValue.value = EnvFalseSymbol(theEnv);
    if (OpenStringSource(theEnv,router,mkstr,0) == 0)
      return NULL;
    GetToken(theEnv,router,&tkn);
@@ -607,7 +604,7 @@ Instance *EnvMakeInstance(
          if (tkn.type == STOP)
            {
             ExpressionInstall(theEnv,top);
-            EvaluateExpression(theEnv,top,&result);
+            EvaluateExpression(theEnv,top,&returnValue);
             ExpressionDeinstall(theEnv,top);
            }
          else
@@ -626,10 +623,10 @@ Instance *EnvMakeInstance(
       CallPeriodicTasks(theEnv);
      }
 
-   if ((result.type == SYMBOL) && (result.value == EnvFalseSymbol(theEnv)))
+   if ((returnValue.type == SYMBOL) && (returnValue.value == EnvFalseSymbol(theEnv)))
      return NULL;
 
-   return FindInstanceBySymbol(theEnv,(SYMBOL_HN *) result.value);
+   return FindInstanceBySymbol(theEnv,(SYMBOL_HN *) returnValue.value);
   }
 
 /***************************************************************
@@ -1146,30 +1143,30 @@ void UnmakeInstanceCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   EXPRESSION *theArgument;
-   CLIPSValue theResult;
+   CLIPSValue theArg;
    Instance *ins;
    int argNumber = 1;
    bool rtn = true;
 
    returnValue->type = SYMBOL;
-   theArgument = GetFirstArgument();
-   while (theArgument != NULL)
+   while (UDFHasNextArgument(context))
      {
-      EvaluateExpression(theEnv,theArgument,&theResult);
-      if ((theResult.type == INSTANCE_NAME) || (theResult.type == SYMBOL))
+      if (! UDFNextArgument(context,INSTANCE_TYPES | SYMBOL_TYPE,&theArg))
+        { return; }
+
+      if ((theArg.type == INSTANCE_NAME) || (theArg.type == SYMBOL))
         {
-         ins = FindInstanceBySymbol(theEnv,(SYMBOL_HN *) theResult.value);
-         if ((ins == NULL) ? (strcmp(DOToString(theResult),"*") != 0) : false)
+         ins = FindInstanceBySymbol(theEnv,(SYMBOL_HN *) theArg.value);
+         if ((ins == NULL) ? (strcmp(DOToString(theArg),"*") != 0) : false)
            {
-            NoInstanceError(theEnv,DOToString(theResult),"unmake-instance");
+            NoInstanceError(theEnv,DOToString(theArg),"unmake-instance");
             returnValue->value = EnvFalseSymbol(theEnv);
             return;
            }
          }
-      else if (theResult.type == INSTANCE_ADDRESS)
+      else if (theArg.type == INSTANCE_ADDRESS)
         {
-         ins = (Instance *) theResult.value;
+         ins = (Instance *) theArg.value;
          if (ins->garbage)
            {
             StaleInstanceAddress(theEnv,"unmake-instance",0);
@@ -1196,9 +1193,7 @@ void UnmakeInstanceCommand(
            { returnValue->value = EnvFalseSymbol(theEnv); }
          return;
         }
-        
       argNumber++;
-      theArgument = GetNextArgument(theArgument);
      }
      
    if (rtn)
@@ -1221,12 +1216,9 @@ void SymbolToInstanceNameFunction(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   if (EnvArgTypeCheck(theEnv,"symbol-to-instance-name",1,SYMBOL,returnValue) == false)
-     {
-      SetpType(returnValue,SYMBOL);
-      SetpValue(returnValue,EnvFalseSymbol(theEnv));
-      return;
-     }
+   if (! UDFFirstArgument(context,SYMBOL_TYPE,returnValue))
+     { return; }
+
    SetpType(returnValue,INSTANCE_NAME);
   }
 
@@ -1244,16 +1236,13 @@ void InstanceNameToSymbolFunction(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   CLIPSValue result;
-   returnValue->type = SYMBOL;
-   
-   if (EnvArgTypeCheck(theEnv,"instance-name-to-symbol",1,INSTANCE_NAME,&result) == false)
-     {
-      returnValue->value = EnvFalseSymbol(theEnv);
-      return;
-     }
+   CLIPSValue theArg;
+
+   if (! UDFFirstArgument(context,INSTANCE_NAME_TYPE | SYMBOL_TYPE,&theArg))
+     { return; }
      
-   returnValue->value = result.value;
+   returnValue->type = SYMBOL;
+   returnValue->value = theArg.value;
   }
 
 /*********************************************************************************
@@ -1276,10 +1265,14 @@ void InstanceAddressCommand(
 
    returnValue->type = SYMBOL;
    returnValue->value = EnvFalseSymbol(theEnv);
-   if (EnvRtnArgCount(theEnv) > 1)
+   if (UDFArgumentCount(context) > 1)
      {
-      if (EnvArgTypeCheck(theEnv,"instance-address",1,SYMBOL,&temp) == false)
-        return;
+      if (! UDFFirstArgument(context,SYMBOL_TYPE,&temp))
+        {
+         returnValue->type = SYMBOL;
+         returnValue->value = EnvFalseSymbol(theEnv);
+         return;
+        }
       theModule = EnvFindDefmodule(theEnv,DOToString(temp));
       if ((theModule == NULL) ? (strcmp(DOToString(temp),"*") != 0) : false)
         {
@@ -1294,9 +1287,12 @@ void InstanceAddressCommand(
         }
       else
         searchImports = false;
-      if (EnvArgTypeCheck(theEnv,"instance-address",2,INSTANCE_NAME,&temp)
-             == false)
-        return;
+      if (! UDFNextArgument(context,INSTANCE_NAME_TYPE | SYMBOL_TYPE,&temp))
+        {
+         returnValue->type = SYMBOL;
+         returnValue->value = EnvFalseSymbol(theEnv);
+         return;
+        }
       ins = FindInstanceInModule(theEnv,(SYMBOL_HN *) temp.value,theModule,
                                  EnvGetCurrentModule(theEnv),searchImports);
       if (ins != NULL)
@@ -1307,7 +1303,7 @@ void InstanceAddressCommand(
       else
         NoInstanceError(theEnv,ValueToString(temp.value),"instance-address");
      }
-   else if (EnvArgTypeCheck(theEnv,"instance-address",1,INSTANCE_OR_INSTANCE_NAME,&temp))
+   else if (UDFFirstArgument(context,INSTANCE_TYPES | SYMBOL_TYPE,&temp))
      {
       if (temp.type == INSTANCE_ADDRESS)
         {
@@ -1335,6 +1331,11 @@ void InstanceAddressCommand(
            NoInstanceError(theEnv,ValueToString(temp.value),"instance-address");
         }
      }
+   else
+     {  
+      returnValue->type = SYMBOL;
+      returnValue->value = EnvFalseSymbol(theEnv);
+     }
   }
 
 /***************************************************************
@@ -1351,15 +1352,16 @@ void InstanceNameCommand(
   CLIPSValue *returnValue)
   {
    Instance *ins;
-   CLIPSValue temp;
+   CLIPSValue theArg;
 
    returnValue->type = SYMBOL;
    returnValue->value = EnvFalseSymbol(theEnv);
-   if (EnvArgTypeCheck(theEnv,"instance-name",1,INSTANCE_OR_INSTANCE_NAME,&temp) == false)
-     return;
-   if (temp.type == INSTANCE_ADDRESS)
+   if (! UDFFirstArgument(context,INSTANCE_TYPES | SYMBOL_TYPE,&theArg))
+     { return; }
+
+   if (theArg.type == INSTANCE_ADDRESS)
      {
-      ins = (Instance *) temp.value;
+      ins = (Instance *) theArg.value;
       if (ins->garbage == 1)
         {
          StaleInstanceAddress(theEnv,"instance-name",0);
@@ -1369,10 +1371,10 @@ void InstanceNameCommand(
      }
    else
      {
-      ins = FindInstanceBySymbol(theEnv,(SYMBOL_HN *) temp.value);
+      ins = FindInstanceBySymbol(theEnv,(SYMBOL_HN *) theArg.value);
       if (ins == NULL)
         {
-         NoInstanceError(theEnv,ValueToString(temp.value),"instance-name");
+         NoInstanceError(theEnv,ValueToString(theArg.value),"instance-name");
          return;
         }
      }
@@ -1393,13 +1395,13 @@ void InstanceAddressPCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   CLIPSValue temp;
+   CLIPSValue theArg;
 
+   if (! UDFFirstArgument(context,ANY_TYPE,&theArg))
+     { return; }
+   
    returnValue->type = SYMBOL;
-   
-   EvaluateExpression(theEnv,GetFirstArgument(),&temp);
-   
-   if (GetType(temp) == INSTANCE_ADDRESS)
+   if (GetType(theArg) == INSTANCE_ADDRESS)
      { returnValue->value = EnvTrueSymbol(theEnv); }
    else
      { returnValue->value = EnvFalseSymbol(theEnv); }
@@ -1418,13 +1420,13 @@ void InstanceNamePCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   CLIPSValue temp;
-
+   CLIPSValue theArg;
+   
+   if (! UDFFirstArgument(context,ANY_TYPE,&theArg))
+     { return; }
+   
    returnValue->type = SYMBOL;
-   
-   EvaluateExpression(theEnv,GetFirstArgument(),&temp);
-   
-   if (GetType(temp) == INSTANCE_NAME)
+   if (GetType(theArg) == INSTANCE_NAME)
      { returnValue->value = EnvTrueSymbol(theEnv); }
    else
      { returnValue->value = EnvFalseSymbol(theEnv); }
@@ -1445,13 +1447,13 @@ void InstancePCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   CLIPSValue temp;
+   CLIPSValue theArg;
 
+   if (! UDFFirstArgument(context,ANY_TYPE,&theArg))
+     { return; }
+   
    returnValue->type = SYMBOL;
-   
-   EvaluateExpression(theEnv,GetFirstArgument(),&temp);
-   
-   if ((GetType(temp) == INSTANCE_NAME) || (GetType(temp) == INSTANCE_ADDRESS))
+   if ((GetType(theArg) == INSTANCE_NAME) || (GetType(theArg) == INSTANCE_ADDRESS))
      { returnValue->value = EnvTrueSymbol(theEnv); }
    else
      { returnValue->value = EnvFalseSymbol(theEnv); }
@@ -1470,14 +1472,15 @@ void InstanceExistPCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   CLIPSValue temp;
-   
-   returnValue->type = SYMBOL;
+   CLIPSValue theArg;
 
-   EvaluateExpression(theEnv,GetFirstArgument(),&temp);
-   if (temp.type == INSTANCE_ADDRESS)
+   if (! UDFFirstArgument(context,ANY_TYPE,&theArg))
+     { return; }
+
+   returnValue->type = SYMBOL;
+   if (theArg.type == INSTANCE_ADDRESS)
      {
-      if (((Instance *) temp.value)->garbage == 0)
+      if (((Instance *) theArg.value)->garbage == 0)
         {
          returnValue->value = EnvTrueSymbol(theEnv);
          return;
@@ -1489,9 +1492,9 @@ void InstanceExistPCommand(
         }
      }
      
-   if ((temp.type == INSTANCE_NAME) || (temp.type == SYMBOL))
+   if ((theArg.type == INSTANCE_NAME) || (theArg.type == SYMBOL))
      {
-      if (FindInstanceBySymbol(theEnv,(SYMBOL_HN *) temp.value) != NULL)
+      if (FindInstanceBySymbol(theEnv,(SYMBOL_HN *) theArg.value) != NULL)
         {
          returnValue->value = EnvTrueSymbol(theEnv);
          return;

@@ -509,20 +509,22 @@ void CallSpecificMethod(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   CLIPSValue temp;
+   CLIPSValue theArg;
    Defgeneric *gfunc;
    int mi;
 
    returnValue->type = SYMBOL;
    returnValue->value = EnvFalseSymbol(theEnv);
-   if (EnvArgTypeCheck(theEnv,"call-specific-method",1,SYMBOL,&temp) == false)
-     return;
-   gfunc = CheckGenericExists(theEnv,"call-specific-method",DOToString(temp));
+
+   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg)) return;
+
+   gfunc = CheckGenericExists(theEnv,"call-specific-method",DOToString(theArg));
    if (gfunc == NULL)
      return;
-   if (EnvArgTypeCheck(theEnv,"call-specific-method",2,INTEGER,&temp) == false)
-     return;
-   mi = CheckMethodExists(theEnv,"call-specific-method",gfunc,(long) DOToLong(temp));
+
+   if (! UDFNextArgument(context,INTEGER_TYPE,&theArg)) return;
+
+   mi = CheckMethodExists(theEnv,"call-specific-method",gfunc,(long) DOToLong(theArg));
    if (mi == -1)
      return;
    gfunc->methods[mi].busy++;

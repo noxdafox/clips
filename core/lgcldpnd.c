@@ -604,7 +604,7 @@ void DependenciesCommand(
    CLIPSValue item;
    void *ptr;
 
-   ptr = GetFactOrInstanceArgument(theEnv,1,&item,"dependencies");
+   ptr = GetFactOrInstanceArgument(context,1,&item);
 
    if (ptr == NULL) return;
 
@@ -627,7 +627,7 @@ void DependentsCommand(
    CLIPSValue item;
    void *ptr;
 
-   ptr = GetFactOrInstanceArgument(theEnv,1,&item,"dependents");
+   ptr = GetFactOrInstanceArgument(context,1,&item);
 
    if (ptr == NULL) return;
 

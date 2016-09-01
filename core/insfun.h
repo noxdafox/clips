@@ -105,7 +105,7 @@ typedef struct igarbage
    bool                           PutSlotValue(Environment *,Instance *,INSTANCE_SLOT *,CLIPSValue *,CLIPSValue *,const char *);
    bool                           DirectPutSlotValue(Environment *,Instance *,INSTANCE_SLOT *,CLIPSValue *,CLIPSValue *);
    bool                           ValidSlotValue(Environment *,CLIPSValue *,SlotDescriptor *,Instance *,const char *);
-   Instance                      *CheckInstance(Environment *,const char *);
+   Instance                      *CheckInstance(UDFContext *);
    void                           NoInstanceError(Environment *,const char *,const char *);
    void                           StaleInstanceAddress(Environment *,const char *,int);
    bool                           EnvGetInstancesChanged(Environment *);

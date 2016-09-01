@@ -236,13 +236,12 @@ void SendCommand(
   {
    EXPRESSION args;
    SYMBOL_HN *msg;
-   CLIPSValue temp;
+   CLIPSValue theArg;
 
    returnValue->type = SYMBOL;
    returnValue->value = EnvFalseSymbol(theEnv);
-   if (EnvArgTypeCheck(theEnv,"send",2,SYMBOL,&temp) == false)
-     return;
-   msg = (SYMBOL_HN *) temp.value;
+   if (! UDFNthArgument(context,2,SYMBOL_TYPE,&theArg)) return;
+   msg = (SYMBOL_HN *) theArg.value;
 
    /* =============================================
       Get the instance or primitive for the message
@@ -275,8 +274,24 @@ CLIPSValue *GetNthMessageArgument(
    return(&ProceduralPrimitiveData(theEnv)->ProcParamArray[n]);
   }
 
+/********************************/
+/* NextHandlerAvailableFunction */
+/********************************/
+void NextHandlerAvailableFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  CLIPSValue *returnValue)
+  {
+   returnValue->type = SYMBOL;
+   
+   if (NextHandlerAvailable(theEnv))
+     { returnValue->value = EnvTrueSymbol(theEnv); }
+   else
+     { returnValue->value = EnvFalseSymbol(theEnv); }
+  }
+
 /*****************************************************
-  NAME         : NextHandlerAvailableFunction
+  NAME         : NextHandlerAvailable
   DESCRIPTION  : Determines if there the currently
                    executing handler can call a
                    shadowed handler
@@ -286,39 +301,20 @@ CLIPSValue *GetNthMessageArgument(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax: (next-handlerp)
  *****************************************************/
-void NextHandlerAvailableFunction(
-  Environment *theEnv,
-  UDFContext *context,
-  CLIPSValue *returnValue)
+bool NextHandlerAvailable(
+  Environment *theEnv)
   {
-   returnValue->type = SYMBOL;
-   
    if (MessageHandlerData(theEnv)->CurrentCore == NULL)
-     {
-      returnValue->value = EnvFalseSymbol(theEnv);
-      return;
-     }
+     { return false; }
    
    if (MessageHandlerData(theEnv)->CurrentCore->hnd->type == MAROUND)
-     {
-      if (MessageHandlerData(theEnv)->NextInCore != NULL)
-        { returnValue->value = EnvTrueSymbol(theEnv); }
-      else
-        { returnValue->value = EnvFalseSymbol(theEnv); }
-      return;
-     }
+     { return (MessageHandlerData(theEnv)->NextInCore != NULL) ? true : false; }
    
    if ((MessageHandlerData(theEnv)->CurrentCore->hnd->type == MPRIMARY) &&
        (MessageHandlerData(theEnv)->NextInCore != NULL))
-     {
-      if (MessageHandlerData(theEnv)->NextInCore->hnd->type == MPRIMARY)
-        { returnValue->value = EnvTrueSymbol(theEnv); }
-      else
-        { returnValue->value = EnvFalseSymbol(theEnv); }
-      return;
-     }
+     { return (MessageHandlerData(theEnv)->NextInCore->hnd->type == MPRIMARY) ? true : false; }
    
-   returnValue->value = EnvFalseSymbol(theEnv);
+   return false;
   }
 
 /********************************************************
@@ -355,15 +351,13 @@ void CallNextHandler(
 #if PROFILING_FUNCTIONS
    struct profileFrameInfo profileFrame;
 #endif
-   CLIPSValue temp;
 
    SetpType(returnValue,SYMBOL);
    SetpValue(returnValue,EnvFalseSymbol(theEnv));
    EvaluationData(theEnv)->EvaluationError = false;
    if (EvaluationData(theEnv)->HaltExecution)
      return;
-   NextHandlerAvailableFunction(theEnv,context,&temp);
-   if (temp.value == EnvFalseSymbol(theEnv))
+   if (NextHandlerAvailable(theEnv) == false)
      {
       PrintErrorID(theEnv,"MSGPASS",1,false);
       EnvPrintRouter(theEnv,WERROR,"Shadowed message-handlers not applicable in current context.\n");
@@ -916,14 +910,14 @@ void DynamicHandlerGetSlot(
 void DynamicHandlerPutSlot(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *theResult)
+  CLIPSValue *returnValue)
   {
    INSTANCE_SLOT *sp;
    Instance *ins;
    CLIPSValue temp;
 
-   theResult->type = SYMBOL;
-   theResult->value = EnvFalseSymbol(theEnv);
+   returnValue->type = SYMBOL;
+   returnValue->value = EnvFalseSymbol(theEnv);
    if (CheckCurrentMessage(theEnv,"dynamic-put",true) == false)
      return;
    EvaluateExpression(theEnv,GetFirstArgument(),&temp);
@@ -968,7 +962,7 @@ void DynamicHandlerPutSlot(
       SetpType(&temp,MULTIFIELD);
       SetpValue(&temp,ProceduralPrimitiveData(theEnv)->NoParamValue);
      }
-   PutSlotValue(theEnv,ins,sp,&temp,theResult,NULL);
+   PutSlotValue(theEnv,ins,sp,&temp,returnValue,NULL);
   }
 
 /* =========================================

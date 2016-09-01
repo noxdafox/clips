@@ -853,19 +853,19 @@ bool ValidSlotValue(
   NOTES        : Used by Initialize and ModifyInstance
  ********************************************************/
 Instance *CheckInstance(
-  Environment *theEnv,
-  const char *func)
+  UDFContext *context)
   {
    Instance *ins;
    CLIPSValue temp;
+   Environment *theEnv = context->environment;
 
-   EvaluateExpression(theEnv,GetFirstArgument(),&temp);
+   UDFFirstArgument(context,ANY_TYPE,&temp);
    if (temp.type == INSTANCE_ADDRESS)
      {
       ins = (Instance *) temp.value;
       if (ins->garbage == 1)
         {
-         StaleInstanceAddress(theEnv,func,0);
+         StaleInstanceAddress(theEnv,UDFContextFunctionName(context),0);
          EnvSetEvaluationError(theEnv,true);
          return NULL;
         }
@@ -876,7 +876,7 @@ Instance *CheckInstance(
       ins = FindInstanceBySymbol(theEnv,(SYMBOL_HN *) temp.value);
       if (ins == NULL)
         {
-         NoInstanceError(theEnv,ValueToString(temp.value),func);
+         NoInstanceError(theEnv,ValueToString(temp.value),UDFContextFunctionName(context));
          return NULL;
         }
      }
@@ -884,7 +884,7 @@ Instance *CheckInstance(
      {
       PrintErrorID(theEnv,"INSFUN",1,false);
       EnvPrintRouter(theEnv,WERROR,"Expected a valid instance in function ");
-      EnvPrintRouter(theEnv,WERROR,func);
+      EnvPrintRouter(theEnv,WERROR,UDFContextFunctionName(context));
       EnvPrintRouter(theEnv,WERROR,".\n");
       EnvSetEvaluationError(theEnv,true);
       return NULL;

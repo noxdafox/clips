@@ -94,13 +94,13 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static bool                    CheckTwoClasses(Environment *,const char *,Defclass **,Defclass **);
-   static SlotDescriptor         *CheckSlotExists(Environment *,const char *,Defclass **,bool,bool);
+   static bool                    CheckTwoClasses(UDFContext *,const char *,Defclass **,Defclass **);
+   static SlotDescriptor         *CheckSlotExists(UDFContext *,const char *,Defclass **,bool,bool);
    static SlotDescriptor         *LookupSlot(Environment *,Defclass *,const char *,bool);
 
 #if DEBUGGING_FUNCTIONS
    static Defclass               *CheckClass(Environment *,const char *,const char *);
-   static const char             *GetClassNameArgument(Environment *,const char *);
+   static const char             *GetClassNameArgument(UDFContext *);
    static void                    PrintClassBrowse(Environment *,const char *,Defclass *,long);
    static void                    DisplaySeparator(Environment *,const char *,char *,int,int);
    static void                    DisplaySlotBasicInfo(Environment *,const char *,const char *,const char *,char *,Defclass *);
@@ -132,7 +132,7 @@ void BrowseClassesCommand(
   {
    Defclass *cls;
 
-   if (EnvRtnArgCount(theEnv) == 0)
+   if (UDFArgumentCount(context) == 0)
       /* ================================================
          Find the OBJECT root class (has no superclasses)
          ================================================ */
@@ -141,7 +141,7 @@ void BrowseClassesCommand(
      {
       CLIPSValue theArg;
 
-      if (EnvArgTypeCheck(theEnv,"browse-classes",1,SYMBOL,&theArg) == false)
+      if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
         return;
       cls = LookupDefclassByMdlOrScope(theEnv,DOToString(theArg));
       if (cls == NULL)
@@ -188,7 +188,7 @@ void DescribeClassCommand(
    const char *className;
    Defclass *theDefclass;
 
-   className = GetClassNameArgument(theEnv,"describe-class");
+   className = GetClassNameArgument(context);
    
    if (className == NULL)
      { return; }
@@ -347,7 +347,7 @@ void GetDefclassModuleCommand(
   CLIPSValue *returnValue)
   {
    returnValue->type = SYMBOL;
-   returnValue->value = GetConstructModuleCommand(theEnv,"defclass-module",DefclassData(theEnv)->DefclassConstruct);
+   returnValue->value = GetConstructModuleCommand(context,"defclass-module",DefclassData(theEnv)->DefclassConstruct);
   }
 
 /*********************************************************************
@@ -367,7 +367,7 @@ void SuperclassPCommand(
    
    returnValue->type = SYMBOL;
    
-   if (CheckTwoClasses(theEnv,"superclassp",&c1,&c2) == false)
+   if (CheckTwoClasses(context,"superclassp",&c1,&c2) == false)
      { returnValue->value = EnvFalseSymbol(theEnv); }
    else if (EnvSuperclassP(theEnv,c1,c2))
      { returnValue->value = EnvTrueSymbol(theEnv); }
@@ -415,7 +415,7 @@ void SubclassPCommand(
    Defclass *c1, *c2;
    
    returnValue->type = SYMBOL;
-   if (CheckTwoClasses(theEnv,"subclassp",&c1,&c2) == false)
+   if (CheckTwoClasses(context,"subclassp",&c1,&c2) == false)
      { returnValue->value = EnvFalseSymbol(theEnv); }
    else if (EnvSubclassP(theEnv,c1,c2))
      { returnValue->value = EnvTrueSymbol(theEnv); }
@@ -466,24 +466,21 @@ void SlotExistPCommand(
    CLIPSValue theArg;
    
    returnValue->type = SYMBOL;
-   sd = CheckSlotExists(theEnv,"slot-existp",&cls,false,true);
+   sd = CheckSlotExists(context,"slot-existp",&cls,false,true);
    if (sd == NULL)
      {
       returnValue->value = EnvFalseSymbol(theEnv);
       return;
      }
       
-   if (EnvRtnArgCount(theEnv) == 3)
+   if (UDFHasNextArgument(context))
      {
-      if (EnvArgTypeCheck(theEnv,"slot-existp",3,SYMBOL,&theArg) == false)
-        {
-         returnValue->value = EnvFalseSymbol(theEnv);
-         return;
-        }
+      if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg))
+        { return; }
       
       if (strcmp(DOToString(theArg),"inherit") != 0)
         {
-         ExpectedTypeError1(theEnv,"slot-existp",3,"keyword \"inherit\"");
+         UDFInvalidArgumentMessage(context,"keyword \"inherit\"");
          EnvSetEvaluationError(theEnv,true);
          returnValue->value = EnvFalseSymbol(theEnv);
          return;
@@ -539,11 +536,8 @@ void MessageHandlerExistPCommand(
    
    returnValue->type = SYMBOL;
    
-   if (EnvArgTypeCheck(theEnv,"message-handler-existp",1,SYMBOL,&theArg) == false)
-     {
-      returnValue->value = EnvFalseSymbol(theEnv);
-      return;
-     }
+   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
+     { return; }
      
    cls = LookupDefclassByMdlOrScope(theEnv,DOToString(theArg));
    if (cls == NULL)
@@ -552,21 +546,15 @@ void MessageHandlerExistPCommand(
       returnValue->value = EnvFalseSymbol(theEnv);
       return;
      }
-   
-   if (EnvArgTypeCheck(theEnv,"message-handler-existp",2,SYMBOL,&theArg) == false)
-     {
-      returnValue->value = EnvFalseSymbol(theEnv);
-      return;
-     }
-     
+
+   if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg))
+        { return; }
+
    mname = (SYMBOL_HN *) GetValue(theArg);
-   if (EnvRtnArgCount(theEnv) == 3)
+   if (UDFHasNextArgument(context))
      {
-      if (EnvArgTypeCheck(theEnv,"message-handler-existp",3,SYMBOL,&theArg) == false)
-        {
-         returnValue->value = EnvFalseSymbol(theEnv);
-         return;
-        }
+      if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg))
+        { return; }
         
       mtype = HandlerType(theEnv,"message-handler-existp",DOToString(theArg));
       if (mtype == MERROR)
@@ -600,7 +588,7 @@ void SlotWritablePCommand(
    SlotDescriptor *sd;
    
    returnValue->type = SYMBOL;
-   sd = CheckSlotExists(theEnv,"slot-writablep",&theDefclass,true,true);
+   sd = CheckSlotExists(context,"slot-writablep",&theDefclass,true,true);
    if (sd == NULL)
      {
       returnValue->value = EnvFalseSymbol(theEnv);
@@ -653,7 +641,7 @@ void SlotInitablePCommand(
    SlotDescriptor *sd;
    
    returnValue->type = SYMBOL;
-   sd = CheckSlotExists(theEnv,"slot-initablep",&theDefclass,true,true);
+   sd = CheckSlotExists(context,"slot-initablep",&theDefclass,true,true);
    if (sd == NULL)
      {
       returnValue->value = EnvFalseSymbol(theEnv);
@@ -706,7 +694,7 @@ void SlotPublicPCommand(
    SlotDescriptor *sd;
    
    returnValue->type = SYMBOL;
-   sd = CheckSlotExists(theEnv,"slot-publicp",&theDefclass,true,false);
+   sd = CheckSlotExists(context,"slot-publicp",&theDefclass,true,false);
    if (sd == NULL)
      {
       returnValue->value = EnvFalseSymbol(theEnv);
@@ -790,7 +778,7 @@ void SlotDirectAccessPCommand(
    SlotDescriptor *sd;
    
    returnValue->type = SYMBOL;
-   sd = CheckSlotExists(theEnv,"slot-direct-accessp",&theDefclass,true,true);
+   sd = CheckSlotExists(context,"slot-direct-accessp",&theDefclass,true,true);
    if (sd == NULL)
      {
       returnValue->value = EnvFalseSymbol(theEnv);
@@ -847,7 +835,7 @@ void SlotDefaultValueCommand(
 
    SetpType(returnValue,SYMBOL);
    SetpValue(returnValue,EnvFalseSymbol(theEnv));
-   sd = CheckSlotExists(theEnv,"slot-default-value",&theDefclass,true,true);
+   sd = CheckSlotExists(context,"slot-default-value",&theDefclass,true,true);
    if (sd == NULL)
      return;
    
@@ -923,11 +911,8 @@ void ClassExistPCommand(
    
    returnValue->type = SYMBOL;
 
-   if (EnvArgTypeCheck(theEnv,"class-existp",1,SYMBOL,&theArg) == false)
-     {
-      returnValue->value = EnvFalseSymbol(theEnv);
-      return;
-     }
+   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
+     { return; }
      
    if (LookupDefclassByMdlOrScope(theEnv,DOToString(theArg)) != NULL)
      { returnValue->value = EnvTrueSymbol(theEnv); }
@@ -953,14 +938,15 @@ void ClassExistPCommand(
   NOTES        : Assumes exactly 2 arguments
  ******************************************************/
 static bool CheckTwoClasses(
-  Environment *theEnv,
+  UDFContext *context,
   const char *func,
   Defclass **c1,
   Defclass **c2)
   {
    CLIPSValue theArg;
+   Environment *theEnv = context->environment;
 
-   if (EnvArgTypeCheck(theEnv,func,1,SYMBOL,&theArg) == false)
+   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
      { return false; }
      
    *c1 = LookupDefclassByMdlOrScope(theEnv,DOToString(theArg));
@@ -970,7 +956,7 @@ static bool CheckTwoClasses(
       return false;
      }
      
-   if (EnvArgTypeCheck(theEnv,func,2,SYMBOL,&theArg) == false)
+   if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg))
      { return false; }
      
    *c2 = LookupDefclassByMdlOrScope(theEnv,DOToString(theArg));
@@ -1002,7 +988,7 @@ static bool CheckTwoClasses(
   NOTES        : None
  ***************************************************/
 static SlotDescriptor *CheckSlotExists(
-  Environment *theEnv,
+  UDFContext *context,
   const char *func,
   Defclass **classBuffer,
   bool existsErrorFlag,
@@ -1011,8 +997,9 @@ static SlotDescriptor *CheckSlotExists(
    SYMBOL_HN *ssym;
    int slotIndex;
    SlotDescriptor *sd;
+   Environment *theEnv = context->environment;
 
-   ssym = CheckClassAndSlot(theEnv,func,classBuffer);
+   ssym = CheckClassAndSlot(context,func,classBuffer);
    if (ssym == NULL)
      return NULL;
      
@@ -1116,14 +1103,14 @@ static Defclass *CheckClass(
   NOTES        : Assumes only 1 argument
  *********************************************************/
 static const char *GetClassNameArgument(
-  Environment *theEnv,
-  const char *fname)
+  UDFContext *context)
   {
-   CLIPSValue temp;
+   CLIPSValue theArg;
 
-   if (EnvArgTypeCheck(theEnv,fname,1,SYMBOL,&temp) == false)
-     return NULL;
-   return(DOToString(temp));
+   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
+     { return NULL; }
+     
+   return(DOToString(theArg));
   }
 
 /****************************************************************

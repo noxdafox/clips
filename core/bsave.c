@@ -118,7 +118,7 @@ void BsaveCommand(
 
    returnValue->type = SYMBOL;
 
-   fileName = GetFileName(theEnv,"bsave",1);
+   fileName = GetFileName(context);
    if (fileName != NULL)
      {
       if (EnvBsave(theEnv,fileName))

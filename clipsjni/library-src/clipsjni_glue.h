@@ -13,8 +13,8 @@ int        UngetcJNIRouter(Environment *,int,const char *);
 void       JNIPeriodicCallback(Environment *);
 void       JNIParserErrorCallback(Environment *,const char *,const char *,const char *,long);
 void       PrintJavaAddress(Environment *,const char *,void *);
-void       NewJavaAddress(Environment *,CLIPSValue *);
-bool       CallJavaMethod(Environment *,CLIPSValue *,CLIPSValue *);
+void       NewJavaAddress(UDFContext *,CLIPSValue *);
+bool       CallJavaMethod(UDFContext *,CLIPSValue *,CLIPSValue *);
 bool       DiscardJavaAddress(Environment *,void *);
 jlong      CreateCLIPSJNIEnvironment(JNIEnv *,jobject);
 

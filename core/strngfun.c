@@ -100,7 +100,7 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    StrOrSymCatFunction(Environment *,CLIPSValue *,unsigned short);
+   static void                    StrOrSymCatFunction(UDFContext *,CLIPSValue *,unsigned short);
 
 /******************************************/
 /* StringFunctionDefinitions: Initializes */
@@ -137,7 +137,7 @@ void StrCatFunction(
   UDFContext *context,
   CLIPSValue *returnValue)
   {   
-   StrOrSymCatFunction(theEnv,returnValue,STRING);
+   StrOrSymCatFunction(context,returnValue,STRING);
   }
 
 /****************************************/
@@ -149,7 +149,7 @@ void SymCatFunction(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   StrOrSymCatFunction(theEnv,returnValue,SYMBOL);
+   StrOrSymCatFunction(context,returnValue,SYMBOL);
   }
 
 /********************************************************/
@@ -157,7 +157,7 @@ void SymCatFunction(
 /*   the str-cat and sym-cat functions.                 */
 /********************************************************/
 static void StrOrSymCatFunction(
-  Environment *theEnv,
+  UDFContext *context,
   CLIPSValue *returnValue,
   unsigned short returnType)
   {
@@ -166,25 +166,7 @@ static void StrOrSymCatFunction(
    char *theString;
    SYMBOL_HN **arrayOfStrings;
    SYMBOL_HN *hashPtr;
-   const char *functionName;
-
-   /*============================================*/
-   /* Determine the calling function name.       */
-   /* Store the null string or the symbol nil as */
-   /* the return value in the event of an error. */
-   /*============================================*/
-
-   SetpType(returnValue,returnType);
-   if (returnType == STRING)
-     {
-      functionName = "str-cat";
-      SetpValue(returnValue,EnvAddSymbol(theEnv,""));
-     }
-   else
-     {
-      functionName = "sym-cat";
-      SetpValue(returnValue,EnvAddSymbol(theEnv,"nil"));
-     }
+   Environment *theEnv = context->environment;
 
    /*===============================================*/
    /* Determine the number of arguments as create a */
@@ -192,7 +174,7 @@ static void StrOrSymCatFunction(
    /* the string representation of each argument.   */
    /*===============================================*/
 
-   numArgs = EnvRtnArgCount(theEnv);
+   numArgs = UDFArgumentCount(context);
    if (numArgs == 0) return;
    
    arrayOfStrings = (SYMBOL_HN **) gm1(theEnv,(int) sizeof(SYMBOL_HN *) * numArgs);
@@ -207,7 +189,7 @@ static void StrOrSymCatFunction(
    total = 1;
    for (i = 1 ; i <= numArgs ; i++)
      {
-      EnvRtnUnknown(theEnv,i,&theArg);
+      UDFNthArgument(context,i,ANY_TYPE,&theArg);
 
       switch(GetType(theArg))
         {
@@ -234,7 +216,7 @@ static void StrOrSymCatFunction(
            break;
 
          default:
-           ExpectedTypeError1(theEnv,functionName,i,"string, instance name, symbol, float, or integer");
+           UDFInvalidArgumentMessage(context,"string, instance name, symbol, float, or integer");
            EnvSetEvaluationError(theEnv,true);
            break;
         }
@@ -248,6 +230,12 @@ static void StrOrSymCatFunction(
            }
 
          rm(theEnv,arrayOfStrings,sizeof(SYMBOL_HN *) * numArgs);
+         
+         SetpType(returnValue,returnType);
+         if (returnType == STRING)
+           { SetpValue(returnValue,EnvAddSymbol(theEnv,"")); }
+         else
+           { SetpValue(returnValue,EnvAddSymbol(theEnv,"nil")); }
          return;
         }
 
@@ -274,6 +262,7 @@ static void StrOrSymCatFunction(
    /* up the temporary memory used.           */
    /*=========================================*/
 
+   SetpType(returnValue,returnType);
    SetpValue(returnValue,EnvAddSymbol(theEnv,theString));
    rm(theEnv,theString,sizeof(char) * total);
 
@@ -297,22 +286,18 @@ void StrLengthFunction(
   {
    CLIPSValue theArg;
 
-   returnValue->type = INTEGER;
-   
-   /*==================================================*/
-   /* The argument should be of type symbol or string. */
-   /*==================================================*/
+   /*==================================================================*/
+   /* The argument should be of type symbol, string, or instance name. */
+   /*==================================================================*/
 
-   if (EnvArgTypeCheck(theEnv,"str-length",1,SYMBOL_OR_STRING,&theArg) == false)
-     {
-      returnValue->value = EnvAddLong(theEnv,-1);
-      return;
-     }
+   if (! UDFFirstArgument(context,LEXEME_TYPES | INSTANCE_NAME_TYPE,&theArg))
+     { return; }
 
    /*============================================*/
    /* Return the length of the string or symbol. */
    /*============================================*/
    
+   returnValue->type = INTEGER;
    returnValue->value = EnvAddLong(theEnv,UTF8Length(DOToString(theArg)));
   }
 
@@ -335,12 +320,8 @@ void UpcaseFunction(
    /* The argument should be of type symbol or string. */
    /*==================================================*/
 
-   if (EnvArgTypeCheck(theEnv,"upcase",1,SYMBOL_OR_STRING,&theArg) == false)
-     {
-      SetpType(returnValue,STRING);
-      SetpValue(returnValue,EnvAddSymbol(theEnv,""));
-      return;
-     }
+   if (! UDFFirstArgument(context,LEXEME_TYPES | INSTANCE_NAME_TYPE,&theArg))
+     { return; }
 
    /*======================================================*/
    /* Allocate temporary memory and then copy the original */
@@ -389,12 +370,8 @@ void LowcaseFunction(
    /* The argument should be of type symbol or string. */
    /*==================================================*/
 
-   if (EnvArgTypeCheck(theEnv,"lowcase",1,SYMBOL_OR_STRING,&theArg) == false)
-     {
-      SetpType(returnValue,STRING);
-      SetpValue(returnValue,EnvAddSymbol(theEnv,""));
-      return;
-     }
+   if (! UDFFirstArgument(context,LEXEME_TYPES | INSTANCE_NAME_TYPE,&theArg))
+     { return; }
 
    /*======================================================*/
    /* Allocate temporary memory and then copy the original */
@@ -433,57 +410,34 @@ void StrCompareFunction(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   int numArgs, length;
    CLIPSValue arg1, arg2, arg3;
-   long long compareValue;
-
-   returnValue->type = INTEGER;
-   
-   /*=======================================================*/
-   /* Function str-compare expects either 2 or 3 arguments. */
-   /*=======================================================*/
-
-   if ((numArgs = EnvArgRangeCheck(theEnv,"str-compare",2,3)) == -1)
-     {
-      returnValue->value = EnvAddLong(theEnv,0);
-      return;
-     }
+   int compareResult;
 
    /*=============================================================*/
    /* The first two arguments should be of type symbol or string. */
    /*=============================================================*/
 
-   if (EnvArgTypeCheck(theEnv,"str-compare",1,SYMBOL_OR_STRING,&arg1) == false)
-     {
-      returnValue->value = EnvAddLong(theEnv,0);
-      return;
-     }
+   if (! UDFFirstArgument(context,LEXEME_TYPES | INSTANCE_NAME_TYPE,&arg1))
+     { return; }
 
-   if (EnvArgTypeCheck(theEnv,"str-compare",2,SYMBOL_OR_STRING,&arg2) == false)
-     {
-      returnValue->value = EnvAddLong(theEnv,0);
-      return;
-     }
+   if (! UDFNextArgument(context,LEXEME_TYPES | INSTANCE_NAME_TYPE,&arg2))
+     { return; }
 
    /*===================================================*/
    /* Compare the strings. Use the 3rd argument for the */
    /* maximum length of comparison, if it is provided.  */
    /*===================================================*/
 
-   if (numArgs == 3)
+   if (UDFHasNextArgument(context))
      {
-      if (EnvArgTypeCheck(theEnv,"str-compare",3,INTEGER,&arg3) == false)
-        {
-         returnValue->value = EnvAddLong(theEnv,0);
-         return;
-        }
+      if (! UDFNextArgument(context,INTEGER_TYPE,&arg3))
+        { return; }
 
-      length = CoerceToInteger(GetType(arg3),GetValue(arg3));
-      compareValue = strncmp(DOToString(arg1),DOToString(arg2),
-                             (STD_SIZE) length);
+      compareResult = strncmp(DOToString(arg1),DOToString(arg2),
+                             (STD_SIZE) DOToInteger(arg3));
      }
    else
-     { compareValue = strcmp(DOToString(arg1),DOToString(arg2)); }
+     { compareResult = strcmp(DOToString(arg1),DOToString(arg2)); }
 
    /*========================================================*/
    /* Return Values are as follows:                          */
@@ -492,9 +446,10 @@ void StrCompareFunction(
    /*  0 is returned if <string-1> is equal to <string-2>.   */
    /*========================================================*/
 
-   if (compareValue < 0)
+   returnValue->type = INTEGER;
+   if (compareResult < 0)
      { returnValue->value = EnvAddLong(theEnv,-1); }
-   else if (compareValue > 0)
+   else if (compareResult > 0)
      { returnValue->value = EnvAddLong(theEnv,1); }
    else
      { returnValue->value = EnvAddLong(theEnv,0); }
@@ -509,7 +464,7 @@ void SubStringFunction(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   CLIPSValue theArgument;
+   CLIPSValue theArg;
    const char *tempString;
    char *returnString;
    size_t start, end, i, j, length;
@@ -520,38 +475,29 @@ void SubStringFunction(
    /* Check and retrieve the arguments. */
    /*===================================*/
 
-   if (EnvArgTypeCheck(theEnv,"sub-string",1,INTEGER,&theArgument) == false)
-     {
-      returnValue->value = EnvAddSymbol(theEnv,"");
-      return;
-     }
+   if (! UDFFirstArgument(context,INTEGER_TYPE,&theArg))
+     { return; }
 
-   if (CoerceToLongInteger(theArgument.type,theArgument.value) < 1)
+   if (CoerceToLongInteger(theArg.type,theArg.value) < 1)
      { start = 0; }
    else
-     { start = (size_t) CoerceToLongInteger(theArgument.type,theArgument.value) - 1; }
+     { start = (size_t) CoerceToLongInteger(theArg.type,theArg.value) - 1; }
 
-   if (EnvArgTypeCheck(theEnv,"sub-string",2,INTEGER,&theArgument) == false)
-     {
-      returnValue->value = EnvAddSymbol(theEnv,"");
-      return;
-     }
+   if (! UDFNextArgument(context,INTEGER_TYPE,&theArg))
+     { return; }
 
-   if (CoerceToLongInteger(theArgument.type,theArgument.value) < 1)
+   if (CoerceToLongInteger(theArg.type,theArg.value) < 1)
      {
       returnValue->value = EnvAddSymbol(theEnv,"");
       return;
      }
    else
-     { end = (size_t) CoerceToLongInteger(theArgument.type,theArgument.value) - 1; }
+     { end = (size_t) CoerceToLongInteger(theArg.type,theArg.value) - 1; }
 
-   if (EnvArgTypeCheck(theEnv,"sub-string",3,SYMBOL_OR_STRING,&theArgument) == false)
-     {
-      returnValue->value = EnvAddSymbol(theEnv,"");
-      return;
-     }
+   if (! UDFNextArgument(context,LEXEME_TYPES | INSTANCE_NAME_TYPE,&theArg))
+     { return; }
    
-   tempString = DOToString(theArgument);
+   tempString = DOToString(theArg);
    
    /*================================================*/
    /* If parameters are out of range return an error */
@@ -607,7 +553,7 @@ void StrIndexFunction(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   CLIPSValue theArgument1, theArgument2;
+   CLIPSValue theArg1, theArg2;
    const char *strg1, *strg2, *strg3;
    size_t i, j;
 
@@ -618,12 +564,14 @@ void StrIndexFunction(
    /* Check and retrieve the arguments. */
    /*===================================*/
 
-   if (EnvArgTypeCheck(theEnv,"str-index",1,SYMBOL_OR_STRING,&theArgument1) == false) return;
+   if (! UDFFirstArgument(context,LEXEME_TYPES | INSTANCE_NAME_TYPE,&theArg1))
+     { return; }
 
-   if (EnvArgTypeCheck(theEnv,"str-index",2,SYMBOL_OR_STRING,&theArgument2) == false) return;
+   if (! UDFNextArgument(context,LEXEME_TYPES | INSTANCE_NAME_TYPE,&theArg2))
+     { return; }
 
-   strg1 = DOToString(theArgument1);
-   strg2 = DOToString(theArgument2);
+   strg1 = DOToString(theArg1);
+   strg2 = DOToString(theArg2);
 
    /*=================================*/
    /* Find the position in string2 of */
@@ -669,7 +617,7 @@ void StringToFieldFunction(
    /* The argument should be of type symbol or string. */
    /*==================================================*/
 
-   if (EnvArgTypeCheck(theEnv,"string-to-field",1,SYMBOL_OR_STRING,&theArg) == false)
+   if (! UDFFirstArgument(context,LEXEME_TYPES | INSTANCE_NAME_TYPE,&theArg))
      {
       returnValue->type = STRING;
       returnValue->value = EnvAddSymbol(theEnv,"*** ERROR ***");
@@ -747,12 +695,8 @@ void EvalFunction(
    /* The argument should be of type SYMBOL or STRING. */
    /*==================================================*/
 
-   if (EnvArgTypeCheck(theEnv,"eval",1,SYMBOL_OR_STRING,&theArg) == false)
-     {
-      SetpType(returnValue,SYMBOL);
-      SetpValue(returnValue,EnvFalseSymbol(theEnv));
-      return;
-     }
+   if (! UDFFirstArgument(context,LEXEME_TYPES,&theArg))
+     { return; }
 
    /*======================*/
    /* Evaluate the string. */
@@ -971,11 +915,8 @@ void BuildFunction(
    /* The argument should be of type SYMBOL or STRING. */
    /*==================================================*/
 
-   if (EnvArgTypeCheck(theEnv,"build",1,SYMBOL_OR_STRING,&theArg) == false)
-     {
-      returnValue->value = EnvFalseSymbol(theEnv);
-      return;
-     }
+   if (! UDFFirstArgument(context,LEXEME_TYPES,&theArg))
+     { return; }
 
    /*======================*/
    /* Build the construct. */

@@ -1026,14 +1026,13 @@ void RunCommand(
    int numArgs;
    long long runLimit = -1LL;
    CLIPSValue theArg;
-   
-   if ((numArgs = EnvArgCountCheck(theEnv,"run",NO_MORE_THAN,1)) == -1) return;
 
+   numArgs = UDFArgumentCount(context);
    if (numArgs == 0)
      { runLimit = -1LL; }
    else if (numArgs == 1)
      {
-      if (EnvArgTypeCheck(theEnv,"run",1,INTEGER,&theArg) == false) return;
+      if (! UDFFirstArgument(context,INTEGER_TYPE,&theArg)) return;
       runLimit = DOToLong(theArg);
      }
 
@@ -1172,7 +1171,7 @@ void SetBreakCommand(
    const char *argument;
    Defrule *defrulePtr;
 
-   if (EnvArgTypeCheck(theEnv,"set-break",1,SYMBOL,&theArg) == false) return;
+   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg)) return;
 
    argument = DOToString(theArg);
 
@@ -1196,19 +1195,15 @@ void RemoveBreakCommand(
   {
    CLIPSValue theArg;
    const char *argument;
-   int nargs;
    Defrule *defrulePtr;
-   
-   if ((nargs = EnvArgCountCheck(theEnv,"remove-break",NO_MORE_THAN,1)) == -1)
-     { return; }
 
-   if (nargs == 0)
+   if (UDFArgumentCount(context) == 0)
      {
       RemoveAllBreakpoints(theEnv);
       return;
      }
 
-   if (EnvArgTypeCheck(theEnv,"remove-break",1,SYMBOL,&theArg) == false) return;
+   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg)) return;
 
    argument = DOToString(theArg);
 
@@ -1238,12 +1233,12 @@ void ShowBreaksCommand(
    int numArgs;
    bool error;
    Defmodule *theModule;
-   
-   if ((numArgs = EnvArgCountCheck(theEnv,"show-breaks",NO_MORE_THAN,1)) == -1) return;
 
+   numArgs = UDFArgumentCount(context);
+   
    if (numArgs == 1)
      {
-      theModule = GetModuleName(theEnv,"show-breaks",1,&error);
+      theModule = GetModuleName(context,1,&error);
       if (error) return;
      }
    else
@@ -1422,27 +1417,16 @@ void FocusCommand(
 
    returnValue->type = SYMBOL;
    
-   /*=====================================================*/
-   /* Check for the correct number and type of arguments. */
-   /*=====================================================*/
-
-   if ((argCount = EnvArgCountCheck(theEnv,"focus",AT_LEAST,1)) == -1)
-     {
-      returnValue->value = EnvFalseSymbol(theEnv);
-      return;
-     }
-
    /*===========================================*/
    /* Focus on the specified defrule module(s). */
    /*===========================================*/
 
+   argCount = UDFArgumentCount(context);
+   
    for (i = argCount; i > 0; i--)
      {
-      if (EnvArgTypeCheck(theEnv,"focus",i,SYMBOL,&theArg) == false)
-        {
-         returnValue->value = EnvFalseSymbol(theEnv);
-         return;
-        }
+      if (! UDFNthArgument(context,i,SYMBOL_TYPE,&theArg))
+        { return; }
 
       argument = DOToString(theArg);
       theModule = EnvFindDefmodule(theEnv,argument);

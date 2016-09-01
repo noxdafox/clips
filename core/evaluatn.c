@@ -105,7 +105,7 @@
 
    static void                    DeallocateEvaluationData(Environment *);
    static void                    PrintCAddress(Environment *,const char *,void *);
-   static void                    NewCAddress(Environment *,CLIPSValue *);
+   static void                    NewCAddress(UDFContext *,CLIPSValue *);
    /*
    static bool                    DiscardCAddress(void *,void *);
    */
@@ -154,6 +154,7 @@ bool EvaluateExpression(
    struct profileFrameInfo profileFrame;
 #endif
 
+   returnValue->environment = theEnv;
    returnValue->type = RVOID;
    
    if (problem == NULL)
@@ -197,6 +198,11 @@ bool EvaluateExpression(
          oldArgument = EvaluationData(theEnv)->CurrentExpression;
          EvaluationData(theEnv)->CurrentExpression = problem;
 
+         theUDFContext.environment = theEnv;
+         theUDFContext.theFunction = fptr;
+         theUDFContext.lastArg = problem->argList;
+         theUDFContext.lastPosition = 1;
+         theUDFContext.returnValue = returnValue;
          fptr->functionPointer(theEnv,&theUDFContext,returnValue);
 
 #if PROFILING_FUNCTIONS 
@@ -1011,12 +1017,13 @@ static void PrintCAddress(
 /* NewCAddress: */
 /****************/
 static void NewCAddress(
-  Environment *theEnv,
+  UDFContext *context,
   CLIPSValue *rv)
   {
    int numberOfArguments;
+   Environment *theEnv = context->environment;
 
-   numberOfArguments = EnvRtnArgCount(theEnv);
+   numberOfArguments = UDFArgumentCount(context);
       
    if (numberOfArguments != 1)
      {

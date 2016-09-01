@@ -347,14 +347,14 @@ void ExitCommand(
    int argCnt;
    int status;
    CLIPSValue theArg;
-   
-   if ((argCnt = EnvArgCountCheck(theEnv,"exit",NO_MORE_THAN,1)) == -1) return;
-   
+
+   argCnt = UDFArgumentCount(context);
+
    if (argCnt == 0)
      { EnvExitRouter(theEnv,EXIT_SUCCESS); }
    else
     {
-     if (! EnvArgTypeCheck(theEnv,"exit",1,INTEGER,&theArg) == false)
+     if (! UDFFirstArgument(context,INTEGER_TYPE,&theArg))
        { EnvExitRouter(theEnv,EXIT_SUCCESS); }
 
      status = DOToLong(theArg);

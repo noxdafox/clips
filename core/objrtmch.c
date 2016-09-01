@@ -130,7 +130,10 @@ void ObjectMatchDelay(
    bool ov;
 
    ov = SetDelayObjectPatternMatching(theEnv,true);
-   EvaluateExpression(theEnv,GetFirstArgument(),returnValue);
+   
+   if (! UDFFirstArgument(context,ANY_TYPE,returnValue))
+     { return; }
+   
    if (EvaluationData(theEnv)->EvaluationError)
      {
       EnvSetHaltExecution(theEnv,false);

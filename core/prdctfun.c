@@ -114,7 +114,7 @@ void EqFunction(
    /* Determine the number of arguments. */
    /*====================================*/
 
-   numArgs = EnvRtnArgCount(theEnv);
+   numArgs = UDFArgumentCount(context);
    if (numArgs == 0)
      {
       returnValue->value = EnvFalseSymbol(theEnv);
@@ -189,7 +189,7 @@ void NeqFunction(
    /* Determine the number of arguments. */
    /*====================================*/
 
-   numArgs = EnvRtnArgCount(theEnv);
+   numArgs = UDFArgumentCount(context);
    if (numArgs == 0)
      {
       returnValue->value = EnvFalseSymbol(theEnv);
@@ -250,10 +250,10 @@ void StringpFunction(
   {
    CLIPSValue item;
 
-   returnValue->type = SYMBOL;
-   
-   EnvRtnUnknown(theEnv,1,&item);
+   if (! UDFFirstArgument(context,ANY_TYPE,&item))
+     { return; }
 
+   returnValue->type = SYMBOL;
    if (GetType(item) == STRING)
      { returnValue->value = EnvTrueSymbol(theEnv); }
    else
@@ -271,10 +271,10 @@ void SymbolpFunction(
   {
    CLIPSValue item;
 
-   returnValue->type = SYMBOL;
-   
-   EnvRtnUnknown(theEnv,1,&item);
+   if (! UDFFirstArgument(context,ANY_TYPE,&item))
+     { return; }
 
+   returnValue->type = SYMBOL;
    if (GetType(item) == SYMBOL)
      { returnValue->value = EnvTrueSymbol(theEnv); }
    else
@@ -292,10 +292,10 @@ void LexemepFunction(
   {
    CLIPSValue item;
 
-   returnValue->type = SYMBOL;
-   
-   EnvRtnUnknown(theEnv,1,&item);
+   if (! UDFFirstArgument(context,ANY_TYPE,&item))
+     { return; }
 
+   returnValue->type = SYMBOL;
    if ((GetType(item) == SYMBOL) || (GetType(item) == STRING))
      { returnValue->value = EnvTrueSymbol(theEnv); }
    else
@@ -313,10 +313,10 @@ void NumberpFunction(
   {
    CLIPSValue item;
 
-   returnValue->type = SYMBOL;
-   
-   EnvRtnUnknown(theEnv,1,&item);
+   if (! UDFFirstArgument(context,ANY_TYPE,&item))
+     { return; }
 
+   returnValue->type = SYMBOL;
    if ((GetType(item) == FLOAT) || (GetType(item) == INTEGER))
      { returnValue->value = EnvTrueSymbol(theEnv); }
    else
@@ -334,10 +334,10 @@ void FloatpFunction(
   {
    CLIPSValue item;
 
-   returnValue->type = SYMBOL;
-   
-   EnvRtnUnknown(theEnv,1,&item);
+   if (! UDFFirstArgument(context,ANY_TYPE,&item))
+     { return; }
 
+   returnValue->type = SYMBOL;
    if (GetType(item) == FLOAT)
      { returnValue->value = EnvTrueSymbol(theEnv); }
    else
@@ -355,10 +355,10 @@ void IntegerpFunction(
   {
    CLIPSValue item;
 
-   returnValue->type = SYMBOL;
-   
-   EnvRtnUnknown(theEnv,1,&item);
+   if (! UDFFirstArgument(context,ANY_TYPE,&item))
+     { return; }
 
+   returnValue->type = SYMBOL;
    if (GetType(item) != INTEGER)
      { returnValue->value = EnvFalseSymbol(theEnv); }
    else
@@ -376,10 +376,10 @@ void MultifieldpFunction(
   {
    CLIPSValue item;
 
-   returnValue->type = SYMBOL;
-   
-   EnvRtnUnknown(theEnv,1,&item);
+   if (! UDFFirstArgument(context,ANY_TYPE,&item))
+     { return; }
 
+   returnValue->type = SYMBOL;
    if (GetType(item) != MULTIFIELD)
      { returnValue->value = EnvFalseSymbol(theEnv); }
    else
@@ -397,44 +397,32 @@ void PointerpFunction(
   {
    CLIPSValue item;
 
-   returnValue->type = SYMBOL;
-   
-   EnvRtnUnknown(theEnv,1,&item);
+   if (! UDFFirstArgument(context,ANY_TYPE,&item))
+     { return; }
 
+   returnValue->type = SYMBOL;
    if (GetType(item) != EXTERNAL_ADDRESS)
      { returnValue->value = EnvFalseSymbol(theEnv); }
    else
      { returnValue->value = EnvTrueSymbol(theEnv); }
   }
 
-/*************************************/
-/* NotFunction: H/L access routine   */
-/*   for the not function.           */
-/*************************************/
+/***********************************/
+/* NotFunction: H/L access routine */
+/*   for the not function.         */
+/***********************************/
 void NotFunction(
   Environment *theEnv,
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   EXPRESSION *theArgument;
-   CLIPSValue result;
+   CLIPSValue theArg;
+
+   if (! UDFFirstArgument(context,ANY_TYPE,&theArg))
+     { return; }
 
    returnValue->type = SYMBOL;
-   
-   theArgument = GetFirstArgument();
-   if (theArgument == NULL)
-     {
-      returnValue->value = EnvFalseSymbol(theEnv);
-      return;
-     }
-
-   if (EvaluateExpression(theEnv,theArgument,&result))
-     {
-      returnValue->value = EnvFalseSymbol(theEnv);
-      return;
-     }
-
-   if ((result.value == EnvFalseSymbol(theEnv)) && (result.type == SYMBOL))
+   if ((theArg.value == EnvFalseSymbol(theEnv)) && (theArg.type == SYMBOL))
      { returnValue->value = EnvTrueSymbol(theEnv); }
    else
      { returnValue->value = EnvFalseSymbol(theEnv); }
@@ -449,21 +437,16 @@ void AndFunction(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   EXPRESSION *theArgument;
-   CLIPSValue result;
+   CLIPSValue theArg;
 
    returnValue->type = SYMBOL;
    
-   for (theArgument = GetFirstArgument();
-        theArgument != NULL;
-        theArgument = GetNextArgument(theArgument))
+   while (UDFHasNextArgument(context))
      {
-      if (EvaluateExpression(theEnv,theArgument,&result))
-        {
-         returnValue->value = EnvFalseSymbol(theEnv);
-         return;
-        }
-      if ((result.value == EnvFalseSymbol(theEnv)) && (result.type == SYMBOL))
+      if (! UDFNextArgument(context,ANY_TYPE,&theArg))
+        { return; }
+
+      if ((theArg.value == EnvFalseSymbol(theEnv)) && (theArg.type == SYMBOL))
         {
          returnValue->value = EnvFalseSymbol(theEnv);
          return;
@@ -482,22 +465,16 @@ void OrFunction(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   EXPRESSION *theArgument;
-   CLIPSValue result;
+   CLIPSValue theArg;
 
    returnValue->type = SYMBOL;
    
-   for (theArgument = GetFirstArgument();
-        theArgument != NULL;
-        theArgument = GetNextArgument(theArgument))
+   while (UDFHasNextArgument(context))
      {
-      if (EvaluateExpression(theEnv,theArgument,&result))
-        {
-         returnValue->value = EnvFalseSymbol(theEnv);
-         return;
-        }
+      if (! UDFNextArgument(context,ANY_TYPE,&theArg))
+        { return; }
 
-      if ((result.value != EnvFalseSymbol(theEnv)) || (result.type != SYMBOL))
+      if ((theArg.value != EnvFalseSymbol(theEnv)) || (theArg.type != SYMBOL))
         {
          returnValue->value = EnvTrueSymbol(theEnv);
          return;
@@ -516,9 +493,7 @@ void LessThanOrEqualFunction(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   EXPRESSION *theArgument;
    CLIPSValue rv1, rv2;
-   int pos = 1;
 
    returnValue->type = SYMBOL;
    
@@ -526,33 +501,18 @@ void LessThanOrEqualFunction(
    /* Get the first argument. */
    /*=========================*/
 
-   theArgument = GetFirstArgument();
-   if (theArgument == NULL)
-     {
-      returnValue->value = EnvTrueSymbol(theEnv);
-      return;
-     }
-   if (! GetNumericArgument(theEnv,theArgument,"<=",&rv1,false,pos))
-     {
-      returnValue->value = EnvFalseSymbol(theEnv);
-      return;
-     }
-   pos++;
+   if (! UDFFirstArgument(context,NUMBER_TYPES,&rv1))
+     { return; }
 
    /*====================================================*/
    /* Compare each of the subsequent arguments to its    */
    /* predecessor. If any is greater, then return FALSE. */
    /*====================================================*/
 
-   for (theArgument = GetNextArgument(theArgument);
-        theArgument != NULL;
-        theArgument = GetNextArgument(theArgument), pos++)
+   while (UDFHasNextArgument(context))
      {
-      if (! GetNumericArgument(theEnv,theArgument,"<=",&rv2,false,pos))
-        {
-         returnValue->value = EnvFalseSymbol(theEnv);
-         return;
-        }
+      if (! UDFNextArgument(context,NUMBER_TYPES,&rv2))
+        { return; }
         
       if (rv1.type == INTEGER)
         {
@@ -614,9 +574,7 @@ void GreaterThanOrEqualFunction(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   EXPRESSION *theArgument;
    CLIPSValue rv1, rv2;
-   int pos = 1;
 
    returnValue->type = SYMBOL;
    
@@ -624,35 +582,19 @@ void GreaterThanOrEqualFunction(
    /* Get the first argument. */
    /*=========================*/
 
-   theArgument = GetFirstArgument();
-   if (theArgument == NULL)
-     {
-      returnValue->value = EnvTrueSymbol(theEnv);
-      return;
-     }
-
-   if (! GetNumericArgument(theEnv,theArgument,">=",&rv1,false,pos))
-     {
-      returnValue->value = EnvFalseSymbol(theEnv);
-      return;
-     }
-   pos++;
+   if (! UDFFirstArgument(context,NUMBER_TYPES,&rv1))
+     { return; }
 
    /*===================================================*/
    /* Compare each of the subsequent arguments to its   */
    /* predecessor. If any is lesser, then return FALSE. */
    /*===================================================*/
 
-   for (theArgument = GetNextArgument(theArgument);
-        theArgument != NULL;
-        theArgument = GetNextArgument(theArgument), pos++)
+   while (UDFHasNextArgument(context))
      {
-      if (! GetNumericArgument(theEnv,theArgument,">=",&rv2,false,pos))
-        {
-         returnValue->value = EnvFalseSymbol(theEnv);
-         return;
-        }
-        
+      if (! UDFNextArgument(context,NUMBER_TYPES,&rv2))
+        { return; }
+
       if (rv1.type == INTEGER)
         {
          if (rv2.type == INTEGER)
@@ -713,9 +655,7 @@ void LessThanFunction(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   EXPRESSION *theArgument;
    CLIPSValue rv1, rv2;
-   int pos = 1;
 
    returnValue->type = SYMBOL;
    
@@ -723,19 +663,8 @@ void LessThanFunction(
    /* Get the first argument. */
    /*=========================*/
 
-   theArgument = GetFirstArgument();
-   if (theArgument == NULL)
-     {
-      returnValue->value = EnvTrueSymbol(theEnv);
-      return;
-     }
-
-   if (! GetNumericArgument(theEnv,theArgument,"<",&rv1,false,pos))
-     {
-      returnValue->value = EnvFalseSymbol(theEnv);
-      return;
-     }
-   pos++;
+   if (! UDFFirstArgument(context,NUMBER_TYPES,&rv1))
+     { return; }
 
    /*==========================================*/
    /* Compare each of the subsequent arguments */
@@ -743,15 +672,10 @@ void LessThanFunction(
    /* equal, then return FALSE.                */
    /*==========================================*/
 
-   for (theArgument = GetNextArgument(theArgument);
-        theArgument != NULL;
-        theArgument = GetNextArgument(theArgument), pos++)
+   while (UDFHasNextArgument(context))
      {
-      if (! GetNumericArgument(theEnv,theArgument,"<",&rv2,false,pos))
-        {
-         returnValue->value = EnvFalseSymbol(theEnv);
-         return;
-        }
+      if (! UDFNextArgument(context,NUMBER_TYPES,&rv2))
+        { return; }
         
       if (rv1.type == INTEGER)
         {
@@ -813,9 +737,7 @@ void GreaterThanFunction(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   EXPRESSION *theArgument;
    CLIPSValue rv1, rv2;
-   int pos = 1;
 
    returnValue->type = SYMBOL;
    
@@ -823,19 +745,8 @@ void GreaterThanFunction(
    /* Get the first argument. */
    /*=========================*/
 
-   theArgument = GetFirstArgument();
-   if (theArgument == NULL)
-     {
-      returnValue->value = EnvTrueSymbol(theEnv);
-      return;
-     }
-
-   if (! GetNumericArgument(theEnv,theArgument,">",&rv1,false,pos))
-     {
-      returnValue->value = EnvFalseSymbol(theEnv);
-      return;
-     }
-   pos++;
+   if (! UDFFirstArgument(context,NUMBER_TYPES,&rv1))
+     { return; }
 
    /*==========================================*/
    /* Compare each of the subsequent arguments */
@@ -843,15 +754,10 @@ void GreaterThanFunction(
    /* equal, then return FALSE.                */
    /*==========================================*/
 
-   for (theArgument = GetNextArgument(theArgument);
-        theArgument != NULL;
-        theArgument = GetNextArgument(theArgument), pos++)
+   while (UDFHasNextArgument(context))
      {
-      if (! GetNumericArgument(theEnv,theArgument,">",&rv2,false,pos))
-        {
-         returnValue->value = EnvFalseSymbol(theEnv);
-         return;
-        }
+      if (! UDFNextArgument(context,NUMBER_TYPES,&rv2))
+        { return; }
         
       if (rv1.type == INTEGER)
         {
@@ -913,9 +819,7 @@ void NumericEqualFunction(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   EXPRESSION *theArgument;
    CLIPSValue rv1, rv2;
-   int pos = 1;
 
    returnValue->type = SYMBOL;
    
@@ -923,35 +827,18 @@ void NumericEqualFunction(
    /* Get the first argument. */
    /*=========================*/
 
-   theArgument = GetFirstArgument();
-
-   if (theArgument == NULL)
-     {
-      returnValue->value = EnvTrueSymbol(theEnv);
-      return;
-     }
-
-   if (! GetNumericArgument(theEnv,theArgument,"=",&rv1,false,pos))
-     {
-      returnValue->value = EnvFalseSymbol(theEnv);
-      return;
-     }
-   pos++;
+   if (! UDFFirstArgument(context,NUMBER_TYPES,&rv1))
+     { return; }
 
    /*=================================================*/
    /* Compare each of the subsequent arguments to the */
    /* first. If any is unequal, then return FALSE.    */
    /*=================================================*/
 
-   for (theArgument = GetNextArgument(theArgument);
-        theArgument != NULL;
-        theArgument = GetNextArgument(theArgument), pos++)
+   while (UDFHasNextArgument(context))
      {
-      if (! GetNumericArgument(theEnv,theArgument,"=",&rv2,false,pos))
-        {
-         returnValue->value = EnvFalseSymbol(theEnv);
-         return;
-        }
+      if (! UDFNextArgument(context,NUMBER_TYPES,&rv2))
+        { return; }
         
       if (rv1.type == INTEGER)
         {
@@ -1010,9 +897,7 @@ void NumericNotEqualFunction(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   EXPRESSION *theArgument;
    CLIPSValue rv1, rv2;
-   int pos = 1;
 
    returnValue->type = SYMBOL;
    
@@ -1020,34 +905,18 @@ void NumericNotEqualFunction(
    /* Get the first argument. */
    /*=========================*/
 
-   theArgument = GetFirstArgument();
-   if (theArgument == NULL)
-     {
-      returnValue->value = EnvTrueSymbol(theEnv);
-      return;
-     }
-
-   if (! GetNumericArgument(theEnv,theArgument,"<>",&rv1,false,pos))
-     {
-      returnValue->value = EnvFalseSymbol(theEnv);
-      return;
-     }
-   pos++;
+   if (! UDFFirstArgument(context,NUMBER_TYPES,&rv1))
+     { return; }
 
    /*=================================================*/
    /* Compare each of the subsequent arguments to the */
    /* first. If any is equal, then return FALSE.      */
    /*=================================================*/
 
-   for (theArgument = GetNextArgument(theArgument);
-        theArgument != NULL;
-        theArgument = GetNextArgument(theArgument), pos++)
+   while (UDFHasNextArgument(context))
      {
-      if (! GetNumericArgument(theEnv,theArgument,"<>",&rv2,false,pos))
-        {
-         returnValue->value = EnvFalseSymbol(theEnv);
-         return;
-        }
+      if (! UDFNextArgument(context,NUMBER_TYPES,&rv2))
+        { return; }
         
       if (rv1.type == INTEGER)
         {
@@ -1111,12 +980,17 @@ void OddpFunction(
 
    returnValue->type = SYMBOL;
       
-   if (EnvArgTypeCheck(theEnv,"oddp",1,INTEGER,&item) == false)
-     {
-      returnValue->value = EnvFalseSymbol(theEnv);
-      return;
-     }
+   /*===========================================*/
+   /* Check for the correct types of arguments. */
+   /*===========================================*/
+ 
+   if (! UDFFirstArgument(context,INTEGER_TYPE,&item))
+     { return; }
 
+   /*===========================*/
+   /* Compute the return value. */
+   /*===========================*/
+   
    num = DOToLong(item);
 
    halfnum = (num / 2) * 2;
@@ -1143,12 +1017,17 @@ void EvenpFunction(
 
    returnValue->type = SYMBOL;
         
-   if (EnvArgTypeCheck(theEnv,"evenp",1,INTEGER,&item) == false)
-     {
-      returnValue->value = EnvFalseSymbol(theEnv);
-      return;
-     }
+   /*===========================================*/
+   /* Check for the correct types of arguments. */
+   /*===========================================*/
+     
+   if (! UDFFirstArgument(context,INTEGER_TYPE,&item))
+     { return; }
 
+   /*===========================*/
+   /* Compute the return value. */
+   /*===========================*/
+   
    num = DOToLong(item);
 
    halfnum = (num / 2) * 2;

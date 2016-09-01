@@ -35,6 +35,8 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Auto-float-dividend always enabled.            */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_bmathfun
@@ -51,10 +53,6 @@
    void                    SubtractionFunction(Environment *,UDFContext *,CLIPSValue *);
    void                    DivisionFunction(Environment *,UDFContext *,CLIPSValue *);
    void                    DivFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                    SetAutoFloatDividendCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                    GetAutoFloatDividendCommand(Environment *,UDFContext *,CLIPSValue *);
-   bool                    EnvGetAutoFloatDividend(Environment *);
-   bool                    EnvSetAutoFloatDividend(Environment *,bool);
    void                    IntegerFunction(Environment *,UDFContext *,CLIPSValue *);
    void                    FloatFunction(Environment *,UDFContext *,CLIPSValue *);
    void                    AbsFunction(Environment *,UDFContext *,CLIPSValue *);

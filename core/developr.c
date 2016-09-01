@@ -379,7 +379,7 @@ void ShowFactPatternNetworkCommand(
    const char *theName;
    int depth = 0, i;
 
-   theName = GetConstructName(theEnv,"show-fpn","template name");
+   theName = GetConstructName(context,"show-fpn","template name");
    if (theName == NULL) return;
 
    theDeftemplate = EnvFindDeftemplate(theEnv,theName);

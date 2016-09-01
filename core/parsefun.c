@@ -130,7 +130,7 @@ void CheckSyntaxFunction(
    /* The argument should be of type STRING. */
    /*========================================*/
 
-   if (EnvArgTypeCheck(theEnv,"check-syntax",1,STRING,&theArg) == false)
+   if (! UDFFirstArgument(context,STRING_TYPE,&theArg))
      { return; }
 
    /*===================*/

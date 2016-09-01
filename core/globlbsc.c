@@ -172,7 +172,7 @@ void UndefglobalCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   UndefconstructCommand(theEnv,"undefglobal",DefglobalData(theEnv)->DefglobalConstruct);
+   UndefconstructCommand(context,"undefglobal",DefglobalData(theEnv)->DefglobalConstruct);
   }
 
 /************************************/
@@ -195,7 +195,7 @@ void GetDefglobalListFunction(
   UDFContext *context,
   CLIPSValue *returnValue)
   { 
-   GetConstructListFunction(theEnv,"get-defglobal-list",returnValue,DefglobalData(theEnv)->DefglobalConstruct); 
+   GetConstructListFunction(context,returnValue,DefglobalData(theEnv)->DefglobalConstruct); 
   }
 
 /******************************************/
@@ -220,7 +220,7 @@ void DefglobalModuleFunction(
   CLIPSValue *returnValue)
   {
    returnValue->type = SYMBOL;
-   returnValue->value = GetConstructModuleCommand(theEnv,"defglobal-module",DefglobalData(theEnv)->DefglobalConstruct);
+   returnValue->value = GetConstructModuleCommand(context,"defglobal-module",DefglobalData(theEnv)->DefglobalConstruct);
   }
 
 #if DEBUGGING_FUNCTIONS
@@ -234,7 +234,7 @@ void PPDefglobalCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   PPConstructCommand(theEnv,"ppdefglobal",DefglobalData(theEnv)->DefglobalConstruct);
+   PPConstructCommand(context,"ppdefglobal",DefglobalData(theEnv)->DefglobalConstruct);
   }
 
 /*************************************/
@@ -258,7 +258,7 @@ void ListDefglobalsCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   ListConstructCommand(theEnv,"list-defglobals",DefglobalData(theEnv)->DefglobalConstruct);
+   ListConstructCommand(context,DefglobalData(theEnv)->DefglobalConstruct);
   }
 
 /***************************************/

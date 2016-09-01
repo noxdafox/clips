@@ -106,9 +106,11 @@ struct externalFunctionData
 
 struct UDFContext_t
   {
+   Environment *environment;
    struct FunctionDefinition *theFunction;
    int lastPosition;
    struct expr *lastArg;
+   CLIPSValue *returnValue;
   };
 
 #define ExternalFunctionData(theEnv) ((struct externalFunctionData *) GetEnvironmentData(theEnv,EXTERNAL_FUNCTION_DATA))
@@ -139,7 +141,15 @@ struct FunctionHash
    bool                           EnvRemoveUDF(Environment *,const char *);
    int                            GetMinimumArgs(struct FunctionDefinition *);
    int                            GetMaximumArgs(struct FunctionDefinition *);
+   int                            UDFArgumentCount(UDFContext *);
+   bool                           UDFNthArgument(UDFContext *,int,unsigned,CLIPSValue *);
+   void                           UDFInvalidArgumentMessage(UDFContext *,const char *);
+   const char                    *UDFContextFunctionName(UDFContext *);
    void                           PrintTypesString(Environment *,const char *,unsigned,bool);
+   bool                           UDFFirstArgument(UDFContext *,unsigned,CLIPSValue *);
+   bool                           UDFNextArgument(UDFContext *,unsigned,CLIPSValue *);
+
+#define UDFHasNextArgument(context) (context->lastArg != NULL)
 
 #endif /* _H_extnfunc */
 

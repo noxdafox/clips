@@ -131,7 +131,7 @@ void FactRelationFunction(
    
    returnValue->type = SYMBOL;
 
-   theFact = GetFactAddressOrIndexArgument(theEnv,"fact-relation",1,false);
+   theFact = GetFactAddressOrIndexArgument(context,false);
 
    if (theFact == NULL)
      {
@@ -180,7 +180,7 @@ void FactExistpFunction(
 
    returnValue->type = SYMBOL;
    
-   theFact = GetFactAddressOrIndexArgument(theEnv,"fact-existp",1,false);
+   theFact = GetFactAddressOrIndexArgument(context,false);
 
    if (EnvFactExistp(theEnv,theFact))
      { returnValue->value = EnvTrueSymbol(theEnv); }
@@ -229,14 +229,14 @@ void FactSlotValueFunction(
    /* Get the reference to the fact. */
    /*================================*/
 
-   theFact = GetFactAddressOrIndexArgument(theEnv,"fact-slot-value",1,true);
+   theFact = GetFactAddressOrIndexArgument(context,true);
    if (theFact == NULL) return;
 
    /*===========================*/
    /* Get the name of the slot. */
    /*===========================*/
 
-   if (EnvArgTypeCheck(theEnv,"fact-slot-value",2,SYMBOL,&theArg) == false)
+   if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg))
      { return; }
 
    /*=======================*/
@@ -314,7 +314,7 @@ void FactSlotNamesFunction(
    /* Get the reference to the fact. */
    /*================================*/
 
-   theFact = GetFactAddressOrIndexArgument(theEnv,"fact-slot-names",1,true);
+   theFact = GetFactAddressOrIndexArgument(context,true);
    if (theFact == NULL) return;
 
    /*=====================*/
@@ -397,35 +397,22 @@ void GetFactListFunction(
   {
    Defmodule *theModule;
    CLIPSValue theArg;
-   int numArgs;
 
    /*===========================================*/
    /* Determine if a module name was specified. */
    /*===========================================*/
 
-   if ((numArgs = EnvArgCountCheck(theEnv,"get-fact-list",NO_MORE_THAN,1)) == -1)
+   if (UDFHasNextArgument(context))
      {
-      EnvSetMultifieldErrorValue(theEnv,returnValue);
-      return;
-     }
-
-   if (numArgs == 1)
-     {
-      EnvRtnUnknown(theEnv,1,&theArg);
-
-      if (GetType(theArg) != SYMBOL)
-        {
-         EnvSetMultifieldErrorValue(theEnv,returnValue);
-         ExpectedTypeError1(theEnv,"get-fact-list",1,"defmodule name");
-         return;
-        }
+      if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
+        { return; }
 
       if ((theModule = EnvFindDefmodule(theEnv,DOToString(theArg))) == NULL)
         {
          if (strcmp("*",DOToString(theArg)) != 0)
            {
             EnvSetMultifieldErrorValue(theEnv,returnValue);
-            ExpectedTypeError1(theEnv,"get-fact-list",1,"defmodule name");
+            UDFInvalidArgumentMessage(context,"defmodule name");
             return;
            }
 
@@ -535,25 +522,20 @@ void PPFactFunction(
   CLIPSValue *returnValue)
   {
    struct fact *theFact;
-   int numberOfArguments;
    const char *logicalName = NULL;      /* Avoids warning */
    bool ignoreDefaults = false;
    CLIPSValue theArg;
-   
-   if ((numberOfArguments = EnvArgRangeCheck(theEnv,"ppfact",1,3)) == -1) return;
 
-   theFact = GetFactAddressOrIndexArgument(theEnv,"ppfact",1,true);
+   theFact = GetFactAddressOrIndexArgument(context,true);
    if (theFact == NULL) return;
 
    /*===============================================================*/
    /* Determine the logical name to which the fact will be printed. */
    /*===============================================================*/
 
-   if (numberOfArguments == 1)
-     { logicalName = STDOUT; }
-   else
+   if (UDFHasNextArgument(context))
      {
-      logicalName = GetLogicalName(theEnv,2,STDOUT);
+      logicalName = GetLogicalName(context,STDOUT);
       if (logicalName == NULL)
         {
          IllegalLogicalNameMessage(theEnv,"ppfact");
@@ -562,15 +544,17 @@ void PPFactFunction(
          return;
         }
      }
+   else
+     { logicalName = STDOUT; }
      
    /*=========================================*/
    /* Should slot values be printed if they   */
    /* are the same as the default slot value. */
    /*=========================================*/
    
-   if (numberOfArguments == 3)
+   if (UDFHasNextArgument(context))
      {
-      EnvRtnUnknown(theEnv,3,&theArg);
+      UDFNextArgument(context,ANY_TYPE,&theArg);
 
       if ((theArg.value == EnvFalseSymbol(theEnv)) && (theArg.type == SYMBOL))
         { ignoreDefaults = false; }
@@ -621,17 +605,17 @@ void EnvPPFact(
 /*   function which should be a reference to a valid fact.    */
 /**************************************************************/
 struct fact *GetFactAddressOrIndexArgument(
-  Environment *theEnv,
-  const char *theFunction,
-  int position,
+  UDFContext *context,
   bool noFactError)
   {
    CLIPSValue theArg;
    long long factIndex;
    Fact *theFact;
+   Environment *theEnv = context->environment;
    char tempBuffer[20];
 
-   EnvRtnUnknown(theEnv,position,&theArg);
+   if (! UDFNextArgument(context,ANY_TYPE,&theArg))
+     { return NULL; }
 
    if (GetType(theArg) == FACT_ADDRESS)
      {
@@ -643,7 +627,7 @@ struct fact *GetFactAddressOrIndexArgument(
       factIndex = ValueToLong(theArg.value);
       if (factIndex < 0)
         {
-         ExpectedTypeError1(theEnv,theFunction,position,"fact-address or fact-index");
+         UDFInvalidArgumentMessage(context,"fact-address or fact-index");
          return NULL;
         }
 
@@ -658,7 +642,7 @@ struct fact *GetFactAddressOrIndexArgument(
       return(theFact);
      }
 
-   ExpectedTypeError1(theEnv,theFunction,position,"fact-address or fact-index");
+   UDFInvalidArgumentMessage(context,"fact-address or fact-index");
    return NULL;
   }
 

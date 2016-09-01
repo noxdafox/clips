@@ -517,7 +517,8 @@ void SDCCommand(
    else
      { returnValue->value = EnvFalseSymbol(theEnv); }
 
-   EnvRtnUnknown(theEnv,1,&theArg);
+   if (! UDFFirstArgument(context,ANY_TYPE,&theArg))
+     { return; }
 
    if ((theArg.value == EnvFalseSymbol(theEnv)) && (theArg.type == SYMBOL))
      { EnvSetDynamicConstraintChecking(theEnv,false); }

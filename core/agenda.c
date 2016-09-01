@@ -906,7 +906,7 @@ void RefreshCommand(
    /* Get the name of the rule. */
    /*===========================*/
 
-   ruleName = GetConstructName(theEnv,"refresh","rule name");
+   ruleName = GetConstructName(context,"refresh","rule name");
    if (ruleName == NULL) return;
 
    /*===============================*/
@@ -994,7 +994,7 @@ void RefreshAgendaCommand(
    /* This function can have at most one argument. */
    /*==============================================*/
 
-   if ((numArgs = EnvArgCountCheck(theEnv,"refresh-agenda",NO_MORE_THAN,1)) == -1) return;
+   numArgs = UDFArgumentCount(context);
 
    /*===============================================================*/
    /* If a module name is specified, then the agenda of that module */
@@ -1004,7 +1004,7 @@ void RefreshAgendaCommand(
 
    if (numArgs == 1)
      {
-      theModule = GetModuleName(theEnv,"refresh-agenda",1,&error);
+      theModule = GetModuleName(context,1,&error);
       if (error) return;
      }
    else
@@ -1123,8 +1123,6 @@ void SetSalienceEvaluationCommand(
    CLIPSValue value;
    const char *argument;
    const char *oldValue;
-
-   returnValue->type = SYMBOL;
    
    /*==================================================*/
    /* Get the current setting for salience evaluation. */
@@ -1137,11 +1135,8 @@ void SetSalienceEvaluationCommand(
    /* which must be a symbol.                 */
    /*=========================================*/
 
-   if (EnvArgTypeCheck(theEnv,"set-salience-evaluation",1,SYMBOL,&value) == false)
-     {
-      returnValue->value = EnvAddSymbol(theEnv,oldValue);
-      return;
-     }
+   if (! UDFFirstArgument(context,SYMBOL_TYPE,&value))
+     { return; }
 
    /*=============================================================*/
    /* The allowed symbols to pass as an argument to this function */
@@ -1158,8 +1153,9 @@ void SetSalienceEvaluationCommand(
      { EnvSetSalienceEvaluation(theEnv,EVERY_CYCLE); }
    else
      {
-      ExpectedTypeError1(theEnv,"set-salience-evaluation",1,
-      "symbol with value when-defined, when-activated, or every-cycle");
+      UDFInvalidArgumentMessage(context,
+         "symbol with value when-defined, when-activated, or every-cycle");
+      returnValue->type = SYMBOL;
       returnValue->value = EnvAddSymbol(theEnv,oldValue);
       return;
      }
@@ -1168,6 +1164,7 @@ void SetSalienceEvaluationCommand(
    /* Return the old setting for salience evaluation. */
    /*=================================================*/
 
+   returnValue->type = SYMBOL;
    returnValue->value = EnvAddSymbol(theEnv,oldValue);
   }
 
@@ -1337,21 +1334,16 @@ void AgendaCommand(
    bool error;
    Defmodule *theModule;
 
-   /*==============================================*/
-   /* This function can have at most one argument. */
-   /*==============================================*/
-
-   if ((numArgs = EnvArgCountCheck(theEnv,"agenda",NO_MORE_THAN,1)) == -1) return;
-
    /*===============================================================*/
    /* If a module name is specified, then the agenda of that module */
    /* is displayed. Otherwise, the agenda of the current module is  */
    /* displayed.                                                    */
    /*===============================================================*/
 
+   numArgs = UDFArgumentCount(context);
    if (numArgs == 1)
      {
-      theModule = GetModuleName(theEnv,"agenda",1,&error);
+      theModule = GetModuleName(context,1,&error);
       if (error) return;
      }
    else

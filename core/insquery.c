@@ -267,7 +267,7 @@ void AnyInstances(
   {
    QUERY_CLASS *qclasses;
    unsigned rcnt;
-   bool TestResult;
+   bool testResult;
 
    returnValue->type = SYMBOL;
    
@@ -283,14 +283,14 @@ void AnyInstances(
    InstanceQueryData(theEnv)->QueryCore = get_struct(theEnv,query_core);
    InstanceQueryData(theEnv)->QueryCore->solns = (Instance **) gm2(theEnv,(sizeof(Instance *) * rcnt));
    InstanceQueryData(theEnv)->QueryCore->query = GetFirstArgument();
-   TestResult = TestForFirstInChain(theEnv,qclasses,0);
+   testResult = TestForFirstInChain(theEnv,qclasses,0);
    InstanceQueryData(theEnv)->AbortQuery = false;
    rm(theEnv,InstanceQueryData(theEnv)->QueryCore->solns,(sizeof(Instance *) * rcnt));
    rtn_struct(theEnv,query_core,InstanceQueryData(theEnv)->QueryCore);
    PopQueryCore(theEnv);
    DeleteQueryClasses(theEnv,qclasses);
    
-   if (TestResult)
+   if (testResult)
      { returnValue->value = EnvTrueSymbol(theEnv); }
    else
      { returnValue->value = EnvFalseSymbol(theEnv); }

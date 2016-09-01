@@ -814,7 +814,7 @@ void BloadCommand(
    
    returnValue->type = SYMBOL;
    
-   fileName = GetFileName(theEnv,"bload",1);
+   fileName = GetFileName(context);
    if (fileName != NULL)
      {
       if (EnvBload(theEnv,fileName))

@@ -119,7 +119,7 @@ struct bsaveSlotValueAtom
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static long                    InstancesSaveCommandParser(Environment *,const char *,
+   static long                    InstancesSaveCommandParser(UDFContext *,
                                                              long (*)(Environment *,const char *,int,EXPRESSION *,bool));
    static CLIPSValue             *ProcessSaveClassList(Environment *,const char *,EXPRESSION *,int,bool);
    static void                    ReturnSaveClassList(Environment *,CLIPSValue *);
@@ -206,7 +206,7 @@ void SaveInstancesCommand(
   CLIPSValue *returnValue)
   {
    returnValue->type = INTEGER;
-   returnValue->value = EnvAddLong(theEnv,InstancesSaveCommandParser(theEnv,"save-instances",EnvSaveInstancesDriver));
+   returnValue->value = EnvAddLong(theEnv,InstancesSaveCommandParser(context,EnvSaveInstancesDriver));
   }
 
 /******************************************************
@@ -224,23 +224,19 @@ void LoadInstancesCommand(
   CLIPSValue *returnValue)
   {
    const char *fileFound;
-   CLIPSValue temp;
+   CLIPSValue theArg;
    long instanceCount;
 
-   returnValue->type = INTEGER;
-   
-   if (EnvArgTypeCheck(theEnv,"load-instances",1,SYMBOL_OR_STRING,&temp) == false)
-     {
-      returnValue->value = EnvAddLong(theEnv,0);
-      return;
-     }
+   if (! UDFFirstArgument(context,LEXEME_TYPES,&theArg))
+     { return; }
 
-   fileFound = DOToString(temp);
+   fileFound = DOToString(theArg);
 
    instanceCount = EnvLoadInstances(theEnv,fileFound);
    if (EvaluationData(theEnv)->EvaluationError)
      { ProcessFileErrorMessage(theEnv,"load-instances",fileFound); }
      
+   returnValue->type = INTEGER;
    returnValue->value = EnvAddLong(theEnv,instanceCount);
   }
 
@@ -303,23 +299,19 @@ void RestoreInstancesCommand(
   CLIPSValue *returnValue)
   {
    const char *fileFound;
-   CLIPSValue temp;
+   CLIPSValue theArg;
    long instanceCount;
 
-   returnValue->type = INTEGER;
-   
-   if (EnvArgTypeCheck(theEnv,"restore-instances",1,SYMBOL_OR_STRING,&temp) == false)
-     {
-      returnValue->value = EnvAddLong(theEnv,0);
-      return;
-     }
+   if (! UDFFirstArgument(context,LEXEME_TYPES,&theArg))
+     { return; }
 
-   fileFound = DOToString(temp);
+   fileFound = DOToString(theArg);
 
    instanceCount = EnvRestoreInstances(theEnv,fileFound);
    if (EvaluationData(theEnv)->EvaluationError)
      { ProcessFileErrorMessage(theEnv,"restore-instances",fileFound); }
      
+   returnValue->type = INTEGER;
    returnValue->value = EnvAddLong(theEnv,instanceCount);
   }
 
@@ -384,23 +376,19 @@ void BinaryLoadInstancesCommand(
   CLIPSValue *returnValue)
   {
    const char *fileFound;
-   CLIPSValue temp;
+   CLIPSValue theArg;
    long instanceCount;
 
-   returnValue->type = INTEGER;
-   
-   if (EnvArgTypeCheck(theEnv,"bload-instances",1,SYMBOL_OR_STRING,&temp) == false)
-     {
-      returnValue->value = EnvAddLong(theEnv,0);
-      return;
-     }
+   if (! UDFFirstArgument(context,LEXEME_TYPES,&theArg))
+     { return; }
 
-   fileFound = DOToString(temp);
+   fileFound = DOToString(theArg);
 
    instanceCount = EnvBinaryLoadInstances(theEnv,fileFound);
    if (EvaluationData(theEnv)->EvaluationError)
      { ProcessFileErrorMessage(theEnv,"bload-instances",fileFound); }
      
+   returnValue->type = INTEGER;
    returnValue->value = EnvAddLong(theEnv,instanceCount);
   }
 
@@ -573,7 +561,7 @@ void BinarySaveInstancesCommand(
   CLIPSValue *returnValue)
   {
    returnValue->type = INTEGER;
-   returnValue->value = EnvAddLong(theEnv,InstancesSaveCommandParser(theEnv,"bsave-instances",EnvBinarySaveInstancesDriver));
+   returnValue->value = EnvAddLong(theEnv,InstancesSaveCommandParser(context,EnvBinarySaveInstancesDriver));
   }
 
 /*******************************************************
@@ -677,8 +665,7 @@ long EnvBinarySaveInstancesDriver(
   NOTES        : None
  ******************************************************/
 static long InstancesSaveCommandParser(
-  Environment *theEnv,
-  const char *functionName,
+  UDFContext *context,
   long (*saveFunction)(Environment *,const char *,int,EXPRESSION *,bool))
   {
    const char *fileFound;
@@ -686,27 +673,25 @@ static long InstancesSaveCommandParser(
    int argCount,saveCode = LOCAL_SAVE;
    EXPRESSION *classList = NULL;
    bool inheritFlag = false;
+   Environment *theEnv = context->environment;
 
-   if (EnvArgTypeCheck(theEnv,functionName,1,SYMBOL_OR_STRING,&temp) == false)
-     return(0L);
+   if (! UDFFirstArgument(context,LEXEME_TYPES,&temp))
+     { return 0L; }
    fileFound = DOToString(temp);
 
-   argCount = EnvRtnArgCount(theEnv);
+   argCount = UDFArgumentCount(context);
    if (argCount > 1)
      {
-      if (EnvArgTypeCheck(theEnv,functionName,2,SYMBOL,&temp) == false)
-        {
-         ExpectedTypeError1(theEnv,functionName,2,"symbol \"local\" or \"visible\"");
-         EnvSetEvaluationError(theEnv,true);
-         return(0L);
-        }
+      if (! UDFNextArgument(context,SYMBOL_TYPE,&temp))
+        { return 0L; }
+
       if (strcmp(DOToString(temp),"local") == 0)
         saveCode = LOCAL_SAVE;
       else if (strcmp(DOToString(temp),"visible") == 0)
         saveCode = VISIBLE_SAVE;
       else
         {
-         ExpectedTypeError1(theEnv,functionName,2,"symbol \"local\" or \"visible\"");
+         UDFInvalidArgumentMessage(context,"symbol \"local\" or \"visible\"");
          EnvSetEvaluationError(theEnv,true);
          return(0L);
         }

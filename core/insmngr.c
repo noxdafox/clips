@@ -139,7 +139,7 @@ void InitializeInstanceCommand(
 
    SetpType(returnValue,SYMBOL);
    SetpValue(returnValue,EnvFalseSymbol(theEnv));
-   ins = CheckInstance(theEnv,"initialize-instance");
+   ins = CheckInstance(context);
    if (ins == NULL)
      return;
    if (CoreInitializeInstance(theEnv,ins,GetFirstArgument()->nextArg) == true)
@@ -494,8 +494,10 @@ void InitSlotsCommand(
    SetpType(returnValue,SYMBOL);
    SetpValue(returnValue,EnvFalseSymbol(theEnv));
    EvaluationData(theEnv)->EvaluationError = false;
+   
    if (CheckCurrentMessage(theEnv,"init-slots",true) == false)
      return;
+
    EvaluateClassDefaults(theEnv,GetActiveInstance(theEnv));
    if (! EvaluationData(theEnv)->EvaluationError)
      {

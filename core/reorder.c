@@ -53,8 +53,6 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
-/*            UDF redesign.                                  */
-/*                                                           */
 /*************************************************************/
 
 #include "setup.h"

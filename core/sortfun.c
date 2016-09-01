@@ -145,17 +145,10 @@ void SortFunction(
    SetpValue(returnValue,EnvFalseSymbol(theEnv));
 
    /*=============================================*/
-   /* The function expects at least one argument. */
-   /*=============================================*/
-
-   if ((argumentCount = EnvArgCountCheck(theEnv,"sort",AT_LEAST,1)) == -1)
-     { return; }
-
-   /*=============================================*/
    /* Verify that the comparison function exists. */
    /*=============================================*/
 
-   if (EnvArgTypeCheck(theEnv,"sort",1,SYMBOL,&theArg) == false)
+   if (! UDFNthArgument(context,1,SYMBOL_TYPE,&theArg))
      { return; }
 
    functionName = DOToString(theArg);
@@ -208,7 +201,9 @@ void SortFunction(
    /* If there are no items to be sorted, */
    /* then return an empty multifield.    */
    /*=====================================*/
-
+  
+   argumentCount = UDFArgumentCount(context);
+ 
    if (argumentCount == 1)
      {
       EnvSetMultifieldErrorValue(theEnv,returnValue);
@@ -225,7 +220,8 @@ void SortFunction(
 
    for (i = 2; i <= argumentCount; i++)
      {
-      EnvRtnUnknown(theEnv,i,&theArguments[i-2]);
+      UDFNthArgument(context,i,ANY_TYPE,&theArguments[i-2]);
+
       if (GetType(theArguments[i-2]) == MULTIFIELD)
         { argumentSize += GetpDOLength(&theArguments[i-2]); }
       else

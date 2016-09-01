@@ -76,6 +76,7 @@ typedef struct messageHandlerLink
    void             SendCommand(Environment *,UDFContext *,CLIPSValue *);
    CLIPSValue      *GetNthMessageArgument(Environment *,int);
 
+   bool             NextHandlerAvailable(Environment *);
    void             NextHandlerAvailableFunction(Environment *,UDFContext *,CLIPSValue *);
    void             CallNextHandler(Environment *,UDFContext *,CLIPSValue *);
    void             FindApplicableOfName(Environment *,Defclass *,HANDLER_LINK *[],

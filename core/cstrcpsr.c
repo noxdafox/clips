@@ -717,7 +717,7 @@ int ParseConstruct(
    memset(&newGarbageFrame,0,sizeof(struct garbageFrame));
    newGarbageFrame.priorFrame = oldGarbageFrame;
    UtilityData(theEnv)->CurrentGarbageFrame = &newGarbageFrame;
-      
+
    /*==================================*/
    /* Prepare the parsing environment. */
    /*==================================*/

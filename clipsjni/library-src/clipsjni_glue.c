@@ -24,7 +24,7 @@ void JNIUserFunction(
    
    context = GetEnvironmentFunctionContext(theEnv);
 
-   argCount = EnvRtnArgCount(theEnv);
+   argCount = UDFArgumentCount(theUDFContext);
    arguments = (*env)->NewObject(env,
                                  CLIPSJNIData(theEnv)->arrayListClass,
                                  CLIPSJNIData(theEnv)->arrayListInitMethod,
@@ -32,7 +32,7 @@ void JNIUserFunction(
                                  
    for (i = 1; i <= argCount; i++)
      {
-      EnvRtnUnknown(theEnv,i,&theArg);
+      UDFNthArgument(theUDFContext,i,ANY_TYPE,&theArg);
       targ = ConvertDataObject(env,CLIPSJNIData(theEnv)->environmentObject,theEnv,&theArg); 
       
       if (targ != NULL)
@@ -324,7 +324,7 @@ void PrintJavaAddress(
 /* NewJavaAddress:  */
 /********************/
 void NewJavaAddress(
-  Environment *theEnv,
+  UDFContext *context,
   CLIPSValue *rv)
   {
    jclass theClass, tempClass;
@@ -342,6 +342,7 @@ void NewJavaAddress(
    bool found = false, matches;
    CLIPSValue *newArgs;
    jvalue *javaArgs;
+   Environment *theEnv = context->environment;
    
    /*=============================================*/
    /* Retrieve the JNI environment pointer stored */
@@ -355,14 +356,15 @@ void NewJavaAddress(
    /* at least include the Java class name of the object to be created.    */
    /*======================================================================*/
    
-   if ((numberOfArguments = EnvArgCountCheck(theEnv,"new (with type Java)",AT_LEAST,2)) == -1) 
+   numberOfArguments = UDFArgumentCount(context);
+   if (numberOfArguments < 2) 
      { return; }
    
    /*=======================================*/
    /* The Java class name must be a symbol. */
    /*=======================================*/
    
-   if (EnvArgTypeCheck(theEnv,"new (with type Java)",2,SYMBOL,&theValue) == false) 
+   if (! UDFNthArgument(context,1,ANY_TYPE,&theValue))
      { return; }
    
    className = DOToString(theValue);
@@ -420,7 +422,7 @@ void NewJavaAddress(
       newArgs = (CLIPSValue *) genalloc(theEnv,sizeof(CLIPSValue) * (numberOfArguments - 2));
       for (i = 0; i < numberOfArguments - 2; i++)
         {
-         EnvRtnUnknown(theEnv,i+3,&newArgs[i]);
+         UDFNthArgument(context,i+3,ANY_TYPE,&newArgs[i]);
          if (EnvGetEvaluationError(theEnv))
            {   
             (*env)->DeleteLocalRef(env,theClass);
@@ -601,7 +603,7 @@ void NewJavaAddress(
 /* CallJavaMethod: */
 /*******************/
 bool CallJavaMethod(
-  Environment *theEnv,
+  UDFContext *context,
   CLIPSValue *target,
   CLIPSValue *rv)
   {
@@ -621,6 +623,7 @@ bool CallJavaMethod(
    CLIPSValue *newArgs;
    jvalue *javaArgs;
    int i;
+   Environment *theEnv = context->environment;
    
    /*=============================================*/
    /* Retrieve the JNI environment pointer stored */
@@ -634,14 +637,15 @@ bool CallJavaMethod(
    /* must at least include the name of the method being called.      */
    /*=================================================================*/
    
-   if ((numberOfArguments = EnvArgCountCheck(theEnv,"call (with type Java)",AT_LEAST,2)) == -1) 
+   numberOfArguments = UDFArgumentCount(context);
+   if (numberOfArguments < 2) 
      { return false; }
 
    /*========================================*/
    /* The Java method name must be a symbol. */
    /*========================================*/
    
-   if (EnvArgTypeCheck(theEnv,"call (with type Java)",2,SYMBOL,&theValue) == false) 
+   if (! UDFNthArgument(context,1,SYMBOL_TYPE,&theValue))
      { return false; }
    
    methodName = DOToString(theValue);
@@ -657,7 +661,7 @@ bool CallJavaMethod(
       newArgs = (CLIPSValue *) genalloc(theEnv,sizeof(CLIPSValue) * (numberOfArguments - 2));
       for (i = 0; i < numberOfArguments - 2; i++)
         {
-         EnvRtnUnknown(theEnv,i+3,&newArgs[i]);
+         UDFNthArgument(context,i+3,ANY_TYPE,&newArgs[i]);
          if (EnvGetEvaluationError(theEnv))
            { return false; }
         }

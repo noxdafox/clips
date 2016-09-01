@@ -110,7 +110,8 @@ void SetResetGlobalsCommand(
    /* Determine the new value of the attribute. */
    /*===========================================*/
 
-   EnvRtnUnknown(theEnv,1,&theArg);
+   if (! UDFFirstArgument(context,ANY_TYPE,&theArg))
+     { return; }
 
    if ((theArg.value == EnvFalseSymbol(theEnv)) && (theArg.type == SYMBOL))
      { EnvSetResetGlobals(theEnv,false); }
@@ -174,12 +175,12 @@ void ShowDefglobalsCommand(
    Defmodule *theModule;
    int numArgs;
    bool error;
-   
-   if ((numArgs = EnvArgCountCheck(theEnv,"show-defglobals",NO_MORE_THAN,1)) == -1) return;
+
+   numArgs = UDFArgumentCount(context);
 
    if (numArgs == 1)
      {
-      theModule = GetModuleName(theEnv,"show-defglobals",1,&error);
+      theModule = GetModuleName(context,1,&error);
       if (error) return;
      }
    else

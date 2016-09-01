@@ -103,7 +103,7 @@
    bool                    EnvUndefclass(Environment *,Defclass *);
    bool                    HasSuperclass(Defclass *,Defclass *);
 
-   SYMBOL_HN              *CheckClassAndSlot(Environment *,const char *,Defclass **);
+   SYMBOL_HN              *CheckClassAndSlot(UDFContext *,const char *,Defclass **);
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
    void                    SaveDefclasses(Environment *,Defmodule *,const char *);

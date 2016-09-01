@@ -161,13 +161,13 @@ void ProfileCommand(
    const char *argument;
    CLIPSValue theValue;
 
-   if (EnvArgTypeCheck(theEnv,"profile",1,SYMBOL,&theValue) == false) return;
+   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theValue)) return;
 
    argument = DOToString(theValue);
 
    if (! Profile(theEnv,argument))
      {
-      ExpectedTypeError1(theEnv,"profile",1,"symbol with value constructs, user-functions, or off");
+      UDFInvalidArgumentMessage(context,"symbol with value constructs, user-functions, or off");
       return;
      }
 
@@ -239,26 +239,7 @@ void ProfileInfoCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   int argCount;
-   CLIPSValue theValue;
    char buffer[512];
-      
-   /*===================================*/
-   /* The profile-info command expects  */
-   /* at most a single symbol argument. */
-   /*===================================*/
-
-   if ((argCount = EnvArgCountCheck(theEnv,"profile",NO_MORE_THAN,1)) == -1) return;
-
-   /*===========================================*/
-   /* The first profile-info argument indicates */
-   /* the field on which sorting is performed.  */
-   /*===========================================*/
-
-   if (argCount == 1)
-     {
-      if (EnvArgTypeCheck(theEnv,"profile",1,SYMBOL,&theValue) == false) return;
-     }
 
    /*==================================*/
    /* If code is still being profiled, */
@@ -734,11 +715,8 @@ void SetProfilePercentThresholdCommand(
    
    returnValue->type = FLOAT;
    
-   if (EnvArgTypeCheck(theEnv,"set-profile-percent-threshold",1,INTEGER_OR_FLOAT,&theValue) == false)
-      {
-       returnValue->value = EnvAddDouble(theEnv,ProfileFunctionData(theEnv)->PercentThreshold);
-       return;
-      }
+   if (! UDFFirstArgument(context,NUMBER_TYPES,&theValue))
+     { return; }
 
    if (GetType(theValue) == INTEGER)
      { newThreshold = (double) DOToLong(theValue); }
@@ -747,8 +725,7 @@ void SetProfilePercentThresholdCommand(
      
    if ((newThreshold < 0.0) || (newThreshold > 100.0))
      { 
-      ExpectedTypeError1(theEnv,"set-profile-percent-threshold",1,
-                         "number in the range 0 to 100");
+      UDFInvalidArgumentMessage(context,"number in the range 0 to 100");
       returnValue->value = EnvAddDouble(theEnv,-1.0);
      }
    else

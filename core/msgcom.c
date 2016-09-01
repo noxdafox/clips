@@ -483,21 +483,21 @@ void UndefmessageHandlerCommand(
       return;
      }
 #endif
-   if (EnvArgTypeCheck(theEnv,"undefmessage-handler",1,SYMBOL,&theArg) == false)
-     return;
+   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg)) return;
+
    cls = LookupDefclassByMdlOrScope(theEnv,DOToString(theArg));
    if ((cls == NULL) ? (strcmp(DOToString(theArg),"*") != 0) : false)
      {
       ClassExistError(theEnv,"undefmessage-handler",DOToString(theArg));
       return;
      }
-   if (EnvArgTypeCheck(theEnv,"undefmessage-handler",2,SYMBOL,&theArg) == false)
-     return;
+   if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg)) return;
+
    mname = (SYMBOL_HN *) theArg.value;
-   if (EnvRtnArgCount(theEnv) == 3)
+   if (UDFHasNextArgument(context))
      {
-      if (EnvArgTypeCheck(theEnv,"undefmessage-handler",3,SYMBOL,&theArg) == false)
-        return;
+      if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg)) return;
+
       tname = DOToString(theArg);
       if (strcmp(tname,"*") == 0)
         tname = NULL;
@@ -577,24 +577,26 @@ void PPDefmessageHandlerCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   CLIPSValue temp;
+   CLIPSValue theArg;
    SYMBOL_HN *csym,*msym;
    const char *tname;
    Defclass *cls = NULL;
    unsigned mtype;
    DefmessageHandler *hnd;
-   
-   if (EnvArgTypeCheck(theEnv,"ppdefmessage-handler",1,SYMBOL,&temp) == false)
-     return;
-   csym = FindSymbolHN(theEnv,DOToString(temp));
-   if (EnvArgTypeCheck(theEnv,"ppdefmessage-handler",2,SYMBOL,&temp) == false)
-     return;
-   msym = FindSymbolHN(theEnv,DOToString(temp));
-   if (EnvRtnArgCount(theEnv) == 3)
+
+   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
+     { return; }
+
+   csym = FindSymbolHN(theEnv,DOToString(theArg));
+   if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg))
+     { return; }
+
+   msym = FindSymbolHN(theEnv,DOToString(theArg));
+   if (UDFHasNextArgument(context))
      {
-      if (EnvArgTypeCheck(theEnv,"ppdefmessage-handler",3,SYMBOL,&temp) == false)
-        return;
-      tname = DOToString(temp);
+      if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg))
+        { return; }
+      tname = DOToString(theArg);
      }
    else
      tname = MessageHandlerData(theEnv)->hndquals[MPRIMARY];
@@ -639,13 +641,13 @@ void ListDefmessageHandlersCommand(
   CLIPSValue *returnValue)
   {
    bool inhp;
-   void *clsptr;
-   
-   if (EnvRtnArgCount(theEnv) == 0)
+   Defclass *clsptr;
+
+   if (UDFArgumentCount(context) == 0)
      EnvListDefmessageHandlers(theEnv,WDISPLAY,NULL,0);
    else
      {
-      clsptr = ClassInfoFnxArgs(theEnv,"list-defmessage-handlers",&inhp);
+      clsptr = ClassInfoFnxArgs(context,"list-defmessage-handlers",&inhp);
       if (clsptr == NULL)
         return;
       EnvListDefmessageHandlers(theEnv,WDISPLAY,clsptr,inhp);
@@ -667,23 +669,25 @@ void PreviewSendCommand(
   CLIPSValue *returnValue)
   {
    Defclass *cls;
-   CLIPSValue temp;
+   CLIPSValue theArg;
 
    /* =============================
       Get the class for the message
       ============================= */
-   if (EnvArgTypeCheck(theEnv,"preview-send",1,SYMBOL,&temp) == false)
-     return;
-   cls = LookupDefclassByMdlOrScope(theEnv,DOToString(temp));
+   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
+     { return; }
+
+   cls = LookupDefclassByMdlOrScope(theEnv,DOToString(theArg));
    if (cls == NULL)
      {
-      ClassExistError(theEnv,"preview-send",ValueToString(temp.value));
+      ClassExistError(theEnv,"preview-send",ValueToString(theArg.value));
       return;
      }
 
-   if (EnvArgTypeCheck(theEnv,"preview-send",2,SYMBOL,&temp) == false)
-     return;
-   EnvPreviewSend(theEnv,WDISPLAY,cls,DOToString(temp));
+   if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg))
+     { return; }
+
+   EnvPreviewSend(theEnv,WDISPLAY,cls,DOToString(theArg));
   }
 
 /********************************************************

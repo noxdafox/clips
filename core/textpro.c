@@ -1018,7 +1018,7 @@ struct topics
 /*============================================================================*/
 /******************************************************************************/
 
-   static struct topics          *GetCommandLineTopics(Environment *);
+   static struct topics          *GetCommandLineTopics(UDFContext *);
    static FILE                   *FindTopicInEntries(Environment *,const char *,struct topics *,char **,int *);
 
 /******************************************************************************/
@@ -1046,8 +1046,10 @@ void FetchCommand(
 
    returnValue->type = SYMBOL;
    returnValue->value = EnvFalseSymbol(theEnv);
-   if (EnvArgTypeCheck(theEnv,"fetch",1,SYMBOL_OR_STRING,&theArg) == false)
-      return;
+
+   if (! UDFFirstArgument(context,LEXEME_TYPES,&theArg))
+     { return; }
+
    load_ct = TextLookupFetch(theEnv,DOToString(theArg));
    if (load_ct <= 0)
      {
@@ -1095,7 +1097,7 @@ void PrintRegionCommand(
 
    returnValue->type = SYMBOL;
    
-   params = GetCommandLineTopics(theEnv);
+   params = GetCommandLineTopics(context);
    fp = FindTopicInEntries(theEnv,params->next->name,params->next->next,menu,&status);
    if ((status != NO_FILE) && (status != NO_TOPIC) && (status != EXIT))
      {
@@ -1156,7 +1158,7 @@ void GetRegionCommand(
 
    returnValue->type = STRING;
    
-   params = GetCommandLineTopics(theEnv);
+   params = GetCommandLineTopics(context);
    fp = FindTopicInEntries(theEnv,params->name,params->next,menu,&status);
    if ((status != NO_FILE) && (status != NO_TOPIC) && (status != EXIT))
      {
@@ -1217,16 +1219,12 @@ void TossCommand(
    const char *file;   /*Name of the file */
    CLIPSValue theArg;
 
-   returnValue->type = SYMBOL;
-   
-   if (EnvArgTypeCheck(theEnv,"toss",1,SYMBOL_OR_STRING,&theArg) == false)
-     {
-      returnValue->value = EnvFalseSymbol(theEnv);
-      return;
-     }
+   if (! UDFFirstArgument(context,LEXEME_TYPES,&theArg))
+     { return; }
      
    file = DOToString(theArg);
 
+   returnValue->type = SYMBOL;
    if (TextLookupToss(theEnv,file))
      { returnValue->value = EnvTrueSymbol(theEnv); }
    else
@@ -1250,21 +1248,22 @@ void TossCommand(
 /*          the list or NULL if there were no command line topics.            */
 /******************************************************************************/
 static struct topics *GetCommandLineTopics(
-  Environment *theEnv)
+  UDFContext *context)
   {
-   int topic_num,         /*Number of topics specified by the user */
-       theIndex;             /*Used to loop through the topic list    */
-   struct topics *head,   /*Address of the top of the topic list   */
-                 *tnode,  /*Address of new topic node              */
-                 *tptr;   /*Used to attach new node to the list    */
-   CLIPSValue val;       /*Unknown-type H/L data structure        */
+   struct topics *head,   /* Address of the top of the topic list */
+                 *tnode,  /* Address of new topic node            */
+                 *tptr;   /* Used to attach new node to the list  */
+   CLIPSValue val;        /* Unknown-type H/L data structure      */
+   Environment *theEnv = context->environment;
 
    head = NULL;
-   topic_num = EnvRtnArgCount(theEnv);
-   for (theIndex = 1; theIndex <= topic_num; theIndex++)
+
+   while (UDFHasNextArgument(context))
      {
       tnode = (struct topics *) gm2(theEnv,(int) sizeof(struct topics));
-      EnvRtnUnknown(theEnv,theIndex,&val);
+      
+      UDFNextArgument(context,ANY_TYPE,&val);
+      
       if ((GetType(val) == SYMBOL) || (GetType(val) == STRING))
         genstrncpy(tnode->name,DOToString(val),NAMESIZE-1);
       else if (GetType(val) == FLOAT)
@@ -1273,6 +1272,7 @@ static struct topics *GetCommandLineTopics(
         genstrncpy(tnode->name,LongIntegerToString(theEnv,DOToLong(val)),NAMESIZE-1);
       else
         genstrncpy(tnode->name,"***ERROR***",NAMESIZE-1);
+        
       tnode->next = NULL;
       tnode->end_list = NULL;
       if (head == NULL)

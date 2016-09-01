@@ -113,7 +113,7 @@
 /***************************************/
 
    static void                    DuplicateModifyCommand(Environment *,int,CLIPSValue *);
-   static SYMBOL_HN              *CheckDeftemplateAndSlotArguments(Environment *,const char *,Deftemplate **,int);
+   static SYMBOL_HN              *CheckDeftemplateAndSlotArguments(UDFContext *,Deftemplate **);
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    static struct expr            *ModAndDupParse(Environment *,struct expr *,const char *,const char *);
@@ -532,7 +532,7 @@ void DeftemplateSlotNamesFunction(
    /* Get the reference to the deftemplate. */
    /*=======================================*/
 
-   deftemplateName = GetConstructName(theEnv,"deftemplate-slot-names","deftemplate name");
+   deftemplateName = GetConstructName(context,"deftemplate-slot-names","deftemplate name");
    if (deftemplateName == NULL) return;
 
    theDeftemplate = EnvFindDeftemplate(theEnv,deftemplateName);
@@ -630,7 +630,7 @@ void DeftemplateSlotDefaultPFunction(
    /* Retrieve the deftemplate and slot name arguments. */
    /*===================================================*/
    
-   slotName = CheckDeftemplateAndSlotArguments(theEnv,"deftemplate-slot-defaultp",&theDeftemplate,2);
+   slotName = CheckDeftemplateAndSlotArguments(context,&theDeftemplate);
    if (slotName == NULL)
      {
       returnValue->value = EnvFalseSymbol(theEnv);
@@ -724,7 +724,7 @@ void DeftemplateSlotDefaultValueFunction(
    /* Retrieve the deftemplate and slot name arguments. */
    /*===================================================*/
    
-   slotName = CheckDeftemplateAndSlotArguments(theEnv,"deftemplate-slot-default-value",&theDeftemplate,2);
+   slotName = CheckDeftemplateAndSlotArguments(context,&theDeftemplate);
    if (slotName == NULL)
      {
       returnValue->type = SYMBOL;
@@ -835,7 +835,7 @@ void DeftemplateSlotCardinalityFunction(
    /* Retrieve the deftemplate and slot name arguments. */
    /*===================================================*/
    
-   slotName = CheckDeftemplateAndSlotArguments(theEnv,"deftemplate-slot-cardinality",&theDeftemplate,2);
+   slotName = CheckDeftemplateAndSlotArguments(context,&theDeftemplate);
    if (slotName == NULL)
      {
       EnvSetMultifieldErrorValue(theEnv,returnValue);
@@ -952,7 +952,7 @@ void DeftemplateSlotAllowedValuesFunction(
    /* Retrieve the deftemplate and slot name arguments. */
    /*===================================================*/
    
-   slotName = CheckDeftemplateAndSlotArguments(theEnv,"deftemplate-slot-allowed-values",&theDeftemplate,2);
+   slotName = CheckDeftemplateAndSlotArguments(context,&theDeftemplate);
    if (slotName == NULL)
      {
       EnvSetMultifieldErrorValue(theEnv,returnValue);
@@ -1061,7 +1061,7 @@ void DeftemplateSlotRangeFunction(
    /* Retrieve the deftemplate and slot name arguments. */
    /*===================================================*/
    
-   slotName = CheckDeftemplateAndSlotArguments(theEnv,"deftemplate-slot-range",&theDeftemplate,2);
+   slotName = CheckDeftemplateAndSlotArguments(context,&theDeftemplate);
    if (slotName == NULL)
      {
       EnvSetMultifieldErrorValue(theEnv,returnValue);
@@ -1172,7 +1172,7 @@ void DeftemplateSlotTypesFunction(
    /* Retrieve the deftemplate and slot name arguments. */
    /*===================================================*/
    
-   slotName = CheckDeftemplateAndSlotArguments(theEnv,"deftemplate-slot-types",&theDeftemplate,2);
+   slotName = CheckDeftemplateAndSlotArguments(context,&theDeftemplate);
    if (slotName == NULL)
      {
       EnvSetMultifieldErrorValue(theEnv,returnValue);
@@ -1345,7 +1345,7 @@ void DeftemplateSlotMultiPFunction(
    /* Retrieve the deftemplate and slot name arguments. */
    /*===================================================*/
    
-   slotName = CheckDeftemplateAndSlotArguments(theEnv,"deftemplate-slot-multip",&theDeftemplate,2);
+   slotName = CheckDeftemplateAndSlotArguments(context,&theDeftemplate);
    if (slotName == NULL)
      {
       returnValue->value = EnvFalseSymbol(theEnv);
@@ -1430,7 +1430,7 @@ void DeftemplateSlotSinglePFunction(
    /* Retrieve the deftemplate and slot name arguments. */
    /*===================================================*/
    
-   slotName = CheckDeftemplateAndSlotArguments(theEnv,"deftemplate-slot-singlep",&theDeftemplate,2);
+   slotName = CheckDeftemplateAndSlotArguments(context,&theDeftemplate);
    if (slotName == NULL)
      {
       returnValue->value = EnvFalseSymbol(theEnv);
@@ -1515,7 +1515,7 @@ void DeftemplateSlotExistPFunction(
    /* Retrieve the deftemplate and slot name arguments. */
    /*===================================================*/
    
-   slotName = CheckDeftemplateAndSlotArguments(theEnv,"deftemplate-slot-existp",&theDeftemplate,2);
+   slotName = CheckDeftemplateAndSlotArguments(context,&theDeftemplate);
    if (slotName == NULL)
      {
       returnValue->value = EnvFalseSymbol(theEnv);
@@ -1590,7 +1590,7 @@ void DeftemplateSlotFacetExistPFunction(
    /* Retrieve the deftemplate and slot name arguments. */
    /*===================================================*/
    
-   slotName = CheckDeftemplateAndSlotArguments(theEnv,"deftemplate-slot-facet-existp",&theDeftemplate,3);
+   slotName = CheckDeftemplateAndSlotArguments(context,&theDeftemplate);
    if (slotName == NULL)
      {
       returnValue->value = EnvFalseSymbol(theEnv);
@@ -1601,7 +1601,7 @@ void DeftemplateSlotFacetExistPFunction(
    /* Get the name of the facet. */
    /*============================*/
 
-   if (EnvArgTypeCheck(theEnv,"deftemplate-slot-facet-existp",3,SYMBOL,&facetName) == false)
+   if (! UDFNextArgument(context,SYMBOL_TYPE,&facetName))
      {
       returnValue->value = EnvFalseSymbol(theEnv);
       return;
@@ -1691,7 +1691,7 @@ void DeftemplateSlotFacetValueFunction(
    /* Retrieve the deftemplate and slot name arguments. */
    /*===================================================*/
    
-   slotName = CheckDeftemplateAndSlotArguments(theEnv,"deftemplate-slot-facet-existp",&theDeftemplate,3);
+   slotName = CheckDeftemplateAndSlotArguments(context,&theDeftemplate);
    if (slotName == NULL)
      { return; }
 
@@ -1699,7 +1699,7 @@ void DeftemplateSlotFacetValueFunction(
    /* Get the name of the facet. */
    /*============================*/
 
-   if (EnvArgTypeCheck(theEnv,"deftemplate-slot-facet-existp",3,SYMBOL,&facetName) == false)
+   if (! UDFNthArgument(context,3,SYMBOL_TYPE,&facetName))
      { return; }
      
    /*===========================*/
@@ -1768,27 +1768,21 @@ bool EnvDeftemplateSlotFacetValue(
 /*   and slot arguments for various functions.              */
 /************************************************************/
 static SYMBOL_HN *CheckDeftemplateAndSlotArguments(
-  Environment *theEnv,
-  const char *functionName,
-  Deftemplate **theDeftemplate,
-  int expectedArgs)
+  UDFContext *context,
+  Deftemplate **theDeftemplate)
   {
-   CLIPSValue tempDO;
+   CLIPSValue theArg;
    const char *deftemplateName;
+   Environment *theEnv = context->environment;
 
    /*=======================================*/
    /* Get the reference to the deftemplate. */
    /*=======================================*/
 
-   EnvRtnUnknown(theEnv,1,&tempDO);
-
-   if (GetType(tempDO) != SYMBOL)
-     {
-      ExpectedTypeError1(theEnv,functionName,1,"deftemplate name");
-      return NULL;
-     }
+   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
+     { return NULL; }
      
-   deftemplateName = DOToString(tempDO);
+   deftemplateName = DOToString(theArg);
 
    *theDeftemplate = EnvFindDeftemplate(theEnv,deftemplateName);
    if (*theDeftemplate == NULL)
@@ -1800,11 +1794,11 @@ static SYMBOL_HN *CheckDeftemplateAndSlotArguments(
    /*===========================*/
    /* Get the name of the slot. */
    /*===========================*/
-
-   if (EnvArgTypeCheck(theEnv,functionName,2,SYMBOL,&tempDO) == false)
+   
+   if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg))
      { return NULL; }
      
-   return((SYMBOL_HN *) GetValue(tempDO));
+   return((SYMBOL_HN *) GetValue(theArg));
   }
   
 #if (! RUN_TIME) && (! BLOAD_ONLY)

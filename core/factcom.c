@@ -109,7 +109,7 @@
    static struct expr            *AssertParse(Environment *,struct expr *,const char *);
 #endif
 #if DEBUGGING_FUNCTIONS
-   static long long               GetFactsArgument(Environment *,int,int);
+   static long long               GetFactsArgument(UDFContext *);
 #endif
    static struct expr            *StandardLoadFact(Environment *,const char *,struct token *);
    static CLIPSValue             *GetSaveFactsDeftemplateNames(Environment *,struct expr *,int,int *,bool *);
@@ -295,23 +295,20 @@ void RetractCommand(
   {
    long long factIndex;
    Fact *ptr;
-   struct expr *theArgument;
-   CLIPSValue theResult;
-   int argNumber;
-   
+   CLIPSValue theArg;
+
    /*================================*/
    /* Iterate through each argument. */
    /*================================*/
 
-   for (theArgument = GetFirstArgument(), argNumber = 1;
-        theArgument != NULL;
-        theArgument = GetNextArgument(theArgument), argNumber++)
+   while (UDFHasNextArgument(context))
      {
       /*========================*/
       /* Evaluate the argument. */
       /*========================*/
 
-      EvaluateExpression(theEnv,theArgument,&theResult);
+      if (! UDFNextArgument(context,INTEGER_TYPE | FACT_ADDRESS_TYPE | SYMBOL_TYPE,&theArg))
+        { return; }
 
       /*===============================================*/
       /* If the argument evaluates to an integer, then */
@@ -319,16 +316,16 @@ void RetractCommand(
       /* to be retracted.                              */
       /*===============================================*/
 
-      if (theResult.type == INTEGER)
+      if (theArg.type == INTEGER)
         {
          /*==========================================*/
          /* A fact index must be a positive integer. */
          /*==========================================*/
 
-         factIndex = ValueToLong(theResult.value);
+         factIndex = ValueToLong(theArg.value);
          if (factIndex < 0)
            {
-            ExpectedTypeError1(theEnv,"retract",argNumber,"fact-address, fact-index, or the symbol *");
+            UDFInvalidArgumentMessage(context,"fact-address, fact-index, or the symbol *");
             return;
            }
 
@@ -358,16 +355,16 @@ void RetractCommand(
       /* address, we can directly retract it.          */
       /*===============================================*/
 
-      else if (theResult.type == FACT_ADDRESS)
-        { EnvRetract(theEnv,theResult.value); }
+      else if (theArg.type == FACT_ADDRESS)
+        { EnvRetract(theEnv,theArg.value); }
 
       /*============================================*/
       /* Otherwise if the argument evaluates to the */
       /* symbol *, then all facts are retracted.    */
       /*============================================*/
 
-      else if ((theResult.type == SYMBOL) ?
-               (strcmp(ValueToString(theResult.value),"*") == 0) : false)
+      else if ((theArg.type == SYMBOL) ?
+               (strcmp(ValueToString(theArg.value),"*") == 0) : false)
         {
          RemoveAllFacts(theEnv);
          return;
@@ -380,7 +377,7 @@ void RetractCommand(
 
       else
         {
-         ExpectedTypeError1(theEnv,"retract",argNumber,"fact-address, fact-index, or the symbol *");
+         UDFInvalidArgumentMessage(context,"fact-address, fact-index, or the symbol *");
          EnvSetEvaluationError(theEnv,true);
         }
      }
@@ -411,7 +408,8 @@ void SetFactDuplicationCommand(
    /* Evaluate the argument. */
    /*========================*/
 
-   EnvRtnUnknown(theEnv,1,&theArg);
+   if (! UDFFirstArgument(context,ANY_TYPE,&theArg))
+     { return; }
 
    /*===============================================================*/
    /* If the argument evaluated to false, then the fact duplication */
@@ -457,22 +455,12 @@ void FactIndexFunction(
 
    returnValue->type = INTEGER;
    
-   /*========================*/
-   /* Evaluate the argument. */
-   /*========================*/
-
-   EnvRtnUnknown(theEnv,1,&theArg);
-
    /*======================================*/
    /* The argument must be a fact address. */
    /*======================================*/
 
-   if (GetType(theArg) != FACT_ADDRESS)
-     {
-      ExpectedTypeError1(theEnv,"fact-index",1,"fact-address");
-      returnValue->value = EnvAddLong(theEnv,-1);
-      return;
-     }
+   if (! UDFFirstArgument(context,FACT_ADDRESS_TYPE,&theArg))
+     { return; }
 
    /*================================================*/
    /* Return the fact index associated with the fact */
@@ -500,17 +488,9 @@ void FactsCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   int argumentCount;
    long long start = UNSPECIFIED, end = UNSPECIFIED, max = UNSPECIFIED;
    Defmodule *theModule;
    CLIPSValue theArg;
-   int argOffset;
-   
-   /*=========================================================*/
-   /* Determine the number of arguments to the facts command. */
-   /*=========================================================*/
-
-   if ((argumentCount = EnvArgCountCheck(theEnv,"facts",NO_MORE_THAN,4)) == -1) return;
 
    /*==================================*/
    /* The default module for the facts */
@@ -524,7 +504,7 @@ void FactsCommand(
    /* the default values to list the facts.    */
    /*==========================================*/
 
-   if (argumentCount == 0)
+   if (! UDFHasNextArgument(context))
      {
       EnvFacts(theEnv,WDISPLAY,theModule,start,end,max);
       return;
@@ -535,7 +515,7 @@ void FactsCommand(
    /* or start index was specified as the first argument.    */
    /*========================================================*/
 
-   EnvRtnUnknown(theEnv,1,&theArg);
+   if (! UDFFirstArgument(context,SYMBOL_TYPE | INTEGER_TYPE,&theArg)) return;
 
    /*===============================================*/
    /* If the first argument is a symbol, then check */
@@ -552,9 +532,7 @@ void FactsCommand(
          return;
         }
 
-      if ((start = GetFactsArgument(theEnv,2,argumentCount)) == INVALID) return;
-
-      argOffset = 1;
+      if ((start = GetFactsArgument(context)) == INVALID) return;
      }
 
    /*================================================*/
@@ -572,7 +550,6 @@ void FactsCommand(
          EnvSetEvaluationError(theEnv,true);
          return;
         }
-      argOffset = 0;
      }
 
    /*==========================================*/
@@ -581,7 +558,7 @@ void FactsCommand(
 
    else
      {
-      ExpectedTypeError1(theEnv,"facts",1,"symbol or positive number");
+      UDFInvalidArgumentMessage(context,"symbol or positive number");
       EnvSetHaltExecution(theEnv,true);
       EnvSetEvaluationError(theEnv,true);
       return;
@@ -591,8 +568,8 @@ void FactsCommand(
    /* Get the other arguments. */
    /*==========================*/
 
-   if ((end = GetFactsArgument(theEnv,2 + argOffset,argumentCount)) == INVALID) return;
-   if ((max = GetFactsArgument(theEnv,3 + argOffset,argumentCount)) == INVALID) return;
+   if ((end = GetFactsArgument(context)) == INVALID) return;
+   if ((max = GetFactsArgument(context)) == INVALID) return;
 
    /*=================*/
    /* List the facts. */
@@ -721,24 +698,23 @@ void EnvFacts(
 /*  invalid.                                                    */
 /****************************************************************/
 static long long GetFactsArgument(
-  Environment *theEnv,
-  int whichOne,
-  int argumentCount)
+  UDFContext *context)
   {
    long long factIndex;
    CLIPSValue theArg;
 
-   if (whichOne > argumentCount) return(UNSPECIFIED);
+   if (! UDFHasNextArgument(context)) return(UNSPECIFIED);
 
-   if (EnvArgTypeCheck(theEnv,"facts",whichOne,INTEGER,&theArg) == false) return(INVALID);
+   if (! UDFNextArgument(context,INTEGER_TYPE,&theArg))
+     { return(INVALID); }
 
    factIndex = DOToLong(theArg);
 
    if (factIndex < 0)
      {
-      ExpectedTypeError1(theEnv,"facts",whichOne,"positive number");
-      EnvSetHaltExecution(theEnv,true);
-      EnvSetEvaluationError(theEnv,true);
+      UDFInvalidArgumentMessage(context,"positive number");
+      EnvSetHaltExecution(context->environment,true);
+      EnvSetEvaluationError(context->environment,true);
       return(INVALID);
      }
 
@@ -770,7 +746,7 @@ void AssertStringFunction(
    /* Check for the correct number and type of arguments. */
    /*=====================================================*/
 
-   if (EnvArgTypeCheck(theEnv,"assert-string",1,STRING,&theArg) == false)
+   if (! UDFFirstArgument(context,STRING_TYPE,&theArg))
      { return; }
 
    /*==========================================*/
@@ -809,17 +785,13 @@ void SaveFactsCommand(
    /* Check for the correct number of arguments. */
    /*============================================*/
 
-   if ((numArgs = EnvArgCountCheck(theEnv,"save-facts",AT_LEAST,1)) == -1)
-     {
-      returnValue->value = EnvFalseSymbol(theEnv);
-      return;
-     }
+   numArgs = UDFArgumentCount(context);
 
    /*=================================================*/
    /* Get the file name to which facts will be saved. */
    /*=================================================*/
 
-   if ((fileName = GetFileName(theEnv,"save-facts",1)) == NULL)
+   if ((fileName = GetFileName(context)) == NULL)
      {
       returnValue->value = EnvFalseSymbol(theEnv);
       return;
@@ -833,8 +805,9 @@ void SaveFactsCommand(
 
    if (numArgs > 1)
      {
-      if (EnvArgTypeCheck(theEnv,"save-facts",2,SYMBOL,&theValue) == false)
+      if (! UDFNextArgument(context,SYMBOL_TYPE,&theValue))
         {
+         returnValue->type = SYMBOL;
          returnValue->value = EnvFalseSymbol(theEnv);
          return;
         }
@@ -888,12 +861,11 @@ void LoadFactsCommand(
    /* Get the file name from which facts will be loaded. */
    /*====================================================*/
 
-   if ((fileName = GetFileName(theEnv,"load-facts",1)) == NULL)
+   if ((fileName = GetFileName(context)) == NULL)
      {
       returnValue->value = EnvFalseSymbol(theEnv);
       return;
      }
-
 
    /*====================================*/
    /* Call the LoadFacts driver routine. */

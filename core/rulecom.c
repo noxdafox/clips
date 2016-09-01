@@ -223,7 +223,8 @@ void SetBetaMemoryResizingCommand(
    /* Any other value enables beta memory resizing.   */
    /*=================================================*/
 
-   EnvRtnUnknown(theEnv,1,&theArg);
+   if (! UDFFirstArgument(context,ANY_TYPE,&theArg))
+     { return; }
 
    if ((theArg.value == EnvFalseSymbol(theEnv)) && (theArg.type == SYMBOL))
      { EnvSetBetaMemoryResizing(theEnv,false); }
@@ -260,23 +261,15 @@ void MatchesCommand(
   CLIPSValue *returnValue)
   {
    const char *ruleName, *argument;
-   void *rulePtr;
-   int numberOfArguments;
+   Defrule *rulePtr;
    CLIPSValue theArg;
    int output;
 
    returnValue->type = SYMBOL;
    returnValue->value = EnvFalseSymbol(theEnv);
 
-   if ((numberOfArguments = EnvArgRangeCheck(theEnv,"matches",1,2)) == -1) return;
-
-   if (EnvArgTypeCheck(theEnv,"matches",1,SYMBOL,&theArg) == false) return;
-
-   if (GetType(theArg) != SYMBOL)
-     {
-      ExpectedTypeError1(theEnv,"matches",1,"rule name");
-      return;
-     }
+   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
+     { return; }
 
    ruleName = DOToString(theArg);
 
@@ -287,9 +280,9 @@ void MatchesCommand(
       return;
      }
 
-   if (numberOfArguments == 2)
+   if (UDFHasNextArgument(context))
      {
-      if (EnvArgTypeCheck(theEnv,"matches",2,SYMBOL,&theArg) == false)
+      if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg))
         { return; }
 
       argument = DOToString(theArg);
@@ -301,7 +294,7 @@ void MatchesCommand(
         { output = TERSE; }
       else
         {
-         ExpectedTypeError1(theEnv,"matches",2,"symbol with value verbose, succinct, or terse");
+         UDFInvalidArgumentMessage(context,"symbol with value verbose, succinct, or terse");
          return;
         }
      }
@@ -983,22 +976,14 @@ void JoinActivityCommand(
   {
    const char *ruleName, *argument;
    void *rulePtr;
-   int numberOfArguments;
    CLIPSValue theArg;
    int output;
 
+   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
+     { return; }
+
    returnValue->type = SYMBOL;
    returnValue->value = EnvFalseSymbol(theEnv);
-
-   if ((numberOfArguments = EnvArgRangeCheck(theEnv,"join-activity",1,2)) == -1) return;
-
-   if (EnvArgTypeCheck(theEnv,"join-activity",1,SYMBOL,&theArg) == false) return;
-
-   if (GetType(theArg) != SYMBOL)
-     {
-      ExpectedTypeError1(theEnv,"join-activity",1,"rule name");
-      return;
-     }
 
    ruleName = DOToString(theArg);
 
@@ -1009,9 +994,9 @@ void JoinActivityCommand(
       return;
      }
 
-   if (numberOfArguments == 2)
+   if (UDFHasNextArgument(context))
      {
-      if (EnvArgTypeCheck(theEnv,"join-activity",2,SYMBOL,&theArg) == false)
+      if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg))
         { return; }
 
       argument = DOToString(theArg);
@@ -1023,7 +1008,7 @@ void JoinActivityCommand(
         { output = TERSE; }
       else
         {
-         ExpectedTypeError1(theEnv,"join-activity",2,"symbol with value verbose, succinct, or terse");
+         UDFInvalidArgumentMessage(context,"symbol with value verbose, succinct, or terse");
          return;
         }
      }
@@ -1305,13 +1290,12 @@ void TimetagFunction(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   CLIPSValue item;
+   CLIPSValue theArg;
    void *ptr;
 
-   returnValue->type = INTEGER;
-   
-   ptr = GetFactOrInstanceArgument(theEnv,1,&item,"timetag");
+   ptr = GetFactOrInstanceArgument(context,1,&theArg);
 
+   returnValue->type = INTEGER;
    if (ptr == NULL)
      { returnValue->value = EnvAddLong(theEnv,-1); }
    else
@@ -1335,7 +1319,7 @@ void RuleComplexityCommand(
 
    returnValue->type = INTEGER;
    
-   ruleName = GetConstructName(theEnv,"rule-complexity","rule name");
+   ruleName = GetConstructName(context,"rule-complexity","rule name");
    if (ruleName == NULL)
      {
       returnValue->value = EnvAddLong(theEnv,-1);
@@ -1364,7 +1348,7 @@ void ShowJoinsCommand(
    const char *ruleName;
    Defrule *rulePtr;
    
-   ruleName = GetConstructName(theEnv,"show-joins","rule name");
+   ruleName = GetConstructName(context,"show-joins","rule name");
    if (ruleName == NULL) return;
 
    rulePtr = EnvFindDefrule(theEnv,ruleName);

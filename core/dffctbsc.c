@@ -227,7 +227,7 @@ void UndeffactsCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   UndefconstructCommand(theEnv,"undeffacts",DeffactsData(theEnv)->DeffactsConstruct);
+   UndefconstructCommand(context,"undeffacts",DeffactsData(theEnv)->DeffactsConstruct);
   }
 
 /***********************************/
@@ -250,7 +250,7 @@ void GetDeffactsListFunction(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   GetConstructListFunction(theEnv,"get-deffacts-list",returnValue,DeffactsData(theEnv)->DeffactsConstruct);
+   GetConstructListFunction(context,returnValue,DeffactsData(theEnv)->DeffactsConstruct);
   }
 
 /*****************************************/
@@ -275,7 +275,7 @@ void DeffactsModuleFunction(
   CLIPSValue *returnValue)
   {
    returnValue->type = SYMBOL;
-   returnValue->value = GetConstructModuleCommand(theEnv,"deffacts-module",DeffactsData(theEnv)->DeffactsConstruct);
+   returnValue->value = GetConstructModuleCommand(context,"deffacts-module",DeffactsData(theEnv)->DeffactsConstruct);
   }
 
 #if DEBUGGING_FUNCTIONS
@@ -289,7 +289,7 @@ void PPDeffactsCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   PPConstructCommand(theEnv,"ppdeffacts",DeffactsData(theEnv)->DeffactsConstruct);
+   PPConstructCommand(context,"ppdeffacts",DeffactsData(theEnv)->DeffactsConstruct);
   }
 
 /************************************/
@@ -313,7 +313,7 @@ void ListDeffactsCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   ListConstructCommand(theEnv,"list-deffacts",DeffactsData(theEnv)->DeffactsConstruct); 
+   ListConstructCommand(context,DeffactsData(theEnv)->DeffactsConstruct); 
   }
 
 /*************************************/

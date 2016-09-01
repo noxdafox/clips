@@ -603,17 +603,17 @@ void PreviewGeneric(
    Defgeneric *gfunc;
    Defgeneric *previousGeneric;
    int oldce;
-   CLIPSValue temp;
-   
+   CLIPSValue theArg;
+
    EvaluationData(theEnv)->EvaluationError = false;
-   if (EnvArgTypeCheck(theEnv,"preview-generic",1,SYMBOL,&temp) == false)
-     return;
-   gfunc = LookupDefgenericByMdlOrScope(theEnv,DOToString(temp));
+   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg)) return;
+
+   gfunc = LookupDefgenericByMdlOrScope(theEnv,DOToString(theArg));
    if (gfunc == NULL)
      {
       PrintErrorID(theEnv,"GENRCFUN",3,false);
       EnvPrintRouter(theEnv,WERROR,"Unable to find generic function ");
-      EnvPrintRouter(theEnv,WERROR,DOToString(temp));
+      EnvPrintRouter(theEnv,WERROR,DOToString(theArg));
       EnvPrintRouter(theEnv,WERROR," in function preview-generic.\n");
       return;
      }
