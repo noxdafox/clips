@@ -32,7 +32,7 @@
 /*            Added code for capturing errors/warnings.      */
 /*                                                           */
 /*            Added AwaitingInput flag.                      */
-/*                                                           */             
+/*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
@@ -119,7 +119,7 @@ struct batchEntry
 #define FILECOM_DATA 14
 
 struct fileCommandData
-  { 
+  {
 #if DEBUGGING_FUNCTIONS
    FILE *DribbleFP;
    char *DribbleBuffer;
@@ -188,7 +188,7 @@ void FileCommandDefinitions(
 #endif
 #endif
   }
-  
+
 /******************************************************/
 /* DeallocateFileCommandData: Deallocates environment */
 /*    data for file commands.                         */
@@ -197,7 +197,7 @@ static void DeallocateFileCommandData(
   Environment *theEnv)
   {
    struct batchEntry *theEntry, *nextEntry;
-   
+
    theEntry = FileCommandData(theEnv)->TopOfBatchList;
    while (theEntry != NULL)
      {
@@ -210,25 +210,25 @@ static void DeallocateFileCommandData(
 
       DeleteString(theEnv,(char *) theEntry->logicalSource);
       rtn_struct(theEnv,batchEntry,theEntry);
-         
+
       theEntry = nextEntry;
      }
-     
+
    if (FileCommandData(theEnv)->BatchBuffer != NULL)
      { rm(theEnv,FileCommandData(theEnv)->BatchBuffer,FileCommandData(theEnv)->BatchMaximumPosition); }
 
    DeleteString(theEnv,FileCommandData(theEnv)->batchPriorParsingFile);
    FileCommandData(theEnv)->batchPriorParsingFile = NULL;
-   
+
 #if DEBUGGING_FUNCTIONS
    if (FileCommandData(theEnv)->DribbleBuffer != NULL)
      { rm(theEnv,FileCommandData(theEnv)->DribbleBuffer,FileCommandData(theEnv)->DribbleMaximumPosition); }
-     
-   if (FileCommandData(theEnv)->DribbleFP != NULL) 
+
+   if (FileCommandData(theEnv)->DribbleFP != NULL)
      { GenClose(theEnv,FileCommandData(theEnv)->DribbleFP); }
 #endif
   }
-  
+
 #if DEBUGGING_FUNCTIONS
 /*****************************************************/
 /* FindDribble: Find routine for the dribble router. */
@@ -415,7 +415,7 @@ static void ExitDribble(
 
    if (FileCommandData(theEnv)->DribbleCurrentPosition > 0)
      { fprintf(FileCommandData(theEnv)->DribbleFP,"%s",FileCommandData(theEnv)->DribbleBuffer); }
- 
+
    if (FileCommandData(theEnv)->DribbleFP != NULL) GenClose(theEnv,FileCommandData(theEnv)->DribbleFP);
   }
 
@@ -431,7 +431,7 @@ void DribbleOnCommand(
    const char *fileName;
 
    returnValue->type = SYMBOL;
-   
+
    if ((fileName = GetFileName(context)) == NULL)
      {
       returnValue->value = EnvFalseSymbol(theEnv);
@@ -703,7 +703,7 @@ int LLGetcBatch(
    /*=============================*/
    /* Increment the line counter. */
    /*=============================*/
-   
+
    if (((char) rv == '\r') || ((char) rv == '\n'))
      { IncrementLineCount(theEnv); }
 
@@ -759,7 +759,7 @@ void BatchCommand(
    const char *fileName;
 
    returnValue->type = SYMBOL;
-      
+
    if ((fileName = GetFileName(context)) == NULL)
      {
       returnValue->value = EnvFalseSymbol(theEnv);
@@ -828,14 +828,14 @@ bool OpenBatch(
    /*========================================================================*/
    /* If this is the first batch file, remember the prior parsing file name. */
    /*========================================================================*/
-   
+
    if (FileCommandData(theEnv)->TopOfBatchList == NULL)
      { FileCommandData(theEnv)->batchPriorParsingFile = CopyString(theEnv,EnvGetParsingFileName(theEnv)); }
-     
+
    /*=======================================================*/
    /* Create the error capture router if it does not exist. */
    /*=======================================================*/
-   
+
    EnvSetParsingFileName(theEnv,fileName);
    SetLineCount(theEnv,0);
 
@@ -1028,7 +1028,7 @@ bool RemoveBatch(
 #if (! RUN_TIME) && (! BLOAD_ONLY)
       if (FileCommandData(theEnv)->TopOfBatchList->batchType == FILE_BATCH)
         { EnvSetParsingFileName(theEnv,FileCommandData(theEnv)->TopOfBatchList->fileName); }
-        
+
       SetLineCount(theEnv,FileCommandData(theEnv)->TopOfBatchList->lineNumber);
 #endif
      }
@@ -1058,7 +1058,7 @@ bool BatchActive(
 /******************************************************/
 void CloseAllBatchSources(
   Environment *theEnv)
-  {   
+  {
    /*================================================*/
    /* Free the batch buffer if it contains anything. */
    /*================================================*/
@@ -1096,7 +1096,7 @@ void BatchStarCommand(
   CLIPSValue *returnValue)
   {
    const char *fileName;
-   
+
    returnValue->type = SYMBOL;
 
    if ((fileName = GetFileName(context)) == NULL)
@@ -1150,7 +1150,7 @@ bool EnvBatchStar(
    EnvSetParsingFileName(theEnv,fileName);
 
    CreateErrorCaptureRouter(theEnv);
-     
+
    oldLineCountValue = SetLineCount(theEnv,1);
 #endif
 
@@ -1178,7 +1178,7 @@ bool EnvBatchStar(
          FlushPPBuffer(theEnv);
          EnvSetHaltExecution(theEnv,false);
          EnvSetEvaluationError(theEnv,false);
-         FlushBindList(theEnv);      
+         FlushBindList(theEnv);
          genfree(theEnv,theString,(unsigned) maxChars);
          theString = NULL;
          maxChars = 0;
@@ -1187,14 +1187,14 @@ bool EnvBatchStar(
          FlushParsingMessages(theEnv);
 #endif
         }
-        
+
       if ((inchar == '\r') || (inchar == '\n'))
         { IncrementLineCount(theEnv); }
      }
 
    if (theString != NULL)
      { genfree(theEnv,theString,(unsigned) maxChars); }
-     
+
    /*=======================*/
    /* Close the batch file. */
    /*=======================*/
@@ -1208,9 +1208,9 @@ bool EnvBatchStar(
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    FlushParsingMessages(theEnv);
    DeleteErrorCaptureRouter(theEnv);
-     
+
    SetLineCount(theEnv,oldLineCountValue);
-   
+
    EnvSetParsingFileName(theEnv,oldParsingFileName);
    DeleteString(theEnv,oldParsingFileName);
 #endif
@@ -1248,7 +1248,7 @@ void LoadCommand(
    int rv;
 
    returnValue->type = SYMBOL;
-      
+
    if ((theFileName = GetFileName(context)) == NULL)
      {
       returnValue->value = EnvFalseSymbol(theEnv);
@@ -1328,7 +1328,7 @@ void SaveCommand(
    const char *theFileName;
 
    returnValue->type = SYMBOL;
-        
+
    if ((theFileName = GetFileName(context)) == NULL)
      {
       returnValue->value = EnvFalseSymbol(theEnv);

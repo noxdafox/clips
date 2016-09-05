@@ -47,7 +47,7 @@
 /*            Changed garbage collection algorithm.          */
 /*                                                           */
 /*            Used genstrcpy instead of strcpy.              */
-/*                                                           */             
+/*                                                           */
 /*            Added support for external address hash table  */
 /*            and subtyping.                                 */
 /*                                                           */
@@ -135,7 +135,7 @@ void InitializeAtomTables(
 #pragma unused(externalAddressTable)
 #endif
    unsigned long i;
-   
+
    AllocateEnvironmentData(theEnv,SYMBOL_DATA,sizeof(struct symbolData),DeallocateSymbolData);
 
 #if ! RUN_TIME
@@ -187,7 +187,7 @@ void InitializeAtomTables(
    SetFloatTable(theEnv,floatTable);
    SetIntegerTable(theEnv,integerTable);
    SetBitMapTable(theEnv,bitmapTable);
-   
+
    SymbolData(theEnv)->ExternalAddressTable = (EXTERNAL_ADDRESS_HN **)
                 gm2(theEnv,(int) sizeof (EXTERNAL_ADDRESS_HN *) * EXTERNAL_ADDRESS_HASH_SIZE);
 
@@ -215,11 +215,11 @@ static void DeallocateSymbolData(
        (SymbolData(theEnv)->BitMapTable == NULL) ||
        (SymbolData(theEnv)->ExternalAddressTable == NULL))
      { return; }
-     
-   for (i = 0; i < SYMBOL_HASH_SIZE; i++) 
+
+   for (i = 0; i < SYMBOL_HASH_SIZE; i++)
      {
       shPtr = SymbolData(theEnv)->SymbolTable[i];
-      
+
       while (shPtr != NULL)
         {
          nextSHPtr = shPtr->next;
@@ -227,12 +227,12 @@ static void DeallocateSymbolData(
            {
             rm(theEnv,(void *) shPtr->contents,strlen(shPtr->contents)+1);
             rtn_struct(theEnv,symbolHashNode,shPtr);
-           }  
+           }
          shPtr = nextSHPtr;
-        } 
+        }
      }
-      
-   for (i = 0; i < FLOAT_HASH_SIZE; i++) 
+
+   for (i = 0; i < FLOAT_HASH_SIZE; i++)
      {
       fhPtr = SymbolData(theEnv)->FloatTable[i];
 
@@ -244,8 +244,8 @@ static void DeallocateSymbolData(
          fhPtr = nextFHPtr;
         }
      }
-     
-   for (i = 0; i < INTEGER_HASH_SIZE; i++) 
+
+   for (i = 0; i < INTEGER_HASH_SIZE; i++)
      {
       ihPtr = SymbolData(theEnv)->IntegerTable[i];
 
@@ -257,8 +257,8 @@ static void DeallocateSymbolData(
          ihPtr = nextIHPtr;
         }
      }
-     
-   for (i = 0; i < BITMAP_HASH_SIZE; i++) 
+
+   for (i = 0; i < BITMAP_HASH_SIZE; i++)
      {
       bmhPtr = SymbolData(theEnv)->BitMapTable[i];
 
@@ -268,13 +268,13 @@ static void DeallocateSymbolData(
          if (! bmhPtr->permanent)
            {
             rm(theEnv,(void *) bmhPtr->contents,bmhPtr->size);
-            rtn_struct(theEnv,bitMapHashNode,bmhPtr); 
-           } 
+            rtn_struct(theEnv,bitMapHashNode,bmhPtr);
+           }
          bmhPtr = nextBMHPtr;
         }
      }
 
-   for (i = 0; i < EXTERNAL_ADDRESS_HASH_SIZE; i++) 
+   for (i = 0; i < EXTERNAL_ADDRESS_HASH_SIZE; i++)
      {
       eahPtr = SymbolData(theEnv)->ExternalAddressTable[i];
 
@@ -283,8 +283,8 @@ static void DeallocateSymbolData(
          nextEAHPtr = eahPtr->next;
          if (! eahPtr->permanent)
            {
-            rtn_struct(theEnv,externalAddressHashNode,eahPtr); 
-           } 
+            rtn_struct(theEnv,externalAddressHashNode,eahPtr);
+           }
          eahPtr = nextEAHPtr;
         }
      }
@@ -292,8 +292,8 @@ static void DeallocateSymbolData(
    /*================================*/
    /* Remove the symbol hash tables. */
    /*================================*/
-   
- #if ! RUN_TIME  
+
+ #if ! RUN_TIME
    rm3(theEnv,SymbolData(theEnv)->SymbolTable,sizeof (SYMBOL_HN *) * SYMBOL_HASH_SIZE);
 
    genfree(theEnv,SymbolData(theEnv)->FloatTable,(int) sizeof (FLOAT_HN *) * FLOAT_HASH_SIZE);
@@ -302,13 +302,13 @@ static void DeallocateSymbolData(
 
    genfree(theEnv,SymbolData(theEnv)->BitMapTable,(int) sizeof (BITMAP_HN *) * BITMAP_HASH_SIZE);
 #endif
-   
+
    genfree(theEnv,SymbolData(theEnv)->ExternalAddressTable,(int) sizeof (EXTERNAL_ADDRESS_HN *) * EXTERNAL_ADDRESS_HASH_SIZE);
 
    /*==============================*/
    /* Remove binary symbol tables. */
    /*==============================*/
-   
+
 #if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE || BLOAD_INSTANCES || BSAVE_INSTANCES
    if (SymbolData(theEnv)->SymbolArray != NULL)
      rm3(theEnv,SymbolData(theEnv)->SymbolArray,(long) sizeof(SYMBOL_HN *) * SymbolData(theEnv)->NumberOfSymbols);
@@ -382,7 +382,7 @@ void *EnvAddSymbol(
     peek->bucket = tally;
     peek->count = 0;
     peek->permanent = false;
-      
+
     /*================================================*/
     /* Add the string to the list of ephemeral items. */
     /*================================================*/
@@ -414,8 +414,8 @@ SYMBOL_HN *FindSymbolHN(
     for (peek = SymbolData(theEnv)->SymbolTable[tally];
          peek != NULL;
          peek = peek->next)
-      { 
-       if (strcmp(str,peek->contents) == 0) 
+      {
+       if (strcmp(str,peek->contents) == 0)
          { return(peek); }
       }
 
@@ -479,7 +479,7 @@ void *EnvAddDouble(
     AddEphemeralHashNode(theEnv,(GENERIC_HN *) peek,&UtilityData(theEnv)->CurrentGarbageFrame->ephemeralFloatList,
                          sizeof(FLOAT_HN),0,true);
     UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
-    
+
     /*==================================*/
     /* Return the address of the float. */
     /*==================================*/
@@ -740,7 +740,7 @@ unsigned long HashSymbol(
 
    if (range == 0)
      { return tally; }
-     
+
    return(tally % range);
   }
 
@@ -754,15 +754,15 @@ unsigned long HashFloat(
    unsigned long tally = 0;
    char *word;
    unsigned i;
-   
+
    word = (char *) &number;
-   
+
    for (i = 0; i < sizeof(double); i++)
      { tally = tally * 127 + word[i]; }
-     
+
    if (range == 0)
      { return tally; }
-       
+
    return(tally % range);
   }
 
@@ -785,7 +785,7 @@ unsigned long HashInteger(
 
    if (range == 0)
      { return tally; }
-     
+
    return(tally);
   }
 
@@ -794,7 +794,7 @@ unsigned long HashInteger(
 /*   value for an external address.     */
 /****************************************/
 unsigned long HashExternalAddress(
-  Environment *theExternalAddress,
+  void *theExternalAddress,
   unsigned long range)
   {
    unsigned long tally;
@@ -803,14 +803,14 @@ unsigned long HashExternalAddress(
       void *vv;
       unsigned uv;
      } fis;
- 
+
    fis.uv = 0;
    fis.vv = theExternalAddress;
    tally = (fis.uv / 256);
-   
+
    if (range == 0)
      { return tally; }
-     
+
    return(tally % range);
   }
 
@@ -854,7 +854,7 @@ unsigned long HashBitMap(
 
    if (range == 0)
      { return count; }
-     
+
    tally = (count % range);
 
    return(tally);
@@ -1022,7 +1022,7 @@ void DecrementExternalAddressCount(
 
    return;
   }
-  
+
 /************************************************/
 /* RemoveHashNode: Removes a hash node from the */
 /*   SymbolTable, FloatTable, IntegerTable,     */
@@ -1083,7 +1083,7 @@ static void RemoveHashNode(
          ((BITMAP_HN *) theValue)->size);
      }
    else if (type == EXTERNAL_ADDRESS)
-     {       
+     {
       theAddress = (struct externalAddressHashNode *) theValue;
 
       if ((EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type] != NULL) &&
@@ -1153,10 +1153,10 @@ void RemoveEphemeralAtoms(
   Environment *theEnv)
   {
    struct garbageFrame *theGarbageFrame;
-   
+
    theGarbageFrame = UtilityData(theEnv)->CurrentGarbageFrame;
    if (! theGarbageFrame->dirty) return;
-   
+
    RemoveEphemeralHashNodes(theEnv,&theGarbageFrame->ephemeralSymbolList,(GENERIC_HN **) SymbolData(theEnv)->SymbolTable,
                             sizeof(SYMBOL_HN),SYMBOL,AVERAGE_STRING_SIZE);
    RemoveEphemeralHashNodes(theEnv,&theGarbageFrame->ephemeralFloatList,(GENERIC_HN **) SymbolData(theEnv)->FloatTable,
@@ -1182,7 +1182,7 @@ void EphemerateValue(
     FLOAT_HN *theFloat;
     INTEGER_HN *theInteger;
     EXTERNAL_ADDRESS_HN *theExternalAddress;
-    
+
     switch (theType)
       {
       case SYMBOL:
@@ -1224,7 +1224,7 @@ void EphemerateValue(
                              sizeof(EXTERNAL_ADDRESS_HN),sizeof(long),false);
         UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
         break;
-        
+
       case MULTIFIELD:
         EphemerateMultifield(theEnv,(struct multifield *) theValue);
         break;

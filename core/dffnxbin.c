@@ -126,7 +126,7 @@ void SetupDeffunctionsBload(
                              ClearDeffunctionBload);
 #endif
   }
-  
+
 /***********************************************************/
 /* DeallocateDeffunctionBloadData: Deallocates environment */
 /*    data for the deffunction bsave functionality.        */
@@ -191,7 +191,7 @@ static void BsaveDeffunctionFind(
    SaveBloadCount(theEnv,DeffunctionBinaryData(theEnv)->DeffunctionCount);
    DeffunctionBinaryData(theEnv)->DeffunctionCount = 0L;
 
-   DeffunctionBinaryData(theEnv)->ModuleCount = 
+   DeffunctionBinaryData(theEnv)->ModuleCount =
       DoForAllConstructs(theEnv,MarkDeffunctionItems,DeffunctionData(theEnv)->DeffunctionModuleIndex,
                          false,NULL);
   }

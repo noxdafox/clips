@@ -29,7 +29,7 @@
 /*            environment is created (i.e a pointer from the */
 /*            CLIPS environment to its parent environment).  */
 /*                                                           */
-/*      6.30: Added support for passing context information  */ 
+/*      6.30: Added support for passing context information  */
 /*            to user defined functions and callback         */
 /*            functions.                                     */
 /*                                                           */
@@ -135,7 +135,7 @@
 /***************************************/
 
    static void                    RemoveEnvironmentCleanupFunctions(struct environmentData *);
-   static void                   *CreateEnvironmentDriver(struct symbolHashNode **,struct floatHashNode **,
+   static Environment            *CreateEnvironmentDriver(struct symbolHashNode **,struct floatHashNode **,
                                                           struct integerHashNode **,struct bitMapHashNode **,
                                                           struct externalAddressHashNode **);
    static void                    SystemFunctionDefinitions(Environment *);
@@ -157,56 +157,56 @@ bool AllocateEnvironmentData(
    /*===========================================*/
    /* Environment data can't be of length zero. */
    /*===========================================*/
-   
+
    if (size <= 0)
      {
-      printf("\n[ENVRNMNT1] Environment data position %d allocated with size of 0 or less.\n",position);      
+      printf("\n[ENVRNMNT1] Environment data position %d allocated with size of 0 or less.\n",position);
       return false;
      }
-     
+
    /*================================================================*/
    /* Check to see if the data position exceeds the maximum allowed. */
    /*================================================================*/
-   
+
    if (position >= MAXIMUM_ENVIRONMENT_POSITIONS)
      {
-      printf("\n[ENVRNMNT2] Environment data position %d exceeds the maximum allowed.\n",position);      
+      printf("\n[ENVRNMNT2] Environment data position %d exceeds the maximum allowed.\n",position);
       return false;
      }
-     
+
    /*============================================================*/
    /* Check if the environment data has already been registered. */
    /*============================================================*/
-   
+
    if (theEnvironment->theData[position] != NULL)
      {
-      printf("\n[ENVRNMNT3] Environment data position %d already allocated.\n",position);      
+      printf("\n[ENVRNMNT3] Environment data position %d already allocated.\n",position);
       return false;
      }
-     
+
    /*====================*/
    /* Allocate the data. */
    /*====================*/
-   
+
    theEnvironment->theData[position] = malloc(size);
    if (theEnvironment->theData[position] == NULL)
      {
-      printf("\n[ENVRNMNT4] Environment data position %d could not be allocated.\n",position);      
+      printf("\n[ENVRNMNT4] Environment data position %d could not be allocated.\n",position);
       return false;
      }
-   
+
    memset(theEnvironment->theData[position],0,size);
-   
+
    /*=============================*/
    /* Store the cleanup function. */
    /*=============================*/
-   
+
    theEnvironment->cleanupFunctions[position] = cleanupFunction;
-   
+
    /*===============================*/
    /* Data successfully registered. */
    /*===============================*/
-   
+
    return true;
   }
 
@@ -214,7 +214,7 @@ bool AllocateEnvironmentData(
 /* CreateEnvironment: Creates an environment data structure */
 /*   and initializes its content to zero/null.              */
 /************************************************************/
-void *CreateEnvironment()
+Environment *CreateEnvironment()
   {
    return CreateEnvironmentDriver(NULL,NULL,NULL,NULL,NULL);
   }
@@ -223,7 +223,7 @@ void *CreateEnvironment()
 /* CreateRuntimeEnvironment: Creates an environment data  */
 /*   structure and initializes its content to zero/null.  */
 /**********************************************************/
-void *CreateRuntimeEnvironment(
+Environment *CreateRuntimeEnvironment(
   struct symbolHashNode **symbolTable,
   struct floatHashNode **floatTable,
   struct integerHashNode **integerTable,
@@ -231,12 +231,12 @@ void *CreateRuntimeEnvironment(
   {
    return CreateEnvironmentDriver(symbolTable,floatTable,integerTable,bitmapTable,NULL);
   }
-  
+
 /*********************************************************/
 /* CreateEnvironmentDriver: Creates an environment data  */
 /*   structure and initializes its content to zero/null. */
 /*********************************************************/
-void *CreateEnvironmentDriver(
+Environment *CreateEnvironmentDriver(
   struct symbolHashNode **symbolTable,
   struct floatHashNode **floatTable,
   struct integerHashNode **integerTable,
@@ -245,9 +245,9 @@ void *CreateEnvironmentDriver(
   {
    struct environmentData *theEnvironment;
    void *theData;
-   
+
    theEnvironment = (struct environmentData *) malloc(sizeof(struct environmentData));
-  
+
    if (theEnvironment == NULL)
      {
       printf("\n[ENVRNMNT5] Unable to create new environment.\n");
@@ -255,7 +255,7 @@ void *CreateEnvironmentDriver(
      }
 
    theData = malloc(sizeof(void *) * MAXIMUM_ENVIRONMENT_POSITIONS);
-   
+
    if (theData == NULL)
      {
       free(theEnvironment);
@@ -279,7 +279,7 @@ void *CreateEnvironmentDriver(
    /*=============================================*/
 
    theData = malloc(sizeof(void (*)(struct environmentData *)) * MAXIMUM_ENVIRONMENT_POSITIONS);
-   
+
    if (theData == NULL)
      {
       free(theEnvironment->theData);
@@ -293,7 +293,7 @@ void *CreateEnvironmentDriver(
 
    EnvInitializeEnvironment(theEnvironment,symbolTable,floatTable,integerTable,bitmapTable,externalAddressTable);
 
-   return(theEnvironment);
+   return theEnvironment;
   }
 
 /**********************************************/
@@ -304,7 +304,7 @@ void *GetEnvironmentContext(
   Environment *theEnvironment)
   {
    return(((struct environmentData *) theEnvironment)->context);
-  } 
+  }
 
 /*******************************************/
 /* SetEnvironmentContext: Sets the context */
@@ -315,13 +315,13 @@ void *SetEnvironmentContext(
   void *theContext)
   {
    void *oldContext;
-   
+
    oldContext = ((struct environmentData *) theEnvironment)->context;
-  
+
    ((struct environmentData *) theEnvironment)->context = theContext;
-   
+
    return oldContext;
-  } 
+  }
 
 /***************************************************/
 /* GetEnvironmentRouterContext: Returns the router */
@@ -331,7 +331,7 @@ void *GetEnvironmentRouterContext(
   Environment *theEnvironment)
   {
    return(((struct environmentData *) theEnvironment)->routerContext);
-  } 
+  }
 
 /************************************************/
 /* SetEnvironmentRouterContext: Sets the router */
@@ -342,13 +342,13 @@ void *SetEnvironmentRouterContext(
   void *theRouterContext)
   {
    void *oldRouterContext;
-   
+
    oldRouterContext = ((struct environmentData *) theEnvironment)->routerContext;
-  
+
    ((struct environmentData *) theEnvironment)->routerContext = theRouterContext;
-   
+
    return oldRouterContext;
-  } 
+  }
 
 /*******************************************************/
 /* GetEnvironmentFunctionContext: Returns the function */
@@ -358,7 +358,7 @@ void *GetEnvironmentFunctionContext(
   Environment *theEnvironment)
   {
    return(((struct environmentData *) theEnvironment)->functionContext);
-  } 
+  }
 
 /**************************************************/
 /* SetEnvironmentFunctionContext: Sets the router */
@@ -369,13 +369,13 @@ void *SetEnvironmentFunctionContext(
   void *theFunctionContext)
   {
    void *oldFunctionContext;
-   
+
    oldFunctionContext = ((struct environmentData *) theEnvironment)->functionContext;
-  
+
    ((struct environmentData *) theEnvironment)->functionContext = theFunctionContext;
-   
+
    return oldFunctionContext;
-  } 
+  }
 
 /*******************************************************/
 /* GetEnvironmentCallbackContext: Returns the callback */
@@ -385,7 +385,7 @@ void *GetEnvironmentCallbackContext(
   Environment *theEnvironment)
   {
    return(((struct environmentData *) theEnvironment)->callbackContext);
-  } 
+  }
 
 /****************************************************/
 /* SetEnvironmentCallbackContext: Sets the callback */
@@ -396,21 +396,21 @@ void *SetEnvironmentCallbackContext(
   void *theCallbackContext)
   {
    void *oldCallbackContext;
-   
+
    oldCallbackContext = ((struct environmentData *) theEnvironment)->callbackContext;
-  
+
    ((struct environmentData *) theEnvironment)->callbackContext = theCallbackContext;
-   
+
    return oldCallbackContext;
-  } 
-  
+  }
+
 /**********************************************/
 /* DestroyEnvironment: Destroys the specified */
 /*   environment returning all of its memory. */
 /**********************************************/
 bool DestroyEnvironment(
   Environment *theEnvironment)
-  {   
+  {
    struct environmentCleanupFunction *cleanupPtr;
    int i;
    struct memoryData *theMemData;
@@ -418,7 +418,7 @@ bool DestroyEnvironment(
    /*
    if (EvaluationData(theEnvironment)->CurrentExpression != NULL)
      { return false; }
-     
+
 #if DEFRULE_CONSTRUCT
    if (EngineData(theEnvironment)->ExecutingRule != NULL)
      { return false; }
@@ -433,23 +433,23 @@ bool DestroyEnvironment(
       if (theEnvironment->cleanupFunctions[i] != NULL)
         { (*theEnvironment->cleanupFunctions[i])(theEnvironment); }
      }
-     
+
    free(theEnvironment->cleanupFunctions);
-     
+
    for (cleanupPtr = theEnvironment->listOfCleanupEnvironmentFunctions;
         cleanupPtr != NULL;
         cleanupPtr = cleanupPtr->next)
      { (*cleanupPtr->func)(theEnvironment); }
 
    RemoveEnvironmentCleanupFunctions(theEnvironment);
-   
+
    EnvReleaseMem(theEnvironment,-1);
-     
+
    if ((theMemData->MemoryAmount != 0) || (theMemData->MemoryCalls != 0))
      {
-      printf("\n[ENVRNMNT8] Environment data not fully deallocated.\n"); 
-      printf("\n[ENVRNMNT8] MemoryAmount = %ld.\n",(long) theMemData->MemoryAmount); 
-      printf("\n[ENVRNMNT8] MemoryCalls = %ld.\n",(long) theMemData->MemoryCalls); 
+      printf("\n[ENVRNMNT8] Environment data not fully deallocated.\n");
+      printf("\n[ENVRNMNT8] MemoryAmount = %ld.\n",(long) theMemData->MemoryAmount);
+      printf("\n[ENVRNMNT8] MemoryCalls = %ld.\n",(long) theMemData->MemoryCalls);
       rv = false;
      }
 
@@ -465,14 +465,14 @@ bool DestroyEnvironment(
          theEnvironment->theData[i] = NULL;
         }
      }
-     
+
    free(theEnvironment->theData);
-   
+
    free(theEnvironment);
-   
+
    return(rv);
-  } 
- 
+  }
+
 /**************************************************/
 /* AddEnvironmentCleanupFunction: Adds a function */
 /*   to the ListOfCleanupEnvironmentFunctions.    */
@@ -484,7 +484,7 @@ bool AddEnvironmentCleanupFunction(
   int priority)
   {
    struct environmentCleanupFunction *newPtr, *currentPtr, *lastPtr = NULL;
-     
+
    newPtr = (struct environmentCleanupFunction *) malloc(sizeof(struct environmentCleanupFunction));
    if (newPtr == NULL)
      { return false; }
@@ -517,7 +517,7 @@ bool AddEnvironmentCleanupFunction(
       newPtr->next = currentPtr;
       lastPtr->next = newPtr;
      }
-     
+
    return true;
   }
 
@@ -527,11 +527,11 @@ bool AddEnvironmentCleanupFunction(
 /**************************************************/
 static void RemoveEnvironmentCleanupFunctions(
   struct environmentData *theEnv)
-  {   
+  {
    struct environmentCleanupFunction *nextPtr;
-      
+
    while (theEnv->listOfCleanupEnvironmentFunctions != NULL)
-     { 
+     {
       nextPtr = theEnv->listOfCleanupEnvironmentFunctions->next;
       free(theEnv->listOfCleanupEnvironmentFunctions);
       theEnv->listOfCleanupEnvironmentFunctions = nextPtr;
@@ -549,13 +549,13 @@ static void EnvInitializeEnvironment(
   struct integerHashNode **integerTable,
   struct bitMapHashNode **bitmapTable,
   struct externalAddressHashNode **externalAddressTable)
-  {   
+  {
    /*================================================*/
    /* Don't allow the initialization to occur twice. */
    /*================================================*/
 
    if (theEnvironment->initialized) return;
-     
+
    /*================================*/
    /* Initialize the memory manager. */
    /*================================*/
@@ -565,7 +565,7 @@ static void EnvInitializeEnvironment(
    /*===================================================*/
    /* Initialize environment data for various features. */
    /*===================================================*/
-   
+
    InitializeCommandLineData(theEnvironment);
 #if CONSTRUCT_COMPILER && (! RUN_TIME)
    InitializeConstructCompilerData(theEnvironment);
@@ -582,7 +582,7 @@ static void EnvInitializeEnvironment(
 #if DEBUGGING_FUNCTIONS
    InitializeWatchData(theEnvironment);
 #endif
-   
+
    /*===============================================*/
    /* Initialize the hash tables for atomic values. */
    /*===============================================*/
@@ -723,7 +723,7 @@ static void EnvInitializeEnvironment(
    /*========================*/
    /* Issue a clear command. */
    /*========================*/
-   
+
    EnvClear(theEnvironment);
 
    /*=============================*/

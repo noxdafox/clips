@@ -83,7 +83,7 @@ typedef struct query_stack
 #define FACT_QUERY_DATA 63
 
 struct factQueryData
-  { 
+  {
    SYMBOL_HN *QUERY_DELIMETER_SYMBOL;
    QUERY_CORE *QueryCore;
    QUERY_STACK *QueryCoreStack;

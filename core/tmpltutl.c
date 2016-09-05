@@ -306,7 +306,7 @@ void PrintTemplateFact(
    struct templateSlot *slotPtr;
    CLIPSValue tempDO;
    bool slotPrinted = false;
-   
+
    /*==============================*/
    /* Initialize some information. */
    /*==============================*/
@@ -329,22 +329,22 @@ void PrintTemplateFact(
 
    i = 0;
    while (slotPtr != NULL)
-     {         
+     {
       /*=================================================*/
       /* If we're ignoring slots with their original     */
       /* default value, check to see if the fact's slot  */
       /* value differs from the deftemplate default.     */
       /*=================================================*/
-      
+
       if (ignoreDefaults && (slotPtr->defaultDynamic == false))
         {
          DeftemplateSlotDefault(theEnv,theDeftemplate,slotPtr,&tempDO,true);
-         
+
          if (slotPtr->multislot == false)
            {
             if ((GetType(tempDO) == sublist[i].type) &&
                 (GetValue(tempDO) == sublist[i].value))
-              {     
+              {
                i++;
                slotPtr = slotPtr->next;
                continue;
@@ -358,16 +358,16 @@ void PrintTemplateFact(
             continue;
            }
         }
-        
+
       /*===========================================*/
       /* Print the opening parenthesis of the slot */
       /* and the slot name.                        */
       /*===========================================*/
-     
-      if (! slotPrinted) 
-        { 
+
+      if (! slotPrinted)
+        {
          slotPrinted = true;
-         EnvPrintRouter(theEnv,logicalName," "); 
+         EnvPrintRouter(theEnv,logicalName," ");
         }
 
       if (separateLines)

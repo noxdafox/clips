@@ -175,12 +175,12 @@ struct multifield *StringToMultifield(
    OpenStringSource(theEnv,"multifield-str",theString,0);
 
    GetToken(theEnv,"multifield-str",&theToken);
-   while (theToken.type != STOP)
+   while (theToken.tknType != STOP_TOKEN)
      {
-      if ((theToken.type == SYMBOL) || (theToken.type == STRING) ||
-          (theToken.type == FLOAT) || (theToken.type == INTEGER) ||
-          (theToken.type == INSTANCE_NAME))
-        { theAtom = GenConstant(theEnv,theToken.type,theToken.value); }
+      if ((theToken.tknType == SYMBOL_TOKEN) || (theToken.tknType == STRING_TOKEN) ||
+          (theToken.tknType == FLOAT_TOKEN) || (theToken.tknType == INTEGER_TOKEN) ||
+          (theToken.tknType == INSTANCE_NAME_TOKEN))
+        { theAtom = GenConstant(theEnv,TokenTypeToType(theToken.tknType),theToken.value); }
       else
         { theAtom = GenConstant(theEnv,STRING,EnvAddSymbol(theEnv,theToken.printForm)); }
 
@@ -227,7 +227,7 @@ struct multifield *StringToMultifield(
 
    return(theSegment);
   }
-  
+
 /**************************************************************/
 /* EnvCreateMultifield: Creates a multifield of the specified */
 /*   size and adds it to the list of segments.                */
@@ -311,13 +311,13 @@ void FlushMultifields(
          rtn_var_struct(theEnv,multifield,sizeof(struct field) * (newSize - 1),theSegment);
          if (lastPtr == NULL) UtilityData(theEnv)->CurrentGarbageFrame->ListOfMultifields = nextPtr;
          else lastPtr->next = nextPtr;
-         
+
          /*=================================================*/
          /* If the multifield deleted was the last in the   */
          /* list, update the pointer to the last multifield */
          /* to the prior multifield.                        */
          /*=================================================*/
-         
+
          if (nextPtr == NULL)
            { UtilityData(theEnv)->CurrentGarbageFrame->LastMultifield = lastPtr; }
         }
@@ -450,7 +450,7 @@ void StoreInMultifield(
 
       val_arr = (CLIPSValue *) gm3(theEnv,(long) sizeof(CLIPSValue) * argCount);
       seg_size = 0;
-      
+
       for (i = 1; i <= argCount; i++, expptr = expptr->nextArg)
         {
          EvaluateExpression(theEnv,expptr,&val_ptr);
@@ -627,7 +627,7 @@ unsigned long HashMultifield(
       void *vv;
       unsigned long liv;
      } fis;
-     
+
    /*================================================*/
    /* Initialize variables for computing hash value. */
    /*================================================*/
@@ -760,10 +760,10 @@ void *ImplodeMultifield(
 #endif
 
       else
-        { 
+        {
          SetType(tempDO,GetMFType(theMultifield,i));
          SetValue(tempDO,GetMFValue(theMultifield,i));
-         strsize += strlen(DataObjectToString(theEnv,&tempDO)) + 1; 
+         strsize += strlen(DataObjectToString(theEnv,&tempDO)) + 1;
         }
      }
 
@@ -821,7 +821,7 @@ void *ImplodeMultifield(
                *(ret_str+j) = '\\';    /* GDR 111599 #835 */
                j++;                    /* GDR 111599 #835 */
               }                        /* GDR 111599 #835 */
-              
+
             *(ret_str+j) = *tmp_str;
             j++, tmp_str++;
            }

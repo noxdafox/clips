@@ -74,7 +74,7 @@ struct partialMatch
    unsigned int betaMemory  :  1;
    unsigned int busy        :  1;
    unsigned int rhsMemory   :  1;
-   unsigned short bcount; 
+   unsigned short bcount;
    unsigned long hashValue;
    void *owner;
    void *marker;

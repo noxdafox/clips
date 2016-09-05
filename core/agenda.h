@@ -74,7 +74,7 @@ typedef struct activation Activation;
 
 #define MAX_DEFRULE_SALIENCE  10000
 #define MIN_DEFRULE_SALIENCE -10000
-  
+
 /*******************/
 /* DATA STRUCTURES */
 /*******************/
@@ -102,7 +102,7 @@ struct salienceGroup
 #define AGENDA_DATA 17
 
 struct agendaData
-  { 
+  {
 #if DEBUGGING_FUNCTIONS
    bool WatchActivations;
 #endif

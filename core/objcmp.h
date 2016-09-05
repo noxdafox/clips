@@ -55,7 +55,7 @@
 #define OBJECT_COMPILER_DATA 36
 
 struct objectCompilerData
-  { 
+  {
 #if CONSTRUCT_COMPILER && (! RUN_TIME)
    struct CodeGeneratorItem *ObjectCodeItem;
 #endif

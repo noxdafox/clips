@@ -32,7 +32,7 @@
 /*                                                           */
 /*            Used genstrcpy and genstrncpy instead of       */
 /*            strcpy and strncpy.                            */
-/*                                                           */             
+/*                                                           */
 /*            Support for long long integers.                */
 /*                                                           */
 /*            Changed integer type/precision.                */

@@ -68,7 +68,7 @@
 void DefglobalCompilerSetup(
   Environment *theEnv)
   {
-   DefglobalData(theEnv)->DefglobalCodeItem = 
+   DefglobalData(theEnv)->DefglobalCodeItem =
       AddCodeGeneratorItem(theEnv,"defglobal",0,BeforeDefglobalsToCode,
                            InitDefglobalsCode,ConstructToCode,2);
   }

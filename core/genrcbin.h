@@ -42,7 +42,7 @@
 #define GENRCBIN_DATA 28
 
 struct defgenericBinaryData
-  { 
+  {
    Defgeneric *DefgenericArray;
    long ModuleCount;
    long GenericCount;
@@ -54,7 +54,7 @@ struct defgenericBinaryData
    RESTRICTION *RestrictionArray;
    void **TypeArray;
   };
-  
+
 #define DefgenericBinaryData(theEnv) ((struct defgenericBinaryData *) GetEnvironmentData(theEnv,GENRCBIN_DATA))
 
 #define GenericPointer(i) (((i) == -1L) ? NULL : &DefgenericBinaryData(theEnv)->DefgenericArray[i])

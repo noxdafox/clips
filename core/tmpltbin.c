@@ -90,7 +90,7 @@ void DeftemplateBinarySetup(
                              ClearBload);
 #endif
   }
-  
+
 /***********************************************************/
 /* DeallocateDeftemplateBloadData: Deallocates environment */
 /*    data for the deftemplate bsave functionality.        */
@@ -102,7 +102,7 @@ static void DeallocateDeftemplateBloadData(
 
    space =  DeftemplateBinaryData(theEnv)->NumberOfTemplateModules * sizeof(struct deftemplateModule);
    if (space != 0) genfree(theEnv,DeftemplateBinaryData(theEnv)->ModuleArray,space);
-   
+
    space = DeftemplateBinaryData(theEnv)->NumberOfDeftemplates * sizeof(Deftemplate);
    if (space != 0) genfree(theEnv,DeftemplateBinaryData(theEnv)->DeftemplateArray,space);
 
@@ -572,7 +572,7 @@ static void ClearBload(
    space =  DeftemplateBinaryData(theEnv)->NumberOfTemplateModules * sizeof(struct deftemplateModule);
    if (space != 0) genfree(theEnv,DeftemplateBinaryData(theEnv)->ModuleArray,space);
    DeftemplateBinaryData(theEnv)->NumberOfTemplateModules = 0;
-   
+
    /*================================================================*/
    /* Deallocate the space used for the deftemplate data structures. */
    /*================================================================*/
@@ -580,7 +580,7 @@ static void ClearBload(
    space = DeftemplateBinaryData(theEnv)->NumberOfDeftemplates * sizeof(Deftemplate);
    if (space != 0) genfree(theEnv,DeftemplateBinaryData(theEnv)->DeftemplateArray,space);
    DeftemplateBinaryData(theEnv)->NumberOfDeftemplates = 0;
-   
+
    /*=================================================================*/
    /* Deallocate the space used for the templateSlot data structures. */
    /*=================================================================*/

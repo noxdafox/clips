@@ -65,10 +65,10 @@
 
    static struct lhsParseNode    *RuleBodyParse(Environment *,const char *,struct token *,const char *,bool *);
    static void                    DeclarationParse(Environment *,const char *,const char *,bool *);
-   static struct lhsParseNode    *LHSPattern(Environment *,const char *,int,const char *,bool *,bool,
+   static struct lhsParseNode    *LHSPattern(Environment *,const char *,TokenType,const char *,bool *,bool,
                                              struct token *,const char *);
    static struct lhsParseNode    *ConnectedPatternParse(Environment *,const char *,struct token *,bool *);
-   static struct lhsParseNode    *GroupPatterns(Environment *,const char *,int,const char *,bool *);
+   static struct lhsParseNode    *GroupPatterns(Environment *,const char *,TokenType,const char *,bool *);
    static struct lhsParseNode    *TestPattern(Environment *,const char *,bool *);
    static struct lhsParseNode    *AssignmentParse(Environment *,const char *,SYMBOL_HN *,bool *);
    static void                    TagLHSLogicalNodes(struct lhsParseNode *);
@@ -90,7 +90,7 @@ struct lhsParseNode *ParseRuleLHS(
   {
    struct lhsParseNode *theLHS;
    bool result;
-   
+
    *error = false;
 
    /*========================================*/
@@ -159,7 +159,7 @@ static struct lhsParseNode *RuleBodyParse(
    /* the LHS and RHS, then the LHS is empty.          */
    /*==================================================*/
 
-   if ((theToken->type == SYMBOL) ?
+   if ((theToken->tknType == SYMBOL_TOKEN) ?
        (strcmp(ValueToString(theToken->value),"=>") == 0) : false)
      { return NULL; }
 
@@ -168,7 +168,7 @@ static struct lhsParseNode *RuleBodyParse(
    /* (the declare statement is allowed).       */
    /*===========================================*/
 
-   theNode = LHSPattern(theEnv,readSource,SYMBOL,"=>",error,true,theToken,ruleName);
+   theNode = LHSPattern(theEnv,readSource,SYMBOL_TOKEN,"=>",error,true,theToken,ruleName);
 
    if (*error == true)
      {
@@ -182,7 +182,7 @@ static struct lhsParseNode *RuleBodyParse(
    /* Parse the other patterns in the LHS. */
    /*======================================*/
 
-   otherNodes = GroupPatterns(theEnv,readSource,SYMBOL,"=>",error);
+   otherNodes = GroupPatterns(theEnv,readSource,SYMBOL_TOKEN,"=>",error);
 
    if (*error == true)
      {
@@ -233,7 +233,7 @@ static void DeclarationParse(
    SavePPBuffer(theEnv," ");
 
    GetToken(theEnv,readSource,&theToken);
-   if (theToken.type != LPAREN)
+   if (theToken.tknType != LEFT_PARENTHESIS_TOKEN)
      {
       SyntaxErrorMessage(theEnv,"declare statement");
       *error = true;
@@ -252,7 +252,7 @@ static void DeclarationParse(
       /*=============================================*/
 
       GetToken(theEnv,readSource,&theToken);
-      if (theToken.type != SYMBOL)
+      if (theToken.tknType != SYMBOL_TOKEN)
         {
          SyntaxErrorMessage(theEnv,"declare statement");
          *error = true;
@@ -324,7 +324,7 @@ static void DeclarationParse(
       /*=======================================*/
 
       GetToken(theEnv,readSource,&theToken);
-      if (theToken.type != RPAREN)
+      if (theToken.tknType != RIGHT_PARENTHESIS_TOKEN)
         {
          PPBackup(theEnv);
          SavePPBuffer(theEnv," ");
@@ -341,8 +341,8 @@ static void DeclarationParse(
       /*=============================================*/
 
       GetToken(theEnv,readSource,&theToken);
-      if (theToken.type == RPAREN) notDone = false;
-      else if (theToken.type != LPAREN)
+      if (theToken.tknType == RIGHT_PARENTHESIS_TOKEN) notDone = false;
+      else if (theToken.tknType != LEFT_PARENTHESIS_TOKEN)
         {
          ReturnExpression(theEnv,PatternData(theEnv)->SalienceExpression);
          PatternData(theEnv)->SalienceExpression = NULL;
@@ -458,7 +458,7 @@ static void ParseAutoFocus(
    SavePPBuffer(theEnv," ");
 
    GetToken(theEnv,readSource,&theToken);
-   if (theToken.type != SYMBOL)
+   if (theToken.tknType != SYMBOL_TOKEN)
      {
       SyntaxErrorMessage(theEnv,"auto-focus statement");
       *error = true;
@@ -497,7 +497,7 @@ static void ParseAutoFocus(
 static struct lhsParseNode *LHSPattern(
   Environment *theEnv,
   const char *readSource,
-  int terminator,
+  TokenType terminator,
   const char *terminatorString,
   bool *error,
   bool allowDeclaration,
@@ -519,14 +519,14 @@ static struct lhsParseNode *LHSPattern(
    /* A left parenthesis begins all CEs and declarations. */
    /*=====================================================*/
 
-   if (theToken.type == LPAREN)
+   if (theToken.tknType == LEFT_PARENTHESIS_TOKEN)
      {
       /*================================================*/
       /* The first field of a pattern must be a symbol. */
       /*================================================*/
 
       GetToken(theEnv,readSource,&theToken);
-      if (theToken.type != SYMBOL)
+      if (theToken.tknType != SYMBOL_TOKEN)
         {
          SyntaxErrorMessage(theEnv,"the first field of a pattern");
          *error = true;
@@ -578,7 +578,7 @@ static struct lhsParseNode *LHSPattern(
    /* Check for a pattern address variable. */
    /*=======================================*/
 
-   else if (theToken.type == SF_VARIABLE)
+   else if (theToken.tknType == SF_VARIABLE_TOKEN)
      { theNode = AssignmentParse(theEnv,readSource,(SYMBOL_HN *) theToken.value,error); }
 
    /*=================================================*/
@@ -587,7 +587,7 @@ static struct lhsParseNode *LHSPattern(
    /* a CE containing other CEs such as an *and* CE). */
    /*=================================================*/
 
-   else if ((theToken.type == terminator) ?
+   else if ((theToken.tknType == terminator) ?
             (strcmp(theToken.printForm,terminatorString) == 0) : false)
      { return NULL;  }
 
@@ -726,7 +726,7 @@ static struct lhsParseNode *ConnectedPatternParse(
    /* CE. A ) will terminate the end of the CE. */
    /*===========================================*/
 
-   theGroup = GroupPatterns(theEnv,readSource,RPAREN,")",error);
+   theGroup = GroupPatterns(theEnv,readSource,RIGHT_PARENTHESIS_TOKEN,")",error);
 
    /*====================================*/
    /* Restore the "with a *not* CE" flag */
@@ -891,7 +891,7 @@ static struct lhsParseNode *ConnectedPatternParse(
 static struct lhsParseNode *GroupPatterns(
   Environment *theEnv,
   const char *readSource,
-  int terminator,
+  TokenType terminator,
   const char *terminatorString,
   bool *error)
   {
@@ -929,7 +929,7 @@ static struct lhsParseNode *GroupPatterns(
         {
          PPBackup(theEnv);
          PPBackup(theEnv);
-         if (terminator == RPAREN)
+         if (terminator == RIGHT_PARENTHESIS_TOKEN)
            { SavePPBuffer(theEnv,terminatorString); }
          else
            {
@@ -997,7 +997,7 @@ static struct lhsParseNode *TestPattern(
    /*=========================================================*/
 
    GetToken(theEnv,readSource,&theToken);
-   if (theToken.type != RPAREN)
+   if (theToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       SyntaxErrorMessage(theEnv,"test conditional element");
       *error = true;
@@ -1047,7 +1047,7 @@ static struct lhsParseNode *AssignmentParse(
 
    GetToken(theEnv,readSource,&theToken);
 
-   if ((theToken.type == SYMBOL) ? (strcmp(ValueToString(theToken.value),"<-") != 0) :
+   if ((theToken.tknType == SYMBOL_TOKEN) ? (strcmp(ValueToString(theToken.value),"<-") != 0) :
                                    true)
      {
       SyntaxErrorMessage(theEnv,"binding patterns");
@@ -1062,7 +1062,7 @@ static struct lhsParseNode *AssignmentParse(
    /*================================================*/
 
    GetToken(theEnv,readSource,&theToken);
-   if (theToken.type != LPAREN)
+   if (theToken.tknType != LEFT_PARENTHESIS_TOKEN)
      {
       SyntaxErrorMessage(theEnv,"binding patterns");
       *error = true;
@@ -1134,7 +1134,7 @@ static struct lhsParseNode *SimplePatternParse(
    /* be used because they have special significance. */
    /*=================================================*/
 
-   if (theToken->type != SYMBOL)
+   if (theToken->tknType != SYMBOL_TOKEN)
      {
       SyntaxErrorMessage(theEnv,"the first field of a pattern");
       *error = true;

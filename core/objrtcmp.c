@@ -272,7 +272,7 @@ static bool ObjectPatternsToCode(
   int maxIndices)
   {
    int version;
-   
+
    version = IntermediatePatternNodesToCode(theEnv,fileName,pathName,fileNameBuffer,
                                             fileID,headerFP,imageID,maxIndices,1);
    if (version == 0)

@@ -195,10 +195,10 @@ void *FindNamedConstructInModuleOrImports(
    /*================================================*/
    /* First look in the current or specified module. */
    /*================================================*/
-   
+
    theConstruct = FindNamedConstructInModule(theEnv,constructName,constructClass);
    if (theConstruct != NULL) return theConstruct;
-   
+
    /*=====================================*/
    /* If there's a module specifier, then */
    /* the construct does not exist.       */
@@ -206,20 +206,20 @@ void *FindNamedConstructInModuleOrImports(
 
    if (FindModuleSeparator(constructName))
      { return NULL; }
-   
+
    /*========================================*/
    /* Otherwise, search in imported modules. */
    /*========================================*/
 
    theConstruct = FindImportedConstruct(theEnv,constructClass->constructName,NULL,
                                         constructName,&count,true,NULL);
-         
+
    if (count > 1)
      {
       AmbiguousReferenceErrorMessage(theEnv,constructClass->constructName,constructName);
       return NULL;
      }
-         
+
    return(theConstruct);
   }
 
@@ -234,7 +234,7 @@ void *FindNamedConstructInModule(
   {
    void *theConstruct;
    SYMBOL_HN *findValue;
-     
+
    /*==========================*/
    /* Save the current module. */
    /*==========================*/
@@ -270,7 +270,7 @@ void *FindNamedConstructInModule(
    /* but it has a count of 0, then it can't be for */
    /* a construct that's currently defined.         */
    /*===============================================*/
-   
+
    if (findValue->count == 0)
      {
       RestoreCurrentModule(theEnv);
@@ -299,7 +299,7 @@ void *FindNamedConstructInModule(
    /*=============================*/
    /* Restore the current module. */
    /*=============================*/
-   
+
    RestoreCurrentModule(theEnv);
 
    /*====================================*/
@@ -734,12 +734,12 @@ const char *GetConstructNameString(
 const char *EnvGetConstructNameString(
   Environment *theEnv,
   struct constructHeader *theConstruct)
-  { 
+  {
 #if MAC_XCD
 #pragma unused(theEnv)
 #endif
 
-   return(ValueToString(theConstruct->name)); 
+   return(ValueToString(theConstruct->name));
   }
 
 /**********************************************************/
@@ -832,7 +832,7 @@ void GetConstructList(
    bool allModules = false;
    size_t largestConstructNameSize = 0, bufferSize = 80;  /* prevents warning */
    char *buffer;
-   
+
    /*==========================*/
    /* Save the current module. */
    /*==========================*/
@@ -864,51 +864,51 @@ void GetConstructList(
       /*======================================================*/
       /* Set the current module to the module being examined. */
       /*======================================================*/
-            
+
       EnvSetCurrentModule(theEnv,loopModule);
 
       /*===========================================*/
       /* Loop over every construct in the  module. */
       /*===========================================*/
-                  
+
       theConstruct = NULL;
       largestConstructNameSize = 0;
-      
+
       while ((theConstruct = (*constructClass->getNextItemFunction)(theEnv,theConstruct)) != NULL)
-        { 
+        {
          /*================================*/
          /* Increment the construct count. */
          /*================================*/
-         
-         count++; 
+
+         count++;
 
          /*=================================================*/
          /* Is this the largest construct name encountered? */
          /*=================================================*/
-         
+
          tempSize = strlen(ValueToString((*constructClass->getConstructNameFunction)((struct constructHeader *) theConstruct)));
          if (tempSize > largestConstructNameSize)
            { largestConstructNameSize = tempSize; }
         }
-        
+
       /*========================================*/
       /* Determine the size of the module name. */
       /*========================================*/
-      
+
       tempSize = strlen(EnvGetDefmoduleName(theEnv,loopModule));
 
       /*======================================================*/
       /* The buffer must be large enough for the module name, */
       /* the largest name of all the constructs, and the ::.  */
       /*======================================================*/
-            
+
       if ((tempSize + largestConstructNameSize + 5) > bufferSize)
         { bufferSize = tempSize + largestConstructNameSize + 5; }
 
       /*=============================*/
       /* Move on to the next module. */
       /*=============================*/
-      
+
       if (allModules) loopModule = EnvGetNextDefmodule(theEnv,loopModule);
       else loopModule = NULL;
      }
@@ -916,9 +916,9 @@ void GetConstructList(
    /*===========================*/
    /* Allocate the name buffer. */
    /*===========================*/
-   
+
    buffer = (char *) genalloc(theEnv,bufferSize);
-   
+
    /*================================*/
    /* Create the multifield value to */
    /* store the construct names.     */
@@ -981,9 +981,9 @@ void GetConstructList(
    /*=========================*/
    /* Return the name buffer. */
    /*=========================*/
-   
+
    genfree(theEnv,buffer,bufferSize);
-   
+
    /*=============================*/
    /* Restore the current module. */
    /*=============================*/
@@ -1178,12 +1178,12 @@ struct defmoduleItemHeader *GetConstructModuleItem(
 const char *GetConstructPPForm(
   Environment *theEnv,
   struct constructHeader *theConstruct)
-  { 
+  {
 #if MAC_XCD
 #pragma unused(theEnv)
 #endif
 
-   return(theConstruct->ppForm); 
+   return(theConstruct->ppForm);
   }
 
 /****************************************************/
@@ -1268,7 +1268,7 @@ long DoForAllConstructs(
    struct defmoduleItemHeader *theModuleItem;
    Defmodule *theModule;
    long moduleCount = 0L;
-   
+
    /*==========================*/
    /* Save the current module. */
    /*==========================*/
@@ -1304,7 +1304,7 @@ long DoForAllConstructs(
          /*==========================================*/
          /* Check to see iteration should be halted. */
          /*==========================================*/
-         
+
          if (interruptable)
            {
             if (EnvGetHaltExecution(theEnv) == true)
@@ -1313,18 +1313,18 @@ long DoForAllConstructs(
                return(-1L);
               }
            }
-           
+
          /*===============================================*/
          /* Determine the next construct since the action */
          /* could delete the current construct.           */
          /*===============================================*/
-         
+
          next = theConstruct->next;
-         
+
          /*===============================================*/
          /* Perform the action for the current construct. */
          /*===============================================*/
-         
+
          (*actionFunction)(theEnv,theConstruct,userBuffer);
         }
      }
@@ -1356,7 +1356,7 @@ void DoForAllConstructsInModule(
   {
    struct constructHeader *theConstruct;
    struct defmoduleItemHeader *theModuleItem;
-   
+
    /*==========================*/
    /* Save the current module. */
    /*==========================*/

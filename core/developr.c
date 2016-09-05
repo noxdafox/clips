@@ -194,7 +194,7 @@ void PrimitiveTablesInfoCommand(
    EnvPrintRouter(theEnv,WDISPLAY,"\n");
    */
   }
-  
+
 #define COUNT_SIZE 21
 
 /*********************************************************/
@@ -216,9 +216,9 @@ void PrimitiveTablesUsageCommand(
    for (i = 0; i < 21; i++)
      {
       symbolCounts[i] = 0;
-      floatCounts[i] = 0; 
+      floatCounts[i] = 0;
      }
-     
+
    /*====================================*/
    /* Count entries in the symbol table. */
    /*====================================*/
@@ -228,11 +228,11 @@ void PrimitiveTablesUsageCommand(
      {
       symbolCount = 0;
       for (symbolPtr = symbolArray[i]; symbolPtr != NULL; symbolPtr = symbolPtr->next)
-        { 
+        {
          symbolCount++;
          totalSymbolCount++;
         }
-           
+
       if (symbolCount < (COUNT_SIZE - 1))
         { symbolCounts[symbolCount]++; }
       else
@@ -242,17 +242,17 @@ void PrimitiveTablesUsageCommand(
    /*===================================*/
    /* Count entries in the float table. */
    /*===================================*/
-   
+
    floatArray = GetFloatTable(theEnv);
    for (i = 0; i < FLOAT_HASH_SIZE; i++)
      {
       floatCount = 0;
       for (floatPtr = floatArray[i]; floatPtr != NULL; floatPtr = floatPtr->next)
-        { 
+        {
          floatCount++;
          totalFloatCount++;
         }
-           
+
       if (floatCount < (COUNT_SIZE - 1))
         { floatCounts[floatCount]++; }
       else
@@ -305,9 +305,9 @@ void ValidateFactIntegrityCommand(
    SYMBOL_HN *theSymbol;
    FLOAT_HN *theFloat;
    INTEGER_HN *theInteger;
-     
+
    returnValue->type = SYMBOL;
-   
+
    if (theEnv->initialized == false)
      {
       returnValue->value = EnvTrueSymbol(theEnv);
@@ -323,9 +323,9 @@ void ValidateFactIntegrityCommand(
          returnValue->value = EnvFalseSymbol(theEnv);
          return;
         }
-      
+
       theSegment = &theFact->theProposition;
-      
+
       for (i = 0 ; i < (int) theSegment->multifieldLength ; i++)
         {
          if ((theSegment->theFields[i].type == SYMBOL) ||
@@ -361,10 +361,10 @@ void ValidateFactIntegrityCommand(
            }
         }
      }
-     
+
    returnValue->value = EnvTrueSymbol(theEnv);
   }
-  
+
 /*************************************************************/
 /* ShowFactPatternNetworkCommand: Command for displaying the */
 /*   fact pattern network for a specified deftemplate.       */
@@ -562,7 +562,7 @@ void InstanceTableUsageCommand(
 
    for (i = 0; i < COUNT_SIZE; i++)
      { instanceCounts[i] = 0; }
-     
+
    /*======================================*/
    /* Count entries in the instance table. */
    /*======================================*/
@@ -571,11 +571,11 @@ void InstanceTableUsageCommand(
      {
       instanceCount = 0;
       for (ins = InstanceData(theEnv)->InstanceTable[i]; ins != NULL; ins = ins->nxtHash)
-        { 
+        {
          instanceCount++;
          totalInstanceCount++;
         }
-           
+
       if (instanceCount < (COUNT_SIZE - 1))
         { instanceCounts[instanceCount]++; }
       else
@@ -597,28 +597,28 @@ void InstanceTableUsageCommand(
       EnvPrintRouter(theEnv,WDISPLAY,"\n");
      }
   }
-  
+
 #endif
 
 #if DEFRULE_CONSTRUCT
- 
+
 /******************/
 /* ExamineMemory: */
 /******************/
 static void ExamineMemory(
   Environment *theEnv,
   struct joinNode *theJoin,
-  struct betaMemory *theMemory)  
+  struct betaMemory *theMemory)
   {
 #if MAC_XCD
 #pragma unused(theJoin)
 #endif
    if (theMemory->size > 10000)
-     { 
+     {
       /* Set a break point here */
      }
   }
-  
+
 /*************************/
 /* TraverseBetaMemories: */
 /*************************/
@@ -626,15 +626,15 @@ static void TraverseBetaMemories(
   Environment *theEnv,
   struct joinNode *theJoin)
   {
-   if (theJoin == NULL) 
+   if (theJoin == NULL)
      { return; }
-     
+
    if (theJoin->lastLevel != NULL)
      { TraverseBetaMemories(theEnv,theJoin->lastLevel); }
-     
+
    if (theJoin->depth > 2)
      { ExamineMemory(theEnv,theJoin,theJoin->leftMemory); }
-   
+
    if (theJoin->joinFromTheRight)
      { TraverseBetaMemories(theEnv,(struct joinNode *) theJoin->rightSideEntryStructure); }
 
@@ -643,9 +643,9 @@ static void TraverseBetaMemories(
      { ExamineMemory(theEnv,theJoin,theJoin->rightMemory); }
   }
 
-/***********************************/  
+/***********************************/
 /* ValidateRuleBetaMemoriesAction: */
-/***********************************/  
+/***********************************/
 static void ValidateRuleBetaMemoriesAction(
   Environment *theEnv,
   struct constructHeader *theConstruct,
@@ -663,7 +663,7 @@ static void ValidateRuleBetaMemoriesAction(
       TraverseBetaMemories(theEnv,rulePtr->lastJoin);
      }
   }
-  
+
 /*******************************/
 /* ValidateBetaMemoriesCommand */
 /*******************************/

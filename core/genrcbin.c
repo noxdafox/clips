@@ -155,7 +155,7 @@ void SetupGenericsBload(
                              ClearBloadGenerics);
 #endif
   }
-  
+
 /***********************************************************/
 /* DeallocateDefgenericBinaryData: Deallocates environment */
 /*    data for the defgeneric binary functionality.        */
@@ -238,7 +238,7 @@ static void BsaveGenericsFind(
    DefgenericBinaryData(theEnv)->RestrictionCount = 0L;
    DefgenericBinaryData(theEnv)->TypeCount = 0L;
 
-   DefgenericBinaryData(theEnv)->ModuleCount = 
+   DefgenericBinaryData(theEnv)->ModuleCount =
       DoForAllConstructs(theEnv,MarkDefgenericItems,DefgenericData(theEnv)->DefgenericModuleIndex,
                                     false,NULL);
   }
@@ -301,7 +301,7 @@ static void BsaveGenericsExpressions(
    /* Important to save all expressions for methods before any          */
    /* expressions for restrictions, since methods will be stored first. */
    /*===================================================================*/
-   
+
    DoForAllConstructs(theEnv,BsaveMethodExpressions,DefgenericData(theEnv)->DefgenericModuleIndex,
                       false,fp);
 

@@ -45,7 +45,7 @@
 #define OBJECTBIN_DATA 33
 
 struct objectBinaryData
-  { 
+  {
    Defclass *DefclassArray;
    long ModuleCount;
    long ClassCount;

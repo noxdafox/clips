@@ -89,14 +89,14 @@ void InitializeBloadData(
    BloadData(theEnv)->BinaryPrefixID = "\1\2\3\4CLIPS";
    BloadData(theEnv)->BinaryVersionID = "V6.30";
   }
-  
+
 /************************************************/
 /* DeallocateBloadData: Deallocates environment */
 /*    data for the bload command.               */
 /************************************************/
 static void DeallocateBloadData(
   Environment *theEnv)
-  {   
+  {
    DeallocateCallList(theEnv,BloadData(theEnv)->BeforeBloadFunctions);
    DeallocateCallList(theEnv,BloadData(theEnv)->AfterBloadFunctions);
    DeallocateCallList(theEnv,BloadData(theEnv)->ClearBloadReadyFunctions);
@@ -114,7 +114,7 @@ bool EnvBload(
    long numberOfFunctions;
    unsigned long space;
    bool error;
-   char IDbuffer[20];   
+   char IDbuffer[20];
    char constructBuffer[CONSTRUCT_HEADER_SIZE];
    struct BinaryItem *biPtr;
    struct callFunctionItem *bfPtr;
@@ -159,7 +159,7 @@ bool EnvBload(
       GenCloseBinary(theEnv);
       return false;
      }
-     
+
    /*====================*/
    /* Clear environment. */
    /*====================*/
@@ -608,10 +608,10 @@ static bool ClearBload(
    /* If bload is not active, then there's */
    /* no need to clear bload data.         */
    /*======================================*/
-   
+
    if (! BloadData(theEnv)->BloadActive)
      { return true; }
-     
+
    /*=================================================*/
    /* Make sure it's safe to clear the bloaded image. */
    /*=================================================*/
@@ -811,9 +811,9 @@ void BloadCommand(
   {
 #if (! RUN_TIME) && (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE)
    const char *fileName;
-   
+
    returnValue->type = SYMBOL;
-   
+
    fileName = GetFileName(context);
    if (fileName != NULL)
      {

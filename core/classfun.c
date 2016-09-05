@@ -30,7 +30,7 @@
 /*                                                           */
 /*            Used genstrcpy and genstrcat instead of strcpy */
 /*            and strcat.                                    */
-/*                                                           */             
+/*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
@@ -152,7 +152,7 @@ void IncrementDefclassBusyCount(
 void DecrementDefclassBusyCount(
   Environment *theEnv,
   Defclass *theDefclass)
-  {   
+  {
    if (! ConstructData(theEnv)->ClearInProgress)
      { theDefclass->busy--; }
   }
@@ -485,7 +485,7 @@ void DeleteSuperclassLink(
   {
    long deletedIndex;
    PACKED_CLASS_LINKS *src,dst;
-   
+
    src = &sclass->directSuperclasses;
 
    for (deletedIndex = 0 ; deletedIndex < src->classCount ; deletedIndex++)
@@ -560,7 +560,7 @@ Defclass *NewClass(
    ClearBitString(cls->traversalRecord,TRAVERSAL_BYTES);
    return(cls);
   }
-  
+
 /***************************************************
   NAME         : DeletePackedClassLinks
   DESCRIPTION  : Dealloacates a contiguous array
@@ -794,14 +794,14 @@ void RemoveDefclass(
       rm(theEnv,cls->handlers,(sizeof(DefmessageHandler) * cls->handlerCount));
       rm(theEnv,cls->handlerOrderMap,(sizeof(unsigned) * cls->handlerCount));
      }
-     
+
    EnvSetDefclassPPForm(theEnv,cls,NULL);
    DeassignClassID(theEnv,(unsigned) cls->id);
    rtn_struct(theEnv,defclass,cls);
   }
- 
+
 #endif
- 
+
 /*******************************************************************
   NAME         : DestroyDefclass
   DESCRIPTION  : Deallocates a class structure and
@@ -809,7 +809,7 @@ void RemoveDefclass(
   INPUTS       : The address of the class
   RETURNS      : Nothing useful
   SIDE EFFECTS : None
-  NOTES        : 
+  NOTES        :
  *******************************************************************/
 void DestroyDefclass(
   Environment *theEnv,
@@ -837,7 +837,7 @@ void DestroyDefclass(
 #endif
         }
      }
-     
+
 #if ! RUN_TIME
    if (cls->instanceSlotCount != 0)
      {
@@ -858,7 +858,7 @@ void DestroyDefclass(
 
       if (hnd->ppForm != NULL)
         rm(theEnv,hnd->ppForm,(sizeof(char) * (strlen(hnd->ppForm)+1)));
-      
+
       if (hnd->usrData != NULL)
         { ClearUserDataList(theEnv,hnd->usrData); }
      }
@@ -868,7 +868,7 @@ void DestroyDefclass(
       rm(theEnv,cls->handlers,(sizeof(DefmessageHandler) * cls->handlerCount));
       rm(theEnv,cls->handlerOrderMap,(sizeof(unsigned) * cls->handlerCount));
      }
-     
+
    DestroyConstructHeader(theEnv,&cls->header);
 
    rtn_struct(theEnv,defclass,cls);
@@ -878,7 +878,7 @@ void DestroyDefclass(
 #endif
 #endif
   }
-  
+
 #if ! RUN_TIME
 
 /***************************************************
@@ -923,7 +923,7 @@ void InstallClass(
       DecrementBitMapCount(theEnv,cls->scopeMap);
 #endif
       ClearUserDataList(theEnv,cls->header.usrData);
-      
+
       for (i = 0 ; i < cls->slotCount ; i++)
         {
          slot = &cls->slots[i];
@@ -1342,7 +1342,7 @@ static void DeassignClassID(
       DefclassData(theEnv)->ClassIDMap = (Defclass **) genrealloc(theEnv,DefclassData(theEnv)->ClassIDMap,
                        (unsigned) (oldChunk * sizeof(Defclass *)),
                        (unsigned) (newChunk * sizeof(Defclass *)));
-                       
+
       DefclassData(theEnv)->AvailClassID = newChunk;
      }
   }

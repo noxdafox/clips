@@ -46,7 +46,7 @@
 /*            Changed garbage collection algorithm.          */
 /*                                                           */
 /*            Used genstrcpy instead of strcpy.              */
-/*                                                           */             
+/*                                                           */
 /*            Added support for external address hash table  */
 /*            and subtyping.                                 */
 /*                                                           */
@@ -251,7 +251,7 @@ struct symbolMatch
 #define SYMBOL_DATA 49
 
 struct symbolData
-  { 
+  {
    void *TrueSymbolHN;
    void *FalseSymbolHN;
    void *PositiveInfinity;
@@ -292,7 +292,7 @@ struct symbolData
    unsigned long                  HashFloat(double,unsigned long);
    unsigned long                  HashInteger(long long,unsigned long);
    unsigned long                  HashBitMap(const char *,unsigned long,unsigned);
-   unsigned long                  HashExternalAddress(Environment *,unsigned long);
+   unsigned long                  HashExternalAddress(void *,unsigned long);
    void                           DecrementSymbolCount(Environment *,struct symbolHashNode *);
    void                           DecrementFloatCount(Environment *,struct floatHashNode *);
    void                           DecrementIntegerCount(Environment *,struct integerHashNode *);
@@ -307,7 +307,7 @@ struct symbolData
    void                           SetIntegerTable(Environment *,struct integerHashNode **);
    struct bitMapHashNode        **GetBitMapTable(Environment *);
    void                           SetBitMapTable(Environment *,struct bitMapHashNode **);
-   struct externalAddressHashNode        
+   struct externalAddressHashNode
                                 **GetExternalAddressTable(Environment *);
    void                           SetExternalAddressTable(Environment *,struct externalAddressHashNode **);
    void                           RefreshSpecialSymbols(Environment *);

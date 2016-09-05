@@ -210,9 +210,9 @@ bool ParseDefclass(
      }
    parseError = false;
    GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
-   while (GetType(DefclassData(theEnv)->ObjectParseToken) != RPAREN)
+   while (DefclassData(theEnv)->ObjectParseToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      {
-      if (GetType(DefclassData(theEnv)->ObjectParseToken) != LPAREN)
+      if (DefclassData(theEnv)->ObjectParseToken.tknType != LEFT_PARENTHESIS_TOKEN)
         {
          SyntaxErrorMessage(theEnv,"defclass");
          parseError = true;
@@ -222,7 +222,7 @@ bool ParseDefclass(
       PPCRAndIndent(theEnv);
       SavePPBuffer(theEnv,"(");
       GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
-      if (GetType(DefclassData(theEnv)->ObjectParseToken) != SYMBOL)
+      if (DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TOKEN)
         {
          SyntaxErrorMessage(theEnv,"defclass");
          parseError = true;
@@ -292,7 +292,8 @@ bool ParseDefclass(
       GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
      }
 
-   if ((GetType(DefclassData(theEnv)->ObjectParseToken) != RPAREN) || (parseError == true))
+   if ((DefclassData(theEnv)->ObjectParseToken.tknType != RIGHT_PARENTHESIS_TOKEN) ||
+       (parseError == true))
      {
       DeletePackedClassLinks(theEnv,sclasses,true);
       DeletePackedClassLinks(theEnv,preclist,true);
@@ -306,7 +307,7 @@ bool ParseDefclass(
       ========================================================================= */
    if (roleSpecified == false)
      {
-      if (preclist->classArray[1]->system &&                             /* Change to cause         */ 
+      if (preclist->classArray[1]->system &&                             /* Change to cause         */
           (DefclassData(theEnv)->ClassDefaultsMode == CONVENIENCE_MODE)) /* default role of         */
         { abstract = false; }                                            /* classes to be concrete. */
       else
@@ -316,7 +317,7 @@ bool ParseDefclass(
    if (patternMatchSpecified == false)
      {
       if ((preclist->classArray[1]->system) &&                           /* Change to cause       */
-          (! abstract) &&                                                /* default pattern-match */ 
+          (! abstract) &&                                                /* default pattern-match */
           (DefclassData(theEnv)->ClassDefaultsMode == CONVENIENCE_MODE)) /* of classes to be      */
         { reactive = true; }                                             /* reactive.             */
       else
@@ -476,7 +477,7 @@ static bool ParseSimpleQualifier(
      }
    SavePPBuffer(theEnv," ");
    GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
-   if (GetType(DefclassData(theEnv)->ObjectParseToken) != SYMBOL)
+   if (DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TOKEN)
      goto ParseSimpleQualifierError;
    if (strcmp(DOToString(DefclassData(theEnv)->ObjectParseToken),setRelation) == 0)
      *binaryFlag = true;
@@ -485,7 +486,7 @@ static bool ParseSimpleQualifier(
    else
      goto ParseSimpleQualifierError;
    GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
-   if (GetType(DefclassData(theEnv)->ObjectParseToken) != RPAREN)
+   if (DefclassData(theEnv)->ObjectParseToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      goto ParseSimpleQualifierError;
    *alreadyTestedFlag = true;
    return true;
@@ -520,17 +521,17 @@ static bool ReadUntilClosingParen(
       if (lparen_read == false)
         SavePPBuffer(theEnv," ");
       GetToken(theEnv,readSource,inputToken);
-      if (inputToken->type == STOP)
+      if (inputToken->tknType == STOP_TOKEN)
         {
          SyntaxErrorMessage(theEnv,"message-handler declaration");
          return false;
         }
-      else if (inputToken->type == LPAREN)
+      else if (inputToken->tknType == LEFT_PARENTHESIS_TOKEN)
         {
          lparen_read = true;
          cnt++;
         }
-      else if (inputToken->type == RPAREN)
+      else if (inputToken->tknType == RIGHT_PARENTHESIS_TOKEN)
         {
          cnt--;
          if (lparen_read == false)

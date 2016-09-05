@@ -39,14 +39,14 @@
 /*            Command history and editing support            */
 /*                                                           */
 /*            Used genstrcpy instead of strcpy.              */
-/*                                                           */             
+/*                                                           */
 /*            Added before command execution callback        */
 /*            function.                                      */
-/*                                                           */  
-/*            Fixed RouteCommand return value.               */           
-/*                                                           */             
+/*                                                           */
+/*            Fixed RouteCommand return value.               */
+/*                                                           */
 /*            Added AwaitingInput flag.                      */
-/*                                                           */             
+/*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
@@ -136,12 +136,12 @@ void InitializeCommandLineData(
   {
    AllocateEnvironmentData(theEnv,COMMANDLINE_DATA,sizeof(struct commandLineData),DeallocateCommandLineData);
 
-#if ! RUN_TIME   
+#if ! RUN_TIME
    CommandLineData(theEnv)->BannerString = BANNER_STRING;
    CommandLineData(theEnv)->EventCallback = DefaultGetNextEvent;
 #endif
   }
-  
+
 /*******************************************************/
 /* DeallocateCommandLineData: Deallocates environment */
 /*    data for the command line functionality.        */
@@ -150,10 +150,10 @@ static void DeallocateCommandLineData(
   Environment *theEnv)
   {
 #if ! RUN_TIME
-   if (CommandLineData(theEnv)->CommandString != NULL) 
+   if (CommandLineData(theEnv)->CommandString != NULL)
      { rm(theEnv,CommandLineData(theEnv)->CommandString,CommandLineData(theEnv)->MaximumCharacters); }
-     
-   if (CommandLineData(theEnv)->CurrentCommand != NULL) 
+
+   if (CommandLineData(theEnv)->CurrentCommand != NULL)
      { ReturnExpression(theEnv,CommandLineData(theEnv)->CurrentCommand); }
 #else
 #if MAC_XCD
@@ -341,11 +341,11 @@ void InsertCommandString(
   const char *str,
   unsigned int position)
   {
-   CommandLineData(theEnv)->CommandString = 
+   CommandLineData(theEnv)->CommandString =
       InsertInString(theEnv,str,position,CommandLineData(theEnv)->CommandString,
                      &RouterData(theEnv)->CommandBufferInputCount,&CommandLineData(theEnv)->MaximumCharacters);
   }
-  
+
 /************************************************************/
 /* AppendNCommandString: Appends a value up to N characters */
 /*   to the contents of the CommandString.                  */
@@ -633,10 +633,10 @@ void CommandLoop(
    EnvPrintRouter(theEnv,WPROMPT,CommandLineData(theEnv)->BannerString);
    EnvSetHaltExecution(theEnv,false);
    EnvSetEvaluationError(theEnv,false);
-   
+
    CleanCurrentGarbageFrame(theEnv,NULL);
    CallPeriodicTasks(theEnv);
-   
+
    PrintPrompt(theEnv);
    RouterData(theEnv)->CommandBufferInputCount = 0;
    RouterData(theEnv)->AwaitingInput = true;
@@ -685,7 +685,7 @@ void CommandLoop(
       ExecuteIfCommandComplete(theEnv);
      }
   }
-  
+
 /***********************************************************/
 /* CommandLoopBatch: Loop which waits for commands from a  */
 /*   batch file and then executes them. Returns when there */
@@ -719,7 +719,7 @@ void CommandLoopOnceThenBatch(
 
    CommandLoopBatchDriver(theEnv);
   }
-  
+
 /*********************************************************/
 /* CommandLoopBatchDriver: Loop which waits for commands */
 /*   from a batch file and then executes them. Returns   */
@@ -733,11 +733,11 @@ void CommandLoopBatchDriver(
    while (true)
      {
       if (GetHaltCommandLoopBatch(theEnv) == true)
-        { 
+        {
          CloseAllBatchSources(theEnv);
          SetHaltCommandLoopBatch(theEnv,false);
         }
-        
+
       /*===================================================*/
       /* If a batch file is active, grab the command input */
       /* directly from the batch file, otherwise call the  */
@@ -788,17 +788,17 @@ void CommandLoopBatchDriver(
 bool ExecuteIfCommandComplete(
   Environment *theEnv)
   {
-   if ((CompleteCommand(CommandLineData(theEnv)->CommandString) == 0) || 
+   if ((CompleteCommand(CommandLineData(theEnv)->CommandString) == 0) ||
        (RouterData(theEnv)->CommandBufferInputCount == 0) ||
        (RouterData(theEnv)->AwaitingInput == false))
      { return false; }
-     
+
    if (CommandLineData(theEnv)->BeforeCommandExecutionCallback != NULL)
-     { 
+     {
       if (! (*CommandLineData(theEnv)->BeforeCommandExecutionCallback)(theEnv))
         { return false; }
      }
-       
+
    FlushPPBuffer(theEnv);
    SetPPBufferStatus(theEnv,false);
    RouterData(theEnv)->CommandBufferInputCount = 0;
@@ -809,12 +809,12 @@ bool ExecuteIfCommandComplete(
    EnvSetHaltExecution(theEnv,false);
    EnvSetEvaluationError(theEnv,false);
    FlushCommandString(theEnv);
-   
+
    CleanCurrentGarbageFrame(theEnv,NULL);
    CallPeriodicTasks(theEnv);
-   
+
    PrintPrompt(theEnv);
-         
+
    return true;
   }
 
@@ -824,14 +824,14 @@ bool ExecuteIfCommandComplete(
 bool CommandCompleteAndNotEmpty(
   Environment *theEnv)
   {
-   if ((CompleteCommand(CommandLineData(theEnv)->CommandString) == 0) || 
+   if ((CompleteCommand(CommandLineData(theEnv)->CommandString) == 0) ||
        (RouterData(theEnv)->CommandBufferInputCount == 0) ||
        (RouterData(theEnv)->AwaitingInput == false))
      { return false; }
-     
+
    return true;
   }
-       
+
 /*******************************************/
 /* PrintPrompt: Prints the command prompt. */
 /*******************************************/
@@ -874,7 +874,7 @@ void SetBeforeCommandExecutionFunction(
   {
    CommandLineData(theEnv)->BeforeCommandExecutionCallback = funptr;
   }
-  
+
 /********************************************************/
 /* RouteCommand: Processes a completed command. Returns */
 /*   1 if a command could be parsed, otherwise 0.       */
@@ -906,14 +906,14 @@ bool RouteCommand(
    /* Evaluate constants. */
    /*=====================*/
 
-   if ((theToken.type == SYMBOL) || (theToken.type == STRING) ||
-       (theToken.type == FLOAT) || (theToken.type == INTEGER) ||
-       (theToken.type == INSTANCE_NAME))
+   if ((theToken.tknType == SYMBOL_TOKEN) || (theToken.tknType == STRING_TOKEN) ||
+       (theToken.tknType == FLOAT_TOKEN) || (theToken.tknType == INTEGER_TOKEN) ||
+       (theToken.tknType == INSTANCE_NAME_TOKEN))
      {
       CloseStringSource(theEnv,"command");
       if (printResult)
         {
-         PrintAtom(theEnv,STDOUT,theToken.type,theToken.value);
+         PrintAtom(theEnv,STDOUT,TokenTypeToType(theToken.tknType),theToken.value);
          EnvPrintRouter(theEnv,STDOUT,"\n");
         }
       return true;
@@ -923,12 +923,12 @@ bool RouteCommand(
    /* Evaluate variables. */
    /*=====================*/
 
-   if ((theToken.type == GBL_VARIABLE) ||
-       (theToken.type == SF_VARIABLE) ||
-       (theToken.type == MF_VARIABLE))
+   if ((theToken.tknType == GBL_VARIABLE_TOKEN) ||
+       (theToken.tknType == SF_VARIABLE_TOKEN) ||
+       (theToken.tknType == MF_VARIABLE_TOKEN))
      {
       CloseStringSource(theEnv,"command");
-      top = GenConstant(theEnv,theToken.type,theToken.value);
+      top = GenConstant(theEnv,TokenTypeToType(theToken.tknType),theToken.value);
       EvaluateExpression(theEnv,top,&returnValue);
       rtn_struct(theEnv,expr,top);
       if (printResult)
@@ -945,7 +945,7 @@ bool RouteCommand(
    /* cannot be evaluated at the command prompt.             */
    /*========================================================*/
 
-   if (theToken.type != LPAREN)
+   if (theToken.tknType != LEFT_PARENTHESIS_TOKEN)
      {
       PrintErrorID(theEnv,"COMMLINE",1,false);
       EnvPrintRouter(theEnv,WERROR,"Expected a '(', constant, or variable\n");
@@ -958,7 +958,7 @@ bool RouteCommand(
    /*===========================================================*/
 
    GetToken(theEnv,"command",&theToken);
-   if (theToken.type != SYMBOL)
+   if (theToken.tknType != SYMBOL_TOKEN)
      {
       PrintErrorID(theEnv,"COMMLINE",2,false);
       EnvPrintRouter(theEnv,WERROR,"Expected a command.\n");
@@ -1018,23 +1018,23 @@ bool RouteCommand(
       ConstructData(theEnv)->DanglingConstructs = danglingConstructs;
       return false;
      }
-   
+
    ExpressionInstall(theEnv,top);
-   
+
    CommandLineData(theEnv)->EvaluatingTopLevelCommand = true;
    CommandLineData(theEnv)->CurrentCommand = top;
    EvaluateExpression(theEnv,top,&returnValue);
    CommandLineData(theEnv)->CurrentCommand = NULL;
    CommandLineData(theEnv)->EvaluatingTopLevelCommand = false;
-   
+
    ExpressionDeinstall(theEnv,top);
    ReturnExpression(theEnv,top);
    ConstructData(theEnv)->DanglingConstructs = danglingConstructs;
-   
+
    /*=================================================*/
    /* Print the return value of the function/command. */
    /*=================================================*/
-   
+
    if ((returnValue.type != RVOID) && printResult)
      {
       PrintDataObject(theEnv,STDOUT,&returnValue);
@@ -1127,7 +1127,7 @@ const char *GetCommandCompletionString(
    ScannerData(theEnv)->IgnoreCompletionErrors = true;
    GetToken(theEnv,"CommandCompletion",&theToken);
    CopyToken(&lastToken,&theToken);
-   while (theToken.type != STOP)
+   while (theToken.tknType != STOP_TOKEN)
      {
       CopyToken(&lastToken,&theToken);
       GetToken(theEnv,"CommandCompletion",&theToken);
@@ -1139,25 +1139,27 @@ const char *GetCommandCompletionString(
    /* Determine if the last token can be completed. */
    /*===============================================*/
 
-   if (lastToken.type == SYMBOL)
+   if (lastToken.tknType == SYMBOL_TOKEN)
      {
       rs = ValueToString(lastToken.value);
       if (rs[0] == '[') return (&rs[1]);
       return(ValueToString(lastToken.value));
      }
-   else if (lastToken.type == SF_VARIABLE)
+   else if (lastToken.tknType == SF_VARIABLE_TOKEN)
      { return(ValueToString(lastToken.value)); }
-   else if (lastToken.type == MF_VARIABLE)
+   else if (lastToken.tknType == MF_VARIABLE_TOKEN)
      { return(ValueToString(lastToken.value)); }
-   else if ((lastToken.type == GBL_VARIABLE) || (lastToken.type == MF_GBL_VARIABLE) ||
-            (lastToken.type == INSTANCE_NAME))
+   else if ((lastToken.tknType == GBL_VARIABLE_TOKEN) ||
+            (lastToken.tknType == MF_GBL_VARIABLE_TOKEN) ||
+            (lastToken.tknType == INSTANCE_NAME_TOKEN))
      { return NULL; }
-   else if (lastToken.type == STRING)
+   else if (lastToken.tknType == STRING_TOKEN)
      {
       length = strlen(ValueToString(lastToken.value));
       return(GetCommandCompletionString(theEnv,ValueToString(lastToken.value),length));
      }
-   else if ((lastToken.type == FLOAT) || (lastToken.type == INTEGER))
+   else if ((lastToken.tknType == FLOAT_TOKEN) ||
+            (lastToken.tknType == INTEGER_TOKEN))
      { return NULL; }
 
    return("");
@@ -1169,8 +1171,8 @@ const char *GetCommandCompletionString(
 void SetHaltCommandLoopBatch(
   Environment *theEnv,
   bool value)
-  { 
-   CommandLineData(theEnv)->HaltCommandLoopBatch = value; 
+  {
+   CommandLineData(theEnv)->HaltCommandLoopBatch = value;
   }
 
 /*******************************************************************/

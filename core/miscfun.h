@@ -46,14 +46,14 @@
 /*                                                           */
 /*            Combined BASIC_IO and EXT_IO compilation       */
 /*            flags into the IO_FUNCTIONS compilation flag.  */
-/*                                                           */    
+/*                                                           */
 /*            Removed code associated with HELP_FUNCTIONS    */
 /*            and EMACS_EDITOR compiler flags.               */
-/*                                                           */    
+/*                                                           */
 /*            Added operating-system function.               */
-/*                                                           */ 
+/*                                                           */
 /*            Added new function (for future use).           */
-/*                                                           */ 
+/*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */

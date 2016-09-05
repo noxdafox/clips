@@ -67,7 +67,7 @@
 void DeffactsCompilerSetup(
   Environment *theEnv)
   {
-   DeffactsData(theEnv)->DeffactsCodeItem = 
+   DeffactsData(theEnv)->DeffactsCodeItem =
       AddCodeGeneratorItem(theEnv,"deffacts",0,BeforeDeffactsToCode,
                            NULL,ConstructToCode,2);
   }
@@ -211,7 +211,7 @@ static void DeffactsModuleToCode(
 #if MAC_XCD
 #pragma unused(moduleCount)
 #endif
-   
+
    fprintf(theFile,"{");
 
    ConstructModuleToCode(theEnv,theFile,theModule,imageID,maxIndices,

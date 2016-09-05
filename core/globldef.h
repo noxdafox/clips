@@ -76,9 +76,9 @@ typedef struct defglobal Defglobal;
 #define DEFGLOBAL_DATA 1
 
 struct defglobalData
-  { 
+  {
    struct construct *DefglobalConstruct;
-   int DefglobalModuleIndex;  
+   int DefglobalModuleIndex;
    bool ChangeToGlobals;
 #if DEBUGGING_FUNCTIONS
    bool WatchGlobals;

@@ -146,26 +146,26 @@ static void FormMethodsFromRestrictions(
    bool needMinimumMethod;
    int i;
    const char *rstring;
-   
+
    if (sysfunc->restrictions == NULL)
      { rstring = NULL; }
    else
      { rstring = sysfunc->restrictions->contents; }
-   
+
    /*================================*/
    /* Extract the range of arguments */
    /* from the restriction string.   */
    /*================================*/
-      
+
    min = sysfunc->minArgs;
    max = sysfunc->maxArgs;
    PopulateRestriction(theEnv,&defaultc2,ANY_TYPE,rstring,0);
-     
+
    /*==================================================*/
    /* Form a list of method restrictions corresponding */
    /* to the minimum number of arguments.              */
    /*==================================================*/
-   
+
    plist = bot = NULL;
    for (i = 0 ; i < min ; i++)
      {
@@ -185,7 +185,7 @@ static void FormMethodsFromRestrictions(
    /* Remember where restrictions end  */
    /* for minimum number of arguments. */
    /*==================================*/
-   
+
    svBot = bot;
    needMinimumMethod = true;
 
@@ -194,7 +194,7 @@ static void FormMethodsFromRestrictions(
    /* possible variations of the extra arguments. Add a   */
    /* separate method for each specified extra argument.  */
    /*=====================================================*/
-   
+
    i = 0;
    while (RestrictionExists(rstring,min+i+1))
      {
@@ -209,7 +209,7 @@ static void FormMethodsFromRestrictions(
 
       PopulateRestriction(theEnv,&argRestriction2,defaultc2,rstring,min+i+1);
       rptr = ParseRestrictionType(theEnv,argRestriction2);
-      
+
       tmp = get_struct(theEnv,expr);
       tmp->argList = (EXPRESSION *) rptr;
       tmp->nextArg = NULL;
@@ -233,7 +233,7 @@ static void FormMethodsFromRestrictions(
    /* Add a method to account for wildcard arguments */
    /* and attach a query in case there is a limit.   */
    /*================================================*/
-   
+
    if ((min + i) != max)
      {
       /*==================================================*/
@@ -242,12 +242,12 @@ static void FormMethodsFromRestrictions(
       /* will already be handled by this method. We don't */
       /* need to add an extra method for that case.       */
       /*==================================================*/
-      
+
       if (i == 0)
         { needMinimumMethod = false; }
 
       rptr = ParseRestrictionType(theEnv,defaultc2);
-        
+
       if (max != -1)
         {
          rptr->query = GenConstant(theEnv,FCALL,FindFunction(theEnv,"<="));
@@ -276,7 +276,7 @@ static void FormMethodsFromRestrictions(
    /* we must add a specific method for the minimum case. */
    /* Otherwise, the method with the wildcard covers it.  */
    /*=====================================================*/
-      
+
    if (needMinimumMethod)
      {
       if (svBot != NULL)
@@ -301,7 +301,7 @@ static EXPRESSION *ParseRestrictionCreateTypes(
   CONSTRAINT_RECORD *rv)
   {
    EXPRESSION *types = NULL;
-   
+
    if (rv->anyAllowed == false)
      {
       if (rv->symbolsAllowed && rv->stringsAllowed)
@@ -341,7 +341,7 @@ static EXPRESSION *ParseRestrictionCreateTypes(
       if (rv->multifieldsAllowed)
         types = GenTypeExpression(theEnv,types,MULTIFIELD,MULTIFIELD,NULL);
      }
-   
+
    return(types);
    }
 
@@ -366,7 +366,7 @@ static RESTRICTION *ParseRestrictionType(
    rptr = get_struct(theEnv,restriction);
    rptr->query = NULL;
    rv = ArgumentTypeToConstraintRecord(theEnv,code);
-   
+
    types = ParseRestrictionCreateTypes(theEnv,rv);
    RemoveConstraint(theEnv,rv);
    PackRestrictionTypes(theEnv,rptr,types);

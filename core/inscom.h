@@ -71,7 +71,7 @@
 #define INSTANCE_DATA 29
 
 struct instanceData
-  { 
+  {
    Instance DummyInstance;
    Instance **InstanceTable;
    bool MaintainGarbageInstances;
@@ -79,7 +79,7 @@ struct instanceData
    bool ChangesToInstances;
    IGARBAGE *InstanceGarbageList;
    struct patternEntityRecord InstanceInfo;
-   Instance *InstanceList;  
+   Instance *InstanceList;
    unsigned long GlobalNumberOfInstances;
    Instance *CurrentInstance;
    Instance *InstanceListBottom;

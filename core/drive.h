@@ -56,7 +56,7 @@
    unsigned long                  BetaMemoryHashValue(Environment *,struct expr *,struct partialMatch *,struct partialMatch *,struct joinNode *);
    bool                           EvaluateSecondaryNetworkTest(Environment *,struct partialMatch *,struct joinNode *);
    void                           EPMDrive(Environment *,struct partialMatch *,struct joinNode *,int);
-   
+
 #endif /* _H_drive */
 
 

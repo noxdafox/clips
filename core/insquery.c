@@ -145,7 +145,7 @@ void GetQueryInstance(
    QUERY_CORE *core;
 
    core = FindQueryCore(theEnv,ValueToInteger(GetpValue(GetFirstArgument())));
-   
+
    returnValue->type = INSTANCE_NAME;
    returnValue->value = GetFullInstanceName(theEnv,core->solns[ValueToInteger(GetpValue(GetFirstArgument()->nextArg))]);
   }
@@ -270,7 +270,7 @@ void AnyInstances(
    bool testResult;
 
    returnValue->type = SYMBOL;
-   
+
    qclasses = DetermineQueryClasses(theEnv,GetFirstArgument()->nextArg,
                                       "any-instancep",&rcnt);
    if (qclasses == NULL)
@@ -278,7 +278,7 @@ void AnyInstances(
       returnValue->value = EnvFalseSymbol(theEnv);
       return;
      }
-     
+
    PushQueryCore(theEnv);
    InstanceQueryData(theEnv)->QueryCore = get_struct(theEnv,query_core);
    InstanceQueryData(theEnv)->QueryCore->solns = (Instance **) gm2(theEnv,(sizeof(Instance *) * rcnt));
@@ -289,7 +289,7 @@ void AnyInstances(
    rtn_struct(theEnv,query_core,InstanceQueryData(theEnv)->QueryCore);
    PopQueryCore(theEnv);
    DeleteQueryClasses(theEnv,qclasses);
-   
+
    if (testResult)
      { returnValue->value = EnvTrueSymbol(theEnv); }
    else
@@ -484,7 +484,7 @@ void QueryDoForAllInstances(
                                       "do-for-all-instances",&rcnt);
    if (qclasses == NULL)
      return;
- 
+
    PushQueryCore(theEnv);
    InstanceQueryData(theEnv)->QueryCore = get_struct(theEnv,query_core);
    InstanceQueryData(theEnv)->QueryCore->solns = (Instance **) gm2(theEnv,(sizeof(Instance *) * rcnt));
@@ -494,7 +494,7 @@ void QueryDoForAllInstances(
    ValueInstall(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
    TestEntireChain(theEnv,qclasses,0);
    ValueDeinstall(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
-      
+
    InstanceQueryData(theEnv)->AbortQuery = false;
    ProcedureFunctionData(theEnv)->BreakFlag = false;
    rm(theEnv,InstanceQueryData(theEnv)->QueryCore->solns,(sizeof(Instance *) * rcnt));
@@ -549,7 +549,7 @@ void DelayedQueryDoForAllInstances(
    TestEntireChain(theEnv,qclasses,0);
    InstanceQueryData(theEnv)->AbortQuery = false;
    InstanceQueryData(theEnv)->QueryCore->action = GetFirstArgument()->nextArg;
-   
+
    oldGarbageFrame = UtilityData(theEnv)->CurrentGarbageFrame;
    memset(&newGarbageFrame,0,sizeof(struct garbageFrame));
    newGarbageFrame.priorFrame = oldGarbageFrame;
@@ -561,7 +561,7 @@ void DelayedQueryDoForAllInstances(
         InstanceQueryData(theEnv)->QueryCore->solns[i] = InstanceQueryData(theEnv)->QueryCore->soln_set->soln[i];
       PopQuerySoln(theEnv);
       EvaluateExpression(theEnv,InstanceQueryData(theEnv)->QueryCore->action,returnValue);
-      
+
       if (EvaluationData(theEnv)->HaltExecution || ProcedureFunctionData(theEnv)->BreakFlag || ProcedureFunctionData(theEnv)->ReturnFlag)
         {
          while (InstanceQueryData(theEnv)->QueryCore->soln_set != NULL)
@@ -572,7 +572,7 @@ void DelayedQueryDoForAllInstances(
       CleanCurrentGarbageFrame(theEnv,NULL);
       CallPeriodicTasks(theEnv);
      }
-      
+
    RestorePriorGarbageFrame(theEnv,&newGarbageFrame,oldGarbageFrame,returnValue);
    CallPeriodicTasks(theEnv);
 
@@ -934,12 +934,12 @@ static bool TestForFirstInstanceInClass(
    SetTraversalID(cls->traversalRecord,id);
    if (DefclassInScope(theEnv,cls,theModule) == false)
      return false;
-     
+
    oldGarbageFrame = UtilityData(theEnv)->CurrentGarbageFrame;
    memset(&newGarbageFrame,0,sizeof(struct garbageFrame));
    newGarbageFrame.priorFrame = oldGarbageFrame;
    UtilityData(theEnv)->CurrentGarbageFrame = &newGarbageFrame;
-      
+
    ins = cls->instanceList;
    while (ins != NULL)
      {
@@ -967,10 +967,10 @@ static bool TestForFirstInstanceInClass(
              (temp.value != EnvFalseSymbol(theEnv)))
            break;
         }
-        
+
       CleanCurrentGarbageFrame(theEnv,NULL);
       CallPeriodicTasks(theEnv);
-       
+
       ins = ins->nxtClass;
       while ((ins != NULL) ? (ins->garbage == 1) : false)
         ins = ins->nxtClass;
@@ -1061,7 +1061,7 @@ static void TestEntireClass(
    SetTraversalID(cls->traversalRecord,id);
    if (DefclassInScope(theEnv,cls,theModule) == false)
      return;
-     
+
    oldGarbageFrame = UtilityData(theEnv)->CurrentGarbageFrame;
    memset(&newGarbageFrame,0,sizeof(struct garbageFrame));
    newGarbageFrame.priorFrame = oldGarbageFrame;
@@ -1112,7 +1112,7 @@ static void TestEntireClass(
               AddSolution(theEnv);
            }
         }
-         
+
       ins = ins->nxtClass;
       while ((ins != NULL) ? (ins->garbage == 1) : false)
         ins = ins->nxtClass;
@@ -1120,7 +1120,7 @@ static void TestEntireClass(
       CleanCurrentGarbageFrame(theEnv,NULL);
       CallPeriodicTasks(theEnv);
      }
-   
+
    RestorePriorGarbageFrame(theEnv,&newGarbageFrame, oldGarbageFrame,NULL);
    CallPeriodicTasks(theEnv);
 

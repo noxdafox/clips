@@ -41,7 +41,7 @@
 /*                                                           */
 /*            Added context information for run functions.   */
 /*                                                           */
-/*            Added before rule firing callback function.    */ 
+/*            Added before rule firing callback function.    */
 /*                                                           */
 /*            Changed garbage collection algorithm.          */
 /*                                                           */
@@ -125,15 +125,15 @@
 /*****************************************************************************/
 void InitializeEngine(
   Environment *theEnv)
-  {   
+  {
    AllocateEnvironmentData(theEnv,ENGINE_DATA,sizeof(struct engineData),DeallocateEngineData);
-   
+
 #if DEBUGGING_FUNCTIONS
    AddWatchItem(theEnv,"statistics",0,&EngineData(theEnv)->WatchStatistics,20,NULL,NULL);
    AddWatchItem(theEnv,"focus",0,&EngineData(theEnv)->WatchFocus,0,NULL,NULL);
 #endif
   }
-  
+
 /*************************************************/
 /* DeallocateEngineData: Deallocates environment */
 /*    data for engine functionality.             */
@@ -142,7 +142,7 @@ static void DeallocateEngineData(
   Environment *theEnv)
   {
    struct focus *tmpPtr, *nextPtr;
-   
+
    DeallocateCallList(theEnv,EngineData(theEnv)->ListOfRunFunctions);
    DeallocateCallListWithArg(theEnv,EngineData(theEnv)->ListOfBeforeRunFunctions);
 
@@ -196,11 +196,11 @@ long long EnvRun(
    if (EngineData(theEnv)->AlreadyRunning)
      { return 0; }
    EngineData(theEnv)->AlreadyRunning = true;
-    
+
    /*========================================*/
    /* Set up the frame for tracking garbage. */
    /*========================================*/
-   
+
    oldGarbageFrame = UtilityData(theEnv)->CurrentGarbageFrame;
    memset(&newGarbageFrame,0,sizeof(struct garbageFrame));
    newGarbageFrame.priorFrame = oldGarbageFrame;
@@ -266,7 +266,7 @@ long long EnvRun(
       for (theBeforeRunFunction = EngineData(theEnv)->ListOfBeforeRunFunctions;
            theBeforeRunFunction != NULL;
            theBeforeRunFunction = theBeforeRunFunction->next)
-        { 
+        {
          SetEnvironmentCallbackContext(theEnv,theBeforeRunFunction->context);
          (*theBeforeRunFunction->func)(theEnv,theActivation);
         }
@@ -345,10 +345,10 @@ long long EnvRun(
       /*====================================================*/
 
       EngineData(theEnv)->TheLogicalJoin = EngineData(theEnv)->ExecutingRule->logicalJoin;
-      
+
       if (EngineData(theEnv)->TheLogicalJoin != NULL)
-        { 
-         EngineData(theEnv)->TheLogicalBind = FindLogicalBind(EngineData(theEnv)->TheLogicalJoin,EngineData(theEnv)->GlobalLHSBinds); 
+        {
+         EngineData(theEnv)->TheLogicalBind = FindLogicalBind(EngineData(theEnv)->TheLogicalJoin,EngineData(theEnv)->GlobalLHSBinds);
          EngineData(theEnv)->TheLogicalBind->busy = true;
         }
       else
@@ -383,13 +383,13 @@ long long EnvRun(
       if ((! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
           (EvaluationData(theEnv)->CurrentExpression == NULL))
         { ConstructData(theEnv)->DanglingConstructs = danglingConstructs; }
-      
+
       /*=====================================*/
       /* Remove information for logical CEs. */
       /*=====================================*/
-      
+
       EngineData(theEnv)->TheLogicalJoin = NULL;
-      
+
       if (EngineData(theEnv)->TheLogicalBind != NULL)
         {
          EngineData(theEnv)->TheLogicalBind->busy = false;
@@ -487,7 +487,7 @@ long long EnvRun(
       for (theRunFunction = EngineData(theEnv)->ListOfRunFunctions;
            theRunFunction != NULL;
            theRunFunction = theRunFunction->next)
-        { 
+        {
          SetEnvironmentCallbackContext(theEnv,theRunFunction->context);
          (*theRunFunction->func)(theEnv);
         }
@@ -598,7 +598,7 @@ long long EnvRun(
                           (long) (((double) sumActivations / (rulesFired + 1)) + 0.5),
                           maxActivations);
       EnvPrintRouter(theEnv,WDIALOG,printSpace);
-      
+
 #if DEVELOPER
       gensprintf(printSpace,"%9ld left to right comparisons.\n",
                           EngineData(theEnv)->leftToRightComparisons);
@@ -631,7 +631,7 @@ long long EnvRun(
       gensprintf(printSpace,"%9ld beta hash list skips.\n",
                           EngineData(theEnv)->betaHashListSkips);
       EnvPrintRouter(theEnv,WDIALOG,printSpace);
-      
+
       gensprintf(printSpace,"%9ld beta hash hash table skips.\n",
                           EngineData(theEnv)->betaHashHTSkips);
       EnvPrintRouter(theEnv,WDIALOG,printSpace);
@@ -654,14 +654,14 @@ long long EnvRun(
       if (EngineData(theEnv)->CurrentFocus->theModule != EnvGetCurrentModule(theEnv))
         { EnvSetCurrentModule(theEnv,EngineData(theEnv)->CurrentFocus->theModule); }
      }
-     
+
    /*================================*/
    /* Restore the old garbage frame. */
    /*================================*/
-   
+
    RestorePriorGarbageFrame(theEnv,&newGarbageFrame, oldGarbageFrame,NULL);
    CallPeriodicTasks(theEnv);
-     
+
    /*===================================*/
    /* Return the number of rules fired. */
    /*===================================*/
@@ -930,7 +930,7 @@ bool EnvAddRunFunction(
                                               EngineData(theEnv)->ListOfRunFunctions);
    return true;
   }
-  
+
 /********************************************/
 /* EnvAddBeforeRunFunction: Adds a function */
 /*   to the ListOfBeforeRunFunctions.       */
@@ -946,7 +946,7 @@ bool EnvAddBeforeRunFunction(
                                               EngineData(theEnv)->ListOfBeforeRunFunctions);
    return true;
   }
-  
+
 /*****************************************/
 /* EnvAddRunFunctionWithContext: Adds a  */
 /*   function to the ListOfRunFunctions. */
@@ -958,13 +958,13 @@ bool EnvAddRunFunctionWithContext(
   int priority,
   void *context)
   {
-   EngineData(theEnv)->ListOfRunFunctions = 
+   EngineData(theEnv)->ListOfRunFunctions =
       AddFunctionToCallListWithContext(theEnv,name,priority,functionPtr,
                                        EngineData(theEnv)->ListOfRunFunctions,
                                        context);
    return true;
   }
-  
+
 /***********************************************/
 /* EnvAddBeforeRunFunctionWithContext: Adds a  */
 /*   function to the ListOfBeforeRunFunctions. */
@@ -976,13 +976,13 @@ bool EnvAddBeforeRunFunctionWithContext(
   int priority,
   void *context)
   {
-   EngineData(theEnv)->ListOfBeforeRunFunctions = 
+   EngineData(theEnv)->ListOfBeforeRunFunctions =
       AddFunctionToCallListWithArgWithContext(theEnv,name,priority,functionPtr,
                                        EngineData(theEnv)->ListOfBeforeRunFunctions,
                                        context);
    return true;
   }
-  
+
 /********************************************/
 /* EnvRemoveRunFunction: Removes a function */
 /*   from the ListOfRunFunctions.           */
@@ -993,12 +993,12 @@ bool EnvRemoveRunFunction(
   {
    bool found;
 
-   EngineData(theEnv)->ListOfRunFunctions = 
+   EngineData(theEnv)->ListOfRunFunctions =
       RemoveFunctionFromCallList(theEnv,name,EngineData(theEnv)->ListOfRunFunctions,&found);
 
    return found;
   }
-  
+
 /**************************************************/
 /* EnvRemoveBeforeRunFunction: Removes a function */
 /*   from the ListOfBeforeRunFunctions.           */
@@ -1009,7 +1009,7 @@ bool EnvRemoveBeforeRunFunction(
   {
    bool found;
 
-   EngineData(theEnv)->ListOfBeforeRunFunctions = 
+   EngineData(theEnv)->ListOfBeforeRunFunctions =
       RemoveFunctionFromCallListWithArg(theEnv,name,EngineData(theEnv)->ListOfBeforeRunFunctions,&found);
 
    return found;
@@ -1115,7 +1115,7 @@ bool EnvRemoveBreak(
 void RemoveAllBreakpoints(
   Environment *theEnv)
   {
-   void *theRule;
+   Defrule *theRule;
    Defmodule *theDefmodule = NULL;
 
    while ((theDefmodule = EnvGetNextDefmodule(theEnv,theDefmodule)) != NULL)
@@ -1235,7 +1235,7 @@ void ShowBreaksCommand(
    Defmodule *theModule;
 
    numArgs = UDFArgumentCount(context);
-   
+
    if (numArgs == 1)
      {
       theModule = GetModuleName(context,1,&error);
@@ -1360,7 +1360,7 @@ void PopFocusFunction(
   {
    Defmodule *theModule;
    returnValue->type = SYMBOL;
-   
+
    theModule = EnvPopFocus(theEnv);
    if (theModule == NULL)
      { returnValue->value = EnvFalseSymbol(theEnv); }
@@ -1380,9 +1380,9 @@ void GetFocusFunction(
    Defmodule *rv;
 
    returnValue->type = SYMBOL;
-   
+
    rv = EnvGetFocus(theEnv);
-   
+
    if (rv == NULL)
      { returnValue->value = EnvFalseSymbol(theEnv); }
    else
@@ -1416,13 +1416,13 @@ void FocusCommand(
    int argCount, i;
 
    returnValue->type = SYMBOL;
-   
+
    /*===========================================*/
    /* Focus on the specified defrule module(s). */
    /*===========================================*/
 
    argCount = UDFArgumentCount(context);
-   
+
    for (i = argCount; i > 0; i--)
      {
       if (! UDFNthArgument(context,i,SYMBOL_TYPE,&theArg))
@@ -1473,8 +1473,8 @@ void EnvSetFocusChanged(
 void EnvSetHaltRules(
   Environment *theEnv,
   bool value)
-  { 
-   EngineData(theEnv)->HaltRules = value; 
+  {
+   EngineData(theEnv)->HaltRules = value;
   }
 
 /****************************************************/

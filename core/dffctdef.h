@@ -64,14 +64,14 @@ typedef struct deffacts Deffacts;
 #define DEFFACTS_DATA 0
 
 struct deffactsData
-  { 
+  {
    struct construct *DeffactsConstruct;
-   int DeffactsModuleIndex;  
+   int DeffactsModuleIndex;
 #if CONSTRUCT_COMPILER && (! RUN_TIME)
    struct CodeGeneratorItem *DeffactsCodeItem;
 #endif
   };
-  
+
 struct deffacts
   {
    struct constructHeader header;

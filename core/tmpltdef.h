@@ -115,7 +115,7 @@ struct deftemplateModule
 #define DEFTEMPLATE_DATA 5
 
 struct deftemplateData
-  { 
+  {
    struct construct *DeftemplateConstruct;
    int DeftemplateModuleIndex;
    struct entityRecord DeftemplatePtrRecord;

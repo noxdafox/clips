@@ -128,7 +128,7 @@ struct construct
 #define CONSTRUCT_DATA 42
 
 struct constructData
-  { 
+  {
    bool ClearReadyInProgress;
    bool ClearInProgress;
    bool ResetReadyInProgress;

@@ -23,13 +23,13 @@
 /*                                                           */
 /*            Renamed BOOLEAN macro type to intBool.         */
 /*                                                           */
-/*            Added support for passing context information  */ 
+/*            Added support for passing context information  */
 /*            to the router functions.                       */
 /*                                                           */
 /*      6.30: Fixed issues with passing context to routers.  */
 /*                                                           */
 /*            Added AwaitingInput flag.                      */
-/*                                                           */             
+/*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
@@ -93,14 +93,14 @@ void InitializeDefaultRouters(
 
    RouterData(theEnv)->CommandBufferInputCount = 0;
    RouterData(theEnv)->AwaitingInput = true;
-   
+
 #if (! RUN_TIME)
    EnvAddUDF(theEnv,"exit","v",0,1,"l",ExitCommand,"ExitCommand",NULL);
 #endif
    InitializeFileRouter(theEnv);
    InitializeStringRouter(theEnv);
   }
-  
+
 /*************************************************/
 /* DeallocateRouterData: Deallocates environment */
 /*    data for I/O routers.                      */
@@ -109,7 +109,7 @@ static void DeallocateRouterData(
   Environment *theEnv)
   {
    struct router *tmpPtr, *nextPtr;
-   
+
    tmpPtr = RouterData(theEnv)->ListOfRouters;
    while (tmpPtr != NULL)
      {
@@ -320,7 +320,7 @@ int EnvUngetcRouter(
                 (strcmp(logicalName,RouterData(theEnv)->LineCountRouter) == 0))
               { DecrementLineCount(theEnv); }
            }
-           
+
          SetEnvironmentRouterContext(theEnv,currentPtr->context);
          return((*currentPtr->ungetcCallback)(theEnv,ch,logicalName));
         }
@@ -381,7 +381,7 @@ void EnvExitRouter(
      {
       nextPtr = currentPtr->next;
       if (currentPtr->active == true)
-        { 
+        {
          if (currentPtr->exitCallback != NULL)
            {
             SetEnvironmentRouterContext(theEnv,currentPtr->context);
@@ -443,7 +443,7 @@ bool EnvAddRouterWithContext(
    /*==================================================*/
    /* Reject the router if the name is already in use. */
    /*==================================================*/
-   
+
    for (currentPtr = RouterData(theEnv)->ListOfRouters;
         currentPtr != NULL;
         currentPtr = currentPtr->next)
@@ -451,11 +451,11 @@ bool EnvAddRouterWithContext(
       if (strcmp(currentPtr->name,routerName) == 0)
         { return false; }
      }
-     
+
    newPtr = get_struct(theEnv,router);
 
    nameCopy = (char *) genalloc(theEnv,strlen(routerName) + 1);
-   genstrcpy(nameCopy,routerName);     
+   genstrcpy(nameCopy,routerName);
    newPtr->name = nameCopy;
 
    newPtr->active = true;
@@ -575,7 +575,7 @@ static bool QueryRouter(
    /* Call the router's query function to see */
    /* if it recognizes the logical name.      */
    /*=========================================*/
-   
+
    SetEnvironmentRouterContext(theEnv,currentPtr->context);
    if ((*currentPtr->queryCallback)(theEnv,logicalName) == true)
      { return true; }
@@ -657,8 +657,8 @@ struct router *EnvFindRouter(
 void SetFastLoad(
   Environment *theEnv,
   FILE *filePtr)
-  { 
-   RouterData(theEnv)->FastLoadFilePtr = filePtr; 
+  {
+   RouterData(theEnv)->FastLoadFilePtr = filePtr;
   }
 
 /********************************************************/
@@ -667,8 +667,8 @@ void SetFastLoad(
 void SetFastSave(
   Environment *theEnv,
   FILE *filePtr)
-  { 
-   RouterData(theEnv)->FastSaveFilePtr = filePtr; 
+  {
+   RouterData(theEnv)->FastSaveFilePtr = filePtr;
   }
 
 /******************************************************/
@@ -677,7 +677,7 @@ void SetFastSave(
 FILE *GetFastLoad(
   Environment *theEnv)
   {
-   return(RouterData(theEnv)->FastLoadFilePtr); 
+   return(RouterData(theEnv)->FastLoadFilePtr);
   }
 
 /******************************************************/
@@ -686,7 +686,7 @@ FILE *GetFastLoad(
 FILE *GetFastSave(
   Environment *theEnv)
   {
-   return(RouterData(theEnv)->FastSaveFilePtr); 
+   return(RouterData(theEnv)->FastSaveFilePtr);
   }
 
 /*****************************************************/

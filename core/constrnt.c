@@ -92,7 +92,7 @@ void InitializeConstraints(
 #endif
 
    AllocateEnvironmentData(theEnv,CONSTRAINT_DATA,sizeof(struct constraintData),DeallocateConstraintData);
-      
+
 #if (! RUN_TIME) && (! BLOAD_ONLY)
 
     ConstraintData(theEnv)->ConstraintHashtable = (struct constraintRecord **)
@@ -109,7 +109,7 @@ void InitializeConstraints(
    EnvAddUDF(theEnv,"set-dynamic-constraint-checking","b",1,1,NULL,SDCCommand,"SDCCommand",NULL);
 #endif
   }
-  
+
 /*****************************************************/
 /* DeallocateConstraintData: Deallocates environment */
 /*    data for constraints.                          */
@@ -117,7 +117,7 @@ void InitializeConstraints(
 static void DeallocateConstraintData(
   Environment *theEnv)
   {
-#if ! RUN_TIME   
+#if ! RUN_TIME
    struct constraintRecord *tmpPtr, *nextPtr;
    int i;
 
@@ -139,7 +139,7 @@ static void DeallocateConstraintData(
 #pragma unused(theEnv)
 #endif
 #endif
-      
+
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE) && (! RUN_TIME)
    if (ConstraintData(theEnv)->NumberOfConstraints != 0)
      {
@@ -295,7 +295,7 @@ unsigned long HashConstraint(
       (theConstraint->factAddressesAllowed * 79) +
       (theConstraint->anyRestriction * 59) +
       (theConstraint->symbolRestriction * 61);
-      
+
    count += (unsigned long)
       (theConstraint->stringRestriction * 3) +
       (theConstraint->floatRestriction * 37) +
@@ -562,7 +562,7 @@ bool EnvSetDynamicConstraintChecking(
 /******************************************************/
 bool EnvGetDynamicConstraintChecking(
   Environment *theEnv)
-  { 
-   return(ConstraintData(theEnv)->DynamicConstraintChecking); 
+  {
+   return(ConstraintData(theEnv)->DynamicConstraintChecking);
   }
 

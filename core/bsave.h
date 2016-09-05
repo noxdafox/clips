@@ -91,7 +91,7 @@ typedef struct bsave_expr
 #define BSAVE_DATA 39
 
 struct bsaveData
-  { 
+  {
    struct BinaryItem *ListOfBinaryItems;
 #if BLOAD_AND_BSAVE
    BLOADCNTSV *BloadCountSaveTop;

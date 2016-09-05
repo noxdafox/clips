@@ -23,7 +23,7 @@
 /*      6.24: Support for run-time programs directly passing */
 /*            the hash tables for initialization.            */
 /*                                                           */
-/*            Made gensystem functional for Xcode.           */ 
+/*            Made gensystem functional for Xcode.           */
 /*                                                           */
 /*            Added BeforeOpenFunction and AfterOpenFunction */
 /*            hooks.                                         */
@@ -141,7 +141,7 @@
 #define SYSTEM_DEPENDENT_DATA 58
 
 struct systemDependentData
-  { 
+  {
    void (*RedrawScreenFunction)(Environment *);
    void (*PauseEnvFunction)(Environment *);
    void (*ContinueEnvFunction)(Environment *,int);
@@ -290,17 +290,17 @@ int gengetchar(
       WCHAR wBuffer = 0;
 
       ReadConsole(GetStdHandle(STD_INPUT_HANDLE),&tBuffer,1,&count,NULL);
-      
+
       wBuffer = tBuffer;
-      
-      SystemDependentData(theEnv)->getcLength = 
+
+      SystemDependentData(theEnv)->getcLength =
          WideCharToMultiByte(CP_UTF8,0,&wBuffer,1,
                              (char *) SystemDependentData(theEnv)->getcBuffer,
                              7,NULL,NULL);
-                             
+
       SystemDependentData(theEnv)->getcPosition = 0;
      }
-     
+
    return SystemDependentData(theEnv)->getcBuffer[SystemDependentData(theEnv)->getcPosition++];
 #else
 */
@@ -321,7 +321,7 @@ int genungetchar(
   /*
 #if WIN_MVC
    if (SystemDependentData(theEnv)->getcPosition > 0)
-     { 
+     {
       SystemDependentData(theEnv)->getcPosition--;
       return theChar;
      }
@@ -359,7 +359,7 @@ void genprintfile(
 
       wbuffer = genalloc(theEnv,sizeof(wchar_t) * (len + 1));
       rv = MultiByteToWideChar(CP_UTF8,MB_ERR_INVALID_CHARS,str,-1,wbuffer,len+1);
-      
+
       fwprintf(fptr,L"%ls",wbuffer);
       fflush(fptr);
       genfree(theEnv,wbuffer,sizeof(wchar_t) * (len + 1));
@@ -372,7 +372,7 @@ void genprintfile(
 #endif
      }
   }
-  
+
 /***********************************************************/
 /* InitializeNonportableFeatures: Initializes non-portable */
 /*   features. Currently, the only non-portable feature    */
@@ -396,7 +396,7 @@ void genexit(
   {
    if (SystemDependentData(theEnv)->jmpBuffer != NULL)
      { longjmp(*SystemDependentData(theEnv)->jmpBuffer,1); }
-     
+
    exit(num);
   }
 
@@ -409,7 +409,7 @@ void SetJmpBuffer(
   {
    SystemDependentData(theEnv)->jmpBuffer = theJmpBuffer;
   }
-  
+
 /******************************************/
 /* genstrcpy: Generic genstrcpy function. */
 /******************************************/
@@ -430,7 +430,7 @@ char *genstrncpy(
   {
    return strncpy(dest,src,n);
   }
-  
+
 /******************************************/
 /* genstrcat: Generic genstrcat function. */
 /******************************************/
@@ -451,7 +451,7 @@ char *genstrncat(
   {
    return strncat(dest,src,n);
   }
-  
+
 /*****************************************/
 /* gensprintf: Generic sprintf function. */
 /*****************************************/
@@ -462,16 +462,16 @@ int gensprintf(
   {
    va_list args;
    int rv;
-   
+
    va_start(args,restrictStr);
-   
+
    rv = vsprintf(buffer,restrictStr,args);
-   
+
    va_end(args);
-   
+
    return rv;
   }
-  
+
 /******************************************************/
 /* genrand: Generic random number generator function. */
 /******************************************************/
@@ -479,7 +479,7 @@ int genrand()
   {
    return(rand());
   }
-  
+
 /**********************************************************************/
 /* genseed: Generic function for seeding the random number generator. */
 /**********************************************************************/
@@ -583,7 +583,7 @@ FILE *GenOpen(
   const char *accessType)
   {
    FILE *theFile;
-   
+
    /*==================================*/
    /* Invoke the before open function. */
    /*==================================*/
@@ -594,7 +594,7 @@ FILE *GenOpen(
    /*================*/
    /* Open the file. */
    /*================*/
-   
+
 #if WIN_MVC
 #if _MSC_VER >= 1400
    fopen_s(&theFile,fileName,accessType);
@@ -604,16 +604,16 @@ FILE *GenOpen(
 #else
    theFile = fopen(fileName,accessType);
 #endif
-   
+
    /*=====================================*/
    /* Check for a UTF-8 Byte Order Marker */
    /* (BOM): 0xEF,0xBB,0xBF.              */
    /*=====================================*/
-   
+
    if ((theFile != NULL) & (strcmp(accessType,"r") == 0))
      {
       int theChar;
-      
+
       theChar = getc(theFile);
       if (theChar == 0xEF)
        {
@@ -630,18 +630,18 @@ FILE *GenOpen(
       else
        { ungetc(theChar,theFile); }
      }
-     
+
    /*=================================*/
    /* Invoke the after open function. */
    /*=================================*/
-   
+
    if (SystemDependentData(theEnv)->AfterOpenFunction != NULL)
      { (*SystemDependentData(theEnv)->AfterOpenFunction)(theEnv); }
-     
+
    /*===============================*/
    /* Return a pointer to the file. */
    /*===============================*/
-   
+
    return theFile;
   }
 
@@ -653,7 +653,7 @@ int GenClose(
   FILE *theFile)
   {
    int rv;
-   
+
    if (SystemDependentData(theEnv)->BeforeOpenFunction != NULL)
      { (*SystemDependentData(theEnv)->BeforeOpenFunction)(theEnv); }
 
@@ -664,7 +664,7 @@ int GenClose(
 
    return rv;
   }
-  
+
 /************************************************************/
 /* GenOpenReadBinary: Generic and machine specific code for */
 /*   opening a file for binary access. Only one file may be */
@@ -724,12 +724,12 @@ void GenReadBinary(
       tempPtr = tempPtr + INT_MAX;
      }
 
-   if (size > 0) 
+   if (size > 0)
      { _read(SystemDependentData(theEnv)->BinaryFileHandle,tempPtr,(unsigned int) size); }
 #endif
 
 #if (! WIN_MVC)
-   fread(dataPtr,size,1,SystemDependentData(theEnv)->BinaryFP); 
+   fread(dataPtr,size,1,SystemDependentData(theEnv)->BinaryFP);
 #endif
   }
 
@@ -749,7 +749,7 @@ void GetSeekCurBinary(
    fseek(SystemDependentData(theEnv)->BinaryFP,offset,SEEK_CUR);
 #endif
   }
-  
+
 /***************************************************/
 /* GetSeekSetBinary:  Generic and machine specific */
 /*   code for seeking a position in a file.        */
@@ -805,7 +805,7 @@ void GenCloseBinary(
    if (SystemDependentData(theEnv)->AfterOpenFunction != NULL)
      { (*SystemDependentData(theEnv)->AfterOpenFunction)(theEnv); }
   }
-  
+
 /***********************************************/
 /* GenWrite: Generic routine for writing to a  */
 /*   file. No machine specific code as of yet. */

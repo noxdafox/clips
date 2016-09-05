@@ -153,7 +153,7 @@ bool ParseDeffunction(
    /*==========================*/
    /* Parse the argument list. */
    /*==========================*/
-   
+
    parameterList = ParseProcParameters(theEnv,readSource,&DeffunctionData(theEnv)->DFInputToken,
                                        NULL,&wildcard,&min,&max,&deffunctionError,NULL);
    if (deffunctionError)
@@ -201,11 +201,11 @@ bool ParseDeffunction(
    /* Check for the closing right parenthesis of the deffunction. */
    /*=============================================================*/
 
-   if ((DeffunctionData(theEnv)->DFInputToken.type != RPAREN) && /* DR0872 */
+   if ((DeffunctionData(theEnv)->DFInputToken.tknType != RIGHT_PARENTHESIS_TOKEN) && /* DR0872 */
        (actions != NULL))
      {
       SyntaxErrorMessage(theEnv,"deffunction");
-      
+
       ReturnExpression(theEnv,parameterList);
       ReturnPackedExpression(theEnv,actions);
 
@@ -315,7 +315,7 @@ static bool ValidDeffunctionName(
    /* A deffunction cannot be named the same as a  */
    /* construct type, e.g, defclass, defrule, etc. */
    /*==============================================*/
-   
+
    if (FindConstruct(theEnv,theDeffunctionName) != NULL)
      {
       PrintErrorID(theEnv,"DFFNXPSR",1,false);
@@ -328,7 +328,7 @@ static bool ValidDeffunctionName(
    /* as a pre-defined system function, e.g, */
    /* watch, list-defrules, etc.             */
    /*========================================*/
-   
+
    if (FindFunction(theEnv,theDeffunctionName) != NULL)
      {
       PrintErrorID(theEnv,"DFFNXPSR",2,false);
@@ -343,9 +343,9 @@ static bool ValidDeffunctionName(
    /* a generic function (either in this module */
    /* or imported from another).                */
    /*===========================================*/
-   
+
    theDefgeneric = LookupDefgenericInScope(theEnv,theDeffunctionName);
-     
+
    if (theDefgeneric != NULL)
      {
       theModule = GetConstructModuleItem(&theDefgeneric->header)->theModule;
@@ -375,7 +375,7 @@ static bool ValidDeffunctionName(
       /* And a deffunction in the current module can */
       /* only be redefined if it is not executing.   */
       /*=============================================*/
-      
+
       if (theDeffunction->executing)
         {
          PrintErrorID(theEnv,"DFNXPSR",4,false);
@@ -464,7 +464,7 @@ static Deffunction *AddDeffunction(
       /* Remove the deffunction from the list */
       /* so that it can be added at the end.  */
       /*======================================*/
-      
+
       RemoveConstructFromModule(theEnv,(struct constructHeader *) dfuncPtr);
      }
 
@@ -480,7 +480,7 @@ static Deffunction *AddDeffunction(
       /* If a deffunction is recursive, do not increment */
       /* its busy count based on self-references.        */
       /*=================================================*/
-      
+
       oldbusy = dfuncPtr->busy;
       ExpressionInstall(theEnv,actions);
       dfuncPtr->busy = oldbusy;
@@ -496,7 +496,7 @@ static Deffunction *AddDeffunction(
    EnvSetDeffunctionWatch(theEnv,
                           DFHadWatch ? true : DeffunctionData(theEnv)->WatchDeffunctions,
                           dfuncPtr);
-      
+
    if ((EnvGetConserveMemory(theEnv) == false) && (headerp == false))
      { EnvSetDeffunctionPPForm(theEnv,dfuncPtr,CopyPPBuffer(theEnv)); }
 #endif

@@ -104,12 +104,12 @@ void InitializeUtilityData(
 
    UtilityData(theEnv)->CurrentGarbageFrame = &UtilityData(theEnv)->MasterGarbageFrame;
    UtilityData(theEnv)->CurrentGarbageFrame->topLevel = true;
-   
+
    UtilityData(theEnv)->GarbageCollectionLocks = 0;
    UtilityData(theEnv)->PeriodicFunctionsEnabled = true;
    UtilityData(theEnv)->YieldFunctionEnabled = true;
   }
-  
+
 /**************************************************/
 /* DeallocateUtilityData: Deallocates environment */
 /*    data for utility routines.                  */
@@ -122,11 +122,11 @@ static void DeallocateUtilityData(
    struct garbageFrame *theGarbageFrame;
    struct ephemeron *edPtr, *nextEDPtr;
    struct multifield *tmpMFPtr, *nextMFPtr;
-   
+
    /*======================*/
    /* Free tracked memory. */
    /*======================*/
-   
+
    tmpTM = UtilityData(theEnv)->trackList;
    while (tmpTM != NULL)
      {
@@ -135,11 +135,11 @@ static void DeallocateUtilityData(
       rtn_struct(theEnv,trackedMemory,tmpTM);
       tmpTM = nextTM;
      }
-   
+
    /*==========================*/
    /* Free callback functions. */
    /*==========================*/
-   
+
    tmpPtr = UtilityData(theEnv)->ListOfPeriodicFunctions;
    while (tmpPtr != NULL)
      {
@@ -157,16 +157,16 @@ static void DeallocateUtilityData(
       rtn_struct(theEnv,callFunctionItem,tmpPtr);
       tmpPtr = nextPtr;
      }
-     
+
    /*=========================================*/
    /* Free the ephemerons tracking data which */
    /* needs to be garbage collected.          */
    /*=========================================*/
-   
+
    while (UtilityData(theEnv)->CurrentGarbageFrame != NULL)
      {
       theGarbageFrame = UtilityData(theEnv)->CurrentGarbageFrame;
-   
+
       edPtr = theGarbageFrame->ephemeralSymbolList;
 
       while (edPtr != NULL)
@@ -215,7 +215,7 @@ static void DeallocateUtilityData(
       /*==========================*/
       /* Free up multifield data. */
       /*==========================*/
-      
+
       tmpMFPtr = theGarbageFrame->ListOfMultifields;
       while (tmpMFPtr != NULL)
         {
@@ -223,7 +223,7 @@ static void DeallocateUtilityData(
          ReturnMultifield(theEnv,tmpMFPtr);
          tmpMFPtr = nextMFPtr;
         }
-      
+
       UtilityData(theEnv)->CurrentGarbageFrame = UtilityData(theEnv)->CurrentGarbageFrame->priorFrame;
      }
   }
@@ -236,21 +236,21 @@ void CleanCurrentGarbageFrame(
   CLIPSValue *returnValue)
   {
    struct garbageFrame *currentGarbageFrame;
-   
+
    currentGarbageFrame = UtilityData(theEnv)->CurrentGarbageFrame;
 
    if (! currentGarbageFrame->dirty) return;
- 
+
    if (returnValue != NULL)
      { ValueInstall(theEnv,returnValue); }
-   
+
    CallCleanupFunctions(theEnv);
    RemoveEphemeralAtoms(theEnv);
    FlushMultifields(theEnv);
-   
+
    if (returnValue != NULL)
      { ValueDeinstall(theEnv,returnValue); }
-    
+
    if ((currentGarbageFrame->ephemeralFloatList == NULL) &&
        (currentGarbageFrame->ephemeralIntegerList == NULL) &&
        (currentGarbageFrame->ephemeralSymbolList == NULL) &&
@@ -278,7 +278,7 @@ void RestorePriorGarbageFrame(
      }
 
    UtilityData(theEnv)->CurrentGarbageFrame = oldGarbageFrame;
-   
+
    if (newGarbageFrame->dirty)
      {
       if (newGarbageFrame->ListOfMultifields != NULL)
@@ -287,14 +287,14 @@ void RestorePriorGarbageFrame(
            { oldGarbageFrame->ListOfMultifields = newGarbageFrame->ListOfMultifields; }
          else
            { oldGarbageFrame->LastMultifield->next = newGarbageFrame->ListOfMultifields; }
-           
+
          oldGarbageFrame->LastMultifield = newGarbageFrame->LastMultifield;
          oldGarbageFrame->dirty = true;
         }
-        
+
       if (returnValue != NULL) ValueDeinstall(theEnv,returnValue);
      }
-     
+
    if (returnValue != NULL)
      { EphemerateValue(theEnv,returnValue->type,returnValue->value); }
   }
@@ -331,7 +331,7 @@ void CallPeriodicTasks(
          void *oldContext = SetEnvironmentCallbackContext(theEnv,periodPtr->context);
 
          (*periodPtr->func)(theEnv);
-           
+
          SetEnvironmentCallbackContext(theEnv,oldContext);
         }
      }
@@ -363,12 +363,12 @@ void *EnvGetPeriodicFunctionContext(
   const char *name)
   {
    struct callFunctionItem *theItem;
-   
+
    theItem = GetFunctionFromCallList(theEnv,name,
                                      UtilityData(theEnv)->ListOfPeriodicFunctions);
-                                     
+
    if (theItem == NULL) return NULL;
-   
+
    return theItem->context;
   }
 
@@ -413,10 +413,10 @@ bool RemoveCleanupFunction(
   const char *name)
   {
    bool found;
-   
+
    UtilityData(theEnv)->ListOfCleanupFunctions =
       RemoveFunctionFromCallList(theEnv,name,UtilityData(theEnv)->ListOfCleanupFunctions,&found);
-  
+
    return found;
   }
 
@@ -429,10 +429,10 @@ bool EnvRemovePeriodicFunction(
   const char *name)
   {
    bool found;
-   
+
    UtilityData(theEnv)->ListOfPeriodicFunctions =
       RemoveFunctionFromCallList(theEnv,name,UtilityData(theEnv)->ListOfPeriodicFunctions,&found);
-  
+
    return found;
   }
 
@@ -478,13 +478,13 @@ char *CopyString(
   const char *theString)
   {
    char *stringCopy = NULL;
-   
+
    if (theString != NULL)
      {
       stringCopy = (char *) genalloc(theEnv,strlen(theString) + 1);
       genstrcpy(stringCopy,theString);
      }
-     
+
    return stringCopy;
   }
 
@@ -593,7 +593,7 @@ char *InsertInString(
    /* Shift the contents to the right of insertion point so that the */
    /* new text does not overwrite what is currently in the string.   */
    /*================================================================*/
-   
+
    memmove(&oldStr[position],&oldStr[position+length],*oldPos - position);
 
    /*===============================================*/
@@ -609,7 +609,7 @@ char *InsertInString(
 
    return(oldStr);
   }
-  
+
 /*******************************************************************/
 /* EnlargeString: Enlarges a string by the specified amount.       */
 /*******************************************************************/
@@ -732,11 +732,11 @@ char *ExpandStringWithChar(
 
      while ((*pos > 1) && IsUTF8MultiByteContinuation(str[*pos - 1]))
        { (*pos)--; }
-     
+
      /*===================================================*/
      /* Now delete the first byte of the UTF-8 character. */
      /*===================================================*/
-     
+
      if (*pos > 0) (*pos)--;
      str[*pos] = '\0';
     }
@@ -758,7 +758,7 @@ struct callFunctionItem *AddFunctionToCallList(
   {
    return AddFunctionToCallListWithContext(theEnv,name,priority,func,head,NULL);
   }
-  
+
 /***********************************************************/
 /* AddFunctionToCallListWithContext: Adds a function to a  */
 /*   list of functions which are called to perform certain */
@@ -774,11 +774,11 @@ struct callFunctionItem *AddFunctionToCallListWithContext(
   {
    struct callFunctionItem *newPtr, *currentPtr, *lastPtr = NULL;
    char  *nameCopy;
-  
+
    newPtr = get_struct(theEnv,callFunctionItem);
 
    nameCopy = (char *) genalloc(theEnv,strlen(name) + 1);
-   genstrcpy(nameCopy,name);     
+   genstrcpy(nameCopy,name);
    newPtr->name = nameCopy;
 
    newPtr->func = func;
@@ -882,7 +882,7 @@ void DeallocateCallList(
   struct callFunctionItem *theList)
   {
    struct callFunctionItem *tmpPtr, *nextPtr;
-   
+
    tmpPtr = theList;
    while (tmpPtr != NULL)
      {
@@ -892,7 +892,7 @@ void DeallocateCallList(
       tmpPtr = nextPtr;
      }
   }
-  
+
 /***************************************************************/
 /* AddFunctionToCallListWithArg: Adds a function to a list of  */
 /*   functions which are called to perform certain operations  */
@@ -907,7 +907,7 @@ struct callFunctionItemWithArg *AddFunctionToCallListWithArg(
   {
    return AddFunctionToCallListWithArgWithContext(theEnv,name,priority,func,head,NULL);
   }
-  
+
 /***************************************************************/
 /* AddFunctionToCallListWithArgWithContext: Adds a function to */
 /*   a list of functions which are called to perform certain   */
@@ -1005,7 +1005,7 @@ void DeallocateCallListWithArg(
   struct callFunctionItemWithArg *theList)
   {
    struct callFunctionItemWithArg *tmpPtr, *nextPtr;
-   
+
    tmpPtr = theList;
    while (tmpPtr != NULL)
      {
@@ -1030,7 +1030,7 @@ unsigned long ItemHashValue(
       void *vv;
       unsigned uv;
      } fis;
-     
+
    switch(theType)
      {
       case FLOAT:
@@ -1056,7 +1056,7 @@ unsigned long ItemHashValue(
 
       case EXTERNAL_ADDRESS:
         return(HashExternalAddress(ValueToExternalAddress(theValue),theRange));
-        
+
 #if OBJECT_SYSTEM
       case INSTANCE_ADDRESS:
 #endif
@@ -1081,7 +1081,7 @@ void YieldTime(
    if ((UtilityData(theEnv)->YieldTimeFunction != NULL) && UtilityData(theEnv)->YieldFunctionEnabled)
      { (*UtilityData(theEnv)->YieldTimeFunction)(); }
   }
-   
+
 /**********************************************/
 /* EnvIncrementGCLocks: Increments the number */
 /*   of garbage collection locks.             */
@@ -1101,15 +1101,15 @@ void EnvDecrementGCLocks(
   {
    if (UtilityData(theEnv)->GarbageCollectionLocks > 0)
      { UtilityData(theEnv)->GarbageCollectionLocks--; }
-     
+
    if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
        (EvaluationData(theEnv)->CurrentExpression == NULL) && (UtilityData(theEnv)->GarbageCollectionLocks == 0))
-     { 
+     {
       CleanCurrentGarbageFrame(theEnv,NULL);
       CallPeriodicTasks(theEnv);
      }
   }
- 
+
 /****************************/
 /* EnablePeriodicFunctions: */
 /****************************/
@@ -1118,14 +1118,14 @@ bool EnablePeriodicFunctions(
   bool value)
   {
    bool oldValue;
-   
+
    oldValue = UtilityData(theEnv)->PeriodicFunctionsEnabled;
-   
+
    UtilityData(theEnv)->PeriodicFunctionsEnabled = value;
-   
+
    return(oldValue);
   }
-  
+
 /************************/
 /* EnableYieldFunction: */
 /************************/
@@ -1134,11 +1134,11 @@ short EnableYieldFunction(
   short value)
   {
    short oldValue;
-   
+
    oldValue = UtilityData(theEnv)->YieldFunctionEnabled;
-   
+
    UtilityData(theEnv)->YieldFunctionEnabled = value;
-   
+
    return(oldValue);
   }
 
@@ -1156,15 +1156,15 @@ struct trackedMemory *AddTrackedMemory(
   size_t theSize)
   {
    struct trackedMemory *newPtr;
-   
+
    newPtr = get_struct(theEnv,trackedMemory);
-   
+
    newPtr->prev = NULL;
    newPtr->theMemory = theMemory;
    newPtr->memSize = theSize;
    newPtr->next = UtilityData(theEnv)->trackList;
    UtilityData(theEnv)->trackList = newPtr;
-   
+
    return newPtr;
   }
 
@@ -1174,15 +1174,15 @@ struct trackedMemory *AddTrackedMemory(
 void RemoveTrackedMemory(
   Environment *theEnv,
   struct trackedMemory *theTracker)
-  {   
+  {
    if (theTracker->prev == NULL)
      { UtilityData(theEnv)->trackList = theTracker->next; }
    else
      { theTracker->prev->next = theTracker->next; }
-     
+
    if (theTracker->next != NULL)
      { theTracker->next->prev = theTracker->prev; }
-     
+
    rtn_struct(theEnv,trackedMemory,theTracker);
   }
 
@@ -1194,16 +1194,16 @@ size_t UTF8Length(
   const char *s)
   {
    size_t i = 0, length = 0;
-   
+
    while (s[i] != '\0')
-     { 
-      UTF8Increment(s,&i); 
+     {
+      UTF8Increment(s,&i);
       length++;
      }
-   
+
    return(length);
   }
-  
+
 /*********************************************/
 /* UTF8Increment: Finds the beginning of the */
 /*   next character in a UTF8 string.        */
@@ -1212,9 +1212,9 @@ void UTF8Increment(
   const char *s,
   size_t *i)
   {
-   (void) (IsUTF8Start(s[++(*i)]) || 
+   (void) (IsUTF8Start(s[++(*i)]) ||
            IsUTF8Start(s[++(*i)]) ||
-           IsUTF8Start(s[++(*i)]) || 
+           IsUTF8Start(s[++(*i)]) ||
            ++(*i));
   }
 
@@ -1228,21 +1228,21 @@ size_t UTF8Offset(
   {
    size_t offs = 0;
 
-   while ((charnum > 0) && (str[offs])) 
+   while ((charnum > 0) && (str[offs]))
      {
-      (void) (IsUTF8Start(str[++offs]) || 
+      (void) (IsUTF8Start(str[++offs]) ||
               IsUTF8Start(str[++offs]) ||
-              IsUTF8Start(str[++offs]) || 
+              IsUTF8Start(str[++offs]) ||
               ++offs);
-              
+
       charnum--;
      }
-     
+
    return offs;
   }
 
 /*************************************************/
-/* UTF8CharNum: Converts the UTF8 character byte */ 
+/* UTF8CharNum: Converts the UTF8 character byte */
 /*   offset to the logical character index.      */
 /*************************************************/
 size_t UTF8CharNum(
@@ -1251,16 +1251,16 @@ size_t UTF8CharNum(
   {
    size_t charnum = 0, offs=0;
 
-   while ((offs < offset) && (s[offs])) 
+   while ((offs < offset) && (s[offs]))
      {
       (void) (IsUTF8Start(s[++offs]) ||
               IsUTF8Start(s[++offs]) ||
-              IsUTF8Start(s[++offs]) || 
+              IsUTF8Start(s[++offs]) ||
               ++offs);
-              
+
       charnum++;
      }
-     
+
    return charnum;
   }
 

@@ -132,7 +132,7 @@ struct factsData
 #endif
    long LastModuleIndex;
   };
-  
+
 #define FactData(theEnv) ((struct factsData *) GetEnvironmentData(theEnv,FACTS_DATA))
 
    Fact                          *EnvAssert(Environment *,Fact *);

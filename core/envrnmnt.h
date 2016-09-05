@@ -29,7 +29,7 @@
 /*            environment is created (i.e a pointer from the */
 /*            CLIPS environment to its parent environment).  */
 /*                                                           */
-/*      6.30: Added support for passing context information  */ 
+/*      6.30: Added support for passing context information  */
 /*            to user defined functions and callback         */
 /*            functions.                                     */
 /*                                                           */
@@ -79,7 +79,7 @@ struct environmentCleanupFunction
   };
 
 struct environmentData
-  {   
+  {
    unsigned int initialized : 1;
    void *context;
    void *routerContext;
@@ -95,9 +95,9 @@ struct environmentData
 #define SetEnvironmentData(theEnv,position,value) (((struct environmentData *) theEnv)->theData[position] = value)
 
    bool                           AllocateEnvironmentData(Environment *,unsigned int,unsigned long,void (*)(Environment *));
-   void                          *CreateEnvironment(void);
-   void                          *CreateRuntimeEnvironment(struct symbolHashNode **,struct floatHashNode **,
-                                                                  struct integerHashNode **,struct bitMapHashNode **);
+   Environment                   *CreateEnvironment(void);
+   Environment                   *CreateRuntimeEnvironment(struct symbolHashNode **,struct floatHashNode **,
+                                                           struct integerHashNode **,struct bitMapHashNode **);
    bool                           DestroyEnvironment(Environment *);
    bool                           AddEnvironmentCleanupFunction(Environment *,const char *,void (*)(Environment *),int);
    void                          *GetEnvironmentContext(Environment *);

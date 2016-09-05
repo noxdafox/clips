@@ -106,9 +106,9 @@ void ClassAbstractPCommand(
   {
    CLIPSValue theArg;
    Defclass *cls;
-   
+
    returnValue->type = SYMBOL;
-   
+
    if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
      { return; }
 
@@ -145,9 +145,9 @@ void ClassReactivePCommand(
   {
    CLIPSValue theArg;
    Defclass *cls;
-   
+
    returnValue->type = SYMBOL;
-   
+
    if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
      { return; }
 
@@ -158,7 +158,7 @@ void ClassReactivePCommand(
       returnValue->value = EnvFalseSymbol(theEnv);
       return;
      }
-     
+
    if (EnvClassReactiveP(theEnv,cls))
      { returnValue->value = EnvTrueSymbol(theEnv); }
    else
@@ -194,19 +194,19 @@ Defclass *ClassInfoFnxArgs(
 
    if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
      { return NULL; }
-     
+
    clsptr = LookupDefclassByMdlOrScope(theEnv,DOToString(theArg));
    if (clsptr == NULL)
      {
       ClassExistError(theEnv,fnx,ValueToString(theArg.value));
       return NULL;
      }
-     
+
    if (UDFHasNextArgument(context))
      {
       if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg))
         { return NULL; }
-        
+
       if (strcmp(ValueToString(theArg.value),"inherit") == 0)
         { *inhp = true; }
       else
@@ -216,7 +216,7 @@ Defclass *ClassInfoFnxArgs(
          return NULL;
         }
      }
-     
+
    return clsptr;
   }
 
@@ -237,7 +237,7 @@ void ClassSlotsCommand(
   {
    bool inhp;
    Defclass *clsptr;
-   
+
    clsptr = ClassInfoFnxArgs(context,"class-slots",&inhp);
    if (clsptr == NULL)
      {
@@ -264,7 +264,7 @@ void ClassSuperclassesCommand(
   {
    bool inhp;
    Defclass *clsptr;
-   
+
    clsptr = ClassInfoFnxArgs(context,"class-superclasses",&inhp);
    if (clsptr == NULL)
      {
@@ -291,7 +291,7 @@ void ClassSubclassesCommand(
   {
    bool inhp;
    Defclass *clsptr;
-     
+
    clsptr = ClassInfoFnxArgs(context,"class-subclasses",&inhp);
    if (clsptr == NULL)
      {
@@ -318,7 +318,7 @@ void GetDefmessageHandlersListCmd(
   {
    bool inhp;
    Defclass *clsptr;
-   
+
    if (! UDFHasNextArgument(context))
      { EnvGetDefmessageHandlerList(theEnv,NULL,returnValue,false); }
    else
@@ -456,15 +456,15 @@ void EnvClassSlots(
    long i;
 
    size = inhp ? theDefclass->instanceSlotCount : theDefclass->slotCount;
-   
+
    returnValue->type = MULTIFIELD;
    SetpDOBegin(returnValue,1);
    SetpDOEnd(returnValue,size);
    returnValue->value = EnvCreateMultifield(theEnv,size);
-   
+
    if (size == 0)
      { return; }
-   
+
    if (inhp)
      {
       for (i = 0 ; i < theDefclass->instanceSlotCount ; i++)
@@ -519,7 +519,7 @@ void EnvGetDefmessageHandlerList(
       svnxt = EnvGetNextDefclass(theEnv,theDefclass);
       SetNextDefclass(cls,NULL);
      }
-     
+
    for (svcls = cls , i = 0 ;
         cls != NULL ;
         cls = EnvGetNextDefclass(theEnv,cls))
@@ -528,13 +528,13 @@ void EnvGetDefmessageHandlerList(
       for (classi = 0 ; classi < classiLimit ; classi++)
         { i += cls->allSuperclasses.classArray[classi]->handlerCount; }
      }
-     
+
    len = i * 3;
    returnValue->type = MULTIFIELD;
    SetpDOBegin(returnValue,1);
    SetpDOEnd(returnValue,len);
    returnValue->value = EnvCreateMultifield(theEnv,len);
-   
+
    for (cls = svcls , sublen = 0 ;
         cls != NULL ;
         cls = EnvGetNextDefclass(theEnv,cls))
@@ -543,12 +543,12 @@ void EnvGetDefmessageHandlerList(
       for (classi = 0 ; classi < classiLimit ; classi++)
         {
          supcls = cls->allSuperclasses.classArray[classi];
-         
+
          if (inhp == 0)
            { i = sublen + 1; }
          else
            { i = len - (supcls->handlerCount * 3) - sublen + 1; }
-           
+
          for (j = 0 ; j < supcls->handlerCount ; j++)
            {
             SetMFType(returnValue->value,i,SYMBOL);
@@ -558,11 +558,11 @@ void EnvGetDefmessageHandlerList(
             SetMFType(returnValue->value,i,SYMBOL);
             SetMFValue(returnValue->value,i++,EnvAddSymbol(theEnv,MessageHandlerData(theEnv)->hndquals[supcls->handlers[j].type]));
            }
-           
+
          sublen += supcls->handlerCount * 3;
         }
      }
-     
+
    if (svcls != NULL)
      { SetNextDefclass(svcls,svnxt); }
   }
@@ -599,15 +599,15 @@ void EnvClassSuperclasses(
       plinks = &theDefclass->directSuperclasses;
       offset = 0;
      }
-     
+
    returnValue->type = MULTIFIELD;
    returnValue->begin = 0;
    SetpDOEnd(returnValue,plinks->classCount - offset);
    returnValue->value = EnvCreateMultifield(theEnv,returnValue->end + 1U);
-   
+
    if (returnValue->end == -1)
      { return; }
-     
+
    for (i = offset , j = 1 ; i < plinks->classCount ; i++ , j++)
      {
       SetMFType(returnValue->value,j,SYMBOL);
@@ -638,23 +638,23 @@ void EnvClassSubclasses(
 
    if ((id = GetTraversalID(theEnv)) == -1)
      { return; }
-     
+
    i = CountSubclasses(theDefclass,inhp,id);
-   
+
    ReleaseTraversalID(theEnv);
-   
+
    returnValue->type = MULTIFIELD;
    returnValue->begin = 0;
    SetpDOEnd(returnValue,i);
    returnValue->value = EnvCreateMultifield(theEnv,i);
-   
+
    if (i == 0)
      { return; }
-   
+
    if ((id = GetTraversalID(theEnv)) == -1)
      { return; }
-     
-   StoreSubclasses(returnValue->value,1,theDefclass,inhp,id,true);
+
+   StoreSubclasses((Multifield *) returnValue->value,1,theDefclass,inhp,id,true);
    ReleaseTraversalID(theEnv);
   }
 
@@ -681,23 +681,23 @@ void ClassSubclassAddresses(
 
    if ((id = GetTraversalID(theEnv)) == -1)
      { return; }
-     
+
    i = CountSubclasses(theDefclass,inhp,id);
-   
+
    ReleaseTraversalID(theEnv);
-   
+
    returnValue->type = MULTIFIELD;
    returnValue->begin = 0;
    SetpDOEnd(returnValue,i);
    returnValue->value = EnvCreateMultifield(theEnv,i);
-   
+
    if (i == 0)
      { return; }
-     
+
    if ((id = GetTraversalID(theEnv)) == -1)
      { return; }
-     
-   StoreSubclasses(returnValue->value,1,theDefclass,inhp,id,false);
+
+   StoreSubclasses((Multifield *) returnValue->value,1,theDefclass,inhp,id,false);
    ReleaseTraversalID(theEnv);
   }
 /**************************************************************************
@@ -728,7 +728,7 @@ void EnvSlotFacets(
 
    if ((sp = SlotInfoSlot(theEnv,returnValue,theDefclass,sname,"slot-facets")) == NULL)
      { return; }
-     
+
 #if DEFRULE_CONSTRUCT
    returnValue->end = 9;
    returnValue->value = EnvCreateMultifield(theEnv,10L);
@@ -755,12 +755,12 @@ void EnvSlotFacets(
       else
         { SetMFValue(returnValue->value,2,EnvAddSymbol(theEnv,"STC")); }
      }
-   
-   if (sp->noInherit)    
+
+   if (sp->noInherit)
      SetMFValue(returnValue->value,3,EnvAddSymbol(theEnv,"NIL"));
    else
      SetMFValue(returnValue->value,3,EnvAddSymbol(theEnv,"INH"));
-   
+
    if (sp->initializeOnly)
      SetMFValue(returnValue->value,4,EnvAddSymbol(theEnv,"INT"));
    else if (sp->noWrite)
@@ -768,27 +768,27 @@ void EnvSlotFacets(
    else
      SetMFValue(returnValue->value,4,EnvAddSymbol(theEnv,"RW"));
 
-   if (sp->shared)     
+   if (sp->shared)
      SetMFValue(returnValue->value,5,EnvAddSymbol(theEnv,"SHR"));
    else
      SetMFValue(returnValue->value,5,EnvAddSymbol(theEnv,"LCL"));
 
 #if DEFRULE_CONSTRUCT
-   if (sp->reactive)   
+   if (sp->reactive)
      SetMFValue(returnValue->value,6,EnvAddSymbol(theEnv,"RCT"));
    else
      SetMFValue(returnValue->value,6,EnvAddSymbol(theEnv,"NIL"));
-   
+
    if (sp->composite)
      SetMFValue(returnValue->value,7,EnvAddSymbol(theEnv,"CMP"));
    else
      SetMFValue(returnValue->value,7,EnvAddSymbol(theEnv,"EXC"));
 
-   if (sp->publicVisibility)   
+   if (sp->publicVisibility)
      SetMFValue(returnValue->value,8,EnvAddSymbol(theEnv,"PUB"));
    else
      SetMFValue(returnValue->value,8,EnvAddSymbol(theEnv,"PRV"));
-   
+
    SetMFValue(returnValue->value,9,EnvAddSymbol(theEnv,GetCreateAccessorString(sp)));
    SetMFValue(returnValue->value,10,sp->noWrite ? EnvAddSymbol(theEnv,"NIL") : (void *) sp->overrideMessage);
 #else
@@ -1185,7 +1185,7 @@ static unsigned StoreSubclasses(
             SetMFType(mfval,i,DEFCLASS_PTR);
             SetMFValue(mfval,i++,subcls);
            }
-           
+
          if (inhp && (subcls->directSubclasses.classCount != 0))
            i += StoreSubclasses(mfval,i,subcls,inhp,tvid,storeName);
         }

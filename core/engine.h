@@ -39,7 +39,7 @@
 /*                                                           */
 /*            Added context information for run functions.   */
 /*                                                           */
-/*            Added before rule firing callback function.    */ 
+/*            Added before rule firing callback function.    */
 /*                                                           */
 /*            Changed garbage collection algorithm.          */
 /*                                                           */
@@ -92,11 +92,11 @@ struct focus
    struct defruleModule *theDefruleModule;
    struct focus *next;
   };
-  
+
 #define ENGINE_DATA 18
 
 struct engineData
-  { 
+  {
    Defrule *ExecutingRule;
    bool HaltRules;
    struct joinNode *TheLogicalJoin;

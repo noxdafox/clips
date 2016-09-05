@@ -109,7 +109,7 @@ void EqFunction(
    struct expr *theExpression;
 
    returnValue->type = SYMBOL;
-   
+
    /*====================================*/
    /* Determine the number of arguments. */
    /*====================================*/
@@ -184,7 +184,7 @@ void NeqFunction(
    struct expr *theExpression;
 
    returnValue->type = SYMBOL;
-   
+
    /*====================================*/
    /* Determine the number of arguments. */
    /*====================================*/
@@ -440,7 +440,7 @@ void AndFunction(
    CLIPSValue theArg;
 
    returnValue->type = SYMBOL;
-   
+
    while (UDFHasNextArgument(context))
      {
       if (! UDFNextArgument(context,ANY_TYPE,&theArg))
@@ -468,7 +468,7 @@ void OrFunction(
    CLIPSValue theArg;
 
    returnValue->type = SYMBOL;
-   
+
    while (UDFHasNextArgument(context))
      {
       if (! UDFNextArgument(context,ANY_TYPE,&theArg))
@@ -496,7 +496,7 @@ void LessThanOrEqualFunction(
    CLIPSValue rv1, rv2;
 
    returnValue->type = SYMBOL;
-   
+
    /*=========================*/
    /* Get the first argument. */
    /*=========================*/
@@ -513,7 +513,7 @@ void LessThanOrEqualFunction(
      {
       if (! UDFNextArgument(context,NUMBER_TYPES,&rv2))
         { return; }
-        
+
       if (rv1.type == INTEGER)
         {
          if (rv2.type == INTEGER)
@@ -577,7 +577,7 @@ void GreaterThanOrEqualFunction(
    CLIPSValue rv1, rv2;
 
    returnValue->type = SYMBOL;
-   
+
    /*=========================*/
    /* Get the first argument. */
    /*=========================*/
@@ -658,7 +658,7 @@ void LessThanFunction(
    CLIPSValue rv1, rv2;
 
    returnValue->type = SYMBOL;
-   
+
    /*=========================*/
    /* Get the first argument. */
    /*=========================*/
@@ -676,7 +676,7 @@ void LessThanFunction(
      {
       if (! UDFNextArgument(context,NUMBER_TYPES,&rv2))
         { return; }
-        
+
       if (rv1.type == INTEGER)
         {
          if (rv2.type == INTEGER)
@@ -740,7 +740,7 @@ void GreaterThanFunction(
    CLIPSValue rv1, rv2;
 
    returnValue->type = SYMBOL;
-   
+
    /*=========================*/
    /* Get the first argument. */
    /*=========================*/
@@ -758,7 +758,7 @@ void GreaterThanFunction(
      {
       if (! UDFNextArgument(context,NUMBER_TYPES,&rv2))
         { return; }
-        
+
       if (rv1.type == INTEGER)
         {
          if (rv2.type == INTEGER)
@@ -822,7 +822,7 @@ void NumericEqualFunction(
    CLIPSValue rv1, rv2;
 
    returnValue->type = SYMBOL;
-   
+
    /*=========================*/
    /* Get the first argument. */
    /*=========================*/
@@ -839,7 +839,7 @@ void NumericEqualFunction(
      {
       if (! UDFNextArgument(context,NUMBER_TYPES,&rv2))
         { return; }
-        
+
       if (rv1.type == INTEGER)
         {
          if (rv2.type == INTEGER)
@@ -900,7 +900,7 @@ void NumericNotEqualFunction(
    CLIPSValue rv1, rv2;
 
    returnValue->type = SYMBOL;
-   
+
    /*=========================*/
    /* Get the first argument. */
    /*=========================*/
@@ -917,7 +917,7 @@ void NumericNotEqualFunction(
      {
       if (! UDFNextArgument(context,NUMBER_TYPES,&rv2))
         { return; }
-        
+
       if (rv1.type == INTEGER)
         {
          if (rv2.type == INTEGER)
@@ -979,18 +979,18 @@ void OddpFunction(
    long long num, halfnum;
 
    returnValue->type = SYMBOL;
-      
+
    /*===========================================*/
    /* Check for the correct types of arguments. */
    /*===========================================*/
- 
+
    if (! UDFFirstArgument(context,INTEGER_TYPE,&item))
      { return; }
 
    /*===========================*/
    /* Compute the return value. */
    /*===========================*/
-   
+
    num = DOToLong(item);
 
    halfnum = (num / 2) * 2;
@@ -1016,18 +1016,18 @@ void EvenpFunction(
    long long num, halfnum;
 
    returnValue->type = SYMBOL;
-        
+
    /*===========================================*/
    /* Check for the correct types of arguments. */
    /*===========================================*/
-     
+
    if (! UDFFirstArgument(context,INTEGER_TYPE,&item))
      { return; }
 
    /*===========================*/
    /* Compute the return value. */
    /*===========================*/
-   
+
    num = DOToLong(item);
 
    halfnum = (num / 2) * 2;

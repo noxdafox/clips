@@ -52,7 +52,7 @@
 /*            specify crlf as \n or \r\n.                    */
 /*                                                           */
 /*            Added AwaitingInput flag.                      */
-/*                                                           */             
+/*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */

@@ -154,14 +154,14 @@ struct partialMatch *FindLogicalBind(
   struct partialMatch *theBinds)
   {
    struct partialMatch *compPtr;
-      
+
    /*========================================================*/
    /* Follow the parent link of the activation back through  */
    /* the join network until the join containing the logical */
    /* partial match is found. The partial match at this      */
    /* join will have the dependency link assigned to it.     */
    /*========================================================*/
-   
+
    for (compPtr = theBinds;
         compPtr != NULL;
         compPtr = compPtr->leftParent)
@@ -233,7 +233,7 @@ void RemoveEntityDependencies(
 
    theEntity->dependents = NULL;
   }
-  
+
 /********************************************************************/
 /* ReturnEntityDependencies: Removes all logical support links from */
 /*   a pattern entity. This is unidirectional. The links from the   */
@@ -538,7 +538,7 @@ void Dependents(
    struct dependency *fdPtr;
    struct partialMatch *theBinds;
    bool found = false;
-   
+
    /*=================================*/
    /* Loop through every data entity. */
    /*=================================*/

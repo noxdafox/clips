@@ -113,7 +113,7 @@ struct expr *BuildRHSAssert(
 
    if (readFirstParen == false)
      {
-      if (theToken->type == RPAREN)
+      if (theToken->tknType == RIGHT_PARENTHESIS_TOKEN)
         {
          if (atLeastOne)
            {
@@ -131,7 +131,7 @@ struct expr *BuildRHSAssert(
    lastOne = assertList = NULL;
    while ((nextOne = GetRHSPattern(theEnv,logicalName,theToken,
                                    error,false,readFirstParen,
-                                   true,RPAREN)) != NULL)
+                                   true,RIGHT_PARENTHESIS_TOKEN)) != NULL)
      {
       PPCRAndIndent(theEnv);
 
@@ -162,7 +162,7 @@ struct expr *BuildRHSAssert(
    /* Fix the pretty print representation. */
    /*======================================*/
 
-   if (theToken->type == RPAREN)
+   if (theToken->tknType == RIGHT_PARENTHESIS_TOKEN)
      {
       PPBackup(theEnv);
       PPBackup(theEnv);
@@ -220,7 +220,7 @@ struct expr *GetRHSPattern(
   bool constantsOnly,
   bool readFirstParen,
   bool checkFirstParen,
-  int endType)
+  TokenType endType)
   {
    struct expr *lastOne = NULL;
    struct expr *nextOne, *firstOne, *argHead = NULL;
@@ -240,9 +240,9 @@ struct expr *GetRHSPattern(
 
    if (checkFirstParen)
      {
-      if (tempToken->type == endType) return NULL;
+      if (tempToken->tknType == endType) return NULL;
 
-      if (tempToken->type != LPAREN)
+      if (tempToken->tknType != LEFT_PARENTHESIS_TOKEN)
         {
          SyntaxErrorMessage(theEnv,"RHS patterns");
          *error = true;
@@ -256,7 +256,7 @@ struct expr *GetRHSPattern(
    /*======================================================*/
 
    GetToken(theEnv,readSource,tempToken);
-   if (tempToken->type != SYMBOL)
+   if (tempToken->tknType != SYMBOL_TOKEN)
      {
       SyntaxErrorMessage(theEnv,"first field of a RHS pattern");
       *error = true;
@@ -451,7 +451,7 @@ struct expr *GetAssertArgument(
   const char *logicalName,
   struct token *theToken,
   bool *error,
-  int endType,
+  TokenType endType,
   bool constantsOnly,
   bool *printError)
   {
@@ -468,7 +468,7 @@ struct expr *GetAssertArgument(
 
    *printError = true;
    GetToken(theEnv,logicalName,theToken);
-   if (theToken->type == endType) return NULL;
+   if (theToken->tknType == endType) return NULL;
 
    /*=============================================================*/
    /* If an equal sign of left parenthesis was parsed, then parse */
@@ -481,9 +481,9 @@ struct expr *GetAssertArgument(
    /* matching.                                                   */
    /*=============================================================*/
 
-   if ((theToken->type == SYMBOL) ?
+   if ((theToken->tknType == SYMBOL_TOKEN) ?
        (strcmp(ValueToString(theToken->value),"=") == 0) :
-       (theToken->type == LPAREN))
+       (theToken->tknType == LEFT_PARENTHESIS_TOKEN))
      {
       if (constantsOnly)
         {
@@ -492,7 +492,7 @@ struct expr *GetAssertArgument(
         }
 
 #if ! RUN_TIME
-      if (theToken->type == LPAREN) nextField = Function1Parse(theEnv,logicalName);
+      if (theToken->tknType == LEFT_PARENTHESIS_TOKEN) nextField = Function1Parse(theEnv,logicalName);
       else nextField = Function0Parse(theEnv,logicalName);
       if (nextField == NULL)
 #endif
@@ -503,7 +503,7 @@ struct expr *GetAssertArgument(
 #if ! RUN_TIME
       else
         {
-         theToken->type= RPAREN;
+         theToken->tknType= RIGHT_PARENTHESIS_TOKEN;
          theToken->value = EnvAddSymbol(theEnv,")");
          theToken->printForm = ")";
         }
@@ -516,24 +516,24 @@ struct expr *GetAssertArgument(
    /* Constants are always allowed as RHS slot values. */
    /*==================================================*/
 
-   if ((theToken->type == SYMBOL) || (theToken->type == STRING) ||
+   if ((theToken->tknType == SYMBOL_TOKEN) || (theToken->tknType == STRING_TOKEN) ||
 #if OBJECT_SYSTEM
-           (theToken->type == INSTANCE_NAME) ||
+           (theToken->tknType == INSTANCE_NAME_TOKEN) ||
 #endif
-           (theToken->type == FLOAT) || (theToken->type == INTEGER))
-     { return(GenConstant(theEnv,theToken->type,theToken->value)); }
+           (theToken->tknType == FLOAT_TOKEN) || (theToken->tknType == INTEGER_TOKEN))
+     { return(GenConstant(theEnv,TokenTypeToType(theToken->tknType),theToken->value)); }
 
    /*========================================*/
    /* Variables are also allowed as RHS slot */
    /* values under some circumstances.       */
    /*========================================*/
 
-   if ((theToken->type == SF_VARIABLE) ||
+   if ((theToken->tknType == SF_VARIABLE_TOKEN) ||
 #if DEFGLOBAL_CONSTRUCT
-            (theToken->type == GBL_VARIABLE) ||
-            (theToken->type == MF_GBL_VARIABLE) ||
+            (theToken->tknType == GBL_VARIABLE_TOKEN) ||
+            (theToken->tknType == MF_GBL_VARIABLE_TOKEN) ||
 #endif
-            (theToken->type == MF_VARIABLE))
+            (theToken->tknType == MF_VARIABLE_TOKEN))
      {
       if (constantsOnly)
         {
@@ -541,7 +541,7 @@ struct expr *GetAssertArgument(
          return NULL;
         }
 
-      return(GenConstant(theEnv,theToken->type,theToken->value));
+      return(GenConstant(theEnv,TokenTypeToType(theToken->tknType),theToken->value));
      }
 
    /*==========================================================*/
@@ -572,21 +572,21 @@ struct fact *StringToFact(
    /* Open a string router and parse the fact */
    /* using the router as an input source.    */
    /*=========================================*/
-   
+
    EnvSetEvaluationError(theEnv,false);
 
    OpenStringSource(theEnv,"assert_str",str,0);
 
    assertArgs = GetRHSPattern(theEnv,"assert_str",&theToken,
                               &error,false,true,
-                              true,RPAREN);
+                              true,RIGHT_PARENTHESIS_TOKEN);
 
    CloseStringSource(theEnv,"assert_str");
 
    /*===========================================*/
    /* Check for errors or the use of variables. */
    /*===========================================*/
-   
+
    if ((assertArgs == NULL) && (! error))
      {
       SyntaxErrorMessage(theEnv,"RHS patterns");

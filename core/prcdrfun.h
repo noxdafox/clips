@@ -62,7 +62,7 @@ typedef struct loopCounterStack
 #define PRCDRFUN_DATA 13
 
 struct procedureFunctionData
-  { 
+  {
    bool ReturnFlag;
    bool BreakFlag;
    LOOP_COUNTER_STACK *LoopCounterStack;

@@ -106,11 +106,11 @@ void AdditionFunction(
         { return; }
 
       if (useFloatTotal)
-        { 
+        {
          if (theArg.type == INTEGER)
            { ftotal += (double) ValueToLong(theArg.value); }
          else
-           { ftotal += ValueToDouble(theArg.value); } 
+           { ftotal += ValueToDouble(theArg.value); }
         }
       else
         {
@@ -248,7 +248,7 @@ void SubtractionFunction(
 
       if (useFloatTotal)
         {
-         if (theArg.type == INTEGER) 
+         if (theArg.type == INTEGER)
            { ftotal -= (double) ValueToLong(theArg.value); }
          else
            { ftotal -= ValueToDouble(theArg.value); }
@@ -294,7 +294,7 @@ void DivisionFunction(
    double ftotal = 1.0;
    double theNumber;
    CLIPSValue theArg;
-   
+
    /*===================================================*/
    /* Get the first argument. This number which will be */
    /* the starting product from which all subsequent    */
@@ -323,12 +323,12 @@ void DivisionFunction(
      {
       if (! UDFNextArgument(context,NUMBER_TYPES,&theArg))
         { return; }
-        
+
       if (theArg.type == INTEGER)
         { theNumber = DOToLong(theArg); }
       else
         { theNumber = DOToDouble(theArg); }
-        
+
       if (theNumber == 0.0)
         {
          DivideByZeroErrorMessage(theEnv,"/");
@@ -365,7 +365,7 @@ void DivFunction(
    long long theNumber;
 
    returnValue->type = INTEGER;
-   
+
    /*===================================================*/
    /* Get the first argument. This number which will be */
    /* the starting product from which all subsequent    */
@@ -379,7 +379,7 @@ void DivFunction(
      { total = DOToInteger(theArg); }
    else
      { total = (long long) DOToDouble(theArg); }
-     
+
    /*=====================================================*/
    /* Loop through each of the arguments dividing it into */
    /* a running product. Floats are converted to integers */
@@ -396,7 +396,7 @@ void DivFunction(
         { theNumber = DOToInteger(theArg); }
       else
         { theNumber = (long long) DOToDouble(theArg); }
-      
+
       if (theNumber == 0LL)
         {
          DivideByZeroErrorMessage(theEnv,"div");
@@ -464,7 +464,7 @@ void FloatFunction(
    /* Convert an integer type to float, otherwise */
    /* return the argument unchanged.              */
    /*=============================================*/
-   
+
    if (returnValue->type == INTEGER)
      {
       returnValue->type = FLOAT;
@@ -585,7 +585,7 @@ void MaxFunction(
   CLIPSValue *returnValue)
   {
    CLIPSValue nextPossible;
-   
+
    /*============================================*/
    /* Check that the first argument is a number. */
    /*============================================*/
@@ -604,7 +604,7 @@ void MaxFunction(
      {
       if (! UDFNextArgument(context,NUMBER_TYPES,&nextPossible))
         { return; }
-      
+
       if (returnValue->type == INTEGER)
         {
          if (nextPossible.type == INTEGER)

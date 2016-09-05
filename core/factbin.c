@@ -93,7 +93,7 @@ void FactBinarySetup(
   Environment *theEnv)
   {
    AllocateEnvironmentData(theEnv,FACTBIN_DATA,sizeof(struct factBinaryData),DeallocateFactBloadData);
-   
+
 #if BLOAD_AND_BSAVE
    AddBinaryItem(theEnv,"facts",0,BsaveFind,NULL,
                             BsaveStorage,BsaveFactPatterns,
@@ -106,7 +106,7 @@ void FactBinarySetup(
                             ClearBload);
 #endif
   }
-  
+
 /****************************************************/
 /* DeallocateFactBloadData: Deallocates environment */
 /*    data for the fact bsave functionality.        */
@@ -116,7 +116,7 @@ static void DeallocateFactBloadData(
   {
    size_t space;
    int i;
-   
+
    for (i = 0; i < FactBinaryData(theEnv)->NumberOfPatterns; i++)
      { DestroyAlphaMemory(theEnv,&FactBinaryData(theEnv)->FactPatternArray[i].header,false); }
 
@@ -371,16 +371,16 @@ static void BloadBinaryItem(
 
    BloadandRefresh(theEnv,FactBinaryData(theEnv)->NumberOfPatterns,(unsigned) sizeof(struct bsaveFactPatternNode),
                    UpdateFactPatterns);
-                   
+
    for (i = 0; i < FactBinaryData(theEnv)->NumberOfPatterns; i++)
      {
       if ((FactBinaryData(theEnv)->FactPatternArray[i].lastLevel != NULL) &&
           (FactBinaryData(theEnv)->FactPatternArray[i].lastLevel->header.selector))
-        { 
+        {
          AddHashedPatternNode(theEnv,FactBinaryData(theEnv)->FactPatternArray[i].lastLevel,
                                      &FactBinaryData(theEnv)->FactPatternArray[i],
                                      FactBinaryData(theEnv)->FactPatternArray[i].networkTest->type,
-                                     FactBinaryData(theEnv)->FactPatternArray[i].networkTest->value); 
+                                     FactBinaryData(theEnv)->FactPatternArray[i].networkTest->value);
         }
      }
   }
@@ -421,16 +421,16 @@ static void ClearBload(
   {
    size_t space;
    long i;
-   
+
    for (i = 0; i < FactBinaryData(theEnv)->NumberOfPatterns; i++)
      {
       if ((FactBinaryData(theEnv)->FactPatternArray[i].lastLevel != NULL) &&
           (FactBinaryData(theEnv)->FactPatternArray[i].lastLevel->header.selector))
-        { 
+        {
          RemoveHashedPatternNode(theEnv,FactBinaryData(theEnv)->FactPatternArray[i].lastLevel,
                                         &FactBinaryData(theEnv)->FactPatternArray[i],
                                         FactBinaryData(theEnv)->FactPatternArray[i].networkTest->type,
-                                        FactBinaryData(theEnv)->FactPatternArray[i].networkTest->value); 
+                                        FactBinaryData(theEnv)->FactPatternArray[i].networkTest->value);
         }
      }
 

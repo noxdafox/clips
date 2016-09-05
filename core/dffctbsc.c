@@ -96,7 +96,7 @@
 /***************************************************************/
 void DeffactsBasicCommands(
   Environment *theEnv)
-  {   
+  {
    EnvAddResetFunction(theEnv,"deffacts",ResetDeffacts,0);
    EnvAddClearFunction(theEnv,"deffacts",ClearDeffacts,0);
    AddSaveFunction(theEnv,"deffacts",SaveDeffacts,10);
@@ -129,7 +129,7 @@ void DeffactsBasicCommands(
 /**********************************************************/
 static void ResetDeffacts(
   Environment *theEnv)
-  { 
+  {
    DoForAllConstructs(theEnv,
                       ResetDeffactsAction,
                       DeffactsData(theEnv)->DeffactsModuleIndex,
@@ -214,8 +214,8 @@ static void SaveDeffacts(
   Environment *theEnv,
   Defmodule *theModule,
   const char *logicalName)
-  { 
-   SaveConstruct(theEnv,theModule,logicalName,DeffactsData(theEnv)->DeffactsConstruct); 
+  {
+   SaveConstruct(theEnv,theModule,logicalName,DeffactsData(theEnv)->DeffactsConstruct);
   }
 
 /*******************************************/
@@ -237,8 +237,8 @@ void UndeffactsCommand(
 bool EnvUndeffacts(
   Environment *theEnv,
   Deffacts *theDeffacts)
-  { 
-   return(Undefconstruct(theEnv,theDeffacts,DeffactsData(theEnv)->DeffactsConstruct)); 
+  {
+   return(Undefconstruct(theEnv,theDeffacts,DeffactsData(theEnv)->DeffactsConstruct));
   }
 
 /*************************************************/
@@ -261,8 +261,8 @@ void EnvGetDeffactsList(
   Environment *theEnv,
   CLIPSValue *returnValue,
   Defmodule *theModule)
-  { 
-   GetConstructList(theEnv,returnValue,DeffactsData(theEnv)->DeffactsConstruct,theModule); 
+  {
+   GetConstructList(theEnv,returnValue,DeffactsData(theEnv)->DeffactsConstruct,theModule);
   }
 
 /************************************************/
@@ -300,8 +300,8 @@ bool PPDeffacts(
   Environment *theEnv,
   const char *deffactsName,
   const char *logicalName)
-  { 
-   return(PPConstruct(theEnv,deffactsName,logicalName,DeffactsData(theEnv)->DeffactsConstruct)); 
+  {
+   return(PPConstruct(theEnv,deffactsName,logicalName,DeffactsData(theEnv)->DeffactsConstruct));
   }
 
 /*********************************************/
@@ -313,7 +313,7 @@ void ListDeffactsCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   ListConstructCommand(context,DeffactsData(theEnv)->DeffactsConstruct); 
+   ListConstructCommand(context,DeffactsData(theEnv)->DeffactsConstruct);
   }
 
 /*************************************/
@@ -324,7 +324,7 @@ void EnvListDeffacts(
   Environment *theEnv,
   const char *logicalName,
   Defmodule *theModule)
-  { 
+  {
    ListConstruct(theEnv,DeffactsData(theEnv)->DeffactsConstruct,logicalName,theModule);
   }
 

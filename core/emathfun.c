@@ -162,10 +162,10 @@ static bool SingleNumberCheck(
    if (! UDFNthArgument(context,1,NUMBER_TYPES,returnValue))
      {
       returnValue->type = FLOAT;
-      returnValue->value = EnvAddDouble(context->environment,0.0); 
+      returnValue->value = EnvAddDouble(context->environment,0.0);
       return false;
      }
-  
+
    return true;
   }
 
@@ -191,7 +191,7 @@ static void DomainErrorMessage(
   CLIPSValue *returnValue)
   {
    Environment *theEnv = context->environment;
-   
+
    PrintErrorID(theEnv,"EMATHFUN",1,false);
    EnvPrintRouter(theEnv,WERROR,"Domain error for ");
    EnvPrintRouter(theEnv,WERROR,UDFContextFunctionName(context));
@@ -321,7 +321,7 @@ void SecFunction(
       SingularityErrorMessage(context,returnValue);
       return;
      }
-     
+
    returnValue->type = FLOAT;
    returnValue->value = EnvAddDouble(theEnv,1.0 / tv);
   }
@@ -346,7 +346,7 @@ void CscFunction(
       SingularityErrorMessage(context,returnValue);
       return;
      }
-     
+
    returnValue->type = FLOAT;
    returnValue->value = EnvAddDouble(theEnv,1.0 / tv);
   }
@@ -371,7 +371,7 @@ void CotFunction(
       SingularityErrorMessage(context,returnValue);
       return;
      }
-     
+
    returnValue->value = EnvAddDouble(theEnv,cos(ConvertToDouble(returnValue)) / tv);
    returnValue->type = FLOAT;
   }
@@ -386,18 +386,18 @@ void AcosFunction(
   CLIPSValue *returnValue)
   {
    double num;
-   
+
    if (! SingleNumberCheck(context,returnValue))
      { return; }
 
    num = ConvertToDouble(returnValue);
-   
+
    if ((num > 1.0) || (num < -1.0))
      {
       DomainErrorMessage(context,returnValue);
       return;
      }
-     
+
    returnValue->type = FLOAT;
    returnValue->value = EnvAddDouble(theEnv,acos(num));
   }
@@ -422,7 +422,7 @@ void AsinFunction(
       DomainErrorMessage(context,returnValue);
       return;
      }
-     
+
    returnValue->type = FLOAT;
    returnValue->value = EnvAddDouble(theEnv,asin(num));
   }
@@ -465,7 +465,7 @@ void AsecFunction(
      }
 
    num = 1.0 / num;
-   returnValue->type = FLOAT;   
+   returnValue->type = FLOAT;
    returnValue->value = EnvAddDouble(theEnv,acos(num));
   }
 
@@ -491,7 +491,7 @@ void AcscFunction(
      }
 
    num = 1.0 / num;
-   returnValue->type = FLOAT;   
+   returnValue->type = FLOAT;
    returnValue->value = EnvAddDouble(theEnv,asin(num));
   }
 
@@ -511,12 +511,12 @@ void AcotFunction(
 
    num = ConvertToDouble(returnValue);
    if (TestProximity(num,1e-25) == true)
-     { 
+     {
       returnValue->type = FLOAT;
       returnValue->value = EnvAddDouble(theEnv,PID2);
       return;
      }
-      
+
    num = 1.0 / num;
    returnValue->type = FLOAT;
    returnValue->value = EnvAddDouble(theEnv,atan(num));
@@ -549,7 +549,7 @@ void SinhFunction(
   {
    if (! SingleNumberCheck(context,returnValue))
      { return; }
-   
+
    returnValue->value = EnvAddDouble(theEnv,sinh(ConvertToDouble(returnValue)));
    returnValue->type = FLOAT;
  }
@@ -581,7 +581,7 @@ void SechFunction(
   {
    if (! SingleNumberCheck(context,returnValue))
      { return; }
-     
+
    returnValue->value = EnvAddDouble(theEnv,1.0 / cosh(ConvertToDouble(returnValue)));
    returnValue->type = FLOAT;
   }
@@ -641,7 +641,7 @@ void CothFunction(
       ArgumentOverflowErrorMessage(context,returnValue);
       return;
      }
-     
+
    returnValue->type = FLOAT;
    returnValue->value = EnvAddDouble(theEnv,1.0 / tanh(num));
   }
@@ -666,7 +666,7 @@ void AcoshFunction(
       DomainErrorMessage(context,returnValue);
       return;
      }
-     
+
    returnValue->type = FLOAT;
    returnValue->value = EnvAddDouble(theEnv,genacosh(num));
   }
@@ -682,7 +682,7 @@ void AsinhFunction(
   {
    if (! SingleNumberCheck(context,returnValue))
      { return; }
-     
+
    returnValue->value = EnvAddDouble(theEnv,genasinh(ConvertToDouble(returnValue)));
    returnValue->type = FLOAT;
   }
@@ -697,7 +697,7 @@ void AtanhFunction(
   CLIPSValue *returnValue)
   {
    double num;
-   
+
    if (! SingleNumberCheck(context,returnValue))
      { return; }
 
@@ -732,7 +732,7 @@ void AsechFunction(
       DomainErrorMessage(context,returnValue);
       return;
      }
-     
+
    returnValue->value = EnvAddDouble(theEnv,genasech(num));
    returnValue->type = FLOAT;
  }
@@ -757,7 +757,7 @@ void AcschFunction(
       DomainErrorMessage(context,returnValue);
       return;
      }
-     
+
    returnValue->value = EnvAddDouble(theEnv,genacsch(num));
    returnValue->type = FLOAT;
   }
@@ -782,7 +782,7 @@ void AcothFunction(
       DomainErrorMessage(context,returnValue);
       return;
      }
-     
+
    returnValue->value = EnvAddDouble(theEnv,genacoth(num));
    returnValue->type = FLOAT;
   }
@@ -798,7 +798,7 @@ void ExpFunction(
   {
    if (! SingleNumberCheck(context,returnValue))
      { return; }
-     
+
    returnValue->value = EnvAddDouble(theEnv,exp(ConvertToDouble(returnValue)));
    returnValue->type = FLOAT;
   }
@@ -814,7 +814,6 @@ void LogFunction(
   {
    double num;
 
-   
    if (! SingleNumberCheck(context,returnValue))
      { return; }
 
@@ -829,7 +828,7 @@ void LogFunction(
       ArgumentOverflowErrorMessage(context,returnValue);
       return;
      }
-     
+
    returnValue->type = FLOAT;
    returnValue->value = EnvAddDouble(theEnv,log(num));
   }
@@ -859,7 +858,7 @@ void Log10Function(
       ArgumentOverflowErrorMessage(context,returnValue);
       return;
      }
-     
+
    returnValue->type = FLOAT;
    returnValue->value = EnvAddDouble(theEnv,log10(num));
   }
@@ -884,7 +883,7 @@ void SqrtFunction(
       DomainErrorMessage(context,returnValue);
       return;
      }
-     
+
    returnValue->type = FLOAT;
    returnValue->value = EnvAddDouble(theEnv,sqrt(num));
   }
@@ -910,21 +909,21 @@ void PowFunction(
 
    if (! UDFNthArgument(context,2,NUMBER_TYPES,&value2))
      { return; }
-     
+
     /*=====================*/
     /* Domain error check. */
     /*=====================*/
 
     num1 = ConvertToDouble(&value1);
     num2 = ConvertToDouble(&value2);
-    
+
     if (((num1 == 0.0) && (num2 <= 0.0)) ||
        ((num1 < 0.0) && (dtrunc(num2) != num2)))
      {
       DomainErrorMessage(context,returnValue);
       return;
      }
-     
+
    returnValue->value = EnvAddDouble(theEnv,pow(num1,num2));
    returnValue->type = FLOAT;
   }
@@ -945,7 +944,7 @@ void ModFunction(
    /*==================================*/
    /* Check for two numeric arguments. */
    /*==================================*/
-   
+
    if (! UDFNthArgument(context,1,NUMBER_TYPES,&item1))
      { return; }
 
@@ -1002,7 +1001,7 @@ void DegRadFunction(
   {
    if (! SingleNumberCheck(context,returnValue))
      { return; }
-     
+
    returnValue->value = EnvAddDouble(theEnv,ConvertToDouble(returnValue) * PI / 180.0);
    returnValue->type = FLOAT;
   }
@@ -1018,7 +1017,7 @@ void RadDegFunction(
   {
    if (! SingleNumberCheck(context,returnValue))
      { return; }
-     
+
    returnValue->value = EnvAddDouble(theEnv,ConvertToDouble(returnValue) * 180.0 / PI);
    returnValue->type = FLOAT;
   }
@@ -1034,7 +1033,7 @@ void DegGradFunction(
   {
    if (! SingleNumberCheck(context,returnValue))
      { return; }
-     
+
    returnValue->value = EnvAddDouble(theEnv,ConvertToDouble(returnValue) / 0.9);
    returnValue->type = FLOAT;
   }
@@ -1050,7 +1049,7 @@ void GradDegFunction(
   {
    if (! SingleNumberCheck(context,returnValue))
      { return; }
-     
+
    returnValue->value = EnvAddDouble(theEnv,ConvertToDouble(returnValue) * 0.9);
    returnValue->type = FLOAT;
   }
@@ -1063,7 +1062,7 @@ void RoundFunction(
   Environment *theEnv,
   UDFContext *context,
   CLIPSValue *returnValue)
-  {   
+  {
    /*======================================*/
    /* Check that the argument is a number. */
    /*======================================*/
@@ -1072,7 +1071,7 @@ void RoundFunction(
      { return; }
 
    if (returnValue->type == FLOAT)
-     { 
+     {
       returnValue->value = EnvAddLong(theEnv,(long long) ceil(ConvertToDouble(returnValue) - 0.5));
       returnValue->type = INTEGER;
      }

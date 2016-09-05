@@ -56,7 +56,7 @@
 /*            specify crlf as \n or \r\n.                    */
 /*                                                           */
 /*            Added AwaitingInput flag.                      */
-/*                                                           */             
+/*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
@@ -129,7 +129,7 @@
 #define IO_FUNCTION_DATA 64
 
 struct IOFunctionData
-  { 
+  {
    void *locale;
    bool useFullCRLF;
   };
@@ -230,7 +230,7 @@ void PrintoutFunction(
    /*========================*/
    /* Call the print driver. */
    /*========================*/
-   
+
    PrintDriver(context,logicalName,false);
   }
 
@@ -278,14 +278,14 @@ static void PrintDriver(
      {
       if (! UDFNextArgument(context,ANY_TYPE,&theArg))
         { break; }
-      
+
       if (EvaluationData(theEnv)->HaltExecution) break;
 
       switch(GetType(theArg))
         {
          case SYMBOL:
            if (strcmp(DOToString(theArg),"crlf") == 0)
-             {    
+             {
               if (IOFunctionData(theEnv)->useFullCRLF)
                 { EnvPrintRouter(theEnv,logicalName,"\r\n"); }
               else
@@ -310,7 +310,7 @@ static void PrintDriver(
            break;
         }
      }
-     
+
    if (endCRLF)
      {
       if (IOFunctionData(theEnv)->useFullCRLF)
@@ -329,9 +329,9 @@ bool SetFullCRLF(
   bool value)
   {
    bool oldValue = IOFunctionData(theEnv)->useFullCRLF;
-   
+
    IOFunctionData(theEnv)->useFullCRLF = value;
-   
+
    return(oldValue);
   }
 
@@ -397,19 +397,21 @@ void ReadFunction(
    /* Copy the token to the return value data structure. */
    /*====================================================*/
 
-   returnValue->type = theToken.type;
-   if ((theToken.type == FLOAT) || (theToken.type == STRING) ||
+   if ((theToken.tknType == FLOAT_TOKEN) || (theToken.tknType == STRING_TOKEN) ||
 #if OBJECT_SYSTEM
-       (theToken.type == INSTANCE_NAME) ||
+       (theToken.tknType == INSTANCE_NAME_TOKEN) ||
 #endif
-       (theToken.type == SYMBOL) || (theToken.type == INTEGER))
-     { returnValue->value = theToken.value; }
-   else if (theToken.type == STOP)
+       (theToken.tknType == SYMBOL_TOKEN) || (theToken.tknType == INTEGER_TOKEN))
+     {
+      returnValue->type = TokenTypeToType(theToken.tknType);
+      returnValue->value = theToken.value;
+     }
+   else if (theToken.tknType == STOP_TOKEN)
      {
       returnValue->type = SYMBOL;
       returnValue->value = EnvAddSymbol(theEnv,"EOF");
      }
-   else if (theToken.type == UNKNOWN_VALUE)
+   else if (theToken.tknType == UNKNOWN_VALUE_TOKEN)
      {
       returnValue->type = STRING;
       returnValue->value = EnvAddSymbol(theEnv,"*** READ ERROR ***");
@@ -419,8 +421,6 @@ void ReadFunction(
       returnValue->type = STRING;
       returnValue->value = EnvAddSymbol(theEnv,theToken.printForm);
      }
-
-   return;
   }
 
 /********************************************************/
@@ -434,7 +434,7 @@ static void ReadTokenFromStdin(
    char *inputString;
    size_t inputStringSize;
    int inchar;
-   
+
    /*===========================================*/
    /* Initialize the variables used for storing */
    /* the characters retrieved from stdin.      */
@@ -449,8 +449,8 @@ static void ReadTokenFromStdin(
    /* Continue processing until a token is found. */
    /*=============================================*/
 
-   theToken->type = STOP;
-   while (theToken->type == STOP)
+   theToken->tknType = STOP_TOKEN;
+   while (theToken->tknType == STOP_TOKEN)
      {
       /*========================================================*/
       /* Continue reading characters until a carriage return is */
@@ -461,7 +461,7 @@ static void ReadTokenFromStdin(
       /*========================================================*/
 
       inchar = EnvGetcRouter(theEnv,STDIN);
-     
+
       while ((inchar != '\n') && (inchar != '\r') && (inchar != EOF) &&
              (! EnvGetHaltExecution(theEnv)))
         {
@@ -473,13 +473,13 @@ static void ReadTokenFromStdin(
       /*====================================================*/
       /* Add the final carriage return to the input buffer. */
       /*====================================================*/
-      
+
       if  ((inchar == '\n') || (inchar == '\r'))
         {
          inputString = ExpandStringWithChar(theEnv,inchar,inputString,&RouterData(theEnv)->CommandBufferInputCount,
                                             &inputStringSize,inputStringSize + 80);
         }
-        
+
       /*==================================================*/
       /* Open a string input source using the characters  */
       /* retrieved from stdin and extract the first token */
@@ -497,7 +497,7 @@ static void ReadTokenFromStdin(
 
       if (EnvGetHaltExecution(theEnv))
         {
-         theToken->type = STRING;
+         theToken->tknType = STRING_TOKEN;
          theToken->value = EnvAddSymbol(theEnv,"*** READ ERROR ***");
         }
 
@@ -508,13 +508,13 @@ static void ReadTokenFromStdin(
       /* in the UNIX operating system).                     */
       /*====================================================*/
 
-      if ((theToken->type == STOP) && (inchar == EOF))
+      if ((theToken->tknType == STOP_TOKEN) && (inchar == EOF))
         {
-         theToken->type = SYMBOL;
+         theToken->tknType = SYMBOL_TOKEN;
          theToken->value = EnvAddSymbol(theEnv,"EOF");
         }
      }
-     
+
    if (inputStringSize > 0) rm(theEnv,inputString,inputStringSize);
   }
 
@@ -530,7 +530,7 @@ void OpenFunction(
    CLIPSValue theArg;
 
    returnValue->type = SYMBOL;
-   
+
    /*====================*/
    /* Get the file name. */
    /*====================*/
@@ -627,7 +627,7 @@ void CloseFunction(
    const char *logicalName;
 
    returnValue->type = SYMBOL;
-   
+
    /*=====================================================*/
    /* If no arguments are specified, then close all files */
    /* opened with the open command. Return true if all    */
@@ -681,7 +681,7 @@ void GetCharFunction(
    const char *logicalName;
 
    returnValue->type = INTEGER;
-   
+
    if (! UDFHasNextArgument(context))
      { logicalName = STDIN; }
    else
@@ -725,11 +725,11 @@ void PutCharFunction(
    FILE *theFile;
 
    numberOfArguments = UDFArgumentCount(context);
-     
+
    /*=======================*/
    /* Get the logical name. */
    /*=======================*/
-   
+
    if (numberOfArguments == 1)
      { logicalName = STDOUT; }
    else
@@ -755,19 +755,19 @@ void PutCharFunction(
    /*===========================*/
    /* Get the character to put. */
    /*===========================*/
-   
+
    if (! UDFNextArgument(context,INTEGER_TYPE,&theArg))
      { return; }
-     
+
    theChar = DOToLong(theArg);
-   
+
    /*===================================================*/
    /* If the "fast load" option is being used, then the */
    /* logical name is actually a pointer to a file and  */
    /* we can bypass the router and directly output the  */
    /* value.                                            */
    /*===================================================*/
-      
+
    theFile = FindFptr(theEnv,logicalName);
    if (theFile != NULL)
      { putc((int) theChar,theFile); }
@@ -785,7 +785,7 @@ void RemoveFunction(
    const char *theFileName;
 
    returnValue->type = SYMBOL;
-   
+
    /*====================*/
    /* Get the file name. */
    /*====================*/
@@ -819,7 +819,7 @@ void RenameFunction(
    const char *oldFileName, *newFileName;
 
    returnValue->type = SYMBOL;
-   
+
    /*===========================*/
    /* Check for the file names. */
    /*===========================*/
@@ -986,7 +986,7 @@ static const char *ControlStringCheck(
          i++;
          formatFlag = FindFormatFlag(str_array,&i,print_buff,FLAG_MAX);
          if (formatFlag == '-')
-           { 
+           {
             PrintErrorID(theEnv,"IOFUN",3,false);
             EnvPrintRouter(theEnv,WERROR,"Invalid format flag \"");
             EnvPrintRouter(theEnv,WERROR,print_buff);
@@ -1105,20 +1105,20 @@ static char FindFormatFlag(
          formatFlagType = inchar;
          return(formatFlagType);
         }
-      
+
       /*=======================================================*/
       /* If the type hasn't been read, then this should be the */
       /* -M.N part of the format specification (where M and N  */
       /* are integers).                                        */
       /*=======================================================*/
-      
+
       if ( (! isdigit(inchar)) &&
            (inchar != '.') &&
            (inchar != '-') )
-        { 
+        {
          formatBuffer[copy_pos++] = inchar;
          formatBuffer[copy_pos] = '\0';
-         return('-'); 
+         return('-');
         }
 
       formatBuffer[copy_pos++] = inchar;
@@ -1144,7 +1144,7 @@ static const char *PrintFormatFlag(
    size_t theLength;
    void *oldLocale;
    Environment *theEnv = context->environment;
-      
+
    /*=================*/
    /* String argument */
    /*=================*/
@@ -1189,7 +1189,7 @@ static const char *PrintFormatFlag(
           { return(NULL); }
         theLength = strlen(formatString) + 200;
         printBuffer = (char *) gm2(theEnv,(sizeof(char) * theLength));
-        
+
         oldLocale = EnvAddSymbol(theEnv,setlocale(LC_NUMERIC,NULL));
         setlocale(LC_NUMERIC,ValueToString(IOFunctionData(theEnv)->locale));
 
@@ -1197,7 +1197,7 @@ static const char *PrintFormatFlag(
           { gensprintf(printBuffer,formatString,(long long) ValueToDouble(theResult.value)); }
         else
           { gensprintf(printBuffer,formatString,(long long) ValueToLong(theResult.value)); }
-          
+
         setlocale(LC_NUMERIC,ValueToString(oldLocale));
         break;
 
@@ -1210,16 +1210,16 @@ static const char *PrintFormatFlag(
         printBuffer = (char *) gm2(theEnv,(sizeof(char) * theLength));
 
         oldLocale = EnvAddSymbol(theEnv,setlocale(LC_NUMERIC,NULL));
-        
+
         setlocale(LC_NUMERIC,ValueToString(IOFunctionData(theEnv)->locale));
 
         if (GetType(theResult) == FLOAT)
           { gensprintf(printBuffer,formatString,ValueToDouble(theResult.value)); }
         else
           { gensprintf(printBuffer,formatString,(double) ValueToLong(theResult.value)); }
-        
+
         setlocale(LC_NUMERIC,ValueToString(oldLocale));
-        
+
         break;
 
       default:
@@ -1338,7 +1338,7 @@ static char *FillBuffer(
    buf = ExpandStringWithChar(theEnv,EOS,buf,currentPosition,maximumSize,*maximumSize+80);
    return (buf);
   }
-  
+
 /*****************************************/
 /* SetLocaleFunction: H/L access routine */
 /*   for the set-locale function.        */
@@ -1354,7 +1354,7 @@ void SetLocaleFunction(
    /* If there are no arguments, just */
    /* return the current locale.      */
    /*=================================*/
-   
+
    if (! UDFHasNextArgument(context))
      {
       returnValue->type = STRING;
@@ -1365,21 +1365,21 @@ void SetLocaleFunction(
    /*=================*/
    /* Get the locale. */
    /*=================*/
-   
+
    if (! UDFFirstArgument(context,STRING_TYPE,&theArg))
      { return; }
-     
+
    /*=====================================*/
    /* Return the old value of the locale. */
    /*=====================================*/
-   
+
    returnValue->type = STRING;
    returnValue->value = IOFunctionData(theEnv)->locale;
-   
+
    /*======================================================*/
    /* Change the value of the locale to the one specified. */
    /*======================================================*/
-   
+
    DecrementSymbolCount(theEnv,(struct symbolHashNode *) IOFunctionData(theEnv)->locale);
    IOFunctionData(theEnv)->locale = DOToPointer(theArg);
    IncrementSymbolCount(IOFunctionData(theEnv)->locale);
@@ -1448,19 +1448,22 @@ void ReadNumberFunction(
    /* Copy the token to the return value data structure. */
    /*====================================================*/
 
-   returnValue->type = theToken.type;
-   if ((theToken.type == FLOAT) || (theToken.type == STRING) ||
+
+   if ((theToken.tknType == FLOAT_TOKEN) || (theToken.tknType == STRING_TOKEN) ||
 #if OBJECT_SYSTEM
-       (theToken.type == INSTANCE_NAME) ||
+       (theToken.tknType == INSTANCE_NAME_TOKEN) ||
 #endif
-       (theToken.type == SYMBOL) || (theToken.type == INTEGER))
-     { returnValue->value = theToken.value; }
-   else if (theToken.type == STOP)
+       (theToken.tknType == SYMBOL_TOKEN) || (theToken.tknType == INTEGER_TOKEN))
+     {
+      returnValue->type = TokenTypeToType(theToken.tknType);
+      returnValue->value = theToken.value;
+     }
+   else if (theToken.tknType == STOP_TOKEN)
      {
       returnValue->type = SYMBOL;
       returnValue->value = EnvAddSymbol(theEnv,"EOF");
      }
-   else if (theToken.type == UNKNOWN_VALUE)
+   else if (theToken.tknType == UNKNOWN_VALUE_TOKEN)
      {
       returnValue->type = STRING;
       returnValue->value = EnvAddSymbol(theEnv,"*** READ ERROR ***");
@@ -1473,7 +1476,7 @@ void ReadNumberFunction(
 
    return;
   }
-  
+
 /********************************************/
 /* ReadNumber: Special routine used by the  */
 /*   read-number function to read a number. */
@@ -1492,7 +1495,7 @@ static void ReadNumber(
    double theDouble;
    void *oldLocale;
 
-   theToken->type = STOP;
+   theToken->tknType = STOP_TOKEN;
 
    /*===========================================*/
    /* Initialize the variables used for storing */
@@ -1504,12 +1507,12 @@ static void ReadNumber(
    RouterData(theEnv)->AwaitingInput = true;
    inputStringSize = 0;
    inchar = EnvGetcRouter(theEnv,logicalName);
-            
+
    /*====================================*/
    /* Skip whitespace before any number. */
    /*====================================*/
-      
-   while (isspace(inchar) && (inchar != EOF) && 
+
+   while (isspace(inchar) && (inchar != EOF) &&
           (! EnvGetHaltExecution(theEnv)))
      { inchar = EnvGetcRouter(theEnv,logicalName); }
 
@@ -1518,7 +1521,7 @@ static void ReadNumber(
    /* (for anything other than stdin) or a CR/LF (for stdin).     */
    /*=============================================================*/
 
-   while ((((! isStdin) && (! isspace(inchar))) || 
+   while ((((! isStdin) && (! isspace(inchar))) ||
           (isStdin && (inchar != '\n') && (inchar != '\r'))) &&
           (inchar != EOF) &&
           (! EnvGetHaltExecution(theEnv)))
@@ -1535,7 +1538,7 @@ static void ReadNumber(
 
    if (EnvGetHaltExecution(theEnv))
      {
-      theToken->type = STRING;
+      theToken->tknType = STRING_TOKEN;
       theToken->value = EnvAddSymbol(theEnv,"*** READ ERROR ***");
       if (inputStringSize > 0) rm(theEnv,inputString,inputStringSize);
       return;
@@ -1550,7 +1553,7 @@ static void ReadNumber(
 
    if (inchar == EOF)
      {
-      theToken->type = SYMBOL;
+      theToken->tknType = SYMBOL_TOKEN;
       theToken->value = EnvAddSymbol(theEnv,"EOF");
       if (inputStringSize > 0) rm(theEnv,inputString,inputStringSize);
       return;
@@ -1561,12 +1564,12 @@ static void ReadNumber(
    /* retrieved from stdin and extract the first token */
    /* contained in the string.                         */
    /*==================================================*/
-   
+
    /*=======================================*/
    /* Change the locale so that numbers are */
    /* converted using the localized format. */
    /*=======================================*/
-   
+
    oldLocale = EnvAddSymbol(theEnv,setlocale(LC_NUMERIC,NULL));
    setlocale(LC_NUMERIC,ValueToString(IOFunctionData(theEnv)->locale));
 
@@ -1582,27 +1585,27 @@ static void ReadNumber(
    theLong = strtoll(inputString,&charPtr,10);
 #endif
 
-   if ((charPtr != inputString) && 
+   if ((charPtr != inputString) &&
        (isspace(*charPtr) || (*charPtr == '\0')))
      {
-      theToken->type = INTEGER;
+      theToken->tknType = INTEGER_TOKEN;
       theToken->value = EnvAddLong(theEnv,theLong);
       if (inputStringSize > 0) rm(theEnv,inputString,inputStringSize);
       setlocale(LC_NUMERIC,ValueToString(oldLocale));
       return;
      }
-     
+
    /*==========================================*/
    /* Try to parse the number as a double. The */
    /* terminating character must either be     */
    /* white space or the string terminator.    */
    /*==========================================*/
 
-   theDouble = strtod(inputString,&charPtr);  
-   if ((charPtr != inputString) && 
+   theDouble = strtod(inputString,&charPtr);
+   if ((charPtr != inputString) &&
        (isspace(*charPtr) || (*charPtr == '\0')))
      {
-      theToken->type = FLOAT;
+      theToken->tknType = FLOAT_TOKEN;
       theToken->value = EnvAddDouble(theEnv,theDouble);
       if (inputStringSize > 0) rm(theEnv,inputString,inputStringSize);
       setlocale(LC_NUMERIC,ValueToString(oldLocale));
@@ -1613,15 +1616,15 @@ static void ReadNumber(
    /* Restore the "C" locale so that any parsing */
    /* of numbers uses the C format.              */
    /*============================================*/
-   
+
    setlocale(LC_NUMERIC,ValueToString(oldLocale));
 
    /*=========================================*/
    /* Return "*** READ ERROR ***" to indicate */
    /* a number was not successfully parsed.   */
    /*=========================================*/
-         
-   theToken->type = STRING;
+
+   theToken->tknType = STRING_TOKEN;
    theToken->value = EnvAddSymbol(theEnv,"*** READ ERROR ***");
   }
 

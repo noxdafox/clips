@@ -520,6 +520,7 @@ static bool ParseAllowedValuesAttribute(
    struct expr *newValue, *lastValue;
    bool constantParsed = false, variableParsed = false;
    const char *tempPtr = NULL;
+   unsigned short genType;
 
    /*======================================================*/
    /* The allowed-values attribute is not allowed if other */
@@ -639,7 +640,7 @@ static bool ParseAllowedValuesAttribute(
      { expectedType = SYMBOL; }
    else
      { expectedType = restrictionType; }
-   
+
    /*=================================================*/
    /* Get the last value in the restriction list (the */
    /* allowed values will be appended there).         */
@@ -649,7 +650,7 @@ static bool ParseAllowedValuesAttribute(
      { lastValue = constraints->classList; }
    else
      { lastValue = constraints->restrictionList; }
-     
+
    if (lastValue != NULL)
      { while (lastValue->nextArg != NULL) lastValue = lastValue->nextArg; }
 
@@ -661,7 +662,7 @@ static bool ParseAllowedValuesAttribute(
    SavePPBuffer(theEnv," ");
    GetToken(theEnv,readSource,&inputToken);
 
-   while (inputToken.type != RPAREN)
+   while (inputToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       SavePPBuffer(theEnv," ");
 
@@ -670,47 +671,55 @@ static bool ParseAllowedValuesAttribute(
       /* and if it is an appropriate value.          */
       /*=============================================*/
 
-      switch(inputToken.type)
+      switch(inputToken.tknType)
         {
-         case INTEGER:
+         case INTEGER_TOKEN:
            if ((expectedType != UNKNOWN_VALUE) &&
                (expectedType != INTEGER) &&
                (expectedType != INTEGER_OR_FLOAT)) error = true;
            constantParsed = true;
+           genType = INTEGER;
            break;
 
-         case FLOAT:
+         case FLOAT_TOKEN:
            if ((expectedType != UNKNOWN_VALUE) &&
                (expectedType != FLOAT) &&
                (expectedType != INTEGER_OR_FLOAT)) error = true;
            constantParsed = true;
+           genType = FLOAT;
            break;
 
-         case STRING:
+         case STRING_TOKEN:
            if ((expectedType != UNKNOWN_VALUE) &&
                (expectedType != STRING) &&
                (expectedType != SYMBOL_OR_STRING)) error = true;
            constantParsed = true;
+           genType = STRING;
            break;
 
-         case SYMBOL:
+         case SYMBOL_TOKEN:
            if ((expectedType != UNKNOWN_VALUE) &&
                (expectedType != SYMBOL) &&
                (expectedType != SYMBOL_OR_STRING)) error = true;
            constantParsed = true;
+           genType = SYMBOL;
            break;
 
 #if OBJECT_SYSTEM
-         case INSTANCE_NAME:
+         case INSTANCE_NAME_TOKEN:
            if ((expectedType != UNKNOWN_VALUE) &&
                (expectedType != INSTANCE_NAME)) error = true;
            constantParsed = true;
+           genType = INSTANCE_NAME;
            break;
 #endif
 
-         case SF_VARIABLE:
+         case SF_VARIABLE_TOKEN:
            if (strcmp(inputToken.printForm,"?VARIABLE") == 0)
-             { variableParsed = true; }
+             {
+              variableParsed = true;
+              genType = SF_VARIABLE;
+             }
            else
              {
               char tempBuffer[120];
@@ -761,9 +770,9 @@ static bool ParseAllowedValuesAttribute(
       /* Add the constant to the restriction list. */
       /*===========================================*/
 
-      newValue = GenConstant(theEnv,inputToken.type,inputToken.value);
+      newValue = GenConstant(theEnv,genType,inputToken.value);
       if (lastValue == NULL)
-        { 
+        {
          if (strcmp(constraintName,"allowed-classes") == 0)
            { constraints->classList = newValue; }
          else
@@ -896,7 +905,7 @@ static bool ParseTypeAttribute(
 
    SavePPBuffer(theEnv," ");
    for (GetToken(theEnv,readSource,&inputToken);
-        inputToken.type != RPAREN;
+        inputToken.tknType != RIGHT_PARENTHESIS_TOKEN;
         GetToken(theEnv,readSource,&inputToken))
      {
       SavePPBuffer(theEnv," ");
@@ -905,7 +914,7 @@ static bool ParseTypeAttribute(
       /* If the token is a symbol then... */
       /*==================================*/
 
-      if (inputToken.type == SYMBOL)
+      if (inputToken.tknType == SYMBOL_TOKEN)
         {
          /*==============================================*/
          /* ?VARIABLE can't be used with type constants. */
@@ -954,7 +963,7 @@ static bool ParseTypeAttribute(
       /* Otherwise if the token is a variable then... */
       /*==============================================*/
 
-      else if (inputToken.type == SF_VARIABLE)
+      else if (inputToken.tknType == SF_VARIABLE_TOKEN)
         {
          /*========================================*/
          /* The only variable allowd is ?VARIABLE. */
@@ -1091,12 +1100,15 @@ static bool ParseRangeCardinalityAttribute(
 
    SavePPBuffer(theEnv," ");
    GetToken(theEnv,readSource,&inputToken);
-   if ((inputToken.type == INTEGER) || ((inputToken.type == FLOAT) && range))
+   if ((inputToken.tknType == INTEGER_TOKEN) || ((inputToken.tknType == FLOAT_TOKEN) && range))
      {
       if (range)
         {
          ReturnExpression(theEnv,constraints->minValue);
-         constraints->minValue = GenConstant(theEnv,inputToken.type,inputToken.value);
+         if (inputToken.tknType == INTEGER_TOKEN)
+           { constraints->minValue = GenConstant(theEnv,INTEGER,inputToken.value); }
+         else
+           { constraints->minValue = GenConstant(theEnv,FLOAT,inputToken.value); }
         }
       else
         {
@@ -1108,10 +1120,13 @@ static bool ParseRangeCardinalityAttribute(
            }
 
          ReturnExpression(theEnv,constraints->minFields);
-         constraints->minFields = GenConstant(theEnv,inputToken.type,inputToken.value);
+         if (inputToken.tknType == INTEGER_TOKEN)
+           { constraints->minFields = GenConstant(theEnv,INTEGER,inputToken.value); }
+         else
+           { constraints->minFields = GenConstant(theEnv,FLOAT,inputToken.value); }
         }
      }
-   else if ((inputToken.type == SF_VARIABLE) && (strcmp(inputToken.printForm,"?VARIABLE") == 0))
+   else if ((inputToken.tknType == SF_VARIABLE_TOKEN) && (strcmp(inputToken.printForm,"?VARIABLE") == 0))
      { /* Do nothing. */ }
    else
      {
@@ -1127,20 +1142,26 @@ static bool ParseRangeCardinalityAttribute(
 
    SavePPBuffer(theEnv," ");
    GetToken(theEnv,readSource,&inputToken);
-   if ((inputToken.type == INTEGER) || ((inputToken.type == FLOAT) && range))
+   if ((inputToken.tknType == INTEGER_TOKEN) || ((inputToken.tknType == FLOAT_TOKEN) && range))
      {
       if (range)
         {
          ReturnExpression(theEnv,constraints->maxValue);
-         constraints->maxValue = GenConstant(theEnv,inputToken.type,inputToken.value);
+         if (inputToken.tknType == INTEGER_TOKEN)
+           { constraints->maxValue = GenConstant(theEnv,INTEGER,inputToken.value); }
+         else
+           { constraints->maxValue = GenConstant(theEnv,FLOAT,inputToken.value); }
         }
       else
         {
          ReturnExpression(theEnv,constraints->maxFields);
-         constraints->maxFields = GenConstant(theEnv,inputToken.type,inputToken.value);
+         if (inputToken.tknType == INTEGER_TOKEN)
+           { constraints->maxFields = GenConstant(theEnv,INTEGER,inputToken.value); }
+         else
+           { constraints->maxFields = GenConstant(theEnv,FLOAT,inputToken.value); }
         }
      }
-   else if ((inputToken.type == SF_VARIABLE) && (strcmp(inputToken.printForm,"?VARIABLE") == 0))
+   else if ((inputToken.tknType == SF_VARIABLE_TOKEN) && (strcmp(inputToken.printForm,"?VARIABLE") == 0))
      { /* Do nothing. */ }
    else
      {
@@ -1155,7 +1176,7 @@ static bool ParseRangeCardinalityAttribute(
    /*================================*/
 
    GetToken(theEnv,readSource,&inputToken);
-   if (inputToken.type != RPAREN)
+   if (inputToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       SyntaxErrorMessage(theEnv,"range attribute");
       return false;

@@ -77,7 +77,7 @@
 void DefmoduleCompilerSetup(
   Environment *theEnv)
   {
-   DefmoduleData(theEnv)->DefmoduleCodeItem = 
+   DefmoduleData(theEnv)->DefmoduleCodeItem =
       AddCodeGeneratorItem(theEnv,"defmodule",200,BeforeDefmodulesToCode,
                            InitDefmoduleCode,ConstructToCode,3);
   }

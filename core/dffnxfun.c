@@ -171,7 +171,7 @@ void SetupDeffunctions(
                        NULL,NULL,NULL,NULL,NULL };
 
    AllocateEnvironmentData(theEnv,DEFFUNCTION_DATA,sizeof(struct deffunctionData),DeallocateDeffunctionData);
-   memcpy(&DeffunctionData(theEnv)->DeffunctionEntityRecord,&deffunctionEntityRecord,sizeof(struct entityRecord));   
+   memcpy(&DeffunctionData(theEnv)->DeffunctionEntityRecord,&deffunctionEntityRecord,sizeof(struct entityRecord));
 
    InstallPrimitive(theEnv,&DeffunctionData(theEnv)->DeffunctionEntityRecord,PCALL);
 
@@ -219,7 +219,7 @@ void SetupDeffunctions(
 
 #if ! BLOAD_ONLY
 #if DEFMODULE_CONSTRUCT
-   AddPortConstructItem(theEnv,"deffunction",SYMBOL);
+   AddPortConstructItem(theEnv,"deffunction",SYMBOL_TOKEN);
 #endif
    AddSaveFunction(theEnv,"deffunction-headers",SaveDeffunctionHeaders,1000);
    AddSaveFunction(theEnv,"deffunctions",SaveDeffunctions,0);
@@ -250,7 +250,7 @@ void SetupDeffunctions(
 #endif
 
   }
-  
+
 /******************************************************/
 /* DeallocateDeffunctionData: Deallocates environment */
 /*    data for the deffunction construct.             */
@@ -285,7 +285,7 @@ static void DeallocateDeffunctionData(
 #endif
 #endif
   }
-  
+
 #if ! RUN_TIME
 /*****************************************************/
 /* DestroyDeffunctionAction: Action used to remove   */
@@ -301,13 +301,13 @@ static void DestroyDeffunctionAction(
 #endif
 #if (! BLOAD_ONLY) && (! RUN_TIME)
    Deffunction *theDeffunction = (Deffunction *) theConstruct;
-   
+
    if (theDeffunction == NULL) return;
-   
+
    ReturnPackedExpression(theEnv,theDeffunction->code);
 
    DestroyConstructHeader(theEnv,&theDeffunction->header);
-   
+
    rtn_struct(theEnv,deffunction,theDeffunction);
 #else
 #if MAC_XCD
@@ -331,7 +331,7 @@ Deffunction *EnvFindDeffunction(
   Environment *theEnv,
   const char *dfnxModuleAndName)
   {
-   return(FindNamedConstructInModuleOrImports(theEnv,dfnxModuleAndName,DeffunctionData(theEnv)->DeffunctionConstruct));
+   return (Deffunction *) FindNamedConstructInModuleOrImports(theEnv,dfnxModuleAndName,DeffunctionData(theEnv)->DeffunctionConstruct);
   }
 
 /***************************************************
@@ -348,7 +348,7 @@ Deffunction *EnvFindDeffunctionInModule(
   Environment *theEnv,
   const char *dfnxModuleAndName)
   {
-   return(FindNamedConstructInModule(theEnv,dfnxModuleAndName,DeffunctionData(theEnv)->DeffunctionConstruct));
+   return (Deffunction *) FindNamedConstructInModule(theEnv,dfnxModuleAndName,DeffunctionData(theEnv)->DeffunctionConstruct);
   }
 
 /***************************************************
@@ -951,7 +951,7 @@ static void SaveDeffunctionHeader(
      {
       EnvPrintRouter(theEnv,logicalName,"(deffunction ");
       EnvPrintRouter(theEnv,logicalName,EnvDeffunctionModule(theEnv,dfnxPtr));
-      EnvPrintRouter(theEnv,logicalName,"::");      
+      EnvPrintRouter(theEnv,logicalName,"::");
       EnvPrintRouter(theEnv,logicalName,EnvGetDeffunctionName(theEnv,dfnxPtr));
       EnvPrintRouter(theEnv,logicalName," (");
       for (i = 0 ; i < dfnxPtr->minNumberOfParameters ; i++)

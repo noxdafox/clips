@@ -75,11 +75,11 @@ struct profileFrameInfo
    double parentStartTime;
    struct constructProfileInfo *oldProfileFrame;
   };
-  
+
 #define PROFLFUN_DATA 15
 
 struct profileFunctionData
-  { 
+  {
    double ProfileStartTime;
    double ProfileEndTime;
    double ProfileTotalTime;

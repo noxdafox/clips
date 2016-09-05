@@ -96,7 +96,7 @@ void FactPatternMatch(
    int offsetSlot;
    CLIPSValue theResult;
    struct factPatternNode *tempPtr;
-   
+
    /*=========================================================*/
    /* If there's nothing left in the pattern network to match */
    /* against, then the current traversal of the pattern      */
@@ -189,12 +189,12 @@ void FactPatternMatch(
             if (EvaluatePatternExpression(theEnv,patternPtr,patternPtr->networkTest->nextArg))
               {
                EvaluateExpression(theEnv,patternPtr->networkTest,&theResult);
-            
+
                tempPtr = (struct factPatternNode *) FindHashedPatternNode(theEnv,patternPtr,theResult.type,theResult.value);
               }
             else
               { tempPtr = NULL; }
-              
+
             if (tempPtr != NULL)
               {
                if (SkipFactPatternNode(theEnv,tempPtr))
@@ -203,14 +203,14 @@ void FactPatternMatch(
                  {
                   if (tempPtr->header.stopNode)
                     { ProcessFactAlphaMatch(theEnv,theFact,markers,tempPtr); }
-               
+
                   patternPtr = GetNextFactPatternNode(theEnv,false,tempPtr);
                  }
               }
             else
               { patternPtr = GetNextFactPatternNode(theEnv,true,patternPtr); }
            }
-         
+
          /*=============================================*/
          /* If the constraints are satisified, then ... */
          /*=============================================*/
@@ -357,7 +357,7 @@ static void ProcessMultifieldNode(
          if (EvaluatePatternExpression(theEnv,thePattern,thePattern->networkTest->nextArg))
            {
             EvaluateExpression(theEnv,thePattern->networkTest,&theResult);
-         
+
             thePattern = (struct factPatternNode *) FindHashedPatternNode(theEnv,thePattern,theResult.type,theResult.value);
             if (thePattern != NULL)
               { success = true; }
@@ -373,7 +373,7 @@ static void ProcessMultifieldNode(
         { success = true; }
       else
         { success = false; }
-    
+
       if (success)
         {
          /*=======================================================*/
@@ -422,7 +422,7 @@ static void ProcessMultifieldNode(
          if (EvaluatePatternExpression(theEnv,thePattern,thePattern->networkTest->nextArg))
            {
             EvaluateExpression(theEnv,thePattern->networkTest,&theResult);
-         
+
             tempPtr = (struct factPatternNode *) FindHashedPatternNode(theEnv,thePattern,theResult.type,theResult.value);
             if (tempPtr != NULL)
               {
@@ -493,7 +493,7 @@ static struct factPatternNode *GetNextFactPatternNode(
       /*======================================*/
 
       if (thePattern == NULL) return NULL;
-      
+
       /*======================================*/
       /* Skip selector constants and pop back */
       /* back to the selector node.           */
@@ -837,7 +837,7 @@ void MarkFactPatternForIncrementalReset(
    /*===============================================================*/
 
    if (patternPtr->header.initialize == false)
-     { 
+     {
       for (theJoin = patternPtr->header.entryJoin;
            theJoin != NULL;
            theJoin = theJoin->rightMatchNode)

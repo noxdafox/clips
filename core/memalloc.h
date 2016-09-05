@@ -174,7 +174,7 @@ struct memoryPtr
 #define MEMORY_DATA 59
 
 struct memoryData
-  { 
+  {
    long int MemoryAmount;
    long int MemoryCalls;
    bool ConserveMemory;

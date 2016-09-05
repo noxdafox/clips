@@ -142,12 +142,12 @@ void WhileFunction(
    CLIPSValue theResult;
    struct garbageFrame newGarbageFrame;
    struct garbageFrame *oldGarbageFrame;
-  
+
    /*====================================================*/
    /* Evaluate the body of the while loop as long as the */
    /* while condition evaluates to a non-FALSE value.    */
    /*====================================================*/
-   
+
    oldGarbageFrame = UtilityData(theEnv)->CurrentGarbageFrame;
    memset(&newGarbageFrame,0,sizeof(struct garbageFrame));
    newGarbageFrame.priorFrame = oldGarbageFrame;
@@ -160,7 +160,7 @@ void WhileFunction(
      {
       if ((ProcedureFunctionData(theEnv)->BreakFlag == true) || (ProcedureFunctionData(theEnv)->ReturnFlag == true))
         break;
-        
+
       UDFNthArgument(context,2,ANY_TYPE,&theResult);
 
       if ((ProcedureFunctionData(theEnv)->BreakFlag == true) || (ProcedureFunctionData(theEnv)->ReturnFlag == true))
@@ -198,7 +198,7 @@ void WhileFunction(
       returnValue->type = SYMBOL;
       returnValue->value = EnvFalseSymbol(theEnv);
      }
-     
+
    RestorePriorGarbageFrame(theEnv,&newGarbageFrame,oldGarbageFrame,returnValue);
    CallPeriodicTasks(theEnv);
   }
@@ -222,7 +222,7 @@ void LoopForCountFunction(
    tmpCounter->loopCounter = 0L;
    tmpCounter->nxt = ProcedureFunctionData(theEnv)->LoopCounterStack;
    ProcedureFunctionData(theEnv)->LoopCounterStack = tmpCounter;
-   
+
    if (! UDFNthArgument(context,1,INTEGER_TYPE,&theArg))
      {
       loopResult->type = SYMBOL;
@@ -240,7 +240,7 @@ void LoopForCountFunction(
       rtn_struct(theEnv,loopCounterStack,tmpCounter);
       return;
      }
-     
+
    oldGarbageFrame = UtilityData(theEnv)->CurrentGarbageFrame;
    memset(&newGarbageFrame,0,sizeof(struct garbageFrame));
    newGarbageFrame.priorFrame = oldGarbageFrame;
@@ -257,13 +257,13 @@ void LoopForCountFunction(
 
       if ((ProcedureFunctionData(theEnv)->BreakFlag == true) || (ProcedureFunctionData(theEnv)->ReturnFlag == true))
         break;
-        
+
       CleanCurrentGarbageFrame(theEnv,NULL);
       CallPeriodicTasks(theEnv);
-        
+
       tmpCounter->loopCounter++;
      }
-     
+
    ProcedureFunctionData(theEnv)->BreakFlag = false;
    if (ProcedureFunctionData(theEnv)->ReturnFlag == true)
      {
@@ -279,7 +279,7 @@ void LoopForCountFunction(
      }
    ProcedureFunctionData(theEnv)->LoopCounterStack = tmpCounter->nxt;
    rtn_struct(theEnv,loopCounterStack,tmpCounter);
-    
+
    RestorePriorGarbageFrame(theEnv,&newGarbageFrame,oldGarbageFrame,loopResult);
    CallPeriodicTasks(theEnv);
   }
@@ -295,7 +295,7 @@ void GetLoopCount(
    int depth;
    CLIPSValue theArg;
    LOOP_COUNTER_STACK *tmpCounter;
-   
+
    if (! UDFFirstArgument(context,INTEGER_TYPE,&theArg))
      { return; }
 
@@ -512,7 +512,7 @@ bool GetBoundVariable(
   SYMBOL_HN *varName)
   {
    CLIPSValue *bindPtr;
-   
+
    for (bindPtr = ProcedureFunctionData(theEnv)->BindList; bindPtr != NULL; bindPtr = bindPtr->next)
      {
       if (bindPtr->supplementalInfo == (void *) varName)

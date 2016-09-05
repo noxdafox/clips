@@ -52,7 +52,7 @@
 #define SORTFUN_DATA 7
 
 struct sortFunctionData
-  { 
+  {
    struct expr *SortComparisonFunction;
   };
 
@@ -67,7 +67,7 @@ struct sortFunctionData
                                               bool (*)(Environment *,CLIPSValue *,CLIPSValue *));
    static bool                    DefaultCompareSwapFunction(Environment *,CLIPSValue *,CLIPSValue *);
    static void                    DeallocateSortFunctionData(Environment *);
-   
+
 /****************************************/
 /* SortFunctionDefinitions: Initializes */
 /*   the sorting functions.             */
@@ -163,7 +163,7 @@ void SortFunction(
    /* For an external function, verify the */
    /* correct number of arguments.         */
    /*======================================*/
-   
+
    if (functionReference->type == FCALL)
      {
       fptr = (struct FunctionDefinition *) functionReference->value;
@@ -176,12 +176,12 @@ void SortFunction(
          return;
         }
      }
-     
+
    /*=======================================*/
    /* For a deffunction, verify the correct */
    /* number of arguments.                  */
    /*=======================================*/
-  
+
 #if DEFFUNCTION_CONSTRUCT
    if (functionReference->type == PCALL)
      {
@@ -201,16 +201,16 @@ void SortFunction(
    /* If there are no items to be sorted, */
    /* then return an empty multifield.    */
    /*=====================================*/
-  
+
    argumentCount = UDFArgumentCount(context);
- 
+
    if (argumentCount == 1)
      {
       EnvSetMultifieldErrorValue(theEnv,returnValue);
       ReturnExpression(theEnv,functionReference);
       return;
      }
-     
+
    /*=====================================*/
    /* Retrieve the arguments to be sorted */
    /* and determine how many there are.   */
@@ -227,20 +227,20 @@ void SortFunction(
       else
         { argumentSize++; }
      }
-     
+
    if (argumentSize == 0)
-     {   
+     {
       genfree(theEnv,theArguments,(argumentCount - 1) * sizeof(CLIPSValue)); /* Bug Fix */
       EnvSetMultifieldErrorValue(theEnv,returnValue);
       ReturnExpression(theEnv,functionReference);
       return;
      }
-   
+
    /*====================================*/
    /* Pack all of the items to be sorted */
    /* into a data object array.          */
    /*====================================*/
-   
+
    theArguments2 = (CLIPSValue *) genalloc(theEnv,argumentSize * sizeof(CLIPSValue));
 
    for (i = 2; i <= argumentCount; i++)
@@ -261,7 +261,7 @@ void SortFunction(
          k++;
         }
      }
-     
+
    genfree(theEnv,theArguments,(argumentCount - 1) * sizeof(CLIPSValue));
 
    functionReference->nextArg = SortFunctionData(theEnv)->SortComparisonFunction;
@@ -271,7 +271,7 @@ void SortFunction(
      { ValueInstall(theEnv,&theArguments2[i]); }
 
    MergeSort(theEnv,(unsigned long) argumentSize,theArguments2,DefaultCompareSwapFunction);
-  
+
    for (i = 0; i < argumentSize; i++)
      { ValueDeinstall(theEnv,&theArguments2[i]); }
 
@@ -286,7 +286,7 @@ void SortFunction(
       SetMFType(theMultifield,i+1,GetType(theArguments2[i]));
       SetMFValue(theMultifield,i+1,GetValue(theArguments2[i]));
      }
-     
+
    genfree(theEnv,theArguments2,argumentSize * sizeof(CLIPSValue));
 
    SetpType(returnValue,MULTIFIELD);

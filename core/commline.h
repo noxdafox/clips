@@ -38,14 +38,14 @@
 /*            Command history and editing support            */
 /*                                                           */
 /*            Used genstrcpy instead of strcpy.              */
-/*                                                           */             
+/*                                                           */
 /*            Added before command execution callback        */
 /*            function.                                      */
-/*                                                           */  
-/*            Fixed RouteCommand return value.               */           
-/*                                                           */             
+/*                                                           */
+/*            Fixed RouteCommand return value.               */
+/*                                                           */
 /*            Added AwaitingInput flag.                      */
-/*                                                           */             
+/*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
@@ -76,7 +76,7 @@ typedef bool BeforeCommandExecutionFunction(Environment *);
 typedef void EventFunction(Environment *);
 
 struct commandLineData
-  { 
+  {
    bool EvaluatingTopLevelCommand;
    bool HaltCommandLoopBatch;
 #if ! RUN_TIME

@@ -89,11 +89,11 @@
 #endif
 
 #ifndef CREATION_DATE_STRING
-#define CREATION_DATE_STRING "8/25/16"
+#define CREATION_DATE_STRING "9/4/16"
 #endif
 
 #ifndef BANNER_STRING
-#define BANNER_STRING "         CLIPS (Cypher Alpha 8/25/16)\n"
+#define BANNER_STRING "         CLIPS (Cypher Alpha 9/4/16)\n"
 #endif
 
 /*************************/
@@ -171,6 +171,8 @@ typedef const char * CLIPSString;
 #define INSTANCE_ADDRESS                7
 #define INSTANCE_NAME                   8
 
+#define RVOID                           9
+
 #define FCALL                          30
 #define GCALL                          31
 #define PCALL                          32
@@ -237,12 +239,7 @@ typedef const char * CLIPSString;
 #define PREDICATE_CONSTRAINT          163
 #define RETURN_VALUE_CONSTRAINT       164
 
-#define LPAREN                        170
-#define RPAREN                        171
-#define STOP                          172
 #define UNKNOWN_VALUE                 173
-
-#define RVOID                         175
 
 #define INTEGER_OR_FLOAT              180
 #define SYMBOL_OR_STRING              181

@@ -373,7 +373,7 @@ void DeleteMethodInfo(
 
       for (k = 0 ; k < rptr->tcnt ; k++)
 #if OBJECT_SYSTEM
-        DecrementDefclassBusyCount(theEnv,rptr->types[k]);
+        DecrementDefclassBusyCount(theEnv,(Defclass *) rptr->types[k]);
 #else
         DecrementIntegerCount(theEnv,(INTEGER_HN *) rptr->types[k]);
 #endif
@@ -388,7 +388,7 @@ void DeleteMethodInfo(
         (sizeof(RESTRICTION) * meth->restrictionCount));
    RestoreBusyCount(gfunc);
   }
-  
+
 /***************************************************
   NAME         : DestroyMethodInfo
   DESCRIPTION  : Deallocates all the data associated
@@ -412,7 +412,7 @@ void DestroyMethodInfo(
 #endif
 
    ReturnPackedExpression(theEnv,meth->actions);
-   
+
    ClearUserDataList(theEnv,meth->usrData);
    if (meth->ppForm != NULL)
      rm(theEnv,meth->ppForm,(sizeof(char) * (strlen(meth->ppForm)+1)));
@@ -451,7 +451,7 @@ bool MethodsExecuting(
        return true;
    return false;
   }
-  
+
 #endif
 
 #if ! OBJECT_SYSTEM
@@ -559,7 +559,7 @@ void PrintMethod(
       for (k = 0 ; k < rptr->tcnt ; k++)
         {
 #if OBJECT_SYSTEM
-         genstrncat(buf,EnvGetDefclassName(theEnv,rptr->types[k]),buflen-strlen(buf));
+         genstrncat(buf,EnvGetDefclassName(theEnv,(Defclass *) rptr->types[k]),buflen-strlen(buf));
 #else
          genstrncat(buf,TypeName(theEnv,ValueToInteger(rptr->types[k])),buflen-strlen(buf));
 #endif

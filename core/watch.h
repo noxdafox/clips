@@ -70,7 +70,7 @@ struct watchItem
   };
 
 struct watchData
-  { 
+  {
    struct watchItem *ListOfWatchItems;
   };
 
@@ -78,7 +78,7 @@ struct watchData
 
    bool                           EnvWatch(Environment *,const char *);
    bool                           EnvUnwatch(Environment *,const char *);
-   void                           InitializeWatchData(Environment *);   
+   void                           InitializeWatchData(Environment *);
    bool                           EnvSetWatchItem(Environment *,const char *,bool,struct expr *);
    int                            EnvGetWatchItem(Environment *,const char *);
    bool                           AddWatchItem(Environment *,const char *,int,bool *,int,

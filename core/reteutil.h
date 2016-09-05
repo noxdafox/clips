@@ -79,7 +79,7 @@
    void                           FlushBetaMemory(Environment *,struct joinNode *,int);
    bool                           BetaMemoryNotEmpty(struct joinNode *);
    void                           RemoveAlphaMemoryMatches(Environment *,struct patternNodeHeader *,struct partialMatch *,
-                                                                  struct alphaMatch *); 
+                                                                  struct alphaMatch *);
    void                           DestroyAlphaMemory(Environment *,struct patternNodeHeader *,bool);
    void                           FlushAlphaMemory(Environment *,struct patternNodeHeader *);
    void                           FlushAlphaBetaMemory(Environment *,struct partialMatch *);

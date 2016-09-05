@@ -104,7 +104,7 @@ struct joinLink
    struct joinLink *next;
    long bsaveID;
   };
-    
+
 struct joinNode
   {
    unsigned int firstJoin : 1;

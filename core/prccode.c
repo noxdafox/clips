@@ -172,10 +172,10 @@ void InstallProcedurePrimitives(
 
    AllocateEnvironmentData(theEnv,PROCEDURAL_PRIMITIVE_DATA,sizeof(struct proceduralPrimitiveData),DeallocateProceduralPrimitiveData);
 
-   memcpy(&ProceduralPrimitiveData(theEnv)->ProcParameterInfo,&procParameterInfo,sizeof(struct entityRecord));  
-   memcpy(&ProceduralPrimitiveData(theEnv)->ProcWildInfo,&procWildInfo,sizeof(struct entityRecord));  
-   memcpy(&ProceduralPrimitiveData(theEnv)->ProcGetInfo,&procGetInfo,sizeof(struct entityRecord));  
-   memcpy(&ProceduralPrimitiveData(theEnv)->ProcBindInfo,&procBindInfo,sizeof(struct entityRecord));  
+   memcpy(&ProceduralPrimitiveData(theEnv)->ProcParameterInfo,&procParameterInfo,sizeof(struct entityRecord));
+   memcpy(&ProceduralPrimitiveData(theEnv)->ProcWildInfo,&procWildInfo,sizeof(struct entityRecord));
+   memcpy(&ProceduralPrimitiveData(theEnv)->ProcGetInfo,&procGetInfo,sizeof(struct entityRecord));
+   memcpy(&ProceduralPrimitiveData(theEnv)->ProcBindInfo,&procBindInfo,sizeof(struct entityRecord));
 
    InstallPrimitive(theEnv,&ProceduralPrimitiveData(theEnv)->ProcParameterInfo,PROC_PARAM);
    InstallPrimitive(theEnv,&ProceduralPrimitiveData(theEnv)->ProcWildInfo,PROC_WILD_PARAM);
@@ -183,7 +183,7 @@ void InstallProcedurePrimitives(
    InstallPrimitive(theEnv,&ProceduralPrimitiveData(theEnv)->ProcBindInfo,PROC_BIND);
 
    ProceduralPrimitiveData(theEnv)->Oldindex = -1;
-   
+
    /* ===============================================
       Make sure a default evaluation function is
       in place for deffunctions and generic functions
@@ -193,12 +193,12 @@ void InstallProcedurePrimitives(
       =============================================== */
 
 #if ! DEFFUNCTION_CONSTRUCT
-   memcpy(&ProceduralPrimitiveData(theEnv)->DeffunctionEntityRecord,&deffunctionEntityRecord,sizeof(struct entityRecord));  
+   memcpy(&ProceduralPrimitiveData(theEnv)->DeffunctionEntityRecord,&deffunctionEntityRecord,sizeof(struct entityRecord));
    InstallPrimitive(theEnv,&ProceduralPrimitiveData(theEnv)->DeffunctionEntityRecord,PCALL);
 #endif
 
 #if ! DEFGENERIC_CONSTRUCT
-   memcpy(&ProceduralPrimitiveData(theEnv)->GenericEntityRecord,&genericEntityRecord,sizeof(struct entityRecord));  
+   memcpy(&ProceduralPrimitiveData(theEnv)->GenericEntityRecord,&genericEntityRecord,sizeof(struct entityRecord));
    InstallPrimitive(theEnv,&ProceduralPrimitiveData(theEnv)->GenericEntityRecord,GCALL);
 #endif
 
@@ -274,14 +274,14 @@ EXPRESSION *ParseProcParameters(
       lastOne = nextOne;
       nextOne = nextOne->nextArg;
      }
-   if (tkn->type != LPAREN)
+   if (tkn->tknType != LEFT_PARENTHESIS_TOKEN)
      {
       SyntaxErrorMessage(theEnv,"parameter list");
       ReturnExpression(theEnv,parameterList);
       return NULL;
      }
    GetToken(theEnv,readSource,tkn);
-   while ((tkn->type == SF_VARIABLE) || (tkn->type == MF_VARIABLE))
+   while ((tkn->tknType == SF_VARIABLE_TOKEN) || (tkn->tknType == MF_VARIABLE_TOKEN))
      {
       for (check = parameterList ; check != NULL ; check = check->nextArg)
         if (check->value == tkn->value)
@@ -303,8 +303,8 @@ EXPRESSION *ParseProcParameters(
          ReturnExpression(theEnv,parameterList);
          return NULL;
         }
-      nextOne = GenConstant(theEnv,tkn->type,tkn->value);
-      if (tkn->type == MF_VARIABLE)
+      nextOne = GenConstant(theEnv,TokenTypeToType(tkn->tknType),tkn->value);
+      if (tkn->tknType == MF_VARIABLE_TOKEN)
         *wildcard = (SYMBOL_HN *) tkn->value;
       else
         (*min)++;
@@ -317,7 +317,7 @@ EXPRESSION *ParseProcParameters(
       paramprintp = 1;
       GetToken(theEnv,readSource,tkn);
      }
-   if (tkn->type != RPAREN)
+   if (tkn->tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       SyntaxErrorMessage(theEnv,"parameter list");
       ReturnExpression(theEnv,parameterList);
@@ -503,14 +503,14 @@ int ReplaceProcVars(
          /*===============================================*/
          /* See if the variable is in the parameter list. */
          /*===============================================*/
-         
+
          bindName = (SYMBOL_HN *) actions->value;
          position = FindProcParameter(bindName,parameterList,wildcard);
 
          /*=============================================================*/
          /* Check to see if the variable is bound within the procedure. */
          /*=============================================================*/
-         
+
          boundPosn = SearchParsedBindNames(theEnv,bindName);
 
          /*=============================================*/
@@ -773,17 +773,17 @@ static void ReleaseProcParameters(
      {
       if (ProceduralPrimitiveData(theEnv)->WildcardValue->value != ProceduralPrimitiveData(theEnv)->NoParamValue)
         { ReturnMultifield(theEnv,(struct multifield *) ProceduralPrimitiveData(theEnv)->WildcardValue->value); }
-     
-      rtn_struct(theEnv,dataObject,ProceduralPrimitiveData(theEnv)->WildcardValue); 
+
+      rtn_struct(theEnv,dataObject,ProceduralPrimitiveData(theEnv)->WildcardValue);
      }
-     
+
 #if DEFGENERIC_CONSTRUCT
    if (ProceduralPrimitiveData(theEnv)->ProcParamExpressions != NULL)
      rm(theEnv,ProceduralPrimitiveData(theEnv)->ProcParamExpressions,(sizeof(EXPRESSION) * ProceduralPrimitiveData(theEnv)->ProcParamArraySize));
 #endif
 
    ptmp = ProceduralPrimitiveData(theEnv)->pstack;
-   
+
    while (ptmp != NULL)
      {
       next = ptmp->nxt;
@@ -797,18 +797,18 @@ static void ReleaseProcParameters(
 #endif
 
       if (ptmp->WildcardValue != NULL)
-        { 
+        {
          if (ptmp->WildcardValue->value != ProceduralPrimitiveData(theEnv)->NoParamValue)
            { ReturnMultifield(theEnv,(struct multifield *) ptmp->WildcardValue->value); }
 
-         rtn_struct(theEnv,dataObject,ptmp->WildcardValue); 
+         rtn_struct(theEnv,dataObject,ptmp->WildcardValue);
         }
-     
+
       rtn_struct(theEnv,ProcParamStack,ptmp);
       ptmp = next;
      }
   }
-  
+
 #if DEFGENERIC_CONSTRUCT
 
 /***********************************************************
@@ -889,7 +889,7 @@ void EvaluateProcActions(
      { theTM = AddTrackedMemory(theEnv,ProceduralPrimitiveData(theEnv)->LocalVarArray,sizeof(CLIPSValue) * lvarcnt); }
    else
      { theTM = NULL; }
-     
+
    for (i = 0 ; i < lvarcnt ; i++)
      ProceduralPrimitiveData(theEnv)->LocalVarArray[i].supplementalInfo = EnvFalseSymbol(theEnv);
 
@@ -1136,7 +1136,7 @@ static bool RtnProcParam(
   CLIPSValue *returnValue)
   {
    CLIPSValue *src;
-   
+
    src = &ProceduralPrimitiveData(theEnv)->ProcParamArray[*((int *) ValueToBitMap(value)) - 1];
    returnValue->type = src->type;
    returnValue->value = src->value;

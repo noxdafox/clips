@@ -257,7 +257,7 @@ void DirectMVReplaceCommand(
    CLIPSValue newval,newseg,oldseg;
 
    returnValue->type = SYMBOL;
-   
+
    if (CheckCurrentMessage(theEnv,"direct-slot-replace$",true) == false)
      {
       returnValue->value = EnvFalseSymbol(theEnv);
@@ -303,7 +303,7 @@ void DirectMVInsertCommand(
    Instance *ins;
    long theIndex;
    CLIPSValue newval,newseg,oldseg;
-   
+
    returnValue->type = SYMBOL;
 
    if (CheckCurrentMessage(theEnv,"direct-slot-insert$",true) == false)
@@ -311,7 +311,7 @@ void DirectMVInsertCommand(
       returnValue->value = EnvFalseSymbol(theEnv);
       return;
      }
-     
+
    ins = GetActiveInstance(theEnv);
    sp = CheckMultifieldSlotModify(theEnv,INSERT,"direct-slot-insert$",ins,
                             GetFirstArgument(),&theIndex,NULL,&newval);
@@ -327,7 +327,7 @@ void DirectMVInsertCommand(
       returnValue->value = EnvFalseSymbol(theEnv);
       return;
      }
-     
+
    if (PutSlotValue(theEnv,ins,sp,&newseg,&newval,"function direct-slot-insert$"))
      { returnValue->value = EnvTrueSymbol(theEnv); }
    else
@@ -354,13 +354,13 @@ void DirectMVDeleteCommand(
    CLIPSValue newseg,oldseg;
 
    returnValue->type = SYMBOL;
-   
+
    if (CheckCurrentMessage(theEnv,"direct-slot-delete$",true) == false)
      {
       returnValue->value = EnvFalseSymbol(theEnv);
       return;
      }
-     
+
    ins = GetActiveInstance(theEnv);
    sp = CheckMultifieldSlotModify(theEnv,DELETE_OP,"direct-slot-delete$",ins,
                                   GetFirstArgument(),&rb,&re,NULL);
@@ -369,14 +369,14 @@ void DirectMVDeleteCommand(
       returnValue->value = EnvFalseSymbol(theEnv);
       return;
      }
-     
+
    AssignSlotToDataObject(&oldseg,sp);
    if (! DeleteMultiValueField(theEnv,&newseg,&oldseg,rb,re,"direct-slot-delete$"))
      {
       returnValue->value = EnvFalseSymbol(theEnv);
       return;
      }
-     
+
    if (PutSlotValue(theEnv,ins,sp,&newseg,&oldseg,"function direct-slot-delete$"))
      { returnValue->value = EnvTrueSymbol(theEnv); }
    else
@@ -407,7 +407,7 @@ static Instance *CheckMultifieldSlotInstance(
 
    if (! UDFFirstArgument(context,INSTANCE_TYPES | SYMBOL_TYPE,&temp))
      { return NULL; }
-     
+
    if (temp.type == INSTANCE_ADDRESS)
      {
       ins = (Instance *) temp.value;

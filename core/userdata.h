@@ -38,14 +38,14 @@ struct userData
 
 typedef struct userData USER_DATA;
 typedef struct userData * USER_DATA_PTR;
-  
+
 struct userDataRecord
   {
    unsigned char dataID;
    void *(*createUserData)(Environment *);
    void (*deleteUserData)(Environment *,void *);
   };
-  
+
 typedef struct userDataRecord USER_DATA_RECORD;
 typedef struct userDataRecord * USER_DATA_RECORD_PTR;
 
@@ -54,7 +54,7 @@ typedef struct userDataRecord * USER_DATA_RECORD_PTR;
 #define USER_DATA_DATA 56
 
 struct userDataData
-  { 
+  {
    struct userDataRecord *UserDataRecordArray[MAXIMUM_USER_DATA_RECORDS];
    unsigned char UserDataRecordCount;
   };

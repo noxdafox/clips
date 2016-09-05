@@ -70,7 +70,7 @@
 #define PRINT_UTILITY_DATA 53
 
 struct printUtilityData
-  { 
+  {
    bool PreserveEscapedCharacters;
    bool AddressesToStrings;
    bool InstanceAddressesToNames;

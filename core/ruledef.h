@@ -124,7 +124,7 @@ struct defruleModule
 #define DEFRULE_DATA 16
 
 struct defruleData
-  { 
+  {
    struct construct *DefruleConstruct;
    int DefruleModuleIndex;
    long long CurrentEntityTimeTag;

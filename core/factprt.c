@@ -65,7 +65,7 @@ void PrintFactJNCompVars1(
    EnvPrintRouter(theEnv,logicalName,"(fact-jn-cmp-vars1 ");
    if (hack->pass) EnvPrintRouter(theEnv,logicalName,"= ");
    else EnvPrintRouter(theEnv,logicalName,"<> ");
-   
+
    EnvPrintRouter(theEnv,logicalName,"p");
    PrintLongInteger(theEnv,logicalName,(long long) hack->pattern1 + 1);
 
@@ -73,7 +73,7 @@ void PrintFactJNCompVars1(
      { EnvPrintRouter(theEnv,logicalName," L"); }
    else if (hack->p1rhs)
      { EnvPrintRouter(theEnv,logicalName," R"); }
-   
+
    EnvPrintRouter(theEnv,logicalName," s");
    PrintLongInteger(theEnv,logicalName,(long long) hack->slot1);
 
@@ -241,7 +241,7 @@ void PrintFactJNGetVar1(
    PrintLongInteger(theEnv,logicalName,(long long) hack->whichField);
    EnvPrintRouter(theEnv,logicalName," s");
    PrintLongInteger(theEnv,logicalName,(long long) hack->whichSlot);
-   
+
    if (hack->lhs)
      { EnvPrintRouter(theEnv,logicalName," L"); }
    else if (hack->rhs)
@@ -321,7 +321,7 @@ void PrintFactJNGetVar3(
      { EnvPrintRouter(theEnv,logicalName," L"); }
    else if (hack->rhs)
      { EnvPrintRouter(theEnv,logicalName," R"); }
-     
+
    EnvPrintRouter(theEnv,logicalName,")");
 #else
 #if MAC_XCD

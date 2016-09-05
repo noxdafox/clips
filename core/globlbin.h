@@ -51,13 +51,13 @@ struct bsaveDefglobalModule
 #define GLOBLBIN_DATA 60
 
 struct defglobalBinaryData
-  { 
+  {
    Defglobal *DefglobalArray;
    long NumberOfDefglobals;
    struct defglobalModule *ModuleArray;
    long NumberOfDefglobalModules;
   };
-  
+
 #define DefglobalBinaryData(theEnv) ((struct defglobalBinaryData *) GetEnvironmentData(theEnv,GLOBLBIN_DATA))
 
 #define DefglobalPointer(i) (&DefglobalBinaryData(theEnv)->DefglobalArray[i])

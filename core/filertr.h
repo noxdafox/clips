@@ -56,7 +56,7 @@
 #include <stdio.h>
 
 #define FILE_ROUTER_DATA 47
-   
+
 struct fileRouter
   {
    const char *logicalName;
@@ -65,7 +65,7 @@ struct fileRouter
   };
 
 struct fileRouterData
-  { 
+  {
    struct fileRouter *ListOfFileRouters;
   };
 

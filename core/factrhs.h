@@ -46,9 +46,9 @@
 #include "symbol.h"
 
    struct expr                   *BuildRHSAssert(Environment *,const char *,struct token *,bool *,bool,bool,const char *);
-   struct expr                   *GetAssertArgument(Environment *,const char *,struct token *,bool *,int,bool,bool *);
+   struct expr                   *GetAssertArgument(Environment *,const char *,struct token *,bool *,TokenType,bool,bool *);
    struct expr                   *GetRHSPattern(Environment*,const char *,struct token *,bool *,bool,
-                                                       bool,bool,int);
+                                                       bool,bool,TokenType);
    struct fact                   *StringToFact(Environment *,const char *);
 
 #endif /* _H_factrhs */

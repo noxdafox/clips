@@ -109,7 +109,7 @@
 /**************************************************************/
 void InitializeDefglobals(
   Environment *theEnv)
-  {  
+  {
    struct entityRecord globalInfo = { "GBL_VARIABLE", GBL_VARIABLE,0,0,0,
                                                        NULL,
                                                        NULL,
@@ -125,15 +125,15 @@ void InitializeDefglobals(
                                                        (EntityBusyCountFunction *) DecrementDefglobalBusyCount,
                                                        (EntityBusyCountFunction *) IncrementDefglobalBusyCount,
                                                        NULL,NULL,NULL,NULL,NULL };
-   
+
    AllocateEnvironmentData(theEnv,DEFGLOBAL_DATA,sizeof(struct defglobalData),DeallocateDefglobalData);
-   
-   memcpy(&DefglobalData(theEnv)->GlobalInfo,&globalInfo,sizeof(struct entityRecord));   
-   memcpy(&DefglobalData(theEnv)->DefglobalPtrRecord,&defglobalPtrRecord,sizeof(struct entityRecord));   
+
+   memcpy(&DefglobalData(theEnv)->GlobalInfo,&globalInfo,sizeof(struct entityRecord));
+   memcpy(&DefglobalData(theEnv)->DefglobalPtrRecord,&defglobalPtrRecord,sizeof(struct entityRecord));
 
    DefglobalData(theEnv)->ResetGlobals = true;
    DefglobalData(theEnv)->LastModuleIndex = -1;
-   
+
    InstallPrimitive(theEnv,&DefglobalData(theEnv)->GlobalInfo,GBL_VARIABLE);
    InstallPrimitive(theEnv,&DefglobalData(theEnv)->DefglobalPtrRecord,DEFGLOBAL_PTR);
 
@@ -164,7 +164,7 @@ static void DeallocateDefglobalData(
 #if ! RUN_TIME
    struct defglobalModule *theModuleItem;
    Defmodule *theModule;
-   
+
 #if BLOAD || BLOAD_AND_BSAVE
    if (Bloaded(theEnv)) return;
 #endif
@@ -185,7 +185,7 @@ static void DeallocateDefglobalData(
    DoForAllConstructs(theEnv,DestroyDefglobalAction,DefglobalData(theEnv)->DefglobalModuleIndex,false,NULL);
 #endif
   }
-  
+
 /***************************************************/
 /* DestroyDefglobalAction: Action used to remove   */
 /*   defglobals as a result of DestroyEnvironment. */
@@ -200,7 +200,7 @@ static void DestroyDefglobalAction(
 #endif
 #if (! BLOAD_ONLY)
    Defglobal *theDefglobal = (Defglobal *) theConstruct;
-   
+
    if (theDefglobal == NULL) return;
 
    DestroyDefglobal(theEnv,theDefglobal);
@@ -234,7 +234,7 @@ static void InitializeDefglobalModules(
                                     (FindConstructFunction *) EnvFindDefglobalInModule);
 
 #if (! BLOAD_ONLY) && (! RUN_TIME) && DEFMODULE_CONSTRUCT
-   AddPortConstructItem(theEnv,"defglobal",SYMBOL);
+   AddPortConstructItem(theEnv,"defglobal",SYMBOL_TOKEN);
 #endif
   }
 
@@ -243,7 +243,7 @@ static void InitializeDefglobalModules(
 /*************************************************/
 static void *AllocateModule(
   Environment *theEnv)
-  {   
+  {
    return (void *) get_struct(theEnv,defglobalModule);
   }
 
@@ -277,8 +277,8 @@ struct defglobalModule *GetDefglobalModuleItem(
 Defglobal *EnvFindDefglobal(
   Environment *theEnv,
   const char *defglobalName)
-  { 
-   return(FindNamedConstructInModuleOrImports(theEnv,defglobalName,DefglobalData(theEnv)->DefglobalConstruct)); 
+  {
+   return (Defglobal *) FindNamedConstructInModuleOrImports(theEnv,defglobalName,DefglobalData(theEnv)->DefglobalConstruct);
   }
 
 /*****************************************************/
@@ -289,8 +289,8 @@ Defglobal *EnvFindDefglobal(
 Defglobal *EnvFindDefglobalInModule(
   Environment *theEnv,
   const char *defglobalName)
-  { 
-   return(FindNamedConstructInModule(theEnv,defglobalName,DefglobalData(theEnv)->DefglobalConstruct)); 
+  {
+   return (Defglobal *) FindNamedConstructInModule(theEnv,defglobalName,DefglobalData(theEnv)->DefglobalConstruct);
   }
 
 /********************************************************************/
@@ -301,7 +301,7 @@ Defglobal *EnvFindDefglobalInModule(
 Defglobal *EnvGetNextDefglobal(
   Environment *theEnv,
   Defglobal *defglobalPtr)
-  { 
+  {
    return (Defglobal *) GetNextConstructItem(theEnv,(struct constructHeader *) defglobalPtr,DefglobalData(theEnv)->DefglobalModuleIndex);
   }
 
@@ -368,7 +368,7 @@ static void ReturnDefglobal(
    DefglobalData(theEnv)->ChangeToGlobals = true;
 #endif
   }
-  
+
 /************************************************************/
 /* DestroyDefglobal: Returns the data structures associated  */
 /*   with a defglobal construct to the pool of free memory. */
@@ -386,7 +386,7 @@ static void DestroyDefglobal(
 
    if (theDefglobal->current.type == MULTIFIELD)
      { ReturnMultifield(theEnv,(struct multifield *) theDefglobal->current.value); }
-     
+
 #if (! RUN_TIME)
 
    /*===============================*/
@@ -525,8 +525,8 @@ void EnvGetDefglobalValueForm(
 /************************************************************/
 bool EnvGetGlobalsChanged(
   Environment *theEnv)
-  {    
-   return(DefglobalData(theEnv)->ChangeToGlobals); 
+  {
+   return(DefglobalData(theEnv)->ChangeToGlobals);
   }
 
 /*********************************************************/
@@ -536,7 +536,7 @@ void EnvSetGlobalsChanged(
   Environment *theEnv,
   bool value)
   {
-   DefglobalData(theEnv)->ChangeToGlobals = value; 
+   DefglobalData(theEnv)->ChangeToGlobals = value;
   }
 
 /**********************************************************/
@@ -708,7 +708,7 @@ void UpdateDefglobalScope(
    int moduleCount;
    Defmodule *theModule;
    struct defmoduleItemHeader *theItem;
-   
+
    /*============================*/
    /* Loop through every module. */
    /*============================*/

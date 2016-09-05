@@ -47,7 +47,7 @@
 #include "tmpltdef.h"
 
    struct expr                   *ParseAssertTemplate(Environment *,const char *,struct token *,bool *,
-                                                      int,bool,Deftemplate *);
+                                                      TokenType,bool,Deftemplate *);
 
 #endif /* _H_tmpltrhs */
 

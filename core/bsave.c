@@ -85,7 +85,7 @@ void InitializeBsaveData(
   {
    AllocateEnvironmentData(theEnv,BSAVE_DATA,sizeof(struct bsaveData),DeallocateBsaveData);
   }
-  
+
 /************************************************/
 /* DeallocateBsaveData: Deallocates environment */
 /*    data for the bsave command.               */
@@ -94,7 +94,7 @@ static void DeallocateBsaveData(
   Environment *theEnv)
   {
    struct BinaryItem *tmpPtr, *nextPtr;
-   
+
    tmpPtr = BsaveData(theEnv)->ListOfBinaryItems;
    while (tmpPtr != NULL)
      {

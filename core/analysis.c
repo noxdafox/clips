@@ -195,17 +195,17 @@ bool VariableAnalysis(
             ReleaseNandFrames(theEnv,theNandFrames);
             return true;
            }
- 
+
          /*==========================================================*/
          /* Analyze any test CE that's been attached to the pattern. */
          /*==========================================================*/
-         
+
          if (TestCEAnalysis(theEnv,patternPtr,patternPtr->expression,false,&errorFlag,theNandFrames) == true)
            {
             ReleaseNandFrames(theEnv,theNandFrames);
             return true;
            }
- 
+
          if (TestCEAnalysis(theEnv,patternPtr,patternPtr->secondaryExpression,true,&errorFlag,theNandFrames) == true)
            {
             ReleaseNandFrames(theEnv,theNandFrames);
@@ -264,7 +264,7 @@ static void ReleaseNandFrames(
   struct nandFrame *theFrames)
   {
    struct nandFrame *tmpFrame;
-   
+
    while (theFrames != NULL)
      {
       tmpFrame = theFrames->next;
@@ -290,7 +290,7 @@ static bool TestCEAnalysis(
    struct lhsParseNode *rv, *theList, *tempList, *tempRight;
 
    if (theExpression == NULL) return false;
-   
+
    /*=====================================================*/
    /* Verify that all variables were referenced properly. */
    /*=====================================================*/
@@ -302,17 +302,17 @@ static bool TestCEAnalysis(
    /* with an attached test CE, we only want to propagate to following   */
    /* patterns, not to nodes of this pattern which preceded the test CE. */
    /*====================================================================*/
-   
+
    tempRight = patternPtr->right;
    patternPtr->right = NULL;
-      
+
    /*=========================================================*/
    /* Determine the type and value constraints implied by the */
    /* expression and propagate these constraints to other     */
    /* variables in the LHS. For example, the expression       */
    /* (+ ?x 1) implies that ?x is a number.                   */
    /*=========================================================*/
-   
+
    theList = GetExpressionVarConstraints(theEnv,theExpression);
    for (tempList = theList; tempList != NULL; tempList = tempList->right)
       {
@@ -324,15 +324,15 @@ static bool TestCEAnalysis(
           return true;
          }
       }
-      
+
    ReturnLHSParseNodes(theEnv,theList);
-   
+
    /*============================*/
    /* Reconnect the right nodes. */
    /*============================*/
-   
+
    patternPtr->right = tempRight;
-   
+
    /*========================================================*/
    /* If the variables in the expression were all referenced */
    /* properly, then create the expression to use in the     */
@@ -345,7 +345,7 @@ static bool TestCEAnalysis(
      { patternPtr->secondaryNetworkTest = CombineExpressions(theEnv,patternPtr->secondaryNetworkTest,GetvarReplace(theEnv,theExpression,false,theNandFrames)); }
    else
      { patternPtr->networkTest = CombineExpressions(theEnv,patternPtr->networkTest,GetvarReplace(theEnv,theExpression,false,theNandFrames)); }
-     
+
    return false;
   }
 
@@ -553,7 +553,7 @@ static bool PropagateVariableDriver(
    if (PropagateVariableToNodes(theEnv,patternHead->secondaryExpression,theType,variableName,theReference,
                                 patternHead->beginNandDepth,assignReference,true))
      { return true; }
-   
+
    /*======================================================*/
    /* Propagate values to other patterns if the pattern in */
    /* which the variable is found is not a "not" CE or the */
@@ -715,7 +715,7 @@ static bool PropagateVariableToNodes(
          PropagateVariableToNodes(theEnv,theNode->secondaryExpression,theType,variableName,
                                   theReference,startDepth,assignReference,true);
         }
-        
+
       /*======================================================*/
       /* If the field/slot is a single or multifield variable */
       /* with the same name as the propagated variable,       */
@@ -1135,7 +1135,7 @@ static void VariableMixingErrorMessage(
    EnvPrintRouter(theEnv,WERROR,ValueToString(theVariable));
    EnvPrintRouter(theEnv,WERROR," is used as both a single and multifield variable in the LHS\n");
   }
-  
+
 #endif /* (! RUN_TIME) && (! BLOAD_ONLY) && DEFRULE_CONSTRUCT */
 
 

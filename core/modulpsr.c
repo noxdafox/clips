@@ -111,7 +111,7 @@ void AddAfterModuleDefinedFunction(
 void AddPortConstructItem(
   Environment *theEnv,
   const char *theName,
-  int theType)
+  TokenType theType)
   {
    struct portConstructItem *newItem;
 
@@ -369,7 +369,7 @@ static bool DeleteDefmodule(
   Environment *theEnv,
   void *theConstruct)
   {
-   if (strcmp(EnvGetDefmoduleName(theEnv,theConstruct),"MAIN") == 0)
+   if (strcmp(EnvGetDefmoduleName(theEnv,(Defmodule *) theConstruct),"MAIN") == 0)
      { return(DefmoduleData(theEnv)->MainModuleRedefinable); }
 
    return false;
@@ -400,13 +400,13 @@ static bool ParsePortSpecifications(
    /* a right parenthesis is encountered.      */
    /*==========================================*/
 
-   while (theToken->type != RPAREN)
+   while (theToken->tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       /*========================================*/
       /* Look for the opening left parenthesis. */
       /*========================================*/
 
-      if (theToken->type != LPAREN)
+      if (theToken->tknType != LEFT_PARENTHESIS_TOKEN)
         {
          SyntaxErrorMessage(theEnv,"defmodule");
          return true;
@@ -420,7 +420,7 @@ static bool ParsePortSpecifications(
 
       GetToken(theEnv,readSource,theToken);
 
-      if (theToken->type != SYMBOL)
+      if (theToken->tknType != SYMBOL_TOKEN)
         {
          SyntaxErrorMessage(theEnv,"defmodule");
          return true;
@@ -449,7 +449,7 @@ static bool ParsePortSpecifications(
       PPCRAndIndent(theEnv);
       GetToken(theEnv,readSource,theToken);
 
-      if (theToken->type == RPAREN)
+      if (theToken->tknType == RIGHT_PARENTHESIS_TOKEN)
         {
          PPBackup(theEnv);
          PPBackup(theEnv);
@@ -497,7 +497,7 @@ static bool ParseImportSpec(
 
    GetToken(theEnv,readSource,theToken);
 
-   if (theToken->type != SYMBOL)
+   if (theToken->tknType != SYMBOL_TOKEN)
      {
       SyntaxErrorMessage(theEnv,"defmodule import specification");
       return true;
@@ -673,7 +673,7 @@ static bool ParseExportSpec(
    SavePPBuffer(theEnv," ");
    GetToken(theEnv,readSource,theToken);
 
-   if (theToken->type == SF_VARIABLE)
+   if (theToken->tknType == SF_VARIABLE_TOKEN)
      {
       /*==============================*/
       /* Check to see if the variable */
@@ -703,7 +703,7 @@ static bool ParseExportSpec(
 
       GetToken(theEnv,readSource,theToken);
 
-      if (theToken->type != RPAREN)
+      if (theToken->tknType != RIGHT_PARENTHESIS_TOKEN)
         {
          if (newPort != NULL) rtn_struct(theEnv,portItem,newPort);
          PPBackup(theEnv);
@@ -745,7 +745,7 @@ static bool ParseExportSpec(
    /* token must be the name of an importable construct.     */
    /*========================================================*/
 
-   if (theToken->type != SYMBOL)
+   if (theToken->tknType != SYMBOL_TOKEN)
      {
       SyntaxErrorMessage(theEnv,errorMessage);
       return true;
@@ -769,7 +769,7 @@ static bool ParseExportSpec(
    SavePPBuffer(theEnv," ");
    GetToken(theEnv,readSource,theToken);
 
-   if (theToken->type == SF_VARIABLE)
+   if (theToken->tknType == SF_VARIABLE_TOKEN)
      {
       /*==============================*/
       /* Check to see if the variable */
@@ -799,7 +799,7 @@ static bool ParseExportSpec(
 
       GetToken(theEnv,readSource,theToken);
 
-      if (theToken->type != RPAREN)
+      if (theToken->tknType != RIGHT_PARENTHESIS_TOKEN)
         {
          if (newPort != NULL) rtn_struct(theEnv,portItem,newPort);
          PPBackup(theEnv);
@@ -841,7 +841,7 @@ static bool ParseExportSpec(
    /* in the import/export list at this point.   */
    /*============================================*/
 
-   if (theToken->type == RPAREN)
+   if (theToken->tknType == RIGHT_PARENTHESIS_TOKEN)
      {
       SyntaxErrorMessage(theEnv,errorMessage);
       return true;
@@ -851,9 +851,9 @@ static bool ParseExportSpec(
    /* Read in the list of imported items. */
    /*=====================================*/
 
-   while (theToken->type != RPAREN)
+   while (theToken->tknType != RIGHT_PARENTHESIS_TOKEN)
      {
-      if (theToken->type != thePortConstruct->typeExpected)
+      if (theToken->tknType != thePortConstruct->typeExpected)
         {
          SyntaxErrorMessage(theEnv,errorMessage);
          return true;

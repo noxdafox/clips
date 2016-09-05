@@ -1036,7 +1036,7 @@ void PrintInstanceNameAndClass(
    EnvPrintRouter(theEnv,logicalName,"] of ");
    PrintClassName(theEnv,logicalName,theInstance->cls,linefeedFlag);
   }
-  
+
 /***************************************************
   NAME         : PrintInstanceName
   DESCRIPTION  : Used by the rule system commands
@@ -1066,7 +1066,7 @@ void PrintInstanceName(
       EnvPrintRouter(theEnv,logName,"]");
      }
   }
-  
+
 /***************************************************
   NAME         : PrintInstanceLongForm
   DESCRIPTION  : Used by kernel to print
@@ -1245,7 +1245,7 @@ bool NetworkSynchronized(
   DESCRIPTION  : Determines if an instance has been
                  deleted
   INPUTS       : The instance
-  RETURNS      : True if instance has been deleted, 
+  RETURNS      : True if instance has been deleted,
                  false otherwise
   SIDE EFFECTS : None
   NOTES        : None

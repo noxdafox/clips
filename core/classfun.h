@@ -30,7 +30,7 @@
 /*                                                           */
 /*            Used genstrcpy and genstrcat instead of strcpy */
 /*            and strcat.                                    */
-/*                                                           */             
+/*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
@@ -116,7 +116,7 @@
 #define PRIMITIVE_CLASSES 9
 
 struct defclassData
-  { 
+  {
    struct construct *DefclassConstruct;
    int DefclassModuleIndex;
    ENTITY_RECORD DefclassEntityRecord;

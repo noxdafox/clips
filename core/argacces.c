@@ -267,16 +267,13 @@ bool CheckFunctionArgCount(
   {
    int minArguments, maxArguments;
    const char *functionName;
-   const char *restrictions;
    char theChar[2];
 
    theChar[0] = '0';
    theChar[1] = EOS;
 
    functionName = func->callFunctionName->contents;
-   if (func->restrictions == NULL) restrictions = NULL;
-   else restrictions = func->restrictions->contents;
-     
+
    /*===========================================*/
    /* Determine the minimum number of arguments */
    /* required by the function.                 */

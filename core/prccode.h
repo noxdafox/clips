@@ -82,7 +82,7 @@ typedef struct ProcParamStack
 #define PROCEDURAL_PRIMITIVE_DATA 37
 
 struct proceduralPrimitiveData
-  { 
+  {
    void *NoParamValue;
    CLIPSValue *ProcParamArray;
    int ProcParamArraySize;
@@ -94,10 +94,10 @@ struct proceduralPrimitiveData
    CLIPSValue *WildcardValue;
    CLIPSValue *LocalVarArray;
    void (*ProcUnboundErrFunc)(Environment *);
-   ENTITY_RECORD ProcParameterInfo; 
+   ENTITY_RECORD ProcParameterInfo;
    ENTITY_RECORD ProcWildInfo;
-   ENTITY_RECORD ProcGetInfo;     
-   ENTITY_RECORD ProcBindInfo;      
+   ENTITY_RECORD ProcGetInfo;
+   ENTITY_RECORD ProcBindInfo;
 #if ! DEFFUNCTION_CONSTRUCT
    ENTITY_RECORD DeffunctionEntityRecord;
 #endif

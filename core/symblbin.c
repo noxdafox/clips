@@ -602,7 +602,7 @@ void FreeAtomicValueStorage(
      rm3(theEnv,SymbolData(theEnv)->IntegerArray,(long) sizeof(INTEGER_HN *) * SymbolData(theEnv)->NumberOfIntegers);
    if (SymbolData(theEnv)->BitMapArray != NULL)
      rm3(theEnv,SymbolData(theEnv)->BitMapArray,(long) sizeof(BITMAP_HN *) * SymbolData(theEnv)->NumberOfBitMaps);
-     
+
    SymbolData(theEnv)->SymbolArray = NULL;
    SymbolData(theEnv)->FloatArray = NULL;
    SymbolData(theEnv)->IntegerArray = NULL;

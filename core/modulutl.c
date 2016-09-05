@@ -566,13 +566,13 @@ bool ConstructExported(
    struct symbolHashNode *constructType;
    Defmodule *theModule;
    struct portItem *theExportList;
-   
+
    constructType = FindSymbolHN(theEnv,constructTypeStr);
    theModule = EnvFindDefmodule(theEnv,ValueToString(moduleName));
-   
+
    if ((constructType == NULL) || (theModule == NULL) || (findName == NULL))
      { return false; }
-   
+
    theExportList = theModule->exportList;
    while (theExportList != NULL)
      {
@@ -589,7 +589,7 @@ bool ConstructExported(
 
    return false;
   }
-         
+
 /*********************************************************/
 /* AllImportedModulesVisited: Returns true if all of the */
 /*   imported modules for a module have been visited.    */
@@ -600,14 +600,14 @@ bool AllImportedModulesVisited(
   {
    struct portItem *theImportList;
    Defmodule *theImportModule;
-      
+
    theImportList = theModule->importList;
    while (theImportList != NULL)
      {
       theImportModule = EnvFindDefmodule(theEnv,ValueToString(theImportList->moduleName));
 
       if (! theImportModule->visitedFlag) return false;
-      
+
       theImportList = theImportList->next;
      }
 

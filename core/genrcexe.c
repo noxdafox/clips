@@ -176,10 +176,10 @@ void GenericDispatch(
       DefgenericData(theEnv)->CurrentGeneric = previousGeneric;
       DefgenericData(theEnv)->CurrentMethod = previousMethod;
       EvaluationData(theEnv)->CurrentEvaluationDepth--;
-      
+
       RestorePriorGarbageFrame(theEnv,&newGarbageFrame,oldGarbageFrame,returnValue);
       CallPeriodicTasks(theEnv);
-     
+
       SetExecutingConstruct(theEnv,oldce);
       return;
      }
@@ -263,7 +263,7 @@ void GenericDispatch(
 
    RestorePriorGarbageFrame(theEnv,&newGarbageFrame,oldGarbageFrame,returnValue);
    CallPeriodicTasks(theEnv);
-   
+
    SetExecutingConstruct(theEnv,oldce);
   }
 

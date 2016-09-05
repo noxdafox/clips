@@ -91,7 +91,7 @@ struct bsaveJoinLink
    long join;
    long next;
   };
-  
+
 struct bsaveJoinNode
   {
    unsigned int firstJoin : 1;
@@ -111,17 +111,17 @@ struct bsaveJoinNode
    long rightMatchNode;
    long ruleToActivate;
   };
-  
+
 #define RULEBIN_DATA 20
 
 struct defruleBinaryData
-  { 
+  {
    long NumberOfDefruleModules;
    long NumberOfDefrules;
    long NumberOfJoins;
    long NumberOfLinks;
    long RightPrimeIndex;
-   long LeftPrimeIndex; 
+   long LeftPrimeIndex;
    struct defruleModule *ModuleArray;
    Defrule *DefruleArray;
    struct joinNode *JoinArray;

@@ -179,9 +179,9 @@ void SetupGenericFunctions(
                        (EntityBusyCountFunction *) DecrementGenericBusyCount,
                        (EntityBusyCountFunction *) IncrementGenericBusyCount,
                        NULL,NULL,NULL,NULL,NULL };
-   
+
    AllocateEnvironmentData(theEnv,DEFGENERIC_DATA,sizeof(struct defgenericData),DeallocateDefgenericData);
-   memcpy(&DefgenericData(theEnv)->GenericEntityRecord,&genericEntityRecord,sizeof(struct entityRecord));   
+   memcpy(&DefgenericData(theEnv)->GenericEntityRecord,&genericEntityRecord,sizeof(struct entityRecord));
 
    InstallPrimitive(theEnv,&DefgenericData(theEnv)->GenericEntityRecord,GCALL);
 
@@ -224,7 +224,7 @@ void SetupGenericFunctions(
                                        NULL
 #endif
                                        );
-      
+
 
 #if ! RUN_TIME
    AddClearReadyFunction(theEnv,"defgeneric",ClearDefgenericsReady,0);
@@ -239,7 +239,7 @@ void SetupGenericFunctions(
 
 #if ! BLOAD_ONLY
 #if DEFMODULE_CONSTRUCT
-   AddPortConstructItem(theEnv,"defgeneric",SYMBOL);
+   AddPortConstructItem(theEnv,"defgeneric",SYMBOL_TOKEN);
 #endif
    AddConstruct(theEnv,"defmethod","defmethods",ParseDefmethod,
                 NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
@@ -296,7 +296,7 @@ void SetupGenericFunctions(
                 DefmethodWatchAccess,DefmethodWatchPrint);
 #endif
   }
-  
+
 /*****************************************************/
 /* DeallocateDefgenericData: Deallocates environment */
 /*    data for the defgeneric construct.             */
@@ -332,7 +332,7 @@ static void DeallocateDefgenericData(
 #endif
 #endif
   }
-  
+
 #if ! RUN_TIME
 /****************************************************/
 /* DestroyDefgenericAction: Action used to remove   */
@@ -349,7 +349,7 @@ static void DestroyDefgenericAction(
 #if (! BLOAD_ONLY) && (! RUN_TIME)
    Defgeneric *theDefgeneric = (Defgeneric *) theConstruct;
    long i;
-   
+
    if (theDefgeneric == NULL) return;
 
    for (i = 0 ; i < theDefgeneric->mcnt ; i++)
@@ -383,7 +383,7 @@ Defgeneric *EnvFindDefgeneric(
   Environment *theEnv,
   const char *genericModuleAndName)
   {
-   return(FindNamedConstructInModuleOrImports(theEnv,genericModuleAndName,DefgenericData(theEnv)->DefgenericConstruct));
+   return (Defgeneric *) FindNamedConstructInModuleOrImports(theEnv,genericModuleAndName,DefgenericData(theEnv)->DefgenericConstruct);
   }
 
 /***************************************************
@@ -400,7 +400,7 @@ Defgeneric *EnvFindDefgenericInModule(
   Environment *theEnv,
   const char *genericModuleAndName)
   {
-   return (Defgeneric*) FindNamedConstructInModule(theEnv,genericModuleAndName,DefgenericData(theEnv)->DefgenericConstruct);
+   return (Defgeneric *) FindNamedConstructInModule(theEnv,genericModuleAndName,DefgenericData(theEnv)->DefgenericConstruct);
   }
 
 /***************************************************
@@ -545,7 +545,7 @@ bool EnvIsDefmethodDeletable(
 
    if (theDefgeneric->methods[FindMethodByIndex(theDefgeneric,theIndex)].system)
      return false;
-   
+
 #if (! BLOAD_ONLY) && (! RUN_TIME)
    return (MethodsExecuting(theDefgeneric) == false) ? true : false;
 #else
@@ -614,7 +614,7 @@ void UndefmethodCommand(
       EnvPrintRouter(theEnv,WERROR," in function undefmethod.\n");
       return;
      }
-     
+
    if (! UDFNextArgument(context,ANY_TYPE,&theArg)) return;
 
    if (theArg.type == SYMBOL)
@@ -1114,7 +1114,7 @@ void GetDefmethodListCommand(
   {
    CLIPSValue theArg;
    Defgeneric *gfunc;
-   
+
    if (! UDFHasNextArgument(context))
      { EnvGetDefmethodList(theEnv,NULL,returnValue); }
    else
@@ -1303,7 +1303,7 @@ void EnvGetMethodRestrictions(
         {
          SetMFType(theList,roffset,SYMBOL);
 #if OBJECT_SYSTEM
-         SetMFValue(theList,roffset++,EnvAddSymbol(theEnv,EnvGetDefclassName(theEnv,rptr->types[j])));
+         SetMFValue(theList,roffset++,EnvAddSymbol(theEnv,EnvGetDefclassName(theEnv,(Defclass *) rptr->types[j])));
 #else
          SetMFValue(theList,roffset++,EnvAddSymbol(theEnv,TypeName(theEnv,ValueToInteger(rptr->types[j]))));
 #endif

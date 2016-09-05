@@ -125,7 +125,7 @@ void SetupDefinstancesBload(
                              ClearDefinstancesBload);
 #endif
   }
-  
+
 /*************************************************************/
 /* DeallocateDefinstancesBinaryData: Deallocates environment */
 /*    data for the definstances binary functionality.        */
@@ -190,7 +190,7 @@ static void BsaveDefinstancesFind(
    SaveBloadCount(theEnv,DefinstancesBinaryData(theEnv)->DefinstancesCount);
    DefinstancesBinaryData(theEnv)->DefinstancesCount = 0L;
 
-   DefinstancesBinaryData(theEnv)->ModuleCount = 
+   DefinstancesBinaryData(theEnv)->ModuleCount =
       DoForAllConstructs(theEnv,MarkDefinstancesItems,DefinstancesData(theEnv)->DefinstancesModuleIndex,
                          false,NULL);
   }
@@ -317,7 +317,7 @@ static void BsaveDefinstancesDriver(
    /*==============================*/
    /* Write out each definstances. */
    /*==============================*/
-   
+
    DoForAllConstructs(theEnv,BsaveDefinstances,DefinstancesData(theEnv)->DefinstancesModuleIndex,
                       false,fp);
 

@@ -219,7 +219,7 @@ void SetupObjectsBload(
   Environment *theEnv)
   {
    AllocateEnvironmentData(theEnv,OBJECTBIN_DATA,sizeof(struct objectBinaryData),DeallocateObjectBinaryData);
-   
+
    AddAbortBloadFunction(theEnv,"defclass",CreateSystemClasses,0);
 
 #if BLOAD_AND_BSAVE
@@ -235,7 +235,7 @@ void SetupObjectsBload(
 #endif
 
   }
-  
+
 /*******************************************************/
 /* DeallocateObjectBinaryData: Deallocates environment */
 /*    data for object binary functionality.            */
@@ -247,12 +247,12 @@ static void DeallocateObjectBinaryData(
    long i;
 
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE) && (! RUN_TIME)
-   
+
    space = (sizeof(DEFCLASS_MODULE) * ObjectBinaryData(theEnv)->ModuleCount);
    if (space != 0) genfree(theEnv,ObjectBinaryData(theEnv)->ModuleArray,space);
 
    if (ObjectBinaryData(theEnv)->ClassCount != 0)
-     { 
+     {
       if (DefclassData(theEnv)->ClassIDMap != NULL)
         { rm(theEnv,DefclassData(theEnv)->ClassIDMap,(sizeof(Defclass *) * DefclassData(theEnv)->AvailClassID)); }
 
@@ -368,7 +368,7 @@ static void BsaveObjectsFind(
    /* ==============================================
       Mark items needed by defclasses in all modules
       ============================================== */
-   ObjectBinaryData(theEnv)->ModuleCount = 
+   ObjectBinaryData(theEnv)->ModuleCount =
       DoForAllConstructs(theEnv,MarkDefclassItems,DefclassData(theEnv)->DefclassModuleIndex,
                                     false,NULL);
 
@@ -923,7 +923,7 @@ static void BsaveTemplateSlots(
 #if MAC_XCD
 #pragma unused(theEnv)
 #endif
-   
+
    for (i = 0 ; i < cls->instanceSlotCount ; i++)
      {
       tsp = SlotIndex(cls->instanceTemplate[i]);
@@ -1244,7 +1244,7 @@ static void UpdateLink(
   long obji)
   {
    long *blink;
-   
+
    blink = (long *) buf;
    ObjectBinaryData(theEnv)->LinkArray[obji] = DefclassPointer(*blink);
   }

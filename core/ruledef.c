@@ -105,7 +105,7 @@
    static void                    InitializeDefruleModules(Environment *);
    static void                    DeallocateDefruleData(Environment *);
    static void                    DestroyDefruleAction(Environment *,struct constructHeader *,void *);
-#if RUN_TIME   
+#if RUN_TIME
    static void                    AddBetaMemoriesToRule(Environment *,struct joinNode *);
 #endif
 
@@ -114,7 +114,7 @@
 /**********************************************************/
 void InitializeDefrules(
   Environment *theEnv)
-  {   
+  {
    unsigned long i;
    AllocateEnvironmentData(theEnv,DEFRULE_DATA,sizeof(struct defruleData),DeallocateDefruleData);
 
@@ -153,9 +153,9 @@ void InitializeDefrules(
    for (i = 0; i < ALPHA_MEMORY_HASH_SIZE; i++) DefruleData(theEnv)->AlphaMemoryTable[i] = NULL;
 
    DefruleData(theEnv)->BetaMemoryResizingFlag = true;
-   
+
    DefruleData(theEnv)->RightPrimeJoins = NULL;
-   DefruleData(theEnv)->LeftPrimeJoins = NULL;   
+   DefruleData(theEnv)->LeftPrimeJoins = NULL;
   }
 
 /**************************************************/
@@ -174,7 +174,7 @@ static void DeallocateDefruleData(
    if (Bloaded(theEnv))
      { return; }
 #endif
-   
+
    DoForAllConstructs(theEnv,DestroyDefruleAction,
                       DefruleData(theEnv)->DefruleModuleIndex,false,NULL);
 
@@ -185,35 +185,35 @@ static void DeallocateDefruleData(
       theModuleItem = (struct defruleModule *)
                       GetModuleItem(theEnv,theModule,
                                     DefruleData(theEnv)->DefruleModuleIndex);
-                                    
+
       theActivation = theModuleItem->agenda;
       while (theActivation != NULL)
         {
          tmpActivation = theActivation->next;
-         
+
          rtn_struct(theEnv,activation,theActivation);
-         
+
          theActivation = tmpActivation;
         }
-        
+
       theGroup = theModuleItem->groupings;
       while (theGroup != NULL)
         {
          tmpGroup = theGroup->next;
-         
-         rtn_struct(theEnv,salienceGroup,theGroup);
-         
-         theGroup = tmpGroup;
-        }        
 
-#if ! RUN_TIME                                    
+         rtn_struct(theEnv,salienceGroup,theGroup);
+
+         theGroup = tmpGroup;
+        }
+
+#if ! RUN_TIME
       rtn_struct(theEnv,defruleModule,theModuleItem);
 #endif
-     }   
-     
+     }
+
    rm3(theEnv,DefruleData(theEnv)->AlphaMemoryTable,sizeof (ALPHA_MEMORY_HASH *) * ALPHA_MEMORY_HASH_SIZE);
   }
-  
+
 /********************************************************/
 /* DestroyDefruleAction: Action used to remove defrules */
 /*   as a result of DestroyEnvironment.                 */
@@ -227,7 +227,7 @@ static void DestroyDefruleAction(
 #pragma unused(buffer)
 #endif
    Defrule *theDefrule = (Defrule *) theConstruct;
-   
+
    DestroyDefrule(theEnv,theDefrule);
   }
 
@@ -286,8 +286,8 @@ static void ReturnModule(
 struct defruleModule *GetDefruleModuleItem(
   Environment *theEnv,
   Defmodule *theModule)
-  {   
-   return((struct defruleModule *) GetConstructModuleItemByIndex(theEnv,theModule,DefruleData(theEnv)->DefruleModuleIndex)); 
+  {
+   return((struct defruleModule *) GetConstructModuleItemByIndex(theEnv,theModule,DefruleData(theEnv)->DefruleModuleIndex));
   }
 
 /*******************************************************************/
@@ -297,8 +297,8 @@ struct defruleModule *GetDefruleModuleItem(
 Defrule *EnvFindDefrule(
   Environment *theEnv,
   const char *defruleName)
-  {   
-   return(FindNamedConstructInModuleOrImports(theEnv,defruleName,DefruleData(theEnv)->DefruleConstruct)); 
+  {
+   return (Defrule *) FindNamedConstructInModuleOrImports(theEnv,defruleName,DefruleData(theEnv)->DefruleConstruct);
   }
 
 /*******************************************************************/
@@ -308,8 +308,8 @@ Defrule *EnvFindDefrule(
 Defrule *EnvFindDefruleInModule(
   Environment *theEnv,
   const char *defruleName)
-  {   
-   return(FindNamedConstructInModule(theEnv,defruleName,DefruleData(theEnv)->DefruleConstruct));
+  {
+   return (Defrule *) FindNamedConstructInModule(theEnv,defruleName,DefruleData(theEnv)->DefruleConstruct);
   }
 
 /************************************************************/
@@ -321,8 +321,8 @@ Defrule *EnvFindDefruleInModule(
 Defrule *EnvGetNextDefrule(
   Environment *theEnv,
   Defrule *defrulePtr)
-  {   
-   return((void *) GetNextConstructItem(theEnv,(struct constructHeader *) defrulePtr,DefruleData(theEnv)->DefruleModuleIndex)); 
+  {
+   return (Defrule *) GetNextConstructItem(theEnv,(struct constructHeader *) defrulePtr,DefruleData(theEnv)->DefruleModuleIndex);
   }
 
 /*******************************************************/
@@ -403,7 +403,7 @@ void DefruleRunTimeInitialize(
    Defrule *theRule, *theDisjunct;
 
    DefruleData(theEnv)->RightPrimeJoins = rightPrime;
-   DefruleData(theEnv)->LeftPrimeJoins = leftPrime;   
+   DefruleData(theEnv)->LeftPrimeJoins = leftPrime;
 
    SaveCurrentModule(theEnv);
 
@@ -415,14 +415,14 @@ void DefruleRunTimeInitialize(
       for (theRule = EnvGetNextDefrule(theEnv,NULL);
            theRule != NULL;
            theRule = EnvGetNextDefrule(theEnv,theRule))
-        { 
+        {
          for (theDisjunct = theRule;
               theDisjunct != NULL;
               theDisjunct = theDisjunct->disjunct)
            { AddBetaMemoriesToRule(theEnv,theDisjunct->lastJoin); }
         }
      }
-     
+
    RestoreCurrentModule(theEnv);
   }
 
@@ -435,14 +435,14 @@ static void AddBetaMemoriesToRule(
   struct joinNode *theNode)
   {
    AddBetaMemoriesToJoin(theEnv,theNode);
-   
+
    if (theNode->lastLevel != NULL)
      { AddBetaMemoriesToRule(theEnv,theNode->lastLevel); }
-     
+
    if (theNode->joinFromTheRight)
      { AddBetaMemoriesToRule(theEnv,(struct joinNode *) theNode->rightSideEntryStructure); }
   }
-  
+
 #endif /* RUN_TIME */
 
 #if RUN_TIME || BLOAD_ONLY || BLOAD || BLOAD_AND_BSAVE
@@ -453,7 +453,7 @@ static void AddBetaMemoriesToRule(
 void AddBetaMemoriesToJoin(
   Environment *theEnv,
   struct joinNode *theNode)
-  {   
+  {
    if ((theNode->leftMemory != NULL) || (theNode->rightMemory != NULL))
      { return; }
 
@@ -461,7 +461,7 @@ void AddBetaMemoriesToJoin(
      {
       if (theNode->leftHash == NULL)
         {
-         theNode->leftMemory = get_struct(theEnv,betaMemory); 
+         theNode->leftMemory = get_struct(theEnv,betaMemory);
          theNode->leftMemory->beta = (struct partialMatch **) genalloc(theEnv,sizeof(struct partialMatch *));
          theNode->leftMemory->beta[0] = NULL;
          theNode->leftMemory->size = 1;
@@ -470,7 +470,7 @@ void AddBetaMemoriesToJoin(
         }
       else
         {
-         theNode->leftMemory = get_struct(theEnv,betaMemory); 
+         theNode->leftMemory = get_struct(theEnv,betaMemory);
          theNode->leftMemory->beta = (struct partialMatch **) genalloc(theEnv,sizeof(struct partialMatch *) * INITIAL_BETA_HASH_SIZE);
          memset(theNode->leftMemory->beta,0,sizeof(struct partialMatch *) * INITIAL_BETA_HASH_SIZE);
          theNode->leftMemory->size = INITIAL_BETA_HASH_SIZE;
@@ -480,7 +480,7 @@ void AddBetaMemoriesToJoin(
 
       if (theNode->firstJoin && (theNode->patternIsExists || theNode-> patternIsNegated || theNode->joinFromTheRight))
         {
-         theNode->leftMemory->beta[0] = CreateEmptyPartialMatch(theEnv); 
+         theNode->leftMemory->beta[0] = CreateEmptyPartialMatch(theEnv);
          theNode->leftMemory->beta[0]->owner = theNode;
         }
      }
@@ -491,7 +491,7 @@ void AddBetaMemoriesToJoin(
      {
       if (theNode->leftHash == NULL)
         {
-         theNode->rightMemory = get_struct(theEnv,betaMemory); 
+         theNode->rightMemory = get_struct(theEnv,betaMemory);
          theNode->rightMemory->beta = (struct partialMatch **) genalloc(theEnv,sizeof(struct partialMatch *));
          theNode->rightMemory->last = (struct partialMatch **) genalloc(theEnv,sizeof(struct partialMatch *));
          theNode->rightMemory->beta[0] = NULL;
@@ -501,7 +501,7 @@ void AddBetaMemoriesToJoin(
         }
       else
         {
-         theNode->rightMemory = get_struct(theEnv,betaMemory); 
+         theNode->rightMemory = get_struct(theEnv,betaMemory);
          theNode->rightMemory->beta = (struct partialMatch **) genalloc(theEnv,sizeof(struct partialMatch *) * INITIAL_BETA_HASH_SIZE);
          theNode->rightMemory->last = (struct partialMatch **) genalloc(theEnv,sizeof(struct partialMatch *) * INITIAL_BETA_HASH_SIZE);
          memset(theNode->rightMemory->beta,0,sizeof(struct partialMatch **) * INITIAL_BETA_HASH_SIZE);
@@ -512,7 +512,7 @@ void AddBetaMemoriesToJoin(
      }
    else if (theNode->rightSideEntryStructure == NULL)
      {
-      theNode->rightMemory = get_struct(theEnv,betaMemory); 
+      theNode->rightMemory = get_struct(theEnv,betaMemory);
       theNode->rightMemory->beta = (struct partialMatch **) genalloc(theEnv,sizeof(struct partialMatch *));
       theNode->rightMemory->last = (struct partialMatch **) genalloc(theEnv,sizeof(struct partialMatch *));
       theNode->rightMemory->beta[0] = CreateEmptyPartialMatch(theEnv);
@@ -520,7 +520,7 @@ void AddBetaMemoriesToJoin(
       theNode->rightMemory->beta[0]->rhsMemory = true;
       theNode->rightMemory->last[0] = theNode->rightMemory->beta[0];
       theNode->rightMemory->size = 1;
-      theNode->rightMemory->count = 1;    
+      theNode->rightMemory->count = 1;
      }
    else
      { theNode->rightMemory = NULL; }

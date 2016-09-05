@@ -18,7 +18,7 @@
 /* Revision History:                                         */
 /*                                                           */
 /*      6.30: Used genstrcpy instead of strcpy.              */
-/*                                                           */             
+/*                                                           */
 /*            Removed conditional code for unsupported       */
 /*            compilers/operating systems (IBM_MCW,          */
 /*            MAC_MCW, and IBM_TBC).                         */
@@ -61,7 +61,7 @@ struct stringRouter
   };
 
 struct stringRouterData
-  { 
+  {
    struct stringRouter *ListOfStringRouters;
   };
 

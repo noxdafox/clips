@@ -132,12 +132,12 @@ bool DirectMessage(
 
    if (resultbuf == NULL)
      resultbuf = &temp;
-     
+
    args.nextArg = remargs;
    args.argList = NULL;
    args.type = INSTANCE_ADDRESS;
    args.value = ins;
-   
+
    return PerformMessage(theEnv,resultbuf,&args,msg);
   }
 
@@ -283,7 +283,7 @@ void NextHandlerAvailableFunction(
   CLIPSValue *returnValue)
   {
    returnValue->type = SYMBOL;
-   
+
    if (NextHandlerAvailable(theEnv))
      { returnValue->value = EnvTrueSymbol(theEnv); }
    else
@@ -306,14 +306,14 @@ bool NextHandlerAvailable(
   {
    if (MessageHandlerData(theEnv)->CurrentCore == NULL)
      { return false; }
-   
+
    if (MessageHandlerData(theEnv)->CurrentCore->hnd->type == MAROUND)
      { return (MessageHandlerData(theEnv)->NextInCore != NULL) ? true : false; }
-   
+
    if ((MessageHandlerData(theEnv)->CurrentCore->hnd->type == MPRIMARY) &&
        (MessageHandlerData(theEnv)->NextInCore != NULL))
      { return (MessageHandlerData(theEnv)->NextInCore->hnd->type == MPRIMARY) ? true : false; }
-   
+
    return false;
   }
 
@@ -1028,10 +1028,10 @@ static bool PerformMessage(
      {
       EvaluationData(theEnv)->CurrentEvaluationDepth--;
       MessageHandlerData(theEnv)->CurrentMessageName = oldName;
-      
+
       RestorePriorGarbageFrame(theEnv,&newGarbageFrame,oldGarbageFrame,returnValue);
       CallPeriodicTasks(theEnv);
-      
+
       SetExecutingConstruct(theEnv,oldce);
       return false;
      }
@@ -1081,7 +1081,7 @@ static bool PerformMessage(
       PopProcParameters(theEnv);
       EvaluationData(theEnv)->CurrentEvaluationDepth--;
       MessageHandlerData(theEnv)->CurrentMessageName = oldName;
-         
+
       RestorePriorGarbageFrame(theEnv,&newGarbageFrame,oldGarbageFrame,returnValue);
       CallPeriodicTasks(theEnv);
 
@@ -1094,7 +1094,7 @@ static bool PerformMessage(
    if (MessageHandlerData(theEnv)->TopOfCore != NULL)
      { MessageHandlerData(theEnv)->TopOfCore->nxtInStack = MessageHandlerData(theEnv)->OldCore; }
    MessageHandlerData(theEnv)->OldCore = MessageHandlerData(theEnv)->TopOfCore;
-   
+
    MessageHandlerData(theEnv)->TopOfCore = FindApplicableHandlers(theEnv,cls,mname);
 
    if (MessageHandlerData(theEnv)->TopOfCore != NULL)
@@ -1189,7 +1189,7 @@ static bool PerformMessage(
       returnValue->value = EnvFalseSymbol(theEnv);
       return false;
      }
-     
+
    return true;
   }
 

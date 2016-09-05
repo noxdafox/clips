@@ -319,8 +319,7 @@
   {
    /*=========================================================*/
    /* The "Load Selection" and "Batch Selection" commands are */
-   /* only available if there is a selection in the window    */
-   /* and the window is attached to a CLIPS terminal.         */
+   /* only available if there is a selection in the window.   */
    /*=========================================================*/
    
    if (([menuItem action] == @selector(loadSelection:)) ||
@@ -332,16 +331,8 @@
       
       return YES;
      }
-   
-   /*================================================*/
-   /* The "Load Buffer" command is only available if */
-   /* the window is attached to a CLIPS terminal.    */
-   /*================================================*/
-
    else if ([menuItem action] == @selector(loadBuffer:))
-     {
-      return YES;
-     }
+     { return YES; }
 
    return [super validateMenuItem: menuItem];
   }

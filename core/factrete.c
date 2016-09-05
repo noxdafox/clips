@@ -695,7 +695,7 @@ bool FactJNCompVars1(
 
    if (hack->p2rhs)
      { fact2 = (struct fact *) EngineData(theEnv)->GlobalRHSBinds->binds[p2].gm.theMatch->matchingItem; }
-   else 
+   else
      { fact2 = (struct fact *) EngineData(theEnv)->GlobalLHSBinds->binds[p2].gm.theMatch->matchingItem; }
 
    /*=====================*/
@@ -753,10 +753,10 @@ bool FactJNCompVars2(
    s2 = (int) hack->slot2;
 
    fact1 = (struct fact *) EngineData(theEnv)->GlobalRHSBinds->binds[p1].gm.theMatch->matchingItem;
-     
+
    if (hack->p2rhs)
      { fact2 = (struct fact *) EngineData(theEnv)->GlobalRHSBinds->binds[p2].gm.theMatch->matchingItem; }
-   else 
+   else
      { fact2 = (struct fact *) EngineData(theEnv)->GlobalLHSBinds->binds[p2].gm.theMatch->matchingItem; }
 
    /*======================*/

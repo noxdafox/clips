@@ -64,7 +64,7 @@
 
    const char             *EnvGetDefclassName(Environment *,Defclass *);
    const char             *EnvGetDefclassPPForm(Environment *,Defclass *);
-   struct defmoduleItemHeader 
+   struct defmoduleItemHeader
                           *EnvGetDefclassModule(Environment *,Defclass *);
    const char             *EnvDefclassModule(Environment *,Defclass *);
    SYMBOL_HN              *GetDefclassNamePointer(Defclass *);

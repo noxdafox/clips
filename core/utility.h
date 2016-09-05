@@ -88,7 +88,7 @@ struct callFunctionItemWithArg
    struct callFunctionItemWithArg *next;
    void *context;
   };
-  
+
 struct trackedMemory
   {
    void *theMemory;
@@ -114,7 +114,7 @@ struct garbageFrame
 #define UTILITY_DATA 55
 
 struct utilityData
-  { 
+  {
    struct callFunctionItem *ListOfCleanupFunctions;
    struct callFunctionItem *ListOfPeriodicFunctions;
    short GarbageCollectionLocks;

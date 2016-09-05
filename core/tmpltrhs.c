@@ -65,7 +65,7 @@
    static struct expr            *ReorderAssertSlotValues(Environment *,struct templateSlot *,struct expr *,bool *);
    static struct expr            *GetSlotAssertValues(Environment *,struct templateSlot *,struct expr *,bool *);
    static struct expr            *FindAssertSlotItem(struct templateSlot *,struct expr *);
-   static struct templateSlot    *ParseSlotLabel(Environment *,const char *,struct token *,Deftemplate *,bool *,int);
+   static struct templateSlot    *ParseSlotLabel(Environment *,const char *,struct token *,Deftemplate *,bool *,TokenType);
 
 /******************************************************************/
 /* ParseAssertTemplate: Parses and builds the list of values that */
@@ -76,7 +76,7 @@ struct expr *ParseAssertTemplate(
   const char *readSource,
   struct token *theToken,
   bool *error,
-  int endType,
+  TokenType endType,
   bool constantsOnly,
   Deftemplate *theDeftemplate)
   {
@@ -182,7 +182,7 @@ static struct templateSlot *ParseSlotLabel(
   struct token *tempToken,
   Deftemplate *theDeftemplate,
   bool *error,
-  int endType)
+  TokenType endType)
   {
    struct templateSlot *slotPtr;
    short position;
@@ -199,7 +199,7 @@ static struct templateSlot *ParseSlotLabel(
    /*============================================*/
 
    GetToken(theEnv,inputSource,tempToken);
-   if (tempToken->type == endType)
+   if (tempToken->tknType == endType)
      { return NULL; }
 
    /*=======================================*/
@@ -215,7 +215,7 @@ static struct templateSlot *ParseSlotLabel(
    /* Slot definition begins with opening left parenthesis. */
    /*=======================================================*/
 
-   if (tempToken->type != LPAREN)
+   if (tempToken->tknType != LEFT_PARENTHESIS_TOKEN)
      {
       SyntaxErrorMessage(theEnv,"deftemplate pattern");
       *error = true;
@@ -227,7 +227,7 @@ static struct templateSlot *ParseSlotLabel(
    /*=============================*/
 
    GetToken(theEnv,inputSource,tempToken);
-   if (tempToken->type != SYMBOL)
+   if (tempToken->tknType != SYMBOL_TOKEN)
      {
       SyntaxErrorMessage(theEnv,"deftemplate pattern");
       *error = true;
@@ -280,8 +280,8 @@ static struct expr *ParseAssertSlotValues(
 
       SavePPBuffer(theEnv," ");
 
-      newField = GetAssertArgument(theEnv,inputSource,tempToken,
-                                   error,RPAREN,constantsOnly,&printError);
+      newField = GetAssertArgument(theEnv,inputSource,tempToken,error,
+                                   RIGHT_PARENTHESIS_TOKEN,constantsOnly,&printError);
       if (*error)
         {
          if (printError) SyntaxErrorMessage(theEnv,"deftemplate pattern");
@@ -338,8 +338,8 @@ static struct expr *ParseAssertSlotValues(
    else
      {
       SavePPBuffer(theEnv," ");
-      valueList = GetAssertArgument(theEnv,inputSource,tempToken,
-                                     error,RPAREN,constantsOnly,&printError);
+      valueList = GetAssertArgument(theEnv,inputSource,tempToken,error,
+                                    RIGHT_PARENTHESIS_TOKEN,constantsOnly,&printError);
       if (*error)
         {
          if (printError) SyntaxErrorMessage(theEnv,"deftemplate pattern");
@@ -355,9 +355,9 @@ static struct expr *ParseAssertSlotValues(
 
       lastValue = valueList;
 
-      while (lastValue != NULL) /* (tempToken->type != RPAREN) */
+      while (lastValue != NULL) /* (tempToken->tknType != RIGHT_PARENTHESIS_TOKEN) */
         {
-         if (tempToken->type == RPAREN)
+         if (tempToken->tknType == RIGHT_PARENTHESIS_TOKEN)
            { SavePPBuffer(theEnv," "); }
          else
            {
@@ -366,7 +366,8 @@ static struct expr *ParseAssertSlotValues(
             /* SavePPBuffer(theEnv,tempToken->printForm); */
            }
 
-         newField = GetAssertArgument(theEnv,inputSource,tempToken,error,RPAREN,constantsOnly,&printError);
+         newField = GetAssertArgument(theEnv,inputSource,tempToken,error,
+                                      RIGHT_PARENTHESIS_TOKEN,constantsOnly,&printError);
          if (*error)
            {
             if (printError) SyntaxErrorMessage(theEnv,"deftemplate pattern");
@@ -392,7 +393,7 @@ static struct expr *ParseAssertSlotValues(
    /* Slot definition must be closed with a right parenthesis. */
    /*==========================================================*/
 
-   if (tempToken->type != RPAREN)
+   if (tempToken->tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       SingleFieldSlotCardinalityError(theEnv,slotPtr->slotName->contents);
       *error = true;

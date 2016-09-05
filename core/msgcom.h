@@ -67,7 +67,7 @@
 #define MESSAGE_HANDLER_DATA 32
 
 struct messageHandlerData
-  { 
+  {
    ENTITY_RECORD HandlerGetInfo;
    ENTITY_RECORD HandlerPutInfo;
    SYMBOL_HN *INIT_SYMBOL;

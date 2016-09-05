@@ -170,7 +170,7 @@ static void SaveDeftemplates(
   Environment *theEnv,
   Defmodule *theModule,
   const char *logicalName)
-  {   
+  {
    SaveConstruct(theEnv,theModule,logicalName,DeftemplateData(theEnv)->DeftemplateConstruct);
   }
 
@@ -193,8 +193,8 @@ void UndeftemplateCommand(
 bool EnvUndeftemplate(
   Environment *theEnv,
   Deftemplate *theDeftemplate)
-  {   
-   return(Undefconstruct(theEnv,theDeftemplate,DeftemplateData(theEnv)->DeftemplateConstruct)); 
+  {
+   return(Undefconstruct(theEnv,theDeftemplate,DeftemplateData(theEnv)->DeftemplateConstruct));
   }
 
 /****************************************************/
@@ -217,8 +217,8 @@ void EnvGetDeftemplateList(
   Environment *theEnv,
   CLIPSValue *returnValue,
   Defmodule *theModule)
-  {   
-   GetConstructList(theEnv,returnValue,DeftemplateData(theEnv)->DeftemplateConstruct,theModule); 
+  {
+   GetConstructList(theEnv,returnValue,DeftemplateData(theEnv)->DeftemplateConstruct,theModule);
   }
 
 /***************************************************/
@@ -256,8 +256,8 @@ bool PPDeftemplate(
   Environment *theEnv,
   const char *deftemplateName,
   const char *logicalName)
-  {   
-   return(PPConstruct(theEnv,deftemplateName,logicalName,DeftemplateData(theEnv)->DeftemplateConstruct)); 
+  {
+   return(PPConstruct(theEnv,deftemplateName,logicalName,DeftemplateData(theEnv)->DeftemplateConstruct));
   }
 
 /*************************************************/
@@ -269,7 +269,7 @@ void ListDeftemplatesCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   ListConstructCommand(context,DeftemplateData(theEnv)->DeftemplateConstruct); 
+   ListConstructCommand(context,DeftemplateData(theEnv)->DeftemplateConstruct);
   }
 
 /*****************************************/
@@ -280,7 +280,7 @@ void EnvListDeftemplates(
   Environment *theEnv,
   const char *logicalName,
   Defmodule *theModule)
-  {   
+  {
    ListConstruct(theEnv,DeftemplateData(theEnv)->DeftemplateConstruct,logicalName,theModule);
   }
 
@@ -291,12 +291,12 @@ void EnvListDeftemplates(
 bool EnvGetDeftemplateWatch(
   Environment *theEnv,
   Deftemplate *theTemplate)
-  { 
+  {
 #if MAC_XCD
 #pragma unused(theEnv)
 #endif
 
-   return theTemplate->watch; 
+   return theTemplate->watch;
   }
 
 /*********************************************************/

@@ -30,7 +30,7 @@
 /*            Added code for capturing errors/warnings.      */
 /*                                                           */
 /*            Added AwaitingInput flag.                      */
-/*                                                           */             
+/*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */

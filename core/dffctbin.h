@@ -51,17 +51,17 @@ struct bsaveDeffactsModule
   {
    struct bsaveDefmoduleItemHeader header;
   };
-  
+
 #define DFFCTBIN_DATA 26
 
 struct deffactsBinaryData
-  { 
+  {
    Deffacts *DeffactsArray;
    long NumberOfDeffacts;
    struct deffactsModule *ModuleArray;
    long NumberOfDeffactsModules;
   };
-  
+
 #define DeffactsBinaryData(theEnv) ((struct deffactsBinaryData *) GetEnvironmentData(theEnv,DFFCTBIN_DATA))
 
    void                           DeffactsBinarySetup(Environment *);

@@ -939,7 +939,7 @@ void WatchHandler(
   const char *tstring)
   {
    DefmessageHandler *hnd;
-   
+
    EnvPrintRouter(theEnv,logName,"HND ");
    EnvPrintRouter(theEnv,logName,tstring);
    EnvPrintRouter(theEnv,logName," ");

@@ -107,7 +107,7 @@ For a total of 4 activations.
 CLIPS> (setgen 1)                        ; DR0156
 1
 CLIPS> (setgen -1)                       ; DR0156
-[ARGACCES5] Function setgen expected argument #1 to be of type number (greater than or equal to 1)
+[ARGACCES5] Function setgen expected argument #1 to be of type integer (greater than or equal to 1)
 1
 CLIPS> (gensym)                          ; DR0156
 gen1

@@ -75,7 +75,7 @@
                                                             int *,int *,int *,int *,int *);
    static bool                    TraverseJoinLinks(Environment *,struct joinLink *,const char *,const char *,char *,int,FILE *,
                                                     int,int,FILE **,int *,int *, int *);
-  
+
 /***********************************************************/
 /* DefruleCompilerSetup: Initializes the defrule construct */
 /*   for use with the constructs-to-c command.             */
@@ -132,7 +132,7 @@ static bool ConstructToCode(
    /*======================================*/
    /* Save the left and right prime links. */
    /*======================================*/
-   
+
    if (! TraverseJoinLinks(theEnv,DefruleData(theEnv)->LeftPrimeJoins,fileName,pathName,fileNameBuffer,fileID,headerFP,imageID,
                            maxIndices,&linkFile,&fileCount,&linkArrayVersion,&linkArrayCount))
      {
@@ -146,7 +146,7 @@ static bool ConstructToCode(
       CloseDefruleFiles(theEnv,moduleFile,defruleFile,joinFile,linkFile,maxIndices);
       return false;
      }
-     
+
    /*=========================================================*/
    /* Loop through all the modules, all the defrules, and all */
    /* the join nodes writing their C code representation to   */
@@ -258,11 +258,11 @@ static bool RuleCompilerTraverseJoins(
   int *joinArrayCount,
   int *linkArrayVersion,
   int *linkArrayCount)
-  {      
+  {
    for (;
         joinPtr != NULL;
         joinPtr = joinPtr->lastLevel)
-     { 
+     {
       if (joinPtr->marked)
         {
          *joinFile = OpenFileIfNeeded(theEnv,*joinFile,fileName,pathName,fileNameBuffer,fileID,imageID,fileCount,
@@ -275,15 +275,15 @@ static bool RuleCompilerTraverseJoins(
          (*joinArrayCount)++;
          *joinFile = CloseFileIfNeeded(theEnv,*joinFile,joinArrayCount,joinArrayVersion,
                                        maxIndices,NULL,NULL);
-                      
-                                       
+
+
          if (! TraverseJoinLinks(theEnv,joinPtr->nextLinks,fileName,pathName,fileNameBuffer,fileID,headerFP,imageID,
                                  maxIndices,linkFile,fileCount,linkArrayVersion,linkArrayCount))
            { return false; }
         }
-      
+
       if (joinPtr->joinFromTheRight)
-        { 
+        {
          if (RuleCompilerTraverseJoins(theEnv,(struct joinNode *) joinPtr->rightSideEntryStructure,fileName,pathName,
                                        fileNameBuffer,fileID,headerFP,imageID,maxIndices,joinFile,linkFile,fileCount,
                                        joinArrayVersion,joinArrayCount,
@@ -312,7 +312,7 @@ static bool TraverseJoinLinks(
   int *fileCount,
   int *linkArrayVersion,
   int *linkArrayCount)
-  {   
+  {
    for (;
         linkPtr != NULL;
         linkPtr = linkPtr->next)
@@ -320,10 +320,10 @@ static bool TraverseJoinLinks(
       *linkFile = OpenFileIfNeeded(theEnv,*linkFile,fileName,pathName,fileNameBuffer,fileID,imageID,fileCount,
                                    *linkArrayVersion,headerFP,
                                    "struct joinLink",LinkPrefix(),false,NULL);
-           
+
       if (*linkFile == NULL)
         { return false; }
-           
+
       LinkToCode(theEnv,*linkFile,linkPtr,imageID,maxIndices);
       (*linkArrayCount)++;
       *linkFile = CloseFileIfNeeded(theEnv,*linkFile,linkArrayCount,linkArrayVersion,
@@ -542,7 +542,7 @@ static void JoinToCode(
 
    PrintHashedExpressionReference(theEnv,joinFile,theJoin->rightHash,imageID,maxIndices);
    fprintf(joinFile,",");
-   
+
    /*============================*/
    /* Right Side Entry Structure */
    /*============================*/
@@ -631,7 +631,7 @@ static void LinkToCode(
   struct joinLink *theLink,
   int imageID,
   int maxIndices)
-  {    
+  {
    /*==================*/
    /* Enter Direction. */
    /*==================*/
@@ -663,7 +663,7 @@ static void LinkToCode(
                     imageID,(theLink->next->bsaveID / maxIndices) + 1,
                             theLink->next->bsaveID % maxIndices);
      }
-     
+
    /*===========*/
    /* Bsave ID. */
    /*===========*/

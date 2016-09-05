@@ -67,7 +67,7 @@ typedef void PrintItemFunction(Environment *,const char *,void *);
                                                   void (*)(Defmodule *,void *),
                                                   int,void *);
    bool                           ConstructExported(Environment *,const char *,struct symbolHashNode *,struct symbolHashNode *);
-   
+
 #endif /* _H_modulutl */
 
 

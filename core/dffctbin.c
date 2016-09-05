@@ -80,7 +80,7 @@ void DeffactsBinarySetup(
                              ClearBload);
 #endif
   }
-  
+
 /********************************************************/
 /* DeallocateDeffactsBloadData: Deallocates environment */
 /*    data for the deffacts bsave functionality.        */
@@ -92,7 +92,7 @@ static void DeallocateDeffactsBloadData(
 
    space = DeffactsBinaryData(theEnv)->NumberOfDeffacts * sizeof(Deffacts);
    if (space != 0) genfree(theEnv,DeffactsBinaryData(theEnv)->DeffactsArray,space);
-   
+
    space = DeffactsBinaryData(theEnv)->NumberOfDeffactsModules * sizeof(struct deffactsModule);
    if (space != 0) genfree(theEnv,DeffactsBinaryData(theEnv)->ModuleArray,space);
   }
@@ -451,7 +451,7 @@ static void ClearBload(
    space = DeffactsBinaryData(theEnv)->NumberOfDeffacts * sizeof(Deffacts);
    if (space != 0) genfree(theEnv,DeffactsBinaryData(theEnv)->DeffactsArray,space);
    DeffactsBinaryData(theEnv)->NumberOfDeffacts = 0;
-   
+
    /*====================================================================*/
    /* Deallocate the space used for the deffacts module data structures. */
    /*====================================================================*/

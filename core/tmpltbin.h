@@ -78,7 +78,7 @@ struct bsaveDeftemplateModule
 #define TMPLTBIN_DATA 61
 
 struct deftemplateBinaryData
-  { 
+  {
    Deftemplate *DeftemplateArray;
    long NumberOfDeftemplates;
    long NumberOfTemplateSlots;
@@ -86,7 +86,7 @@ struct deftemplateBinaryData
    struct templateSlot *SlotArray;
    struct deftemplateModule *ModuleArray;
   };
-  
+
 #define DeftemplateBinaryData(theEnv) ((struct deftemplateBinaryData *) GetEnvironmentData(theEnv,TMPLTBIN_DATA))
 
 #define DeftemplatePointer(i) ((Deftemplate *) (&DeftemplateBinaryData(theEnv)->DeftemplateArray[i]))

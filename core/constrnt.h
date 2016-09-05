@@ -100,7 +100,7 @@ struct constraintRecord
 #define CONSTRAINT_DATA 43
 
 struct constraintData
-  { 
+  {
    struct constraintRecord **ConstraintHashtable;
    bool DynamicConstraintChecking;
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE) && (! RUN_TIME)

@@ -95,11 +95,11 @@ struct deffunction
    int maxNumberOfParameters;
    int numberOfLocalVars;
   };
-  
+
 #define DEFFUNCTION_DATA 23
 
 struct deffunctionData // TBD DeffunctionEnvironmentData
-  { 
+  {
    struct construct *DeffunctionConstruct;
    int DeffunctionModuleIndex;
    ENTITY_RECORD DeffunctionEntityRecord;

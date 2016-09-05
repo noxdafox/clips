@@ -82,7 +82,7 @@ typedef struct definstances
 #define DEFINSTANCES_DATA 22
 
 struct definstancesData
-  { 
+  {
    struct construct *DefinstancesConstruct;
    int DefinstancesModuleIndex;
 #if CONSTRUCT_COMPILER && (! RUN_TIME)

@@ -230,7 +230,7 @@ void SetupDefinstances(
    SetupDefinstancesCompiler(theEnv);
 #endif
   }
-  
+
 /*******************************************************/
 /* DeallocateDefinstancesData: Deallocates environment */
 /*    data for the definstances construct.             */
@@ -241,13 +241,13 @@ static void DeallocateDefinstancesData(
 #if ! RUN_TIME
    struct definstancesModule *theModuleItem;
    Defmodule *theModule;
-   
+
 #if BLOAD || BLOAD_AND_BSAVE
    if (Bloaded(theEnv)) return;
 #endif
-   
+
    DoForAllConstructs(theEnv,DestroyDefinstancesAction,DefinstancesData(theEnv)->DefinstancesModuleIndex,false,NULL);
-   
+
    for (theModule = EnvGetNextDefmodule(theEnv,NULL);
         theModule != NULL;
         theModule = EnvGetNextDefmodule(theEnv,theModule))
@@ -264,7 +264,7 @@ static void DeallocateDefinstancesData(
 #endif
   }
 
-#if ! RUN_TIME  
+#if ! RUN_TIME
 /*****************************************************/
 /* DestroyDefinstancesAction: Action used to remove  */
 /*   definstances as a result of DestroyEnvironment. */
@@ -279,11 +279,11 @@ static void DestroyDefinstancesAction(
 #endif
 #if (! BLOAD_ONLY) && (! RUN_TIME)
    struct definstances *theDefinstances = (struct definstances *) theConstruct;
-   
+
    if (theDefinstances == NULL) return;
-   
+
    ReturnPackedExpression(theEnv,theDefinstances->mkinstance);
-   
+
    DestroyConstructHeader(theEnv,&theDefinstances->header);
 
    rtn_struct(theEnv,definstances,theDefinstances);
@@ -425,13 +425,13 @@ bool EnvUndefinstances(
 #endif
    if (theDefinstances == NULL)
      { return RemoveAllDefinstances(theEnv); }
-     
+
    if (EnvIsDefinstancesDeletable(theEnv,theDefinstances) == false)
      { return false; }
-     
+
    RemoveConstructFromModule(theEnv,(struct constructHeader *) theDefinstances);
    RemoveDefinstances(theEnv,theDefinstances);
-   
+
    return true;
 #endif
   }
@@ -588,7 +588,7 @@ static bool ParseDefinstances(
 #else
    mkinsfcall = FindFunction(theEnv,"make-instance");
 #endif
-   while (GetType(DefclassData(theEnv)->ObjectParseToken) == LPAREN)
+   while (DefclassData(theEnv)->ObjectParseToken.tknType == LEFT_PARENTHESIS_TOKEN)
      {
       mkinstance = GenConstant(theEnv,UNKNOWN_VALUE,mkinsfcall);
       mkinstance = ParseInitializeInstance(theEnv,mkinstance,readSource);
@@ -617,7 +617,7 @@ static bool ParseDefinstances(
       SavePPBuffer(theEnv,DefclassData(theEnv)->ObjectParseToken.printForm);
      }
 
-   if (GetType(DefclassData(theEnv)->ObjectParseToken) != RPAREN)
+   if (DefclassData(theEnv)->ObjectParseToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       ReturnExpression(theEnv,dobj->mkinstance);
       rtn_struct(theEnv,definstances,dobj);
@@ -683,7 +683,7 @@ static SYMBOL_HN *ParseDefinstancesName(
      return NULL;
 
 #if DEFRULE_CONSTRUCT
-   if ((GetType(DefclassData(theEnv)->ObjectParseToken) != SYMBOL) ? false :
+   if ((DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TYPE) ? false :
        (strcmp(ValueToString(GetValue(DefclassData(theEnv)->ObjectParseToken)),ACTIVE_RLN) == 0))
      {
       PPBackup(theEnv);
@@ -695,7 +695,7 @@ static SYMBOL_HN *ParseDefinstancesName(
       *active = true;
      }
 #endif
-   if (GetType(DefclassData(theEnv)->ObjectParseToken) == STRING)
+   if (DefclassData(theEnv)->ObjectParseToken.tknType == STRING_TOKEN)
      {
       PPBackup(theEnv);
       PPBackup(theEnv);

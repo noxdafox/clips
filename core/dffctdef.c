@@ -86,11 +86,11 @@
 /***********************************************************/
 /* InitializeDeffacts: Initializes the deffacts construct. */
 /***********************************************************/
-void InitializeDeffacts(  
+void InitializeDeffacts(
   Environment *theEnv)
   {
    AllocateEnvironmentData(theEnv,DEFFACTS_DATA,sizeof(struct deffactsData),DeallocateDeffactsData);
-  
+
    InitializeDeffactsModules(theEnv);
 
    DeffactsBasicCommands(theEnv);
@@ -142,7 +142,7 @@ static void DeallocateDeffactsData(
 #endif
 #endif
   }
-  
+
 #if ! RUN_TIME
 /*********************************************************/
 /* DestroyDeffactsAction: Action used to remove deffacts */
@@ -158,11 +158,11 @@ static void DestroyDeffactsAction(
 #endif
 #if (! BLOAD_ONLY) && (! RUN_TIME)
    Deffacts *theDeffacts = (Deffacts *) theConstruct;
-   
+
    if (theDeffacts == NULL) return;
 
    ReturnPackedExpression(theEnv,theDeffacts->assertList);
-   
+
    DestroyConstructHeader(theEnv,&theDeffacts->header);
 
    rtn_struct(theEnv,deffacts,theDeffacts);
@@ -178,10 +178,10 @@ static void DestroyDeffactsAction(
 /* InitializeDeffactsModules: Initializes the deffacts */
 /*   construct for use with the defmodule construct.   */
 /*******************************************************/
-static void InitializeDeffactsModules(  
+static void InitializeDeffactsModules(
   Environment *theEnv)
   {
-   DeffactsData(theEnv)->DeffactsModuleIndex = 
+   DeffactsData(theEnv)->DeffactsModuleIndex =
       RegisterModuleItem(theEnv,"deffacts",
                          AllocateModule,
                          ReturnModule,
@@ -204,7 +204,7 @@ static void InitializeDeffactsModules(
 static void *AllocateModule(
   Environment *theEnv)
   {
-   return((void *) get_struct(theEnv,deffactsModule)); 
+   return((void *) get_struct(theEnv,deffactsModule));
   }
 
 /************************************************/
@@ -225,8 +225,8 @@ static void ReturnModule(
 struct deffactsModule *GetDeffactsModuleItem(
   Environment *theEnv,
   Defmodule *theModule)
-  { 
-   return((struct deffactsModule *) GetConstructModuleItemByIndex(theEnv,theModule,DeffactsData(theEnv)->DeffactsModuleIndex)); 
+  {
+   return((struct deffactsModule *) GetConstructModuleItemByIndex(theEnv,theModule,DeffactsData(theEnv)->DeffactsModuleIndex));
   }
 
 /**************************************************/
@@ -237,8 +237,8 @@ struct deffactsModule *GetDeffactsModuleItem(
 Deffacts *EnvFindDeffacts(
   Environment *theEnv,
   const char *deffactsName)
-  { 
-   return(FindNamedConstructInModuleOrImports(theEnv,deffactsName,DeffactsData(theEnv)->DeffactsConstruct)); 
+  {
+   return (Deffacts *) FindNamedConstructInModuleOrImports(theEnv,deffactsName,DeffactsData(theEnv)->DeffactsConstruct);
   }
 
 /**************************************************/
@@ -249,8 +249,8 @@ Deffacts *EnvFindDeffacts(
 Deffacts *EnvFindDeffactsInModule(
   Environment *theEnv,
   const char *deffactsName)
-  { 
-   return(FindNamedConstructInModule(theEnv,deffactsName,DeffactsData(theEnv)->DeffactsConstruct));
+  {
+   return (Deffacts *) FindNamedConstructInModule(theEnv,deffactsName,DeffactsData(theEnv)->DeffactsConstruct);
   }
 
 /*********************************************************/

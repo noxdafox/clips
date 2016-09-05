@@ -49,7 +49,7 @@
 #define OBJECTRETEBIN_DATA 34
 
 struct objectReteBinaryData
-  { 
+  {
    long AlphaNodeCount;
    long PatternNodeCount;
    OBJECT_ALPHA_NODE *AlphaArray;

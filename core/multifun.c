@@ -127,7 +127,7 @@ typedef struct fieldVarStack
 #define MULTIFUN_DATA 10
 
 struct multiFunctionData
-  { 
+  {
    FIELD_VAR_STACK *FieldVarStack;
   };
 
@@ -267,7 +267,7 @@ void DeleteMemberFunction(
    /*=======================================*/
    /* Check for the correct argument types. */
    /*=======================================*/
-   
+
    if (! UDFFirstArgument(context,MULTIFIELD_TYPE,&resultValue))
      { return; }
 
@@ -327,7 +327,7 @@ void ReplaceMemberFunction(
    /*=======================================*/
    /* Check for the correct argument types. */
    /*=======================================*/
-   
+
    if (! UDFFirstArgument(context,MULTIFIELD_TYPE,&resultValue))
      { return; }
 
@@ -341,10 +341,10 @@ void ReplaceMemberFunction(
    /* replace all occurrences of those values with all     */
    /* values specified.                                    */
    /*======================================================*/
-   
+
    delSize = (sizeof(CLIPSValue) * (argCnt-2));
    delVals = (CLIPSValue *) gm2(theEnv,delSize);
-   
+
    for (i = 3 ; i <= argCnt ; i++)
      {
       if (! UDFNthArgument(context,i,ANY_TYPE,&delVals[i-3]))
@@ -672,7 +672,7 @@ void SubsetpFunction(
   CLIPSValue *returnValue)
   {
    CLIPSValue item1, item2, tmpItem;
-   long i,j,k; 
+   long i,j,k;
 
    returnValue->type = SYMBOL;
 
@@ -687,7 +687,7 @@ void SubsetpFunction(
       returnValue->value = EnvTrueSymbol(theEnv);
       return;
      }
-   
+
    if (GetDOLength(item2) == 0)
      {
       returnValue->value = EnvFalseSymbol(theEnv);
@@ -725,7 +725,7 @@ void MemberFunction(
    returnValue->value = EnvFalseSymbol(theEnv);
 
    if (! UDFFirstArgument(context,ANY_TYPE,&item1)) return;
-   
+
    if (! UDFNextArgument(context,MULTIFIELD_TYPE,&item2)) return;
 
    if (FindDOsInSegment(&item1,1,&item2,&j,&k,NULL,0))
@@ -844,7 +844,7 @@ static struct expr *MultifieldPrognParser(
    /* ================================
       Simple form: progn$ <mf-exp> ...
       ================================ */
-   if (tkn.type != LPAREN)
+   if (tkn.tknType != LEFT_PARENTHESIS_TOKEN)
      {
       top->argList = ParseAtomOrExpression(theEnv,infile,&tkn);
       if (top->argList == NULL)
@@ -856,9 +856,9 @@ static struct expr *MultifieldPrognParser(
    else
      {
       GetToken(theEnv,infile,&tkn);
-      if (tkn.type != SF_VARIABLE)
+      if (tkn.tknType != SF_VARIABLE_TOKEN)
         {
-         if (tkn.type != SYMBOL)
+         if (tkn.tknType != SYMBOL_TOKEN)
            goto MvPrognParseError;
          top->argList = Function2Parse(theEnv,infile,ValueToString(tkn.value));
          if (top->argList == NULL)
@@ -882,7 +882,7 @@ static struct expr *MultifieldPrognParser(
             return NULL;
            }
          GetToken(theEnv,infile,&tkn);
-         if (tkn.type != RPAREN)
+         if (tkn.tknType != RIGHT_PARENTHESIS_TOKEN)
            goto MvPrognParseError;
          PPBackup(theEnv);
          /* PPBackup(theEnv); */
@@ -893,7 +893,7 @@ static struct expr *MultifieldPrognParser(
 
    if (CheckArgumentAgainstRestriction(theEnv,top->argList,MULTIFIELD_TYPE))
      goto MvPrognParseError;
-     
+
    oldBindList = GetParsedBindNames(theEnv);
    SetParsedBindNames(theEnv,NULL);
    IncrementIndentDepth(theEnv,3);
@@ -963,7 +963,7 @@ static struct expr *ForeachParser(
    SavePPBuffer(theEnv," ");
    GetToken(theEnv,infile,&tkn);
 
-   if (tkn.type != SF_VARIABLE)
+   if (tkn.tknType != SF_VARIABLE_TOKEN)
      { goto ForeachParseError; }
 
    fieldVar = (SYMBOL_HN *) tkn.value;
@@ -977,7 +977,7 @@ static struct expr *ForeachParser(
 
    if (CheckArgumentAgainstRestriction(theEnv,top->argList,MULTIFIELD_TYPE))
      goto ForeachParseError;
-     
+
    oldBindList = GetParsedBindNames(theEnv);
    SetParsedBindNames(theEnv,NULL);
    IncrementIndentDepth(theEnv,3);
@@ -1030,7 +1030,7 @@ ForeachParseError:
    ReturnExpression(theEnv,top);
    return NULL;
   }
-  
+
 /**********************************************/
 /* ReplaceMvPrognFieldVars: Replaces variable */
 /*   references found in the progn$ function. */
@@ -1100,7 +1100,7 @@ void ForeachFunction(
   {
    MultifieldPrognDriver(context,returnValue,"foreach");
   }
-    
+
 /*******************************************/
 /* MultifieldPrognDriver: Driver routine   */
 /*   for the progn$ and foreach functions. */
@@ -1125,7 +1125,7 @@ static void MultifieldPrognDriver(
    MultiFunctionData(theEnv)->FieldVarStack = tmpField;
    returnValue->type = SYMBOL;
    returnValue->value = EnvFalseSymbol(theEnv);
-   
+
    if (! UDFFirstArgument(context,MULTIFIELD_TYPE,&argval))
      {
       MultiFunctionData(theEnv)->FieldVarStack = tmpField->nxt;
@@ -1134,7 +1134,7 @@ static void MultifieldPrognDriver(
       returnValue->value = EnvFalseSymbol(theEnv);
       return;
      }
-     
+
    oldGarbageFrame = UtilityData(theEnv)->CurrentGarbageFrame;
    memset(&newGarbageFrame,0,sizeof(struct garbageFrame));
    newGarbageFrame.priorFrame = oldGarbageFrame;
@@ -1146,11 +1146,11 @@ static void MultifieldPrognDriver(
       tmpField->type = GetMFType(argval.value,i);
       tmpField->value = GetMFValue(argval.value,i);
       /* tmpField->index = i; */
-      tmpField->index = (i - GetDOBegin(argval)) + 1; 
+      tmpField->index = (i - GetDOBegin(argval)) + 1;
       for (theExp = GetFirstArgument()->nextArg ; theExp != NULL ; theExp = theExp->nextArg)
         {
          EvaluateExpression(theEnv,theExp,returnValue);
-        
+
          if (EvaluationData(theEnv)->HaltExecution || ProcedureFunctionData(theEnv)->BreakFlag || ProcedureFunctionData(theEnv)->ReturnFlag)
            {
             ProcedureFunctionData(theEnv)->BreakFlag = false;
@@ -1169,7 +1169,7 @@ static void MultifieldPrognDriver(
          /* Garbage collect if this isn't the */
          /* last evaluation of the progn$.    */
          /*===================================*/
-         
+
          if ((i < end) || (theExp->nextArg != NULL))
            {
             CleanCurrentGarbageFrame(theEnv,NULL);
@@ -1177,11 +1177,11 @@ static void MultifieldPrognDriver(
            }
         }
      }
-     
+
    ProcedureFunctionData(theEnv)->BreakFlag = false;
    MultiFunctionData(theEnv)->FieldVarStack = tmpField->nxt;
    rtn_struct(theEnv,fieldVarStack,tmpField);
-   
+
    RestorePriorGarbageFrame(theEnv,&newGarbageFrame,oldGarbageFrame,returnValue);
    CallPeriodicTasks(theEnv);
   }
@@ -1220,7 +1220,7 @@ void GetMvPrognIndex(
    FIELD_VAR_STACK *tmpField;
 
    returnValue->type = INTEGER;
-   
+
    depth = ValueToInteger(GetFirstArgument()->value);
    tmpField = MultiFunctionData(theEnv)->FieldVarStack;
    while (depth > 0)
@@ -1228,7 +1228,7 @@ void GetMvPrognIndex(
       tmpField = tmpField->nxt;
       depth--;
      }
-     
+
    returnValue->value = EnvAddLong(theEnv,tmpField->index);
   }
 

@@ -124,9 +124,9 @@ static void DeallocateDefruleBloadData(
    struct salienceGroup *theGroup, *tmpGroup;
 
    for (i = 0; i < DefruleBinaryData(theEnv)->NumberOfJoins; i++)
-     { 
-      DestroyBetaMemory(theEnv,&DefruleBinaryData(theEnv)->JoinArray[i],LHS); 
-      DestroyBetaMemory(theEnv,&DefruleBinaryData(theEnv)->JoinArray[i],RHS); 
+     {
+      DestroyBetaMemory(theEnv,&DefruleBinaryData(theEnv)->JoinArray[i],LHS);
+      DestroyBetaMemory(theEnv,&DefruleBinaryData(theEnv)->JoinArray[i],RHS);
       ReturnLeftMemory(theEnv,&DefruleBinaryData(theEnv)->JoinArray[i]);
       ReturnRightMemory(theEnv,&DefruleBinaryData(theEnv)->JoinArray[i]);
      }
@@ -134,14 +134,14 @@ static void DeallocateDefruleBloadData(
    for (i = 0; i < DefruleBinaryData(theEnv)->NumberOfDefruleModules; i++)
      {
       theModuleItem = &DefruleBinaryData(theEnv)->ModuleArray[i];
-      
+
       theActivation = theModuleItem->agenda;
       while (theActivation != NULL)
         {
          tmpActivation = theActivation->next;
-         
+
          rtn_struct(theEnv,activation,theActivation);
-         
+
          theActivation = tmpActivation;
         }
 
@@ -149,25 +149,25 @@ static void DeallocateDefruleBloadData(
       while (theGroup != NULL)
         {
          tmpGroup = theGroup->next;
-         
+
          rtn_struct(theEnv,salienceGroup,theGroup);
-         
+
          theGroup = tmpGroup;
         }
      }
-     
+
    space = DefruleBinaryData(theEnv)->NumberOfDefruleModules * sizeof(struct defruleModule);
    if (space != 0) genfree(theEnv,DefruleBinaryData(theEnv)->ModuleArray,space);
-   
+
    space = DefruleBinaryData(theEnv)->NumberOfDefrules * sizeof(Defrule);
    if (space != 0) genfree(theEnv,DefruleBinaryData(theEnv)->DefruleArray,space);
-   
+
    space = DefruleBinaryData(theEnv)->NumberOfJoins * sizeof(struct joinNode);
    if (space != 0) genfree(theEnv,DefruleBinaryData(theEnv)->JoinArray,space);
 
    space = DefruleBinaryData(theEnv)->NumberOfLinks * sizeof(struct joinLink);
    if (space != 0) genfree(theEnv,DefruleBinaryData(theEnv)->LinkArray,space);
-   
+
    if (Bloaded(theEnv))
      { rm3(theEnv,DefruleData(theEnv)->AlphaMemoryTable,sizeof(ALPHA_MEMORY_HASH *) * ALPHA_MEMORY_HASH_SIZE); }
 #endif
@@ -350,14 +350,14 @@ static void BsaveStorage(
      { value = -1; }
    else
      { value = DefruleData(theEnv)->RightPrimeJoins->bsaveID; }
-   
+
    GenWrite(&value,sizeof(long int),fp);
 
    if (DefruleData(theEnv)->LeftPrimeJoins == NULL)
      { value = -1; }
    else
      { value = DefruleData(theEnv)->LeftPrimeJoins->bsaveID; }
-   
+
    GenWrite(&value,sizeof(long int),fp);
   }
 
@@ -432,7 +432,7 @@ static void BsaveBinaryItem(
 
    MarkRuleNetwork(theEnv,1);
    BsaveLinks(theEnv,fp);
-      
+
    /*=============================================================*/
    /* If a binary image was already loaded when the bsave command */
    /* was issued, then restore the counts indicating the number   */
@@ -570,11 +570,11 @@ static void BsaveJoins(
 
          for (disjunctPtr = rulePtr; disjunctPtr != NULL; disjunctPtr = disjunctPtr->disjunct)
            { BsaveTraverseJoins(theEnv,fp,disjunctPtr->lastJoin); }
-         
+
          /*===========================*/
          /* Move on to the next rule. */
          /*===========================*/
-         
+
          rulePtr = EnvGetNextDefrule(theEnv,rulePtr);
         }
      }
@@ -591,9 +591,9 @@ static void BsaveTraverseJoins(
    for (;
         joinPtr != NULL;
         joinPtr = joinPtr->lastLevel)
-     { 
-      if (joinPtr->marked) BsaveJoin(theEnv,fp,joinPtr); 
-      
+     {
+      if (joinPtr->marked) BsaveJoin(theEnv,fp,joinPtr);
+
       if (joinPtr->joinFromTheRight)
         { BsaveTraverseJoins(theEnv,fp,(struct joinNode *) joinPtr->rightSideEntryStructure); }
      }
@@ -623,7 +623,7 @@ static void BsaveJoin(
      { tempJoin.rightSideEntryStructure =  BsaveJoinIndex(joinPtr->rightSideEntryStructure); }
    else
      { tempJoin.rightSideEntryStructure =  -1L; }
-     
+
    tempJoin.lastLevel =  BsaveJoinIndex(joinPtr->lastLevel);
    tempJoin.nextLinks =  BsaveJoinLinkIndex(joinPtr->nextLinks);
    tempJoin.rightMatchNode =  BsaveJoinIndex(joinPtr->rightMatchNode);
@@ -642,7 +642,7 @@ static void BsaveJoin(
 
    GenWrite(&tempJoin,(unsigned long) sizeof(struct bsaveJoinNode),fp);
   }
-  
+
 /********************************************/
 /* BsaveLinks: Writes out all the join link */
 /*   data structures to the binary file.    */
@@ -688,7 +688,7 @@ static void BsaveLinks(
 
          for (disjunctPtr = rulePtr; disjunctPtr != NULL; disjunctPtr = disjunctPtr->disjunct)
            { BsaveTraverseLinks(theEnv,fp,disjunctPtr->lastJoin); }
-         
+
          /*=======================================*/
          /* Move on to the next rule or disjunct. */
          /*=======================================*/
@@ -708,21 +708,21 @@ static void BsaveTraverseLinks(
   struct joinNode *joinPtr)
   {
    struct joinLink *theLink;
-   
+
    for (;
         joinPtr != NULL;
         joinPtr = joinPtr->lastLevel)
-     { 
-      if (joinPtr->marked) 
+     {
+      if (joinPtr->marked)
         {
          for (theLink = joinPtr->nextLinks;
               theLink != NULL;
               theLink = theLink->next)
            { BsaveLink(fp,theLink); }
-         
+
          joinPtr->marked = 0;
         }
-      
+
       if (joinPtr->joinFromTheRight)
         { BsaveTraverseLinks(theEnv,fp,(struct joinNode *) joinPtr->rightSideEntryStructure); }
      }
@@ -883,7 +883,7 @@ static void BloadBinaryItem(
 
    BloadandRefresh(theEnv,DefruleBinaryData(theEnv)->NumberOfLinks,
                    sizeof(struct bsaveJoinLink),UpdateLink);
-             
+
    DefruleData(theEnv)->RightPrimeJoins = BloadJoinLinkPointer(DefruleBinaryData(theEnv)->RightPrimeIndex);
    DefruleData(theEnv)->LeftPrimeJoins = BloadJoinLinkPointer(DefruleBinaryData(theEnv)->LeftPrimeIndex);
   }
@@ -1000,7 +1000,7 @@ static void UpdateLink(
    DefruleBinaryData(theEnv)->LinkArray[obji].next = BloadJoinLinkPointer(bj->next);
    DefruleBinaryData(theEnv)->LinkArray[obji].join = BloadJoinPointer(bj->join);
   }
-  
+
 /************************************************************/
 /* UpdatePatternNodeHeader: Refreshes the values in pattern */
 /*   node headers from the loaded binary image.             */
@@ -1082,10 +1082,10 @@ static void ClearBload(
    /*==========================================================*/
 
    for (i = 0; i < DefruleBinaryData(theEnv)->NumberOfJoins; i++)
-     { 
-      FlushBetaMemory(theEnv,&DefruleBinaryData(theEnv)->JoinArray[i],LHS); 
+     {
+      FlushBetaMemory(theEnv,&DefruleBinaryData(theEnv)->JoinArray[i],LHS);
       ReturnLeftMemory(theEnv,&DefruleBinaryData(theEnv)->JoinArray[i]);
-      FlushBetaMemory(theEnv,&DefruleBinaryData(theEnv)->JoinArray[i],RHS); 
+      FlushBetaMemory(theEnv,&DefruleBinaryData(theEnv)->JoinArray[i],RHS);
       ReturnRightMemory(theEnv,&DefruleBinaryData(theEnv)->JoinArray[i]);
      }
 
@@ -1103,11 +1103,11 @@ static void ClearBload(
    space = DefruleBinaryData(theEnv)->NumberOfDefruleModules * sizeof(struct defruleModule);
    if (space != 0) genfree(theEnv,DefruleBinaryData(theEnv)->ModuleArray,space);
    DefruleBinaryData(theEnv)->NumberOfDefruleModules = 0;
-   
+
    space = DefruleBinaryData(theEnv)->NumberOfDefrules * sizeof(Defrule);
    if (space != 0) genfree(theEnv,DefruleBinaryData(theEnv)->DefruleArray,space);
    DefruleBinaryData(theEnv)->NumberOfDefrules = 0;
-   
+
    space = DefruleBinaryData(theEnv)->NumberOfJoins * sizeof(struct joinNode);
    if (space != 0) genfree(theEnv,DefruleBinaryData(theEnv)->JoinArray,space);
    DefruleBinaryData(theEnv)->NumberOfJoins = 0;

@@ -180,7 +180,7 @@ typedef struct moduleStackItem
 #include "utility.h"
 
 struct defmoduleData
-  {   
+  {
    struct moduleItem *LastModuleItem;
    struct callFunctionItem *AfterModuleChangeFunctions;
    MODULE_STACK_ITEM *ModuleStack;
@@ -207,7 +207,7 @@ struct defmoduleData
    Defmodule *DefmoduleArray;
 #endif
   };
-  
+
 #define DefmoduleData(theEnv) ((struct defmoduleData *) GetEnvironmentData(theEnv,DEFMODULE_DATA))
 
    void                           InitializeDefmodules(Environment *);

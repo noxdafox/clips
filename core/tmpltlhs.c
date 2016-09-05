@@ -78,13 +78,14 @@ struct lhsParseNode *DeftemplateLHSParse(
    struct lhsParseNode *head, *firstSlot;
    struct token theToken;
    bool error;
-   
+
    /*===============================================================*/
    /* Make sure the deftemplate name is not connected to subfields. */
    /*===============================================================*/
 
    GetToken(theEnv,readSource,&theToken);
-   if ((theToken.type == OR_CONSTRAINT) || (theToken.type == AND_CONSTRAINT))
+   if ((theToken.tknType == OR_CONSTRAINT_TOKEN) ||
+       (theToken.tknType == AND_CONSTRAINT_TOKEN))
      {
       SyntaxErrorMessage(theEnv,"deftemplate patterns");
       return NULL;
@@ -147,7 +148,7 @@ static struct lhsParseNode *GetLHSSlots(
    /* closing right parenthesis is encountered.             */
    /*=======================================================*/
 
-   while (tempToken->type != RPAREN)
+   while (tempToken->tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       PPBackup(theEnv);
       SavePPBuffer(theEnv," ");
@@ -157,7 +158,7 @@ static struct lhsParseNode *GetLHSSlots(
       /* Slot definitions begin with a left parenthesis. */
       /*=================================================*/
 
-      if (tempToken->type != LPAREN)
+      if (tempToken->tknType != LEFT_PARENTHESIS_TOKEN)
         {
          *error = true;
          SyntaxErrorMessage(theEnv,"deftemplate patterns");
@@ -170,7 +171,7 @@ static struct lhsParseNode *GetLHSSlots(
       /*====================*/
 
       GetToken(theEnv,readSource,tempToken);
-      if (tempToken->type != SYMBOL)
+      if (tempToken->tknType != SYMBOL_TOKEN)
         {
          *error = true;
          SyntaxErrorMessage(theEnv,"deftemplate patterns");
@@ -317,7 +318,7 @@ static struct lhsParseNode *GetSingleLHSSlot(
    /* The slot definition must end with a right parenthesis. */
    /*========================================================*/
 
-   if (tempToken->type != RPAREN)
+   if (tempToken->tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       PPBackup(theEnv);
       SavePPBuffer(theEnv," ");

@@ -19,7 +19,7 @@ For a total of 7 facts.
 CLIPS> (facts 1 2 3 4 5)
 [ARGACCES4] Function facts expected no more than 4 argument(s)
 CLIPS> (facts "a")
-[ARGACCES5] Function facts expected argument #1 to be of type symbol or positive number
+[ARGACCES5] Function facts expected argument #1 to be of type integer or symbol
 CLIPS> (facts 1 a)
 [ARGACCES5] Function facts expected argument #2 to be of type integer
 CLIPS> (facts 1 2 a)

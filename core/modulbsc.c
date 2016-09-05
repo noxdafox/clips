@@ -161,7 +161,7 @@ void EnvGetDefmoduleList(
   Environment *theEnv,
   CLIPSValue *returnValue)
   {
-   void *theConstruct;
+   Defmodule *theConstruct;
    unsigned long count = 0;
    Multifield *theList;
 
@@ -245,7 +245,7 @@ bool PPDefmodule(
 
    if (EnvGetDefmodulePPForm(theEnv,defmodulePtr) == NULL) return true;
    PrintInChunks(theEnv,logicalName,EnvGetDefmodulePPForm(theEnv,defmodulePtr));
-   
+
    return true;
   }
 

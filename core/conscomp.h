@@ -93,7 +93,7 @@ struct CodeGeneratorItem
   };
 
 struct constructCompilerData
-  { 
+  {
    int ImageID;
    FILE *HeaderFP;
    int MaxIndices;

@@ -173,7 +173,7 @@ bool ParseDefmessageHandler(
       EnvPrintRouter(theEnv,WERROR,"  other message-handlers for the same class.\n");
       return true;
      }
-   if (GetType(DefclassData(theEnv)->ObjectParseToken) != SYMBOL)
+   if (DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TOKEN)
      {
       SyntaxErrorMessage(theEnv,"defmessage-handler");
       return true;
@@ -185,12 +185,12 @@ bool ParseDefmessageHandler(
    SavePPBuffer(theEnv," ");
    mname = (SYMBOL_HN *) GetValue(DefclassData(theEnv)->ObjectParseToken);
    GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
-   if (GetType(DefclassData(theEnv)->ObjectParseToken) != LPAREN)
+   if (DefclassData(theEnv)->ObjectParseToken.tknType != LEFT_PARENTHESIS_TOKEN)
      {
       SavePPBuffer(theEnv," ");
-      if (GetType(DefclassData(theEnv)->ObjectParseToken) != STRING)
+      if (DefclassData(theEnv)->ObjectParseToken.tknType != STRING_TOKEN)
         {
-         if (GetType(DefclassData(theEnv)->ObjectParseToken) != SYMBOL)
+         if (DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TOKEN)
            {
             SyntaxErrorMessage(theEnv,"defmessage-handler");
             return true;
@@ -200,7 +200,7 @@ bool ParseDefmessageHandler(
            return true;
 
          GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
-         if (GetType(DefclassData(theEnv)->ObjectParseToken) == STRING)
+         if (DefclassData(theEnv)->ObjectParseToken.tknType == STRING_TOKEN)
            {
             SavePPBuffer(theEnv," ");
             GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
@@ -253,7 +253,7 @@ bool ParseDefmessageHandler(
       ReturnExpression(theEnv,hndParams);
       return true;
      }
-   if (GetType(DefclassData(theEnv)->ObjectParseToken) != RPAREN)
+   if (DefclassData(theEnv)->ObjectParseToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       SyntaxErrorMessage(theEnv,"defmessage-handler");
       ReturnExpression(theEnv,hndParams);
@@ -361,15 +361,15 @@ void CreateGetAndPutHandlers(
    if (sd->createReadAccessor)
      {
       gensprintf(buf,"%s get-%s () ?self:%s)",className,slotName,slotName);
-      
+
       oldRouter = RouterData(theEnv)->FastCharGetRouter;
       oldString = RouterData(theEnv)->FastCharGetString;
       oldIndex = RouterData(theEnv)->FastCharGetIndex;
-   
+
       RouterData(theEnv)->FastCharGetRouter = handlerRouter;
       RouterData(theEnv)->FastCharGetIndex = 0;
       RouterData(theEnv)->FastCharGetString = buf;
-      
+
       ParseDefmessageHandler(theEnv,handlerRouter);
       DestroyPPBuffer(theEnv);
       /*
@@ -389,26 +389,26 @@ void CreateGetAndPutHandlers(
      {
       gensprintf(buf,"%s put-%s ($?value) (bind ?self:%s ?value))",
                   className,slotName,slotName);
-                  
+
       oldRouter = RouterData(theEnv)->FastCharGetRouter;
       oldString = RouterData(theEnv)->FastCharGetString;
       oldIndex = RouterData(theEnv)->FastCharGetIndex;
-   
+
       RouterData(theEnv)->FastCharGetRouter = handlerRouter;
       RouterData(theEnv)->FastCharGetIndex = 0;
       RouterData(theEnv)->FastCharGetString = buf;
-      
+
       ParseDefmessageHandler(theEnv,handlerRouter);
       DestroyPPBuffer(theEnv);
 
-/*     
+/*
       if (OpenStringSource(theEnv,handlerRouter,buf,0))
         {
          ParseDefmessageHandler(handlerRouter);
          DestroyPPBuffer();
          CloseStringSource(theEnv,handlerRouter);
         }
-*/        
+*/
       RouterData(theEnv)->FastCharGetRouter = oldRouter;
       RouterData(theEnv)->FastCharGetIndex = oldIndex;
       RouterData(theEnv)->FastCharGetString = oldString;
@@ -491,9 +491,9 @@ static int SlotReferenceVar(
       GetToken(theEnv,"hnd-var",&itkn);
       SetPPBufferStatus(theEnv,oldpp);
       CloseStringSource(theEnv,"hnd-var");
-      if (itkn.type != STOP)
+      if (itkn.tknType != STOP_TOKEN)
         {
-         sd = CheckSlotReference(theEnv,(Defclass *) userBuffer,itkn.type,itkn.value,
+         sd = CheckSlotReference(theEnv,(Defclass *) userBuffer,TokenTypeToType(itkn.tknType),itkn.value,
                                  false,NULL);
          if (sd == NULL)
            { return -1; }
@@ -501,7 +501,7 @@ static int SlotReferenceVar(
          return 1;
         }
      }
-     
+
    return 0;
   }
 
@@ -551,10 +551,10 @@ static int BindSlotReference(
       GetToken(theEnv,"hnd-var",&itkn);
       SetPPBufferStatus(theEnv,oldpp);
       CloseStringSource(theEnv,"hnd-var");
-      if (itkn.type != STOP)
+      if (itkn.tknType != STOP_TOKEN)
         {
          saveExp = bindExp->argList->nextArg;
-         sd = CheckSlotReference(theEnv,(Defclass *) userBuffer,itkn.type,itkn.value,
+         sd = CheckSlotReference(theEnv,(Defclass *) userBuffer,TokenTypeToType(itkn.tknType),itkn.value,
                                  true,saveExp);
          if (sd == NULL)
            { return -1; }

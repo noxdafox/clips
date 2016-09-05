@@ -92,9 +92,9 @@ int main(
    /* CLIPS. If you have a multi-threaded application, no environments */
    /* can be currently executing.                                      */
    /*==================================================================*/
-   
+
    DestroyEnvironment(mainEnv);
-   
+
    return(-1);
   }
 

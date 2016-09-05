@@ -144,7 +144,7 @@ void GetResetGlobalsCommand(
   CLIPSValue *returnValue)
   {
    returnValue->type = SYMBOL;
-   
+
    if (EnvGetResetGlobals(theEnv))
      { returnValue->value = EnvTrueSymbol(theEnv); }
    else
@@ -157,8 +157,8 @@ void GetResetGlobalsCommand(
 /****************************************/
 bool EnvGetResetGlobals(
   Environment *theEnv)
-  {   
-   return(DefglobalData(theEnv)->ResetGlobals); 
+  {
+   return(DefglobalData(theEnv)->ResetGlobals);
   }
 
 #if DEBUGGING_FUNCTIONS

@@ -20,7 +20,7 @@
 /* Revision History:                                         */
 /*                                                           */
 /*      6.24: Support for deftemplate-slot-default-value     */
-/*            function.                                      */ 
+/*            function.                                      */
 /*                                                           */
 /*      6.30: Support for long long integers.                */
 /*                                                           */
@@ -299,7 +299,7 @@ struct expr *ParseDefault(
    /* until a closing right parenthesis is encountered. */
    /*===================================================*/
 
-   while (theToken.type != RPAREN)
+   while (theToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       /*========================================*/
       /* Get the next item in the default list. */
@@ -350,7 +350,7 @@ struct expr *ParseDefault(
 
          GetToken(theEnv,readSource,&theToken);
 
-         if (theToken.type != RPAREN)
+         if (theToken.tknType != RIGHT_PARENTHESIS_TOKEN)
            {
             if (dynamic) SyntaxErrorMessage(theEnv,"default-dynamic attribute");
             else SyntaxErrorMessage(theEnv,"default attribute");

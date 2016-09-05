@@ -61,7 +61,7 @@
 /* FactPatternsCompilerSetup: Initializes the constructs-to-c */
 /*   command for use with the fact pattern network.           */
 /**************************************************************/
-void FactPatternsCompilerSetup(  
+void FactPatternsCompilerSetup(
   Environment *theEnv)
   {
    FactData(theEnv)->FactCodeItem = AddCodeGeneratorItem(theEnv,"facts",0,BeforePatternNetworkToCode,

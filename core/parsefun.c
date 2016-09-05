@@ -70,7 +70,7 @@
 #define PARSEFUN_DATA 11
 
 struct parseFunctionData
-  { 
+  {
    char *ErrorString;
    size_t ErrorCurrentPosition;
    size_t ErrorMaximumPosition;
@@ -177,7 +177,7 @@ bool CheckSyntax(
 
    GetToken(theEnv,"check-syntax",&theToken);
 
-   if (theToken.type != LPAREN)
+   if (theToken.tknType != LEFT_PARENTHESIS_TOKEN)
      {
       CloseStringSource(theEnv,"check-syntax");
       SetpValue(returnValue,EnvAddSymbol(theEnv,"MISSING-LEFT-PARENTHESIS"));
@@ -190,7 +190,7 @@ bool CheckSyntax(
    /*========================================*/
 
    GetToken(theEnv,"check-syntax",&theToken);
-   if (theToken.type != SYMBOL)
+   if (theToken.tknType != SYMBOL_TOKEN)
      {
       CloseStringSource(theEnv,"check-syntax");
       SetpValue(returnValue,EnvAddSymbol(theEnv,"EXPECTED-SYMBOL-AFTER-LEFT-PARENTHESIS"));
@@ -236,7 +236,7 @@ bool CheckSyntax(
          return true;
         }
 
-      if (theToken.type != STOP)
+      if (theToken.tknType != STOP_TOKEN)
         {
          SetpValue(returnValue,EnvAddSymbol(theEnv,"EXTRANEOUS-INPUT-AFTER-LAST-PARENTHESIS"));
          DeactivateErrorCapture(theEnv);
@@ -265,7 +265,7 @@ bool CheckSyntax(
       return true;
      }
 
-   if (theToken.type != STOP)
+   if (theToken.tknType != STOP_TOKEN)
      {
       SetpValue(returnValue,EnvAddSymbol(theEnv,"EXTRANEOUS-INPUT-AFTER-LAST-PARENTHESIS"));
       DeactivateErrorCapture(theEnv);
@@ -288,7 +288,7 @@ bool CheckSyntax(
 /**************************************************/
 static void DeactivateErrorCapture(
   Environment *theEnv)
-  {   
+  {
    if (ParseFunctionData(theEnv)->ErrorString != NULL)
      {
       rm(theEnv,ParseFunctionData(theEnv)->ErrorString,ParseFunctionData(theEnv)->ErrorMaximumPosition);

@@ -160,7 +160,7 @@ static void SaveDefglobals(
   Defmodule *theModule,
   const char *logicalName)
   {
-   SaveConstruct(theEnv,theModule,logicalName,DefglobalData(theEnv)->DefglobalConstruct); 
+   SaveConstruct(theEnv,theModule,logicalName,DefglobalData(theEnv)->DefglobalConstruct);
   }
 
 /********************************************/
@@ -183,7 +183,7 @@ bool EnvUndefglobal(
   Environment *theEnv,
   Defglobal *theDefglobal)
   {
-   return(Undefconstruct(theEnv,theDefglobal,DefglobalData(theEnv)->DefglobalConstruct)); 
+   return(Undefconstruct(theEnv,theDefglobal,DefglobalData(theEnv)->DefglobalConstruct));
   }
 
 /**************************************************/
@@ -194,8 +194,8 @@ void GetDefglobalListFunction(
   Environment *theEnv,
   UDFContext *context,
   CLIPSValue *returnValue)
-  { 
-   GetConstructListFunction(context,returnValue,DefglobalData(theEnv)->DefglobalConstruct); 
+  {
+   GetConstructListFunction(context,returnValue,DefglobalData(theEnv)->DefglobalConstruct);
   }
 
 /******************************************/
@@ -207,7 +207,7 @@ void EnvGetDefglobalList(
   CLIPSValue *returnValue,
   Defmodule *theModule)
   {
-   GetConstructList(theEnv,returnValue,DefglobalData(theEnv)->DefglobalConstruct,theModule); 
+   GetConstructList(theEnv,returnValue,DefglobalData(theEnv)->DefglobalConstruct,theModule);
   }
 
 /*************************************************/
@@ -246,7 +246,7 @@ bool PPDefglobal(
   const char *defglobalName,
   const char *logicalName)
   {
-   return(PPConstruct(theEnv,defglobalName,logicalName,DefglobalData(theEnv)->DefglobalConstruct)); 
+   return(PPConstruct(theEnv,defglobalName,logicalName,DefglobalData(theEnv)->DefglobalConstruct));
   }
 
 /***********************************************/
@@ -280,7 +280,7 @@ void EnvListDefglobals(
 bool EnvGetDefglobalWatch(
   Environment *theEnv,
   Defglobal *theGlobal)
-  { 
+  {
 #if MAC_XCD
 #pragma unused(theEnv)
 #endif
@@ -296,7 +296,7 @@ void EnvSetDefglobalWatch(
   Environment *theEnv,
   bool newState,
   Defglobal *theGlobal)
-  {  
+  {
 #if MAC_XCD
 #pragma unused(theEnv)
 #endif

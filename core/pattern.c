@@ -69,13 +69,13 @@
 #endif
    static void                            DeallocatePatternData(Environment *);
    static struct patternNodeHashEntry   **CreatePatternHashTable(Environment *,unsigned long);
-   
+
 /*****************************************************************************/
 /* InitializePatterns: Initializes the global data associated with patterns. */
 /*****************************************************************************/
 void InitializePatterns(
   Environment *theEnv)
-  {   
+  {
    AllocateEnvironmentData(theEnv,PATTERN_DATA,sizeof(struct patternData),DeallocatePatternData);
    PatternData(theEnv)->NextPosition = 1;
    PatternData(theEnv)->PatternHashTable = CreatePatternHashTable(theEnv,SIZE_PATTERN_HASH);
@@ -96,12 +96,12 @@ static struct patternNodeHashEntry **CreatePatternHashTable(
                gm3(theEnv,sizeof (struct patternNodeHashEntry *) * tableSize);
 
     if (theTable == NULL) EnvExitRouter(theEnv,EXIT_FAILURE);
-    
+
     for (i = 0; i < tableSize; i++) theTable[i] = NULL;
-    
+
     return(theTable);
    }
-       
+
 /**************************************************/
 /* DeallocatePatternData: Deallocates environment */
 /*    data for rule pattern registration.         */
@@ -121,7 +121,7 @@ static void DeallocatePatternData(
       rtn_struct(theEnv,reservedSymbol,tmpRSPtr);
       tmpRSPtr = nextRSPtr;
      }
-     
+
    tmpPPPtr = PatternData(theEnv)->ListOfPatternParsers;
    while (tmpPPPtr != NULL)
      {
@@ -129,11 +129,11 @@ static void DeallocatePatternData(
       rtn_struct(theEnv,patternParser,tmpPPPtr);
       tmpPPPtr = nextPPPtr;
      }
-   
-   for (i = 0; i < PatternData(theEnv)->PatternHashTableSize; i++) 
+
+   for (i = 0; i < PatternData(theEnv)->PatternHashTableSize; i++)
      {
       tmpPNEPtr = PatternData(theEnv)->PatternHashTable[i];
-      
+
       while (tmpPNEPtr != NULL)
         {
          nextPNEPtr = tmpPNEPtr->next;
@@ -141,7 +141,7 @@ static void DeallocatePatternData(
          tmpPNEPtr = nextPNEPtr;
         }
      }
-  
+
    rm3(theEnv,PatternData(theEnv)->PatternHashTable,
        sizeof(struct patternNodeHashEntry *) * PatternData(theEnv)->PatternHashTableSize);
   }
@@ -168,7 +168,7 @@ void AddHashedPatternNode(
    newhash->value = keyValue;
 
    hashValue = (hashValue % PatternData(theEnv)->PatternHashTableSize);
-   
+
    temp = PatternData(theEnv)->PatternHashTable[hashValue];
    PatternData(theEnv)->PatternHashTable[hashValue] = newhash;
    newhash->next = temp;
@@ -244,7 +244,7 @@ void *FindHashedPatternNode(
 
    return NULL;
   }
-  
+
 /******************************************************************/
 /* AddReservedPatternSymbol: Adds a symbol to the list of symbols */
 /*  that are restricted for use in patterns. For example, the     */
@@ -400,7 +400,7 @@ void DetachPattern(
   struct patternNodeHeader *theHeader)
   {
    if (rhsType == 0) return;
-   
+
    if (PatternData(theEnv)->PatternParserArray[rhsType-1] != NULL)
      {
       FlushAlphaMemory(theEnv,theHeader);
@@ -495,7 +495,7 @@ struct patternParser *GetPatternParser(
   int rhsType)
   {
    if (rhsType == 0) return NULL;
-   
+
    return(PatternData(theEnv)->PatternParserArray[rhsType-1]);
   }
 
@@ -525,7 +525,7 @@ void PatternNodeHeaderToCode(
      }
 
    PrintHashedExpressionReference(theEnv,fp,theHeader->rightHash,imageID,maxIndices);
-  
+
    fprintf(fp,",%d,%d,%d,0,0,%d,%d,%d}",theHeader->singlefieldNode,
                                      theHeader->multifieldNode,
                                      theHeader->stopNode,
@@ -598,18 +598,18 @@ struct lhsParseNode *RestrictionParse(
    /* an ordered fact.                                 */
    /*==================================================*/
 
-   while (theToken->type != RPAREN)
+   while (theToken->tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       /*========================================*/
       /* Look for either a single or multifield */
       /* wildcard or a conjuctive restriction.  */
       /*========================================*/
 
-      if ((theToken->type == SF_WILDCARD) ||
-          (theToken->type == MF_WILDCARD))
+      if ((theToken->tknType == SF_WILDCARD_TOKEN) ||
+          (theToken->tknType == MF_WILDCARD_TOKEN))
         {
          nextNode = GetLHSParseNode(theEnv);
-         nextNode->type = theToken->type;
+         nextNode->type = TokenTypeToType(theToken->tknType);
          nextNode->negated = false;
          nextNode->exists = false;
          GetToken(theEnv,readSource,theToken);
@@ -629,7 +629,7 @@ struct lhsParseNode *RestrictionParse(
       /* slot so that the fields don't run together.            */
       /*========================================================*/
 
-      if ((theToken->type != RPAREN) && (multifieldSlot == true))
+      if ((theToken->tknType != RIGHT_PARENTHESIS_TOKEN) && (multifieldSlot == true))
         {
          PPBackup(theEnv);
          SavePPBuffer(theEnv," ");
@@ -917,7 +917,7 @@ static struct lhsParseNode *ConjuctiveRestrictionParse(
 
    if (((theNode->type == SF_VARIABLE) || (theNode->type == MF_VARIABLE)) &&
        (theNode->negated == false) &&
-       (theToken->type != OR_CONSTRAINT))
+       (theToken->tknType != OR_CONSTRAINT_TOKEN))
      {
       theNode->bindingVariable = true;
       bindNode = theNode;
@@ -940,13 +940,14 @@ static struct lhsParseNode *ConjuctiveRestrictionParse(
    /* within the constraint             */
    /*===================================*/
 
-   while ((theToken->type == OR_CONSTRAINT) || (theToken->type == AND_CONSTRAINT))
+   while ((theToken->tknType == OR_CONSTRAINT_TOKEN) ||
+          (theToken->tknType == AND_CONSTRAINT_TOKEN))
      {
       /*==========================*/
       /* Get the next constraint. */
       /*==========================*/
 
-      connectorType = theToken->type;
+      connectorType = TokenTypeToType(theToken->tknType);
 
       GetToken(theEnv,readSource,theToken);
       theNode = LiteralRestrictionParse(theEnv,readSource,theToken,error);
@@ -1142,7 +1143,7 @@ static struct lhsParseNode *LiteralRestrictionParse(
    /* (e.g. ~red means "not the constant red."        */
    /*=================================================*/
 
-   if (theToken->type == NOT_CONSTRAINT)
+   if (theToken->tknType == NOT_CONSTRAINT_TOKEN)
      {
       GetToken(theEnv,readSource,theToken);
       topNode->negated = true;
@@ -1157,15 +1158,13 @@ static struct lhsParseNode *LiteralRestrictionParse(
    /* and =(expression).                        */
    /*===========================================*/
 
-   topNode->type = theToken->type;
-
    /*============================================*/
    /* Any symbol is valid, but an = signifies a  */
    /* return value constraint and an : signifies */
    /* a predicate constraint.                    */
    /*============================================*/
 
-   if (theToken->type == SYMBOL)
+   if (theToken->tknType == SYMBOL_TOKEN)
      {
       /*==============================*/
       /* If the symbol is an =, parse */
@@ -1210,7 +1209,10 @@ static struct lhsParseNode *LiteralRestrictionParse(
       /*==============================================*/
 
       else
-        { topNode->value = theToken->value; }
+        {
+         topNode->type = SYMBOL;
+         topNode->value = theToken->value;
+        }
      }
 
    /*=====================================================*/
@@ -1218,13 +1220,16 @@ static struct lhsParseNode *LiteralRestrictionParse(
    /* string, and instance name constants are also valid. */
    /*=====================================================*/
 
-   else if ((theToken->type == SF_VARIABLE)  ||
-            (theToken->type == MF_VARIABLE)  ||
-            (theToken->type == FLOAT) ||
-            (theToken->type == INTEGER) ||
-            (theToken->type == STRING) ||
-            (theToken->type == INSTANCE_NAME))
-     { topNode->value = theToken->value; }
+   else if ((theToken->tknType == SF_VARIABLE_TOKEN)  ||
+            (theToken->tknType == MF_VARIABLE_TOKEN)  ||
+            (theToken->tknType == FLOAT_TOKEN) ||
+            (theToken->tknType == INTEGER_TOKEN) ||
+            (theToken->tknType == STRING_TOKEN) ||
+            (theToken->tknType == INSTANCE_NAME_TOKEN))
+     {
+      topNode->type = TokenTypeToType(theToken->tknType);
+      topNode->value = theToken->value;
+     }
 
    /*===========================*/
    /* Anything else is invalid. */
@@ -1242,7 +1247,7 @@ static struct lhsParseNode *LiteralRestrictionParse(
    /* Return the parsed constraint. */
    /*===============================*/
 
-   return(topNode);
+   return topNode;
   }
 
 #endif /* (! RUN_TIME) && (! BLOAD_ONLY) */

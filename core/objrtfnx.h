@@ -178,23 +178,23 @@ struct ObjectCmpJoinSingleSlotVars3
 #define OBJECT_RETE_DATA 35
 
 struct objectReteData
-  { 
+  {
    Instance *CurrentPatternObject;
    INSTANCE_SLOT *CurrentPatternObjectSlot;
    unsigned CurrentObjectSlotLength;
    struct multifieldMarker *CurrentPatternObjectMarks;
-   struct entityRecord ObjectGVInfo1;  
+   struct entityRecord ObjectGVInfo1;
    struct entityRecord ObjectGVInfo2;
    struct entityRecord ObjectGVPNInfo1;
    struct entityRecord ObjectGVPNInfo2;
-   struct entityRecord ObjectCmpConstantInfo; 
-   struct entityRecord LengthTestInfo; 
-   struct entityRecord PNSimpleCompareInfo1; 
-   struct entityRecord PNSimpleCompareInfo2; 
-   struct entityRecord PNSimpleCompareInfo3; 
-   struct entityRecord JNSimpleCompareInfo1; 
-   struct entityRecord JNSimpleCompareInfo2; 
-   struct entityRecord JNSimpleCompareInfo3; 
+   struct entityRecord ObjectCmpConstantInfo;
+   struct entityRecord LengthTestInfo;
+   struct entityRecord PNSimpleCompareInfo1;
+   struct entityRecord PNSimpleCompareInfo2;
+   struct entityRecord PNSimpleCompareInfo3;
+   struct entityRecord JNSimpleCompareInfo1;
+   struct entityRecord JNSimpleCompareInfo2;
+   struct entityRecord JNSimpleCompareInfo3;
    OBJECT_MATCH_ACTION *ObjectMatchActionQueue;
    OBJECT_PATTERN_NODE *ObjectPatternNetworkPointer;
    OBJECT_ALPHA_NODE *ObjectPatternNetworkTerminalPointer;

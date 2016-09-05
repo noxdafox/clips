@@ -111,7 +111,7 @@ typedef struct exprHashNode
 #define EXPRESSION_DATA 45
 
 struct expressionData
-  { 
+  {
    struct FunctionDefinition *PTR_AND;
    struct FunctionDefinition *PTR_OR;
    struct FunctionDefinition *PTR_EQ;

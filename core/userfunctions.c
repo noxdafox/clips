@@ -67,7 +67,7 @@ void UserFunctions()
    // Use of UserFunctions is deprecated.
    // Use EnvUserFunctions instead.
   }
-  
+
 /***********************************************************/
 /* EnvUserFunctions: Informs the expert system environment */
 /*   of any user defined functions. In the default case,   */

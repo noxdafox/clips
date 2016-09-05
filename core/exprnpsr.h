@@ -91,7 +91,7 @@ typedef struct saved_contexts
    bool                           CheckExpressionAgainstRestrictions(Environment *,struct expr *,
                                                                      struct FunctionDefinition *,const char *);
    bool                           RestrictionExists(const char *,int);
-   
+
 #endif
 
 #endif /* _H_exprnpsr */

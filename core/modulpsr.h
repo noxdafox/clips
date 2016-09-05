@@ -43,22 +43,25 @@
 
 #define _H_modulpsr
 
-struct portConstructItem
-  {
-   const char *constructName;
-   int typeExpected;
-   struct portConstructItem *next;
-  };
+struct portConstructItem;
 
 #include "evaluatn.h"
 #include "moduldef.h"
 #include "symbol.h"
+#include "scanner.h"
+
+struct portConstructItem
+  {
+   const char *constructName;
+   TokenType typeExpected;
+   struct portConstructItem *next;
+  };
 
    long                           GetNumberOfDefmodules(Environment *);
    void                           SetNumberOfDefmodules(Environment *,long);
    void                           AddAfterModuleDefinedFunction(Environment *,const char *,void (*)(Environment *),int);
    bool                           ParseDefmodule(Environment *,const char *);
-   void                           AddPortConstructItem(Environment *,const char *,int);
+   void                           AddPortConstructItem(Environment *,const char *,TokenType);
    struct portConstructItem      *ValidPortConstructItem(Environment *,const char *);
    bool                           FindImportExportConflict(Environment *,const char *,Defmodule *,const char *);
 

@@ -299,7 +299,7 @@ static void IntersectAllowedValueExpressions(
 
    newConstraint->restrictionList = theHead;
   }
-  
+
 /*************************************************/
 /* IntersectAllowedClassExpressions: Creates the */
 /*   intersection of two allowed-classes lists.  */
@@ -319,7 +319,7 @@ static void IntersectAllowedClassExpressions(
    /* each value to a list if it satisfies the   */
    /* restrictions for both constraint records.  */
    /*============================================*/
-   
+
    for (theList1 = constraint1->classList;
         theList1 != NULL;
         theList1 = theList1->nextArg)
@@ -363,7 +363,7 @@ static void IntersectAllowedClassExpressions(
 
    newConstraint->classList = theHead;
   }
-  
+
 /*********************************************************/
 /* IntersectNumericExpressions: Creates the intersection */
 /*   of two range or two min/max-fields constraints.     */

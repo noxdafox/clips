@@ -86,7 +86,7 @@
    static int                     ComparePartialMatches(Environment *,Activation *,Activation *);
    static const char             *GetStrategyName(int);
    static unsigned long long     *SortPartialMatch(Environment *,struct partialMatch *);
-   
+
 /******************************************************************/
 /* PlaceActivation: Coordinates placement of an activation on the */
 /*   Agenda based on the current conflict resolution strategy.    */
@@ -112,7 +112,7 @@ void PlaceActivation(
    /* current conflict resolution strategy.       */
    /*==============================================*/
 
-   if (*whichAgenda != NULL) 
+   if (*whichAgenda != NULL)
      {
       switch (AgendaData(theEnv)->Strategy)
         {
@@ -144,7 +144,7 @@ void PlaceActivation(
            placeAfter = PlaceRandomActivation(newActivation,theGroup);
            break;
         }
-     } 
+     }
    else
      {
       theGroup->first = newActivation;
@@ -184,7 +184,7 @@ static Activation *PlaceDepthActivation(
   {
    Activation *lastAct, *actPtr;
    unsigned long long timetag;
-     
+
    /*============================================*/
    /* Set up initial information for the search. */
    /*============================================*/
@@ -212,7 +212,7 @@ static Activation *PlaceDepthActivation(
          lastAct = actPtr;
          if (actPtr == theGroup->last)
            { break; }
-         else 
+         else
            { actPtr = actPtr->next; }
         }
       else
@@ -222,11 +222,11 @@ static Activation *PlaceDepthActivation(
    /*========================================*/
    /* Update the salience group information. */
    /*========================================*/
-   
-   if ((lastAct == NULL) || 
+
+   if ((lastAct == NULL) ||
        ((theGroup->prev != NULL) && (theGroup->prev->last == lastAct)))
      { theGroup->first = newActivation; }
-     
+
    if ((theGroup->last == NULL) || (theGroup->last == lastAct))
      { theGroup->last = newActivation; }
 
@@ -257,7 +257,7 @@ static Activation *PlaceBreadthActivation(
 
    timetag = newActivation->timetag;
    if (theGroup->last == NULL)
-     {    
+     {
       if (theGroup->prev == NULL)
         { lastAct = NULL; }
       else
@@ -288,24 +288,24 @@ static Activation *PlaceBreadthActivation(
               { lastAct = theGroup->prev->last; }
             break;
            }
-         else 
+         else
            { actPtr = actPtr->prev; }
         }
       else
         {
-         lastAct = actPtr; 
-         break; 
+         lastAct = actPtr;
+         break;
         }
      }
-     
+
    /*========================================*/
    /* Update the salience group information. */
    /*========================================*/
-   
-   if ((lastAct == NULL) || 
+
+   if ((lastAct == NULL) ||
        ((theGroup->prev != NULL) && (theGroup->prev->last == lastAct)))
      { theGroup->first = newActivation; }
-     
+
    if ((theGroup->last == NULL) || (theGroup->last == lastAct))
      { theGroup->last = newActivation; }
 
@@ -346,21 +346,21 @@ static Activation *PlaceLEXActivation(
    /* Look first at the very end of the group to see */
    /* if the activation should be placed there.      */
    /*================================================*/
-   
+
    actPtr = theGroup->last;
    if (actPtr != NULL)
      {
       flag = ComparePartialMatches(theEnv,actPtr,newActivation);
-      
+
       if ((flag == LESS_THAN) ||
           ((flag == EQUAL) &&  (timetag > actPtr->timetag)))
         {
-         theGroup->last = newActivation; 
-         
+         theGroup->last = newActivation;
+
          return(actPtr);
         }
      }
-     
+
    /*=========================================================*/
    /* Find the insertion point in the agenda. The activation  */
    /* is placed before activations of lower salience and      */
@@ -379,7 +379,7 @@ static Activation *PlaceLEXActivation(
          lastAct = actPtr;
          if (actPtr == theGroup->last)
            { break; }
-         else 
+         else
            { actPtr = actPtr->next; }
         }
       else if (flag == GREATER_THAN)
@@ -391,22 +391,22 @@ static Activation *PlaceLEXActivation(
             lastAct = actPtr;
             if (actPtr == theGroup->last)
               { break; }
-            else 
+            else
               { actPtr = actPtr->next; }
            }
          else
            { break; }
         }
      }
-     
+
    /*========================================*/
    /* Update the salience group information. */
    /*========================================*/
-   
-   if ((lastAct == NULL) || 
+
+   if ((lastAct == NULL) ||
        ((theGroup->prev != NULL) && (theGroup->prev->last == lastAct)))
      { theGroup->first = newActivation; }
-     
+
    if ((theGroup->last == NULL) || (theGroup->last == lastAct))
      { theGroup->last = newActivation; }
 
@@ -449,26 +449,26 @@ static Activation *PlaceMEAActivation(
    /* Look first at the very end of the group to see */
    /* if the activation should be placed there.      */
    /*================================================*/
-   
+
    actPtr = theGroup->last;
    if (actPtr != NULL)
      {
       if (GetMatchingItem(newActivation,0) != NULL)
-        { 
-         cWhoset = GetMatchingItem(newActivation,0)->timeTag; 
+        {
+         cWhoset = GetMatchingItem(newActivation,0)->timeTag;
          cSet = true;
         }
       else
         { cSet = false; }
-        
+
       if (GetMatchingItem(actPtr,0) != NULL)
         {
-         oWhoset = GetMatchingItem(actPtr,0)->timeTag; 
+         oWhoset = GetMatchingItem(actPtr,0)->timeTag;
          oSet = true;
         }
       else
         { oSet = false; }
-        
+
       if ((cSet == false) && (oSet == false))
         { flag = ComparePartialMatches(theEnv,actPtr,newActivation); }
       else if ((cSet == true) && (oSet == false))
@@ -485,8 +485,8 @@ static Activation *PlaceMEAActivation(
       if ((flag == LESS_THAN) ||
           ((flag == EQUAL) &&  (timetag > actPtr->timetag)))
         {
-         theGroup->last = newActivation; 
-         
+         theGroup->last = newActivation;
+
          return(actPtr);
         }
      }
@@ -506,10 +506,10 @@ static Activation *PlaceMEAActivation(
       oWhoset = -1;
       if (GetMatchingItem(newActivation,0) != NULL)
         { cWhoset = GetMatchingItem(newActivation,0)->timeTag; }
-        
+
       if (GetMatchingItem(actPtr,0) != NULL)
         { oWhoset = GetMatchingItem(actPtr,0)->timeTag; }
-        
+
       if (oWhoset < cWhoset)
         {
          if (cWhoset > 0) flag = GREATER_THAN;
@@ -528,7 +528,7 @@ static Activation *PlaceMEAActivation(
          lastAct = actPtr;
          if (actPtr == theGroup->last)
            { break; }
-         else 
+         else
            { actPtr = actPtr->next; }
         }
       else if (flag == GREATER_THAN)
@@ -540,22 +540,22 @@ static Activation *PlaceMEAActivation(
             lastAct = actPtr;
             if (actPtr == theGroup->last)
               { break; }
-            else 
+            else
               { actPtr = actPtr->next; }
            }
          else
            { break; }
         }
      }
-     
+
    /*========================================*/
    /* Update the salience group information. */
    /*========================================*/
-   
-   if ((lastAct == NULL) || 
+
+   if ((lastAct == NULL) ||
        ((theGroup->prev != NULL) && (theGroup->prev->last == lastAct)))
      { theGroup->first = newActivation; }
-     
+
    if ((theGroup->last == NULL) || (theGroup->last == lastAct))
      { theGroup->last = newActivation; }
 
@@ -608,7 +608,7 @@ static Activation *PlaceComplexityActivation(
          lastAct = actPtr;
          if (actPtr == theGroup->last)
            { break; }
-         else 
+         else
            { actPtr = actPtr->next; }
         }
       else if (complexity > (int) actPtr->theRule->complexity)
@@ -618,21 +618,21 @@ static Activation *PlaceComplexityActivation(
          lastAct = actPtr;
          if (actPtr == theGroup->last)
            { break; }
-         else 
+         else
            { actPtr = actPtr->next; }
         }
       else
         { break; }
      }
-     
+
    /*========================================*/
    /* Update the salience group information. */
    /*========================================*/
-   
-   if ((lastAct == NULL) || 
+
+   if ((lastAct == NULL) ||
        ((theGroup->prev != NULL) && (theGroup->prev->last == lastAct)))
      { theGroup->first = newActivation; }
-     
+
    if ((theGroup->last == NULL) || (theGroup->last == lastAct))
      { theGroup->last = newActivation; }
 
@@ -685,7 +685,7 @@ static Activation *PlaceSimplicityActivation(
          lastAct = actPtr;
          if (actPtr == theGroup->last)
            { break; }
-         else 
+         else
            { actPtr = actPtr->next; }
         }
       else if (complexity < (int) actPtr->theRule->complexity)
@@ -695,21 +695,21 @@ static Activation *PlaceSimplicityActivation(
          lastAct = actPtr;
          if (actPtr == theGroup->last)
            { break; }
-         else 
+         else
            { actPtr = actPtr->next; }
         }
       else
        { break; }
      }
-     
+
    /*========================================*/
    /* Update the salience group information. */
    /*========================================*/
-   
-   if ((lastAct == NULL) || 
+
+   if ((lastAct == NULL) ||
        ((theGroup->prev != NULL) && (theGroup->prev->last == lastAct)))
      { theGroup->first = newActivation; }
-     
+
    if ((theGroup->last == NULL) || (theGroup->last == lastAct))
      { theGroup->last = newActivation; }
 
@@ -762,7 +762,7 @@ static Activation *PlaceRandomActivation(
          lastAct = actPtr;
          if (actPtr == theGroup->last)
            { break; }
-         else 
+         else
            { actPtr = actPtr->next; }
         }
       else if (randomID < actPtr->randomID)
@@ -772,21 +772,21 @@ static Activation *PlaceRandomActivation(
          lastAct = actPtr;
          if (actPtr == theGroup->last)
            { break; }
-         else 
+         else
            { actPtr = actPtr->next; }
         }
       else
        { break; }
      }
-     
+
    /*========================================*/
    /* Update the salience group information. */
    /*========================================*/
-   
-   if ((lastAct == NULL) || 
+
+   if ((lastAct == NULL) ||
        ((theGroup->prev != NULL) && (theGroup->prev->last == lastAct)))
      { theGroup->first = newActivation; }
-     
+
    if ((theGroup->last == NULL) || (theGroup->last == lastAct))
      { theGroup->last = newActivation; }
 
@@ -817,7 +817,7 @@ static unsigned long long *SortPartialMatch(
    /*====================================================*/
 
    nbinds = (unsigned long long *) get_mem(theEnv,sizeof(long long) * binds->bcount);
-      
+
    for (j = 0; j < (unsigned) binds->bcount; j++)
      {
       if ((binds->binds[j].gm.theMatch != NULL) &&
@@ -876,7 +876,7 @@ static int ComparePartialMatches(
 
    basis1 = SortPartialMatch(theEnv,newActivation->basis);
    basis2 = SortPartialMatch(theEnv,actPtr->basis);
-   
+
    /*==============================================================*/
    /* Determine the number of timetags in each of the activations. */
    /* The number of timetags to be compared is the lessor of these */
@@ -885,7 +885,7 @@ static int ComparePartialMatches(
 
    cCount = newActivation->basis->bcount;
    oCount = actPtr->basis->bcount;
- 
+
    if (oCount > cCount) mCount = cCount;
    else mCount = oCount;
 
@@ -900,19 +900,19 @@ static int ComparePartialMatches(
    for (i = 0 ; i < mCount ; i++)
      {
       if (basis1[i] < basis2[i])
-        { 
+        {
          rtn_mem(theEnv,sizeof(long long) * cCount,basis1);
          rtn_mem(theEnv,sizeof(long long) * oCount,basis2);
-         return(LESS_THAN); 
+         return(LESS_THAN);
         }
       else if (basis1[i] > basis2[i])
-        { 
+        {
          rtn_mem(theEnv,sizeof(long long) * cCount,basis1);
          rtn_mem(theEnv,sizeof(long long) * oCount,basis2);
-         return(GREATER_THAN); 
+         return(GREATER_THAN);
         }
      }
-  
+
    rtn_mem(theEnv,sizeof(long long) * cCount,basis1);
    rtn_mem(theEnv,sizeof(long long) * oCount,basis2);
 
@@ -957,7 +957,7 @@ int EnvSetStrategy(
   int value)
   {
    int oldStrategy;
-   
+
    oldStrategy = AgendaData(theEnv)->Strategy;
    AgendaData(theEnv)->Strategy = value;
 
@@ -984,7 +984,7 @@ void GetStrategyCommand(
   Environment *theEnv,
   UDFContext *context,
   CLIPSValue *returnValue)
-  {   
+  {
    returnValue->type = SYMBOL;
    returnValue->value = EnvAddSymbol(theEnv,GetStrategyName(EnvGetStrategy(theEnv)));
   }
@@ -1001,11 +1001,11 @@ void SetStrategyCommand(
    CLIPSValue theArg;
    const char *argument;
    int oldStrategy;
-   
+
    /*=======================*/
    /* Set the return value. */
    /*=======================*/
-   
+
    oldStrategy = AgendaData(theEnv)->Strategy;
    returnValue->type = SYMBOL;
    returnValue->value = EnvAddSymbol(theEnv,GetStrategyName(EnvGetStrategy(theEnv)));

@@ -318,7 +318,7 @@ static void DeftemplateToCode(
    /* Print the factList and lastFact references */
    /* and close the structure.                   */
    /*============================================*/
-   
+
    fprintf(theFile,",NULL,NULL}");
   }
 
@@ -360,11 +360,11 @@ static void SlotToCode(
 
    fprintf(theFile,",");
    PrintHashedExpressionReference(theEnv,theFile,theSlot->defaultList,imageID,maxIndices);
-   
+
    /*============*/
    /* Facet List */
    /*============*/
-   
+
    fprintf(theFile,",");
    PrintHashedExpressionReference(theEnv,theFile,theSlot->facetList,imageID,maxIndices);
    fprintf(theFile,",");
@@ -422,7 +422,7 @@ void DeftemplateCConstructReference(
      }
 
   }
-  
+
 /*******************************************/
 /* InitDeftemplateCode: Writes out runtime */
 /*   initialization code for deftemplates. */

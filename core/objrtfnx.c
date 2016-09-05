@@ -216,18 +216,18 @@ void InstallObjectPrimitives(
    AllocateEnvironmentData(theEnv,OBJECT_RETE_DATA,sizeof(struct objectReteData),DeallocateObjectReteData);
    ObjectReteData(theEnv)->CurrentObjectSlotLength = 1;
 
-   memcpy(&ObjectReteData(theEnv)->ObjectGVInfo1,&objectGVInfo1,sizeof(struct entityRecord));  
+   memcpy(&ObjectReteData(theEnv)->ObjectGVInfo1,&objectGVInfo1,sizeof(struct entityRecord));
    memcpy(&ObjectReteData(theEnv)->ObjectGVInfo2,&objectGVInfo2,sizeof(struct entityRecord));
    memcpy(&ObjectReteData(theEnv)->ObjectGVPNInfo1,&objectGVPNInfo1,sizeof(struct entityRecord));
    memcpy(&ObjectReteData(theEnv)->ObjectGVPNInfo2,&objectGVPNInfo2,sizeof(struct entityRecord));
-   memcpy(&ObjectReteData(theEnv)->ObjectCmpConstantInfo,&objectCmpConstantInfo,sizeof(struct entityRecord)); 
-   memcpy(&ObjectReteData(theEnv)->LengthTestInfo,&lengthTestInfo,sizeof(struct entityRecord)); 
-   memcpy(&ObjectReteData(theEnv)->PNSimpleCompareInfo1,&pNSimpleCompareInfo1,sizeof(struct entityRecord)); 
-   memcpy(&ObjectReteData(theEnv)->PNSimpleCompareInfo2,&pNSimpleCompareInfo2,sizeof(struct entityRecord)); 
-   memcpy(&ObjectReteData(theEnv)->PNSimpleCompareInfo3,&pNSimpleCompareInfo3,sizeof(struct entityRecord)); 
-   memcpy(&ObjectReteData(theEnv)->JNSimpleCompareInfo1,&jNSimpleCompareInfo1,sizeof(struct entityRecord)); 
-   memcpy(&ObjectReteData(theEnv)->JNSimpleCompareInfo2,&jNSimpleCompareInfo2,sizeof(struct entityRecord)); 
-   memcpy(&ObjectReteData(theEnv)->JNSimpleCompareInfo3,&jNSimpleCompareInfo3,sizeof(struct entityRecord)); 
+   memcpy(&ObjectReteData(theEnv)->ObjectCmpConstantInfo,&objectCmpConstantInfo,sizeof(struct entityRecord));
+   memcpy(&ObjectReteData(theEnv)->LengthTestInfo,&lengthTestInfo,sizeof(struct entityRecord));
+   memcpy(&ObjectReteData(theEnv)->PNSimpleCompareInfo1,&pNSimpleCompareInfo1,sizeof(struct entityRecord));
+   memcpy(&ObjectReteData(theEnv)->PNSimpleCompareInfo2,&pNSimpleCompareInfo2,sizeof(struct entityRecord));
+   memcpy(&ObjectReteData(theEnv)->PNSimpleCompareInfo3,&pNSimpleCompareInfo3,sizeof(struct entityRecord));
+   memcpy(&ObjectReteData(theEnv)->JNSimpleCompareInfo1,&jNSimpleCompareInfo1,sizeof(struct entityRecord));
+   memcpy(&ObjectReteData(theEnv)->JNSimpleCompareInfo2,&jNSimpleCompareInfo2,sizeof(struct entityRecord));
+   memcpy(&ObjectReteData(theEnv)->JNSimpleCompareInfo3,&jNSimpleCompareInfo3,sizeof(struct entityRecord));
 
    InstallPrimitive(theEnv,&ObjectReteData(theEnv)->ObjectGVInfo1,OBJ_GET_SLOT_JNVAR1);
    InstallPrimitive(theEnv,&ObjectReteData(theEnv)->ObjectGVInfo2,OBJ_GET_SLOT_JNVAR2);
@@ -242,7 +242,7 @@ void InstallObjectPrimitives(
    InstallPrimitive(theEnv,&ObjectReteData(theEnv)->JNSimpleCompareInfo2,OBJ_JN_CMP2);
    InstallPrimitive(theEnv,&ObjectReteData(theEnv)->JNSimpleCompareInfo3,OBJ_JN_CMP3);
   }
-  
+
 /*****************************************************/
 /* DeallocateObjectReteData: Deallocates environment */
 /*    data for the object rete network.              */
@@ -251,15 +251,15 @@ static void DeallocateObjectReteData(
   Environment *theEnv)
   {
    OBJECT_PATTERN_NODE *theNetwork;
-   
+
 #if BLOAD || BLOAD_AND_BSAVE
    if (Bloaded(theEnv)) return;
 #endif
-   
+
    theNetwork = ObjectReteData(theEnv)->ObjectPatternNetworkPointer;
    DestroyObjectPatternNetwork(theEnv,theNetwork);
   }
-  
+
 /****************************************************************/
 /* DestroyObjectPatternNetwork: Deallocates the data structures */
 /*   associated with the object pattern network.                */
@@ -269,22 +269,22 @@ static void DestroyObjectPatternNetwork(
   OBJECT_PATTERN_NODE *thePattern)
   {
    OBJECT_PATTERN_NODE *patternPtr;
-   
+
    if (thePattern == NULL) return;
-   
+
    while (thePattern != NULL)
      {
       patternPtr = thePattern->rightNode;
-      
+
       DestroyObjectPatternNetwork(theEnv,thePattern->nextLevel);
       DestroyObjectAlphaNodes(theEnv,thePattern->alphaNode);
-#if ! RUN_TIME      
+#if ! RUN_TIME
       rtn_struct(theEnv,objectPatternNode,thePattern);
-#endif      
+#endif
       thePattern = patternPtr;
      }
   }
-  
+
 /************************************************************/
 /* DestroyObjectAlphaNodes: Deallocates the data structures */
 /*   associated with the object alpha nodes.                */
@@ -294,19 +294,19 @@ static void DestroyObjectAlphaNodes(
   OBJECT_ALPHA_NODE *theNode)
   {
    OBJECT_ALPHA_NODE *nodePtr;
-   
+
    if (theNode == NULL) return;
-   
+
    while (theNode != NULL)
      {
       nodePtr = theNode->nxtInGroup;
-       
+
       DestroyAlphaMemory(theEnv,&theNode->header,false);
 
 #if ! RUN_TIME
       rtn_struct(theEnv,objectAlphaNode,theNode);
 #endif
-      
+
       theNode = nodePtr;
      }
   }
@@ -432,7 +432,7 @@ static bool ObjectGetVarJNFunction1(
    struct ObjectMatchVar1 *hack;
    Instance *theInstance;
    struct multifieldMarker *theMarks;
-   
+
    hack = (struct ObjectMatchVar1 *) ValueToBitMap(theValue);
    GetPatternObjectAndMarks(theEnv,((int) hack->whichPattern),hack->lhs,hack->rhs,&theInstance,&theMarks);
    GetObjectValueGeneral(theEnv,theResult,theInstance,theMarks,hack);
@@ -480,7 +480,7 @@ static bool ObjectGetVarJNFunction2(
    struct ObjectMatchVar2 *hack;
    Instance *theInstance;
    struct multifieldMarker *theMarks;
-   
+
    hack = (struct ObjectMatchVar2 *) ValueToBitMap(theValue);
    GetPatternObjectAndMarks(theEnv,((int) hack->whichPattern),hack->lhs,hack->rhs,&theInstance,&theMarks);
    GetObjectValueSimple(theEnv,theResult,theInstance,hack);
@@ -1030,7 +1030,7 @@ static void GetPatternObjectAndMarks(
      }
    else if ((((int) EngineData(theEnv)->GlobalJoin->depth) - 1) == pattern)
      {
-      *theInstance = (Instance *) 
+      *theInstance = (Instance *)
         get_nth_pm_match(EngineData(theEnv)->GlobalRHSBinds,0)->matchingItem;
       *theMarkers = get_nth_pm_match(EngineData(theEnv)->GlobalRHSBinds,0)->markers;
      }
@@ -1067,7 +1067,7 @@ static void GetObjectValueGeneral(
   {
    long field, extent; /* 6.04 Bug Fix */
    INSTANCE_SLOT **insSlot,*basisSlot;
-   
+
    if (matchVar->objectAddress)
      {
       returnValue->type = INSTANCE_ADDRESS;
@@ -1174,7 +1174,7 @@ static void GetObjectValueSimple(
    INSTANCE_SLOT **insSlot,*basisSlot;
    SEGMENT *segmentPtr;
    FIELD *fieldPtr;
-   
+
    insSlot =
      &theInstance->slotAddresses
      [theInstance->cls->slotNameMap[matchVar->whichSlot] - 1];

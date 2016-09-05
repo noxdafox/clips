@@ -19,7 +19,7 @@
 /* Revision History:                                         */
 /*                                                           */
 /*      6.30: Used genstrcpy instead of strcpy.              */
-/*                                                           */             
+/*                                                           */
 /*            Removed conditional code for unsupported       */
 /*            compilers/operating systems (IBM_MCW,          */
 /*            MAC_MCW, and IBM_TBC).                         */
@@ -76,7 +76,7 @@ void InitializeStringRouter(
 
    EnvAddRouter(theEnv,"string",0,FindString,PrintString,GetcString,UngetcString,NULL);
   }
-  
+
 /*******************************************/
 /* DeallocateStringRouterData: Deallocates */
 /*    environment data for string routers. */
@@ -85,7 +85,7 @@ static void DeallocateStringRouterData(
   Environment *theEnv)
   {
    struct stringRouter *tmpPtr, *nextPtr;
-   
+
    tmpPtr = StringRouterData(theEnv)->ListOfStringRouters;
    while (tmpPtr != NULL)
      {
@@ -135,9 +135,9 @@ static void PrintString(
      }
 
    if (head->readWriteType != WRITE_STRING) return;
-   
+
    if (head->maximumPosition == 0) return;
-   
+
    if ((head->currentPosition + 1) >= head->maximumPosition) return;
 
    genstrncpy(&head->writeString[head->currentPosition],

@@ -22,13 +22,13 @@
 /*                                                           */
 /*            Renamed BOOLEAN macro type to intBool.         */
 /*                                                           */
-/*            Added support for passing context information  */ 
+/*            Added support for passing context information  */
 /*            to the router functions.                       */
 /*                                                           */
 /*      6.30: Fixed issues with passing context to routers.  */
 /*                                                           */
 /*            Added AwaitingInput flag.                      */
-/*                                                           */             
+/*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
@@ -103,7 +103,7 @@ struct router
   };
 
 struct routerData
-  { 
+  {
    size_t CommandBufferInputCount;
    bool AwaitingInput;
    const char *LineCountRouter;

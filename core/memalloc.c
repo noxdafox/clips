@@ -95,12 +95,12 @@ void InitializeMemory(
    else
      {
       int i;
-      
+
       for (i = 0; i < MEM_TABLE_SIZE; i++) MemoryData(theEnv)->MemoryTable[i] = NULL;
      }
 #else // MEM_TABLE_SIZE == 0
       MemoryData(theEnv)->MemoryTable = NULL;
-#endif 
+#endif
   }
 
 /***************************************************/
@@ -111,9 +111,9 @@ void *genalloc(
   size_t size)
   {
    void *memPtr;
-      
+
    memPtr = malloc(size);
-        
+
    if (memPtr == NULL)
      {
       EnvReleaseMem(theEnv,(long) ((size * 5 > 4096) ? size * 5 : 4096));
@@ -177,7 +177,7 @@ void genfree(
   Environment *theEnv,
   void *waste,
   size_t size)
-  {   
+  {
    free(waste);
 
    MemoryData(theEnv)->MemoryAmount -= (long) size;
@@ -447,7 +447,7 @@ void rm3(
      }
 
    if (size < (long) sizeof(char *)) size = sizeof(char *);
-   
+
 #if (MEM_TABLE_SIZE > 0)
    if (size >= MEM_TABLE_SIZE)
      {

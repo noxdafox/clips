@@ -235,7 +235,7 @@ void LoadInstancesCommand(
    instanceCount = EnvLoadInstances(theEnv,fileFound);
    if (EvaluationData(theEnv)->EvaluationError)
      { ProcessFileErrorMessage(theEnv,"load-instances",fileFound); }
-     
+
    returnValue->type = INTEGER;
    returnValue->value = EnvAddLong(theEnv,instanceCount);
   }
@@ -276,11 +276,11 @@ long EnvLoadInstancesFromString(
    if ((theMax == -1) ? (! OpenStringSource(theEnv,theStrRouter,theString,0)) :
                         (! OpenTextSource(theEnv,theStrRouter,theString,0,theMax)))
      { return(-1L); }
-     
+
    theCount = LoadOrRestoreInstances(theEnv,theStrRouter,true,false);
-   
+
    CloseStringSource(theEnv,theStrRouter);
-   
+
    return theCount;
   }
 
@@ -310,7 +310,7 @@ void RestoreInstancesCommand(
    instanceCount = EnvRestoreInstances(theEnv,fileFound);
    if (EvaluationData(theEnv)->EvaluationError)
      { ProcessFileErrorMessage(theEnv,"restore-instances",fileFound); }
-     
+
    returnValue->type = INTEGER;
    returnValue->value = EnvAddLong(theEnv,instanceCount);
   }
@@ -351,11 +351,11 @@ long EnvRestoreInstancesFromString(
    if ((theMax == -1) ? (! OpenStringSource(theEnv,theStrRouter,theString,0)) :
                         (! OpenTextSource(theEnv,theStrRouter,theString,0,(unsigned) theMax)))
      { return(-1L); }
-     
+
    theCount = LoadOrRestoreInstances(theEnv,theStrRouter,false,false);
-   
+
    CloseStringSource(theEnv,theStrRouter);
-   
+
    return(theCount);
   }
 
@@ -387,7 +387,7 @@ void BinaryLoadInstancesCommand(
    instanceCount = EnvBinaryLoadInstances(theEnv,fileFound);
    if (EvaluationData(theEnv)->EvaluationError)
      { ProcessFileErrorMessage(theEnv,"bload-instances",fileFound); }
-     
+
    returnValue->type = INTEGER;
    returnValue->value = EnvAddLong(theEnv,instanceCount);
   }
@@ -419,7 +419,7 @@ long EnvBinaryLoadInstances(
       EnvSetEvaluationError(theEnv,true);
       return(-1L);
      }
-   
+
    EnvIncrementGCLocks(theEnv);
    ReadNeededAtomicValues(theEnv);
 
@@ -583,7 +583,7 @@ long EnvBinarySaveInstances(
   {
    return EnvBinarySaveInstancesDriver(theEnv,file,saveCode,NULL,true);
   }
-  
+
 /*******************************************************
   NAME         : EnvBinarySaveInstancesDriver
   DESCRIPTION  : Saves current instances to binary file
@@ -1023,7 +1023,7 @@ static void SaveSingleInstanceText(
 static void WriteBinaryHeader(
   Environment *theEnv,
   FILE *bsaveFP)
-  {   
+  {
    fwrite(InstanceFileData(theEnv)->InstanceBinaryPrefixID,
           (STD_SIZE) (strlen(InstanceFileData(theEnv)->InstanceBinaryPrefixID) + 1),1,bsaveFP);
    fwrite(InstanceFileData(theEnv)->InstanceBinaryVersionID,
@@ -1175,7 +1175,7 @@ static void SaveSingleInstanceBinary(
       Write out the number of slot value
       atoms for the whole instance
       ================================== */
-   if (theInstance->cls->instanceSlotCount != 0) // (totalValueCount != 0L) : Bug fix if any slots, write out count 
+   if (theInstance->cls->instanceSlotCount != 0) // (totalValueCount != 0L) : Bug fix if any slots, write out count
      fwrite(&totalValueCount,(int) sizeof(unsigned long),1,bsaveFP);
 
    /* ==============================
@@ -1292,9 +1292,9 @@ static long LoadOrRestoreInstances(
    GetToken(theEnv,ilog,&DefclassData(theEnv)->ObjectParseToken);
    svoverride = InstanceData(theEnv)->MkInsMsgPass;
    InstanceData(theEnv)->MkInsMsgPass = usemsgs;
-   while ((GetType(DefclassData(theEnv)->ObjectParseToken) != STOP) && (EvaluationData(theEnv)->HaltExecution != true))
+   while ((DefclassData(theEnv)->ObjectParseToken.tknType != STOP_TOKEN) && (EvaluationData(theEnv)->HaltExecution != true))
      {
-      if (GetType(DefclassData(theEnv)->ObjectParseToken) != LPAREN)
+      if (DefclassData(theEnv)->ObjectParseToken.tknType != LEFT_PARENTHESIS_TOKEN)
         {
          SyntaxErrorMessage(theEnv,"instance definition");
          rtn_struct(theEnv,expr,top);
@@ -1368,7 +1368,7 @@ static void ProcessFileErrorMessage(
   INPUTS       : The name of the file
   RETURNS      : True if OK, false otherwise
   SIDE EFFECTS : Input prefix and version read
-  NOTES        : Assumes file already open with 
+  NOTES        : Assumes file already open with
                  GenOpenReadBinary
  *******************************************************/
 static bool VerifyBinaryHeader(

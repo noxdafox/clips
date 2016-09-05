@@ -108,7 +108,7 @@ void DefruleBasicCommands(
    AddClearReadyFunction(theEnv,"defrule",ClearDefrulesReady,0);
    EnvAddClearFunction(theEnv,"defrule",ClearDefrules,0);
 #endif
-   
+
 #if DEBUGGING_FUNCTIONS
    AddWatchItem(theEnv,"rules",0,&DefruleData(theEnv)->WatchRules,70,DefruleWatchAccess,DefruleWatchPrint);
 #endif
@@ -148,12 +148,12 @@ static void ResetDefrules(
    Defmodule *theModule;
    struct joinLink *theLink;
    struct partialMatch *notParent;
-  
+
    DefruleData(theEnv)->CurrentEntityTimeTag = 1L;
    EnvClearFocusStack(theEnv);
    theModule = EnvFindDefmodule(theEnv,"MAIN");
    EnvFocus(theEnv,theModule);
-   
+
    for (theLink = DefruleData(theEnv)->RightPrimeJoins;
         theLink != NULL;
         theLink = theLink->next)
@@ -162,25 +162,25 @@ static void ResetDefrules(
    for (theLink = DefruleData(theEnv)->LeftPrimeJoins;
         theLink != NULL;
         theLink = theLink->next)
-     { 
-      if ((theLink->join->patternIsNegated || theLink->join->joinFromTheRight) && 
+     {
+      if ((theLink->join->patternIsNegated || theLink->join->joinFromTheRight) &&
           (! theLink->join->patternIsExists))
         {
          notParent = theLink->join->leftMemory->beta[0];
-         
+
          if (notParent->marker)
            { RemoveBlockedLink(notParent); }
-           
+
          /*==========================================================*/
          /* Prevent any retractions from generating partial matches. */
          /*==========================================================*/
-           
+
          notParent->marker = notParent;
-         
+
          if (notParent->children != NULL)
            { PosEntryRetractBeta(theEnv,notParent,notParent->children,NETWORK_ASSERT); }
            /*
-         if (notParent->dependents != NULL) 
+         if (notParent->dependents != NULL)
            { RemoveLogicalSupport(theEnv,notParent); } */
         }
      }
@@ -194,7 +194,7 @@ static void ResetDefrulesPrime(
   {
    struct joinLink *theLink;
    struct partialMatch *notParent;
-      
+
    for (theLink = DefruleData(theEnv)->RightPrimeJoins;
         theLink != NULL;
         theLink = theLink->next)
@@ -203,8 +203,8 @@ static void ResetDefrulesPrime(
    for (theLink = DefruleData(theEnv)->LeftPrimeJoins;
         theLink != NULL;
         theLink = theLink->next)
-     { 
-      if ((theLink->join->patternIsNegated || theLink->join->joinFromTheRight) && 
+     {
+      if ((theLink->join->patternIsNegated || theLink->join->joinFromTheRight) &&
           (! theLink->join->patternIsExists))
         {
          notParent = theLink->join->leftMemory->beta[0];
@@ -266,7 +266,7 @@ static void SaveDefrules(
   Defmodule *theModule,
   const char *logicalName)
   {
-   SaveConstruct(theEnv,theModule,logicalName,DefruleData(theEnv)->DefruleConstruct); 
+   SaveConstruct(theEnv,theModule,logicalName,DefruleData(theEnv)->DefruleConstruct);
   }
 
 /******************************************/
@@ -289,7 +289,7 @@ bool EnvUndefrule(
   Environment *theEnv,
   Defrule *theDefrule)
   {
-   return(Undefconstruct(theEnv,theDefrule,DefruleData(theEnv)->DefruleConstruct)); 
+   return(Undefconstruct(theEnv,theDefrule,DefruleData(theEnv)->DefruleConstruct));
   }
 
 /************************************************/
@@ -364,7 +364,7 @@ void ListDefrulesCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   ListConstructCommand(context,DefruleData(theEnv)->DefruleConstruct); 
+   ListConstructCommand(context,DefruleData(theEnv)->DefruleConstruct);
   }
 
 /*************************************/
@@ -446,7 +446,7 @@ void EnvSetDefruleWatchActivations(
 
 /****************************************************/
 /* EnvSetDefruleWatchFirings: C access routine for  */
-/*   setting the current watch value of a defrule's */ 
+/*   setting the current watch value of a defrule's */
 /*   firings.                                       */
 /****************************************************/
 void EnvSetDefruleWatchFirings(
@@ -494,7 +494,7 @@ bool DefruleWatchPrint(
   const char *logName,
   int code,
   struct expr *argExprs)
-  {   
+  {
    if (code)
      return(ConstructPrintWatchAccess(theEnv,DefruleData(theEnv)->DefruleConstruct,logName,argExprs,
                                       (bool (*)(Environment *,void *)) EnvGetDefruleWatchActivations,

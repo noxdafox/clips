@@ -123,7 +123,7 @@ bool ParseDefglobal(
    /*===========================*/
 
    GetToken(theEnv,readSource,&theToken);
-   if (theToken.type == SYMBOL)
+   if (theToken.tknType == SYMBOL_TOKEN)
      {
       /*=================================================*/
       /* The optional module name can't contain a module */
@@ -223,15 +223,15 @@ static bool GetVariableDefinition(
    /*========================================*/
 
    if (! tokenRead) GetToken(theEnv,readSource,theToken);
-   if (theToken->type == RPAREN) return false;
+   if (theToken->tknType == RIGHT_PARENTHESIS_TOKEN) return false;
 
-   if (theToken->type == SF_VARIABLE)
+   if (theToken->tknType == SF_VARIABLE_TOKEN)
      {
       SyntaxErrorMessage(theEnv,"defglobal");
       *defglobalError = true;
       return false;
      }
-   else if (theToken->type != GBL_VARIABLE)
+   else if (theToken->tknType != GBL_VARIABLE_TOKEN)
      {
       SyntaxErrorMessage(theEnv,"defglobal");
       *defglobalError = true;
@@ -250,7 +250,7 @@ static bool GetVariableDefinition(
    if ((EnvGetWatchItem(theEnv,"compilations") == true) && GetPrintWhileLoading(theEnv))
      {
       const char *outRouter = WDIALOG;
-      if (QFindDefglobal(theEnv,variableName) != NULL) 
+      if (QFindDefglobal(theEnv,variableName) != NULL)
         {
          outRouter = WWARNING;
          PrintWarningID(theEnv,"CSTRCPSR",1,true);

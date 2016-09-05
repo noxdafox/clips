@@ -19,7 +19,7 @@
 /* Revision History:                                         */
 /*                                                           */
 /*      6.24: Support for deftemplate-slot-default-value     */
-/*            function.                                      */ 
+/*            function.                                      */
 /*                                                           */
 /*      6.30: Support for long long integers.                */
 /*                                                           */

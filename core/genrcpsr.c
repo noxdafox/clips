@@ -122,7 +122,7 @@
    static bool                    DuplicateParameters(Environment *,EXPRESSION *,EXPRESSION **,SYMBOL_HN *);
    static EXPRESSION             *AddParameter(Environment *,EXPRESSION *,EXPRESSION *,SYMBOL_HN *,RESTRICTION *);
    static EXPRESSION             *ValidType(Environment *,SYMBOL_HN *);
-   static bool                    RedundantClasses(Environment *,void *,void *);
+   static bool                    RedundantClasses(Environment *,Defclass *,Defclass *);
    static Defgeneric             *AddGeneric(Environment *,SYMBOL_HN *,bool *);
    static Defmethod              *AddGenericMethod(Environment *,Defgeneric *,int,short);
    static int                     RestrictionsCompare(EXPRESSION *,int,int,int,Defmethod *);
@@ -174,7 +174,7 @@ bool ParseDefgeneric(
    if (ValidGenericName(theEnv,ValueToString(gname)) == false)
      return true;
 
-   if (DefgenericData(theEnv)->GenericInputToken.type != RPAREN)
+   if (DefgenericData(theEnv)->GenericInputToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       PrintErrorID(theEnv,"GENRCPSR",1,false);
       EnvPrintRouter(theEnv,WERROR,"Expected ')' to complete defgeneric.\n");
@@ -323,12 +323,12 @@ bool ParseDefmethod(
    actions = ParseProcActions(theEnv,"method",readSource,
                               &DefgenericData(theEnv)->GenericInputToken,params,wildcard,
                               NULL,NULL,&lvars,NULL);
-                              
+
    /*===========================================================*/
    /* Check for the closing right parenthesis of the defmethod. */
    /*===========================================================*/
 
-   if ((DefgenericData(theEnv)->GenericInputToken.type != RPAREN) &&  /* DR0872 */
+   if ((DefgenericData(theEnv)->GenericInputToken.tknType != RIGHT_PARENTHESIS_TOKEN) &&  /* DR0872 */
        (actions != NULL))
      {
       SyntaxErrorMessage(theEnv,"defmethod");
@@ -376,7 +376,7 @@ bool ParseDefmethod(
        (! ConstructData(theEnv)->CheckSyntaxMode))
      {
       const char *outRouter = WDIALOG;
-     
+
       if (mnew)
         {
          EnvPrintRouter(theEnv,outRouter,"   Method #");
@@ -538,7 +538,7 @@ Defmethod *AddMethod(
       ExpressionInstall(theEnv,rptr->query);
       for (j = 0 ; j < rptr->tcnt ; j++)
 #if OBJECT_SYSTEM
-        IncrementDefclassBusyCount(theEnv,rptr->types[j]);
+        IncrementDefclassBusyCount(theEnv,(Defclass *) rptr->types[j]);
 #else
         IncrementIntegerCount((INTEGER_HN *) rptr->types[j]);
 #endif
@@ -735,7 +735,7 @@ static bool ValidGenericName(
    /* See if the defgeneric already exists in   */
    /* this module (or is imported from another) */
    /*===========================================*/
-   
+
    theDefgeneric = EnvFindDefgenericInModule(theEnv,theDefgenericName);
    if (theDefgeneric != NULL)
      {
@@ -822,7 +822,7 @@ static SYMBOL_HN *ParseMethodNameAndIndex(
                                       NULL,"&",true,false,true,true);
    if (gname == NULL)
      return NULL;
-   if (GetType(DefgenericData(theEnv)->GenericInputToken) == INTEGER)
+   if (DefgenericData(theEnv)->GenericInputToken.tknType == INTEGER_TOKEN)
      {
       int tmp;
 
@@ -841,7 +841,7 @@ static SYMBOL_HN *ParseMethodNameAndIndex(
       PPCRAndIndent(theEnv);
       GetToken(theEnv,readSource,&DefgenericData(theEnv)->GenericInputToken);
      }
-   if (GetType(DefgenericData(theEnv)->GenericInputToken) == STRING)
+   if (DefgenericData(theEnv)->GenericInputToken.tknType == STRING_TOKEN)
      {
       PPBackup(theEnv);
       PPBackup(theEnv);
@@ -882,14 +882,14 @@ static int ParseMethodParameters(
 
    *wildcard = NULL;
    *params = NULL;
-   if (GetType(DefgenericData(theEnv)->GenericInputToken) != LPAREN)
+   if (DefgenericData(theEnv)->GenericInputToken.tknType != LEFT_PARENTHESIS_TOKEN)
      {
       PrintErrorID(theEnv,"GENRCPSR",7,false);
       EnvPrintRouter(theEnv,WERROR,"Expected a '(' to begin method parameter restrictions.\n");
       return(-1);
      }
    GetToken(theEnv,readSource,&DefgenericData(theEnv)->GenericInputToken);
-   while (DefgenericData(theEnv)->GenericInputToken.type != RPAREN)
+   while (DefgenericData(theEnv)->GenericInputToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       if (*wildcard != NULL)
         {
@@ -898,7 +898,8 @@ static int ParseMethodParameters(
          EnvPrintRouter(theEnv,WERROR,"No parameters allowed after wildcard parameter.\n");
          return(-1);
         }
-      if ((DefgenericData(theEnv)->GenericInputToken.type == SF_VARIABLE) || (DefgenericData(theEnv)->GenericInputToken.type == MF_VARIABLE))
+      if ((DefgenericData(theEnv)->GenericInputToken.tknType == SF_VARIABLE_TOKEN) ||
+          (DefgenericData(theEnv)->GenericInputToken.tknType == MF_VARIABLE_TOKEN))
         {
          pname = (SYMBOL_HN *) DefgenericData(theEnv)->GenericInputToken.value;
          if (DuplicateParameters(theEnv,phead,&pprv,pname))
@@ -906,7 +907,7 @@ static int ParseMethodParameters(
             DeleteTempRestricts(theEnv,phead);
             return(-1);
            }
-         if (DefgenericData(theEnv)->GenericInputToken.type == MF_VARIABLE)
+         if (DefgenericData(theEnv)->GenericInputToken.tknType == MF_VARIABLE_TOKEN)
            *wildcard = pname;
          rtmp = get_struct(theEnv,restriction);
          PackRestrictionTypes(theEnv,rtmp,NULL);
@@ -914,11 +915,11 @@ static int ParseMethodParameters(
          phead = AddParameter(theEnv,phead,pprv,pname,rtmp);
          rcnt++;
         }
-      else if (DefgenericData(theEnv)->GenericInputToken.type == LPAREN)
+      else if (DefgenericData(theEnv)->GenericInputToken.tknType == LEFT_PARENTHESIS_TOKEN)
         {
          GetToken(theEnv,readSource,&DefgenericData(theEnv)->GenericInputToken);
-         if ((DefgenericData(theEnv)->GenericInputToken.type != SF_VARIABLE) &&
-             (DefgenericData(theEnv)->GenericInputToken.type != MF_VARIABLE))
+         if ((DefgenericData(theEnv)->GenericInputToken.tknType != SF_VARIABLE_TOKEN) &&
+             (DefgenericData(theEnv)->GenericInputToken.tknType != MF_VARIABLE_TOKEN))
            {
             DeleteTempRestricts(theEnv,phead);
             PrintErrorID(theEnv,"GENRCPSR",8,false);
@@ -931,7 +932,7 @@ static int ParseMethodParameters(
             DeleteTempRestricts(theEnv,phead);
             return(-1);
            }
-         if (DefgenericData(theEnv)->GenericInputToken.type == MF_VARIABLE)
+         if (DefgenericData(theEnv)->GenericInputToken.tknType == MF_VARIABLE_TOKEN)
            *wildcard = pname;
          SavePPBuffer(theEnv," ");
          rtmp = ParseRestriction(theEnv,readSource);
@@ -992,7 +993,7 @@ static RESTRICTION *ParseRestriction(
    RESTRICTION *rptr;
 
    GetToken(theEnv,readSource,&DefgenericData(theEnv)->GenericInputToken);
-   while (DefgenericData(theEnv)->GenericInputToken.type != RPAREN)
+   while (DefgenericData(theEnv)->GenericInputToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       if (query != NULL)
         {
@@ -1002,7 +1003,7 @@ static RESTRICTION *ParseRestriction(
          ReturnExpression(theEnv,types);
          return NULL;
         }
-      if (DefgenericData(theEnv)->GenericInputToken.type == SYMBOL)
+      if (DefgenericData(theEnv)->GenericInputToken.tknType == SYMBOL_TOKEN)
         {
          new_types = ValidType(theEnv,(SYMBOL_HN *) DefgenericData(theEnv)->GenericInputToken.value);
          if (new_types == NULL)
@@ -1032,7 +1033,7 @@ static RESTRICTION *ParseRestriction(
                      ReturnExpression(theEnv,new_types);
                      return NULL;
                     }
-                  if (RedundantClasses(theEnv,tmp->value,tmp2->value))
+                  if (RedundantClasses(theEnv,(Defclass *) tmp->value,(Defclass *) tmp2->value))
                     {
                      ReturnExpression(theEnv,query);
                      ReturnExpression(theEnv,types);
@@ -1045,7 +1046,7 @@ static RESTRICTION *ParseRestriction(
             typesbot->nextArg = new_types;
            }
         }
-      else if (DefgenericData(theEnv)->GenericInputToken.type == LPAREN)
+      else if (DefgenericData(theEnv)->GenericInputToken.tknType == LEFT_PARENTHESIS_TOKEN)
         {
          query = Function1Parse(theEnv,readSource);
          if (query == NULL)
@@ -1063,7 +1064,7 @@ static RESTRICTION *ParseRestriction(
            }
         }
 #if DEFGLOBAL_CONSTRUCT
-      else if (DefgenericData(theEnv)->GenericInputToken.type == GBL_VARIABLE)
+      else if (DefgenericData(theEnv)->GenericInputToken.tknType == GBL_VARIABLE_TOKEN)
         query = GenConstant(theEnv,GBL_VARIABLE,DefgenericData(theEnv)->GenericInputToken.value);
 #endif
       else
@@ -1280,15 +1281,15 @@ static EXPRESSION *ValidType(
  *************************************************************/
 static bool RedundantClasses(
   Environment *theEnv,
-  void *c1,
-  void *c2)
+  Defclass *c1,
+  Defclass *c2)
   {
    const char *tname;
 
 #if OBJECT_SYSTEM
-   if (HasSuperclass((Defclass *) c1,(Defclass *) c2))
+   if (HasSuperclass(c1,c2))
      tname = EnvGetDefclassName(theEnv,c1);
-   else if (HasSuperclass((Defclass *) c2,(Defclass *) c1))
+   else if (HasSuperclass(c2,c1))
      tname = EnvGetDefclassName(theEnv,c2);
 #else
    if (SubsumeType(ValueToInteger(c1),ValueToInteger(c2)))

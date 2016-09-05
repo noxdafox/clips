@@ -267,13 +267,13 @@ static struct templateSlot *SlotDeclarations(
    struct templateSlot *newSlot, *slotList = NULL, *lastSlot = NULL;
    struct templateSlot *multiSlot = NULL;
 
-   while (inputToken->type != RPAREN)
+   while (inputToken->tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       /*====================================================*/
       /* Slots begin with a '(' followed by a slot keyword. */
       /*====================================================*/
 
-      if (inputToken->type != LPAREN)
+      if (inputToken->tknType != LEFT_PARENTHESIS_TOKEN)
         {
          SyntaxErrorMessage(theEnv,"deftemplate");
          ReturnSlots(theEnv,slotList);
@@ -283,7 +283,7 @@ static struct templateSlot *SlotDeclarations(
         }
 
       GetToken(theEnv,readSource,inputToken);
-      if (inputToken->type != SYMBOL)
+      if (inputToken->tknType != SYMBOL_TOKEN)
         {
          SyntaxErrorMessage(theEnv,"deftemplate");
          ReturnSlots(theEnv,slotList);
@@ -323,7 +323,7 @@ static struct templateSlot *SlotDeclarations(
       /*================================*/
 
       GetToken(theEnv,readSource,inputToken);
-      if (inputToken->type != RPAREN)
+      if (inputToken->tknType != RIGHT_PARENTHESIS_TOKEN)
         {
          PPBackup(theEnv);
          SavePPBuffer(theEnv,"\n   ");
@@ -384,7 +384,7 @@ static struct templateSlot *ParseSlot(
 
    SavePPBuffer(theEnv," ");
    GetToken(theEnv,readSource,inputToken);
-   if (inputToken->type != SYMBOL)
+   if (inputToken->tknType != SYMBOL_TOKEN)
      {
       SyntaxErrorMessage(theEnv,"deftemplate");
       DeftemplateData(theEnv)->DeftemplateError = true;
@@ -495,7 +495,7 @@ static struct templateSlot *DefinedSlots(
    InitializeConstraintParseRecord(&parsedConstraints);
    GetToken(theEnv,readSource,inputToken);
 
-   while (inputToken->type != RPAREN)
+   while (inputToken->tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       PPBackup(theEnv);
       SavePPBuffer(theEnv," ");
@@ -505,7 +505,7 @@ static struct templateSlot *DefinedSlots(
       /* Slot attributes begin with a left parenthesis. */
       /*================================================*/
 
-      if (inputToken->type != LPAREN)
+      if (inputToken->tknType != LEFT_PARENTHESIS_TOKEN)
         {
          SyntaxErrorMessage(theEnv,"deftemplate");
          ReturnSlots(theEnv,newSlot);
@@ -518,7 +518,7 @@ static struct templateSlot *DefinedSlots(
       /*=============================================*/
 
       GetToken(theEnv,readSource,inputToken);
-      if (inputToken->type != SYMBOL)
+      if (inputToken->tknType != SYMBOL_TOKEN)
         {
          SyntaxErrorMessage(theEnv,"deftemplate");
          ReturnSlots(theEnv,newSlot);
@@ -604,11 +604,11 @@ static struct templateSlot *DefinedSlots(
            }
          newSlot->defaultList = defaultList;
         }
-        
+
       /*===============================================*/
       /* else if the attribute is the facet attribute. */
       /*===============================================*/
-      
+
       else if (strcmp(ValueToString(inputToken->value),"facet") == 0)
         {
          if (! ParseFacetAttribute(theEnv,readSource,newSlot,false))
@@ -618,7 +618,7 @@ static struct templateSlot *DefinedSlots(
             return NULL;
            }
         }
-        
+
       else if (strcmp(ValueToString(inputToken->value),"multifacet") == 0)
         {
          if (! ParseFacetAttribute(theEnv,readSource,newSlot,true))
@@ -671,32 +671,32 @@ static bool ParseFacetAttribute(
    /*==============================*/
    /* Parse the name of the facet. */
    /*==============================*/
-   
+
    SavePPBuffer(theEnv," ");
    GetToken(theEnv,readSource,&inputToken);
-   
+
    /*==================================*/
    /* The facet name must be a symbol. */
    /*==================================*/
-   
-   if (inputToken.type != SYMBOL)
+
+   if (inputToken.tknType != SYMBOL_TOKEN)
      {
       if (multifacet) SyntaxErrorMessage(theEnv,"multifacet attribute");
       else SyntaxErrorMessage(theEnv,"facet attribute");
       return false;
      }
-     
+
    facetName = (SYMBOL_HN *) inputToken.value;
 
    /*===================================*/
    /* Don't allow facets with the same  */
    /* name as a predefined CLIPS facet. */
    /*===================================*/
-   
+
    /*====================================*/
    /* Has the facet already been parsed? */
    /*====================================*/
-   
+
    for (tempFacet = theSlot->facetList;
         tempFacet != NULL;
         tempFacet = tempFacet->nextArg)
@@ -708,21 +708,21 @@ static bool ParseFacetAttribute(
          return false;
         }
      }
-   
+
    /*===============================*/
    /* Parse the value of the facet. */
    /*===============================*/
-   
+
    SavePPBuffer(theEnv," ");
    GetToken(theEnv,readSource,&inputToken);
 
-   while (inputToken.type != RPAREN)
+   while (inputToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       /*=====================================*/
       /* The facet value must be a constant. */
       /*=====================================*/
-   
-      if (! ConstantType(inputToken.type))
+
+      if (! ConstantType(TokenTypeToType(inputToken.tknType)))
         {
          if (multifacet) SyntaxErrorMessage(theEnv,"multifacet attribute");
          else SyntaxErrorMessage(theEnv,"facet attribute");
@@ -733,41 +733,41 @@ static bool ParseFacetAttribute(
       /*======================================*/
       /* Add the value to the list of values. */
       /*======================================*/
-      
+
       if (lastValue == NULL)
-        { 
-         facetValue = GenConstant(theEnv,inputToken.type,inputToken.value);
+        {
+         facetValue = GenConstant(theEnv,TokenTypeToType(inputToken.tknType),inputToken.value);
          lastValue = facetValue;
         }
       else
         {
-         lastValue->nextArg = GenConstant(theEnv,inputToken.type,inputToken.value);
+         lastValue->nextArg = GenConstant(theEnv,TokenTypeToType(inputToken.tknType),inputToken.value);
          lastValue = lastValue->nextArg;
         }
-        
+
       /*=====================*/
       /* Get the next token. */
       /*=====================*/
-      
+
       SavePPBuffer(theEnv," ");
       GetToken(theEnv,readSource,&inputToken);
-      
+
       /*===============================================*/
       /* A facet can't contain more than one constant. */
       /*===============================================*/
-      
-      if ((! multifacet) && (inputToken.type != RPAREN))
+
+      if ((! multifacet) && (inputToken.tknType != RIGHT_PARENTHESIS_TOKEN))
         {
          SyntaxErrorMessage(theEnv,"facet attribute");
          ReturnExpression(theEnv,facetValue);
          return false;
         }
      }
-     
+
    /*========================================================*/
    /* Remove the space before the closing right parenthesis. */
    /*========================================================*/
-   
+
    PPBackup(theEnv);
    PPBackup(theEnv);
    SavePPBuffer(theEnv,")");
@@ -775,7 +775,7 @@ static bool ParseFacetAttribute(
    /*====================================*/
    /* A facet must contain one constant. */
    /*====================================*/
-      
+
    if ((! multifacet) && (facetValue == NULL))
      {
       SyntaxErrorMessage(theEnv,"facet attribute");
@@ -785,20 +785,20 @@ static bool ParseFacetAttribute(
    /*=================================================*/
    /* Add the facet to the list of the slot's facets. */
    /*=================================================*/
-   
+
    facetPair = GenConstant(theEnv,SYMBOL,facetName);
-   
+
    if (multifacet)
-     { 
+     {
       facetPair->argList = GenConstant(theEnv,FCALL,FindFunction(theEnv,"create$"));
       facetPair->argList->argList = facetValue;
      }
    else
      { facetPair->argList = facetValue; }
-   
+
    facetPair->nextArg = theSlot->facetList;
    theSlot->facetList = facetPair;
-   
+
    /*===============================================*/
    /* The facet/multifacet was successfully parsed. */
    /*===============================================*/

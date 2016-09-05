@@ -61,7 +61,7 @@
 
 #if BLOAD_INSTANCES || BSAVE_INSTANCES
 struct instanceFileData
-  { 
+  {
    const char *InstanceBinaryPrefixID;
    const char *InstanceBinaryVersionID;
    unsigned long BinaryInstanceFileSize;

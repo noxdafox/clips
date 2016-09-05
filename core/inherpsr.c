@@ -129,13 +129,13 @@ PACKED_CLASS_LINKS *ParseSuperclasses(
    Defclass *sclass;
    PACKED_CLASS_LINKS *plinks;
 
-   if (GetType(DefclassData(theEnv)->ObjectParseToken) != LPAREN)
+   if (DefclassData(theEnv)->ObjectParseToken.tknType != LEFT_PARENTHESIS_TOKEN)
      {
       SyntaxErrorMessage(theEnv,"defclass inheritance");
       return NULL;
      }
    GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
-   if ((GetType(DefclassData(theEnv)->ObjectParseToken) != SYMBOL) ? true :
+   if ((DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TOKEN) ? true :
        (DefclassData(theEnv)->ObjectParseToken.value != (void *) DefclassData(theEnv)->ISA_SYMBOL))
      {
       SyntaxErrorMessage(theEnv,"defclass inheritance");
@@ -143,9 +143,9 @@ PACKED_CLASS_LINKS *ParseSuperclasses(
      }
    SavePPBuffer(theEnv," ");
    GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
-   while (GetType(DefclassData(theEnv)->ObjectParseToken) != RPAREN)
+   while (DefclassData(theEnv)->ObjectParseToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      {
-      if (GetType(DefclassData(theEnv)->ObjectParseToken) != SYMBOL)
+      if (DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TOKEN)
         {
          SyntaxErrorMessage(theEnv,"defclass");
          goto SuperclassParseError;

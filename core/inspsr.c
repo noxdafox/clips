@@ -244,7 +244,7 @@ EXPRESSION *ParseInitializeInstance(
       else
         {
          GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
-         if ((GetType(DefclassData(theEnv)->ObjectParseToken) != SYMBOL) ? true :
+         if ((DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TOKEN) ? true :
              (strcmp(CLASS_RLN,DOToString(DefclassData(theEnv)->ObjectParseToken)) != 0))
            {
             SyntaxErrorMessage(theEnv,"make-instance");
@@ -283,7 +283,7 @@ EXPRESSION *ParseInitializeInstance(
       GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
       if (fcalltype == DUPLICATE_TYPE)
         {
-         if ((DefclassData(theEnv)->ObjectParseToken.type != SYMBOL) ? false :
+         if ((DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TOKEN) ? false :
              (strcmp(DOToString(DefclassData(theEnv)->ObjectParseToken),DUPLICATE_NAME_REF) == 0))
            {
             PPBackup(theEnv);
@@ -310,7 +310,7 @@ EXPRESSION *ParseInitializeInstance(
      }
    if (error)
       goto ParseInitializeInstanceError;
-   if (GetType(DefclassData(theEnv)->ObjectParseToken) != RPAREN)
+   if (DefclassData(theEnv)->ObjectParseToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       SyntaxErrorMessage(theEnv,"slot-override");
       goto ParseInitializeInstanceError;
@@ -353,7 +353,7 @@ EXPRESSION *ParseSlotOverrides(
    EXPRESSION *top = NULL,*bot = NULL,*theExp;
    EXPRESSION *theExpNext;
 
-   while (GetType(DefclassData(theEnv)->ObjectParseToken) == LPAREN)
+   while (DefclassData(theEnv)->ObjectParseToken.tknType == LEFT_PARENTHESIS_TOKEN)
      {
       *error = false;
       theExp = ArgumentParse(theEnv,readSource,error);
@@ -434,14 +434,14 @@ EXPRESSION *ParseSimpleInstance(
   const char *readSource)
   {
    EXPRESSION *theExp,*vals = NULL,*vbot,*tval;
-   unsigned short type;
+   TokenType type;
 
    GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
-   if ((GetType(DefclassData(theEnv)->ObjectParseToken) != INSTANCE_NAME) &&
-       (GetType(DefclassData(theEnv)->ObjectParseToken) != SYMBOL))
+   if ((DefclassData(theEnv)->ObjectParseToken.tknType != INSTANCE_NAME_TOKEN) &&
+       (DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TOKEN))
      goto MakeInstanceError;
 
-   if ((GetType(DefclassData(theEnv)->ObjectParseToken) == SYMBOL) &&
+   if ((DefclassData(theEnv)->ObjectParseToken.tknType == SYMBOL_TOKEN) &&
        (strcmp(CLASS_RLN,DOToString(DefclassData(theEnv)->ObjectParseToken)) == 0))
      {
       top->argList = GenConstant(theEnv,FCALL,
@@ -452,13 +452,13 @@ EXPRESSION *ParseSimpleInstance(
       top->argList = GenConstant(theEnv,INSTANCE_NAME,
                                  (void *) GetValue(DefclassData(theEnv)->ObjectParseToken));
       GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
-      if ((GetType(DefclassData(theEnv)->ObjectParseToken) != SYMBOL) ? true :
+      if ((DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TOKEN) ? true :
           (strcmp(CLASS_RLN,DOToString(DefclassData(theEnv)->ObjectParseToken)) != 0))
         goto MakeInstanceError;
      }
 
    GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
-   if (GetType(DefclassData(theEnv)->ObjectParseToken) != SYMBOL)
+   if (DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TOKEN)
      goto MakeInstanceError;
    top->argList->nextArg =
         GenConstant(theEnv,SYMBOL,GetValue(DefclassData(theEnv)->ObjectParseToken));
@@ -466,36 +466,36 @@ EXPRESSION *ParseSimpleInstance(
    if (ReplaceClassNameWithReference(theEnv,theExp) == false)
      goto MakeInstanceError;
    GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
-   while (GetType(DefclassData(theEnv)->ObjectParseToken) == LPAREN)
+   while (DefclassData(theEnv)->ObjectParseToken.tknType == LEFT_PARENTHESIS_TOKEN)
      {
       GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
-      if (GetType(DefclassData(theEnv)->ObjectParseToken) != SYMBOL)
+      if (DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TOKEN)
         goto SlotOverrideError;
       theExp->nextArg = GenConstant(theEnv,SYMBOL,GetValue(DefclassData(theEnv)->ObjectParseToken));
       theExp->nextArg->nextArg = GenConstant(theEnv,SYMBOL,EnvTrueSymbol(theEnv));
       theExp = theExp->nextArg->nextArg;
       GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
       vbot = NULL;
-      while (GetType(DefclassData(theEnv)->ObjectParseToken) != RPAREN)
+      while (DefclassData(theEnv)->ObjectParseToken.tknType != RIGHT_PARENTHESIS_TOKEN)
         {
-         type = GetType(DefclassData(theEnv)->ObjectParseToken);
-         if (type == LPAREN)
+         type = DefclassData(theEnv)->ObjectParseToken.tknType;
+         if (type == LEFT_PARENTHESIS_TOKEN)
            {
             GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
-            if ((GetType(DefclassData(theEnv)->ObjectParseToken) != SYMBOL) ? true :
+            if ((DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TOKEN) ? true :
                 (strcmp(ValueToString(DefclassData(theEnv)->ObjectParseToken.value),"create$") != 0))
               goto SlotOverrideError;
             GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
-            if (GetType(DefclassData(theEnv)->ObjectParseToken) != RPAREN)
+            if (DefclassData(theEnv)->ObjectParseToken.tknType != RIGHT_PARENTHESIS_TOKEN)
               goto SlotOverrideError;
             tval = GenConstant(theEnv,FCALL,FindFunction(theEnv,"create$"));
            }
          else
            {
-            if ((type != SYMBOL) && (type != STRING) &&
-                (type != FLOAT) && (type != INTEGER) && (type != INSTANCE_NAME))
+            if ((type != SYMBOL_TOKEN) && (type != STRING_TOKEN) &&
+                (type != FLOAT_TOKEN) && (type != INTEGER_TOKEN) && (type != INSTANCE_NAME_TOKEN))
               goto SlotOverrideError;
-            tval = GenConstant(theEnv,type,GetValue(DefclassData(theEnv)->ObjectParseToken));
+            tval = GenConstant(theEnv,TokenTypeToType(type),GetValue(DefclassData(theEnv)->ObjectParseToken));
            }
          if (vals == NULL)
            vals = tval;
@@ -508,7 +508,7 @@ EXPRESSION *ParseSimpleInstance(
       GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
       vals = NULL;
      }
-   if (GetType(DefclassData(theEnv)->ObjectParseToken) != RPAREN)
+   if (DefclassData(theEnv)->ObjectParseToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      goto SlotOverrideError;
    return(top);
 
@@ -554,13 +554,13 @@ static bool ReplaceClassNameWithReference(
   EXPRESSION *theExp)
   {
    const char *theClassName;
-   void *theDefclass;
+   Defclass *theDefclass;
 
    if (theExp->type == SYMBOL)
      {
       theClassName = ValueToString(theExp->value);
       //theDefclass = (void *) LookupDefclassInScope(theEnv,theClassName);
-      theDefclass = (void *) LookupDefclassByMdlOrScope(theEnv,theClassName); // Module or scope is now allowed
+      theDefclass = LookupDefclassByMdlOrScope(theEnv,theClassName); // Module or scope is now allowed
       if (theDefclass == NULL)
         {
          CantFindItemErrorMessage(theEnv,"class",theClassName);
@@ -576,7 +576,7 @@ static bool ReplaceClassNameWithReference(
         }
       theExp->type = DEFCLASS_PTR;
       theExp->value = theDefclass;
-      
+
 #if (! RUN_TIME) && (! BLOAD_ONLY)
       if (! ConstructData(theEnv)->ParsingConstruct)
         { ConstructData(theEnv)->DanglingConstructs++; }

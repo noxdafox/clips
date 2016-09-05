@@ -22,7 +22,7 @@
 /*                                                           */
 /*            Added EvaluateAndStoreInDataObject function.   */
 /*                                                           */
-/*      6.30: Added support for passing context information  */ 
+/*      6.30: Added support for passing context information  */
 /*            to user defined functions.                     */
 /*                                                           */
 /*            Added support for external address hash table  */
@@ -209,7 +209,7 @@ typedef struct entityRecord * ENTITY_RECORD_PTR;
 #define EVALUATION_DATA 44
 
 struct evaluationData
-  { 
+  {
    struct expr *CurrentExpression;
    bool EvaluationError;
    bool HaltExecution;

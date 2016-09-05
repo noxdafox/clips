@@ -22,7 +22,7 @@
 /*      6.24: Support for run-time programs directly passing */
 /*            the hash tables for initialization.            */
 /*                                                           */
-/*            Made gensystem functional for Xcode.           */ 
+/*            Made gensystem functional for Xcode.           */
 /*                                                           */
 /*            Added BeforeOpenFunction and AfterOpenFunction */
 /*            hooks.                                         */

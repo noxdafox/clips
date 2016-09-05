@@ -197,7 +197,7 @@ static void PrintFile(
    FILE *fptr;
 
    fptr = FindFptr(theEnv,logicalName);
-   
+
    genprintfile(theEnv,fptr,str);
   }
 
@@ -239,7 +239,7 @@ static int UngetcFile(
    FILE *fptr;
 
    fptr = FindFptr(theEnv,logicalName);
-   
+
    if (fptr == stdin)
      { return(genungetchar(theEnv,ch)); }
    else

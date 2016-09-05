@@ -192,7 +192,7 @@ TEMP_SLOT_LINK *ParseSlot(
    SavePPBuffer(theEnv," ");
    specbits[0] = specbits[1] = '\0';
    GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
-   if (GetType(DefclassData(theEnv)->ObjectParseToken) != SYMBOL)
+   if (DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TOKEN)
      {
       DeleteSlots(theEnv,slist);
       SyntaxErrorMessage(theEnv,"defclass slot");
@@ -216,13 +216,13 @@ TEMP_SLOT_LINK *ParseSlot(
    GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
    IncrementIndentDepth(theEnv,3);
    InitializeConstraintParseRecord(&parsedConstraint);
-   while (GetType(DefclassData(theEnv)->ObjectParseToken) == LPAREN)
+   while (DefclassData(theEnv)->ObjectParseToken.tknType == LEFT_PARENTHESIS_TOKEN)
      {
       PPBackup(theEnv);
       PPCRAndIndent(theEnv);
       SavePPBuffer(theEnv,"(");
       GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
-      if (GetType(DefclassData(theEnv)->ObjectParseToken) != SYMBOL)
+      if (DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TOKEN)
         {
          SyntaxErrorMessage(theEnv,"defclass slot");
          goto ParseSlotError;
@@ -332,23 +332,23 @@ TEMP_SLOT_LINK *ParseSlot(
         }
       GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
      }
-   if (GetType(DefclassData(theEnv)->ObjectParseToken) != RPAREN)
+   if (DefclassData(theEnv)->ObjectParseToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       SyntaxErrorMessage(theEnv,"defclass slot");
       goto ParseSlotError;
      }
-     
+
    if (DefclassData(theEnv)->ClassDefaultsMode == CONVENIENCE_MODE)
      {
       if (! TestBitMap(specbits,CREATE_ACCESSOR_BIT))
         {
          slot->createReadAccessor = true;
-      
+
          if (! slot->noWrite)
            { slot->createWriteAccessor = true; }
         }
      }
-     
+
    if (slot->composite)
      BuildCompositeFacets(theEnv,slot,preclist,specbits,&parsedConstraint);
    if (CheckForFacetConflicts(theEnv,slot,&parsedConstraint) == false)
@@ -561,7 +561,7 @@ static int ParseSimpleFacet(
    /* ===============================
       Check for the variable relation
       =============================== */
-   if (DefclassData(theEnv)->ObjectParseToken.type == SF_VARIABLE)
+   if (DefclassData(theEnv)->ObjectParseToken.tknType == SF_VARIABLE_TOKEN)
      {
       if ((varRelation == NULL) ? false :
           (strcmp(DOToString(DefclassData(theEnv)->ObjectParseToken),varRelation) == 0))
@@ -571,7 +571,7 @@ static int ParseSimpleFacet(
      }
    else
      {
-      if (DefclassData(theEnv)->ObjectParseToken.type != SYMBOL)
+      if (DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TOKEN)
         goto ParseSimpleFacetError;
 
       /* ===================================================
@@ -597,7 +597,7 @@ static int ParseSimpleFacet(
         }
      }
    GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
-   if (DefclassData(theEnv)->ObjectParseToken.type != RPAREN)
+   if (DefclassData(theEnv)->ObjectParseToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      goto ParseSimpleFacetError;
    return(rtnCode);
 

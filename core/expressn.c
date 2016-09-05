@@ -97,7 +97,7 @@ void InitExpressionData(
      ExpressionData(theEnv)->ExpressionHashTable[i] = NULL;
 #endif
   }
-  
+
 /*****************************************/
 /* DeallocateExpressionData: Deallocates */
 /*    environment data for expressions.  */
@@ -108,7 +108,7 @@ static void DeallocateExpressionData(
 #if ! RUN_TIME
    int i;
    EXPRESSION_HN *tmpPtr, *nextPtr;
-   
+
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE)
    if (! Bloaded(theEnv))
 #endif
@@ -125,7 +125,7 @@ static void DeallocateExpressionData(
            }
         }
      }
-     
+
    rm(theEnv,ExpressionData(theEnv)->ExpressionHashTable,
       (int) (sizeof(EXPRESSION_HN *) * EXPRESSION_HASH_SIZE));
 #else
@@ -133,7 +133,7 @@ static void DeallocateExpressionData(
 #pragma unused(theEnv)
 #endif
 #endif
-   
+
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE)
    if ((ExpressionData(theEnv)->NumberOfExpressions != 0) && Bloaded(theEnv))
      {
@@ -359,7 +359,7 @@ static unsigned HashExpression(
       void *vv;
       unsigned long uv;
      } fis;
-     
+
    if (theExp->argList != NULL)
      tally += HashExpression(theExp->argList) * PRIME_ONE;
    while (theExp != NULL)

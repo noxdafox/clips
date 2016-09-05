@@ -74,7 +74,7 @@
 #define PRCDRPSR_DATA 12
 
 struct procedureParserData
-  { 
+  {
    struct BindInfo *ListOfParsedBindNames;
   };
 
@@ -128,7 +128,7 @@ void ProceduralFunctionParsers(
 /*************************************************************/
 static void DeallocateProceduralFunctionData(
   Environment *theEnv)
-  { 
+  {
    struct BindInfo *temp_bind;
 
    while (ProcedureParserData(theEnv)->ListOfParsedBindNames != NULL)
@@ -219,7 +219,7 @@ static struct expr *WhileParse(
    /*====================================*/
 
    GetToken(theEnv,infile,&theToken);
-   if ((theToken.type == SYMBOL) && (strcmp(ValueToString(theToken.value),"do") == 0))
+   if ((theToken.tknType == SYMBOL_TOKEN) && (strcmp(ValueToString(theToken.value),"do") == 0))
      {
       read_first_paren = true;
       PPBackup(theEnv);
@@ -228,7 +228,7 @@ static struct expr *WhileParse(
       IncrementIndentDepth(theEnv,3);
       PPCRAndIndent(theEnv);
      }
-   else if (theToken.type == LPAREN)
+   else if (theToken.tknType == LEFT_PARENTHESIS_TOKEN)
      {
       read_first_paren = false;
       PPBackup(theEnv);
@@ -264,7 +264,7 @@ static struct expr *WhileParse(
    /* Check for the closing right parenthesis of the while. */
    /*=======================================================*/
 
-   if (theToken.type != RPAREN)
+   if (theToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       SyntaxErrorMessage(theEnv,"while function");
       ReturnExpression(theEnv,parse);
@@ -303,7 +303,7 @@ static struct expr *LoopForCountParse(
    /* ==========================================
       Simple form: loop-for-count <end> [do] ...
       ========================================== */
-   if (theToken.type != LPAREN)
+   if (theToken.tknType != LEFT_PARENTHESIS_TOKEN)
      {
       parse->argList = GenConstant(theEnv,INTEGER,EnvAddLong(theEnv,1LL));
       parse->argList->nextArg = ParseAtomOrExpression(theEnv,infile,&theToken);
@@ -316,9 +316,9 @@ static struct expr *LoopForCountParse(
    else
      {
       GetToken(theEnv,infile,&theToken);
-      if (theToken.type != SF_VARIABLE)
+      if (theToken.tknType != SF_VARIABLE_TOKEN)
         {
-         if (theToken.type != SYMBOL)
+         if (theToken.tknType != SYMBOL_TOKEN)
            goto LoopForCountParseError;
          parse->argList = GenConstant(theEnv,INTEGER,EnvAddLong(theEnv,1LL));
          parse->argList->nextArg = Function2Parse(theEnv,infile,ValueToString(theToken.value));
@@ -345,10 +345,10 @@ static struct expr *LoopForCountParse(
 
          if (CheckArgumentAgainstRestriction(theEnv,parse->argList,INTEGER_TYPE))
            goto LoopForCountParseError;
-           
+
          SavePPBuffer(theEnv," ");
          GetToken(theEnv,infile,&theToken);
-         if (theToken.type == RPAREN)
+         if (theToken.tknType == RIGHT_PARENTHESIS_TOKEN)
            {
             PPBackup(theEnv);
             PPBackup(theEnv);
@@ -366,7 +366,7 @@ static struct expr *LoopForCountParse(
                return NULL;
               }
             GetToken(theEnv,infile,&theToken);
-            if (theToken.type != RPAREN)
+            if (theToken.tknType != RIGHT_PARENTHESIS_TOKEN)
               goto LoopForCountParseError;
            }
          SavePPBuffer(theEnv," ");
@@ -381,7 +381,7 @@ static struct expr *LoopForCountParse(
    /*====================================*/
 
    GetToken(theEnv,infile,&theToken);
-   if ((theToken.type == SYMBOL) && (strcmp(ValueToString(theToken.value),"do") == 0))
+   if ((theToken.tknType == SYMBOL_TOKEN) && (strcmp(ValueToString(theToken.value),"do") == 0))
      {
       read_first_paren = true;
       PPBackup(theEnv);
@@ -390,7 +390,7 @@ static struct expr *LoopForCountParse(
       IncrementIndentDepth(theEnv,3);
       PPCRAndIndent(theEnv);
      }
-   else if (theToken.type == LPAREN)
+   else if (theToken.tknType == LEFT_PARENTHESIS_TOKEN)
      {
       read_first_paren = false;
       PPBackup(theEnv);
@@ -449,7 +449,7 @@ static struct expr *LoopForCountParse(
    /* Check for the closing right parenthesis of the loop-for-count. */
    /*================================================================*/
 
-   if (theToken.type != RPAREN)
+   if (theToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       SyntaxErrorMessage(theEnv,"loop-for-count function");
       ReturnExpression(theEnv,parse);
@@ -531,7 +531,7 @@ static struct expr *IfParse(
    PPCRAndIndent(theEnv);
 
    GetToken(theEnv,infile,&theToken);
-   if ((theToken.type != SYMBOL) || (strcmp(ValueToString(theToken.value),"then") != 0))
+   if ((theToken.tknType != SYMBOL_TOKEN) || (strcmp(ValueToString(theToken.value),"then") != 0))
      {
       SyntaxErrorMessage(theEnv,"if function");
       ReturnExpression(theEnv,top);
@@ -561,7 +561,7 @@ static struct expr *IfParse(
    /* A ')' signals an if then without an else. */
    /*===========================================*/
 
-   if (theToken.type == RPAREN)
+   if (theToken.tknType == RIGHT_PARENTHESIS_TOKEN)
      {
       DecrementIndentDepth(theEnv,3);
       PPBackup(theEnv);
@@ -574,7 +574,7 @@ static struct expr *IfParse(
    /* Keyword 'else' must follow if then actions. */
    /*=============================================*/
 
-   if ((theToken.type != SYMBOL) || (strcmp(ValueToString(theToken.value),"else") != 0))
+   if ((theToken.tknType != SYMBOL_TOKEN) || (strcmp(ValueToString(theToken.value),"else") != 0))
      {
       SyntaxErrorMessage(theEnv,"if function");
       ReturnExpression(theEnv,top);
@@ -600,7 +600,7 @@ static struct expr *IfParse(
    /* Check for the closing right parenthesis of the if. */
    /*======================================================*/
 
-   if (theToken.type != RPAREN)
+   if (theToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       SyntaxErrorMessage(theEnv,"if function");
       ReturnExpression(theEnv,top);
@@ -671,9 +671,10 @@ static struct expr *BindParse(
    /*=============================================*/
 
    GetToken(theEnv,infile,&theToken);
-   if ((theToken.type != SF_VARIABLE) && (theToken.type != GBL_VARIABLE))
+   if ((theToken.tknType != SF_VARIABLE_TOKEN) &&
+       (theToken.tknType != GBL_VARIABLE_TOKEN))
      {
-      if ((theToken.type != MF_VARIABLE) || ExpressionData(theEnv)->SequenceOpMode)
+      if ((theToken.tknType != MF_VARIABLE_TOKEN) || ExpressionData(theEnv)->SequenceOpMode)
         {
          SyntaxErrorMessage(theEnv,"bind function");
          ReturnExpression(theEnv,top);
@@ -689,7 +690,7 @@ static struct expr *BindParse(
    variableName = (SYMBOL_HN *) theToken.value;
 
 #if DEFGLOBAL_CONSTRUCT
-   if ((theToken.type == GBL_VARIABLE) ?
+   if ((theToken.tknType == GBL_VARIABLE_TOKEN) ?
        ((theGlobal = (Defglobal *)
                      FindImportedConstruct(theEnv,"defglobal",NULL,ValueToString(variableName),
                                            &count,true,NULL)) != NULL) :
@@ -698,7 +699,7 @@ static struct expr *BindParse(
       top->argList->type = DEFGLOBAL_PTR;
       top->argList->value = theGlobal;
      }
-   else if (theToken.type == GBL_VARIABLE)
+   else if (theToken.tknType == GBL_VARIABLE_TOKEN)
      {
       GlobalReferenceErrorMessage(theEnv,ValueToString(variableName));
       ReturnExpression(theEnv,top);
@@ -769,7 +770,7 @@ static struct expr *ReturnParse(
      {
       SavePPBuffer(theEnv," ");
       GetToken(theEnv,infile,&theToken);
-      if (theToken.type != RPAREN)
+      if (theToken.tknType != RIGHT_PARENTHESIS_TOKEN)
         {
          SyntaxErrorMessage(theEnv,"return function");
          ReturnExpression(theEnv,top);
@@ -802,7 +803,7 @@ static struct expr *BreakParse(
 
    SavePPBuffer(theEnv," ");
    GetToken(theEnv,infile,&theToken);
-   if (theToken.type != RPAREN)
+   if (theToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       SyntaxErrorMessage(theEnv,"break function");
       ReturnExpression(theEnv,top);
@@ -839,16 +840,16 @@ static struct expr *SwitchParse(
    /* Parse case statements. */
    /*========================*/
    GetToken(theEnv,infile,&theToken);
-   while (theToken.type != RPAREN)
+   while (theToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       PPBackup(theEnv);
       PPCRAndIndent(theEnv);
       SavePPBuffer(theEnv,theToken.printForm);
-      if (theToken.type != LPAREN)
+      if (theToken.tknType != LEFT_PARENTHESIS_TOKEN)
         goto SwitchParseErrorAndMessage;
       GetToken(theEnv,infile,&theToken);
       SavePPBuffer(theEnv," ");
-      if ((theToken.type == SYMBOL) &&
+      if ((theToken.tknType == SYMBOL_TOKEN) &&
           (strcmp(ValueToString(theToken.value),"case") == 0))
         {
          if (default_count != 0)
@@ -869,11 +870,11 @@ static struct expr *SwitchParse(
               }
            }
          GetToken(theEnv,infile,&theToken);
-         if ((theToken.type != SYMBOL) ? true :
+         if ((theToken.tknType != SYMBOL_TOKEN) ? true :
              (strcmp(ValueToString(theToken.value),"then") != 0))
            goto SwitchParseErrorAndMessage;
         }
-      else if ((theToken.type == SYMBOL) &&
+      else if ((theToken.tknType == SYMBOL_TOKEN) &&
                (strcmp(ValueToString(theToken.value),"default") == 0))
         {
          if (default_count)

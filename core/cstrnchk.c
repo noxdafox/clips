@@ -398,7 +398,7 @@ bool CheckAllowedClassesConstraint(
    /* The constraint is satisfied if there */
    /* aren't any class restrictions.       */
    /*======================================*/
-   
+
    if (constraints->classList == NULL)
      { return true; }
 
@@ -406,7 +406,7 @@ bool CheckAllowedClassesConstraint(
    /* Class restrictions only apply to */
    /* instances and instance names.    */
    /*==================================*/
-    
+
    if ((type != INSTANCE_ADDRESS) && (type != INSTANCE_NAME))
      { return true; }
 
@@ -414,15 +414,15 @@ bool CheckAllowedClassesConstraint(
    /* If an instance name is specified, determine */
    /* whether the instance exists.                */
    /*=============================================*/
-   
+
    if (type == INSTANCE_ADDRESS)
      { ins = (Instance *) vPtr; }
    else
      { ins = FindInstanceBySymbol(theEnv,(SYMBOL_HN *) vPtr); }
-    
+
    if (ins == NULL)
      { return false; }
-   
+
    /*======================================================*/
    /* Search through the class list to see if the instance */
    /* belongs to one of the allowed classes in the list.   */
@@ -456,7 +456,7 @@ bool CheckAllowedClassesConstraint(
 #endif
 
    return true;
-#endif     
+#endif
   }
 
 /*************************************************************/

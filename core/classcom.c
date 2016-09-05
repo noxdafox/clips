@@ -112,19 +112,19 @@ Defclass *EnvFindDefclass( // TBD Needs to look in imported
    const char *className;
 
    SaveCurrentModule(theEnv);
-   
+
    className = ExtractModuleAndConstructName(theEnv,classAndModuleName);
    if (className != NULL)
      {
       classSymbol = FindSymbolHN(theEnv,ExtractModuleAndConstructName(theEnv,classAndModuleName));
       theModule = EnvGetCurrentModule(theEnv);
      }
-     
+
    RestoreCurrentModule(theEnv);
 
    if (classSymbol == NULL)
      { return NULL; }
-     
+
    cls = DefclassData(theEnv)->ClassTable[HashClass(classSymbol)];
    while (cls != NULL)
      {
@@ -135,7 +135,7 @@ Defclass *EnvFindDefclass( // TBD Needs to look in imported
         }
       cls = cls->nxtHash;
      }
-     
+
    return NULL;
   }
 
@@ -168,7 +168,7 @@ Defclass *EnvFindDefclassInModule(
 
    if (classSymbol == NULL)
      { return NULL; }
-     
+
    cls = DefclassData(theEnv)->ClassTable[HashClass(classSymbol)];
    while (cls != NULL)
      {
@@ -179,7 +179,7 @@ Defclass *EnvFindDefclassInModule(
         }
       cls = cls->nxtHash;
      }
-     
+
    return NULL;
   }
 
@@ -211,13 +211,13 @@ Defclass *LookupDefclassByMdlOrScope(
    className = ExtractModuleAndConstructName(theEnv,classAndModuleName);
    theModule = EnvGetCurrentModule(theEnv);
    RestoreCurrentModule(theEnv);
-   
+
    if (className == NULL)
      { return NULL; }
-   
+
    if ((classSymbol = FindSymbolHN(theEnv,className)) == NULL)
      { return NULL; }
-   
+
    cls = DefclassData(theEnv)->ClassTable[HashClass(classSymbol)];
    while (cls != NULL)
      {
@@ -226,7 +226,7 @@ Defclass *LookupDefclassByMdlOrScope(
         return(cls->installed ? cls : NULL);
       cls = cls->nxtHash;
      }
-   
+
    return NULL;
   }
 
@@ -251,7 +251,7 @@ Defclass *LookupDefclassInScope(
 
    if ((classSymbol = FindSymbolHN(theEnv,className)) == NULL)
      { return NULL; }
-     
+
    cls = DefclassData(theEnv)->ClassTable[HashClass(classSymbol)];
    while (cls != NULL)
      {
@@ -259,7 +259,7 @@ Defclass *LookupDefclassInScope(
         return cls->installed ? cls : NULL;
       cls = cls->nxtHash;
      }
-     
+
    return NULL;
   }
 
@@ -286,7 +286,7 @@ Defclass *LookupDefclassAnywhere(
 
    if ((classSymbol = FindSymbolHN(theEnv,className)) == NULL)
      { return NULL; }
-     
+
    cls = DefclassData(theEnv)->ClassTable[HashClass(classSymbol)];
    while (cls != NULL)
      {
@@ -296,7 +296,7 @@ Defclass *LookupDefclassAnywhere(
         { return cls->installed ? cls : NULL; }
       cls = cls->nxtHash;
      }
-     
+
    return NULL;
   }
 
@@ -325,7 +325,7 @@ bool DefclassInScope(
    if (theModule == NULL)
      { theModule = EnvGetCurrentModule(theEnv); }
    moduleID = (int) theModule->bsaveID;
-   
+
    return TestBitMap(scopeMap,moduleID) ? true : false;
 #else
 #if MAC_XCD
@@ -372,7 +372,7 @@ bool EnvIsDefclassDeletable(
 
    if (theDefclass->system == 1)
      { return false; }
-   
+
 #if (! BLOAD_ONLY) && (! RUN_TIME)
    return (IsClassBeingUsed(theDefclass) == false) ? true : false;
 #else
@@ -419,7 +419,7 @@ bool EnvUndefclass(
 #endif
    if (theDefclass == NULL)
      { return RemoveAllUserClasses(theEnv); }
-   
+
    return DeleteClassUAG(theEnv,theDefclass);
 #endif
   }
@@ -522,7 +522,7 @@ void EnvSetDefclassWatchInstances(
 
    if (theDefclass->abstract)
      { return; }
-     
+
    theDefclass->traceInstances = newState;
   }
 
@@ -827,7 +827,7 @@ unsigned short EnvGetClassDefaultsMode(
   {
    return DefclassData(theEnv)->ClassDefaultsMode;
   }
-  
+
 /***************************************************/
 /* GetClassDefaultsModeCommand: H/L access routine */
 /*   for the get-class-defaults-mode command.      */
@@ -853,9 +853,9 @@ void SetClassDefaultsModeCommand(
    CLIPSValue theArg;
    const char *argument;
    unsigned short oldMode;
-   
+
    returnValue->type = SYMBOL;
-   
+
    oldMode = DefclassData(theEnv)->ClassDefaultsMode;
 
    /*=====================================================*/

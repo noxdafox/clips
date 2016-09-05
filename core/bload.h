@@ -60,7 +60,7 @@
 #define BLOAD_DATA 38
 
 struct bloadData
-  { 
+  {
    const char *BinaryPrefixID;
    const char *BinaryVersionID;
    struct FunctionDefinition **FunctionArray;

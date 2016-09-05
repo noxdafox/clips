@@ -46,13 +46,13 @@
 #define DFINSBIN_DATA 25
 
 struct definstancesBinaryData
-  { 
+  {
    Definstances *DefinstancesArray;
    long DefinstancesCount;
    long ModuleCount;
    DEFINSTANCES_MODULE *ModuleArray;
   };
-  
+
 #define DefinstancesBinaryData(theEnv) ((struct definstancesBinaryData *) GetEnvironmentData(theEnv,DFINSBIN_DATA))
 
    void                           SetupDefinstancesBload(Environment *);

@@ -197,7 +197,7 @@ void MakeInstanceCommand(
          EnvSetEvaluationError(theEnv,true);
          return;
         }
-    
+
       //cls = LookupDefclassInScope(theEnv,DOToString(temp));
       cls = LookupDefclassByMdlOrScope(theEnv,DOToString(temp)); // Module or scope is now allowed
 
@@ -213,7 +213,7 @@ void MakeInstanceCommand(
    ins = BuildInstance(theEnv,iname,cls,true);
    if (ins == NULL)
      return;
-     
+
    if (CoreInitializeInstance(theEnv,ins,GetFirstArgument()->nextArg->nextArg) == true)
      {
       returnValue->type = INSTANCE_NAME;
@@ -256,12 +256,12 @@ SYMBOL_HN *GetFullInstanceName(
    size_t bufsz;
    SYMBOL_HN *iname;
    */
-   
+
    if (ins == &InstanceData(theEnv)->DummyInstance)
      return((SYMBOL_HN *) EnvAddSymbol(theEnv,"Dummy Instance"));
-   
+
    return(ins->name);
-     
+
 /*
    if (ins->garbage)
      return(ins->name);
@@ -341,7 +341,7 @@ Instance *BuildInstance(
       iname = ExtractConstructName(theEnv,modulePosition,ValueToString(iname));
      }
    ins = InstanceLocationInfo(theEnv,cls,iname,&iprv,&hashTableIndex);
-      
+
    if (ins != NULL)
      {
       if (ins->cls != cls)
@@ -355,7 +355,7 @@ Instance *BuildInstance(
          EnvSetEvaluationError(theEnv,true);
          return NULL;
         }
-        
+
       if (ins->installed == 0)
         {
          PrintErrorID(theEnv,"INSMNGR",4,false);
@@ -494,7 +494,7 @@ void InitSlotsCommand(
    SetpType(returnValue,SYMBOL);
    SetpValue(returnValue,EnvFalseSymbol(theEnv));
    EvaluationData(theEnv)->EvaluationError = false;
-   
+
    if (CheckCurrentMessage(theEnv,"init-slots",true) == false)
      return;
 
@@ -603,7 +603,7 @@ bool QuashInstance(
 #endif
      RemoveInstanceData(theEnv,ins);
 
-   if ((ins->busy == 0) && 
+   if ((ins->busy == 0) &&
        (InstanceData(theEnv)->MaintainGarbageInstances == false)
 #if DEFRULE_CONSTRUCT
         && (ins->header.busyCount == 0)
@@ -771,7 +771,7 @@ static Instance *InstanceLocationInfo(
       *prv = ins;
       ins = ins->nxtHash;
      }
-      
+
    /*
    while ((ins != NULL) ? (ins->name != iname) : false)
      {
@@ -987,7 +987,7 @@ static bool CoreInitializeInstance(
       EnvPrintRouter(theEnv,WERROR,".\n");
       return false;
      }
-     
+
    ins->initializeInProgress = 0;
    return((ins->initSlotsCalled == 0) ? false : true);
   }

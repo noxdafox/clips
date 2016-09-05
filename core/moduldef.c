@@ -119,14 +119,14 @@ static void DeallocateDefmoduleData(
    for (i = 0; i < DefmoduleData(theEnv)->BNumberOfDefmodules; i++)
      {
       if (DefmoduleData(theEnv)->DefmoduleArray[i].itemsArray != NULL)
-        { 
+        {
          rm(theEnv,DefmoduleData(theEnv)->DefmoduleArray[i].itemsArray,
             sizeof(void *) * GetNumberOfModuleItems(theEnv));
         }
      }
 
    space = DefmoduleData(theEnv)->BNumberOfDefmodules * sizeof(Defmodule);
-   if (space != 0) 
+   if (space != 0)
      {
       genfree(theEnv,DefmoduleData(theEnv)->DefmoduleArray,space);
       DefmoduleData(theEnv)->ListOfDefmodules = NULL;
@@ -169,13 +169,13 @@ static void DeallocateDefmoduleData(
       rtn_struct(theEnv,moduleItem,tmpMIPtr);
       tmpMIPtr = nextMIPtr;
      }
-     
+
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    DeallocateCallList(theEnv,DefmoduleData(theEnv)->AfterModuleDefinedFunctions);
 #endif
    DeallocateCallList(theEnv,DefmoduleData(theEnv)->AfterModuleChangeFunctions);
   }
-  
+
 /**************************************************************/
 /* InitializeDefmodules: Initializes the defmodule construct. */
 /**************************************************************/
@@ -384,7 +384,7 @@ void *GetModuleItem(
      }
 
    if (theModule->itemsArray == NULL) return (NULL);
-   
+
    return ((void *) theModule->itemsArray[moduleItemIndex]);
   }
 
@@ -516,7 +516,7 @@ Defmodule *EnvGetNextDefmodule(
 const char *EnvGetDefmoduleName(
   Environment *theEnv,
   Defmodule *defmodulePtr)
-  { 
+  {
 #if MAC_XCD
 #pragma unused(theEnv)
 #endif
@@ -531,7 +531,7 @@ const char *EnvGetDefmoduleName(
 const char *EnvGetDefmodulePPForm(
   Environment *theEnv,
   Defmodule *defmodulePtr)
-  { 
+  {
 #if MAC_XCD
 #pragma unused(theEnv)
 #endif
@@ -579,7 +579,7 @@ static void ReturnDefmodule(
    /*=====================================================*/
 
    if (theDefmodule == NULL) return;
-   
+
    if (! environmentClear)
      { EnvSetCurrentModule(theEnv,theDefmodule); }
 
@@ -656,13 +656,13 @@ static void ReturnDefmodule(
       rm(theEnv,theDefmodule->ppForm,
          (int) sizeof(char) * (strlen(theDefmodule->ppForm) + 1));
      }
-     
+
    /*=======================*/
    /* Return the user data. */
    /*=======================*/
 
    ClearUserDataList(theEnv,theDefmodule->usrData);
-   
+
    /*======================================*/
    /* Return the defmodule data structure. */
    /*======================================*/
@@ -731,7 +731,7 @@ void SetCurrentModuleCommand(
    Defmodule *theModule;
 
    returnValue->type = SYMBOL;
-   
+
    /*=====================================================*/
    /* Check for the correct number and type of arguments. */
    /*=====================================================*/

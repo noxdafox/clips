@@ -144,7 +144,7 @@ EXPRESSION *ParseQueryNoAction(
      }
    DecrementIndentDepth(theEnv,3);
    GetToken(theEnv,readSource,&queryInputToken);
-   if (GetType(queryInputToken) != RPAREN)
+   if (queryInputToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       SyntaxErrorMessage(theEnv,"instance-set query function");
       ReturnExpression(theEnv,top);
@@ -212,8 +212,8 @@ EXPRESSION *ParseQueryAction(
       return NULL;
      }
    DecrementIndentDepth(theEnv,3);
-   
-   if (GetType(queryInputToken) != RPAREN)
+
+   if (queryInputToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       SyntaxErrorMessage(theEnv,"instance-set query function");
       ReturnExpression(theEnv,top);
@@ -259,15 +259,15 @@ static EXPRESSION *ParseQueryRestrictions(
 
    SavePPBuffer(theEnv," ");
    GetToken(theEnv,readSource,queryInputToken);
-   if (queryInputToken->type != LPAREN)
+   if (queryInputToken->tknType != LEFT_PARENTHESIS_TOKEN)
      goto ParseQueryRestrictionsError1;
    GetToken(theEnv,readSource,queryInputToken);
-   if (queryInputToken->type != LPAREN)
+   if (queryInputToken->tknType != LEFT_PARENTHESIS_TOKEN)
      goto ParseQueryRestrictionsError1;
-   while (queryInputToken->type == LPAREN)
+   while (queryInputToken->tknType == LEFT_PARENTHESIS_TOKEN)
      {
       GetToken(theEnv,readSource,queryInputToken);
-      if (queryInputToken->type != SF_VARIABLE)
+      if (queryInputToken->tknType != SF_VARIABLE_TOKEN)
         goto ParseQueryRestrictionsError1;
       tmp = insQuerySetVars;
       while (tmp != NULL)
@@ -323,7 +323,7 @@ static EXPRESSION *ParseQueryRestrictions(
       SavePPBuffer(theEnv," ");
       GetToken(theEnv,readSource,queryInputToken);
      }
-   if (queryInputToken->type != RPAREN)
+   if (queryInputToken->tknType != RIGHT_PARENTHESIS_TOKEN)
      goto ParseQueryRestrictionsError1;
    PPBackup(theEnv);
    PPBackup(theEnv);
@@ -372,7 +372,7 @@ static bool ReplaceClassNameWithReference(
         }
       theExp->type = DEFCLASS_PTR;
       theExp->value = theDefclass;
-      
+
 #if (! RUN_TIME) && (! BLOAD_ONLY)
       if (! ConstructData(theEnv)->ParsingConstruct)
         { ConstructData(theEnv)->DanglingConstructs++; }
@@ -640,7 +640,7 @@ static void ReplaceSlotReference(
             theExp->argList = GenConstant(theEnv,INTEGER,EnvAddLong(theEnv,(long long) ndepth));
             theExp->argList->nextArg =
               GenConstant(theEnv,INTEGER,EnvAddLong(theEnv,(long long) posn));
-            theExp->argList->nextArg->nextArg = GenConstant(theEnv,itkn.type,itkn.value);
+            theExp->argList->nextArg->nextArg = GenConstant(theEnv,TokenTypeToType(itkn.tknType),itkn.value);
             break;
            }
         }

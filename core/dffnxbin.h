@@ -47,13 +47,13 @@
 #define DFFNXBIN_DATA 24
 
 struct deffunctionBinaryData
-  { 
+  {
    Deffunction *DeffunctionArray;
    long DeffunctionCount;
    long ModuleCount;
    DeffunctionModuleData *ModuleArray;
   };
-  
+
 #define DeffunctionBinaryData(theEnv) ((struct deffunctionBinaryData *) GetEnvironmentData(theEnv,DFFNXBIN_DATA))
 
 #define DeffunctionPointer(i) (((i) == -1L) ? NULL : &DeffunctionBinaryData(theEnv)->DeffunctionArray[i])

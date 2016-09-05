@@ -20,7 +20,7 @@
 /*      6.30: Changed integer type/precision.                */
 /*                                                           */
 /*            Used genstrcpy instead of strcpy.              */
-/*                                                           */             
+/*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
@@ -44,7 +44,7 @@
 #define PRETTY_PRINT_DATA 52
 
 struct prettyPrintData
-  { 
+  {
    bool PPBufferStatus;
    bool PPBufferEnabled;
    int IndentationDepth;

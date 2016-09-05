@@ -128,7 +128,7 @@ void FactRelationFunction(
   CLIPSValue *returnValue)
   {
    struct fact *theFact;
-   
+
    returnValue->type = SYMBOL;
 
    theFact = GetFactAddressOrIndexArgument(context,false);
@@ -151,7 +151,7 @@ struct symbolHashNode *FactRelation(
   {
    return theFact->whichDeftemplate->header.name;
   }
-  
+
 /****************************************/
 /* EnvFactDeftemplate: C access routine */
 /*   to retrieve a fact's deftemplate.  */
@@ -179,7 +179,7 @@ void FactExistpFunction(
    Fact *theFact;
 
    returnValue->type = SYMBOL;
-   
+
    theFact = GetFactAddressOrIndexArgument(context,false);
 
    if (EnvFactExistp(theEnv,theFact))
@@ -511,7 +511,7 @@ void EnvGetFactList(
    RestoreCurrentModule(theEnv);
    UpdateDeftemplateScope(theEnv);
   }
-  
+
 /**************************************/
 /* PPFactFunction: H/L access routine */
 /*   for the ppfact function.         */
@@ -546,12 +546,12 @@ void PPFactFunction(
      }
    else
      { logicalName = STDOUT; }
-     
+
    /*=========================================*/
    /* Should slot values be printed if they   */
    /* are the same as the default slot value. */
    /*=========================================*/
-   
+
    if (UDFHasNextArgument(context))
      {
       UDFNextArgument(context,ANY_TYPE,&theArg);
@@ -561,7 +561,7 @@ void PPFactFunction(
       else
         { ignoreDefaults = true; }
      }
-   
+
    /*============================================================*/
    /* Determine if any router recognizes the output destination. */
    /*============================================================*/
@@ -596,10 +596,10 @@ void EnvPPFact(
    if (theFact->garbage) return;
 
    PrintFact(theEnv,logicalName,theFact,true,ignoreDefaults);
-   
+
    EnvPrintRouter(theEnv,logicalName,"\n");
   }
-  
+
 /**************************************************************/
 /* GetFactAddressOrIndexArgument: Retrieves an argument for a */
 /*   function which should be a reference to a valid fact.    */

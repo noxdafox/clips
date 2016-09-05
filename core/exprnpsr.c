@@ -109,7 +109,7 @@ struct expr *Function0Parse(
    /*=================================*/
 
    GetToken(theEnv,logicalName,&theToken);
-   if (theToken.type != LPAREN)
+   if (theToken.tknType != LEFT_PARENTHESIS_TOKEN)
      {
       SyntaxErrorMessage(theEnv,"function calls");
       return NULL;
@@ -139,7 +139,7 @@ struct expr *Function1Parse(
    /*========================*/
 
    GetToken(theEnv,logicalName,&theToken);
-   if (theToken.type != SYMBOL)
+   if (theToken.tknType != SYMBOL_TOKEN)
      {
       PrintErrorID(theEnv,"EXPRNPSR",1,true);
       EnvPrintRouter(theEnv,WERROR,"A function name must be a symbol\n");
@@ -181,7 +181,7 @@ struct expr *Function2Parse(
    /*=========================================================*/
 
    if ((position = FindModuleSeparator(name)) != 0)
-     { 
+     {
       moduleName = ExtractModuleName(theEnv,position,name);
       constructName = ExtractConstructName(theEnv,position,name);
       moduleSpecified = true;
@@ -195,7 +195,7 @@ struct expr *Function2Parse(
 
 #if DEFGENERIC_CONSTRUCT
    if (moduleSpecified)
-     { 
+     {
       if (ConstructExported(theEnv,"defgeneric",moduleName,constructName) ||
           EnvGetCurrentModule(theEnv) == EnvFindDefmodule(theEnv,ValueToString(moduleName)))
         { gfunc = EnvFindDefgenericInModule(theEnv,name); }
@@ -214,7 +214,7 @@ struct expr *Function2Parse(
    if (theFunction == NULL)
 #endif
      if (moduleSpecified)
-       { 
+       {
         if (ConstructExported(theEnv,"deffunction",moduleName,constructName) ||
             EnvGetCurrentModule(theEnv) == EnvFindDefmodule(theEnv,ValueToString(moduleName)))
           { dptr = EnvFindDeffunctionInModule(theEnv,name); }
@@ -318,7 +318,7 @@ struct expr *Function2Parse(
 #if DEFFUNCTION_CONSTRUCT
    else if (top->type == PCALL)
      {
-      if (CheckDeffunctionCall(theEnv,top->value,CountArguments(top->argList)) == false)
+      if (CheckDeffunctionCall(theEnv,(Deffunction *) top->value,CountArguments(top->argList)) == false)
         {
          ReturnExpression(theEnv,top);
          return NULL;
@@ -454,7 +454,7 @@ bool RestrictionExists(
    int position)
    {
     int i = 0, currentPosition = 0;
-       
+
     while (restrictionString[i] != '\0')
       {
        if (restrictionString[i] == ';')
@@ -464,9 +464,9 @@ bool RestrictionExists(
          }
        i++;
       }
-      
+
     if (position == currentPosition) true;
-      
+
     return false;
    }
 
@@ -505,7 +505,7 @@ bool CheckExpressionAgainstRestrictions(
    /*======================================*/
 
    number1 = theFunction->minArgs;
-     
+
    /*======================================*/
    /* Get the maximum number of arguments. */
    /*======================================*/
@@ -540,15 +540,15 @@ bool CheckExpressionAgainstRestrictions(
    /*===============================================*/
    /* Return if there are no argument restrictions. */
    /*===============================================*/
-   
+
    if (restrictions == NULL) return false;
-   
+
    /*=======================================*/
    /* Check for the default argument types. */
    /*=======================================*/
 
    PopulateRestriction(theEnv,&defaultRestriction2,ANY_TYPE,restrictions,0);
-     
+
    /*======================*/
    /* Check each argument. */
    /*======================*/
@@ -642,30 +642,30 @@ struct expr *ArgumentParse(
    /* ')' counts as no argument. */
    /*============================*/
 
-   if (theToken.type == RPAREN)
+   if (theToken.tknType == RIGHT_PARENTHESIS_TOKEN)
      { return NULL; }
 
    /*================================*/
    /* Parse constants and variables. */
    /*================================*/
 
-   if ((theToken.type == SF_VARIABLE) || (theToken.type == MF_VARIABLE) ||
-       (theToken.type == SYMBOL) || (theToken.type == STRING) ||
+   if ((theToken.tknType == SF_VARIABLE_TOKEN) || (theToken.tknType == MF_VARIABLE_TOKEN) ||
+       (theToken.tknType == SYMBOL_TOKEN) || (theToken.tknType == STRING_TOKEN) ||
 #if DEFGLOBAL_CONSTRUCT
-       (theToken.type == GBL_VARIABLE) ||
-       (theToken.type == MF_GBL_VARIABLE) ||
+       (theToken.tknType == GBL_VARIABLE_TOKEN) ||
+       (theToken.tknType == MF_GBL_VARIABLE_TOKEN) ||
 #endif
 #if OBJECT_SYSTEM
-       (theToken.type == INSTANCE_NAME) ||
+       (theToken.tknType == INSTANCE_NAME_TOKEN) ||
 #endif
-       (theToken.type == FLOAT) || (theToken.type == INTEGER))
-     { return(GenConstant(theEnv,theToken.type,theToken.value)); }
+       (theToken.tknType == FLOAT_TOKEN) || (theToken.tknType == INTEGER_TOKEN))
+     { return(GenConstant(theEnv,TokenTypeToType(theToken.tknType),theToken.value)); }
 
    /*======================*/
    /* Parse function call. */
    /*======================*/
 
-   if (theToken.type != LPAREN)
+   if (theToken.tknType != LEFT_PARENTHESIS_TOKEN)
      {
       PrintErrorID(theEnv,"EXPRNPSR",2,true);
       EnvPrintRouter(theEnv,WERROR,"Expected a constant, variable, or expression.\n");
@@ -698,18 +698,18 @@ struct expr *ParseAtomOrExpression(
      }
    else thisToken = useToken;
 
-   if ((thisToken->type == SYMBOL) || (thisToken->type == STRING) ||
-       (thisToken->type == INTEGER) || (thisToken->type == FLOAT) ||
+   if ((thisToken->tknType == SYMBOL_TOKEN) || (thisToken->tknType == STRING_TOKEN) ||
+       (thisToken->tknType == INTEGER_TOKEN) || (thisToken->tknType == FLOAT_TOKEN) ||
 #if OBJECT_SYSTEM
-       (thisToken->type == INSTANCE_NAME) ||
+       (thisToken->tknType == INSTANCE_NAME_TOKEN) ||
 #endif
 #if DEFGLOBAL_CONSTRUCT
-       (thisToken->type == GBL_VARIABLE) ||
-       (thisToken->type == MF_GBL_VARIABLE) ||
+       (thisToken->tknType == GBL_VARIABLE_TOKEN) ||
+       (thisToken->tknType == MF_GBL_VARIABLE_TOKEN) ||
 #endif
-       (thisToken->type == SF_VARIABLE) || (thisToken->type == MF_VARIABLE))
-     { rv = GenConstant(theEnv,thisToken->type,thisToken->value); }
-   else if (thisToken->type == LPAREN)
+       (thisToken->tknType == SF_VARIABLE_TOKEN) || (thisToken->tknType == MF_VARIABLE_TOKEN))
+     { rv = GenConstant(theEnv,TokenTypeToType(thisToken->tknType),thisToken->value); }
+   else if (thisToken->tknType == LEFT_PARENTHESIS_TOKEN)
      {
       rv = Function1Parse(theEnv,logicalName);
       if (rv == NULL) return NULL;
@@ -767,7 +767,7 @@ struct expr *GroupActions(
       /* of actions (such as "else" in an if function).  */
       /*=================================================*/
 
-      if ((theToken->type == SYMBOL) &&
+      if ((theToken->tknType == SYMBOL_TOKEN) &&
           (endWord != NULL) &&
           (! functionNameParsed))
         {
@@ -790,23 +790,23 @@ struct expr *GroupActions(
       /* Process a constant or global variable. */
       /*========================================*/
 
-      else if ((theToken->type == SYMBOL) || (theToken->type == STRING) ||
-          (theToken->type == INTEGER) || (theToken->type == FLOAT) ||
+      else if ((theToken->tknType == SYMBOL_TOKEN) || (theToken->tknType == STRING_TOKEN) ||
+          (theToken->tknType == INTEGER_TOKEN) || (theToken->tknType == FLOAT_TOKEN) ||
 #if DEFGLOBAL_CONSTRUCT
-          (theToken->type == GBL_VARIABLE) ||
-          (theToken->type == MF_GBL_VARIABLE) ||
+          (theToken->tknType == GBL_VARIABLE_TOKEN) ||
+          (theToken->tknType == MF_GBL_VARIABLE_TOKEN) ||
 #endif
 #if OBJECT_SYSTEM
-          (theToken->type == INSTANCE_NAME) ||
+          (theToken->tknType == INSTANCE_NAME_TOKEN) ||
 #endif
-          (theToken->type == SF_VARIABLE) || (theToken->type == MF_VARIABLE))
-        { nextOne = GenConstant(theEnv,theToken->type,theToken->value); }
+          (theToken->tknType == SF_VARIABLE_TOKEN) || (theToken->tknType == MF_VARIABLE_TOKEN))
+        { nextOne = GenConstant(theEnv,TokenTypeToType(theToken->tknType),theToken->value); }
 
       /*=============================*/
       /* Otherwise parse a function. */
       /*=============================*/
 
-      else if (theToken->type == LPAREN)
+      else if (theToken->tknType == LEFT_PARENTHESIS_TOKEN)
         { nextOne = Function1Parse(theEnv,logicalName); }
 
       /*======================================*/
@@ -834,7 +834,7 @@ struct expr *GroupActions(
 
       if (nextOne == NULL)
         {
-         theToken->type = UNKNOWN_VALUE;
+         theToken->tknType = UNKNOWN_VALUE_TOKEN;
          ReturnExpression(theEnv,top);
          return NULL;
         }
@@ -864,13 +864,13 @@ void PopulateRestriction(
    {
     int i = 0, currentPosition = 0, valuesRead = 0;
     char buffer[2];
-    
+
     *restriction = 0;
 
     while (restrictionString[i] != '\0')
       {
        char theChar = restrictionString[i];
-       
+
        switch(theChar)
          {
           case ';':
@@ -879,37 +879,37 @@ void PopulateRestriction(
             *restriction = 0;
             valuesRead = 0;
             break;
-            
+
           case 'l':
             *restriction |= INTEGER_TYPE;
             valuesRead++;
             break;
-            
+
           case 'd':
             *restriction |= FLOAT_TYPE;
             valuesRead++;
             break;
-            
+
           case 's':
             *restriction |= STRING_TYPE;
             valuesRead++;
             break;
-            
+
           case 'y':
             *restriction |= SYMBOL_TYPE;
             valuesRead++;
             break;
-            
+
           case 'n':
             *restriction |= INSTANCE_NAME_TYPE;
             valuesRead++;
             break;
-            
+
           case 'm':
             *restriction |= MULTIFIELD_TYPE;
             valuesRead++;
             break;
-            
+
           case 'f':
             *restriction |= FACT_ADDRESS_TYPE;
             valuesRead++;
@@ -924,12 +924,12 @@ void PopulateRestriction(
             *restriction |= EXTERNAL_ADDRESS_TYPE;
             valuesRead++;
             break;
-            
+
           case 'v':
             *restriction |= VOID_TYPE;
             valuesRead++;
             break;
-            
+
           case 'b':
             *restriction |= BOOLEAN_TYPE;
             valuesRead++;
@@ -949,17 +949,17 @@ void PopulateRestriction(
             valuesRead++;
             break;
          }
-       
+
        i++;
       }
-      
+
     if (position == currentPosition)
       {
        if (valuesRead == 0)
          { *restriction = defaultRestriction; }
        return;
       }
-    
+
     *restriction = defaultRestriction;
    }
 
@@ -1022,11 +1022,11 @@ EXPRESSION *ParseConstantArguments(
    /*======================*/
 
    GetToken(theEnv,router,&tkn);
-   while (tkn.type != STOP)
+   while (tkn.tknType != STOP_TOKEN)
      {
-      if ((tkn.type != SYMBOL) && (tkn.type != STRING) &&
-          (tkn.type != FLOAT) && (tkn.type != INTEGER) &&
-          (tkn.type != INSTANCE_NAME))
+      if ((tkn.tknType != SYMBOL_TOKEN) && (tkn.tknType != STRING_TOKEN) &&
+          (tkn.tknType != FLOAT_TOKEN) && (tkn.tknType != INTEGER_TOKEN) &&
+          (tkn.tknType != INSTANCE_NAME_TOKEN))
         {
          PrintErrorID(theEnv,"EXPRNPSR",7,false);
          EnvPrintRouter(theEnv,WERROR,"Only constant arguments allowed for external function call.\n");
@@ -1035,7 +1035,7 @@ EXPRESSION *ParseConstantArguments(
          CloseStringSource(theEnv,router);
          return NULL;
         }
-      tmp = GenConstant(theEnv,tkn.type,tkn.value);
+      tmp = GenConstant(theEnv,TokenTypeToType(tkn.tknType),tkn.value);
       if (top == NULL)
         top = tmp;
       else

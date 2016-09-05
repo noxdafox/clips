@@ -466,7 +466,7 @@ static void UpdateDefmodule(
      { DefmoduleData(theEnv)->DefmoduleArray[obji].itemsArray = NULL; }
    else
      {
-      DefmoduleData(theEnv)->DefmoduleArray[obji].itemsArray = 
+      DefmoduleData(theEnv)->DefmoduleArray[obji].itemsArray =
          (struct defmoduleItemHeader **) gm2(theEnv,sizeof(void *) * GetNumberOfModuleItems(theEnv));
      }
 
@@ -589,7 +589,7 @@ static void ClearBload(
    space = DefmoduleData(theEnv)->BNumberOfDefmodules * sizeof(Defmodule);
    if (space != 0) genfree(theEnv,DefmoduleData(theEnv)->DefmoduleArray,space);
    DefmoduleData(theEnv)->BNumberOfDefmodules = 0;
-   
+
    /*================================*/
    /* Deallocate the space used for  */
    /* the port item data structures. */
@@ -598,7 +598,7 @@ static void ClearBload(
    space = DefmoduleData(theEnv)->NumberOfPortItems * sizeof(struct portItem);
    if (space != 0) genfree(theEnv,DefmoduleData(theEnv)->PortItemArray,space);
    DefmoduleData(theEnv)->NumberOfPortItems = 0;
-   
+
    /*===========================*/
    /* Reset module information. */
    /*===========================*/

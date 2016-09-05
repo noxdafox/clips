@@ -81,7 +81,7 @@
       INTERNALLY VISIBLE FUNCTION HEADERS
    =========================================
    ***************************************** */
-   
+
 /***************************************/
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
@@ -141,31 +141,31 @@ EXPRESSION *FactParseQueryNoAction(
    factQuerySetVars = ParseQueryRestrictions(theEnv,top,readSource,&queryInputToken);
    if (factQuerySetVars == NULL)
      { return NULL; }
-     
+
    IncrementIndentDepth(theEnv,3);
    PPCRAndIndent(theEnv);
-   
+
    if (ParseQueryTestExpression(theEnv,top,readSource) == false)
      {
       DecrementIndentDepth(theEnv,3);
       ReturnExpression(theEnv,factQuerySetVars);
       return NULL;
      }
-     
+
    DecrementIndentDepth(theEnv,3);
-   
-   GetToken(theEnv,readSource,&queryInputToken);   
-   if (GetType(queryInputToken) != RPAREN)
+
+   GetToken(theEnv,readSource,&queryInputToken);
+   if (queryInputToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       SyntaxErrorMessage(theEnv,"fact-set query function");
       ReturnExpression(theEnv,top);
       ReturnExpression(theEnv,factQuerySetVars);
       return NULL;
      }
-     
+
    ReplaceFactVariables(theEnv,factQuerySetVars,top->argList,true,0);
    ReturnExpression(theEnv,factQuerySetVars);
-   
+
    return(top);
   }
 
@@ -209,40 +209,40 @@ EXPRESSION *FactParseQueryAction(
    factQuerySetVars = ParseQueryRestrictions(theEnv,top,readSource,&queryInputToken);
    if (factQuerySetVars == NULL)
      { return NULL; }
-     
+
    IncrementIndentDepth(theEnv,3);
    PPCRAndIndent(theEnv);
-   
+
    if (ParseQueryTestExpression(theEnv,top,readSource) == false)
      {
       DecrementIndentDepth(theEnv,3);
       ReturnExpression(theEnv,factQuerySetVars);
       return NULL;
      }
-     
+
    PPCRAndIndent(theEnv);
-   
+
    if (ParseQueryActionExpression(theEnv,top,readSource,factQuerySetVars,&queryInputToken) == false)
      {
       DecrementIndentDepth(theEnv,3);
       ReturnExpression(theEnv,factQuerySetVars);
       return NULL;
      }
-     
+
    DecrementIndentDepth(theEnv,3);
-   
-   if (GetType(queryInputToken) != RPAREN)
+
+   if (queryInputToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       SyntaxErrorMessage(theEnv,"fact-set query function");
       ReturnExpression(theEnv,top);
       ReturnExpression(theEnv,factQuerySetVars);
       return NULL;
      }
-     
+
    ReplaceFactVariables(theEnv,factQuerySetVars,top->argList,true,0);
    ReplaceFactVariables(theEnv,factQuerySetVars,top->argList->nextArg,false,0);
    ReturnExpression(theEnv,factQuerySetVars);
-   
+
    return(top);
   }
 
@@ -278,21 +278,21 @@ static EXPRESSION *ParseQueryRestrictions(
    bool error = false;
 
    SavePPBuffer(theEnv," ");
-   
+
    GetToken(theEnv,readSource,queryInputToken);
-   if (queryInputToken->type != LPAREN)
+   if (queryInputToken->tknType != LEFT_PARENTHESIS_TOKEN)
      { goto ParseQueryRestrictionsError1; }
-     
+
    GetToken(theEnv,readSource,queryInputToken);
-   if (queryInputToken->type != LPAREN)
+   if (queryInputToken->tknType != LEFT_PARENTHESIS_TOKEN)
      { goto ParseQueryRestrictionsError1; }
-     
-   while (queryInputToken->type == LPAREN)
+
+   while (queryInputToken->tknType == LEFT_PARENTHESIS_TOKEN)
      {
       GetToken(theEnv,readSource,queryInputToken);
-      if (queryInputToken->type != SF_VARIABLE)
+      if (queryInputToken->tknType != SF_VARIABLE_TOKEN)
         { goto ParseQueryRestrictionsError1; }
-        
+
       tmp = factQuerySetVars;
       while (tmp != NULL)
         {
@@ -304,33 +304,33 @@ static EXPRESSION *ParseQueryRestrictions(
             EnvPrintRouter(theEnv,WERROR,".\n");
             goto ParseQueryRestrictionsError2;
            }
-           
+
          tmp = tmp->nextArg;
         }
-        
+
       tmp = GenConstant(theEnv,SF_VARIABLE,queryInputToken->value);
       if (factQuerySetVars == NULL)
         { factQuerySetVars = tmp; }
       else
         { lastFactQuerySetVars->nextArg = tmp; }
-      
+
       lastFactQuerySetVars = tmp;
       SavePPBuffer(theEnv," ");
-      
+
       templateExp = ArgumentParse(theEnv,readSource,&error);
-      
+
       if (error)
         { goto ParseQueryRestrictionsError2; }
-      
+
       if (templateExp == NULL)
         { goto ParseQueryRestrictionsError1; }
-      
+
       if (ReplaceTemplateNameWithReference(theEnv,templateExp) == false)
         { goto ParseQueryRestrictionsError2; }
-      
+
       lastTemplateExp = templateExp;
       SavePPBuffer(theEnv," ");
-      
+
       while ((tmp = ArgumentParse(theEnv,readSource,&error)) != NULL)
         {
          if (ReplaceTemplateNameWithReference(theEnv,tmp) == false)
@@ -339,33 +339,33 @@ static EXPRESSION *ParseQueryRestrictions(
          lastTemplateExp = tmp;
          SavePPBuffer(theEnv," ");
         }
-        
+
       if (error)
         { goto ParseQueryRestrictionsError2; }
-        
+
       PPBackup(theEnv);
       PPBackup(theEnv);
       SavePPBuffer(theEnv,")");
-      
+
       tmp = GenConstant(theEnv,SYMBOL,FactQueryData(theEnv)->QUERY_DELIMETER_SYMBOL);
-      
+
       lastTemplateExp->nextArg = tmp;
       lastTemplateExp = tmp;
-      
+
       if (top->argList == NULL)
         { top->argList = templateExp; }
       else
         { lastOne->nextArg = templateExp; }
-      
+
       lastOne = lastTemplateExp;
       templateExp = NULL;
       SavePPBuffer(theEnv," ");
       GetToken(theEnv,readSource,queryInputToken);
      }
-     
-   if (queryInputToken->type != RPAREN)
+
+   if (queryInputToken->tknType != RIGHT_PARENTHESIS_TOKEN)
      { goto ParseQueryRestrictionsError1; }
-     
+
    PPBackup(theEnv);
    PPBackup(theEnv);
    SavePPBuffer(theEnv,")");
@@ -406,7 +406,7 @@ static bool ReplaceTemplateNameWithReference(
    if (theExp->type == SYMBOL)
      {
       theTemplateName = ValueToString(theExp->value);
-      
+
       theDeftemplate = (Deftemplate *)
                        FindImportedConstruct(theEnv,"deftemplate",NULL,theTemplateName,
                                              &count,true,NULL);
@@ -416,7 +416,7 @@ static bool ReplaceTemplateNameWithReference(
          CantFindItemErrorMessage(theEnv,"deftemplate",theTemplateName);
          return false;
         }
-        
+
       if (count > 1)
         {
          AmbiguousReferenceErrorMessage(theEnv,"deftemplate",theTemplateName);
@@ -425,7 +425,7 @@ static bool ReplaceTemplateNameWithReference(
 
       theExp->type = DEFTEMPLATE_PTR;
       theExp->value = theDeftemplate;
-      
+
 #if (! RUN_TIME) && (! BLOAD_ONLY)
       if (! ConstructData(theEnv)->ParsingConstruct)
         { ConstructData(theEnv)->DanglingConstructs++; }
@@ -459,9 +459,9 @@ static bool ParseQueryTestExpression(
    error = false;
    oldBindList = GetParsedBindNames(theEnv);
    SetParsedBindNames(theEnv,NULL);
-   
+
    qtest = ArgumentParse(theEnv,readSource,&error);
-   
+
    if (error == true)
      {
       ClearParsedBindNames(theEnv);
@@ -469,7 +469,7 @@ static bool ParseQueryTestExpression(
       ReturnExpression(theEnv,top);
       return false;
      }
-   
+
    if (qtest == NULL)
      {
       ClearParsedBindNames(theEnv);
@@ -478,10 +478,10 @@ static bool ParseQueryTestExpression(
       ReturnExpression(theEnv,top);
       return false;
      }
-   
+
    qtest->nextArg = top->argList;
    top->argList = qtest;
-   
+
    if (ParsedBindNamesEmpty(theEnv) == false)
      {
       ClearParsedBindNames(theEnv);
@@ -493,9 +493,9 @@ static bool ParseQueryTestExpression(
       ReturnExpression(theEnv,top);
       return false;
      }
-     
+
    SetParsedBindNames(theEnv,oldBindList);
-   
+
    return true;
   }
 
@@ -525,18 +525,18 @@ static bool ParseQueryActionExpression(
 
    oldBindList = GetParsedBindNames(theEnv);
    SetParsedBindNames(theEnv,NULL);
-   
+
    ExpressionData(theEnv)->BreakContext = true;
    ExpressionData(theEnv)->ReturnContext = ExpressionData(theEnv)->svContexts->rtn;
 
    qaction = GroupActions(theEnv,readSource,queryInputToken,true,NULL,false);
-   
+
    PPBackup(theEnv);
    PPBackup(theEnv);
    SavePPBuffer(theEnv,queryInputToken->printForm);
 
    ExpressionData(theEnv)->BreakContext = false;
-   
+
    if (qaction == NULL)
      {
       ClearParsedBindNames(theEnv);
@@ -545,10 +545,10 @@ static bool ParseQueryActionExpression(
       ReturnExpression(theEnv,top);
       return false;
      }
-     
+
    qaction->nextArg = top->argList->nextArg;
    top->argList->nextArg = qaction;
-   
+
    newBindList = GetParsedBindNames(theEnv);
    prev = NULL;
    while (newBindList != NULL)
@@ -574,12 +574,12 @@ static bool ParseQueryActionExpression(
       prev = newBindList;
       newBindList = newBindList->next;
      }
-     
+
    if (prev == NULL)
      { SetParsedBindNames(theEnv,oldBindList); }
    else
      { prev->next = oldBindList; }
-   
+
    return true;
   }
 
@@ -708,7 +708,7 @@ static void ReplaceSlotReference(
             theExp->argList = GenConstant(theEnv,INTEGER,EnvAddLong(theEnv,(long long) ndepth));
             theExp->argList->nextArg =
               GenConstant(theEnv,INTEGER,EnvAddLong(theEnv,(long long) posn));
-            theExp->argList->nextArg->nextArg = GenConstant(theEnv,itkn.type,itkn.value);
+            theExp->argList->nextArg->nextArg = GenConstant(theEnv,TokenTypeToType(itkn.tknType),itkn.value);
             break;
            }
         }

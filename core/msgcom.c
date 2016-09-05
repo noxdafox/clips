@@ -111,13 +111,13 @@
    static bool                    DefmessageHandlerWatchAccess(Environment *,int,bool,EXPRESSION *);
    static bool                    DefmessageHandlerWatchPrint(Environment *,const char *,int,EXPRESSION *);
    static bool                    DefmessageHandlerWatchSupport(Environment *,const char *,const char *,bool,
-                                                                void (*)(Environment *,const char *,void *,int),
+                                                                void (*)(Environment *,const char *,Defclass *,int),
                                                                 void (*)(Environment *,bool,Defclass *,int),
                                                                 EXPRESSION *);
    static bool                    WatchClassHandlers(Environment *,Defclass *,const char *,int,const char *,bool,bool,
-                                                     void (*)(Environment *,const char *,void *,int),
+                                                     void (*)(Environment *,const char *,Defclass *,int),
                                                      void (*)(Environment *,bool,Defclass *,int));
-   static void                    PrintHandlerWatchFlag(Environment *,const char *,void *,int);
+   static void                    PrintHandlerWatchFlag(Environment *,const char *,Defclass *,int);
 #endif
 
    static void                    DeallocateMessageHandlerData(Environment *);
@@ -158,8 +158,8 @@ void SetupMessageHandlers(
                                         NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL };
 
    AllocateEnvironmentData(theEnv,MESSAGE_HANDLER_DATA,sizeof(struct messageHandlerData),DeallocateMessageHandlerData);
-   memcpy(&MessageHandlerData(theEnv)->HandlerGetInfo,&handlerGetInfo,sizeof(struct entityRecord));   
-   memcpy(&MessageHandlerData(theEnv)->HandlerPutInfo,&handlerPutInfo,sizeof(struct entityRecord));   
+   memcpy(&MessageHandlerData(theEnv)->HandlerGetInfo,&handlerGetInfo,sizeof(struct entityRecord));
+   memcpy(&MessageHandlerData(theEnv)->HandlerPutInfo,&handlerPutInfo,sizeof(struct entityRecord));
 
    MessageHandlerData(theEnv)->hndquals[0] = "around";
    MessageHandlerData(theEnv)->hndquals[1] = "before";
@@ -175,10 +175,10 @@ void SetupMessageHandlers(
 
    MessageHandlerData(theEnv)->DELETE_SYMBOL = (SYMBOL_HN *) EnvAddSymbol(theEnv,DELETE_STRING);
    IncrementSymbolCount(MessageHandlerData(theEnv)->DELETE_SYMBOL);
-   
+
    MessageHandlerData(theEnv)->CREATE_SYMBOL = (SYMBOL_HN *) EnvAddSymbol(theEnv,CREATE_STRING);
    IncrementSymbolCount(MessageHandlerData(theEnv)->CREATE_SYMBOL);
-   
+
    EnvAddClearFunction(theEnv,"defclass",CreateSystemHandlers,-100);
 
 #if ! BLOAD_ONLY
@@ -228,21 +228,21 @@ static void DeallocateMessageHandlerData(
   Environment *theEnv)
   {
    HANDLER_LINK *tmp, *mhead, *chead;
-    
+
    mhead = MessageHandlerData(theEnv)->TopOfCore;
    while (mhead != NULL)
-     { 
+     {
       tmp = mhead;
       mhead = mhead->nxt;
       rtn_struct(theEnv,messageHandlerLink,tmp);
      }
-     
+
    chead = MessageHandlerData(theEnv)->OldCore;
    while (chead != NULL)
-     { 
+     {
       mhead = chead;
       chead = chead->nxtInStack;
-      
+
       while (mhead != NULL)
         {
          tmp = mhead;
@@ -314,10 +314,10 @@ int EnvGetNextDefmessageHandler(
 
    if (theIndex == 0)
      { return (theDefclass->handlers != NULL) ? 1 : 0; }
-     
+
    if (theIndex == theDefclass->handlerCount)
      { return 0; }
-   
+
    return theIndex+1;
   }
 
@@ -416,7 +416,7 @@ unsigned EnvFindDefmessageHandler(
    htype = HandlerType(theEnv,"handler-lookup",htypestr);
    if (htype == MERROR)
      { return 0; }
-   
+
    hsym = FindSymbolHN(theEnv,hname);
    if (hsym == NULL)
      { return 0; }
@@ -555,7 +555,7 @@ bool EnvUndefmessageHandler(
       HandlerDeleteError(theEnv,EnvGetDefclassName(theEnv,theDefclass));
       return false;
      }
-     
+
    theDefclass->handlers[mhi-1].mark = 1;
    DeallocateMarkedHandlers(theEnv,theDefclass);
    return true;
@@ -780,7 +780,7 @@ void EnvPreviewSend(
    msym = FindSymbolHN(theEnv,msgname);
    if (msym == NULL)
      { return; }
-     
+
    core = FindPreviewApplicableHandlers(theEnv,theDefclass,msym);
    if (core != NULL)
      {
@@ -981,7 +981,7 @@ static bool DefmessageHandlerWatchSupport(
   const char *funcName,
   const char *logName,
   bool newState,
-  void (*printFunc)(Environment *,const char *,void *,int),
+  void (*printFunc)(Environment *,const char *,Defclass *,int),
   void (*traceFunc)(Environment *,bool,Defclass *,int),
   EXPRESSION *argExprs)
   {
@@ -1111,7 +1111,7 @@ static bool WatchClassHandlers(
   const char *logName,
   bool newState,
   bool indentp,
-  void (*printFunc)(Environment *,const char *,void *,int),
+  void (*printFunc)(Environment *,const char *,Defclass *,int),
   void (*traceFunc)(Environment *,bool,Defclass *,int))
   {
    unsigned theHandler;
@@ -1157,7 +1157,7 @@ static bool WatchClassHandlers(
 static void PrintHandlerWatchFlag(
   Environment *theEnv,
   const char *logName,
-  void *theClass,
+  Defclass *theClass,
   int theHandler)
   {
    EnvPrintRouter(theEnv,logName,EnvGetDefclassName(theEnv,theClass));
@@ -1165,7 +1165,7 @@ static void PrintHandlerWatchFlag(
    EnvPrintRouter(theEnv,logName,EnvGetDefmessageHandlerName(theEnv,theClass,theHandler));
    EnvPrintRouter(theEnv,logName," ");
    EnvPrintRouter(theEnv,logName,EnvGetDefmessageHandlerType(theEnv,theClass,theHandler));
-   
+
    if (EnvGetDefmessageHandlerWatch(theEnv,theClass,theHandler))
      EnvPrintRouter(theEnv,logName," = on\n");
    else

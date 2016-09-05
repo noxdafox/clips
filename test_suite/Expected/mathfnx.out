@@ -103,16 +103,6 @@ CLIPS> (format nil "%0.6f" (/ -13.2 -6))  ; 10.6.1.3 : 2.2
 "2.200000"
 CLIPS> (format nil "%0.6f" (/ 2 3.7 1.2)) ; 10.6.1.3 : 0.450450
 "0.450450"
-CLIPS> (set-auto-float-dividend FALSE)    ; 10.6.1.3
-TRUE
-CLIPS> (/ 2 3)                            ; 10.6.1.3 : 0
-0
-CLIPS> (format nil "%0.6f" (/ 2 3.0))     ; 10.6.1.3 : 0.666667
-"0.666667"
-CLIPS> (format nil "%0.6f" (/ 2 4 3.0))   ; 10.6.1.3 : 0.0
-"0.000000"
-CLIPS> (set-auto-float-dividend TRUE)     ; 10.6.1.3
-FALSE
 CLIPS> (div)                              ; 10.6.1.5
 [ARGACCES4] Function div expected at least 2 argument(s)
 CLIPS> (div 1)                            ; 10.6.1.5

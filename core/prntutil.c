@@ -108,7 +108,7 @@ void PrintInChunks(
    /* we'll assume no modern compiler has this limitation */
    /* and just print the entire string.                   */
    /*=====================================================*/
-   
+
    EnvPrintRouter(theEnv,logicalName,bigString);
 
 /*
@@ -196,35 +196,35 @@ void PrintAtom(
 
       case DATA_OBJECT_ARRAY:
         if (PrintUtilityData(theEnv)->AddressesToStrings) EnvPrintRouter(theEnv,logicalName,"\"");
-        
+
         EnvPrintRouter(theEnv,logicalName,"<Pointer-");
         gensprintf(buffer,"%p",value);
         EnvPrintRouter(theEnv,logicalName,buffer);
         EnvPrintRouter(theEnv,logicalName,">");
-          
+
         if (PrintUtilityData(theEnv)->AddressesToStrings) EnvPrintRouter(theEnv,logicalName,"\"");
         break;
 
       case EXTERNAL_ADDRESS:
         theAddress = (struct externalAddressHashNode *) value;
-        
+
         if (PrintUtilityData(theEnv)->AddressesToStrings) EnvPrintRouter(theEnv,logicalName,"\"");
-        
+
         if ((EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type] != NULL) &&
             (EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type]->longPrintFunction != NULL))
           { (*EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type]->longPrintFunction)(theEnv,logicalName,value); }
         else
           {
            EnvPrintRouter(theEnv,logicalName,"<Pointer-");
-        
+
            gensprintf(buffer,"%d-",theAddress->type);
            EnvPrintRouter(theEnv,logicalName,buffer);
-        
+
            gensprintf(buffer,"%p",ValueToExternalAddress(value));
            EnvPrintRouter(theEnv,logicalName,buffer);
            EnvPrintRouter(theEnv,logicalName,">");
           }
-          
+
         if (PrintUtilityData(theEnv)->AddressesToStrings) EnvPrintRouter(theEnv,logicalName,"\"");
         break;
 
@@ -522,7 +522,7 @@ const char *DataObjectToString(
    size_t length;
    struct externalAddressHashNode *theAddress;
    char buffer[30];
-   
+
    switch (GetpType(theDO))
      {
       case MULTIFIELD:
@@ -530,28 +530,28 @@ const char *DataObjectToString(
          theString = ValueToString(ImplodeMultifield(theEnv,theDO));
          postfix = ")";
          break;
-         
+
       case STRING:
          prefix = "\"";
          theString = DOPToString(theDO);
          postfix = "\"";
          break;
-         
+
       case INSTANCE_NAME:
          prefix = "[";
          theString = DOPToString(theDO);
          postfix = "]";
          break;
-         
+
       case SYMBOL:
          return(DOPToString(theDO));
-         
+
       case FLOAT:
          return(FloatToString(theEnv,DOPToDouble(theDO)));
-         
+
       case INTEGER:
          return(LongIntegerToString(theEnv,DOPToLong(theDO)));
-         
+
       case RVOID:
          return("");
 
@@ -561,7 +561,7 @@ const char *DataObjectToString(
 
          if (thePtr == (void *) &InstanceData(theEnv)->DummyInstance)
            { return("<Dummy Instance>"); }
-           
+
          if (((struct instance *) thePtr)->garbage)
            {
             prefix = "<Stale Instance-";
@@ -574,10 +574,10 @@ const char *DataObjectToString(
             theString = ValueToString(GetFullInstanceName(theEnv,(Instance *) thePtr));
             postfix = ">";
            }
-           
+
         break;
 #endif
-      
+
       case EXTERNAL_ADDRESS:
         theAddress = (struct externalAddressHashNode *) DOPToPointer(theDO);
         /* TBD Need specific routine for creating name string. */
@@ -585,21 +585,21 @@ const char *DataObjectToString(
         thePtr = EnvAddSymbol(theEnv,buffer);
         return(ValueToString(thePtr));
 
-#if DEFTEMPLATE_CONSTRUCT      
+#if DEFTEMPLATE_CONSTRUCT
       case FACT_ADDRESS:
          if (DOPToPointer(theDO) == (void *) &FactData(theEnv)->DummyFact)
            { return("<Dummy Fact>"); }
-         
+
          thePtr = DOPToPointer(theDO);
          gensprintf(buffer,"<Fact-%lld>",((struct fact *) thePtr)->factIndex);
          thePtr = EnvAddSymbol(theEnv,buffer);
          return(ValueToString(thePtr));
 #endif
-                        
+
       default:
          return("UNK");
      }
-     
+
    length = strlen(prefix) + strlen(theString) + strlen(postfix) + 1;
    newString = (char *) genalloc(theEnv,length);
    newString[0] = '\0';
@@ -610,7 +610,7 @@ const char *DataObjectToString(
    genfree(theEnv,newString,length);
    return(ValueToString(thePtr));
   }
-  
+
 /************************************************************/
 /* SalienceInformationError: Error message for errors which */
 /*   occur during the evaluation of a salience value.       */

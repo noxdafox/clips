@@ -25,7 +25,7 @@
 /*      6.30: Changed integer type/precision.                */
 /*                                                           */
 /*            Used genstrcpy instead of strcpy.              */
-/*                                                           */             
+/*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
@@ -68,7 +68,7 @@ void InitializePrettyPrintData(
   Environment *theEnv)
   {
    AllocateEnvironmentData(theEnv,PRETTY_PRINT_DATA,sizeof(struct prettyPrintData),DeallocatePrettyPrintData);
-   
+
    PrettyPrintData(theEnv)->PPBufferEnabled = true;
   }
 
@@ -79,7 +79,7 @@ void InitializePrettyPrintData(
 static void DeallocatePrettyPrintData(
   Environment *theEnv)
   {
-   if (PrettyPrintData(theEnv)->PrettyPrintBuffer != NULL) 
+   if (PrettyPrintData(theEnv)->PrettyPrintBuffer != NULL)
      { rm(theEnv,PrettyPrintData(theEnv)->PrettyPrintBuffer,PrettyPrintData(theEnv)->PPBufferMax); }
   }
 
@@ -144,7 +144,7 @@ void SavePPBuffer(
 
    if (strlen(str) + PrettyPrintData(theEnv)->PPBufferPos + 1 >= PrettyPrintData(theEnv)->PPBufferMax)
      {
-      PrettyPrintData(theEnv)->PrettyPrintBuffer = 
+      PrettyPrintData(theEnv)->PrettyPrintBuffer =
          (char *) genrealloc(theEnv,PrettyPrintData(theEnv)->PrettyPrintBuffer,
                                     PrettyPrintData(theEnv)->PPBufferMax,
                                     PrettyPrintData(theEnv)->PPBufferMax + increment);
@@ -298,7 +298,7 @@ int SetPPBufferEnabled(
   int value)
   {
    int oldValue;
-   
+
    oldValue = PrettyPrintData(theEnv)->PPBufferEnabled;
    PrettyPrintData(theEnv)->PPBufferEnabled = value;
    return(oldValue);

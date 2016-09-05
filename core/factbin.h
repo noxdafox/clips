@@ -40,11 +40,11 @@
 #define FACTBIN_DATA 62
 
 struct factBinaryData
-  { 
+  {
    struct factPatternNode *FactPatternArray;
    long NumberOfPatterns;
   };
-  
+
 #define FactBinaryData(theEnv) ((struct factBinaryData *) GetEnvironmentData(theEnv,FACTBIN_DATA))
 
    void                           FactBinarySetup(Environment *);

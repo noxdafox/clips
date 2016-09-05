@@ -84,7 +84,7 @@ typedef struct query_stack
 #define INSTANCE_QUERY_DATA 31
 
 struct instanceQueryData
-  { 
+  {
    SYMBOL_HN *QUERY_DELIMETER_SYMBOL;
    QUERY_CORE *QueryCore;
    QUERY_STACK *QueryCoreStack;

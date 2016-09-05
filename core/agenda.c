@@ -97,7 +97,7 @@
    static struct salienceGroup   *ReuseOrCreateSalienceGroup(Environment *,struct defruleModule *,int);
    static struct salienceGroup   *FindSalienceGroup(struct defruleModule *,int);
    static void                    RemoveActivationFromGroup(Environment *,Activation *,struct defruleModule *);
-   
+
 /*************************************************/
 /* InitializeAgenda: Initializes the activations */
 /*   watch item and the H/L commands for         */
@@ -105,13 +105,13 @@
 /*************************************************/
 void InitializeAgenda(
   Environment *theEnv)
-  {   
+  {
    AllocateEnvironmentData(theEnv,AGENDA_DATA,sizeof(struct agendaData),NULL);
-   
+
    AgendaData(theEnv)->SalienceEvaluation = WHEN_DEFINED;
 
    AgendaData(theEnv)->Strategy = DEFAULT_STRATEGY;
-   
+
    EnvAddClearFunction(theEnv,"agenda",AgendaClearFunction,0);
 #if DEBUGGING_FUNCTIONS
    AddWatchItem(theEnv,"activations",1,&AgendaData(theEnv)->WatchActivations,40,DefruleWatchAccess,DefruleWatchPrint);
@@ -197,9 +197,9 @@ void AddActivation(
     /*=====================================*/
 
     theModuleItem = (struct defruleModule *) theRule->header.whichModule;
-    
+
     theGroup = ReuseOrCreateSalienceGroup(theEnv,theModuleItem,newActivation->salience);
-    
+
     PlaceActivation(theEnv,&(theModuleItem->agenda),newActivation,theGroup);
    }
 
@@ -212,34 +212,34 @@ static struct salienceGroup *ReuseOrCreateSalienceGroup(
   int salience)
   {
    struct salienceGroup *theGroup, *lastGroup, *newGroup;
-   
+
    for (lastGroup = NULL, theGroup = theRuleModule->groupings;
         theGroup != NULL;
         lastGroup = theGroup, theGroup = theGroup->next)
      {
       if (theGroup->salience == salience)
         { return(theGroup); }
-        
+
       if (theGroup->salience < salience)
         { break; }
      }
-     
+
    newGroup = get_struct(theEnv,salienceGroup);
    newGroup->salience = salience;
    newGroup->first = NULL;
    newGroup->last = NULL;
    newGroup->next = theGroup;
    newGroup->prev = lastGroup;
-   
+
    if (newGroup->next != NULL)
      { newGroup->next->prev = newGroup; }
 
    if (newGroup->prev != NULL)
      { newGroup->prev->next = newGroup; }
-   
+
    if (lastGroup == NULL)
      { theRuleModule->groupings = newGroup; }
-     
+
    return newGroup;
   }
 
@@ -251,21 +251,21 @@ static struct salienceGroup *FindSalienceGroup(
   int salience)
   {
    struct salienceGroup *theGroup;
-   
+
    for (theGroup = theRuleModule->groupings;
         theGroup != NULL;
         theGroup = theGroup->next)
      {
       if (theGroup->salience == salience)
         { return(theGroup); }
-        
+
       if (theGroup->salience < salience)
         { break; }
      }
-     
+
    return NULL;
   }
-  
+
 /***************************************************************/
 /* ClearRuleFromAgenda: Clears the agenda of a specified rule. */
 /***************************************************************/
@@ -323,7 +323,7 @@ Activation *EnvGetNextActivation(
   Activation *actPtr)
   {
    struct defruleModule *theModuleItem;
-   
+
    if (actPtr == NULL)
      {
       theModuleItem = (struct defruleModule *) GetModuleItem(theEnv,NULL,DefruleData(theEnv)->DefruleModuleIndex);
@@ -695,35 +695,35 @@ static void RemoveActivationFromGroup(
   struct defruleModule *theRuleModule)
   {
    struct salienceGroup *theGroup;
-   
+
    theGroup = FindSalienceGroup(theRuleModule,theActivation->salience);
    if (theGroup == NULL) return;
-   
+
    if (theActivation == theGroup->first)
      {
       /*====================================================*/
       /* If the activation is the only remaining activation */
       /* in the group, then the group needs to be removed.  */
       /*====================================================*/
-      
+
       if (theActivation == theGroup->last)
         {
          if (theGroup->prev == NULL)
            { theRuleModule->groupings = theGroup->next; }
          else
            { theGroup->prev->next = theGroup->next; }
-           
+
          if (theGroup->next != NULL)
            { theGroup->next->prev = theGroup->prev; }
-           
+
          rtn_struct(theEnv,salienceGroup,theGroup);
         }
-        
+
       /*======================================================*/
       /* Otherwise this is the first activation in the group, */
       /* but there are other activations which follow.        */
       /*======================================================*/
-      
+
       else
         { theGroup->first = theActivation->next; }
      }
@@ -733,15 +733,15 @@ static void RemoveActivationFromGroup(
       /* Otherwise if the activation isn't the first in the */
       /* group, then check to see if it's the last.         */
       /*====================================================*/
-      
+
       if (theActivation == theGroup->last)
         { theGroup->last = theActivation->prev; }
-        
+
       /*==================================================*/
       /* Otherwise the activation is in the middle of the */
       /* group and no first/last updates are needed.      */
       /*==================================================*/
-      
+
       else
         { return; }
      }
@@ -856,7 +856,7 @@ void EnvReorderAgenda(
         }
 
       theModuleItem->groupings = NULL;
-        
+
       /*=========================================*/
       /* Reorder the activations by placing them */
       /* back on the agenda one by one.          */
@@ -886,8 +886,8 @@ void EnvReorderAgenda(
 /****************************************************/
 unsigned long GetNumberOfActivations(
   Environment *theEnv)
-  {  
-   return(AgendaData(theEnv)->NumberOfActivations); 
+  {
+   return(AgendaData(theEnv)->NumberOfActivations);
   }
 
 /******************************************************/
@@ -938,7 +938,7 @@ bool EnvRefresh(
    Defrule *rulePtr;
    struct partialMatch *listOfMatches;
    unsigned long b;
-   
+
    /*====================================*/
    /* Refresh each disjunct of the rule. */
    /*====================================*/
@@ -1028,7 +1028,7 @@ void EnvRefreshAgenda(
    Activation *theActivation;
    int oldValue;
    bool allModules = false;
-   
+
    /*==========================*/
    /* Save the current module. */
    /*==========================*/
@@ -1123,7 +1123,7 @@ void SetSalienceEvaluationCommand(
    CLIPSValue value;
    const char *argument;
    const char *oldValue;
-   
+
    /*==================================================*/
    /* Get the current setting for salience evaluation. */
    /*==================================================*/
@@ -1218,8 +1218,8 @@ static const char *SalienceEvaluationName(
 /****************************************************************/
 int EnvGetSalienceEvaluation(
   Environment *theEnv)
-  {   
-   return(AgendaData(theEnv)->SalienceEvaluation); 
+  {
+   return(AgendaData(theEnv)->SalienceEvaluation);
   }
 
 /***********************************************/

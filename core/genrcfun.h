@@ -120,7 +120,7 @@ struct defgeneric
 #define DEFGENERIC_DATA 27
 
 struct defgenericData
-  { 
+  {
    struct construct *DefgenericConstruct;
    int DefgenericModuleIndex;
    ENTITY_RECORD GenericEntityRecord;

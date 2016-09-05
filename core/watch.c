@@ -88,7 +88,7 @@ void InitializeWatchData(
   {
    AllocateEnvironmentData(theEnv,WATCH_DATA,sizeof(struct watchData),DeallocateWatchData);
   }
-  
+
 /************************************************/
 /* DeallocateWatchData: Deallocates environment */
 /*    data for watch items.                     */
@@ -287,8 +287,8 @@ int EnvGetWatchItem(
    struct watchItem *wPtr;
 
    for (wPtr = WatchData(theEnv)->ListOfWatchItems; wPtr != NULL; wPtr = wPtr->next)
-     { 
-      if (strcmp(itemName,wPtr->name) == 0) 
+     {
+      if (strcmp(itemName,wPtr->name) == 0)
         { return((int) *(wPtr->flag)); }
      }
 
@@ -542,7 +542,7 @@ void GetWatchItemCommand(
    bool recognized;
 
    returnValue->type = SYMBOL;
-   
+
    /*========================================*/
    /* Determine which item is to be watched. */
    /*========================================*/

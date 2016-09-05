@@ -97,7 +97,8 @@ struct lhsParseNode *SequenceRestrictionParse(
 
    SavePPBuffer(theEnv," ");
    GetToken(theEnv,readSource,theToken);
-   if ((theToken->type == OR_CONSTRAINT) || (theToken->type == AND_CONSTRAINT))
+   if ((theToken->tknType == OR_CONSTRAINT_TOKEN) ||
+       (theToken->tknType == AND_CONSTRAINT_TOKEN))
      {
       ReturnLHSParseNodes(theEnv,topNode);
       SyntaxErrorMessage(theEnv,"the first field of a pattern");
@@ -121,7 +122,7 @@ struct lhsParseNode *SequenceRestrictionParse(
    /* The pattern must end with a right parenthesis. */
    /*================================================*/
 
-   if (theToken->type != RPAREN)
+   if (theToken->tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       PPBackup(theEnv);
       SavePPBuffer(theEnv," ");
@@ -160,7 +161,7 @@ struct lhsParseNode *CreateInitialFactPattern(
    struct lhsParseNode *topNode;
    Deftemplate *theDeftemplate;
    int count;
-   
+
    /*==================================*/
    /* If the initial-fact deftemplate  */
    /* doesn't exist, then create it.   */

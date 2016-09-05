@@ -155,7 +155,6 @@ CLIPS> (run)                             ; DR0063
 here
 CLIPS> (retract ?f)                      ; DR0067
 [EVALUATN1] Variable f is unbound
-[ARGACCES5] Function retract expected argument #1 to be of type fact-address, fact-index, or the symbol *
 CLIPS> (clear)                           ; DR0068
 CLIPS> (defrule foo =>)                  ; DR0068
 CLIPS> (reset)                           ; DR0068

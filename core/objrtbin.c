@@ -147,7 +147,7 @@ void SetupObjectPatternsBload(
                              ClearBloadObjectPatterns);
 #endif
   }
-  
+
 /***********************************************************/
 /* DeallocateObjectReteBinaryData: Deallocates environment */
 /*    data for object rete binary functionality.           */
@@ -409,11 +409,11 @@ static void BloadObjectPatterns(
      {
       if ((ObjectReteBinaryData(theEnv)->PatternArray[i].lastLevel != NULL) &&
           (ObjectReteBinaryData(theEnv)->PatternArray[i].lastLevel->selector))
-        { 
+        {
          AddHashedPatternNode(theEnv,ObjectReteBinaryData(theEnv)->PatternArray[i].lastLevel,
                                      &ObjectReteBinaryData(theEnv)->PatternArray[i],
                                      ObjectReteBinaryData(theEnv)->PatternArray[i].networkTest->type,
-                                     ObjectReteBinaryData(theEnv)->PatternArray[i].networkTest->value); 
+                                     ObjectReteBinaryData(theEnv)->PatternArray[i].networkTest->value);
         }
      }
 
@@ -526,11 +526,11 @@ static void ClearBloadObjectPatterns(
      {
       if ((ObjectReteBinaryData(theEnv)->PatternArray[i].lastLevel != NULL) &&
           (ObjectReteBinaryData(theEnv)->PatternArray[i].lastLevel->selector))
-        { 
+        {
          RemoveHashedPatternNode(theEnv,ObjectReteBinaryData(theEnv)->PatternArray[i].lastLevel,
                                         &ObjectReteBinaryData(theEnv)->PatternArray[i],
                                         ObjectReteBinaryData(theEnv)->PatternArray[i].networkTest->type,
-                                        ObjectReteBinaryData(theEnv)->PatternArray[i].networkTest->value); 
+                                        ObjectReteBinaryData(theEnv)->PatternArray[i].networkTest->value);
         }
      }
 

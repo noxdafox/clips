@@ -70,7 +70,7 @@
    static struct factHashEntry  **CreateFactHashTable(Environment *,unsigned long);
    static void                    ResizeFactHashTable(Environment *);
    static void                    ResetFactHashTable(Environment *);
-   
+
 /************************************************/
 /* HashFact: Returns the hash value for a fact. */
 /************************************************/
@@ -151,7 +151,7 @@ void AddHashedFact(
    newhash->theFact = theFact;
 
    hashValue = (hashValue % FactData(theEnv)->FactHashTableSize);
-   
+
    temp = FactData(theEnv)->FactHashTable[hashValue];
    FactData(theEnv)->FactHashTable[hashValue] = newhash;
    newhash->next = temp;
@@ -217,7 +217,7 @@ bool FactWillBeAsserted(
 
    tempPtr = FactExists(theEnv,theFact,hashValue);
    if (tempPtr == NULL) return true;
-   
+
    return false;
   }
 
@@ -235,7 +235,7 @@ unsigned long HandleFactDuplication(
    struct fact *tempPtr;
    unsigned long hashValue;
    *duplicate = false;
-   
+
    hashValue = HashFact(theFact);
 
    if (FactData(theEnv)->FactDuplication)
@@ -259,8 +259,8 @@ unsigned long HandleFactDuplication(
 /*******************************************/
 bool EnvGetFactDuplication(
   Environment *theEnv)
-  {   
-   return(FactData(theEnv)->FactDuplication); 
+  {
+   return(FactData(theEnv)->FactDuplication);
   }
 
 /*******************************************/
@@ -303,12 +303,12 @@ static struct factHashEntry **CreateFactHashTable(
                gm3(theEnv,sizeof (struct factHashEntry *) * tableSize);
 
     if (theTable == NULL) EnvExitRouter(theEnv,EXIT_FAILURE);
-    
+
     for (i = 0; i < tableSize; i++) theTable[i] = NULL;
-    
+
     return(theTable);
    }
- 
+
 /************************/
 /* ResizeFactHashTable: */
 /************************/
@@ -320,33 +320,33 @@ static void ResizeFactHashTable(
     struct factHashEntry *theEntry, *nextEntry;
 
     theTable = FactData(theEnv)->FactHashTable;
-    
+
     newSize = (FactData(theEnv)->FactHashTableSize * 2) + 1;
     newTable = CreateFactHashTable(theEnv,newSize);
 
     /*========================================*/
     /* Copy the old entries to the new table. */
     /*========================================*/
-    
+
     for (i = 0; i < FactData(theEnv)->FactHashTableSize; i++)
       {
        theEntry = theTable[i];
        while (theEntry != NULL)
-         { 
+         {
           nextEntry = theEntry->next;
-          
+
           newLocation = theEntry->theFact->hashValue % newSize;
           theEntry->next = newTable[newLocation];
           newTable[newLocation] = theEntry;
-          
+
           theEntry = nextEntry;
          }
       }
-    
+
     /*=====================================================*/
     /* Replace the old hash table with the new hash table. */
     /*=====================================================*/
-    
+
     rm3(theEnv,theTable,sizeof(struct factHashEntry *) * FactData(theEnv)->FactHashTableSize);
     FactData(theEnv)->FactHashTableSize = newSize;
     FactData(theEnv)->FactHashTable = newTable;
@@ -364,25 +364,25 @@ static void ResetFactHashTable(
     /* Don't reset the table unless the hash table */
     /* has been expanded from its original size.   */
     /*=============================================*/
-    
+
     if (FactData(theEnv)->FactHashTableSize == SIZE_FACT_HASH)
       { return; }
-          
+
     /*=======================*/
     /* Create the new table. */
     /*=======================*/
-    
+
     newTable = CreateFactHashTable(theEnv,SIZE_FACT_HASH);
-    
+
     /*=====================================================*/
     /* Replace the old hash table with the new hash table. */
     /*=====================================================*/
-    
+
     rm3(theEnv,FactData(theEnv)->FactHashTable,sizeof(struct factHashEntry *) * FactData(theEnv)->FactHashTableSize);
     FactData(theEnv)->FactHashTableSize = SIZE_FACT_HASH;
     FactData(theEnv)->FactHashTable = newTable;
    }
-      
+
 #if DEVELOPER
 
 /****************************************************/

@@ -115,7 +115,7 @@ void CallDeffunction(
    EvaluationData(theEnv)->EvaluationError = false;
    if (EvaluationData(theEnv)->HaltExecution)
      return;
-     
+
    oldGarbageFrame = UtilityData(theEnv)->CurrentGarbageFrame;
    memset(&newGarbageFrame,0,sizeof(struct garbageFrame));
    newGarbageFrame.priorFrame = oldGarbageFrame;
@@ -134,7 +134,7 @@ void CallDeffunction(
       dptr->executing--;
       DeffunctionData(theEnv)->ExecutingDeffunction = previouslyExecutingDeffunction;
       EvaluationData(theEnv)->CurrentEvaluationDepth--;
-      
+
       RestorePriorGarbageFrame(theEnv,&newGarbageFrame,oldGarbageFrame,returnValue);
       CallPeriodicTasks(theEnv);
 
@@ -171,10 +171,10 @@ void CallDeffunction(
    PopProcParameters(theEnv);
    DeffunctionData(theEnv)->ExecutingDeffunction = previouslyExecutingDeffunction;
    EvaluationData(theEnv)->CurrentEvaluationDepth--;
-   
+
    RestorePriorGarbageFrame(theEnv,&newGarbageFrame,oldGarbageFrame,returnValue);
    CallPeriodicTasks(theEnv);
-   
+
    SetExecutingConstruct(theEnv,oldce);
   }
 

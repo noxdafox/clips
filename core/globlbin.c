@@ -106,11 +106,11 @@ static void DeallocateDefglobalBloadData(
      }
 
    space = DefglobalBinaryData(theEnv)->NumberOfDefglobals * sizeof(Defglobal);
-   if (space != 0) 
+   if (space != 0)
      { genfree(theEnv,DefglobalBinaryData(theEnv)->DefglobalArray,space); }
 
    space =  DefglobalBinaryData(theEnv)->NumberOfDefglobalModules * sizeof(struct defglobalModule);
-   if (space != 0) 
+   if (space != 0)
      { genfree(theEnv,DefglobalBinaryData(theEnv)->ModuleArray,space); }
 #endif
   }
@@ -432,7 +432,7 @@ static void ClearBload(
    space = DefglobalBinaryData(theEnv)->NumberOfDefglobals * sizeof(Defglobal);
    if (space != 0) genfree(theEnv,DefglobalBinaryData(theEnv)->DefglobalArray,space);
    DefglobalBinaryData(theEnv)->NumberOfDefglobals = 0;
-   
+
    /*=====================================================================*/
    /* Deallocate the space used for the defglobal module data structures. */
    /*=====================================================================*/
