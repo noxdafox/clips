@@ -168,7 +168,7 @@ struct joinNode *ConstructJoins(
               { nextLHS = nextLHS->bottom; }
 
             if ((nextLHS != NULL) &&
-                (nextLHS->type == TEST_CE) &&
+                (nextLHS->pnType == TEST_CE_NODE) &&
                 (nextLHS->beginNandDepth >= startDepth))
               {
                if (nextLHS->endNandDepth < startDepth)
@@ -183,7 +183,7 @@ struct joinNode *ConstructJoins(
         {
          if (nextLHS == NULL)
            { lastIteration = true; }
-         else if ((nextLHS->type == TEST_CE) &&
+         else if ((nextLHS->pnType == TEST_CE_NODE) &&
                   (nextLHS->endNandDepth < startDepth))
            { lastIteration = true; }
         }
@@ -384,7 +384,7 @@ static void AttachTestCEsToPatternCEs(
       /* variables that track the preceding pattern.                    */
       /*================================================================*/
 
-      if (theLHS->type != TEST_CE)
+      if (theLHS->pnType != TEST_CE_NODE)
         {
          lastLastNode = lastNode;
          lastNode = theLHS;

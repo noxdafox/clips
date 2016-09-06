@@ -649,7 +649,7 @@ static struct lhsParseNode *ConnectedPatternParse(
   struct token *theToken,
   bool *error)
   {
-   unsigned short connectorValue = 0;
+   ParseNodeType connectorValue = AND_CE_NODE;
    struct lhsParseNode *theNode, *tempNode, *theGroup;
    const char *errorCE = NULL;
    bool logical = false;
@@ -662,37 +662,37 @@ static struct lhsParseNode *ConnectedPatternParse(
    IncrementIndentDepth(theEnv,5);
    if (strcmp(ValueToString(theToken->value),"or") == 0)
      {
-      connectorValue = OR_CE;
+      connectorValue = OR_CE_NODE;
       errorCE = "the or conditional element";
       SavePPBuffer(theEnv,"  ");
      }
    else if (strcmp(ValueToString(theToken->value),"and") == 0)
      {
-      connectorValue = AND_CE;
+      connectorValue = AND_CE_NODE;
       errorCE = "the and conditional element";
       SavePPBuffer(theEnv," ");
      }
    else if (strcmp(ValueToString(theToken->value),"not") == 0)
      {
-      connectorValue = NOT_CE;
+      connectorValue = NOT_CE_NODE;
       errorCE = "the not conditional element";
       SavePPBuffer(theEnv," ");
      }
    else if (strcmp(ValueToString(theToken->value),"exists") == 0)
      {
-      connectorValue = EXISTS_CE;
+      connectorValue = EXISTS_CE_NODE;
       errorCE = "the exists conditional element";
       PPCRAndIndent(theEnv);
      }
    else if (strcmp(ValueToString(theToken->value),"forall") == 0)
      {
-      connectorValue = FORALL_CE;
+      connectorValue = FORALL_CE_NODE;
       errorCE = "the forall conditional element";
       PPCRAndIndent(theEnv);
      }
    else if (strcmp(ValueToString(theToken->value),"logical") == 0)
      {
-      connectorValue = AND_CE;
+      connectorValue = AND_CE_NODE;
       errorCE = "the logical conditional element";
       logical = true;
       PPCRAndIndent(theEnv);
@@ -716,9 +716,9 @@ static struct lhsParseNode *ConnectedPatternParse(
    /*=====================================================*/
 
       tempValue = PatternData(theEnv)->WithinNotCE;
-   if ((connectorValue == NOT_CE) ||
-       (connectorValue == EXISTS_CE) ||
-       (connectorValue == FORALL_CE))
+   if ((connectorValue == NOT_CE_NODE) ||
+       (connectorValue == EXISTS_CE_NODE) ||
+       (connectorValue == FORALL_CE_NODE))
      { PatternData(theEnv)->WithinNotCE = true; }
 
    /*===========================================*/
@@ -768,7 +768,7 @@ static struct lhsParseNode *ConnectedPatternParse(
    /* A not CE may not contain more than one CE. */
    /*============================================*/
 
-   if ((connectorValue == NOT_CE) && (theGroup->bottom != NULL))
+   if ((connectorValue == NOT_CE_NODE) && (theGroup->bottom != NULL))
      {
       SyntaxErrorMessage(theEnv,errorCE);
       ReturnLHSParseNodes(theEnv,theGroup);
@@ -780,7 +780,7 @@ static struct lhsParseNode *ConnectedPatternParse(
    /* A forall CE must contain at least two CEs. */
    /*============================================*/
 
-   if ((connectorValue == FORALL_CE) && (theGroup->bottom == NULL))
+   if ((connectorValue == FORALL_CE_NODE) && (theGroup->bottom == NULL))
      {
       SyntaxErrorMessage(theEnv,errorCE);
       ReturnLHSParseNodes(theEnv,theGroup);
@@ -792,7 +792,7 @@ static struct lhsParseNode *ConnectedPatternParse(
    /* Remove an "and" and "or" CE that only contains one CE. */
    /*========================================================*/
 
-   if (((connectorValue == AND_CE) || (connectorValue == OR_CE)) &&
+   if (((connectorValue == AND_CE_NODE) || (connectorValue == OR_CE_NODE)) &&
        (theGroup->bottom == NULL))
      {
       theGroup->logical = logical;
@@ -810,11 +810,11 @@ static struct lhsParseNode *ConnectedPatternParse(
    /* Attach and/or/not CEs directly to the top most node. */
    /*======================================================*/
 
-   if ((connectorValue == AND_CE) ||
-       (connectorValue == OR_CE) ||
-       (connectorValue == NOT_CE))
+   if ((connectorValue == AND_CE_NODE) ||
+       (connectorValue == OR_CE_NODE) ||
+       (connectorValue == NOT_CE_NODE))
      {
-      theNode->type = connectorValue;
+      theNode->pnType = connectorValue;
       theNode->right = theGroup;
      }
 
@@ -822,18 +822,18 @@ static struct lhsParseNode *ConnectedPatternParse(
    /* Wrap two not CEs around the patterns contained in an exists CE. */
    /*=================================================================*/
 
-   else if (connectorValue == EXISTS_CE)
+   else if (connectorValue == EXISTS_CE_NODE)
      {
-      theNode->type = NOT_CE;
+      theNode->pnType = NOT_CE_NODE;
 
       theNode->right = GetLHSParseNode(theEnv);
-      theNode->right->type = NOT_CE;
+      theNode->right->pnType = NOT_CE_NODE;
       theNode->right->logical = logical;
 
       if (theGroup->bottom != NULL)
         {
          theNode->right->right = GetLHSParseNode(theEnv);
-         theNode->right->right->type = AND_CE;
+         theNode->right->right->pnType = AND_CE_NODE;
          theNode->right->right->logical = logical;
          theNode->right->right->right = theGroup;
         }
@@ -846,22 +846,22 @@ static struct lhsParseNode *ConnectedPatternParse(
    /* CEs and a not CE around the 2nd through nth CEs. */
    /*==================================================*/
 
-   else if (connectorValue == FORALL_CE)
+   else if (connectorValue == FORALL_CE_NODE)
      {
-      theNode->type = NOT_CE;
+      theNode->pnType = NOT_CE_NODE;
 
       tempNode = theGroup->bottom;
       theGroup->bottom = NULL;
 
       theNode->right = GetLHSParseNode(theEnv);
-      theNode->right->type = AND_CE;
+      theNode->right->pnType = AND_CE_NODE;
       theNode->right->logical = logical;
       theNode->right->right = theGroup;
 
       theGroup = tempNode;
 
       theNode->right->right->bottom = GetLHSParseNode(theEnv);
-      theNode->right->right->bottom->type = NOT_CE;
+      theNode->right->right->bottom->pnType = NOT_CE_NODE;
       theNode->right->right->bottom->logical = logical;
 
       tempNode = theNode->right->right->bottom;
@@ -871,7 +871,7 @@ static struct lhsParseNode *ConnectedPatternParse(
       else
         {
          tempNode->right = GetLHSParseNode(theEnv);
-         tempNode->right->type = AND_CE;
+         tempNode->right->pnType = AND_CE_NODE;
          tempNode->right->logical = logical;
          tempNode->right->right = theGroup;
         }
@@ -980,7 +980,7 @@ static struct lhsParseNode *TestPattern(
 
    SavePPBuffer(theEnv," ");
    theNode = GetLHSParseNode(theEnv);
-   theNode->type = TEST_CE;
+   theNode->pnType = TEST_CE_NODE;
    theExpression = Function0Parse(theEnv,readSource);
    theNode->expression = ExpressionToLHSParseNodes(theEnv,theExpression);
    ReturnExpression(theEnv,theExpression);
@@ -1103,9 +1103,9 @@ static void TagLHSLogicalNodes(
    while (nodePtr != NULL)
      {
       nodePtr->logical = true;
-      if ((nodePtr->type == AND_CE) ||
-          (nodePtr->type == OR_CE) ||
-          (nodePtr->type == NOT_CE))
+      if ((nodePtr->pnType == AND_CE_NODE) ||
+          (nodePtr->pnType == OR_CE_NODE) ||
+          (nodePtr->pnType == NOT_CE_NODE))
         { TagLHSLogicalNodes(nodePtr->right); }
       nodePtr = nodePtr->bottom;
      }
@@ -1153,7 +1153,7 @@ static struct lhsParseNode *SimplePatternParse(
    /*===============================================*/
 
    theNode = GetLHSParseNode(theEnv);
-   theNode->type = PATTERN_CE;
+   theNode->pnType = PATTERN_CE_NODE;
    theNode->negated = false;
    theNode->exists = false;
 

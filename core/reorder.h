@@ -61,13 +61,41 @@ struct lhsParseNode;
 #include "pattern.h"
 #include "ruledef.h"
 
+typedef enum
+  {
+   PATTERN_CE_NODE = 2049,
+   AND_CE_NODE,
+   OR_CE_NODE,
+   NOT_CE_NODE,
+   TEST_CE_NODE,
+   NAND_CE_NODE,
+   EXISTS_CE_NODE,
+   FORALL_CE_NODE,
+   SF_WILDCARD_NODE,
+   MF_WILDCARD_NODE,
+   SF_VARIABLE_NODE,
+   MF_VARIABLE_NODE,
+   GBL_VARIABLE_NODE,
+   PREDICATE_CONSTRAINT_NODE,
+   RETURN_VALUE_CONSTRAINT_NODE,
+   FCALL_NODE,
+   GCALL_NODE,
+   PCALL_NODE,
+   INTEGER_NODE,
+   FLOAT_NODE,
+   SYMBOL_NODE,
+   STRING_NODE,
+   INSTANCE_NAME_NODE,
+   UNKNOWN_NODE
+  } ParseNodeType;
+
 /***********************************************************************/
 /* lhsParseNode structure: Stores information about the intermediate   */
 /*   parsed representation of the lhs of a rule.                       */
 /***********************************************************************/
 struct lhsParseNode
   {
-   unsigned short type;
+   ParseNodeType pnType;
    void *value;
    unsigned int negated : 1;
    unsigned int exists : 1;
@@ -121,7 +149,9 @@ struct lhsParseNode
    void                           AddInitialPatterns(Environment *,struct lhsParseNode *);
    bool                           IsExistsSubjoin(struct lhsParseNode *,int);
    struct lhsParseNode           *CombineLHSParseNodes(Environment *,struct lhsParseNode *,struct lhsParseNode *);
-   //void                           AssignPatternMarkedFlag(struct lhsParseNode *,short);
+   bool                           ConstantNode(struct lhsParseNode *);
+   unsigned short                 NodeTypeToType(struct lhsParseNode *);
+   ParseNodeType                  TypeToNodeType(unsigned short);
 
 #endif /* _H_reorder */
 

@@ -243,7 +243,7 @@ void FieldConversion(
    /* to the previous binding occurrence.                           */
    /*===============================================================*/
 
-   if (((theField->type == MF_VARIABLE) || (theField->type == SF_VARIABLE)) &&
+   if (((theField->pnType == MF_VARIABLE_NODE) || (theField->pnType == SF_VARIABLE_NODE)) &&
        (theField->referringNode != NULL))
      {
       /*================================================================*/
@@ -396,11 +396,11 @@ static void ExtractFieldTest(
    /* Generate a network expression for a constant constraint. */
    /*==========================================================*/
 
-   if ((theField->type == STRING) || (theField->type == SYMBOL) ||
+   if ((theField->pnType == STRING_NODE) || (theField->pnType == SYMBOL_NODE) ||
 #if OBJECT_SYSTEM
-       (theField->type == INSTANCE_NAME) ||
+       (theField->pnType == INSTANCE_NAME_NODE) ||
 #endif
-       (theField->type == FLOAT) || (theField->type == INTEGER))
+       (theField->pnType == FLOAT_NODE) || (theField->pnType == INTEGER_NODE))
      {
       if (testInPatternNetwork == true)
         {
@@ -409,7 +409,7 @@ static void ExtractFieldTest(
          if (! theField->negated)
            {
             *constantSelector = (*theField->patternType->genGetPNValueFunction)(theEnv,theField);
-            *constantValue = GenConstant(theEnv,theField->type,theField->value);
+            *constantValue = GenConstant(theEnv,NodeTypeToType(theField),theField->value);
            }
         }
       else
@@ -420,7 +420,7 @@ static void ExtractFieldTest(
    /* Generate a network expression for a predicate constraint. */
    /*===========================================================*/
 
-   else if (theField->type == PREDICATE_CONSTRAINT)
+   else if (theField->pnType == PREDICATE_CONSTRAINT_NODE)
      {
       if ((testInPatternNetwork == true) &&
           (AllVariablesInExpression(theField->expression,theField->pattern) == true))
@@ -433,7 +433,7 @@ static void ExtractFieldTest(
    /* Generate a network expression for a return value constraint. */
    /*==============================================================*/
 
-   else if (theField->type == RETURN_VALUE_CONSTRAINT)
+   else if (theField->pnType == RETURN_VALUE_CONSTRAINT_NODE)
      {
       if ((testInPatternNetwork == true) &&
           (AllVariablesInExpression(theField->expression,theField->pattern) == true))
@@ -446,7 +446,7 @@ static void ExtractFieldTest(
    /* Generate a network expression for a variable comparison constraint. */
    /*=====================================================================*/
 
-   else if ((theField->type == SF_VARIABLE) || (theField->type == MF_VARIABLE))
+   else if ((theField->pnType == SF_VARIABLE_NODE) || (theField->pnType == MF_VARIABLE_NODE))
      {
       if ((testInPatternNetwork == true) &&
           ((theField->referringNode != NULL) ?
@@ -496,7 +496,7 @@ static struct expr *GenPNConstant(
      { top = GenConstant(theEnv,FCALL,ExpressionData(theEnv)->PTR_EQ); }
 
    top->argList = (*theField->patternType->genGetPNValueFunction)(theEnv,theField);
-   top->argList->nextArg = GenConstant(theEnv,theField->type,theField->value);
+   top->argList->nextArg = GenConstant(theEnv,NodeTypeToType(theField),theField->value);
 
    return(top);
   }
@@ -545,7 +545,7 @@ static struct expr *GenJNConstant(
    else
       { top->argList = (*theField->patternType->genGetJNValueFunction)(theEnv,theField,RHS); }
 
-   top->argList->nextArg = GenConstant(theEnv,theField->type,theField->value);
+   top->argList->nextArg = GenConstant(theEnv,NodeTypeToType(theField),theField->value);
 
    return(top);
   }
@@ -791,7 +791,7 @@ struct expr *GetvarReplace(
    /*=====================================================*/
 
    newList = get_struct(theEnv,expr);
-   newList->type = nodeList->type;
+   newList->type = NodeTypeToType(nodeList);
    newList->value = nodeList->value;
    newList->nextArg = GetvarReplace(theEnv,nodeList->right,isNand,theNandFrames);
    newList->argList = GetvarReplace(theEnv,nodeList->bottom,isNand,theNandFrames);
@@ -802,7 +802,7 @@ struct expr *GetvarReplace(
    /* that will return the variable's value.                  */
    /*=========================================================*/
 
-   if ((nodeList->type == SF_VARIABLE) || (nodeList->type == MF_VARIABLE))
+   if ((nodeList->pnType == SF_VARIABLE_NODE) || (nodeList->pnType == MF_VARIABLE_NODE))
      {
       AddNandUnification(theEnv,nodeList,theNandFrames);
 
@@ -877,7 +877,7 @@ static struct expr *GetfieldReplace(
    /*=====================================================*/
 
    newList = get_struct(theEnv,expr);
-   newList->type = nodeList->type;
+   newList->type = NodeTypeToType(nodeList);
    newList->value = nodeList->value;
    newList->nextArg = GetfieldReplace(theEnv,nodeList->right);
    newList->argList = GetfieldReplace(theEnv,nodeList->bottom);
@@ -888,7 +888,7 @@ static struct expr *GetfieldReplace(
    /* that will return the variable's value.                  */
    /*=========================================================*/
 
-   if ((nodeList->type == SF_VARIABLE) || (nodeList->type == MF_VARIABLE))
+   if ((nodeList->pnType == SF_VARIABLE_NODE) || (nodeList->pnType == MF_VARIABLE_NODE))
      {
       (*nodeList->referringNode->patternType->replaceGetPNValueFunction)
          (theEnv,newList,nodeList->referringNode);
@@ -1005,7 +1005,7 @@ static bool AllVariablesInPattern(
          /* pattern being checked.                                 */
          /*========================================================*/
 
-         if ((andField->type == SF_VARIABLE) || (andField->type == MF_VARIABLE))
+         if ((andField->pnType == SF_VARIABLE_NODE) || (andField->pnType == MF_VARIABLE_NODE))
            { if (andField->referringNode->pattern != pattern) return false; }
 
          /*========================================================*/
@@ -1013,8 +1013,8 @@ static bool AllVariablesInPattern(
          /* that all variables can be referenced from the pattern. */
          /*========================================================*/
 
-         else if ((andField->type == PREDICATE_CONSTRAINT) ||
-                  (andField->type == RETURN_VALUE_CONSTRAINT))
+         else if ((andField->pnType == PREDICATE_CONSTRAINT_NODE) ||
+                  (andField->pnType == RETURN_VALUE_CONSTRAINT_NODE))
            {
             if (AllVariablesInExpression(andField->expression,pattern) == false)
               { return false; }
@@ -1053,8 +1053,8 @@ static bool AllVariablesInExpression(
       /* checked.                                               */
       /*========================================================*/
 
-      if ((theExpression->type == SF_VARIABLE) ||
-          (theExpression->type == MF_VARIABLE))
+      if ((theExpression->pnType == SF_VARIABLE_NODE) ||
+          (theExpression->pnType == MF_VARIABLE_NODE))
         { if (theExpression->referringNode->pattern != pattern) return false; }
 
       /*=======================================================*/

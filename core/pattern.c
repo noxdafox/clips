@@ -553,7 +553,7 @@ bool PostPatternAnalysis(
 
    for (patternPtr = theLHS; patternPtr != NULL; patternPtr = patternPtr->bottom)
      {
-      if ((patternPtr->type == PATTERN_CE) && (patternPtr->patternType != NULL))
+      if ((patternPtr->pnType == PATTERN_CE_NODE) && (patternPtr->patternType != NULL))
         {
          tempParser = patternPtr->patternType;
          if (tempParser->postAnalysisFunction != NULL)
@@ -609,7 +609,10 @@ struct lhsParseNode *RestrictionParse(
           (theToken->tknType == MF_WILDCARD_TOKEN))
         {
          nextNode = GetLHSParseNode(theEnv);
-         nextNode->type = TokenTypeToType(theToken->tknType);
+         if (theToken->tknType == SF_WILDCARD_TOKEN)
+           { nextNode->pnType = SF_WILDCARD_NODE; }
+         else
+           { nextNode->pnType = MF_WILDCARD_NODE; }
          nextNode->negated = false;
          nextNode->exists = false;
          GetToken(theEnv,readSource,theToken);
@@ -641,7 +644,8 @@ struct lhsParseNode *RestrictionParse(
       /* multifield restrictions encountered.   */
       /*========================================*/
 
-      if ((nextNode->type == SF_WILDCARD) || (nextNode->type == SF_VARIABLE))
+      if ((nextNode->pnType == SF_WILDCARD_NODE) ||
+          (nextNode->pnType == SF_VARIABLE_NODE))
         { numberOfSingleFields++; }
       else
         { numberOfMultifields++; }
@@ -664,7 +668,7 @@ struct lhsParseNode *RestrictionParse(
         {
          if (theConstraints == NULL)
            {
-            if (nextNode->type == SF_VARIABLE)
+            if (nextNode->pnType == SF_VARIABLE_NODE)
               { nextNode->constraints = GetConstraintRecord(theEnv); }
             else nextNode->constraints = NULL;
            }
@@ -714,7 +718,7 @@ struct lhsParseNode *RestrictionParse(
 
       if (theConstraints == NULL)
         {
-         if (nextNode->type == SF_VARIABLE)
+         if (nextNode->pnType == SF_VARIABLE_NODE)
            { nextNode->constraints = GetConstraintRecord(theEnv); }
          else
            { continue; }
@@ -740,7 +744,7 @@ struct lhsParseNode *RestrictionParse(
       /* min and max constraints for this constraint.       */
       /*====================================================*/
 
-      if ((nextNode->type != MF_WILDCARD) && (nextNode->type != MF_VARIABLE))
+      if ((nextNode->pnType != MF_WILDCARD_NODE) && (nextNode->pnType != MF_VARIABLE_NODE))
         { continue; }
 
       /*==========================================================*/
@@ -782,7 +786,7 @@ struct lhsParseNode *RestrictionParse(
    if (multifieldSlot)
      {
       nextNode = GetLHSParseNode(theEnv);
-      nextNode->type = MF_WILDCARD;
+      nextNode->pnType = MF_WILDCARD_NODE;
       nextNode->multifieldSlot = true;
       nextNode->bottom = topNode;
       nextNode->slot = theSlot;
@@ -819,7 +823,7 @@ static void TallyFieldTypes(
 
    for (tempNode1 = theRestrictions; tempNode1 != NULL; tempNode1 = tempNode1->right)
      {
-      if ((tempNode1->type == SF_VARIABLE) || (tempNode1->type == SF_WILDCARD))
+      if ((tempNode1->pnType == SF_VARIABLE_NODE) || (tempNode1->pnType == SF_WILDCARD_NODE))
         { totalSingleFields++; }
       else
         { totalMultiFields++; }
@@ -841,7 +845,7 @@ static void TallyFieldTypes(
       tempNode1->multiFieldsBefore = runningMultiFields;
       tempNode1->withinMultifieldSlot = true;
 
-      if ((tempNode1->type == SF_VARIABLE) || (tempNode1->type == SF_WILDCARD))
+      if ((tempNode1->pnType == SF_VARIABLE_NODE) || (tempNode1->pnType == SF_WILDCARD_NODE))
         {
          tempNode1->singleFieldsAfter = (unsigned short) (totalSingleFields - (runningSingleFields + 1));
          tempNode1->multiFieldsAfter = (unsigned short) (totalMultiFields - runningMultiFields);
@@ -874,7 +878,7 @@ static void TallyFieldTypes(
       /* and multifield constraints.           */
       /*=======================================*/
 
-      if ((tempNode1->type == SF_VARIABLE) || (tempNode1->type == SF_WILDCARD))
+      if ((tempNode1->pnType == SF_VARIABLE_NODE) || (tempNode1->pnType == SF_WILDCARD_NODE))
         { runningSingleFields++; }
       else
         { runningMultiFields++; }
@@ -901,7 +905,7 @@ static struct lhsParseNode *ConjuctiveRestrictionParse(
   {
    struct lhsParseNode *bindNode;
    struct lhsParseNode *theNode, *nextOr, *nextAnd;
-   int connectorType;
+   TokenType connectorType;
 
    /*=====================================*/
    /* Get the first node and determine if */
@@ -915,7 +919,7 @@ static struct lhsParseNode *ConjuctiveRestrictionParse(
 
    GetToken(theEnv,readSource,theToken);
 
-   if (((theNode->type == SF_VARIABLE) || (theNode->type == MF_VARIABLE)) &&
+   if (((theNode->pnType == SF_VARIABLE_NODE) || (theNode->pnType == MF_VARIABLE_NODE)) &&
        (theNode->negated == false) &&
        (theToken->tknType != OR_CONSTRAINT_TOKEN))
      {
@@ -927,8 +931,8 @@ static struct lhsParseNode *ConjuctiveRestrictionParse(
    else
      {
       bindNode = GetLHSParseNode(theEnv);
-      if (theNode->type == MF_VARIABLE) bindNode->type = MF_WILDCARD;
-      else bindNode->type = SF_WILDCARD;
+      if (theNode->pnType == MF_VARIABLE_NODE) bindNode->pnType = MF_WILDCARD_NODE;
+      else bindNode->pnType = SF_WILDCARD_NODE;
       bindNode->negated = false;
       bindNode->bottom = theNode;
       nextOr = theNode;
@@ -947,7 +951,7 @@ static struct lhsParseNode *ConjuctiveRestrictionParse(
       /* Get the next constraint. */
       /*==========================*/
 
-      connectorType = TokenTypeToType(theToken->tknType);
+      connectorType = theToken->tknType;
 
       GetToken(theEnv,readSource,theToken);
       theNode = LiteralRestrictionParse(theEnv,readSource,theToken,error);
@@ -963,7 +967,7 @@ static struct lhsParseNode *ConjuctiveRestrictionParse(
       /* of constraints for this field.        */
       /*=======================================*/
 
-      if (connectorType == OR_CONSTRAINT)
+      if (connectorType == OR_CONSTRAINT_TOKEN)
         {
          if (nextOr == NULL)
            { bindNode->bottom = theNode; }
@@ -972,7 +976,7 @@ static struct lhsParseNode *ConjuctiveRestrictionParse(
          nextOr = theNode;
          nextAnd = theNode;
         }
-      else if (connectorType == AND_CONSTRAINT)
+      else if (connectorType == AND_CONSTRAINT_TOKEN)
         {
          if (nextAnd == NULL)
            {
@@ -1039,8 +1043,8 @@ static bool CheckForVariableMixing(
    /* multifield variable.                           */
    /*================================================*/
 
-   if (theRestriction->type == SF_VARIABLE) singlefield = true;
-   else if (theRestriction->type == MF_VARIABLE) multifield = true;
+   if (theRestriction->pnType == SF_VARIABLE_NODE) singlefield = true;
+   else if (theRestriction->pnType == MF_VARIABLE_NODE) multifield = true;
 
    /*===========================================*/
    /* Loop through each of the or (|) connected */
@@ -1069,10 +1073,10 @@ static bool CheckForVariableMixing(
          /* value.                                              */
          /*=====================================================*/
 
-         if (tempRestriction->type == SF_VARIABLE) singlefield = true;
-         else if (tempRestriction->type == MF_VARIABLE) multifield = true;
-         else if (ConstantType(tempRestriction->type)) constant = true;
-         else if (tempRestriction->type == RETURN_VALUE_CONSTRAINT)
+         if (tempRestriction->pnType == SF_VARIABLE_NODE) singlefield = true;
+         else if (tempRestriction->pnType == MF_VARIABLE_NODE) multifield = true;
+         else if (ConstantNode(tempRestriction)) constant = true;
+         else if (tempRestriction->pnType == RETURN_VALUE_CONSTRAINT_NODE)
            {
             theConstraint = FunctionCallToConstraintRecord(theEnv,tempRestriction->expression->value);
             if (theConstraint->anyAllowed) { /* Do nothing. */ }
@@ -1180,7 +1184,7 @@ static struct lhsParseNode *LiteralRestrictionParse(
             ReturnLHSParseNodes(theEnv,topNode);
             return NULL;
            }
-         topNode->type = RETURN_VALUE_CONSTRAINT;
+         topNode->pnType = RETURN_VALUE_CONSTRAINT_NODE;
          topNode->expression = ExpressionToLHSParseNodes(theEnv,theExpression);
          ReturnExpression(theEnv,theExpression);
         }
@@ -1199,7 +1203,7 @@ static struct lhsParseNode *LiteralRestrictionParse(
             ReturnLHSParseNodes(theEnv,topNode);
             return NULL;
            }
-         topNode->type = PREDICATE_CONSTRAINT;
+         topNode->pnType = PREDICATE_CONSTRAINT_NODE;
          topNode->expression = ExpressionToLHSParseNodes(theEnv,theExpression);
          ReturnExpression(theEnv,theExpression);
         }
@@ -1210,7 +1214,7 @@ static struct lhsParseNode *LiteralRestrictionParse(
 
       else
         {
-         topNode->type = SYMBOL;
+         topNode->pnType = SYMBOL_NODE;
          topNode->value = theToken->value;
         }
      }
@@ -1227,7 +1231,7 @@ static struct lhsParseNode *LiteralRestrictionParse(
             (theToken->tknType == STRING_TOKEN) ||
             (theToken->tknType == INSTANCE_NAME_TOKEN))
      {
-      topNode->type = TokenTypeToType(theToken->tknType);
+      topNode->pnType = TypeToNodeType(TokenTypeToType(theToken->tknType));
       topNode->value = theToken->value;
      }
 

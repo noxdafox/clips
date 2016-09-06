@@ -111,7 +111,7 @@ EXPRESSION *GenObjectPNConstantCompare(
   {
    struct ObjectCmpPNConstant hack;
    EXPRESSION *theExp;
-   unsigned short tmpType;
+   ParseNodeType tmpType;
 
    /* ===============================================================
       If the value of a single field slot (or relation name) is being
@@ -147,7 +147,7 @@ EXPRESSION *GenObjectPNConstantCompare(
         hack.offset = theNode->singleFieldsAfter;
       theExp = GenConstant(theEnv,OBJ_PN_CONSTANT,EnvAddBitMap(theEnv,&hack,
                                         (int) sizeof(struct ObjectCmpPNConstant)));
-      theExp->argList = GenConstant(theEnv,theNode->type,theNode->value);
+      theExp->argList = GenConstant(theEnv,NodeTypeToType(theNode),theNode->value);
      }
    else
      {
@@ -155,11 +155,11 @@ EXPRESSION *GenObjectPNConstantCompare(
       theExp = GenConstant(theEnv,OBJ_PN_CONSTANT,EnvAddBitMap(theEnv,&hack,
                                         (int) sizeof(struct ObjectCmpPNConstant)));
       theExp->argList = GenConstant(theEnv,0,NULL);
-      tmpType = theNode->type;
-      theNode->type = SF_VARIABLE;
+      tmpType = theNode->pnType;
+      theNode->pnType = SF_VARIABLE_NODE;
       GenObjectGetVar(theEnv,false,theExp->argList,theNode,-1);
-      theNode->type = tmpType;
-      theExp->argList->nextArg = GenConstant(theEnv,theNode->type,theNode->value);
+      theNode->pnType = tmpType;
+      theExp->argList->nextArg = GenConstant(theEnv,NodeTypeToType(theNode),theNode->value);
      }
    return(theExp);
   }
@@ -210,20 +210,20 @@ void GenObjectLengthTest(
    EXPRESSION *theTest;
 
    if ((theNode->singleFieldsAfter == 0) &&
-       (theNode->type != SF_VARIABLE) &&
-       (theNode->type != SF_WILDCARD))
+       (theNode->pnType != SF_VARIABLE_NODE) &&
+       (theNode->pnType != SF_WILDCARD_NODE))
      return;
 
    ClearBitString(&hack,(int) sizeof(struct ObjectMatchLength));
 
-   if ((theNode->type != MF_VARIABLE) &&
-       (theNode->type != MF_WILDCARD) &&
+   if ((theNode->pnType != MF_VARIABLE_NODE) &&
+       (theNode->pnType != MF_WILDCARD_NODE) &&
        (theNode->multiFieldsAfter == 0))
      hack.exactly = 1;
    else
      hack.exactly = 0;
 
-   if ((theNode->type == SF_VARIABLE) || (theNode->type == SF_WILDCARD))
+   if ((theNode->pnType == SF_VARIABLE_NODE) || (theNode->pnType == SF_WILDCARD_NODE))
      hack.minLength = 1 + theNode->singleFieldsAfter;
    else
      hack.minLength = theNode->singleFieldsAfter;
@@ -350,8 +350,8 @@ static void GenObjectGetVar(
        (theNode->multiFieldsBefore == 0) &&
        (theNode->multiFieldsAfter == 0) &&
        ((theNode->withinMultifieldSlot == false) ||
-        (theNode->type == MF_VARIABLE) ||
-        (theNode->type == MF_WILDCARD)))
+        (theNode->pnType == MF_VARIABLE_NODE) ||
+        (theNode->pnType == MF_WILDCARD_NODE)))
      {
       hack1.allFields = 1;
       hack1.whichSlot = (unsigned short) theNode->slotNumber;
@@ -365,7 +365,7 @@ static void GenObjectGetVar(
       containing at most one multifield variable and at least
       one (or two if no multifield variables) single-field variable
       ============================================================= */
-   if (((theNode->type == SF_WILDCARD) || (theNode->type == SF_VARIABLE) || ConstantType(theNode->type)) &&
+   if (((theNode->pnType == SF_WILDCARD_NODE) || (theNode->pnType == SF_VARIABLE_NODE) || ConstantNode(theNode)) &&
        ((theNode->multiFieldsBefore == 0) || (theNode->multiFieldsAfter == 0)))
      {
       hack2.whichSlot = (unsigned short) theNode->slotNumber;
@@ -384,7 +384,7 @@ static void GenObjectGetVar(
       return;
      }
 
-   if (((theNode->type == MF_WILDCARD) || (theNode->type == MF_VARIABLE) || ConstantType(theNode->type)) &&
+   if (((theNode->pnType == MF_WILDCARD_NODE) || (theNode->pnType == MF_VARIABLE_NODE) || ConstantNode(theNode)) &&
        (theNode->multiFieldsBefore == 0) &&
        (theNode->multiFieldsAfter == 0))
      {
@@ -423,7 +423,7 @@ static void GenObjectGetVar(
 static bool IsSimpleSlotVariable(
   struct lhsParseNode *node)
   {
-   if ((node->type == MF_WILDCARD) || (node->type == MF_VARIABLE))
+   if ((node->pnType == MF_WILDCARD_NODE) || (node->pnType == MF_VARIABLE_NODE))
      return false;
    if ((node->slotNumber < 0) ||
        (node->slotNumber == ISA_ID) ||

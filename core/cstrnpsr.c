@@ -771,6 +771,7 @@ static bool ParseAllowedValuesAttribute(
       /*===========================================*/
 
       newValue = GenConstant(theEnv,genType,inputToken.value);
+      
       if (lastValue == NULL)
         {
          if (strcmp(constraintName,"allowed-classes") == 0)

@@ -185,8 +185,8 @@ static bool MultifieldCardinalityViolation(
       /* and maximum number of fields by one.               */
       /*====================================================*/
 
-      if ((tmpNode->type == SF_VARIABLE) ||
-          (tmpNode->type == SF_WILDCARD))
+      if ((tmpNode->pnType == SF_VARIABLE_NODE) ||
+          (tmpNode->pnType == SF_WILDCARD_NODE))
         {
          minFields++;
          maxFields++;
@@ -298,9 +298,9 @@ bool ProcessConnectedConstraints(
         {
          if (! andNode->negated)
            {
-            if (andNode->type == RETURN_VALUE_CONSTRAINT)
+            if (andNode->pnType == RETURN_VALUE_CONSTRAINT_NODE)
               {
-               if (andNode->expression->type == FCALL)
+               if (andNode->expression->pnType == FCALL_NODE)
                  {
                   rvConstraints = FunctionCallToConstraintRecord(theEnv,andNode->expression->value);
                   tmpConstraints = andConstraints;
@@ -309,9 +309,9 @@ bool ProcessConnectedConstraints(
                   RemoveConstraint(theEnv,rvConstraints);
                  }
               }
-            else if (ConstantType(andNode->type))
+            else if (ConstantNode(andNode))
               {
-               tmpExpr = GenConstant(theEnv,andNode->type,andNode->value);
+               tmpExpr = GenConstant(theEnv,NodeTypeToType(andNode),andNode->value);
                rvConstraints = ExpressionToConstraintRecord(theEnv,tmpExpr);
                tmpConstraints = andConstraints;
                andConstraints = IntersectConstraints(theEnv,andConstraints,rvConstraints);
@@ -342,8 +342,8 @@ bool ProcessConnectedConstraints(
 
       for (andNode = orNode; andNode != NULL; andNode = andNode->right)
         {
-         if ((andNode->negated) && ConstantType(andNode->type))
-             { RemoveConstantFromConstraint(theEnv,andNode->type,andNode->value,andConstraints); }
+         if ((andNode->negated) && ConstantNode(andNode))
+           { RemoveConstantFromConstraint(theEnv,NodeTypeToType(andNode),andNode->value,andConstraints); }
         }
 
       /*=======================================================*/
@@ -638,13 +638,13 @@ struct lhsParseNode *GetExpressionVarConstraints(
          list1 = AddToVariableConstraints(theEnv,list2,list1);
         }
 
-      if (theExpression->type == SF_VARIABLE)
+      if (theExpression->pnType == SF_VARIABLE_NODE)
         {
          list2 = GetLHSParseNode(theEnv);
          if (theExpression->referringNode != NULL)
-           { list2->type = theExpression->referringNode->type; }
+           { list2->pnType = theExpression->referringNode->pnType; }
          else
-           { list2->type = SF_VARIABLE; }
+           { list2->pnType = SF_VARIABLE_NODE; }
          list2->value = theExpression->value;
          list2->derivedConstraints = true;
          list2->constraints = CopyConstraintRecord(theEnv,theExpression->constraints);
@@ -682,8 +682,8 @@ struct lhsParseNode *DeriveVariableConstraints(
       list2 = NULL;
       for (andNode = orNode; andNode != NULL; andNode = andNode->right)
         {
-         if ((andNode->type == RETURN_VALUE_CONSTRAINT) ||
-             (andNode->type == PREDICATE_CONSTRAINT))
+         if ((andNode->pnType == RETURN_VALUE_CONSTRAINT_NODE) ||
+             (andNode->pnType == PREDICATE_CONSTRAINT_NODE))
            {
             list1 = GetExpressionVarConstraints(theEnv,andNode->expression);
             list2 = AddToVariableConstraints(theEnv,list2,list1);
@@ -797,7 +797,7 @@ static bool CheckArgumentForConstraintError(
    theVariable = FindVariable((SYMBOL_HN *) expressionList->value,theLHS);
    if (theVariable != NULL)
      {
-      if (theVariable->type == MF_VARIABLE)
+      if (theVariable->pnType == MF_VARIABLE_NODE)
         {
          constraint2 = GetConstraintRecord(theEnv);
          SetConstraintType(MULTIFIELD,constraint2);

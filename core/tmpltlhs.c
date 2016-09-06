@@ -96,13 +96,13 @@ struct lhsParseNode *DeftemplateLHSParse(
    /*===================================================*/
 
    head = GetLHSParseNode(theEnv);
-   head->type = SF_WILDCARD;
+   head->pnType = SF_WILDCARD_NODE;
    head->negated = false;
    head->exists = false;
    head->index = 0;
    head->slotNumber = 1;
    head->bottom = GetLHSParseNode(theEnv);
-   head->bottom->type = SYMBOL;
+   head->bottom->pnType = SYMBOL_NODE;
    head->bottom->negated = false;
    head->bottom->exists = false;
    head->bottom->value = theDeftemplate->header.name;
@@ -289,8 +289,8 @@ static struct lhsParseNode *GetSingleLHSSlot(
       /* not allowed in a single field slot.  */
       /*======================================*/
 
-      if ((nextSlot->type == MF_VARIABLE) ||
-          (nextSlot->type == MULTIFIELD))
+      if ((nextSlot->pnType == MF_VARIABLE_NODE) ||
+          (nextSlot->pnType == MF_WILDCARD_NODE))
         {
          SingleFieldSlotCardinalityError(theEnv,slotPtr->slotName->contents);
          *error = true;

@@ -1959,11 +1959,11 @@ SYMBOL_HN *FindTemplateForFactAddress(
    /*=====================================*/
 
    thePattern = thePattern->right;
-   if ((thePattern->type != SF_WILDCARD) || (thePattern->bottom == NULL))
+   if ((thePattern->pnType != SF_WILDCARD_NODE) || (thePattern->bottom == NULL))
      { return NULL; }
 
    thePattern = thePattern->bottom;
-   if ((thePattern->type != SYMBOL) ||
+   if ((thePattern->pnType != SYMBOL_NODE) ||
             (thePattern->right != NULL) ||
             (thePattern->bottom != NULL))
     { return NULL; }

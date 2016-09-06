@@ -315,7 +315,7 @@ static Defrule *ProcessRuleLHS(
    else
      {
       emptyLHS = false;
-      if (theLHS->type == OR_CE) theLHS = theLHS->right;
+      if (theLHS->pnType == OR_CE_NODE) theLHS = theLHS->right;
      }
 
    /*=========================================*/
@@ -334,8 +334,8 @@ static Defrule *ProcessRuleLHS(
         { tempNode = NULL; }
       else
         {
-         if (theLHS->type == AND_CE) tempNode = theLHS->right;
-         else if (theLHS->type == PATTERN_CE) tempNode = theLHS;
+         if (theLHS->pnType == AND_CE_NODE) tempNode = theLHS->right;
+         else if (theLHS->pnType == PATTERN_CE_NODE) tempNode = theLHS;
         }
 
       if (VariableAnalysis(theEnv,tempNode))
@@ -772,7 +772,7 @@ static int LogicalAnalysis(
       /* or is embedded within a not/and CE.   */
       /*=======================================*/
 
-      if ((patternList->type != PATTERN_CE) || (patternList->endNandDepth != 1))
+      if ((patternList->pnType != PATTERN_CE_NODE) || (patternList->endNandDepth != 1))
         { continue; }
 
       /*=====================================================*/
@@ -871,7 +871,7 @@ struct lhsParseNode *FindVariable(
       /* is not contained within a not CE.        */
       /*==========================================*/
 
-      if ((theLHS->type != PATTERN_CE) ||
+      if ((theLHS->pnType != PATTERN_CE_NODE) ||
           (theLHS->negated == true) ||
           (theLHS->exists == true) ||
           (theLHS->beginNandDepth > 1))
@@ -908,8 +908,8 @@ struct lhsParseNode *FindVariable(
 
          if (theFields == NULL)
            { /* Do Nothing */ }
-         else if (((theFields->type == SF_VARIABLE) ||
-                   (theFields->type == MF_VARIABLE)) &&
+         else if (((theFields->pnType == SF_VARIABLE_NODE) ||
+                   (theFields->pnType == MF_VARIABLE_NODE)) &&
              (theFields->value == (void *) name))
            { theReturnValue = theFields; }
 

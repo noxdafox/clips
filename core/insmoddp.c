@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  09/05/16             */
    /*                                                     */
    /*        INSTANCE MODIFY AND DUPLICATE MODULE         */
    /*******************************************************/
@@ -44,6 +44,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            UDF redesign.                                  */
+/*                                                           */
+/*            Removed DATA_OBJECT_ARRAY primitive type.      */
 /*                                                           */
 /*************************************************************/
 
@@ -198,8 +200,9 @@ void ModifyInstance(
       to whatever message-handler implements
       the modify
       ====================================== */
-   theExp.type = DATA_OBJECT_ARRAY;
-   theExp.value = overrides;
+
+   theExp.type = EXTERNAL_ADDRESS;
+   theExp.value = EnvAddExternalAddress(theEnv,overrides,0);
    theExp.argList = NULL;
    theExp.nextArg = NULL;
 
@@ -268,8 +271,9 @@ void MsgModifyInstance(
       to whatever message-handler implements
       the modify
       ====================================== */
-   theExp.type = DATA_OBJECT_ARRAY;
-   theExp.value = overrides;
+
+   theExp.type = EXTERNAL_ADDRESS;
+   theExp.value = EnvAddExternalAddress(theEnv,overrides,0);
    theExp.argList = NULL;
    theExp.nextArg = NULL;
 
@@ -351,8 +355,8 @@ void DuplicateInstance(
    theExp[0].value = newName.value;
    theExp[0].argList = NULL;
    theExp[0].nextArg = &theExp[1];
-   theExp[1].type = DATA_OBJECT_ARRAY;
-   theExp[1].value = overrides;
+   theExp[1].type = EXTERNAL_ADDRESS;
+   theExp[1].value = EnvAddExternalAddress(theEnv,overrides,0);
    theExp[1].argList = NULL;
    theExp[1].nextArg = NULL;
 
@@ -433,8 +437,8 @@ void MsgDuplicateInstance(
    theExp[0].value = newName.value;
    theExp[0].argList = NULL;
    theExp[0].nextArg = &theExp[1];
-   theExp[1].type = DATA_OBJECT_ARRAY;
-   theExp[1].value = overrides;
+   theExp[1].type = EXTERNAL_ADDRESS;
+   theExp[1].value = EnvAddExternalAddress(theEnv,overrides,0);
    theExp[1].argList = NULL;
    theExp[1].nextArg = NULL;
 
@@ -794,7 +798,9 @@ static void ModifyMsgHandlerSupport(
       name is stored in the supplementalInfo
       field - and the next fields are links
       ======================================= */
-   slotOverrides = (CLIPSValue *) GetNthMessageArgument(theEnv,1)->value;
+
+   //slotOverrides = (CLIPSValue *) GetNthMessageArgument(theEnv,1)->value;
+   slotOverrides = (CLIPSValue *) ((EXTERNAL_ADDRESS_HN *) GetNthMessageArgument(theEnv,1)->value)->externalAddress;
 
    while (slotOverrides != NULL)
      {
@@ -891,7 +897,8 @@ static void DuplicateMsgHandlerSupport(
       ================================== */
    srcins = GetActiveInstance(theEnv);
    newName = (SYMBOL_HN *) GetNthMessageArgument(theEnv,1)->value;
-   slotOverrides = (CLIPSValue *) GetNthMessageArgument(theEnv,2)->value;
+   //slotOverrides = (CLIPSValue *) GetNthMessageArgument(theEnv,2)->value;
+   slotOverrides = (CLIPSValue *) ((EXTERNAL_ADDRESS_HN *) GetNthMessageArgument(theEnv,2)->value)->externalAddress;
    if (srcins->garbage)
      {
       StaleInstanceAddress(theEnv,"duplicate-instance",0);

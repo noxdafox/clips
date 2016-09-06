@@ -232,7 +232,7 @@ struct expr *FactGenPNConstant(
   struct lhsParseNode *theField)
   {
    struct expr *top;
-   unsigned short tempValue;
+   ParseNodeType tempValue;
    struct factConstantPN1Call hack1;
    struct factConstantPN2Call hack2;
 
@@ -253,7 +253,7 @@ struct expr *FactGenPNConstant(
 
       top = GenConstant(theEnv,FACT_PN_CONSTANT1,EnvAddBitMap(theEnv,&hack1,sizeof(struct factConstantPN1Call)));
 
-      top->argList = GenConstant(theEnv,theField->type,theField->value);
+      top->argList = GenConstant(theEnv,NodeTypeToType(theField),theField->value);
 
       return(top);
      }
@@ -288,7 +288,7 @@ struct expr *FactGenPNConstant(
 
       top = GenConstant(theEnv,FACT_PN_CONSTANT2,EnvAddBitMap(theEnv,&hack2,sizeof(struct factConstantPN2Call)));
 
-      top->argList = GenConstant(theEnv,theField->type,theField->value);
+      top->argList = GenConstant(theEnv,NodeTypeToType(theField),theField->value);
 
       return(top);
      }
@@ -306,12 +306,12 @@ struct expr *FactGenPNConstant(
       else
         { top = GenConstant(theEnv,FCALL,ExpressionData(theEnv)->PTR_EQ); }
 
-      tempValue = theField->type;
-      theField->type = SF_VARIABLE;
+      tempValue = theField->pnType;
+      theField->pnType = SF_VARIABLE_NODE;
       top->argList = FactGenGetfield(theEnv,theField);
-      theField->type = tempValue;
+      theField->pnType = tempValue;
 
-      top->argList->nextArg = GenConstant(theEnv,theField->type,theField->value);
+      top->argList->nextArg = GenConstant(theEnv,NodeTypeToType(theField),theField->value);
      }
 
    /*===============================================================*/
@@ -345,12 +345,12 @@ struct expr *FactGenGetfield(
    /* value to be retrieved.                              */
    /*=====================================================*/
 
-   if (((theNode->type == SF_WILDCARD) || (theNode->type == SF_VARIABLE) || ConstantType(theNode->type)) &&
+   if (((theNode->pnType == SF_WILDCARD_NODE) || (theNode->pnType == SF_VARIABLE_NODE) || ConstantNode(theNode)) &&
        ((theNode->multiFieldsBefore == 0) ||
         ((theNode->multiFieldsBefore == 1) && (theNode->multiFieldsAfter == 0))))
      { return(GenConstant(theEnv,FACT_PN_VAR3,FactGetVarPN3(theEnv,theNode))); }
 
-   if (((theNode->type == MF_WILDCARD) || (theNode->type == MF_VARIABLE)) &&
+   if (((theNode->pnType == MF_WILDCARD_NODE) || (theNode->pnType == MF_VARIABLE_NODE)) &&
        (theNode->multiFieldsBefore == 0) && (theNode->multiFieldsAfter == 0))
      { return(GenConstant(theEnv,FACT_PN_VAR3,FactGetVarPN3(theEnv,theNode))); }
 
@@ -386,12 +386,12 @@ struct expr *FactGenGetvar(
    /* value to be retrieved.                              */
    /*=====================================================*/
 
-   if (((theNode->type == SF_WILDCARD) || (theNode->type == SF_VARIABLE)) &&
+   if (((theNode->pnType == SF_WILDCARD_NODE) || (theNode->pnType == SF_VARIABLE_NODE)) &&
        ((theNode->multiFieldsBefore == 0) ||
         ((theNode->multiFieldsBefore == 1) && (theNode->multiFieldsAfter == 0))))
      { return(GenConstant(theEnv,FACT_JN_VAR3,FactGetVarJN3(theEnv,theNode,side))); }
 
-   if (((theNode->type == MF_WILDCARD) || (theNode->type == MF_VARIABLE)) &&
+   if (((theNode->pnType == MF_WILDCARD_NODE) || (theNode->pnType == MF_VARIABLE_NODE)) &&
        (theNode->multiFieldsBefore == 0) &&
        (theNode->multiFieldsAfter == 0))
      { return(GenConstant(theEnv,FACT_JN_VAR3,FactGetVarJN3(theEnv,theNode,side))); }
@@ -424,8 +424,8 @@ struct expr *FactGenCheckLength(
    /*===================================================*/
 
    if ((theNode->singleFieldsAfter == 0) &&
-       (theNode->type != SF_VARIABLE) &&
-       (theNode->type != SF_WILDCARD))
+       (theNode->pnType != SF_VARIABLE_NODE) &&
+       (theNode->pnType != SF_WILDCARD_NODE))
      { return NULL; }
 
    /*=======================================*/
@@ -440,8 +440,8 @@ struct expr *FactGenCheckLength(
    /* then the length must match exactly.        */
    /*============================================*/
 
-   if ((theNode->type != MF_VARIABLE) &&
-       (theNode->type != MF_WILDCARD) &&
+   if ((theNode->pnType != MF_VARIABLE_NODE) &&
+       (theNode->pnType != MF_WILDCARD_NODE) &&
        (theNode->multiFieldsAfter == 0))
      { hack.exactly = 1; }
    else
@@ -452,7 +452,7 @@ struct expr *FactGenCheckLength(
    /* field constraints contained in the slot.   */
    /*============================================*/
 
-   if ((theNode->type == SF_VARIABLE) || (theNode->type == SF_WILDCARD))
+   if ((theNode->pnType == SF_VARIABLE_NODE) || (theNode->pnType == SF_WILDCARD_NODE))
      { hack.minLength = (unsigned short) (1 + theNode->singleFieldsAfter); }
    else
      { hack.minLength = theNode->singleFieldsAfter; }
@@ -513,7 +513,7 @@ void FactReplaceGetvar(
    /* value to be retrieved.                              */
    /*=====================================================*/
 
-   if (((theNode->type == SF_WILDCARD) || (theNode->type == SF_VARIABLE)) &&
+   if (((theNode->pnType == SF_WILDCARD_NODE) || (theNode->pnType == SF_VARIABLE_NODE)) &&
        ((theNode->multiFieldsBefore == 0) ||
         ((theNode->multiFieldsBefore == 1) && (theNode->multiFieldsAfter == 0))))
      {
@@ -522,7 +522,7 @@ void FactReplaceGetvar(
       return;
      }
 
-   if (((theNode->type == MF_WILDCARD) || (theNode->type == MF_VARIABLE)) &&
+   if (((theNode->pnType == MF_WILDCARD_NODE) || (theNode->pnType == MF_VARIABLE_NODE)) &&
        (theNode->multiFieldsBefore == 0) &&
        (theNode->multiFieldsAfter == 0))
      {
@@ -568,7 +568,7 @@ void FactReplaceGetfield(
    /* value to be retrieved.                              */
    /*=====================================================*/
 
-   if (((theNode->type == SF_WILDCARD) || (theNode->type == SF_VARIABLE)) &&
+   if (((theNode->pnType == SF_WILDCARD_NODE) || (theNode->pnType == SF_VARIABLE_NODE)) &&
        ((theNode->multiFieldsBefore == 0) ||
         ((theNode->multiFieldsBefore == 1) && (theNode->multiFieldsAfter == 0))))
      {
@@ -577,7 +577,7 @@ void FactReplaceGetfield(
       return;
      }
 
-   if (((theNode->type == MF_WILDCARD) || (theNode->type == MF_VARIABLE)) &&
+   if (((theNode->pnType == MF_WILDCARD_NODE) || (theNode->pnType == MF_VARIABLE_NODE)) &&
        (theNode->multiFieldsBefore == 0) &&
        (theNode->multiFieldsAfter == 0))
      {
@@ -797,7 +797,7 @@ static void *FactGetVarJN3(
    /* If a single field variable value is being retrieved, then... */
    /*==============================================================*/
 
-   if ((theNode->type == SF_WILDCARD) || (theNode->type == SF_VARIABLE))
+   if ((theNode->pnType == SF_WILDCARD_NODE) || (theNode->pnType == SF_VARIABLE_NODE))
      {
       /*=========================================================*/
       /* If no multifield values occur before the variable, then */
@@ -994,7 +994,7 @@ static void *FactGetVarPN3(
    /* If a single field variable value is being retrieved, then... */
    /*==============================================================*/
 
-   if ((theNode->type == SF_WILDCARD) || (theNode->type == SF_VARIABLE) || ConstantType(theNode->type))
+   if ((theNode->pnType == SF_WILDCARD_NODE) || (theNode->pnType == SF_VARIABLE_NODE) || ConstantNode(theNode))
      {
       /*=========================================================*/
       /* If no multifield values occur before the variable, then */
@@ -1178,12 +1178,12 @@ struct expr *FactJNVariableComparison(
    /*===============================================================*/
 
    else if ((selfNode->slotNumber > 0) &&
-            (selfNode->type == SF_VARIABLE) &&
+            (selfNode->pnType == SF_VARIABLE_NODE) &&
             ((selfNode->multiFieldsBefore == 0) ||
              ((selfNode->multiFieldsBefore == 1) &&
               (selfNode->multiFieldsAfter == 0))) &&
             (referringNode->slotNumber > 0) &&
-            (referringNode->type == SF_VARIABLE) &&
+            (referringNode->pnType == SF_VARIABLE_NODE) &&
             ((referringNode->multiFieldsBefore == 0) ||
              (referringNode->multiFieldsAfter == 0)))
      {

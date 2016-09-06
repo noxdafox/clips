@@ -79,13 +79,13 @@ struct lhsParseNode *SequenceRestrictionParse(
    /*================================================*/
 
    topNode = GetLHSParseNode(theEnv);
-   topNode->type = SF_WILDCARD;
+   topNode->pnType = SF_WILDCARD_NODE;
    topNode->negated = false;
    topNode->exists = false;
    topNode->index = -1;
    topNode->slotNumber = 1;
    topNode->bottom = GetLHSParseNode(theEnv);
-   topNode->bottom->type = SYMBOL;
+   topNode->bottom->pnType = SYMBOL_NODE;
    topNode->bottom->negated = false;
    topNode->bottom->exists = false;
    topNode->bottom->value = theToken->value;
@@ -185,12 +185,12 @@ struct lhsParseNode *CreateInitialFactPattern(
    /*====================================*/
 
    topNode = GetLHSParseNode(theEnv);
-   topNode->type = SF_WILDCARD;
+   topNode->pnType = SF_WILDCARD_NODE;
    topNode->index = 0;
    topNode->slotNumber = 1;
 
    topNode->bottom = GetLHSParseNode(theEnv);
-   topNode->bottom->type = SYMBOL;
+   topNode->bottom->pnType = SYMBOL_NODE;
    topNode->bottom->value = EnvAddSymbol(theEnv,"initial-fact");
 
    /*=====================*/

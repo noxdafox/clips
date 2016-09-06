@@ -55,6 +55,8 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Removed DATA_OBJECT_ARRAY primitive type.      */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_prntutil

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  09/05/16             */
    /*                                                     */
    /*                CONSTANTS HEADER FILE                */
    /*******************************************************/
@@ -32,6 +32,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            UDF redesign.                                  */
+/*                                                           */
+/*            Removed DATA_OBJECT_ARRAY primitive type.      */
 /*                                                           */
 /*************************************************************/
 
@@ -181,10 +183,7 @@ typedef const char * CLIPSString;
 
 #define SF_VARIABLE                    35
 #define MF_VARIABLE                    36
-#define SF_WILDCARD                    37
-#define MF_WILDCARD                    38
 #define BITMAPARRAY                    39
-#define DATA_OBJECT_ARRAY              40
 
 #define FACT_PN_CMP1                   50
 #define FACT_JN_CMP1                   51
@@ -223,21 +222,6 @@ typedef const char * CLIPSString;
 #define PROC_WILD_PARAM                96
 #define PROC_GET_BIND                  97
 #define PROC_BIND                      98
-
-#define PATTERN_CE                    150
-#define AND_CE                        151
-#define OR_CE                         152
-#define NOT_CE                        153
-#define TEST_CE                       154
-#define NAND_CE                       155
-#define EXISTS_CE                     156
-#define FORALL_CE                     157
-
-#define NOT_CONSTRAINT                160
-#define AND_CONSTRAINT                161
-#define OR_CONSTRAINT                 162
-#define PREDICATE_CONSTRAINT          163
-#define RETURN_VALUE_CONSTRAINT       164
 
 #define UNKNOWN_VALUE                 173
 

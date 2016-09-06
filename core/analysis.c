@@ -63,13 +63,10 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static bool                    GetVariables(Environment *,struct lhsParseNode *,int,struct nandFrame *);
+   static bool                    GetVariables(Environment *,struct lhsParseNode *,ParseNodeType,struct nandFrame *);
    static bool                    UnboundVariablesInPattern(Environment *,struct lhsParseNode *,int);
-   static bool                    PropagateVariableToNodes(Environment *,
-                                                           struct lhsParseNode *,
-                                                           int,
-                                                           struct symbolHashNode *,
-                                                           struct lhsParseNode *,
+   static bool                    PropagateVariableToNodes(Environment *,struct lhsParseNode *,ParseNodeType,
+                                                           struct symbolHashNode *,struct lhsParseNode *,
                                                            int,bool,bool);
    static struct lhsParseNode    *CheckExpression(Environment *,
                                                   struct lhsParseNode *,
@@ -87,22 +84,22 @@
                                                struct lhsParseNode *,
                                                struct lhsParseNode *,
                                                struct lhsParseNode *,
-                                               int,
+                                               ParseNodeType,
                                                struct nandFrame *);
    static bool                    ProcessVariable(Environment *,
                                                struct lhsParseNode *,
                                                struct lhsParseNode *,
                                                struct lhsParseNode *,
-                                               int,
+                                               ParseNodeType,
                                                struct nandFrame *);
    static void                    VariableMixingErrorMessage(Environment *,struct symbolHashNode *);
    static bool                    PropagateVariableDriver(Environment *,
                                                           struct lhsParseNode *,
                                                           struct lhsParseNode *,
                                                           struct lhsParseNode *,
-                                                          int,struct symbolHashNode *,
+                                                          ParseNodeType,struct symbolHashNode *,
                                                           struct lhsParseNode *,
-                                                          bool,int);
+                                                          bool,ParseNodeType);
    static bool                    TestCEAnalysis(Environment *,struct lhsParseNode *,struct lhsParseNode *,bool,bool *,struct nandFrame *);
    static void                    ReleaseNandFrames(Environment *,struct nandFrame *);
 
@@ -153,7 +150,7 @@ bool VariableAnalysis(
       /* other variables.                                        */
       /*=========================================================*/
 
-      if (patternPtr->type == PATTERN_CE)
+      if (patternPtr->pnType == PATTERN_CE_NODE)
         {
          /*====================================================*/
          /* Determine if the fact address associated with this */
@@ -190,7 +187,7 @@ bool VariableAnalysis(
          /* in the same semantic scope as the bound variable.  */
          /*====================================================*/
 
-         if (GetVariables(theEnv,patternPtr,PATTERN_CE,theNandFrames))
+         if (GetVariables(theEnv,patternPtr,PATTERN_CE_NODE,theNandFrames))
            {
             ReleaseNandFrames(theEnv,theNandFrames);
             return true;
@@ -220,7 +217,7 @@ bool VariableAnalysis(
       /* to retrieve the variables.                                   */
       /*==============================================================*/
 
-      else if (patternPtr->type == TEST_CE)
+      else if (patternPtr->pnType == TEST_CE_NODE)
         {
          if (TestCEAnalysis(theEnv,patternPtr,patternPtr->expression,false,&errorFlag,theNandFrames) == true)
            {
@@ -316,8 +313,8 @@ static bool TestCEAnalysis(
    theList = GetExpressionVarConstraints(theEnv,theExpression);
    for (tempList = theList; tempList != NULL; tempList = tempList->right)
       {
-       if (PropagateVariableDriver(theEnv,patternPtr,patternPtr,NULL,SF_VARIABLE,
-                                   (SYMBOL_HN *) tempList->value,tempList,false,TEST_CE))
+       if (PropagateVariableDriver(theEnv,patternPtr,patternPtr,NULL,SF_VARIABLE_NODE,
+                                   (SYMBOL_HN *) tempList->value,tempList,false,TEST_CE_NODE))
          {
           ReturnLHSParseNodes(theEnv,theList);
           patternPtr->right = tempRight;
@@ -358,7 +355,7 @@ static bool TestCEAnalysis(
 static bool GetVariables(
   Environment *theEnv,
   struct lhsParseNode *thePattern,
-  int patternHeadType,
+  ParseNodeType patternHeadType,
   struct nandFrame *theNandFrames)
   {
    struct lhsParseNode *patternHead = thePattern;
@@ -391,9 +388,9 @@ static bool GetVariables(
 
       if (thePattern != NULL)
         {
-         if ((thePattern->type == SF_VARIABLE) ||
-             (thePattern->type == MF_VARIABLE) ||
-             ((thePattern->type == PATTERN_CE) && (thePattern->value != NULL)))
+         if ((thePattern->pnType == SF_VARIABLE_NODE) ||
+             (thePattern->pnType == MF_VARIABLE_NODE) ||
+             ((thePattern->pnType == PATTERN_CE_NODE) && (thePattern->value != NULL)))
            {
             if (ProcessVariable(theEnv,thePattern,multifieldHeader,patternHead,patternHeadType,theNandFrames))
               { return true; }
@@ -438,10 +435,10 @@ static bool ProcessVariable(
   struct lhsParseNode *thePattern,
   struct lhsParseNode *multifieldHeader,
   struct lhsParseNode *patternHead,
-  int patternHeadType,
+  ParseNodeType patternHeadType,
   struct nandFrame *theNandFrames)
   {
-   int theType;
+   ParseNodeType theType;
    struct symbolHashNode *theVariable;
    struct constraintRecord *theConstraints;
 
@@ -453,9 +450,9 @@ static bool ProcessVariable(
    /* can match patterns.                                         */
    /*=============================================================*/
 
-   if (thePattern->type == PATTERN_CE)
+   if (thePattern->pnType == PATTERN_CE_NODE)
      {
-      theType = SF_VARIABLE;
+      theType = SF_VARIABLE_NODE;
       theVariable = (struct symbolHashNode *) thePattern->value;
       if (thePattern->derivedConstraints) RemoveConstraint(theEnv,thePattern->constraints);
       theConstraints = GetConstraintRecord(theEnv);
@@ -472,7 +469,7 @@ static bool ProcessVariable(
 
    else
      {
-      theType = thePattern->type;
+      theType = thePattern->pnType;
       theVariable = (struct symbolHashNode *) thePattern->value;
      }
 
@@ -481,7 +478,7 @@ static bool ProcessVariable(
    /* fields associated with the binding variable.      */
    /*===================================================*/
 
-   if (thePattern->type != PATTERN_CE)
+   if (thePattern->pnType != PATTERN_CE_NODE)
      {
       PropagateVariableToNodes(theEnv,thePattern->bottom,theType,theVariable,
                                thePattern,patternHead->beginNandDepth,
@@ -508,11 +505,11 @@ static bool PropagateVariableDriver(
   struct lhsParseNode *patternHead,
   struct lhsParseNode *theNode,
   struct lhsParseNode *multifieldHeader,
-  int theType,
+  ParseNodeType theType,
   struct symbolHashNode *variableName,
   struct lhsParseNode *theReference,
   bool assignReference,
-  int patternHeadType)
+  ParseNodeType patternHeadType)
   {
    /*===================================================*/
    /* Propagate the variable location to any additional */
@@ -560,7 +557,7 @@ static bool PropagateVariableDriver(
    /* last pattern within a nand CE.                       */
    /*======================================================*/
 
-   if (((patternHead->type == PATTERN_CE) || (patternHead->type == TEST_CE)) &&
+   if (((patternHead->pnType == PATTERN_CE_NODE) || (patternHead->pnType == TEST_CE_NODE)) &&
        (patternHead->negated == false) &&
        (patternHead->exists == false) &&
        (patternHead->beginNandDepth <= patternHead->endNandDepth))
@@ -575,7 +572,7 @@ static bool PropagateVariableDriver(
       /* sequence expansion is desired).                            */
       /*============================================================*/
 
-      if (patternHeadType == TEST_CE) ignoreVariableMixing = true;
+      if (patternHeadType == TEST_CE_NODE) ignoreVariableMixing = true;
       else ignoreVariableMixing = false;
 
       /*==========================*/
@@ -608,7 +605,7 @@ static bool ProcessField(
   struct lhsParseNode *thePattern,
   struct lhsParseNode *multifieldHeader,
   struct lhsParseNode *patternHead,
-  int patternHeadType,
+  ParseNodeType patternHeadType,
   struct nandFrame *theNandFrames)
   {
    struct lhsParseNode *theList, *tempList;
@@ -619,7 +616,7 @@ static bool ProcessField(
    /* no errors were generated.                          */
    /*====================================================*/
 
-   if (thePattern->type == PATTERN_CE) return false;
+   if (thePattern->pnType == PATTERN_CE_NODE) return false;
 
    /*====================================================================*/
    /* Derive a set of constraints based on values found in the slot or   */
@@ -632,7 +629,7 @@ static bool ProcessField(
    theList = DeriveVariableConstraints(theEnv,thePattern);
    for (tempList = theList; tempList != NULL; tempList = tempList->right)
      {
-      if (PropagateVariableDriver(theEnv,patternHead,thePattern,multifieldHeader,tempList->type,
+      if (PropagateVariableDriver(theEnv,patternHead,thePattern,multifieldHeader,tempList->pnType,
                                   (SYMBOL_HN *) tempList->value,tempList,false,patternHeadType))
         {
          ReturnLHSParseNodes(theEnv,theList);
@@ -683,7 +680,7 @@ static bool ProcessField(
 static bool PropagateVariableToNodes(
   Environment *theEnv,
   struct lhsParseNode *theNode,
-  int theType,
+  ParseNodeType theType,
   struct symbolHashNode *variableName,
   struct lhsParseNode *theReference,
   int startDepth,
@@ -722,7 +719,7 @@ static bool PropagateVariableToNodes(
       /* then propagate the variable location to this node.   */
       /*======================================================*/
 
-      else if (((theNode->type == SF_VARIABLE) || (theNode->type == MF_VARIABLE)) &&
+      else if (((theNode->pnType == SF_VARIABLE_NODE) || (theNode->pnType == MF_VARIABLE_NODE)) &&
                (theNode->value == (void *) variableName))
         {
          /*======================================================*/
@@ -731,8 +728,8 @@ static bool PropagateVariableToNodes(
 
          if (ignoreVariableTypes == false)
            {
-            if (((theType == SF_VARIABLE) && (theNode->type == MF_VARIABLE)) ||
-                ((theType == MF_VARIABLE) && (theNode->type == SF_VARIABLE)))
+            if (((theType == SF_VARIABLE_NODE) && (theNode->pnType == MF_VARIABLE_NODE)) ||
+                ((theType == MF_VARIABLE_NODE) && (theNode->pnType == SF_VARIABLE_NODE)))
               { return true; }
            }
 
@@ -776,7 +773,7 @@ static bool PropagateVariableToNodes(
       /* same variable name).                                   */
       /*========================================================*/
 
-      else if ((theNode->type == PATTERN_CE) &&
+      else if ((theNode->pnType == PATTERN_CE_NODE) &&
                (theNode->value == (void *) variableName) &&
                (assignReference == true))
         {
@@ -803,7 +800,7 @@ static bool PropagateVariableToNodes(
       /* pattern) or to the next | field constraint within a field. */
       /*============================================================*/
 
-      if ((theNode->type == PATTERN_CE) || (theNode->type == TEST_CE))
+      if ((theNode->pnType == PATTERN_CE_NODE) || (theNode->pnType == TEST_CE_NODE))
         {
          if (theNode->endNandDepth < startDepth) theNode = NULL;
          else theNode = theNode->bottom;
@@ -888,7 +885,7 @@ static bool UnboundVariablesInPattern(
          /* referred to but not bound.                            */
          /*=======================================================*/
 
-         if (((andField->type == SF_VARIABLE) || (andField->type == MF_VARIABLE)) &&
+         if (((andField->pnType == SF_VARIABLE_NODE) || (andField->pnType == MF_VARIABLE_NODE)) &&
              (andField->referringNode == NULL))
            {
             VariableReferenceErrorMessage(theEnv,(SYMBOL_HN *) andField->value,NULL,pattern,
@@ -902,8 +899,8 @@ static bool UnboundVariablesInPattern(
          /* constraint have been previously bound.       */
          /*==============================================*/
 
-         else if ((andField->type == PREDICATE_CONSTRAINT) ||
-                  (andField->type == RETURN_VALUE_CONSTRAINT))
+         else if ((andField->pnType == PREDICATE_CONSTRAINT_NODE) ||
+                  (andField->pnType == RETURN_VALUE_CONSTRAINT_NODE))
            {
             rv = CheckExpression(theEnv,andField->expression,NULL,pattern,slotName,theField);
             if (rv != NULL) return true;
@@ -916,11 +913,11 @@ static bool UnboundVariablesInPattern(
          /* deftemplate definition and propagated constraints).    */
          /*========================================================*/
 
-         else if (((andField->type == INTEGER) || (andField->type == FLOAT) ||
-                   (andField->type == SYMBOL) || (andField->type == STRING) ||
-                   (andField->type == INSTANCE_NAME)))
+         else if (((andField->pnType == INTEGER_NODE) || (andField->pnType == FLOAT_NODE) ||
+                   (andField->pnType == SYMBOL_NODE) || (andField->pnType == STRING_NODE) ||
+                   (andField->pnType == INSTANCE_NAME_NODE)))
            {
-            result = ConstraintCheckValue(theEnv,andField->type,andField->value,theConstraints);
+            result = ConstraintCheckValue(theEnv,NodeTypeToType(andField),andField->value,theConstraints);
             if (result != NO_VIOLATION)
               {
                ConstraintViolationErrorMessage(theEnv,"A literal restriction value",
@@ -965,7 +962,7 @@ static struct lhsParseNode *CheckExpression(
       /* variable has unmatchable constraints.                         */
       /*===============================================================*/
 
-      if (exprPtr->type == SF_VARIABLE)
+      if (exprPtr->pnType == SF_VARIABLE_NODE)
         {
          if (exprPtr->referringNode == NULL)
            {
@@ -986,7 +983,7 @@ static struct lhsParseNode *CheckExpression(
       /* expression were previously defined in the LHS.   */
       /*==================================================*/
 
-      else if ((exprPtr->type == MF_VARIABLE) && (exprPtr->referringNode == NULL))
+      else if ((exprPtr->pnType == MF_VARIABLE_NODE) && (exprPtr->referringNode == NULL))
         {
          VariableReferenceErrorMessage(theEnv,(SYMBOL_HN *) exprPtr->value,lastOne,
                                        whichCE,slotName,theField);
@@ -1000,7 +997,7 @@ static struct lhsParseNode *CheckExpression(
       /*=====================================================*/
 
 #if DEFGLOBAL_CONSTRUCT
-      else if (exprPtr->type == GBL_VARIABLE)
+      else if (exprPtr->pnType == GBL_VARIABLE_NODE)
         {
          int count;
 
@@ -1019,12 +1016,12 @@ static struct lhsParseNode *CheckExpression(
       /* insure variables are referenced correctly. */
       /*============================================*/
 
-      else if (((exprPtr->type == FCALL)
+      else if (((exprPtr->pnType == FCALL_NODE)
 #if DEFGENERIC_CONSTRUCT
-             || (exprPtr->type == GCALL)
+             || (exprPtr->pnType == GCALL_NODE)
 #endif
 #if DEFFUNCTION_CONSTRUCT
-             || (exprPtr->type == PCALL)
+             || (exprPtr->pnType == PCALL_NODE)
 #endif
          ) && (exprPtr->bottom != NULL))
         {

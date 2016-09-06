@@ -372,7 +372,7 @@ static struct factPatternNode *FindPatternNode(
       /* the pattern field being added.                           */
       /*==========================================================*/
 
-      if ((thePattern->type == SF_WILDCARD) || (thePattern->type == SF_VARIABLE))
+      if ((thePattern->pnType == SF_WILDCARD_NODE) || (thePattern->pnType == SF_VARIABLE_NODE))
         {
          if ((listOfNodes->header.singlefieldNode) &&
              (listOfNodes->header.endSlot == endSlot) &&
@@ -382,7 +382,7 @@ static struct factPatternNode *FindPatternNode(
              IdenticalExpression(listOfNodes->header.rightHash,thePattern->rightHash))
            { return(listOfNodes); }
         }
-      else if ((thePattern->type == MF_WILDCARD) || (thePattern->type == MF_VARIABLE))
+      else if ((thePattern->pnType == MF_WILDCARD_NODE) || (thePattern->pnType == MF_VARIABLE_NODE))
         {
          if ((listOfNodes->header.multifieldNode) &&
              (listOfNodes->header.endSlot == endSlot) &&
@@ -439,7 +439,7 @@ static struct lhsParseNode *RemoveUnneededSlots(
       /* in this slot will satisfy the pattern being matched).       */
       /*=============================================================*/
 
-      if (((tempPattern->type == SF_WILDCARD) || (tempPattern->type == SF_VARIABLE)) &&
+      if (((tempPattern->pnType == SF_WILDCARD_NODE) || (tempPattern->pnType == SF_VARIABLE_NODE)) &&
           (tempPattern->networkTest == NULL))
         {
          if (lastPattern != NULL) lastPattern->right = tempPattern->right;
@@ -460,7 +460,7 @@ static struct lhsParseNode *RemoveUnneededSlots(
       /* evaluated in the fact pattern network).               */
       /*=======================================================*/
 
-      else if (((tempPattern->type == MF_WILDCARD) || (tempPattern->type == MF_VARIABLE)) &&
+      else if (((tempPattern->pnType == MF_WILDCARD_NODE) || (tempPattern->pnType == MF_VARIABLE_NODE)) &&
                (tempPattern->multifieldSlot == false) &&
                (tempPattern->networkTest == NULL) &&
                (tempPattern->multiFieldsBefore == 0) &&
@@ -483,13 +483,13 @@ static struct lhsParseNode *RemoveUnneededSlots(
       /* to a single field pattern node with the same expression.         */
       /*==================================================================*/
 
-      else if (((tempPattern->type == MF_WILDCARD) || (tempPattern->type == MF_VARIABLE)) &&
+      else if (((tempPattern->pnType == MF_WILDCARD_NODE) || (tempPattern->pnType == MF_VARIABLE_NODE)) &&
                (tempPattern->multifieldSlot == false) &&
                (tempPattern->networkTest != NULL) &&
                (tempPattern->multiFieldsBefore == 0) &&
                (tempPattern->multiFieldsAfter == 0))
         {
-         tempPattern->type = SF_WILDCARD;
+         tempPattern->pnType = SF_WILDCARD_NODE;
          lastPattern = tempPattern;
          tempPattern = tempPattern->right;
         }
@@ -501,11 +501,11 @@ static struct lhsParseNode *RemoveUnneededSlots(
       /* slot contains a zero length multifield value.           */
       /*=========================================================*/
 
-      else if ((tempPattern->type == MF_WILDCARD) &&
+      else if ((tempPattern->pnType == MF_WILDCARD_NODE) &&
                (tempPattern->multifieldSlot == true) &&
                (tempPattern->bottom == NULL))
         {
-         tempPattern->type = SF_WILDCARD;
+         tempPattern->pnType = SF_WILDCARD_NODE;
          tempPattern->networkTest = FactGenCheckZeroLength(theEnv,tempPattern->slotNumber);
          tempPattern->multifieldSlot = false;
          lastPattern = tempPattern;
@@ -517,7 +517,7 @@ static struct lhsParseNode *RemoveUnneededSlots(
       /* restrictions contained within a multifield slot.  */
       /*===================================================*/
 
-      else if ((tempPattern->type == MF_WILDCARD) &&
+      else if ((tempPattern->pnType == MF_WILDCARD_NODE) &&
                (tempPattern->multifieldSlot == true))
         {
          /*=======================================================*/
@@ -631,9 +631,9 @@ static struct factPatternNode *CreateNewPatternNode(
    /* is a single-field, multifield, or end-of-pattern node.      */
    /*=============================================================*/
 
-   if ((thePattern->type == SF_WILDCARD) || (thePattern->type == SF_VARIABLE))
+   if ((thePattern->pnType == SF_WILDCARD_NODE) || (thePattern->pnType == SF_VARIABLE_NODE))
      { newNode->header.singlefieldNode = true; }
-   else if ((thePattern->type == MF_WILDCARD) || (thePattern->type == MF_VARIABLE))
+   else if ((thePattern->pnType == MF_WILDCARD_NODE) || (thePattern->pnType == MF_VARIABLE_NODE))
      { newNode->header.multifieldNode = true; }
    newNode->header.endSlot = endSlot;
 

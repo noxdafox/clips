@@ -845,20 +845,10 @@ unsigned short TokenTypeToType(
         return SF_VARIABLE;
       case MF_VARIABLE_TOKEN:
         return MF_VARIABLE;
-      case SF_WILDCARD_TOKEN:
-        return SF_WILDCARD;
-      case MF_WILDCARD_TOKEN:
-        return MF_WILDCARD;
       case GBL_VARIABLE_TOKEN:
         return GBL_VARIABLE;
       case MF_GBL_VARIABLE_TOKEN:
         return MF_GBL_VARIABLE;
-      case OR_CONSTRAINT_TOKEN:
-        return OR_CONSTRAINT;
-      case AND_CONSTRAINT_TOKEN:
-        return AND_CONSTRAINT;
-      case NOT_CONSTRAINT_TOKEN:
-        return NOT_CONSTRAINT;
       default:
         return RVOID;
      }

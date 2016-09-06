@@ -591,5 +591,14 @@ CLIPS> (length$ (fact-slot-value 1 implied))
 3
 CLIPS> (length$ (fact-slot-value 2 implied))
 1
+CLIPS> (clear) ; Multifield wildcard not allowed in single field slot
+CLIPS> (deftemplate bar (slot x))
+CLIPS> (defrule blah (bar (x $?)) =>) 
+
+[TMPLTDEF2] The single field slot x can only contain a single field value.
+
+ERROR:
+(defrule MAIN::blah
+   (bar (x $?)
 CLIPS> (clear)
 CLIPS> (dribble-off)

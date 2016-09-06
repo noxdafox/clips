@@ -333,4 +333,7 @@
 (fact-slot-value 2 implied)
 (length$ (fact-slot-value 1 implied))
 (length$ (fact-slot-value 2 implied))
+(clear) ; Multifield wildcard not allowed in single field slot
+(deftemplate bar (slot x))
+(defrule blah (bar (x $?)) =>) 
 (clear)

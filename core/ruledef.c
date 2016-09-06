@@ -301,10 +301,10 @@ Defrule *EnvFindDefrule(
    return (Defrule *) FindNamedConstructInModuleOrImports(theEnv,defruleName,DefruleData(theEnv)->DefruleConstruct);
   }
 
-/*******************************************************************/
+/***************************************************************************/
 /* EnvFindDefruleInModule: Searches for a defrule in the list of defrules. */
-/*   Returns a pointer to the defrule if found, otherwise NULL.    */
-/*******************************************************************/
+/*   Returns a pointer to the defrule if found, otherwise NULL.            */
+/***************************************************************************/
 Defrule *EnvFindDefruleInModule(
   Environment *theEnv,
   const char *defruleName)
