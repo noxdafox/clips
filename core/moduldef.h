@@ -66,6 +66,15 @@ struct moduleItem;
 typedef void *AllocateModuleFunction(Environment *);
 typedef void FreeModuleFunction(Environment *,void *);
 
+struct defmoduleItemHeader
+  {
+   Defmodule *theModule;
+   struct constructHeader *firstItem;
+   struct constructHeader *lastItem;
+  };
+  
+#include "constrct.h"
+
 #include <stdio.h>
 
 #include "symbol.h"
@@ -93,30 +102,19 @@ typedef void FreeModuleFunction(Environment *,void *);
 
 struct defmodule
   {
-   struct symbolHashNode *name;
-   char *ppForm;
+   struct constructHeader header;
    struct defmoduleItemHeader **itemsArray;
    struct portItem *importList;
    struct portItem *exportList;
    bool visitedFlag;
-   long bsaveID;
-   struct userData *usrData;
-   Defmodule *next;
   };
 
 struct portItem
   {
-   struct symbolHashNode *moduleName;
-   struct symbolHashNode *constructType;
-   struct symbolHashNode *constructName;
+   CLIPSLexeme *moduleName;
+   CLIPSLexeme *constructType;
+   CLIPSLexeme *constructName;
    struct portItem *next;
-  };
-
-struct defmoduleItemHeader
-  {
-   Defmodule *theModule;
-   struct constructHeader *firstItem;
-   struct constructHeader *lastItem;
   };
 
 #define MIHS (struct defmoduleItemHeader *)

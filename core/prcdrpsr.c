@@ -90,11 +90,11 @@ struct procedureParserData
 #if (! BLOAD_ONLY)
    static struct expr            *WhileParse(Environment *,struct expr *,const char *);
    static struct expr            *LoopForCountParse(Environment *,struct expr *,const char *);
-   static void                    ReplaceLoopCountVars(Environment *,SYMBOL_HN *,EXPRESSION *,int);
+   static void                    ReplaceLoopCountVars(Environment *,CLIPSLexeme *,EXPRESSION *,int);
    static struct expr            *IfParse(Environment *,struct expr *,const char *);
    static struct expr            *PrognParse(Environment *,struct expr *,const char *);
    static struct expr            *BindParse(Environment *,struct expr *,const char *);
-   static int                     AddBindName(Environment *,struct symbolHashNode *,CONSTRAINT_RECORD *);
+   static int                     AddBindName(Environment *,CLIPSLexeme *,CONSTRAINT_RECORD *);
    static struct expr            *ReturnParse(Environment *,struct expr *,const char *);
    static struct expr            *BreakParse(Environment *,struct expr *,const char *);
    static struct expr            *SwitchParse(Environment *,struct expr *,const char *);
@@ -219,7 +219,7 @@ static struct expr *WhileParse(
    /*====================================*/
 
    GetToken(theEnv,infile,&theToken);
-   if ((theToken.tknType == SYMBOL_TOKEN) && (strcmp(ValueToString(theToken.value),"do") == 0))
+   if ((theToken.tknType == SYMBOL_TOKEN) && (strcmp(theToken.lexemeValue->contents,"do") == 0))
      {
       read_first_paren = true;
       PPBackup(theEnv);
@@ -288,7 +288,7 @@ static struct expr *LoopForCountParse(
   const char *infile)
   {
    struct token theToken;
-   SYMBOL_HN *loopVar = NULL;
+   CLIPSLexeme *loopVar = NULL;
    EXPRESSION *tmpexp;
    bool read_first_paren;
    struct BindInfo *oldBindList,*newBindList,*prev;
@@ -305,7 +305,7 @@ static struct expr *LoopForCountParse(
       ========================================== */
    if (theToken.tknType != LEFT_PARENTHESIS_TOKEN)
      {
-      parse->argList = GenConstant(theEnv,INTEGER,EnvAddLong(theEnv,1LL));
+      parse->argList = GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,1LL));
       parse->argList->nextArg = ParseAtomOrExpression(theEnv,infile,&theToken);
       if (parse->argList->nextArg == NULL)
         {
@@ -320,8 +320,8 @@ static struct expr *LoopForCountParse(
         {
          if (theToken.tknType != SYMBOL_TOKEN)
            goto LoopForCountParseError;
-         parse->argList = GenConstant(theEnv,INTEGER,EnvAddLong(theEnv,1LL));
-         parse->argList->nextArg = Function2Parse(theEnv,infile,ValueToString(theToken.value));
+         parse->argList = GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,1LL));
+         parse->argList->nextArg = Function2Parse(theEnv,infile,theToken.lexemeValue->contents);
          if (parse->argList->nextArg == NULL)
            {
             ReturnExpression(theEnv,parse);
@@ -334,7 +334,7 @@ static struct expr *LoopForCountParse(
          ============================================================= */
       else
         {
-         loopVar = (SYMBOL_HN *) theToken.value;
+         loopVar = theToken.lexemeValue;
          SavePPBuffer(theEnv," ");
          parse->argList = ParseAtomOrExpression(theEnv,infile,NULL);
          if (parse->argList == NULL)
@@ -353,7 +353,7 @@ static struct expr *LoopForCountParse(
             PPBackup(theEnv);
             PPBackup(theEnv);
             SavePPBuffer(theEnv,theToken.printForm);
-            tmpexp = GenConstant(theEnv,INTEGER,EnvAddLong(theEnv,1LL));
+            tmpexp = GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,1LL));
             tmpexp->nextArg = parse->argList;
             parse->argList = tmpexp;
            }
@@ -381,7 +381,7 @@ static struct expr *LoopForCountParse(
    /*====================================*/
 
    GetToken(theEnv,infile,&theToken);
-   if ((theToken.tknType == SYMBOL_TOKEN) && (strcmp(ValueToString(theToken.value),"do") == 0))
+   if ((theToken.tknType == SYMBOL_TOKEN) && (strcmp(theToken.lexemeValue->contents,"do") == 0))
      {
       read_first_paren = true;
       PPBackup(theEnv);
@@ -423,7 +423,7 @@ static struct expr *LoopForCountParse(
    while (newBindList != NULL)
      {
       if ((loopVar == NULL) ? false :
-          (strcmp(ValueToString(newBindList->name),ValueToString(loopVar)) == 0))
+          (strcmp(newBindList->name->contents,loopVar->contents) == 0))
         {
          ClearParsedBindNames(theEnv);
          SetParsedBindNames(theEnv,oldBindList);
@@ -471,18 +471,18 @@ LoopForCountParseError:
 /*************************/
 static void ReplaceLoopCountVars(
   Environment *theEnv,
-  SYMBOL_HN *loopVar,
+  CLIPSLexeme *loopVar,
   EXPRESSION *theExp,
   int depth)
   {
    while (theExp != NULL)
      {
       if ((theExp->type != SF_VARIABLE) ? false :
-          (strcmp(ValueToString(theExp->value),ValueToString(loopVar)) == 0))
+          (strcmp(ValueToString(theExp->value),loopVar->contents) == 0))
         {
          theExp->type = FCALL;
          theExp->value = FindFunction(theEnv,"(get-loop-count)");
-         theExp->argList = GenConstant(theEnv,INTEGER,EnvAddLong(theEnv,(long long) depth));
+         theExp->argList = GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,(long long) depth));
         }
       else if (theExp->argList != NULL)
         {
@@ -531,7 +531,7 @@ static struct expr *IfParse(
    PPCRAndIndent(theEnv);
 
    GetToken(theEnv,infile,&theToken);
-   if ((theToken.tknType != SYMBOL_TOKEN) || (strcmp(ValueToString(theToken.value),"then") != 0))
+   if ((theToken.tknType != SYMBOL_TOKEN) || (strcmp(theToken.lexemeValue->contents,"then") != 0))
      {
       SyntaxErrorMessage(theEnv,"if function");
       ReturnExpression(theEnv,top);
@@ -574,7 +574,7 @@ static struct expr *IfParse(
    /* Keyword 'else' must follow if then actions. */
    /*=============================================*/
 
-   if ((theToken.tknType != SYMBOL_TOKEN) || (strcmp(ValueToString(theToken.value),"else") != 0))
+   if ((theToken.tknType != SYMBOL_TOKEN) || (strcmp(theToken.lexemeValue->contents,"else") != 0))
      {
       SyntaxErrorMessage(theEnv,"if function");
       ReturnExpression(theEnv,top);
@@ -655,7 +655,7 @@ static struct expr *BindParse(
   const char *infile)
   {
    struct token theToken;
-   SYMBOL_HN *variableName;
+   CLIPSLexeme *variableName;
    struct expr *texp;
    CONSTRAINT_RECORD *theConstraint = NULL;
 #if DEFGLOBAL_CONSTRUCT
@@ -687,12 +687,12 @@ static struct expr *BindParse(
    /*==============================*/
 
    top->argList = GenConstant(theEnv,SYMBOL,theToken.value);
-   variableName = (SYMBOL_HN *) theToken.value;
+   variableName = theToken.lexemeValue;
 
 #if DEFGLOBAL_CONSTRUCT
    if ((theToken.tknType == GBL_VARIABLE_TOKEN) ?
        ((theGlobal = (Defglobal *)
-                     FindImportedConstruct(theEnv,"defglobal",NULL,ValueToString(variableName),
+                     FindImportedConstruct(theEnv,"defglobal",NULL,variableName->contents,
                                            &count,true,NULL)) != NULL) :
        false)
      {
@@ -701,7 +701,7 @@ static struct expr *BindParse(
      }
    else if (theToken.tknType == GBL_VARIABLE_TOKEN)
      {
-      GlobalReferenceErrorMessage(theEnv,ValueToString(variableName));
+      GlobalReferenceErrorMessage(theEnv,variableName->contents);
       ReturnExpression(theEnv,top);
       return NULL;
      }
@@ -850,7 +850,7 @@ static struct expr *SwitchParse(
       GetToken(theEnv,infile,&theToken);
       SavePPBuffer(theEnv," ");
       if ((theToken.tknType == SYMBOL_TOKEN) &&
-          (strcmp(ValueToString(theToken.value),"case") == 0))
+          (strcmp(theToken.lexemeValue->contents,"case") == 0))
         {
          if (default_count != 0)
            goto SwitchParseErrorAndMessage;
@@ -871,11 +871,11 @@ static struct expr *SwitchParse(
            }
          GetToken(theEnv,infile,&theToken);
          if ((theToken.tknType != SYMBOL_TOKEN) ? true :
-             (strcmp(ValueToString(theToken.value),"then") != 0))
+             (strcmp(theToken.lexemeValue->contents,"then") != 0))
            goto SwitchParseErrorAndMessage;
         }
       else if ((theToken.tknType == SYMBOL_TOKEN) &&
-               (strcmp(ValueToString(theToken.value),"default") == 0))
+               (strcmp(theToken.lexemeValue->contents,"default") == 0))
         {
          if (default_count)
            goto SwitchParseErrorAndMessage;
@@ -919,7 +919,7 @@ SwitchParseError:
 /**************************/
 int SearchParsedBindNames(
   Environment *theEnv,
-  SYMBOL_HN *name_sought)
+  CLIPSLexeme *name_sought)
   {
    struct BindInfo *var_ptr;
    int theIndex = 1;
@@ -941,7 +941,7 @@ int SearchParsedBindNames(
 /************************/
 struct constraintRecord *FindBindConstraints(
   Environment *theEnv,
-  SYMBOL_HN *nameSought)
+  CLIPSLexeme *nameSought)
   {
    struct BindInfo *theVariable;
 
@@ -984,7 +984,7 @@ int CountParsedBindNames(
 /****************************************************************/
 static int AddBindName(
   Environment *theEnv,
-  SYMBOL_HN *variableName,
+  CLIPSLexeme *variableName,
   CONSTRAINT_RECORD *theConstraint)
   {
    CONSTRAINT_RECORD *tmpConstraint;
@@ -1040,7 +1040,7 @@ static int AddBindName(
 /*************************/
 void RemoveParsedBindName(
   Environment *theEnv,
-  struct symbolHashNode *bname)
+  CLIPSLexeme *bname)
   {
    struct BindInfo *prv,*tmp;
 

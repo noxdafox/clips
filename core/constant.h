@@ -91,11 +91,11 @@
 #endif
 
 #ifndef CREATION_DATE_STRING
-#define CREATION_DATE_STRING "9/4/16"
+#define CREATION_DATE_STRING "9/22/16"
 #endif
 
 #ifndef BANNER_STRING
-#define BANNER_STRING "         CLIPS (Cypher Alpha 9/4/16)\n"
+#define BANNER_STRING "         CLIPS (Cypher Alpha 9/22/16)\n"
 #endif
 
 /*************************/
@@ -146,17 +146,14 @@ typedef enum
    INSTANCE_NAME_TYPE = (1 << 8),
    VOID_TYPE = (1 << 9),
    BOOLEAN_TYPE = (1 << 10),
-   NUMBER_TYPES = INTEGER_TYPE | FLOAT_TYPE,
-   LEXEME_TYPES = SYMBOL_TYPE | STRING_TYPE,
-   ADDRESS_TYPES = EXTERNAL_ADDRESS_TYPE | FACT_ADDRESS_TYPE | INSTANCE_ADDRESS_TYPE,
-   INSTANCE_TYPES = INSTANCE_ADDRESS_TYPE | INSTANCE_NAME_TYPE,
-   SINGLEFIELD_TYPES = NUMBER_TYPES | LEXEME_TYPES | ADDRESS_TYPES | INSTANCE_NAME_TYPE,
-   ANY_TYPE = VOID_TYPE | SINGLEFIELD_TYPES | MULTIFIELD_TYPE
   } CLIPSType;
 
-typedef long long CLIPSInteger;
-typedef double CLIPSFloat;
-typedef const char * CLIPSString;
+#define NUMBER_TYPES (INTEGER_TYPE | FLOAT_TYPE)
+#define LEXEME_TYPES (SYMBOL_TYPE | STRING_TYPE)
+#define ADDRESS_TYPES (EXTERNAL_ADDRESS_TYPE | FACT_ADDRESS_TYPE | INSTANCE_ADDRESS_TYPE)
+#define INSTANCE_TYPES (INSTANCE_ADDRESS_TYPE | INSTANCE_NAME_TYPE)
+#define SINGLEFIELD_TYPES (NUMBER_TYPES | LEXEME_TYPES | ADDRESS_TYPES | INSTANCE_NAME_TYPE)
+#define ANY_TYPE (VOID_TYPE | SINGLEFIELD_TYPES | MULTIFIELD_TYPE)
 
 /****************************************************/
 /* The first 9 primitive types need to retain their */
@@ -174,6 +171,8 @@ typedef const char * CLIPSString;
 #define INSTANCE_NAME                   8
 
 #define RVOID                           9
+
+#define BITMAP                         11
 
 #define FCALL                          30
 #define GCALL                          31

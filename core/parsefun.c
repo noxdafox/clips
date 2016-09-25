@@ -118,14 +118,6 @@ void CheckSyntaxFunction(
   {
    CLIPSValue theArg;
 
-   /*===============================*/
-   /* Set up a default return value */
-   /* (TRUE for problems found).    */
-   /*===============================*/
-
-   SetpType(returnValue,SYMBOL);
-   SetpValue(returnValue,EnvTrueSymbol(theEnv));
-
    /*========================================*/
    /* The argument should be of type STRING. */
    /*========================================*/
@@ -137,7 +129,7 @@ void CheckSyntaxFunction(
    /* Check the syntax. */
    /*===================*/
 
-   CheckSyntax(theEnv,DOToString(theArg),returnValue);
+   CheckSyntax(theEnv,theArg.lexemeValue->contents,returnValue);
   }
 
 /*********************************/
@@ -159,8 +151,7 @@ bool CheckSyntax(
    /* (TRUE for problems found).   */
    /*==============================*/
 
-   SetpType(returnValue,SYMBOL);
-   SetpValue(returnValue,EnvTrueSymbol(theEnv));
+   returnValue->lexemeValue = theEnv->TrueSymbol;
 
    /*===========================================*/
    /* Create a string source router so that the */
@@ -180,7 +171,7 @@ bool CheckSyntax(
    if (theToken.tknType != LEFT_PARENTHESIS_TOKEN)
      {
       CloseStringSource(theEnv,"check-syntax");
-      SetpValue(returnValue,EnvAddSymbol(theEnv,"MISSING-LEFT-PARENTHESIS"));
+      returnValue->lexemeValue = EnvCreateSymbol(theEnv,"MISSING-LEFT-PARENTHESIS");
       return true;
      }
 
@@ -193,11 +184,11 @@ bool CheckSyntax(
    if (theToken.tknType != SYMBOL_TOKEN)
      {
       CloseStringSource(theEnv,"check-syntax");
-      SetpValue(returnValue,EnvAddSymbol(theEnv,"EXPECTED-SYMBOL-AFTER-LEFT-PARENTHESIS"));
+      returnValue->lexemeValue = EnvCreateSymbol(theEnv,"EXPECTED-SYMBOL-AFTER-LEFT-PARENTHESIS");
       return true;
      }
 
-   name = ValueToString(theToken.value);
+   name = theToken.lexemeValue->contents;
 
    /*==============================================*/
    /* Set up a router to capture the error output. */
@@ -238,13 +229,12 @@ bool CheckSyntax(
 
       if (theToken.tknType != STOP_TOKEN)
         {
-         SetpValue(returnValue,EnvAddSymbol(theEnv,"EXTRANEOUS-INPUT-AFTER-LAST-PARENTHESIS"));
+         returnValue->value = EnvCreateSymbol(theEnv,"EXTRANEOUS-INPUT-AFTER-LAST-PARENTHESIS");
          DeactivateErrorCapture(theEnv);
          return true;
         }
 
-      SetpType(returnValue,SYMBOL);
-      SetpValue(returnValue,EnvFalseSymbol(theEnv));
+      returnValue->lexemeValue = theEnv->FalseSymbol;
       DeactivateErrorCapture(theEnv);
       return false;
      }
@@ -267,7 +257,7 @@ bool CheckSyntax(
 
    if (theToken.tknType != STOP_TOKEN)
      {
-      SetpValue(returnValue,EnvAddSymbol(theEnv,"EXTRANEOUS-INPUT-AFTER-LAST-PARENTHESIS"));
+      returnValue->lexemeValue = EnvCreateSymbol(theEnv,"EXTRANEOUS-INPUT-AFTER-LAST-PARENTHESIS");
       DeactivateErrorCapture(theEnv);
       ReturnExpression(theEnv,top);
       return true;
@@ -276,8 +266,7 @@ bool CheckSyntax(
    DeactivateErrorCapture(theEnv);
 
    ReturnExpression(theEnv,top);
-   SetpType(returnValue,SYMBOL);
-   SetpValue(returnValue,EnvFalseSymbol(theEnv));
+   returnValue->lexemeValue = theEnv->FalseSymbol;
    return false;
   }
 
@@ -327,30 +316,25 @@ static void SetErrorCaptureValues(
 
    if (ParseFunctionData(theEnv)->ErrorString != NULL)
      {
-      SetMFType(theMultifield,1,STRING);
-      SetMFValue(theMultifield,1,EnvAddSymbol(theEnv,ParseFunctionData(theEnv)->ErrorString));
+      SetMFValue(theMultifield,0,EnvCreateString(theEnv,ParseFunctionData(theEnv)->ErrorString));
      }
    else
      {
-      SetMFType(theMultifield,1,SYMBOL);
-      SetMFValue(theMultifield,1,EnvFalseSymbol(theEnv));
+      SetMFValue(theMultifield,0,theEnv->FalseSymbol);
      }
 
    if (ParseFunctionData(theEnv)->WarningString != NULL)
      {
-      SetMFType(theMultifield,2,STRING);
-      SetMFValue(theMultifield,2,EnvAddSymbol(theEnv,ParseFunctionData(theEnv)->WarningString));
+      SetMFValue(theMultifield,1,EnvCreateString(theEnv,ParseFunctionData(theEnv)->WarningString));
      }
    else
      {
-      SetMFType(theMultifield,2,SYMBOL);
-      SetMFValue(theMultifield,2,EnvFalseSymbol(theEnv));
+      SetMFValue(theMultifield,1,theEnv->FalseSymbol);
      }
 
-   SetpType(returnValue,MULTIFIELD);
-   SetpDOBegin(returnValue,1);
-   SetpDOEnd(returnValue,2);
-   SetpValue(returnValue,theMultifield);
+   returnValue->begin = 0;
+   returnValue->end = 1;
+   returnValue->value = theMultifield;
   }
 
 /**********************************/
@@ -407,8 +391,7 @@ void CheckSyntaxFunction(
   {
    PrintErrorID(theEnv,"PARSEFUN",1,false);
    EnvPrintRouter(theEnv,WERROR,"Function check-syntax does not work in run time modules.\n");
-   SetpType(returnValue,SYMBOL);
-   SetpValue(returnValue,EnvTrueSymbol(theEnv));
+   returnValue->value = theEnv->TrueSymbol;
   }
 
 /************************************************/
@@ -422,8 +405,7 @@ bool CheckSyntax(
   {
    PrintErrorID(theEnv,"PARSEFUN",1,false);
    EnvPrintRouter(theEnv,WERROR,"Function check-syntax does not work in run time modules.\n");
-   SetpType(returnValue,SYMBOL);
-   SetpValue(returnValue,EnvTrueSymbol(theEnv));
+   returnValue->value = theEnv->TrueSymbol;
    return true;
   }
 

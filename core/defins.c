@@ -114,7 +114,7 @@
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
    static bool                    ParseDefinstances(Environment *,const char *);
-   static SYMBOL_HN              *ParseDefinstancesName(Environment *,const char *,bool *);
+   static CLIPSLexeme            *ParseDefinstancesName(Environment *,const char *,bool *);
    static void                    RemoveDefinstances(Environment *,Definstances *);
    static void                    SaveDefinstances(Environment *,Defmodule *,const char *);
    static bool                    RemoveAllDefinstances(Environment *);
@@ -395,7 +395,6 @@ void GetDefinstancesModuleCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   returnValue->type = SYMBOL;
    returnValue->value = GetConstructModuleCommand(context,"definstances-module",DefinstancesData(theEnv)->DefinstancesConstruct);
   }
 
@@ -554,7 +553,7 @@ static bool ParseDefinstances(
   Environment *theEnv,
   const char *readSource)
   {
-   SYMBOL_HN *dname;
+   CLIPSLexeme *dname;
    struct FunctionDefinition *mkinsfcall;
    EXPRESSION *mkinstance,*mkbot = NULL;
    Definstances *dobj;
@@ -577,7 +576,7 @@ static bool ParseDefinstances(
      return true;
 
    dobj = get_struct(theEnv,definstances);
-   InitializeConstructHeader(theEnv,"definstances",(struct constructHeader *) dobj,dname);
+   InitializeConstructHeader(theEnv,"definstances",DEFINSTANCES,(struct constructHeader *) dobj,dname);
    dobj->busy = 0;
    dobj->mkinstance = NULL;
 #if DEFRULE_CONSTRUCT
@@ -667,12 +666,12 @@ static bool ParseDefinstances(
   NOTES        : Assumes "(definstances" has already
                    been scanned.
  *************************************************************/
-static SYMBOL_HN *ParseDefinstancesName(
+static CLIPSLexeme *ParseDefinstancesName(
   Environment *theEnv,
   const char *readSource,
   bool *active)
   {
-   SYMBOL_HN *dname;
+   CLIPSLexeme *dname;
 
    *active = false;
    dname = GetConstructNameAndComment(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken,"definstances",
@@ -684,7 +683,7 @@ static SYMBOL_HN *ParseDefinstancesName(
 
 #if DEFRULE_CONSTRUCT
    if ((DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TYPE) ? false :
-       (strcmp(ValueToString(GetValue(DefclassData(theEnv)->ObjectParseToken)),ACTIVE_RLN) == 0))
+       (strcmp(DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents,ACTIVE_RLN) == 0))
      {
       PPBackup(theEnv);
       PPBackup(theEnv);
@@ -820,7 +819,7 @@ static void CreateInitialDefinstances(
    Definstances *theDefinstances;
 
    theDefinstances = get_struct(theEnv,definstances);
-   InitializeConstructHeader(theEnv,"definstances",(struct constructHeader *) theDefinstances,
+   InitializeConstructHeader(theEnv,"definstances",DEFINSTANCES,(struct constructHeader *) theDefinstances,
                              DefclassData(theEnv)->INITIAL_OBJECT_SYMBOL);
    theDefinstances->busy = 0;
    tmp = GenConstant(theEnv,FCALL,FindFunction(theEnv,"make-instance"));
@@ -976,8 +975,7 @@ static void ResetDefinstancesAction(
      {
       EvaluateExpression(theEnv,theExp,&temp);
       if (EvaluationData(theEnv)->HaltExecution ||
-          ((GetType(temp) == SYMBOL) &&
-           (GetValue(temp) == EnvFalseSymbol(theEnv))))
+          (temp.value == theEnv->FalseSymbol))
         {
          RestoreCurrentModule(theEnv);
          theDefinstances->busy--;
@@ -1021,7 +1019,7 @@ const char *EnvDefinstancesModule(
    return GetConstructModuleName((struct constructHeader *) theDefinstances);
   }
 
-SYMBOL_HN *EnvGetDefinstancesNamePointer(
+CLIPSLexeme *EnvGetDefinstancesNamePointer(
   Environment *theEnv,
   Definstances *theDefinstances)
   {

@@ -50,9 +50,9 @@
 
 #include "symbol.h"
 
-   void                     PrintSymbolReference(Environment *,FILE *,SYMBOL_HN *);
-   void                     PrintFloatReference(Environment *,FILE *,FLOAT_HN *);
-   void                     PrintIntegerReference(Environment *,FILE *,INTEGER_HN *);
+   void                     PrintSymbolReference(Environment *,FILE *,CLIPSLexeme *);
+   void                     PrintFloatReference(Environment *,FILE *,CLIPSFloat *);
+   void                     PrintIntegerReference(Environment *,FILE *,CLIPSInteger *);
    void                     PrintBitMapReference(Environment *,FILE *,BITMAP_HN *);
    void                     AtomicValuesToCode(Environment *,const char *,const char *,char *);
 

@@ -68,7 +68,7 @@
    int                            LoadConstructsFromLogicalName(Environment *,const char *);
    int                            ParseConstruct(Environment *,const char *,const char *);
    void                           RemoveConstructFromModule(Environment *,struct constructHeader *);
-   struct symbolHashNode         *GetConstructNameAndComment(Environment *,const char *,
+   CLIPSLexeme                   *GetConstructNameAndComment(Environment *,const char *,
                                                              struct token *,const char *,
                                                              FindConstructFunction *,
                                                              DeleteConstructFunction *,

@@ -112,10 +112,10 @@ static int SymbolHashNodesToCode(
   int version)
   {
    unsigned long i, j;
-   struct symbolHashNode *hashPtr;
+   CLIPSLexeme *hashPtr;
    int count;
    int numberOfEntries;
-   struct symbolHashNode **symbolTable;
+   CLIPSLexeme **symbolTable;
    bool newHeader = true;
    int arrayVersion = 1;
    FILE *fp;
@@ -138,7 +138,7 @@ static int SymbolHashNodesToCode(
    if (numberOfEntries == 0) return(version);
 
    for (i = 1; i <= (unsigned long) (numberOfEntries / ConstructCompilerData(theEnv)->MaxIndices) + 1 ; i++)
-     { fprintf(ConstructCompilerData(theEnv)->HeaderFP,"extern struct symbolHashNode S%d_%ld[];\n",ConstructCompilerData(theEnv)->ImageID,i); }
+     { fprintf(ConstructCompilerData(theEnv)->HeaderFP,"extern CLIPSLexeme S%d_%ld[];\n",ConstructCompilerData(theEnv)->ImageID,i); }
 
    /*==================*/
    /* Create the file. */
@@ -160,18 +160,25 @@ static int SymbolHashNodesToCode(
         {
          if (newHeader)
            {
-            fprintf(fp,"struct symbolHashNode S%d_%d[] = {\n",ConstructCompilerData(theEnv)->ImageID,arrayVersion);
+            fprintf(fp,"CLIPSLexeme S%d_%d[] = {\n",ConstructCompilerData(theEnv)->ImageID,arrayVersion);
             newHeader = false;
            }
 
+         if (hashPtr->th.type == SYMBOL)
+           { fprintf(fp,"{{SYMBOL},"); }
+         else if (hashPtr->th.type == STRING)
+           { fprintf(fp,"{{STRING},"); }
+         else
+           { fprintf(fp,"{{INSTANCE_NAME},"); }
+           
          if (hashPtr->next == NULL)
-           { fprintf(fp,"{NULL,"); }
+           { fprintf(fp,"NULL,"); }
          else
            {
             if ((j + 1) >= (unsigned long) ConstructCompilerData(theEnv)->MaxIndices)
-              { fprintf(fp,"{&S%d_%d[%d],",ConstructCompilerData(theEnv)->ImageID,arrayVersion + 1,0); }
+              { fprintf(fp,"&S%d_%d[%d],",ConstructCompilerData(theEnv)->ImageID,arrayVersion + 1,0); }
             else
-              { fprintf(fp,"{&S%d_%d[%ld],",ConstructCompilerData(theEnv)->ImageID,arrayVersion,j + 1); }
+              { fprintf(fp,"&S%d_%d[%ld],",ConstructCompilerData(theEnv)->ImageID,arrayVersion,j + 1); }
            }
 
          fprintf(fp,"%ld,1,0,0,%ld,",hashPtr->count + 1,i);
@@ -267,15 +274,17 @@ static int BitMapHashNodesToCode(
             fprintf(fp,"struct bitMapHashNode B%d_%d[] = {\n",ConstructCompilerData(theEnv)->ImageID,arrayVersion);
             newHeader = false;
            }
-
+           
+         fprintf(fp,"{{BITMAP},");
+         
          if (hashPtr->next == NULL)
-           { fprintf(fp,"{NULL,"); }
+           { fprintf(fp,"NULL,"); }
          else
            {
             if ((j + 1) >= ConstructCompilerData(theEnv)->MaxIndices)
-              { fprintf(fp,"{&B%d_%d[%d],",ConstructCompilerData(theEnv)->ImageID,arrayVersion + 1,0); }
+              { fprintf(fp,"&B%d_%d[%d],",ConstructCompilerData(theEnv)->ImageID,arrayVersion + 1,0); }
             else
-              { fprintf(fp,"{&B%d_%d[%d],",ConstructCompilerData(theEnv)->ImageID,arrayVersion,j + 1); }
+              { fprintf(fp,"&B%d_%d[%d],",ConstructCompilerData(theEnv)->ImageID,arrayVersion,j + 1); }
            }
 
          fprintf(fp,"%ld,1,0,0,%d,(char *) &L%d_%d[%d],%d",
@@ -495,15 +504,17 @@ static int FloatHashNodesToCode(
             fprintf(fp,"struct floatHashNode F%d_%d[] = {\n",ConstructCompilerData(theEnv)->ImageID,arrayVersion);
             newHeader = false;
            }
-
+           
+         fprintf(fp,"{{FLOAT},");
+         
          if (hashPtr->next == NULL)
-           { fprintf(fp,"{NULL,"); }
+           { fprintf(fp,"NULL,"); }
          else
            {
             if ((j + 1) >= ConstructCompilerData(theEnv)->MaxIndices)
-              { fprintf(fp,"{&F%d_%d[%d],",ConstructCompilerData(theEnv)->ImageID,arrayVersion + 1,0); }
+              { fprintf(fp,"&F%d_%d[%d],",ConstructCompilerData(theEnv)->ImageID,arrayVersion + 1,0); }
             else
-              { fprintf(fp,"{&F%d_%d[%d],",ConstructCompilerData(theEnv)->ImageID,arrayVersion,j + 1); }
+              { fprintf(fp,"&F%d_%d[%d],",ConstructCompilerData(theEnv)->ImageID,arrayVersion,j + 1); }
            }
 
          fprintf(fp,"%ld,1,0,0,%d,",hashPtr->count + 1,i);
@@ -598,15 +609,17 @@ static int IntegerHashNodesToCode(
             fprintf(fp,"struct integerHashNode I%d_%d[] = {\n",ConstructCompilerData(theEnv)->ImageID,arrayVersion);
             newHeader = false;
            }
+           
+         fprintf(fp,"{{INTEGER},");
 
          if (hashPtr->next == NULL)
-           { fprintf(fp,"{NULL,"); }
+           { fprintf(fp,"NULL,"); }
          else
            {
             if ((j + 1) >= ConstructCompilerData(theEnv)->MaxIndices)
-              { fprintf(fp,"{&I%d_%d[%d],",ConstructCompilerData(theEnv)->ImageID,arrayVersion + 1,0); }
+              { fprintf(fp,"&I%d_%d[%d],",ConstructCompilerData(theEnv)->ImageID,arrayVersion + 1,0); }
             else
-              { fprintf(fp,"{&I%d_%d[%d],",ConstructCompilerData(theEnv)->ImageID,arrayVersion,j + 1); }
+              { fprintf(fp,"&I%d_%d[%d],",ConstructCompilerData(theEnv)->ImageID,arrayVersion,j + 1); }
            }
 
          fprintf(fp,"%ld,1,0,0,%d,",hashPtr->count + 1,i);
@@ -650,7 +663,7 @@ static int HashTablesToCode(
   {
    unsigned long i;
    FILE *fp;
-   struct symbolHashNode **symbolTable;
+   CLIPSLexeme **symbolTable;
    struct floatHashNode **floatTable;
    struct integerHashNode **integerTable;
    struct bitMapHashNode **bitMapTable;
@@ -664,8 +677,8 @@ static int HashTablesToCode(
    if ((fp = NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,1,false)) == NULL)
      { return 0; }
 
-   fprintf(ConstructCompilerData(theEnv)->HeaderFP,"extern struct symbolHashNode *sht%d[];\n",ConstructCompilerData(theEnv)->ImageID);
-   fprintf(fp,"struct symbolHashNode *sht%d[%ld] = {\n",ConstructCompilerData(theEnv)->ImageID,SYMBOL_HASH_SIZE);
+   fprintf(ConstructCompilerData(theEnv)->HeaderFP,"extern CLIPSLexeme *sht%d[];\n",ConstructCompilerData(theEnv)->ImageID);
+   fprintf(fp,"CLIPSLexeme *sht%d[%ld] = {\n",ConstructCompilerData(theEnv)->ImageID,SYMBOL_HASH_SIZE);
 
    for (i = 0; i < SYMBOL_HASH_SIZE; i++)
       {
@@ -760,7 +773,7 @@ static int HashTablesToCode(
 void PrintSymbolReference(
   Environment *theEnv,
   FILE *theFile,
-  struct symbolHashNode *theSymbol)
+  CLIPSLexeme *theSymbol)
   {
    if (theSymbol == NULL) fprintf(theFile,"NULL");
    else fprintf(theFile,"&S%d_%d[%d]",

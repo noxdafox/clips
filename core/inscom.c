@@ -158,7 +158,7 @@ void SetupInstances(
 #endif
                                          };
 
-   Instance dummyInstance = { { NULL, NULL, 0, 0L },
+   Instance dummyInstance = { { { INSTANCE_ADDRESS } , NULL, NULL, 0, 0L },
                               NULL, NULL, 0, 1, 0, 0, 0,
                               NULL,  0, 0, NULL, NULL, NULL, NULL,
                               NULL, NULL, NULL, NULL, NULL };
@@ -272,7 +272,7 @@ static void DeallocateInstanceData(
              (--sp->desc->sharedCount == 0) : true)
            {
             if (sp->desc->multiple)
-              { ReturnMultifield(theEnv,(MULTIFIELD_PTR) sp->value); }
+              { ReturnMultifield(theEnv,(Multifield *) sp->value); }
            }
         }
 
@@ -331,7 +331,7 @@ bool EnvDeleteInstance(
      {
       itmp = ins;
       ins = ins->nxtList;
-      if (QuashInstance(theEnv,(Instance *) itmp) == 0)
+      if (QuashInstance(theEnv,itmp) == 0)
         success = 0;
      }
 
@@ -429,9 +429,9 @@ void InstancesCommand(
      {
       if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg)) return;
 
-      theDefmodule = EnvFindDefmodule(theEnv,DOToString(theArg));
+      theDefmodule = EnvFindDefmodule(theEnv,theArg.lexemeValue->contents);
       if ((theDefmodule != NULL) ? false :
-          (strcmp(DOToString(theArg),"*") != 0))
+          (strcmp(theArg.lexemeValue->contents,"*") != 0))
         {
          EnvSetEvaluationError(theEnv,true);
          ExpectedTypeError1(theEnv,"instances",1,"defmodule name");
@@ -440,7 +440,7 @@ void InstancesCommand(
       if (UDFHasNextArgument(context))
         {
          if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg)) return;
-         className = DOToString(theArg);
+         className = theArg.lexemeValue->contents;
          if (LookupDefclassAnywhere(theEnv,theDefmodule,className) == NULL)
            {
             if (strcmp(className,"*") == 0)
@@ -455,7 +455,7 @@ void InstancesCommand(
            {
             if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg)) return;
 
-            if (strcmp(DOToString(theArg),ALL_QUALIFIER) != 0)
+            if (strcmp(theArg.lexemeValue->contents,ALL_QUALIFIER) != 0)
               {
                EnvSetEvaluationError(theEnv,true);
                ExpectedTypeError1(theEnv,"instances",3,"keyword \"inherit\"");
@@ -590,8 +590,7 @@ Instance *EnvMakeInstance(
    EXPRESSION *top;
    CLIPSValue returnValue;
 
-   returnValue.type = SYMBOL;
-   returnValue.value = EnvFalseSymbol(theEnv);
+   returnValue.value = theEnv->FalseSymbol;
    if (OpenStringSource(theEnv,router,mkstr,0) == 0)
      return NULL;
    GetToken(theEnv,router,&tkn);
@@ -623,10 +622,10 @@ Instance *EnvMakeInstance(
       CallPeriodicTasks(theEnv);
      }
 
-   if ((returnValue.type == SYMBOL) && (returnValue.value == EnvFalseSymbol(theEnv)))
+   if (returnValue.value == theEnv->FalseSymbol)
      return NULL;
 
-   return FindInstanceBySymbol(theEnv,(SYMBOL_HN *) returnValue.value);
+   return FindInstanceBySymbol(theEnv,returnValue.lexemeValue);
   }
 
 /***************************************************************
@@ -646,7 +645,7 @@ Instance *EnvCreateRawInstance(
   Defclass *theDefclass,
   const char *instanceName)
   {
-   return BuildInstance(theEnv,(SYMBOL_HN *) EnvAddSymbol(theEnv,instanceName),theDefclass,false);
+   return BuildInstance(theEnv,EnvCreateInstanceName(theEnv,instanceName),theDefclass,false);
   }
 
 /***************************************************************************
@@ -663,9 +662,9 @@ Instance *EnvFindInstance(
   const char *iname,
   bool searchImports)
   {
-   SYMBOL_HN *isym;
+   CLIPSLexeme *isym;
 
-   isym = FindSymbolHN(theEnv,iname);
+   isym = FindSymbolHN(theEnv,iname,LEXEME_TYPES | INSTANCE_NAME);
 
    if (isym == NULL)
      { return NULL; }
@@ -716,24 +715,22 @@ void EnvDirectGetSlot(
    if (theInstance->garbage == 1)
      {
       EnvSetEvaluationError(theEnv,true);
-      returnValue->type = SYMBOL;
-      returnValue->value = EnvFalseSymbol(theEnv);
+      returnValue->value = theEnv->FalseSymbol;
       return;
      }
    sp = FindISlotByName(theEnv,theInstance,sname);
    if (sp == NULL)
      {
       EnvSetEvaluationError(theEnv,true);
-      returnValue->type = SYMBOL;
-      returnValue->value = EnvFalseSymbol(theEnv);
+      returnValue->value = theEnv->FalseSymbol;
       return;
      }
-   returnValue->type = (unsigned short) sp->type;
+
    returnValue->value = sp->value;
    if (sp->type == MULTIFIELD)
      {
       returnValue->begin = 0;
-      SetpDOEnd(returnValue,GetInstanceSlotLength(sp));
+      returnValue->end = GetInstanceSlotLength(sp) - 1;
      }
    if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
        (EvaluationData(theEnv)->CurrentExpression == NULL) && (UtilityData(theEnv)->GarbageCollectionLocks == 0))
@@ -806,7 +803,7 @@ const char *EnvGetInstanceName(
    if (theInstance->garbage == 1)
      { return NULL; }
 
-   return ValueToString(theInstance->name);
+   return theInstance->name->contents;
   }
 
 /***************************************************
@@ -967,12 +964,12 @@ Instance *EnvGetNextInstanceInClassAndSubclasses(
      { nextInstance = theInstance->nxtClass; }
 
    while ((nextInstance == NULL) &&
-          (GetpDOBegin(iterationInfo) <= GetpDOEnd(iterationInfo)))
+          (iterationInfo->begin <= iterationInfo->end))
      {
-      theClass = (Defclass *) GetMFValue(DOPToPointer(iterationInfo),
-                                         GetpDOBegin(iterationInfo));
+      theClass = (Defclass *) GetMFValue(iterationInfo->multifieldValue,
+                                         iterationInfo->begin);
       *cptr = theClass;
-      SetpDOBegin(iterationInfo,GetpDOBegin(iterationInfo) + 1);
+      iterationInfo->begin = iterationInfo->begin + 1;
       nextInstance = theClass->instanceList;
      }
 
@@ -1029,14 +1026,15 @@ void ClassCommand(
    const char *func;
    CLIPSValue temp;
 
-   func = ValueToString(((struct FunctionDefinition *)
-                       EvaluationData(theEnv)->CurrentExpression->value)->callFunctionName);
-   returnValue->type = SYMBOL;
-   returnValue->value = EnvFalseSymbol(theEnv);
+   func = ((struct FunctionDefinition *)
+           EvaluationData(theEnv)->CurrentExpression->value)->callFunctionName->contents;
+
+   returnValue->lexemeValue = theEnv->FalseSymbol;
+
    EvaluateExpression(theEnv,GetFirstArgument(),&temp);
-   if (temp.type == INSTANCE_ADDRESS)
+   if (temp.header->type == INSTANCE_ADDRESS)
      {
-      ins = (Instance *) temp.value;
+      ins = temp.instanceValue;
       if (ins->garbage == 1)
         {
          StaleInstanceAddress(theEnv,func,0);
@@ -1045,19 +1043,19 @@ void ClassCommand(
         }
       returnValue->value = GetDefclassNamePointer(ins->cls);
      }
-   else if (temp.type == INSTANCE_NAME)
+   else if (temp.header->type == INSTANCE_NAME)
      {
-      ins = FindInstanceBySymbol(theEnv,(SYMBOL_HN *) temp.value);
+      ins = FindInstanceBySymbol(theEnv,temp.lexemeValue);
       if (ins == NULL)
         {
-         NoInstanceError(theEnv,ValueToString(temp.value),func);
+         NoInstanceError(theEnv,temp.lexemeValue->contents,func);
          return;
         }
       returnValue->value = GetDefclassNamePointer(ins->cls);
      }
    else
      {
-      switch (temp.type)
+      switch (temp.header->type)
         {
          case INTEGER          :
          case FLOAT            :
@@ -1067,7 +1065,7 @@ void ClassCommand(
          case EXTERNAL_ADDRESS :
          case FACT_ADDRESS     :
                           returnValue->value = GetDefclassNamePointer(
-                                            DefclassData(theEnv)->PrimitiveClassMap[temp.type]);
+                                                 DefclassData(theEnv)->PrimitiveClassMap[temp.header->type]);
                          return;
 
          default       : PrintErrorID(theEnv,"INSCOM",1,false);
@@ -1094,10 +1092,10 @@ void CreateInstanceHandler(
   CLIPSValue *returnValue)
   {
 #if MAC_XCD
-#pragma unused(theEnv)
+#pragma unused(theEnv,context)
 #endif
-   returnValue->type = SYMBOL;
-   returnValue->value = EnvTrueSymbol(theEnv);
+
+   returnValue->lexemeValue = theEnv->TrueSymbol;
   }
 
 /******************************************************
@@ -1117,16 +1115,10 @@ void DeleteInstanceCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   returnValue->type = SYMBOL;
    if (CheckCurrentMessage(theEnv,"delete-instance",true))
-     {
-      if (QuashInstance(theEnv,GetActiveInstance(theEnv)))
-        { returnValue->value = EnvTrueSymbol(theEnv); }
-      else
-        { returnValue->value = EnvFalseSymbol(theEnv); }
-     }
+     { returnValue->lexemeValue = EnvCreateBoolean(theEnv,QuashInstance(theEnv,GetActiveInstance(theEnv))); }
    else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+     { returnValue->lexemeValue = theEnv->FalseSymbol; }
   }
 
 /********************************************************************
@@ -1148,30 +1140,29 @@ void UnmakeInstanceCommand(
    int argNumber = 1;
    bool rtn = true;
 
-   returnValue->type = SYMBOL;
    while (UDFHasNextArgument(context))
      {
       if (! UDFNextArgument(context,INSTANCE_TYPES | SYMBOL_TYPE,&theArg))
         { return; }
 
-      if ((theArg.type == INSTANCE_NAME) || (theArg.type == SYMBOL))
+      if (CVIsType(&theArg,INSTANCE_NAME_TYPE | SYMBOL_TYPE))
         {
-         ins = FindInstanceBySymbol(theEnv,(SYMBOL_HN *) theArg.value);
-         if ((ins == NULL) ? (strcmp(DOToString(theArg),"*") != 0) : false)
+         ins = FindInstanceBySymbol(theEnv,theArg.lexemeValue);
+         if ((ins == NULL) ? (strcmp(theArg.lexemeValue->contents,"*") != 0) : false)
            {
-            NoInstanceError(theEnv,DOToString(theArg),"unmake-instance");
-            returnValue->value = EnvFalseSymbol(theEnv);
+            NoInstanceError(theEnv,theArg.lexemeValue->contents,"unmake-instance");
+            returnValue->lexemeValue = theEnv->FalseSymbol;
             return;
            }
          }
-      else if (theArg.type == INSTANCE_ADDRESS)
+      else if (CVIsType(&theArg,INSTANCE_ADDRESS_TYPE))
         {
-         ins = (Instance *) theArg.value;
+         ins = theArg.instanceValue;
          if (ins->garbage)
            {
             StaleInstanceAddress(theEnv,"unmake-instance",0);
             EnvSetEvaluationError(theEnv,true);
-            returnValue->value = EnvFalseSymbol(theEnv);
+            returnValue->lexemeValue = theEnv->FalseSymbol;
             return;
            }
         }
@@ -1179,7 +1170,7 @@ void UnmakeInstanceCommand(
         {
          ExpectedTypeError1(theEnv,"unmake-instance",argNumber,"instance-address, instance-name, or the symbol *");
          EnvSetEvaluationError(theEnv,true);
-         returnValue->value = EnvFalseSymbol(theEnv);
+         returnValue->lexemeValue = theEnv->FalseSymbol;
          return;
         }
       if (EnvUnmakeInstance(theEnv,ins) == false)
@@ -1187,19 +1178,13 @@ void UnmakeInstanceCommand(
 
       if (ins == NULL)
         {
-         if (rtn)
-           { returnValue->value = EnvTrueSymbol(theEnv); }
-         else
-           { returnValue->value = EnvFalseSymbol(theEnv); }
+         returnValue->lexemeValue = EnvCreateBoolean(theEnv,rtn);
          return;
         }
       argNumber++;
      }
 
-   if (rtn)
-     { returnValue->value = EnvTrueSymbol(theEnv); }
-   else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+   returnValue->lexemeValue = EnvCreateBoolean(theEnv,rtn);
   }
 
 /*****************************************************************
@@ -1219,7 +1204,7 @@ void SymbolToInstanceNameFunction(
    if (! UDFFirstArgument(context,SYMBOL_TYPE,returnValue))
      { return; }
 
-   SetpType(returnValue,INSTANCE_NAME);
+   returnValue->value = EnvCreateInstanceName(theEnv,returnValue->lexemeValue->contents);
   }
 
 /*****************************************************************
@@ -1236,13 +1221,10 @@ void InstanceNameToSymbolFunction(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   CLIPSValue theArg;
-
-   if (! UDFFirstArgument(context,INSTANCE_NAME_TYPE | SYMBOL_TYPE,&theArg))
+   if (! UDFFirstArgument(context,INSTANCE_NAME_TYPE | SYMBOL_TYPE,returnValue))
      { return; }
 
-   returnValue->type = SYMBOL;
-   returnValue->value = theArg.value;
+   returnValue->value = EnvCreateSymbol(theEnv,returnValue->lexemeValue->contents);
   }
 
 /*********************************************************************************
@@ -1263,18 +1245,16 @@ void InstanceAddressCommand(
    Defmodule *theModule;
    bool searchImports;
 
-   returnValue->type = SYMBOL;
-   returnValue->value = EnvFalseSymbol(theEnv);
+   returnValue->lexemeValue = theEnv->FalseSymbol;
    if (UDFArgumentCount(context) > 1)
      {
       if (! UDFFirstArgument(context,SYMBOL_TYPE,&temp))
         {
-         returnValue->type = SYMBOL;
-         returnValue->value = EnvFalseSymbol(theEnv);
+         returnValue->lexemeValue = theEnv->FalseSymbol;
          return;
         }
-      theModule = EnvFindDefmodule(theEnv,DOToString(temp));
-      if ((theModule == NULL) ? (strcmp(DOToString(temp),"*") != 0) : false)
+      theModule = EnvFindDefmodule(theEnv,temp.lexemeValue->contents);
+      if ((theModule == NULL) ? (strcmp(temp.lexemeValue->contents,"*") != 0) : false)
         {
          ExpectedTypeError1(theEnv,"instance-address",1,"module name");
          EnvSetEvaluationError(theEnv,true);
@@ -1287,32 +1267,26 @@ void InstanceAddressCommand(
         }
       else
         searchImports = false;
+
       if (! UDFNextArgument(context,INSTANCE_NAME_TYPE | SYMBOL_TYPE,&temp))
         {
-         returnValue->type = SYMBOL;
-         returnValue->value = EnvFalseSymbol(theEnv);
+         returnValue->lexemeValue = theEnv->FalseSymbol;
          return;
         }
-      ins = FindInstanceInModule(theEnv,(SYMBOL_HN *) temp.value,theModule,
+      ins = FindInstanceInModule(theEnv,temp.lexemeValue,theModule,
                                  EnvGetCurrentModule(theEnv),searchImports);
       if (ins != NULL)
-        {
-         returnValue->type = INSTANCE_ADDRESS;
-         returnValue->value = ins;
-        }
+        { returnValue->instanceValue = ins; }
       else
-        NoInstanceError(theEnv,ValueToString(temp.value),"instance-address");
+        NoInstanceError(theEnv,temp.lexemeValue->contents,"instance-address");
      }
    else if (UDFFirstArgument(context,INSTANCE_TYPES | SYMBOL_TYPE,&temp))
      {
-      if (temp.type == INSTANCE_ADDRESS)
+      if (temp.header->type == INSTANCE_ADDRESS)
         {
-         ins = (Instance *) temp.value;
+         ins = temp.instanceValue;
          if (ins->garbage == 0)
-           {
-            returnValue->type = INSTANCE_ADDRESS;
-            returnValue->value = temp.value;
-           }
+           { returnValue->instanceValue = temp.instanceValue; }
          else
            {
             StaleInstanceAddress(theEnv,"instance-address",0);
@@ -1321,21 +1295,15 @@ void InstanceAddressCommand(
         }
       else
         {
-         ins = FindInstanceBySymbol(theEnv,(SYMBOL_HN *) temp.value);
+         ins = FindInstanceBySymbol(theEnv,temp.lexemeValue);
          if (ins != NULL)
-           {
-            returnValue->type = INSTANCE_ADDRESS;
-            returnValue->value = ins;
-           }
+           { returnValue->instanceValue = ins; }
          else
-           NoInstanceError(theEnv,ValueToString(temp.value),"instance-address");
+           NoInstanceError(theEnv,temp.lexemeValue->contents,"instance-address");
         }
      }
    else
-     {
-      returnValue->type = SYMBOL;
-      returnValue->value = EnvFalseSymbol(theEnv);
-     }
+     { returnValue->lexemeValue = theEnv->FalseSymbol; }
   }
 
 /***************************************************************
@@ -1354,14 +1322,13 @@ void InstanceNameCommand(
    Instance *ins;
    CLIPSValue theArg;
 
-   returnValue->type = SYMBOL;
-   returnValue->value = EnvFalseSymbol(theEnv);
+   returnValue->lexemeValue = theEnv->FalseSymbol;
    if (! UDFFirstArgument(context,INSTANCE_TYPES | SYMBOL_TYPE,&theArg))
      { return; }
 
-   if (theArg.type == INSTANCE_ADDRESS)
+   if (CVIsType(&theArg,INSTANCE_ADDRESS_TYPE))
      {
-      ins = (Instance *) theArg.value;
+      ins = theArg.instanceValue;
       if (ins->garbage == 1)
         {
          StaleInstanceAddress(theEnv,"instance-name",0);
@@ -1371,14 +1338,14 @@ void InstanceNameCommand(
      }
    else
      {
-      ins = FindInstanceBySymbol(theEnv,(SYMBOL_HN *) theArg.value);
+      ins = FindInstanceBySymbol(theEnv,theArg.lexemeValue);
       if (ins == NULL)
         {
-         NoInstanceError(theEnv,ValueToString(theArg.value),"instance-name");
+         NoInstanceError(theEnv,theArg.lexemeValue->contents,"instance-name");
          return;
         }
      }
-   returnValue->type = INSTANCE_NAME;
+
    returnValue->value = ins->name;
   }
 
@@ -1400,11 +1367,10 @@ void InstanceAddressPCommand(
    if (! UDFFirstArgument(context,ANY_TYPE,&theArg))
      { return; }
 
-   returnValue->type = SYMBOL;
-   if (GetType(theArg) == INSTANCE_ADDRESS)
-     { returnValue->value = EnvTrueSymbol(theEnv); }
+   if (theArg.header->type == INSTANCE_ADDRESS)
+     { returnValue->value = theEnv->TrueSymbol; }
    else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+     { returnValue->value = theEnv->FalseSymbol; }
   }
 
 /**************************************************************
@@ -1425,11 +1391,7 @@ void InstanceNamePCommand(
    if (! UDFFirstArgument(context,ANY_TYPE,&theArg))
      { return; }
 
-   returnValue->type = SYMBOL;
-   if (GetType(theArg) == INSTANCE_NAME)
-     { returnValue->value = EnvTrueSymbol(theEnv); }
-   else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+   returnValue->lexemeValue = EnvCreateBoolean(theEnv,CVIsType(&theArg,INSTANCE_NAME_TYPE));
   }
 
 /*****************************************************************
@@ -1452,11 +1414,7 @@ void InstancePCommand(
    if (! UDFFirstArgument(context,ANY_TYPE,&theArg))
      { return; }
 
-   returnValue->type = SYMBOL;
-   if ((GetType(theArg) == INSTANCE_NAME) || (GetType(theArg) == INSTANCE_ADDRESS))
-     { returnValue->value = EnvTrueSymbol(theEnv); }
-   else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+   returnValue->lexemeValue = EnvCreateBoolean(theEnv,CVIsType(&theArg,INSTANCE_ADDRESS_TYPE | INSTANCE_NAME_TYPE));
   }
 
 /********************************************************
@@ -1477,39 +1435,21 @@ void InstanceExistPCommand(
    if (! UDFFirstArgument(context,ANY_TYPE,&theArg))
      { return; }
 
-   returnValue->type = SYMBOL;
-   if (theArg.type == INSTANCE_ADDRESS)
+   if (CVIsType(&theArg,INSTANCE_ADDRESS_TYPE))
      {
-      if (((Instance *) theArg.value)->garbage == 0)
-        {
-         returnValue->value = EnvTrueSymbol(theEnv);
-         return;
-        }
-      else
-        {
-         returnValue->value = EnvFalseSymbol(theEnv);
-         return;
-        }
+      returnValue->lexemeValue = EnvCreateBoolean(theEnv,(theArg.instanceValue->garbage == 0) ? true : false);
+      return;
      }
 
-   if ((theArg.type == INSTANCE_NAME) || (theArg.type == SYMBOL))
+   if (CVIsType(&theArg,INSTANCE_NAME_TYPE | SYMBOL_TYPE))
      {
-      if (FindInstanceBySymbol(theEnv,(SYMBOL_HN *) theArg.value) != NULL)
-        {
-         returnValue->value = EnvTrueSymbol(theEnv);
-         return;
-        }
-      else
-        {
-         returnValue->value = EnvFalseSymbol(theEnv);
-         return;
-        }
+      returnValue->lexemeValue = EnvCreateBoolean(theEnv,((FindInstanceBySymbol(theEnv,theArg.lexemeValue) != NULL) ?
+              true : false));
+      return;
      }
-
    ExpectedTypeError1(theEnv,"instance-existp",1,"instance name, instance address or symbol");
    EnvSetEvaluationError(theEnv,true);
-
-   returnValue->value = EnvFalseSymbol(theEnv);
+   returnValue->lexemeValue = theEnv->FalseSymbol;
   }
 
 /* =========================================
@@ -1689,7 +1629,7 @@ static void PrintInstance(
       EnvPrintRouter(theEnv,logicalName,separator);
       sp = ins->slotAddresses[i];
       EnvPrintRouter(theEnv,logicalName,"(");
-      EnvPrintRouter(theEnv,logicalName,ValueToString(sp->desc->slotName->name));
+      EnvPrintRouter(theEnv,logicalName,sp->desc->slotName->name->contents);
       if (sp->type != MULTIFIELD)
         {
          EnvPrintRouter(theEnv,logicalName," ");
@@ -1698,7 +1638,7 @@ static void PrintInstance(
       else if (GetInstanceSlotLength(sp) != 0)
         {
          EnvPrintRouter(theEnv,logicalName," ");
-         PrintMultifield(theEnv,logicalName,(MULTIFIELD_PTR) sp->value,0,
+         PrintMultifield(theEnv,logicalName,(Multifield *) sp->value,0,
                          (long) (GetInstanceSlotLength(sp) - 1),false);
         }
       EnvPrintRouter(theEnv,logicalName,")");
@@ -1721,10 +1661,10 @@ static INSTANCE_SLOT *FindISlotByName(
   Instance *theInstance,
   const char *sname)
   {
-   SYMBOL_HN *ssym;
+   CLIPSLexeme *ssym;
 
-   ssym = FindSymbolHN(theEnv,sname);
-
+   ssym = FindSymbolHN(theEnv,sname,LEXEME_TYPES | INSTANCE_NAME);
+   
    if (ssym == NULL)
      { return NULL; }
 

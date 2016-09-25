@@ -76,6 +76,12 @@ struct dataObject;
 typedef struct dataObject CLIPSValue;
 typedef struct dataObject * CLIPSValuePtr;
 typedef struct expr FUNCTION_REFERENCE;
+typedef struct typeHeader TypeHeader;
+
+struct typeHeader
+  {
+   unsigned short type;
+  };
 
 typedef void EntityPrintFunction(Environment *,const char *,void *);
 typedef bool EntityEvaluationFunction(Environment *,void *,CLIPSValue *);
@@ -84,17 +90,6 @@ typedef void EntityBusyCountFunction(Environment *,void *);
 #include "constant.h"
 #include "symbol.h"
 #include "expressn.h"
-
-struct dataObject
-  {
-   void *supplementalInfo;
-   unsigned short type;
-   void *value;
-   long begin;
-   long end;
-   struct dataObject *next;
-   Environment *environment;
-  };
 
 #define C_POINTER_EXTERNAL_ADDRESS 0
 
@@ -121,6 +116,30 @@ struct entityRecord
    struct userData *usrData;
   };
 
+#include "factmngr.h"
+#include "object.h"
+
+struct dataObject
+  {
+   void *supplementalInfo;
+   union
+     {
+      void *value;
+      TypeHeader const *header;
+      Fact *factValue;
+      Instance *instanceValue;
+      CLIPSLexeme *lexemeValue;
+      CLIPSFloat *floatValue;
+      CLIPSInteger *integerValue;
+      CLIPSVoid *voidValue;
+      Multifield *multifieldValue;
+     };
+   long begin;
+   long end;
+   struct dataObject *next;
+   Environment *environment;
+  };
+
 struct externalAddressType
   {
    const  char *name;
@@ -136,57 +155,6 @@ typedef struct entityRecord * ENTITY_RECORD_PTR;
 
 #define GetDOLength(target)       (((target).end - (target).begin) + 1)
 #define GetpDOLength(target)      (((target)->end - (target)->begin) + 1)
-#define GetDOBegin(target)        ((target).begin + 1)
-#define GetDOEnd(target)          ((target).end + 1)
-#define GetpDOBegin(target)       ((target)->begin + 1)
-#define GetpDOEnd(target)         ((target)->end + 1)
-#define SetDOBegin(target,val)   ((target).begin = (long) ((val) - 1))
-#define SetDOEnd(target,val)     ((target).end = (long) ((val) - 1))
-#define SetpDOBegin(target,val)   ((target)->begin = (long) ((val) - 1))
-#define SetpDOEnd(target,val)     ((target)->end = (long) ((val) - 1))
-
-#define EnvGetDOLength(theEnv,target)       (((target).end - (target).begin) + 1)
-#define EnvGetpDOLength(theEnv,target)      (((target)->end - (target)->begin) + 1)
-#define EnvGetDOBegin(theEnv,target)        ((target).begin + 1)
-#define EnvGetDOEnd(theEnv,target)          ((target).end + 1)
-#define EnvGetpDOBegin(theEnv,target)       ((target)->begin + 1)
-#define EnvGetpDOEnd(theEnv,target)         ((target)->end + 1)
-#define EnvSetDOBegin(theEnv,target,val)   ((target).begin = (long) ((val) - 1))
-#define EnvSetDOEnd(theEnv,target,val)     ((target).end = (long) ((val) - 1))
-#define EnvSetpDOBegin(theEnv,target,val)   ((target)->begin = (long) ((val) - 1))
-#define EnvSetpDOEnd(theEnv,target,val)     ((target)->end = (long) ((val) - 1))
-
-#define DOPToString(target) (((struct symbolHashNode *) ((target)->value))->contents)
-#define DOPToDouble(target) (((struct floatHashNode *) ((target)->value))->contents)
-#define DOPToFloat(target) ((float) (((struct floatHashNode *) ((target)->value))->contents))
-#define DOPToLong(target) (((struct integerHashNode *) ((target)->value))->contents)
-#define DOPToInteger(target) ((int) (((struct integerHashNode *) ((target)->value))->contents))
-#define DOPToPointer(target)       ((target)->value)
-#define DOPToExternalAddress(target) (((struct externalAddressHashNode *) ((target)->value))->externalAddress)
-
-#define EnvDOPToString(theEnv,target) (((struct symbolHashNode *) ((target)->value))->contents)
-#define EnvDOPToDouble(theEnv,target) (((struct floatHashNode *) ((target)->value))->contents)
-#define EnvDOPToFloat(theEnv,target) ((float) (((struct floatHashNode *) ((target)->value))->contents))
-#define EnvDOPToLong(theEnv,target) (((struct integerHashNode *) ((target)->value))->contents)
-#define EnvDOPToInteger(theEnv,target) ((int) (((struct integerHashNode *) ((target)->value))->contents))
-#define EnvDOPToPointer(theEnv,target)       ((target)->value)
-#define EnvDOPToExternalAddress(target) (((struct externalAddressHashNode *) ((target)->value))->externalAddress)
-
-#define DOToString(target) (((struct symbolHashNode *) ((target).value))->contents)
-#define DOToDouble(target) (((struct floatHashNode *) ((target).value))->contents)
-#define DOToFloat(target) ((float) (((struct floatHashNode *) ((target).value))->contents))
-#define DOToLong(target) (((struct integerHashNode *) ((target).value))->contents)
-#define DOToInteger(target) ((int) (((struct integerHashNode *) ((target).value))->contents))
-#define DOToPointer(target)        ((target).value)
-#define DOToExternalAddress(target) (((struct externalAddressHashNode *) ((target).value))->externalAddress)
-
-#define EnvDOToString(theEnv,target) (((struct symbolHashNode *) ((target).value))->contents)
-#define EnvDOToDouble(theEnv,target) (((struct floatHashNode *) ((target).value))->contents)
-#define EnvDOToFloat(theEnv,target) ((float) (((struct floatHashNode *) ((target).value))->contents))
-#define EnvDOToLong(theEnv,target) (((struct integerHashNode *) ((target).value))->contents)
-#define EnvDOToInteger(theEnv,target) ((int) (((struct integerHashNode *) ((target).value))->contents))
-#define EnvDOToPointer(theEnv,target)        ((target).value)
-#define EnvDOToExternalAddress(target) (((struct externalAddressHashNode *) ((target).value))->externalAddress)
 
 #define CoerceToLongInteger(t,v) ((t == INTEGER) ? ValueToLong(v) : (long int) ValueToDouble(v))
 #define CoerceToInteger(t,v) ((t == INTEGER) ? (int) ValueToLong(v) : (int) ValueToDouble(v))
@@ -223,9 +191,6 @@ struct evaluationData
 
 #define EvaluationData(theEnv) ((struct evaluationData *) GetEnvironmentData(theEnv,EVALUATION_DATA))
 
-#include "factmngr.h"
-#include "object.h"
-
    void                           InitializeEvaluationData(Environment *);
    bool                           EvaluateExpression(Environment *,struct expr *,CLIPSValue *);
    void                           EnvSetEvaluationError(Environment *,bool);
@@ -244,6 +209,8 @@ struct evaluationData
    void                           CopyDataObject(Environment *,CLIPSValue *,CLIPSValue *,int);
    void                           AtomInstall(Environment *,int,void *);
    void                           AtomDeinstall(Environment *,int,void *);
+   void                           CVAtomInstall(Environment *,void *);
+   void                           CVAtomDeinstall(Environment *,void *);
    struct expr                   *ConvertValueToExpression(Environment *,CLIPSValue *);
    unsigned long                  GetAtomicHashValue(unsigned short,void *,int);
    void                           InstallPrimitive(Environment *,struct entityRecord *,int);
@@ -253,5 +220,15 @@ struct evaluationData
    bool                           GetFunctionReference(Environment *,const char *,FUNCTION_REFERENCE *);
    bool                           DOsEqual(CLIPSValue *,CLIPSValue *);
    bool                           EvaluateAndStoreInDataObject(Environment *,bool,EXPRESSION *,CLIPSValue *,bool);
+
+#define CVIsType(cv,cvType) ((1 << (((TypeHeader *) (cv)->value)->type)) & (cvType))
+
+#define CVCoerceToFloat(cv) (((cv)->header->type == FLOAT) ? \
+                             ((cv)->floatValue->contents) : \
+                             ((double) (cv)->integerValue->contents))
+
+#define CVCoerceToInteger(cv) (((cv)->header->type == INTEGER) ? \
+                               ((cv)->integerValue->contents) : \
+                               ((long long) (cv)->floatValue->contents))
 
 #endif /* _H_evaluatn */

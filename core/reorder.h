@@ -117,7 +117,7 @@ struct lhsParseNode
    struct patternParser *patternType;
    short pattern;
    short index;
-   struct symbolHashNode *slot;
+   CLIPSLexeme *slot;
    short slotNumber;
    int beginNandDepth;
    int endNandDepth;

@@ -4,6 +4,7 @@
 #import "CLIPSFocus.h"
 #import "CLIPSModule.h"
 #import "CLIPSActivation.h"
+#import "CLIPSTerminalController.h"
 
 #import <CLIPS/clips.h>
 

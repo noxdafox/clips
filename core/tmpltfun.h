@@ -112,7 +112,7 @@
    bool                           EnvDeftemplateSlotFacetExistP(Environment *,Deftemplate *,const char *,const char *);
    void                           DeftemplateSlotFacetValueFunction(Environment *,UDFContext *,CLIPSValue *);
    bool                           EnvDeftemplateSlotFacetValue(Environment *,Deftemplate *,const char *,const char *,CLIPSValue *);
-   SYMBOL_HN                     *FindTemplateForFactAddress(SYMBOL_HN *,struct lhsParseNode *);
+   CLIPSLexeme                   *FindTemplateForFactAddress(CLIPSLexeme *,struct lhsParseNode *);
 
 #endif /* _H_tmpltfun */
 

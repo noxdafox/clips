@@ -104,7 +104,7 @@ void AddImplicitMethods(
    struct FunctionDefinition *sysfunc;
    EXPRESSION action;
 
-   sysfunc = FindFunction(theEnv,ValueToString(gfunc->header.name));
+   sysfunc = FindFunction(theEnv,gfunc->header.name->contents);
    if (sysfunc == NULL)
      return;
    action.type = FCALL;
@@ -254,7 +254,7 @@ static void FormMethodsFromRestrictions(
          rptr->query->argList = GenConstant(theEnv,FCALL,FindFunction(theEnv,"length$"));
          rptr->query->argList->argList = GenProcWildcardReference(theEnv,min + i + 1);
          rptr->query->argList->nextArg =
-               GenConstant(theEnv,INTEGER,EnvAddLong(theEnv,(long long) (max - min - i)));
+               GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,(long long) (max - min - i)));
         }
       tmp = get_struct(theEnv,expr);
       tmp->argList = (EXPRESSION *) rptr;
@@ -263,8 +263,8 @@ static void FormMethodsFromRestrictions(
         plist = tmp;
       else
         bot->nextArg = tmp;
-      FindMethodByRestrictions(gfunc,plist,min + i + 1,(SYMBOL_HN *) EnvTrueSymbol(theEnv),&mposn);
-      meth = AddMethod(theEnv,gfunc,NULL,mposn,0,plist,min + i + 1,0,(SYMBOL_HN *) EnvTrueSymbol(theEnv),
+      FindMethodByRestrictions(gfunc,plist,min + i + 1,theEnv->TrueSymbol,&mposn);
+      meth = AddMethod(theEnv,gfunc,NULL,mposn,0,plist,min + i + 1,0,theEnv->TrueSymbol,
                        PackExpression(theEnv,actions),NULL,false);
       meth->system = 1;
      }
@@ -419,7 +419,7 @@ static EXPRESSION *GenTypeExpression(
    else
      tmp = GenConstant(theEnv,0,LookupDefclassByMdlOrScope(theEnv,COOLName));
 #else
-   tmp = GenConstant(theEnv,0,EnvAddLong(theEnv,(long long) nonCOOLCode));
+   tmp = GenConstant(theEnv,0,EnvCreateInteger(theEnv,(long long) nonCOOLCode));
 #endif
    tmp->nextArg = top;
    return(tmp);

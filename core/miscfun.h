@@ -102,7 +102,7 @@
    void                           GetSORCommand(Environment *,UDFContext *,CLIPSValue *);
    void                           GetFunctionRestrictions(Environment *,UDFContext *,CLIPSValue *);
    void                           AproposCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                          *GensymStar(Environment *);
+   void                           GensymStar(Environment *,CLIPSValue *);
    void                           GetFunctionListFunction(Environment *,UDFContext *,CLIPSValue *);
    void                           FuncallFunction(Environment *,UDFContext *,CLIPSValue *);
    void                           NewFunction(Environment *,UDFContext *,CLIPSValue *);

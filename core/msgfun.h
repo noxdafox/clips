@@ -76,34 +76,34 @@ typedef struct handlerSlotReference
    void             UnboundHandlerErr(Environment *);
    void             PrintNoHandlerError(Environment *,const char *);
    bool             CheckHandlerArgCount(Environment *);
-   void             SlotAccessViolationError(Environment *,const char *,bool,void *);
+   void             SlotAccessViolationError(Environment *,const char *,Instance *,Defclass *);
    void             SlotVisibilityViolationError(Environment *,SlotDescriptor *,Defclass *);
 
 #if ! RUN_TIME
    void             NewSystemHandler(Environment *,const char *,const char *,const char *,int);
    DefmessageHandler
-                   *InsertHandlerHeader(Environment *,Defclass *,SYMBOL_HN *,int);
+                   *InsertHandlerHeader(Environment *,Defclass *,CLIPSLexeme *,int);
 #endif
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
    DefmessageHandler
                    *NewHandler(void);
    bool             HandlersExecuting(Defclass *);
-   bool             DeleteHandler(Environment *,Defclass *,SYMBOL_HN *,int,bool);
+   bool             DeleteHandler(Environment *,Defclass *,CLIPSLexeme *,int,bool);
    void             DeallocateMarkedHandlers(Environment *,Defclass *);
 #endif
    unsigned         HandlerType(Environment *,const char *,const char *);
    bool             CheckCurrentMessage(Environment *,const char *,bool);
    void             PrintHandler(Environment *,const char *,DefmessageHandler *,bool);
    DefmessageHandler
-                   *FindHandlerByAddress(Defclass *,SYMBOL_HN *,unsigned);
-   int              FindHandlerByIndex(Defclass *,SYMBOL_HN *,unsigned);
-   int              FindHandlerNameGroup(Defclass *,SYMBOL_HN *);
+                   *FindHandlerByAddress(Defclass *,CLIPSLexeme *,unsigned);
+   int              FindHandlerByIndex(Defclass *,CLIPSLexeme *,unsigned);
+   int              FindHandlerNameGroup(Defclass *,CLIPSLexeme *);
    void             HandlerDeleteError(Environment *,const char *);
 
 #if DEBUGGING_FUNCTIONS
    void             DisplayCore(Environment *,const char *,HANDLER_LINK *,int);
-   HANDLER_LINK    *FindPreviewApplicableHandlers(Environment *,Defclass *,SYMBOL_HN *);
+   HANDLER_LINK    *FindPreviewApplicableHandlers(Environment *,Defclass *,CLIPSLexeme *);
    void             WatchMessage(Environment *,const char *,const char *);
    void             WatchHandler(Environment *,const char *,HANDLER_LINK *,const char *);
 #endif

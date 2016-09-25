@@ -1044,13 +1044,12 @@ void FetchCommand(
    int load_ct;          /*Number of entries loaded */
    CLIPSValue theArg;
 
-   returnValue->type = SYMBOL;
-   returnValue->value = EnvFalseSymbol(theEnv);
+   returnValue->lexemeValue = theEnv->FalseSymbol;
 
    if (! UDFFirstArgument(context,LEXEME_TYPES,&theArg))
      { return; }
 
-   load_ct = TextLookupFetch(theEnv,DOToString(theArg));
+   load_ct = TextLookupFetch(theEnv,theArg.lexemeValue->contents);
    if (load_ct <= 0)
      {
       if (load_ct == 0)
@@ -1061,8 +1060,8 @@ void FetchCommand(
 
       return;
      }
-   returnValue->type = INTEGER;
-   returnValue->value = EnvAddLong(theEnv,(long long) load_ct);
+
+   returnValue->integerValue = EnvCreateInteger(theEnv,load_ct);
   }
 
 /******************************************************************************/
@@ -1094,8 +1093,6 @@ void PrintRegionCommand(
    char *menu[1];            /*Buffer for the current menu name        */
    int status;               /*Lookup status return code               */
    bool com_code;            /*Completion flag                         */
-
-   returnValue->type = SYMBOL;
 
    params = GetCommandLineTopics(context);
    fp = FindTopicInEntries(theEnv,params->next->name,params->next->next,menu,&status);
@@ -1131,10 +1128,7 @@ void PrintRegionCommand(
       rm(theEnv,tptr,(int) sizeof(struct topics));
      }
 
-   if (com_code)
-     { returnValue->value = EnvTrueSymbol(theEnv); }
-   else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+   returnValue->lexemeValue = EnvCreateBoolean(theEnv,com_code);
   }
 
 /***********************************************/
@@ -1155,8 +1149,6 @@ void GetRegionCommand(
    size_t oldPos = 0;
    size_t oldMax = 0;
    size_t sLength;
-
-   returnValue->type = STRING;
 
    params = GetCommandLineTopics(context);
    fp = FindTopicInEntries(theEnv,params->name,params->next,menu,&status);
@@ -1188,7 +1180,7 @@ void GetRegionCommand(
      }
 
    if (theString == NULL)
-     { returnValue->value = EnvAddSymbol(theEnv,""); }
+     { returnValue->lexemeValue = EnvCreateString(theEnv,""); }
    else
      {
       sLength = strlen(theString);
@@ -1197,7 +1189,7 @@ void GetRegionCommand(
 		   ||
            ((theString[sLength-1] == '\n') && (theString[sLength-2] == '\r'))))
         { theString[sLength-2] = 0; }
-      returnValue->value = EnvAddSymbol(theEnv,theString);
+      returnValue->lexemeValue = EnvCreateString(theEnv,theString);
      }
 
    if (theString != NULL)
@@ -1222,13 +1214,9 @@ void TossCommand(
    if (! UDFFirstArgument(context,LEXEME_TYPES,&theArg))
      { return; }
 
-   file = DOToString(theArg);
+   file = theArg.lexemeValue->contents;
 
-   returnValue->type = SYMBOL;
-   if (TextLookupToss(theEnv,file))
-     { returnValue->value = EnvTrueSymbol(theEnv); }
-   else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+   returnValue->lexemeValue = EnvCreateBoolean(theEnv,TextLookupToss(theEnv,file));
   }
 
 #endif
@@ -1264,12 +1252,12 @@ static struct topics *GetCommandLineTopics(
 
       UDFNextArgument(context,ANY_TYPE,&val);
 
-      if ((GetType(val) == SYMBOL) || (GetType(val) == STRING))
-        genstrncpy(tnode->name,DOToString(val),NAMESIZE-1);
-      else if (GetType(val) == FLOAT)
-        genstrncpy(tnode->name,FloatToString(theEnv,DOToDouble(val)),NAMESIZE-1);
-      else if (GetType(val) == INTEGER)
-        genstrncpy(tnode->name,LongIntegerToString(theEnv,DOToLong(val)),NAMESIZE-1);
+      if ((val.header->type == SYMBOL) || (val.header->type == STRING))
+        genstrncpy(tnode->name,val.lexemeValue->contents,NAMESIZE-1);
+      else if (val.header->type == FLOAT)
+        genstrncpy(tnode->name,FloatToString(theEnv,val.floatValue->contents),NAMESIZE-1);
+      else if (val.header->type == INTEGER)
+        genstrncpy(tnode->name,LongIntegerToString(theEnv,val.integerValue->contents),NAMESIZE-1);
       else
         genstrncpy(tnode->name,"***ERROR***",NAMESIZE-1);
 

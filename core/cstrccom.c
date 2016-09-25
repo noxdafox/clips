@@ -233,7 +233,7 @@ void *FindNamedConstructInModule(
   struct construct *constructClass)
   {
    void *theConstruct;
-   SYMBOL_HN *findValue;
+   CLIPSLexeme *findValue;
 
    /*==========================*/
    /* Save the current module. */
@@ -259,7 +259,7 @@ void *FindNamedConstructInModule(
 
    if ((constructName == NULL) ?
        true :
-       ((findValue = (SYMBOL_HN *) FindSymbolHN(theEnv,constructName)) == NULL))
+       ((findValue = FindSymbolHN(theEnv,constructName,SYMBOL_TYPE)) == NULL))
      {
       RestoreCurrentModule(theEnv);
       return NULL;
@@ -448,7 +448,7 @@ bool PPConstruct(
 /* GetConstructModuleCommand: Driver routine */
 /*   for def<construct>-module routines      */
 /*********************************************/
-SYMBOL_HN *GetConstructModuleCommand(
+CLIPSLexeme *GetConstructModuleCommand(
   UDFContext *context,
   const char *command,
   struct construct *constructClass)
@@ -466,7 +466,7 @@ SYMBOL_HN *GetConstructModuleCommand(
    gensprintf(buffer,"%s name",constructClass->constructName);
 
    constructName = GetConstructName(context,command,buffer);
-   if (constructName == NULL) return((SYMBOL_HN *) EnvFalseSymbol(theEnv));
+   if (constructName == NULL) return theEnv->FalseSymbol;
 
    /*==========================================*/
    /* Get a pointer to the construct's module. */
@@ -476,14 +476,14 @@ SYMBOL_HN *GetConstructModuleCommand(
    if (constructModule == NULL)
      {
       CantFindItemErrorMessage(theEnv,constructClass->constructName,constructName);
-      return((SYMBOL_HN *) EnvFalseSymbol(theEnv));
+      return theEnv->FalseSymbol;
      }
 
    /*============================================*/
    /* Return the name of the construct's module. */
    /*============================================*/
 
-   return(constructModule->name);
+   return constructModule->header.name;
   }
 
 /******************************************/
@@ -498,7 +498,7 @@ Defmodule *GetConstructModule(
    struct constructHeader *constructPtr;
    int count;
    unsigned position;
-   SYMBOL_HN *theName;
+   CLIPSLexeme *theName;
 
    /*====================================================*/
    /* If the construct name contains a module specifier, */
@@ -510,7 +510,7 @@ Defmodule *GetConstructModule(
      {
       theName = ExtractModuleName(theEnv,position,constructName);
       if (theName != NULL)
-        { return EnvFindDefmodule(theEnv,ValueToString(theName)); }
+        { return EnvFindDefmodule(theEnv,theName->contents); }
      }
 
    /*============================================*/
@@ -581,7 +581,7 @@ bool Undefconstruct(
          else
            {
             CantDeleteItemErrorMessage(theEnv,constructClass->constructName,
-                        ValueToString((*constructClass->getConstructNameFunction)((struct constructHeader *) currentConstruct)));
+                        (*constructClass->getConstructNameFunction)((struct constructHeader *) currentConstruct)->contents);
             success = false;
            }
 
@@ -725,7 +725,7 @@ const char *GetConstructModuleName(
 /*********************************************************/
 const char *GetConstructNameString(
   struct constructHeader *theConstruct)
-  { return(ValueToString(theConstruct->name)); }
+  { return theConstruct->name->contents; }
 
 /**************************************************/
 /* EnvGetConstructNameString: Generic routine for */
@@ -739,16 +739,16 @@ const char *EnvGetConstructNameString(
 #pragma unused(theEnv)
 #endif
 
-   return(ValueToString(theConstruct->name));
+   return theConstruct->name->contents;
   }
 
 /**********************************************************/
 /* GetConstructNamePointer: Generic routine for returning */
 /*   the name pointer of a construct.                     */
 /**********************************************************/
-SYMBOL_HN *GetConstructNamePointer(
+CLIPSLexeme *GetConstructNamePointer(
   struct constructHeader *theConstruct)
-  { return(theConstruct->name); }
+  { return theConstruct->name; }
 
 /************************************************/
 /* GetConstructListFunction: Generic Routine    */
@@ -785,9 +785,9 @@ void GetConstructListFunction(
       /* list for all modules).                    */
       /*===========================================*/
 
-      if ((theModule = EnvFindDefmodule(theEnv,DOToString(result))) == NULL)
+      if ((theModule = EnvFindDefmodule(theEnv,result.lexemeValue->contents)) == NULL)
         {
-         if (strcmp("*",DOToString(result)) != 0)
+         if (strcmp("*",result.lexemeValue->contents) != 0)
            {
             EnvSetMultifieldErrorValue(theEnv,returnValue);
             ExpectedTypeError1(theEnv,UDFContextFunctionName(context),1,"defmodule name");
@@ -827,7 +827,7 @@ void GetConstructList(
    void *theConstruct;
    unsigned long count = 0;
    Multifield *theList;
-   SYMBOL_HN *theName;
+   CLIPSLexeme *theName;
    Defmodule *loopModule;
    bool allModules = false;
    size_t largestConstructNameSize = 0, bufferSize = 80;  /* prevents warning */
@@ -886,7 +886,7 @@ void GetConstructList(
          /* Is this the largest construct name encountered? */
          /*=================================================*/
 
-         tempSize = strlen(ValueToString((*constructClass->getConstructNameFunction)((struct constructHeader *) theConstruct)));
+         tempSize = strlen((*constructClass->getConstructNameFunction)((struct constructHeader *) theConstruct)->contents);
          if (tempSize > largestConstructNameSize)
            { largestConstructNameSize = tempSize; }
         }
@@ -924,11 +924,10 @@ void GetConstructList(
    /* store the construct names.     */
    /*================================*/
 
-   SetpType(returnValue,MULTIFIELD);
-   SetpDOBegin(returnValue,1);
-   SetpDOEnd(returnValue,(long) count);
+   returnValue->begin = 0;
+   returnValue->end = ((long) count) - 1;
    theList = EnvCreateMultifield(theEnv,count);
-   SetpValue(returnValue,theList);
+   returnValue->value = theList;
 
    /*===========================*/
    /* Store the construct names */
@@ -936,7 +935,7 @@ void GetConstructList(
    /*===========================*/
 
    loopModule = theModule;
-   count = 1;
+   count = 0;
    while (loopModule != NULL)
      {
       /*============================*/
@@ -955,16 +954,15 @@ void GetConstructList(
       while ((theConstruct = (*constructClass->getNextItemFunction)(theEnv,theConstruct)) != NULL)
         {
          theName = (*constructClass->getConstructNameFunction)((struct constructHeader *) theConstruct);
-         SetMFType(theList,count,SYMBOL);
          if (allModules)
            {
             genstrcpy(buffer,EnvGetDefmoduleName(theEnv,loopModule));
             genstrcat(buffer,"::");
-            genstrcat(buffer,ValueToString(theName));
-            SetMFValue(theList,count,EnvAddSymbol(theEnv,buffer));
+            genstrcat(buffer,theName->contents);
+            SetMFValue(theList,count,EnvCreateSymbol(theEnv,buffer));
            }
          else
-           { SetMFValue(theList,count,EnvAddSymbol(theEnv,ValueToString(theName))); }
+           { SetMFValue(theList,count,EnvCreateSymbol(theEnv,theName->contents)); }
          count++;
         }
 
@@ -1025,9 +1023,9 @@ void ListConstructCommand(
       /* list for all modules).                    */
       /*===========================================*/
 
-      if ((theModule = EnvFindDefmodule(theEnv,DOToString(result))) == NULL)
+      if ((theModule = EnvFindDefmodule(theEnv,result.lexemeValue->contents)) == NULL)
         {
-         if (strcmp("*",DOToString(result)) != 0)
+         if (strcmp("*",result.lexemeValue->contents) != 0)
            {
             ExpectedTypeError1(theEnv,UDFContextFunctionName(context),1,"defmodule name");
             return;
@@ -1064,7 +1062,7 @@ void ListConstruct(
   Defmodule *theModule)
   {
    void *constructPtr;
-   SYMBOL_HN *constructName;
+   CLIPSLexeme *constructName;
    long count = 0;
    bool allModules = false;
 
@@ -1125,7 +1123,7 @@ void ListConstruct(
          if (constructName != NULL)
            {
             if (allModules) EnvPrintRouter(theEnv,WDISPLAY,"   ");
-            EnvPrintRouter(theEnv,logicalName,ValueToString(constructName));
+            EnvPrintRouter(theEnv,logicalName,constructName->contents);
             EnvPrintRouter(theEnv,logicalName,"\n");
            }
 
@@ -1407,14 +1405,15 @@ void DoForAllConstructsInModule(
 /*****************************************************/
 void InitializeConstructHeader(
   Environment *theEnv,
-  const char *constructType,
+  const char *constructNameString,
+  ConstructType theType,
   struct constructHeader *theConstruct,
-  SYMBOL_HN *theConstructName)
+  CLIPSLexeme *theConstructName)
   {
    struct moduleItem *theModuleItem;
    struct defmoduleItemHeader *theItemHeader;
 
-   theModuleItem = FindModuleItem(theEnv,constructType);
+   theModuleItem = FindModuleItem(theEnv,constructNameString);
    theItemHeader = (struct defmoduleItemHeader *)
                    GetModuleItem(theEnv,NULL,theModuleItem->moduleIndex);
 
@@ -1424,6 +1423,7 @@ void InitializeConstructHeader(
    theConstruct->bsaveID = 0L;
    theConstruct->next = NULL;
    theConstruct->usrData = NULL;
+   theConstruct->constructType = theType;
   }
 
 /*************************************************/
@@ -1593,9 +1593,9 @@ static bool ConstructWatchSupport(
       /* Check to see that it's a valid construct name. */
       /*================================================*/
 
-      if ((constructName.type != SYMBOL) ? true :
+      if ((constructName.header->type != SYMBOL) ? true :
           ((theConstruct = LookupConstruct(theEnv,constructClass,
-                                           DOToString(constructName),true)) == NULL))
+                                           constructName.lexemeValue->contents,true)) == NULL))
         {
          ExpectedTypeError1(theEnv,funcName,argIndex,constructClass->constructName);
          return false;
@@ -1638,7 +1638,7 @@ static void ConstructPrintWatch(
   void *theConstruct,
   bool (*getWatchFunc)(Environment *,void *))
   {
-   EnvPrintRouter(theEnv,logName,ValueToString((*constructClass->getConstructNameFunction)((struct constructHeader *) theConstruct)));
+   EnvPrintRouter(theEnv,logName,(*constructClass->getConstructNameFunction)((struct constructHeader *) theConstruct)->contents);
    if ((*getWatchFunc)(theEnv,theConstruct))
      EnvPrintRouter(theEnv,logName," = on\n");
    else

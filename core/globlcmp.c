@@ -99,6 +99,7 @@ static void InitDefglobalsCode(
 #pragma unused(imageID)
 #pragma unused(theEnv)
 #endif
+   fprintf(initFP,"   DefglobalRunTimeInitialize(theEnv);\n");
    fprintf(initFP,"   ResetDefglobals(theEnv);\n");
   }
 
@@ -269,7 +270,7 @@ static void DefglobalToCode(
    /* Current Value. */
    /*================*/
 
-   fprintf(theFile,"{NULL,RVOID}");
+   fprintf(theFile,"{NULL}");
 
    /*=====================*/
    /* Initial Expression. */

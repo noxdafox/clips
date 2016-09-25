@@ -337,7 +337,10 @@ static void GenObjectGetVar(
    if (theNode->slotNumber < 0)
      {
       hack1.objectAddress = 1;
-      SetpType(theItem,(joinReference ? OBJ_GET_SLOT_JNVAR1 : OBJ_GET_SLOT_PNVAR1));
+      if (joinReference)
+        { theItem->type = OBJ_GET_SLOT_JNVAR1; }
+      else
+        { theItem->type = OBJ_GET_SLOT_PNVAR1; }
       theItem->value = EnvAddBitMap(theEnv,&hack1,(int) sizeof(struct ObjectMatchVar1));
       return;
      }

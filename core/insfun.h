@@ -94,14 +94,14 @@ typedef struct igarbage
    void                           EnvDecrementInstanceCount(Environment *,Instance *);
    void                           InitializeInstanceTable(Environment *);
    void                           CleanupInstances(Environment *);
-   unsigned                       HashInstance(SYMBOL_HN *);
+   unsigned                       HashInstance(CLIPSLexeme *);
    void                           DestroyAllInstances(Environment *);
    void                           RemoveInstanceData(Environment *,Instance *);
-   Instance                      *FindInstanceBySymbol(Environment *,SYMBOL_HN *);
-   Instance                      *FindInstanceInModule(Environment *,SYMBOL_HN *,Defmodule *,
+   Instance                      *FindInstanceBySymbol(Environment *,CLIPSLexeme *);
+   Instance                      *FindInstanceInModule(Environment *,CLIPSLexeme *,Defmodule *,
                                                        Defmodule *,bool);
-   INSTANCE_SLOT                 *FindInstanceSlot(Environment *,Instance *,SYMBOL_HN *);
-   int                            FindInstanceTemplateSlot(Environment *,Defclass *,SYMBOL_HN *);
+   INSTANCE_SLOT                 *FindInstanceSlot(Environment *,Instance *,CLIPSLexeme *);
+   int                            FindInstanceTemplateSlot(Environment *,Defclass *,CLIPSLexeme *);
    bool                           PutSlotValue(Environment *,Instance *,INSTANCE_SLOT *,CLIPSValue *,CLIPSValue *,const char *);
    bool                           DirectPutSlotValue(Environment *,Instance *,INSTANCE_SLOT *,CLIPSValue *,CLIPSValue *);
    bool                           ValidSlotValue(Environment *,CLIPSValue *,SlotDescriptor *,Instance *,const char *);

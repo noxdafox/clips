@@ -94,17 +94,14 @@ void SetResetGlobalsCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
+   bool oldValue;
    CLIPSValue theArg;
 
    /*===========================================*/
    /* Remember the old value of this attribute. */
    /*===========================================*/
 
-   returnValue->type = SYMBOL;
-   if (EnvGetResetGlobals(theEnv))
-     { returnValue->value = EnvTrueSymbol(theEnv); }
-   else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+   oldValue = EnvGetResetGlobals(theEnv);
 
    /*===========================================*/
    /* Determine the new value of the attribute. */
@@ -113,10 +110,16 @@ void SetResetGlobalsCommand(
    if (! UDFFirstArgument(context,ANY_TYPE,&theArg))
      { return; }
 
-   if ((theArg.value == EnvFalseSymbol(theEnv)) && (theArg.type == SYMBOL))
+   if (theArg.value == theEnv->FalseSymbol)
      { EnvSetResetGlobals(theEnv,false); }
    else
      { EnvSetResetGlobals(theEnv,true); }
+
+   /*========================================*/
+   /* Return the old value of the attribute. */
+   /*========================================*/
+
+   returnValue->lexemeValue = EnvCreateBoolean(theEnv,oldValue);
   }
 
 /****************************************/
@@ -143,12 +146,7 @@ void GetResetGlobalsCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   returnValue->type = SYMBOL;
-
-   if (EnvGetResetGlobals(theEnv))
-     { returnValue->value = EnvTrueSymbol(theEnv); }
-   else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+   returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvGetResetGlobals(theEnv));
   }
 
 /****************************************/
@@ -271,7 +269,7 @@ static void PrintDefglobalValueForm(
   Defglobal *theGlobal)
   {
    EnvPrintRouter(theEnv,logicalName,"?*");
-   EnvPrintRouter(theEnv,logicalName,ValueToString(theGlobal->header.name));
+   EnvPrintRouter(theEnv,logicalName,theGlobal->header.name->contents);
    EnvPrintRouter(theEnv,logicalName,"* = ");
    PrintDataObject(theEnv,logicalName,&theGlobal->current);
   }

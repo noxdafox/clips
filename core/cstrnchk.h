@@ -70,7 +70,7 @@
    int                            ConstraintCheckExpressionChain(Environment *,struct expr *,
                                                                      CONSTRAINT_RECORD *);
    void                           ConstraintViolationErrorMessage(Environment *,const char *,const char *,bool,int,
-                                                                      struct symbolHashNode *,
+                                                                      CLIPSLexeme *,
                                                                       int,int,CONSTRAINT_RECORD *,
                                                                       bool);
    int                            ConstraintCheckValue(Environment *,int,void *,CONSTRAINT_RECORD *);

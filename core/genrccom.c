@@ -582,7 +582,6 @@ void GetDefgenericModuleCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   returnValue->type = SYMBOL;
    returnValue->value = GetConstructModuleCommand(context,"defgeneric-module",DefgenericData(theEnv)->DefgenericConstruct);
   }
 
@@ -605,21 +604,21 @@ void UndefmethodCommand(
 
    if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg)) return;
 
-   gfunc = LookupDefgenericByMdlOrScope(theEnv,DOToString(theArg));
-   if ((gfunc == NULL) ? (strcmp(DOToString(theArg),"*") != 0) : false)
+   gfunc = LookupDefgenericByMdlOrScope(theEnv,theArg.lexemeValue->contents);
+   if ((gfunc == NULL) ? (strcmp(theArg.lexemeValue->contents,"*") != 0) : false)
      {
       PrintErrorID(theEnv,"GENRCCOM",1,false);
       EnvPrintRouter(theEnv,WERROR,"No such generic function ");
-      EnvPrintRouter(theEnv,WERROR,DOToString(theArg));
+      EnvPrintRouter(theEnv,WERROR,theArg.lexemeValue->contents);
       EnvPrintRouter(theEnv,WERROR," in function undefmethod.\n");
       return;
      }
 
    if (! UDFNextArgument(context,ANY_TYPE,&theArg)) return;
 
-   if (theArg.type == SYMBOL)
+   if (CVIsType(&theArg,SYMBOL_TYPE))
      {
-      if (strcmp(DOToString(theArg),"*") != 0)
+      if (strcmp(theArg.lexemeValue->contents,"*") != 0)
         {
          PrintErrorID(theEnv,"GENRCCOM",2,false);
          EnvPrintRouter(theEnv,WERROR,"Expected a valid method index in function undefmethod.\n");
@@ -627,9 +626,9 @@ void UndefmethodCommand(
         }
       mi = 0;
      }
-   else if (theArg.type == INTEGER)
+   else if (CVIsType(&theArg,INTEGER_TYPE))
      {
-      mi = (long) DOToLong(theArg);
+      mi = (long) theArg.integerValue->contents;
       if (mi == 0)
         {
          PrintErrorID(theEnv,"GENRCCOM",2,false);
@@ -924,18 +923,18 @@ void PPDefmethodCommand(
    int gi;
 
    if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg)) return;
-   gname = DOToString(theArg);
+   gname = theArg.lexemeValue->contents;
 
    if (! UDFNextArgument(context,INTEGER_TYPE,&theArg)) return;
 
    gfunc = CheckGenericExists(theEnv,"ppdefmethod",gname);
    if (gfunc == NULL)
      return;
-   gi = CheckMethodExists(theEnv,"ppdefmethod",gfunc,(long) DOToLong(theArg));
+   gi = CheckMethodExists(theEnv,"ppdefmethod",gfunc,(long) theArg.integerValue->contents);
    if (gi == -1)
      return;
-   if (gfunc->methods[gi].ppForm != NULL)
-     PrintInChunks(theEnv,WDISPLAY,gfunc->methods[gi].ppForm);
+   if (gfunc->methods[gi].header.ppForm != NULL)
+     PrintInChunks(theEnv,WDISPLAY,gfunc->methods[gi].header.ppForm);
   }
 
 /******************************************************
@@ -961,7 +960,7 @@ void ListDefmethodsCommand(
      {
       if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg)) return;
 
-      gfunc = CheckGenericExists(theEnv,"list-defmethods",DOToString(theArg));
+      gfunc = CheckGenericExists(theEnv,"list-defmethods",theArg.lexemeValue->contents);
       if (gfunc != NULL)
         { EnvListDefmethods(theEnv,WDISPLAY,gfunc); }
      }
@@ -987,7 +986,7 @@ const char *EnvGetDefmethodPPForm(
 #endif
 
    mi = FindMethodByIndex(theDefgeneric,theIndex);
-   return theDefgeneric->methods[mi].ppForm;
+   return theDefgeneric->methods[mi].header.ppForm;
   }
 
 /***************************************************
@@ -1121,7 +1120,7 @@ void GetDefmethodListCommand(
      {
       if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
         { return; }
-      gfunc = CheckGenericExists(theEnv,"get-defmethod-list",DOToString(theArg));
+      gfunc = CheckGenericExists(theEnv,"get-defmethod-list",theArg.lexemeValue->contents);
       if (gfunc != NULL)
         { EnvGetDefmethodList(theEnv,gfunc,returnValue); }
       else
@@ -1148,7 +1147,7 @@ void EnvGetDefmethodList(
    Defgeneric *gfunc, *svg, *svnxt;
    long i,j;
    unsigned long count;
-   MULTIFIELD_PTR theList;
+   Multifield *theList;
 
    if (theDefgeneric != NULL)
      {
@@ -1167,21 +1166,18 @@ void EnvGetDefmethodList(
         gfunc = EnvGetNextDefgeneric(theEnv,gfunc))
      count += (unsigned long) gfunc->mcnt;
    count *= 2;
-   SetpType(returnValue,MULTIFIELD);
-   SetpDOBegin(returnValue,1);
-   SetpDOEnd(returnValue,count);
-   theList = (MULTIFIELD_PTR) EnvCreateMultifield(theEnv,count);
-   SetpValue(returnValue,theList);
-   for (gfunc = svg , i = 1 ;
+   returnValue->begin = 0;
+   returnValue->end = count - 1;
+   theList = (Multifield *) EnvCreateMultifield(theEnv,count);
+   returnValue->value = theList;
+   for (gfunc = svg , i = 0 ;
         gfunc != NULL ;
         gfunc = EnvGetNextDefgeneric(theEnv,gfunc))
      {
       for (j = 0 ; j < gfunc->mcnt ; j++)
         {
-         SetMFType(theList,i,SYMBOL);
          SetMFValue(theList,i++,GetDefgenericNamePointer(gfunc));
-         SetMFType(theList,i,INTEGER);
-         SetMFValue(theList,i++,EnvAddLong(theEnv,(long long) gfunc->methods[j].index));
+         SetMFValue(theList,i++,EnvCreateInteger(theEnv,(long long) gfunc->methods[j].index));
         }
      }
    if (svg != NULL)
@@ -1206,7 +1202,7 @@ void GetMethodRestrictionsCommand(
 
    if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
      { return; }
-   gfunc = CheckGenericExists(theEnv,"get-method-restrictions",DOToString(theArg));
+   gfunc = CheckGenericExists(theEnv,"get-method-restrictions",theArg.lexemeValue->contents);
    if (gfunc == NULL)
      {
       EnvSetMultifieldErrorValue(theEnv,returnValue);
@@ -1216,12 +1212,12 @@ void GetMethodRestrictionsCommand(
    if (! UDFNextArgument(context,INTEGER_TYPE,&theArg))
      { return; }
 
-   if (CheckMethodExists(theEnv,"get-method-restrictions",gfunc,(long) DOToLong(theArg)) == -1)
+   if (CheckMethodExists(theEnv,"get-method-restrictions",gfunc,(long) theArg.integerValue->contents) == -1)
      {
       EnvSetMultifieldErrorValue(theEnv,returnValue);
       return;
      }
-   EnvGetMethodRestrictions(theEnv,gfunc,(unsigned) DOToLong(theArg),returnValue);
+   EnvGetMethodRestrictions(theEnv,gfunc,(unsigned) theArg.integerValue->contents,returnValue);
   }
 
 /***********************************************************************
@@ -1271,41 +1267,34 @@ void EnvGetMethodRestrictions(
    RESTRICTION *rptr;
    long count;
    int roffset,rstrctIndex;
-   MULTIFIELD_PTR theList;
+   Multifield *theList;
 
    meth = theDefgeneric->methods + FindMethodByIndex(theDefgeneric,mi);
    count = 3;
    for (i = 0 ; i < meth->restrictionCount ; i++)
      count += meth->restrictions[i].tcnt + 3;
-   theList = (MULTIFIELD_PTR) EnvCreateMultifield(theEnv,count);
-   SetpType(returnValue,MULTIFIELD);
-   SetpValue(returnValue,theList);
-   SetpDOBegin(returnValue,1);
-   SetpDOEnd(returnValue,count);
-   SetMFType(theList,1,INTEGER);
-   SetMFValue(theList,1,EnvAddLong(theEnv,(long long) meth->minRestrictions));
-   SetMFType(theList,2,INTEGER);
-   SetMFValue(theList,2,EnvAddLong(theEnv,(long long) meth->maxRestrictions));
-   SetMFType(theList,3,INTEGER);
-   SetMFValue(theList,3,EnvAddLong(theEnv,(long long) meth->restrictionCount));
-   roffset = 3 + meth->restrictionCount + 1;
-   rstrctIndex = 4;
+   theList = (Multifield *) EnvCreateMultifield(theEnv,count);
+
+   returnValue->value = theList;
+   returnValue->begin = 0;
+   returnValue->end = count - 1;
+   SetMFValue(theList,0,EnvCreateInteger(theEnv,(long long) meth->minRestrictions));
+   SetMFValue(theList,1,EnvCreateInteger(theEnv,(long long) meth->maxRestrictions));
+   SetMFValue(theList,2,EnvCreateInteger(theEnv,(long long) meth->restrictionCount));
+   roffset = 3 + meth->restrictionCount;
+   rstrctIndex = 3;
    for (i = 0 ; i < meth->restrictionCount ; i++)
      {
       rptr = meth->restrictions + i;
-      SetMFType(theList,rstrctIndex,INTEGER);
-      SetMFValue(theList,rstrctIndex++,EnvAddLong(theEnv,(long long) roffset));
-      SetMFType(theList,roffset,SYMBOL);
-      SetMFValue(theList,roffset++,(rptr->query != NULL) ? EnvTrueSymbol(theEnv) : EnvFalseSymbol(theEnv));
-      SetMFType(theList,roffset,INTEGER);
-      SetMFValue(theList,roffset++,EnvAddLong(theEnv,(long long) rptr->tcnt));
+      SetMFValue(theList,rstrctIndex++,EnvCreateInteger(theEnv,(long long) roffset + 1));
+      SetMFValue(theList,roffset++,(rptr->query != NULL) ? theEnv->TrueSymbol : theEnv->FalseSymbol);
+      SetMFValue(theList,roffset++,EnvCreateInteger(theEnv,(long long) rptr->tcnt));
       for (j = 0 ; j < rptr->tcnt ; j++)
         {
-         SetMFType(theList,roffset,SYMBOL);
 #if OBJECT_SYSTEM
-         SetMFValue(theList,roffset++,EnvAddSymbol(theEnv,EnvGetDefclassName(theEnv,(Defclass *) rptr->types[j])));
+         SetMFValue(theList,roffset++,EnvCreateSymbol(theEnv,EnvGetDefclassName(theEnv,(Defclass *) rptr->types[j])));
 #else
-         SetMFValue(theList,roffset++,EnvAddSymbol(theEnv,TypeName(theEnv,ValueToInteger(rptr->types[j]))));
+         SetMFValue(theList,roffset++,EnvCreateSymbol(theEnv,TypeName(theEnv,ValueToInteger(rptr->types[j]))));
 #endif
         }
      }
@@ -1371,8 +1360,8 @@ static bool EvaluateGenericCall(
   CLIPSValue *returnValue)
   {
    GenericDispatch(theEnv,theDefgeneric,NULL,NULL,GetFirstArgument(),returnValue);
-   if ((GetpType(returnValue) == SYMBOL) &&
-       (GetpValue(returnValue) == EnvFalseSymbol(theEnv)))
+   if ((returnValue->header->type == SYMBOL) &&
+       (returnValue->value == theEnv->FalseSymbol))
      return false;
    return true;
   }
@@ -1484,9 +1473,9 @@ static void SaveDefmethodsForDefgeneric(
 
    for (i = 0 ; i < gfunc->mcnt ; i++)
      {
-      if (gfunc->methods[i].ppForm != NULL)
+      if (gfunc->methods[i].header.ppForm != NULL)
         {
-         PrintInChunks(theEnv,logName,gfunc->methods[i].ppForm);
+         PrintInChunks(theEnv,logName,gfunc->methods[i].header.ppForm);
          EnvPrintRouter(theEnv,logName,"\n");
         }
      }
@@ -1763,9 +1752,9 @@ static bool DefmethodWatchSupport(
      {
       if (EvaluateExpression(theEnv,argExprs,&genericName))
         return false;
-      if ((genericName.type != SYMBOL) ? true :
+      if ((genericName.header->type != SYMBOL) ? true :
           ((theGeneric =
-              LookupDefgenericByMdlOrScope(theEnv,DOToString(genericName))) == NULL))
+              LookupDefgenericByMdlOrScope(theEnv,genericName.lexemeValue->contents)) == NULL))
         {
          ExpectedTypeError1(theEnv,funcName,argIndex,"generic function name");
          return false;
@@ -1778,10 +1767,10 @@ static bool DefmethodWatchSupport(
          argIndex++;
          if (EvaluateExpression(theEnv,argExprs,&methodIndex))
            return false;
-         if ((methodIndex.type != INTEGER) ? false :
-             ((DOToLong(methodIndex) <= 0) ? false :
+         if ((methodIndex.header->type != INTEGER) ? false :
+             ((methodIndex.integerValue->contents <= 0) ? false :
               (FindMethodByIndex(theGeneric,theMethod) != -1)))
-           theMethod = (long) DOToLong(methodIndex);
+           theMethod = (long) methodIndex.integerValue->contents;
          else
            {
             ExpectedTypeError1(theEnv,funcName,argIndex,"method index");
@@ -1858,9 +1847,9 @@ void TypeCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   EvaluateExpression(theEnv,GetFirstArgument(),returnValue);
-   returnValue->value = EnvAddSymbol(theEnv,TypeName(theEnv,returnValue->type));
-   returnValue->type = SYMBOL;
+   EvaluateExpression(theEnv,GetFirstArgument(),result);
+
+   returnValue->lexemeValue = EnvCreateSymbol(theEnv,TypeName(theEnv,result->type));
   }
 
 #endif
@@ -1869,7 +1858,7 @@ void TypeCommand(
 /* Additional Access Functions */
 /*#############################*/
 
-SYMBOL_HN *GetDefgenericNamePointer(
+CLIPSLexeme *GetDefgenericNamePointer(
   Defgeneric *theDefgeneric)
   {
    return GetConstructNamePointer((struct constructHeader *) theDefgeneric);
@@ -1908,7 +1897,7 @@ const char *EnvGetDefgenericPPForm(
    return GetConstructPPForm(theEnv,(struct constructHeader *) theDefgeneric);
   }
 
-SYMBOL_HN *EnvGetDefgenericNamePointer(
+CLIPSLexeme *EnvGetDefgenericNamePointer(
   Environment *theEnv,
   Defgeneric *theDefgeneric)
   {

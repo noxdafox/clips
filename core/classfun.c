@@ -106,7 +106,7 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static unsigned                HashSlotName(SYMBOL_HN *);
+   static unsigned                HashSlotName(CLIPSLexeme *);
 
 #if (! RUN_TIME)
    static int                     NewSlotNameID(Environment *);
@@ -216,7 +216,7 @@ void InitializeClasses(
  ********************************************************/
 SlotDescriptor *FindClassSlot(
   Defclass *cls,
-  SYMBOL_HN *sname)
+  CLIPSLexeme *sname)
   {
    long i;
 
@@ -297,7 +297,7 @@ void PrintClassName(
                  EnvGetDefmoduleName(theEnv,theDefclass->header.whichModule->theModule));
       EnvPrintRouter(theEnv,logicalName,"::");
      }
-   EnvPrintRouter(theEnv,logicalName,ValueToString(theDefclass->header.name));
+   EnvPrintRouter(theEnv,logicalName,theDefclass->header.name->contents);
    if (linefeedFlag)
      EnvPrintRouter(theEnv,logicalName,"\n");
   }
@@ -519,12 +519,12 @@ void DeleteSuperclassLink(
  **************************************************************/
 Defclass *NewClass(
   Environment *theEnv,
-  SYMBOL_HN *className)
+  CLIPSLexeme *className)
   {
    Defclass *cls;
 
    cls = get_struct(theEnv,defclass);
-   InitializeConstructHeader(theEnv,"defclass",(struct constructHeader *) cls,className);
+   InitializeConstructHeader(theEnv,"defclass",DEFCLASS,(struct constructHeader *) cls,className);
 
    cls->id = 0;
    cls->installed = 0;
@@ -632,7 +632,7 @@ void AssignClassID(
  *********************************************************/
 SLOT_NAME *AddSlotName(
   Environment *theEnv,
-  SYMBOL_HN *slotName,
+  CLIPSLexeme *slotName,
   int newid,
   bool usenewid)
   {
@@ -665,11 +665,11 @@ SLOT_NAME *AddSlotName(
       DefclassData(theEnv)->SlotNameTable[hashTableIndex] = snp;
       IncrementSymbolCount(slotName);
       bufsz = (sizeof(char) *
-                     (PUT_PREFIX_LENGTH + strlen(ValueToString(slotName)) + 1));
+                     (PUT_PREFIX_LENGTH + strlen(slotName->contents) + 1));
       buf = (char *) gm2(theEnv,bufsz);
       genstrcpy(buf,PUT_PREFIX);
-      genstrcat(buf,ValueToString(slotName));
-      snp->putHandlerName = (SYMBOL_HN *) EnvAddSymbol(theEnv,buf);
+      genstrcat(buf,slotName->contents);
+      snp->putHandlerName = EnvCreateSymbol(theEnv,buf);
       IncrementSymbolCount(snp->putHandlerName);
       rm(theEnv,buf,bufsz);
       snp->bsaveIndex = 0L;
@@ -784,10 +784,10 @@ void RemoveDefclass(
       hnd = &cls->handlers[i];
       if (hnd->actions != NULL)
         ReturnPackedExpression(theEnv,hnd->actions);
-      if (hnd->ppForm != NULL)
-        rm(theEnv,hnd->ppForm,(sizeof(char) * (strlen(hnd->ppForm)+1)));
-      if (hnd->usrData != NULL)
-        { ClearUserDataList(theEnv,hnd->usrData); }
+      if (hnd->header.ppForm != NULL)
+        rm(theEnv,(void *) hnd->header.ppForm,(sizeof(char) * (strlen(hnd->header.ppForm)+1)));
+      if (hnd->header.usrData != NULL)
+        { ClearUserDataList(theEnv,hnd->header.usrData); }
      }
    if (cls->handlerCount != 0)
      {
@@ -856,11 +856,11 @@ void DestroyDefclass(
       if (hnd->actions != NULL)
         ReturnPackedExpression(theEnv,hnd->actions);
 
-      if (hnd->ppForm != NULL)
-        rm(theEnv,hnd->ppForm,(sizeof(char) * (strlen(hnd->ppForm)+1)));
+      if (hnd->header.ppForm != NULL)
+        rm(theEnv,(void *) hnd->header.ppForm,(sizeof(char) * (strlen(hnd->header.ppForm)+1)));
 
-      if (hnd->usrData != NULL)
-        { ClearUserDataList(theEnv,hnd->usrData); }
+      if (hnd->header.usrData != NULL)
+        { ClearUserDataList(theEnv,hnd->header.usrData); }
      }
 
    if (cls->handlerCount != 0)
@@ -939,7 +939,7 @@ void InstallClass(
       for (i = 0 ; i < cls->handlerCount ; i++)
         {
          hnd = &cls->handlers[i];
-         DecrementSymbolCount(theEnv,hnd->name);
+         DecrementSymbolCount(theEnv,hnd->header.name);
          if (hnd->actions != NULL)
            ExpressionDeinstall(theEnv,hnd->actions);
         }
@@ -1107,7 +1107,7 @@ void MarkBitMapSubclasses(
  ***************************************************/
 short FindSlotNameID(
   Environment *theEnv,
-  SYMBOL_HN *slotName)
+  CLIPSLexeme *slotName)
   {
    SLOT_NAME *snp;
 
@@ -1125,7 +1125,7 @@ short FindSlotNameID(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-SYMBOL_HN *FindIDSlotName(
+CLIPSLexeme *FindIDSlotName(
   Environment *theEnv,
   int id)
   {
@@ -1226,7 +1226,7 @@ void ReleaseTraversalID(
                  multiplied by a prime for a new hash
  *******************************************************/
 unsigned HashClass(
-  SYMBOL_HN *cname)
+  CLIPSLexeme *cname)
   {
    unsigned long tally;
 
@@ -1253,7 +1253,7 @@ unsigned HashClass(
                  multiplied by a prime for a new hash
  *******************************************************/
 static unsigned HashSlotName(
-  SYMBOL_HN *sname)
+  CLIPSLexeme *sname)
   {
    unsigned long tally;
 

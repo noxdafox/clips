@@ -421,7 +421,7 @@ static void UpdateDeffacts(
 
    bdp = (struct bsaveDeffacts *) buf;
    UpdateConstructHeader(theEnv,&bdp->header,&DeffactsBinaryData(theEnv)->DeffactsArray[obji].header,
-                         (int) sizeof(struct deffactsModule),DeffactsBinaryData(theEnv)->ModuleArray,
+                         DEFFACTS,(int) sizeof(struct deffactsModule),DeffactsBinaryData(theEnv)->ModuleArray,
                          (int) sizeof(Deffacts),DeffactsBinaryData(theEnv)->DeffactsArray);
    DeffactsBinaryData(theEnv)->DeffactsArray[obji].assertList = ExpressionPointer(bdp->assertList);
   }

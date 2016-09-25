@@ -68,7 +68,7 @@ bool ParseDeffacts(
   const char *readSource)
   {
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   SYMBOL_HN *deffactsName;
+   CLIPSLexeme *deffactsName;
    struct expr *temp;
    Deffacts *newDeffacts;
    bool deffactsError;
@@ -141,14 +141,10 @@ bool ParseDeffacts(
 
    ExpressionInstall(theEnv,temp);
    newDeffacts = get_struct(theEnv,deffacts);
-   newDeffacts->header.name = deffactsName;
    IncrementSymbolCount(deffactsName);
-   newDeffacts->assertList = PackExpression(theEnv,temp);
-   newDeffacts->header.whichModule = (struct defmoduleItemHeader *)
-                              GetModuleItem(theEnv,NULL,FindModuleItem(theEnv,"deffacts")->moduleIndex);
+   InitializeConstructHeader(theEnv,"deffacts",DEFFACTS,(struct constructHeader *) newDeffacts,deffactsName);
 
-   newDeffacts->header.next = NULL;
-   newDeffacts->header.usrData = NULL;
+   newDeffacts->assertList = PackExpression(theEnv,temp);
    ReturnExpression(theEnv,temp);
 
    /*=======================================================*/

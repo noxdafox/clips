@@ -73,6 +73,7 @@ typedef struct bsaveRestriction
 
 typedef struct bsaveMethod
   {
+   struct bsaveConstructHeader header;
    short index;
    short restrictionCount,
        minRestrictions,maxRestrictions,
@@ -525,6 +526,9 @@ static void BsaveMethods(
    for (i = 0 ; i < gfunc->mcnt ; i++)
      {
       meth = &gfunc->methods[i];
+      
+      AssignBsaveConstructHeaderVals(&dummy_method.header,&meth->header);
+
       dummy_method.index = meth->index;
       dummy_method.restrictionCount = meth->restrictionCount;
       dummy_method.minRestrictions = meth->minRestrictions;
@@ -755,7 +759,7 @@ static void UpdateGeneric(
    bgp = (BSAVE_GENERIC *) buf;
    gp = &DefgenericBinaryData(theEnv)->DefgenericArray[obji];
 
-   UpdateConstructHeader(theEnv,&bgp->header,&gp->header,
+   UpdateConstructHeader(theEnv,&bgp->header,&gp->header,DEFGENERIC,
                          (int) sizeof(DEFGENERIC_MODULE),DefgenericBinaryData(theEnv)->ModuleArray,
                          (int) sizeof(Defgeneric),DefgenericBinaryData(theEnv)->DefgenericArray);
    DefgenericBinaryData(theEnv)->DefgenericArray[obji].busy = 0;
@@ -787,8 +791,10 @@ static void UpdateMethod(
    DefgenericBinaryData(theEnv)->MethodArray[obji].system = bmth->system;
    DefgenericBinaryData(theEnv)->MethodArray[obji].restrictions = RestrictionPointer(bmth->restrictions);
    DefgenericBinaryData(theEnv)->MethodArray[obji].actions = ExpressionPointer(bmth->actions);
-   DefgenericBinaryData(theEnv)->MethodArray[obji].ppForm = NULL;
-   DefgenericBinaryData(theEnv)->MethodArray[obji].usrData = NULL;
+   
+   UpdateConstructHeader(theEnv,&bmth->header,&DefgenericBinaryData(theEnv)->MethodArray[obji].header,DEFMETHOD,
+                         (int) sizeof(DEFGENERIC_MODULE),DefgenericBinaryData(theEnv)->ModuleArray,
+                         (int) sizeof(Defmethod),DefgenericBinaryData(theEnv)->MethodArray);
   }
 
 static void UpdateRestriction(
@@ -817,10 +823,10 @@ static void UpdateType(
       PrintWarningID(theEnv,"GENRCBIN",1,false);
       EnvPrintRouter(theEnv,WWARNING,"COOL not installed!  User-defined class\n");
       EnvPrintRouter(theEnv,WWARNING,"  in method restriction substituted with OBJECT.\n");
-      DefgenericBinaryData(theEnv)->TypeArray[obji] = EnvAddLong(theEnv,(long long) OBJECT_TYPE_CODE);
+      DefgenericBinaryData(theEnv)->TypeArray[obji] = EnvCreateInteger(theEnv,(long long) OBJECT_TYPE_CODE);
      }
    else
-     DefgenericBinaryData(theEnv)->TypeArray[obji] = EnvAddLong(theEnv,* (long *) buf);
+     DefgenericBinaryData(theEnv)->TypeArray[obji] = EnvCreateInteger(theEnv,* (long *) buf);
    IncrementIntegerCount((INTEGER_HN *) DefgenericBinaryData(theEnv)->TypeArray[obji]);
 #endif
   }

@@ -84,8 +84,17 @@ void AssignBsaveConstructHeaderVals(
   struct bsaveConstructHeader *theBsaveConstruct,
   struct constructHeader *theConstruct)
   {
-   theBsaveConstruct->name = (long) theConstruct->name->bucket;
-   theBsaveConstruct->whichModule = theConstruct->whichModule->theModule->bsaveID;
+   if (theConstruct->name != NULL)
+     { theBsaveConstruct->name = (long) theConstruct->name->bucket; }
+   else
+     { theBsaveConstruct->name = -1L; }
+   
+   if ((theConstruct->whichModule != NULL) &&
+       (theConstruct->whichModule->theModule != NULL))
+     { theBsaveConstruct->whichModule = theConstruct->whichModule->theModule->header.bsaveID; }
+   else
+     { theBsaveConstruct->whichModule = -1L; }
+     
    if (theConstruct->next != NULL)
      theBsaveConstruct->next = ((struct constructHeader *) theConstruct->next)->bsaveID;
    else
@@ -116,6 +125,7 @@ void UpdateConstructHeader(
   Environment *theEnv,
   struct bsaveConstructHeader *theBsaveConstruct,
   struct constructHeader *theConstruct,
+  ConstructType theType,
   int itemModuleSize,
   void *itemModuleArray,
   int itemSize,
@@ -123,18 +133,32 @@ void UpdateConstructHeader(
   {
    long moduleOffset, itemOffset;
 
-   moduleOffset = itemModuleSize * theBsaveConstruct->whichModule;
-   theConstruct->whichModule =
-     (struct defmoduleItemHeader *) &((char *) itemModuleArray)[moduleOffset];
-   theConstruct->name = SymbolPointer(theBsaveConstruct->name);
-   IncrementSymbolCount(theConstruct->name);
+   if (theBsaveConstruct->whichModule != -1L)
+     {
+      moduleOffset = itemModuleSize * theBsaveConstruct->whichModule;
+      theConstruct->whichModule =
+        (struct defmoduleItemHeader *) &((char *) itemModuleArray)[moduleOffset];
+     }
+   else
+     { theConstruct->whichModule = NULL; }
+     
+   if (theBsaveConstruct->name != -1L)
+     {
+      theConstruct->name = SymbolPointer(theBsaveConstruct->name);
+      IncrementSymbolCount(theConstruct->name);
+     }
+   else
+     { theConstruct->name = NULL; }
+     
    if (theBsaveConstruct->next != -1L)
      {
       itemOffset = itemSize * theBsaveConstruct->next;
       theConstruct->next = (struct constructHeader *) &((char *) itemArray)[itemOffset];
      }
    else
-     theConstruct->next = NULL;
+     { theConstruct->next = NULL; }
+
+   theConstruct->constructType = theType;
    theConstruct->ppForm = NULL;
    theConstruct->bsaveID = 0L;
    theConstruct->usrData = NULL;

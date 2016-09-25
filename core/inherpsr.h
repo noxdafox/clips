@@ -40,7 +40,7 @@
 
 #include "object.h"
 
-   PACKED_CLASS_LINKS            *ParseSuperclasses(Environment *,const char *,SYMBOL_HN *);
+   PACKED_CLASS_LINKS            *ParseSuperclasses(Environment *,const char *,CLIPSLexeme *);
    PACKED_CLASS_LINKS            *FindPrecedenceList(Environment *,Defclass *,PACKED_CLASS_LINKS *);
    void                           PackClassLinks(Environment *,PACKED_CLASS_LINKS *,CLASS_LINK *);
 

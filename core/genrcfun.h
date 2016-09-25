@@ -93,6 +93,7 @@ struct restriction
 
 struct defmethod
   {
+   struct constructHeader header;
    short index;
    unsigned busy;
    short restrictionCount;
@@ -103,8 +104,6 @@ struct defmethod
    unsigned trace : 1;
    RESTRICTION *restrictions;
    EXPRESSION *actions;
-   char *ppForm;
-   struct userData *usrData;
   };
 
 struct defgeneric

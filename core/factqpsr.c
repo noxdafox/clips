@@ -300,7 +300,7 @@ static EXPRESSION *ParseQueryRestrictions(
            {
             PrintErrorID(theEnv,"FACTQPSR",1,false);
             EnvPrintRouter(theEnv,WERROR,"Duplicate fact member variable name in function ");
-            EnvPrintRouter(theEnv,WERROR,ValueToString(ExpressionFunctionCallName(top)));
+            EnvPrintRouter(theEnv,WERROR,ExpressionFunctionCallName(top)->contents);
             EnvPrintRouter(theEnv,WERROR,".\n");
             goto ParseQueryRestrictionsError2;
            }
@@ -347,7 +347,7 @@ static EXPRESSION *ParseQueryRestrictions(
       PPBackup(theEnv);
       SavePPBuffer(theEnv,")");
 
-      tmp = GenConstant(theEnv,SYMBOL,FactQueryData(theEnv)->QUERY_DELIMETER_SYMBOL);
+      tmp = GenConstant(theEnv,SYMBOL,FactQueryData(theEnv)->QUERY_DELIMITER_SYMBOL);
 
       lastTemplateExp->nextArg = tmp;
       lastTemplateExp = tmp;
@@ -488,7 +488,7 @@ static bool ParseQueryTestExpression(
       SetParsedBindNames(theEnv,oldBindList);
       PrintErrorID(theEnv,"FACTQPSR",2,false);
       EnvPrintRouter(theEnv,WERROR,"Binds are not allowed in fact-set query in function ");
-      EnvPrintRouter(theEnv,WERROR,ValueToString(ExpressionFunctionCallName(top)));
+      EnvPrintRouter(theEnv,WERROR,ExpressionFunctionCallName(top)->contents);
       EnvPrintRouter(theEnv,WERROR,".\n");
       ReturnExpression(theEnv,top);
       return false;
@@ -564,7 +564,7 @@ static bool ParseQueryActionExpression(
             EnvPrintRouter(theEnv,WERROR,"Cannot rebind fact-set member variable ");
             EnvPrintRouter(theEnv,WERROR,ValueToString(tmpFactSetVars->value));
             EnvPrintRouter(theEnv,WERROR," in function ");
-            EnvPrintRouter(theEnv,WERROR,ValueToString(ExpressionFunctionCallName(top)));
+            EnvPrintRouter(theEnv,WERROR,ExpressionFunctionCallName(top)->contents);
             EnvPrintRouter(theEnv,WERROR,".\n");
             ReturnExpression(theEnv,top);
             return false;
@@ -630,8 +630,8 @@ static void ReplaceFactVariables(
            {
             bexp->type = FCALL;
             bexp->value = rindx_func;
-            eptr = GenConstant(theEnv,INTEGER,EnvAddLong(theEnv,(long long) ndepth));
-            eptr->nextArg = GenConstant(theEnv,INTEGER,EnvAddLong(theEnv,(long long) posn));
+            eptr = GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,(long long) ndepth));
+            eptr->nextArg = GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,(long long) posn));
             bexp->argList = eptr;
            }
          else if (sdirect == true)
@@ -705,9 +705,9 @@ static void ReplaceSlotReference(
             CloseStringSource(theEnv,"query-var");
             theExp->type = FCALL;
             theExp->value = func;
-            theExp->argList = GenConstant(theEnv,INTEGER,EnvAddLong(theEnv,(long long) ndepth));
+            theExp->argList = GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,(long long) ndepth));
             theExp->argList->nextArg =
-              GenConstant(theEnv,INTEGER,EnvAddLong(theEnv,(long long) posn));
+              GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,(long long) posn));
             theExp->argList->nextArg->nextArg = GenConstant(theEnv,TokenTypeToType(itkn.tknType),itkn.value);
             break;
            }

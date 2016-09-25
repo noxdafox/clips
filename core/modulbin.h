@@ -35,13 +35,16 @@
 #define _H_modulbin
 
 #include "moduldef.h"
+#include "modulbin.h"
+#include "cstrcbin.h"
+
+#if (! RUN_TIME)
 
 struct bsaveDefmodule
   {
-   unsigned long name;
+   struct bsaveConstructHeader header;
    long importList;
    long exportList;
-   long next;
    long bsaveID;
   };
 
@@ -72,6 +75,8 @@ struct bsavePortItem
                                                  (struct bsaveDefmoduleItemHeader *,
                                                   struct defmoduleItemHeader *);
 #endif
+
+#endif /* RUN_TIME */
 
 #endif /* _H_modulbin */
 

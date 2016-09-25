@@ -126,7 +126,7 @@ bool ParseDefmessageHandler(
   const char *readSource)
   {
    Defclass *cls;
-   SYMBOL_HN *cname,*mname,*wildcard;
+   CLIPSLexeme *cname, *mname, *wildcard;
    unsigned mtype = MPRIMARY;
    int min,max,lvars;
    bool error;
@@ -149,7 +149,7 @@ bool ParseDefmessageHandler(
                                       NULL,NULL,"~",true,false,true,false);
    if (cname == NULL)
      return true;
-   cls = LookupDefclassByMdlOrScope(theEnv,ValueToString(cname));
+   cls = LookupDefclassByMdlOrScope(theEnv,cname->contents);
    if (cls == NULL)
      {
       PrintErrorID(theEnv,"MSGPSR",1,false);
@@ -183,7 +183,7 @@ bool ParseDefmessageHandler(
    SavePPBuffer(theEnv," ");
    SavePPBuffer(theEnv,DefclassData(theEnv)->ObjectParseToken.printForm);
    SavePPBuffer(theEnv," ");
-   mname = (SYMBOL_HN *) GetValue(DefclassData(theEnv)->ObjectParseToken);
+   mname = DefclassData(theEnv)->ObjectParseToken.lexemeValue;
    GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
    if (DefclassData(theEnv)->ObjectParseToken.tknType != LEFT_PARENTHESIS_TOKEN)
      {
@@ -195,7 +195,7 @@ bool ParseDefmessageHandler(
             SyntaxErrorMessage(theEnv,"defmessage-handler");
             return true;
            }
-         mtype = HandlerType(theEnv,"defmessage-handler",DOToString(DefclassData(theEnv)->ObjectParseToken));
+         mtype = HandlerType(theEnv,"defmessage-handler",DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents);
          if (mtype == MERROR)
            return true;
 
@@ -221,7 +221,7 @@ bool ParseDefmessageHandler(
    if (GetPrintWhileLoading(theEnv) && GetCompilationsWatch(theEnv))
      {
       EnvPrintRouter(theEnv,WDIALOG,"   Handler ");
-      EnvPrintRouter(theEnv,WDIALOG,ValueToString(mname));
+      EnvPrintRouter(theEnv,WDIALOG,mname->contents);
       EnvPrintRouter(theEnv,WDIALOG," ");
       EnvPrintRouter(theEnv,WDIALOG,MessageHandlerData(theEnv)->hndquals[mtype]);
       if (hnd == NULL)
@@ -281,14 +281,14 @@ bool ParseDefmessageHandler(
      {
       ExpressionDeinstall(theEnv,hnd->actions);
       ReturnPackedExpression(theEnv,hnd->actions);
-      if (hnd->ppForm != NULL)
-        rm(theEnv,hnd->ppForm,
-           (sizeof(char) * (strlen(hnd->ppForm)+1)));
+      if (hnd->header.ppForm != NULL)
+        rm(theEnv,(void *) hnd->header.ppForm,
+           (sizeof(char) * (strlen(hnd->header.ppForm)+1)));
      }
    else
      {
       hnd = InsertHandlerHeader(theEnv,cls,mname,(int) mtype);
-      IncrementSymbolCount(hnd->name);
+      IncrementSymbolCount(hnd->header.name);
      }
    ReturnExpression(theEnv,hndParams);
 
@@ -303,10 +303,10 @@ bool ParseDefmessageHandler(
       Old handler trace status is automatically preserved
       =================================================== */
    if (EnvGetConserveMemory(theEnv) == false)
-     hnd->ppForm = CopyPPBuffer(theEnv);
+     hnd->header.ppForm = CopyPPBuffer(theEnv);
    else
 #endif
-     hnd->ppForm = NULL;
+     hnd->header.ppForm = NULL;
    return false;
   }
 
@@ -348,8 +348,8 @@ void CreateGetAndPutHandlers(
 
    if ((sd->createReadAccessor == 0) && (sd->createWriteAccessor == 0))
      return;
-   className = ValueToString(sd->cls->header.name);
-   slotName = ValueToString(sd->slotName->name);
+   className = sd->cls->header.name->contents;
+   slotName = sd->slotName->name->contents;
 
    bufsz = (sizeof(char) * (strlen(className) + (strlen(slotName) * 2) + 80));
    buf = (char *) gm2(theEnv,bufsz);
@@ -613,7 +613,7 @@ static SlotDescriptor *CheckSlotReference(
       EnvPrintRouter(theEnv,WERROR,"Illegal value for ?self reference.\n");
       return NULL;
      }
-   slotIndex = FindInstanceTemplateSlot(theEnv,theDefclass,(SYMBOL_HN *) theValue);
+   slotIndex = FindInstanceTemplateSlot(theEnv,theDefclass,(CLIPSLexeme *) theValue);
    if (slotIndex == -1)
      {
       PrintErrorID(theEnv,"MSGPSR",6,false);
@@ -642,7 +642,7 @@ static SlotDescriptor *CheckSlotReference(
    if (sd->noWrite && (sd->initializeOnly == 0))
      {
       SlotAccessViolationError(theEnv,ValueToString(theValue),
-                               false,theDefclass);
+                               NULL,theDefclass);
       return NULL;
      }
 

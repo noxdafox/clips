@@ -85,7 +85,7 @@ typedef struct query_stack
 
 struct instanceQueryData
   {
-   SYMBOL_HN *QUERY_DELIMETER_SYMBOL;
+   CLIPSLexeme *QUERY_DELIMITER_SYMBOL;
    QUERY_CORE *QueryCore;
    QUERY_STACK *QueryCoreStack;
    bool AbortQuery;
@@ -93,7 +93,7 @@ struct instanceQueryData
 
 #define InstanceQueryData(theEnv) ((struct instanceQueryData *) GetEnvironmentData(theEnv,INSTANCE_QUERY_DATA))
 
-#define QUERY_DELIMETER_STRING     "(QDS)"
+#define QUERY_DELIMITER_STRING     "(QDS)"
 
    void                           SetupQuery(Environment *);
    void                           GetQueryInstance(Environment *,UDFContext *,CLIPSValue *);

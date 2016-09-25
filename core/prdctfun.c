@@ -108,8 +108,6 @@ void EqFunction(
    int numArgs, i;
    struct expr *theExpression;
 
-   returnValue->type = SYMBOL;
-
    /*====================================*/
    /* Determine the number of arguments. */
    /*====================================*/
@@ -117,7 +115,7 @@ void EqFunction(
    numArgs = UDFArgumentCount(context);
    if (numArgs == 0)
      {
-      returnValue->value = EnvFalseSymbol(theEnv);
+      returnValue->lexemeValue = theEnv->FalseSymbol;
       return;
      }
 
@@ -139,23 +137,23 @@ void EqFunction(
      {
       EvaluateExpression(theEnv,theExpression,&nextItem);
 
-      if (GetType(nextItem) != GetType(item))
+      if (nextItem.header->type != item.header->type)
         {
-         returnValue->value = EnvFalseSymbol(theEnv);
+         returnValue->lexemeValue = theEnv->FalseSymbol;
          return;
         }
 
-      if (GetType(nextItem) == MULTIFIELD)
+      if (nextItem.header->type == MULTIFIELD)
         {
          if (MultifieldDOsEqual(&nextItem,&item) == false)
            {
-            returnValue->value = EnvFalseSymbol(theEnv);
+            returnValue->lexemeValue = theEnv->FalseSymbol;
             return;
            }
         }
       else if (nextItem.value != item.value)
         {
-         returnValue->value = EnvFalseSymbol(theEnv);
+         returnValue->lexemeValue = theEnv->FalseSymbol;
          return;
         }
 
@@ -167,7 +165,7 @@ void EqFunction(
    /* from the first. Return TRUE.        */
    /*=====================================*/
 
-   returnValue->value = EnvTrueSymbol(theEnv);
+   returnValue->lexemeValue = theEnv->TrueSymbol;
   }
 
 /*************************************/
@@ -183,8 +181,6 @@ void NeqFunction(
    int numArgs, i;
    struct expr *theExpression;
 
-   returnValue->type = SYMBOL;
-
    /*====================================*/
    /* Determine the number of arguments. */
    /*====================================*/
@@ -192,7 +188,7 @@ void NeqFunction(
    numArgs = UDFArgumentCount(context);
    if (numArgs == 0)
      {
-      returnValue->value = EnvFalseSymbol(theEnv);
+      returnValue->lexemeValue = theEnv->FalseSymbol;
       return;
      }
 
@@ -214,19 +210,19 @@ void NeqFunction(
         i++, theExpression = GetNextArgument(theExpression))
      {
       EvaluateExpression(theEnv,theExpression,&nextItem);
-      if (GetType(nextItem) != GetType(item))
+      if (nextItem.header->type != item.header->type)
         { continue; }
-      else if (nextItem.type == MULTIFIELD)
+      else if (nextItem.header->type == MULTIFIELD)
         {
          if (MultifieldDOsEqual(&nextItem,&item) == true)
            {
-            returnValue->value = EnvFalseSymbol(theEnv);
+            returnValue->lexemeValue = theEnv->FalseSymbol;
             return;
            }
         }
       else if (nextItem.value == item.value)
         {
-         returnValue->value = EnvFalseSymbol(theEnv);
+         returnValue->lexemeValue = theEnv->FalseSymbol;
          return;
         }
      }
@@ -236,7 +232,7 @@ void NeqFunction(
    /* to the first. Return TRUE.          */
    /*=====================================*/
 
-   returnValue->value = EnvTrueSymbol(theEnv);
+   returnValue->lexemeValue = theEnv->TrueSymbol;
   }
 
 /*****************************************/
@@ -253,11 +249,10 @@ void StringpFunction(
    if (! UDFFirstArgument(context,ANY_TYPE,&item))
      { return; }
 
-   returnValue->type = SYMBOL;
-   if (GetType(item) == STRING)
-     { returnValue->value = EnvTrueSymbol(theEnv); }
+   if (CVIsType(&item,STRING_TYPE))
+     { returnValue->lexemeValue = theEnv->TrueSymbol; }
    else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+     { returnValue->lexemeValue = theEnv->FalseSymbol; }
   }
 
 /*****************************************/
@@ -274,11 +269,10 @@ void SymbolpFunction(
    if (! UDFFirstArgument(context,ANY_TYPE,&item))
      { return; }
 
-   returnValue->type = SYMBOL;
-   if (GetType(item) == SYMBOL)
-     { returnValue->value = EnvTrueSymbol(theEnv); }
+   if (CVIsType(&item,SYMBOL_TYPE))
+     { returnValue->lexemeValue = theEnv->TrueSymbol; }
    else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+     { returnValue->lexemeValue = theEnv->FalseSymbol; }
   }
 
 /*****************************************/
@@ -295,11 +289,10 @@ void LexemepFunction(
    if (! UDFFirstArgument(context,ANY_TYPE,&item))
      { return; }
 
-   returnValue->type = SYMBOL;
-   if ((GetType(item) == SYMBOL) || (GetType(item) == STRING))
-     { returnValue->value = EnvTrueSymbol(theEnv); }
+   if (CVIsType(&item,LEXEME_TYPES))
+     { returnValue->lexemeValue = theEnv->TrueSymbol; }
    else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+     { returnValue->lexemeValue = theEnv->FalseSymbol; }
   }
 
 /*****************************************/
@@ -316,11 +309,10 @@ void NumberpFunction(
    if (! UDFFirstArgument(context,ANY_TYPE,&item))
      { return; }
 
-   returnValue->type = SYMBOL;
-   if ((GetType(item) == FLOAT) || (GetType(item) == INTEGER))
-     { returnValue->value = EnvTrueSymbol(theEnv); }
+   if (CVIsType(&item,NUMBER_TYPES))
+     { returnValue->lexemeValue = theEnv->TrueSymbol; }
    else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+     { returnValue->lexemeValue = theEnv->FalseSymbol; }
   }
 
 /****************************************/
@@ -337,11 +329,10 @@ void FloatpFunction(
    if (! UDFFirstArgument(context,ANY_TYPE,&item))
      { return; }
 
-   returnValue->type = SYMBOL;
-   if (GetType(item) == FLOAT)
-     { returnValue->value = EnvTrueSymbol(theEnv); }
+   if (CVIsType(&item,FLOAT_TYPE))
+     { returnValue->lexemeValue = theEnv->TrueSymbol; }
    else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+     { returnValue->lexemeValue = theEnv->FalseSymbol; }
   }
 
 /******************************************/
@@ -358,11 +349,10 @@ void IntegerpFunction(
    if (! UDFFirstArgument(context,ANY_TYPE,&item))
      { return; }
 
-   returnValue->type = SYMBOL;
-   if (GetType(item) != INTEGER)
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+   if (CVIsType(&item,INTEGER_TYPE))
+     { returnValue->lexemeValue = theEnv->TrueSymbol; }
    else
-     { returnValue->value = EnvTrueSymbol(theEnv); }
+     { returnValue->lexemeValue = theEnv->FalseSymbol; }
   }
 
 /*********************************************/
@@ -379,11 +369,10 @@ void MultifieldpFunction(
    if (! UDFFirstArgument(context,ANY_TYPE,&item))
      { return; }
 
-   returnValue->type = SYMBOL;
-   if (GetType(item) != MULTIFIELD)
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+   if (CVIsType(&item,MULTIFIELD_TYPE))
+     { returnValue->lexemeValue = theEnv->TrueSymbol; }
    else
-     { returnValue->value = EnvTrueSymbol(theEnv); }
+     { returnValue->lexemeValue = theEnv->FalseSymbol; }
   }
 
 /******************************************/
@@ -400,11 +389,10 @@ void PointerpFunction(
    if (! UDFFirstArgument(context,ANY_TYPE,&item))
      { return; }
 
-   returnValue->type = SYMBOL;
-   if (GetType(item) != EXTERNAL_ADDRESS)
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+   if (CVIsType(&item,EXTERNAL_ADDRESS_TYPE))
+     { returnValue->lexemeValue = theEnv->TrueSymbol; }
    else
-     { returnValue->value = EnvTrueSymbol(theEnv); }
+     { returnValue->lexemeValue = theEnv->FalseSymbol; }
   }
 
 /***********************************/
@@ -421,11 +409,10 @@ void NotFunction(
    if (! UDFFirstArgument(context,ANY_TYPE,&theArg))
      { return; }
 
-   returnValue->type = SYMBOL;
-   if ((theArg.value == EnvFalseSymbol(theEnv)) && (theArg.type == SYMBOL))
-     { returnValue->value = EnvTrueSymbol(theEnv); }
+   if (theArg.value == theEnv->FalseSymbol)
+     { returnValue->lexemeValue = theEnv->TrueSymbol; }
    else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+     { returnValue->lexemeValue = theEnv->FalseSymbol; }
   }
 
 /*************************************/
@@ -439,21 +426,19 @@ void AndFunction(
   {
    CLIPSValue theArg;
 
-   returnValue->type = SYMBOL;
-
    while (UDFHasNextArgument(context))
      {
       if (! UDFNextArgument(context,ANY_TYPE,&theArg))
         { return; }
 
-      if ((theArg.value == EnvFalseSymbol(theEnv)) && (theArg.type == SYMBOL))
+      if (theArg.value == theEnv->FalseSymbol)
         {
-         returnValue->value = EnvFalseSymbol(theEnv);
+         returnValue->lexemeValue = theEnv->FalseSymbol;
          return;
         }
      }
 
-   returnValue->value = EnvTrueSymbol(theEnv);
+   returnValue->lexemeValue = theEnv->TrueSymbol;
   }
 
 /************************************/
@@ -467,21 +452,19 @@ void OrFunction(
   {
    CLIPSValue theArg;
 
-   returnValue->type = SYMBOL;
-
    while (UDFHasNextArgument(context))
      {
       if (! UDFNextArgument(context,ANY_TYPE,&theArg))
         { return; }
 
-      if ((theArg.value != EnvFalseSymbol(theEnv)) || (theArg.type != SYMBOL))
+      if (theArg.value != theEnv->FalseSymbol)
         {
-         returnValue->value = EnvTrueSymbol(theEnv);
+         returnValue->lexemeValue = theEnv->TrueSymbol;
          return;
         }
      }
 
-   returnValue->value = EnvFalseSymbol(theEnv);
+   returnValue->lexemeValue = theEnv->FalseSymbol;
   }
 
 /*****************************************/
@@ -494,8 +477,6 @@ void LessThanOrEqualFunction(
   CLIPSValue *returnValue)
   {
    CLIPSValue rv1, rv2;
-
-   returnValue->type = SYMBOL;
 
    /*=========================*/
    /* Get the first argument. */
@@ -514,46 +495,23 @@ void LessThanOrEqualFunction(
       if (! UDFNextArgument(context,NUMBER_TYPES,&rv2))
         { return; }
 
-      if (rv1.type == INTEGER)
+      if (CVIsType(&rv1,INTEGER_TYPE) && CVIsType(&rv2,INTEGER_TYPE))
         {
-         if (rv2.type == INTEGER)
+         if (rv1.integerValue->contents > rv2.integerValue->contents)
            {
-            if (ValueToLong(rv1.value) > ValueToLong(rv2.value))
-              {
-               returnValue->value = EnvFalseSymbol(theEnv);
-               return;
-              }
-           }
-         else
-           {
-            if ((double) ValueToLong(rv1.value) > ValueToDouble(rv2.value))
-              {
-               returnValue->value = EnvFalseSymbol(theEnv);
-               return;
-              }
+            returnValue->lexemeValue = theEnv->FalseSymbol;
+            return;
            }
         }
       else
         {
-         if (rv2.type == INTEGER)
+         if (CVCoerceToFloat(&rv1) > CVCoerceToFloat(&rv2))
            {
-            if (ValueToDouble(rv1.value) > (double) ValueToLong(rv2.value))
-              {
-               returnValue->value = EnvFalseSymbol(theEnv);
-               return;
-              }
-           }
-         else
-           {
-            if (ValueToDouble(rv1.value) > ValueToDouble(rv2.value))
-              {
-               returnValue->value = EnvFalseSymbol(theEnv);
-               return;
-              }
+            returnValue->lexemeValue = theEnv->FalseSymbol;
+            return;
            }
         }
 
-      rv1.type = rv2.type;
       rv1.value = rv2.value;
      }
 
@@ -562,7 +520,7 @@ void LessThanOrEqualFunction(
    /* to its predecessor. Return TRUE.     */
    /*======================================*/
 
-   returnValue->value = EnvTrueSymbol(theEnv);
+   returnValue->lexemeValue = theEnv->TrueSymbol;
   }
 
 /********************************************/
@@ -576,8 +534,6 @@ void GreaterThanOrEqualFunction(
   {
    CLIPSValue rv1, rv2;
 
-   returnValue->type = SYMBOL;
-
    /*=========================*/
    /* Get the first argument. */
    /*=========================*/
@@ -587,7 +543,7 @@ void GreaterThanOrEqualFunction(
 
    /*===================================================*/
    /* Compare each of the subsequent arguments to its   */
-   /* predecessor. If any is lesser, then return FALSE. */
+   /* predecessor. If any is lesser, then return false. */
    /*===================================================*/
 
    while (UDFHasNextArgument(context))
@@ -595,46 +551,23 @@ void GreaterThanOrEqualFunction(
       if (! UDFNextArgument(context,NUMBER_TYPES,&rv2))
         { return; }
 
-      if (rv1.type == INTEGER)
+      if (CVIsType(&rv1,INTEGER_TYPE) && CVIsType(&rv2,INTEGER_TYPE))
         {
-         if (rv2.type == INTEGER)
+         if (rv1.integerValue->contents < rv2.integerValue->contents)
            {
-            if (ValueToLong(rv1.value) < ValueToLong(rv2.value))
-              {
-               returnValue->value = EnvFalseSymbol(theEnv);
-               return;
-              }
-           }
-         else
-           {
-            if ((double) ValueToLong(rv1.value) < ValueToDouble(rv2.value))
-              {
-               returnValue->value = EnvFalseSymbol(theEnv);
-               return;
-              }
+            returnValue->lexemeValue = theEnv->FalseSymbol;
+            return;
            }
         }
       else
         {
-         if (rv2.type == INTEGER)
+         if (CVCoerceToFloat(&rv1) < CVCoerceToFloat(&rv2))
            {
-            if (ValueToDouble(rv1.value) < (double) ValueToLong(rv2.value))
-              {
-               returnValue->value = EnvFalseSymbol(theEnv);
-               return;
-              }
-           }
-         else
-           {
-            if (ValueToDouble(rv1.value) < ValueToDouble(rv2.value))
-              {
-               returnValue->value = EnvFalseSymbol(theEnv);
-               return;
-              }
+            returnValue->lexemeValue = theEnv->FalseSymbol;
+            return;
            }
         }
 
-      rv1.type = rv2.type;
       rv1.value = rv2.value;
      }
 
@@ -643,7 +576,7 @@ void GreaterThanOrEqualFunction(
    /* to its predecessor. Return TRUE.        */
    /*=========================================*/
 
-   returnValue->value = EnvTrueSymbol(theEnv);
+   returnValue->lexemeValue = theEnv->TrueSymbol;
   }
 
 /**********************************/
@@ -656,8 +589,6 @@ void LessThanFunction(
   CLIPSValue *returnValue)
   {
    CLIPSValue rv1, rv2;
-
-   returnValue->type = SYMBOL;
 
    /*=========================*/
    /* Get the first argument. */
@@ -677,46 +608,23 @@ void LessThanFunction(
       if (! UDFNextArgument(context,NUMBER_TYPES,&rv2))
         { return; }
 
-      if (rv1.type == INTEGER)
+      if (CVIsType(&rv1,INTEGER_TYPE) && CVIsType(&rv2,INTEGER_TYPE))
         {
-         if (rv2.type == INTEGER)
+         if (rv1.integerValue->contents >= rv2.integerValue->contents)
            {
-            if (ValueToLong(rv1.value) >= ValueToLong(rv2.value))
-              {
-               returnValue->value = EnvFalseSymbol(theEnv);
-               return;
-              }
-           }
-         else
-           {
-            if ((double) ValueToLong(rv1.value) >= ValueToDouble(rv2.value))
-              {
-               returnValue->value = EnvFalseSymbol(theEnv);
-               return;
-              }
+            returnValue->lexemeValue = theEnv->FalseSymbol;
+            return;
            }
         }
       else
         {
-         if (rv2.type == INTEGER)
+         if (CVCoerceToFloat(&rv1) >= CVCoerceToFloat(&rv2))
            {
-            if (ValueToDouble(rv1.value) >= (double) ValueToLong(rv2.value))
-              {
-               returnValue->value = EnvFalseSymbol(theEnv);
-               return;
-              }
-           }
-         else
-           {
-            if (ValueToDouble(rv1.value) >= ValueToDouble(rv2.value))
-              {
-               returnValue->value = EnvFalseSymbol(theEnv);
-               return;
-              }
+            returnValue->lexemeValue = theEnv->FalseSymbol;
+            return;
            }
         }
 
-      rv1.type = rv2.type;
       rv1.value = rv2.value;
      }
 
@@ -725,7 +633,7 @@ void LessThanFunction(
    /* predecessor. Return TRUE.       */
    /*=================================*/
 
-   returnValue->value = EnvTrueSymbol(theEnv);
+   returnValue->lexemeValue = theEnv->TrueSymbol;
   }
 
 /*************************************/
@@ -738,8 +646,6 @@ void GreaterThanFunction(
   CLIPSValue *returnValue)
   {
    CLIPSValue rv1, rv2;
-
-   returnValue->type = SYMBOL;
 
    /*=========================*/
    /* Get the first argument. */
@@ -759,46 +665,23 @@ void GreaterThanFunction(
       if (! UDFNextArgument(context,NUMBER_TYPES,&rv2))
         { return; }
 
-      if (rv1.type == INTEGER)
+      if (CVIsType(&rv1,INTEGER_TYPE) && CVIsType(&rv2,INTEGER_TYPE))
         {
-         if (rv2.type == INTEGER)
+         if (rv1.integerValue->contents <= rv2.integerValue->contents)
            {
-            if (ValueToLong(rv1.value) <= ValueToLong(rv2.value))
-              {
-               returnValue->value = EnvFalseSymbol(theEnv);
-               return;
-              }
-           }
-         else
-           {
-            if ((double) ValueToLong(rv1.value) <= ValueToDouble(rv2.value))
-              {
-               returnValue->value = EnvFalseSymbol(theEnv);
-               return;
-              }
+            returnValue->lexemeValue = theEnv->FalseSymbol;
+            return;
            }
         }
       else
         {
-         if (rv2.type == INTEGER)
+         if (CVCoerceToFloat(&rv1) <= CVCoerceToFloat(&rv2))
            {
-            if (ValueToDouble(rv1.value) <= (double) ValueToLong(rv2.value))
-              {
-               returnValue->value = EnvFalseSymbol(theEnv);
-               return;
-              }
-           }
-         else
-           {
-            if (ValueToDouble(rv1.value) <= ValueToDouble(rv2.value))
-              {
-               returnValue->value = EnvFalseSymbol(theEnv);
-               return;
-              }
+            returnValue->lexemeValue = theEnv->FalseSymbol;
+            return;
            }
         }
 
-      rv1.type = rv2.type;
       rv1.value = rv2.value;
      }
 
@@ -807,7 +690,7 @@ void GreaterThanFunction(
    /* its predecessor. Return TRUE.  */
    /*================================*/
 
-   returnValue->value = EnvTrueSymbol(theEnv);
+   returnValue->lexemeValue = theEnv->TrueSymbol;
   }
 
 /**************************************/
@@ -820,8 +703,6 @@ void NumericEqualFunction(
   CLIPSValue *returnValue)
   {
    CLIPSValue rv1, rv2;
-
-   returnValue->type = SYMBOL;
 
    /*=========================*/
    /* Get the first argument. */
@@ -840,42 +721,20 @@ void NumericEqualFunction(
       if (! UDFNextArgument(context,NUMBER_TYPES,&rv2))
         { return; }
 
-      if (rv1.type == INTEGER)
+      if (CVIsType(&rv1,INTEGER_TYPE) && CVIsType(&rv2,INTEGER_TYPE))
         {
-         if (rv2.type == INTEGER)
+         if (rv1.integerValue->contents != rv2.integerValue->contents)
            {
-            if (ValueToLong(rv1.value) != ValueToLong(rv2.value))
-              {
-               returnValue->value = EnvFalseSymbol(theEnv);
-               return;
-              }
-           }
-         else
-           {
-            if ((double) ValueToLong(rv1.value) != ValueToDouble(rv2.value))
-              {
-               returnValue->value = EnvFalseSymbol(theEnv);
-               return;
-              }
+            returnValue->lexemeValue = theEnv->FalseSymbol;
+            return;
            }
         }
       else
         {
-         if (rv2.type == INTEGER)
+         if (CVCoerceToFloat(&rv1) != CVCoerceToFloat(&rv2))
            {
-            if (ValueToDouble(rv1.value) != (double) ValueToLong(rv2.value))
-              {
-               returnValue->value = EnvFalseSymbol(theEnv);
-               return;
-              }
-           }
-         else
-           {
-            if (ValueToDouble(rv1.value) != ValueToDouble(rv2.value))
-              {
-               returnValue->value = EnvFalseSymbol(theEnv);
-               return;
-              }
+            returnValue->lexemeValue = theEnv->FalseSymbol;
+            return;
            }
         }
      }
@@ -885,7 +744,7 @@ void NumericEqualFunction(
    /* first argument. Return TRUE.    */
    /*=================================*/
 
-   returnValue->value = EnvTrueSymbol(theEnv);
+   returnValue->lexemeValue = theEnv->TrueSymbol;
   }
 
 /*****************************************/
@@ -898,8 +757,6 @@ void NumericNotEqualFunction(
   CLIPSValue *returnValue)
   {
    CLIPSValue rv1, rv2;
-
-   returnValue->type = SYMBOL;
 
    /*=========================*/
    /* Get the first argument. */
@@ -918,42 +775,20 @@ void NumericNotEqualFunction(
       if (! UDFNextArgument(context,NUMBER_TYPES,&rv2))
         { return; }
 
-      if (rv1.type == INTEGER)
+      if (CVIsType(&rv1,INTEGER_TYPE) && CVIsType(&rv2,INTEGER_TYPE))
         {
-         if (rv2.type == INTEGER)
+         if (rv1.integerValue->contents == rv2.integerValue->contents)
            {
-            if (ValueToLong(rv1.value) == ValueToLong(rv2.value))
-              {
-               returnValue->value = EnvFalseSymbol(theEnv);
-               return;
-              }
-           }
-         else
-           {
-            if ((double) ValueToLong(rv1.value) == ValueToDouble(rv2.value))
-              {
-               returnValue->value = EnvFalseSymbol(theEnv);
-               return;
-              }
+            returnValue->lexemeValue = theEnv->FalseSymbol;
+            return;
            }
         }
       else
         {
-         if (rv2.type == INTEGER)
+         if (CVCoerceToFloat(&rv1) == CVCoerceToFloat(&rv2))
            {
-            if (ValueToDouble(rv1.value) == (double) ValueToLong(rv2.value))
-              {
-               returnValue->value = EnvFalseSymbol(theEnv);
-               return;
-              }
-           }
-         else
-           {
-            if (ValueToDouble(rv1.value) == ValueToDouble(rv2.value))
-              {
-               returnValue->value = EnvFalseSymbol(theEnv);
-               return;
-              }
+            returnValue->lexemeValue = theEnv->FalseSymbol;
+            return;
            }
         }
      }
@@ -963,7 +798,7 @@ void NumericNotEqualFunction(
    /* first argument. Return TRUE.      */
    /*===================================*/
 
-   returnValue->value = EnvTrueSymbol(theEnv);
+   returnValue->lexemeValue = theEnv->TrueSymbol;
   }
 
 /**************************************/
@@ -978,8 +813,6 @@ void OddpFunction(
    CLIPSValue item;
    long long num, halfnum;
 
-   returnValue->type = SYMBOL;
-
    /*===========================================*/
    /* Check for the correct types of arguments. */
    /*===========================================*/
@@ -991,16 +824,11 @@ void OddpFunction(
    /* Compute the return value. */
    /*===========================*/
 
-   num = DOToLong(item);
-
+   num = item.integerValue->contents;
    halfnum = (num / 2) * 2;
-   if (num == halfnum)
-     {
-      returnValue->value = EnvFalseSymbol(theEnv);
-      return;
-     }
 
-   returnValue->value = EnvTrueSymbol(theEnv);
+   if (num == halfnum) returnValue->lexemeValue = theEnv->FalseSymbol;
+   else returnValue->lexemeValue = theEnv->TrueSymbol;
   }
 
 /***************************************/
@@ -1015,8 +843,6 @@ void EvenpFunction(
    CLIPSValue item;
    long long num, halfnum;
 
-   returnValue->type = SYMBOL;
-
    /*===========================================*/
    /* Check for the correct types of arguments. */
    /*===========================================*/
@@ -1028,16 +854,11 @@ void EvenpFunction(
    /* Compute the return value. */
    /*===========================*/
 
-   num = DOToLong(item);
-
+   num = item.integerValue->contents;;
    halfnum = (num / 2) * 2;
-   if (num != halfnum)
-     {
-      returnValue->value = EnvFalseSymbol(theEnv);
-      return;
-     }
 
-   returnValue->value = EnvTrueSymbol(theEnv);
+   if (num != halfnum) returnValue->lexemeValue = theEnv->FalseSymbol;
+   else returnValue->lexemeValue = theEnv->TrueSymbol;
   }
 
 

@@ -364,9 +364,9 @@ void DeleteMethodInfo(
    SaveBusyCount(gfunc);
    ExpressionDeinstall(theEnv,meth->actions);
    ReturnPackedExpression(theEnv,meth->actions);
-   ClearUserDataList(theEnv,meth->usrData);
-   if (meth->ppForm != NULL)
-     rm(theEnv,meth->ppForm,(sizeof(char) * (strlen(meth->ppForm)+1)));
+   ClearUserDataList(theEnv,meth->header.usrData);
+   if (meth->header.ppForm != NULL)
+     rm(theEnv,(void *) meth->header.ppForm,(sizeof(char) * (strlen(meth->header.ppForm)+1)));
    for (j = 0 ; j < meth->restrictionCount ; j++)
      {
       rptr = &meth->restrictions[j];
@@ -413,9 +413,9 @@ void DestroyMethodInfo(
 
    ReturnPackedExpression(theEnv,meth->actions);
 
-   ClearUserDataList(theEnv,meth->usrData);
-   if (meth->ppForm != NULL)
-     rm(theEnv,meth->ppForm,(sizeof(char) * (strlen(meth->ppForm)+1)));
+   ClearUserDataList(theEnv,meth->header.usrData);
+   if (meth->header.ppForm != NULL)
+     rm(theEnv,(void *) meth->header.ppForm,(sizeof(char) * (strlen(meth->header.ppForm)+1)));
    for (j = 0 ; j < meth->restrictionCount ; j++)
      {
       rptr = &meth->restrictions[j];
@@ -608,12 +608,12 @@ void PreviewGeneric(
    EvaluationData(theEnv)->EvaluationError = false;
    if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg)) return;
 
-   gfunc = LookupDefgenericByMdlOrScope(theEnv,DOToString(theArg));
+   gfunc = LookupDefgenericByMdlOrScope(theEnv,theArg.lexemeValue->contents);
    if (gfunc == NULL)
      {
       PrintErrorID(theEnv,"GENRCFUN",3,false);
       EnvPrintRouter(theEnv,WERROR,"Unable to find generic function ");
-      EnvPrintRouter(theEnv,WERROR,DOToString(theArg));
+      EnvPrintRouter(theEnv,WERROR,theArg.lexemeValue->contents);
       EnvPrintRouter(theEnv,WERROR," in function preview-generic.\n");
       return;
      }
@@ -781,7 +781,7 @@ void PrintGenericName(
                         gfunc->header.whichModule->theModule));
       EnvPrintRouter(theEnv,logName,"::");
      }
-   EnvPrintRouter(theEnv,logName,ValueToString(gfunc->header.name));
+   EnvPrintRouter(theEnv,logName,gfunc->header.name->contents);
   }
 
 /* =========================================

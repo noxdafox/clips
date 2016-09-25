@@ -154,7 +154,7 @@ static void ClearDeftemplates(
   {
 #if (! RUN_TIME) && (! BLOAD_ONLY)
 
-   CreateImpliedDeftemplate(theEnv,(SYMBOL_HN *) EnvAddSymbol(theEnv,"initial-fact"),false);
+   CreateImpliedDeftemplate(theEnv,EnvCreateSymbol(theEnv,"initial-fact"),false);
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -230,7 +230,6 @@ void DeftemplateModuleFunction(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   returnValue->type = SYMBOL;
    returnValue->value = GetConstructModuleCommand(context,"deftemplate-module",DeftemplateData(theEnv)->DeftemplateConstruct);
   }
 

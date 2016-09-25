@@ -360,7 +360,7 @@ const char *EnvGetActivationName(
 #pragma unused(theEnv)
 #endif
 
-   return ValueToString(actPtr->theRule->header.name);
+   return actPtr->theRule->header.name->contents;
   }
 
 /******************************************/
@@ -584,7 +584,7 @@ static void PrintActivation(
 
    gensprintf(printSpace,"%-6d ",theActivation->salience);
    EnvPrintRouter(theEnv,logicalName,printSpace);
-   EnvPrintRouter(theEnv,logicalName,ValueToString(theActivation->theRule->header.name));
+   EnvPrintRouter(theEnv,logicalName,theActivation->theRule->header.name->contents);
    EnvPrintRouter(theEnv,logicalName,": ");
    PrintPartialMatch(theEnv,logicalName,theActivation->basis);
   }
@@ -1143,7 +1143,7 @@ void SetSalienceEvaluationCommand(
    /* are when-defined, when-activated, and every-cycle.          */
    /*=============================================================*/
 
-   argument = DOToString(value);
+   argument = value.lexemeValue->contents;
 
    if (strcmp(argument,"when-defined") == 0)
      { EnvSetSalienceEvaluation(theEnv,WHEN_DEFINED); }
@@ -1155,8 +1155,7 @@ void SetSalienceEvaluationCommand(
      {
       UDFInvalidArgumentMessage(context,
          "symbol with value when-defined, when-activated, or every-cycle");
-      returnValue->type = SYMBOL;
-      returnValue->value = EnvAddSymbol(theEnv,oldValue);
+      returnValue->lexemeValue = EnvCreateSymbol(theEnv,oldValue);
       return;
      }
 
@@ -1164,8 +1163,7 @@ void SetSalienceEvaluationCommand(
    /* Return the old setting for salience evaluation. */
    /*=================================================*/
 
-   returnValue->type = SYMBOL;
-   returnValue->value = EnvAddSymbol(theEnv,oldValue);
+   returnValue->lexemeValue = EnvCreateSymbol(theEnv,oldValue);
   }
 
 /*********************************************************/
@@ -1178,8 +1176,7 @@ void GetSalienceEvaluationCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   returnValue->type = SYMBOL;
-   returnValue->value = EnvAddSymbol(theEnv,SalienceEvaluationName(EnvGetSalienceEvaluation(theEnv)));
+   returnValue->lexemeValue = EnvCreateSymbol(theEnv,SalienceEvaluationName(EnvGetSalienceEvaluation(theEnv)));
   }
 
 /*****************************************************************/
@@ -1278,7 +1275,7 @@ static int EvaluateSalience(
   EnvSetEvaluationError(theEnv,false);
   if (EvaluateExpression(theEnv,theDefrule->dynamicSalience,&salienceValue))
     {
-     SalienceInformationError(theEnv,"defrule",ValueToString(theDefrule->header.name));
+     SalienceInformationError(theEnv,"defrule",theDefrule->header.name->contents);
      return theDefrule->salience;
     }
 
@@ -1286,10 +1283,10 @@ static int EvaluateSalience(
   /* The salience value must be an integer. */
   /*========================================*/
 
-  if (salienceValue.type != INTEGER)
+  if (salienceValue.header->type != INTEGER)
     {
      SalienceNonIntegerError(theEnv);
-     SalienceInformationError(theEnv,"defrule",ValueToString(theDefrule->header.name));
+     SalienceInformationError(theEnv,"defrule",theDefrule->header.name->contents);
      EnvSetEvaluationError(theEnv,true);
      return theDefrule->salience;
     }
@@ -1305,7 +1302,7 @@ static int EvaluateSalience(
     {
      SalienceRangeError(theEnv,MIN_DEFRULE_SALIENCE,MAX_DEFRULE_SALIENCE);
      EnvSetEvaluationError(theEnv,true);
-     SalienceInformationError(theEnv,"defrule",ValueToString(theDefrule->header.name));
+     SalienceInformationError(theEnv,"defrule",theDefrule->header.name->contents);
      return theDefrule->salience;
     }
 

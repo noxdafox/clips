@@ -698,7 +698,7 @@ bool EvaluateJoinExpression(
             return false;
            }
 
-         if ((theResult.value == EnvFalseSymbol(theEnv)) && (theResult.type == SYMBOL))
+         if (theResult.value == theEnv->FalseSymbol)
            { result = false; }
          else
            { result = true; }
@@ -835,20 +835,20 @@ unsigned long BetaMemoryHashValue(
       else
         { EvaluateExpression(theEnv,hashExpr,&theResult); }
 
-      switch (theResult.type)
+      switch (theResult.header->type)
         {
          case STRING:
          case SYMBOL:
          case INSTANCE_NAME:
-           hashValue += (((SYMBOL_HN *) theResult.value)->bucket * multiplier);
+           hashValue += theResult.lexemeValue->bucket * multiplier;
            break;
 
          case INTEGER:
-            hashValue += (((INTEGER_HN *) theResult.value)->bucket * multiplier);
+            hashValue += (theResult.integerValue->bucket * multiplier);
             break;
 
          case FLOAT:
-           hashValue += (((FLOAT_HN *) theResult.value)->bucket * multiplier);
+           hashValue += (theResult.floatValue->bucket * multiplier);
            break;
 
           case FACT_ADDRESS:

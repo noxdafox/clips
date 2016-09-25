@@ -50,23 +50,7 @@
 
 #include "clips.h"
 
-void UserFunctions(void);
 void EnvUserFunctions(Environment *);
-
-/*********************************************************/
-/* UserFunctions: Informs the expert system environment  */
-/*   of any user defined functions. In the default case, */
-/*   there are no user defined functions. To define      */
-/*   functions, either this function must be replaced by */
-/*   a function with the same name within this file, or  */
-/*   this function can be deleted from this file and     */
-/*   included in another file.                           */
-/*********************************************************/
-void UserFunctions()
-  {
-   // Use of UserFunctions is deprecated.
-   // Use EnvUserFunctions instead.
-  }
 
 /***********************************************************/
 /* EnvUserFunctions: Informs the expert system environment */

@@ -123,7 +123,7 @@ struct successor
 PACKED_CLASS_LINKS *ParseSuperclasses(
   Environment *theEnv,
   const char *readSource,
-  SYMBOL_HN *newClassName)
+  CLIPSLexeme *newClassName)
   {
    CLASS_LINK *clink = NULL,*cbot = NULL,*ctmp;
    Defclass *sclass;
@@ -150,12 +150,12 @@ PACKED_CLASS_LINKS *ParseSuperclasses(
          SyntaxErrorMessage(theEnv,"defclass");
          goto SuperclassParseError;
         }
-      if (FindModuleSeparator(ValueToString(newClassName)))
+      if (FindModuleSeparator(newClassName->contents))
         {
          IllegalModuleSpecifierMessage(theEnv);
          goto SuperclassParseError;
         }
-      if (GetValue(DefclassData(theEnv)->ObjectParseToken) == (void *) newClassName)
+      if (DefclassData(theEnv)->ObjectParseToken.value == (void *) newClassName)
         {
          PrintErrorID(theEnv,"INHERPSR",1,false);
          EnvPrintRouter(theEnv,WERROR,"A class may not have itself as a superclass.\n");
@@ -163,14 +163,14 @@ PACKED_CLASS_LINKS *ParseSuperclasses(
         }
       for (ctmp = clink ; ctmp != NULL ; ctmp = ctmp->nxt)
         {
-         if (GetValue(DefclassData(theEnv)->ObjectParseToken) == (void *) ctmp->cls->header.name)
+         if (DefclassData(theEnv)->ObjectParseToken.value == (void *) ctmp->cls->header.name)
            {
             PrintErrorID(theEnv,"INHERPSR",2,false);
             EnvPrintRouter(theEnv,WERROR,"A class may inherit from a superclass only once.\n");
             goto SuperclassParseError;
            }
         }
-      sclass = LookupDefclassInScope(theEnv,ValueToString(GetValue(DefclassData(theEnv)->ObjectParseToken)));
+      sclass = LookupDefclassInScope(theEnv,DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents);
       if (sclass == NULL)
         {
          PrintErrorID(theEnv,"INHERPSR",3,false);

@@ -425,7 +425,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getModuleList(
   jlong clipsEnv)
   {
    int moduleCount = 0;
-   struct defmodule *theModule;
+   Defmodule *theModule;
    jobject arrayList, returnModule, moduleName;
    void *theCLIPSEnv = JLongToPointer(clipsEnv);
 
@@ -442,11 +442,11 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getModuleList(
    if (arrayList == NULL)
      { return NULL; }
   
-   for (theModule = (struct defmodule *) EnvGetNextDefmodule(theCLIPSEnv,NULL);
+   for (theModule = EnvGetNextDefmodule(theCLIPSEnv,NULL);
         theModule != NULL;
-        theModule = (struct defmodule *) EnvGetNextDefmodule(theCLIPSEnv,theModule))
+        theModule = EnvGetNextDefmodule(theCLIPSEnv,theModule))
      {  
-      moduleName = (*env)->NewStringUTF(env,ValueToString(theModule->name));
+      moduleName = (*env)->NewStringUTF(env,theModule->header.name->contents);
       
       returnModule = (*env)->NewObject(env,
                                        CLIPSJNIData(clipsEnv)->moduleClass,

@@ -38,6 +38,7 @@
 #include "bload.h"
 #include "bsave.h"
 #include "constrct.h"
+#include "cstrcbin.h"
 #include "envrnmnt.h"
 #include "memalloc.h"
 #include "moduldef.h"
@@ -124,7 +125,7 @@ void AssignBsaveDefmdlItemHdrVals(
   struct bsaveDefmoduleItemHeader *theBsaveHeader,
   struct defmoduleItemHeader *theHeader)
   {
-   theBsaveHeader->theModule = theHeader->theModule->bsaveID;
+   theBsaveHeader->theModule = theHeader->theModule->header.bsaveID;
    if (theHeader->firstItem == NULL)
      {
       theBsaveHeader->firstItem = -1L;
@@ -184,8 +185,8 @@ static void BsaveFind(
       /* as being a needed symbol. */
       /*===========================*/
 
-      defmodulePtr->name->neededSymbol = true;
-
+      MarkConstructHeaderNeededItems(&defmodulePtr->header,defmodulePtr->header.bsaveID);
+         
       /*==============================================*/
       /* Loop through each of the port items in the   */
       /* defmodule's import list incrementing the     */
@@ -277,14 +278,10 @@ static void BsaveBinaryItem(
         defmodulePtr != NULL;
         defmodulePtr = EnvGetNextDefmodule(theEnv,defmodulePtr))
      {
-      newDefmodule.name = defmodulePtr->name->bucket;
+      AssignBsaveConstructHeaderVals(&newDefmodule.header,&defmodulePtr->header);
 
       DefmoduleData(theEnv)->BNumberOfDefmodules++;
-      if (defmodulePtr->next != NULL)
-        { newDefmodule.next = DefmoduleData(theEnv)->BNumberOfDefmodules; }
-      else
-        { newDefmodule.next = -1L; }
-
+      
       if (defmodulePtr->importList == NULL)
         { newDefmodule.importList = -1L; }
       else
@@ -307,7 +304,7 @@ static void BsaveBinaryItem(
            { DefmoduleData(theEnv)->NumberOfPortItems++; }
         }
 
-      newDefmodule.bsaveID = defmodulePtr->bsaveID;
+      newDefmodule.bsaveID = defmodulePtr->header.bsaveID;
       GenWrite(&newDefmodule,sizeof(struct bsaveDefmodule),fp);
      }
 
@@ -455,12 +452,9 @@ static void UpdateDefmodule(
    int i;
 
    bdp = (struct bsaveDefmodule *) buf;
-   DefmoduleData(theEnv)->DefmoduleArray[obji].name = SymbolPointer(bdp->name);
-   IncrementSymbolCount(DefmoduleData(theEnv)->DefmoduleArray[obji].name);
-   if (bdp->next != -1L)
-     { DefmoduleData(theEnv)->DefmoduleArray[obji].next = &DefmoduleData(theEnv)->DefmoduleArray[bdp->next]; }
-   else
-     { DefmoduleData(theEnv)->DefmoduleArray[obji].next = NULL; }
+   
+   UpdateConstructHeader(theEnv,&bdp->header,&DefmoduleData(theEnv)->DefmoduleArray[obji].header,DEFMODULE,
+                         0,NULL,(int) sizeof(Defmodule),DefmoduleData(theEnv)->DefmoduleArray);
 
    if (GetNumberOfModuleItems(theEnv) == 0)
      { DefmoduleData(theEnv)->DefmoduleArray[obji].itemsArray = NULL; }
@@ -484,7 +478,7 @@ static void UpdateDefmodule(
         }
      }
 
-   DefmoduleData(theEnv)->DefmoduleArray[obji].ppForm = NULL;
+   DefmoduleData(theEnv)->DefmoduleArray[obji].header.ppForm = NULL;
 
    if (bdp->importList != -1L)
      { DefmoduleData(theEnv)->DefmoduleArray[obji].importList = (struct portItem *) &DefmoduleData(theEnv)->PortItemArray[bdp->importList]; }
@@ -495,7 +489,7 @@ static void UpdateDefmodule(
      { DefmoduleData(theEnv)->DefmoduleArray[obji].exportList = (struct portItem *) &DefmoduleData(theEnv)->PortItemArray[bdp->exportList]; }
    else
      { DefmoduleData(theEnv)->DefmoduleArray[obji].exportList = NULL; }
-   DefmoduleData(theEnv)->DefmoduleArray[obji].bsaveID = bdp->bsaveID;
+   DefmoduleData(theEnv)->DefmoduleArray[obji].header.bsaveID = bdp->bsaveID;
   }
 
 /*****************************************/
@@ -559,7 +553,7 @@ static void ClearBload(
 
    for (i = 0; i < DefmoduleData(theEnv)->BNumberOfDefmodules; i++)
      {
-      DecrementSymbolCount(theEnv,DefmoduleData(theEnv)->DefmoduleArray[i].name);
+      DecrementSymbolCount(theEnv,DefmoduleData(theEnv)->DefmoduleArray[i].header.name);
       for (theList = DefmoduleData(theEnv)->DefmoduleArray[i].importList;
            theList != NULL;
            theList = theList->next)

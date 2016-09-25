@@ -920,7 +920,7 @@ static void UpdateDefrule(
    struct bsaveDefrule *br;
 
    br = (struct bsaveDefrule *) buf;
-   UpdateConstructHeader(theEnv,&br->header,&DefruleBinaryData(theEnv)->DefruleArray[obji].header,
+   UpdateConstructHeader(theEnv,&br->header,&DefruleBinaryData(theEnv)->DefruleArray[obji].header,DEFRULE,
                          (int) sizeof(struct defruleModule),(void *) DefruleBinaryData(theEnv)->ModuleArray,
                          (int) sizeof(Defrule),(void *) DefruleBinaryData(theEnv)->DefruleArray);
 

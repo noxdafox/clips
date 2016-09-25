@@ -48,8 +48,8 @@ typedef void PrintItemFunction(Environment *,const char *,void *);
 #include "symbol.h"
 
    unsigned                       FindModuleSeparator(const char *);
-   SYMBOL_HN                     *ExtractModuleName(Environment *,unsigned,const char *);
-   SYMBOL_HN                     *ExtractConstructName(Environment *,unsigned,const char *);
+   CLIPSLexeme                   *ExtractModuleName(Environment *,unsigned,const char *);
+   CLIPSLexeme                   *ExtractConstructName(Environment *,unsigned,const char *,unsigned);
    const char                    *ExtractModuleAndConstructName(Environment *,const char *);
    void                          *FindImportedConstruct(Environment *,const char *,Defmodule *,
                                                         const char *,int *,bool,Defmodule *);
@@ -66,7 +66,7 @@ typedef void PrintItemFunction(Environment *,const char *,void *);
    long                           DoForAllModules(Environment *,
                                                   void (*)(Defmodule *,void *),
                                                   int,void *);
-   bool                           ConstructExported(Environment *,const char *,struct symbolHashNode *,struct symbolHashNode *);
+   bool                           ConstructExported(Environment *,const char *,CLIPSLexeme *,CLIPSLexeme *);
 
 #endif /* _H_modulutl */
 

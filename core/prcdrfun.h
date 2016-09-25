@@ -81,7 +81,7 @@ struct procedureFunctionData
    void                           ReturnFunction(Environment *,UDFContext *,CLIPSValue *);
    void                           BreakFunction(Environment *,UDFContext *,CLIPSValue *);
    void                           SwitchFunction(Environment *,UDFContext *,CLIPSValue *);
-   bool                           GetBoundVariable(Environment *,CLIPSValue *,struct symbolHashNode *);
+   bool                           GetBoundVariable(Environment *,CLIPSValue *,CLIPSLexeme *);
    void                           FlushBindList(Environment *);
 
 #endif /* _H_prcdrfun */

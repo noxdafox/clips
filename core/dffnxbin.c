@@ -465,7 +465,7 @@ static void UpdateDeffunction(
    bdptr = (BSAVE_DEFFUNCTION *) buf;
    dptr = &DeffunctionBinaryData(theEnv)->DeffunctionArray[obji];
 
-   UpdateConstructHeader(theEnv,&bdptr->header,&dptr->header,
+   UpdateConstructHeader(theEnv,&bdptr->header,&dptr->header,DEFFUNCTION,
                          (int) sizeof(DeffunctionModuleData),DeffunctionBinaryData(theEnv)->ModuleArray,
                          (int) sizeof(Deffunction),DeffunctionBinaryData(theEnv)->DeffunctionArray);
 

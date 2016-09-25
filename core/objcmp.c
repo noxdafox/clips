@@ -147,7 +147,7 @@ typedef union
                                                      int *,int,Defclass *,int *,
                                                      int *,bool *,struct CodeGeneratorFile *);
    static bool                    HandlersToCode(Environment *,FILE **,const char *,const char *,char *,int,int,FILE *,
-                                                 int *,int,Defclass *,int *,
+                                                 int *,int,Defclass *,int,int *,
                                                  int *,bool *,struct CodeGeneratorFile *);
    static bool                    OrderedHandlersToCode(Environment *,FILE **,const char *,const char *,char *,int,int,FILE *,
                                                         int *,int,Defclass *,int *,
@@ -522,7 +522,7 @@ static bool ObjectsToCode(
            goto ObjectCodeError;
 
          if (HandlersToCode(theEnv,&itemFiles[HANDLERI],fileName,pathName,fileNameBuffer,fileID,imageID,
-                            headerFP,&fileCount,maxIndices,theDefclass,
+                            headerFP,&fileCount,maxIndices,theDefclass,moduleCount,
                             &itemArrayVersions[HANDLERI],&itemArrayCounts[HANDLERI],
                             &itemReopenFlags[HANDLERI],&itemCodeFiles[HANDLERI])
               == false)
@@ -1360,6 +1360,7 @@ static bool HandlersToCode(
   int *fileCount,
   int maxIndices,
   Defclass *theDefclass,
+  int moduleCount,
   int *handlerArrayVersion,
   int *handlerArrayCount,
   bool *reopenHandlerFile,
@@ -1384,14 +1385,18 @@ static bool HandlersToCode(
       if (i > 0)
         fprintf(*handlerFile,",\n");
       hnd = &theDefclass->handlers[i];
-      fprintf(*handlerFile,"{ %u,%u,0,0,0,",hnd->system,hnd->type);
-      PrintSymbolReference(theEnv,*handlerFile,hnd->name);
-      fprintf(*handlerFile,",");
+         
+      fprintf(*handlerFile,"{");
+      ConstructHeaderToCode(theEnv,*handlerFile,&hnd->header,imageID,maxIndices,moduleCount,
+                            ModulePrefix(ObjectCompilerData(theEnv)->ObjectCodeItem),HandlerPrefix());
+
+
+      fprintf(*handlerFile,",%u,%u,0,0,0,",hnd->system,hnd->type);
       PrintClassReference(theEnv,*handlerFile,hnd->cls,imageID,maxIndices);
       fprintf(*handlerFile,",%hd,%hd,%hd,",hnd->minParams,hnd->maxParams,
                                         hnd->localVarCount);
       ExpressionToCode(theEnv,*handlerFile,hnd->actions);
-      fprintf(*handlerFile,",NULL }");
+      fprintf(*handlerFile,"}");
      }
    *handlerArrayCount += (int) theDefclass->handlerCount;
    *handlerFile = CloseFileIfNeeded(theEnv,*handlerFile,handlerArrayCount,

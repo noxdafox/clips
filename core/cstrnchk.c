@@ -418,7 +418,7 @@ bool CheckAllowedClassesConstraint(
    if (type == INSTANCE_ADDRESS)
      { ins = (Instance *) vPtr; }
    else
-     { ins = FindInstanceBySymbol(theEnv,(SYMBOL_HN *) vPtr); }
+     { ins = FindInstanceBySymbol(theEnv,(CLIPSLexeme *) vPtr); }
 
    if (ins == NULL)
      { return false; }
@@ -433,7 +433,6 @@ bool CheckAllowedClassesConstraint(
         tmpPtr != NULL;
         tmpPtr = tmpPtr->nextArg)
      {
-      //cmpClass = EnvFindDefclass(theEnv,ValueToString(tmpPtr->value));
       cmpClass = LookupDefclassByMdlOrScope(theEnv,ValueToString(tmpPtr->value));
       if (cmpClass == NULL) continue;
       if (cmpClass == insClass) return true;
@@ -529,7 +528,7 @@ void ConstraintViolationErrorMessage(
   const char *thePlace,
   bool command,
   int thePattern,
-  struct symbolHashNode *theSlot,
+  CLIPSLexeme *theSlot,
   int theField,
   int violationType,
   CONSTRAINT_RECORD *theConstraint,
@@ -611,7 +610,7 @@ void ConstraintViolationErrorMessage(
    if (theSlot != NULL)
      {
       EnvPrintRouter(theEnv,WERROR," for slot ");
-      EnvPrintRouter(theEnv,WERROR,ValueToString(theSlot));
+      EnvPrintRouter(theEnv,WERROR,theSlot->contents);
      }
    else if (theField > 0)
      {
@@ -632,11 +631,11 @@ static void PrintRange(
   CONSTRAINT_RECORD *theConstraint)
   {
    if (theConstraint->minValue->value == SymbolData(theEnv)->NegativeInfinity)
-     { EnvPrintRouter(theEnv,logicalName,ValueToString(SymbolData(theEnv)->NegativeInfinity)); }
+     { EnvPrintRouter(theEnv,logicalName,SymbolData(theEnv)->NegativeInfinity->contents); }
    else PrintExpression(theEnv,logicalName,theConstraint->minValue);
    EnvPrintRouter(theEnv,logicalName," to ");
    if (theConstraint->maxValue->value == SymbolData(theEnv)->PositiveInfinity)
-     { EnvPrintRouter(theEnv,logicalName,ValueToString(SymbolData(theEnv)->PositiveInfinity)); }
+     { EnvPrintRouter(theEnv,logicalName,SymbolData(theEnv)->PositiveInfinity->contents); }
    else PrintExpression(theEnv,logicalName,theConstraint->maxValue);
   }
 
@@ -656,16 +655,16 @@ int ConstraintCheckDataObject(
 
    if (theConstraints == NULL) return(NO_VIOLATION);
 
-   if (theData->type == MULTIFIELD)
+   if (theData->header->type == MULTIFIELD)
      {
       if (CheckCardinalityConstraint(theEnv,(theData->end - theData->begin) + 1,
                                      theConstraints) == false)
         { return(CARDINALITY_VIOLATION); }
 
-      theMultifield = ((struct multifield *) theData->value)->theFields;
+      theMultifield = ((Multifield *) theData->value)->theFields;
       for (i = theData->begin; i <= theData->end; i++)
         {
-         if ((rv = ConstraintCheckValue(theEnv,theMultifield[i].type,
+         if ((rv = ConstraintCheckValue(theEnv,theMultifield[i].header->type,
                                         theMultifield[i].value,
                                         theConstraints)) != NO_VIOLATION)
            { return(rv); }
@@ -677,7 +676,7 @@ int ConstraintCheckDataObject(
    if (CheckCardinalityConstraint(theEnv,1L,theConstraints) == false)
     { return(CARDINALITY_VIOLATION); }
 
-   return(ConstraintCheckValue(theEnv,theData->type,theData->value,theConstraints));
+   return(ConstraintCheckValue(theEnv,theData->header->type,theData->value,theConstraints));
   }
 
 /****************************************************************/

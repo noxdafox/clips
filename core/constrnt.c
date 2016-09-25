@@ -511,19 +511,12 @@ void SDCCommand(
   {
    CLIPSValue theArg;
 
-   returnValue->type = SYMBOL;
-   if (EnvGetDynamicConstraintChecking(theEnv))
-     { returnValue->value = EnvTrueSymbol(theEnv); }
-   else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+   returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvGetDynamicConstraintChecking(theEnv));
 
    if (! UDFFirstArgument(context,ANY_TYPE,&theArg))
      { return; }
 
-   if ((theArg.value == EnvFalseSymbol(theEnv)) && (theArg.type == SYMBOL))
-     { EnvSetDynamicConstraintChecking(theEnv,false); }
-   else
-     { EnvSetDynamicConstraintChecking(theEnv,true); }
+   EnvSetDynamicConstraintChecking(theEnv,theArg.value != theEnv->FalseSymbol);
   }
 
 /**********************************************/
@@ -535,11 +528,7 @@ void GDCCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   returnValue->type = SYMBOL;
-   if (EnvGetDynamicConstraintChecking(theEnv))
-     { returnValue->value = EnvTrueSymbol(theEnv); }
-   else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+   returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvGetDynamicConstraintChecking(theEnv));
   }
 
 /******************************************************/

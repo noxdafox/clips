@@ -932,7 +932,7 @@ static bool ParseTypeAttribute(
          /* (e.g. SYMBOL, FLOAT, INTEGER, etc.).   */
          /*========================================*/
 
-         theType = GetConstraintTypeFromTypeName(ValueToString(inputToken.value));
+         theType = GetConstraintTypeFromTypeName(inputToken.lexemeValue->contents);
          if (theType < 0)
            {
             SyntaxErrorMessage(theEnv,"type attribute");

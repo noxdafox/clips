@@ -935,7 +935,7 @@ static void ProcessPatternNode(
            {
             EvaluateExpression(theEnv,patternNode->networkTest,&theResult);
 
-            tempPtr = (OBJECT_PATTERN_NODE *) FindHashedPatternNode(theEnv,patternNode,theResult.type,theResult.value);
+            tempPtr = (OBJECT_PATTERN_NODE *) FindHashedPatternNode(theEnv,patternNode,theResult.header->type,theResult.value);
 
             if (tempPtr != NULL)
               {
@@ -968,7 +968,7 @@ static void ProcessPatternNode(
            {
             EvaluateExpression(theEnv,patternNode->networkTest,&theResult);
 
-            tempPtr = (OBJECT_PATTERN_NODE *) FindHashedPatternNode(theEnv,patternNode,theResult.type,theResult.value);
+            tempPtr = (OBJECT_PATTERN_NODE *) FindHashedPatternNode(theEnv,patternNode,theResult.header->type,theResult.value);
 
             if (tempPtr != NULL)
               {
@@ -1030,7 +1030,7 @@ static void ProcessPatternNode(
               {
                EvaluateExpression(theEnv,patternNode->networkTest,&theResult);
 
-               tempPtr = (OBJECT_PATTERN_NODE *) FindHashedPatternNode(theEnv,patternNode,theResult.type,theResult.value);
+               tempPtr = (OBJECT_PATTERN_NODE *) FindHashedPatternNode(theEnv,patternNode,theResult.header->type,theResult.value);
 
                if (tempPtr != NULL)
                  {
@@ -1068,7 +1068,7 @@ static void ProcessPatternNode(
            {
             EvaluateExpression(theEnv,patternNode->networkTest,&theResult);
 
-            tempPtr = (OBJECT_PATTERN_NODE *) FindHashedPatternNode(theEnv,patternNode,theResult.type,theResult.value);
+            tempPtr = (OBJECT_PATTERN_NODE *) FindHashedPatternNode(theEnv,patternNode,theResult.header->type,theResult.value);
 
             if (tempPtr != NULL)
               {
@@ -1273,7 +1273,7 @@ static bool EvaluateObjectPatternTest(
          EvaluationData(theEnv)->HaltExecution = false;
          return false;
         }
-      if ((vresult.value != EnvFalseSymbol(theEnv)) || (vresult.type != SYMBOL))
+      if (vresult.value != theEnv->FalseSymbol)
         return true;
      }
    return false;
@@ -1443,10 +1443,10 @@ static void ObjectPatternNetErrorMessage(
    PrintErrorID(theEnv,"OBJRTMCH",1,true);
    EnvPrintRouter(theEnv,WERROR,"This error occurred in the object pattern network\n");
    EnvPrintRouter(theEnv,WERROR,"   Currently active instance: [");
-   EnvPrintRouter(theEnv,WERROR,ValueToString(ObjectReteData(theEnv)->CurrentPatternObject->name));
+   EnvPrintRouter(theEnv,WERROR,ObjectReteData(theEnv)->CurrentPatternObject->name->contents);
    EnvPrintRouter(theEnv,WERROR,"]\n");
    EnvPrintRouter(theEnv,WERROR,"   Problem resides in slot ");
-   EnvPrintRouter(theEnv,WERROR,ValueToString(FindIDSlotName(theEnv,patternPtr->slotNameID)));
+   EnvPrintRouter(theEnv,WERROR,FindIDSlotName(theEnv,patternPtr->slotNameID)->contents);
    EnvPrintRouter(theEnv,WERROR," field #");
    PrintLongInteger(theEnv,WERROR,(long long) patternPtr->whichField);
    EnvPrintRouter(theEnv,WERROR,"\n");

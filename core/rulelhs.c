@@ -70,7 +70,7 @@
    static struct lhsParseNode    *ConnectedPatternParse(Environment *,const char *,struct token *,bool *);
    static struct lhsParseNode    *GroupPatterns(Environment *,const char *,TokenType,const char *,bool *);
    static struct lhsParseNode    *TestPattern(Environment *,const char *,bool *);
-   static struct lhsParseNode    *AssignmentParse(Environment *,const char *,SYMBOL_HN *,bool *);
+   static struct lhsParseNode    *AssignmentParse(Environment *,const char *,CLIPSLexeme *,bool *);
    static void                    TagLHSLogicalNodes(struct lhsParseNode *);
    static struct lhsParseNode    *SimplePatternParse(Environment *,const char *,struct token *,bool *);
    static void                    ParseSalience(Environment *,const char *,const char *,bool *);
@@ -160,7 +160,7 @@ static struct lhsParseNode *RuleBodyParse(
    /*==================================================*/
 
    if ((theToken->tknType == SYMBOL_TOKEN) ?
-       (strcmp(ValueToString(theToken->value),"=>") == 0) : false)
+       (strcmp(theToken->lexemeValue->contents,"=>") == 0) : false)
      { return NULL; }
 
    /*===========================================*/
@@ -262,7 +262,7 @@ static void DeclarationParse(
       /* Parse a salience declaration if encountered. */
       /*==============================================*/
 
-      else if (strcmp(ValueToString(theToken.value),"salience") == 0)
+      else if (strcmp(theToken.lexemeValue->contents,"salience") == 0)
         {
          if (salienceParsed)
            {
@@ -282,7 +282,7 @@ static void DeclarationParse(
       /* auto-focus feature for a rule was parsed.       */
       /*=================================================*/
 
-      else if (strcmp(ValueToString(theToken.value),"auto-focus") == 0)
+      else if (strcmp(theToken.lexemeValue->contents,"auto-focus") == 0)
         {
          if (autoFocusParsed)
            {
@@ -406,7 +406,7 @@ static void ParseSalience(
       return;
      }
 
-   if (salienceValue.type != INTEGER)
+   if (salienceValue.header->type != INTEGER)
      {
       SalienceNonIntegerError(theEnv);
       *error = true;
@@ -471,9 +471,9 @@ static void ParseAutoFocus(
    /* the global variable GlobalAutoFocus.               */
    /*====================================================*/
 
-   if (strcmp(ValueToString(theToken.value),"TRUE") == 0)
+   if (strcmp(theToken.lexemeValue->contents,"TRUE") == 0)
      { PatternData(theEnv)->GlobalAutoFocus = true; }
-   else if (strcmp(ValueToString(theToken.value),"FALSE") == 0)
+   else if (strcmp(theToken.lexemeValue->contents,"FALSE") == 0)
      { PatternData(theEnv)->GlobalAutoFocus = false; }
    else
      {
@@ -539,7 +539,7 @@ static struct lhsParseNode *LHSPattern(
       /*====================================*/
 
       if (allowDeclaration &&
-          (strcmp(ValueToString(theToken.value),"declare") == 0))
+          (strcmp(theToken.lexemeValue->contents,"declare") == 0))
         {
          if (ruleName == NULL) SystemError(theEnv,"RULELHS",1);
          DeclarationParse(theEnv,readSource,ruleName,error);
@@ -550,7 +550,7 @@ static struct lhsParseNode *LHSPattern(
       /* Otherwise check for a *test* CE. */
       /*==================================*/
 
-      else if (strcmp(ValueToString(theToken.value),"test") == 0)
+      else if (strcmp(theToken.lexemeValue->contents,"test") == 0)
         { theNode = TestPattern(theEnv,readSource,error); }
 
       /*============================================*/
@@ -558,12 +558,12 @@ static struct lhsParseNode *LHSPattern(
       /* *logical*, *exists*, or *forall* CE.       */
       /*============================================*/
 
-      else if ((strcmp(ValueToString(theToken.value),"and") == 0) ||
-               (strcmp(ValueToString(theToken.value),"logical") == 0) ||
-               (strcmp(ValueToString(theToken.value),"not") == 0) ||
-               (strcmp(ValueToString(theToken.value),"exists") == 0) ||
-               (strcmp(ValueToString(theToken.value),"forall") == 0) ||
-               (strcmp(ValueToString(theToken.value),"or") == 0))
+      else if ((strcmp(theToken.lexemeValue->contents,"and") == 0) ||
+               (strcmp(theToken.lexemeValue->contents,"logical") == 0) ||
+               (strcmp(theToken.lexemeValue->contents,"not") == 0) ||
+               (strcmp(theToken.lexemeValue->contents,"exists") == 0) ||
+               (strcmp(theToken.lexemeValue->contents,"forall") == 0) ||
+               (strcmp(theToken.lexemeValue->contents,"or") == 0))
         { theNode = ConnectedPatternParse(theEnv,readSource,&theToken,error); }
 
       /*=================================*/
@@ -579,7 +579,7 @@ static struct lhsParseNode *LHSPattern(
    /*=======================================*/
 
    else if (theToken.tknType == SF_VARIABLE_TOKEN)
-     { theNode = AssignmentParse(theEnv,readSource,(SYMBOL_HN *) theToken.value,error); }
+     { theNode = AssignmentParse(theEnv,readSource,theToken.lexemeValue,error); }
 
    /*=================================================*/
    /* Check for the group terminator (either a "=>"   */
@@ -660,37 +660,37 @@ static struct lhsParseNode *ConnectedPatternParse(
    /*==========================================================*/
 
    IncrementIndentDepth(theEnv,5);
-   if (strcmp(ValueToString(theToken->value),"or") == 0)
+   if (strcmp(theToken->lexemeValue->contents,"or") == 0)
      {
       connectorValue = OR_CE_NODE;
       errorCE = "the or conditional element";
       SavePPBuffer(theEnv,"  ");
      }
-   else if (strcmp(ValueToString(theToken->value),"and") == 0)
+   else if (strcmp(theToken->lexemeValue->contents,"and") == 0)
      {
       connectorValue = AND_CE_NODE;
       errorCE = "the and conditional element";
       SavePPBuffer(theEnv," ");
      }
-   else if (strcmp(ValueToString(theToken->value),"not") == 0)
+   else if (strcmp(theToken->lexemeValue->contents,"not") == 0)
      {
       connectorValue = NOT_CE_NODE;
       errorCE = "the not conditional element";
       SavePPBuffer(theEnv," ");
      }
-   else if (strcmp(ValueToString(theToken->value),"exists") == 0)
+   else if (strcmp(theToken->lexemeValue->contents,"exists") == 0)
      {
       connectorValue = EXISTS_CE_NODE;
       errorCE = "the exists conditional element";
       PPCRAndIndent(theEnv);
      }
-   else if (strcmp(ValueToString(theToken->value),"forall") == 0)
+   else if (strcmp(theToken->lexemeValue->contents,"forall") == 0)
      {
       connectorValue = FORALL_CE_NODE;
       errorCE = "the forall conditional element";
       PPCRAndIndent(theEnv);
      }
-   else if (strcmp(ValueToString(theToken->value),"logical") == 0)
+   else if (strcmp(theToken->lexemeValue->contents,"logical") == 0)
      {
       connectorValue = AND_CE_NODE;
       errorCE = "the logical conditional element";
@@ -1021,7 +1021,7 @@ static struct lhsParseNode *TestPattern(
 static struct lhsParseNode *AssignmentParse(
   Environment *theEnv,
   const char *readSource,
-  SYMBOL_HN *factAddress,
+  CLIPSLexeme *factAddress,
   bool *error)
   {
    struct lhsParseNode *theNode;
@@ -1047,7 +1047,7 @@ static struct lhsParseNode *AssignmentParse(
 
    GetToken(theEnv,readSource,&theToken);
 
-   if ((theToken.tknType == SYMBOL_TOKEN) ? (strcmp(ValueToString(theToken.value),"<-") != 0) :
+   if ((theToken.tknType == SYMBOL_TOKEN) ? (strcmp(theToken.lexemeValue->contents,"<-") != 0) :
                                    true)
      {
       SyntaxErrorMessage(theEnv,"binding patterns");
@@ -1140,8 +1140,8 @@ static struct lhsParseNode *SimplePatternParse(
       *error = true;
       return NULL;
      }
-   else if ((strcmp(ValueToString(theToken->value),"=") == 0) ||
-            (strcmp(ValueToString(theToken->value),":") == 0))
+   else if ((strcmp(theToken->lexemeValue->contents,"=") == 0) ||
+            (strcmp(theToken->lexemeValue->contents,":") == 0))
      {
       SyntaxErrorMessage(theEnv,"the field field of a pattern");
       *error = true;
@@ -1165,7 +1165,7 @@ static struct lhsParseNode *SimplePatternParse(
         tempParser != NULL;
         tempParser = tempParser->next)
      {
-      if ((*tempParser->recognizeFunction)((SYMBOL_HN *) theToken->value))
+      if ((*tempParser->recognizeFunction)(theToken->lexemeValue))
         {
          theNode->patternType = tempParser;
          theNode->right = (*tempParser->parseFunction)(theEnv,readSource,theToken);

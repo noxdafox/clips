@@ -93,7 +93,7 @@
                                                        struct CodeGeneratorFile [SAVE_ITEMS],int);
    static void                    DefgenericModuleToCode(Environment *,FILE *,Defmodule *,int,int);
    static void                    SingleDefgenericToCode(Environment *,FILE *,int,int,Defgeneric *,int,int,int);
-   static void                    MethodToCode(Environment *,FILE *,int,Defmethod *,int,int);
+   static void                    MethodToCode(Environment *,FILE *,int,int,Defmethod *,int,int,int);
    static void                    RestrictionToCode(Environment *,FILE *,int,RESTRICTION *,int,int);
    static void                    TypeToCode(Environment *,FILE *,int,void *,int);
 
@@ -314,7 +314,7 @@ static bool DefgenericsToCode(
                theMethod = &theDefgeneric->methods[i];
                if (i > 0)
                  fprintf(itemFiles[METHODI],",\n");
-               MethodToCode(theEnv,itemFiles[METHODI],imageID,theMethod,
+               MethodToCode(theEnv,itemFiles[METHODI],imageID,maxIndices,theMethod,moduleCount,
                             itemArrayVersions[RESTRICTIONI],itemArrayCounts[RESTRICTIONI]);
                if (theMethod->restrictionCount > 0)
                  {
@@ -525,11 +525,18 @@ static void MethodToCode(
   Environment *theEnv,
   FILE *theFile,
   int imageID,
+  int maxIndices,
   Defmethod *theMethod,
+  int moduleCount,
   int restrictionArrayVersion,
   int restrictionArrayCount)
   {
-   fprintf(theFile,"{%hd,0,%hd,%hd,%hd,%hd,%u,0,",
+   fprintf(theFile,"{");
+   ConstructHeaderToCode(theEnv,theFile,&theMethod->header,imageID,maxIndices,moduleCount,
+                         ModulePrefix(DefgenericData(theEnv)->DefgenericCodeItem),
+                         "");
+
+   fprintf(theFile,",%hd,0,%hd,%hd,%hd,%hd,%u,0,",
                    theMethod->index,theMethod->restrictionCount,
                    theMethod->minRestrictions,theMethod->maxRestrictions,
                    theMethod->localVarCount,theMethod->system);
@@ -539,7 +546,7 @@ static void MethodToCode(
      fprintf(theFile,"&%s%d_%d[%d],",RestrictionPrefix(),imageID,
                                      restrictionArrayVersion,restrictionArrayCount);
    ExpressionToCode(theEnv,theFile,theMethod->actions);
-   fprintf(theFile,",NULL}");
+   fprintf(theFile,"}");
   }
 
 /****************************************************************

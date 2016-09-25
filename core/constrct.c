@@ -852,7 +852,7 @@ struct construct *AddConstruct(
   const char *pluralName,
   bool (*parseFunction)(Environment *,const char *),
   FindConstructFunction *findFunction,
-  SYMBOL_HN *(*getConstructNameFunction)(struct constructHeader *),
+  CLIPSLexeme *(*getConstructNameFunction)(struct constructHeader *),
   const char *(*getPPFormFunction)(Environment *,struct constructHeader *),
   struct defmoduleItemHeader *(*getModuleItemFunction)(struct constructHeader *),
   GetNextConstructFunction *getNextItemFunction,

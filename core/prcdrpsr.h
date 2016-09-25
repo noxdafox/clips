@@ -55,7 +55,7 @@
 
 struct BindInfo
   {
-   struct symbolHashNode *name;
+   CLIPSLexeme *name;
    CONSTRAINT_RECORD *constraints;
    struct BindInfo *next;
   };
@@ -68,10 +68,10 @@ struct BindInfo
    bool                           ParsedBindNamesEmpty(Environment *);
 #endif
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-   int                            SearchParsedBindNames(Environment *,struct symbolHashNode *);
+   int                            SearchParsedBindNames(Environment *,CLIPSLexeme *);
    int                            CountParsedBindNames(Environment *);
-   void                           RemoveParsedBindName(Environment *,struct symbolHashNode *);
-   struct constraintRecord       *FindBindConstraints(Environment *,struct symbolHashNode *);
+   void                           RemoveParsedBindName(Environment *,CLIPSLexeme *);
+   struct constraintRecord       *FindBindConstraints(Environment *,CLIPSLexeme *);
 #endif
 
 #endif /* _H_prcdrpsr */

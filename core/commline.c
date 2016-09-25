@@ -966,7 +966,7 @@ bool RouteCommand(
       return false;
      }
 
-   commandName = ValueToString(theToken.value);
+   commandName = theToken.lexemeValue->contents;
 
    /*======================*/
    /* Evaluate constructs. */
@@ -1035,7 +1035,7 @@ bool RouteCommand(
    /* Print the return value of the function/command. */
    /*=================================================*/
 
-   if ((returnValue.type != RVOID) && printResult)
+   if ((returnValue.header->type != RVOID) && printResult)
      {
       PrintDataObject(theEnv,STDOUT,&returnValue);
       EnvPrintRouter(theEnv,STDOUT,"\n");
@@ -1141,22 +1141,22 @@ const char *GetCommandCompletionString(
 
    if (lastToken.tknType == SYMBOL_TOKEN)
      {
-      rs = ValueToString(lastToken.value);
+      rs = lastToken.lexemeValue->contents;
       if (rs[0] == '[') return (&rs[1]);
-      return(ValueToString(lastToken.value));
+      return lastToken.lexemeValue->contents;
      }
    else if (lastToken.tknType == SF_VARIABLE_TOKEN)
-     { return(ValueToString(lastToken.value)); }
+     { return lastToken.lexemeValue->contents; }
    else if (lastToken.tknType == MF_VARIABLE_TOKEN)
-     { return(ValueToString(lastToken.value)); }
+     { return lastToken.lexemeValue->contents; }
    else if ((lastToken.tknType == GBL_VARIABLE_TOKEN) ||
             (lastToken.tknType == MF_GBL_VARIABLE_TOKEN) ||
             (lastToken.tknType == INSTANCE_NAME_TOKEN))
      { return NULL; }
    else if (lastToken.tknType == STRING_TOKEN)
      {
-      length = strlen(ValueToString(lastToken.value));
-      return(GetCommandCompletionString(theEnv,ValueToString(lastToken.value),length));
+      length = strlen(lastToken.lexemeValue->contents);
+      return GetCommandCompletionString(theEnv,lastToken.lexemeValue->contents,length);
      }
    else if ((lastToken.tknType == FLOAT_TOKEN) ||
             (lastToken.tknType == INTEGER_TOKEN))

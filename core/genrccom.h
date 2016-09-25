@@ -107,12 +107,12 @@
    void                           EnvGetDefmethodList(Environment *,Defgeneric *,CLIPSValue *);
    void                           GetMethodRestrictionsCommand(Environment *,UDFContext *,CLIPSValue *);
    void                           EnvGetMethodRestrictions(Environment *,Defgeneric *,long,CLIPSValue *);
-   SYMBOL_HN                     *GetDefgenericNamePointer(Defgeneric *);
+   CLIPSLexeme                   *GetDefgenericNamePointer(Defgeneric *);
    void                           SetNextDefgeneric(Defgeneric *,Defgeneric *);
    const char                    *EnvDefgenericModule(Environment *,Defgeneric *);
    const char                    *EnvGetDefgenericName(Environment *,Defgeneric *);
    const char                    *EnvGetDefgenericPPForm(Environment *,Defgeneric *);
-   SYMBOL_HN                     *EnvGetDefgenericNamePointer(Environment *,Defgeneric *);
+   CLIPSLexeme                   *EnvGetDefgenericNamePointer(Environment *,Defgeneric *);
    void                           EnvSetDefgenericPPForm(Environment *,Defgeneric *,const char *);
 
 #endif /* _H_genrccom */

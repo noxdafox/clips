@@ -103,7 +103,7 @@ struct expr *ParseAssertTemplate(
         {
          if (tempSlot->value == (void *) slotPtr->slotName)
            {
-            AlreadyParsedErrorMessage(theEnv,"slot ",ValueToString(slotPtr->slotName));
+            AlreadyParsedErrorMessage(theEnv,"slot ",slotPtr->slotName->contents);
             *error = true;
             ReturnExpression(theEnv,firstSlot);
             return NULL;
@@ -238,10 +238,10 @@ static struct templateSlot *ParseSlotLabel(
    /* Check that the slot name is valid for this template. */
    /*======================================================*/
 
-   if ((slotPtr = FindSlot(theDeftemplate,(SYMBOL_HN *) tempToken->value,&position)) == NULL)
+   if ((slotPtr = FindSlot(theDeftemplate,tempToken->lexemeValue,&position)) == NULL)
      {
-      InvalidDeftemplateSlotMessage(theEnv,ValueToString(tempToken->value),
-                                    ValueToString(theDeftemplate->header.name),true);
+      InvalidDeftemplateSlotMessage(theEnv,tempToken->lexemeValue->contents,
+                                    theDeftemplate->header.name->contents,true);
       *error = true;
       return NULL;
      }

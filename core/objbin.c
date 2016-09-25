@@ -146,13 +146,13 @@ typedef struct bsaveSlotDescriptor
 
 typedef struct bsaveMessageHandler
   {
+   struct bsaveConstructHeader header;
    unsigned system : 1;
    unsigned type   : 2;
    short minParams,
        maxParams,
        localVarCount;
-   long name,
-        cls,
+   long cls,
         actions;
   } BSAVE_HANDLER;
 
@@ -460,7 +460,7 @@ static void MarkDefclassItems(
       =============================================== */
    for (i = 0 ; i < cls->handlerCount ; i++)
      {
-      cls->handlers[i].name->neededSymbol = true;
+      cls->handlers[i].header.name->neededSymbol = true;
       ExpressionData(theEnv)->ExpressionCount += ExpressionSize(cls->handlers[i].actions);
       MarkNeededItems(theEnv,cls->handlers[i].actions);
      }
@@ -977,13 +977,15 @@ static void BsaveHandlers(
    for (i = 0 ; i < cls->handlerCount ; i++)
      {
       hnd = &cls->handlers[i];
+      
+      AssignBsaveConstructHeaderVals(&dummy_handler.header,&hnd->header);
+
       dummy_handler.system = hnd->system;
       dummy_handler.type = hnd->type;
       dummy_handler.minParams = hnd->minParams;
       dummy_handler.maxParams = hnd->maxParams;
       dummy_handler.localVarCount = hnd->localVarCount;
       dummy_handler.cls = DefclassIndex(hnd->cls);
-      dummy_handler.name = (long) hnd->name->bucket;
       if (hnd->actions != NULL)
         {
          dummy_handler.actions = ExpressionData(theEnv)->ExpressionCount;
@@ -1196,7 +1198,7 @@ static void UpdateDefclass(
    bcls = (BSAVE_DEFCLASS *) buf;
    cls = &ObjectBinaryData(theEnv)->DefclassArray[obji];
 
-   UpdateConstructHeader(theEnv,&bcls->header,&cls->header,
+   UpdateConstructHeader(theEnv,&bcls->header,&cls->header,DEFCLASS,
                          (int) sizeof(DEFCLASS_MODULE),ObjectBinaryData(theEnv)->ModuleArray,
                          (int) sizeof(Defclass),ObjectBinaryData(theEnv)->DefclassArray);
    cls->abstract = bcls->abstract;
@@ -1341,17 +1343,20 @@ static void UpdateHandler(
    hnd->system = bhnd->system;
    hnd->type = bhnd->type;
 
+   UpdateConstructHeader(theEnv,&bhnd->header,&hnd->header,DEFMESSAGE_HANDLER,
+                         (int) sizeof(DEFCLASS_MODULE),ObjectBinaryData(theEnv)->ModuleArray,
+                         (int) sizeof(DefmessageHandler),ObjectBinaryData(theEnv)->HandlerArray);
+
    hnd->minParams = bhnd->minParams;
    hnd->maxParams = bhnd->maxParams;
    hnd->localVarCount = bhnd->localVarCount;
    hnd->cls = DefclassPointer(bhnd->cls);
-   hnd->name = SymbolPointer(bhnd->name);
-   IncrementSymbolCount(hnd->name);
+   //IncrementSymbolCount(hnd->header.name);
    hnd->actions = ExpressionPointer(bhnd->actions);
-   hnd->ppForm = NULL;
+   hnd->header.ppForm = NULL;
    hnd->busy = 0;
    hnd->mark = 0;
-   hnd->usrData = NULL;
+   hnd->header.usrData = NULL;
 #if DEBUGGING_FUNCTIONS
    hnd->trace = MessageHandlerData(theEnv)->WatchHandlers;
 #endif
@@ -1461,7 +1466,7 @@ static void ClearBloadObjects(
    if (ObjectBinaryData(theEnv)->HandlerCount != 0L)
      {
       for (i = 0L ; i < ObjectBinaryData(theEnv)->HandlerCount ; i++)
-        DecrementSymbolCount(theEnv,ObjectBinaryData(theEnv)->HandlerArray[i].name);
+        DecrementSymbolCount(theEnv,ObjectBinaryData(theEnv)->HandlerArray[i].header.name);
 
       space = (sizeof(DefmessageHandler) * ObjectBinaryData(theEnv)->HandlerCount);
       if (space != 0L)

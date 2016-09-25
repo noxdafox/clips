@@ -985,8 +985,7 @@ void GetStrategyCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   returnValue->type = SYMBOL;
-   returnValue->value = EnvAddSymbol(theEnv,GetStrategyName(EnvGetStrategy(theEnv)));
+   returnValue->lexemeValue = EnvCreateSymbol(theEnv,GetStrategyName(EnvGetStrategy(theEnv)));
   }
 
 /********************************************/
@@ -1006,9 +1005,8 @@ void SetStrategyCommand(
    /* Set the return value. */
    /*=======================*/
 
-   oldStrategy = AgendaData(theEnv)->Strategy;
-   returnValue->type = SYMBOL;
-   returnValue->value = EnvAddSymbol(theEnv,GetStrategyName(EnvGetStrategy(theEnv)));
+   oldStrategy = EnvGetStrategy(theEnv);
+   returnValue->lexemeValue = EnvCreateSymbol(theEnv,GetStrategyName(oldStrategy));
 
    /*=========================================*/
    /* Check for the correct type of argument. */
@@ -1021,7 +1019,7 @@ void SetStrategyCommand(
    /* Set the strategy to the specified strategy. */
    /*=============================================*/
 
-   argument = DOToString(theArg);
+   argument = theArg.lexemeValue->contents;
 
    if (strcmp(argument,"depth") == 0)
      { EnvSetStrategy(theEnv,DEPTH_STRATEGY); }

@@ -129,13 +129,11 @@ void FactRelationFunction(
   {
    struct fact *theFact;
 
-   returnValue->type = SYMBOL;
-
    theFact = GetFactAddressOrIndexArgument(context,false);
 
    if (theFact == NULL)
      {
-      returnValue->value = EnvFalseSymbol(theEnv);
+      returnValue->lexemeValue = theEnv->FalseSymbol;
       return;
      }
 
@@ -146,7 +144,7 @@ void FactRelationFunction(
 /* FactRelation: C access routine for */
 /*   the fact-relation function.      */
 /**************************************/
-struct symbolHashNode *FactRelation(
+CLIPSLexeme *FactRelation(
   Fact *theFact)
   {
    return theFact->whichDeftemplate->header.name;
@@ -178,14 +176,9 @@ void FactExistpFunction(
   {
    Fact *theFact;
 
-   returnValue->type = SYMBOL;
-
    theFact = GetFactAddressOrIndexArgument(context,false);
 
-   if (EnvFactExistp(theEnv,theFact))
-     { returnValue->value = EnvTrueSymbol(theEnv); }
-   else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+   returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvFactExistp(theEnv,theFact));
   }
 
 /***********************************/
@@ -218,19 +211,16 @@ void FactSlotValueFunction(
    struct fact *theFact;
    CLIPSValue theArg;
 
-   /*=============================================*/
-   /* Set up the default return value for errors. */
-   /*=============================================*/
-
-   returnValue->type = SYMBOL;
-   returnValue->value = EnvFalseSymbol(theEnv);
-
    /*================================*/
    /* Get the reference to the fact. */
    /*================================*/
 
    theFact = GetFactAddressOrIndexArgument(context,true);
-   if (theFact == NULL) return;
+   if (theFact == NULL)
+     {
+      returnValue->lexemeValue = theEnv->FalseSymbol;
+      return;
+     }
 
    /*===========================*/
    /* Get the name of the slot. */
@@ -243,7 +233,7 @@ void FactSlotValueFunction(
    /* Get the slot's value. */
    /*=======================*/
 
-   FactSlotValue(theEnv,theFact,DOToString(theArg),returnValue);
+   FactSlotValue(theEnv,theFact,theArg.lexemeValue->contents,returnValue);
   }
 
 /***************************************/
@@ -269,16 +259,18 @@ void FactSlotValue(
         {
          EnvSetEvaluationError(theEnv,true);
          InvalidDeftemplateSlotMessage(theEnv,theSlotName,
-                                       ValueToString(theFact->whichDeftemplate->header.name),false);
+                                       theFact->whichDeftemplate->header.name->contents,false);
+         returnValue->lexemeValue = theEnv->FalseSymbol;
          return;
         }
      }
 
-   else if (FindSlot(theFact->whichDeftemplate,(SYMBOL_HN *) EnvAddSymbol(theEnv,theSlotName),&position) == NULL)
+   else if (FindSlot(theFact->whichDeftemplate,EnvCreateSymbol(theEnv,theSlotName),&position) == NULL)
      {
       EnvSetEvaluationError(theEnv,true);
       InvalidDeftemplateSlotMessage(theEnv,theSlotName,
-                                    ValueToString(theFact->whichDeftemplate->header.name),false);
+                                    theFact->whichDeftemplate->header.name->contents,false);
+      returnValue->lexemeValue = theEnv->FalseSymbol;
       return;
      }
 
@@ -303,19 +295,16 @@ void FactSlotNamesFunction(
   {
    struct fact *theFact;
 
-   /*=============================================*/
-   /* Set up the default return value for errors. */
-   /*=============================================*/
-
-   returnValue->type = SYMBOL;
-   returnValue->value = EnvFalseSymbol(theEnv);
-
    /*================================*/
    /* Get the reference to the fact. */
    /*================================*/
 
    theFact = GetFactAddressOrIndexArgument(context,true);
-   if (theFact == NULL) return;
+   if (theFact == NULL)
+     {
+      returnValue->lexemeValue = theEnv->FalseSymbol;
+      return;
+     }
 
    /*=====================*/
    /* Get the slot names. */
@@ -344,13 +333,11 @@ void EnvFactSlotNames(
 
    if (theFact->whichDeftemplate->implied)
      {
-      SetpType(returnValue,MULTIFIELD);
-      SetpDOBegin(returnValue,1);
-      SetpDOEnd(returnValue,1);
+      returnValue->begin = 0;
+      returnValue->end = 0;
       theList = EnvCreateMultifield(theEnv,(int) 1);
-      SetMFType(theList,1,SYMBOL);
-      SetMFValue(theList,1,EnvAddSymbol(theEnv,"implied"));
-      SetpValue(returnValue,theList);
+      SetMFValue(theList,0,EnvCreateSymbol(theEnv,"implied"));
+      returnValue->value = theList;
       return;
      }
 
@@ -367,21 +354,19 @@ void EnvFactSlotNames(
    /* Create a multifield value in which to store the slot names. */
    /*=============================================================*/
 
-   SetpType(returnValue,MULTIFIELD);
-   SetpDOBegin(returnValue,1);
-   SetpDOEnd(returnValue,(long) count);
+   returnValue->begin = 0;
+   returnValue->end = count - 1;
    theList = EnvCreateMultifield(theEnv,count);
-   SetpValue(returnValue,theList);
+   returnValue->value = theList;
 
    /*===============================================*/
    /* Store the slot names in the multifield value. */
    /*===============================================*/
 
-   for (count = 1, theSlot = theFact->whichDeftemplate->slotList;
+   for (count = 0, theSlot = theFact->whichDeftemplate->slotList;
         theSlot != NULL;
         count++, theSlot = theSlot->next)
      {
-      SetMFType(theList,count,SYMBOL);
       SetMFValue(theList,count,theSlot->slotName);
      }
   }
@@ -407,9 +392,9 @@ void GetFactListFunction(
       if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
         { return; }
 
-      if ((theModule = EnvFindDefmodule(theEnv,DOToString(theArg))) == NULL)
+      if ((theModule = EnvFindDefmodule(theEnv,theArg.lexemeValue->contents)) == NULL)
         {
-         if (strcmp("*",DOToString(theArg)) != 0)
+         if (strcmp("*",theArg.lexemeValue->contents) != 0)
            {
             EnvSetMultifieldErrorValue(theEnv,returnValue);
             UDFInvalidArgumentMessage(context,"defmodule name");
@@ -473,11 +458,10 @@ void EnvGetFactList(
    /* Create the multifield value to store the construct names. */
    /*===========================================================*/
 
-   SetpType(returnValue,MULTIFIELD);
-   SetpDOBegin(returnValue,1);
-   SetpDOEnd(returnValue,(long) count);
+   returnValue->begin = 0;
+   returnValue->end = count - 1;
    theList = EnvCreateMultifield(theEnv,count);
-   SetpValue(returnValue,theList);
+   returnValue->value = theList;
 
    /*==================================================*/
    /* Store the fact pointers in the multifield value. */
@@ -485,21 +469,19 @@ void EnvGetFactList(
 
    if (theModule == NULL)
      {
-      for (theFact = EnvGetNextFact(theEnv,NULL), count = 1;
+      for (theFact = EnvGetNextFact(theEnv,NULL), count = 0;
            theFact != NULL;
            theFact = EnvGetNextFact(theEnv,theFact), count++)
         {
-         SetMFType(theList,count,FACT_ADDRESS);
          SetMFValue(theList,count,theFact);
         }
      }
    else
      {
-      for (theFact = GetNextFactInScope(theEnv,NULL), count = 1;
+      for (theFact = GetNextFactInScope(theEnv,NULL), count = 0;
            theFact != NULL;
            theFact = GetNextFactInScope(theEnv,theFact), count++)
         {
-         SetMFType(theList,count,FACT_ADDRESS);
          SetMFValue(theList,count,theFact);
         }
      }
@@ -556,7 +538,7 @@ void PPFactFunction(
      {
       UDFNextArgument(context,ANY_TYPE,&theArg);
 
-      if ((theArg.value == EnvFalseSymbol(theEnv)) && (theArg.type == SYMBOL))
+      if (theArg.value == theEnv->FalseSymbol)
         { ignoreDefaults = false; }
       else
         { ignoreDefaults = true; }
@@ -604,7 +586,7 @@ void EnvPPFact(
 /* GetFactAddressOrIndexArgument: Retrieves an argument for a */
 /*   function which should be a reference to a valid fact.    */
 /**************************************************************/
-struct fact *GetFactAddressOrIndexArgument(
+Fact *GetFactAddressOrIndexArgument(
   UDFContext *context,
   bool noFactError)
   {
@@ -617,12 +599,12 @@ struct fact *GetFactAddressOrIndexArgument(
    if (! UDFNextArgument(context,ANY_TYPE,&theArg))
      { return NULL; }
 
-   if (GetType(theArg) == FACT_ADDRESS)
+   if (theArg.header->type == FACT_ADDRESS)
      {
-      if (((Fact *) GetValue(theArg))->garbage) return NULL;
-      else return (((Fact *) GetValue(theArg)));
+      if (theArg.factValue->garbage) return NULL;
+      else return theArg.factValue;
      }
-   else if (GetType(theArg) == INTEGER)
+   else if (theArg.header->type == INTEGER)
      {
       factIndex = ValueToLong(theArg.value);
       if (factIndex < 0)

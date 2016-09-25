@@ -101,16 +101,15 @@ static bool DefaultCompareSwapFunction(
   {
    CLIPSValue returnValue;
 
-   SortFunctionData(theEnv)->SortComparisonFunction->argList = GenConstant(theEnv,item1->type,item1->value);
-   SortFunctionData(theEnv)->SortComparisonFunction->argList->nextArg = GenConstant(theEnv,item2->type,item2->value);
+   SortFunctionData(theEnv)->SortComparisonFunction->argList = GenConstant(theEnv,item1->header->type,item1->value);
+   SortFunctionData(theEnv)->SortComparisonFunction->argList->nextArg = GenConstant(theEnv,item2->header->type,item2->value);
    ExpressionInstall(theEnv,SortFunctionData(theEnv)->SortComparisonFunction);
    EvaluateExpression(theEnv,SortFunctionData(theEnv)->SortComparisonFunction,&returnValue);
    ExpressionDeinstall(theEnv,SortFunctionData(theEnv)->SortComparisonFunction);
    ReturnExpression(theEnv,SortFunctionData(theEnv)->SortComparisonFunction->argList);
    SortFunctionData(theEnv)->SortComparisonFunction->argList = NULL;
 
-   if ((GetType(returnValue) == SYMBOL) &&
-       (GetValue(returnValue) == EnvFalseSymbol(theEnv)))
+   if (returnValue.value == theEnv->FalseSymbol)
      { return false; }
 
    return true;
@@ -141,8 +140,7 @@ void SortFunction(
    /* Set up the default return value. */
    /*==================================*/
 
-   SetpType(returnValue,SYMBOL);
-   SetpValue(returnValue,EnvFalseSymbol(theEnv));
+   returnValue->lexemeValue = theEnv->FalseSymbol;
 
    /*=============================================*/
    /* Verify that the comparison function exists. */
@@ -151,7 +149,7 @@ void SortFunction(
    if (! UDFNthArgument(context,1,SYMBOL_TYPE,&theArg))
      { return; }
 
-   functionName = DOToString(theArg);
+   functionName = theArg.lexemeValue->contents;
    functionReference = FunctionReferenceExpression(theEnv,functionName);
    if (functionReference == NULL)
      {
@@ -222,7 +220,7 @@ void SortFunction(
      {
       UDFNthArgument(context,i,ANY_TYPE,&theArguments[i-2]);
 
-      if (GetType(theArguments[i-2]) == MULTIFIELD)
+      if (theArguments[i-2].header->type == MULTIFIELD)
         { argumentSize += GetpDOLength(&theArguments[i-2]); }
       else
         { argumentSize++; }
@@ -245,19 +243,17 @@ void SortFunction(
 
    for (i = 2; i <= argumentCount; i++)
      {
-      if (GetType(theArguments[i-2]) == MULTIFIELD)
+      if (theArguments[i-2].header->type == MULTIFIELD)
         {
-         tempMultifield = (struct multifield *) GetValue(theArguments[i-2]);
-         for (j = GetDOBegin(theArguments[i-2]); j <= GetDOEnd(theArguments[i-2]); j++, k++)
+         tempMultifield = (Multifield *) theArguments[i-2].value;
+         for (j = theArguments[i-2].begin; j <= theArguments[i-2].end; j++, k++)
            {
-            SetType(theArguments2[k],GetMFType(tempMultifield,j));
-            SetValue(theArguments2[k],GetMFValue(tempMultifield,j));
+            theArguments2[k].value = GetMFValue(tempMultifield,j);
            }
         }
       else
         {
-         SetType(theArguments2[k],GetType(theArguments[i-2]));
-         SetValue(theArguments2[k],GetValue(theArguments[i-2]));
+         theArguments2[k].value = theArguments[i-2].value;
          k++;
         }
      }
@@ -283,16 +279,14 @@ void SortFunction(
 
    for (i = 0; i < argumentSize; i++)
      {
-      SetMFType(theMultifield,i+1,GetType(theArguments2[i]));
-      SetMFValue(theMultifield,i+1,GetValue(theArguments2[i]));
+      SetMFValue(theMultifield,i,theArguments2[i].value);
      }
 
    genfree(theEnv,theArguments2,argumentSize * sizeof(CLIPSValue));
 
-   SetpType(returnValue,MULTIFIELD);
-   SetpDOBegin(returnValue,1);
-   SetpDOEnd(returnValue,argumentSize);
-   SetpValue(returnValue,theMultifield);
+   returnValue->begin = 0;
+   returnValue->end = argumentSize - 1;
+   returnValue->value = theMultifield;
   }
 
 

@@ -74,7 +74,11 @@ typedef enum
 struct token
   {
    TokenType tknType;
-   void *value;
+   union
+     {
+      void *value;
+      CLIPSLexeme *lexemeValue;
+     };
    const char *printForm;
   };
 

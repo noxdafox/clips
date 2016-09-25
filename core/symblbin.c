@@ -82,9 +82,9 @@ void InitAtomicValueNeededFlags(
   Environment *theEnv)
   {
    unsigned long i;
-   SYMBOL_HN *symbolPtr, **symbolArray;
-   FLOAT_HN *floatPtr, **floatArray;
-   INTEGER_HN *integerPtr, **integerArray;
+   CLIPSLexeme *symbolPtr, **symbolArray;
+   CLIPSFloat *floatPtr, **floatArray;
+   CLIPSInteger *integerPtr, **integerArray;
    BITMAP_HN *bitMapPtr, **bitMapArray;
 
    /*===============*/
@@ -162,8 +162,8 @@ void WriteNeededSymbols(
   {
    unsigned long i;
    size_t length;
-   SYMBOL_HN **symbolArray;
-   SYMBOL_HN *symbolPtr;
+   CLIPSLexeme **symbolArray;
+   CLIPSLexeme *symbolPtr;
    unsigned long int numberOfUsedSymbols = 0;
    size_t size = 0;
 
@@ -198,6 +198,25 @@ void WriteNeededSymbols(
    GenWrite(&numberOfUsedSymbols,(unsigned long) sizeof(unsigned long int),fp);
    GenWrite(&size,(unsigned long) sizeof(unsigned long int),fp);
 
+   /*=============================*/
+   /* Write out the symbol types. */
+   /*=============================*/
+   
+   for (i = 0; i < SYMBOL_HASH_SIZE; i++)
+     {
+      for (symbolPtr = symbolArray[i];
+           symbolPtr != NULL;
+           symbolPtr = symbolPtr->next)
+        {
+         if (symbolPtr->neededSymbol)
+           { GenWrite(&symbolPtr->th.type,sizeof(unsigned short),fp); }
+        }
+     }
+     
+   /*========================*/
+   /* Write out the symbols. */
+   /*========================*/
+   
    for (i = 0; i < SYMBOL_HASH_SIZE; i++)
      {
       for (symbolPtr = symbolArray[i];
@@ -222,8 +241,8 @@ void WriteNeededFloats(
   FILE *fp)
   {
    int i;
-   FLOAT_HN **floatArray;
-   FLOAT_HN *floatPtr;
+   CLIPSFloat **floatArray;
+   CLIPSFloat *floatPtr;
    unsigned long int numberOfUsedFloats = 0;
 
    /*================================*/
@@ -272,8 +291,8 @@ void WriteNeededIntegers(
   FILE *fp)
   {
    int i;
-   INTEGER_HN **integerArray;
-   INTEGER_HN *integerPtr;
+   CLIPSInteger **integerArray;
+   CLIPSInteger *integerPtr;
    unsigned long int numberOfUsedIntegers = 0;
 
    /*==================================*/
@@ -403,6 +422,7 @@ void ReadNeededSymbols(
   {
    char *symbolNames, *namePtr;
    unsigned long space;
+   unsigned short *types;
    long i;
 
    /*=================================================*/
@@ -421,6 +441,9 @@ void ReadNeededSymbols(
    /*=======================================*/
    /* Allocate area for strings to be read. */
    /*=======================================*/
+   
+   types = (unsigned short *) gm3(theEnv,sizeof(unsigned short) * SymbolData(theEnv)->NumberOfSymbols);
+   GenReadBinary(theEnv,types,sizeof(unsigned short) * SymbolData(theEnv)->NumberOfSymbols);
 
    symbolNames = (char *) gm3(theEnv,(long) space);
    GenReadBinary(theEnv,symbolNames,space);
@@ -429,12 +452,18 @@ void ReadNeededSymbols(
    /* Store the symbol pointers in the symbol array. */
    /*================================================*/
 
-   SymbolData(theEnv)->SymbolArray = (SYMBOL_HN **)
-                 gm3(theEnv,(long) sizeof(SYMBOL_HN *) *  SymbolData(theEnv)->NumberOfSymbols);
+   SymbolData(theEnv)->SymbolArray = (CLIPSLexeme **)
+                 gm3(theEnv,(long) sizeof(CLIPSLexeme *) * SymbolData(theEnv)->NumberOfSymbols);
    namePtr = symbolNames;
    for (i = 0; i < SymbolData(theEnv)->NumberOfSymbols; i++)
      {
-      SymbolData(theEnv)->SymbolArray[i] = (SYMBOL_HN *) EnvAddSymbol(theEnv,namePtr);
+      if (types[i] == SYMBOL)
+        { SymbolData(theEnv)->SymbolArray[i] = EnvCreateSymbol(theEnv,namePtr); }
+      else if (types[i] == STRING)
+        { SymbolData(theEnv)->SymbolArray[i] = EnvCreateString(theEnv,namePtr); }
+      else
+        { SymbolData(theEnv)->SymbolArray[i] = EnvCreateInstanceName(theEnv,namePtr); }
+
       namePtr += strlen(namePtr) + 1;
      }
 
@@ -442,6 +471,7 @@ void ReadNeededSymbols(
    /* Free the name buffer. */
    /*=======================*/
 
+   rm3(theEnv,types,sizeof(unsigned short) * SymbolData(theEnv)->NumberOfSymbols);
    rm3(theEnv,symbolNames,(long) space);
   }
 
@@ -477,10 +507,10 @@ void ReadNeededFloats(
    /* Store the floats in the float array. */
    /*======================================*/
 
-   SymbolData(theEnv)->FloatArray = (FLOAT_HN **)
-               gm3(theEnv,(long) sizeof(FLOAT_HN *) * SymbolData(theEnv)->NumberOfFloats);
+   SymbolData(theEnv)->FloatArray = (CLIPSFloat **)
+               gm3(theEnv,(long) sizeof(CLIPSFloat *) * SymbolData(theEnv)->NumberOfFloats);
    for (i = 0; i < SymbolData(theEnv)->NumberOfFloats; i++)
-     { SymbolData(theEnv)->FloatArray[i] = (FLOAT_HN *) EnvAddDouble(theEnv,floatValues[i]); }
+     { SymbolData(theEnv)->FloatArray[i] = (CLIPSFloat *) EnvCreateFloat(theEnv,floatValues[i]); }
 
    /*========================*/
    /* Free the float buffer. */
@@ -521,10 +551,10 @@ void ReadNeededIntegers(
    /* Store the integers in the integer array. */
    /*==========================================*/
 
-   SymbolData(theEnv)->IntegerArray = (INTEGER_HN **)
-           gm3(theEnv,(long) (sizeof(INTEGER_HN *) * SymbolData(theEnv)->NumberOfIntegers));
+   SymbolData(theEnv)->IntegerArray = (CLIPSInteger **)
+           gm3(theEnv,(long) (sizeof(CLIPSInteger *) * SymbolData(theEnv)->NumberOfIntegers));
    for (i = 0; i < SymbolData(theEnv)->NumberOfIntegers; i++)
-     { SymbolData(theEnv)->IntegerArray[i] = (INTEGER_HN *) EnvAddLong(theEnv,integerValues[i]); }
+     { SymbolData(theEnv)->IntegerArray[i] = (CLIPSInteger *) EnvCreateInteger(theEnv,integerValues[i]); }
 
    /*==========================*/
    /* Free the integer buffer. */
@@ -595,11 +625,11 @@ void FreeAtomicValueStorage(
   Environment *theEnv)
   {
    if (SymbolData(theEnv)->SymbolArray != NULL)
-     rm3(theEnv,SymbolData(theEnv)->SymbolArray,(long) sizeof(SYMBOL_HN *) * SymbolData(theEnv)->NumberOfSymbols);
+     rm3(theEnv,SymbolData(theEnv)->SymbolArray,(long) sizeof(CLIPSLexeme *) * SymbolData(theEnv)->NumberOfSymbols);
    if (SymbolData(theEnv)->FloatArray != NULL)
-     rm3(theEnv,SymbolData(theEnv)->FloatArray,(long) sizeof(FLOAT_HN *) * SymbolData(theEnv)->NumberOfFloats);
+     rm3(theEnv,SymbolData(theEnv)->FloatArray,(long) sizeof(CLIPSFloat *) * SymbolData(theEnv)->NumberOfFloats);
    if (SymbolData(theEnv)->IntegerArray != NULL)
-     rm3(theEnv,SymbolData(theEnv)->IntegerArray,(long) sizeof(INTEGER_HN *) * SymbolData(theEnv)->NumberOfIntegers);
+     rm3(theEnv,SymbolData(theEnv)->IntegerArray,(long) sizeof(CLIPSInteger *) * SymbolData(theEnv)->NumberOfIntegers);
    if (SymbolData(theEnv)->BitMapArray != NULL)
      rm3(theEnv,SymbolData(theEnv)->BitMapArray,(long) sizeof(BITMAP_HN *) * SymbolData(theEnv)->NumberOfBitMaps);
 

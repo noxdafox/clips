@@ -69,12 +69,12 @@ typedef struct UDFContext_t UDFContext;
 
 struct FunctionDefinition
   {
-   struct symbolHashNode *callFunctionName;
+   CLIPSLexeme *callFunctionName;
    const char *actualFunctionName;
    unsigned unknownReturnValueType;
    void (*functionPointer)(Environment *,UDFContext *,CLIPSValue *);
    struct expr *(*parser)(Environment *,struct expr *,const char *);
-   struct symbolHashNode *restrictions;
+   CLIPSLexeme *restrictions;
    int minArgs;
    int maxArgs;
    bool overloadable;

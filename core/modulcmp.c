@@ -96,7 +96,7 @@ static void BeforeDefmodulesToCode(
    for (theModule = EnvGetNextDefmodule(theEnv,NULL);
         theModule != NULL;
         theModule = EnvGetNextDefmodule(theEnv,theModule))
-     { theModule->bsaveID = value++; }
+     { theModule->header.bsaveID = value++; }
   }
 
 /*************************************************************/
@@ -110,8 +110,8 @@ void PrintDefmoduleReference(
   {
    if (theModule == NULL) fprintf(theFile,"NULL");
    else fprintf(theFile,"&%s%d_%ld[%ld]",DefmodulePrefix(),ConstructCompilerData(theEnv)->ImageID,
-                                    (long) ((theModule->bsaveID / ConstructCompilerData(theEnv)->MaxIndices) + 1),
-                                    (long) (theModule->bsaveID % ConstructCompilerData(theEnv)->MaxIndices));
+                                    (long) ((theModule->header.bsaveID / ConstructCompilerData(theEnv)->MaxIndices) + 1),
+                                    (long) (theModule->header.bsaveID % ConstructCompilerData(theEnv)->MaxIndices));
   }
 
 /************************************************/
@@ -208,8 +208,12 @@ static bool ConstructToCode(
       /*======================================*/
 
       fprintf(moduleFile,"{");
-      PrintSymbolReference(theEnv,moduleFile,theConstruct->name);
-      fprintf(moduleFile,",NULL,");
+      
+      ConstructHeaderToCode(theEnv,moduleFile,&theConstruct->header,imageID,maxIndices,
+                         moduleCount,ModulePrefix(DefmoduleData(theEnv)->DefmoduleCodeItem),
+                         ConstructPrefix(DefmoduleData(theEnv)->DefmoduleCodeItem));
+
+      fprintf(moduleFile,",");
 
       /*=====================================================*/
       /* Write the items array pointers to other constructs. */
@@ -225,10 +229,10 @@ static bool ConstructToCode(
          if (theItem->constructsToCModuleReference == NULL)
            { fprintf(itemsFile,"NULL"); }
          else
-           { (*theItem->constructsToCModuleReference)(theEnv,itemsFile,(int) theConstruct->bsaveID,imageID,maxIndices); }
+           { (*theItem->constructsToCModuleReference)(theEnv,itemsFile,(int) theConstruct->header.bsaveID,imageID,maxIndices); }
 
          if ((j + 1) < GetNumberOfModuleItems(theEnv)) fprintf(itemsFile,",");
-         else if (theConstruct->next != NULL) fprintf(itemsFile,",\n");
+         else if (theConstruct->header.next != NULL) fprintf(itemsFile,",\n");
         }
 
       /*=================================*/
@@ -265,30 +269,11 @@ static bool ConstructToCode(
            { portItemCount++; }
         }
 
-      /*=====================*/
-      /* Write the bsave id. */
-      /*=====================*/
+      /*========================*/
+      /* Write the visitedFlag. */
+      /*========================*/
 
-      fprintf(moduleFile,"0,%ld,",theConstruct->bsaveID);
-
-      /*======================*/
-      /* Write the user data. */
-      /*======================*/
-
-      fprintf(moduleFile,"NULL,");
-
-      /*===========================*/
-      /* Write the next reference. */
-      /*===========================*/
-
-      if (theConstruct->next == NULL)
-        { fprintf(moduleFile,"NULL}"); }
-      else
-        {
-         fprintf(moduleFile,"&%s%d_%d[%d]}",ConstructPrefix(DefmoduleData(theEnv)->DefmoduleCodeItem),imageID,
-                            (int) (theConstruct->next->bsaveID / maxIndices) + 1,
-                            (int) theConstruct->next->bsaveID % maxIndices);
-        }
+      fprintf(moduleFile,"0}");
 
       /*===================================================*/
       /* Increment the number of defmodule data structures */

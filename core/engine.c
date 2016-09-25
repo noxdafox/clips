@@ -779,12 +779,12 @@ static Defmodule *RemoveFocus(
    if (EngineData(theEnv)->WatchFocus)
      {
       EnvPrintRouter(theEnv,WTRACE,"<== Focus ");
-      EnvPrintRouter(theEnv,WTRACE,ValueToString(theModule->name));
+      EnvPrintRouter(theEnv,WTRACE,theModule->header.name->contents);
 
       if ((EngineData(theEnv)->CurrentFocus != NULL) && currentFocusRemoved)
         {
          EnvPrintRouter(theEnv,WTRACE," to ");
-         EnvPrintRouter(theEnv,WTRACE,ValueToString(EngineData(theEnv)->CurrentFocus->theModule->name));
+         EnvPrintRouter(theEnv,WTRACE,EngineData(theEnv)->CurrentFocus->theModule->header.name->contents);
         }
 
       EnvPrintRouter(theEnv,WTRACE,"\n");
@@ -869,11 +869,11 @@ void EnvFocus(
    if (EngineData(theEnv)->WatchFocus)
      {
       EnvPrintRouter(theEnv,WTRACE,"==> Focus ");
-      EnvPrintRouter(theEnv,WTRACE,ValueToString(theModule->name));
+      EnvPrintRouter(theEnv,WTRACE,theModule->header.name->contents);
       if (EngineData(theEnv)->CurrentFocus != NULL)
         {
          EnvPrintRouter(theEnv,WTRACE," from ");
-         EnvPrintRouter(theEnv,WTRACE,ValueToString(EngineData(theEnv)->CurrentFocus->theModule->name));
+         EnvPrintRouter(theEnv,WTRACE,EngineData(theEnv)->CurrentFocus->theModule->header.name->contents);
         }
       EnvPrintRouter(theEnv,WTRACE,"\n");
      }
@@ -1033,7 +1033,7 @@ void RunCommand(
    else if (numArgs == 1)
      {
       if (! UDFFirstArgument(context,INTEGER_TYPE,&theArg)) return;
-      runLimit = DOToLong(theArg);
+      runLimit = theArg.integerValue->contents;
      }
 
    EnvRun(theEnv,runLimit);
@@ -1173,7 +1173,7 @@ void SetBreakCommand(
 
    if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg)) return;
 
-   argument = DOToString(theArg);
+   argument = theArg.lexemeValue->contents;
 
    if ((defrulePtr = EnvFindDefrule(theEnv,argument)) == NULL)
      {
@@ -1205,7 +1205,7 @@ void RemoveBreakCommand(
 
    if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg)) return;
 
-   argument = DOToString(theArg);
+   argument = theArg.lexemeValue->contents;
 
    if ((defrulePtr = EnvFindDefrule(theEnv,argument)) == NULL)
      {
@@ -1311,10 +1311,9 @@ void EnvGetFocusStack(
 
    if (EngineData(theEnv)->CurrentFocus == NULL)
      {
-      SetpType(returnValue,MULTIFIELD);
-      SetpDOBegin(returnValue,1);
-      SetpDOEnd(returnValue,0);
-      SetpValue(returnValue,EnvCreateMultifield(theEnv,0L));
+      returnValue->begin = 0;
+      returnValue->end = -1;
+      returnValue->value = EnvCreateMultifield(theEnv,0L);
       return;
      }
 
@@ -1330,22 +1329,20 @@ void EnvGetFocusStack(
    /* in which to store the module names.         */
    /*=============================================*/
 
-   SetpType(returnValue,MULTIFIELD);
-   SetpDOBegin(returnValue,1);
-   SetpDOEnd(returnValue,(long) count);
-   theList = (struct multifield *) EnvCreateMultifield(theEnv,count);
-   SetpValue(returnValue,theList);
+   returnValue->begin = 0;
+   returnValue->end = count - 1;
+   theList = (Multifield *) EnvCreateMultifield(theEnv,count);
+   returnValue->value = theList;
 
    /*=================================================*/
    /* Store the module names in the multifield value. */
    /*=================================================*/
 
-   for (theFocus = EngineData(theEnv)->CurrentFocus, count = 1;
+   for (theFocus = EngineData(theEnv)->CurrentFocus, count = 0;
         theFocus != NULL;
         theFocus = theFocus->next, count++)
      {
-      SetMFType(theList,count,SYMBOL);
-      SetMFValue(theList,count,theFocus->theModule->name);
+      SetMFValue(theList,count,theFocus->theModule->header.name);
      }
   }
 
@@ -1359,13 +1356,15 @@ void PopFocusFunction(
   CLIPSValue *returnValue)
   {
    Defmodule *theModule;
-   returnValue->type = SYMBOL;
 
    theModule = EnvPopFocus(theEnv);
    if (theModule == NULL)
-     { returnValue->value = EnvFalseSymbol(theEnv); }
-   else
-     { returnValue->value = theModule->name; }
+     {
+      returnValue->lexemeValue = theEnv->FalseSymbol;
+      return;
+     }
+
+   returnValue->value = theModule->header.name;
   }
 
 /******************************************/
@@ -1379,14 +1378,15 @@ void GetFocusFunction(
   {
    Defmodule *rv;
 
-   returnValue->type = SYMBOL;
-
    rv = EnvGetFocus(theEnv);
 
    if (rv == NULL)
-     { returnValue->value = EnvFalseSymbol(theEnv); }
-   else
-     { returnValue->value = rv->name; }
+     {
+      returnValue->lexemeValue = theEnv->FalseSymbol;
+      return;
+     }
+
+   returnValue->value = rv->header.name;
   }
 
 /*********************************/
@@ -1415,8 +1415,6 @@ void FocusCommand(
    Defmodule *theModule;
    int argCount, i;
 
-   returnValue->type = SYMBOL;
-
    /*===========================================*/
    /* Focus on the specified defrule module(s). */
    /*===========================================*/
@@ -1428,13 +1426,13 @@ void FocusCommand(
       if (! UDFNthArgument(context,i,SYMBOL_TYPE,&theArg))
         { return; }
 
-      argument = DOToString(theArg);
+      argument = theArg.lexemeValue->contents;
       theModule = EnvFindDefmodule(theEnv,argument);
 
       if (theModule == NULL)
         {
          CantFindItemErrorMessage(theEnv,"defmodule",argument);
-         returnValue->value = EnvFalseSymbol(theEnv);
+         returnValue->lexemeValue = theEnv->FalseSymbol;
          return;
         }
 
@@ -1445,7 +1443,7 @@ void FocusCommand(
    /* Return true to indicate success of focus command. */
    /*===================================================*/
 
-   returnValue->value = EnvTrueSymbol(theEnv);
+   returnValue->lexemeValue = theEnv->TrueSymbol;
   }
 
 /***********************************************************************/

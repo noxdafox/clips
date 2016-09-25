@@ -430,18 +430,13 @@ void DribbleOnCommand(
   {
    const char *fileName;
 
-   returnValue->type = SYMBOL;
-
    if ((fileName = GetFileName(context)) == NULL)
      {
-      returnValue->value = EnvFalseSymbol(theEnv);
+      returnValue->lexemeValue = theEnv->FalseSymbol;
       return;
      }
 
-   if (EnvDribbleOn(theEnv,fileName))
-     { returnValue->value = EnvTrueSymbol(theEnv); }
-   else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+   returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvDribbleOn(theEnv,fileName));
   }
 
 /**********************************/
@@ -522,12 +517,7 @@ void DribbleOffCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   returnValue->type = SYMBOL;
-
-   if (EnvDribbleOff(theEnv))
-     { returnValue->value = EnvTrueSymbol(theEnv); }
-   else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+   returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvDribbleOff(theEnv));
   }
 
 /***********************************/
@@ -758,18 +748,13 @@ void BatchCommand(
   {
    const char *fileName;
 
-   returnValue->type = SYMBOL;
-
    if ((fileName = GetFileName(context)) == NULL)
      {
-      returnValue->value = EnvFalseSymbol(theEnv);
+      returnValue->lexemeValue = theEnv->FalseSymbol;
       return;
      }
 
-   if (OpenBatch(theEnv,fileName,false))
-     { returnValue->value = EnvTrueSymbol(theEnv); }
-   else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+   returnValue->lexemeValue = EnvCreateBoolean(theEnv,OpenBatch(theEnv,fileName,false));
   }
 
 /**************************************************/
@@ -1097,18 +1082,13 @@ void BatchStarCommand(
   {
    const char *fileName;
 
-   returnValue->type = SYMBOL;
-
    if ((fileName = GetFileName(context)) == NULL)
      {
-      returnValue->value = EnvFalseSymbol(theEnv);
+      returnValue->lexemeValue = theEnv->FalseSymbol;
       return;
      }
 
-   if (EnvBatchStar(theEnv,fileName))
-     { returnValue->value = EnvTrueSymbol(theEnv); }
-   else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+   returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvBatchStar(theEnv,fileName));
   }
 
 #if ! RUN_TIME
@@ -1247,11 +1227,9 @@ void LoadCommand(
    const char *theFileName;
    int rv;
 
-   returnValue->type = SYMBOL;
-
    if ((theFileName = GetFileName(context)) == NULL)
      {
-      returnValue->value = EnvFalseSymbol(theEnv);
+      returnValue->lexemeValue = theEnv->FalseSymbol;
       return;
      }
 
@@ -1261,19 +1239,17 @@ void LoadCommand(
      {
       SetPrintWhileLoading(theEnv,false);
       OpenErrorMessage(theEnv,"load",theFileName);
-      returnValue->value = EnvFalseSymbol(theEnv);
+      returnValue->lexemeValue = theEnv->FalseSymbol;
       return;
      }
 
    SetPrintWhileLoading(theEnv,false);
-   if (rv == -1)
-     { returnValue->value = EnvFalseSymbol(theEnv); }
-   else
-     { returnValue->value = EnvTrueSymbol(theEnv); }
+
+   if (rv == -1) returnValue->lexemeValue = theEnv->FalseSymbol;
+   else returnValue->lexemeValue = theEnv->TrueSymbol;
 #else
    EnvPrintRouter(theEnv,WDIALOG,"Load is not available in this environment\n");
-   returnValue->type = SYMBOL;
-   returnValue->value = EnvFalseSymbol(theEnv);
+   returnValue->lexemeValue = theEnv->FalseSymbol;
 #endif
   }
 
@@ -1289,36 +1265,31 @@ void LoadStarCommand(
    const char *theFileName;
    int rv;
 
-   returnValue->type = SYMBOL;
-
    if ((theFileName = GetFileName(context)) == NULL)
      {
-      returnValue->value = EnvFalseSymbol(theEnv);
+      returnValue->lexemeValue = theEnv->FalseSymbol;
       return;
      }
 
    if ((rv = EnvLoad(theEnv,theFileName)) == 0)
      {
       OpenErrorMessage(theEnv,"load*",theFileName);
-      returnValue->value = EnvFalseSymbol(theEnv);
+      returnValue->lexemeValue = theEnv->FalseSymbol;
       return;
      }
 
-   if (rv == -1)
-     { returnValue->value = EnvFalseSymbol(theEnv); }
-   else
-     { returnValue->value = EnvTrueSymbol(theEnv); }
+   if (rv == -1) returnValue->lexemeValue = theEnv->FalseSymbol;
+   else returnValue->lexemeValue = theEnv->TrueSymbol;
 #else
    EnvPrintRouter(theEnv,WDIALOG,"Load* is not available in this environment\n");
-   returnValue->type = SYMBOL;
-   returnValue->value = EnvFalseSymbol(theEnv);
+   returnValue->lexemeValue = theEnv->FalseSymbol;
 #endif
   }
 
 #if DEBUGGING_FUNCTIONS
-/***********************************************************/
-/* SaveCommand: H/L access routine for the save command.   */
-/***********************************************************/
+/*********************************************************/
+/* SaveCommand: H/L access routine for the save command. */
+/*********************************************************/
 void SaveCommand(
   Environment *theEnv,
   UDFContext *context,
@@ -1327,25 +1298,23 @@ void SaveCommand(
 #if (! BLOAD_ONLY) && (! RUN_TIME)
    const char *theFileName;
 
-   returnValue->type = SYMBOL;
-
    if ((theFileName = GetFileName(context)) == NULL)
      {
-      returnValue->value = EnvFalseSymbol(theEnv);
+      returnValue->lexemeValue = theEnv->FalseSymbol;
       return;
      }
 
    if (EnvSave(theEnv,theFileName) == false)
      {
       OpenErrorMessage(theEnv,"save",theFileName);
-      returnValue->value = EnvFalseSymbol(theEnv);
+      returnValue->lexemeValue = theEnv->FalseSymbol;
+      return;
      }
-   else
-     { returnValue->value = EnvTrueSymbol(theEnv); }
+
+   returnValue->lexemeValue = theEnv->TrueSymbol;
 #else
    EnvPrintRouter(theEnv,WDIALOG,"Save is not available in this environment\n");
-   returnValue->type = SYMBOL;
-   returnValue->value = EnvFalseSymbol(theEnv);
+   returnValue->lexemeValue = theEnv->FalseSymbol;
 #endif
   }
 #endif

@@ -64,7 +64,7 @@
    static struct lhsParseNode    *GetLHSSlots(Environment *,const char *,struct token *,Deftemplate *,bool *);
    static struct lhsParseNode    *GetSingleLHSSlot(Environment *,const char *,struct token *,
                                                    struct templateSlot *,bool *,short);
-   static bool                    MultiplyDefinedLHSSlots(Environment *,struct lhsParseNode *,SYMBOL_HN *);
+   static bool                    MultiplyDefinedLHSSlots(Environment *,struct lhsParseNode *,CLIPSLexeme *);
 
 /*********************************************/
 /* DeftemplateLHSParse: Parses a LHS pattern */
@@ -183,11 +183,11 @@ static struct lhsParseNode *GetLHSSlots(
       /* Determine if the slot name is valid for the deftemplate. */
       /*==========================================================*/
 
-      if ((slotPtr = FindSlot(theDeftemplate,(SYMBOL_HN *) tempToken->value,&position)) == NULL)
+      if ((slotPtr = FindSlot(theDeftemplate,tempToken->lexemeValue,&position)) == NULL)
         {
          *error = true;
-         InvalidDeftemplateSlotMessage(theEnv,ValueToString(tempToken->value),
-                                       ValueToString(theDeftemplate->header.name),true);
+         InvalidDeftemplateSlotMessage(theEnv,tempToken->lexemeValue->contents,
+                                       theDeftemplate->header.name->contents,true);
          ReturnLHSParseNodes(theEnv,firstSlot);
          return NULL;
         }
@@ -196,7 +196,7 @@ static struct lhsParseNode *GetLHSSlots(
       /* Determine if the slot is multiply defined. */
       /*============================================*/
 
-      if (MultiplyDefinedLHSSlots(theEnv,firstSlot,(SYMBOL_HN *) tempToken->value) == true)
+      if (MultiplyDefinedLHSSlots(theEnv,firstSlot,tempToken->lexemeValue) == true)
         {
          *error = true;
          ReturnLHSParseNodes(theEnv,firstSlot);
@@ -255,13 +255,13 @@ static struct lhsParseNode *GetSingleLHSSlot(
   short position)
   {
    struct lhsParseNode *nextSlot;
-   SYMBOL_HN *slotName;
+   CLIPSLexeme *slotName;
 
    /*================================================*/
    /* Get the slot name and read in the first token. */
    /*================================================*/
 
-   slotName = (SYMBOL_HN *) tempToken->value;
+   slotName = tempToken->lexemeValue;
    SavePPBuffer(theEnv," ");
    GetToken(theEnv,readSource,tempToken);
 
@@ -356,7 +356,7 @@ static struct lhsParseNode *GetSingleLHSSlot(
 static bool MultiplyDefinedLHSSlots(
   Environment *theEnv,
   struct lhsParseNode *theSlots,
-  SYMBOL_HN *slotName)
+  CLIPSLexeme *slotName)
   {
    for (;
         theSlots != NULL;
@@ -364,7 +364,7 @@ static bool MultiplyDefinedLHSSlots(
      {
       if (theSlots->slot == slotName)
         {
-         AlreadyParsedErrorMessage(theEnv,"slot ",ValueToString(slotName));
+         AlreadyParsedErrorMessage(theEnv,"slot ",slotName->contents);
          return true;
         }
      }

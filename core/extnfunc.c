@@ -184,7 +184,7 @@ static bool DefineFunction(
    if (newFunction != NULL) return false;
 
    newFunction = get_struct(theEnv,FunctionDefinition);
-   newFunction->callFunctionName = (SYMBOL_HN *) EnvAddSymbol(theEnv,name);
+   newFunction->callFunctionName = EnvCreateSymbol(theEnv,name);
    IncrementSymbolCount(newFunction->callFunctionName);
    newFunction->next = GetFunctionList(theEnv);
    ExternalFunctionData(theEnv)->ListOfFunctions = newFunction;
@@ -201,7 +201,7 @@ static bool DefineFunction(
      { newFunction->restrictions = NULL; }
    else
      {
-      newFunction->restrictions = (SYMBOL_HN *) EnvAddSymbol(theEnv,restrictions);
+      newFunction->restrictions = EnvCreateString(theEnv,restrictions);
       IncrementSymbolCount(newFunction->restrictions);
      }
 
@@ -222,10 +222,10 @@ bool EnvRemoveUDF(
   Environment *theEnv,
   const char *functionName)
   {
-   SYMBOL_HN *findValue;
+   CLIPSLexeme *findValue;
    struct FunctionDefinition *fPtr, *lastPtr = NULL;
 
-   findValue = (SYMBOL_HN *) FindSymbolHN(theEnv,functionName);
+   findValue = FindSymbolHN(theEnv,functionName,SYMBOL_TYPE);
 
    for (fPtr = ExternalFunctionData(theEnv)->ListOfFunctions;
         fPtr != NULL;
@@ -265,7 +265,7 @@ static bool RemoveHashFunction(
    struct FunctionHash *fhPtr, *lastPtr = NULL;
    unsigned hashValue;
 
-   hashValue = HashSymbol(ValueToString(fdPtr->callFunctionName),SIZE_FUNCTION_HASH);
+   hashValue = HashSymbol(fdPtr->callFunctionName->contents,SIZE_FUNCTION_HASH);
 
    for (fhPtr = ExternalFunctionData(theEnv)->FunctionHashtable[hashValue];
         fhPtr != NULL;
@@ -568,13 +568,13 @@ struct FunctionDefinition *FindFunction(
   {
    struct FunctionHash *fhPtr;
    unsigned hashValue;
-   SYMBOL_HN *findValue;
+   CLIPSLexeme *findValue;
 
    if (ExternalFunctionData(theEnv)->FunctionHashtable == NULL) return NULL;
 
    hashValue = HashSymbol(functionName,SIZE_FUNCTION_HASH);
 
-   findValue = (SYMBOL_HN *) FindSymbolHN(theEnv,functionName);
+   findValue = FindSymbolHN(theEnv,functionName,SYMBOL_TYPE);
 
    for (fhPtr = ExternalFunctionData(theEnv)->FunctionHashtable[hashValue];
         fhPtr != NULL;
@@ -680,58 +680,27 @@ void AssignErrorValue(
   UDFContext *context)
   {
    if (context->theFunction->unknownReturnValueType & BOOLEAN_TYPE)
-     {
-      context->returnValue->type = SYMBOL;
-      context->returnValue->value = EnvFalseSymbol(context->environment);
-     }
+     { context->returnValue->lexemeValue = context->environment->FalseSymbol; }
    else if (context->theFunction->unknownReturnValueType & STRING_TYPE)
-     {
-      context->returnValue->type = STRING;
-      context->returnValue->value = EnvAddSymbol(context->environment,"");
-     }
+     { context->returnValue->lexemeValue = EnvCreateString(context->environment,""); }
    else if (context->theFunction->unknownReturnValueType & SYMBOL_TYPE)
-     {
-      context->returnValue->type = SYMBOL;
-      context->returnValue->value = EnvAddSymbol(context->environment,"nil");
-     }
+     { context->returnValue->lexemeValue = EnvCreateSymbol(context->environment,"nil"); }
    else if (context->theFunction->unknownReturnValueType & INTEGER_TYPE)
-     {
-      context->returnValue->type = INTEGER;
-      context->returnValue->value = EnvAddLong(context->environment,0);
-     }
+     { context->returnValue->integerValue = EnvCreateInteger(context->environment,0); }
    else if (context->theFunction->unknownReturnValueType & FLOAT_TYPE)
-     {
-      context->returnValue->type = FLOAT;
-      context->returnValue->value = EnvAddDouble(context->environment,0.0);
-     }
+     { context->returnValue->floatValue = EnvCreateFloat(context->environment,0.0); }
    else if (context->theFunction->unknownReturnValueType & MULTIFIELD_TYPE)
-     {
-      EnvSetMultifieldErrorValue(context->environment,context->returnValue);
-     }
+     { EnvSetMultifieldErrorValue(context->environment,context->returnValue); }
    else if (context->theFunction->unknownReturnValueType & INSTANCE_NAME_TYPE)
-     {
-      context->returnValue->type = INSTANCE_NAME;
-      context->returnValue->value = EnvAddSymbol(context->environment,"nil");
-     }
+     { context->returnValue->lexemeValue = EnvCreateInstanceName(context->environment,"nil"); }
    else if (context->theFunction->unknownReturnValueType & FACT_ADDRESS_TYPE)
-     {
-      context->returnValue->type = FACT_ADDRESS;
-      context->returnValue->value = &FactData(context->environment)->DummyFact;
-     }
+     { context->returnValue->factValue = &FactData(context->environment)->DummyFact; }
    else if (context->theFunction->unknownReturnValueType & INSTANCE_ADDRESS_TYPE)
-     {
-      context->returnValue->type = INSTANCE_ADDRESS;
-      context->returnValue->value = &InstanceData(context->environment)->DummyInstance;
-     }
+     { context->returnValue->value = &InstanceData(context->environment)->DummyInstance; }
    else if (context->theFunction->unknownReturnValueType & EXTERNAL_ADDRESS_TYPE)
-     {
-      context->returnValue->type = EXTERNAL_ADDRESS;
-      context->returnValue->value = EnvAddExternalAddress(context->environment,NULL,0);
-     }
+     { context->returnValue->value = EnvAddExternalAddress(context->environment,NULL,0); }
    else
-     {
-      context->returnValue->type = RVOID;
-     }
+     { context->returnValue->value = context->environment->VoidConstant; }
   }
 
 /*********************/
@@ -790,8 +759,6 @@ bool UDFNextArgument(
    switch (argPtr->type)
      {
       case INTEGER:
-        returnValue->type = argPtr->type;
-        //returnValue->bitType = INTEGER_TYPE;
         returnValue->value = argPtr->value;
         if (expectedType & INTEGER_TYPE) return true;
         ExpectedTypeError0(theEnv,UDFContextFunctionName(context),argumentPosition);
@@ -803,8 +770,6 @@ bool UDFNextArgument(
         break;
 
       case FLOAT:
-        returnValue->type = argPtr->type;
-        //returnValue->bitType = FLOAT_TYPE;
         returnValue->value = argPtr->value;
         if (expectedType & FLOAT_TYPE) return true;
         ExpectedTypeError0(theEnv,UDFContextFunctionName(context),argumentPosition);
@@ -816,9 +781,7 @@ bool UDFNextArgument(
         break;
 
       case SYMBOL:
-        returnValue->type = argPtr->type;
         returnValue->value = argPtr->value;
-        //returnValue->bitType = SYMBOL_TYPE;
         if (expectedType & SYMBOL_TYPE) return true;
         ExpectedTypeError0(theEnv,UDFContextFunctionName(context),argumentPosition);
         PrintTypesString(theEnv,WERROR,expectedType,true);
@@ -829,9 +792,7 @@ bool UDFNextArgument(
         break;
 
       case STRING:
-        returnValue->type = argPtr->type;
         returnValue->value = argPtr->value;
-        //returnValue->bitType = STRING_TYPE;
         if (expectedType & STRING_TYPE) return true;
         ExpectedTypeError0(theEnv,UDFContextFunctionName(context),argumentPosition);
         PrintTypesString(theEnv,WERROR,expectedType,true);
@@ -842,9 +803,7 @@ bool UDFNextArgument(
         break;
 
       case INSTANCE_NAME:
-        returnValue->type = argPtr->type;
         returnValue->value = argPtr->value;
-        //returnValue->bitType = INSTANCE_NAME_TYPE;
         if (expectedType & INSTANCE_NAME_TYPE) return true;
         ExpectedTypeError0(theEnv,UDFContextFunctionName(context),argumentPosition);
         PrintTypesString(theEnv,WERROR,expectedType,true);
@@ -857,10 +816,9 @@ bool UDFNextArgument(
 
    EvaluateExpression(theEnv,argPtr,returnValue);
 
-   switch (returnValue->type)
+   switch (returnValue->header->type)
      {
       case RVOID:
-        //returnValue->bitType = VOID_TYPE;
         if (expectedType & VOID_TYPE)
           {
            if (EvaluationData(theEnv)->EvaluationError)
@@ -873,7 +831,6 @@ bool UDFNextArgument(
         break;
 
       case INTEGER:
-        //returnValue->bitType = INTEGER_TYPE;
         if (expectedType & INTEGER_TYPE)
           {
            if (EvaluationData(theEnv)->EvaluationError)
@@ -886,7 +843,6 @@ bool UDFNextArgument(
         break;
 
       case FLOAT:
-        //returnValue->bitType = FLOAT_TYPE;
         if (expectedType & FLOAT_TYPE)
           {
            if (EvaluationData(theEnv)->EvaluationError)
@@ -899,7 +855,6 @@ bool UDFNextArgument(
         break;
 
       case SYMBOL:
-        //returnValue->bitType = SYMBOL_TYPE;
         if (expectedType & SYMBOL_TYPE)
           {
            if (EvaluationData(theEnv)->EvaluationError)
@@ -912,7 +867,6 @@ bool UDFNextArgument(
         break;
 
       case STRING:
-        //returnValue->bitType = STRING_TYPE;
         if (expectedType & STRING_TYPE)
           {
            if (EvaluationData(theEnv)->EvaluationError)
@@ -925,7 +879,6 @@ bool UDFNextArgument(
         break;
 
       case INSTANCE_NAME:
-        //returnValue->bitType = INSTANCE_NAME_TYPE;
         if (expectedType & INSTANCE_NAME_TYPE)
           {
            if (EvaluationData(theEnv)->EvaluationError)
@@ -938,7 +891,6 @@ bool UDFNextArgument(
         break;
 
       case EXTERNAL_ADDRESS:
-        //returnValue->bitType = EXTERNAL_ADDRESS_TYPE;
         if (expectedType & EXTERNAL_ADDRESS_TYPE)
           {
            if (EvaluationData(theEnv)->EvaluationError)
@@ -951,7 +903,6 @@ bool UDFNextArgument(
         break;
 
       case FACT_ADDRESS:
-        //returnValue->bitType = FACT_ADDRESS_TYPE;
         if (expectedType & FACT_ADDRESS_TYPE)
           {
            if (EvaluationData(theEnv)->EvaluationError)
@@ -964,7 +915,6 @@ bool UDFNextArgument(
         break;
 
       case INSTANCE_ADDRESS:
-        //returnValue->bitType = INSTANCE_ADDRESS_TYPE;
         if (expectedType & INSTANCE_ADDRESS_TYPE)
           {
            if (EvaluationData(theEnv)->EvaluationError)
@@ -977,7 +927,6 @@ bool UDFNextArgument(
         break;
 
       case MULTIFIELD:
-        //returnValue->bitType = MULTIFIELD_TYPE;
         if (expectedType & MULTIFIELD_TYPE)
           {
            if (EvaluationData(theEnv)->EvaluationError)

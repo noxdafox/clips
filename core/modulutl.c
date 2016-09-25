@@ -50,9 +50,9 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                      *SearchImportedConstructModules(Environment *,struct symbolHashNode *,
+   static void                      *SearchImportedConstructModules(Environment *,CLIPSLexeme *,
                                               Defmodule *,
-                                              struct moduleItem *,struct symbolHashNode *,
+                                              struct moduleItem *,CLIPSLexeme *,
                                               int *,int,Defmodule *);
 
 /********************************************************************/
@@ -87,13 +87,13 @@ unsigned FindModuleSeparator(
 /*   symbol reference to the module name (or NULL if a module name */
 /*   cannot be extracted).                                         */
 /*******************************************************************/
-SYMBOL_HN *ExtractModuleName(
+CLIPSLexeme *ExtractModuleName(
   Environment *theEnv,
   unsigned thePosition,
   const char *theString)
   {
    char *newString;
-   SYMBOL_HN *returnValue;
+   CLIPSLexeme *returnValue;
 
    /*=============================================*/
    /* Return NULL if the :: is in a position such */
@@ -126,7 +126,7 @@ SYMBOL_HN *ExtractModuleName(
    /* name) to the symbol table.                          */
    /*=====================================================*/
 
-   returnValue = (SYMBOL_HN *) EnvAddSymbol(theEnv,newString);
+   returnValue = EnvCreateSymbol(theEnv,newString);
 
    /*=============================================*/
    /* Return the storage of the temporary string. */
@@ -138,7 +138,7 @@ SYMBOL_HN *ExtractModuleName(
    /* Return a pointer to the module name symbol. */
    /*=============================================*/
 
-   return(returnValue);
+   return returnValue;
   }
 
 /********************************************************************/
@@ -147,21 +147,22 @@ SYMBOL_HN *ExtractModuleName(
 /*   symbol reference to the construct name (or NULL if a construct */
 /*   name cannot be extracted).                                     */
 /********************************************************************/
-SYMBOL_HN *ExtractConstructName(
+CLIPSLexeme *ExtractConstructName(
   Environment *theEnv,
   unsigned thePosition,
-  const char *theString)
+  const char *theString,
+  unsigned returnType)
   {
    size_t theLength;
    char *newString;
-   SYMBOL_HN *returnValue;
+   CLIPSLexeme *returnValue;
 
    /*======================================*/
    /* Just return the string if it doesn't */
    /* contain the :: symbol.               */
    /*======================================*/
 
-   if (thePosition == 0) return((SYMBOL_HN *) EnvAddSymbol(theEnv,theString));
+   if (thePosition == 0) return EnvCreateSymbol(theEnv,theString);
 
    /*=====================================*/
    /* Determine the length of the string. */
@@ -195,7 +196,12 @@ SYMBOL_HN *ExtractConstructName(
    /* Add the construct name to the symbol table. */
    /*=============================================*/
 
-   returnValue = (SYMBOL_HN *) EnvAddSymbol(theEnv,newString);
+   if (returnType == SYMBOL)
+     { returnValue = EnvCreateSymbol(theEnv,newString); }
+   else if (returnType == INSTANCE_NAME)
+     { returnValue = EnvCreateInstanceName(theEnv,newString); }
+   else
+     { returnValue = EnvCreateString(theEnv,newString); }
 
    /*=============================================*/
    /* Return the storage of the temporary string. */
@@ -207,7 +213,7 @@ SYMBOL_HN *ExtractConstructName(
    /* Return a pointer to the construct name symbol. */
    /*================================================*/
 
-   return(returnValue);
+   return returnValue;
   }
 
 /****************************************************/
@@ -220,7 +226,7 @@ const char *ExtractModuleAndConstructName(
   const char *theName)
   {
    unsigned separatorPosition;
-   SYMBOL_HN *moduleName, *shortName;
+   CLIPSLexeme *moduleName, *shortName;
    Defmodule *theModule;
 
    /*========================*/
@@ -241,7 +247,7 @@ const char *ExtractModuleAndConstructName(
    /* Check to see if the module exists. */
    /*====================================*/
 
-   theModule = EnvFindDefmodule(theEnv,ValueToString(moduleName));
+   theModule = EnvFindDefmodule(theEnv,moduleName->contents);
    if (theModule == NULL) return NULL;
 
    /*============================*/
@@ -254,9 +260,9 @@ const char *ExtractModuleAndConstructName(
    /* Extract the construct name. */
    /*=============================*/
 
-   shortName = ExtractConstructName(theEnv,separatorPosition,theName);
+   shortName = ExtractConstructName(theEnv,separatorPosition,theName,SYMBOL);
    if (shortName == NULL) return NULL;
-   return(ValueToString(shortName));
+   return shortName->contents;
   }
 
 /************************************************************/
@@ -330,9 +336,9 @@ void *FindImportedConstruct(
    /* Search for the construct. */
    /*===========================*/
 
-   rv = SearchImportedConstructModules(theEnv,(SYMBOL_HN *) EnvAddSymbol(theEnv,constructName),
+   rv = SearchImportedConstructModules(theEnv,EnvCreateSymbol(theEnv,constructName),
                                        matchModule,theModuleItem,
-                                       (SYMBOL_HN *) EnvAddSymbol(theEnv,findName),count,
+                                       EnvCreateSymbol(theEnv,findName),count,
                                        searchCurrent,notYetDefinedInModule);
 
    /*=============================*/
@@ -389,10 +395,10 @@ void MarkModulesAsUnvisited(
 /***********************************************************/
 static void *SearchImportedConstructModules(
   Environment *theEnv,
-  struct symbolHashNode *constructType,
+  CLIPSLexeme *constructType,
   Defmodule *matchModule,
   struct moduleItem *theModuleItem,
-  struct symbolHashNode *findName,
+  CLIPSLexeme *findName,
   int *count,
   int searchCurrent,
   Defmodule *notYetDefinedInModule)
@@ -427,7 +433,7 @@ static void *SearchImportedConstructModules(
       /* Look for the construct in the current module. */
       /*===============================================*/
 
-      rv = (*theModuleItem->findFunction)(theEnv,ValueToString(findName));
+      rv = (*theModuleItem->findFunction)(theEnv,findName->contents);
 
       /*========================================================*/
       /* If we're in the process of defining the construct in   */
@@ -496,7 +502,7 @@ static void *SearchImportedConstructModules(
 
       if (searchModule)
         {
-         theModule = EnvFindDefmodule(theEnv,ValueToString(theImportList->moduleName));
+         theModule = EnvFindDefmodule(theEnv,theImportList->moduleName->contents);
          if (theModule == NULL) searchModule = false;
         }
 
@@ -560,15 +566,15 @@ static void *SearchImportedConstructModules(
 bool ConstructExported(
   Environment *theEnv,
   const char *constructTypeStr,
-  struct symbolHashNode *moduleName,
-  struct symbolHashNode *findName)
+  CLIPSLexeme *moduleName,
+  CLIPSLexeme *findName)
   {
-   struct symbolHashNode *constructType;
+   CLIPSLexeme *constructType;
    Defmodule *theModule;
    struct portItem *theExportList;
 
-   constructType = FindSymbolHN(theEnv,constructTypeStr);
-   theModule = EnvFindDefmodule(theEnv,ValueToString(moduleName));
+   constructType = FindSymbolHN(theEnv,constructTypeStr,SYMBOL_TYPE);
+   theModule = EnvFindDefmodule(theEnv,moduleName->contents);
 
    if ((constructType == NULL) || (theModule == NULL) || (findName == NULL))
      { return false; }
@@ -604,7 +610,7 @@ bool AllImportedModulesVisited(
    theImportList = theModule->importList;
    while (theImportList != NULL)
      {
-      theImportModule = EnvFindDefmodule(theEnv,ValueToString(theImportList->moduleName));
+      theImportModule = EnvFindDefmodule(theEnv,theImportList->moduleName->contents);
 
       if (! theImportModule->visitedFlag) return false;
 

@@ -579,7 +579,7 @@ struct lhsParseNode *RestrictionParse(
   const char *readSource,
   struct token *theToken,
   bool multifieldSlot,
-  struct symbolHashNode *theSlot,
+  CLIPSLexeme *theSlot,
   short slotNumber,
   CONSTRAINT_RECORD *theConstraints,
   short position)
@@ -768,13 +768,13 @@ struct lhsParseNode *RestrictionParse(
       if (theConstraints->maxFields->value != SymbolData(theEnv)->PositiveInfinity)
         {
          ReturnExpression(theEnv,tempConstraints->maxFields);
-         tempConstraints->maxFields = GenConstant(theEnv,INTEGER,EnvAddLong(theEnv,ValueToLong(theConstraints->maxFields->value) - numberOfSingleFields));
+         tempConstraints->maxFields = GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,ValueToLong(theConstraints->maxFields->value) - numberOfSingleFields));
         }
 
       if ((numberOfMultifields == 1) && (theConstraints->minFields->value != SymbolData(theEnv)->NegativeInfinity))
         {
          ReturnExpression(theEnv,tempConstraints->minFields);
-         tempConstraints->minFields = GenConstant(theEnv,INTEGER,EnvAddLong(theEnv,ValueToLong(theConstraints->minFields->value) - numberOfSingleFields));
+         tempConstraints->minFields = GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,ValueToLong(theConstraints->minFields->value) - numberOfSingleFields));
         }
      }
 
@@ -1175,7 +1175,7 @@ static struct lhsParseNode *LiteralRestrictionParse(
       /* a return value constraint.   */
       /*==============================*/
 
-      if (strcmp(ValueToString(theToken->value),"=") == 0)
+      if (strcmp(theToken->lexemeValue->contents,"=") == 0)
         {
          theExpression = Function0Parse(theEnv,readSource);
          if (theExpression == NULL)
@@ -1194,7 +1194,7 @@ static struct lhsParseNode *LiteralRestrictionParse(
       /* a predicate constraint.     */
       /*=============================*/
 
-      else if (strcmp(ValueToString(theToken->value),":") == 0)
+      else if (strcmp(theToken->lexemeValue->contents,":") == 0)
         {
          theExpression = Function0Parse(theEnv,readSource);
          if (theExpression == NULL)

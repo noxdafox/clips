@@ -135,8 +135,7 @@ void MVSlotReplaceCommand(
    long rb,re;
    EXPRESSION arg;
 
-   returnValue->type = SYMBOL;
-   returnValue->value = EnvFalseSymbol(theEnv);
+   returnValue->lexemeValue = theEnv->FalseSymbol;
    ins = CheckMultifieldSlotInstance(context);
    if (ins == NULL)
      return;
@@ -176,8 +175,7 @@ void MVSlotInsertCommand(
    long theIndex;
    EXPRESSION arg;
 
-   returnValue->type = SYMBOL;
-   returnValue->value = EnvFalseSymbol(theEnv);
+   returnValue->lexemeValue = theEnv->FalseSymbol;
    ins = CheckMultifieldSlotInstance(context);
    if (ins == NULL)
      return;
@@ -218,8 +216,7 @@ void MVSlotDeleteCommand(
    long rb,re;
    EXPRESSION arg;
 
-   returnValue->type = SYMBOL;
-   returnValue->value = EnvFalseSymbol(theEnv);
+   returnValue->lexemeValue = theEnv->FalseSymbol;
    ins = CheckMultifieldSlotInstance(context);
    if (ins == NULL)
      return;
@@ -256,11 +253,9 @@ void DirectMVReplaceCommand(
    long rb,re;
    CLIPSValue newval,newseg,oldseg;
 
-   returnValue->type = SYMBOL;
-
    if (CheckCurrentMessage(theEnv,"direct-slot-replace$",true) == false)
      {
-      returnValue->value = EnvFalseSymbol(theEnv);
+      returnValue->lexemeValue = theEnv->FalseSymbol;
       return;
      }
 
@@ -269,21 +264,21 @@ void DirectMVReplaceCommand(
                             GetFirstArgument(),&rb,&re,&newval);
    if (sp == NULL)
      {
-      returnValue->value = EnvFalseSymbol(theEnv);
+      returnValue->lexemeValue = theEnv->FalseSymbol;
       return;
      }
 
    AssignSlotToDataObject(&oldseg,sp);
    if (! ReplaceMultiValueField(theEnv,&newseg,&oldseg,rb,re,&newval,"direct-slot-replace$"))
      {
-      returnValue->value = EnvFalseSymbol(theEnv);
+      returnValue->lexemeValue = theEnv->FalseSymbol;
       return;
      }
 
    if (PutSlotValue(theEnv,ins,sp,&newseg,&newval,"function direct-slot-replace$"))
-     { returnValue->value = EnvTrueSymbol(theEnv); }
+     { returnValue->lexemeValue = theEnv->TrueSymbol; }
    else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+     { returnValue->lexemeValue = theEnv->FalseSymbol; }
   }
 
 /************************************************************************
@@ -304,12 +299,10 @@ void DirectMVInsertCommand(
    long theIndex;
    CLIPSValue newval,newseg,oldseg;
 
-   returnValue->type = SYMBOL;
-
    if (CheckCurrentMessage(theEnv,"direct-slot-insert$",true) == false)
-     {
-      returnValue->value = EnvFalseSymbol(theEnv);
-      return;
+     { 
+      returnValue->lexemeValue = theEnv->FalseSymbol;
+      return; 
      }
 
    ins = GetActiveInstance(theEnv);
@@ -317,21 +310,21 @@ void DirectMVInsertCommand(
                             GetFirstArgument(),&theIndex,NULL,&newval);
    if (sp == NULL)
      {
-      returnValue->value = EnvFalseSymbol(theEnv);
+      returnValue->lexemeValue = theEnv->FalseSymbol;
       return;
      }
 
    AssignSlotToDataObject(&oldseg,sp);
    if (! InsertMultiValueField(theEnv,&newseg,&oldseg,theIndex,&newval,"direct-slot-insert$"))
      {
-      returnValue->value = EnvFalseSymbol(theEnv);
-      return;
+      returnValue->lexemeValue = theEnv->FalseSymbol;
+      return; 
      }
 
    if (PutSlotValue(theEnv,ins,sp,&newseg,&newval,"function direct-slot-insert$"))
-     { returnValue->value = EnvTrueSymbol(theEnv); }
+     { returnValue->lexemeValue = theEnv->TrueSymbol; }
    else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+     { returnValue->lexemeValue = theEnv->FalseSymbol; }
   }
 
 /*****************************************************************
@@ -353,11 +346,9 @@ void DirectMVDeleteCommand(
    long rb,re;
    CLIPSValue newseg,oldseg;
 
-   returnValue->type = SYMBOL;
-
    if (CheckCurrentMessage(theEnv,"direct-slot-delete$",true) == false)
      {
-      returnValue->value = EnvFalseSymbol(theEnv);
+      returnValue->lexemeValue = theEnv->FalseSymbol;
       return;
      }
 
@@ -366,21 +357,21 @@ void DirectMVDeleteCommand(
                                   GetFirstArgument(),&rb,&re,NULL);
    if (sp == NULL)
      {
-      returnValue->value = EnvFalseSymbol(theEnv);
+      returnValue->lexemeValue = theEnv->FalseSymbol;
       return;
      }
 
    AssignSlotToDataObject(&oldseg,sp);
    if (! DeleteMultiValueField(theEnv,&newseg,&oldseg,rb,re,"direct-slot-delete$"))
      {
-      returnValue->value = EnvFalseSymbol(theEnv);
+      returnValue->lexemeValue = theEnv->FalseSymbol;
       return;
      }
 
    if (PutSlotValue(theEnv,ins,sp,&newseg,&oldseg,"function direct-slot-delete$"))
-     { returnValue->value = EnvTrueSymbol(theEnv); }
+     { returnValue->lexemeValue = theEnv->TrueSymbol; }
    else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+     { returnValue->lexemeValue = theEnv->FalseSymbol; }
   }
 
 /* =========================================
@@ -408,9 +399,9 @@ static Instance *CheckMultifieldSlotInstance(
    if (! UDFFirstArgument(context,INSTANCE_TYPES | SYMBOL_TYPE,&temp))
      { return NULL; }
 
-   if (temp.type == INSTANCE_ADDRESS)
+   if (temp.header->type == INSTANCE_ADDRESS)
      {
-      ins = (Instance *) temp.value;
+      ins = temp.instanceValue;
       if (ins->garbage == 1)
         {
          StaleInstanceAddress(theEnv,UDFContextFunctionName(context),0);
@@ -420,9 +411,9 @@ static Instance *CheckMultifieldSlotInstance(
      }
    else
      {
-      ins = FindInstanceBySymbol(theEnv,(SYMBOL_HN *) temp.value);
+      ins = FindInstanceBySymbol(theEnv,temp.lexemeValue);
       if (ins == NULL)
-        NoInstanceError(theEnv,ValueToString(temp.value),UDFContextFunctionName(context));
+        NoInstanceError(theEnv,temp.lexemeValue->contents,UDFContextFunctionName(context));
      }
    return ins;
   }
@@ -472,16 +463,16 @@ static INSTANCE_SLOT *CheckMultifieldSlotModify(
    start = (args == GetFirstArgument()) ? 1 : 2;
    EvaluationData(theEnv)->EvaluationError = false;
    EvaluateExpression(theEnv,args,&temp);
-   if (temp.type != SYMBOL)
+   if (temp.header->type != SYMBOL)
      {
       ExpectedTypeError1(theEnv,func,start,"symbol");
       EnvSetEvaluationError(theEnv,true);
       return NULL;
      }
-   sp = FindInstanceSlot(theEnv,ins,(SYMBOL_HN *) temp.value);
+   sp = FindInstanceSlot(theEnv,ins,temp.lexemeValue);
    if (sp == NULL)
      {
-      SlotExistError(theEnv,ValueToString(temp.value),func);
+      SlotExistError(theEnv,temp.lexemeValue->contents,func);
       return NULL;
      }
    if (sp->desc->multiple == 0)
@@ -490,15 +481,15 @@ static INSTANCE_SLOT *CheckMultifieldSlotModify(
       EnvPrintRouter(theEnv,WERROR,"Function ");
       EnvPrintRouter(theEnv,WERROR,func);
       EnvPrintRouter(theEnv,WERROR," cannot be used on single-field slot ");
-      EnvPrintRouter(theEnv,WERROR,ValueToString(sp->desc->slotName->name));
+      EnvPrintRouter(theEnv,WERROR,sp->desc->slotName->name->contents);
       EnvPrintRouter(theEnv,WERROR," in instance ");
-      EnvPrintRouter(theEnv,WERROR,ValueToString(ins->name));
+      EnvPrintRouter(theEnv,WERROR,ins->name->contents);
       EnvPrintRouter(theEnv,WERROR,".\n");
       EnvSetEvaluationError(theEnv,true);
       return NULL;
      }
    EvaluateExpression(theEnv,args->nextArg,&temp);
-   if (temp.type != INTEGER)
+   if (temp.header->type != INTEGER)
      {
       ExpectedTypeError1(theEnv,func,start+1,"integer");
       EnvSetEvaluationError(theEnv,true);
@@ -509,7 +500,7 @@ static INSTANCE_SLOT *CheckMultifieldSlotModify(
    if ((code == REPLACE) || (code == DELETE_OP))
      {
       EvaluateExpression(theEnv,args,&temp);
-      if (temp.type != INTEGER)
+      if (temp.header->type != INTEGER)
         {
          ExpectedTypeError1(theEnv,func,start+2,"integer");
          EnvSetEvaluationError(theEnv,true);
@@ -540,10 +531,9 @@ static void AssignSlotToDataObject(
   CLIPSValue *theDataObject,
   INSTANCE_SLOT *theSlot)
   {
-   theDataObject->type = (unsigned short) theSlot->type;
    theDataObject->value = theSlot->value;
    theDataObject->begin = 0;
-   SetpDOEnd(theDataObject,GetInstanceSlotLength(theSlot));
+   theDataObject->end = GetInstanceSlotLength(theSlot) - 1;
   }
 
 #endif

@@ -567,7 +567,7 @@ static struct FunctionDefinition *FastFindFunction(
    /* the named function wrapping around if necessary.     */
    /*======================================================*/
 
-   while (strcmp(functionName,ValueToString(theFunction->callFunctionName)) != 0)
+   while (strcmp(functionName,theFunction->callFunctionName->contents) != 0)
      {
       theFunction = theFunction->next;
       if (theFunction == lastFunction) return NULL;
@@ -812,23 +812,16 @@ void BloadCommand(
 #if (! RUN_TIME) && (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE)
    const char *fileName;
 
-   returnValue->type = SYMBOL;
-
    fileName = GetFileName(context);
    if (fileName != NULL)
      {
-      if (EnvBload(theEnv,fileName))
-        { returnValue->value = EnvTrueSymbol(theEnv); }
-      else
-        { returnValue->value = EnvFalseSymbol(theEnv); }
+      returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvBload(theEnv,fileName));
+      return;
      }
-   else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
 #else
 #if MAC_XCD
-#pragma unused(theEnv)
+#pragma unused(theEnv,context)
 #endif
-   returnValue->type = SYMBOL;
-   returnValue->value = EnvFalseSymbol(theEnv);
 #endif
+   returnValue->lexemeValue = theEnv->FalseSymbol;
   }

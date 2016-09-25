@@ -94,7 +94,7 @@
 /***************************************/
 
    static bool                    ValidDeffunctionName(Environment *,const char *);
-   static Deffunction            *AddDeffunction(Environment *,SYMBOL_HN *,EXPRESSION *,int,int,int,bool);
+   static Deffunction            *AddDeffunction(Environment *,CLIPSLexeme *,EXPRESSION *,int,int,int,bool);
 
 /***************************************************************************
   NAME         : ParseDeffunction
@@ -111,10 +111,10 @@ bool ParseDeffunction(
   Environment *theEnv,
   const char *readSource)
   {
-   SYMBOL_HN *deffunctionName;
+   CLIPSLexeme *deffunctionName;
    EXPRESSION *actions;
    EXPRESSION *parameterList;
-   SYMBOL_HN *wildcard;
+   CLIPSLexeme *wildcard;
    int min,max,lvars;
    bool deffunctionError = false;
    bool overwrite = false;
@@ -147,7 +147,7 @@ bool ParseDeffunction(
    if (deffunctionName == NULL)
      { return true; }
 
-   if (ValidDeffunctionName(theEnv,ValueToString(deffunctionName)) == false)
+   if (ValidDeffunctionName(theEnv,deffunctionName->contents) == false)
      { return true; }
 
    /*==========================*/
@@ -165,7 +165,7 @@ bool ParseDeffunction(
 
    if (ConstructData(theEnv)->CheckSyntaxMode)
      {
-      dptr = EnvFindDeffunctionInModule(theEnv,ValueToString(deffunctionName));
+      dptr = EnvFindDeffunctionInModule(theEnv,deffunctionName->contents);
       if (dptr == NULL)
         { dptr = AddDeffunction(theEnv,deffunctionName,NULL,min,max,0,true); }
       else
@@ -408,7 +408,7 @@ static bool ValidDeffunctionName(
  ****************************************************/
 static Deffunction *AddDeffunction(
   Environment *theEnv,
-  SYMBOL_HN *name,
+  CLIPSLexeme *name,
   EXPRESSION *actions,
   int min,
   int max,
@@ -432,11 +432,11 @@ static Deffunction *AddDeffunction(
    /* and interpretive code.                                        */
    /*===============================================================*/
 
-   dfuncPtr = EnvFindDeffunctionInModule(theEnv,ValueToString(name));
+   dfuncPtr = EnvFindDeffunctionInModule(theEnv,name->contents);
    if (dfuncPtr == NULL)
      {
       dfuncPtr = get_struct(theEnv,deffunction);
-      InitializeConstructHeader(theEnv,"deffunction",(struct constructHeader *) dfuncPtr,name);
+      InitializeConstructHeader(theEnv,"deffunction",DEFFUNCTION,(struct constructHeader *) dfuncPtr,name);
       IncrementSymbolCount(name);
       dfuncPtr->code = NULL;
       dfuncPtr->minNumberOfParameters = min;

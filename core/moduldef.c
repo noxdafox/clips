@@ -140,7 +140,7 @@ static void DeallocateDefmoduleData(
    tmpDMPtr = DefmoduleData(theEnv)->ListOfDefmodules;
    while (tmpDMPtr != NULL)
      {
-      nextDMPtr = tmpDMPtr->next;
+      nextDMPtr = (Defmodule *) tmpDMPtr->header.next;
       ReturnDefmodule(theEnv,tmpDMPtr,true);
       tmpDMPtr = nextDMPtr;
      }
@@ -427,14 +427,16 @@ void CreateMainModule(
    /*=======================================*/
 
    newDefmodule = get_struct(theEnv,defmodule);
-   newDefmodule->name = (SYMBOL_HN *) EnvAddSymbol(theEnv,"MAIN");
-   IncrementSymbolCount(newDefmodule->name);
-   newDefmodule->next = NULL;
-   newDefmodule->ppForm = NULL;
+   newDefmodule->header.name = EnvCreateSymbol(theEnv,"MAIN");
+   IncrementSymbolCount(newDefmodule->header.name);
+   newDefmodule->header.whichModule = NULL;
+   newDefmodule->header.next = NULL;
+   newDefmodule->header.ppForm = NULL;
    newDefmodule->importList = NULL;
    newDefmodule->exportList = NULL;
-   newDefmodule->bsaveID = 0L;
-   newDefmodule->usrData = NULL;
+   newDefmodule->header.bsaveID = 0L;
+   newDefmodule->header.usrData = NULL;
+   newDefmodule->header.constructType = DEFMODULE;
 
    /*==================================*/
    /* Initialize the array for storing */
@@ -491,7 +493,8 @@ void SetListOfDefmodules(
 
    DefmoduleData(theEnv)->LastDefmodule = DefmoduleData(theEnv)->ListOfDefmodules;
    if (DefmoduleData(theEnv)->LastDefmodule == NULL) return;
-   while (DefmoduleData(theEnv)->LastDefmodule->next != NULL) DefmoduleData(theEnv)->LastDefmodule = DefmoduleData(theEnv)->LastDefmodule->next;
+   while (DefmoduleData(theEnv)->LastDefmodule->header.next != NULL)
+     { DefmoduleData(theEnv)->LastDefmodule = (Defmodule *) DefmoduleData(theEnv)->LastDefmodule->header.next; }
   }
 
 /********************************************************************/
@@ -506,7 +509,7 @@ Defmodule *EnvGetNextDefmodule(
    if (defmodulePtr == NULL)
      { return DefmoduleData(theEnv)->ListOfDefmodules; }
    else
-     { return defmodulePtr->next; }
+     { return (Defmodule *) defmodulePtr->header.next; }
   }
 
 /*****************************************/
@@ -521,7 +524,7 @@ const char *EnvGetDefmoduleName(
 #pragma unused(theEnv)
 #endif
 
-   return ValueToString(defmodulePtr->name);
+   return defmodulePtr->header.name->contents;
   }
 
 /***************************************************/
@@ -536,7 +539,7 @@ const char *EnvGetDefmodulePPForm(
 #pragma unused(theEnv)
 #endif
 
-   return defmodulePtr->ppForm;
+   return defmodulePtr->header.ppForm;
   }
 
 #if (! RUN_TIME)
@@ -552,7 +555,7 @@ void RemoveAllDefmodules(
 
    while (DefmoduleData(theEnv)->ListOfDefmodules != NULL)
      {
-      nextDefmodule = DefmoduleData(theEnv)->ListOfDefmodules->next;
+      nextDefmodule = (Defmodule *) DefmoduleData(theEnv)->ListOfDefmodules->header.next;
       ReturnDefmodule(theEnv,DefmoduleData(theEnv)->ListOfDefmodules,false);
       DefmoduleData(theEnv)->ListOfDefmodules = nextDefmodule;
      }
@@ -609,7 +612,7 @@ static void ReturnDefmodule(
    /*======================================================*/
 
    if (! environmentClear)
-     { DecrementSymbolCount(theEnv,theDefmodule->name); }
+     { DecrementSymbolCount(theEnv,theDefmodule->header.name); }
 
    /*====================================*/
    /* Free the items in the import list. */
@@ -651,17 +654,17 @@ static void ReturnDefmodule(
    /* Free the defmodule pretty print string. */
    /*=========================================*/
 
-   if (theDefmodule->ppForm != NULL)
+   if (theDefmodule->header.ppForm != NULL)
      {
-      rm(theEnv,theDefmodule->ppForm,
-         (int) sizeof(char) * (strlen(theDefmodule->ppForm) + 1));
+      rm(theEnv,(void *) theDefmodule->header.ppForm,
+         (int) sizeof(char) * (strlen(theDefmodule->header.ppForm) + 1));
      }
 
    /*=======================*/
    /* Return the user data. */
    /*=======================*/
 
-   ClearUserDataList(theEnv,theDefmodule->usrData);
+   ClearUserDataList(theEnv,theDefmodule->header.usrData);
 
    /*======================================*/
    /* Return the defmodule data structure. */
@@ -681,17 +684,17 @@ Defmodule *EnvFindDefmodule(
   const char *defmoduleName)
   {
    Defmodule *defmodulePtr;
-   SYMBOL_HN *findValue;
+   CLIPSLexeme *findValue;
 
-   if ((findValue = (SYMBOL_HN *) FindSymbolHN(theEnv,defmoduleName)) == NULL) return NULL;
+   if ((findValue = FindSymbolHN(theEnv,defmoduleName,SYMBOL_TYPE)) == NULL) return NULL;
 
    defmodulePtr = DefmoduleData(theEnv)->ListOfDefmodules;
    while (defmodulePtr != NULL)
      {
-      if (defmodulePtr->name == findValue)
+      if (defmodulePtr->header.name == findValue)
         { return defmodulePtr; }
 
-      defmodulePtr = defmodulePtr->next;
+      defmodulePtr = (Defmodule *) defmodulePtr->header.next;
      }
 
    return NULL;
@@ -707,14 +710,16 @@ void GetCurrentModuleCommand(
   CLIPSValue *returnValue)
   {
    Defmodule *theModule;
-   returnValue->type = SYMBOL;
 
    theModule = EnvGetCurrentModule(theEnv);
 
    if (theModule == NULL)
-     { returnValue->value = EnvFalseSymbol(theEnv); }
-   else
-     { returnValue->value = EnvAddSymbol(theEnv,ValueToString(theModule->name)); }
+     {
+      returnValue->lexemeValue = theEnv->FalseSymbol;
+      return;
+     }
+
+   returnValue->value = theModule->header.name;
   }
 
 /*************************************************/
@@ -729,26 +734,30 @@ void SetCurrentModuleCommand(
    CLIPSValue theArg;
    const char *argument;
    Defmodule *theModule;
+   CLIPSLexeme *oldModuleName;
 
-   returnValue->type = SYMBOL;
+   /*=======================*/
+   /* Set the return value. */
+   /*=======================*/
+
+   theModule = EnvGetCurrentModule(theEnv);
+   if (theModule == NULL)
+     {
+      returnValue->lexemeValue = theEnv->FalseSymbol;
+      return;
+     }
+
+   oldModuleName = theModule->header.name;
+   returnValue->value = oldModuleName;
 
    /*=====================================================*/
    /* Check for the correct number and type of arguments. */
    /*=====================================================*/
 
-   theModule = EnvGetCurrentModule(theEnv);
-   if (theModule == NULL)
-     {
-      returnValue->value = EnvFalseSymbol(theEnv);
-      return;
-     }
-
-   returnValue->value = EnvAddSymbol(theEnv,ValueToString(EnvGetCurrentModule(theEnv)->name));
-
    if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
      { return; }
 
-   argument = DOToString(theArg);
+   argument = theArg.lexemeValue->contents;
 
    /*================================================*/
    /* Set the current module to the specified value. */

@@ -115,14 +115,14 @@ struct proceduralPrimitiveData
 
 #if DEFFUNCTION_CONSTRUCT || OBJECT_SYSTEM
    EXPRESSION                    *ParseProcParameters(Environment *,const char *,struct token *,EXPRESSION *,
-                                                             SYMBOL_HN **,int *,int *,bool *,
+                                                             CLIPSLexeme **,int *,int *,bool *,
                                                              bool (*)(Environment *,const char *));
 #endif
-   EXPRESSION                    *ParseProcActions(Environment *,const char *,const char *,struct token *,EXPRESSION *,SYMBOL_HN *,
+   EXPRESSION                    *ParseProcActions(Environment *,const char *,const char *,struct token *,EXPRESSION *,CLIPSLexeme *,
                                                           int (*)(Environment *,EXPRESSION *,void *),
                                                           int (*)(Environment *,EXPRESSION *,void *),
                                                           int *,void *);
-   int                            ReplaceProcVars(Environment *,const char *,EXPRESSION *,EXPRESSION *,SYMBOL_HN *,
+   int                            ReplaceProcVars(Environment *,const char *,EXPRESSION *,EXPRESSION *,CLIPSLexeme *,
                                                          int (*)(Environment *,EXPRESSION *,void *),void *);
 #if DEFGENERIC_CONSTRUCT
    EXPRESSION                    *GenProcWildcardReference(Environment *,int);

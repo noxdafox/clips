@@ -499,11 +499,11 @@ char *gengetcwd(
   {
 #if MAC_XCD
    return(getcwd(buffer,buflength));
-#endif
-
+#else
    if (buffer != NULL)
      { buffer[0] = 0; }
    return(buffer);
+#endif
   }
 
 /******************************************/

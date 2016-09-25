@@ -78,28 +78,6 @@ typedef struct exprHashNode
 
 #define EXPRESSION_HASH_SIZE 503
 
-/*************************/
-/* Type and Value Macros */
-/*************************/
-
-#define GetType(target)         ((target).type)
-#define GetpType(target)        ((target)->type)
-#define SetType(target,val)     ((target).type = (unsigned short) (val))
-#define SetpType(target,val)    ((target)->type = (unsigned short) (val))
-#define GetValue(target)        ((target).value)
-#define GetpValue(target)       ((target)->value)
-#define SetValue(target,val)    ((target).value = (val))
-#define SetpValue(target,val)   ((target)->value = (val))
-
-#define EnvGetType(theEnv,target)         ((target).type)
-#define EnvGetpType(theEnv,target)        ((target)->type)
-#define EnvSetType(theEnv,target,val)     ((target).type = (unsigned short) (val))
-#define EnvSetpType(theEnv,target,val)    ((target)->type = (unsigned short) (val))
-#define EnvGetValue(theEnv,target)        ((target).value)
-#define EnvGetpValue(theEnv,target)       ((target)->value)
-#define EnvSetValue(theEnv,target,val)    ((target).value = (void *) (val))
-#define EnvSetpValue(theEnv,target,val)   ((target)->value = (val))
-
 /********************/
 /* ENVIRONMENT DATA */
 /********************/

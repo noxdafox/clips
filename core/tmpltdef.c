@@ -481,7 +481,7 @@ void *CreateDeftemplateScopeMap(
    int moduleID,count;
    void *theBitMap;
 
-   templateName = ValueToString(theDeftemplate->header.name);
+   templateName = theDeftemplate->header.name->contents;
    matchModule = theDeftemplate->header.whichModule->theModule;
 
    scopeMapSize = (sizeof(char) * ((GetNumberOfDefmodules(theEnv) / BITS_PER_BYTE) + 1));
@@ -494,7 +494,7 @@ void *CreateDeftemplateScopeMap(
         theModule = EnvGetNextDefmodule(theEnv,theModule))
      {
       EnvSetCurrentModule(theEnv,theModule);
-      moduleID = (int) theModule->bsaveID;
+      moduleID = (int) theModule->header.bsaveID;
       if (FindImportedConstruct(theEnv,"deftemplate",matchModule,
                                 templateName,&count,true,NULL) != NULL)
         SetBitMap(scopeMap,moduleID);

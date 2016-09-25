@@ -98,7 +98,7 @@ struct definstancesData
    Definstances                  *EnvFindDefinstancesInModule(Environment *,const char *);
    void                           EnvGetDefinstancesList(Environment *,CLIPSValue *,Defmodule *);
    const char                    *EnvGetDefinstancesName(Environment *,Definstances *);
-   SYMBOL_HN                     *EnvGetDefinstancesNamePointer(Environment *,Definstances *);
+   CLIPSLexeme                   *EnvGetDefinstancesNamePointer(Environment *,Definstances *);
    const char                    *EnvGetDefinstancesPPForm(Environment *,Definstances *);
    Definstances                  *EnvGetNextDefinstances(Environment *,Definstances *);
    bool                           EnvIsDefinstancesDeletable(Environment *,Definstances *);

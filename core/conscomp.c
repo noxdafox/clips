@@ -227,7 +227,7 @@ void ConstructsToCCommand(
    if (! UDFFirstArgument(context,LEXEME_TYPES,&theArg))
      { return; }
 
-   fileName = DOToString(theArg);
+   fileName = theArg.lexemeValue->contents;
    nameLength = (int) strlen(fileName);
 
    /*================================*/
@@ -288,7 +288,7 @@ void ConstructsToCCommand(
    if (! UDFNextArgument(context,INTEGER_TYPE,&theArg))
      { return; }
 
-   id = DOToLong(theArg);
+   id = theArg.integerValue->contents;
    if (id < 0)
      {
       ExpectedTypeError1(theEnv,"constructs-to-c",2,"positive integer");
@@ -304,7 +304,7 @@ void ConstructsToCCommand(
       if (! UDFNextArgument(context,LEXEME_TYPES,&theArg))
         { return; }
 
-      pathName = DOToString(theArg);
+      pathName = theArg.lexemeValue->contents;
       pathLength = (int) strlen(pathName);
      }
    else
@@ -323,7 +323,7 @@ void ConstructsToCCommand(
       if (! UDFNextArgument(context,INTEGER_TYPE,&theArg))
         { return; }
 
-      max = DOToLong(theArg);
+      max = theArg.integerValue->contents;
 
       if (max < 0)
         {
@@ -946,11 +946,11 @@ static void DumpExpression(
            break;
 
          case INTEGER:
-           PrintIntegerReference(theEnv,ConstructCompilerData(theEnv)->ExpressionFP,(INTEGER_HN *) exprPtr->value);
+           PrintIntegerReference(theEnv,ConstructCompilerData(theEnv)->ExpressionFP,(CLIPSInteger *) exprPtr->value);
            break;
 
          case FLOAT:
-           PrintFloatReference(theEnv,ConstructCompilerData(theEnv)->ExpressionFP,(FLOAT_HN *) exprPtr->value);
+           PrintFloatReference(theEnv,ConstructCompilerData(theEnv)->ExpressionFP,(CLIPSFloat *) exprPtr->value);
            break;
 
          case PCALL:
@@ -1027,7 +1027,7 @@ static void DumpExpression(
          case SYMBOL:
          case INSTANCE_NAME:
          case GBL_VARIABLE:
-           PrintSymbolReference(theEnv,ConstructCompilerData(theEnv)->ExpressionFP,(SYMBOL_HN *) exprPtr->value);
+           PrintSymbolReference(theEnv,ConstructCompilerData(theEnv)->ExpressionFP,(CLIPSLexeme *) exprPtr->value);
            break;
 
          case RVOID:
@@ -1437,6 +1437,43 @@ void ConstructHeaderToCode(
    /*================*/
 
    fprintf(theFile,"{");
+   
+   switch (theConstruct->constructType)
+     {
+      case DEFMODULE:
+        fprintf(theFile,"DEFMODULE,");
+        break;
+      case DEFRULE:
+        fprintf(theFile,"DEFRULE,");
+        break;
+      case DEFTEMPLATE:
+        fprintf(theFile,"DEFTEMPLATE,");
+        break;
+      case DEFFACTS:
+        fprintf(theFile,"DEFFACTS,");
+        break;
+      case DEFGLOBAL:
+        fprintf(theFile,"DEFGLOBAL,");
+        break;
+      case DEFFUNCTION:
+        fprintf(theFile,"DEFFUNCTION,");
+        break;
+      case DEFGENERIC:
+        fprintf(theFile,"DEFGENERIC,");
+        break;
+      case DEFMETHOD:
+        fprintf(theFile,"DEFMETHOD,");
+        break;
+      case DEFCLASS:
+        fprintf(theFile,"DEFCLASS,");
+        break;
+      case DEFMESSAGE_HANDLER:
+        fprintf(theFile,"DEFMESSAGE_HANDLER,");
+        break;
+      case DEFINSTANCES:
+        fprintf(theFile,"DEFINSTANCES,");
+        break;
+     }
 
    PrintSymbolReference(theEnv,theFile,theConstruct->name);
 
@@ -1446,15 +1483,20 @@ void ConstructHeaderToCode(
 
    fprintf(theFile,",NULL,");
 
-   /*====================*/
+   /*==================*/
    /* Construct Module */
-   /*====================*/
+   /*==================*/
 
-   fprintf(theFile,"MIHS &%s%d_%d[%d],",
-                   constructModulePrefix,
-                   imageID,
-                   (moduleCount / maxIndices) + 1,
-                   moduleCount % maxIndices);
+   if (theConstruct->whichModule != NULL)
+     {
+      fprintf(theFile,"MIHS &%s%d_%d[%d],",
+                      constructModulePrefix,
+                      imageID,
+                      (moduleCount / maxIndices) + 1,
+                      moduleCount % maxIndices);
+     }
+   else
+     { fprintf(theFile,"NULL,"); }
 
    /*==========*/
    /* Bsave ID */

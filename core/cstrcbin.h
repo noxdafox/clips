@@ -49,7 +49,7 @@ void AssignBsaveConstructHeaderVals(struct bsaveConstructHeader *,
 #endif
 
 void UpdateConstructHeader(Environment *,struct bsaveConstructHeader *,
-                           struct constructHeader *,int,void *,int,void *);
+                           struct constructHeader *,ConstructType,int,void *,int,void *);
 void UnmarkConstructHeader(Environment *,struct constructHeader *);
 
 #endif

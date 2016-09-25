@@ -66,19 +66,19 @@
    static bool                    GetVariables(Environment *,struct lhsParseNode *,ParseNodeType,struct nandFrame *);
    static bool                    UnboundVariablesInPattern(Environment *,struct lhsParseNode *,int);
    static bool                    PropagateVariableToNodes(Environment *,struct lhsParseNode *,ParseNodeType,
-                                                           struct symbolHashNode *,struct lhsParseNode *,
+                                                           CLIPSLexeme *,struct lhsParseNode *,
                                                            int,bool,bool);
    static struct lhsParseNode    *CheckExpression(Environment *,
                                                   struct lhsParseNode *,
                                                   struct lhsParseNode *,
                                                   int,
-                                                  struct symbolHashNode *,
+                                                  CLIPSLexeme *,
                                                   int);
    static void                    VariableReferenceErrorMessage(Environment *,
-                                                                struct symbolHashNode *,
+                                                                CLIPSLexeme *,
                                                                 struct lhsParseNode *,
                                                                 int,
-                                                                struct symbolHashNode *,
+                                                                CLIPSLexeme *,
                                                                 int);
    static bool                    ProcessField(Environment *,
                                                struct lhsParseNode *,
@@ -92,12 +92,12 @@
                                                struct lhsParseNode *,
                                                ParseNodeType,
                                                struct nandFrame *);
-   static void                    VariableMixingErrorMessage(Environment *,struct symbolHashNode *);
+   static void                    VariableMixingErrorMessage(Environment *,CLIPSLexeme *);
    static bool                    PropagateVariableDriver(Environment *,
                                                           struct lhsParseNode *,
                                                           struct lhsParseNode *,
                                                           struct lhsParseNode *,
-                                                          ParseNodeType,struct symbolHashNode *,
+                                                          ParseNodeType,CLIPSLexeme *,
                                                           struct lhsParseNode *,
                                                           bool,ParseNodeType);
    static bool                    TestCEAnalysis(Environment *,struct lhsParseNode *,struct lhsParseNode *,bool,bool *,struct nandFrame *);
@@ -314,7 +314,7 @@ static bool TestCEAnalysis(
    for (tempList = theList; tempList != NULL; tempList = tempList->right)
       {
        if (PropagateVariableDriver(theEnv,patternPtr,patternPtr,NULL,SF_VARIABLE_NODE,
-                                   (SYMBOL_HN *) tempList->value,tempList,false,TEST_CE_NODE))
+                                   (CLIPSLexeme *) tempList->value,tempList,false,TEST_CE_NODE))
          {
           ReturnLHSParseNodes(theEnv,theList);
           patternPtr->right = tempRight;
@@ -439,7 +439,7 @@ static bool ProcessVariable(
   struct nandFrame *theNandFrames)
   {
    ParseNodeType theType;
-   struct symbolHashNode *theVariable;
+   CLIPSLexeme *theVariable;
    struct constraintRecord *theConstraints;
 
    /*=============================================================*/
@@ -506,7 +506,7 @@ static bool PropagateVariableDriver(
   struct lhsParseNode *theNode,
   struct lhsParseNode *multifieldHeader,
   ParseNodeType theType,
-  struct symbolHashNode *variableName,
+  CLIPSLexeme *variableName,
   struct lhsParseNode *theReference,
   bool assignReference,
   ParseNodeType patternHeadType)
@@ -630,7 +630,7 @@ static bool ProcessField(
    for (tempList = theList; tempList != NULL; tempList = tempList->right)
      {
       if (PropagateVariableDriver(theEnv,patternHead,thePattern,multifieldHeader,tempList->pnType,
-                                  (SYMBOL_HN *) tempList->value,tempList,false,patternHeadType))
+                                  (CLIPSLexeme *) tempList->value,tempList,false,patternHeadType))
         {
          ReturnLHSParseNodes(theEnv,theList);
          return true;
@@ -681,7 +681,7 @@ static bool PropagateVariableToNodes(
   Environment *theEnv,
   struct lhsParseNode *theNode,
   ParseNodeType theType,
-  struct symbolHashNode *variableName,
+  CLIPSLexeme *variableName,
   struct lhsParseNode *theReference,
   int startDepth,
   bool assignReference,
@@ -831,7 +831,7 @@ static bool UnboundVariablesInPattern(
    struct lhsParseNode *rv;
    int result;
    struct lhsParseNode *orField;
-   struct symbolHashNode *slotName;
+   CLIPSLexeme *slotName;
    CONSTRAINT_RECORD *theConstraints;
    int theField;
 
@@ -888,7 +888,7 @@ static bool UnboundVariablesInPattern(
          if (((andField->pnType == SF_VARIABLE_NODE) || (andField->pnType == MF_VARIABLE_NODE)) &&
              (andField->referringNode == NULL))
            {
-            VariableReferenceErrorMessage(theEnv,(SYMBOL_HN *) andField->value,NULL,pattern,
+            VariableReferenceErrorMessage(theEnv,(CLIPSLexeme *) andField->value,NULL,pattern,
                                           slotName,theField);
             return true;
            }
@@ -948,7 +948,7 @@ static struct lhsParseNode *CheckExpression(
   struct lhsParseNode *exprPtr,
   struct lhsParseNode *lastOne,
   int whichCE,
-  struct symbolHashNode *slotName,
+  CLIPSLexeme *slotName,
   int theField)
   {
    struct lhsParseNode *rv;
@@ -966,13 +966,13 @@ static struct lhsParseNode *CheckExpression(
         {
          if (exprPtr->referringNode == NULL)
            {
-            VariableReferenceErrorMessage(theEnv,(SYMBOL_HN *) exprPtr->value,lastOne,
+            VariableReferenceErrorMessage(theEnv,(CLIPSLexeme *) exprPtr->value,lastOne,
                                           whichCE,slotName,theField);
             return(exprPtr);
            }
          else if (UnmatchableConstraint(exprPtr->constraints))
            {
-            ConstraintReferenceErrorMessage(theEnv,(SYMBOL_HN *) exprPtr->value,lastOne,i,
+            ConstraintReferenceErrorMessage(theEnv,(CLIPSLexeme *) exprPtr->value,lastOne,i,
                                             whichCE,slotName,theField);
             return(exprPtr);
            }
@@ -985,7 +985,7 @@ static struct lhsParseNode *CheckExpression(
 
       else if ((exprPtr->pnType == MF_VARIABLE_NODE) && (exprPtr->referringNode == NULL))
         {
-         VariableReferenceErrorMessage(theEnv,(SYMBOL_HN *) exprPtr->value,lastOne,
+         VariableReferenceErrorMessage(theEnv,(CLIPSLexeme *) exprPtr->value,lastOne,
                                        whichCE,slotName,theField);
          return(exprPtr);
         }
@@ -1004,7 +1004,7 @@ static struct lhsParseNode *CheckExpression(
          if (FindImportedConstruct(theEnv,"defglobal",NULL,ValueToString(exprPtr->value),
                                    &count,true,NULL) == NULL)
            {
-            VariableReferenceErrorMessage(theEnv,(SYMBOL_HN *) exprPtr->value,lastOne,
+            VariableReferenceErrorMessage(theEnv,(CLIPSLexeme *) exprPtr->value,lastOne,
                                           whichCE,slotName,theField);
             return(exprPtr);
            }
@@ -1050,10 +1050,10 @@ static struct lhsParseNode *CheckExpression(
 /********************************************************/
 static void VariableReferenceErrorMessage(
   Environment *theEnv,
-  struct symbolHashNode *theVariable,
+  CLIPSLexeme *theVariable,
   struct lhsParseNode *theExpression,
   int whichCE,
-  struct symbolHashNode *slotName,
+  CLIPSLexeme *slotName,
   int theField)
   {
    struct expr *temprv;
@@ -1112,7 +1112,7 @@ static void VariableReferenceErrorMessage(
    else
      {
       EnvPrintRouter(theEnv,WERROR," slot ");
-      EnvPrintRouter(theEnv,WERROR,ValueToString(slotName));
+      EnvPrintRouter(theEnv,WERROR,slotName->contents);
      }
 
    EnvPrintRouter(theEnv,WERROR," before being defined.\n");
@@ -1125,7 +1125,7 @@ static void VariableReferenceErrorMessage(
 /************************************************************/
 static void VariableMixingErrorMessage(
   Environment *theEnv,
-  struct symbolHashNode *theVariable)
+  CLIPSLexeme *theVariable)
   {
    PrintErrorID(theEnv,"ANALYSIS",3,true);
    EnvPrintRouter(theEnv,WERROR,"Variable ?");

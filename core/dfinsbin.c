@@ -463,7 +463,7 @@ static void UpdateDefinstances(
    bdptr = (BSAVE_DEFINSTANCES *) buf;
    dfiptr = (Definstances *) &DefinstancesBinaryData(theEnv)->DefinstancesArray[obji];
 
-   UpdateConstructHeader(theEnv,&bdptr->header,&dfiptr->header,
+   UpdateConstructHeader(theEnv,&bdptr->header,&dfiptr->header,DEFINSTANCES,
                          (int) sizeof(DEFINSTANCES_MODULE),DefinstancesBinaryData(theEnv)->ModuleArray,
                          (int) sizeof(Definstances),DefinstancesBinaryData(theEnv)->DefinstancesArray);
    dfiptr->mkinstance = ExpressionPointer(bdptr->mkinstance);

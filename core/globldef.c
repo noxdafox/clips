@@ -103,6 +103,9 @@
 #if (! BLOAD_ONLY)
    static void                    DestroyDefglobal(Environment *,Defglobal *);
 #endif
+#if RUN_TIME
+   static void                    RuntimeDefglobalAction(Environment *,struct constructHeader *,void *);
+#endif
 
 /**************************************************************/
 /* InitializeDefglobals: Initializes the defglobal construct. */
@@ -337,8 +340,8 @@ static void ReturnDefglobal(
    /*====================================*/
 
    ValueDeinstall(theEnv,&theDefglobal->current);
-   if (theDefglobal->current.type == MULTIFIELD)
-     { ReturnMultifield(theEnv,(struct multifield *) theDefglobal->current.value); }
+   if (theDefglobal->current.header->type == MULTIFIELD)
+     { ReturnMultifield(theEnv,(Multifield *) theDefglobal->current.value); }
 
    /*================================================*/
    /* Return the expression representing the initial */
@@ -384,8 +387,8 @@ static void DestroyDefglobal(
    /* Return the global's current value. */
    /*====================================*/
 
-   if (theDefglobal->current.type == MULTIFIELD)
-     { ReturnMultifield(theEnv,(struct multifield *) theDefglobal->current.value); }
+   if (theDefglobal->current.header->type == MULTIFIELD)
+     { ReturnMultifield(theEnv,(Multifield *) theDefglobal->current.value); }
 
 #if (! RUN_TIME)
 
@@ -426,8 +429,7 @@ void QSetDefglobalValue(
       EvaluateExpression(theEnv,theGlobal->initial,vPtr);
       if (EvaluationData(theEnv)->EvaluationError)
         {
-         vPtr->type = SYMBOL;
-         vPtr->value = EnvFalseSymbol(theEnv);
+         vPtr->value = theEnv->FalseSymbol;
         }
      }
 
@@ -440,7 +442,7 @@ void QSetDefglobalValue(
    if (theGlobal->watch)
      {
       EnvPrintRouter(theEnv,WTRACE,":== ?*");
-      EnvPrintRouter(theEnv,WTRACE,ValueToString(theGlobal->header.name));
+      EnvPrintRouter(theEnv,WTRACE,theGlobal->header.name->contents);
       EnvPrintRouter(theEnv,WTRACE,"* ==> ");
       PrintDataObject(theEnv,WTRACE,vPtr);
       EnvPrintRouter(theEnv,WTRACE," <== ");
@@ -454,15 +456,14 @@ void QSetDefglobalValue(
    /*==============================================*/
 
    ValueDeinstall(theEnv,&theGlobal->current);
-   if (theGlobal->current.type == MULTIFIELD)
-     { ReturnMultifield(theEnv,(struct multifield *) theGlobal->current.value); }
+   if (theGlobal->current.header->type == MULTIFIELD)
+     { ReturnMultifield(theEnv,(Multifield *) theGlobal->current.value); }
 
    /*===========================================*/
    /* Set the new value of the global variable. */
    /*===========================================*/
 
-   theGlobal->current.type = vPtr->type;
-   if (vPtr->type != MULTIFIELD) theGlobal->current.value = vPtr->value;
+   if (vPtr->header->type != MULTIFIELD) theGlobal->current.value = vPtr->value;
    else DuplicateMultifield(theEnv,&theGlobal->current,vPtr);
    ValueInstall(theEnv,&theGlobal->current);
 
@@ -488,7 +489,7 @@ void QSetDefglobalValue(
 /**************************************************************/
 Defglobal *QFindDefglobal(
   Environment *theEnv,
-  SYMBOL_HN *defglobalName)
+  CLIPSLexeme *defglobalName)
   {
    Defglobal *theDefglobal;
 
@@ -514,7 +515,7 @@ void EnvGetDefglobalValueForm(
   {
    OpenStringDestination(theEnv,"GlobalValueForm",buffer,bufferLength);
    EnvPrintRouter(theEnv,"GlobalValueForm","?*");
-   EnvPrintRouter(theEnv,"GlobalValueForm",ValueToString(theGlobal->header.name));
+   EnvPrintRouter(theEnv,"GlobalValueForm",theGlobal->header.name->contents);
    EnvPrintRouter(theEnv,"GlobalValueForm","* = ");
    PrintDataObject(theEnv,"GlobalValueForm",&theGlobal->current);
    CloseStringDestination(theEnv,"GlobalValueForm");
@@ -570,8 +571,7 @@ static bool GetDefglobalValue2(
       EnvPrintRouter(theEnv,WERROR,"Global variable ?*");
       EnvPrintRouter(theEnv,WERROR,ValueToString(theValue));
       EnvPrintRouter(theEnv,WERROR,"* is unbound.\n");
-      vPtr->type = SYMBOL;
-      vPtr->value = EnvFalseSymbol(theEnv);
+      vPtr->value = theEnv->FalseSymbol;
       EnvSetEvaluationError(theEnv,true);
       return false;
      }
@@ -585,8 +585,7 @@ static bool GetDefglobalValue2(
    if (count > 1)
      {
       AmbiguousReferenceErrorMessage(theEnv,"defglobal",ValueToString(theValue));
-      vPtr->type = SYMBOL;
-      vPtr->value = EnvFalseSymbol(theEnv);
+      vPtr->value = theEnv->FalseSymbol;
       EnvSetEvaluationError(theEnv,true);
       return false;
      }
@@ -612,7 +611,6 @@ bool QGetDefglobalValue(
    /* Transfer values which can be copied directly. */
    /*===============================================*/
 
-   vPtr->type = theGlobal->current.type;
    vPtr->value = theGlobal->current.value;
    vPtr->begin = theGlobal->current.begin;
    vPtr->end = theGlobal->current.end;
@@ -623,12 +621,12 @@ bool QGetDefglobalValue(
    /* not affected if the value of the global is later changed. */
    /*===========================================================*/
 
-   if (vPtr->type == MULTIFIELD)
+   if (vPtr->header->type == MULTIFIELD)
      {
       vPtr->value = EnvCreateMultifield(theEnv,(unsigned long) (vPtr->end + 1));
       GenCopyMemory(struct field,vPtr->end + 1,
-                                &((struct multifield *) vPtr->value)->theFields[0],
-                                &((struct multifield *) theGlobal->current.value)->theFields[theGlobal->current.begin]);
+                                &((Multifield *) vPtr->value)->theFields[0],
+                                &((Multifield *) theGlobal->current.value)->theFields[theGlobal->current.begin]);
      }
 
    return true;
@@ -664,7 +662,7 @@ bool EnvSetDefglobalValue(
   {
    Defglobal *theGlobal;
 
-   if ((theGlobal = QFindDefglobal(theEnv,(SYMBOL_HN *) EnvAddSymbol(theEnv,variableName))) == NULL)
+   if ((theGlobal = QFindDefglobal(theEnv,EnvCreateSymbol(theEnv,variableName))) == NULL)
      { return false; }
 
    QSetDefglobalValue(theEnv,theGlobal,vPtr,false);
@@ -735,7 +733,7 @@ void UpdateDefglobalScope(
          /*====================================================*/
 
          if (FindImportedConstruct(theEnv,"defglobal",theModule,
-                                   ValueToString(theDefglobal->header.name),
+                                   theDefglobal->header.name->contents,
                                    &moduleCount,true,NULL) != NULL)
            { theDefglobal->inScope = true; }
          else
@@ -829,6 +827,36 @@ Defglobal *GetNextDefglobalInScope(
 
    return NULL;
   }
+
+#if RUN_TIME
+
+/************************************************/
+/* RuntimeDefglobalAction: Action to be applied */
+/*   to each defglobal construct when a runtime */
+/*   initialization occurs.                     */
+/************************************************/
+static void RuntimeDefglobalAction(
+  Environment *theEnv,
+  struct constructHeader *theConstruct,
+  void *buffer)
+  {
+#if MAC_XCD
+#pragma unused(buffer)
+#endif
+   Defglobal *theDefglobal = (Defglobal *) theConstruct;
+   theDefglobal->current.value = theEnv->VoidConstant;
+  }
+
+/*******************************/
+/* DefglobalRunTimeInitialize: */
+/*******************************/
+void DefglobalRunTimeInitialize(
+  Environment *theEnv)
+  {
+   DoForAllConstructs(theEnv,RuntimeDefglobalAction,DefglobalData(theEnv)->DefglobalModuleIndex,true,NULL);
+  }
+
+#endif
 
 /*##################################*/
 /* Additional Environment Functions */

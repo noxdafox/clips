@@ -62,14 +62,14 @@ typedef void ConstructActionFunction(Environment *,struct constructHeader *,void
    void                          *FindNamedConstructInModuleOrImports(Environment *,const char *,struct construct *);
    void                           UndefconstructCommand(UDFContext *,const char *,struct construct *);
    bool                           PPConstruct(Environment *,const char *,const char *,struct construct *);
-   SYMBOL_HN                     *GetConstructModuleCommand(UDFContext *,const char *,struct construct *);
+   CLIPSLexeme                   *GetConstructModuleCommand(UDFContext *,const char *,struct construct *);
    Defmodule                     *GetConstructModule(Environment *,const char *,struct construct *);
    bool                           Undefconstruct(Environment *,void *,struct construct *);
    void                           SaveConstruct(Environment *,Defmodule *,const char *,struct construct *);
    const char                    *GetConstructNameString(struct constructHeader *);
    const char                    *EnvGetConstructNameString(Environment *,struct constructHeader *);
    const char                    *GetConstructModuleName(struct constructHeader *);
-   SYMBOL_HN                     *GetConstructNamePointer(struct constructHeader *);
+   CLIPSLexeme                   *GetConstructNamePointer(struct constructHeader *);
    void                           GetConstructListFunction(UDFContext *,CLIPSValue *,struct construct *);
    void                           GetConstructList(Environment *,CLIPSValue *,struct construct *,
                                                    Defmodule *);
@@ -89,7 +89,8 @@ typedef void ConstructActionFunction(Environment *,struct constructHeader *,void
    void                           DoForAllConstructsInModule(Environment *,Defmodule *,
                                                              ConstructActionFunction *,
                                                              int,int,void *);
-   void                           InitializeConstructHeader(Environment *,const char *,struct constructHeader *,SYMBOL_HN *);
+   void                           InitializeConstructHeader(Environment *,const char *,ConstructType,
+                                                            struct constructHeader *,CLIPSLexeme *);
    void                           SetConstructPPForm(Environment *,struct constructHeader *,const char *);
    void                          *LookupConstruct(Environment *,struct construct *,const char *,bool);
 #if DEBUGGING_FUNCTIONS

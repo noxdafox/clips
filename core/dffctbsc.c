@@ -186,12 +186,13 @@ static void ClearDeffacts(
    newDeffacts = get_struct(theEnv,deffacts);
    newDeffacts->header.whichModule =
       (struct defmoduleItemHeader *) GetDeffactsModuleItem(theEnv,NULL);
-   newDeffacts->header.name = (SYMBOL_HN *) EnvAddSymbol(theEnv,"initial-fact");
+   newDeffacts->header.name = EnvCreateSymbol(theEnv,"initial-fact");
    IncrementSymbolCount(newDeffacts->header.name);
    newDeffacts->assertList = PackExpression(theEnv,stub);
    newDeffacts->header.next = NULL;
    newDeffacts->header.ppForm = NULL;
    newDeffacts->header.usrData = NULL;
+   newDeffacts->header.constructType = DEFFACTS;
    ReturnExpression(theEnv,stub);
 
    /*===========================================*/
@@ -274,7 +275,6 @@ void DeffactsModuleFunction(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   returnValue->type = SYMBOL;
    returnValue->value = GetConstructModuleCommand(context,"deffacts-module",DeffactsData(theEnv)->DeffactsConstruct);
   }
 

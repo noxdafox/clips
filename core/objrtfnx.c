@@ -333,7 +333,7 @@ bool ObjectCmpConstantFunction(
    CLIPSValue theVar;
    EXPRESSION *constantExp;
    int rv;
-   SEGMENT *theSegment;
+   Multifield *theSegment;
 
    hack = (struct ObjectCmpPNConstant *) ValueToBitMap(theValue);
    if (hack->general)
@@ -346,34 +346,29 @@ bool ObjectCmpConstantFunction(
       constantExp = GetFirstArgument();
       if (ObjectReteData(theEnv)->CurrentPatternObjectSlot->type == MULTIFIELD)
         {
-         theSegment = (struct multifield *) ObjectReteData(theEnv)->CurrentPatternObjectSlot->value;
+         theSegment = (Multifield *) ObjectReteData(theEnv)->CurrentPatternObjectSlot->value;
          if (hack->fromBeginning)
            {
-            theVar.type = theSegment->theFields[hack->offset].type;
             theVar.value = theSegment->theFields[hack->offset].value;
            }
          else
            {
-            theVar.type = theSegment->theFields[theSegment->multifieldLength -
-                                      (hack->offset + 1)].type;
             theVar.value = theSegment->theFields[theSegment->multifieldLength -
                                       (hack->offset + 1)].value;
            }
         }
       else
         {
-         theVar.type = (unsigned short) ObjectReteData(theEnv)->CurrentPatternObjectSlot->type;
          theVar.value = ObjectReteData(theEnv)->CurrentPatternObjectSlot->value;
         }
      }
-   if (theVar.type != constantExp->type)
+   if (theVar.header->type != constantExp->type)
      rv = hack->fail;
    else if (theVar.value != constantExp->value)
      rv = hack->fail;
    else
      rv = hack->pass;
-   theResult->type = SYMBOL;
-   theResult->value = rv ? EnvTrueSymbol(theEnv) : EnvFalseSymbol(theEnv);
+   theResult->value = rv ? theEnv->TrueSymbol : theEnv->FalseSymbol;
    return(rv);
   }
 
@@ -403,14 +398,14 @@ static void PrintObjectGetVarJN1(
       EnvPrintRouter(theEnv,logicalName,"(obj-slot-contents ");
       PrintLongInteger(theEnv,logicalName,(long long) hack->whichPattern);
       EnvPrintRouter(theEnv,logicalName," ");
-      EnvPrintRouter(theEnv,logicalName,ValueToString(FindIDSlotName(theEnv,(unsigned) hack->whichSlot)));
+      EnvPrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->whichSlot)->contents);
      }
    else
      {
       EnvPrintRouter(theEnv,logicalName,"(obj-slot-var ");
       PrintLongInteger(theEnv,logicalName,(long long) hack->whichPattern);
       EnvPrintRouter(theEnv,logicalName," ");
-      EnvPrintRouter(theEnv,logicalName,ValueToString(FindIDSlotName(theEnv,(unsigned) hack->whichSlot)));
+      EnvPrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->whichSlot)->contents);
       EnvPrintRouter(theEnv,logicalName," ");
       PrintLongInteger(theEnv,logicalName,(long long) hack->whichField);
      }
@@ -451,7 +446,7 @@ static void PrintObjectGetVarJN2(
    EnvPrintRouter(theEnv,logicalName,"(obj-slot-quick-var ");
    PrintLongInteger(theEnv,logicalName,(long long) hack->whichPattern);
    EnvPrintRouter(theEnv,logicalName," ");
-   EnvPrintRouter(theEnv,logicalName,ValueToString(FindIDSlotName(theEnv,(unsigned) hack->whichSlot)));
+   EnvPrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->whichSlot)->contents);
    if (hack->fromBeginning)
      {
       EnvPrintRouter(theEnv,logicalName," B");
@@ -502,12 +497,12 @@ static void PrintObjectGetVarPN1(
    else if (hack->allFields)
      {
       EnvPrintRouter(theEnv,logicalName,"(ptn-obj-slot-contents ");
-      EnvPrintRouter(theEnv,logicalName,ValueToString(FindIDSlotName(theEnv,(unsigned) hack->whichSlot)));
+      EnvPrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->whichSlot)->contents);
      }
    else
      {
       EnvPrintRouter(theEnv,logicalName,"(ptn-obj-slot-var ");
-      EnvPrintRouter(theEnv,logicalName,ValueToString(FindIDSlotName(theEnv,(unsigned) hack->whichSlot)));
+      EnvPrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->whichSlot)->contents);
       EnvPrintRouter(theEnv,logicalName," ");
       PrintLongInteger(theEnv,logicalName,(long long) hack->whichField);
      }
@@ -543,7 +538,7 @@ static void PrintObjectGetVarPN2(
 
    hack = (struct ObjectMatchVar2 *) ValueToBitMap(theValue);
    EnvPrintRouter(theEnv,logicalName,"(ptn-obj-slot-quick-var ");
-   EnvPrintRouter(theEnv,logicalName,ValueToString(FindIDSlotName(theEnv,(unsigned) hack->whichSlot)));
+   EnvPrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->whichSlot)->contents);
    if (hack->fromBeginning)
      {
       EnvPrintRouter(theEnv,logicalName," B");
@@ -640,14 +635,13 @@ static bool SlotLengthTestFunction(
   {
    struct ObjectMatchLength *hack;
 
-   theResult->type = SYMBOL;
-   theResult->value = EnvFalseSymbol(theEnv);
+   theResult->value = theEnv->FalseSymbol;
    hack = (struct ObjectMatchLength *) ValueToBitMap(theValue);
    if (ObjectReteData(theEnv)->CurrentObjectSlotLength < hack->minLength)
      return false;
    if (hack->exactly && (ObjectReteData(theEnv)->CurrentObjectSlotLength > hack->minLength))
      return false;
-   theResult->value = EnvTrueSymbol(theEnv);
+   theResult->value = theEnv->TrueSymbol;
    return true;
   }
 
@@ -663,9 +657,9 @@ static void PrintPNSimpleCompareFunction1(
 
    EnvPrintRouter(theEnv,logicalName,"(pslot-cmp1 ");
    EnvPrintRouter(theEnv,logicalName,hack->pass ? "p " : "n ");
-   EnvPrintRouter(theEnv,logicalName,ValueToString(FindIDSlotName(theEnv,(unsigned) hack->firstSlot)));
+   EnvPrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->firstSlot)->contents);
    EnvPrintRouter(theEnv,logicalName," ");
-   EnvPrintRouter(theEnv,logicalName,ValueToString(FindIDSlotName(theEnv,(unsigned) hack->secondSlot)));
+   EnvPrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->secondSlot)->contents);
    EnvPrintRouter(theEnv,logicalName,")");
 #else
 #if MAC_XCD
@@ -694,8 +688,7 @@ static bool PNSimpleCompareFunction1(
      rv = hack->fail;
    else
      rv = hack->pass;
-   theResult->type = SYMBOL;
-   theResult->value = rv ? EnvTrueSymbol(theEnv) : EnvFalseSymbol(theEnv);
+   theResult->value = rv ? theEnv->TrueSymbol : theEnv->FalseSymbol;
    return(rv);
   }
 
@@ -711,11 +704,11 @@ static void PrintPNSimpleCompareFunction2(
 
    EnvPrintRouter(theEnv,logicalName,"(pslot-cmp2 ");
    EnvPrintRouter(theEnv,logicalName,hack->pass ? "p " : "n ");
-   EnvPrintRouter(theEnv,logicalName,ValueToString(FindIDSlotName(theEnv,(unsigned) hack->firstSlot)));
+   EnvPrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->firstSlot)->contents);
    EnvPrintRouter(theEnv,logicalName,hack->fromBeginning ? " B" : " E");
    PrintLongInteger(theEnv,logicalName,(long long) hack->offset);
    EnvPrintRouter(theEnv,logicalName," ");
-   EnvPrintRouter(theEnv,logicalName,ValueToString(FindIDSlotName(theEnv,(unsigned) hack->secondSlot)));
+   EnvPrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->secondSlot)->contents);
    EnvPrintRouter(theEnv,logicalName,")");
 #else
 #if MAC_XCD
@@ -740,14 +733,11 @@ static bool PNSimpleCompareFunction2(
    GetInsMultiSlotField(&f1,ObjectReteData(theEnv)->CurrentPatternObject,(unsigned) hack->firstSlot,
                              (unsigned) hack->fromBeginning,(unsigned) hack->offset);
    is2 = GetInsSlot(ObjectReteData(theEnv)->CurrentPatternObject,hack->secondSlot);
-   if (f1.type != is2->type)
-     rv = hack->fail;
-   else if (f1.value != is2->value)
+   if (f1.value != is2->value)
      rv = hack->fail;
    else
      rv = hack->pass;
-   theResult->type = SYMBOL;
-   theResult->value = rv ? EnvTrueSymbol(theEnv) : EnvFalseSymbol(theEnv);
+   theResult->value = rv ? theEnv->TrueSymbol : theEnv->FalseSymbol;
    return(rv);
   }
 
@@ -763,11 +753,11 @@ static void PrintPNSimpleCompareFunction3(
 
    EnvPrintRouter(theEnv,logicalName,"(pslot-cmp3 ");
    EnvPrintRouter(theEnv,logicalName,hack->pass ? "p " : "n ");
-   EnvPrintRouter(theEnv,logicalName,ValueToString(FindIDSlotName(theEnv,(unsigned) hack->firstSlot)));
+   EnvPrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->firstSlot)->contents);
    EnvPrintRouter(theEnv,logicalName,hack->firstFromBeginning ? " B" : " E");
    PrintLongInteger(theEnv,logicalName,(long long) hack->firstOffset);
    EnvPrintRouter(theEnv,logicalName," ");
-   EnvPrintRouter(theEnv,logicalName,ValueToString(FindIDSlotName(theEnv,(unsigned) hack->secondSlot)));
+   EnvPrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->secondSlot)->contents);
    EnvPrintRouter(theEnv,logicalName,hack->secondFromBeginning ? " B" : " E");
    PrintLongInteger(theEnv,logicalName,(long long) hack->secondOffset);
    EnvPrintRouter(theEnv,logicalName,")");
@@ -794,14 +784,11 @@ static bool PNSimpleCompareFunction3(
                         (unsigned) hack->firstFromBeginning,(unsigned) hack->firstOffset);
    GetInsMultiSlotField(&f2,ObjectReteData(theEnv)->CurrentPatternObject,(unsigned) hack->secondSlot,
                         (unsigned) hack->secondFromBeginning,(unsigned) hack->secondOffset);
-   if (f1.type != f2.type)
-     rv = hack->fail;
-   else if (f1.value != f2.value)
+   if (f1.value != f2.value)
      rv = hack->fail;
    else
      rv = hack->pass;
-   theResult->type = SYMBOL;
-   theResult->value = rv ? EnvTrueSymbol(theEnv) : EnvFalseSymbol(theEnv);
+   theResult->value = rv ? theEnv->TrueSymbol : theEnv->FalseSymbol;
    return(rv);
   }
 
@@ -819,11 +806,11 @@ static void PrintJNSimpleCompareFunction1(
    EnvPrintRouter(theEnv,logicalName,hack->pass ? "p " : "n ");
    PrintLongInteger(theEnv,logicalName,(long long) hack->firstPattern);
    EnvPrintRouter(theEnv,logicalName," ");
-   EnvPrintRouter(theEnv,logicalName,ValueToString(FindIDSlotName(theEnv,(unsigned) hack->firstSlot)));
+   EnvPrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->firstSlot)->contents);
    EnvPrintRouter(theEnv,logicalName," ");
    PrintLongInteger(theEnv,logicalName,(long long) hack->secondPattern);
    EnvPrintRouter(theEnv,logicalName," ");
-   EnvPrintRouter(theEnv,logicalName,ValueToString(FindIDSlotName(theEnv,(unsigned) hack->secondSlot)));
+   EnvPrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->secondSlot)->contents);
    EnvPrintRouter(theEnv,logicalName,")");
 #else
 #if MAC_XCD
@@ -856,8 +843,7 @@ static bool JNSimpleCompareFunction1(
      rv = hack->fail;
    else
      rv = hack->pass;
-   theResult->type = SYMBOL;
-   theResult->value = rv ? EnvTrueSymbol(theEnv) : EnvFalseSymbol(theEnv);
+   theResult->value = rv ? theEnv->TrueSymbol : theEnv->FalseSymbol;
    return(rv);
   }
 
@@ -875,13 +861,13 @@ static void PrintJNSimpleCompareFunction2(
    EnvPrintRouter(theEnv,logicalName,hack->pass ? "p " : "n ");
    PrintLongInteger(theEnv,logicalName,(long long) hack->firstPattern);
    EnvPrintRouter(theEnv,logicalName," ");
-   EnvPrintRouter(theEnv,logicalName,ValueToString(FindIDSlotName(theEnv,(unsigned) hack->firstSlot)));
+   EnvPrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->firstSlot)->contents);
    EnvPrintRouter(theEnv,logicalName,hack->fromBeginning ? " B" : " E");
    PrintLongInteger(theEnv,logicalName,(long long) hack->offset);
    EnvPrintRouter(theEnv,logicalName," ");
    PrintLongInteger(theEnv,logicalName,(long long) hack->secondPattern);
    EnvPrintRouter(theEnv,logicalName," ");
-   EnvPrintRouter(theEnv,logicalName,ValueToString(FindIDSlotName(theEnv,(unsigned) hack->secondSlot)));
+   EnvPrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->secondSlot)->contents);
    EnvPrintRouter(theEnv,logicalName,")");
 #else
 #if MAC_XCD
@@ -910,14 +896,11 @@ static bool JNSimpleCompareFunction2(
                         (unsigned) hack->fromBeginning,(unsigned) hack->offset);
    GetPatternObjectAndMarks(theEnv,((int) hack->secondPattern),hack->secondPatternLHS,hack->secondPatternRHS,&ins2,&theMarks);
    is2 = GetInsSlot(ins2,hack->secondSlot);
-   if (f1.type != is2->type)
-     rv = hack->fail;
-   else if (f1.value != is2->value)
+   if (f1.value != is2->value)
      rv = hack->fail;
    else
      rv = hack->pass;
-   theResult->type = SYMBOL;
-   theResult->value = rv ? EnvTrueSymbol(theEnv) : EnvFalseSymbol(theEnv);
+   theResult->value = rv ? theEnv->TrueSymbol : theEnv->FalseSymbol;
    return(rv);
   }
 
@@ -935,13 +918,13 @@ static void PrintJNSimpleCompareFunction3(
    EnvPrintRouter(theEnv,logicalName,hack->pass ? "p " : "n ");
    PrintLongInteger(theEnv,logicalName,(long long) hack->firstPattern);
    EnvPrintRouter(theEnv,logicalName," ");
-   EnvPrintRouter(theEnv,logicalName,ValueToString(FindIDSlotName(theEnv,(unsigned) hack->firstSlot)));
+   EnvPrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->firstSlot)->contents);
    EnvPrintRouter(theEnv,logicalName,hack->firstFromBeginning ? " B" : " E");
    PrintLongInteger(theEnv,logicalName,(long long) hack->firstOffset);
    EnvPrintRouter(theEnv,logicalName," ");
    PrintLongInteger(theEnv,logicalName,(long long) hack->secondPattern);
    EnvPrintRouter(theEnv,logicalName," ");
-   EnvPrintRouter(theEnv,logicalName,ValueToString(FindIDSlotName(theEnv,(unsigned) hack->secondSlot)));
+   EnvPrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->secondSlot)->contents);
    EnvPrintRouter(theEnv,logicalName,hack->secondFromBeginning ? " B" : " E");
    PrintLongInteger(theEnv,logicalName,(long long) hack->secondOffset);
    EnvPrintRouter(theEnv,logicalName,")");
@@ -974,14 +957,11 @@ static bool JNSimpleCompareFunction3(
    GetInsMultiSlotField(&f2,ins2,(unsigned) hack->secondSlot,
                         (unsigned) hack->secondFromBeginning,
                         (unsigned) hack->secondOffset);
-   if (f1.type != f2.type)
-     rv = hack->fail;
-   else if (f1.value != f2.value)
+   if (f1.value != f2.value)
      rv = hack->fail;
    else
      rv = hack->pass;
-   theResult->type = SYMBOL;
-   theResult->value = rv ? EnvTrueSymbol(theEnv) : EnvFalseSymbol(theEnv);
+   theResult->value = rv ? theEnv->TrueSymbol : theEnv->FalseSymbol;
    return(rv);
   }
 
@@ -1070,19 +1050,16 @@ static void GetObjectValueGeneral(
 
    if (matchVar->objectAddress)
      {
-      returnValue->type = INSTANCE_ADDRESS;
       returnValue->value = theInstance;
       return;
      }
    if (matchVar->whichSlot == ISA_ID)
      {
-      returnValue->type = SYMBOL;
       returnValue->value = GetDefclassNamePointer(theInstance->cls);
       return;
      }
    if (matchVar->whichSlot == NAME_ID)
      {
-      returnValue->type = INSTANCE_NAME;
       returnValue->value = theInstance->name;
       return;
      }
@@ -1115,12 +1092,11 @@ static void GetObjectValueGeneral(
       ================================================== */
    if (matchVar->allFields)
      {
-      returnValue->type = (unsigned short) (*insSlot)->type;
       returnValue->value = (*insSlot)->value;
-      if (returnValue->type == MULTIFIELD)
+      if (returnValue->header->type == MULTIFIELD)
         {
          returnValue->begin = 0;
-         SetpDOEnd(returnValue,GetMFLength((*insSlot)->value));
+         returnValue->end = GetMFLength((*insSlot)->value) - 1;
         }
       return;
      }
@@ -1134,18 +1110,15 @@ static void GetObjectValueGeneral(
      {
       if ((*insSlot)->desc->multiple)
         {
-         returnValue->type = GetMFType((*insSlot)->value,field);
-         returnValue->value = GetMFValue((*insSlot)->value,field);
+         returnValue->value = GetMFValue((*insSlot)->value,field-1);
         }
       else
         {
-         returnValue->type = (unsigned short) (*insSlot)->type;
          returnValue->value = (*insSlot)->value;
         }
      }
    else
      {
-      returnValue->type = MULTIFIELD;
       returnValue->value = (*insSlot)->value;
       returnValue->begin = field - 1;
       returnValue->end = field + extent - 2;
@@ -1172,7 +1145,7 @@ static void GetObjectValueSimple(
   struct ObjectMatchVar2 *matchVar)
   {
    INSTANCE_SLOT **insSlot,*basisSlot;
-   SEGMENT *segmentPtr;
+   Multifield *segmentPtr;
    FIELD *fieldPtr;
 
    insSlot =
@@ -1199,20 +1172,18 @@ static void GetObjectValueSimple(
 
    if ((*insSlot)->desc->multiple)
      {
-      segmentPtr = (SEGMENT *) (*insSlot)->value;
+      segmentPtr = (Multifield *) (*insSlot)->value;
       if (matchVar->fromBeginning)
         {
          if (matchVar->fromEnd)
            {
-            returnValue->type = MULTIFIELD;
             returnValue->value = segmentPtr;
             returnValue->begin = matchVar->beginningOffset;
-            SetpDOEnd(returnValue,GetMFLength(segmentPtr) - matchVar->endOffset);
+            returnValue->end = (GetMFLength(segmentPtr) - matchVar->endOffset) - 1;
            }
          else
            {
             fieldPtr = &segmentPtr->theFields[matchVar->beginningOffset];
-            returnValue->type = fieldPtr->type;
             returnValue->value = fieldPtr->value;
            }
         }
@@ -1220,13 +1191,11 @@ static void GetObjectValueSimple(
         {
          fieldPtr = &segmentPtr->theFields[segmentPtr->multifieldLength -
                                            (matchVar->endOffset + 1)];
-         returnValue->type = fieldPtr->type;
          returnValue->value = fieldPtr->value;
         }
      }
    else
      {
-      returnValue->type = (unsigned short) (*insSlot)->type;
       returnValue->value = (*insSlot)->value;
      }
   }
@@ -1309,7 +1278,7 @@ static void GetInsMultiSlotField(
   unsigned offset)
   {
    INSTANCE_SLOT * insSlot;
-   SEGMENT *theSegment;
+   Multifield *theSegment;
    FIELD *tmpField;
 
    insSlot = theInstance->slotAddresses
@@ -1319,17 +1288,15 @@ static void GetInsMultiSlotField(
 
    if (insSlot->desc->multiple)
      {
-      theSegment = (SEGMENT *) insSlot->value;
+      theSegment = (Multifield *) insSlot->value;
       if (fromBeginning)
         tmpField = &theSegment->theFields[offset];
       else
         tmpField = &theSegment->theFields[theSegment->multifieldLength - offset - 1];
-      theField->type = tmpField->type;
       theField->value = tmpField->value;
      }
    else
      {
-      theField->type = (unsigned short) insSlot->type;
       theField->value = insSlot->value;
      }
   }

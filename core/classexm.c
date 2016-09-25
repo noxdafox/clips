@@ -104,7 +104,7 @@
    static void                    PrintClassBrowse(Environment *,const char *,Defclass *,long);
    static void                    DisplaySeparator(Environment *,const char *,char *,int,int);
    static void                    DisplaySlotBasicInfo(Environment *,const char *,const char *,const char *,char *,Defclass *);
-   static bool                    PrintSlotSources(Environment *,const char *,SYMBOL_HN *,PACKED_CLASS_LINKS *,long,bool);
+   static bool                    PrintSlotSources(Environment *,const char *,CLIPSLexeme *,PACKED_CLASS_LINKS *,long,bool);
    static void                    DisplaySlotConstraintInfo(Environment *,const char *,const char *,char *,unsigned,Defclass *);
    static const char             *ConstraintCode(CONSTRAINT_RECORD *,unsigned,unsigned);
 #endif
@@ -143,10 +143,10 @@ void BrowseClassesCommand(
 
       if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
         return;
-      cls = LookupDefclassByMdlOrScope(theEnv,DOToString(theArg));
+      cls = LookupDefclassByMdlOrScope(theEnv,theArg.lexemeValue->contents);
       if (cls == NULL)
         {
-         ClassExistError(theEnv,"browse-classes",DOToString(theArg));
+         ClassExistError(theEnv,"browse-classes",theArg.lexemeValue->contents);
          return;
         }
      }
@@ -251,13 +251,13 @@ void EnvDescribeClass(
       maxOverrideMessageLength = 8;
       for (i = 0 ; i < theDefclass->instanceSlotCount ; i++)
         {
-         slotNameLength = strlen(ValueToString(theDefclass->instanceTemplate[i]->slotName->name));
+         slotNameLength = strlen(theDefclass->instanceTemplate[i]->slotName->name->contents);
          if (slotNameLength > maxSlotNameLength)
            maxSlotNameLength = slotNameLength;
          if (theDefclass->instanceTemplate[i]->noWrite == 0)
            {
             overrideMessageLength =
-              strlen(ValueToString(theDefclass->instanceTemplate[i]->overrideMessage));
+              strlen(theDefclass->instanceTemplate[i]->overrideMessage->contents);
             if (overrideMessageLength > maxOverrideMessageLength)
               maxOverrideMessageLength = overrideMessageLength;
            }
@@ -346,7 +346,6 @@ void GetDefclassModuleCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   returnValue->type = SYMBOL;
    returnValue->value = GetConstructModuleCommand(context,"defclass-module",DefclassData(theEnv)->DefclassConstruct);
   }
 
@@ -365,14 +364,13 @@ void SuperclassPCommand(
   {
    Defclass *c1, *c2;
 
-   returnValue->type = SYMBOL;
-
    if (CheckTwoClasses(context,"superclassp",&c1,&c2) == false)
-     { returnValue->value = EnvFalseSymbol(theEnv); }
-   else if (EnvSuperclassP(theEnv,c1,c2))
-     { returnValue->value = EnvTrueSymbol(theEnv); }
-   else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+     {
+      returnValue->lexemeValue = theEnv->FalseSymbol;
+      return;
+     }
+
+   returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvSuperclassP(theEnv,c1,c2));
   }
 
 /***************************************************
@@ -414,13 +412,13 @@ void SubclassPCommand(
   {
    Defclass *c1, *c2;
 
-   returnValue->type = SYMBOL;
    if (CheckTwoClasses(context,"subclassp",&c1,&c2) == false)
-     { returnValue->value = EnvFalseSymbol(theEnv); }
-   else if (EnvSubclassP(theEnv,c1,c2))
-     { returnValue->value = EnvTrueSymbol(theEnv); }
-   else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+     {
+      returnValue->lexemeValue = theEnv->FalseSymbol;
+      return;
+     }
+
+   returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvSubclassP(theEnv,c1,c2));
   }
 
 /***************************************************
@@ -465,11 +463,10 @@ void SlotExistPCommand(
    bool inheritFlag = false;
    CLIPSValue theArg;
 
-   returnValue->type = SYMBOL;
    sd = CheckSlotExists(context,"slot-existp",&cls,false,true);
    if (sd == NULL)
      {
-      returnValue->value = EnvFalseSymbol(theEnv);
+      returnValue->lexemeValue = theEnv->FalseSymbol;
       return;
      }
 
@@ -478,20 +475,17 @@ void SlotExistPCommand(
       if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg))
         { return; }
 
-      if (strcmp(DOToString(theArg),"inherit") != 0)
+      if (strcmp(theArg.lexemeValue->contents,"inherit") != 0)
         {
          UDFInvalidArgumentMessage(context,"keyword \"inherit\"");
          EnvSetEvaluationError(theEnv,true);
-         returnValue->value = EnvFalseSymbol(theEnv);
+         returnValue->lexemeValue = theEnv->FalseSymbol;
          return;
         }
       inheritFlag = true;
      }
 
-   if ((sd->cls == cls) || inheritFlag)
-     { returnValue->value = EnvTrueSymbol(theEnv); }
-   else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+   returnValue->lexemeValue = EnvCreateBoolean(theEnv,((sd->cls == cls) ? true : inheritFlag));
   }
 
 /***************************************************
@@ -530,45 +524,42 @@ void MessageHandlerExistPCommand(
   CLIPSValue *returnValue)
   {
    Defclass *cls;
-   SYMBOL_HN *mname;
+   CLIPSLexeme *mname;
    CLIPSValue theArg;
    unsigned mtype = MPRIMARY;
 
-   returnValue->type = SYMBOL;
-
    if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
      { return; }
-
-   cls = LookupDefclassByMdlOrScope(theEnv,DOToString(theArg));
+   cls = LookupDefclassByMdlOrScope(theEnv,theArg.lexemeValue->contents);
    if (cls == NULL)
      {
-      ClassExistError(theEnv,"message-handler-existp",DOToString(theArg));
-      returnValue->value = EnvFalseSymbol(theEnv);
+      ClassExistError(theEnv,"message-handler-existp",theArg.lexemeValue->contents);
+      returnValue->lexemeValue = theEnv->FalseSymbol;
       return;
      }
 
    if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg))
         { return; }
 
-   mname = (SYMBOL_HN *) GetValue(theArg);
+   mname = theArg.lexemeValue;
    if (UDFHasNextArgument(context))
      {
       if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg))
         { return; }
 
-      mtype = HandlerType(theEnv,"message-handler-existp",DOToString(theArg));
+      mtype = HandlerType(theEnv,"message-handler-existp",theArg.lexemeValue->contents);
       if (mtype == MERROR)
         {
          EnvSetEvaluationError(theEnv,true);
-         returnValue->value = EnvFalseSymbol(theEnv);
+         returnValue->lexemeValue = theEnv->FalseSymbol;
          return;
         }
      }
 
    if (FindHandlerByAddress(cls,mname,mtype) != NULL)
-     { returnValue->value = EnvTrueSymbol(theEnv); }
+     { returnValue->lexemeValue = theEnv->TrueSymbol; }
    else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+     { returnValue->lexemeValue = theEnv->FalseSymbol; }
   }
 
 /**********************************************************************
@@ -587,18 +578,11 @@ void SlotWritablePCommand(
    Defclass *theDefclass;
    SlotDescriptor *sd;
 
-   returnValue->type = SYMBOL;
    sd = CheckSlotExists(context,"slot-writablep",&theDefclass,true,true);
    if (sd == NULL)
-     {
-      returnValue->value = EnvFalseSymbol(theEnv);
-      return;
-     }
-
-   if (sd->noWrite || sd->initializeOnly)
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+     { returnValue->lexemeValue = theEnv->FalseSymbol; }
    else
-     { returnValue->value = EnvTrueSymbol(theEnv); }
+     { returnValue->lexemeValue = EnvCreateBoolean(theEnv,(sd->noWrite || sd->initializeOnly) ? false : true); }
   }
 
 /***************************************************
@@ -640,18 +624,11 @@ void SlotInitablePCommand(
    Defclass *theDefclass;
    SlotDescriptor *sd;
 
-   returnValue->type = SYMBOL;
    sd = CheckSlotExists(context,"slot-initablep",&theDefclass,true,true);
    if (sd == NULL)
-     {
-      returnValue->value = EnvFalseSymbol(theEnv);
-      return;
-     }
-
-   if (sd->noWrite && (sd->initializeOnly == 0))
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+     { returnValue->lexemeValue = theEnv->FalseSymbol; }
    else
-     { returnValue->value = EnvTrueSymbol(theEnv); }
+     { returnValue->lexemeValue = EnvCreateBoolean(theEnv,(sd->noWrite && (sd->initializeOnly == 0)) ? false : true); }
   }
 
 /***************************************************
@@ -693,18 +670,11 @@ void SlotPublicPCommand(
    Defclass *theDefclass;
    SlotDescriptor *sd;
 
-   returnValue->type = SYMBOL;
    sd = CheckSlotExists(context,"slot-publicp",&theDefclass,true,false);
    if (sd == NULL)
-     {
-      returnValue->value = EnvFalseSymbol(theEnv);
-      return;
-     }
-
-   if (sd->publicVisibility)
-     { returnValue->value = EnvTrueSymbol(theEnv); }
+     { returnValue->lexemeValue = theEnv->FalseSymbol; }
    else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+     { returnValue->lexemeValue = EnvCreateBoolean(theEnv,(sd->publicVisibility ? true : false)); }
   }
 
 /***************************************************
@@ -777,18 +747,11 @@ void SlotDirectAccessPCommand(
    Defclass *theDefclass;
    SlotDescriptor *sd;
 
-   returnValue->type = SYMBOL;
    sd = CheckSlotExists(context,"slot-direct-accessp",&theDefclass,true,true);
    if (sd == NULL)
-     {
-      returnValue->value = EnvFalseSymbol(theEnv);
-      return;
-     }
-
-   if (sd->publicVisibility || (sd->cls == theDefclass))
-     { returnValue->value = EnvTrueSymbol(theEnv); }
+     { returnValue->lexemeValue = theEnv->FalseSymbol; }
    else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+     { returnValue->lexemeValue = EnvCreateBoolean(theEnv,((sd->publicVisibility || (sd->cls == theDefclass)) ? true : false)); }
   }
 
 /***************************************************
@@ -833,16 +796,15 @@ void SlotDefaultValueCommand(
    Defclass *theDefclass;
    SlotDescriptor *sd;
 
-   SetpType(returnValue,SYMBOL);
-   SetpValue(returnValue,EnvFalseSymbol(theEnv));
+   returnValue->lexemeValue = theEnv->FalseSymbol;
+
    sd = CheckSlotExists(context,"slot-default-value",&theDefclass,true,true);
    if (sd == NULL)
      return;
 
    if (sd->noDefault)
      {
-      SetpType(returnValue,SYMBOL);
-      SetpValue(returnValue,EnvAddSymbol(theEnv,"?NONE"));
+      returnValue->lexemeValue = EnvCreateSymbol(theEnv,"?NONE");
       return;
      }
 
@@ -874,15 +836,13 @@ bool EnvSlotDefaultValue(
   {
    SlotDescriptor *sd;
 
-   SetpType(theValue,SYMBOL);
-   SetpValue(theValue,EnvFalseSymbol(theEnv));
+   theValue->value = theEnv->FalseSymbol;
    if ((sd = LookupSlot(theEnv,theDefclass,slotName,true)) == NULL)
      return false;
 
    if (sd->noDefault)
      {
-      SetpType(theValue,SYMBOL);
-      SetpValue(theValue,EnvAddSymbol(theEnv,"?NONE"));
+      theValue->value = EnvCreateSymbol(theEnv,"?NONE");
       return true;
      }
 
@@ -909,15 +869,10 @@ void ClassExistPCommand(
   {
    CLIPSValue theArg;
 
-   returnValue->type = SYMBOL;
-
    if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
      { return; }
 
-   if (LookupDefclassByMdlOrScope(theEnv,DOToString(theArg)) != NULL)
-     { returnValue->value = EnvTrueSymbol(theEnv); }
-   else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+   returnValue->lexemeValue = EnvCreateBoolean(theEnv,((LookupDefclassByMdlOrScope(theEnv,theArg.lexemeValue->contents) != NULL) ? true : false));
   }
 
 /* =========================================
@@ -949,20 +904,20 @@ static bool CheckTwoClasses(
    if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
      { return false; }
 
-   *c1 = LookupDefclassByMdlOrScope(theEnv,DOToString(theArg));
+   *c1 = LookupDefclassByMdlOrScope(theEnv,theArg.lexemeValue->contents);
    if (*c1 == NULL)
      {
-      ClassExistError(theEnv,func,ValueToString(theArg.value));
+      ClassExistError(theEnv,func,theArg.lexemeValue->contents);
       return false;
      }
 
    if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg))
      { return false; }
 
-   *c2 = LookupDefclassByMdlOrScope(theEnv,DOToString(theArg));
+   *c2 = LookupDefclassByMdlOrScope(theEnv,theArg.lexemeValue->contents);
    if (*c2 == NULL)
      {
-      ClassExistError(theEnv,func,ValueToString(theArg.value));
+      ClassExistError(theEnv,func,theArg.lexemeValue->contents);
       return false;
      }
 
@@ -994,7 +949,7 @@ static SlotDescriptor *CheckSlotExists(
   bool existsErrorFlag,
   bool inheritFlag)
   {
-   SYMBOL_HN *ssym;
+   CLIPSLexeme *ssym;
    int slotIndex;
    SlotDescriptor *sd;
    Environment *theEnv = context->environment;
@@ -1008,7 +963,7 @@ static SlotDescriptor *CheckSlotExists(
      {
       if (existsErrorFlag)
         {
-         SlotExistError(theEnv,ValueToString(ssym),func);
+         SlotExistError(theEnv,ssym->contents,func);
          EnvSetEvaluationError(theEnv,true);
         }
       return NULL;
@@ -1020,7 +975,7 @@ static SlotDescriptor *CheckSlotExists(
 
    PrintErrorID(theEnv,"CLASSEXM",1,false);
    EnvPrintRouter(theEnv,WERROR,"Inherited slot ");
-   EnvPrintRouter(theEnv,WERROR,ValueToString(ssym));
+   EnvPrintRouter(theEnv,WERROR,ssym->contents);
    EnvPrintRouter(theEnv,WERROR," from class ");
    PrintClassName(theEnv,WERROR,sd->cls,false);
    EnvPrintRouter(theEnv,WERROR," is not valid for function ");
@@ -1048,11 +1003,11 @@ static SlotDescriptor *LookupSlot(
   const char *slotName,
   bool inheritFlag)
   {
-   SYMBOL_HN *slotSymbol;
+   CLIPSLexeme *slotSymbol;
    int slotIndex;
    SlotDescriptor *sd;
 
-   slotSymbol = FindSymbolHN(theEnv,slotName);
+   slotSymbol = FindSymbolHN(theEnv,slotName,SYMBOL_TYPE);
    if (slotSymbol == NULL)
      return NULL;
 
@@ -1110,7 +1065,7 @@ static const char *GetClassNameArgument(
    if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
      { return NULL; }
 
-   return(DOToString(theArg));
+   return theArg.lexemeValue->contents;
   }
 
 /****************************************************************
@@ -1222,7 +1177,7 @@ static void DisplaySlotBasicInfo(
    for (i = 0 ; i < cls->instanceSlotCount ; i++)
      {
       sp = cls->instanceTemplate[i];
-      gensprintf(buf,slotNamePrintFormat,ValueToString(sp->slotName->name));
+      gensprintf(buf,slotNamePrintFormat,sp->slotName->name->contents);
       genstrcat(buf,sp->multiple ? "MLT " : "SGL ");
       if (sp->noDefault)
         genstrcat(buf,"NIL ");
@@ -1250,7 +1205,7 @@ static void DisplaySlotBasicInfo(
       genstrcat(buf," ");
       EnvPrintRouter(theEnv,logicalName,buf);
       gensprintf(buf,overrideMessagePrintFormat,
-              sp->noWrite ? "NIL" : ValueToString(sp->overrideMessage));
+              sp->noWrite ? "NIL" : sp->overrideMessage->contents);
       EnvPrintRouter(theEnv,logicalName,buf);
       PrintSlotSources(theEnv,logicalName,sp->slotName->name,&sp->cls->allSuperclasses,0,true);
       EnvPrintRouter(theEnv,logicalName,"\n");
@@ -1280,7 +1235,7 @@ static void DisplaySlotBasicInfo(
 static bool PrintSlotSources(
   Environment *theEnv,
   const char *logicalName,
-  SYMBOL_HN *sname,
+  CLIPSLexeme *sname,
   PACKED_CLASS_LINKS *sprec,
   long theIndex,
   bool inhp)
@@ -1347,7 +1302,7 @@ static void DisplaySlotConstraintInfo(
    for (i = 0 ; i < cls->instanceSlotCount ; i++)
      {
       cr = cls->instanceTemplate[i]->constraint;
-      gensprintf(buf,slotNamePrintFormat,ValueToString(cls->instanceTemplate[i]->slotName->name));
+      gensprintf(buf,slotNamePrintFormat,cls->instanceTemplate[i]->slotName->name->contents);
       if (cr != NULL)
         {
          genstrcat(buf,ConstraintCode(cr,(unsigned) cr->symbolsAllowed,

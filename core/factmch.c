@@ -172,10 +172,10 @@ void FactPatternMatch(
               false :
               (FactData(theEnv)->CurrentPatternMarks->where.whichSlotNumber == patternPtr->whichSlot)) &&
              (FactData(theEnv)->CurrentPatternFact->theProposition.theFields
-                  [patternPtr->whichSlot].type == MULTIFIELD))
+                  [patternPtr->whichSlot].header->type == MULTIFIELD))
            {
             if ((patternPtr->leaveFields + theSlotField) != (int)
-               ((struct multifield *) FactData(theEnv)->CurrentPatternFact->theProposition.theFields
+               ((Multifield *) FactData(theEnv)->CurrentPatternFact->theProposition.theFields
                                       [patternPtr->whichSlot].value)->multifieldLength)
               { skipit = true; }
            }
@@ -190,7 +190,7 @@ void FactPatternMatch(
               {
                EvaluateExpression(theEnv,patternPtr->networkTest,&theResult);
 
-               tempPtr = (struct factPatternNode *) FindHashedPatternNode(theEnv,patternPtr,theResult.type,theResult.value);
+               tempPtr = (struct factPatternNode *) FindHashedPatternNode(theEnv,patternPtr,theResult.header->type,theResult.value);
               }
             else
               { tempPtr = NULL; }
@@ -301,7 +301,7 @@ static void ProcessMultifieldNode(
    /* multifield slot being pattern matched. */
    /*========================================*/
 
-   theSlotValue = (struct multifield *)
+   theSlotValue = (Multifield *)
      FactData(theEnv)->CurrentPatternFact->theProposition.theFields[thePattern->whichSlot].value;
 
    /*===============================================*/
@@ -358,7 +358,7 @@ static void ProcessMultifieldNode(
            {
             EvaluateExpression(theEnv,thePattern->networkTest,&theResult);
 
-            thePattern = (struct factPatternNode *) FindHashedPatternNode(theEnv,thePattern,theResult.type,theResult.value);
+            thePattern = (struct factPatternNode *) FindHashedPatternNode(theEnv,thePattern,theResult.header->type,theResult.value);
             if (thePattern != NULL)
               { success = true; }
             else
@@ -423,7 +423,7 @@ static void ProcessMultifieldNode(
            {
             EvaluateExpression(theEnv,thePattern->networkTest,&theResult);
 
-            tempPtr = (struct factPatternNode *) FindHashedPatternNode(theEnv,thePattern,theResult.type,theResult.value);
+            tempPtr = (struct factPatternNode *) FindHashedPatternNode(theEnv,thePattern,theResult.header->type,theResult.value);
             if (tempPtr != NULL)
               {
                FactPatternMatch(theEnv,FactData(theEnv)->CurrentPatternFact,
@@ -690,7 +690,7 @@ static bool EvaluatePatternExpression(
       return false;
      }
 
-   if ((theResult.value == EnvFalseSymbol(theEnv)) && (theResult.type == SYMBOL))
+   if (theResult.value == theEnv->FalseSymbol)
      { return false; }
 
    return true;
@@ -735,7 +735,7 @@ static void PatternNetErrorMessage(
      {
       theSlots = FactData(theEnv)->CurrentPatternFact->whichDeftemplate->slotList;
       for (i = 0; i < (int) patternPtr->whichSlot; i++) theSlots = theSlots->next;
-      gensprintf(buffer,"   Problem resides in slot %s\n",ValueToString(theSlots->slotName));
+      gensprintf(buffer,"   Problem resides in slot %s\n",theSlots->slotName->contents);
      }
 
    EnvPrintRouter(theEnv,WERROR,buffer);

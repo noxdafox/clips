@@ -71,48 +71,47 @@ typedef struct multifield Multifield;
 
 struct field
   {
-   unsigned short type;
-   void *value;
+   union
+     {
+      void *value;
+      TypeHeader *header;
+      CLIPSLexeme *lexemeValue;
+      CLIPSFloat *floatValue;
+      CLIPSInteger *integerValue;
+      CLIPSVoid *voidValue;
+     };
   };
 
 struct multifield
   {
+   TypeHeader th;
    unsigned busyCount;
    long multifieldLength;
    struct multifield *next;
    struct field theFields[1];
   };
 
-typedef struct multifield SEGMENT;
-typedef struct multifield * SEGMENT_PTR;
-typedef struct multifield * MULTIFIELD_PTR;
 typedef struct field FIELD;
 typedef struct field * FIELD_PTR;
 
-#define GetMFLength(target)     (((struct multifield *) (target))->multifieldLength)
-#define GetMFPtr(target,index)  (&(((struct field *) ((struct multifield *) (target))->theFields)[index-1]))
-#define SetMFType(target,index,value)  (((struct field *) ((struct multifield *) (target))->theFields)[index-1].type = (unsigned short) (value))
-#define SetMFValue(target,index,val)  (((struct field *) ((struct multifield *) (target))->theFields)[index-1].value = (void *) (val))
-#define GetMFType(target,index)  (((struct field *) ((struct multifield *) (target))->theFields)[index-1].type)
-#define GetMFValue(target,index)  (((struct field *) ((struct multifield *) (target))->theFields)[index-1].value)
+#define GetMFLength(target)     (((Multifield *) (target))->multifieldLength)
+#define SetMFValue(target,index,val)  (((struct field *) ((Multifield *) (target))->theFields)[index].value = (void *) (val))
 
-#define EnvGetMFLength(theEnv,target)     (((struct multifield *) (target))->multifieldLength)
-#define EnvGetMFPtr(theEnv,target,index)  (&(((struct field *) ((struct multifield *) (target))->theFields)[index-1]))
-#define EnvSetMFType(theEnv,target,index,value)  (((struct field *) ((struct multifield *) (target))->theFields)[index-1].type = (unsigned short) (value))
-#define EnvSetMFValue(theEnv,target,index,val)  (((struct field *) ((struct multifield *) (target))->theFields)[index-1].value = (void *) (val))
-#define EnvGetMFType(theEnv,target,index)  (((struct field *) ((struct multifield *) (target))->theFields)[index-1].type)
-#define EnvGetMFValue(theEnv,target,index)  (((struct field *) ((struct multifield *) (target))->theFields)[index-1].value)
+#define GetMFType(target,index)  ((((struct field *) ((Multifield *) (target))->theFields)[index].header)->type)
+#define GetMFValue(target,index)  (((struct field *) ((Multifield *) (target))->theFields)[index].value)
 
    Multifield                    *CreateMultifield2(Environment *,long);
    void                           ReturnMultifield(Environment *,struct multifield *);
    void                           MultifieldInstall(Environment *,struct multifield *);
    void                           MultifieldDeinstall(Environment *,struct multifield *);
+   void                           CVMultifieldInstall(Environment *,struct multifield *);
+   void                           CVMultifieldDeinstall(Environment *,struct multifield *);
    Multifield                    *StringToMultifield(Environment *,const char *);
    Multifield                    *EnvCreateMultifield(Environment *,long);
    void                           AddToMultifieldList(Environment *,struct multifield *);
    void                           FlushMultifields(Environment *);
    void                           DuplicateMultifield(Environment *,CLIPSValue *,CLIPSValue *);
-   void                           PrintMultifield(Environment *,const char *,SEGMENT_PTR,long,long,bool);
+   void                           PrintMultifield(Environment *,const char *,Multifield *,long,long,bool);
    bool                           MultifieldDOsEqual(CLIPSValue *,CLIPSValue *);
    void                           StoreInMultifield(Environment *,CLIPSValue *,EXPRESSION *,bool);
    Multifield                    *CopyMultifield(Environment *,struct multifield *);
@@ -120,7 +119,7 @@ typedef struct field * FIELD_PTR;
    Multifield                    *DOToMultifield(Environment *,CLIPSValue *);
    unsigned long                  HashMultifield(struct multifield *,unsigned long);
    Multifield                    *GetMultifieldList(Environment *);
-   void                          *ImplodeMultifield(Environment *,CLIPSValue *);
+   CLIPSLexeme                   *ImplodeMultifield(Environment *,CLIPSValue *);
    void                           EphemerateMultifield(Environment *,struct multifield *);
 
 #endif /* _H_multifld */

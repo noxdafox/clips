@@ -164,8 +164,8 @@ static void StrOrSymCatFunction(
    CLIPSValue theArg;
    int numArgs, i, total, j;
    char *theString;
-   SYMBOL_HN **arrayOfStrings;
-   SYMBOL_HN *hashPtr;
+   CLIPSLexeme **arrayOfStrings;
+   CLIPSLexeme *hashPtr;
    Environment *theEnv = context->environment;
 
    /*===============================================*/
@@ -177,7 +177,7 @@ static void StrOrSymCatFunction(
    numArgs = UDFArgumentCount(context);
    if (numArgs == 0) return;
 
-   arrayOfStrings = (SYMBOL_HN **) gm1(theEnv,(int) sizeof(SYMBOL_HN *) * numArgs);
+   arrayOfStrings = (CLIPSLexeme **) gm1(theEnv,(int) sizeof(CLIPSLexeme *) * numArgs);
    for (i = 0; i < numArgs; i++)
      { arrayOfStrings[i] = NULL; }
 
@@ -191,26 +191,26 @@ static void StrOrSymCatFunction(
      {
       UDFNthArgument(context,i,ANY_TYPE,&theArg);
 
-      switch(GetType(theArg))
+      switch(theArg.header->type)
         {
          case STRING:
 #if OBJECT_SYSTEM
          case INSTANCE_NAME:
 #endif
          case SYMBOL:
-           hashPtr = (SYMBOL_HN *) GetValue(theArg);
+           hashPtr = theArg.lexemeValue;
            arrayOfStrings[i-1] = hashPtr;
            IncrementSymbolCount(hashPtr);
            break;
 
          case FLOAT:
-           hashPtr = (SYMBOL_HN *) EnvAddSymbol(theEnv,FloatToString(theEnv,ValueToDouble(GetValue(theArg))));
+           hashPtr = EnvCreateString(theEnv,FloatToString(theEnv,ValueToDouble(theArg.value)));
            arrayOfStrings[i-1] = hashPtr;
            IncrementSymbolCount(hashPtr);
            break;
 
          case INTEGER:
-           hashPtr = (SYMBOL_HN *) EnvAddSymbol(theEnv,LongIntegerToString(theEnv,ValueToLong(GetValue(theArg))));
+           hashPtr = EnvCreateString(theEnv,LongIntegerToString(theEnv,ValueToLong(theArg.value)));
            arrayOfStrings[i-1] = hashPtr;
            IncrementSymbolCount(hashPtr);
            break;
@@ -229,17 +229,16 @@ static void StrOrSymCatFunction(
               { DecrementSymbolCount(theEnv,arrayOfStrings[i]); }
            }
 
-         rm(theEnv,arrayOfStrings,sizeof(SYMBOL_HN *) * numArgs);
+         rm(theEnv,arrayOfStrings,sizeof(CLIPSLexeme *) * numArgs);
 
-         SetpType(returnValue,returnType);
          if (returnType == STRING)
-           { SetpValue(returnValue,EnvAddSymbol(theEnv,"")); }
+           { returnValue->value = EnvCreateString(theEnv,""); }
          else
-           { SetpValue(returnValue,EnvAddSymbol(theEnv,"nil")); }
+           { returnValue->value = EnvCreateSymbol(theEnv,"nil"); }
          return;
         }
 
-      total += (int) strlen(ValueToString(arrayOfStrings[i - 1]));
+      total += (int) strlen(arrayOfStrings[i - 1]->contents);
      }
 
    /*=========================================================*/
@@ -253,8 +252,8 @@ static void StrOrSymCatFunction(
    j = 0;
    for (i = 0 ; i < numArgs ; i++)
      {
-      gensprintf(&theString[j],"%s",ValueToString(arrayOfStrings[i]));
-      j += (int) strlen(ValueToString(arrayOfStrings[i]));
+      gensprintf(&theString[j],"%s",arrayOfStrings[i]->contents);
+      j += (int) strlen(arrayOfStrings[i]->contents);
      }
 
    /*=========================================*/
@@ -262,8 +261,10 @@ static void StrOrSymCatFunction(
    /* up the temporary memory used.           */
    /*=========================================*/
 
-   SetpType(returnValue,returnType);
-   SetpValue(returnValue,EnvAddSymbol(theEnv,theString));
+   if (returnType == STRING)
+     { returnValue->value = EnvCreateString(theEnv,theString); }
+   else
+     { returnValue->value = EnvCreateSymbol(theEnv,theString); }
    rm(theEnv,theString,sizeof(char) * total);
 
    for (i = 0; i < numArgs; i++)
@@ -272,7 +273,7 @@ static void StrOrSymCatFunction(
         { DecrementSymbolCount(theEnv,arrayOfStrings[i]); }
      }
 
-   rm(theEnv,arrayOfStrings,sizeof(SYMBOL_HN *) * numArgs);
+   rm(theEnv,arrayOfStrings,sizeof(CLIPSLexeme *) * numArgs);
   }
 
 /*******************************************/
@@ -297,8 +298,7 @@ void StrLengthFunction(
    /* Return the length of the string or symbol. */
    /*============================================*/
 
-   returnValue->type = INTEGER;
-   returnValue->value = EnvAddLong(theEnv,UTF8Length(DOToString(theArg)));
+   returnValue->integerValue = EnvCreateInteger(theEnv,UTF8Length(theArg.lexemeValue->contents));
   }
 
 /****************************************/
@@ -329,7 +329,7 @@ void UpcaseFunction(
    /* lower case alphabetic characters.                    */
    /*======================================================*/
 
-   osptr = DOToString(theArg);
+   osptr = theArg.lexemeValue->contents;
    slen = strlen(osptr) + 1;
    nsptr = (char *) gm2(theEnv,slen);
 
@@ -346,8 +346,12 @@ void UpcaseFunction(
    /* up the temporary memory used.          */
    /*========================================*/
 
-   SetpType(returnValue,GetType(theArg));
-   SetpValue(returnValue,EnvAddSymbol(theEnv,nsptr));
+   if (CVIsType(&theArg,SYMBOL_TYPE))
+     { returnValue->value = EnvCreateSymbol(theEnv,nsptr); }
+   else if (CVIsType(&theArg,INSTANCE_NAME_TYPE))
+     { returnValue->value = EnvCreateInstanceName(theEnv,nsptr); }
+   else
+     { returnValue->value = EnvCreateString(theEnv,nsptr); }
    rm(theEnv,nsptr,slen);
   }
 
@@ -379,7 +383,7 @@ void LowcaseFunction(
    /* upper case alphabetic characters.                    */
    /*======================================================*/
 
-   osptr = DOToString(theArg);
+   osptr = theArg.lexemeValue->contents;
    slen = strlen(osptr) + 1;
    nsptr = (char *) gm2(theEnv,slen);
 
@@ -396,8 +400,12 @@ void LowcaseFunction(
    /* up the temporary memory used.          */
    /*========================================*/
 
-   SetpType(returnValue,GetType(theArg));
-   SetpValue(returnValue,EnvAddSymbol(theEnv,nsptr));
+   if (CVIsType(&theArg,SYMBOL_TYPE))
+     { returnValue->value = EnvCreateSymbol(theEnv,nsptr); }
+   else if (CVIsType(&theArg,INSTANCE_NAME_TYPE))
+     { returnValue->value = EnvCreateInstanceName(theEnv,nsptr); }
+   else
+     { returnValue->value = EnvCreateString(theEnv,nsptr); }
    rm(theEnv,nsptr,slen);
   }
 
@@ -433,11 +441,11 @@ void StrCompareFunction(
       if (! UDFNextArgument(context,INTEGER_TYPE,&arg3))
         { return; }
 
-      compareResult = strncmp(DOToString(arg1),DOToString(arg2),
-                             (STD_SIZE) DOToInteger(arg3));
+      compareResult = strncmp(arg1.lexemeValue->contents,arg2.lexemeValue->contents,
+                            (STD_SIZE) arg3.integerValue->contents);
      }
    else
-     { compareResult = strcmp(DOToString(arg1),DOToString(arg2)); }
+     { compareResult = strcmp(arg1.lexemeValue->contents,arg2.lexemeValue->contents); }
 
    /*========================================================*/
    /* Return Values are as follows:                          */
@@ -446,13 +454,12 @@ void StrCompareFunction(
    /*  0 is returned if <string-1> is equal to <string-2>.   */
    /*========================================================*/
 
-   returnValue->type = INTEGER;
    if (compareResult < 0)
-     { returnValue->value = EnvAddLong(theEnv,-1); }
+     { returnValue->integerValue = EnvCreateInteger(theEnv,-1L); }
    else if (compareResult > 0)
-     { returnValue->value = EnvAddLong(theEnv,1); }
+     { returnValue->integerValue = EnvCreateInteger(theEnv,1L); }
    else
-     { returnValue->value = EnvAddLong(theEnv,0); }
+     { returnValue->integerValue = EnvCreateInteger(theEnv,0L); }
   }
 
 /*******************************************/
@@ -469,8 +476,6 @@ void SubStringFunction(
    char *returnString;
    size_t start, end, i, j, length;
 
-   returnValue->type = STRING;
-
    /*===================================*/
    /* Check and retrieve the arguments. */
    /*===================================*/
@@ -478,26 +483,26 @@ void SubStringFunction(
    if (! UDFFirstArgument(context,INTEGER_TYPE,&theArg))
      { return; }
 
-   if (CoerceToLongInteger(theArg.type,theArg.value) < 1)
+   if (theArg.integerValue->contents < 1)
      { start = 0; }
    else
-     { start = (size_t) CoerceToLongInteger(theArg.type,theArg.value) - 1; }
+     { start = (size_t) theArg.integerValue->contents - 1; }
 
    if (! UDFNextArgument(context,INTEGER_TYPE,&theArg))
      { return; }
 
-   if (CoerceToLongInteger(theArg.type,theArg.value) < 1)
+   if (theArg.integerValue->contents < 1)
      {
-      returnValue->value = EnvAddSymbol(theEnv,"");
+      returnValue->lexemeValue = EnvCreateString(theEnv,"");
       return;
      }
    else
-     { end = (size_t) CoerceToLongInteger(theArg.type,theArg.value) - 1; }
+     { end = (size_t) theArg.integerValue->contents - 1; }
 
    if (! UDFNextArgument(context,LEXEME_TYPES | INSTANCE_NAME_TYPE,&theArg))
      { return; }
 
-   tempString = DOToString(theArg);
+   tempString = theArg.lexemeValue->contents;
 
    /*================================================*/
    /* If parameters are out of range return an error */
@@ -515,7 +520,7 @@ void SubStringFunction(
 
    if ((start > end) || (length == 0))
      {
-      returnValue->value = EnvAddSymbol(theEnv,"");
+      returnValue->lexemeValue = EnvCreateString(theEnv,"");
       return;
      }
 
@@ -540,7 +545,7 @@ void SubStringFunction(
    /* Return the new string. */
    /*========================*/
 
-   returnValue->value = EnvAddSymbol(theEnv,returnString);
+   returnValue->lexemeValue = EnvCreateString(theEnv,returnString);
    rm(theEnv,returnString,(unsigned) (end - start + 2));
   }
 
@@ -557,8 +562,7 @@ void StrIndexFunction(
    const char *strg1, *strg2, *strg3;
    size_t i, j;
 
-   returnValue->type = SYMBOL;
-   returnValue->value = EnvFalseSymbol(theEnv);
+   returnValue->lexemeValue = theEnv->FalseSymbol;
 
    /*===================================*/
    /* Check and retrieve the arguments. */
@@ -570,8 +574,8 @@ void StrIndexFunction(
    if (! UDFNextArgument(context,LEXEME_TYPES | INSTANCE_NAME_TYPE,&theArg2))
      { return; }
 
-   strg1 = DOToString(theArg1);
-   strg2 = DOToString(theArg2);
+   strg1 = theArg1.lexemeValue->contents;
+   strg2 = theArg2.lexemeValue->contents;
 
    /*=================================*/
    /* Find the position in string2 of */
@@ -580,8 +584,7 @@ void StrIndexFunction(
 
    if (strlen(strg1) == 0)
      {
-      returnValue->type = INTEGER;
-      returnValue->value = EnvAddLong(theEnv,(long long) UTF8Length(strg2) + 1LL);
+      returnValue->integerValue = EnvCreateInteger(theEnv,(long long) UTF8Length(strg2) + 1LL);
       return;
      }
 
@@ -593,8 +596,7 @@ void StrIndexFunction(
 
       if (*(strg1+j) == '\0')
         {
-         returnValue->type = INTEGER;
-         returnValue->value = EnvAddLong(theEnv,(long long) UTF8CharNum(strg3,i));
+         returnValue->integerValue = EnvCreateInteger(theEnv,(long long) UTF8CharNum(strg3,i));
          return;
         }
      }
@@ -619,8 +621,7 @@ void StringToFieldFunction(
 
    if (! UDFFirstArgument(context,LEXEME_TYPES | INSTANCE_NAME_TYPE,&theArg))
      {
-      returnValue->type = STRING;
-      returnValue->value = EnvAddSymbol(theEnv,"*** ERROR ***");
+      returnValue->lexemeValue = EnvCreateSymbol(theEnv,"*** ERROR ***");
       return;
      }
 
@@ -628,7 +629,7 @@ void StringToFieldFunction(
    /* Convert the string to an atom. */
    /*================================*/
 
-   StringToField(theEnv,DOToString(theArg),returnValue);
+   StringToField(theEnv,theArg.lexemeValue->contents,returnValue);
   }
 
 /*************************************************************/
@@ -659,25 +660,13 @@ void StringToField(
        (theToken.tknType == INSTANCE_NAME_TOKEN) ||
 #endif
        (theToken.tknType == SYMBOL_TOKEN) || (theToken.tknType == INTEGER_TOKEN))
-     {
-      returnValue->type = TokenTypeToType(theToken.tknType);
-      returnValue->value = theToken.value;
-     }
+     { returnValue->value = theToken.value; }
    else if (theToken.tknType == STOP_TOKEN)
-     {
-      returnValue->type = SYMBOL;
-      returnValue->value = EnvAddSymbol(theEnv,"EOF");
-     }
+     { returnValue->value = EnvCreateSymbol(theEnv,"EOF"); }
    else if (theToken.tknType == UNKNOWN_VALUE_TOKEN)
-     {
-      returnValue->type = STRING;
-      returnValue->value = EnvAddSymbol(theEnv,"*** ERROR ***");
-     }
+     { returnValue->value = EnvCreateString(theEnv,"*** ERROR ***"); }
    else
-     {
-      returnValue->type = STRING;
-      returnValue->value = EnvAddSymbol(theEnv,theToken.printForm);
-     }
+     { returnValue->value = EnvCreateString(theEnv,theToken.printForm); }
   }
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
@@ -704,7 +693,7 @@ void EvalFunction(
    /* Evaluate the string. */
    /*======================*/
 
-   EnvEval(theEnv,DOToString(theArg),returnValue);
+   EnvEval(theEnv,theArg.lexemeValue->contents,returnValue);
   }
 
 /*****************************/
@@ -722,6 +711,8 @@ bool EnvEval(
    char logicalNameBuffer[20];
    struct BindInfo *oldBinds;
    int danglingConstructs;
+
+   returnValue->environment = theEnv;
 
    /*=====================================*/
    /* If embedded, clear the error flags. */
@@ -743,8 +734,7 @@ bool EnvEval(
    gensprintf(logicalNameBuffer,"Eval-%d",depth);
    if (OpenStringSource(theEnv,logicalNameBuffer,theString,0) == 0)
      {
-      SetpType(returnValue,SYMBOL);
-      SetpValue(returnValue,EnvFalseSymbol(theEnv));
+      returnValue->lexemeValue = theEnv->FalseSymbol;
       depth--;
       return false;
      }
@@ -782,8 +772,7 @@ bool EnvEval(
      {
       EnvSetEvaluationError(theEnv,true);
       CloseStringSource(theEnv,logicalNameBuffer);
-      SetpType(returnValue,SYMBOL);
-      SetpValue(returnValue,EnvFalseSymbol(theEnv));
+      returnValue->lexemeValue = theEnv->FalseSymbol;
       depth--;
       ConstructData(theEnv)->DanglingConstructs = danglingConstructs;
       return false;
@@ -800,8 +789,7 @@ bool EnvEval(
       EnvPrintRouter(theEnv,WERROR,"expand$ must be used in the argument list of a function call.\n");
       EnvSetEvaluationError(theEnv,true);
       CloseStringSource(theEnv,logicalNameBuffer);
-      SetpType(returnValue,SYMBOL);
-      SetpValue(returnValue,EnvFalseSymbol(theEnv));
+      returnValue->value = theEnv->FalseSymbol;
       ReturnExpression(theEnv,top);
       depth--;
       ConstructData(theEnv)->DanglingConstructs = danglingConstructs;
@@ -819,8 +807,7 @@ bool EnvEval(
       EnvPrintRouter(theEnv,WERROR,"Some variables could not be accessed by the eval function.\n");
       EnvSetEvaluationError(theEnv,true);
       CloseStringSource(theEnv,logicalNameBuffer);
-      SetpType(returnValue,SYMBOL);
-      SetpValue(returnValue,EnvFalseSymbol(theEnv));
+      returnValue->value = theEnv->FalseSymbol;
       ReturnExpression(theEnv,top);
       depth--;
       ConstructData(theEnv)->DanglingConstructs = danglingConstructs;
@@ -875,10 +862,10 @@ void EvalFunction(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
+   returnValue->environment = theEnv;
    PrintErrorID(theEnv,"STRNGFUN",1,false);
    EnvPrintRouter(theEnv,WERROR,"Function eval does not work in run time modules.\n");
-   SetpType(returnValue,SYMBOL);
-   SetpValue(returnValue,EnvFalseSymbol(theEnv));
+   returnValue->lexemeValue = theEnv->FalseSymbol;
   }
 
 /*****************************************************/
@@ -890,10 +877,10 @@ bool EnvEval(
   const char *theString,
   CLIPSValue *returnValue)
   {
+   returnValue->environment = theEnv;
    PrintErrorID(theEnv,"STRNGFUN",1,false);
    EnvPrintRouter(theEnv,WERROR,"Function eval does not work in run time modules.\n");
-   SetpType(returnValue,SYMBOL);
-   SetpValue(returnValue,EnvFalseSymbol(theEnv));
+   returnValue->lexemeValue = theEnv->FalseSymbol;
    return false;
   }
 
@@ -911,8 +898,6 @@ void BuildFunction(
   {
    CLIPSValue theArg;
 
-   returnValue->type = SYMBOL;
-
    /*==================================================*/
    /* The argument should be of type SYMBOL or STRING. */
    /*==================================================*/
@@ -924,10 +909,7 @@ void BuildFunction(
    /* Build the construct. */
    /*======================*/
 
-   if (EnvBuild(theEnv,DOToString(theArg)))
-     { returnValue->value = EnvTrueSymbol(theEnv); }
-   else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+   returnValue->lexemeValue = EnvCreateBoolean(theEnv,(EnvBuild(theEnv,theArg.lexemeValue->contents)));
   }
 
 /******************************/
@@ -993,7 +975,7 @@ bool EnvBuild(
       return false;
      }
 
-   constructType = ValueToString(theToken.value);
+   constructType = theToken.lexemeValue->contents;
 
    /*======================*/
    /* Parse the construct. */
@@ -1054,8 +1036,7 @@ void BuildFunction(
   {
    PrintErrorID(theEnv,"STRNGFUN",1,false);
    EnvPrintRouter(theEnv,WERROR,"Function build does not work in run time modules.\n");
-   returnValue->type = SYMBOL;
-   returnValue->value = EnvFalseSymbol(theEnv);
+   returnValue->lexemeValue = theEnv->FalseSymbol;
   }
 
 /******************************************************/

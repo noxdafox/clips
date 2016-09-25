@@ -101,8 +101,8 @@ static void DeallocateDefglobalBloadData(
 
    for (i = 0; i < DefglobalBinaryData(theEnv)->NumberOfDefglobals; i++)
      {
-      if (DefglobalBinaryData(theEnv)->DefglobalArray[i].current.type == MULTIFIELD)
-        { ReturnMultifield(theEnv,(struct multifield *) DefglobalBinaryData(theEnv)->DefglobalArray[i].current.value); }
+      if (DefglobalBinaryData(theEnv)->DefglobalArray[i].current.header->type == MULTIFIELD)
+        { ReturnMultifield(theEnv,(Multifield *) DefglobalBinaryData(theEnv)->DefglobalArray[i].current.value); }
      }
 
    space = DefglobalBinaryData(theEnv)->NumberOfDefglobals * sizeof(Defglobal);
@@ -388,7 +388,7 @@ static void UpdateDefglobal(
    struct bsaveDefglobal *bdp;
 
    bdp = (struct bsaveDefglobal *) buf;
-   UpdateConstructHeader(theEnv,&bdp->header,&DefglobalBinaryData(theEnv)->DefglobalArray[obji].header,
+   UpdateConstructHeader(theEnv,&bdp->header,&DefglobalBinaryData(theEnv)->DefglobalArray[obji].header,DEFGLOBAL,
                          (int) sizeof(struct defglobalModule),DefglobalBinaryData(theEnv)->ModuleArray,
                          (int) sizeof(Defglobal),DefglobalBinaryData(theEnv)->DefglobalArray);
 
@@ -396,8 +396,7 @@ static void UpdateDefglobal(
    DefglobalBinaryData(theEnv)->DefglobalArray[obji].watch = DefglobalData(theEnv)->WatchGlobals;
 #endif
    DefglobalBinaryData(theEnv)->DefglobalArray[obji].initial = HashedExpressionPointer(bdp->initial);
-   DefglobalBinaryData(theEnv)->DefglobalArray[obji].current.type = RVOID;
-
+   DefglobalBinaryData(theEnv)->DefglobalArray[obji].current.voidValue = theEnv->VoidConstant;
   }
 
 /***************************************/
@@ -421,8 +420,8 @@ static void ClearBload(
       UnmarkConstructHeader(theEnv,&DefglobalBinaryData(theEnv)->DefglobalArray[i].header);
 
       ValueDeinstall(theEnv,&(DefglobalBinaryData(theEnv)->DefglobalArray[i].current));
-      if (DefglobalBinaryData(theEnv)->DefglobalArray[i].current.type == MULTIFIELD)
-        { ReturnMultifield(theEnv,(struct multifield *) DefglobalBinaryData(theEnv)->DefglobalArray[i].current.value); }
+      if (DefglobalBinaryData(theEnv)->DefglobalArray[i].current.header->type == MULTIFIELD)
+        { ReturnMultifield(theEnv,(Multifield *) DefglobalBinaryData(theEnv)->DefglobalArray[i].current.value); }
      }
 
    /*==============================================================*/

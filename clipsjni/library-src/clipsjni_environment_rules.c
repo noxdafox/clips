@@ -176,7 +176,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getFocusStack(
         theFocus != NULL; 
         theFocus = theFocus->next)
      { 
-      moduleName = (*env)->NewStringUTF(env,ValueToString(theFocus->theModule->name));
+      moduleName = (*env)->NewStringUTF(env,theFocus->theModule->header.name->contents);
         
       focusModule = (*env)->NewObject(env,
                                       CLIPSJNIData(clipsEnv)->focusClass,

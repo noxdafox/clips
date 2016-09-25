@@ -10,6 +10,7 @@
 #import "AppController.h"
 #import "CLIPSEnvironment.h"
 #import "CLIPSFactInstance.h"
+#import "CLIPSAgendaController.h"
 #import "ModuleArrayController.h"
 
 #include <CLIPS/clips.h>

@@ -63,8 +63,8 @@
                                                            struct lhsParseNode *);
    static struct lhsParseNode    *AddToVariableConstraints(Environment *,struct lhsParseNode *,
                                                            struct lhsParseNode *);
-   static void                    ConstraintConflictMessage(Environment *,struct symbolHashNode *,
-                                                            int,int,struct symbolHashNode *);
+   static void                    ConstraintConflictMessage(Environment *,CLIPSLexeme *,
+                                                            int,int,CLIPSLexeme *);
    static bool                    CheckArgumentForConstraintError(Environment *,struct expr *,struct expr*,
                                                                   int,struct FunctionDefinition *,
                                                                   struct lhsParseNode *);
@@ -81,7 +81,7 @@ static bool CheckForUnmatchableConstraints(
   {
    if (UnmatchableConstraint(theNode->constraints))
      {
-      ConstraintConflictMessage(theEnv,(SYMBOL_HN *) theNode->value,whichCE,
+      ConstraintConflictMessage(theEnv,(CLIPSLexeme *) theNode->value,whichCE,
                                 theNode->index,theNode->slot);
       return true;
      }
@@ -96,10 +96,10 @@ static bool CheckForUnmatchableConstraints(
 /******************************************************/
 static void ConstraintConflictMessage(
   Environment *theEnv,
-  struct symbolHashNode *variableName,
+  CLIPSLexeme *variableName,
   int thePattern,
   int theField,
-  struct symbolHashNode *theSlot)
+  CLIPSLexeme *theSlot)
   {
    /*=========================*/
    /* Print the error header. */
@@ -115,7 +115,7 @@ static void ConstraintConflictMessage(
    if (variableName != NULL)
      {
       EnvPrintRouter(theEnv,WERROR,"Variable ?");
-      EnvPrintRouter(theEnv,WERROR,ValueToString(variableName));
+      EnvPrintRouter(theEnv,WERROR,variableName->contents);
       EnvPrintRouter(theEnv,WERROR," in CE #");
       PrintLongInteger(theEnv,WERROR,(long int) thePattern);
      }
@@ -138,7 +138,7 @@ static void ConstraintConflictMessage(
    else
      {
       EnvPrintRouter(theEnv,WERROR," slot ");
-      EnvPrintRouter(theEnv,WERROR,ValueToString(theSlot));
+      EnvPrintRouter(theEnv,WERROR,theSlot->contents);
      }
 
    /*======================================*/
@@ -241,9 +241,9 @@ static bool MultifieldCardinalityViolation(
    else tempConstraint = CopyConstraintRecord(theEnv,theNode->constraints);
    ReturnExpression(theEnv,tempConstraint->minFields);
    ReturnExpression(theEnv,tempConstraint->maxFields);
-   tempConstraint->minFields = GenConstant(theEnv,INTEGER,EnvAddLong(theEnv,(long long) minFields));
+   tempConstraint->minFields = GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,(long long) minFields));
    if (posInfinity) tempConstraint->maxFields = GenConstant(theEnv,SYMBOL,SymbolData(theEnv)->PositiveInfinity);
-   else tempConstraint->maxFields = GenConstant(theEnv,INTEGER,EnvAddLong(theEnv,(long long) maxFields));
+   else tempConstraint->maxFields = GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,(long long) maxFields));
 
    /*================================================================*/
    /* Determine the final cardinality for the multifield slot by     */
@@ -411,11 +411,11 @@ bool ProcessConnectedConstraints(
 /**************************************************/
 void ConstraintReferenceErrorMessage(
   Environment *theEnv,
-  struct symbolHashNode *theVariable,
+  CLIPSLexeme *theVariable,
   struct lhsParseNode *theExpression,
   int whichArgument,
   int whichCE,
-  struct symbolHashNode *slotName,
+  CLIPSLexeme *slotName,
   int theField)
   {
    struct expr *temprv;
@@ -427,7 +427,7 @@ void ConstraintReferenceErrorMessage(
    /*==========================*/
 
    EnvPrintRouter(theEnv,WERROR,"Previous variable bindings of ?");
-   EnvPrintRouter(theEnv,WERROR,ValueToString(theVariable));
+   EnvPrintRouter(theEnv,WERROR,theVariable->contents);
    EnvPrintRouter(theEnv,WERROR," caused the type restrictions");
 
    /*============================*/
@@ -468,7 +468,7 @@ void ConstraintReferenceErrorMessage(
    else
      {
       EnvPrintRouter(theEnv,WERROR," slot ");
-      EnvPrintRouter(theEnv,WERROR,ValueToString(slotName));
+      EnvPrintRouter(theEnv,WERROR,slotName->contents);
      }
 
    EnvPrintRouter(theEnv,WERROR," to be violated.\n");
@@ -794,7 +794,7 @@ static bool CheckArgumentForConstraintError(
    /* binding the variable in the LHS of the rule.   */
    /*================================================*/
 
-   theVariable = FindVariable((SYMBOL_HN *) expressionList->value,theLHS);
+   theVariable = FindVariable((CLIPSLexeme *) expressionList->value,theLHS);
    if (theVariable != NULL)
      {
       if (theVariable->pnType == MF_VARIABLE_NODE)
@@ -815,7 +815,7 @@ static bool CheckArgumentForConstraintError(
    /* binding the variable on the RHS of the rule.   */
    /*================================================*/
 
-   constraint3 = FindBindConstraints(theEnv,(SYMBOL_HN *) expressionList->value);
+   constraint3 = FindBindConstraints(theEnv,(CLIPSLexeme *) expressionList->value);
 
    /*====================================================*/
    /* Union the LHS and RHS variable binding constraints */
@@ -840,7 +840,7 @@ static bool CheckArgumentForConstraintError(
      {
       PrintErrorID(theEnv,"RULECSTR",3,true);
       EnvPrintRouter(theEnv,WERROR,"Previous variable bindings of ?");
-      EnvPrintRouter(theEnv,WERROR,ValueToString((SYMBOL_HN *) expressionList->value));
+      EnvPrintRouter(theEnv,WERROR,ValueToString((CLIPSLexeme *) expressionList->value));
       EnvPrintRouter(theEnv,WERROR," caused the type restrictions");
       EnvPrintRouter(theEnv,WERROR,"\nfor argument #");
       PrintLongInteger(theEnv,WERROR,(long int) i);

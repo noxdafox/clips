@@ -84,11 +84,28 @@ typedef bool *BeforeResetFunction(Environment *);
 #include "symbol.h"
 #include "userdata.h"
 
+typedef enum
+  {
+   DEFMODULE,
+   DEFRULE,
+   DEFTEMPLATE,
+   DEFFACTS,
+   DEFGLOBAL,
+   DEFFUNCTION,
+   DEFGENERIC,
+   DEFMETHOD,
+   DEFCLASS,
+   DEFMESSAGE_HANDLER,
+   DEFINSTANCES
+  } ConstructType;
+
+
 struct defmoduleItemHeader; // TBD Can this be removed?
 
 struct constructHeader
   {
-   struct symbolHashNode *name;
+   ConstructType constructType;
+   CLIPSLexeme *name;
    const char *ppForm;
    struct defmoduleItemHeader *whichModule;
    long bsaveID;
@@ -107,7 +124,7 @@ struct construct
    const char *pluralName;
    bool (*parseFunction)(Environment *,const char *);
    FindConstructFunction *findFunction;
-   struct symbolHashNode *(*getConstructNameFunction)(struct constructHeader *);
+   CLIPSLexeme *(*getConstructNameFunction)(struct constructHeader *);
    const char *(*getPPFormFunction)(Environment *,struct constructHeader *);
    struct defmoduleItemHeader *(*getModuleItemFunction)(struct constructHeader *);
    GetNextConstructFunction *getNextItemFunction;
@@ -183,7 +200,7 @@ struct constructData
    struct construct              *AddConstruct(Environment *,const char *,const char *,
                                                bool (*)(Environment *,const char *),
                                                FindConstructFunction *,
-                                               SYMBOL_HN *(*)(struct constructHeader *),
+                                               CLIPSLexeme *(*)(struct constructHeader *),
                                                const char *(*)(Environment *,struct constructHeader *),
                                                struct defmoduleItemHeader *(*)(struct constructHeader *),
                                                GetNextConstructFunction *,

@@ -83,7 +83,7 @@
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    static struct templateSlot    *SlotDeclarations(Environment *,const char *,struct token *);
    static struct templateSlot    *ParseSlot(Environment *,const char *,struct token *,struct templateSlot *);
-   static struct templateSlot    *DefinedSlots(Environment *,const char *,SYMBOL_HN *,int,struct token *);
+   static struct templateSlot    *DefinedSlots(Environment *,const char *,CLIPSLexeme *,int,struct token *);
    static bool                    ParseFacetAttribute(Environment *,const char *,struct templateSlot *,bool);
 #endif
 
@@ -95,7 +95,7 @@ bool ParseDeftemplate(
   const char *readSource)
   {
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   SYMBOL_HN *deftemplateName;
+   CLIPSLexeme *deftemplateName;
    Deftemplate *newDeftemplate;
    struct templateSlot *slots;
    struct token inputToken;
@@ -136,9 +136,9 @@ bool ParseDeftemplate(
 
    if (deftemplateName == NULL) return true;
 
-   if (ReservedPatternSymbol(theEnv,ValueToString(deftemplateName),"deftemplate"))
+   if (ReservedPatternSymbol(theEnv,deftemplateName->contents,"deftemplate"))
      {
-      ReservedPatternSymbolErrorMsg(theEnv,ValueToString(deftemplateName),"a deftemplate name");
+      ReservedPatternSymbolErrorMsg(theEnv,deftemplateName->contents,"a deftemplate name");
       return true;
      }
 
@@ -168,6 +168,7 @@ bool ParseDeftemplate(
    newDeftemplate->header.name =  deftemplateName;
    newDeftemplate->header.next = NULL;
    newDeftemplate->header.usrData = NULL;
+   newDeftemplate->header.constructType = DEFTEMPLATE;
    newDeftemplate->slotList = slots;
    newDeftemplate->implied = false;
    newDeftemplate->numberOfSlots = 0;
@@ -350,7 +351,7 @@ static struct templateSlot *ParseSlot(
   struct templateSlot *slotList)
   {
    bool parsingMultislot;
-   SYMBOL_HN *slotName;
+   CLIPSLexeme *slotName;
    struct templateSlot *newSlot;
    int rv;
 
@@ -358,10 +359,10 @@ static struct templateSlot *ParseSlot(
    /* Slots must  begin with keyword field or multifield. */
    /*=====================================================*/
 
-   if ((strcmp(ValueToString(inputToken->value),"field") != 0) &&
-       (strcmp(ValueToString(inputToken->value),"multifield") != 0) &&
-       (strcmp(ValueToString(inputToken->value),"slot") != 0) &&
-       (strcmp(ValueToString(inputToken->value),"multislot") != 0))
+   if ((strcmp(inputToken->lexemeValue->contents,"field") != 0) &&
+       (strcmp(inputToken->lexemeValue->contents,"multifield") != 0) &&
+       (strcmp(inputToken->lexemeValue->contents,"slot") != 0) &&
+       (strcmp(inputToken->lexemeValue->contents,"multislot") != 0))
      {
       SyntaxErrorMessage(theEnv,"deftemplate");
       DeftemplateData(theEnv)->DeftemplateError = true;
@@ -372,8 +373,8 @@ static struct templateSlot *ParseSlot(
    /* Determine if multifield slot is being parsed. */
    /*===============================================*/
 
-   if ((strcmp(ValueToString(inputToken->value),"multifield") == 0) ||
-       (strcmp(ValueToString(inputToken->value),"multislot") == 0))
+   if ((strcmp(inputToken->lexemeValue->contents,"multifield") == 0) ||
+       (strcmp(inputToken->lexemeValue->contents,"multislot") == 0))
      { parsingMultislot = true; }
    else
      { parsingMultislot = false; }
@@ -391,7 +392,7 @@ static struct templateSlot *ParseSlot(
       return NULL;
      }
 
-   slotName = (SYMBOL_HN *) inputToken->value;
+   slotName = inputToken->lexemeValue;
 
    /*================================================*/
    /* Determine if the slot has already been parsed. */
@@ -401,7 +402,7 @@ static struct templateSlot *ParseSlot(
      {
       if (slotList->slotName == slotName)
         {
-         AlreadyParsedErrorMessage(theEnv,"slot ",ValueToString(slotList->slotName));
+         AlreadyParsedErrorMessage(theEnv,"slot ",slotList->slotName->contents);
          DeftemplateData(theEnv)->DeftemplateError = true;
          return NULL;
         }
@@ -461,7 +462,7 @@ static struct templateSlot *ParseSlot(
 static struct templateSlot *DefinedSlots(
   Environment *theEnv,
   const char *readSource,
-  SYMBOL_HN *slotName,
+  CLIPSLexeme *slotName,
   int multifieldSlot,
   struct token *inputToken)
   {
@@ -530,9 +531,9 @@ static struct templateSlot *DefinedSlots(
       /* Determine if the attribute is one of the standard constraints. */
       /*================================================================*/
 
-      if (StandardConstraint(ValueToString(inputToken->value)))
+      if (StandardConstraint(inputToken->lexemeValue->contents))
         {
-         if (ParseStandardConstraint(theEnv,readSource,(ValueToString(inputToken->value)),
+         if (ParseStandardConstraint(theEnv,readSource,(inputToken->lexemeValue->contents),
                                      newSlot->constraints,&parsedConstraints,
                                      multifieldSlot) == false)
            {
@@ -547,8 +548,8 @@ static struct templateSlot *DefinedSlots(
       /* then get the default list for this slot.        */
       /*=================================================*/
 
-      else if ((strcmp(ValueToString(inputToken->value),"default") == 0) ||
-               (strcmp(ValueToString(inputToken->value),"default-dynamic") == 0))
+      else if ((strcmp(inputToken->lexemeValue->contents,"default") == 0) ||
+               (strcmp(inputToken->lexemeValue->contents,"default-dynamic") == 0))
         {
          /*======================================================*/
          /* Check to see if the default has already been parsed. */
@@ -568,7 +569,7 @@ static struct templateSlot *DefinedSlots(
          /* Determine whether the default is dynamic or static. */
          /*=====================================================*/
 
-         if (strcmp(ValueToString(inputToken->value),"default") == 0)
+         if (strcmp(inputToken->lexemeValue->contents,"default") == 0)
            {
             newSlot->defaultPresent = true;
             newSlot->defaultDynamic = false;
@@ -609,7 +610,7 @@ static struct templateSlot *DefinedSlots(
       /* else if the attribute is the facet attribute. */
       /*===============================================*/
 
-      else if (strcmp(ValueToString(inputToken->value),"facet") == 0)
+      else if (strcmp(inputToken->lexemeValue->contents,"facet") == 0)
         {
          if (! ParseFacetAttribute(theEnv,readSource,newSlot,false))
            {
@@ -619,7 +620,7 @@ static struct templateSlot *DefinedSlots(
            }
         }
 
-      else if (strcmp(ValueToString(inputToken->value),"multifacet") == 0)
+      else if (strcmp(inputToken->lexemeValue->contents,"multifacet") == 0)
         {
          if (! ParseFacetAttribute(theEnv,readSource,newSlot,true))
            {
@@ -665,7 +666,7 @@ static bool ParseFacetAttribute(
   bool multifacet)
   {
    struct token inputToken;
-   SYMBOL_HN *facetName;
+   CLIPSLexeme *facetName;
    struct expr *facetPair, *tempFacet, *facetValue = NULL, *lastValue = NULL;
 
    /*==============================*/
@@ -686,7 +687,7 @@ static bool ParseFacetAttribute(
       return false;
      }
 
-   facetName = (SYMBOL_HN *) inputToken.value;
+   facetName = inputToken.lexemeValue;
 
    /*===================================*/
    /* Don't allow facets with the same  */
@@ -703,8 +704,8 @@ static bool ParseFacetAttribute(
      {
       if (tempFacet->value == facetName)
         {
-         if (multifacet) AlreadyParsedErrorMessage(theEnv,"multifacet ",ValueToString(facetName));
-         else AlreadyParsedErrorMessage(theEnv,"facet ",ValueToString(facetName));
+         if (multifacet) AlreadyParsedErrorMessage(theEnv,"multifacet ",facetName->contents);
+         else AlreadyParsedErrorMessage(theEnv,"facet ",facetName->contents);
          return false;
         }
      }

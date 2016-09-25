@@ -483,7 +483,7 @@ static void UpdateDeftemplate(
    bdtPtr = (struct bsaveDeftemplate *) buf;
    theDeftemplate = &DeftemplateBinaryData(theEnv)->DeftemplateArray[obji];
 
-   UpdateConstructHeader(theEnv,&bdtPtr->header,&theDeftemplate->header,
+   UpdateConstructHeader(theEnv,&bdtPtr->header,&theDeftemplate->header,DEFTEMPLATE,
                          (int) sizeof(struct deftemplateModule),DeftemplateBinaryData(theEnv)->ModuleArray,
                          (int) sizeof(Deftemplate),DeftemplateBinaryData(theEnv)->DeftemplateArray);
 
@@ -594,7 +594,7 @@ static void ClearBload(
    /*======================================*/
 
 #if (! BLOAD_ONLY)
-   CreateImpliedDeftemplate(theEnv,(SYMBOL_HN *) EnvAddSymbol(theEnv,"initial-fact"),false);
+   CreateImpliedDeftemplate(theEnv,EnvCreateSymbol(theEnv,""),false);
 #endif
   }
 

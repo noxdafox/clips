@@ -63,11 +63,11 @@
    void                           CheckTemplateFact(Environment *,Fact *);
    bool                           CheckRHSSlotTypes(Environment *,struct expr *,struct templateSlot *,const char *);
    struct templateSlot           *GetNthSlot(Deftemplate *,int);
-   int                            FindSlotPosition(Deftemplate *,struct symbolHashNode *);
+   int                            FindSlotPosition(Deftemplate *,CLIPSLexeme *);
    void                           PrintTemplateFact(Environment *,const char *,Fact *,bool,bool);
    void                           UpdateDeftemplateScope(Environment *);
-   struct templateSlot           *FindSlot(Deftemplate *,struct symbolHashNode *,short *);
-   Deftemplate                   *CreateImpliedDeftemplate(Environment *,SYMBOL_HN *,bool);
+   struct templateSlot           *FindSlot(Deftemplate *,CLIPSLexeme *,short *);
+   Deftemplate                   *CreateImpliedDeftemplate(Environment *,CLIPSLexeme *,bool);
 
 #endif /* _H_tmpltutl */
 

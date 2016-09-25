@@ -110,8 +110,7 @@ void CallDeffunction(
    struct profileFrameInfo profileFrame;
 #endif
 
-   returnValue->type = SYMBOL;
-   returnValue->value = EnvFalseSymbol(theEnv);
+   returnValue->value = theEnv->FalseSymbol;
    EvaluationData(theEnv)->EvaluationError = false;
    if (EvaluationData(theEnv)->HaltExecution)
      return;
@@ -228,7 +227,7 @@ static void WatchDeffunction(
                         DeffunctionData(theEnv)->ExecutingDeffunction->header.whichModule->theModule));
       EnvPrintRouter(theEnv,WTRACE,"::");
      }
-   EnvPrintRouter(theEnv,WTRACE,ValueToString(DeffunctionData(theEnv)->ExecutingDeffunction->header.name));
+   EnvPrintRouter(theEnv,WTRACE,DeffunctionData(theEnv)->ExecutingDeffunction->header.name->contents);
    EnvPrintRouter(theEnv,WTRACE," ED:");
    PrintLongInteger(theEnv,WTRACE,(long long) EvaluationData(theEnv)->CurrentEvaluationDepth);
    PrintProcParamArray(theEnv,WTRACE);

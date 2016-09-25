@@ -98,7 +98,7 @@ struct deffunction
 
 #define DEFFUNCTION_DATA 23
 
-struct deffunctionData // TBD DeffunctionEnvironmentData
+struct deffunctionData
   {
    struct construct *DeffunctionConstruct;
    int DeffunctionModuleIndex;
@@ -124,7 +124,7 @@ struct deffunctionData // TBD DeffunctionEnvironmentData
    Deffunction                   *EnvFindDeffunctionInModule(Environment *,const char *);
    void                           EnvGetDeffunctionList(Environment *,CLIPSValue *,Defmodule *);
    const char                    *EnvGetDeffunctionName(Environment *,Deffunction *);
-   SYMBOL_HN                     *EnvGetDeffunctionNamePointer(Environment *,Deffunction *);
+   CLIPSLexeme                   *EnvGetDeffunctionNamePointer(Environment *,Deffunction *);
    const char                    *EnvGetDeffunctionPPForm(Environment *,Deffunction *);
    Deffunction                   *EnvGetNextDeffunction(Environment *,Deffunction *);
    bool                           EnvIsDeffunctionDeletable(Environment *,Deffunction *);

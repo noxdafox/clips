@@ -177,7 +177,7 @@ struct lhsParseNode *CreateInitialFactPattern(
       EnvPrintRouter(theEnv,WWARNING,EnvGetDefmoduleName(theEnv,EnvGetCurrentModule(theEnv)));
       EnvPrintRouter(theEnv,WWARNING,".\n");
       EnvPrintRouter(theEnv,WWARNING,"  You probably want to import this deftemplate from the MAIN module.\n");
-      CreateImpliedDeftemplate(theEnv,(SYMBOL_HN *) EnvAddSymbol(theEnv,"initial-fact"),false);
+      CreateImpliedDeftemplate(theEnv,EnvCreateSymbol(theEnv,"initial-fact"),false);
      }
 
    /*====================================*/
@@ -191,7 +191,7 @@ struct lhsParseNode *CreateInitialFactPattern(
 
    topNode->bottom = GetLHSParseNode(theEnv);
    topNode->bottom->pnType = SYMBOL_NODE;
-   topNode->bottom->value = EnvAddSymbol(theEnv,"initial-fact");
+   topNode->bottom->value = EnvCreateSymbol(theEnv,"initial-fact");
 
    /*=====================*/
    /* Return the pattern. */
@@ -209,7 +209,7 @@ struct lhsParseNode *CreateInitialFactPattern(
 /*   can be parsed as a fact pattern.                                 */
 /**********************************************************************/
 bool FactPatternParserFind(
-  SYMBOL_HN *theRelation)
+  CLIPSLexeme *theRelation)
   {
 #if MAC_XCD
 #pragma unused(theRelation)
@@ -234,7 +234,7 @@ struct lhsParseNode *FactPatternParse(
    /* as part of the pattern's relation name. */
    /*=========================================*/
 
-   if (FindModuleSeparator(ValueToString(theToken->value)))
+   if (FindModuleSeparator(theToken->lexemeValue->contents))
      {
       IllegalModuleSpecifierMessage(theEnv);
       return NULL;
@@ -245,12 +245,12 @@ struct lhsParseNode *FactPatternParse(
    /*=========================================================*/
 
    theDeftemplate = (Deftemplate *)
-                    FindImportedConstruct(theEnv,"deftemplate",NULL,ValueToString(theToken->value),
+                    FindImportedConstruct(theEnv,"deftemplate",NULL,theToken->lexemeValue->contents,
                                           &count,true,NULL);
 
    if (count > 1)
      {
-      AmbiguousReferenceErrorMessage(theEnv,"deftemplate",ValueToString(theToken->value));
+      AmbiguousReferenceErrorMessage(theEnv,"deftemplate",theToken->lexemeValue->contents);
       return NULL;
      }
 
@@ -262,15 +262,15 @@ struct lhsParseNode *FactPatternParse(
    if (theDeftemplate == NULL)
      {
 #if DEFMODULE_CONSTRUCT
-      if (FindImportExportConflict(theEnv,"deftemplate",EnvGetCurrentModule(theEnv),ValueToString(theToken->value)))
+      if (FindImportExportConflict(theEnv,"deftemplate",EnvGetCurrentModule(theEnv),theToken->lexemeValue->contents))
         {
-         ImportExportConflictMessage(theEnv,"implied deftemplate",ValueToString(theToken->value),NULL,NULL);
+         ImportExportConflictMessage(theEnv,"implied deftemplate",theToken->lexemeValue->contents,NULL,NULL);
          return NULL;
         }
 #endif /* DEFMODULE_CONSTRUCT */
 
       if (! ConstructData(theEnv)->CheckSyntaxMode)
-        { theDeftemplate = CreateImpliedDeftemplate(theEnv,(SYMBOL_HN *) theToken->value,true); }
+        { theDeftemplate = CreateImpliedDeftemplate(theEnv,theToken->lexemeValue,true); }
       else
         { theDeftemplate = NULL; }
      }

@@ -227,7 +227,7 @@ struct expr *GetRHSPattern(
    bool printError;
    int count;
    Deftemplate *theDeftemplate;
-   struct symbolHashNode *templateName;
+   CLIPSLexeme *templateName;
    const char *nullBitMap = "\0";
 
    /*=================================================*/
@@ -262,8 +262,8 @@ struct expr *GetRHSPattern(
       *error = true;
       return NULL;
      }
-   else if ((strcmp(ValueToString(tempToken->value),"=") == 0) ||
-            (strcmp(ValueToString(tempToken->value),":") == 0))
+   else if ((strcmp(tempToken->lexemeValue->contents,"=") == 0) ||
+            (strcmp(tempToken->lexemeValue->contents,":") == 0))
      {
       SyntaxErrorMessage(theEnv,"first field of a RHS pattern");
       *error = true;
@@ -276,9 +276,9 @@ struct expr *GetRHSPattern(
 
    templateName = (struct symbolHashNode *) tempToken->value;
 
-   if (ReservedPatternSymbol(theEnv,ValueToString(templateName),NULL))
+   if (ReservedPatternSymbol(theEnv,templateName->contents,NULL))
      {
-      ReservedPatternSymbolErrorMsg(theEnv,ValueToString(templateName),"a relation name");
+      ReservedPatternSymbolErrorMsg(theEnv,templateName->contents,"a relation name");
       *error = true;
       return NULL;
      }
@@ -287,7 +287,7 @@ struct expr *GetRHSPattern(
    /* A module separator in the name is illegal in this context. */
    /*============================================================*/
 
-   if (FindModuleSeparator(ValueToString(templateName)))
+   if (FindModuleSeparator(templateName->contents))
      {
       IllegalModuleSpecifierMessage(theEnv);
 
@@ -302,12 +302,12 @@ struct expr *GetRHSPattern(
    /*=============================================================*/
 
    theDeftemplate = (Deftemplate *)
-                    FindImportedConstruct(theEnv,"deftemplate",NULL,ValueToString(templateName),
+                    FindImportedConstruct(theEnv,"deftemplate",NULL,templateName->contents,
                                           &count,true,NULL);
 
    if (count > 1)
      {
-      AmbiguousReferenceErrorMessage(theEnv,"deftemplate",ValueToString(templateName));
+      AmbiguousReferenceErrorMessage(theEnv,"deftemplate",templateName->contents);
       *error = true;
       return NULL;
      }
@@ -323,25 +323,25 @@ struct expr *GetRHSPattern(
 #if BLOAD || BLOAD_AND_BSAVE
       if ((Bloaded(theEnv)) && (! ConstructData(theEnv)->CheckSyntaxMode))
         {
-         NoSuchTemplateError(theEnv,ValueToString(templateName));
+         NoSuchTemplateError(theEnv,templateName->contents);
          *error = true;
          return NULL;
         }
 #endif
 #if DEFMODULE_CONSTRUCT
-      if (FindImportExportConflict(theEnv,"deftemplate",EnvGetCurrentModule(theEnv),ValueToString(templateName)))
+      if (FindImportExportConflict(theEnv,"deftemplate",EnvGetCurrentModule(theEnv),templateName->contents))
         {
-         ImportExportConflictMessage(theEnv,"implied deftemplate",ValueToString(templateName),NULL,NULL);
+         ImportExportConflictMessage(theEnv,"implied deftemplate",templateName->contents,NULL,NULL);
          *error = true;
          return NULL;
         }
 #endif
       if (! ConstructData(theEnv)->CheckSyntaxMode)
-        { theDeftemplate = CreateImpliedDeftemplate(theEnv,(SYMBOL_HN *) templateName,true); }
+        { theDeftemplate = CreateImpliedDeftemplate(theEnv,templateName,true); }
      }
 #else
     {
-     NoSuchTemplateError(theEnv,ValueToString(templateName));
+     NoSuchTemplateError(theEnv,templateName->contents);
      *error = true;
      return NULL;
     }
@@ -482,7 +482,7 @@ struct expr *GetAssertArgument(
    /*=============================================================*/
 
    if ((theToken->tknType == SYMBOL_TOKEN) ?
-       (strcmp(ValueToString(theToken->value),"=") == 0) :
+       (strcmp(theToken->lexemeValue->contents,"=") == 0) :
        (theToken->tknType == LEFT_PARENTHESIS_TOKEN))
      {
       if (constantsOnly)
@@ -504,7 +504,7 @@ struct expr *GetAssertArgument(
       else
         {
          theToken->tknType= RIGHT_PARENTHESIS_TOKEN;
-         theToken->value = EnvAddSymbol(theEnv,")");
+         theToken->value = EnvCreateString(theEnv,")");
          theToken->printForm = ")";
         }
 #endif
@@ -629,7 +629,6 @@ struct fact *StringToFact(
    for (tempPtr = assertArgs->nextArg; tempPtr != NULL; tempPtr = tempPtr->nextArg)
      {
       EvaluateExpression(theEnv,tempPtr,&theResult);
-      factPtr->theProposition.theFields[whichField].type = theResult.type;
       factPtr->theProposition.theFields[whichField].value = theResult.value;
       whichField++;
      }

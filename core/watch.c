@@ -376,7 +376,8 @@ void WatchCommand(
    /*========================================*/
 
    if (! UDFFirstArgument(context,SYMBOL_TYPE,&theValue)) return;
-   argument = DOToString(theValue);
+
+   argument = theValue.lexemeValue->contents;
    wPtr = ValidWatchItem(theEnv,argument,&recognized);
    if (recognized == false)
      {
@@ -425,7 +426,8 @@ void UnwatchCommand(
    /*==========================================*/
 
    if (! UDFFirstArgument(context,SYMBOL_TYPE,&theValue)) return;
-   argument = DOToString(theValue);
+
+   argument = theValue.lexemeValue->contents;
    wPtr = ValidWatchItem(theEnv,argument,&recognized);
    if (recognized == false)
      {
@@ -488,7 +490,7 @@ void ListWatchItemsCommand(
    /*=======================================*/
 
    if (! UDFFirstArgument(context,SYMBOL_TYPE,&theValue)) return;
-   wPtr = ValidWatchItem(theEnv,DOToString(theValue),&recognized);
+   wPtr = ValidWatchItem(theEnv,theValue.lexemeValue->contents,&recognized);
    if ((recognized == false) || (wPtr == NULL))
      {
       EnvSetEvaluationError(theEnv,true);
@@ -541,8 +543,6 @@ void GetWatchItemCommand(
    const char *argument;
    bool recognized;
 
-   returnValue->type = SYMBOL;
-
    /*========================================*/
    /* Determine which item is to be watched. */
    /*========================================*/
@@ -550,13 +550,13 @@ void GetWatchItemCommand(
    if (! UDFFirstArgument(context,SYMBOL_TYPE,&theValue))
      { return; }
 
-   argument = DOToString(theValue);
+   argument = theValue.lexemeValue->contents;
    ValidWatchItem(theEnv,argument,&recognized);
    if (recognized == false)
      {
       EnvSetEvaluationError(theEnv,true);
       ExpectedTypeError1(theEnv,"get-watch-item",1,"watchable symbol");
-      returnValue->value = EnvFalseSymbol(theEnv);
+      returnValue->lexemeValue = theEnv->FalseSymbol;
       return;
      }
 
@@ -565,9 +565,9 @@ void GetWatchItemCommand(
    /*===========================*/
 
    if (EnvGetWatchItem(theEnv,argument) == 1)
-     { returnValue->value = EnvTrueSymbol(theEnv); }
+     { returnValue->lexemeValue = theEnv->TrueSymbol; }
    else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+     { returnValue->lexemeValue = theEnv->FalseSymbol; }
   }
 
 /*************************************************************/

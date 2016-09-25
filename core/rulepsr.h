@@ -50,7 +50,7 @@
 #define _H_rulepsr
 
    bool                           ParseDefrule(Environment *,const char *);
-   struct lhsParseNode           *FindVariable(struct symbolHashNode *,
+   struct lhsParseNode           *FindVariable(CLIPSLexeme *,
                                                struct lhsParseNode *);
 #if DEVELOPER && DEBUGGING_FUNCTIONS
    void                           DumpRuleAnalysis(Environment *,struct lhsParseNode *);

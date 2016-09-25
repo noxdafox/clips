@@ -84,7 +84,7 @@ typedef struct query_stack
 
 struct factQueryData
   {
-   SYMBOL_HN *QUERY_DELIMETER_SYMBOL;
+   CLIPSLexeme *QUERY_DELIMITER_SYMBOL;
    QUERY_CORE *QueryCore;
    QUERY_STACK *QueryCoreStack;
    bool AbortQuery;
@@ -92,7 +92,7 @@ struct factQueryData
 
 #define FactQueryData(theEnv) ((struct factQueryData *) GetEnvironmentData(theEnv,FACT_QUERY_DATA))
 
-#define QUERY_DELIMETER_STRING     "(QDS)"
+#define QUERY_DELIMITER_STRING     "(QDS)"
 
    void                           SetupFactQuery(Environment *);
    void                           GetQueryFact(Environment *,UDFContext *,CLIPSValue *);

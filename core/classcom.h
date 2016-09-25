@@ -67,7 +67,7 @@
    struct defmoduleItemHeader
                           *EnvGetDefclassModule(Environment *,Defclass *);
    const char             *EnvDefclassModule(Environment *,Defclass *);
-   SYMBOL_HN              *GetDefclassNamePointer(Defclass *);
+   CLIPSLexeme            *GetDefclassNamePointer(Defclass *);
    void                    SetNextDefclass(Defclass *,Defclass *);
    void                    EnvSetDefclassPPForm(Environment *,Defclass *,char *);
 
@@ -103,7 +103,7 @@
    bool                    EnvUndefclass(Environment *,Defclass *);
    bool                    HasSuperclass(Defclass *,Defclass *);
 
-   SYMBOL_HN              *CheckClassAndSlot(UDFContext *,const char *,Defclass **);
+   CLIPSLexeme            *CheckClassAndSlot(UDFContext *,const char *,Defclass **);
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
    void                    SaveDefclasses(Environment *,Defmodule *,const char *);

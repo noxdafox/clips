@@ -78,7 +78,7 @@
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    static bool                    GetVariableDefinition(Environment *,const char *,bool *,bool,struct token *);
-   static void                    AddDefglobal(Environment *,SYMBOL_HN *,CLIPSValue *,struct expr *);
+   static void                    AddDefglobal(Environment *,CLIPSLexeme *,CLIPSValue *,struct expr *);
 #endif
 
 /*********************************************************************/
@@ -133,7 +133,7 @@ bool ParseDefglobal(
       /*=================================================*/
 
       tokenRead = false;
-      if (FindModuleSeparator(ValueToString(theToken.value)))
+      if (FindModuleSeparator(theToken.lexemeValue->contents))
         {
          SyntaxErrorMessage(theEnv,"defglobal");
          return true;
@@ -143,10 +143,10 @@ bool ParseDefglobal(
       /* Determine if the module exists. */
       /*=================================*/
 
-      theModule = EnvFindDefmodule(theEnv,ValueToString(theToken.value));
+      theModule = EnvFindDefmodule(theEnv,theToken.lexemeValue->contents);
       if (theModule == NULL)
         {
-         CantFindItemErrorMessage(theEnv,"defmodule",ValueToString(theToken.value));
+         CantFindItemErrorMessage(theEnv,"defmodule",theToken.lexemeValue->contents);
          return true;
         }
 
@@ -213,7 +213,7 @@ static bool GetVariableDefinition(
   bool tokenRead,
   struct token *theToken)
   {
-   SYMBOL_HN *variableName;
+   CLIPSLexeme *variableName;
    struct expr *assignPtr;
    CLIPSValue assignValue;
 
@@ -238,7 +238,7 @@ static bool GetVariableDefinition(
       return false;
      }
 
-   variableName = (SYMBOL_HN *) theToken->value;
+   variableName = theToken->lexemeValue;
 
    SavePPBuffer(theEnv," ");
 
@@ -257,7 +257,7 @@ static bool GetVariableDefinition(
          EnvPrintRouter(theEnv,outRouter,"Redefining defglobal: ");
         }
       else EnvPrintRouter(theEnv,outRouter,"Defining defglobal: ");
-      EnvPrintRouter(theEnv,outRouter,ValueToString(variableName));
+      EnvPrintRouter(theEnv,outRouter,variableName->contents);
       EnvPrintRouter(theEnv,outRouter,"\n");
      }
    else
@@ -269,9 +269,9 @@ static bool GetVariableDefinition(
    /*==================================================================*/
 
 #if DEFMODULE_CONSTRUCT
-   if (FindImportExportConflict(theEnv,"defglobal",EnvGetCurrentModule(theEnv),ValueToString(variableName)))
+   if (FindImportExportConflict(theEnv,"defglobal",EnvGetCurrentModule(theEnv),variableName->contents))
      {
-      ImportExportConflictMessage(theEnv,"defglobal",ValueToString(variableName),NULL,NULL);
+      ImportExportConflictMessage(theEnv,"defglobal",variableName->contents,NULL,NULL);
       *defglobalError = true;
       return false;
      }
@@ -341,7 +341,7 @@ static bool GetVariableDefinition(
 /*********************************************************/
 static void AddDefglobal(
   Environment *theEnv,
-  SYMBOL_HN *name,
+  CLIPSLexeme *name,
   CLIPSValue *vPtr,
   struct expr *ePtr)
   {
@@ -378,8 +378,8 @@ static void AddDefglobal(
    if (newGlobal == false)
      {
       ValueDeinstall(theEnv,&defglobalPtr->current);
-      if (defglobalPtr->current.type == MULTIFIELD)
-        { ReturnMultifield(theEnv,(struct multifield *) defglobalPtr->current.value); }
+      if (defglobalPtr->current.header->type == MULTIFIELD)
+        { ReturnMultifield(theEnv,(Multifield *) defglobalPtr->current.value); }
 
       RemoveHashedExpression(theEnv,defglobalPtr->initial);
      }
@@ -388,8 +388,7 @@ static void AddDefglobal(
    /* Copy the new values to the defglobal. */
    /*=======================================*/
 
-   defglobalPtr->current.type = vPtr->type;
-   if (vPtr->type != MULTIFIELD) defglobalPtr->current.value = vPtr->value;
+   if (vPtr->header->type != MULTIFIELD) defglobalPtr->current.value = vPtr->value;
    else DuplicateMultifield(theEnv,&defglobalPtr->current,vPtr);
    ValueInstall(theEnv,&defglobalPtr->current);
 
@@ -412,6 +411,7 @@ static void AddDefglobal(
 
    defglobalPtr->header.name = name;
    defglobalPtr->header.usrData = NULL;
+   defglobalPtr->header.constructType = DEFGLOBAL;
    IncrementSymbolCount(name);
 
    SavePPBuffer(theEnv,"\n");

@@ -42,10 +42,10 @@
    struct lhsParseNode           *DeriveVariableConstraints(Environment *,struct lhsParseNode *);
    bool                           ProcessConnectedConstraints(Environment *,struct lhsParseNode *,struct lhsParseNode *,struct lhsParseNode *);
    void                           ConstraintReferenceErrorMessage(Environment *,
-                                                                  struct symbolHashNode *,
+                                                                  CLIPSLexeme *,
                                                                   struct lhsParseNode *,
                                                                   int,int,
-                                                                  struct symbolHashNode *,
+                                                                  CLIPSLexeme *,
                                                                   int);
    bool                           CheckRHSForConstraintErrors(Environment *,struct expr *,struct lhsParseNode *);
 

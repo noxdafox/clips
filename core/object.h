@@ -140,7 +140,7 @@ struct slotName
    unsigned hashTableIndex,
             use;
    short id;
-   SYMBOL_HN *name,
+   CLIPSLexeme *name,
              *putHandlerName;
    struct slotName *nxt;
    long bsaveIndex;
@@ -173,7 +173,7 @@ struct slotDescriptor
    unsigned overrideMessageSpecified : 1;
    Defclass *cls;
    SLOT_NAME *slotName;
-   SYMBOL_HN *overrideMessage;
+   CLIPSLexeme *overrideMessage;
    void *defaultValue;
    CONSTRAINT_RECORD *constraint;
    unsigned sharedCount;
@@ -191,7 +191,7 @@ struct instance
    unsigned initSlotsCalled      : 1;
    unsigned initializeInProgress : 1;
    unsigned reteSynchronized     : 1;
-   SYMBOL_HN *name;
+   CLIPSLexeme *name;
    unsigned hashTableIndex;
    unsigned busy;
    Defclass *cls;
@@ -204,19 +204,17 @@ struct instance
 
 struct defmessageHandler
   {
+   struct constructHeader header;
    unsigned system         : 1;
    unsigned type           : 2;
    unsigned mark           : 1;
    unsigned trace          : 1;
    unsigned busy;
-   SYMBOL_HN *name;
    Defclass *cls;
    short minParams;
    short maxParams;
    short localVarCount;
    EXPRESSION *actions;
-   char *ppForm;
-   struct userData *usrData;
   };
 
 #endif /* _H_object */

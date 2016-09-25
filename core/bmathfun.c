@@ -106,19 +106,14 @@ void AdditionFunction(
         { return; }
 
       if (useFloatTotal)
-        {
-         if (theArg.type == INTEGER)
-           { ftotal += (double) ValueToLong(theArg.value); }
-         else
-           { ftotal += ValueToDouble(theArg.value); }
-        }
+        { ftotal += CVCoerceToFloat(&theArg); }
       else
         {
-         if (theArg.type == INTEGER)
-           { ltotal += ValueToLong(theArg.value); }
+         if (CVIsType(&theArg,INTEGER_TYPE))
+           { ltotal += theArg.integerValue->contents; }
          else
            {
-            ftotal = (double) ltotal + ValueToDouble(theArg.value);
+            ftotal = (double) ltotal + CVCoerceToFloat(&theArg);
             useFloatTotal = true;
            }
         }
@@ -130,15 +125,9 @@ void AdditionFunction(
    /*======================================================*/
 
    if (useFloatTotal)
-     {
-      returnValue->type = FLOAT;
-      returnValue->value = EnvAddDouble(theEnv,ftotal);
-     }
+     { returnValue->floatValue = EnvCreateFloat(theEnv,ftotal); }
    else
-     {
-      returnValue->type = INTEGER;
-      returnValue->value = EnvAddLong(theEnv,ltotal);
-     }
+     { returnValue->integerValue = EnvCreateInteger(theEnv,ltotal); }
   }
 
 /****************************************/
@@ -168,19 +157,14 @@ void MultiplicationFunction(
         { return; }
 
       if (useFloatTotal)
-        {
-         if (theArg.type == INTEGER)
-           { ftotal *= (double) ValueToLong(theArg.value); }
-         else
-           { ftotal *= ValueToDouble(theArg.value); }
-        }
+        { ftotal *= CVCoerceToFloat(&theArg); }
       else
         {
-         if (theArg.type == INTEGER)
-           { ltotal *= ValueToLong(theArg.value); }
+         if (CVIsType(&theArg,INTEGER_TYPE))
+           { ltotal *= theArg.integerValue->contents; }
          else
            {
-            ftotal = (double) ltotal * ValueToDouble(theArg.value);
+            ftotal = (double) ltotal * CVCoerceToFloat(&theArg);
             useFloatTotal = true;
            }
         }
@@ -192,15 +176,9 @@ void MultiplicationFunction(
    /*======================================================*/
 
    if (useFloatTotal)
-     {
-      returnValue->type = FLOAT;
-      returnValue->value = EnvAddDouble(theEnv,ftotal);
-     }
+     { returnValue->floatValue = EnvCreateFloat(theEnv,ftotal); }
    else
-     {
-      returnValue->type = INTEGER;
-      returnValue->value = EnvAddLong(theEnv,ltotal);
-     }
+     { returnValue->integerValue = EnvCreateInteger(theEnv,ltotal); }
   }
 
 /*************************************/
@@ -226,11 +204,11 @@ void SubtractionFunction(
    if (! UDFFirstArgument(context,NUMBER_TYPES,&theArg))
      { return; }
 
-   if (theArg.type == INTEGER)
-     { ltotal = ValueToLong(theArg.value); }
+   if (CVIsType(&theArg,INTEGER_TYPE))
+     { ltotal = theArg.integerValue->contents; }
    else
      {
-      ftotal = ValueToDouble(theArg.value);
+      ftotal = CVCoerceToFloat(&theArg);
       useFloatTotal = true;
      }
 
@@ -247,19 +225,14 @@ void SubtractionFunction(
         { return; }
 
       if (useFloatTotal)
-        {
-         if (theArg.type == INTEGER)
-           { ftotal -= (double) ValueToLong(theArg.value); }
-         else
-           { ftotal -= ValueToDouble(theArg.value); }
-        }
+        { ftotal -= CVCoerceToFloat(&theArg); }
       else
         {
-         if (theArg.type == INTEGER)
-           { ltotal -= ValueToLong(theArg.value); }
+         if (CVIsType(&theArg,INTEGER_TYPE))
+           { ltotal -= theArg.integerValue->contents; }
          else
            {
-            ftotal = (double) ltotal - ValueToDouble(theArg.value);
+            ftotal = (double) ltotal - theArg.floatValue->contents;
             useFloatTotal = true;
            }
         }
@@ -271,15 +244,9 @@ void SubtractionFunction(
    /*======================================================*/
 
    if (useFloatTotal)
-     {
-      returnValue->type = FLOAT;
-      returnValue->value = EnvAddDouble(theEnv,ftotal);
-     }
+     { returnValue->floatValue = EnvCreateFloat(theEnv,ftotal); }
    else
-     {
-      returnValue->type = INTEGER;
-      returnValue->value = EnvAddLong(theEnv,ltotal);
-     }
+     { returnValue->integerValue = EnvCreateInteger(theEnv,ltotal); }
   }
 
 /***********************************/
@@ -306,10 +273,7 @@ void DivisionFunction(
    if (! UDFFirstArgument(context,NUMBER_TYPES,&theArg))
      { return; }
 
-   if (theArg.type == INTEGER)
-     { ftotal = (double) ValueToLong(theArg.value); }
-   else
-     { ftotal = ValueToDouble(theArg.value); }
+   ftotal = CVCoerceToFloat(&theArg);
 
    /*====================================================*/
    /* Loop through each of the arguments dividing it     */
@@ -324,18 +288,14 @@ void DivisionFunction(
       if (! UDFNextArgument(context,NUMBER_TYPES,&theArg))
         { return; }
 
-      if (theArg.type == INTEGER)
-        { theNumber = DOToLong(theArg); }
-      else
-        { theNumber = DOToDouble(theArg); }
+      theNumber = CVCoerceToFloat(&theArg);
 
       if (theNumber == 0.0)
         {
          DivideByZeroErrorMessage(theEnv,"/");
          EnvSetHaltExecution(theEnv,true);
          EnvSetEvaluationError(theEnv,true);
-         returnValue->type = FLOAT;
-         returnValue->value = EnvAddDouble(theEnv,1.0);
+         returnValue->floatValue = EnvCreateFloat(theEnv,1.0);
          return;
         }
 
@@ -347,8 +307,7 @@ void DivisionFunction(
    /* then return a float, otherwise return an integer.    */
    /*======================================================*/
 
-   returnValue->type = FLOAT;
-   returnValue->value = EnvAddDouble(theEnv,ftotal);
+   returnValue->floatValue = EnvCreateFloat(theEnv,ftotal);
   }
 
 /*************************************/
@@ -364,8 +323,6 @@ void DivFunction(
    CLIPSValue theArg;
    long long theNumber;
 
-   returnValue->type = INTEGER;
-
    /*===================================================*/
    /* Get the first argument. This number which will be */
    /* the starting product from which all subsequent    */
@@ -374,11 +331,7 @@ void DivFunction(
 
    if (! UDFFirstArgument(context,NUMBER_TYPES,&theArg))
      { return; }
-
-   if (theArg.type == INTEGER)
-     { total = DOToInteger(theArg); }
-   else
-     { total = (long long) DOToDouble(theArg); }
+   total = CVCoerceToInteger(&theArg);
 
    /*=====================================================*/
    /* Loop through each of the arguments dividing it into */
@@ -392,17 +345,14 @@ void DivFunction(
       if (! UDFNextArgument(context,NUMBER_TYPES,&theArg))
         { return; }
 
-      if (theArg.type == INTEGER)
-        { theNumber = DOToInteger(theArg); }
-      else
-        { theNumber = (long long) DOToDouble(theArg); }
+      theNumber = CVCoerceToInteger(&theArg);
 
       if (theNumber == 0LL)
         {
          DivideByZeroErrorMessage(theEnv,"div");
          EnvSetHaltExecution(theEnv,true);
          EnvSetEvaluationError(theEnv,true);
-         returnValue->value = EnvAddLong(theEnv,1);
+         returnValue->integerValue = EnvCreateInteger(theEnv,1L);
          return;
         }
 
@@ -413,7 +363,7 @@ void DivFunction(
    /* The result of the div function is always an integer. */
    /*======================================================*/
 
-   returnValue->value = EnvAddLong(theEnv,total);
+   returnValue->integerValue = EnvCreateInteger(theEnv,total);
   }
 
 /*****************************************/
@@ -437,11 +387,8 @@ void IntegerFunction(
    /* return the argument unchanged.             */
    /*============================================*/
 
-   if (returnValue->type == FLOAT)
-     {
-      returnValue->type = INTEGER;
-      returnValue->value = EnvAddLong(theEnv,(long long) DOPToDouble(returnValue));
-     }
+   if (CVIsType(returnValue,FLOAT_TYPE))
+     { returnValue->integerValue = EnvCreateInteger(theEnv,CVCoerceToInteger(returnValue)); }
   }
 
 /***************************************/
@@ -465,12 +412,8 @@ void FloatFunction(
    /* return the argument unchanged.              */
    /*=============================================*/
 
-   if (returnValue->type == INTEGER)
-     {
-      returnValue->type = FLOAT;
-      returnValue->value = EnvAddDouble(theEnv,(double) DOPToLong(returnValue));
-     }
-
+   if (CVIsType(returnValue,INTEGER_TYPE))
+     { returnValue->floatValue = EnvCreateFloat(theEnv,CVCoerceToFloat(returnValue)); }
   }
 
 /*************************************/
@@ -493,13 +436,18 @@ void AbsFunction(
    /* Return the absolute value of the number. */
    /*==========================================*/
 
-   if (returnValue->type == INTEGER)
+   if (CVIsType(returnValue,INTEGER_TYPE))
      {
-      if (ValueToLong(returnValue->value) < 0L)
-        { returnValue->value = EnvAddLong(theEnv,- ValueToLong(returnValue->value)); }
+      long long lv = returnValue->integerValue->contents;
+      if (lv < 0L)
+        { returnValue->integerValue = EnvCreateInteger(theEnv,-lv); }
      }
-   else if (ValueToDouble(returnValue->value) < 0.0)
-     { returnValue->value = EnvAddDouble(theEnv,- ValueToDouble(returnValue->value)); }
+   else
+     {
+      double dv = returnValue->floatValue->contents;
+      if (dv < 0.0)
+        { returnValue->floatValue = EnvCreateFloat(theEnv,-dv); }
+     }
   }
 
 /*************************************/
@@ -532,45 +480,20 @@ void MinFunction(
       if (! UDFNextArgument(context,NUMBER_TYPES,&nextPossible))
         { return; }
 
-      if (returnValue->type == INTEGER)
+      /*=============================================*/
+      /* If either argument is a float, convert both */
+      /* to floats. Otherwise compare two integers.  */
+      /*=============================================*/
+
+      if (CVIsType(returnValue,FLOAT_TYPE) || CVIsType(&nextPossible,FLOAT_TYPE))
         {
-         if (nextPossible.type == INTEGER)
-           {
-            if (ValueToLong(returnValue->value) > ValueToLong(nextPossible.value))
-              {
-               returnValue->type = nextPossible.type;
-               returnValue->value = nextPossible.value;
-              }
-           }
-         else
-           {
-            if ((double) ValueToLong(returnValue->value) >
-                         ValueToDouble(nextPossible.value))
-              {
-               returnValue->type = nextPossible.type;
-               returnValue->value = nextPossible.value;
-              }
-           }
+         if (CVCoerceToFloat(returnValue) > CVCoerceToFloat(&nextPossible))
+           { returnValue->value = nextPossible.value; }
         }
       else
         {
-         if (nextPossible.type == INTEGER)
-           {
-            if (ValueToDouble(returnValue->value) >
-                (double) ValueToLong(nextPossible.value))
-              {
-               returnValue->type = nextPossible.type;
-               returnValue->value = nextPossible.value;
-              }
-           }
-         else
-           {
-            if (ValueToDouble(returnValue->value) > ValueToDouble(nextPossible.value))
-              {
-               returnValue->type = nextPossible.type;
-               returnValue->value = nextPossible.value;
-              }
-           }
+         if (returnValue->integerValue->contents > nextPossible.integerValue->contents)
+           { returnValue->value = nextPossible.value; }
         }
      }
   }
@@ -605,45 +528,20 @@ void MaxFunction(
       if (! UDFNextArgument(context,NUMBER_TYPES,&nextPossible))
         { return; }
 
-      if (returnValue->type == INTEGER)
+      /*=============================================*/
+      /* If either argument is a float, convert both */
+      /* to floats. Otherwise compare two integers.  */
+      /*=============================================*/
+
+      if (CVIsType(returnValue,FLOAT_TYPE) || CVIsType(&nextPossible,FLOAT_TYPE))
         {
-         if (nextPossible.type == INTEGER)
-           {
-            if (ValueToLong(returnValue->value) < ValueToLong(nextPossible.value))
-              {
-               returnValue->type = nextPossible.type;
-               returnValue->value = nextPossible.value;
-              }
-           }
-         else
-           {
-            if ((double) ValueToLong(returnValue->value) <
-                         ValueToDouble(nextPossible.value))
-              {
-               returnValue->type = nextPossible.type;
-               returnValue->value = nextPossible.value;
-              }
-           }
+         if (CVCoerceToFloat(returnValue) < CVCoerceToFloat(&nextPossible))
+           { returnValue->value = nextPossible.value; }
         }
       else
         {
-         if (nextPossible.type == INTEGER)
-           {
-            if (ValueToDouble(returnValue->value) <
-                (double) ValueToLong(nextPossible.value))
-              {
-               returnValue->type = nextPossible.type;
-               returnValue->value = nextPossible.value;
-              }
-           }
-         else
-           {
-            if (ValueToDouble(returnValue->value) < ValueToDouble(nextPossible.value))
-              {
-               returnValue->type = nextPossible.type;
-               returnValue->value = nextPossible.value;
-              }
-           }
+         if (returnValue->integerValue->contents < nextPossible.integerValue->contents)
+           { returnValue->value = nextPossible.value; }
         }
      }
   }

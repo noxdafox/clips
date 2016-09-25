@@ -72,7 +72,7 @@
 #if ! RUN_TIME
    void                           InitializeClasses(Environment *);
 #endif
-   SlotDescriptor                *FindClassSlot(Defclass *,SYMBOL_HN *);
+   SlotDescriptor                *FindClassSlot(Defclass *,CLIPSLexeme *);
    void                           ClassExistError(Environment *,const char *,const char *);
    void                           DeleteClassLinks(Environment *,CLASS_LINK *);
    void                           PrintClassName(Environment *,const char *,Defclass *,bool);
@@ -87,10 +87,10 @@
    void                           AddClassLink(Environment *,PACKED_CLASS_LINKS *,Defclass *,int);
    void                           DeleteSubclassLink(Environment *,Defclass *,Defclass *);
    void                           DeleteSuperclassLink(Environment *,Defclass *,Defclass *);
-   Defclass                      *NewClass(Environment *,SYMBOL_HN *);
+   Defclass                      *NewClass(Environment *,CLIPSLexeme *);
    void                           DeletePackedClassLinks(Environment *,PACKED_CLASS_LINKS *,bool);
    void                           AssignClassID(Environment *,Defclass *);
-   SLOT_NAME                     *AddSlotName(Environment *,SYMBOL_HN *,int,bool);
+   SLOT_NAME                     *AddSlotName(Environment *,CLIPSLexeme *,int,bool);
    void                           DeleteSlotName(Environment *,SLOT_NAME *);
    void                           RemoveDefclass(Environment *,Defclass *);
    void                           InstallClass(Environment *,Defclass *,bool);
@@ -104,12 +104,12 @@
    void                           MarkBitMapSubclasses(char *,Defclass *,int);
 #endif
 
-   short                          FindSlotNameID(Environment *,SYMBOL_HN *);
-   SYMBOL_HN                     *FindIDSlotName(Environment *,int);
+   short                          FindSlotNameID(Environment *,CLIPSLexeme *);
+   CLIPSLexeme                   *FindIDSlotName(Environment *,int);
    SLOT_NAME                     *FindIDSlotNameHash(Environment *,int);
    int                            GetTraversalID(Environment *);
    void                           ReleaseTraversalID(Environment *);
-   unsigned                       HashClass(SYMBOL_HN *);
+   unsigned                       HashClass(CLIPSLexeme *);
 
 #define DEFCLASS_DATA 21
 
@@ -126,10 +126,10 @@ struct defclassData
    unsigned short MaxClassID;
    unsigned short AvailClassID;
    SLOT_NAME **SlotNameTable;
-   SYMBOL_HN *ISA_SYMBOL;
-   SYMBOL_HN *NAME_SYMBOL;
+   CLIPSLexeme *ISA_SYMBOL;
+   CLIPSLexeme *NAME_SYMBOL;
 #if DEFRULE_CONSTRUCT
-   SYMBOL_HN *INITIAL_OBJECT_SYMBOL;
+   CLIPSLexeme *INITIAL_OBJECT_SYMBOL;
 #endif
 #if DEBUGGING_FUNCTIONS
    bool WatchInstances;

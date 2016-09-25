@@ -121,9 +121,9 @@ void PrimitiveTablesInfoCommand(
   CLIPSValue *returnValue)
   {
    unsigned long i;
-   SYMBOL_HN **symbolArray, *symbolPtr;
-   FLOAT_HN **floatArray, *floatPtr;
-   INTEGER_HN **integerArray, *integerPtr;
+   CLIPSLexeme **symbolArray, *symbolPtr;
+   CLIPSFloat **floatArray, *floatPtr;
+   CLIPSInteger **integerArray, *integerPtr;
    BITMAP_HN **bitMapArray, *bitMapPtr;
    unsigned long int symbolCount = 0, integerCount = 0;
    unsigned long int floatCount = 0, bitMapCount = 0;
@@ -208,8 +208,8 @@ void PrimitiveTablesUsageCommand(
   {
    unsigned long i;
    int symbolCounts[COUNT_SIZE], floatCounts[COUNT_SIZE];
-   SYMBOL_HN **symbolArray, *symbolPtr;
-   FLOAT_HN **floatArray, *floatPtr;
+   CLIPSLexeme **symbolArray, *symbolPtr;
+   CLIPSFloat **floatArray, *floatPtr;
    unsigned long int symbolCount, totalSymbolCount = 0;
    unsigned long int floatCount, totalFloatCount = 0;
 
@@ -300,17 +300,15 @@ void ValidateFactIntegrityCommand(
   CLIPSValue *returnValue)
   {
    Fact *theFact;
-   struct multifield *theSegment;
+   Multifield *theSegment;
    int i;
-   SYMBOL_HN *theSymbol;
-   FLOAT_HN *theFloat;
-   INTEGER_HN *theInteger;
-
-   returnValue->type = SYMBOL;
+   CLIPSLexeme *theSymbol;
+   CLIPSFloat *theFloat;
+   CLIPSInteger *theInteger;
 
    if (theEnv->initialized == false)
      {
-      returnValue->value = EnvTrueSymbol(theEnv);
+      returnValue->lexemeValue = theEnv->TrueSymbol;
       return;
      }
 
@@ -320,7 +318,7 @@ void ValidateFactIntegrityCommand(
      {
       if (theFact->factHeader.busyCount <= 0)
         {
-         returnValue->value = EnvFalseSymbol(theEnv);
+         returnValue->lexemeValue = theEnv->FalseSymbol;
          return;
         }
 
@@ -328,41 +326,41 @@ void ValidateFactIntegrityCommand(
 
       for (i = 0 ; i < (int) theSegment->multifieldLength ; i++)
         {
-         if ((theSegment->theFields[i].type == SYMBOL) ||
-             (theSegment->theFields[i].type == STRING) ||
-             (theSegment->theFields[i].type == INSTANCE_NAME))
+         if ((theSegment->theFields[i].header->type == SYMBOL) ||
+             (theSegment->theFields[i].header->type == STRING) ||
+             (theSegment->theFields[i].header->type == INSTANCE_NAME))
            {
-            theSymbol = (SYMBOL_HN *) theSegment->theFields[i].value;
+            theSymbol = theSegment->theFields[i].lexemeValue;
             if (theSymbol->count <= 0)
               {
-               returnValue->value = EnvFalseSymbol(theEnv);
+               returnValue->lexemeValue = theEnv->FalseSymbol;
                return;
               }
            }
 
-         if (theSegment->theFields[i].type == INTEGER)
+         if (theSegment->theFields[i].header->type == INTEGER)
            {
-            theInteger = (INTEGER_HN *) theSegment->theFields[i].value;
+            theInteger = theSegment->theFields[i].integerValue;
             if (theInteger->count <= 0)
               {
-               returnValue->value = EnvFalseSymbol(theEnv);
+               returnValue->lexemeValue = theEnv->FalseSymbol;
                return;
               }
            }
 
-         if (theSegment->theFields[i].type == FLOAT)
+         if (theSegment->theFields[i].header->type == FLOAT)
            {
-            theFloat = (FLOAT_HN *) theSegment->theFields[i].value;
+            theFloat = theSegment->theFields[i].floatValue;
             if (theFloat->count <= 0)
               {
-               returnValue->value = EnvFalseSymbol(theEnv);
+               returnValue->lexemeValue = theEnv->FalseSymbol;
                return;
               }
            }
         }
      }
 
-   returnValue->value = EnvTrueSymbol(theEnv);
+   returnValue->lexemeValue = theEnv->TrueSymbol;
   }
 
 /*************************************************************/
@@ -482,7 +480,7 @@ static void PrintOPNLevel(
       EnvPrintRouter(theEnv,WDISPLAY,indentbuf);
       if (pptr->alphaNode != NULL)
         EnvPrintRouter(theEnv,WDISPLAY,"+");
-      EnvPrintRouter(theEnv,WDISPLAY,ValueToString(FindIDSlotName(theEnv,pptr->slotNameID)));
+      EnvPrintRouter(theEnv,WDISPLAY,FindIDSlotName(theEnv,pptr->slotNameID)->contents);
       EnvPrintRouter(theEnv,WDISPLAY," (");
       PrintLongInteger(theEnv,WDISPLAY,(long long) pptr->slotNameID);
       EnvPrintRouter(theEnv,WDISPLAY,") ");
@@ -518,7 +516,7 @@ static void PrintOPNLevel(
                  if (uptr == NULL)
                    {
                     EnvPrintRouter(theEnv,WDISPLAY," ");
-                    EnvPrintRouter(theEnv,WDISPLAY,ValueToString(FindIDSlotName(theEnv,i)));
+                    EnvPrintRouter(theEnv,WDISPLAY,FindIDSlotName(theEnv,i)->contents);
                    }
                 }
            }

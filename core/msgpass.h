@@ -58,7 +58,7 @@
 
 #define _H_msgpass
 
-#define GetActiveInstance(theEnv) ((Instance *) GetNthMessageArgument(theEnv,0)->value)
+#define GetActiveInstance(theEnv) (GetNthMessageArgument(theEnv,0)->instanceValue)
 
 #include "object.h"
 
@@ -69,7 +69,7 @@ typedef struct messageHandlerLink
    struct messageHandlerLink *nxtInStack;
   } HANDLER_LINK;
 
-   bool             DirectMessage(Environment *,SYMBOL_HN *,Instance *,
+   bool             DirectMessage(Environment *,CLIPSLexeme *,Instance *,
                                   CLIPSValue *,EXPRESSION *);
    void             EnvSend(Environment *,CLIPSValue *,const char *,const char *,CLIPSValue *);
    void             DestroyHandlerLinks(Environment *,HANDLER_LINK *);
@@ -80,8 +80,8 @@ typedef struct messageHandlerLink
    void             NextHandlerAvailableFunction(Environment *,UDFContext *,CLIPSValue *);
    void             CallNextHandler(Environment *,UDFContext *,CLIPSValue *);
    void             FindApplicableOfName(Environment *,Defclass *,HANDLER_LINK *[],
-                                         HANDLER_LINK *[],SYMBOL_HN *);
-   HANDLER_LINK    *JoinHandlerLinks(Environment *,HANDLER_LINK *[],HANDLER_LINK *[],SYMBOL_HN *);
+                                         HANDLER_LINK *[],CLIPSLexeme *);
+   HANDLER_LINK    *JoinHandlerLinks(Environment *,HANDLER_LINK *[],HANDLER_LINK *[],CLIPSLexeme *);
 
    void             PrintHandlerSlotGetFunction(Environment *,const char *,void *);
    bool             HandlerSlotGetFunction(Environment *,void *,CLIPSValue *);

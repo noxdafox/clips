@@ -8,6 +8,7 @@
 #import "CLIPSInstanceController.h"
 
 #import "AppController.h"
+#import "CLIPSAgendaController.h"
 #import "CLIPSEnvironment.h"
 #import "CLIPSFactInstance.h"
 #import "ModuleArrayController.h"
@@ -279,7 +280,7 @@
    if (theRow != -1)
      {
       Environment *theEnvironment = [environment environment];
-      struct instance *clipsInstance = NULL;
+      Instance *clipsInstance = NULL;
       char *theInstanceName;
       NSArray *theArray = [instanceListController arrangedObjects];
       CLIPSFactInstance *theInstance = [theArray objectAtIndex: theRow];
@@ -293,7 +294,7 @@
       
       theInstanceName = (char *) [[theInstance name] UTF8String];
       if (theInstanceName != NULL)
-        { clipsInstance = (struct instance *) EnvFindInstance(theEnvironment,NULL,theInstanceName,true); }
+        { clipsInstance = EnvFindInstance(theEnvironment,NULL,theInstanceName,true); }
       
       /*===========================================================*/
       /* If we were able to find the corresponding CLIPS instance, */

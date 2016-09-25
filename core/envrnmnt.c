@@ -127,7 +127,6 @@
 /* GLOBAL EXTERNAL FUNCTION DEFINITIONS */
 /****************************************/
 
-   extern void                    UserFunctions(void);
    extern void                    EnvUserFunctions(Environment *);
 
 /***************************************/
@@ -135,12 +134,12 @@
 /***************************************/
 
    static void                    RemoveEnvironmentCleanupFunctions(struct environmentData *);
-   static Environment            *CreateEnvironmentDriver(struct symbolHashNode **,struct floatHashNode **,
+   static Environment            *CreateEnvironmentDriver(CLIPSLexeme **,struct floatHashNode **,
                                                           struct integerHashNode **,struct bitMapHashNode **,
                                                           struct externalAddressHashNode **);
    static void                    SystemFunctionDefinitions(Environment *);
    static void                    InitializeKeywords(Environment *);
-   static void                    EnvInitializeEnvironment(Environment *,struct symbolHashNode **,struct floatHashNode **,
+   static void                    EnvInitializeEnvironment(Environment *,CLIPSLexeme **,struct floatHashNode **,
 					   								       struct integerHashNode **,struct bitMapHashNode **,
 														   struct externalAddressHashNode **);
 
@@ -224,7 +223,7 @@ Environment *CreateEnvironment()
 /*   structure and initializes its content to zero/null.  */
 /**********************************************************/
 Environment *CreateRuntimeEnvironment(
-  struct symbolHashNode **symbolTable,
+  CLIPSLexeme **symbolTable,
   struct floatHashNode **floatTable,
   struct integerHashNode **integerTable,
   struct bitMapHashNode **bitmapTable)
@@ -237,7 +236,7 @@ Environment *CreateRuntimeEnvironment(
 /*   structure and initializes its content to zero/null. */
 /*********************************************************/
 Environment *CreateEnvironmentDriver(
-  struct symbolHashNode **symbolTable,
+  CLIPSLexeme **symbolTable,
   struct floatHashNode **floatTable,
   struct integerHashNode **integerTable,
   struct bitMapHashNode **bitmapTable,
@@ -544,7 +543,7 @@ static void RemoveEnvironmentCleanupFunctions(
 /*****************************************************/
 static void EnvInitializeEnvironment(
   Environment *theEnvironment,
-  struct symbolHashNode **symbolTable,
+  CLIPSLexeme **symbolTable,
   struct floatHashNode **floatTable,
   struct integerHashNode **integerTable,
   struct bitMapHashNode **bitmapTable,
@@ -606,7 +605,6 @@ static void EnvInitializeEnvironment(
    /*=============================================*/
 
    SystemFunctionDefinitions(theEnvironment);
-   UserFunctions();
    EnvUserFunctions(theEnvironment);
 
    /*====================================*/
@@ -798,223 +796,223 @@ static void InitializeKeywords(
    /* construct keywords */
    /*====================*/
 
-   ts = EnvAddSymbol(theEnv,"defrule");
+   ts = EnvCreateSymbol(theEnv,"defrule");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"defglobal");
+   ts = EnvCreateSymbol(theEnv,"defglobal");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"deftemplate");
+   ts = EnvCreateSymbol(theEnv,"deftemplate");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"deffacts");
+   ts = EnvCreateSymbol(theEnv,"deffacts");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"deffunction");
+   ts = EnvCreateSymbol(theEnv,"deffunction");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"defmethod");
+   ts = EnvCreateSymbol(theEnv,"defmethod");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"defgeneric");
+   ts = EnvCreateSymbol(theEnv,"defgeneric");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"defclass");
+   ts = EnvCreateSymbol(theEnv,"defclass");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"defmessage-handler");
+   ts = EnvCreateSymbol(theEnv,"defmessage-handler");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"definstances");
+   ts = EnvCreateSymbol(theEnv,"definstances");
    IncrementSymbolCount(ts);
 
    /*=======================*/
    /* set-strategy keywords */
    /*=======================*/
 
-   ts = EnvAddSymbol(theEnv,"depth");
+   ts = EnvCreateSymbol(theEnv,"depth");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"breadth");
+   ts = EnvCreateSymbol(theEnv,"breadth");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"lex");
+   ts = EnvCreateSymbol(theEnv,"lex");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"mea");
+   ts = EnvCreateSymbol(theEnv,"mea");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"simplicity");
+   ts = EnvCreateSymbol(theEnv,"simplicity");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"complexity");
+   ts = EnvCreateSymbol(theEnv,"complexity");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"random");
+   ts = EnvCreateSymbol(theEnv,"random");
    IncrementSymbolCount(ts);
 
    /*==================================*/
    /* set-salience-evaluation keywords */
    /*==================================*/
 
-   ts = EnvAddSymbol(theEnv,"when-defined");
+   ts = EnvCreateSymbol(theEnv,"when-defined");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"when-activated");
+   ts = EnvCreateSymbol(theEnv,"when-activated");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"every-cycle");
+   ts = EnvCreateSymbol(theEnv,"every-cycle");
    IncrementSymbolCount(ts);
 
    /*======================*/
    /* deftemplate keywords */
    /*======================*/
 
-   ts = EnvAddSymbol(theEnv,"field");
+   ts = EnvCreateSymbol(theEnv,"field");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"multifield");
+   ts = EnvCreateSymbol(theEnv,"multifield");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"default");
+   ts = EnvCreateSymbol(theEnv,"default");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"type");
+   ts = EnvCreateSymbol(theEnv,"type");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"allowed-symbols");
+   ts = EnvCreateSymbol(theEnv,"allowed-symbols");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"allowed-strings");
+   ts = EnvCreateSymbol(theEnv,"allowed-strings");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"allowed-numbers");
+   ts = EnvCreateSymbol(theEnv,"allowed-numbers");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"allowed-integers");
+   ts = EnvCreateSymbol(theEnv,"allowed-integers");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"allowed-floats");
+   ts = EnvCreateSymbol(theEnv,"allowed-floats");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"allowed-values");
+   ts = EnvCreateSymbol(theEnv,"allowed-values");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"min-number-of-elements");
+   ts = EnvCreateSymbol(theEnv,"min-number-of-elements");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"max-number-of-elements");
+   ts = EnvCreateSymbol(theEnv,"max-number-of-elements");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"NONE");
+   ts = EnvCreateSymbol(theEnv,"NONE");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"VARIABLE");
+   ts = EnvCreateSymbol(theEnv,"VARIABLE");
    IncrementSymbolCount(ts);
 
    /*==================*/
    /* defrule keywords */
    /*==================*/
 
-   ts = EnvAddSymbol(theEnv,"declare");
+   ts = EnvCreateSymbol(theEnv,"declare");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"salience");
+   ts = EnvCreateSymbol(theEnv,"salience");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"test");
+   ts = EnvCreateSymbol(theEnv,"test");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"or");
+   ts = EnvCreateSymbol(theEnv,"or");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"and");
+   ts = EnvCreateSymbol(theEnv,"and");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"not");
+   ts = EnvCreateSymbol(theEnv,"not");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"logical");
+   ts = EnvCreateSymbol(theEnv,"logical");
    IncrementSymbolCount(ts);
 
    /*===============*/
    /* COOL keywords */
    /*===============*/
 
-   ts = EnvAddSymbol(theEnv,"is-a");
+   ts = EnvCreateSymbol(theEnv,"is-a");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"role");
+   ts = EnvCreateSymbol(theEnv,"role");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"abstract");
+   ts = EnvCreateSymbol(theEnv,"abstract");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"concrete");
+   ts = EnvCreateSymbol(theEnv,"concrete");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"pattern-match");
+   ts = EnvCreateSymbol(theEnv,"pattern-match");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"reactive");
+   ts = EnvCreateSymbol(theEnv,"reactive");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"non-reactive");
+   ts = EnvCreateSymbol(theEnv,"non-reactive");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"slot");
+   ts = EnvCreateSymbol(theEnv,"slot");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"field");
+   ts = EnvCreateSymbol(theEnv,"field");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"multiple");
+   ts = EnvCreateSymbol(theEnv,"multiple");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"single");
+   ts = EnvCreateSymbol(theEnv,"single");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"storage");
+   ts = EnvCreateSymbol(theEnv,"storage");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"shared");
+   ts = EnvCreateSymbol(theEnv,"shared");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"local");
+   ts = EnvCreateSymbol(theEnv,"local");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"access");
+   ts = EnvCreateSymbol(theEnv,"access");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"read");
+   ts = EnvCreateSymbol(theEnv,"read");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"write");
+   ts = EnvCreateSymbol(theEnv,"write");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"read-only");
+   ts = EnvCreateSymbol(theEnv,"read-only");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"read-write");
+   ts = EnvCreateSymbol(theEnv,"read-write");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"initialize-only");
+   ts = EnvCreateSymbol(theEnv,"initialize-only");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"propagation");
+   ts = EnvCreateSymbol(theEnv,"propagation");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"inherit");
+   ts = EnvCreateSymbol(theEnv,"inherit");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"no-inherit");
+   ts = EnvCreateSymbol(theEnv,"no-inherit");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"source");
+   ts = EnvCreateSymbol(theEnv,"source");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"composite");
+   ts = EnvCreateSymbol(theEnv,"composite");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"exclusive");
+   ts = EnvCreateSymbol(theEnv,"exclusive");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"allowed-lexemes");
+   ts = EnvCreateSymbol(theEnv,"allowed-lexemes");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"allowed-instances");
+   ts = EnvCreateSymbol(theEnv,"allowed-instances");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"around");
+   ts = EnvCreateSymbol(theEnv,"around");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"before");
+   ts = EnvCreateSymbol(theEnv,"before");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"primary");
+   ts = EnvCreateSymbol(theEnv,"primary");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"after");
+   ts = EnvCreateSymbol(theEnv,"after");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"of");
+   ts = EnvCreateSymbol(theEnv,"of");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"self");
+   ts = EnvCreateSymbol(theEnv,"self");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"visibility");
+   ts = EnvCreateSymbol(theEnv,"visibility");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"override-message");
+   ts = EnvCreateSymbol(theEnv,"override-message");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"private");
+   ts = EnvCreateSymbol(theEnv,"private");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"public");
+   ts = EnvCreateSymbol(theEnv,"public");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"create-accessor");
+   ts = EnvCreateSymbol(theEnv,"create-accessor");
    IncrementSymbolCount(ts);
 
    /*================*/
    /* watch keywords */
    /*================*/
 
-   ts = EnvAddSymbol(theEnv,"compilations");
+   ts = EnvCreateSymbol(theEnv,"compilations");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"deffunctions");
+   ts = EnvCreateSymbol(theEnv,"deffunctions");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"globals");
+   ts = EnvCreateSymbol(theEnv,"globals");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"rules");
+   ts = EnvCreateSymbol(theEnv,"rules");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"activations");
+   ts = EnvCreateSymbol(theEnv,"activations");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"statistics");
+   ts = EnvCreateSymbol(theEnv,"statistics");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"facts");
+   ts = EnvCreateSymbol(theEnv,"facts");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"generic-functions");
+   ts = EnvCreateSymbol(theEnv,"generic-functions");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"methods");
+   ts = EnvCreateSymbol(theEnv,"methods");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"instances");
+   ts = EnvCreateSymbol(theEnv,"instances");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"slots");
+   ts = EnvCreateSymbol(theEnv,"slots");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"messages");
+   ts = EnvCreateSymbol(theEnv,"messages");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"message-handlers");
+   ts = EnvCreateSymbol(theEnv,"message-handlers");
    IncrementSymbolCount(ts);
-   ts = EnvAddSymbol(theEnv,"focus");
+   ts = EnvCreateSymbol(theEnv,"focus");
    IncrementSymbolCount(ts);
 #else
 #if MAC_XCD

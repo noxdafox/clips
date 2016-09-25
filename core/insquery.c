@@ -77,7 +77,7 @@
    static void                    PopQueryCore(Environment *);
    static QUERY_CORE             *FindQueryCore(Environment *,int);
    static QUERY_CLASS            *DetermineQueryClasses(Environment *,EXPRESSION *,const char *,unsigned *);
-   static QUERY_CLASS            *FormChain(Environment *,const char *,CLIPSValue *);
+   static QUERY_CLASS            *FormChain(Environment *,const char *,Defclass *,CLIPSValue *);
    static void                    DeleteQueryClasses(Environment *,QUERY_CLASS *);
    static bool                    TestForFirstInChain(Environment *,QUERY_CLASS *,int);
    static bool                    TestForFirstInstanceInClass(Environment *,Defmodule *,int,Defclass *,QUERY_CLASS *,int);
@@ -101,8 +101,8 @@ void SetupQuery(
    AllocateEnvironmentData(theEnv,INSTANCE_QUERY_DATA,sizeof(struct instanceQueryData),NULL);
 
 #if ! RUN_TIME
-   InstanceQueryData(theEnv)->QUERY_DELIMETER_SYMBOL = (SYMBOL_HN *) EnvAddSymbol(theEnv,QUERY_DELIMETER_STRING);
-   IncrementSymbolCount(InstanceQueryData(theEnv)->QUERY_DELIMETER_SYMBOL);
+   InstanceQueryData(theEnv)->QUERY_DELIMITER_SYMBOL = EnvCreateSymbol(theEnv,QUERY_DELIMITER_STRING);
+   IncrementSymbolCount(InstanceQueryData(theEnv)->QUERY_DELIMITER_SYMBOL);
 
    EnvAddUDF(theEnv,"(query-instance)","n",0,UNBOUNDED,NULL,GetQueryInstance,"GetQueryInstance",NULL);
 
@@ -144,10 +144,8 @@ void GetQueryInstance(
   {
    QUERY_CORE *core;
 
-   core = FindQueryCore(theEnv,ValueToInteger(GetpValue(GetFirstArgument())));
-
-   returnValue->type = INSTANCE_NAME;
-   returnValue->value = GetFullInstanceName(theEnv,core->solns[ValueToInteger(GetpValue(GetFirstArgument()->nextArg))]);
+   core = FindQueryCore(theEnv,ValueToInteger(GetFirstArgument()->value));
+   returnValue->value = GetFullInstanceName(theEnv,core->solns[ValueToInteger(GetFirstArgument()->nextArg->value)]);
   }
 
 /***************************************************************************
@@ -169,30 +167,28 @@ void GetQueryInstanceSlot(
    CLIPSValue temp;
    QUERY_CORE *core;
 
-   returnValue->type = SYMBOL;
-   returnValue->value = EnvFalseSymbol(theEnv);
+   returnValue->lexemeValue = theEnv->FalseSymbol;
 
-   core = FindQueryCore(theEnv,ValueToInteger(GetpValue(GetFirstArgument())));
-   ins = core->solns[ValueToInteger(GetpValue(GetFirstArgument()->nextArg))];
+   core = FindQueryCore(theEnv,ValueToInteger(GetFirstArgument()->value));
+   ins = core->solns[ValueToInteger(GetFirstArgument()->nextArg->value)];
    EvaluateExpression(theEnv,GetFirstArgument()->nextArg->nextArg,&temp);
-   if (temp.type != SYMBOL)
+   if (temp.header->type != SYMBOL)
      {
       ExpectedTypeError1(theEnv,"get",1,"symbol");
       EnvSetEvaluationError(theEnv,true);
       return;
      }
-   sp = FindInstanceSlot(theEnv,ins,(SYMBOL_HN *) temp.value);
+   sp = FindInstanceSlot(theEnv,ins,temp.lexemeValue);
    if (sp == NULL)
      {
-      SlotExistError(theEnv,ValueToString(temp.value),"instance-set query");
+      SlotExistError(theEnv,temp.lexemeValue->contents,"instance-set query");
       return;
      }
-   returnValue->type = (unsigned short) sp->type;
    returnValue->value = sp->value;
    if (sp->type == MULTIFIELD)
      {
       returnValue->begin = 0;
-      SetpDOEnd(returnValue,GetInstanceSlotLength(sp));
+      returnValue->end = GetInstanceSlotLength(sp) - 1;
      }
   }
 
@@ -269,13 +265,11 @@ void AnyInstances(
    unsigned rcnt;
    bool testResult;
 
-   returnValue->type = SYMBOL;
-
    qclasses = DetermineQueryClasses(theEnv,GetFirstArgument()->nextArg,
                                       "any-instancep",&rcnt);
    if (qclasses == NULL)
      {
-      returnValue->value = EnvFalseSymbol(theEnv);
+      returnValue->lexemeValue = theEnv->FalseSymbol;
       return;
      }
 
@@ -290,10 +284,7 @@ void AnyInstances(
    PopQueryCore(theEnv);
    DeleteQueryClasses(theEnv,qclasses);
 
-   if (testResult)
-     { returnValue->value = EnvTrueSymbol(theEnv); }
-   else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+   returnValue->lexemeValue = EnvCreateBoolean(theEnv,testResult);
   }
 
 /******************************************************************************
@@ -316,7 +307,6 @@ void QueryFindInstance(
    QUERY_CLASS *qclasses;
    unsigned rcnt,i;
 
-   returnValue->type = MULTIFIELD;
    returnValue->begin = 0;
    returnValue->end = -1;
    qclasses = DetermineQueryClasses(theEnv,GetFirstArgument()->nextArg,
@@ -334,11 +324,10 @@ void QueryFindInstance(
    if (TestForFirstInChain(theEnv,qclasses,0) == true)
      {
       returnValue->value = EnvCreateMultifield(theEnv,rcnt);
-      SetpDOEnd(returnValue,rcnt);
-      for (i = 1 ; i <= rcnt ; i++)
+      returnValue->end = rcnt - 1;
+      for (i = 0 ; i < rcnt ; i++)
         {
-         SetMFType(returnValue->value,i,INSTANCE_NAME);
-         SetMFValue(returnValue->value,i,GetFullInstanceName(theEnv,InstanceQueryData(theEnv)->QueryCore->solns[i - 1]));
+         SetMFValue(returnValue->value,i,GetFullInstanceName(theEnv,InstanceQueryData(theEnv)->QueryCore->solns[i]));
         }
      }
    else
@@ -377,7 +366,6 @@ void QueryFindAllInstances(
    unsigned rcnt;
    unsigned i,j;
 
-   returnValue->type = MULTIFIELD;
    returnValue->begin = 0;
    returnValue->end = -1;
    qclasses = DetermineQueryClasses(theEnv,GetFirstArgument()->nextArg,
@@ -400,12 +388,11 @@ void QueryFindAllInstances(
    returnValue->value = EnvCreateMultifield(theEnv,InstanceQueryData(theEnv)->QueryCore->soln_cnt * rcnt);
    while (InstanceQueryData(theEnv)->QueryCore->soln_set != NULL)
      {
-      for (i = 0 , j = (unsigned) (returnValue->end + 2) ; i < rcnt ; i++ , j++)
+      for (i = 0 , j = (unsigned) (returnValue->end + 1) ; i < rcnt ; i++ , j++)
         {
-         SetMFType(returnValue->value,j,INSTANCE_NAME);
          SetMFValue(returnValue->value,j,GetFullInstanceName(theEnv,InstanceQueryData(theEnv)->QueryCore->soln_set->soln[i]));
         }
-      returnValue->end = (long) j-2;
+      returnValue->end = (long) j-1;
       PopQuerySoln(theEnv);
      }
    rm(theEnv,InstanceQueryData(theEnv)->QueryCore->solns,(sizeof(Instance *) * rcnt));
@@ -436,8 +423,7 @@ void QueryDoForInstance(
    QUERY_CLASS *qclasses;
    unsigned rcnt;
 
-   returnValue->type = SYMBOL;
-   returnValue->value = EnvFalseSymbol(theEnv);
+   returnValue->lexemeValue = theEnv->FalseSymbol;
    qclasses = DetermineQueryClasses(theEnv,GetFirstArgument()->nextArg->nextArg,
                                       "do-for-instance",&rcnt);
    if (qclasses == NULL)
@@ -478,8 +464,7 @@ void QueryDoForAllInstances(
    QUERY_CLASS *qclasses;
    unsigned rcnt;
 
-   returnValue->type = SYMBOL;
-   returnValue->value = EnvFalseSymbol(theEnv);
+   returnValue->lexemeValue = theEnv->FalseSymbol;
    qclasses = DetermineQueryClasses(theEnv,GetFirstArgument()->nextArg->nextArg,
                                       "do-for-all-instances",&rcnt);
    if (qclasses == NULL)
@@ -531,8 +516,7 @@ void DelayedQueryDoForAllInstances(
    struct garbageFrame newGarbageFrame;
    struct garbageFrame *oldGarbageFrame;
 
-   returnValue->type = SYMBOL;
-   returnValue->value = EnvFalseSymbol(theEnv);
+   returnValue->lexemeValue = theEnv->FalseSymbol;
    qclasses = DetermineQueryClasses(theEnv,GetFirstArgument()->nextArg->nextArg,
                                       "delayed-do-for-all-instances",&rcnt);
    if (qclasses == NULL)
@@ -686,21 +670,30 @@ static QUERY_CLASS *DetermineQueryClasses(
    QUERY_CLASS *clist = NULL,*cnxt = NULL,*cchain = NULL,*tmp;
    bool new_list = false;
    CLIPSValue temp;
+   Defclass *theClass;
 
    *rcnt = 0;
    while (classExp != NULL)
      {
-      if (EvaluateExpression(theEnv,classExp,&temp))
+      theClass = NULL;
+      
+      if (classExp->type == DEFCLASS_PTR)
+        {
+         theClass = (Defclass *) classExp->value;
+        }
+      else if (EvaluateExpression(theEnv,classExp,&temp))
         {
          DeleteQueryClasses(theEnv,clist);
          return NULL;
         }
-      if ((temp.type == SYMBOL) && (temp.value == (void *) InstanceQueryData(theEnv)->QUERY_DELIMETER_SYMBOL))
+        
+      if ((theClass == NULL) &&
+          (temp.value == (void *) InstanceQueryData(theEnv)->QUERY_DELIMITER_SYMBOL))
         {
          new_list = true;
          (*rcnt)++;
         }
-      else if ((tmp = FormChain(theEnv,func,&temp)) != NULL)
+      else if ((tmp = FormChain(theEnv,func,theClass,&temp)) != NULL)
         {
          if (clist == NULL)
            clist = cnxt = cchain = tmp;
@@ -743,6 +736,7 @@ static QUERY_CLASS *DetermineQueryClasses(
 static QUERY_CLASS *FormChain(
   Environment *theEnv,
   const char *func,
+  Defclass *theClass,
   CLIPSValue *val)
   {
    Defclass *cls;
@@ -752,11 +746,11 @@ static QUERY_CLASS *FormChain(
    Defmodule *currentModule;
 
    currentModule = EnvGetCurrentModule(theEnv);
-   if (val->type == DEFCLASS_PTR)
+   if (theClass != NULL)
      {
-      IncrementDefclassBusyCount(theEnv,(Defclass *) val->value);
+      IncrementDefclassBusyCount(theEnv,theClass);
       head = get_struct(theEnv,query_class);
-      head->cls = (Defclass *) val->value;
+      head->cls = theClass;
       if (DefclassInScope(theEnv,head->cls,currentModule))
         head->theModule = currentModule;
       else
@@ -765,7 +759,8 @@ static QUERY_CLASS *FormChain(
       head->nxt = NULL;
       return(head);
      }
-   if (val->type == SYMBOL)
+
+   if (val->header->type == SYMBOL)
      {
       /* ===============================================
          Allow instance-set query restrictions to have a
@@ -773,10 +768,10 @@ static QUERY_CLASS *FormChain(
          but search imported defclasses too if a
          module specifier is not given
          =============================================== */
-      cls = LookupDefclassByMdlOrScope(theEnv,DOPToString(val));
+      cls = LookupDefclassByMdlOrScope(theEnv,val->lexemeValue->contents);
       if (cls == NULL)
         {
-         ClassExistError(theEnv,func,DOPToString(val));
+         ClassExistError(theEnv,func,val->lexemeValue->contents);
          return NULL;
         }
       IncrementDefclassBusyCount(theEnv,(Defclass *) cls);
@@ -790,11 +785,12 @@ static QUERY_CLASS *FormChain(
       head->nxt = NULL;
       return(head);
      }
-   if (val->type == MULTIFIELD)
+
+   if (val->header->type == MULTIFIELD)
      {
       head = bot = NULL;
-      end = GetpDOEnd(val);
-      for (i = GetpDOBegin(val) ; i <= end ; i++)
+      end = val->end;
+      for (i = val->begin ; i <= end ; i++)
         {
          if (GetMFType(val->value,i) == SYMBOL)
            {
@@ -963,8 +959,7 @@ static bool TestForFirstInstanceInClass(
          ins->busy--;
          if (EvaluationData(theEnv)->HaltExecution == true)
            break;
-         if ((temp.type != SYMBOL) ? true :
-             (temp.value != EnvFalseSymbol(theEnv)))
+         if (temp.value != theEnv->FalseSymbol)
            break;
         }
 
@@ -1088,8 +1083,7 @@ static void TestEntireClass(
          ins->busy--;
          if (EvaluationData(theEnv)->HaltExecution == true)
            break;
-         if ((temp.type != SYMBOL) ? true :
-             (temp.value != EnvFalseSymbol(theEnv)))
+         if (temp.value != theEnv->FalseSymbol)
            {
             if (InstanceQueryData(theEnv)->QueryCore->action != NULL)
               {

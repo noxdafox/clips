@@ -85,6 +85,9 @@ struct environmentData
    void *routerContext;
    void *functionContext;
    void *callbackContext;
+   CLIPSLexeme *TrueSymbol;
+   CLIPSLexeme *FalseSymbol;
+   CLIPSVoid *VoidConstant;
    void **theData;
    void (**cleanupFunctions)(Environment *);
    struct environmentCleanupFunction *listOfCleanupEnvironmentFunctions;
@@ -96,7 +99,7 @@ struct environmentData
 
    bool                           AllocateEnvironmentData(Environment *,unsigned int,unsigned long,void (*)(Environment *));
    Environment                   *CreateEnvironment(void);
-   Environment                   *CreateRuntimeEnvironment(struct symbolHashNode **,struct floatHashNode **,
+   Environment                   *CreateRuntimeEnvironment(CLIPSLexeme **,struct floatHashNode **,
                                                            struct integerHashNode **,struct bitMapHashNode **);
    bool                           DestroyEnvironment(Environment *);
    bool                           AddEnvironmentCleanupFunction(Environment *,const char *,void (*)(Environment *),int);

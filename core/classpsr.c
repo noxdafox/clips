@@ -166,7 +166,7 @@ bool ParseDefclass(
   Environment *theEnv,
   const char *readSource)
   {
-   SYMBOL_HN *cname;
+   CLIPSLexeme *cname;
    Defclass *cls;
    PACKED_CLASS_LINKS *sclasses,*preclist;
    TEMP_SLOT_LINK *slots = NULL;
@@ -196,7 +196,7 @@ bool ParseDefclass(
    if (cname == NULL)
      return true;
 
-   if (ValidClassName(theEnv,ValueToString(cname),&cls) == false)
+   if (ValidClassName(theEnv,cname->contents,&cls) == false)
      return true;
 
    sclasses = ParseSuperclasses(theEnv,readSource,cname);
@@ -228,7 +228,7 @@ bool ParseDefclass(
          parseError = true;
          break;
         }
-      if (strcmp(DOToString(DefclassData(theEnv)->ObjectParseToken),ROLE_RLN) == 0)
+      if (strcmp(DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents,ROLE_RLN) == 0)
         {
          if (ParseSimpleQualifier(theEnv,readSource,ROLE_RLN,CONCRETE_RLN,ABSTRACT_RLN,
                                   &roleSpecified,&abstract) == false)
@@ -238,7 +238,7 @@ bool ParseDefclass(
            }
         }
 #if DEFRULE_CONSTRUCT
-      else if (strcmp(DOToString(DefclassData(theEnv)->ObjectParseToken),MATCH_RLN) == 0)
+      else if (strcmp(DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents,MATCH_RLN) == 0)
         {
          if (ParseSimpleQualifier(theEnv,readSource,MATCH_RLN,NONREACTIVE_RLN,REACTIVE_RLN,
                                   &patternMatchSpecified,&reactive) == false)
@@ -248,7 +248,7 @@ bool ParseDefclass(
            }
         }
 #endif
-      else if (strcmp(DOToString(DefclassData(theEnv)->ObjectParseToken),SLOT_RLN) == 0)
+      else if (strcmp(DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents,SLOT_RLN) == 0)
         {
          slots = ParseSlot(theEnv,readSource,slots,preclist,false,false);
          if (slots == NULL)
@@ -257,7 +257,7 @@ bool ParseDefclass(
             break;
            }
         }
-      else if (strcmp(DOToString(DefclassData(theEnv)->ObjectParseToken),SGL_SLOT_RLN) == 0)
+      else if (strcmp(DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents,SGL_SLOT_RLN) == 0)
         {
          slots = ParseSlot(theEnv,readSource,slots,preclist,false,true);
          if (slots == NULL)
@@ -266,7 +266,7 @@ bool ParseDefclass(
             break;
            }
         }
-      else if (strcmp(DOToString(DefclassData(theEnv)->ObjectParseToken),MLT_SLOT_RLN) == 0)
+      else if (strcmp(DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents,MLT_SLOT_RLN) == 0)
         {
          slots = ParseSlot(theEnv,readSource,slots,preclist,true,true);
          if (slots == NULL)
@@ -275,7 +275,7 @@ bool ParseDefclass(
             break;
            }
         }
-      else if (strcmp(DOToString(DefclassData(theEnv)->ObjectParseToken),HANDLER_DECL) == 0)
+      else if (strcmp(DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents,HANDLER_DECL) == 0)
         {
          if (ReadUntilClosingParen(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken) == false)
            {
@@ -479,9 +479,9 @@ static bool ParseSimpleQualifier(
    GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
    if (DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TOKEN)
      goto ParseSimpleQualifierError;
-   if (strcmp(DOToString(DefclassData(theEnv)->ObjectParseToken),setRelation) == 0)
+   if (strcmp(DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents,setRelation) == 0)
      *binaryFlag = true;
-   else if (strcmp(DOToString(DefclassData(theEnv)->ObjectParseToken),clearRelation) == 0)
+   else if (strcmp(DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents,clearRelation) == 0)
      *binaryFlag = false;
    else
      goto ParseSimpleQualifierError;
@@ -875,7 +875,7 @@ void *CreateClassScopeMap(
    int moduleID,count;
    void *theBitMap;
 
-   className = ValueToString(theDefclass->header.name);
+   className = theDefclass->header.name->contents;
    matchModule = theDefclass->header.whichModule->theModule;
 
    scopeMapSize = (sizeof(char) * ((GetNumberOfDefmodules(theEnv) / BITS_PER_BYTE) + 1));
@@ -888,7 +888,7 @@ void *CreateClassScopeMap(
         theModule = EnvGetNextDefmodule(theEnv,theModule))
      {
       EnvSetCurrentModule(theEnv,theModule);
-      moduleID = (int) theModule->bsaveID;
+      moduleID = (int) theModule->header.bsaveID;
       if (FindImportedConstruct(theEnv,"defclass",matchModule,
                                 className,&count,true,NULL) != NULL)
         SetBitMap(scopeMap,moduleID);

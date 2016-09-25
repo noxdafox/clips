@@ -32,10 +32,10 @@ jobject ConvertDataObject(
   {
    jobject result = NULL, tresult;
    jint mfLength;
-   struct multifield *theList;
+   Multifield *theList;
    long i;
    
-   switch(GetpType(theDO))
+   switch(theDO->header->type)
      {
       case MULTIFIELD:
         mfLength = GetpDOLength(theDO);
@@ -48,9 +48,9 @@ jobject ConvertDataObject(
         if (result == NULL)
           { return result; }
           
-        theList = (struct multifield *) DOPToPointer(theDO);
+        theList = theDO->multifieldValue;
         
-        for (i = GetpDOBegin(theDO); i <= GetpDOEnd(theDO); i++)
+        for (i = theDO->begin; i <= theDO->end; i++)
          {
           tresult = ConvertSingleFieldValue(env,javaEnv,clipsEnv,GetMFType(theList,i),GetMFValue(theList,i));
           
@@ -76,7 +76,7 @@ jobject ConvertDataObject(
       case FLOAT:
       case FACT_ADDRESS:
       case INSTANCE_ADDRESS:
-        result = ConvertSingleFieldValue(env,javaEnv,clipsEnv,GetpType(theDO),GetpValue(theDO));
+        result = ConvertSingleFieldValue(env,javaEnv,clipsEnv,theDO->header->type,theDO->value);
         break;
 
       default: 
@@ -202,7 +202,7 @@ static void *ConvertSingleFieldPrimitiveValue(
         {
          jstring theString = (*env)->CallObjectMethod(env,theValue,CLIPSJNIData(theEnv)->lexemeValueGetValueMethod);
          const char *cString = (*env)->GetStringUTFChars(env,theString,NULL);
-         rv = EnvAddSymbol(theEnv,cString);
+         rv = EnvCreateSymbol(theEnv,cString);
          (*env)->ReleaseStringUTFChars(env,theString,cString);
          break;
         }
@@ -210,14 +210,14 @@ static void *ConvertSingleFieldPrimitiveValue(
       case FLOAT:
         {
          jdouble theDouble = (*env)->CallDoubleMethod(env,theValue,CLIPSJNIData(theEnv)->floatValueDoubleValueMethod);
-         rv = EnvAddDouble(theEnv,theDouble);
+         rv = EnvCreateFloat(theEnv,theDouble);
          break;
         }
 
       case INTEGER:
         {
          jlong theLong = (*env)->CallLongMethod(env,theValue,CLIPSJNIData(theEnv)->integerValueLongValueMethod);
-         rv = EnvAddLong(theEnv,theLong);
+         rv = EnvCreateInteger(theEnv,theLong);
          break;
         }
 
@@ -246,19 +246,20 @@ void ConvertPrimitiveValueToDataObject(
   Environment *theEnv,
   jobject theValue,
   CLIPSValue *theDO)
-  {
+  { 
+   unsigned short theType;
    void *result = NULL;
    JNIEnv *env = (JNIEnv *) GetEnvironmentContext(theEnv);
   
    if (theValue == NULL)
      {
-      theDO->type = RVOID;
+      theDO->voidValue = theEnv->VoidConstant;
       return;
      }
    
-   theDO->type = (*env)->CallIntMethod(env,theValue,CLIPSJNIData(theEnv)->getCLIPSTypeValueMethod);
+   theType = (*env)->CallIntMethod(env,theValue,CLIPSJNIData(theEnv)->getCLIPSTypeValueMethod);
 
-   switch(theDO->type)
+   switch(theType)
      {
       case MULTIFIELD:
         {
@@ -270,12 +271,12 @@ void ConvertPrimitiveValueToDataObject(
             jobject mfo = (*env)->CallObjectMethod(env,theValue,CLIPSJNIData(theEnv)->multifieldValueGetMethod,i);
             int mft = (*env)->CallIntMethod(env,mfo,CLIPSJNIData(theEnv)->getCLIPSTypeValueMethod);
             void *mfv = ConvertSingleFieldPrimitiveValue(theEnv,mft,mfo); 
-            SetMFType(result,i+1,mft);
             SetMFValue(result,i+1,mfv);
            }
            
-         SetpDOBegin(theDO,1);
-         SetpDOEnd(theDO,GetMFLength(result));
+         theDO->begin = 0;
+         theDO->end = GetMFLength(result) - 1;
+         theDO->value = result;
          break;
         }
         
@@ -287,14 +288,12 @@ void ConvertPrimitiveValueToDataObject(
       case FLOAT:
       case FACT_ADDRESS:
       case INSTANCE_ADDRESS:
-        result = ConvertSingleFieldPrimitiveValue(theEnv,theDO->type,theValue);
+        theDO->value = ConvertSingleFieldPrimitiveValue(theEnv,theType,theValue);
         break;
 
       default: 
-        theDO->type = RVOID;
+        theDO->voidValue = theEnv->VoidConstant;
         break;
      }
-
-   theDO->value = result;
   }
 

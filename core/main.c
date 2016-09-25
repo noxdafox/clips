@@ -95,7 +95,7 @@ int main(
 
    DestroyEnvironment(mainEnv);
 
-   return(-1);
+   return -1;
   }
 
 #if UNIX_V || LINUX || DARWIN || UNIX_7 || WIN_GCC || WIN_MVC || DARWIN

@@ -208,9 +208,9 @@ void SetgenFunction(
   {
    long long theLong;
 
-   /*==========================================================*/
-   /* Check to see that a single integer argument is provided. */
-   /*==========================================================*/
+   /*====================================================*/
+   /* Check to see that an integer argument is provided. */
+   /*====================================================*/
 
    if (! UDFNthArgument(context,1,INTEGER_TYPE,returnValue))
      { return; }
@@ -219,20 +219,18 @@ void SetgenFunction(
    /* The integer must be greater than zero. */
    /*========================================*/
 
-   theLong = ValueToLong(returnValue->value);
+   theLong = returnValue->integerValue->contents;
 
    if (theLong < 1LL)
      {
       UDFInvalidArgumentMessage(context,"integer (greater than or equal to 1)");
-      returnValue->type = INTEGER;
-      returnValue->value = EnvAddLong(theEnv,MiscFunctionData(theEnv)->GensymNumber);
+      returnValue->integerValue = EnvCreateInteger(theEnv,MiscFunctionData(theEnv)->GensymNumber);
       return;
      }
 
-   /*====================================*/
-   /* Set the gensym index to the number */
-   /* provided and return this value.    */
-   /*====================================*/
+   /*==============================================*/
+   /* Set the gensym index to the number provided. */
+   /*==============================================*/
 
    MiscFunctionData(theEnv)->GensymNumber = theLong;
   }
@@ -248,8 +246,6 @@ void GensymFunction(
   {
    char genstring[128];
 
-   returnValue->type = SYMBOL;
-
    /*================================================*/
    /* Create a symbol using the current gensym index */
    /* as the postfix.                                */
@@ -262,7 +258,7 @@ void GensymFunction(
    /* Return the symbol. */
    /*====================*/
 
-   returnValue->value = EnvAddSymbol(theEnv,genstring);
+   returnValue->lexemeValue = EnvCreateSymbol(theEnv,genstring);
   }
 
 /************************************************/
@@ -278,16 +274,16 @@ void GensymStarFunction(
    /* Return the symbol. */
    /*====================*/
 
-   returnValue->type = SYMBOL;
-   returnValue->value = GensymStar(theEnv);
+   GensymStar(theEnv,returnValue);
   }
 
 /************************************/
 /* GensymStar: C access routine for */
 /*   the gensym* function.          */
 /************************************/
-void *GensymStar(
-  Environment *theEnv)
+void GensymStar(
+  Environment *theEnv,
+  CLIPSValue *returnValue)
   {
    char genstring[128];
 
@@ -303,13 +299,13 @@ void *GensymStar(
       gensprintf(genstring,"gen%lld",MiscFunctionData(theEnv)->GensymNumber);
       MiscFunctionData(theEnv)->GensymNumber++;
      }
-   while (FindSymbolHN(theEnv,genstring) != NULL);
+   while (FindSymbolHN(theEnv,genstring,SYMBOL_TYPE) != NULL);
 
    /*====================*/
    /* Return the symbol. */
    /*====================*/
 
-   return(EnvAddSymbol(theEnv,genstring));
+   returnValue->lexemeValue = EnvCreateSymbol(theEnv,genstring);
   }
 
 /********************************************/
@@ -325,8 +321,6 @@ void RandomFunction(
    long long rv;
    CLIPSValue theArg;
    long long begin, end;
-
-   returnValue->type = INTEGER;
 
    /*====================================*/
    /* The random function accepts either */
@@ -351,24 +345,24 @@ void RandomFunction(
      {
       if (! UDFFirstArgument(context,INTEGER_TYPE,&theArg))
         { return; }
+      begin = theArg.integerValue->contents;
 
-      begin = DOToLong(theArg);
       if (! UDFNextArgument(context,INTEGER_TYPE,&theArg))
         { return; }
 
-      end = DOToLong(theArg);
+      end = theArg.integerValue->contents;
       if (end < begin)
         {
          PrintErrorID(theEnv,"MISCFUN",3,false);
          EnvPrintRouter(theEnv,WERROR,"Function random expected argument #1 to be less than argument #2\n");
-         returnValue->value = EnvAddLong(theEnv,rv);
+         returnValue->integerValue = EnvCreateInteger(theEnv,rv);
          return;
         }
 
       rv = begin + (rv % ((end - begin) + 1));
      }
 
-   returnValue->value = EnvAddLong(theEnv,rv);
+   returnValue->integerValue = EnvCreateInteger(theEnv,rv);
   }
 
 /******************************************/
@@ -393,7 +387,7 @@ void SeedFunction(
    /* Seed the random number generator with the provided integer. */
    /*=============================================================*/
 
-   genseed((int) DOToLong(theValue));
+   genseed((int) theValue.integerValue->contents);
   }
 
 /********************************************/
@@ -407,8 +401,6 @@ void LengthFunction(
   {
    CLIPSValue theArg;
 
-   returnValue->type = INTEGER;
-
    /*====================================================*/
    /* The length$ function expects exactly one argument. */
    /*====================================================*/
@@ -421,9 +413,9 @@ void LengthFunction(
    /* the number of characters in the argument.          */
    /*====================================================*/
 
-   if ((GetType(theArg) == STRING) || (GetType(theArg) == SYMBOL))
+   if (CVIsType(&theArg,LEXEME_TYPES))
      {
-      returnValue->value = EnvAddLong(theEnv,strlen(DOToString(theArg)));
+      returnValue->integerValue = EnvCreateInteger(theEnv,strlen(theArg.lexemeValue->contents));
       return;
      }
 
@@ -432,20 +424,11 @@ void LengthFunction(
    /* the number of fields in the argument.              */
    /*====================================================*/
 
-   if (GetType(theArg) == MULTIFIELD)
+   else if (CVIsType(&theArg,MULTIFIELD_TYPE))
      {
-      returnValue->value = EnvAddLong(theEnv,GetDOLength(theArg));
+      returnValue->value = EnvCreateInteger(theEnv,GetDOLength(theArg));
       return;
      }
-
-   /*=============================================*/
-   /* If the argument wasn't a string, symbol, or */
-   /* multifield value, then generate an error.   */
-   /*=============================================*/
-
-   EnvSetEvaluationError(theEnv,true);
-   ExpectedTypeError2(theEnv,"length$",1);
-   returnValue->value = EnvAddLong(theEnv,-1);
   }
 
 /*******************************************/
@@ -462,8 +445,7 @@ void ReleaseMemCommand(
    /* and return the amount of memory freed. */
    /*========================================*/
 
-   returnValue->type = INTEGER;
-   returnValue->value = EnvAddLong(theEnv,EnvReleaseMem(theEnv,-1L));
+   returnValue->integerValue = EnvCreateInteger(theEnv,EnvReleaseMem(theEnv,-1L));
   }
 
 /******************************************/
@@ -486,7 +468,7 @@ void ConserveMemCommand(
    if (! UDFFirstArgument(context,SYMBOL_TYPE,&theValue))
      { return; }
 
-   argument = DOToString(theValue);
+   argument = theValue.lexemeValue->contents;
 
    /*====================================================*/
    /* If the argument is the symbol "on", then store the */
@@ -531,14 +513,12 @@ void MemUsedCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   returnValue->type = INTEGER;
-
    /*============================================*/
    /* Return the amount of memory currently held */
    /* (both for current use and for later use).  */
    /*============================================*/
 
-   returnValue->value = EnvAddLong(theEnv,EnvMemUsed(theEnv));
+   returnValue->integerValue = EnvCreateInteger(theEnv,EnvMemUsed(theEnv));
   }
 
 /********************************************/
@@ -550,14 +530,12 @@ void MemRequestsCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   returnValue->type = INTEGER;
-
    /*==================================*/
    /* Return the number of outstanding */
    /* memory requests.                 */
    /*==================================*/
 
-   returnValue->value = EnvAddLong(theEnv,EnvMemRequests(theEnv));
+   returnValue->integerValue = EnvCreateInteger(theEnv,EnvMemRequests(theEnv));
   }
 
 #endif
@@ -573,7 +551,7 @@ void AproposCommand(
   {
    const char *argument;
    CLIPSValue theArg;
-   struct symbolHashNode *hashPtr = NULL;
+   CLIPSLexeme *hashPtr = NULL;
    size_t theLength;
 
    /*=======================================================*/
@@ -587,7 +565,7 @@ void AproposCommand(
    /* Determine the length of the argument. */
    /*=======================================*/
 
-   argument = DOToString(theArg);
+   argument = theArg.lexemeValue->contents;
    theLength = strlen(argument);
 
    /*====================================================================*/
@@ -599,7 +577,7 @@ void AproposCommand(
 
    while ((hashPtr = GetNextSymbolMatch(theEnv,argument,theLength,hashPtr,true,NULL)) != NULL)
      {
-      EnvPrintRouter(theEnv,WDISPLAY,ValueToString(hashPtr));
+      EnvPrintRouter(theEnv,WDISPLAY,hashPtr->contents);
       EnvPrintRouter(theEnv,WDISPLAY,"\n");
      }
   }
@@ -613,6 +591,12 @@ void OptionsCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
+   /*=======================*/
+   /* Set the return value. */
+   /*=======================*/
+
+   returnValue->voidValue = theEnv->VoidConstant;
+
    /*=================================*/
    /* Print the state of the compiler */
    /* flags for this executable.      */
@@ -840,25 +824,24 @@ void OperatingSystemFunction(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   returnValue->type = SYMBOL;
 #if GENERIC
-   returnValue->value = EnvAddSymbol(theEnv,"UNKNOWN");
+   returnValue->lexemeValue = EnvCreateSymbol(theEnv,"UNKNOWN");
 #elif UNIX_V
-   returnValue->value = EnvAddSymbol(theEnv,"UNIX-V");
+   returnValue->lexemeValue = EnvCreateSymbol(theEnv,"UNIX-V");
 #elif UNIX_7
-   returnValue->value = EnvAddSymbol(theEnv,"UNIX-7");
+   returnValue->lexemeValue = EnvCreateSymbol(theEnv,"UNIX-7");
 #elif LINUX
-   returnValue->value = EnvAddSymbol(theEnv,"LINUX");
+   returnValue->lexemeValue = EnvCreateSymbol(theEnv,"LINUX");
 #elif DARWIN
-   returnValue->value = EnvAddSymbol(theEnv,"DARWIN");
+   returnValue->lexemeValue = EnvCreateSymbol(theEnv,"DARWIN");
 #elif MAC_XCD
-   returnValue->value = EnvAddSymbol(theEnv,"MAC-OS-X");
+   returnValue->lexemeValue = EnvCreateSymbol(theEnv,"MAC-OS-X");
 #elif IBM && (! WINDOW_INTERFACE)
-   returnValue->value = EnvAddSymbol(theEnv,"DOS");
+   returnValue->lexemeValue = EnvCreateSymbol(theEnv,"DOS");
 #elif IBM && WINDOW_INTERFACE
-   returnValue->value = EnvAddSymbol(theEnv,"WINDOWS");
+   returnValue->lexemeValue = EnvCreateSymbol(theEnv,"WINDOWS");
 #else
-   returnValue->value = EnvAddSymbol(theEnv,"UNKNOWN");
+   returnValue->lexemeValue = EnvCreateSymbol(theEnv,"UNKNOWN");
 #endif
   }
 
@@ -909,8 +892,7 @@ void ExpandFuncCall(
       func = (struct FunctionDefinition *) fcallexp->value;
       if (CheckFunctionArgCount(theEnv,func,CountArguments(newargexp)) == false)
         {
-         returnValue->type = SYMBOL;
-         returnValue->value = EnvFalseSymbol(theEnv);
+         returnValue->lexemeValue = theEnv->FalseSymbol;
          ReturnExpression(theEnv,fcallexp);
          return;
         }
@@ -921,8 +903,7 @@ void ExpandFuncCall(
       if (CheckDeffunctionCall(theEnv,(Deffunction *) fcallexp->value,
               CountArguments(fcallexp->argList)) == false)
         {
-         returnValue->type = SYMBOL;
-         returnValue->value = EnvFalseSymbol(theEnv);
+         returnValue->lexemeValue = theEnv->FalseSymbol;
          ReturnExpression(theEnv,fcallexp);
          EnvSetEvaluationError(theEnv,true);
          return;
@@ -952,8 +933,7 @@ void DummyExpandFuncMultifield(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   returnValue->type = SYMBOL;
-   returnValue->value = EnvFalseSymbol(theEnv);
+   returnValue->lexemeValue = theEnv->FalseSymbol;
    EnvSetEvaluationError(theEnv,true);
    PrintErrorID(theEnv,"MISCFUN",1,false);
    EnvPrintRouter(theEnv,WERROR,"expand$ must be used in the argument list of a function call.\n");
@@ -994,10 +974,12 @@ static void ExpandFuncMultifield(
         {
          EvaluateExpression(theEnv,theExp->argList,returnValue);
          ReturnExpression(theEnv,theExp->argList);
-         if ((EvaluationData(theEnv)->EvaluationError) || (returnValue->type != MULTIFIELD))
+         if ((EvaluationData(theEnv)->EvaluationError) ||
+             (returnValue->header->type != MULTIFIELD))
            {
             theExp->argList = NULL;
-            if ((EvaluationData(theEnv)->EvaluationError == false) && (returnValue->type != MULTIFIELD))
+            if ((EvaluationData(theEnv)->EvaluationError == false) &&
+                (returnValue->header->type != MULTIFIELD))
               ExpectedTypeError2(theEnv,"expand$",1);
             theExp->value = FindFunction(theEnv,"(set-evaluation-error)");
             EvaluationData(theEnv)->EvaluationError = false;
@@ -1005,7 +987,7 @@ static void ExpandFuncMultifield(
             return;
            }
          top = bot = NULL;
-         for (i = GetpDOBegin(returnValue) ; i <= GetpDOEnd(returnValue) ; i++)
+         for (i = returnValue->begin ; i <= returnValue->end ; i++)
            {
             newexp = get_struct(theEnv,expr);
             newexp->type = GetMFType(returnValue->value,i);
@@ -1058,8 +1040,7 @@ void CauseEvaluationError(
   CLIPSValue *returnValue)
   {
    EnvSetEvaluationError(theEnv,true);
-   returnValue->type = SYMBOL;
-   returnValue->value = EnvFalseSymbol(theEnv);
+   returnValue->lexemeValue = theEnv->FalseSymbol;
   }
 
 /************************************************/
@@ -1071,15 +1052,7 @@ void GetSORCommand(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   /*========================================*/
-   /* Get the current value of the behavior. */
-   /*========================================*/
-
-   returnValue->type = SYMBOL;
-   if (EnvGetSequenceOperatorRecognition(theEnv))
-     { returnValue->value = EnvTrueSymbol(theEnv); }
-   else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+   returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvGetSequenceOperatorRecognition(theEnv));
   }
 
 /************************************************/
@@ -1094,34 +1067,12 @@ void SetSORCommand(
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    CLIPSValue theArg;
 
-   returnValue->type = SYMBOL;
-   if (ExpressionData(theEnv)->SequenceOpMode)
-     { returnValue->value = EnvTrueSymbol(theEnv); }
-   else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
-
-   /*========================*/
-   /* Evaluate the argument. */
-   /*========================*/
-
    if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
      { return; }
 
-   /*================================================*/
-   /* If the argument evaluated to false, then the   */
-   /* behavior is disabled, otherwise it is enabled. */
-   /*================================================*/
-
-   if ((theArg.value == EnvFalseSymbol(theEnv)) && (theArg.type == SYMBOL))
-     { EnvSetSequenceOperatorRecognition(theEnv,false); }
-   else
-     { EnvSetSequenceOperatorRecognition(theEnv,true); }
+   returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvSetSequenceOperatorRecognition(theEnv,theArg.value != theEnv->FalseSymbol));
 #else
-   returnValue->type = SYMBOL;
-   if (ExpressionData(theEnv)->SequenceOpMode)
-     { returnValue->value = EnvTrueSymbol(theEnv); }
-   else
-     { returnValue->value = EnvFalseSymbol(theEnv); }
+   returnValue->lexemeValue = EnvCreateBoolean(theEnv,ExpressionData(theEnv)->SequenceOpMode);
 #endif
   }
 
@@ -1147,13 +1098,12 @@ void GetFunctionRestrictions(
    if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
      { return; }
 
-   returnValue->type = STRING;
-   fptr = FindFunction(theEnv,DOToString(theArg));
+   fptr = FindFunction(theEnv,theArg.lexemeValue->contents);
    if (fptr == NULL)
      {
-      CantFindItemErrorMessage(theEnv,"function",DOToString(theArg));
+      CantFindItemErrorMessage(theEnv,"function",theArg.lexemeValue->contents);
       EnvSetEvaluationError(theEnv,true);
-      returnValue->value = EnvAddSymbol(theEnv,"");
+      returnValue->lexemeValue = EnvCreateString(theEnv,"");
       return;
      }
 
@@ -1186,11 +1136,11 @@ void GetFunctionRestrictions(
      }
    else
      {
-      stringBuffer = AppendToString(theEnv,ValueToString(fptr->restrictions),
+      stringBuffer = AppendToString(theEnv,fptr->restrictions->contents,
                                     stringBuffer,&bufferPosition,&bufferMaximum);
      }
 
-   returnValue->value = EnvAddSymbol(theEnv,stringBuffer);
+   returnValue->lexemeValue = EnvCreateString(theEnv,stringBuffer);
 
    rm(theEnv,stringBuffer,bufferMaximum);
   }
@@ -1213,17 +1163,15 @@ void GetFunctionListFunction(
         theFunction = theFunction->next)
      { functionCount++; }
 
-   SetpType(returnValue,MULTIFIELD);
-   SetpDOBegin(returnValue,1);
-   SetpDOEnd(returnValue,functionCount);
+   returnValue->begin = 0;
+   returnValue->end = functionCount - 1;
    theList = EnvCreateMultifield(theEnv,functionCount);
-   SetpValue(returnValue,theList);
+   returnValue->value = theList;
 
-   for (theFunction = GetFunctionList(theEnv), functionCount = 1;
+   for (theFunction = GetFunctionList(theEnv), functionCount = 0;
         theFunction != NULL;
         theFunction = theFunction->next, functionCount++)
      {
-      SetMFType(theList,functionCount,SYMBOL);
       SetMFValue(theList,functionCount,theFunction->callFunctionName);
      }
   }
@@ -1249,8 +1197,7 @@ void FuncallFunction(
    /* Set up the default return value. */
    /*==================================*/
 
-   SetpType(returnValue,SYMBOL);
-   SetpValue(returnValue,EnvFalseSymbol(theEnv));
+   returnValue->lexemeValue = theEnv->FalseSymbol;
 
    /*============================================*/
    /* Get the name of the function to be called. */
@@ -1263,7 +1210,7 @@ void FuncallFunction(
    /* Find the function. */
    /*====================*/
 
-   name = DOToString(theArg);
+   name = theArg.lexemeValue->contents;
    if (! GetFunctionReference(theEnv,name,&theReference))
      {
       ExpectedTypeError1(theEnv,"funcall",1,"function, deffunction, or generic function name");
@@ -1299,7 +1246,7 @@ void FuncallFunction(
          return;
         }
 
-      switch(GetType(theArg))
+      switch(theArg.header->type)
         {
          case MULTIFIELD:
            nextAdd = GenConstant(theEnv,FCALL,FindFunction(theEnv,"create$"));
@@ -1311,8 +1258,8 @@ void FuncallFunction(
            lastAdd = nextAdd;
 
            multiAdd = NULL;
-           theMultifield = (struct multifield *) GetValue(theArg);
-           for (j = GetDOBegin(theArg); j <= GetDOEnd(theArg); j++)
+           theMultifield = (Multifield *) theArg.value;
+           for (j = theArg.begin; j <= theArg.end; j++)
              {
               nextAdd = GenConstant(theEnv,GetMFType(theMultifield,j),GetMFValue(theMultifield,j));
               if (multiAdd == NULL)
@@ -1326,7 +1273,7 @@ void FuncallFunction(
            break;
 
          default:
-           nextAdd = GenConstant(theEnv,GetType(theArg),GetValue(theArg));
+           nextAdd = GenConstant(theEnv,theArg.header->type,theArg.value);
            if (lastAdd == NULL)
              { theReference.argList = nextAdd; }
            else
@@ -1405,8 +1352,7 @@ void NewFunction(
    /* Set up the default return value. */
    /*==================================*/
 
-   SetpType(returnValue,SYMBOL);
-   SetpValue(returnValue,EnvFalseSymbol(theEnv));
+   returnValue->lexemeValue = theEnv->FalseSymbol;
 
    /*====================================*/
    /* Get the name of the language type. */
@@ -1419,7 +1365,7 @@ void NewFunction(
    /* Find the language type. */
    /*=========================*/
 
-   name = DOToString(theValue);
+   name = theValue.lexemeValue->contents;
 
    theType = FindLanguageType(theEnv,name);
 
@@ -1456,8 +1402,7 @@ void CallFunction(
    /* Set up the default return value. */
    /*==================================*/
 
-   SetpType(returnValue,SYMBOL);
-   SetpValue(returnValue,EnvFalseSymbol(theEnv));
+   returnValue->lexemeValue = theEnv->FalseSymbol;
 
    /*=========================*/
    /* Get the first argument. */
@@ -1471,9 +1416,9 @@ void CallFunction(
    /* should be an external language type.       */
    /*============================================*/
 
-   if (GetType(theValue) == SYMBOL)
+   if (theValue.header->type == SYMBOL)
      {
-      name = DOToString(theValue);
+      name = theValue.lexemeValue->contents;
 
       theType = FindLanguageType(theEnv,name);
 
@@ -1502,9 +1447,9 @@ void CallFunction(
    /* type be examining the pointer.                */
    /*===============================================*/
 
-   if (GetType(theValue) == EXTERNAL_ADDRESS)
+   if (theValue.header->type == EXTERNAL_ADDRESS)
      {
-      theEA = (struct externalAddressHashNode *) GetValue(theValue);
+      theEA = (struct externalAddressHashNode *) theValue.value;
 
       theType = theEA->type;
 
@@ -1547,8 +1492,7 @@ void TimeFunction(
    /* Return the time. */
    /*==================*/
 
-   returnValue->type = FLOAT;
-   returnValue->value = EnvAddDouble(theEnv,gentime());
+   returnValue->floatValue = EnvCreateFloat(theEnv,gentime());
   }
 
 /****************************************/
@@ -1560,65 +1504,55 @@ static void ConvertTime(
   CLIPSValue *returnValue,
   struct tm *info)
   {
-   returnValue->type = MULTIFIELD;
    returnValue->begin = 0;
    returnValue->end = 8;
    returnValue->value = EnvCreateMultifield(theEnv,9L);
-   SetMFType(returnValue->value,1,INTEGER);
-   SetMFValue(returnValue->value,1,EnvAddLong(theEnv,info->tm_year + 1900));
-   SetMFType(returnValue->value,2,INTEGER);
-   SetMFValue(returnValue->value,2,EnvAddLong(theEnv,info->tm_mon + 1));
-   SetMFType(returnValue->value,3,INTEGER);
-   SetMFValue(returnValue->value,3,EnvAddLong(theEnv,info->tm_mday));
-   SetMFType(returnValue->value,4,INTEGER);
-   SetMFValue(returnValue->value,4,EnvAddLong(theEnv,info->tm_hour));
-   SetMFType(returnValue->value,5,INTEGER);
-   SetMFValue(returnValue->value,5,EnvAddLong(theEnv,info->tm_min));
-   SetMFType(returnValue->value,6,INTEGER);
-   SetMFValue(returnValue->value,6,EnvAddLong(theEnv,info->tm_sec));
+   SetMFValue(returnValue->value,0,EnvCreateInteger(theEnv,info->tm_year + 1900));
+   SetMFValue(returnValue->value,1,EnvCreateInteger(theEnv,info->tm_mon + 1));
+   SetMFValue(returnValue->value,2,EnvCreateInteger(theEnv,info->tm_mday));
+   SetMFValue(returnValue->value,3,EnvCreateInteger(theEnv,info->tm_hour));
+   SetMFValue(returnValue->value,4,EnvCreateInteger(theEnv,info->tm_min));
+   SetMFValue(returnValue->value,5,EnvCreateInteger(theEnv,info->tm_sec));
 
-   SetMFType(returnValue->value,7,SYMBOL);
    switch (info->tm_wday)
      {
       case 0:
-        SetMFValue(returnValue->value,7,EnvAddSymbol(theEnv,"Sunday"));
+        SetMFValue(returnValue->value,6,EnvCreateSymbol(theEnv,"Sunday"));
         break;
 
       case 1:
-        SetMFValue(returnValue->value,7,EnvAddSymbol(theEnv,"Monday"));
+        SetMFValue(returnValue->value,6,EnvCreateSymbol(theEnv,"Monday"));
         break;
 
       case 2:
-        SetMFValue(returnValue->value,7,EnvAddSymbol(theEnv,"Tuesday"));
+        SetMFValue(returnValue->value,6,EnvCreateSymbol(theEnv,"Tuesday"));
         break;
 
       case 3:
-        SetMFValue(returnValue->value,7,EnvAddSymbol(theEnv,"Wednesday"));
+        SetMFValue(returnValue->value,6,EnvCreateSymbol(theEnv,"Wednesday"));
         break;
 
       case 4:
-        SetMFValue(returnValue->value,7,EnvAddSymbol(theEnv,"Thursday"));
+        SetMFValue(returnValue->value,6,EnvCreateSymbol(theEnv,"Thursday"));
         break;
 
       case 5:
-        SetMFValue(returnValue->value,7,EnvAddSymbol(theEnv,"Friday"));
+        SetMFValue(returnValue->value,6,EnvCreateSymbol(theEnv,"Friday"));
         break;
 
       case 6:
-        SetMFValue(returnValue->value,7,EnvAddSymbol(theEnv,"Saturday"));
+        SetMFValue(returnValue->value,6,EnvCreateSymbol(theEnv,"Saturday"));
         break;
      }
 
-   SetMFType(returnValue->value,8,INTEGER);
-   SetMFValue(returnValue->value,8,EnvAddLong(theEnv,info->tm_yday));
+   SetMFValue(returnValue->value,7,EnvCreateInteger(theEnv,info->tm_yday));
 
-   SetMFType(returnValue->value,9,SYMBOL);
    if (info->tm_isdst > 0)
-     { SetMFValue(returnValue->value,9,SymbolData(theEnv)->TrueSymbolHN); }
+     { SetMFValue(returnValue->value,8,theEnv->TrueSymbol); }
    else if (info->tm_isdst == 0)
-     { SetMFValue(returnValue->value,9,SymbolData(theEnv)->FalseSymbolHN); }
+     { SetMFValue(returnValue->value,8,theEnv->FalseSymbol); }
    else
-     { SetMFValue(returnValue->value,9,EnvAddSymbol(theEnv,"UNKNOWN")); }
+     { SetMFValue(returnValue->value,8,EnvCreateSymbol(theEnv,"UNKNOWN")); }
   }
 
 /*****************************************/
@@ -1683,8 +1617,7 @@ void TimerFunction(
           (! EnvGetHaltExecution(theEnv)))
      { UDFNextArgument(context,ANY_TYPE,&theArg); }
 
-   returnValue->type = FLOAT;
-   returnValue->value = EnvAddDouble(theEnv,gentime() - startTime);
+   returnValue->floatValue = EnvCreateFloat(theEnv,gentime() - startTime);
   }
 
 /***************************************/
@@ -1712,7 +1645,7 @@ void SystemCommand(
       if (! UDFNextArgument(context,LEXEME_TYPES,&tempValue))
         { return; }
 
-     theString = DOToString(tempValue);
+     theString = tempValue.lexemeValue->contents;
 
      commandBuffer = AppendToString(theEnv,theString,commandBuffer,&bufferPosition,&bufferMaximum);
     }

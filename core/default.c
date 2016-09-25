@@ -92,16 +92,14 @@ void DeriveDefaultFromConstraints(
      {
       if (multifield)
         {
-         SetpType(theDefault,MULTIFIELD);
-         SetpDOBegin(theDefault,1);
-         SetpDOEnd(theDefault,0);
-         if (garbageMultifield) SetpValue(theDefault,EnvCreateMultifield(theEnv,0L));
-         else SetpValue(theDefault,CreateMultifield2(theEnv,0L));
+         theDefault->begin = 0;
+         theDefault->end = -1;
+         if (garbageMultifield) theDefault->value = EnvCreateMultifield(theEnv,0L);
+         else theDefault->value = CreateMultifield2(theEnv,0L);
         }
       else
         {
-         theDefault->type = SYMBOL;
-         theDefault->value = EnvAddSymbol(theEnv,"nil");
+         theDefault->value = EnvCreateSymbol(theEnv,"nil");
         }
 
       return;
@@ -114,31 +112,31 @@ void DeriveDefaultFromConstraints(
    if (constraints->anyAllowed || constraints->symbolsAllowed)
      {
       theType = SYMBOL;
-      theValue = FindDefaultValue(theEnv,SYMBOL,constraints,EnvAddSymbol(theEnv,"nil"));
+      theValue = FindDefaultValue(theEnv,SYMBOL,constraints,EnvCreateSymbol(theEnv,"nil"));
      }
 
    else if (constraints->stringsAllowed)
      {
       theType = STRING;
-      theValue = FindDefaultValue(theEnv,STRING,constraints,EnvAddSymbol(theEnv,""));
+      theValue = FindDefaultValue(theEnv,STRING,constraints,EnvCreateString(theEnv,""));
      }
 
    else if (constraints->integersAllowed)
      {
       theType = INTEGER;
-      theValue = FindDefaultValue(theEnv,INTEGER,constraints,EnvAddLong(theEnv,0LL));
+      theValue = FindDefaultValue(theEnv,INTEGER,constraints,EnvCreateInteger(theEnv,0LL));
      }
 
    else if (constraints->floatsAllowed)
      {
       theType = FLOAT;
-      theValue = FindDefaultValue(theEnv,FLOAT,constraints,EnvAddDouble(theEnv,0.0));
+      theValue = FindDefaultValue(theEnv,FLOAT,constraints,EnvCreateFloat(theEnv,0.0));
      }
 #if OBJECT_SYSTEM
    else if (constraints->instanceNamesAllowed)
      {
       theType = INSTANCE_NAME;
-      theValue = FindDefaultValue(theEnv,INSTANCE_NAME,constraints,EnvAddSymbol(theEnv,"nil"));
+      theValue = FindDefaultValue(theEnv,INSTANCE_NAME,constraints,EnvCreateInstanceName(theEnv,"nil"));
      }
 
    else if (constraints->instanceAddressesAllowed)
@@ -163,7 +161,7 @@ void DeriveDefaultFromConstraints(
    else
      {
       theType = SYMBOL;
-      theValue = EnvAddSymbol(theEnv,"nil");
+      theValue = EnvCreateSymbol(theEnv,"nil");
      }
 
    /*=========================================================*/
@@ -179,21 +177,18 @@ void DeriveDefaultFromConstraints(
       else if (constraints->minFields->value == SymbolData(theEnv)->NegativeInfinity) minFields = 0;
       else minFields = (unsigned long) ValueToLong(constraints->minFields->value);
 
-      SetpType(theDefault,MULTIFIELD);
-      SetpDOBegin(theDefault,1);
-      SetpDOEnd(theDefault,(long) minFields);
-      if (garbageMultifield) SetpValue(theDefault,EnvCreateMultifield(theEnv,minFields));
-      else SetpValue(theDefault,CreateMultifield2(theEnv,minFields));
+      theDefault->begin = 0;
+      theDefault->end = minFields - 1;
+      if (garbageMultifield) theDefault->value = EnvCreateMultifield(theEnv,minFields);
+      else theDefault->value = CreateMultifield2(theEnv,minFields);
 
       for (; minFields > 0; minFields--)
         {
-         SetMFType(GetpValue(theDefault),minFields,theType);
-         SetMFValue(GetpValue(theDefault),minFields,theValue);
+         SetMFValue(theDefault->value,minFields-1,theValue);
         }
      }
    else
      {
-      theDefault->type = theType;
       theDefault->value = theValue;
      }
   }
@@ -240,22 +235,22 @@ static void *FindDefaultValue(
       if (theConstraints->minValue->type == INTEGER)
         { return(theConstraints->minValue->value); }
       else if (theConstraints->minValue->type == FLOAT)
-        { return(EnvAddLong(theEnv,(long long) ValueToDouble(theConstraints->minValue->value))); }
+        { return(EnvCreateInteger(theEnv,(long long) ValueToDouble(theConstraints->minValue->value))); }
       else if (theConstraints->maxValue->type == INTEGER)
         { return(theConstraints->maxValue->value); }
       else if (theConstraints->maxValue->type == FLOAT)
-        { return(EnvAddLong(theEnv,(long long) ValueToDouble(theConstraints->maxValue->value))); }
+        { return(EnvCreateInteger(theEnv,(long long) ValueToDouble(theConstraints->maxValue->value))); }
      }
    else if (theType == FLOAT)
      {
       if (theConstraints->minValue->type == FLOAT)
         { return(theConstraints->minValue->value); }
       else if (theConstraints->minValue->type == INTEGER)
-        { return(EnvAddDouble(theEnv,(double) ValueToLong(theConstraints->minValue->value))); }
+        { return(EnvCreateFloat(theEnv,(double) ValueToLong(theConstraints->minValue->value))); }
       else if (theConstraints->maxValue->type == FLOAT)
         { return(theConstraints->maxValue->value); }
       else if (theConstraints->maxValue->type == INTEGER)
-        { return(EnvAddDouble(theEnv,(double) ValueToLong(theConstraints->maxValue->value))); }
+        { return(EnvCreateFloat(theEnv,(double) ValueToLong(theConstraints->maxValue->value))); }
      }
 
    /*======================================*/
@@ -453,7 +448,7 @@ struct expr *ParseDefault(
       EnvSetEvaluationError(theEnv,false);
       if (EvaluateExpression(theEnv,newItem,&theValue)) *error = true;
 
-      if ((theValue.type == MULTIFIELD) &&
+      if ((theValue.header->type == MULTIFIELD) &&
           (multifield == false) &&
           (*error == false))
         {

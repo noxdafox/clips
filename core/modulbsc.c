@@ -180,17 +180,16 @@ void EnvGetDefmoduleList(
    /* enough to store the list. */
    /*===========================*/
 
-   SetpType(returnValue,MULTIFIELD);
-   SetpDOBegin(returnValue,1);
-   SetpDOEnd(returnValue,(long) count);
+   returnValue->begin = 0;
+   returnValue->end = ((long) count) - 1;
    theList = EnvCreateMultifield(theEnv,count);
-   SetpValue(returnValue,theList);
+   returnValue->value = theList;
 
    /*====================================*/
    /* Store the names in the multifield. */
    /*====================================*/
 
-   for (theConstruct = EnvGetNextDefmodule(theEnv,NULL), count = 1;
+   for (theConstruct = EnvGetNextDefmodule(theEnv,NULL), count = 0;
         theConstruct != NULL;
         theConstruct = EnvGetNextDefmodule(theEnv,theConstruct), count++)
      {
@@ -199,8 +198,7 @@ void EnvGetDefmoduleList(
          EnvSetMultifieldErrorValue(theEnv,returnValue);
          return;
         }
-      SetMFType(theList,count,SYMBOL);
-      SetMFValue(theList,count,EnvAddSymbol(theEnv,EnvGetDefmoduleName(theEnv,theConstruct)));
+      SetMFValue(theList,count,EnvCreateSymbol(theEnv,EnvGetDefmoduleName(theEnv,theConstruct)));
      }
   }
 

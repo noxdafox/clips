@@ -26,7 +26,7 @@
 - initWithFact: (Fact *) theFact
   fromEnvironment: (void *) theEnvironment;
 
-- initWithInstance: (struct instance *) theInstance
+- initWithInstance: (Instance *) theInstance
   fromEnvironment: (void *) theEnvironment;
 
 - (BOOL)                         searchForString: (NSString *) theString;

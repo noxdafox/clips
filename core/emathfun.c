@@ -161,8 +161,7 @@ static bool SingleNumberCheck(
 
    if (! UDFNthArgument(context,1,NUMBER_TYPES,returnValue))
      {
-      returnValue->type = FLOAT;
-      returnValue->value = EnvAddDouble(context->environment,0.0);
+      returnValue->floatValue = EnvCreateFloat(context->environment,0.0);
       return false;
      }
 
@@ -198,8 +197,7 @@ static void DomainErrorMessage(
    EnvPrintRouter(theEnv,WERROR," function.\n");
    EnvSetHaltExecution(theEnv,true);
    EnvSetEvaluationError(theEnv,true);
-   returnValue->type = FLOAT;
-   returnValue->value = EnvAddDouble(theEnv,0.0);
+   returnValue->floatValue = EnvCreateFloat(theEnv,0.0);
   }
 
 /************************************************************/
@@ -219,8 +217,7 @@ static void ArgumentOverflowErrorMessage(
    EnvPrintRouter(theEnv,WERROR," function.\n");
    EnvSetHaltExecution(theEnv,true);
    EnvSetEvaluationError(theEnv,true);
-   returnValue->type = FLOAT;
-   returnValue->value = EnvAddDouble(theEnv,0.0);
+   returnValue->floatValue = EnvCreateFloat(theEnv,0.0);
   }
 
 /************************************************************/
@@ -240,8 +237,7 @@ static void SingularityErrorMessage(
    EnvPrintRouter(theEnv,WERROR," function.\n");
    EnvSetHaltExecution(theEnv,true);
    EnvSetEvaluationError(theEnv,true);
-   returnValue->type = FLOAT;
-   returnValue->value = EnvAddDouble(theEnv,0.0);
+   returnValue->floatValue = EnvCreateFloat(theEnv,0.0);
   }
 
 /*************************************/
@@ -256,8 +252,7 @@ void CosFunction(
    if (! SingleNumberCheck(context,returnValue))
      { return; }
 
-   returnValue->value = EnvAddDouble(theEnv,cos(ConvertToDouble(returnValue)));
-   returnValue->type = FLOAT;
+   returnValue->floatValue = EnvCreateFloat(theEnv,cos(CVCoerceToFloat(returnValue)));
   }
 
 /*************************************/
@@ -272,8 +267,7 @@ void SinFunction(
    if (! SingleNumberCheck(context,returnValue))
      { return; }
 
-   returnValue->value = EnvAddDouble(theEnv,sin(ConvertToDouble(returnValue)));
-   returnValue->type = FLOAT;
+   returnValue->floatValue = EnvCreateFloat(theEnv,sin(CVCoerceToFloat(returnValue)));
   }
 
 /*************************************/
@@ -290,15 +284,14 @@ void TanFunction(
    if (! SingleNumberCheck(context,returnValue))
      { return; }
 
-   tv = cos(ConvertToDouble(returnValue));
+   tv = cos(CVCoerceToFloat(returnValue));
    if ((tv < SMALLEST_ALLOWED_NUMBER) && (tv > -SMALLEST_ALLOWED_NUMBER))
      {
       SingularityErrorMessage(context,returnValue);
       return;
      }
 
-   returnValue->value = EnvAddDouble(theEnv,sin(ConvertToDouble(returnValue)) / tv);
-   returnValue->type = FLOAT;
+   returnValue->floatValue = EnvCreateFloat(theEnv,sin(CVCoerceToFloat(returnValue)) / tv);
   }
 
 /*************************************/
@@ -315,15 +308,14 @@ void SecFunction(
    if (! SingleNumberCheck(context,returnValue))
      { return; }
 
-   tv = cos(ConvertToDouble(returnValue));
+   tv = cos(CVCoerceToFloat(returnValue));
    if ((tv < SMALLEST_ALLOWED_NUMBER) && (tv > -SMALLEST_ALLOWED_NUMBER))
      {
       SingularityErrorMessage(context,returnValue);
       return;
      }
 
-   returnValue->type = FLOAT;
-   returnValue->value = EnvAddDouble(theEnv,1.0 / tv);
+   returnValue->floatValue = EnvCreateFloat(theEnv,1.0 / tv);
   }
 
 /*************************************/
@@ -340,15 +332,14 @@ void CscFunction(
    if (! SingleNumberCheck(context,returnValue))
      { return; }
 
-   tv = sin(ConvertToDouble(returnValue));
+   tv = sin(CVCoerceToFloat(returnValue));
    if ((tv < SMALLEST_ALLOWED_NUMBER) && (tv > -SMALLEST_ALLOWED_NUMBER))
      {
       SingularityErrorMessage(context,returnValue);
       return;
      }
 
-   returnValue->type = FLOAT;
-   returnValue->value = EnvAddDouble(theEnv,1.0 / tv);
+   returnValue->floatValue = EnvCreateFloat(theEnv,1.0 / tv);
   }
 
 /*************************************/
@@ -365,15 +356,14 @@ void CotFunction(
    if (! SingleNumberCheck(context,returnValue))
      { return; }
 
-   tv = sin(ConvertToDouble(returnValue));
-   if ((tv < SMALLEST_ALLOWED_NUMBER) && (tv > -SMALLEST_ALLOWED_NUMBER))
-     {
-      SingularityErrorMessage(context,returnValue);
-      return;
-     }
+    tv = sin(CVCoerceToFloat(returnValue));
+    if ((tv < SMALLEST_ALLOWED_NUMBER) && (tv > -SMALLEST_ALLOWED_NUMBER))
+      {
+       SingularityErrorMessage(context,returnValue);
+       return;
+      }
 
-   returnValue->value = EnvAddDouble(theEnv,cos(ConvertToDouble(returnValue)) / tv);
-   returnValue->type = FLOAT;
+    returnValue->floatValue = EnvCreateFloat(theEnv,cos(CVCoerceToFloat(returnValue)) / tv);
   }
 
 /**************************************/
@@ -390,7 +380,7 @@ void AcosFunction(
    if (! SingleNumberCheck(context,returnValue))
      { return; }
 
-   num = ConvertToDouble(returnValue);
+   num = CVCoerceToFloat(returnValue);
 
    if ((num > 1.0) || (num < -1.0))
      {
@@ -398,8 +388,7 @@ void AcosFunction(
       return;
      }
 
-   returnValue->type = FLOAT;
-   returnValue->value = EnvAddDouble(theEnv,acos(num));
+    returnValue->floatValue = EnvCreateFloat(theEnv,acos(num));
   }
 
 /**************************************/
@@ -416,15 +405,14 @@ void AsinFunction(
    if (! SingleNumberCheck(context,returnValue))
      { return; }
 
-   num = ConvertToDouble(returnValue);
+   num = CVCoerceToFloat(returnValue);
    if ((num > 1.0) || (num < -1.0))
      {
       DomainErrorMessage(context,returnValue);
       return;
      }
 
-   returnValue->type = FLOAT;
-   returnValue->value = EnvAddDouble(theEnv,asin(num));
+   returnValue->floatValue = EnvCreateFloat(theEnv,asin(num));
   }
 
 /**************************************/
@@ -439,8 +427,7 @@ void AtanFunction(
    if (! SingleNumberCheck(context,returnValue))
      { return; }
 
-   returnValue->value = EnvAddDouble(theEnv,atan(ConvertToDouble(returnValue)));
-   returnValue->type = FLOAT;
+   returnValue->floatValue = EnvCreateFloat(theEnv,atan(CVCoerceToFloat(returnValue)));
   }
 
 /**************************************/
@@ -457,7 +444,7 @@ void AsecFunction(
    if (! SingleNumberCheck(context,returnValue))
      { return; }
 
-   num = ConvertToDouble(returnValue);
+   num = CVCoerceToFloat(returnValue);
    if ((num < 1.0) && (num > -1.0))
      {
       DomainErrorMessage(context,returnValue);
@@ -465,8 +452,7 @@ void AsecFunction(
      }
 
    num = 1.0 / num;
-   returnValue->type = FLOAT;
-   returnValue->value = EnvAddDouble(theEnv,acos(num));
+   returnValue->floatValue = EnvCreateFloat(theEnv,acos(num));
   }
 
 /**************************************/
@@ -483,7 +469,7 @@ void AcscFunction(
    if (! SingleNumberCheck(context,returnValue))
      { return; }
 
-   num = ConvertToDouble(returnValue);
+   num = CVCoerceToFloat(returnValue);
    if ((num < 1.0) && (num > -1.0))
      {
       DomainErrorMessage(context,returnValue);
@@ -491,8 +477,7 @@ void AcscFunction(
      }
 
    num = 1.0 / num;
-   returnValue->type = FLOAT;
-   returnValue->value = EnvAddDouble(theEnv,asin(num));
+   returnValue->floatValue = EnvCreateFloat(theEnv,asin(num));
   }
 
 /**************************************/
@@ -509,17 +494,15 @@ void AcotFunction(
    if (! SingleNumberCheck(context,returnValue))
      { return; }
 
-   num = ConvertToDouble(returnValue);
+   num = CVCoerceToFloat(returnValue);
    if (TestProximity(num,1e-25) == true)
      {
-      returnValue->type = FLOAT;
-      returnValue->value = EnvAddDouble(theEnv,PID2);
+      returnValue->floatValue = EnvCreateFloat(theEnv,PID2);
       return;
      }
 
    num = 1.0 / num;
-   returnValue->type = FLOAT;
-   returnValue->value = EnvAddDouble(theEnv,atan(num));
+   returnValue->floatValue = EnvCreateFloat(theEnv,atan(num));
   }
 
 /**************************************/
@@ -534,8 +517,7 @@ void CoshFunction(
    if (! SingleNumberCheck(context,returnValue))
      { return; }
 
-   returnValue->value = EnvAddDouble(theEnv,cosh(ConvertToDouble(returnValue)));
-   returnValue->type = FLOAT;
+   returnValue->floatValue = EnvCreateFloat(theEnv,cosh(CVCoerceToFloat(returnValue)));
   }
 
 /**************************************/
@@ -550,9 +532,8 @@ void SinhFunction(
    if (! SingleNumberCheck(context,returnValue))
      { return; }
 
-   returnValue->value = EnvAddDouble(theEnv,sinh(ConvertToDouble(returnValue)));
-   returnValue->type = FLOAT;
- }
+   returnValue->floatValue = EnvCreateFloat(theEnv,sinh(CVCoerceToFloat(returnValue)));
+  }
 
 /**************************************/
 /* TanhFunction: H/L access routine   */
@@ -566,8 +547,7 @@ void TanhFunction(
    if (! SingleNumberCheck(context,returnValue))
      { return; }
 
-   returnValue->value = EnvAddDouble(theEnv,tanh(ConvertToDouble(returnValue)));
-   returnValue->type = FLOAT;
+   returnValue->floatValue = EnvCreateFloat(theEnv,tanh(CVCoerceToFloat(returnValue)));
   }
 
 /**************************************/
@@ -582,8 +562,7 @@ void SechFunction(
    if (! SingleNumberCheck(context,returnValue))
      { return; }
 
-   returnValue->value = EnvAddDouble(theEnv,1.0 / cosh(ConvertToDouble(returnValue)));
-   returnValue->type = FLOAT;
+   returnValue->floatValue = EnvCreateFloat(theEnv,1.0 / cosh(CVCoerceToFloat(returnValue)));
   }
 
 /**************************************/
@@ -600,7 +579,7 @@ void CschFunction(
    if (! SingleNumberCheck(context,returnValue))
      { return; }
 
-   num = ConvertToDouble(returnValue);
+   num = CVCoerceToFloat(returnValue);
    if (num == 0.0)
      {
       SingularityErrorMessage(context,returnValue);
@@ -612,8 +591,7 @@ void CschFunction(
       return;
      }
 
-   returnValue->type = FLOAT;
-   returnValue->value = EnvAddDouble(theEnv,1.0 / sinh(num));
+   returnValue->floatValue = EnvCreateFloat(theEnv,1.0 / sinh(num));
   }
 
 /**************************************/
@@ -630,7 +608,7 @@ void CothFunction(
    if (! SingleNumberCheck(context,returnValue))
      { return; }
 
-   num = ConvertToDouble(returnValue);
+   num = CVCoerceToFloat(returnValue);
    if (num == 0.0)
      {
       SingularityErrorMessage(context,returnValue);
@@ -642,8 +620,7 @@ void CothFunction(
       return;
      }
 
-   returnValue->type = FLOAT;
-   returnValue->value = EnvAddDouble(theEnv,1.0 / tanh(num));
+   returnValue->floatValue = EnvCreateFloat(theEnv,1.0 / tanh(num));
   }
 
 /***************************************/
@@ -660,15 +637,14 @@ void AcoshFunction(
    if (! SingleNumberCheck(context,returnValue))
      { return; }
 
-   num = ConvertToDouble(returnValue);
+   num = CVCoerceToFloat(returnValue);
    if (num < 1.0)
      {
       DomainErrorMessage(context,returnValue);
       return;
      }
 
-   returnValue->type = FLOAT;
-   returnValue->value = EnvAddDouble(theEnv,genacosh(num));
+   returnValue->floatValue = EnvCreateFloat(theEnv,genacosh(num));
   }
 
 /***************************************/
@@ -683,8 +659,7 @@ void AsinhFunction(
    if (! SingleNumberCheck(context,returnValue))
      { return; }
 
-   returnValue->value = EnvAddDouble(theEnv,genasinh(ConvertToDouble(returnValue)));
-   returnValue->type = FLOAT;
+   returnValue->floatValue = EnvCreateFloat(theEnv,genasinh(CVCoerceToFloat(returnValue)));
   }
 
 /***************************************/
@@ -701,15 +676,14 @@ void AtanhFunction(
    if (! SingleNumberCheck(context,returnValue))
      { return; }
 
-   num = ConvertToDouble(returnValue);
+   num = CVCoerceToFloat(returnValue);
    if ((num >= 1.0) || (num <= -1.0))
      {
       DomainErrorMessage(context,returnValue);
       return;
      }
 
-   returnValue->value = EnvAddDouble(theEnv,genatanh(num));
-   returnValue->type = FLOAT;
+   returnValue->floatValue = EnvCreateFloat(theEnv,genatanh(num));
   }
 
 /***************************************/
@@ -726,16 +700,15 @@ void AsechFunction(
    if (! SingleNumberCheck(context,returnValue))
      { return; }
 
-   num = ConvertToDouble(returnValue);
+   num = CVCoerceToFloat(returnValue);
    if ((num > 1.0) || (num <= 0.0))
      {
       DomainErrorMessage(context,returnValue);
       return;
      }
 
-   returnValue->value = EnvAddDouble(theEnv,genasech(num));
-   returnValue->type = FLOAT;
- }
+   returnValue->floatValue = EnvCreateFloat(theEnv,genasech(num));
+  }
 
 /***************************************/
 /* AcschFunction: H/L access routine   */
@@ -751,15 +724,14 @@ void AcschFunction(
    if (! SingleNumberCheck(context,returnValue))
      { return; }
 
-   num = ConvertToDouble(returnValue);
+   num = CVCoerceToFloat(returnValue);
    if (num == 0.0)
      {
       DomainErrorMessage(context,returnValue);
       return;
      }
 
-   returnValue->value = EnvAddDouble(theEnv,genacsch(num));
-   returnValue->type = FLOAT;
+   returnValue->floatValue = EnvCreateFloat(theEnv,genacsch(num));
   }
 
 /***************************************/
@@ -776,15 +748,14 @@ void AcothFunction(
    if (! SingleNumberCheck(context,returnValue))
      { return; }
 
-   num = ConvertToDouble(returnValue);
+   num = CVCoerceToFloat(returnValue);
    if ((num <= 1.0) && (num >= -1.0))
      {
       DomainErrorMessage(context,returnValue);
       return;
      }
 
-   returnValue->value = EnvAddDouble(theEnv,genacoth(num));
-   returnValue->type = FLOAT;
+   returnValue->floatValue = EnvCreateFloat(theEnv,genacoth(num));
   }
 
 /*************************************/
@@ -799,8 +770,7 @@ void ExpFunction(
    if (! SingleNumberCheck(context,returnValue))
      { return; }
 
-   returnValue->value = EnvAddDouble(theEnv,exp(ConvertToDouble(returnValue)));
-   returnValue->type = FLOAT;
+   returnValue->floatValue = EnvCreateFloat(theEnv,exp(CVCoerceToFloat(returnValue)));
   }
 
 /*************************************/
@@ -817,7 +787,7 @@ void LogFunction(
    if (! SingleNumberCheck(context,returnValue))
      { return; }
 
-   num = ConvertToDouble(returnValue);
+   num = CVCoerceToFloat(returnValue);
    if (num < 0.0)
      {
       DomainErrorMessage(context,returnValue);
@@ -829,8 +799,7 @@ void LogFunction(
       return;
      }
 
-   returnValue->type = FLOAT;
-   returnValue->value = EnvAddDouble(theEnv,log(num));
+   returnValue->floatValue = EnvCreateFloat(theEnv,log(num));
   }
 
 /***************************************/
@@ -847,7 +816,7 @@ void Log10Function(
    if (! SingleNumberCheck(context,returnValue))
      { return; }
 
-   num = ConvertToDouble(returnValue);
+   num = CVCoerceToFloat(returnValue);
    if (num < 0.0)
      {
       DomainErrorMessage(context,returnValue);
@@ -859,9 +828,8 @@ void Log10Function(
       return;
      }
 
-   returnValue->type = FLOAT;
-   returnValue->value = EnvAddDouble(theEnv,log10(num));
-  }
+    returnValue->floatValue = EnvCreateFloat(theEnv,log10(num));
+   }
 
 /**************************************/
 /* SqrtFunction: H/L access routine   */
@@ -877,15 +845,14 @@ void SqrtFunction(
    if (! SingleNumberCheck(context,returnValue))
      { return; }
 
-   num = ConvertToDouble(returnValue);
+   num = CVCoerceToFloat(returnValue);
    if (num < 0.00000)
      {
       DomainErrorMessage(context,returnValue);
       return;
      }
 
-   returnValue->type = FLOAT;
-   returnValue->value = EnvAddDouble(theEnv,sqrt(num));
+   returnValue->floatValue = EnvCreateFloat(theEnv,sqrt(num));
   }
 
 /*************************************/
@@ -898,7 +865,7 @@ void PowFunction(
   CLIPSValue *returnValue)
   {
    CLIPSValue value1, value2;
-   CLIPSFloat num1, num2;
+   double num1, num2;
 
    /*==================================*/
    /* Check for two numeric arguments. */
@@ -914,8 +881,8 @@ void PowFunction(
     /* Domain error check. */
     /*=====================*/
 
-    num1 = ConvertToDouble(&value1);
-    num2 = ConvertToDouble(&value2);
+    num1 = CVCoerceToFloat(&value1);
+    num2 = CVCoerceToFloat(&value2);
 
     if (((num1 == 0.0) && (num2 <= 0.0)) ||
        ((num1 < 0.0) && (dtrunc(num2) != num2)))
@@ -924,8 +891,11 @@ void PowFunction(
       return;
      }
 
-   returnValue->value = EnvAddDouble(theEnv,pow(num1,num2));
-   returnValue->type = FLOAT;
+   /*============================*/
+   /* Compute and set the value. */
+   /*============================*/
+
+   returnValue->floatValue = EnvCreateFloat(theEnv,pow(num1,num2));
   }
 
 /*************************************/
@@ -951,29 +921,34 @@ void ModFunction(
    if (! UDFNthArgument(context,2,NUMBER_TYPES,&item2))
      { return; }
 
-   if (((item2.type == INTEGER) ? (ValueToLong(item2.value) == 0L) : false) ||
-       ((item2.type == FLOAT) ? ValueToDouble(item2.value) == 0.0 : false))
+   /*===========================*/
+   /* Check for divide by zero. */
+   /*===========================*/
+
+   if ((CVIsType(&item2,INTEGER_TYPE) ? (item2.integerValue->contents == 0L) : false) ||
+       (CVIsType(&item2,FLOAT_TYPE) ? (item2.floatValue->contents == 0.0) : false))
      {
       DivideByZeroErrorMessage(theEnv,"mod");
       EnvSetEvaluationError(theEnv,true);
-      returnValue->type = INTEGER;
-      returnValue->value = EnvAddLong(theEnv,0L);
+      returnValue->integerValue = EnvCreateInteger(theEnv,0);
       return;
      }
 
-   if ((item1.type == FLOAT) || (item2.type == FLOAT))
+   /*===========================*/
+   /* Compute the return value. */
+   /*===========================*/
+
+   if (CVIsType(&item1,FLOAT_TYPE) || CVIsType(&item2,FLOAT_TYPE))
      {
-      fnum1 = CoerceToDouble(item1.type,item1.value);
-      fnum2 = CoerceToDouble(item2.type,item2.value);
-      returnValue->value = EnvAddDouble(theEnv,fnum1 - (dtrunc(fnum1 / fnum2) * fnum2));
-      returnValue->type = FLOAT;
+      fnum1 = CVCoerceToFloat(&item1);
+      fnum2 = CVCoerceToFloat(&item2);
+      returnValue->floatValue = EnvCreateFloat(theEnv,fnum1 - (dtrunc(fnum1 / fnum2) * fnum2));
      }
    else
      {
-      lnum1 = DOToLong(item1);
-      lnum2 = DOToLong(item2);
-      returnValue->value = EnvAddLong(theEnv,lnum1 - (lnum1 / lnum2) * lnum2);
-      returnValue->type = INTEGER;
+      lnum1 = item1.integerValue->contents;
+      lnum2 = item2.integerValue->contents;
+      returnValue->integerValue = EnvCreateInteger(theEnv,lnum1 - (lnum1 / lnum2) * lnum2);
      }
   }
 
@@ -986,8 +961,7 @@ void PiFunction(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   returnValue->value = EnvAddDouble(theEnv,acos(-1.0));
-   returnValue->type = FLOAT;
+   returnValue->floatValue = EnvCreateFloat(theEnv,acos(-1.0));
   }
 
 /****************************************/
@@ -1002,8 +976,7 @@ void DegRadFunction(
    if (! SingleNumberCheck(context,returnValue))
      { return; }
 
-   returnValue->value = EnvAddDouble(theEnv,ConvertToDouble(returnValue) * PI / 180.0);
-   returnValue->type = FLOAT;
+   returnValue->floatValue = EnvCreateFloat(theEnv,CVCoerceToFloat(returnValue) * PI / 180.0);
   }
 
 /****************************************/
@@ -1018,8 +991,7 @@ void RadDegFunction(
    if (! SingleNumberCheck(context,returnValue))
      { return; }
 
-   returnValue->value = EnvAddDouble(theEnv,ConvertToDouble(returnValue) * 180.0 / PI);
-   returnValue->type = FLOAT;
+   returnValue->floatValue = EnvCreateFloat(theEnv,CVCoerceToFloat(returnValue) * 180.0 / PI);
   }
 
 /*****************************************/
@@ -1034,8 +1006,7 @@ void DegGradFunction(
    if (! SingleNumberCheck(context,returnValue))
      { return; }
 
-   returnValue->value = EnvAddDouble(theEnv,ConvertToDouble(returnValue) / 0.9);
-   returnValue->type = FLOAT;
+   returnValue->floatValue = EnvCreateFloat(theEnv,CVCoerceToFloat(returnValue) / 0.9);
   }
 
 /*****************************************/
@@ -1050,8 +1021,7 @@ void GradDegFunction(
    if (! SingleNumberCheck(context,returnValue))
      { return; }
 
-   returnValue->value = EnvAddDouble(theEnv,ConvertToDouble(returnValue) * 0.9);
-   returnValue->type = FLOAT;
+   returnValue->floatValue = EnvCreateFloat(theEnv,CVCoerceToFloat(returnValue) * 0.9);
   }
 
 /***************************************/
@@ -1070,11 +1040,12 @@ void RoundFunction(
    if (! UDFNthArgument(context,1,NUMBER_TYPES,returnValue))
      { return; }
 
-   if (returnValue->type == FLOAT)
-     {
-      returnValue->value = EnvAddLong(theEnv,(long long) ceil(ConvertToDouble(returnValue) - 0.5));
-      returnValue->type = INTEGER;
-     }
+   /*==============================*/
+   /* Round float type to integer. */
+   /*==============================*/
+
+   if (CVIsType(returnValue,FLOAT_TYPE))
+     { returnValue->integerValue = EnvCreateInteger(theEnv,ceil(returnValue->floatValue->contents - 0.5)); }
   }
 
 /*******************************************/

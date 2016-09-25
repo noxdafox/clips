@@ -154,9 +154,8 @@ void WhileFunction(
    UtilityData(theEnv)->CurrentGarbageFrame = &newGarbageFrame;
 
    UDFNthArgument(context,1,ANY_TYPE,&theResult);
-   while (((theResult.value != EnvFalseSymbol(theEnv)) ||
-           (theResult.type != SYMBOL)) &&
-           (EvaluationData(theEnv)->HaltExecution != true))
+   while ((theResult.value != theEnv->FalseSymbol) &&
+          (EvaluationData(theEnv)->HaltExecution != true))
      {
       if ((ProcedureFunctionData(theEnv)->BreakFlag == true) || (ProcedureFunctionData(theEnv)->ReturnFlag == true))
         break;
@@ -188,15 +187,13 @@ void WhileFunction(
 
    if (ProcedureFunctionData(theEnv)->ReturnFlag == true)
      {
-      returnValue->type = theResult.type;
       returnValue->value = theResult.value;
       returnValue->begin = theResult.begin;
       returnValue->end = theResult.end;
      }
    else
      {
-      returnValue->type = SYMBOL;
-      returnValue->value = EnvFalseSymbol(theEnv);
+      returnValue->value = theEnv->FalseSymbol;
      }
 
    RestorePriorGarbageFrame(theEnv,&newGarbageFrame,oldGarbageFrame,returnValue);
@@ -225,17 +222,15 @@ void LoopForCountFunction(
 
    if (! UDFNthArgument(context,1,INTEGER_TYPE,&theArg))
      {
-      loopResult->type = SYMBOL;
-      loopResult->value = EnvFalseSymbol(theEnv);
+      loopResult->value = theEnv->FalseSymbol;
       ProcedureFunctionData(theEnv)->LoopCounterStack = tmpCounter->nxt;
       rtn_struct(theEnv,loopCounterStack,tmpCounter);
       return;
      }
-   tmpCounter->loopCounter = DOToLong(theArg);
+   tmpCounter->loopCounter = theArg.integerValue->contents;
    if (! UDFNthArgument(context,2,INTEGER_TYPE,&theArg))
      {
-      loopResult->type = SYMBOL;
-      loopResult->value = EnvFalseSymbol(theEnv);
+      loopResult->value = theEnv->FalseSymbol;
       ProcedureFunctionData(theEnv)->LoopCounterStack = tmpCounter->nxt;
       rtn_struct(theEnv,loopCounterStack,tmpCounter);
       return;
@@ -246,7 +241,7 @@ void LoopForCountFunction(
    newGarbageFrame.priorFrame = oldGarbageFrame;
    UtilityData(theEnv)->CurrentGarbageFrame = &newGarbageFrame;
 
-   iterationEnd = DOToLong(theArg);
+   iterationEnd = theArg.integerValue->contents;
    while ((tmpCounter->loopCounter <= iterationEnd) &&
           (EvaluationData(theEnv)->HaltExecution != true))
      {
@@ -267,15 +262,13 @@ void LoopForCountFunction(
    ProcedureFunctionData(theEnv)->BreakFlag = false;
    if (ProcedureFunctionData(theEnv)->ReturnFlag == true)
      {
-      loopResult->type = theArg.type;
       loopResult->value = theArg.value;
       loopResult->begin = theArg.begin;
       loopResult->end = theArg.end;
      }
    else
      {
-      loopResult->type = SYMBOL;
-      loopResult->value = EnvFalseSymbol(theEnv);
+      loopResult->value = theEnv->FalseSymbol;
      }
    ProcedureFunctionData(theEnv)->LoopCounterStack = tmpCounter->nxt;
    rtn_struct(theEnv,loopCounterStack,tmpCounter);
@@ -298,8 +291,7 @@ void GetLoopCount(
 
    if (! UDFFirstArgument(context,INTEGER_TYPE,&theArg))
      { return; }
-
-   depth = DOToInteger(theArg);
+   depth = theArg.integerValue->contents;
    tmpCounter = ProcedureFunctionData(theEnv)->LoopCounterStack;
    while (depth > 0)
      {
@@ -307,8 +299,7 @@ void GetLoopCount(
       depth--;
      }
 
-   returnValue->type = INTEGER;
-   returnValue->value = EnvAddLong(theEnv,tmpCounter->loopCounter);
+   returnValue->integerValue = EnvCreateInteger(theEnv,tmpCounter->loopCounter);
   }
 
 /************************************/
@@ -328,16 +319,14 @@ void IfFunction(
 
    if (! UDFNthArgument(context,1,ANY_TYPE,returnValue))
      {
-      returnValue->type = SYMBOL;
-      returnValue->value = EnvFalseSymbol(theEnv);
+      returnValue->value = theEnv->FalseSymbol;
       return;
      }
 
    if ((ProcedureFunctionData(theEnv)->BreakFlag == true) ||
        (ProcedureFunctionData(theEnv)->ReturnFlag == true))
      {
-      returnValue->type = SYMBOL;
-      returnValue->value = EnvFalseSymbol(theEnv);
+      returnValue->value = theEnv->FalseSymbol;
       return;
      }
 
@@ -348,8 +337,7 @@ void IfFunction(
    /*=========================================*/
 
    numArgs = UDFArgumentCount(context);
-   if ((returnValue->value == EnvFalseSymbol(theEnv)) &&
-       (returnValue->type == SYMBOL) &&
+   if ((returnValue->value == theEnv->FalseSymbol) &&
        (numArgs == 3))
      {
       UDFNthArgument(context,3,ANY_TYPE,returnValue);
@@ -361,8 +349,7 @@ void IfFunction(
    /* value, evaluate the "then" portion and return it. */
    /*===================================================*/
 
-   else if ((returnValue->value != EnvFalseSymbol(theEnv)) ||
-            (returnValue->type != SYMBOL))
+   else if (returnValue->value != theEnv->FalseSymbol)
      {
       UDFNthArgument(context,2,ANY_TYPE,returnValue);
       return;
@@ -374,8 +361,7 @@ void IfFunction(
    /* of the if statement.                    */
    /*=========================================*/
 
-   returnValue->type = SYMBOL;
-   returnValue->value = EnvFalseSymbol(theEnv);
+   returnValue->value = theEnv->FalseSymbol;
   }
 
 /**************************************/
@@ -390,7 +376,7 @@ void BindFunction(
    CLIPSValue *theBind, *lastBind;
    bool found = false,
        unbindVar = false;
-   SYMBOL_HN *variableName = NULL;
+   CLIPSLexeme *variableName = NULL;
 #if DEFGLOBAL_CONSTRUCT
    Defglobal *theGlobal = NULL;
 #endif
@@ -406,7 +392,7 @@ void BindFunction(
 #endif
      {
       EvaluateExpression(theEnv,GetFirstArgument(),returnValue);
-      variableName = (SYMBOL_HN *) DOPToPointer(returnValue);
+      variableName = returnValue->lexemeValue;
      }
 
    /*===========================================*/
@@ -471,8 +457,7 @@ void BindFunction(
         }
       else
         {
-         returnValue->type = SYMBOL;
-         returnValue->value = EnvFalseSymbol(theEnv);
+         returnValue->value = theEnv->FalseSymbol;
          return;
         }
      }
@@ -485,7 +470,6 @@ void BindFunction(
 
    if (unbindVar == false)
      {
-      theBind->type = returnValue->type;
       theBind->value = returnValue->value;
       theBind->begin = returnValue->begin;
       theBind->end = returnValue->end;
@@ -497,8 +481,7 @@ void BindFunction(
       else lastBind->next = theBind->next;
       DecrementSymbolCount(theEnv,(struct symbolHashNode *) theBind->supplementalInfo);
       rtn_struct(theEnv,dataObject,theBind);
-      returnValue->type = SYMBOL;
-      returnValue->value = EnvFalseSymbol(theEnv);
+      returnValue->value = theEnv->FalseSymbol;
      }
   }
 
@@ -509,7 +492,7 @@ void BindFunction(
 bool GetBoundVariable(
   Environment *theEnv,
   CLIPSValue *vPtr,
-  SYMBOL_HN *varName)
+  CLIPSLexeme *varName)
   {
    CLIPSValue *bindPtr;
 
@@ -517,7 +500,6 @@ bool GetBoundVariable(
      {
       if (bindPtr->supplementalInfo == (void *) varName)
         {
-         vPtr->type = bindPtr->type;
          vPtr->value = bindPtr->value;
          vPtr->begin = bindPtr->begin;
          vPtr->end = bindPtr->end;
@@ -554,8 +536,7 @@ void PrognFunction(
 
    if (argPtr == NULL)
      {
-      returnValue->type = SYMBOL;
-      returnValue->value = EnvFalseSymbol(theEnv);
+      returnValue->value = theEnv->FalseSymbol;
       return;
      }
 
@@ -570,17 +551,16 @@ void PrognFunction(
 
    if (EnvGetHaltExecution(theEnv) == true)
      {
-      returnValue->type = SYMBOL;
-      returnValue->value = EnvFalseSymbol(theEnv);
+      returnValue->value = theEnv->FalseSymbol;
       return;
      }
 
    return;
   }
 
-/*****************************************************************/
-/* ReturnFunction: H/L access routine for the return function.   */
-/*****************************************************************/
+/***************************************************************/
+/* ReturnFunction: H/L access routine for the return function. */
+/***************************************************************/
 void ReturnFunction(
   Environment *theEnv,
   UDFContext *context,
@@ -588,8 +568,7 @@ void ReturnFunction(
   {
    if (! UDFHasNextArgument(context))
      {
-      returnValue->type = RVOID;
-      returnValue->value = EnvFalseSymbol(theEnv);
+      returnValue->voidValue = theEnv->VoidConstant;
      }
    else
      { UDFNextArgument(context,ANY_TYPE,returnValue); }
@@ -618,8 +597,7 @@ void SwitchFunction(
    CLIPSValue switch_val,case_val;
    EXPRESSION *theExp;
 
-   returnValue->type = SYMBOL;
-   returnValue->value = EnvFalseSymbol(theEnv);
+   returnValue->lexemeValue = theEnv->FalseSymbol;
 
    /* ==========================
       Get the value to switch on
@@ -644,9 +622,9 @@ void SwitchFunction(
       EvaluateExpression(theEnv,theExp,&case_val);
       if (EvaluationData(theEnv)->EvaluationError)
         return;
-      if (switch_val.type == case_val.type)
+      if (switch_val.header->type == case_val.header->type)
         {
-         if ((case_val.type == MULTIFIELD) ? MultifieldDOsEqual(&switch_val,&case_val) :
+         if ((case_val.header->type == MULTIFIELD) ? MultifieldDOsEqual(&switch_val,&case_val) :
              (switch_val.value == case_val.value))
            {
             EvaluateExpression(theEnv,theExp->nextArg,returnValue);

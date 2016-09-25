@@ -57,7 +57,7 @@
 
    void                           FactFunctionDefinitions(Environment *);
    void                           FactRelationFunction(Environment *,UDFContext *,CLIPSValue *);
-   struct symbolHashNode         *FactRelation(Fact *);
+   CLIPSLexeme                   *FactRelation(Fact *);
    Deftemplate                   *EnvFactDeftemplate(Environment *,Fact *);
    void                           FactExistpFunction(Environment *,UDFContext *,CLIPSValue *);
    bool                           EnvFactExistp(Environment *,Fact *);
@@ -69,7 +69,7 @@
    void                           EnvGetFactList(Environment *,CLIPSValue *,Defmodule *);
    void                           PPFactFunction(Environment *,UDFContext *,CLIPSValue *);
    void                           EnvPPFact(Environment *,Fact *,const char *,bool);
-   struct fact                   *GetFactAddressOrIndexArgument(UDFContext *,bool);
+   Fact                          *GetFactAddressOrIndexArgument(UDFContext *,bool);
 
 #endif /* _H_factfun */
 

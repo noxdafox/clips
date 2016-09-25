@@ -18,7 +18,7 @@ void JNIUserFunction(
    int i, argCount;
    CLIPSValue theArg;
    
-   result->type = RVOID;
+   result->voidValue = theEnv->VoidConstant;
 
    env = (JNIEnv *) GetEnvironmentContext(theEnv);
    
@@ -367,7 +367,7 @@ void NewJavaAddress(
    if (! UDFNthArgument(context,1,ANY_TYPE,&theValue))
      { return; }
    
-   className = DOToString(theValue);
+   className = theValue.lexemeValue->contents;
    
    /*=============================================*/
    /* Construct the class descriptor by replacing */
@@ -494,17 +494,17 @@ void NewJavaAddress(
 
          cStr = (char *) (*env)->GetStringUTFChars(env,str,NULL);
                   
-         if (GetType(newArgs[p]) == INTEGER)
+         if (newArgs[p].header->type == INTEGER)
            {
             if (strcmp(cStr,"long") == 0)
               { 
                printf("p[%d] = %s\n",(int) p,cStr);
-               javaArgs[p].j = DOToLong(newArgs[p]);
+               javaArgs[p].j = newArgs[p].integerValue->contents;
               }
             else if (strcmp(cStr,"int") == 0)  
               { 
                printf("p[%d] = %s\n",(int) p,cStr);
-               javaArgs[p].i = DOToLong(newArgs[p]);
+               javaArgs[p].i = newArgs[p].integerValue->contents;
               }
             else
               { matches = false; }
@@ -594,8 +594,7 @@ void NewJavaAddress(
    
    if (theObject != NULL)
      {
-      SetpType(rv,EXTERNAL_ADDRESS);
-      SetpValue(rv,EnvAddExternalAddress(theEnv,theObject,CLIPSJNIData(theEnv)->javaExternalAddressID));
+      rv->value = EnvAddExternalAddress(theEnv,theObject,CLIPSJNIData(theEnv)->javaExternalAddressID);
      }
   }
 
@@ -648,7 +647,7 @@ bool CallJavaMethod(
    if (! UDFNthArgument(context,1,SYMBOL_TYPE,&theValue))
      { return false; }
    
-   methodName = DOToString(theValue);
+   methodName = theValue.lexemeValue->contents;
 
    /*===========================================================================*/
    /* Evaluate the CLIPS arguments that will be passed to the java constructor. */
@@ -681,9 +680,9 @@ bool CallJavaMethod(
    /* should be invoking a method of an instance.   */
    /*===============================================*/
 
-   if (GetpType(target) == EXTERNAL_ADDRESS)
+   if (target->header->type == EXTERNAL_ADDRESS)
      {
-      theObject = DOPToExternalAddress(target);
+      theObject = ((struct externalAddressHashNode *) target->value)->externalAddress;
 
       /*=========================================*/
       /* Determine the class of the java object. */
@@ -768,17 +767,17 @@ bool CallJavaMethod(
              
             printf("p[%d] = %s\n",(int) p,cStr);
             
-            if (GetType(newArgs[p]) == INTEGER)
+            if (newArgs[p].header->type == INTEGER)
               {
                if (strcmp(cStr,"long") == 0)
                  { 
                   /* printf("p[%d] = %s\n",(int) p,cStr); */
-                  javaArgs[p].j = DOToLong(newArgs[p]);
+                  javaArgs[p].j = newArgs[p].integerValue->contents;
                  }
                else if (strcmp(cStr,"int") == 0)  
                  { 
                   /* printf("p[%d] = %s\n",(int) p,cStr); */
-                  javaArgs[p].i = DOToLong(newArgs[p]);
+                  javaArgs[p].i = newArgs[p].integerValue->contents;
                  }
                else
                  { matches = false; }

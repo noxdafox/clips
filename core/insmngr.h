@@ -54,8 +54,8 @@
 
    void                           InitializeInstanceCommand(Environment *,UDFContext *,CLIPSValue *);
    void                           MakeInstanceCommand(Environment *,UDFContext *,CLIPSValue *);
-   SYMBOL_HN                     *GetFullInstanceName(Environment *,Instance *);
-   Instance                      *BuildInstance(Environment *,SYMBOL_HN *,Defclass *,bool);
+   CLIPSLexeme                   *GetFullInstanceName(Environment *,Instance *);
+   Instance                      *BuildInstance(Environment *,CLIPSLexeme *,Defclass *,bool);
    void                           InitSlotsCommand(Environment *,UDFContext *,CLIPSValue *);
    bool                           QuashInstance(Environment *,Instance *);
 

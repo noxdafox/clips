@@ -150,7 +150,7 @@ struct expr *Function1Parse(
    /* Parse the rest of the function. */
    /*=================================*/
 
-   top = Function2Parse(theEnv,logicalName,ValueToString(theToken.value));
+   top = Function2Parse(theEnv,logicalName,theToken.lexemeValue->contents);
    return(top);
   }
 
@@ -168,7 +168,7 @@ struct expr *Function2Parse(
    struct expr *top;
    bool moduleSpecified = false;
    unsigned position;
-   struct symbolHashNode *moduleName = NULL, *constructName = NULL;
+   CLIPSLexeme *moduleName = NULL, *constructName = NULL;
 #if DEFGENERIC_CONSTRUCT
    Defgeneric *gfunc;
 #endif
@@ -183,7 +183,7 @@ struct expr *Function2Parse(
    if ((position = FindModuleSeparator(name)) != 0)
      {
       moduleName = ExtractModuleName(theEnv,position,name);
-      constructName = ExtractConstructName(theEnv,position,name);
+      constructName = ExtractConstructName(theEnv,position,name,SYMBOL);
       moduleSpecified = true;
      }
 
@@ -197,7 +197,7 @@ struct expr *Function2Parse(
    if (moduleSpecified)
      {
       if (ConstructExported(theEnv,"defgeneric",moduleName,constructName) ||
-          EnvGetCurrentModule(theEnv) == EnvFindDefmodule(theEnv,ValueToString(moduleName)))
+          EnvGetCurrentModule(theEnv) == EnvFindDefmodule(theEnv,moduleName->contents))
         { gfunc = EnvFindDefgenericInModule(theEnv,name); }
       else
         { gfunc = NULL; }
@@ -216,7 +216,7 @@ struct expr *Function2Parse(
      if (moduleSpecified)
        {
         if (ConstructExported(theEnv,"deffunction",moduleName,constructName) ||
-            EnvGetCurrentModule(theEnv) == EnvFindDefmodule(theEnv,ValueToString(moduleName)))
+            EnvGetCurrentModule(theEnv) == EnvFindDefmodule(theEnv,moduleName->contents))
           { dptr = EnvFindDeffunctionInModule(theEnv,name); }
         else
           { dptr = NULL; }
@@ -374,8 +374,8 @@ bool ReplaceSequenceExpansionOps(
            {
             PrintErrorID(theEnv,"EXPRNPSR",4,false);
             EnvPrintRouter(theEnv,WERROR,"$ Sequence operator not a valid argument for ");
-            EnvPrintRouter(theEnv,WERROR,ValueToString(((struct FunctionDefinition *)
-                              fcallexp->value)->callFunctionName));
+            EnvPrintRouter(theEnv,WERROR,((struct FunctionDefinition *)
+                              fcallexp->value)->callFunctionName->contents);
             EnvPrintRouter(theEnv,WERROR,".\n");
             return true;
            }
@@ -771,7 +771,7 @@ struct expr *GroupActions(
           (endWord != NULL) &&
           (! functionNameParsed))
         {
-         if (strcmp(ValueToString(theToken->value),endWord) == 0)
+         if (strcmp(theToken->lexemeValue->contents,endWord) == 0)
            { return(top); }
         }
 
@@ -782,7 +782,7 @@ struct expr *GroupActions(
 
       if (functionNameParsed)
         {
-         nextOne = Function2Parse(theEnv,logicalName,ValueToString(theToken->value));
+         nextOne = Function2Parse(theEnv,logicalName,theToken->lexemeValue->contents);
          functionNameParsed = false;
         }
 

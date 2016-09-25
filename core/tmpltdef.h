@@ -69,16 +69,21 @@ struct templateSlot;
 struct deftemplateModule;
 
 #include "constrct.h"
-#include "factbld.h"
-#include "factmngr.h"
-#include "expressn.h"
-
 #include "conscomp.h"
-#include "constrnt.h"
 #include "cstrccom.h"
 #include "evaluatn.h"
+#include "expressn.h"
 #include "moduldef.h"
 #include "symbol.h"
+
+struct deftemplateModule
+  {
+   struct defmoduleItemHeader header;
+  };
+
+#include "constrnt.h"
+#include "factbld.h"
+#include "factmngr.h"
 
 struct deftemplate
   {
@@ -96,7 +101,7 @@ struct deftemplate
 
 struct templateSlot
   {
-   struct symbolHashNode *slotName;
+   CLIPSLexeme *slotName;
    unsigned int multislot : 1;
    unsigned int noDefault : 1;
    unsigned int defaultPresent : 1;
@@ -107,10 +112,6 @@ struct templateSlot
    struct templateSlot *next;
   };
 
-struct deftemplateModule
-  {
-   struct defmoduleItemHeader header;
-  };
 
 #define DEFTEMPLATE_DATA 5
 

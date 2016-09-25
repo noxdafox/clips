@@ -104,7 +104,7 @@
 #endif
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-   static bool                    WildDeleteHandler(Environment *,Defclass *,SYMBOL_HN *,const char *);
+   static bool                    WildDeleteHandler(Environment *,Defclass *,CLIPSLexeme *,const char *);
 #endif
 
 #if DEBUGGING_FUNCTIONS
@@ -170,19 +170,19 @@ void SetupMessageHandlers(
    InstallPrimitive(theEnv,&MessageHandlerData(theEnv)->HandlerPutInfo,HANDLER_PUT);
 
 #if ! RUN_TIME
-   MessageHandlerData(theEnv)->INIT_SYMBOL = (SYMBOL_HN *) EnvAddSymbol(theEnv,INIT_STRING);
+   MessageHandlerData(theEnv)->INIT_SYMBOL = EnvCreateSymbol(theEnv,INIT_STRING);
    IncrementSymbolCount(MessageHandlerData(theEnv)->INIT_SYMBOL);
 
-   MessageHandlerData(theEnv)->DELETE_SYMBOL = (SYMBOL_HN *) EnvAddSymbol(theEnv,DELETE_STRING);
+   MessageHandlerData(theEnv)->DELETE_SYMBOL = EnvCreateSymbol(theEnv,DELETE_STRING);
    IncrementSymbolCount(MessageHandlerData(theEnv)->DELETE_SYMBOL);
 
-   MessageHandlerData(theEnv)->CREATE_SYMBOL = (SYMBOL_HN *) EnvAddSymbol(theEnv,CREATE_STRING);
+   MessageHandlerData(theEnv)->CREATE_SYMBOL = EnvCreateSymbol(theEnv,CREATE_STRING);
    IncrementSymbolCount(MessageHandlerData(theEnv)->CREATE_SYMBOL);
 
    EnvAddClearFunction(theEnv,"defclass",CreateSystemHandlers,-100);
 
 #if ! BLOAD_ONLY
-   MessageHandlerData(theEnv)->SELF_SYMBOL = (SYMBOL_HN *) EnvAddSymbol(theEnv,SELF_STRING);
+   MessageHandlerData(theEnv)->SELF_SYMBOL = EnvCreateSymbol(theEnv,SELF_STRING);
    IncrementSymbolCount(MessageHandlerData(theEnv)->SELF_SYMBOL);
 
    AddConstruct(theEnv,"defmessage-handler","defmessage-handlers",
@@ -271,7 +271,7 @@ const char *EnvGetDefmessageHandlerName(
 #pragma unused(theEnv)
 #endif
 
-   return ValueToString(theDefclass->handlers[theIndex-1].name);
+   return theDefclass->handlers[theIndex-1].header.name->contents;
   }
 
 /*****************************************************
@@ -410,14 +410,14 @@ unsigned EnvFindDefmessageHandler(
   const char *htypestr)
   {
    unsigned htype;
-   SYMBOL_HN *hsym;
+   CLIPSLexeme *hsym;
    int theIndex;
 
    htype = HandlerType(theEnv,"handler-lookup",htypestr);
    if (htype == MERROR)
      { return 0; }
 
-   hsym = FindSymbolHN(theEnv,hname);
+   hsym = FindSymbolHN(theEnv,hname,SYMBOL_TYPE);
    if (hsym == NULL)
      { return 0; }
 
@@ -470,7 +470,7 @@ void UndefmessageHandlerCommand(
    PrintErrorID(theEnv,"MSGCOM",3,false);
    EnvPrintRouter(theEnv,WERROR,"Unable to delete message-handlers.\n");
 #else
-   SYMBOL_HN *mname;
+   CLIPSLexeme *mname;
    const char *tname;
    CLIPSValue theArg;
    Defclass *cls;
@@ -485,20 +485,20 @@ void UndefmessageHandlerCommand(
 #endif
    if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg)) return;
 
-   cls = LookupDefclassByMdlOrScope(theEnv,DOToString(theArg));
-   if ((cls == NULL) ? (strcmp(DOToString(theArg),"*") != 0) : false)
+   cls = LookupDefclassByMdlOrScope(theEnv,theArg.lexemeValue->contents);
+   if ((cls == NULL) ? (strcmp(theArg.lexemeValue->contents,"*") != 0) : false)
      {
-      ClassExistError(theEnv,"undefmessage-handler",DOToString(theArg));
+      ClassExistError(theEnv,"undefmessage-handler",theArg.lexemeValue->contents);
       return;
      }
    if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg)) return;
 
-   mname = (SYMBOL_HN *) theArg.value;
+   mname = theArg.lexemeValue;
    if (UDFHasNextArgument(context))
      {
       if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg)) return;
 
-      tname = DOToString(theArg);
+      tname = theArg.lexemeValue->contents;
       if (strcmp(tname,"*") == 0)
         tname = NULL;
      }
@@ -578,7 +578,7 @@ void PPDefmessageHandlerCommand(
   CLIPSValue *returnValue)
   {
    CLIPSValue theArg;
-   SYMBOL_HN *csym,*msym;
+   CLIPSLexeme *csym, *msym;
    const char *tname;
    Defclass *cls = NULL;
    unsigned mtype;
@@ -587,16 +587,18 @@ void PPDefmessageHandlerCommand(
    if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
      { return; }
 
-   csym = FindSymbolHN(theEnv,DOToString(theArg));
+   csym = FindSymbolHN(theEnv,theArg.lexemeValue->contents,SYMBOL_TYPE);
+
    if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg))
      { return; }
 
-   msym = FindSymbolHN(theEnv,DOToString(theArg));
+   msym = FindSymbolHN(theEnv,theArg.lexemeValue->contents,SYMBOL_TYPE);
+
    if (UDFHasNextArgument(context))
      {
       if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg))
         { return; }
-      tname = DOToString(theArg);
+      tname = theArg.lexemeValue->contents;
      }
    else
      tname = MessageHandlerData(theEnv)->hndquals[MPRIMARY];
@@ -607,23 +609,23 @@ void PPDefmessageHandlerCommand(
       return;
      }
    if (csym != NULL)
-     cls = LookupDefclassByMdlOrScope(theEnv,ValueToString(csym));
+     cls = LookupDefclassByMdlOrScope(theEnv,csym->contents);
    if (((cls == NULL) || (msym == NULL)) ? true :
        ((hnd = FindHandlerByAddress(cls,msym,(unsigned) mtype)) == NULL))
      {
       PrintErrorID(theEnv,"MSGCOM",2,false);
       EnvPrintRouter(theEnv,WERROR,"Unable to find message-handler ");
-      EnvPrintRouter(theEnv,WERROR,ValueToString(msym));
+      EnvPrintRouter(theEnv,WERROR,msym->contents);
       EnvPrintRouter(theEnv,WERROR," ");
       EnvPrintRouter(theEnv,WERROR,tname);
       EnvPrintRouter(theEnv,WERROR," for class ");
-      EnvPrintRouter(theEnv,WERROR,ValueToString(csym));
+      EnvPrintRouter(theEnv,WERROR,csym->contents);
       EnvPrintRouter(theEnv,WERROR," in function ppdefmessage-handler.\n");
       EnvSetEvaluationError(theEnv,true);
       return;
      }
-   if (hnd->ppForm != NULL)
-     PrintInChunks(theEnv,WDISPLAY,hnd->ppForm);
+   if (hnd->header.ppForm != NULL)
+     PrintInChunks(theEnv,WDISPLAY,hnd->header.ppForm);
   }
 
 /*****************************************************************************
@@ -674,20 +676,22 @@ void PreviewSendCommand(
    /* =============================
       Get the class for the message
       ============================= */
+
    if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
      { return; }
 
-   cls = LookupDefclassByMdlOrScope(theEnv,DOToString(theArg));
+   cls = LookupDefclassByMdlOrScope(theEnv,theArg.lexemeValue->contents);
+
    if (cls == NULL)
      {
-      ClassExistError(theEnv,"preview-send",ValueToString(theArg.value));
+      ClassExistError(theEnv,"preview-send",theArg.lexemeValue->contents);
       return;
      }
 
    if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg))
      { return; }
 
-   EnvPreviewSend(theEnv,WDISPLAY,cls,DOToString(theArg));
+   EnvPreviewSend(theEnv,WDISPLAY,cls,theArg.lexemeValue->contents);
   }
 
 /********************************************************
@@ -708,7 +712,7 @@ const char *EnvGetDefmessageHandlerPPForm(
 #pragma unused(theEnv)
 #endif
 
-   return theDefclass->handlers[theIndex-1].ppForm;
+   return theDefclass->handlers[theIndex-1].header.ppForm;
   }
 
 /*******************************************************************
@@ -775,9 +779,9 @@ void EnvPreviewSend(
   const char *msgname)
   {
    HANDLER_LINK *core;
-   SYMBOL_HN *msym;
+   CLIPSLexeme *msym;
 
-   msym = FindSymbolHN(theEnv,msgname);
+   msym = FindSymbolHN(theEnv,msgname,SYMBOL_TYPE);
    if (msym == NULL)
      { return; }
 
@@ -870,13 +874,13 @@ static void CreateSystemHandlers(
 static bool WildDeleteHandler(
   Environment *theEnv,
   Defclass *cls,
-  SYMBOL_HN *msym,
+  CLIPSLexeme *msym,
   const char *tname)
   {
    int mtype;
 
    if (msym == NULL)
-     msym = (SYMBOL_HN *) EnvAddSymbol(theEnv,"*");
+     msym = EnvCreateSymbol(theEnv,"*");
    if (tname != NULL)
      {
       mtype = (int) HandlerType(theEnv,"undefmessage-handler",tname);
@@ -1030,12 +1034,12 @@ static bool DefmessageHandlerWatchSupport(
      {
       if (EvaluateExpression(theEnv,argExprs,&tmpData))
         return false;
-      if (tmpData.type != SYMBOL)
+      if (tmpData.header->type != SYMBOL)
         {
          ExpectedTypeError1(theEnv,funcName,argIndex,"class name");
          return false;
         }
-      theClass = LookupDefclassByMdlOrScope(theEnv,DOToString(tmpData));
+      theClass = LookupDefclassByMdlOrScope(theEnv,tmpData.lexemeValue->contents);
       if (theClass == NULL)
         {
          ExpectedTypeError1(theEnv,funcName,argIndex,"class name");
@@ -1047,24 +1051,24 @@ static bool DefmessageHandlerWatchSupport(
          argIndex++;
          if (EvaluateExpression(theEnv,argExprs,&tmpData))
            return false;
-         if (tmpData.type != SYMBOL)
+         if (tmpData.header->type != SYMBOL)
            {
             ExpectedTypeError1(theEnv,funcName,argIndex,"handler name");
             return false;
            }
-         theHandlerStr = DOToString(tmpData);
+         theHandlerStr = tmpData.lexemeValue->contents;
          if (GetNextArgument(argExprs) != NULL)
            {
             argExprs = GetNextArgument(argExprs);
             argIndex++;
             if (EvaluateExpression(theEnv,argExprs,&tmpData))
               return false;
-            if (tmpData.type != SYMBOL)
+            if (tmpData.header->type != SYMBOL)
               {
                ExpectedTypeError1(theEnv,funcName,argIndex,"handler type");
                return false;
               }
-            if ((theType = (int) HandlerType(theEnv,funcName,DOToString(tmpData))) == MERROR)
+            if ((theType = (int) HandlerType(theEnv,funcName,tmpData.lexemeValue->contents)) == MERROR)
               return false;
            }
          else

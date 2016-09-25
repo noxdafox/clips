@@ -70,16 +70,16 @@ struct messageHandlerData
   {
    ENTITY_RECORD HandlerGetInfo;
    ENTITY_RECORD HandlerPutInfo;
-   SYMBOL_HN *INIT_SYMBOL;
-   SYMBOL_HN *DELETE_SYMBOL;
-   SYMBOL_HN *CREATE_SYMBOL;
+   CLIPSLexeme *INIT_SYMBOL;
+   CLIPSLexeme *DELETE_SYMBOL;
+   CLIPSLexeme *CREATE_SYMBOL;
 #if DEBUGGING_FUNCTIONS
    bool WatchHandlers;
    bool WatchMessages;
 #endif
    const char *hndquals[4];
-   SYMBOL_HN *SELF_SYMBOL;
-   SYMBOL_HN *CurrentMessageName;
+   CLIPSLexeme *SELF_SYMBOL;
+   CLIPSLexeme *CurrentMessageName;
    HANDLER_LINK *CurrentCore;
    HANDLER_LINK *TopOfCore;
    HANDLER_LINK *NextInCore;
