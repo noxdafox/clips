@@ -1173,9 +1173,9 @@ static const char *PrintFormatFlag(
         setlocale(LC_NUMERIC,IOFunctionData(theEnv)->locale->contents);
 
         if (theResult.header->type == FLOAT)
-          { gensprintf(printBuffer,formatString,(long long) ValueToDouble(theResult.value)); }
+          { gensprintf(printBuffer,formatString,(long long) theResult.floatValue->contents); }
         else
-          { gensprintf(printBuffer,formatString,(long long) ValueToLong(theResult.value)); }
+          { gensprintf(printBuffer,formatString,(long long) theResult.integerValue->contents); }
 
         setlocale(LC_NUMERIC,oldLocale->contents);
         break;
@@ -1193,9 +1193,9 @@ static const char *PrintFormatFlag(
         setlocale(LC_NUMERIC,IOFunctionData(theEnv)->locale->contents);
 
         if (theResult.header->type == FLOAT)
-          { gensprintf(printBuffer,formatString,ValueToDouble(theResult.value)); }
+          { gensprintf(printBuffer,formatString,theResult.floatValue->contents); }
         else
-          { gensprintf(printBuffer,formatString,(double) ValueToLong(theResult.value)); }
+          { gensprintf(printBuffer,formatString,(double) theResult.integerValue->contents); }
 
         setlocale(LC_NUMERIC,oldLocale->contents);
 

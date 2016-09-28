@@ -139,9 +139,9 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getInstanceList
          const char *theCSlotName, *theCSlotValue;
          jboolean defaulted = false;
          
-         theCSlotName = ValueToString(GetMFValue(slotNames.value,i));
+         theCSlotName = slotNames.multifieldValue->theFields[i].lexemeValue->contents;
          
-         EnvDirectGetSlot(theCLIPSEnv,instancePtr,ValueToString(GetMFValue(slotNames.value,i)),&slotValue);
+         EnvDirectGetSlot(theCLIPSEnv,instancePtr,slotNames.multifieldValue->theFields[i].lexemeValue->contents,&slotValue);
 
          if (EnvSlotDefaultP(theCLIPSEnv,theClass,theCSlotName) == STATIC_DEFAULT)
            {

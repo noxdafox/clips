@@ -339,9 +339,9 @@ int CompareNumbers(
 
    if ((type1 == INTEGER) && (type2 == INTEGER))
      {
-      if (ValueToLong(vptr1) < ValueToLong(vptr2))
+      if (((CLIPSInteger *) vptr1)->contents < ((CLIPSInteger *) vptr2)->contents)
         { return(LESS_THAN); }
-      else if (ValueToLong(vptr1) > ValueToLong(vptr2))
+      else if (((CLIPSInteger *) vptr1)->contents > ((CLIPSInteger *) vptr2)->contents)
         { return(GREATER_THAN); }
 
       return(EQUAL);
@@ -353,9 +353,9 @@ int CompareNumbers(
 
    if ((type1 == FLOAT) && (type2 == FLOAT))
      {
-      if (ValueToDouble(vptr1) < ValueToDouble(vptr2))
+      if (((CLIPSFloat *) vptr1)->contents < ((CLIPSFloat *) vptr2)->contents)
         { return(LESS_THAN); }
-      else if (ValueToDouble(vptr1) > ValueToDouble(vptr2))
+      else if (((CLIPSFloat *) vptr1)->contents > ((CLIPSFloat *) vptr2)->contents)
         { return(GREATER_THAN); }
 
       return(EQUAL);
@@ -367,9 +367,9 @@ int CompareNumbers(
 
    if ((type1 == INTEGER) && (type2 == FLOAT))
      {
-      if (((double) ValueToLong(vptr1)) < ValueToDouble(vptr2))
+      if (((double) ((CLIPSInteger *) vptr1)->contents) < ((CLIPSFloat *) vptr2)->contents)
         { return(LESS_THAN); }
-      else if (((double) ValueToLong(vptr1)) > ValueToDouble(vptr2))
+      else if (((double) ((CLIPSInteger *) vptr1)->contents) > ((CLIPSFloat *) vptr2)->contents)
         { return(GREATER_THAN); }
 
       return(EQUAL);
@@ -381,9 +381,9 @@ int CompareNumbers(
 
    if ((type1 == FLOAT) && (type2 == INTEGER))
      {
-      if (ValueToDouble(vptr1) < ((double) ValueToLong(vptr2)))
+      if (((CLIPSFloat *) vptr1)->contents < ((double) ((CLIPSInteger *) vptr2)->contents))
         { return(LESS_THAN); }
-      else if (ValueToDouble(vptr1) > ((double) ValueToLong(vptr2)))
+      else if (((CLIPSFloat *) vptr1)->contents > ((double) ((CLIPSInteger *) vptr2)->contents))
         { return(GREATER_THAN); }
 
       return(EQUAL);

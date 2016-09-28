@@ -134,13 +134,13 @@
 /***************************************/
 
    static void                    RemoveEnvironmentCleanupFunctions(struct environmentData *);
-   static Environment            *CreateEnvironmentDriver(CLIPSLexeme **,struct floatHashNode **,
-                                                          struct integerHashNode **,struct bitMapHashNode **,
+   static Environment            *CreateEnvironmentDriver(CLIPSLexeme **,CLIPSFloat **,
+                                                          CLIPSInteger **,struct bitMapHashNode **,
                                                           struct externalAddressHashNode **);
    static void                    SystemFunctionDefinitions(Environment *);
    static void                    InitializeKeywords(Environment *);
-   static void                    EnvInitializeEnvironment(Environment *,CLIPSLexeme **,struct floatHashNode **,
-					   								       struct integerHashNode **,struct bitMapHashNode **,
+   static void                    EnvInitializeEnvironment(Environment *,CLIPSLexeme **,CLIPSFloat **,
+					   								       CLIPSInteger **,struct bitMapHashNode **,
 														   struct externalAddressHashNode **);
 
 /*******************************************************/
@@ -224,8 +224,8 @@ Environment *CreateEnvironment()
 /**********************************************************/
 Environment *CreateRuntimeEnvironment(
   CLIPSLexeme **symbolTable,
-  struct floatHashNode **floatTable,
-  struct integerHashNode **integerTable,
+  CLIPSFloat **floatTable,
+  CLIPSInteger **integerTable,
   struct bitMapHashNode **bitmapTable)
   {
    return CreateEnvironmentDriver(symbolTable,floatTable,integerTable,bitmapTable,NULL);
@@ -237,8 +237,8 @@ Environment *CreateRuntimeEnvironment(
 /*********************************************************/
 Environment *CreateEnvironmentDriver(
   CLIPSLexeme **symbolTable,
-  struct floatHashNode **floatTable,
-  struct integerHashNode **integerTable,
+  CLIPSFloat **floatTable,
+  CLIPSInteger **integerTable,
   struct bitMapHashNode **bitmapTable,
   struct externalAddressHashNode **externalAddressTable)
   {
@@ -544,8 +544,8 @@ static void RemoveEnvironmentCleanupFunctions(
 static void EnvInitializeEnvironment(
   Environment *theEnvironment,
   CLIPSLexeme **symbolTable,
-  struct floatHashNode **floatTable,
-  struct integerHashNode **integerTable,
+  CLIPSFloat **floatTable,
+  CLIPSInteger **integerTable,
   struct bitMapHashNode **bitmapTable,
   struct externalAddressHashNode **externalAddressTable)
   {

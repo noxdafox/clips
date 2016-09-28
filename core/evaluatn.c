@@ -222,7 +222,7 @@ bool EvaluateExpression(
           {
            PrintErrorID(theEnv,"EVALUATN",1,false);
            EnvPrintRouter(theEnv,WERROR,"Variable ");
-           EnvPrintRouter(theEnv,WERROR,ValueToString(problem->value));
+           EnvPrintRouter(theEnv,WERROR,problem->lexemeValue->contents);
            EnvPrintRouter(theEnv,WERROR," is unbound\n");
            returnValue->value = theEnv->FalseSymbol;
            EnvSetEvaluationError(theEnv,true);
@@ -815,8 +815,8 @@ struct expr *ConvertValueToExpression(
 
    for (i = theValue->begin; i <= theValue->end; i++)
      {
-      newItem = GenConstant(theEnv,GetMFType(theValue->value,i),
-                                   GetMFValue(theValue->value,i));
+      newItem = GenConstant(theEnv,theValue->multifieldValue->theFields[i].header->type,
+                                   theValue->multifieldValue->theFields[i].value);
       if (last == NULL) head = newItem;
       else last->nextArg = newItem;
       last = newItem;
@@ -849,12 +849,12 @@ unsigned long GetAtomicHashValue(
      {
       case FLOAT:
         fis.liv = 0;
-        fis.fv = ValueToDouble(value);
+        fis.fv = ((CLIPSFloat *) value)->contents;
         tvalue = fis.liv;
         break;
 
       case INTEGER:
-        tvalue = (unsigned long) ValueToLong(value);
+        tvalue = (unsigned long) ((CLIPSInteger *) value)->contents;
         break;
 
       case EXTERNAL_ADDRESS:

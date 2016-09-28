@@ -478,7 +478,7 @@ static void ReplaceLoopCountVars(
    while (theExp != NULL)
      {
       if ((theExp->type != SF_VARIABLE) ? false :
-          (strcmp(ValueToString(theExp->value),loopVar->contents) == 0))
+          (strcmp(theExp->lexemeValue->contents,loopVar->contents) == 0))
         {
          theExp->type = FCALL;
          theExp->value = FindFunction(theEnv,"(get-loop-count)");

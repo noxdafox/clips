@@ -547,7 +547,7 @@ static bool ReorderAndAnalyzeObjectPattern(
       rexp = isa_node->constraints->restrictionList;
       while (rexp != NULL)
         {
-         cls = LookupDefclassInScope(theEnv,ValueToString(rexp->value));
+         cls = LookupDefclassInScope(theEnv,rexp->lexemeValue->contents);
          if (cls != NULL)
            {
             if ((cls->id <= (unsigned) clsset->maxid) ? TestBitMap(clsset->map,cls->id) : false)
@@ -1757,7 +1757,7 @@ static bool ProcessClassRestriction(
      {
       if (chk->pnType == SYMBOL_NODE)
         {
-         chk->value = LookupDefclassByMdlOrScope(theEnv,ValueToString(chk->value));
+         chk->value = LookupDefclassByMdlOrScope(theEnv,chk->lexemeValue->contents);
          if (chk->value == NULL)
            {
             PrintErrorID(theEnv,"OBJRTBLD",5,false);

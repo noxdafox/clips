@@ -453,10 +453,10 @@ static int FloatHashNodesToCode(
   int version)
   {
    int i, j;
-   struct floatHashNode *hashPtr;
+   CLIPSFloat *hashPtr;
    int count;
    int numberOfEntries;
-   struct floatHashNode **floatTable;
+   CLIPSFloat **floatTable;
    bool newHeader = true;
    FILE *fp;
    int arrayVersion = 1;
@@ -479,7 +479,7 @@ static int FloatHashNodesToCode(
    if (numberOfEntries == 0) return(version);
 
    for (i = 1; i <= (numberOfEntries / ConstructCompilerData(theEnv)->MaxIndices) + 1 ; i++)
-     { fprintf(ConstructCompilerData(theEnv)->HeaderFP,"extern struct floatHashNode F%d_%d[];\n",ConstructCompilerData(theEnv)->ImageID,i); }
+     { fprintf(ConstructCompilerData(theEnv)->HeaderFP,"extern CLIPSFloat F%d_%d[];\n",ConstructCompilerData(theEnv)->ImageID,i); }
 
    /*==================*/
    /* Create the file. */
@@ -501,7 +501,7 @@ static int FloatHashNodesToCode(
         {
          if (newHeader)
            {
-            fprintf(fp,"struct floatHashNode F%d_%d[] = {\n",ConstructCompilerData(theEnv)->ImageID,arrayVersion);
+            fprintf(fp,"CLIPSFloat F%d_%d[] = {\n",ConstructCompilerData(theEnv)->ImageID,arrayVersion);
             newHeader = false;
            }
            
@@ -558,10 +558,10 @@ static int IntegerHashNodesToCode(
   int version)
   {
    int i, j;
-   struct integerHashNode *hashPtr;
+   CLIPSInteger *hashPtr;
    int count;
    int numberOfEntries;
-   struct integerHashNode **integerTable;
+   CLIPSInteger **integerTable;
    bool newHeader = true;
    FILE *fp;
    int arrayVersion = 1;
@@ -584,7 +584,7 @@ static int IntegerHashNodesToCode(
    if (numberOfEntries == 0) return(version);
 
    for (i = 1; i <= (numberOfEntries / ConstructCompilerData(theEnv)->MaxIndices) + 1 ; i++)
-     { fprintf(ConstructCompilerData(theEnv)->HeaderFP,"extern struct integerHashNode I%d_%d[];\n",ConstructCompilerData(theEnv)->ImageID,i); }
+     { fprintf(ConstructCompilerData(theEnv)->HeaderFP,"extern CLIPSInteger I%d_%d[];\n",ConstructCompilerData(theEnv)->ImageID,i); }
 
    /*==================*/
    /* Create the file. */
@@ -606,7 +606,7 @@ static int IntegerHashNodesToCode(
         {
          if (newHeader)
            {
-            fprintf(fp,"struct integerHashNode I%d_%d[] = {\n",ConstructCompilerData(theEnv)->ImageID,arrayVersion);
+            fprintf(fp,"CLIPSInteger I%d_%d[] = {\n",ConstructCompilerData(theEnv)->ImageID,arrayVersion);
             newHeader = false;
            }
            
@@ -664,8 +664,8 @@ static int HashTablesToCode(
    unsigned long i;
    FILE *fp;
    CLIPSLexeme **symbolTable;
-   struct floatHashNode **floatTable;
-   struct integerHashNode **integerTable;
+   CLIPSFloat **floatTable;
+   CLIPSInteger **integerTable;
    struct bitMapHashNode **bitMapTable;
 
    /*======================================*/
@@ -700,8 +700,8 @@ static int HashTablesToCode(
    if ((fp = NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,2,false)) == NULL)
      { return 0; }
 
-   fprintf(ConstructCompilerData(theEnv)->HeaderFP,"extern struct floatHashNode *fht%d[];\n",ConstructCompilerData(theEnv)->ImageID);
-   fprintf(fp,"struct floatHashNode *fht%d[%d] = {\n",ConstructCompilerData(theEnv)->ImageID,FLOAT_HASH_SIZE);
+   fprintf(ConstructCompilerData(theEnv)->HeaderFP,"extern CLIPSFloat *fht%d[];\n",ConstructCompilerData(theEnv)->ImageID);
+   fprintf(fp,"CLIPSFloat *fht%d[%d] = {\n",ConstructCompilerData(theEnv)->ImageID,FLOAT_HASH_SIZE);
 
    for (i = 0; i < FLOAT_HASH_SIZE; i++)
       {
@@ -724,8 +724,8 @@ static int HashTablesToCode(
    if ((fp = NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,3,false)) == NULL)
      { return 0; }
 
-   fprintf(ConstructCompilerData(theEnv)->HeaderFP,"extern struct integerHashNode *iht%d[];\n",ConstructCompilerData(theEnv)->ImageID);
-   fprintf(fp,"struct integerHashNode *iht%d[%d] = {\n",ConstructCompilerData(theEnv)->ImageID,INTEGER_HASH_SIZE);
+   fprintf(ConstructCompilerData(theEnv)->HeaderFP,"extern CLIPSInteger *iht%d[];\n",ConstructCompilerData(theEnv)->ImageID);
+   fprintf(fp,"CLIPSInteger *iht%d[%d] = {\n",ConstructCompilerData(theEnv)->ImageID,INTEGER_HASH_SIZE);
 
    for (i = 0; i < INTEGER_HASH_SIZE; i++)
       {
@@ -789,7 +789,7 @@ void PrintSymbolReference(
 void PrintFloatReference(
   Environment *theEnv,
   FILE *theFile,
-  struct floatHashNode *theFloat)
+  CLIPSFloat *theFloat)
   {
    fprintf(theFile,"&F%d_%d[%d]",
                    ConstructCompilerData(theEnv)->ImageID,
@@ -804,7 +804,7 @@ void PrintFloatReference(
 void PrintIntegerReference(
   Environment *theEnv,
   FILE *theFile,
-  struct integerHashNode *theInteger)
+  CLIPSInteger *theInteger)
   {
    fprintf(theFile,"&I%d_%d[%d]",
                    ConstructCompilerData(theEnv)->ImageID,

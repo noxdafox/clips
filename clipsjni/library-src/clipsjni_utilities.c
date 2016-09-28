@@ -52,7 +52,9 @@ jobject ConvertDataObject(
         
         for (i = theDO->begin; i <= theDO->end; i++)
          {
-          tresult = ConvertSingleFieldValue(env,javaEnv,clipsEnv,GetMFType(theList,i),GetMFValue(theList,i));
+          tresult = ConvertSingleFieldValue(env,javaEnv,clipsEnv,
+                                            theList->theFields[i].header->type,
+                                            theList->theFields[i].value);
           
           if (tresult != NULL)
              { (*env)->CallBooleanMethod(env,result,CLIPSJNIData(clipsEnv)->arrayListAddMethod,tresult); }
@@ -108,7 +110,7 @@ jobject ConvertSingleFieldValue(
         break;
 
       case SYMBOL:
-        sresult = (*env)->NewStringUTF(env,ValueToString(value));
+        sresult = (*env)->NewStringUTF(env,((CLIPSLexeme *) value)->contents);
         result = (*env)->NewObject(env,
                                    CLIPSJNIData(clipsEnv)->symbolValueClass,
                                    CLIPSJNIData(clipsEnv)->symbolValueInitMethod,
@@ -118,7 +120,7 @@ jobject ConvertSingleFieldValue(
         
         
       case STRING:
-        sresult = (*env)->NewStringUTF(env,ValueToString(value));
+        sresult = (*env)->NewStringUTF(env,((CLIPSLexeme *) value)->contents);
         result = (*env)->NewObject(env,
                                    CLIPSJNIData(clipsEnv)->stringValueClass,
                                    CLIPSJNIData(clipsEnv)->stringValueInitMethod,
@@ -127,7 +129,7 @@ jobject ConvertSingleFieldValue(
         break;
         
       case INSTANCE_NAME:
-        sresult = (*env)->NewStringUTF(env,ValueToString(value));
+        sresult = (*env)->NewStringUTF(env,((CLIPSLexeme *) value)->contents);
         result = (*env)->NewObject(env,
                                    CLIPSJNIData(clipsEnv)->instanceNameValueClass,
                                    CLIPSJNIData(clipsEnv)->instanceNameValueInitMethod,
@@ -139,7 +141,7 @@ jobject ConvertSingleFieldValue(
         tresult = (*env)->NewObject(env,
                                     CLIPSJNIData(clipsEnv)->longClass,
                                     CLIPSJNIData(clipsEnv)->longInitMethod,
-                                    (jlong) ValueToLong(value));
+                                    (jlong) ((CLIPSInteger *) value)->contents);
         result = (*env)->NewObject(env,
                                    CLIPSJNIData(clipsEnv)->integerValueClass,
                                    CLIPSJNIData(clipsEnv)->integerValueInitMethod,
@@ -151,7 +153,7 @@ jobject ConvertSingleFieldValue(
         tresult = (*env)->NewObject(env,
                                     CLIPSJNIData(clipsEnv)->doubleClass,
                                     CLIPSJNIData(clipsEnv)->doubleInitMethod,
-                                    (jdouble) ValueToDouble(value));
+                                    (jdouble) ((CLIPSFloat *) value)->contents);
 
         result = (*env)->NewObject(env,
                                    CLIPSJNIData(clipsEnv)->floatValueClass,
@@ -248,7 +250,7 @@ void ConvertPrimitiveValueToDataObject(
   CLIPSValue *theDO)
   { 
    unsigned short theType;
-   void *result = NULL;
+   Multifield *result = NULL;
    JNIEnv *env = (JNIEnv *) GetEnvironmentContext(theEnv);
   
    if (theValue == NULL)
@@ -271,7 +273,7 @@ void ConvertPrimitiveValueToDataObject(
             jobject mfo = (*env)->CallObjectMethod(env,theValue,CLIPSJNIData(theEnv)->multifieldValueGetMethod,i);
             int mft = (*env)->CallIntMethod(env,mfo,CLIPSJNIData(theEnv)->getCLIPSTypeValueMethod);
             void *mfv = ConvertSingleFieldPrimitiveValue(theEnv,mft,mfo); 
-            SetMFValue(result,i+1,mfv);
+            result->theFields[i].value = mfv;
            }
            
          theDO->begin = 0;

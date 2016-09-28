@@ -959,10 +959,10 @@ void GetConstructList(
             genstrcpy(buffer,EnvGetDefmoduleName(theEnv,loopModule));
             genstrcat(buffer,"::");
             genstrcat(buffer,theName->contents);
-            SetMFValue(theList,count,EnvCreateSymbol(theEnv,buffer));
+            theList->theFields[count].value = EnvCreateSymbol(theEnv,buffer);
            }
          else
-           { SetMFValue(theList,count,EnvCreateSymbol(theEnv,theName->contents)); }
+           { theList->theFields[count].value = EnvCreateSymbol(theEnv,theName->contents); }
          count++;
         }
 

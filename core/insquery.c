@@ -144,8 +144,8 @@ void GetQueryInstance(
   {
    QUERY_CORE *core;
 
-   core = FindQueryCore(theEnv,ValueToInteger(GetFirstArgument()->value));
-   returnValue->value = GetFullInstanceName(theEnv,core->solns[ValueToInteger(GetFirstArgument()->nextArg->value)]);
+   core = FindQueryCore(theEnv,(int) GetFirstArgument()->integerValue->contents);
+   returnValue->value = GetFullInstanceName(theEnv,core->solns[(int) GetFirstArgument()->nextArg->integerValue->contents]);
   }
 
 /***************************************************************************
@@ -169,8 +169,8 @@ void GetQueryInstanceSlot(
 
    returnValue->lexemeValue = theEnv->FalseSymbol;
 
-   core = FindQueryCore(theEnv,ValueToInteger(GetFirstArgument()->value));
-   ins = core->solns[ValueToInteger(GetFirstArgument()->nextArg->value)];
+   core = FindQueryCore(theEnv,(int) GetFirstArgument()->integerValue->contents);
+   ins = core->solns[(int) GetFirstArgument()->nextArg->integerValue->contents];
    EvaluateExpression(theEnv,GetFirstArgument()->nextArg->nextArg,&temp);
    if (temp.header->type != SYMBOL)
      {
@@ -327,7 +327,8 @@ void QueryFindInstance(
       returnValue->end = rcnt - 1;
       for (i = 0 ; i < rcnt ; i++)
         {
-         SetMFValue(returnValue->value,i,GetFullInstanceName(theEnv,InstanceQueryData(theEnv)->QueryCore->solns[i]));
+         returnValue->multifieldValue->theFields[i].lexemeValue =
+            GetFullInstanceName(theEnv,InstanceQueryData(theEnv)->QueryCore->solns[i]);
         }
      }
    else
@@ -390,7 +391,8 @@ void QueryFindAllInstances(
      {
       for (i = 0 , j = (unsigned) (returnValue->end + 1) ; i < rcnt ; i++ , j++)
         {
-         SetMFValue(returnValue->value,j,GetFullInstanceName(theEnv,InstanceQueryData(theEnv)->QueryCore->soln_set->soln[i]));
+         returnValue->multifieldValue->theFields[j].lexemeValue =
+            GetFullInstanceName(theEnv,InstanceQueryData(theEnv)->QueryCore->soln_set->soln[i]);
         }
       returnValue->end = (long) j-1;
       PopQuerySoln(theEnv);
@@ -792,9 +794,9 @@ static QUERY_CLASS *FormChain(
       end = val->end;
       for (i = val->begin ; i <= end ; i++)
         {
-         if (GetMFType(val->value,i) == SYMBOL)
+         if (val->multifieldValue->theFields[i].header->type == SYMBOL)
            {
-            className = ValueToString(GetMFValue(val->value,i));
+            className = val->multifieldValue->theFields[i].lexemeValue->contents;
             cls = LookupDefclassByMdlOrScope(theEnv,className);
             if (cls == NULL)
               {

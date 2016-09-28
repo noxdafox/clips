@@ -496,7 +496,7 @@ static INSTANCE_SLOT *CheckMultifieldSlotModify(
       return NULL;
      }
    args = args->nextArg->nextArg;
-   *rb = (long) ValueToLong(temp.value);
+   *rb = (long) temp.integerValue->contents;
    if ((code == REPLACE) || (code == DELETE_OP))
      {
       EvaluateExpression(theEnv,args,&temp);
@@ -506,7 +506,7 @@ static INSTANCE_SLOT *CheckMultifieldSlotModify(
          EnvSetEvaluationError(theEnv,true);
          return NULL;
         }
-      *re = (long) ValueToLong(temp.value);
+      *re = (long) temp.integerValue->contents;
       args = args->nextArg;
      }
    if ((code == INSERT) || (code == REPLACE))

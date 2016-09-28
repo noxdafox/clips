@@ -830,7 +830,7 @@ static CLIPSLexeme *ParseMethodNameAndIndex(
       PPBackup(theEnv);
       SavePPBuffer(theEnv," ");
       SavePPBuffer(theEnv,DefgenericData(theEnv)->GenericInputToken.printForm);
-      tmp = (int) ValueToLong(DefgenericData(theEnv)->GenericInputToken.value);
+      tmp = (int) DefgenericData(theEnv)->GenericInputToken.integerValue->contents;
       if (tmp < 1)
         {
          PrintErrorID(theEnv,"GENRCPSR",6,false);
@@ -1118,7 +1118,7 @@ static void ReplaceCurrentArgRefs(
    while (query != NULL)
      {
       if ((query->type != SF_VARIABLE) ? false :
-          (strcmp(ValueToString(query->value),CURR_ARG_VAR) == 0))
+          (strcmp(query->lexemeValue->contents,CURR_ARG_VAR) == 0))
         {
          query->type = FCALL;
          query->value = FindFunction(theEnv,"(gnrc-current-arg)");

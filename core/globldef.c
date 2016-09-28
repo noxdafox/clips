@@ -558,7 +558,7 @@ static bool GetDefglobalValue2(
    /*===========================================*/
 
    theGlobal = (Defglobal *)
-               FindImportedConstruct(theEnv,"defglobal",NULL,ValueToString(theValue),
+               FindImportedConstruct(theEnv,"defglobal",NULL,((CLIPSLexeme *) theValue)->contents,
                &count,true,NULL);
 
    /*=============================================*/
@@ -569,7 +569,7 @@ static bool GetDefglobalValue2(
      {
       PrintErrorID(theEnv,"GLOBLDEF",1,false);
       EnvPrintRouter(theEnv,WERROR,"Global variable ?*");
-      EnvPrintRouter(theEnv,WERROR,ValueToString(theValue));
+      EnvPrintRouter(theEnv,WERROR,((CLIPSLexeme *) theValue)->contents);
       EnvPrintRouter(theEnv,WERROR,"* is unbound.\n");
       vPtr->value = theEnv->FalseSymbol;
       EnvSetEvaluationError(theEnv,true);
@@ -584,7 +584,7 @@ static bool GetDefglobalValue2(
 
    if (count > 1)
      {
-      AmbiguousReferenceErrorMessage(theEnv,"defglobal",ValueToString(theValue));
+      AmbiguousReferenceErrorMessage(theEnv,"defglobal",((CLIPSLexeme *) theValue)->contents);
       vPtr->value = theEnv->FalseSymbol;
       EnvSetEvaluationError(theEnv,true);
       return false;

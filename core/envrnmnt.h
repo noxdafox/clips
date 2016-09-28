@@ -99,8 +99,8 @@ struct environmentData
 
    bool                           AllocateEnvironmentData(Environment *,unsigned int,unsigned long,void (*)(Environment *));
    Environment                   *CreateEnvironment(void);
-   Environment                   *CreateRuntimeEnvironment(CLIPSLexeme **,struct floatHashNode **,
-                                                           struct integerHashNode **,struct bitMapHashNode **);
+   Environment                   *CreateRuntimeEnvironment(CLIPSLexeme **,CLIPSFloat **,
+                                                           CLIPSInteger **,struct bitMapHashNode **);
    bool                           DestroyEnvironment(Environment *);
    bool                           AddEnvironmentCleanupFunction(Environment *,const char *,void (*)(Environment *),int);
    void                          *GetEnvironmentContext(Environment *);

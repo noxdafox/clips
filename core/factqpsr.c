@@ -405,7 +405,7 @@ static bool ReplaceTemplateNameWithReference(
 
    if (theExp->type == SYMBOL)
      {
-      theTemplateName = ValueToString(theExp->value);
+      theTemplateName = theExp->lexemeValue->contents;
 
       theDeftemplate = (Deftemplate *)
                        FindImportedConstruct(theEnv,"deftemplate",NULL,theTemplateName,
@@ -562,7 +562,7 @@ static bool ParseQueryActionExpression(
             SetParsedBindNames(theEnv,oldBindList);
             PrintErrorID(theEnv,"FACTQPSR",3,false);
             EnvPrintRouter(theEnv,WERROR,"Cannot rebind fact-set member variable ");
-            EnvPrintRouter(theEnv,WERROR,ValueToString(tmpFactSetVars->value));
+            EnvPrintRouter(theEnv,WERROR,tmpFactSetVars->lexemeValue->contents);
             EnvPrintRouter(theEnv,WERROR," in function ");
             EnvPrintRouter(theEnv,WERROR,ExpressionFunctionCallName(top)->contents);
             EnvPrintRouter(theEnv,WERROR,".\n");
@@ -678,7 +678,7 @@ static void ReplaceSlotReference(
    EXPRESSION *eptr;
    struct token itkn;
 
-   str = ValueToString(theExp->value);
+   str = theExp->lexemeValue->contents;
    len =  strlen(str);
    if (len < 3)
      return;
@@ -688,8 +688,8 @@ static void ReplaceSlotReference(
         {
          eptr = vlist;
          posn = 0;
-         while (eptr && ((i != strlen(ValueToString(eptr->value))) ||
-                         strncmp(ValueToString(eptr->value),str,
+         while (eptr && ((i != strlen(eptr->lexemeValue->contents)) ||
+                         strncmp(eptr->lexemeValue->contents,str,
                                  (STD_SIZE) i)))
            {
             eptr = eptr->nextArg;

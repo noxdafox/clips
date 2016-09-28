@@ -200,7 +200,7 @@ bool CheckCardinalityConstraint(
      {
       if (constraints->minFields->value != SymbolData(theEnv)->NegativeInfinity)
         {
-         if (number < ValueToLong(constraints->minFields->value))
+         if (number < constraints->minFields->integerValue->contents)
            { return false; }
         }
      }
@@ -214,7 +214,7 @@ bool CheckCardinalityConstraint(
      {
       if (constraints->maxFields->value != SymbolData(theEnv)->PositiveInfinity)
         {
-         if (number > ValueToLong(constraints->maxFields->value))
+         if (number > constraints->maxFields->integerValue->contents)
            { return false; }
         }
      }
@@ -257,7 +257,7 @@ static bool CheckRangeAgainstCardinalityConstraint(
      {
       if (constraints->maxFields->value != SymbolData(theEnv)->PositiveInfinity)
         {
-         if (min > ValueToLong(constraints->maxFields->value))
+         if (min > constraints->maxFields->integerValue->contents)
            { return false; }
         }
      }
@@ -274,7 +274,7 @@ static bool CheckRangeAgainstCardinalityConstraint(
      {
       if (constraints->minFields->value != SymbolData(theEnv)->NegativeInfinity)
         {
-         if (max < ValueToLong(constraints->minFields->value))
+         if (max < constraints->minFields->integerValue->contents)
            { return false; }
         }
      }
@@ -433,7 +433,7 @@ bool CheckAllowedClassesConstraint(
         tmpPtr != NULL;
         tmpPtr = tmpPtr->nextArg)
      {
-      cmpClass = LookupDefclassByMdlOrScope(theEnv,ValueToString(tmpPtr->value));
+      cmpClass = LookupDefclassByMdlOrScope(theEnv,tmpPtr->lexemeValue->contents);
       if (cmpClass == NULL) continue;
       if (cmpClass == insClass) return true;
       if (EnvSubclassP(theEnv,insClass,cmpClass)) return true;

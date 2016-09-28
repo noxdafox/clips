@@ -482,10 +482,10 @@ static int SlotReferenceVar(
 
    if ((varexp->type != SF_VARIABLE) && (varexp->type != MF_VARIABLE))
      { return 0; }
-   if ((strncmp(ValueToString(varexp->value),SELF_STRING,SELF_LEN) == 0) ?
-               (ValueToString(varexp->value)[SELF_LEN] == SELF_SLOT_REF) : false)
+   if ((strncmp(varexp->lexemeValue->contents,SELF_STRING,SELF_LEN) == 0) ?
+               (varexp->lexemeValue->contents[SELF_LEN] == SELF_SLOT_REF) : false)
      {
-      OpenStringSource(theEnv,"hnd-var",ValueToString(varexp->value) + SELF_LEN + 1,0);
+      OpenStringSource(theEnv,"hnd-var",varexp->lexemeValue->contents + SELF_LEN + 1,0);
       oldpp = GetPPBufferStatus(theEnv);
       SetPPBufferStatus(theEnv,false);
       GetToken(theEnv,"hnd-var",&itkn);
@@ -535,7 +535,7 @@ static int BindSlotReference(
    SlotDescriptor *sd;
    EXPRESSION *saveExp;
 
-   bindName = ValueToString(bindExp->argList->value);
+   bindName = bindExp->argList->lexemeValue->contents;
    if (strcmp(bindName,SELF_STRING) == 0)
      {
       PrintErrorID(theEnv,"MSGPSR",5,false);
@@ -618,7 +618,7 @@ static SlotDescriptor *CheckSlotReference(
      {
       PrintErrorID(theEnv,"MSGPSR",6,false);
       EnvPrintRouter(theEnv,WERROR,"No such slot ");
-      EnvPrintRouter(theEnv,WERROR,ValueToString(theValue));
+      EnvPrintRouter(theEnv,WERROR,((CLIPSLexeme *) theValue)->contents);
       EnvPrintRouter(theEnv,WERROR," in class ");
       EnvPrintRouter(theEnv,WERROR,EnvGetDefclassName(theEnv,theDefclass));
       EnvPrintRouter(theEnv,WERROR," for ?self reference.\n");
@@ -641,7 +641,7 @@ static SlotDescriptor *CheckSlotReference(
       ================================================= */
    if (sd->noWrite && (sd->initializeOnly == 0))
      {
-      SlotAccessViolationError(theEnv,ValueToString(theValue),
+      SlotAccessViolationError(theEnv,((CLIPSLexeme *) theValue)->contents,
                                NULL,theDefclass);
       return NULL;
      }

@@ -322,9 +322,9 @@ void EnvMatches(
    returnValue->end = 2;
    returnValue->value = EnvCreateMultifield(theEnv,3L);
 
-   SetMFValue(returnValue->value,0,SymbolData(theEnv)->Zero);
-   SetMFValue(returnValue->value,1,SymbolData(theEnv)->Zero);
-   SetMFValue(returnValue->value,2,SymbolData(theEnv)->Zero);
+   returnValue->multifieldValue->theFields[0].integerValue = SymbolData(theEnv)->Zero;
+   returnValue->multifieldValue->theFields[1].integerValue = SymbolData(theEnv)->Zero;
+   returnValue->multifieldValue->theFields[2].integerValue = SymbolData(theEnv)->Zero;
 
    /*=================================================*/
    /* Loop through each of the disjuncts for the rule */
@@ -350,7 +350,7 @@ void EnvMatches(
       for (joinIndex = 0; joinIndex < arraySize; joinIndex++)
         {
          alphaMatchCount += ListAlphaMatches(theEnv,&theInfo[joinIndex],output);
-         SetMFValue(returnValue->value,0,EnvCreateInteger(theEnv,alphaMatchCount));
+         returnValue->multifieldValue->theFields[0].integerValue = EnvCreateInteger(theEnv,alphaMatchCount);
         }
 
       /*================================*/
@@ -379,7 +379,7 @@ void EnvMatches(
       for (joinIndex = 1; joinIndex < arraySize; joinIndex++)
         {
          betaMatchCount += ListBetaMatches(theEnv,theInfo,joinIndex,arraySize,output);
-         SetMFValue(returnValue->value,1,EnvCreateInteger(theEnv,betaMatchCount));
+         returnValue->multifieldValue->theFields[1].integerValue = EnvCreateInteger(theEnv,betaMatchCount);
         }
 
       /*================================*/
@@ -423,7 +423,7 @@ void EnvMatches(
 
    if ((activations == 0) && (output == VERBOSE)) EnvPrintRouter(theEnv,WDISPLAY," None\n");
 
-   SetMFValue(returnValue->value,2,EnvCreateInteger(theEnv,activations));
+   returnValue->multifieldValue->theFields[2].integerValue = EnvCreateInteger(theEnv,activations);
   }
 
 /****************************************************/
@@ -1021,9 +1021,9 @@ void EnvJoinActivity(
    returnValue->end = 2;
    returnValue->value = EnvCreateMultifield(theEnv,3L);
 
-   SetMFValue(returnValue->value,0,SymbolData(theEnv)->Zero);
-   SetMFValue(returnValue->value,1,SymbolData(theEnv)->Zero);
-   SetMFValue(returnValue->value,2,SymbolData(theEnv)->Zero);
+   returnValue->multifieldValue->theFields[0].integerValue = SymbolData(theEnv)->Zero;
+   returnValue->multifieldValue->theFields[1].integerValue = SymbolData(theEnv)->Zero;
+   returnValue->multifieldValue->theFields[2].integerValue = SymbolData(theEnv)->Zero;
 
    /*=================================================*/
    /* Loop through each of the disjuncts for the rule */
@@ -1201,13 +1201,13 @@ static void ListBetaJoinActivity(
       EnvPrintRouter(theEnv,WDISPLAY,"\n");
      }
 
-   compares += ValueToLong(GetMFValue(returnValue->value,0));
-   adds += ValueToLong(GetMFValue(returnValue->value,1));
-   deletes += ValueToLong(GetMFValue(returnValue->value,2));
+   compares += returnValue->multifieldValue->theFields[0].integerValue->contents;
+   adds += returnValue->multifieldValue->theFields[1].integerValue->contents;
+   deletes += returnValue->multifieldValue->theFields[2].integerValue->contents;
 
-   SetMFValue(returnValue->value,0,EnvCreateInteger(theEnv,compares));
-   SetMFValue(returnValue->value,1,EnvCreateInteger(theEnv,adds));
-   SetMFValue(returnValue->value,2,EnvCreateInteger(theEnv,deletes));
+   returnValue->multifieldValue->theFields[0].integerValue = EnvCreateInteger(theEnv,compares);
+   returnValue->multifieldValue->theFields[1].integerValue = EnvCreateInteger(theEnv,adds);
+   returnValue->multifieldValue->theFields[2].integerValue = EnvCreateInteger(theEnv,deletes);
   }
 
 /*********************************************/

@@ -1035,17 +1035,17 @@ unsigned long ItemHashValue(
    switch(theType)
      {
       case FLOAT:
-        return(HashFloat(ValueToDouble(theValue),theRange));
+        return(HashFloat(((CLIPSFloat *) theValue)->contents,theRange));
 
       case INTEGER:
-        return(HashInteger(ValueToLong(theValue),theRange));
+        return(HashInteger(((CLIPSInteger *) theValue)->contents,theRange));
 
       case SYMBOL:
       case STRING:
 #if OBJECT_SYSTEM
       case INSTANCE_NAME:
 #endif
-        return(HashSymbol(ValueToString(theValue),theRange));
+        return HashSymbol(((CLIPSLexeme *) theValue)->contents,theRange);
 
       case MULTIFIELD:
         return(HashMultifield((Multifield *) theValue,theRange));

@@ -68,6 +68,7 @@ struct field;
 typedef struct multifield Multifield;
 
 #include "evaluatn.h"
+#include "object.h"
 
 struct field
   {
@@ -79,6 +80,8 @@ struct field
       CLIPSFloat *floatValue;
       CLIPSInteger *integerValue;
       CLIPSVoid *voidValue;
+      Fact *factValue;
+      Instance *instanceValue;
      };
   };
 
@@ -95,10 +98,6 @@ typedef struct field FIELD;
 typedef struct field * FIELD_PTR;
 
 #define GetMFLength(target)     (((Multifield *) (target))->multifieldLength)
-#define SetMFValue(target,index,val)  (((struct field *) ((Multifield *) (target))->theFields)[index].value = (void *) (val))
-
-#define GetMFType(target,index)  ((((struct field *) ((Multifield *) (target))->theFields)[index].header)->type)
-#define GetMFValue(target,index)  (((struct field *) ((Multifield *) (target))->theFields)[index].value)
 
    Multifield                    *CreateMultifield2(Environment *,long);
    void                           ReturnMultifield(Environment *,struct multifield *);

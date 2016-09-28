@@ -221,7 +221,7 @@ EXPRESSION *ParseInitializeInstance(
          where the name was not specified
          ====================================== */
       if ((top->argList->type != SYMBOL) ? false :
-          (strcmp(ValueToString(top->argList->value),CLASS_RLN) == 0))
+          (strcmp(top->argList->lexemeValue->contents,CLASS_RLN) == 0))
         {
          top->argList->nextArg = ArgumentParse(theEnv,readSource,&error);
          if (error == true)
@@ -232,7 +232,7 @@ EXPRESSION *ParseInitializeInstance(
             goto ParseInitializeInstanceError;
            }
          if ((top->argList->nextArg->type != SYMBOL) ? true :
-             (strcmp(ValueToString(top->argList->nextArg->value),CLASS_RLN) != 0))
+             (strcmp(top->argList->nextArg->lexemeValue->contents,CLASS_RLN) != 0))
            {
             top->argList->type = FCALL;
             top->argList->value = FindFunction(theEnv,"gensym*");
@@ -558,7 +558,7 @@ static bool ReplaceClassNameWithReference(
 
    if (theExp->type == SYMBOL)
      {
-      theClassName = ValueToString(theExp->value);
+      theClassName = theExp->lexemeValue->contents;
       //theDefclass = (void *) LookupDefclassInScope(theEnv,theClassName);
       theDefclass = LookupDefclassByMdlOrScope(theEnv,theClassName); // Module or scope is now allowed
       if (theDefclass == NULL)

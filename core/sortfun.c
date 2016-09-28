@@ -248,7 +248,7 @@ void SortFunction(
          tempMultifield = (Multifield *) theArguments[i-2].value;
          for (j = theArguments[i-2].begin; j <= theArguments[i-2].end; j++, k++)
            {
-            theArguments2[k].value = GetMFValue(tempMultifield,j);
+            theArguments2[k].value = tempMultifield->theFields[j].value;
            }
         }
       else
@@ -279,7 +279,7 @@ void SortFunction(
 
    for (i = 0; i < argumentSize; i++)
      {
-      SetMFValue(theMultifield,i,theArguments2[i].value);
+      theMultifield->theFields[i].value = theArguments2[i].value;
      }
 
    genfree(theEnv,theArguments2,argumentSize * sizeof(CLIPSValue));

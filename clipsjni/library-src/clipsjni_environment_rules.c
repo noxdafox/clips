@@ -109,7 +109,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getAgenda(
         theActivation != NULL;
         theActivation = EnvGetNextActivation(theCLIPSEnv,theActivation))
      { 
-      ruleName = (*env)->NewStringUTF(env,ValueToString(theActivation->theRule->header.name));
+      ruleName = (*env)->NewStringUTF(env,theActivation->theRule->header.name->contents);
 
       EnvGetActivationBasisPPForm(theCLIPSEnv,bindingsBuffer,1024,theActivation);
       basis = (*env)->NewStringUTF(env,bindingsBuffer);

@@ -768,13 +768,13 @@ struct lhsParseNode *RestrictionParse(
       if (theConstraints->maxFields->value != SymbolData(theEnv)->PositiveInfinity)
         {
          ReturnExpression(theEnv,tempConstraints->maxFields);
-         tempConstraints->maxFields = GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,ValueToLong(theConstraints->maxFields->value) - numberOfSingleFields));
+         tempConstraints->maxFields = GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,theConstraints->maxFields->integerValue->contents - numberOfSingleFields));
         }
 
       if ((numberOfMultifields == 1) && (theConstraints->minFields->value != SymbolData(theEnv)->NegativeInfinity))
         {
          ReturnExpression(theEnv,tempConstraints->minFields);
-         tempConstraints->minFields = GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,ValueToLong(theConstraints->minFields->value) - numberOfSingleFields));
+         tempConstraints->minFields = GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,theConstraints->minFields->integerValue->contents - numberOfSingleFields));
         }
      }
 

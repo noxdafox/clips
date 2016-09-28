@@ -990,8 +990,8 @@ static void ExpandFuncMultifield(
          for (i = returnValue->begin ; i <= returnValue->end ; i++)
            {
             newexp = get_struct(theEnv,expr);
-            newexp->type = GetMFType(returnValue->value,i);
-            newexp->value = GetMFValue(returnValue->value,i);
+            newexp->type = returnValue->multifieldValue->theFields[i].header->type;
+            newexp->value = returnValue->multifieldValue->theFields[i].value;
             newexp->argList = NULL;
             newexp->nextArg = NULL;
             if (top == NULL)
@@ -1172,7 +1172,7 @@ void GetFunctionListFunction(
         theFunction != NULL;
         theFunction = theFunction->next, functionCount++)
      {
-      SetMFValue(theList,functionCount,theFunction->callFunctionName);
+      theList->theFields[functionCount].lexemeValue = theFunction->callFunctionName;
      }
   }
 
@@ -1261,7 +1261,8 @@ void FuncallFunction(
            theMultifield = (Multifield *) theArg.value;
            for (j = theArg.begin; j <= theArg.end; j++)
              {
-              nextAdd = GenConstant(theEnv,GetMFType(theMultifield,j),GetMFValue(theMultifield,j));
+              nextAdd = GenConstant(theEnv,theMultifield->theFields[j].header->type,
+                                           theMultifield->theFields[j].value);
               if (multiAdd == NULL)
                 { lastAdd->argList = nextAdd; }
               else
@@ -1507,52 +1508,53 @@ static void ConvertTime(
    returnValue->begin = 0;
    returnValue->end = 8;
    returnValue->value = EnvCreateMultifield(theEnv,9L);
-   SetMFValue(returnValue->value,0,EnvCreateInteger(theEnv,info->tm_year + 1900));
-   SetMFValue(returnValue->value,1,EnvCreateInteger(theEnv,info->tm_mon + 1));
-   SetMFValue(returnValue->value,2,EnvCreateInteger(theEnv,info->tm_mday));
-   SetMFValue(returnValue->value,3,EnvCreateInteger(theEnv,info->tm_hour));
-   SetMFValue(returnValue->value,4,EnvCreateInteger(theEnv,info->tm_min));
-   SetMFValue(returnValue->value,5,EnvCreateInteger(theEnv,info->tm_sec));
+   
+   returnValue->multifieldValue->theFields[0].integerValue = EnvCreateInteger(theEnv,info->tm_year + 1900);
+   returnValue->multifieldValue->theFields[1].integerValue = EnvCreateInteger(theEnv,info->tm_mon + 1);
+   returnValue->multifieldValue->theFields[2].integerValue = EnvCreateInteger(theEnv,info->tm_mday);
+   returnValue->multifieldValue->theFields[3].integerValue = EnvCreateInteger(theEnv,info->tm_hour);
+   returnValue->multifieldValue->theFields[4].integerValue = EnvCreateInteger(theEnv,info->tm_min);
+   returnValue->multifieldValue->theFields[5].integerValue = EnvCreateInteger(theEnv,info->tm_sec);
 
    switch (info->tm_wday)
      {
       case 0:
-        SetMFValue(returnValue->value,6,EnvCreateSymbol(theEnv,"Sunday"));
+        returnValue->multifieldValue->theFields[6].lexemeValue = EnvCreateSymbol(theEnv,"Sunday");
         break;
 
       case 1:
-        SetMFValue(returnValue->value,6,EnvCreateSymbol(theEnv,"Monday"));
+        returnValue->multifieldValue->theFields[6].lexemeValue = EnvCreateSymbol(theEnv,"Monday");
         break;
 
       case 2:
-        SetMFValue(returnValue->value,6,EnvCreateSymbol(theEnv,"Tuesday"));
+        returnValue->multifieldValue->theFields[6].lexemeValue = EnvCreateSymbol(theEnv,"Tuesday");
         break;
 
       case 3:
-        SetMFValue(returnValue->value,6,EnvCreateSymbol(theEnv,"Wednesday"));
+        returnValue->multifieldValue->theFields[6].lexemeValue = EnvCreateSymbol(theEnv,"Wednesday");
         break;
 
       case 4:
-        SetMFValue(returnValue->value,6,EnvCreateSymbol(theEnv,"Thursday"));
+        returnValue->multifieldValue->theFields[6].lexemeValue = EnvCreateSymbol(theEnv,"Thursday");
         break;
 
       case 5:
-        SetMFValue(returnValue->value,6,EnvCreateSymbol(theEnv,"Friday"));
+        returnValue->multifieldValue->theFields[6].lexemeValue = EnvCreateSymbol(theEnv,"Friday");
         break;
 
       case 6:
-        SetMFValue(returnValue->value,6,EnvCreateSymbol(theEnv,"Saturday"));
+        returnValue->multifieldValue->theFields[6].lexemeValue = EnvCreateSymbol(theEnv,"Saturday");
         break;
      }
 
-   SetMFValue(returnValue->value,7,EnvCreateInteger(theEnv,info->tm_yday));
+   returnValue->multifieldValue->theFields[7].integerValue = EnvCreateInteger(theEnv,info->tm_yday);
 
    if (info->tm_isdst > 0)
-     { SetMFValue(returnValue->value,8,theEnv->TrueSymbol); }
+     { returnValue->multifieldValue->theFields[8].lexemeValue = theEnv->TrueSymbol; }
    else if (info->tm_isdst == 0)
-     { SetMFValue(returnValue->value,8,theEnv->FalseSymbol); }
+     { returnValue->multifieldValue->theFields[8].lexemeValue = theEnv->FalseSymbol; }
    else
-     { SetMFValue(returnValue->value,8,EnvCreateSymbol(theEnv,"UNKNOWN")); }
+     { returnValue->multifieldValue->theFields[8].lexemeValue = EnvCreateSymbol(theEnv,"UNKNOWN"); }
   }
 
 /*****************************************/

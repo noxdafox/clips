@@ -1113,7 +1113,7 @@ static bool ParseRangeCardinalityAttribute(
         }
       else
         {
-         if (ValueToLong(inputToken.value) < 0LL)
+         if (inputToken.integerValue->contents < 0LL)
            {
             PrintErrorID(theEnv,"CSTRNPSR",6,true);
             EnvPrintRouter(theEnv,WERROR,"Minimum cardinality value must be greater than or equal to zero\n");

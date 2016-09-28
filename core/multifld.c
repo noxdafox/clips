@@ -545,12 +545,12 @@ void StoreInMultifield(
             orig_ptr = (Multifield *) (val_arr+k)->value;
             for (i = start; i < end + 1; i++, j++)
               {
-               SetMFValue(theMultifield,j,(GetMFValue(orig_ptr,i)));
+               theMultifield->theFields[j].value = orig_ptr->theFields[i].value;
               }
            }
          else if ((val_arr+k)->header->type != RVOID)
            {
-            SetMFValue(theMultifield,j,(val_arr+k)->value);
+            theMultifield->theFields[j].value = (val_arr+k)->value;
             j++;
            }
         }
@@ -683,14 +683,14 @@ unsigned long HashMultifield(
 
           case FLOAT:
             fis.liv = 0;
-            fis.fv = ValueToDouble(fieldPtr[i].value);
+            fis.fv = fieldPtr[i].floatValue->contents;
             count += (fis.liv * (i + 29))  +
-                     (unsigned long) ValueToDouble(fieldPtr[i].value);
+                     (unsigned long) fieldPtr[i].floatValue->contents;
             break;
 
           case INTEGER:
-            count += (((unsigned long) ValueToLong(fieldPtr[i].value)) * (i + 29)) +
-                      ((unsigned long) ValueToLong(fieldPtr[i].value));
+            count += (((unsigned long) fieldPtr[i].integerValue->contents) * (i + 29)) +
+                      ((unsigned long) fieldPtr[i].integerValue->contents);
             break;
 
           case FACT_ADDRESS:
@@ -713,7 +713,7 @@ unsigned long HashMultifield(
 #if OBJECT_SYSTEM
           case INSTANCE_NAME:
 #endif
-            tvalue = (unsigned long) HashSymbol(ValueToString(fieldPtr[i].value),theRange);
+            tvalue = (unsigned long) HashSymbol(fieldPtr[i].lexemeValue->contents,theRange);
             count += (unsigned long) (tvalue * (i + 29));
             break;
          }
@@ -758,20 +758,20 @@ CLIPSLexeme *ImplodeMultifield(
    theMultifield = (Multifield *) value->value;
    for (i = value->begin ; i <= value->end ; i++)
      {
-      if (GetMFType(theMultifield,i) == FLOAT)
+      if (theMultifield->theFields[i].header->type == FLOAT)
         {
-         tmp_str = FloatToString(theEnv,ValueToDouble(GetMFValue(theMultifield,i)));
+         tmp_str = FloatToString(theEnv,theMultifield->theFields[i].floatValue->contents);
          strsize += strlen(tmp_str) + 1;
         }
-      else if (GetMFType(theMultifield,i) == INTEGER)
+      else if (theMultifield->theFields[i].header->type == INTEGER)
         {
-         tmp_str = LongIntegerToString(theEnv,ValueToLong(GetMFValue(theMultifield,i)));
+         tmp_str = LongIntegerToString(theEnv,theMultifield->theFields[i].integerValue->contents);
          strsize += strlen(tmp_str) + 1;
         }
-      else if (GetMFType(theMultifield,i) == STRING)
+      else if (theMultifield->theFields[i].header->type == STRING)
         {
-         strsize += strlen(ValueToString(GetMFValue(theMultifield,i))) + 3;
-         tmp_str = ValueToString(GetMFValue(theMultifield,i));
+         strsize += strlen(theMultifield->theFields[i].lexemeValue->contents) + 3;
+         tmp_str = theMultifield->theFields[i].lexemeValue->contents;
          while(*tmp_str)
            {
             if (*tmp_str == '"')
@@ -782,16 +782,17 @@ CLIPSLexeme *ImplodeMultifield(
            }
         }
 #if OBJECT_SYSTEM
-      else if (GetMFType(theMultifield,i) == INSTANCE_NAME)
-        { strsize += strlen(ValueToString(GetMFValue(theMultifield,i))) + 3; }
-      else if (GetMFType(theMultifield,i) == INSTANCE_ADDRESS)
-        { strsize += strlen(((Instance *)
-                            GetMFValue(theMultifield,i))->name->contents) + 3; }
+      else if (theMultifield->theFields[i].header->type == INSTANCE_NAME)
+        { strsize += strlen(theMultifield->theFields[i].lexemeValue->contents) + 3; }
+      else if (theMultifield->theFields[i].header->type == INSTANCE_ADDRESS)
+        {
+         strsize += strlen(theMultifield->theFields[i].instanceValue->name->contents) + 3;
+        }
 #endif
 
       else
         {
-         tempDO.value = GetMFValue(theMultifield,i);
+         tempDO.value = theMultifield->theFields[i].value;
          strsize += strlen(DataObjectToString(theEnv,&tempDO)) + 1;
         }
      }
@@ -809,18 +810,18 @@ CLIPSLexeme *ImplodeMultifield(
       /* Convert numbers to strings */
       /*============================*/
 
-      if (GetMFType(theMultifield,i) == FLOAT)
+      if (theMultifield->theFields[i].header->type == FLOAT)
         {
-         tmp_str = FloatToString(theEnv,ValueToDouble(GetMFValue(theMultifield,i)));
+         tmp_str = FloatToString(theEnv,theMultifield->theFields[i].floatValue->contents);
          while(*tmp_str)
            {
             *(ret_str+j) = *tmp_str;
             j++, tmp_str++;
            }
         }
-      else if (GetMFType(theMultifield,i) == INTEGER)
+      else if (theMultifield->theFields[i].header->type == INTEGER)
         {
-         tmp_str = LongIntegerToString(theEnv,ValueToLong(GetMFValue(theMultifield,i)));
+         tmp_str = LongIntegerToString(theEnv,theMultifield->theFields[i].integerValue->contents);
          while(*tmp_str)
            {
             *(ret_str+j) = *tmp_str;
@@ -833,9 +834,9 @@ CLIPSLexeme *ImplodeMultifield(
       /* imbedded quotes with a backslash      */
       /*=======================================*/
 
-      else if (GetMFType(theMultifield,i) == STRING)
+      else if (theMultifield->theFields[i].header->type == STRING)
         {
-         tmp_str = ValueToString(GetMFValue(theMultifield,i));
+         tmp_str = theMultifield->theFields[i].lexemeValue->contents;
          *(ret_str+j) = '"';
          j++;
          while(*tmp_str)
@@ -858,9 +859,9 @@ CLIPSLexeme *ImplodeMultifield(
          j++;
         }
 #if OBJECT_SYSTEM
-      else if (GetMFType(theMultifield,i) == INSTANCE_NAME)
+      else if (theMultifield->theFields[i].header->type == INSTANCE_NAME)
         {
-         tmp_str = ValueToString(GetMFValue(theMultifield,i));
+         tmp_str = theMultifield->theFields[i].lexemeValue->contents;
          *(ret_str + j++) = '[';
          while(*tmp_str)
            {
@@ -869,9 +870,9 @@ CLIPSLexeme *ImplodeMultifield(
            }
          *(ret_str + j++) = ']';
         }
-      else if (GetMFType(theMultifield,i) == INSTANCE_ADDRESS)
+      else if (theMultifield->theFields[i].header->type == INSTANCE_ADDRESS)
         {
-         tmp_str = ((Instance *) GetMFValue(theMultifield,i))->name->contents;
+         tmp_str = theMultifield->theFields[i].instanceValue->name->contents;
          *(ret_str + j++) = '[';
          while(*tmp_str)
            {
@@ -883,7 +884,7 @@ CLIPSLexeme *ImplodeMultifield(
 #endif
       else
         {
-         tempDO.value = GetMFValue(theMultifield,i);
+         tempDO.value = theMultifield->theFields[i].value;
          tmp_str = DataObjectToString(theEnv,&tempDO);
          while(*tmp_str)
            {

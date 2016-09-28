@@ -1342,7 +1342,7 @@ void EnvGetFocusStack(
         theFocus != NULL;
         theFocus = theFocus->next, count++)
      {
-      SetMFValue(theList,count,theFocus->theModule->header.name);
+      theList->theFields[count].value = theFocus->theModule->header.name;
      }
   }
 

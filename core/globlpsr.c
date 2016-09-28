@@ -461,7 +461,7 @@ bool ReplaceGlobalVariable(
    /*=================================*/
 
    theGlobal = (Defglobal *)
-               FindImportedConstruct(theEnv,"defglobal",NULL,ValueToString(ePtr->value),
+               FindImportedConstruct(theEnv,"defglobal",NULL,ePtr->lexemeValue->contents,
                                      &count,true,NULL);
 
    /*=============================================*/
@@ -470,7 +470,7 @@ bool ReplaceGlobalVariable(
 
    if (theGlobal == NULL)
      {
-      GlobalReferenceErrorMessage(theEnv,ValueToString(ePtr->value));
+      GlobalReferenceErrorMessage(theEnv,ePtr->lexemeValue->contents);
       return false;
      }
 
@@ -482,7 +482,7 @@ bool ReplaceGlobalVariable(
 
    if (count > 1)
      {
-      AmbiguousReferenceErrorMessage(theEnv,"defglobal",ValueToString(ePtr->value));
+      AmbiguousReferenceErrorMessage(theEnv,"defglobal",ePtr->lexemeValue->contents);
       return false;
      }
 

@@ -315,22 +315,14 @@ static void SetErrorCaptureValues(
    theMultifield = EnvCreateMultifield(theEnv,2L);
 
    if (ParseFunctionData(theEnv)->ErrorString != NULL)
-     {
-      SetMFValue(theMultifield,0,EnvCreateString(theEnv,ParseFunctionData(theEnv)->ErrorString));
-     }
+     { theMultifield->theFields[0].lexemeValue = EnvCreateString(theEnv,ParseFunctionData(theEnv)->ErrorString); }
    else
-     {
-      SetMFValue(theMultifield,0,theEnv->FalseSymbol);
-     }
+     { theMultifield->theFields[0].lexemeValue = theEnv->FalseSymbol; }
 
    if (ParseFunctionData(theEnv)->WarningString != NULL)
-     {
-      SetMFValue(theMultifield,1,EnvCreateString(theEnv,ParseFunctionData(theEnv)->WarningString));
-     }
+     { theMultifield->theFields[1].lexemeValue = EnvCreateString(theEnv,ParseFunctionData(theEnv)->WarningString); }
    else
-     {
-      SetMFValue(theMultifield,1,theEnv->FalseSymbol);
-     }
+     { theMultifield->theFields[1].lexemeValue = theEnv->FalseSymbol; }
 
    returnValue->begin = 0;
    returnValue->end = 1;

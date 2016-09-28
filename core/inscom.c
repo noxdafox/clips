@@ -966,8 +966,7 @@ Instance *EnvGetNextInstanceInClassAndSubclasses(
    while ((nextInstance == NULL) &&
           (iterationInfo->begin <= iterationInfo->end))
      {
-      theClass = (Defclass *) GetMFValue(iterationInfo->multifieldValue,
-                                         iterationInfo->begin);
+      theClass = (Defclass *) iterationInfo->multifieldValue->theFields[iterationInfo->begin].value;
       *cptr = theClass;
       iterationInfo->begin = iterationInfo->begin + 1;
       nextInstance = theClass->instanceList;

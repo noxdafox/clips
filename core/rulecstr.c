@@ -207,7 +207,7 @@ static bool MultifieldCardinalityViolation(
          /*=======================================*/
 
          if (tmpNode->constraints->minFields->value != SymbolData(theEnv)->NegativeInfinity)
-           { minFields += (long) ValueToLong(tmpNode->constraints->minFields->value); }
+           { minFields += (long) tmpNode->constraints->minFields->integerValue->contents; }
 
          /*=========================================*/
          /* The greatest maximum of all the min/max */
@@ -219,7 +219,7 @@ static bool MultifieldCardinalityViolation(
          if (tmpMax->value == SymbolData(theEnv)->PositiveInfinity)
            { posInfinity = true; }
          else
-           { maxFields += (long) ValueToLong(tmpMax->value); }
+           { maxFields += (long) tmpMax->integerValue->contents; }
         }
 
       /*================================================*/
@@ -840,7 +840,7 @@ static bool CheckArgumentForConstraintError(
      {
       PrintErrorID(theEnv,"RULECSTR",3,true);
       EnvPrintRouter(theEnv,WERROR,"Previous variable bindings of ?");
-      EnvPrintRouter(theEnv,WERROR,ValueToString((CLIPSLexeme *) expressionList->value));
+      EnvPrintRouter(theEnv,WERROR,expressionList->lexemeValue->contents);
       EnvPrintRouter(theEnv,WERROR," caused the type restrictions");
       EnvPrintRouter(theEnv,WERROR,"\nfor argument #");
       PrintLongInteger(theEnv,WERROR,(long int) i);

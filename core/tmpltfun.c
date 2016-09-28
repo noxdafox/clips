@@ -227,7 +227,7 @@ static void DuplicateModifyCommand(
 
    if (computeResult.header->type == INTEGER)
      {
-      factNum = ValueToLong(computeResult.value);
+      factNum = computeResult.integerValue->contents;
       if (factNum < 0)
         {
          if (retractIt) ExpectedTypeError2(theEnv,"modify",1);
@@ -312,7 +312,7 @@ static void DuplicateModifyCommand(
       /*============================================================*/
 
       if (testPtr->type == INTEGER)
-        { position = (int) ValueToLong(testPtr->value); }
+        { position = (int) testPtr->integerValue->contents; }
       else
         {
          found = false;
@@ -334,7 +334,7 @@ static void DuplicateModifyCommand(
 
          if (! found)
            {
-            InvalidDeftemplateSlotMessage(theEnv,ValueToString(testPtr->value),
+            InvalidDeftemplateSlotMessage(theEnv,testPtr->lexemeValue->contents,
                                           templatePtr->header.name->contents,true);
             EnvSetEvaluationError(theEnv,true);
             ReturnFact(theEnv,newFact);
@@ -562,7 +562,7 @@ void EnvDeftemplateSlotNames(
       returnValue->begin = 0;
       returnValue->end = 0;
       theList = EnvCreateMultifield(theEnv,(int) 1);
-      SetMFValue(theList,0,EnvCreateSymbol(theEnv,"implied"));
+      theList->theFields[0].lexemeValue = EnvCreateSymbol(theEnv,"implied");
       returnValue->value = theList;
       return;
      }
@@ -593,7 +593,7 @@ void EnvDeftemplateSlotNames(
         theSlot != NULL;
         count++, theSlot = theSlot->next)
      {
-      SetMFValue(theList,count,theSlot->slotName);
+      theList->theFields[count].lexemeValue = theSlot->slotName;
      }
   }
 
@@ -853,8 +853,8 @@ void EnvDeftemplateSlotCardinality(
          returnValue->begin = 0;
          returnValue->end = 1;
          returnValue->value = EnvCreateMultifield(theEnv,2L);
-         SetMFValue(returnValue->value,0,SymbolData(theEnv)->Zero);
-         SetMFValue(returnValue->value,1,SymbolData(theEnv)->PositiveInfinity);
+         returnValue->multifieldValue->theFields[0].integerValue = SymbolData(theEnv)->Zero;
+         returnValue->multifieldValue->theFields[1].lexemeValue = SymbolData(theEnv)->PositiveInfinity;
          return;
         }
       else
@@ -897,13 +897,13 @@ void EnvDeftemplateSlotCardinality(
 
    if (theSlot->constraints != NULL)
      {
-      SetMFValue(returnValue->value,0,theSlot->constraints->minFields->value);
-      SetMFValue(returnValue->value,1,theSlot->constraints->maxFields->value);
+      returnValue->multifieldValue->theFields[0].value = theSlot->constraints->minFields->value;
+      returnValue->multifieldValue->theFields[1].value = theSlot->constraints->maxFields->value;
      }
    else
      {
-      SetMFValue(returnValue->value,0,SymbolData(theEnv)->Zero);
-      SetMFValue(returnValue->value,1,SymbolData(theEnv)->PositiveInfinity);
+      returnValue->multifieldValue->theFields[0].integerValue = SymbolData(theEnv)->Zero;
+      returnValue->multifieldValue->theFields[1].lexemeValue = SymbolData(theEnv)->PositiveInfinity;
      }
   }
 
@@ -1006,7 +1006,7 @@ void EnvDeftemplateSlotAllowedValues(
    theExp = theSlot->constraints->restrictionList;
    while (theExp != NULL)
      {
-      SetMFValue(returnValue->value,i,theExp->value);
+      returnValue->multifieldValue->theFields[i].value = theExp->value;
       theExp = theExp->nextArg;
       i++;
      }
@@ -1067,8 +1067,10 @@ void EnvDeftemplateSlotRange(
          returnValue->begin = 0;
          returnValue->end = 1;
          returnValue->value = EnvCreateMultifield(theEnv,2L);
-         SetMFValue(returnValue->value,0,SymbolData(theEnv)->NegativeInfinity);
-         SetMFValue(returnValue->value,1,SymbolData(theEnv)->PositiveInfinity);
+         returnValue->multifieldValue->theFields[0].lexemeValue =
+            SymbolData(theEnv)->NegativeInfinity;
+         returnValue->multifieldValue->theFields[1].lexemeValue =
+            SymbolData(theEnv)->PositiveInfinity;
          return;
         }
       else
@@ -1106,8 +1108,8 @@ void EnvDeftemplateSlotRange(
       returnValue->begin = 0;
       returnValue->end = 1;
       returnValue->value = EnvCreateMultifield(theEnv,2L);
-      SetMFValue(returnValue->value,0,theSlot->constraints->minValue->value);
-      SetMFValue(returnValue->value,1,theSlot->constraints->maxValue->value);
+      returnValue->multifieldValue->theFields[0].value = theSlot->constraints->minValue->value;
+      returnValue->multifieldValue->theFields[1].value = theSlot->constraints->maxValue->value;
      }
    else
      {
@@ -1237,43 +1239,43 @@ void EnvDeftemplateSlotTypes(
 
    if (allTypes || theSlot->constraints->floatsAllowed)
      {
-      SetMFValue(returnValue->value,i++,EnvCreateSymbol(theEnv,"FLOAT"));
+      returnValue->multifieldValue->theFields[i++].lexemeValue = EnvCreateSymbol(theEnv,"FLOAT");
      }
 
    if (allTypes || theSlot->constraints->integersAllowed)
      {
-      SetMFValue(returnValue->value,i++,EnvCreateSymbol(theEnv,"INTEGER"));
+      returnValue->multifieldValue->theFields[i++].lexemeValue = EnvCreateSymbol(theEnv,"INTEGER");
      }
 
    if (allTypes || theSlot->constraints->symbolsAllowed)
      {
-      SetMFValue(returnValue->value,i++,EnvCreateSymbol(theEnv,"SYMBOL"));
+      returnValue->multifieldValue->theFields[i++].lexemeValue = EnvCreateSymbol(theEnv,"SYMBOL");
      }
 
    if (allTypes || theSlot->constraints->stringsAllowed)
      {
-      SetMFValue(returnValue->value,i++,EnvCreateSymbol(theEnv,"STRING"));
+      returnValue->multifieldValue->theFields[i++].lexemeValue = EnvCreateSymbol(theEnv,"STRING");
      }
 
    if (allTypes || theSlot->constraints->externalAddressesAllowed)
      {
-      SetMFValue(returnValue->value,i++,EnvCreateSymbol(theEnv,"EXTERNAL-ADDRESS"));
+      returnValue->multifieldValue->theFields[i++].lexemeValue = EnvCreateSymbol(theEnv,"EXTERNAL-ADDRESS");
      }
 
    if (allTypes || theSlot->constraints->factAddressesAllowed)
      {
-      SetMFValue(returnValue->value,i++,EnvCreateSymbol(theEnv,"FACT-ADDRESS"));
+      returnValue->multifieldValue->theFields[i++].lexemeValue = EnvCreateSymbol(theEnv,"FACT-ADDRESS");
      }
 
 #if OBJECT_SYSTEM
    if (allTypes || theSlot->constraints->instanceAddressesAllowed)
      {
-      SetMFValue(returnValue->value,i++,EnvCreateSymbol(theEnv,"INSTANCE-ADDRESS"));
+      returnValue->multifieldValue->theFields[i++].lexemeValue = EnvCreateSymbol(theEnv,"INSTANCE-ADDRESS");
      }
 
    if (allTypes || theSlot->constraints->instanceNamesAllowed)
      {
-      SetMFValue(returnValue->value,i,EnvCreateSymbol(theEnv,"INSTANCE-NAME"));
+      returnValue->multifieldValue->theFields[i++].lexemeValue = EnvCreateSymbol(theEnv,"INSTANCE-NAME");
      }
 #endif
   }
@@ -1797,7 +1799,7 @@ bool UpdateModifyDuplicate(
 
       if ((slotPtr = FindSlot(theDeftemplate,(CLIPSLexeme *) tempArg->value,&position)) == NULL)
         {
-         InvalidDeftemplateSlotMessage(theEnv,ValueToString(tempArg->value),
+         InvalidDeftemplateSlotMessage(theEnv,tempArg->lexemeValue->contents,
                                        theDeftemplate->header.name->contents,true);
          return false;
         }

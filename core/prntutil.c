@@ -177,21 +177,21 @@ void PrintAtom(
    switch (type)
      {
       case FLOAT:
-        PrintFloat(theEnv,logicalName,ValueToDouble(value));
+        PrintFloat(theEnv,logicalName,((CLIPSFloat *) value)->contents);
         break;
       case INTEGER:
-        PrintLongInteger(theEnv,logicalName,ValueToLong(value));
+        PrintLongInteger(theEnv,logicalName,((CLIPSInteger *) value)->contents);
         break;
       case SYMBOL:
-        EnvPrintRouter(theEnv,logicalName,ValueToString(value));
+        EnvPrintRouter(theEnv,logicalName,((CLIPSLexeme *) value)->contents);
         break;
       case STRING:
         if (PrintUtilityData(theEnv)->PreserveEscapedCharacters)
-          { EnvPrintRouter(theEnv,logicalName,StringPrintForm(theEnv,ValueToString(value))); }
+          { EnvPrintRouter(theEnv,logicalName,StringPrintForm(theEnv,((CLIPSLexeme *) value)->contents)); }
         else
           {
            EnvPrintRouter(theEnv,logicalName,"\"");
-           EnvPrintRouter(theEnv,logicalName,ValueToString(value));
+           EnvPrintRouter(theEnv,logicalName,((CLIPSLexeme *) value)->contents);
            EnvPrintRouter(theEnv,logicalName,"\"");
           }
         break;
@@ -222,7 +222,7 @@ void PrintAtom(
 #if OBJECT_SYSTEM
       case INSTANCE_NAME:
         EnvPrintRouter(theEnv,logicalName,"[");
-        EnvPrintRouter(theEnv,logicalName,ValueToString(value));
+        EnvPrintRouter(theEnv,logicalName,((CLIPSLexeme *) value)->contents);
         EnvPrintRouter(theEnv,logicalName,"]");
         break;
 #endif
@@ -572,7 +572,7 @@ const char *DataObjectToString(
         /* TBD Need specific routine for creating name string. */
         gensprintf(buffer,"<Pointer-%d-%p>",(int) theAddress->type,theDO->value);
         thePtr = EnvCreateString(theEnv,buffer);
-        return(ValueToString(thePtr));
+        return thePtr->contents;
 
 #if DEFTEMPLATE_CONSTRUCT
       case FACT_ADDRESS:

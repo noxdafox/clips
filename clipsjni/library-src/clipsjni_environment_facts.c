@@ -136,9 +136,9 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getFactList(
          const char *theCSlotName, *theCSlotValue;
          jboolean defaulted = false;
          
-         theCSlotName = ValueToString(GetMFValue(slotNames.value,i));
+         theCSlotName = slotNames.multifieldValue->theFields[i].lexemeValue->contents;
          
-         FactSlotValue(theCLIPSEnv,factPtr,GetMFValue(slotNames.value,i),&slotValue);
+         FactSlotValue(theCLIPSEnv,factPtr,slotNames.multifieldValue->theFields[i].lexemeValue->contents,&slotValue);
 
          if (EnvDeftemplateSlotDefaultP(theCLIPSEnv,EnvFactDeftemplate(theCLIPSEnv,factPtr),theCSlotName) == STATIC_DEFAULT)
            {
@@ -173,7 +173,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getFactList(
       sprintf(factNameBuffer,"f-%lld", EnvFactIndex(theCLIPSEnv,factPtr));
       
       factName = (*env)->NewStringUTF(env,factNameBuffer);
-      factRelation = (*env)->NewStringUTF(env,ValueToString(factPtr->whichDeftemplate->header.name));
+      factRelation = (*env)->NewStringUTF(env,factPtr->whichDeftemplate->header.name->contents);
 
       theJavaFact = (*env)->NewObject(env,
                                       CLIPSJNIData(clipsEnv)->factInstanceClass,

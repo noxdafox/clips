@@ -1176,8 +1176,8 @@ void EnvGetDefmethodList(
      {
       for (j = 0 ; j < gfunc->mcnt ; j++)
         {
-         SetMFValue(theList,i++,GetDefgenericNamePointer(gfunc));
-         SetMFValue(theList,i++,EnvCreateInteger(theEnv,(long long) gfunc->methods[j].index));
+         theList->theFields[i++].value = GetDefgenericNamePointer(gfunc);
+         theList->theFields[i++].integerValue = EnvCreateInteger(theEnv,(long long) gfunc->methods[j].index);
         }
      }
    if (svg != NULL)
@@ -1278,23 +1278,23 @@ void EnvGetMethodRestrictions(
    returnValue->value = theList;
    returnValue->begin = 0;
    returnValue->end = count - 1;
-   SetMFValue(theList,0,EnvCreateInteger(theEnv,(long long) meth->minRestrictions));
-   SetMFValue(theList,1,EnvCreateInteger(theEnv,(long long) meth->maxRestrictions));
-   SetMFValue(theList,2,EnvCreateInteger(theEnv,(long long) meth->restrictionCount));
+   theList->theFields[0].integerValue = EnvCreateInteger(theEnv,(long long) meth->minRestrictions);
+   theList->theFields[1].integerValue = EnvCreateInteger(theEnv,(long long) meth->maxRestrictions);
+   theList->theFields[2].integerValue = EnvCreateInteger(theEnv,(long long) meth->restrictionCount);
    roffset = 3 + meth->restrictionCount;
    rstrctIndex = 3;
    for (i = 0 ; i < meth->restrictionCount ; i++)
      {
       rptr = meth->restrictions + i;
-      SetMFValue(theList,rstrctIndex++,EnvCreateInteger(theEnv,(long long) roffset + 1));
-      SetMFValue(theList,roffset++,(rptr->query != NULL) ? theEnv->TrueSymbol : theEnv->FalseSymbol);
-      SetMFValue(theList,roffset++,EnvCreateInteger(theEnv,(long long) rptr->tcnt));
+      theList->theFields[rstrctIndex++].integerValue = EnvCreateInteger(theEnv,(long long) roffset + 1);
+      theList->theFields[roffset++].lexemeValue = (rptr->query != NULL) ? theEnv->TrueSymbol : theEnv->FalseSymbol;
+      theList->theFields[roffset++].integerValue = EnvCreateInteger(theEnv,(long long) rptr->tcnt);
       for (j = 0 ; j < rptr->tcnt ; j++)
         {
 #if OBJECT_SYSTEM
-         SetMFValue(theList,roffset++,EnvCreateSymbol(theEnv,EnvGetDefclassName(theEnv,(Defclass *) rptr->types[j])));
+         theList->theFields[roffset++].lexemeValue = EnvCreateSymbol(theEnv,EnvGetDefclassName(theEnv,(Defclass *) rptr->types[j]));
 #else
-         SetMFValue(theList,roffset++,EnvCreateSymbol(theEnv,TypeName(theEnv,ValueToInteger(rptr->types[j]))));
+         theList->theFields[roffset++].lexemeValue = EnvCreateSymbol(theEnv,TypeName(theEnv,ValueToInteger(rptr->types[j])));
 #endif
         }
      }

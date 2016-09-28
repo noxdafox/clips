@@ -146,9 +146,9 @@ void GetQueryFact(
   {
    QUERY_CORE *core;
 
-   core = FindQueryCore(theEnv,ValueToInteger(GetFirstArgument()->value));
+   core = FindQueryCore(theEnv,(int) GetFirstArgument()->integerValue->contents);
 
-   returnValue->factValue = core->solns[ValueToInteger(GetFirstArgument()->nextArg->value)];
+   returnValue->factValue = core->solns[(int) GetFirstArgument()->nextArg->integerValue->contents];
   }
 
 /***************************************************************************
@@ -172,8 +172,8 @@ void GetQueryFactSlot(
 
    returnValue->lexemeValue = theEnv->FalseSymbol;
 
-   core = FindQueryCore(theEnv,ValueToInteger(GetFirstArgument()->value));
-   theFact = core->solns[ValueToInteger(GetFirstArgument()->nextArg->value)];
+   core = FindQueryCore(theEnv,(int) GetFirstArgument()->integerValue->contents);
+   theFact = core->solns[(int) GetFirstArgument()->nextArg->integerValue->contents];
    EvaluateExpression(theEnv,GetFirstArgument()->nextArg->nextArg,&temp);
    if (temp.header->type != SYMBOL)
      {
@@ -341,7 +341,7 @@ void QueryFindFact(
       returnValue->end = rcnt - 1;
       for (i = 0 ; i < rcnt ; i++)
         {
-         SetMFValue(returnValue->value,i,FactQueryData(theEnv)->QueryCore->solns[i]);
+         returnValue->multifieldValue->theFields[i].value = FactQueryData(theEnv)->QueryCore->solns[i];
         }
      }
    else
@@ -404,7 +404,7 @@ void QueryFindAllFacts(
      {
       for (i = 0 , j = (unsigned) (returnValue->end + 1) ; i < rcnt ; i++ , j++)
         {
-         SetMFValue(returnValue->value,j,FactQueryData(theEnv)->QueryCore->soln_set->soln[i]);
+         returnValue->multifieldValue->theFields[j].value = FactQueryData(theEnv)->QueryCore->soln_set->soln[i];
         }
       returnValue->end = (long) j-1;
       PopQuerySoln(theEnv);
@@ -800,9 +800,9 @@ static QUERY_TEMPLATE *FormChain(
       end = val->end;
       for (i = val->begin ; i <= end ; i++)
         {
-         if (GetMFType(val->value,i) == SYMBOL)
+         if (val->multifieldValue->theFields[i].header->type == SYMBOL)
            {
-            templateName = ValueToString(GetMFValue(val->value,i));
+            templateName = val->multifieldValue->theFields[i].lexemeValue->contents;
 
             templatePtr = (Deftemplate *)
                           FindImportedConstruct(theEnv,"deftemplate",NULL,templateName,

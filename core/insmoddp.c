@@ -799,7 +799,7 @@ static void ModifyMsgHandlerSupport(
       insSlot = FindInstanceSlot(theEnv,ins,(CLIPSLexeme *) slotOverrides->supplementalInfo);
       if (insSlot == NULL)
         {
-         SlotExistError(theEnv,ValueToString(slotOverrides->supplementalInfo),"modify-instance");
+         SlotExistError(theEnv,((CLIPSLexeme *) slotOverrides->supplementalInfo)->contents,"modify-instance");
          EnvSetEvaluationError(theEnv,true);
          return;
         }
@@ -822,7 +822,7 @@ static void ModifyMsgHandlerSupport(
             temp.value = EnvCreateMultifield(theEnv,1L);
             temp.begin = 0;
             temp.end = 0;
-            SetMFValue(temp.value,0,slotOverrides->value);
+            temp.multifieldValue->theFields[0].value = slotOverrides->value;
             newval = &temp;
            }
          else
@@ -923,7 +923,7 @@ static void DuplicateMsgHandlerSupport(
       dstInsSlot = FindInstanceSlot(theEnv,dstins,(CLIPSLexeme *) slotOverrides->supplementalInfo);
       if (dstInsSlot == NULL)
         {
-         SlotExistError(theEnv,ValueToString(slotOverrides->supplementalInfo),
+         SlotExistError(theEnv,((CLIPSLexeme *) slotOverrides->supplementalInfo)->contents,
                         "duplicate-instance");
          goto DuplicateError;
         }
@@ -934,6 +934,7 @@ static void DuplicateMsgHandlerSupport(
            msgExp.value = slotOverrides->value;
          else
            msgExp.value = slotOverrides;
+
          msgExp.argList = NULL;
          msgExp.nextArg = NULL;
          if (! DirectMessage(theEnv,dstInsSlot->desc->overrideMessage,dstins,&temp,&msgExp))
@@ -946,7 +947,7 @@ static void DuplicateMsgHandlerSupport(
             temp.value = EnvCreateMultifield(theEnv,1L);
             temp.begin = 0;
             temp.end = 0;
-            SetMFValue(temp.value,0,slotOverrides->value);
+            temp.multifieldValue->theFields[0].value = slotOverrides->value;
             newval = &temp;
            }
          else

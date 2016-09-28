@@ -166,7 +166,7 @@ static struct patternNodeHeader *PlaceFactPattern(
    /* added (recall that the first field of any pattern must be a symbol). */
    /*======================================================================*/
 
-   deftemplateName = ValueToString(thePattern->right->bottom->value);
+   deftemplateName = thePattern->right->bottom->lexemeValue->contents;
 
    /*=====================================================*/
    /* Remove any slot tests that test only for existance. */

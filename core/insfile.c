@@ -706,7 +706,7 @@ static long InstancesSaveCommandParser(
       if ((classList != NULL) ? (classList->nextArg != NULL) : false)
         {
          if ((classList->type != SYMBOL) ? false :
-             (strcmp(ValueToString(classList->value),"inherit") == 0))
+             (strcmp(classList->lexemeValue->contents,"inherit") == 0))
            {
             inheritFlag = true;
             classList = classList->nextArg;
@@ -1075,7 +1075,8 @@ static void MarkSingleInstance(
       if (sp->desc->multiple)
         {
          for (j = 0 ; j < GetInstanceSlotLength(sp) ; j++)
-           MarkNeededAtom(theEnv,GetMFType(sp->value,j),GetMFValue(sp->value,j));
+           MarkNeededAtom(theEnv,((Multifield *) sp->value)->theFields[j].header->type,
+                                 ((Multifield *) sp->value)->theFields[j].value);
         }
       else
         MarkNeededAtom(theEnv,(int) sp->type,sp->value);
@@ -1200,7 +1201,8 @@ static void SaveSingleInstanceBinary(
       if (sp->desc->multiple)
         {
          for (j = 0 ; j < slotLen ; j++)
-           SaveAtomBinary(theEnv,GetMFType(sp->value,j),GetMFValue(sp->value,j),bsaveFP);
+           SaveAtomBinary(theEnv,((Multifield *) sp->value)->theFields[j].header->type,
+                                 ((Multifield *) sp->value)->theFields[j].value,bsaveFP);
         }
       else
         SaveAtomBinary(theEnv,(unsigned short) sp->type,sp->value,bsaveFP);
@@ -1597,7 +1599,7 @@ static void CreateSlotValue(
       returnValue->end = valueCount - 1;
       for (i = 0 ; i < valueCount ; i++)
         {
-         SetMFValue(returnValue->value,i,GetBinaryAtomValue(theEnv,&bsaValues[i-1]));
+         returnValue->multifieldValue->theFields[i].value = GetBinaryAtomValue(theEnv,&bsaValues[i-1]);
         }
      }
   }

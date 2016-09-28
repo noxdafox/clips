@@ -1110,7 +1110,7 @@ static void GetObjectValueGeneral(
      {
       if ((*insSlot)->desc->multiple)
         {
-         returnValue->value = GetMFValue((*insSlot)->value,field-1);
+         returnValue->value = ((Multifield *) (*insSlot)->value)->theFields[field-1].value;
         }
       else
         {

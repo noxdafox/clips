@@ -198,7 +198,7 @@ void EnvGetDefmoduleList(
          EnvSetMultifieldErrorValue(theEnv,returnValue);
          return;
         }
-      SetMFValue(theList,count,EnvCreateSymbol(theEnv,EnvGetDefmoduleName(theEnv,theConstruct)));
+      theList->theFields[count].lexemeValue = EnvCreateSymbol(theEnv,EnvGetDefmoduleName(theEnv,theConstruct));
      }
   }
 

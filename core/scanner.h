@@ -78,6 +78,8 @@ struct token
      {
       void *value;
       CLIPSLexeme *lexemeValue;
+      CLIPSFloat *floatValue;
+      CLIPSInteger *integerValue;
      };
    const char *printForm;
   };

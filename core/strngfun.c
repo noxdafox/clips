@@ -204,13 +204,13 @@ static void StrOrSymCatFunction(
            break;
 
          case FLOAT:
-           hashPtr = EnvCreateString(theEnv,FloatToString(theEnv,ValueToDouble(theArg.value)));
+           hashPtr = EnvCreateString(theEnv,FloatToString(theEnv,theArg.floatValue->contents));
            arrayOfStrings[i-1] = hashPtr;
            IncrementSymbolCount(hashPtr);
            break;
 
          case INTEGER:
-           hashPtr = EnvCreateString(theEnv,LongIntegerToString(theEnv,ValueToLong(theArg.value)));
+           hashPtr = EnvCreateString(theEnv,LongIntegerToString(theEnv,theArg.integerValue->contents));
            arrayOfStrings[i-1] = hashPtr;
            IncrementSymbolCount(hashPtr);
            break;

@@ -1020,7 +1020,7 @@ void GrabProcWildargs(
      {
       if (ProceduralPrimitiveData(theEnv)->ProcParamArray[i].header->type != MULTIFIELD)
         {
-         SetMFValue(returnValue->value,j,ProceduralPrimitiveData(theEnv)->ProcParamArray[i].value);
+         returnValue->multifieldValue->theFields[j].value = ProceduralPrimitiveData(theEnv)->ProcParamArray[i].value;
          j++;
         }
       else
@@ -1028,7 +1028,7 @@ void GrabProcWildargs(
          val = &ProceduralPrimitiveData(theEnv)->ProcParamArray[i];
          for (k = val->begin ; k <= val->end  ; k++ , j++)
            {
-            SetMFValue(returnValue->value,j,GetMFValue(val->value,k));
+            returnValue->multifieldValue->theFields[j].value = val->multifieldValue->theFields[k].value;
            }
         }
      }
@@ -1179,7 +1179,7 @@ static bool GetProcBind(
       PrintErrorID(theEnv,"PRCCODE",5,false);
       EnvSetEvaluationError(theEnv,true);
       EnvPrintRouter(theEnv,WERROR,"Variable ");
-      EnvPrintRouter(theEnv,WERROR,ValueToString(GetFirstArgument()->value));
+      EnvPrintRouter(theEnv,WERROR,GetFirstArgument()->lexemeValue->contents);
       if (ProceduralPrimitiveData(theEnv)->ProcUnboundErrFunc != NULL)
         {
          EnvPrintRouter(theEnv,WERROR," unbound in ");

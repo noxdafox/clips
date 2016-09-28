@@ -122,8 +122,8 @@
 void InitializeAtomTables(
   Environment *theEnv,
   CLIPSLexeme **symbolTable,
-  struct floatHashNode **floatTable,
-  struct integerHashNode **integerTable,
+  CLIPSFloat **floatTable,
+  CLIPSInteger **integerTable,
   struct bitMapHashNode **bitmapTable,
   struct externalAddressHashNode **externalAddressTable)
   {

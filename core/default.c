@@ -175,7 +175,7 @@ void DeriveDefaultFromConstraints(
      {
       if (constraints->minFields == NULL) minFields = 0;
       else if (constraints->minFields->value == SymbolData(theEnv)->NegativeInfinity) minFields = 0;
-      else minFields = (unsigned long) ValueToLong(constraints->minFields->value);
+      else minFields = (unsigned long) constraints->minFields->integerValue->contents;
 
       theDefault->begin = 0;
       theDefault->end = minFields - 1;
@@ -184,7 +184,7 @@ void DeriveDefaultFromConstraints(
 
       for (; minFields > 0; minFields--)
         {
-         SetMFValue(theDefault->value,minFields-1,theValue);
+         theDefault->multifieldValue->theFields[minFields-1].value = theValue;
         }
      }
    else
@@ -235,22 +235,22 @@ static void *FindDefaultValue(
       if (theConstraints->minValue->type == INTEGER)
         { return(theConstraints->minValue->value); }
       else if (theConstraints->minValue->type == FLOAT)
-        { return(EnvCreateInteger(theEnv,(long long) ValueToDouble(theConstraints->minValue->value))); }
+        { return(EnvCreateInteger(theEnv,(long long) theConstraints->minValue->floatValue->contents)); }
       else if (theConstraints->maxValue->type == INTEGER)
         { return(theConstraints->maxValue->value); }
       else if (theConstraints->maxValue->type == FLOAT)
-        { return(EnvCreateInteger(theEnv,(long long) ValueToDouble(theConstraints->maxValue->value))); }
+        { return(EnvCreateInteger(theEnv,(long long) theConstraints->maxValue->floatValue->contents)); }
      }
    else if (theType == FLOAT)
      {
       if (theConstraints->minValue->type == FLOAT)
         { return(theConstraints->minValue->value); }
       else if (theConstraints->minValue->type == INTEGER)
-        { return(EnvCreateFloat(theEnv,(double) ValueToLong(theConstraints->minValue->value))); }
+        { return(EnvCreateFloat(theEnv,(double) theConstraints->minValue->integerValue->contents)); }
       else if (theConstraints->maxValue->type == FLOAT)
         { return(theConstraints->maxValue->value); }
       else if (theConstraints->maxValue->type == INTEGER)
-        { return(EnvCreateFloat(theEnv,(double) ValueToLong(theConstraints->maxValue->value))); }
+        { return(EnvCreateFloat(theEnv,(double) theConstraints->maxValue->integerValue->contents)); }
      }
 
    /*======================================*/
@@ -316,9 +316,9 @@ struct expr *ParseDefault(
 
       if ((newItem->type == SF_VARIABLE) || (newItem->type == MF_VARIABLE))
         {
-         if (strcmp(ValueToString(newItem->value),"NONE") == 0)
+         if (strcmp(newItem->lexemeValue->contents,"NONE") == 0)
            { specialVarCode = 0; }
-         else if (strcmp(ValueToString(newItem->value),"DERIVE") == 0)
+         else if (strcmp(newItem->lexemeValue->contents,"DERIVE") == 0)
            { specialVarCode = 1; }
          else
            { specialVarCode = -1; }

@@ -1296,7 +1296,7 @@ static int EvaluateSalience(
   /* minimum and maximum allowed values.      */
   /*==========================================*/
 
-  salience = (int) ValueToLong(salienceValue.value);
+  salience = (int) salienceValue.integerValue->contents;
 
   if ((salience > MAX_DEFRULE_SALIENCE) || (salience < MIN_DEFRULE_SALIENCE))
     {

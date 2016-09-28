@@ -165,7 +165,7 @@ bool VariableAnalysis(
               {
                PrintErrorID(theEnv,"ANALYSIS",1,true);
                EnvPrintRouter(theEnv,WERROR,"Duplicate pattern-address ?");
-               EnvPrintRouter(theEnv,WERROR,ValueToString(patternPtr->value));
+               EnvPrintRouter(theEnv,WERROR,patternPtr->lexemeValue->contents);
                EnvPrintRouter(theEnv,WERROR," found in CE #");
                PrintLongInteger(theEnv,WERROR,(long) patternPtr->whichCE);
                EnvPrintRouter(theEnv,WERROR,".\n");
@@ -174,7 +174,7 @@ bool VariableAnalysis(
               {
                PrintErrorID(theEnv,"ANALYSIS",2,true);
                EnvPrintRouter(theEnv,WERROR,"Pattern-address ?");
-               EnvPrintRouter(theEnv,WERROR,ValueToString(patternPtr->value));
+               EnvPrintRouter(theEnv,WERROR,patternPtr->lexemeValue->contents);
                EnvPrintRouter(theEnv,WERROR," used in CE #");
                PrintLongInteger(theEnv,WERROR,(long) patternPtr->whichCE);
                EnvPrintRouter(theEnv,WERROR," was previously bound within a pattern CE.\n");
@@ -1001,7 +1001,7 @@ static struct lhsParseNode *CheckExpression(
         {
          int count;
 
-         if (FindImportedConstruct(theEnv,"defglobal",NULL,ValueToString(exprPtr->value),
+         if (FindImportedConstruct(theEnv,"defglobal",NULL,exprPtr->lexemeValue->contents,
                                    &count,true,NULL) == NULL)
            {
             VariableReferenceErrorMessage(theEnv,(CLIPSLexeme *) exprPtr->value,lastOne,
@@ -1069,7 +1069,7 @@ static void VariableReferenceErrorMessage(
    /*=================================*/
 
    EnvPrintRouter(theEnv,WERROR,"Variable ?");
-   EnvPrintRouter(theEnv,WERROR,ValueToString(theVariable));
+   EnvPrintRouter(theEnv,WERROR,theVariable->contents);
    EnvPrintRouter(theEnv,WERROR," ");
 
    /*=================================================*/
@@ -1129,7 +1129,7 @@ static void VariableMixingErrorMessage(
   {
    PrintErrorID(theEnv,"ANALYSIS",3,true);
    EnvPrintRouter(theEnv,WERROR,"Variable ?");
-   EnvPrintRouter(theEnv,WERROR,ValueToString(theVariable));
+   EnvPrintRouter(theEnv,WERROR,theVariable->contents);
    EnvPrintRouter(theEnv,WERROR," is used as both a single and multifield variable in the LHS\n");
   }
 

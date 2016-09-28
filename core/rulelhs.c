@@ -417,7 +417,7 @@ static void ParseSalience(
    /* Salience number must be in the range -10000 to 10000. */
    /*=======================================================*/
 
-   salience = (int) ValueToLong(salienceValue.value);
+   salience = (int) salienceValue.integerValue->contents;
 
    if ((salience > MAX_DEFRULE_SALIENCE) || (salience < MIN_DEFRULE_SALIENCE))
      {

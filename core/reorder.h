@@ -96,7 +96,11 @@ typedef enum
 struct lhsParseNode
   {
    ParseNodeType pnType;
-   void *value;
+   union
+     {
+      void *value;
+      CLIPSLexeme *lexemeValue;
+     };
    unsigned int negated : 1;
    unsigned int exists : 1;
    unsigned int existsNand : 1;

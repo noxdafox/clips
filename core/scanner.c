@@ -731,8 +731,8 @@ static void ScanNumber(
      {
       fvalue = atof(ScannerData(theEnv)->GlobalString);
       theToken->tknType = FLOAT_TOKEN;
-      theToken->value = EnvCreateFloat(theEnv,fvalue);
-      theToken->printForm = FloatToString(theEnv,ValueToDouble(theToken->value));
+      theToken->floatValue = EnvCreateFloat(theEnv,fvalue);
+      theToken->printForm = FloatToString(theEnv,theToken->floatValue->contents);
      }
    else
      {
@@ -748,8 +748,8 @@ static void ScanNumber(
          EnvPrintRouter(theEnv,WWARNING,"Over or underflow of long long integer.\n");
         }
       theToken->tknType = INTEGER_TOKEN;
-      theToken->value = EnvCreateInteger(theEnv,lvalue);
-      theToken->printForm = LongIntegerToString(theEnv,ValueToLong(theToken->value));
+      theToken->integerValue = EnvCreateInteger(theEnv,lvalue);
+      theToken->printForm = LongIntegerToString(theEnv,theToken->integerValue->contents);
      }
 
    return;

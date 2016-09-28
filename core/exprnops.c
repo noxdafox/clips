@@ -345,18 +345,18 @@ void PrintExpression(
          case SF_VARIABLE:
          case GBL_VARIABLE:
             EnvPrintRouter(theEnv,fileid,"?");
-            EnvPrintRouter(theEnv,fileid,ValueToString(theExpression->value));
+            EnvPrintRouter(theEnv,fileid,theExpression->lexemeValue->contents);
             break;
 
          case MF_VARIABLE:
          case MF_GBL_VARIABLE:
             EnvPrintRouter(theEnv,fileid,"$?");
-            EnvPrintRouter(theEnv,fileid,ValueToString(theExpression->value));
+            EnvPrintRouter(theEnv,fileid,theExpression->lexemeValue->contents);
             break;
 
          case FCALL:
            EnvPrintRouter(theEnv,fileid,"(");
-           EnvPrintRouter(theEnv,fileid,ValueToString(ExpressionFunctionCallName(theExpression)));
+           EnvPrintRouter(theEnv,fileid,ExpressionFunctionCallName(theExpression)->contents);
            if (theExpression->argList != NULL) { EnvPrintRouter(theEnv,fileid," "); }
            PrintExpression(theEnv,fileid,theExpression->argList);
            EnvPrintRouter(theEnv,fileid,")");

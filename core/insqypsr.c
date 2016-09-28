@@ -363,7 +363,7 @@ static bool ReplaceClassNameWithReference(
 
    if (theExp->type == SYMBOL)
      {
-      theClassName = ValueToString(theExp->value);
+      theClassName = theExp->lexemeValue->contents;
       theDefclass = LookupDefclassByMdlOrScope(theEnv,theClassName);
       if (theDefclass == NULL)
         {
@@ -459,7 +459,7 @@ static bool ParseQueryActionExpression(
   EXPRESSION *insQuerySetVars,
   struct token *queryInputToken)
   {
-   EXPRESSION *qaction,*tmpInsSetVars;
+   EXPRESSION *qaction, *tmpInsSetVars;
    struct BindInfo *oldBindList,*newBindList,*prev;
 
    oldBindList = GetParsedBindNames(theEnv);
@@ -496,7 +496,7 @@ static bool ParseQueryActionExpression(
             SetParsedBindNames(theEnv,oldBindList);
             PrintErrorID(theEnv,"INSQYPSR",3,false);
             EnvPrintRouter(theEnv,WERROR,"Cannot rebind instance-set member variable ");
-            EnvPrintRouter(theEnv,WERROR,ValueToString(tmpInsSetVars->value));
+            EnvPrintRouter(theEnv,WERROR,tmpInsSetVars->lexemeValue->contents);
             EnvPrintRouter(theEnv,WERROR," in function ");
             EnvPrintRouter(theEnv,WERROR,ExpressionFunctionCallName(top)->contents);
             EnvPrintRouter(theEnv,WERROR,".\n");
@@ -610,7 +610,7 @@ static void ReplaceSlotReference(
    EXPRESSION *eptr;
    struct token itkn;
 
-   str = ValueToString(theExp->value);
+   str = theExp->lexemeValue->contents;
    len =  strlen(str);
    if (len < 3)
      return;
@@ -620,8 +620,8 @@ static void ReplaceSlotReference(
         {
          eptr = vlist;
          posn = 0;
-         while (eptr && ((i != strlen(ValueToString(eptr->value))) ||
-                         strncmp(ValueToString(eptr->value),str,
+         while (eptr && ((i != strlen(eptr->lexemeValue->contents)) ||
+                         strncmp(eptr->lexemeValue->contents,str,
                                  (STD_SIZE) i)))
            {
             eptr = eptr->nextArg;

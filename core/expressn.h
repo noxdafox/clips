@@ -59,7 +59,13 @@ typedef struct expr EXPRESSION;
 struct expr
    {
     unsigned short type;
-    void *value;
+    union
+      {
+       void *value;
+       CLIPSLexeme *lexemeValue;
+       CLIPSFloat *floatValue;
+       CLIPSInteger *integerValue;
+      };
     struct expr *argList;
     struct expr *nextArg;
    };
