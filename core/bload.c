@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/16/14          */
+   /*               CLIPS Version 6.31  09/29/16          */
    /*                                                     */
    /*                    BLOAD MODULE                     */
    /*******************************************************/
@@ -29,6 +29,9 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*            Converted API macros to function calls.        */
+/*                                                           */
+/*      6.31: Data sizes written to binary files for         */
+/*            validation when loaded.                        */
 /*                                                           */
 /*************************************************************/
 
@@ -68,12 +71,18 @@
 globle void InitializeBloadData(
   void *theEnv)
   {
+   char sizeBuffer[20];
+   sprintf(sizeBuffer,"%2d%2d%2d%2d%2d",(int) sizeof(void *),(int) sizeof(double),
+                                        (int) sizeof(int),(int) sizeof(long),(int) sizeof(long long));
+
    AllocateEnvironmentData(theEnv,BLOAD_DATA,sizeof(struct bloadData),NULL);
    AddEnvironmentCleanupFunction(theEnv,"bload",DeallocateBloadData,-1500);
    EnvAddClearFunction(theEnv,"bload",(void (*)(void *)) ClearBload,10000);
 
    BloadData(theEnv)->BinaryPrefixID = "\1\2\3\4CLIPS";
-   BloadData(theEnv)->BinaryVersionID = "V6.30";
+   BloadData(theEnv)->BinaryVersionID = "V6.31";
+   BloadData(theEnv)->BinarySizes = genalloc(theEnv,strlen(sizeBuffer) + 1);
+   genstrcpy(BloadData(theEnv)->BinarySizes,sizeBuffer);
   }
   
 /************************************************/
@@ -87,6 +96,7 @@ static void DeallocateBloadData(
    DeallocateCallList(theEnv,BloadData(theEnv)->AfterBloadFunctions);
    DeallocateCallList(theEnv,BloadData(theEnv)->ClearBloadReadyFunctions);
    DeallocateCallList(theEnv,BloadData(theEnv)->AbortBloadFunctions);
+   genfree(theEnv,BloadData(theEnv)->BinarySizes,strlen(BloadData(theEnv)->BinarySizes) + 1);
   }
 
 /******************************/
@@ -101,6 +111,7 @@ globle int EnvBload(
    unsigned long space;
    int error;
    char IDbuffer[20];   
+   char sizesBuffer[20];
    char constructBuffer[CONSTRUCT_HEADER_SIZE];
    struct BinaryItem *biPtr;
    struct callFunctionItem *bfPtr;
@@ -140,6 +151,22 @@ globle int EnvBload(
       EnvPrintRouter(theEnv,WERROR," is an incompatible binary construct file.\n");
       GenCloseBinary(theEnv);
       return(FALSE);
+     }
+     
+   /*===========================================*/
+   /* Determine if it's a binary file using the */
+   /* correct size for pointers and numbers.    */
+   /*===========================================*/
+
+   GenReadBinary(theEnv,sizesBuffer,(unsigned long) strlen(BloadData(theEnv)->BinarySizes) + 1);
+   if (strcmp(sizesBuffer,BloadData(theEnv)->BinarySizes) != 0)
+     {
+      PrintErrorID(theEnv,"BLOAD",3,FALSE);
+      EnvPrintRouter(theEnv,WERROR,"File ");
+      EnvPrintRouter(theEnv,WERROR,fileName);
+      EnvPrintRouter(theEnv,WERROR," is an incompatible binary construct file.\n");
+      GenCloseBinary(theEnv);
+      return FALSE;
      }
      
    /*====================*/

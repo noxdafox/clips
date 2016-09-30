@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.30  08/22/14          */
+   /*               CLIPS Version 6.31  09/29/16          */
    /*                                                     */
    /*                     BSAVE MODULE                    */
    /*******************************************************/
@@ -34,6 +34,9 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*            Converted API macros to function calls.        */
+/*                                                           */
+/*      6.31: Data sizes written to binary files for         */
+/*            validation when loaded.                        */
 /*                                                           */
 /*************************************************************/
 
@@ -499,6 +502,7 @@ static void WriteBinaryHeader(
   {
    GenWrite((void *) BloadData(theEnv)->BinaryPrefixID,(unsigned long) strlen(BloadData(theEnv)->BinaryPrefixID) + 1,fp);
    GenWrite((void *) BloadData(theEnv)->BinaryVersionID,(unsigned long) strlen(BloadData(theEnv)->BinaryVersionID) + 1,fp);
+   GenWrite((void *) BloadData(theEnv)->BinarySizes,(unsigned long) strlen(BloadData(theEnv)->BinarySizes) + 1,fp);
   }
 
 /******************************************************/
