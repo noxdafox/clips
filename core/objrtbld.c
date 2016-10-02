@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  10/01/16             */
    /*                                                     */
    /*          OBJECT PATTERN MATCHER MODULE              */
    /*******************************************************/
@@ -149,7 +149,7 @@
    static void                    DeleteIntermediateClassBitMap(Environment *,CLASS_BITMAP *);
    static void                   *CopyClassBitMap(Environment *,void *);
    static void                    DeleteClassBitMap(Environment *,void *);
-   static void                    MarkBitMapClassesBusy(Environment *,BITMAP_HN *,int);
+   static void                    MarkBitMapClassesBusy(Environment *,CLIPSBitMap *,int);
    static bool                    EmptyClassBitMap(CLASS_BITMAP *);
    static bool                    IdenticalClassBitMap(CLASS_BITMAP *,CLASS_BITMAP *);
    static bool                    ProcessClassRestriction(Environment *,CLASS_BITMAP *,struct lhsParseNode **,bool);
@@ -160,8 +160,8 @@
    static struct lhsParseNode    *FilterObjectPattern(Environment *,struct patternParser *,
                                               struct lhsParseNode *,struct lhsParseNode **,
                                               struct lhsParseNode **,struct lhsParseNode **);
-   static BITMAP_HN              *FormSlotBitMap(Environment *,struct lhsParseNode *);
-   static struct lhsParseNode    *RemoveSlotExistenceTests(Environment *,struct lhsParseNode *,BITMAP_HN **);
+   static CLIPSBitMap            *FormSlotBitMap(Environment *,struct lhsParseNode *);
+   static struct lhsParseNode    *RemoveSlotExistenceTests(Environment *,struct lhsParseNode *,CLIPSBitMap **);
    static struct lhsParseNode    *CreateInitialObjectPattern(Environment *);
    static EXPRESSION             *ObjectMatchDelayParse(Environment *,EXPRESSION *,const char *);
    static void                    MarkObjectPtnIncrementalReset(Environment *,struct patternNodeHeader *,int);
@@ -529,7 +529,7 @@ static bool ReorderAndAnalyzeObjectPattern(
    /* ============================================
       Allocate a temporary set for marking classes
       ============================================ */
-   clsset = (CLASS_BITMAP *) ValueToBitMap(bitmap_node->userData);
+   clsset = (CLASS_BITMAP *) ((CLIPSBitMap *) bitmap_node->userData)->contents;
    tmpset = NewClassBitMap(theEnv,(int) clsset->maxid,0);
 
    /* ==========================================================
@@ -676,7 +676,7 @@ static struct patternNodeHeader *PlaceObjectPattern(
    OBJECT_PATTERN_NODE *nodeSlotGroup, *newNode;
    OBJECT_ALPHA_NODE *newAlphaNode;
    bool endSlot;
-   BITMAP_HN *newClassBitMap,*newSlotBitMap;
+   CLIPSBitMap *newClassBitMap,*newSlotBitMap;
    struct expr *rightHash;
 
    /*========================================================*/
@@ -992,7 +992,7 @@ static OBJECT_PATTERN_NODE *CreateNewObjectPatternNode(
      {
       if ((curNode->networkTest == NULL) ? false :
           ((curNode->networkTest->type != OBJ_PN_CONSTANT) ? false :
-           ((struct ObjectCmpPNConstant *) ValueToBitMap(curNode->networkTest->value))->pass))
+           ((struct ObjectCmpPNConstant *) curNode->networkTest->bitMapValue->contents)->pass))
         break;
       prvNode = curNode;
       curNode = curNode->rightNode;
@@ -1626,7 +1626,7 @@ static void DeleteClassBitMap(
   {
    if (gset == NULL)
      return;
-   DecrementBitMapCount(theEnv,(BITMAP_HN *) gset);
+   DecrementBitMapCount(theEnv,(CLIPSBitMap *) gset);
   }
 
 /***************************************************
@@ -1642,7 +1642,7 @@ static void DeleteClassBitMap(
  ***************************************************/
 static void MarkBitMapClassesBusy(
   Environment *theEnv,
-  BITMAP_HN *bmphn,
+  CLIPSBitMap *bmphn,
   int offset)
   {
    CLASS_BITMAP *bmp;
@@ -1655,7 +1655,7 @@ static void MarkBitMapClassesBusy(
       ==================================== */
    if (ConstructData(theEnv)->ClearInProgress)
      return;
-   bmp = (CLASS_BITMAP *) ValueToBitMap(bmphn);
+   bmp = (CLASS_BITMAP *) bmphn->contents;
    for (i = 0 ; i <= bmp->maxid ; i++)
      if (TestBitMap(bmp->map,i))
        {
@@ -2024,7 +2024,7 @@ static struct lhsParseNode *FilterObjectPattern(
                  for ids of slots used in pattern
   NOTES        : None
  ***************************************************/
-static BITMAP_HN *FormSlotBitMap(
+static CLIPSBitMap *FormSlotBitMap(
   Environment *theEnv,
   struct lhsParseNode *thePattern)
   {
@@ -2032,7 +2032,7 @@ static BITMAP_HN *FormSlotBitMap(
    int maxSlotID = -1;
    unsigned size;
    SLOT_BITMAP *bmp;
-   BITMAP_HN *hshBmp;
+   CLIPSBitMap *hshBmp;
 
    /* =======================================
       Find the largest slot id in the pattern
@@ -2065,7 +2065,7 @@ static BITMAP_HN *FormSlotBitMap(
       ============================================ */
    for (node = thePattern ; node != NULL ; node = node->right)
      SetBitMap(bmp->map,node->slotNumber);
-   hshBmp = (BITMAP_HN *) EnvAddBitMap(theEnv,bmp,SlotBitMapSize(bmp));
+   hshBmp = (CLIPSBitMap *) EnvAddBitMap(theEnv,bmp,SlotBitMapSize(bmp));
    rm(theEnv,bmp,size);
    return(hshBmp);
   }
@@ -2084,7 +2084,7 @@ static BITMAP_HN *FormSlotBitMap(
 static struct lhsParseNode *RemoveSlotExistenceTests(
   Environment *theEnv,
   struct lhsParseNode *thePattern,
-  BITMAP_HN **bmp)
+  CLIPSBitMap **bmp)
   {
    struct lhsParseNode *tempPattern = thePattern;
    struct lhsParseNode *lastPattern = NULL, *head = thePattern;
@@ -2096,7 +2096,7 @@ static struct lhsParseNode *RemoveSlotExistenceTests(
          ========================================== */
       if (tempPattern->userData != NULL)
         {
-         *bmp = (BITMAP_HN *) tempPattern->userData;
+         *bmp = (CLIPSBitMap *) tempPattern->userData;
          lastPattern = tempPattern;
          tempPattern = tempPattern->right;
         }

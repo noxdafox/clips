@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/25/16            */
+   /*             CLIPS Version 6.40  10/01/16            */
    /*                                                     */
    /*                 UTILITY HEADER FILE                 */
    /*******************************************************/
@@ -61,6 +61,9 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Added CLIPSBlockStart and CLIPSBlockEnd        */
+/*            functions for garbage collection blocks.       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_utility
@@ -70,6 +73,8 @@
 #define _H_utility
 
 #include "evaluatn.h"
+
+typedef struct clipsBlock CLIPSBlock;
 
 struct callFunctionItem
   {
@@ -109,6 +114,13 @@ struct garbageFrame
    struct ephemeron *ephemeralExternalAddressList;
    struct multifield *ListOfMultifields;
    struct multifield *LastMultifield;
+  };
+
+struct clipsBlock
+  {
+   struct garbageFrame newGarbageFrame;
+   struct garbageFrame *oldGarbageFrame;
+   CLIPSValue *result;
   };
 
 #define UTILITY_DATA 55
@@ -183,6 +195,8 @@ struct utilityData
    void                           CallCleanupFunctions(Environment *);
    void                           CallPeriodicTasks(Environment *);
    void                           CleanCurrentGarbageFrame(Environment *,CLIPSValue *);
+   void                           CLIPSBlockStart(Environment *,CLIPSBlock *);
+   void                           CLIPSBlockEnd(Environment *,CLIPSBlock *,CLIPSValue *);
 
 #endif /* _H_utility */
 

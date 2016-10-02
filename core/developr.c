@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  10/01/16             */
    /*                                                     */
    /*                   DEVELOPER MODULE                  */
    /*******************************************************/
@@ -124,7 +124,7 @@ void PrimitiveTablesInfoCommand(
    CLIPSLexeme **symbolArray, *symbolPtr;
    CLIPSFloat **floatArray, *floatPtr;
    CLIPSInteger **integerArray, *integerPtr;
-   BITMAP_HN **bitMapArray, *bitMapPtr;
+   CLIPSBitMap **bitMapArray, *bitMapPtr;
    unsigned long int symbolCount = 0, integerCount = 0;
    unsigned long int floatCount = 0, bitMapCount = 0;
 
@@ -496,7 +496,7 @@ static void PrintOPNLevel(
         {
          EnvPrintRouter(theEnv,WDISPLAY,indentbuf);
          EnvPrintRouter(theEnv,WDISPLAY,"     Classes:");
-         cbmp = (CLASS_BITMAP *) ValueToBitMap(alphaPtr->classbmp);
+         cbmp = (CLASS_BITMAP *) alphaPtr->classbmp->contents;
          for (i = 0 ; i <= cbmp->maxid ; i++)
            if (TestBitMap(cbmp->map,i))
              {
@@ -505,7 +505,7 @@ static void PrintOPNLevel(
              }
          if (alphaPtr->slotbmp != NULL)
            {
-            sbmp = (SLOT_BITMAP *) ValueToBitMap(alphaPtr->slotbmp);
+            sbmp = (SLOT_BITMAP *) alphaPtr->slotbmp->contents;
             EnvPrintRouter(theEnv,WDISPLAY," *** Slots:");
             for (i = NAME_ID ; i <= sbmp->maxid ; i++)
               if (TestBitMap(sbmp->map,i))

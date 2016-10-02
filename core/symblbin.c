@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  10/01/16             */
    /*                                                     */
    /*                 SYMBOL BSAVE MODULE                 */
    /*******************************************************/
@@ -85,7 +85,7 @@ void InitAtomicValueNeededFlags(
    CLIPSLexeme *symbolPtr, **symbolArray;
    CLIPSFloat *floatPtr, **floatArray;
    CLIPSInteger *integerPtr, **integerArray;
-   BITMAP_HN *bitMapPtr, **bitMapArray;
+   CLIPSBitMap *bitMapPtr, **bitMapArray;
 
    /*===============*/
    /* Mark symbols. */
@@ -345,8 +345,8 @@ static void WriteNeededBitMaps(
   FILE *fp)
   {
    int i;
-   BITMAP_HN **bitMapArray;
-   BITMAP_HN *bitMapPtr;
+   CLIPSBitMap **bitMapArray;
+   CLIPSBitMap *bitMapPtr;
    unsigned long int numberOfUsedBitMaps = 0, size = 0;
    unsigned short tempSize;
 
@@ -599,13 +599,13 @@ static void ReadNeededBitMaps(
    /* Store the bitMap pointers in the bitmap array. */
    /*================================================*/
 
-   SymbolData(theEnv)->BitMapArray = (BITMAP_HN **)
-                 gm3(theEnv,(long) sizeof(BITMAP_HN *) *  SymbolData(theEnv)->NumberOfBitMaps);
+   SymbolData(theEnv)->BitMapArray = (CLIPSBitMap **)
+                 gm3(theEnv,(long) sizeof(CLIPSBitMap *) * SymbolData(theEnv)->NumberOfBitMaps);
    bitMapPtr = bitMapStorage;
    for (i = 0; i < SymbolData(theEnv)->NumberOfBitMaps; i++)
      {
       tempSize = (unsigned short *) bitMapPtr;
-      SymbolData(theEnv)->BitMapArray[i] = (BITMAP_HN *) EnvAddBitMap(theEnv,bitMapPtr+sizeof(unsigned short),*tempSize);
+      SymbolData(theEnv)->BitMapArray[i] = (CLIPSBitMap *) EnvAddBitMap(theEnv,bitMapPtr+sizeof(unsigned short),*tempSize);
       bitMapPtr += *tempSize + sizeof(unsigned short);
      }
 
@@ -631,7 +631,7 @@ void FreeAtomicValueStorage(
    if (SymbolData(theEnv)->IntegerArray != NULL)
      rm3(theEnv,SymbolData(theEnv)->IntegerArray,(long) sizeof(CLIPSInteger *) * SymbolData(theEnv)->NumberOfIntegers);
    if (SymbolData(theEnv)->BitMapArray != NULL)
-     rm3(theEnv,SymbolData(theEnv)->BitMapArray,(long) sizeof(BITMAP_HN *) * SymbolData(theEnv)->NumberOfBitMaps);
+     rm3(theEnv,SymbolData(theEnv)->BitMapArray,(long) sizeof(CLIPSBitMap *) * SymbolData(theEnv)->NumberOfBitMaps);
 
    SymbolData(theEnv)->SymbolArray = NULL;
    SymbolData(theEnv)->FloatArray = NULL;

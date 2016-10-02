@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  10/01/16             */
    /*                                                     */
    /*                  I/O ROUTER MODULE                  */
    /*******************************************************/
@@ -123,7 +123,7 @@ static void DeallocateRouterData(
 /*******************************************/
 /* EnvPrintRouter: Generic print function. */
 /*******************************************/
-int EnvPrintRouter( // TBD Return value 0, 1, 2
+void EnvPrintRouter(
   Environment *theEnv,
   const char *logicalName,
   const char *str)
@@ -140,7 +140,7 @@ int EnvPrintRouter( // TBD Return value 0, 1, 2
    if (((char *) RouterData(theEnv)->FastSaveFilePtr) == logicalName)
      {
       fprintf(RouterData(theEnv)->FastSaveFilePtr,"%s",str);
-      return 2;
+      return;
      }
 
    /*==============================================*/
@@ -155,7 +155,7 @@ int EnvPrintRouter( // TBD Return value 0, 1, 2
         {
          SetEnvironmentRouterContext(theEnv,currentPtr->context);
          (*currentPtr->printCallback)(theEnv,logicalName,str);
-         return 1;
+         return;
         }
       currentPtr = currentPtr->next;
      }
@@ -164,8 +164,8 @@ int EnvPrintRouter( // TBD Return value 0, 1, 2
    /* The logical name was not recognized by any routers. */
    /*=====================================================*/
 
-   if (strcmp(WERROR,logicalName) != 0) UnrecognizedRouterMessage(theEnv,logicalName);
-   return 0;
+   if (strcmp(WERROR,logicalName) != 0)
+     { UnrecognizedRouterMessage(theEnv,logicalName); }
   }
 
 /**************************************************/
@@ -282,7 +282,7 @@ int EnvUngetcRouter(
            { DecrementLineCount(theEnv); }
         }
 
-      return(ungetc(ch,RouterData(theEnv)->FastLoadFilePtr));
+      return ungetc(ch,RouterData(theEnv)->FastLoadFilePtr);
      }
 
    /*===============================================*/
@@ -301,7 +301,7 @@ int EnvUngetcRouter(
         }
 
       if (RouterData(theEnv)->FastCharGetIndex > 0) RouterData(theEnv)->FastCharGetIndex--;
-      return(ch);
+      return ch;
      }
 
    /*===============================================*/
@@ -322,7 +322,7 @@ int EnvUngetcRouter(
            }
 
          SetEnvironmentRouterContext(theEnv,currentPtr->context);
-         return((*currentPtr->ungetcCallback)(theEnv,ch,logicalName));
+         return (*currentPtr->ungetcCallback)(theEnv,ch,logicalName);
         }
 
       currentPtr = currentPtr->next;
@@ -333,7 +333,7 @@ int EnvUngetcRouter(
    /*=====================================================*/
 
    UnrecognizedRouterMessage(theEnv,logicalName);
-   return(-1);
+   return -1;
   }
 
 /*****************************************************/
@@ -706,21 +706,19 @@ void UnrecognizedRouterMessage(
 /*****************************************/
 /* PrintNRouter: Generic print function. */
 /*****************************************/
-int PrintNRouter(
+void PrintNRouter(
   Environment *theEnv,
   const char *logicalName,
   const char *str,
   unsigned long length)
   {
    char *tempStr;
-   int rv;
 
    tempStr = (char *) genalloc(theEnv,length+1);
    genstrncpy(tempStr,str,length);
    tempStr[length] = 0;
-   rv = EnvPrintRouter(theEnv,logicalName,tempStr);
+   EnvPrintRouter(theEnv,logicalName,tempStr);
    genfree(theEnv,tempStr,length+1);
-   return(rv);
   }
 
 /************************/

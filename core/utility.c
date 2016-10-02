@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  10/01/16             */
    /*                                                     */
    /*                   UTILITY MODULE                    */
    /*******************************************************/
@@ -62,6 +62,9 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Added CLIPSBlockStart and CLIPSBlockEnd        */
+/*            functions for garbage collection blocks.       */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -117,7 +120,6 @@ void InitializeUtilityData(
 static void DeallocateUtilityData(
   Environment *theEnv)
   {
-   struct callFunctionItem *tmpPtr, *nextPtr;
    struct trackedMemory *tmpTM, *nextTM;
    struct garbageFrame *theGarbageFrame;
    struct ephemeron *edPtr, *nextEDPtr;
@@ -140,23 +142,8 @@ static void DeallocateUtilityData(
    /* Free callback functions. */
    /*==========================*/
 
-   tmpPtr = UtilityData(theEnv)->ListOfPeriodicFunctions;
-   while (tmpPtr != NULL)
-     {
-      nextPtr = tmpPtr->next;
-      genfree(theEnv,(void *) tmpPtr->name,strlen(tmpPtr->name) + 1);
-      rtn_struct(theEnv,callFunctionItem,tmpPtr);
-      tmpPtr = nextPtr;
-     }
-
-   tmpPtr = UtilityData(theEnv)->ListOfCleanupFunctions;
-   while (tmpPtr != NULL)
-     {
-      nextPtr = tmpPtr->next;
-      genfree(theEnv,(void *) tmpPtr->name,strlen(tmpPtr->name) + 1);
-      rtn_struct(theEnv,callFunctionItem,tmpPtr);
-      tmpPtr = nextPtr;
-     }
+   DeallocateCallList(theEnv,UtilityData(theEnv)->ListOfPeriodicFunctions);
+   DeallocateCallList(theEnv,UtilityData(theEnv)->ListOfCleanupFunctions);
 
    /*=========================================*/
    /* Free the ephemerons tracking data which */
@@ -297,6 +284,30 @@ void RestorePriorGarbageFrame(
 
    if (returnValue != NULL)
      { EphemerateValue(theEnv,returnValue->value); }
+  }
+
+/********************/
+/* CLIPSBlockStart: */
+/********************/
+void CLIPSBlockStart(
+  Environment *theEnv,
+  CLIPSBlock *theBlock)
+  {
+   theBlock->oldGarbageFrame = UtilityData(theEnv)->CurrentGarbageFrame;
+   memset(&theBlock->newGarbageFrame,0,sizeof(struct garbageFrame));
+   theBlock->newGarbageFrame.priorFrame = theBlock->oldGarbageFrame;
+   UtilityData(theEnv)->CurrentGarbageFrame = &theBlock->newGarbageFrame;
+  }
+
+/******************/
+/* CLIPSBlockEnd: */
+/******************/
+void CLIPSBlockEnd(
+  Environment *theEnv,
+  CLIPSBlock *theBlock,
+  CLIPSValue *rv)
+  {
+   RestorePriorGarbageFrame(theEnv,&theBlock->newGarbageFrame,theBlock->oldGarbageFrame,rv);
   }
 
 /*************************/
@@ -1056,7 +1067,7 @@ unsigned long ItemHashValue(
 #endif
 
       case EXTERNAL_ADDRESS:
-        return(HashExternalAddress(ValueToExternalAddress(theValue),theRange));
+        return HashExternalAddress(((CLIPSExternalAddress *) theValue)->contents,theRange);
 
 #if OBJECT_SYSTEM
       case INSTANCE_ADDRESS:

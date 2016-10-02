@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  10/01/16             */
    /*                                                     */
    /*             EXPRESSION BSAVE/BLOAD MODULE           */
    /*******************************************************/
@@ -225,7 +225,7 @@ static void UpdateExpression(
         if (EvaluationData(theEnv)->PrimitivesArray[bexp->type]->bitMap)
           {
            ExpressionData(theEnv)->ExpressionArray[obji].value = SymbolData(theEnv)->BitMapArray[bexp->value];
-           IncrementBitMapCount((BITMAP_HN *) ExpressionData(theEnv)->ExpressionArray[obji].value);
+           IncrementBitMapCount((CLIPSBitMap *) ExpressionData(theEnv)->ExpressionArray[obji].value);
           }
         break;
      }
@@ -292,7 +292,7 @@ void ClearBloadedExpressions(
          default:
            if (EvaluationData(theEnv)->PrimitivesArray[ExpressionData(theEnv)->ExpressionArray[i].type] == NULL) break;
            if (EvaluationData(theEnv)->PrimitivesArray[ExpressionData(theEnv)->ExpressionArray[i].type]->bitMap)
-             { DecrementBitMapCount(theEnv,(BITMAP_HN *) ExpressionData(theEnv)->ExpressionArray[i].value); }
+             { DecrementBitMapCount(theEnv,(CLIPSBitMap *) ExpressionData(theEnv)->ExpressionArray[i].value); }
            break;
         }
      }
@@ -502,7 +502,7 @@ void BsaveExpression(
          default:
            if (EvaluationData(theEnv)->PrimitivesArray[testPtr->type] == NULL) break;
            if (EvaluationData(theEnv)->PrimitivesArray[testPtr->type]->bitMap)
-             { newTest.value = (long) ((BITMAP_HN *) testPtr->value)->bucket; }
+             { newTest.value = (long) ((CLIPSBitMap *) testPtr->value)->bucket; }
            break;
         }
 

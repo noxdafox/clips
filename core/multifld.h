@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/25/16            */
+   /*             CLIPS Version 6.40  10/01/16            */
    /*                                                     */
    /*                MULTIFIELD HEADER FILE               */
    /*******************************************************/
@@ -82,6 +82,7 @@ struct field
       CLIPSVoid *voidValue;
       Fact *factValue;
       Instance *instanceValue;
+      CLIPSExternalAddress *externalAddressValue;
      };
   };
 

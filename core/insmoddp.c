@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  09/05/16             */
+   /*            CLIPS Version 6.40  10/01/16             */
    /*                                                     */
    /*        INSTANCE MODIFY AND DUPLICATE MODULE         */
    /*******************************************************/
@@ -787,8 +787,7 @@ static void ModifyMsgHandlerSupport(
       field - and the next fields are links
       ======================================= */
 
-   //slotOverrides = (CLIPSValue *) GetNthMessageArgument(theEnv,1)->value;
-   slotOverrides = (CLIPSValue *) ((EXTERNAL_ADDRESS_HN *) GetNthMessageArgument(theEnv,1)->value)->externalAddress;
+   slotOverrides = (CLIPSValue *) ((CLIPSExternalAddress *) GetNthMessageArgument(theEnv,1)->value)->contents;
 
    while (slotOverrides != NULL)
      {
@@ -882,8 +881,7 @@ static void DuplicateMsgHandlerSupport(
       ================================== */
    srcins = GetActiveInstance(theEnv);
    newName = GetNthMessageArgument(theEnv,1)->lexemeValue;
-   //slotOverrides = (CLIPSValue *) GetNthMessageArgument(theEnv,2)->value;
-   slotOverrides = (CLIPSValue *) ((EXTERNAL_ADDRESS_HN *) GetNthMessageArgument(theEnv,2)->value)->externalAddress;
+   slotOverrides = (CLIPSValue *) ((CLIPSExternalAddress *) GetNthMessageArgument(theEnv,2)->value)->contents;
    if (srcins->garbage)
      {
       StaleInstanceAddress(theEnv,"duplicate-instance",0);

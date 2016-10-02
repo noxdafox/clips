@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  10/01/16            */
    /*                                                     */
    /*             DEFMODULE PARSER HEADER FILE            */
    /*******************************************************/
@@ -57,7 +57,6 @@ struct portConstructItem
    struct portConstructItem *next;
   };
 
-   long                           GetNumberOfDefmodules(Environment *);
    void                           SetNumberOfDefmodules(Environment *,long);
    void                           AddAfterModuleDefinedFunction(Environment *,const char *,void (*)(Environment *),int);
    bool                           ParseDefmodule(Environment *,const char *);

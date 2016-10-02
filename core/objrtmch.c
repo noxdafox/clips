@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  10/01/16             */
    /*                                                     */
    /*          OBJECT PATTERN MATCHER MODULE              */
    /*******************************************************/
@@ -686,7 +686,7 @@ static void MarkObjectPatternNetwork(
          Check the class bitmap to see if the pattern
          pattern is applicable to the object at all
          ============================================ */
-      clsset = (CLASS_BITMAP *) ValueToBitMap(alphaPtr->classbmp);
+      clsset = (CLASS_BITMAP *) alphaPtr->classbmp->contents;
 
       if ((id > (unsigned) clsset->maxid) ? false : TestBitMap(clsset->map,id))
         {
@@ -716,7 +716,7 @@ static void MarkObjectPatternNetwork(
          else if (alphaPtr->slotbmp != NULL)
            {
            if (CompareSlotBitMaps(slotNameIDs,
-                  (SLOT_BITMAP *) ValueToBitMap(alphaPtr->slotbmp)))
+                  (SLOT_BITMAP *) alphaPtr->slotbmp->contents))
               {
                alphaPtr->matchTimeTag = ObjectReteData(theEnv)->CurrentObjectMatchTimeTag;
                for (upper = alphaPtr->patternNode ; upper != NULL ; upper = upper->lastLevel)
@@ -1204,7 +1204,7 @@ static bool EvaluateObjectPatternTest(
       if (rv)
         {
          if (((struct ObjectCmpPNConstant *)
-                 ValueToBitMap(networkTest->value))->pass)
+                 networkTest->bitMapValue->contents)->pass)
            patternNode->blocked = true;
          return true;
         }
@@ -1379,7 +1379,7 @@ static void ObjectRetractAction(
          if (alphaPtr->slotbmp != NULL)
            {
            if (CompareSlotBitMaps(slotNameIDs,
-                  (SLOT_BITMAP *) ValueToBitMap(alphaPtr->slotbmp)))
+                  (SLOT_BITMAP *) alphaPtr->slotbmp->contents))
               {
                ins->busy--;
                if (prvMatch == NULL)

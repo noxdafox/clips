@@ -295,7 +295,7 @@ void PrintJavaAddress(
 
    EnvPrintRouter(theEnv,logicalName,"<Pointer-");
         
-   theObject = (jobject) ValueToExternalAddress(theValue);
+   theObject = (jobject) ((CLIPSExternalAddress *) theValue)->contents;
    
    if (theObject != NULL)
      {
@@ -682,7 +682,7 @@ bool CallJavaMethod(
 
    if (target->header->type == EXTERNAL_ADDRESS)
      {
-      theObject = ((struct externalAddressHashNode *) target->value)->externalAddress;
+      theObject = ((CLIPSExternalAddress *) target->value)->contents;
 
       /*=========================================*/
       /* Determine the class of the java object. */

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  10/01/16             */
    /*                                                     */
    /*                  CLASS PARSER MODULE                */
    /*******************************************************/
@@ -629,7 +629,7 @@ static void AddClass(
       Create a bitmap indicating whether this
       class is in scope or not for every module
       ========================================= */
-   cls->scopeMap = (BITMAP_HN *) CreateClassScopeMap(theEnv,cls);
+   cls->scopeMap = (CLIPSBitMap *) CreateClassScopeMap(theEnv,cls);
 
 #endif
 
@@ -894,7 +894,7 @@ void *CreateClassScopeMap(
         SetBitMap(scopeMap,moduleID);
      }
    RestoreCurrentModule(theEnv);
-   theBitMap = (BITMAP_HN *) EnvAddBitMap(theEnv,scopeMap,scopeMapSize);
+   theBitMap = (CLIPSBitMap *) EnvAddBitMap(theEnv,scopeMap,scopeMapSize);
    IncrementBitMapCount(theBitMap);
    rm(theEnv,scopeMap,scopeMapSize);
    return(theBitMap);

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  10/01/16             */
    /*                                                     */
    /*               INSTANCE COMMAND MODULE               */
    /*******************************************************/
@@ -148,11 +148,11 @@ void SetupInstances(
                                                      NULL,NULL,NULL,NULL,NULL
                                                    },
 #if DEFRULE_CONSTRUCT && OBJECT_SYSTEM
-                                                  (void (*)(void *,void *)) DecrementObjectBasisCount,
-                                                  (void (*)(void *,void *)) IncrementObjectBasisCount,
-                                                  (void (*)(void *,void *)) MatchObjectFunction,
-                                                  (bool (*)(void *,void *)) NetworkSynchronized,
-                                                  (bool (*)(void *,void *)) InstanceIsDeleted
+                                                  (void (*)(Environment *,void *)) DecrementObjectBasisCount,
+                                                  (void (*)(Environment *,void *)) IncrementObjectBasisCount,
+                                                  (void (*)(Environment *,void *)) MatchObjectFunction,
+                                                  (bool (*)(Environment *,void *)) NetworkSynchronized,
+                                                  (bool (*)(Environment *,void *)) InstanceIsDeleted
 #else
                                                   NULL,NULL,NULL,NULL,NULL
 #endif

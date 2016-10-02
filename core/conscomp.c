@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/25/16            */
+   /*             CLIPS Version 6.40  10/01/16            */
    /*                                                     */
    /*              CONSTRUCT COMPILER MODULE              */
    /*******************************************************/
@@ -629,7 +629,7 @@ static bool FunctionsToCode(
 
       PrintSymbolReference(theEnv,fp,fctnPtr->restrictions);
 
-      fprintf(fp,",%d,%d,0,0,0,",fctnPtr->minArgs,fctnPtr->maxArgs);
+      fprintf(fp,",%d,%d,0,0,0,0,",fctnPtr->minArgs,fctnPtr->maxArgs);
 
       PrintFunctionReference(theEnv,fp,fctnPtr->next);
 
@@ -1038,7 +1038,7 @@ static void DumpExpression(
            if (EvaluationData(theEnv)->PrimitivesArray[exprPtr->type] == NULL)
              { fprintf(ConstructCompilerData(theEnv)->ExpressionFP,"NULL"); }
            else if (EvaluationData(theEnv)->PrimitivesArray[exprPtr->type]->bitMap)
-             { PrintBitMapReference(theEnv,ConstructCompilerData(theEnv)->ExpressionFP,(BITMAP_HN *) exprPtr->value); }
+             { PrintBitMapReference(theEnv,ConstructCompilerData(theEnv)->ExpressionFP,(CLIPSBitMap *) exprPtr->value); }
            else
              { fprintf(ConstructCompilerData(theEnv)->ExpressionFP,"NULL"); }
            break;

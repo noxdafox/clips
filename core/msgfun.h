@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  10/01/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -77,7 +77,7 @@ typedef struct handlerSlotReference
    void             PrintNoHandlerError(Environment *,const char *);
    bool             CheckHandlerArgCount(Environment *);
    void             SlotAccessViolationError(Environment *,const char *,Instance *,Defclass *);
-   void             SlotVisibilityViolationError(Environment *,SlotDescriptor *,Defclass *);
+   void             SlotVisibilityViolationError(Environment *,SlotDescriptor *,Defclass *,bool);
 
 #if ! RUN_TIME
    void             NewSystemHandler(Environment *,const char *,const char *,const char *,int);

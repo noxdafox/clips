@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  10/01/16            */
    /*                                                     */
    /*               EXPRESSION HEADER FILE                */
    /*******************************************************/
@@ -65,6 +65,7 @@ struct expr
        CLIPSLexeme *lexemeValue;
        CLIPSFloat *floatValue;
        CLIPSInteger *integerValue;
+       CLIPSBitMap *bitMapValue;
       };
     struct expr *argList;
     struct expr *nextArg;

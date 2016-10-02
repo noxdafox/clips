@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  10/01/16             */
    /*                                                     */
    /*    INFERENCE ENGINE OBJECT ACCESS ROUTINES MODULE   */
    /*******************************************************/
@@ -335,7 +335,7 @@ bool ObjectCmpConstantFunction(
    int rv;
    Multifield *theSegment;
 
-   hack = (struct ObjectCmpPNConstant *) ValueToBitMap(theValue);
+   hack = (struct ObjectCmpPNConstant *) ((CLIPSBitMap *) theValue)->contents;
    if (hack->general)
      {
       EvaluateExpression(theEnv,GetFirstArgument(),&theVar);
@@ -386,7 +386,7 @@ static void PrintObjectGetVarJN1(
 #if DEVELOPER
    struct ObjectMatchVar1 *hack;
 
-   hack = (struct ObjectMatchVar1 *) ValueToBitMap(theValue);
+   hack = (struct ObjectMatchVar1 *) ((CLIPSBitMap *) theValue)->contents;
 
    if (hack->objectAddress)
      {
@@ -428,7 +428,7 @@ static bool ObjectGetVarJNFunction1(
    Instance *theInstance;
    struct multifieldMarker *theMarks;
 
-   hack = (struct ObjectMatchVar1 *) ValueToBitMap(theValue);
+   hack = (struct ObjectMatchVar1 *) ((CLIPSBitMap *) theValue)->contents;
    GetPatternObjectAndMarks(theEnv,((int) hack->whichPattern),hack->lhs,hack->rhs,&theInstance,&theMarks);
    GetObjectValueGeneral(theEnv,theResult,theInstance,theMarks,hack);
    return true;
@@ -442,7 +442,7 @@ static void PrintObjectGetVarJN2(
 #if DEVELOPER
    struct ObjectMatchVar2 *hack;
 
-   hack = (struct ObjectMatchVar2 *) ValueToBitMap(theValue);
+   hack = (struct ObjectMatchVar2 *) ((CLIPSBitMap *) theValue)->contents;
    EnvPrintRouter(theEnv,logicalName,"(obj-slot-quick-var ");
    PrintLongInteger(theEnv,logicalName,(long long) hack->whichPattern);
    EnvPrintRouter(theEnv,logicalName," ");
@@ -476,7 +476,7 @@ static bool ObjectGetVarJNFunction2(
    Instance *theInstance;
    struct multifieldMarker *theMarks;
 
-   hack = (struct ObjectMatchVar2 *) ValueToBitMap(theValue);
+   hack = (struct ObjectMatchVar2 *) ((CLIPSBitMap *) theValue)->contents;
    GetPatternObjectAndMarks(theEnv,((int) hack->whichPattern),hack->lhs,hack->rhs,&theInstance,&theMarks);
    GetObjectValueSimple(theEnv,theResult,theInstance,hack);
    return true;
@@ -490,7 +490,7 @@ static void PrintObjectGetVarPN1(
 #if DEVELOPER
    struct ObjectMatchVar1 *hack;
 
-   hack = (struct ObjectMatchVar1 *) ValueToBitMap(theValue);
+   hack = (struct ObjectMatchVar1 *) ((CLIPSBitMap *) theValue)->contents;
 
    if (hack->objectAddress)
      EnvPrintRouter(theEnv,logicalName,"(ptn-obj-ptr ");
@@ -523,7 +523,7 @@ static bool ObjectGetVarPNFunction1(
   {
    struct ObjectMatchVar1 *hack;
 
-   hack = (struct ObjectMatchVar1 *) ValueToBitMap(theValue);
+   hack = (struct ObjectMatchVar1 *) ((CLIPSBitMap *) theValue)->contents;
    GetObjectValueGeneral(theEnv,theResult,ObjectReteData(theEnv)->CurrentPatternObject,ObjectReteData(theEnv)->CurrentPatternObjectMarks,hack);
    return true;
   }
@@ -536,7 +536,7 @@ static void PrintObjectGetVarPN2(
 #if DEVELOPER
    struct ObjectMatchVar2 *hack;
 
-   hack = (struct ObjectMatchVar2 *) ValueToBitMap(theValue);
+   hack = (struct ObjectMatchVar2 *) ((CLIPSBitMap *) theValue)->contents;
    EnvPrintRouter(theEnv,logicalName,"(ptn-obj-slot-quick-var ");
    EnvPrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->whichSlot)->contents);
    if (hack->fromBeginning)
@@ -566,7 +566,7 @@ static bool ObjectGetVarPNFunction2(
   {
    struct ObjectMatchVar2 *hack;
 
-   hack = (struct ObjectMatchVar2 *) ValueToBitMap(theValue);
+   hack = (struct ObjectMatchVar2 *) ((CLIPSBitMap *) theValue)->contents;
    GetObjectValueSimple(theEnv,theResult,ObjectReteData(theEnv)->CurrentPatternObject,hack);
    return true;
   }
@@ -579,7 +579,7 @@ static void PrintObjectCmpConstant(
 #if DEVELOPER
    struct ObjectCmpPNConstant *hack;
 
-   hack = (struct ObjectCmpPNConstant *) ValueToBitMap(theValue);
+   hack = (struct ObjectCmpPNConstant *) ((CLIPSBitMap *) theValue)->contents;
 
    EnvPrintRouter(theEnv,logicalName,"(obj-const ");
    EnvPrintRouter(theEnv,logicalName,hack->pass ? "p " : "n ");
@@ -610,7 +610,7 @@ static void PrintSlotLengthTest(
 #if DEVELOPER
    struct ObjectMatchLength *hack;
 
-   hack = (struct ObjectMatchLength *) ValueToBitMap(theValue);
+   hack = (struct ObjectMatchLength *) ((CLIPSBitMap *) theValue)->contents;
 
    EnvPrintRouter(theEnv,logicalName,"(obj-slot-len ");
    if (hack->exactly)
@@ -636,7 +636,7 @@ static bool SlotLengthTestFunction(
    struct ObjectMatchLength *hack;
 
    theResult->value = theEnv->FalseSymbol;
-   hack = (struct ObjectMatchLength *) ValueToBitMap(theValue);
+   hack = (struct ObjectMatchLength *) ((CLIPSBitMap *) theValue)->contents;
    if (ObjectReteData(theEnv)->CurrentObjectSlotLength < hack->minLength)
      return false;
    if (hack->exactly && (ObjectReteData(theEnv)->CurrentObjectSlotLength > hack->minLength))
@@ -653,7 +653,7 @@ static void PrintPNSimpleCompareFunction1(
 #if DEVELOPER
    struct ObjectCmpPNSingleSlotVars1 *hack;
 
-   hack = (struct ObjectCmpPNSingleSlotVars1 *) ValueToBitMap(theValue);
+   hack = (struct ObjectCmpPNSingleSlotVars1 *) ((CLIPSBitMap *) theValue)->contents;
 
    EnvPrintRouter(theEnv,logicalName,"(pslot-cmp1 ");
    EnvPrintRouter(theEnv,logicalName,hack->pass ? "p " : "n ");
@@ -679,7 +679,7 @@ static bool PNSimpleCompareFunction1(
    INSTANCE_SLOT *is1,*is2;
    int rv;
 
-   hack = (struct ObjectCmpPNSingleSlotVars1 *) ValueToBitMap(theValue);
+   hack = (struct ObjectCmpPNSingleSlotVars1 *) ((CLIPSBitMap *) theValue)->contents;
    is1 = GetInsSlot(ObjectReteData(theEnv)->CurrentPatternObject,hack->firstSlot);
    is2 = GetInsSlot(ObjectReteData(theEnv)->CurrentPatternObject,hack->secondSlot);
    if (is1->type != is2->type)
@@ -700,7 +700,7 @@ static void PrintPNSimpleCompareFunction2(
 #if DEVELOPER
    struct ObjectCmpPNSingleSlotVars2 *hack;
 
-   hack = (struct ObjectCmpPNSingleSlotVars2 *) ValueToBitMap(theValue);
+   hack = (struct ObjectCmpPNSingleSlotVars2 *) ((CLIPSBitMap *) theValue)->contents;
 
    EnvPrintRouter(theEnv,logicalName,"(pslot-cmp2 ");
    EnvPrintRouter(theEnv,logicalName,hack->pass ? "p " : "n ");
@@ -729,7 +729,7 @@ static bool PNSimpleCompareFunction2(
    FIELD f1;
    INSTANCE_SLOT *is2;
 
-   hack = (struct ObjectCmpPNSingleSlotVars2 *) ValueToBitMap(theValue);
+   hack = (struct ObjectCmpPNSingleSlotVars2 *) ((CLIPSBitMap *) theValue)->contents;
    GetInsMultiSlotField(&f1,ObjectReteData(theEnv)->CurrentPatternObject,(unsigned) hack->firstSlot,
                              (unsigned) hack->fromBeginning,(unsigned) hack->offset);
    is2 = GetInsSlot(ObjectReteData(theEnv)->CurrentPatternObject,hack->secondSlot);
@@ -749,7 +749,7 @@ static void PrintPNSimpleCompareFunction3(
 #if DEVELOPER
    struct ObjectCmpPNSingleSlotVars3 *hack;
 
-   hack = (struct ObjectCmpPNSingleSlotVars3 *) ValueToBitMap(theValue);
+   hack = (struct ObjectCmpPNSingleSlotVars3 *) ((CLIPSBitMap *) theValue)->contents;
 
    EnvPrintRouter(theEnv,logicalName,"(pslot-cmp3 ");
    EnvPrintRouter(theEnv,logicalName,hack->pass ? "p " : "n ");
@@ -779,7 +779,7 @@ static bool PNSimpleCompareFunction3(
    int rv;
    FIELD f1,f2;
 
-   hack = (struct ObjectCmpPNSingleSlotVars3 *) ValueToBitMap(theValue);
+   hack = (struct ObjectCmpPNSingleSlotVars3 *) ((CLIPSBitMap *) theValue)->contents;
    GetInsMultiSlotField(&f1,ObjectReteData(theEnv)->CurrentPatternObject,(unsigned) hack->firstSlot,
                         (unsigned) hack->firstFromBeginning,(unsigned) hack->firstOffset);
    GetInsMultiSlotField(&f2,ObjectReteData(theEnv)->CurrentPatternObject,(unsigned) hack->secondSlot,
@@ -800,7 +800,7 @@ static void PrintJNSimpleCompareFunction1(
 #if DEVELOPER
    struct ObjectCmpJoinSingleSlotVars1 *hack;
 
-   hack = (struct ObjectCmpJoinSingleSlotVars1 *) ValueToBitMap(theValue);
+   hack = (struct ObjectCmpJoinSingleSlotVars1 *) ((CLIPSBitMap *) theValue)->contents;
 
    EnvPrintRouter(theEnv,logicalName,"(jslot-cmp1 ");
    EnvPrintRouter(theEnv,logicalName,hack->pass ? "p " : "n ");
@@ -832,7 +832,7 @@ static bool JNSimpleCompareFunction1(
    int rv;
    INSTANCE_SLOT *is1,*is2;
 
-   hack = (struct ObjectCmpJoinSingleSlotVars1 *) ValueToBitMap(theValue);
+   hack = (struct ObjectCmpJoinSingleSlotVars1 *) ((CLIPSBitMap *) theValue)->contents;
    GetPatternObjectAndMarks(theEnv,((int) hack->firstPattern),hack->firstPatternLHS,hack->firstPatternRHS,&ins1,&theMarks);
    is1 = GetInsSlot(ins1,hack->firstSlot);
    GetPatternObjectAndMarks(theEnv,((int) hack->secondPattern),hack->secondPatternLHS,hack->secondPatternRHS,&ins2,&theMarks);
@@ -855,7 +855,7 @@ static void PrintJNSimpleCompareFunction2(
 #if DEVELOPER
    struct ObjectCmpJoinSingleSlotVars2 *hack;
 
-   hack = (struct ObjectCmpJoinSingleSlotVars2 *) ValueToBitMap(theValue);
+   hack = (struct ObjectCmpJoinSingleSlotVars2 *) ((CLIPSBitMap *) theValue)->contents;
 
    EnvPrintRouter(theEnv,logicalName,"(jslot-cmp2 ");
    EnvPrintRouter(theEnv,logicalName,hack->pass ? "p " : "n ");
@@ -890,7 +890,7 @@ static bool JNSimpleCompareFunction2(
    FIELD f1;
    INSTANCE_SLOT *is2;
 
-   hack = (struct ObjectCmpJoinSingleSlotVars2 *) ValueToBitMap(theValue);
+   hack = (struct ObjectCmpJoinSingleSlotVars2 *) ((CLIPSBitMap *) theValue)->contents;
    GetPatternObjectAndMarks(theEnv,((int) hack->firstPattern),hack->firstPatternLHS,hack->firstPatternRHS,&ins1,&theMarks);
    GetInsMultiSlotField(&f1,ins1,(unsigned) hack->firstSlot,
                         (unsigned) hack->fromBeginning,(unsigned) hack->offset);
@@ -912,7 +912,7 @@ static void PrintJNSimpleCompareFunction3(
 #if DEVELOPER
    struct ObjectCmpJoinSingleSlotVars3 *hack;
 
-   hack = (struct ObjectCmpJoinSingleSlotVars3 *) ValueToBitMap(theValue);
+   hack = (struct ObjectCmpJoinSingleSlotVars3 *) ((CLIPSBitMap *) theValue)->contents;
 
    EnvPrintRouter(theEnv,logicalName,"(jslot-cmp3 ");
    EnvPrintRouter(theEnv,logicalName,hack->pass ? "p " : "n ");
@@ -948,7 +948,7 @@ static bool JNSimpleCompareFunction3(
    int rv;
    FIELD f1,f2;
 
-   hack = (struct ObjectCmpJoinSingleSlotVars3 *) ValueToBitMap(theValue);
+   hack = (struct ObjectCmpJoinSingleSlotVars3 *) ((CLIPSBitMap *) theValue)->contents;
    GetPatternObjectAndMarks(theEnv,((int) hack->firstPattern),hack->firstPatternLHS,hack->firstPatternRHS,&ins1,&theMarks);
    GetInsMultiSlotField(&f1,ins1,(unsigned) hack->firstSlot,
                         (unsigned) hack->firstFromBeginning,

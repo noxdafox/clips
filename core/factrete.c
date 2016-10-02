@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  10/01/16             */
    /*                                                     */
    /*          FACT RETE ACCESS FUNCTIONS MODULE          */
    /*******************************************************/
@@ -79,7 +79,7 @@ bool FactPNGetVar1(
    /* Retrieve the arguments for the function. */
    /*==========================================*/
 
-   hack = (struct factGetVarPN1Call *) ValueToBitMap(theValue);
+   hack = (struct factGetVarPN1Call *) ((CLIPSBitMap *) theValue)->contents;
 
    /*=====================================================*/
    /* Get the pointer to the fact from the partial match. */
@@ -182,7 +182,7 @@ bool FactPNGetVar2(
    /* Retrieve the arguments for the function. */
    /*==========================================*/
 
-   hack = (struct factGetVarPN2Call *) ValueToBitMap(theValue);
+   hack = (struct factGetVarPN2Call *) ((CLIPSBitMap *) theValue)->contents;
 
    /*==============================*/
    /* Get the pointer to the fact. */
@@ -220,7 +220,7 @@ bool FactPNGetVar3(
    /* Retrieve the arguments for the function. */
    /*==========================================*/
 
-   hack = (struct factGetVarPN3Call *) ValueToBitMap(theValue);
+   hack = (struct factGetVarPN3Call *) ((CLIPSBitMap *) theValue)->contents;
 
    /*==============================*/
    /* Get the pointer to the fact. */
@@ -282,7 +282,7 @@ bool FactPNConstant1(
    /* Retrieve the arguments for the function. */
    /*==========================================*/
 
-   hack = (struct factConstantPN1Call *) ValueToBitMap(theValue);
+   hack = (struct factConstantPN1Call *) ((CLIPSBitMap *) theValue)->contents;
 
    /*============================================*/
    /* Extract the value from the specified slot. */
@@ -323,7 +323,7 @@ bool FactPNConstant2(
    /* Retrieve the arguments for the function. */
    /*==========================================*/
 
-   hack = (struct factConstantPN2Call *) ValueToBitMap(theValue);
+   hack = (struct factConstantPN2Call *) ((CLIPSBitMap *) theValue)->contents;
 
    /*==========================================================*/
    /* Extract the value from the specified slot. Note that the */
@@ -377,7 +377,7 @@ bool FactJNGetVar1(
    /* Retrieve the arguments for the function. */
    /*==========================================*/
 
-   hack = (struct factGetVarJN1Call *) ValueToBitMap(theValue);
+   hack = (struct factGetVarJN1Call *) ((CLIPSBitMap *) theValue)->contents;
 
    /*=====================================================*/
    /* Get the pointer to the fact from the partial match. */
@@ -509,7 +509,7 @@ bool FactJNGetVar2(
    /* Retrieve the arguments for the function. */
    /*==========================================*/
 
-   hack = (struct factGetVarJN2Call *) ValueToBitMap(theValue);
+   hack = (struct factGetVarJN2Call *) ((CLIPSBitMap *) theValue)->contents;
 
    /*=====================================================*/
    /* Get the pointer to the fact from the partial match. */
@@ -556,7 +556,7 @@ bool FactJNGetVar3(
    /* Retrieve the arguments for the function. */
    /*==========================================*/
 
-   hack = (struct factGetVarJN3Call *) ValueToBitMap(theValue);
+   hack = (struct factGetVarJN3Call *) ((CLIPSBitMap *) theValue)->contents;
 
    /*=====================================================*/
    /* Get the pointer to the fact from the partial match. */
@@ -622,7 +622,7 @@ bool FactSlotLength(
 
    returnValue->value = theEnv->FalseSymbol;
 
-   hack = (struct factCheckLengthPNCall *) ValueToBitMap(theValue);
+   hack = (struct factCheckLengthPNCall *) ((CLIPSBitMap *) theValue)->contents;
 
    for (tempMark = FactData(theEnv)->CurrentPatternMarks;
         tempMark != NULL;
@@ -664,7 +664,7 @@ bool FactJNCompVars1(
    /* Retrieve the arguments to the function. */
    /*=========================================*/
 
-   hack = (struct factCompVarsJN1Call *) ValueToBitMap(theValue);
+   hack = (struct factCompVarsJN1Call *) ((CLIPSBitMap *) theValue)->contents;
 
    /*=================================================*/
    /* Extract the fact pointers for the two patterns. */
@@ -719,7 +719,7 @@ bool FactJNCompVars2(
    /* Retrieve the arguments to the function. */
    /*=========================================*/
 
-   hack = (struct factCompVarsJN2Call *) ValueToBitMap(theValue);
+   hack = (struct factCompVarsJN2Call *) ((CLIPSBitMap *) theValue)->contents;
 
    /*=================================================*/
    /* Extract the fact pointers for the two patterns. */
@@ -792,7 +792,7 @@ bool FactPNCompVars1(
    /* Extract the arguments to the function. */
    /*========================================*/
 
-   hack = (struct factCompVarsPN1Call *) ValueToBitMap(theValue);
+   hack = (struct factCompVarsPN1Call *) ((CLIPSBitMap *) theValue)->contents;
    fieldPtr1 = &FactData(theEnv)->CurrentPatternFact->theProposition.theFields[hack->field1];
    fieldPtr2 = &FactData(theEnv)->CurrentPatternFact->theProposition.theFields[hack->field2];
 

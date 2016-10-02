@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.40  07/30/16          */
+   /*               CLIPS Version 6.40  10/01/16          */
    /*                                                     */
    /*                OBJECT SYSTEM DEFINITIONS            */
    /*******************************************************/
@@ -125,7 +125,7 @@ struct defclass
    unsigned *handlerOrderMap;
    short handlerCount;
    Defclass *nxtHash;
-   BITMAP_HN *scopeMap;
+   CLIPSBitMap *scopeMap;
    char traversalRecord[TRAVERSAL_BYTES];
   };
 

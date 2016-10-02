@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  10/01/16             */
    /*                                                     */
    /*                     BSAVE MODULE                    */
    /*******************************************************/
@@ -34,6 +34,9 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*            Converted API macros to function calls.        */
+/*                                                           */
+/*      6.31: Data sizes written to binary files for         */
+/*            validation when loaded.                        */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -309,7 +312,7 @@ static void InitializeFunctionNeededFlags(
    for (functionList = GetFunctionList(theEnv);
         functionList != NULL;
         functionList = functionList->next)
-     { functionList->bsaveIndex = 0; }
+     { functionList->neededFunction = false; }
   }
 
 /**********************************************************/
@@ -349,7 +352,7 @@ static void WriteNeededFunctions(
         functionList != NULL;
         functionList = functionList->next)
      {
-      if (functionList->bsaveIndex)
+      if (functionList->neededFunction)
         { functionList->bsaveIndex = (short int) count++; }
       else
         { functionList->bsaveIndex = -1; }
@@ -382,7 +385,7 @@ static void WriteNeededFunctions(
         functionList != NULL;
         functionList = functionList->next)
      {
-      if (functionList->bsaveIndex >= 0)
+      if (functionList->neededFunction)
         {
          length = strlen(functionList->callFunctionName->contents) + 1;
          GenWrite((void *) functionList->callFunctionName->contents,(unsigned long) length,fp);
@@ -405,7 +408,7 @@ static size_t FunctionBinarySize(
         functionList != NULL;
         functionList = functionList->next)
      {
-      if (functionList->bsaveIndex >= 0)
+      if (functionList->neededFunction)
         { size += strlen(functionList->callFunctionName->contents) + 1; }
      }
 
@@ -484,7 +487,7 @@ void MarkNeededItems(
             break;
 
          case FCALL:
-            ((struct FunctionDefinition *) testPtr->value)->bsaveIndex = true;
+            ((struct FunctionDefinition *) testPtr->value)->neededFunction = true;
             break;
 
          case RVOID:
@@ -493,7 +496,7 @@ void MarkNeededItems(
          default:
            if (EvaluationData(theEnv)->PrimitivesArray[testPtr->type] == NULL) break;
            if (EvaluationData(theEnv)->PrimitivesArray[testPtr->type]->bitMap)
-             { ((BITMAP_HN *) testPtr->value)->neededBitMap = true; }
+             { ((CLIPSBitMap *) testPtr->value)->neededBitMap = true; }
            break;
 
         }
@@ -515,6 +518,7 @@ static void WriteBinaryHeader(
   {
    GenWrite((void *) BloadData(theEnv)->BinaryPrefixID,(unsigned long) strlen(BloadData(theEnv)->BinaryPrefixID) + 1,fp);
    GenWrite((void *) BloadData(theEnv)->BinaryVersionID,(unsigned long) strlen(BloadData(theEnv)->BinaryVersionID) + 1,fp);
+   GenWrite((void *) BloadData(theEnv)->BinarySizes,(unsigned long) strlen(BloadData(theEnv)->BinarySizes) + 1,fp);
   }
 
 /******************************************************/

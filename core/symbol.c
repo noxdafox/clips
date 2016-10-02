@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/06/16             */
+   /*            CLIPS Version 6.40  10/01/16             */
    /*                                                     */
    /*                    SYMBOL MODULE                    */
    /*******************************************************/
@@ -124,8 +124,8 @@ void InitializeAtomTables(
   CLIPSLexeme **symbolTable,
   CLIPSFloat **floatTable,
   CLIPSInteger **integerTable,
-  struct bitMapHashNode **bitmapTable,
-  struct externalAddressHashNode **externalAddressTable)
+  CLIPSBitMap **bitmapTable,
+  CLIPSExternalAddress **externalAddressTable)
   {
 #if MAC_XCD
 #pragma unused(symbolTable)
@@ -152,11 +152,11 @@ void InitializeAtomTables(
    SymbolData(theEnv)->IntegerTable = (CLIPSInteger **)
                    gm2(theEnv,(int) sizeof (CLIPSInteger *) * INTEGER_HASH_SIZE);
 
-   SymbolData(theEnv)->BitMapTable = (BITMAP_HN **)
-                   gm2(theEnv,(int) sizeof (BITMAP_HN *) * BITMAP_HASH_SIZE);
+   SymbolData(theEnv)->BitMapTable = (CLIPSBitMap **)
+                   gm2(theEnv,(int) sizeof (CLIPSBitMap *) * BITMAP_HASH_SIZE);
 
-   SymbolData(theEnv)->ExternalAddressTable = (EXTERNAL_ADDRESS_HN **)
-                   gm2(theEnv,(int) sizeof (EXTERNAL_ADDRESS_HN *) * EXTERNAL_ADDRESS_HASH_SIZE);
+   SymbolData(theEnv)->ExternalAddressTable = (CLIPSExternalAddress **)
+                   gm2(theEnv,(int) sizeof (CLIPSExternalAddress *) * EXTERNAL_ADDRESS_HASH_SIZE);
 
    /*===================================================*/
    /* Initialize all of the hash table entries to NULL. */
@@ -188,8 +188,8 @@ void InitializeAtomTables(
    SetIntegerTable(theEnv,integerTable);
    SetBitMapTable(theEnv,bitmapTable);
 
-   SymbolData(theEnv)->ExternalAddressTable = (EXTERNAL_ADDRESS_HN **)
-                gm2(theEnv,(int) sizeof (EXTERNAL_ADDRESS_HN *) * EXTERNAL_ADDRESS_HASH_SIZE);
+   SymbolData(theEnv)->ExternalAddressTable = (CLIPSExternalAddress **)
+                gm2(theEnv,(int) sizeof (CLIPSExternalAddress *) * EXTERNAL_ADDRESS_HASH_SIZE);
 
    for (i = 0; i < EXTERNAL_ADDRESS_HASH_SIZE; i++) SymbolData(theEnv)->ExternalAddressTable[i] = NULL;
 #endif
@@ -209,8 +209,8 @@ static void DeallocateSymbolData(
    CLIPSLexeme *shPtr, *nextSHPtr;
    CLIPSInteger *ihPtr, *nextIHPtr;
    CLIPSFloat *fhPtr, *nextFHPtr;
-   BITMAP_HN *bmhPtr, *nextBMHPtr;
-   EXTERNAL_ADDRESS_HN *eahPtr, *nextEAHPtr;
+   CLIPSBitMap *bmhPtr, *nextBMHPtr;
+   CLIPSExternalAddress *eahPtr, *nextEAHPtr;
 
    if ((SymbolData(theEnv)->SymbolTable == NULL) ||
        (SymbolData(theEnv)->FloatTable == NULL) ||
@@ -305,10 +305,10 @@ static void DeallocateSymbolData(
 
    genfree(theEnv,SymbolData(theEnv)->IntegerTable,(int) sizeof (CLIPSInteger *) * INTEGER_HASH_SIZE);
 
-   genfree(theEnv,SymbolData(theEnv)->BitMapTable,(int) sizeof (BITMAP_HN *) * BITMAP_HASH_SIZE);
+   genfree(theEnv,SymbolData(theEnv)->BitMapTable,(int) sizeof (CLIPSBitMap *) * BITMAP_HASH_SIZE);
 #endif
 
-   genfree(theEnv,SymbolData(theEnv)->ExternalAddressTable,(int) sizeof (EXTERNAL_ADDRESS_HN *) * EXTERNAL_ADDRESS_HASH_SIZE);
+   genfree(theEnv,SymbolData(theEnv)->ExternalAddressTable,(int) sizeof (CLIPSExternalAddress *) * EXTERNAL_ADDRESS_HASH_SIZE);
 
    /*==============================*/
    /* Remove binary symbol tables. */
@@ -322,7 +322,7 @@ static void DeallocateSymbolData(
    if (SymbolData(theEnv)->IntegerArray != NULL)
      rm3(theEnv,SymbolData(theEnv)->IntegerArray,(long) sizeof(CLIPSInteger *) * SymbolData(theEnv)->NumberOfIntegers);
    if (SymbolData(theEnv)->BitMapArray != NULL)
-     rm3(theEnv,SymbolData(theEnv)->BitMapArray,(long) sizeof(BITMAP_HN *) * SymbolData(theEnv)->NumberOfBitMaps);
+     rm3(theEnv,SymbolData(theEnv)->BitMapArray,(long) sizeof(CLIPSBitMap *) * SymbolData(theEnv)->NumberOfBitMaps);
 #endif
   }
 
@@ -641,7 +641,7 @@ void *EnvAddBitMap(
    char *theBitMap = (char *) vTheBitMap;
    unsigned long tally;
    unsigned i;
-   BITMAP_HN *past = NULL, *peek;
+   CLIPSBitMap *past = NULL, *peek;
    char *buffer;
 
     /*====================================*/
@@ -701,7 +701,7 @@ void *EnvAddBitMap(
     /*================================================*/
 
     AddEphemeralHashNode(theEnv,(GENERIC_HN *) peek,&UtilityData(theEnv)->CurrentGarbageFrame->ephemeralBitMapList,
-                         sizeof(BITMAP_HN),sizeof(long),true);
+                         sizeof(CLIPSBitMap),sizeof(long),true);
     UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
 
     /*===================================*/
@@ -724,7 +724,7 @@ void *EnvAddExternalAddress(
   unsigned theType)
   {
    unsigned long tally;
-   EXTERNAL_ADDRESS_HN *past = NULL, *peek;
+   CLIPSExternalAddress *past = NULL, *peek;
 
     /*====================================*/
     /* Get the hash value for the bitmap. */
@@ -743,7 +743,7 @@ void *EnvAddExternalAddress(
     while (peek != NULL)
       {
        if ((peek->type == (unsigned short) theType) &&
-           (peek->externalAddress == theExternalAddress))
+           (peek->contents == theExternalAddress))
          { return((void *) peek); }
 
        past = peek;
@@ -759,7 +759,7 @@ void *EnvAddExternalAddress(
     if (past == NULL) SymbolData(theEnv)->ExternalAddressTable[tally] = peek;
     else past->next = peek;
 
-    peek->externalAddress = theExternalAddress;
+    peek->contents = theExternalAddress;
     peek->type = (unsigned short) theType;
     peek->next = NULL;
     peek->bucket = tally;
@@ -772,7 +772,7 @@ void *EnvAddExternalAddress(
     /*================================================*/
 
     AddEphemeralHashNode(theEnv,(GENERIC_HN *) peek,&UtilityData(theEnv)->CurrentGarbageFrame->ephemeralExternalAddressList,
-                         sizeof(EXTERNAL_ADDRESS_HN),sizeof(long),true);
+                         sizeof(CLIPSExternalAddress),sizeof(long),true);
     UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
 
     /*=============================================*/
@@ -1017,7 +1017,7 @@ void DecrementIntegerCount(
 /*****************************************************/
 void DecrementBitMapCount(
   Environment *theEnv,
-  BITMAP_HN *theValue)
+  CLIPSBitMap *theValue)
   {
    if (theValue->count < 0)
      {
@@ -1038,7 +1038,7 @@ void DecrementBitMapCount(
    if (theValue->markedEphemeral == false)
      {
       AddEphemeralHashNode(theEnv,(GENERIC_HN *) theValue,&UtilityData(theEnv)->CurrentGarbageFrame->ephemeralBitMapList,
-                           sizeof(BITMAP_HN),sizeof(long),true);
+                           sizeof(CLIPSBitMap),sizeof(long),true);
       UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
      }
 
@@ -1052,7 +1052,7 @@ void DecrementBitMapCount(
 /*************************************************************/
 void DecrementExternalAddressCount(
   Environment *theEnv,
-  EXTERNAL_ADDRESS_HN *theValue)
+  CLIPSExternalAddress *theValue)
   {
    if (theValue->count < 0)
      {
@@ -1073,7 +1073,7 @@ void DecrementExternalAddressCount(
    if (theValue->markedEphemeral == false)
      {
       AddEphemeralHashNode(theEnv,(GENERIC_HN *) theValue,&UtilityData(theEnv)->CurrentGarbageFrame->ephemeralExternalAddressList,
-                           sizeof(EXTERNAL_ADDRESS_HN),sizeof(long),true);
+                           sizeof(CLIPSExternalAddress),sizeof(long),true);
       UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
      }
 
@@ -1136,8 +1136,8 @@ static void RemoveHashNode(
      }
    else if (type == BITMAPARRAY)
      {
-      rm(theEnv,(void *) ((BITMAP_HN *) theValue)->contents,
-         ((BITMAP_HN *) theValue)->size);
+      rm(theEnv,(void *) ((CLIPSBitMap *) theValue)->contents,
+         ((CLIPSBitMap *) theValue)->size);
      }
    else if (type == EXTERNAL_ADDRESS)
      {
@@ -1145,7 +1145,7 @@ static void RemoveHashNode(
 
       if ((EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type] != NULL) &&
           (EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type]->discardFunction != NULL))
-        { (*EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type]->discardFunction)(theEnv,theAddress->externalAddress); }
+        { (*EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type]->discardFunction)(theEnv,theAddress->contents); }
      }
 
    /*===========================*/
@@ -1221,9 +1221,9 @@ void RemoveEphemeralAtoms(
    RemoveEphemeralHashNodes(theEnv,&theGarbageFrame->ephemeralIntegerList,(GENERIC_HN **) SymbolData(theEnv)->IntegerTable,
                             sizeof(CLIPSInteger),INTEGER,0);
    RemoveEphemeralHashNodes(theEnv,&theGarbageFrame->ephemeralBitMapList,(GENERIC_HN **) SymbolData(theEnv)->BitMapTable,
-                            sizeof(BITMAP_HN),BITMAPARRAY,AVERAGE_BITMAP_SIZE);
+                            sizeof(CLIPSBitMap),BITMAPARRAY,AVERAGE_BITMAP_SIZE);
    RemoveEphemeralHashNodes(theEnv,&theGarbageFrame->ephemeralExternalAddressList,(GENERIC_HN **) SymbolData(theEnv)->ExternalAddressTable,
-                            sizeof(EXTERNAL_ADDRESS_HN),EXTERNAL_ADDRESS,0);
+                            sizeof(CLIPSExternalAddress),EXTERNAL_ADDRESS,0);
   }
 
 /***********************************************/
@@ -1237,7 +1237,7 @@ void EphemerateValue(
     CLIPSLexeme *theSymbol;
     CLIPSFloat *theFloat;
     CLIPSInteger *theInteger;
-    EXTERNAL_ADDRESS_HN *theExternalAddress;
+    CLIPSExternalAddress *theExternalAddress;
 
     switch (((TypeHeader *) theValue)->type)
       {
@@ -1273,11 +1273,11 @@ void EphemerateValue(
         break;
 
       case EXTERNAL_ADDRESS:
-        theExternalAddress = (EXTERNAL_ADDRESS_HN *) theValue;
+        theExternalAddress = (CLIPSExternalAddress *) theValue;
         if (theExternalAddress->markedEphemeral) return;
         AddEphemeralHashNode(theEnv,(GENERIC_HN *) theValue,
                              &UtilityData(theEnv)->CurrentGarbageFrame->ephemeralExternalAddressList,
-                             sizeof(EXTERNAL_ADDRESS_HN),sizeof(long),false);
+                             sizeof(CLIPSExternalAddress),sizeof(long),false);
         UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
         break;
 
@@ -1421,7 +1421,7 @@ void SetIntegerTable(
 /*********************************************************/
 /* GetBitMapTable: Returns a pointer to the BitMapTable. */
 /*********************************************************/
-BITMAP_HN **GetBitMapTable(
+CLIPSBitMap **GetBitMapTable(
   Environment *theEnv)
   {
    return(SymbolData(theEnv)->BitMapTable);
@@ -1432,7 +1432,7 @@ BITMAP_HN **GetBitMapTable(
 /******************************************************/
 void SetBitMapTable(
   Environment *theEnv,
-  BITMAP_HN **value)
+  CLIPSBitMap **value)
   {
    SymbolData(theEnv)->BitMapTable = value;
   }
@@ -1440,7 +1440,7 @@ void SetBitMapTable(
 /***************************************************************************/
 /* GetExternalAddressTable: Returns a pointer to the ExternalAddressTable. */
 /***************************************************************************/
-EXTERNAL_ADDRESS_HN **GetExternalAddressTable(
+CLIPSExternalAddress **GetExternalAddressTable(
   Environment *theEnv)
   {
    return(SymbolData(theEnv)->ExternalAddressTable);
@@ -1451,7 +1451,7 @@ EXTERNAL_ADDRESS_HN **GetExternalAddressTable(
 /************************************************************************/
 void SetExternalAddressTable(
   Environment *theEnv,
-  EXTERNAL_ADDRESS_HN **value)
+  CLIPSExternalAddress **value)
   {
    SymbolData(theEnv)->ExternalAddressTable = value;
   }
@@ -1722,7 +1722,7 @@ void SetAtomicValueIndices(
    CLIPSLexeme *symbolPtr, **symbolArray;
    CLIPSFloat *floatPtr, **floatArray;
    CLIPSInteger *integerPtr, **integerArray;
-   BITMAP_HN *bitMapPtr, **bitMapArray;
+   CLIPSBitMap *bitMapPtr, **bitMapArray;
 
    /*===================================*/
    /* Set indices for the symbol table. */
@@ -1825,7 +1825,7 @@ void RestoreAtomicValueBuckets(
    CLIPSLexeme *symbolPtr, **symbolArray;
    CLIPSFloat *floatPtr, **floatArray;
    CLIPSInteger *integerPtr, **integerArray;
-   BITMAP_HN *bitMapPtr, **bitMapArray;
+   CLIPSBitMap *bitMapPtr, **bitMapArray;
 
    /*================================================*/
    /* Restore the bucket values in the symbol table. */

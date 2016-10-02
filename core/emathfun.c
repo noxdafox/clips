@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  10/01/16             */
    /*                                                     */
    /*            EXTENDED MATH FUNCTIONS MODULE           */
    /*******************************************************/
@@ -75,8 +75,6 @@
 
 #define SMALLEST_ALLOWED_NUMBER 1e-15
 #define dtrunc(x) (((x) < 0.0) ? ceil(x) : floor(x))
-
-#define ConvertToDouble(arg) (((arg)->type == FLOAT) ? DOPToDouble(arg) : (double) DOPToLong(arg))
 
 /***************************************/
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */

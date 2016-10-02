@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  10/01/16             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -39,6 +39,9 @@
 /*            data structures.                               */
 /*                                                           */
 /*            UDF redesign.                                  */
+/*                                                           */
+/*            Added CLIPSBlockStart and CLIPSBlockEnd        */
+/*            functions for garbage collection blocks.       */
 /*                                                           */
 /*************************************************************/
 
@@ -146,18 +149,14 @@ void GenericDispatch(
 #if PROFILING_FUNCTIONS
    struct profileFrameInfo profileFrame;
 #endif
-   struct garbageFrame newGarbageFrame;
-   struct garbageFrame *oldGarbageFrame;
+   CLIPSBlock gcBlock;
 
    returnValue->value = theEnv->FalseSymbol;
    EvaluationData(theEnv)->EvaluationError = false;
    if (EvaluationData(theEnv)->HaltExecution)
      return;
 
-   oldGarbageFrame = UtilityData(theEnv)->CurrentGarbageFrame;
-   memset(&newGarbageFrame,0,sizeof(struct garbageFrame));
-   newGarbageFrame.priorFrame = oldGarbageFrame;
-   UtilityData(theEnv)->CurrentGarbageFrame = &newGarbageFrame;
+   CLIPSBlockStart(theEnv,&gcBlock);
 
    oldce = ExecutingConstruct(theEnv);
    SetExecutingConstruct(theEnv,true);
@@ -176,7 +175,7 @@ void GenericDispatch(
       DefgenericData(theEnv)->CurrentMethod = previousMethod;
       EvaluationData(theEnv)->CurrentEvaluationDepth--;
 
-      RestorePriorGarbageFrame(theEnv,&newGarbageFrame,oldGarbageFrame,returnValue);
+      CLIPSBlockEnd(theEnv,&gcBlock,returnValue);
       CallPeriodicTasks(theEnv);
 
       SetExecutingConstruct(theEnv,oldce);
@@ -260,7 +259,7 @@ void GenericDispatch(
    DefgenericData(theEnv)->CurrentMethod = previousMethod;
    EvaluationData(theEnv)->CurrentEvaluationDepth--;
 
-   RestorePriorGarbageFrame(theEnv,&newGarbageFrame,oldGarbageFrame,returnValue);
+   CLIPSBlockEnd(theEnv,&gcBlock,returnValue);
    CallPeriodicTasks(theEnv);
 
    SetExecutingConstruct(theEnv,oldce);

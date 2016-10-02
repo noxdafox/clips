@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/25/16            */
+   /*             CLIPS Version 6.40  10/01/16            */
    /*                                                     */
    /*                 ROUTER HEADER FILE                  */
    /*******************************************************/
@@ -119,7 +119,7 @@ struct routerData
 #define RouterData(theEnv) ((struct routerData *) GetEnvironmentData(theEnv,ROUTER_DATA))
 
    void                           InitializeDefaultRouters(Environment *);
-   int                            EnvPrintRouter(Environment *,const char *,const char *);
+   void                           EnvPrintRouter(Environment *,const char *,const char *);
    int                            EnvGetcRouter(Environment *,const char *);
    int                            EnvUngetcRouter(Environment *,int,const char *);
    void                           EnvExitRouter(Environment *,int);
@@ -149,7 +149,7 @@ struct routerData
    FILE                          *GetFastSave(Environment *);
    void                           UnrecognizedRouterMessage(Environment *,const char *);
    void                           ExitCommand(Environment *,UDFContext *,CLIPSValue *);
-   int                            PrintNRouter(Environment *,const char *,const char *,unsigned long);
+   void                           PrintNRouter(Environment *,const char *,const char *,unsigned long);
    size_t                         EnvInputBufferCount(Environment *);
    Router                        *EnvFindRouter(Environment *,const char *);
 

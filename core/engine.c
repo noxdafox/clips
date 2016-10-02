@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  10/01/16             */
    /*                                                     */
    /*                    ENGINE MODULE                    */
    /*******************************************************/
@@ -81,6 +81,9 @@
 /*            Incremental reset is always enabled.           */
 /*                                                           */
 /*            UDF redesign.                                  */
+/*                                                           */
+/*            Added CLIPSBlockStart and CLIPSBlockEnd        */
+/*            functions for garbage collection blocks.       */
 /*                                                           */
 /*************************************************************/
 
@@ -186,8 +189,8 @@ long long EnvRun(
    struct profileFrameInfo profileFrame;
 #endif
    struct trackedMemory *theTM;
-   struct garbageFrame newGarbageFrame, *oldGarbageFrame;
    int danglingConstructs;
+   CLIPSBlock gcBlock;
 
    /*=====================================================*/
    /* Make sure the run command is not already executing. */
@@ -201,10 +204,7 @@ long long EnvRun(
    /* Set up the frame for tracking garbage. */
    /*========================================*/
 
-   oldGarbageFrame = UtilityData(theEnv)->CurrentGarbageFrame;
-   memset(&newGarbageFrame,0,sizeof(struct garbageFrame));
-   newGarbageFrame.priorFrame = oldGarbageFrame;
-   UtilityData(theEnv)->CurrentGarbageFrame = &newGarbageFrame;
+   CLIPSBlockStart(theEnv,&gcBlock);
 
    /*================================*/
    /* Set up statistics information. */
@@ -659,7 +659,7 @@ long long EnvRun(
    /* Restore the old garbage frame. */
    /*================================*/
 
-   RestorePriorGarbageFrame(theEnv,&newGarbageFrame, oldGarbageFrame,NULL);
+   CLIPSBlockEnd(theEnv,&gcBlock,NULL);
    CallPeriodicTasks(theEnv);
 
    /*===================================*/

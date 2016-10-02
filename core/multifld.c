@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  10/01/16             */
    /*                                                     */
    /*                  MULTIFIELD MODULE                  */
    /*******************************************************/
@@ -704,7 +704,7 @@ unsigned long HashMultifield(
 
           case EXTERNAL_ADDRESS:
             fis.liv = 0;
-            fis.vv = ValueToExternalAddress(fieldPtr[i].value);
+            fis.vv = fieldPtr[i].externalAddressValue->contents;
             count += (unsigned long) (fis.liv * (i + 29));
             break;
 

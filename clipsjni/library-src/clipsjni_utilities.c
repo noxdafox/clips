@@ -272,7 +272,7 @@ void ConvertPrimitiveValueToDataObject(
            {         
             jobject mfo = (*env)->CallObjectMethod(env,theValue,CLIPSJNIData(theEnv)->multifieldValueGetMethod,i);
             int mft = (*env)->CallIntMethod(env,mfo,CLIPSJNIData(theEnv)->getCLIPSTypeValueMethod);
-            void *mfv = ConvertSingleFieldPrimitiveValue(theEnv,mft,mfo); 
+            void *mfv = ConvertSingleFieldPrimitiveValue(theEnv,mft,mfo);  
             result->theFields[i].value = mfv;
            }
            

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  10/01/16             */
    /*                                                     */
    /*             CONSTRAINT UTILITY MODULE               */
    /*******************************************************/
@@ -450,39 +450,46 @@ CONSTRAINT_RECORD *ExpressionToConstraintRecord(
    rv = GetConstraintRecord(theEnv);
    rv->anyAllowed = false;
 
-   if (theExpression->type == FLOAT)
+   switch (theExpression->type)
      {
-      rv->floatRestriction = true;
-      rv->floatsAllowed = true;
-     }
-   else if (theExpression->type == INTEGER)
-     {
-      rv->integerRestriction = true;
-      rv->integersAllowed = true;
-     }
-   else if (theExpression->type == SYMBOL)
-     {
-      rv->symbolRestriction = true;
-      rv->symbolsAllowed = true;
-     }
-   else if (theExpression->type == STRING)
-     {
-      rv->stringRestriction = true;
-      rv->stringsAllowed = true;
-     }
-   else if (theExpression->type == INSTANCE_NAME)
-     {
+      case FLOAT:
+        rv->floatRestriction = true;
+        rv->floatsAllowed = true;
+        break;
+        
+      case INTEGER:
+        rv->integerRestriction = true;
+        rv->integersAllowed = true;
+        break;
+        
+      case SYMBOL:
+        rv->symbolRestriction = true;
+        rv->symbolsAllowed = true;
+        break;
+        
+      case STRING:
+        rv->stringRestriction = true;
+        rv->stringsAllowed = true;
+        break;
+        
+      case INSTANCE_NAME:
       rv->instanceNameRestriction = true;
       rv->instanceNamesAllowed = true;
+        break;
+        
+      case INSTANCE_ADDRESS:
+        rv->instanceAddressesAllowed = true;
+        break;
+        
+      default:
+        break;
      }
-   else if (theExpression->type == INSTANCE_ADDRESS)
-     { rv->instanceAddressesAllowed = true; }
 
    if (rv->floatsAllowed || rv->integersAllowed || rv->symbolsAllowed ||
        rv->stringsAllowed || rv->instanceNamesAllowed)
      { rv->restrictionList = GenConstant(theEnv,theExpression->type,theExpression->value); }
 
-   return(rv);
+   return rv;
   }
 
 /*******************************************************/

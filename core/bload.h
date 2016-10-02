@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/25/16            */
+   /*             CLIPS Version 6.40  10/01/16            */
    /*                                                     */
    /*                 BLOAD HEADER FILE                   */
    /*******************************************************/
@@ -28,6 +28,9 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*            Converted API macros to function calls.        */
+/*                                                           */
+/*      6.31: Data sizes written to binary files for         */
+/*            validation when loaded.                        */
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
@@ -63,6 +66,7 @@ struct bloadData
   {
    const char *BinaryPrefixID;
    const char *BinaryVersionID;
+   char *BinarySizes;
    struct FunctionDefinition **FunctionArray;
    bool BloadActive;
    struct callFunctionItem *BeforeBloadFunctions;

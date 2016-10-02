@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  10/01/16             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -42,6 +42,9 @@
 /*            data structures.                               */
 /*                                                           */
 /*            UDF redesign.                                  */
+/*                                                           */
+/*            Added CLIPSBlockStart and CLIPSBlockEnd        */
+/*            functions for garbage collection blocks.       */
 /*                                                           */
 /*************************************************************/
 
@@ -515,8 +518,7 @@ void DelayedQueryDoForAllInstances(
    QUERY_CLASS *qclasses;
    unsigned rcnt;
    unsigned i;
-   struct garbageFrame newGarbageFrame;
-   struct garbageFrame *oldGarbageFrame;
+   CLIPSBlock gcBlock;
 
    returnValue->lexemeValue = theEnv->FalseSymbol;
    qclasses = DetermineQueryClasses(theEnv,GetFirstArgument()->nextArg->nextArg,
@@ -536,10 +538,7 @@ void DelayedQueryDoForAllInstances(
    InstanceQueryData(theEnv)->AbortQuery = false;
    InstanceQueryData(theEnv)->QueryCore->action = GetFirstArgument()->nextArg;
 
-   oldGarbageFrame = UtilityData(theEnv)->CurrentGarbageFrame;
-   memset(&newGarbageFrame,0,sizeof(struct garbageFrame));
-   newGarbageFrame.priorFrame = oldGarbageFrame;
-   UtilityData(theEnv)->CurrentGarbageFrame = &newGarbageFrame;
+   CLIPSBlockStart(theEnv,&gcBlock);
 
    while (InstanceQueryData(theEnv)->QueryCore->soln_set != NULL)
      {
@@ -559,7 +558,7 @@ void DelayedQueryDoForAllInstances(
       CallPeriodicTasks(theEnv);
      }
 
-   RestorePriorGarbageFrame(theEnv,&newGarbageFrame,oldGarbageFrame,returnValue);
+   CLIPSBlockEnd(theEnv,&gcBlock,returnValue);
    CallPeriodicTasks(theEnv);
 
    ProcedureFunctionData(theEnv)->BreakFlag = false;
@@ -924,8 +923,7 @@ static bool TestForFirstInstanceInClass(
    long i;
    Instance *ins;
    CLIPSValue temp;
-   struct garbageFrame newGarbageFrame;
-   struct garbageFrame *oldGarbageFrame;
+   CLIPSBlock gcBlock;
 
    if (TestTraversalID(cls->traversalRecord,id))
      return false;
@@ -933,10 +931,7 @@ static bool TestForFirstInstanceInClass(
    if (DefclassInScope(theEnv,cls,theModule) == false)
      return false;
 
-   oldGarbageFrame = UtilityData(theEnv)->CurrentGarbageFrame;
-   memset(&newGarbageFrame,0,sizeof(struct garbageFrame));
-   newGarbageFrame.priorFrame = oldGarbageFrame;
-   UtilityData(theEnv)->CurrentGarbageFrame = &newGarbageFrame;
+   CLIPSBlockStart(theEnv,&gcBlock);
 
    ins = cls->instanceList;
    while (ins != NULL)
@@ -973,7 +968,7 @@ static bool TestForFirstInstanceInClass(
         ins = ins->nxtClass;
      }
 
-   RestorePriorGarbageFrame(theEnv,&newGarbageFrame, oldGarbageFrame,NULL);
+   CLIPSBlockEnd(theEnv,&gcBlock,NULL);
    CallPeriodicTasks(theEnv);
 
    if (ins != NULL)
@@ -1050,8 +1045,7 @@ static void TestEntireClass(
    long i;
    Instance *ins;
    CLIPSValue temp;
-   struct garbageFrame newGarbageFrame;
-   struct garbageFrame *oldGarbageFrame;
+   CLIPSBlock gcBlock;
 
    if (TestTraversalID(cls->traversalRecord,id))
      return;
@@ -1059,10 +1053,7 @@ static void TestEntireClass(
    if (DefclassInScope(theEnv,cls,theModule) == false)
      return;
 
-   oldGarbageFrame = UtilityData(theEnv)->CurrentGarbageFrame;
-   memset(&newGarbageFrame,0,sizeof(struct garbageFrame));
-   newGarbageFrame.priorFrame = oldGarbageFrame;
-   UtilityData(theEnv)->CurrentGarbageFrame = &newGarbageFrame;
+   CLIPSBlockStart(theEnv,&gcBlock);
 
    ins = cls->instanceList;
    while (ins != NULL)
@@ -1117,7 +1108,7 @@ static void TestEntireClass(
       CallPeriodicTasks(theEnv);
      }
 
-   RestorePriorGarbageFrame(theEnv,&newGarbageFrame, oldGarbageFrame,NULL);
+   CLIPSBlockEnd(theEnv,&gcBlock,NULL);
    CallPeriodicTasks(theEnv);
 
    if (ins != NULL)

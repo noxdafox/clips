@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/11/16             */
+   /*            CLIPS Version 6.40  10/01/16             */
    /*                                                     */
    /*           MESSAGE-HANDLER PARSER FUNCTIONS          */
    /*******************************************************/
@@ -627,7 +627,7 @@ static SlotDescriptor *CheckSlotReference(
    sd = theDefclass->instanceTemplate[slotIndex];
    if ((sd->publicVisibility == 0) && (sd->cls != theDefclass))
      {
-      SlotVisibilityViolationError(theEnv,sd,theDefclass);
+      SlotVisibilityViolationError(theEnv,sd,theDefclass,false);
       return NULL;
      }
    if (! writeFlag)

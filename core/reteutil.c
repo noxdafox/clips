@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  10/01/16             */
    /*                                                     */
    /*                 RETE UTILITY MODULE                 */
    /*******************************************************/
@@ -1442,7 +1442,7 @@ unsigned long ComputeRightHashValue(
 
           case EXTERNAL_ADDRESS:
             fis.liv = 0;
-            fis.vv = ValueToExternalAddress(theResult.value);
+            fis.vv = theResult.externalAddressValue->contents;
             hashValue += (unsigned long) (fis.liv * multiplier);
             break;
           }

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/25/16            */
+   /*             CLIPS Version 6.40  10/01/16            */
    /*                                                     */
    /*                 SYMBOL HEADER FILE                  */
    /*******************************************************/
@@ -88,8 +88,8 @@ typedef struct voidHashNode CLIPSVoid;
 typedef struct symbolHashNode CLIPSLexeme;
 typedef struct floatHashNode CLIPSFloat;
 typedef struct integerHashNode CLIPSInteger;
-typedef struct bitMapHashNode BITMAP_HN;
-typedef struct externalAddressHashNode EXTERNAL_ADDRESS_HN;
+typedef struct bitMapHashNode CLIPSBitMap;
+typedef struct externalAddressHashNode CLIPSExternalAddress;
 typedef struct genericHashNode GENERIC_HN;
 
 #include "evaluatn.h"
@@ -195,7 +195,7 @@ struct externalAddressHashNode
    unsigned int markedEphemeral : 1;
    unsigned int neededPointer : 1;
    unsigned int bucket : 29;
-   void *externalAddress;
+   void *contents;
    unsigned short type;
   };
 
@@ -239,15 +239,11 @@ struct symbolMatch
    struct symbolMatch *next;
   };
 
-#define ValueToBitMap(target) ((void *) ((struct bitMapHashNode *) (target))->contents)
-#define ValueToPointer(target) ((void *) target)
-#define ValueToExternalAddress(target) ((void *) ((struct externalAddressHashNode *) (target))->externalAddress)
-
 #define IncrementSymbolCount(theValue) (((CLIPSLexeme *) theValue)->count++)
 #define IncrementFloatCount(theValue) (((CLIPSFloat *) theValue)->count++)
 #define IncrementIntegerCount(theValue) (((CLIPSInteger *) theValue)->count++)
-#define IncrementBitMapCount(theValue) (((BITMAP_HN *) theValue)->count++)
-#define IncrementExternalAddressCount(theValue) (((EXTERNAL_ADDRESS_HN *) theValue)->count++)
+#define IncrementBitMapCount(theValue) (((CLIPSBitMap *) theValue)->count++)
+#define IncrementExternalAddressCount(theValue) (((CLIPSExternalAddress *) theValue)->count++)
 
 /*==================*/
 /* ENVIRONMENT DATA */
@@ -263,8 +259,8 @@ struct symbolData
    CLIPSLexeme **SymbolTable;
    CLIPSFloat **FloatTable;
    CLIPSInteger **IntegerTable;
-   BITMAP_HN **BitMapTable;
-   EXTERNAL_ADDRESS_HN **ExternalAddressTable;
+   CLIPSBitMap **BitMapTable;
+   CLIPSExternalAddress **ExternalAddressTable;
 #if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE || BLOAD_INSTANCES || BSAVE_INSTANCES
    long NumberOfSymbols;
    long NumberOfFloats;
@@ -274,8 +270,8 @@ struct symbolData
    CLIPSLexeme **SymbolArray;
    CLIPSFloat **FloatArray;
    CLIPSInteger **IntegerArray;
-   BITMAP_HN **BitMapArray;
-   EXTERNAL_ADDRESS_HN **ExternalAddressArray;
+   CLIPSBitMap **BitMapArray;
+   CLIPSExternalAddress **ExternalAddressArray;
 #endif
   };
 
@@ -283,7 +279,7 @@ struct symbolData
 
    void                           InitializeAtomTables(Environment *,CLIPSLexeme **,CLIPSFloat **,
                                                               CLIPSInteger **,struct bitMapHashNode **,
-                                                              struct externalAddressHashNode **);
+                                                              CLIPSExternalAddress **);
    CLIPSLexeme                   *EnvAddSymbol(Environment *,const char *,unsigned short);
    CLIPSLexeme                   *FindSymbolHN(Environment *,const char *,unsigned short);
    CLIPSFloat                    *EnvCreateFloat(Environment *,double);
@@ -300,7 +296,7 @@ struct symbolData
    void                           DecrementFloatCount(Environment *,CLIPSFloat *);
    void                           DecrementIntegerCount(Environment *,CLIPSInteger *);
    void                           DecrementBitMapCount(Environment *,struct bitMapHashNode *);
-   void                           DecrementExternalAddressCount(Environment *,struct externalAddressHashNode *);
+   void                           DecrementExternalAddressCount(Environment *,CLIPSExternalAddress *);
    void                           RemoveEphemeralAtoms(Environment *);
    CLIPSLexeme                  **GetSymbolTable(Environment *);
    void                           SetSymbolTable(Environment *,CLIPSLexeme **);
@@ -310,9 +306,8 @@ struct symbolData
    void                           SetIntegerTable(Environment *,CLIPSInteger **);
    struct bitMapHashNode        **GetBitMapTable(Environment *);
    void                           SetBitMapTable(Environment *,struct bitMapHashNode **);
-   struct externalAddressHashNode
-                                **GetExternalAddressTable(Environment *);
-   void                           SetExternalAddressTable(Environment *,struct externalAddressHashNode **);
+   CLIPSExternalAddress         **GetExternalAddressTable(Environment *);
+   void                           SetExternalAddressTable(Environment *,CLIPSExternalAddress **);
    void                           RefreshSpecialSymbols(Environment *);
    struct symbolMatch            *FindSymbolMatches(Environment *,const char *,unsigned *,size_t *);
    void                           ReturnSymbolMatches(Environment *,struct symbolMatch *);

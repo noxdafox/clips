@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  10/01/16             */
    /*                                                     */
    /*             OBJECT MESSAGE DISPATCH CODE            */
    /*******************************************************/
@@ -54,6 +54,9 @@
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*            UDF redesign.                                  */
+/*                                                           */
+/*            Added CLIPSBlockStart and CLIPSBlockEnd        */
+/*            functions for garbage collection blocks.       */
 /*                                                           */
 /*************************************************************/
 
@@ -584,7 +587,7 @@ void PrintHandlerSlotGetFunction(
    Defclass *theDefclass;
    SlotDescriptor *sd;
 
-   theReference = (HANDLER_SLOT_REFERENCE *) ValueToBitMap(theValue);
+   theReference = (HANDLER_SLOT_REFERENCE *) ((CLIPSBitMap *) theValue)->contents;
    EnvPrintRouter(theEnv,logicalName,"?self:[");
    theDefclass = DefclassData(theEnv)->ClassIDMap[theReference->classID];
    EnvPrintRouter(theEnv,logicalName,theDefclass->header.name->contents);
@@ -636,7 +639,7 @@ bool HandlerSlotGetFunction(
    INSTANCE_SLOT *sp;
    unsigned instanceSlotIndex;
 
-   theReference = (HANDLER_SLOT_REFERENCE *) ValueToBitMap(theValue);
+   theReference = (HANDLER_SLOT_REFERENCE *) ((CLIPSBitMap *) theValue)->contents;
    theInstance = ProceduralPrimitiveData(theEnv)->ProcParamArray[0].instanceValue;
    theDefclass = DefclassData(theEnv)->ClassIDMap[theReference->classID];
 
@@ -701,7 +704,7 @@ void PrintHandlerSlotPutFunction(
    Defclass *theDefclass;
    SlotDescriptor *sd;
 
-   theReference = (HANDLER_SLOT_REFERENCE *) ValueToBitMap(theValue);
+   theReference = (HANDLER_SLOT_REFERENCE *) ((CLIPSBitMap *) theValue)->contents;
    EnvPrintRouter(theEnv,logicalName,"(bind ?self:[");
    theDefclass = DefclassData(theEnv)->ClassIDMap[theReference->classID];
    EnvPrintRouter(theEnv,logicalName,theDefclass->header.name->contents);
@@ -760,7 +763,7 @@ bool HandlerSlotPutFunction(
    unsigned instanceSlotIndex;
    CLIPSValue theSetVal;
 
-   theReference = (HANDLER_SLOT_REFERENCE *) ValueToBitMap(theValue);
+   theReference = (HANDLER_SLOT_REFERENCE *) ((CLIPSBitMap *) theValue)->contents;
    theInstance = ProceduralPrimitiveData(theEnv)->ProcParamArray[0].instanceValue;
    theDefclass = DefclassData(theEnv)->ClassIDMap[theReference->classID];
 
@@ -872,7 +875,7 @@ void DynamicHandlerGetSlot(
    if ((sp->desc->publicVisibility == 0) &&
        (MessageHandlerData(theEnv)->CurrentCore->hnd->cls != sp->desc->cls))
      {
-      SlotVisibilityViolationError(theEnv,sp->desc,MessageHandlerData(theEnv)->CurrentCore->hnd->cls);
+      SlotVisibilityViolationError(theEnv,sp->desc,MessageHandlerData(theEnv)->CurrentCore->hnd->cls,false);
       EnvSetEvaluationError(theEnv,true);
       return;
      }
@@ -931,7 +934,7 @@ void DynamicHandlerPutSlot(
    if ((sp->desc->publicVisibility == 0) &&
        (MessageHandlerData(theEnv)->CurrentCore->hnd->cls != sp->desc->cls))
      {
-      SlotVisibilityViolationError(theEnv,sp->desc,MessageHandlerData(theEnv)->CurrentCore->hnd->cls);
+      SlotVisibilityViolationError(theEnv,sp->desc,MessageHandlerData(theEnv)->CurrentCore->hnd->cls,false);
       EnvSetEvaluationError(theEnv,true);
       return;
      }
@@ -985,17 +988,14 @@ static bool PerformMessage(
 #if PROFILING_FUNCTIONS
    struct profileFrameInfo profileFrame;
 #endif
-   struct garbageFrame newGarbageFrame;
-   struct garbageFrame *oldGarbageFrame;
+   CLIPSBlock gcBlock;
 
    returnValue->value = theEnv->FalseSymbol;
    EvaluationData(theEnv)->EvaluationError = false;
    if (EvaluationData(theEnv)->HaltExecution)
      return false;
 
-   oldGarbageFrame = UtilityData(theEnv)->CurrentGarbageFrame;
-   memset(&newGarbageFrame,0,sizeof(struct garbageFrame));
-   UtilityData(theEnv)->CurrentGarbageFrame = &newGarbageFrame;
+   CLIPSBlockStart(theEnv,&gcBlock);
 
    oldce = ExecutingConstruct(theEnv);
    SetExecutingConstruct(theEnv,true);
@@ -1013,7 +1013,7 @@ static bool PerformMessage(
       EvaluationData(theEnv)->CurrentEvaluationDepth--;
       MessageHandlerData(theEnv)->CurrentMessageName = oldName;
 
-      RestorePriorGarbageFrame(theEnv,&newGarbageFrame,oldGarbageFrame,returnValue);
+      CLIPSBlockEnd(theEnv,&gcBlock,returnValue);
       CallPeriodicTasks(theEnv);
 
       SetExecutingConstruct(theEnv,oldce);
@@ -1063,7 +1063,7 @@ static bool PerformMessage(
       EvaluationData(theEnv)->CurrentEvaluationDepth--;
       MessageHandlerData(theEnv)->CurrentMessageName = oldName;
 
-      RestorePriorGarbageFrame(theEnv,&newGarbageFrame,oldGarbageFrame,returnValue);
+      CLIPSBlockEnd(theEnv,&gcBlock,returnValue);
       CallPeriodicTasks(theEnv);
 
       SetExecutingConstruct(theEnv,oldce);
@@ -1159,7 +1159,7 @@ static bool PerformMessage(
    EvaluationData(theEnv)->CurrentEvaluationDepth--;
    MessageHandlerData(theEnv)->CurrentMessageName = oldName;
 
-   RestorePriorGarbageFrame(theEnv,&newGarbageFrame,oldGarbageFrame,returnValue);
+   CLIPSBlockEnd(theEnv,&gcBlock,returnValue);
    CallPeriodicTasks(theEnv);
 
    SetExecutingConstruct(theEnv,oldce);

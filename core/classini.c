@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  10/01/16             */
    /*                                                     */
    /*               CLASS INITIALIZATION MODULE           */
    /*******************************************************/
@@ -736,7 +736,7 @@ static Defclass *AddSystemClass(
    ClearBitString(defaultScopeMap,(int) sizeof(char));
    SetBitMap(defaultScopeMap,0);
 #if DEFMODULE_CONSTRUCT
-   sys->scopeMap = (BITMAP_HN *) EnvAddBitMap(theEnv,defaultScopeMap,(int) sizeof(char));
+   sys->scopeMap = (CLIPSBitMap *) EnvAddBitMap(theEnv,defaultScopeMap,(int) sizeof(char));
    IncrementBitMapCount(sys->scopeMap);
 #endif
    return(sys);
@@ -813,14 +813,14 @@ static void UpdateDefclassesScope(
         className = theDefclass->header.name->contents;
         ClearBitString(newScopeMap,newScopeMapSize);
         GenCopyMemory(char,theDefclass->scopeMap->size,
-                   newScopeMap,ValueToBitMap(theDefclass->scopeMap));
+                   newScopeMap,theDefclass->scopeMap->contents);
         DecrementBitMapCount(theEnv,theDefclass->scopeMap);
         if (theDefclass->system)
           SetBitMap(newScopeMap,newModuleID);
         else if (FindImportedConstruct(theEnv,"defclass",matchModule,
                                        className,&count,true,NULL) != NULL)
           SetBitMap(newScopeMap,newModuleID);
-        theDefclass->scopeMap = (BITMAP_HN *) EnvAddBitMap(theEnv,newScopeMap,newScopeMapSize);
+        theDefclass->scopeMap = (CLIPSBitMap *) EnvAddBitMap(theEnv,newScopeMap,newScopeMapSize);
         IncrementBitMapCount(theDefclass->scopeMap);
        }
    rm(theEnv,newScopeMap,newScopeMapSize);

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  10/01/16             */
    /*                                                     */
    /*             PROCEDURAL FUNCTIONS MODULE             */
    /*******************************************************/
@@ -45,6 +45,9 @@
 /*            data structures.                               */
 /*                                                           */
 /*            UDF redesign.                                  */
+/*                                                           */
+/*            Added CLIPSBlockStart and CLIPSBlockEnd        */
+/*            functions for garbage collection blocks.       */
 /*                                                           */
 /*************************************************************/
 
@@ -140,18 +143,14 @@ void WhileFunction(
   CLIPSValue *returnValue)
   {
    CLIPSValue theResult;
-   struct garbageFrame newGarbageFrame;
-   struct garbageFrame *oldGarbageFrame;
+   CLIPSBlock gcBlock;
 
    /*====================================================*/
    /* Evaluate the body of the while loop as long as the */
    /* while condition evaluates to a non-FALSE value.    */
    /*====================================================*/
 
-   oldGarbageFrame = UtilityData(theEnv)->CurrentGarbageFrame;
-   memset(&newGarbageFrame,0,sizeof(struct garbageFrame));
-   newGarbageFrame.priorFrame = oldGarbageFrame;
-   UtilityData(theEnv)->CurrentGarbageFrame = &newGarbageFrame;
+   CLIPSBlockStart(theEnv,&gcBlock);
 
    UDFNthArgument(context,1,ANY_TYPE,&theResult);
    while ((theResult.value != theEnv->FalseSymbol) &&
@@ -196,7 +195,7 @@ void WhileFunction(
       returnValue->value = theEnv->FalseSymbol;
      }
 
-   RestorePriorGarbageFrame(theEnv,&newGarbageFrame,oldGarbageFrame,returnValue);
+   CLIPSBlockEnd(theEnv,&gcBlock,returnValue);
    CallPeriodicTasks(theEnv);
   }
 
@@ -212,8 +211,7 @@ void LoopForCountFunction(
    CLIPSValue theArg;
    long long iterationEnd;
    LOOP_COUNTER_STACK *tmpCounter;
-   struct garbageFrame newGarbageFrame;
-   struct garbageFrame *oldGarbageFrame;
+   CLIPSBlock gcBlock;
 
    tmpCounter = get_struct(theEnv,loopCounterStack);
    tmpCounter->loopCounter = 0L;
@@ -236,10 +234,7 @@ void LoopForCountFunction(
       return;
      }
 
-   oldGarbageFrame = UtilityData(theEnv)->CurrentGarbageFrame;
-   memset(&newGarbageFrame,0,sizeof(struct garbageFrame));
-   newGarbageFrame.priorFrame = oldGarbageFrame;
-   UtilityData(theEnv)->CurrentGarbageFrame = &newGarbageFrame;
+   CLIPSBlockStart(theEnv,&gcBlock);
 
    iterationEnd = theArg.integerValue->contents;
    while ((tmpCounter->loopCounter <= iterationEnd) &&
@@ -273,7 +268,7 @@ void LoopForCountFunction(
    ProcedureFunctionData(theEnv)->LoopCounterStack = tmpCounter->nxt;
    rtn_struct(theEnv,loopCounterStack,tmpCounter);
 
-   RestorePriorGarbageFrame(theEnv,&newGarbageFrame,oldGarbageFrame,loopResult);
+   CLIPSBlockEnd(theEnv,&gcBlock,loopResult);
    CallPeriodicTasks(theEnv);
   }
 

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  10/01/16             */
    /*                                                     */
    /*                    BLOAD MODULE                     */
    /*******************************************************/
@@ -29,6 +29,9 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*            Converted API macros to function calls.        */
+/*                                                           */
+/*      6.31: Data sizes written to binary files for         */
+/*            validation when loaded.                        */
 /*                                                           */
 /*      6.40: Refactored code to reduce header dependencies  */
 /*            in sysdep.c.                                   */
@@ -71,6 +74,7 @@
    static struct FunctionDefinition **ReadNeededFunctions(Environment *,long *,bool *);
    static struct FunctionDefinition  *FastFindFunction(Environment *,const char *,struct FunctionDefinition *);
    static bool                        ClearBload(Environment *);
+   static void                        ClearBloadCallback(Environment *);
    static void                        AbortBload(Environment *);
    static bool                        BloadOutOfMemoryFunction(Environment *,size_t);
    static void                        DeallocateBloadData(Environment *);
@@ -82,12 +86,18 @@
 void InitializeBloadData(
   Environment *theEnv)
   {
+   char sizeBuffer[20];
+   sprintf(sizeBuffer,"%2d%2d%2d%2d%2d",(int) sizeof(void *),(int) sizeof(double),
+                                        (int) sizeof(int),(int) sizeof(long),(int) sizeof(long long));
+
    AllocateEnvironmentData(theEnv,BLOAD_DATA,sizeof(struct bloadData),NULL);
    AddEnvironmentCleanupFunction(theEnv,"bload",DeallocateBloadData,-1500);
-   EnvAddClearFunction(theEnv,"bload",(void (*)(Environment *)) ClearBload,10000);
+   EnvAddClearFunction(theEnv,"bload",ClearBloadCallback,10000);
 
    BloadData(theEnv)->BinaryPrefixID = "\1\2\3\4CLIPS";
-   BloadData(theEnv)->BinaryVersionID = "V6.30";
+   BloadData(theEnv)->BinaryVersionID = "V6.40";
+   BloadData(theEnv)->BinarySizes = (char *) genalloc(theEnv,strlen(sizeBuffer) + 1);
+   genstrcpy(BloadData(theEnv)->BinarySizes,sizeBuffer);
   }
 
 /************************************************/
@@ -101,6 +111,7 @@ static void DeallocateBloadData(
    DeallocateCallList(theEnv,BloadData(theEnv)->AfterBloadFunctions);
    DeallocateCallList(theEnv,BloadData(theEnv)->ClearBloadReadyFunctions);
    DeallocateCallList(theEnv,BloadData(theEnv)->AbortBloadFunctions);
+   genfree(theEnv,BloadData(theEnv)->BinarySizes,strlen(BloadData(theEnv)->BinarySizes) + 1);
   }
 
 /******************************/
@@ -115,6 +126,7 @@ bool EnvBload(
    unsigned long space;
    bool error;
    char IDbuffer[20];
+   char sizesBuffer[20];
    char constructBuffer[CONSTRUCT_HEADER_SIZE];
    struct BinaryItem *biPtr;
    struct callFunctionItem *bfPtr;
@@ -151,6 +163,22 @@ bool EnvBload(
 
    GenReadBinary(theEnv,IDbuffer,(unsigned long) strlen(BloadData(theEnv)->BinaryVersionID) + 1);
    if (strcmp(IDbuffer,BloadData(theEnv)->BinaryVersionID) != 0)
+     {
+      PrintErrorID(theEnv,"BLOAD",3,false);
+      EnvPrintRouter(theEnv,WERROR,"File ");
+      EnvPrintRouter(theEnv,WERROR,fileName);
+      EnvPrintRouter(theEnv,WERROR," is an incompatible binary construct file.\n");
+      GenCloseBinary(theEnv);
+      return false;
+     }
+
+   /*===========================================*/
+   /* Determine if it's a binary file using the */
+   /* correct size for pointers and numbers.    */
+   /*===========================================*/
+
+   GenReadBinary(theEnv,sizesBuffer,(unsigned long) strlen(BloadData(theEnv)->BinarySizes) + 1);
+   if (strcmp(sizesBuffer,BloadData(theEnv)->BinarySizes) != 0)
      {
       PrintErrorID(theEnv,"BLOAD",3,false);
       EnvPrintRouter(theEnv,WERROR,"File ");
@@ -591,6 +619,16 @@ bool Bloaded(
   Environment *theEnv)
   {
    return BloadData(theEnv)->BloadActive;
+  }
+
+/***************************************/
+/* ClearBloadCallback: Clears a binary */
+/*   image from the KB environment.    */
+/***************************************/
+static void ClearBloadCallback(
+  Environment *theEnv)
+  {
+   ClearBload(theEnv);
   }
 
 /*************************************/

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  10/01/16            */
    /*                                                     */
    /*        SYMBOL CONSTRUCT COMPILER HEADER FILE        */
    /*******************************************************/
@@ -53,7 +53,7 @@
    void                     PrintSymbolReference(Environment *,FILE *,CLIPSLexeme *);
    void                     PrintFloatReference(Environment *,FILE *,CLIPSFloat *);
    void                     PrintIntegerReference(Environment *,FILE *,CLIPSInteger *);
-   void                     PrintBitMapReference(Environment *,FILE *,BITMAP_HN *);
+   void                     PrintBitMapReference(Environment *,FILE *,CLIPSBitMap *);
    void                     AtomicValuesToCode(Environment *,const char *,const char *,char *);
 
 #endif /* _H_symblcmp */

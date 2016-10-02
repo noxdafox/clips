@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  10/01/16             */
    /*                                                     */
    /*                  CLASS COMMANDS MODULE              */
    /*******************************************************/
@@ -321,7 +321,7 @@ bool DefclassInScope(
    int moduleID;
    char *scopeMap;
 
-   scopeMap = (char *) ValueToBitMap(theDefclass->scopeMap);
+   scopeMap = (char *) theDefclass->scopeMap->contents;
    if (theModule == NULL)
      { theModule = EnvGetCurrentModule(theEnv); }
    moduleID = (int) theModule->header.bsaveID;

@@ -24,7 +24,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getFactScopes(
    struct deftemplateModule *theModuleItem;
    struct deftemplate *theDeftemplate;
    jint moduleCount = 0, whichBit;
-   BITMAP_HN *theScopeMap;
+   CLIPSBitMap *theScopeMap;
 
    scopeMap = (*env)->NewObject(env,
                                 CLIPSJNIData(theCLIPSEnv)->hashMapClass,
@@ -60,7 +60,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getFactScopes(
                                 CLIPSJNIData(theCLIPSEnv)->bitSetInitMethod,
                                 moduleCount);
                                 
-            theScopeMap = (BITMAP_HN *) CreateDeftemplateScopeMap(theCLIPSEnv,theDeftemplate);
+            theScopeMap = (CLIPSBitMap *) CreateDeftemplateScopeMap(theCLIPSEnv,theDeftemplate);
             
             for (whichBit = 0; whichBit < moduleCount; whichBit++)
               {

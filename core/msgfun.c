@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  10/01/16             */
    /*                                                     */
    /*              OBJECT MESSAGE FUNCTIONS               */
    /*******************************************************/
@@ -203,9 +203,10 @@ void SlotAccessViolationError(
 void SlotVisibilityViolationError(
   Environment *theEnv,
   SlotDescriptor *sd,
-  Defclass *theDefclass)
+  Defclass *theDefclass,
+  bool printCR)
   {
-   PrintErrorID(theEnv,"MSGFUN",6,false);
+   PrintErrorID(theEnv,"MSGFUN",6,printCR);
    EnvPrintRouter(theEnv,WERROR,"Private slot ");
    EnvPrintRouter(theEnv,WERROR,sd->slotName->name->contents);
    EnvPrintRouter(theEnv,WERROR," of class ");

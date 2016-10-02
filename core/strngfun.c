@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  10/01/16             */
    /*                                                     */
    /*               STRING FUNCTIONS MODULE               */
    /*******************************************************/
@@ -712,8 +712,6 @@ bool EnvEval(
    struct BindInfo *oldBinds;
    int danglingConstructs;
 
-   returnValue->environment = theEnv;
-
    /*=====================================*/
    /* If embedded, clear the error flags. */
    /*=====================================*/
@@ -789,7 +787,7 @@ bool EnvEval(
       EnvPrintRouter(theEnv,WERROR,"expand$ must be used in the argument list of a function call.\n");
       EnvSetEvaluationError(theEnv,true);
       CloseStringSource(theEnv,logicalNameBuffer);
-      returnValue->value = theEnv->FalseSymbol;
+      returnValue->lexemeValue = theEnv->FalseSymbol;
       ReturnExpression(theEnv,top);
       depth--;
       ConstructData(theEnv)->DanglingConstructs = danglingConstructs;
@@ -807,7 +805,7 @@ bool EnvEval(
       EnvPrintRouter(theEnv,WERROR,"Some variables could not be accessed by the eval function.\n");
       EnvSetEvaluationError(theEnv,true);
       CloseStringSource(theEnv,logicalNameBuffer);
-      returnValue->value = theEnv->FalseSymbol;
+      returnValue->lexemeValue = theEnv->FalseSymbol;
       ReturnExpression(theEnv,top);
       depth--;
       ConstructData(theEnv)->DanglingConstructs = danglingConstructs;
@@ -862,7 +860,6 @@ void EvalFunction(
   UDFContext *context,
   CLIPSValue *returnValue)
   {
-   returnValue->environment = theEnv;
    PrintErrorID(theEnv,"STRNGFUN",1,false);
    EnvPrintRouter(theEnv,WERROR,"Function eval does not work in run time modules.\n");
    returnValue->lexemeValue = theEnv->FalseSymbol;
@@ -877,7 +874,6 @@ bool EnvEval(
   const char *theString,
   CLIPSValue *returnValue)
   {
-   returnValue->environment = theEnv;
    PrintErrorID(theEnv,"STRNGFUN",1,false);
    EnvPrintRouter(theEnv,WERROR,"Function eval does not work in run time modules.\n");
    returnValue->lexemeValue = theEnv->FalseSymbol;
