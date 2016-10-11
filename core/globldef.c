@@ -95,7 +95,7 @@
    static void                    ReturnModule(Environment *,void *);
    static void                    ReturnDefglobal(Environment *,Defglobal *);
    static void                    InitializeDefglobalModules(Environment *);
-   static bool                    GetDefglobalValue2(Environment *,void *,CLIPSValue *);
+   static bool                    GetDefglobalValue(Environment *,void *,CLIPSValue *);
    static void                    IncrementDefglobalBusyCount(Environment *,Defglobal *);
    static void                    DecrementDefglobalBusyCount(Environment *,Defglobal *);
    static void                    DeallocateDefglobalData(Environment *);
@@ -117,7 +117,7 @@ void InitializeDefglobals(
                                                        NULL,
                                                        NULL,
                                                        NULL,
-                                                       (EntityEvaluationFunction *)  GetDefglobalValue2,
+                                                       (EntityEvaluationFunction *)  GetDefglobalValue,
                                                        NULL,NULL,
                                                        NULL,NULL,NULL,NULL,NULL,NULL };
 
@@ -341,7 +341,7 @@ static void ReturnDefglobal(
 
    ValueDeinstall(theEnv,&theDefglobal->current);
    if (theDefglobal->current.header->type == MULTIFIELD)
-     { ReturnMultifield(theEnv,(Multifield *) theDefglobal->current.value); }
+     { ReturnMultifield(theEnv,theDefglobal->current.multifieldValue); }
 
    /*================================================*/
    /* Return the expression representing the initial */
@@ -388,7 +388,7 @@ static void DestroyDefglobal(
    /*====================================*/
 
    if (theDefglobal->current.header->type == MULTIFIELD)
-     { ReturnMultifield(theEnv,(Multifield *) theDefglobal->current.value); }
+     { ReturnMultifield(theEnv,theDefglobal->current.multifieldValue); }
 
 #if (! RUN_TIME)
 
@@ -457,7 +457,7 @@ void QSetDefglobalValue(
 
    ValueDeinstall(theEnv,&theGlobal->current);
    if (theGlobal->current.header->type == MULTIFIELD)
-     { ReturnMultifield(theEnv,(Multifield *) theGlobal->current.value); }
+     { ReturnMultifield(theEnv,theGlobal->current.multifieldValue); }
 
    /*===========================================*/
    /* Set the new value of the global variable. */
@@ -540,11 +540,11 @@ void EnvSetGlobalsChanged(
    DefglobalData(theEnv)->ChangeToGlobals = value;
   }
 
-/**********************************************************/
-/* GetDefglobalValue2: Returns the value of the specified */
-/*   global variable in the supplied CLIPSValue.          */
-/**********************************************************/
-static bool GetDefglobalValue2(
+/*********************************************************/
+/* GetDefglobalValue: Returns the value of the specified */
+/*   global variable in the supplied CLIPSValue.         */
+/*********************************************************/
+static bool GetDefglobalValue(
   Environment *theEnv,
   void *theValue,
   CLIPSValue *vPtr)
@@ -625,8 +625,8 @@ bool QGetDefglobalValue(
      {
       vPtr->value = EnvCreateMultifield(theEnv,(unsigned long) (vPtr->end + 1));
       GenCopyMemory(struct field,vPtr->end + 1,
-                                &((Multifield *) vPtr->value)->theFields[0],
-                                &((Multifield *) theGlobal->current.value)->theFields[theGlobal->current.begin]);
+                                &vPtr->multifieldValue->theFields[0],
+                                &theGlobal->current.multifieldValue->theFields[theGlobal->current.begin]);
      }
 
    return true;

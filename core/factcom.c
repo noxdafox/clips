@@ -189,7 +189,7 @@ void AssertCommand(
       newFact = CreateFactBySize(theEnv,1);
       if (theExpression->nextArg == NULL)
         {
-         newFact->theProposition.theFields[0].value = CreateMultifield2(theEnv,0L);
+         newFact->theProposition.theFields[0].value = CreateUnmanagedMultifield(theEnv,0L);
         }
       slotPtr = NULL;
      }

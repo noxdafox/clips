@@ -322,8 +322,8 @@ void RemoveInstanceData(
         {
          if (sp->desc->multiple)
            {
-            MultifieldDeinstall(theEnv,(Multifield *) sp->value);
-            AddToMultifieldList(theEnv,(Multifield *) sp->value);
+            MultifieldDeinstall(theEnv,sp->multifieldValue);
+            AddToMultifieldList(theEnv,sp->multifieldValue);
            }
          else
            AtomDeinstall(theEnv,(int) sp->type,sp->value);
@@ -646,7 +646,7 @@ bool DirectPutSlotValue(
          bsp->type = sp->type;
          bsp->value = sp->value;
          if (sp->desc->multiple)
-           MultifieldInstall(theEnv,(Multifield *) bsp->value);
+           MultifieldInstall(theEnv,bsp->multifieldValue);
          else
            AtomInstall(theEnv,(int) bsp->type,bsp->value);
         }
@@ -676,23 +676,23 @@ bool DirectPutSlotValue(
      }
    else
      {
-      MultifieldDeinstall(theEnv,(Multifield *) sp->value);
-      AddToMultifieldList(theEnv,(Multifield *) sp->value);
+      MultifieldDeinstall(theEnv,sp->multifieldValue);
+      AddToMultifieldList(theEnv,sp->multifieldValue);
       sp->type = MULTIFIELD;
       if (val->header->type == MULTIFIELD)
         {
-         sp->value = CreateMultifield2(theEnv,(unsigned long) GetpDOLength(val));
+         sp->value = CreateUnmanagedMultifield(theEnv,(unsigned long) GetpDOLength(val));
          for (i = 0 , j = val->begin ; i < GetpDOLength(val) ; i++ , j++)
            {
-            ((Multifield *) sp->value)->theFields[i].value = val->multifieldValue->theFields[j].value;
+            sp->multifieldValue->theFields[i].value = val->multifieldValue->theFields[j].value;
            }
         }
       else
         {
-         sp->value = CreateMultifield2(theEnv,1L);
-         ((Multifield *) sp->value)->theFields[0].value = val->value;
+         sp->multifieldValue = CreateUnmanagedMultifield(theEnv,1L);
+         sp->multifieldValue->theFields[0].value = val->value;
         }
-      MultifieldInstall(theEnv,(Multifield *) sp->value);
+      MultifieldInstall(theEnv,sp->multifieldValue);
       setVal->value = sp->value;
       setVal->begin = 0;
       setVal->end = GetMFLength(sp->value) - 1;
@@ -720,7 +720,7 @@ bool DirectPutSlotValue(
       if (sp->type != MULTIFIELD)
         PrintAtom(theEnv,WTRACE,(int) sp->type,sp->value);
       else
-        PrintMultifield(theEnv,WTRACE,(Multifield *) sp->value,0,
+        PrintMultifield(theEnv,WTRACE,sp->multifieldValue,0,
                         (long) (GetInstanceSlotLength(sp) - 1),true);
       EnvPrintRouter(theEnv,WTRACE,"\n");
      }
@@ -1149,7 +1149,7 @@ void DecrementObjectBasisCount(
            if (theInstance->basisSlots[i].value != NULL)
              {
               if (theInstance->basisSlots[i].desc->multiple)
-                MultifieldDeinstall(theEnv,(Multifield *) theInstance->basisSlots[i].value);
+                MultifieldDeinstall(theEnv,theInstance->basisSlots[i].multifieldValue);
               else
                 AtomDeinstall(theEnv,(int) theInstance->basisSlots[i].type,
                               theInstance->basisSlots[i].value);

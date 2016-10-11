@@ -217,7 +217,7 @@ bool EvaluateExpression(
 
      case MF_VARIABLE:
      case SF_VARIABLE:
-        if (GetBoundVariable(theEnv,returnValue,(CLIPSLexeme *) problem->value) == false)
+        if (GetBoundVariable(theEnv,returnValue,problem->lexemeValue) == false)
           {
            PrintErrorID(theEnv,"EVALUATN",1,false);
            EnvPrintRouter(theEnv,WERROR,"Variable ");
@@ -400,7 +400,7 @@ void PrintDataObject(
         break;
 
       case MULTIFIELD:
-        PrintMultifield(theEnv,fileid,(Multifield *) argPtr->value,
+        PrintMultifield(theEnv,fileid,argPtr->multifieldValue,
                         argPtr->begin,argPtr->end,true);
         break;
 
@@ -435,8 +435,10 @@ void ValueInstall(
   Environment *theEnv,
   CLIPSValue *vPtr)
   {
-   if (vPtr->header->type == MULTIFIELD) CVMultifieldInstall(theEnv,(Multifield *) vPtr->value);
-   else CVAtomInstall(theEnv,vPtr->value);
+   if (vPtr->header->type == MULTIFIELD)
+     { CVMultifieldInstall(theEnv,vPtr->multifieldValue); }
+   else
+     { CVAtomInstall(theEnv,vPtr->value); }
   }
 
 /****************************************************/
@@ -447,8 +449,10 @@ void ValueDeinstall(
   Environment *theEnv,
   CLIPSValue *vPtr)
   {
-   if (vPtr->header->type == MULTIFIELD) CVMultifieldDeinstall(theEnv,(Multifield *) vPtr->value);
-   else CVAtomDeinstall(theEnv,vPtr->value);
+   if (vPtr->header->type == MULTIFIELD)
+     { CVMultifieldDeinstall(theEnv,vPtr->multifieldValue); }
+   else
+     { CVAtomDeinstall(theEnv,vPtr->value); }
   }
 
 /*******************************************/
@@ -776,7 +780,7 @@ void CopyDataObject(
      {
       DuplicateMultifield(theEnv,dst,src);
       if (garbageMultifield)
-        { AddToMultifieldList(theEnv,(Multifield *) dst->value); }
+        { AddToMultifieldList(theEnv,dst->multifieldValue); }
      }
   }
 
@@ -1059,7 +1063,7 @@ bool EvaluateAndStoreInDataObject(
    if (theExp == NULL)
      {
       if (garbageSegment) val->value = EnvCreateMultifield(theEnv,0L);
-      else val->value = CreateMultifield2(theEnv,0L);
+      else val->value = CreateUnmanagedMultifield(theEnv,0L);
 
       return true;
      }

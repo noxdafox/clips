@@ -505,7 +505,7 @@ void SubseqFunction(
    if (! UDFFirstArgument(context,MULTIFIELD_TYPE,&theArg))
      { return; }
 
-   theList = (Multifield *) theArg.value;
+   theList = theArg.multifieldValue;
    offset = theArg.begin;
    length = GetDOLength(theArg);
 
@@ -568,7 +568,7 @@ void FirstFunction(
 
    if (! UDFFirstArgument(context,MULTIFIELD_TYPE,&theArg)) return;
 
-   theList = (Multifield *) theArg.value;
+   theList = theArg.multifieldValue;
 
    /*=========================*/
    /* Return the new segment. */
@@ -600,7 +600,7 @@ void RestFunction(
 
    if (! UDFFirstArgument(context,MULTIFIELD_TYPE,&theArg)) return;
 
-   theList = (Multifield *) theArg.value;
+   theList = theArg.multifieldValue;
 
    /*=========================*/
    /* Return the new segment. */
@@ -624,7 +624,7 @@ void NthFunction(
   CLIPSValue *returnValue)
   {
    CLIPSValue value1, value2;
-   struct multifield *elm_ptr;
+   Multifield *elm_ptr;
    long long n; /* 6.04 Bug Fix */
 
    if ((! UDFFirstArgument(context,INTEGER_TYPE,&value1)) ||
@@ -638,7 +638,7 @@ void NthFunction(
 	  return;
 	 }
 
-   elm_ptr = (Multifield *) value2.value;
+   elm_ptr = value2.multifieldValue;
    returnValue->value = elm_ptr->theFields[((long) n - 1) + value2.begin].value;
   }
 
@@ -1257,21 +1257,21 @@ bool ReplaceMultiValueField(
    dst->end = dstlen - 1;
    for (i = 0 , j = src->begin ; j < rb ; i++ , j++)
 	 {
-	  deptr = &((Multifield *) dst->value)->theFields[i];
-	  septr = &((Multifield *) src->value)->theFields[j];
+	  deptr = &dst->multifieldValue->theFields[i];
+	  septr = &src->multifieldValue->theFields[j];
 	  deptr->value = septr->value;
 	 }
    if (field->header->type != MULTIFIELD)
 	 {
-	  deptr = &((Multifield *) dst->value)->theFields[i++];
+	  deptr = &dst->multifieldValue->theFields[i++];
 	  deptr->value = field->value;
 	 }
    else
 	 {
 	  for (k = field->begin ; k <= field->end ; k++ , i++)
 		{
-		 deptr = &((Multifield *) dst->value)->theFields[i];
-		 septr = &((Multifield *) field->value)->theFields[k];
+		 deptr = &dst->multifieldValue->theFields[i];
+		 septr = &field->multifieldValue->theFields[k];
 		 deptr->value = septr->value;
 		}
 	 }
@@ -1279,8 +1279,8 @@ bool ReplaceMultiValueField(
 	 j++;
    for (j++ ; i < dstlen ; i++ , j++)
 	 {
-	  deptr = &((Multifield *) dst->value)->theFields[i];
-	  septr = &((Multifield *) src->value)->theFields[j];
+	  deptr = &dst->multifieldValue->theFields[i];
+	  septr = &src->multifieldValue->theFields[j];
 	  deptr->value = septr->value;
 	 }
    return true;
@@ -1327,13 +1327,13 @@ bool InsertMultiValueField(
       if (field->header->type == MULTIFIELD)
         {
          DuplicateMultifield(theEnv,dst,field);
-         AddToMultifieldList(theEnv,(Multifield *) dst->value);
+         AddToMultifieldList(theEnv,dst->multifieldValue);
         }
       else
         {
          dst->value = EnvCreateMultifield(theEnv,0L);
          dst->end = 0;
-         deptr = &((Multifield *) dst->value)->theFields[0];
+         deptr = &dst->multifieldValue->theFields[0];
          deptr->value = field->value;
         }
       return true;
@@ -1344,13 +1344,13 @@ bool InsertMultiValueField(
    theIndex--;
    for (i = 0 , j = src->begin ; i < theIndex ; i++ , j++)
      {
-      deptr = &((Multifield *) dst->value)->theFields[i];
-      septr = &((Multifield *) src->value)->theFields[j];
+      deptr = &dst->multifieldValue->theFields[i];
+      septr = &src->multifieldValue->theFields[j];
       deptr->value = septr->value;
      }
    if (field->header->type != MULTIFIELD)
      {
-      deptr = &((Multifield *) dst->value)->theFields[theIndex];
+      deptr = &dst->multifieldValue->theFields[theIndex];
       deptr->value = field->value;
       i++;
      }
@@ -1358,15 +1358,15 @@ bool InsertMultiValueField(
      {
       for (k = field->begin ; k <= field->end ; k++ , i++)
         {
-         deptr = &((Multifield *) dst->value)->theFields[i];
-         septr = &((Multifield *) field->value)->theFields[k];
+         deptr = &dst->multifieldValue->theFields[i];
+         septr = &field->multifieldValue->theFields[k];
          deptr->value = septr->value;
         }
      }
    for ( ; j <= src->end ; i++ , j++)
      {
-      deptr = &((Multifield *) dst->value)->theFields[i];
-      septr = &((Multifield *) src->value)->theFields[j];
+      deptr = &dst->multifieldValue->theFields[i];
+      septr = &src->multifieldValue->theFields[j];
       deptr->value = septr->value;
      }
    return true;
@@ -1462,16 +1462,16 @@ bool DeleteMultiValueField(
    dst->value = EnvCreateMultifield(theEnv,dstlen);
    for (i = 0 , j = src->begin ; j < rb ; i++ , j++)
      {
-      deptr = &((Multifield *) dst->value)->theFields[i];
-      septr = &((Multifield *) src->value)->theFields[j];
+      deptr = &dst->multifieldValue->theFields[i];
+      septr = &src->multifieldValue->theFields[j];
       deptr->value = septr->value;
      }
    while (j < re)
      j++;
    for (j++ ; i <= dst->end ; j++ , i++)
      {
-      deptr = &((Multifield *) dst->value)->theFields[i];
-      septr = &((Multifield *) src->value)->theFields[j];
+      deptr = &dst->multifieldValue->theFields[i];
+      septr = &src->multifieldValue->theFields[j];
       deptr->value = septr->value;
      }
    return true;

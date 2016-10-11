@@ -65,6 +65,8 @@
 /*            Added CLIPSBlockStart and CLIPSBlockEnd        */
 /*            functions for garbage collection blocks.       */
 /*                                                           */
+/*            Added StringBuilder functions.                 */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -1274,5 +1276,80 @@ size_t UTF8CharNum(
      }
 
    return charnum;
+  }
+
+/***************************/
+/* EnvCreateStringBuilder: */
+/***************************/
+StringBuilder *EnvCreateStringBuilder(
+  Environment *theEnv,
+  size_t theSize)
+  {
+   StringBuilder *theSB;
+   
+   theSB = get_struct(theEnv,stringBuilder);
+   if (theSB == NULL) return NULL;
+   
+   theSize++;
+   theSB->sbEnv = theEnv;
+   theSB->bufferReset = theSize;
+   theSB->bufferMaximum = theSize;
+   theSB->bufferPosition = 0;
+   theSB->stringBuffer = (char *) genalloc(theEnv,theSize);
+   theSB->stringBuffer[0] = EOS;
+   
+   return theSB;
+  }
+
+/************************/
+/* StringBuilderAppend: */
+/************************/
+void StringBuilderAppend(
+  StringBuilder *theSB,
+  const char *appendString)
+  {
+   theSB->stringBuffer = AppendToString(theSB->sbEnv,appendString,
+                                        theSB->stringBuffer,&theSB->bufferPosition,&theSB->bufferMaximum);
+  }
+
+/**********************/
+/* StringBuilderReset */
+/**********************/
+void StringBuilderReset(
+  StringBuilder *theSB)
+  {
+   if (theSB->bufferReset != theSB->bufferMaximum)
+     {
+      rm(theSB->sbEnv,theSB->stringBuffer,theSB->bufferMaximum);
+      theSB->stringBuffer = (char *) genalloc(theSB->sbEnv,theSB->bufferReset);
+     }
+     
+   theSB->bufferPosition = 0;
+   theSB->stringBuffer[0] = EOS;
+  }
+
+/*********************/
+/* StringBuilderCopy */
+/*********************/
+char *StringBuilderCopy(
+  StringBuilder *theSB)
+  {
+   char *stringCopy;
+
+   stringCopy = (char *) malloc(strlen(theSB->stringBuffer) + 1);
+   strcpy(stringCopy,theSB->stringBuffer);
+
+   return stringCopy;
+  }
+
+/*************************/
+/* StringBuilderDispose: */
+/*************************/
+void StringBuilderDispose(
+  StringBuilder *theSB)
+  {
+   Environment *theEnv = theSB->sbEnv;
+   rm(theEnv,theSB->stringBuffer,theSB->bufferMaximum);
+   rtn_struct(theEnv,stringBuilder,theSB);
   }
 

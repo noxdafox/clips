@@ -102,7 +102,7 @@ static void DeallocateDefglobalBloadData(
    for (i = 0; i < DefglobalBinaryData(theEnv)->NumberOfDefglobals; i++)
      {
       if (DefglobalBinaryData(theEnv)->DefglobalArray[i].current.header->type == MULTIFIELD)
-        { ReturnMultifield(theEnv,(Multifield *) DefglobalBinaryData(theEnv)->DefglobalArray[i].current.value); }
+        { ReturnMultifield(theEnv,DefglobalBinaryData(theEnv)->DefglobalArray[i].current.multifieldValue); }
      }
 
    space = DefglobalBinaryData(theEnv)->NumberOfDefglobals * sizeof(Defglobal);
@@ -421,7 +421,7 @@ static void ClearBload(
 
       ValueDeinstall(theEnv,&(DefglobalBinaryData(theEnv)->DefglobalArray[i].current));
       if (DefglobalBinaryData(theEnv)->DefglobalArray[i].current.header->type == MULTIFIELD)
-        { ReturnMultifield(theEnv,(Multifield *) DefglobalBinaryData(theEnv)->DefglobalArray[i].current.value); }
+        { ReturnMultifield(theEnv,DefglobalBinaryData(theEnv)->DefglobalArray[i].current.multifieldValue); }
      }
 
    /*==============================================================*/

@@ -637,7 +637,7 @@ void EnvClassSubclasses(
    if ((id = GetTraversalID(theEnv)) == -1)
      { return; }
 
-   StoreSubclasses((Multifield *) returnValue->value,0,theDefclass,inhp,id,true);
+   StoreSubclasses(returnValue->multifieldValue,0,theDefclass,inhp,id,true);
    ReleaseTraversalID(theEnv);
   }
 
@@ -679,7 +679,7 @@ void ClassSubclassAddresses(
    if ((id = GetTraversalID(theEnv)) == -1)
      { return; }
 
-   StoreSubclasses((Multifield *) returnValue->value,0,theDefclass,inhp,id,false);
+   StoreSubclasses(returnValue->multifieldValue,0,theDefclass,inhp,id,false);
    ReleaseTraversalID(theEnv);
   }
 /**************************************************************************

@@ -187,7 +187,7 @@ void CheckTemplateFact(
         {
          theData.value = (void *) sublist[i].value;
          theData.begin = 0;
-         theData.end = ((Multifield *) sublist[i].value)->multifieldLength - 1;
+         theData.end = sublist[i].multifieldValue->multifieldLength - 1;
          i++;
         }
 
@@ -348,8 +348,8 @@ void PrintTemplateFact(
                continue;
               }
            }
-         else if (MultifieldsEqual((Multifield*) tempDO.value,
-                                   (Multifield *) sublist[i].value))
+         else if (MultifieldsEqual(tempDO.multifieldValue,
+                                   sublist[i].multifieldValue))
            {
             i++;
             slotPtr = slotPtr->next;
@@ -392,11 +392,11 @@ void PrintTemplateFact(
         {
          Multifield *theSegment;
 
-         theSegment = (Multifield *) sublist[i].value;
+         theSegment = sublist[i].multifieldValue;
          if (theSegment->multifieldLength > 0)
            {
             EnvPrintRouter(theEnv,logicalName," ");
-            PrintMultifield(theEnv,logicalName,(Multifield *) sublist[i].value,
+            PrintMultifield(theEnv,logicalName,sublist[i].multifieldValue,
                             0,(long) theSegment->multifieldLength-1,false);
            }
         }

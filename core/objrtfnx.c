@@ -346,7 +346,7 @@ bool ObjectCmpConstantFunction(
       constantExp = GetFirstArgument();
       if (ObjectReteData(theEnv)->CurrentPatternObjectSlot->type == MULTIFIELD)
         {
-         theSegment = (Multifield *) ObjectReteData(theEnv)->CurrentPatternObjectSlot->value;
+         theSegment = ObjectReteData(theEnv)->CurrentPatternObjectSlot->multifieldValue;
          if (hack->fromBeginning)
            {
             theVar.value = theSegment->theFields[hack->offset].value;
@@ -1110,7 +1110,7 @@ static void GetObjectValueGeneral(
      {
       if ((*insSlot)->desc->multiple)
         {
-         returnValue->value = ((Multifield *) (*insSlot)->value)->theFields[field-1].value;
+         returnValue->value = (*insSlot)->multifieldValue->theFields[field-1].value;
         }
       else
         {
@@ -1172,7 +1172,7 @@ static void GetObjectValueSimple(
 
    if ((*insSlot)->desc->multiple)
      {
-      segmentPtr = (Multifield *) (*insSlot)->value;
+      segmentPtr = (*insSlot)->multifieldValue;
       if (matchVar->fromBeginning)
         {
          if (matchVar->fromEnd)
@@ -1288,7 +1288,7 @@ static void GetInsMultiSlotField(
 
    if (insSlot->desc->multiple)
      {
-      theSegment = (Multifield *) insSlot->value;
+      theSegment = insSlot->multifieldValue;
       if (fromBeginning)
         tmpField = &theSegment->theFields[offset];
       else

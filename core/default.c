@@ -95,7 +95,7 @@ void DeriveDefaultFromConstraints(
          theDefault->begin = 0;
          theDefault->end = -1;
          if (garbageMultifield) theDefault->value = EnvCreateMultifield(theEnv,0L);
-         else theDefault->value = CreateMultifield2(theEnv,0L);
+         else theDefault->value = CreateUnmanagedMultifield(theEnv,0L);
         }
       else
         {
@@ -180,7 +180,7 @@ void DeriveDefaultFromConstraints(
       theDefault->begin = 0;
       theDefault->end = minFields - 1;
       if (garbageMultifield) theDefault->value = EnvCreateMultifield(theEnv,minFields);
-      else theDefault->value = CreateMultifield2(theEnv,minFields);
+      else theDefault->value = CreateUnmanagedMultifield(theEnv,minFields);
 
       for (; minFields > 0; minFields--)
         {

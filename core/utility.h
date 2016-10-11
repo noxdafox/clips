@@ -64,6 +64,8 @@
 /*            Added CLIPSBlockStart and CLIPSBlockEnd        */
 /*            functions for garbage collection blocks.       */
 /*                                                           */
+/*            Added StringBuilder functions.                 */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_utility
@@ -75,6 +77,7 @@
 #include "evaluatn.h"
 
 typedef struct clipsBlock CLIPSBlock;
+typedef struct stringBuilder StringBuilder;
 
 struct callFunctionItem
   {
@@ -121,6 +124,15 @@ struct clipsBlock
    struct garbageFrame newGarbageFrame;
    struct garbageFrame *oldGarbageFrame;
    CLIPSValue *result;
+  };
+
+struct stringBuilder
+  {
+   Environment *sbEnv;
+   char *stringBuffer;
+   size_t bufferReset;
+   size_t bufferPosition;
+   size_t bufferMaximum;
   };
 
 #define UTILITY_DATA 55
@@ -197,6 +209,11 @@ struct utilityData
    void                           CleanCurrentGarbageFrame(Environment *,CLIPSValue *);
    void                           CLIPSBlockStart(Environment *,CLIPSBlock *);
    void                           CLIPSBlockEnd(Environment *,CLIPSBlock *,CLIPSValue *);
+   StringBuilder                 *EnvCreateStringBuilder(Environment *,size_t);
+   void                           StringBuilderDispose(StringBuilder *);
+   void                           StringBuilderAppend(StringBuilder *,const char *);
+   void                           StringBuilderReset(StringBuilder *);
+   char                          *StringBuilderCopy(StringBuilder *);
 
 #endif /* _H_utility */
 

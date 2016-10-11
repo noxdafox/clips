@@ -661,7 +661,7 @@ int ConstraintCheckDataObject(
                                      theConstraints) == false)
         { return(CARDINALITY_VIOLATION); }
 
-      theMultifield = ((Multifield *) theData->value)->theFields;
+      theMultifield = theData->multifieldValue->theFields;
       for (i = theData->begin; i <= theData->end; i++)
         {
          if ((rv = ConstraintCheckValue(theEnv,theMultifield[i].header->type,

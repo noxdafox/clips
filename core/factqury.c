@@ -211,7 +211,7 @@ void GetQueryFactSlot(
    if (returnValue->header->type == MULTIFIELD)
      {
       returnValue->begin = 0;
-      returnValue->end = ((Multifield *) returnValue->value)->multifieldLength - 1;
+      returnValue->end = returnValue->multifieldValue->multifieldLength - 1;
      }
   }
 

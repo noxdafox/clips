@@ -946,11 +946,11 @@ static void DumpExpression(
            break;
 
          case INTEGER:
-           PrintIntegerReference(theEnv,ConstructCompilerData(theEnv)->ExpressionFP,(CLIPSInteger *) exprPtr->value);
+           PrintIntegerReference(theEnv,ConstructCompilerData(theEnv)->ExpressionFP,exprPtr->integerValue);
            break;
 
          case FLOAT:
-           PrintFloatReference(theEnv,ConstructCompilerData(theEnv)->ExpressionFP,(CLIPSFloat *) exprPtr->value);
+           PrintFloatReference(theEnv,ConstructCompilerData(theEnv)->ExpressionFP,exprPtr->floatValue);
            break;
 
          case PCALL:
@@ -1027,7 +1027,7 @@ static void DumpExpression(
          case SYMBOL:
          case INSTANCE_NAME:
          case GBL_VARIABLE:
-           PrintSymbolReference(theEnv,ConstructCompilerData(theEnv)->ExpressionFP,(CLIPSLexeme *) exprPtr->value);
+           PrintSymbolReference(theEnv,ConstructCompilerData(theEnv)->ExpressionFP,exprPtr->lexemeValue);
            break;
 
          case RVOID:

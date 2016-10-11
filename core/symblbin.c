@@ -510,7 +510,7 @@ void ReadNeededFloats(
    SymbolData(theEnv)->FloatArray = (CLIPSFloat **)
                gm3(theEnv,(long) sizeof(CLIPSFloat *) * SymbolData(theEnv)->NumberOfFloats);
    for (i = 0; i < SymbolData(theEnv)->NumberOfFloats; i++)
-     { SymbolData(theEnv)->FloatArray[i] = (CLIPSFloat *) EnvCreateFloat(theEnv,floatValues[i]); }
+     { SymbolData(theEnv)->FloatArray[i] = EnvCreateFloat(theEnv,floatValues[i]); }
 
    /*========================*/
    /* Free the float buffer. */
@@ -554,7 +554,7 @@ void ReadNeededIntegers(
    SymbolData(theEnv)->IntegerArray = (CLIPSInteger **)
            gm3(theEnv,(long) (sizeof(CLIPSInteger *) * SymbolData(theEnv)->NumberOfIntegers));
    for (i = 0; i < SymbolData(theEnv)->NumberOfIntegers; i++)
-     { SymbolData(theEnv)->IntegerArray[i] = (CLIPSInteger *) EnvCreateInteger(theEnv,integerValues[i]); }
+     { SymbolData(theEnv)->IntegerArray[i] = EnvCreateInteger(theEnv,integerValues[i]); }
 
    /*==========================*/
    /* Free the integer buffer. */

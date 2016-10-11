@@ -81,7 +81,7 @@ static bool CheckForUnmatchableConstraints(
   {
    if (UnmatchableConstraint(theNode->constraints))
      {
-      ConstraintConflictMessage(theEnv,(CLIPSLexeme *) theNode->value,whichCE,
+      ConstraintConflictMessage(theEnv,theNode->lexemeValue,whichCE,
                                 theNode->index,theNode->slot);
       return true;
      }
@@ -794,7 +794,7 @@ static bool CheckArgumentForConstraintError(
    /* binding the variable in the LHS of the rule.   */
    /*================================================*/
 
-   theVariable = FindVariable((CLIPSLexeme *) expressionList->value,theLHS);
+   theVariable = FindVariable(expressionList->lexemeValue,theLHS);
    if (theVariable != NULL)
      {
       if (theVariable->pnType == MF_VARIABLE_NODE)
@@ -815,7 +815,7 @@ static bool CheckArgumentForConstraintError(
    /* binding the variable on the RHS of the rule.   */
    /*================================================*/
 
-   constraint3 = FindBindConstraints(theEnv,(CLIPSLexeme *) expressionList->value);
+   constraint3 = FindBindConstraints(theEnv,expressionList->lexemeValue);
 
    /*====================================================*/
    /* Union the LHS and RHS variable binding constraints */

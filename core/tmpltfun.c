@@ -320,7 +320,7 @@ static void DuplicateModifyCommand(
          slotPtr = templatePtr->slotList;
          while (slotPtr != NULL)
            {
-            if (slotPtr->slotName == (CLIPSLexeme *) testPtr->value)
+            if (slotPtr->slotName == testPtr->lexemeValue)
               {
                found = true;
                slotPtr = NULL;
@@ -428,7 +428,7 @@ static void DuplicateModifyCommand(
 
         {
          newFact->theProposition.theFields[i].value =
-            CopyMultifield(theEnv,(Multifield *) oldFact->theProposition.theFields[i].value);
+            CopyMultifield(theEnv,oldFact->theProposition.theFields[i].multifieldValue);
         }
      }
 
@@ -1765,7 +1765,7 @@ bool UpdateModifyDuplicate(
    functionArgs = top->argList;
    if (functionArgs->type == SF_VARIABLE)
      {
-      templateName = FindTemplateForFactAddress((CLIPSLexeme *) functionArgs->value,
+      templateName = FindTemplateForFactAddress(functionArgs->lexemeValue,
                                                 (struct lhsParseNode *) vTheLHS);
       if (templateName == NULL) return true;
      }
@@ -1797,7 +1797,7 @@ bool UpdateModifyDuplicate(
       /* Does the slot exist? */
       /*======================*/
 
-      if ((slotPtr = FindSlot(theDeftemplate,(CLIPSLexeme *) tempArg->value,&position)) == NULL)
+      if ((slotPtr = FindSlot(theDeftemplate,tempArg->lexemeValue,&position)) == NULL)
         {
          InvalidDeftemplateSlotMessage(theEnv,tempArg->lexemeValue->contents,
                                        theDeftemplate->header.name->contents,true);
@@ -1847,7 +1847,7 @@ bool UpdateModifyDuplicate(
       /*=============================================*/
 
       tempArg->type = INTEGER;
-      tempArg->value = EnvCreateInteger(theEnv,(long long) (FindSlotPosition(theDeftemplate,(CLIPSLexeme *) tempArg->value) - 1));
+      tempArg->value = EnvCreateInteger(theEnv,(long long) (FindSlotPosition(theDeftemplate,tempArg->lexemeValue) - 1));
 
       tempArg = tempArg->nextArg;
      }
@@ -1904,7 +1904,7 @@ CLIPSLexeme *FindTemplateForFactAddress(
    /* Return the deftemplate name. */
    /*==============================*/
 
-   return (CLIPSLexeme *) thePattern->value;
+   return thePattern->lexemeValue;
   }
 
 /*******************************************/

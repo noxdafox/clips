@@ -1008,7 +1008,7 @@ static void SaveSingleInstanceText(
       else if (GetInstanceSlotLength(sp) != 0)
         {
          EnvPrintRouter(theEnv,logicalName," ");
-         PrintMultifield(theEnv,logicalName,(Multifield *) sp->value,0,
+         PrintMultifield(theEnv,logicalName,sp->multifieldValue,0,
                          (long) (GetInstanceSlotLength(sp) - 1),false);
         }
       EnvPrintRouter(theEnv,logicalName,")");
@@ -1075,8 +1075,8 @@ static void MarkSingleInstance(
       if (sp->desc->multiple)
         {
          for (j = 0 ; j < GetInstanceSlotLength(sp) ; j++)
-           MarkNeededAtom(theEnv,((Multifield *) sp->value)->theFields[j].header->type,
-                                 ((Multifield *) sp->value)->theFields[j].value);
+           MarkNeededAtom(theEnv,sp->multifieldValue->theFields[j].header->type,
+                                 sp->multifieldValue->theFields[j].value);
         }
       else
         MarkNeededAtom(theEnv,(int) sp->type,sp->value);
@@ -1201,8 +1201,8 @@ static void SaveSingleInstanceBinary(
       if (sp->desc->multiple)
         {
          for (j = 0 ; j < slotLen ; j++)
-           SaveAtomBinary(theEnv,((Multifield *) sp->value)->theFields[j].header->type,
-                                 ((Multifield *) sp->value)->theFields[j].value,bsaveFP);
+           SaveAtomBinary(theEnv,sp->multifieldValue->theFields[j].header->type,
+                                 sp->multifieldValue->theFields[j].value,bsaveFP);
         }
       else
         SaveAtomBinary(theEnv,(unsigned short) sp->type,sp->value,bsaveFP);

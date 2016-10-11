@@ -73,6 +73,7 @@
 struct entityRecord;
 struct dataObject;
 
+typedef struct genericValue GenericValue;
 typedef struct dataObject CLIPSValue;
 typedef struct dataObject * CLIPSValuePtr;
 typedef struct expr FUNCTION_REFERENCE;
@@ -118,6 +119,23 @@ struct entityRecord
 
 #include "factmngr.h"
 #include "object.h"
+
+struct genericValue
+  {
+   union
+     {
+      void *value;
+      TypeHeader const *header;
+      Fact *factValue;
+      Instance *instanceValue;
+      CLIPSLexeme *lexemeValue;
+      CLIPSFloat *floatValue;
+      CLIPSInteger *integerValue;
+      CLIPSVoid *voidValue;
+      Multifield *multifieldValue;
+      CLIPSExternalAddress *externalAddressValue;
+     };
+  };
 
 struct dataObject
   {
@@ -172,6 +190,7 @@ typedef struct entityRecord * ENTITY_RECORD_PTR;
 #define BitwiseSet(n,b)    (n |= (char) (1 << (b)))
 #define BitwiseClear(n,b)  (n &= (char) ~(1 << (b)))
 
+#define CountToBitMapSize(c) (((c) + (BITS_PER_BYTE - 1)) / BITS_PER_BYTE) 
 #define TestBitMap(map,id)  BitwiseTest(map[(id) / BITS_PER_BYTE],(id) % BITS_PER_BYTE)
 #define SetBitMap(map,id)   BitwiseSet(map[(id) / BITS_PER_BYTE],(id) % BITS_PER_BYTE)
 #define ClearBitMap(map,id) BitwiseClear(map[(id) / BITS_PER_BYTE],(id) % BITS_PER_BYTE)

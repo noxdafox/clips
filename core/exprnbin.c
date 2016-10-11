@@ -180,12 +180,12 @@ static void UpdateExpression(
 
       case INTEGER:
         ExpressionData(theEnv)->ExpressionArray[obji].value = SymbolData(theEnv)->IntegerArray[bexp->value];
-        IncrementIntegerCount((CLIPSInteger *) ExpressionData(theEnv)->ExpressionArray[obji].value);
+        IncrementIntegerCount(ExpressionData(theEnv)->ExpressionArray[obji].integerValue);
         break;
 
       case FLOAT:
         ExpressionData(theEnv)->ExpressionArray[obji].value = SymbolData(theEnv)->FloatArray[bexp->value];
-        IncrementFloatCount((CLIPSFloat *) ExpressionData(theEnv)->ExpressionArray[obji].value);
+        IncrementFloatCount(ExpressionData(theEnv)->ExpressionArray[obji].floatValue);
         break;
 
       case INSTANCE_NAME:
@@ -196,7 +196,7 @@ static void UpdateExpression(
       case SYMBOL:
       case STRING:
         ExpressionData(theEnv)->ExpressionArray[obji].value = SymbolData(theEnv)->SymbolArray[bexp->value];
-        IncrementSymbolCount((CLIPSLexeme *) ExpressionData(theEnv)->ExpressionArray[obji].value);
+        IncrementSymbolCount(ExpressionData(theEnv)->ExpressionArray[obji].lexemeValue);
         break;
 
 #if DEFTEMPLATE_CONSTRUCT
@@ -265,13 +265,13 @@ void ClearBloadedExpressions(
          case STRING          :
          case INSTANCE_NAME   :
          case GBL_VARIABLE    :
-           DecrementSymbolCount(theEnv,(CLIPSLexeme *) ExpressionData(theEnv)->ExpressionArray[i].value);
+           DecrementSymbolCount(theEnv,ExpressionData(theEnv)->ExpressionArray[i].lexemeValue);
            break;
          case FLOAT           :
-           DecrementFloatCount(theEnv,(CLIPSFloat *) ExpressionData(theEnv)->ExpressionArray[i].value);
+           DecrementFloatCount(theEnv,ExpressionData(theEnv)->ExpressionArray[i].floatValue);
            break;
          case INTEGER         :
-           DecrementIntegerCount(theEnv,(CLIPSInteger *) ExpressionData(theEnv)->ExpressionArray[i].value);
+           DecrementIntegerCount(theEnv,ExpressionData(theEnv)->ExpressionArray[i].integerValue);
            break;
 
 #if DEFTEMPLATE_CONSTRUCT
@@ -424,11 +424,11 @@ void BsaveExpression(
       switch(testPtr->type)
         {
          case FLOAT:
-           newTest.value = (long) ((CLIPSFloat *) testPtr->value)->bucket;
+           newTest.value = (long) testPtr->floatValue->bucket;
            break;
 
          case INTEGER:
-           newTest.value = (long) ((CLIPSInteger *) testPtr->value)->bucket;
+           newTest.value = (long) testPtr->integerValue->bucket;
            break;
 
          case FCALL:
@@ -487,7 +487,7 @@ void BsaveExpression(
          case SYMBOL:
          case GBL_VARIABLE:
          case STRING:
-           newTest.value = (long) ((CLIPSLexeme *) testPtr->value)->bucket;
+           newTest.value = (long) testPtr->lexemeValue->bucket;
            break;
 
          case FACT_ADDRESS:

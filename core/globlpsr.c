@@ -379,7 +379,7 @@ static void AddDefglobal(
      {
       ValueDeinstall(theEnv,&defglobalPtr->current);
       if (defglobalPtr->current.header->type == MULTIFIELD)
-        { ReturnMultifield(theEnv,(Multifield *) defglobalPtr->current.value); }
+        { ReturnMultifield(theEnv,defglobalPtr->current.multifieldValue); }
 
       RemoveHashedExpression(theEnv,defglobalPtr->initial);
      }

@@ -421,7 +421,7 @@ void rm(
    memPtr->next = MemoryData(theEnv)->MemoryTable[size];
    MemoryData(theEnv)->MemoryTable[size] = memPtr;
 #else
-   genfree(theEnv,str,size));
+   genfree(theEnv,str,size);
 #endif
   }
 

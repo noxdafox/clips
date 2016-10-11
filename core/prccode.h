@@ -83,7 +83,7 @@ typedef struct ProcParamStack
 
 struct proceduralPrimitiveData
   {
-   void *NoParamValue;
+   Multifield *NoParamValue;
    CLIPSValue *ProcParamArray;
    int ProcParamArraySize;
    EXPRESSION *CurrentProcActions;

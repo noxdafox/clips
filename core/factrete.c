@@ -111,7 +111,7 @@ bool FactPNGetVar1(
       if (returnValue->header->type == MULTIFIELD)
         {
          returnValue->begin = 0;
-         returnValue->end = ((Multifield *) fieldPtr->value)->multifieldLength - 1;
+         returnValue->end = fieldPtr->multifieldValue->multifieldLength - 1;
         }
 
       return true;
@@ -156,7 +156,7 @@ bool FactPNGetVar1(
    /* a multifield slot. Just return the type and value.     */
    /*========================================================*/
 
-   segmentPtr = (Multifield *) fieldPtr->value;
+   segmentPtr = fieldPtr->multifieldValue;
    fieldPtr = &segmentPtr->theFields[theField];
 
    returnValue->value = fieldPtr->value;
@@ -232,7 +232,7 @@ bool FactPNGetVar3(
    /* Get the multifield value from which the data is retrieved. */
    /*============================================================*/
 
-   segmentPtr = (Multifield *) factPtr->theProposition.theFields[hack->whichSlot].value;
+   segmentPtr = factPtr->theProposition.theFields[hack->whichSlot].multifieldValue;
 
    /*=========================================*/
    /* If the beginning and end flags are set, */
@@ -336,7 +336,7 @@ bool FactPNConstant2(
 
    if (fieldPtr->header->type == MULTIFIELD)
      {
-      segmentPtr = (Multifield *) fieldPtr->value;
+      segmentPtr = fieldPtr->multifieldValue;
 
       if (hack->fromBeginning)
         { fieldPtr = &segmentPtr->theFields[hack->offset]; }
@@ -372,6 +372,7 @@ bool FactJNGetVar1(
    Multifield *segmentPtr;
    int extent;
    struct factGetVarJN1Call *hack;
+   struct multifield *theSlots = NULL;
 
    /*==========================================*/
    /* Retrieve the arguments for the function. */
@@ -420,6 +421,12 @@ bool FactJNGetVar1(
       return true;
      }
 
+   if ((factPtr->basisSlots != NULL) &&
+       (! EngineData(theEnv)->JoinOperationInProgress))
+     { theSlots = factPtr->basisSlots; }
+   else
+     { theSlots = &factPtr->theProposition; }
+
    /*=========================================================*/
    /* Determine if we want to retrieve the entire slot value. */
    /*=========================================================*/
@@ -427,12 +434,12 @@ bool FactJNGetVar1(
    if (hack->allFields)
      {
       theSlot = hack->whichSlot;
-      fieldPtr = &factPtr->theProposition.theFields[theSlot];
+      fieldPtr = &theSlots->theFields[theSlot];
       returnValue->value = fieldPtr->value;
       if (returnValue->header->type == MULTIFIELD)
         {
          returnValue->begin = 0;
-         returnValue->end = ((Multifield *) fieldPtr->value)->multifieldLength - 1;
+         returnValue->end = fieldPtr->multifieldValue->multifieldLength - 1;
         }
 
       return true;
@@ -449,7 +456,7 @@ bool FactJNGetVar1(
 
    theField = hack->whichField;
    theSlot = hack->whichSlot;
-   fieldPtr = &factPtr->theProposition.theFields[theSlot];
+   fieldPtr = &theSlots->theFields[theSlot];
 
    if (fieldPtr->header->type != MULTIFIELD)
      {
@@ -483,7 +490,7 @@ bool FactJNGetVar1(
    /* a multifield slot. Just return the type and value.     */
    /*========================================================*/
 
-   segmentPtr = (Multifield *) factPtr->theProposition.theFields[theSlot].value;
+   segmentPtr = theSlots->theFields[theSlot].multifieldValue;
    fieldPtr = &segmentPtr->theFields[theField];
 
    returnValue->value = fieldPtr->value;
@@ -530,7 +537,11 @@ bool FactJNGetVar2(
    /* Extract the value from the specified slot. */
    /*============================================*/
 
-   fieldPtr = &factPtr->theProposition.theFields[hack->whichSlot];
+   if ((factPtr->basisSlots != NULL) &&
+       (! EngineData(theEnv)->JoinOperationInProgress))
+     { fieldPtr = &factPtr->basisSlots->theFields[hack->whichSlot]; }
+   else
+     { fieldPtr = &factPtr->theProposition.theFields[hack->whichSlot]; }
 
    returnValue->value = fieldPtr->value;
 
@@ -577,7 +588,11 @@ bool FactJNGetVar3(
    /* Get the multifield value from which the data is retrieved. */
    /*============================================================*/
 
-   segmentPtr = (Multifield *) factPtr->theProposition.theFields[hack->whichSlot].value;
+   if ((factPtr->basisSlots != NULL) &&
+       (! EngineData(theEnv)->JoinOperationInProgress))
+     { segmentPtr = factPtr->basisSlots->theFields[hack->whichSlot].multifieldValue; }
+   else
+     { segmentPtr = factPtr->theProposition.theFields[hack->whichSlot].multifieldValue; }
 
    /*=========================================*/
    /* If the beginning and end flags are set, */
@@ -616,7 +631,7 @@ bool FactSlotLength(
   CLIPSValue *returnValue)
   {
    struct factCheckLengthPNCall *hack;
-   struct multifield *segmentPtr;
+   Multifield *segmentPtr;
    long extraOffset = 0;
    struct multifieldMarker *tempMark;
 
@@ -632,7 +647,7 @@ bool FactSlotLength(
       extraOffset += ((tempMark->endPosition - tempMark->startPosition) + 1);
      }
 
-   segmentPtr = (Multifield *) FactData(theEnv)->CurrentPatternFact->theProposition.theFields[hack->whichSlot].value;
+   segmentPtr = FactData(theEnv)->CurrentPatternFact->theProposition.theFields[hack->whichSlot].multifieldValue;
 
    if (segmentPtr->multifieldLength < (hack->minLength + extraOffset))
      { return false; }
@@ -745,7 +760,7 @@ bool FactJNCompVars2(
      { fieldPtr1 = &fact1->theProposition.theFields[s1]; }
    else
      {
-      segment = (Multifield *) fact1->theProposition.theFields[s1].value;
+      segment = fact1->theProposition.theFields[s1].multifieldValue;
 
       if (hack->fromBeginning1)
         { fieldPtr1 = &segment->theFields[hack->offset1]; }
@@ -757,7 +772,7 @@ bool FactJNCompVars2(
      { fieldPtr2 = &fact2->theProposition.theFields[s2]; }
    else
      {
-      segment = (Multifield *) fact2->theProposition.theFields[s2].value;
+      segment = fact2->theProposition.theFields[s2].multifieldValue;
 
       if (hack->fromBeginning2)
         { fieldPtr2 = &segment->theFields[hack->offset2]; }

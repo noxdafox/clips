@@ -75,6 +75,8 @@
 #define _H_factmngr
 
 typedef struct fact Fact;
+typedef struct factBuilder FactBuilder;
+typedef struct factModifier FactModifier;
 
 #include "conscomp.h"
 #include "evaluatn.h"
@@ -94,7 +96,23 @@ struct fact
    struct fact *nextFact;
    struct fact *previousTemplateFact;
    struct fact *nextTemplateFact;
+   struct multifield *basisSlots;
    struct multifield theProposition;
+  };
+
+struct factBuilder
+  {
+   Environment *fbEnv;
+   Deftemplate *fbDeftemplate;
+   GenericValue *fbValueArray;
+  };
+
+struct factModifier
+  {
+   Environment *fmEnv;
+   Fact *fmOldFact;
+   GenericValue *fmValueArray;
+   char *changeMap;
   };
 
 #include "facthsh.h"
@@ -184,6 +202,34 @@ struct factsData
    bool                           EnvAddModifyFunctionWithContext(Environment *,const char *,
                                                                   void (*)(Environment *,void *,void *),int,void *);
    bool                           EnvRemoveModifyFunction(Environment *,const char *);
+
+   FactBuilder                   *EnvCreateFactBuilder(Environment *,const char *);
+   bool                           FBPutSlot(FactBuilder *,const char *,GenericValue *);
+   Fact                          *FBAssert(FactBuilder *);
+   void                           FBDispose(FactBuilder *);
+   void                           FBAbort(FactBuilder *);
+   bool                           FBSetDeftemplate(FactBuilder *,const char *);
+   bool                           FBPutSlotInteger(FactBuilder *,const char *,CLIPSInteger *);
+   bool                           FBPutSlotFloat(FactBuilder *,const char *,CLIPSFloat *);
+   bool                           FBPutSlotLexeme(FactBuilder *,const char *,CLIPSLexeme *);
+   bool                           FBPutSlotFact(FactBuilder *,const char *,Fact *);
+   bool                           FBPutSlotInstance(FactBuilder *,const char *,Instance *);
+   bool                           FBPutSlotExternalAddress(FactBuilder *,const char *,CLIPSExternalAddress *);
+   bool                           FBPutSlotMultifield(FactBuilder *,const char *,Multifield *);
+
+   FactModifier                  *EnvCreateFactModifier(Environment *,Fact *);
+   bool                           FMPutSlot(FactModifier *,const char *,GenericValue *);
+   Fact                          *FMApply(FactModifier *);
+   void                           FMDispose(FactModifier *);
+   void                           FMAbort(FactModifier *);
+   bool                           FMSetFact(FactModifier *,Fact *);
+   bool                           FMPutSlotInteger(FactModifier *,const char *,CLIPSInteger *);
+   bool                           FMPutSlotFloat(FactModifier *,const char *,CLIPSFloat *);
+   bool                           FMPutSlotLexeme(FactModifier *,const char *,CLIPSLexeme *);
+   bool                           FMPutSlotFact(FactModifier *,const char *,Fact *);
+   bool                           FMPutSlotInstance(FactModifier *,const char *,Instance *);
+   bool                           FMPutSlotExternalAddress(FactModifier *,const char *,CLIPSExternalAddress *);
+   bool                           FMPutSlotMultifield(FactModifier *,const char *,Multifield *);
 
 #endif /* _H_factmngr */
 

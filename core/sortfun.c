@@ -245,7 +245,7 @@ void SortFunction(
      {
       if (theArguments[i-2].header->type == MULTIFIELD)
         {
-         tempMultifield = (Multifield *) theArguments[i-2].value;
+         tempMultifield = theArguments[i-2].multifieldValue;
          for (j = theArguments[i-2].begin; j <= theArguments[i-2].end; j++, k++)
            {
             theArguments2[k].value = tempMultifield->theFields[j].value;

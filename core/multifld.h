@@ -82,6 +82,7 @@ struct field
       CLIPSVoid *voidValue;
       Fact *factValue;
       Instance *instanceValue;
+      Multifield *multifieldValue;
       CLIPSExternalAddress *externalAddressValue;
      };
   };
@@ -100,7 +101,7 @@ typedef struct field * FIELD_PTR;
 
 #define GetMFLength(target)     (((Multifield *) (target))->multifieldLength)
 
-   Multifield                    *CreateMultifield2(Environment *,long);
+   Multifield                    *CreateUnmanagedMultifield(Environment *,long);
    void                           ReturnMultifield(Environment *,struct multifield *);
    void                           MultifieldInstall(Environment *,struct multifield *);
    void                           MultifieldDeinstall(Environment *,struct multifield *);
@@ -121,7 +122,8 @@ typedef struct field * FIELD_PTR;
    Multifield                    *GetMultifieldList(Environment *);
    CLIPSLexeme                   *ImplodeMultifield(Environment *,CLIPSValue *);
    void                           EphemerateMultifield(Environment *,struct multifield *);
-
+   Multifield                    *EnvArrayToMultifield(Environment *,GenericValue *,long size);
+   
 #endif /* _H_multifld */
 
 

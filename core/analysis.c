@@ -314,7 +314,7 @@ static bool TestCEAnalysis(
    for (tempList = theList; tempList != NULL; tempList = tempList->right)
       {
        if (PropagateVariableDriver(theEnv,patternPtr,patternPtr,NULL,SF_VARIABLE_NODE,
-                                   (CLIPSLexeme *) tempList->value,tempList,false,TEST_CE_NODE))
+                                   tempList->lexemeValue,tempList,false,TEST_CE_NODE))
          {
           ReturnLHSParseNodes(theEnv,theList);
           patternPtr->right = tempRight;
@@ -630,7 +630,7 @@ static bool ProcessField(
    for (tempList = theList; tempList != NULL; tempList = tempList->right)
      {
       if (PropagateVariableDriver(theEnv,patternHead,thePattern,multifieldHeader,tempList->pnType,
-                                  (CLIPSLexeme *) tempList->value,tempList,false,patternHeadType))
+                                  tempList->lexemeValue,tempList,false,patternHeadType))
         {
          ReturnLHSParseNodes(theEnv,theList);
          return true;
@@ -888,7 +888,7 @@ static bool UnboundVariablesInPattern(
          if (((andField->pnType == SF_VARIABLE_NODE) || (andField->pnType == MF_VARIABLE_NODE)) &&
              (andField->referringNode == NULL))
            {
-            VariableReferenceErrorMessage(theEnv,(CLIPSLexeme *) andField->value,NULL,pattern,
+            VariableReferenceErrorMessage(theEnv,andField->lexemeValue,NULL,pattern,
                                           slotName,theField);
             return true;
            }
@@ -966,13 +966,13 @@ static struct lhsParseNode *CheckExpression(
         {
          if (exprPtr->referringNode == NULL)
            {
-            VariableReferenceErrorMessage(theEnv,(CLIPSLexeme *) exprPtr->value,lastOne,
+            VariableReferenceErrorMessage(theEnv,exprPtr->lexemeValue,lastOne,
                                           whichCE,slotName,theField);
             return(exprPtr);
            }
          else if (UnmatchableConstraint(exprPtr->constraints))
            {
-            ConstraintReferenceErrorMessage(theEnv,(CLIPSLexeme *) exprPtr->value,lastOne,i,
+            ConstraintReferenceErrorMessage(theEnv,exprPtr->lexemeValue,lastOne,i,
                                             whichCE,slotName,theField);
             return(exprPtr);
            }
@@ -985,7 +985,7 @@ static struct lhsParseNode *CheckExpression(
 
       else if ((exprPtr->pnType == MF_VARIABLE_NODE) && (exprPtr->referringNode == NULL))
         {
-         VariableReferenceErrorMessage(theEnv,(CLIPSLexeme *) exprPtr->value,lastOne,
+         VariableReferenceErrorMessage(theEnv,exprPtr->lexemeValue,lastOne,
                                        whichCE,slotName,theField);
          return(exprPtr);
         }
@@ -1004,7 +1004,7 @@ static struct lhsParseNode *CheckExpression(
          if (FindImportedConstruct(theEnv,"defglobal",NULL,exprPtr->lexemeValue->contents,
                                    &count,true,NULL) == NULL)
            {
-            VariableReferenceErrorMessage(theEnv,(CLIPSLexeme *) exprPtr->value,lastOne,
+            VariableReferenceErrorMessage(theEnv,exprPtr->lexemeValue,lastOne,
                                           whichCE,slotName,theField);
             return(exprPtr);
            }

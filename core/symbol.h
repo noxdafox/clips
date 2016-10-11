@@ -320,6 +320,7 @@ struct symbolData
    CLIPSLexeme                   *EnvCreateString(Environment *,const char *);
    CLIPSLexeme                   *EnvCreateInstanceName(Environment *,const char *);
    CLIPSLexeme                   *EnvCreateBoolean(Environment *,bool);
+   bool                           BitStringHasBitsSet(void *,unsigned);
 
 #endif /* _H_symbol */
 

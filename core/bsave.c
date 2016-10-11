@@ -475,15 +475,15 @@ void MarkNeededItems(
          case STRING:
          case GBL_VARIABLE:
          case INSTANCE_NAME:
-            ((CLIPSLexeme *) testPtr->value)->neededSymbol = true;
+            testPtr->lexemeValue->neededSymbol = true;
             break;
 
          case FLOAT:
-            ((CLIPSFloat *) testPtr->value)->neededFloat = true;
+            testPtr->floatValue->neededFloat = true;
             break;
 
          case INTEGER:
-            ((CLIPSInteger *) testPtr->value)->neededInteger = true;
+            testPtr->integerValue->neededInteger = true;
             break;
 
          case FCALL:

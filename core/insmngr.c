@@ -878,8 +878,8 @@ static void BuildDefaultSlots(
             if (adst[i]->desc->multiple)
               {
                adst[i]->type = MULTIFIELD;
-               adst[i]->value = CreateMultifield2(theEnv,0L);
-               MultifieldInstall(theEnv,(Multifield *) adst[i]->value);
+               adst[i]->value = CreateUnmanagedMultifield(theEnv,0L);
+               MultifieldInstall(theEnv,adst[i]->multifieldValue);
               }
             else
               {

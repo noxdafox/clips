@@ -152,7 +152,19 @@ struct instanceSlot
    unsigned valueRequired : 1;
    unsigned override      : 1;
    unsigned short type;
-   void *value;
+   union
+     {
+      void *value;
+      TypeHeader *header;
+      CLIPSLexeme *lexemeValue;
+      CLIPSFloat *floatValue;
+      CLIPSInteger *integerValue;
+      CLIPSVoid *voidValue;
+      Fact *factValue;
+      Instance *instanceValue;
+      Multifield *multifieldValue;
+      CLIPSExternalAddress *externalAddressValue;
+     };
   };
 
 struct slotDescriptor

@@ -1301,7 +1301,7 @@ void EnvGetFocusStack(
   CLIPSValue *returnValue)
   {
    struct focus *theFocus;
-   struct multifield *theList;
+   Multifield *theList;
    unsigned long count = 0;
 
    /*===========================================*/
@@ -1331,8 +1331,8 @@ void EnvGetFocusStack(
 
    returnValue->begin = 0;
    returnValue->end = count - 1;
-   theList = (Multifield *) EnvCreateMultifield(theEnv,count);
-   returnValue->value = theList;
+   theList = EnvCreateMultifield(theEnv,count);
+   returnValue->multifieldValue = theList;
 
    /*=================================================*/
    /* Store the module names in the multifield value. */

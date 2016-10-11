@@ -1532,6 +1532,23 @@ void ClearBitString(
 
    for (i = 0; i < length; i++) theBitMap[i] = '\0';
   }
+  
+/****************************************/
+/* BitStringHasBitsSet: Returns true if */
+/*   the bit string has any bits set.   */
+/****************************************/
+bool BitStringHasBitsSet(
+  void *vTheBitMap,
+  unsigned length)
+  {
+   char *theBitMap = (char *) vTheBitMap;
+   unsigned i;
+
+   for (i = 0; i < length; i++)
+     { if (theBitMap[i] != '\0') return true; }
+   
+   return false;
+  }
 
 /*****************************************************************/
 /* GetNextSymbolMatch: Finds the next symbol in the SymbolTable  */

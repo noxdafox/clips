@@ -272,7 +272,7 @@ static void DeallocateInstanceData(
              (--sp->desc->sharedCount == 0) : true)
            {
             if (sp->desc->multiple)
-              { ReturnMultifield(theEnv,(Multifield *) sp->value); }
+              { ReturnMultifield(theEnv,sp->multifieldValue); }
            }
         }
 
@@ -1637,7 +1637,7 @@ static void PrintInstance(
       else if (GetInstanceSlotLength(sp) != 0)
         {
          EnvPrintRouter(theEnv,logicalName," ");
-         PrintMultifield(theEnv,logicalName,(Multifield *) sp->value,0,
+         PrintMultifield(theEnv,logicalName,sp->multifieldValue,0,
                          (long) (GetInstanceSlotLength(sp) - 1),false);
         }
       EnvPrintRouter(theEnv,logicalName,")");

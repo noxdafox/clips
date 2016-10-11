@@ -144,7 +144,7 @@ void InitializeFacts(
 
    Fact dummyFact = { { { FACT_ADDRESS }, NULL, NULL, 0, 0L },
                       NULL, NULL, -1L, 0, 1,
-                      NULL, NULL, NULL, NULL,
+                      NULL, NULL, NULL, NULL, NULL, 
                       { {MULTIFIELD } , 1, 0UL, NULL, { { { NULL } } } } };
 
    AllocateEnvironmentData(theEnv,FACTS_DATA,sizeof(struct factsData),DeallocateFactData);
@@ -351,10 +351,22 @@ void DecrementFactBasisCount(
 
    EnvDecrementFactCount(theEnv,factPtr);
 
-   theSegment = &factPtr->theProposition;
+   if (factPtr->basisSlots != NULL)
+     {
+      theSegment = factPtr->basisSlots;
+      factPtr->basisSlots->busyCount--;
+     }
+   else
+     { theSegment = &factPtr->theProposition; }
 
    for (i = 0 ; i < (int) theSegment->multifieldLength ; i++)
      { AtomDeinstall(theEnv,theSegment->theFields[i].header->type,theSegment->theFields[i].value); }
+
+   if ((factPtr->basisSlots != NULL) && (factPtr->basisSlots->busyCount == 0))
+     {
+      ReturnMultifield(theEnv,factPtr->basisSlots);
+      factPtr->basisSlots = NULL;
+     }
   }
 
 /*******************************************/
@@ -371,6 +383,20 @@ void IncrementFactBasisCount(
    EnvIncrementFactCount(theEnv,factPtr);
 
    theSegment = &factPtr->theProposition;
+
+   if (theSegment->multifieldLength != 0)
+     {
+      if (factPtr->basisSlots != NULL)
+        {
+         factPtr->basisSlots->busyCount++;
+        }
+      else
+        {
+         factPtr->basisSlots = CopyMultifield(theEnv,theSegment);
+         factPtr->basisSlots->busyCount = 1;
+        }
+      theSegment = factPtr->basisSlots;
+     }
 
    for (i = 0 ; i < (int) theSegment->multifieldLength ; i++)
      {
@@ -404,7 +430,7 @@ void PrintFact(
   bool separateLines,
   bool ignoreDefaults)
   {
-   struct multifield *theMultifield;
+   Multifield *theMultifield;
 
    /*=========================================*/
    /* Print a deftemplate (non-ordered) fact. */
@@ -425,7 +451,7 @@ void PrintFact(
 
    EnvPrintRouter(theEnv,logicalName,factPtr->whichDeftemplate->header.name->contents);
 
-   theMultifield = (Multifield *) factPtr->theProposition.theFields[0].value;
+   theMultifield = factPtr->theProposition.theFields[0].multifieldValue;
    if (theMultifield->multifieldLength != 0)
      {
       EnvPrintRouter(theEnv,logicalName," ");
@@ -914,7 +940,7 @@ Fact *EnvCreateFact(
    else
      {
       newFact = CreateFactBySize(theEnv,1);
-      newFact->theProposition.theFields[0].value = CreateMultifield2(theEnv,0L);
+      newFact->theProposition.theFields[0].value = CreateUnmanagedMultifield(theEnv,0L);
      }
 
    /*===============================*/
@@ -923,7 +949,7 @@ Fact *EnvCreateFact(
 
    newFact->whichDeftemplate = theDeftemplate;
 
-   return(newFact);
+   return newFact;
   }
 
 /******************************************/
@@ -956,7 +982,7 @@ bool EnvGetFactSlot(
       if (slotName != NULL) return false;
       theValue->value = theFact->theProposition.theFields[0].value;
       theValue->begin = 0;
-      theValue->end = ((Multifield *) theValue->value)->multifieldLength - 1;
+      theValue->end = theValue->multifieldValue->multifieldLength - 1;
       return true;
      }
 
@@ -978,7 +1004,7 @@ bool EnvGetFactSlot(
    if (theValue->header->type == MULTIFIELD)
      {
       theValue->begin = 0;
-      theValue->end = ((Multifield *) theValue->value)->multifieldLength - 1;
+      theValue->end = theValue->multifieldValue->multifieldLength - 1;
      }
 
    if (theValue->header->type == RVOID) return false;
@@ -1018,7 +1044,7 @@ bool EnvPutFactSlot(
         { return false; }
 
       if (theFact->theProposition.theFields[0].header->type == MULTIFIELD)
-        { ReturnMultifield(theEnv,(Multifield *) theFact->theProposition.theFields[0].value); }
+        { ReturnMultifield(theEnv,theFact->theProposition.theFields[0].multifieldValue); }
 
       theFact->theProposition.theFields[0].value = DOToMultifield(theEnv,theValue);
 
@@ -1047,10 +1073,10 @@ bool EnvPutFactSlot(
    /*=====================*/
 
    if (theFact->theProposition.theFields[whichSlot-1].header->type == MULTIFIELD)
-     { ReturnMultifield(theEnv,(Multifield *) theFact->theProposition.theFields[whichSlot-1].value); }
+     { ReturnMultifield(theEnv,theFact->theProposition.theFields[whichSlot-1].multifieldValue); }
 
    if (theValue->header->type == MULTIFIELD)
-     { theFact->theProposition.theFields[whichSlot-1].value = (TypeHeader *) DOToMultifield(theEnv,theValue); }
+     { theFact->theProposition.theFields[whichSlot-1].multifieldValue = DOToMultifield(theEnv,theValue); }
    else
      { theFact->theProposition.theFields[whichSlot-1].value = theValue->value; }
 
@@ -1233,7 +1259,7 @@ bool CopyFactSlotValues(
       else
         {
          theDestFact->theProposition.theFields[i].value = 
-           CopyMultifield(theEnv,(Multifield *) theSourceFact->theProposition.theFields[i].value);
+           CopyMultifield(theEnv,theSourceFact->theProposition.theFields[i].multifieldValue);
         }
      }
 
@@ -1273,6 +1299,7 @@ Fact *CreateFactBySize(
    theFact->previousTemplateFact = NULL;
    theFact->nextTemplateFact = NULL;
    theFact->list = NULL;
+   theFact->basisSlots = NULL;
 
    theFact->theProposition.multifieldLength = size;
    theFact->theProposition.busyCount = 0;
@@ -1288,7 +1315,7 @@ void ReturnFact(
   Environment *theEnv,
   Fact *theFact)
   {
-   struct multifield *theSegment, *subSegment;
+   Multifield *theSegment, *subSegment;
    long newSize, i;
 
    theSegment = &theFact->theProposition;
@@ -1297,7 +1324,7 @@ void ReturnFact(
      {
       if (theSegment->theFields[i].header->type == MULTIFIELD)
         {
-         subSegment = (Multifield *) theSegment->theFields[i].value;
+         subSegment = theSegment->theFields[i].multifieldValue;
          if (subSegment->busyCount == 0)
            { ReturnMultifield(theEnv,subSegment); }
          else
@@ -1342,7 +1369,7 @@ void FactDeinstall(
   Environment *theEnv,
   Fact *newFact)
   {
-   struct multifield *theSegment;
+   Multifield *theSegment;
    int i;
 
    FactData(theEnv)->NumberOfFacts--;
@@ -1791,6 +1818,717 @@ bool EnvRemoveModifyFunction(
 
    return false;
   }
+
+/*************************/
+/* EnvCreateFactBuilder: */
+/*************************/
+FactBuilder *EnvCreateFactBuilder(
+  Environment *theEnv,
+  const char *deftemplateName)
+  {
+   FactBuilder *theFB;
+   Deftemplate *theDeftemplate;
+   int i;
+   
+   theDeftemplate = EnvFindDeftemplate(theEnv,deftemplateName);
+   if (theDeftemplate == NULL) return NULL;
+   
+   if (theDeftemplate->implied) return NULL;
+   
+   theFB = get_struct(theEnv,factBuilder);
+   if (theFB == NULL) return NULL;
+   
+   theFB->fbEnv = theEnv;
+   theFB->fbDeftemplate = theDeftemplate;
+      
+   theFB->fbValueArray = (GenericValue *) gm3(theEnv,sizeof(GenericValue) * theDeftemplate->numberOfSlots);
+
+   for (i = 0; i < theDeftemplate->numberOfSlots; i++)
+     { theFB->fbValueArray[i].voidValue = theEnv->VoidConstant; }
+
+   return theFB;
+  }
+
+/********************/
+/* FBPutSlotInteger */
+/********************/
+bool FBPutSlotInteger(
+  FactBuilder *theFB,
+  const char *slotName,
+  CLIPSInteger *slotValue)
+  {
+   GenericValue theValue;
+   
+   theValue.integerValue = slotValue;
+   return FBPutSlot(theFB,slotName,&theValue);
+  }
+
+/*******************/
+/* FMPutSlotLexeme */
+/*******************/
+bool FBPutSlotLexeme(
+  FactBuilder *theFB,
+  const char *slotName,
+  CLIPSLexeme *slotValue)
+  {
+   GenericValue theValue;
+   
+   theValue.lexemeValue = slotValue;
+   return FBPutSlot(theFB,slotName,&theValue);
+  }
+
+/******************/
+/* FMPutSlotFloat */
+/******************/
+bool FBPutSlotFloat(
+  FactBuilder *theFB,
+  const char *slotName,
+  CLIPSFloat *slotValue)
+  {
+   GenericValue theValue;
+   
+   theValue.floatValue = slotValue;
+   return FBPutSlot(theFB,slotName,&theValue);
+  }
+
+/*****************/
+/* FMPutSlotFact */
+/*****************/
+bool FBPutSlotFact(
+  FactBuilder *theFB,
+  const char *slotName,
+  Fact *slotValue)
+  {
+   GenericValue theValue;
+   
+   theValue.factValue = slotValue;
+   return FBPutSlot(theFB,slotName,&theValue);
+  }
+
+/*********************/
+/* FBPutSlotInstance */
+/*********************/
+bool FBPutSlotInstance(
+  FactBuilder *theFB,
+  const char *slotName,
+  Instance *slotValue)
+  {
+   GenericValue theValue;
+   
+   theValue.instanceValue = slotValue;
+   return FBPutSlot(theFB,slotName,&theValue);
+  }
+
+/****************************/
+/* FBPutSlotExternalAddress */
+/****************************/
+bool FBPutSlotExternalAddress(
+  FactBuilder *theFB,
+  const char *slotName,
+  CLIPSExternalAddress *slotValue)
+  {
+   GenericValue theValue;
+   
+   theValue.externalAddressValue = slotValue;
+   return FBPutSlot(theFB,slotName,&theValue);
+  }
+
+/***********************/
+/* FBPutSlotMultifield */
+/***********************/
+bool FBPutSlotMultifield(
+  FactBuilder *theFB,
+  const char *slotName,
+  Multifield *slotValue)
+  {
+   GenericValue theValue;
+   
+   theValue.multifieldValue = slotValue;
+   return FBPutSlot(theFB,slotName,&theValue);
+  }
+
+/**************/
+/* FBPutSlot: */
+/**************/
+bool FBPutSlot(
+  FactBuilder *theFB,
+  const char *slotName,
+  GenericValue *slotValue)
+  {
+   Environment *theEnv = theFB->fbEnv;
+   struct templateSlot *theSlot;
+   short whichSlot;
+   GenericValue oldValue;
+   int i;
+      
+   /*===================================*/
+   /* Make sure the slot name requested */
+   /* corresponds to a valid slot name. */
+   /*===================================*/
+
+   if ((theSlot = FindSlot(theFB->fbDeftemplate,EnvCreateSymbol(theFB->fbEnv,slotName),&whichSlot)) == NULL)
+     { return false; }
+     
+   /*=============================================*/
+   /* Make sure a single field value is not being */
+   /* stored in a multifield slot or vice versa.  */
+   /*=============================================*/
+
+   if (((theSlot->multislot == 0) && (slotValue->header->type == MULTIFIELD)) ||
+       ((theSlot->multislot == 1) && (slotValue->header->type != MULTIFIELD)))
+     { return false; }
+     
+   if (theFB->fbValueArray == NULL)
+     {
+      theFB->fbValueArray = (GenericValue *) gm3(theFB->fbEnv,sizeof(GenericValue) * theFB->fbDeftemplate->numberOfSlots);
+      for (i = 0; i < theFB->fbDeftemplate->numberOfSlots; i++)
+        { theFB->fbValueArray[i].voidValue = theFB->fbEnv->VoidConstant; }
+     }
+
+   /*=====================*/
+   /* Set the slot value. */
+   /*=====================*/
+   
+   oldValue.value = theFB->fbValueArray[whichSlot-1].value;
+   
+   if (oldValue.header->type == MULTIFIELD)
+     {
+      if (MultifieldsEqual(oldValue.multifieldValue,slotValue->multifieldValue))
+        { return true; }
+     }
+   else
+     {
+      if (oldValue.value == slotValue->value)
+        { return true; }
+     }
+   
+   CVAtomDeinstall(theEnv,oldValue.value);
+   
+   if (oldValue.header->type == MULTIFIELD)
+     { ReturnMultifield(theEnv,oldValue.multifieldValue); }
+
+   if (slotValue->header->type == MULTIFIELD)
+     { theFB->fbValueArray[whichSlot-1].multifieldValue = CopyMultifield(theEnv,slotValue->multifieldValue); }
+   else
+     { theFB->fbValueArray[whichSlot-1].value = slotValue->value; }
+      
+   CVAtomInstall(theEnv,theFB->fbValueArray[whichSlot-1].value);
+   
+   return true;
+  }
+
+/*************/
+/* FBAssert: */
+/*************/
+Fact *FBAssert(
+  FactBuilder *theFB)
+  {
+   Environment *theEnv = theFB->fbEnv;
+   int i;
+   Fact *theFact;
+   
+   theFact = EnvCreateFact(theEnv,theFB->fbDeftemplate);
+   
+   for (i = 0; i < theFB->fbDeftemplate->numberOfSlots; i++)
+     {
+      if (theFB->fbValueArray[i].voidValue != theEnv->VoidConstant)
+        {
+         theFact->theProposition.theFields[i].value = theFB->fbValueArray[i].value;
+         CVAtomDeinstall(theEnv,theFB->fbValueArray[i].value);
+         theFB->fbValueArray[i].voidValue = theEnv->VoidConstant;
+        }
+     }
+
+   EnvAssignFactSlotDefaults(theEnv,theFact);
+   
+   theFact = EnvAssert(theEnv,theFact);
+      
+   return theFact;
+  }
+
+/**************/
+/* FBDispose: */
+/**************/
+void FBDispose(
+  FactBuilder *theFB)
+  {
+   Environment *theEnv = theFB->fbEnv;
+
+   FBAbort(theFB);
+   
+   if (theFB->fbValueArray != NULL)
+     { rm3(theEnv,theFB->fbValueArray,sizeof(GenericValue) * theFB->fbDeftemplate->numberOfSlots); }
+   
+   rtn_struct(theEnv,factBuilder,theFB);
+  }
+
+/************/
+/* FBAbort: */
+/************/
+void FBAbort(
+  FactBuilder *theFB)
+  {
+   Environment *theEnv = theFB->fbEnv;
+   int i;
+   
+   for (i = 0; i < theFB->fbDeftemplate->numberOfSlots; i++)
+     {
+      CVAtomDeinstall(theEnv,theFB->fbValueArray[i].value);
+      
+      if (theFB->fbValueArray[i].header->type == MULTIFIELD)
+        { ReturnMultifield(theEnv,theFB->fbValueArray[i].multifieldValue); }
+        
+      theFB->fbValueArray[i].voidValue = theEnv->VoidConstant;
+     }
+  }
+
+/********************/
+/* FBSetDeftemplate */
+/********************/
+bool FBSetDeftemplate(
+  FactBuilder *theFB,
+  const char *deftemplateName)
+  {
+   Deftemplate *theDeftemplate;
+   Environment *theEnv = theFB->fbEnv;
+   int i;
+   
+   FBAbort(theFB);
+   
+   theDeftemplate = EnvFindDeftemplate(theFB->fbEnv,deftemplateName);
+   
+   if (theDeftemplate == NULL) return false;
+   if (theDeftemplate->implied) return false;
+
+   if (theFB->fbValueArray != NULL)
+     { rm3(theEnv,theFB->fbValueArray,sizeof(GenericValue) * theFB->fbDeftemplate->numberOfSlots); }
+
+   theFB->fbDeftemplate = theDeftemplate;
+   
+   theFB->fbValueArray = (GenericValue *) gm3(theEnv,sizeof(GenericValue) * theDeftemplate->numberOfSlots);
+
+   for (i = 0; i < theDeftemplate->numberOfSlots; i++)
+     { theFB->fbValueArray[i].voidValue = theEnv->VoidConstant; }
+
+   return true;
+  }
+
+/**************************/
+/* EnvCreateFactModifier: */
+/**************************/
+FactModifier *EnvCreateFactModifier(
+  Environment *theEnv,
+  Fact *oldFact)
+  {
+   FactModifier *theFM;
+   int i;
+
+   if (oldFact->garbage) return NULL;
+   if (oldFact->whichDeftemplate->implied) return NULL;
+   if (oldFact->whichDeftemplate->numberOfSlots == 0) return NULL;
+
+   theFM = get_struct(theEnv,factModifier);
+   if (theFM == NULL) return NULL;
+
+   theFM->fmEnv = theEnv;
+   theFM->fmOldFact = oldFact;
+   EnvIncrementFactCount(theEnv,oldFact);
+
+   theFM->fmValueArray = (GenericValue *) gm3(theEnv,sizeof(GenericValue) * oldFact->whichDeftemplate->numberOfSlots);
+
+   for (i = 0; i < oldFact->whichDeftemplate->numberOfSlots; i++)
+     { theFM->fmValueArray[i].voidValue = theEnv->VoidConstant; }
+
+   theFM->changeMap = (char *) gm2(theEnv,CountToBitMapSize(oldFact->whichDeftemplate->numberOfSlots));
+   ClearBitString((void *) theFM->changeMap,CountToBitMapSize(oldFact->whichDeftemplate->numberOfSlots));
+
+   return theFM;
+  }
+
+/********************/
+/* FMPutSlotInteger */
+/********************/
+bool FMPutSlotInteger(
+  FactModifier *theFM,
+  const char *slotName,
+  CLIPSInteger *slotValue)
+  {
+   GenericValue theValue;
+   
+   theValue.integerValue = slotValue;
+   return FMPutSlot(theFM,slotName,&theValue);
+  }
+
+/*******************/
+/* FMPutSlotLexeme */
+/*******************/
+bool FMPutSlotLexeme(
+  FactModifier *theFM,
+  const char *slotName,
+  CLIPSLexeme *slotValue)
+  {
+   GenericValue theValue;
+   
+   theValue.lexemeValue = slotValue;
+   return FMPutSlot(theFM,slotName,&theValue);
+  }
+
+/******************/
+/* FMPutSlotFloat */
+/******************/
+bool FMPutSlotFloat(
+  FactModifier *theFM,
+  const char *slotName,
+  CLIPSFloat *slotValue)
+  {
+   GenericValue theValue;
+   
+   theValue.floatValue = slotValue;
+   return FMPutSlot(theFM,slotName,&theValue);
+  }
+
+/*****************/
+/* FMPutSlotFact */
+/*****************/
+bool FMPutSlotFact(
+  FactModifier *theFM,
+  const char *slotName,
+  Fact *slotValue)
+  {
+   GenericValue theValue;
+   
+   theValue.factValue = slotValue;
+   return FMPutSlot(theFM,slotName,&theValue);
+  }
+
+/*********************/
+/* FMPutSlotInstance */
+/*********************/
+bool FMPutSlotInstance(
+  FactModifier *theFM,
+  const char *slotName,
+  Instance *slotValue)
+  {
+   GenericValue theValue;
+   
+   theValue.instanceValue = slotValue;
+   return FMPutSlot(theFM,slotName,&theValue);
+  }
+
+/****************************/
+/* FMPutSlotExternalAddress */
+/****************************/
+bool FMPutSlotExternalAddress(
+  FactModifier *theFM,
+  const char *slotName,
+  CLIPSExternalAddress *slotValue)
+  {
+   GenericValue theValue;
+   
+   theValue.externalAddressValue = slotValue;
+   return FMPutSlot(theFM,slotName,&theValue);
+  }
+
+/***********************/
+/* FMPutSlotMultifield */
+/***********************/
+bool FMPutSlotMultifield(
+  FactModifier *theFM,
+  const char *slotName,
+  Multifield *slotValue)
+  {
+   GenericValue theValue;
+   
+   theValue.multifieldValue = slotValue;
+   return FMPutSlot(theFM,slotName,&theValue);
+  }
+
+/**************/
+/* FMPutSlot: */
+/**************/
+bool FMPutSlot(
+  FactModifier *theFM,
+  const char *slotName,
+  GenericValue *slotValue)
+  {
+   Environment *theEnv = theFM->fmEnv;
+   struct templateSlot *theSlot;
+   short whichSlot;
+   GenericValue oldValue;
+   GenericValue oldFactValue;
+   int i;
+
+   /*===================================*/
+   /* Make sure the slot name requested */
+   /* corresponds to a valid slot name. */
+   /*===================================*/
+
+   if ((theSlot = FindSlot(theFM->fmOldFact->whichDeftemplate,EnvCreateSymbol(theEnv,slotName),&whichSlot)) == NULL)
+     { return false; }
+
+   /*=============================================*/
+   /* Make sure a single field value is not being */
+   /* stored in a multifield slot or vice versa.  */
+   /*=============================================*/
+
+   if (((theSlot->multislot == 0) && (slotValue->header->type == MULTIFIELD)) ||
+       ((theSlot->multislot == 1) && (slotValue->header->type != MULTIFIELD)))
+     { return false; }
+
+   if (theFM->fmValueArray == NULL)
+     {
+      theFM->fmValueArray = (GenericValue *) gm3(theFM->fmEnv,sizeof(GenericValue) * theFM->fmOldFact->whichDeftemplate->numberOfSlots);
+      for (i = 0; i < theFM->fmOldFact->whichDeftemplate->numberOfSlots; i++)
+        { theFM->fmValueArray[i].voidValue = theFM->fmEnv->VoidConstant; }
+     }
+
+   if (theFM->changeMap == NULL)
+     {
+      theFM->changeMap = (char *) gm2(theFM->fmEnv,CountToBitMapSize(theFM->fmOldFact->whichDeftemplate->numberOfSlots));
+      ClearBitString((void *) theFM->changeMap,CountToBitMapSize(theFM->fmOldFact->whichDeftemplate->numberOfSlots));
+     }
+     
+   /*=====================*/
+   /* Set the slot value. */
+   /*=====================*/
+
+   oldValue.value = theFM->fmValueArray[whichSlot-1].value;
+   oldFactValue.value = theFM->fmOldFact->theProposition.theFields[whichSlot-1].value;
+
+   if (oldFactValue.header->type == MULTIFIELD)
+     {
+      if (MultifieldsEqual(oldFactValue.multifieldValue,slotValue->multifieldValue))
+        {
+         CVAtomDeinstall(theFM->fmEnv,oldValue.value);
+         if (oldValue.header->type == MULTIFIELD)
+           { ReturnMultifield(theFM->fmEnv,oldValue.multifieldValue); }
+         theFM->fmValueArray[whichSlot-1].voidValue = theFM->fmEnv->VoidConstant;
+         ClearBitMap(theFM->changeMap,whichSlot-1);
+         return true;
+        }
+
+      if (MultifieldsEqual(oldValue.multifieldValue,slotValue->multifieldValue))
+        { return true; }
+     }
+   else
+     {
+      if (slotValue->value == oldFactValue.value)
+        {
+         CVAtomDeinstall(theFM->fmEnv,oldValue.value);
+         theFM->fmValueArray[whichSlot-1].voidValue = theFM->fmEnv->VoidConstant;
+         ClearBitMap(theFM->changeMap,whichSlot-1);
+         return true;
+        }
+        
+      if (oldValue.value == slotValue->value)
+        { return true; }
+     }
+
+   SetBitMap(theFM->changeMap,whichSlot-1);
+
+   CVAtomDeinstall(theFM->fmEnv,oldValue.value);
+
+   if (oldValue.header->type == MULTIFIELD)
+     { ReturnMultifield(theFM->fmEnv,oldValue.multifieldValue); }
+      
+   if (slotValue->header->type == MULTIFIELD)
+     { theFM->fmValueArray[whichSlot-1].multifieldValue = CopyMultifield(theFM->fmEnv,slotValue->multifieldValue); }
+   else
+     { theFM->fmValueArray[whichSlot-1].value = slotValue->value; }
+
+   CVAtomInstall(theFM->fmEnv,theFM->fmValueArray[whichSlot-1].value);
+
+   return true;
+  }
+
+/************/
+/* FMApply: */
+/************/
+Fact *FMApply(
+  FactModifier *theFM)
+  {
+   Environment *theEnv = theFM->fmEnv;
+   Fact *newFact;
+   Fact *oldFact = theFM->fmOldFact;
+   int i;
+   
+   if (! BitStringHasBitsSet(theFM->changeMap,CountToBitMapSize(oldFact->whichDeftemplate->numberOfSlots)))
+     { return theFM->fmOldFact; }
+
+   newFact = EnvCreateFact(theEnv,oldFact->whichDeftemplate);
+   
+   for (i = 0; i < oldFact->whichDeftemplate->numberOfSlots; i++)
+     {
+      if (theFM->fmValueArray[i].voidValue == theEnv->VoidConstant)
+        {
+         GenericValue theValue;
+         theValue.value = oldFact->theProposition.theFields[i].value;
+         
+         if (theValue.header->type == MULTIFIELD)
+           { newFact->theProposition.theFields[i].value = CopyMultifield(theEnv,theValue.multifieldValue); }
+         else
+           { newFact->theProposition.theFields[i].value = oldFact->theProposition.theFields[i].value; }
+        }
+      else
+        { newFact->theProposition.theFields[i].value = theFM->fmValueArray[i].value; }
+     }
+
+   EnvDecrementFactCount(theEnv,oldFact);
+   
+   EnvRetract(theEnv,oldFact);
+
+   newFact = EnvAssert(theEnv,newFact);
+
+   if (newFact != NULL)
+     { EnvIncrementFactCount(theEnv,newFact); }
+     
+   theFM->fmOldFact = newFact;
+
+   for (i = 0; i < oldFact->whichDeftemplate->numberOfSlots; i++)
+     {
+      CVAtomDeinstall(theEnv,theFM->fmValueArray[i].value);
+      theFM->fmValueArray[i].voidValue = theFM->fmEnv->VoidConstant;
+     }
+     
+   FMAbort(theFM);
+   
+   return newFact;
+  }
+
+/**************/
+/* FMDispose: */
+/**************/
+void FMDispose(
+  FactModifier *theFM)
+  {
+   Environment *theEnv = theFM->fmEnv;
+   int i;
+
+   /*========================*/
+   /* Clear the value array. */
+   /*========================*/
+   
+   for (i = 0; i < theFM->fmOldFact->whichDeftemplate->numberOfSlots; i++)
+     {
+      CVAtomDeinstall(theEnv,theFM->fmValueArray[i].value);
+
+      if (theFM->fmValueArray[i].header->type == MULTIFIELD)
+        { ReturnMultifield(theEnv,theFM->fmValueArray[i].multifieldValue); }
+     }
+   
+   /*=====================================*/
+   /* Return the value and change arrays. */
+   /*=====================================*/
+   
+   if (theFM->fmValueArray != NULL)
+     { rm3(theEnv,theFM->fmValueArray,sizeof(GenericValue) * theFM->fmOldFact->whichDeftemplate->numberOfSlots); }
+      
+   if (theFM->changeMap != NULL)
+     { rm(theEnv,(void *) theFM->changeMap,CountToBitMapSize(theFM->fmOldFact->whichDeftemplate->numberOfSlots)); }
+
+   /*====================================*/
+   /* Return the FactModifier structure. */
+   /*====================================*/
+   
+   EnvDecrementFactCount(theEnv,theFM->fmOldFact);
+   
+   rtn_struct(theEnv,factModifier,theFM);
+  }
+
+/************/
+/* FMAbort: */
+/************/
+void FMAbort(
+  FactModifier *theFM)
+  {
+   Environment *theEnv = theFM->fmEnv;
+   int i;
+   
+   for (i = 0; i < theFM->fmOldFact->whichDeftemplate->numberOfSlots; i++)
+     {
+      CVAtomDeinstall(theEnv,theFM->fmValueArray[i].value);
+
+      if (theFM->fmValueArray[i].header->type == MULTIFIELD)
+        { ReturnMultifield(theEnv,theFM->fmValueArray[i].multifieldValue); }
+        
+      theFM->fmValueArray[i].voidValue = theFM->fmEnv->VoidConstant;
+     }
+     
+   ClearBitString((void *) theFM->changeMap,CountToBitMapSize(theFM->fmOldFact->whichDeftemplate->numberOfSlots));
+  }
+
+/**************/
+/* FMSetFact: */
+/**************/
+bool FMSetFact(
+  FactModifier *theFM,
+  Fact *oldFact)
+  {
+   Environment *theEnv = theFM->fmEnv;
+   unsigned short currentSlotCount = theFM->fmOldFact->whichDeftemplate->numberOfSlots;
+   int i;
+   
+   /*=================================================*/
+   /* Modifiers can only be created for non-retracted */
+   /* deftemplate facts with at least one slot.       */
+   /*=================================================*/
+   
+   if (oldFact->garbage) return false;
+   if (oldFact->whichDeftemplate->implied) return false;
+   if (oldFact->whichDeftemplate->numberOfSlots == 0) return false;
+
+   /*========================*/
+   /* Clear the value array. */
+   /*========================*/
+   
+   for (i = 0; i < theFM->fmOldFact->whichDeftemplate->numberOfSlots; i++)
+     {
+      CVAtomDeinstall(theEnv,theFM->fmValueArray[i].value);
+
+      if (theFM->fmValueArray[i].header->type == MULTIFIELD)
+        { ReturnMultifield(theEnv,theFM->fmValueArray[i].multifieldValue); }
+     }
+
+   /*==================================================*/
+   /* Resize the value and change arrays if necessary. */
+   /*==================================================*/
+   
+   if (oldFact->whichDeftemplate->numberOfSlots != currentSlotCount)
+     {
+      if (theFM->fmValueArray != NULL)
+        { rm3(theEnv,theFM->fmValueArray,sizeof(GenericValue) * currentSlotCount); }
+      
+      if (theFM->changeMap != NULL)
+        { rm(theEnv,(void *) theFM->changeMap,currentSlotCount); }
+        
+      theFM->fmValueArray = (GenericValue *) gm3(theEnv,sizeof(GenericValue) * oldFact->whichDeftemplate->numberOfSlots);
+      theFM->changeMap = (char *) gm2(theEnv,CountToBitMapSize(oldFact->whichDeftemplate->numberOfSlots));
+     }
+   
+   /*=================================*/
+   /* Update the fact being modified. */
+   /*=================================*/
+   
+   EnvDecrementFactCount(theEnv,theFM->fmOldFact);
+   theFM->fmOldFact = oldFact;
+   EnvIncrementFactCount(theEnv,theFM->fmOldFact);
+   
+   /*=========================================*/
+   /* Initialize the value and change arrays. */
+   /*=========================================*/
+   
+   for (i = 0; i < theFM->fmOldFact->whichDeftemplate->numberOfSlots; i++)
+     { theFM->fmValueArray[i].voidValue = theFM->fmEnv->VoidConstant; }
+   
+   ClearBitString((void *) theFM->changeMap,CountToBitMapSize(theFM->fmOldFact->whichDeftemplate->numberOfSlots));
+
+   /*================================================================*/
+   /* Return true to indicate the modifier was successfully created. */
+   /*================================================================*/
+   
+   return true;
+  }
+
 
 #endif /* DEFTEMPLATE_CONSTRUCT && DEFRULE_CONSTRUCT */
 

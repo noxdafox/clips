@@ -1258,7 +1258,7 @@ void FuncallFunction(
            lastAdd = nextAdd;
 
            multiAdd = NULL;
-           theMultifield = (Multifield *) theArg.value;
+           theMultifield = theArg.multifieldValue;
            for (j = theArg.begin; j <= theArg.end; j++)
              {
               nextAdd = GenConstant(theEnv,theMultifield->theFields[j].header->type,
