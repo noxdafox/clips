@@ -125,7 +125,7 @@
 void ObjectMatchDelay(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    bool ov;
 
@@ -916,7 +916,7 @@ static void ProcessPatternNode(
    int repeatCount;
    INSTANCE_SLOT *objectSlot;
    struct multifieldMarker *newMark;
-   CLIPSValue theResult;
+   UDFValue theResult;
    OBJECT_PATTERN_NODE *tempPtr;
 
    patternSlotField = patternNode->whichField;
@@ -1188,7 +1188,7 @@ static bool EvaluateObjectPatternTest(
   EXPRESSION *networkTest,
   OBJECT_PATTERN_NODE *patternNode)
   {
-   CLIPSValue vresult;
+   UDFValue vresult;
    int rv;
 
    if (networkTest == NULL) return true;

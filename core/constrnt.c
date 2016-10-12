@@ -507,9 +507,9 @@ static void InstallConstraintRecord(
 void SDCCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvGetDynamicConstraintChecking(theEnv));
 
@@ -526,7 +526,7 @@ void SDCCommand(
 void GDCCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvGetDynamicConstraintChecking(theEnv));
   }

@@ -76,14 +76,14 @@
    long                           EnvGetNextDefmethod(Environment *,Defgeneric *,long);
    bool                           EnvIsDefgenericDeletable(Environment *,Defgeneric *);
    bool                           EnvIsDefmethodDeletable(Environment *,Defgeneric *,long);
-   void                           UndefgenericCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           GetDefgenericModuleCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           UndefmethodCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           UndefgenericCommand(Environment *,UDFContext *,UDFValue *);
+   void                           GetDefgenericModuleCommand(Environment *,UDFContext *,UDFValue *);
+   void                           UndefmethodCommand(Environment *,UDFContext *,UDFValue *);
    Defmethod                     *GetDefmethodPointer(Defgeneric *,long);
    bool                           EnvUndefgeneric(Environment *,Defgeneric *);
    bool                           EnvUndefmethod(Environment *,Defgeneric *,long);
 #if ! OBJECT_SYSTEM
-   void                           TypeCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           TypeCommand(Environment *,UDFContext *,UDFValue *);
 #endif
 #if DEBUGGING_FUNCTIONS || PROFILING_FUNCTIONS
    void                           EnvGetDefmethodDescription(Environment *,char *,size_t,Defgeneric *,long);
@@ -93,20 +93,20 @@
    void                           EnvSetDefgenericWatch(Environment *,bool,Defgeneric *);
    bool                           EnvGetDefmethodWatch(Environment *,Defgeneric *,long);
    void                           EnvSetDefmethodWatch(Environment *,bool,Defgeneric *,long);
-   void                           PPDefgenericCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           PPDefmethodCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           ListDefmethodsCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           PPDefgenericCommand(Environment *,UDFContext *,UDFValue *);
+   void                           PPDefmethodCommand(Environment *,UDFContext *,UDFValue *);
+   void                           ListDefmethodsCommand(Environment *,UDFContext *,UDFValue *);
    const char                    *EnvGetDefmethodPPForm(Environment *,Defgeneric *,long);
-   void                           ListDefgenericsCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           ListDefgenericsCommand(Environment *,UDFContext *,UDFValue *);
    void                           EnvListDefgenerics(Environment *,const char *,Defmodule *);
    void                           EnvListDefmethods(Environment *,const char *,Defgeneric *);
 #endif
-   void                           GetDefgenericListFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           EnvGetDefgenericList(Environment *,CLIPSValue *,Defmodule *);
-   void                           GetDefmethodListCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           EnvGetDefmethodList(Environment *,Defgeneric *,CLIPSValue *);
-   void                           GetMethodRestrictionsCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           EnvGetMethodRestrictions(Environment *,Defgeneric *,long,CLIPSValue *);
+   void                           GetDefgenericListFunction(Environment *,UDFContext *,UDFValue *);
+   void                           EnvGetDefgenericList(Environment *,UDFValue *,Defmodule *);
+   void                           GetDefmethodListCommand(Environment *,UDFContext *,UDFValue *);
+   void                           EnvGetDefmethodList(Environment *,Defgeneric *,UDFValue *);
+   void                           GetMethodRestrictionsCommand(Environment *,UDFContext *,UDFValue *);
+   void                           EnvGetMethodRestrictions(Environment *,Defgeneric *,long,UDFValue *);
    CLIPSLexeme                   *GetDefgenericNamePointer(Defgeneric *);
    void                           SetNextDefgeneric(Defgeneric *,Defgeneric *);
    const char                    *EnvDefgenericModule(Environment *,Defgeneric *);

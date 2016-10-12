@@ -897,7 +897,7 @@ unsigned long GetNumberOfActivations(
 void RefreshCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    const char *ruleName;
    Defrule *rulePtr;
@@ -984,7 +984,7 @@ bool EnvRefresh(
 void RefreshAgendaCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    int numArgs;
    bool error;
@@ -1118,9 +1118,9 @@ void EnvRefreshAgenda(
 void SetSalienceEvaluationCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue value;
+   UDFValue value;
    const char *argument;
    const char *oldValue;
 
@@ -1174,7 +1174,7 @@ void SetSalienceEvaluationCommand(
 void GetSalienceEvaluationCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    returnValue->lexemeValue = EnvCreateSymbol(theEnv,SalienceEvaluationName(EnvGetSalienceEvaluation(theEnv)));
   }
@@ -1246,7 +1246,7 @@ static int EvaluateSalience(
   Environment *theEnv,
   Defrule *theDefrule)
   {
-   CLIPSValue salienceValue;
+   UDFValue salienceValue;
    int salience;
 
   /*==================================================*/
@@ -1325,7 +1325,7 @@ static int EvaluateSalience(
 void AgendaCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    int numArgs;
    bool error;

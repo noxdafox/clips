@@ -133,7 +133,7 @@
 void InitializeInstanceCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Instance *ins;
 
@@ -161,11 +161,11 @@ void InitializeInstanceCommand(
 void MakeInstanceCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    CLIPSLexeme *iname;
    Instance *ins;
-   CLIPSValue temp;
+   UDFValue temp;
    Defclass *cls;
 
    returnValue->lexemeValue = theEnv->FalseSymbol;
@@ -277,7 +277,7 @@ Instance *BuildInstance(
    unsigned hashTableIndex;
    unsigned modulePosition;
    CLIPSLexeme *moduleName;
-   CLIPSValue temp;
+   UDFValue temp;
 
 #if DEFRULE_CONSTRUCT
    if (EngineData(theEnv)->JoinOperationInProgress && cls->reactive)
@@ -452,7 +452,7 @@ Instance *BuildInstance(
                  by overrides (sp->override == 1) are ignored)
   INPUTS       : 1) Instance address
   RETURNS      : Nothing useful
-  SIDE EFFECTS : Each CLIPSValue slot in the instance's slot array is replaced
+  SIDE EFFECTS : Each UDFValue slot in the instance's slot array is replaced
                    by the evaluation (by EvaluateExpression) of the expression
                    in the slot list.  The old expression-values
                    are deleted.
@@ -461,7 +461,7 @@ Instance *BuildInstance(
 void InitSlotsCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    EvaluationData(theEnv)->EvaluationError = false;
 
@@ -618,7 +618,7 @@ bool QuashInstance(
 void InactiveInitializeInstance(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    bool ov;
 
@@ -643,7 +643,7 @@ void InactiveInitializeInstance(
 void InactiveMakeInstance(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    bool ov;
 
@@ -909,7 +909,7 @@ static bool CoreInitializeInstance(
   Instance *ins,
   EXPRESSION *ovrexp)
   {
-   CLIPSValue temp;
+   UDFValue temp;
 
    if (ins->installed == 0)
      {
@@ -984,7 +984,7 @@ static bool InsertSlotOverrides(
   EXPRESSION *slot_exp)
   {
    INSTANCE_SLOT *slot;
-   CLIPSValue temp, junk;
+   UDFValue temp, junk;
 
    EvaluationData(theEnv)->EvaluationError = false;
    while (slot_exp != NULL)
@@ -1041,7 +1041,7 @@ static bool InsertSlotOverrides(
                  by overrides (sp->override == 1) are ignored)
   INPUTS       : 1) Instance address
   RETURNS      : Nothing useful
-  SIDE EFFECTS : Each CLIPSValue slot in the instance's slot array is replaced
+  SIDE EFFECTS : Each UDFValue slot in the instance's slot array is replaced
                    by the evaluation (by EvaluateExpression) of the expression
                    in the slot list.  The old expression-values
                    are deleted.
@@ -1052,7 +1052,7 @@ static void EvaluateClassDefaults(
   Instance *ins)
   {
    INSTANCE_SLOT *slot;
-   CLIPSValue temp,junk;
+   UDFValue temp,junk;
    long i;
 
    if (ins->initializeInProgress == 0)
@@ -1082,7 +1082,7 @@ static void EvaluateClassDefaults(
            }
          else if (((slot->desc->shared == 0) || (slot->desc->sharedCount == 1)) &&
                   (slot->desc->noDefault == 0))
-           DirectPutSlotValue(theEnv,ins,slot,(CLIPSValue *) slot->desc->defaultValue,&junk);
+           DirectPutSlotValue(theEnv,ins,slot,(UDFValue *) slot->desc->defaultValue,&junk);
          else if (slot->valueRequired)
            {
             PrintErrorID(theEnv,"INSMNGR",14,false);

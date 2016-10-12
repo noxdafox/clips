@@ -81,7 +81,7 @@
    static void                    PrintType(Environment *,const char *,int,int *,const char *);
    static void                    AssignErrorValue(UDFContext *);
    static bool                    DefineFunction(Environment *,const char *,unsigned,
-                                                 void (*)(Environment *,UDFContext *,CLIPSValue *),
+                                                 void (*)(Environment *,UDFContext *,UDFValue *),
                                                  const char *,int,int,const char *,void *);
 
 /*********************************************************/
@@ -147,7 +147,7 @@ bool EnvAddUDF(
   int minArgs,
   int maxArgs,
   const char *argumentTypes,
-  void (*cFunctionPointer)(Environment *,UDFContext *,CLIPSValue *),
+  void (*cFunctionPointer)(Environment *,UDFContext *,UDFValue *),
   const char *cFunctionName,
   void *context)
   {
@@ -171,7 +171,7 @@ static bool DefineFunction(
   Environment *theEnv,
   const char *name,
   unsigned returnTypeBits,
-  void (*pointer)(Environment *,UDFContext *,CLIPSValue *),
+  void (*pointer)(Environment *,UDFContext *,UDFValue *),
   const char *actualName,
   int minArgs,
   int maxArgs,
@@ -698,7 +698,7 @@ int UDFArgumentCount(
 bool UDFFirstArgument(
   UDFContext *context,
   unsigned expectedType,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    context->lastArg = EvaluationData(context->environment)->CurrentExpression->argList;
    context->lastPosition = 1;
@@ -711,7 +711,7 @@ bool UDFFirstArgument(
 bool UDFNextArgument(
   UDFContext *context,
   unsigned expectedType,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    struct expr *argPtr = context->lastArg;
    int argumentPosition = context->lastPosition;
@@ -927,7 +927,7 @@ bool UDFNthArgument(
   UDFContext *context,
   int argumentPosition,
   unsigned expectedType,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    if (argumentPosition < context->lastPosition)
      {

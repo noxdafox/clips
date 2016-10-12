@@ -148,7 +148,7 @@ static void SaveDefmodules(
 void GetDefmoduleListFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    EnvGetDefmoduleList(theEnv,returnValue);
   }
@@ -159,7 +159,7 @@ void GetDefmoduleListFunction(
 /******************************************/
 void EnvGetDefmoduleList(
   Environment *theEnv,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Defmodule *theConstruct;
    unsigned long count = 0;
@@ -211,7 +211,7 @@ void EnvGetDefmoduleList(
 void PPDefmoduleCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    const char *defmoduleName;
 
@@ -254,7 +254,7 @@ bool PPDefmodule(
 void ListDefmodulesCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    EnvListDefmodules(theEnv,WDISPLAY);
   }

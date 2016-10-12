@@ -72,7 +72,7 @@ typedef struct query_core
    EXPRESSION *query,*action;
    QUERY_SOLN *soln_set,*soln_bottom;
    unsigned soln_size,soln_cnt;
-   CLIPSValue *result;
+   UDFValue *result;
   } QUERY_CORE;
 
 typedef struct query_stack
@@ -96,14 +96,14 @@ struct instanceQueryData
 #define QUERY_DELIMITER_STRING     "(QDS)"
 
    void                           SetupQuery(Environment *);
-   void                           GetQueryInstance(Environment *,UDFContext *,CLIPSValue *);
-   void                           GetQueryInstanceSlot(Environment *,UDFContext *,CLIPSValue *);
-   void                           AnyInstances(Environment *,UDFContext *,CLIPSValue *);
-   void                           QueryFindInstance(Environment *,UDFContext *,CLIPSValue *);
-   void                           QueryFindAllInstances(Environment *,UDFContext *,CLIPSValue *);
-   void                           QueryDoForInstance(Environment *,UDFContext *,CLIPSValue *);
-   void                           QueryDoForAllInstances(Environment *,UDFContext *,CLIPSValue *);
-   void                           DelayedQueryDoForAllInstances(Environment *,UDFContext *,CLIPSValue *);
+   void                           GetQueryInstance(Environment *,UDFContext *,UDFValue *);
+   void                           GetQueryInstanceSlot(Environment *,UDFContext *,UDFValue *);
+   void                           AnyInstances(Environment *,UDFContext *,UDFValue *);
+   void                           QueryFindInstance(Environment *,UDFContext *,UDFValue *);
+   void                           QueryFindAllInstances(Environment *,UDFContext *,UDFValue *);
+   void                           QueryDoForInstance(Environment *,UDFContext *,UDFValue *);
+   void                           QueryDoForAllInstances(Environment *,UDFContext *,UDFValue *);
+   void                           DelayedQueryDoForAllInstances(Environment *,UDFContext *,UDFValue *);
 
 #endif /* INSTANCE_SET_QUERIES */
 

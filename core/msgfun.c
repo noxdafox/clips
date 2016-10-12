@@ -608,7 +608,7 @@ bool CheckCurrentMessage(
   const char *func,
   bool ins_reqd)
   {
-   CLIPSValue *activeMsgArg;
+   UDFValue *activeMsgArg;
 
    if (!MessageHandlerData(theEnv)->CurrentCore || (MessageHandlerData(theEnv)->CurrentCore->hnd->actions != ProceduralPrimitiveData(theEnv)->CurrentProcActions))
      {

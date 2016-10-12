@@ -143,13 +143,13 @@ struct agendaData
    void                    EnvRefreshAgenda(Environment *,Defmodule *);
    void                    EnvReorderAgenda(Environment *,Defmodule *);
    void                    InitializeAgenda(Environment *);
-   void                    SetSalienceEvaluationCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                    GetSalienceEvaluationCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                    RefreshAgendaCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                    RefreshCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                    SetSalienceEvaluationCommand(Environment *,UDFContext *,UDFValue *);
+   void                    GetSalienceEvaluationCommand(Environment *,UDFContext *,UDFValue *);
+   void                    RefreshAgendaCommand(Environment *,UDFContext *,UDFValue *);
+   void                    RefreshCommand(Environment *,UDFContext *,UDFValue *);
    bool                    EnvRefresh(Environment *,Defrule *);
 #if DEBUGGING_FUNCTIONS
-   void                    AgendaCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                    AgendaCommand(Environment *,UDFContext *,UDFValue *);
 #endif
 
 #endif

@@ -222,7 +222,7 @@ static void DeallocateUtilityData(
 /*****************************/
 void CleanCurrentGarbageFrame(
   Environment *theEnv,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    struct garbageFrame *currentGarbageFrame;
 
@@ -256,7 +256,7 @@ void RestorePriorGarbageFrame(
   Environment *theEnv,
   struct garbageFrame *newGarbageFrame,
   struct garbageFrame *oldGarbageFrame,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    if (newGarbageFrame->dirty)
      {
@@ -307,7 +307,7 @@ void CLIPSBlockStart(
 void CLIPSBlockEnd(
   Environment *theEnv,
   CLIPSBlock *theBlock,
-  CLIPSValue *rv)
+  UDFValue *rv)
   {
    RestorePriorGarbageFrame(theEnv,&theBlock->newGarbageFrame,theBlock->oldGarbageFrame,rv);
   }

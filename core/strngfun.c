@@ -100,7 +100,7 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    StrOrSymCatFunction(UDFContext *,CLIPSValue *,unsigned short);
+   static void                    StrOrSymCatFunction(UDFContext *,UDFValue *,unsigned short);
 
 /******************************************/
 /* StringFunctionDefinitions: Initializes */
@@ -135,7 +135,7 @@ void StringFunctionDefinitions(
 void StrCatFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    StrOrSymCatFunction(context,returnValue,STRING);
   }
@@ -147,7 +147,7 @@ void StrCatFunction(
 void SymCatFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    StrOrSymCatFunction(context,returnValue,SYMBOL);
   }
@@ -158,10 +158,10 @@ void SymCatFunction(
 /********************************************************/
 static void StrOrSymCatFunction(
   UDFContext *context,
-  CLIPSValue *returnValue,
+  UDFValue *returnValue,
   unsigned short returnType)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
    int numArgs, i, total, j;
    char *theString;
    CLIPSLexeme **arrayOfStrings;
@@ -283,9 +283,9 @@ static void StrOrSymCatFunction(
 void StrLengthFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    /*==================================================================*/
    /* The argument should be of type symbol, string, or instance name. */
@@ -308,9 +308,9 @@ void StrLengthFunction(
 void UpcaseFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
    unsigned i;
    size_t slen;
    const char *osptr;
@@ -362,9 +362,9 @@ void UpcaseFunction(
 void LowcaseFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
    unsigned i;
    size_t slen;
    const char *osptr;
@@ -416,9 +416,9 @@ void LowcaseFunction(
 void StrCompareFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue arg1, arg2, arg3;
+   UDFValue arg1, arg2, arg3;
    int compareResult;
 
    /*=============================================================*/
@@ -469,9 +469,9 @@ void StrCompareFunction(
 void SubStringFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
    const char *tempString;
    char *returnString;
    size_t start, end, i, j, length;
@@ -556,9 +556,9 @@ void SubStringFunction(
 void StrIndexFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg1, theArg2;
+   UDFValue theArg1, theArg2;
    const char *strg1, *strg2, *strg3;
    size_t i, j;
 
@@ -611,9 +611,9 @@ void StrIndexFunction(
 void StringToFieldFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    /*==================================================*/
    /* The argument should be of type symbol or string. */
@@ -638,7 +638,7 @@ void StringToFieldFunction(
 void StringToField(
   Environment *theEnv,
   const char *theString,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    struct token theToken;
 
@@ -678,9 +678,9 @@ void StringToField(
 void EvalFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    /*==================================================*/
    /* The argument should be of type SYMBOL or STRING. */
@@ -703,7 +703,7 @@ void EvalFunction(
 bool EnvEval(
   Environment *theEnv,
   const char *theString,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    struct expr *top;
    bool ov;
@@ -858,7 +858,7 @@ bool EnvEval(
 void EvalFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    PrintErrorID(theEnv,"STRNGFUN",1,false);
    EnvPrintRouter(theEnv,WERROR,"Function eval does not work in run time modules.\n");
@@ -872,7 +872,7 @@ void EvalFunction(
 bool EnvEval(
   Environment *theEnv,
   const char *theString,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    PrintErrorID(theEnv,"STRNGFUN",1,false);
    EnvPrintRouter(theEnv,WERROR,"Function eval does not work in run time modules.\n");
@@ -890,9 +890,9 @@ bool EnvEval(
 void BuildFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    /*==================================================*/
    /* The argument should be of type SYMBOL or STRING. */
@@ -1028,7 +1028,7 @@ bool EnvBuild(
 void BuildFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    PrintErrorID(theEnv,"STRNGFUN",1,false);
    EnvPrintRouter(theEnv,WERROR,"Function build does not work in run time modules.\n");

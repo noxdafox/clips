@@ -53,38 +53,38 @@
 
 #include "evaluatn.h"
 
-   void                           ClassAbstractPCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           ClassAbstractPCommand(Environment *,UDFContext *,UDFValue *);
 #if DEFRULE_CONSTRUCT
-   void                           ClassReactivePCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           ClassReactivePCommand(Environment *,UDFContext *,UDFValue *);
 #endif
    Defclass                      *ClassInfoFnxArgs(UDFContext *,const char *,bool *);
-   void                           ClassSlotsCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           ClassSuperclassesCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           ClassSubclassesCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           GetDefmessageHandlersListCmd(Environment *,UDFContext *,CLIPSValue *);
-   void                           SlotFacetsCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           SlotSourcesCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           SlotTypesCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           SlotAllowedValuesCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           SlotAllowedClassesCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           SlotRangeCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           SlotCardinalityCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           ClassSlotsCommand(Environment *,UDFContext *,UDFValue *);
+   void                           ClassSuperclassesCommand(Environment *,UDFContext *,UDFValue *);
+   void                           ClassSubclassesCommand(Environment *,UDFContext *,UDFValue *);
+   void                           GetDefmessageHandlersListCmd(Environment *,UDFContext *,UDFValue *);
+   void                           SlotFacetsCommand(Environment *,UDFContext *,UDFValue *);
+   void                           SlotSourcesCommand(Environment *,UDFContext *,UDFValue *);
+   void                           SlotTypesCommand(Environment *,UDFContext *,UDFValue *);
+   void                           SlotAllowedValuesCommand(Environment *,UDFContext *,UDFValue *);
+   void                           SlotAllowedClassesCommand(Environment *,UDFContext *,UDFValue *);
+   void                           SlotRangeCommand(Environment *,UDFContext *,UDFValue *);
+   void                           SlotCardinalityCommand(Environment *,UDFContext *,UDFValue *);
    bool                           EnvClassAbstractP(Environment *,Defclass *);
 #if DEFRULE_CONSTRUCT
    bool                           EnvClassReactiveP(Environment *,Defclass *);
 #endif
-   void                           EnvClassSlots(Environment *,Defclass *,CLIPSValue *,bool);
-   void                           EnvGetDefmessageHandlerList(Environment *,Defclass *,CLIPSValue *,bool);
-   void                           EnvClassSuperclasses(Environment *,Defclass *,CLIPSValue *,bool);
-   void                           EnvClassSubclasses(Environment *,Defclass *,CLIPSValue *,bool);
-   void                           ClassSubclassAddresses(Environment *,Defclass *,CLIPSValue *,bool);
-   void                           EnvSlotFacets(Environment *,Defclass *,const char *,CLIPSValue *);
-   void                           EnvSlotSources(Environment *,Defclass *,const char *,CLIPSValue *);
-   void                           EnvSlotTypes(Environment *,Defclass *,const char *,CLIPSValue *);
-   void                           EnvSlotAllowedValues(Environment *,Defclass *,const char *,CLIPSValue *);
-   void                           EnvSlotAllowedClasses(Environment *,Defclass *,const char *,CLIPSValue *);
-   void                           EnvSlotRange(Environment *,Defclass *,const char *,CLIPSValue *);
-   void                           EnvSlotCardinality(Environment *,Defclass *,const char *,CLIPSValue *);
+   void                           EnvClassSlots(Environment *,Defclass *,UDFValue *,bool);
+   void                           EnvGetDefmessageHandlerList(Environment *,Defclass *,UDFValue *,bool);
+   void                           EnvClassSuperclasses(Environment *,Defclass *,UDFValue *,bool);
+   void                           EnvClassSubclasses(Environment *,Defclass *,UDFValue *,bool);
+   void                           ClassSubclassAddresses(Environment *,Defclass *,UDFValue *,bool);
+   void                           EnvSlotFacets(Environment *,Defclass *,const char *,UDFValue *);
+   void                           EnvSlotSources(Environment *,Defclass *,const char *,UDFValue *);
+   void                           EnvSlotTypes(Environment *,Defclass *,const char *,UDFValue *);
+   void                           EnvSlotAllowedValues(Environment *,Defclass *,const char *,UDFValue *);
+   void                           EnvSlotAllowedClasses(Environment *,Defclass *,const char *,UDFValue *);
+   void                           EnvSlotRange(Environment *,Defclass *,const char *,UDFValue *);
+   void                           EnvSlotCardinality(Environment *,Defclass *,const char *,UDFValue *);
 
 #endif /* _H_classinf */
 

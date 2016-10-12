@@ -298,8 +298,8 @@ static void DeallocateDefclassData(
              {
               if ((cls->slots[i].defaultValue != NULL) && (cls->slots[i].dynamicDefault == 0))
                 {
-                 tmpexp = ((CLIPSValue *) cls->slots[i].defaultValue)->supplementalInfo;
-                 rtn_struct(theEnv,dataObject,cls->slots[i].defaultValue);
+                 tmpexp = ((UDFValue *) cls->slots[i].defaultValue)->supplementalInfo;
+                 rtn_struct(theEnv,udfValue,cls->slots[i].defaultValue);
                  cls->slots[i].defaultValue = tmpexp;
                 }
              }
@@ -372,9 +372,9 @@ void ObjectsRunTimeInitialize(
                  ===================================================================== */
               if ((cls->slots[i].defaultValue != NULL) && (cls->slots[i].dynamicDefault == 0))
                 {
-                 tmpexp = ((CLIPSValue *) cls->slots[i].defaultValue)->supplementalInfo;
-                 ValueDeinstall(theEnv,(CLIPSValue *) cls->slots[i].defaultValue);
-                 rtn_struct(theEnv,dataObject,cls->slots[i].defaultValue);
+                 tmpexp = ((UDFValue *) cls->slots[i].defaultValue)->supplementalInfo;
+                 ValueDeinstall(theEnv,(UDFValue *) cls->slots[i].defaultValue);
+                 rtn_struct(theEnv,udfValue,cls->slots[i].defaultValue);
                  cls->slots[i].defaultValue = tmpexp;
                 }
              }
@@ -422,11 +422,11 @@ void ObjectsRunTimeInitialize(
          if ((cls->slots[i].defaultValue != NULL) && (cls->slots[i].dynamicDefault == 0))
            {
             tmpexp = cls->slots[i].defaultValue;
-            cls->slots[i].defaultValue = get_struct(theEnv,dataObject);
+            cls->slots[i].defaultValue = get_struct(theEnv,udfValue);
             EvaluateAndStoreInDataObject(theEnv,(int) cls->slots[i].multiple,(EXPRESSION *) tmpexp,
-                                         (CLIPSValue *) cls->slots[i].defaultValue,true);
-            ValueInstall(theEnv,(CLIPSValue *) cls->slots[i].defaultValue);
-            ((CLIPSValue *) cls->slots[i].defaultValue)->supplementalInfo = tmpexp;
+                                         (UDFValue *) cls->slots[i].defaultValue,true);
+            ValueInstall(theEnv,(UDFValue *) cls->slots[i].defaultValue);
+            ((UDFValue *) cls->slots[i].defaultValue)->supplementalInfo = tmpexp;
            }
         }
      }

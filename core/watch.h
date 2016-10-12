@@ -86,11 +86,11 @@ struct watchData
                                                       bool (*)(Environment *,const char *,int,struct expr *));
    const char                    *GetNthWatchName(Environment *,int);
    int                            GetNthWatchValue(Environment *,int);
-   void                           WatchCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           UnwatchCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           ListWatchItemsCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           WatchCommand(Environment *,UDFContext *,UDFValue *);
+   void                           UnwatchCommand(Environment *,UDFContext *,UDFValue *);
+   void                           ListWatchItemsCommand(Environment *,UDFContext *,UDFValue *);
    void                           WatchFunctionDefinitions(Environment *);
-   void                           GetWatchItemCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           GetWatchItemCommand(Environment *,UDFContext *,UDFValue *);
 
 #endif /* _H_watch */
 

@@ -64,20 +64,20 @@
 #include "evaluatn.h"
 
    void                           FactCommandDefinitions(Environment *);
-   void                           AssertCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           RetractCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           AssertStringFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           FactsCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           AssertCommand(Environment *,UDFContext *,UDFValue *);
+   void                           RetractCommand(Environment *,UDFContext *,UDFValue *);
+   void                           AssertStringFunction(Environment *,UDFContext *,UDFValue *);
+   void                           FactsCommand(Environment *,UDFContext *,UDFValue *);
    void                           EnvFacts(Environment *,const char *,Defmodule *,long long,long long,long long);
-   void                           SetFactDuplicationCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           GetFactDuplicationCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           SaveFactsCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           LoadFactsCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           SetFactDuplicationCommand(Environment *,UDFContext *,UDFValue *);
+   void                           GetFactDuplicationCommand(Environment *,UDFContext *,UDFValue *);
+   void                           SaveFactsCommand(Environment *,UDFContext *,UDFValue *);
+   void                           LoadFactsCommand(Environment *,UDFContext *,UDFValue *);
    bool                           EnvSaveFacts(Environment *,const char *,int);
    bool                           EnvSaveFactsDriver(Environment *,const char *,int,struct expr *);
    bool                           EnvLoadFacts(Environment *,const char *);
    bool                           EnvLoadFactsFromString(Environment *,const char *,long);
-   void                           FactIndexFunction(Environment *,UDFContext *,CLIPSValue *);
+   void                           FactIndexFunction(Environment *,UDFContext *,UDFValue *);
 
 #endif /* _H_factcom */
 

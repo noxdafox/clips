@@ -80,20 +80,20 @@
    void                           IOFunctionDefinitions(Environment *);
 #if IO_FUNCTIONS
    bool                           SetFullCRLF(Environment *,bool);
-   void                           PrintoutFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           PrintFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           PrintlnFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           ReadFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           OpenFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           CloseFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           GetCharFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           PutCharFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           ReadlineFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           FormatFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           RemoveFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           RenameFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           SetLocaleFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           ReadNumberFunction(Environment *,UDFContext *,CLIPSValue *);
+   void                           PrintoutFunction(Environment *,UDFContext *,UDFValue *);
+   void                           PrintFunction(Environment *,UDFContext *,UDFValue *);
+   void                           PrintlnFunction(Environment *,UDFContext *,UDFValue *);
+   void                           ReadFunction(Environment *,UDFContext *,UDFValue *);
+   void                           OpenFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CloseFunction(Environment *,UDFContext *,UDFValue *);
+   void                           GetCharFunction(Environment *,UDFContext *,UDFValue *);
+   void                           PutCharFunction(Environment *,UDFContext *,UDFValue *);
+   void                           ReadlineFunction(Environment *,UDFContext *,UDFValue *);
+   void                           FormatFunction(Environment *,UDFContext *,UDFValue *);
+   void                           RemoveFunction(Environment *,UDFContext *,UDFValue *);
+   void                           RenameFunction(Environment *,UDFContext *,UDFValue *);
+   void                           SetLocaleFunction(Environment *,UDFContext *,UDFValue *);
+   void                           ReadNumberFunction(Environment *,UDFContext *,UDFValue *);
 #endif
 
 #endif /* _H_iofun */

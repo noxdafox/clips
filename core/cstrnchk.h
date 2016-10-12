@@ -74,7 +74,7 @@
                                                                       int,int,CONSTRAINT_RECORD *,
                                                                       bool);
    int                            ConstraintCheckValue(Environment *,int,void *,CONSTRAINT_RECORD *);
-   int                            ConstraintCheckDataObject(Environment *,CLIPSValue *,CONSTRAINT_RECORD *);
+   int                            ConstraintCheckDataObject(Environment *,UDFValue *,CONSTRAINT_RECORD *);
 #if (! BLOAD_ONLY) && (! RUN_TIME)
    int                            ConstraintCheckExpression(Environment *,struct expr *,
                                                             CONSTRAINT_RECORD *);

@@ -112,7 +112,7 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    DuplicateModifyCommand(Environment *,int,CLIPSValue *);
+   static void                    DuplicateModifyCommand(Environment *,int,UDFValue *);
    static CLIPSLexeme            *CheckDeftemplateAndSlotArguments(UDFContext *,Deftemplate **);
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
@@ -165,7 +165,7 @@ void DeftemplateFunctions(
 void ModifyCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    DuplicateModifyCommand(theEnv,true,returnValue);
   }
@@ -177,7 +177,7 @@ void ModifyCommand(
 void DuplicateCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    DuplicateModifyCommand(theEnv,false,returnValue);
   }
@@ -193,12 +193,12 @@ void DuplicateCommand(
 static void DuplicateModifyCommand(
   Environment *theEnv,
   int retractIt,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    long long factNum;
    Fact *oldFact, *newFact, *theFact;
    struct expr *testPtr;
-   CLIPSValue computeResult;
+   UDFValue computeResult;
    Deftemplate *templatePtr;
    struct templateSlot *slotPtr;
    int i, position;
@@ -507,7 +507,7 @@ static void DuplicateModifyCommand(
 void DeftemplateSlotNamesFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    const char *deftemplateName;
    Deftemplate *theDeftemplate;
@@ -546,7 +546,7 @@ void DeftemplateSlotNamesFunction(
 void EnvDeftemplateSlotNames(
   Environment *theEnv,
   Deftemplate *theDeftemplate,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Multifield *theList;
    struct templateSlot *theSlot;
@@ -604,7 +604,7 @@ void EnvDeftemplateSlotNames(
 void DeftemplateSlotDefaultPFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Deftemplate *theDeftemplate;
    CLIPSLexeme *slotName;
@@ -699,7 +699,7 @@ int EnvDeftemplateSlotDefaultP(
 void DeftemplateSlotDefaultValueFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Deftemplate *theDeftemplate;
    CLIPSLexeme *slotName;
@@ -730,11 +730,11 @@ bool EnvDeftemplateSlotDefaultValue(
   Environment *theEnv,
   Deftemplate *theDeftemplate,
   const char *slotName,
-  CLIPSValue *theValue)
+  UDFValue *theValue)
   {
    short position;
    struct templateSlot *theSlot;
-   CLIPSValue tempDO;
+   UDFValue tempDO;
 
    /*=============================================*/
    /* Set up the default return value for errors. */
@@ -805,7 +805,7 @@ bool EnvDeftemplateSlotDefaultValue(
 void DeftemplateSlotCardinalityFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Deftemplate *theDeftemplate;
    CLIPSLexeme *slotName;
@@ -836,7 +836,7 @@ void EnvDeftemplateSlotCardinality(
   Environment *theEnv,
   Deftemplate *theDeftemplate,
   const char *slotName,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    short position;
    struct templateSlot *theSlot;
@@ -914,7 +914,7 @@ void EnvDeftemplateSlotCardinality(
 void DeftemplateSlotAllowedValuesFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Deftemplate *theDeftemplate;
    CLIPSLexeme *slotName;
@@ -945,7 +945,7 @@ void EnvDeftemplateSlotAllowedValues(
   Environment *theEnv,
   Deftemplate *theDeftemplate,
   const char *slotName,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    short position;
    struct templateSlot *theSlot;
@@ -1019,7 +1019,7 @@ void EnvDeftemplateSlotAllowedValues(
 void DeftemplateSlotRangeFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Deftemplate *theDeftemplate;
    CLIPSLexeme *slotName;
@@ -1050,7 +1050,7 @@ void EnvDeftemplateSlotRange(
   Environment *theEnv,
   Deftemplate *theDeftemplate,
   const char *slotName,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    short position;
    struct templateSlot *theSlot;
@@ -1125,7 +1125,7 @@ void EnvDeftemplateSlotRange(
 void DeftemplateSlotTypesFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Deftemplate *theDeftemplate;
    CLIPSLexeme *slotName;
@@ -1156,7 +1156,7 @@ void EnvDeftemplateSlotTypes(
   Environment *theEnv,
   Deftemplate *theDeftemplate,
   const char *slotName,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    short position;
    struct templateSlot *theSlot = NULL;
@@ -1287,7 +1287,7 @@ void EnvDeftemplateSlotTypes(
 void DeftemplateSlotMultiPFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Deftemplate *theDeftemplate;
    CLIPSLexeme *slotName;
@@ -1367,7 +1367,7 @@ bool EnvDeftemplateSlotMultiP(
 void DeftemplateSlotSinglePFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Deftemplate *theDeftemplate;
    CLIPSLexeme *slotName;
@@ -1447,7 +1447,7 @@ bool EnvDeftemplateSlotSingleP(
 void DeftemplateSlotExistPFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Deftemplate *theDeftemplate;
    CLIPSLexeme *slotName;
@@ -1516,11 +1516,11 @@ bool EnvDeftemplateSlotExistP(
 void DeftemplateSlotFacetExistPFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Deftemplate *theDeftemplate;
    CLIPSLexeme *slotName;
-   CLIPSValue facetName;
+   UDFValue facetName;
 
    /*===================================================*/
    /* Retrieve the deftemplate and slot name arguments. */
@@ -1607,11 +1607,11 @@ bool EnvDeftemplateSlotFacetExistP(
 void DeftemplateSlotFacetValueFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Deftemplate *theDeftemplate;
    CLIPSLexeme *slotName;
-   CLIPSValue facetName;
+   UDFValue facetName;
 
    /*=============================================*/
    /* Set up the default return value for errors. */
@@ -1650,7 +1650,7 @@ bool EnvDeftemplateSlotFacetValue(
   Deftemplate *theDeftemplate,
   const char *slotName,
   const char *facetName,
-  CLIPSValue *rv)
+  UDFValue *rv)
   {
    short position;
    struct templateSlot *theSlot;
@@ -1703,7 +1703,7 @@ static CLIPSLexeme *CheckDeftemplateAndSlotArguments(
   UDFContext *context,
   Deftemplate **theDeftemplate)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
    const char *deftemplateName;
    Environment *theEnv = context->environment;
 

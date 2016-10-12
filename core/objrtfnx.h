@@ -209,7 +209,7 @@ struct objectReteData
 #define ObjectReteData(theEnv) ((struct objectReteData *) GetEnvironmentData(theEnv,OBJECT_RETE_DATA))
 
    void                    InstallObjectPrimitives(Environment *);
-   bool                    ObjectCmpConstantFunction(Environment *,void *,CLIPSValue *);
+   bool                    ObjectCmpConstantFunction(Environment *,void *,UDFValue *);
 
 #endif /* DEFRULE_CONSTRUCT && OBJECT_SYSTEM */
 

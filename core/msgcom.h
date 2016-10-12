@@ -105,12 +105,12 @@ struct messageHandlerData
 #endif
    unsigned         EnvFindDefmessageHandler(Environment *,Defclass *,const char *,const char *);
    bool             EnvIsDefmessageHandlerDeletable(Environment *,Defclass *,int);
-   void             UndefmessageHandlerCommand(Environment *,UDFContext *,CLIPSValue *);
+   void             UndefmessageHandlerCommand(Environment *,UDFContext *,UDFValue *);
    bool             EnvUndefmessageHandler(Environment *,Defclass *,int);
 #if DEBUGGING_FUNCTIONS
-   void             PPDefmessageHandlerCommand(Environment *,UDFContext *,CLIPSValue *);
-   void             ListDefmessageHandlersCommand(Environment *,UDFContext *,CLIPSValue *);
-   void             PreviewSendCommand(Environment *,UDFContext *,CLIPSValue *);
+   void             PPDefmessageHandlerCommand(Environment *,UDFContext *,UDFValue *);
+   void             ListDefmessageHandlersCommand(Environment *,UDFContext *,UDFValue *);
+   void             PreviewSendCommand(Environment *,UDFContext *,UDFValue *);
    const char      *EnvGetDefmessageHandlerPPForm(Environment *,Defclass *,int);
    void             EnvListDefmessageHandlers(Environment *,const char *,Defclass *,bool);
    void             EnvPreviewSend(Environment *,const char *,Defclass *,const char *);

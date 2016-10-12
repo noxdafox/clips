@@ -56,8 +56,8 @@
 #include "evaluatn.h"
 
    void                           ParseFunctionDefinitions(Environment *);
-   void                           CheckSyntaxFunction(Environment *,UDFContext *,CLIPSValue *);
-   bool                           CheckSyntax(Environment *,const char *,CLIPSValue *);
+   void                           CheckSyntaxFunction(Environment *,UDFContext *,UDFValue *);
+   bool                           CheckSyntax(Environment *,const char *,UDFValue *);
 
 #endif /* _H_parsefun */
 

@@ -566,7 +566,7 @@ struct fact *StringToFact(
    unsigned numberOfFields = 0, whichField;
    struct expr *assertArgs, *tempPtr;
    bool error = false;
-   CLIPSValue theResult;
+   UDFValue theResult;
 
    /*=========================================*/
    /* Open a string router and parse the fact */

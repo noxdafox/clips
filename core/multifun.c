@@ -111,7 +111,7 @@ typedef struct fieldVarStack
 
 #if MULTIFIELD_FUNCTIONS
    static bool                    MVRangeCheck(long,long,long *,int);
-   static void                    MultifieldPrognDriver(UDFContext *,CLIPSValue *,const char *);
+   static void                    MultifieldPrognDriver(UDFContext *,UDFValue *,const char *);
 #if (! BLOAD_ONLY) && (! RUN_TIME)
    static struct expr            *MultifieldPrognParser(Environment *,struct expr *,const char *);
    static struct expr            *ForeachParser(Environment *,struct expr *,const char *);
@@ -179,9 +179,9 @@ void MultifieldFunctionDefinitions(
 void DeleteFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue value1, value2, value3;
+   UDFValue value1, value2, value3;
 
    /*=======================================*/
    /* Check for the correct argument types. */
@@ -211,9 +211,9 @@ void DeleteFunction(
 void ReplaceFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue value1, value2, value3, value4;
+   UDFValue value1, value2, value3, value4;
    EXPRESSION *fieldarg;
 
    /*=======================================*/
@@ -254,9 +254,9 @@ void ReplaceFunction(
 void DeleteMemberFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue resultValue, *delVals, tmpVal;
+   UDFValue resultValue, *delVals, tmpVal;
    int i, argCnt;
    unsigned delSize;
    long j,k;
@@ -279,8 +279,8 @@ void DeleteMemberFunction(
    /* of those values from the multifield.              */
    /*===================================================*/
 
-   delSize = (sizeof(CLIPSValue) * (argCnt-1));
-   delVals = (CLIPSValue *) gm2(theEnv,delSize);
+   delSize = (sizeof(UDFValue) * (argCnt-1));
+   delVals = (UDFValue *) gm2(theEnv,delSize);
    for (i = 2 ; i <= argCnt ; i++)
      {
       if (! UDFNextArgument(context,ANY_TYPE,&delVals[i-2]))
@@ -300,10 +300,10 @@ void DeleteMemberFunction(
          EnvSetMultifieldErrorValue(theEnv,returnValue);
          return;
         }
-      GenCopyMemory(CLIPSValue,1,&resultValue,&tmpVal);
+      GenCopyMemory(UDFValue,1,&resultValue,&tmpVal);
      }
    rm(theEnv,delVals,delSize);
-   GenCopyMemory(CLIPSValue,1,returnValue,&resultValue);
+   GenCopyMemory(UDFValue,1,returnValue,&resultValue);
   }
 
 /***********************************************/
@@ -313,9 +313,9 @@ void DeleteMemberFunction(
 void ReplaceMemberFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue resultValue,replVal,*delVals,tmpVal;
+   UDFValue resultValue,replVal,*delVals,tmpVal;
    int i,argCnt;
    unsigned delSize;
    long j,k,mink[2],*minkp;
@@ -345,8 +345,8 @@ void ReplaceMemberFunction(
    /* values specified.                                    */
    /*======================================================*/
 
-   delSize = (sizeof(CLIPSValue) * (argCnt-2));
-   delVals = (CLIPSValue *) gm2(theEnv,delSize);
+   delSize = (sizeof(UDFValue) * (argCnt-2));
+   delVals = (UDFValue *) gm2(theEnv,delSize);
 
    for (i = 3 ; i <= argCnt ; i++)
      {
@@ -367,13 +367,13 @@ void ReplaceMemberFunction(
          EnvSetMultifieldErrorValue(theEnv,returnValue);
          return;
         }
-      GenCopyMemory(CLIPSValue,1,&resultValue,&tmpVal);
+      GenCopyMemory(UDFValue,1,&resultValue,&tmpVal);
       mink[0] = 1L;
       mink[1] = j + replLen - 1L;
       minkp = mink;
      }
    rm(theEnv,delVals,delSize);
-   GenCopyMemory(CLIPSValue,1,returnValue,&resultValue);
+   GenCopyMemory(UDFValue,1,returnValue,&resultValue);
   }
 
 /****************************************/
@@ -383,9 +383,9 @@ void ReplaceMemberFunction(
 void InsertFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue value1, value2, value3;
+   UDFValue value1, value2, value3;
    EXPRESSION *fieldarg;
 
    /*=======================================*/
@@ -425,9 +425,9 @@ void InsertFunction(
 void ExplodeFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue value;
+   UDFValue value;
    Multifield *theMultifield;
    unsigned long end;
 
@@ -467,9 +467,9 @@ void ExplodeFunction(
 void ImplodeFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    /*======================================*/
    /* The argument should be a multifield. */
@@ -492,9 +492,9 @@ void ImplodeFunction(
 void SubseqFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
    Multifield *theList;
    long long offset, start, end, length; /* 6.04 Bug Fix */
 
@@ -557,9 +557,9 @@ void SubseqFunction(
 void FirstFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
    Multifield *theList;
 
    /*===================================*/
@@ -589,9 +589,9 @@ void FirstFunction(
 void RestFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
    Multifield *theList;
 
    /*===================================*/
@@ -621,9 +621,9 @@ void RestFunction(
 void NthFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue value1, value2;
+   UDFValue value1, value2;
    Multifield *elm_ptr;
    long long n; /* 6.04 Bug Fix */
 
@@ -664,9 +664,9 @@ void NthFunction(
 void SubsetpFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue item1, item2, tmpItem;
+   UDFValue item1, item2, tmpItem;
    long i,j,k;
 
    if (! UDFFirstArgument(context,MULTIFIELD_TYPE,&item1))
@@ -708,9 +708,9 @@ void SubsetpFunction(
 void MemberFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue item1, item2;
+   UDFValue item1, item2;
    long j, k;
 
    returnValue->lexemeValue = theEnv->FalseSymbol;
@@ -741,9 +741,9 @@ void MemberFunction(
 /*********************/
 /* 6.05 Bug Fix */
 bool FindDOsInSegment(
-  CLIPSValue *searchDOs,
+  UDFValue *searchDOs,
   int scnt,
-  CLIPSValue *value,
+  UDFValue *value,
   long *si,
   long *ei,
   long *excludes,
@@ -1068,7 +1068,7 @@ static void ReplaceMvPrognFieldVars(
 void MultifieldPrognFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    MultifieldPrognDriver(context,returnValue,"progn$");
   }
@@ -1080,7 +1080,7 @@ void MultifieldPrognFunction(
 void ForeachFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    MultifieldPrognDriver(context,returnValue,"foreach");
   }
@@ -1091,11 +1091,11 @@ void ForeachFunction(
 /******************************************/
 static void MultifieldPrognDriver(
   UDFContext *context,
-  CLIPSValue *returnValue,
+  UDFValue *returnValue,
   const char *functionName)
   {
    EXPRESSION *theExp;
-   CLIPSValue argval;
+   UDFValue argval;
    long i, end; /* 6.04 Bug Fix */
    FIELD_VAR_STACK *tmpField;
    CLIPSBlock gcBlock;
@@ -1168,7 +1168,7 @@ static void MultifieldPrognDriver(
 void GetMvPrognField(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    int depth;
    FIELD_VAR_STACK *tmpField;
@@ -1189,7 +1189,7 @@ void GetMvPrognField(
 void GetMvPrognIndex(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    int depth;
    FIELD_VAR_STACK *tmpField;
@@ -1226,11 +1226,11 @@ void GetMvPrognIndex(
  **************************************************************************/
 bool ReplaceMultiValueField(
   Environment *theEnv,
-  CLIPSValue *dst,
-  CLIPSValue *src,
+  UDFValue *dst,
+  UDFValue *src,
   long rb,
   long re,
-  CLIPSValue *field,
+  UDFValue *field,
   const char *funcName)
   {
    long i,j,k;
@@ -1303,10 +1303,10 @@ bool ReplaceMultiValueField(
  **************************************************************************/
 bool InsertMultiValueField(
   Environment *theEnv,
-  CLIPSValue *dst,
-  CLIPSValue *src,
+  UDFValue *dst,
+  UDFValue *src,
   long theIndex,
-  CLIPSValue *field,
+  UDFValue *field,
   const char *funcName)
   {
    long i,j,k;
@@ -1430,8 +1430,8 @@ static void MVRangeError(
  **************************************************************************/
 bool DeleteMultiValueField(
   Environment *theEnv,
-  CLIPSValue *dst,
-  CLIPSValue *src,
+  UDFValue *dst,
+  UDFValue *src,
   long rb,
   long re,
   const char *funcName)

@@ -94,7 +94,7 @@ void FactPatternMatch(
   {
    int theSlotField;
    int offsetSlot;
-   CLIPSValue theResult;
+   UDFValue theResult;
    struct factPatternNode *tempPtr;
 
    /*=========================================================*/
@@ -292,7 +292,7 @@ static void ProcessMultifieldNode(
    struct multifieldMarker *newMark, *oldMark;
    int repeatCount;
    Multifield *theSlotValue;
-   CLIPSValue theResult;
+   UDFValue theResult;
    struct factPatternNode *tempPtr;
    bool success;
 
@@ -581,7 +581,7 @@ static bool EvaluatePatternExpression(
   struct factPatternNode *patternPtr,
   struct expr *theTest)
   {
-   CLIPSValue theResult;
+   UDFValue theResult;
    struct expr *oldArgument;
    bool rv;
 

@@ -960,7 +960,7 @@ bool EnvGetFactSlot(
   Environment *theEnv,
   Fact *theFact,
   const char *slotName,
-  CLIPSValue *theValue)
+  UDFValue *theValue)
   {
    Deftemplate *theDeftemplate;
    short whichSlot;
@@ -1020,7 +1020,7 @@ bool EnvPutFactSlot(
   Environment *theEnv,
   Fact *theFact,
   const char *slotName,
-  CLIPSValue *theValue)
+  UDFValue *theValue)
   {
    Deftemplate *theDeftemplate;
    struct templateSlot *theSlot;
@@ -1095,7 +1095,7 @@ bool EnvAssignFactSlotDefaults(
    Deftemplate *theDeftemplate;
    struct templateSlot *slotPtr;
    int i;
-   CLIPSValue theResult;
+   UDFValue theResult;
 
    /*===============================================*/
    /* Get the deftemplate associated with the fact. */
@@ -1152,7 +1152,7 @@ bool DeftemplateSlotDefault(
   Environment *theEnv,
   Deftemplate *theDeftemplate,
   struct templateSlot *slotPtr,
-  CLIPSValue *theResult,
+  UDFValue *theResult,
   bool garbageMultifield)
   {
    /*================================================*/
@@ -1841,7 +1841,7 @@ FactBuilder *EnvCreateFactBuilder(
    theFB->fbEnv = theEnv;
    theFB->fbDeftemplate = theDeftemplate;
       
-   theFB->fbValueArray = (GenericValue *) gm3(theEnv,sizeof(GenericValue) * theDeftemplate->numberOfSlots);
+   theFB->fbValueArray = (CLIPSValue *) gm3(theEnv,sizeof(CLIPSValue) * theDeftemplate->numberOfSlots);
 
    for (i = 0; i < theDeftemplate->numberOfSlots; i++)
      { theFB->fbValueArray[i].voidValue = theEnv->VoidConstant; }
@@ -1857,7 +1857,7 @@ bool FBPutSlotInteger(
   const char *slotName,
   CLIPSInteger *slotValue)
   {
-   GenericValue theValue;
+   CLIPSValue theValue;
    
    theValue.integerValue = slotValue;
    return FBPutSlot(theFB,slotName,&theValue);
@@ -1871,7 +1871,7 @@ bool FBPutSlotLexeme(
   const char *slotName,
   CLIPSLexeme *slotValue)
   {
-   GenericValue theValue;
+   CLIPSValue theValue;
    
    theValue.lexemeValue = slotValue;
    return FBPutSlot(theFB,slotName,&theValue);
@@ -1885,7 +1885,7 @@ bool FBPutSlotFloat(
   const char *slotName,
   CLIPSFloat *slotValue)
   {
-   GenericValue theValue;
+   CLIPSValue theValue;
    
    theValue.floatValue = slotValue;
    return FBPutSlot(theFB,slotName,&theValue);
@@ -1899,7 +1899,7 @@ bool FBPutSlotFact(
   const char *slotName,
   Fact *slotValue)
   {
-   GenericValue theValue;
+   CLIPSValue theValue;
    
    theValue.factValue = slotValue;
    return FBPutSlot(theFB,slotName,&theValue);
@@ -1913,7 +1913,7 @@ bool FBPutSlotInstance(
   const char *slotName,
   Instance *slotValue)
   {
-   GenericValue theValue;
+   CLIPSValue theValue;
    
    theValue.instanceValue = slotValue;
    return FBPutSlot(theFB,slotName,&theValue);
@@ -1927,7 +1927,7 @@ bool FBPutSlotExternalAddress(
   const char *slotName,
   CLIPSExternalAddress *slotValue)
   {
-   GenericValue theValue;
+   CLIPSValue theValue;
    
    theValue.externalAddressValue = slotValue;
    return FBPutSlot(theFB,slotName,&theValue);
@@ -1941,7 +1941,7 @@ bool FBPutSlotMultifield(
   const char *slotName,
   Multifield *slotValue)
   {
-   GenericValue theValue;
+   CLIPSValue theValue;
    
    theValue.multifieldValue = slotValue;
    return FBPutSlot(theFB,slotName,&theValue);
@@ -1953,12 +1953,12 @@ bool FBPutSlotMultifield(
 bool FBPutSlot(
   FactBuilder *theFB,
   const char *slotName,
-  GenericValue *slotValue)
+  CLIPSValue *slotValue)
   {
    Environment *theEnv = theFB->fbEnv;
    struct templateSlot *theSlot;
    short whichSlot;
-   GenericValue oldValue;
+   CLIPSValue oldValue;
    int i;
       
    /*===================================*/
@@ -1980,7 +1980,7 @@ bool FBPutSlot(
      
    if (theFB->fbValueArray == NULL)
      {
-      theFB->fbValueArray = (GenericValue *) gm3(theFB->fbEnv,sizeof(GenericValue) * theFB->fbDeftemplate->numberOfSlots);
+      theFB->fbValueArray = (CLIPSValue *) gm3(theFB->fbEnv,sizeof(CLIPSValue) * theFB->fbDeftemplate->numberOfSlots);
       for (i = 0; i < theFB->fbDeftemplate->numberOfSlots; i++)
         { theFB->fbValueArray[i].voidValue = theFB->fbEnv->VoidConstant; }
      }
@@ -2057,7 +2057,7 @@ void FBDispose(
    FBAbort(theFB);
    
    if (theFB->fbValueArray != NULL)
-     { rm3(theEnv,theFB->fbValueArray,sizeof(GenericValue) * theFB->fbDeftemplate->numberOfSlots); }
+     { rm3(theEnv,theFB->fbValueArray,sizeof(CLIPSValue) * theFB->fbDeftemplate->numberOfSlots); }
    
    rtn_struct(theEnv,factBuilder,theFB);
   }
@@ -2101,11 +2101,11 @@ bool FBSetDeftemplate(
    if (theDeftemplate->implied) return false;
 
    if (theFB->fbValueArray != NULL)
-     { rm3(theEnv,theFB->fbValueArray,sizeof(GenericValue) * theFB->fbDeftemplate->numberOfSlots); }
+     { rm3(theEnv,theFB->fbValueArray,sizeof(CLIPSValue) * theFB->fbDeftemplate->numberOfSlots); }
 
    theFB->fbDeftemplate = theDeftemplate;
    
-   theFB->fbValueArray = (GenericValue *) gm3(theEnv,sizeof(GenericValue) * theDeftemplate->numberOfSlots);
+   theFB->fbValueArray = (CLIPSValue *) gm3(theEnv,sizeof(CLIPSValue) * theDeftemplate->numberOfSlots);
 
    for (i = 0; i < theDeftemplate->numberOfSlots; i++)
      { theFB->fbValueArray[i].voidValue = theEnv->VoidConstant; }
@@ -2134,7 +2134,7 @@ FactModifier *EnvCreateFactModifier(
    theFM->fmOldFact = oldFact;
    EnvIncrementFactCount(theEnv,oldFact);
 
-   theFM->fmValueArray = (GenericValue *) gm3(theEnv,sizeof(GenericValue) * oldFact->whichDeftemplate->numberOfSlots);
+   theFM->fmValueArray = (CLIPSValue *) gm3(theEnv,sizeof(CLIPSValue) * oldFact->whichDeftemplate->numberOfSlots);
 
    for (i = 0; i < oldFact->whichDeftemplate->numberOfSlots; i++)
      { theFM->fmValueArray[i].voidValue = theEnv->VoidConstant; }
@@ -2153,7 +2153,7 @@ bool FMPutSlotInteger(
   const char *slotName,
   CLIPSInteger *slotValue)
   {
-   GenericValue theValue;
+   CLIPSValue theValue;
    
    theValue.integerValue = slotValue;
    return FMPutSlot(theFM,slotName,&theValue);
@@ -2167,7 +2167,7 @@ bool FMPutSlotLexeme(
   const char *slotName,
   CLIPSLexeme *slotValue)
   {
-   GenericValue theValue;
+   CLIPSValue theValue;
    
    theValue.lexemeValue = slotValue;
    return FMPutSlot(theFM,slotName,&theValue);
@@ -2181,7 +2181,7 @@ bool FMPutSlotFloat(
   const char *slotName,
   CLIPSFloat *slotValue)
   {
-   GenericValue theValue;
+   CLIPSValue theValue;
    
    theValue.floatValue = slotValue;
    return FMPutSlot(theFM,slotName,&theValue);
@@ -2195,7 +2195,7 @@ bool FMPutSlotFact(
   const char *slotName,
   Fact *slotValue)
   {
-   GenericValue theValue;
+   CLIPSValue theValue;
    
    theValue.factValue = slotValue;
    return FMPutSlot(theFM,slotName,&theValue);
@@ -2209,7 +2209,7 @@ bool FMPutSlotInstance(
   const char *slotName,
   Instance *slotValue)
   {
-   GenericValue theValue;
+   CLIPSValue theValue;
    
    theValue.instanceValue = slotValue;
    return FMPutSlot(theFM,slotName,&theValue);
@@ -2223,7 +2223,7 @@ bool FMPutSlotExternalAddress(
   const char *slotName,
   CLIPSExternalAddress *slotValue)
   {
-   GenericValue theValue;
+   CLIPSValue theValue;
    
    theValue.externalAddressValue = slotValue;
    return FMPutSlot(theFM,slotName,&theValue);
@@ -2237,7 +2237,7 @@ bool FMPutSlotMultifield(
   const char *slotName,
   Multifield *slotValue)
   {
-   GenericValue theValue;
+   CLIPSValue theValue;
    
    theValue.multifieldValue = slotValue;
    return FMPutSlot(theFM,slotName,&theValue);
@@ -2249,13 +2249,13 @@ bool FMPutSlotMultifield(
 bool FMPutSlot(
   FactModifier *theFM,
   const char *slotName,
-  GenericValue *slotValue)
+  CLIPSValue *slotValue)
   {
    Environment *theEnv = theFM->fmEnv;
    struct templateSlot *theSlot;
    short whichSlot;
-   GenericValue oldValue;
-   GenericValue oldFactValue;
+   CLIPSValue oldValue;
+   CLIPSValue oldFactValue;
    int i;
 
    /*===================================*/
@@ -2277,7 +2277,7 @@ bool FMPutSlot(
 
    if (theFM->fmValueArray == NULL)
      {
-      theFM->fmValueArray = (GenericValue *) gm3(theFM->fmEnv,sizeof(GenericValue) * theFM->fmOldFact->whichDeftemplate->numberOfSlots);
+      theFM->fmValueArray = (CLIPSValue *) gm3(theFM->fmEnv,sizeof(CLIPSValue) * theFM->fmOldFact->whichDeftemplate->numberOfSlots);
       for (i = 0; i < theFM->fmOldFact->whichDeftemplate->numberOfSlots; i++)
         { theFM->fmValueArray[i].voidValue = theFM->fmEnv->VoidConstant; }
      }
@@ -2361,7 +2361,7 @@ Fact *FMApply(
      {
       if (theFM->fmValueArray[i].voidValue == theEnv->VoidConstant)
         {
-         GenericValue theValue;
+         CLIPSValue theValue;
          theValue.value = oldFact->theProposition.theFields[i].value;
          
          if (theValue.header->type == MULTIFIELD)
@@ -2421,7 +2421,7 @@ void FMDispose(
    /*=====================================*/
    
    if (theFM->fmValueArray != NULL)
-     { rm3(theEnv,theFM->fmValueArray,sizeof(GenericValue) * theFM->fmOldFact->whichDeftemplate->numberOfSlots); }
+     { rm3(theEnv,theFM->fmValueArray,sizeof(CLIPSValue) * theFM->fmOldFact->whichDeftemplate->numberOfSlots); }
       
    if (theFM->changeMap != NULL)
      { rm(theEnv,(void *) theFM->changeMap,CountToBitMapSize(theFM->fmOldFact->whichDeftemplate->numberOfSlots)); }
@@ -2496,12 +2496,12 @@ bool FMSetFact(
    if (oldFact->whichDeftemplate->numberOfSlots != currentSlotCount)
      {
       if (theFM->fmValueArray != NULL)
-        { rm3(theEnv,theFM->fmValueArray,sizeof(GenericValue) * currentSlotCount); }
+        { rm3(theEnv,theFM->fmValueArray,sizeof(CLIPSValue) * currentSlotCount); }
       
       if (theFM->changeMap != NULL)
         { rm(theEnv,(void *) theFM->changeMap,currentSlotCount); }
         
-      theFM->fmValueArray = (GenericValue *) gm3(theEnv,sizeof(GenericValue) * oldFact->whichDeftemplate->numberOfSlots);
+      theFM->fmValueArray = (CLIPSValue *) gm3(theEnv,sizeof(CLIPSValue) * oldFact->whichDeftemplate->numberOfSlots);
       theFM->changeMap = (char *) gm2(theEnv,CountToBitMapSize(oldFact->whichDeftemplate->numberOfSlots));
      }
    

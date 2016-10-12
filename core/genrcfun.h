@@ -129,7 +129,7 @@ struct defgenericData
 #endif
    Defgeneric *CurrentGeneric;
    Defmethod *CurrentMethod;
-   CLIPSValue *GenericCurrentArgument;
+   UDFValue *GenericCurrentArgument;
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    unsigned OldGenericBusySave;
 #endif
@@ -171,7 +171,7 @@ struct defgenericData
    void                           PrintMethod(Environment *,char *,size_t,Defmethod *);
 #endif
 #if DEBUGGING_FUNCTIONS
-   void                           PreviewGeneric(Environment *,UDFContext *,CLIPSValue *);
+   void                           PreviewGeneric(Environment *,UDFContext *,UDFValue *);
 #endif
    Defgeneric                    *CheckGenericExists(Environment *,const char *,const char *);
    long                           CheckMethodExists(Environment *,const char *,Defgeneric *,long);

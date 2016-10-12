@@ -89,7 +89,7 @@ struct parseFunctionData
    static bool                    FindErrorCapture(Environment *,const char *);
    static void                    PrintErrorCapture(Environment *,const char *,const char *);
    static void                    DeactivateErrorCapture(Environment *);
-   static void                    SetErrorCaptureValues(Environment *,CLIPSValue *);
+   static void                    SetErrorCaptureValues(Environment *,UDFValue *);
 #endif
 
 /*****************************************/
@@ -114,9 +114,9 @@ void ParseFunctionDefinitions(
 void CheckSyntaxFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    /*========================================*/
    /* The argument should be of type STRING. */
@@ -139,7 +139,7 @@ void CheckSyntaxFunction(
 bool CheckSyntax(
   Environment *theEnv,
   const char *theString,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    const char *name;
    struct token theToken;
@@ -308,7 +308,7 @@ static void DeactivateErrorCapture(
 /*******************************************************************/
 static void SetErrorCaptureValues(
   Environment *theEnv,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Multifield *theMultifield;
 
@@ -379,7 +379,7 @@ static void PrintErrorCapture(
 void CheckSyntaxFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    PrintErrorID(theEnv,"PARSEFUN",1,false);
    EnvPrintRouter(theEnv,WERROR,"Function check-syntax does not work in run time modules.\n");
@@ -393,7 +393,7 @@ void CheckSyntaxFunction(
 bool CheckSyntax(
   Environment *theEnv,
   const char *theString,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    PrintErrorID(theEnv,"PARSEFUN",1,false);
    EnvPrintRouter(theEnv,WERROR,"Function check-syntax does not work in run time modules.\n");

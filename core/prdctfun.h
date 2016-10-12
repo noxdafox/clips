@@ -46,27 +46,27 @@
 #define _H_prdctfun
 
    void                           PredicateFunctionDefinitions(Environment *);
-   void                           EqFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           NeqFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           StringpFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           SymbolpFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           LexemepFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           NumberpFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           FloatpFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           IntegerpFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           MultifieldpFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           PointerpFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           NotFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           AndFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           OrFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           LessThanOrEqualFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           GreaterThanOrEqualFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           LessThanFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           GreaterThanFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           NumericEqualFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           NumericNotEqualFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           OddpFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           EvenpFunction(Environment *,UDFContext *,CLIPSValue *);
+   void                           EqFunction(Environment *,UDFContext *,UDFValue *);
+   void                           NeqFunction(Environment *,UDFContext *,UDFValue *);
+   void                           StringpFunction(Environment *,UDFContext *,UDFValue *);
+   void                           SymbolpFunction(Environment *,UDFContext *,UDFValue *);
+   void                           LexemepFunction(Environment *,UDFContext *,UDFValue *);
+   void                           NumberpFunction(Environment *,UDFContext *,UDFValue *);
+   void                           FloatpFunction(Environment *,UDFContext *,UDFValue *);
+   void                           IntegerpFunction(Environment *,UDFContext *,UDFValue *);
+   void                           MultifieldpFunction(Environment *,UDFContext *,UDFValue *);
+   void                           PointerpFunction(Environment *,UDFContext *,UDFValue *);
+   void                           NotFunction(Environment *,UDFContext *,UDFValue *);
+   void                           AndFunction(Environment *,UDFContext *,UDFValue *);
+   void                           OrFunction(Environment *,UDFContext *,UDFValue *);
+   void                           LessThanOrEqualFunction(Environment *,UDFContext *,UDFValue *);
+   void                           GreaterThanOrEqualFunction(Environment *,UDFContext *,UDFValue *);
+   void                           LessThanFunction(Environment *,UDFContext *,UDFValue *);
+   void                           GreaterThanFunction(Environment *,UDFContext *,UDFValue *);
+   void                           NumericEqualFunction(Environment *,UDFContext *,UDFValue *);
+   void                           NumericNotEqualFunction(Environment *,UDFContext *,UDFValue *);
+   void                           OddpFunction(Environment *,UDFContext *,UDFValue *);
+   void                           EvenpFunction(Environment *,UDFContext *,UDFValue *);
 
 #endif /* _H_prdctfun */
 

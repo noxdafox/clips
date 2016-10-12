@@ -536,7 +536,7 @@ int FindInstanceTemplateSlot(
                     (NULL if no trace-messages desired)
                  2) The address of the slot
                  3) The address of the value
-                 4) CLIPSValue pointer to store the
+                 4) UDFValue pointer to store the
                     set value
                  5) The command doing the put-
   RETURNS      : False on errors, or true
@@ -549,8 +549,8 @@ bool PutSlotValue(
   Environment *theEnv,
   Instance *ins,
   INSTANCE_SLOT *sp,
-  CLIPSValue *val,
-  CLIPSValue *setVal,
+  UDFValue *val,
+  UDFValue *setVal,
   const char *theCommand)
   {
    if (ValidSlotValue(theEnv,val,sp->desc,ins,theCommand) == false)
@@ -570,7 +570,7 @@ bool PutSlotValue(
                     (NULL if no trace-messages desired)
                  2) The address of the slot
                  3) The address of the value
-                 4) CLIPSValue pointer to store the
+                 4) UDFValue pointer to store the
                     set value
   RETURNS      : False on errors, or true
   SIDE EFFECTS : Old value deleted and new one allocated
@@ -582,15 +582,15 @@ bool DirectPutSlotValue(
   Environment *theEnv,
   Instance *ins,
   INSTANCE_SLOT *sp,
-  CLIPSValue *val,
-  CLIPSValue *setVal)
+  UDFValue *val,
+  UDFValue *setVal)
   {
    long i,j; /* 6.04 Bug Fix */
 #if DEFRULE_CONSTRUCT
    int sharedTraversalID;
    INSTANCE_SLOT *bsp,**spaddr;
 #endif
-   CLIPSValue tmpVal;
+   UDFValue tmpVal;
 
    setVal->value = theEnv->FalseSymbol;
    if (val == NULL)
@@ -608,7 +608,7 @@ bool DirectPutSlotValue(
            return false;
         }
       else if (sp->desc->defaultValue != NULL)
-        { val = (CLIPSValue *) sp->desc->defaultValue; }
+        { val = (UDFValue *) sp->desc->defaultValue; }
       else
         {
          PrintErrorID(theEnv,"INSMNGR",14,false);
@@ -778,7 +778,7 @@ bool DirectPutSlotValue(
  *******************************************************************/
 bool ValidSlotValue(
   Environment *theEnv,
-  CLIPSValue *val,
+  UDFValue *val,
   SlotDescriptor *sd,
   Instance *ins,
   const char *theCommand)
@@ -847,7 +847,7 @@ Instance *CheckInstance(
   UDFContext *context)
   {
    Instance *ins;
-   CLIPSValue temp;
+   UDFValue temp;
    Environment *theEnv = context->environment;
 
    UDFFirstArgument(context,ANY_TYPE,&temp);

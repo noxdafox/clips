@@ -58,14 +58,14 @@
 #include "evaluatn.h"
 
    void                           DeffactsBasicCommands(Environment *);
-   void                           UndeffactsCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           UndeffactsCommand(Environment *,UDFContext *,UDFValue *);
    bool                           EnvUndeffacts(Environment *,Deffacts *);
-   void                           GetDeffactsListFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           EnvGetDeffactsList(Environment *,CLIPSValue *,Defmodule *);
-   void                           DeffactsModuleFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           PPDeffactsCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           GetDeffactsListFunction(Environment *,UDFContext *,UDFValue *);
+   void                           EnvGetDeffactsList(Environment *,UDFValue *,Defmodule *);
+   void                           DeffactsModuleFunction(Environment *,UDFContext *,UDFValue *);
+   void                           PPDeffactsCommand(Environment *,UDFContext *,UDFValue *);
    bool                           PPDeffacts(Environment *,const char *,const char *);
-   void                           ListDeffactsCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           ListDeffactsCommand(Environment *,UDFContext *,UDFValue *);
    void                           EnvListDeffacts(Environment *,const char *,Defmodule *);
 
 #endif /* _H_dffctbsc */

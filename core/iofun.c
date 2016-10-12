@@ -198,7 +198,7 @@ void IOFunctionDefinitions(
 void PrintoutFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    const char *logicalName;
 
@@ -241,7 +241,7 @@ void PrintoutFunction(
 void PrintFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    PrintDriver(context,STDOUT,false);
   }
@@ -253,7 +253,7 @@ void PrintFunction(
 void PrintlnFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    PrintDriver(context,STDOUT,true);
   }
@@ -267,7 +267,7 @@ static void PrintDriver(
   const char *logicalName,
   bool endCRLF)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
    Environment *theEnv = context->environment;
 
    /*==============================*/
@@ -341,7 +341,7 @@ bool SetFullCRLF(
 void ReadFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    struct token theToken;
    const char *logicalName = NULL;
@@ -510,10 +510,10 @@ static void ReadTokenFromStdin(
 void OpenFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    const char *fileName, *logicalName, *accessMode = NULL;
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    /*====================*/
    /* Get the file name. */
@@ -603,7 +603,7 @@ void OpenFunction(
 void CloseFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    const char *logicalName;
 
@@ -649,7 +649,7 @@ void CloseFunction(
 void GetCharFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    const char *logicalName;
 
@@ -687,11 +687,11 @@ void GetCharFunction(
 void PutCharFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    int numberOfArguments;
    const char *logicalName;
-   CLIPSValue theArg;
+   UDFValue theArg;
    long long theChar;
    FILE *theFile;
 
@@ -751,7 +751,7 @@ void PutCharFunction(
 void RemoveFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    const char *theFileName;
 
@@ -780,7 +780,7 @@ void RemoveFunction(
 void RenameFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    const char *oldFileName, *newFileName;
 
@@ -815,7 +815,7 @@ void RenameFunction(
 void FormatFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    int argCount;
    size_t start_pos;
@@ -945,7 +945,7 @@ static const char *ControlStringCheck(
   UDFContext *context,
   int argCount)
   {
-   CLIPSValue t_ptr;
+   UDFValue t_ptr;
    const char *str_array;
    char print_buff[FLAG_MAX];
    size_t i;
@@ -1117,7 +1117,7 @@ static const char *PrintFormatFlag(
   int whichArg,
   int formatType)
   {
-   CLIPSValue theResult;
+   UDFValue theResult;
    const char *theString;
    char *printBuffer;
    size_t theLength;
@@ -1219,7 +1219,7 @@ static const char *PrintFormatFlag(
 void ReadlineFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    char *buffer;
    size_t line_max = 0;
@@ -1322,9 +1322,9 @@ static char *FillBuffer(
 void SetLocaleFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    /*=================================*/
    /* If there are no arguments, just */
@@ -1366,7 +1366,7 @@ void SetLocaleFunction(
 void ReadNumberFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    struct token theToken;
    const char *logicalName = NULL;

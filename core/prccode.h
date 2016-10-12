@@ -67,14 +67,14 @@
 
 typedef struct ProcParamStack
   {
-   CLIPSValue *ParamArray;
+   UDFValue *ParamArray;
 
 #if DEFGENERIC_CONSTRUCT
    EXPRESSION *ParamExpressions;
 #endif
 
    int ParamArraySize;
-   CLIPSValue *WildcardValue;
+   UDFValue *WildcardValue;
    void (*UnboundErrFunc)(Environment *);
    struct ProcParamStack *nxt;
   } PROC_PARAM_STACK;
@@ -84,15 +84,15 @@ typedef struct ProcParamStack
 struct proceduralPrimitiveData
   {
    Multifield *NoParamValue;
-   CLIPSValue *ProcParamArray;
+   UDFValue *ProcParamArray;
    int ProcParamArraySize;
    EXPRESSION *CurrentProcActions;
 #if DEFGENERIC_CONSTRUCT
    EXPRESSION *ProcParamExpressions;
 #endif
    PROC_PARAM_STACK *pstack;
-   CLIPSValue *WildcardValue;
-   CLIPSValue *LocalVarArray;
+   UDFValue *WildcardValue;
+   UDFValue *LocalVarArray;
    void (*ProcUnboundErrFunc)(Environment *);
    ENTITY_RECORD ProcParameterInfo;
    ENTITY_RECORD ProcWildInfo;
@@ -137,9 +137,9 @@ struct proceduralPrimitiveData
 #endif
 
    void                           EvaluateProcActions(Environment *,Defmodule *,EXPRESSION *,int,
-                                                      CLIPSValue *,void (*)(Environment *));
+                                                      UDFValue *,void (*)(Environment *));
    void                           PrintProcParamArray(Environment *,const char *);
-   void                           GrabProcWildargs(Environment *,CLIPSValue *,int);
+   void                           GrabProcWildargs(Environment *,UDFValue *,int);
 
 #endif /* _H_prccode */
 

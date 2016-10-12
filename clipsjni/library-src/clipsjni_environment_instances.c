@@ -99,9 +99,9 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getInstanceList
    int i;
    jobject arrayList, slotValueList, javaSlotValueObject, theJavaInstance, instanceName, instanceClass;
    jobject theJavaSlotName, theJavaSlotValue;
-   CLIPSValue slotNames;
-   CLIPSValue slotValue;
-   CLIPSValue defaultValue;
+   UDFValue slotNames;
+   UDFValue slotValue;
+   UDFValue defaultValue;
    void *theCLIPSEnv = JLongToPointer(clipsEnv);
    void *theClass;
   
@@ -356,7 +356,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_directGetSlot(
   jstring slotName)
   {
    jobject rv;
-   CLIPSValue theDO;
+   UDFValue theDO;
    void *theCLIPSEnv = JLongToPointer(clipsEnv);
    const char *cSlotName = (*env)->GetStringUTFChars(env,slotName,NULL);
 

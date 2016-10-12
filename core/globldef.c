@@ -95,7 +95,7 @@
    static void                    ReturnModule(Environment *,void *);
    static void                    ReturnDefglobal(Environment *,Defglobal *);
    static void                    InitializeDefglobalModules(Environment *);
-   static bool                    GetDefglobalValue(Environment *,void *,CLIPSValue *);
+   static bool                    GetDefglobalValue(Environment *,void *,UDFValue *);
    static void                    IncrementDefglobalBusyCount(Environment *,Defglobal *);
    static void                    DecrementDefglobalBusyCount(Environment *,Defglobal *);
    static void                    DeallocateDefglobalData(Environment *);
@@ -415,7 +415,7 @@ static void DestroyDefglobal(
 void QSetDefglobalValue(
   Environment *theEnv,
   Defglobal *theGlobal,
-  CLIPSValue *vPtr,
+  UDFValue *vPtr,
   bool resetVar)
   {
    /*====================================================*/
@@ -542,12 +542,12 @@ void EnvSetGlobalsChanged(
 
 /*********************************************************/
 /* GetDefglobalValue: Returns the value of the specified */
-/*   global variable in the supplied CLIPSValue.         */
+/*   global variable in the supplied UDFValue.         */
 /*********************************************************/
 static bool GetDefglobalValue(
   Environment *theEnv,
   void *theValue,
-  CLIPSValue *vPtr)
+  UDFValue *vPtr)
   {
    Defglobal *theGlobal;
    int count;
@@ -605,7 +605,7 @@ static bool GetDefglobalValue(
 bool QGetDefglobalValue(
   Environment *theEnv,
   Defglobal *theGlobal,
-  CLIPSValue *vPtr)
+  UDFValue *vPtr)
   {
    /*===============================================*/
    /* Transfer values which can be copied directly. */
@@ -634,12 +634,12 @@ bool QGetDefglobalValue(
 
 /************************************************************/
 /* EnvGetDefglobalValue: Returns the value of the specified */
-/*   global variable in the supplied CLIPSValue.            */
+/*   global variable in the supplied UDFValue.            */
 /************************************************************/
 bool EnvGetDefglobalValue(
   Environment *theEnv,
   const char *variableName,
-  CLIPSValue *vPtr)
+  UDFValue *vPtr)
   {
    Defglobal *theDefglobal;
 
@@ -653,12 +653,12 @@ bool EnvGetDefglobalValue(
 
 /****************************************************************/
 /* EnvSetDefglobalValue: Sets the value of the specified global */
-/*   variable to the value stored in the supplied CLIPSValue.   */
+/*   variable to the value stored in the supplied UDFValue.   */
 /****************************************************************/
 bool EnvSetDefglobalValue(
   Environment *theEnv,
   const char *variableName,
-  CLIPSValue *vPtr)
+  UDFValue *vPtr)
   {
    Defglobal *theGlobal;
 

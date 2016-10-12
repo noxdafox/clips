@@ -80,7 +80,7 @@ struct bloadData
 #define FunctionPointer(i) ((struct FunctionDefinition *) (((i) == -1L) ? NULL : BloadData(theEnv)->FunctionArray[i]))
 
    void                    InitializeBloadData(Environment *);
-   void                    BloadCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                    BloadCommand(Environment *,UDFContext *,UDFValue *);
    bool                    EnvBload(Environment *,const char *);
    void                    BloadandRefresh(Environment *,long,size_t,void (*)(Environment *,void *,long));
    bool                    Bloaded(Environment *);

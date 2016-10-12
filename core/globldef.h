@@ -99,7 +99,7 @@ struct defglobal
    unsigned int watch   : 1;
    unsigned int inScope : 1;
    long busyCount;
-   CLIPSValue current;
+   UDFValue current;
    struct expr *initial;
   };
 
@@ -117,16 +117,16 @@ struct defglobalModule
    void                           CreateInitialFactDefglobal(void);
    bool                           EnvIsDefglobalDeletable(Environment *,Defglobal *);
    struct defglobalModule        *GetDefglobalModuleItem(Environment *,Defmodule *);
-   void                           QSetDefglobalValue(Environment *,Defglobal *,CLIPSValue *,bool);
+   void                           QSetDefglobalValue(Environment *,Defglobal *,UDFValue *,bool);
    Defglobal                     *QFindDefglobal(Environment *,CLIPSLexeme *);
    void                           EnvGetDefglobalValueForm(Environment *,char *,size_t,Defglobal *);
    bool                           EnvGetGlobalsChanged(Environment *);
    void                           EnvSetGlobalsChanged(Environment *,bool);
-   bool                           EnvGetDefglobalValue(Environment *,const char *,CLIPSValue *);
-   bool                           EnvSetDefglobalValue(Environment *,const char *,CLIPSValue *);
+   bool                           EnvGetDefglobalValue(Environment *,const char *,UDFValue *);
+   bool                           EnvSetDefglobalValue(Environment *,const char *,UDFValue *);
    void                           UpdateDefglobalScope(Environment *);
    Defglobal                     *GetNextDefglobalInScope(Environment *,Defglobal *);
-   bool                           QGetDefglobalValue(Environment *,Defglobal *,CLIPSValue *);
+   bool                           QGetDefglobalValue(Environment *,Defglobal *,UDFValue *);
    const char                    *EnvDefglobalModule(Environment *,Defglobal *);
    const char                    *EnvGetDefglobalName(Environment *,Defglobal *);
    const char                    *EnvGetDefglobalPPForm(Environment *,Defglobal *);

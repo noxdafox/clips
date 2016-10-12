@@ -62,33 +62,33 @@
 
 #if DEBUGGING_FUNCTIONS
 
-   void                           BrowseClassesCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           BrowseClassesCommand(Environment *,UDFContext *,UDFValue *);
    void                           EnvBrowseClasses(Environment *,const char *,Defclass *);
-   void                           DescribeClassCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           DescribeClassCommand(Environment *,UDFContext *,UDFValue *);
    void                           EnvDescribeClass(Environment *,const char *,Defclass *);
 
 #endif /* DEBUGGING_FUNCTIONS */
 
    const char                    *GetCreateAccessorString(SlotDescriptor *);
-   void                           GetDefclassModuleCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           SuperclassPCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           GetDefclassModuleCommand(Environment *,UDFContext *,UDFValue *);
+   void                           SuperclassPCommand(Environment *,UDFContext *,UDFValue *);
    bool                           EnvSuperclassP(Environment *,Defclass *,Defclass *);
-   void                           SubclassPCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           SubclassPCommand(Environment *,UDFContext *,UDFValue *);
    bool                           EnvSubclassP(Environment *,Defclass *,Defclass *);
-   void                           SlotExistPCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           SlotExistPCommand(Environment *,UDFContext *,UDFValue *);
    bool                           EnvSlotExistP(Environment *,Defclass *,const char *,bool);
-   void                           MessageHandlerExistPCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           SlotWritablePCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           MessageHandlerExistPCommand(Environment *,UDFContext *,UDFValue *);
+   void                           SlotWritablePCommand(Environment *,UDFContext *,UDFValue *);
    bool                           EnvSlotWritableP(Environment *,Defclass *,const char *);
-   void                           SlotInitablePCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           SlotInitablePCommand(Environment *,UDFContext *,UDFValue *);
    bool                           EnvSlotInitableP(Environment *,Defclass *,const char *);
-   void                           SlotPublicPCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           SlotPublicPCommand(Environment *,UDFContext *,UDFValue *);
    bool                           EnvSlotPublicP(Environment *,Defclass *,const char *);
-   void                           SlotDirectAccessPCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           SlotDirectAccessPCommand(Environment *,UDFContext *,UDFValue *);
    bool                           EnvSlotDirectAccessP(Environment *,Defclass *,const char *);
-   void                           SlotDefaultValueCommand(Environment *,UDFContext *,CLIPSValue *);
-   bool                           EnvSlotDefaultValue(Environment *,Defclass *,const char *,CLIPSValue *);
-   void                           ClassExistPCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           SlotDefaultValueCommand(Environment *,UDFContext *,UDFValue *);
+   bool                           EnvSlotDefaultValue(Environment *,Defclass *,const char *,UDFValue *);
+   void                           ClassExistPCommand(Environment *,UDFContext *,UDFValue *);
    int                            EnvSlotDefaultP(Environment *,Defclass *,const char *);
 
 #endif /* _H_classexm */

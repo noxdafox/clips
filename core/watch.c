@@ -364,9 +364,9 @@ int GetNthWatchValue(
 void WatchCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theValue;
+   UDFValue theValue;
    const char *argument;
    bool recognized;
    struct watchItem *wPtr;
@@ -414,9 +414,9 @@ void WatchCommand(
 void UnwatchCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theValue;
+   UDFValue theValue;
    const char *argument;
    bool recognized;
    struct watchItem *wPtr;
@@ -464,10 +464,10 @@ void UnwatchCommand(
 void ListWatchItemsCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    struct watchItem *wPtr;
-   CLIPSValue theValue;
+   UDFValue theValue;
    bool recognized;
 
    /*=======================*/
@@ -537,9 +537,9 @@ void ListWatchItemsCommand(
 void GetWatchItemCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theValue;
+   UDFValue theValue;
    const char *argument;
    bool recognized;
 

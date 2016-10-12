@@ -81,7 +81,7 @@ const char *GetLogicalName(
   {
    Environment *theEnv = context->environment;
    const char *logicalName;
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    if (! UDFNextArgument(context,ANY_TYPE,&theArg))
      { return NULL; }
@@ -116,7 +116,7 @@ const char *GetLogicalName(
 const char *GetFileName(
   UDFContext *context)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    if (! UDFNextArgument(context,LEXEME_TYPES,&theArg))
      { return NULL; }
@@ -152,7 +152,7 @@ Defmodule *GetModuleName(
   int whichArgument,
   bool *error)
   {
-   CLIPSValue returnValue;
+   UDFValue returnValue;
    Defmodule *theModule;
    Environment *theEnv = context->environment;
    const char *functionName = UDFContextFunctionName(context);
@@ -204,7 +204,7 @@ const char *GetConstructName(
   const char *functionName,
   const char *constructType)
   {
-   CLIPSValue returnValue;
+   UDFValue returnValue;
 
    if (! UDFFirstArgument(context,ANY_TYPE,&returnValue))
      { return NULL; }
@@ -406,7 +406,7 @@ void ExpectedTypeError2(
 void *GetFactOrInstanceArgument(
   UDFContext *context,
   int thePosition,
-  CLIPSValue *item)
+  UDFValue *item)
   {
    Environment *theEnv = context->environment;
 #if DEFTEMPLATE_CONSTRUCT || OBJECT_SYSTEM

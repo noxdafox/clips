@@ -52,17 +52,17 @@
 #include "expressn.h"
 #include "genrcfun.h"
 
-   void                           GenericDispatch(Environment *,Defgeneric *,Defmethod *,Defmethod *,EXPRESSION *,CLIPSValue *);
+   void                           GenericDispatch(Environment *,Defgeneric *,Defmethod *,Defmethod *,EXPRESSION *,UDFValue *);
    void                           UnboundMethodErr(Environment *);
    bool                           IsMethodApplicable(Environment *,Defmethod *);
 
    bool                           NextMethodP(Environment *);
-   void                           NextMethodPCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           CallNextMethod(Environment *,UDFContext *,CLIPSValue *);
-   void                           CallSpecificMethod(Environment *,UDFContext *,CLIPSValue *);
-   void                           OverrideNextMethod(Environment *,UDFContext *,CLIPSValue *);
+   void                           NextMethodPCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CallNextMethod(Environment *,UDFContext *,UDFValue *);
+   void                           CallSpecificMethod(Environment *,UDFContext *,UDFValue *);
+   void                           OverrideNextMethod(Environment *,UDFContext *,UDFValue *);
 
-   void                           GetGenericCurrentArgument(Environment *,UDFContext *,CLIPSValue *);
+   void                           GetGenericCurrentArgument(Environment *,UDFContext *,UDFValue *);
 
 #endif /* DEFGENERIC_CONSTRUCT */
 

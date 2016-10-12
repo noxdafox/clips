@@ -80,7 +80,7 @@
    static void                    PopQueryCore(Environment *);
    static QUERY_CORE             *FindQueryCore(Environment *,int);
    static QUERY_CLASS            *DetermineQueryClasses(Environment *,EXPRESSION *,const char *,unsigned *);
-   static QUERY_CLASS            *FormChain(Environment *,const char *,Defclass *,CLIPSValue *);
+   static QUERY_CLASS            *FormChain(Environment *,const char *,Defclass *,UDFValue *);
    static void                    DeleteQueryClasses(Environment *,QUERY_CLASS *);
    static bool                    TestForFirstInChain(Environment *,QUERY_CLASS *,int);
    static bool                    TestForFirstInstanceInClass(Environment *,Defmodule *,int,Defclass *,QUERY_CLASS *,int);
@@ -143,7 +143,7 @@ void SetupQuery(
 void GetQueryInstance(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    QUERY_CORE *core;
 
@@ -163,11 +163,11 @@ void GetQueryInstance(
 void GetQueryInstanceSlot(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Instance *ins;
    INSTANCE_SLOT *sp;
-   CLIPSValue temp;
+   UDFValue temp;
    QUERY_CORE *core;
 
    returnValue->lexemeValue = theEnv->FalseSymbol;
@@ -262,7 +262,7 @@ void GetQueryInstanceSlot(
 void AnyInstances(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    QUERY_CLASS *qclasses;
    unsigned rcnt;
@@ -305,7 +305,7 @@ void AnyInstances(
 void QueryFindInstance(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    QUERY_CLASS *qclasses;
    unsigned rcnt,i;
@@ -364,7 +364,7 @@ void QueryFindInstance(
 void QueryFindAllInstances(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    QUERY_CLASS *qclasses;
    unsigned rcnt;
@@ -423,7 +423,7 @@ void QueryFindAllInstances(
 void QueryDoForInstance(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    QUERY_CLASS *qclasses;
    unsigned rcnt;
@@ -464,7 +464,7 @@ void QueryDoForInstance(
 void QueryDoForAllInstances(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    QUERY_CLASS *qclasses;
    unsigned rcnt;
@@ -513,7 +513,7 @@ void QueryDoForAllInstances(
 void DelayedQueryDoForAllInstances(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    QUERY_CLASS *qclasses;
    unsigned rcnt;
@@ -670,7 +670,7 @@ static QUERY_CLASS *DetermineQueryClasses(
   {
    QUERY_CLASS *clist = NULL,*cnxt = NULL,*cchain = NULL,*tmp;
    bool new_list = false;
-   CLIPSValue temp;
+   UDFValue temp;
    Defclass *theClass;
 
    *rcnt = 0;
@@ -738,7 +738,7 @@ static QUERY_CLASS *FormChain(
   Environment *theEnv,
   const char *func,
   Defclass *theClass,
-  CLIPSValue *val)
+  UDFValue *val)
   {
    Defclass *cls;
    QUERY_CLASS *head,*bot,*tmp;
@@ -922,7 +922,7 @@ static bool TestForFirstInstanceInClass(
   {
    long i;
    Instance *ins;
-   CLIPSValue temp;
+   UDFValue temp;
    CLIPSBlock gcBlock;
 
    if (TestTraversalID(cls->traversalRecord,id))
@@ -1044,7 +1044,7 @@ static void TestEntireClass(
   {
    long i;
    Instance *ins;
-   CLIPSValue temp;
+   UDFValue temp;
    CLIPSBlock gcBlock;
 
    if (TestTraversalID(cls->traversalRecord,id))

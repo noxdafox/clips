@@ -90,32 +90,32 @@
 /***************************************/
 
    static void                    PrintObjectGetVarJN1(Environment *,const char *,void *);
-   static bool                    ObjectGetVarJNFunction1(Environment *,void *,CLIPSValue *);
+   static bool                    ObjectGetVarJNFunction1(Environment *,void *,UDFValue *);
    static void                    PrintObjectGetVarJN2(Environment *,const char *,void *);
-   static bool                    ObjectGetVarJNFunction2(Environment *,void *,CLIPSValue *);
+   static bool                    ObjectGetVarJNFunction2(Environment *,void *,UDFValue *);
    static void                    PrintObjectGetVarPN1(Environment *,const char *,void *);
-   static bool                    ObjectGetVarPNFunction1(Environment *,void *,CLIPSValue *);
+   static bool                    ObjectGetVarPNFunction1(Environment *,void *,UDFValue *);
    static void                    PrintObjectGetVarPN2(Environment *,const char *,void *);
-   static bool                    ObjectGetVarPNFunction2(Environment *,void *,CLIPSValue *);
+   static bool                    ObjectGetVarPNFunction2(Environment *,void *,UDFValue *);
    static void                    PrintObjectCmpConstant(Environment *,const char *,void *);
    static void                    PrintSlotLengthTest(Environment *,const char *,void *);
-   static bool                    SlotLengthTestFunction(Environment *,void *,CLIPSValue *);
+   static bool                    SlotLengthTestFunction(Environment *,void *,UDFValue *);
    static void                    PrintPNSimpleCompareFunction1(Environment *,const char *,void *);
-   static bool                    PNSimpleCompareFunction1(Environment *,void *,CLIPSValue *);
+   static bool                    PNSimpleCompareFunction1(Environment *,void *,UDFValue *);
    static void                    PrintPNSimpleCompareFunction2(Environment *,const char *,void *);
-   static bool                    PNSimpleCompareFunction2(Environment *,void *,CLIPSValue *);
+   static bool                    PNSimpleCompareFunction2(Environment *,void *,UDFValue *);
    static void                    PrintPNSimpleCompareFunction3(Environment *,const char *,void *);
-   static bool                    PNSimpleCompareFunction3(Environment *,void *,CLIPSValue *);
+   static bool                    PNSimpleCompareFunction3(Environment *,void *,UDFValue *);
    static void                    PrintJNSimpleCompareFunction1(Environment *,const char *,void *);
-   static bool                    JNSimpleCompareFunction1(Environment *,void *,CLIPSValue *);
+   static bool                    JNSimpleCompareFunction1(Environment *,void *,UDFValue *);
    static void                    PrintJNSimpleCompareFunction2(Environment *,const char *,void *);
-   static bool                    JNSimpleCompareFunction2(Environment *,void *,CLIPSValue *);
+   static bool                    JNSimpleCompareFunction2(Environment *,void *,UDFValue *);
    static void                    PrintJNSimpleCompareFunction3(Environment *,const char *,void *);
-   static bool                    JNSimpleCompareFunction3(Environment *,void *,CLIPSValue *);
+   static bool                    JNSimpleCompareFunction3(Environment *,void *,UDFValue *);
    static void                    GetPatternObjectAndMarks(Environment *,int,int,int,Instance **,struct multifieldMarker **);
-   static void                    GetObjectValueGeneral(Environment *,CLIPSValue *,Instance *,
+   static void                    GetObjectValueGeneral(Environment *,UDFValue *,Instance *,
                                                         struct multifieldMarker *,struct ObjectMatchVar1 *);
-   static void                    GetObjectValueSimple(Environment *,CLIPSValue *,Instance *,struct ObjectMatchVar2 *);
+   static void                    GetObjectValueSimple(Environment *,UDFValue *,Instance *,struct ObjectMatchVar2 *);
    static long                    CalculateSlotField(struct multifieldMarker *,INSTANCE_SLOT *,long,long *); /* 6.04 Bug Fix */
    static void                    GetInsMultiSlotField(FIELD *,Instance *,unsigned,unsigned,unsigned);
    static void                    DeallocateObjectReteData(Environment *);
@@ -327,10 +327,10 @@ static void DestroyObjectAlphaNodes(
 bool ObjectCmpConstantFunction(
   Environment *theEnv,
   void *theValue,
-  CLIPSValue *theResult)
+  UDFValue *theResult)
   {
    struct ObjectCmpPNConstant *hack;
-   CLIPSValue theVar;
+   UDFValue theVar;
    EXPRESSION *constantExp;
    int rv;
    Multifield *theSegment;
@@ -422,7 +422,7 @@ static void PrintObjectGetVarJN1(
 static bool ObjectGetVarJNFunction1(
   Environment *theEnv,
   void *theValue,
-  CLIPSValue *theResult)
+  UDFValue *theResult)
   {
    struct ObjectMatchVar1 *hack;
    Instance *theInstance;
@@ -470,7 +470,7 @@ static void PrintObjectGetVarJN2(
 static bool ObjectGetVarJNFunction2(
   Environment *theEnv,
   void *theValue,
-  CLIPSValue *theResult)
+  UDFValue *theResult)
   {
    struct ObjectMatchVar2 *hack;
    Instance *theInstance;
@@ -519,7 +519,7 @@ static void PrintObjectGetVarPN1(
 static bool ObjectGetVarPNFunction1(
   Environment *theEnv,
   void *theValue,
-  CLIPSValue *theResult)
+  UDFValue *theResult)
   {
    struct ObjectMatchVar1 *hack;
 
@@ -562,7 +562,7 @@ static void PrintObjectGetVarPN2(
 static bool ObjectGetVarPNFunction2(
   Environment *theEnv,
   void *theValue,
-  CLIPSValue *theResult)
+  UDFValue *theResult)
   {
    struct ObjectMatchVar2 *hack;
 
@@ -631,7 +631,7 @@ static void PrintSlotLengthTest(
 static bool SlotLengthTestFunction(
   Environment *theEnv,
   void *theValue,
-  CLIPSValue *theResult)
+  UDFValue *theResult)
   {
    struct ObjectMatchLength *hack;
 
@@ -673,7 +673,7 @@ static void PrintPNSimpleCompareFunction1(
 static bool PNSimpleCompareFunction1(
   Environment *theEnv,
   void *theValue,
-  CLIPSValue *theResult)
+  UDFValue *theResult)
   {
    struct ObjectCmpPNSingleSlotVars1 *hack;
    INSTANCE_SLOT *is1,*is2;
@@ -722,7 +722,7 @@ static void PrintPNSimpleCompareFunction2(
 static bool PNSimpleCompareFunction2(
   Environment *theEnv,
   void *theValue,
-  CLIPSValue *theResult)
+  UDFValue *theResult)
   {
    struct ObjectCmpPNSingleSlotVars2 *hack;
    int rv;
@@ -773,7 +773,7 @@ static void PrintPNSimpleCompareFunction3(
 static bool PNSimpleCompareFunction3(
   Environment *theEnv,
   void *theValue,
-  CLIPSValue *theResult)
+  UDFValue *theResult)
   {
    struct ObjectCmpPNSingleSlotVars3 *hack;
    int rv;
@@ -824,7 +824,7 @@ static void PrintJNSimpleCompareFunction1(
 static bool JNSimpleCompareFunction1(
   Environment *theEnv,
   void *theValue,
-  CLIPSValue *theResult)
+  UDFValue *theResult)
   {
    Instance *ins1,*ins2;
    struct multifieldMarker *theMarks;
@@ -881,7 +881,7 @@ static void PrintJNSimpleCompareFunction2(
 static bool JNSimpleCompareFunction2(
   Environment *theEnv,
   void *theValue,
-  CLIPSValue *theResult)
+  UDFValue *theResult)
   {
    Instance *ins1,*ins2;
    struct multifieldMarker *theMarks;
@@ -940,7 +940,7 @@ static void PrintJNSimpleCompareFunction3(
 static bool JNSimpleCompareFunction3(
   Environment *theEnv,
   void *theValue,
-  CLIPSValue *theResult)
+  UDFValue *theResult)
   {
    Instance *ins1,*ins2;
    struct multifieldMarker *theMarks;
@@ -1040,7 +1040,7 @@ static void GetPatternObjectAndMarks(
  ***************************************************/
 static void GetObjectValueGeneral(
   Environment *theEnv,
-  CLIPSValue *returnValue,
+  UDFValue *returnValue,
   Instance *theInstance,
   struct multifieldMarker *theMarks,
   struct ObjectMatchVar1 *matchVar)
@@ -1140,7 +1140,7 @@ static void GetObjectValueGeneral(
  ***************************************************/
 static void GetObjectValueSimple(
   Environment *theEnv,
-  CLIPSValue *returnValue,
+  UDFValue *returnValue,
   Instance *theInstance,
   struct ObjectMatchVar2 *matchVar)
   {

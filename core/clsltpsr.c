@@ -399,8 +399,8 @@ void DeleteSlots(
         }
       else if (stmp->desc->defaultValue != NULL)
         {
-         ValueDeinstall(theEnv,(CLIPSValue *) stmp->desc->defaultValue);
-         rtn_struct(theEnv,dataObject,stmp->desc->defaultValue);
+         ValueDeinstall(theEnv,(UDFValue *) stmp->desc->defaultValue);
+         rtn_struct(theEnv,udfValue,stmp->desc->defaultValue);
         }
       rtn_struct(theEnv,slotDescriptor,stmp->desc);
       rtn_struct(theEnv,tempSlotLink,stmp);
@@ -717,9 +717,9 @@ static void BuildCompositeFacets(
               }
             else
               {
-               sd->defaultValue = get_struct(theEnv,dataObject);
-               GenCopyMemory(CLIPSValue,1,sd->defaultValue,compslot->defaultValue);
-               ValueInstall(theEnv,(CLIPSValue *) sd->defaultValue);
+               sd->defaultValue = get_struct(theEnv,udfValue);
+               GenCopyMemory(UDFValue,1,sd->defaultValue,compslot->defaultValue);
+               ValueInstall(theEnv,(UDFValue *) sd->defaultValue);
               }
            }
         }
@@ -829,7 +829,7 @@ static bool EvaluateSlotDefaultValue(
   SlotDescriptor *sd,
   const char *specbits)
   {
-   CLIPSValue temp;
+   UDFValue temp;
    bool oldce,olddcc, vPass;
    int vCode;
 
@@ -862,9 +862,9 @@ static bool EvaluateSlotDefaultValue(
            {
             ExpressionDeinstall(theEnv,(EXPRESSION *) sd->defaultValue);
             ReturnPackedExpression(theEnv,(EXPRESSION *) sd->defaultValue);
-            sd->defaultValue = get_struct(theEnv,dataObject);
-            GenCopyMemory(CLIPSValue,1,sd->defaultValue,&temp);
-            ValueInstall(theEnv,(CLIPSValue *) sd->defaultValue);
+            sd->defaultValue = get_struct(theEnv,udfValue);
+            GenCopyMemory(UDFValue,1,sd->defaultValue,&temp);
+            ValueInstall(theEnv,(UDFValue *) sd->defaultValue);
            }
          else
            {
@@ -874,10 +874,10 @@ static bool EvaluateSlotDefaultValue(
         }
       else if (sd->defaultSpecified == 0)
         {
-         sd->defaultValue = get_struct(theEnv,dataObject);
+         sd->defaultValue = get_struct(theEnv,udfValue);
          DeriveDefaultFromConstraints(theEnv,sd->constraint,
-                                      (CLIPSValue *) sd->defaultValue,(int) sd->multiple,true);
-         ValueInstall(theEnv,(CLIPSValue *) sd->defaultValue);
+                                      (UDFValue *) sd->defaultValue,(int) sd->multiple,true);
+         ValueInstall(theEnv,(UDFValue *) sd->defaultValue);
         }
      }
    else

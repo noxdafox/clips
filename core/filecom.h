@@ -72,14 +72,14 @@
    bool                           RemoveBatch(Environment *);
    bool                           BatchActive(Environment *);
    void                           CloseAllBatchSources(Environment *);
-   void                           BatchCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           BatchStarCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           BatchCommand(Environment *,UDFContext *,UDFValue *);
+   void                           BatchStarCommand(Environment *,UDFContext *,UDFValue *);
    bool                           EnvBatchStar(Environment *,const char *);
-   void                           LoadCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           LoadStarCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           SaveCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           DribbleOnCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           DribbleOffCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           LoadCommand(Environment *,UDFContext *,UDFValue *);
+   void                           LoadStarCommand(Environment *,UDFContext *,UDFValue *);
+   void                           SaveCommand(Environment *,UDFContext *,UDFValue *);
+   void                           DribbleOnCommand(Environment *,UDFContext *,UDFValue *);
+   void                           DribbleOffCommand(Environment *,UDFContext *,UDFValue *);
 
 #endif /* _H_filecom */
 

@@ -98,9 +98,9 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static bool                    PerformMessage(Environment *,CLIPSValue *,EXPRESSION *,CLIPSLexeme *);
+   static bool                    PerformMessage(Environment *,UDFValue *,EXPRESSION *,CLIPSLexeme *);
    static HANDLER_LINK           *FindApplicableHandlers(Environment *,Defclass *,CLIPSLexeme *);
-   static void                    CallHandlers(Environment *,CLIPSValue *);
+   static void                    CallHandlers(Environment *,UDFValue *);
    static void                    EarlySlotBindError(Environment *,Instance *,Defclass *,unsigned);
 
 /* =========================================
@@ -115,7 +115,7 @@
                   performs specified message
   INPUTS       : 1) Message symbolic name
                  2) The instance address
-                 3) Address of CLIPSValue buffer
+                 3) Address of UDFValue buffer
                     (NULL if don't care)
                  4) Message argument expressions
   RETURNS      : Returns false is an execution error occurred
@@ -127,11 +127,11 @@ bool DirectMessage(
   Environment *theEnv,
   CLIPSLexeme *msg,
   Instance *ins,
-  CLIPSValue *resultbuf,
+  UDFValue *resultbuf,
   EXPRESSION *remargs)
   {
    EXPRESSION args;
-   CLIPSValue temp;
+   UDFValue temp;
 
    if (resultbuf == NULL)
      resultbuf = &temp;
@@ -160,10 +160,10 @@ bool DirectMessage(
  ***************************************************/
 void EnvSend(
   Environment *theEnv,
-  CLIPSValue *idata,
+  UDFValue *idata,
   const char *msg,
   const char *args,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    bool error;
    EXPRESSION *iexp;
@@ -235,11 +235,11 @@ void DestroyHandlerLinks(
 void SendCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    EXPRESSION args;
    CLIPSLexeme *msg;
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    returnValue->lexemeValue = theEnv->FalseSymbol;
 
@@ -270,7 +270,7 @@ void SendCommand(
                  stored as the first argument (0) in
                  the call frame of the message
  ***************************************************/
-CLIPSValue *GetNthMessageArgument(
+UDFValue *GetNthMessageArgument(
   Environment *theEnv,
   int n)
   {
@@ -283,7 +283,7 @@ CLIPSValue *GetNthMessageArgument(
 void NextHandlerAvailableFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    returnValue->lexemeValue = EnvCreateBoolean(theEnv,NextHandlerAvailable(theEnv));
   }
@@ -341,7 +341,7 @@ bool NextHandlerAvailable(
 void CallNextHandler(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    EXPRESSION args;
    int overridep;
@@ -631,7 +631,7 @@ void PrintHandlerSlotGetFunction(
 bool HandlerSlotGetFunction(
   Environment *theEnv,
   void *theValue,
-  CLIPSValue *theResult)
+  UDFValue *theResult)
   {
    HANDLER_SLOT_REFERENCE *theReference;
    Defclass *theDefclass;
@@ -754,14 +754,14 @@ void PrintHandlerSlotPutFunction(
 bool HandlerSlotPutFunction(
   Environment *theEnv,
   void *theValue,
-  CLIPSValue *theResult)
+  UDFValue *theResult)
   {
    HANDLER_SLOT_REFERENCE *theReference;
    Defclass *theDefclass;
    Instance *theInstance;
    INSTANCE_SLOT *sp;
    unsigned instanceSlotIndex;
-   CLIPSValue theSetVal;
+   UDFValue theSetVal;
 
    theReference = (HANDLER_SLOT_REFERENCE *) ((CLIPSBitMap *) theValue)->contents;
    theInstance = ProceduralPrimitiveData(theEnv)->ProcParamArray[0].instanceValue;
@@ -849,11 +849,11 @@ HandlerPutError2:
 void DynamicHandlerGetSlot(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    INSTANCE_SLOT *sp;
    Instance *ins;
-   CLIPSValue temp;
+   UDFValue temp;
 
    returnValue->value = theEnv->FalseSymbol;
    if (CheckCurrentMessage(theEnv,"dynamic-get",true) == false)
@@ -900,11 +900,11 @@ void DynamicHandlerGetSlot(
 void DynamicHandlerPutSlot(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    INSTANCE_SLOT *sp;
    Instance *ins;
-   CLIPSValue temp;
+   UDFValue temp;
 
    returnValue->value = theEnv->FalseSymbol;
    if (CheckCurrentMessage(theEnv,"dynamic-put",true) == false)
@@ -976,7 +976,7 @@ void DynamicHandlerPutSlot(
  *****************************************************/
 static bool PerformMessage(
   Environment *theEnv,
-  CLIPSValue *returnValue,
+  UDFValue *returnValue,
   EXPRESSION *args,
   CLIPSLexeme *mname)
   {
@@ -1232,10 +1232,10 @@ static HANDLER_LINK *FindApplicableHandlers(
  ***************************************************************/
 static void CallHandlers(
   Environment *theEnv,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    HANDLER_LINK *oldCurrent = NULL,*oldNext = NULL;  /* prevents warning */
-   CLIPSValue temp;
+   UDFValue temp;
 #if PROFILING_FUNCTIONS
    struct profileFrameInfo profileFrame;
 #endif

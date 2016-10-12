@@ -464,7 +464,7 @@ bool EnvIsDefmessageHandlerDeletable(
 void UndefmessageHandlerCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
 #if RUN_TIME || BLOAD_ONLY
    PrintErrorID(theEnv,"MSGCOM",3,false);
@@ -472,7 +472,7 @@ void UndefmessageHandlerCommand(
 #else
    CLIPSLexeme *mname;
    const char *tname;
-   CLIPSValue theArg;
+   UDFValue theArg;
    Defclass *cls;
 
 #if BLOAD || BLOAD_AND_BSAVE
@@ -575,9 +575,9 @@ bool EnvUndefmessageHandler(
 void PPDefmessageHandlerCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
    CLIPSLexeme *csym, *msym;
    const char *tname;
    Defclass *cls = NULL;
@@ -640,7 +640,7 @@ void PPDefmessageHandlerCommand(
 void ListDefmessageHandlersCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    bool inhp;
    Defclass *clsptr;
@@ -668,10 +668,10 @@ void ListDefmessageHandlersCommand(
 void PreviewSendCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Defclass *cls;
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    /* =============================
       Get the class for the message
@@ -994,7 +994,7 @@ static bool DefmessageHandlerWatchSupport(
    const char *theHandlerStr;
    int theType;
    int argIndex = 2;
-   CLIPSValue tmpData;
+   UDFValue tmpData;
 
    /* ===============================
       If no handlers are specified,

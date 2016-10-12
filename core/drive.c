@@ -596,7 +596,7 @@ bool EvaluateJoinExpression(
   struct expr *joinExpr,
   struct joinNode *joinPtr)
   {
-   CLIPSValue theResult;
+   UDFValue theResult;
    bool andLogic, result = true;
 
    /*======================================*/
@@ -774,7 +774,7 @@ unsigned long BetaMemoryHashValue(
   struct partialMatch *rbinds,
   struct joinNode *joinPtr)
   {
-   CLIPSValue theResult;
+   UDFValue theResult;
    struct partialMatch *oldLHSBinds;
    struct partialMatch *oldRHSBinds;
    struct joinNode *oldJoin;

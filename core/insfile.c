@@ -150,7 +150,7 @@ struct classItem
    static bool                    VerifyBinaryHeader(Environment *,const char *);
    static bool                    LoadSingleBinaryInstance(Environment *);
    static void                    BinaryLoadInstanceError(Environment *,CLIPSLexeme *,Defclass *);
-   static void                    CreateSlotValue(Environment *,CLIPSValue *,struct bsaveSlotValueAtom *,unsigned long);
+   static void                    CreateSlotValue(Environment *,UDFValue *,struct bsaveSlotValueAtom *,unsigned long);
    static void                   *GetBinaryAtomValue(Environment *,struct bsaveSlotValueAtom *);
    static void                    BufferedRead(Environment *,void *,unsigned long);
    static void                    FreeReadBuffer(Environment *);
@@ -210,7 +210,7 @@ void SetupInstanceFileCommands(
 void SaveInstancesCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    returnValue->integerValue = EnvCreateInteger(theEnv,InstancesSaveCommandParser(context,EnvSaveInstancesDriver));
   }
@@ -227,10 +227,10 @@ void SaveInstancesCommand(
 void LoadInstancesCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    const char *fileFound;
-   CLIPSValue theArg;
+   UDFValue theArg;
    long instanceCount;
 
    if (! UDFFirstArgument(context,LEXEME_TYPES,&theArg))
@@ -301,10 +301,10 @@ long EnvLoadInstancesFromString(
 void RestoreInstancesCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    const char *fileFound;
-   CLIPSValue theArg;
+   UDFValue theArg;
    long instanceCount;
 
    if (! UDFFirstArgument(context,LEXEME_TYPES,&theArg))
@@ -377,10 +377,10 @@ long EnvRestoreInstancesFromString(
 void BinaryLoadInstancesCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    const char *fileFound;
-   CLIPSValue theArg;
+   UDFValue theArg;
    long instanceCount;
 
    if (! UDFFirstArgument(context,LEXEME_TYPES,&theArg))
@@ -560,7 +560,7 @@ long EnvSaveInstancesDriver(
 void BinarySaveInstancesCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    returnValue->integerValue = EnvCreateInteger(theEnv,InstancesSaveCommandParser(context,EnvBinarySaveInstancesDriver));
   }
@@ -670,7 +670,7 @@ static long InstancesSaveCommandParser(
   long (*saveFunction)(Environment *,const char *,int,EXPRESSION *,bool))
   {
    const char *fileFound;
-   CLIPSValue temp;
+   UDFValue temp;
    int argCount,saveCode = LOCAL_SAVE;
    EXPRESSION *classList = NULL;
    bool inheritFlag = false;
@@ -744,7 +744,7 @@ static struct classItem *ProcessSaveClassList(
   bool inheritFlag)
   {
    struct classItem *head = NULL, *prv, *newItem;
-   CLIPSValue tmp;
+   UDFValue tmp;
    Defclass *theDefclass;
    Defmodule *currentModule;
    int argIndex = inheritFlag ? 4 : 3;
@@ -1279,7 +1279,7 @@ static long LoadOrRestoreInstances(
   bool usemsgs,
   bool isFileName)
   {
-   CLIPSValue temp;
+   UDFValue temp;
    FILE *sfile = NULL,*svload = NULL;
    const char *ilog;
    EXPRESSION *top;
@@ -1432,7 +1432,7 @@ static bool LoadSingleBinaryInstance(
    unsigned long totalValueCount;
    long i, j;
    INSTANCE_SLOT *sp;
-   CLIPSValue slotValue, junkValue;
+   UDFValue slotValue, junkValue;
 
    /* =====================
       Get the instance name
@@ -1576,7 +1576,7 @@ static void BinaryLoadInstanceError(
  ***************************************************/
 static void CreateSlotValue(
   Environment *theEnv,
-  CLIPSValue *returnValue,
+  UDFValue *returnValue,
   struct bsaveSlotValueAtom *bsaValues,
   unsigned long valueCount)
   {

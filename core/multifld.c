@@ -274,7 +274,7 @@ struct multifield *StringToMultifield(
 /*************************/
 Multifield *EnvArrayToMultifield(
   Environment *theEnv,
-  GenericValue *theArray,
+  CLIPSValue *theArray,
   long size)
   {
    Multifield *rv;
@@ -323,7 +323,7 @@ Multifield *EnvCreateMultifield(
 /*******************/
 Multifield *DOToMultifield(
   Environment *theEnv,
-  CLIPSValue *theValue)
+  UDFValue *theValue)
   {
    Multifield *dst, *src;
 
@@ -395,8 +395,8 @@ void FlushMultifields(
 /************************************************************************/
 void DuplicateMultifield(
   Environment *theEnv,
-  CLIPSValue *dst,
-  CLIPSValue *src)
+  UDFValue *dst,
+  UDFValue *src)
   {
    dst->begin = 0;
    dst->end = src->end - src->begin;
@@ -473,12 +473,12 @@ void PrintMultifield(
 /****************************************************/
 void StoreInMultifield(
   Environment *theEnv,
-  CLIPSValue *returnValue,
+  UDFValue *returnValue,
   EXPRESSION *expptr,
   bool garbageSegment)
   {
-   CLIPSValue val_ptr;
-   CLIPSValue *val_arr;
+   UDFValue val_ptr;
+   UDFValue *val_arr;
    Multifield *theMultifield;
    Multifield *orig_ptr;
    long start, end, i,j, k, argCount;
@@ -507,7 +507,7 @@ void StoreInMultifield(
       /* the total length of all the arguments. */
       /*========================================*/
 
-      val_arr = (CLIPSValue *) gm3(theEnv,(long) sizeof(CLIPSValue) * argCount);
+      val_arr = (UDFValue *) gm3(theEnv,(long) sizeof(UDFValue) * argCount);
       seg_size = 0;
 
       for (i = 1; i <= argCount; i++, expptr = expptr->nextArg)
@@ -521,7 +521,7 @@ void StoreInMultifield(
               { theMultifield = EnvCreateMultifield(theEnv,0L); }
             else theMultifield = CreateUnmanagedMultifield(theEnv,0L);
             returnValue->value = theMultifield;
-            rm3(theEnv,val_arr,(long) sizeof(CLIPSValue) * argCount);
+            rm3(theEnv,val_arr,(long) sizeof(UDFValue) * argCount);
             return;
            }
          if (val_ptr.header->type == MULTIFIELD)
@@ -581,7 +581,7 @@ void StoreInMultifield(
       returnValue->begin = 0;
       returnValue->end = ((long) seg_size) - 1;
       returnValue->value = theMultifield;
-      rm3(theEnv,val_arr,(long) sizeof(CLIPSValue) * argCount);
+      rm3(theEnv,val_arr,(long) sizeof(UDFValue) * argCount);
       return;
      }
   }
@@ -590,8 +590,8 @@ void StoreInMultifield(
 /* MultifieldDOsEqual: determines if two segments are equal. */
 /*************************************************************/
 bool MultifieldDOsEqual(
-  CLIPSValue *dobj1,
-  CLIPSValue *dobj2)
+  UDFValue *dobj1,
+  UDFValue *dobj2)
   {
    long extent1,extent2; /* 6.04 Bug Fix */
    FIELD_PTR e1,e2;
@@ -760,7 +760,7 @@ Multifield *GetMultifieldList(
 /***************************************/
 CLIPSLexeme *ImplodeMultifield(
   Environment *theEnv,
-  CLIPSValue *value)
+  UDFValue *value)
   {
    size_t strsize = 0;
    long i, j;
@@ -768,7 +768,7 @@ CLIPSLexeme *ImplodeMultifield(
    char *ret_str;
    CLIPSLexeme *rv;
    Multifield *theMultifield;
-   CLIPSValue tempDO;
+   UDFValue tempDO;
 
    /*===================================================*/
    /* Determine the size of the string to be allocated. */

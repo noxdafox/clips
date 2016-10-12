@@ -983,7 +983,7 @@ int EnvGetStrategy(
 void GetStrategyCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    returnValue->lexemeValue = EnvCreateSymbol(theEnv,GetStrategyName(EnvGetStrategy(theEnv)));
   }
@@ -995,9 +995,9 @@ void GetStrategyCommand(
 void SetStrategyCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
    const char *argument;
    int oldStrategy;
 

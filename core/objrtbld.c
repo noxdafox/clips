@@ -278,7 +278,7 @@ static void ResetInitialObject(
   Environment *theEnv)
   {
    EXPRESSION *tmp;
-   CLIPSValue rtn;
+   UDFValue rtn;
 
    tmp = GenConstant(theEnv,FCALL,FindFunction(theEnv,"make-instance"));
    tmp->argList = GenConstant(theEnv,INSTANCE_NAME,DefclassData(theEnv)->INITIAL_OBJECT_SYMBOL);

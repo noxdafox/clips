@@ -92,10 +92,10 @@ void DefglobalCommandDefinitions(
 void SetResetGlobalsCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    bool oldValue;
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    /*===========================================*/
    /* Remember the old value of this attribute. */
@@ -144,7 +144,7 @@ bool EnvSetResetGlobals(
 void GetResetGlobalsCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvGetResetGlobals(theEnv));
   }
@@ -168,7 +168,7 @@ bool EnvGetResetGlobals(
 void ShowDefglobalsCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Defmodule *theModule;
    int numArgs;

@@ -111,18 +111,18 @@ typedef struct field * FIELD_PTR;
    Multifield                    *EnvCreateMultifield(Environment *,long);
    void                           AddToMultifieldList(Environment *,struct multifield *);
    void                           FlushMultifields(Environment *);
-   void                           DuplicateMultifield(Environment *,CLIPSValue *,CLIPSValue *);
+   void                           DuplicateMultifield(Environment *,UDFValue *,UDFValue *);
    void                           PrintMultifield(Environment *,const char *,Multifield *,long,long,bool);
-   bool                           MultifieldDOsEqual(CLIPSValue *,CLIPSValue *);
-   void                           StoreInMultifield(Environment *,CLIPSValue *,EXPRESSION *,bool);
+   bool                           MultifieldDOsEqual(UDFValue *,UDFValue *);
+   void                           StoreInMultifield(Environment *,UDFValue *,EXPRESSION *,bool);
    Multifield                    *CopyMultifield(Environment *,struct multifield *);
    bool                           MultifieldsEqual(struct multifield *,struct multifield *);
-   Multifield                    *DOToMultifield(Environment *,CLIPSValue *);
+   Multifield                    *DOToMultifield(Environment *,UDFValue *);
    unsigned long                  HashMultifield(struct multifield *,unsigned long);
    Multifield                    *GetMultifieldList(Environment *);
-   CLIPSLexeme                   *ImplodeMultifield(Environment *,CLIPSValue *);
+   CLIPSLexeme                   *ImplodeMultifield(Environment *,UDFValue *);
    void                           EphemerateMultifield(Environment *,struct multifield *);
-   Multifield                    *EnvArrayToMultifield(Environment *,GenericValue *,long size);
+   Multifield                    *EnvArrayToMultifield(Environment *,CLIPSValue *,long size);
    
 #endif /* _H_multifld */
 

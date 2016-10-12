@@ -78,7 +78,7 @@
    static void                    PopQueryCore(Environment *);
    static QUERY_CORE             *FindQueryCore(Environment *,int);
    static QUERY_TEMPLATE         *DetermineQueryTemplates(Environment *,EXPRESSION *,const char *,unsigned *);
-   static QUERY_TEMPLATE         *FormChain(Environment *,const char *,Deftemplate *,CLIPSValue *);
+   static QUERY_TEMPLATE         *FormChain(Environment *,const char *,Deftemplate *,UDFValue *);
    static void                    DeleteQueryTemplates(Environment *,QUERY_TEMPLATE *);
    static bool                    TestForFirstInChain(Environment *,QUERY_TEMPLATE *,int);
    static bool                    TestForFirstFactInTemplate(Environment *,Deftemplate *,QUERY_TEMPLATE *,int);
@@ -145,7 +145,7 @@ void SetupFactQuery(
 void GetQueryFact(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    QUERY_CORE *core;
 
@@ -166,10 +166,10 @@ void GetQueryFact(
 void GetQueryFactSlot(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    struct fact *theFact;
-   CLIPSValue temp;
+   UDFValue temp;
    QUERY_CORE *core;
    short position;
 
@@ -277,7 +277,7 @@ void GetQueryFactSlot(
 void AnyFacts(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    QUERY_TEMPLATE *qtemplates;
    unsigned rcnt;
@@ -319,7 +319,7 @@ void AnyFacts(
 void QueryFindFact(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    QUERY_TEMPLATE *qtemplates;
    unsigned rcnt,i;
@@ -377,7 +377,7 @@ void QueryFindFact(
 void QueryFindAllFacts(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    QUERY_TEMPLATE *qtemplates;
    unsigned rcnt;
@@ -435,7 +435,7 @@ void QueryFindAllFacts(
 void QueryDoForFact(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    QUERY_TEMPLATE *qtemplates;
    unsigned rcnt;
@@ -476,7 +476,7 @@ void QueryDoForFact(
 void QueryDoForAllFacts(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    QUERY_TEMPLATE *qtemplates;
    unsigned rcnt;
@@ -526,7 +526,7 @@ void QueryDoForAllFacts(
 void DelayedQueryDoForAllFacts(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    QUERY_TEMPLATE *qtemplates;
    unsigned rcnt;
@@ -684,7 +684,7 @@ static QUERY_TEMPLATE *DetermineQueryTemplates(
   {
    QUERY_TEMPLATE *clist = NULL,*cnxt = NULL,*cchain = NULL,*tmp;
    bool new_list = false;
-   CLIPSValue temp;
+   UDFValue temp;
    Deftemplate *theDeftemplate;
 
    *rcnt = 0;
@@ -750,7 +750,7 @@ static QUERY_TEMPLATE *FormChain(
   Environment *theEnv,
   const char *func,
   Deftemplate *theDeftemplate,
-  CLIPSValue *val)
+  UDFValue *val)
   {
    Deftemplate *templatePtr;
    QUERY_TEMPLATE *head,*bot,*tmp;
@@ -919,7 +919,7 @@ static bool TestForFirstFactInTemplate(
   int indx)
   {
    struct fact *theFact;
-   CLIPSValue temp;
+   UDFValue temp;
    CLIPSBlock gcBlock;
 
    CLIPSBlockStart(theEnv,&gcBlock);
@@ -1021,7 +1021,7 @@ static void TestEntireTemplate(
   int indx)
   {
    struct fact *theFact;
-   CLIPSValue temp;
+   UDFValue temp;
    CLIPSBlock gcBlock;
 
    CLIPSBlockStart(theEnv,&gcBlock);

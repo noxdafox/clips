@@ -52,16 +52,16 @@
 
 #include "object.h"
 
-   void                           InitializeInstanceCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           MakeInstanceCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           InitializeInstanceCommand(Environment *,UDFContext *,UDFValue *);
+   void                           MakeInstanceCommand(Environment *,UDFContext *,UDFValue *);
    CLIPSLexeme                   *GetFullInstanceName(Environment *,Instance *);
    Instance                      *BuildInstance(Environment *,CLIPSLexeme *,Defclass *,bool);
-   void                           InitSlotsCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           InitSlotsCommand(Environment *,UDFContext *,UDFValue *);
    bool                           QuashInstance(Environment *,Instance *);
 
 #if DEFRULE_CONSTRUCT && OBJECT_SYSTEM
-   void                           InactiveInitializeInstance(Environment *,UDFContext *,CLIPSValue *);
-   void                           InactiveMakeInstance(Environment *,UDFContext *,CLIPSValue *);
+   void                           InactiveInitializeInstance(Environment *,UDFContext *,UDFValue *);
+   void                           InactiveMakeInstance(Environment *,UDFContext *,UDFValue *);
 #endif
 
 #endif /* _H_insmngr */

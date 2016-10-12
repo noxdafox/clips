@@ -63,14 +63,14 @@
 #include "globldef.h"
 
    void                           DefglobalBasicCommands(Environment *);
-   void                           UndefglobalCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           UndefglobalCommand(Environment *,UDFContext *,UDFValue *);
    bool                           EnvUndefglobal(Environment *,Defglobal *);
-   void                           GetDefglobalListFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           EnvGetDefglobalList(Environment *,CLIPSValue *,Defmodule *);
-   void                           DefglobalModuleFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           PPDefglobalCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           GetDefglobalListFunction(Environment *,UDFContext *,UDFValue *);
+   void                           EnvGetDefglobalList(Environment *,UDFValue *,Defmodule *);
+   void                           DefglobalModuleFunction(Environment *,UDFContext *,UDFValue *);
+   void                           PPDefglobalCommand(Environment *,UDFContext *,UDFValue *);
    bool                           PPDefglobal(Environment *,const char *,const char *);
-   void                           ListDefglobalsCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           ListDefglobalsCommand(Environment *,UDFContext *,UDFValue *);
 #if DEBUGGING_FUNCTIONS
    bool                           EnvGetDefglobalWatch(Environment *,Defglobal *);
    void                           EnvListDefglobals(Environment *,const char *,Defmodule *);

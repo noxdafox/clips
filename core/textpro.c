@@ -1039,10 +1039,10 @@ struct topics
 void FetchCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    int load_ct;          /*Number of entries loaded */
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    returnValue->lexemeValue = theEnv->FalseSymbol;
 
@@ -1084,7 +1084,7 @@ void FetchCommand(
 void PrintRegionCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    struct topics *params,    /*Lookup file and list of topic requests  */
                  *tptr;      /*Used in deallocating the parameter list */
@@ -1137,7 +1137,7 @@ void PrintRegionCommand(
 void GetRegionCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    struct topics *params,    /*Lookup file and list of topic requests  */
                  *tptr;      /*Used in deallocating the parameter list */
@@ -1206,10 +1206,10 @@ void GetRegionCommand(
 void TossCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    const char *file;   /*Name of the file */
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    if (! UDFFirstArgument(context,LEXEME_TYPES,&theArg))
      { return; }
@@ -1241,7 +1241,7 @@ static struct topics *GetCommandLineTopics(
    struct topics *head,   /* Address of the top of the topic list */
                  *tnode,  /* Address of new topic node            */
                  *tptr;   /* Used to attach new node to the list  */
-   CLIPSValue val;        /* Unknown-type H/L data structure      */
+   UDFValue val;        /* Unknown-type H/L data structure      */
    Environment *theEnv = context->environment;
 
    head = NULL;

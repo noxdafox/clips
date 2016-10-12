@@ -56,18 +56,18 @@
 #include "factmngr.h"
 
    void                           FactFunctionDefinitions(Environment *);
-   void                           FactRelationFunction(Environment *,UDFContext *,CLIPSValue *);
+   void                           FactRelationFunction(Environment *,UDFContext *,UDFValue *);
    CLIPSLexeme                   *FactRelation(Fact *);
    Deftemplate                   *EnvFactDeftemplate(Environment *,Fact *);
-   void                           FactExistpFunction(Environment *,UDFContext *,CLIPSValue *);
+   void                           FactExistpFunction(Environment *,UDFContext *,UDFValue *);
    bool                           EnvFactExistp(Environment *,Fact *);
-   void                           FactSlotValueFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           FactSlotValue(Environment *,Fact *,const char *,CLIPSValue *);
-   void                           FactSlotNamesFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           EnvFactSlotNames(Environment *,Fact *,CLIPSValue *);
-   void                           GetFactListFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           EnvGetFactList(Environment *,CLIPSValue *,Defmodule *);
-   void                           PPFactFunction(Environment *,UDFContext *,CLIPSValue *);
+   void                           FactSlotValueFunction(Environment *,UDFContext *,UDFValue *);
+   void                           FactSlotValue(Environment *,Fact *,const char *,UDFValue *);
+   void                           FactSlotNamesFunction(Environment *,UDFContext *,UDFValue *);
+   void                           EnvFactSlotNames(Environment *,Fact *,UDFValue *);
+   void                           GetFactListFunction(Environment *,UDFContext *,UDFValue *);
+   void                           EnvGetFactList(Environment *,UDFValue *,Defmodule *);
+   void                           PPFactFunction(Environment *,UDFContext *,UDFValue *);
    void                           EnvPPFact(Environment *,Fact *,const char *,bool);
    Fact                          *GetFactAddressOrIndexArgument(UDFContext *,bool);
 

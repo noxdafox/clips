@@ -225,8 +225,8 @@ struct defmoduleData
    void                           SetModuleItem(Environment *,Defmodule *,int,void *);
    Defmodule                     *EnvGetCurrentModule(Environment *);
    Defmodule                     *EnvSetCurrentModule(Environment *,Defmodule *);
-   void                           GetCurrentModuleCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           SetCurrentModuleCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           GetCurrentModuleCommand(Environment *,UDFContext *,UDFValue *);
+   void                           SetCurrentModuleCommand(Environment *,UDFContext *,UDFValue *);
    int                            GetNumberOfModuleItems(Environment *);
    void                           CreateMainModule(Environment *);
    void                           SetListOfDefmodules(Environment *,Defmodule *);

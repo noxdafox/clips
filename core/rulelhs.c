@@ -379,7 +379,7 @@ static void ParseSalience(
   bool *error)
   {
    int salience;
-   CLIPSValue salienceValue;
+   UDFValue salienceValue;
 
    /*==============================*/
    /* Get the salience expression. */

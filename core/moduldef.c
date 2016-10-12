@@ -707,7 +707,7 @@ Defmodule *EnvFindDefmodule(
 void GetCurrentModuleCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Defmodule *theModule;
 
@@ -729,9 +729,9 @@ void GetCurrentModuleCommand(
 void SetCurrentModuleCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
    const char *argument;
    Defmodule *theModule;
    CLIPSLexeme *oldModuleName;

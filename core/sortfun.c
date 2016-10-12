@@ -62,10 +62,10 @@ struct sortFunctionData
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    DoMergeSort(Environment *,CLIPSValue *,CLIPSValue *,unsigned long,
+   static void                    DoMergeSort(Environment *,UDFValue *,UDFValue *,unsigned long,
                                               unsigned long,unsigned long,unsigned long,
-                                              bool (*)(Environment *,CLIPSValue *,CLIPSValue *));
-   static bool                    DefaultCompareSwapFunction(Environment *,CLIPSValue *,CLIPSValue *);
+                                              bool (*)(Environment *,UDFValue *,UDFValue *));
+   static bool                    DefaultCompareSwapFunction(Environment *,UDFValue *,UDFValue *);
    static void                    DeallocateSortFunctionData(Environment *);
 
 /****************************************/
@@ -96,10 +96,10 @@ static void DeallocateSortFunctionData(
 /********************************/
 static bool DefaultCompareSwapFunction(
   Environment *theEnv,
-  CLIPSValue *item1,
-  CLIPSValue *item2)
+  UDFValue *item1,
+  UDFValue *item2)
   {
-   CLIPSValue returnValue;
+   UDFValue returnValue;
 
    SortFunctionData(theEnv)->SortComparisonFunction->argList = GenConstant(theEnv,item1->header->type,item1->value);
    SortFunctionData(theEnv)->SortComparisonFunction->argList->nextArg = GenConstant(theEnv,item2->header->type,item2->value);
@@ -122,11 +122,11 @@ static bool DefaultCompareSwapFunction(
 void SortFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    long argumentCount, i, j, k = 0;
-   CLIPSValue *theArguments, *theArguments2;
-   CLIPSValue theArg;
+   UDFValue *theArguments, *theArguments2;
+   UDFValue theArg;
    Multifield *theMultifield, *tempMultifield;
    const char *functionName;
    struct expr *functionReference;
@@ -214,7 +214,7 @@ void SortFunction(
    /* and determine how many there are.   */
    /*=====================================*/
 
-   theArguments = (CLIPSValue *) genalloc(theEnv,(argumentCount - 1) * sizeof(CLIPSValue));
+   theArguments = (UDFValue *) genalloc(theEnv,(argumentCount - 1) * sizeof(UDFValue));
 
    for (i = 2; i <= argumentCount; i++)
      {
@@ -228,7 +228,7 @@ void SortFunction(
 
    if (argumentSize == 0)
      {
-      genfree(theEnv,theArguments,(argumentCount - 1) * sizeof(CLIPSValue)); /* Bug Fix */
+      genfree(theEnv,theArguments,(argumentCount - 1) * sizeof(UDFValue)); /* Bug Fix */
       EnvSetMultifieldErrorValue(theEnv,returnValue);
       ReturnExpression(theEnv,functionReference);
       return;
@@ -239,7 +239,7 @@ void SortFunction(
    /* into a data object array.          */
    /*====================================*/
 
-   theArguments2 = (CLIPSValue *) genalloc(theEnv,argumentSize * sizeof(CLIPSValue));
+   theArguments2 = (UDFValue *) genalloc(theEnv,argumentSize * sizeof(UDFValue));
 
    for (i = 2; i <= argumentCount; i++)
      {
@@ -258,7 +258,7 @@ void SortFunction(
         }
      }
 
-   genfree(theEnv,theArguments,(argumentCount - 1) * sizeof(CLIPSValue));
+   genfree(theEnv,theArguments,(argumentCount - 1) * sizeof(UDFValue));
 
    functionReference->nextArg = SortFunctionData(theEnv)->SortComparisonFunction;
    SortFunctionData(theEnv)->SortComparisonFunction = functionReference;
@@ -282,7 +282,7 @@ void SortFunction(
       theMultifield->theFields[i].value = theArguments2[i].value;
      }
 
-   genfree(theEnv,theArguments2,argumentSize * sizeof(CLIPSValue));
+   genfree(theEnv,theArguments2,argumentSize * sizeof(UDFValue));
 
    returnValue->begin = 0;
    returnValue->end = argumentSize - 1;
@@ -297,10 +297,10 @@ void SortFunction(
 void MergeSort(
   Environment *theEnv,
   unsigned long listSize,
-  CLIPSValue *theList,
-  bool (*swapFunction)(Environment *,CLIPSValue *,CLIPSValue *))
+  UDFValue *theList,
+  bool (*swapFunction)(Environment *,UDFValue *,UDFValue *))
   {
-   CLIPSValue *tempList;
+   UDFValue *tempList;
    unsigned long middle;
 
    if (listSize <= 1) return;
@@ -310,7 +310,7 @@ void MergeSort(
    /* needed for the merge sort.   */
    /*==============================*/
 
-   tempList = (CLIPSValue *) genalloc(theEnv,listSize * sizeof(CLIPSValue));
+   tempList = (UDFValue *) genalloc(theEnv,listSize * sizeof(UDFValue));
 
    /*=====================================*/
    /* Call the merge sort driver routine. */
@@ -324,25 +324,25 @@ void MergeSort(
    /* needed by the merge sort.        */
    /*==================================*/
 
-   genfree(theEnv,tempList,listSize * sizeof(CLIPSValue));
+   genfree(theEnv,tempList,listSize * sizeof(UDFValue));
   }
 
 
 /******************************************************/
 /* DoMergeSort: Driver routine for performing a merge */
-/*   sort on an array of CLIPSValue structures.       */
+/*   sort on an array of UDFValue structures.       */
 /******************************************************/
 static void DoMergeSort(
   Environment *theEnv,
-  CLIPSValue *theList,
-  CLIPSValue *tempList,
+  UDFValue *theList,
+  UDFValue *tempList,
   unsigned long s1,
   unsigned long e1,
   unsigned long s2,
   unsigned long e2,
-  bool (*swapFunction)(Environment *,CLIPSValue *,CLIPSValue *))
+  bool (*swapFunction)(Environment *,UDFValue *,UDFValue *))
   {
-   CLIPSValue temp;
+   UDFValue temp;
    unsigned long middle, size;
    unsigned long c1, c2, mergePoint;
 

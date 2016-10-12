@@ -65,7 +65,7 @@
    void                           ExpectedTypeError1(Environment *,const char *,int,const char *);
    void                           ExpectedTypeError2(Environment *,const char *,int);
    Defmodule                     *GetModuleName(UDFContext *,int,bool *);
-   void                          *GetFactOrInstanceArgument(UDFContext *,int,CLIPSValue *);
+   void                          *GetFactOrInstanceArgument(UDFContext *,int,UDFValue *);
    void                           IllegalLogicalNameMessage(Environment *,const char *);
 
 #endif

@@ -52,11 +52,11 @@
 #define _H_globlcom
 
    void                           DefglobalCommandDefinitions(Environment *);
-   void                           SetResetGlobalsCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           SetResetGlobalsCommand(Environment *,UDFContext *,UDFValue *);
    bool                           EnvSetResetGlobals(Environment *,bool);
-   void                           GetResetGlobalsCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           GetResetGlobalsCommand(Environment *,UDFContext *,UDFValue *);
    bool                           EnvGetResetGlobals(Environment *);
-   void                           ShowDefglobalsCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           ShowDefglobalsCommand(Environment *,UDFContext *,UDFValue *);
    void                           EnvShowDefglobals(Environment *,const char *,Defmodule *);
 
 #endif /* _H_globlcom */

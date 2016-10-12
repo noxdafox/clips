@@ -86,12 +86,12 @@ void BasicMathFunctionDefinitions(
 void AdditionFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    double ftotal = 0.0;
    long long ltotal = 0LL;
    bool useFloatTotal = false;
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    /*=================================================*/
    /* Loop through each of the arguments adding it to */
@@ -137,12 +137,12 @@ void AdditionFunction(
 void MultiplicationFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    double ftotal = 1.0;
    long long ltotal = 1LL;
    bool useFloatTotal = false;
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    /*===================================================*/
    /* Loop through each of the arguments multiplying it */
@@ -188,12 +188,12 @@ void MultiplicationFunction(
 void SubtractionFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    double ftotal = 0.0;
    long long ltotal = 0LL;
    bool useFloatTotal = false;
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    /*=================================================*/
    /* Get the first argument. This number which will  */
@@ -256,11 +256,11 @@ void SubtractionFunction(
 void DivisionFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    double ftotal = 1.0;
    double theNumber;
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    /*===================================================*/
    /* Get the first argument. This number which will be */
@@ -316,10 +316,10 @@ void DivisionFunction(
 void DivFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    long long total = 1LL;
-   CLIPSValue theArg;
+   UDFValue theArg;
    long long theNumber;
 
    /*===================================================*/
@@ -371,7 +371,7 @@ void DivFunction(
 void IntegerFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    /*======================================*/
    /* Check that the argument is a number. */
@@ -396,7 +396,7 @@ void IntegerFunction(
 void FloatFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    /*======================================*/
    /* Check that the argument is a number. */
@@ -421,7 +421,7 @@ void FloatFunction(
 void AbsFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    /*======================================*/
    /* Check that the argument is a number. */
@@ -455,9 +455,9 @@ void AbsFunction(
 void MinFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue nextPossible;
+   UDFValue nextPossible;
 
    /*============================================*/
    /* Check that the first argument is a number. */
@@ -503,9 +503,9 @@ void MinFunction(
 void MaxFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue nextPossible;
+   UDFValue nextPossible;
 
    /*============================================*/
    /* Check that the first argument is a number. */

@@ -1407,7 +1407,7 @@ unsigned long ComputeRightHashValue(
         tempExpr != NULL;
         tempExpr = tempExpr->nextArg, multiplier = multiplier * 509)
       {
-       CLIPSValue theResult;
+       UDFValue theResult;
        struct expr *oldArgument;
 
        oldArgument = EvaluationData(theEnv)->CurrentExpression;

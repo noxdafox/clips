@@ -646,7 +646,7 @@ static void PrintRange(
 /*************************************************************/
 int ConstraintCheckDataObject(
   Environment *theEnv,
-  CLIPSValue *theData,
+  UDFValue *theData,
   CONSTRAINT_RECORD *theConstraints)
   {
    long i; /* 6.04 Bug Fix */

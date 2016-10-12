@@ -125,7 +125,7 @@ void FactFunctionDefinitions(
 void FactRelationFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    struct fact *theFact;
 
@@ -172,7 +172,7 @@ Deftemplate *EnvFactDeftemplate(
 void FactExistpFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Fact *theFact;
 
@@ -206,10 +206,10 @@ bool EnvFactExistp(
 void FactSlotValueFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    struct fact *theFact;
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    /*================================*/
    /* Get the reference to the fact. */
@@ -244,7 +244,7 @@ void FactSlotValue(
   Environment *theEnv,
   Fact *theFact,
   const char *theSlotName,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    short position;
 
@@ -291,7 +291,7 @@ void FactSlotValue(
 void FactSlotNamesFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    struct fact *theFact;
 
@@ -320,7 +320,7 @@ void FactSlotNamesFunction(
 void EnvFactSlotNames(
   Environment *theEnv,
   Fact *theFact,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Multifield *theList;
    struct templateSlot *theSlot;
@@ -378,10 +378,10 @@ void EnvFactSlotNames(
 void GetFactListFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Defmodule *theModule;
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    /*===========================================*/
    /* Determine if a module name was specified. */
@@ -420,7 +420,7 @@ void GetFactListFunction(
 /*************************************/
 void EnvGetFactList(
   Environment *theEnv,
-  CLIPSValue *returnValue,
+  UDFValue *returnValue,
   Defmodule *theModule)
   {
    Fact *theFact;
@@ -501,12 +501,12 @@ void EnvGetFactList(
 void PPFactFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    struct fact *theFact;
    const char *logicalName = NULL;      /* Avoids warning */
    bool ignoreDefaults = false;
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    theFact = GetFactAddressOrIndexArgument(context,true);
    if (theFact == NULL) return;
@@ -590,7 +590,7 @@ Fact *GetFactAddressOrIndexArgument(
   UDFContext *context,
   bool noFactError)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
    long long factIndex;
    Fact *theFact;
    Environment *theEnv = context->environment;

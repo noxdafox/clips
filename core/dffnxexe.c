@@ -103,7 +103,7 @@ void CallDeffunction(
   Environment *theEnv,
   Deffunction *dptr,
   EXPRESSION *args,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    int oldce;
    Deffunction *previouslyExecutingDeffunction;

@@ -86,10 +86,10 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    SlotInfoSupportFunction(UDFContext *,CLIPSValue *,const char *,void (*)(Environment *,Defclass *,const char *,CLIPSValue *));
+   static void                    SlotInfoSupportFunction(UDFContext *,UDFValue *,const char *,void (*)(Environment *,Defclass *,const char *,UDFValue *));
    static unsigned                CountSubclasses(Defclass *,bool,int);
    static unsigned                StoreSubclasses(Multifield *,unsigned,Defclass *,int,int,bool);
-   static SlotDescriptor         *SlotInfoSlot(Environment *,CLIPSValue *,Defclass *,const char *,const char *);
+   static SlotDescriptor         *SlotInfoSlot(Environment *,UDFValue *,Defclass *,const char *,const char *);
 
 /*********************************************************************
   NAME         : ClassAbstractPCommand
@@ -102,9 +102,9 @@
 void ClassAbstractPCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
    Defclass *cls;
 
    if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
@@ -136,9 +136,9 @@ void ClassAbstractPCommand(
 void ClassReactivePCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
    Defclass *cls;
 
    if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
@@ -177,7 +177,7 @@ Defclass *ClassInfoFnxArgs(
   bool *inhp)
   {
    Defclass *clsptr;
-   CLIPSValue theArg;
+   UDFValue theArg;
    Environment *theEnv = context->environment;
 
    *inhp = false;
@@ -223,7 +223,7 @@ Defclass *ClassInfoFnxArgs(
 void ClassSlotsCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    bool inhp;
    Defclass *clsptr;
@@ -250,7 +250,7 @@ void ClassSlotsCommand(
 void ClassSuperclassesCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    bool inhp;
    Defclass *clsptr;
@@ -277,7 +277,7 @@ void ClassSuperclassesCommand(
 void ClassSubclassesCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    bool inhp;
    Defclass *clsptr;
@@ -304,7 +304,7 @@ void ClassSubclassesCommand(
 void GetDefmessageHandlersListCmd(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    bool inhp;
    Defclass *clsptr;
@@ -329,7 +329,7 @@ void GetDefmessageHandlersListCmd(
 void SlotFacetsCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    SlotInfoSupportFunction(context,returnValue,"slot-facets",EnvSlotFacets);
   }
@@ -337,7 +337,7 @@ void SlotFacetsCommand(
 void SlotSourcesCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    SlotInfoSupportFunction(context,returnValue,"slot-sources",EnvSlotSources);
   }
@@ -345,7 +345,7 @@ void SlotSourcesCommand(
 void SlotTypesCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    SlotInfoSupportFunction(context,returnValue,"slot-types",EnvSlotTypes);
   }
@@ -353,7 +353,7 @@ void SlotTypesCommand(
 void SlotAllowedValuesCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    SlotInfoSupportFunction(context,returnValue,"slot-allowed-values",EnvSlotAllowedValues);
   }
@@ -361,7 +361,7 @@ void SlotAllowedValuesCommand(
 void SlotAllowedClassesCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    SlotInfoSupportFunction(context,returnValue,"slot-allowed-classes",EnvSlotAllowedClasses);
   }
@@ -369,7 +369,7 @@ void SlotAllowedClassesCommand(
 void SlotRangeCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    SlotInfoSupportFunction(context,returnValue,"slot-range",EnvSlotRange);
   }
@@ -377,7 +377,7 @@ void SlotRangeCommand(
 void SlotCardinalityCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    SlotInfoSupportFunction(context,returnValue,"slot-cardinality",EnvSlotCardinality);
   }
@@ -439,7 +439,7 @@ bool EnvClassReactiveP(
 void EnvClassSlots(
   Environment *theEnv,
   Defclass *theDefclass,
-  CLIPSValue *returnValue,
+  UDFValue *returnValue,
   bool inhp)
   {
    long size;
@@ -488,7 +488,7 @@ void EnvClassSlots(
 void EnvGetDefmessageHandlerList(
   Environment *theEnv,
   Defclass *theDefclass,
-  CLIPSValue *returnValue,
+  UDFValue *returnValue,
   bool inhp)
   {
    Defclass *cls,*svcls,*svnxt,*supcls;
@@ -568,7 +568,7 @@ void EnvGetDefmessageHandlerList(
 void EnvClassSuperclasses(
   Environment *theEnv,
   Defclass *theDefclass,
-  CLIPSValue *returnValue,
+  UDFValue *returnValue,
   bool inhp)
   {
    PACKED_CLASS_LINKS *plinks;
@@ -614,7 +614,7 @@ void EnvClassSuperclasses(
 void EnvClassSubclasses(
   Environment *theEnv,
   Defclass *theDefclass,
-  CLIPSValue *returnValue,
+  UDFValue *returnValue,
   bool inhp)
   {
    int i; // Bug fix 2014-07-18: Previously unsigned and SetpDOEnd decremented to -1.
@@ -656,7 +656,7 @@ void EnvClassSubclasses(
 void ClassSubclassAddresses(
   Environment *theEnv,
   Defclass *theDefclass,
-  CLIPSValue *returnValue,
+  UDFValue *returnValue,
   bool inhp)
   {
    int i; // Bug fix 2014-07-18: Previously unsigned and SetpDOEnd decremented to -1.
@@ -703,7 +703,7 @@ void EnvSlotFacets(
   Environment *theEnv,
   Defclass *theDefclass,
   const char *sname,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    SlotDescriptor *sp;
 
@@ -791,7 +791,7 @@ void EnvSlotSources(
   Environment *theEnv,
   Defclass *theDefclass,
   const char *sname,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    unsigned i;
    int classi;
@@ -839,7 +839,7 @@ void EnvSlotTypes(
   Environment *theEnv,
   Defclass *theDefclass,
   const char *sname,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    unsigned i,j;
    SlotDescriptor *sp;
@@ -922,7 +922,7 @@ void EnvSlotAllowedValues(
   Environment *theEnv,
   Defclass *theDefclass,
   const char *sname,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    int i;
    SlotDescriptor *sp;
@@ -954,7 +954,7 @@ void EnvSlotAllowedClasses(
   Environment *theEnv,
   Defclass *theDefclass,
   const char *sname,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    int i;
    SlotDescriptor *sp;
@@ -986,7 +986,7 @@ void EnvSlotRange(
   Environment *theEnv,
   Defclass *theDefclass,
   const char *sname,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    SlotDescriptor *sp;
 
@@ -1015,7 +1015,7 @@ void EnvSlotCardinality(
   Environment *theEnv,
   Defclass *theDefclass,
   const char *sname,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    SlotDescriptor *sp;
 
@@ -1060,9 +1060,9 @@ void EnvSlotCardinality(
  *****************************************************/
 static void SlotInfoSupportFunction(
   UDFContext *context,
-  CLIPSValue *returnValue,
+  UDFValue *returnValue,
   const char *fnxname,
-  void (*fnx)(Environment *,Defclass *,const char *,CLIPSValue *))
+  void (*fnx)(Environment *,Defclass *,const char *,UDFValue *))
   {
    CLIPSLexeme *ssym;
    Defclass *cls;
@@ -1171,7 +1171,7 @@ static unsigned StoreSubclasses(
  *********************************************************/
 static SlotDescriptor *SlotInfoSlot(
   Environment *theEnv,
-  CLIPSValue *returnValue,
+  UDFValue *returnValue,
   Defclass *cls,
   const char *sname,
   const char *fnxname)

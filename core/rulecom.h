@@ -87,25 +87,25 @@ struct joinInformation
 
    bool                           EnvGetBetaMemoryResizing(Environment *);
    bool                           EnvSetBetaMemoryResizing(Environment *,bool);
-   void                           GetBetaMemoryResizingCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           SetBetaMemoryResizingCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           EnvMatches(Environment *,Defrule *,int,CLIPSValue *);
-   void                           EnvJoinActivity(Environment *,Defrule *,int,CLIPSValue *);
+   void                           GetBetaMemoryResizingCommand(Environment *,UDFContext *,UDFValue *);
+   void                           SetBetaMemoryResizingCommand(Environment *,UDFContext *,UDFValue *);
+   void                           EnvMatches(Environment *,Defrule *,int,UDFValue *);
+   void                           EnvJoinActivity(Environment *,Defrule *,int,UDFValue *);
    void                           DefruleCommands(Environment *);
-   void                           MatchesCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           JoinActivityCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           TimetagFunction(Environment *,UDFContext *,CLIPSValue *);
+   void                           MatchesCommand(Environment *,UDFContext *,UDFValue *);
+   void                           JoinActivityCommand(Environment *,UDFContext *,UDFValue *);
+   void                           TimetagFunction(Environment *,UDFContext *,UDFValue *);
    long                           EnvAlphaJoinCount(Environment *,Defrule *);
    long                           EnvBetaJoinCount(Environment *,Defrule *);
    struct joinInformation        *EnvCreateJoinArray(Environment *,long);
    void                           EnvFreeJoinArray(Environment *,struct joinInformation *,long);
    void                           EnvAlphaJoins(Environment *,Defrule *,long,struct joinInformation *);
    void                           EnvBetaJoins(Environment *,Defrule *,long,struct joinInformation *);
-   void                           JoinActivityResetCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           JoinActivityResetCommand(Environment *,UDFContext *,UDFValue *);
 #if DEVELOPER
-   void                           ShowJoinsCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           RuleComplexityCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           ShowAlphaHashTable(Environment *,UDFContext *,CLIPSValue *);
+   void                           ShowJoinsCommand(Environment *,UDFContext *,UDFValue *);
+   void                           RuleComplexityCommand(Environment *,UDFContext *,UDFValue *);
+   void                           ShowAlphaHashTable(Environment *,UDFContext *,UDFValue *);
 #endif
 
 #endif /* _H_rulecom */

@@ -756,11 +756,11 @@ CLIPSLexeme *GetConstructNamePointer(
 /************************************************/
 void GetConstructListFunction(
   UDFContext *context,
-  CLIPSValue *returnValue,
+  UDFValue *returnValue,
   struct construct *constructClass)
   {
    Defmodule *theModule;
-   CLIPSValue result;
+   UDFValue result;
    int numArgs;
    Environment *theEnv = context->environment;
 
@@ -820,7 +820,7 @@ void GetConstructListFunction(
 /********************************************/
 void GetConstructList(
   Environment *theEnv,
-  CLIPSValue *returnValue,
+  UDFValue *returnValue,
   struct construct *constructClass,
   Defmodule *theModule)
   {
@@ -998,7 +998,7 @@ void ListConstructCommand(
   struct construct *constructClass)
   {
    Defmodule *theModule;
-   CLIPSValue result;
+   UDFValue result;
    int numArgs;
    Environment *theEnv = context->environment;
 
@@ -1494,7 +1494,7 @@ static bool ConstructWatchSupport(
   {
    Defmodule *theModule;
    void *theConstruct;
-   CLIPSValue constructName;
+   UDFValue constructName;
    int argIndex = 2;
 
    /*========================================*/

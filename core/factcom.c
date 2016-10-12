@@ -154,11 +154,11 @@ void FactCommandDefinitions(
 void AssertCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Deftemplate *theDeftemplate;
    struct field *theField;
-   CLIPSValue theValue;
+   UDFValue theValue;
    struct expr *theExpression;
    struct templateSlot *slotPtr;
    Fact *newFact;
@@ -281,11 +281,11 @@ void AssertCommand(
 void RetractCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    long long factIndex;
    Fact *ptr;
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    /*================================*/
    /* Iterate through each argument. */
@@ -380,9 +380,9 @@ void RetractCommand(
 void SetFactDuplicationCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    /*=====================================================*/
    /* Get the old value of the fact duplication behavior. */
@@ -412,7 +412,7 @@ void SetFactDuplicationCommand(
 void GetFactDuplicationCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvGetFactDuplication(theEnv));
   }
@@ -424,9 +424,9 @@ void GetFactDuplicationCommand(
 void FactIndexFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    /*======================================*/
    /* The argument must be a fact address. */
@@ -459,11 +459,11 @@ void FactIndexFunction(
 void FactsCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    long long start = UNSPECIFIED, end = UNSPECIFIED, max = UNSPECIFIED;
    Defmodule *theModule;
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    /*==================================*/
    /* The default module for the facts */
@@ -674,7 +674,7 @@ static long long GetFactsArgument(
   UDFContext *context)
   {
    long long factIndex;
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    if (! UDFHasNextArgument(context)) return(UNSPECIFIED);
 
@@ -703,9 +703,9 @@ static long long GetFactsArgument(
 void AssertStringFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
    Fact *theFact;
 
    /*=====================================================*/
@@ -734,12 +734,12 @@ void AssertStringFunction(
 void SaveFactsCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    const char *fileName;
    int numArgs, saveCode = LOCAL_SAVE;
    const char *argument;
-   CLIPSValue theValue;
+   UDFValue theValue;
    struct expr *theList = NULL;
 
    /*============================================*/
@@ -811,7 +811,7 @@ void SaveFactsCommand(
 void LoadFactsCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    const char *fileName;
 
@@ -1003,7 +1003,7 @@ static Deftemplate **GetSaveFactsDeftemplateNames(
   {
    struct expr *tempList;
    Deftemplate **deftemplateArray;
-   CLIPSValue tempArg;
+   UDFValue tempArg;
    int i, tempCount;
    Deftemplate *theDeftemplate = NULL;
 
@@ -1130,7 +1130,7 @@ bool EnvLoadFacts(
    FILE *filePtr;
    struct token theToken;
    struct expr *testPtr;
-   CLIPSValue rv;
+   UDFValue rv;
 
    /*======================================================*/
    /* Open the file. Use either "fast save" or I/O Router. */
@@ -1184,7 +1184,7 @@ bool EnvLoadFactsFromString(
    const char *theStrRouter = "*** load-facts-from-string ***";
    struct token theToken;
    struct expr *testPtr;
-   CLIPSValue rv;
+   UDFValue rv;
 
    /*==========================*/
    /* Initialize string router */

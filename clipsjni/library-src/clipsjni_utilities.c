@@ -28,7 +28,7 @@ jobject ConvertDataObject(
   JNIEnv *env,
   jobject javaEnv,
   void *clipsEnv,
-  CLIPSValue *theDO)
+  UDFValue *theDO)
   {
    jobject result = NULL, tresult;
    jint mfLength;
@@ -247,7 +247,7 @@ static void *ConvertSingleFieldPrimitiveValue(
 void ConvertPrimitiveValueToDataObject(
   Environment *theEnv,
   jobject theValue,
-  CLIPSValue *theDO)
+  UDFValue *theDO)
   { 
    unsigned short theType;
    Multifield *result = NULL;

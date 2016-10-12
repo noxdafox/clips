@@ -78,7 +78,7 @@
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    static bool                    GetVariableDefinition(Environment *,const char *,bool *,bool,struct token *);
-   static void                    AddDefglobal(Environment *,CLIPSLexeme *,CLIPSValue *,struct expr *);
+   static void                    AddDefglobal(Environment *,CLIPSLexeme *,UDFValue *,struct expr *);
 #endif
 
 /*********************************************************************/
@@ -215,7 +215,7 @@ static bool GetVariableDefinition(
   {
    CLIPSLexeme *variableName;
    struct expr *assignPtr;
-   CLIPSValue assignValue;
+   UDFValue assignValue;
 
    /*========================================*/
    /* Get next token, which should either be */
@@ -342,7 +342,7 @@ static bool GetVariableDefinition(
 static void AddDefglobal(
   Environment *theEnv,
   CLIPSLexeme *name,
-  CLIPSValue *vPtr,
+  UDFValue *vPtr,
   struct expr *ePtr)
   {
    Defglobal *defglobalPtr;

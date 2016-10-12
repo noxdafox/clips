@@ -61,10 +61,10 @@
 #define _H_textpro
 
 #if TEXTPRO_FUNCTIONS
-   void                           FetchCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           PrintRegionCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           GetRegionCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           TossCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           FetchCommand(Environment *,UDFContext *,UDFValue *);
+   void                           PrintRegionCommand(Environment *,UDFContext *,UDFValue *);
+   void                           GetRegionCommand(Environment *,UDFContext *,UDFValue *);
+   void                           TossCommand(Environment *,UDFContext *,UDFValue *);
 #endif
 
    void                           HelpFunctionDefinitions(Environment *);

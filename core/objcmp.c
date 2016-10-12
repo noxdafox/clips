@@ -1141,7 +1141,7 @@ static bool SlotsToCode(
            ExpressionToCode(theEnv,*slotFile,(EXPRESSION *) sd->defaultValue);
          else
            {
-            tmpexp = ConvertValueToExpression(theEnv,(CLIPSValue *) sd->defaultValue);
+            tmpexp = ConvertValueToExpression(theEnv,(UDFValue *) sd->defaultValue);
             ExpressionToCode(theEnv,*slotFile,tmpexp);
             ReturnExpression(theEnv,tmpexp);
            }

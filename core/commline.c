@@ -884,7 +884,7 @@ bool RouteCommand(
   const char *command,
   bool printResult)
   {
-   CLIPSValue returnValue;
+   UDFValue returnValue;
    struct expr *top;
    const char *commandName;
    struct token theToken;

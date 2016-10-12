@@ -80,11 +80,11 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static bool                    SingleNumberCheck(UDFContext *,CLIPSValue *);
+   static bool                    SingleNumberCheck(UDFContext *,UDFValue *);
    static bool                    TestProximity(double,double);
-   static void                    DomainErrorMessage(UDFContext *,CLIPSValue *);
-   static void                    ArgumentOverflowErrorMessage(UDFContext *,CLIPSValue *);
-   static void                    SingularityErrorMessage(UDFContext *,CLIPSValue *);
+   static void                    DomainErrorMessage(UDFContext *,UDFValue *);
+   static void                    ArgumentOverflowErrorMessage(UDFContext *,UDFValue *);
+   static void                    SingularityErrorMessage(UDFContext *,UDFValue *);
    static double                  genacosh(double);
    static double                  genasinh(double);
    static double                  genatanh(double);
@@ -151,7 +151,7 @@ void ExtendedMathFunctionDefinitions(
 /************************************************************/
 static bool SingleNumberCheck(
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    /*======================================*/
    /* Check that the argument is a number. */
@@ -185,7 +185,7 @@ static bool TestProximity(
 /********************************************************/
 static void DomainErrorMessage(
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Environment *theEnv = context->environment;
 
@@ -205,7 +205,7 @@ static void DomainErrorMessage(
 /************************************************************/
 static void ArgumentOverflowErrorMessage(
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Environment *theEnv = context->environment;
 
@@ -225,7 +225,7 @@ static void ArgumentOverflowErrorMessage(
 /************************************************************/
 static void SingularityErrorMessage(
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Environment *theEnv = context->environment;
 
@@ -245,7 +245,7 @@ static void SingularityErrorMessage(
 void CosFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    if (! SingleNumberCheck(context,returnValue))
      { return; }
@@ -260,7 +260,7 @@ void CosFunction(
 void SinFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    if (! SingleNumberCheck(context,returnValue))
      { return; }
@@ -275,7 +275,7 @@ void SinFunction(
 void TanFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    double tv;
 
@@ -299,7 +299,7 @@ void TanFunction(
 void SecFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    double tv;
 
@@ -323,7 +323,7 @@ void SecFunction(
 void CscFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    double tv;
 
@@ -347,7 +347,7 @@ void CscFunction(
 void CotFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    double tv;
 
@@ -371,7 +371,7 @@ void CotFunction(
 void AcosFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    double num;
 
@@ -396,7 +396,7 @@ void AcosFunction(
 void AsinFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    double num;
 
@@ -420,7 +420,7 @@ void AsinFunction(
 void AtanFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    if (! SingleNumberCheck(context,returnValue))
      { return; }
@@ -435,7 +435,7 @@ void AtanFunction(
 void AsecFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    double num;
 
@@ -460,7 +460,7 @@ void AsecFunction(
 void AcscFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    double num;
 
@@ -485,7 +485,7 @@ void AcscFunction(
 void AcotFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    double num;
 
@@ -510,7 +510,7 @@ void AcotFunction(
 void CoshFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    if (! SingleNumberCheck(context,returnValue))
      { return; }
@@ -525,7 +525,7 @@ void CoshFunction(
 void SinhFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    if (! SingleNumberCheck(context,returnValue))
      { return; }
@@ -540,7 +540,7 @@ void SinhFunction(
 void TanhFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    if (! SingleNumberCheck(context,returnValue))
      { return; }
@@ -555,7 +555,7 @@ void TanhFunction(
 void SechFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    if (! SingleNumberCheck(context,returnValue))
      { return; }
@@ -570,7 +570,7 @@ void SechFunction(
 void CschFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    double num;
 
@@ -599,7 +599,7 @@ void CschFunction(
 void CothFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    double num;
 
@@ -628,7 +628,7 @@ void CothFunction(
 void AcoshFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    double num;
 
@@ -652,7 +652,7 @@ void AcoshFunction(
 void AsinhFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    if (! SingleNumberCheck(context,returnValue))
      { return; }
@@ -667,7 +667,7 @@ void AsinhFunction(
 void AtanhFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    double num;
 
@@ -691,7 +691,7 @@ void AtanhFunction(
 void AsechFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    double num;
 
@@ -715,7 +715,7 @@ void AsechFunction(
 void AcschFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    double num;
 
@@ -739,7 +739,7 @@ void AcschFunction(
 void AcothFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    double num;
 
@@ -763,7 +763,7 @@ void AcothFunction(
 void ExpFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    if (! SingleNumberCheck(context,returnValue))
      { return; }
@@ -778,7 +778,7 @@ void ExpFunction(
 void LogFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    double num;
 
@@ -807,7 +807,7 @@ void LogFunction(
 void Log10Function(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    double num;
 
@@ -836,7 +836,7 @@ void Log10Function(
 void SqrtFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    double num;
 
@@ -860,9 +860,9 @@ void SqrtFunction(
 void PowFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue value1, value2;
+   UDFValue value1, value2;
    double num1, num2;
 
    /*==================================*/
@@ -903,9 +903,9 @@ void PowFunction(
 void ModFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue item1, item2;
+   UDFValue item1, item2;
    double fnum1, fnum2;
    long long lnum1, lnum2;
 
@@ -957,7 +957,7 @@ void ModFunction(
 void PiFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    returnValue->floatValue = EnvCreateFloat(theEnv,acos(-1.0));
   }
@@ -969,7 +969,7 @@ void PiFunction(
 void DegRadFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    if (! SingleNumberCheck(context,returnValue))
      { return; }
@@ -984,7 +984,7 @@ void DegRadFunction(
 void RadDegFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    if (! SingleNumberCheck(context,returnValue))
      { return; }
@@ -999,7 +999,7 @@ void RadDegFunction(
 void DegGradFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    if (! SingleNumberCheck(context,returnValue))
      { return; }
@@ -1014,7 +1014,7 @@ void DegGradFunction(
 void GradDegFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    if (! SingleNumberCheck(context,returnValue))
      { return; }
@@ -1029,7 +1029,7 @@ void GradDegFunction(
 void RoundFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    /*======================================*/
    /* Check that the argument is a number. */

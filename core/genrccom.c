@@ -120,7 +120,7 @@
    ***************************************** */
 
    static void                    PrintGenericCall(Environment *,const char *,Defgeneric *);
-   static bool                    EvaluateGenericCall(Environment *,Defgeneric *,CLIPSValue *);
+   static bool                    EvaluateGenericCall(Environment *,Defgeneric *,UDFValue *);
    static void                    DecrementGenericBusyCount(Environment *,Defgeneric *);
    static void                    IncrementGenericBusyCount(Environment *,Defgeneric *);
    static void                    DeallocateDefgenericData(Environment *);
@@ -564,7 +564,7 @@ bool EnvIsDefmethodDeletable(
 void UndefgenericCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    UndefconstructCommand(context,"undefgeneric",DefgenericData(theEnv)->DefgenericConstruct);
   }
@@ -580,7 +580,7 @@ void UndefgenericCommand(
 void GetDefgenericModuleCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    returnValue->value = GetConstructModuleCommand(context,"defgeneric-module",DefgenericData(theEnv)->DefgenericConstruct);
   }
@@ -596,9 +596,9 @@ void GetDefgenericModuleCommand(
 void UndefmethodCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
    Defgeneric *gfunc;
    long mi;
 
@@ -898,7 +898,7 @@ void EnvSetDefmethodWatch(
 void PPDefgenericCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    PPConstructCommand(context,"ppdefgeneric",DefgenericData(theEnv)->DefgenericConstruct);
   }
@@ -915,9 +915,9 @@ void PPDefgenericCommand(
 void PPDefmethodCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
    const char *gname;
    Defgeneric *gfunc;
    int gi;
@@ -949,9 +949,9 @@ void PPDefmethodCommand(
 void ListDefmethodsCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
    Defgeneric *gfunc;
 
    if (! UDFHasNextArgument(context))
@@ -1000,7 +1000,7 @@ const char *EnvGetDefmethodPPForm(
 void ListDefgenericsCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    ListConstructCommand(context,DefgenericData(theEnv)->DefgenericConstruct);
   }
@@ -1072,7 +1072,7 @@ void EnvListDefmethods(
 void GetDefgenericListFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    GetConstructListFunction(context,returnValue,DefgenericData(theEnv)->DefgenericConstruct);
   }
@@ -1090,7 +1090,7 @@ void GetDefgenericListFunction(
  ***************************************************************/
 void EnvGetDefgenericList(
   Environment *theEnv,
-  CLIPSValue *returnValue,
+  UDFValue *returnValue,
   Defmodule *theModule)
   {
    GetConstructList(theEnv,returnValue,DefgenericData(theEnv)->DefgenericConstruct,theModule);
@@ -1109,9 +1109,9 @@ void EnvGetDefgenericList(
 void GetDefmethodListCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
    Defgeneric *gfunc;
 
    if (! UDFHasNextArgument(context))
@@ -1142,7 +1142,7 @@ void GetDefmethodListCommand(
 void EnvGetDefmethodList(
   Environment *theEnv,
   Defgeneric *theDefgeneric,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Defgeneric *gfunc, *svg, *svnxt;
    long i,j;
@@ -1195,9 +1195,9 @@ void EnvGetDefmethodList(
 void GetMethodRestrictionsCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
    Defgeneric *gfunc;
 
    if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
@@ -1260,7 +1260,7 @@ void EnvGetMethodRestrictions(
   Environment *theEnv,
   Defgeneric *theDefgeneric,
   long mi,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    short i,j;
    Defmethod *meth;
@@ -1357,7 +1357,7 @@ static void PrintGenericCall(
 static bool EvaluateGenericCall(
   Environment *theEnv,
   Defgeneric *theDefgeneric,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    GenericDispatch(theEnv,theDefgeneric,NULL,NULL,GetFirstArgument(),returnValue);
    if ((returnValue->header->type == SYMBOL) &&
@@ -1702,7 +1702,7 @@ static bool DefmethodWatchSupport(
    Defgeneric *theGeneric;
    unsigned long theMethod = 0;
    int argIndex = 2;
-   CLIPSValue genericName, methodIndex;
+   UDFValue genericName, methodIndex;
    Defmodule *theModule;
 
    /* ==============================
@@ -1845,7 +1845,7 @@ static void PrintMethodWatchFlag(
 void TypeCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    EvaluateExpression(theEnv,GetFirstArgument(),result);
 

@@ -74,7 +74,7 @@
 void DeriveDefaultFromConstraints(
   Environment *theEnv,
   CONSTRAINT_RECORD *constraints,
-  CLIPSValue *theDefault,
+  UDFValue *theDefault,
   bool multifield,
   bool garbageMultifield)
   {
@@ -279,7 +279,7 @@ struct expr *ParseDefault(
    struct expr *defaultList = NULL, *lastDefault = NULL;
    struct expr *newItem, *tmpItem;
    struct token theToken;
-   CLIPSValue theValue;
+   UDFValue theValue;
    CONSTRAINT_RECORD *rv;
    int specialVarCode;
 

@@ -276,7 +276,7 @@ static void SaveDefrules(
 void UndefruleCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    UndefconstructCommand(context,"undefrule",DefruleData(theEnv)->DefruleConstruct);
   }
@@ -299,7 +299,7 @@ bool EnvUndefrule(
 void GetDefruleListFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    GetConstructListFunction(context,returnValue,DefruleData(theEnv)->DefruleConstruct);
   }
@@ -310,7 +310,7 @@ void GetDefruleListFunction(
 /****************************************/
 void EnvGetDefruleList(
   Environment *theEnv,
-  CLIPSValue *returnValue,
+  UDFValue *returnValue,
   Defmodule *theModule)
   {
    GetConstructList(theEnv,returnValue,DefruleData(theEnv)->DefruleConstruct,theModule);
@@ -323,7 +323,7 @@ void EnvGetDefruleList(
 void DefruleModuleFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    returnValue->value = GetConstructModuleCommand(context,"defrule-module",DefruleData(theEnv)->DefruleConstruct);
   }
@@ -337,7 +337,7 @@ void DefruleModuleFunction(
 void PPDefruleCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    PPConstructCommand(context,"ppdefrule",DefruleData(theEnv)->DefruleConstruct);
   }
@@ -361,7 +361,7 @@ bool PPDefrule(
 void ListDefrulesCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    ListConstructCommand(context,DefruleData(theEnv)->DefruleConstruct);
   }

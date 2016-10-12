@@ -65,15 +65,15 @@
 #include "evaluatn.h"
 
    void                           DeftemplateBasicCommands(Environment *);
-   void                           UndeftemplateCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           UndeftemplateCommand(Environment *,UDFContext *,UDFValue *);
    bool                           EnvUndeftemplate(Environment *,Deftemplate *);
-   void                           GetDeftemplateListFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           EnvGetDeftemplateList(Environment *,CLIPSValue *,Defmodule *);
-   void                           DeftemplateModuleFunction(Environment *,UDFContext *,CLIPSValue *);
+   void                           GetDeftemplateListFunction(Environment *,UDFContext *,UDFValue *);
+   void                           EnvGetDeftemplateList(Environment *,UDFValue *,Defmodule *);
+   void                           DeftemplateModuleFunction(Environment *,UDFContext *,UDFValue *);
 #if DEBUGGING_FUNCTIONS
-   void                           PPDeftemplateCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           PPDeftemplateCommand(Environment *,UDFContext *,UDFValue *);
    bool                           PPDeftemplate(Environment *,const char *,const char *);
-   void                           ListDeftemplatesCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           ListDeftemplatesCommand(Environment *,UDFContext *,UDFValue *);
    void                           EnvListDeftemplates(Environment *,const char *,Defmodule *);
    bool                           EnvGetDeftemplateWatch(Environment *,Deftemplate *);
    void                           EnvSetDeftemplateWatch(Environment *,bool,Deftemplate *);

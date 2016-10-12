@@ -103,10 +103,10 @@ typedef struct
 /***************************************/
 
    static void                    EvaluateProcParameters(Environment *,EXPRESSION *,int,const char *,const char *);
-   static bool                    RtnProcParam(Environment *,void *,CLIPSValue *);
-   static bool                    GetProcBind(Environment *,void *,CLIPSValue *);
-   static bool                    PutProcBind(Environment *,void *,CLIPSValue *);
-   static bool                    RtnProcWild(Environment *,void *,CLIPSValue *);
+   static bool                    RtnProcParam(Environment *,void *,UDFValue *);
+   static bool                    GetProcBind(Environment *,void *,UDFValue *);
+   static bool                    PutProcBind(Environment *,void *,UDFValue *);
+   static bool                    RtnProcWild(Environment *,void *,UDFValue *);
    static void                    DeallocateProceduralPrimitiveData(Environment *);
    static void                    ReleaseProcParameters(Environment *);
 
@@ -118,7 +118,7 @@ typedef struct
 #endif
 
 #if (! DEFFUNCTION_CONSTRUCT) || (! DEFGENERIC_CONSTRUCT)
-   static bool                    EvaluateBadCall(Environment *,void *,CLIPSValue *);
+   static bool                    EvaluateBadCall(Environment *,void *,UDFValue *);
 #endif
 
 /* =========================================
@@ -666,7 +666,7 @@ EXPRESSION *GenProcWildcardReference(
   RETURNS      : Nothing useful
   SIDE EFFECTS : Any side-effects of the evaluation of the
                    parameter expressions
-                 CLIPSValue array allocated (deallocated on errors)
+                 UDFValue array allocated (deallocated on errors)
                  ProcParamArray set
   NOTES        : EvaluationError set on errors
  *******************************************************************/
@@ -724,7 +724,7 @@ void PopProcParameters(
    PROC_PARAM_STACK *ptmp;
 
    if (ProceduralPrimitiveData(theEnv)->ProcParamArray != NULL)
-     rm(theEnv,ProceduralPrimitiveData(theEnv)->ProcParamArray,(sizeof(CLIPSValue) * ProceduralPrimitiveData(theEnv)->ProcParamArraySize));
+     rm(theEnv,ProceduralPrimitiveData(theEnv)->ProcParamArray,(sizeof(UDFValue) * ProceduralPrimitiveData(theEnv)->ProcParamArraySize));
 
 #if DEFGENERIC_CONSTRUCT
    if (ProceduralPrimitiveData(theEnv)->ProcParamExpressions != NULL)
@@ -745,7 +745,7 @@ void PopProcParameters(
       MultifieldDeinstall(theEnv,ProceduralPrimitiveData(theEnv)->WildcardValue->multifieldValue);
       if (ProceduralPrimitiveData(theEnv)->WildcardValue->value != ProceduralPrimitiveData(theEnv)->NoParamValue)
         AddToMultifieldList(theEnv,ProceduralPrimitiveData(theEnv)->WildcardValue->multifieldValue);
-      rtn_struct(theEnv,dataObject,ProceduralPrimitiveData(theEnv)->WildcardValue);
+      rtn_struct(theEnv,udfValue,ProceduralPrimitiveData(theEnv)->WildcardValue);
      }
    ProceduralPrimitiveData(theEnv)->WildcardValue = ptmp->WildcardValue;
    ProceduralPrimitiveData(theEnv)->ProcUnboundErrFunc = ptmp->UnboundErrFunc;
@@ -766,7 +766,7 @@ static void ReleaseProcParameters(
    PROC_PARAM_STACK *ptmp, *next;
 
    if (ProceduralPrimitiveData(theEnv)->ProcParamArray != NULL)
-     rm(theEnv,ProceduralPrimitiveData(theEnv)->ProcParamArray,(sizeof(CLIPSValue) * ProceduralPrimitiveData(theEnv)->ProcParamArraySize));
+     rm(theEnv,ProceduralPrimitiveData(theEnv)->ProcParamArray,(sizeof(UDFValue) * ProceduralPrimitiveData(theEnv)->ProcParamArraySize));
 
 
    if (ProceduralPrimitiveData(theEnv)->WildcardValue != NULL)
@@ -774,7 +774,7 @@ static void ReleaseProcParameters(
       if (ProceduralPrimitiveData(theEnv)->WildcardValue->value != ProceduralPrimitiveData(theEnv)->NoParamValue)
         { ReturnMultifield(theEnv,ProceduralPrimitiveData(theEnv)->WildcardValue->multifieldValue); }
 
-      rtn_struct(theEnv,dataObject,ProceduralPrimitiveData(theEnv)->WildcardValue);
+      rtn_struct(theEnv,udfValue,ProceduralPrimitiveData(theEnv)->WildcardValue);
      }
 
 #if DEFGENERIC_CONSTRUCT
@@ -789,7 +789,7 @@ static void ReleaseProcParameters(
       next = ptmp->nxt;
 
       if (ptmp->ParamArray != NULL)
-        { rm(theEnv,ptmp->ParamArray,(sizeof(CLIPSValue) * ptmp->ParamArraySize)); }
+        { rm(theEnv,ptmp->ParamArray,(sizeof(UDFValue) * ptmp->ParamArraySize)); }
 
 #if DEFGENERIC_CONSTRUCT
       if (ptmp->ParamExpressions != NULL)
@@ -801,7 +801,7 @@ static void ReleaseProcParameters(
          if (ptmp->WildcardValue->value != ProceduralPrimitiveData(theEnv)->NoParamValue)
            { ReturnMultifield(theEnv,ptmp->WildcardValue->multifieldValue); }
 
-         rtn_struct(theEnv,dataObject,ptmp->WildcardValue);
+         rtn_struct(theEnv,udfValue,ptmp->WildcardValue);
         }
 
       rtn_struct(theEnv,ProcParamStack,ptmp);
@@ -872,10 +872,10 @@ void EvaluateProcActions(
   Defmodule *theModule,
   EXPRESSION *actions,
   int lvarcnt,
-  CLIPSValue *returnValue,
+  UDFValue *returnValue,
   void (*crtproc)(Environment *))
   {
-   CLIPSValue *oldLocalVarArray;
+   UDFValue *oldLocalVarArray;
    int i;
    Defmodule *oldModule;
    EXPRESSION *oldActions;
@@ -883,10 +883,10 @@ void EvaluateProcActions(
 
    oldLocalVarArray = ProceduralPrimitiveData(theEnv)->LocalVarArray;
    ProceduralPrimitiveData(theEnv)->LocalVarArray = (lvarcnt == 0) ? NULL :
-                   (CLIPSValue *) gm2(theEnv,(sizeof(CLIPSValue) * lvarcnt));
+                   (UDFValue *) gm2(theEnv,(sizeof(UDFValue) * lvarcnt));
 
    if (lvarcnt != 0)
-     { theTM = AddTrackedMemory(theEnv,ProceduralPrimitiveData(theEnv)->LocalVarArray,sizeof(CLIPSValue) * lvarcnt); }
+     { theTM = AddTrackedMemory(theEnv,ProceduralPrimitiveData(theEnv)->LocalVarArray,sizeof(UDFValue) * lvarcnt); }
    else
      { theTM = NULL; }
 
@@ -918,7 +918,7 @@ void EvaluateProcActions(
       MultifieldDeinstall(theEnv,ProceduralPrimitiveData(theEnv)->WildcardValue->multifieldValue);
       if (ProceduralPrimitiveData(theEnv)->WildcardValue->value != ProceduralPrimitiveData(theEnv)->NoParamValue)
         AddToMultifieldList(theEnv,ProceduralPrimitiveData(theEnv)->WildcardValue->multifieldValue);
-      rtn_struct(theEnv,dataObject,ProceduralPrimitiveData(theEnv)->WildcardValue);
+      rtn_struct(theEnv,udfValue,ProceduralPrimitiveData(theEnv)->WildcardValue);
       ProceduralPrimitiveData(theEnv)->WildcardValue = NULL;
      }
 
@@ -928,7 +928,7 @@ void EvaluateProcActions(
       for (i = 0 ; i < lvarcnt ; i++)
         if (ProceduralPrimitiveData(theEnv)->LocalVarArray[i].supplementalInfo == theEnv->TrueSymbol)
           ValueDeinstall(theEnv,&ProceduralPrimitiveData(theEnv)->LocalVarArray[i]);
-      rm(theEnv,ProceduralPrimitiveData(theEnv)->LocalVarArray,(sizeof(CLIPSValue) * lvarcnt));
+      rm(theEnv,ProceduralPrimitiveData(theEnv)->LocalVarArray,(sizeof(UDFValue) * lvarcnt));
      }
 
    ProceduralPrimitiveData(theEnv)->LocalVarArray = oldLocalVarArray;
@@ -974,18 +974,18 @@ void PrintProcParamArray(
  ****************************************************************/
 void GrabProcWildargs(
   Environment *theEnv,
-  CLIPSValue *returnValue,
+  UDFValue *returnValue,
   int theIndex)
   {
    int i,j;
    long k; /* 6.04 Bug Fix */
    long size;
-   CLIPSValue *val;
+   UDFValue *val;
 
    returnValue->begin = 0;
    if (ProceduralPrimitiveData(theEnv)->WildcardValue == NULL)
      {
-      ProceduralPrimitiveData(theEnv)->WildcardValue = get_struct(theEnv,dataObject);
+      ProceduralPrimitiveData(theEnv)->WildcardValue = get_struct(theEnv,udfValue);
       ProceduralPrimitiveData(theEnv)->WildcardValue->begin = 0;
      }
    else if (theIndex == ProceduralPrimitiveData(theEnv)->Oldindex)
@@ -1057,7 +1057,7 @@ void GrabProcWildargs(
   RETURNS      : Nothing useful
   SIDE EFFECTS : Any side-effects of the evaluation of the
                    parameter expressions
-                 CLIPSValue array allocated (deallocated on errors)
+                 UDFValue array allocated (deallocated on errors)
                  ProcParamArray set
   NOTES        : EvaluationError set on errors
  *******************************************************************/
@@ -1068,7 +1068,7 @@ static void EvaluateProcParameters(
   const char *pname,
   const char *bodytype)
   {
-   CLIPSValue *rva,temp;
+   UDFValue *rva,temp;
    int i = 0;
 
    if (numberOfParameters == 0)
@@ -1078,7 +1078,7 @@ static void EvaluateProcParameters(
       return;
      }
 
-   rva = (CLIPSValue *) gm2(theEnv,(sizeof(CLIPSValue) * numberOfParameters));
+   rva = (UDFValue *) gm2(theEnv,(sizeof(UDFValue) * numberOfParameters));
    while (parameterList != NULL)
      {
       if ((EvaluateExpression(theEnv,parameterList,&temp) == true) ? true :
@@ -1099,7 +1099,7 @@ static void EvaluateProcParameters(
          EnvPrintRouter(theEnv,WERROR," ");
          EnvPrintRouter(theEnv,WERROR,pname);
          EnvPrintRouter(theEnv,WERROR,".\n");
-         rm(theEnv,rva,(sizeof(CLIPSValue) * numberOfParameters));
+         rm(theEnv,rva,(sizeof(UDFValue) * numberOfParameters));
          return;
         }
       rva[i].value = temp.value;
@@ -1128,9 +1128,9 @@ static void EvaluateProcParameters(
 static bool RtnProcParam(
   Environment *theEnv,
   void *value,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue *src;
+   UDFValue *src;
 
    src = &ProceduralPrimitiveData(theEnv)->ProcParamArray[*((int *) ((CLIPSBitMap *) value)->contents) - 1];
    returnValue->value = src->value;
@@ -1155,9 +1155,9 @@ static bool RtnProcParam(
 static bool GetProcBind(
   Environment *theEnv,
   void *value,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue *src;
+   UDFValue *src;
    PACKED_PROC_VAR *pvar;
 
    pvar = (PACKED_PROC_VAR *) ((CLIPSBitMap *) value)->contents;
@@ -1217,9 +1217,9 @@ static bool GetProcBind(
 static bool PutProcBind(
   Environment *theEnv,
   void *value,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue *dst;
+   UDFValue *dst;
 
    dst = &ProceduralPrimitiveData(theEnv)->LocalVarArray[*((int *) ((CLIPSBitMap *) value)->contents) - 1];
    if (GetFirstArgument() == NULL)
@@ -1262,7 +1262,7 @@ static bool PutProcBind(
 static bool RtnProcWild(
   Environment *theEnv,
   void *value,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    GrabProcWildargs(theEnv,returnValue,*(int *) ((CLIPSBitMap *) value)->contents);
    return true;
@@ -1429,7 +1429,7 @@ static EXPRESSION *CompactActions(
 static bool EvaluateBadCall(
   Environment *theEnv,
   void *value,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
 #if MAC_XCD
 #pragma unused(value)

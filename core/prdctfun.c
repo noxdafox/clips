@@ -102,9 +102,9 @@ void PredicateFunctionDefinitions(
 void EqFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue item, nextItem;
+   UDFValue item, nextItem;
    int numArgs, i;
    struct expr *theExpression;
 
@@ -175,9 +175,9 @@ void EqFunction(
 void NeqFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue item, nextItem;
+   UDFValue item, nextItem;
    int numArgs, i;
    struct expr *theExpression;
 
@@ -242,9 +242,9 @@ void NeqFunction(
 void StringpFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue item;
+   UDFValue item;
 
    if (! UDFFirstArgument(context,ANY_TYPE,&item))
      { return; }
@@ -262,9 +262,9 @@ void StringpFunction(
 void SymbolpFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue item;
+   UDFValue item;
 
    if (! UDFFirstArgument(context,ANY_TYPE,&item))
      { return; }
@@ -282,9 +282,9 @@ void SymbolpFunction(
 void LexemepFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue item;
+   UDFValue item;
 
    if (! UDFFirstArgument(context,ANY_TYPE,&item))
      { return; }
@@ -302,9 +302,9 @@ void LexemepFunction(
 void NumberpFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue item;
+   UDFValue item;
 
    if (! UDFFirstArgument(context,ANY_TYPE,&item))
      { return; }
@@ -322,9 +322,9 @@ void NumberpFunction(
 void FloatpFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue item;
+   UDFValue item;
 
    if (! UDFFirstArgument(context,ANY_TYPE,&item))
      { return; }
@@ -342,9 +342,9 @@ void FloatpFunction(
 void IntegerpFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue item;
+   UDFValue item;
 
    if (! UDFFirstArgument(context,ANY_TYPE,&item))
      { return; }
@@ -362,9 +362,9 @@ void IntegerpFunction(
 void MultifieldpFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue item;
+   UDFValue item;
 
    if (! UDFFirstArgument(context,ANY_TYPE,&item))
      { return; }
@@ -382,9 +382,9 @@ void MultifieldpFunction(
 void PointerpFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue item;
+   UDFValue item;
 
    if (! UDFFirstArgument(context,ANY_TYPE,&item))
      { return; }
@@ -402,9 +402,9 @@ void PointerpFunction(
 void NotFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    if (! UDFFirstArgument(context,ANY_TYPE,&theArg))
      { return; }
@@ -422,9 +422,9 @@ void NotFunction(
 void AndFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    while (UDFHasNextArgument(context))
      {
@@ -448,9 +448,9 @@ void AndFunction(
 void OrFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    while (UDFHasNextArgument(context))
      {
@@ -474,9 +474,9 @@ void OrFunction(
 void LessThanOrEqualFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue rv1, rv2;
+   UDFValue rv1, rv2;
 
    /*=========================*/
    /* Get the first argument. */
@@ -530,9 +530,9 @@ void LessThanOrEqualFunction(
 void GreaterThanOrEqualFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue rv1, rv2;
+   UDFValue rv1, rv2;
 
    /*=========================*/
    /* Get the first argument. */
@@ -586,9 +586,9 @@ void GreaterThanOrEqualFunction(
 void LessThanFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue rv1, rv2;
+   UDFValue rv1, rv2;
 
    /*=========================*/
    /* Get the first argument. */
@@ -643,9 +643,9 @@ void LessThanFunction(
 void GreaterThanFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue rv1, rv2;
+   UDFValue rv1, rv2;
 
    /*=========================*/
    /* Get the first argument. */
@@ -700,9 +700,9 @@ void GreaterThanFunction(
 void NumericEqualFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue rv1, rv2;
+   UDFValue rv1, rv2;
 
    /*=========================*/
    /* Get the first argument. */
@@ -754,9 +754,9 @@ void NumericEqualFunction(
 void NumericNotEqualFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue rv1, rv2;
+   UDFValue rv1, rv2;
 
    /*=========================*/
    /* Get the first argument. */
@@ -808,9 +808,9 @@ void NumericNotEqualFunction(
 void OddpFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue item;
+   UDFValue item;
    long long num, halfnum;
 
    /*===========================================*/
@@ -838,9 +838,9 @@ void OddpFunction(
 void EvenpFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue item;
+   UDFValue item;
    long long num, halfnum;
 
    /*===========================================*/

@@ -83,10 +83,10 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static CLIPSValue             *EvaluateSlotOverrides(Environment *,EXPRESSION *,int *,bool *);
-   static void                    DeleteSlotOverrideEvaluations(Environment *,CLIPSValue *,int);
-   static void                    ModifyMsgHandlerSupport(Environment *,CLIPSValue *,bool);
-   static void                    DuplicateMsgHandlerSupport(Environment *,CLIPSValue *,bool);
+   static UDFValue             *EvaluateSlotOverrides(Environment *,EXPRESSION *,int *,bool *);
+   static void                    DeleteSlotOverrideEvaluations(Environment *,UDFValue *,int);
+   static void                    ModifyMsgHandlerSupport(Environment *,UDFValue *,bool);
+   static void                    DuplicateMsgHandlerSupport(Environment *,UDFValue *,bool);
 
 /* =========================================
    *****************************************
@@ -156,11 +156,11 @@ void SetupInstanceModDupCommands(
 void ModifyInstance(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Instance *ins;
    EXPRESSION theExp;
-   CLIPSValue *overrides;
+   UDFValue *overrides;
    bool oldOMDMV;
    int overrideCount;
    bool error;
@@ -226,11 +226,11 @@ void ModifyInstance(
 void MsgModifyInstance(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Instance *ins;
    EXPRESSION theExp;
-   CLIPSValue *overrides;
+   UDFValue *overrides;
    bool oldOMDMV;
    int overrideCount;
    bool error;
@@ -295,12 +295,12 @@ void MsgModifyInstance(
 void DuplicateInstance(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Instance *ins;
-   CLIPSValue newName;
+   UDFValue newName;
    EXPRESSION theExp[2];
-   CLIPSValue *overrides;
+   UDFValue *overrides;
    bool oldOMDMV;
    int overrideCount;
    bool error;
@@ -375,12 +375,12 @@ void DuplicateInstance(
 void MsgDuplicateInstance(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Instance *ins;
-   CLIPSValue newName;
+   UDFValue newName;
    EXPRESSION theExp[2];
-   CLIPSValue *overrides;
+   UDFValue *overrides;
    bool oldOMDMV;
    int overrideCount;
    bool error;
@@ -457,7 +457,7 @@ void MsgDuplicateInstance(
 void InactiveModifyInstance(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    bool ov;
 
@@ -481,7 +481,7 @@ void InactiveModifyInstance(
 void InactiveMsgModifyInstance(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    bool ov;
 
@@ -505,7 +505,7 @@ void InactiveMsgModifyInstance(
 void InactiveDuplicateInstance(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    bool ov;
 
@@ -530,7 +530,7 @@ void InactiveDuplicateInstance(
 void InactiveMsgDuplicateInstance(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    bool ov;
 
@@ -558,7 +558,7 @@ void InactiveMsgDuplicateInstance(
 void DirectDuplicateMsgHandler(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    DuplicateMsgHandlerSupport(theEnv,returnValue,false);
   }
@@ -579,7 +579,7 @@ void DirectDuplicateMsgHandler(
 void MsgDuplicateMsgHandler(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    DuplicateMsgHandlerSupport(theEnv,returnValue,true);
   }
@@ -601,7 +601,7 @@ void MsgDuplicateMsgHandler(
 void DirectModifyMsgHandler(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    ModifyMsgHandlerSupport(theEnv,returnValue,false);
   }
@@ -622,7 +622,7 @@ void DirectModifyMsgHandler(
 void MsgModifyMsgHandler(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    ModifyMsgHandlerSupport(theEnv,returnValue,true);
   }
@@ -655,13 +655,13 @@ void MsgModifyMsgHandler(
                  event that the overrides contain variable
                  references to an outer frame
  ***********************************************************/
-static CLIPSValue *EvaluateSlotOverrides(
+static UDFValue *EvaluateSlotOverrides(
   Environment *theEnv,
   EXPRESSION *ovExprs,
   int *ovCnt,
   bool *error)
   {
-   CLIPSValue *ovs;
+   UDFValue *ovs;
    int ovi;
    void *slotName;
 
@@ -680,7 +680,7 @@ static CLIPSValue *EvaluateSlotOverrides(
       Evaluate all the slot override names and values
       and store them in a contiguous array
       =============================================== */
-   ovs = (CLIPSValue *) gm2(theEnv,(sizeof(CLIPSValue) * (*ovCnt)));
+   ovs = (UDFValue *) gm2(theEnv,(sizeof(UDFValue) * (*ovCnt)));
    ovi = 0;
    while (ovExprs != NULL)
      {
@@ -714,7 +714,7 @@ static CLIPSValue *EvaluateSlotOverrides(
    return(ovs);
 
 EvaluateOverridesError:
-   rm(theEnv,ovs,(sizeof(CLIPSValue) * (*ovCnt)));
+   rm(theEnv,ovs,(sizeof(UDFValue) * (*ovCnt)));
    *error = true;
    return NULL;
   }
@@ -731,11 +731,11 @@ EvaluateOverridesError:
  **********************************************************/
 static void DeleteSlotOverrideEvaluations(
   Environment *theEnv,
-  CLIPSValue *ovEvals,
+  UDFValue *ovEvals,
   int ovCnt)
   {
    if (ovEvals != NULL)
-     rm(theEnv,ovEvals,(sizeof(CLIPSValue) * ovCnt));
+     rm(theEnv,ovEvals,(sizeof(UDFValue) * ovCnt));
   }
 
 /**********************************************************
@@ -754,10 +754,10 @@ static void DeleteSlotOverrideEvaluations(
  **********************************************************/
 static void ModifyMsgHandlerSupport(
   Environment *theEnv,
-  CLIPSValue *returnValue,
+  UDFValue *returnValue,
   bool msgpass)
   {
-   CLIPSValue *slotOverrides,*newval,temp,junk;
+   UDFValue *slotOverrides,*newval,temp,junk;
    EXPRESSION msgExp;
    Instance *ins;
    INSTANCE_SLOT *insSlot;
@@ -787,7 +787,7 @@ static void ModifyMsgHandlerSupport(
       field - and the next fields are links
       ======================================= */
 
-   slotOverrides = (CLIPSValue *) ((CLIPSExternalAddress *) GetNthMessageArgument(theEnv,1)->value)->contents;
+   slotOverrides = (UDFValue *) ((CLIPSExternalAddress *) GetNthMessageArgument(theEnv,1)->value)->contents;
 
    while (slotOverrides != NULL)
      {
@@ -851,17 +851,17 @@ static void ModifyMsgHandlerSupport(
  *************************************************************/
 static void DuplicateMsgHandlerSupport(
   Environment *theEnv,
-  CLIPSValue *returnValue,
+  UDFValue *returnValue,
   bool msgpass)
   {
    Instance *srcins,*dstins;
    CLIPSLexeme *newName;
-   CLIPSValue *slotOverrides;
+   UDFValue *slotOverrides;
    EXPRESSION *valArg,msgExp;
    long i;
    int oldMkInsMsgPass;
    INSTANCE_SLOT *dstInsSlot;
-   CLIPSValue temp,junk,*newval;
+   UDFValue temp,junk,*newval;
    bool success;
 
    returnValue->value = theEnv->FalseSymbol;
@@ -881,7 +881,7 @@ static void DuplicateMsgHandlerSupport(
       ================================== */
    srcins = GetActiveInstance(theEnv);
    newName = GetNthMessageArgument(theEnv,1)->lexemeValue;
-   slotOverrides = (CLIPSValue *) ((CLIPSExternalAddress *) GetNthMessageArgument(theEnv,2)->value)->contents;
+   slotOverrides = (UDFValue *) ((CLIPSExternalAddress *) GetNthMessageArgument(theEnv,2)->value)->contents;
    if (srcins->garbage)
      {
       StaleInstanceAddress(theEnv,"duplicate-instance",0);

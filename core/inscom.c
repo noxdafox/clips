@@ -416,12 +416,12 @@ bool EnvUnmakeInstance(
 void InstancesCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    bool inheritFlag = false;
    Defmodule *theDefmodule;
    const char *className = NULL;
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    theDefmodule = EnvGetCurrentModule(theEnv);
 
@@ -480,7 +480,7 @@ void InstancesCommand(
 void PPInstanceCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Instance *ins;
 
@@ -588,7 +588,7 @@ Instance *EnvMakeInstance(
    const char *router = "***MKINS***";
    struct token tkn;
    EXPRESSION *top;
-   CLIPSValue returnValue;
+   UDFValue returnValue;
 
    returnValue.value = theEnv->FalseSymbol;
    if (OpenStringSource(theEnv,router,mkstr,0) == 0)
@@ -708,7 +708,7 @@ void EnvDirectGetSlot(
   Environment *theEnv,
   Instance *theInstance,
   const char *sname,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    INSTANCE_SLOT *sp;
 
@@ -754,10 +754,10 @@ bool EnvDirectPutSlot(
   Environment *theEnv,
   Instance *theInstance,
   const char *sname,
-  CLIPSValue *val)
+  UDFValue *val)
   {
    INSTANCE_SLOT *sp;
-   CLIPSValue junk;
+   UDFValue junk;
 
    if ((theInstance->garbage == 1) || (val == NULL))
      {
@@ -946,7 +946,7 @@ Instance *EnvGetNextInstanceInClassAndSubclasses(
   Environment *theEnv,
   Defclass **cptr,
   Instance *theInstance,
-  CLIPSValue *iterationInfo)
+  UDFValue *iterationInfo)
   {
    Instance *nextInstance;
    Defclass *theClass;
@@ -1019,11 +1019,11 @@ void EnvGetInstancePPForm(
 void ClassCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Instance *ins;
    const char *func;
-   CLIPSValue temp;
+   UDFValue temp;
 
    func = ((struct FunctionDefinition *)
            EvaluationData(theEnv)->CurrentExpression->value)->callFunctionName->contents;
@@ -1088,7 +1088,7 @@ void ClassCommand(
 void CreateInstanceHandler(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
 #if MAC_XCD
 #pragma unused(theEnv,context)
@@ -1112,7 +1112,7 @@ void CreateInstanceHandler(
 void DeleteInstanceCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    if (CheckCurrentMessage(theEnv,"delete-instance",true))
      { returnValue->lexemeValue = EnvCreateBoolean(theEnv,QuashInstance(theEnv,GetActiveInstance(theEnv))); }
@@ -1132,9 +1132,9 @@ void DeleteInstanceCommand(
 void UnmakeInstanceCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
    Instance *ins;
    int argNumber = 1;
    bool rtn = true;
@@ -1198,7 +1198,7 @@ void UnmakeInstanceCommand(
 void SymbolToInstanceNameFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    if (! UDFFirstArgument(context,SYMBOL_TYPE,returnValue))
      { return; }
@@ -1218,7 +1218,7 @@ void SymbolToInstanceNameFunction(
 void InstanceNameToSymbolFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    if (! UDFFirstArgument(context,INSTANCE_NAME_TYPE | SYMBOL_TYPE,returnValue))
      { return; }
@@ -1237,10 +1237,10 @@ void InstanceNameToSymbolFunction(
 void InstanceAddressCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Instance *ins;
-   CLIPSValue temp;
+   UDFValue temp;
    Defmodule *theModule;
    bool searchImports;
 
@@ -1316,10 +1316,10 @@ void InstanceAddressCommand(
 void InstanceNameCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Instance *ins;
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    returnValue->lexemeValue = theEnv->FalseSymbol;
    if (! UDFFirstArgument(context,INSTANCE_TYPES | SYMBOL_TYPE,&theArg))
@@ -1359,9 +1359,9 @@ void InstanceNameCommand(
 void InstanceAddressPCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    if (! UDFFirstArgument(context,ANY_TYPE,&theArg))
      { return; }
@@ -1383,9 +1383,9 @@ void InstanceAddressPCommand(
 void InstanceNamePCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    if (! UDFFirstArgument(context,ANY_TYPE,&theArg))
      { return; }
@@ -1406,9 +1406,9 @@ void InstanceNamePCommand(
 void InstancePCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    if (! UDFFirstArgument(context,ANY_TYPE,&theArg))
      { return; }
@@ -1427,9 +1427,9 @@ void InstancePCommand(
 void InstanceExistPCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    if (! UDFFirstArgument(context,ANY_TYPE,&theArg))
      { return; }

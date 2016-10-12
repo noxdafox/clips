@@ -598,7 +598,7 @@ static int ReplaceRHSVariable(
    /* Check to see if the variable is bound on the LHS of the rule. */
    /*===============================================================*/
 
-   theVariable = FindVariable((CLIPSLexeme *) list->value,(struct lhsParseNode *) VtheLHS);
+   theVariable = FindVariable(list->lexemeValue,(struct lhsParseNode *) VtheLHS);
    if (theVariable == NULL) return 0;
 
    /*================================================*/

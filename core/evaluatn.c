@@ -107,7 +107,7 @@
 
    static void                    DeallocateEvaluationData(Environment *);
    static void                    PrintCAddress(Environment *,const char *,void *);
-   static void                    NewCAddress(UDFContext *,CLIPSValue *);
+   static void                    NewCAddress(UDFContext *,UDFValue *);
    /*
    static bool                    DiscardCAddress(void *,void *);
    */
@@ -146,7 +146,7 @@ static void DeallocateEvaluationData(
 bool EvaluateExpression(
   Environment *theEnv,
   struct expr *problem,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    struct expr *oldArgument;
    void *oldContext;
@@ -210,9 +210,9 @@ bool EvaluateExpression(
         }
 
      case MULTIFIELD:
-        returnValue->value = ((CLIPSValue *) (problem->value))->value;
-        returnValue->begin = ((CLIPSValue *) (problem->value))->begin;
-        returnValue->end = ((CLIPSValue *) (problem->value))->end;
+        returnValue->value = ((UDFValue *) (problem->value))->value;
+        returnValue->begin = ((UDFValue *) (problem->value))->begin;
+        returnValue->end = ((UDFValue *) (problem->value))->end;
         break;
 
      case MF_VARIABLE:
@@ -353,15 +353,15 @@ bool EnvGetHaltExecution(
   }
 
 /*****************************************************/
-/* ReturnValues: Returns a linked list of CLIPSValue */
+/* ReturnValues: Returns a linked list of UDFValue */
 /*   structures to the pool of free memory.          */
 /*****************************************************/
 void ReturnValues(
   Environment *theEnv,
-  CLIPSValue *garbagePtr,
+  UDFValue *garbagePtr,
   bool decrementSupplementalInfo)
   {
-   CLIPSValue *nextPtr;
+   UDFValue *nextPtr;
 
    while (garbagePtr != NULL)
      {
@@ -369,19 +369,19 @@ void ReturnValues(
       ValueDeinstall(theEnv,garbagePtr);
       if ((garbagePtr->supplementalInfo != NULL) && decrementSupplementalInfo)
         { DecrementSymbolCount(theEnv,(struct symbolHashNode *) garbagePtr->supplementalInfo); }
-      rtn_struct(theEnv,dataObject,garbagePtr);
+      rtn_struct(theEnv,udfValue,garbagePtr);
       garbagePtr = nextPtr;
      }
   }
 
 /**************************************************/
-/* PrintDataObject: Prints a CLIPSValue structure */
+/* PrintDataObject: Prints a UDFValue structure */
 /*   to the specified logical name.               */
 /**************************************************/
 void PrintDataObject(
   Environment *theEnv,
   const char *fileid,
-  CLIPSValue *argPtr)
+  UDFValue *argPtr)
   {
    switch(argPtr->header->type)
      {
@@ -420,7 +420,7 @@ void PrintDataObject(
 /****************************************************/
 void EnvSetMultifieldErrorValue(
   Environment *theEnv,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    returnValue->value = EnvCreateMultifield(theEnv,0L);
    returnValue->begin = 1;
@@ -429,11 +429,11 @@ void EnvSetMultifieldErrorValue(
 
 /**************************************************/
 /* ValueInstall: Increments the appropriate count */
-/*   (in use) values for a CLIPSValue structure.  */
+/*   (in use) values for a UDFValue structure.  */
 /**************************************************/
 void ValueInstall(
   Environment *theEnv,
-  CLIPSValue *vPtr)
+  UDFValue *vPtr)
   {
    if (vPtr->header->type == MULTIFIELD)
      { CVMultifieldInstall(theEnv,vPtr->multifieldValue); }
@@ -443,11 +443,11 @@ void ValueInstall(
 
 /****************************************************/
 /* ValueDeinstall: Decrements the appropriate count */
-/*   (in use) values for a CLIPSValue structure.    */
+/*   (in use) values for a UDFValue structure.    */
 /****************************************************/
 void ValueDeinstall(
   Environment *theEnv,
-  CLIPSValue *vPtr)
+  UDFValue *vPtr)
   {
    if (vPtr->header->type == MULTIFIELD)
      { CVMultifieldDeinstall(theEnv,vPtr->multifieldValue); }
@@ -669,7 +669,7 @@ bool EnvFunctionCall(
   Environment *theEnv,
   const char *name,
   const char *args,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    FUNCTION_REFERENCE theReference;
 
@@ -702,7 +702,7 @@ bool FunctionCall2(
   Environment *theEnv,
   FUNCTION_REFERENCE *theReference,
   const char *args,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    EXPRESSION *argexps;
    bool error = false;
@@ -764,12 +764,12 @@ bool FunctionCall2(
 
 /***************************************************/
 /* CopyDataObject: Copies the values from a source */
-/*   CLIPSValue to a destination CLIPSValue.       */
+/*   UDFValue to a destination UDFValue.       */
 /***************************************************/
 void CopyDataObject(
   Environment *theEnv,
-  CLIPSValue *dst,
-  CLIPSValue *src,
+  UDFValue *dst,
+  UDFValue *src,
   int garbageMultifield)
   {
    if (src->header->type != MULTIFIELD)
@@ -786,12 +786,12 @@ void CopyDataObject(
 
 /***********************************************/
 /* TransferDataObjectValues: Copies the values */
-/*   directly from a source CLIPSValue to a    */
-/*   destination CLIPSValue.                   */
+/*   directly from a source UDFValue to a    */
+/*   destination UDFValue.                   */
 /***********************************************/
 void TransferDataObjectValues(
-  CLIPSValue *dst,
-  CLIPSValue *src)
+  UDFValue *dst,
+  UDFValue *src)
   {
    dst->value = src->value;
    dst->begin = src->begin;
@@ -808,7 +808,7 @@ void TransferDataObjectValues(
 /************************************************************************/
 struct expr *ConvertValueToExpression(
   Environment *theEnv,
-  CLIPSValue *theValue)
+  UDFValue *theValue)
   {
    long i;
    struct expr *head = NULL, *last = NULL, *newItem;
@@ -1018,8 +1018,8 @@ bool GetFunctionReference(
 /* DOsEqual: Determines if two DATA_OBJECTS are equal. */
 /*******************************************************/
 bool DOsEqual(
-  CLIPSValue *dobj1,
-  CLIPSValue *dobj2)
+  UDFValue *dobj1,
+  UDFValue *dobj2)
   {
    if (dobj1->header->type != dobj2->header->type)
      { return false; }
@@ -1054,7 +1054,7 @@ bool EvaluateAndStoreInDataObject(
   Environment *theEnv,
   bool mfp,
   EXPRESSION *theExp,
-  CLIPSValue *val,
+  UDFValue *val,
   bool garbageSegment)
   {
    val->begin = 0;
@@ -1098,7 +1098,7 @@ static void PrintCAddress(
 /****************/
 static void NewCAddress(
   UDFContext *context,
-  CLIPSValue *rv)
+  UDFValue *rv)
   {
    int numberOfArguments;
    Environment *theEnv = context->environment;

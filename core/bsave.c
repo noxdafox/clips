@@ -114,7 +114,7 @@ static void DeallocateBsaveData(
 void BsaveCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
 #if (! RUN_TIME) && BLOAD_AND_BSAVE
    const char *fileName;

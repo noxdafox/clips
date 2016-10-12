@@ -392,7 +392,7 @@ static void ResetFactHashTable(
 void ShowFactHashTableCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    int i, count;
    struct factHashEntry *theEntry;

@@ -599,9 +599,9 @@ void Dependents(
 void DependenciesCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue item;
+   UDFValue item;
    void *ptr;
 
    ptr = GetFactOrInstanceArgument(context,1,&item);
@@ -622,9 +622,9 @@ void DependenciesCommand(
 void DependentsCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue item;
+   UDFValue item;
    void *ptr;
 
    ptr = GetFactOrInstanceArgument(context,1,&item);

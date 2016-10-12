@@ -71,11 +71,10 @@
 #define _H_evaluatn
 
 struct entityRecord;
-struct dataObject;
+struct udfValue;
 
-typedef struct genericValue GenericValue;
-typedef struct dataObject CLIPSValue;
-typedef struct dataObject * CLIPSValuePtr;
+typedef struct clipsValue CLIPSValue;
+typedef struct udfValue UDFValue;
 typedef struct expr FUNCTION_REFERENCE;
 typedef struct typeHeader TypeHeader;
 
@@ -85,7 +84,7 @@ struct typeHeader
   };
 
 typedef void EntityPrintFunction(Environment *,const char *,void *);
-typedef bool EntityEvaluationFunction(Environment *,void *,CLIPSValue *);
+typedef bool EntityEvaluationFunction(Environment *,void *,UDFValue *);
 typedef void EntityBusyCountFunction(Environment *,void *);
 
 #include "constant.h"
@@ -120,7 +119,7 @@ struct entityRecord
 #include "factmngr.h"
 #include "object.h"
 
-struct genericValue
+struct clipsValue
   {
    union
      {
@@ -137,7 +136,7 @@ struct genericValue
      };
   };
 
-struct dataObject
+struct udfValue
   {
    void *supplementalInfo;
    union
@@ -155,7 +154,7 @@ struct dataObject
      };
    long begin;
    long end;
-   struct dataObject *next;
+   struct udfValue *next;
   };
 
 struct externalAddressType
@@ -164,8 +163,8 @@ struct externalAddressType
    void (*shortPrintFunction)(Environment *,const char *,void *);
    void (*longPrintFunction)(Environment *,const char *,void *);
    bool (*discardFunction)(Environment *,void *);
-   void (*newFunction)(UDFContext *,CLIPSValue *);
-   bool (*callFunction)(UDFContext *,CLIPSValue *,CLIPSValue *);
+   void (*newFunction)(UDFContext *,UDFValue *);
+   bool (*callFunction)(UDFContext *,UDFValue *,UDFValue *);
   };
 
 typedef struct entityRecord ENTITY_RECORD;
@@ -211,34 +210,34 @@ struct evaluationData
 #define EvaluationData(theEnv) ((struct evaluationData *) GetEnvironmentData(theEnv,EVALUATION_DATA))
 
    void                           InitializeEvaluationData(Environment *);
-   bool                           EvaluateExpression(Environment *,struct expr *,CLIPSValue *);
+   bool                           EvaluateExpression(Environment *,struct expr *,UDFValue *);
    void                           EnvSetEvaluationError(Environment *,bool);
    bool                           EnvGetEvaluationError(Environment *);
    void                           EnvSetHaltExecution(Environment *,bool);
    bool                           EnvGetHaltExecution(Environment *);
-   void                           ReturnValues(Environment *,CLIPSValue *,bool);
-   void                           PrintDataObject(Environment *,const char *,CLIPSValue *);
-   void                           EnvSetMultifieldErrorValue(Environment *,CLIPSValue *);
-   void                           ValueInstall(Environment *,CLIPSValue *);
-   void                           ValueDeinstall(Environment *,CLIPSValue *);
+   void                           ReturnValues(Environment *,UDFValue *,bool);
+   void                           PrintDataObject(Environment *,const char *,UDFValue *);
+   void                           EnvSetMultifieldErrorValue(Environment *,UDFValue *);
+   void                           ValueInstall(Environment *,UDFValue *);
+   void                           ValueDeinstall(Environment *,UDFValue *);
 #if DEFFUNCTION_CONSTRUCT || DEFGENERIC_CONSTRUCT
-   bool                           EnvFunctionCall(Environment *,const char *,const char *,CLIPSValue *);
-   bool                           FunctionCall2(Environment *,FUNCTION_REFERENCE *,const char *,CLIPSValue *);
+   bool                           EnvFunctionCall(Environment *,const char *,const char *,UDFValue *);
+   bool                           FunctionCall2(Environment *,FUNCTION_REFERENCE *,const char *,UDFValue *);
 #endif
-   void                           CopyDataObject(Environment *,CLIPSValue *,CLIPSValue *,int);
+   void                           CopyDataObject(Environment *,UDFValue *,UDFValue *,int);
    void                           AtomInstall(Environment *,int,void *);
    void                           AtomDeinstall(Environment *,int,void *);
    void                           CVAtomInstall(Environment *,void *);
    void                           CVAtomDeinstall(Environment *,void *);
-   struct expr                   *ConvertValueToExpression(Environment *,CLIPSValue *);
+   struct expr                   *ConvertValueToExpression(Environment *,UDFValue *);
    unsigned long                  GetAtomicHashValue(unsigned short,void *,int);
    void                           InstallPrimitive(Environment *,struct entityRecord *,int);
    int                            InstallExternalAddressType(Environment *,struct externalAddressType *);
-   void                           TransferDataObjectValues(CLIPSValue *,CLIPSValue *);
+   void                           TransferDataObjectValues(UDFValue *,UDFValue *);
    struct expr                   *FunctionReferenceExpression(Environment *,const char *);
    bool                           GetFunctionReference(Environment *,const char *,FUNCTION_REFERENCE *);
-   bool                           DOsEqual(CLIPSValue *,CLIPSValue *);
-   bool                           EvaluateAndStoreInDataObject(Environment *,bool,EXPRESSION *,CLIPSValue *,bool);
+   bool                           DOsEqual(UDFValue *,UDFValue *);
+   bool                           EvaluateAndStoreInDataObject(Environment *,bool,EXPRESSION *,UDFValue *,bool);
 
 #define CVIsType(cv,cvType) ((1 << (((TypeHeader *) (cv)->value)->type)) & (cvType))
 

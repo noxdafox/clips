@@ -88,7 +88,7 @@ struct printUtilityData
    void                           PrintTally(Environment *,const char *,long long,const char *,const char *);
    const char                    *FloatToString(Environment *,double);
    const char                    *LongIntegerToString(Environment *,long long);
-   const char                    *DataObjectToString(Environment *,CLIPSValue *);
+   const char                    *DataObjectToString(Environment *,UDFValue *);
    void                           SyntaxErrorMessage(Environment *,const char *);
    void                           SystemError(Environment *,const char *,int);
    void                           PrintErrorID(Environment *,const char *,int,bool);

@@ -10,13 +10,13 @@ static void       DeallocateJNIData(Environment *);
 void JNIUserFunction(
   Environment *theEnv,
   UDFContext *theUDFContext,
-  CLIPSValue *result)
+  UDFValue *result)
   {
    JNIEnv *env;
    jobject context;
    jobject arguments, targ, rv;
    int i, argCount;
-   CLIPSValue theArg;
+   UDFValue theArg;
    
    result->voidValue = theEnv->VoidConstant;
 
@@ -325,14 +325,14 @@ void PrintJavaAddress(
 /********************/
 void NewJavaAddress(
   UDFContext *context,
-  CLIPSValue *rv)
+  UDFValue *rv)
   {
    jclass theClass, tempClass;
    int i, numberOfArguments;
    JNIEnv *env;
    const char *className;
    char *classDescriptor;
-   CLIPSValue theValue;
+   UDFValue theValue;
    size_t length;
    jmethodID mid;
    jobjectArray constructorList, parameterList;
@@ -340,7 +340,7 @@ void NewJavaAddress(
    jsize paramCount, p; 
    jobject theConstructor, theObject, oldObject; 
    bool found = false, matches;
-   CLIPSValue *newArgs;
+   UDFValue *newArgs;
    jvalue *javaArgs;
    Environment *theEnv = context->environment;
    
@@ -419,7 +419,7 @@ void NewJavaAddress(
      { newArgs = NULL; }
    else
      {
-      newArgs = (CLIPSValue *) genalloc(theEnv,sizeof(CLIPSValue) * (numberOfArguments - 2));
+      newArgs = (UDFValue *) genalloc(theEnv,sizeof(UDFValue) * (numberOfArguments - 2));
       for (i = 0; i < numberOfArguments - 2; i++)
         {
          UDFNthArgument(context,i+3,ANY_TYPE,&newArgs[i]);
@@ -564,13 +564,13 @@ void NewJavaAddress(
       (*env)->DeleteLocalRef(env,oldObject);
      }
 
-   /*============================================*/
-   /* Return the array containing the CLIPSValue */
-   /* arguments to the new function.             */
-   /*============================================*/
+   /*==========================================*/
+   /* Return the array containing the UDFValue */
+   /* arguments to the new function.           */
+   /*==========================================*/
    
    if (newArgs != NULL)
-     { genfree(theEnv,newArgs,sizeof(CLIPSValue) * (numberOfArguments - 2)); }
+     { genfree(theEnv,newArgs,sizeof(UDFValue) * (numberOfArguments - 2)); }
      
    if (javaArgs != NULL)
      { genfree(theEnv,javaArgs,sizeof(jvalue) * (numberOfArguments - 2)); }
@@ -603,8 +603,8 @@ void NewJavaAddress(
 /*******************/
 bool CallJavaMethod(
   UDFContext *context,
-  CLIPSValue *target,
-  CLIPSValue *rv)
+  UDFValue *target,
+  UDFValue *rv)
   {
    int numberOfArguments;
    jobject theObject, theMethod;

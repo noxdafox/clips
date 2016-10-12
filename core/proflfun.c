@@ -156,10 +156,10 @@ void DeleteProfileData(
 void ProfileCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    const char *argument;
-   CLIPSValue theValue;
+   UDFValue theValue;
 
    if (! UDFFirstArgument(context,SYMBOL_TYPE,&theValue)) return;
    argument = theValue.lexemeValue->contents;
@@ -236,7 +236,7 @@ bool Profile(
 void ProfileInfoCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    char buffer[512];
 
@@ -428,7 +428,7 @@ static bool OutputProfileInfo(
 void ProfileResetCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    struct FunctionDefinition *theFunction;
    int i;
@@ -707,9 +707,9 @@ static void OutputConstructsCodeInfo(
 void SetProfilePercentThresholdCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theValue;
+   UDFValue theValue;
    double newThreshold;
 
    if (! UDFFirstArgument(context,NUMBER_TYPES,&theValue))
@@ -753,7 +753,7 @@ double SetProfilePercentThreshold(
 void GetProfilePercentThresholdCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    returnValue->floatValue = EnvCreateFloat(theEnv,ProfileFunctionData(theEnv)->PercentThreshold);
   }

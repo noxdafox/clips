@@ -64,22 +64,22 @@
    void                           SetupInstanceModDupCommands(Environment *);
 #endif
 
-   void                           ModifyInstance(Environment *,UDFContext *,CLIPSValue *);
-   void                           MsgModifyInstance(Environment *,UDFContext *,CLIPSValue *);
-   void                           DuplicateInstance(Environment *,UDFContext *,CLIPSValue *);
-   void                           MsgDuplicateInstance(Environment *,UDFContext *,CLIPSValue *);
+   void                           ModifyInstance(Environment *,UDFContext *,UDFValue *);
+   void                           MsgModifyInstance(Environment *,UDFContext *,UDFValue *);
+   void                           DuplicateInstance(Environment *,UDFContext *,UDFValue *);
+   void                           MsgDuplicateInstance(Environment *,UDFContext *,UDFValue *);
 
 #if DEFRULE_CONSTRUCT && OBJECT_SYSTEM
-   void                           InactiveModifyInstance(Environment *,UDFContext *,CLIPSValue *);
-   void                           InactiveMsgModifyInstance(Environment *,UDFContext *,CLIPSValue *);
-   void                           InactiveDuplicateInstance(Environment *,UDFContext *,CLIPSValue *);
-   void                           InactiveMsgDuplicateInstance(Environment *,UDFContext *,CLIPSValue *);
+   void                           InactiveModifyInstance(Environment *,UDFContext *,UDFValue *);
+   void                           InactiveMsgModifyInstance(Environment *,UDFContext *,UDFValue *);
+   void                           InactiveDuplicateInstance(Environment *,UDFContext *,UDFValue *);
+   void                           InactiveMsgDuplicateInstance(Environment *,UDFContext *,UDFValue *);
 #endif
 
-   void                           DirectModifyMsgHandler(Environment *,UDFContext *,CLIPSValue *);
-   void                           MsgModifyMsgHandler(Environment *,UDFContext *,CLIPSValue *);
-   void                           DirectDuplicateMsgHandler(Environment *,UDFContext *,CLIPSValue *);
-   void                           MsgDuplicateMsgHandler(Environment *,UDFContext *,CLIPSValue *);
+   void                           DirectModifyMsgHandler(Environment *,UDFContext *,UDFValue *);
+   void                           MsgModifyMsgHandler(Environment *,UDFContext *,UDFValue *);
+   void                           DirectDuplicateMsgHandler(Environment *,UDFContext *,UDFValue *);
+   void                           MsgDuplicateMsgHandler(Environment *,UDFContext *,UDFValue *);
 
 #endif /* _H_insmoddp */
 

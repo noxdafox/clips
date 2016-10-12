@@ -500,11 +500,11 @@ const char *LongIntegerToString(
   }
 
 /******************************************************************/
-/* DataObjectToString: Converts a CLIPSValue to KB string format. */
+/* DataObjectToString: Converts a UDFValue to KB string format. */
 /******************************************************************/
 const char *DataObjectToString(
   Environment *theEnv,
-  CLIPSValue *theDO)
+  UDFValue *theDO)
   {
    CLIPSLexeme *thePtr;
    const char *theString;

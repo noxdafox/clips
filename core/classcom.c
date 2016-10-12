@@ -392,7 +392,7 @@ bool EnvIsDefclassDeletable(
 void UndefclassCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    UndefconstructCommand(context,"undefclass",DefclassData(theEnv)->DefclassConstruct);
   }
@@ -439,7 +439,7 @@ bool EnvUndefclass(
 void PPDefclassCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    PPConstructCommand(context,"ppdefclass",DefclassData(theEnv)->DefclassConstruct);
   }
@@ -455,7 +455,7 @@ void PPDefclassCommand(
 void ListDefclassesCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    ListConstructCommand(context,DefclassData(theEnv)->DefclassConstruct);
   }
@@ -645,7 +645,7 @@ bool DefclassWatchPrint(
 void GetDefclassListFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    GetConstructListFunction(context,returnValue,DefclassData(theEnv)->DefclassConstruct);
   }
@@ -663,7 +663,7 @@ void GetDefclassListFunction(
  ***************************************************************/
 void EnvGetDefclassList(
   Environment *theEnv,
-  CLIPSValue *returnValue,
+  UDFValue *returnValue,
   Defmodule *theModule)
   {
    GetConstructList(theEnv,returnValue,DefclassData(theEnv)->DefclassConstruct,theModule);
@@ -706,7 +706,7 @@ CLIPSLexeme *CheckClassAndSlot(
    const char *func,
    Defclass **cls)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
    Environment *theEnv = context->environment;
 
    if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
@@ -835,7 +835,7 @@ unsigned short EnvGetClassDefaultsMode(
 void GetClassDefaultsModeCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    returnValue->lexemeValue = EnvCreateSymbol(theEnv,GetClassDefaultsModeName(EnvGetClassDefaultsMode(theEnv)));
   }
@@ -847,9 +847,9 @@ void GetClassDefaultsModeCommand(
 void SetClassDefaultsModeCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
    const char *argument;
    unsigned short oldMode;
 

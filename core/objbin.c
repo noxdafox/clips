@@ -259,7 +259,7 @@ static void DeallocateObjectBinaryData(
       for (i = 0L ; i < ObjectBinaryData(theEnv)->SlotCount ; i++)
         {
          if ((ObjectBinaryData(theEnv)->SlotArray[i].defaultValue != NULL) && (ObjectBinaryData(theEnv)->SlotArray[i].dynamicDefault == 0))
-           { rtn_struct(theEnv,dataObject,ObjectBinaryData(theEnv)->SlotArray[i].defaultValue); }
+           { rtn_struct(theEnv,udfValue,ObjectBinaryData(theEnv)->SlotArray[i].defaultValue); }
         }
 
       space = (sizeof(Defclass) * ObjectBinaryData(theEnv)->ClassCount);
@@ -440,7 +440,7 @@ static void MarkDefclassItems(
                and must be converted into expressions
                ================================================= */
             tmpexp =
-              ConvertValueToExpression(theEnv,(CLIPSValue *) cls->slots[i].defaultValue);
+              ConvertValueToExpression(theEnv,(UDFValue *) cls->slots[i].defaultValue);
             ExpressionData(theEnv)->ExpressionCount += ExpressionSize(tmpexp);
             MarkNeededItems(theEnv,tmpexp);
             ReturnExpression(theEnv,tmpexp);
@@ -528,7 +528,7 @@ static void BsaveDefaultSlotExpressions(
                and must be converted into expressions
                ================================================= */
             tmpexp =
-              ConvertValueToExpression(theEnv,(CLIPSValue *) cls->slots[i].defaultValue);
+              ConvertValueToExpression(theEnv,(UDFValue *) cls->slots[i].defaultValue);
             BsaveExpression(theEnv,tmpexp,(FILE *) buf);
             ReturnExpression(theEnv,tmpexp);
            }
@@ -891,7 +891,7 @@ static void BsaveSlots(
            ExpressionData(theEnv)->ExpressionCount += ExpressionSize((EXPRESSION *) sp->defaultValue);
          else
            {
-            tmpexp = ConvertValueToExpression(theEnv,(CLIPSValue *) sp->defaultValue);
+            tmpexp = ConvertValueToExpression(theEnv,(UDFValue *) sp->defaultValue);
             ExpressionData(theEnv)->ExpressionCount += ExpressionSize(tmpexp);
             ReturnExpression(theEnv,tmpexp);
            }
@@ -1283,10 +1283,10 @@ static void UpdateSlot(
         sp->defaultValue = ExpressionPointer(bsp->defaultValue);
       else
         {
-         sp->defaultValue = get_struct(theEnv,dataObject);
+         sp->defaultValue = get_struct(theEnv,udfValue);
          EvaluateAndStoreInDataObject(theEnv,(int) sp->multiple,ExpressionPointer(bsp->defaultValue),
-                                      (CLIPSValue *) sp->defaultValue,true);
-         ValueInstall(theEnv,(CLIPSValue *) sp->defaultValue);
+                                      (UDFValue *) sp->defaultValue,true);
+         ValueInstall(theEnv,(UDFValue *) sp->defaultValue);
         }
      }
    else
@@ -1403,8 +1403,8 @@ static void ClearBloadObjects(
          DecrementSymbolCount(theEnv,ObjectBinaryData(theEnv)->SlotArray[i].overrideMessage);
          if ((ObjectBinaryData(theEnv)->SlotArray[i].defaultValue != NULL) && (ObjectBinaryData(theEnv)->SlotArray[i].dynamicDefault == 0))
            {
-            ValueDeinstall(theEnv,(CLIPSValue *) ObjectBinaryData(theEnv)->SlotArray[i].defaultValue);
-            rtn_struct(theEnv,dataObject,ObjectBinaryData(theEnv)->SlotArray[i].defaultValue);
+            ValueDeinstall(theEnv,(UDFValue *) ObjectBinaryData(theEnv)->SlotArray[i].defaultValue);
+            rtn_struct(theEnv,udfValue,ObjectBinaryData(theEnv)->SlotArray[i].defaultValue);
            }
         }
       for (i = 0L ; i < ObjectBinaryData(theEnv)->SlotNameCount ; i++)

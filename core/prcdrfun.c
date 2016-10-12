@@ -121,14 +121,14 @@ void ProceduralFunctionDefinitions(
 static void DeallocateProceduralFunctionData(
   Environment *theEnv)
   {
-   CLIPSValue *nextPtr, *garbagePtr;
+   UDFValue *nextPtr, *garbagePtr;
 
    garbagePtr = ProcedureFunctionData(theEnv)->BindList;
 
    while (garbagePtr != NULL)
      {
       nextPtr = garbagePtr->next;
-      rtn_struct(theEnv,dataObject,garbagePtr);
+      rtn_struct(theEnv,udfValue,garbagePtr);
       garbagePtr = nextPtr;
      }
   }
@@ -140,9 +140,9 @@ static void DeallocateProceduralFunctionData(
 void WhileFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theResult;
+   UDFValue theResult;
    CLIPSBlock gcBlock;
 
    /*====================================================*/
@@ -206,9 +206,9 @@ void WhileFunction(
 void LoopForCountFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *loopResult)
+  UDFValue *loopResult)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
    long long iterationEnd;
    LOOP_COUNTER_STACK *tmpCounter;
    CLIPSBlock gcBlock;
@@ -278,10 +278,10 @@ void LoopForCountFunction(
 void GetLoopCount(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    int depth;
-   CLIPSValue theArg;
+   UDFValue theArg;
    LOOP_COUNTER_STACK *tmpCounter;
 
    if (! UDFFirstArgument(context,INTEGER_TYPE,&theArg))
@@ -304,7 +304,7 @@ void GetLoopCount(
 void IfFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    int numArgs;
 
@@ -366,9 +366,9 @@ void IfFunction(
 void BindFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue *theBind, *lastBind;
+   UDFValue *theBind, *lastBind;
    bool found = false,
        unbindVar = false;
    CLIPSLexeme *variableName = NULL;
@@ -441,7 +441,7 @@ void BindFunction(
      {
       if (unbindVar == false)
         {
-         theBind = get_struct(theEnv,dataObject);
+         theBind = get_struct(theEnv,udfValue);
          theBind->supplementalInfo = (void *) variableName;
          IncrementSymbolCount(variableName);
          theBind->next = NULL;
@@ -475,7 +475,7 @@ void BindFunction(
       if (lastBind == NULL) ProcedureFunctionData(theEnv)->BindList = theBind->next;
       else lastBind->next = theBind->next;
       DecrementSymbolCount(theEnv,(struct symbolHashNode *) theBind->supplementalInfo);
-      rtn_struct(theEnv,dataObject,theBind);
+      rtn_struct(theEnv,udfValue,theBind);
       returnValue->value = theEnv->FalseSymbol;
      }
   }
@@ -486,10 +486,10 @@ void BindFunction(
 /*******************************************/
 bool GetBoundVariable(
   Environment *theEnv,
-  CLIPSValue *vPtr,
+  UDFValue *vPtr,
   CLIPSLexeme *varName)
   {
-   CLIPSValue *bindPtr;
+   UDFValue *bindPtr;
 
    for (bindPtr = ProcedureFunctionData(theEnv)->BindList; bindPtr != NULL; bindPtr = bindPtr->next)
      {
@@ -523,7 +523,7 @@ void FlushBindList(
 void PrognFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    struct expr *argPtr;
 
@@ -559,7 +559,7 @@ void PrognFunction(
 void ReturnFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    if (! UDFHasNextArgument(context))
      {
@@ -576,7 +576,7 @@ void ReturnFunction(
 void BreakFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    ProcedureFunctionData(theEnv)->BreakFlag = true;
   }
@@ -587,9 +587,9 @@ void BreakFunction(
 void SwitchFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue switch_val,case_val;
+   UDFValue switch_val,case_val;
    EXPRESSION *theExp;
 
    returnValue->lexemeValue = theEnv->FalseSymbol;

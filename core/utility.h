@@ -123,7 +123,7 @@ struct clipsBlock
   {
    struct garbageFrame newGarbageFrame;
    struct garbageFrame *oldGarbageFrame;
-   CLIPSValue *result;
+   UDFValue *result;
   };
 
 struct stringBuilder
@@ -203,12 +203,12 @@ struct utilityData
    size_t                         UTF8Offset(const char *,size_t);
    size_t                         UTF8Length(const char *);
    size_t                         UTF8CharNum(const char *,size_t);
-   void                           RestorePriorGarbageFrame(Environment *,struct garbageFrame *,struct garbageFrame *,CLIPSValue *);
+   void                           RestorePriorGarbageFrame(Environment *,struct garbageFrame *,struct garbageFrame *,UDFValue *);
    void                           CallCleanupFunctions(Environment *);
    void                           CallPeriodicTasks(Environment *);
-   void                           CleanCurrentGarbageFrame(Environment *,CLIPSValue *);
+   void                           CleanCurrentGarbageFrame(Environment *,UDFValue *);
    void                           CLIPSBlockStart(Environment *,CLIPSBlock *);
-   void                           CLIPSBlockEnd(Environment *,CLIPSBlock *,CLIPSValue *);
+   void                           CLIPSBlockEnd(Environment *,CLIPSBlock *,UDFValue *);
    StringBuilder                 *EnvCreateStringBuilder(Environment *,size_t);
    void                           StringBuilderDispose(StringBuilder *);
    void                           StringBuilderAppend(StringBuilder *,const char *);

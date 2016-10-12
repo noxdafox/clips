@@ -78,8 +78,8 @@
 
    static Instance               *CheckMultifieldSlotInstance(UDFContext *);
    static INSTANCE_SLOT          *CheckMultifieldSlotModify(Environment *,int,const char *,Instance *,
-                                                            EXPRESSION *,long *,long *,CLIPSValue *);
-   static void                    AssignSlotToDataObject(CLIPSValue *,INSTANCE_SLOT *);
+                                                            EXPRESSION *,long *,long *,UDFValue *);
+   static void                    AssignSlotToDataObject(UDFValue *,INSTANCE_SLOT *);
 
 /* =========================================
    *****************************************
@@ -127,9 +127,9 @@ void SetupInstanceMultifieldCommands(
 void MVSlotReplaceCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue newval,newseg,oldseg;
+   UDFValue newval,newseg,oldseg;
    Instance *ins;
    INSTANCE_SLOT *sp;
    long rb,re;
@@ -167,9 +167,9 @@ void MVSlotReplaceCommand(
 void MVSlotInsertCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue newval,newseg,oldseg;
+   UDFValue newval,newseg,oldseg;
    Instance *ins;
    INSTANCE_SLOT *sp;
    long theIndex;
@@ -208,9 +208,9 @@ void MVSlotInsertCommand(
 void MVSlotDeleteCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue newseg,oldseg;
+   UDFValue newseg,oldseg;
    Instance *ins;
    INSTANCE_SLOT *sp;
    long rb,re;
@@ -246,12 +246,12 @@ void MVSlotDeleteCommand(
 void DirectMVReplaceCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    INSTANCE_SLOT *sp;
    Instance *ins;
    long rb,re;
-   CLIPSValue newval,newseg,oldseg;
+   UDFValue newval,newseg,oldseg;
 
    if (CheckCurrentMessage(theEnv,"direct-slot-replace$",true) == false)
      {
@@ -292,12 +292,12 @@ void DirectMVReplaceCommand(
 void DirectMVInsertCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    INSTANCE_SLOT *sp;
    Instance *ins;
    long theIndex;
-   CLIPSValue newval,newseg,oldseg;
+   UDFValue newval,newseg,oldseg;
 
    if (CheckCurrentMessage(theEnv,"direct-slot-insert$",true) == false)
      { 
@@ -339,12 +339,12 @@ void DirectMVInsertCommand(
 void DirectMVDeleteCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    INSTANCE_SLOT *sp;
    Instance *ins;
    long rb,re;
-   CLIPSValue newseg,oldseg;
+   UDFValue newseg,oldseg;
 
    if (CheckCurrentMessage(theEnv,"direct-slot-delete$",true) == false)
      {
@@ -393,7 +393,7 @@ static Instance *CheckMultifieldSlotInstance(
   UDFContext *context)
   {
    Instance *ins;
-   CLIPSValue temp;
+   UDFValue temp;
    Environment *theEnv = context->environment;
 
    if (! UDFFirstArgument(context,INSTANCE_TYPES | SYMBOL_TYPE,&temp))
@@ -454,9 +454,9 @@ static INSTANCE_SLOT *CheckMultifieldSlotModify(
   EXPRESSION *args,
   long *rb,
   long *re,
-  CLIPSValue *newval)
+  UDFValue *newval)
   {
-   CLIPSValue temp;
+   UDFValue temp;
    INSTANCE_SLOT *sp;
    int start;
 
@@ -528,7 +528,7 @@ static INSTANCE_SLOT *CheckMultifieldSlotModify(
   NOTES        : Assumes slot is a multislot
  ***************************************************/
 static void AssignSlotToDataObject(
-  CLIPSValue *theDataObject,
+  UDFValue *theDataObject,
   INSTANCE_SLOT *theSlot)
   {
    theDataObject->value = theSlot->value;

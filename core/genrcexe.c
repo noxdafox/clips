@@ -97,7 +97,7 @@
 #endif
 
 #if OBJECT_SYSTEM
-   static Defclass               *DetermineRestrictionClass(Environment *,CLIPSValue *);
+   static Defclass               *DetermineRestrictionClass(Environment *,UDFValue *);
 #endif
 
 /* =========================================
@@ -141,7 +141,7 @@ void GenericDispatch(
   Defmethod *prevmeth,
   Defmethod *meth,
   EXPRESSION *params,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Defgeneric *previousGeneric;
    Defmethod *previousMethod;
@@ -300,7 +300,7 @@ bool IsMethodApplicable(
   Environment *theEnv,
   Defmethod *meth)
   {
-   CLIPSValue temp;
+   UDFValue temp;
    short i,j,k;
    RESTRICTION *rp;
 #if OBJECT_SYSTEM
@@ -403,7 +403,7 @@ bool NextMethodP(
 void NextMethodPCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    returnValue->lexemeValue = EnvCreateBoolean(theEnv,NextMethodP(theEnv));
   }
@@ -422,7 +422,7 @@ void NextMethodPCommand(
 void CallNextMethod(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Defmethod *oldMethod;
 #if PROFILING_FUNCTIONS
@@ -500,9 +500,9 @@ void CallNextMethod(
 void CallSpecificMethod(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
    Defgeneric *gfunc;
    int mi;
 
@@ -536,7 +536,7 @@ void CallSpecificMethod(
 void OverrideNextMethod(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    returnValue->lexemeValue = theEnv->FalseSymbol;
    if (EvaluationData(theEnv)->HaltExecution)
@@ -565,7 +565,7 @@ void OverrideNextMethod(
 void GetGenericCurrentArgument(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    returnValue->value = DefgenericData(theEnv)->GenericCurrentArgument->value;
    returnValue->begin = DefgenericData(theEnv)->GenericCurrentArgument->begin;
@@ -693,7 +693,7 @@ static void WatchMethod(
  ***************************************************/
 static Defclass *DetermineRestrictionClass(
   Environment *theEnv,
-  CLIPSValue *dobj)
+  UDFValue *dobj)
   {
    Instance *ins;
    Defclass *cls;

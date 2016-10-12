@@ -152,7 +152,7 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   void                               ConstructsToCCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                               ConstructsToCCommand(Environment *,UDFContext *,UDFValue *);
    static bool                        ConstructsToC(Environment *,const char *,const char *,char *,long long,long long);
    static void                        WriteFunctionExternDeclarations(Environment *,FILE *);
    static bool                        FunctionsToCode(Environment *theEnv,const char *,const char *,char *);
@@ -208,12 +208,12 @@ static void DeallocateConstructCompilerData(
 void ConstructsToCCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    const char *fileName;
    char *fileNameBuffer;
    const char *pathName;
-   CLIPSValue theArg;
+   UDFValue theArg;
    long long id, max;
    int nameLength, pathLength;
 #if WIN_MVC
@@ -558,7 +558,7 @@ static void WriteFunctionExternDeclarations(
 
       fprintf(fp,"%s(",theFunction->actualFunctionName);
 
-      fprintf(fp,"Environment *,UDFContext *,CLIPSValue *");
+      fprintf(fp,"Environment *,UDFContext *,UDFValue *");
 
       fprintf(fp,");\n");
      }
@@ -1575,7 +1575,7 @@ void ConstructModuleToCode(
 
 #else /* CONSTRUCT_COMPILER && (! RUN_TIME) */
 
-   void                               ConstructsToCCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                               ConstructsToCCommand(Environment *,UDFContext *,UDFValue *);
 
 /************************************/
 /* ConstructsToCCommand: Definition */
@@ -1584,7 +1584,7 @@ void ConstructModuleToCode(
 void ConstructsToCCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
 #if MAC_XCD
 #pragma unused(theEnv)

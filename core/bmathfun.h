@@ -48,16 +48,16 @@
 #include "evaluatn.h"
 
    void                    BasicMathFunctionDefinitions(Environment *);
-   void                    AdditionFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                    MultiplicationFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                    SubtractionFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                    DivisionFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                    DivFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                    IntegerFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                    FloatFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                    AbsFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                    MinFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                    MaxFunction(Environment *,UDFContext *,CLIPSValue *);
+   void                    AdditionFunction(Environment *,UDFContext *,UDFValue *);
+   void                    MultiplicationFunction(Environment *,UDFContext *,UDFValue *);
+   void                    SubtractionFunction(Environment *,UDFContext *,UDFValue *);
+   void                    DivisionFunction(Environment *,UDFContext *,UDFValue *);
+   void                    DivFunction(Environment *,UDFContext *,UDFValue *);
+   void                    IntegerFunction(Environment *,UDFContext *,UDFValue *);
+   void                    FloatFunction(Environment *,UDFContext *,UDFValue *);
+   void                    AbsFunction(Environment *,UDFContext *,UDFValue *);
+   void                    MinFunction(Environment *,UDFContext *,UDFValue *);
+   void                    MaxFunction(Environment *,UDFContext *,UDFValue *);
 
 #endif
 

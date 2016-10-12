@@ -70,25 +70,25 @@ typedef struct messageHandlerLink
   } HANDLER_LINK;
 
    bool             DirectMessage(Environment *,CLIPSLexeme *,Instance *,
-                                  CLIPSValue *,EXPRESSION *);
-   void             EnvSend(Environment *,CLIPSValue *,const char *,const char *,CLIPSValue *);
+                                  UDFValue *,EXPRESSION *);
+   void             EnvSend(Environment *,UDFValue *,const char *,const char *,UDFValue *);
    void             DestroyHandlerLinks(Environment *,HANDLER_LINK *);
-   void             SendCommand(Environment *,UDFContext *,CLIPSValue *);
-   CLIPSValue      *GetNthMessageArgument(Environment *,int);
+   void             SendCommand(Environment *,UDFContext *,UDFValue *);
+   UDFValue      *GetNthMessageArgument(Environment *,int);
 
    bool             NextHandlerAvailable(Environment *);
-   void             NextHandlerAvailableFunction(Environment *,UDFContext *,CLIPSValue *);
-   void             CallNextHandler(Environment *,UDFContext *,CLIPSValue *);
+   void             NextHandlerAvailableFunction(Environment *,UDFContext *,UDFValue *);
+   void             CallNextHandler(Environment *,UDFContext *,UDFValue *);
    void             FindApplicableOfName(Environment *,Defclass *,HANDLER_LINK *[],
                                          HANDLER_LINK *[],CLIPSLexeme *);
    HANDLER_LINK    *JoinHandlerLinks(Environment *,HANDLER_LINK *[],HANDLER_LINK *[],CLIPSLexeme *);
 
    void             PrintHandlerSlotGetFunction(Environment *,const char *,void *);
-   bool             HandlerSlotGetFunction(Environment *,void *,CLIPSValue *);
+   bool             HandlerSlotGetFunction(Environment *,void *,UDFValue *);
    void             PrintHandlerSlotPutFunction(Environment *,const char *,void *);
-   bool             HandlerSlotPutFunction(Environment *,void *,CLIPSValue *);
-   void             DynamicHandlerGetSlot(Environment *,UDFContext *,CLIPSValue *);
-   void             DynamicHandlerPutSlot(Environment *,UDFContext *,CLIPSValue *);
+   bool             HandlerSlotPutFunction(Environment *,void *,UDFValue *);
+   void             DynamicHandlerGetSlot(Environment *,UDFContext *,UDFValue *);
+   void             DynamicHandlerPutSlot(Environment *,UDFContext *,UDFValue *);
 
 #endif /* _H_object */
 

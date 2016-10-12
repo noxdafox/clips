@@ -50,12 +50,12 @@
    void                           SetupInstanceMultifieldCommands(Environment *);
 #endif
 
-   void                           MVSlotReplaceCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           MVSlotInsertCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           MVSlotDeleteCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           DirectMVReplaceCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           DirectMVInsertCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           DirectMVDeleteCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           MVSlotReplaceCommand(Environment *,UDFContext *,UDFValue *);
+   void                           MVSlotInsertCommand(Environment *,UDFContext *,UDFValue *);
+   void                           MVSlotDeleteCommand(Environment *,UDFContext *,UDFValue *);
+   void                           DirectMVReplaceCommand(Environment *,UDFContext *,UDFValue *);
+   void                           DirectMVInsertCommand(Environment *,UDFContext *,UDFValue *);
+   void                           DirectMVDeleteCommand(Environment *,UDFContext *,UDFValue *);
 
 #endif /* _H_insmult */
 

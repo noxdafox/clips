@@ -63,34 +63,34 @@
 
    void                    MultifieldFunctionDefinitions(Environment *);
 #if MULTIFIELD_FUNCTIONS
-   void                    DeleteFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                    ReplaceFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                    DeleteMemberFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                    ReplaceMemberFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                    InsertFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                    ExplodeFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                    ImplodeFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                    SubseqFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                    FirstFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                    RestFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                    NthFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                    SubsetpFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                    MemberFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                    MultifieldPrognFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                    ForeachFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                    GetMvPrognField(Environment *,UDFContext *,CLIPSValue *);
-   void                    GetMvPrognIndex(Environment *,UDFContext *,CLIPSValue *);
-   bool                    FindDOsInSegment(CLIPSValue *,int,CLIPSValue *,
+   void                    DeleteFunction(Environment *,UDFContext *,UDFValue *);
+   void                    ReplaceFunction(Environment *,UDFContext *,UDFValue *);
+   void                    DeleteMemberFunction(Environment *,UDFContext *,UDFValue *);
+   void                    ReplaceMemberFunction(Environment *,UDFContext *,UDFValue *);
+   void                    InsertFunction(Environment *,UDFContext *,UDFValue *);
+   void                    ExplodeFunction(Environment *,UDFContext *,UDFValue *);
+   void                    ImplodeFunction(Environment *,UDFContext *,UDFValue *);
+   void                    SubseqFunction(Environment *,UDFContext *,UDFValue *);
+   void                    FirstFunction(Environment *,UDFContext *,UDFValue *);
+   void                    RestFunction(Environment *,UDFContext *,UDFValue *);
+   void                    NthFunction(Environment *,UDFContext *,UDFValue *);
+   void                    SubsetpFunction(Environment *,UDFContext *,UDFValue *);
+   void                    MemberFunction(Environment *,UDFContext *,UDFValue *);
+   void                    MultifieldPrognFunction(Environment *,UDFContext *,UDFValue *);
+   void                    ForeachFunction(Environment *,UDFContext *,UDFValue *);
+   void                    GetMvPrognField(Environment *,UDFContext *,UDFValue *);
+   void                    GetMvPrognIndex(Environment *,UDFContext *,UDFValue *);
+   bool                    FindDOsInSegment(UDFValue *,int,UDFValue *,
                                             long *,long *,long *,int);
 #endif
-   bool                    ReplaceMultiValueField(Environment *,CLIPSValue *,
-                                                  CLIPSValue *,
+   bool                    ReplaceMultiValueField(Environment *,UDFValue *,
+                                                  UDFValue *,
                                                   long,long,
-                                                  CLIPSValue *,const char *);
-   bool                    InsertMultiValueField(Environment *,CLIPSValue *,
-                                                 CLIPSValue *,
-                                                 long,CLIPSValue *,const char *);
-   bool                    DeleteMultiValueField(Environment *,CLIPSValue *,CLIPSValue *,
+                                                  UDFValue *,const char *);
+   bool                    InsertMultiValueField(Environment *,UDFValue *,
+                                                 UDFValue *,
+                                                 long,UDFValue *,const char *);
+   bool                    DeleteMultiValueField(Environment *,UDFValue *,UDFValue *,
                                                  long,long,const char *);
 
 #endif /* _H_multifun */

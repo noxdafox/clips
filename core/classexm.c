@@ -128,7 +128,7 @@
 void BrowseClassesCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Defclass *cls;
 
@@ -139,7 +139,7 @@ void BrowseClassesCommand(
       cls = LookupDefclassByMdlOrScope(theEnv,OBJECT_TYPE_NAME);
    else
      {
-      CLIPSValue theArg;
+      UDFValue theArg;
 
       if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
         return;
@@ -183,7 +183,7 @@ void EnvBrowseClasses(
 void DescribeClassCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    const char *className;
    Defclass *theDefclass;
@@ -344,7 +344,7 @@ const char *GetCreateAccessorString(
 void GetDefclassModuleCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    returnValue->value = GetConstructModuleCommand(context,"defclass-module",DefclassData(theEnv)->DefclassConstruct);
   }
@@ -360,7 +360,7 @@ void GetDefclassModuleCommand(
 void SuperclassPCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Defclass *c1, *c2;
 
@@ -408,7 +408,7 @@ bool EnvSuperclassP(
 void SubclassPCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Defclass *c1, *c2;
 
@@ -456,12 +456,12 @@ bool EnvSubclassP(
 void SlotExistPCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Defclass *cls;
    SlotDescriptor *sd;
    bool inheritFlag = false;
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    sd = CheckSlotExists(context,"slot-existp",&cls,false,true);
    if (sd == NULL)
@@ -521,11 +521,11 @@ bool EnvSlotExistP(
 void MessageHandlerExistPCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Defclass *cls;
    CLIPSLexeme *mname;
-   CLIPSValue theArg;
+   UDFValue theArg;
    unsigned mtype = MPRIMARY;
 
    if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
@@ -573,7 +573,7 @@ void MessageHandlerExistPCommand(
 void SlotWritablePCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Defclass *theDefclass;
    SlotDescriptor *sd;
@@ -619,7 +619,7 @@ bool EnvSlotWritableP(
 void SlotInitablePCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Defclass *theDefclass;
    SlotDescriptor *sd;
@@ -665,7 +665,7 @@ bool EnvSlotInitableP(
 void SlotPublicPCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Defclass *theDefclass;
    SlotDescriptor *sd;
@@ -742,7 +742,7 @@ int EnvSlotDefaultP(
 void SlotDirectAccessPCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Defclass *theDefclass;
    SlotDescriptor *sd;
@@ -791,7 +791,7 @@ bool EnvSlotDirectAccessP(
 void SlotDefaultValueCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Defclass *theDefclass;
    SlotDescriptor *sd;
@@ -813,7 +813,7 @@ void SlotDefaultValueCommand(
                                   (EXPRESSION *) sd->defaultValue,
                                   returnValue,true);
    else
-     GenCopyMemory(CLIPSValue,1,returnValue,sd->defaultValue);
+     GenCopyMemory(UDFValue,1,returnValue,sd->defaultValue);
   }
 
 /*********************************************************
@@ -832,7 +832,7 @@ bool EnvSlotDefaultValue(
   Environment *theEnv,
   Defclass *theDefclass,
   const char *slotName,
-  CLIPSValue *theValue)
+  UDFValue *theValue)
   {
    SlotDescriptor *sd;
 
@@ -850,7 +850,7 @@ bool EnvSlotDefaultValue(
      return(EvaluateAndStoreInDataObject(theEnv,(int) sd->multiple,
                                          (EXPRESSION *) sd->defaultValue,
                                          theValue,true));
-   GenCopyMemory(CLIPSValue,1,theValue,sd->defaultValue);
+   GenCopyMemory(UDFValue,1,theValue,sd->defaultValue);
    return true;
   }
 
@@ -865,9 +865,9 @@ bool EnvSlotDefaultValue(
 void ClassExistPCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
      { return; }
@@ -898,7 +898,7 @@ static bool CheckTwoClasses(
   Defclass **c1,
   Defclass **c2)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
    Environment *theEnv = context->environment;
 
    if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
@@ -1060,7 +1060,7 @@ static Defclass *CheckClass(
 static const char *GetClassNameArgument(
   UDFContext *context)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
      { return NULL; }

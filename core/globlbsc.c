@@ -140,7 +140,7 @@ static void ResetDefglobalAction(
 #pragma unused(buffer)
 #endif
    Defglobal *theDefglobal = (Defglobal *) theConstruct;
-   CLIPSValue assignValue;
+   UDFValue assignValue;
 
    if (EvaluateExpression(theEnv,theDefglobal->initial,&assignValue))
      {
@@ -169,7 +169,7 @@ static void SaveDefglobals(
 void UndefglobalCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    UndefconstructCommand(context,"undefglobal",DefglobalData(theEnv)->DefglobalConstruct);
   }
@@ -192,7 +192,7 @@ bool EnvUndefglobal(
 void GetDefglobalListFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    GetConstructListFunction(context,returnValue,DefglobalData(theEnv)->DefglobalConstruct);
   }
@@ -203,7 +203,7 @@ void GetDefglobalListFunction(
 /******************************************/
 void EnvGetDefglobalList(
   Environment *theEnv,
-  CLIPSValue *returnValue,
+  UDFValue *returnValue,
   Defmodule *theModule)
   {
    GetConstructList(theEnv,returnValue,DefglobalData(theEnv)->DefglobalConstruct,theModule);
@@ -216,7 +216,7 @@ void EnvGetDefglobalList(
 void DefglobalModuleFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    returnValue->value = GetConstructModuleCommand(context,"defglobal-module",DefglobalData(theEnv)->DefglobalConstruct);
   }
@@ -230,7 +230,7 @@ void DefglobalModuleFunction(
 void PPDefglobalCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    PPConstructCommand(context,"ppdefglobal",DefglobalData(theEnv)->DefglobalConstruct);
   }
@@ -254,7 +254,7 @@ bool PPDefglobal(
 void ListDefglobalsCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    ListConstructCommand(context,DefglobalData(theEnv)->DefglobalConstruct);
   }

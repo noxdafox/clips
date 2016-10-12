@@ -217,8 +217,8 @@ struct constructData
    void                           SetExecutingConstruct(Environment *,bool);
    void                           InitializeConstructs(Environment *);
    BeforeResetFunction           *SetBeforeResetFunction(Environment *,BeforeResetFunction *);
-   void                           ResetCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           ClearCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           ResetCommand(Environment *,UDFContext *,UDFValue *);
+   void                           ClearCommand(Environment *,UDFContext *,UDFValue *);
    bool                           ClearReady(Environment *);
    struct construct              *FindConstruct(Environment *,const char *);
    void                           DeinstallConstructHeader(Environment *,struct constructHeader *);

@@ -116,7 +116,7 @@
    ***************************************** */
 
    static void                    PrintDeffunctionCall(Environment *,const char *,Deffunction *);
-   static bool                    EvaluateDeffunctionCall(Environment *,Deffunction *,CLIPSValue *);
+   static bool                    EvaluateDeffunctionCall(Environment *,Deffunction *,UDFValue *);
    static void                    DecrementDeffunctionBusyCount(Environment *,Deffunction *);
    static void                    IncrementDeffunctionBusyCount(Environment *,Deffunction *);
    static void                    DeallocateDeffunctionData(Environment *);
@@ -496,7 +496,7 @@ void RemoveDeffunction(
 void UndeffunctionCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    UndefconstructCommand(context,"undeffunction",DeffunctionData(theEnv)->DeffunctionConstruct);
   }
@@ -512,7 +512,7 @@ void UndeffunctionCommand(
 void GetDeffunctionModuleCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    returnValue->value = GetConstructModuleCommand(context,"deffunction-module",DeffunctionData(theEnv)->DeffunctionConstruct);
   }
@@ -532,7 +532,7 @@ void GetDeffunctionModuleCommand(
 void PPDeffunctionCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    PPConstructCommand(context,"ppdeffunction",DeffunctionData(theEnv)->DeffunctionConstruct);
   }
@@ -548,7 +548,7 @@ void PPDeffunctionCommand(
 void ListDeffunctionsCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    ListConstructCommand(context,DeffunctionData(theEnv)->DeffunctionConstruct);
   }
@@ -585,7 +585,7 @@ void EnvListDeffunctions(
 void GetDeffunctionListFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    GetConstructListFunction(context,returnValue,DeffunctionData(theEnv)->DeffunctionConstruct);
   }
@@ -603,7 +603,7 @@ void GetDeffunctionListFunction(
  ***************************************************************/
 void EnvGetDeffunctionList(
   Environment *theEnv,
-  CLIPSValue *returnValue,
+  UDFValue *returnValue,
   Defmodule *theModule)
   {
    GetConstructList(theEnv,returnValue,DeffunctionData(theEnv)->DeffunctionConstruct,theModule);
@@ -704,7 +704,7 @@ static void PrintDeffunctionCall(
 static bool EvaluateDeffunctionCall(
   Environment *theEnv,
   Deffunction *theDeffunction,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    CallDeffunction(theEnv,theDeffunction,GetFirstArgument(),returnValue);
    if (returnValue->value == theEnv->FalseSymbol)

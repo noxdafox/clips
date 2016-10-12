@@ -118,7 +118,7 @@ void DeveloperCommands(
 void PrimitiveTablesInfoCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    unsigned long i;
    CLIPSLexeme **symbolArray, *symbolPtr;
@@ -204,7 +204,7 @@ void PrimitiveTablesInfoCommand(
 void PrimitiveTablesUsageCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    unsigned long i;
    int symbolCounts[COUNT_SIZE], floatCounts[COUNT_SIZE];
@@ -297,7 +297,7 @@ void PrimitiveTablesUsageCommand(
 void ValidateFactIntegrityCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Fact *theFact;
    Multifield *theSegment;
@@ -370,7 +370,7 @@ void ValidateFactIntegrityCommand(
 void ShowFactPatternNetworkCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    struct factPatternNode *patternPtr;
    Deftemplate *theDeftemplate;
@@ -444,7 +444,7 @@ void ShowFactPatternNetworkCommand(
 void PrintObjectPatternNetworkCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    char indentbuf[80];
 
@@ -551,7 +551,7 @@ static void PrintOPNLevel(
 void InstanceTableUsageCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    unsigned long i;
    int instanceCounts[COUNT_SIZE];
@@ -668,7 +668,7 @@ static void ValidateRuleBetaMemoriesAction(
 void ValidateBetaMemoriesCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    EnvPrintRouter(theEnv,WPROMPT,"ValidateBetaMemories");
    DoForAllConstructs(theEnv,ValidateRuleBetaMemoriesAction,DefruleData(theEnv)->DefruleModuleIndex,false,NULL);

@@ -62,8 +62,8 @@ struct dependency
    void                           ForceLogicalRetractions(Environment *);
    void                           Dependencies(Environment *,struct patternEntity *);
    void                           Dependents(Environment *,struct patternEntity *);
-   void                           DependenciesCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           DependentsCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           DependenciesCommand(Environment *,UDFContext *,UDFValue *);
+   void                           DependentsCommand(Environment *,UDFContext *,UDFValue *);
    void                           ReturnEntityDependencies(Environment *,struct patternEntity *);
    struct partialMatch           *FindLogicalBind(struct joinNode *,struct partialMatch *);
 

@@ -484,7 +484,7 @@ static struct expr *GetSlotAssertValues(
   {
    struct expr *slotItem;
    struct expr *newArg, *tempArg;
-   CLIPSValue theDefault;
+   UDFValue theDefault;
    const char *nullBitMap = "\0";
 
    /*==================================================*/

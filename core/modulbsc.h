@@ -52,11 +52,11 @@
 #include "evaluatn.h"
 
    void                           DefmoduleBasicCommands(Environment *);
-   void                           GetDefmoduleListFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           EnvGetDefmoduleList(Environment *,CLIPSValue *);
-   void                           PPDefmoduleCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           GetDefmoduleListFunction(Environment *,UDFContext *,UDFValue *);
+   void                           EnvGetDefmoduleList(Environment *,UDFValue *);
+   void                           PPDefmoduleCommand(Environment *,UDFContext *,UDFValue *);
    bool                           PPDefmodule(Environment *,const char *,const char *);
-   void                           ListDefmodulesCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           ListDefmodulesCommand(Environment *,UDFContext *,UDFValue *);
    void                           EnvListDefmodules(Environment *,const char *);
 
 #endif /* _H_modulbsc */

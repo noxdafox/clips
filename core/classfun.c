@@ -763,7 +763,7 @@ void RemoveDefclass(
          if (cls->slots[i].dynamicDefault)
            ReturnPackedExpression(theEnv,(EXPRESSION *) cls->slots[i].defaultValue);
          else
-           rtn_struct(theEnv,dataObject,cls->slots[i].defaultValue);
+           rtn_struct(theEnv,udfValue,cls->slots[i].defaultValue);
         }
       DeleteSlotName(theEnv,cls->slots[i].slotName);
       RemoveConstraint(theEnv,cls->slots[i].constraint);
@@ -830,10 +830,10 @@ void DestroyDefclass(
          if (cls->slots[i].dynamicDefault)
            ReturnPackedExpression(theEnv,(EXPRESSION *) cls->slots[i].defaultValue);
          else
-           rtn_struct(theEnv,dataObject,cls->slots[i].defaultValue);
+           rtn_struct(theEnv,udfValue,cls->slots[i].defaultValue);
 #else
          if (cls->slots[i].dynamicDefault == 0)
-           rtn_struct(theEnv,dataObject,cls->slots[i].defaultValue);
+           rtn_struct(theEnv,udfValue,cls->slots[i].defaultValue);
 #endif
         }
      }
@@ -933,7 +933,7 @@ void InstallClass(
             if (slot->dynamicDefault)
               ExpressionDeinstall(theEnv,(EXPRESSION *) slot->defaultValue);
             else
-              ValueDeinstall(theEnv,(CLIPSValue *) slot->defaultValue);
+              ValueDeinstall(theEnv,(UDFValue *) slot->defaultValue);
            }
         }
       for (i = 0 ; i < cls->handlerCount ; i++)

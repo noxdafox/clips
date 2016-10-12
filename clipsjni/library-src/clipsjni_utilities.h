@@ -4,8 +4,8 @@
 #ifndef _Included_clipsjni_utilities
 #define _Included_clipsjni_utilities
 
-void       ConvertPrimitiveValueToDataObject(Environment *,jobject,CLIPSValue *);
-jobject    ConvertDataObject(JNIEnv *,jobject,void *,CLIPSValue *);
+void       ConvertPrimitiveValueToDataObject(Environment *,jobject,UDFValue *);
+jobject    ConvertDataObject(JNIEnv *,jobject,void *,UDFValue *);
 jobject    ConvertSingleFieldValue(JNIEnv *,jobject,void *,int,void *);
 void      *JLongToPointer(jlong);
 jlong      PointerToJLong(void *);

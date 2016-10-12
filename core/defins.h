@@ -96,7 +96,7 @@ struct definstancesData
    const char                    *EnvDefinstancesModuleName(Environment *,Definstances *);
    Definstances                  *EnvFindDefinstances(Environment *,const char *);
    Definstances                  *EnvFindDefinstancesInModule(Environment *,const char *);
-   void                           EnvGetDefinstancesList(Environment *,CLIPSValue *,Defmodule *);
+   void                           EnvGetDefinstancesList(Environment *,UDFValue *,Defmodule *);
    const char                    *EnvGetDefinstancesName(Environment *,Definstances *);
    CLIPSLexeme                   *EnvGetDefinstancesNamePointer(Environment *,Definstances *);
    const char                    *EnvGetDefinstancesPPForm(Environment *,Definstances *);
@@ -104,13 +104,13 @@ struct definstancesData
    bool                           EnvIsDefinstancesDeletable(Environment *,Definstances *);
    void                           EnvSetDefinstancesPPForm(Environment *,Definstances *,const char *);
    bool                           EnvUndefinstances(Environment *,Definstances *);
-   void                           GetDefinstancesListFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           GetDefinstancesModuleCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           GetDefinstancesListFunction(Environment *,UDFContext *,UDFValue *);
+   void                           GetDefinstancesModuleCommand(Environment *,UDFContext *,UDFValue *);
    void                           SetupDefinstances(Environment *);
-   void                           UndefinstancesCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           UndefinstancesCommand(Environment *,UDFContext *,UDFValue *);
 #if DEBUGGING_FUNCTIONS
-   void                           PPDefinstancesCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                           ListDefinstancesCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                           PPDefinstancesCommand(Environment *,UDFContext *,UDFValue *);
+   void                           ListDefinstancesCommand(Environment *,UDFContext *,UDFValue *);
    void                           EnvListDefinstances(Environment *,const char *,Defmodule *);
 #endif
 

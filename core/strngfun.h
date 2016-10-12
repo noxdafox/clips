@@ -60,20 +60,20 @@
 #include "evaluatn.h"
 
    bool                           EnvBuild(Environment *,const char *);
-   bool                           EnvEval(Environment *,const char *,CLIPSValue *);
+   bool                           EnvEval(Environment *,const char *,UDFValue *);
    void                           StringFunctionDefinitions(Environment *);
-   void                           StrCatFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           SymCatFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           StrLengthFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           UpcaseFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           LowcaseFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           StrCompareFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           SubStringFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           StrIndexFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           EvalFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           BuildFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           StringToFieldFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                           StringToField(Environment *,const char *,CLIPSValue *);
+   void                           StrCatFunction(Environment *,UDFContext *,UDFValue *);
+   void                           SymCatFunction(Environment *,UDFContext *,UDFValue *);
+   void                           StrLengthFunction(Environment *,UDFContext *,UDFValue *);
+   void                           UpcaseFunction(Environment *,UDFContext *,UDFValue *);
+   void                           LowcaseFunction(Environment *,UDFContext *,UDFValue *);
+   void                           StrCompareFunction(Environment *,UDFContext *,UDFValue *);
+   void                           SubStringFunction(Environment *,UDFContext *,UDFValue *);
+   void                           StrIndexFunction(Environment *,UDFContext *,UDFValue *);
+   void                           EvalFunction(Environment *,UDFContext *,UDFValue *);
+   void                           BuildFunction(Environment *,UDFContext *,UDFValue *);
+   void                           StringToFieldFunction(Environment *,UDFContext *,UDFValue *);
+   void                           StringToField(Environment *,const char *,UDFValue *);
 
 #endif /* _H_strngfun */
 

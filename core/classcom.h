@@ -80,15 +80,15 @@
    Defclass               *EnvGetNextDefclass(Environment *,Defclass *);
    bool                    EnvIsDefclassDeletable(Environment *,Defclass *);
 
-   void                    UndefclassCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                    UndefclassCommand(Environment *,UDFContext *,UDFValue *);
    unsigned short          EnvSetClassDefaultsMode(Environment *,unsigned short);
    unsigned short          EnvGetClassDefaultsMode(Environment *);
-   void                    GetClassDefaultsModeCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                    SetClassDefaultsModeCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                    GetClassDefaultsModeCommand(Environment *,UDFContext *,UDFValue *);
+   void                    SetClassDefaultsModeCommand(Environment *,UDFContext *,UDFValue *);
 
 #if DEBUGGING_FUNCTIONS
-   void                    PPDefclassCommand(Environment *,UDFContext *,CLIPSValue *);
-   void                    ListDefclassesCommand(Environment *,UDFContext *,CLIPSValue *);
+   void                    PPDefclassCommand(Environment *,UDFContext *,UDFValue *);
+   void                    ListDefclassesCommand(Environment *,UDFContext *,UDFValue *);
    void                    EnvListDefclasses(Environment *,const char *,Defmodule *);
    bool                    EnvGetDefclassWatchInstances(Environment *,Defclass *);
    void                    EnvSetDefclassWatchInstances(Environment *,bool,Defclass *);
@@ -98,8 +98,8 @@
    bool                    DefclassWatchPrint(Environment *,const char *,int,EXPRESSION *);
 #endif
 
-   void                    GetDefclassListFunction(Environment *,UDFContext *,CLIPSValue *);
-   void                    EnvGetDefclassList(Environment *,CLIPSValue *,Defmodule *);
+   void                    GetDefclassListFunction(Environment *,UDFContext *,UDFValue *);
+   void                    EnvGetDefclassList(Environment *,UDFValue *,Defmodule *);
    bool                    EnvUndefclass(Environment *,Defclass *);
    bool                    HasSuperclass(Defclass *,Defclass *);
 

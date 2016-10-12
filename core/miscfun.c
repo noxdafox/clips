@@ -133,10 +133,10 @@ struct miscFunctionData
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    ExpandFuncMultifield(Environment *,CLIPSValue *,EXPRESSION *,
+   static void                    ExpandFuncMultifield(Environment *,UDFValue *,EXPRESSION *,
                                                        EXPRESSION **,void *);
    static int                     FindLanguageType(Environment *,const char *);
-   static void                    ConvertTime(Environment *,CLIPSValue *,struct tm *);
+   static void                    ConvertTime(Environment *,UDFValue *,struct tm *);
 
 /*****************************************************************/
 /* MiscFunctionDefinitions: Initializes miscellaneous functions. */
@@ -193,7 +193,7 @@ void MiscFunctionDefinitions(
 void CreateFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    StoreInMultifield(theEnv,returnValue,GetFirstArgument(),true);
   }
@@ -204,7 +204,7 @@ void CreateFunction(
 void SetgenFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    long long theLong;
 
@@ -242,7 +242,7 @@ void SetgenFunction(
 void GensymFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    char genstring[128];
 
@@ -268,7 +268,7 @@ void GensymFunction(
 void GensymStarFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    /*====================*/
    /* Return the symbol. */
@@ -283,7 +283,7 @@ void GensymStarFunction(
 /************************************/
 void GensymStar(
   Environment *theEnv,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    char genstring[128];
 
@@ -315,11 +315,11 @@ void GensymStar(
 void RandomFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    int argCount;
    long long rv;
-   CLIPSValue theArg;
+   UDFValue theArg;
    long long begin, end;
 
    /*====================================*/
@@ -372,9 +372,9 @@ void RandomFunction(
 void SeedFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theValue;
+   UDFValue theValue;
 
    /*==========================================================*/
    /* Check to see that a single integer argument is provided. */
@@ -397,9 +397,9 @@ void SeedFunction(
 void LengthFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    /*====================================================*/
    /* The length$ function expects exactly one argument. */
@@ -438,7 +438,7 @@ void LengthFunction(
 void ReleaseMemCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    /*========================================*/
    /* Release memory to the operating system */
@@ -455,10 +455,10 @@ void ReleaseMemCommand(
 void ConserveMemCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    const char *argument;
-   CLIPSValue theValue;
+   UDFValue theValue;
 
    /*===================================*/
    /* The conserve-mem function expects */
@@ -511,7 +511,7 @@ void ConserveMemCommand(
 void MemUsedCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    /*============================================*/
    /* Return the amount of memory currently held */
@@ -528,7 +528,7 @@ void MemUsedCommand(
 void MemRequestsCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    /*==================================*/
    /* Return the number of outstanding */
@@ -547,10 +547,10 @@ void MemRequestsCommand(
 void AproposCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    const char *argument;
-   CLIPSValue theArg;
+   UDFValue theArg;
    CLIPSLexeme *hashPtr = NULL;
    size_t theLength;
 
@@ -589,7 +589,7 @@ void AproposCommand(
 void OptionsCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    /*=======================*/
    /* Set the return value. */
@@ -822,7 +822,7 @@ EnvPrintRouter(theEnv,WDISPLAY,"Run time module is ");
 void OperatingSystemFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
 #if GENERIC
    returnValue->lexemeValue = EnvCreateSymbol(theEnv,"UNKNOWN");
@@ -863,7 +863,7 @@ void OperatingSystemFunction(
 void ExpandFuncCall(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    EXPRESSION *newargexp,*fcallexp;
    struct FunctionDefinition *func;
@@ -931,7 +931,7 @@ void ExpandFuncCall(
 void DummyExpandFuncMultifield(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    returnValue->lexemeValue = theEnv->FalseSymbol;
    EnvSetEvaluationError(theEnv,true);
@@ -960,7 +960,7 @@ void DummyExpandFuncMultifield(
  **********************************************************************/
 static void ExpandFuncMultifield(
   Environment *theEnv,
-  CLIPSValue *returnValue,
+  UDFValue *returnValue,
   EXPRESSION *theExp,
   EXPRESSION **sto,
   void *expmult)
@@ -1037,7 +1037,7 @@ static void ExpandFuncMultifield(
 void CauseEvaluationError(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    EnvSetEvaluationError(theEnv,true);
    returnValue->lexemeValue = theEnv->FalseSymbol;
@@ -1050,7 +1050,7 @@ void CauseEvaluationError(
 void GetSORCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvGetSequenceOperatorRecognition(theEnv));
   }
@@ -1062,10 +1062,10 @@ void GetSORCommand(
 void SetSORCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
      { return; }
@@ -1087,9 +1087,9 @@ void SetSORCommand(
 void GetFunctionRestrictions(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
    struct FunctionDefinition *fptr;
    char *stringBuffer = NULL;
    size_t bufferPosition = 0;
@@ -1152,7 +1152,7 @@ void GetFunctionRestrictions(
 void GetFunctionListFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    struct FunctionDefinition *theFunction;
    Multifield *theList;
@@ -1183,10 +1183,10 @@ void GetFunctionListFunction(
 void FuncallFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    int j;
-   CLIPSValue theArg;
+   UDFValue theArg;
    FUNCTION_REFERENCE theReference;
    const char *name;
    struct multifield *theMultifield;
@@ -1343,10 +1343,10 @@ void FuncallFunction(
 void NewFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    int theType;
-   CLIPSValue theValue;
+   UDFValue theValue;
    const char *name;
 
    /*==================================*/
@@ -1392,10 +1392,10 @@ void NewFunction(
 void CallFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    int theType;
-   CLIPSValue theValue;
+   UDFValue theValue;
    const char *name;
    struct externalAddressHashNode *theEA;
 
@@ -1487,7 +1487,7 @@ static int FindLanguageType(
 void TimeFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    /*==================*/
    /* Return the time. */
@@ -1502,7 +1502,7 @@ void TimeFunction(
 /****************************************/
 static void ConvertTime(
   Environment *theEnv,
-  CLIPSValue *returnValue,
+  UDFValue *returnValue,
   struct tm *info)
   {
    returnValue->begin = 0;
@@ -1564,7 +1564,7 @@ static void ConvertTime(
 void LocalTimeFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    time_t rawtime;
    struct tm *info;
@@ -1586,7 +1586,7 @@ void LocalTimeFunction(
 void GMTimeFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    time_t rawtime;
    struct tm *info;
@@ -1608,10 +1608,10 @@ void GMTimeFunction(
 void TimerFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    double startTime;
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    startTime = gentime();
 
@@ -1629,12 +1629,12 @@ void TimerFunction(
 void SystemCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    char *commandBuffer = NULL;
    size_t bufferPosition = 0;
    size_t bufferMaximum = 0;
-   CLIPSValue tempValue;
+   UDFValue tempValue;
    const char *theString;
 
    /*============================================================*/

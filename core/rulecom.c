@@ -113,7 +113,7 @@
 #if DEBUGGING_FUNCTIONS
    static long long               ListAlphaMatches(Environment *,struct joinInformation *,int);
    static long long               ListBetaMatches(Environment *,struct joinInformation *,long,long,int);
-   static void                    ListBetaJoinActivity(Environment *,struct joinInformation *,long,long,int,CLIPSValue *);
+   static void                    ListBetaJoinActivity(Environment *,struct joinInformation *,long,long,int,UDFValue *);
    static long                    AlphaJoinCountDriver(Environment *,struct joinNode *);
    static long                    BetaJoinCountDriver(Environment *,struct joinNode *);
    static void                    AlphaJoinsDriver(Environment *,struct joinNode *,long,struct joinInformation *);
@@ -208,9 +208,9 @@ bool EnvSetBetaMemoryResizing(
 void SetBetaMemoryResizingCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvGetBetaMemoryResizing(theEnv));
 
@@ -235,7 +235,7 @@ void SetBetaMemoryResizingCommand(
 void GetBetaMemoryResizingCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvGetBetaMemoryResizing(theEnv));
   }
@@ -249,11 +249,11 @@ void GetBetaMemoryResizingCommand(
 void MatchesCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    const char *ruleName, *argument;
    Defrule *rulePtr;
-   CLIPSValue theArg;
+   UDFValue theArg;
    int output;
 
    if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
@@ -302,7 +302,7 @@ void EnvMatches(
   Environment *theEnv,
   Defrule *theRule,
   int output,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Defrule *rulePtr;
    Defrule *topDisjunct = theRule;
@@ -953,11 +953,11 @@ static int CountPatterns(
 void JoinActivityCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    const char *ruleName, *argument;
    Defrule *rulePtr;
-   CLIPSValue theArg;
+   UDFValue theArg;
    int output;
 
    if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
@@ -1006,7 +1006,7 @@ void EnvJoinActivity(
   Environment *theEnv,
   Defrule *theRule,
   int output,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Defrule *rulePtr;
    long disjunctCount, disjunctIndex, joinIndex;
@@ -1146,7 +1146,7 @@ static void ListBetaJoinActivity(
   long joinIndex,
   long arraySize,
   int output,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    long long activity = 0;
    long long compares, adds, deletes;
@@ -1247,7 +1247,7 @@ static void JoinActivityReset(
 void JoinActivityResetCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    DoForAllConstructs(theEnv,
                       JoinActivityReset,
@@ -1261,9 +1261,9 @@ void JoinActivityResetCommand(
 void TimetagFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
    void *ptr;
 
    ptr = GetFactOrInstanceArgument(context,1,&theArg);
@@ -1287,7 +1287,7 @@ void TimetagFunction(
 void RuleComplexityCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    const char *ruleName;
    Defrule *rulePtr;
@@ -1317,7 +1317,7 @@ void RuleComplexityCommand(
 void ShowJoinsCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    const char *ruleName;
    Defrule *rulePtr;
@@ -1490,7 +1490,7 @@ static void ShowJoins(
 void ShowAlphaHashTable(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
    {
     int i, count;
     long totalCount = 0;

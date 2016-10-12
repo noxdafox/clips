@@ -166,7 +166,7 @@ long long EnvRun(
   long long runLimit)
   {
    long long rulesFired = 0;
-   CLIPSValue returnValue;
+   UDFValue returnValue;
    struct callFunctionItemWithArg *theBeforeRunFunction;
    struct callFunctionItem *theRunFunction;
 #if DEBUGGING_FUNCTIONS
@@ -898,7 +898,7 @@ void EnvFocus(
 void ClearFocusStackCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    EnvClearFocusStack(theEnv);
   }
@@ -1021,11 +1021,11 @@ bool EnvRemoveBeforeRunFunction(
 void RunCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    int numArgs;
    long long runLimit = -1LL;
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    numArgs = UDFArgumentCount(context);
    if (numArgs == 0)
@@ -1045,7 +1045,7 @@ void RunCommand(
 void HaltCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    EnvHalt(theEnv);
   }
@@ -1165,9 +1165,9 @@ bool EnvDefruleHasBreakpoint(
 void SetBreakCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
    const char *argument;
    Defrule *defrulePtr;
 
@@ -1191,9 +1191,9 @@ void SetBreakCommand(
 void RemoveBreakCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
    const char *argument;
    Defrule *defrulePtr;
 
@@ -1228,7 +1228,7 @@ void RemoveBreakCommand(
 void ShowBreaksCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    int numArgs;
    bool error;
@@ -1254,7 +1254,7 @@ void ShowBreaksCommand(
 void ListFocusStackCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    EnvListFocusStack(theEnv,WDISPLAY);
   }
@@ -1287,7 +1287,7 @@ void EnvListFocusStack(
 void GetFocusStackFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    EnvGetFocusStack(theEnv,returnValue);
   }
@@ -1298,7 +1298,7 @@ void GetFocusStackFunction(
 /***************************************/
 void EnvGetFocusStack(
   Environment *theEnv,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    struct focus *theFocus;
    Multifield *theList;
@@ -1353,7 +1353,7 @@ void EnvGetFocusStack(
 void PopFocusFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Defmodule *theModule;
 
@@ -1374,7 +1374,7 @@ void PopFocusFunction(
 void GetFocusFunction(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Defmodule *rv;
 
@@ -1408,9 +1408,9 @@ Defmodule *EnvGetFocus(
 void FocusCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
-   CLIPSValue theArg;
+   UDFValue theArg;
    const char *argument;
    Defmodule *theModule;
    int argCount, i;

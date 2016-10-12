@@ -342,11 +342,11 @@ int EnvUngetcRouter(
 void ExitCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    int argCnt;
    int status;
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    argCnt = UDFArgumentCount(context);
 

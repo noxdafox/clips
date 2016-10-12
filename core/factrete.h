@@ -49,19 +49,19 @@
 
 #include "evaluatn.h"
 
-   bool                           FactPNGetVar1(Environment *,void *,CLIPSValue *);
-   bool                           FactPNGetVar2(Environment *,void *,CLIPSValue *);
-   bool                           FactPNGetVar3(Environment *,void *,CLIPSValue *);
-   bool                           FactJNGetVar1(Environment *,void *,CLIPSValue *);
-   bool                           FactJNGetVar2(Environment *,void *,CLIPSValue *);
-   bool                           FactJNGetVar3(Environment *,void *,CLIPSValue *);
-   bool                           FactSlotLength(Environment *,void *,CLIPSValue *);
-   bool                           FactJNCompVars1(Environment *,void *,CLIPSValue *);
-   bool                           FactJNCompVars2(Environment *,void *,CLIPSValue *);
-   bool                           FactPNCompVars1(Environment *,void *,CLIPSValue *);
-   bool                           FactPNConstant1(Environment *,void *,CLIPSValue *);
-   bool                           FactPNConstant2(Environment *,void *,CLIPSValue *);
-   bool                           FactStoreMultifield(Environment *,void *,CLIPSValue *);
+   bool                           FactPNGetVar1(Environment *,void *,UDFValue *);
+   bool                           FactPNGetVar2(Environment *,void *,UDFValue *);
+   bool                           FactPNGetVar3(Environment *,void *,UDFValue *);
+   bool                           FactJNGetVar1(Environment *,void *,UDFValue *);
+   bool                           FactJNGetVar2(Environment *,void *,UDFValue *);
+   bool                           FactJNGetVar3(Environment *,void *,UDFValue *);
+   bool                           FactSlotLength(Environment *,void *,UDFValue *);
+   bool                           FactJNCompVars1(Environment *,void *,UDFValue *);
+   bool                           FactJNCompVars2(Environment *,void *,UDFValue *);
+   bool                           FactPNCompVars1(Environment *,void *,UDFValue *);
+   bool                           FactPNConstant1(Environment *,void *,UDFValue *);
+   bool                           FactPNConstant2(Environment *,void *,UDFValue *);
+   bool                           FactStoreMultifield(Environment *,void *,UDFValue *);
    unsigned short                 AdjustFieldPosition(Environment *,struct multifieldMarker *,
                                                       unsigned short,unsigned short,int *);
 

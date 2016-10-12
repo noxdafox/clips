@@ -48,7 +48,7 @@
 #include "constrnt.h"
 #include "evaluatn.h"
 
-   void                           DeriveDefaultFromConstraints(Environment *,CONSTRAINT_RECORD *,CLIPSValue *,bool,bool);
+   void                           DeriveDefaultFromConstraints(Environment *,CONSTRAINT_RECORD *,UDFValue *,bool,bool);
    struct expr                   *ParseDefault(Environment *,const char *,bool,bool,bool,bool *,bool *,bool *);
 
 #endif /* _H_default */

@@ -146,7 +146,7 @@ void CheckTemplateFact(
    int i;
    Deftemplate *theDeftemplate;
    struct templateSlot *slotPtr;
-   CLIPSValue theData;
+   UDFValue theData;
    char thePlace[20];
    int rv;
 
@@ -302,7 +302,7 @@ void PrintTemplateFact(
    int i;
    Deftemplate *theDeftemplate;
    struct templateSlot *slotPtr;
-   CLIPSValue tempDO;
+   UDFValue tempDO;
    bool slotPrinted = false;
 
    /*==============================*/

@@ -71,7 +71,7 @@ typedef struct query_core
    EXPRESSION *query,*action;
    QUERY_SOLN *soln_set,*soln_bottom;
    unsigned soln_size,soln_cnt;
-   CLIPSValue *result;
+   UDFValue *result;
   } QUERY_CORE;
 
 typedef struct query_stack
@@ -95,14 +95,14 @@ struct factQueryData
 #define QUERY_DELIMITER_STRING     "(QDS)"
 
    void                           SetupFactQuery(Environment *);
-   void                           GetQueryFact(Environment *,UDFContext *,CLIPSValue *);
-   void                           GetQueryFactSlot(Environment *,UDFContext *,CLIPSValue *);
-   void                           AnyFacts(Environment *,UDFContext *,CLIPSValue *);
-   void                           QueryFindFact(Environment *,UDFContext *,CLIPSValue *);
-   void                           QueryFindAllFacts(Environment *,UDFContext *,CLIPSValue *);
-   void                           QueryDoForFact(Environment *,UDFContext *,CLIPSValue *);
-   void                           QueryDoForAllFacts(Environment *,UDFContext *,CLIPSValue *);
-   void                           DelayedQueryDoForAllFacts(Environment *,UDFContext *,CLIPSValue *);
+   void                           GetQueryFact(Environment *,UDFContext *,UDFValue *);
+   void                           GetQueryFactSlot(Environment *,UDFContext *,UDFValue *);
+   void                           AnyFacts(Environment *,UDFContext *,UDFValue *);
+   void                           QueryFindFact(Environment *,UDFContext *,UDFValue *);
+   void                           QueryFindAllFacts(Environment *,UDFContext *,UDFValue *);
+   void                           QueryDoForFact(Environment *,UDFContext *,UDFValue *);
+   void                           QueryDoForAllFacts(Environment *,UDFContext *,UDFValue *);
+   void                           DelayedQueryDoForAllFacts(Environment *,UDFContext *,UDFValue *);
 
 #endif /* FACT_SET_QUERIES */
 

@@ -598,12 +598,12 @@ void PrintMethod(
 void PreviewGeneric(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    Defgeneric *gfunc;
    Defgeneric *previousGeneric;
    int oldce;
-   CLIPSValue theArg;
+   UDFValue theArg;
 
    EvaluationData(theEnv)->EvaluationError = false;
    if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg)) return;

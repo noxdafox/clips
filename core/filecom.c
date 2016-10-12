@@ -426,7 +426,7 @@ static void ExitDribble(
 void DribbleOnCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    const char *fileName;
 
@@ -515,7 +515,7 @@ bool EnvDribbleActive(
 void DribbleOffCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvDribbleOff(theEnv));
   }
@@ -744,7 +744,7 @@ static void ExitBatch(
 void BatchCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    const char *fileName;
 
@@ -1078,7 +1078,7 @@ void CloseAllBatchSources(
 void BatchStarCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    const char *fileName;
 
@@ -1221,7 +1221,7 @@ bool EnvBatchStar(
 void LoadCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
 #if (! BLOAD_ONLY) && (! RUN_TIME)
    const char *theFileName;
@@ -1259,7 +1259,7 @@ void LoadCommand(
 void LoadStarCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
 #if (! BLOAD_ONLY) && (! RUN_TIME)
    const char *theFileName;
@@ -1293,7 +1293,7 @@ void LoadStarCommand(
 void SaveCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
 #if (! BLOAD_ONLY) && (! RUN_TIME)
    const char *theFileName;
