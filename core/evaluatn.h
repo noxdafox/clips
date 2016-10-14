@@ -153,7 +153,7 @@ struct udfValue
       CLIPSExternalAddress *externalAddressValue;
      };
    long begin;
-   long end;
+   long range;
    struct udfValue *next;
   };
 
@@ -169,9 +169,6 @@ struct externalAddressType
 
 typedef struct entityRecord ENTITY_RECORD;
 typedef struct entityRecord * ENTITY_RECORD_PTR;
-
-#define GetDOLength(target)       (((target).end - (target).begin) + 1)
-#define GetpDOLength(target)      (((target)->end - (target)->begin) + 1)
 
 #define CoerceToLongInteger(t,v) ((t == INTEGER) ? ValueToLong(v) : (long int) ValueToDouble(v))
 #define CoerceToInteger(t,v) ((t == INTEGER) ? (int) ValueToLong(v) : (int) ValueToDouble(v))

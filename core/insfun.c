@@ -681,8 +681,8 @@ bool DirectPutSlotValue(
       sp->type = MULTIFIELD;
       if (val->header->type == MULTIFIELD)
         {
-         sp->value = CreateUnmanagedMultifield(theEnv,(unsigned long) GetpDOLength(val));
-         for (i = 0 , j = val->begin ; i < GetpDOLength(val) ; i++ , j++)
+         sp->value = CreateUnmanagedMultifield(theEnv,(unsigned long) val->range);
+         for (i = 0 , j = val->begin ; i < val->range ; i++ , j++)
            {
             sp->multifieldValue->theFields[i].value = val->multifieldValue->theFields[j].value;
            }
@@ -695,7 +695,7 @@ bool DirectPutSlotValue(
       MultifieldInstall(theEnv,sp->multifieldValue);
       setVal->value = sp->value;
       setVal->begin = 0;
-      setVal->end = GetMFLength(sp->value) - 1;
+      setVal->range = GetMFLength(sp->value);
      }
    /* ==================================================
       6.05 Bug fix - any slot set directly or indirectly
@@ -792,7 +792,7 @@ bool ValidSlotValue(
    if (val->value == ProceduralPrimitiveData(theEnv)->NoParamValue)
      return true;
    if ((sd->multiple == 0) && (val->header->type == MULTIFIELD) &&
-                              (GetpDOLength(val) != 1))
+                              (val->range != 1))
      {
       PrintErrorID(theEnv,"INSFUN",7,false);
       PrintDataObject(theEnv,WERROR,val);

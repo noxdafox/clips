@@ -38,7 +38,7 @@ jobject ConvertDataObject(
    switch(theDO->header->type)
      {
       case MULTIFIELD:
-        mfLength = GetpDOLength(theDO);
+        mfLength = theDO->range;
 
         result = (*env)->NewObject(env,
                                    CLIPSJNIData(clipsEnv)->arrayListClass,
@@ -50,7 +50,7 @@ jobject ConvertDataObject(
           
         theList = theDO->multifieldValue;
         
-        for (i = theDO->begin; i <= theDO->end; i++)
+        for (i = theDO->begin; i < (theDO->begin + theDO->range); i++)
          {
           tresult = ConvertSingleFieldValue(env,javaEnv,clipsEnv,
                                             theList->theFields[i].header->type,
@@ -277,7 +277,7 @@ void ConvertPrimitiveValueToDataObject(
            }
            
          theDO->begin = 0;
-         theDO->end = GetMFLength(result) - 1;
+         theDO->range = GetMFLength(result);
          theDO->value = result;
          break;
         }

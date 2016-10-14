@@ -188,7 +188,7 @@ void WhileFunction(
      {
       returnValue->value = theResult.value;
       returnValue->begin = theResult.begin;
-      returnValue->end = theResult.end;
+      returnValue->range = theResult.range;
      }
    else
      {
@@ -259,7 +259,7 @@ void LoopForCountFunction(
      {
       loopResult->value = theArg.value;
       loopResult->begin = theArg.begin;
-      loopResult->end = theArg.end;
+      loopResult->range = theArg.range;
      }
    else
      {
@@ -467,7 +467,7 @@ void BindFunction(
      {
       theBind->value = returnValue->value;
       theBind->begin = returnValue->begin;
-      theBind->end = returnValue->end;
+      theBind->range = returnValue->range;
       ValueInstall(theEnv,returnValue);
      }
    else
@@ -497,7 +497,7 @@ bool GetBoundVariable(
         {
          vPtr->value = bindPtr->value;
          vPtr->begin = bindPtr->begin;
-         vPtr->end = bindPtr->end;
+         vPtr->range = bindPtr->range;
          return true;
         }
      }

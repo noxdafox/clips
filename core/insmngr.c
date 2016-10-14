@@ -1022,7 +1022,7 @@ static bool InsertSlotOverrides(
       else
         {
          temp.begin = 0;
-         temp.end = -1;
+         temp.range = 0;
          temp.value = ProceduralPrimitiveData(theEnv)->NoParamValue;
          PutSlotValue(theEnv,ins,slot,&temp,&junk,"function make-instance");
         }

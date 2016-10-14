@@ -157,6 +157,7 @@ bool EvaluateExpression(
 #endif
 
    returnValue->voidValue = theEnv->VoidConstant;
+   returnValue->range = -1;
 
    if (problem == NULL)
      {
@@ -212,7 +213,7 @@ bool EvaluateExpression(
      case MULTIFIELD:
         returnValue->value = ((UDFValue *) (problem->value))->value;
         returnValue->begin = ((UDFValue *) (problem->value))->begin;
-        returnValue->end = ((UDFValue *) (problem->value))->end;
+        returnValue->range = ((UDFValue *) (problem->value))->range;
         break;
 
      case MF_VARIABLE:
@@ -265,8 +266,8 @@ bool EvaluateExpression(
         EvaluationData(theEnv)->CurrentExpression = oldArgument;
         break;
      }
-
-   return(EvaluationData(theEnv)->EvaluationError);
+     
+   return EvaluationData(theEnv)->EvaluationError;
   }
 
 /******************************************/
@@ -401,7 +402,7 @@ void PrintDataObject(
 
       case MULTIFIELD:
         PrintMultifield(theEnv,fileid,argPtr->multifieldValue,
-                        argPtr->begin,argPtr->end,true);
+                        argPtr->begin,(argPtr->begin + argPtr->range) - 1,true);
         break;
 
       default:
@@ -423,8 +424,8 @@ void EnvSetMultifieldErrorValue(
   UDFValue *returnValue)
   {
    returnValue->value = EnvCreateMultifield(theEnv,0L);
-   returnValue->begin = 1;
-   returnValue->end = 0;
+   returnValue->begin = 0;
+   returnValue->range = 0;
   }
 
 /**************************************************/
@@ -795,7 +796,7 @@ void TransferDataObjectValues(
   {
    dst->value = src->value;
    dst->begin = src->begin;
-   dst->end = src->end;
+   dst->range = src->range;
    dst->supplementalInfo = src->supplementalInfo;
    dst->next = src->next;
   }
@@ -816,7 +817,7 @@ struct expr *ConvertValueToExpression(
    if (theValue->header->type != MULTIFIELD)
      { return(GenConstant(theEnv,theValue->header->type,theValue->value)); }
 
-   for (i = theValue->begin; i <= theValue->end; i++)
+   for (i = theValue->begin; i < (theValue->begin + theValue->range); i++)
      {
       newItem = GenConstant(theEnv,theValue->multifieldValue->theFields[i].header->type,
                                    theValue->multifieldValue->theFields[i].value);
@@ -1058,7 +1059,7 @@ bool EvaluateAndStoreInDataObject(
   bool garbageSegment)
   {
    val->begin = 0;
-   val->end = -1;
+   val->range = 0;
 
    if (theExp == NULL)
      {

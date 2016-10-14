@@ -1586,7 +1586,7 @@ static void CreateSlotValue(
      {
       returnValue->value = EnvCreateMultifield(theEnv,0L);
       returnValue->begin = 0;
-      returnValue->end = -1;
+      returnValue->range = 0;
      }
    else if (valueCount == 1)
      {
@@ -1596,7 +1596,7 @@ static void CreateSlotValue(
      {
       returnValue->value = EnvCreateMultifield(theEnv,valueCount);
       returnValue->begin = 0;
-      returnValue->end = valueCount - 1;
+      returnValue->range = valueCount;
       for (i = 0 ; i < valueCount ; i++)
         {
          returnValue->multifieldValue->theFields[i].value = GetBinaryAtomValue(theEnv,&bsaValues[i-1]);

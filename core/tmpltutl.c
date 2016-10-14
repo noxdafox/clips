@@ -187,7 +187,7 @@ void CheckTemplateFact(
         {
          theData.value = (void *) sublist[i].value;
          theData.begin = 0;
-         theData.end = sublist[i].multifieldValue->multifieldLength - 1;
+         theData.range = sublist[i].multifieldValue->multifieldLength;
          i++;
         }
 

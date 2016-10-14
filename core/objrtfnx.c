@@ -1096,7 +1096,7 @@ static void GetObjectValueGeneral(
       if (returnValue->header->type == MULTIFIELD)
         {
          returnValue->begin = 0;
-         returnValue->end = GetMFLength((*insSlot)->value) - 1;
+         returnValue->range = GetMFLength((*insSlot)->value);
         }
       return;
      }
@@ -1121,7 +1121,7 @@ static void GetObjectValueGeneral(
      {
       returnValue->value = (*insSlot)->value;
       returnValue->begin = field - 1;
-      returnValue->end = field + extent - 2;
+      returnValue->range = extent;
      }
   }
 
@@ -1179,7 +1179,9 @@ static void GetObjectValueSimple(
            {
             returnValue->value = segmentPtr;
             returnValue->begin = matchVar->beginningOffset;
-            returnValue->end = (GetMFLength(segmentPtr) - matchVar->endOffset) - 1;
+            returnValue->range = GetMFLength(segmentPtr) - (matchVar->endOffset + matchVar->beginningOffset);
+            if (returnValue->range < 0)
+              { returnValue->range = 0; } // TBD Can this be removed?
            }
          else
            {
@@ -1247,7 +1249,7 @@ static long CalculateSlotField(
       actualIndex += theMarkers->endPosition - theMarkers->startPosition;
       theMarkers = theMarkers->next;
      }
-   return(actualIndex);
+   return actualIndex;
   }
 
 /****************************************************

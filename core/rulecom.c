@@ -319,7 +319,7 @@ void EnvMatches(
    /*==========================*/
 
    returnValue->begin = 0;
-   returnValue->end = 2;
+   returnValue->range = 3;
    returnValue->value = EnvCreateMultifield(theEnv,3L);
 
    returnValue->multifieldValue->theFields[0].integerValue = SymbolData(theEnv)->Zero;
@@ -1018,7 +1018,7 @@ void EnvJoinActivity(
    /*==========================*/
 
    returnValue->begin = 0;
-   returnValue->end = 2;
+   returnValue->range = 3;
    returnValue->value = EnvCreateMultifield(theEnv,3L);
 
    returnValue->multifieldValue->theFields[0].integerValue = SymbolData(theEnv)->Zero;

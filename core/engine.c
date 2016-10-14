@@ -1312,7 +1312,7 @@ void EnvGetFocusStack(
    if (EngineData(theEnv)->CurrentFocus == NULL)
      {
       returnValue->begin = 0;
-      returnValue->end = -1;
+      returnValue->range = 0;
       returnValue->value = EnvCreateMultifield(theEnv,0L);
       return;
      }
@@ -1330,7 +1330,7 @@ void EnvGetFocusStack(
    /*=============================================*/
 
    returnValue->begin = 0;
-   returnValue->end = count - 1;
+   returnValue->range = count;
    theList = EnvCreateMultifield(theEnv,count);
    returnValue->multifieldValue = theList;
 

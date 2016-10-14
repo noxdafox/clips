@@ -703,7 +703,7 @@ static UDFValue *EvaluateSlotOverrides(
       else
         {
          ovs[ovi].begin = 0;
-         ovs[ovi].end = -1;
+         ovs[ovi].range = 0;
          ovs[ovi].value = ProceduralPrimitiveData(theEnv)->NoParamValue;
         }
       ovs[ovi].supplementalInfo = slotName;
@@ -820,7 +820,7 @@ static void ModifyMsgHandlerSupport(
            {
             temp.value = EnvCreateMultifield(theEnv,1L);
             temp.begin = 0;
-            temp.end = 0;
+            temp.range = 1;
             temp.multifieldValue->theFields[0].value = slotOverrides->value;
             newval = &temp;
            }
@@ -944,7 +944,7 @@ static void DuplicateMsgHandlerSupport(
            {
             temp.value = EnvCreateMultifield(theEnv,1L);
             temp.begin = 0;
-            temp.end = 0;
+            temp.range = 1;
             temp.multifieldValue->theFields[0].value = slotOverrides->value;
             newval = &temp;
            }
@@ -971,7 +971,7 @@ static void DuplicateMsgHandlerSupport(
             if (temp.header->type == MULTIFIELD)
               {
                temp.begin = 0;
-               temp.end = GetMFLength(temp.value) - 1;
+               temp.range = GetMFLength(temp.value);
               }
             valArg = ConvertValueToExpression(theEnv,&temp);
             success = DirectMessage(theEnv,dstins->slots[i].desc->overrideMessage,
@@ -986,7 +986,7 @@ static void DuplicateMsgHandlerSupport(
             if (srcins->slots[i].type == MULTIFIELD)
               {
                temp.begin = 0;
-               temp.end = GetMFLength(srcins->slots[i].value) - 1;
+               temp.range = GetMFLength(srcins->slots[i].value);
               }
             if (PutSlotValue(theEnv,dstins,&dstins->slots[i],&temp,&junk,"duplicate-instance")
                  == false)

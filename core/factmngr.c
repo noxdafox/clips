@@ -982,7 +982,7 @@ bool EnvGetFactSlot(
       if (slotName != NULL) return false;
       theValue->value = theFact->theProposition.theFields[0].value;
       theValue->begin = 0;
-      theValue->end = theValue->multifieldValue->multifieldLength - 1;
+      theValue->range = theValue->multifieldValue->multifieldLength;
       return true;
      }
 
@@ -1004,7 +1004,7 @@ bool EnvGetFactSlot(
    if (theValue->header->type == MULTIFIELD)
      {
       theValue->begin = 0;
-      theValue->end = theValue->multifieldValue->multifieldLength - 1;
+      theValue->range = theValue->multifieldValue->multifieldLength;
      }
 
    if (theValue->header->type == RVOID) return false;

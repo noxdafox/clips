@@ -493,7 +493,7 @@ static void DuplicateModifyCommand(
    if (theFact != NULL)
      {
       returnValue->begin = 0;
-      returnValue->end = theFact->theProposition.multifieldLength - 1;
+      returnValue->range = theFact->theProposition.multifieldLength;
       returnValue->value = theFact;
      }
 
@@ -560,7 +560,7 @@ void EnvDeftemplateSlotNames(
    if (theDeftemplate->implied)
      {
       returnValue->begin = 0;
-      returnValue->end = 0;
+      returnValue->range = 1;
       theList = EnvCreateMultifield(theEnv,(int) 1);
       theList->theFields[0].lexemeValue = EnvCreateSymbol(theEnv,"implied");
       returnValue->value = theList;
@@ -581,7 +581,7 @@ void EnvDeftemplateSlotNames(
    /*=============================================================*/
 
    returnValue->begin = 0;
-   returnValue->end = count - 1;
+   returnValue->range = count;
    theList = EnvCreateMultifield(theEnv,count);
    returnValue->value = theList;
 
@@ -752,8 +752,8 @@ bool EnvDeftemplateSlotDefaultValue(
       if (strcmp(slotName,"implied") == 0)
         {
          theValue->value = EnvCreateMultifield(theEnv,0L);
-         theValue->begin = 1;
-         theValue->end = 0;
+         theValue->begin = 0;
+         theValue->range = 0;
          return true;
         }
       else
@@ -789,7 +789,7 @@ bool EnvDeftemplateSlotDefaultValue(
    else if (DeftemplateSlotDefault(theEnv,theDeftemplate,theSlot,&tempDO,true))
      {
       theValue->begin = tempDO.begin;
-      theValue->end = tempDO.end;
+      theValue->range = tempDO.range;
       theValue->value = tempDO.value;
      }
    else
@@ -851,7 +851,7 @@ void EnvDeftemplateSlotCardinality(
       if (strcmp(slotName,"implied") == 0)
         {
          returnValue->begin = 0;
-         returnValue->end = 1;
+         returnValue->range = 2;
          returnValue->value = EnvCreateMultifield(theEnv,2L);
          returnValue->multifieldValue->theFields[0].integerValue = SymbolData(theEnv)->Zero;
          returnValue->multifieldValue->theFields[1].lexemeValue = SymbolData(theEnv)->PositiveInfinity;
@@ -892,7 +892,7 @@ void EnvDeftemplateSlotCardinality(
      }
 
    returnValue->begin = 0;
-   returnValue->end = 1;
+   returnValue->range = 2;
    returnValue->value = EnvCreateMultifield(theEnv,2L);
 
    if (theSlot->constraints != NULL)
@@ -999,8 +999,8 @@ void EnvDeftemplateSlotAllowedValues(
      }
 
    returnValue->begin = 0;
-   returnValue->end = ExpressionSize(theSlot->constraints->restrictionList) - 1;
-   returnValue->value = EnvCreateMultifield(theEnv,(unsigned long) (returnValue->end + 1));
+   returnValue->range = ExpressionSize(theSlot->constraints->restrictionList);
+   returnValue->value = EnvCreateMultifield(theEnv,(unsigned long) returnValue->range);
    i = 0;
 
    theExp = theSlot->constraints->restrictionList;
@@ -1065,7 +1065,7 @@ void EnvDeftemplateSlotRange(
       if (strcmp(slotName,"implied") == 0)
         {
          returnValue->begin = 0;
-         returnValue->end = 1;
+         returnValue->range = 2;
          returnValue->value = EnvCreateMultifield(theEnv,2L);
          returnValue->multifieldValue->theFields[0].lexemeValue =
             SymbolData(theEnv)->NegativeInfinity;
@@ -1106,7 +1106,7 @@ void EnvDeftemplateSlotRange(
         theSlot->constraints->integersAllowed))
      {
       returnValue->begin = 0;
-      returnValue->end = 1;
+      returnValue->range = 2;
       returnValue->value = EnvCreateMultifield(theEnv,2L);
       returnValue->multifieldValue->theFields[0].value = theSlot->constraints->minValue->value;
       returnValue->multifieldValue->theFields[1].value = theSlot->constraints->maxValue->value;
@@ -1232,7 +1232,7 @@ void EnvDeftemplateSlotTypes(
    /*========================================*/
 
    returnValue->begin = 0;
-   returnValue->end = numTypes - 1;
+   returnValue->range = numTypes;
    returnValue->value = EnvCreateMultifield(theEnv,(long) numTypes);
 
    i = 0;

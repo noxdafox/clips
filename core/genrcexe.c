@@ -569,7 +569,7 @@ void GetGenericCurrentArgument(
   {
    returnValue->value = DefgenericData(theEnv)->GenericCurrentArgument->value;
    returnValue->begin = DefgenericData(theEnv)->GenericCurrentArgument->begin;
-   returnValue->end = DefgenericData(theEnv)->GenericCurrentArgument->end;
+   returnValue->range = DefgenericData(theEnv)->GenericCurrentArgument->range;
   }
 
 /* =========================================

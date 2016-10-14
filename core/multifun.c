@@ -337,7 +337,7 @@ void ReplaceMemberFunction(
    if (! UDFNextArgument(context,ANY_TYPE,&replVal))
      { return; }
    if (replVal.header->type == MULTIFIELD)
-     replLen = GetDOLength(replVal);
+     replLen = replVal.range;
 
    /*======================================================*/
    /* For the value (or values from multifield) specified, */
@@ -456,7 +456,7 @@ void ExplodeFunction(
    /*========================*/
 
    returnValue->begin = 0;
-   returnValue->end = end - 1;
+   returnValue->range = end;
    returnValue->value = theMultifield;
   }
 
@@ -507,7 +507,7 @@ void SubseqFunction(
 
    theList = theArg.multifieldValue;
    offset = theArg.begin;
-   length = GetDOLength(theArg);
+   length = theArg.range;
 
    /*=============================================*/
    /* Get range arguments. If they are not within */
@@ -546,7 +546,7 @@ void SubseqFunction(
    /*=========================*/
 
    returnValue->value = theList;
-   returnValue->end = offset + end - 1;
+   returnValue->range = (end - start) + 1;
    returnValue->begin = offset + start - 1;
   }
 
@@ -575,10 +575,10 @@ void FirstFunction(
    /*=========================*/
 
    returnValue->value = theList;
-   if (theArg.end >= theArg.begin)
-     { returnValue->end = theArg.begin; }
+   if (theArg.range >= 1)
+     { returnValue->range = 1; }
    else
-     { returnValue->end = theArg.end; }
+     { returnValue->range = 0; }
    returnValue->begin = theArg.begin;
   }
 
@@ -607,11 +607,17 @@ void RestFunction(
    /*=========================*/
 
    returnValue->value = theList;
-   if (theArg.begin > theArg.end)
-     { returnValue->begin = theArg.begin; }
+   
+   if (theArg.range > 0)
+     {
+      returnValue->begin = theArg.begin + 1;
+      returnValue->range = theArg.range - 1;
+     }
    else
-     { returnValue->begin = theArg.begin + 1; }
-   returnValue->end = theArg.end;
+     {
+      returnValue->begin = theArg.begin;
+      returnValue->range = theArg.range;
+     }
   }
 
 /*************************************/
@@ -632,7 +638,7 @@ void NthFunction(
      { return; }
 
    n = value1.integerValue->contents; /* 6.04 Bug Fix */
-   if ((n > GetDOLength(value2)) || (n < 1))
+   if ((n > value2.range) || (n < 1))
 	 {
       returnValue->lexemeValue = EnvCreateSymbol(theEnv,"nil");
 	  return;
@@ -675,19 +681,19 @@ void SubsetpFunction(
    if (! UDFNextArgument(context,MULTIFIELD_TYPE,&item2))
      { return; }
 
-   if (GetDOLength(item1) == 0)
+   if (item1.range == 0)
      {
       returnValue->lexemeValue = theEnv->TrueSymbol;
       return;
      }
 
-   if (GetDOLength(item2) == 0)
+   if (item2.range == 0)
      {
       returnValue->lexemeValue = theEnv->FalseSymbol;
       return;
      }
 
-   for (i = item1.begin ; i <= item1.end ; i++)
+   for (i = item1.begin ; i < (item1.begin + item1.range) ; i++)
      {
       tmpItem.value = item1.multifieldValue->theFields[i].value;
 
@@ -731,7 +737,7 @@ void MemberFunction(
          returnValue->multifieldValue->theFields[0].integerValue = EnvCreateInteger(theEnv,j);
          returnValue->multifieldValue->theFields[1].integerValue = EnvCreateInteger(theEnv,k);
          returnValue->begin = 0;
-         returnValue->end = 1;
+         returnValue->range = 2;
         }
      }
   }
@@ -752,14 +758,14 @@ bool FindDOsInSegment(
    long mul_length,slen,i,k; /* 6.04 Bug Fix */
    int j;
 
-   mul_length = GetpDOLength(value);
+   mul_length = value->range;
    for (i = 0 ; i < mul_length ; i++)
      {
       for (j = 0 ; j < scnt ; j++)
         {
          if (searchDOs[j].header->type == MULTIFIELD)
            {
-            slen = GetDOLength(searchDOs[j]);
+            slen = searchDOs[j].range;
             if (MVRangeCheck(i+1L,i+slen,excludes,epaircnt))
               {
                for (k = 0L ; (k < slen) && ((k + i) < mul_length) ; k++)
@@ -1118,7 +1124,7 @@ static void MultifieldPrognDriver(
 
    CLIPSBlockStart(theEnv,&gcBlock);
 
-   end = argval.end;
+   end = (argval.begin + argval.range) - 1;
    for (i = argval.begin ; i <= end ; i++)
      {
       tmpField->type = argval.multifieldValue->theFields[i].header->type;
@@ -1238,7 +1244,7 @@ bool ReplaceMultiValueField(
    struct field *septr;
    long srclen,dstlen;
 
-   srclen = ((src != NULL) ? (src->end - src->begin + 1) : 0);
+   srclen = ((src != NULL) ? src->range : 0);
    if ((re < rb) ||
 	   (rb < 1) || (re < 1) ||
 	   (rb > srclen) || (re > srclen))
@@ -1249,12 +1255,12 @@ bool ReplaceMultiValueField(
    rb = src->begin + rb - 1;
    re = src->begin + re - 1;
    if (field->header->type == MULTIFIELD)
-	 dstlen = srclen + GetpDOLength(field) - (re-rb+1);
+	 dstlen = srclen + field->range - (re-rb+1);
    else
 	 dstlen = srclen + 1 - (re-rb+1);
    dst->begin = 0;
    dst->value = EnvCreateMultifield(theEnv,dstlen);
-   dst->end = dstlen - 1;
+   dst->range = dstlen;
    for (i = 0 , j = src->begin ; j < rb ; i++ , j++)
 	 {
 	  deptr = &dst->multifieldValue->theFields[i];
@@ -1268,7 +1274,7 @@ bool ReplaceMultiValueField(
 	 }
    else
 	 {
-	  for (k = field->begin ; k <= field->end ; k++ , i++)
+	  for (k = field->begin ; k < (field->begin + field->range) ; k++ , i++)
 		{
 		 deptr = &dst->multifieldValue->theFields[i];
 		 septr = &field->multifieldValue->theFields[k];
@@ -1313,7 +1319,7 @@ bool InsertMultiValueField(
    FIELD *deptr, *septr;
    long srclen,dstlen;
 
-   srclen = (long) ((src != NULL) ? (src->end - src->begin + 1) : 0);
+   srclen = (long) ((src != NULL) ? src->range : 0);
    if (theIndex < 1)
      {
       MVRangeError(theEnv,theIndex,theIndex,srclen+1,funcName);
@@ -1332,15 +1338,15 @@ bool InsertMultiValueField(
       else
         {
          dst->value = EnvCreateMultifield(theEnv,0L);
-         dst->end = 0;
+         dst->range = 1;
          deptr = &dst->multifieldValue->theFields[0];
          deptr->value = field->value;
         }
       return true;
      }
-   dstlen = (field->header->type == MULTIFIELD) ? GetpDOLength(field) + srclen : srclen + 1;
+   dstlen = (field->header->type == MULTIFIELD) ? field->range + srclen : srclen + 1;
    dst->value = EnvCreateMultifield(theEnv,dstlen);
-   dst->end = dstlen - 1;
+   dst->range = dstlen;
    theIndex--;
    for (i = 0 , j = src->begin ; i < theIndex ; i++ , j++)
      {
@@ -1356,14 +1362,14 @@ bool InsertMultiValueField(
      }
    else
      {
-      for (k = field->begin ; k <= field->end ; k++ , i++)
+      for (k = field->begin ; k < (field->begin + field->range) ; k++ , i++)
         {
          deptr = &dst->multifieldValue->theFields[i];
          septr = &field->multifieldValue->theFields[k];
          deptr->value = septr->value;
         }
      }
-   for ( ; j <= src->end ; i++ , j++)
+   for ( ; j < (src->begin + src->range) ; i++ , j++)
      {
       deptr = &dst->multifieldValue->theFields[i];
       septr = &src->multifieldValue->theFields[j];
@@ -1440,7 +1446,7 @@ bool DeleteMultiValueField(
    FIELD_PTR deptr,septr;
    long srclen, dstlen;
 
-   srclen = (long) ((src != NULL) ? (src->end - src->begin + 1) : 0);
+   srclen = (long) ((src != NULL) ? src->range : 0);
    if ((re < rb) ||
        (rb < 1) || (re < 1) ||
        (rb > srclen) || (re > srclen))
@@ -1452,13 +1458,13 @@ bool DeleteMultiValueField(
    if (srclen == 0)
     {
      dst->value = EnvCreateMultifield(theEnv,0L);
-     dst->end = -1;
+     dst->range = 0;
      return true;
     }
    rb = src->begin + rb -1;
    re = src->begin + re -1;
    dstlen = srclen-(re-rb+1);
-   dst->end = dstlen - 1;
+   dst->range = dstlen;
    dst->value = EnvCreateMultifield(theEnv,dstlen);
    for (i = 0 , j = src->begin ; j < rb ; i++ , j++)
      {
@@ -1468,7 +1474,7 @@ bool DeleteMultiValueField(
      }
    while (j < re)
      j++;
-   for (j++ ; i <= dst->end ; j++ , i++)
+   for (j++ ; i < (dst->begin + dst->range) ; j++ , i++)
      {
       deptr = &dst->multifieldValue->theFields[i];
       septr = &src->multifieldValue->theFields[j];

@@ -329,7 +329,7 @@ Multifield *DOToMultifield(
 
    if (theValue->header->type != MULTIFIELD) return NULL;
 
-   dst = CreateUnmanagedMultifield(theEnv,(unsigned long) GetpDOLength(theValue));
+   dst = CreateUnmanagedMultifield(theEnv,(unsigned long) theValue->range);
 
    src = theValue->multifieldValue;
    GenCopyMemory(struct field,dst->multifieldLength,
@@ -399,10 +399,10 @@ void DuplicateMultifield(
   UDFValue *src)
   {
    dst->begin = 0;
-   dst->end = src->end - src->begin;
-   dst->value = CreateUnmanagedMultifield(theEnv,(unsigned long) dst->end + 1);
-   GenCopyMemory(struct field,dst->end + 1,&dst->multifieldValue->theFields[0],
-                                           &src->multifieldValue->theFields[src->begin]);
+   dst->range = src->range;
+   dst->value = CreateUnmanagedMultifield(theEnv,(unsigned long) dst->range);
+   GenCopyMemory(struct field,dst->range,&dst->multifieldValue->theFields[0],
+                                         &src->multifieldValue->theFields[src->begin]);
   }
 
 /*******************/
@@ -481,7 +481,7 @@ void StoreInMultifield(
    UDFValue *val_arr;
    Multifield *theMultifield;
    Multifield *orig_ptr;
-   long start, end, i,j, k, argCount;
+   long start, range, i,j, k, argCount;
    unsigned long seg_size;
 
    argCount = CountArguments(expptr);
@@ -494,7 +494,7 @@ void StoreInMultifield(
    if (argCount == 0)
      {
       returnValue->begin = 0;
-      returnValue->end = -1;
+      returnValue->range = 0;
       if (garbageSegment) theMultifield = EnvCreateMultifield(theEnv,0L);
       else theMultifield = CreateUnmanagedMultifield(theEnv,0L);
       returnValue->value = theMultifield;
@@ -516,7 +516,7 @@ void StoreInMultifield(
          if (EvaluationData(theEnv)->EvaluationError)
            {
             returnValue->begin = 0;
-            returnValue->end = -1;
+            returnValue->range = 0;
             if (garbageSegment)
               { theMultifield = EnvCreateMultifield(theEnv,0L); }
             else theMultifield = CreateUnmanagedMultifield(theEnv,0L);
@@ -528,23 +528,24 @@ void StoreInMultifield(
            {
             (val_arr+i-1)->value = val_ptr.value;
             start = val_ptr.begin;
-            end = val_ptr.end;
+            range = val_ptr.range;
            }
          else if (val_ptr.header->type == RVOID)
            {
             (val_arr+i-1)->value = val_ptr.value;
             start = 0;
-            end = -1;
+            range = 0;
            }
          else
            {
             (val_arr+i-1)->value = val_ptr.value;
-            start = end = -1;
+            start = 0;
+            range = 1;
            }
 
-         seg_size += (unsigned long) (end - start + 1);
+         seg_size += (unsigned long) range;
          (val_arr+i-1)->begin = start;
-         (val_arr+i-1)->end = end;
+         (val_arr+i-1)->range = range;
         }
 
       if (garbageSegment)
@@ -560,9 +561,9 @@ void StoreInMultifield(
          if ((val_arr+k)->header->type == MULTIFIELD)
            {
             start = (val_arr+k)->begin;
-            end = (val_arr+k)->end;
+            range = (val_arr+k)->range;
             orig_ptr = (val_arr+k)->multifieldValue;
-            for (i = start; i < end + 1; i++, j++)
+            for (i = start; i < (start + range); i++, j++)
               {
                theMultifield->theFields[j].value = orig_ptr->theFields[i].value;
               }
@@ -579,7 +580,7 @@ void StoreInMultifield(
       /*=========================*/
 
       returnValue->begin = 0;
-      returnValue->end = ((long) seg_size) - 1;
+      returnValue->range = (long) seg_size;
       returnValue->value = theMultifield;
       rm3(theEnv,val_arr,(long) sizeof(UDFValue) * argCount);
       return;
@@ -596,8 +597,8 @@ bool MultifieldDOsEqual(
    long extent1,extent2; /* 6.04 Bug Fix */
    FIELD_PTR e1,e2;
 
-   extent1 = GetpDOLength(dobj1);
-   extent2 = GetpDOLength(dobj2);
+   extent1 = dobj1->range;
+   extent2 = dobj2->range;
    if (extent1 != extent2)
      { return false; }
 
@@ -775,7 +776,7 @@ CLIPSLexeme *ImplodeMultifield(
    /*===================================================*/
 
    theMultifield = value->multifieldValue;
-   for (i = value->begin ; i <= value->end ; i++)
+   for (i = value->begin ; i < (value->begin + value->range) ; i++)
      {
       if (theMultifield->theFields[i].header->type == FLOAT)
         {
@@ -823,7 +824,7 @@ CLIPSLexeme *ImplodeMultifield(
 
    if (strsize == 0) return(EnvCreateString(theEnv,""));
    ret_str = (char *) gm2(theEnv,strsize);
-   for(j = 0, i = value->begin ; i <= value->end ; i++)
+   for(j = 0, i = value->begin ; i < (value->begin + value->range) ; i++)
      {
       /*============================*/
       /* Convert numbers to strings */

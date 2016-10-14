@@ -1167,7 +1167,7 @@ void EnvGetDefmethodList(
      count += (unsigned long) gfunc->mcnt;
    count *= 2;
    returnValue->begin = 0;
-   returnValue->end = count - 1;
+   returnValue->range = count;
    theList = EnvCreateMultifield(theEnv,count);
    returnValue->value = theList;
    for (gfunc = svg , i = 0 ;
@@ -1277,7 +1277,7 @@ void EnvGetMethodRestrictions(
 
    returnValue->value = theList;
    returnValue->begin = 0;
-   returnValue->end = count - 1;
+   returnValue->range = count;
    theList->theFields[0].integerValue = EnvCreateInteger(theEnv,(long long) meth->minRestrictions);
    theList->theFields[1].integerValue = EnvCreateInteger(theEnv,(long long) meth->maxRestrictions);
    theList->theFields[2].integerValue = EnvCreateInteger(theEnv,(long long) meth->restrictionCount);

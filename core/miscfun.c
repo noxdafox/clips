@@ -426,7 +426,7 @@ void LengthFunction(
 
    else if (CVIsType(&theArg,MULTIFIELD_TYPE))
      {
-      returnValue->value = EnvCreateInteger(theEnv,GetDOLength(theArg));
+      returnValue->value = EnvCreateInteger(theEnv,theArg.range);
       return;
      }
   }
@@ -987,7 +987,7 @@ static void ExpandFuncMultifield(
             return;
            }
          top = bot = NULL;
-         for (i = returnValue->begin ; i <= returnValue->end ; i++)
+         for (i = returnValue->begin ; i < (returnValue->begin + returnValue->range) ; i++)
            {
             newexp = get_struct(theEnv,expr);
             newexp->type = returnValue->multifieldValue->theFields[i].header->type;
@@ -1164,7 +1164,7 @@ void GetFunctionListFunction(
      { functionCount++; }
 
    returnValue->begin = 0;
-   returnValue->end = functionCount - 1;
+   returnValue->range = functionCount;
    theList = EnvCreateMultifield(theEnv,functionCount);
    returnValue->value = theList;
 
@@ -1259,7 +1259,7 @@ void FuncallFunction(
 
            multiAdd = NULL;
            theMultifield = theArg.multifieldValue;
-           for (j = theArg.begin; j <= theArg.end; j++)
+           for (j = theArg.begin; j < (theArg.begin + theArg.range); j++)
              {
               nextAdd = GenConstant(theEnv,theMultifield->theFields[j].header->type,
                                            theMultifield->theFields[j].value);
@@ -1506,7 +1506,7 @@ static void ConvertTime(
   struct tm *info)
   {
    returnValue->begin = 0;
-   returnValue->end = 8;
+   returnValue->range = 9;
    returnValue->value = EnvCreateMultifield(theEnv,9L);
    
    returnValue->multifieldValue->theFields[0].integerValue = EnvCreateInteger(theEnv,info->tm_year + 1900);

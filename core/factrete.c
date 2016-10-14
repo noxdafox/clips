@@ -111,7 +111,7 @@ bool FactPNGetVar1(
       if (returnValue->header->type == MULTIFIELD)
         {
          returnValue->begin = 0;
-         returnValue->end = fieldPtr->multifieldValue->multifieldLength - 1;
+         returnValue->range = fieldPtr->multifieldValue->multifieldLength;
         }
 
       return true;
@@ -147,7 +147,7 @@ bool FactPNGetVar1(
      {
       returnValue->value = fieldPtr->value;
       returnValue->begin = theField;
-      returnValue->end = theField + extent - 1;
+      returnValue->range = extent;
       return true;
      }
 
@@ -243,7 +243,7 @@ bool FactPNGetVar3(
      {
       returnValue->value = segmentPtr;
       returnValue->begin = (long) hack->beginOffset;
-      returnValue->end = (long) (segmentPtr->multifieldLength - (hack->endOffset + 1));
+      returnValue->range = segmentPtr->multifieldLength - (hack->endOffset + hack->beginOffset);
       return true;
      }
 
@@ -439,7 +439,7 @@ bool FactJNGetVar1(
       if (returnValue->header->type == MULTIFIELD)
         {
          returnValue->begin = 0;
-         returnValue->end = fieldPtr->multifieldValue->multifieldLength - 1;
+         returnValue->range = fieldPtr->multifieldValue->multifieldLength;
         }
 
       return true;
@@ -481,7 +481,7 @@ bool FactJNGetVar1(
      {
       returnValue->value = fieldPtr->value;
       returnValue->begin = theField;
-      returnValue->end = theField + extent - 1;
+      returnValue->range = extent;
       return true;
      }
 
@@ -603,7 +603,7 @@ bool FactJNGetVar3(
      {
       returnValue->value = segmentPtr;
       returnValue->begin = hack->beginOffset;
-      returnValue->end = (long) (segmentPtr->multifieldLength - (hack->endOffset + 1));
+      returnValue->range = segmentPtr->multifieldLength - (hack->endOffset + hack->beginOffset);
       return true;
      }
 

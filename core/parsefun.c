@@ -325,7 +325,7 @@ static void SetErrorCaptureValues(
      { theMultifield->theFields[1].lexemeValue = theEnv->FalseSymbol; }
 
    returnValue->begin = 0;
-   returnValue->end = 1;
+   returnValue->range = 2;
    returnValue->value = theMultifield;
   }
 

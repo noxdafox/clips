@@ -129,12 +129,12 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getInstanceList
       slotValueList = (*env)->NewObject(env,
                                         CLIPSJNIData(clipsEnv)->arrayListClass,
                                         CLIPSJNIData(clipsEnv)->arrayListInitMethod,
-                                        (jint) GetDOLength(slotNames));
+                                        (jint) slotNames.range);
 
       if (slotValueList == NULL)
         { break; }
 
-      for (i = 1; i <= GetDOLength(slotNames); i++)
+      for (i = 0; i < slotNames.range; i++)
         {
          const char *theCSlotName, *theCSlotValue;
          jboolean defaulted = false;

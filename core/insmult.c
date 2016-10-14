@@ -533,7 +533,7 @@ static void AssignSlotToDataObject(
   {
    theDataObject->value = theSlot->value;
    theDataObject->begin = 0;
-   theDataObject->end = GetInstanceSlotLength(theSlot) - 1;
+   theDataObject->range = GetInstanceSlotLength(theSlot);
   }
 
 #endif

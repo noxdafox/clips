@@ -221,7 +221,7 @@ void SortFunction(
       UDFNthArgument(context,i,ANY_TYPE,&theArguments[i-2]);
 
       if (theArguments[i-2].header->type == MULTIFIELD)
-        { argumentSize += GetpDOLength(&theArguments[i-2]); }
+        { argumentSize += theArguments[i-2].range; }
       else
         { argumentSize++; }
      }
@@ -246,7 +246,7 @@ void SortFunction(
       if (theArguments[i-2].header->type == MULTIFIELD)
         {
          tempMultifield = theArguments[i-2].multifieldValue;
-         for (j = theArguments[i-2].begin; j <= theArguments[i-2].end; j++, k++)
+         for (j = theArguments[i-2].begin; j < (theArguments[i-2].begin + theArguments[i-2].range); j++, k++)
            {
             theArguments2[k].value = tempMultifield->theFields[j].value;
            }
@@ -285,7 +285,7 @@ void SortFunction(
    genfree(theEnv,theArguments2,argumentSize * sizeof(UDFValue));
 
    returnValue->begin = 0;
-   returnValue->end = argumentSize - 1;
+   returnValue->range = argumentSize;
    returnValue->value = theMultifield;
   }
 

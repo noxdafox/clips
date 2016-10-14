@@ -672,7 +672,7 @@ bool HandlerSlotGetFunction(
    if (sp->type == MULTIFIELD)
      {
       theResult->begin = 0;
-      theResult->end = GetInstanceSlotLength(sp) - 1;
+      theResult->range = GetInstanceSlotLength(sp);
      }
    return true;
 
@@ -883,7 +883,7 @@ void DynamicHandlerGetSlot(
    if (sp->type == MULTIFIELD)
      {
       returnValue->begin = 0;
-      returnValue->end = GetInstanceSlotLength(sp) - 1;
+      returnValue->range = GetInstanceSlotLength(sp);
      }
   }
 
@@ -947,7 +947,7 @@ void DynamicHandlerPutSlot(
    else
      {
       temp.begin = 0;
-      temp.end = -1;
+      temp.range = 0;
       temp.value = ProceduralPrimitiveData(theEnv)->NoParamValue;
      }
    PutSlotValue(theEnv,ins,sp,&temp,returnValue,NULL);

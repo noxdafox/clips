@@ -730,7 +730,7 @@ void EnvDirectGetSlot(
    if (sp->type == MULTIFIELD)
      {
       returnValue->begin = 0;
-      returnValue->end = GetInstanceSlotLength(sp) - 1;
+      returnValue->range = GetInstanceSlotLength(sp);
      }
    if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
        (EvaluationData(theEnv)->CurrentExpression == NULL) && (UtilityData(theEnv)->GarbageCollectionLocks == 0))
@@ -964,7 +964,7 @@ Instance *EnvGetNextInstanceInClassAndSubclasses(
      { nextInstance = theInstance->nxtClass; }
 
    while ((nextInstance == NULL) &&
-          (iterationInfo->begin <= iterationInfo->end))
+          (iterationInfo->begin < (iterationInfo->begin + iterationInfo->range)))
      {
       theClass = (Defclass *) iterationInfo->multifieldValue->theFields[iterationInfo->begin].value;
       *cptr = theClass;

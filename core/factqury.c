@@ -211,7 +211,7 @@ void GetQueryFactSlot(
    if (returnValue->header->type == MULTIFIELD)
      {
       returnValue->begin = 0;
-      returnValue->end = returnValue->multifieldValue->multifieldLength - 1;
+      returnValue->range = returnValue->multifieldValue->multifieldLength;
      }
   }
 
@@ -325,7 +325,7 @@ void QueryFindFact(
    unsigned rcnt,i;
 
    returnValue->begin = 0;
-   returnValue->end = -1;
+   returnValue->range = 0;
    qtemplates = DetermineQueryTemplates(theEnv,GetFirstArgument()->nextArg,
                                       "find-fact",&rcnt);
    if (qtemplates == NULL)
@@ -341,7 +341,7 @@ void QueryFindFact(
    if (TestForFirstInChain(theEnv,qtemplates,0) == true)
      {
       returnValue->value = EnvCreateMultifield(theEnv,rcnt);
-      returnValue->end = rcnt - 1;
+      returnValue->range = rcnt;
       for (i = 0 ; i < rcnt ; i++)
         {
          returnValue->multifieldValue->theFields[i].value = FactQueryData(theEnv)->QueryCore->solns[i];
@@ -384,7 +384,7 @@ void QueryFindAllFacts(
    unsigned i, j;
 
    returnValue->begin = 0;
-   returnValue->end = -1;
+   returnValue->range = 0;
    qtemplates = DetermineQueryTemplates(theEnv,GetFirstArgument()->nextArg,
                                       "find-all-facts",&rcnt);
    if (qtemplates == NULL)
@@ -405,11 +405,11 @@ void QueryFindAllFacts(
    returnValue->value = EnvCreateMultifield(theEnv,FactQueryData(theEnv)->QueryCore->soln_cnt * rcnt);
    while (FactQueryData(theEnv)->QueryCore->soln_set != NULL)
      {
-      for (i = 0 , j = (unsigned) (returnValue->end + 1) ; i < rcnt ; i++ , j++)
+      for (i = 0 , j = (unsigned) returnValue->range ; i < rcnt ; i++ , j++)
         {
          returnValue->multifieldValue->theFields[j].value = FactQueryData(theEnv)->QueryCore->soln_set->soln[i];
         }
-      returnValue->end = (long) j-1;
+      returnValue->range = (long) j;
       PopQuerySoln(theEnv);
      }
    rm(theEnv,FactQueryData(theEnv)->QueryCore->solns,(sizeof(Fact *) * rcnt));
@@ -754,7 +754,7 @@ static QUERY_TEMPLATE *FormChain(
   {
    Deftemplate *templatePtr;
    QUERY_TEMPLATE *head,*bot,*tmp;
-   long i,end; /* 6.04 Bug Fix */
+   long i; /* 6.04 Bug Fix */
    const char *templateName;
    int count;
 
@@ -797,8 +797,8 @@ static QUERY_TEMPLATE *FormChain(
    if (val->header->type == MULTIFIELD)
      {
       head = bot = NULL;
-      end = val->end;
-      for (i = val->begin ; i <= end ; i++)
+
+      for (i = val->begin ; i < (val->begin + val->range) ; i++)
         {
          if (val->multifieldValue->theFields[i].header->type == SYMBOL)
            {

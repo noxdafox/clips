@@ -191,7 +191,7 @@ void GetQueryInstanceSlot(
    if (sp->type == MULTIFIELD)
      {
       returnValue->begin = 0;
-      returnValue->end = GetInstanceSlotLength(sp) - 1;
+      returnValue->range = GetInstanceSlotLength(sp);
      }
   }
 
@@ -311,7 +311,7 @@ void QueryFindInstance(
    unsigned rcnt,i;
 
    returnValue->begin = 0;
-   returnValue->end = -1;
+   returnValue->range = 0;
    qclasses = DetermineQueryClasses(theEnv,GetFirstArgument()->nextArg,
                                       "find-instance",&rcnt);
    if (qclasses == NULL)
@@ -327,7 +327,7 @@ void QueryFindInstance(
    if (TestForFirstInChain(theEnv,qclasses,0) == true)
      {
       returnValue->value = EnvCreateMultifield(theEnv,rcnt);
-      returnValue->end = rcnt - 1;
+      returnValue->range = rcnt;
       for (i = 0 ; i < rcnt ; i++)
         {
          returnValue->multifieldValue->theFields[i].lexemeValue =
@@ -371,7 +371,7 @@ void QueryFindAllInstances(
    unsigned i,j;
 
    returnValue->begin = 0;
-   returnValue->end = -1;
+   returnValue->range = 0;
    qclasses = DetermineQueryClasses(theEnv,GetFirstArgument()->nextArg,
                                       "find-all-instances",&rcnt);
    if (qclasses == NULL)
@@ -392,12 +392,12 @@ void QueryFindAllInstances(
    returnValue->value = EnvCreateMultifield(theEnv,InstanceQueryData(theEnv)->QueryCore->soln_cnt * rcnt);
    while (InstanceQueryData(theEnv)->QueryCore->soln_set != NULL)
      {
-      for (i = 0 , j = (unsigned) (returnValue->end + 1) ; i < rcnt ; i++ , j++)
+      for (i = 0 , j = (unsigned) returnValue->range ; i < rcnt ; i++ , j++)
         {
          returnValue->multifieldValue->theFields[j].lexemeValue =
             GetFullInstanceName(theEnv,InstanceQueryData(theEnv)->QueryCore->soln_set->soln[i]);
         }
-      returnValue->end = (long) j-1;
+      returnValue->range = (long) j;
       PopQuerySoln(theEnv);
      }
    rm(theEnv,InstanceQueryData(theEnv)->QueryCore->solns,(sizeof(Instance *) * rcnt));
@@ -790,7 +790,7 @@ static QUERY_CLASS *FormChain(
    if (val->header->type == MULTIFIELD)
      {
       head = bot = NULL;
-      end = val->end;
+      end = (val->begin + val->range) - 1;
       for (i = val->begin ; i <= end ; i++)
         {
          if (val->multifieldValue->theFields[i].header->type == SYMBOL)

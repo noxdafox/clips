@@ -614,12 +614,12 @@ bool CallJavaMethod(
    jobjectArray methodList, parameterList;
    jsize theSize, c; 
    jsize paramCount, p; 
-   CLIPSValue theValue;
+   UDFValue theValue;
    const char *methodName;
    jstring str;
    char *cStr;
    bool matches;
-   CLIPSValue *newArgs;
+   UDFValue *newArgs;
    jvalue *javaArgs;
    int i;
    Environment *theEnv = context->environment;
@@ -657,7 +657,7 @@ bool CallJavaMethod(
      { newArgs = NULL; }
    else
      {
-      newArgs = (CLIPSValue *) genalloc(theEnv,sizeof(CLIPSValue) * (numberOfArguments - 2));
+      newArgs = (UDFValue *) genalloc(theEnv,sizeof(UDFValue) * (numberOfArguments - 2));
       for (i = 0; i < numberOfArguments - 2; i++)
         {
          UDFNthArgument(context,i+3,ANY_TYPE,&newArgs[i]);
@@ -795,7 +795,7 @@ bool CallJavaMethod(
      }
 
    if (newArgs != NULL)
-     { genfree(theEnv,newArgs,sizeof(CLIPSValue) * (numberOfArguments - 2)); }
+     { genfree(theEnv,newArgs,sizeof(UDFValue) * (numberOfArguments - 2)); }
 
    if (javaArgs != NULL)
      { genfree(theEnv,javaArgs,sizeof(jvalue) * (numberOfArguments - 2)); }

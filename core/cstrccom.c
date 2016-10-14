@@ -925,7 +925,7 @@ void GetConstructList(
    /*================================*/
 
    returnValue->begin = 0;
-   returnValue->end = ((long) count) - 1;
+   returnValue->range = count;
    theList = EnvCreateMultifield(theEnv,count);
    returnValue->value = theList;
 

@@ -448,7 +448,7 @@ void EnvClassSlots(
    size = inhp ? theDefclass->instanceSlotCount : theDefclass->slotCount;
 
    returnValue->begin = 0;
-   returnValue->end = size - 1;
+   returnValue->range = size;
    returnValue->value = EnvCreateMultifield(theEnv,size);
 
    if (size == 0)
@@ -521,7 +521,7 @@ void EnvGetDefmessageHandlerList(
    len = i * 3;
 
    returnValue->begin = 0;
-   returnValue->end = len - 1;
+   returnValue->range = len;
    returnValue->value = EnvCreateMultifield(theEnv,len);
 
    for (cls = svcls , sublen = 0 ;
@@ -587,10 +587,10 @@ void EnvClassSuperclasses(
      }
 
    returnValue->begin = 0;
-   returnValue->end = (plinks->classCount - offset) - 1;
-   returnValue->value = EnvCreateMultifield(theEnv,returnValue->end + 1U);
+   returnValue->range = (plinks->classCount - offset);
+   returnValue->value = EnvCreateMultifield(theEnv,returnValue->range);
 
-   if (returnValue->end == -1)
+   if (returnValue->range == 0)
      { return; }
 
    for (i = offset , j = 0 ; i < plinks->classCount ; i++ , j++)
@@ -628,7 +628,7 @@ void EnvClassSubclasses(
    ReleaseTraversalID(theEnv);
 
    returnValue->begin = 0;
-   returnValue->end = i - 1;
+   returnValue->range = i;
    returnValue->value = EnvCreateMultifield(theEnv,i);
 
    if (i == 0)
@@ -670,7 +670,7 @@ void ClassSubclassAddresses(
    ReleaseTraversalID(theEnv);
 
    returnValue->begin = 0;
-   returnValue->end = i - 1;
+   returnValue->range = i;
    returnValue->value = EnvCreateMultifield(theEnv,i);
 
    if (i == 0)
@@ -711,10 +711,10 @@ void EnvSlotFacets(
      { return; }
 
 #if DEFRULE_CONSTRUCT
-   returnValue->end = 9;
+   returnValue->range = 10;
    returnValue->value = EnvCreateMultifield(theEnv,10L);
 #else
-   returnValue->end = 8;
+   returnValue->range = 9;
    returnValue->value = EnvCreateMultifield(theEnv,9L);
 #endif
 
@@ -823,7 +823,7 @@ void EnvSlotSources(
            }
         }
      }
-   returnValue->end = i - 1;
+   returnValue->range = i;
    returnValue->value = EnvCreateMultifield(theEnv,i);
    for (ctmp = ctop , i = 0 ; ctmp != NULL ; ctmp = ctmp->nxt , i++)
      {
@@ -899,7 +899,7 @@ void EnvSlotTypes(
          SetBitMap(typemap,FACT_ADDRESS);
         }
      }
-   returnValue->end = msize - 1;
+   returnValue->range = msize;
    returnValue->value = EnvCreateMultifield(theEnv,msize);
    i = 0;
    j = 0;
@@ -935,8 +935,8 @@ void EnvSlotAllowedValues(
       returnValue->value = theEnv->FalseSymbol;
       return;
      }
-   returnValue->end = ExpressionSize(sp->constraint->restrictionList) - 1;
-   returnValue->value = EnvCreateMultifield(theEnv,(unsigned long) (returnValue->end + 1));
+   returnValue->range = ExpressionSize(sp->constraint->restrictionList);
+   returnValue->value = EnvCreateMultifield(theEnv,(unsigned long) returnValue->range);
    i = 0;
    theExp = sp->constraint->restrictionList;
    while (theExp != NULL)
@@ -967,8 +967,8 @@ void EnvSlotAllowedClasses(
       returnValue->value = theEnv->FalseSymbol;
       return;
      }
-   returnValue->end = ExpressionSize(sp->constraint->classList) - 1;
-   returnValue->value = EnvCreateMultifield(theEnv,(unsigned long) (returnValue->end + 1));
+   returnValue->range = ExpressionSize(sp->constraint->classList);
+   returnValue->value = EnvCreateMultifield(theEnv,(unsigned long) returnValue->range);
    i = 0;
    theExp = sp->constraint->classList;
    while (theExp != NULL)
@@ -996,7 +996,7 @@ void EnvSlotRange(
        (sp->constraint->anyAllowed || sp->constraint->floatsAllowed ||
         sp->constraint->integersAllowed))
      {
-      returnValue->end = 1;
+      returnValue->range = 2;
       returnValue->value = EnvCreateMultifield(theEnv,2L);
       returnValue->multifieldValue->theFields[0].value = sp->constraint->minValue->value;
       returnValue->multifieldValue->theFields[1].value = sp->constraint->maxValue->value;
@@ -1026,7 +1026,7 @@ void EnvSlotCardinality(
       EnvSetMultifieldErrorValue(theEnv,returnValue);
       return;
      }
-   returnValue->end = 1;
+   returnValue->range = 2;
    returnValue->value = EnvCreateMultifield(theEnv,2L);
    if (sp->constraint != NULL)
      {

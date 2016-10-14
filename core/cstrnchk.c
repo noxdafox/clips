@@ -657,12 +657,12 @@ int ConstraintCheckDataObject(
 
    if (theData->header->type == MULTIFIELD)
      {
-      if (CheckCardinalityConstraint(theEnv,(theData->end - theData->begin) + 1,
+      if (CheckCardinalityConstraint(theEnv,theData->range,
                                      theConstraints) == false)
         { return(CARDINALITY_VIOLATION); }
 
       theMultifield = theData->multifieldValue->theFields;
-      for (i = theData->begin; i <= theData->end; i++)
+      for (i = theData->begin; i < theData->begin + theData->range; i++)
         {
          if ((rv = ConstraintCheckValue(theEnv,theMultifield[i].header->type,
                                         theMultifield[i].value,

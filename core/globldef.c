@@ -613,7 +613,7 @@ bool QGetDefglobalValue(
 
    vPtr->value = theGlobal->current.value;
    vPtr->begin = theGlobal->current.begin;
-   vPtr->end = theGlobal->current.end;
+   vPtr->range = theGlobal->current.range;
 
    /*===========================================================*/
    /* If the global contains a multifield value, return a copy  */
@@ -623,8 +623,8 @@ bool QGetDefglobalValue(
 
    if (vPtr->header->type == MULTIFIELD)
      {
-      vPtr->value = EnvCreateMultifield(theEnv,(unsigned long) (vPtr->end + 1));
-      GenCopyMemory(struct field,vPtr->end + 1,
+      vPtr->value = EnvCreateMultifield(theEnv,(unsigned long) vPtr->range);
+      GenCopyMemory(struct field,vPtr->range,
                                 &vPtr->multifieldValue->theFields[0],
                                 &theGlobal->current.multifieldValue->theFields[theGlobal->current.begin]);
      }
