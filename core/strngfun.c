@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/01/16             */
+   /*            CLIPS Version 6.40  10/18/16             */
    /*                                                     */
    /*               STRING FUNCTIONS MODULE               */
    /*******************************************************/
@@ -64,6 +64,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            UDF redesign.                                  */
+/*                                                           */
+/*            Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -669,8 +671,6 @@ void StringToField(
      { returnValue->value = EnvCreateString(theEnv,theToken.printForm); }
   }
 
-#if (! RUN_TIME) && (! BLOAD_ONLY)
-
 /**************************************/
 /* EvalFunction: H/L access routine   */
 /*   for the eval function.           */
@@ -848,39 +848,6 @@ bool EnvEval(
    if (EnvGetEvaluationError(theEnv)) return false;
    return true;
   }
-
-#else
-
-/*************************************************/
-/* EvalFunction: This is the non-functional stub */
-/*   provided for use with a run-time version.   */
-/*************************************************/
-void EvalFunction(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
-   PrintErrorID(theEnv,"STRNGFUN",1,false);
-   EnvPrintRouter(theEnv,WERROR,"Function eval does not work in run time modules.\n");
-   returnValue->lexemeValue = theEnv->FalseSymbol;
-  }
-
-/*****************************************************/
-/* EnvEval: This is the non-functional stub provided */
-/*   for use with a run-time version.                */
-/*****************************************************/
-bool EnvEval(
-  Environment *theEnv,
-  const char *theString,
-  UDFValue *returnValue)
-  {
-   PrintErrorID(theEnv,"STRNGFUN",1,false);
-   EnvPrintRouter(theEnv,WERROR,"Function eval does not work in run time modules.\n");
-   returnValue->lexemeValue = theEnv->FalseSymbol;
-   return false;
-  }
-
-#endif
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
 /***************************************/

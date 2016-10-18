@@ -163,11 +163,12 @@
    static CLIPSBitMap            *FormSlotBitMap(Environment *,struct lhsParseNode *);
    static struct lhsParseNode    *RemoveSlotExistenceTests(Environment *,struct lhsParseNode *,CLIPSBitMap **);
    static struct lhsParseNode    *CreateInitialObjectPattern(Environment *);
-   static EXPRESSION             *ObjectMatchDelayParse(Environment *,EXPRESSION *,const char *);
    static void                    MarkObjectPtnIncrementalReset(Environment *,struct patternNodeHeader *,int);
    static void                    ObjectIncrementalReset(Environment *);
 
 #endif
+
+   static EXPRESSION             *ObjectMatchDelayParse(Environment *,EXPRESSION *,const char *);
 
 #if ! DEFINSTANCES_CONSTRUCT
    static void                    ResetInitialObject(Environment *);
@@ -243,12 +244,14 @@ void SetupObjectPatternStuff(
 
    AddPatternParser(theEnv,newPtr);
 
+#endif
+
+#if (! RUN_TIME)
    EnvAddUDF(theEnv,"object-pattern-match-delay","*",0,UNBOUNDED,NULL,ObjectMatchDelay,"ObjectMatchDelay",NULL);
+   FuncSeqOvlFlags(theEnv,"object-pattern-match-delay",false,false);
+#endif
 
    AddFunctionParser(theEnv,"object-pattern-match-delay",ObjectMatchDelayParse);
-   FuncSeqOvlFlags(theEnv,"object-pattern-match-delay",false,false);
-
-#endif
 
    InstallObjectPrimitives(theEnv);
 
@@ -259,7 +262,6 @@ void SetupObjectPatternStuff(
 #if ! DEFINSTANCES_CONSTRUCT
    EnvAddResetFunction(theEnv,"reset-initial-object",ResetInitialObject,0);
 #endif
-
 
 #if BLOAD_AND_BSAVE || BLOAD || BLOAD_ONLY
    SetupObjectPatternsBload(theEnv);
@@ -2281,6 +2283,8 @@ static struct lhsParseNode *CreateInitialObjectPattern(
 
    return(topNode);
   }
+  
+#endif
 
 /**************************************************************
   NAME         : ObjectMatchDelayParse
@@ -2315,6 +2319,8 @@ static EXPRESSION *ObjectMatchDelayParse(
      }
    return(top);
   }
+
+#if (! BLOAD_ONLY) && (! RUN_TIME)
 
 /***************************************************
   NAME         : MarkObjectPtnIncrementalReset

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/06/16             */
+   /*            CLIPS Version 6.40  10/18/16             */
    /*                                                     */
    /*                ENVIRONMENT MODULE                   */
    /*******************************************************/
@@ -55,6 +55,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
+/*                                                           */
+/*            Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -136,12 +138,14 @@
    static void                    RemoveEnvironmentCleanupFunctions(struct environmentData *);
    static Environment            *CreateEnvironmentDriver(CLIPSLexeme **,CLIPSFloat **,
                                                           CLIPSInteger **,struct bitMapHashNode **,
-                                                          struct externalAddressHashNode **);
+                                                          struct externalAddressHashNode **,
+                                                          struct FunctionDefinition *);
    static void                    SystemFunctionDefinitions(Environment *);
    static void                    InitializeKeywords(Environment *);
    static void                    EnvInitializeEnvironment(Environment *,CLIPSLexeme **,CLIPSFloat **,
 					   								       CLIPSInteger **,struct bitMapHashNode **,
-														   struct externalAddressHashNode **);
+														   struct externalAddressHashNode **,
+                                                           struct FunctionDefinition *);
 
 /*******************************************************/
 /* AllocateEnvironmentData: Allocates environment data */
@@ -215,7 +219,7 @@ bool AllocateEnvironmentData(
 /************************************************************/
 Environment *CreateEnvironment()
   {
-   return CreateEnvironmentDriver(NULL,NULL,NULL,NULL,NULL);
+   return CreateEnvironmentDriver(NULL,NULL,NULL,NULL,NULL,NULL);
   }
 
 /**********************************************************/
@@ -226,9 +230,10 @@ Environment *CreateRuntimeEnvironment(
   CLIPSLexeme **symbolTable,
   CLIPSFloat **floatTable,
   CLIPSInteger **integerTable,
-  struct bitMapHashNode **bitmapTable)
+  struct bitMapHashNode **bitmapTable,
+  struct FunctionDefinition *functions)
   {
-   return CreateEnvironmentDriver(symbolTable,floatTable,integerTable,bitmapTable,NULL);
+   return CreateEnvironmentDriver(symbolTable,floatTable,integerTable,bitmapTable,NULL,functions);
   }
 
 /*********************************************************/
@@ -240,7 +245,8 @@ Environment *CreateEnvironmentDriver(
   CLIPSFloat **floatTable,
   CLIPSInteger **integerTable,
   struct bitMapHashNode **bitmapTable,
-  struct externalAddressHashNode **externalAddressTable)
+  struct externalAddressHashNode **externalAddressTable,
+  struct FunctionDefinition *functions)
   {
    struct environmentData *theEnvironment;
    void *theData;
@@ -290,7 +296,8 @@ Environment *CreateEnvironmentDriver(
    memset(theData,0,sizeof(void (*)(struct environmentData *)) * MAXIMUM_ENVIRONMENT_POSITIONS);
    theEnvironment->cleanupFunctions = (void (**)(Environment *))theData;
 
-   EnvInitializeEnvironment(theEnvironment,symbolTable,floatTable,integerTable,bitmapTable,externalAddressTable);
+   EnvInitializeEnvironment(theEnvironment,symbolTable,floatTable,integerTable,
+                            bitmapTable,externalAddressTable,functions);
 
    return theEnvironment;
   }
@@ -547,7 +554,8 @@ static void EnvInitializeEnvironment(
   CLIPSFloat **floatTable,
   CLIPSInteger **integerTable,
   struct bitMapHashNode **bitmapTable,
-  struct externalAddressHashNode **externalAddressTable)
+  struct externalAddressHashNode **externalAddressTable,
+  struct FunctionDefinition *functions)
   {
    /*================================================*/
    /* Don't allow the initialization to occur twice. */
@@ -603,6 +611,9 @@ static void EnvInitializeEnvironment(
    /*=============================================*/
    /* Register system and user defined functions. */
    /*=============================================*/
+
+   if (functions != NULL)
+     { InstallFunctionList(theEnvironment,functions); }
 
    SystemFunctionDefinitions(theEnvironment);
    EnvUserFunctions(theEnvironment);

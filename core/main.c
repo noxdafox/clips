@@ -74,132 +74,15 @@ int main(
   int argc,
   char *argv[])
   {
-   FactBuilder *theFB;
-   FactModifier *theFM;
-   Fact *thePerson;
-   Fact *thePoint;
-   Multifield *theMF;
-   CLIPSValue multifieldArray[3];
-
    mainEnv = CreateEnvironment();
    
 #if UNIX_V || LINUX || DARWIN || UNIX_7 || WIN_GCC || WIN_MVC
    signal(SIGINT,CatchCtrlC);
 #endif
 
-   EnvBuild(mainEnv,"(deftemplate person"
-                    "   (multislot name)"
-                    "   (slot age))");
+   RerouteStdin(mainEnv,argc,argv);
 
-   EnvBuild(mainEnv,"(deftemplate point"
-                    "   (slot x (default 0))"
-                    "   (slot y (default 0))"
-                    "   (slot z (default 0)))");
-
-   EnvWatch(mainEnv,"facts");
-
-   theFB = EnvCreateFactBuilder(mainEnv,"MAIN::point");
-
-   FBPutSlotInteger(theFB,"x",EnvCreateInteger(mainEnv,4));
-   FBPutSlotInteger(theFB,"y",EnvCreateInteger(mainEnv,3));
-   FBPutSlotInteger(theFB,"z",EnvCreateInteger(mainEnv,1));
-   FBAssert(theFB);
-
-   FBPutSlotInteger(theFB,"x",EnvCreateInteger(mainEnv,7));
-   FBPutSlotInteger(theFB,"y",EnvCreateInteger(mainEnv,0));
-   FBPutSlotInteger(theFB,"z",EnvCreateInteger(mainEnv,5));
-   FBAssert(theFB);
-
-   FBPutSlotInteger(theFB,"x",EnvCreateInteger(mainEnv,2));
-   FBPutSlotInteger(theFB,"y",EnvCreateInteger(mainEnv,6));
-   FBPutSlotInteger(theFB,"z",EnvCreateInteger(mainEnv,8));
-   thePoint = FBAssert(theFB);
-
-   FBSetDeftemplate(theFB,"MAIN::person");
-   multifieldArray[0].lexemeValue = EnvCreateSymbol(mainEnv,"Gary");
-   multifieldArray[1].lexemeValue = EnvCreateSymbol(mainEnv,"Riley");
-   theMF = EnvArrayToMultifield(mainEnv,multifieldArray,2);
-   
-   FBPutSlotMultifield(theFB,"name",theMF);
-   FBPutSlotInteger(theFB,"age",EnvCreateInteger(mainEnv,44));
-   thePerson = FBAssert(theFB);
-   
-   FBDispose(theFB);
-
-   theFM = EnvCreateFactModifier(mainEnv,thePoint);
-   FMPutSlotInteger(theFM,"x",EnvCreateInteger(mainEnv,11));
-   FMApply(theFM);
-   FMPutSlotInteger(theFM,"y",EnvCreateInteger(mainEnv,22));
-   FMPutSlotInteger(theFM,"z",EnvCreateInteger(mainEnv,33));
-   FMApply(theFM);
-
-   FMPutSlotInteger(theFM,"x",EnvCreateInteger(mainEnv,22));
-   FMPutSlotInteger(theFM,"y",EnvCreateInteger(mainEnv,33));
-   FMPutSlotInteger(theFM,"z",EnvCreateInteger(mainEnv,44));
-   FMAbort(theFM);
-
-   FMPutSlotInteger(theFM,"x",EnvCreateInteger(mainEnv,55));
-   FMPutSlotInteger(theFM,"z",EnvCreateInteger(mainEnv,66));
-   FMApply(theFM);
-   
-   FMSetFact(theFM,thePerson);
-   multifieldArray[0].lexemeValue = EnvCreateSymbol(mainEnv,"Mark");
-   theMF = EnvArrayToMultifield(mainEnv,multifieldArray,1);
-      
-   FMPutSlotMultifield(theFM,"name",theMF);
-   FMApply(theFM);
-
-   FMPutSlotInteger(theFM,"age",EnvCreateInteger(mainEnv,17));
-   multifieldArray[0].lexemeValue = EnvCreateSymbol(mainEnv,"Howard");
-   multifieldArray[1].lexemeValue = EnvCreateSymbol(mainEnv,"Wayne");
-   multifieldArray[2].lexemeValue = EnvCreateSymbol(mainEnv,"Garner");
-   theMF = EnvArrayToMultifield(mainEnv,multifieldArray,3);
-   
-   FMPutSlotMultifield(theFM,"name",theMF);
-   FMApply(theFM);
-      
-   FMApply(theFM);
-
-   FMPutSlotInteger(theFM,"age",EnvCreateInteger(mainEnv,17));
-   FMPutSlotInteger(theFM,"age",EnvCreateInteger(mainEnv,18));
-   FMPutSlotInteger(theFM,"age",EnvCreateInteger(mainEnv,17));
-
-   multifieldArray[0].lexemeValue = EnvCreateSymbol(mainEnv,"Howard");
-   multifieldArray[1].lexemeValue = EnvCreateSymbol(mainEnv,"Wayne");
-   multifieldArray[2].lexemeValue = EnvCreateSymbol(mainEnv,"Garner");
-   theMF = EnvArrayToMultifield(mainEnv,multifieldArray,3);
-   FMPutSlotMultifield(theFM,"name",theMF);
-
-   multifieldArray[0].lexemeValue = EnvCreateSymbol(mainEnv,"Gary");
-   multifieldArray[1].lexemeValue = EnvCreateSymbol(mainEnv,"David");
-   multifieldArray[2].lexemeValue = EnvCreateSymbol(mainEnv,"Riley");
-   theMF = EnvArrayToMultifield(mainEnv,multifieldArray,3);
-   FMPutSlotMultifield(theFM,"name",theMF);
-   
-   multifieldArray[0].lexemeValue = EnvCreateSymbol(mainEnv,"Howard");
-   multifieldArray[1].lexemeValue = EnvCreateSymbol(mainEnv,"Wayne");
-   multifieldArray[2].lexemeValue = EnvCreateSymbol(mainEnv,"Garner");
-   theMF = EnvArrayToMultifield(mainEnv,multifieldArray,3);
-   FMPutSlotMultifield(theFM,"name",theMF);
-
-   multifieldArray[0].lexemeValue = EnvCreateSymbol(mainEnv,"Fred");
-   multifieldArray[1].lexemeValue = EnvCreateSymbol(mainEnv,"Flintstone");
-   theMF = EnvArrayToMultifield(mainEnv,multifieldArray,2);
-   FMPutSlotMultifield(theFM,"name",theMF);
-   FMPutSlotInteger(theFM,"age",EnvCreateInteger(mainEnv,19));
-   
-   FMApply(theFM);
-
-   multifieldArray[0].lexemeValue = EnvCreateSymbol(mainEnv,"Barney");
-   multifieldArray[1].lexemeValue = EnvCreateSymbol(mainEnv,"Rubble");
-   theMF = EnvArrayToMultifield(mainEnv,multifieldArray,2);
-   FMPutSlotMultifield(theFM,"name",theMF);
-   FMAbort(theFM);
-
-   FMDispose(theFM);
-
-   //RerouteStdin(mainEnv,argc,argv);
-   //CommandLoop(mainEnv);
+   CommandLoop(mainEnv);
 
    /*==================================================================*/
    /* Control does not normally return from the CommandLoop function.  */

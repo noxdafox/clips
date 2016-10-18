@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  10/01/16            */
+   /*             CLIPS Version 6.40  10/18/16            */
    /*                                                     */
    /*              CONSTRUCT COMPILER MODULE              */
    /*******************************************************/
@@ -71,6 +71,8 @@
 /*            Callbacks must be environment aware.           */
 /*                                                           */
 /*            UDF redesign.                                  */
+/*                                                           */
+/*            Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -725,14 +727,14 @@ static bool WriteInitializationFunction(
    fprintf(fp,"  {\n");
    fprintf(fp,"   static Environment *theEnv = NULL;\n\n");
    fprintf(fp,"   if (theEnv != NULL) return NULL;\n\n");
-   fprintf(fp,"   theEnv = CreateRuntimeEnvironment(sht%d,fht%d,iht%d,bmht%d);\n\n",
+   fprintf(fp,"   theEnv = CreateRuntimeEnvironment(sht%d,fht%d,iht%d,bmht%d,P%d_1);\n\n",
            ConstructCompilerData(theEnv)->ImageID,ConstructCompilerData(theEnv)->ImageID,
-           ConstructCompilerData(theEnv)->ImageID,ConstructCompilerData(theEnv)->ImageID);
+           ConstructCompilerData(theEnv)->ImageID,ConstructCompilerData(theEnv)->ImageID,
+           ConstructCompilerData(theEnv)->ImageID);
 
    fprintf(fp,"   EnvClear(theEnv);\n");
 
    fprintf(fp,"   RefreshSpecialSymbols(theEnv);\n");
-   fprintf(fp,"   InstallFunctionList(theEnv,P%d_1);\n\n",ConstructCompilerData(theEnv)->ImageID);
    fprintf(fp,"   InitExpressionPointers(theEnv);\n");
    fprintf(fp,"   FixupCImage_%d(theEnv);\n\n",ConstructCompilerData(theEnv)->ImageID);
 
@@ -938,7 +940,7 @@ static void DumpExpression(
      {
       fprintf(ConstructCompilerData(theEnv)->ExpressionFP,"{");
       fprintf(ConstructCompilerData(theEnv)->ExpressionFP,"%d,",exprPtr->type);
-      fprintf(ConstructCompilerData(theEnv)->ExpressionFP,"VS ");
+      fprintf(ConstructCompilerData(theEnv)->ExpressionFP,"{ ");
       switch (exprPtr->type)
         {
          case FCALL:
@@ -1044,7 +1046,7 @@ static void DumpExpression(
            break;
         }
 
-      fprintf(ConstructCompilerData(theEnv)->ExpressionFP,",");
+      fprintf(ConstructCompilerData(theEnv)->ExpressionFP,"},");
 
       ConstructCompilerData(theEnv)->ExpressionCount++;
       if (exprPtr->argList == NULL)

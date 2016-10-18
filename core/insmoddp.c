@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/01/16             */
+   /*            CLIPS Version 6.40  10/18/16             */
    /*                                                     */
    /*        INSTANCE MODIFY AND DUPLICATE MODULE         */
    /*******************************************************/
@@ -46,6 +46,8 @@
 /*            UDF redesign.                                  */
 /*                                                           */
 /*            Removed DATA_OBJECT_ARRAY primitive type.      */
+/*                                                           */
+/*            Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -94,8 +96,6 @@
    =========================================
    ***************************************** */
 
-#if (! RUN_TIME)
-
 /***************************************************
   NAME         : SetupInstanceModDupCommands
   DESCRIPTION  : Defines function interfaces for
@@ -109,6 +109,8 @@
 void SetupInstanceModDupCommands(
   Environment *theEnv)
   {
+#if ! RUN_TIME
+
 #if DEFRULE_CONSTRUCT
    EnvAddUDF(theEnv,"modify-instance","*",0,UNBOUNDED,NULL,InactiveModifyInstance,"InactiveModifyInstance",NULL);
    EnvAddUDF(theEnv,"active-modify-instance","*",0,UNBOUNDED,NULL,ModifyInstance,"ModifyInstance",NULL);
@@ -135,13 +137,21 @@ void SetupInstanceModDupCommands(
    EnvAddUDF(theEnv,"(direct-duplicate)","*",0,UNBOUNDED,NULL,DirectDuplicateMsgHandler,"DirectDuplicateMsgHandler",NULL);
    EnvAddUDF(theEnv,"(message-duplicate)","*",0,UNBOUNDED,NULL,MsgDuplicateMsgHandler,"MsgDuplicateMsgHandler",NULL);
 
+#endif
+
+#if DEFRULE_CONSTRUCT
+   AddFunctionParser(theEnv,"active-modify-instance",ParseInitializeInstance);
+   AddFunctionParser(theEnv,"active-message-modify-instance",ParseInitializeInstance);
+
+   AddFunctionParser(theEnv,"active-duplicate-instance",ParseInitializeInstance);
+   AddFunctionParser(theEnv,"active-message-duplicate-instance",ParseInitializeInstance);
+#endif
+
    AddFunctionParser(theEnv,"modify-instance",ParseInitializeInstance);
    AddFunctionParser(theEnv,"message-modify-instance",ParseInitializeInstance);
    AddFunctionParser(theEnv,"duplicate-instance",ParseInitializeInstance);
    AddFunctionParser(theEnv,"message-duplicate-instance",ParseInitializeInstance);
   }
-
-#endif
 
 /*************************************************************
   NAME         : ModifyInstance

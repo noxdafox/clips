@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/01/16             */
+   /*            CLIPS Version 6.40  10/18/16             */
    /*                                                     */
    /*             DEFTEMPLATE FUNCTIONS MODULE            */
    /*******************************************************/
@@ -75,6 +75,8 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Eval support for run time and bload only.      */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -114,10 +116,7 @@
 
    static void                    DuplicateModifyCommand(Environment *,int,UDFValue *);
    static CLIPSLexeme            *CheckDeftemplateAndSlotArguments(UDFContext *,Deftemplate **);
-
-#if (! RUN_TIME) && (! BLOAD_ONLY)
    static struct expr            *ModAndDupParse(Environment *,struct expr *,const char *,const char *);
-#endif
 
 /****************************************************************/
 /* DeftemplateFunctions: Initializes the deftemplate functions. */
@@ -145,10 +144,6 @@ void DeftemplateFunctions(
 
    EnvAddUDF(theEnv,"deftemplate-slot-facet-value","*",3,3,"y",DeftemplateSlotFacetValueFunction,"DeftemplateSlotFacetValueFunction",NULL);
 
-#if (! BLOAD_ONLY)
-   AddFunctionParser(theEnv,"modify",ModifyParse);
-   AddFunctionParser(theEnv,"duplicate",DuplicateParse);
-#endif
    FuncSeqOvlFlags(theEnv,"modify",false,false);
    FuncSeqOvlFlags(theEnv,"duplicate",false,false);
 #else
@@ -156,6 +151,9 @@ void DeftemplateFunctions(
 #pragma unused(theEnv)
 #endif
 #endif
+
+   AddFunctionParser(theEnv,"modify",ModifyParse);
+   AddFunctionParser(theEnv,"duplicate",DuplicateParse);
   }
 
 /*********************************************************************/
@@ -1906,6 +1904,7 @@ CLIPSLexeme *FindTemplateForFactAddress(
 
    return thePattern->lexemeValue;
   }
+#endif
 
 /*******************************************/
 /* ModifyParse: Parses the modify command. */
@@ -1956,6 +1955,7 @@ static struct expr *ModAndDupParse(
      { nextOne = GenConstant(theEnv,TokenTypeToType(theToken.tknType),theToken.value); }
    else if (theToken.tknType == INTEGER_TOKEN)
      {
+#if (! RUN_TIME)
       if (! TopLevelCommand(theEnv))
         {
          PrintErrorID(theEnv,"TMPLTFUN",1,true);
@@ -1965,6 +1965,7 @@ static struct expr *ModAndDupParse(
          ReturnExpression(theEnv,top);
          return NULL;
         }
+#endif
 
       nextOne = GenConstant(theEnv,INTEGER,theToken.value);
      }
@@ -2096,8 +2097,6 @@ static struct expr *ModAndDupParse(
 
    return(top);
   }
-
-#endif /* (! RUN_TIME) && (! BLOAD_ONLY) */
 
 #endif /* DEFTEMPLATE_CONSTRUCT */
 

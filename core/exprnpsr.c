@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  10/18/16             */
    /*                                                     */
    /*              EXPRESSION PARSER MODULE               */
    /*******************************************************/
@@ -55,6 +55,8 @@
 /*            Static constraint checking is always enabled.  */
 /*                                                           */
 /*            UDF redesign.                                  */
+/*                                                           */
+/*            Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -122,6 +124,8 @@ struct expr *Function0Parse(
    top = Function1Parse(theEnv,logicalName);
    return(top);
   }
+
+#endif
 
 /*******************************************************/
 /* Function1Parse: Parses a function. Assumes that the */
@@ -445,6 +449,8 @@ void PopRtnBrkContexts(
    ExpressionData(theEnv)->svContexts = ExpressionData(theEnv)->svContexts->nxt;
    rtn_struct(theEnv,saved_contexts,svtmp);
   }
+  
+#if (! RUN_TIME)
 
 /**********************/
 /* RestrictionExists: */
@@ -469,6 +475,8 @@ bool RestrictionExists(
 
     return false;
    }
+
+#endif
 
 /*****************************************************************/
 /* CheckExpressionAgainstRestrictions: Compares the arguments to */
@@ -849,8 +857,6 @@ struct expr *GroupActions(
       PPCRAndIndent(theEnv);
      }
   }
-
-#endif /* (! RUN_TIME) */
 
 /************************/
 /* PopulateRestriction: */

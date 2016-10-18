@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  10/18/16             */
    /*                                                     */
    /*                  EXPRESSION MODULE                  */
    /*******************************************************/
@@ -38,6 +38,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            Eval support for run time and bload only.      */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -69,9 +71,9 @@
 #if (! RUN_TIME)
    static long                    ListToPacked(struct expr *,
                                                struct expr *,long);
+#endif
    static EXPRESSION_HN          *FindHashedExpression(Environment *,EXPRESSION *,unsigned *,EXPRESSION_HN **);
    static unsigned                HashExpression(EXPRESSION *);
-#endif
    static void                    DeallocateExpressionData(Environment *);
 
 /**************************************************/
@@ -82,20 +84,18 @@
 void InitExpressionData(
   Environment *theEnv)
   {
-#if ! RUN_TIME
    unsigned i;
-#endif
 
    AllocateEnvironmentData(theEnv,EXPRESSION_DATA,sizeof(struct expressionData),DeallocateExpressionData);
 
 #if ! RUN_TIME
    InitExpressionPointers(theEnv);
+#endif
 
    ExpressionData(theEnv)->ExpressionHashTable = (EXPRESSION_HN **)
      gm2(theEnv,(int) (sizeof(EXPRESSION_HN *) * EXPRESSION_HASH_SIZE));
    for (i = 0 ; i < EXPRESSION_HASH_SIZE ; i++)
      ExpressionData(theEnv)->ExpressionHashTable[i] = NULL;
-#endif
   }
 
 /*****************************************/
@@ -105,7 +105,6 @@ void InitExpressionData(
 static void DeallocateExpressionData(
   Environment *theEnv)
   {
-#if ! RUN_TIME
    int i;
    EXPRESSION_HN *tmpPtr, *nextPtr;
 
@@ -128,11 +127,6 @@ static void DeallocateExpressionData(
 
    rm(theEnv,ExpressionData(theEnv)->ExpressionHashTable,
       (int) (sizeof(EXPRESSION_HN *) * EXPRESSION_HASH_SIZE));
-#else
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
-#endif
 
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE)
    if ((ExpressionData(theEnv)->NumberOfExpressions != 0) && Bloaded(theEnv))
@@ -266,6 +260,8 @@ static long ListToPacked(
    return(count);
   }
 
+#endif /* (! RUN_TIME) */
+
 /***************************************************************/
 /* ReturnPackedExpression: Returns a packed expression created */
 /*   using PackExpression to the memory manager.               */
@@ -280,8 +276,6 @@ void ReturnPackedExpression(
                          ExpressionSize(packPtr));
      }
   }
-
-#endif /* (! RUN_TIME) */
 
 /***********************************************/
 /* ReturnExpression: Returns a multiply linked */
@@ -301,8 +295,6 @@ void ReturnExpression(
       rtn_struct(theEnv,expr,tmp);
      }
   }
-
-#if (! RUN_TIME)
 
 /***************************************************
   NAME         : FindHashedExpression
@@ -407,8 +399,6 @@ void RemoveHashedExpression(
    ReturnPackedExpression(theEnv,exphash->exp);
    rtn_struct(theEnv,exprHashNode,exphash);
   }
-
-#endif /* (! RUN_TIME) */
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
 

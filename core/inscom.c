@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/01/16             */
+   /*            CLIPS Version 6.40  10/18/16             */
    /*                                                     */
    /*               INSTANCE COMMAND MODULE               */
    /*******************************************************/
@@ -61,6 +61,8 @@
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
 /*            UDF redesign.                                  */
+/*                                                           */
+/*            Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -178,18 +180,14 @@ void SetupInstances(
 #if DEFRULE_CONSTRUCT && OBJECT_SYSTEM
    EnvAddUDF(theEnv,"initialize-instance","bn",0,UNBOUNDED,NULL,InactiveInitializeInstance,"InactiveInitializeInstance",NULL);
    EnvAddUDF(theEnv,"active-initialize-instance","bn",0,UNBOUNDED,NULL,InitializeInstanceCommand,"InitializeInstanceCommand",NULL);
-   AddFunctionParser(theEnv,"active-initialize-instance",ParseInitializeInstance);
 
    EnvAddUDF(theEnv,"make-instance","bn",0,UNBOUNDED,NULL,InactiveMakeInstance,"InactiveMakeInstance",NULL);
    EnvAddUDF(theEnv,"active-make-instance","bn",0,UNBOUNDED,NULL,MakeInstanceCommand,"MakeInstanceCommand",NULL);
-   AddFunctionParser(theEnv,"active-make-instance",ParseInitializeInstance);
 
 #else
    EnvAddUDF(theEnv,"initialize-instance","bn",0,UNBOUNDED,NULL,InitializeInstanceCommand,"InitializeInstanceCommand",NULL);
    EnvAddUDF(theEnv,"make-instance","bn",0,UNBOUNDED,NULL,MakeInstanceCommand,"MakeInstanceCommand",NULL);
 #endif
-   AddFunctionParser(theEnv,"initialize-instance",ParseInitializeInstance);
-   AddFunctionParser(theEnv,"make-instance",ParseInitializeInstance);
 
    EnvAddUDF(theEnv,"init-slots","*",0,0,NULL,InitSlotsCommand,"InitSlotsCommand",NULL);
 
@@ -212,11 +210,18 @@ void SetupInstances(
    EnvAddUDF(theEnv,"instance-existp","b",1,1,"niy",InstanceExistPCommand,"InstanceExistPCommand",NULL);
    EnvAddUDF(theEnv,"class","*",1,1,NULL,ClassCommand,"ClassCommand",NULL);
 
+#endif
+
+#if DEFRULE_CONSTRUCT && OBJECT_SYSTEM
+   AddFunctionParser(theEnv,"active-initialize-instance",ParseInitializeInstance);
+   AddFunctionParser(theEnv,"active-make-instance",ParseInitializeInstance);
+#endif
+   AddFunctionParser(theEnv,"initialize-instance",ParseInitializeInstance);
+   AddFunctionParser(theEnv,"make-instance",ParseInitializeInstance);
+
    SetupInstanceModDupCommands(theEnv);
    /* SetupInstanceFileCommands(theEnv); DR0866 */
    SetupInstanceMultifieldCommands(theEnv);
-
-#endif
 
    SetupInstanceFileCommands(theEnv); /* DR0866 */
 

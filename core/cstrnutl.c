@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/01/16             */
+   /*            CLIPS Version 6.40  10/18/16             */
    /*                                                     */
    /*             CONSTRAINT UTILITY MODULE               */
    /*******************************************************/
@@ -30,6 +30,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            UDF redesign.                                  */
+/*                                                           */
+/*            Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -172,8 +174,6 @@ struct constraintRecord *CopyConstraintRecord(
    return(theConstraint);
   }
 
-#if (! RUN_TIME) && (! BLOAD_ONLY)
-
 /**************************************************************/
 /* SetAnyRestrictionFlags: Sets the restriction type flags of */
 /*   a constraint record to indicate there are restriction on */
@@ -206,6 +206,8 @@ void SetAnyRestrictionFlags(
    theConstraint->integerRestriction = flag2;
    theConstraint->instanceNameRestriction = flag2;
   }
+
+#if (! RUN_TIME) && (! BLOAD_ONLY)
 
 /*****************************************************/
 /* SetConstraintType: Given a constraint type and a  */

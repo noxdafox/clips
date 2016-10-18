@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  10/18/16            */
    /*                                                     */
    /*                ENVRNMNT HEADER FILE                 */
    /*******************************************************/
@@ -53,6 +53,8 @@
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
+/*            Eval support for run time and bload only.      */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_envrnmnt
@@ -100,7 +102,8 @@ struct environmentData
    bool                           AllocateEnvironmentData(Environment *,unsigned int,unsigned long,void (*)(Environment *));
    Environment                   *CreateEnvironment(void);
    Environment                   *CreateRuntimeEnvironment(CLIPSLexeme **,CLIPSFloat **,
-                                                           CLIPSInteger **,struct bitMapHashNode **);
+                                                           CLIPSInteger **,struct bitMapHashNode **,
+                                                           struct FunctionDefinition *);
    bool                           DestroyEnvironment(Environment *);
    bool                           AddEnvironmentCleanupFunction(Environment *,const char *,void (*)(Environment *),int);
    void                          *GetEnvironmentContext(Environment *);

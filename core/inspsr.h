@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  10/18/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -38,6 +38,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            Eval support for run time and bload only.      */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_inspsr
@@ -48,11 +50,8 @@
 
 #include "expressn.h"
 
-#if ! RUN_TIME
    EXPRESSION                    *ParseInitializeInstance(Environment *,EXPRESSION *,const char *);
    EXPRESSION                    *ParseSlotOverrides(Environment *,const char *,bool *);
-#endif
-
    EXPRESSION                    *ParseSimpleInstance(Environment *,EXPRESSION *,const char *);
 
 #endif /* _H_inspsr */

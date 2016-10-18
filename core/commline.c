@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  10/18/16             */
    /*                                                     */
    /*                COMMAND LINE MODULE                  */
    /*******************************************************/
@@ -77,6 +77,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            UDF redesign.                                  */
+/*                                                           */
+/*            Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -805,7 +807,9 @@ bool ExecuteIfCommandComplete(
    RouterData(theEnv)->AwaitingInput = false;
    RouteCommand(theEnv,CommandLineData(theEnv)->CommandString,true);
    FlushPPBuffer(theEnv);
+#if (! BLOAD_ONLY)
    FlushParsingMessages(theEnv);
+#endif
    EnvSetHaltExecution(theEnv,false);
    EnvSetEvaluationError(theEnv,false);
    FlushCommandString(theEnv);

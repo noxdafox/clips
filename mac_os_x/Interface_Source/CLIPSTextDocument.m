@@ -346,6 +346,7 @@
 /*****************************************************/
 - (IBAction) loadSelection: (id) sender
   {
+#if (! RUN_TIME) && (! BLOAD_ONLY)
    AppController *theDelegate = [NSApp delegate];
    char *theString, *convString;
    NSUInteger length;
@@ -398,6 +399,7 @@
    
    rm(theEnvironment,theString,(unsigned int) length+1);
    PrintPrompt(theEnvironment);
+#endif
   }
   
 /*******************************************************/
@@ -454,6 +456,7 @@
 /************************************************/
 - (IBAction) loadBuffer: (id) sender
   {
+#if (! RUN_TIME) && (! BLOAD_ONLY)
    AppController *theDelegate = [NSApp delegate];
    char *theString, *convString;
    NSUInteger length;
@@ -493,6 +496,7 @@
    
    rm(theEnvironment,theString,(unsigned int) length+1);
    PrintPrompt(theEnvironment);
+#endif
   }
 
 /*****************************************/

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  10/18/16             */
    /*                                                     */
    /*            CONSTRAINT OPERATIONS MODULE             */
    /*******************************************************/
@@ -27,14 +27,14 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            Eval support for run time and bload only.      */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
 
 #include <stdio.h>
 #include <stdlib.h>
-
-#if (! RUN_TIME)
 
 #include "constant.h"
 #include "constrnt.h"
@@ -67,7 +67,6 @@
                                                                     CONSTRAINT_RECORD *);
    static bool                     FindItemInExpression(int,void *,bool,struct expr *);
    static void                     UpdateRestrictionFlags(CONSTRAINT_RECORD *);
-#if (! BLOAD_ONLY)
    static void                     UnionRangeMinMaxValueWithList(Environment *,
                                                                  struct expr *,
                                                                  struct expr *,
@@ -89,7 +88,6 @@
                                                                 CONSTRAINT_RECORD *,
                                                                 CONSTRAINT_RECORD *);
    static bool                     RestrictionOnType(int,CONSTRAINT_RECORD *);
-#endif
 
 /**************************************************************/
 /* IntersectConstraints: Creates a new constraint record that */
@@ -613,8 +611,6 @@ static bool FindItemInExpression(
    return false;
   }
 
-#if (! BLOAD_ONLY)
-
 /**************************************************/
 /* RestrictionOnType: Determines if a restriction */
 /*   is present for a specific type. Returns true */
@@ -1133,6 +1129,8 @@ static struct expr *AddToUnionList(
    return(theHead);
   }
 
+#if (! BLOAD_ONLY)
+
 /****************************************************/
 /* RemoveConstantFromConstraint: Removes a constant */
 /*   value (including any duplicates) from the      */
@@ -1176,9 +1174,3 @@ void RemoveConstantFromConstraint(
   }
 
 #endif /* (! BLOAD_ONLY) */
-
-#endif /* (! RUN_TIME) */
-
-
-
-

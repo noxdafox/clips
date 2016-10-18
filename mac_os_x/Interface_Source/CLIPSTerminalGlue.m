@@ -19,7 +19,7 @@
 void ClearEnvironmentWindowCommand(
   Environment *theEnv,
   UDFContext *context,
-  CLIPSValue *returnValue)
+  UDFValue *returnValue)
   {
    CLIPSTerminalController *theObject;
    

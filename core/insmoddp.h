@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/25/16            */
+   /*             CLIPS Version 6.40  10/18/16            */
    /*                                                     */
    /*           INSTANCE MODIFY AND DUPLICATE MODULE      */
    /*******************************************************/
@@ -43,6 +43,8 @@
 /*                                                           */
 /*            Removed DATA_OBJECT_ARRAY primitive type.      */
 /*                                                           */
+/*            Eval support for run time and bload only.      */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_insmoddp
@@ -60,9 +62,7 @@
 #include "evaluatn.h"
 #endif
 
-#if (! RUN_TIME)
    void                           SetupInstanceModDupCommands(Environment *);
-#endif
 
    void                           ModifyInstance(Environment *,UDFContext *,UDFValue *);
    void                           MsgModifyInstance(Environment *,UDFContext *,UDFValue *);

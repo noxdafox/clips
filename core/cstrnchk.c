@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  10/18/16             */
    /*                                                     */
    /*             CONSTRAINT CHECKING MODULE              */
    /*******************************************************/
@@ -47,6 +47,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            UDF redesign.                                  */
+/*                                                           */
+/*            Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -796,8 +798,6 @@ int ConstraintCheckExpression(
 
 #endif /* (! RUN_TIME) && (! BLOAD_ONLY) */
 
-#if (! RUN_TIME)
-
 /*****************************************************/
 /* UnmatchableConstraint: Determines if a constraint */
 /*  record can still be satisfied by some value.     */
@@ -822,6 +822,4 @@ bool UnmatchableConstraint(
 
    return false;
   }
-
-#endif /* (! RUN_TIME) */
 

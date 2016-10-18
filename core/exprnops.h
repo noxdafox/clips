@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/25/16            */
+   /*             CLIPS Version 6.40  10/18/16            */
    /*                                                     */
    /*          EXPRESSION OPERATIONS HEADER FILE          */
    /*******************************************************/
@@ -36,6 +36,8 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Eval support for run time and bload only.      */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_exprnops
@@ -54,9 +56,7 @@
    bool                           ExpressionContainsVariables(struct expr *,bool);
    bool                           IdenticalExpression(struct expr *,struct expr *);
    struct expr                   *GenConstant(Environment *,unsigned short,void *);
-#if ! RUN_TIME
    bool                           CheckArgumentAgainstRestriction(Environment *,struct expr *,unsigned);
-#endif
    bool                           ConstantType(int);
    struct expr                   *CombineExpressions(Environment *,struct expr *,struct expr *);
    struct expr                   *AppendExpressions(struct expr *,struct expr *);

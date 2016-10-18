@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/25/16            */
+   /*             CLIPS Version 6.40  10/18/16            */
    /*                                                     */
    /*                CONSTRAINT HEADER FILE               */
    /*******************************************************/
@@ -47,6 +47,8 @@
 /*            Static constraint checking is always enabled.  */
 /*                                                           */
 /*            UDF redesign.                                  */
+/*                                                           */
+/*            Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -120,9 +122,7 @@ struct constraintData
    unsigned long                  HashConstraint(struct constraintRecord *);
    struct constraintRecord       *AddConstraint(Environment *,struct constraintRecord *);
 #endif
-#if (! RUN_TIME)
    void                           RemoveConstraint(Environment *,struct constraintRecord *);
-#endif
 
 #endif
 

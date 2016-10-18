@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  10/18/16             */
    /*                                                     */
    /*                FACT COMMANDS MODULE                 */
    /*******************************************************/
@@ -62,6 +62,8 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Eval support for run time and bload only.      */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -105,9 +107,7 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-#if (! RUN_TIME)
    static struct expr            *AssertParse(Environment *,struct expr *,const char *);
-#endif
 #if DEBUGGING_FUNCTIONS
    static long long               GetFactsArgument(UDFContext *);
 #endif
@@ -138,13 +138,13 @@ void FactCommandDefinitions(
    EnvAddUDF(theEnv,"load-facts","b",1,1,"sy",LoadFactsCommand,"LoadFactsCommand",NULL);
    EnvAddUDF(theEnv,"fact-index","l",1,1,"f",FactIndexFunction,"FactIndexFunction",NULL);
 
-   AddFunctionParser(theEnv,"assert",AssertParse);
    FuncSeqOvlFlags(theEnv,"assert",false,false);
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
 #endif
 #endif
+   AddFunctionParser(theEnv,"assert",AssertParse);
   }
 
 /***************************************/
@@ -1257,8 +1257,6 @@ static struct expr *StandardLoadFact(
    return(temp);
   }
 
-#if (! RUN_TIME)
-
 /****************************************************************/
 /* AssertParse: Driver routine for parsing the assert function. */
 /****************************************************************/
@@ -1278,8 +1276,6 @@ static struct expr *AssertParse(
    DecrementIndentDepth(theEnv,8);
    return(rv);
   }
-
-#endif /* (! RUN_TIME) */
 
 #endif /* DEFTEMPLATE_CONSTRUCT */
 

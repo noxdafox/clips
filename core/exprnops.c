@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/01/16             */
+   /*            CLIPS Version 6.40  10/18/16             */
    /*                                                     */
    /*             EXPRESSION OPERATIONS MODULE            */
    /*******************************************************/
@@ -34,6 +34,8 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Eval support for run time and bload only.      */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -53,8 +55,6 @@
 #include "router.h"
 
 #include "exprnops.h"
-
-#if (! RUN_TIME)
 
 /************************************/
 /* CheckArgumentAgainstRestriction: */
@@ -109,8 +109,6 @@ bool CheckArgumentAgainstRestriction(
    RemoveConstraint(theEnv,cr3);
    return false;
   }
-
-#endif /* (! RUN_TIME) */
 
 /******************************************************/
 /* ConstantExpression: Returns true if the expression */

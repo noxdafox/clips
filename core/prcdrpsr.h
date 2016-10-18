@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  10/18/16            */
    /*                                                     */
    /*       PROCEDURAL FUNCTIONS PARSER HEADER FILE       */
    /*******************************************************/
@@ -43,6 +43,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            Eval support for run time and bload only.      */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_prcdrpsr
@@ -60,19 +62,15 @@ struct BindInfo
    struct BindInfo *next;
   };
 
-#if (! RUN_TIME)
    void                           ProceduralFunctionParsers(Environment *);
    struct BindInfo               *GetParsedBindNames(Environment *);
    void                           SetParsedBindNames(Environment *,struct BindInfo *);
    void                           ClearParsedBindNames(Environment *);
    bool                           ParsedBindNamesEmpty(Environment *);
-#endif
-#if (! BLOAD_ONLY) && (! RUN_TIME)
    int                            SearchParsedBindNames(Environment *,CLIPSLexeme *);
    int                            CountParsedBindNames(Environment *);
    void                           RemoveParsedBindName(Environment *,CLIPSLexeme *);
    struct constraintRecord       *FindBindConstraints(Environment *,CLIPSLexeme *);
-#endif
 
 #endif /* _H_prcdrpsr */
 

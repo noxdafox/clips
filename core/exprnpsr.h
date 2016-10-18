@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/25/16            */
+   /*             CLIPS Version 6.40  10/18/16            */
    /*                                                     */
    /*            EXPRESSION PARSER HEADER FILE            */
    /*******************************************************/
@@ -46,6 +46,8 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Eval support for run time and bload only.      */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_exprnpsr
@@ -54,16 +56,12 @@
 
 #define _H_exprnpsr
 
-#if (! RUN_TIME)
-
 typedef struct saved_contexts
   {
    bool rtn;
    bool brk;
    struct saved_contexts *nxt;
   } SAVED_CONTEXTS;
-
-#endif
 
 #include "extnfunc.h"
 #include "scanner.h"
@@ -86,10 +84,11 @@ typedef struct saved_contexts
    struct expr                   *RemoveUnneededProgn(Environment *,struct expr *);
    void                           PopulateRestriction(Environment *,unsigned *,unsigned,const char *,int);
 
-#if (! RUN_TIME)
 
    bool                           CheckExpressionAgainstRestrictions(Environment *,struct expr *,
                                                                      struct FunctionDefinition *,const char *);
+
+#if (! RUN_TIME)
    bool                           RestrictionExists(const char *,int);
 
 #endif

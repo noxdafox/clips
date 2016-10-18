@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  10/18/16            */
    /*                                                     */
    /*               CLASS PARSER HEADER FILE              */
    /*******************************************************/
@@ -44,6 +44,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            Eval support for run time and bload only.      */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_classpsr
@@ -52,17 +54,20 @@
 
 #define _H_classpsr
 
-#if OBJECT_SYSTEM && (! BLOAD_ONLY) && (! RUN_TIME)
+#if OBJECT_SYSTEM
 
+#if (! BLOAD_ONLY) && (! RUN_TIME)
    bool                    ParseDefclass(Environment *,const char *);
+
+#endif
 
 #if DEFMODULE_CONSTRUCT
    void                   *CreateClassScopeMap(Environment *,Defclass *);
 #endif
 
-#endif
+#endif /* OBJECT_SYSTEM */
 
-#endif
+#endif /* _H_classpsr */
 
 
 

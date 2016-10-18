@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  10/18/16             */
    /*                                                     */
    /*                 CONSTRAINT MODULE                   */
    /*******************************************************/
@@ -47,6 +47,8 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Eval support for run time and bload only.      */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -73,10 +75,8 @@
    static void                     InstallConstraintRecord(Environment *,CONSTRAINT_RECORD *);
    static bool                     ConstraintCompare(struct constraintRecord *,struct constraintRecord *);
 #endif
-#if (! RUN_TIME)
    static void                     ReturnConstraintRecord(Environment *,CONSTRAINT_RECORD *);
    static void                     DeinstallConstraintRecord(Environment *,CONSTRAINT_RECORD *);
-#endif
    static void                     DeallocateConstraintData(Environment *);
 
 /*****************************************************/
@@ -148,8 +148,6 @@ static void DeallocateConstraintData(
      }
 #endif
   }
-
-#if (! RUN_TIME)
 
 /*************************************************************/
 /* ReturnConstraintRecord: Frees the data structures used by */
@@ -262,8 +260,6 @@ void RemoveConstraint(
 
    return;
   }
-
-#endif /* (! RUN_TIME) */
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
 

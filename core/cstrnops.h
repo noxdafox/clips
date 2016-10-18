@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  10/18/16            */
    /*                                                     */
    /*           CONSTRAINT OPERATIONS HEADER FILE         */
    /*******************************************************/
@@ -25,6 +25,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            Eval support for run time and bload only.      */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_cstrnops
@@ -33,17 +35,13 @@
 
 #define _H_cstrnops
 
-#if (! RUN_TIME)
-
 #include "evaluatn.h"
 #include "constrnt.h"
 
    struct constraintRecord       *IntersectConstraints(Environment *,struct constraintRecord *,struct constraintRecord *);
-#if (! BLOAD_ONLY)
    struct constraintRecord       *UnionConstraints(Environment *,struct constraintRecord *,struct constraintRecord *);
+#if (! BLOAD_ONLY)
    void                           RemoveConstantFromConstraint(Environment *,int,void *,CONSTRAINT_RECORD *);
 #endif
-
-#endif /* (! RUN_TIME) */
 
 #endif /* _H_cstrnops */

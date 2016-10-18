@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/01/16             */
+   /*            CLIPS Version 6.40  10/18/16             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -44,6 +44,8 @@
 /*                                                           */
 /*            Added CLIPSBlockStart and CLIPSBlockEnd        */
 /*            functions for garbage collection blocks.       */
+/*                                                           */
+/*            Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -114,23 +116,24 @@ void SetupFactQuery(
    EnvAddUDF(theEnv,"(query-fact-slot)","*",0,UNBOUNDED,NULL,GetQueryFactSlot,"GetQueryFactSlot",NULL);
 
    EnvAddUDF(theEnv,"any-factp","b",0,UNBOUNDED,NULL,AnyFacts,"AnyFacts",NULL);
-   AddFunctionParser(theEnv,"any-factp",FactParseQueryNoAction);
 
    EnvAddUDF(theEnv,"find-fact","m",0,UNBOUNDED,NULL,QueryFindFact,"QueryFindFact",NULL);
-   AddFunctionParser(theEnv,"find-fact",FactParseQueryNoAction);
 
    EnvAddUDF(theEnv,"find-all-facts","m",0,UNBOUNDED,NULL,QueryFindAllFacts,"QueryFindAllFacts",NULL);
-   AddFunctionParser(theEnv,"find-all-facts",FactParseQueryNoAction);
 
    EnvAddUDF(theEnv,"do-for-fact","*",0,UNBOUNDED,NULL,QueryDoForFact,"QueryDoForFact",NULL);
-   AddFunctionParser(theEnv,"do-for-fact",FactParseQueryAction);
 
    EnvAddUDF(theEnv,"do-for-all-facts","*",0,UNBOUNDED,NULL,QueryDoForAllFacts,"QueryDoForAllFacts",NULL);
-   AddFunctionParser(theEnv,"do-for-all-facts",FactParseQueryAction);
 
    EnvAddUDF(theEnv,"delayed-do-for-all-facts","*",0,UNBOUNDED,NULL,DelayedQueryDoForAllFacts,"DelayedQueryDoForAllFacts",NULL);
-   AddFunctionParser(theEnv,"delayed-do-for-all-facts",FactParseQueryAction);
 #endif
+
+   AddFunctionParser(theEnv,"any-factp",FactParseQueryNoAction);
+   AddFunctionParser(theEnv,"find-fact",FactParseQueryNoAction);
+   AddFunctionParser(theEnv,"find-all-facts",FactParseQueryNoAction);
+   AddFunctionParser(theEnv,"do-for-fact",FactParseQueryAction);
+   AddFunctionParser(theEnv,"do-for-all-facts",FactParseQueryAction);
+   AddFunctionParser(theEnv,"delayed-do-for-all-facts",FactParseQueryAction);
   }
 
 /*************************************************************

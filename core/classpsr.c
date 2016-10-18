@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/01/16             */
+   /*            CLIPS Version 6.40  10/18/16             */
    /*                                                     */
    /*                  CLASS PARSER MODULE                */
    /*******************************************************/
@@ -41,11 +41,13 @@
 /*                                                            */
 /*      6.40: Pragma once and other inclusion changes.        */
 /*                                                            */
-/*            Added support for booleans with <stdbool.h>.   */
-/*                                                           */
-/*            Removed use of void pointers for specific      */
-/*            data structures.                               */
-/*                                                           */
+/*            Added support for booleans with <stdbool.h>.    */
+/*                                                            */
+/*            Removed use of void pointers for specific       */
+/*            data structures.                                */
+/*                                                            */
+/*            Eval support for run time and bload only.       */
+/*                                                            */
 /**************************************************************/
 
 /* =========================================
@@ -54,8 +56,6 @@
    =========================================
    ***************************************** */
 #include "setup.h"
-
-#if OBJECT_SYSTEM && (! BLOAD_ONLY) && (! RUN_TIME)
 
 #if BLOAD || BLOAD_AND_BSAVE
 #include "bload.h"
@@ -93,6 +93,8 @@
 
 #define DIRECT               0
 #define INHERIT              1
+
+#if OBJECT_SYSTEM && (! BLOAD_ONLY) && (! RUN_TIME)
 
 /***************************************/
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
@@ -851,6 +853,50 @@ static void PackSlots(
      }
   }
 
+/*****************************************************************************
+  NAME         : CreatePublicSlotMessageHandlers
+  DESCRIPTION  : Creates a get-<slot-name> and
+                 put-<slot-name> handler for every
+                 public slot in a class.
+
+                 The syntax of the message-handlers
+                 created are:
+
+                 (defmessage-handler <class> get-<slot-name> primary ()
+                    ?self:<slot-name>)
+
+                 For single-field slots:
+
+                 (defmessage-handler <class> put-<slot-name> primary (?value)
+                    (bind ?self:<slot-name> ?value))
+
+                 For multifield slots:
+
+                 (defmessage-handler <class> put-<slot-name> primary ($?value)
+                    (bind ?self:<slot-name> ?value))
+  INPUTS       : The defclass
+  RETURNS      : Nothing useful
+  SIDE EFFECTS : Message-handlers created
+  NOTES        : None
+ ******************************************************************************/
+static void CreatePublicSlotMessageHandlers(
+  Environment *theEnv,
+  Defclass *theDefclass)
+  {
+   long i;
+   SlotDescriptor *sd;
+
+   for (i = 0 ; i < theDefclass->slotCount ; i++)
+     {
+      sd = &theDefclass->slots[i];
+        CreateGetAndPutHandlers(theEnv,sd);
+     }
+   for (i = 0 ; i < theDefclass->handlerCount ; i++)
+     theDefclass->handlers[i].system = true;
+  }
+
+#endif
+
 #if DEFMODULE_CONSTRUCT
 
 /********************************************************
@@ -898,50 +944,6 @@ void *CreateClassScopeMap(
    IncrementBitMapCount(theBitMap);
    rm(theEnv,scopeMap,scopeMapSize);
    return(theBitMap);
-  }
-
-#endif
-
-/*****************************************************************************
-  NAME         : CreatePublicSlotMessageHandlers
-  DESCRIPTION  : Creates a get-<slot-name> and
-                 put-<slot-name> handler for every
-                 public slot in a class.
-
-                 The syntax of the message-handlers
-                 created are:
-
-                 (defmessage-handler <class> get-<slot-name> primary ()
-                    ?self:<slot-name>)
-
-                 For single-field slots:
-
-                 (defmessage-handler <class> put-<slot-name> primary (?value)
-                    (bind ?self:<slot-name> ?value))
-
-                 For multifield slots:
-
-                 (defmessage-handler <class> put-<slot-name> primary ($?value)
-                    (bind ?self:<slot-name> ?value))
-  INPUTS       : The defclass
-  RETURNS      : Nothing useful
-  SIDE EFFECTS : Message-handlers created
-  NOTES        : None
- ******************************************************************************/
-static void CreatePublicSlotMessageHandlers(
-  Environment *theEnv,
-  Defclass *theDefclass)
-  {
-   long i;
-   SlotDescriptor *sd;
-
-   for (i = 0 ; i < theDefclass->slotCount ; i++)
-     {
-      sd = &theDefclass->slots[i];
-        CreateGetAndPutHandlers(theEnv,sd);
-     }
-   for (i = 0 ; i < theDefclass->handlerCount ; i++)
-     theDefclass->handlers[i].system = true;
   }
 
 #endif

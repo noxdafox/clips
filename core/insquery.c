@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/01/16             */
+   /*            CLIPS Version 6.40  10/18/16             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -45,6 +45,8 @@
 /*                                                           */
 /*            Added CLIPSBlockStart and CLIPSBlockEnd        */
 /*            functions for garbage collection blocks.       */
+/*                                                           */
+/*            Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -112,23 +114,24 @@ void SetupQuery(
    EnvAddUDF(theEnv,"(query-instance-slot)","*",0,UNBOUNDED,NULL,GetQueryInstanceSlot,"GetQueryInstanceSlot",NULL);
 
    EnvAddUDF(theEnv,"any-instancep","b",0,UNBOUNDED,NULL,AnyInstances,"AnyInstances",NULL);
-   AddFunctionParser(theEnv,"any-instancep",ParseQueryNoAction);
 
    EnvAddUDF(theEnv,"find-instance","m",0,UNBOUNDED,NULL,QueryFindInstance,"QueryFindInstance",NULL);
-   AddFunctionParser(theEnv,"find-instance",ParseQueryNoAction);
 
    EnvAddUDF(theEnv,"find-all-instances","m",0,UNBOUNDED,NULL,QueryFindAllInstances,"QueryFindAllInstances",NULL);
-   AddFunctionParser(theEnv,"find-all-instances",ParseQueryNoAction);
 
    EnvAddUDF(theEnv,"do-for-instance","*",0,UNBOUNDED,NULL,QueryDoForInstance,"QueryDoForInstance",NULL);
-   AddFunctionParser(theEnv,"do-for-instance",ParseQueryAction);
 
    EnvAddUDF(theEnv,"do-for-all-instances","*",0,UNBOUNDED,NULL,QueryDoForAllInstances,"QueryDoForAllInstances",NULL);
-   AddFunctionParser(theEnv,"do-for-all-instances",ParseQueryAction);
 
    EnvAddUDF(theEnv,"delayed-do-for-all-instances","*",0,UNBOUNDED,NULL,DelayedQueryDoForAllInstances,"DelayedQueryDoForAllInstances",NULL);
-   AddFunctionParser(theEnv,"delayed-do-for-all-instances",ParseQueryAction);
 #endif
+
+   AddFunctionParser(theEnv,"any-instancep",ParseQueryNoAction);
+   AddFunctionParser(theEnv,"find-instance",ParseQueryNoAction);
+   AddFunctionParser(theEnv,"find-all-instances",ParseQueryNoAction);
+   AddFunctionParser(theEnv,"do-for-instance",ParseQueryAction);
+   AddFunctionParser(theEnv,"do-for-all-instances",ParseQueryAction);
+   AddFunctionParser(theEnv,"delayed-do-for-all-instances",ParseQueryAction);
   }
 
 /*************************************************************

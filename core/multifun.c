@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/01/16             */
+   /*            CLIPS Version 6.40  10/18/16             */
    /*                                                     */
    /*             MULTIFIELD FUNCTIONS MODULE             */
    /*******************************************************/
@@ -67,6 +67,8 @@
 /*            Added CLIPSBlockStart and CLIPSBlockEnd        */
 /*            functions for garbage collection blocks.       */
 /*                                                           */
+/*            Eval support for run time and bload only.      */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -112,7 +114,7 @@ typedef struct fieldVarStack
 #if MULTIFIELD_FUNCTIONS
    static bool                    MVRangeCheck(long,long,long *,int);
    static void                    MultifieldPrognDriver(UDFContext *,UDFValue *,const char *);
-#if (! BLOAD_ONLY) && (! RUN_TIME)
+#if (! BLOAD_ONLY)
    static struct expr            *MultifieldPrognParser(Environment *,struct expr *,const char *);
    static struct expr            *ForeachParser(Environment *,struct expr *,const char *);
    static void                    ReplaceMvPrognFieldVars(Environment *,CLIPSLexeme *,struct expr *,int);
@@ -161,14 +163,15 @@ void MultifieldFunctionDefinitions(
    EnvAddUDF(theEnv,"subsetp","b",2,2,";m;m",SubsetpFunction,"SubsetpFunction",NULL);
    EnvAddUDF(theEnv,"progn$","*",0,UNBOUNDED,NULL,MultifieldPrognFunction,"MultifieldPrognFunction",NULL);
    EnvAddUDF(theEnv,"foreach","*",0,UNBOUNDED,NULL,ForeachFunction,"ForeachFunction",NULL);
-#if ! BLOAD_ONLY
-   AddFunctionParser(theEnv,"progn$",MultifieldPrognParser);
-   AddFunctionParser(theEnv,"foreach",ForeachParser);
-#endif
    FuncSeqOvlFlags(theEnv,"progn$",false,false);
    FuncSeqOvlFlags(theEnv,"foreach",false,false);
    EnvAddUDF(theEnv,"(get-progn$-field)","*",0,0,NULL,GetMvPrognField,"GetMvPrognField",NULL);
    EnvAddUDF(theEnv,"(get-progn$-index)","l",0,0,NULL,GetMvPrognIndex,"GetMvPrognIndex",NULL);
+#endif
+
+#if ! BLOAD_ONLY
+   AddFunctionParser(theEnv,"progn$",MultifieldPrognParser);
+   AddFunctionParser(theEnv,"foreach",ForeachParser);
 #endif
   }
 
@@ -813,7 +816,7 @@ static bool MVRangeCheck(
   return true;
 }
 
-#if (! BLOAD_ONLY) && (! RUN_TIME)
+#if (! BLOAD_ONLY)
 
 /******************************************************/
 /* MultifieldPrognParser: Parses the progn$ function. */
@@ -1065,7 +1068,7 @@ static void ReplaceMvPrognFieldVars(
      }
   }
 
-#endif /* (! BLOAD_ONLY) && (! RUN_TIME) */
+#endif /* (! BLOAD_ONLY) */
 
 /*****************************************/
 /* MultifieldPrognFunction: H/L access   */

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  10/18/16             */
    /*                                                     */
    /*            FACT RHS PATTERN PARSER MODULE           */
    /*******************************************************/
@@ -45,6 +45,8 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Eval support for run time and bload only.      */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -81,8 +83,6 @@
 #if RUN_TIME || BLOAD_ONLY || BLOAD || BLOAD_AND_BSAVE
    static void                       NoSuchTemplateError(Environment *,const char *);
 #endif
-
-#if (! RUN_TIME)
 
 /**********************************************************************/
 /* BuildRHSAssert: Parses zero or more RHS fact patterns (the format  */
@@ -203,8 +203,6 @@ struct expr *BuildRHSAssert(
 
    return assertList;
   }
-
-#endif
 
 /***************************************************************/
 /* GetRHSPattern: Parses a single RHS fact pattern. The return */

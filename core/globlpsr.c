@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  10/18/16             */
    /*                                                     */
    /*              DEFGLOBAL PARSER MODULE                */
    /*******************************************************/
@@ -42,6 +42,8 @@
 /*            data structures.                               */
 /*                                                           */
 /*            UDF redesign.                                  */
+/*                                                           */
+/*            Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -497,6 +499,8 @@ bool ReplaceGlobalVariable(
    return true;
   }
 
+#endif /* (! RUN_TIME) && (! BLOAD_ONLY) */
+
 /*****************************************************************/
 /* GlobalReferenceErrorMessage: Prints an error message when a   */
 /*   symbolic reference to a global variable cannot be resolved. */
@@ -510,8 +514,6 @@ void GlobalReferenceErrorMessage(
    EnvPrintRouter(theEnv,WERROR,variableName);
    EnvPrintRouter(theEnv,WERROR,"* was referenced, but is not defined.\n");
   }
-
-#endif /* (! RUN_TIME) && (! BLOAD_ONLY) */
 
 #endif /* DEFGLOBAL_CONSTRUCT */
 

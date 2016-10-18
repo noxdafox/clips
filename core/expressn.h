@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  10/01/16            */
+   /*             CLIPS Version 6.40  10/18/16            */
    /*                                                     */
    /*               EXPRESSION HEADER FILE                */
    /*******************************************************/
@@ -36,6 +36,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -108,11 +110,9 @@ struct expressionData
    struct expr *ExpressionArray;
    long int ExpressionCount;
 #endif
-#if (! RUN_TIME)
    SAVED_CONTEXTS *svContexts;
    bool ReturnContext;
    bool BreakContext;
-#endif
    bool SequenceOpMode;
   };
 
@@ -132,9 +132,7 @@ struct expressionData
 #if (! BLOAD_ONLY) && (! RUN_TIME)
    EXPRESSION                    *AddHashedExpression(Environment *,EXPRESSION *);
 #endif
-#if (! RUN_TIME)
    void                           RemoveHashedExpression(Environment *,EXPRESSION *);
-#endif
 #if BLOAD_AND_BSAVE || BLOAD_ONLY || BLOAD || CONSTRUCT_COMPILER
    long                           HashedExpressionIndex(Environment *,EXPRESSION *);
 #endif

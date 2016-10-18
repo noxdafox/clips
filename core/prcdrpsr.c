@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  10/18/16             */
    /*                                                     */
    /*          PROCEDURAL FUNCTIONS PARSER MODULE         */
    /*******************************************************/
@@ -43,6 +43,8 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Eval support for run time and bload only.      */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -70,7 +72,6 @@
 #include "globlpsr.h"
 #endif
 
-#if ! RUN_TIME
 #define PRCDRPSR_DATA 12
 
 struct procedureParserData
@@ -79,15 +80,12 @@ struct procedureParserData
   };
 
 #define ProcedureParserData(theEnv) ((struct procedureParserData *) GetEnvironmentData(theEnv,PRCDRPSR_DATA))
-#endif
 
 /***************************************/
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-#if (! RUN_TIME)
    static void                    DeallocateProceduralFunctionData(Environment *);
-#if (! BLOAD_ONLY)
    static struct expr            *WhileParse(Environment *,struct expr *,const char *);
    static struct expr            *LoopForCountParse(Environment *,struct expr *,const char *);
    static void                    ReplaceLoopCountVars(Environment *,CLIPSLexeme *,EXPRESSION *,int);
@@ -98,10 +96,7 @@ struct procedureParserData
    static struct expr            *ReturnParse(Environment *,struct expr *,const char *);
    static struct expr            *BreakParse(Environment *,struct expr *,const char *);
    static struct expr            *SwitchParse(Environment *,struct expr *,const char *);
-#endif
-#endif
 
-#if ! RUN_TIME
 /*****************************/
 /* ProceduralFunctionParsers */
 /*****************************/
@@ -110,7 +105,6 @@ void ProceduralFunctionParsers(
   {
    AllocateEnvironmentData(theEnv,PRCDRPSR_DATA,sizeof(struct procedureParserData),DeallocateProceduralFunctionData);
 
-#if (! BLOAD_ONLY)
    AddFunctionParser(theEnv,"bind",BindParse);
    AddFunctionParser(theEnv,"progn",PrognParse);
    AddFunctionParser(theEnv,"if",IfParse);
@@ -119,7 +113,6 @@ void ProceduralFunctionParsers(
    AddFunctionParser(theEnv,"return",ReturnParse);
    AddFunctionParser(theEnv,"break",BreakParse);
    AddFunctionParser(theEnv,"switch",SwitchParse);
-#endif
   }
 
 /*************************************************************/
@@ -185,8 +178,6 @@ bool ParsedBindNamesEmpty(
 
    return true;
   }
-
-#if (! BLOAD_ONLY)
 
 /*********************************************************/
 /* WhileParse: purpose is to parse the while statement.  */
@@ -1062,8 +1053,3 @@ void RemoveParsedBindName(
       rtn_struct(theEnv,BindInfo,tmp);
      }
   }
-
-#endif
-
-#endif
-

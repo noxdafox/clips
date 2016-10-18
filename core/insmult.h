@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/25/16            */
+   /*             CLIPS Version 6.40  10/18/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -36,6 +36,8 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Eval support for run time and bload only.      */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_insmult
@@ -46,10 +48,7 @@
 
 #include "evaluatn.h"
 
-#if (! RUN_TIME)
    void                           SetupInstanceMultifieldCommands(Environment *);
-#endif
-
    void                           MVSlotReplaceCommand(Environment *,UDFContext *,UDFValue *);
    void                           MVSlotInsertCommand(Environment *,UDFContext *,UDFValue *);
    void                           MVSlotDeleteCommand(Environment *,UDFContext *,UDFValue *);

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  10/18/16             */
    /*                                                     */
    /*               INSTANCE PARSER MODULE                */
    /*******************************************************/
@@ -46,6 +46,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -98,8 +100,6 @@
           EXTERNALLY VISIBLE FUNCTIONS
    =========================================
    ***************************************** */
-
-#if ! RUN_TIME
 
 /*************************************************************************************
   NAME         : ParseInitializeInstance
@@ -392,8 +392,6 @@ EXPRESSION *ParseSlotOverrides(
    SavePPBuffer(theEnv,DefclassData(theEnv)->ObjectParseToken.printForm);
    return(top);
   }
-
-#endif
 
 /****************************************************************************
   NAME         : ParseSimpleInstance

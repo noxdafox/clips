@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  10/18/16             */
    /*                                                     */
    /*                  DEFINSTANCES MODULE                */
    /*******************************************************/
@@ -413,7 +413,7 @@ bool EnvUndefinstances(
   {
 #if RUN_TIME || BLOAD_ONLY
 #if MAC_XCD
-#pragma unused(theEnv,vptr)
+#pragma unused(theEnv,theDefinstances)
 #endif
    return false;
 #else

@@ -22,9 +22,9 @@
    if (self = [super init])
      {
       int i;
-      CLIPSValue slotNames;
-      CLIPSValue slotValue;
-      CLIPSValue defaultValue;
+      UDFValue slotNames;
+      UDFValue slotValue;
+      UDFValue defaultValue;
       NSMutableArray *tempArray;
       NSMutableDictionary *theMD;
       NSNumber *theNumber;
@@ -50,9 +50,9 @@
       
       DecrementBitMapCount(theEnvironment,theScopeMap);
 
-      tempArray = [NSMutableArray arrayWithCapacity: (unsigned) GetDOLength(slotNames)];
+      tempArray = [NSMutableArray arrayWithCapacity: (unsigned) slotNames.range];
 
-      for (i = 0; i < GetDOLength(slotNames); i++)
+      for (i = 0; i < slotNames.range; i++)
         {
          const char *theCSlotName = slotNames.multifieldValue->theFields[i].lexemeValue->contents;
          NSString *theSlotName = [NSString stringWithUTF8String: theCSlotName];
@@ -100,9 +100,9 @@
    if (self = [super init])
      {
       int i;
-      CLIPSValue slotNames;
-      CLIPSValue slotValue;
-      CLIPSValue defaultValue;
+      UDFValue slotNames;
+      UDFValue slotValue;
+      UDFValue defaultValue;
       NSMutableArray *tempArray;
       NSMutableDictionary *theMD;
       NSNumber *theNumber;
@@ -134,9 +134,9 @@
       
       DecrementBitMapCount(theEnvironment,theScopeMap);
 
-      tempArray = [NSMutableArray arrayWithCapacity: (unsigned) GetDOLength(slotNames)];
+      tempArray = [NSMutableArray arrayWithCapacity: (unsigned) slotNames.range];
 
-      for (i = 1; i <= GetDOLength(slotNames); i++)
+      for (i = 0; i < slotNames.range; i++)
         {
          const char *theCSlotName = slotNames.multifieldValue->theFields[i].lexemeValue->contents;
          NSString *theSlotName = [NSString stringWithUTF8String: theCSlotName];
