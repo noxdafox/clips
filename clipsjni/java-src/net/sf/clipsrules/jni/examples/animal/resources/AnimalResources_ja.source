@@ -1,0 +1,7 @@
+﻿# Properties Source File for Japanese
+# Generate the properties file from this file using the following command:
+# native2ascii -encoding UTF-8 AnimalResources_ja.source AnimalResources_ja.properties
+AnimalDemo=動物デモ
+Next=次の
+Prev=前の
+Restart=再起動

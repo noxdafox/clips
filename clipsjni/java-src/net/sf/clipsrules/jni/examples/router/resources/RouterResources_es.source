@@ -1,0 +1,6 @@
+﻿# Properties Source File for Spanish
+# Generate the properties file from this file using the following command:
+# native2ascii -encoding UTF-8 AutoResources_es.source AutoResources_es.properties
+RouterDemo=Demostración de Ruta
+RestartAnimal=Reiniciar los Animales
+RestartAuto=Reiniciar Automóvil

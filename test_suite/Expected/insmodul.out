@@ -1,0 +1,210 @@
+TRUE
+CLIPS> (batch "insmodul.bat")
+TRUE
+CLIPS> (defmodule MAIN
+  (export defclass A))
+CLIPS> (defclass MAIN::A
+   (is-a USER)
+   (role concrete))
+CLIPS> (definstances MAIN::A (a-main of A))
+CLIPS> (defmodule FOO (export defclass B)
+               (export defclass C))
+CLIPS> (defclass FOO::A
+   (is-a USER)
+   (role concrete))
+CLIPS> (defclass FOO::B
+   (is-a USER))
+CLIPS> (defclass FOO::C
+   (is-a B)
+   (role concrete))
+CLIPS> (definstances FOO::A (a-foo of A) (c of C))
+CLIPS> (defmodule BAR
+   (import MAIN defclass A)
+   (import FOO defclass C))
+CLIPS> (defmodule WOZ
+   (import FOO defclass ?ALL))
+CLIPS> (reset)
+CLIPS> (set-current-module WOZ)
+MAIN
+CLIPS> (instances)
+[c] of FOO::C
+For a total of 1 instance.
+CLIPS> (instances MAIN)
+[a-main] of A
+For a total of 1 instance.
+CLIPS> (instances FOO)
+[a-foo] of A
+[c] of C
+For a total of 2 instances.
+CLIPS> (instances BAR)
+[a-main] of MAIN::A
+[c] of FOO::C
+For a total of 2 instances.
+CLIPS> (instances *)
+MAIN:
+   [a-main] of A
+FOO:
+   [a-foo] of A
+   [c] of C
+BAR:
+WOZ:
+For a total of 3 instances.
+CLIPS> (instances FOO B)
+CLIPS> (instances FOO B inherit)
+[c] of C
+For a total of 1 instance.
+CLIPS> (instances * A)
+MAIN:
+   [a-main] of A
+FOO:
+   [a-foo] of A
+BAR:
+WOZ:
+For a total of 2 instances.
+CLIPS> (clear)
+CLIPS> (defmodule QUIX (export ?ALL))
+CLIPS> (defclass A (is-a USER) (role concrete))
+CLIPS> (definstances A (of A) (of A))
+CLIPS> (defmodule FOO (export ?ALL))
+CLIPS> (defclass A (is-a USER) (role concrete))
+CLIPS> (definstances A (of A) (of A))
+CLIPS> (defmodule BAR (import QUIX ?ALL) (export ?ALL))
+CLIPS> (defmodule WOZ (import FOO ?ALL))
+CLIPS> (defmodule FRIBBAN (import BAR ?ALL))
+CLIPS> (set-current-module MAIN)
+FRIBBAN
+CLIPS> (reset)
+CLIPS> (instances *)
+MAIN:
+QUIX:
+   [gen1] of A
+   [gen2] of A
+FOO:
+   [gen3] of A
+   [gen4] of A
+BAR:
+WOZ:
+FRIBBAN:
+For a total of 4 instances.
+CLIPS> (instances MAIN)
+CLIPS> (instances QUIX)
+[gen1] of A
+[gen2] of A
+For a total of 2 instances.
+CLIPS> (instances FOO)
+[gen3] of A
+[gen4] of A
+For a total of 2 instances.
+CLIPS> (instances BAR)
+[gen1] of QUIX::A
+[gen2] of QUIX::A
+For a total of 2 instances.
+CLIPS> (instances WOZ)
+[gen3] of FOO::A
+[gen4] of FOO::A
+For a total of 2 instances.
+CLIPS> (instances FRIBBAN)
+[gen1] of QUIX::A
+[gen2] of QUIX::A
+For a total of 2 instances.
+CLIPS> (clear)
+CLIPS> (defmodule FOO (export defclass FOO))
+CLIPS> (defclass FOO (is-a USER) (role concrete))
+CLIPS> (definstances FOO (a of FOO))
+CLIPS> (defmodule BAR (export defclass BAR))
+CLIPS> (defclass BAR (is-a USER) (role concrete))
+CLIPS> (definstances BAR (b of BAR))
+CLIPS> (defmodule WOZ (import FOO defclass FOO))
+CLIPS> (defclass WOZ (is-a USER) (role concrete))
+CLIPS> (definstances WOZ (c of WOZ))
+CLIPS> (defmodule FRIBBAN (import BAR defclass BAR))
+CLIPS> (defclass FRIBBAN (is-a USER) (role concrete))
+CLIPS> 
+(defmodule MAIN (import FOO ?ALL)
+                (import BAR ?ALL))
+CLIPS> 
+(deffunction MAIN::testit()
+   (reset)
+   (progn$ (?field (get-defmodule-list))
+      (set-current-module ?field)
+      (printout t ?field ":" crlf)
+      (instances)
+      (printout t crlf)
+      (printout t (instance-existp [a]) " " 
+                  (instance-existp [::a]) " "
+                  (class (instance-address a)) crlf)
+      (printout t (instance-existp [b]) " " 
+                  (instance-existp [::b]) " "
+                  (class (instance-address b)) crlf)
+      (printout t (instance-existp [c]) " " 
+                  (instance-existp [::c]) " "
+                  (class (instance-address c)) crlf)
+   )
+)
+CLIPS> (testit)
+MAIN:
+[a] of FOO::FOO
+[b] of BAR::BAR
+For a total of 2 instances.
+
+TRUE TRUE FOO
+TRUE TRUE BAR
+TRUE FALSE WOZ
+FOO:
+[a] of FOO
+For a total of 1 instance.
+
+TRUE TRUE FOO
+TRUE FALSE BAR
+TRUE FALSE WOZ
+BAR:
+[b] of BAR
+For a total of 1 instance.
+
+TRUE FALSE FOO
+TRUE TRUE BAR
+TRUE FALSE WOZ
+WOZ:
+[a] of FOO::FOO
+[c] of WOZ
+For a total of 2 instances.
+
+TRUE TRUE FOO
+TRUE FALSE BAR
+TRUE TRUE WOZ
+FRIBBAN:
+[b] of BAR::BAR
+For a total of 1 instance.
+
+TRUE FALSE FOO
+TRUE TRUE BAR
+TRUE FALSE WOZ
+CLIPS> (clear)
+CLIPS> (defmodule FOO (export defclass A))
+CLIPS> (defclass A (is-a USER) (role concrete))
+CLIPS> (definstances A (a of A))
+CLIPS> (defmodule BAR (export defclass B))
+CLIPS> (defclass B (is-a USER) (role concrete))
+CLIPS> (definstances B (c of B))
+CLIPS> (defmodule WOZ (import BAR defclass B))
+CLIPS> (defclass A (is-a USER) (role concrete))
+CLIPS> (definstances A (b of A))
+CLIPS> 
+(deffunction testit ()
+  (reset)
+  (set-current-module WOZ)
+  (printout t "TRUE TRUE TRUE FALSE TRUE TRUE TRUE TRUE TRUE" crlf)
+  (printout t
+     (instance-existp [a]) " "
+     (instance-existp [b]) " "
+     (instance-existp [c]) " "
+     (instance-existp [::a]) " "
+     (instance-existp [::b]) " "
+     (instance-existp [::c]) " "
+     (instance-existp [FOO::a]) " "
+     (instance-existp [BAR::c]) " "
+     (instance-existp [WOZ::b]) crlf))
+CLIPS> (testit)
+TRUE TRUE TRUE FALSE TRUE TRUE TRUE TRUE TRUE
+TRUE TRUE TRUE FALSE TRUE TRUE TRUE TRUE TRUE
+CLIPS> (dribble-off)

@@ -1,0 +1,7 @@
+﻿# Properties Source File for Arabic
+# Generate the properties file from this file using the following command:
+# native2ascii -encoding UTF-8 AutoResources_ar.source AutoResources_ar.properties
+AutoDemo=تظاهرة السيارات
+Next=القادم
+Prev=السابق
+Restart=استأنف

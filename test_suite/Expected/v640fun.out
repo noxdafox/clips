@@ -1,0 +1,14 @@
+TRUE
+CLIPS> (batch "v640fun.bat")
+TRUE
+CLIPS> (clear)  ; print and println commands    
+CLIPS> (println)
+
+CLIPS> (print)
+CLIPS> (println "Hello World")
+Hello World
+CLIPS> (print "Hello World" crlf)                   
+Hello World
+CLIPS> (println a " " "b" " " [c] " " 3 " " 4.5 " " (create$ d e f))
+a b [c] 3 4.5 (d e f)
+CLIPS> (dribble-off)

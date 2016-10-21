@@ -1,0 +1,83 @@
+TRUE
+CLIPS> (batch "tmplv640.bat")
+TRUE
+CLIPS> (clear) ; Modify rebind
+CLIPS> (deftemplate point (slot x) (slot y))
+CLIPS> (deftemplate person (slot name) (slot age))
+CLIPS> 
+(deffacts start
+   (point (x 2) (y 3))
+   (person (name "John Smith") (age 53)))
+CLIPS> 
+(defrule munge
+   ?p <- (point)
+   =>
+   (modify ?p (x 4))
+   (bind ?p (nth$ 1 (find-fact ((?f person)) TRUE)))
+   (modify ?p (age 54)))
+CLIPS> (reset)
+CLIPS> (run)
+CLIPS> (facts)
+f-1     (point (x 4) (y 3))
+f-2     (person (name "John Smith") (age 54))
+For a total of 2 facts.
+CLIPS> (clear) ; Modify rebind invalid slot
+CLIPS> (deftemplate point (slot x) (slot y))
+CLIPS> (deftemplate person (slot name) (slot age))
+CLIPS> 
+(deffacts start
+   (point (x 2) (y 3))
+   (person (name "John Smith") (age 53)))
+CLIPS> 
+(defrule munge
+   ?p <- (point)
+   =>
+   (modify ?p (x 4))
+   (bind ?p (nth$ 1 (find-fact ((?f person)) TRUE)))
+   (modify ?p (y 5)))
+CLIPS> (reset)
+CLIPS> (run)
+
+[TMPLTDEF1] Invalid slot y not defined in corresponding deftemplate person.
+[PRCCODE4] Execution halted during the actions of defrule munge.
+CLIPS> (facts)
+f-1     (point (x 4) (y 3))
+f-2     (person (name "John Smith") (age 53))
+For a total of 2 facts.
+CLIPS> (clear) ; ?var:slot rebind
+CLIPS> (deftemplate point (slot x) (slot y))
+CLIPS> (deftemplate person (slot name) (slot age))
+CLIPS> 
+(deffacts start
+   (point (x 2) (y 3))
+   (person (name "John Smith") (age 53)))
+CLIPS> 
+(defrule munge
+   ?p <- (point)
+   =>
+   (println "x = " ?p:x)
+   (bind ?p (nth$ 1 (find-fact ((?f person)) TRUE)))
+   (println "age = " ?p:age))
+CLIPS> (reset)
+CLIPS> (run)
+x = 2
+age = 53
+CLIPS> (clear) ; Invalid ?var:slot
+CLIPS> (deftemplate point (slot x) (slot y))
+CLIPS> 
+(deffacts start
+   (point (x 2) (y 3)))
+CLIPS> 
+(defrule munge
+   ?p <- (point)
+   =>
+   (println "(" ?p:x "," ?p:y "," ?p:z ")"))
+
+[FACTGEN1] The variable/slot reference ?p:z is invalid because the referenced deftemplate does not contain the specified slot
+
+ERROR:
+(defrule MAIN::munge
+   ?p <- (point)
+   =>
+   (println "(" ?p:x "," ?p:y "," ?p:z ")"))
+CLIPS> (dribble-off)

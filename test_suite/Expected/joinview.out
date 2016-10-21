@@ -1,0 +1,1271 @@
+TRUE
+CLIPS> (batch "joinview.bat")
+TRUE
+CLIPS> (clear)
+CLIPS> (defrule joins =>)
+CLIPS> (join-activity joins)
+Activity for CE 1
+   Compares:          0
+   Adds:              1
+   Deletes:           0
+(0 1 0)
+CLIPS> (clear)
+CLIPS> (defrule joins (a) =>)
+CLIPS> (join-activity joins)
+Activity for CE 1
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+(0 0 0)
+CLIPS> (assert (a))
+<Fact-1>
+CLIPS> (join-activity joins)
+Activity for CE 1
+   Compares:          0
+   Adds:              1
+   Deletes:           0
+(0 1 0)
+CLIPS> (retract 1)
+CLIPS> (join-activity joins)
+Activity for CE 1
+   Compares:          0
+   Adds:              1
+   Deletes:           1
+(0 1 1)
+CLIPS> (clear)
+CLIPS> 
+(defrule joins 
+   (a ?x) 
+   (b ?x) 
+   (c ?x) 
+   =>)
+CLIPS> (join-activity joins)
+Activity for CE 1
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+Activity for CE 2
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+Activity for CE 3
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+(0 0 0)
+CLIPS> (assert (a 1) (b 1) (c 1))
+<Fact-3>
+CLIPS> (join-activity joins)
+Activity for CE 1
+   Compares:          0
+   Adds:              1
+   Deletes:           0
+Activity for CE 2
+   Compares:          1
+   Adds:              1
+   Deletes:           0
+Activity for CE 3
+   Compares:          1
+   Adds:              1
+   Deletes:           0
+(2 3 0)
+CLIPS> (assert (c 2) (b 2) (a 2))
+<Fact-6>
+CLIPS> (join-activity joins)
+Activity for CE 1
+   Compares:          0
+   Adds:              2
+   Deletes:           0
+Activity for CE 2
+   Compares:          2
+   Adds:              2
+   Deletes:           0
+Activity for CE 3
+   Compares:          2
+   Adds:              2
+   Deletes:           0
+(4 6 0)
+CLIPS> (assert (a 3) (b 4) (c 5))
+<Fact-9>
+CLIPS> (join-activity joins)
+Activity for CE 1
+   Compares:          0
+   Adds:              3
+   Deletes:           0
+Activity for CE 2
+   Compares:          2
+   Adds:              2
+   Deletes:           0
+Activity for CE 3
+   Compares:          2
+   Adds:              2
+   Deletes:           0
+(4 7 0)
+CLIPS> (join-activity joins verbose)
+Activity for CE 1
+   Compares:          0
+   Adds:              3
+   Deletes:           0
+Activity for CE 2
+   Compares:          2
+   Adds:              2
+   Deletes:           0
+Activity for CE 3
+   Compares:          2
+   Adds:              2
+   Deletes:           0
+(4 7 0)
+CLIPS> (join-activity joins succinct)
+CE 1: 3
+CE 2: 4
+CE 3: 4
+(4 7 0)
+CLIPS> (join-activity joins terse)
+(4 7 0)
+CLIPS> (join-activity joins bogus)
+[ARGACCES5] Function join-activity expected argument #2 to be of type symbol with value verbose, succinct, or terse
+FALSE
+CLIPS> (join-activity bogus)
+[PRNTUTIL1] Unable to find defrule bogus.
+FALSE
+CLIPS> (clear)
+CLIPS> 
+(defrule joins 
+   (a) 
+   (not (b ?)) 
+   =>)
+CLIPS> (join-activity joins)
+Activity for CE 1
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+Activity for CE 2
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+(0 0 0)
+CLIPS> (assert (a))
+<Fact-1>
+CLIPS> (join-activity joins)
+Activity for CE 1
+   Compares:          0
+   Adds:              1
+   Deletes:           0
+Activity for CE 2
+   Compares:          0
+   Adds:              1
+   Deletes:           0
+(0 2 0)
+CLIPS> (assert (b 1))
+<Fact-2>
+CLIPS> (join-activity joins)
+Activity for CE 1
+   Compares:          0
+   Adds:              1
+   Deletes:           0
+Activity for CE 2
+   Compares:          1
+   Adds:              1
+   Deletes:           1
+(1 2 1)
+CLIPS> (assert (b 2) (b 3))
+<Fact-4>
+CLIPS> (join-activity joins)
+Activity for CE 1
+   Compares:          0
+   Adds:              1
+   Deletes:           0
+Activity for CE 2
+   Compares:          3
+   Adds:              1
+   Deletes:           1
+(3 2 1)
+CLIPS> (retract 4)
+CLIPS> (join-activity joins)
+Activity for CE 1
+   Compares:          0
+   Adds:              1
+   Deletes:           0
+Activity for CE 2
+   Compares:          3
+   Adds:              1
+   Deletes:           1
+(3 2 1)
+CLIPS> (retract 2)
+CLIPS> (join-activity joins)
+Activity for CE 1
+   Compares:          0
+   Adds:              1
+   Deletes:           0
+Activity for CE 2
+   Compares:          4
+   Adds:              1
+   Deletes:           1
+(4 2 1)
+CLIPS> (retract 3)
+CLIPS> (join-activity joins)
+Activity for CE 1
+   Compares:          0
+   Adds:              1
+   Deletes:           0
+Activity for CE 2
+   Compares:          4
+   Adds:              2
+   Deletes:           1
+(4 3 1)
+CLIPS> (clear)
+CLIPS> (defrule joins 
+   (a ?x) 
+   (not (and (b ?x) 
+             (c ?x)))
+   =>)
+CLIPS> (join-activity joins)
+Activity for CE 1
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+Activity for CE 2
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+Activity for CE 3
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+Activity for CE 2 (P2 - P3)
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+(0 0 0)
+CLIPS> (assert (c 1))
+<Fact-1>
+CLIPS> (join-activity joins)
+Activity for CE 1
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+Activity for CE 2
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+Activity for CE 3
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+Activity for CE 2 (P2 - P3)
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+(0 0 0)
+CLIPS> (assert (a 1))
+<Fact-2>
+CLIPS> (join-activity joins)
+Activity for CE 1
+   Compares:          0
+   Adds:              1
+   Deletes:           0
+Activity for CE 2
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+Activity for CE 3
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+Activity for CE 2 (P2 - P3)
+   Compares:          0
+   Adds:              1
+   Deletes:           0
+(0 2 0)
+CLIPS> (assert (b 1))
+<Fact-3>
+CLIPS> (join-activity joins)
+Activity for CE 1
+   Compares:          0
+   Adds:              1
+   Deletes:           0
+Activity for CE 2
+   Compares:          1
+   Adds:              1
+   Deletes:           0
+Activity for CE 3
+   Compares:          1
+   Adds:              1
+   Deletes:           0
+Activity for CE 2 (P2 - P3)
+   Compares:          1
+   Adds:              1
+   Deletes:           1
+(3 4 1)
+CLIPS> (assert (a 2))
+<Fact-4>
+CLIPS> (join-activity joins)
+Activity for CE 1
+   Compares:          0
+   Adds:              2
+   Deletes:           0
+Activity for CE 2
+   Compares:          1
+   Adds:              1
+   Deletes:           0
+Activity for CE 3
+   Compares:          1
+   Adds:              1
+   Deletes:           0
+Activity for CE 2 (P2 - P3)
+   Compares:          1
+   Adds:              2
+   Deletes:           1
+(3 6 1)
+CLIPS> (assert (b 2))
+<Fact-5>
+CLIPS> (join-activity joins)
+Activity for CE 1
+   Compares:          0
+   Adds:              2
+   Deletes:           0
+Activity for CE 2
+   Compares:          2
+   Adds:              2
+   Deletes:           0
+Activity for CE 3
+   Compares:          1
+   Adds:              1
+   Deletes:           0
+Activity for CE 2 (P2 - P3)
+   Compares:          1
+   Adds:              2
+   Deletes:           1
+(4 7 1)
+CLIPS> (assert (c 2))
+<Fact-6>
+CLIPS> (join-activity joins)
+Activity for CE 1
+   Compares:          0
+   Adds:              2
+   Deletes:           0
+Activity for CE 2
+   Compares:          2
+   Adds:              2
+   Deletes:           0
+Activity for CE 3
+   Compares:          2
+   Adds:              2
+   Deletes:           0
+Activity for CE 2 (P2 - P3)
+   Compares:          2
+   Adds:              2
+   Deletes:           2
+(6 8 2)
+CLIPS> (retract 2)
+CLIPS> (join-activity joins)
+Activity for CE 1
+   Compares:          0
+   Adds:              2
+   Deletes:           1
+Activity for CE 2
+   Compares:          2
+   Adds:              2
+   Deletes:           1
+Activity for CE 3
+   Compares:          2
+   Adds:              2
+   Deletes:           1
+Activity for CE 2 (P2 - P3)
+   Compares:          2
+   Adds:              2
+   Deletes:           2
+(6 8 5)
+CLIPS> (retract 5)
+CLIPS> (join-activity joins)
+Activity for CE 1
+   Compares:          0
+   Adds:              2
+   Deletes:           1
+Activity for CE 2
+   Compares:          2
+   Adds:              2
+   Deletes:           2
+Activity for CE 3
+   Compares:          2
+   Adds:              2
+   Deletes:           2
+Activity for CE 2 (P2 - P3)
+   Compares:          2
+   Adds:              3
+   Deletes:           2
+(6 9 7)
+CLIPS> (assert (a 3))
+<Fact-7>
+CLIPS> (join-activity joins)
+Activity for CE 1
+   Compares:          0
+   Adds:              3
+   Deletes:           1
+Activity for CE 2
+   Compares:          2
+   Adds:              2
+   Deletes:           2
+Activity for CE 3
+   Compares:          2
+   Adds:              2
+   Deletes:           2
+Activity for CE 2 (P2 - P3)
+   Compares:          2
+   Adds:              4
+   Deletes:           2
+(6 11 7)
+CLIPS> (join-activity joins succinct)
+CE 1: 4
+CE 2: 6
+CE 3: 6
+CE 2 (P2 - P3): 8
+(6 11 7)
+CLIPS> (join-activity-reset)
+CLIPS> (join-activity joins)
+Activity for CE 1
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+Activity for CE 2
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+Activity for CE 3
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+Activity for CE 2 (P2 - P3)
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+(0 0 0)
+CLIPS> (clear)
+CLIPS> 
+(defrule joins 
+   (a) 
+   (not (and (b) 
+             (not (and (c) 
+                       (d)))))
+   =>)
+CLIPS> (assert (a))
+<Fact-1>
+CLIPS> (join-activity joins)
+Activity for CE 1
+   Compares:          0
+   Adds:              1
+   Deletes:           0
+Activity for CE 2
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+Activity for CE 3
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+Activity for CE 4
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+Activity for CE 3 (P3 - P4)
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+Activity for CE 2 (P2 - P4)
+   Compares:          0
+   Adds:              1
+   Deletes:           0
+(0 2 0)
+CLIPS> (join-activity-reset)
+CLIPS> (assert (b))
+<Fact-2>
+CLIPS> (join-activity joins)
+Activity for CE 1
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+Activity for CE 2
+   Compares:          1
+   Adds:              1
+   Deletes:           0
+Activity for CE 3
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+Activity for CE 4
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+Activity for CE 3 (P3 - P4)
+   Compares:          0
+   Adds:              1
+   Deletes:           0
+Activity for CE 2 (P2 - P4)
+   Compares:          1
+   Adds:              0
+   Deletes:           1
+(2 2 1)
+CLIPS> (join-activity-reset)
+CLIPS> (assert (c))
+<Fact-3>
+CLIPS> (join-activity joins)
+Activity for CE 1
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+Activity for CE 2
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+Activity for CE 3
+   Compares:          1
+   Adds:              1
+   Deletes:           0
+Activity for CE 4
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+Activity for CE 3 (P3 - P4)
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+Activity for CE 2 (P2 - P4)
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+(1 1 0)
+CLIPS> (join-activity-reset)
+CLIPS> (assert (d))
+<Fact-4>
+CLIPS> (join-activity joins)
+Activity for CE 1
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+Activity for CE 2
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+Activity for CE 3
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+Activity for CE 4
+   Compares:          1
+   Adds:              1
+   Deletes:           0
+Activity for CE 3 (P3 - P4)
+   Compares:          1
+   Adds:              0
+   Deletes:           1
+Activity for CE 2 (P2 - P4)
+   Compares:          0
+   Adds:              1
+   Deletes:           0
+(2 2 1)
+CLIPS> (join-activity-reset)
+CLIPS> (retract 2)
+CLIPS> (join-activity joins)
+Activity for CE 1
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+Activity for CE 2
+   Compares:          0
+   Adds:              0
+   Deletes:           1
+Activity for CE 3
+   Compares:          0
+   Adds:              0
+   Deletes:           1
+Activity for CE 4
+   Compares:          0
+   Adds:              0
+   Deletes:           1
+Activity for CE 3 (P3 - P4)
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+Activity for CE 2 (P2 - P4)
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+(0 0 3)
+CLIPS> (join-activity-reset)
+CLIPS> (retract 1)
+CLIPS> (join-activity joins)
+Activity for CE 1
+   Compares:          0
+   Adds:              0
+   Deletes:           1
+Activity for CE 2
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+Activity for CE 3
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+Activity for CE 4
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+Activity for CE 3 (P3 - P4)
+   Compares:          0
+   Adds:              0
+   Deletes:           0
+Activity for CE 2 (P2 - P4)
+   Compares:          0
+   Adds:              0
+   Deletes:           1
+(0 0 2)
+CLIPS> (clear)
+CLIPS> 
+(defrule joins
+   (a) 
+   (b) 
+   (c)
+   =>)
+CLIPS> (matches joins)
+Matches for Pattern 1
+ None
+Matches for Pattern 2
+ None
+Matches for Pattern 3
+ None
+Partial matches for CEs 1 - 2
+ None
+Partial matches for CEs 1 - 3
+ None
+Activations
+ None
+(0 0 0)
+CLIPS> (matches joins verbose)
+Matches for Pattern 1
+ None
+Matches for Pattern 2
+ None
+Matches for Pattern 3
+ None
+Partial matches for CEs 1 - 2
+ None
+Partial matches for CEs 1 - 3
+ None
+Activations
+ None
+(0 0 0)
+CLIPS> (matches joins succinct)
+Pattern 1: 0
+Pattern 2: 0
+Pattern 3: 0
+CEs 1 - 2: 0
+CEs 1 - 3: 0
+Activations: 0
+(0 0 0)
+CLIPS> (matches joins terse)
+(0 0 0)
+CLIPS> (matches joins bogus)
+[ARGACCES5] Function matches expected argument #2 to be of type symbol with value verbose, succinct, or terse
+FALSE
+CLIPS> (matches bogus)
+[PRNTUTIL1] Unable to find defrule bogus.
+FALSE
+CLIPS> (assert (c))
+<Fact-1>
+CLIPS> (matches joins)
+Matches for Pattern 1
+ None
+Matches for Pattern 2
+ None
+Matches for Pattern 3
+f-1
+Partial matches for CEs 1 - 2
+ None
+Partial matches for CEs 1 - 3
+ None
+Activations
+ None
+(1 0 0)
+CLIPS> (assert (a))
+<Fact-2>
+CLIPS> (matches joins)
+Matches for Pattern 1
+f-2
+Matches for Pattern 2
+ None
+Matches for Pattern 3
+f-1
+Partial matches for CEs 1 - 2
+ None
+Partial matches for CEs 1 - 3
+ None
+Activations
+ None
+(2 0 0)
+CLIPS> (assert (b))
+<Fact-3>
+CLIPS> (matches joins)
+Matches for Pattern 1
+f-2
+Matches for Pattern 2
+f-3
+Matches for Pattern 3
+f-1
+Partial matches for CEs 1 - 2
+f-2,f-3
+Partial matches for CEs 1 - 3
+f-2,f-3,f-1
+Activations
+f-2,f-3,f-1
+(3 2 1)
+CLIPS> (clear)
+CLIPS> (defrule joins 
+   (a) 
+   (not (and (b) 
+             (c)))
+   =>)
+CLIPS> (matches joins)
+Matches for Pattern 1
+ None
+Matches for Pattern 2
+ None
+Matches for Pattern 3
+ None
+Partial matches for CEs 1 - 2
+ None
+Partial matches for CEs 1 - 3
+ None
+Partial matches for CEs 1 (P1) , 2 (P2 - P3)
+ None
+Activations
+ None
+(0 0 0)
+CLIPS> (assert (a))
+<Fact-1>
+CLIPS> (matches joins)
+Matches for Pattern 1
+f-1
+Matches for Pattern 2
+ None
+Matches for Pattern 3
+ None
+Partial matches for CEs 1 - 2
+ None
+Partial matches for CEs 1 - 3
+ None
+Partial matches for CEs 1 (P1) , 2 (P2 - P3)
+f-1,*
+Activations
+f-1,*
+(1 1 1)
+CLIPS> (assert (b))
+<Fact-2>
+CLIPS> (matches joins)
+Matches for Pattern 1
+f-1
+Matches for Pattern 2
+f-2
+Matches for Pattern 3
+ None
+Partial matches for CEs 1 - 2
+f-1,f-2
+Partial matches for CEs 1 - 3
+ None
+Partial matches for CEs 1 (P1) , 2 (P2 - P3)
+f-1,*
+Activations
+f-1,*
+(2 2 1)
+CLIPS> (assert (c))
+<Fact-3>
+CLIPS> (matches joins)
+Matches for Pattern 1
+f-1
+Matches for Pattern 2
+f-2
+Matches for Pattern 3
+f-3
+Partial matches for CEs 1 - 2
+f-1,f-2
+Partial matches for CEs 1 - 3
+f-1,f-2,f-3
+Partial matches for CEs 1 (P1) , 2 (P2 - P3)
+ None
+Activations
+ None
+(3 2 0)
+CLIPS> (clear)
+CLIPS>    
+(defrule joins
+   (a)
+   (not (and (b)
+             (not (and (c)
+                       (d)))))
+   =>)   
+CLIPS> (matches joins)
+Matches for Pattern 1
+ None
+Matches for Pattern 2
+ None
+Matches for Pattern 3
+ None
+Matches for Pattern 4
+ None
+Partial matches for CEs 1 - 2
+ None
+Partial matches for CEs 1 - 3
+ None
+Partial matches for CEs 1 - 4
+ None
+Partial matches for CEs 1 (P1) - 2 (P2) , 3 (P3 - P4)
+ None
+Partial matches for CEs 1 (P1) , 2 (P2 - P4)
+ None
+Activations
+ None
+(0 0 0)
+CLIPS> (assert (a))
+<Fact-1>
+CLIPS> (matches joins)
+Matches for Pattern 1
+f-1
+Matches for Pattern 2
+ None
+Matches for Pattern 3
+ None
+Matches for Pattern 4
+ None
+Partial matches for CEs 1 - 2
+ None
+Partial matches for CEs 1 - 3
+ None
+Partial matches for CEs 1 - 4
+ None
+Partial matches for CEs 1 (P1) - 2 (P2) , 3 (P3 - P4)
+ None
+Partial matches for CEs 1 (P1) , 2 (P2 - P4)
+f-1,*
+Activations
+f-1,*
+(1 1 1)
+CLIPS> (assert (b))
+<Fact-2>
+CLIPS> (matches joins)
+Matches for Pattern 1
+f-1
+Matches for Pattern 2
+f-2
+Matches for Pattern 3
+ None
+Matches for Pattern 4
+ None
+Partial matches for CEs 1 - 2
+f-1,f-2
+Partial matches for CEs 1 - 3
+ None
+Partial matches for CEs 1 - 4
+ None
+Partial matches for CEs 1 (P1) - 2 (P2) , 3 (P3 - P4)
+f-1,f-2,*
+Partial matches for CEs 1 (P1) , 2 (P2 - P4)
+ None
+Activations
+ None
+(2 2 0)
+CLIPS> (assert (c))
+<Fact-3>
+CLIPS> (matches joins)
+Matches for Pattern 1
+f-1
+Matches for Pattern 2
+f-2
+Matches for Pattern 3
+f-3
+Matches for Pattern 4
+ None
+Partial matches for CEs 1 - 2
+f-1,f-2
+Partial matches for CEs 1 - 3
+f-1,f-2,f-3
+Partial matches for CEs 1 - 4
+ None
+Partial matches for CEs 1 (P1) - 2 (P2) , 3 (P3 - P4)
+f-1,f-2,*
+Partial matches for CEs 1 (P1) , 2 (P2 - P4)
+ None
+Activations
+ None
+(3 3 0)
+CLIPS> (assert (d))
+<Fact-4>
+CLIPS> (matches joins)
+Matches for Pattern 1
+f-1
+Matches for Pattern 2
+f-2
+Matches for Pattern 3
+f-3
+Matches for Pattern 4
+f-4
+Partial matches for CEs 1 - 2
+f-1,f-2
+Partial matches for CEs 1 - 3
+f-1,f-2,f-3
+Partial matches for CEs 1 - 4
+f-1,f-2,f-3,f-4
+Partial matches for CEs 1 (P1) - 2 (P2) , 3 (P3 - P4)
+ None
+Partial matches for CEs 1 (P1) , 2 (P2 - P4)
+f-1,*
+Activations
+f-1,*
+(4 4 1)
+CLIPS> (matches joins succinct)
+Pattern 1: 1
+Pattern 2: 1
+Pattern 3: 1
+Pattern 4: 1
+CEs 1 - 2: 1
+CEs 1 - 3: 1
+CEs 1 - 4: 1
+CEs 1 (P1) - 2 (P2) , 3 (P3 - P4): 0
+CEs 1 (P1) , 2 (P2 - P4): 1
+Activations: 1
+(4 4 1)
+CLIPS> (matches joins terse)
+(4 4 1)
+CLIPS> (clear)
+CLIPS>    
+(defrule joins
+   (a)
+   (not (and (b) (c)))
+   (d)
+   (not (and (e) (f)))
+   (g)
+   =>)
+CLIPS> (matches joins)
+Matches for Pattern 1
+ None
+Matches for Pattern 2
+ None
+Matches for Pattern 3
+ None
+Matches for Pattern 4
+ None
+Matches for Pattern 5
+ None
+Matches for Pattern 6
+ None
+Matches for Pattern 7
+ None
+Partial matches for CEs 1 - 2
+ None
+Partial matches for CEs 1 - 3
+ None
+Partial matches for CEs 1 (P1) , 2 (P2 - P3)
+ None
+Partial matches for CEs 1 (P1) , 2 (P2 - P3) , 3 (P4)
+ None
+Partial matches for CEs 1 (P1) , 2 (P2 - P3) , 3 (P4) - 4 (P5)
+ None
+Partial matches for CEs 1 (P1) , 2 (P2 - P3) , 3 (P4) - 5 (P6)
+ None
+Partial matches for CEs 1 (P1) , 2 (P2 - P3) , 3 (P4) , 4 (P5 - P6)
+ None
+Partial matches for CEs 1 (P1) , 2 (P2 - P3) , 3 (P4) , 4 (P5 - P6) , 5 (P7)
+ None
+Activations
+ None
+(0 0 0)
+CLIPS> (assert (a) (d) (g))
+<Fact-3>
+CLIPS> (matches joins)
+Matches for Pattern 1
+f-1
+Matches for Pattern 2
+ None
+Matches for Pattern 3
+ None
+Matches for Pattern 4
+f-2
+Matches for Pattern 5
+ None
+Matches for Pattern 6
+ None
+Matches for Pattern 7
+f-3
+Partial matches for CEs 1 - 2
+ None
+Partial matches for CEs 1 - 3
+ None
+Partial matches for CEs 1 (P1) , 2 (P2 - P3)
+f-1,*
+Partial matches for CEs 1 (P1) , 2 (P2 - P3) , 3 (P4)
+f-1,*,f-2
+Partial matches for CEs 1 (P1) , 2 (P2 - P3) , 3 (P4) - 4 (P5)
+ None
+Partial matches for CEs 1 (P1) , 2 (P2 - P3) , 3 (P4) - 5 (P6)
+ None
+Partial matches for CEs 1 (P1) , 2 (P2 - P3) , 3 (P4) , 4 (P5 - P6)
+f-1,*,f-2,*
+Partial matches for CEs 1 (P1) , 2 (P2 - P3) , 3 (P4) , 4 (P5 - P6) , 5 (P7)
+f-1,*,f-2,*,f-3
+Activations
+f-1,*,f-2,*,f-3
+(3 4 1)
+CLIPS> (assert (b) (f))
+<Fact-5>
+CLIPS> (matches joins)
+Matches for Pattern 1
+f-1
+Matches for Pattern 2
+f-4
+Matches for Pattern 3
+ None
+Matches for Pattern 4
+f-2
+Matches for Pattern 5
+ None
+Matches for Pattern 6
+f-5
+Matches for Pattern 7
+f-3
+Partial matches for CEs 1 - 2
+f-1,f-4
+Partial matches for CEs 1 - 3
+ None
+Partial matches for CEs 1 (P1) , 2 (P2 - P3)
+f-1,*
+Partial matches for CEs 1 (P1) , 2 (P2 - P3) , 3 (P4)
+f-1,*,f-2
+Partial matches for CEs 1 (P1) , 2 (P2 - P3) , 3 (P4) - 4 (P5)
+ None
+Partial matches for CEs 1 (P1) , 2 (P2 - P3) , 3 (P4) - 5 (P6)
+ None
+Partial matches for CEs 1 (P1) , 2 (P2 - P3) , 3 (P4) , 4 (P5 - P6)
+f-1,*,f-2,*
+Partial matches for CEs 1 (P1) , 2 (P2 - P3) , 3 (P4) , 4 (P5 - P6) , 5 (P7)
+f-1,*,f-2,*,f-3
+Activations
+f-1,*,f-2,*,f-3
+(5 5 1)
+CLIPS> (assert (c) (e))
+<Fact-7>
+CLIPS> (matches joins)
+Matches for Pattern 1
+f-1
+Matches for Pattern 2
+f-4
+Matches for Pattern 3
+f-6
+Matches for Pattern 4
+f-2
+Matches for Pattern 5
+f-7
+Matches for Pattern 6
+f-5
+Matches for Pattern 7
+f-3
+Partial matches for CEs 1 - 2
+f-1,f-4
+Partial matches for CEs 1 - 3
+f-1,f-4,f-6
+Partial matches for CEs 1 (P1) , 2 (P2 - P3)
+ None
+Partial matches for CEs 1 (P1) , 2 (P2 - P3) , 3 (P4)
+ None
+Partial matches for CEs 1 (P1) , 2 (P2 - P3) , 3 (P4) - 4 (P5)
+ None
+Partial matches for CEs 1 (P1) , 2 (P2 - P3) , 3 (P4) - 5 (P6)
+ None
+Partial matches for CEs 1 (P1) , 2 (P2 - P3) , 3 (P4) , 4 (P5 - P6)
+ None
+Partial matches for CEs 1 (P1) , 2 (P2 - P3) , 3 (P4) , 4 (P5 - P6) , 5 (P7)
+ None
+Activations
+ None
+(7 2 0)
+CLIPS> (clear)
+CLIPS> 
+(defrule joins
+  (a)
+  (not (and (b) (c)))
+  (not (and (d) (e)))
+  (f)
+  =>)
+CLIPS> (assert (a) (f))
+<Fact-2>
+CLIPS> (matches joins)
+Matches for Pattern 1
+f-1
+Matches for Pattern 2
+ None
+Matches for Pattern 3
+ None
+Matches for Pattern 4
+ None
+Matches for Pattern 5
+ None
+Matches for Pattern 6
+f-2
+Partial matches for CEs 1 - 2
+ None
+Partial matches for CEs 1 - 3
+ None
+Partial matches for CEs 1 (P1) , 2 (P2 - P3)
+f-1,*
+Partial matches for CEs 1 (P1) , 2 (P2 - P3) , 3 (P4)
+ None
+Partial matches for CEs 1 (P1) , 2 (P2 - P3) , 3 (P4) - 4 (P5)
+ None
+Partial matches for CEs 1 (P1) , 2 (P2 - P3) , 3 (P4 - P5)
+f-1,*,*
+Partial matches for CEs 1 (P1) , 2 (P2 - P3) , 3 (P4 - P5) , 4 (P6)
+f-1,*,*,f-2
+Activations
+f-1,*,*,f-2
+(2 3 1)
+CLIPS> (assert (b) (e))
+<Fact-4>
+CLIPS> (matches joins)
+Matches for Pattern 1
+f-1
+Matches for Pattern 2
+f-3
+Matches for Pattern 3
+ None
+Matches for Pattern 4
+ None
+Matches for Pattern 5
+f-4
+Matches for Pattern 6
+f-2
+Partial matches for CEs 1 - 2
+f-1,f-3
+Partial matches for CEs 1 - 3
+ None
+Partial matches for CEs 1 (P1) , 2 (P2 - P3)
+f-1,*
+Partial matches for CEs 1 (P1) , 2 (P2 - P3) , 3 (P4)
+ None
+Partial matches for CEs 1 (P1) , 2 (P2 - P3) , 3 (P4) - 4 (P5)
+ None
+Partial matches for CEs 1 (P1) , 2 (P2 - P3) , 3 (P4 - P5)
+f-1,*,*
+Partial matches for CEs 1 (P1) , 2 (P2 - P3) , 3 (P4 - P5) , 4 (P6)
+f-1,*,*,f-2
+Activations
+f-1,*,*,f-2
+(4 4 1)
+CLIPS> (assert (d))
+<Fact-5>
+CLIPS> (matches joins)
+Matches for Pattern 1
+f-1
+Matches for Pattern 2
+f-3
+Matches for Pattern 3
+ None
+Matches for Pattern 4
+f-5
+Matches for Pattern 5
+f-4
+Matches for Pattern 6
+f-2
+Partial matches for CEs 1 - 2
+f-1,f-3
+Partial matches for CEs 1 - 3
+ None
+Partial matches for CEs 1 (P1) , 2 (P2 - P3)
+f-1,*
+Partial matches for CEs 1 (P1) , 2 (P2 - P3) , 3 (P4)
+f-1,*,f-5
+Partial matches for CEs 1 (P1) , 2 (P2 - P3) , 3 (P4) - 4 (P5)
+f-1,*,f-5,f-4
+Partial matches for CEs 1 (P1) , 2 (P2 - P3) , 3 (P4 - P5)
+ None
+Partial matches for CEs 1 (P1) , 2 (P2 - P3) , 3 (P4 - P5) , 4 (P6)
+ None
+Activations
+ None
+(5 4 0)
+CLIPS> (assert (c))
+<Fact-6>
+CLIPS> (matches joins)
+Matches for Pattern 1
+f-1
+Matches for Pattern 2
+f-3
+Matches for Pattern 3
+f-6
+Matches for Pattern 4
+f-5
+Matches for Pattern 5
+f-4
+Matches for Pattern 6
+f-2
+Partial matches for CEs 1 - 2
+f-1,f-3
+Partial matches for CEs 1 - 3
+f-1,f-3,f-6
+Partial matches for CEs 1 (P1) , 2 (P2 - P3)
+ None
+Partial matches for CEs 1 (P1) , 2 (P2 - P3) , 3 (P4)
+ None
+Partial matches for CEs 1 (P1) , 2 (P2 - P3) , 3 (P4) - 4 (P5)
+ None
+Partial matches for CEs 1 (P1) , 2 (P2 - P3) , 3 (P4 - P5)
+ None
+Partial matches for CEs 1 (P1) , 2 (P2 - P3) , 3 (P4 - P5) , 4 (P6)
+ None
+Activations
+ None
+(6 2 0)
+CLIPS> (clear)
+CLIPS> 
+(defrule joins
+  (not (and (a)
+            (b)))
+  =>)
+CLIPS> (matches joins)
+Matches for Pattern 1
+ None
+Matches for Pattern 2
+ None
+Partial matches for CEs 1 - 2
+ None
+Partial matches for CEs 1 (P1 - P2)
+*
+Activations
+*
+(0 1 1)
+CLIPS> (assert (a))
+<Fact-1>
+CLIPS> (matches joins)
+Matches for Pattern 1
+f-1
+Matches for Pattern 2
+ None
+Partial matches for CEs 1 - 2
+ None
+Partial matches for CEs 1 (P1 - P2)
+*
+Activations
+*
+(1 1 1)
+CLIPS> (assert (b))
+<Fact-2>
+CLIPS> (matches joins)
+Matches for Pattern 1
+f-1
+Matches for Pattern 2
+f-2
+Partial matches for CEs 1 - 2
+f-1,f-2
+Partial matches for CEs 1 (P1 - P2)
+ None
+Activations
+ None
+(2 1 0)
+CLIPS> (clear)
+CLIPS> (dribble-off)
