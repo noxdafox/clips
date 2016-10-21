@@ -66,7 +66,7 @@
    void                           UndefglobalCommand(Environment *,UDFContext *,UDFValue *);
    bool                           EnvUndefglobal(Environment *,Defglobal *);
    void                           GetDefglobalListFunction(Environment *,UDFContext *,UDFValue *);
-   void                           EnvGetDefglobalList(Environment *,UDFValue *,Defmodule *);
+   void                           EnvGetDefglobalList(Environment *,CLIPSValue *,Defmodule *);
    void                           DefglobalModuleFunction(Environment *,UDFContext *,UDFValue *);
    void                           PPDefglobalCommand(Environment *,UDFContext *,UDFValue *);
    bool                           PPDefglobal(Environment *,const char *,const char *);

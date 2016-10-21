@@ -3,7 +3,7 @@
    /*                                                     */
    /*             CLIPS Version 6.40  10/01/16            */
    /*                                                     */
-   /*                 SYMBOL HEADER FILE                  */
+   /*                 SYMBOL_TYPE HEADER FILE                  */
    /*******************************************************/
 
 /*************************************************************/
@@ -38,7 +38,7 @@
 /*            compilers/operating systems (IBM_MCW,          */
 /*            MAC_MCW, and IBM_TBC).                         */
 /*                                                           */
-/*            Support for hashing EXTERNAL_ADDRESS data      */
+/*            Support for hashing EXTERNAL_ADDRESS_TYPE data      */
 /*            type.                                          */
 /*                                                           */
 /*            Support for long long integers.                */

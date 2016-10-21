@@ -313,7 +313,11 @@ void EnvGetDefruleList(
   UDFValue *returnValue,
   Defmodule *theModule)
   {
-   GetConstructList(theEnv,returnValue,DefruleData(theEnv)->DefruleConstruct,theModule);
+   UDFValue result;
+   
+   GetConstructList(theEnv,&result,DefruleData(theEnv)->DefruleConstruct,theModule);
+   NormalizeMultifield(theEnv,&result);
+   returnValue->value = result.value;
   }
 
 /*********************************************/

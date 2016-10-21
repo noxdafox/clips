@@ -30,7 +30,7 @@
 /*                                                           */
 /*            Support for DATA_OBJECT_ARRAY primitive.       */
 /*                                                           */
-/*            Support for typed EXTERNAL_ADDRESS.            */
+/*            Support for typed EXTERNAL_ADDRESS_TYPE.            */
 /*                                                           */
 /*            Used gensprintf and genstrcat instead of       */
 /*            sprintf and strcat.                            */
@@ -176,16 +176,16 @@ void PrintAtom(
 
    switch (type)
      {
-      case FLOAT:
+      case FLOAT_TYPE:
         PrintFloat(theEnv,logicalName,((CLIPSFloat *) value)->contents);
         break;
-      case INTEGER:
+      case INTEGER_TYPE:
         PrintLongInteger(theEnv,logicalName,((CLIPSInteger *) value)->contents);
         break;
-      case SYMBOL:
+      case SYMBOL_TYPE:
         EnvPrintRouter(theEnv,logicalName,((CLIPSLexeme *) value)->contents);
         break;
-      case STRING:
+      case STRING_TYPE:
         if (PrintUtilityData(theEnv)->PreserveEscapedCharacters)
           { EnvPrintRouter(theEnv,logicalName,StringPrintForm(theEnv,((CLIPSLexeme *) value)->contents)); }
         else
@@ -196,7 +196,7 @@ void PrintAtom(
           }
         break;
 
-      case EXTERNAL_ADDRESS:
+      case EXTERNAL_ADDRESS_TYPE:
         theAddress = (struct externalAddressHashNode *) value;
 
         if (PrintUtilityData(theEnv)->AddressesToStrings) EnvPrintRouter(theEnv,logicalName,"\"");
@@ -220,14 +220,14 @@ void PrintAtom(
         break;
 
 #if OBJECT_SYSTEM
-      case INSTANCE_NAME:
+      case INSTANCE_NAME_TYPE:
         EnvPrintRouter(theEnv,logicalName,"[");
         EnvPrintRouter(theEnv,logicalName,((CLIPSLexeme *) value)->contents);
         EnvPrintRouter(theEnv,logicalName,"]");
         break;
 #endif
 
-      case RVOID:
+      case VOID_TYPE:
         break;
 
       default:
@@ -516,38 +516,38 @@ const char *DataObjectToString(
 
    switch (theDO->header->type)
      {
-      case MULTIFIELD:
+      case MULTIFIELD_TYPE:
          prefix = "(";
          theString = ImplodeMultifield(theEnv,theDO)->contents;
          postfix = ")";
          break;
 
-      case STRING:
+      case STRING_TYPE:
          prefix = "\"";
          theString = theDO->lexemeValue->contents;
          postfix = "\"";
          break;
 
-      case INSTANCE_NAME:
+      case INSTANCE_NAME_TYPE:
          prefix = "[";
          theString = theDO->lexemeValue->contents;
          postfix = "]";
          break;
 
-      case SYMBOL:
+      case SYMBOL_TYPE:
          return theDO->lexemeValue->contents;
 
-      case FLOAT:
+      case FLOAT_TYPE:
          return(FloatToString(theEnv,theDO->floatValue->contents));
 
-      case INTEGER:
+      case INTEGER_TYPE:
          return(LongIntegerToString(theEnv,theDO->integerValue->contents));
 
-      case RVOID:
+      case VOID_TYPE:
          return("");
 
 #if OBJECT_SYSTEM
-      case INSTANCE_ADDRESS:
+      case INSTANCE_ADDRESS_TYPE:
          if (theDO->instanceValue == &InstanceData(theEnv)->DummyInstance)
            { return("<Dummy Instance>"); }
 
@@ -567,7 +567,7 @@ const char *DataObjectToString(
         break;
 #endif
 
-      case EXTERNAL_ADDRESS:
+      case EXTERNAL_ADDRESS_TYPE:
         theAddress = (struct externalAddressHashNode *) theDO->value;
         /* TBD Need specific routine for creating name string. */
         gensprintf(buffer,"<Pointer-%d-%p>",(int) theAddress->type,theDO->value);
@@ -575,7 +575,7 @@ const char *DataObjectToString(
         return thePtr->contents;
 
 #if DEFTEMPLATE_CONSTRUCT
-      case FACT_ADDRESS:
+      case FACT_ADDRESS_TYPE:
          if (theDO->factValue == &FactData(theEnv)->DummyFact)
            { return("<Dummy Fact>"); }
 

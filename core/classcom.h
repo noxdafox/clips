@@ -99,7 +99,7 @@
 #endif
 
    void                    GetDefclassListFunction(Environment *,UDFContext *,UDFValue *);
-   void                    EnvGetDefclassList(Environment *,UDFValue *,Defmodule *);
+   void                    EnvGetDefclassList(Environment *,CLIPSValue *,Defmodule *);
    bool                    EnvUndefclass(Environment *,Defclass *);
    bool                    HasSuperclass(Defclass *,Defclass *);
 

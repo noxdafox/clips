@@ -215,10 +215,14 @@ void GetDeftemplateListFunction(
 /***********************************************/
 void EnvGetDeftemplateList(
   Environment *theEnv,
-  UDFValue *returnValue,
+  CLIPSValue *returnValue,
   Defmodule *theModule)
   {
-   GetConstructList(theEnv,returnValue,DeftemplateData(theEnv)->DeftemplateConstruct,theModule);
+   UDFValue result;
+   
+   GetConstructList(theEnv,&result,DeftemplateData(theEnv)->DeftemplateConstruct,theModule);
+   NormalizeMultifield(theEnv,&result);
+   returnValue->value = result.value;
   }
 
 /***************************************************/

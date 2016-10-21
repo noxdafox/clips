@@ -102,14 +102,14 @@ void AdditionFunction(
 
    while (UDFHasNextArgument(context))
      {
-      if (! UDFNextArgument(context,NUMBER_TYPES,&theArg))
+      if (! UDFNextArgument(context,NUMBER_BITS,&theArg))
         { return; }
 
       if (useFloatTotal)
         { ftotal += CVCoerceToFloat(&theArg); }
       else
         {
-         if (CVIsType(&theArg,INTEGER_TYPE))
+         if (CVIsType(&theArg,INTEGER_BIT))
            { ltotal += theArg.integerValue->contents; }
          else
            {
@@ -153,14 +153,14 @@ void MultiplicationFunction(
 
    while (UDFHasNextArgument(context))
      {
-      if (! UDFNextArgument(context,NUMBER_TYPES,&theArg))
+      if (! UDFNextArgument(context,NUMBER_BITS,&theArg))
         { return; }
 
       if (useFloatTotal)
         { ftotal *= CVCoerceToFloat(&theArg); }
       else
         {
-         if (CVIsType(&theArg,INTEGER_TYPE))
+         if (CVIsType(&theArg,INTEGER_BIT))
            { ltotal *= theArg.integerValue->contents; }
          else
            {
@@ -201,10 +201,10 @@ void SubtractionFunction(
    /* arguments will subtracted.                      */
    /*=================================================*/
 
-   if (! UDFFirstArgument(context,NUMBER_TYPES,&theArg))
+   if (! UDFFirstArgument(context,NUMBER_BITS,&theArg))
      { return; }
 
-   if (CVIsType(&theArg,INTEGER_TYPE))
+   if (CVIsType(&theArg,INTEGER_BIT))
      { ltotal = theArg.integerValue->contents; }
    else
      {
@@ -221,14 +221,14 @@ void SubtractionFunction(
 
    while (UDFHasNextArgument(context))
      {
-      if (! UDFNextArgument(context,NUMBER_TYPES,&theArg))
+      if (! UDFNextArgument(context,NUMBER_BITS,&theArg))
         { return; }
 
       if (useFloatTotal)
         { ftotal -= CVCoerceToFloat(&theArg); }
       else
         {
-         if (CVIsType(&theArg,INTEGER_TYPE))
+         if (CVIsType(&theArg,INTEGER_BIT))
            { ltotal -= theArg.integerValue->contents; }
          else
            {
@@ -270,7 +270,7 @@ void DivisionFunction(
    /* to a float if it is an integer.                   */
    /*===================================================*/
 
-   if (! UDFFirstArgument(context,NUMBER_TYPES,&theArg))
+   if (! UDFFirstArgument(context,NUMBER_BITS,&theArg))
      { return; }
 
    ftotal = CVCoerceToFloat(&theArg);
@@ -285,7 +285,7 @@ void DivisionFunction(
 
    while (UDFHasNextArgument(context))
      {
-      if (! UDFNextArgument(context,NUMBER_TYPES,&theArg))
+      if (! UDFNextArgument(context,NUMBER_BITS,&theArg))
         { return; }
 
       theNumber = CVCoerceToFloat(&theArg);
@@ -328,7 +328,7 @@ void DivFunction(
    /* arguments will divide.                            */
    /*===================================================*/
 
-   if (! UDFFirstArgument(context,NUMBER_TYPES,&theArg))
+   if (! UDFFirstArgument(context,NUMBER_BITS,&theArg))
      { return; }
    total = CVCoerceToInteger(&theArg);
 
@@ -341,7 +341,7 @@ void DivFunction(
 
    while (UDFHasNextArgument(context))
      {
-      if (! UDFNextArgument(context,NUMBER_TYPES,&theArg))
+      if (! UDFNextArgument(context,NUMBER_BITS,&theArg))
         { return; }
 
       theNumber = CVCoerceToInteger(&theArg);
@@ -377,7 +377,7 @@ void IntegerFunction(
    /* Check that the argument is a number. */
    /*======================================*/
 
-   if (! UDFNthArgument(context,1,NUMBER_TYPES,returnValue))
+   if (! UDFNthArgument(context,1,NUMBER_BITS,returnValue))
      { return; }
 
    /*============================================*/
@@ -385,7 +385,7 @@ void IntegerFunction(
    /* return the argument unchanged.             */
    /*============================================*/
 
-   if (CVIsType(returnValue,FLOAT_TYPE))
+   if (CVIsType(returnValue,FLOAT_BIT))
      { returnValue->integerValue = EnvCreateInteger(theEnv,CVCoerceToInteger(returnValue)); }
   }
 
@@ -402,7 +402,7 @@ void FloatFunction(
    /* Check that the argument is a number. */
    /*======================================*/
 
-   if (! UDFNthArgument(context,1,NUMBER_TYPES,returnValue))
+   if (! UDFNthArgument(context,1,NUMBER_BITS,returnValue))
      { return; }
 
    /*=============================================*/
@@ -410,7 +410,7 @@ void FloatFunction(
    /* return the argument unchanged.              */
    /*=============================================*/
 
-   if (CVIsType(returnValue,INTEGER_TYPE))
+   if (CVIsType(returnValue,INTEGER_BIT))
      { returnValue->floatValue = EnvCreateFloat(theEnv,CVCoerceToFloat(returnValue)); }
   }
 
@@ -427,14 +427,14 @@ void AbsFunction(
    /* Check that the argument is a number. */
    /*======================================*/
 
-   if (! UDFNthArgument(context,1,NUMBER_TYPES,returnValue))
+   if (! UDFNthArgument(context,1,NUMBER_BITS,returnValue))
      { return; }
 
    /*==========================================*/
    /* Return the absolute value of the number. */
    /*==========================================*/
 
-   if (CVIsType(returnValue,INTEGER_TYPE))
+   if (CVIsType(returnValue,INTEGER_BIT))
      {
       long long lv = returnValue->integerValue->contents;
       if (lv < 0L)
@@ -463,7 +463,7 @@ void MinFunction(
    /* Check that the first argument is a number. */
    /*============================================*/
 
-   if (! UDFFirstArgument(context,NUMBER_TYPES,returnValue))
+   if (! UDFFirstArgument(context,NUMBER_BITS,returnValue))
      { return; }
 
    /*===========================================================*/
@@ -475,7 +475,7 @@ void MinFunction(
 
    while (UDFHasNextArgument(context))
      {
-      if (! UDFNextArgument(context,NUMBER_TYPES,&nextPossible))
+      if (! UDFNextArgument(context,NUMBER_BITS,&nextPossible))
         { return; }
 
       /*=============================================*/
@@ -483,7 +483,7 @@ void MinFunction(
       /* to floats. Otherwise compare two integers.  */
       /*=============================================*/
 
-      if (CVIsType(returnValue,FLOAT_TYPE) || CVIsType(&nextPossible,FLOAT_TYPE))
+      if (CVIsType(returnValue,FLOAT_BIT) || CVIsType(&nextPossible,FLOAT_BIT))
         {
          if (CVCoerceToFloat(returnValue) > CVCoerceToFloat(&nextPossible))
            { returnValue->value = nextPossible.value; }
@@ -511,7 +511,7 @@ void MaxFunction(
    /* Check that the first argument is a number. */
    /*============================================*/
 
-   if (! UDFFirstArgument(context,NUMBER_TYPES,returnValue))
+   if (! UDFFirstArgument(context,NUMBER_BITS,returnValue))
      { return; }
 
    /*===========================================================*/
@@ -523,7 +523,7 @@ void MaxFunction(
 
    while (UDFHasNextArgument(context))
      {
-      if (! UDFNextArgument(context,NUMBER_TYPES,&nextPossible))
+      if (! UDFNextArgument(context,NUMBER_BITS,&nextPossible))
         { return; }
 
       /*=============================================*/
@@ -531,7 +531,7 @@ void MaxFunction(
       /* to floats. Otherwise compare two integers.  */
       /*=============================================*/
 
-      if (CVIsType(returnValue,FLOAT_TYPE) || CVIsType(&nextPossible,FLOAT_TYPE))
+      if (CVIsType(returnValue,FLOAT_BIT) || CVIsType(&nextPossible,FLOAT_BIT))
         {
          if (CVCoerceToFloat(returnValue) < CVCoerceToFloat(&nextPossible))
            { returnValue->value = nextPossible.value; }

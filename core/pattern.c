@@ -734,8 +734,8 @@ struct lhsParseNode *RestrictionParse(
 
       ReturnExpression(theEnv,nextNode->constraints->minFields);
       ReturnExpression(theEnv,nextNode->constraints->maxFields);
-      nextNode->constraints->minFields = GenConstant(theEnv,SYMBOL,SymbolData(theEnv)->NegativeInfinity);
-      nextNode->constraints->maxFields = GenConstant(theEnv,SYMBOL,SymbolData(theEnv)->PositiveInfinity);
+      nextNode->constraints->minFields = GenConstant(theEnv,SYMBOL_TYPE,SymbolData(theEnv)->NegativeInfinity);
+      nextNode->constraints->maxFields = GenConstant(theEnv,SYMBOL_TYPE,SymbolData(theEnv)->PositiveInfinity);
       nextNode->derivedConstraints = true;
 
       /*====================================================*/
@@ -753,7 +753,7 @@ struct lhsParseNode *RestrictionParse(
       /*==========================================================*/
 
       tempConstraints = GetConstraintRecord(theEnv);
-      SetConstraintType(MULTIFIELD,tempConstraints);
+      SetConstraintType(MULTIFIELD_TYPE,tempConstraints);
       tempConstraints->singlefieldsAllowed = false;
       tempConstraints->multifield = nextNode->constraints;
       nextNode->constraints = tempConstraints;
@@ -768,13 +768,13 @@ struct lhsParseNode *RestrictionParse(
       if (theConstraints->maxFields->value != SymbolData(theEnv)->PositiveInfinity)
         {
          ReturnExpression(theEnv,tempConstraints->maxFields);
-         tempConstraints->maxFields = GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,theConstraints->maxFields->integerValue->contents - numberOfSingleFields));
+         tempConstraints->maxFields = GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,theConstraints->maxFields->integerValue->contents - numberOfSingleFields));
         }
 
       if ((numberOfMultifields == 1) && (theConstraints->minFields->value != SymbolData(theEnv)->NegativeInfinity))
         {
          ReturnExpression(theEnv,tempConstraints->minFields);
-         tempConstraints->minFields = GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,theConstraints->minFields->integerValue->contents - numberOfSingleFields));
+         tempConstraints->minFields = GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,theConstraints->minFields->integerValue->contents - numberOfSingleFields));
         }
      }
 

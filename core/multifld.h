@@ -3,7 +3,7 @@
    /*                                                     */
    /*             CLIPS Version 6.40  10/01/16            */
    /*                                                     */
-   /*                MULTIFIELD HEADER FILE               */
+   /*                MULTIFIELD_TYPE HEADER FILE               */
    /*******************************************************/
 
 /*************************************************************/
@@ -91,15 +91,13 @@ struct multifield
   {
    TypeHeader th;
    unsigned busyCount;
-   long multifieldLength;
+   long length;
    struct multifield *next;
    struct field theFields[1];
   };
 
 typedef struct field FIELD;
 typedef struct field * FIELD_PTR;
-
-#define GetMFLength(target)     (((Multifield *) (target))->multifieldLength)
 
    Multifield                    *CreateUnmanagedMultifield(Environment *,long);
    void                           ReturnMultifield(Environment *,struct multifield *);
@@ -123,7 +121,9 @@ typedef struct field * FIELD_PTR;
    CLIPSLexeme                   *ImplodeMultifield(Environment *,UDFValue *);
    void                           EphemerateMultifield(Environment *,struct multifield *);
    Multifield                    *EnvArrayToMultifield(Environment *,CLIPSValue *,long size);
-   
+   void                           NormalizeMultifield(Environment *,UDFValue *);
+   void                           CLIPSToUDFValue(CLIPSValue *,UDFValue *);
+
 #endif /* _H_multifld */
 
 

@@ -471,18 +471,18 @@ void MarkNeededItems(
      {
       switch (testPtr->type)
         {
-         case SYMBOL:
-         case STRING:
+         case SYMBOL_TYPE:
+         case STRING_TYPE:
          case GBL_VARIABLE:
-         case INSTANCE_NAME:
+         case INSTANCE_NAME_TYPE:
             testPtr->lexemeValue->neededSymbol = true;
             break;
 
-         case FLOAT:
+         case FLOAT_TYPE:
             testPtr->floatValue->neededFloat = true;
             break;
 
-         case INTEGER:
+         case INTEGER_TYPE:
             testPtr->integerValue->neededInteger = true;
             break;
 
@@ -490,7 +490,7 @@ void MarkNeededItems(
             ((struct FunctionDefinition *) testPtr->value)->neededFunction = true;
             break;
 
-         case RVOID:
+         case VOID_TYPE:
            break;
 
          default:

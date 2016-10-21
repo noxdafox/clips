@@ -1039,7 +1039,7 @@ bool RouteCommand(
    /* Print the return value of the function/command. */
    /*=================================================*/
 
-   if ((returnValue.header->type != RVOID) && printResult)
+   if ((returnValue.header->type != VOID_TYPE) && printResult)
      {
       PrintDataObject(theEnv,STDOUT,&returnValue);
       EnvPrintRouter(theEnv,STDOUT,"\n");

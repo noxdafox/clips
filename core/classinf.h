@@ -73,18 +73,18 @@
 #if DEFRULE_CONSTRUCT
    bool                           EnvClassReactiveP(Environment *,Defclass *);
 #endif
-   void                           EnvClassSlots(Environment *,Defclass *,UDFValue *,bool);
-   void                           EnvGetDefmessageHandlerList(Environment *,Defclass *,UDFValue *,bool);
-   void                           EnvClassSuperclasses(Environment *,Defclass *,UDFValue *,bool);
-   void                           EnvClassSubclasses(Environment *,Defclass *,UDFValue *,bool);
+   void                           EnvClassSlots(Environment *,Defclass *,CLIPSValue *,bool);
+   void                           EnvGetDefmessageHandlerList(Environment *,Defclass *,CLIPSValue *,bool);
+   void                           EnvClassSuperclasses(Environment *,Defclass *,CLIPSValue *,bool);
+   void                           EnvClassSubclasses(Environment *,Defclass *,CLIPSValue *,bool);
    void                           ClassSubclassAddresses(Environment *,Defclass *,UDFValue *,bool);
-   void                           EnvSlotFacets(Environment *,Defclass *,const char *,UDFValue *);
-   void                           EnvSlotSources(Environment *,Defclass *,const char *,UDFValue *);
-   void                           EnvSlotTypes(Environment *,Defclass *,const char *,UDFValue *);
-   void                           EnvSlotAllowedValues(Environment *,Defclass *,const char *,UDFValue *);
-   void                           EnvSlotAllowedClasses(Environment *,Defclass *,const char *,UDFValue *);
-   void                           EnvSlotRange(Environment *,Defclass *,const char *,UDFValue *);
-   void                           EnvSlotCardinality(Environment *,Defclass *,const char *,UDFValue *);
+   void                           EnvSlotFacets(Environment *,Defclass *,const char *,CLIPSValue *);
+   void                           EnvSlotSources(Environment *,Defclass *,const char *,CLIPSValue *);
+   void                           EnvSlotTypes(Environment *,Defclass *,const char *,CLIPSValue *);
+   void                           EnvSlotAllowedValues(Environment *,Defclass *,const char *,CLIPSValue *);
+   void                           EnvSlotAllowedClasses(Environment *,Defclass *,const char *,CLIPSValue *);
+   void                           EnvSlotRange(Environment *,Defclass *,const char *,CLIPSValue *);
+   void                           EnvSlotCardinality(Environment *,Defclass *,const char *,CLIPSValue *);
 
 #endif /* _H_classinf */
 

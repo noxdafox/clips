@@ -84,8 +84,6 @@ typedef struct instanceSlot INSTANCE_SLOT;
 #include "pattern.h"
 #endif
 
-#define GetInstanceSlotLength(sp) GetMFLength(sp->value)
-
 struct packedClassLinks
   {
    long classCount;

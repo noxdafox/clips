@@ -104,7 +104,7 @@ void SetupFactQuery(
    AllocateEnvironmentData(theEnv,FACT_QUERY_DATA,sizeof(struct factQueryData),NULL);
 
 #if RUN_TIME
-   FactQueryData(theEnv)->QUERY_DELIMITER_SYMBOL = FindSymbolHN(theEnv,QUERY_DELIMITER_STRING,SYMBOL_TYPE);
+   FactQueryData(theEnv)->QUERY_DELIMITER_SYMBOL = FindSymbolHN(theEnv,QUERY_DELIMITER_STRING,SYMBOL_BIT);
 #endif
 
 #if ! RUN_TIME
@@ -181,7 +181,7 @@ void GetQueryFactSlot(
    core = FindQueryCore(theEnv,(int) GetFirstArgument()->integerValue->contents);
    theFact = core->solns[(int) GetFirstArgument()->nextArg->integerValue->contents];
    EvaluateExpression(theEnv,GetFirstArgument()->nextArg->nextArg,&temp);
-   if (temp.header->type != SYMBOL)
+   if (temp.header->type != SYMBOL_TYPE)
      {
       ExpectedTypeError1(theEnv,"get",1,"symbol");
       EnvSetEvaluationError(theEnv,true);
@@ -211,10 +211,10 @@ void GetQueryFactSlot(
      }
 
    returnValue->value = theFact->theProposition.theFields[position-1].value;
-   if (returnValue->header->type == MULTIFIELD)
+   if (returnValue->header->type == MULTIFIELD_TYPE)
      {
       returnValue->begin = 0;
-      returnValue->range = returnValue->multifieldValue->multifieldLength;
+      returnValue->range = returnValue->multifieldValue->length;
      }
   }
 
@@ -772,7 +772,7 @@ static QUERY_TEMPLATE *FormChain(
       return(head);
      }
 
-   if (val->header->type == SYMBOL)
+   if (val->header->type == SYMBOL_TYPE)
      {
       /* ===============================================
          Allow instance-set query restrictions to have a
@@ -797,13 +797,13 @@ static QUERY_TEMPLATE *FormChain(
       head->nxt = NULL;
       return(head);
      }
-   if (val->header->type == MULTIFIELD)
+   if (val->header->type == MULTIFIELD_TYPE)
      {
       head = bot = NULL;
 
       for (i = val->begin ; i < (val->begin + val->range) ; i++)
         {
-         if (val->multifieldValue->theFields[i].header->type == SYMBOL)
+         if (val->multifieldValue->theFields[i].header->type == SYMBOL_TYPE)
            {
             templateName = val->multifieldValue->theFields[i].lexemeValue->contents;
 

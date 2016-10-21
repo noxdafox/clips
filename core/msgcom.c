@@ -417,7 +417,7 @@ unsigned EnvFindDefmessageHandler(
    if (htype == MERROR)
      { return 0; }
 
-   hsym = FindSymbolHN(theEnv,hname,SYMBOL_TYPE);
+   hsym = FindSymbolHN(theEnv,hname,SYMBOL_BIT);
    if (hsym == NULL)
      { return 0; }
 
@@ -483,7 +483,7 @@ void UndefmessageHandlerCommand(
       return;
      }
 #endif
-   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg)) return;
+   if (! UDFFirstArgument(context,SYMBOL_BIT,&theArg)) return;
 
    cls = LookupDefclassByMdlOrScope(theEnv,theArg.lexemeValue->contents);
    if ((cls == NULL) ? (strcmp(theArg.lexemeValue->contents,"*") != 0) : false)
@@ -491,12 +491,12 @@ void UndefmessageHandlerCommand(
       ClassExistError(theEnv,"undefmessage-handler",theArg.lexemeValue->contents);
       return;
      }
-   if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg)) return;
+   if (! UDFNextArgument(context,SYMBOL_BIT,&theArg)) return;
 
    mname = theArg.lexemeValue;
    if (UDFHasNextArgument(context))
      {
-      if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg)) return;
+      if (! UDFNextArgument(context,SYMBOL_BIT,&theArg)) return;
 
       tname = theArg.lexemeValue->contents;
       if (strcmp(tname,"*") == 0)
@@ -584,19 +584,19 @@ void PPDefmessageHandlerCommand(
    unsigned mtype;
    DefmessageHandler *hnd;
 
-   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
+   if (! UDFFirstArgument(context,SYMBOL_BIT,&theArg))
      { return; }
 
-   csym = FindSymbolHN(theEnv,theArg.lexemeValue->contents,SYMBOL_TYPE);
+   csym = FindSymbolHN(theEnv,theArg.lexemeValue->contents,SYMBOL_BIT);
 
-   if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg))
+   if (! UDFNextArgument(context,SYMBOL_BIT,&theArg))
      { return; }
 
-   msym = FindSymbolHN(theEnv,theArg.lexemeValue->contents,SYMBOL_TYPE);
+   msym = FindSymbolHN(theEnv,theArg.lexemeValue->contents,SYMBOL_BIT);
 
    if (UDFHasNextArgument(context))
      {
-      if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg))
+      if (! UDFNextArgument(context,SYMBOL_BIT,&theArg))
         { return; }
       tname = theArg.lexemeValue->contents;
      }
@@ -677,7 +677,7 @@ void PreviewSendCommand(
       Get the class for the message
       ============================= */
 
-   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
+   if (! UDFFirstArgument(context,SYMBOL_BIT,&theArg))
      { return; }
 
    cls = LookupDefclassByMdlOrScope(theEnv,theArg.lexemeValue->contents);
@@ -688,7 +688,7 @@ void PreviewSendCommand(
       return;
      }
 
-   if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg))
+   if (! UDFNextArgument(context,SYMBOL_BIT,&theArg))
      { return; }
 
    EnvPreviewSend(theEnv,WDISPLAY,cls,theArg.lexemeValue->contents);
@@ -781,7 +781,7 @@ void EnvPreviewSend(
    HANDLER_LINK *core;
    CLIPSLexeme *msym;
 
-   msym = FindSymbolHN(theEnv,msgname,SYMBOL_TYPE);
+   msym = FindSymbolHN(theEnv,msgname,SYMBOL_BIT);
    if (msym == NULL)
      { return; }
 
@@ -1034,7 +1034,7 @@ static bool DefmessageHandlerWatchSupport(
      {
       if (EvaluateExpression(theEnv,argExprs,&tmpData))
         return false;
-      if (tmpData.header->type != SYMBOL)
+      if (tmpData.header->type != SYMBOL_TYPE)
         {
          ExpectedTypeError1(theEnv,funcName,argIndex,"class name");
          return false;
@@ -1051,7 +1051,7 @@ static bool DefmessageHandlerWatchSupport(
          argIndex++;
          if (EvaluateExpression(theEnv,argExprs,&tmpData))
            return false;
-         if (tmpData.header->type != SYMBOL)
+         if (tmpData.header->type != SYMBOL_TYPE)
            {
             ExpectedTypeError1(theEnv,funcName,argIndex,"handler name");
             return false;
@@ -1063,7 +1063,7 @@ static bool DefmessageHandlerWatchSupport(
             argIndex++;
             if (EvaluateExpression(theEnv,argExprs,&tmpData))
               return false;
-            if (tmpData.header->type != SYMBOL)
+            if (tmpData.header->type != SYMBOL_TYPE)
               {
                ExpectedTypeError1(theEnv,funcName,argIndex,"handler type");
                return false;

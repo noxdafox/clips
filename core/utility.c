@@ -34,7 +34,7 @@
 /*            Used genstrncpy function instead of strncpy    */
 /*            function.                                      */
 /*                                                           */
-/*            Support for typed EXTERNAL_ADDRESS.            */
+/*            Support for typed EXTERNAL_ADDRESS_TYPE.            */
 /*                                                           */
 /*            Support for tracked memory (allows memory to   */
 /*            be freed if CLIPS is exited while executing).  */
@@ -1047,32 +1047,32 @@ unsigned long ItemHashValue(
 
    switch(theType)
      {
-      case FLOAT:
+      case FLOAT_TYPE:
         return(HashFloat(((CLIPSFloat *) theValue)->contents,theRange));
 
-      case INTEGER:
+      case INTEGER_TYPE:
         return(HashInteger(((CLIPSInteger *) theValue)->contents,theRange));
 
-      case SYMBOL:
-      case STRING:
+      case SYMBOL_TYPE:
+      case STRING_TYPE:
 #if OBJECT_SYSTEM
-      case INSTANCE_NAME:
+      case INSTANCE_NAME_TYPE:
 #endif
         return HashSymbol(((CLIPSLexeme *) theValue)->contents,theRange);
 
-      case MULTIFIELD:
+      case MULTIFIELD_TYPE:
         return(HashMultifield((Multifield *) theValue,theRange));
 
 #if DEFTEMPLATE_CONSTRUCT
-      case FACT_ADDRESS:
+      case FACT_ADDRESS_TYPE:
         return(((Fact *) theValue)->hashValue % theRange);
 #endif
 
-      case EXTERNAL_ADDRESS:
+      case EXTERNAL_ADDRESS_TYPE:
         return HashExternalAddress(((CLIPSExternalAddress *) theValue)->contents,theRange);
 
 #if OBJECT_SYSTEM
-      case INSTANCE_ADDRESS:
+      case INSTANCE_ADDRESS_TYPE:
 #endif
         fis.uv = 0;
         fis.vv = theValue;

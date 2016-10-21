@@ -210,6 +210,7 @@ void FactSlotValueFunction(
   {
    struct fact *theFact;
    UDFValue theArg;
+   CLIPSValue result;
 
    /*================================*/
    /* Get the reference to the fact. */
@@ -226,14 +227,15 @@ void FactSlotValueFunction(
    /* Get the name of the slot. */
    /*===========================*/
 
-   if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg))
+   if (! UDFNextArgument(context,SYMBOL_BIT,&theArg))
      { return; }
 
    /*=======================*/
    /* Get the slot's value. */
    /*=======================*/
 
-   FactSlotValue(theEnv,theFact,theArg.lexemeValue->contents,returnValue);
+   FactSlotValue(theEnv,theFact,theArg.lexemeValue->contents,&result);
+   CLIPSToUDFValue(&result,returnValue);
   }
 
 /***************************************/
@@ -244,7 +246,7 @@ void FactSlotValue(
   Environment *theEnv,
   Fact *theFact,
   const char *theSlotName,
-  UDFValue *returnValue)
+  CLIPSValue *returnValue)
   {
    short position;
 
@@ -293,7 +295,8 @@ void FactSlotNamesFunction(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   struct fact *theFact;
+   Fact *theFact;
+   CLIPSValue result;
 
    /*================================*/
    /* Get the reference to the fact. */
@@ -310,7 +313,8 @@ void FactSlotNamesFunction(
    /* Get the slot names. */
    /*=====================*/
 
-   EnvFactSlotNames(theEnv,theFact,returnValue);
+   EnvFactSlotNames(theEnv,theFact,&result);
+   CLIPSToUDFValue(&result,returnValue);
   }
 
 /***************************************/
@@ -320,7 +324,7 @@ void FactSlotNamesFunction(
 void EnvFactSlotNames(
   Environment *theEnv,
   Fact *theFact,
-  UDFValue *returnValue)
+  CLIPSValue *returnValue)
   {
    Multifield *theList;
    struct templateSlot *theSlot;
@@ -333,8 +337,6 @@ void EnvFactSlotNames(
 
    if (theFact->whichDeftemplate->implied)
      {
-      returnValue->begin = 0;
-      returnValue->range = 1;
       theList = EnvCreateMultifield(theEnv,(int) 1);
       theList->theFields[0].lexemeValue = EnvCreateSymbol(theEnv,"implied");
       returnValue->value = theList;
@@ -354,8 +356,6 @@ void EnvFactSlotNames(
    /* Create a multifield value in which to store the slot names. */
    /*=============================================================*/
 
-   returnValue->begin = 0;
-   returnValue->range = count;
    theList = EnvCreateMultifield(theEnv,count);
    returnValue->value = theList;
 
@@ -382,6 +382,7 @@ void GetFactListFunction(
   {
    Defmodule *theModule;
    UDFValue theArg;
+   CLIPSValue result;
 
    /*===========================================*/
    /* Determine if a module name was specified. */
@@ -389,7 +390,7 @@ void GetFactListFunction(
 
    if (UDFHasNextArgument(context))
      {
-      if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
+      if (! UDFFirstArgument(context,SYMBOL_BIT,&theArg))
         { return; }
 
       if ((theModule = EnvFindDefmodule(theEnv,theArg.lexemeValue->contents)) == NULL)
@@ -411,7 +412,8 @@ void GetFactListFunction(
    /* Get the constructs. */
    /*=====================*/
 
-   EnvGetFactList(theEnv,returnValue,theModule);
+   EnvGetFactList(theEnv,&result,theModule);
+   CLIPSToUDFValue(&result,returnValue);
   }
 
 /*************************************/
@@ -420,7 +422,7 @@ void GetFactListFunction(
 /*************************************/
 void EnvGetFactList(
   Environment *theEnv,
-  UDFValue *returnValue,
+  CLIPSValue *returnValue,
   Defmodule *theModule)
   {
    Fact *theFact;
@@ -458,8 +460,6 @@ void EnvGetFactList(
    /* Create the multifield value to store the construct names. */
    /*===========================================================*/
 
-   returnValue->begin = 0;
-   returnValue->range = count;
    theList = EnvCreateMultifield(theEnv,count);
    returnValue->value = theList;
 
@@ -536,7 +536,7 @@ void PPFactFunction(
 
    if (UDFHasNextArgument(context))
      {
-      UDFNextArgument(context,ANY_TYPE,&theArg);
+      UDFNextArgument(context,ANY_TYPE_BITS,&theArg);
 
       if (theArg.value == theEnv->FalseSymbol)
         { ignoreDefaults = false; }
@@ -596,15 +596,15 @@ Fact *GetFactAddressOrIndexArgument(
    Environment *theEnv = context->environment;
    char tempBuffer[20];
 
-   if (! UDFNextArgument(context,ANY_TYPE,&theArg))
+   if (! UDFNextArgument(context,ANY_TYPE_BITS,&theArg))
      { return NULL; }
 
-   if (theArg.header->type == FACT_ADDRESS)
+   if (theArg.header->type == FACT_ADDRESS_TYPE)
      {
       if (theArg.factValue->garbage) return NULL;
       else return theArg.factValue;
      }
-   else if (theArg.header->type == INTEGER)
+   else if (theArg.header->type == INTEGER_TYPE)
      {
       factIndex = theArg.integerValue->contents;
       if (factIndex < 0)

@@ -212,7 +212,7 @@ void SetgenFunction(
    /* Check to see that an integer argument is provided. */
    /*====================================================*/
 
-   if (! UDFNthArgument(context,1,INTEGER_TYPE,returnValue))
+   if (! UDFNthArgument(context,1,INTEGER_BIT,returnValue))
      { return; }
 
    /*========================================*/
@@ -299,7 +299,7 @@ void GensymStar(
       gensprintf(genstring,"gen%lld",MiscFunctionData(theEnv)->GensymNumber);
       MiscFunctionData(theEnv)->GensymNumber++;
      }
-   while (FindSymbolHN(theEnv,genstring,SYMBOL_TYPE) != NULL);
+   while (FindSymbolHN(theEnv,genstring,SYMBOL_BIT) != NULL);
 
    /*====================*/
    /* Return the symbol. */
@@ -343,11 +343,11 @@ void RandomFunction(
 
    if (argCount == 2)
      {
-      if (! UDFFirstArgument(context,INTEGER_TYPE,&theArg))
+      if (! UDFFirstArgument(context,INTEGER_BIT,&theArg))
         { return; }
       begin = theArg.integerValue->contents;
 
-      if (! UDFNextArgument(context,INTEGER_TYPE,&theArg))
+      if (! UDFNextArgument(context,INTEGER_BIT,&theArg))
         { return; }
 
       end = theArg.integerValue->contents;
@@ -380,7 +380,7 @@ void SeedFunction(
    /* Check to see that a single integer argument is provided. */
    /*==========================================================*/
 
-   if (! UDFFirstArgument(context,INTEGER_TYPE,&theValue))
+   if (! UDFFirstArgument(context,INTEGER_BIT,&theValue))
      { return; }
 
    /*=============================================================*/
@@ -405,7 +405,7 @@ void LengthFunction(
    /* The length$ function expects exactly one argument. */
    /*====================================================*/
 
-   if (! UDFFirstArgument(context, LEXEME_TYPES | MULTIFIELD_TYPE, &theArg))
+   if (! UDFFirstArgument(context, LEXEME_BITS | MULTIFIELD_BIT, &theArg))
      { return; }
 
    /*====================================================*/
@@ -413,7 +413,7 @@ void LengthFunction(
    /* the number of characters in the argument.          */
    /*====================================================*/
 
-   if (CVIsType(&theArg,LEXEME_TYPES))
+   if (CVIsType(&theArg,LEXEME_BITS))
      {
       returnValue->integerValue = EnvCreateInteger(theEnv,strlen(theArg.lexemeValue->contents));
       return;
@@ -424,7 +424,7 @@ void LengthFunction(
    /* the number of fields in the argument.              */
    /*====================================================*/
 
-   else if (CVIsType(&theArg,MULTIFIELD_TYPE))
+   else if (CVIsType(&theArg,MULTIFIELD_BIT))
      {
       returnValue->value = EnvCreateInteger(theEnv,theArg.range);
       return;
@@ -465,7 +465,7 @@ void ConserveMemCommand(
    /* a single symbol argument.         */
    /*===================================*/
 
-   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theValue))
+   if (! UDFFirstArgument(context,SYMBOL_BIT,&theValue))
      { return; }
 
    argument = theValue.lexemeValue->contents;
@@ -558,7 +558,7 @@ void AproposCommand(
    /* The apropos command expects a single symbol argument. */
    /*=======================================================*/
 
-   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
+   if (! UDFFirstArgument(context,SYMBOL_BIT,&theArg))
      { return; }
 
    /*=======================================*/
@@ -975,11 +975,11 @@ static void ExpandFuncMultifield(
          EvaluateExpression(theEnv,theExp->argList,returnValue);
          ReturnExpression(theEnv,theExp->argList);
          if ((EvaluationData(theEnv)->EvaluationError) ||
-             (returnValue->header->type != MULTIFIELD))
+             (returnValue->header->type != MULTIFIELD_TYPE))
            {
             theExp->argList = NULL;
             if ((EvaluationData(theEnv)->EvaluationError == false) &&
-                (returnValue->header->type != MULTIFIELD))
+                (returnValue->header->type != MULTIFIELD_TYPE))
               ExpectedTypeError2(theEnv,"expand$",1);
             theExp->value = FindFunction(theEnv,"(set-evaluation-error)");
             EvaluationData(theEnv)->EvaluationError = false;
@@ -1067,7 +1067,7 @@ void SetSORCommand(
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    UDFValue theArg;
 
-   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
+   if (! UDFFirstArgument(context,SYMBOL_BIT,&theArg))
      { return; }
 
    returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvSetSequenceOperatorRecognition(theEnv,theArg.value != theEnv->FalseSymbol));
@@ -1095,7 +1095,7 @@ void GetFunctionRestrictions(
    size_t bufferPosition = 0;
    size_t bufferMaximum = 0;
 
-   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
+   if (! UDFFirstArgument(context,SYMBOL_BIT,&theArg))
      { return; }
 
    fptr = FindFunction(theEnv,theArg.lexemeValue->contents);
@@ -1203,7 +1203,7 @@ void FuncallFunction(
    /* Get the name of the function to be called. */
    /*============================================*/
 
-   if (! UDFFirstArgument(context,LEXEME_TYPES,&theArg))
+   if (! UDFFirstArgument(context,LEXEME_BITS,&theArg))
      { return; }
 
    /*====================*/
@@ -1240,7 +1240,7 @@ void FuncallFunction(
 
    while (UDFHasNextArgument(context))
      {
-      if (! UDFNextArgument(context,ANY_TYPE,&theArg))
+      if (! UDFNextArgument(context,ANY_TYPE_BITS,&theArg))
         {
          ExpressionDeinstall(theEnv,&theReference);
          return;
@@ -1248,7 +1248,7 @@ void FuncallFunction(
 
       switch(theArg.header->type)
         {
-         case MULTIFIELD:
+         case MULTIFIELD_TYPE:
            nextAdd = GenConstant(theEnv,FCALL,FindFunction(theEnv,"create$"));
 
            if (lastAdd == NULL)
@@ -1359,7 +1359,7 @@ void NewFunction(
    /* Get the name of the language type. */
    /*====================================*/
 
-   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theValue))
+   if (! UDFFirstArgument(context,SYMBOL_BIT,&theValue))
      { return; }
 
    /*=========================*/
@@ -1409,7 +1409,7 @@ void CallFunction(
    /* Get the first argument. */
    /*=========================*/
 
-   if (! UDFFirstArgument(context,SYMBOL_TYPE | EXTERNAL_ADDRESS_TYPE,&theValue))
+   if (! UDFFirstArgument(context,SYMBOL_BIT | EXTERNAL_ADDRESS_BIT,&theValue))
      { return; }
 
    /*============================================*/
@@ -1417,7 +1417,7 @@ void CallFunction(
    /* should be an external language type.       */
    /*============================================*/
 
-   if (theValue.header->type == SYMBOL)
+   if (theValue.header->type == SYMBOL_TYPE)
      {
       name = theValue.lexemeValue->contents;
 
@@ -1448,7 +1448,7 @@ void CallFunction(
    /* type be examining the pointer.                */
    /*===============================================*/
 
-   if (theValue.header->type == EXTERNAL_ADDRESS)
+   if (theValue.header->type == EXTERNAL_ADDRESS_TYPE)
      {
       theEA = (struct externalAddressHashNode *) theValue.value;
 
@@ -1617,7 +1617,7 @@ void TimerFunction(
 
    while (UDFHasNextArgument(context) &&
           (! EnvGetHaltExecution(theEnv)))
-     { UDFNextArgument(context,ANY_TYPE,&theArg); }
+     { UDFNextArgument(context,ANY_TYPE_BITS,&theArg); }
 
    returnValue->floatValue = EnvCreateFloat(theEnv,gentime() - startTime);
   }
@@ -1644,7 +1644,7 @@ void SystemCommand(
 
    while (UDFHasNextArgument(context))
      {
-      if (! UDFNextArgument(context,LEXEME_TYPES,&tempValue))
+      if (! UDFNextArgument(context,LEXEME_BITS,&tempValue))
         { return; }
 
      theString = tempValue.lexemeValue->contents;

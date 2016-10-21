@@ -170,9 +170,9 @@ struct externalAddressType
 typedef struct entityRecord ENTITY_RECORD;
 typedef struct entityRecord * ENTITY_RECORD_PTR;
 
-#define CoerceToLongInteger(t,v) ((t == INTEGER) ? ValueToLong(v) : (long int) ValueToDouble(v))
-#define CoerceToInteger(t,v) ((t == INTEGER) ? (int) ValueToLong(v) : (int) ValueToDouble(v))
-#define CoerceToDouble(t,v) ((t == INTEGER) ? (double) ValueToLong(v) : ValueToDouble(v))
+#define CoerceToLongInteger(t,v) ((t == INTEGER_TYPE) ? ValueToLong(v) : (long int) ValueToDouble(v))
+#define CoerceToInteger(t,v) ((t == INTEGER_TYPE) ? (int) ValueToLong(v) : (int) ValueToDouble(v))
+#define CoerceToDouble(t,v) ((t == INTEGER_TYPE) ? (double) ValueToLong(v) : ValueToDouble(v))
 
 #define GetFirstArgument()           (EvaluationData(theEnv)->CurrentExpression->argList)
 #define GetNextArgument(ep)          (ep->nextArg)
@@ -218,7 +218,7 @@ struct evaluationData
    void                           ValueInstall(Environment *,UDFValue *);
    void                           ValueDeinstall(Environment *,UDFValue *);
 #if DEFFUNCTION_CONSTRUCT || DEFGENERIC_CONSTRUCT
-   bool                           EnvFunctionCall(Environment *,const char *,const char *,UDFValue *);
+   bool                           EnvFunctionCall(Environment *,const char *,const char *,CLIPSValue *);
    bool                           FunctionCall2(Environment *,FUNCTION_REFERENCE *,const char *,UDFValue *);
 #endif
    void                           CopyDataObject(Environment *,UDFValue *,UDFValue *,int);
@@ -240,11 +240,11 @@ struct evaluationData
 
 #define ValueIsType(value,vType) ((1 << (((TypeHeader *) value)->type)) & (vType))
 
-#define CVCoerceToFloat(cv) (((cv)->header->type == FLOAT) ? \
+#define CVCoerceToFloat(cv) (((cv)->header->type == FLOAT_TYPE) ? \
                              ((cv)->floatValue->contents) : \
                              ((double) (cv)->integerValue->contents))
 
-#define CVCoerceToInteger(cv) (((cv)->header->type == INTEGER) ? \
+#define CVCoerceToInteger(cv) (((cv)->header->type == INTEGER_TYPE) ? \
                                ((cv)->integerValue->contents) : \
                                ((long long) (cv)->floatValue->contents))
 

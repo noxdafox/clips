@@ -344,7 +344,7 @@ bool ObjectCmpConstantFunction(
    else
      {
       constantExp = GetFirstArgument();
-      if (ObjectReteData(theEnv)->CurrentPatternObjectSlot->type == MULTIFIELD)
+      if (ObjectReteData(theEnv)->CurrentPatternObjectSlot->type == MULTIFIELD_TYPE)
         {
          theSegment = ObjectReteData(theEnv)->CurrentPatternObjectSlot->multifieldValue;
          if (hack->fromBeginning)
@@ -353,7 +353,7 @@ bool ObjectCmpConstantFunction(
            }
          else
            {
-            theVar.value = theSegment->theFields[theSegment->multifieldLength -
+            theVar.value = theSegment->theFields[theSegment->length -
                                       (hack->offset + 1)].value;
            }
         }
@@ -1093,10 +1093,10 @@ static void GetObjectValueGeneral(
    if (matchVar->allFields)
      {
       returnValue->value = (*insSlot)->value;
-      if (returnValue->header->type == MULTIFIELD)
+      if (returnValue->header->type == MULTIFIELD_TYPE)
         {
          returnValue->begin = 0;
-         returnValue->range = GetMFLength((*insSlot)->value);
+         returnValue->range = (*insSlot)->multifieldValue->length;
         }
       return;
      }
@@ -1179,7 +1179,7 @@ static void GetObjectValueSimple(
            {
             returnValue->value = segmentPtr;
             returnValue->begin = matchVar->beginningOffset;
-            returnValue->range = GetMFLength(segmentPtr) - (matchVar->endOffset + matchVar->beginningOffset);
+            returnValue->range = segmentPtr->length - (matchVar->endOffset + matchVar->beginningOffset);
             if (returnValue->range < 0)
               { returnValue->range = 0; } // TBD Can this be removed?
            }
@@ -1191,7 +1191,7 @@ static void GetObjectValueSimple(
         }
       else
         {
-         fieldPtr = &segmentPtr->theFields[segmentPtr->multifieldLength -
+         fieldPtr = &segmentPtr->theFields[segmentPtr->length -
                                            (matchVar->endOffset + 1)];
          returnValue->value = fieldPtr->value;
         }
@@ -1294,7 +1294,7 @@ static void GetInsMultiSlotField(
       if (fromBeginning)
         tmpField = &theSegment->theFields[offset];
       else
-        tmpField = &theSegment->theFields[theSegment->multifieldLength - offset - 1];
+        tmpField = &theSegment->theFields[theSegment->length - offset - 1];
       theField->value = tmpField->value;
      }
    else

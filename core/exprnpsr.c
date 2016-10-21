@@ -187,7 +187,7 @@ struct expr *Function2Parse(
    if ((position = FindModuleSeparator(name)) != 0)
      {
       moduleName = ExtractModuleName(theEnv,position,name);
-      constructName = ExtractConstructName(theEnv,position,name,SYMBOL);
+      constructName = ExtractConstructName(theEnv,position,name,SYMBOL_TYPE);
       moduleSpecified = true;
      }
 
@@ -555,7 +555,7 @@ bool CheckExpressionAgainstRestrictions(
    /* Check for the default argument types. */
    /*=======================================*/
 
-   PopulateRestriction(theEnv,&defaultRestriction2,ANY_TYPE,restrictions,0);
+   PopulateRestriction(theEnv,&defaultRestriction2,ANY_TYPE_BITS,restrictions,0);
 
    /*======================*/
    /* Check each argument. */
@@ -887,62 +887,62 @@ void PopulateRestriction(
             break;
 
           case 'l':
-            *restriction |= INTEGER_TYPE;
+            *restriction |= INTEGER_BIT;
             valuesRead++;
             break;
 
           case 'd':
-            *restriction |= FLOAT_TYPE;
+            *restriction |= FLOAT_BIT;
             valuesRead++;
             break;
 
           case 's':
-            *restriction |= STRING_TYPE;
+            *restriction |= STRING_BIT;
             valuesRead++;
             break;
 
           case 'y':
-            *restriction |= SYMBOL_TYPE;
+            *restriction |= SYMBOL_BIT;
             valuesRead++;
             break;
 
           case 'n':
-            *restriction |= INSTANCE_NAME_TYPE;
+            *restriction |= INSTANCE_NAME_BIT;
             valuesRead++;
             break;
 
           case 'm':
-            *restriction |= MULTIFIELD_TYPE;
+            *restriction |= MULTIFIELD_BIT;
             valuesRead++;
             break;
 
           case 'f':
-            *restriction |= FACT_ADDRESS_TYPE;
+            *restriction |= FACT_ADDRESS_BIT;
             valuesRead++;
             break;
 
           case 'i':
-            *restriction |= INSTANCE_ADDRESS_TYPE;
+            *restriction |= INSTANCE_ADDRESS_BIT;
             valuesRead++;
             break;
 
           case 'e':
-            *restriction |= EXTERNAL_ADDRESS_TYPE;
+            *restriction |= EXTERNAL_ADDRESS_BIT;
             valuesRead++;
             break;
 
           case 'v':
-            *restriction |= VOID_TYPE;
+            *restriction |= VOID_BIT;
             valuesRead++;
             break;
 
           case 'b':
-            *restriction |= BOOLEAN_TYPE;
+            *restriction |= BOOLEAN_BIT;
             valuesRead++;
             break;
 
           case '*':
-            *restriction |= ANY_TYPE;
+            *restriction |= ANY_TYPE_BITS;
             valuesRead++;
             break;
 

@@ -187,7 +187,7 @@ void CheckTemplateFact(
         {
          theData.value = (void *) sublist[i].value;
          theData.begin = 0;
-         theData.range = sublist[i].multifieldValue->multifieldLength;
+         theData.range = sublist[i].multifieldValue->length;
          i++;
         }
 
@@ -393,11 +393,11 @@ void PrintTemplateFact(
          Multifield *theSegment;
 
          theSegment = sublist[i].multifieldValue;
-         if (theSegment->multifieldLength > 0)
+         if (theSegment->length > 0)
            {
             EnvPrintRouter(theEnv,logicalName," ");
             PrintMultifield(theEnv,logicalName,sublist[i].multifieldValue,
-                            0,(long) theSegment->multifieldLength-1,false);
+                            0,(long) theSegment->length-1,false);
            }
         }
 

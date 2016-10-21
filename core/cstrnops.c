@@ -570,19 +570,19 @@ static void UpdateRestrictionFlags(
      }
 
    if ((rv->symbolRestriction) && (rv->symbolsAllowed))
-     { rv->symbolsAllowed = FindItemInExpression(SYMBOL,NULL,false,rv->restrictionList); }
+     { rv->symbolsAllowed = FindItemInExpression(SYMBOL_TYPE,NULL,false,rv->restrictionList); }
 
    if ((rv->stringRestriction)  && (rv->stringsAllowed))
-     { rv->stringsAllowed = FindItemInExpression(STRING,NULL,false,rv->restrictionList); }
+     { rv->stringsAllowed = FindItemInExpression(STRING_TYPE,NULL,false,rv->restrictionList); }
 
    if ((rv->floatRestriction) && (rv->floatsAllowed))
-     { rv->floatsAllowed = FindItemInExpression(FLOAT,NULL,false,rv->restrictionList); }
+     { rv->floatsAllowed = FindItemInExpression(FLOAT_TYPE,NULL,false,rv->restrictionList); }
 
    if ((rv->integerRestriction) && (rv->integersAllowed))
-     { rv->integersAllowed = FindItemInExpression(INTEGER,NULL,false,rv->restrictionList); }
+     { rv->integersAllowed = FindItemInExpression(INTEGER_TYPE,NULL,false,rv->restrictionList); }
 
    if ((rv->instanceNameRestriction) && (rv->instanceNamesAllowed))
-     { rv->instanceNamesAllowed = FindItemInExpression(INSTANCE_NAME,NULL,false,rv->restrictionList); }
+     { rv->instanceNamesAllowed = FindItemInExpression(INSTANCE_NAME_TYPE,NULL,false,rv->restrictionList); }
   }
 
 /*************************************************************/
@@ -623,13 +623,13 @@ static bool RestrictionOnType(
    if (theConstraint == NULL) return false;
 
    if ((theConstraint->anyRestriction) ||
-       (theConstraint->symbolRestriction && (theType == SYMBOL)) ||
-       (theConstraint->stringRestriction && (theType == STRING)) ||
-       (theConstraint->floatRestriction && (theType == FLOAT)) ||
-       (theConstraint->integerRestriction && (theType == INTEGER)) ||
-       (theConstraint->classRestriction && ((theType == INSTANCE_ADDRESS) ||
-                                            (theType == INSTANCE_NAME))) ||
-       (theConstraint->instanceNameRestriction && (theType == INSTANCE_NAME)))
+       (theConstraint->symbolRestriction && (theType == SYMBOL_TYPE)) ||
+       (theConstraint->stringRestriction && (theType == STRING_TYPE)) ||
+       (theConstraint->floatRestriction && (theType == FLOAT_TYPE)) ||
+       (theConstraint->integerRestriction && (theType == INTEGER_TYPE)) ||
+       (theConstraint->classRestriction && ((theType == INSTANCE_ADDRESS_TYPE) ||
+                                            (theType == INSTANCE_NAME_TYPE))) ||
+       (theConstraint->instanceNameRestriction && (theType == INSTANCE_NAME_TYPE)))
      { return true; }
 
    return false;

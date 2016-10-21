@@ -576,7 +576,7 @@ int ReplaceProcVars(
             pvar.second = position;
             pvar.secondFlag = (bindName != wildcard) ? 0 : 1;
             actions->value = EnvAddBitMap(theEnv,&pvar,(int) sizeof(PACKED_PROC_VAR));
-            actions->argList = GenConstant(theEnv,SYMBOL,bindName);
+            actions->argList = GenConstant(theEnv,SYMBOL_TYPE,bindName);
             actions->argList->nextArg = altvarexp;
            }
         }
@@ -604,7 +604,7 @@ int ReplaceProcVars(
             special internal function for procedure local variables.
             ==================================================================== */
          if ((actions->value == (void *) FindFunction(theEnv,"bind")) &&
-             (actions->argList->type == SYMBOL))
+             (actions->argList->type == SYMBOL_TYPE))
            {
             actions->type = PROC_BIND;
             boundPosn = SearchParsedBindNames(theEnv,actions->argList->lexemeValue);
@@ -835,7 +835,7 @@ EXPRESSION *GetProcParamExpressions(
    for (i = 0 ; i < ProceduralPrimitiveData(theEnv)->ProcParamArraySize ; i++)
      {
       ProceduralPrimitiveData(theEnv)->ProcParamExpressions[i].type = ProceduralPrimitiveData(theEnv)->ProcParamArray[i].header->type; // TBD Remove
-      if (ProceduralPrimitiveData(theEnv)->ProcParamArray[i].header->type != MULTIFIELD)
+      if (ProceduralPrimitiveData(theEnv)->ProcParamArray[i].header->type != MULTIFIELD_TYPE)
         ProceduralPrimitiveData(theEnv)->ProcParamExpressions[i].value = ProceduralPrimitiveData(theEnv)->ProcParamArray[i].value;
       else
         ProceduralPrimitiveData(theEnv)->ProcParamExpressions[i].value = &ProceduralPrimitiveData(theEnv)->ProcParamArray[i];
@@ -1012,7 +1012,7 @@ void GrabProcWildargs(
      }
    for (i = theIndex-1 ; i < ProceduralPrimitiveData(theEnv)->ProcParamArraySize ; i++)
      {
-      if (ProceduralPrimitiveData(theEnv)->ProcParamArray[i].header->type == MULTIFIELD)
+      if (ProceduralPrimitiveData(theEnv)->ProcParamArray[i].header->type == MULTIFIELD_TYPE)
         size += ProceduralPrimitiveData(theEnv)->ProcParamArray[i].range - 1;
      }
    returnValue->range = size;
@@ -1020,7 +1020,7 @@ void GrabProcWildargs(
    returnValue->value = ProceduralPrimitiveData(theEnv)->WildcardValue->value = CreateUnmanagedMultifield(theEnv,(unsigned long) size);
    for (i = theIndex-1 , j = 0 ; i < ProceduralPrimitiveData(theEnv)->ProcParamArraySize ; i++)
      {
-      if (ProceduralPrimitiveData(theEnv)->ProcParamArray[i].header->type != MULTIFIELD)
+      if (ProceduralPrimitiveData(theEnv)->ProcParamArray[i].header->type != MULTIFIELD_TYPE)
         {
          returnValue->multifieldValue->theFields[j].value = ProceduralPrimitiveData(theEnv)->ProcParamArray[i].value;
          j++;
@@ -1084,9 +1084,9 @@ static void EvaluateProcParameters(
    while (parameterList != NULL)
      {
       if ((EvaluateExpression(theEnv,parameterList,&temp) == true) ? true :
-          (temp.header->type == RVOID))
+          (temp.header->type == VOID_TYPE))
         {
-         if (temp.header->type == RVOID)
+         if (temp.header->type == VOID_TYPE)
            {
             PrintErrorID(theEnv,"PRCCODE",2,false);
             EnvPrintRouter(theEnv,WERROR,"Functions without a return value are illegal as ");
@@ -1358,7 +1358,7 @@ static bool ReplaceProcBinds(
          if (ReplaceProcBinds(theEnv,actions->argList,altbindfunc,userBuffer))
            return true;
          if ((actions->value == (void *) FindFunction(theEnv,"bind")) &&
-             (actions->argList->type == SYMBOL))
+             (actions->argList->type == SYMBOL_TYPE))
            {
             bname = actions->argList->lexemeValue;
             bcode = (*altbindfunc)(theEnv,actions,userBuffer);
@@ -1397,7 +1397,7 @@ static EXPRESSION *CompactActions(
 
    if (actions->argList == NULL)
      {
-      actions->type = SYMBOL;
+      actions->type = SYMBOL_TYPE;
       actions->value = theEnv->FalseSymbol;
      }
    else if (actions->argList->nextArg == NULL)

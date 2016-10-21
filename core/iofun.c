@@ -276,14 +276,14 @@ static void PrintDriver(
 
    while (UDFHasNextArgument(context))
      {
-      if (! UDFNextArgument(context,ANY_TYPE,&theArg))
+      if (! UDFNextArgument(context,ANY_TYPE_BITS,&theArg))
         { break; }
 
       if (EvaluationData(theEnv)->HaltExecution) break;
 
       switch(theArg.header->type)
         {
-         case SYMBOL:
+         case SYMBOL_TYPE:
            if (strcmp(theArg.lexemeValue->contents,"crlf") == 0)
              {
               if (IOFunctionData(theEnv)->useFullCRLF)
@@ -301,7 +301,7 @@ static void PrintDriver(
              { EnvPrintRouter(theEnv,logicalName,theArg.lexemeValue->contents); }
            break;
 
-         case STRING:
+         case STRING_TYPE:
            EnvPrintRouter(theEnv,logicalName,theArg.lexemeValue->contents);
            break;
 
@@ -565,7 +565,7 @@ void OpenFunction(
      { accessMode = "r"; }
    else
      {
-      if (! UDFNextArgument(context,STRING_TYPE,&theArg))
+      if (! UDFNextArgument(context,STRING_BIT,&theArg))
         { return; }
       accessMode = theArg.lexemeValue->contents;
      }
@@ -727,7 +727,7 @@ void PutCharFunction(
    /* Get the character to put. */
    /*===========================*/
 
-   if (! UDFNextArgument(context,INTEGER_TYPE,&theArg))
+   if (! UDFNextArgument(context,INTEGER_BIT,&theArg))
      { return; }
 
    theChar = theArg.integerValue->contents;
@@ -953,7 +953,7 @@ static const char *ControlStringCheck(
    char formatFlag;
    Environment *theEnv = context->environment;
 
-   if (! UDFNthArgument(context,2,STRING_TYPE,&t_ptr))
+   if (! UDFNthArgument(context,2,STRING_BIT,&t_ptr))
      { return NULL; }
 
    per_count = 0;
@@ -1131,7 +1131,7 @@ static const char *PrintFormatFlag(
    switch (formatType)
      {
       case 's':
-        if (! UDFNthArgument(context,whichArg,LEXEME_TYPES,&theResult))
+        if (! UDFNthArgument(context,whichArg,LEXEME_BITS,&theResult))
           { return(NULL); }
         theLength = strlen(formatString) + strlen(theResult.lexemeValue->contents) + 200;
         printBuffer = (char *) gm2(theEnv,(sizeof(char) * theLength));
@@ -1139,15 +1139,15 @@ static const char *PrintFormatFlag(
         break;
 
       case 'c':
-        UDFNthArgument(context,whichArg,ANY_TYPE,&theResult);
-        if ((theResult.header->type == STRING) ||
-            (theResult.header->type == SYMBOL))
+        UDFNthArgument(context,whichArg,ANY_TYPE_BITS,&theResult);
+        if ((theResult.header->type == STRING_TYPE) ||
+            (theResult.header->type == SYMBOL_TYPE))
           {
            theLength = strlen(formatString) + 200;
            printBuffer = (char *) gm2(theEnv,(sizeof(char) * theLength));
            gensprintf(printBuffer,formatString,theResult.lexemeValue->contents[0]);
           }
-        else if (theResult.header->type == INTEGER)
+        else if (theResult.header->type == INTEGER_TYPE)
           {
            theLength = strlen(formatString) + 200;
            printBuffer = (char *) gm2(theEnv,(sizeof(char) * theLength));
@@ -1164,7 +1164,7 @@ static const char *PrintFormatFlag(
       case 'x':
       case 'o':
       case 'u':
-        if (! UDFNthArgument(context,whichArg,NUMBER_TYPES,&theResult))
+        if (! UDFNthArgument(context,whichArg,NUMBER_BITS,&theResult))
           { return(NULL); }
         theLength = strlen(formatString) + 200;
         printBuffer = (char *) gm2(theEnv,(sizeof(char) * theLength));
@@ -1172,7 +1172,7 @@ static const char *PrintFormatFlag(
         oldLocale = EnvCreateSymbol(theEnv,setlocale(LC_NUMERIC,NULL));
         setlocale(LC_NUMERIC,IOFunctionData(theEnv)->locale->contents);
 
-        if (theResult.header->type == FLOAT)
+        if (theResult.header->type == FLOAT_TYPE)
           { gensprintf(printBuffer,formatString,(long long) theResult.floatValue->contents); }
         else
           { gensprintf(printBuffer,formatString,(long long) theResult.integerValue->contents); }
@@ -1183,7 +1183,7 @@ static const char *PrintFormatFlag(
       case 'f':
       case 'g':
       case 'e':
-        if (! UDFNthArgument(context,whichArg,NUMBER_TYPES,&theResult))
+        if (! UDFNthArgument(context,whichArg,NUMBER_BITS,&theResult))
           { return(NULL); }
         theLength = strlen(formatString) + 200;
         printBuffer = (char *) gm2(theEnv,(sizeof(char) * theLength));
@@ -1192,7 +1192,7 @@ static const char *PrintFormatFlag(
 
         setlocale(LC_NUMERIC,IOFunctionData(theEnv)->locale->contents);
 
-        if (theResult.header->type == FLOAT)
+        if (theResult.header->type == FLOAT_TYPE)
           { gensprintf(printBuffer,formatString,theResult.floatValue->contents); }
         else
           { gensprintf(printBuffer,formatString,(double) theResult.integerValue->contents); }
@@ -1341,7 +1341,7 @@ void SetLocaleFunction(
    /* Get the locale. */
    /*=================*/
 
-   if (! UDFFirstArgument(context,STRING_TYPE,&theArg))
+   if (! UDFFirstArgument(context,STRING_BIT,&theArg))
      { return; }
 
    /*=====================================*/

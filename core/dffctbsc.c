@@ -260,10 +260,14 @@ void GetDeffactsListFunction(
 /*****************************************/
 void EnvGetDeffactsList(
   Environment *theEnv,
-  UDFValue *returnValue,
+  CLIPSValue *returnValue,
   Defmodule *theModule)
   {
-   GetConstructList(theEnv,returnValue,DeffactsData(theEnv)->DeffactsConstruct,theModule);
+   UDFValue result;
+   
+   GetConstructList(theEnv,&result,DeffactsData(theEnv)->DeffactsConstruct,theModule);
+   NormalizeMultifield(theEnv,&result);
+   returnValue->value = result.value;
   }
 
 /************************************************/

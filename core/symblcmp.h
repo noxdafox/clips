@@ -3,7 +3,7 @@
    /*                                                     */
    /*             CLIPS Version 6.40  10/01/16            */
    /*                                                     */
-   /*        SYMBOL CONSTRUCT COMPILER HEADER FILE        */
+   /*        SYMBOL_TYPE CONSTRUCT COMPILER HEADER FILE        */
    /*******************************************************/
 
 /*************************************************************/

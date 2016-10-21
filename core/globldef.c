@@ -340,7 +340,7 @@ static void ReturnDefglobal(
    /*====================================*/
 
    ValueDeinstall(theEnv,&theDefglobal->current);
-   if (theDefglobal->current.header->type == MULTIFIELD)
+   if (theDefglobal->current.header->type == MULTIFIELD_TYPE)
      { ReturnMultifield(theEnv,theDefglobal->current.multifieldValue); }
 
    /*================================================*/
@@ -387,7 +387,7 @@ static void DestroyDefglobal(
    /* Return the global's current value. */
    /*====================================*/
 
-   if (theDefglobal->current.header->type == MULTIFIELD)
+   if (theDefglobal->current.header->type == MULTIFIELD_TYPE)
      { ReturnMultifield(theEnv,theDefglobal->current.multifieldValue); }
 
 #if (! RUN_TIME)
@@ -456,14 +456,14 @@ void QSetDefglobalValue(
    /*==============================================*/
 
    ValueDeinstall(theEnv,&theGlobal->current);
-   if (theGlobal->current.header->type == MULTIFIELD)
+   if (theGlobal->current.header->type == MULTIFIELD_TYPE)
      { ReturnMultifield(theEnv,theGlobal->current.multifieldValue); }
 
    /*===========================================*/
    /* Set the new value of the global variable. */
    /*===========================================*/
 
-   if (vPtr->header->type != MULTIFIELD) theGlobal->current.value = vPtr->value;
+   if (vPtr->header->type != MULTIFIELD_TYPE) theGlobal->current.value = vPtr->value;
    else DuplicateMultifield(theEnv,&theGlobal->current,vPtr);
    ValueInstall(theEnv,&theGlobal->current);
 
@@ -621,7 +621,7 @@ bool QGetDefglobalValue(
    /* not affected if the value of the global is later changed. */
    /*===========================================================*/
 
-   if (vPtr->header->type == MULTIFIELD)
+   if (vPtr->header->type == MULTIFIELD_TYPE)
      {
       vPtr->value = EnvCreateMultifield(theEnv,(unsigned long) vPtr->range);
       GenCopyMemory(struct field,vPtr->range,
@@ -639,14 +639,16 @@ bool QGetDefglobalValue(
 bool EnvGetDefglobalValue(
   Environment *theEnv,
   const char *variableName,
-  UDFValue *vPtr)
+  CLIPSValue *vPtr)
   {
    Defglobal *theDefglobal;
-
+   UDFValue temp;
+   
    if ((theDefglobal = EnvFindDefglobal(theEnv,variableName)) == NULL)
      { return false; }
 
-   QGetDefglobalValue(theEnv,theDefglobal,vPtr);
+   CLIPSToUDFValue(vPtr,&temp);
+   QGetDefglobalValue(theEnv,theDefglobal,&temp);
 
    return true;
   }
@@ -658,14 +660,16 @@ bool EnvGetDefglobalValue(
 bool EnvSetDefglobalValue(
   Environment *theEnv,
   const char *variableName,
-  UDFValue *vPtr)
+  CLIPSValue *vPtr)
   {
    Defglobal *theGlobal;
-
+   UDFValue temp;
+   
    if ((theGlobal = QFindDefglobal(theEnv,EnvCreateSymbol(theEnv,variableName))) == NULL)
      { return false; }
 
-   QSetDefglobalValue(theEnv,theGlobal,vPtr,false);
+   CLIPSToUDFValue(vPtr,&temp);
+   QSetDefglobalValue(theEnv,theGlobal,&temp,false);
 
    return true;
   }

@@ -29,7 +29,7 @@
 /*                                                           */
 /*            Support for DATA_OBJECT_ARRAY primitive.       */
 /*                                                           */
-/*            Support for typed EXTERNAL_ADDRESS.            */
+/*            Support for typed EXTERNAL_ADDRESS_TYPE.            */
 /*                                                           */
 /*            Used gensprintf and genstrcat instead of       */
 /*            sprintf and strcat.                            */

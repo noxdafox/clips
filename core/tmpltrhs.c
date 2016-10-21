@@ -314,7 +314,7 @@ static struct expr *ParseAssertSlotValues(
         }
       else if (newField->type == FCALL)
        {
-        if ((ExpressionUnknownFunctionType(newField) & SINGLEFIELD_TYPES) == 0)
+        if ((ExpressionUnknownFunctionType(newField) & SINGLEFIELD_BITS) == 0)
           {
            *error = true;
            SingleFieldSlotCardinalityError(theEnv,slotPtr->slotName->contents);
@@ -405,7 +405,7 @@ static struct expr *ParseAssertSlotValues(
    /* Build and return a structure describing the slot value. */
    /*=========================================================*/
 
-   nextSlot = GenConstant(theEnv,SYMBOL,slotPtr->slotName);
+   nextSlot = GenConstant(theEnv,SYMBOL_TYPE,slotPtr->slotName);
    nextSlot->argList = newField;
 
    return(nextSlot);

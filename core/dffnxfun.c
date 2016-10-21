@@ -606,7 +606,11 @@ void EnvGetDeffunctionList(
   UDFValue *returnValue,
   Defmodule *theModule)
   {
-   GetConstructList(theEnv,returnValue,DeffunctionData(theEnv)->DeffunctionConstruct,theModule);
+   UDFValue result;
+   
+   GetConstructList(theEnv,&result,DeffunctionData(theEnv)->DeffunctionConstruct,theModule);
+   NormalizeMultifield(theEnv,&result);
+   returnValue->value = result.value;
   }
 
 /*******************************************************

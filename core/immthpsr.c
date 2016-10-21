@@ -159,7 +159,7 @@ static void FormMethodsFromRestrictions(
 
    min = sysfunc->minArgs;
    max = sysfunc->maxArgs;
-   PopulateRestriction(theEnv,&defaultc2,ANY_TYPE,rstring,0);
+   PopulateRestriction(theEnv,&defaultc2,ANY_TYPE_BITS,rstring,0);
 
    /*==================================================*/
    /* Form a list of method restrictions corresponding */
@@ -202,7 +202,7 @@ static void FormMethodsFromRestrictions(
         {
          if (! RestrictionExists(rstring,min+i+2))
            {
-            PopulateRestriction(theEnv,&defaultc2,ANY_TYPE,rstring,min+i+1);
+            PopulateRestriction(theEnv,&defaultc2,ANY_TYPE_BITS,rstring,min+i+1);
             break;
            }
         }
@@ -254,7 +254,7 @@ static void FormMethodsFromRestrictions(
          rptr->query->argList = GenConstant(theEnv,FCALL,FindFunction(theEnv,"length$"));
          rptr->query->argList->argList = GenProcWildcardReference(theEnv,min + i + 1);
          rptr->query->argList->nextArg =
-               GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,(long long) (max - min - i)));
+               GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,(long long) (max - min - i)));
         }
       tmp = get_struct(theEnv,expr);
       tmp->argList = (EXPRESSION *) rptr;
@@ -307,23 +307,23 @@ static EXPRESSION *ParseRestrictionCreateTypes(
       if (rv->symbolsAllowed && rv->stringsAllowed)
         types = GenTypeExpression(theEnv,types,LEXEME_TYPE_CODE,-1,LEXEME_TYPE_NAME);
       else if (rv->symbolsAllowed)
-        types = GenTypeExpression(theEnv,types,SYMBOL,SYMBOL,NULL);
+        types = GenTypeExpression(theEnv,types,SYMBOL_TYPE,SYMBOL_TYPE,NULL);
       else if (rv->stringsAllowed)
-        types = GenTypeExpression(theEnv,types,STRING,STRING,NULL);
+        types = GenTypeExpression(theEnv,types,STRING_TYPE,STRING_TYPE,NULL);
 
       if (rv->floatsAllowed && rv->integersAllowed)
         types = GenTypeExpression(theEnv,types,NUMBER_TYPE_CODE,-1,NUMBER_TYPE_NAME);
       else if (rv->integersAllowed)
-        types = GenTypeExpression(theEnv,types,INTEGER,INTEGER,NULL);
+        types = GenTypeExpression(theEnv,types,INTEGER_TYPE,INTEGER_TYPE,NULL);
       else if (rv->floatsAllowed)
-        types = GenTypeExpression(theEnv,types,FLOAT,FLOAT,NULL);
+        types = GenTypeExpression(theEnv,types,FLOAT_TYPE,FLOAT_TYPE,NULL);
 
       if (rv->instanceNamesAllowed && rv->instanceAddressesAllowed)
         types = GenTypeExpression(theEnv,types,INSTANCE_TYPE_CODE,-1,INSTANCE_TYPE_NAME);
       else if (rv->instanceNamesAllowed)
-        types = GenTypeExpression(theEnv,types,INSTANCE_NAME,INSTANCE_NAME,NULL);
+        types = GenTypeExpression(theEnv,types,INSTANCE_NAME_TYPE,INSTANCE_NAME_TYPE,NULL);
       else if (rv->instanceAddressesAllowed)
-        types = GenTypeExpression(theEnv,types,INSTANCE_ADDRESS,INSTANCE_ADDRESS,NULL);
+        types = GenTypeExpression(theEnv,types,INSTANCE_ADDRESS_TYPE,INSTANCE_ADDRESS_TYPE,NULL);
 
       if (rv->externalAddressesAllowed && rv->instanceAddressesAllowed &&
           rv->factAddressesAllowed)
@@ -331,15 +331,15 @@ static EXPRESSION *ParseRestrictionCreateTypes(
       else
         {
          if (rv->externalAddressesAllowed)
-           types = GenTypeExpression(theEnv,types,EXTERNAL_ADDRESS,EXTERNAL_ADDRESS,NULL);
+           types = GenTypeExpression(theEnv,types,EXTERNAL_ADDRESS_TYPE,EXTERNAL_ADDRESS_TYPE,NULL);
          if (rv->instanceAddressesAllowed && (rv->instanceNamesAllowed == 0))
-           types = GenTypeExpression(theEnv,types,INSTANCE_ADDRESS,INSTANCE_ADDRESS,NULL);
+           types = GenTypeExpression(theEnv,types,INSTANCE_ADDRESS_TYPE,INSTANCE_ADDRESS_TYPE,NULL);
          if (rv->factAddressesAllowed)
-           types = GenTypeExpression(theEnv,types,FACT_ADDRESS,FACT_ADDRESS,NULL);
+           types = GenTypeExpression(theEnv,types,FACT_ADDRESS_TYPE,FACT_ADDRESS_TYPE,NULL);
         }
 
       if (rv->multifieldsAllowed)
-        types = GenTypeExpression(theEnv,types,MULTIFIELD,MULTIFIELD,NULL);
+        types = GenTypeExpression(theEnv,types,MULTIFIELD_TYPE,MULTIFIELD_TYPE,NULL);
      }
 
    return(types);

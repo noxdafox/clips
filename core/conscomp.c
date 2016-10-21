@@ -226,7 +226,7 @@ void ConstructsToCCommand(
    /* Get the name of the file in which to place C code. */
    /*====================================================*/
 
-   if (! UDFFirstArgument(context,LEXEME_TYPES,&theArg))
+   if (! UDFFirstArgument(context,LEXEME_BITS,&theArg))
      { return; }
 
    fileName = theArg.lexemeValue->contents;
@@ -287,7 +287,7 @@ void ConstructsToCCommand(
    /* Get the runtime image ID argument. */
    /*====================================*/
 
-   if (! UDFNextArgument(context,INTEGER_TYPE,&theArg))
+   if (! UDFNextArgument(context,INTEGER_BIT,&theArg))
      { return; }
 
    id = theArg.integerValue->contents;
@@ -303,7 +303,7 @@ void ConstructsToCCommand(
 
    if (UDFHasNextArgument(context))
      {
-      if (! UDFNextArgument(context,LEXEME_TYPES,&theArg))
+      if (! UDFNextArgument(context,LEXEME_BITS,&theArg))
         { return; }
 
       pathName = theArg.lexemeValue->contents;
@@ -322,7 +322,7 @@ void ConstructsToCCommand(
 
    if (UDFHasNextArgument(context))
      {
-      if (! UDFNextArgument(context,INTEGER_TYPE,&theArg))
+      if (! UDFNextArgument(context,INTEGER_BIT,&theArg))
         { return; }
 
       max = theArg.integerValue->contents;
@@ -947,11 +947,11 @@ static void DumpExpression(
            PrintFunctionReference(theEnv,ConstructCompilerData(theEnv)->ExpressionFP,(struct FunctionDefinition *) exprPtr->value);
            break;
 
-         case INTEGER:
+         case INTEGER_TYPE:
            PrintIntegerReference(theEnv,ConstructCompilerData(theEnv)->ExpressionFP,exprPtr->integerValue);
            break;
 
-         case FLOAT:
+         case FLOAT_TYPE:
            PrintFloatReference(theEnv,ConstructCompilerData(theEnv)->ExpressionFP,exprPtr->floatValue);
            break;
 
@@ -999,7 +999,7 @@ static void DumpExpression(
 #endif
            break;
 
-          case FACT_ADDRESS:
+          case FACT_ADDRESS_TYPE:
 #if DEFTEMPLATE_CONSTRUCT
            fprintf(ConstructCompilerData(theEnv)->ExpressionFP,"NULL");
            fprintf(ConstructCompilerData(theEnv)->FixupFP,
@@ -1012,7 +1012,7 @@ static void DumpExpression(
 #endif
            break;
 
-         case INSTANCE_ADDRESS:
+         case INSTANCE_ADDRESS_TYPE:
 #if OBJECT_SYSTEM
            fprintf(ConstructCompilerData(theEnv)->ExpressionFP,"NULL");
            fprintf(ConstructCompilerData(theEnv)->FixupFP,
@@ -1025,14 +1025,14 @@ static void DumpExpression(
 #endif
            break;
 
-         case STRING:
-         case SYMBOL:
-         case INSTANCE_NAME:
+         case STRING_TYPE:
+         case SYMBOL_TYPE:
+         case INSTANCE_NAME_TYPE:
          case GBL_VARIABLE:
            PrintSymbolReference(theEnv,ConstructCompilerData(theEnv)->ExpressionFP,exprPtr->lexemeValue);
            break;
 
-         case RVOID:
+         case VOID_TYPE:
            fprintf(ConstructCompilerData(theEnv)->ExpressionFP,"NULL");
            break;
 

@@ -146,7 +146,7 @@ void SortFunction(
    /* Verify that the comparison function exists. */
    /*=============================================*/
 
-   if (! UDFNthArgument(context,1,SYMBOL_TYPE,&theArg))
+   if (! UDFNthArgument(context,1,SYMBOL_BIT,&theArg))
      { return; }
 
    functionName = theArg.lexemeValue->contents;
@@ -218,9 +218,9 @@ void SortFunction(
 
    for (i = 2; i <= argumentCount; i++)
      {
-      UDFNthArgument(context,i,ANY_TYPE,&theArguments[i-2]);
+      UDFNthArgument(context,i,ANY_TYPE_BITS,&theArguments[i-2]);
 
-      if (theArguments[i-2].header->type == MULTIFIELD)
+      if (theArguments[i-2].header->type == MULTIFIELD_TYPE)
         { argumentSize += theArguments[i-2].range; }
       else
         { argumentSize++; }
@@ -243,7 +243,7 @@ void SortFunction(
 
    for (i = 2; i <= argumentCount; i++)
      {
-      if (theArguments[i-2].header->type == MULTIFIELD)
+      if (theArguments[i-2].header->type == MULTIFIELD_TYPE)
         {
          tempMultifield = theArguments[i-2].multifieldValue;
          for (j = theArguments[i-2].begin; j < (theArguments[i-2].begin + theArguments[i-2].range); j++, k++)

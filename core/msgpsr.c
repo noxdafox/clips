@@ -156,9 +156,9 @@ bool ParseDefmessageHandler(
       EnvPrintRouter(theEnv,WERROR,"A class must be defined before its message-handlers.\n");
       return true;
      }
-   if ((cls == DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_NAME]) ||
-       (cls == DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_ADDRESS]) ||
-       (cls == DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_NAME]->directSuperclasses.classArray[0]))
+   if ((cls == DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_NAME_TYPE]) ||
+       (cls == DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_ADDRESS_TYPE]) ||
+       (cls == DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_NAME_TYPE]->directSuperclasses.classArray[0]))
      {
       PrintErrorID(theEnv,"MSGPSR",8,false);
       EnvPrintRouter(theEnv,WERROR,"Message-handlers cannot be attached to the class ");
@@ -237,7 +237,7 @@ bool ParseDefmessageHandler(
       return true;
      }
 
-   hndParams = GenConstant(theEnv,SYMBOL,MessageHandlerData(theEnv)->SELF_SYMBOL);
+   hndParams = GenConstant(theEnv,SYMBOL_TYPE,MessageHandlerData(theEnv)->SELF_SYMBOL);
    hndParams = ParseProcParameters(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken,hndParams,
                                     &wildcard,&min,&max,&error,IsParameterSlotReference);
    if (error)
@@ -607,7 +607,7 @@ static SlotDescriptor *CheckSlotReference(
    SlotDescriptor *sd;
    int vCode;
 
-   if (theType != SYMBOL)
+   if (theType != SYMBOL_TYPE)
      {
       PrintErrorID(theEnv,"MSGPSR",7,false);
       EnvPrintRouter(theEnv,WERROR,"Illegal value for ?self reference.\n");

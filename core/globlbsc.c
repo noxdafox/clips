@@ -203,10 +203,14 @@ void GetDefglobalListFunction(
 /******************************************/
 void EnvGetDefglobalList(
   Environment *theEnv,
-  UDFValue *returnValue,
+  CLIPSValue *returnValue,
   Defmodule *theModule)
   {
-   GetConstructList(theEnv,returnValue,DefglobalData(theEnv)->DefglobalConstruct,theModule);
+   UDFValue result;
+   
+   GetConstructList(theEnv,&result,DefglobalData(theEnv)->DefglobalConstruct,theModule);
+   NormalizeMultifield(theEnv,&result);
+   returnValue->value = result.value;
   }
 
 /*************************************************/

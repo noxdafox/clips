@@ -107,7 +107,7 @@ void SetResetGlobalsCommand(
    /* Determine the new value of the attribute. */
    /*===========================================*/
 
-   if (! UDFFirstArgument(context,ANY_TYPE,&theArg))
+   if (! UDFFirstArgument(context,ANY_TYPE_BITS,&theArg))
      { return; }
 
    if (theArg.value == theEnv->FalseSymbol)

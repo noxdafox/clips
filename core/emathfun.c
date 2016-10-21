@@ -157,7 +157,7 @@ static bool SingleNumberCheck(
    /* Check that the argument is a number. */
    /*======================================*/
 
-   if (! UDFNthArgument(context,1,NUMBER_TYPES,returnValue))
+   if (! UDFNthArgument(context,1,NUMBER_BITS,returnValue))
      {
       returnValue->floatValue = EnvCreateFloat(context->environment,0.0);
       return false;
@@ -869,10 +869,10 @@ void PowFunction(
    /* Check for two numeric arguments. */
    /*==================================*/
 
-   if (! UDFNthArgument(context,1,NUMBER_TYPES,&value1))
+   if (! UDFNthArgument(context,1,NUMBER_BITS,&value1))
      { return; }
 
-   if (! UDFNthArgument(context,2,NUMBER_TYPES,&value2))
+   if (! UDFNthArgument(context,2,NUMBER_BITS,&value2))
      { return; }
 
     /*=====================*/
@@ -913,18 +913,18 @@ void ModFunction(
    /* Check for two numeric arguments. */
    /*==================================*/
 
-   if (! UDFNthArgument(context,1,NUMBER_TYPES,&item1))
+   if (! UDFNthArgument(context,1,NUMBER_BITS,&item1))
      { return; }
 
-   if (! UDFNthArgument(context,2,NUMBER_TYPES,&item2))
+   if (! UDFNthArgument(context,2,NUMBER_BITS,&item2))
      { return; }
 
    /*===========================*/
    /* Check for divide by zero. */
    /*===========================*/
 
-   if ((CVIsType(&item2,INTEGER_TYPE) ? (item2.integerValue->contents == 0L) : false) ||
-       (CVIsType(&item2,FLOAT_TYPE) ? (item2.floatValue->contents == 0.0) : false))
+   if ((CVIsType(&item2,INTEGER_BIT) ? (item2.integerValue->contents == 0L) : false) ||
+       (CVIsType(&item2,FLOAT_BIT) ? (item2.floatValue->contents == 0.0) : false))
      {
       DivideByZeroErrorMessage(theEnv,"mod");
       EnvSetEvaluationError(theEnv,true);
@@ -936,7 +936,7 @@ void ModFunction(
    /* Compute the return value. */
    /*===========================*/
 
-   if (CVIsType(&item1,FLOAT_TYPE) || CVIsType(&item2,FLOAT_TYPE))
+   if (CVIsType(&item1,FLOAT_BIT) || CVIsType(&item2,FLOAT_BIT))
      {
       fnum1 = CVCoerceToFloat(&item1);
       fnum2 = CVCoerceToFloat(&item2);
@@ -1035,14 +1035,14 @@ void RoundFunction(
    /* Check that the argument is a number. */
    /*======================================*/
 
-   if (! UDFNthArgument(context,1,NUMBER_TYPES,returnValue))
+   if (! UDFNthArgument(context,1,NUMBER_BITS,returnValue))
      { return; }
 
    /*==============================*/
    /* Round float type to integer. */
    /*==============================*/
 
-   if (CVIsType(returnValue,FLOAT_TYPE))
+   if (CVIsType(returnValue,FLOAT_BIT))
      { returnValue->integerValue = EnvCreateInteger(theEnv,ceil(returnValue->floatValue->contents - 0.5)); }
   }
 

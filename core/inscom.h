@@ -100,8 +100,8 @@ struct instanceData
    Instance                      *EnvCreateRawInstance(Environment *,Defclass *,const char *);
    Instance                      *EnvFindInstance(Environment *,Defmodule *,const char *,bool);
    bool                           EnvValidInstanceAddress(Environment *,Instance *);
-   void                           EnvDirectGetSlot(Environment *,Instance *,const char *,UDFValue *);
-   bool                           EnvDirectPutSlot(Environment *,Instance *,const char *,UDFValue *);
+   void                           EnvDirectGetSlot(Environment *,Instance *,const char *,CLIPSValue *);
+   bool                           EnvDirectPutSlot(Environment *,Instance *,const char *,CLIPSValue *);
    const char                    *EnvGetInstanceName(Environment *,Instance *);
    Defclass                      *EnvGetInstanceClass(Environment *,Instance *);
    unsigned long                  GetGlobalNumberOfInstances(Environment *);

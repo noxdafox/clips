@@ -156,9 +156,9 @@ bool EnvAddUDF(
    unsigned returnTypeBits;
 
    if (returnTypes != NULL)
-     { PopulateRestriction(theEnv,&returnTypeBits,ANY_TYPE,returnTypes,0); }
+     { PopulateRestriction(theEnv,&returnTypeBits,ANY_TYPE_BITS,returnTypes,0); }
    else
-     { returnTypeBits = ANY_TYPE; }
+     { returnTypeBits = ANY_TYPE_BITS; }
 
    return DefineFunction(theEnv,clipsFunctionName,returnTypeBits,cFunctionPointer,
                          cFunctionName,minArgs,maxArgs,argumentTypes,context);
@@ -227,7 +227,7 @@ bool EnvRemoveUDF(
    CLIPSLexeme *findValue;
    struct FunctionDefinition *fPtr, *lastPtr = NULL;
 
-   findValue = FindSymbolHN(theEnv,functionName,SYMBOL_TYPE);
+   findValue = FindSymbolHN(theEnv,functionName,SYMBOL_BIT);
 
    for (fPtr = ExternalFunctionData(theEnv)->ListOfFunctions;
         fPtr != NULL;
@@ -508,12 +508,12 @@ unsigned GetNthRestriction2(
    unsigned rv, df;
    const char *restrictions;
 
-   if (theFunction == NULL) return(ANY_TYPE);
+   if (theFunction == NULL) return(ANY_TYPE_BITS);
 
-   if (theFunction->restrictions == NULL) return(ANY_TYPE);
+   if (theFunction->restrictions == NULL) return(ANY_TYPE_BITS);
    restrictions = theFunction->restrictions->contents;
 
-   PopulateRestriction(theEnv,&df,ANY_TYPE,restrictions,0);
+   PopulateRestriction(theEnv,&df,ANY_TYPE_BITS,restrictions,0);
    PopulateRestriction(theEnv,&rv,df,restrictions,position);
 
    return rv;
@@ -580,7 +580,7 @@ struct FunctionDefinition *FindFunction(
 
    hashValue = HashSymbol(functionName,SIZE_FUNCTION_HASH);
 
-   findValue = FindSymbolHN(theEnv,functionName,SYMBOL_TYPE);
+   findValue = FindSymbolHN(theEnv,functionName,SYMBOL_BIT);
 
    for (fhPtr = ExternalFunctionData(theEnv)->FunctionHashtable[hashValue];
         fhPtr != NULL;
@@ -657,25 +657,25 @@ int GetMaximumArgs(
 void AssignErrorValue(
   UDFContext *context)
   {
-   if (context->theFunction->unknownReturnValueType & BOOLEAN_TYPE)
+   if (context->theFunction->unknownReturnValueType & BOOLEAN_BIT)
      { context->returnValue->lexemeValue = context->environment->FalseSymbol; }
-   else if (context->theFunction->unknownReturnValueType & STRING_TYPE)
+   else if (context->theFunction->unknownReturnValueType & STRING_BIT)
      { context->returnValue->lexemeValue = EnvCreateString(context->environment,""); }
-   else if (context->theFunction->unknownReturnValueType & SYMBOL_TYPE)
+   else if (context->theFunction->unknownReturnValueType & SYMBOL_BIT)
      { context->returnValue->lexemeValue = EnvCreateSymbol(context->environment,"nil"); }
-   else if (context->theFunction->unknownReturnValueType & INTEGER_TYPE)
+   else if (context->theFunction->unknownReturnValueType & INTEGER_BIT)
      { context->returnValue->integerValue = EnvCreateInteger(context->environment,0); }
-   else if (context->theFunction->unknownReturnValueType & FLOAT_TYPE)
+   else if (context->theFunction->unknownReturnValueType & FLOAT_BIT)
      { context->returnValue->floatValue = EnvCreateFloat(context->environment,0.0); }
-   else if (context->theFunction->unknownReturnValueType & MULTIFIELD_TYPE)
+   else if (context->theFunction->unknownReturnValueType & MULTIFIELD_BIT)
      { EnvSetMultifieldErrorValue(context->environment,context->returnValue); }
-   else if (context->theFunction->unknownReturnValueType & INSTANCE_NAME_TYPE)
+   else if (context->theFunction->unknownReturnValueType & INSTANCE_NAME_BIT)
      { context->returnValue->lexemeValue = EnvCreateInstanceName(context->environment,"nil"); }
-   else if (context->theFunction->unknownReturnValueType & FACT_ADDRESS_TYPE)
+   else if (context->theFunction->unknownReturnValueType & FACT_ADDRESS_BIT)
      { context->returnValue->factValue = &FactData(context->environment)->DummyFact; }
-   else if (context->theFunction->unknownReturnValueType & INSTANCE_ADDRESS_TYPE)
+   else if (context->theFunction->unknownReturnValueType & INSTANCE_ADDRESS_BIT)
      { context->returnValue->value = &InstanceData(context->environment)->DummyInstance; }
-   else if (context->theFunction->unknownReturnValueType & EXTERNAL_ADDRESS_TYPE)
+   else if (context->theFunction->unknownReturnValueType & EXTERNAL_ADDRESS_BIT)
      { context->returnValue->value = EnvAddExternalAddress(context->environment,NULL,0); }
    else
      { context->returnValue->value = context->environment->VoidConstant; }
@@ -735,9 +735,9 @@ bool UDFNextArgument(
 
    switch (argPtr->type)
      {
-      case INTEGER:
+      case INTEGER_TYPE:
         returnValue->value = argPtr->value;
-        if (expectedType & INTEGER_TYPE) return true;
+        if (expectedType & INTEGER_BIT) return true;
         ExpectedTypeError0(theEnv,UDFContextFunctionName(context),argumentPosition);
         PrintTypesString(theEnv,WERROR,expectedType,true);
         EnvSetHaltExecution(theEnv,true);
@@ -746,9 +746,9 @@ bool UDFNextArgument(
         return false;
         break;
 
-      case FLOAT:
+      case FLOAT_TYPE:
         returnValue->value = argPtr->value;
-        if (expectedType & FLOAT_TYPE) return true;
+        if (expectedType & FLOAT_BIT) return true;
         ExpectedTypeError0(theEnv,UDFContextFunctionName(context),argumentPosition);
         PrintTypesString(theEnv,WERROR,expectedType,true);
         EnvSetHaltExecution(theEnv,true);
@@ -757,9 +757,9 @@ bool UDFNextArgument(
         return false;
         break;
 
-      case SYMBOL:
+      case SYMBOL_TYPE:
         returnValue->value = argPtr->value;
-        if (expectedType & SYMBOL_TYPE) return true;
+        if (expectedType & SYMBOL_BIT) return true;
         ExpectedTypeError0(theEnv,UDFContextFunctionName(context),argumentPosition);
         PrintTypesString(theEnv,WERROR,expectedType,true);
         EnvSetHaltExecution(theEnv,true);
@@ -768,9 +768,9 @@ bool UDFNextArgument(
         return false;
         break;
 
-      case STRING:
+      case STRING_TYPE:
         returnValue->value = argPtr->value;
-        if (expectedType & STRING_TYPE) return true;
+        if (expectedType & STRING_BIT) return true;
         ExpectedTypeError0(theEnv,UDFContextFunctionName(context),argumentPosition);
         PrintTypesString(theEnv,WERROR,expectedType,true);
         EnvSetHaltExecution(theEnv,true);
@@ -779,9 +779,9 @@ bool UDFNextArgument(
         return false;
         break;
 
-      case INSTANCE_NAME:
+      case INSTANCE_NAME_TYPE:
         returnValue->value = argPtr->value;
-        if (expectedType & INSTANCE_NAME_TYPE) return true;
+        if (expectedType & INSTANCE_NAME_BIT) return true;
         ExpectedTypeError0(theEnv,UDFContextFunctionName(context),argumentPosition);
         PrintTypesString(theEnv,WERROR,expectedType,true);
         EnvSetHaltExecution(theEnv,true);
@@ -795,8 +795,8 @@ bool UDFNextArgument(
 
    switch (returnValue->header->type)
      {
-      case RVOID:
-        if (expectedType & VOID_TYPE)
+      case VOID_TYPE:
+        if (expectedType & VOID_BIT)
           {
            if (EvaluationData(theEnv)->EvaluationError)
              {
@@ -807,8 +807,8 @@ bool UDFNextArgument(
           }
         break;
 
-      case INTEGER:
-        if (expectedType & INTEGER_TYPE)
+      case INTEGER_TYPE:
+        if (expectedType & INTEGER_BIT)
           {
            if (EvaluationData(theEnv)->EvaluationError)
              {
@@ -819,8 +819,8 @@ bool UDFNextArgument(
           }
         break;
 
-      case FLOAT:
-        if (expectedType & FLOAT_TYPE)
+      case FLOAT_TYPE:
+        if (expectedType & FLOAT_BIT)
           {
            if (EvaluationData(theEnv)->EvaluationError)
              {
@@ -831,8 +831,8 @@ bool UDFNextArgument(
           }
         break;
 
-      case SYMBOL:
-        if (expectedType & SYMBOL_TYPE)
+      case SYMBOL_TYPE:
+        if (expectedType & SYMBOL_BIT)
           {
            if (EvaluationData(theEnv)->EvaluationError)
              {
@@ -843,8 +843,8 @@ bool UDFNextArgument(
           }
         break;
 
-      case STRING:
-        if (expectedType & STRING_TYPE)
+      case STRING_TYPE:
+        if (expectedType & STRING_BIT)
           {
            if (EvaluationData(theEnv)->EvaluationError)
              {
@@ -855,8 +855,8 @@ bool UDFNextArgument(
           }
         break;
 
-      case INSTANCE_NAME:
-        if (expectedType & INSTANCE_NAME_TYPE)
+      case INSTANCE_NAME_TYPE:
+        if (expectedType & INSTANCE_NAME_BIT)
           {
            if (EvaluationData(theEnv)->EvaluationError)
              {
@@ -867,8 +867,8 @@ bool UDFNextArgument(
           }
         break;
 
-      case EXTERNAL_ADDRESS:
-        if (expectedType & EXTERNAL_ADDRESS_TYPE)
+      case EXTERNAL_ADDRESS_TYPE:
+        if (expectedType & EXTERNAL_ADDRESS_BIT)
           {
            if (EvaluationData(theEnv)->EvaluationError)
              {
@@ -879,8 +879,8 @@ bool UDFNextArgument(
           }
         break;
 
-      case FACT_ADDRESS:
-        if (expectedType & FACT_ADDRESS_TYPE)
+      case FACT_ADDRESS_TYPE:
+        if (expectedType & FACT_ADDRESS_BIT)
           {
            if (EvaluationData(theEnv)->EvaluationError)
              {
@@ -891,8 +891,8 @@ bool UDFNextArgument(
           }
         break;
 
-      case INSTANCE_ADDRESS:
-        if (expectedType & INSTANCE_ADDRESS_TYPE)
+      case INSTANCE_ADDRESS_TYPE:
+        if (expectedType & INSTANCE_ADDRESS_BIT)
           {
            if (EvaluationData(theEnv)->EvaluationError)
              {
@@ -903,8 +903,8 @@ bool UDFNextArgument(
           }
         break;
 
-      case MULTIFIELD:
-        if (expectedType & MULTIFIELD_TYPE)
+      case MULTIFIELD_TYPE:
+        if (expectedType & MULTIFIELD_BIT)
           {
            if (EvaluationData(theEnv)->EvaluationError)
              {
@@ -1009,42 +1009,42 @@ void PrintTypesString(
    int typeCount, typesPrinted;
 
    typeCount = 0;
-   if (expectedType & INTEGER_TYPE) typeCount++;
-   if (expectedType & FLOAT_TYPE) typeCount++;
-   if (expectedType & SYMBOL_TYPE) typeCount++;
-   if (expectedType & STRING_TYPE) typeCount++;
-   if (expectedType & INSTANCE_NAME_TYPE) typeCount++;
-   if (expectedType & INSTANCE_ADDRESS_TYPE) typeCount++;
-   if (expectedType & FACT_ADDRESS_TYPE) typeCount++;
-   if (expectedType & EXTERNAL_ADDRESS_TYPE) typeCount++;
-   if (expectedType & MULTIFIELD_TYPE) typeCount++;
+   if (expectedType & INTEGER_BIT) typeCount++;
+   if (expectedType & FLOAT_BIT) typeCount++;
+   if (expectedType & SYMBOL_BIT) typeCount++;
+   if (expectedType & STRING_BIT) typeCount++;
+   if (expectedType & INSTANCE_NAME_BIT) typeCount++;
+   if (expectedType & INSTANCE_ADDRESS_BIT) typeCount++;
+   if (expectedType & FACT_ADDRESS_BIT) typeCount++;
+   if (expectedType & EXTERNAL_ADDRESS_BIT) typeCount++;
+   if (expectedType & MULTIFIELD_BIT) typeCount++;
 
    typesPrinted = 0;
-   if (expectedType & INTEGER_TYPE)
+   if (expectedType & INTEGER_BIT)
      { PrintType(theEnv,logicalName,typeCount,&typesPrinted,"integer"); }
 
-    if (expectedType & FLOAT_TYPE)
+    if (expectedType & FLOAT_BIT)
      { PrintType(theEnv,logicalName,typeCount,&typesPrinted,"float"); }
 
-   if (expectedType & SYMBOL_TYPE)
+   if (expectedType & SYMBOL_BIT)
      { PrintType(theEnv,logicalName,typeCount,&typesPrinted,"symbol"); }
 
-   if (expectedType & STRING_TYPE)
+   if (expectedType & STRING_BIT)
      { PrintType(theEnv,logicalName,typeCount,&typesPrinted,"string"); }
 
-   if (expectedType & INSTANCE_NAME_TYPE)
+   if (expectedType & INSTANCE_NAME_BIT)
      { PrintType(theEnv,logicalName,typeCount,&typesPrinted,"instance name"); }
 
-   if (expectedType & INSTANCE_ADDRESS_TYPE)
+   if (expectedType & INSTANCE_ADDRESS_BIT)
      { PrintType(theEnv,logicalName,typeCount,&typesPrinted,"instance address"); }
 
-   if (expectedType & FACT_ADDRESS_TYPE)
+   if (expectedType & FACT_ADDRESS_BIT)
      { PrintType(theEnv,logicalName,typeCount,&typesPrinted,"fact address"); }
 
-   if (expectedType & EXTERNAL_ADDRESS_TYPE)
+   if (expectedType & EXTERNAL_ADDRESS_BIT)
      { PrintType(theEnv,logicalName,typeCount,&typesPrinted,"external address"); }
 
-   if (expectedType & MULTIFIELD_TYPE)
+   if (expectedType & MULTIFIELD_BIT)
      { PrintType(theEnv,logicalName,typeCount,&typesPrinted,"multifield"); }
 
    if (printCRLF)

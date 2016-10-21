@@ -830,7 +830,7 @@ CLIPSLexeme *GetConstructNameAndComment(
         }
 
       EnvSetCurrentModule(theEnv,theModule);
-      name = ExtractConstructName(theEnv,separatorPosition,name->contents,SYMBOL);
+      name = ExtractConstructName(theEnv,separatorPosition,name->contents,SYMBOL_TYPE);
       if (name == NULL)
         {
          SyntaxErrorMessage(theEnv,"construct name");

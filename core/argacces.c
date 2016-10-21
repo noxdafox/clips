@@ -83,21 +83,21 @@ const char *GetLogicalName(
    const char *logicalName;
    UDFValue theArg;
 
-   if (! UDFNextArgument(context,ANY_TYPE,&theArg))
+   if (! UDFNextArgument(context,ANY_TYPE_BITS,&theArg))
      { return NULL; }
 
-   if (CVIsType(&theArg,LEXEME_TYPES) ||
-       CVIsType(&theArg,INSTANCE_NAME_TYPE))
+   if (CVIsType(&theArg,LEXEME_BITS) ||
+       CVIsType(&theArg,INSTANCE_NAME_BIT))
      {
       logicalName = theArg.lexemeValue->contents;
       if ((strcmp(logicalName,"t") == 0) || (strcmp(logicalName,"T") == 0))
         { logicalName = defaultLogicalName; }
      }
-   else if (CVIsType(&theArg,FLOAT_TYPE))
+   else if (CVIsType(&theArg,FLOAT_BIT))
      {
       logicalName = EnvCreateSymbol(theEnv,FloatToString(theEnv,theArg.floatValue->contents))->contents;
      }
-   else if (CVIsType(&theArg,INTEGER_TYPE))
+   else if (CVIsType(&theArg,INTEGER_BIT))
      {
       logicalName = EnvCreateSymbol(theEnv,LongIntegerToString(theEnv,theArg.integerValue->contents))->contents;
      }
@@ -118,7 +118,7 @@ const char *GetFileName(
   {
    UDFValue theArg;
 
-   if (! UDFNextArgument(context,LEXEME_TYPES,&theArg))
+   if (! UDFNextArgument(context,LEXEME_BITS,&theArg))
      { return NULL; }
 
    return theArg.lexemeValue->contents;
@@ -163,7 +163,7 @@ Defmodule *GetModuleName(
    /* Retrieve the argument. */
    /*========================*/
 
-   if (! UDFNthArgument(context,1,SYMBOL_TYPE,&returnValue))
+   if (! UDFNthArgument(context,1,SYMBOL_BIT,&returnValue))
      {
       *error = true;
       return NULL;
@@ -206,10 +206,10 @@ const char *GetConstructName(
   {
    UDFValue returnValue;
 
-   if (! UDFFirstArgument(context,ANY_TYPE,&returnValue))
+   if (! UDFFirstArgument(context,ANY_TYPE_BITS,&returnValue))
      { return NULL; }
 
-   if (! CVIsType(&returnValue,SYMBOL_TYPE))
+   if (! CVIsType(&returnValue,SYMBOL_BIT))
      {
       UDFInvalidArgumentMessage(context,constructType);
       return NULL;
@@ -417,13 +417,13 @@ void *GetFactOrInstanceArgument(
    /* Retrieve the first argument. */
    /*==============================*/
 
-   UDFNthArgument(context,thePosition,ANY_TYPE,item);
+   UDFNthArgument(context,thePosition,ANY_TYPE_BITS,item);
 
    /*==================================================*/
    /* Fact and instance addresses are valid arguments. */
    /*==================================================*/
 
-   if (CVIsType(item,FACT_ADDRESS_TYPE | INSTANCE_ADDRESS_TYPE))
+   if (CVIsType(item,FACT_ADDRESS_BIT | INSTANCE_ADDRESS_BIT))
      { return item->value; }
 
    /*==================================================*/
@@ -432,7 +432,7 @@ void *GetFactOrInstanceArgument(
    /*==================================================*/
 
 #if DEFTEMPLATE_CONSTRUCT
-   else if (item->header->type == INTEGER)
+   else if (item->header->type == INTEGER_TYPE)
      {
       if ((ptr = (void *) FindIndexedFact(theEnv,item->integerValue->contents)) == NULL)
         {
@@ -450,7 +450,7 @@ void *GetFactOrInstanceArgument(
    /*================================================*/
 
 #if OBJECT_SYSTEM
-   else if (CVIsType(item,INSTANCE_NAME_TYPE | SYMBOL_TYPE))
+   else if (CVIsType(item,INSTANCE_NAME_BIT | SYMBOL_BIT))
      {
       if ((ptr = (void *) FindInstanceBySymbol(theEnv,item->lexemeValue)) == NULL)
         {

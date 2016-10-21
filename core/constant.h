@@ -135,42 +135,42 @@
 
 typedef enum
   {
-   FLOAT_TYPE = (1 << 0),
-   INTEGER_TYPE = (1 << 1),
-   SYMBOL_TYPE = (1 << 2),
-   STRING_TYPE = (1 << 3),
-   MULTIFIELD_TYPE = (1 << 4),
-   EXTERNAL_ADDRESS_TYPE = (1 << 5),
-   FACT_ADDRESS_TYPE = (1 << 6),
-   INSTANCE_ADDRESS_TYPE = (1 << 7),
-   INSTANCE_NAME_TYPE = (1 << 8),
-   VOID_TYPE = (1 << 9),
-   BOOLEAN_TYPE = (1 << 10),
+   FLOAT_BIT = (1 << 0),
+   INTEGER_BIT = (1 << 1),
+   SYMBOL_BIT = (1 << 2),
+   STRING_BIT = (1 << 3),
+   MULTIFIELD_BIT = (1 << 4),
+   EXTERNAL_ADDRESS_BIT = (1 << 5),
+   FACT_ADDRESS_BIT = (1 << 6),
+   INSTANCE_ADDRESS_BIT = (1 << 7),
+   INSTANCE_NAME_BIT = (1 << 8),
+   VOID_BIT = (1 << 9),
+   BOOLEAN_BIT = (1 << 10),
   } CLIPSType;
 
-#define NUMBER_TYPES (INTEGER_TYPE | FLOAT_TYPE)
-#define LEXEME_TYPES (SYMBOL_TYPE | STRING_TYPE)
-#define ADDRESS_TYPES (EXTERNAL_ADDRESS_TYPE | FACT_ADDRESS_TYPE | INSTANCE_ADDRESS_TYPE)
-#define INSTANCE_TYPES (INSTANCE_ADDRESS_TYPE | INSTANCE_NAME_TYPE)
-#define SINGLEFIELD_TYPES (NUMBER_TYPES | LEXEME_TYPES | ADDRESS_TYPES | INSTANCE_NAME_TYPE)
-#define ANY_TYPE (VOID_TYPE | SINGLEFIELD_TYPES | MULTIFIELD_TYPE)
+#define NUMBER_BITS (INTEGER_BIT | FLOAT_BIT)
+#define LEXEME_BITS (SYMBOL_BIT | STRING_BIT)
+#define ADDRESS_BITS (EXTERNAL_ADDRESS_BIT | FACT_ADDRESS_BIT | INSTANCE_ADDRESS_BIT)
+#define INSTANCE_BITS (INSTANCE_ADDRESS_BIT | INSTANCE_NAME_BIT)
+#define SINGLEFIELD_BITS (NUMBER_BITS | LEXEME_BITS | ADDRESS_BITS | INSTANCE_NAME_BIT)
+#define ANY_TYPE_BITS (VOID_BIT | SINGLEFIELD_BITS | MULTIFIELD_BIT)
 
 /****************************************************/
 /* The first 9 primitive types need to retain their */
 /* values!! Sorted arrays depend on their values!!  */
 /****************************************************/
 
-#define FLOAT                           0
-#define INTEGER                         1
-#define SYMBOL                          2
-#define STRING                          3
-#define MULTIFIELD                      4
-#define EXTERNAL_ADDRESS                5
-#define FACT_ADDRESS                    6
-#define INSTANCE_ADDRESS                7
-#define INSTANCE_NAME                   8
+#define FLOAT_TYPE                      0
+#define INTEGER_TYPE                    1
+#define SYMBOL_TYPE                     2
+#define STRING_TYPE                     3
+#define MULTIFIELD_TYPE                 4
+#define EXTERNAL_ADDRESS_TYPE           5
+#define FACT_ADDRESS_TYPE               6
+#define INSTANCE_ADDRESS_TYPE           7
+#define INSTANCE_NAME_TYPE              8
 
-#define RVOID                           9
+#define VOID_TYPE                       9
 
 #define BITMAP                         11
 

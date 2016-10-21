@@ -686,7 +686,7 @@ Defmodule *EnvFindDefmodule(
    Defmodule *defmodulePtr;
    CLIPSLexeme *findValue;
 
-   if ((findValue = FindSymbolHN(theEnv,defmoduleName,SYMBOL_TYPE)) == NULL) return NULL;
+   if ((findValue = FindSymbolHN(theEnv,defmoduleName,SYMBOL_BIT)) == NULL) return NULL;
 
    defmodulePtr = DefmoduleData(theEnv)->ListOfDefmodules;
    while (defmodulePtr != NULL)
@@ -754,7 +754,7 @@ void SetCurrentModuleCommand(
    /* Check for the correct number and type of arguments. */
    /*=====================================================*/
 
-   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
+   if (! UDFFirstArgument(context,SYMBOL_BIT,&theArg))
      { return; }
 
    argument = theArg.lexemeValue->contents;

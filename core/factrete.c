@@ -108,10 +108,10 @@ bool FactPNGetVar1(
       theSlot = hack->whichSlot;
       fieldPtr = &factPtr->theProposition.theFields[theSlot];
       returnValue->value = fieldPtr->value;
-      if (returnValue->header->type == MULTIFIELD)
+      if (returnValue->header->type == MULTIFIELD_TYPE)
         {
          returnValue->begin = 0;
-         returnValue->range = fieldPtr->multifieldValue->multifieldLength;
+         returnValue->range = fieldPtr->multifieldValue->length;
         }
 
       return true;
@@ -243,7 +243,7 @@ bool FactPNGetVar3(
      {
       returnValue->value = segmentPtr;
       returnValue->begin = (long) hack->beginOffset;
-      returnValue->range = segmentPtr->multifieldLength - (hack->endOffset + hack->beginOffset);
+      returnValue->range = segmentPtr->length - (hack->endOffset + hack->beginOffset);
       return true;
      }
 
@@ -254,7 +254,7 @@ bool FactPNGetVar3(
    if (hack->fromBeginning)
      { fieldPtr = &segmentPtr->theFields[hack->beginOffset]; }
    else
-     { fieldPtr = &segmentPtr->theFields[segmentPtr->multifieldLength - (hack->endOffset + 1)]; }
+     { fieldPtr = &segmentPtr->theFields[segmentPtr->length - (hack->endOffset + 1)]; }
 
    returnValue->value = fieldPtr->value;
 
@@ -334,7 +334,7 @@ bool FactPNConstant2(
 
    fieldPtr = &FactData(theEnv)->CurrentPatternFact->theProposition.theFields[hack->whichSlot];
 
-   if (fieldPtr->header->type == MULTIFIELD)
+   if (fieldPtr->header->type == MULTIFIELD_TYPE)
      {
       segmentPtr = fieldPtr->multifieldValue;
 
@@ -342,7 +342,7 @@ bool FactPNConstant2(
         { fieldPtr = &segmentPtr->theFields[hack->offset]; }
       else
         {
-         fieldPtr = &segmentPtr->theFields[segmentPtr->multifieldLength -
+         fieldPtr = &segmentPtr->theFields[segmentPtr->length -
                     (hack->offset + 1)];
         }
      }
@@ -436,10 +436,10 @@ bool FactJNGetVar1(
       theSlot = hack->whichSlot;
       fieldPtr = &theSlots->theFields[theSlot];
       returnValue->value = fieldPtr->value;
-      if (returnValue->header->type == MULTIFIELD)
+      if (returnValue->header->type == MULTIFIELD_TYPE)
         {
          returnValue->begin = 0;
-         returnValue->range = fieldPtr->multifieldValue->multifieldLength;
+         returnValue->range = fieldPtr->multifieldValue->length;
         }
 
       return true;
@@ -458,7 +458,7 @@ bool FactJNGetVar1(
    theSlot = hack->whichSlot;
    fieldPtr = &theSlots->theFields[theSlot];
 
-   if (fieldPtr->header->type != MULTIFIELD)
+   if (fieldPtr->header->type != MULTIFIELD_TYPE)
      {
       returnValue->value = fieldPtr->value;
       return true;
@@ -603,7 +603,7 @@ bool FactJNGetVar3(
      {
       returnValue->value = segmentPtr;
       returnValue->begin = hack->beginOffset;
-      returnValue->range = segmentPtr->multifieldLength - (hack->endOffset + hack->beginOffset);
+      returnValue->range = segmentPtr->length - (hack->endOffset + hack->beginOffset);
       return true;
      }
 
@@ -614,7 +614,7 @@ bool FactJNGetVar3(
    if (hack->fromBeginning)
      { fieldPtr = &segmentPtr->theFields[hack->beginOffset]; }
    else
-     { fieldPtr = &segmentPtr->theFields[segmentPtr->multifieldLength - (hack->endOffset + 1)]; }
+     { fieldPtr = &segmentPtr->theFields[segmentPtr->length - (hack->endOffset + 1)]; }
 
    returnValue->value = fieldPtr->value;
 
@@ -649,10 +649,10 @@ bool FactSlotLength(
 
    segmentPtr = FactData(theEnv)->CurrentPatternFact->theProposition.theFields[hack->whichSlot].multifieldValue;
 
-   if (segmentPtr->multifieldLength < (hack->minLength + extraOffset))
+   if (segmentPtr->length < (hack->minLength + extraOffset))
      { return false; }
 
-   if (hack->exactly && (segmentPtr->multifieldLength > (hack->minLength + extraOffset)))
+   if (hack->exactly && (segmentPtr->length > (hack->minLength + extraOffset)))
      { return false; }
 
    returnValue->value = theEnv->TrueSymbol;
@@ -756,7 +756,7 @@ bool FactJNCompVars2(
    /* Retrieve the values. */
    /*======================*/
 
-   if (fact1->theProposition.theFields[s1].header->type != MULTIFIELD)
+   if (fact1->theProposition.theFields[s1].header->type != MULTIFIELD_TYPE)
      { fieldPtr1 = &fact1->theProposition.theFields[s1]; }
    else
      {
@@ -765,10 +765,10 @@ bool FactJNCompVars2(
       if (hack->fromBeginning1)
         { fieldPtr1 = &segment->theFields[hack->offset1]; }
       else
-        { fieldPtr1 = &segment->theFields[segment->multifieldLength - (hack->offset1 + 1)]; }
+        { fieldPtr1 = &segment->theFields[segment->length - (hack->offset1 + 1)]; }
      }
 
-   if (fact2->theProposition.theFields[s2].header->type != MULTIFIELD)
+   if (fact2->theProposition.theFields[s2].header->type != MULTIFIELD_TYPE)
      { fieldPtr2 = &fact2->theProposition.theFields[s2]; }
    else
      {
@@ -777,7 +777,7 @@ bool FactJNCompVars2(
       if (hack->fromBeginning2)
         { fieldPtr2 = &segment->theFields[hack->offset2]; }
       else
-        { fieldPtr2 = &segment->theFields[segment->multifieldLength - (hack->offset2 + 1)]; }
+        { fieldPtr2 = &segment->theFields[segment->length - (hack->offset2 + 1)]; }
      }
 
    /*=====================*/

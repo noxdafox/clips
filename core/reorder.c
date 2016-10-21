@@ -1390,15 +1390,15 @@ unsigned short NodeTypeToType(
    switch (theNode->pnType)
      {
       case FLOAT_NODE:
-        return FLOAT;
+        return FLOAT_TYPE;
       case INTEGER_NODE:
-        return INTEGER;
+        return INTEGER_TYPE;
       case SYMBOL_NODE:
-        return SYMBOL;
+        return SYMBOL_TYPE;
       case STRING_NODE:
-        return STRING;
+        return STRING_TYPE;
       case INSTANCE_NAME_NODE:
-        return INSTANCE_NAME;
+        return INSTANCE_NAME_TYPE;
       case SF_VARIABLE_NODE:
         return SF_VARIABLE;
       case MF_VARIABLE_NODE:
@@ -1413,7 +1413,7 @@ unsigned short NodeTypeToType(
         return GCALL;
         
       default:
-        return RVOID;
+        return VOID_TYPE;
      }
   }
 
@@ -1425,15 +1425,15 @@ ParseNodeType TypeToNodeType(
   {
    switch (theType)
      {
-      case FLOAT:
+      case FLOAT_TYPE:
         return FLOAT_NODE;
-      case INTEGER:
+      case INTEGER_TYPE:
         return INTEGER_NODE;
-      case SYMBOL:
+      case SYMBOL_TYPE:
         return SYMBOL_NODE;
-      case STRING:
+      case STRING_TYPE:
         return STRING_NODE;
-      case INSTANCE_NAME:
+      case INSTANCE_NAME_TYPE:
         return INSTANCE_NAME_NODE;
       case SF_VARIABLE:
         return SF_VARIABLE_NODE;

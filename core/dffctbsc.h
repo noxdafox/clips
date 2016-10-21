@@ -61,7 +61,7 @@
    void                           UndeffactsCommand(Environment *,UDFContext *,UDFValue *);
    bool                           EnvUndeffacts(Environment *,Deffacts *);
    void                           GetDeffactsListFunction(Environment *,UDFContext *,UDFValue *);
-   void                           EnvGetDeffactsList(Environment *,UDFValue *,Defmodule *);
+   void                           EnvGetDeffactsList(Environment *,CLIPSValue *,Defmodule *);
    void                           DeffactsModuleFunction(Environment *,UDFContext *,UDFValue *);
    void                           PPDeffactsCommand(Environment *,UDFContext *,UDFValue *);
    bool                           PPDeffacts(Environment *,const char *,const char *);

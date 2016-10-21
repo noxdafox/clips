@@ -373,7 +373,7 @@ Instance *FindInstanceBySymbol(
    if (modulePosition == 0)
      {
       Instance *ins;
-      if (moduleAndInstanceName->th.type == SYMBOL)
+      if (moduleAndInstanceName->th.type == SYMBOL_TYPE)
         { moduleAndInstanceName = EnvCreateInstanceName(theEnv,moduleAndInstanceName->contents); }
 
       ins = InstanceData(theEnv)->InstanceTable[HashInstance(moduleAndInstanceName)];
@@ -394,7 +394,7 @@ Instance *FindInstanceBySymbol(
    else if (modulePosition == 1)
      {
       theModule = currentModule;
-      instanceName = ExtractConstructName(theEnv,modulePosition,moduleAndInstanceName->contents,INSTANCE_NAME);
+      instanceName = ExtractConstructName(theEnv,modulePosition,moduleAndInstanceName->contents,INSTANCE_NAME_TYPE);
       searchImports = true;
      }
 
@@ -406,7 +406,7 @@ Instance *FindInstanceBySymbol(
      {
       moduleName = ExtractModuleName(theEnv,modulePosition,moduleAndInstanceName->contents);
       theModule = EnvFindDefmodule(theEnv,moduleName->contents);
-      instanceName = ExtractConstructName(theEnv,modulePosition,moduleAndInstanceName->contents,INSTANCE_NAME);
+      instanceName = ExtractConstructName(theEnv,modulePosition,moduleAndInstanceName->contents,INSTANCE_NAME_TYPE);
       if (theModule == NULL)
         return NULL;
       searchImports = false;
@@ -661,7 +661,7 @@ bool DirectPutSlotValue(
          Assumed that multfield already checked
          to be of cardinality 1
          ====================================== */
-      if (val->header->type == MULTIFIELD)
+      if (val->header->type == MULTIFIELD_TYPE)
         {
          sp->type = val->multifieldValue->theFields[val->begin].header->type;
          sp->value = val->multifieldValue->theFields[val->begin].value;
@@ -678,8 +678,8 @@ bool DirectPutSlotValue(
      {
       MultifieldDeinstall(theEnv,sp->multifieldValue);
       AddToMultifieldList(theEnv,sp->multifieldValue);
-      sp->type = MULTIFIELD;
-      if (val->header->type == MULTIFIELD)
+      sp->type = MULTIFIELD_TYPE;
+      if (val->header->type == MULTIFIELD_TYPE)
         {
          sp->value = CreateUnmanagedMultifield(theEnv,(unsigned long) val->range);
          for (i = 0 , j = val->begin ; i < val->range ; i++ , j++)
@@ -695,7 +695,7 @@ bool DirectPutSlotValue(
       MultifieldInstall(theEnv,sp->multifieldValue);
       setVal->value = sp->value;
       setVal->begin = 0;
-      setVal->range = GetMFLength(sp->value);
+      setVal->range = sp->multifieldValue->length;
      }
    /* ==================================================
       6.05 Bug fix - any slot set directly or indirectly
@@ -717,11 +717,11 @@ bool DirectPutSlotValue(
       EnvPrintRouter(theEnv,WTRACE," in instance ");
       EnvPrintRouter(theEnv,WTRACE,ins->name->contents);
       EnvPrintRouter(theEnv,WTRACE," <- ");
-      if (sp->type != MULTIFIELD)
+      if (sp->type != MULTIFIELD_TYPE)
         PrintAtom(theEnv,WTRACE,(int) sp->type,sp->value);
       else
         PrintMultifield(theEnv,WTRACE,sp->multifieldValue,0,
-                        (long) (GetInstanceSlotLength(sp) - 1),true);
+                        (long) (sp->multifieldValue->length - 1),true);
       EnvPrintRouter(theEnv,WTRACE,"\n");
      }
 #endif
@@ -791,7 +791,7 @@ bool ValidSlotValue(
       =================================== */
    if (val->value == ProceduralPrimitiveData(theEnv)->NoParamValue)
      return true;
-   if ((sd->multiple == 0) && (val->header->type == MULTIFIELD) &&
+   if ((sd->multiple == 0) && (val->header->type == MULTIFIELD_TYPE) &&
                               (val->range != 1))
      {
       PrintErrorID(theEnv,"INSFUN",7,false);
@@ -802,7 +802,7 @@ bool ValidSlotValue(
       EnvSetEvaluationError(theEnv,true);
       return false;
      }
-   if (val->header->type == RVOID)
+   if (val->header->type == VOID_TYPE)
      {
       PrintErrorID(theEnv,"INSFUN",8,false);
       EnvPrintRouter(theEnv,WERROR,"Void function illegal value for ");
@@ -817,7 +817,7 @@ bool ValidSlotValue(
       if (violationCode != NO_VIOLATION)
         {
          PrintErrorID(theEnv,"CSTRNCHK",1,false);
-         if ((val->header->type == MULTIFIELD) && (sd->multiple == 0))
+         if ((val->header->type == MULTIFIELD_TYPE) && (sd->multiple == 0))
            PrintAtom(theEnv,WERROR,val->multifieldValue->theFields[val->begin].header->type,
                                    val->multifieldValue->theFields[val->begin].value);
          else
@@ -850,8 +850,8 @@ Instance *CheckInstance(
    UDFValue temp;
    Environment *theEnv = context->environment;
 
-   UDFFirstArgument(context,ANY_TYPE,&temp);
-   if (temp.header->type == INSTANCE_ADDRESS)
+   UDFFirstArgument(context,ANY_TYPE_BITS,&temp);
+   if (temp.header->type == INSTANCE_ADDRESS_TYPE)
      {
       ins = temp.instanceValue;
       if (ins->garbage == 1)
@@ -861,7 +861,7 @@ Instance *CheckInstance(
          return NULL;
         }
      }
-   else if (temp.header->type == INSTANCE_NAME)
+   else if (temp.header->type == INSTANCE_NAME_TYPE)
      {
       ins = FindInstanceBySymbol(theEnv,temp.lexemeValue);
       if (ins == NULL)
@@ -870,7 +870,7 @@ Instance *CheckInstance(
          return NULL;
         }
      }
-   else if (temp.header->type == SYMBOL)
+   else if (temp.header->type == SYMBOL_TYPE)
      {
       temp.value = EnvCreateInstanceName(theEnv,temp.lexemeValue->contents);
       ins = FindInstanceBySymbol(theEnv,temp.lexemeValue);

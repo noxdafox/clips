@@ -1135,7 +1135,7 @@ void SetSalienceEvaluationCommand(
    /* which must be a symbol.                 */
    /*=========================================*/
 
-   if (! UDFFirstArgument(context,SYMBOL_TYPE,&value))
+   if (! UDFFirstArgument(context,SYMBOL_BIT,&value))
      { return; }
 
    /*=============================================================*/
@@ -1283,7 +1283,7 @@ static int EvaluateSalience(
   /* The salience value must be an integer. */
   /*========================================*/
 
-  if (salienceValue.header->type != INTEGER)
+  if (salienceValue.header->type != INTEGER_TYPE)
     {
      SalienceNonIntegerError(theEnv);
      SalienceInformationError(theEnv,"defrule",theDefrule->header.name->contents);

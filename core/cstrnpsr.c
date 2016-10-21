@@ -157,9 +157,9 @@ bool CheckConstraintParseConflicts(
    if ((constraints->maxValue != NULL) &&
        (constraints->anyAllowed == false))
      {
-      if (((constraints->maxValue->type == INTEGER) &&
+      if (((constraints->maxValue->type == INTEGER_TYPE) &&
           (constraints->integersAllowed == false)) ||
-          ((constraints->maxValue->type == FLOAT) &&
+          ((constraints->maxValue->type == FLOAT_TYPE) &&
            (constraints->floatsAllowed == false)))
         {
          AttributeConflictErrorMessage(theEnv,"type","range");
@@ -170,9 +170,9 @@ bool CheckConstraintParseConflicts(
    if ((constraints->minValue != NULL) &&
        (constraints->anyAllowed == false))
      {
-      if (((constraints->minValue->type == INTEGER) &&
+      if (((constraints->minValue->type == INTEGER_TYPE) &&
           (constraints->integersAllowed == false)) ||
-          ((constraints->minValue->type == FLOAT) &&
+          ((constraints->minValue->type == FLOAT_TYPE) &&
            (constraints->floatsAllowed == false)))
         {
          AttributeConflictErrorMessage(theEnv,"type","range");
@@ -410,41 +410,41 @@ void OverlayConstraint(
          if ((pc->allowedSymbols == 0) && csrc->symbolRestriction)
            {
             cdst->symbolRestriction = 1;
-            AddToRestrictionList(theEnv,SYMBOL,cdst,csrc);
+            AddToRestrictionList(theEnv,SYMBOL_TYPE,cdst,csrc);
            }
          if ((pc->allowedStrings == 0) && csrc->stringRestriction)
            {
             cdst->stringRestriction = 1;
-            AddToRestrictionList(theEnv,STRING,cdst,csrc);
+            AddToRestrictionList(theEnv,STRING_TYPE,cdst,csrc);
            }
          if ((pc->allowedLexemes == 0) && csrc->symbolRestriction && csrc->stringRestriction)
            {
             cdst->symbolRestriction = 1;
             cdst->stringRestriction = 1;
-            AddToRestrictionList(theEnv,SYMBOL,cdst,csrc);
-            AddToRestrictionList(theEnv,STRING,cdst,csrc);
+            AddToRestrictionList(theEnv,SYMBOL_TYPE,cdst,csrc);
+            AddToRestrictionList(theEnv,STRING_TYPE,cdst,csrc);
            }
          if ((pc->allowedIntegers == 0) && csrc->integerRestriction)
            {
             cdst->integerRestriction = 1;
-            AddToRestrictionList(theEnv,INTEGER,cdst,csrc);
+            AddToRestrictionList(theEnv,INTEGER_TYPE,cdst,csrc);
            }
          if ((pc->allowedFloats == 0) && csrc->floatRestriction)
            {
             cdst->floatRestriction = 1;
-            AddToRestrictionList(theEnv,FLOAT,cdst,csrc);
+            AddToRestrictionList(theEnv,FLOAT_TYPE,cdst,csrc);
            }
          if ((pc->allowedNumbers == 0) && csrc->integerRestriction && csrc->floatRestriction)
            {
             cdst->integerRestriction = 1;
             cdst->floatRestriction = 1;
-            AddToRestrictionList(theEnv,INTEGER,cdst,csrc);
-            AddToRestrictionList(theEnv,FLOAT,cdst,csrc);
+            AddToRestrictionList(theEnv,INTEGER_TYPE,cdst,csrc);
+            AddToRestrictionList(theEnv,FLOAT_TYPE,cdst,csrc);
            }
          if ((pc->allowedInstanceNames == 0) && csrc->instanceNameRestriction)
            {
             cdst->instanceNameRestriction = 1;
-            AddToRestrictionList(theEnv,INSTANCE_NAME,cdst,csrc);
+            AddToRestrictionList(theEnv,INSTANCE_NAME_TYPE,cdst,csrc);
            }
         }
      }
@@ -637,7 +637,7 @@ static bool ParseAllowedValuesAttribute(
    restrictionType = GetConstraintTypeFromAllowedName(constraintName);
    SetRestrictionFlag(restrictionType,constraints,true);
    if (strcmp(constraintName,"allowed-classes") == 0)
-     { expectedType = SYMBOL; }
+     { expectedType = SYMBOL_TYPE; }
    else
      { expectedType = restrictionType; }
 
@@ -675,42 +675,42 @@ static bool ParseAllowedValuesAttribute(
         {
          case INTEGER_TOKEN:
            if ((expectedType != UNKNOWN_VALUE) &&
-               (expectedType != INTEGER) &&
+               (expectedType != INTEGER_TYPE) &&
                (expectedType != INTEGER_OR_FLOAT)) error = true;
            constantParsed = true;
-           genType = INTEGER;
+           genType = INTEGER_TYPE;
            break;
 
          case FLOAT_TOKEN:
            if ((expectedType != UNKNOWN_VALUE) &&
-               (expectedType != FLOAT) &&
+               (expectedType != FLOAT_TYPE) &&
                (expectedType != INTEGER_OR_FLOAT)) error = true;
            constantParsed = true;
-           genType = FLOAT;
+           genType = FLOAT_TYPE;
            break;
 
          case STRING_TOKEN:
            if ((expectedType != UNKNOWN_VALUE) &&
-               (expectedType != STRING) &&
+               (expectedType != STRING_TYPE) &&
                (expectedType != SYMBOL_OR_STRING)) error = true;
            constantParsed = true;
-           genType = STRING;
+           genType = STRING_TYPE;
            break;
 
          case SYMBOL_TOKEN:
            if ((expectedType != UNKNOWN_VALUE) &&
-               (expectedType != SYMBOL) &&
+               (expectedType != SYMBOL_TYPE) &&
                (expectedType != SYMBOL_OR_STRING)) error = true;
            constantParsed = true;
-           genType = SYMBOL;
+           genType = SYMBOL_TYPE;
            break;
 
 #if OBJECT_SYSTEM
          case INSTANCE_NAME_TOKEN:
            if ((expectedType != UNKNOWN_VALUE) &&
-               (expectedType != INSTANCE_NAME)) error = true;
+               (expectedType != INSTANCE_NAME_TYPE)) error = true;
            constantParsed = true;
-           genType = INSTANCE_NAME;
+           genType = INSTANCE_NAME_TYPE;
            break;
 #endif
 
@@ -816,19 +816,19 @@ static bool ParseAllowedValuesAttribute(
            constraints->anyRestriction = false;
            break;
 
-         case SYMBOL:
+         case SYMBOL_TYPE:
            constraints->symbolRestriction = false;
            break;
 
-         case STRING:
+         case STRING_TYPE:
            constraints->stringRestriction = false;
            break;
 
-         case INTEGER:
+         case INTEGER_TYPE:
            constraints->integerRestriction = false;
            break;
 
-         case FLOAT:
+         case FLOAT_TYPE:
            constraints->floatRestriction = false;
            break;
 
@@ -842,7 +842,7 @@ static bool ParseAllowedValuesAttribute(
            constraints->stringRestriction = false;
            break;
 
-         case INSTANCE_NAME:
+         case INSTANCE_NAME_TYPE:
            constraints->instanceNameRestriction = false;
            break;
 
@@ -929,7 +929,7 @@ static bool ParseTypeAttribute(
 
          /*========================================*/
          /* Check for an appropriate type constant */
-         /* (e.g. SYMBOL, FLOAT, INTEGER, etc.).   */
+         /* (e.g. SYMBOL_TYPE, FLOAT_TYPE, INTEGER_TYPE, etc.).   */
          /*========================================*/
 
          theType = GetConstraintTypeFromTypeName(inputToken.lexemeValue->contents);
@@ -1107,9 +1107,9 @@ static bool ParseRangeCardinalityAttribute(
         {
          ReturnExpression(theEnv,constraints->minValue);
          if (inputToken.tknType == INTEGER_TOKEN)
-           { constraints->minValue = GenConstant(theEnv,INTEGER,inputToken.value); }
+           { constraints->minValue = GenConstant(theEnv,INTEGER_TYPE,inputToken.value); }
          else
-           { constraints->minValue = GenConstant(theEnv,FLOAT,inputToken.value); }
+           { constraints->minValue = GenConstant(theEnv,FLOAT_TYPE,inputToken.value); }
         }
       else
         {
@@ -1122,9 +1122,9 @@ static bool ParseRangeCardinalityAttribute(
 
          ReturnExpression(theEnv,constraints->minFields);
          if (inputToken.tknType == INTEGER_TOKEN)
-           { constraints->minFields = GenConstant(theEnv,INTEGER,inputToken.value); }
+           { constraints->minFields = GenConstant(theEnv,INTEGER_TYPE,inputToken.value); }
          else
-           { constraints->minFields = GenConstant(theEnv,FLOAT,inputToken.value); }
+           { constraints->minFields = GenConstant(theEnv,FLOAT_TYPE,inputToken.value); }
         }
      }
    else if ((inputToken.tknType == SF_VARIABLE_TOKEN) && (strcmp(inputToken.printForm,"?VARIABLE") == 0))
@@ -1149,17 +1149,17 @@ static bool ParseRangeCardinalityAttribute(
         {
          ReturnExpression(theEnv,constraints->maxValue);
          if (inputToken.tknType == INTEGER_TOKEN)
-           { constraints->maxValue = GenConstant(theEnv,INTEGER,inputToken.value); }
+           { constraints->maxValue = GenConstant(theEnv,INTEGER_TYPE,inputToken.value); }
          else
-           { constraints->maxValue = GenConstant(theEnv,FLOAT,inputToken.value); }
+           { constraints->maxValue = GenConstant(theEnv,FLOAT_TYPE,inputToken.value); }
         }
       else
         {
          ReturnExpression(theEnv,constraints->maxFields);
          if (inputToken.tknType == INTEGER_TOKEN)
-           { constraints->maxFields = GenConstant(theEnv,INTEGER,inputToken.value); }
+           { constraints->maxFields = GenConstant(theEnv,INTEGER_TYPE,inputToken.value); }
          else
-           { constraints->maxFields = GenConstant(theEnv,FLOAT,inputToken.value); }
+           { constraints->maxFields = GenConstant(theEnv,FLOAT_TYPE,inputToken.value); }
         }
      }
    else if ((inputToken.tknType == SF_VARIABLE_TOKEN) && (strcmp(inputToken.printForm,"?VARIABLE") == 0))
@@ -1230,14 +1230,14 @@ static int GetConstraintTypeFromAllowedName(
   const char *constraintName)
   {
    if (strcmp(constraintName,"allowed-values") == 0) return(UNKNOWN_VALUE);
-   else if (strcmp(constraintName,"allowed-symbols") == 0) return(SYMBOL);
-   else if (strcmp(constraintName,"allowed-strings") == 0) return(STRING);
+   else if (strcmp(constraintName,"allowed-symbols") == 0) return(SYMBOL_TYPE);
+   else if (strcmp(constraintName,"allowed-strings") == 0) return(STRING_TYPE);
    else if (strcmp(constraintName,"allowed-lexemes") == 0) return(SYMBOL_OR_STRING);
-   else if (strcmp(constraintName,"allowed-integers") == 0) return(INTEGER);
+   else if (strcmp(constraintName,"allowed-integers") == 0) return(INTEGER_TYPE);
    else if (strcmp(constraintName,"allowed-numbers") == 0) return(INTEGER_OR_FLOAT);
-   else if (strcmp(constraintName,"allowed-instance-names") == 0) return(INSTANCE_NAME);
+   else if (strcmp(constraintName,"allowed-instance-names") == 0) return(INSTANCE_NAME_TYPE);
    else if (strcmp(constraintName,"allowed-classes") == 0) return(INSTANCE_OR_INSTANCE_NAME);
-   else if (strcmp(constraintName,"allowed-floats") == 0) return(FLOAT);
+   else if (strcmp(constraintName,"allowed-floats") == 0) return(FLOAT_TYPE);
 
    return(-1);
   }
@@ -1249,17 +1249,17 @@ static int GetConstraintTypeFromAllowedName(
 static int GetConstraintTypeFromTypeName(
   const char *constraintName)
   {
-   if (strcmp(constraintName,"SYMBOL") == 0) return(SYMBOL);
-   else if (strcmp(constraintName,"STRING") == 0) return(STRING);
+   if (strcmp(constraintName,"SYMBOL") == 0) return(SYMBOL_TYPE);
+   else if (strcmp(constraintName,"STRING") == 0) return(STRING_TYPE);
    else if (strcmp(constraintName,"LEXEME") == 0) return(SYMBOL_OR_STRING);
-   else if (strcmp(constraintName,"INTEGER") == 0) return(INTEGER);
-   else if (strcmp(constraintName,"FLOAT") == 0) return(FLOAT);
+   else if (strcmp(constraintName,"INTEGER") == 0) return(INTEGER_TYPE);
+   else if (strcmp(constraintName,"FLOAT") == 0) return(FLOAT_TYPE);
    else if (strcmp(constraintName,"NUMBER") == 0) return(INTEGER_OR_FLOAT);
-   else if (strcmp(constraintName,"INSTANCE-NAME") == 0) return(INSTANCE_NAME);
-   else if (strcmp(constraintName,"INSTANCE-ADDRESS") == 0) return(INSTANCE_ADDRESS);
+   else if (strcmp(constraintName,"INSTANCE-NAME") == 0) return(INSTANCE_NAME_TYPE);
+   else if (strcmp(constraintName,"INSTANCE-ADDRESS") == 0) return(INSTANCE_ADDRESS_TYPE);
    else if (strcmp(constraintName,"INSTANCE") == 0) return(INSTANCE_OR_INSTANCE_NAME);
-   else if (strcmp(constraintName,"EXTERNAL-ADDRESS") == 0) return(EXTERNAL_ADDRESS);
-   else if (strcmp(constraintName,"FACT-ADDRESS") == 0) return(FACT_ADDRESS);
+   else if (strcmp(constraintName,"EXTERNAL-ADDRESS") == 0) return(EXTERNAL_ADDRESS_TYPE);
+   else if (strcmp(constraintName,"FACT-ADDRESS") == 0) return(FACT_ADDRESS_TYPE);
 
    return(-1);
   }
@@ -1316,19 +1316,19 @@ static void SetRestrictionFlag(
          constraints->anyRestriction = value;
          break;
 
-      case SYMBOL:
+      case SYMBOL_TYPE:
          constraints->symbolRestriction = value;
          break;
 
-      case STRING:
+      case STRING_TYPE:
          constraints->stringRestriction = value;
          break;
 
-      case INTEGER:
+      case INTEGER_TYPE:
          constraints->integerRestriction = value;
          break;
 
-      case FLOAT:
+      case FLOAT_TYPE:
          constraints->floatRestriction = value;
          break;
 
@@ -1342,7 +1342,7 @@ static void SetRestrictionFlag(
          constraints->stringRestriction = value;
          break;
 
-      case INSTANCE_NAME:
+      case INSTANCE_NAME_TYPE:
          constraints->instanceNameRestriction = value;
          break;
 

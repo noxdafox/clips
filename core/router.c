@@ -354,7 +354,7 @@ void ExitCommand(
      { EnvExitRouter(theEnv,EXIT_SUCCESS); }
    else
     {
-     if (! UDFFirstArgument(context,INTEGER_TYPE,&theArg))
+     if (! UDFFirstArgument(context,INTEGER_BIT,&theArg))
        { EnvExitRouter(theEnv,EXIT_SUCCESS); }
 
      status = (int) theArg.integerValue->contents;

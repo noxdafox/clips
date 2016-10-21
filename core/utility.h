@@ -31,7 +31,7 @@
 /*            Used genstrncpy function instead of strncpy    */
 /*            function.                                      */
 /*                                                           */
-/*            Support for typed EXTERNAL_ADDRESS.            */
+/*            Support for typed EXTERNAL_ADDRESS_TYPE.            */
 /*                                                           */
 /*            Support for tracked memory (allows memory to   */
 /*            be freed if CLIPS is exited while executing).  */

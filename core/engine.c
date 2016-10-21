@@ -1032,7 +1032,7 @@ void RunCommand(
      { runLimit = -1LL; }
    else if (numArgs == 1)
      {
-      if (! UDFFirstArgument(context,INTEGER_TYPE,&theArg)) return;
+      if (! UDFFirstArgument(context,INTEGER_BIT,&theArg)) return;
       runLimit = theArg.integerValue->contents;
      }
 
@@ -1171,7 +1171,7 @@ void SetBreakCommand(
    const char *argument;
    Defrule *defrulePtr;
 
-   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg)) return;
+   if (! UDFFirstArgument(context,SYMBOL_BIT,&theArg)) return;
 
    argument = theArg.lexemeValue->contents;
 
@@ -1203,7 +1203,7 @@ void RemoveBreakCommand(
       return;
      }
 
-   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg)) return;
+   if (! UDFFirstArgument(context,SYMBOL_BIT,&theArg)) return;
 
    argument = theArg.lexemeValue->contents;
 
@@ -1289,7 +1289,10 @@ void GetFocusStackFunction(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   EnvGetFocusStack(theEnv,returnValue);
+   CLIPSValue result;
+   
+   EnvGetFocusStack(theEnv,&result);
+   CLIPSToUDFValue(&result,returnValue);
   }
 
 /***************************************/
@@ -1298,7 +1301,7 @@ void GetFocusStackFunction(
 /***************************************/
 void EnvGetFocusStack(
   Environment *theEnv,
-  UDFValue *returnValue)
+  CLIPSValue *returnValue)
   {
    struct focus *theFocus;
    Multifield *theList;
@@ -1311,8 +1314,6 @@ void EnvGetFocusStack(
 
    if (EngineData(theEnv)->CurrentFocus == NULL)
      {
-      returnValue->begin = 0;
-      returnValue->range = 0;
       returnValue->value = EnvCreateMultifield(theEnv,0L);
       return;
      }
@@ -1329,8 +1330,6 @@ void EnvGetFocusStack(
    /* in which to store the module names.         */
    /*=============================================*/
 
-   returnValue->begin = 0;
-   returnValue->range = count;
    theList = EnvCreateMultifield(theEnv,count);
    returnValue->multifieldValue = theList;
 
@@ -1423,7 +1422,7 @@ void FocusCommand(
 
    for (i = argCount; i > 0; i--)
      {
-      if (! UDFNthArgument(context,i,SYMBOL_TYPE,&theArg))
+      if (! UDFNthArgument(context,i,SYMBOL_BIT,&theArg))
         { return; }
 
       argument = theArg.lexemeValue->contents;

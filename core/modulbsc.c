@@ -150,7 +150,10 @@ void GetDefmoduleListFunction(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   EnvGetDefmoduleList(theEnv,returnValue);
+   CLIPSValue result;
+   
+   EnvGetDefmoduleList(theEnv,&result);
+   CLIPSToUDFValue(&result,returnValue);
   }
 
 /******************************************/
@@ -159,7 +162,7 @@ void GetDefmoduleListFunction(
 /******************************************/
 void EnvGetDefmoduleList(
   Environment *theEnv,
-  UDFValue *returnValue)
+  CLIPSValue *returnValue)
   {
    Defmodule *theConstruct;
    unsigned long count = 0;
@@ -180,8 +183,6 @@ void EnvGetDefmoduleList(
    /* enough to store the list. */
    /*===========================*/
 
-   returnValue->begin = 0;
-   returnValue->range = (long) count;
    theList = EnvCreateMultifield(theEnv,count);
    returnValue->value = theList;
 
@@ -195,7 +196,7 @@ void EnvGetDefmoduleList(
      {
       if (EvaluationData(theEnv)->HaltExecution == true)
         {
-         EnvSetMultifieldErrorValue(theEnv,returnValue);
+         returnValue->multifieldValue = EnvCreateMultifield(theEnv,0L);
          return;
         }
       theList->theFields[count].lexemeValue = EnvCreateSymbol(theEnv,EnvGetDefmoduleName(theEnv,theConstruct));

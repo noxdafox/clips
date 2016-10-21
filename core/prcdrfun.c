@@ -156,14 +156,14 @@ void WhileFunction(
 
    CLIPSBlockStart(theEnv,&gcBlock);
 
-   UDFNthArgument(context,1,ANY_TYPE,&theResult);
+   UDFNthArgument(context,1,ANY_TYPE_BITS,&theResult);
    while ((theResult.value != theEnv->FalseSymbol) &&
           (EvaluationData(theEnv)->HaltExecution != true))
      {
       if ((ProcedureFunctionData(theEnv)->BreakFlag == true) || (ProcedureFunctionData(theEnv)->ReturnFlag == true))
         break;
 
-      UDFNthArgument(context,2,ANY_TYPE,&theResult);
+      UDFNthArgument(context,2,ANY_TYPE_BITS,&theResult);
 
       if ((ProcedureFunctionData(theEnv)->BreakFlag == true) || (ProcedureFunctionData(theEnv)->ReturnFlag == true))
         break;
@@ -171,7 +171,7 @@ void WhileFunction(
       CleanCurrentGarbageFrame(theEnv,NULL);
       CallPeriodicTasks(theEnv);
 
-      UDFNthArgument(context,1,ANY_TYPE,&theResult);
+      UDFNthArgument(context,1,ANY_TYPE_BITS,&theResult);
      }
 
    /*=====================================================*/
@@ -222,7 +222,7 @@ void LoopForCountFunction(
    tmpCounter->nxt = ProcedureFunctionData(theEnv)->LoopCounterStack;
    ProcedureFunctionData(theEnv)->LoopCounterStack = tmpCounter;
 
-   if (! UDFNthArgument(context,1,INTEGER_TYPE,&theArg))
+   if (! UDFNthArgument(context,1,INTEGER_BIT,&theArg))
      {
       loopResult->value = theEnv->FalseSymbol;
       ProcedureFunctionData(theEnv)->LoopCounterStack = tmpCounter->nxt;
@@ -230,7 +230,7 @@ void LoopForCountFunction(
       return;
      }
    tmpCounter->loopCounter = theArg.integerValue->contents;
-   if (! UDFNthArgument(context,2,INTEGER_TYPE,&theArg))
+   if (! UDFNthArgument(context,2,INTEGER_BIT,&theArg))
      {
       loopResult->value = theEnv->FalseSymbol;
       ProcedureFunctionData(theEnv)->LoopCounterStack = tmpCounter->nxt;
@@ -247,7 +247,7 @@ void LoopForCountFunction(
       if ((ProcedureFunctionData(theEnv)->BreakFlag == true) || (ProcedureFunctionData(theEnv)->ReturnFlag == true))
         break;
 
-      UDFNthArgument(context,3,ANY_TYPE,&theArg);
+      UDFNthArgument(context,3,ANY_TYPE_BITS,&theArg);
 
       if ((ProcedureFunctionData(theEnv)->BreakFlag == true) || (ProcedureFunctionData(theEnv)->ReturnFlag == true))
         break;
@@ -288,7 +288,7 @@ void GetLoopCount(
    UDFValue theArg;
    LOOP_COUNTER_STACK *tmpCounter;
 
-   if (! UDFFirstArgument(context,INTEGER_TYPE,&theArg))
+   if (! UDFFirstArgument(context,INTEGER_BIT,&theArg))
      { return; }
    depth = theArg.integerValue->contents;
    tmpCounter = ProcedureFunctionData(theEnv)->LoopCounterStack;
@@ -316,7 +316,7 @@ void IfFunction(
    /* Evaluate the condition. */
    /*=========================*/
 
-   if (! UDFNthArgument(context,1,ANY_TYPE,returnValue))
+   if (! UDFNthArgument(context,1,ANY_TYPE_BITS,returnValue))
      {
       returnValue->value = theEnv->FalseSymbol;
       return;
@@ -339,7 +339,7 @@ void IfFunction(
    if ((returnValue->value == theEnv->FalseSymbol) &&
        (numArgs == 3))
      {
-      UDFNthArgument(context,3,ANY_TYPE,returnValue);
+      UDFNthArgument(context,3,ANY_TYPE_BITS,returnValue);
       return;
      }
 
@@ -350,7 +350,7 @@ void IfFunction(
 
    else if (returnValue->value != theEnv->FalseSymbol)
      {
-      UDFNthArgument(context,2,ANY_TYPE,returnValue);
+      UDFNthArgument(context,2,ANY_TYPE_BITS,returnValue);
       return;
      }
 
@@ -570,7 +570,7 @@ void ReturnFunction(
       returnValue->voidValue = theEnv->VoidConstant;
      }
    else
-     { UDFNextArgument(context,ANY_TYPE,returnValue); }
+     { UDFNextArgument(context,ANY_TYPE_BITS,returnValue); }
    ProcedureFunctionData(theEnv)->ReturnFlag = true;
   }
 
@@ -607,9 +607,9 @@ void SwitchFunction(
    for (theExp = GetFirstArgument()->nextArg ; theExp != NULL ; theExp = theExp->nextArg->nextArg)
      {
       /* =================================================
-         RVOID is the default case (if any) for the switch
+         VOID_TYPE is the default case (if any) for the switch
          ================================================= */
-      if (theExp->type == RVOID)
+      if (theExp->type == VOID_TYPE)
         {
          EvaluateExpression(theEnv,theExp->nextArg,returnValue);
          return;
@@ -623,7 +623,7 @@ void SwitchFunction(
         return;
       if (switch_val.header->type == case_val.header->type)
         {
-         if ((case_val.header->type == MULTIFIELD) ? MultifieldDOsEqual(&switch_val,&case_val) :
+         if ((case_val.header->type == MULTIFIELD_TYPE) ? MultifieldDOsEqual(&switch_val,&case_val) :
              (switch_val.value == case_val.value))
            {
             EvaluateExpression(theEnv,theExp->nextArg,returnValue);

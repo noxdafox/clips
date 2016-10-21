@@ -522,7 +522,11 @@ void EnvGetDefinstancesList(
   UDFValue *returnValue,
   Defmodule *theModule)
   {
-   GetConstructList(theEnv,returnValue,DefinstancesData(theEnv)->DefinstancesConstruct,theModule);
+   UDFValue result;
+   
+   GetConstructList(theEnv,&result,DefinstancesData(theEnv)->DefinstancesConstruct,theModule);
+   NormalizeMultifield(theEnv,&result);
+   returnValue->value = result.value;
   }
 
 /* =========================================
@@ -682,7 +686,7 @@ static CLIPSLexeme *ParseDefinstancesName(
      return NULL;
 
 #if DEFRULE_CONSTRUCT
-   if ((DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TYPE) ? false :
+   if ((DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_BIT) ? false :
        (strcmp(DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents,ACTIVE_RLN) == 0))
      {
       PPBackup(theEnv);
@@ -823,7 +827,7 @@ static void CreateInitialDefinstances(
                              DefclassData(theEnv)->INITIAL_OBJECT_SYMBOL);
    theDefinstances->busy = 0;
    tmp = GenConstant(theEnv,FCALL,FindFunction(theEnv,"make-instance"));
-   tmp->argList = GenConstant(theEnv,INSTANCE_NAME,DefclassData(theEnv)->INITIAL_OBJECT_SYMBOL);
+   tmp->argList = GenConstant(theEnv,INSTANCE_NAME_TYPE,DefclassData(theEnv)->INITIAL_OBJECT_SYMBOL);
    tmp->argList->nextArg =
        GenConstant(theEnv,DEFCLASS_PTR,LookupDefclassInScope(theEnv,INITIAL_OBJECT_CLASS_NAME));
    theDefinstances->mkinstance = PackExpression(theEnv,tmp);

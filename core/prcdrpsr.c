@@ -296,7 +296,7 @@ static struct expr *LoopForCountParse(
       ========================================== */
    if (theToken.tknType != LEFT_PARENTHESIS_TOKEN)
      {
-      parse->argList = GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,1LL));
+      parse->argList = GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,1LL));
       parse->argList->nextArg = ParseAtomOrExpression(theEnv,infile,&theToken);
       if (parse->argList->nextArg == NULL)
         {
@@ -311,7 +311,7 @@ static struct expr *LoopForCountParse(
         {
          if (theToken.tknType != SYMBOL_TOKEN)
            goto LoopForCountParseError;
-         parse->argList = GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,1LL));
+         parse->argList = GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,1LL));
          parse->argList->nextArg = Function2Parse(theEnv,infile,theToken.lexemeValue->contents);
          if (parse->argList->nextArg == NULL)
            {
@@ -334,7 +334,7 @@ static struct expr *LoopForCountParse(
             return NULL;
            }
 
-         if (CheckArgumentAgainstRestriction(theEnv,parse->argList,INTEGER_TYPE))
+         if (CheckArgumentAgainstRestriction(theEnv,parse->argList,INTEGER_BIT))
            goto LoopForCountParseError;
 
          SavePPBuffer(theEnv," ");
@@ -344,7 +344,7 @@ static struct expr *LoopForCountParse(
             PPBackup(theEnv);
             PPBackup(theEnv);
             SavePPBuffer(theEnv,theToken.printForm);
-            tmpexp = GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,1LL));
+            tmpexp = GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,1LL));
             tmpexp->nextArg = parse->argList;
             parse->argList = tmpexp;
            }
@@ -364,7 +364,7 @@ static struct expr *LoopForCountParse(
         }
      }
 
-   if (CheckArgumentAgainstRestriction(theEnv,parse->argList->nextArg,INTEGER_TYPE))
+   if (CheckArgumentAgainstRestriction(theEnv,parse->argList->nextArg,INTEGER_BIT))
      goto LoopForCountParseError;
 
    /*====================================*/
@@ -473,7 +473,7 @@ static void ReplaceLoopCountVars(
         {
          theExp->type = FCALL;
          theExp->value = FindFunction(theEnv,"(get-loop-count)");
-         theExp->argList = GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,(long long) depth));
+         theExp->argList = GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,(long long) depth));
         }
       else if (theExp->argList != NULL)
         {
@@ -677,7 +677,7 @@ static struct expr *BindParse(
    /* Process the bind expression. */
    /*==============================*/
 
-   top->argList = GenConstant(theEnv,SYMBOL,theToken.value);
+   top->argList = GenConstant(theEnv,SYMBOL_TYPE,theToken.value);
    variableName = theToken.lexemeValue;
 
 #if DEFGLOBAL_CONSTRUCT
@@ -870,7 +870,7 @@ static struct expr *SwitchParse(
         {
          if (default_count)
            goto SwitchParseErrorAndMessage;
-         theExp->nextArg = GenConstant(theEnv,RVOID,NULL);
+         theExp->nextArg = GenConstant(theEnv,VOID_TYPE,NULL);
          default_count = 1;
         }
       else

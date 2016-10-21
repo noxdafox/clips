@@ -219,7 +219,7 @@ void SetBetaMemoryResizingCommand(
    /* Any other value enables beta memory resizing.   */
    /*=================================================*/
 
-   if (! UDFFirstArgument(context,ANY_TYPE,&theArg))
+   if (! UDFFirstArgument(context,ANY_TYPE_BITS,&theArg))
      { return; }
 
    if (theArg.value == theEnv->FalseSymbol)
@@ -255,8 +255,9 @@ void MatchesCommand(
    Defrule *rulePtr;
    UDFValue theArg;
    int output;
+   CLIPSValue result;
 
-   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
+   if (! UDFFirstArgument(context,SYMBOL_BIT,&theArg))
      { return; }
 
    ruleName = theArg.lexemeValue->contents;
@@ -271,7 +272,7 @@ void MatchesCommand(
 
    if (UDFHasNextArgument(context))
      {
-      if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg))
+      if (! UDFNextArgument(context,SYMBOL_BIT,&theArg))
         { return; }
 
       argument = theArg.lexemeValue->contents;
@@ -291,7 +292,8 @@ void MatchesCommand(
    else
      { output = VERBOSE; }
 
-   EnvMatches(theEnv,rulePtr,output,returnValue);
+   EnvMatches(theEnv,rulePtr,output,&result);
+   CLIPSToUDFValue(&result,returnValue);
   }
 
 /********************************/
@@ -302,7 +304,7 @@ void EnvMatches(
   Environment *theEnv,
   Defrule *theRule,
   int output,
-  UDFValue *returnValue)
+  CLIPSValue *returnValue)
   {
    Defrule *rulePtr;
    Defrule *topDisjunct = theRule;
@@ -318,8 +320,6 @@ void EnvMatches(
    /* Set up the return value. */
    /*==========================*/
 
-   returnValue->begin = 0;
-   returnValue->range = 3;
    returnValue->value = EnvCreateMultifield(theEnv,3L);
 
    returnValue->multifieldValue->theFields[0].integerValue = SymbolData(theEnv)->Zero;
@@ -960,7 +960,7 @@ void JoinActivityCommand(
    UDFValue theArg;
    int output;
 
-   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
+   if (! UDFFirstArgument(context,SYMBOL_BIT,&theArg))
      { return; }
 
    ruleName = theArg.lexemeValue->contents;
@@ -975,7 +975,7 @@ void JoinActivityCommand(
 
    if (UDFHasNextArgument(context))
      {
-      if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg))
+      if (! UDFNextArgument(context,SYMBOL_BIT,&theArg))
         { return; }
 
       argument = theArg.lexemeValue->contents;

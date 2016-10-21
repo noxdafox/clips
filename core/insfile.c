@@ -233,7 +233,7 @@ void LoadInstancesCommand(
    UDFValue theArg;
    long instanceCount;
 
-   if (! UDFFirstArgument(context,LEXEME_TYPES,&theArg))
+   if (! UDFFirstArgument(context,LEXEME_BITS,&theArg))
      { return; }
 
    fileFound = theArg.lexemeValue->contents;
@@ -307,7 +307,7 @@ void RestoreInstancesCommand(
    UDFValue theArg;
    long instanceCount;
 
-   if (! UDFFirstArgument(context,LEXEME_TYPES,&theArg))
+   if (! UDFFirstArgument(context,LEXEME_BITS,&theArg))
      { return; }
 
    fileFound = theArg.lexemeValue->contents;
@@ -383,7 +383,7 @@ void BinaryLoadInstancesCommand(
    UDFValue theArg;
    long instanceCount;
 
-   if (! UDFFirstArgument(context,LEXEME_TYPES,&theArg))
+   if (! UDFFirstArgument(context,LEXEME_BITS,&theArg))
      { return; }
 
    fileFound = theArg.lexemeValue->contents;
@@ -676,14 +676,14 @@ static long InstancesSaveCommandParser(
    bool inheritFlag = false;
    Environment *theEnv = context->environment;
 
-   if (! UDFFirstArgument(context,LEXEME_TYPES,&temp))
+   if (! UDFFirstArgument(context,LEXEME_BITS,&temp))
      { return 0L; }
    fileFound = temp.lexemeValue->contents;
 
    argCount = UDFArgumentCount(context);
    if (argCount > 1)
      {
-      if (! UDFNextArgument(context,SYMBOL_TYPE,&temp))
+      if (! UDFNextArgument(context,SYMBOL_BIT,&temp))
         { return 0L; }
 
       if (strcmp(temp.lexemeValue->contents,"local") == 0)
@@ -705,7 +705,7 @@ static long InstancesSaveCommandParser(
          =========================== */
       if ((classList != NULL) ? (classList->nextArg != NULL) : false)
         {
-         if ((classList->type != SYMBOL) ? false :
+         if ((classList->type != SYMBOL_TYPE) ? false :
              (strcmp(classList->lexemeValue->contents,"inherit") == 0))
            {
             inheritFlag = true;
@@ -755,7 +755,7 @@ static struct classItem *ProcessSaveClassList(
       if (EvaluateExpression(theEnv,classExps,&tmp))
         goto ProcessClassListError;
 
-      if (tmp.header->type != SYMBOL)
+      if (tmp.header->type != SYMBOL_TYPE)
         goto ProcessClassListError;
         
       if (saveCode == LOCAL_SAVE)
@@ -1000,16 +1000,16 @@ static void SaveSingleInstanceText(
       sp = theInstance->slotAddresses[i];
       EnvPrintRouter(theEnv,logicalName,"\n   (");
       EnvPrintRouter(theEnv,logicalName,sp->desc->slotName->name->contents);
-      if (sp->type != MULTIFIELD)
+      if (sp->type != MULTIFIELD_TYPE)
         {
          EnvPrintRouter(theEnv,logicalName," ");
          PrintAtom(theEnv,logicalName,(int) sp->type,sp->value);
         }
-      else if (GetInstanceSlotLength(sp) != 0)
+      else if (sp->multifieldValue->length != 0)
         {
          EnvPrintRouter(theEnv,logicalName," ");
          PrintMultifield(theEnv,logicalName,sp->multifieldValue,0,
-                         (long) (GetInstanceSlotLength(sp) - 1),false);
+                         (long) (sp->multifieldValue->length - 1),false);
         }
       EnvPrintRouter(theEnv,logicalName,")");
      }
@@ -1074,7 +1074,7 @@ static void MarkSingleInstance(
       sp->desc->slotName->name->neededSymbol = true;
       if (sp->desc->multiple)
         {
-         for (j = 0 ; j < GetInstanceSlotLength(sp) ; j++)
+         for (j = 0 ; j < sp->multifieldValue->length ; j++)
            MarkNeededAtom(theEnv,sp->multifieldValue->theFields[j].header->type,
                                  sp->multifieldValue->theFields[j].value);
         }
@@ -1108,18 +1108,18 @@ static void MarkNeededAtom(
       ===================================== */
    switch (type)
      {
-      case SYMBOL:
-      case STRING:
-      case INSTANCE_NAME:
+      case SYMBOL_TYPE:
+      case STRING_TYPE:
+      case INSTANCE_NAME_TYPE:
          ((CLIPSLexeme *) value)->neededSymbol = true;
          break;
-      case FLOAT:
+      case FLOAT_TYPE:
          ((CLIPSFloat *) value)->neededFloat = true;
          break;
-      case INTEGER:
+      case INTEGER_TYPE:
          ((CLIPSInteger *) value)->neededInteger = true;
          break;
-      case INSTANCE_ADDRESS:
+      case INSTANCE_ADDRESS_TYPE:
          GetFullInstanceName(theEnv,(Instance *) value)->neededSymbol = true;
          break;
      }
@@ -1175,7 +1175,7 @@ static void SaveSingleInstanceBinary(
          Write out the number of atoms in the slot value
          =============================================== */
       bs.slotName = (long) sp->desc->slotName->name->bucket;
-      bs.valueCount = sp->desc->multiple ? GetInstanceSlotLength(sp) : 1;
+      bs.valueCount = sp->desc->multiple ? sp->multifieldValue->length : 1;
       fwrite(&bs,(int) sizeof(struct bsaveSlotValue),1,bsaveFP);
       totalValueCount += (unsigned long) bs.valueCount;
      }
@@ -1193,7 +1193,7 @@ static void SaveSingleInstanceBinary(
    for (i = 0 ; i < theInstance->cls->instanceSlotCount ; i++)
      {
       sp = theInstance->slotAddresses[i];
-      slotLen = sp->desc->multiple ? GetInstanceSlotLength(sp) : 1;
+      slotLen = sp->desc->multiple ? sp->multifieldValue->length : 1;
 
       /* =========================================
          Write out the type and index of each atom
@@ -1237,19 +1237,19 @@ static void SaveAtomBinary(
    bsa.type = type;
    switch (type)
      {
-      case SYMBOL:
-      case STRING:
-      case INSTANCE_NAME:
+      case SYMBOL_TYPE:
+      case STRING_TYPE:
+      case INSTANCE_NAME_TYPE:
          bsa.value = (long) ((CLIPSLexeme *) value)->bucket;
          break;
-      case FLOAT:
+      case FLOAT_TYPE:
          bsa.value = (long) ((CLIPSFloat *) value)->bucket;
          break;
-      case INTEGER:
+      case INTEGER_TYPE:
          bsa.value = (long) ((CLIPSInteger *) value)->bucket;
          break;
-      case INSTANCE_ADDRESS:
-         bsa.type = INSTANCE_NAME;
+      case INSTANCE_ADDRESS_TYPE:
+         bsa.type = INSTANCE_NAME_TYPE;
          bsa.value = (long) GetFullInstanceName(theEnv,(Instance *) value)->bucket;
          break;
       default:
@@ -1619,21 +1619,21 @@ static void *GetBinaryAtomValue(
   {
    switch (ba->type)
      {
-      case SYMBOL:
-      case STRING:
-      case INSTANCE_NAME:
+      case SYMBOL_TYPE:
+      case STRING_TYPE:
+      case INSTANCE_NAME_TYPE:
          return((void *) SymbolPointer(ba->value));
-      case FLOAT:
+      case FLOAT_TYPE:
          return((void *) FloatPointer(ba->value));
-      case INTEGER:
+      case INTEGER_TYPE:
          return((void *) IntegerPointer(ba->value));
-      case FACT_ADDRESS:
+      case FACT_ADDRESS_TYPE:
 #if DEFTEMPLATE_CONSTRUCT && DEFRULE_CONSTRUCT
          return((void *) &FactData(theEnv)->DummyFact);
 #else
          return NULL;
 #endif
-      case EXTERNAL_ADDRESS:
+      case EXTERNAL_ADDRESS_TYPE:
         return NULL;
 
       default:

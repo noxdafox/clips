@@ -80,10 +80,10 @@ struct constraintRecord *GetConstraintRecord(
    constraints->instanceNameRestriction = false;
    constraints->classList = NULL;
    constraints->restrictionList = NULL;
-   constraints->minValue = GenConstant(theEnv,SYMBOL,SymbolData(theEnv)->NegativeInfinity);
-   constraints->maxValue = GenConstant(theEnv,SYMBOL,SymbolData(theEnv)->PositiveInfinity);
-   constraints->minFields = GenConstant(theEnv,INTEGER,SymbolData(theEnv)->Zero);
-   constraints->maxFields = GenConstant(theEnv,SYMBOL,SymbolData(theEnv)->PositiveInfinity);
+   constraints->minValue = GenConstant(theEnv,SYMBOL_TYPE,SymbolData(theEnv)->NegativeInfinity);
+   constraints->maxValue = GenConstant(theEnv,SYMBOL_TYPE,SymbolData(theEnv)->PositiveInfinity);
+   constraints->minFields = GenConstant(theEnv,INTEGER_TYPE,SymbolData(theEnv)->Zero);
+   constraints->maxFields = GenConstant(theEnv,SYMBOL_TYPE,SymbolData(theEnv)->PositiveInfinity);
    constraints->bucket = -1;
    constraints->count = 0;
    constraints->multifield = NULL;
@@ -227,12 +227,12 @@ bool SetConstraintType(
          constraints->anyAllowed = true;
          break;
 
-      case SYMBOL:
+      case SYMBOL_TYPE:
          rv = constraints->symbolsAllowed;
          constraints->symbolsAllowed = true;
          break;
 
-      case STRING:
+      case STRING_TYPE:
          rv = constraints->stringsAllowed;
          constraints->stringsAllowed = true;
          break;
@@ -243,12 +243,12 @@ bool SetConstraintType(
          constraints->stringsAllowed = true;
          break;
 
-      case INTEGER:
+      case INTEGER_TYPE:
          rv = constraints->integersAllowed;
          constraints->integersAllowed = true;
          break;
 
-      case FLOAT:
+      case FLOAT_TYPE:
          rv = constraints->floatsAllowed;
          constraints->floatsAllowed = true;
          break;
@@ -259,12 +259,12 @@ bool SetConstraintType(
          constraints->floatsAllowed = true;
          break;
 
-      case INSTANCE_ADDRESS:
+      case INSTANCE_ADDRESS_TYPE:
          rv = constraints->instanceAddressesAllowed;
          constraints->instanceAddressesAllowed = true;
          break;
 
-      case INSTANCE_NAME:
+      case INSTANCE_NAME_TYPE:
          rv = constraints->instanceNamesAllowed;
          constraints->instanceNamesAllowed = true;
          break;
@@ -275,22 +275,22 @@ bool SetConstraintType(
          constraints->instanceAddressesAllowed = true;
          break;
 
-      case EXTERNAL_ADDRESS:
+      case EXTERNAL_ADDRESS_TYPE:
          rv = constraints->externalAddressesAllowed;
          constraints->externalAddressesAllowed = true;
          break;
 
-      case RVOID:
+      case VOID_TYPE:
          rv = constraints->voidAllowed;
          constraints->voidAllowed = true;
          break;
 
-      case FACT_ADDRESS:
+      case FACT_ADDRESS_TYPE:
          rv = constraints->factAddressesAllowed;
          constraints->factAddressesAllowed = true;
          break;
 
-      case MULTIFIELD:
+      case MULTIFIELD_TYPE:
          rv = constraints->multifieldsAllowed;
          constraints->multifieldsAllowed = true;
          break;
@@ -339,7 +339,7 @@ int CompareNumbers(
    /* Compare two integers. */
    /*=======================*/
 
-   if ((type1 == INTEGER) && (type2 == INTEGER))
+   if ((type1 == INTEGER_TYPE) && (type2 == INTEGER_TYPE))
      {
       if (((CLIPSInteger *) vptr1)->contents < ((CLIPSInteger *) vptr2)->contents)
         { return(LESS_THAN); }
@@ -353,7 +353,7 @@ int CompareNumbers(
    /* Compare two floats. */
    /*=====================*/
 
-   if ((type1 == FLOAT) && (type2 == FLOAT))
+   if ((type1 == FLOAT_TYPE) && (type2 == FLOAT_TYPE))
      {
       if (((CLIPSFloat *) vptr1)->contents < ((CLIPSFloat *) vptr2)->contents)
         { return(LESS_THAN); }
@@ -367,7 +367,7 @@ int CompareNumbers(
    /* Compare an integer to a float. */
    /*================================*/
 
-   if ((type1 == INTEGER) && (type2 == FLOAT))
+   if ((type1 == INTEGER_TYPE) && (type2 == FLOAT_TYPE))
      {
       if (((double) ((CLIPSInteger *) vptr1)->contents) < ((CLIPSFloat *) vptr2)->contents)
         { return(LESS_THAN); }
@@ -381,7 +381,7 @@ int CompareNumbers(
    /* Compare a float to an integer. */
    /*================================*/
 
-   if ((type1 == FLOAT) && (type2 == INTEGER))
+   if ((type1 == FLOAT_TYPE) && (type2 == INTEGER_TYPE))
      {
       if (((CLIPSFloat *) vptr1)->contents < ((double) ((CLIPSInteger *) vptr2)->contents))
         { return(LESS_THAN); }
@@ -403,7 +403,7 @@ int CompareNumbers(
 /* ExpressionToConstraintRecord: Converts an expression into a  */
 /*   constraint record. For example, an expression representing */
 /*   the symbol BLUE would be converted to a  record with       */
-/*   allowed types SYMBOL and allow-values BLUE.                */
+/*   allowed types SYMBOL_TYPE and allow-values BLUE.                */
 /****************************************************************/
 CONSTRAINT_RECORD *ExpressionToConstraintRecord(
   Environment *theEnv,
@@ -454,32 +454,32 @@ CONSTRAINT_RECORD *ExpressionToConstraintRecord(
 
    switch (theExpression->type)
      {
-      case FLOAT:
+      case FLOAT_TYPE:
         rv->floatRestriction = true;
         rv->floatsAllowed = true;
         break;
         
-      case INTEGER:
+      case INTEGER_TYPE:
         rv->integerRestriction = true;
         rv->integersAllowed = true;
         break;
         
-      case SYMBOL:
+      case SYMBOL_TYPE:
         rv->symbolRestriction = true;
         rv->symbolsAllowed = true;
         break;
         
-      case STRING:
+      case STRING_TYPE:
         rv->stringRestriction = true;
         rv->stringsAllowed = true;
         break;
         
-      case INSTANCE_NAME:
+      case INSTANCE_NAME_TYPE:
       rv->instanceNameRestriction = true;
       rv->instanceNamesAllowed = true;
         break;
         
-      case INSTANCE_ADDRESS:
+      case INSTANCE_ADDRESS_TYPE:
         rv->instanceAddressesAllowed = true;
         break;
         
@@ -498,7 +498,7 @@ CONSTRAINT_RECORD *ExpressionToConstraintRecord(
 /* FunctionCallToConstraintRecord: Converts a function */
 /*   call to a constraint record. For example, the +   */
 /*   function when converted would be a constraint     */
-/*   record with allowed types INTEGER and FLOAT.      */
+/*   record with allowed types INTEGER_TYPE and FLOAT_TYPE.      */
 /*******************************************************/
 CONSTRAINT_RECORD *FunctionCallToConstraintRecord(
   Environment *theEnv,
@@ -520,30 +520,30 @@ CONSTRAINT_RECORD *ArgumentTypeToConstraintRecord(
    rv = GetConstraintRecord(theEnv);
    rv->anyAllowed = false;
 
-   if (bitTypes & VOID_TYPE)
+   if (bitTypes & VOID_BIT)
      { rv->voidAllowed = true; }
-   if (bitTypes & FLOAT_TYPE)
+   if (bitTypes & FLOAT_BIT)
      { rv->floatsAllowed = true; }
-   if (bitTypes & INTEGER_TYPE)
+   if (bitTypes & INTEGER_BIT)
      { rv->integersAllowed = true; }
-   if (bitTypes & SYMBOL_TYPE)
+   if (bitTypes & SYMBOL_BIT)
      { rv->symbolsAllowed = true; }
-   if (bitTypes & STRING_TYPE)
+   if (bitTypes & STRING_BIT)
      { rv->stringsAllowed = true; }
-   if (bitTypes & MULTIFIELD_TYPE)
+   if (bitTypes & MULTIFIELD_BIT)
      { rv->multifieldsAllowed = true; }
-   if (bitTypes & EXTERNAL_ADDRESS_TYPE)
+   if (bitTypes & EXTERNAL_ADDRESS_BIT)
      { rv->externalAddressesAllowed = true; }
-   if (bitTypes & FACT_ADDRESS_TYPE)
+   if (bitTypes & FACT_ADDRESS_BIT)
      { rv->factAddressesAllowed = true; }
-   if (bitTypes & INSTANCE_ADDRESS_TYPE)
+   if (bitTypes & INSTANCE_ADDRESS_BIT)
      { rv->instanceAddressesAllowed = true; }
-   if (bitTypes & INSTANCE_NAME_TYPE)
+   if (bitTypes & INSTANCE_NAME_BIT)
      { rv->instanceNamesAllowed = true; }
-   if (bitTypes & BOOLEAN_TYPE)
+   if (bitTypes & BOOLEAN_BIT)
      { rv->symbolsAllowed = true; }
 
-   if (bitTypes == ANY_TYPE)
+   if (bitTypes == ANY_TYPE_BITS)
      { rv->anyAllowed = true; }
 
    return(rv);

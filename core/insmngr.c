@@ -171,9 +171,9 @@ void MakeInstanceCommand(
    returnValue->lexemeValue = theEnv->FalseSymbol;
    EvaluateExpression(theEnv,GetFirstArgument(),&temp);
    
-   if (temp.header->type == INSTANCE_NAME)
+   if (temp.header->type == INSTANCE_NAME_TYPE)
      { iname = temp.lexemeValue; }
-   else if (temp.header->type == SYMBOL)
+   else if (temp.header->type == SYMBOL_TYPE)
      { iname = EnvCreateInstanceName(theEnv,temp.lexemeValue->contents); }
    else
      {
@@ -188,7 +188,7 @@ void MakeInstanceCommand(
    else
      {
       EvaluateExpression(theEnv,GetFirstArgument()->nextArg,&temp);
-      if (temp.header->type != SYMBOL)
+      if (temp.header->type != SYMBOL_TYPE)
         {
          PrintErrorID(theEnv,"INSMNGR",2,false);
          EnvPrintRouter(theEnv,WERROR,"Expected a valid class name for new instance.\n");
@@ -310,7 +310,7 @@ Instance *BuildInstance(
          EnvSetEvaluationError(theEnv,true);
          return NULL;
         }
-      iname = ExtractConstructName(theEnv,modulePosition,iname->contents,INSTANCE_NAME);
+      iname = ExtractConstructName(theEnv,modulePosition,iname->contents,INSTANCE_NAME_TYPE);
      }
    ins = InstanceLocationInfo(theEnv,cls,iname,&iprv,&hashTableIndex);
 
@@ -685,7 +685,7 @@ static Instance *NewInstance(
    instance->basisSlots = NULL;
    instance->reteSynchronized = false;
 #endif
-   instance->header.th.type = INSTANCE_ADDRESS;
+   instance->header.th.type = INSTANCE_ADDRESS_TYPE;
    instance->busy = 0;
    instance->installed = 0;
    instance->garbage = 0;
@@ -877,13 +877,13 @@ static void BuildDefaultSlots(
             adst[i]->valueRequired = initMessage;
             if (adst[i]->desc->multiple)
               {
-               adst[i]->type = MULTIFIELD;
+               adst[i]->type = MULTIFIELD_TYPE;
                adst[i]->value = CreateUnmanagedMultifield(theEnv,0L);
                MultifieldInstall(theEnv,adst[i]->multifieldValue);
               }
             else
               {
-               adst[i]->type = SYMBOL;
+               adst[i]->type = SYMBOL_TYPE;
                adst[i]->value = EnvCreateSymbol(theEnv,"nil");
                AtomInstall(theEnv,(int) adst[i]->type,adst[i]->value);
               }
@@ -990,7 +990,7 @@ static bool InsertSlotOverrides(
    while (slot_exp != NULL)
      {
       if ((EvaluateExpression(theEnv,slot_exp,&temp) == true) ? true :
-          (temp.header->type != SYMBOL))
+          (temp.header->type != SYMBOL_TYPE))
         {
          PrintErrorID(theEnv,"INSMNGR",9,false);
          EnvPrintRouter(theEnv,WERROR,"Expected a valid slot name for slot-override.\n");

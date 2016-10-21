@@ -3,7 +3,7 @@
    /*                                                     */
    /*            CLIPS Version 6.40  10/18/16             */
    /*                                                     */
-   /*             MULTIFIELD FUNCTIONS MODULE             */
+   /*             MULTIFIELD_TYPE FUNCTIONS MODULE             */
    /*******************************************************/
 
 /*************************************************************/
@@ -190,9 +190,9 @@ void DeleteFunction(
    /* Check for the correct argument types. */
    /*=======================================*/
 
-   if ((! UDFFirstArgument(context,MULTIFIELD_TYPE,&value1)) ||
-       (! UDFNextArgument(context,INTEGER_TYPE,&value2)) ||
-       (! UDFNextArgument(context,INTEGER_TYPE,&value3)))
+   if ((! UDFFirstArgument(context,MULTIFIELD_BIT,&value1)) ||
+       (! UDFNextArgument(context,INTEGER_BIT,&value2)) ||
+       (! UDFNextArgument(context,INTEGER_BIT,&value3)))
      { return; }
 
    /*=================================================*/
@@ -223,9 +223,9 @@ void ReplaceFunction(
    /* Check for the correct argument types. */
    /*=======================================*/
 
-   if ((! UDFFirstArgument(context,MULTIFIELD_TYPE,&value1)) ||
-       (! UDFNextArgument(context,INTEGER_TYPE,&value2)) ||
-       (! UDFNextArgument(context,INTEGER_TYPE,&value3)))
+   if ((! UDFFirstArgument(context,MULTIFIELD_BIT,&value1)) ||
+       (! UDFNextArgument(context,INTEGER_BIT,&value2)) ||
+       (! UDFNextArgument(context,INTEGER_BIT,&value3)))
      { return; }
 
    /*===============================*/
@@ -274,7 +274,7 @@ void DeleteMemberFunction(
    /* Check for the correct argument types. */
    /*=======================================*/
 
-   if (! UDFFirstArgument(context,MULTIFIELD_TYPE,&resultValue))
+   if (! UDFFirstArgument(context,MULTIFIELD_BIT,&resultValue))
      { return; }
 
    /*===================================================*/
@@ -286,7 +286,7 @@ void DeleteMemberFunction(
    delVals = (UDFValue *) gm2(theEnv,delSize);
    for (i = 2 ; i <= argCnt ; i++)
      {
-      if (! UDFNextArgument(context,ANY_TYPE,&delVals[i-2]))
+      if (! UDFNextArgument(context,ANY_TYPE_BITS,&delVals[i-2]))
         {
          rm(theEnv,delVals,delSize);
          return;
@@ -334,12 +334,12 @@ void ReplaceMemberFunction(
    /* Check for the correct argument types. */
    /*=======================================*/
 
-   if (! UDFFirstArgument(context,MULTIFIELD_TYPE,&resultValue))
+   if (! UDFFirstArgument(context,MULTIFIELD_BIT,&resultValue))
      { return; }
 
-   if (! UDFNextArgument(context,ANY_TYPE,&replVal))
+   if (! UDFNextArgument(context,ANY_TYPE_BITS,&replVal))
      { return; }
-   if (replVal.header->type == MULTIFIELD)
+   if (replVal.header->type == MULTIFIELD_TYPE)
      replLen = replVal.range;
 
    /*======================================================*/
@@ -353,7 +353,7 @@ void ReplaceMemberFunction(
 
    for (i = 3 ; i <= argCnt ; i++)
      {
-      if (! UDFNthArgument(context,i,ANY_TYPE,&delVals[i-3]))
+      if (! UDFNthArgument(context,i,ANY_TYPE_BITS,&delVals[i-3]))
         {
          rm(theEnv,delVals,delSize);
          return;
@@ -395,8 +395,8 @@ void InsertFunction(
    /* Check for the correct argument types. */
    /*=======================================*/
 
-   if ((! UDFFirstArgument(context,MULTIFIELD_TYPE,&value1)) ||
-       (! UDFNextArgument(context,INTEGER_TYPE,&value2)))
+   if ((! UDFFirstArgument(context,MULTIFIELD_BIT,&value1)) ||
+       (! UDFNextArgument(context,INTEGER_BIT,&value2)))
      { return; }
 
    /*=============================*/
@@ -438,7 +438,7 @@ void ExplodeFunction(
    /* The argument should be a string. */
    /*==================================*/
 
-   if (! UDFFirstArgument(context,STRING_TYPE,&value))
+   if (! UDFFirstArgument(context,STRING_BIT,&value))
      { return; }
 
    /*=====================================*/
@@ -452,7 +452,7 @@ void ExplodeFunction(
       end = 0;
      }
    else
-     { end = GetMFLength(theMultifield); }
+     { end = theMultifield->length; }
 
    /*========================*/
    /* Return the multifield. */
@@ -478,7 +478,7 @@ void ImplodeFunction(
    /* The argument should be a multifield. */
    /*======================================*/
 
-   if (! UDFFirstArgument(context,MULTIFIELD_TYPE,&theArg))
+   if (! UDFFirstArgument(context,MULTIFIELD_BIT,&theArg))
      { return; }
 
    /*====================*/
@@ -505,7 +505,7 @@ void SubseqFunction(
    /* Get the segment to be subdivided. */
    /*===================================*/
 
-   if (! UDFFirstArgument(context,MULTIFIELD_TYPE,&theArg))
+   if (! UDFFirstArgument(context,MULTIFIELD_BIT,&theArg))
      { return; }
 
    theList = theArg.multifieldValue;
@@ -517,12 +517,12 @@ void SubseqFunction(
    /* appropriate ranges, return a null segment.  */
    /*=============================================*/
 
-   if (! UDFNextArgument(context,INTEGER_TYPE,&theArg))
+   if (! UDFNextArgument(context,INTEGER_BIT,&theArg))
      { return; }
 
    start = theArg.integerValue->contents;
 
-   if (! UDFNextArgument(context,INTEGER_TYPE,&theArg))
+   if (! UDFNextArgument(context,INTEGER_BIT,&theArg))
      { return; }
    end = theArg.integerValue->contents;
 
@@ -569,7 +569,7 @@ void FirstFunction(
    /* Get the segment to be subdivided. */
    /*===================================*/
 
-   if (! UDFFirstArgument(context,MULTIFIELD_TYPE,&theArg)) return;
+   if (! UDFFirstArgument(context,MULTIFIELD_BIT,&theArg)) return;
 
    theList = theArg.multifieldValue;
 
@@ -601,7 +601,7 @@ void RestFunction(
    /* Get the segment to be subdivided. */
    /*===================================*/
 
-   if (! UDFFirstArgument(context,MULTIFIELD_TYPE,&theArg)) return;
+   if (! UDFFirstArgument(context,MULTIFIELD_BIT,&theArg)) return;
 
    theList = theArg.multifieldValue;
 
@@ -636,8 +636,8 @@ void NthFunction(
    Multifield *elm_ptr;
    long long n; /* 6.04 Bug Fix */
 
-   if ((! UDFFirstArgument(context,INTEGER_TYPE,&value1)) ||
-	   (! UDFNextArgument(context,MULTIFIELD_TYPE,&value2)))
+   if ((! UDFFirstArgument(context,INTEGER_BIT,&value1)) ||
+	   (! UDFNextArgument(context,MULTIFIELD_BIT,&value2)))
      { return; }
 
    n = value1.integerValue->contents; /* 6.04 Bug Fix */
@@ -659,7 +659,7 @@ void NthFunction(
  *
  *    INPUTS:    Two arguments via argument stack. First is the sublist
  *               multi-field variable, the second is the list to be
- *               compared to. Both should be of type MULTIFIELD.
+ *               compared to. Both should be of type MULTIFIELD_TYPE.
  *
  *    OUTPUTS:   True if the first list is a subset of the
  *               second, else false
@@ -678,10 +678,10 @@ void SubsetpFunction(
    UDFValue item1, item2, tmpItem;
    long i,j,k;
 
-   if (! UDFFirstArgument(context,MULTIFIELD_TYPE,&item1))
+   if (! UDFFirstArgument(context,MULTIFIELD_BIT,&item1))
      { return; }
 
-   if (! UDFNextArgument(context,MULTIFIELD_TYPE,&item2))
+   if (! UDFNextArgument(context,MULTIFIELD_BIT,&item2))
      { return; }
 
    if (item1.range == 0)
@@ -724,9 +724,9 @@ void MemberFunction(
 
    returnValue->lexemeValue = theEnv->FalseSymbol;
 
-   if (! UDFFirstArgument(context,ANY_TYPE,&item1)) return;
+   if (! UDFFirstArgument(context,ANY_TYPE_BITS,&item1)) return;
 
-   if (! UDFNextArgument(context,MULTIFIELD_TYPE,&item2)) return;
+   if (! UDFNextArgument(context,MULTIFIELD_BIT,&item2)) return;
 
    if (FindDOsInSegment(&item1,1,&item2,&j,&k,NULL,0))
      {
@@ -766,7 +766,7 @@ bool FindDOsInSegment(
      {
       for (j = 0 ; j < scnt ; j++)
         {
-         if (searchDOs[j].header->type == MULTIFIELD)
+         if (searchDOs[j].header->type == MULTIFIELD_TYPE)
            {
             slen = searchDOs[j].range;
             if (MVRangeCheck(i+1L,i+slen,excludes,epaircnt))
@@ -884,7 +884,7 @@ static struct expr *MultifieldPrognParser(
         }
      }
 
-   if (CheckArgumentAgainstRestriction(theEnv,top->argList,MULTIFIELD_TYPE))
+   if (CheckArgumentAgainstRestriction(theEnv,top->argList,MULTIFIELD_BIT))
      goto MvPrognParseError;
 
    oldBindList = GetParsedBindNames(theEnv);
@@ -968,7 +968,7 @@ static struct expr *ForeachParser(
       return NULL;
      }
 
-   if (CheckArgumentAgainstRestriction(theEnv,top->argList,MULTIFIELD_TYPE))
+   if (CheckArgumentAgainstRestriction(theEnv,top->argList,MULTIFIELD_BIT))
      goto ForeachParseError;
 
    oldBindList = GetParsedBindNames(theEnv);
@@ -1047,13 +1047,13 @@ static void ReplaceMvPrognFieldVars(
            {
             theExp->type = FCALL;
             theExp->value = FindFunction(theEnv,"(get-progn$-field)");
-            theExp->argList = GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,(long long) depth));
+            theExp->argList = GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,(long long) depth));
            }
          else if (strcmp(theExp->lexemeValue->contents + flen,"-index") == 0)
            {
             theExp->type = FCALL;
             theExp->value = FindFunction(theEnv,"(get-progn$-index)");
-            theExp->argList = GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,(long long) depth));
+            theExp->argList = GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,(long long) depth));
            }
         }
       else if (theExp->argList != NULL)
@@ -1111,13 +1111,13 @@ static void MultifieldPrognDriver(
    Environment *theEnv = context->environment;
 
    tmpField = get_struct(theEnv,fieldVarStack);
-   tmpField->type = SYMBOL;
+   tmpField->type = SYMBOL_TYPE;
    tmpField->value = theEnv->FalseSymbol;
    tmpField->nxt = MultiFunctionData(theEnv)->FieldVarStack;
    MultiFunctionData(theEnv)->FieldVarStack = tmpField;
    returnValue->value = theEnv->FalseSymbol;
 
-   if (! UDFFirstArgument(context,MULTIFIELD_TYPE,&argval))
+   if (! UDFFirstArgument(context,MULTIFIELD_BIT,&argval))
      {
       MultiFunctionData(theEnv)->FieldVarStack = tmpField->nxt;
       rtn_struct(theEnv,fieldVarStack,tmpField);
@@ -1257,7 +1257,7 @@ bool ReplaceMultiValueField(
 	 }
    rb = src->begin + rb - 1;
    re = src->begin + re - 1;
-   if (field->header->type == MULTIFIELD)
+   if (field->header->type == MULTIFIELD_TYPE)
 	 dstlen = srclen + field->range - (re-rb+1);
    else
 	 dstlen = srclen + 1 - (re-rb+1);
@@ -1270,7 +1270,7 @@ bool ReplaceMultiValueField(
 	  septr = &src->multifieldValue->theFields[j];
 	  deptr->value = septr->value;
 	 }
-   if (field->header->type != MULTIFIELD)
+   if (field->header->type != MULTIFIELD_TYPE)
 	 {
 	  deptr = &dst->multifieldValue->theFields[i++];
 	  deptr->value = field->value;
@@ -1333,7 +1333,7 @@ bool InsertMultiValueField(
    dst->begin = 0;
    if (src == NULL)
      {
-      if (field->header->type == MULTIFIELD)
+      if (field->header->type == MULTIFIELD_TYPE)
         {
          DuplicateMultifield(theEnv,dst,field);
          AddToMultifieldList(theEnv,dst->multifieldValue);
@@ -1347,7 +1347,7 @@ bool InsertMultiValueField(
         }
       return true;
      }
-   dstlen = (field->header->type == MULTIFIELD) ? field->range + srclen : srclen + 1;
+   dstlen = (field->header->type == MULTIFIELD_TYPE) ? field->range + srclen : srclen + 1;
    dst->value = EnvCreateMultifield(theEnv,dstlen);
    dst->range = dstlen;
    theIndex--;
@@ -1357,7 +1357,7 @@ bool InsertMultiValueField(
       septr = &src->multifieldValue->theFields[j];
       deptr->value = septr->value;
      }
-   if (field->header->type != MULTIFIELD)
+   if (field->header->type != MULTIFIELD_TYPE)
      {
       deptr = &dst->multifieldValue->theFields[theIndex];
       deptr->value = field->value;

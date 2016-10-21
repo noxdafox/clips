@@ -178,7 +178,7 @@ void GetQueryInstanceSlot(
    core = FindQueryCore(theEnv,(int) GetFirstArgument()->integerValue->contents);
    ins = core->solns[(int) GetFirstArgument()->nextArg->integerValue->contents];
    EvaluateExpression(theEnv,GetFirstArgument()->nextArg->nextArg,&temp);
-   if (temp.header->type != SYMBOL)
+   if (temp.header->type != SYMBOL_TYPE)
      {
       ExpectedTypeError1(theEnv,"get",1,"symbol");
       EnvSetEvaluationError(theEnv,true);
@@ -191,10 +191,10 @@ void GetQueryInstanceSlot(
       return;
      }
    returnValue->value = sp->value;
-   if (sp->type == MULTIFIELD)
+   if (sp->type == MULTIFIELD_TYPE)
      {
       returnValue->begin = 0;
-      returnValue->range = GetInstanceSlotLength(sp);
+      returnValue->range = sp->multifieldValue->length;
      }
   }
 
@@ -764,7 +764,7 @@ static QUERY_CLASS *FormChain(
       return(head);
      }
 
-   if (val->header->type == SYMBOL)
+   if (val->header->type == SYMBOL_TYPE)
      {
       /* ===============================================
          Allow instance-set query restrictions to have a
@@ -790,13 +790,13 @@ static QUERY_CLASS *FormChain(
       return(head);
      }
 
-   if (val->header->type == MULTIFIELD)
+   if (val->header->type == MULTIFIELD_TYPE)
      {
       head = bot = NULL;
       end = (val->begin + val->range) - 1;
       for (i = val->begin ; i <= end ; i++)
         {
-         if (val->multifieldValue->theFields[i].header->type == SYMBOL)
+         if (val->multifieldValue->theFields[i].header->type == SYMBOL_TYPE)
            {
             className = val->multifieldValue->theFields[i].lexemeValue->contents;
             cls = LookupDefclassByMdlOrScope(theEnv,className);

@@ -68,7 +68,7 @@
    void                           UndeftemplateCommand(Environment *,UDFContext *,UDFValue *);
    bool                           EnvUndeftemplate(Environment *,Deftemplate *);
    void                           GetDeftemplateListFunction(Environment *,UDFContext *,UDFValue *);
-   void                           EnvGetDeftemplateList(Environment *,UDFValue *,Defmodule *);
+   void                           EnvGetDeftemplateList(Environment *,CLIPSValue *,Defmodule *);
    void                           DeftemplateModuleFunction(Environment *,UDFContext *,UDFValue *);
 #if DEBUGGING_FUNCTIONS
    void                           PPDeftemplateCommand(Environment *,UDFContext *,UDFValue *);

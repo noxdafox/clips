@@ -787,7 +787,7 @@ static bool ParseFacetAttribute(
    /* Add the facet to the list of the slot's facets. */
    /*=================================================*/
 
-   facetPair = GenConstant(theEnv,SYMBOL,facetName);
+   facetPair = GenConstant(theEnv,SYMBOL_TYPE,facetName);
 
    if (multifacet)
      {

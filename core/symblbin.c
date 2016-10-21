@@ -3,7 +3,7 @@
    /*                                                     */
    /*            CLIPS Version 6.40  10/01/16             */
    /*                                                     */
-   /*                 SYMBOL BSAVE MODULE                 */
+   /*                 SYMBOL_TYPE BSAVE MODULE                 */
    /*******************************************************/
 
 /*************************************************************/
@@ -457,9 +457,9 @@ void ReadNeededSymbols(
    namePtr = symbolNames;
    for (i = 0; i < SymbolData(theEnv)->NumberOfSymbols; i++)
      {
-      if (types[i] == SYMBOL)
+      if (types[i] == SYMBOL_TYPE)
         { SymbolData(theEnv)->SymbolArray[i] = EnvCreateSymbol(theEnv,namePtr); }
-      else if (types[i] == STRING)
+      else if (types[i] == STRING_TYPE)
         { SymbolData(theEnv)->SymbolArray[i] = EnvCreateString(theEnv,namePtr); }
       else
         { SymbolData(theEnv)->SymbolArray[i] = EnvCreateInstanceName(theEnv,namePtr); }

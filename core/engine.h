@@ -170,7 +170,7 @@ struct engineData
    void                    ListFocusStackCommand(Environment *,UDFContext *,UDFValue *);
    void                    EnvListFocusStack(Environment *,const char *);
    void                    GetFocusStackFunction(Environment *,UDFContext *,UDFValue *);
-   void                    EnvGetFocusStack(Environment *,UDFValue *);
+   void                    EnvGetFocusStack(Environment *,CLIPSValue *);
    void                    PopFocusFunction(Environment *,UDFContext *,UDFValue *);
    void                    GetFocusFunction(Environment *,UDFContext *,UDFValue *);
    Defmodule              *EnvPopFocus(Environment *);

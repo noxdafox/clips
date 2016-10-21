@@ -259,7 +259,7 @@ void *FindNamedConstructInModule(
 
    if ((constructName == NULL) ?
        true :
-       ((findValue = FindSymbolHN(theEnv,constructName,SYMBOL_TYPE)) == NULL))
+       ((findValue = FindSymbolHN(theEnv,constructName,SYMBOL_BIT)) == NULL))
      {
       RestoreCurrentModule(theEnv);
       return NULL;
@@ -776,7 +776,7 @@ void GetConstructListFunction(
       /* Only symbols are valid module names. */
       /*======================================*/
 
-      if (! UDFFirstArgument(context,SYMBOL_TYPE,&result))
+      if (! UDFFirstArgument(context,SYMBOL_BIT,&result))
         { return; }
 
       /*===========================================*/
@@ -1014,7 +1014,7 @@ void ListConstructCommand(
       /* Only symbols are valid module names. */
       /*======================================*/
 
-      if (! UDFFirstArgument(context,SYMBOL_TYPE,&result))
+      if (! UDFFirstArgument(context,SYMBOL_BIT,&result))
         { return; }
 
       /*===========================================*/
@@ -1593,7 +1593,7 @@ static bool ConstructWatchSupport(
       /* Check to see that it's a valid construct name. */
       /*================================================*/
 
-      if ((constructName.header->type != SYMBOL) ? true :
+      if ((constructName.header->type != SYMBOL_TYPE) ? true :
           ((theConstruct = LookupConstruct(theEnv,constructClass,
                                            constructName.lexemeValue->contents,true)) == NULL))
         {

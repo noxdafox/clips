@@ -53,7 +53,7 @@
 
    void                           DefmoduleBasicCommands(Environment *);
    void                           GetDefmoduleListFunction(Environment *,UDFContext *,UDFValue *);
-   void                           EnvGetDefmoduleList(Environment *,UDFValue *);
+   void                           EnvGetDefmoduleList(Environment *,CLIPSValue *);
    void                           PPDefmoduleCommand(Environment *,UDFContext *,UDFValue *);
    bool                           PPDefmodule(Environment *,const char *,const char *);
    void                           ListDefmodulesCommand(Environment *,UDFContext *,UDFValue *);

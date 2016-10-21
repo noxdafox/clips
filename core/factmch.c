@@ -172,11 +172,11 @@ void FactPatternMatch(
               false :
               (FactData(theEnv)->CurrentPatternMarks->where.whichSlotNumber == patternPtr->whichSlot)) &&
              (FactData(theEnv)->CurrentPatternFact->theProposition.theFields
-                  [patternPtr->whichSlot].header->type == MULTIFIELD))
+                  [patternPtr->whichSlot].header->type == MULTIFIELD_TYPE))
            {
             if ((patternPtr->leaveFields + theSlotField) != (int)
                   FactData(theEnv)->CurrentPatternFact->theProposition.theFields
-                                      [patternPtr->whichSlot].multifieldValue->multifieldLength)
+                                      [patternPtr->whichSlot].multifieldValue->length)
               { skipit = true; }
            }
 
@@ -336,7 +336,7 @@ static void ProcessMultifieldNode(
 
    if (thePattern->header.endSlot)
      {
-      newMark->endPosition = (long) theSlotValue->multifieldLength -
+      newMark->endPosition = (long) theSlotValue->length -
                                     (thePattern->leaveFields + 1);
 
       /*=======================================================*/
@@ -410,7 +410,7 @@ static void ProcessMultifieldNode(
    /* Perform matching for nodes beneath this one. */
    /*==============================================*/
 
-   for (repeatCount = (long) (theSlotValue->multifieldLength -
+   for (repeatCount = (long) (theSlotValue->length -
                       (newMark->startPosition + thePattern->leaveFields));
         repeatCount >= 0;
         repeatCount--)

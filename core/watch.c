@@ -375,7 +375,7 @@ void WatchCommand(
    /* Determine which item is to be watched. */
    /*========================================*/
 
-   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theValue)) return;
+   if (! UDFFirstArgument(context,SYMBOL_BIT,&theValue)) return;
 
    argument = theValue.lexemeValue->contents;
    wPtr = ValidWatchItem(theEnv,argument,&recognized);
@@ -425,7 +425,7 @@ void UnwatchCommand(
    /* Determine which item is to be unwatched. */
    /*==========================================*/
 
-   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theValue)) return;
+   if (! UDFFirstArgument(context,SYMBOL_BIT,&theValue)) return;
 
    argument = theValue.lexemeValue->contents;
    wPtr = ValidWatchItem(theEnv,argument,&recognized);
@@ -489,7 +489,7 @@ void ListWatchItemsCommand(
    /* Determine which item is to be listed. */
    /*=======================================*/
 
-   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theValue)) return;
+   if (! UDFFirstArgument(context,SYMBOL_BIT,&theValue)) return;
    wPtr = ValidWatchItem(theEnv,theValue.lexemeValue->contents,&recognized);
    if ((recognized == false) || (wPtr == NULL))
      {
@@ -547,7 +547,7 @@ void GetWatchItemCommand(
    /* Determine which item is to be watched. */
    /*========================================*/
 
-   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theValue))
+   if (! UDFFirstArgument(context,SYMBOL_BIT,&theValue))
      { return; }
 
    argument = theValue.lexemeValue->contents;

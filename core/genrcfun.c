@@ -460,7 +460,7 @@ bool MethodsExecuting(
   NAME         : SubsumeType
   DESCRIPTION  : Determines if the second type subsumes
                  the first type
-                 (e.g. INTEGER is subsumed by NUMBER_TYPE_CODE)
+                 (e.g. INTEGER_TYPE is subsumed by NUMBER_TYPE_CODE)
   INPUTS       : Two type codes
   RETURNS      : True if type 2 subsumes type 1, false
                  otherwise
@@ -473,15 +473,15 @@ bool SubsumeType(
   {
    if ((t2 == OBJECT_TYPE_CODE) || (t2 == PRIMITIVE_TYPE_CODE))
      return true;
-   if ((t2 == NUMBER_TYPE_CODE) && ((t1 == INTEGER) || (t1 == FLOAT)))
+   if ((t2 == NUMBER_TYPE_CODE) && ((t1 == INTEGER_TYPE) || (t1 == FLOAT_TYPE)))
      return true;
-   if ((t2 == LEXEME_TYPE_CODE) && ((t1 == STRING) || (t1 == SYMBOL)))
+   if ((t2 == LEXEME_TYPE_CODE) && ((t1 == STRING_TYPE) || (t1 == SYMBOL_TYPE)))
      return true;
-   if ((t2 == ADDRESS_TYPE_CODE) && ((t1 == EXTERNAL_ADDRESS) ||
-       (t1 == FACT_ADDRESS) || (t1 == INSTANCE_ADDRESS)))
+   if ((t2 == ADDRESS_TYPE_CODE) && ((t1 == EXTERNAL_ADDRESS_TYPE) ||
+       (t1 == FACT_ADDRESS_TYPE) || (t1 == INSTANCE_ADDRESS_TYPE)))
      return true;
    if ((t2 == LEXEME_TYPE_CODE) &&
-       ((t1 == INSTANCE_NAME) || (t1 == INSTANCE_ADDRESS)))
+       ((t1 == INSTANCE_NAME_TYPE) || (t1 == INSTANCE_ADDRESS_TYPE)))
      return true;
    return false;
   }
@@ -606,7 +606,7 @@ void PreviewGeneric(
    UDFValue theArg;
 
    EvaluationData(theEnv)->EvaluationError = false;
-   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg)) return;
+   if (! UDFFirstArgument(context,SYMBOL_BIT,&theArg)) return;
 
    gfunc = LookupDefgenericByMdlOrScope(theEnv,theArg.lexemeValue->contents);
    if (gfunc == NULL)
@@ -735,15 +735,15 @@ const char *TypeName(
   {
    switch (tcode)
      {
-      case INTEGER             : return(INTEGER_TYPE_NAME);
-      case FLOAT               : return(FLOAT_TYPE_NAME);
-      case SYMBOL              : return(SYMBOL_TYPE_NAME);
-      case STRING              : return(STRING_TYPE_NAME);
-      case MULTIFIELD          : return(MULTIFIELD_TYPE_NAME);
-      case EXTERNAL_ADDRESS    : return(EXTERNAL_ADDRESS_TYPE_NAME);
-      case FACT_ADDRESS        : return(FACT_ADDRESS_TYPE_NAME);
-      case INSTANCE_ADDRESS    : return(INSTANCE_ADDRESS_TYPE_NAME);
-      case INSTANCE_NAME       : return(INSTANCE_NAME_TYPE_NAME);
+      case INTEGER_TYPE             : return(INTEGER_TYPE_NAME);
+      case FLOAT_TYPE               : return(FLOAT_TYPE_NAME);
+      case SYMBOL_TYPE              : return(SYMBOL_TYPE_NAME);
+      case STRING_TYPE              : return(STRING_TYPE_NAME);
+      case MULTIFIELD_TYPE          : return(MULTIFIELD_TYPE_NAME);
+      case EXTERNAL_ADDRESS_TYPE    : return(EXTERNAL_ADDRESS_TYPE_NAME);
+      case FACT_ADDRESS_TYPE        : return(FACT_ADDRESS_TYPE_NAME);
+      case INSTANCE_ADDRESS_TYPE    : return(INSTANCE_ADDRESS_TYPE_NAME);
+      case INSTANCE_NAME_TYPE       : return(INSTANCE_NAME_TYPE_NAME);
       case OBJECT_TYPE_CODE    : return(OBJECT_TYPE_NAME);
       case PRIMITIVE_TYPE_CODE : return(PRIMITIVE_TYPE_NAME);
       case NUMBER_TYPE_CODE    : return(NUMBER_TYPE_NAME);

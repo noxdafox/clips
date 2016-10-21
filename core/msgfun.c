@@ -619,7 +619,7 @@ bool CheckCurrentMessage(
       return false;
      }
    activeMsgArg = GetNthMessageArgument(theEnv,0);
-   if ((ins_reqd == true) ? (activeMsgArg->header->type != INSTANCE_ADDRESS) : false)
+   if ((ins_reqd == true) ? (activeMsgArg->header->type != INSTANCE_ADDRESS_TYPE) : false)
      {
       PrintErrorID(theEnv,"MSGFUN",5,false);
       EnvPrintRouter(theEnv,WERROR,func);
@@ -627,7 +627,7 @@ bool CheckCurrentMessage(
       EnvSetEvaluationError(theEnv,true);
       return false;
      }
-   if ((activeMsgArg->header->type == INSTANCE_ADDRESS) ?
+   if ((activeMsgArg->header->type == INSTANCE_ADDRESS_TYPE) ?
        (activeMsgArg->instanceValue->garbage == 1) : false)
      {
       StaleInstanceAddress(theEnv,func,0);

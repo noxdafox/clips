@@ -161,7 +161,7 @@ void ProfileCommand(
    const char *argument;
    UDFValue theValue;
 
-   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theValue)) return;
+   if (! UDFFirstArgument(context,SYMBOL_BIT,&theValue)) return;
    argument = theValue.lexemeValue->contents;
 
    if (! Profile(theEnv,argument))
@@ -712,7 +712,7 @@ void SetProfilePercentThresholdCommand(
    UDFValue theValue;
    double newThreshold;
 
-   if (! UDFFirstArgument(context,NUMBER_TYPES,&theValue))
+   if (! UDFFirstArgument(context,NUMBER_BITS,&theValue))
      { return; }
 
    newThreshold = CVCoerceToFloat(&theValue);

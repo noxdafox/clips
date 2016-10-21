@@ -17,6 +17,7 @@ void JNIUserFunction(
    jobject arguments, targ, rv;
    int i, argCount;
    UDFValue theArg;
+   CLIPSValue temp;
    
    result->voidValue = theEnv->VoidConstant;
 
@@ -32,8 +33,10 @@ void JNIUserFunction(
                                  
    for (i = 1; i <= argCount; i++)
      {
-      UDFNthArgument(theUDFContext,i,ANY_TYPE,&theArg);
-      targ = ConvertDataObject(env,CLIPSJNIData(theEnv)->environmentObject,theEnv,&theArg); 
+      UDFNthArgument(theUDFContext,i,ANY_TYPE_BITS,&theArg);
+      NormalizeMultifield(theEnv,&theArg);
+      temp.value = theArg.value;
+      targ = ConvertDataObject(env,CLIPSJNIData(theEnv)->environmentObject,theEnv,&temp); 
       
       if (targ != NULL)
         { 
@@ -364,7 +367,7 @@ void NewJavaAddress(
    /* The Java class name must be a symbol. */
    /*=======================================*/
    
-   if (! UDFNthArgument(context,1,ANY_TYPE,&theValue))
+   if (! UDFNthArgument(context,1,ANY_TYPE_BITS,&theValue))
      { return; }
    
    className = theValue.lexemeValue->contents;
@@ -422,7 +425,7 @@ void NewJavaAddress(
       newArgs = (UDFValue *) genalloc(theEnv,sizeof(UDFValue) * (numberOfArguments - 2));
       for (i = 0; i < numberOfArguments - 2; i++)
         {
-         UDFNthArgument(context,i+3,ANY_TYPE,&newArgs[i]);
+         UDFNthArgument(context,i+3,ANY_TYPE_BITS,&newArgs[i]);
          if (EnvGetEvaluationError(theEnv))
            {   
             (*env)->DeleteLocalRef(env,theClass);
@@ -494,7 +497,7 @@ void NewJavaAddress(
 
          cStr = (char *) (*env)->GetStringUTFChars(env,str,NULL);
                   
-         if (newArgs[p].header->type == INTEGER)
+         if (newArgs[p].header->type == INTEGER_TYPE)
            {
             if (strcmp(cStr,"long") == 0)
               { 
@@ -660,7 +663,7 @@ bool CallJavaMethod(
       newArgs = (UDFValue *) genalloc(theEnv,sizeof(UDFValue) * (numberOfArguments - 2));
       for (i = 0; i < numberOfArguments - 2; i++)
         {
-         UDFNthArgument(context,i+3,ANY_TYPE,&newArgs[i]);
+         UDFNthArgument(context,i+3,ANY_TYPE_BITS,&newArgs[i]);
          if (EnvGetEvaluationError(theEnv))
            { return false; }
         }
@@ -680,7 +683,7 @@ bool CallJavaMethod(
    /* should be invoking a method of an instance.   */
    /*===============================================*/
 
-   if (target->header->type == EXTERNAL_ADDRESS)
+   if (target->header->type == EXTERNAL_ADDRESS_TYPE)
      {
       theObject = ((CLIPSExternalAddress *) target->value)->contents;
 
@@ -767,7 +770,7 @@ bool CallJavaMethod(
              
             printf("p[%d] = %s\n",(int) p,cStr);
             
-            if (newArgs[p].header->type == INTEGER)
+            if (newArgs[p].header->type == INTEGER_TYPE)
               {
                if (strcmp(cStr,"long") == 0)
                  { 

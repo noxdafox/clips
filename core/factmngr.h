@@ -158,7 +158,7 @@ struct factsData
    Fact                          *EnvCreateFact(Environment *,Deftemplate *);
    void                           EnvDecrementFactCount(Environment *,Fact *);
    long long                      EnvFactIndex(Environment *,Fact *);
-   bool                           EnvGetFactSlot(Environment *,Fact *,const char *,UDFValue *);
+   bool                           EnvGetFactSlot(Environment *,Fact *,const char *,CLIPSValue *);
    void                           PrintFactWithIdentifier(Environment *,const char *,Fact *);
    void                           PrintFact(Environment *,const char *,Fact *,bool,bool);
    void                           PrintFactIdentifierInLongForm(Environment *,const char *,Fact *);
@@ -182,7 +182,7 @@ struct factsData
    bool                           FactIsDeleted(Environment *,Fact *);
    void                           ReturnFact(Environment *,Fact *);
    void                           MatchFactFunction(Environment *,Fact *);
-   bool                           EnvPutFactSlot(Environment *,Fact *,const char *,UDFValue *);
+   bool                           EnvPutFactSlot(Environment *,Fact *,const char *,CLIPSValue *);
    bool                           EnvAssignFactSlotDefaults(Environment *,Fact *);
    bool                           CopyFactSlotValues(Environment *,Fact *,Fact *);
    bool                           DeftemplateSlotDefault(Environment *,Deftemplate *,

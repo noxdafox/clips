@@ -221,7 +221,7 @@ void AssertCommand(
       /*============================================================*/
 
       if ((slotPtr != NULL) ?
-          (slotPtr->multislot == false) && (theValue.header->type == MULTIFIELD) :
+          (slotPtr->multislot == false) && (theValue.header->type == MULTIFIELD_TYPE) :
           false)
         {
          MultiIntoSingleFieldSlotError(theEnv,slotPtr,theDeftemplate);
@@ -297,7 +297,7 @@ void RetractCommand(
       /* Evaluate the argument. */
       /*========================*/
 
-      if (! UDFNextArgument(context,INTEGER_TYPE | FACT_ADDRESS_TYPE | SYMBOL_TYPE,&theArg))
+      if (! UDFNextArgument(context,INTEGER_BIT | FACT_ADDRESS_BIT | SYMBOL_BIT,&theArg))
         { return; }
 
       /*===============================================*/
@@ -306,7 +306,7 @@ void RetractCommand(
       /* to be retracted.                              */
       /*===============================================*/
 
-      if (CVIsType(&theArg,INTEGER_TYPE))
+      if (CVIsType(&theArg,INTEGER_BIT))
         {
          /*==========================================*/
          /* A fact index must be a positive integer. */
@@ -345,7 +345,7 @@ void RetractCommand(
       /* address, we can directly retract it.          */
       /*===============================================*/
 
-      else if (CVIsType(&theArg,FACT_ADDRESS_TYPE))
+      else if (CVIsType(&theArg,FACT_ADDRESS_BIT))
         { EnvRetract(theEnv,theArg.factValue); }
 
       /*============================================*/
@@ -353,7 +353,7 @@ void RetractCommand(
       /* symbol *, then all facts are retracted.    */
       /*============================================*/
 
-      else if ((CVIsType(&theArg,SYMBOL_TYPE)) ?
+      else if ((CVIsType(&theArg,SYMBOL_BIT)) ?
                (strcmp(theArg.lexemeValue->contents,"*") == 0) : false)
         {
          RemoveAllFacts(theEnv);
@@ -394,7 +394,7 @@ void SetFactDuplicationCommand(
    /* Evaluate the argument. */
    /*========================*/
 
-   if (! UDFFirstArgument(context,ANY_TYPE,&theArg))
+   if (! UDFFirstArgument(context,ANY_TYPE_BITS,&theArg))
      { return; }
 
    /*===============================================================*/
@@ -432,7 +432,7 @@ void FactIndexFunction(
    /* The argument must be a fact address. */
    /*======================================*/
 
-   if (! UDFFirstArgument(context,FACT_ADDRESS_TYPE,&theArg))
+   if (! UDFFirstArgument(context,FACT_ADDRESS_BIT,&theArg))
      { return; }
 
    /*================================================*/
@@ -488,14 +488,14 @@ void FactsCommand(
    /* or start index was specified as the first argument.    */
    /*========================================================*/
 
-   if (! UDFFirstArgument(context,SYMBOL_TYPE | INTEGER_TYPE,&theArg)) return;
+   if (! UDFFirstArgument(context,SYMBOL_BIT | INTEGER_BIT,&theArg)) return;
 
    /*===============================================*/
    /* If the first argument is a symbol, then check */
    /* to see that a valid module was specified.     */
    /*===============================================*/
 
-   if (CVIsType(&theArg,SYMBOL_TYPE))
+   if (CVIsType(&theArg,SYMBOL_BIT))
      {
       theModule = EnvFindDefmodule(theEnv,theArg.lexemeValue->contents);
       if ((theModule == NULL) && (strcmp(theArg.lexemeValue->contents,"*") != 0))
@@ -513,7 +513,7 @@ void FactsCommand(
    /* check to see that a valid index was specified. */
    /*================================================*/
 
-   else if (CVIsType(&theArg,INTEGER_TYPE))
+   else if (CVIsType(&theArg,INTEGER_BIT))
      {
       start = theArg.integerValue->contents;
       if (start < 0)
@@ -678,7 +678,7 @@ static long long GetFactsArgument(
 
    if (! UDFHasNextArgument(context)) return(UNSPECIFIED);
 
-   if (! UDFNextArgument(context,INTEGER_TYPE,&theArg))
+   if (! UDFNextArgument(context,INTEGER_BIT,&theArg))
      { return(INVALID); }
 
    factIndex = theArg.integerValue->contents;
@@ -712,7 +712,7 @@ void AssertStringFunction(
    /* Check for the correct number and type of arguments. */
    /*=====================================================*/
 
-   if (! UDFFirstArgument(context,STRING_TYPE,&theArg))
+   if (! UDFFirstArgument(context,STRING_BIT,&theArg))
      { return; }
 
    /*==========================================*/
@@ -766,7 +766,7 @@ void SaveFactsCommand(
 
    if (numArgs > 1)
      {
-      if (! UDFNextArgument(context,SYMBOL_TYPE,&theValue))
+      if (! UDFNextArgument(context,SYMBOL_BIT,&theValue))
         {
          returnValue->lexemeValue = theEnv->FalseSymbol;
          return;
@@ -1065,7 +1065,7 @@ static Deftemplate **GetSaveFactsDeftemplateNames(
       /* A deftemplate name must be a symbol. */
       /*======================================*/
 
-      if (tempArg.header->type != SYMBOL)
+      if (tempArg.header->type != SYMBOL_TYPE)
         {
          *error = true;
          ExpectedTypeError1(theEnv,"save-facts",3+i,"symbol");

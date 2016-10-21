@@ -241,9 +241,9 @@ static bool MultifieldCardinalityViolation(
    else tempConstraint = CopyConstraintRecord(theEnv,theNode->constraints);
    ReturnExpression(theEnv,tempConstraint->minFields);
    ReturnExpression(theEnv,tempConstraint->maxFields);
-   tempConstraint->minFields = GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,(long long) minFields));
-   if (posInfinity) tempConstraint->maxFields = GenConstant(theEnv,SYMBOL,SymbolData(theEnv)->PositiveInfinity);
-   else tempConstraint->maxFields = GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,(long long) maxFields));
+   tempConstraint->minFields = GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,(long long) minFields));
+   if (posInfinity) tempConstraint->maxFields = GenConstant(theEnv,SYMBOL_TYPE,SymbolData(theEnv)->PositiveInfinity);
+   else tempConstraint->maxFields = GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,(long long) maxFields));
 
    /*================================================================*/
    /* Determine the final cardinality for the multifield slot by     */
@@ -800,7 +800,7 @@ static bool CheckArgumentForConstraintError(
       if (theVariable->pnType == MF_VARIABLE_NODE)
         {
          constraint2 = GetConstraintRecord(theEnv);
-         SetConstraintType(MULTIFIELD,constraint2);
+         SetConstraintType(MULTIFIELD_TYPE,constraint2);
         }
       else if (theVariable->constraints == NULL)
         { constraint2 = GetConstraintRecord(theEnv); }

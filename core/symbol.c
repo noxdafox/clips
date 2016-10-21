@@ -3,7 +3,7 @@
    /*                                                     */
    /*            CLIPS Version 6.40  10/01/16             */
    /*                                                     */
-   /*                    SYMBOL MODULE                    */
+   /*                    SYMBOL_TYPE MODULE                    */
    /*******************************************************/
 
 /*************************************************************/
@@ -39,7 +39,7 @@
 /*            compilers/operating systems (IBM_MCW,          */
 /*            MAC_MCW, and IBM_TBC).                         */
 /*                                                           */
-/*            Support for hashing EXTERNAL_ADDRESS data      */
+/*            Support for hashing EXTERNAL_ADDRESS_TYPE data      */
 /*            type.                                          */
 /*                                                           */
 /*            Support for long long integers.                */
@@ -172,13 +172,13 @@ void InitializeAtomTables(
    /* Predefine some values. */
    /*========================*/
 
-   theEnv->TrueSymbol = EnvAddSymbol(theEnv,TRUE_STRING,SYMBOL);
+   theEnv->TrueSymbol = EnvAddSymbol(theEnv,TRUE_STRING,SYMBOL_TYPE);
    IncrementSymbolCount(theEnv->TrueSymbol);
-   theEnv->FalseSymbol = EnvAddSymbol(theEnv,FALSE_STRING,SYMBOL);
+   theEnv->FalseSymbol = EnvAddSymbol(theEnv,FALSE_STRING,SYMBOL_TYPE);
    IncrementSymbolCount(theEnv->FalseSymbol);
-   SymbolData(theEnv)->PositiveInfinity = EnvAddSymbol(theEnv,POSITIVE_INFINITY_STRING,SYMBOL);
+   SymbolData(theEnv)->PositiveInfinity = EnvAddSymbol(theEnv,POSITIVE_INFINITY_STRING,SYMBOL_TYPE);
    IncrementSymbolCount(SymbolData(theEnv)->PositiveInfinity);
-   SymbolData(theEnv)->NegativeInfinity = EnvAddSymbol(theEnv,NEGATIVE_INFINITY_STRING,SYMBOL);
+   SymbolData(theEnv)->NegativeInfinity = EnvAddSymbol(theEnv,NEGATIVE_INFINITY_STRING,SYMBOL_TYPE);
    IncrementSymbolCount(SymbolData(theEnv)->NegativeInfinity);
    SymbolData(theEnv)->Zero = EnvCreateInteger(theEnv,0LL);
    IncrementIntegerCount(SymbolData(theEnv)->Zero);
@@ -195,7 +195,7 @@ void InitializeAtomTables(
 #endif
 
    theEnv->VoidConstant = get_struct(theEnv,voidHashNode);
-   theEnv->VoidConstant->th.type = RVOID;
+   theEnv->VoidConstant->th.type = VOID_TYPE;
   }
 
 /*************************************************/
@@ -346,7 +346,7 @@ CLIPSLexeme *EnvCreateSymbol(
   Environment *theEnv,
   const char *str)
   {
-   return EnvAddSymbol(theEnv,str,SYMBOL);
+   return EnvAddSymbol(theEnv,str,SYMBOL_TYPE);
   }
 
 /****************/
@@ -356,7 +356,7 @@ CLIPSLexeme *EnvCreateString(
   Environment *theEnv,
   const char *str)
   {
-   return EnvAddSymbol(theEnv,str,STRING);
+   return EnvAddSymbol(theEnv,str,STRING_TYPE);
   }
 
 /**********************/
@@ -366,7 +366,7 @@ CLIPSLexeme *EnvCreateInstanceName(
   Environment *theEnv,
   const char *str)
   {
-   return EnvAddSymbol(theEnv,str,INSTANCE_NAME);
+   return EnvAddSymbol(theEnv,str,INSTANCE_NAME_TYPE);
   }
 
 /*********************************************************************/
@@ -392,7 +392,7 @@ CLIPSLexeme *EnvAddSymbol(
 
     if (str == NULL)
       {
-       SystemError(theEnv,"SYMBOL",1);
+       SystemError(theEnv,"SYMBOL_TYPE",1);
        EnvExitRouter(theEnv,EXIT_FAILURE);
       }
 
@@ -524,7 +524,7 @@ CLIPSFloat *EnvCreateFloat(
     peek->bucket = tally;
     peek->count = 0;
     peek->permanent = false;
-    peek->th.type = FLOAT;
+    peek->th.type = FLOAT_TYPE;
 
     /*===============================================*/
     /* Add the float to the list of ephemeral items. */
@@ -589,7 +589,7 @@ CLIPSInteger *EnvCreateInteger(
     peek->bucket = tally;
     peek->count = 0;
     peek->permanent = false;
-    peek->th.type = INTEGER;
+    peek->th.type = INTEGER_TYPE;
 
     /*=================================================*/
     /* Add the integer to the list of ephemeral items. */
@@ -650,7 +650,7 @@ void *EnvAddBitMap(
 
     if (theBitMap == NULL)
       {
-       SystemError(theEnv,"SYMBOL",2);
+       SystemError(theEnv,"SYMBOL_TYPE",2);
        EnvExitRouter(theEnv,EXIT_FAILURE);
       }
 
@@ -765,7 +765,7 @@ void *EnvAddExternalAddress(
     peek->bucket = tally;
     peek->count = 0;
     peek->permanent = false;
-    peek->th.type = EXTERNAL_ADDRESS;
+    peek->th.type = EXTERNAL_ADDRESS_TYPE;
 
     /*================================================*/
     /* Add the bitmap to the list of ephemeral items. */
@@ -928,13 +928,13 @@ void DecrementSymbolCount(
   {
    if (theValue->count < 0)
      {
-      SystemError(theEnv,"SYMBOL",3);
+      SystemError(theEnv,"SYMBOL_TYPE",3);
       EnvExitRouter(theEnv,EXIT_FAILURE);
      }
 
    if (theValue->count == 0)
      {
-      SystemError(theEnv,"SYMBOL",4);
+      SystemError(theEnv,"SYMBOL_TYPE",4);
       EnvExitRouter(theEnv,EXIT_FAILURE);
      }
 
@@ -963,7 +963,7 @@ void DecrementFloatCount(
   {
    if (theValue->count <= 0)
      {
-      SystemError(theEnv,"SYMBOL",5);
+      SystemError(theEnv,"SYMBOL_TYPE",5);
       EnvExitRouter(theEnv,EXIT_FAILURE);
      }
 
@@ -992,7 +992,7 @@ void DecrementIntegerCount(
   {
    if (theValue->count <= 0)
      {
-      SystemError(theEnv,"SYMBOL",6);
+      SystemError(theEnv,"SYMBOL_TYPE",6);
       EnvExitRouter(theEnv,EXIT_FAILURE);
      }
 
@@ -1021,13 +1021,13 @@ void DecrementBitMapCount(
   {
    if (theValue->count < 0)
      {
-      SystemError(theEnv,"SYMBOL",7);
+      SystemError(theEnv,"SYMBOL_TYPE",7);
       EnvExitRouter(theEnv,EXIT_FAILURE);
      }
 
    if (theValue->count == 0)
      {
-      SystemError(theEnv,"SYMBOL",8);
+      SystemError(theEnv,"SYMBOL_TYPE",8);
       EnvExitRouter(theEnv,EXIT_FAILURE);
      }
 
@@ -1056,13 +1056,13 @@ void DecrementExternalAddressCount(
   {
    if (theValue->count < 0)
      {
-      SystemError(theEnv,"SYMBOL",9);
+      SystemError(theEnv,"SYMBOL_TYPE",9);
       EnvExitRouter(theEnv,EXIT_FAILURE);
      }
 
    if (theValue->count == 0)
      {
-      SystemError(theEnv,"SYMBOL",10);
+      SystemError(theEnv,"SYMBOL_TYPE",10);
       EnvExitRouter(theEnv,EXIT_FAILURE);
      }
 
@@ -1109,7 +1109,7 @@ static void RemoveHashNode(
 
       if (currentNode == NULL)
         {
-         SystemError(theEnv,"SYMBOL",11);
+         SystemError(theEnv,"SYMBOL_TYPE",11);
          EnvExitRouter(theEnv,EXIT_FAILURE);
         }
      }
@@ -1129,7 +1129,7 @@ static void RemoveHashNode(
    /* use to store the character or bitmap string.    */
    /*=================================================*/
 
-   if (type == SYMBOL)
+   if (type == SYMBOL_TYPE)
      {
       rm(theEnv,(void *) ((CLIPSLexeme *) theValue)->contents,
          strlen(((CLIPSLexeme *) theValue)->contents) + 1);
@@ -1139,7 +1139,7 @@ static void RemoveHashNode(
       rm(theEnv,(void *) ((CLIPSBitMap *) theValue)->contents,
          ((CLIPSBitMap *) theValue)->size);
      }
-   else if (type == EXTERNAL_ADDRESS)
+   else if (type == EXTERNAL_ADDRESS_TYPE)
      {
       theAddress = (struct externalAddressHashNode *) theValue;
 
@@ -1179,7 +1179,7 @@ static void AddEphemeralHashNode(
 
    if (checkCount && (theHashNode->count != 0))
      {
-      SystemError(theEnv,"SYMBOL",12);
+      SystemError(theEnv,"SYMBOL_TYPE",12);
       EnvExitRouter(theEnv,EXIT_FAILURE);
      }
 
@@ -1215,15 +1215,15 @@ void RemoveEphemeralAtoms(
    if (! theGarbageFrame->dirty) return;
 
    RemoveEphemeralHashNodes(theEnv,&theGarbageFrame->ephemeralSymbolList,(GENERIC_HN **) SymbolData(theEnv)->SymbolTable,
-                            sizeof(CLIPSLexeme),SYMBOL,AVERAGE_STRING_SIZE);
+                            sizeof(CLIPSLexeme),SYMBOL_TYPE,AVERAGE_STRING_SIZE);
    RemoveEphemeralHashNodes(theEnv,&theGarbageFrame->ephemeralFloatList,(GENERIC_HN **) SymbolData(theEnv)->FloatTable,
-                            sizeof(CLIPSFloat),FLOAT,0);
+                            sizeof(CLIPSFloat),FLOAT_TYPE,0);
    RemoveEphemeralHashNodes(theEnv,&theGarbageFrame->ephemeralIntegerList,(GENERIC_HN **) SymbolData(theEnv)->IntegerTable,
-                            sizeof(CLIPSInteger),INTEGER,0);
+                            sizeof(CLIPSInteger),INTEGER_TYPE,0);
    RemoveEphemeralHashNodes(theEnv,&theGarbageFrame->ephemeralBitMapList,(GENERIC_HN **) SymbolData(theEnv)->BitMapTable,
                             sizeof(CLIPSBitMap),BITMAPARRAY,AVERAGE_BITMAP_SIZE);
    RemoveEphemeralHashNodes(theEnv,&theGarbageFrame->ephemeralExternalAddressList,(GENERIC_HN **) SymbolData(theEnv)->ExternalAddressTable,
-                            sizeof(CLIPSExternalAddress),EXTERNAL_ADDRESS,0);
+                            sizeof(CLIPSExternalAddress),EXTERNAL_ADDRESS_TYPE,0);
   }
 
 /***********************************************/
@@ -1241,10 +1241,10 @@ void EphemerateValue(
 
     switch (((TypeHeader *) theValue)->type)
       {
-      case SYMBOL:
-      case STRING:
+      case SYMBOL_TYPE:
+      case STRING_TYPE:
 #if OBJECT_SYSTEM
-      case INSTANCE_NAME:
+      case INSTANCE_NAME_TYPE:
 #endif
         theSymbol = (CLIPSLexeme *) theValue;
         if (theSymbol->markedEphemeral) return;
@@ -1254,7 +1254,7 @@ void EphemerateValue(
         UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
         break;
 
-      case FLOAT:
+      case FLOAT_TYPE:
         theFloat = (CLIPSFloat *) theValue;
         if (theFloat->markedEphemeral) return;
         AddEphemeralHashNode(theEnv,(GENERIC_HN *) theValue,
@@ -1263,7 +1263,7 @@ void EphemerateValue(
         UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
         break;
 
-      case INTEGER:
+      case INTEGER_TYPE:
         theInteger = (CLIPSInteger *) theValue;
         if (theInteger->markedEphemeral) return;
         AddEphemeralHashNode(theEnv,(GENERIC_HN *) theValue,
@@ -1272,7 +1272,7 @@ void EphemerateValue(
         UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
         break;
 
-      case EXTERNAL_ADDRESS:
+      case EXTERNAL_ADDRESS_TYPE:
         theExternalAddress = (CLIPSExternalAddress *) theValue;
         if (theExternalAddress->markedEphemeral) return;
         AddEphemeralHashNode(theEnv,(GENERIC_HN *) theValue,
@@ -1281,7 +1281,7 @@ void EphemerateValue(
         UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
         break;
 
-      case MULTIFIELD:
+      case MULTIFIELD_TYPE:
         EphemerateMultifield(theEnv,(Multifield *) theValue);
         break;
 
@@ -1464,10 +1464,10 @@ void SetExternalAddressTable(
 void RefreshSpecialSymbols(
   Environment *theEnv)
   {
-   theEnv->TrueSymbol = FindSymbolHN(theEnv,TRUE_STRING,SYMBOL_TYPE);
-   theEnv->FalseSymbol = FindSymbolHN(theEnv,FALSE_STRING,SYMBOL_TYPE);
-   SymbolData(theEnv)->PositiveInfinity = FindSymbolHN(theEnv,POSITIVE_INFINITY_STRING,SYMBOL_TYPE);
-   SymbolData(theEnv)->NegativeInfinity = FindSymbolHN(theEnv,NEGATIVE_INFINITY_STRING,SYMBOL_TYPE);
+   theEnv->TrueSymbol = FindSymbolHN(theEnv,TRUE_STRING,SYMBOL_BIT);
+   theEnv->FalseSymbol = FindSymbolHN(theEnv,FALSE_STRING,SYMBOL_BIT);
+   SymbolData(theEnv)->PositiveInfinity = FindSymbolHN(theEnv,POSITIVE_INFINITY_STRING,SYMBOL_BIT);
+   SymbolData(theEnv)->NegativeInfinity = FindSymbolHN(theEnv,NEGATIVE_INFINITY_STRING,SYMBOL_BIT);
    SymbolData(theEnv)->Zero = FindLongHN(theEnv,0L);
   }
 
@@ -1758,7 +1758,7 @@ void SetAtomicValueIndices(
            {
             symbolPtr->bucket = count++;
             if (symbolPtr->bucket != (count - 1))
-              { SystemError(theEnv,"SYMBOL",13); }
+              { SystemError(theEnv,"SYMBOL_TYPE",13); }
            }
         }
      }
@@ -1780,7 +1780,7 @@ void SetAtomicValueIndices(
            {
             floatPtr->bucket = count++;
             if (floatPtr->bucket != (count - 1))
-              { SystemError(theEnv,"SYMBOL",14); }
+              { SystemError(theEnv,"SYMBOL_TYPE",14); }
            }
         }
      }
@@ -1802,7 +1802,7 @@ void SetAtomicValueIndices(
            {
             integerPtr->bucket = count++;
             if (integerPtr->bucket != (count - 1))
-              { SystemError(theEnv,"SYMBOL",15); }
+              { SystemError(theEnv,"SYMBOL_TYPE",15); }
            }
         }
      }
@@ -1824,7 +1824,7 @@ void SetAtomicValueIndices(
            {
             bitMapPtr->bucket = count++;
             if (bitMapPtr->bucket != (count - 1))
-              { SystemError(theEnv,"SYMBOL",16); }
+              { SystemError(theEnv,"SYMBOL_TYPE",16); }
            }
         }
      }

@@ -62,11 +62,11 @@
    void                           FactExistpFunction(Environment *,UDFContext *,UDFValue *);
    bool                           EnvFactExistp(Environment *,Fact *);
    void                           FactSlotValueFunction(Environment *,UDFContext *,UDFValue *);
-   void                           FactSlotValue(Environment *,Fact *,const char *,UDFValue *);
+   void                           FactSlotValue(Environment *,Fact *,const char *,CLIPSValue *);
    void                           FactSlotNamesFunction(Environment *,UDFContext *,UDFValue *);
-   void                           EnvFactSlotNames(Environment *,Fact *,UDFValue *);
+   void                           EnvFactSlotNames(Environment *,Fact *,CLIPSValue *);
    void                           GetFactListFunction(Environment *,UDFContext *,UDFValue *);
-   void                           EnvGetFactList(Environment *,UDFValue *,Defmodule *);
+   void                           EnvGetFactList(Environment *,CLIPSValue *,Defmodule *);
    void                           PPFactFunction(Environment *,UDFContext *,UDFValue *);
    void                           EnvPPFact(Environment *,Fact *,const char *,bool);
    Fact                          *GetFactAddressOrIndexArgument(UDFContext *,bool);

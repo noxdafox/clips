@@ -143,7 +143,7 @@ void EqFunction(
          return;
         }
 
-      if (nextItem.header->type == MULTIFIELD)
+      if (nextItem.header->type == MULTIFIELD_TYPE)
         {
          if (MultifieldDOsEqual(&nextItem,&item) == false)
            {
@@ -212,7 +212,7 @@ void NeqFunction(
       EvaluateExpression(theEnv,theExpression,&nextItem);
       if (nextItem.header->type != item.header->type)
         { continue; }
-      else if (nextItem.header->type == MULTIFIELD)
+      else if (nextItem.header->type == MULTIFIELD_TYPE)
         {
          if (MultifieldDOsEqual(&nextItem,&item) == true)
            {
@@ -246,10 +246,10 @@ void StringpFunction(
   {
    UDFValue item;
 
-   if (! UDFFirstArgument(context,ANY_TYPE,&item))
+   if (! UDFFirstArgument(context,ANY_TYPE_BITS,&item))
      { return; }
 
-   if (CVIsType(&item,STRING_TYPE))
+   if (CVIsType(&item,STRING_BIT))
      { returnValue->lexemeValue = theEnv->TrueSymbol; }
    else
      { returnValue->lexemeValue = theEnv->FalseSymbol; }
@@ -266,10 +266,10 @@ void SymbolpFunction(
   {
    UDFValue item;
 
-   if (! UDFFirstArgument(context,ANY_TYPE,&item))
+   if (! UDFFirstArgument(context,ANY_TYPE_BITS,&item))
      { return; }
 
-   if (CVIsType(&item,SYMBOL_TYPE))
+   if (CVIsType(&item,SYMBOL_BIT))
      { returnValue->lexemeValue = theEnv->TrueSymbol; }
    else
      { returnValue->lexemeValue = theEnv->FalseSymbol; }
@@ -286,10 +286,10 @@ void LexemepFunction(
   {
    UDFValue item;
 
-   if (! UDFFirstArgument(context,ANY_TYPE,&item))
+   if (! UDFFirstArgument(context,ANY_TYPE_BITS,&item))
      { return; }
 
-   if (CVIsType(&item,LEXEME_TYPES))
+   if (CVIsType(&item,LEXEME_BITS))
      { returnValue->lexemeValue = theEnv->TrueSymbol; }
    else
      { returnValue->lexemeValue = theEnv->FalseSymbol; }
@@ -306,10 +306,10 @@ void NumberpFunction(
   {
    UDFValue item;
 
-   if (! UDFFirstArgument(context,ANY_TYPE,&item))
+   if (! UDFFirstArgument(context,ANY_TYPE_BITS,&item))
      { return; }
 
-   if (CVIsType(&item,NUMBER_TYPES))
+   if (CVIsType(&item,NUMBER_BITS))
      { returnValue->lexemeValue = theEnv->TrueSymbol; }
    else
      { returnValue->lexemeValue = theEnv->FalseSymbol; }
@@ -326,10 +326,10 @@ void FloatpFunction(
   {
    UDFValue item;
 
-   if (! UDFFirstArgument(context,ANY_TYPE,&item))
+   if (! UDFFirstArgument(context,ANY_TYPE_BITS,&item))
      { return; }
 
-   if (CVIsType(&item,FLOAT_TYPE))
+   if (CVIsType(&item,FLOAT_BIT))
      { returnValue->lexemeValue = theEnv->TrueSymbol; }
    else
      { returnValue->lexemeValue = theEnv->FalseSymbol; }
@@ -346,10 +346,10 @@ void IntegerpFunction(
   {
    UDFValue item;
 
-   if (! UDFFirstArgument(context,ANY_TYPE,&item))
+   if (! UDFFirstArgument(context,ANY_TYPE_BITS,&item))
      { return; }
 
-   if (CVIsType(&item,INTEGER_TYPE))
+   if (CVIsType(&item,INTEGER_BIT))
      { returnValue->lexemeValue = theEnv->TrueSymbol; }
    else
      { returnValue->lexemeValue = theEnv->FalseSymbol; }
@@ -366,10 +366,10 @@ void MultifieldpFunction(
   {
    UDFValue item;
 
-   if (! UDFFirstArgument(context,ANY_TYPE,&item))
+   if (! UDFFirstArgument(context,ANY_TYPE_BITS,&item))
      { return; }
 
-   if (CVIsType(&item,MULTIFIELD_TYPE))
+   if (CVIsType(&item,MULTIFIELD_BIT))
      { returnValue->lexemeValue = theEnv->TrueSymbol; }
    else
      { returnValue->lexemeValue = theEnv->FalseSymbol; }
@@ -386,10 +386,10 @@ void PointerpFunction(
   {
    UDFValue item;
 
-   if (! UDFFirstArgument(context,ANY_TYPE,&item))
+   if (! UDFFirstArgument(context,ANY_TYPE_BITS,&item))
      { return; }
 
-   if (CVIsType(&item,EXTERNAL_ADDRESS_TYPE))
+   if (CVIsType(&item,EXTERNAL_ADDRESS_BIT))
      { returnValue->lexemeValue = theEnv->TrueSymbol; }
    else
      { returnValue->lexemeValue = theEnv->FalseSymbol; }
@@ -406,7 +406,7 @@ void NotFunction(
   {
    UDFValue theArg;
 
-   if (! UDFFirstArgument(context,ANY_TYPE,&theArg))
+   if (! UDFFirstArgument(context,ANY_TYPE_BITS,&theArg))
      { return; }
 
    if (theArg.value == theEnv->FalseSymbol)
@@ -428,7 +428,7 @@ void AndFunction(
 
    while (UDFHasNextArgument(context))
      {
-      if (! UDFNextArgument(context,ANY_TYPE,&theArg))
+      if (! UDFNextArgument(context,ANY_TYPE_BITS,&theArg))
         { return; }
 
       if (theArg.value == theEnv->FalseSymbol)
@@ -454,7 +454,7 @@ void OrFunction(
 
    while (UDFHasNextArgument(context))
      {
-      if (! UDFNextArgument(context,ANY_TYPE,&theArg))
+      if (! UDFNextArgument(context,ANY_TYPE_BITS,&theArg))
         { return; }
 
       if (theArg.value != theEnv->FalseSymbol)
@@ -482,7 +482,7 @@ void LessThanOrEqualFunction(
    /* Get the first argument. */
    /*=========================*/
 
-   if (! UDFFirstArgument(context,NUMBER_TYPES,&rv1))
+   if (! UDFFirstArgument(context,NUMBER_BITS,&rv1))
      { return; }
 
    /*====================================================*/
@@ -492,10 +492,10 @@ void LessThanOrEqualFunction(
 
    while (UDFHasNextArgument(context))
      {
-      if (! UDFNextArgument(context,NUMBER_TYPES,&rv2))
+      if (! UDFNextArgument(context,NUMBER_BITS,&rv2))
         { return; }
 
-      if (CVIsType(&rv1,INTEGER_TYPE) && CVIsType(&rv2,INTEGER_TYPE))
+      if (CVIsType(&rv1,INTEGER_BIT) && CVIsType(&rv2,INTEGER_BIT))
         {
          if (rv1.integerValue->contents > rv2.integerValue->contents)
            {
@@ -538,7 +538,7 @@ void GreaterThanOrEqualFunction(
    /* Get the first argument. */
    /*=========================*/
 
-   if (! UDFFirstArgument(context,NUMBER_TYPES,&rv1))
+   if (! UDFFirstArgument(context,NUMBER_BITS,&rv1))
      { return; }
 
    /*===================================================*/
@@ -548,10 +548,10 @@ void GreaterThanOrEqualFunction(
 
    while (UDFHasNextArgument(context))
      {
-      if (! UDFNextArgument(context,NUMBER_TYPES,&rv2))
+      if (! UDFNextArgument(context,NUMBER_BITS,&rv2))
         { return; }
 
-      if (CVIsType(&rv1,INTEGER_TYPE) && CVIsType(&rv2,INTEGER_TYPE))
+      if (CVIsType(&rv1,INTEGER_BIT) && CVIsType(&rv2,INTEGER_BIT))
         {
          if (rv1.integerValue->contents < rv2.integerValue->contents)
            {
@@ -594,7 +594,7 @@ void LessThanFunction(
    /* Get the first argument. */
    /*=========================*/
 
-   if (! UDFFirstArgument(context,NUMBER_TYPES,&rv1))
+   if (! UDFFirstArgument(context,NUMBER_BITS,&rv1))
      { return; }
 
    /*==========================================*/
@@ -605,10 +605,10 @@ void LessThanFunction(
 
    while (UDFHasNextArgument(context))
      {
-      if (! UDFNextArgument(context,NUMBER_TYPES,&rv2))
+      if (! UDFNextArgument(context,NUMBER_BITS,&rv2))
         { return; }
 
-      if (CVIsType(&rv1,INTEGER_TYPE) && CVIsType(&rv2,INTEGER_TYPE))
+      if (CVIsType(&rv1,INTEGER_BIT) && CVIsType(&rv2,INTEGER_BIT))
         {
          if (rv1.integerValue->contents >= rv2.integerValue->contents)
            {
@@ -651,7 +651,7 @@ void GreaterThanFunction(
    /* Get the first argument. */
    /*=========================*/
 
-   if (! UDFFirstArgument(context,NUMBER_TYPES,&rv1))
+   if (! UDFFirstArgument(context,NUMBER_BITS,&rv1))
      { return; }
 
    /*==========================================*/
@@ -662,10 +662,10 @@ void GreaterThanFunction(
 
    while (UDFHasNextArgument(context))
      {
-      if (! UDFNextArgument(context,NUMBER_TYPES,&rv2))
+      if (! UDFNextArgument(context,NUMBER_BITS,&rv2))
         { return; }
 
-      if (CVIsType(&rv1,INTEGER_TYPE) && CVIsType(&rv2,INTEGER_TYPE))
+      if (CVIsType(&rv1,INTEGER_BIT) && CVIsType(&rv2,INTEGER_BIT))
         {
          if (rv1.integerValue->contents <= rv2.integerValue->contents)
            {
@@ -708,7 +708,7 @@ void NumericEqualFunction(
    /* Get the first argument. */
    /*=========================*/
 
-   if (! UDFFirstArgument(context,NUMBER_TYPES,&rv1))
+   if (! UDFFirstArgument(context,NUMBER_BITS,&rv1))
      { return; }
 
    /*=================================================*/
@@ -718,10 +718,10 @@ void NumericEqualFunction(
 
    while (UDFHasNextArgument(context))
      {
-      if (! UDFNextArgument(context,NUMBER_TYPES,&rv2))
+      if (! UDFNextArgument(context,NUMBER_BITS,&rv2))
         { return; }
 
-      if (CVIsType(&rv1,INTEGER_TYPE) && CVIsType(&rv2,INTEGER_TYPE))
+      if (CVIsType(&rv1,INTEGER_BIT) && CVIsType(&rv2,INTEGER_BIT))
         {
          if (rv1.integerValue->contents != rv2.integerValue->contents)
            {
@@ -762,7 +762,7 @@ void NumericNotEqualFunction(
    /* Get the first argument. */
    /*=========================*/
 
-   if (! UDFFirstArgument(context,NUMBER_TYPES,&rv1))
+   if (! UDFFirstArgument(context,NUMBER_BITS,&rv1))
      { return; }
 
    /*=================================================*/
@@ -772,10 +772,10 @@ void NumericNotEqualFunction(
 
    while (UDFHasNextArgument(context))
      {
-      if (! UDFNextArgument(context,NUMBER_TYPES,&rv2))
+      if (! UDFNextArgument(context,NUMBER_BITS,&rv2))
         { return; }
 
-      if (CVIsType(&rv1,INTEGER_TYPE) && CVIsType(&rv2,INTEGER_TYPE))
+      if (CVIsType(&rv1,INTEGER_BIT) && CVIsType(&rv2,INTEGER_BIT))
         {
          if (rv1.integerValue->contents == rv2.integerValue->contents)
            {
@@ -817,7 +817,7 @@ void OddpFunction(
    /* Check for the correct types of arguments. */
    /*===========================================*/
 
-   if (! UDFFirstArgument(context,INTEGER_TYPE,&item))
+   if (! UDFFirstArgument(context,INTEGER_BIT,&item))
      { return; }
 
    /*===========================*/
@@ -847,7 +847,7 @@ void EvenpFunction(
    /* Check for the correct types of arguments. */
    /*===========================================*/
 
-   if (! UDFFirstArgument(context,INTEGER_TYPE,&item))
+   if (! UDFFirstArgument(context,INTEGER_BIT,&item))
      { return; }
 
    /*===========================*/

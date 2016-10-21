@@ -429,7 +429,7 @@ static CLIPSLexeme *ScanSymbol(
    /* Add the symbol to the symbol table and return the  */
    /* symbol table address of the symbol. Symbols of the */
    /* form [<symbol>] are instance names, so the type    */
-   /* returned is INSTANCE_NAME rather than SYMBOL.      */
+   /* returned is INSTANCE_NAME_TYPE rather than SYMBOL_TYPE.      */
    /*====================================================*/
 
 #if OBJECT_SYSTEM
@@ -832,15 +832,15 @@ unsigned short TokenTypeToType(
    switch (theType)
      {
       case FLOAT_TOKEN:
-        return FLOAT;
+        return FLOAT_TYPE;
       case INTEGER_TOKEN:
-        return INTEGER;
+        return INTEGER_TYPE;
       case SYMBOL_TOKEN:
-        return SYMBOL;
+        return SYMBOL_TYPE;
       case STRING_TOKEN:
-        return STRING;
+        return STRING_TYPE;
       case INSTANCE_NAME_TOKEN:
-        return INSTANCE_NAME;
+        return INSTANCE_NAME_TYPE;
       case SF_VARIABLE_TOKEN:
         return SF_VARIABLE;
       case MF_VARIABLE_TOKEN:
@@ -850,6 +850,6 @@ unsigned short TokenTypeToType(
       case MF_GBL_VARIABLE_TOKEN:
         return MF_GBL_VARIABLE;
       default:
-        return RVOID;
+        return VOID_TYPE;
      }
   }

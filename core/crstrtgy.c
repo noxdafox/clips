@@ -1012,7 +1012,7 @@ void SetStrategyCommand(
    /* Check for the correct type of argument. */
    /*=========================================*/
 
-   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
+   if (! UDFFirstArgument(context,SYMBOL_BIT,&theArg))
      { return; }
 
    /*=============================================*/

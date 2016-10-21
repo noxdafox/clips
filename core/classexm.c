@@ -141,7 +141,7 @@ void BrowseClassesCommand(
      {
       UDFValue theArg;
 
-      if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
+      if (! UDFFirstArgument(context,SYMBOL_BIT,&theArg))
         return;
       cls = LookupDefclassByMdlOrScope(theEnv,theArg.lexemeValue->contents);
       if (cls == NULL)
@@ -472,7 +472,7 @@ void SlotExistPCommand(
 
    if (UDFHasNextArgument(context))
      {
-      if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg))
+      if (! UDFNextArgument(context,SYMBOL_BIT,&theArg))
         { return; }
 
       if (strcmp(theArg.lexemeValue->contents,"inherit") != 0)
@@ -528,7 +528,7 @@ void MessageHandlerExistPCommand(
    UDFValue theArg;
    unsigned mtype = MPRIMARY;
 
-   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
+   if (! UDFFirstArgument(context,SYMBOL_BIT,&theArg))
      { return; }
    cls = LookupDefclassByMdlOrScope(theEnv,theArg.lexemeValue->contents);
    if (cls == NULL)
@@ -538,13 +538,13 @@ void MessageHandlerExistPCommand(
       return;
      }
 
-   if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg))
+   if (! UDFNextArgument(context,SYMBOL_BIT,&theArg))
         { return; }
 
    mname = theArg.lexemeValue;
    if (UDFHasNextArgument(context))
      {
-      if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg))
+      if (! UDFNextArgument(context,SYMBOL_BIT,&theArg))
         { return; }
 
       mtype = HandlerType(theEnv,"message-handler-existp",theArg.lexemeValue->contents);
@@ -832,13 +832,16 @@ bool EnvSlotDefaultValue(
   Environment *theEnv,
   Defclass *theDefclass,
   const char *slotName,
-  UDFValue *theValue)
+  CLIPSValue *theValue)
   {
    SlotDescriptor *sd;
+   bool rv;
+   UDFValue result;
+   UDFValue *tmpPtr;
 
    theValue->value = theEnv->FalseSymbol;
    if ((sd = LookupSlot(theEnv,theDefclass,slotName,true)) == NULL)
-     return false;
+     { return false; }
 
    if (sd->noDefault)
      {
@@ -847,10 +850,17 @@ bool EnvSlotDefaultValue(
      }
 
    if (sd->dynamicDefault)
-     return(EvaluateAndStoreInDataObject(theEnv,(int) sd->multiple,
+     {
+      rv = EvaluateAndStoreInDataObject(theEnv,(int) sd->multiple,
                                          (EXPRESSION *) sd->defaultValue,
-                                         theValue,true));
-   GenCopyMemory(UDFValue,1,theValue,sd->defaultValue);
+                                         &result,true);
+      NormalizeMultifield(theEnv,&result);
+      theValue->value = result.value;
+      return rv;
+     }
+     
+   tmpPtr = (UDFValue *) sd->defaultValue;
+   theValue->value = tmpPtr->value;
    return true;
   }
 
@@ -869,7 +879,7 @@ void ClassExistPCommand(
   {
    UDFValue theArg;
 
-   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
+   if (! UDFFirstArgument(context,SYMBOL_BIT,&theArg))
      { return; }
 
    returnValue->lexemeValue = EnvCreateBoolean(theEnv,((LookupDefclassByMdlOrScope(theEnv,theArg.lexemeValue->contents) != NULL) ? true : false));
@@ -901,7 +911,7 @@ static bool CheckTwoClasses(
    UDFValue theArg;
    Environment *theEnv = context->environment;
 
-   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
+   if (! UDFFirstArgument(context,SYMBOL_BIT,&theArg))
      { return false; }
 
    *c1 = LookupDefclassByMdlOrScope(theEnv,theArg.lexemeValue->contents);
@@ -911,7 +921,7 @@ static bool CheckTwoClasses(
       return false;
      }
 
-   if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg))
+   if (! UDFNextArgument(context,SYMBOL_BIT,&theArg))
      { return false; }
 
    *c2 = LookupDefclassByMdlOrScope(theEnv,theArg.lexemeValue->contents);
@@ -1007,7 +1017,7 @@ static SlotDescriptor *LookupSlot(
    int slotIndex;
    SlotDescriptor *sd;
 
-   slotSymbol = FindSymbolHN(theEnv,slotName,SYMBOL_TYPE);
+   slotSymbol = FindSymbolHN(theEnv,slotName,SYMBOL_BIT);
    if (slotSymbol == NULL)
      return NULL;
 
@@ -1062,7 +1072,7 @@ static const char *GetClassNameArgument(
   {
    UDFValue theArg;
 
-   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
+   if (! UDFFirstArgument(context,SYMBOL_BIT,&theArg))
      { return NULL; }
 
    return theArg.lexemeValue->contents;

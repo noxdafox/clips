@@ -3,7 +3,7 @@
    /*                                                     */
    /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
-   /*             STRING FUNCTIONS HEADER FILE            */
+   /*             STRING_TYPE FUNCTIONS HEADER FILE            */
    /*******************************************************/
 
 /*************************************************************/
@@ -60,7 +60,7 @@
 #include "evaluatn.h"
 
    bool                           EnvBuild(Environment *,const char *);
-   bool                           EnvEval(Environment *,const char *,UDFValue *);
+   bool                           EnvEval(Environment *,const char *,CLIPSValue *);
    void                           StringFunctionDefinitions(Environment *);
    void                           StrCatFunction(Environment *,UDFContext *,UDFValue *);
    void                           SymCatFunction(Environment *,UDFContext *,UDFValue *);

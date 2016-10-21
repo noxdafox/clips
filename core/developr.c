@@ -324,11 +324,11 @@ void ValidateFactIntegrityCommand(
 
       theSegment = &theFact->theProposition;
 
-      for (i = 0 ; i < (int) theSegment->multifieldLength ; i++)
+      for (i = 0 ; i < (int) theSegment->length ; i++)
         {
-         if ((theSegment->theFields[i].header->type == SYMBOL) ||
-             (theSegment->theFields[i].header->type == STRING) ||
-             (theSegment->theFields[i].header->type == INSTANCE_NAME))
+         if ((theSegment->theFields[i].header->type == SYMBOL_TYPE) ||
+             (theSegment->theFields[i].header->type == STRING_TYPE) ||
+             (theSegment->theFields[i].header->type == INSTANCE_NAME_TYPE))
            {
             theSymbol = theSegment->theFields[i].lexemeValue;
             if (theSymbol->count <= 0)
@@ -338,7 +338,7 @@ void ValidateFactIntegrityCommand(
               }
            }
 
-         if (theSegment->theFields[i].header->type == INTEGER)
+         if (theSegment->theFields[i].header->type == INTEGER_TYPE)
            {
             theInteger = theSegment->theFields[i].integerValue;
             if (theInteger->count <= 0)
@@ -348,7 +348,7 @@ void ValidateFactIntegrityCommand(
               }
            }
 
-         if (theSegment->theFields[i].header->type == FLOAT)
+         if (theSegment->theFields[i].header->type == FLOAT_TYPE)
            {
             theFloat = theSegment->theFields[i].floatValue;
             if (theFloat->count <= 0)

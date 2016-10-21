@@ -406,7 +406,7 @@ static void ParseSalience(
       return;
      }
 
-   if (salienceValue.header->type != INTEGER)
+   if (salienceValue.header->type != INTEGER_TYPE)
      {
       SalienceNonIntegerError(theEnv);
       *error = true;
@@ -431,7 +431,7 @@ static void ParseSalience(
    /* don't bother storing the expression.     */
    /*==========================================*/
 
-   if (PatternData(theEnv)->SalienceExpression->type == INTEGER)
+   if (PatternData(theEnv)->SalienceExpression->type == INTEGER_TYPE)
      {
       ReturnExpression(theEnv,PatternData(theEnv)->SalienceExpression);
       PatternData(theEnv)->SalienceExpression = NULL;

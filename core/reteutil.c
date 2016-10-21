@@ -1417,30 +1417,30 @@ unsigned long ComputeRightHashValue(
 
        switch (theResult.header->type)
          {
-          case STRING:
-          case SYMBOL:
-          case INSTANCE_NAME:
+          case STRING_TYPE:
+          case SYMBOL_TYPE:
+          case INSTANCE_NAME_TYPE:
             hashValue += (theResult.lexemeValue->bucket * multiplier);
             break;
 
-          case INTEGER:
+          case INTEGER_TYPE:
             hashValue += (theResult.integerValue->bucket * multiplier);
             break;
 
-          case FLOAT:
+          case FLOAT_TYPE:
             hashValue += (theResult.floatValue->bucket * multiplier);
             break;
 
-          case FACT_ADDRESS:
+          case FACT_ADDRESS_TYPE:
 #if OBJECT_SYSTEM
-          case INSTANCE_ADDRESS:
+          case INSTANCE_ADDRESS_TYPE:
 #endif
             fis.liv = 0;
             fis.vv = theResult.value;
             hashValue += (unsigned long) (fis.liv * multiplier);
             break;
 
-          case EXTERNAL_ADDRESS:
+          case EXTERNAL_ADDRESS_TYPE:
             fis.liv = 0;
             fis.vv = theResult.externalAddressValue->contents;
             hashValue += (unsigned long) (fis.liv * multiplier);

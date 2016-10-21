@@ -122,8 +122,8 @@ struct defglobalModule
    void                           EnvGetDefglobalValueForm(Environment *,char *,size_t,Defglobal *);
    bool                           EnvGetGlobalsChanged(Environment *);
    void                           EnvSetGlobalsChanged(Environment *,bool);
-   bool                           EnvGetDefglobalValue(Environment *,const char *,UDFValue *);
-   bool                           EnvSetDefglobalValue(Environment *,const char *,UDFValue *);
+   bool                           EnvGetDefglobalValue(Environment *,const char *,CLIPSValue *);
+   bool                           EnvSetDefglobalValue(Environment *,const char *,CLIPSValue *);
    void                           UpdateDefglobalScope(Environment *);
    Defglobal                     *GetNextDefglobalInScope(Environment *,Defglobal *);
    bool                           QGetDefglobalValue(Environment *,Defglobal *,UDFValue *);

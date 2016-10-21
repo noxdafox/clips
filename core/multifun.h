@@ -3,7 +3,7 @@
    /*                                                     */
    /*             CLIPS Version 6.40  08/25/16            */
    /*                                                     */
-   /*           MULTIFIELD FUNCTIONS HEADER FILE          */
+   /*           MULTIFIELD_TYPE FUNCTIONS HEADER FILE          */
    /*******************************************************/
 
 /*************************************************************/

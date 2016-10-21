@@ -327,21 +327,21 @@ bool IsMethodApplicable(
               break;
             if (HasSuperclass(type,(Defclass *) rp->types[j]))
               break;
-            if (rp->types[j] == (void *) DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_ADDRESS])
+            if (rp->types[j] == (void *) DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_ADDRESS_TYPE])
               {
-               if (ProceduralPrimitiveData(theEnv)->ProcParamArray[i].header->type == INSTANCE_ADDRESS)
+               if (ProceduralPrimitiveData(theEnv)->ProcParamArray[i].header->type == INSTANCE_ADDRESS_TYPE)
                  break;
               }
-            else if (rp->types[j] == (void *) DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_NAME])
+            else if (rp->types[j] == (void *) DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_NAME_TYPE])
               {
-               if (ProceduralPrimitiveData(theEnv)->ProcParamArray[i].header->type == INSTANCE_NAME)
+               if (ProceduralPrimitiveData(theEnv)->ProcParamArray[i].header->type == INSTANCE_NAME_TYPE)
                  break;
               }
             else if (rp->types[j] ==
-                DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_NAME]->directSuperclasses.classArray[0])
+                DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_NAME_TYPE]->directSuperclasses.classArray[0])
               {
-               if ((ProceduralPrimitiveData(theEnv)->ProcParamArray[i].header->type == INSTANCE_NAME) ||
-                   (ProceduralPrimitiveData(theEnv)->ProcParamArray[i].header->type == INSTANCE_ADDRESS))
+               if ((ProceduralPrimitiveData(theEnv)->ProcParamArray[i].header->type == INSTANCE_NAME_TYPE) ||
+                   (ProceduralPrimitiveData(theEnv)->ProcParamArray[i].header->type == INSTANCE_ADDRESS_TYPE))
                  break;
               }
            }
@@ -508,12 +508,12 @@ void CallSpecificMethod(
 
    returnValue->lexemeValue = theEnv->FalseSymbol;
 
-   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg)) return;
+   if (! UDFFirstArgument(context,SYMBOL_BIT,&theArg)) return;
 
    gfunc = CheckGenericExists(theEnv,"call-specific-method",theArg.lexemeValue->contents);
    if (gfunc == NULL) return;
 
-   if (! UDFNextArgument(context,INTEGER_TYPE,&theArg)) return;
+   if (! UDFNextArgument(context,INTEGER_BIT,&theArg)) return;
 
    mi = CheckMethodExists(theEnv,"call-specific-method",gfunc,(long) theArg.integerValue->contents);
    if (mi == -1)
@@ -698,12 +698,12 @@ static Defclass *DetermineRestrictionClass(
    Instance *ins;
    Defclass *cls;
 
-   if (dobj->header->type == INSTANCE_NAME)
+   if (dobj->header->type == INSTANCE_NAME_TYPE)
      {
       ins = FindInstanceBySymbol(theEnv,dobj->lexemeValue);
       cls = (ins != NULL) ? ins->cls : NULL;
      }
-   else if (dobj->header->type == INSTANCE_ADDRESS)
+   else if (dobj->header->type == INSTANCE_ADDRESS_TYPE)
      {
       ins = dobj->instanceValue;
       cls = (ins->garbage == 0) ? ins->cls : NULL;

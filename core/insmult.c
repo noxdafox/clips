@@ -3,7 +3,7 @@
    /*                                                     */
    /*            CLIPS Version 6.40  10/18/16             */
    /*                                                     */
-   /*           INSTANCE MULTIFIELD SLOT MODULE           */
+   /*           INSTANCE MULTIFIELD_TYPE SLOT MODULE           */
    /*******************************************************/
 
 /*************************************************************/
@@ -146,7 +146,7 @@ void MVSlotReplaceCommand(
    AssignSlotToDataObject(&oldseg,sp);
    if (ReplaceMultiValueField(theEnv,&newseg,&oldseg,rb,re,&newval,"slot-replace$") == false)
      return;
-   arg.type = MULTIFIELD;
+   arg.type = MULTIFIELD_TYPE;
    arg.value = &newseg;
    arg.nextArg = NULL;
    arg.argList = NULL;
@@ -186,7 +186,7 @@ void MVSlotInsertCommand(
    AssignSlotToDataObject(&oldseg,sp);
    if (InsertMultiValueField(theEnv,&newseg,&oldseg,theIndex,&newval,"slot-insert$") == false)
      return;
-   arg.type = MULTIFIELD;
+   arg.type = MULTIFIELD_TYPE;
    arg.value = &newseg;
    arg.nextArg = NULL;
    arg.argList = NULL;
@@ -227,7 +227,7 @@ void MVSlotDeleteCommand(
    AssignSlotToDataObject(&oldseg,sp);
    if (DeleteMultiValueField(theEnv,&newseg,&oldseg,rb,re,"slot-delete$") == false)
      return;
-   arg.type = MULTIFIELD;
+   arg.type = MULTIFIELD_TYPE;
    arg.value = &newseg;
    arg.nextArg = NULL;
    arg.argList = NULL;
@@ -396,10 +396,10 @@ static Instance *CheckMultifieldSlotInstance(
    UDFValue temp;
    Environment *theEnv = context->environment;
 
-   if (! UDFFirstArgument(context,INSTANCE_TYPES | SYMBOL_TYPE,&temp))
+   if (! UDFFirstArgument(context,INSTANCE_BITS | SYMBOL_BIT,&temp))
      { return NULL; }
 
-   if (temp.header->type == INSTANCE_ADDRESS)
+   if (temp.header->type == INSTANCE_ADDRESS_TYPE)
      {
       ins = temp.instanceValue;
       if (ins->garbage == 1)
@@ -463,7 +463,7 @@ static INSTANCE_SLOT *CheckMultifieldSlotModify(
    start = (args == GetFirstArgument()) ? 1 : 2;
    EvaluationData(theEnv)->EvaluationError = false;
    EvaluateExpression(theEnv,args,&temp);
-   if (temp.header->type != SYMBOL)
+   if (temp.header->type != SYMBOL_TYPE)
      {
       ExpectedTypeError1(theEnv,func,start,"symbol");
       EnvSetEvaluationError(theEnv,true);
@@ -489,7 +489,7 @@ static INSTANCE_SLOT *CheckMultifieldSlotModify(
       return NULL;
      }
    EvaluateExpression(theEnv,args->nextArg,&temp);
-   if (temp.header->type != INTEGER)
+   if (temp.header->type != INTEGER_TYPE)
      {
       ExpectedTypeError1(theEnv,func,start+1,"integer");
       EnvSetEvaluationError(theEnv,true);
@@ -500,7 +500,7 @@ static INSTANCE_SLOT *CheckMultifieldSlotModify(
    if ((code == REPLACE) || (code == DELETE_OP))
      {
       EvaluateExpression(theEnv,args,&temp);
-      if (temp.header->type != INTEGER)
+      if (temp.header->type != INTEGER_TYPE)
         {
          ExpectedTypeError1(theEnv,func,start+2,"integer");
          EnvSetEvaluationError(theEnv,true);
@@ -533,7 +533,7 @@ static void AssignSlotToDataObject(
   {
    theDataObject->value = theSlot->value;
    theDataObject->begin = 0;
-   theDataObject->range = GetInstanceSlotLength(theSlot);
+   theDataObject->range = theSlot->multifieldValue->length;
   }
 
 #endif

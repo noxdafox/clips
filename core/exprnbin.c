@@ -178,46 +178,46 @@ static void UpdateExpression(
         break;
 
 
-      case INTEGER:
+      case INTEGER_TYPE:
         ExpressionData(theEnv)->ExpressionArray[obji].value = SymbolData(theEnv)->IntegerArray[bexp->value];
         IncrementIntegerCount(ExpressionData(theEnv)->ExpressionArray[obji].integerValue);
         break;
 
-      case FLOAT:
+      case FLOAT_TYPE:
         ExpressionData(theEnv)->ExpressionArray[obji].value = SymbolData(theEnv)->FloatArray[bexp->value];
         IncrementFloatCount(ExpressionData(theEnv)->ExpressionArray[obji].floatValue);
         break;
 
-      case INSTANCE_NAME:
+      case INSTANCE_NAME_TYPE:
 #if ! OBJECT_SYSTEM
-        ExpressionData(theEnv)->ExpressionArray[obji].type = SYMBOL;
+        ExpressionData(theEnv)->ExpressionArray[obji].type = SYMBOL_TYPE;
 #endif
       case GBL_VARIABLE:
-      case SYMBOL:
-      case STRING:
+      case SYMBOL_TYPE:
+      case STRING_TYPE:
         ExpressionData(theEnv)->ExpressionArray[obji].value = SymbolData(theEnv)->SymbolArray[bexp->value];
         IncrementSymbolCount(ExpressionData(theEnv)->ExpressionArray[obji].lexemeValue);
         break;
 
 #if DEFTEMPLATE_CONSTRUCT
-      case FACT_ADDRESS:
+      case FACT_ADDRESS_TYPE:
         ExpressionData(theEnv)->ExpressionArray[obji].value = &FactData(theEnv)->DummyFact;
         EnvIncrementFactCount(theEnv,(Fact *) ExpressionData(theEnv)->ExpressionArray[obji].value);
         break;
 #endif
 
 #if OBJECT_SYSTEM
-      case INSTANCE_ADDRESS:
+      case INSTANCE_ADDRESS_TYPE:
         ExpressionData(theEnv)->ExpressionArray[obji].value = &InstanceData(theEnv)->DummyInstance;
         EnvIncrementInstanceCount(theEnv,(Instance *) ExpressionData(theEnv)->ExpressionArray[obji].value);
         break;
 #endif
 
-      case EXTERNAL_ADDRESS:
+      case EXTERNAL_ADDRESS_TYPE:
         ExpressionData(theEnv)->ExpressionArray[obji].value = NULL;
         break;
 
-      case RVOID:
+      case VOID_TYPE:
         break;
 
       default:
@@ -261,32 +261,32 @@ void ClearBloadedExpressions(
      {
       switch (ExpressionData(theEnv)->ExpressionArray[i].type)
         {
-         case SYMBOL          :
-         case STRING          :
-         case INSTANCE_NAME   :
+         case SYMBOL_TYPE          :
+         case STRING_TYPE          :
+         case INSTANCE_NAME_TYPE   :
          case GBL_VARIABLE    :
            DecrementSymbolCount(theEnv,ExpressionData(theEnv)->ExpressionArray[i].lexemeValue);
            break;
-         case FLOAT           :
+         case FLOAT_TYPE           :
            DecrementFloatCount(theEnv,ExpressionData(theEnv)->ExpressionArray[i].floatValue);
            break;
-         case INTEGER         :
+         case INTEGER_TYPE         :
            DecrementIntegerCount(theEnv,ExpressionData(theEnv)->ExpressionArray[i].integerValue);
            break;
 
 #if DEFTEMPLATE_CONSTRUCT
-         case FACT_ADDRESS    :
+         case FACT_ADDRESS_TYPE    :
            EnvDecrementFactCount(theEnv,(Fact *) ExpressionData(theEnv)->ExpressionArray[i].value);
            break;
 #endif
 
 #if OBJECT_SYSTEM
-         case INSTANCE_ADDRESS :
+         case INSTANCE_ADDRESS_TYPE :
            EnvDecrementInstanceCount(theEnv,(Instance *) ExpressionData(theEnv)->ExpressionArray[i].value);
            break;
 #endif
 
-         case RVOID:
+         case VOID_TYPE:
            break;
 
          default:
@@ -423,11 +423,11 @@ void BsaveExpression(
 
       switch(testPtr->type)
         {
-         case FLOAT:
+         case FLOAT_TYPE:
            newTest.value = (long) testPtr->floatValue->bucket;
            break;
 
-         case INTEGER:
+         case INTEGER_TYPE:
            newTest.value = (long) testPtr->integerValue->bucket;
            break;
 
@@ -482,21 +482,21 @@ void BsaveExpression(
            break;
 
 #if OBJECT_SYSTEM
-         case INSTANCE_NAME:
+         case INSTANCE_NAME_TYPE:
 #endif
-         case SYMBOL:
+         case SYMBOL_TYPE:
          case GBL_VARIABLE:
-         case STRING:
+         case STRING_TYPE:
            newTest.value = (long) testPtr->lexemeValue->bucket;
            break;
 
-         case FACT_ADDRESS:
-         case INSTANCE_ADDRESS:
-         case EXTERNAL_ADDRESS:
+         case FACT_ADDRESS_TYPE:
+         case INSTANCE_ADDRESS_TYPE:
+         case EXTERNAL_ADDRESS_TYPE:
            newTest.value = -1L;
            break;
 
-         case RVOID:
+         case VOID_TYPE:
            break;
 
          default:

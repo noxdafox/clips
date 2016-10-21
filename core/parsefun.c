@@ -119,10 +119,10 @@ void CheckSyntaxFunction(
    UDFValue theArg;
 
    /*========================================*/
-   /* The argument should be of type STRING. */
+   /* The argument should be of type STRING_TYPE. */
    /*========================================*/
 
-   if (! UDFFirstArgument(context,STRING_TYPE,&theArg))
+   if (! UDFFirstArgument(context,STRING_BIT,&theArg))
      { return; }
 
    /*===================*/
@@ -184,7 +184,7 @@ bool CheckSyntax(
    if (theToken.tknType != SYMBOL_TOKEN)
      {
       CloseStringSource(theEnv,"check-syntax");
-      returnValue->lexemeValue = EnvCreateSymbol(theEnv,"EXPECTED-SYMBOL-AFTER-LEFT-PARENTHESIS");
+      returnValue->lexemeValue = EnvCreateSymbol(theEnv,"EXPECTED-SYMBOL_TYPE-AFTER-LEFT-PARENTHESIS");
       return true;
      }
 

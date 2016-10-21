@@ -177,9 +177,9 @@ PACKED_CLASS_LINKS *ParseSuperclasses(
          EnvPrintRouter(theEnv,WERROR,"A class must be defined after all its superclasses.\n");
          goto SuperclassParseError;
         }
-      if ((sclass == DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_NAME]) ||
-          (sclass == DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_ADDRESS]) ||
-          (sclass == DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_NAME]->directSuperclasses.classArray[0]))
+      if ((sclass == DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_NAME_TYPE]) ||
+          (sclass == DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_ADDRESS_TYPE]) ||
+          (sclass == DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_NAME_TYPE]->directSuperclasses.classArray[0]))
         {
          PrintErrorID(theEnv,"INHERPSR",6,false);
          EnvPrintRouter(theEnv,WERROR,"A user-defined class cannot be a subclass of ");

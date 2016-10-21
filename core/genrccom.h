@@ -104,9 +104,9 @@
    void                           GetDefgenericListFunction(Environment *,UDFContext *,UDFValue *);
    void                           EnvGetDefgenericList(Environment *,UDFValue *,Defmodule *);
    void                           GetDefmethodListCommand(Environment *,UDFContext *,UDFValue *);
-   void                           EnvGetDefmethodList(Environment *,Defgeneric *,UDFValue *);
+   void                           EnvGetDefmethodList(Environment *,Defgeneric *,CLIPSValue *);
    void                           GetMethodRestrictionsCommand(Environment *,UDFContext *,UDFValue *);
-   void                           EnvGetMethodRestrictions(Environment *,Defgeneric *,long,UDFValue *);
+   void                           EnvGetMethodRestrictions(Environment *,Defgeneric *,long,CLIPSValue *);
    CLIPSLexeme                   *GetDefgenericNamePointer(Defgeneric *);
    void                           SetNextDefgeneric(Defgeneric *,Defgeneric *);
    const char                    *EnvDefgenericModule(Environment *,Defgeneric *);

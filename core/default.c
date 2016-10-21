@@ -111,56 +111,56 @@ void DeriveDefaultFromConstraints(
 
    if (constraints->anyAllowed || constraints->symbolsAllowed)
      {
-      theType = SYMBOL;
-      theValue = FindDefaultValue(theEnv,SYMBOL,constraints,EnvCreateSymbol(theEnv,"nil"));
+      theType = SYMBOL_TYPE;
+      theValue = FindDefaultValue(theEnv,SYMBOL_TYPE,constraints,EnvCreateSymbol(theEnv,"nil"));
      }
 
    else if (constraints->stringsAllowed)
      {
-      theType = STRING;
-      theValue = FindDefaultValue(theEnv,STRING,constraints,EnvCreateString(theEnv,""));
+      theType = STRING_TYPE;
+      theValue = FindDefaultValue(theEnv,STRING_TYPE,constraints,EnvCreateString(theEnv,""));
      }
 
    else if (constraints->integersAllowed)
      {
-      theType = INTEGER;
-      theValue = FindDefaultValue(theEnv,INTEGER,constraints,EnvCreateInteger(theEnv,0LL));
+      theType = INTEGER_TYPE;
+      theValue = FindDefaultValue(theEnv,INTEGER_TYPE,constraints,EnvCreateInteger(theEnv,0LL));
      }
 
    else if (constraints->floatsAllowed)
      {
-      theType = FLOAT;
-      theValue = FindDefaultValue(theEnv,FLOAT,constraints,EnvCreateFloat(theEnv,0.0));
+      theType = FLOAT_TYPE;
+      theValue = FindDefaultValue(theEnv,FLOAT_TYPE,constraints,EnvCreateFloat(theEnv,0.0));
      }
 #if OBJECT_SYSTEM
    else if (constraints->instanceNamesAllowed)
      {
-      theType = INSTANCE_NAME;
-      theValue = FindDefaultValue(theEnv,INSTANCE_NAME,constraints,EnvCreateInstanceName(theEnv,"nil"));
+      theType = INSTANCE_NAME_TYPE;
+      theValue = FindDefaultValue(theEnv,INSTANCE_NAME_TYPE,constraints,EnvCreateInstanceName(theEnv,"nil"));
      }
 
    else if (constraints->instanceAddressesAllowed)
      {
-      theType = INSTANCE_ADDRESS;
+      theType = INSTANCE_ADDRESS_TYPE;
       theValue = &InstanceData(theEnv)->DummyInstance;
      }
 #endif
 #if DEFTEMPLATE_CONSTRUCT
    else if (constraints->factAddressesAllowed)
      {
-      theType = FACT_ADDRESS;
+      theType = FACT_ADDRESS_TYPE;
       theValue = &FactData(theEnv)->DummyFact;
      }
 #endif
    else if (constraints->externalAddressesAllowed)
      {
-      theType = EXTERNAL_ADDRESS;
+      theType = EXTERNAL_ADDRESS_TYPE;
       theValue = EnvAddExternalAddress(theEnv,NULL,0);
      }
 
    else
      {
-      theType = SYMBOL;
+      theType = SYMBOL_TYPE;
       theValue = EnvCreateSymbol(theEnv,"nil");
      }
 
@@ -230,26 +230,26 @@ static void *FindDefaultValue(
    /* range attribute to select a default value.                  */
    /*=============================================================*/
 
-   if (theType == INTEGER)
+   if (theType == INTEGER_TYPE)
      {
-      if (theConstraints->minValue->type == INTEGER)
+      if (theConstraints->minValue->type == INTEGER_TYPE)
         { return(theConstraints->minValue->value); }
-      else if (theConstraints->minValue->type == FLOAT)
+      else if (theConstraints->minValue->type == FLOAT_TYPE)
         { return(EnvCreateInteger(theEnv,(long long) theConstraints->minValue->floatValue->contents)); }
-      else if (theConstraints->maxValue->type == INTEGER)
+      else if (theConstraints->maxValue->type == INTEGER_TYPE)
         { return(theConstraints->maxValue->value); }
-      else if (theConstraints->maxValue->type == FLOAT)
+      else if (theConstraints->maxValue->type == FLOAT_TYPE)
         { return(EnvCreateInteger(theEnv,(long long) theConstraints->maxValue->floatValue->contents)); }
      }
-   else if (theType == FLOAT)
+   else if (theType == FLOAT_TYPE)
      {
-      if (theConstraints->minValue->type == FLOAT)
+      if (theConstraints->minValue->type == FLOAT_TYPE)
         { return(theConstraints->minValue->value); }
-      else if (theConstraints->minValue->type == INTEGER)
+      else if (theConstraints->minValue->type == INTEGER_TYPE)
         { return(EnvCreateFloat(theEnv,(double) theConstraints->minValue->integerValue->contents)); }
-      else if (theConstraints->maxValue->type == FLOAT)
+      else if (theConstraints->maxValue->type == FLOAT_TYPE)
         { return(theConstraints->maxValue->value); }
-      else if (theConstraints->maxValue->type == INTEGER)
+      else if (theConstraints->maxValue->type == INTEGER_TYPE)
         { return(EnvCreateFloat(theEnv,(double) theConstraints->maxValue->integerValue->contents)); }
      }
 
@@ -448,7 +448,7 @@ struct expr *ParseDefault(
       EnvSetEvaluationError(theEnv,false);
       if (EvaluateExpression(theEnv,newItem,&theValue)) *error = true;
 
-      if ((theValue.header->type == MULTIFIELD) &&
+      if ((theValue.header->type == MULTIFIELD_TYPE) &&
           (multifield == false) &&
           (*error == false))
         {

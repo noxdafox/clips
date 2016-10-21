@@ -509,7 +509,7 @@ void SDCCommand(
 
    returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvGetDynamicConstraintChecking(theEnv));
 
-   if (! UDFFirstArgument(context,ANY_TYPE,&theArg))
+   if (! UDFFirstArgument(context,ANY_TYPE_BITS,&theArg))
      { return; }
 
    EnvSetDynamicConstraintChecking(theEnv,theArg.value != theEnv->FalseSymbol);

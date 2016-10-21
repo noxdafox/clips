@@ -3,7 +3,7 @@
    /*                                                     */
    /*            CLIPS Version 6.40  07/30/16             */
    /*                                                     */
-   /*           SYMBOL CONSTRUCT COMPILER MODULE          */
+   /*           SYMBOL_TYPE CONSTRUCT COMPILER MODULE          */
    /*******************************************************/
 
 /*************************************************************/
@@ -164,12 +164,12 @@ static int SymbolHashNodesToCode(
             newHeader = false;
            }
 
-         if (hashPtr->th.type == SYMBOL)
-           { fprintf(fp,"{{SYMBOL},"); }
-         else if (hashPtr->th.type == STRING)
-           { fprintf(fp,"{{STRING},"); }
+         if (hashPtr->th.type == SYMBOL_TYPE)
+           { fprintf(fp,"{{SYMBOL_TYPE},"); }
+         else if (hashPtr->th.type == STRING_TYPE)
+           { fprintf(fp,"{{STRING_TYPE},"); }
          else
-           { fprintf(fp,"{{INSTANCE_NAME},"); }
+           { fprintf(fp,"{{INSTANCE_NAME_TYPE},"); }
            
          if (hashPtr->next == NULL)
            { fprintf(fp,"NULL,"); }
@@ -505,7 +505,7 @@ static int FloatHashNodesToCode(
             newHeader = false;
            }
            
-         fprintf(fp,"{{FLOAT},");
+         fprintf(fp,"{{FLOAT_TYPE},");
          
          if (hashPtr->next == NULL)
            { fprintf(fp,"NULL,"); }
@@ -610,7 +610,7 @@ static int IntegerHashNodesToCode(
             newHeader = false;
            }
            
-         fprintf(fp,"{{INTEGER},");
+         fprintf(fp,"{{INTEGER_TYPE},");
 
          if (hashPtr->next == NULL)
            { fprintf(fp,"NULL,"); }

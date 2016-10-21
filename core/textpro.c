@@ -1046,7 +1046,7 @@ void FetchCommand(
 
    returnValue->lexemeValue = theEnv->FalseSymbol;
 
-   if (! UDFFirstArgument(context,LEXEME_TYPES,&theArg))
+   if (! UDFFirstArgument(context,LEXEME_BITS,&theArg))
      { return; }
 
    load_ct = TextLookupFetch(theEnv,theArg.lexemeValue->contents);
@@ -1211,7 +1211,7 @@ void TossCommand(
    const char *file;   /*Name of the file */
    UDFValue theArg;
 
-   if (! UDFFirstArgument(context,LEXEME_TYPES,&theArg))
+   if (! UDFFirstArgument(context,LEXEME_BITS,&theArg))
      { return; }
 
    file = theArg.lexemeValue->contents;
@@ -1250,13 +1250,13 @@ static struct topics *GetCommandLineTopics(
      {
       tnode = (struct topics *) gm2(theEnv,(int) sizeof(struct topics));
 
-      UDFNextArgument(context,ANY_TYPE,&val);
+      UDFNextArgument(context,ANY_TYPE_BITS,&val);
 
-      if ((val.header->type == SYMBOL) || (val.header->type == STRING))
+      if ((val.header->type == SYMBOL_TYPE) || (val.header->type == STRING_TYPE))
         genstrncpy(tnode->name,val.lexemeValue->contents,NAMESIZE-1);
-      else if (val.header->type == FLOAT)
+      else if (val.header->type == FLOAT_TYPE)
         genstrncpy(tnode->name,FloatToString(theEnv,val.floatValue->contents),NAMESIZE-1);
-      else if (val.header->type == INTEGER)
+      else if (val.header->type == INTEGER_TYPE)
         genstrncpy(tnode->name,LongIntegerToString(theEnv,val.integerValue->contents),NAMESIZE-1);
       else
         genstrncpy(tnode->name,"***ERROR***",NAMESIZE-1);

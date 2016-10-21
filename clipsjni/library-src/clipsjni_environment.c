@@ -361,7 +361,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_eval(
   jlong clipsEnv,
   jstring evalStr)
   {
-   UDFValue theDO;
+   CLIPSValue theDO;
    jobject result = NULL;
    const char *cEvalStr;
    void *theCLIPSEnv = JLongToPointer(clipsEnv);

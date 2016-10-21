@@ -116,7 +116,7 @@ Defclass *EnvFindDefclass( // TBD Needs to look in imported
    className = ExtractModuleAndConstructName(theEnv,classAndModuleName);
    if (className != NULL)
      {
-      classSymbol = FindSymbolHN(theEnv,ExtractModuleAndConstructName(theEnv,classAndModuleName),SYMBOL_TYPE);
+      classSymbol = FindSymbolHN(theEnv,ExtractModuleAndConstructName(theEnv,classAndModuleName),SYMBOL_BIT);
       theModule = EnvGetCurrentModule(theEnv);
      }
 
@@ -161,7 +161,7 @@ Defclass *EnvFindDefclassInModule(
    className = ExtractModuleAndConstructName(theEnv,classAndModuleName);
    if (className != NULL)
      {
-      classSymbol = FindSymbolHN(theEnv,ExtractModuleAndConstructName(theEnv,classAndModuleName),SYMBOL_TYPE);
+      classSymbol = FindSymbolHN(theEnv,ExtractModuleAndConstructName(theEnv,classAndModuleName),SYMBOL_BIT);
       theModule = EnvGetCurrentModule(theEnv);
      }
    RestoreCurrentModule(theEnv);
@@ -215,7 +215,7 @@ Defclass *LookupDefclassByMdlOrScope(
    if (className == NULL)
      { return NULL; }
 
-   if ((classSymbol = FindSymbolHN(theEnv,className,SYMBOL_TYPE)) == NULL)
+   if ((classSymbol = FindSymbolHN(theEnv,className,SYMBOL_BIT)) == NULL)
      { return NULL; }
 
    cls = DefclassData(theEnv)->ClassTable[HashClass(classSymbol)];
@@ -249,7 +249,7 @@ Defclass *LookupDefclassInScope(
    Defclass *cls;
    CLIPSLexeme *classSymbol;
 
-   if ((classSymbol = FindSymbolHN(theEnv,className,SYMBOL_TYPE)) == NULL)
+   if ((classSymbol = FindSymbolHN(theEnv,className,SYMBOL_BIT)) == NULL)
      { return NULL; }
 
    cls = DefclassData(theEnv)->ClassTable[HashClass(classSymbol)];
@@ -284,7 +284,7 @@ Defclass *LookupDefclassAnywhere(
    Defclass *cls;
    CLIPSLexeme *classSymbol;
 
-   if ((classSymbol = FindSymbolHN(theEnv,className,SYMBOL_TYPE)) == NULL)
+   if ((classSymbol = FindSymbolHN(theEnv,className,SYMBOL_BIT)) == NULL)
      { return NULL; }
 
    cls = DefclassData(theEnv)->ClassTable[HashClass(classSymbol)];
@@ -663,10 +663,14 @@ void GetDefclassListFunction(
  ***************************************************************/
 void EnvGetDefclassList(
   Environment *theEnv,
-  UDFValue *returnValue,
+  CLIPSValue *returnValue,
   Defmodule *theModule)
   {
-   GetConstructList(theEnv,returnValue,DefclassData(theEnv)->DefclassConstruct,theModule);
+   UDFValue result;
+   
+   GetConstructList(theEnv,&result,DefclassData(theEnv)->DefclassConstruct,theModule);
+   NormalizeMultifield(theEnv,&result);
+   returnValue->value = result.value;
   }
 
 /*****************************************************
@@ -709,7 +713,7 @@ CLIPSLexeme *CheckClassAndSlot(
    UDFValue theArg;
    Environment *theEnv = context->environment;
 
-   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
+   if (! UDFFirstArgument(context,SYMBOL_BIT,&theArg))
      return NULL;
 
    *cls = LookupDefclassByMdlOrScope(theEnv,theArg.lexemeValue->contents);
@@ -719,7 +723,7 @@ CLIPSLexeme *CheckClassAndSlot(
       return NULL;
      }
 
-   if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg))
+   if (! UDFNextArgument(context,SYMBOL_BIT,&theArg))
      return NULL;
 
    return theArg.lexemeValue;
@@ -859,7 +863,7 @@ void SetClassDefaultsModeCommand(
    /* Check for the correct number and type of arguments. */
    /*=====================================================*/
 
-   if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg))
+   if (! UDFFirstArgument(context,SYMBOL_BIT,&theArg))
      { return; }
 
    argument = theArg.lexemeValue->contents;

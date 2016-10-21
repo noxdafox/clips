@@ -87,7 +87,7 @@
    void                           SlotDirectAccessPCommand(Environment *,UDFContext *,UDFValue *);
    bool                           EnvSlotDirectAccessP(Environment *,Defclass *,const char *);
    void                           SlotDefaultValueCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           EnvSlotDefaultValue(Environment *,Defclass *,const char *,UDFValue *);
+   bool                           EnvSlotDefaultValue(Environment *,Defclass *,const char *,CLIPSValue *);
    void                           ClassExistPCommand(Environment *,UDFContext *,UDFValue *);
    int                            EnvSlotDefaultP(Environment *,Defclass *,const char *);
 

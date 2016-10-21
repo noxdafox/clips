@@ -196,9 +196,9 @@ CLIPSLexeme *ExtractConstructName(
    /* Add the construct name to the symbol table. */
    /*=============================================*/
 
-   if (returnType == SYMBOL)
+   if (returnType == SYMBOL_TYPE)
      { returnValue = EnvCreateSymbol(theEnv,newString); }
-   else if (returnType == INSTANCE_NAME)
+   else if (returnType == INSTANCE_NAME_TYPE)
      { returnValue = EnvCreateInstanceName(theEnv,newString); }
    else
      { returnValue = EnvCreateString(theEnv,newString); }
@@ -260,7 +260,7 @@ const char *ExtractModuleAndConstructName(
    /* Extract the construct name. */
    /*=============================*/
 
-   shortName = ExtractConstructName(theEnv,separatorPosition,theName,SYMBOL);
+   shortName = ExtractConstructName(theEnv,separatorPosition,theName,SYMBOL_TYPE);
    if (shortName == NULL) return NULL;
    return shortName->contents;
   }
@@ -573,7 +573,7 @@ bool ConstructExported(
    Defmodule *theModule;
    struct portItem *theExportList;
 
-   constructType = FindSymbolHN(theEnv,constructTypeStr,SYMBOL_TYPE);
+   constructType = FindSymbolHN(theEnv,constructTypeStr,SYMBOL_BIT);
    theModule = EnvFindDefmodule(theEnv,moduleName->contents);
 
    if ((constructType == NULL) || (theModule == NULL) || (findName == NULL))

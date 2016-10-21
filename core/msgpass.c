@@ -138,7 +138,7 @@ bool DirectMessage(
 
    args.nextArg = remargs;
    args.argList = NULL;
-   args.type = INSTANCE_ADDRESS;
+   args.type = INSTANCE_ADDRESS_TYPE;
    args.value = ins;
 
    return PerformMessage(theEnv,resultbuf,&args,msg);
@@ -160,14 +160,15 @@ bool DirectMessage(
  ***************************************************/
 void EnvSend(
   Environment *theEnv,
-  UDFValue *idata,
+  CLIPSValue *idata,
   const char *msg,
   const char *args,
-  UDFValue *returnValue)
+  CLIPSValue *returnValue)
   {
    bool error;
    EXPRESSION *iexp;
    CLIPSLexeme *msym;
+   UDFValue result;
 
    if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
        (EvaluationData(theEnv)->CurrentExpression == NULL) && (UtilityData(theEnv)->GarbageCollectionLocks == 0))
@@ -179,7 +180,7 @@ void EnvSend(
    EnvSetEvaluationError(theEnv,false);
 
    returnValue->value = theEnv->FalseSymbol;
-   msym = FindSymbolHN(theEnv,msg,SYMBOL_TYPE);
+   msym = FindSymbolHN(theEnv,msg,SYMBOL_BIT);
    if (msym == NULL)
      {
       PrintNoHandlerError(theEnv,msg);
@@ -194,7 +195,9 @@ void EnvSend(
       EnvSetEvaluationError(theEnv,true);
       return;
      }
-   PerformMessage(theEnv,returnValue,iexp,msym);
+   PerformMessage(theEnv,&result,iexp,msym);
+   NormalizeMultifield(theEnv,&result);
+   returnValue->value = result.value;
    ReturnExpression(theEnv,iexp);
   }
 
@@ -243,7 +246,7 @@ void SendCommand(
 
    returnValue->lexemeValue = theEnv->FalseSymbol;
 
-   if (! UDFNthArgument(context,2,SYMBOL_TYPE,&theArg)) return;
+   if (! UDFNthArgument(context,2,SYMBOL_BIT,&theArg)) return;
    msg = theArg.lexemeValue;
 
    /* =============================================
@@ -366,7 +369,7 @@ void CallNextHandler(
      {
       overridep = 1;
       args.type = ProceduralPrimitiveData(theEnv)->ProcParamArray[0].header->type;
-      if (args.type != MULTIFIELD)
+      if (args.type != MULTIFIELD_TYPE)
         args.value = ProceduralPrimitiveData(theEnv)->ProcParamArray[0].value;
       else
         args.value = &ProceduralPrimitiveData(theEnv)->ProcParamArray[0];
@@ -669,10 +672,10 @@ bool HandlerSlotGetFunction(
         goto HandlerGetError;
      }
    theResult->value = sp->value;
-   if (sp->type == MULTIFIELD)
+   if (sp->type == MULTIFIELD_TYPE)
      {
       theResult->begin = 0;
-      theResult->range = GetInstanceSlotLength(sp);
+      theResult->range = sp->multifieldValue->length;
      }
    return true;
 
@@ -859,7 +862,7 @@ void DynamicHandlerGetSlot(
    if (CheckCurrentMessage(theEnv,"dynamic-get",true) == false)
      return;
    EvaluateExpression(theEnv,GetFirstArgument(),&temp);
-   if (temp.header->type != SYMBOL)
+   if (temp.header->type != SYMBOL_TYPE)
      {
       ExpectedTypeError1(theEnv,"dynamic-get",1,"symbol");
       EnvSetEvaluationError(theEnv,true);
@@ -880,10 +883,10 @@ void DynamicHandlerGetSlot(
       return;
      }
    returnValue->value = sp->value;
-   if (sp->type == MULTIFIELD)
+   if (sp->type == MULTIFIELD_TYPE)
      {
       returnValue->begin = 0;
-      returnValue->range = GetInstanceSlotLength(sp);
+      returnValue->range = sp->multifieldValue->length;
      }
   }
 
@@ -910,7 +913,7 @@ void DynamicHandlerPutSlot(
    if (CheckCurrentMessage(theEnv,"dynamic-put",true) == false)
      return;
    EvaluateExpression(theEnv,GetFirstArgument(),&temp);
-   if (temp.header->type != SYMBOL)
+   if (temp.header->type != SYMBOL_TYPE)
      {
       ExpectedTypeError1(theEnv,"dynamic-put",1,"symbol");
       EnvSetEvaluationError(theEnv,true);
@@ -1020,7 +1023,7 @@ static bool PerformMessage(
       return false;
      }
 
-   if (ProceduralPrimitiveData(theEnv)->ProcParamArray->header->type == INSTANCE_ADDRESS)
+   if (ProceduralPrimitiveData(theEnv)->ProcParamArray->header->type == INSTANCE_ADDRESS_TYPE)
      {
       ins = ProceduralPrimitiveData(theEnv)->ProcParamArray->instanceValue;
       if (ins->garbage == 1)
@@ -1034,7 +1037,7 @@ static bool PerformMessage(
          ins->busy++;
         }
      }
-   else if (ProceduralPrimitiveData(theEnv)->ProcParamArray->header->type == INSTANCE_NAME)
+   else if (ProceduralPrimitiveData(theEnv)->ProcParamArray->header->type == INSTANCE_NAME_TYPE)
      {
       ins = FindInstanceBySymbol(theEnv,ProceduralPrimitiveData(theEnv)->ProcParamArray->lexemeValue);
       if (ins == NULL)

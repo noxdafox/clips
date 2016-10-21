@@ -786,8 +786,8 @@ static bool CheckForFacetConflicts(
         {
          ReturnExpression(theEnv,sd->constraint->minFields);
          ReturnExpression(theEnv,sd->constraint->maxFields);
-         sd->constraint->minFields = GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,1LL));
-         sd->constraint->maxFields = GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,1LL));
+         sd->constraint->minFields = GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,1LL));
+         sd->constraint->maxFields = GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,1LL));
         }
      }
    if (sd->noDefault && sd->noWrite)

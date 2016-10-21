@@ -138,8 +138,8 @@
 void SetupInstances(
   Environment *theEnv)
   {
-   struct patternEntityRecord instanceInfo = { { "INSTANCE_ADDRESS",
-                                                     INSTANCE_ADDRESS,0,0,0,
+   struct patternEntityRecord instanceInfo = { { "INSTANCE_ADDRESS_TYPE",
+                                                     INSTANCE_ADDRESS_TYPE,0,0,0,
                                                      (EntityPrintFunction *) PrintInstanceName,
                                                      (EntityPrintFunction *) PrintInstanceLongForm,
                                                      (bool (*)(void *,void *)) EnvUnmakeInstance,
@@ -160,7 +160,7 @@ void SetupInstances(
 #endif
                                          };
 
-   Instance dummyInstance = { { { INSTANCE_ADDRESS } , NULL, NULL, 0, 0L },
+   Instance dummyInstance = { { { INSTANCE_ADDRESS_TYPE } , NULL, NULL, 0, 0L },
                               NULL, NULL, 0, 1, 0, 0, 0,
                               NULL,  0, 0, NULL, NULL, NULL, NULL,
                               NULL, NULL, NULL, NULL, NULL };
@@ -173,7 +173,7 @@ void SetupInstances(
    memcpy(&InstanceData(theEnv)->DummyInstance,&dummyInstance,sizeof(Instance));
 
    InitializeInstanceTable(theEnv);
-   InstallPrimitive(theEnv,(struct entityRecord *) &InstanceData(theEnv)->InstanceInfo,INSTANCE_ADDRESS);
+   InstallPrimitive(theEnv,(struct entityRecord *) &InstanceData(theEnv)->InstanceInfo,INSTANCE_ADDRESS_TYPE);
 
 #if ! RUN_TIME
 
@@ -432,7 +432,7 @@ void InstancesCommand(
 
    if (UDFHasNextArgument(context))
      {
-      if (! UDFFirstArgument(context,SYMBOL_TYPE,&theArg)) return;
+      if (! UDFFirstArgument(context,SYMBOL_BIT,&theArg)) return;
 
       theDefmodule = EnvFindDefmodule(theEnv,theArg.lexemeValue->contents);
       if ((theDefmodule != NULL) ? false :
@@ -444,7 +444,7 @@ void InstancesCommand(
         }
       if (UDFHasNextArgument(context))
         {
-         if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg)) return;
+         if (! UDFNextArgument(context,SYMBOL_BIT,&theArg)) return;
          className = theArg.lexemeValue->contents;
          if (LookupDefclassAnywhere(theEnv,theDefmodule,className) == NULL)
            {
@@ -458,7 +458,7 @@ void InstancesCommand(
            }
          if (UDFHasNextArgument(context))
            {
-            if (! UDFNextArgument(context,SYMBOL_TYPE,&theArg)) return;
+            if (! UDFNextArgument(context,SYMBOL_BIT,&theArg)) return;
 
             if (strcmp(theArg.lexemeValue->contents,ALL_QUALIFIER) != 0)
               {
@@ -669,7 +669,7 @@ Instance *EnvFindInstance(
   {
    CLIPSLexeme *isym;
 
-   isym = FindSymbolHN(theEnv,iname,LEXEME_TYPES | INSTANCE_NAME);
+   isym = FindSymbolHN(theEnv,iname,LEXEME_BITS | INSTANCE_NAME_TYPE);
 
    if (isym == NULL)
      { return NULL; }
@@ -713,9 +713,10 @@ void EnvDirectGetSlot(
   Environment *theEnv,
   Instance *theInstance,
   const char *sname,
-  UDFValue *returnValue)
+  CLIPSValue *returnValue)
   {
    INSTANCE_SLOT *sp;
+   UDFValue temp;
 
    if (theInstance->garbage == 1)
      {
@@ -732,15 +733,12 @@ void EnvDirectGetSlot(
      }
 
    returnValue->value = sp->value;
-   if (sp->type == MULTIFIELD)
-     {
-      returnValue->begin = 0;
-      returnValue->range = GetInstanceSlotLength(sp);
-     }
+
    if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
        (EvaluationData(theEnv)->CurrentExpression == NULL) && (UtilityData(theEnv)->GarbageCollectionLocks == 0))
      {
-      CleanCurrentGarbageFrame(theEnv,returnValue);
+      CLIPSToUDFValue(returnValue,&temp);
+      CleanCurrentGarbageFrame(theEnv,&temp);
       CallPeriodicTasks(theEnv);
      }
   }
@@ -759,10 +757,10 @@ bool EnvDirectPutSlot(
   Environment *theEnv,
   Instance *theInstance,
   const char *sname,
-  UDFValue *val)
+  CLIPSValue *val)
   {
    INSTANCE_SLOT *sp;
-   UDFValue junk;
+   UDFValue junk, temp;
 
    if ((theInstance->garbage == 1) || (val == NULL))
      {
@@ -776,7 +774,8 @@ bool EnvDirectPutSlot(
       return false;
      }
 
-   if (PutSlotValue(theEnv,theInstance,sp,val,&junk,"external put"))
+   CLIPSToUDFValue(val,&temp);
+   if (PutSlotValue(theEnv,theInstance,sp,&temp,&junk,"external put"))
      {
       if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
           (EvaluationData(theEnv)->CurrentExpression == NULL) && (UtilityData(theEnv)->GarbageCollectionLocks == 0))
@@ -1036,7 +1035,7 @@ void ClassCommand(
    returnValue->lexemeValue = theEnv->FalseSymbol;
 
    EvaluateExpression(theEnv,GetFirstArgument(),&temp);
-   if (temp.header->type == INSTANCE_ADDRESS)
+   if (temp.header->type == INSTANCE_ADDRESS_TYPE)
      {
       ins = temp.instanceValue;
       if (ins->garbage == 1)
@@ -1047,7 +1046,7 @@ void ClassCommand(
         }
       returnValue->value = GetDefclassNamePointer(ins->cls);
      }
-   else if (temp.header->type == INSTANCE_NAME)
+   else if (temp.header->type == INSTANCE_NAME_TYPE)
      {
       ins = FindInstanceBySymbol(theEnv,temp.lexemeValue);
       if (ins == NULL)
@@ -1061,13 +1060,13 @@ void ClassCommand(
      {
       switch (temp.header->type)
         {
-         case INTEGER          :
-         case FLOAT            :
-         case SYMBOL           :
-         case STRING           :
-         case MULTIFIELD       :
-         case EXTERNAL_ADDRESS :
-         case FACT_ADDRESS     :
+         case INTEGER_TYPE          :
+         case FLOAT_TYPE            :
+         case SYMBOL_TYPE           :
+         case STRING_TYPE           :
+         case MULTIFIELD_TYPE       :
+         case EXTERNAL_ADDRESS_TYPE :
+         case FACT_ADDRESS_TYPE     :
                           returnValue->value = GetDefclassNamePointer(
                                                  DefclassData(theEnv)->PrimitiveClassMap[temp.header->type]);
                          return;
@@ -1146,10 +1145,10 @@ void UnmakeInstanceCommand(
 
    while (UDFHasNextArgument(context))
      {
-      if (! UDFNextArgument(context,INSTANCE_TYPES | SYMBOL_TYPE,&theArg))
+      if (! UDFNextArgument(context,INSTANCE_BITS | SYMBOL_BIT,&theArg))
         { return; }
 
-      if (CVIsType(&theArg,INSTANCE_NAME_TYPE | SYMBOL_TYPE))
+      if (CVIsType(&theArg,INSTANCE_NAME_BIT | SYMBOL_BIT))
         {
          ins = FindInstanceBySymbol(theEnv,theArg.lexemeValue);
          if ((ins == NULL) ? (strcmp(theArg.lexemeValue->contents,"*") != 0) : false)
@@ -1159,7 +1158,7 @@ void UnmakeInstanceCommand(
             return;
            }
          }
-      else if (CVIsType(&theArg,INSTANCE_ADDRESS_TYPE))
+      else if (CVIsType(&theArg,INSTANCE_ADDRESS_BIT))
         {
          ins = theArg.instanceValue;
          if (ins->garbage)
@@ -1193,10 +1192,10 @@ void UnmakeInstanceCommand(
 
 /*****************************************************************
   NAME         : SymbolToInstanceNameFunction
-  DESCRIPTION  : Converts a symbol from type SYMBOL
-                   to type INSTANCE_NAME
+  DESCRIPTION  : Converts a symbol from type SYMBOL_TYPE
+                   to type INSTANCE_NAME_TYPE
   INPUTS       : The address of the value buffer
-  RETURNS      : The new INSTANCE_NAME symbol
+  RETURNS      : The new INSTANCE_NAME_TYPE symbol
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (symbol-to-instance-name <symbol>)
  *****************************************************************/
@@ -1205,7 +1204,7 @@ void SymbolToInstanceNameFunction(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   if (! UDFFirstArgument(context,SYMBOL_TYPE,returnValue))
+   if (! UDFFirstArgument(context,SYMBOL_BIT,returnValue))
      { return; }
 
    returnValue->value = EnvCreateInstanceName(theEnv,returnValue->lexemeValue->contents);
@@ -1213,8 +1212,8 @@ void SymbolToInstanceNameFunction(
 
 /*****************************************************************
   NAME         : InstanceNameToSymbolFunction
-  DESCRIPTION  : Converts a symbol from type INSTANCE_NAME
-                   to type SYMBOL
+  DESCRIPTION  : Converts a symbol from type INSTANCE_NAME_TYPE
+                   to type SYMBOL_TYPE
   INPUTS       : None
   RETURNS      : Symbol FALSE on errors - or converted instance name
   SIDE EFFECTS : None
@@ -1225,7 +1224,7 @@ void InstanceNameToSymbolFunction(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   if (! UDFFirstArgument(context,INSTANCE_NAME_TYPE | SYMBOL_TYPE,returnValue))
+   if (! UDFFirstArgument(context,INSTANCE_NAME_BIT | SYMBOL_BIT,returnValue))
      { return; }
 
    returnValue->value = EnvCreateSymbol(theEnv,returnValue->lexemeValue->contents);
@@ -1252,7 +1251,7 @@ void InstanceAddressCommand(
    returnValue->lexemeValue = theEnv->FalseSymbol;
    if (UDFArgumentCount(context) > 1)
      {
-      if (! UDFFirstArgument(context,SYMBOL_TYPE,&temp))
+      if (! UDFFirstArgument(context,SYMBOL_BIT,&temp))
         {
          returnValue->lexemeValue = theEnv->FalseSymbol;
          return;
@@ -1272,7 +1271,7 @@ void InstanceAddressCommand(
       else
         searchImports = false;
 
-      if (! UDFNextArgument(context,INSTANCE_NAME_TYPE | SYMBOL_TYPE,&temp))
+      if (! UDFNextArgument(context,INSTANCE_NAME_BIT | SYMBOL_BIT,&temp))
         {
          returnValue->lexemeValue = theEnv->FalseSymbol;
          return;
@@ -1284,9 +1283,9 @@ void InstanceAddressCommand(
       else
         NoInstanceError(theEnv,temp.lexemeValue->contents,"instance-address");
      }
-   else if (UDFFirstArgument(context,INSTANCE_TYPES | SYMBOL_TYPE,&temp))
+   else if (UDFFirstArgument(context,INSTANCE_BITS | SYMBOL_BIT,&temp))
      {
-      if (temp.header->type == INSTANCE_ADDRESS)
+      if (temp.header->type == INSTANCE_ADDRESS_TYPE)
         {
          ins = temp.instanceValue;
          if (ins->garbage == 0)
@@ -1314,7 +1313,7 @@ void InstanceAddressCommand(
   NAME         : InstanceNameCommand
   DESCRIPTION  : Gets the name of an INSTANCE
   INPUTS       : The address of the value buffer
-  RETURNS      : The INSTANCE_NAME symbol
+  RETURNS      : The INSTANCE_NAME_TYPE symbol
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (instance-name <instance>)
  ***************************************************************/
@@ -1327,10 +1326,10 @@ void InstanceNameCommand(
    UDFValue theArg;
 
    returnValue->lexemeValue = theEnv->FalseSymbol;
-   if (! UDFFirstArgument(context,INSTANCE_TYPES | SYMBOL_TYPE,&theArg))
+   if (! UDFFirstArgument(context,INSTANCE_BITS | SYMBOL_BIT,&theArg))
      { return; }
 
-   if (CVIsType(&theArg,INSTANCE_ADDRESS_TYPE))
+   if (CVIsType(&theArg,INSTANCE_ADDRESS_BIT))
      {
       ins = theArg.instanceValue;
       if (ins->garbage == 1)
@@ -1357,7 +1356,7 @@ void InstanceNameCommand(
   NAME         : InstanceAddressPCommand
   DESCRIPTION  : Determines if a value is of type INSTANCE
   INPUTS       : None
-  RETURNS      : True if type INSTANCE_ADDRESS, false otherwise
+  RETURNS      : True if type INSTANCE_ADDRESS_TYPE, false otherwise
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (instance-addressp <arg>)
  **************************************************************/
@@ -1368,10 +1367,10 @@ void InstanceAddressPCommand(
   {
    UDFValue theArg;
 
-   if (! UDFFirstArgument(context,ANY_TYPE,&theArg))
+   if (! UDFFirstArgument(context,ANY_TYPE_BITS,&theArg))
      { return; }
 
-   if (theArg.header->type == INSTANCE_ADDRESS)
+   if (theArg.header->type == INSTANCE_ADDRESS_TYPE)
      { returnValue->value = theEnv->TrueSymbol; }
    else
      { returnValue->value = theEnv->FalseSymbol; }
@@ -1379,9 +1378,9 @@ void InstanceAddressPCommand(
 
 /**************************************************************
   NAME         : InstanceNamePCommand
-  DESCRIPTION  : Determines if a value is of type INSTANCE_NAME
+  DESCRIPTION  : Determines if a value is of type INSTANCE_NAME_TYPE
   INPUTS       : None
-  RETURNS      : True if type INSTANCE_NAME, false otherwise
+  RETURNS      : True if type INSTANCE_NAME_TYPE, false otherwise
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (instance-namep <arg>)
  **************************************************************/
@@ -1392,18 +1391,18 @@ void InstanceNamePCommand(
   {
    UDFValue theArg;
 
-   if (! UDFFirstArgument(context,ANY_TYPE,&theArg))
+   if (! UDFFirstArgument(context,ANY_TYPE_BITS,&theArg))
      { return; }
 
-   returnValue->lexemeValue = EnvCreateBoolean(theEnv,CVIsType(&theArg,INSTANCE_NAME_TYPE));
+   returnValue->lexemeValue = EnvCreateBoolean(theEnv,CVIsType(&theArg,INSTANCE_NAME_BIT));
   }
 
 /*****************************************************************
   NAME         : InstancePCommand
-  DESCRIPTION  : Determines if a value is of type INSTANCE_ADDRESS
-                   or INSTANCE_NAME
+  DESCRIPTION  : Determines if a value is of type INSTANCE_ADDRESS_TYPE
+                   or INSTANCE_NAME_TYPE
   INPUTS       : None
-  RETURNS      : True if type INSTANCE_NAME or INSTANCE_ADDRESS,
+  RETURNS      : True if type INSTANCE_NAME_TYPE or INSTANCE_ADDRESS_TYPE,
                      false otherwise
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (instancep <arg>)
@@ -1415,10 +1414,10 @@ void InstancePCommand(
   {
    UDFValue theArg;
 
-   if (! UDFFirstArgument(context,ANY_TYPE,&theArg))
+   if (! UDFFirstArgument(context,ANY_TYPE_BITS,&theArg))
      { return; }
 
-   returnValue->lexemeValue = EnvCreateBoolean(theEnv,CVIsType(&theArg,INSTANCE_ADDRESS_TYPE | INSTANCE_NAME_TYPE));
+   returnValue->lexemeValue = EnvCreateBoolean(theEnv,CVIsType(&theArg,INSTANCE_ADDRESS_BIT | INSTANCE_NAME_BIT));
   }
 
 /********************************************************
@@ -1436,16 +1435,16 @@ void InstanceExistPCommand(
   {
    UDFValue theArg;
 
-   if (! UDFFirstArgument(context,ANY_TYPE,&theArg))
+   if (! UDFFirstArgument(context,ANY_TYPE_BITS,&theArg))
      { return; }
 
-   if (CVIsType(&theArg,INSTANCE_ADDRESS_TYPE))
+   if (CVIsType(&theArg,INSTANCE_ADDRESS_BIT))
      {
       returnValue->lexemeValue = EnvCreateBoolean(theEnv,(theArg.instanceValue->garbage == 0) ? true : false);
       return;
      }
 
-   if (CVIsType(&theArg,INSTANCE_NAME_TYPE | SYMBOL_TYPE))
+   if (CVIsType(&theArg,INSTANCE_NAME_BIT | SYMBOL_BIT))
      {
       returnValue->lexemeValue = EnvCreateBoolean(theEnv,((FindInstanceBySymbol(theEnv,theArg.lexemeValue) != NULL) ?
               true : false));
@@ -1634,16 +1633,16 @@ static void PrintInstance(
       sp = ins->slotAddresses[i];
       EnvPrintRouter(theEnv,logicalName,"(");
       EnvPrintRouter(theEnv,logicalName,sp->desc->slotName->name->contents);
-      if (sp->type != MULTIFIELD)
+      if (sp->type != MULTIFIELD_TYPE)
         {
          EnvPrintRouter(theEnv,logicalName," ");
          PrintAtom(theEnv,logicalName,(int) sp->type,sp->value);
         }
-      else if (GetInstanceSlotLength(sp) != 0)
+      else if (sp->multifieldValue->length != 0)
         {
          EnvPrintRouter(theEnv,logicalName," ");
          PrintMultifield(theEnv,logicalName,sp->multifieldValue,0,
-                         (long) (GetInstanceSlotLength(sp) - 1),false);
+                         sp->multifieldValue->length - 1,false);
         }
       EnvPrintRouter(theEnv,logicalName,")");
      }
@@ -1667,7 +1666,7 @@ static INSTANCE_SLOT *FindISlotByName(
   {
    CLIPSLexeme *ssym;
 
-   ssym = FindSymbolHN(theEnv,sname,LEXEME_TYPES | INSTANCE_NAME);
+   ssym = FindSymbolHN(theEnv,sname,LEXEME_BITS | INSTANCE_NAME_TYPE);
    
    if (ssym == NULL)
      { return NULL; }

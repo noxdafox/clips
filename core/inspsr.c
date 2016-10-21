@@ -220,7 +220,7 @@ EXPRESSION *ParseInitializeInstance(
          Handle the case of anonymous instances
          where the name was not specified
          ====================================== */
-      if ((top->argList->type != SYMBOL) ? false :
+      if ((top->argList->type != SYMBOL_TYPE) ? false :
           (strcmp(top->argList->lexemeValue->contents,CLASS_RLN) == 0))
         {
          top->argList->nextArg = ArgumentParse(theEnv,readSource,&error);
@@ -231,7 +231,7 @@ EXPRESSION *ParseInitializeInstance(
             SyntaxErrorMessage(theEnv,"instance class");
             goto ParseInitializeInstanceError;
            }
-         if ((top->argList->nextArg->type != SYMBOL) ? true :
+         if ((top->argList->nextArg->type != SYMBOL_TYPE) ? true :
              (strcmp(top->argList->nextArg->lexemeValue->contents,CLASS_RLN) != 0))
            {
             top->argList->type = FCALL;
@@ -370,7 +370,7 @@ EXPRESSION *ParseSlotOverrides(
          EnvSetEvaluationError(theEnv,true);
          return NULL;
         }
-      theExpNext = GenConstant(theEnv,SYMBOL,theEnv->TrueSymbol);
+      theExpNext = GenConstant(theEnv,SYMBOL_TYPE,theEnv->TrueSymbol);
       if (CollectArguments(theEnv,theExpNext,readSource) == NULL)
         {
          *error = true;
@@ -447,7 +447,7 @@ EXPRESSION *ParseSimpleInstance(
      }
    else
      {
-      top->argList = GenConstant(theEnv,INSTANCE_NAME,
+      top->argList = GenConstant(theEnv,INSTANCE_NAME_TYPE,
                                  DefclassData(theEnv)->ObjectParseToken.value);
       GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
       if ((DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TOKEN) ? true :
@@ -459,7 +459,7 @@ EXPRESSION *ParseSimpleInstance(
    if (DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TOKEN)
      goto MakeInstanceError;
    top->argList->nextArg =
-        GenConstant(theEnv,SYMBOL,DefclassData(theEnv)->ObjectParseToken.value);
+        GenConstant(theEnv,SYMBOL_TYPE,DefclassData(theEnv)->ObjectParseToken.value);
    theExp = top->argList->nextArg;
    if (ReplaceClassNameWithReference(theEnv,theExp) == false)
      goto MakeInstanceError;
@@ -469,8 +469,8 @@ EXPRESSION *ParseSimpleInstance(
       GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
       if (DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TOKEN)
         goto SlotOverrideError;
-      theExp->nextArg = GenConstant(theEnv,SYMBOL,DefclassData(theEnv)->ObjectParseToken.value);
-      theExp->nextArg->nextArg = GenConstant(theEnv,SYMBOL,theEnv->TrueSymbol);
+      theExp->nextArg = GenConstant(theEnv,SYMBOL_TYPE,DefclassData(theEnv)->ObjectParseToken.value);
+      theExp->nextArg->nextArg = GenConstant(theEnv,SYMBOL_TYPE,theEnv->TrueSymbol);
       theExp = theExp->nextArg->nextArg;
       GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
       vbot = NULL;
@@ -554,7 +554,7 @@ static bool ReplaceClassNameWithReference(
    const char *theClassName;
    Defclass *theDefclass;
 
-   if (theExp->type == SYMBOL)
+   if (theExp->type == SYMBOL_TYPE)
      {
       theClassName = theExp->lexemeValue->contents;
       //theDefclass = (void *) LookupDefclassInScope(theEnv,theClassName);

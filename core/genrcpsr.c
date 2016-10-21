@@ -1188,7 +1188,7 @@ static EXPRESSION *AddParameter(
   {
    EXPRESSION *ptmp;
 
-   ptmp = GenConstant(theEnv,SYMBOL,pname);
+   ptmp = GenConstant(theEnv,SYMBOL_TYPE,pname);
    if (phead == NULL)
      phead = ptmp;
    else
@@ -1232,35 +1232,35 @@ static EXPRESSION *ValidType(
      }
 #else
    if (strcmp(tname->contents,INTEGER_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,(long long) INTEGER)));
+     return(GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,(long long) INTEGER_TYPE)));
    if (strcmp(tname->contents,FLOAT_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,(long long) FLOAT)));
+     return(GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,(long long) FLOAT_TYPE)));
    if (strcmp(tname->contents,SYMBOL_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,(long long) SYMBOL)));
+     return(GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,(long long) SYMBOL_TYPE)));
    if (strcmp(tname->contents,STRING_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,(long long) STRING)));
+     return(GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,(long long) STRING_TYPE)));
    if (strcmp(tname->contents,MULTIFIELD_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,(long long) MULTIFIELD)));
+     return(GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,(long long) MULTIFIELD_TYPE)));
    if (strcmp(tname->contents,EXTERNAL_ADDRESS_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,(long long) EXTERNAL_ADDRESS)));
+     return(GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,(long long) EXTERNAL_ADDRESS_TYPE)));
    if (strcmp(tname->contents,FACT_ADDRESS_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,(long long) FACT_ADDRESS)));
+     return(GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,(long long) FACT_ADDRESS_TYPE)));
    if (strcmp(tname->contents,NUMBER_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,(long long) NUMBER_TYPE_CODE)));
+     return(GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,(long long) NUMBER_TYPE_CODE)));
    if (strcmp(tname->contents,LEXEME_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,(long long) LEXEME_TYPE_CODE)));
+     return(GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,(long long) LEXEME_TYPE_CODE)));
    if (strcmp(tname->contents,ADDRESS_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,(long long) ADDRESS_TYPE_CODE)));
+     return(GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,(long long) ADDRESS_TYPE_CODE)));
    if (strcmp(tname->contents,PRIMITIVE_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,(long long) PRIMITIVE_TYPE_CODE)));
+     return(GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,(long long) PRIMITIVE_TYPE_CODE)));
    if (strcmp(tname->contents,OBJECT_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,(long long) OBJECT_TYPE_CODE)));
+     return(GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,(long long) OBJECT_TYPE_CODE)));
    if (strcmp(tname->contents,INSTANCE_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,(long long) INSTANCE_TYPE_CODE)));
+     return(GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,(long long) INSTANCE_TYPE_CODE)));
    if (strcmp(tname->contents,INSTANCE_NAME_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,(long long) INSTANCE_NAME)));
+     return(GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,(long long) INSTANCE_NAME_TYPE)));
    if (strcmp(tname->contents,INSTANCE_ADDRESS_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER,EnvCreateInteger(theEnv,(long long) INSTANCE_ADDRESS)));
+     return(GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,(long long) INSTANCE_ADDRESS_TYPE)));
 
    PrintErrorID(theEnv,"GENRCPSR",14,false);
    EnvPrintRouter(theEnv,WERROR,"Unknown type in method.\n");

@@ -97,34 +97,34 @@ static bool CheckFunctionReturnType(
    if (constraints->anyAllowed) return true;
 
    if (constraints->voidAllowed)
-     { if (functionReturnType & VOID_TYPE) return true; }
+     { if (functionReturnType & VOID_BIT) return true; }
 
    if (constraints->symbolsAllowed)
-     { if (functionReturnType & SYMBOL_TYPE) return true; }
+     { if (functionReturnType & SYMBOL_BIT) return true; }
 
    if (constraints->stringsAllowed)
-     { if (functionReturnType & STRING_TYPE) return true; }
+     { if (functionReturnType & STRING_BIT) return true; }
 
    if (constraints->instanceNamesAllowed)
-     { if (functionReturnType & INSTANCE_NAME_TYPE) return true; }
+     { if (functionReturnType & INSTANCE_NAME_BIT) return true; }
 
    if (constraints->floatsAllowed)
-     { if (functionReturnType & FLOAT_TYPE) return true; }
+     { if (functionReturnType & FLOAT_BIT) return true; }
 
    if (constraints->integersAllowed)
-     { if (functionReturnType & INTEGER_TYPE) return true; }
+     { if (functionReturnType & INTEGER_BIT) return true; }
 
    if (constraints->multifieldsAllowed)
-     { if (functionReturnType & MULTIFIELD_TYPE) return true; }
+     { if (functionReturnType & MULTIFIELD_BIT) return true; }
 
    if (constraints->externalAddressesAllowed)
-     { if (functionReturnType & EXTERNAL_ADDRESS_TYPE) return true; }
+     { if (functionReturnType & EXTERNAL_ADDRESS_BIT) return true; }
 
    if (constraints->factAddressesAllowed)
-     { if (functionReturnType & FACT_ADDRESS_TYPE) return true; }
+     { if (functionReturnType & FACT_ADDRESS_BIT) return true; }
 
    if (constraints->instanceAddressesAllowed)
-     { if (functionReturnType & INSTANCE_ADDRESS_TYPE) return true; }
+     { if (functionReturnType & INSTANCE_ADDRESS_BIT) return true; }
 
    return false;
   }
@@ -138,39 +138,39 @@ static bool CheckTypeConstraint(
   int type,
   CONSTRAINT_RECORD *constraints)
   {
-   if (type == RVOID) return false;
+   if (type == VOID_TYPE) return false;
 
    if (constraints == NULL) return true;
 
    if (constraints->anyAllowed == true) return true;
 
-   if ((type == SYMBOL) && (constraints->symbolsAllowed != true))
+   if ((type == SYMBOL_TYPE) && (constraints->symbolsAllowed != true))
      { return false; }
 
-   if ((type == STRING) && (constraints->stringsAllowed != true))
+   if ((type == STRING_TYPE) && (constraints->stringsAllowed != true))
      { return false; }
 
-   if ((type == FLOAT) && (constraints->floatsAllowed != true))
+   if ((type == FLOAT_TYPE) && (constraints->floatsAllowed != true))
      { return false; }
 
-   if ((type == INTEGER) && (constraints->integersAllowed != true))
+   if ((type == INTEGER_TYPE) && (constraints->integersAllowed != true))
      { return false; }
 
 #if OBJECT_SYSTEM
-   if ((type == INSTANCE_NAME) && (constraints->instanceNamesAllowed != true))
+   if ((type == INSTANCE_NAME_TYPE) && (constraints->instanceNamesAllowed != true))
      { return false; }
 
-   if ((type == INSTANCE_ADDRESS) && (constraints->instanceAddressesAllowed != true))
+   if ((type == INSTANCE_ADDRESS_TYPE) && (constraints->instanceAddressesAllowed != true))
      { return false; }
 #endif
 
-   if ((type == EXTERNAL_ADDRESS) && (constraints->externalAddressesAllowed != true))
+   if ((type == EXTERNAL_ADDRESS_TYPE) && (constraints->externalAddressesAllowed != true))
      { return false; }
 
-   if ((type == RVOID) && (constraints->voidAllowed != true))
+   if ((type == VOID_TYPE) && (constraints->voidAllowed != true))
      { return false; }
 
-   if ((type == FACT_ADDRESS) && (constraints->factAddressesAllowed != true))
+   if ((type == FACT_ADDRESS_TYPE) && (constraints->factAddressesAllowed != true))
      { return false; }
 
    return true;
@@ -316,33 +316,33 @@ bool CheckAllowedValuesConstraint(
 
    switch (type)
      {
-      case SYMBOL:
+      case SYMBOL_TYPE:
         if ((constraints->symbolRestriction == false) &&
             (constraints->anyRestriction == false))
           { return true; }
         break;
 
 #if OBJECT_SYSTEM
-      case INSTANCE_NAME:
+      case INSTANCE_NAME_TYPE:
         if ((constraints->instanceNameRestriction == false) &&
             (constraints->anyRestriction == false))
           { return true; }
         break;
 #endif
 
-      case STRING:
+      case STRING_TYPE:
         if ((constraints->stringRestriction == false) &&
             (constraints->anyRestriction == false))
           { return true; }
         break;
 
-      case INTEGER:
+      case INTEGER_TYPE:
         if ((constraints->integerRestriction == false) &&
             (constraints->anyRestriction == false))
           { return true; }
         break;
 
-      case FLOAT:
+      case FLOAT_TYPE:
         if ((constraints->floatRestriction == false) &&
             (constraints->anyRestriction == false))
           { return true; }
@@ -409,7 +409,7 @@ bool CheckAllowedClassesConstraint(
    /* instances and instance names.    */
    /*==================================*/
 
-   if ((type != INSTANCE_ADDRESS) && (type != INSTANCE_NAME))
+   if ((type != INSTANCE_ADDRESS_TYPE) && (type != INSTANCE_NAME_TYPE))
      { return true; }
 
    /*=============================================*/
@@ -417,7 +417,7 @@ bool CheckAllowedClassesConstraint(
    /* whether the instance exists.                */
    /*=============================================*/
 
-   if (type == INSTANCE_ADDRESS)
+   if (type == INSTANCE_ADDRESS_TYPE)
      { ins = (Instance *) vPtr; }
    else
      { ins = FindInstanceBySymbol(theEnv,(CLIPSLexeme *) vPtr); }
@@ -484,7 +484,7 @@ static bool CheckRangeConstraint(
    /* then the range restrictions don't apply.   */
    /*============================================*/
 
-   if ((type != INTEGER) && (type != FLOAT)) return true;
+   if ((type != INTEGER_TYPE) && (type != FLOAT_TYPE)) return true;
 
    /*=====================================================*/
    /* Check each of the range restrictions to see if the  */
@@ -657,7 +657,7 @@ int ConstraintCheckDataObject(
 
    if (theConstraints == NULL) return(NO_VIOLATION);
 
-   if (theData->header->type == MULTIFIELD)
+   if (theData->header->type == MULTIFIELD_TYPE)
      {
       if (CheckCardinalityConstraint(theEnv,theData->range,
                                      theConstraints) == false)
@@ -736,7 +736,7 @@ int ConstraintCheckExpressionChain(
       else if (theExp->type == FCALL)
         {
          unsigned restriction = ExpressionUnknownFunctionType(theExp);
-         if (restriction & MULTIFIELD_TYPE)
+         if (restriction & MULTIFIELD_BIT)
            { max = -1; }
          else
            { min++; }

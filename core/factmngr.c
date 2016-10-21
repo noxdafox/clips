@@ -125,7 +125,7 @@ void InitializeFacts(
   Environment *theEnv)
   {
    struct patternEntityRecord factInfo =
-      { { "FACT_ADDRESS", FACT_ADDRESS,1,0,0,
+      { { "FACT_ADDRESS_TYPE", FACT_ADDRESS_TYPE,1,0,0,
           (EntityPrintFunction *) PrintFactIdentifier,
           (EntityPrintFunction *) PrintFactIdentifierInLongForm,
           (bool (*)(void *,void *)) EnvRetract,
@@ -142,10 +142,10 @@ void InitializeFacts(
         (bool (*)(Environment *,void *)) FactIsDeleted
       };
 
-   Fact dummyFact = { { { FACT_ADDRESS }, NULL, NULL, 0, 0L },
+   Fact dummyFact = { { { FACT_ADDRESS_TYPE }, NULL, NULL, 0, 0L },
                       NULL, NULL, -1L, 0, 1,
                       NULL, NULL, NULL, NULL, NULL, 
-                      { {MULTIFIELD } , 1, 0UL, NULL, { { { NULL } } } } };
+                      { {MULTIFIELD_TYPE } , 1, 0UL, NULL, { { { NULL } } } } };
 
    AllocateEnvironmentData(theEnv,FACTS_DATA,sizeof(struct factsData),DeallocateFactData);
 
@@ -359,7 +359,7 @@ void DecrementFactBasisCount(
    else
      { theSegment = &factPtr->theProposition; }
 
-   for (i = 0 ; i < (int) theSegment->multifieldLength ; i++)
+   for (i = 0 ; i < (int) theSegment->length ; i++)
      { AtomDeinstall(theEnv,theSegment->theFields[i].header->type,theSegment->theFields[i].value); }
 
    if ((factPtr->basisSlots != NULL) && (factPtr->basisSlots->busyCount == 0))
@@ -384,7 +384,7 @@ void IncrementFactBasisCount(
 
    theSegment = &factPtr->theProposition;
 
-   if (theSegment->multifieldLength != 0)
+   if (theSegment->length != 0)
      {
       if (factPtr->basisSlots != NULL)
         {
@@ -398,7 +398,7 @@ void IncrementFactBasisCount(
       theSegment = factPtr->basisSlots;
      }
 
-   for (i = 0 ; i < (int) theSegment->multifieldLength ; i++)
+   for (i = 0 ; i < (int) theSegment->length ; i++)
      {
       AtomInstall(theEnv,theSegment->theFields[i].header->type,theSegment->theFields[i].value);
      }
@@ -452,11 +452,11 @@ void PrintFact(
    EnvPrintRouter(theEnv,logicalName,factPtr->whichDeftemplate->header.name->contents);
 
    theMultifield = factPtr->theProposition.theFields[0].multifieldValue;
-   if (theMultifield->multifieldLength != 0)
+   if (theMultifield->length != 0)
      {
       EnvPrintRouter(theEnv,logicalName," ");
       PrintMultifield(theEnv,logicalName,theMultifield,0,
-                      (long) (theMultifield->multifieldLength - 1),
+                      (long) (theMultifield->length - 1),
                       false);
      }
 
@@ -726,7 +726,7 @@ Fact *EnvAssert(
    /* Replace invalid data types in the fact with the symbol nil. */
    /*=============================================================*/
 
-   length = theFact->theProposition.multifieldLength;
+   length = theFact->theProposition.length;
    theField = theFact->theProposition.theFields;
 
    for (i = 0; i < length; i++)
@@ -960,7 +960,7 @@ bool EnvGetFactSlot(
   Environment *theEnv,
   Fact *theFact,
   const char *slotName,
-  UDFValue *theValue)
+  CLIPSValue *theValue)
   {
    Deftemplate *theDeftemplate;
    short whichSlot;
@@ -981,8 +981,6 @@ bool EnvGetFactSlot(
      {
       if (slotName != NULL) return false;
       theValue->value = theFact->theProposition.theFields[0].value;
-      theValue->begin = 0;
-      theValue->range = theValue->multifieldValue->multifieldLength;
       return true;
      }
 
@@ -1001,13 +999,8 @@ bool EnvGetFactSlot(
    /*======================================================*/
 
    theValue->value = theFact->theProposition.theFields[whichSlot-1].value;
-   if (theValue->header->type == MULTIFIELD)
-     {
-      theValue->begin = 0;
-      theValue->range = theValue->multifieldValue->multifieldLength;
-     }
 
-   if (theValue->header->type == RVOID) return false;
+   if (theValue->header->type == VOID_TYPE) return false;
 
    return true;
   }
@@ -1020,7 +1013,7 @@ bool EnvPutFactSlot(
   Environment *theEnv,
   Fact *theFact,
   const char *slotName,
-  UDFValue *theValue)
+  CLIPSValue *theValue)
   {
    Deftemplate *theDeftemplate;
    struct templateSlot *theSlot;
@@ -1040,13 +1033,13 @@ bool EnvPutFactSlot(
 
    if (theDeftemplate->implied)
      {
-      if ((slotName != NULL) || (theValue->header->type != MULTIFIELD))
+      if ((slotName != NULL) || (theValue->header->type != MULTIFIELD_TYPE))
         { return false; }
 
-      if (theFact->theProposition.theFields[0].header->type == MULTIFIELD)
+      if (theFact->theProposition.theFields[0].header->type == MULTIFIELD_TYPE)
         { ReturnMultifield(theEnv,theFact->theProposition.theFields[0].multifieldValue); }
 
-      theFact->theProposition.theFields[0].value = DOToMultifield(theEnv,theValue);
+      theFact->theProposition.theFields[0].value = CopyMultifield(theEnv,theValue->multifieldValue);
 
       return true;
      }
@@ -1064,19 +1057,19 @@ bool EnvPutFactSlot(
    /* stored in a multifield slot or vice versa.  */
    /*=============================================*/
 
-   if (((theSlot->multislot == 0) && (theValue->header->type == MULTIFIELD)) ||
-       ((theSlot->multislot == 1) && (theValue->header->type != MULTIFIELD)))
+   if (((theSlot->multislot == 0) && (theValue->header->type == MULTIFIELD_TYPE)) ||
+       ((theSlot->multislot == 1) && (theValue->header->type != MULTIFIELD_TYPE)))
      { return false; }
 
    /*=====================*/
    /* Set the slot value. */
    /*=====================*/
 
-   if (theFact->theProposition.theFields[whichSlot-1].header->type == MULTIFIELD)
+   if (theFact->theProposition.theFields[whichSlot-1].header->type == MULTIFIELD_TYPE)
      { ReturnMultifield(theEnv,theFact->theProposition.theFields[whichSlot-1].multifieldValue); }
 
-   if (theValue->header->type == MULTIFIELD)
-     { theFact->theProposition.theFields[whichSlot-1].multifieldValue = DOToMultifield(theEnv,theValue); }
+   if (theValue->header->type == MULTIFIELD_TYPE)
+     { theFact->theProposition.theFields[whichSlot-1].multifieldValue = CopyMultifield(theEnv,theValue->multifieldValue); }
    else
      { theFact->theProposition.theFields[whichSlot-1].value = theValue->value; }
 
@@ -1251,7 +1244,7 @@ bool CopyFactSlotValues(
         i < (int) theDeftemplate->numberOfSlots;
         i++, slotPtr = slotPtr->next)
      {
-      if (theSourceFact->theProposition.theFields[i].header->type != MULTIFIELD)
+      if (theSourceFact->theProposition.theFields[i].header->type != MULTIFIELD_TYPE)
         {
          theDestFact->theProposition.theFields[i].value =
            theSourceFact->theProposition.theFields[i].value;
@@ -1287,7 +1280,7 @@ Fact *CreateFactBySize(
 
    theFact = get_var_struct(theEnv,fact,sizeof(struct field) * (newSize - 1));
 
-   theFact->factHeader.th.type = FACT_ADDRESS;
+   theFact->factHeader.th.type = FACT_ADDRESS_TYPE;
    theFact->garbage = false;
    theFact->factIndex = 0LL;
    theFact->factHeader.busyCount = 0;
@@ -1301,7 +1294,7 @@ Fact *CreateFactBySize(
    theFact->list = NULL;
    theFact->basisSlots = NULL;
 
-   theFact->theProposition.multifieldLength = size;
+   theFact->theProposition.length = size;
    theFact->theProposition.busyCount = 0;
 
    return(theFact);
@@ -1320,9 +1313,9 @@ void ReturnFact(
 
    theSegment = &theFact->theProposition;
 
-   for (i = 0; i < theSegment->multifieldLength; i++)
+   for (i = 0; i < theSegment->length; i++)
      {
-      if (theSegment->theFields[i].header->type == MULTIFIELD)
+      if (theSegment->theFields[i].header->type == MULTIFIELD_TYPE)
         {
          subSegment = theSegment->theFields[i].multifieldValue;
          if (subSegment->busyCount == 0)
@@ -1332,8 +1325,8 @@ void ReturnFact(
         }
      }
 
-   if (theFact->theProposition.multifieldLength == 0) newSize = 1;
-   else newSize = theFact->theProposition.multifieldLength;
+   if (theFact->theProposition.length == 0) newSize = 1;
+   else newSize = theFact->theProposition.length;
 
    rtn_var_struct(theEnv,fact,sizeof(struct field) * (newSize - 1),theFact);
   }
@@ -1353,7 +1346,7 @@ void FactInstall(
    newFact->whichDeftemplate->busyCount++;
    theSegment = &newFact->theProposition;
 
-   for (i = 0 ; i < (int) theSegment->multifieldLength ; i++)
+   for (i = 0 ; i < (int) theSegment->length ; i++)
      {
       AtomInstall(theEnv,theSegment->theFields[i].header->type,theSegment->theFields[i].value);
      }
@@ -1376,7 +1369,7 @@ void FactDeinstall(
    theSegment = &newFact->theProposition;
    newFact->whichDeftemplate->busyCount--;
 
-   for (i = 0 ; i < (int) theSegment->multifieldLength ; i++)
+   for (i = 0 ; i < (int) theSegment->length ; i++)
      {
       AtomDeinstall(theEnv,theSegment->theFields[i].header->type,theSegment->theFields[i].value);
      }
@@ -1974,8 +1967,8 @@ bool FBPutSlot(
    /* stored in a multifield slot or vice versa.  */
    /*=============================================*/
 
-   if (((theSlot->multislot == 0) && (slotValue->header->type == MULTIFIELD)) ||
-       ((theSlot->multislot == 1) && (slotValue->header->type != MULTIFIELD)))
+   if (((theSlot->multislot == 0) && (slotValue->header->type == MULTIFIELD_TYPE)) ||
+       ((theSlot->multislot == 1) && (slotValue->header->type != MULTIFIELD_TYPE)))
      { return false; }
      
    if (theFB->fbValueArray == NULL)
@@ -1991,7 +1984,7 @@ bool FBPutSlot(
    
    oldValue.value = theFB->fbValueArray[whichSlot-1].value;
    
-   if (oldValue.header->type == MULTIFIELD)
+   if (oldValue.header->type == MULTIFIELD_TYPE)
      {
       if (MultifieldsEqual(oldValue.multifieldValue,slotValue->multifieldValue))
         { return true; }
@@ -2004,10 +1997,10 @@ bool FBPutSlot(
    
    CVAtomDeinstall(theEnv,oldValue.value);
    
-   if (oldValue.header->type == MULTIFIELD)
+   if (oldValue.header->type == MULTIFIELD_TYPE)
      { ReturnMultifield(theEnv,oldValue.multifieldValue); }
 
-   if (slotValue->header->type == MULTIFIELD)
+   if (slotValue->header->type == MULTIFIELD_TYPE)
      { theFB->fbValueArray[whichSlot-1].multifieldValue = CopyMultifield(theEnv,slotValue->multifieldValue); }
    else
      { theFB->fbValueArray[whichSlot-1].value = slotValue->value; }
@@ -2075,7 +2068,7 @@ void FBAbort(
      {
       CVAtomDeinstall(theEnv,theFB->fbValueArray[i].value);
       
-      if (theFB->fbValueArray[i].header->type == MULTIFIELD)
+      if (theFB->fbValueArray[i].header->type == MULTIFIELD_TYPE)
         { ReturnMultifield(theEnv,theFB->fbValueArray[i].multifieldValue); }
         
       theFB->fbValueArray[i].voidValue = theEnv->VoidConstant;
@@ -2271,8 +2264,8 @@ bool FMPutSlot(
    /* stored in a multifield slot or vice versa.  */
    /*=============================================*/
 
-   if (((theSlot->multislot == 0) && (slotValue->header->type == MULTIFIELD)) ||
-       ((theSlot->multislot == 1) && (slotValue->header->type != MULTIFIELD)))
+   if (((theSlot->multislot == 0) && (slotValue->header->type == MULTIFIELD_TYPE)) ||
+       ((theSlot->multislot == 1) && (slotValue->header->type != MULTIFIELD_TYPE)))
      { return false; }
 
    if (theFM->fmValueArray == NULL)
@@ -2295,12 +2288,12 @@ bool FMPutSlot(
    oldValue.value = theFM->fmValueArray[whichSlot-1].value;
    oldFactValue.value = theFM->fmOldFact->theProposition.theFields[whichSlot-1].value;
 
-   if (oldFactValue.header->type == MULTIFIELD)
+   if (oldFactValue.header->type == MULTIFIELD_TYPE)
      {
       if (MultifieldsEqual(oldFactValue.multifieldValue,slotValue->multifieldValue))
         {
          CVAtomDeinstall(theFM->fmEnv,oldValue.value);
-         if (oldValue.header->type == MULTIFIELD)
+         if (oldValue.header->type == MULTIFIELD_TYPE)
            { ReturnMultifield(theFM->fmEnv,oldValue.multifieldValue); }
          theFM->fmValueArray[whichSlot-1].voidValue = theFM->fmEnv->VoidConstant;
          ClearBitMap(theFM->changeMap,whichSlot-1);
@@ -2328,10 +2321,10 @@ bool FMPutSlot(
 
    CVAtomDeinstall(theFM->fmEnv,oldValue.value);
 
-   if (oldValue.header->type == MULTIFIELD)
+   if (oldValue.header->type == MULTIFIELD_TYPE)
      { ReturnMultifield(theFM->fmEnv,oldValue.multifieldValue); }
       
-   if (slotValue->header->type == MULTIFIELD)
+   if (slotValue->header->type == MULTIFIELD_TYPE)
      { theFM->fmValueArray[whichSlot-1].multifieldValue = CopyMultifield(theFM->fmEnv,slotValue->multifieldValue); }
    else
      { theFM->fmValueArray[whichSlot-1].value = slotValue->value; }
@@ -2364,7 +2357,7 @@ Fact *FMApply(
          CLIPSValue theValue;
          theValue.value = oldFact->theProposition.theFields[i].value;
          
-         if (theValue.header->type == MULTIFIELD)
+         if (theValue.header->type == MULTIFIELD_TYPE)
            { newFact->theProposition.theFields[i].value = CopyMultifield(theEnv,theValue.multifieldValue); }
          else
            { newFact->theProposition.theFields[i].value = oldFact->theProposition.theFields[i].value; }
@@ -2412,7 +2405,7 @@ void FMDispose(
      {
       CVAtomDeinstall(theEnv,theFM->fmValueArray[i].value);
 
-      if (theFM->fmValueArray[i].header->type == MULTIFIELD)
+      if (theFM->fmValueArray[i].header->type == MULTIFIELD_TYPE)
         { ReturnMultifield(theEnv,theFM->fmValueArray[i].multifieldValue); }
      }
    
@@ -2448,7 +2441,7 @@ void FMAbort(
      {
       CVAtomDeinstall(theEnv,theFM->fmValueArray[i].value);
 
-      if (theFM->fmValueArray[i].header->type == MULTIFIELD)
+      if (theFM->fmValueArray[i].header->type == MULTIFIELD_TYPE)
         { ReturnMultifield(theEnv,theFM->fmValueArray[i].multifieldValue); }
         
       theFM->fmValueArray[i].voidValue = theFM->fmEnv->VoidConstant;
@@ -2485,7 +2478,7 @@ bool FMSetFact(
      {
       CVAtomDeinstall(theEnv,theFM->fmValueArray[i].value);
 
-      if (theFM->fmValueArray[i].header->type == MULTIFIELD)
+      if (theFM->fmValueArray[i].header->type == MULTIFIELD_TYPE)
         { ReturnMultifield(theEnv,theFM->fmValueArray[i].multifieldValue); }
      }
 

@@ -33,7 +33,7 @@
 /*            to user defined functions and callback         */
 /*            functions.                                     */
 /*                                                           */
-/*            Support for hashing EXTERNAL_ADDRESS data      */
+/*            Support for hashing EXTERNAL_ADDRESS_TYPE data      */
 /*            type.                                          */
 /*                                                           */
 /*            Added const qualifiers to remove C++           */

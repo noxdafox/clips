@@ -381,37 +381,37 @@ void ObjectsRunTimeInitialize(
           }
      }
 
-   InstanceQueryData(theEnv)->QUERY_DELIMITER_SYMBOL = FindSymbolHN(theEnv,QUERY_DELIMITER_STRING,SYMBOL_TYPE);
-   MessageHandlerData(theEnv)->INIT_SYMBOL = FindSymbolHN(theEnv,INIT_STRING,SYMBOL_TYPE);
-   MessageHandlerData(theEnv)->DELETE_SYMBOL = FindSymbolHN(theEnv,DELETE_STRING,SYMBOL_TYPE);
-   MessageHandlerData(theEnv)->CREATE_SYMBOL = FindSymbolHN(theEnv,CREATE_STRING,SYMBOL_TYPE);
-   DefclassData(theEnv)->ISA_SYMBOL = FindSymbolHN(theEnv,SUPERCLASS_RLN,SYMBOL_TYPE);
-   DefclassData(theEnv)->NAME_SYMBOL = FindSymbolHN(theEnv,NAME_RLN,SYMBOL_TYPE);
+   InstanceQueryData(theEnv)->QUERY_DELIMITER_SYMBOL = FindSymbolHN(theEnv,QUERY_DELIMITER_STRING,SYMBOL_BIT);
+   MessageHandlerData(theEnv)->INIT_SYMBOL = FindSymbolHN(theEnv,INIT_STRING,SYMBOL_BIT);
+   MessageHandlerData(theEnv)->DELETE_SYMBOL = FindSymbolHN(theEnv,DELETE_STRING,SYMBOL_BIT);
+   MessageHandlerData(theEnv)->CREATE_SYMBOL = FindSymbolHN(theEnv,CREATE_STRING,SYMBOL_BIT);
+   DefclassData(theEnv)->ISA_SYMBOL = FindSymbolHN(theEnv,SUPERCLASS_RLN,SYMBOL_BIT);
+   DefclassData(theEnv)->NAME_SYMBOL = FindSymbolHN(theEnv,NAME_RLN,SYMBOL_BIT);
 #if DEFRULE_CONSTRUCT
-   DefclassData(theEnv)->INITIAL_OBJECT_SYMBOL = FindSymbolHN(theEnv,INITIAL_OBJECT_NAME,INSTANCE_NAME_TYPE);
+   DefclassData(theEnv)->INITIAL_OBJECT_SYMBOL = FindSymbolHN(theEnv,INITIAL_OBJECT_NAME,INSTANCE_NAME_BIT);
 #endif
 
    DefclassData(theEnv)->ClassTable = (Defclass **) ctable;
    DefclassData(theEnv)->SlotNameTable = (SLOT_NAME **) sntable;
    DefclassData(theEnv)->ClassIDMap = (Defclass **) cidmap;
    DefclassData(theEnv)->MaxClassID = (unsigned short) mid;
-   DefclassData(theEnv)->PrimitiveClassMap[FLOAT] =
+   DefclassData(theEnv)->PrimitiveClassMap[FLOAT_TYPE] =
      LookupDefclassByMdlOrScope(theEnv,FLOAT_TYPE_NAME);
-   DefclassData(theEnv)->PrimitiveClassMap[INTEGER] =
+   DefclassData(theEnv)->PrimitiveClassMap[INTEGER_TYPE] =
      LookupDefclassByMdlOrScope(theEnv,INTEGER_TYPE_NAME);
-   DefclassData(theEnv)->PrimitiveClassMap[STRING] =
+   DefclassData(theEnv)->PrimitiveClassMap[STRING_TYPE] =
      LookupDefclassByMdlOrScope(theEnv,STRING_TYPE_NAME);
-   DefclassData(theEnv)->PrimitiveClassMap[SYMBOL] =
+   DefclassData(theEnv)->PrimitiveClassMap[SYMBOL_TYPE] =
      LookupDefclassByMdlOrScope(theEnv,SYMBOL_TYPE_NAME);
-   DefclassData(theEnv)->PrimitiveClassMap[MULTIFIELD] =
+   DefclassData(theEnv)->PrimitiveClassMap[MULTIFIELD_TYPE] =
      LookupDefclassByMdlOrScope(theEnv,MULTIFIELD_TYPE_NAME);
-   DefclassData(theEnv)->PrimitiveClassMap[EXTERNAL_ADDRESS] =
+   DefclassData(theEnv)->PrimitiveClassMap[EXTERNAL_ADDRESS_TYPE] =
      LookupDefclassByMdlOrScope(theEnv,EXTERNAL_ADDRESS_TYPE_NAME);
-   DefclassData(theEnv)->PrimitiveClassMap[FACT_ADDRESS] =
+   DefclassData(theEnv)->PrimitiveClassMap[FACT_ADDRESS_TYPE] =
      LookupDefclassByMdlOrScope(theEnv,FACT_ADDRESS_TYPE_NAME);
-   DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_NAME] =
+   DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_NAME_TYPE] =
      LookupDefclassByMdlOrScope(theEnv,INSTANCE_NAME_TYPE_NAME);
-   DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_ADDRESS] =
+   DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_ADDRESS_TYPE] =
      LookupDefclassByMdlOrScope(theEnv,INSTANCE_ADDRESS_TYPE_NAME);
 
    for (j = 0 ; j < CLASS_TABLE_HASH_SIZE ; j++)
@@ -501,18 +501,18 @@ void CreateSystemClasses(
    user = AddSystemClass(theEnv,USER_TYPE_NAME,any);
 
    number = AddSystemClass(theEnv,NUMBER_TYPE_NAME,primitive);
-   DefclassData(theEnv)->PrimitiveClassMap[INTEGER] = AddSystemClass(theEnv,INTEGER_TYPE_NAME,number);
-   DefclassData(theEnv)->PrimitiveClassMap[FLOAT] = AddSystemClass(theEnv,FLOAT_TYPE_NAME,number);
+   DefclassData(theEnv)->PrimitiveClassMap[INTEGER_TYPE] = AddSystemClass(theEnv,INTEGER_TYPE_NAME,number);
+   DefclassData(theEnv)->PrimitiveClassMap[FLOAT_TYPE] = AddSystemClass(theEnv,FLOAT_TYPE_NAME,number);
    lexeme = AddSystemClass(theEnv,LEXEME_TYPE_NAME,primitive);
-   DefclassData(theEnv)->PrimitiveClassMap[SYMBOL] = AddSystemClass(theEnv,SYMBOL_TYPE_NAME,lexeme);
-   DefclassData(theEnv)->PrimitiveClassMap[STRING] = AddSystemClass(theEnv,STRING_TYPE_NAME,lexeme);
-   DefclassData(theEnv)->PrimitiveClassMap[MULTIFIELD] = AddSystemClass(theEnv,MULTIFIELD_TYPE_NAME,primitive);
+   DefclassData(theEnv)->PrimitiveClassMap[SYMBOL_TYPE] = AddSystemClass(theEnv,SYMBOL_TYPE_NAME,lexeme);
+   DefclassData(theEnv)->PrimitiveClassMap[STRING_TYPE] = AddSystemClass(theEnv,STRING_TYPE_NAME,lexeme);
+   DefclassData(theEnv)->PrimitiveClassMap[MULTIFIELD_TYPE] = AddSystemClass(theEnv,MULTIFIELD_TYPE_NAME,primitive);
    address = AddSystemClass(theEnv,ADDRESS_TYPE_NAME,primitive);
-   DefclassData(theEnv)->PrimitiveClassMap[EXTERNAL_ADDRESS] = AddSystemClass(theEnv,EXTERNAL_ADDRESS_TYPE_NAME,address);
-   DefclassData(theEnv)->PrimitiveClassMap[FACT_ADDRESS] = AddSystemClass(theEnv,FACT_ADDRESS_TYPE_NAME,address);
+   DefclassData(theEnv)->PrimitiveClassMap[EXTERNAL_ADDRESS_TYPE] = AddSystemClass(theEnv,EXTERNAL_ADDRESS_TYPE_NAME,address);
+   DefclassData(theEnv)->PrimitiveClassMap[FACT_ADDRESS_TYPE] = AddSystemClass(theEnv,FACT_ADDRESS_TYPE_NAME,address);
    instance = AddSystemClass(theEnv,INSTANCE_TYPE_NAME,primitive);
-   DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_ADDRESS] = AddSystemClass(theEnv,INSTANCE_ADDRESS_TYPE_NAME,instance);
-   DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_NAME] = AddSystemClass(theEnv,INSTANCE_NAME_TYPE_NAME,instance);
+   DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_ADDRESS_TYPE] = AddSystemClass(theEnv,INSTANCE_ADDRESS_TYPE_NAME,instance);
+   DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_NAME_TYPE] = AddSystemClass(theEnv,INSTANCE_NAME_TYPE_NAME,instance);
 #if DEFRULE_CONSTRUCT
    initialObject = AddSystemClass(theEnv,INITIAL_OBJECT_CLASS_NAME,user);
    initialObject->abstract = 0;
@@ -523,23 +523,23 @@ void CreateSystemClasses(
        INSTANCE-ADDRESS is-a INSTANCE and ADDRESS.  The links between INSTANCE-ADDRESS
        and ADDRESS still need to be made.
        =============================================================================== */
-   AddClassLink(theEnv,&DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_ADDRESS]->directSuperclasses,address,-1);
-   AddClassLink(theEnv,&DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_ADDRESS]->allSuperclasses,address,2);
-   AddClassLink(theEnv,&address->directSubclasses,DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_ADDRESS],-1);
+   AddClassLink(theEnv,&DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_ADDRESS_TYPE]->directSuperclasses,address,-1);
+   AddClassLink(theEnv,&DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_ADDRESS_TYPE]->allSuperclasses,address,2);
+   AddClassLink(theEnv,&address->directSubclasses,DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_ADDRESS_TYPE],-1);
 
    /* =======================================================================
       The order of the class in the list MUST correspond to their type codes!
       See CONSTANT.H
       ======================================================================= */
-   AddConstructToModule((struct constructHeader *) DefclassData(theEnv)->PrimitiveClassMap[FLOAT]);
-   AddConstructToModule((struct constructHeader *) DefclassData(theEnv)->PrimitiveClassMap[INTEGER]);
-   AddConstructToModule((struct constructHeader *) DefclassData(theEnv)->PrimitiveClassMap[SYMBOL]);
-   AddConstructToModule((struct constructHeader *) DefclassData(theEnv)->PrimitiveClassMap[STRING]);
-   AddConstructToModule((struct constructHeader *) DefclassData(theEnv)->PrimitiveClassMap[MULTIFIELD]);
-   AddConstructToModule((struct constructHeader *) DefclassData(theEnv)->PrimitiveClassMap[EXTERNAL_ADDRESS]);
-   AddConstructToModule((struct constructHeader *) DefclassData(theEnv)->PrimitiveClassMap[FACT_ADDRESS]);
-   AddConstructToModule((struct constructHeader *) DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_ADDRESS]);
-   AddConstructToModule((struct constructHeader *) DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_NAME]);
+   AddConstructToModule((struct constructHeader *) DefclassData(theEnv)->PrimitiveClassMap[FLOAT_TYPE]);
+   AddConstructToModule((struct constructHeader *) DefclassData(theEnv)->PrimitiveClassMap[INTEGER_TYPE]);
+   AddConstructToModule((struct constructHeader *) DefclassData(theEnv)->PrimitiveClassMap[SYMBOL_TYPE]);
+   AddConstructToModule((struct constructHeader *) DefclassData(theEnv)->PrimitiveClassMap[STRING_TYPE]);
+   AddConstructToModule((struct constructHeader *) DefclassData(theEnv)->PrimitiveClassMap[MULTIFIELD_TYPE]);
+   AddConstructToModule((struct constructHeader *) DefclassData(theEnv)->PrimitiveClassMap[EXTERNAL_ADDRESS_TYPE]);
+   AddConstructToModule((struct constructHeader *) DefclassData(theEnv)->PrimitiveClassMap[FACT_ADDRESS_TYPE]);
+   AddConstructToModule((struct constructHeader *) DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_ADDRESS_TYPE]);
+   AddConstructToModule((struct constructHeader *) DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_NAME_TYPE]);
    AddConstructToModule((struct constructHeader *) any);
    AddConstructToModule((struct constructHeader *) primitive);
    AddConstructToModule((struct constructHeader *) number);

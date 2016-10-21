@@ -131,7 +131,7 @@ void ObjectMatchDelay(
 
    ov = SetDelayObjectPatternMatching(theEnv,true);
 
-   if (! UDFFirstArgument(context,ANY_TYPE,returnValue))
+   if (! UDFFirstArgument(context,ANY_TYPE_BITS,returnValue))
      { return; }
 
    if (EvaluationData(theEnv)->EvaluationError)
@@ -836,7 +836,7 @@ static void ObjectPatternMatch(
             offset = 0;
             if (ObjectReteData(theEnv)->CurrentPatternObjectSlot->desc->multiple)
               ObjectReteData(theEnv)->CurrentObjectSlotLength =
-                GetInstanceSlotLength(ObjectReteData(theEnv)->CurrentPatternObjectSlot);
+                ObjectReteData(theEnv)->CurrentPatternObjectSlot->multifieldValue->length;
             else
               ObjectReteData(theEnv)->CurrentObjectSlotLength = 1;
            }
