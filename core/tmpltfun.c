@@ -534,21 +534,21 @@ void DeftemplateSlotNamesFunction(
    /* Get the slot names. */
    /*=====================*/
 
-   EnvDeftemplateSlotNames(theEnv,theDeftemplate,returnValue);
+   DeftemplateSlotNames(theDeftemplate,returnValue);
   }
 
 /**********************************************/
-/* EnvDeftemplateSlotNames: C access routine  */
-/*   for the deftemplate-slot-names function. */
+/* DeftemplateSlotNames: C access routine for */
+/*   the deftemplate-slot-names function.     */
 /**********************************************/
-void EnvDeftemplateSlotNames(
-  Environment *theEnv,
+void DeftemplateSlotNames(
   Deftemplate *theDeftemplate,
   UDFValue *returnValue)
   {
    Multifield *theList;
    struct templateSlot *theSlot;
    unsigned long count;
+   Environment *theEnv = theDeftemplate->header.env;
 
    /*===============================================*/
    /* If we're dealing with an implied deftemplate, */
@@ -623,7 +623,7 @@ void DeftemplateSlotDefaultPFunction(
    /* Does the slot have a default? */
    /*===============================*/
 
-   defaultType = EnvDeftemplateSlotDefaultP(theEnv,theDeftemplate,slotName->contents);
+   defaultType = DeftemplateSlotDefaultP(theDeftemplate,slotName->contents);
 
    if (defaultType == STATIC_DEFAULT)
      { returnValue->lexemeValue = EnvCreateSymbol(theEnv,"static"); }
@@ -634,16 +634,16 @@ void DeftemplateSlotDefaultPFunction(
   }
 
 /*************************************************/
-/* EnvDeftemplateSlotDefaultP: C access routine  */
-/*   for the deftemplate-slot-defaultp function. */
+/* DeftemplateSlotDefaultP: C access routine for */
+/*   the deftemplate-slot-defaultp function.     */
 /*************************************************/
-int EnvDeftemplateSlotDefaultP(
-  Environment *theEnv,
+int DeftemplateSlotDefaultP(
   Deftemplate *theDeftemplate,
   const char *slotName)
   {
    short position;
    struct templateSlot *theSlot;
+   Environment *theEnv = theDeftemplate->header.env;
 
    /*==================================================*/
    /* Make sure the slot exists (the symbol implied is */
@@ -718,16 +718,15 @@ void DeftemplateSlotDefaultValueFunction(
    /* Get the deftemplate slot default value. */
    /*=========================================*/
 
-   EnvDeftemplateSlotDefaultValue(theEnv,theDeftemplate,slotName->contents,&cv);
+   DeftemplateSlotDefaultValue(theDeftemplate,slotName->contents,&cv);
    CLIPSToUDFValue(&cv,returnValue);
   }
 
 /******************************************************/
-/* EnvDeftemplateSlotDefaultValue: C access routine   */
-/*   for the deftemplate-slot-default-value function. */
+/* DeftemplateSlotDefaultValue: C access routine for  */
+/*   the deftemplate-slot-default-value function.     */
 /******************************************************/
-bool EnvDeftemplateSlotDefaultValue(
-  Environment *theEnv,
+bool DeftemplateSlotDefaultValue(
   Deftemplate *theDeftemplate,
   const char *slotName,
   CLIPSValue *theValue)
@@ -735,6 +734,7 @@ bool EnvDeftemplateSlotDefaultValue(
    short position;
    struct templateSlot *theSlot;
    UDFValue tempDO;
+   Environment *theEnv = theDeftemplate->header.env;
 
    /*=============================================*/
    /* Set up the default return value for errors. */
@@ -821,22 +821,22 @@ void DeftemplateSlotCardinalityFunction(
    /* Get the deftemplate slot cardinality. */
    /*=======================================*/
 
-   EnvDeftemplateSlotCardinality(theEnv,theDeftemplate,slotName->contents,&cv);
+   DeftemplateSlotCardinality(theDeftemplate,slotName->contents,&cv);
    CLIPSToUDFValue(&cv,returnValue);
   }
 
 /****************************************************/
-/* EnvDeftemplateSlotCardinality: C access routine  */
-/*   for the deftemplate-slot-cardinality function. */
+/* DeftemplateSlotCardinality: C access routine for */
+/*   the deftemplate-slot-cardinality function.     */
 /****************************************************/
-void EnvDeftemplateSlotCardinality(
-  Environment *theEnv,
+void DeftemplateSlotCardinality(
   Deftemplate *theDeftemplate,
   const char *slotName,
   CLIPSValue *returnValue)
   {
    short position;
    struct templateSlot *theSlot;
+   Environment *theEnv = theDeftemplate->header.env;
 
    /*===============================================*/
    /* If we're dealing with an implied deftemplate, */
@@ -928,16 +928,15 @@ void DeftemplateSlotAllowedValuesFunction(
    /* Get the deftemplate slot allowed values. */
    /*==========================================*/
 
-   EnvDeftemplateSlotAllowedValues(theEnv,theDeftemplate,slotName->contents,&result);
+   DeftemplateSlotAllowedValues(theDeftemplate,slotName->contents,&result);
    CLIPSToUDFValue(&result,returnValue);
   }
 
 /*******************************************************/
-/* EnvDeftemplateSlotAllowedValues: C access routine   */
+/* DeftemplateSlotAllowedValues: C access routine   */
 /*   for the deftemplate-slot-allowed-values function. */
 /*******************************************************/
-void EnvDeftemplateSlotAllowedValues(
-  Environment *theEnv,
+void DeftemplateSlotAllowedValues(
   Deftemplate *theDeftemplate,
   const char *slotName,
   CLIPSValue *returnValue)
@@ -946,6 +945,7 @@ void EnvDeftemplateSlotAllowedValues(
    struct templateSlot *theSlot;
    int i;
    EXPRESSION *theExp;
+   Environment *theEnv = theDeftemplate->header.env;
 
    /*===============================================*/
    /* If we're dealing with an implied deftemplate, */
@@ -1033,22 +1033,22 @@ void DeftemplateSlotRangeFunction(
    /* Get the deftemplate slot range. */
    /*=================================*/
 
-   EnvDeftemplateSlotRange(theEnv,theDeftemplate,slotName->contents,&cv);
+   DeftemplateSlotRange(theDeftemplate,slotName->contents,&cv);
    CLIPSToUDFValue(&cv,returnValue);
   }
 
 /**********************************************/
-/* EnvDeftemplateSlotRange: C access routine  */
-/*   for the deftemplate-slot-range function. */
+/* DeftemplateSlotRange: C access routine for */
+/*   the deftemplate-slot-range function.     */
 /**********************************************/
-void EnvDeftemplateSlotRange(
-  Environment *theEnv,
+void DeftemplateSlotRange(
   Deftemplate *theDeftemplate,
   const char *slotName,
   CLIPSValue *returnValue)
   {
    short position;
    struct templateSlot *theSlot;
+   Environment *theEnv = theDeftemplate->header.env;
 
    /*===============================================*/
    /* If we're dealing with an implied deftemplate, */
@@ -1137,16 +1137,15 @@ void DeftemplateSlotTypesFunction(
    /* Get the deftemplate slot types. */
    /*=================================*/
 
-   EnvDeftemplateSlotTypes(theEnv,theDeftemplate,slotName->contents,&cv);
+   DeftemplateSlotTypes(theDeftemplate,slotName->contents,&cv);
    CLIPSToUDFValue(&cv,returnValue);
   }
 
 /**********************************************/
-/* EnvDeftemplateSlotTypes: C access routine  */
-/*   for the deftemplate-slot-types function. */
+/* DeftemplateSlotTypes: C access routine for */
+/*   the deftemplate-slot-types function.     */
 /**********************************************/
-void EnvDeftemplateSlotTypes(
-  Environment *theEnv,
+void DeftemplateSlotTypes(
   Deftemplate *theDeftemplate,
   const char *slotName,
   CLIPSValue *returnValue)
@@ -1155,6 +1154,7 @@ void EnvDeftemplateSlotTypes(
    struct templateSlot *theSlot = NULL;
    int numTypes, i;
    bool allTypes = false;
+   Environment *theEnv = theDeftemplate->header.env;
 
    /*===============================================*/
    /* If we're dealing with an implied deftemplate, */
@@ -1298,20 +1298,20 @@ void DeftemplateSlotMultiPFunction(
    /* Is the slot a multifield slot? */
    /*================================*/
 
-   returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvDeftemplateSlotMultiP(theEnv,theDeftemplate,slotName->contents));
+   returnValue->lexemeValue = EnvCreateBoolean(theEnv,DeftemplateSlotMultiP(theDeftemplate,slotName->contents));
   }
 
 /***********************************************/
-/* EnvDeftemplateSlotMultiP: C access routine  */
-/*   for the deftemplate-slot-multip function. */
+/* DeftemplateSlotMultiP: C access routine for */
+/*   the deftemplate-slot-multip function.     */
 /***********************************************/
-bool EnvDeftemplateSlotMultiP(
-  Environment *theEnv,
+bool DeftemplateSlotMultiP(
   Deftemplate *theDeftemplate,
   const char *slotName)
   {
    short position;
    struct templateSlot *theSlot;
+   Environment *theEnv = theDeftemplate->header.env;
 
    /*===============================================*/
    /* If we're dealing with an implied deftemplate, */
@@ -1378,20 +1378,20 @@ void DeftemplateSlotSinglePFunction(
    /* Is the slot a single field slot? */
    /*==================================*/
 
-   returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvDeftemplateSlotSingleP(theEnv,theDeftemplate,slotName->contents));
+   returnValue->lexemeValue = EnvCreateBoolean(theEnv,DeftemplateSlotSingleP(theDeftemplate,slotName->contents));
   }
 
 /************************************************/
-/* EnvDeftemplateSlotSingleP: C access routine  */
-/*   for the deftemplate-slot-singlep function. */
+/* DeftemplateSlotSingleP: C access routine for */
+/*   the deftemplate-slot-singlep function.     */
 /************************************************/
-bool EnvDeftemplateSlotSingleP(
-  Environment *theEnv,
+bool DeftemplateSlotSingleP(
   Deftemplate *theDeftemplate,
   const char *slotName)
   {
    short position;
    struct templateSlot *theSlot;
+   Environment *theEnv = theDeftemplate->header.env;
 
    /*===============================================*/
    /* If we're dealing with an implied deftemplate, */
@@ -1458,19 +1458,19 @@ void DeftemplateSlotExistPFunction(
    /* Does the slot exist? */
    /*======================*/
 
-   returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvDeftemplateSlotExistP(theEnv,theDeftemplate,slotName->contents));
+   returnValue->lexemeValue = EnvCreateBoolean(theEnv,DeftemplateSlotExistP(theDeftemplate,slotName->contents));
   }
 
-/************************************************/
-/* EnvDeftemplateSlotExistP: C access routine  */
-/*   for the deftemplate-slot-existp function. */
-/************************************************/
-bool EnvDeftemplateSlotExistP(
-  Environment *theEnv,
+/***********************************************/
+/* DeftemplateSlotExistP: C access routine for */
+/*   the deftemplate-slot-existp function.     */
+/***********************************************/
+bool DeftemplateSlotExistP(
   Deftemplate *theDeftemplate,
   const char *slotName)
   {
    short position;
+   Environment *theEnv = theDeftemplate->header.env;
 
    /*===============================================*/
    /* If we're dealing with an implied deftemplate, */

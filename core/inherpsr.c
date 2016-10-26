@@ -183,7 +183,7 @@ PACKED_CLASS_LINKS *ParseSuperclasses(
         {
          PrintErrorID(theEnv,"INHERPSR",6,false);
          EnvPrintRouter(theEnv,WERROR,"A user-defined class cannot be a subclass of ");
-         EnvPrintRouter(theEnv,WERROR,EnvGetDefclassName(theEnv,sclass));
+         EnvPrintRouter(theEnv,WERROR,DefclassName(sclass));
          EnvPrintRouter(theEnv,WERROR,".\n");
          goto SuperclassParseError;
         }

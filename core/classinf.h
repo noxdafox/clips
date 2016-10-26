@@ -69,22 +69,22 @@
    void                           SlotAllowedClassesCommand(Environment *,UDFContext *,UDFValue *);
    void                           SlotRangeCommand(Environment *,UDFContext *,UDFValue *);
    void                           SlotCardinalityCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           EnvClassAbstractP(Environment *,Defclass *);
+   bool                           ClassAbstractP(Defclass *);
 #if DEFRULE_CONSTRUCT
-   bool                           EnvClassReactiveP(Environment *,Defclass *);
+   bool                           ClassReactiveP(Defclass *);
 #endif
-   void                           EnvClassSlots(Environment *,Defclass *,CLIPSValue *,bool);
+   void                           ClassSlots(Defclass *,CLIPSValue *,bool);
    void                           EnvGetDefmessageHandlerList(Environment *,Defclass *,CLIPSValue *,bool);
-   void                           EnvClassSuperclasses(Environment *,Defclass *,CLIPSValue *,bool);
-   void                           EnvClassSubclasses(Environment *,Defclass *,CLIPSValue *,bool);
+   void                           ClassSuperclasses(Defclass *,CLIPSValue *,bool);
+   void                           ClassSubclasses(Defclass *,CLIPSValue *,bool);
    void                           ClassSubclassAddresses(Environment *,Defclass *,UDFValue *,bool);
-   void                           EnvSlotFacets(Environment *,Defclass *,const char *,CLIPSValue *);
-   void                           EnvSlotSources(Environment *,Defclass *,const char *,CLIPSValue *);
-   void                           EnvSlotTypes(Environment *,Defclass *,const char *,CLIPSValue *);
-   void                           EnvSlotAllowedValues(Environment *,Defclass *,const char *,CLIPSValue *);
-   void                           EnvSlotAllowedClasses(Environment *,Defclass *,const char *,CLIPSValue *);
-   void                           EnvSlotRange(Environment *,Defclass *,const char *,CLIPSValue *);
-   void                           EnvSlotCardinality(Environment *,Defclass *,const char *,CLIPSValue *);
+   void                           SlotFacets(Defclass *,const char *,CLIPSValue *);
+   void                           SlotSources(Defclass *,const char *,CLIPSValue *);
+   void                           SlotTypes(Defclass *,const char *,CLIPSValue *);
+   void                           SlotAllowedValues(Defclass *,const char *,CLIPSValue *);
+   void                           SlotAllowedClasses(Defclass *,const char *,CLIPSValue *);
+   void                           SlotRange(Defclass *,const char *,CLIPSValue *);
+   void                           SlotCardinality(Defclass *,const char *,CLIPSValue *);
 
 #endif /* _H_classinf */
 

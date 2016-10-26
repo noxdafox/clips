@@ -749,7 +749,7 @@ bool DirectPutSlotValue(
             EnvPrintRouter(theEnv,WERROR,"Unable to pattern-match on shared slot ");
             EnvPrintRouter(theEnv,WERROR,sp->desc->slotName->name->contents);
             EnvPrintRouter(theEnv,WERROR," in class ");
-            EnvPrintRouter(theEnv,WERROR,EnvGetDefclassName(theEnv,sp->desc->cls));
+            EnvPrintRouter(theEnv,WERROR,DefclassName(sp->desc->cls));
             EnvPrintRouter(theEnv,WERROR,".\n");
            }
         }
@@ -1005,7 +1005,7 @@ void PrintSlot(
    else if (sd->cls != NULL)
      {
       EnvPrintRouter(theEnv,logName," of class ");
-      EnvPrintRouter(theEnv,logName,EnvGetDefclassName(theEnv,sd->cls));
+      EnvPrintRouter(theEnv,logName,DefclassName(sd->cls));
      }
    EnvPrintRouter(theEnv,logName," found in ");
    if (theCommand != NULL)
@@ -1032,7 +1032,7 @@ void PrintInstanceNameAndClass(
   bool linefeedFlag)
   {
    EnvPrintRouter(theEnv,logicalName,"[");
-   EnvPrintRouter(theEnv,logicalName,EnvGetInstanceName(theEnv,theInstance));
+   EnvPrintRouter(theEnv,logicalName,InstanceName(theInstance));
    EnvPrintRouter(theEnv,logicalName,"] of ");
    PrintClassName(theEnv,logicalName,theInstance->cls,linefeedFlag);
   }

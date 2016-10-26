@@ -131,7 +131,7 @@ bool ParseDeftemplate(
 
    deftemplateName = GetConstructNameAndComment(theEnv,readSource,&inputToken,"deftemplate",
                                                 (FindConstructFunction *) EnvFindDeftemplateInModule,
-                                                (DeleteConstructFunction *) EnvUndeftemplate,"%",
+                                                (DeleteConstructFunction *) Undeftemplate,"%",
                                                 true,true,true,false);
 
    if (deftemplateName == NULL) return true;
@@ -169,6 +169,7 @@ bool ParseDeftemplate(
    newDeftemplate->header.next = NULL;
    newDeftemplate->header.usrData = NULL;
    newDeftemplate->header.constructType = DEFTEMPLATE;
+   newDeftemplate->header.env = theEnv;
    newDeftemplate->slotList = slots;
    newDeftemplate->implied = false;
    newDeftemplate->numberOfSlots = 0;
@@ -206,7 +207,7 @@ bool ParseDeftemplate(
 
 #if DEBUGGING_FUNCTIONS
    if ((BitwiseTest(DeftemplateData(theEnv)->DeletedTemplateDebugFlags,0)) || EnvGetWatchItem(theEnv,"facts"))
-     { EnvSetDeftemplateWatch(theEnv,true,newDeftemplate); }
+     { DeftemplateSetWatch(newDeftemplate,true); }
 #endif
 
    /*==============================================*/

@@ -174,7 +174,7 @@ struct lhsParseNode *CreateInitialFactPattern(
      {
       PrintWarningID(theEnv,"FACTLHS",1,false);
       EnvPrintRouter(theEnv,WWARNING,"Creating implied initial-fact deftemplate in module ");
-      EnvPrintRouter(theEnv,WWARNING,EnvGetDefmoduleName(theEnv,EnvGetCurrentModule(theEnv)));
+      EnvPrintRouter(theEnv,WWARNING,DefmoduleName(EnvGetCurrentModule(theEnv)));
       EnvPrintRouter(theEnv,WWARNING,".\n");
       EnvPrintRouter(theEnv,WWARNING,"  You probably want to import this deftemplate from the MAIN module.\n");
       CreateImpliedDeftemplate(theEnv,EnvCreateSymbol(theEnv,"initial-fact"),false);

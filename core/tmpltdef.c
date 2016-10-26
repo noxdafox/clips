@@ -139,8 +139,8 @@ void InitializeDeftemplates(
                    GetConstructModuleItem,
                    (GetNextConstructFunction *) EnvGetNextDeftemplate,
                    SetNextConstruct,
-                   (IsConstructDeletableFunction *) EnvIsDeftemplateDeletable,
-                   (DeleteConstructFunction *) EnvUndeftemplate,
+                   (IsConstructDeletableFunction *) DeftemplateIsDeletable,
+                   (DeleteConstructFunction *) Undeftemplate,
                    (FreeConstructFunction *) ReturnDeftemplate);
 
    InstallPrimitive(theEnv,(ENTITY_RECORD_PTR) &DeftemplateData(theEnv)->DeftemplatePtrRecord,DEFTEMPLATE_PTR);
@@ -290,14 +290,15 @@ Deftemplate *EnvGetNextDeftemplate(
    return (Deftemplate *) GetNextConstructItem(theEnv,(struct constructHeader *) deftemplatePtr,DeftemplateData(theEnv)->DeftemplateModuleIndex);
   }
 
-/***********************************************************/
-/* EnvIsDeftemplateDeletable: Returns true if a particular */
-/*   deftemplate can be deleted, otherwise returns false.  */
-/***********************************************************/
-bool EnvIsDeftemplateDeletable(
-  Environment *theEnv,
+/**********************************************************/
+/* DeftemplateIsDeletable: Returns true if a particular   */
+/*   deftemplate can be deleted, otherwise returns false. */
+/**********************************************************/
+bool DeftemplateIsDeletable(
   Deftemplate *theDeftemplate)
   {
+   Environment *theEnv = theDeftemplate->header.env;
+
    if (! ConstructsDeletable(theEnv))
      { return false; }
 
@@ -524,7 +525,8 @@ static void RuntimeDeftemplateAction(
 #pragma unused(buffer)
 #endif
    Deftemplate *theDeftemplate = (Deftemplate *) theConstruct;
-
+   
+   theDeftemplate->header.env = theEnv;
    SearchForHashedPatternNodes(theEnv,theDeftemplate->patternNetwork);
   }
 
@@ -561,25 +563,22 @@ void DeftemplateRunTimeInitialize(
 /* Additional Environment Functions */
 /*##################################*/
 
-const char *EnvDeftemplateModule(
-  Environment *theEnv,
+const char *DeftemplateModule(
   Deftemplate *theDeftemplate)
   {
    return GetConstructModuleName((struct constructHeader *) theDeftemplate);
   }
 
-const char *EnvGetDeftemplateName(
-  Environment *theEnv,
+const char *DeftemplateName(
   Deftemplate *theDeftemplate)
   {
    return GetConstructNameString((struct constructHeader *) theDeftemplate);
   }
 
-const char *EnvGetDeftemplatePPForm(
-  Environment *theEnv,
+const char *DeftemplatePPForm(
   Deftemplate *theDeftemplate)
   {
-   return GetConstructPPForm(theEnv,(struct constructHeader *) theDeftemplate);
+   return GetConstructPPForm((struct constructHeader *) theDeftemplate);
   }
 
 #endif /* DEFTEMPLATE_CONSTRUCT */

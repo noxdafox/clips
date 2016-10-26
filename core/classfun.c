@@ -294,7 +294,7 @@ void PrintClassName(
        (theDefclass->system == 0))
      {
       EnvPrintRouter(theEnv,logicalName,
-                 EnvGetDefmoduleName(theEnv,theDefclass->header.whichModule->theModule));
+                DefmoduleName(theDefclass->header.whichModule->theModule));
       EnvPrintRouter(theEnv,logicalName,"::");
      }
    EnvPrintRouter(theEnv,logicalName,theDefclass->header.name->contents);
@@ -1011,7 +1011,7 @@ bool RemoveAllUserClasses(
      {
       ctmp = userClasses;
       userClasses = EnvGetNextDefclass(theEnv,userClasses);
-      if (EnvIsDefclassDeletable(theEnv,ctmp))
+      if (DefclassIsDeletable(ctmp))
         {
          RemoveConstructFromModule(theEnv,(struct constructHeader *) ctmp);
          RemoveDefclass(theEnv,ctmp);
@@ -1019,7 +1019,7 @@ bool RemoveAllUserClasses(
       else
         {
          success = false;
-         CantDeleteItemErrorMessage(theEnv,"defclass",EnvGetDefclassName(theEnv,ctmp));
+         CantDeleteItemErrorMessage(theEnv,"defclass",DefclassName(ctmp));
         }
      }
    return(success);
@@ -1048,7 +1048,7 @@ bool DeleteClassUAG(
       if (cls->directSubclasses.classCount == subCount)
         return false;
      }
-   if (EnvIsDefclassDeletable(theEnv,cls))
+   if (DefclassIsDeletable(cls))
      {
       RemoveConstructFromModule(theEnv,(struct constructHeader *) cls);
       RemoveDefclass(theEnv,cls);

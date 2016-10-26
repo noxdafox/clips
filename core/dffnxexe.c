@@ -125,7 +125,7 @@ void CallDeffunction(
    DeffunctionData(theEnv)->ExecutingDeffunction = dptr;
    EvaluationData(theEnv)->CurrentEvaluationDepth++;
    dptr->executing++;
-   PushProcParameters(theEnv,args,CountArguments(args),EnvGetDeffunctionName(theEnv,dptr),
+   PushProcParameters(theEnv,args,CountArguments(args),DeffunctionName(dptr),
                       "deffunction",UnboundDeffunctionErr);
    if (EvaluationData(theEnv)->EvaluationError)
      {
@@ -196,7 +196,7 @@ static void UnboundDeffunctionErr(
   Environment *theEnv)
   {
    EnvPrintRouter(theEnv,WERROR,"deffunction ");
-   EnvPrintRouter(theEnv,WERROR,EnvGetDeffunctionName(theEnv,DeffunctionData(theEnv)->ExecutingDeffunction));
+   EnvPrintRouter(theEnv,WERROR,DeffunctionName(DeffunctionData(theEnv)->ExecutingDeffunction));
    EnvPrintRouter(theEnv,WERROR,".\n");
   }
 
@@ -222,8 +222,7 @@ static void WatchDeffunction(
    EnvPrintRouter(theEnv,WTRACE,tstring);
    if (DeffunctionData(theEnv)->ExecutingDeffunction->header.whichModule->theModule != EnvGetCurrentModule(theEnv))
      {
-      EnvPrintRouter(theEnv,WTRACE,EnvGetDefmoduleName(theEnv,
-                        DeffunctionData(theEnv)->ExecutingDeffunction->header.whichModule->theModule));
+      EnvPrintRouter(theEnv,WTRACE,DeffunctionModule(DeffunctionData(theEnv)->ExecutingDeffunction));;
       EnvPrintRouter(theEnv,WTRACE,"::");
      }
    EnvPrintRouter(theEnv,WTRACE,DeffunctionData(theEnv)->ExecutingDeffunction->header.name->contents);

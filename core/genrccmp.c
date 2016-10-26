@@ -96,6 +96,7 @@
    static void                    MethodToCode(Environment *,FILE *,int,int,Defmethod *,int,int,int);
    static void                    RestrictionToCode(Environment *,FILE *,int,RESTRICTION *,int,int);
    static void                    TypeToCode(Environment *,FILE *,int,void *,int);
+   static void                    InitDefgenericsCode(Environment *,FILE *,int,int);
 
 /* =========================================
    *****************************************
@@ -116,7 +117,7 @@ void SetupGenericsCompiler(
   Environment *theEnv)
   {
    DefgenericData(theEnv)->DefgenericCodeItem = AddCodeGeneratorItem(theEnv,"generics",0,ReadyDefgenericsForCode,
-                                             NULL,DefgenericsToCode,5);
+                                             InitDefgenericsCode,DefgenericsToCode,5);
   }
 
 /***************************************************
@@ -194,6 +195,24 @@ static void ReadyDefgenericsForCode(
   Environment *theEnv)
   {
    MarkConstructBsaveIDs(theEnv,DefgenericData(theEnv)->DefgenericModuleIndex);
+  }
+
+/**************************************************/
+/* InitDefgenericsCode: Writes out initialization */
+/*   code for defgenerics for a run-time module.  */
+/**************************************************/
+static void InitDefgenericsCode(
+  Environment *theEnv,
+  FILE *initFP,
+  int imageID,
+  int maxIndices)
+  {
+#if MAC_XCD
+#pragma unused(maxIndices)
+#pragma unused(imageID)
+#pragma unused(theEnv)
+#endif
+   fprintf(initFP,"   DefgenericRunTimeInitialize(theEnv);\n");
   }
 
 /*******************************************************

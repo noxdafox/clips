@@ -961,7 +961,8 @@ int EnvSetStrategy(
    oldStrategy = AgendaData(theEnv)->Strategy;
    AgendaData(theEnv)->Strategy = value;
 
-   if (oldStrategy != AgendaData(theEnv)->Strategy) EnvReorderAgenda(theEnv,NULL);
+   if (oldStrategy != AgendaData(theEnv)->Strategy)
+     { DefmoduleReorderAgenda(NULL,theEnv); }
 
    return(oldStrategy);
   }

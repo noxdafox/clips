@@ -617,7 +617,7 @@ static void OutputConstructsCodeInfo(
         theDeffunction != NULL;
         theDeffunction = EnvGetNextDeffunction(theEnv,theDeffunction))
      {
-      OutputProfileInfo(theEnv,EnvGetDeffunctionName(theEnv,theDeffunction),
+      OutputProfileInfo(theEnv,DeffunctionName(theDeffunction),
                         (struct constructProfileInfo *)
                           TestUserData(ProfileFunctionData(theEnv)->ProfileDataID,theDeffunction->header.usrData),
                         NULL,NULL,NULL,&banner);
@@ -631,7 +631,7 @@ static void OutputConstructsCodeInfo(
         theDefgeneric = EnvGetNextDefgeneric(theEnv,theDefgeneric))
      {
       prefixBefore = "\n";
-      prefix = EnvGetDefgenericName(theEnv,theDefgeneric);
+      prefix = DefgenericName(theDefgeneric);
       prefixAfter = "\n";
 
       for (methodIndex = EnvGetNextDefmethod(theEnv,theDefgeneric,0);
@@ -640,7 +640,7 @@ static void OutputConstructsCodeInfo(
         {
          theMethod = GetDefmethodPointer(theDefgeneric,methodIndex);
 
-         EnvGetDefmethodDescription(theEnv,methodBuffer,510,theDefgeneric,methodIndex);
+         DefmethodDescription(methodBuffer,510,theDefgeneric,methodIndex);
          if (OutputProfileInfo(theEnv,methodBuffer,
                                (struct constructProfileInfo *)
                                   TestUserData(ProfileFunctionData(theEnv)->ProfileDataID,theMethod->header.usrData),
@@ -661,7 +661,7 @@ static void OutputConstructsCodeInfo(
         theDefclass = EnvGetNextDefclass(theEnv,theDefclass))
      {
       prefixAfter = "\n";
-      prefix = EnvGetDefclassName(theEnv,theDefclass);
+      prefix = DefclassName(theDefclass);
       prefixBefore = "\n";
 
       for (handlerIndex = EnvGetNextDefmessageHandler(theEnv,theDefclass,0);
@@ -669,7 +669,7 @@ static void OutputConstructsCodeInfo(
            handlerIndex = EnvGetNextDefmessageHandler(theEnv,theDefclass,handlerIndex))
         {
          theHandler = GetDefmessageHandlerPointer(theDefclass,handlerIndex);
-         if (OutputProfileInfo(theEnv,EnvGetDefmessageHandlerName(theEnv,theDefclass,handlerIndex),
+         if (OutputProfileInfo(theEnv,DefmessageHandlerName(theDefclass,handlerIndex),
                                (struct constructProfileInfo *)
                                   TestUserData(ProfileFunctionData(theEnv)->ProfileDataID,
                                theHandler->header.usrData),
@@ -691,7 +691,7 @@ static void OutputConstructsCodeInfo(
         theDefrule != NULL;
         theDefrule = EnvGetNextDefrule(theEnv,theDefrule))
      {
-      OutputProfileInfo(theEnv,EnvGetDefruleName(theEnv,theDefrule),
+      OutputProfileInfo(theEnv,DefruleName(theDefrule),
                         (struct constructProfileInfo *)
                           TestUserData(ProfileFunctionData(theEnv)->ProfileDataID,theDefrule->header.usrData),
                         NULL,NULL,NULL,&banner);

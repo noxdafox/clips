@@ -62,11 +62,11 @@
 #include "object.h"
 #include "symbol.h"
 
-   const char             *EnvGetDefclassName(Environment *,Defclass *);
-   const char             *EnvGetDefclassPPForm(Environment *,Defclass *);
+   const char             *DefclassName(Defclass *);
+   const char             *DefclassPPForm(Defclass *);
    struct defmoduleItemHeader
                           *EnvGetDefclassModule(Environment *,Defclass *);
-   const char             *EnvDefclassModule(Environment *,Defclass *);
+   const char             *DefclassModule(Defclass *);
    CLIPSLexeme            *GetDefclassNamePointer(Defclass *);
    void                    SetNextDefclass(Defclass *,Defclass *);
    void                    EnvSetDefclassPPForm(Environment *,Defclass *,char *);
@@ -78,7 +78,7 @@
    Defclass               *LookupDefclassAnywhere(Environment *,Defmodule *,const char *);
    bool                    DefclassInScope(Environment *,Defclass *,Defmodule *);
    Defclass               *EnvGetNextDefclass(Environment *,Defclass *);
-   bool                    EnvIsDefclassDeletable(Environment *,Defclass *);
+   bool                    DefclassIsDeletable(Defclass *);
 
    void                    UndefclassCommand(Environment *,UDFContext *,UDFValue *);
    unsigned short          EnvSetClassDefaultsMode(Environment *,unsigned short);
@@ -90,17 +90,17 @@
    void                    PPDefclassCommand(Environment *,UDFContext *,UDFValue *);
    void                    ListDefclassesCommand(Environment *,UDFContext *,UDFValue *);
    void                    EnvListDefclasses(Environment *,const char *,Defmodule *);
-   bool                    EnvGetDefclassWatchInstances(Environment *,Defclass *);
-   void                    EnvSetDefclassWatchInstances(Environment *,bool,Defclass *);
-   bool                    EnvGetDefclassWatchSlots(Environment *,Defclass *);
-   void                    EnvSetDefclassWatchSlots(Environment *,bool,Defclass *);
+   bool                    DefclassGetWatchInstances(Defclass *);
+   void                    DefclassSetWatchInstances(Defclass *,bool);
+   bool                    DefclassGetWatchSlots(Defclass *);
+   void                    DefclassSetWatchSlots(Defclass *,bool);
    bool                    DefclassWatchAccess(Environment *,int,bool,EXPRESSION *);
    bool                    DefclassWatchPrint(Environment *,const char *,int,EXPRESSION *);
 #endif
 
    void                    GetDefclassListFunction(Environment *,UDFContext *,UDFValue *);
    void                    EnvGetDefclassList(Environment *,CLIPSValue *,Defmodule *);
-   bool                    EnvUndefclass(Environment *,Defclass *);
+   bool                    Undefclass(Defclass *,Environment *);
    bool                    HasSuperclass(Defclass *,Defclass *);
 
    CLIPSLexeme            *CheckClassAndSlot(UDFContext *,const char *,Defclass **);

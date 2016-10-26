@@ -156,7 +156,7 @@ bool ParseDefrule(
 
    ruleName = GetConstructNameAndComment(theEnv,readSource,&theToken,"defrule",
                                          (FindConstructFunction *) EnvFindDefruleInModule,
-                                         (DeleteConstructFunction *) EnvUndefrule,
+                                         (DeleteConstructFunction *) Undefrule,
                                          "*",false,
                                          true,true,false);
 
@@ -256,11 +256,11 @@ bool ParseDefrule(
 
 #if DEBUGGING_FUNCTIONS
    if (BitwiseTest(DefruleData(theEnv)->DeletedRuleDebugFlags,0))
-     { EnvSetBreak(theEnv,topDisjunct); }
+     { DefruleSetBreak(topDisjunct); }
    if (BitwiseTest(DefruleData(theEnv)->DeletedRuleDebugFlags,1) || EnvGetWatchItem(theEnv,"activations"))
-     { EnvSetDefruleWatchActivations(theEnv,true,topDisjunct); }
+     { DefruleSetWatchActivations(topDisjunct,true); }
    if (BitwiseTest(DefruleData(theEnv)->DeletedRuleDebugFlags,2) || EnvGetWatchItem(theEnv,"rules"))
-     { EnvSetDefruleWatchFirings(theEnv,true,topDisjunct); }
+     { DefruleSetWatchFirings(topDisjunct,true); }
 #endif
 
    /*================================*/
@@ -503,6 +503,7 @@ static Defrule *CreateNewDisjunct(
    newDisjunct->logicalJoin = NULL;
    newDisjunct->disjunct = NULL;
    newDisjunct->header.constructType = DEFRULE;
+   newDisjunct->header.env = theEnv;
    newDisjunct->header.name = ruleName;
    IncrementSymbolCount(newDisjunct->header.name);
    newDisjunct->actions = theActions;

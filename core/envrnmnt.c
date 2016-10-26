@@ -476,7 +476,7 @@ bool DestroyEnvironment(
 
    free(theEnvironment);
 
-   return(rv);
+   return rv;
   }
 
 /**************************************************/

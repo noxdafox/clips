@@ -153,7 +153,7 @@ void InitializeDefglobals(
                    (GetNextConstructFunction *) EnvGetNextDefglobal,
                    SetNextConstruct,
                    (IsConstructDeletableFunction *) EnvIsDefglobalDeletable,
-                   (DeleteConstructFunction *) EnvUndefglobal,
+                   (DeleteConstructFunction *) Undefglobal,
                    (FreeConstructFunction *) ReturnDefglobal);
   }
 
@@ -313,9 +313,10 @@ Defglobal *EnvGetNextDefglobal(
 /*   defglobal can be deleted, otherwise returns false.  */
 /*********************************************************/
 bool EnvIsDefglobalDeletable(
-  Environment *theEnv,
   Defglobal *theDefglobal)
   {
+   Environment *theEnv = theDefglobal->header.env;
+   
    if (! ConstructsDeletable(theEnv))
      { return false; }
 
@@ -848,6 +849,8 @@ static void RuntimeDefglobalAction(
 #pragma unused(buffer)
 #endif
    Defglobal *theDefglobal = (Defglobal *) theConstruct;
+   
+   theDefglobal->header.env = theEnv;
    theDefglobal->current.value = theEnv->VoidConstant;
   }
 
@@ -866,25 +869,22 @@ void DefglobalRunTimeInitialize(
 /* Additional Environment Functions */
 /*##################################*/
 
-const char *EnvDefglobalModule(
-  Environment *theEnv,
+const char *DefglobalModule(
   Defglobal *theDefglobal)
   {
    return GetConstructModuleName((struct constructHeader *) theDefglobal);
   }
 
-const char *EnvGetDefglobalName(
-  Environment *theEnv,
+const char *DefglobalName(
   Defglobal *theDefglobal)
   {
    return GetConstructNameString((struct constructHeader *) theDefglobal);
   }
 
-const char *EnvGetDefglobalPPForm(
-  Environment *theEnv,
+const char *DefglobalPPForm(
   Defglobal *theDefglobal)
   {
-   return GetConstructPPForm(theEnv,(struct constructHeader *) theDefglobal);
+   return GetConstructPPForm((struct constructHeader *) theDefglobal);
   }
 
 #endif /* DEFGLOBAL_CONSTRUCT */

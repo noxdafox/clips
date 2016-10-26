@@ -90,11 +90,14 @@ struct deffactsModule
    Deffacts                      *EnvFindDeffactsInModule(Environment *,const char *);
    Deffacts                      *EnvGetNextDeffacts(Environment *,Deffacts *);
    void                           CreateInitialFactDeffacts(void);
-   bool                           EnvIsDeffactsDeletable(Environment *,Deffacts *);
+   bool                           DeffactsIsDeletable(Deffacts *);
    struct deffactsModule         *GetDeffactsModuleItem(Environment *,Defmodule *);
-   const char                    *EnvDeffactsModule(Environment *,Deffacts *);
-   const char                    *EnvGetDeffactsName(Environment *,Deffacts *);
-   const char                    *EnvGetDeffactsPPForm(Environment *,Deffacts *);
+   const char                    *DeffactsModule(Deffacts *);
+   const char                    *DeffactsName(Deffacts *);
+   const char                    *DeffactsPPForm(Deffacts *);
+#if RUN_TIME
+   void                           DeffactsRunTimeInitialize(Environment *);
+#endif
 
 #endif /* _H_dffctdef */
 

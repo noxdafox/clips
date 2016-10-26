@@ -501,6 +501,7 @@ Deftemplate *CreateImpliedDeftemplate(
    newDeftemplate->header.ppForm = NULL;
    newDeftemplate->header.usrData = NULL;
    newDeftemplate->header.constructType = DEFTEMPLATE;
+   newDeftemplate->header.env = theEnv;
    newDeftemplate->slotList = NULL;
    newDeftemplate->implied = setFlag;
    newDeftemplate->numberOfSlots = 0;
@@ -514,7 +515,7 @@ Deftemplate *CreateImpliedDeftemplate(
 
 #if DEBUGGING_FUNCTIONS
    if (EnvGetWatchItem(theEnv,"facts"))
-     { EnvSetDeftemplateWatch(theEnv,true,newDeftemplate); }
+     { DeftemplateSetWatch(newDeftemplate,true); }
 #endif
 
    newDeftemplate->header.whichModule = (struct defmoduleItemHeader *)

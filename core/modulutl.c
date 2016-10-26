@@ -633,7 +633,7 @@ void ListItemsDriver(
   GetNextItemFunction *nextFunction,
   const char *(*nameFunction)(void *),
   PrintItemFunction *printFunction,
-  bool (*doItFunction)(Environment *,void *))
+  bool (*doItFunction)(void *))
   {
    void *constructPtr;
    const char *constructName;
@@ -661,7 +661,7 @@ void ListItemsDriver(
      {
       if (allModules)
         {
-         EnvPrintRouter(theEnv,logicalName,EnvGetDefmoduleName(theEnv,theModule));
+         EnvPrintRouter(theEnv,logicalName,DefmoduleName(theModule));
          EnvPrintRouter(theEnv,logicalName,":\n");
         }
 
@@ -672,7 +672,7 @@ void ListItemsDriver(
          if (EvaluationData(theEnv)->HaltExecution == true) return;
 
          if (doItFunction == NULL) doIt = true;
-         else doIt = (*doItFunction)(theEnv,constructPtr);
+         else doIt = (*doItFunction)(constructPtr);
 
          if (! doIt) {}
          else if (nameFunction != NULL)

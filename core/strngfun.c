@@ -735,7 +735,8 @@ bool EnvEval(
    gensprintf(logicalNameBuffer,"Eval-%d",depth);
    if (OpenStringSource(theEnv,logicalNameBuffer,theString,0) == 0)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      if (returnValue != NULL)
+        { returnValue->lexemeValue = theEnv->FalseSymbol; }
       depth--;
       return false;
      }
@@ -773,7 +774,8 @@ bool EnvEval(
      {
       EnvSetEvaluationError(theEnv,true);
       CloseStringSource(theEnv,logicalNameBuffer);
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      if (returnValue != NULL)
+        { returnValue->lexemeValue = theEnv->FalseSymbol; }
       depth--;
       ConstructData(theEnv)->DanglingConstructs = danglingConstructs;
       return false;
@@ -790,7 +792,8 @@ bool EnvEval(
       EnvPrintRouter(theEnv,WERROR,"expand$ must be used in the argument list of a function call.\n");
       EnvSetEvaluationError(theEnv,true);
       CloseStringSource(theEnv,logicalNameBuffer);
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      if (returnValue != NULL)
+        { returnValue->lexemeValue = theEnv->FalseSymbol; }
       ReturnExpression(theEnv,top);
       depth--;
       ConstructData(theEnv)->DanglingConstructs = danglingConstructs;
@@ -808,7 +811,8 @@ bool EnvEval(
       EnvPrintRouter(theEnv,WERROR,"Some variables could not be accessed by the eval function.\n");
       EnvSetEvaluationError(theEnv,true);
       CloseStringSource(theEnv,logicalNameBuffer);
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      if (returnValue != NULL)
+        { returnValue->lexemeValue = theEnv->FalseSymbol; }
       ReturnExpression(theEnv,top);
       depth--;
       ConstructData(theEnv)->DanglingConstructs = danglingConstructs;
@@ -850,11 +854,15 @@ bool EnvEval(
    if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
        (EvaluationData(theEnv)->CurrentExpression == NULL) && (UtilityData(theEnv)->GarbageCollectionLocks == 0))
      {
-      CleanCurrentGarbageFrame(theEnv,&evalResult);
+      if (returnValue != NULL)
+        { CleanCurrentGarbageFrame(theEnv,&evalResult); }
+      else
+        { CleanCurrentGarbageFrame(theEnv,NULL); }
       CallPeriodicTasks(theEnv);
      }
-
-   returnValue->value = evalResult.value;
+     
+   if (returnValue != NULL)
+     { returnValue->value = evalResult.value; }
    
    if (EnvGetEvaluationError(theEnv)) return false;
    return true;

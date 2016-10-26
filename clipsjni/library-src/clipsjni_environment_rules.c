@@ -259,7 +259,7 @@ JNIEXPORT jstring JNICALL Java_net_sf_clipsrules_jni_Environment_getDefruleText(
    (*env)->ReleaseStringUTFChars(env,defruleName,cDefruleName);
 
    if (defrulePtr != NULL)
-     { ruleText = EnvGetDefrulePPForm(theEnv,defrulePtr); }   
+     { ruleText = DefrulePPForm(defrulePtr); }   
 
    if (ruleText == NULL)
      { return (*env)->NewStringUTF(env,""); }

@@ -103,7 +103,7 @@ bool ParseDeffacts(
 
    deffactsName = GetConstructNameAndComment(theEnv,readSource,&inputToken,"deffacts",
                                              (FindConstructFunction *) EnvFindDeffactsInModule,
-                                             (DeleteConstructFunction *) EnvUndeffacts,"$",true,
+                                             (DeleteConstructFunction *) Undeffacts,"$",true,
                                              true,true,false);
    if (deffactsName == NULL) { return true; }
 

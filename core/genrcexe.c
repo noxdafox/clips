@@ -166,7 +166,7 @@ void GenericDispatch(
    EvaluationData(theEnv)->CurrentEvaluationDepth++;
    gfunc->busy++;
    PushProcParameters(theEnv,params,CountArguments(params),
-                      EnvGetDefgenericName(theEnv,gfunc),
+                      DefgenericName(gfunc),
                       "generic function",UnboundMethodErr);
    if (EvaluationData(theEnv)->EvaluationError)
      {
@@ -194,7 +194,7 @@ void GenericDispatch(
          EnvSetEvaluationError(theEnv,true);
          DefgenericData(theEnv)->CurrentMethod = NULL;
          EnvPrintRouter(theEnv,WERROR,"Generic function ");
-         EnvPrintRouter(theEnv,WERROR,EnvGetDefgenericName(theEnv,gfunc));
+         EnvPrintRouter(theEnv,WERROR,DefgenericName(gfunc));
          EnvPrintRouter(theEnv,WERROR," method #");
          PrintLongInteger(theEnv,WERROR,(long long) meth->index);
          EnvPrintRouter(theEnv,WERROR," is not applicable to the given arguments.\n");
@@ -248,7 +248,7 @@ void GenericDispatch(
      {
       PrintErrorID(theEnv,"GENRCEXE",1,false);
       EnvPrintRouter(theEnv,WERROR,"No applicable methods for ");
-      EnvPrintRouter(theEnv,WERROR,EnvGetDefgenericName(theEnv,gfunc));
+      EnvPrintRouter(theEnv,WERROR,DefgenericName(gfunc));
       EnvPrintRouter(theEnv,WERROR,".\n");
       EnvSetEvaluationError(theEnv,true);
      }
@@ -279,7 +279,7 @@ void UnboundMethodErr(
   Environment *theEnv)
   {
    EnvPrintRouter(theEnv,WERROR,"generic function ");
-   EnvPrintRouter(theEnv,WERROR,EnvGetDefgenericName(theEnv,DefgenericData(theEnv)->CurrentGeneric));
+   EnvPrintRouter(theEnv,WERROR,DefgenericName(DefgenericData(theEnv)->CurrentGeneric));
    EnvPrintRouter(theEnv,WERROR," method #");
    PrintLongInteger(theEnv,WERROR,(long long) DefgenericData(theEnv)->CurrentMethod->index);
    EnvPrintRouter(theEnv,WERROR,".\n");
@@ -631,8 +631,7 @@ static void WatchGeneric(
    EnvPrintRouter(theEnv,WTRACE," ");
    if (DefgenericData(theEnv)->CurrentGeneric->header.whichModule->theModule != EnvGetCurrentModule(theEnv))
      {
-      EnvPrintRouter(theEnv,WTRACE,EnvGetDefmoduleName(theEnv,
-                        DefgenericData(theEnv)->CurrentGeneric->header.whichModule->theModule));
+      EnvPrintRouter(theEnv,WTRACE,DefgenericModule(DefgenericData(theEnv)->CurrentGeneric));
       EnvPrintRouter(theEnv,WTRACE,"::");
      }
    EnvPrintRouter(theEnv,WTRACE,DefgenericData(theEnv)->CurrentGeneric->header.name->contents);
@@ -663,8 +662,7 @@ static void WatchMethod(
    EnvPrintRouter(theEnv,WTRACE," ");
    if (DefgenericData(theEnv)->CurrentGeneric->header.whichModule->theModule != EnvGetCurrentModule(theEnv))
      {
-      EnvPrintRouter(theEnv,WTRACE,EnvGetDefmoduleName(theEnv,
-                        DefgenericData(theEnv)->CurrentGeneric->header.whichModule->theModule));
+      EnvPrintRouter(theEnv,WTRACE,DefgenericModule(DefgenericData(theEnv)->CurrentGeneric));
       EnvPrintRouter(theEnv,WTRACE,"::");
      }
    EnvPrintRouter(theEnv,WTRACE,DefgenericData(theEnv)->CurrentGeneric->header.name->contents);
@@ -717,7 +715,7 @@ static Defclass *DetermineRestrictionClass(
       EnvPrintRouter(theEnv,WERROR,"Unable to determine class of ");
       PrintDataObject(theEnv,WERROR,dobj);
       EnvPrintRouter(theEnv,WERROR," in generic function ");
-      EnvPrintRouter(theEnv,WERROR,EnvGetDefgenericName(theEnv,DefgenericData(theEnv)->CurrentGeneric));
+      EnvPrintRouter(theEnv,WERROR,DefgenericName(DefgenericData(theEnv)->CurrentGeneric));
       EnvPrintRouter(theEnv,WERROR,".\n");
      }
    return(cls);

@@ -59,7 +59,7 @@
 
    void                           DeffactsBasicCommands(Environment *);
    void                           UndeffactsCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           EnvUndeffacts(Environment *,Deffacts *);
+   bool                           Undeffacts(Deffacts *,Environment *);
    void                           GetDeffactsListFunction(Environment *,UDFContext *,UDFValue *);
    void                           EnvGetDeffactsList(Environment *,CLIPSValue *,Defmodule *);
    void                           DeffactsModuleFunction(Environment *,UDFContext *,UDFValue *);

@@ -141,11 +141,10 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getFactList(
          
          FactSlotValue(theCLIPSEnv,factPtr,slotNames.multifieldValue->theFields[i].lexemeValue->contents,&temp);
          CLIPSToUDFValue(&temp,&slotValue);
-         if (EnvDeftemplateSlotDefaultP(theCLIPSEnv,EnvFactDeftemplate(theCLIPSEnv,factPtr),theCSlotName) == STATIC_DEFAULT)
+         if (DeftemplateSlotDefaultP(EnvFactDeftemplate(theCLIPSEnv,factPtr),theCSlotName) == STATIC_DEFAULT)
            {
-            EnvDeftemplateSlotDefaultValue(theCLIPSEnv,
-                                           EnvFactDeftemplate(theCLIPSEnv,factPtr),
-                                           theCSlotName,&temp);
+            DeftemplateSlotDefaultValue(EnvFactDeftemplate(theCLIPSEnv,factPtr),
+                                        theCSlotName,&temp);
             CLIPSToUDFValue(&temp,&defaultValue);
                              
             if (DOsEqual(&slotValue,&defaultValue))
@@ -416,11 +415,10 @@ JNIEXPORT jstring JNICALL Java_net_sf_clipsrules_jni_Environment_getDeftemplateT
   jlong deftemplateLong)
   {
    void *deftemplatePtr = JLongToPointer(deftemplateLong);
-   void *theEnv = JLongToPointer(clipsEnv);
    const char *deftemplateText = NULL;
       
    if (deftemplatePtr != NULL)
-     { deftemplateText = EnvGetDeftemplatePPForm(theEnv,deftemplatePtr); }   
+     { deftemplateText = DeftemplatePPForm(deftemplatePtr); }   
 
    if (deftemplateText == NULL)
      { return (*env)->NewStringUTF(env,""); }

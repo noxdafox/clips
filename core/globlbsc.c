@@ -174,14 +174,21 @@ void UndefglobalCommand(
    UndefconstructCommand(context,"undefglobal",DefglobalData(theEnv)->DefglobalConstruct);
   }
 
-/************************************/
-/* EnvUndefglobal: C access routine */
-/*   for the undefglobal command.   */
-/************************************/
-bool EnvUndefglobal(
-  Environment *theEnv,
-  Defglobal *theDefglobal)
+/**********************************/
+/* Undefglobal: C access routine  */
+/*   for the undefglobal command. */
+/**********************************/
+bool Undefglobal(
+  Defglobal *theDefglobal,
+  Environment *allEnv)
   {
+   Environment *theEnv;
+   
+   if (theDefglobal == NULL)
+     { theEnv = allEnv; }
+   else 
+     { theEnv = theDefglobal->header.env; }
+   
    return(Undefconstruct(theEnv,theDefglobal,DefglobalData(theEnv)->DefglobalConstruct));
   }
 
@@ -275,18 +282,13 @@ void EnvListDefglobals(
    ListConstruct(theEnv,DefglobalData(theEnv)->DefglobalConstruct,logicalName,theModule);
   }
 
-/*********************************************************/
-/* EnvGetDefglobalWatch: C access routine for retrieving */
-/*   the current watch value of a defglobal.             */
-/*********************************************************/
-bool EnvGetDefglobalWatch(
-  Environment *theEnv,
+/******************************************************/
+/* DefglobalGetWatch: C access routine for retrieving */
+/*   the current watch value of a defglobal.          */
+/******************************************************/
+bool DefglobalGetWatch(
   Defglobal *theGlobal)
   {
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
-
    return theGlobal->watch;
   }
 
@@ -294,15 +296,10 @@ bool EnvGetDefglobalWatch(
 /* EnvSetDefglobalWatch: C access routine for setting */
 /*   the current watch value of a defglobal.          */
 /******************************************************/
-void EnvSetDefglobalWatch(
-  Environment *theEnv,
-  bool newState,
-  Defglobal *theGlobal)
+void DefglobalSetWatch(
+  Defglobal *theGlobal,
+  bool newState)
   {
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
-
    theGlobal->watch = newState;
   }
 
@@ -323,8 +320,8 @@ static bool DefglobalWatchAccess(
 #endif
 
    return(ConstructSetWatchAccess(theEnv,DefglobalData(theEnv)->DefglobalConstruct,newState,argExprs,
-                                  (bool (*)(Environment *,void *)) EnvGetDefglobalWatch,
-                                  (void (*)(Environment *,bool,void *)) EnvSetDefglobalWatch));
+                                  (ConstructGetWatchFunction *) DefglobalGetWatch,
+                                  (ConstructSetWatchFunction *) DefglobalSetWatch));
   }
 
 /*********************************************************************/
@@ -341,8 +338,8 @@ static bool DefglobalWatchPrint(
 #pragma unused(code)
 #endif
    return(ConstructPrintWatchAccess(theEnv,DefglobalData(theEnv)->DefglobalConstruct,logName,argExprs,
-                                    (bool (*)(Environment *,void *)) EnvGetDefglobalWatch,
-                                    (void (*)(Environment *,bool,void *)) EnvSetDefglobalWatch));
+                                    (ConstructGetWatchFunction *) DefglobalGetWatch,
+                                    (ConstructSetWatchFunction *) DefglobalSetWatch));
   }
 
 #endif /* ! RUN_TIME */

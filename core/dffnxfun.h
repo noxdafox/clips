@@ -119,17 +119,17 @@ struct deffunctionData
    void                           DeffunctionGetBind(UDFValue *);
    void                           DFRtnUnknown(UDFValue *);
    void                           DFWildargs(UDFValue *);
-   const char                    *EnvDeffunctionModule(Environment *,Deffunction *);
+   const char                    *DeffunctionModule(Deffunction *);
    Deffunction                   *EnvFindDeffunction(Environment *,const char *);
    Deffunction                   *EnvFindDeffunctionInModule(Environment *,const char *);
    void                           EnvGetDeffunctionList(Environment *,UDFValue *,Defmodule *);
-   const char                    *EnvGetDeffunctionName(Environment *,Deffunction *);
+   const char                    *DeffunctionName(Deffunction *);
    CLIPSLexeme                   *EnvGetDeffunctionNamePointer(Environment *,Deffunction *);
-   const char                    *EnvGetDeffunctionPPForm(Environment *,Deffunction *);
+   const char                    *DeffunctionPPForm(Deffunction *);
    Deffunction                   *EnvGetNextDeffunction(Environment *,Deffunction *);
-   bool                           EnvIsDeffunctionDeletable(Environment *,Deffunction *);
+   bool                           DeffunctionIsDeletable(Deffunction *);
    void                           EnvSetDeffunctionPPForm(Environment *,Deffunction *,const char *);
-   bool                           EnvUndeffunction(Environment *,Deffunction *);
+   bool                           Undeffunction(Deffunction *,Environment *);
    void                           GetDeffunctionListFunction(Environment *,UDFContext *,UDFValue *);
    void                           GetDeffunctionModuleCommand(Environment *,UDFContext *,UDFValue *);
    Deffunction                   *LookupDeffunctionByMdlOrScope(Environment *,const char *);
@@ -140,11 +140,15 @@ struct deffunctionData
    void                           SetupDeffunctions(Environment *);
    void                           UndeffunctionCommand(Environment *,UDFContext *,UDFValue *);
 #if DEBUGGING_FUNCTIONS
-   bool                           EnvGetDeffunctionWatch(Environment *,Deffunction *);
+   bool                           DeffunctionGetWatch(Deffunction *);
    void                           EnvListDeffunctions(Environment *,const char *,Defmodule *);
-   void                           EnvSetDeffunctionWatch(Environment *,bool,Deffunction *);
+   void                           DeffunctionSetWatch(Deffunction *,bool);
    void                           ListDeffunctionsCommand(Environment *,UDFContext *,UDFValue *);
    void                           PPDeffunctionCommand(Environment *,UDFContext *,UDFValue *);
+#endif
+
+#if RUN_TIME
+   void                           DeffunctionRunTimeInitialize(Environment *);
 #endif
 
 #endif /* _H_dffnxfun */

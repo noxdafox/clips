@@ -150,11 +150,11 @@ void BrowseClassesCommand(
          return;
         }
      }
-   EnvBrowseClasses(theEnv,WDISPLAY,cls);
+   BrowseClasses(WDISPLAY,cls);
   }
 
 /****************************************************************
-  NAME         : EnvBrowseClasses
+  NAME         : BrowseClasses
   DESCRIPTION  : Displays a "graph" of the class hierarchy
   INPUTS       : 1) The logical name of the output
                  2) Class pointer
@@ -162,11 +162,12 @@ void BrowseClassesCommand(
   SIDE EFFECTS : None
   NOTES        : None
  ****************************************************************/
-void EnvBrowseClasses(
-  Environment *theEnv,
+void BrowseClasses(
   const char *logicalName,
   Defclass *theDefclass)
   {
+   Environment *theEnv = theDefclass->header.env;
+   
    PrintClassBrowse(theEnv,logicalName,theDefclass,0);
   }
 
@@ -198,11 +199,11 @@ void DescribeClassCommand(
    if (theDefclass == NULL)
      { return; }
 
-   EnvDescribeClass(theEnv,WDISPLAY,theDefclass);
+   DescribeClass(WDISPLAY,theDefclass);
   }
 
 /******************************************************
-  NAME         : EnvDescribeClass
+  NAME         : DescribeClass
   DESCRIPTION  : Displays direct superclasses and
                    subclasses and the entire precedence
                    list for a class
@@ -212,8 +213,7 @@ void DescribeClassCommand(
   SIDE EFFECTS : None
   NOTES        : None
  ******************************************************/
-void EnvDescribeClass(
-  Environment *theEnv,
+void DescribeClass(
   const char *logicalName,
   Defclass *theDefclass)
   {
@@ -224,7 +224,8 @@ void EnvDescribeClass(
    long i;
    size_t slotNameLength, maxSlotNameLength;
    size_t overrideMessageLength, maxOverrideMessageLength;
-
+   Environment *theEnv = theDefclass->header.env;
+  
    DisplaySeparator(theEnv,logicalName,buf,82,'=');
    DisplaySeparator(theEnv,logicalName,buf,82,'*');
    if (theDefclass->abstract)
@@ -370,11 +371,11 @@ void SuperclassPCommand(
       return;
      }
 
-   returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvSuperclassP(theEnv,c1,c2));
+   returnValue->lexemeValue = EnvCreateBoolean(theEnv,SuperclassP(c1,c2));
   }
 
 /***************************************************
-  NAME         : EnvSuperclassP
+  NAME         : SuperclassP
   DESCRIPTION  : Determines if the first class is
                  a superclass of the other
   INPUTS       : 1) First class
@@ -385,15 +386,10 @@ void SuperclassPCommand(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-bool EnvSuperclassP(
-  Environment *theEnv,
+bool SuperclassP(
   Defclass *firstClass,
   Defclass *secondClass)
   {
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
-
    return HasSuperclass(secondClass,firstClass);
   }
 
@@ -418,11 +414,11 @@ void SubclassPCommand(
       return;
      }
 
-   returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvSubclassP(theEnv,c1,c2));
+   returnValue->lexemeValue = EnvCreateBoolean(theEnv,SubclassP(c1,c2));
   }
 
 /***************************************************
-  NAME         : EnvSubclassP
+  NAME         : SubclassP
   DESCRIPTION  : Determines if the first class is
                  a subclass of the other
   INPUTS       : 1) First class
@@ -433,15 +429,10 @@ void SubclassPCommand(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-bool EnvSubclassP(
-  Environment *theEnv,
+bool SubclassP(
   Defclass *firstClass,
   Defclass *secondClass)
   {
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
-
    return HasSuperclass(firstClass,secondClass);
   }
 
@@ -489,7 +480,7 @@ void SlotExistPCommand(
   }
 
 /***************************************************
-  NAME         : EnvSlotExistP
+  NAME         : SlotExistP
   DESCRIPTION  : Determines if a slot exists
   INPUTS       : 1) The class
                  2) The slot name
@@ -500,12 +491,13 @@ void SlotExistPCommand(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-bool EnvSlotExistP(
-  Environment *theEnv,
+bool SlotExistP(
   Defclass *theDefclass,
   const char *slotName,
   bool inheritFlag)
   {
+   Environment *theEnv = theDefclass->header.env;
+
    return (LookupSlot(theEnv,theDefclass,slotName,inheritFlag) != NULL)
            ? true : false;
   }
@@ -586,7 +578,7 @@ void SlotWritablePCommand(
   }
 
 /***************************************************
-  NAME         : EnvSlotWritableP
+  NAME         : SlotWritableP
   DESCRIPTION  : Determines if a slot is writable
   INPUTS       : 1) The class
                  2) The slot name
@@ -595,13 +587,13 @@ void SlotWritablePCommand(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-bool EnvSlotWritableP(
-  Environment *theEnv,
+bool SlotWritableP(
   Defclass *theDefclass,
   const char *slotName)
   {
    SlotDescriptor *sd;
-
+   Environment *theEnv = theDefclass->header.env;
+  
    if ((sd = LookupSlot(theEnv,theDefclass,slotName,true)) == NULL)
      return false;
    return((sd->noWrite || sd->initializeOnly) ? false : true);
@@ -632,7 +624,7 @@ void SlotInitablePCommand(
   }
 
 /***************************************************
-  NAME         : EnvSlotInitableP
+  NAME         : SlotInitableP
   DESCRIPTION  : Determines if a slot is initable
   INPUTS       : 1) The class
                  2) The slot name
@@ -641,12 +633,12 @@ void SlotInitablePCommand(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-bool EnvSlotInitableP(
-  Environment *theEnv,
+bool SlotInitableP(
   Defclass *theDefclass,
   const char *slotName)
   {
    SlotDescriptor *sd;
+   Environment *theEnv = theDefclass->header.env;
 
    if ((sd = LookupSlot(theEnv,theDefclass,slotName,true)) == NULL)
      return false;
@@ -678,7 +670,7 @@ void SlotPublicPCommand(
   }
 
 /***************************************************
-  NAME         : EnvSlotPublicP
+  NAME         : SlotPublicP
   DESCRIPTION  : Determines if a slot is public
   INPUTS       : 1) The class
                  2) The slot name
@@ -687,12 +679,12 @@ void SlotPublicPCommand(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-bool EnvSlotPublicP(
-  Environment *theEnv,
+bool SlotPublicP(
   Defclass *theDefclass,
   const char *slotName)
   {
    SlotDescriptor *sd;
+   Environment *theEnv = theDefclass->header.env;
 
    if ((sd = LookupSlot(theEnv,theDefclass,slotName,false)) == NULL)
      return false;
@@ -755,7 +747,7 @@ void SlotDirectAccessPCommand(
   }
 
 /***************************************************
-  NAME         : EnvSlotDirectAccessP
+  NAME         : SlotDirectAccessP
   DESCRIPTION  : Determines if a slot is directly
                  accessible from message-handlers
                  on class
@@ -766,12 +758,12 @@ void SlotDirectAccessPCommand(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-bool EnvSlotDirectAccessP(
-  Environment *theEnv,
+bool SlotDirectAccessP(
   Defclass *theDefclass,
   const char *slotName)
   {
    SlotDescriptor *sd;
+   Environment *theEnv = theDefclass->header.env;
 
    if ((sd = LookupSlot(theEnv,theDefclass,slotName,true)) == NULL)
      return false;
@@ -828,8 +820,7 @@ void SlotDefaultValueCommand(
                  defaults will cause any side effects
   NOTES        : None
  *********************************************************/
-bool EnvSlotDefaultValue(
-  Environment *theEnv,
+bool SlotDefaultValue(
   Defclass *theDefclass,
   const char *slotName,
   CLIPSValue *theValue)
@@ -838,7 +829,8 @@ bool EnvSlotDefaultValue(
    bool rv;
    UDFValue result;
    UDFValue *tmpPtr;
-
+   Environment *theEnv = theDefclass->header.env;
+   
    theValue->value = theEnv->FalseSymbol;
    if ((sd = LookupSlot(theEnv,theDefclass,slotName,true)) == NULL)
      { return false; }
@@ -1098,7 +1090,7 @@ static void PrintClassBrowse(
 
    for (i = 0 ; i < depth ; i++)
      EnvPrintRouter(theEnv,logicalName,"  ");
-   EnvPrintRouter(theEnv,logicalName,EnvGetDefclassName(theEnv,cls));
+   EnvPrintRouter(theEnv,logicalName,DefclassName(cls));
    if (cls->directSuperclasses.classCount > 1)
      EnvPrintRouter(theEnv,logicalName," *");
    EnvPrintRouter(theEnv,logicalName,"\n");

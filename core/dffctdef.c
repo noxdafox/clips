@@ -81,6 +81,8 @@
    static void                    DeallocateDeffactsData(Environment *);
 #if ! RUN_TIME
    static void                    DestroyDeffactsAction(Environment *,struct constructHeader *,void *);
+#else
+   static void                    RuntimeDeffactsAction(Environment *,struct constructHeader *,void *);
 #endif
 
 /***********************************************************/
@@ -102,8 +104,8 @@ void InitializeDeffacts(
                    GetConstructModuleItem,
                    (GetNextConstructFunction *) EnvGetNextDeffacts,
                    SetNextConstruct,
-                   (IsConstructDeletableFunction *) EnvIsDeffactsDeletable,
-                   (DeleteConstructFunction *) EnvUndeffacts,
+                   (IsConstructDeletableFunction *) DeffactsIsDeletable,
+                   (DeleteConstructFunction *) Undeffacts,
                    (FreeConstructFunction *) ReturnDeffacts);
   }
 
@@ -172,6 +174,37 @@ static void DestroyDeffactsAction(
 #endif
 #endif
   }
+#endif
+
+#if RUN_TIME
+
+/***********************************************/
+/* RuntimeDeffactsAction: Action to be applied */
+/*   to each deffacts construct when a runtime */
+/*   initialization occurs.                    */
+/***********************************************/
+static void RuntimeDeffactsAction(
+  Environment *theEnv,
+  struct constructHeader *theConstruct,
+  void *buffer)
+  {
+#if MAC_XCD
+#pragma unused(buffer)
+#endif
+   Deffacts *theDeffacts = (Deffacts *) theConstruct;
+   
+   theDeffacts->header.env = theEnv;
+  }
+
+/******************************/
+/* DeffactsRunTimeInitialize: */
+/******************************/
+void DeffactsRunTimeInitialize(
+  Environment *theEnv)
+  {
+   DoForAllConstructs(theEnv,RuntimeDeffactsAction,DeffactsData(theEnv)->DeffactsModuleIndex,true,NULL);
+  }
+
 #endif
 
 /*******************************************************/
@@ -266,17 +299,15 @@ Deffacts *EnvGetNextDeffacts(
    return (Deffacts *) GetNextConstructItem(theEnv,(struct constructHeader *) deffactsPtr,DeffactsData(theEnv)->DeffactsModuleIndex);
   }
 
-/********************************************************/
-/* EnvIsDeffactsDeletable: Returns true if a particular */
-/*   deffacts can be deleted, otherwise returns false.  */
-/********************************************************/
-bool EnvIsDeffactsDeletable(
-  Environment *theEnv,
-  Deffacts *ptr)
+/*******************************************************/
+/* DeffactsIsDeletable: Returns true if a particular   */
+/*   deffacts can be deleted, otherwise returns false. */
+/*******************************************************/
+bool DeffactsIsDeletable(
+  Deffacts *theDeffacts)
   {
-#if MAC_XCD
-#pragma unused(ptr)
-#endif
+   Environment *theEnv = theDeffacts->header.env;
+
    if (! ConstructsDeletable(theEnv))
      { return false; }
 
@@ -309,25 +340,22 @@ static void ReturnDeffacts(
 /* Additional Environment Functions */
 /*##################################*/
 
-const char *EnvDeffactsModule(
-  Environment *theEnv,
+const char *DeffactsModule(
   Deffacts *theDeffacts)
   {
    return GetConstructModuleName((struct constructHeader *) theDeffacts);
   }
 
-const char *EnvGetDeffactsName(
-  Environment *theEnv,
+const char *DeffactsName(
   Deffacts *theDeffacts)
   {
    return GetConstructNameString((struct constructHeader *) theDeffacts);
   }
 
-const char *EnvGetDeffactsPPForm(
-  Environment *theEnv,
+const char *DeffactsPPForm(
   Deffacts *theDeffacts)
   {
-   return GetConstructPPForm(theEnv,(struct constructHeader *) theDeffacts);
+   return GetConstructPPForm((struct constructHeader *) theDeffacts);
   }
 
 

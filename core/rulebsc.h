@@ -69,7 +69,7 @@
 
    void                           DefruleBasicCommands(Environment *);
    void                           UndefruleCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           EnvUndefrule(Environment *,Defrule *);
+   bool                           Undefrule(Defrule *,Environment *);
    void                           GetDefruleListFunction(Environment *,UDFContext *,UDFValue *);
    void                           EnvGetDefruleList(Environment *,UDFValue *,Defmodule *);
    void                           DefruleModuleFunction(Environment *,UDFContext *,UDFValue *);
@@ -78,10 +78,10 @@
    bool                           PPDefrule(Environment *,const char *,const char *);
    void                           ListDefrulesCommand(Environment *,UDFContext *,UDFValue *);
    void                           EnvListDefrules(Environment *,const char *,Defmodule *);
-   bool                           EnvGetDefruleWatchFirings(Environment *,Defrule *);
-   bool                           EnvGetDefruleWatchActivations(Environment *,Defrule *);
-   void                           EnvSetDefruleWatchFirings(Environment *,bool,Defrule *);
-   void                           EnvSetDefruleWatchActivations(Environment *,bool,Defrule *);
+   bool                           DefruleGetWatchFirings(Defrule *);
+   bool                           DefruleGetWatchActivations(Defrule *);
+   void                           DefruleSetWatchFirings(Defrule *,bool);
+   void                           DefruleSetWatchActivations(Defrule *,bool);
    bool                           DefruleWatchAccess(Environment *,int,bool,struct expr *);
    bool                           DefruleWatchPrint(Environment *,const char *,int,struct expr *);
 #endif

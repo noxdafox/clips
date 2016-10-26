@@ -143,7 +143,7 @@ bool CheckHandlerArgCount(
       EnvPrintRouter(theEnv,WERROR," ");
       EnvPrintRouter(theEnv,WERROR,MessageHandlerData(theEnv)->hndquals[hnd->type]);
       EnvPrintRouter(theEnv,WERROR," in class ");
-      EnvPrintRouter(theEnv,WERROR,EnvGetDefclassName(theEnv,hnd->cls));
+      EnvPrintRouter(theEnv,WERROR,DefclassName(hnd->cls));
       EnvPrintRouter(theEnv,WERROR," expected ");
       if (hnd->maxParams == -1)
         EnvPrintRouter(theEnv,WERROR,"at least ");
@@ -325,6 +325,7 @@ DefmessageHandler *InsertHandlerHeader(
    nhnd[cls->handlerCount].header.ppForm = NULL;
    nhnd[cls->handlerCount].header.usrData = NULL;
    nhnd[cls->handlerCount].header.constructType = DEFMESSAGE_HANDLER;
+   nhnd[cls->handlerCount].header.env = theEnv;
    if (cls->handlerCount != 0)
      {
       rm(theEnv,hnd,(sizeof(DefmessageHandler) * cls->handlerCount));
@@ -396,14 +397,14 @@ bool DeleteHandler(
      {
       if (indicate_missing)
         {
-         HandlerDeleteError(theEnv,EnvGetDefclassName(theEnv,cls));
+         HandlerDeleteError(theEnv,DefclassName(cls));
          return false;
         }
       return true;
      }
    if (HandlersExecuting(cls))
      {
-      HandlerDeleteError(theEnv,EnvGetDefclassName(theEnv,cls));
+      HandlerDeleteError(theEnv,DefclassName(cls));
       return false;
      }
    if (mtype == -1)
@@ -447,7 +448,7 @@ bool DeleteHandler(
          else
            {
             if (indicate_missing)
-              HandlerDeleteError(theEnv,EnvGetDefclassName(theEnv,cls));
+              HandlerDeleteError(theEnv,DefclassName(cls));
             success = false;
            }
         }

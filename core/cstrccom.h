@@ -46,8 +46,8 @@
 
 #define _H_cstrccom
 
-typedef bool ConstructGetWatchFunction(Environment *,void *);
-typedef void ConstructSetWatchFunction(Environment *,bool,void *);
+typedef bool ConstructGetWatchFunction(void *);
+typedef void ConstructSetWatchFunction(void *,bool);
 
 #include "moduldef.h"
 #include "constrct.h"
@@ -67,7 +67,6 @@ typedef void ConstructActionFunction(Environment *,struct constructHeader *,void
    bool                           Undefconstruct(Environment *,void *,struct construct *);
    void                           SaveConstruct(Environment *,Defmodule *,const char *,struct construct *);
    const char                    *GetConstructNameString(struct constructHeader *);
-   const char                    *EnvGetConstructNameString(Environment *,struct constructHeader *);
    const char                    *GetConstructModuleName(struct constructHeader *);
    CLIPSLexeme                   *GetConstructNamePointer(struct constructHeader *);
    void                           GetConstructListFunction(UDFContext *,UDFValue *,struct construct *);
@@ -77,7 +76,7 @@ typedef void ConstructActionFunction(Environment *,struct constructHeader *,void
    void                           ListConstruct(Environment *,struct construct *,const char *,Defmodule *);
    void                           SetNextConstruct(struct constructHeader *,struct constructHeader *);
    struct defmoduleItemHeader    *GetConstructModuleItem(struct constructHeader *);
-   const char                    *GetConstructPPForm(Environment *,struct constructHeader *);
+   const char                    *GetConstructPPForm(struct constructHeader *);
    void                           PPConstructCommand(UDFContext *,const char *,struct construct *);
    struct constructHeader        *GetNextConstructItem(Environment *,struct constructHeader *,int);
    struct defmoduleItemHeader    *GetConstructModuleItemByIndex(Environment *,Defmodule *,int);
@@ -96,8 +95,8 @@ typedef void ConstructActionFunction(Environment *,struct constructHeader *,void
 #if DEBUGGING_FUNCTIONS
    bool                           ConstructPrintWatchAccess(Environment *,struct construct *,const char *,
                                             EXPRESSION *,
-                                            bool (*)(Environment *,void *),
-                                            void (*)(Environment *,bool,void *));
+                                            ConstructGetWatchFunction *,
+                                            ConstructSetWatchFunction *);
    bool                           ConstructSetWatchAccess(Environment *,struct construct *,bool,
                                             EXPRESSION *,
                                             ConstructGetWatchFunction *,

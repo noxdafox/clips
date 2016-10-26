@@ -150,7 +150,7 @@ void AddActivation(
    /*=======================================*/
 
    if (theRule->autoFocus)
-     { EnvFocus(theEnv,theRule->header.whichModule->theModule); }
+     { DefmoduleFocus(theRule->header.whichModule->theModule); }
 
    /*=======================================================*/
    /* Create the activation. The activation stores pointers */
@@ -349,17 +349,12 @@ struct partialMatch *EnvGetActivationBasis(
   }
 
 /*********************************************/
-/* EnvGetActivationName: Returns the name of */
+/* ActivationRuleName: Returns the name of   */
 /*   the rule associated with an activation. */
 /*********************************************/
-const char *EnvGetActivationName(
-  Environment *theEnv,
+const char *ActivationRuleName(
   Activation *actPtr)
   {
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
-
    return actPtr->theRule->header.name->contents;
   }
 
@@ -377,49 +372,42 @@ Defrule *EnvGetActivationRule(
    return actPtr->theRule;
   }
 
-/**************************************************/
-/* EnvGetActivationSalience: Returns the salience */
-/*   of the rule associated with an activation.   */
-/**************************************************/
-int EnvGetActivationSalience(
-  Environment *theEnv,
+/************************************************/
+/* ActivationGetSalience: Returns the salience  */
+/*   of the rule associated with an activation. */
+/************************************************/
+int ActivationGetSalience(
   Activation *actPtr)
   {
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
    return actPtr->salience;
   }
 
 /**************************************/
-/* EnvSetActivationSalience: Sets the */
+/* ActivationSetSalience: Sets the    */
 /*   salience value of an activation. */
 /**************************************/
-int EnvSetActivationSalience(
-  Environment *theEnv,
+int ActivationSetSalience(
   Activation *actPtr,
   int value)
   {
    int temp;
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
 
    temp = actPtr->salience;
    actPtr->salience = value;
    return temp;
   }
 
-/**********************************************/
-/* EnvGetActivationPPForm: Returns the pretty */
-/*   print representation of an activation.   */
-/**********************************************/
-void EnvGetActivationPPForm(
-  Environment *theEnv,
+/********************************************/
+/* ActivationPPForm: Returns the pretty     */
+/*   print representation of an activation. */
+/********************************************/
+void ActivationPPForm(
   char *buffer,
   size_t bufferLength,
   Activation *theActivation)
   {
+   Environment *theEnv = theActivation->theRule->header.env;
+   
    OpenStringDestination(theEnv,"ActPPForm",buffer,bufferLength);
    PrintActivation(theEnv,"ActPPForm",theActivation);
    CloseStringDestination(theEnv,"ActPPForm");
@@ -494,16 +482,16 @@ bool MoveActivationToTop(
    return true;
   }
 
-/**********************************************/
-/* EnvDeleteActivation: Removes the specified */
-/*   activation from the agenda.              */
-/**********************************************/
-bool EnvDeleteActivation(
-  Environment *theEnv,
-  Activation *theActivation)
-  {
-   if (theActivation == NULL) RemoveAllActivations(theEnv);
-   else RemoveActivation(theEnv,(struct activation *) theActivation,true,true);
+/*******************************************/
+/* ActivationDelete: Removes the specified */
+/*   activation from the agenda.           */
+/*******************************************/
+bool ActivationDelete(
+  Activation *theActivation,
+  Environment *allEnv)
+  {   
+   if (theActivation == NULL) RemoveAllActivations(allEnv);
+   else RemoveActivation(theActivation->theRule->header.env,theActivation,true,true);
 
    return true;
   }
@@ -807,18 +795,24 @@ void EnvSetAgendaChanged(
   }
 
 /**********************************************************/
-/* EnvReorderAgenda: Completely reorders the agenda based */
-/*   on the current conflict resolution strategy.         */
+/* DefmoduleReorderAgenda: Completely reorders the agenda */
+/*   based on the current conflict resolution strategy.   */
 /**********************************************************/
-void EnvReorderAgenda(
-  Environment *theEnv,
-  Defmodule *theModule)
+void DefmoduleReorderAgenda(
+  Defmodule *theModule,
+  Environment *allEnv)
   {
    struct activation *theActivation, *tempPtr;
    bool allModules = false;
    struct defruleModule *theModuleItem;
    struct salienceGroup *theGroup, *tempGroup;
+   Environment *theEnv;
 
+   if (theModule == NULL)
+     { theEnv = allEnv; }
+   else
+     { theEnv = theModule->header.env; }
+     
    /*=============================================*/
    /* If the module specified is a NULL pointer,  */
    /* then every module has its agenda reordered. */
@@ -924,20 +918,20 @@ void RefreshCommand(
    /* Refresh the rule. */
    /*===================*/
 
-   EnvRefresh(theEnv,rulePtr);
+   DefruleRefresh(rulePtr);
   }
 
-/************************************************************/
-/* EnvRefresh: Refreshes a defrule. Activations of the rule */
-/*   that have already been fired are added to the agenda.  */
-/************************************************************/
-bool EnvRefresh(
-  Environment *theEnv,
+/****************************************************************/
+/* DefruleRefresh: Refreshes a defrule. Activations of the rule */
+/*   that have already been fired are added to the agenda.      */
+/****************************************************************/
+bool DefruleRefresh(
   Defrule *theRule)
   {
    Defrule *rulePtr;
    struct partialMatch *listOfMatches;
    unsigned long b;
+   Environment *theEnv = theRule->header.env;
 
    /*====================================*/
    /* Refresh each disjunct of the rule. */
@@ -1014,20 +1008,26 @@ void RefreshAgendaCommand(
    /* Refresh the agenda of the appropriate module. */
    /*===============================================*/
 
-   EnvRefreshAgenda(theEnv,theModule);
+   DefmoduleRefreshAgenda(theModule,theEnv);
   }
 
-/**************************************/
-/* EnvRefreshAgenda: C access routine */
-/*   for the refresh-agenda command.  */
-/**************************************/
-void EnvRefreshAgenda(
-  Environment *theEnv,
-  Defmodule *theModule)
+/********************************************/
+/* DefmoduleRefreshAgenda: C access routine */
+/*   for the refresh-agenda command.        */
+/********************************************/
+void DefmoduleRefreshAgenda(
+  Defmodule *theModule,
+  Environment *allEnv)
   {
    Activation *theActivation;
    int oldValue;
    bool allModules = false;
+   Environment *theEnv;
+   
+   if (theModule == NULL)
+     { theEnv = allEnv; }
+   else
+     { theEnv = theModule->header.env; }
 
    /*==========================*/
    /* Save the current module. */
@@ -1083,7 +1083,7 @@ void EnvRefreshAgenda(
       /* Reorder the agenda based on the new salience values. */
       /*======================================================*/
 
-      EnvReorderAgenda(theEnv,theModule);
+      DefmoduleReorderAgenda(theModule,theEnv);
 
       /*===============================================*/
       /* Return if only one agenda is being refreshed. */

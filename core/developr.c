@@ -501,7 +501,7 @@ static void PrintOPNLevel(
            if (TestBitMap(cbmp->map,i))
              {
               EnvPrintRouter(theEnv,WDISPLAY," ");
-              EnvPrintRouter(theEnv,WDISPLAY,EnvGetDefclassName(theEnv,DefclassData(theEnv)->ClassIDMap[i]));
+              EnvPrintRouter(theEnv,WDISPLAY,DefclassName(DefclassData(theEnv)->ClassIDMap[i]));
              }
          if (alphaPtr->slotbmp != NULL)
            {

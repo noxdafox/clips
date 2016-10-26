@@ -358,12 +358,11 @@
      { [theDelegate setValue: nil forKey: @"constructInspectorText"]; }
    else
      {   
-      Environment *theEnvironment = [environment environment];
       NSArray *theArray = [focusStackController valueForKeyPath: @"selection.agenda"];
          
       struct activation *theActivation = (struct activation *) [[theArray objectAtIndex: theRow] activation];
          
-      NSString *thePPForm = [NSString stringWithUTF8String: EnvGetDefrulePPForm(theEnvironment,theActivation->theRule)];
+      NSString *thePPForm = [NSString stringWithUTF8String: DefrulePPForm(theActivation->theRule)];
 
       [theDelegate setValue: thePPForm forKey: @"constructInspectorText"];
      }

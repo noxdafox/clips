@@ -716,9 +716,9 @@ static bool ValidGenericName(
         {
          PrintErrorID(theEnv,"GENRCPSR",4,false);
          EnvPrintRouter(theEnv,WERROR,"Deffunction ");
-         EnvPrintRouter(theEnv,WERROR,EnvGetDeffunctionName(theEnv,theDeffunction));
+         EnvPrintRouter(theEnv,WERROR,DeffunctionName(theDeffunction));
          EnvPrintRouter(theEnv,WERROR," imported from module ");
-         EnvPrintRouter(theEnv,WERROR,EnvGetDefmoduleName(theEnv,theModule));
+         EnvPrintRouter(theEnv,WERROR,DefmoduleName(theModule));
          EnvPrintRouter(theEnv,WERROR," conflicts with this defgeneric.\n");
          return false;
         }
@@ -789,8 +789,8 @@ static void CreateDefaultGenericPPForm(
    const char *moduleName, *genericName;
    char *buf;
 
-   moduleName = EnvGetDefmoduleName(theEnv,EnvGetCurrentModule(theEnv));
-   genericName = EnvGetDefgenericName(theEnv,gfunc);
+   moduleName = DefmoduleName(EnvGetCurrentModule(theEnv));
+   genericName = DefgenericName(gfunc);
    buf = (char *) gm2(theEnv,(sizeof(char) * (strlen(moduleName) + strlen(genericName) + 17)));
    gensprintf(buf,"(defgeneric %s::%s)\n",moduleName,genericName);
    EnvSetDefgenericPPForm(theEnv,gfunc,buf);
@@ -1288,9 +1288,9 @@ static bool RedundantClasses(
 
 #if OBJECT_SYSTEM
    if (HasSuperclass(c1,c2))
-     tname = EnvGetDefclassName(theEnv,c1);
+     tname = DefclassName(c1);
    else if (HasSuperclass(c2,c1))
-     tname = EnvGetDefclassName(theEnv,c2);
+     tname = DefclassName(c2);
 #else
    if (SubsumeType(ValueToInteger(c1),ValueToInteger(c2)))
      tname = TypeName(theEnv,ValueToInteger(c1));
@@ -1403,6 +1403,7 @@ static Defmethod *AddGenericMethod(
    narr[mposn].header.name = NULL;
    narr[mposn].header.next = NULL;
    narr[mposn].header.constructType = DEFMETHOD;
+   narr[mposn].header.env = theEnv;
    narr[mposn].header.whichModule = gfunc->header.whichModule;
    narr[mposn].header.ppForm = NULL;
    narr[mposn].header.usrData = NULL;

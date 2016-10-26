@@ -149,6 +149,8 @@ struct defgenericData
    bool                           ClearDefgenericsReady(Environment *);
    void                          *AllocateDefgenericModule(Environment *);
    void                           FreeDefgenericModule(Environment *,void *);
+#else
+   void                           DefgenericRunTimeInitialize(Environment *);
 #endif
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)

@@ -75,13 +75,12 @@ int main(
   char *argv[])
   {
    mainEnv = CreateEnvironment();
-   
+
 #if UNIX_V || LINUX || DARWIN || UNIX_7 || WIN_GCC || WIN_MVC
    signal(SIGINT,CatchCtrlC);
 #endif
 
    RerouteStdin(mainEnv,argc,argv);
-
    CommandLoop(mainEnv);
 
    /*==================================================================*/
@@ -96,7 +95,7 @@ int main(
 
    DestroyEnvironment(mainEnv);
 
-   return -1;
+   return(-1);
   }
 
 #if UNIX_V || LINUX || DARWIN || UNIX_7 || WIN_GCC || WIN_MVC || DARWIN

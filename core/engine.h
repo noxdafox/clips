@@ -149,12 +149,12 @@ struct engineData
                                                               void (*)(Environment *, void *),int,void *);
    bool                    EnvRemoveBeforeRunFunction(Environment *,const char *);
    void                    InitializeEngine(Environment *);
-   void                    EnvSetBreak(Environment *,Defrule *);
+   void                    DefruleSetBreak(Defrule *);
    void                    EnvHalt(Environment *);
-   bool                    EnvRemoveBreak(Environment *,Defrule *);
+   bool                    DefruleRemoveBreak(Defrule *);
    void                    RemoveAllBreakpoints(Environment *);
    void                    EnvShowBreaks(Environment *,const char *,Defmodule *);
-   bool                    EnvDefruleHasBreakpoint(Environment *,Defrule *);
+   bool                    DefruleHasBreakpoint(Defrule *);
    void                    RunCommand(Environment *,UDFContext *,UDFValue *);
    void                    SetBreakCommand(Environment *,UDFContext *,UDFValue *);
    void                    RemoveBreakCommand(Environment *,UDFContext *,UDFValue *);
@@ -164,7 +164,7 @@ struct engineData
    void                    ClearFocusStackCommand(Environment *,UDFContext *,UDFValue *);
    void                    EnvClearFocusStack(Environment *);
    struct focus           *EnvGetNextFocus(Environment *,struct focus *);
-   void                    EnvFocus(Environment *,Defmodule *);
+   void                    DefmoduleFocus(Defmodule *);
    bool                    EnvGetFocusChanged(Environment *);
    void                    EnvSetFocusChanged(Environment *,bool);
    void                    ListFocusStackCommand(Environment *,UDFContext *,UDFValue *);

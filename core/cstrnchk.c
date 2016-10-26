@@ -430,7 +430,7 @@ bool CheckAllowedClassesConstraint(
    /* belongs to one of the allowed classes in the list.   */
    /*======================================================*/
 
-   insClass = EnvGetInstanceClass(theEnv,ins);
+   insClass = InstanceClass(ins);
    for (tmpPtr = constraints->classList;
         tmpPtr != NULL;
         tmpPtr = tmpPtr->nextArg)
@@ -438,7 +438,7 @@ bool CheckAllowedClassesConstraint(
       cmpClass = LookupDefclassByMdlOrScope(theEnv,tmpPtr->lexemeValue->contents);
       if (cmpClass == NULL) continue;
       if (cmpClass == insClass) return true;
-      if (EnvSubclassP(theEnv,insClass,cmpClass)) return true;
+      if (SubclassP(insClass,cmpClass)) return true;
      }
 
    /*=========================================================*/

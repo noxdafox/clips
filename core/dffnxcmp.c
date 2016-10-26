@@ -54,6 +54,7 @@
    static void                    CloseDeffunctionFiles(Environment *,FILE *,FILE *,int);
    static void                    DeffunctionModuleToCode(Environment *,FILE *,Defmodule *,int,int);
    static void                    SingleDeffunctionToCode(Environment *,FILE *,Deffunction *,int,int,int);
+   static void                    InitDeffunctionCode(Environment *,FILE *,int,int);
 
 /* =========================================
    *****************************************
@@ -74,7 +75,7 @@ void SetupDeffunctionCompiler(
   Environment *theEnv)
   {
    DeffunctionData(theEnv)->DeffunctionCodeItem = AddCodeGeneratorItem(theEnv,"deffunctions",0,ReadyDeffunctionsForCode,
-                                              NULL,DeffunctionsToCode,2);
+                                              InitDeffunctionCode,DeffunctionsToCode,2);
   }
 
 
@@ -153,6 +154,24 @@ static void ReadyDeffunctionsForCode(
   Environment *theEnv)
   {
    MarkConstructBsaveIDs(theEnv,DeffunctionData(theEnv)->DeffunctionModuleIndex);
+  }
+
+/**************************************************/
+/* InitDeffunctionCode: Writes out initialization */
+/*   code for deffunction for a run-time module.  */
+/**************************************************/
+static void InitDeffunctionCode(
+  Environment *theEnv,
+  FILE *initFP,
+  int imageID,
+  int maxIndices)
+  {
+#if MAC_XCD
+#pragma unused(maxIndices)
+#pragma unused(imageID)
+#pragma unused(theEnv)
+#endif
+   fprintf(initFP,"   DeffunctionRunTimeInitialize(theEnv);\n");
   }
 
 /*******************************************************

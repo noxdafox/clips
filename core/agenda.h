@@ -123,14 +123,14 @@ struct agendaData
    void                    ClearRuleFromAgenda(Environment *,Defrule *);
    Activation             *EnvGetNextActivation(Environment *,Activation *);
    struct partialMatch    *EnvGetActivationBasis(Environment *,Activation *);
-   const char             *EnvGetActivationName(Environment *,Activation *);
+   const char             *ActivationRuleName(Activation *);
    Defrule                *EnvGetActivationRule(Environment *,Activation *);
-   int                     EnvGetActivationSalience(Environment *,Activation *);
-   int                     EnvSetActivationSalience(Environment *,Activation *,int);
-   void                    EnvGetActivationPPForm(Environment *,char *,size_t,Activation *);
+   int                     ActivationGetSalience(Activation *);
+   int                     ActivationSetSalience(Activation *,int);
+   void                    ActivationPPForm(char *,size_t,Activation *);
    void                    EnvGetActivationBasisPPForm(Environment *,char *,size_t,Activation *);
    bool                    MoveActivationToTop(Environment *,Activation *);
-   bool                    EnvDeleteActivation(Environment *,Activation *);
+   bool                    ActivationDelete(Activation *,Environment *);
    bool                    DetachActivation(Environment *,Activation *);
    void                    EnvAgenda(Environment *,const char *,Defmodule *);
    void                    RemoveActivation(Environment *,Activation *,bool,bool);
@@ -140,14 +140,14 @@ struct agendaData
    unsigned long           GetNumberOfActivations(Environment *);
    int                     EnvGetSalienceEvaluation(Environment *);
    int                     EnvSetSalienceEvaluation(Environment *,int);
-   void                    EnvRefreshAgenda(Environment *,Defmodule *);
-   void                    EnvReorderAgenda(Environment *,Defmodule *);
+   void                    DefmoduleRefreshAgenda(Defmodule *,Environment *);
+   void                    DefmoduleReorderAgenda(Defmodule *,Environment *);
    void                    InitializeAgenda(Environment *);
    void                    SetSalienceEvaluationCommand(Environment *,UDFContext *,UDFValue *);
    void                    GetSalienceEvaluationCommand(Environment *,UDFContext *,UDFValue *);
    void                    RefreshAgendaCommand(Environment *,UDFContext *,UDFValue *);
    void                    RefreshCommand(Environment *,UDFContext *,UDFValue *);
-   bool                    EnvRefresh(Environment *,Defrule *);
+   bool                    DefruleRefresh(Defrule *);
 #if DEBUGGING_FUNCTIONS
    void                    AgendaCommand(Environment *,UDFContext *,UDFValue *);
 #endif

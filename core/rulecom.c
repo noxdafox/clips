@@ -292,22 +292,21 @@ void MatchesCommand(
    else
      { output = VERBOSE; }
 
-   EnvMatches(theEnv,rulePtr,output,&result);
+   DefruleMatches(rulePtr,output,&result);
    CLIPSToUDFValue(&result,returnValue);
   }
 
-/********************************/
-/* EnvMatches: C access routine */
-/*   for the matches command.   */
-/********************************/
-void EnvMatches(
-  Environment *theEnv,
-  Defrule *theRule,
+/************************************/
+/* DefruleMatches: C access routine */
+/*   for the matches command.       */
+/************************************/
+void DefruleMatches(
+  Defrule *theDefrule,
   int output,
   CLIPSValue *returnValue)
   {
    Defrule *rulePtr;
-   Defrule *topDisjunct = theRule;
+   Defrule *topDisjunct = theDefrule;
    long joinIndex;
    long arraySize;
    struct joinInformation *theInfo;
@@ -315,6 +314,7 @@ void EnvMatches(
    long long betaMatchCount = 0;
    long long activations = 0;
    Activation *agendaPtr;
+   Environment *theEnv = theDefrule->header.env;
 
    /*==========================*/
    /* Set up the return value. */
@@ -1420,7 +1420,7 @@ static void ShowJoins(
          if (joinList[numberOfJoins]->ruleToActivate != NULL)
            {
             EnvPrintRouter(theEnv,WDISPLAY,"    RA : ");
-            EnvPrintRouter(theEnv,WDISPLAY,EnvGetDefruleName(theEnv,joinList[numberOfJoins]->ruleToActivate));
+            EnvPrintRouter(theEnv,WDISPLAY,DefruleName(joinList[numberOfJoins]->ruleToActivate));
             EnvPrintRouter(theEnv,WDISPLAY,"\n");
            }
 

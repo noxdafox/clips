@@ -363,6 +363,8 @@ void ObjectsRunTimeInitialize(
       for (j = 0 ; j < CLASS_TABLE_HASH_SIZE ; j++)
         for (cls = DefclassData(theEnv)->ClassTable[j] ; cls != NULL ; cls = cls->nxtHash)
           {
+           cls->header.env = theEnv;
+           
            for (i = 0 ; i < cls->slotCount ; i++)
              {
               /* =====================================================================
@@ -378,6 +380,9 @@ void ObjectsRunTimeInitialize(
                  cls->slots[i].defaultValue = tmpexp;
                 }
              }
+
+           for (i = 0; i < cls->handlerCount; i++)
+             { cls->handlers[i].header.env = theEnv; }
           }
      }
 
@@ -609,8 +614,8 @@ static void SetupDefclasses(
                                      GetConstructModuleItem,
                                      (GetNextConstructFunction *) EnvGetNextDefclass,
                                      SetNextConstruct,
-                                     (IsConstructDeletableFunction *) EnvIsDefclassDeletable,
-                                     (DeleteConstructFunction *) EnvUndefclass,
+                                     (IsConstructDeletableFunction *) DefclassIsDeletable,
+                                     (DeleteConstructFunction *) Undefclass,
 #if (! RUN_TIME)
                                      (FreeConstructFunction *) RemoveDefclass
 #else

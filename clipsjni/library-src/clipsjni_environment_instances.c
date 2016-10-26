@@ -123,9 +123,9 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getInstanceList
         instancePtr != NULL;
         instancePtr = EnvGetNextInstance(theCLIPSEnv,instancePtr))
      {
-      theClass = EnvGetInstanceClass(theCLIPSEnv,instancePtr);
+      theClass = InstanceClass(instancePtr);
       
-      EnvClassSlots(theCLIPSEnv,theClass,&slotNames,true);
+      ClassSlots(theClass,&slotNames,true);
    
       slotValueList = (*env)->NewObject(env,
                                         CLIPSJNIData(clipsEnv)->arrayListClass,
@@ -147,7 +147,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getInstanceList
 
          if (EnvSlotDefaultP(theCLIPSEnv,theClass,theCSlotName) == STATIC_DEFAULT)
            {
-            EnvSlotDefaultValue(theCLIPSEnv,theClass,theCSlotName,&temp);
+            SlotDefaultValue(theClass,theCSlotName,&temp);
             CLIPSToUDFValue(&temp,&defaultValue);
                                            
             if (DOsEqual(&slotValue,&defaultValue))
@@ -174,8 +174,8 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getInstanceList
            }
         }
 
-      instanceName = (*env)->NewStringUTF(env,EnvGetInstanceName(theCLIPSEnv,instancePtr));
-      instanceClass = (*env)->NewStringUTF(env,EnvGetDefclassName(theCLIPSEnv,theClass));
+      instanceName = (*env)->NewStringUTF(env,InstanceName(instancePtr));
+      instanceClass = (*env)->NewStringUTF(env,DefclassName(theClass));
 
       theJavaInstance = (*env)->NewObject(env,
                                       CLIPSJNIData(clipsEnv)->factInstanceClass,
@@ -253,7 +253,7 @@ JNIEXPORT jstring JNICALL Java_net_sf_clipsrules_jni_Environment_getInstanceName
    jstring rv;
    void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
 
-   rv = (*env)->NewStringUTF(env,EnvGetInstanceName(JLongToPointer(clipsEnv),JLongToPointer(clipsInstance)));
+   rv = (*env)->NewStringUTF(env,InstanceName(JLongToPointer(clipsInstance)));
 
    SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
 
@@ -391,11 +391,10 @@ JNIEXPORT jstring JNICALL Java_net_sf_clipsrules_jni_Environment_getDefclassText
   jlong defclassLong)
   {
    void *defclassPtr = JLongToPointer(defclassLong);
-   void *theEnv = JLongToPointer(clipsEnv);
    const char *defclassText = NULL;
       
    if (defclassPtr != NULL)
-     { defclassText = EnvGetDefclassPPForm(theEnv,defclassPtr); }   
+     { defclassText = DefclassPPForm(defclassPtr); }   
 
    if (defclassText == NULL)
      { return (*env)->NewStringUTF(env,""); }

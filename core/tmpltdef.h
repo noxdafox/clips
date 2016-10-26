@@ -137,7 +137,7 @@ struct deftemplateData
    Deftemplate                   *EnvFindDeftemplate(Environment *,const char *);
    Deftemplate                   *EnvFindDeftemplateInModule(Environment *,const char *);
    Deftemplate                   *EnvGetNextDeftemplate(Environment *,Deftemplate *);
-   bool                           EnvIsDeftemplateDeletable(Environment *,Deftemplate *);
+   bool                           DeftemplateIsDeletable(Deftemplate *);
    Fact                          *EnvGetNextFactInTemplate(Environment *,Deftemplate *,Fact *);
    struct deftemplateModule      *GetDeftemplateModuleItem(Environment *,Defmodule *);
    void                           ReturnSlots(Environment *,struct templateSlot *);
@@ -147,9 +147,9 @@ struct deftemplateData
 #if RUN_TIME
    void                           DeftemplateRunTimeInitialize(Environment *);
 #endif
-   const char                    *EnvDeftemplateModule(Environment *,Deftemplate *);
-   const char                    *EnvGetDeftemplateName(Environment *,Deftemplate *);
-   const char                    *EnvGetDeftemplatePPForm(Environment *,Deftemplate *);
+   const char                    *DeftemplateModule(Deftemplate *);
+   const char                    *DeftemplateName(Deftemplate *);
+   const char                    *DeftemplatePPForm(Deftemplate *);
 
 #endif /* _H_tmpltdef */
 

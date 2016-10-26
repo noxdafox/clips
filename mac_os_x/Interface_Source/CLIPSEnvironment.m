@@ -439,7 +439,7 @@
       
       newFocus = [[CLIPSFocus alloc] init];
 
-      moduleName = EnvGetDefmoduleName(environment,theFocus->theModule);
+      moduleName = DefmoduleName(theFocus->theModule);
 
       theStr = [NSString stringWithCString: moduleName encoding: NSUTF8StringEncoding];
 
@@ -484,7 +484,7 @@
          
          [newActivation setSalience: [NSNumber numberWithInt: theActivation->salience]];
          
-         [newActivation setRuleName: [NSString stringWithUTF8String: EnvGetDefruleName(environment,theActivation->theRule)]];
+         [newActivation setRuleName: [NSString stringWithUTF8String: DefruleName(theActivation->theRule)]];
 
          EnvGetActivationBasisPPForm(environment,bindingsBuffer,1024,theActivation);
          [newActivation setBindings: [NSString stringWithFormat:@"%s", bindingsBuffer]];
@@ -571,7 +571,7 @@
      {
       newModule = [[CLIPSModule alloc] init];
 
-      moduleName = EnvGetDefmoduleName(environment,theModule);
+      moduleName = DefmoduleName(theModule);
 
       theStr = [NSString stringWithCString: moduleName encoding: NSUTF8StringEncoding];
 
@@ -658,7 +658,7 @@
      {
       newModule = [[CLIPSModule alloc] init];
 
-      moduleName = EnvGetDefmoduleName(environment,theModule);
+      moduleName = DefmoduleName(theModule);
 
       theStr = [NSString stringWithCString: moduleName encoding: NSUTF8StringEncoding];
 

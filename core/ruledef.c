@@ -143,8 +143,8 @@ void InitializeDefrules(
                    GetConstructModuleItem,
                    (GetNextConstructFunction *) EnvGetNextDefrule,
                    SetNextConstruct,
-                   (IsConstructDeletableFunction *) EnvIsDefruleDeletable,
-                   (DeleteConstructFunction *) EnvUndefrule,
+                   (IsConstructDeletableFunction *) DefruleIsDeletable,
+                   (DeleteConstructFunction *) Undefrule,
                    (FreeConstructFunction *) ReturnDefrule);
 
    DefruleData(theEnv)->AlphaMemoryTable = (ALPHA_MEMORY_HASH **)
@@ -325,14 +325,15 @@ Defrule *EnvGetNextDefrule(
    return (Defrule *) GetNextConstructItem(theEnv,(struct constructHeader *) defrulePtr,DefruleData(theEnv)->DefruleModuleIndex);
   }
 
-/*******************************************************/
-/* EnvIsDefruleDeletable: Returns true if a particular */
-/*   defrule can be deleted, otherwise returns false.  */
-/*******************************************************/
-bool EnvIsDefruleDeletable(
-  Environment *theEnv,
+/******************************************************/
+/* DefruleIsDeletable: Returns true if a particular   */
+/*   defrule can be deleted, otherwise returns false. */
+/******************************************************/
+bool DefruleIsDeletable(
   Defrule *theDefrule)
   {
+   Environment *theEnv = theDefrule->header.env;
+
    if (! ConstructsDeletable(theEnv))
      { return false; }
 
@@ -419,7 +420,10 @@ void DefruleRunTimeInitialize(
          for (theDisjunct = theRule;
               theDisjunct != NULL;
               theDisjunct = theDisjunct->disjunct)
-           { AddBetaMemoriesToRule(theEnv,theDisjunct->lastJoin); }
+           {
+            theDisjunct->header.env = theEnv;
+            AddBetaMemoriesToRule(theEnv,theDisjunct->lastJoin);
+           }
         }
      }
 
@@ -532,25 +536,22 @@ void AddBetaMemoriesToJoin(
 /* Additional Environment Functions */
 /*##################################*/
 
-const char *EnvDefruleModule(
-  Environment *theEnv,
+const char *DefruleModule(
   Defrule *theDefrule)
   {
    return GetConstructModuleName((struct constructHeader *) theDefrule);
   }
 
-const char *EnvGetDefruleName(
-  Environment *theEnv,
+const char *DefruleName(
   Defrule *theDefrule)
   {
    return GetConstructNameString((struct constructHeader *) theDefrule);
   }
 
-const char *EnvGetDefrulePPForm(
-  Environment *theEnv,
+const char *DefrulePPForm(
   Defrule *theDefrule)
   {
-   return GetConstructPPForm(theEnv,(struct constructHeader *) theDefrule);
+   return GetConstructPPForm((struct constructHeader *) theDefrule);
   }
 
 #endif /* DEFRULE_CONSTRUCT */

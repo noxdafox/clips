@@ -162,7 +162,7 @@ bool ParseDefmessageHandler(
      {
       PrintErrorID(theEnv,"MSGPSR",8,false);
       EnvPrintRouter(theEnv,WERROR,"Message-handlers cannot be attached to the class ");
-      EnvPrintRouter(theEnv,WERROR,EnvGetDefclassName(theEnv,cls));
+      EnvPrintRouter(theEnv,WERROR,DefclassName(cls));
       EnvPrintRouter(theEnv,WERROR,".\n");
       return true;
      }
@@ -620,7 +620,7 @@ static SlotDescriptor *CheckSlotReference(
       EnvPrintRouter(theEnv,WERROR,"No such slot ");
       EnvPrintRouter(theEnv,WERROR,((CLIPSLexeme *) theValue)->contents);
       EnvPrintRouter(theEnv,WERROR," in class ");
-      EnvPrintRouter(theEnv,WERROR,EnvGetDefclassName(theEnv,theDefclass));
+      EnvPrintRouter(theEnv,WERROR,DefclassName(theDefclass));
       EnvPrintRouter(theEnv,WERROR," for ?self reference.\n");
       return NULL;
      }

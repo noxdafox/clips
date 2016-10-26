@@ -152,7 +152,7 @@ static void ResetDefrules(
    DefruleData(theEnv)->CurrentEntityTimeTag = 1L;
    EnvClearFocusStack(theEnv);
    theModule = EnvFindDefmodule(theEnv,"MAIN");
-   EnvFocus(theEnv,theModule);
+   DefmoduleFocus(theModule);
 
    for (theLink = DefruleData(theEnv)->RightPrimeJoins;
         theLink != NULL;
@@ -252,7 +252,7 @@ static void ClearDefrules(
    Defmodule *theModule;
 
    theModule = EnvFindDefmodule(theEnv,"MAIN");
-   EnvFocus(theEnv,theModule);
+   DefmoduleFocus(theModule);
   }
 
 #endif
@@ -281,15 +281,22 @@ void UndefruleCommand(
    UndefconstructCommand(context,"undefrule",DefruleData(theEnv)->DefruleConstruct);
   }
 
-/**********************************/
-/* EnvUndefrule: C access routine */
-/*   for the undefrule command.   */
-/**********************************/
-bool EnvUndefrule(
-  Environment *theEnv,
-  Defrule *theDefrule)
+/********************************/
+/* Undefrule: C access routine  */
+/*   for the undefrule command. */
+/********************************/
+bool Undefrule(
+  Defrule *theDefrule,
+  Environment *allEnv)
   {
-   return(Undefconstruct(theEnv,theDefrule,DefruleData(theEnv)->DefruleConstruct));
+   Environment *theEnv;
+   
+   if (theDefrule == NULL)
+     { theEnv = allEnv; }
+   else
+     { theEnv = theDefrule->header.env; }
+   
+   return Undefconstruct(theEnv,theDefrule,DefruleData(theEnv)->DefruleConstruct);
   }
 
 /************************************************/
@@ -383,18 +390,14 @@ void EnvListDefrules(
   }
 
 /*******************************************************/
-/* EnvGetDefruleWatchActivations: C access routine for */
+/* DefruleGetWatchActivations: C access routine for    */
 /*   retrieving the current watch value of a defrule's */
 /*   activations.                                      */
 /*******************************************************/
-bool EnvGetDefruleWatchActivations(
-  Environment *theEnv,
+bool DefruleGetWatchActivations(
   Defrule *rulePtr)
   {
    Defrule *thePtr;
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
 
    for (thePtr = rulePtr;
         thePtr != NULL;
@@ -404,19 +407,15 @@ bool EnvGetDefruleWatchActivations(
    return false;
   }
 
-/***********************************************/
-/* EnvGetDefruleWatchFirings: C access routine */
-/*   for retrieving the current watch value of */
-/*   a defrule's firings.                      */
-/***********************************************/
-bool EnvGetDefruleWatchFirings(
-  Environment *theEnv,
+/********************************************/
+/* DefruleGetWatchFirings: C access routine */
+/*   for retrieving the current watch value */
+/*   of a defrule's firings.                */
+/********************************************/
+bool DefruleGetWatchFirings(
   Defrule *rulePtr)
   {
    Defrule *thePtr;
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
 
    for (thePtr = rulePtr;
         thePtr != NULL;
@@ -426,20 +425,16 @@ bool EnvGetDefruleWatchFirings(
    return false;
   }
 
-/***************************************************/
-/* EnvSetDefruleWatchActivations: C access routine */
-/*   for setting the current watch value of a      */
-/*   defrule's activations.                        */
-/***************************************************/
-void EnvSetDefruleWatchActivations(
-  Environment *theEnv,
-  bool newState,
-  Defrule *rulePtr)
+/************************************************/
+/* DefruleSetWatchActivations: C access routine */
+/*   for setting the current watch value of a   */
+/*   defrule's activations.                     */
+/************************************************/
+void DefruleSetWatchActivations(
+  Defrule *rulePtr,
+  bool newState)
   {
    Defrule *thePtr;
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
 
    for (thePtr = rulePtr;
         thePtr != NULL;
@@ -447,20 +442,16 @@ void EnvSetDefruleWatchActivations(
      { thePtr->watchActivation = newState; }
   }
 
-/****************************************************/
-/* EnvSetDefruleWatchFirings: C access routine for  */
-/*   setting the current watch value of a defrule's */
-/*   firings.                                       */
-/****************************************************/
-void EnvSetDefruleWatchFirings(
-  Environment *theEnv,
-  bool newState,
-  Defrule *rulePtr)
+/********************************************/
+/* DefruleSetWatchFirings: C access routine */
+/*   for setting the current watch value of */
+/*   a defrule's firings.                   */
+/********************************************/
+void DefruleSetWatchFirings(
+  Defrule *rulePtr,
+  bool newState)
   {
    Defrule *thePtr;
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
 
    for (thePtr = rulePtr;
         thePtr != NULL;
@@ -480,12 +471,12 @@ bool DefruleWatchAccess(
   {
    if (code)
      return(ConstructSetWatchAccess(theEnv,DefruleData(theEnv)->DefruleConstruct,newState,argExprs,
-                                    (bool (*)(Environment *,void *)) EnvGetDefruleWatchActivations,
-                                    (void (*)(Environment *,bool,void *)) EnvSetDefruleWatchActivations));
+                                    (ConstructGetWatchFunction *) DefruleGetWatchActivations,
+                                    (ConstructSetWatchFunction *) DefruleSetWatchActivations));
    else
      return(ConstructSetWatchAccess(theEnv,DefruleData(theEnv)->DefruleConstruct,newState,argExprs,
-                                    (bool (*)(Environment *,void *)) EnvGetDefruleWatchFirings,
-                                    (void (*)(Environment *,bool,void *)) EnvSetDefruleWatchFirings));
+                                    (ConstructGetWatchFunction *) DefruleGetWatchFirings,
+                                    (ConstructSetWatchFunction *) DefruleSetWatchFirings));
   }
 
 /*****************************************************************/
@@ -500,12 +491,12 @@ bool DefruleWatchPrint(
   {
    if (code)
      return(ConstructPrintWatchAccess(theEnv,DefruleData(theEnv)->DefruleConstruct,logName,argExprs,
-                                      (bool (*)(Environment *,void *)) EnvGetDefruleWatchActivations,
-                                      (void (*)(Environment *,bool,void *)) EnvSetDefruleWatchActivations));
+                                      (ConstructGetWatchFunction *) DefruleGetWatchActivations,
+                                      (ConstructSetWatchFunction *) DefruleSetWatchActivations));
    else
      return(ConstructPrintWatchAccess(theEnv,DefruleData(theEnv)->DefruleConstruct,logName,argExprs,
-                                      (bool (*)(Environment *,void *)) EnvGetDefruleWatchActivations,
-                                      (void (*)(Environment *,bool,void *)) EnvSetDefruleWatchActivations));
+                                      (ConstructGetWatchFunction *) DefruleGetWatchActivations,
+                                      (ConstructSetWatchFunction *) DefruleGetWatchActivations));
   }
 
 #endif /* DEBUGGING_FUNCTIONS */

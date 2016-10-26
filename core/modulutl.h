@@ -62,7 +62,7 @@ typedef void PrintItemFunction(Environment *,const char *,void *);
                                                   GetNextItemFunction *,
                                                   const char *(*)(void *),
                                                   PrintItemFunction *,
-                                                  bool (*)(Environment *,void *));
+                                                  bool (*)(void *));
    long                           DoForAllModules(Environment *,
                                                   void (*)(Defmodule *,void *),
                                                   int,void *);

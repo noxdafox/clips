@@ -74,7 +74,7 @@
    static bool                       ParseExportSpec(Environment *,const char *,struct token *,
                                                      Defmodule *,
                                                      Defmodule *);
-   static bool                       DeleteDefmodule(Environment *,void *);
+   static bool                       DeleteDefmodule(Defmodule *,Environment *);
    static bool                       FindMultiImportConflict(Environment *,Defmodule *);
    static void                       NotExportedErrorMessage(Environment *,const char *,const char *,const char *);
 
@@ -198,6 +198,7 @@ bool ParseDefmodule(
          newDefmodule->header.whichModule = NULL;
          newDefmodule->header.usrData = NULL;
          newDefmodule->header.constructType = DEFMODULE;
+         newDefmodule->header.env = theEnv;
          newDefmodule->header.next = NULL;
         }
      }
@@ -368,10 +369,17 @@ bool ParseDefmodule(
 /*   be redefined (and it can only be redefined once).       */
 /*************************************************************/
 static bool DeleteDefmodule(
-  Environment *theEnv,
-  void *theConstruct)
+  Defmodule *theDefmodule,
+  Environment *allEnv)
   {
-   if (strcmp(EnvGetDefmoduleName(theEnv,(Defmodule *) theConstruct),"MAIN") == 0)
+   Environment *theEnv;
+   
+   if (theDefmodule == NULL)
+     { theEnv = allEnv; }
+   else
+     { theEnv = theDefmodule->header.env; }
+   
+   if (strcmp(DefmoduleName(theDefmodule),"MAIN") == 0)
      { return(DefmoduleData(theEnv)->MainModuleRedefinable); }
 
    return false;
@@ -523,7 +531,7 @@ static bool ParseImportSpec(
 
    if (theModule->exportList == NULL)
      {
-      NotExportedErrorMessage(theEnv,EnvGetDefmoduleName(theEnv,theModule),NULL,NULL);
+      NotExportedErrorMessage(theEnv,DefmoduleName(theModule),NULL,NULL);
       return true;
      }
 
@@ -582,13 +590,13 @@ static bool ParseImportSpec(
         {
          if (newModule->importList->constructName == NULL)
            {
-            NotExportedErrorMessage(theEnv,EnvGetDefmoduleName(theEnv,theModule),
+            NotExportedErrorMessage(theEnv,DefmoduleName(theModule),
                                     newModule->importList->constructType->contents,
                                     NULL);
            }
          else
            {
-            NotExportedErrorMessage(theEnv,EnvGetDefmoduleName(theEnv,theModule),
+            NotExportedErrorMessage(theEnv,DefmoduleName(theModule),
                                     newModule->importList->constructType->contents,
                                     newModule->importList->constructName->contents);
            }
@@ -617,7 +625,7 @@ static bool ParseImportSpec(
                                 thePort->constructName->contents,&count,
                                 true,NULL) == NULL)
         {
-         NotExportedErrorMessage(theEnv,EnvGetDefmoduleName(theEnv,theModule),
+         NotExportedErrorMessage(theEnv,DefmoduleName(theModule),
                                  thePort->constructType->contents,
                                  thePort->constructName->contents);
          RestoreCurrentModule(theEnv);
@@ -996,7 +1004,7 @@ static bool FindMultiImportConflict(
                                    &count,false,NULL);
              if (count > 1)
                {
-                ImportExportConflictMessage(theEnv,"defmodule",EnvGetDefmoduleName(theEnv,theModule),
+                ImportExportConflictMessage(theEnv,"defmodule",DefmoduleName(theModule),
                                             thePCItem->constructName,
                                             (*theConstruct->getConstructNameFunction)
                                                ((struct constructHeader *) theCItem)->contents);
