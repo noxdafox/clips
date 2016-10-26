@@ -437,6 +437,7 @@ void CreateMainModule(
    newDefmodule->header.bsaveID = 0L;
    newDefmodule->header.usrData = NULL;
    newDefmodule->header.constructType = DEFMODULE;
+   newDefmodule->header.env = theEnv;
 
    /*==================================*/
    /* Initialize the array for storing */
@@ -490,11 +491,16 @@ void SetListOfDefmodules(
   Defmodule *defmodulePtr)
   {
    DefmoduleData(theEnv)->ListOfDefmodules = defmodulePtr;
-
    DefmoduleData(theEnv)->LastDefmodule = DefmoduleData(theEnv)->ListOfDefmodules;
+
    if (DefmoduleData(theEnv)->LastDefmodule == NULL) return;
+   DefmoduleData(theEnv)->LastDefmodule->header.env = theEnv;
+
    while (DefmoduleData(theEnv)->LastDefmodule->header.next != NULL)
-     { DefmoduleData(theEnv)->LastDefmodule = (Defmodule *) DefmoduleData(theEnv)->LastDefmodule->header.next; }
+     {
+      DefmoduleData(theEnv)->LastDefmodule = (Defmodule *) DefmoduleData(theEnv)->LastDefmodule->header.next;
+      DefmoduleData(theEnv)->LastDefmodule->header.env = theEnv;
+     }
   }
 
 /********************************************************************/
@@ -512,33 +518,23 @@ Defmodule *EnvGetNextDefmodule(
      { return (Defmodule *) defmodulePtr->header.next; }
   }
 
-/*****************************************/
-/* EnvGetDefmoduleName: Returns the name */
-/*   of the specified defmodule.         */
-/*****************************************/
-const char *EnvGetDefmoduleName(
-  Environment *theEnv,
+/***********************************/
+/* DefmoduleName: Returns the name */
+/*   of the specified defmodule.   */
+/***********************************/
+const char *DefmoduleName(
   Defmodule *defmodulePtr)
   {
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
-
    return defmodulePtr->header.name->contents;
   }
 
-/***************************************************/
-/* EnvGetDefmodulePPForm: Returns the pretty print */
-/*   representation of the specified defmodule.    */
-/***************************************************/
-const char *EnvGetDefmodulePPForm(
-  Environment *theEnv,
+/************************************************/
+/* DefmodulePPForm: Returns the pretty print    */
+/*   representation of the specified defmodule. */
+/************************************************/
+const char *DefmodulePPForm(
   Defmodule *defmodulePtr)
   {
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
-
    return defmodulePtr->header.ppForm;
   }
 

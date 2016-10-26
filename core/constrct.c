@@ -884,7 +884,7 @@ struct construct *AddConstruct(
   bool (*parseFunction)(Environment *,const char *),
   FindConstructFunction *findFunction,
   CLIPSLexeme *(*getConstructNameFunction)(struct constructHeader *),
-  const char *(*getPPFormFunction)(Environment *,struct constructHeader *),
+  const char *(*getPPFormFunction)(struct constructHeader *),
   struct defmoduleItemHeader *(*getModuleItemFunction)(struct constructHeader *),
   GetNextConstructFunction *getNextItemFunction,
   void (*setNextItemFunction)(struct constructHeader *,struct constructHeader *),

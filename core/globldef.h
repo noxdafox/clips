@@ -115,7 +115,7 @@ struct defglobalModule
    Defglobal                     *EnvFindDefglobalInModule(Environment *,const char *);
    Defglobal                     *EnvGetNextDefglobal(Environment *,Defglobal *);
    void                           CreateInitialFactDefglobal(void);
-   bool                           EnvIsDefglobalDeletable(Environment *,Defglobal *);
+   bool                           EnvIsDefglobalDeletable(Defglobal *);
    struct defglobalModule        *GetDefglobalModuleItem(Environment *,Defmodule *);
    void                           QSetDefglobalValue(Environment *,Defglobal *,UDFValue *,bool);
    Defglobal                     *QFindDefglobal(Environment *,CLIPSLexeme *);
@@ -127,9 +127,9 @@ struct defglobalModule
    void                           UpdateDefglobalScope(Environment *);
    Defglobal                     *GetNextDefglobalInScope(Environment *,Defglobal *);
    bool                           QGetDefglobalValue(Environment *,Defglobal *,UDFValue *);
-   const char                    *EnvDefglobalModule(Environment *,Defglobal *);
-   const char                    *EnvGetDefglobalName(Environment *,Defglobal *);
-   const char                    *EnvGetDefglobalPPForm(Environment *,Defglobal *);
+   const char                    *DefglobalModule(Defglobal *);
+   const char                    *DefglobalName(Defglobal *);
+   const char                    *DefglobalPPForm(Defglobal *);
 #if RUN_TIME
    void                           DefglobalRunTimeInitialize(Environment *);
 #endif

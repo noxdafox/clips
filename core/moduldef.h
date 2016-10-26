@@ -210,8 +210,8 @@ struct defmoduleData
 
    void                           InitializeDefmodules(Environment *);
    Defmodule                     *EnvFindDefmodule(Environment *,const char *);
-   const char                    *EnvGetDefmoduleName(Environment *,Defmodule *);
-   const char                    *EnvGetDefmodulePPForm(Environment *,Defmodule *);
+   const char                    *DefmoduleName(Defmodule *);
+   const char                    *DefmodulePPForm(Defmodule *);
    Defmodule                     *EnvGetNextDefmodule(Environment *,Defmodule *);
    void                           RemoveAllDefmodules(Environment *);
    int                            AllocateModuleStorage(void);

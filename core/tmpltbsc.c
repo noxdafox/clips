@@ -144,15 +144,22 @@ void UndeftemplateCommand(
    UndefconstructCommand(context,"undeftemplate",DeftemplateData(theEnv)->DeftemplateConstruct);
   }
 
-/**************************************/
-/* EnvUndeftemplate: C access routine */
-/*   for the undeftemplate command.   */
-/**************************************/
-bool EnvUndeftemplate(
-  Environment *theEnv,
-  Deftemplate *theDeftemplate)
+/************************************/
+/* Undeftemplate: C access routine  */
+/*   for the undeftemplate command. */
+/************************************/
+bool Undeftemplate(
+  Deftemplate *theDeftemplate,
+  Environment *allEnv)
   {
-   return(Undefconstruct(theEnv,theDeftemplate,DeftemplateData(theEnv)->DeftemplateConstruct));
+   Environment *theEnv;
+   
+   if (theDeftemplate == NULL)
+     { theEnv = allEnv; }
+   else
+     { theEnv = theDeftemplate->header.env; }
+   
+   return Undefconstruct(theEnv,theDeftemplate,DeftemplateData(theEnv)->DeftemplateConstruct);
   }
 
 /****************************************************/
@@ -245,34 +252,24 @@ void EnvListDeftemplates(
    ListConstruct(theEnv,DeftemplateData(theEnv)->DeftemplateConstruct,logicalName,theModule);
   }
 
-/***********************************************************/
-/* EnvGetDeftemplateWatch: C access routine for retrieving */
-/*   the current watch value of a deftemplate.             */
-/***********************************************************/
-bool EnvGetDeftemplateWatch(
-  Environment *theEnv,
+/********************************************************/
+/* DeftemplateGetWatch: C access routine for retrieving */
+/*   the current watch value of a deftemplate.          */
+/********************************************************/
+bool DeftemplateGetWatch(
   Deftemplate *theTemplate)
   {
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
-
    return theTemplate->watch;
   }
 
-/*********************************************************/
-/* EnvSetDeftemplateWatch:  C access routine for setting */
-/*   the current watch value of a deftemplate.           */
-/*********************************************************/
-void EnvSetDeftemplateWatch(
-  Environment *theEnv,
-  bool newState,
-  Deftemplate *theTemplate)
+/******************************************************/
+/* DeftemplateSetWatch:  C access routine for setting */
+/*   the current watch value of a deftemplate.        */
+/******************************************************/
+void DeftemplateSetWatch(
+  Deftemplate *theTemplate,
+  bool newState)
   {
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
-
    theTemplate->watch = newState;
   }
 
@@ -290,9 +287,9 @@ bool DeftemplateWatchAccess(
 #pragma unused(code)
 #endif
 
-   return(ConstructSetWatchAccess(theEnv,DeftemplateData(theEnv)->DeftemplateConstruct,newState,argExprs,
-                                  ((bool (*)(Environment *,void *)) EnvGetDeftemplateWatch),
-                                  ((void (*)(Environment *,bool,void *)) EnvSetDeftemplateWatch)));
+   return ConstructSetWatchAccess(theEnv,DeftemplateData(theEnv)->DeftemplateConstruct,newState,argExprs,
+                                  (ConstructGetWatchFunction *) DeftemplateGetWatch,
+                                  (ConstructSetWatchFunction *) DeftemplateSetWatch);
   }
 
 /*************************************************************************/
@@ -309,9 +306,9 @@ bool DeftemplateWatchPrint(
 #pragma unused(code)
 #endif
 
-   return(ConstructPrintWatchAccess(theEnv,DeftemplateData(theEnv)->DeftemplateConstruct,logName,argExprs,
-                                    ((bool (*)(Environment *,void *)) EnvGetDeftemplateWatch),
-                                    ((void (*)(Environment *,bool,void *)) EnvSetDeftemplateWatch)));
+   return ConstructPrintWatchAccess(theEnv,DeftemplateData(theEnv)->DeftemplateConstruct,logName,argExprs,
+                                    (ConstructGetWatchFunction *) DeftemplateGetWatch,
+                                    (ConstructSetWatchFunction *) DeftemplateSetWatch);
   }
 
 #endif /* DEBUGGING_FUNCTIONS */

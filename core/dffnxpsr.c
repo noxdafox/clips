@@ -366,9 +366,9 @@ static bool ValidDeffunctionName(
         {
          PrintErrorID(theEnv,"DFFNXPSR",5,false);
          EnvPrintRouter(theEnv,WERROR,"Defgeneric ");
-         EnvPrintRouter(theEnv,WERROR,EnvGetDefgenericName(theEnv,theDefgeneric));
+         EnvPrintRouter(theEnv,WERROR,DefgenericName(theDefgeneric));
          EnvPrintRouter(theEnv,WERROR," imported from module ");
-         EnvPrintRouter(theEnv,WERROR,EnvGetDefmoduleName(theEnv,theModule));
+         EnvPrintRouter(theEnv,WERROR,DefmoduleName(theModule));
          EnvPrintRouter(theEnv,WERROR," conflicts with this deffunction.\n");
          return false;
         }
@@ -393,7 +393,7 @@ static bool ValidDeffunctionName(
         {
          PrintErrorID(theEnv,"DFNXPSR",4,false);
          EnvPrintRouter(theEnv,WERROR,"Deffunction ");
-         EnvPrintRouter(theEnv,WERROR,EnvGetDeffunctionName(theEnv,theDeffunction));
+         EnvPrintRouter(theEnv,WERROR,DeffunctionName(theDeffunction));
          EnvPrintRouter(theEnv,WERROR," may not be redefined while it is executing.\n");
          return false;
         }
@@ -461,7 +461,7 @@ static Deffunction *AddDeffunction(
    else
      {
 #if DEBUGGING_FUNCTIONS
-      DFHadWatch = EnvGetDeffunctionWatch(theEnv,dfuncPtr);
+      DFHadWatch = DeffunctionGetWatch(dfuncPtr);
 #endif
       dfuncPtr->minNumberOfParameters = min;
       dfuncPtr->maxNumberOfParameters = max;
@@ -506,9 +506,7 @@ static Deffunction *AddDeffunction(
    /*==================================*/
 
 #if DEBUGGING_FUNCTIONS
-   EnvSetDeffunctionWatch(theEnv,
-                          DFHadWatch ? true : DeffunctionData(theEnv)->WatchDeffunctions,
-                          dfuncPtr);
+   DeffunctionSetWatch(dfuncPtr,DFHadWatch ? true : DeffunctionData(theEnv)->WatchDeffunctions);
 
    if ((EnvGetConserveMemory(theEnv) == false) && (headerp == false))
      { EnvSetDeffunctionPPForm(theEnv,dfuncPtr,CopyPPBuffer(theEnv)); }

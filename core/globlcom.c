@@ -227,7 +227,7 @@ void EnvShowDefglobals(
 
       if (allModules)
         {
-         EnvPrintRouter(theEnv,logicalName,EnvGetDefmoduleName(theEnv,theModule));
+         EnvPrintRouter(theEnv,logicalName,DefmoduleName(theModule));
          EnvPrintRouter(theEnv,logicalName,":\n");
         }
 

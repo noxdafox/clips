@@ -22,9 +22,10 @@
    if (self = [super init])
      {
       int i;
-      UDFValue slotNames;
+      CLIPSValue slotNames;
       UDFValue slotValue;
       UDFValue defaultValue;
+      CLIPSValue cv;
       NSMutableArray *tempArray;
       NSMutableDictionary *theMD;
       NSNumber *theNumber;
@@ -50,25 +51,25 @@
       
       DecrementBitMapCount(theEnvironment,theScopeMap);
 
-      tempArray = [NSMutableArray arrayWithCapacity: (unsigned) slotNames.range];
+      tempArray = [NSMutableArray arrayWithCapacity: (unsigned) slotNames.multifieldValue->length];
 
-      for (i = 0; i < slotNames.range; i++)
+      for (i = 0; i < slotNames.multifieldValue->length; i++)
         {
          const char *theCSlotName = slotNames.multifieldValue->theFields[i].lexemeValue->contents;
          NSString *theSlotName = [NSString stringWithUTF8String: theCSlotName];
          
-         FactSlotValue(theEnvironment,theFact,theCSlotName,&slotValue);
+         FactSlotValue(theEnvironment,theFact,theCSlotName,&cv);
+         CLIPSToUDFValue(&cv,&slotValue);
 
          NSString *theSlotValue = [NSString stringWithUTF8String: DataObjectToString(theEnvironment,&slotValue)];
 
          /* Only static defaults will be excluded from display. */
 
-         if (EnvDeftemplateSlotDefaultP(theEnvironment,EnvFactDeftemplate(theEnvironment,theFact),theCSlotName) == STATIC_DEFAULT)
+         if (DeftemplateSlotDefaultP(EnvFactDeftemplate(theEnvironment,theFact),theCSlotName) == STATIC_DEFAULT)
            {
-            EnvDeftemplateSlotDefaultValue(theEnvironment,
-                                           EnvFactDeftemplate(theEnvironment,theFact),
-                                           theCSlotName,&defaultValue);
-                                           
+            DeftemplateSlotDefaultValue(EnvFactDeftemplate(theEnvironment,theFact),
+                                        theCSlotName,&cv);
+            CLIPSToUDFValue(&cv,&defaultValue);
             if (DOsEqual(&slotValue,&defaultValue))
               { theNumber = [NSNumber numberWithBool: NO]; }
             else
@@ -100,7 +101,7 @@
    if (self = [super init])
      {
       int i;
-      UDFValue slotNames;
+      CLIPSValue slotNames;
       UDFValue slotValue;
       UDFValue defaultValue;
       NSMutableArray *tempArray;
@@ -108,11 +109,12 @@
       NSNumber *theNumber;
       CLIPSBitMap *theScopeMap;
       Defclass *theClass;
+      CLIPSValue result;
 
-      theClass = EnvGetInstanceClass(theEnvironment,theInstance);
-      [self setValue: [NSString stringWithUTF8String: EnvGetDefclassName(theEnvironment,theClass)] forKey: @"relationName"]; 
+      theClass = InstanceClass(theInstance);
+      [self setValue: [NSString stringWithUTF8String: DefclassName(theClass)] forKey: @"relationName"]; 
       
-      [self setValue: [NSString stringWithUTF8String: EnvGetInstanceName(theEnvironment,theInstance)] forKey: @"name"]; 
+      [self setValue: [NSString stringWithUTF8String: InstanceName(theInstance)] forKey: @"name"]; 
 
       /*====================================================*/
       /* An index of -1 indicates that this is an instance. */
@@ -122,7 +124,7 @@
       
       theCPointer = theInstance; 
             
-      EnvClassSlots(theEnvironment,theClass,&slotNames,true);
+      ClassSlots(theClass,&slotNames,true);
       
       environment = theEnvironment;
 
@@ -134,22 +136,24 @@
       
       DecrementBitMapCount(theEnvironment,theScopeMap);
 
-      tempArray = [NSMutableArray arrayWithCapacity: (unsigned) slotNames.range];
+      tempArray = [NSMutableArray arrayWithCapacity: (unsigned) slotNames.multifieldValue->length];
 
-      for (i = 0; i < slotNames.range; i++)
+      for (i = 0; i < slotNames.multifieldValue->length; i++)
         {
          const char *theCSlotName = slotNames.multifieldValue->theFields[i].lexemeValue->contents;
          NSString *theSlotName = [NSString stringWithUTF8String: theCSlotName];
          
-         EnvDirectGetSlot(theEnvironment,theInstance,theCSlotName,&slotValue);
-
+         EnvDirectGetSlot(theEnvironment,theInstance,theCSlotName,&result);
+         CLIPSToUDFValue(&result,&slotValue);
+         
          NSString *theSlotValue = [NSString stringWithUTF8String: DataObjectToString(theEnvironment,&slotValue)];
 
          /* Only static defaults will be excluded from display. */
  
          if (EnvSlotDefaultP(theEnvironment,theClass,theCSlotName) == STATIC_DEFAULT)
            {
-            EnvSlotDefaultValue(theEnvironment,theClass,theCSlotName,&defaultValue);
+            SlotDefaultValue(theClass,theCSlotName,&result);
+            CLIPSToUDFValue(&result,&defaultValue);
                                             
             if (DOsEqual(&slotValue,&defaultValue))
               { theNumber = [NSNumber numberWithBool: NO]; }

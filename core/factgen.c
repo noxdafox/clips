@@ -1413,7 +1413,6 @@ static void ReplaceVarSlotReference(
    theExpr->value = FindFunction(theEnv,"(slot-value)");
   }
 
-
 /*************************/
 /* FactSlotReferenceVar: */
 /*************************/

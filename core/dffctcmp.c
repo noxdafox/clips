@@ -59,6 +59,7 @@
    static void                    DeffactsModuleToCode(Environment *,FILE *,Defmodule *,int,int,int);
    static void                    CloseDeffactsFiles(Environment *,FILE *,FILE *,int);
    static void                    BeforeDeffactsToCode(Environment *);
+   static void                    InitDeffactsCode(Environment *,FILE *,int,int);
 
 /*************************************************************/
 /* DeffactsCompilerSetup: Initializes the deffacts construct */
@@ -69,7 +70,7 @@ void DeffactsCompilerSetup(
   {
    DeffactsData(theEnv)->DeffactsCodeItem =
       AddCodeGeneratorItem(theEnv,"deffacts",0,BeforeDeffactsToCode,
-                           NULL,ConstructToCode,2);
+                           InitDeffactsCode,ConstructToCode,2);
   }
 
 /*************************************************************/
@@ -81,6 +82,24 @@ static void BeforeDeffactsToCode(
   Environment *theEnv)
   {
    MarkConstructBsaveIDs(theEnv,DeffactsData(theEnv)->DeffactsModuleIndex);
+  }
+
+/***********************************************/
+/* InitDeffactsCode: Writes out initialization */
+/*   code for deffacts for a run-time module.  */
+/***********************************************/
+static void InitDeffactsCode(
+  Environment *theEnv,
+  FILE *initFP,
+  int imageID,
+  int maxIndices)
+  {
+#if MAC_XCD
+#pragma unused(maxIndices)
+#pragma unused(imageID)
+#pragma unused(theEnv)
+#endif
+   fprintf(initFP,"   DeffactsRunTimeInitialize(theEnv);\n");
   }
 
 /**********************************************************/

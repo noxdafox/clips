@@ -133,7 +133,7 @@ static void SaveDefmodules(
   {
    const char *ppform;
 
-   ppform = EnvGetDefmodulePPForm(theEnv,theModule);
+   ppform = DefmodulePPForm(theModule);
    if (ppform != NULL)
      {
       PrintInChunks(theEnv,logicalName,ppform);
@@ -199,7 +199,7 @@ void EnvGetDefmoduleList(
          returnValue->multifieldValue = EnvCreateMultifield(theEnv,0L);
          return;
         }
-      theList->theFields[count].lexemeValue = EnvCreateSymbol(theEnv,EnvGetDefmoduleName(theEnv,theConstruct));
+      theList->theFields[count].lexemeValue = EnvCreateSymbol(theEnv,DefmoduleName(theConstruct));
      }
   }
 
@@ -242,8 +242,8 @@ bool PPDefmodule(
       return false;
      }
 
-   if (EnvGetDefmodulePPForm(theEnv,defmodulePtr) == NULL) return true;
-   PrintInChunks(theEnv,logicalName,EnvGetDefmodulePPForm(theEnv,defmodulePtr));
+   if (DefmodulePPForm(defmodulePtr) == NULL) return true;
+   PrintInChunks(theEnv,logicalName,DefmodulePPForm(defmodulePtr));
 
    return true;
   }
@@ -275,7 +275,7 @@ void EnvListDefmodules(
         theModule != NULL;
         theModule = EnvGetNextDefmodule(theEnv,theModule))
     {
-     EnvPrintRouter(theEnv,logicalName,EnvGetDefmoduleName(theEnv,theModule));
+     EnvPrintRouter(theEnv,logicalName,DefmoduleName(theModule));
      EnvPrintRouter(theEnv,logicalName,"\n");
      count++;
     }

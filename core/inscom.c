@@ -351,7 +351,7 @@ bool EnvDeleteInstance(
   }
 
 /*******************************************************************
-  NAME         : EnvUnmakeInstance
+  NAME         : UnmakeInstance
   DESCRIPTION  : Removes a named instance via message-passing
   INPUTS       : The instance address (NULL to delete all instances)
   RETURNS      : 1 if successful, 0 otherwise
@@ -547,7 +547,7 @@ void EnvInstances(
             return;
            }
 
-         EnvPrintRouter(theEnv,logicalName,EnvGetDefmoduleName(theEnv,theModule));
+         EnvPrintRouter(theEnv,logicalName,DefmoduleName(theModule));
          EnvPrintRouter(theEnv,logicalName,":\n");
          EnvSetCurrentModule(theEnv,theModule);
          count += ListInstancesInModule(theEnv,id,logicalName,className,inheritFlag,true);
@@ -681,21 +681,16 @@ Instance *EnvFindInstance(
   }
 
 /***************************************************************************
-  NAME         : EnvValidInstanceAddress
+  NAME         : ValidInstanceAddress
   DESCRIPTION  : Determines if an instance address is still valid
   INPUTS       : Instance address
   RETURNS      : 1 if the address is still valid, 0 otherwise
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************************************/
-bool EnvValidInstanceAddress(
-  Environment *theEnv,
+bool ValidInstanceAddress(
   Instance *theInstance)
   {
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
-
    return (theInstance->garbage == 0) ? true : false;
   }
 
@@ -789,21 +784,16 @@ bool EnvDirectPutSlot(
   }
 
 /***************************************************
-  NAME         : GetInstanceName
+  NAME         : InstanceName
   DESCRIPTION  : Returns name of instance
   INPUTS       : Pointer to instance
   RETURNS      : Name of instance
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-const char *EnvGetInstanceName(
-  Environment *theEnv,
+const char *InstanceName(
   Instance *theInstance)
   {
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
-
    if (theInstance->garbage == 1)
      { return NULL; }
 
@@ -811,21 +801,16 @@ const char *EnvGetInstanceName(
   }
 
 /***************************************************
-  NAME         : EnvGetInstanceClass
+  NAME         : InstanceClass
   DESCRIPTION  : Returns class of instance
   INPUTS       : Pointer to instance
   RETURNS      : Pointer to class of instance
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-Defclass *EnvGetInstanceClass(
-  Environment *theEnv,
+Defclass *InstanceClass(
   Instance *theInstance)
   {
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
-
    if (theInstance->garbage == 1)
      { return NULL; }
 
@@ -980,7 +965,7 @@ Instance *EnvGetNextInstanceInClassAndSubclasses(
   }
 
 /***************************************************
-  NAME         : EnvGetInstancePPForm
+  NAME         : InstancePPForm
   DESCRIPTION  : Writes slot names and values to
                   caller's buffer
   INPUTS       : 1) Caller's buffer
@@ -991,17 +976,19 @@ Instance *EnvGetNextInstanceInClassAndSubclasses(
   SIDE EFFECTS : Caller's buffer written
   NOTES        : None
  ***************************************************/
-void EnvGetInstancePPForm(
-  Environment *theEnv,
+void InstancePPForm(
   char *buf,
   size_t buflen,
   Instance *theInstance)
   {
    const char *pbuf = "***InstancePPForm***";
+   Environment *theEnv;
 
    if (theInstance->garbage == 1)
      { return; }
 
+   theEnv = theInstance->cls->header.env;
+   
    if (OpenStringDestination(theEnv,pbuf,buf,buflen+1) == 0)
      { return; }
 

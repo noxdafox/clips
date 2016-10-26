@@ -183,15 +183,22 @@ void UndeffactsCommand(
    UndefconstructCommand(context,"undeffacts",DeffactsData(theEnv)->DeffactsConstruct);
   }
 
-/***********************************/
-/* EnvUndeffacts: C access routine */
-/*   for the undeffacts command.   */
-/***********************************/
-bool EnvUndeffacts(
-  Environment *theEnv,
-  Deffacts *theDeffacts)
+/*********************************/
+/* Undeffacts: C access routine  */
+/*   for the undeffacts command. */
+/*********************************/
+bool Undeffacts(
+  Deffacts *theDeffacts,
+  Environment *allEnv)
   {
-   return(Undefconstruct(theEnv,theDeffacts,DeffactsData(theEnv)->DeffactsConstruct));
+   Environment *theEnv;
+   
+   if (theDeffacts == NULL)
+     { theEnv = allEnv; }
+   else
+     { theEnv = theDeffacts->header.env; }
+   
+   return Undefconstruct(theEnv,theDeffacts,DeffactsData(theEnv)->DeffactsConstruct);
   }
 
 /*************************************************/

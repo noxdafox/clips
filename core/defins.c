@@ -187,8 +187,8 @@ void SetupDefinstances(
                    GetConstructModuleItem,
                    (GetNextConstructFunction *) EnvGetNextDefinstances,
                    SetNextConstruct,
-                   (IsConstructDeletableFunction *) EnvIsDefinstancesDeletable,
-                   (DeleteConstructFunction *) EnvUndefinstances,
+                   (IsConstructDeletableFunction *) DefinstancesIsDeletable,
+                   (DeleteConstructFunction *) Undefinstances,
 #if (! BLOAD_ONLY) && (! RUN_TIME)
                    (FreeConstructFunction *) RemoveDefinstances
 #else
@@ -289,6 +289,37 @@ static void DestroyDefinstancesAction(
   }
 #endif
 
+#if RUN_TIME
+
+/***************************************************/
+/* RuntimeDefinstancesAction: Action to be applied */
+/*   to each definstances construct when a runtime */
+/*   initialization occurs.                        */
+/***************************************************/
+static void RuntimeDefinstancesAction(
+  Environment *theEnv,
+  struct constructHeader *theConstruct,
+  void *buffer)
+  {
+#if MAC_XCD
+#pragma unused(buffer)
+#endif
+   Definstances *theDefinstances = (Definstances *) theConstruct;
+   
+   theDefinstances->header.env = theEnv;
+  }
+
+/**********************************/
+/* DefinstancesRunTimeInitialize: */
+/**********************************/
+void DefinstancesRunTimeInitialize(
+  Environment *theEnv)
+  {
+   DoForAllConstructs(theEnv,RuntimeDefinstancesAction,DefinstancesData(theEnv)->DefinstancesModuleIndex,true,NULL);
+  }
+
+#endif
+
 /***********************************************************
   NAME         : EnvGetNextDefinstances
   DESCRIPTION  : Finds first or next definstances
@@ -342,7 +373,7 @@ Definstances *EnvFindDefinstancesInModule(
   }
 
 /***************************************************
-  NAME         : EnvIsDefinstancesDeletable
+  NAME         : DefinstancesIsDeletable
   DESCRIPTION  : Determines if a definstances
                    can be deleted
   INPUTS       : Address of the definstances
@@ -350,10 +381,11 @@ Definstances *EnvFindDefinstancesInModule(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-bool EnvIsDefinstancesDeletable(
-  Environment *theEnv,
+bool DefinstancesIsDeletable(
   Definstances *theDefinstances)
   {
+   Environment *theEnv = theDefinstances->header.env;
+   
    if (! ConstructsDeletable(theEnv))
      { return false; }
 
@@ -393,7 +425,7 @@ void GetDefinstancesModuleCommand(
   }
 
 /***********************************************************
-  NAME         : EnvUndefinstances
+  NAME         : Undefinstances
   DESCRIPTION  : Removes a definstance
   INPUTS       : Address of definstances to remove
   RETURNS      : True if successful,
@@ -401,16 +433,22 @@ void GetDefinstancesModuleCommand(
   SIDE EFFECTS : Definstance deallocated
   NOTES        : None
  ***********************************************************/
-bool EnvUndefinstances(
-  Environment *theEnv,
-  Definstances *theDefinstances)
+bool Undefinstances(
+  Definstances *theDefinstances,
+  Environment *allEnv)
   {
 #if RUN_TIME || BLOAD_ONLY
 #if MAC_XCD
-#pragma unused(theEnv,theDefinstances)
+#pragma unused(allEnv,theDefinstances)
 #endif
    return false;
 #else
+   Environment *theEnv;
+   
+   if (theDefinstances == NULL)
+     { theEnv = allEnv; }
+   else
+     { theEnv = theDefinstances->header.env; }
 
 #if BLOAD || BLOAD_AND_BSAVE
    if (Bloaded(theEnv))
@@ -419,7 +457,7 @@ bool EnvUndefinstances(
    if (theDefinstances == NULL)
      { return RemoveAllDefinstances(theEnv); }
 
-   if (EnvIsDefinstancesDeletable(theEnv,theDefinstances) == false)
+   if (DefinstancesIsDeletable(theDefinstances) == false)
      { return false; }
 
    RemoveConstructFromModule(theEnv,(struct constructHeader *) theDefinstances);
@@ -674,7 +712,7 @@ static CLIPSLexeme *ParseDefinstancesName(
    *active = false;
    dname = GetConstructNameAndComment(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken,"definstances",
                                       (FindConstructFunction *) EnvFindDefinstancesInModule,
-                                      (DeleteConstructFunction *) EnvUndefinstances,"@",
+                                      (DeleteConstructFunction *) Undefinstances,"@",
                                       true,false,true,false);
    if (dname == NULL)
      return NULL;
@@ -766,14 +804,14 @@ static bool RemoveAllDefinstances(
     {
      dptr = dhead;
      dhead = EnvGetNextDefinstances(theEnv,dhead);
-     if (EnvIsDefinstancesDeletable(theEnv,dptr))
+     if (DefinstancesIsDeletable(dptr))
        {
         RemoveConstructFromModule(theEnv,(struct constructHeader *) dptr);
         RemoveDefinstances(theEnv,dptr);
        }
      else
        {
-        DefinstancesDeleteError(theEnv,EnvGetDefinstancesName(theEnv,dptr));
+        DefinstancesDeleteError(theEnv,DefinstancesName(dptr));
         success = false;
        }
     }
@@ -952,18 +990,16 @@ static void ResetDefinstancesAction(
 /* Additional Environment Functions */
 /*##################################*/
 
-const char *EnvGetDefinstancesName(
-  Environment *theEnv,
+const char *DefinstancesName(
   Definstances *theDefinstances)
   {
    return GetConstructNameString((struct constructHeader *) theDefinstances);
   }
 
-const char *EnvGetDefinstancesPPForm(
-  Environment *theEnv,
+const char *DefinstancesPPForm(
   Definstances *theDefinstances)
   {
-   return GetConstructPPForm(theEnv,(struct constructHeader *) theDefinstances);
+   return GetConstructPPForm((struct constructHeader *) theDefinstances);
   }
 
 void EnvSetDefinstancesPPForm(
@@ -974,8 +1010,7 @@ void EnvSetDefinstancesPPForm(
    SetConstructPPForm(theEnv,(struct constructHeader *) theDefinstances,thePPForm);
   }
 
-const char *EnvDefinstancesModule(
-  Environment *theEnv,
+const char *DefinstancesModule(
   Definstances *theDefinstances)
   {
    return GetConstructModuleName((struct constructHeader *) theDefinstances);

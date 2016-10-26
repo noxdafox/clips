@@ -55,6 +55,7 @@
    static void                    CloseDefinstancesFiles(Environment *,FILE *,FILE *,int);
    static void                    DefinstancesModuleToCode(Environment *,FILE *,Defmodule *,int,int);
    static void                    SingleDefinstancesToCode(Environment*,FILE *,Definstances *,int,int,int);
+   static void                    InitDefinstancesCode(Environment *,FILE *,int,int);
 
 /* =========================================
    *****************************************
@@ -75,7 +76,7 @@ void SetupDefinstancesCompiler(
   Environment *theEnv)
   {
    DefinstancesData(theEnv)->DefinstancesCodeItem = AddCodeGeneratorItem(theEnv,"definstances",0,ReadyDefinstancesForCode,
-                                               NULL,DefinstancesToCode,2);
+                                               InitDefinstancesCode,DefinstancesToCode,2);
   }
 
 
@@ -125,6 +126,24 @@ static void ReadyDefinstancesForCode(
   Environment *theEnv)
   {
    MarkConstructBsaveIDs(theEnv,DefinstancesData(theEnv)->DefinstancesModuleIndex);
+  }
+
+/***************************************************/
+/* InitDefinstancesCode: Writes out initialization */
+/*   code for definstances for a run-time module.  */
+/***************************************************/
+static void InitDefinstancesCode(
+  Environment *theEnv,
+  FILE *initFP,
+  int imageID,
+  int maxIndices)
+  {
+#if MAC_XCD
+#pragma unused(maxIndices)
+#pragma unused(imageID)
+#pragma unused(theEnv)
+#endif
+   fprintf(initFP,"   DefinstancesRunTimeInitialize(theEnv);\n");
   }
 
 /*******************************************************

@@ -429,11 +429,11 @@ static bool ValidClassName(
          redefined if it is not in use, e.g., instances,
          generic function method restrictions, etc.
          =============================================== */
-      if ((EnvIsDefclassDeletable(theEnv,*theDefclass) == false) &&
+      if ((DefclassIsDeletable(*theDefclass) == false) &&
           (! ConstructData(theEnv)->CheckSyntaxMode))
         {
          PrintErrorID(theEnv,"CLASSPSR",3,false);
-         EnvPrintRouter(theEnv,WERROR,EnvGetDefclassName(theEnv,*theDefclass));
+         EnvPrintRouter(theEnv,WERROR,DefclassName(*theDefclass));
          EnvPrintRouter(theEnv,WERROR," class cannot be redefined while\n");
          EnvPrintRouter(theEnv,WERROR,"    outstanding references to it still exist.\n");
          return false;
@@ -584,7 +584,7 @@ static void AddClass(
       form progeny links with all direct superclasses
       =============================================== */
    cls->hashTableIndex = HashClass(GetDefclassNamePointer(cls));
-   ctmp = EnvFindDefclassInModule(theEnv,EnvGetDefclassName(theEnv,cls));
+   ctmp = EnvFindDefclassInModule(theEnv,DefclassName(cls));
 
    if (ctmp != NULL)
      {

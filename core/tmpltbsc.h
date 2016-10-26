@@ -66,7 +66,7 @@
 
    void                           DeftemplateBasicCommands(Environment *);
    void                           UndeftemplateCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           EnvUndeftemplate(Environment *,Deftemplate *);
+   bool                           Undeftemplate(Deftemplate *,Environment *);
    void                           GetDeftemplateListFunction(Environment *,UDFContext *,UDFValue *);
    void                           EnvGetDeftemplateList(Environment *,CLIPSValue *,Defmodule *);
    void                           DeftemplateModuleFunction(Environment *,UDFContext *,UDFValue *);
@@ -75,8 +75,8 @@
    bool                           PPDeftemplate(Environment *,const char *,const char *);
    void                           ListDeftemplatesCommand(Environment *,UDFContext *,UDFValue *);
    void                           EnvListDeftemplates(Environment *,const char *,Defmodule *);
-   bool                           EnvGetDeftemplateWatch(Environment *,Deftemplate *);
-   void                           EnvSetDeftemplateWatch(Environment *,bool,Deftemplate *);
+   bool                           DeftemplateGetWatch(Deftemplate *);
+   void                           DeftemplateSetWatch(Deftemplate *,bool);
    bool                           DeftemplateWatchAccess(Environment *,int,bool,struct expr *);
    bool                           DeftemplateWatchPrint(Environment *,const char *,int,struct expr *);
 #endif

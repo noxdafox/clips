@@ -851,7 +851,7 @@ CLIPSLexeme *GetConstructNameAndComment(
       if (moduleNameAllowed)
         {
          PPBackup(theEnv);
-         SavePPBuffer(theEnv,EnvGetDefmoduleName(theEnv,theModule));
+         SavePPBuffer(theEnv,DefmoduleName(theModule));
          SavePPBuffer(theEnv,"::");
          SavePPBuffer(theEnv,name->contents);
         }
@@ -882,7 +882,7 @@ CLIPSLexeme *GetConstructNameAndComment(
          redefining = true;
          if (deleteFunction != NULL)
            {
-            if ((*deleteFunction)(theEnv,theConstruct) == false)
+            if ((*deleteFunction)(theConstruct,theEnv) == false)
               {
                PrintErrorID(theEnv,"CSTRCPSR",4,true);
                EnvPrintRouter(theEnv,WERROR,"Cannot redefine ");

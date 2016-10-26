@@ -159,6 +159,7 @@ void UpdateConstructHeader(
      { theConstruct->next = NULL; }
 
    theConstruct->constructType = theType;
+   theConstruct->env = theEnv;
    theConstruct->ppForm = NULL;
    theConstruct->bsaveID = 0L;
    theConstruct->usrData = NULL;

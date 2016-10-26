@@ -64,7 +64,7 @@
 
    void                           DefglobalBasicCommands(Environment *);
    void                           UndefglobalCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           EnvUndefglobal(Environment *,Defglobal *);
+   bool                           Undefglobal(Defglobal *,Environment *);
    void                           GetDefglobalListFunction(Environment *,UDFContext *,UDFValue *);
    void                           EnvGetDefglobalList(Environment *,CLIPSValue *,Defmodule *);
    void                           DefglobalModuleFunction(Environment *,UDFContext *,UDFValue *);
@@ -72,9 +72,9 @@
    bool                           PPDefglobal(Environment *,const char *,const char *);
    void                           ListDefglobalsCommand(Environment *,UDFContext *,UDFValue *);
 #if DEBUGGING_FUNCTIONS
-   bool                           EnvGetDefglobalWatch(Environment *,Defglobal *);
+   bool                           DefglobalGetWatch(Defglobal *);
    void                           EnvListDefglobals(Environment *,const char *,Defmodule *);
-   void                           EnvSetDefglobalWatch(Environment *,bool,Defglobal *);
+   void                           DefglobalSetWatch(Defglobal *,bool);
 #endif
    void                           ResetDefglobals(Environment *);
 

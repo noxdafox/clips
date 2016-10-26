@@ -293,7 +293,7 @@ Instance *BuildInstance(
      {
       PrintErrorID(theEnv,"INSMNGR",3,false);
       EnvPrintRouter(theEnv,WERROR,"Cannot create instances of abstract class ");
-      EnvPrintRouter(theEnv,WERROR,EnvGetDefclassName(theEnv,cls));
+      EnvPrintRouter(theEnv,WERROR,DefclassName(cls));
       EnvPrintRouter(theEnv,WERROR,".\n");
       EnvSetEvaluationError(theEnv,true);
       return NULL;

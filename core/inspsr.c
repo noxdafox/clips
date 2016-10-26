@@ -564,7 +564,7 @@ static bool ReplaceClassNameWithReference(
          CantFindItemErrorMessage(theEnv,"class",theClassName);
          return false;
         }
-      if (EnvClassAbstractP(theEnv,theDefclass))
+      if (ClassAbstractP(theDefclass))
         {
          PrintErrorID(theEnv,"INSMNGR",3,false);
          EnvPrintRouter(theEnv,WERROR,"Cannot create instances of abstract class ");

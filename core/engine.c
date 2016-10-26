@@ -278,7 +278,7 @@ long long EnvRun(
 
       DetachActivation(theEnv,theActivation);
       theTM = AddTrackedMemory(theEnv,theActivation,sizeof(struct activation));
-      ruleFiring = EnvGetActivationName(theEnv,theActivation);
+      ruleFiring = ActivationRuleName(theActivation);
       theBasis = (struct partialMatch *) EnvGetActivationBasis(theEnv,theActivation);
       EngineData(theEnv)->ExecutingRule = EnvGetActivationRule(theEnv,theActivation);
 
@@ -477,7 +477,8 @@ long long EnvRun(
       /* Update saliences if appropriate. */
       /*==================================*/
 
-      if (EnvGetSalienceEvaluation(theEnv) == EVERY_CYCLE) EnvRefreshAgenda(theEnv,NULL);
+      if (EnvGetSalienceEvaluation(theEnv) == EVERY_CYCLE)
+        { DefmoduleRefreshAgenda(NULL,theEnv); }
 
       /*========================================*/
       /* Execute the list of functions that are */
@@ -518,7 +519,7 @@ long long EnvRun(
            {
             EngineData(theEnv)->HaltRules = true;
             EnvPrintRouter(theEnv,WDIALOG,"Breaking on rule ");
-            EnvPrintRouter(theEnv,WDIALOG,EnvGetActivationName(theEnv,theActivation));
+            EnvPrintRouter(theEnv,WDIALOG,ActivationRuleName(theActivation));
             EnvPrintRouter(theEnv,WDIALOG,".\n");
            }
         }
@@ -688,7 +689,7 @@ Activation *NextActivationToFire(
    if (EngineData(theEnv)->CurrentFocus == NULL)
      {
       theModule = EnvFindDefmodule(theEnv,"MAIN");
-      EnvFocus(theEnv,theModule);
+      DefmoduleFocus(theModule);
      }
 
    /*===========================================================*/
@@ -841,14 +842,18 @@ struct focus *EnvGetNextFocus( // TBD Add to API when EnvFocus and not Focus is 
    return theFocus->next;
   }
 
-/******************************************************/
-/* EnvFocus: C access routine for the focus function. */
-/******************************************************/
-void EnvFocus(
-  Environment *theEnv,
+/************************************************************/
+/* DefmoduleFocus: C access routine for the focus function. */
+/************************************************************/
+void DefmoduleFocus(
   Defmodule *theModule)
   {
    struct focus *tempFocus;
+   Environment *theEnv;
+   
+   if (theModule == NULL) return;
+    
+   theEnv = theModule->header.env;
 
    /*==================================================*/
    /* Make the specified module be the current module. */
@@ -1062,17 +1067,13 @@ void EnvHalt(
 
 #if DEBUGGING_FUNCTIONS
 
-/*********************************/
-/* EnvSetBreak: C access routine */
-/*   for the set-break command.  */
-/*********************************/
-void EnvSetBreak(
-  Environment *theEnv,
+/*************************************/
+/* DefruleSetBreak: C access routine */
+/*   for the set-break command.      */
+/*************************************/
+void DefruleSetBreak(
   Defrule *theRule)
   {
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
    Defrule *thePtr;
 
    for (thePtr = theRule;
@@ -1081,17 +1082,13 @@ void EnvSetBreak(
      { thePtr->afterBreakpoint = 1; }
   }
 
-/************************************/
-/* EnvRemoveBreak: C access routine */
-/*   for the remove-break command.  */
-/************************************/
-bool EnvRemoveBreak(
-  Environment *theEnv,
+/****************************************/
+/* DefruleRemoveBreak: C access routine */
+/*   for the remove-break command.      */
+/****************************************/
+bool DefruleRemoveBreak(
   Defrule *theRule)
   {
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
    Defrule *thePtr;
    bool rv = false;
 
@@ -1122,7 +1119,7 @@ void RemoveAllBreakpoints(
      {
       theRule = NULL;
       while ((theRule = EnvGetNextDefrule(theEnv,theRule)) != NULL)
-        { EnvRemoveBreak(theEnv,theRule); }
+        { DefruleRemoveBreak(theRule); }
      }
   }
 
@@ -1140,21 +1137,16 @@ void EnvShowBreaks(
                    (GetNextItemFunction *) EnvGetNextDefrule,
                    (const char *(*)(void *)) GetConstructNameString,
                    NULL,
-                   (bool (*)(Environment *,void *)) EnvDefruleHasBreakpoint);
+                   (bool (*)(void *)) DefruleHasBreakpoint);
    }
 
-/**********************************************/
-/* EnvDefruleHasBreakpoint: Indicates whether */
-/*   the specified rule has a breakpoint set. */
-/**********************************************/
-bool EnvDefruleHasBreakpoint(
-  Environment *theEnv,
+/***********************************************/
+/* DefruleHasBreakpoint: Indicates whether the */
+/*   specified rule has a breakpoint set.      */
+/***********************************************/
+bool DefruleHasBreakpoint(
   Defrule *theRule)
   {
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
-
    return theRule->afterBreakpoint;
   }
 
@@ -1181,7 +1173,7 @@ void SetBreakCommand(
       return;
      }
 
-   EnvSetBreak(theEnv,defrulePtr);
+   DefruleSetBreak(defrulePtr);
   }
 
 /********************************************/
@@ -1213,7 +1205,7 @@ void RemoveBreakCommand(
       return;
      }
 
-   if (EnvRemoveBreak(theEnv,defrulePtr) == false)
+   if (DefruleRemoveBreak(defrulePtr) == false)
      {
       EnvPrintRouter(theEnv,WERROR,"Rule ");
       EnvPrintRouter(theEnv,WERROR,argument);
@@ -1273,7 +1265,7 @@ void EnvListFocusStack(
         theFocus != NULL;
         theFocus = theFocus->next)
      {
-      EnvPrintRouter(theEnv,logicalName,EnvGetDefmoduleName(theEnv,theFocus->theModule));
+      EnvPrintRouter(theEnv,logicalName,DefmoduleName(theFocus->theModule));
       EnvPrintRouter(theEnv,logicalName,"\n");
      }
   }
@@ -1435,7 +1427,7 @@ void FocusCommand(
          return;
         }
 
-      EnvFocus(theEnv,theModule);
+      DefmoduleFocus(theModule);
      }
 
    /*===================================================*/

@@ -94,26 +94,26 @@ struct messageHandlerData
 #define CREATE_STRING "create"
 
    void             SetupMessageHandlers(Environment *);
-   const char      *EnvGetDefmessageHandlerName(Environment *,Defclass *,int);
-   const char      *EnvGetDefmessageHandlerType(Environment *,Defclass *,int);
+   const char      *DefmessageHandlerName(Defclass *,int);
+   const char      *DefmessageHandlerType(Defclass *,int);
    int              EnvGetNextDefmessageHandler(Environment *,Defclass *,int);
    DefmessageHandler
                    *GetDefmessageHandlerPointer(Defclass *,int);
 #if DEBUGGING_FUNCTIONS
-   bool             EnvGetDefmessageHandlerWatch(Environment *,Defclass *,int);
-   void             EnvSetDefmessageHandlerWatch(Environment *,bool,Defclass *,int);
+   bool             DefmessageHandlerGetWatch(Defclass *,int);
+   void             DefmessageHandlerSetWatch(Defclass *,int,bool);
 #endif
    unsigned         EnvFindDefmessageHandler(Environment *,Defclass *,const char *,const char *);
-   bool             EnvIsDefmessageHandlerDeletable(Environment *,Defclass *,int);
+   bool             DefmessageHandlerIsDeletable(Defclass *,int);
    void             UndefmessageHandlerCommand(Environment *,UDFContext *,UDFValue *);
-   bool             EnvUndefmessageHandler(Environment *,Defclass *,int);
+   bool             UndefmessageHandler(Defclass *,int,Environment *);
 #if DEBUGGING_FUNCTIONS
    void             PPDefmessageHandlerCommand(Environment *,UDFContext *,UDFValue *);
    void             ListDefmessageHandlersCommand(Environment *,UDFContext *,UDFValue *);
    void             PreviewSendCommand(Environment *,UDFContext *,UDFValue *);
-   const char      *EnvGetDefmessageHandlerPPForm(Environment *,Defclass *,int);
+   const char      *DefmessageHandlerPPForm(Defclass *,int);
    void             EnvListDefmessageHandlers(Environment *,const char *,Defclass *,bool);
-   void             EnvPreviewSend(Environment *,const char *,Defclass *,const char *);
+   void             PreviewSend(const char *,Defclass *,const char *);
    long             DisplayHandlersInLinks(Environment *,const char *,PACKED_CLASS_LINKS *,int);
 #endif
 

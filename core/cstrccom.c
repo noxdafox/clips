@@ -93,11 +93,11 @@
 
 #if DEBUGGING_FUNCTIONS
    static void                    ConstructPrintWatch(Environment *,const char *,struct construct *,void *,
-                                                      bool (*)(Environment *,void *));
+                                                      ConstructGetWatchFunction *);
    static bool                    ConstructWatchSupport(Environment *,struct construct *,const char *,
                                                         const char *,EXPRESSION *,bool,
-                                                        bool,bool (*)(Environment *,void *),
-                                                        void (*)(Environment *,bool,void *));
+                                                        bool,ConstructGetWatchFunction *,
+                                                        ConstructSetWatchFunction *);
 #endif
 
 #if (! RUN_TIME)
@@ -152,7 +152,7 @@ bool DeleteNamedConstruct(
    /*========================================*/
 
    if (constructPtr != NULL)
-     { return (*constructClass->deleteFunction)(theEnv,constructPtr); }
+     { return (*constructClass->deleteFunction)(constructPtr,theEnv); }
 
    /*========================================*/
    /* If the construct wasn't found, but the */
@@ -162,7 +162,7 @@ bool DeleteNamedConstruct(
 
    if (strcmp("*",constructName) == 0)
      {
-      (*constructClass->deleteFunction)(theEnv,NULL);
+      (*constructClass->deleteFunction)(NULL,theEnv);
       return true;
      }
 
@@ -425,7 +425,7 @@ bool PPConstruct(
    /* the construct was found).                    */
    /*==============================================*/
 
-   if ((*constructClass->getPPFormFunction)(theEnv,(struct constructHeader *) constructPtr) == NULL)
+   if ((*constructClass->getPPFormFunction)((struct constructHeader *) constructPtr) == NULL)
      { return true; }
 
    /*============================================*/
@@ -434,7 +434,7 @@ bool PPConstruct(
    /* printing a string greater than 512 bytes.) */
    /*============================================*/
 
-   PrintInChunks(theEnv,logicalName,(*constructClass->getPPFormFunction)(theEnv,(struct constructHeader *) constructPtr));
+   PrintInChunks(theEnv,logicalName,(*constructClass->getPPFormFunction)((struct constructHeader *) constructPtr));
 
    /*=======================================*/
    /* Return true to indicate the construct */
@@ -573,7 +573,7 @@ bool Undefconstruct(
          /* Try deleting the construct. */
          /*=============================*/
 
-         if ((*constructClass->isConstructDeletableFunction)(theEnv,currentConstruct))
+         if ((*constructClass->isConstructDeletableFunction)(currentConstruct))
            {
             RemoveConstructFromModule(theEnv,(struct constructHeader *) currentConstruct);
             (*constructClass->freeFunction)(theEnv,currentConstruct);
@@ -617,7 +617,7 @@ bool Undefconstruct(
    /* Return false if the construct cannot be deleted. */
    /*==================================================*/
 
-   if ((*constructClass->isConstructDeletableFunction)(theEnv,theConstruct) == false)
+   if ((*constructClass->isConstructDeletableFunction)(theConstruct) == false)
      { return false; }
 
    /*===========================*/
@@ -696,7 +696,7 @@ void SaveConstruct(
       /* Print the construct's pretty print form. */
       /*==========================================*/
 
-      ppform = (*constructClass->getPPFormFunction)(theEnv,theConstruct);
+      ppform = (*constructClass->getPPFormFunction)(theConstruct);
       if (ppform != NULL)
         {
          PrintInChunks(theEnv,logicalName,ppform);
@@ -717,7 +717,7 @@ void SaveConstruct(
 /*********************************************************/
 const char *GetConstructModuleName(
   struct constructHeader *theConstruct)
-  { return(EnvGetDefmoduleName(NULL,theConstruct->whichModule->theModule)); }
+  { return DefmoduleName(theConstruct->whichModule->theModule); }
 
 /*********************************************************/
 /* GetConstructNameString: Generic routine for returning */
@@ -726,21 +726,6 @@ const char *GetConstructModuleName(
 const char *GetConstructNameString(
   struct constructHeader *theConstruct)
   { return theConstruct->name->contents; }
-
-/**************************************************/
-/* EnvGetConstructNameString: Generic routine for */
-/*   returning the name string of a construct.    */
-/**************************************************/
-const char *EnvGetConstructNameString(
-  Environment *theEnv,
-  struct constructHeader *theConstruct)
-  {
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
-
-   return theConstruct->name->contents;
-  }
 
 /**********************************************************/
 /* GetConstructNamePointer: Generic routine for returning */
@@ -895,7 +880,7 @@ void GetConstructList(
       /* Determine the size of the module name. */
       /*========================================*/
 
-      tempSize = strlen(EnvGetDefmoduleName(theEnv,loopModule));
+      tempSize = strlen(DefmoduleName(loopModule));
 
       /*======================================================*/
       /* The buffer must be large enough for the module name, */
@@ -956,7 +941,7 @@ void GetConstructList(
          theName = (*constructClass->getConstructNameFunction)((struct constructHeader *) theConstruct);
          if (allModules)
            {
-            genstrcpy(buffer,EnvGetDefmoduleName(theEnv,loopModule));
+            genstrcpy(buffer,DefmoduleName(loopModule));
             genstrcat(buffer,"::");
             genstrcat(buffer,theName->contents);
             theList->theFields[count].value = EnvCreateSymbol(theEnv,buffer);
@@ -1097,7 +1082,7 @@ void ListConstruct(
 
       if (allModules)
         {
-         EnvPrintRouter(theEnv,logicalName,EnvGetDefmoduleName(theEnv,theModule));
+         EnvPrintRouter(theEnv,logicalName,DefmoduleName(theModule));
          EnvPrintRouter(theEnv,logicalName,":\n");
         }
 
@@ -1174,14 +1159,9 @@ struct defmoduleItemHeader *GetConstructModuleItem(
 /*   representation for the specified construct. */
 /*************************************************/
 const char *GetConstructPPForm(
-  Environment *theEnv,
   struct constructHeader *theConstruct)
   {
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
-
-   return(theConstruct->ppForm);
+   return theConstruct->ppForm;
   }
 
 /****************************************************/
@@ -1424,6 +1404,7 @@ void InitializeConstructHeader(
    theConstruct->next = NULL;
    theConstruct->usrData = NULL;
    theConstruct->constructType = theType;
+   theConstruct->env = theEnv;
   }
 
 /*************************************************/
@@ -1454,8 +1435,8 @@ bool ConstructPrintWatchAccess(
   struct construct *constructClass,
   const char *logName,
   EXPRESSION *argExprs,
-  bool (*getWatchFunc)(Environment *,void *),
-  void (*setWatchFunc)(Environment *,bool,void *))
+  ConstructGetWatchFunction *getWatchFunc,
+  ConstructSetWatchFunction *setWatchFunc)
   {
    return(ConstructWatchSupport(theEnv,constructClass,"list-watch-items",logName,argExprs,
                                 false,false,getWatchFunc,setWatchFunc));
@@ -1489,8 +1470,8 @@ static bool ConstructWatchSupport(
   EXPRESSION *argExprs,
   bool setFlag,
   bool newState,
-  bool (*getWatchFunc)(Environment *,void *),
-  void (*setWatchFunc)(Environment *,bool,void *))
+  ConstructGetWatchFunction *getWatchFunc,
+  ConstructSetWatchFunction *setWatchFunc)
   {
    Defmodule *theModule;
    void *theConstruct;
@@ -1533,7 +1514,7 @@ static bool ConstructWatchSupport(
 
          if (setFlag == false)
            {
-            EnvPrintRouter(theEnv,logName,EnvGetDefmoduleName(theEnv,theModule));
+            EnvPrintRouter(theEnv,logName,DefmoduleName(theModule));
             EnvPrintRouter(theEnv,logName,":\n");
            }
 
@@ -1551,7 +1532,7 @@ static bool ConstructWatchSupport(
             /*=============================================*/
 
             if (setFlag)
-              { (*setWatchFunc)(theEnv,newState,theConstruct); }
+              { (*setWatchFunc)(theConstruct,newState); }
             else
               {
                EnvPrintRouter(theEnv,logName,"   ");
@@ -1607,7 +1588,7 @@ static bool ConstructWatchSupport(
       /*=============================================*/
 
       if (setFlag)
-        { (*setWatchFunc)(theEnv,newState,theConstruct); }
+        { (*setWatchFunc)(theConstruct,newState); }
       else
         { ConstructPrintWatch(theEnv,logName,constructClass,theConstruct,getWatchFunc); }
 
@@ -1636,10 +1617,10 @@ static void ConstructPrintWatch(
   const char *logName,
   struct construct *constructClass,
   void *theConstruct,
-  bool (*getWatchFunc)(Environment *,void *))
+  ConstructGetWatchFunction *getWatchFunc)
   {
    EnvPrintRouter(theEnv,logName,(*constructClass->getConstructNameFunction)((struct constructHeader *) theConstruct)->contents);
-   if ((*getWatchFunc)(theEnv,theConstruct))
+   if ((*getWatchFunc)(theConstruct))
      EnvPrintRouter(theEnv,logName," = on\n");
    else
      EnvPrintRouter(theEnv,logName," = off\n");

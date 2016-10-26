@@ -170,7 +170,7 @@ bool ParseDefglobal(
    else
      {
       PPBackup(theEnv);
-      SavePPBuffer(theEnv,EnvGetDefmoduleName(theEnv,EnvGetCurrentModule(theEnv)));
+      SavePPBuffer(theEnv,DefmoduleName(EnvGetCurrentModule(theEnv)));
       SavePPBuffer(theEnv," ");
       SavePPBuffer(theEnv,theToken.printForm);
      }
@@ -185,7 +185,7 @@ bool ParseDefglobal(
 
       FlushPPBuffer(theEnv);
       SavePPBuffer(theEnv,"(defglobal ");
-      SavePPBuffer(theEnv,EnvGetDefmoduleName(theEnv,EnvGetCurrentModule(theEnv)));
+      SavePPBuffer(theEnv,DefmoduleName(EnvGetCurrentModule(theEnv)));
       SavePPBuffer(theEnv," ");
      }
 
@@ -414,6 +414,7 @@ static void AddDefglobal(
    defglobalPtr->header.name = name;
    defglobalPtr->header.usrData = NULL;
    defglobalPtr->header.constructType = DEFGLOBAL;
+   defglobalPtr->header.env = theEnv;
    IncrementSymbolCount(name);
 
    SavePPBuffer(theEnv,"\n");

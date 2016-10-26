@@ -80,8 +80,8 @@ struct construct;
 
 typedef void *FindConstructFunction(Environment *,const char *);
 typedef void *GetNextConstructFunction(Environment *,void *);
-typedef bool *IsConstructDeletableFunction(Environment *,void *);
-typedef bool *DeleteConstructFunction(Environment *,void *);
+typedef bool *IsConstructDeletableFunction(void *);
+typedef bool *DeleteConstructFunction(void *,Environment *);
 typedef void *FreeConstructFunction(Environment *,void *);
 typedef void ParserErrorFunction(Environment *,const char *,const char *,const char *,long);
 typedef bool *BeforeResetFunction(Environment *);
@@ -116,6 +116,7 @@ struct constructHeader
    long bsaveID;
    struct constructHeader *next;
    struct userData *usrData;
+   Environment *env;
   };
 
 #include "moduldef.h"
@@ -130,7 +131,7 @@ struct construct
    bool (*parseFunction)(Environment *,const char *);
    FindConstructFunction *findFunction;
    CLIPSLexeme *(*getConstructNameFunction)(struct constructHeader *);
-   const char *(*getPPFormFunction)(Environment *,struct constructHeader *);
+   const char *(*getPPFormFunction)(struct constructHeader *);
    struct defmoduleItemHeader *(*getModuleItemFunction)(struct constructHeader *);
    GetNextConstructFunction *getNextItemFunction;
    void (*setNextItemFunction)(struct constructHeader *,struct constructHeader *);
@@ -207,7 +208,7 @@ struct constructData
                                                bool (*)(Environment *,const char *),
                                                FindConstructFunction *,
                                                CLIPSLexeme *(*)(struct constructHeader *),
-                                               const char *(*)(Environment *,struct constructHeader *),
+                                               const char *(*)(struct constructHeader *),
                                                struct defmoduleItemHeader *(*)(struct constructHeader *),
                                                GetNextConstructFunction *,
                                                void (*)(struct constructHeader *,struct constructHeader *),

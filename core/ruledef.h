@@ -161,7 +161,7 @@ struct defruleData
    Defrule                       *EnvFindDefruleInModule(Environment *,const char *);
    Defrule                       *EnvGetNextDefrule(Environment *,Defrule *);
    struct defruleModule          *GetDefruleModuleItem(Environment *,Defmodule *);
-   bool                           EnvIsDefruleDeletable(Environment *,Defrule *);
+   bool                           DefruleIsDeletable(Defrule *);
 #if RUN_TIME
    void                           DefruleRunTimeInitialize(Environment *,struct joinLink *,struct joinLink *);
 #endif
@@ -170,9 +170,9 @@ struct defruleData
 #endif
    long                           EnvGetDisjunctCount(Environment *,Defrule *);
    Defrule                       *EnvGetNthDisjunct(Environment *,Defrule *,long);
-   const char                    *EnvDefruleModule(Environment *,Defrule *);
-   const char                    *EnvGetDefruleName(Environment *,Defrule *);
-   const char                    *EnvGetDefrulePPForm(Environment *,Defrule *);
+   const char                    *DefruleModule(Defrule *);
+   const char                    *DefruleName(Defrule *);
+   const char                    *DefrulePPForm(Defrule *);
 
 #endif /* _H_ruledef */
 

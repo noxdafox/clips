@@ -89,7 +89,7 @@ struct joinInformation
    bool                           EnvSetBetaMemoryResizing(Environment *,bool);
    void                           GetBetaMemoryResizingCommand(Environment *,UDFContext *,UDFValue *);
    void                           SetBetaMemoryResizingCommand(Environment *,UDFContext *,UDFValue *);
-   void                           EnvMatches(Environment *,Defrule *,int,CLIPSValue *);
+   void                           DefruleMatches(Defrule *,int,CLIPSValue *);
    void                           EnvJoinActivity(Environment *,Defrule *,int,UDFValue *);
    void                           DefruleCommands(Environment *);
    void                           MatchesCommand(Environment *,UDFContext *,UDFValue *);

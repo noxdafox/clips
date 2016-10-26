@@ -354,7 +354,7 @@ Defclass *EnvGetNextDefclass(
   }
 
 /***************************************************
-  NAME         : EnvIsDefclassDeletable
+  NAME         : DefclassIsDeletable
   DESCRIPTION  : Determines if a defclass
                    can be deleted
   INPUTS       : Address of the defclass
@@ -363,11 +363,12 @@ Defclass *EnvGetNextDefclass(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-bool EnvIsDefclassDeletable(
-  Environment *theEnv,
+bool DefclassIsDeletable(
   Defclass *theDefclass)
   {
-   if (! ConstructsDeletable(theEnv))
+  Environment *theEnv = theDefclass->header.env;
+  
+  if (! ConstructsDeletable(theEnv))
      { return false; }
 
    if (theDefclass->system == 1)
@@ -398,20 +399,26 @@ void UndefclassCommand(
   }
 
 /********************************************************
-  NAME         : EnvUndefclass
+  NAME         : Undefclass
   DESCRIPTION  : Deletes the named defclass
   INPUTS       : None
   RETURNS      : True if deleted, or false
   SIDE EFFECTS : Defclass and handlers removed
   NOTES        : Interface for AddConstruct()
  ********************************************************/
-bool EnvUndefclass(
-  Environment *theEnv,
-  Defclass *theDefclass)
-  {
+bool Undefclass(
+  Defclass *theDefclass,
+  Environment *allEnv)
+  {   
 #if RUN_TIME || BLOAD_ONLY
    return false;
 #else
+   Environment *theEnv;
+   
+   if (theDefclass == NULL)
+     { theEnv = allEnv; }
+   else
+     { theEnv = theDefclass->header.env; }
 
 #if BLOAD || BLOAD_AND_BSAVE
    if (Bloaded(theEnv))
@@ -478,7 +485,7 @@ void EnvListDefclasses(
   }
 
 /*********************************************************
-  NAME         : EnvGetDefclassWatchInstances
+  NAME         : DefclassGetWatchInstances
   DESCRIPTION  : Determines if deletions/creations of
                  instances of this class will generate
                  trace messages or not
@@ -488,19 +495,14 @@ void EnvListDefclasses(
   SIDE EFFECTS : None
   NOTES        : None
  *********************************************************/
-bool EnvGetDefclassWatchInstances(
-  Environment *theEnv,
+bool DefclassGetWatchInstances(
   Defclass *theDefclass)
   {
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
-
    return theDefclass->traceInstances;
   }
 
 /*********************************************************
-  NAME         : EnvSetDefclassWatchInstances
+  NAME         : DefclassSetWatchInstances
   DESCRIPTION  : Sets the trace to ON/OFF for the
                  creation/deletion of instances
                  of the class
@@ -511,15 +513,10 @@ bool EnvGetDefclassWatchInstances(
   SIDE EFFECTS : Watch flag for the class set
   NOTES        : None
  *********************************************************/
-void EnvSetDefclassWatchInstances(
-  Environment *theEnv,
-  bool newState,
-  Defclass *theDefclass)
+void DefclassSetWatchInstances(
+  Defclass *theDefclass,
+  bool newState)
   {
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
-
    if (theDefclass->abstract)
      { return; }
 
@@ -527,7 +524,7 @@ void EnvSetDefclassWatchInstances(
   }
 
 /*********************************************************
-  NAME         : EnvGetDefclassWatchSlots
+  NAME         : DefclassGetWatchSlots
   DESCRIPTION  : Determines if changes to slots of
                  instances of this class will generate
                  trace messages or not
@@ -537,14 +534,9 @@ void EnvSetDefclassWatchInstances(
   SIDE EFFECTS : None
   NOTES        : None
  *********************************************************/
-bool EnvGetDefclassWatchSlots(
-  Environment *theEnv,
+bool DefclassGetWatchSlots(
   Defclass *theDefclass)
   {
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
-
    return theDefclass->traceSlots;
   }
 
@@ -559,15 +551,10 @@ bool EnvGetDefclassWatchSlots(
   SIDE EFFECTS : Watch flag for the class set
   NOTES        : None
  **********************************************************/
-void EnvSetDefclassWatchSlots(
-  Environment *theEnv,
-  bool newState,
-  Defclass *theDefclass)
+void DefclassSetWatchSlots(
+  Defclass *theDefclass,
+  bool newState)
   {
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
-
    theDefclass->traceSlots = newState;
   }
 
@@ -593,12 +580,12 @@ bool DefclassWatchAccess(
   {
    if (code)
      return(ConstructSetWatchAccess(theEnv,DefclassData(theEnv)->DefclassConstruct,newState,argExprs,
-                                    (ConstructGetWatchFunction *) EnvGetDefclassWatchSlots,
-                                    (ConstructSetWatchFunction *) EnvSetDefclassWatchSlots));
+                                    (ConstructGetWatchFunction *) DefclassGetWatchSlots,
+                                    (ConstructSetWatchFunction *) DefclassSetWatchSlots));
    else
      return(ConstructSetWatchAccess(theEnv,DefclassData(theEnv)->DefclassConstruct,newState,argExprs,
-                                    (ConstructGetWatchFunction *) EnvGetDefclassWatchInstances,
-                                    (ConstructSetWatchFunction *) EnvSetDefclassWatchInstances));
+                                    (ConstructGetWatchFunction *) DefclassGetWatchInstances,
+                                    (ConstructSetWatchFunction *) DefclassSetWatchInstances));
   }
 
 /***********************************************************************
@@ -623,12 +610,12 @@ bool DefclassWatchPrint(
   {
    if (code)
      return(ConstructPrintWatchAccess(theEnv,DefclassData(theEnv)->DefclassConstruct,logName,argExprs,
-                                      (ConstructGetWatchFunction *) EnvGetDefclassWatchSlots,
-                                      (ConstructSetWatchFunction *) EnvSetDefclassWatchSlots));
+                                      (ConstructGetWatchFunction *) DefclassGetWatchSlots,
+                                      (ConstructSetWatchFunction *) DefclassSetWatchSlots));
    else
      return(ConstructPrintWatchAccess(theEnv,DefclassData(theEnv)->DefclassConstruct,logName,argExprs,
-                                      (ConstructGetWatchFunction *) EnvGetDefclassWatchInstances,
-                                      (ConstructSetWatchFunction *) EnvSetDefclassWatchInstances));
+                                      (ConstructGetWatchFunction *) DefclassGetWatchInstances,
+                                      (ConstructSetWatchFunction *) DefclassSetWatchInstances));
   }
 
 #endif /* DEBUGGING_FUNCTIONS */
@@ -786,7 +773,7 @@ static void SaveDefclass(
    unsigned hnd;
    const char *ppForm;
 
-   ppForm = EnvGetDefclassPPForm(theEnv,theDefclass);
+   ppForm = DefclassPPForm(theDefclass);
    if (ppForm != NULL)
      {
       PrintInChunks(theEnv,logName,ppForm);
@@ -794,7 +781,7 @@ static void SaveDefclass(
       hnd = EnvGetNextDefmessageHandler(theEnv,theDefclass,0);
       while (hnd != 0)
         {
-         ppForm = EnvGetDefmessageHandlerPPForm(theEnv,theDefclass,hnd);
+         ppForm = DefmessageHandlerPPForm(theDefclass,hnd);
          if (ppForm != NULL)
            {
             PrintInChunks(theEnv,logName,ppForm);
@@ -938,18 +925,16 @@ void SetNextDefclass(
 /* Additional Environment Functions */
 /*##################################*/
 
-const char *EnvGetDefclassName(
-  Environment *theEnv,
+const char *DefclassName(
   Defclass *theClass)
   {
-   return EnvGetConstructNameString(theEnv,(struct constructHeader *) theClass);
+   return GetConstructNameString((struct constructHeader *) theClass);
   }
 
-const char *EnvGetDefclassPPForm(
-  Environment *theEnv,
+const char *DefclassPPForm(
   Defclass *theClass)
   {
-   return GetConstructPPForm(theEnv,(struct constructHeader *) theClass);
+   return GetConstructPPForm((struct constructHeader *) theClass);
   }
 
 struct defmoduleItemHeader *EnvGetDefclassModule(
@@ -959,8 +944,7 @@ struct defmoduleItemHeader *EnvGetDefclassModule(
    return GetConstructModuleItem((struct constructHeader *) theClass);
   }
 
-const char *EnvDefclassModule(
-  Environment *theEnv,
+const char *DefclassModule(
   Defclass *theClass)
   {
    return GetConstructModuleName((struct constructHeader *) theClass);

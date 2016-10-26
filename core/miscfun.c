@@ -1301,7 +1301,7 @@ void FuncallFunction(
         {
          PrintErrorID(theEnv,"MISCFUN",4,false);
          EnvPrintRouter(theEnv,WERROR,"Function funcall called with the wrong number of arguments for deffunction ");
-         EnvPrintRouter(theEnv,WERROR,EnvGetDeffunctionName(theEnv,(Deffunction *) theReference.value));
+         EnvPrintRouter(theEnv,WERROR,DeffunctionName((Deffunction *) theReference.value));
          EnvPrintRouter(theEnv,WERROR,"\n");
          ExpressionDeinstall(theEnv,&theReference);
          ReturnExpression(theEnv,theReference.argList);

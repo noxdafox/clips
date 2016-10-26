@@ -920,7 +920,7 @@ static void TraceErrorToRuleDriver(
    else if (joinPtr->ruleToActivate != NULL)
      {
       joinPtr->marked = 1;
-      name = EnvGetDefruleName(theEnv,joinPtr->ruleToActivate);
+      name = DefruleName(joinPtr->ruleToActivate);
       EnvPrintRouter(theEnv,WERROR,indentSpaces);
 
       EnvPrintRouter(theEnv,WERROR,"Of pattern #");
