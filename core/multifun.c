@@ -699,6 +699,8 @@ void SubsetpFunction(
    for (i = item1.begin ; i < (item1.begin + item1.range) ; i++)
      {
       tmpItem.value = item1.multifieldValue->theFields[i].value;
+      tmpItem.begin = 0;
+      tmpItem.range = 1;
 
       if (! FindDOsInSegment(&tmpItem,1,&item2,&j,&k,NULL,0))
         {

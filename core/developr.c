@@ -652,9 +652,9 @@ static void ValidateRuleBetaMemoriesAction(
 #if MAC_XCD
 #pragma unused(buffer)
 #endif
-   Defrule *rulePtr, *tmpPtr;
+   Defrule *rulePtr;
 
-   for (rulePtr = (Defrule *) theConstruct, tmpPtr = rulePtr;
+   for (rulePtr = (Defrule *) theConstruct;
         rulePtr != NULL;
         rulePtr = rulePtr->disjunct)
      {

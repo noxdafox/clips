@@ -726,7 +726,7 @@ static CLIPSLexeme *ParseDefinstancesName(
      return NULL;
 
 #if DEFRULE_CONSTRUCT
-   if ((DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_BIT) ? false :
+   if ((DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TOKEN) ? false :
        (strcmp(DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents,ACTIVE_RLN) == 0))
      {
       PPBackup(theEnv);
