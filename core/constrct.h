@@ -75,14 +75,14 @@
 
 #define _H_constrct
 
-struct constructHeader;
-struct construct;
+typedef struct constructHeader ConstructHeader;
+typedef struct construct Construct;
 
-typedef void *FindConstructFunction(Environment *,const char *);
-typedef void *GetNextConstructFunction(Environment *,void *);
-typedef bool *IsConstructDeletableFunction(void *);
-typedef bool *DeleteConstructFunction(void *,Environment *);
-typedef void *FreeConstructFunction(Environment *,void *);
+typedef ConstructHeader *FindConstructFunction(Environment *,const char *);
+typedef ConstructHeader *GetNextConstructFunction(Environment *,ConstructHeader *);
+typedef bool *IsConstructDeletableFunction(ConstructHeader *);
+typedef bool *DeleteConstructFunction(ConstructHeader *,Environment *);
+typedef void *FreeConstructFunction(Environment *,ConstructHeader *);
 typedef void ParserErrorFunction(Environment *,const char *,const char *,const char *,long);
 typedef bool *BeforeResetFunction(Environment *);
 
@@ -104,7 +104,6 @@ typedef enum
    DEFINSTANCES
   } ConstructType;
 
-
 struct defmoduleItemHeader; // TBD Can this be removed?
 
 struct constructHeader
@@ -114,15 +113,14 @@ struct constructHeader
    const char *ppForm;
    struct defmoduleItemHeader *whichModule;
    long bsaveID;
-   struct constructHeader *next;
+   ConstructHeader *next;
    struct userData *usrData;
    Environment *env;
   };
 
 #include "moduldef.h"
 
-
-#define CHS (struct constructHeader *)
+#define CHS (ConstructHeader *)
 
 struct construct
   {
@@ -130,15 +128,15 @@ struct construct
    const char *pluralName;
    bool (*parseFunction)(Environment *,const char *);
    FindConstructFunction *findFunction;
-   CLIPSLexeme *(*getConstructNameFunction)(struct constructHeader *);
-   const char *(*getPPFormFunction)(struct constructHeader *);
-   struct defmoduleItemHeader *(*getModuleItemFunction)(struct constructHeader *);
+   CLIPSLexeme *(*getConstructNameFunction)(ConstructHeader *);
+   const char *(*getPPFormFunction)(ConstructHeader *);
+   struct defmoduleItemHeader *(*getModuleItemFunction)(ConstructHeader *);
    GetNextConstructFunction *getNextItemFunction;
-   void (*setNextItemFunction)(struct constructHeader *,struct constructHeader *);
+   void (*setNextItemFunction)(ConstructHeader *,ConstructHeader *);
    IsConstructDeletableFunction *isConstructDeletableFunction;
    DeleteConstructFunction *deleteFunction;
    FreeConstructFunction *freeFunction;
-   struct construct *next;
+   Construct *next;
   };
 
 #ifndef _H_evaluatn
@@ -179,7 +177,7 @@ struct constructData
    size_t CurWrnPos;
    ParserErrorFunction *ParserErrorCallback;
 #endif
-   struct construct *ListOfConstructs;
+   Construct *ListOfConstructs;
    struct callFunctionItem *ListOfResetFunctions;
    struct callFunctionItem *ListOfClearFunctions;
    struct callFunctionItem *ListOfClearReadyFunctions;
@@ -204,14 +202,14 @@ struct constructData
    bool                           EnvRemoveClearFunction(Environment *,const char *);
    void                           EnvIncrementClearReadyLocks(Environment *);
    void                           EnvDecrementClearReadyLocks(Environment *);
-   struct construct              *AddConstruct(Environment *,const char *,const char *,
+   Construct                     *AddConstruct(Environment *,const char *,const char *,
                                                bool (*)(Environment *,const char *),
                                                FindConstructFunction *,
-                                               CLIPSLexeme *(*)(struct constructHeader *),
-                                               const char *(*)(struct constructHeader *),
-                                               struct defmoduleItemHeader *(*)(struct constructHeader *),
+                                               CLIPSLexeme *(*)(ConstructHeader *),
+                                               const char *(*)(ConstructHeader *),
+                                               struct defmoduleItemHeader *(*)(ConstructHeader *),
                                                GetNextConstructFunction *,
-                                               void (*)(struct constructHeader *,struct constructHeader *),
+                                               void (*)(ConstructHeader *,ConstructHeader *),
                                                IsConstructDeletableFunction *,
                                                DeleteConstructFunction *,
                                                FreeConstructFunction *);
@@ -229,9 +227,9 @@ struct constructData
    void                           ResetCommand(Environment *,UDFContext *,UDFValue *);
    void                           ClearCommand(Environment *,UDFContext *,UDFValue *);
    bool                           ClearReady(Environment *);
-   struct construct              *FindConstruct(Environment *,const char *);
-   void                           DeinstallConstructHeader(Environment *,struct constructHeader *);
-   void                           DestroyConstructHeader(Environment *,struct constructHeader *);
+   Construct                     *FindConstruct(Environment *,const char *);
+   void                           DeinstallConstructHeader(Environment *,ConstructHeader *);
+   void                           DestroyConstructHeader(Environment *,ConstructHeader *);
    ParserErrorFunction           *EnvSetParserErrorCallback(Environment *,ParserErrorFunction *);
 
 #endif /* _H_constrct */

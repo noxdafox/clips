@@ -973,14 +973,14 @@ static void AddToDefruleList(
    theModuleItem = (struct defruleModule *) rulePtr->header.whichModule;
 
    if (theModuleItem->header.lastItem == NULL)
-     { theModuleItem->header.firstItem = (struct constructHeader *) rulePtr; }
+     { theModuleItem->header.firstItem = &rulePtr->header; }
    else
      {
       tempRule = (Defrule *) theModuleItem->header.lastItem; // Note: Only the first disjunct
-      tempRule->header.next = (struct constructHeader *) rulePtr;   // points to the next rule
+      tempRule->header.next = &rulePtr->header;   // points to the next rule
      }
 
-   theModuleItem->header.lastItem = (struct constructHeader *) rulePtr;
+   theModuleItem->header.lastItem = &rulePtr->header;
   }
 
 #if DEVELOPER && DEBUGGING_FUNCTIONS

@@ -230,7 +230,7 @@ bool ParseDeffunction(
 
       if ((dptr->busy == 0) && (! overwrite))
         {
-         RemoveConstructFromModule(theEnv,(struct constructHeader *) dptr);
+         RemoveConstructFromModule(theEnv,&dptr->header);
          RemoveDeffunction(theEnv,dptr);
         }
 
@@ -248,7 +248,7 @@ bool ParseDeffunction(
 
       if ((dptr->busy == 0) && (! overwrite))
         {
-         RemoveConstructFromModule(theEnv,(struct constructHeader *) dptr);
+         RemoveConstructFromModule(theEnv,&dptr->header);
          RemoveDeffunction(theEnv,dptr);
         }
       return true;
@@ -270,7 +270,7 @@ bool ParseDeffunction(
         }
       else
         {
-         RemoveConstructFromModule(theEnv,(struct constructHeader *) dptr);
+         RemoveConstructFromModule(theEnv,&dptr->header);
          RemoveDeffunction(theEnv,dptr);
         }
       return false;
@@ -449,7 +449,7 @@ static Deffunction *AddDeffunction(
    if (dfuncPtr == NULL)
      {
       dfuncPtr = get_struct(theEnv,deffunction);
-      InitializeConstructHeader(theEnv,"deffunction",DEFFUNCTION,(struct constructHeader *) dfuncPtr,name);
+      InitializeConstructHeader(theEnv,"deffunction",DEFFUNCTION,&dfuncPtr->header,name);
       IncrementSymbolCount(name);
       dfuncPtr->code = NULL;
       dfuncPtr->minNumberOfParameters = min;
@@ -478,10 +478,10 @@ static Deffunction *AddDeffunction(
       /* so that it can be added at the end.  */
       /*======================================*/
 
-      RemoveConstructFromModule(theEnv,(struct constructHeader *) dfuncPtr);
+      RemoveConstructFromModule(theEnv,&dfuncPtr->header);
      }
 
-   AddConstructToModule((struct constructHeader *) dfuncPtr);
+   AddConstructToModule(&dfuncPtr->header);
 
    /*====================================*/
    /* Install the new interpretive code. */

@@ -160,7 +160,7 @@
    static bool                        FunctionsToCode(Environment *theEnv,const char *,const char *,char *);
    static bool                        WriteInitializationFunction(Environment *,const char *,const char *,char *);
    static void                        DumpExpression(Environment *,struct expr *);
-   static void                        MarkConstruct(Environment *,struct constructHeader *,void *);
+   static void                        MarkConstruct(Environment *,ConstructHeader *,void *);
    static void                        HashedExpressionsToCode(Environment *);
    static void                        DeallocateConstructCompilerData(Environment *);
 
@@ -944,7 +944,7 @@ static void DumpExpression(
       switch (exprPtr->type)
         {
          case FCALL:
-           PrintFunctionReference(theEnv,ConstructCompilerData(theEnv)->ExpressionFP,(struct FunctionDefinition *) exprPtr->value);
+           PrintFunctionReference(theEnv,ConstructCompilerData(theEnv)->ExpressionFP,exprPtr->functionValue);
            break;
 
          case INTEGER_TYPE:
@@ -1409,7 +1409,7 @@ void MarkConstructBsaveIDs(
 /*************************************************************/
 static void MarkConstruct(
   Environment *theEnv,
-  struct constructHeader *theConstruct,
+  ConstructHeader *theConstruct,
   void *vTheBuffer)
   {
    long *count = (long *) vTheBuffer;
@@ -1427,7 +1427,7 @@ static void MarkConstruct(
 void ConstructHeaderToCode(
   Environment *theEnv,
   FILE *theFile,
-  struct constructHeader *theConstruct,
+  ConstructHeader *theConstruct,
   int imageID,
   int maxIndices,
   int moduleCount,

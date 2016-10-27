@@ -126,14 +126,14 @@
    static void                    DeallocateDefgenericData(Environment *);
 
 #if ! RUN_TIME
-   static void                    DestroyDefgenericAction(Environment *,struct constructHeader *,void *);
+   static void                    DestroyDefgenericAction(Environment *,ConstructHeader *,void *);
 #endif
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
 
    static void                    SaveDefgenerics(Environment *,Defmodule *,const char *);
    static void                    SaveDefmethods(Environment *,Defmodule *,const char *);
-   static void                    SaveDefmethodsForDefgeneric(Environment *,struct constructHeader *,void *);
+   static void                    SaveDefmethodsForDefgeneric(Environment *,ConstructHeader *,void *);
    static void                    RemoveDefgenericMethod(Environment *,Defgeneric *,long);
 
 #endif
@@ -340,7 +340,7 @@ static void DeallocateDefgenericData(
 /****************************************************/
 static void DestroyDefgenericAction(
   Environment *theEnv,
-  struct constructHeader *theConstruct,
+  ConstructHeader *theConstruct,
   void *buffer)
   {
 #if MAC_XCD
@@ -453,7 +453,7 @@ Defgeneric *EnvGetNextDefgeneric(
   Environment *theEnv,
   Defgeneric *theDefgeneric)
   {
-   return (Defgeneric *) GetNextConstructItem(theEnv,(struct constructHeader *) theDefgeneric,DefgenericData(theEnv)->DefgenericModuleIndex);
+   return (Defgeneric *) GetNextConstructItem(theEnv,&theDefgeneric->header,DefgenericData(theEnv)->DefgenericModuleIndex);
   }
 
 /***********************************************************
@@ -681,7 +681,7 @@ bool Undefgeneric(
      }
    if (DefgenericIsDeletable(theDefgeneric) == false)
      return false;
-   RemoveConstructFromModule(theEnv,(struct constructHeader *) theDefgeneric);
+   RemoveConstructFromModule(theEnv,&theDefgeneric->header);
    RemoveDefgeneric(theEnv,theDefgeneric);
    return true;
 #endif
@@ -1463,7 +1463,7 @@ static void SaveDefmethods(
  ***************************************************/
 static void SaveDefmethodsForDefgeneric(
   Environment *theEnv,
-  struct constructHeader *theDefgeneric,
+  ConstructHeader *theDefgeneric,
   void *userBuffer)
   {
    Defgeneric *gfunc = (Defgeneric *) theDefgeneric;
@@ -1860,15 +1860,15 @@ void TypeCommand(
 CLIPSLexeme *GetDefgenericNamePointer(
   Defgeneric *theDefgeneric)
   {
-   return GetConstructNamePointer((struct constructHeader *) theDefgeneric);
+   return GetConstructNamePointer(&theDefgeneric->header);
   }
 
 void SetNextDefgeneric(
   Defgeneric *theDefgeneric,
   Defgeneric *targetDefgeneric)
   {
-   SetNextConstruct((struct constructHeader *) theDefgeneric,
-                    (struct constructHeader *) targetDefgeneric);
+   SetNextConstruct(&theDefgeneric->header,
+                    &targetDefgeneric->header);
   }
 
 /*##################################*/
@@ -1878,26 +1878,26 @@ void SetNextDefgeneric(
 const char *DefgenericModule(
   Defgeneric *theDefgeneric)
   {
-   return GetConstructModuleName((struct constructHeader *) theDefgeneric);
+   return GetConstructModuleName(&theDefgeneric->header);
   }
 
 const char *DefgenericName(
   Defgeneric *theDefgeneric)
   {
-   return GetConstructNameString((struct constructHeader *) theDefgeneric);
+   return GetConstructNameString(&theDefgeneric->header);
   }
 
 const char *DefgenericPPForm(
   Defgeneric *theDefgeneric)
   {
-   return GetConstructPPForm((struct constructHeader *) theDefgeneric);
+   return GetConstructPPForm(&theDefgeneric->header);
   }
 
 CLIPSLexeme *EnvGetDefgenericNamePointer(
   Environment *theEnv,
   Defgeneric *theDefgeneric)
   {
-   return GetConstructNamePointer((struct constructHeader *) theDefgeneric);
+   return GetConstructNamePointer(&theDefgeneric->header);
   }
 
 void EnvSetDefgenericPPForm(
@@ -1905,7 +1905,7 @@ void EnvSetDefgenericPPForm(
   Defgeneric *theDefgeneric,
   const char *thePPForm)
   {
-   SetConstructPPForm(theEnv,(struct constructHeader *) theDefgeneric,thePPForm);
+   SetConstructPPForm(theEnv,&theDefgeneric->header,thePPForm);
   }
 
 

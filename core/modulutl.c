@@ -50,7 +50,7 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                      *SearchImportedConstructModules(Environment *,CLIPSLexeme *,
+   static ConstructHeader    *SearchImportedConstructModules(Environment *,CLIPSLexeme *,
                                               Defmodule *,
                                               struct moduleItem *,CLIPSLexeme *,
                                               int *,int,Defmodule *);
@@ -270,7 +270,7 @@ const char *ExtractModuleAndConstructName(
 /*   a module and other modules from which it imports       */
 /*   constructs for a specified construct.                  */
 /************************************************************/
-void *FindImportedConstruct(
+ConstructHeader *FindImportedConstruct(
   Environment *theEnv,
   const char *constructName,
   Defmodule *matchModule,
@@ -279,7 +279,7 @@ void *FindImportedConstruct(
   bool searchCurrent,
   Defmodule *notYetDefinedInModule)
   {
-   void *rv;
+   ConstructHeader *rv;
    struct moduleItem *theModuleItem;
 
    /*=============================================*/
@@ -351,7 +351,7 @@ void *FindImportedConstruct(
    /* Return a pointer to the construct. */
    /*====================================*/
 
-   return(rv);
+   return rv;
   }
 
 /*********************************************************/
@@ -393,7 +393,7 @@ void MarkModulesAsUnvisited(
 /*   searches a module and other modules from which it     */
 /*   imports constructs for a specified construct.         */
 /***********************************************************/
-static void *SearchImportedConstructModules(
+static ConstructHeader *SearchImportedConstructModules(
   Environment *theEnv,
   CLIPSLexeme *constructType,
   Defmodule *matchModule,
@@ -405,7 +405,7 @@ static void *SearchImportedConstructModules(
   {
    Defmodule *theModule;
    struct portItem *theImportList, *theExportList;
-   void *rv, *arv = NULL;
+   ConstructHeader *rv, *arv = NULL;
    bool searchModule, exported;
    Defmodule *currentModule;
 
@@ -458,7 +458,7 @@ static void *SearchImportedConstructModules(
 
       else if (rv != NULL)
         {
-         if (((struct constructHeader *) rv)->whichModule->theModule == currentModule)
+         if (rv->whichModule->theModule == currentModule)
            { (*count)++; }
          arv = rv;
         }
@@ -556,7 +556,7 @@ static void *SearchImportedConstructModules(
    /* last construct found.   */
    /*=========================*/
 
-   return(arv);
+   return arv;
   }
 
 /**************************************************************/

@@ -80,12 +80,12 @@ typedef struct bsaveDefinstances
 
 #if BLOAD_AND_BSAVE
    static void                    BsaveDefinstancesFind(Environment *);
-   static void                    MarkDefinstancesItems(Environment *,struct constructHeader *,void *);
+   static void                    MarkDefinstancesItems(Environment *,ConstructHeader *,void *);
    static void                    BsaveDefinstancesExpressions(Environment *,FILE *);
-   static void                    BsaveDefinstancesExpression(Environment *,struct constructHeader *,void *);
+   static void                    BsaveDefinstancesExpression(Environment *,ConstructHeader *,void *);
    static void                    BsaveStorageDefinstances(Environment *,FILE *);
    static void                    BsaveDefinstancesDriver(Environment *,FILE *);
-   static void                    BsaveDefinstances(Environment *,struct constructHeader *,void *);
+   static void                    BsaveDefinstances(Environment *,ConstructHeader *,void *);
 #endif
 
    static void                    BloadStorageDefinstances(Environment *);
@@ -208,7 +208,7 @@ static void BsaveDefinstancesFind(
  ***************************************************/
 static void MarkDefinstancesItems(
   Environment *theEnv,
-  struct constructHeader *theDefinstances,
+  ConstructHeader *theDefinstances,
   void *userBuffer)
   {
 #if MAC_XCD
@@ -249,7 +249,7 @@ static void BsaveDefinstancesExpressions(
  ***************************************************/
 static void BsaveDefinstancesExpression(
   Environment *theEnv,
-  struct constructHeader *theDefinstances,
+  ConstructHeader *theDefinstances,
   void *userBuffer)
   {
    BsaveExpression(theEnv,((Definstances *) theDefinstances)->mkinstance,(FILE *) userBuffer);
@@ -336,7 +336,7 @@ static void BsaveDefinstancesDriver(
  ***************************************************/
 static void BsaveDefinstances(
   Environment *theEnv,
-  struct constructHeader *theDefinstances,
+  ConstructHeader *theDefinstances,
   void *userBuffer)
   {
    Definstances *dptr = (Definstances *) theDefinstances;

@@ -170,19 +170,19 @@ typedef struct handlerBsaveInfo
 #if BLOAD_AND_BSAVE
 
    static void                    BsaveObjectsFind(Environment *);
-   static void                    MarkDefclassItems(Environment *,struct constructHeader *,void *);
+   static void                    MarkDefclassItems(Environment *,ConstructHeader *,void *);
    static void                    BsaveObjectsExpressions(Environment *,FILE *);
-   static void                    BsaveDefaultSlotExpressions(Environment *,struct constructHeader *,void *);
-   static void                    BsaveHandlerActionExpressions(Environment *,struct constructHeader *,void *);
+   static void                    BsaveDefaultSlotExpressions(Environment *,ConstructHeader *,void *);
+   static void                    BsaveHandlerActionExpressions(Environment *,ConstructHeader *,void *);
    static void                    BsaveStorageObjects(Environment *,FILE *);
    static void                    BsaveObjects(Environment *,FILE *);
-   static void                    BsaveDefclass(Environment *,struct constructHeader *,void *);
-   static void                    BsaveClassLinks(Environment *,struct constructHeader *,void *);
-   static void                    BsaveSlots(Environment *,struct constructHeader *,void *);
-   static void                    BsaveTemplateSlots(Environment *,struct constructHeader *,void *);
-   static void                    BsaveSlotMap(Environment *,struct constructHeader *,void *);
-   static void                    BsaveHandlers(Environment *,struct constructHeader *,void *);
-   static void                    BsaveHandlerMap(Environment *,struct constructHeader *,void *);
+   static void                    BsaveDefclass(Environment *,ConstructHeader *,void *);
+   static void                    BsaveClassLinks(Environment *,ConstructHeader *,void *);
+   static void                    BsaveSlots(Environment *,ConstructHeader *,void *);
+   static void                    BsaveTemplateSlots(Environment *,ConstructHeader *,void *);
+   static void                    BsaveSlotMap(Environment *,ConstructHeader *,void *);
+   static void                    BsaveHandlers(Environment *,ConstructHeader *,void *);
+   static void                    BsaveHandlerMap(Environment *,ConstructHeader *,void *);
 
 #endif
 
@@ -399,7 +399,7 @@ static void BsaveObjectsFind(
  ***************************************************/
 static void MarkDefclassItems(
   Environment *theEnv,
-  struct constructHeader *theDefclass,
+  ConstructHeader *theDefclass,
   void *buf)
   {
 #if MAC_XCD
@@ -508,7 +508,7 @@ static void BsaveObjectsExpressions(
  ***************************************************/
 static void BsaveDefaultSlotExpressions(
   Environment *theEnv,
-  struct constructHeader *theDefclass,
+  ConstructHeader *theDefclass,
   void *buf)
   {
    Defclass *cls = (Defclass *) theDefclass;
@@ -548,7 +548,7 @@ static void BsaveDefaultSlotExpressions(
  ***************************************************/
 static void BsaveHandlerActionExpressions(
   Environment *theEnv,
-  struct constructHeader *theDefclass,
+  ConstructHeader *theDefclass,
   void *buf)
   {
    Defclass *cls = (Defclass *) theDefclass;
@@ -734,7 +734,7 @@ static void BsaveObjects(
  ***************************************************/
 static void BsaveDefclass(
   Environment *theEnv,
-  struct constructHeader *theDefclass,
+  ConstructHeader *theDefclass,
   void *buf)
   {
    Defclass *cls = (Defclass *) theDefclass;
@@ -819,7 +819,7 @@ static void BsaveDefclass(
  ***************************************************/
 static void BsaveClassLinks(
   Environment *theEnv,
-  struct constructHeader *theDefclass,
+  ConstructHeader *theDefclass,
   void *buf)
   {
    Defclass *cls = (Defclass *) theDefclass;
@@ -857,7 +857,7 @@ static void BsaveClassLinks(
  ***************************************************/
 static void BsaveSlots(
   Environment *theEnv,
-  struct constructHeader *theDefclass,
+  ConstructHeader *theDefclass,
   void *buf)
   {
    Defclass *cls = (Defclass *) theDefclass;
@@ -914,7 +914,7 @@ static void BsaveSlots(
  **************************************************************/
 static void BsaveTemplateSlots(
   Environment *theEnv,
-  struct constructHeader *theDefclass,
+  ConstructHeader *theDefclass,
   void *buf)
   {
    Defclass *cls = (Defclass *) theDefclass;
@@ -942,7 +942,7 @@ static void BsaveTemplateSlots(
  ***************************************************************/
 static void BsaveSlotMap(
   Environment *theEnv,
-  struct constructHeader *theDefclass,
+  ConstructHeader *theDefclass,
   void *buf)
   {
    Defclass *cls = (Defclass *) theDefclass;
@@ -966,7 +966,7 @@ static void BsaveSlotMap(
  ************************************************************/
 static void BsaveHandlers(
   Environment *theEnv,
-  struct constructHeader *theDefclass,
+  ConstructHeader *theDefclass,
   void *buf)
   {
    Defclass *cls = (Defclass *) theDefclass;
@@ -1008,7 +1008,7 @@ static void BsaveHandlers(
  ****************************************************************/
 static void BsaveHandlerMap(
   Environment *theEnv,
-  struct constructHeader *theDefclass,
+  ConstructHeader *theDefclass,
   void *buf)
   {
    Defclass *cls = (Defclass *) theDefclass;

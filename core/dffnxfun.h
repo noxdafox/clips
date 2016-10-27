@@ -86,7 +86,7 @@ struct deffunctionModuleData
 
 struct deffunction
   {
-   struct constructHeader header;
+   ConstructHeader header;
    unsigned busy;
    unsigned executing;
    bool trace;
@@ -100,7 +100,7 @@ struct deffunction
 
 struct deffunctionData
   {
-   struct construct *DeffunctionConstruct;
+   Construct *DeffunctionConstruct;
    int DeffunctionModuleIndex;
    ENTITY_RECORD DeffunctionEntityRecord;
 #if DEBUGGING_FUNCTIONS

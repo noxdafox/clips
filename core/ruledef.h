@@ -74,7 +74,7 @@
 
 #define _H_ruledef
 
-#define GetDisjunctIndex(r) ((struct constructHeader *) r)->bsaveID
+#define GetDisjunctIndex(r) (r->header.bsaveID)
 
 typedef struct defrule Defrule;
 struct defruleModule;
@@ -86,7 +86,7 @@ struct defruleModule;
 
 struct defrule
   {
-   struct constructHeader header;
+   ConstructHeader header;
    int salience;
    int localVarCnt;
    unsigned int complexity      : 11;
@@ -125,7 +125,7 @@ struct defruleModule
 
 struct defruleData
   {
-   struct construct *DefruleConstruct;
+   Construct *DefruleConstruct;
    int DefruleModuleIndex;
    long long CurrentEntityTimeTag;
    struct alphaMemoryHash **AlphaMemoryTable;

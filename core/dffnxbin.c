@@ -81,12 +81,12 @@ typedef struct bsaveDeffunctionStruct
 
 #if BLOAD_AND_BSAVE
    static void                    BsaveDeffunctionFind(Environment *);
-   static void                    MarkDeffunctionItems(Environment *,struct constructHeader *,void *);
+   static void                    MarkDeffunctionItems(Environment *,ConstructHeader *,void *);
    static void                    BsaveDeffunctionExpressions(Environment *,FILE *);
-   static void                    BsaveDeffunctionExpression(Environment *,struct constructHeader *,void *);
+   static void                    BsaveDeffunctionExpression(Environment *,ConstructHeader *,void *);
    static void                    BsaveStorageDeffunctions(Environment *,FILE *);
    static void                    BsaveDeffunctions(Environment *,FILE *);
-   static void                    BsaveDeffunction(Environment *,struct constructHeader *,void *);
+   static void                    BsaveDeffunction(Environment *,ConstructHeader *,void *);
 #endif
 
    static void                    BloadStorageDeffunctions(Environment *);
@@ -208,7 +208,7 @@ static void BsaveDeffunctionFind(
  ***************************************************/
 static void MarkDeffunctionItems(
   Environment *theEnv,
-  struct constructHeader *theDeffunction,
+  ConstructHeader *theDeffunction,
   void *userBuffer)
   {
 #if MAC_XCD
@@ -249,7 +249,7 @@ static void BsaveDeffunctionExpressions(
  ***************************************************/
 static void BsaveDeffunctionExpression(
   Environment *theEnv,
-  struct constructHeader *theDeffunction,
+  ConstructHeader *theDeffunction,
   void *userBuffer)
   {
    BsaveExpression(theEnv,((Deffunction *) theDeffunction)->code,(FILE *) userBuffer);
@@ -335,7 +335,7 @@ static void BsaveDeffunctions(
  ***************************************************/
 static void BsaveDeffunction(
   Environment *theEnv,
-  struct constructHeader *theDeffunction,
+  ConstructHeader *theDeffunction,
   void *userBuffer)
   {
    Deffunction *dptr = (Deffunction *) theDeffunction;

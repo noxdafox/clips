@@ -296,7 +296,7 @@ bool Undefrule(
    else
      { theEnv = theDefrule->header.env; }
    
-   return Undefconstruct(theEnv,theDefrule,DefruleData(theEnv)->DefruleConstruct);
+   return Undefconstruct(theEnv,&theDefrule->header,DefruleData(theEnv)->DefruleConstruct);
   }
 
 /************************************************/

@@ -77,7 +77,7 @@ typedef struct defglobal Defglobal;
 
 struct defglobalData
   {
-   struct construct *DefglobalConstruct;
+   Construct *DefglobalConstruct;
    int DefglobalModuleIndex;
    bool ChangeToGlobals;
 #if DEBUGGING_FUNCTIONS
@@ -95,7 +95,7 @@ struct defglobalData
 
 struct defglobal
   {
-   struct constructHeader header;
+   ConstructHeader header;
    unsigned int watch   : 1;
    unsigned int inScope : 1;
    long busyCount;

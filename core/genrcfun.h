@@ -93,7 +93,7 @@ struct restriction
 
 struct defmethod
   {
-   struct constructHeader header;
+   ConstructHeader header;
    short index;
    unsigned busy;
    short restrictionCount;
@@ -108,7 +108,7 @@ struct defmethod
 
 struct defgeneric
   {
-   struct constructHeader header;
+   ConstructHeader header;
    unsigned busy;
    bool trace;
    Defmethod *methods;
@@ -120,7 +120,7 @@ struct defgeneric
 
 struct defgenericData
   {
-   struct construct *DefgenericConstruct;
+   Construct *DefgenericConstruct;
    int DefgenericModuleIndex;
    ENTITY_RECORD GenericEntityRecord;
 #if DEBUGGING_FUNCTIONS

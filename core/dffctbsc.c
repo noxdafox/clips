@@ -91,7 +91,7 @@
 
    static void                    ResetDeffacts(Environment *);
    static void                    SaveDeffacts(Environment *,Defmodule *,const char *);
-   static void                    ResetDeffactsAction(Environment *,struct constructHeader *,void *);
+   static void                    ResetDeffactsAction(Environment *,ConstructHeader *,void *);
 
 /***************************************************************/
 /* DeffactsBasicCommands: Initializes basic deffacts commands. */
@@ -143,7 +143,7 @@ static void ResetDeffacts(
 /*****************************************************/
 static void ResetDeffactsAction(
   Environment *theEnv,
-  struct constructHeader *theConstruct,
+  ConstructHeader *theConstruct,
   void *buffer)
   {
 #if MAC_XCD
@@ -198,7 +198,7 @@ bool Undeffacts(
    else
      { theEnv = theDeffacts->header.env; }
    
-   return Undefconstruct(theEnv,theDeffacts,DeffactsData(theEnv)->DeffactsConstruct);
+   return Undefconstruct(theEnv,&theDeffacts->header,DeffactsData(theEnv)->DeffactsConstruct);
   }
 
 /*************************************************/

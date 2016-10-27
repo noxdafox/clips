@@ -127,12 +127,14 @@
    static void                   *AllocateModule(Environment *);
    static void                    ReturnModule(Environment *,void *);
    static bool                    ClearDefinstancesReady(Environment *);
-   static void                    CheckDefinstancesBusy(Environment *,struct constructHeader *,void *);
-   static void                    DestroyDefinstancesAction(Environment *,struct constructHeader *,void *);
+   static void                    CheckDefinstancesBusy(Environment *,ConstructHeader *,void *);
+   static void                    DestroyDefinstancesAction(Environment *,ConstructHeader *,void *);
+#else
+   static void                    RuntimeDefinstancesAction(Environment *,ConstructHeader *,void *);
 #endif
 
    static void                    ResetDefinstances(Environment *);
-   static void                    ResetDefinstancesAction(Environment *,struct constructHeader *,void *);
+   static void                    ResetDefinstancesAction(Environment *,ConstructHeader *,void *);
    static void                    DeallocateDefinstancesData(Environment *);
 
 /* =========================================
@@ -265,7 +267,7 @@ static void DeallocateDefinstancesData(
 /*****************************************************/
 static void DestroyDefinstancesAction(
   Environment *theEnv,
-  struct constructHeader *theConstruct,
+  ConstructHeader *theConstruct,
   void *buffer)
   {
 #if MAC_XCD
@@ -298,7 +300,7 @@ static void DestroyDefinstancesAction(
 /***************************************************/
 static void RuntimeDefinstancesAction(
   Environment *theEnv,
-  struct constructHeader *theConstruct,
+  ConstructHeader *theConstruct,
   void *buffer)
   {
 #if MAC_XCD
@@ -334,7 +336,7 @@ Definstances *EnvGetNextDefinstances(
   Environment *theEnv,
   Definstances *theDefinstances)
   {
-   return (Definstances *) GetNextConstructItem(theEnv,(struct constructHeader *) theDefinstances,
+   return (Definstances *) GetNextConstructItem(theEnv,&theDefinstances->header,
                                                 DefinstancesData(theEnv)->DefinstancesModuleIndex);
   }
 
@@ -460,7 +462,7 @@ bool Undefinstances(
    if (DefinstancesIsDeletable(theDefinstances) == false)
      { return false; }
 
-   RemoveConstructFromModule(theEnv,(struct constructHeader *) theDefinstances);
+   RemoveConstructFromModule(theEnv,&theDefinstances->header);
    RemoveDefinstances(theEnv,theDefinstances);
 
    return true;
@@ -612,7 +614,7 @@ static bool ParseDefinstances(
      return true;
 
    dobj = get_struct(theEnv,definstances);
-   InitializeConstructHeader(theEnv,"definstances",DEFINSTANCES,(struct constructHeader *) dobj,dname);
+   InitializeConstructHeader(theEnv,"definstances",DEFINSTANCES,&dobj->header,dname);
    dobj->busy = 0;
    dobj->mkinstance = NULL;
 #if DEFRULE_CONSTRUCT
@@ -684,7 +686,7 @@ static bool ParseDefinstances(
       ExpressionInstall(theEnv,dobj->mkinstance);
      }
 
-   AddConstructToModule((struct constructHeader *) dobj);
+   AddConstructToModule(&dobj->header);
    return false;
   }
 
@@ -806,7 +808,7 @@ static bool RemoveAllDefinstances(
      dhead = EnvGetNextDefinstances(theEnv,dhead);
      if (DefinstancesIsDeletable(dptr))
        {
-        RemoveConstructFromModule(theEnv,(struct constructHeader *) dptr);
+        RemoveConstructFromModule(theEnv,&dptr->header);
         RemoveDefinstances(theEnv,dptr);
        }
      else
@@ -911,7 +913,7 @@ static bool ClearDefinstancesReady(
  ***************************************************/
 static void CheckDefinstancesBusy(
   Environment *theEnv,
-  struct constructHeader *theDefinstances,
+  ConstructHeader *theDefinstances,
   void *userBuffer)
   {
 #if MAC_XCD
@@ -956,7 +958,7 @@ static void ResetDefinstances(
  ***************************************************/
 static void ResetDefinstancesAction(
   Environment *theEnv,
-  struct constructHeader *vDefinstances,
+  ConstructHeader *vDefinstances,
   void *userBuffer)
   {
 #if MAC_XCD
@@ -993,13 +995,13 @@ static void ResetDefinstancesAction(
 const char *DefinstancesName(
   Definstances *theDefinstances)
   {
-   return GetConstructNameString((struct constructHeader *) theDefinstances);
+   return GetConstructNameString(&theDefinstances->header);
   }
 
 const char *DefinstancesPPForm(
   Definstances *theDefinstances)
   {
-   return GetConstructPPForm((struct constructHeader *) theDefinstances);
+   return GetConstructPPForm(&theDefinstances->header);
   }
 
 void EnvSetDefinstancesPPForm(
@@ -1007,27 +1009,27 @@ void EnvSetDefinstancesPPForm(
   Definstances *theDefinstances,
   const char *thePPForm)
   {
-   SetConstructPPForm(theEnv,(struct constructHeader *) theDefinstances,thePPForm);
+   SetConstructPPForm(theEnv,&theDefinstances->header,thePPForm);
   }
 
 const char *DefinstancesModule(
   Definstances *theDefinstances)
   {
-   return GetConstructModuleName((struct constructHeader *) theDefinstances);
+   return GetConstructModuleName(&theDefinstances->header);
   }
 
 CLIPSLexeme *EnvGetDefinstancesNamePointer(
   Environment *theEnv,
   Definstances *theDefinstances)
   {
-   return GetConstructNamePointer((struct constructHeader *) theDefinstances);
+   return GetConstructNamePointer(&theDefinstances->header);
   }
 
 const char *EnvDefinstancesModuleName(
   Environment *theEnv,
   Definstances *theDefinstances)
   {
-   return GetConstructModuleName((struct constructHeader *) theDefinstances);
+   return GetConstructModuleName(&theDefinstances->header);
   }
 
 #endif

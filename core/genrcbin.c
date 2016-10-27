@@ -101,15 +101,15 @@ typedef struct bsaveGenericModule
 #if BLOAD_AND_BSAVE
 
    static void                    BsaveGenericsFind(Environment *);
-   static void                    MarkDefgenericItems(Environment *,struct constructHeader *,void *);
+   static void                    MarkDefgenericItems(Environment *,ConstructHeader *,void *);
    static void                    BsaveGenericsExpressions(Environment *,FILE *);
-   static void                    BsaveMethodExpressions(Environment *,struct constructHeader *,void *);
-   static void                    BsaveRestrictionExpressions(Environment *,struct constructHeader *,void *);
+   static void                    BsaveMethodExpressions(Environment *,ConstructHeader *,void *);
+   static void                    BsaveRestrictionExpressions(Environment *,ConstructHeader *,void *);
    static void                    BsaveGenerics(Environment *,FILE *);
-   static void                    BsaveDefgenericHeader(Environment *,struct constructHeader *,void *);
-   static void                    BsaveMethods(Environment *,struct constructHeader *,void *);
-   static void                    BsaveMethodRestrictions(Environment *,struct constructHeader *,void *);
-   static void                    BsaveRestrictionTypes(Environment *,struct constructHeader *,void *);
+   static void                    BsaveDefgenericHeader(Environment *,ConstructHeader *,void *);
+   static void                    BsaveMethods(Environment *,ConstructHeader *,void *);
+   static void                    BsaveMethodRestrictions(Environment *,ConstructHeader *,void *);
+   static void                    BsaveRestrictionTypes(Environment *,ConstructHeader *,void *);
    static void                    BsaveStorageGenerics(Environment *,FILE *);
 
 #endif
@@ -256,7 +256,7 @@ static void BsaveGenericsFind(
  ***************************************************/
 static void MarkDefgenericItems(
   Environment *theEnv,
-  struct constructHeader *theDefgeneric,
+  ConstructHeader *theDefgeneric,
   void *userBuffer)
   {
 #if MAC_XCD
@@ -322,7 +322,7 @@ static void BsaveGenericsExpressions(
  ***************************************************/
 static void BsaveMethodExpressions(
   Environment *theEnv,
-  struct constructHeader *theDefgeneric,
+  ConstructHeader *theDefgeneric,
   void *userBuffer)
   {
    Defgeneric *gfunc = (Defgeneric *) theDefgeneric;
@@ -346,7 +346,7 @@ static void BsaveMethodExpressions(
  ***************************************************/
 static void BsaveRestrictionExpressions(
   Environment *theEnv,
-  struct constructHeader *theDefgeneric,
+  ConstructHeader *theDefgeneric,
   void *userBuffer)
   {
    Defgeneric *gfunc = (Defgeneric *) theDefgeneric;
@@ -486,7 +486,7 @@ static void BsaveGenerics(
  ***************************************************/
 static void BsaveDefgenericHeader(
   Environment *theEnv,
-  struct constructHeader *theDefgeneric,
+  ConstructHeader *theDefgeneric,
   void *userBuffer)
   {
    Defgeneric *gfunc = (Defgeneric *) theDefgeneric;
@@ -515,7 +515,7 @@ static void BsaveDefgenericHeader(
  ***************************************************/
 static void BsaveMethods(
   Environment *theEnv,
-  struct constructHeader *theDefgeneric,
+  ConstructHeader *theDefgeneric,
   void *userBuffer)
   {
    Defgeneric *gfunc = (Defgeneric *) theDefgeneric;
@@ -564,7 +564,7 @@ static void BsaveMethods(
  ******************************************************/
 static void BsaveMethodRestrictions(
   Environment *theEnv,
-  struct constructHeader *theDefgeneric,
+  ConstructHeader *theDefgeneric,
   void *userBuffer)
   {
    Defgeneric *gfunc = (Defgeneric *) theDefgeneric;
@@ -609,7 +609,7 @@ static void BsaveMethodRestrictions(
  *************************************************************/
 static void BsaveRestrictionTypes(
   Environment *theEnv,
-  struct constructHeader *theDefgeneric,
+  ConstructHeader *theDefgeneric,
   void *userBuffer)
   {
    Defgeneric *gfunc = (Defgeneric *) theDefgeneric;

@@ -159,7 +159,7 @@ bool Undeftemplate(
    else
      { theEnv = theDeftemplate->header.env; }
    
-   return Undefconstruct(theEnv,theDeftemplate,DeftemplateData(theEnv)->DeftemplateConstruct);
+   return Undefconstruct(theEnv,&theDeftemplate->header,DeftemplateData(theEnv)->DeftemplateConstruct);
   }
 
 /****************************************************/

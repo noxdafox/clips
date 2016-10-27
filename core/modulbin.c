@@ -109,9 +109,9 @@ void UpdateDefmoduleItemHeader(
       firstOffset = itemSize * theBsaveHeader->firstItem;
       lastOffset = itemSize * theBsaveHeader->lastItem;
       theHeader->firstItem =
-        (struct constructHeader *) &((char *) itemArray)[firstOffset];
+        (ConstructHeader *) &((char *) itemArray)[firstOffset];
       theHeader->lastItem =
-        (struct constructHeader *) &((char *) itemArray)[lastOffset];
+        (ConstructHeader *) &((char *) itemArray)[lastOffset];
      }
   }
 

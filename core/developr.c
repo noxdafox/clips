@@ -646,7 +646,7 @@ static void TraverseBetaMemories(
 /***********************************/
 static void ValidateRuleBetaMemoriesAction(
   Environment *theEnv,
-  struct constructHeader *theConstruct,
+  ConstructHeader *theConstruct,
   void *buffer)
   {
 #if MAC_XCD

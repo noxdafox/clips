@@ -132,7 +132,7 @@ struct CodeGeneratorFile
    FILE                     *OpenFileIfNeeded(Environment *,FILE *,const char *,const char *,char *,int,int,int *,
                                               int,FILE *,const char *,char *,bool,struct CodeGeneratorFile *);
    void                      MarkConstructBsaveIDs(Environment *,int);
-   void                      ConstructHeaderToCode(Environment *,FILE *,struct constructHeader *,int,int,
+   void                      ConstructHeaderToCode(Environment *,FILE *,ConstructHeader *,int,int,
                                                    int,const char *,const char *);
    void                      ConstructModuleToCode(Environment *,FILE *,Defmodule *,int,int,
                                                    int,const char *);

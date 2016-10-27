@@ -1315,7 +1315,7 @@ struct lhsParseNode *ExpressionToLHSParseNodes(
 
    if (newList->pnType != FCALL_NODE) return(newList);
 
-   theFunction = (struct FunctionDefinition *) newList->value;
+   theFunction = newList->functionValue;
    for (theList = newList->bottom, i = 1;
         theList != NULL;
         theList = theList->right, i++)

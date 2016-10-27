@@ -1016,8 +1016,7 @@ void ClassCommand(
    const char *func;
    UDFValue temp;
 
-   func = ((struct FunctionDefinition *)
-           EvaluationData(theEnv)->CurrentExpression->value)->callFunctionName->contents;
+   func = EvaluationData(theEnv)->CurrentExpression->functionValue->callFunctionName->contents;
 
    returnValue->lexemeValue = theEnv->FalseSymbol;
 

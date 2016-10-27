@@ -120,7 +120,7 @@ typedef union
 /***************************************/
 
    static void                    ReadyObjectsForCode(Environment *);
-   static void                    MarkDefclassAndSlots(Environment *,struct constructHeader *,void *);
+   static void                    MarkDefclassAndSlots(Environment *,ConstructHeader *,void *);
    static void                    PrintSlotNameReference(Environment *,FILE *,SLOT_NAME *,int,int);
    static void                    InitObjectsCode(Environment *,FILE *,int,int);
    static bool                    ObjectsToCode(Environment *,const char *,const char *,char *,int,FILE *,int,int);
@@ -300,7 +300,7 @@ static void ReadyObjectsForCode(
  ************************************************************/
 static void MarkDefclassAndSlots(
   Environment *theEnv,
-  struct constructHeader *vTheDefclass,
+  ConstructHeader *vTheDefclass,
   void *vTheBuffer)
   {
    Defclass *theDefclass = (Defclass *) vTheDefclass;

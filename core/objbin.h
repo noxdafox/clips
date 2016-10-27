@@ -68,7 +68,7 @@ struct objectBinaryData
 #define ObjectBinaryData(theEnv) ((struct objectBinaryData *) GetEnvironmentData(theEnv,OBJECTBIN_DATA))
 
 #define DefclassPointer(i) (((i) == -1L) ? NULL : &ObjectBinaryData(theEnv)->DefclassArray[i])
-#define DefclassIndex(cls) (((cls) == NULL) ? -1 : ((struct constructHeader *) cls)->bsaveID)
+#define DefclassIndex(cls) (((cls) == NULL) ? -1 : ((ConstructHeader *) cls)->bsaveID)
 
    void                    SetupObjectsBload(Environment *);
    void                   *BloadDefclassModuleReference(Environment *,int);

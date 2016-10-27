@@ -354,7 +354,7 @@ bool ParseDefmethod(
       ReturnPackedExpression(theEnv,actions);
       if (newMethod)
         {
-         RemoveConstructFromModule(theEnv,(struct constructHeader *) gfunc);
+         RemoveConstructFromModule(theEnv,&gfunc->header);
          RemoveDefgeneric(theEnv,gfunc);
         }
       return false;
@@ -397,7 +397,7 @@ bool ParseDefmethod(
 DefmethodParseError:
    if (newMethod)
      {
-      RemoveConstructFromModule(theEnv,(struct constructHeader *) gfunc);
+      RemoveConstructFromModule(theEnv,&gfunc->header);
       RemoveDefgeneric(theEnv,gfunc);
      }
    return true;
@@ -1338,7 +1338,7 @@ static Defgeneric *AddGeneric(
       /* ================================
          The old trace state is preserved
          ================================ */
-      RemoveConstructFromModule(theEnv,(struct constructHeader *) gfunc);
+      RemoveConstructFromModule(theEnv,&gfunc->header);
      }
    else
      {
@@ -1347,7 +1347,7 @@ static Defgeneric *AddGeneric(
       IncrementSymbolCount(name);
       AddImplicitMethods(theEnv,gfunc);
      }
-   AddConstructToModule((struct constructHeader *) gfunc);
+   AddConstructToModule(&gfunc->header);
    return(gfunc);
   }
 
@@ -1576,7 +1576,7 @@ static Defgeneric *NewGeneric(
    Defgeneric *ngen;
 
    ngen = get_struct(theEnv,defgeneric);
-   InitializeConstructHeader(theEnv,"defgeneric",DEFGENERIC,(struct constructHeader *) ngen,gname);
+   InitializeConstructHeader(theEnv,"defgeneric",DEFGENERIC,&ngen->header,gname);
    ngen->busy = 0;
    ngen->new_index = 1;
    ngen->methods = NULL;

@@ -122,19 +122,19 @@
    static void                    DeallocateDeffunctionData(Environment *);
 
 #if ! RUN_TIME
-   static void                    DestroyDeffunctionAction(Environment *,struct constructHeader *,void *);
+   static void                    DestroyDeffunctionAction(Environment *,ConstructHeader *,void *);
    static void                   *AllocateModule(Environment *);
    static void                    ReturnModule(Environment *,void *);
    static bool                    ClearDeffunctionsReady(Environment *);
 #else
-   static void                    RuntimeDeffunctionAction(Environment *,struct constructHeader *,void *);
+   static void                    RuntimeDeffunctionAction(Environment *,ConstructHeader *,void *);
 #endif
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
    static bool                    RemoveAllDeffunctions(Environment *);
    static void                    DeffunctionDeleteError(Environment *,const char *);
    static void                    SaveDeffunctionHeaders(Environment *,Defmodule *,const char *);
-   static void                    SaveDeffunctionHeader(Environment *,struct constructHeader *,void *);
+   static void                    SaveDeffunctionHeader(Environment *,ConstructHeader *,void *);
    static void                    SaveDeffunctions(Environment *,Defmodule *,const char *);
 #endif
 
@@ -295,7 +295,7 @@ static void DeallocateDeffunctionData(
 /*****************************************************/
 static void DestroyDeffunctionAction(
   Environment *theEnv,
-  struct constructHeader *theConstruct,
+  ConstructHeader *theConstruct,
   void *buffer)
   {
 #if MAC_XCD
@@ -421,7 +421,7 @@ bool Undeffunction(
       return(RemoveAllDeffunctions(theEnv));
    if (DeffunctionIsDeletable(theDeffunction) == false)
      return false;
-   RemoveConstructFromModule(theEnv,(struct constructHeader *) theDeffunction);
+   RemoveConstructFromModule(theEnv,&theDeffunction->header);
    RemoveDeffunction(theEnv,theDeffunction);
    return true;
 #endif
@@ -441,7 +441,7 @@ Deffunction *EnvGetNextDeffunction(
   Deffunction *theDeffunction)
   {
    return (Deffunction *)
-          GetNextConstructItem(theEnv,(struct constructHeader *) theDeffunction,
+          GetNextConstructItem(theEnv,&theDeffunction->header,
                                DeffunctionData(theEnv)->DeffunctionModuleIndex);
   }
 
@@ -839,7 +839,7 @@ static bool ClearDeffunctionsReady(
 /**************************************************/
 static void RuntimeDeffunctionAction(
   Environment *theEnv,
-  struct constructHeader *theConstruct,
+  ConstructHeader *theConstruct,
   void *buffer)
   {
 #if MAC_XCD
@@ -922,7 +922,7 @@ static bool RemoveAllDeffunctions(
            }
          else
            {
-            RemoveConstructFromModule(theEnv,(struct constructHeader *) dtmp);
+            RemoveConstructFromModule(theEnv,&dtmp->header);
             RemoveDeffunction(theEnv,dtmp);
            }
         }
@@ -981,7 +981,7 @@ static void SaveDeffunctionHeaders(
  ***************************************************/
 static void SaveDeffunctionHeader(
   Environment *theEnv,
-  struct constructHeader *theDeffunction,
+  ConstructHeader *theDeffunction,
   void *userBuffer)
   {
    Deffunction *dfnxPtr = (Deffunction *) theDeffunction;
@@ -1133,26 +1133,26 @@ bool DeffunctionGetWatch(
 const char *DeffunctionModule(
   Deffunction *theDeffunction)
   {
-   return GetConstructModuleName((struct constructHeader *) theDeffunction);
+   return GetConstructModuleName(&theDeffunction->header);
   }
 
 const char *DeffunctionName(
   Deffunction *theDeffunction)
   {
-   return GetConstructNameString((struct constructHeader *) theDeffunction);
+   return GetConstructNameString(&theDeffunction->header);
   }
 
 const char *DeffunctionPPForm(
   Deffunction *theDeffunction)
   {
-   return GetConstructPPForm((struct constructHeader *) theDeffunction);
+   return GetConstructPPForm(&theDeffunction->header);
   }
 
 CLIPSLexeme *EnvGetDeffunctionNamePointer(
   Environment *theEnv,
   Deffunction *theDeffunction)
   {
-   return GetConstructNamePointer((struct constructHeader *) theDeffunction);
+   return GetConstructNamePointer(&theDeffunction->header);
   }
 
 void EnvSetDeffunctionPPForm(
@@ -1160,7 +1160,7 @@ void EnvSetDeffunctionPPForm(
   Deffunction *theDeffunction,
   const char *thePPForm)
   {
-   SetConstructPPForm(theEnv,(struct constructHeader *) theDeffunction,thePPForm);
+   SetConstructPPForm(theEnv,&theDeffunction->header,thePPForm);
   }
 
 #endif

@@ -78,7 +78,7 @@
 /***************************************/
 
    static void                    SaveDefglobals(Environment *,Defmodule *,const char *);
-   static void                    ResetDefglobalAction(Environment *,struct constructHeader *,void *);
+   static void                    ResetDefglobalAction(Environment *,ConstructHeader *,void *);
 #if DEBUGGING_FUNCTIONS && (! RUN_TIME)
    static bool                    DefglobalWatchAccess(Environment *,int,bool,struct expr *);
    static bool                    DefglobalWatchPrint(Environment *,const char *,int,struct expr *);
@@ -133,7 +133,7 @@ void ResetDefglobals(
 /******************************************************/
 static void ResetDefglobalAction(
   Environment *theEnv,
-  struct constructHeader *theConstruct,
+  ConstructHeader *theConstruct,
   void *buffer)
   {
 #if MAC_XCD
@@ -189,7 +189,7 @@ bool Undefglobal(
    else 
      { theEnv = theDefglobal->header.env; }
    
-   return(Undefconstruct(theEnv,theDefglobal,DefglobalData(theEnv)->DefglobalConstruct));
+   return(Undefconstruct(theEnv,&theDefglobal->header,DefglobalData(theEnv)->DefglobalConstruct));
   }
 
 /**************************************************/

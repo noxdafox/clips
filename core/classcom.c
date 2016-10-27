@@ -83,7 +83,7 @@
 /***************************************/
 
 #if (! BLOAD_ONLY) && (! RUN_TIME) && DEBUGGING_FUNCTIONS
-   static void                    SaveDefclass(Environment *,struct constructHeader *,void *);
+   static void                    SaveDefclass(Environment *,ConstructHeader *,void *);
 #endif
    static const char             *GetClassDefaultsModeName(unsigned short);
 
@@ -349,7 +349,7 @@ Defclass *EnvGetNextDefclass(
   Environment *theEnv,
   Defclass *theDefclass)
   {
-   return (Defclass *) GetNextConstructItem(theEnv,(struct constructHeader *) theDefclass,
+   return (Defclass *) GetNextConstructItem(theEnv,&theDefclass->header,
                                             DefclassData(theEnv)->DefclassModuleIndex);
   }
 
@@ -765,7 +765,7 @@ void SaveDefclasses(
  ***************************************************/
 static void SaveDefclass(
   Environment *theEnv,
-  struct constructHeader *theConstruct,
+  ConstructHeader *theConstruct,
   void *userBuffer)
   {
    const char *logName = (const char *) userBuffer;
@@ -910,15 +910,15 @@ static const char *GetClassDefaultsModeName(
 CLIPSLexeme *GetDefclassNamePointer(
   Defclass *theClass)
   {
-   return GetConstructNamePointer((struct constructHeader *) theClass);
+   return GetConstructNamePointer(&theClass->header);
   }
 
 void SetNextDefclass(
   Defclass *theClass,
   Defclass *targetClass)
   {
-   SetNextConstruct((struct constructHeader *) theClass,
-                    (struct constructHeader *) targetClass);
+   SetNextConstruct(&theClass->header,
+                    &targetClass->header);
   }
 
 /*##################################*/
@@ -928,26 +928,26 @@ void SetNextDefclass(
 const char *DefclassName(
   Defclass *theClass)
   {
-   return GetConstructNameString((struct constructHeader *) theClass);
+   return GetConstructNameString(&theClass->header);
   }
 
 const char *DefclassPPForm(
   Defclass *theClass)
   {
-   return GetConstructPPForm((struct constructHeader *) theClass);
+   return GetConstructPPForm(&theClass->header);
   }
 
 struct defmoduleItemHeader *EnvGetDefclassModule(
   Environment *theEnv,
   Defclass *theClass)
   {
-   return GetConstructModuleItem((struct constructHeader *) theClass);
+   return GetConstructModuleItem(&theClass->header);
   }
 
 const char *DefclassModule(
   Defclass *theClass)
   {
-   return GetConstructModuleName((struct constructHeader *) theClass);
+   return GetConstructModuleName(&theClass->header);
   }
 
 void EnvSetDefclassPPForm(
@@ -955,7 +955,7 @@ void EnvSetDefclassPPForm(
   Defclass *theClass,
   char *thePPForm)
   {
-   SetConstructPPForm(theEnv,(struct constructHeader *) theClass,thePPForm);
+   SetConstructPPForm(theEnv,&theClass->header,thePPForm);
   }
 
 #endif /* OBJECT_SYSTEM */

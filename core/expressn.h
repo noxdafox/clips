@@ -53,6 +53,7 @@ struct exprHashNode;
 typedef struct expr EXPRESSION;
 
 #include "exprnops.h"
+#include "constrct.h"
 
 /******************************/
 /* Expression Data Structures */
@@ -68,6 +69,8 @@ struct expr
        CLIPSFloat *floatValue;
        CLIPSInteger *integerValue;
        CLIPSBitMap *bitMapValue;
+       ConstructHeader *constructValue;
+       struct FunctionDefinition *functionValue;
       };
     struct expr *argList;
     struct expr *nextArg;

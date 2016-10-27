@@ -80,9 +80,9 @@
    static void                    InitializeDeffactsModules(Environment *);
    static void                    DeallocateDeffactsData(Environment *);
 #if ! RUN_TIME
-   static void                    DestroyDeffactsAction(Environment *,struct constructHeader *,void *);
+   static void                    DestroyDeffactsAction(Environment *,ConstructHeader *,void *);
 #else
-   static void                    RuntimeDeffactsAction(Environment *,struct constructHeader *,void *);
+   static void                    RuntimeDeffactsAction(Environment *,ConstructHeader *,void *);
 #endif
 
 /***********************************************************/
@@ -152,7 +152,7 @@ static void DeallocateDeffactsData(
 /*********************************************************/
 static void DestroyDeffactsAction(
   Environment *theEnv,
-  struct constructHeader *theConstruct,
+  ConstructHeader *theConstruct,
   void *buffer)
   {
 #if MAC_XCD
@@ -185,7 +185,7 @@ static void DestroyDeffactsAction(
 /***********************************************/
 static void RuntimeDeffactsAction(
   Environment *theEnv,
-  struct constructHeader *theConstruct,
+  ConstructHeader *theConstruct,
   void *buffer)
   {
 #if MAC_XCD
@@ -296,7 +296,7 @@ Deffacts *EnvGetNextDeffacts(
   Environment *theEnv,
   Deffacts *deffactsPtr)
   {
-   return (Deffacts *) GetNextConstructItem(theEnv,(struct constructHeader *) deffactsPtr,DeffactsData(theEnv)->DeffactsModuleIndex);
+   return (Deffacts *) GetNextConstructItem(theEnv,&deffactsPtr->header,DeffactsData(theEnv)->DeffactsModuleIndex);
   }
 
 /*******************************************************/
@@ -343,19 +343,19 @@ static void ReturnDeffacts(
 const char *DeffactsModule(
   Deffacts *theDeffacts)
   {
-   return GetConstructModuleName((struct constructHeader *) theDeffacts);
+   return GetConstructModuleName(&theDeffacts->header);
   }
 
 const char *DeffactsName(
   Deffacts *theDeffacts)
   {
-   return GetConstructNameString((struct constructHeader *) theDeffacts);
+   return GetConstructNameString(&theDeffacts->header);
   }
 
 const char *DeffactsPPForm(
   Deffacts *theDeffacts)
   {
-   return GetConstructPPForm((struct constructHeader *) theDeffacts);
+   return GetConstructPPForm(&theDeffacts->header);
   }
 
 
