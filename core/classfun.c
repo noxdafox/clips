@@ -524,7 +524,7 @@ Defclass *NewClass(
    Defclass *cls;
 
    cls = get_struct(theEnv,defclass);
-   InitializeConstructHeader(theEnv,"defclass",DEFCLASS,(struct constructHeader *) cls,className);
+   InitializeConstructHeader(theEnv,"defclass",DEFCLASS,&cls->header,className);
 
    cls->id = 0;
    cls->installed = 0;
@@ -1013,7 +1013,7 @@ bool RemoveAllUserClasses(
       userClasses = EnvGetNextDefclass(theEnv,userClasses);
       if (DefclassIsDeletable(ctmp))
         {
-         RemoveConstructFromModule(theEnv,(struct constructHeader *) ctmp);
+         RemoveConstructFromModule(theEnv,&ctmp->header);
          RemoveDefclass(theEnv,ctmp);
         }
       else
@@ -1050,7 +1050,7 @@ bool DeleteClassUAG(
      }
    if (DefclassIsDeletable(cls))
      {
-      RemoveConstructFromModule(theEnv,(struct constructHeader *) cls);
+      RemoveConstructFromModule(theEnv,&cls->header);
       RemoveDefclass(theEnv,cls);
       return true;
      }

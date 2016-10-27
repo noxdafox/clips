@@ -726,7 +726,7 @@ bool CheckRHSForConstraintErrors(
        if (checkList->type == FCALL)
          {
           lastOne = checkList;
-          theFunction = (struct FunctionDefinition *) checkList->value;
+          theFunction = checkList->functionValue;
          }
        else
          { theFunction = NULL; }

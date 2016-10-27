@@ -339,7 +339,7 @@ bool ParseDefmodule(
    if (redefiningMainModule == NULL)
      {
       if (DefmoduleData(theEnv)->LastDefmodule == NULL) DefmoduleData(theEnv)->ListOfDefmodules = newDefmodule;
-      else DefmoduleData(theEnv)->LastDefmodule->header.next = (struct constructHeader *) newDefmodule;
+      else DefmoduleData(theEnv)->LastDefmodule->header.next = &newDefmodule->header;
       DefmoduleData(theEnv)->LastDefmodule = newDefmodule;
       newDefmodule->header.bsaveID = DefmoduleData(theEnv)->NumberOfDefmodules++;
      }
@@ -952,8 +952,8 @@ static bool FindMultiImportConflict(
    Defmodule *testModule;
    int count;
    struct portConstructItem *thePCItem;
-   struct construct *theConstruct;
-   void *theCItem;
+   Construct *theConstruct;
+   ConstructHeader *theCItem;
 
    /*==========================*/
    /* Save the current module. */
@@ -999,15 +999,13 @@ static bool FindMultiImportConflict(
 
              EnvSetCurrentModule(theEnv,theModule);
              FindImportedConstruct(theEnv,thePCItem->constructName,NULL,
-                                   (*theConstruct->getConstructNameFunction)
-                                      ((struct constructHeader *) theCItem)->contents,
+                                   (*theConstruct->getConstructNameFunction)(theCItem)->contents,
                                    &count,false,NULL);
              if (count > 1)
                {
                 ImportExportConflictMessage(theEnv,"defmodule",DefmoduleName(theModule),
                                             thePCItem->constructName,
-                                            (*theConstruct->getConstructNameFunction)
-                                               ((struct constructHeader *) theCItem)->contents);
+                                            (*theConstruct->getConstructNameFunction)(theCItem)->contents);
                 RestoreCurrentModule(theEnv);
                 return true;
                }

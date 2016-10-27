@@ -98,7 +98,7 @@
 #endif
 
 #if RUN_TIME
-   static void                    RuntimeDefgenericAction(Environment *,struct constructHeader *,void *);
+   static void                    RuntimeDefgenericAction(Environment *,ConstructHeader *,void *);
 #endif
 
 /* =========================================
@@ -174,7 +174,7 @@ void FreeDefgenericModule(
 /*************************************************/
 static void RuntimeDefgenericAction(
   Environment *theEnv,
-  struct constructHeader *theConstruct,
+  ConstructHeader *theConstruct,
   void *buffer)
   {
 #if MAC_XCD
@@ -353,7 +353,7 @@ bool ClearDefgenerics(
         }
       else
         {
-         RemoveConstructFromModule(theEnv,(struct constructHeader *) gtmp);
+         RemoveConstructFromModule(theEnv,&gtmp->header);
          RemoveDefgeneric(theEnv,gtmp);
         }
      }

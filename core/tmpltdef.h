@@ -87,7 +87,7 @@ struct deftemplateModule
 
 struct deftemplate
   {
-   struct constructHeader header;
+   ConstructHeader header;
    struct templateSlot *slotList;
    unsigned int implied       : 1;
    unsigned int watch         : 1;
@@ -117,7 +117,7 @@ struct templateSlot
 
 struct deftemplateData
   {
-   struct construct *DeftemplateConstruct;
+   Construct *DeftemplateConstruct;
    int DeftemplateModuleIndex;
    struct entityRecord DeftemplatePtrRecord;
 #if DEBUGGING_FUNCTIONS

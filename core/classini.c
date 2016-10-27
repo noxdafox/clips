@@ -128,7 +128,7 @@
    static void                    DeallocateDefclassData(Environment *);
 
 #if (! RUN_TIME)
-   static void                    DestroyDefclassAction(Environment *,struct constructHeader *,void *);
+   static void                    DestroyDefclassAction(Environment *,ConstructHeader *,void *);
    static Defclass               *AddSystemClass(Environment *,const char *,Defclass *);
    static void                   *AllocateModule(Environment *);
    static void                    ReturnModule(Environment *,void *);
@@ -315,7 +315,7 @@ static void DeallocateDefclassData(
 /*********************************************************/
 static void DestroyDefclassAction(
   Environment *theEnv,
-  struct constructHeader *theConstruct,
+  ConstructHeader *theConstruct,
   void *buffer)
   {
 #if MAC_XCD
@@ -536,24 +536,24 @@ void CreateSystemClasses(
       The order of the class in the list MUST correspond to their type codes!
       See CONSTANT.H
       ======================================================================= */
-   AddConstructToModule((struct constructHeader *) DefclassData(theEnv)->PrimitiveClassMap[FLOAT_TYPE]);
-   AddConstructToModule((struct constructHeader *) DefclassData(theEnv)->PrimitiveClassMap[INTEGER_TYPE]);
-   AddConstructToModule((struct constructHeader *) DefclassData(theEnv)->PrimitiveClassMap[SYMBOL_TYPE]);
-   AddConstructToModule((struct constructHeader *) DefclassData(theEnv)->PrimitiveClassMap[STRING_TYPE]);
-   AddConstructToModule((struct constructHeader *) DefclassData(theEnv)->PrimitiveClassMap[MULTIFIELD_TYPE]);
-   AddConstructToModule((struct constructHeader *) DefclassData(theEnv)->PrimitiveClassMap[EXTERNAL_ADDRESS_TYPE]);
-   AddConstructToModule((struct constructHeader *) DefclassData(theEnv)->PrimitiveClassMap[FACT_ADDRESS_TYPE]);
-   AddConstructToModule((struct constructHeader *) DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_ADDRESS_TYPE]);
-   AddConstructToModule((struct constructHeader *) DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_NAME_TYPE]);
-   AddConstructToModule((struct constructHeader *) any);
-   AddConstructToModule((struct constructHeader *) primitive);
-   AddConstructToModule((struct constructHeader *) number);
-   AddConstructToModule((struct constructHeader *) lexeme);
-   AddConstructToModule((struct constructHeader *) address);
-   AddConstructToModule((struct constructHeader *) instance);
-   AddConstructToModule((struct constructHeader *) user);
+   AddConstructToModule(&DefclassData(theEnv)->PrimitiveClassMap[FLOAT_TYPE]->header);
+   AddConstructToModule(&DefclassData(theEnv)->PrimitiveClassMap[INTEGER_TYPE]->header);
+   AddConstructToModule(&DefclassData(theEnv)->PrimitiveClassMap[SYMBOL_TYPE]->header);
+   AddConstructToModule(&DefclassData(theEnv)->PrimitiveClassMap[STRING_TYPE]->header);
+   AddConstructToModule(&DefclassData(theEnv)->PrimitiveClassMap[MULTIFIELD_TYPE]->header);
+   AddConstructToModule(&DefclassData(theEnv)->PrimitiveClassMap[EXTERNAL_ADDRESS_TYPE]->header);
+   AddConstructToModule(&DefclassData(theEnv)->PrimitiveClassMap[FACT_ADDRESS_TYPE]->header);
+   AddConstructToModule(&DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_ADDRESS_TYPE]->header);
+   AddConstructToModule(&DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_NAME_TYPE]->header);
+   AddConstructToModule(&any->header);
+   AddConstructToModule(&primitive->header);
+   AddConstructToModule(&number->header);
+   AddConstructToModule(&lexeme->header);
+   AddConstructToModule(&address->header);
+   AddConstructToModule(&instance->header);
+   AddConstructToModule(&user->header);
 #if DEFRULE_CONSTRUCT
-   AddConstructToModule((struct constructHeader *) initialObject);
+   AddConstructToModule(&initialObject->header);
 #endif
    for (any = EnvGetNextDefclass(theEnv,NULL) ;
         any != NULL ;

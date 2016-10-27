@@ -97,10 +97,10 @@
    static void                    ReturnDeftemplate(Environment *,Deftemplate *);
    static void                    InitializeDeftemplateModules(Environment *);
    static void                    DeallocateDeftemplateData(Environment *);
-   static void                    DestroyDeftemplateAction(Environment *,struct constructHeader *,void *);
+   static void                    DestroyDeftemplateAction(Environment *,ConstructHeader *,void *);
    static void                    DestroyDeftemplate(Environment *,Deftemplate *);
 #if RUN_TIME
-   static void                    RuntimeDeftemplateAction(Environment *,struct constructHeader *,void *);
+   static void                    RuntimeDeftemplateAction(Environment *,ConstructHeader *,void *);
    static void                    SearchForHashedPatternNodes(Environment *,struct factPatternNode *);
 #endif
 
@@ -182,7 +182,7 @@ static void DeallocateDeftemplateData(
 /*****************************************************/
 static void DestroyDeftemplateAction(
   Environment *theEnv,
-  struct constructHeader *theConstruct,
+  ConstructHeader *theConstruct,
   void *buffer)
   {
 #if MAC_XCD
@@ -287,7 +287,7 @@ Deftemplate *EnvGetNextDeftemplate(
   Environment *theEnv,
   Deftemplate *deftemplatePtr)
   {
-   return (Deftemplate *) GetNextConstructItem(theEnv,(struct constructHeader *) deftemplatePtr,DeftemplateData(theEnv)->DeftemplateModuleIndex);
+   return (Deftemplate *) GetNextConstructItem(theEnv,&deftemplatePtr->header,DeftemplateData(theEnv)->DeftemplateModuleIndex);
   }
 
 /**********************************************************/
@@ -518,7 +518,7 @@ void *CreateDeftemplateScopeMap(
 /**************************************************/
 static void RuntimeDeftemplateAction(
   Environment *theEnv,
-  struct constructHeader *theConstruct,
+  ConstructHeader *theConstruct,
   void *buffer)
   {
 #if MAC_XCD
@@ -566,19 +566,19 @@ void DeftemplateRunTimeInitialize(
 const char *DeftemplateModule(
   Deftemplate *theDeftemplate)
   {
-   return GetConstructModuleName((struct constructHeader *) theDeftemplate);
+   return GetConstructModuleName(&theDeftemplate->header);
   }
 
 const char *DeftemplateName(
   Deftemplate *theDeftemplate)
   {
-   return GetConstructNameString((struct constructHeader *) theDeftemplate);
+   return GetConstructNameString(&theDeftemplate->header);
   }
 
 const char *DeftemplatePPForm(
   Deftemplate *theDeftemplate)
   {
-   return GetConstructPPForm((struct constructHeader *) theDeftemplate);
+   return GetConstructPPForm(&theDeftemplate->header);
   }
 
 #endif /* DEFTEMPLATE_CONSTRUCT */

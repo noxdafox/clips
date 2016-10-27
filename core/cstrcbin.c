@@ -56,7 +56,7 @@
   NOTES        : None
  ***************************************************/
 void MarkConstructHeaderNeededItems(
-  struct constructHeader *theConstruct,
+  ConstructHeader *theConstruct,
   long theBsaveID)
   {
    theConstruct->name->neededSymbol = true;
@@ -82,7 +82,7 @@ void MarkConstructHeaderNeededItems(
  ******************************************************/
 void AssignBsaveConstructHeaderVals(
   struct bsaveConstructHeader *theBsaveConstruct,
-  struct constructHeader *theConstruct)
+  ConstructHeader *theConstruct)
   {
    if (theConstruct->name != NULL)
      { theBsaveConstruct->name = (long) theConstruct->name->bucket; }
@@ -96,7 +96,7 @@ void AssignBsaveConstructHeaderVals(
      { theBsaveConstruct->whichModule = -1L; }
      
    if (theConstruct->next != NULL)
-     theBsaveConstruct->next = ((struct constructHeader *) theConstruct->next)->bsaveID;
+     theBsaveConstruct->next = theConstruct->next->bsaveID;
    else
      theBsaveConstruct->next = -1L;
   }
@@ -124,7 +124,7 @@ void AssignBsaveConstructHeaderVals(
 void UpdateConstructHeader(
   Environment *theEnv,
   struct bsaveConstructHeader *theBsaveConstruct,
-  struct constructHeader *theConstruct,
+  ConstructHeader *theConstruct,
   ConstructType theType,
   int itemModuleSize,
   void *itemModuleArray,
@@ -153,7 +153,7 @@ void UpdateConstructHeader(
    if (theBsaveConstruct->next != -1L)
      {
       itemOffset = itemSize * theBsaveConstruct->next;
-      theConstruct->next = (struct constructHeader *) &((char *) itemArray)[itemOffset];
+      theConstruct->next = (ConstructHeader *) &((char *) itemArray)[itemOffset];
      }
    else
      { theConstruct->next = NULL; }
@@ -176,7 +176,7 @@ void UpdateConstructHeader(
  *******************************************************/
 void UnmarkConstructHeader(
   Environment *theEnv,
-  struct constructHeader *theConstruct)
+  ConstructHeader *theConstruct)
   {
    DecrementSymbolCount(theEnv,theConstruct->name);
   }

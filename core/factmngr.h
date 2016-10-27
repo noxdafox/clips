@@ -154,6 +154,7 @@ struct factsData
 #define FactData(theEnv) ((struct factsData *) GetEnvironmentData(theEnv,FACTS_DATA))
 
    Fact                          *EnvAssert(Environment *,Fact *);
+   Fact                          *AssertDriver(Environment *,Fact *);
    Fact                          *EnvAssertString(Environment *,const char *);
    Fact                          *EnvCreateFact(Environment *,Deftemplate *);
    void                           EnvDecrementFactCount(Environment *,Fact *);
@@ -163,6 +164,7 @@ struct factsData
    void                           PrintFact(Environment *,const char *,Fact *,bool,bool);
    void                           PrintFactIdentifierInLongForm(Environment *,const char *,Fact *);
    bool                           EnvRetract(Environment *,Fact *);
+   bool                           RetractDriver(Environment *,Fact *);
    void                           RemoveAllFacts(Environment *);
    struct fact                   *CreateFactBySize(Environment *,unsigned);
    void                           FactInstall(Environment *,Fact *);

@@ -67,7 +67,7 @@
    int                            EnvLoad(Environment *,const char *);
    int                            LoadConstructsFromLogicalName(Environment *,const char *);
    int                            ParseConstruct(Environment *,const char *,const char *);
-   void                           RemoveConstructFromModule(Environment *,struct constructHeader *);
+   void                           RemoveConstructFromModule(Environment *,ConstructHeader *);
    CLIPSLexeme                   *GetConstructNameAndComment(Environment *,const char *,
                                                              struct token *,const char *,
                                                              FindConstructFunction *,

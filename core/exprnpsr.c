@@ -374,12 +374,11 @@ bool ReplaceSequenceExpansionOps(
           (actions->value == expmult))
         {
          if ((fcallexp->type != FCALL) ? false :
-             (((struct FunctionDefinition *) fcallexp->value)->sequenceuseok == false))
+             (fcallexp->functionValue->sequenceuseok == false))
            {
             PrintErrorID(theEnv,"EXPRNPSR",4,false);
             EnvPrintRouter(theEnv,WERROR,"$ Sequence operator not a valid argument for ");
-            EnvPrintRouter(theEnv,WERROR,((struct FunctionDefinition *)
-                              fcallexp->value)->callFunctionName->contents);
+            EnvPrintRouter(theEnv,WERROR,fcallexp->functionValue->callFunctionName->contents);
             EnvPrintRouter(theEnv,WERROR,".\n");
             return true;
            }
@@ -1077,7 +1076,7 @@ struct expr *RemoveUnneededProgn(
 
    if (theExpression->type != FCALL) return(theExpression);
 
-   fptr = (struct FunctionDefinition *) theExpression->value;
+   fptr = theExpression->functionValue;
 
    if (fptr->functionPointer != PrognFunction)
      { return(theExpression); }

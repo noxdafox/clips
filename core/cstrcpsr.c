@@ -695,7 +695,7 @@ int ParseConstruct(
   const char *name,
   const char *logicalName)
   {
-   struct construct *currentPtr;
+   Construct *currentPtr;
    int rv, ov;
    CLIPSBlock gcBlock;
 
@@ -781,7 +781,7 @@ CLIPSLexeme *GetConstructNameAndComment(
 #endif
    CLIPSLexeme *name, *moduleName;
    bool redefining = false;
-   void *theConstruct;
+   ConstructHeader *theConstruct;
    unsigned separatorPosition;
    Defmodule *theModule;
 
@@ -964,9 +964,9 @@ CLIPSLexeme *GetConstructNameAndComment(
 /****************************************/
 void RemoveConstructFromModule(
   Environment *theEnv,
-  struct constructHeader *theConstruct)
+  ConstructHeader *theConstruct)
   {
-   struct constructHeader *lastConstruct,*currentConstruct;
+   ConstructHeader *lastConstruct,*currentConstruct;
 
    /*==============================*/
    /* Find the specified construct */

@@ -123,7 +123,7 @@ void InitializeConstructData(
 static void DeallocateConstructData(
   Environment *theEnv)
   {
-   struct construct *tmpPtr, *nextPtr;
+   Construct *tmpPtr, *nextPtr;
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    DeallocateCallList(theEnv,ConstructData(theEnv)->ListOfSaveFunctions);
@@ -178,11 +178,11 @@ ParserErrorFunction *EnvSetParserErrorCallback(
 /* FindConstruct: Determines whether a construct */
 /*   type is in the ListOfConstructs.            */
 /*************************************************/
-struct construct *FindConstruct(
+Construct *FindConstruct(
   Environment *theEnv,
   const char *name)
   {
-   struct construct *currentPtr;
+   Construct *currentPtr;
 
    for (currentPtr = ConstructData(theEnv)->ListOfConstructs;
         currentPtr != NULL;
@@ -205,7 +205,7 @@ bool RemoveConstruct(
   Environment *theEnv,
   const char *name)
   {
-   struct construct *currentPtr, *lastPtr = NULL;
+   Construct *currentPtr, *lastPtr = NULL;
 
    for (currentPtr = ConstructData(theEnv)->ListOfConstructs;
         currentPtr != NULL;
@@ -801,7 +801,7 @@ void SetExecutingConstruct(
 /*******************************************************/
 void DeinstallConstructHeader(
   Environment *theEnv,
-  struct constructHeader *theHeader)
+  ConstructHeader *theHeader)
   {
    DecrementSymbolCount(theEnv,theHeader->name);
    if (theHeader->ppForm != NULL)
@@ -826,7 +826,7 @@ void DeinstallConstructHeader(
 /**************************************************/
 void DestroyConstructHeader(
   Environment *theEnv,
-  struct constructHeader *theHeader)
+  ConstructHeader *theHeader)
   {
    if (theHeader->ppForm != NULL)
      {
@@ -846,22 +846,22 @@ void DestroyConstructHeader(
 /* AddConstruct: Adds a construct and its associated */
 /*   parsing function to the ListOfConstructs.       */
 /*****************************************************/
-struct construct *AddConstruct(
+Construct *AddConstruct(
   Environment *theEnv,
   const char *name,
   const char *pluralName,
   bool (*parseFunction)(Environment *,const char *),
   FindConstructFunction *findFunction,
-  CLIPSLexeme *(*getConstructNameFunction)(struct constructHeader *),
-  const char *(*getPPFormFunction)(struct constructHeader *),
-  struct defmoduleItemHeader *(*getModuleItemFunction)(struct constructHeader *),
+  CLIPSLexeme *(*getConstructNameFunction)(ConstructHeader *),
+  const char *(*getPPFormFunction)(ConstructHeader *),
+  struct defmoduleItemHeader *(*getModuleItemFunction)(ConstructHeader *),
   GetNextConstructFunction *getNextItemFunction,
-  void (*setNextItemFunction)(struct constructHeader *,struct constructHeader *),
+  void (*setNextItemFunction)(ConstructHeader *,ConstructHeader *),
   IsConstructDeletableFunction *isConstructDeletableFunction,
   DeleteConstructFunction *deleteFunction,
   FreeConstructFunction *freeFunction)
   {
-   struct construct *newPtr;
+   Construct *newPtr;
 
    /*=============================*/
    /* Allocate and initialize the */

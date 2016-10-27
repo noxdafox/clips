@@ -104,7 +104,7 @@
    static void                    ReturnModule(Environment *,void *);
    static void                    InitializeDefruleModules(Environment *);
    static void                    DeallocateDefruleData(Environment *);
-   static void                    DestroyDefruleAction(Environment *,struct constructHeader *,void *);
+   static void                    DestroyDefruleAction(Environment *,ConstructHeader *,void *);
 #if RUN_TIME
    static void                    AddBetaMemoriesToRule(Environment *,struct joinNode *);
 #endif
@@ -220,7 +220,7 @@ static void DeallocateDefruleData(
 /********************************************************/
 static void DestroyDefruleAction(
   Environment *theEnv,
-  struct constructHeader *theConstruct,
+  ConstructHeader *theConstruct,
   void *buffer)
   {
 #if MAC_XCD
@@ -322,7 +322,7 @@ Defrule *EnvGetNextDefrule(
   Environment *theEnv,
   Defrule *defrulePtr)
   {
-   return (Defrule *) GetNextConstructItem(theEnv,(struct constructHeader *) defrulePtr,DefruleData(theEnv)->DefruleModuleIndex);
+   return (Defrule *) GetNextConstructItem(theEnv,&defrulePtr->header,DefruleData(theEnv)->DefruleModuleIndex);
   }
 
 /******************************************************/
@@ -539,19 +539,19 @@ void AddBetaMemoriesToJoin(
 const char *DefruleModule(
   Defrule *theDefrule)
   {
-   return GetConstructModuleName((struct constructHeader *) theDefrule);
+   return GetConstructModuleName(&theDefrule->header);
   }
 
 const char *DefruleName(
   Defrule *theDefrule)
   {
-   return GetConstructNameString((struct constructHeader *) theDefrule);
+   return GetConstructNameString(&theDefrule->header);
   }
 
 const char *DefrulePPForm(
   Defrule *theDefrule)
   {
-   return GetConstructPPForm((struct constructHeader *) theDefrule);
+   return GetConstructPPForm(&theDefrule->header);
   }
 
 #endif /* DEFRULE_CONSTRUCT */

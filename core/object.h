@@ -97,7 +97,7 @@ struct defclassModule
 
 struct defclass
   {
-   struct constructHeader header;
+   ConstructHeader header;
    unsigned installed      : 1;
    unsigned system         : 1;
    unsigned abstract       : 1;
@@ -214,7 +214,7 @@ struct instance
 
 struct defmessageHandler
   {
-   struct constructHeader header;
+   ConstructHeader header;
    unsigned system         : 1;
    unsigned type           : 2;
    unsigned mark           : 1;

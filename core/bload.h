@@ -77,7 +77,7 @@ struct bloadData
 
 #define BloadData(theEnv) ((struct bloadData *) GetEnvironmentData(theEnv,BLOAD_DATA))
 
-#define FunctionPointer(i) ((struct FunctionDefinition *) (((i) == -1L) ? NULL : BloadData(theEnv)->FunctionArray[i]))
+#define FunctionPointer(i) ((((i) == -1L) ? NULL : BloadData(theEnv)->FunctionArray[i]))
 
    void                    InitializeBloadData(Environment *);
    void                    BloadCommand(Environment *,UDFContext *,UDFValue *);

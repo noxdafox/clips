@@ -598,7 +598,7 @@ static void AddClass(
 
    BuildSubclassLinks(theEnv,cls);
    InstallClass(theEnv,cls,true);
-   AddConstructToModule((struct constructHeader *) cls);
+   AddConstructToModule(&cls->header);
 
    FormInstanceTemplate(theEnv,cls);
    FormSlotNameMap(theEnv,cls);

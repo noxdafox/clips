@@ -432,14 +432,13 @@ void BsaveExpression(
            break;
 
          case FCALL:
-           newTest.value = (long) ((struct FunctionDefinition *)
-                                   testPtr->value)->bsaveIndex;
+           newTest.value = (long) testPtr->functionValue->bsaveIndex;
            break;
 
          case GCALL:
 #if DEFGENERIC_CONSTRUCT
            if (testPtr->value != NULL)
-             newTest.value = ((struct constructHeader *) testPtr->value)->bsaveID;
+             newTest.value = testPtr->constructValue->bsaveID;
            else
 #endif
              newTest.value = -1L;
@@ -448,7 +447,7 @@ void BsaveExpression(
          case PCALL:
 #if DEFFUNCTION_CONSTRUCT
            if (testPtr->value != NULL)
-             newTest.value = ((struct constructHeader *) testPtr->value)->bsaveID;
+             newTest.value = testPtr->constructValue->bsaveID;
            else
 #endif
              newTest.value = -1L;
@@ -457,7 +456,7 @@ void BsaveExpression(
          case DEFTEMPLATE_PTR:
 #if DEFTEMPLATE_CONSTRUCT
            if (testPtr->value != NULL)
-             newTest.value = ((struct constructHeader *) testPtr->value)->bsaveID;
+             newTest.value = testPtr->constructValue->bsaveID;
            else
 #endif
              newTest.value = -1L;
@@ -466,7 +465,7 @@ void BsaveExpression(
          case DEFCLASS_PTR:
 #if OBJECT_SYSTEM
            if (testPtr->value != NULL)
-             newTest.value = ((struct constructHeader *) testPtr->value)->bsaveID;
+             newTest.value = testPtr->constructValue->bsaveID;
            else
 #endif
              newTest.value = -1L;
@@ -475,7 +474,7 @@ void BsaveExpression(
          case DEFGLOBAL_PTR:
 #if DEFGLOBAL_CONSTRUCT
            if (testPtr->value != NULL)
-             newTest.value = ((Defglobal *) testPtr->value)->header.bsaveID;
+             newTest.value = testPtr->constructValue->bsaveID;
            else
 #endif
              newTest.value = -1L;

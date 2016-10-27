@@ -121,7 +121,7 @@
    static int                     CountPatterns(Environment *,struct joinNode *,bool);
    static const char             *BetaHeaderString(Environment *,struct joinInformation *,long,long);
    static const char             *ActivityHeaderString(Environment *,struct joinInformation *,long,long);
-   static void                    JoinActivityReset(Environment *,struct constructHeader *,void *);
+   static void                    JoinActivityReset(Environment *,ConstructHeader *,void *);
 #endif
 
 /****************************************************************/
@@ -1216,7 +1216,7 @@ static void ListBetaJoinActivity(
 /*********************************************/
 static void JoinActivityReset(
   Environment *theEnv,
-  struct constructHeader *theConstruct,
+  ConstructHeader *theConstruct,
   void *buffer)
   {
 #if MAC_XCD

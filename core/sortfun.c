@@ -164,7 +164,7 @@ void SortFunction(
 
    if (functionReference->type == FCALL)
      {
-      fptr = (struct FunctionDefinition *) functionReference->value;
+      fptr = functionReference->functionValue;
       if ((GetMinimumArgs(fptr) > 2) ||
           (GetMaximumArgs(fptr) == 0) ||
           (GetMaximumArgs(fptr) == 1))

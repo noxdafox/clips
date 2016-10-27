@@ -69,8 +69,8 @@ typedef void FreeModuleFunction(Environment *,void *);
 struct defmoduleItemHeader
   {
    Defmodule *theModule;
-   struct constructHeader *firstItem;
-   struct constructHeader *lastItem;
+   ConstructHeader *firstItem;
+   ConstructHeader *lastItem;
   };
   
 #include "constrct.h"
@@ -102,7 +102,7 @@ struct defmoduleItemHeader
 
 struct defmodule
   {
-   struct constructHeader header;
+   ConstructHeader header;
    struct defmoduleItemHeader **itemsArray;
    struct portItem *importList;
    struct portItem *exportList;
@@ -158,7 +158,7 @@ struct moduleItem
    void  (*freeFunction)(Environment *,void *);
    void *(*bloadModuleReference)(Environment *,int);
    void  (*constructsToCModuleReference)(Environment *,FILE *,int,int,int);
-   void *(*findFunction)(Environment *,const char *);
+   FindConstructFunction *findFunction;
    struct moduleItem *next;
   };
 

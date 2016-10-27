@@ -117,7 +117,7 @@
 
 struct defclassData
   {
-   struct construct *DefclassConstruct;
+   Construct *DefclassConstruct;
    int DefclassModuleIndex;
    ENTITY_RECORD DefclassEntityRecord;
    Defclass *PrimitiveClassMap[PRIMITIVE_CLASSES];

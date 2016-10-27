@@ -65,7 +65,7 @@ typedef struct deffacts Deffacts;
 
 struct deffactsData
   {
-   struct construct *DeffactsConstruct;
+   Construct *DeffactsConstruct;
    int DeffactsModuleIndex;
 #if CONSTRUCT_COMPILER && (! RUN_TIME)
    struct CodeGeneratorItem *DeffactsCodeItem;
@@ -74,7 +74,7 @@ struct deffactsData
 
 struct deffacts
   {
-   struct constructHeader header;
+   ConstructHeader header;
    struct expr *assertList;
   };
 

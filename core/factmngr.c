@@ -474,10 +474,10 @@ void MatchFactFunction(
    FactPatternMatch(theEnv,theFact,theFact->whichDeftemplate->patternNetwork,0,NULL,NULL);
   }
 
-/*********************************************************/
-/* EnvRetract: C access routine for the retract command. */
-/*********************************************************/
-bool EnvRetract(
+/*************************************************/
+/* RetractDriver: Driver routine for EnvRetract. */
+/*************************************************/
+bool RetractDriver(
   Environment *theEnv,
   Fact *theFact)
   {
@@ -666,6 +666,16 @@ bool EnvRetract(
    return true;
   }
 
+/*********************************************************/
+/* EnvRetract: C access routine for the retract command. */
+/*********************************************************/
+bool EnvRetract(
+  Environment *theEnv,
+  Fact *theFact)
+  {
+   return RetractDriver(theEnv,theFact);
+  }
+
 /*******************************************************************/
 /* RemoveGarbageFacts: Returns facts that have been retracted to   */
 /*   the pool of available memory. It is necessary to postpone     */
@@ -697,9 +707,9 @@ static void RemoveGarbageFacts(
   }
 
 /********************************************************/
-/* EnvAssert: C access routine for the assert function. */
+/* AssertDriver: Driver routine for the assert command. */
 /********************************************************/
-Fact *EnvAssert(
+Fact *AssertDriver(
   Environment *theEnv,
   Fact *theFact)
   {
@@ -889,6 +899,16 @@ Fact *EnvAssert(
    /*===============================*/
 
    return theFact;
+  }
+
+/********************************************************/
+/* EnvAssert: C access routine for the assert function. */
+/********************************************************/
+Fact *EnvAssert(
+  Environment *theEnv,
+  Fact *theFact)
+  {
+   return AssertDriver(theEnv,theFact);
   }
 
 /**************************************/

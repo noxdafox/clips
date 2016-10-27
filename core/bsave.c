@@ -487,7 +487,7 @@ void MarkNeededItems(
             break;
 
          case FCALL:
-            ((struct FunctionDefinition *) testPtr->value)->neededFunction = true;
+            testPtr->functionValue->neededFunction = true;
             break;
 
          case VOID_TYPE:

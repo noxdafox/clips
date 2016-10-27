@@ -51,7 +51,7 @@ typedef void PrintItemFunction(Environment *,const char *,void *);
    CLIPSLexeme                   *ExtractModuleName(Environment *,unsigned,const char *);
    CLIPSLexeme                   *ExtractConstructName(Environment *,unsigned,const char *,unsigned);
    const char                    *ExtractModuleAndConstructName(Environment *,const char *);
-   void                          *FindImportedConstruct(Environment *,const char *,Defmodule *,
+   ConstructHeader               *FindImportedConstruct(Environment *,const char *,Defmodule *,
                                                         const char *,int *,bool,Defmodule *);
    void                           AmbiguousReferenceErrorMessage(Environment *,const char *,const char *);
    void                           MarkModulesAsUnvisited(Environment *);

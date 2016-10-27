@@ -196,7 +196,7 @@ void EnvShowDefglobals(
   const char *logicalName,
   Defmodule *theModule)
   {
-   struct constructHeader *constructPtr;
+   ConstructHeader *constructPtr;
    bool allModules = false;
    struct defmoduleItemHeader *theModuleItem;
 

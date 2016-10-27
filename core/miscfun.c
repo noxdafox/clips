@@ -889,7 +889,7 @@ void ExpandFuncCall(
    fcallexp->argList = newargexp;
    if (fcallexp->type == FCALL)
      {
-      func = (struct FunctionDefinition *) fcallexp->value;
+      func = fcallexp->functionValue;
       if (CheckFunctionArgCount(theEnv,func,CountArguments(newargexp)) == false)
         {
          returnValue->lexemeValue = theEnv->FalseSymbol;

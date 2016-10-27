@@ -99,12 +99,12 @@
    static void                    IncrementDefglobalBusyCount(Environment *,Defglobal *);
    static void                    DecrementDefglobalBusyCount(Environment *,Defglobal *);
    static void                    DeallocateDefglobalData(Environment *);
-   static void                    DestroyDefglobalAction(Environment *,struct constructHeader *,void *);
+   static void                    DestroyDefglobalAction(Environment *,ConstructHeader *,void *);
 #if (! BLOAD_ONLY)
    static void                    DestroyDefglobal(Environment *,Defglobal *);
 #endif
 #if RUN_TIME
-   static void                    RuntimeDefglobalAction(Environment *,struct constructHeader *,void *);
+   static void                    RuntimeDefglobalAction(Environment *,ConstructHeader *,void *);
 #endif
 
 /**************************************************************/
@@ -195,7 +195,7 @@ static void DeallocateDefglobalData(
 /***************************************************/
 static void DestroyDefglobalAction(
   Environment *theEnv,
-  struct constructHeader *theConstruct,
+  ConstructHeader *theConstruct,
   void *buffer)
   {
 #if MAC_XCD
@@ -305,7 +305,7 @@ Defglobal *EnvGetNextDefglobal(
   Environment *theEnv,
   Defglobal *defglobalPtr)
   {
-   return (Defglobal *) GetNextConstructItem(theEnv,(struct constructHeader *) defglobalPtr,DefglobalData(theEnv)->DefglobalModuleIndex);
+   return (Defglobal *) GetNextConstructItem(theEnv,&defglobalPtr->header,DefglobalData(theEnv)->DefglobalModuleIndex);
   }
 
 /*********************************************************/
@@ -842,7 +842,7 @@ Defglobal *GetNextDefglobalInScope(
 /************************************************/
 static void RuntimeDefglobalAction(
   Environment *theEnv,
-  struct constructHeader *theConstruct,
+  ConstructHeader *theConstruct,
   void *buffer)
   {
 #if MAC_XCD
@@ -872,19 +872,19 @@ void DefglobalRunTimeInitialize(
 const char *DefglobalModule(
   Defglobal *theDefglobal)
   {
-   return GetConstructModuleName((struct constructHeader *) theDefglobal);
+   return GetConstructModuleName(&theDefglobal->header);
   }
 
 const char *DefglobalName(
   Defglobal *theDefglobal)
   {
-   return GetConstructNameString((struct constructHeader *) theDefglobal);
+   return GetConstructNameString(&theDefglobal->header);
   }
 
 const char *DefglobalPPForm(
   Defglobal *theDefglobal)
   {
-   return GetConstructPPForm((struct constructHeader *) theDefglobal);
+   return GetConstructPPForm(&theDefglobal->header);
   }
 
 #endif /* DEFGLOBAL_CONSTRUCT */

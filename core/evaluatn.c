@@ -182,7 +182,7 @@ bool EvaluateExpression(
 
       case FCALL:
         {
-         fptr = (struct FunctionDefinition *) problem->value;
+         fptr = problem->functionValue;
          oldContext = SetEnvironmentFunctionContext(theEnv,fptr->context);
 
 #if PROFILING_FUNCTIONS

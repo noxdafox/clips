@@ -86,12 +86,11 @@ struct FunctionDefinition
    void *context;
   };
 
-#define ValueFunctionType(target) (((struct FunctionDefinition *) target)->returnValueType)
 #define UnknownFunctionType(target) (((struct FunctionDefinition *) target)->unknownReturnValueType)
-#define ExpressionFunctionPointer(target) (((struct FunctionDefinition *) ((target)->value))->functionPointer)
-#define ExpressionFunctionCallName(target) (((struct FunctionDefinition *) ((target)->value))->callFunctionName)
-#define ExpressionFunctionRealName(target) (((struct FunctionDefinition *) ((target)->value))->actualFunctionName)
-#define ExpressionUnknownFunctionType(target) (((struct FunctionDefinition *) ((target)->value))->unknownReturnValueType)
+#define ExpressionFunctionPointer(target) ((target)->functionValue->functionPointer)
+#define ExpressionFunctionCallName(target) ((target)->functionValue->callFunctionName)
+#define ExpressionFunctionRealName(target) ((target)->functionValue->actualFunctionName)
+#define ExpressionUnknownFunctionType(target) ((target)->functionValue->unknownReturnValueType)
 
 /*==================*/
 /* ENVIRONMENT DATA */
