@@ -693,7 +693,7 @@ static bool EvaluatePatternExpression(
       return false;
      }
 
-   if (theResult.value == theEnv->FalseSymbol)
+   if (theResult.value == FalseSymbol(theEnv))
      { return false; }
 
    return true;

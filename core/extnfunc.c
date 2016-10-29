@@ -695,7 +695,7 @@ int UDFArgumentCount(
         argPtr = argPtr->nextArg)
      { count++; }
 
-   return(count);
+   return count;
   }
 
 /*********************/

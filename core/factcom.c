@@ -228,7 +228,7 @@ void AssertCommand(
           false)
         {
          MultiIntoSingleFieldSlotError(theEnv,slotPtr,theDeftemplate);
-         theValue.value = theEnv->FalseSymbol;
+         theValue.value = FalseSymbol(theEnv);
          error = true;
         }
 
@@ -255,7 +255,7 @@ void AssertCommand(
    if (error)
      {
       ReturnFact(theEnv,newFact);
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -272,7 +272,7 @@ void AssertCommand(
    if (theFact != NULL)
      { returnValue->factValue = theFact; }
    else
-     { returnValue->lexemeValue = theEnv->FalseSymbol; }
+     { returnValue->lexemeValue = FalseSymbol(theEnv); }
 
    return;
   }
@@ -405,7 +405,7 @@ void SetFactDuplicationCommand(
    /* behavior is disabled, otherwise it is enabled.                */
    /*===============================================================*/
 
-   EnvSetFactDuplication(theEnv,theArg.value != theEnv->FalseSymbol);
+   EnvSetFactDuplication(theEnv,theArg.value != FalseSymbol(theEnv));
   }
 
 /***************************************************/
@@ -724,7 +724,7 @@ void AssertStringFunction(
    if (theFact != NULL)
      { returnValue->factValue = theFact; }
    else
-     { returnValue->lexemeValue = theEnv->FalseSymbol; }
+     { returnValue->lexemeValue = FalseSymbol(theEnv); }
   }
 
 /******************************************/
@@ -754,7 +754,7 @@ void SaveFactsCommand(
 
    if ((fileName = GetFileName(context)) == NULL)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -768,7 +768,7 @@ void SaveFactsCommand(
      {
       if (! UDFNextArgument(context,SYMBOL_BIT,&theValue))
         {
-         returnValue->lexemeValue = theEnv->FalseSymbol;
+         returnValue->lexemeValue = FalseSymbol(theEnv);
          return;
         }
 
@@ -781,7 +781,7 @@ void SaveFactsCommand(
       else
         {
          ExpectedTypeError1(theEnv,"save-facts",2,"symbol with value local or visible");
-         returnValue->lexemeValue = theEnv->FalseSymbol;
+         returnValue->lexemeValue = FalseSymbol(theEnv);
          return;
         }
      }
@@ -799,9 +799,9 @@ void SaveFactsCommand(
    /*====================================*/
 
    if (EnvSaveFactsDriver(theEnv,fileName,saveCode,theList) == false)
-     { returnValue->lexemeValue = theEnv->FalseSymbol; }
+     { returnValue->lexemeValue = FalseSymbol(theEnv); }
    else
-     { returnValue->lexemeValue = theEnv->TrueSymbol; }
+     { returnValue->lexemeValue = TrueSymbol(theEnv); }
   }
 
 /******************************************/
@@ -821,7 +821,7 @@ void LoadFactsCommand(
 
    if ((fileName = GetFileName(context)) == NULL)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 

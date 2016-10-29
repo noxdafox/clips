@@ -1273,7 +1273,7 @@ static bool EvaluateObjectPatternTest(
          EvaluationData(theEnv)->HaltExecution = false;
          return false;
         }
-      if (vresult.value != theEnv->FalseSymbol)
+      if (vresult.value != FalseSymbol(theEnv))
         return true;
      }
    return false;

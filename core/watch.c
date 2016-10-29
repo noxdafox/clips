@@ -556,7 +556,7 @@ void GetWatchItemCommand(
      {
       EnvSetEvaluationError(theEnv,true);
       ExpectedTypeError1(theEnv,"get-watch-item",1,"watchable symbol");
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -565,9 +565,9 @@ void GetWatchItemCommand(
    /*===========================*/
 
    if (EnvGetWatchItem(theEnv,argument) == 1)
-     { returnValue->lexemeValue = theEnv->TrueSymbol; }
+     { returnValue->lexemeValue = TrueSymbol(theEnv); }
    else
-     { returnValue->lexemeValue = theEnv->FalseSymbol; }
+     { returnValue->lexemeValue = FalseSymbol(theEnv); }
   }
 
 /*************************************************************/

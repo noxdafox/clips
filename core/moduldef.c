@@ -339,7 +339,7 @@ Defmodule *EnvSetCurrentModule(
 void SaveCurrentModule(
   Environment *theEnv)
   {
-   MODULE_STACK_ITEM *tmp;
+   ModuleStackItem *tmp;
 
    tmp = get_struct(theEnv,moduleStackItem);
    tmp->changeFlag = DefmoduleData(theEnv)->CallModuleChangeFunctions;
@@ -357,7 +357,7 @@ void SaveCurrentModule(
 void RestoreCurrentModule(
   Environment *theEnv)
   {
-   MODULE_STACK_ITEM *tmp;
+   ModuleStackItem *tmp;
 
    tmp = DefmoduleData(theEnv)->ModuleStack;
    DefmoduleData(theEnv)->ModuleStack = tmp->next;
@@ -711,7 +711,7 @@ void GetCurrentModuleCommand(
 
    if (theModule == NULL)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -739,7 +739,7 @@ void SetCurrentModuleCommand(
    theModule = EnvGetCurrentModule(theEnv);
    if (theModule == NULL)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 

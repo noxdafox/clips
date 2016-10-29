@@ -222,7 +222,7 @@ void SetBetaMemoryResizingCommand(
    if (! UDFFirstArgument(context,ANY_TYPE_BITS,&theArg))
      { return; }
 
-   if (theArg.value == theEnv->FalseSymbol)
+   if (theArg.value == FalseSymbol(theEnv))
      { EnvSetBetaMemoryResizing(theEnv,false); }
    else
      { EnvSetBetaMemoryResizing(theEnv,true); }
@@ -266,7 +266,7 @@ void MatchesCommand(
    if (rulePtr == NULL)
      {
       CantFindItemErrorMessage(theEnv,"defrule",ruleName);
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -285,7 +285,7 @@ void MatchesCommand(
       else
         {
          UDFInvalidArgumentMessage(context,"symbol with value verbose, succinct, or terse");
-         returnValue->lexemeValue = theEnv->FalseSymbol;
+         returnValue->lexemeValue = FalseSymbol(theEnv);
          return;
         }
      }
@@ -969,7 +969,7 @@ void JoinActivityCommand(
    if (rulePtr == NULL)
      {
       CantFindItemErrorMessage(theEnv,"defrule",ruleName);
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -988,7 +988,7 @@ void JoinActivityCommand(
       else
         {
          UDFInvalidArgumentMessage(context,"symbol with value verbose, succinct, or terse");
-         returnValue->lexemeValue = theEnv->FalseSymbol;
+         returnValue->lexemeValue = FalseSymbol(theEnv);
          return;
         }
      }

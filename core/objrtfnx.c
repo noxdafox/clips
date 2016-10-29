@@ -368,7 +368,7 @@ bool ObjectCmpConstantFunction(
      rv = hack->fail;
    else
      rv = hack->pass;
-   theResult->value = rv ? theEnv->TrueSymbol : theEnv->FalseSymbol;
+   theResult->value = rv ? TrueSymbol(theEnv) : FalseSymbol(theEnv);
    return(rv);
   }
 
@@ -635,13 +635,13 @@ static bool SlotLengthTestFunction(
   {
    struct ObjectMatchLength *hack;
 
-   theResult->value = theEnv->FalseSymbol;
+   theResult->value = FalseSymbol(theEnv);
    hack = (struct ObjectMatchLength *) ((CLIPSBitMap *) theValue)->contents;
    if (ObjectReteData(theEnv)->CurrentObjectSlotLength < hack->minLength)
      return false;
    if (hack->exactly && (ObjectReteData(theEnv)->CurrentObjectSlotLength > hack->minLength))
      return false;
-   theResult->value = theEnv->TrueSymbol;
+   theResult->value = TrueSymbol(theEnv);
    return true;
   }
 
@@ -688,7 +688,7 @@ static bool PNSimpleCompareFunction1(
      rv = hack->fail;
    else
      rv = hack->pass;
-   theResult->value = rv ? theEnv->TrueSymbol : theEnv->FalseSymbol;
+   theResult->value = rv ? TrueSymbol(theEnv) : FalseSymbol(theEnv);
    return(rv);
   }
 
@@ -737,7 +737,7 @@ static bool PNSimpleCompareFunction2(
      rv = hack->fail;
    else
      rv = hack->pass;
-   theResult->value = rv ? theEnv->TrueSymbol : theEnv->FalseSymbol;
+   theResult->value = rv ? TrueSymbol(theEnv) : FalseSymbol(theEnv);
    return(rv);
   }
 
@@ -788,7 +788,7 @@ static bool PNSimpleCompareFunction3(
      rv = hack->fail;
    else
      rv = hack->pass;
-   theResult->value = rv ? theEnv->TrueSymbol : theEnv->FalseSymbol;
+   theResult->value = rv ? TrueSymbol(theEnv) : FalseSymbol(theEnv);
    return(rv);
   }
 
@@ -843,7 +843,7 @@ static bool JNSimpleCompareFunction1(
      rv = hack->fail;
    else
      rv = hack->pass;
-   theResult->value = rv ? theEnv->TrueSymbol : theEnv->FalseSymbol;
+   theResult->value = rv ? TrueSymbol(theEnv) : FalseSymbol(theEnv);
    return(rv);
   }
 
@@ -900,7 +900,7 @@ static bool JNSimpleCompareFunction2(
      rv = hack->fail;
    else
      rv = hack->pass;
-   theResult->value = rv ? theEnv->TrueSymbol : theEnv->FalseSymbol;
+   theResult->value = rv ? TrueSymbol(theEnv) : FalseSymbol(theEnv);
    return(rv);
   }
 
@@ -961,7 +961,7 @@ static bool JNSimpleCompareFunction3(
      rv = hack->fail;
    else
      rv = hack->pass;
-   theResult->value = rv ? theEnv->TrueSymbol : theEnv->FalseSymbol;
+   theResult->value = rv ? TrueSymbol(theEnv) : FalseSymbol(theEnv);
    return(rv);
   }
 

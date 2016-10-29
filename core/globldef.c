@@ -430,7 +430,7 @@ void QSetDefglobalValue(
       EvaluateExpression(theEnv,theGlobal->initial,vPtr);
       if (EvaluationData(theEnv)->EvaluationError)
         {
-         vPtr->value = theEnv->FalseSymbol;
+         vPtr->value = FalseSymbol(theEnv);
         }
      }
 
@@ -572,7 +572,7 @@ static bool GetDefglobalValue(
       EnvPrintRouter(theEnv,WERROR,"Global variable ?*");
       EnvPrintRouter(theEnv,WERROR,((CLIPSLexeme *) theValue)->contents);
       EnvPrintRouter(theEnv,WERROR,"* is unbound.\n");
-      vPtr->value = theEnv->FalseSymbol;
+      vPtr->value = FalseSymbol(theEnv);
       EnvSetEvaluationError(theEnv,true);
       return false;
      }
@@ -586,7 +586,7 @@ static bool GetDefglobalValue(
    if (count > 1)
      {
       AmbiguousReferenceErrorMessage(theEnv,"defglobal",((CLIPSLexeme *) theValue)->contents);
-      vPtr->value = theEnv->FalseSymbol;
+      vPtr->value = FalseSymbol(theEnv);
       EnvSetEvaluationError(theEnv,true);
       return false;
      }
@@ -851,7 +851,7 @@ static void RuntimeDefglobalAction(
    Defglobal *theDefglobal = (Defglobal *) theConstruct;
    
    theDefglobal->header.env = theEnv;
-   theDefglobal->current.value = theEnv->VoidConstant;
+   theDefglobal->current.value = VoidConstant(theEnv);
   }
 
 /*******************************/

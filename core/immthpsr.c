@@ -263,8 +263,8 @@ static void FormMethodsFromRestrictions(
         plist = tmp;
       else
         bot->nextArg = tmp;
-      FindMethodByRestrictions(gfunc,plist,min + i + 1,theEnv->TrueSymbol,&mposn);
-      meth = AddMethod(theEnv,gfunc,NULL,mposn,0,plist,min + i + 1,0,theEnv->TrueSymbol,
+      FindMethodByRestrictions(gfunc,plist,min + i + 1,TrueSymbol(theEnv),&mposn);
+      meth = AddMethod(theEnv,gfunc,NULL,mposn,0,plist,min + i + 1,0,TrueSymbol(theEnv),
                        PackExpression(theEnv,actions),NULL,false);
       meth->system = 1;
      }

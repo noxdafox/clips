@@ -110,7 +110,7 @@ void SetResetGlobalsCommand(
    if (! UDFFirstArgument(context,ANY_TYPE_BITS,&theArg))
      { return; }
 
-   if (theArg.value == theEnv->FalseSymbol)
+   if (theArg.value == FalseSymbol(theEnv))
      { EnvSetResetGlobals(theEnv,false); }
    else
      { EnvSetResetGlobals(theEnv,true); }

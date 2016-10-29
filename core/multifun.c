@@ -688,28 +688,30 @@ void SubsetpFunction(
 
    if (item1.range == 0)
      {
-      returnValue->lexemeValue = theEnv->TrueSymbol;
+      returnValue->lexemeValue = TrueSymbol(theEnv);
       return;
      }
 
    if (item2.range == 0)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
    for (i = item1.begin ; i < (item1.begin + item1.range) ; i++)
      {
       tmpItem.value = item1.multifieldValue->theFields[i].value;
+      tmpItem.begin = 0;
+      tmpItem.range = 1;
 
       if (! FindDOsInSegment(&tmpItem,1,&item2,&j,&k,NULL,0))
         {
-         returnValue->lexemeValue = theEnv->FalseSymbol;
+         returnValue->lexemeValue = FalseSymbol(theEnv);
          return;
         }
      }
 
-   returnValue->lexemeValue = theEnv->TrueSymbol;
+   returnValue->lexemeValue = TrueSymbol(theEnv);
   }
 
 /****************************************/
@@ -724,7 +726,7 @@ void MemberFunction(
    UDFValue item1, item2;
    long j, k;
 
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
 
    if (! UDFFirstArgument(context,ANY_TYPE_BITS,&item1)) return;
 
@@ -1133,16 +1135,16 @@ static void MultifieldPrognDriver(
 
    tmpField = get_struct(theEnv,fieldVarStack);
    tmpField->type = SYMBOL_TYPE;
-   tmpField->value = theEnv->FalseSymbol;
+   tmpField->value = FalseSymbol(theEnv);
    tmpField->nxt = MultiFunctionData(theEnv)->FieldVarStack;
    MultiFunctionData(theEnv)->FieldVarStack = tmpField;
-   returnValue->value = theEnv->FalseSymbol;
+   returnValue->value = FalseSymbol(theEnv);
 
    if (! UDFFirstArgument(context,MULTIFIELD_BIT,&argval))
      {
       MultiFunctionData(theEnv)->FieldVarStack = tmpField->nxt;
       rtn_struct(theEnv,fieldVarStack,tmpField);
-      returnValue->value = theEnv->FalseSymbol;
+      returnValue->value = FalseSymbol(theEnv);
       return;
      }
 
@@ -1163,7 +1165,7 @@ static void MultifieldPrognDriver(
             ProcedureFunctionData(theEnv)->BreakFlag = false;
             if (EvaluationData(theEnv)->HaltExecution)
               {
-               returnValue->value = theEnv->FalseSymbol;
+               returnValue->value = FalseSymbol(theEnv);
               }
             MultiFunctionData(theEnv)->FieldVarStack = tmpField->nxt;
             rtn_struct(theEnv,fieldVarStack,tmpField);

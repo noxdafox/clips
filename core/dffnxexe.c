@@ -112,7 +112,7 @@ void CallDeffunction(
    struct profileFrameInfo profileFrame;
 #endif
 
-   returnValue->value = theEnv->FalseSymbol;
+   returnValue->value = FalseSymbol(theEnv);
    EvaluationData(theEnv)->EvaluationError = false;
    if (EvaluationData(theEnv)->HaltExecution)
      return;

@@ -59,12 +59,45 @@
 #define _H_moduldef
 
 typedef struct defmodule Defmodule;
-struct portItem;
-struct defmoduleItemHeader;
-struct moduleItem;
+typedef struct portItem PortItem;
+typedef struct defmoduleItemHeader DefmoduleItemHeader;
+typedef struct moduleItem ModuleItem;
+typedef struct constructHeader ConstructHeader;
+typedef struct moduleStackItem ModuleStackItem;
 
 typedef void *AllocateModuleFunction(Environment *);
 typedef void FreeModuleFunction(Environment *,void *);
+
+typedef enum
+  {
+   DEFMODULE,
+   DEFRULE,
+   DEFTEMPLATE,
+   DEFFACTS,
+   DEFGLOBAL,
+   DEFFUNCTION,
+   DEFGENERIC,
+   DEFMETHOD,
+   DEFCLASS,
+   DEFMESSAGE_HANDLER,
+   DEFINSTANCES
+  } ConstructType;
+
+#include <stdio.h>
+#include "symbol.h"
+#include "userdata.h"
+
+struct constructHeader
+  {
+   ConstructType constructType;
+   CLIPSLexeme *name;
+   const char *ppForm;
+   DefmoduleItemHeader *whichModule;
+   long bsaveID;
+   ConstructHeader *next;
+   struct userData *usrData;
+   Environment *env;
+  };
 
 struct defmoduleItemHeader
   {
@@ -72,13 +105,12 @@ struct defmoduleItemHeader
    ConstructHeader *firstItem;
    ConstructHeader *lastItem;
   };
-  
-#include "constrct.h"
 
-#include <stdio.h>
-
-#include "symbol.h"
-#include "userdata.h"
+typedef ConstructHeader *FindConstructFunction(Environment *,const char *);
+typedef ConstructHeader *GetNextConstructFunction(Environment *,ConstructHeader *);
+typedef bool *IsConstructDeletableFunction(ConstructHeader *);
+typedef bool *DeleteConstructFunction(ConstructHeader *,Environment *);
+typedef void *FreeConstructFunction(Environment *,ConstructHeader *);
 
 /**********************************************************************/
 /* defmodule                                                          */
@@ -103,9 +135,9 @@ struct defmoduleItemHeader
 struct defmodule
   {
    ConstructHeader header;
-   struct defmoduleItemHeader **itemsArray;
-   struct portItem *importList;
-   struct portItem *exportList;
+   DefmoduleItemHeader **itemsArray;
+   PortItem *importList;
+   PortItem *exportList;
    bool visitedFlag;
   };
 
@@ -114,10 +146,10 @@ struct portItem
    CLIPSLexeme *moduleName;
    CLIPSLexeme *constructType;
    CLIPSLexeme *constructName;
-   struct portItem *next;
+   PortItem *next;
   };
 
-#define MIHS (struct defmoduleItemHeader *)
+#define MIHS (DefmoduleItemHeader *)
 
 /**********************************************************************/
 /* moduleItem                                                         */
@@ -159,21 +191,19 @@ struct moduleItem
    void *(*bloadModuleReference)(Environment *,int);
    void  (*constructsToCModuleReference)(Environment *,FILE *,int,int,int);
    FindConstructFunction *findFunction;
-   struct moduleItem *next;
+   ModuleItem *next;
   };
 
-typedef struct moduleStackItem
+struct moduleStackItem
   {
    bool changeFlag;
    Defmodule *theModule;
-   struct moduleStackItem *next;
-  } MODULE_STACK_ITEM;
+   ModuleStackItem *next;
+  };
 
 #define DEFMODULE_DATA 4
 
-#include "conscomp.h" /* TBD Needed Headers? */
-#include "constrct.h"
-#include "evaluatn.h"
+#include "extnfunc.h"
 #include "modulpsr.h"
 #include "utility.h"
 
@@ -181,7 +211,7 @@ struct defmoduleData
   {
    struct moduleItem *LastModuleItem;
    struct callFunctionItem *AfterModuleChangeFunctions;
-   MODULE_STACK_ITEM *ModuleStack;
+   ModuleStackItem *ModuleStack;
    bool CallModuleChangeFunctions;
    Defmodule *ListOfDefmodules;
    Defmodule *CurrentModule;

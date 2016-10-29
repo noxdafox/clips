@@ -698,7 +698,7 @@ bool EvaluateJoinExpression(
             return false;
            }
 
-         if (theResult.value == theEnv->FalseSymbol)
+         if (theResult.value == FalseSymbol(theEnv))
            { result = false; }
          else
            { result = true; }

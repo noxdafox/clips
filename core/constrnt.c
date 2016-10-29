@@ -512,7 +512,7 @@ void SDCCommand(
    if (! UDFFirstArgument(context,ANY_TYPE_BITS,&theArg))
      { return; }
 
-   EnvSetDynamicConstraintChecking(theEnv,theArg.value != theEnv->FalseSymbol);
+   EnvSetDynamicConstraintChecking(theEnv,theArg.value != FalseSymbol(theEnv));
   }
 
 /**********************************************/

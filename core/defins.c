@@ -720,7 +720,7 @@ static CLIPSLexeme *ParseDefinstancesName(
      return NULL;
 
 #if DEFRULE_CONSTRUCT
-   if ((DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_BIT) ? false :
+   if ((DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TOKEN) ? false :
        (strcmp(DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents,ACTIVE_RLN) == 0))
      {
       PPBackup(theEnv);
@@ -977,7 +977,7 @@ static void ResetDefinstancesAction(
      {
       EvaluateExpression(theEnv,theExp,&temp);
       if (EvaluationData(theEnv)->HaltExecution ||
-          (temp.value == theEnv->FalseSymbol))
+          (temp.value == FalseSymbol(theEnv)))
         {
          RestoreCurrentModule(theEnv);
          theDefinstances->busy--;

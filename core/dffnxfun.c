@@ -719,7 +719,7 @@ static bool EvaluateDeffunctionCall(
   UDFValue *returnValue)
   {
    CallDeffunction(theEnv,theDeffunction,GetFirstArgument(),returnValue);
-   if (returnValue->value == theEnv->FalseSymbol)
+   if (returnValue->value == FalseSymbol(theEnv))
      { return false; }
    return true;
   }

@@ -96,15 +96,14 @@ struct environmentData
    struct environmentData *next;
   };
 
+#define VoidConstant(theEnv) (theEnv->VoidConstant)
+#define FalseSymbol(theEnv) (theEnv->FalseSymbol)
+#define TrueSymbol(theEnv) (theEnv->TrueSymbol)
+
 #define GetEnvironmentData(theEnv,position) (((struct environmentData *) theEnv)->theData[position])
 #define SetEnvironmentData(theEnv,position,value) (((struct environmentData *) theEnv)->theData[position] = value)
 
    bool                           AllocateEnvironmentData(Environment *,unsigned int,unsigned long,void (*)(Environment *));
-   Environment                   *CreateEnvironment(void);
-   Environment                   *CreateRuntimeEnvironment(CLIPSLexeme **,CLIPSFloat **,
-                                                           CLIPSInteger **,struct bitMapHashNode **,
-                                                           struct FunctionDefinition *);
-   bool                           DestroyEnvironment(Environment *);
    bool                           AddEnvironmentCleanupFunction(Environment *,const char *,void (*)(Environment *),int);
    void                          *GetEnvironmentContext(Environment *);
    void                          *SetEnvironmentContext(Environment *,void *);

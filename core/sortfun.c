@@ -109,7 +109,7 @@ static bool DefaultCompareSwapFunction(
    ReturnExpression(theEnv,SortFunctionData(theEnv)->SortComparisonFunction->argList);
    SortFunctionData(theEnv)->SortComparisonFunction->argList = NULL;
 
-   if (returnValue.value == theEnv->FalseSymbol)
+   if (returnValue.value == FalseSymbol(theEnv))
      { return false; }
 
    return true;
@@ -140,7 +140,7 @@ void SortFunction(
    /* Set up the default return value. */
    /*==================================*/
 
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
 
    /*=============================================*/
    /* Verify that the comparison function exists. */

@@ -207,7 +207,7 @@ void ModifyCommand(
    /* Set the default return value to the symbol FALSE. */
    /*===================================================*/
 
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
 
    /*==================================================*/
    /* Evaluate the first argument which is used to get */
@@ -300,7 +300,7 @@ void ModifyCommand(
    /*================================================================*/
 
    for (i = 0; i < (int) oldFact->theProposition.length; i++)
-     { theValueArray[i].voidValue = theEnv->VoidConstant; }
+     { theValueArray[i].voidValue = VoidConstant(theEnv); }
 
    /*========================*/
    /* Start replacing slots. */
@@ -532,7 +532,7 @@ Fact *ReplaceFact(
 
    for (i = 0; i < (int) oldFact->theProposition.length; i++)
      {
-      if (theValueArray[i].voidValue != theEnv->VoidConstant)
+      if (theValueArray[i].voidValue != VoidConstant(theEnv))
         {
          if (oldFact->theProposition.theFields[i].header->type == MULTIFIELD_TYPE)
            {
@@ -595,7 +595,7 @@ void DuplicateCommand(
    /* Set the default return value to the symbol FALSE. */
    /*===================================================*/
 
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
 
    /*==================================================*/
    /* Evaluate the first argument which is used to get */
@@ -853,7 +853,7 @@ void DeftemplateSlotNamesFunction(
    /* Set up the default return value for errors. */
    /*=============================================*/
 
-   returnValue->value = theEnv->FalseSymbol;
+   returnValue->value = FalseSymbol(theEnv);
 
    /*=======================================*/
    /* Get the reference to the deftemplate. */
@@ -954,7 +954,7 @@ void DeftemplateSlotDefaultPFunction(
    slotName = CheckDeftemplateAndSlotArguments(context,&theDeftemplate);
    if (slotName == NULL)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -969,7 +969,7 @@ void DeftemplateSlotDefaultPFunction(
    else if (defaultType == DYNAMIC_DEFAULT)
      { returnValue->lexemeValue = EnvCreateSymbol(theEnv,"dynamic"); }
    else
-     { returnValue->lexemeValue = theEnv->FalseSymbol; }
+     { returnValue->lexemeValue = FalseSymbol(theEnv); }
   }
 
 /*************************************************/
@@ -1049,7 +1049,7 @@ void DeftemplateSlotDefaultValueFunction(
    slotName = CheckDeftemplateAndSlotArguments(context,&theDeftemplate);
    if (slotName == NULL)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -1079,7 +1079,7 @@ bool DeftemplateSlotDefaultValue(
    /* Set up the default return value for errors. */
    /*=============================================*/
 
-   theValue->value = theEnv->FalseSymbol;
+   theValue->value = FalseSymbol(theEnv);
 
    /*==================================================*/
    /* Make sure the slot exists (the symbol implied is */
@@ -1295,7 +1295,7 @@ void DeftemplateSlotAllowedValues(
      {
       if (strcmp(slotName,"implied") == 0)
         {
-         returnValue->value = theEnv->FalseSymbol;
+         returnValue->value = FalseSymbol(theEnv);
          return;
         }
       else
@@ -1328,7 +1328,7 @@ void DeftemplateSlotAllowedValues(
 
    if ((theSlot->constraints != NULL) ? (theSlot->constraints->restrictionList == NULL) : true)
      {
-      returnValue->value = theEnv->FalseSymbol;
+      returnValue->value = FalseSymbol(theEnv);
       return;
      }
 
@@ -1443,7 +1443,7 @@ void DeftemplateSlotRange(
      }
    else
      {
-      returnValue->value = theEnv->FalseSymbol;
+      returnValue->value = FalseSymbol(theEnv);
       return;
      }
   }
@@ -1629,7 +1629,7 @@ void DeftemplateSlotMultiPFunction(
    slotName = CheckDeftemplateAndSlotArguments(context,&theDeftemplate);
    if (slotName == NULL)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -1709,7 +1709,7 @@ void DeftemplateSlotSinglePFunction(
    slotName = CheckDeftemplateAndSlotArguments(context,&theDeftemplate);
    if (slotName == NULL)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -1789,7 +1789,7 @@ void DeftemplateSlotExistPFunction(
    slotName = CheckDeftemplateAndSlotArguments(context,&theDeftemplate);
    if (slotName == NULL)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -1859,7 +1859,7 @@ void DeftemplateSlotFacetExistPFunction(
    slotName = CheckDeftemplateAndSlotArguments(context,&theDeftemplate);
    if (slotName == NULL)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -1869,7 +1869,7 @@ void DeftemplateSlotFacetExistPFunction(
 
    if (! UDFNextArgument(context,SYMBOL_BIT,&facetName))
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -1947,7 +1947,7 @@ void DeftemplateSlotFacetValueFunction(
    /* Set up the default return value for errors. */
    /*=============================================*/
 
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
 
    /*===================================================*/
    /* Retrieve the deftemplate and slot name arguments. */

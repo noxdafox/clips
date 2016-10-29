@@ -179,7 +179,7 @@ void EnvSend(
 
    EnvSetEvaluationError(theEnv,false);
 
-   returnValue->value = theEnv->FalseSymbol;
+   returnValue->value = FalseSymbol(theEnv);
    msym = FindSymbolHN(theEnv,msg,SYMBOL_BIT);
    if (msym == NULL)
      {
@@ -244,7 +244,7 @@ void SendCommand(
    CLIPSLexeme *msg;
    UDFValue theArg;
 
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
 
    if (! UDFNthArgument(context,2,SYMBOL_BIT,&theArg)) return;
    msg = theArg.lexemeValue;
@@ -353,7 +353,7 @@ void CallNextHandler(
    struct profileFrameInfo profileFrame;
 #endif
 
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
 
    EvaluationData(theEnv)->EvaluationError = false;
    if (EvaluationData(theEnv)->HaltExecution)
@@ -649,7 +649,7 @@ bool HandlerSlotGetFunction(
    if (theInstance->garbage)
      {
       StaleInstanceAddress(theEnv,"for slot get",0);
-      theResult->value = theEnv->FalseSymbol;
+      theResult->value = FalseSymbol(theEnv);
       EnvSetEvaluationError(theEnv,true);
       return false;
      }
@@ -681,7 +681,7 @@ bool HandlerSlotGetFunction(
 
 HandlerGetError:
    EarlySlotBindError(theEnv,theInstance,theDefclass,theReference->slotID);
-   theResult->value = theEnv->FalseSymbol;
+   theResult->value = FalseSymbol(theEnv);
    EnvSetEvaluationError(theEnv,true);
    return false;
   }
@@ -773,7 +773,7 @@ bool HandlerSlotPutFunction(
    if (theInstance->garbage)
      {
       StaleInstanceAddress(theEnv,"for slot put",0);
-      theResult->value = theEnv->FalseSymbol;
+      theResult->value = FalseSymbol(theEnv);
       EnvSetEvaluationError(theEnv,true);
       return false;
      }
@@ -834,7 +834,7 @@ HandlerPutError:
    EarlySlotBindError(theEnv,theInstance,theDefclass,theReference->slotID);
 
 HandlerPutError2:
-   theResult->value = theEnv->FalseSymbol;
+   theResult->value = FalseSymbol(theEnv);
    EnvSetEvaluationError(theEnv,true);
 
    return false;
@@ -858,7 +858,7 @@ void DynamicHandlerGetSlot(
    Instance *ins;
    UDFValue temp;
 
-   returnValue->value = theEnv->FalseSymbol;
+   returnValue->value = FalseSymbol(theEnv);
    if (CheckCurrentMessage(theEnv,"dynamic-get",true) == false)
      return;
    EvaluateExpression(theEnv,GetFirstArgument(),&temp);
@@ -909,7 +909,7 @@ void DynamicHandlerPutSlot(
    Instance *ins;
    UDFValue temp;
 
-   returnValue->value = theEnv->FalseSymbol;
+   returnValue->value = FalseSymbol(theEnv);
    if (CheckCurrentMessage(theEnv,"dynamic-put",true) == false)
      return;
    EvaluateExpression(theEnv,GetFirstArgument(),&temp);
@@ -993,7 +993,7 @@ static bool PerformMessage(
 #endif
    CLIPSBlock gcBlock;
 
-   returnValue->value = theEnv->FalseSymbol;
+   returnValue->value = FalseSymbol(theEnv);
    EvaluationData(theEnv)->EvaluationError = false;
    if (EvaluationData(theEnv)->HaltExecution)
      return false;
@@ -1169,7 +1169,7 @@ static bool PerformMessage(
 
    if (EvaluationData(theEnv)->EvaluationError)
      {
-      returnValue->value = theEnv->FalseSymbol;
+      returnValue->value = FalseSymbol(theEnv);
       return false;
      }
 

@@ -861,5 +861,5 @@ void BloadCommand(
 #pragma unused(theEnv,context)
 #endif
 #endif
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
   }

@@ -3,7 +3,7 @@
    /*                                                     */
    /*            CLIPS Version 6.40  10/01/16             */
    /*                                                     */
-   /*                    SYMBOL_TYPE MODULE                    */
+   /*                    SYMBOL MODULE                    */
    /*******************************************************/
 
 /*************************************************************/
@@ -39,8 +39,8 @@
 /*            compilers/operating systems (IBM_MCW,          */
 /*            MAC_MCW, and IBM_TBC).                         */
 /*                                                           */
-/*            Support for hashing EXTERNAL_ADDRESS_TYPE data      */
-/*            type.                                          */
+/*            Support for hashing EXTERNAL_ADDRESS_TYPE      */
+/*            data type.                                     */
 /*                                                           */
 /*            Support for long long integers.                */
 /*                                                           */
@@ -172,10 +172,10 @@ void InitializeAtomTables(
    /* Predefine some values. */
    /*========================*/
 
-   theEnv->TrueSymbol = EnvAddSymbol(theEnv,TRUE_STRING,SYMBOL_TYPE);
-   IncrementSymbolCount(theEnv->TrueSymbol);
-   theEnv->FalseSymbol = EnvAddSymbol(theEnv,FALSE_STRING,SYMBOL_TYPE);
-   IncrementSymbolCount(theEnv->FalseSymbol);
+   TrueSymbol(theEnv) = EnvAddSymbol(theEnv,TRUE_STRING,SYMBOL_TYPE);
+   IncrementSymbolCount(TrueSymbol(theEnv));
+   FalseSymbol(theEnv) = EnvAddSymbol(theEnv,FALSE_STRING,SYMBOL_TYPE);
+   IncrementSymbolCount(FalseSymbol(theEnv));
    SymbolData(theEnv)->PositiveInfinity = EnvAddSymbol(theEnv,POSITIVE_INFINITY_STRING,SYMBOL_TYPE);
    IncrementSymbolCount(SymbolData(theEnv)->PositiveInfinity);
    SymbolData(theEnv)->NegativeInfinity = EnvAddSymbol(theEnv,NEGATIVE_INFINITY_STRING,SYMBOL_TYPE);
@@ -334,9 +334,9 @@ CLIPSLexeme *EnvCreateBoolean(
   bool theValue)
   {
    if (theValue)
-     { return theEnv->TrueSymbol; }
+     { return TrueSymbol(theEnv); }
    else
-     { return theEnv->FalseSymbol; }
+     { return FalseSymbol(theEnv); }
   }
 
 /*******************/
@@ -1464,8 +1464,8 @@ void SetExternalAddressTable(
 void RefreshSpecialSymbols(
   Environment *theEnv)
   {
-   theEnv->TrueSymbol = FindSymbolHN(theEnv,TRUE_STRING,SYMBOL_BIT);
-   theEnv->FalseSymbol = FindSymbolHN(theEnv,FALSE_STRING,SYMBOL_BIT);
+   TrueSymbol(theEnv) = FindSymbolHN(theEnv,TRUE_STRING,SYMBOL_BIT);
+   FalseSymbol(theEnv) = FindSymbolHN(theEnv,FALSE_STRING,SYMBOL_BIT);
    SymbolData(theEnv)->PositiveInfinity = FindSymbolHN(theEnv,POSITIVE_INFINITY_STRING,SYMBOL_BIT);
    SymbolData(theEnv)->NegativeInfinity = FindSymbolHN(theEnv,NEGATIVE_INFINITY_STRING,SYMBOL_BIT);
    SymbolData(theEnv)->Zero = FindLongHN(theEnv,0L);

@@ -467,7 +467,7 @@ CLIPSLexeme *GetConstructModuleCommand(
    gensprintf(buffer,"%s name",constructClass->constructName);
 
    constructName = GetConstructName(context,command,buffer);
-   if (constructName == NULL) return theEnv->FalseSymbol;
+   if (constructName == NULL) return FalseSymbol(theEnv);
 
    /*==========================================*/
    /* Get a pointer to the construct's module. */
@@ -477,7 +477,7 @@ CLIPSLexeme *GetConstructModuleCommand(
    if (constructModule == NULL)
      {
       CantFindItemErrorMessage(theEnv,constructClass->constructName,constructName);
-      return theEnv->FalseSymbol;
+      return FalseSymbol(theEnv);
      }
 
    /*============================================*/

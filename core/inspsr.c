@@ -370,7 +370,7 @@ EXPRESSION *ParseSlotOverrides(
          EnvSetEvaluationError(theEnv,true);
          return NULL;
         }
-      theExpNext = GenConstant(theEnv,SYMBOL_TYPE,theEnv->TrueSymbol);
+      theExpNext = GenConstant(theEnv,SYMBOL_TYPE,TrueSymbol(theEnv));
       if (CollectArguments(theEnv,theExpNext,readSource) == NULL)
         {
          *error = true;
@@ -470,7 +470,7 @@ EXPRESSION *ParseSimpleInstance(
       if (DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TOKEN)
         goto SlotOverrideError;
       theExp->nextArg = GenConstant(theEnv,SYMBOL_TYPE,DefclassData(theEnv)->ObjectParseToken.value);
-      theExp->nextArg->nextArg = GenConstant(theEnv,SYMBOL_TYPE,theEnv->TrueSymbol);
+      theExp->nextArg->nextArg = GenConstant(theEnv,SYMBOL_TYPE,TrueSymbol(theEnv));
       theExp = theExp->nextArg->nextArg;
       GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
       vbot = NULL;

@@ -266,10 +266,6 @@ bool CheckFunctionArgCount(
   {
    int minArguments, maxArguments;
    const char *functionName;
-   char theChar[2];
-
-   theChar[0] = '0';
-   theChar[1] = EOS;
 
    functionName = func->callFunctionName->contents;
 

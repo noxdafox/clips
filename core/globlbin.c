@@ -396,7 +396,7 @@ static void UpdateDefglobal(
    DefglobalBinaryData(theEnv)->DefglobalArray[obji].watch = DefglobalData(theEnv)->WatchGlobals;
 #endif
    DefglobalBinaryData(theEnv)->DefglobalArray[obji].initial = HashedExpressionPointer(bdp->initial);
-   DefglobalBinaryData(theEnv)->DefglobalArray[obji].current.voidValue = theEnv->VoidConstant;
+   DefglobalBinaryData(theEnv)->DefglobalArray[obji].current.voidValue = VoidConstant(theEnv);
   }
 
 /***************************************/

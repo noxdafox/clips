@@ -1044,7 +1044,7 @@ void FetchCommand(
    int load_ct;          /*Number of entries loaded */
    UDFValue theArg;
 
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
 
    if (! UDFFirstArgument(context,LEXEME_BITS,&theArg))
      { return; }

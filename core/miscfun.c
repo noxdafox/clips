@@ -600,7 +600,7 @@ void OptionsCommand(
    /* Set the return value. */
    /*=======================*/
 
-   returnValue->voidValue = theEnv->VoidConstant;
+   returnValue->voidValue = VoidConstant(theEnv);
 
    /*=================================*/
    /* Print the state of the compiler */
@@ -897,7 +897,7 @@ void ExpandFuncCall(
       func = fcallexp->functionValue;
       if (CheckFunctionArgCount(theEnv,func,CountArguments(newargexp)) == false)
         {
-         returnValue->lexemeValue = theEnv->FalseSymbol;
+         returnValue->lexemeValue = FalseSymbol(theEnv);
          ReturnExpression(theEnv,fcallexp);
          return;
         }
@@ -908,7 +908,7 @@ void ExpandFuncCall(
       if (CheckDeffunctionCall(theEnv,(Deffunction *) fcallexp->value,
               CountArguments(fcallexp->argList)) == false)
         {
-         returnValue->lexemeValue = theEnv->FalseSymbol;
+         returnValue->lexemeValue = FalseSymbol(theEnv);
          ReturnExpression(theEnv,fcallexp);
          EnvSetEvaluationError(theEnv,true);
          return;
@@ -938,7 +938,7 @@ void DummyExpandFuncMultifield(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
    EnvSetEvaluationError(theEnv,true);
    PrintErrorID(theEnv,"MISCFUN",1,false);
    EnvPrintRouter(theEnv,WERROR,"expand$ must be used in the argument list of a function call.\n");
@@ -1045,7 +1045,7 @@ void CauseEvaluationError(
   UDFValue *returnValue)
   {
    EnvSetEvaluationError(theEnv,true);
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
   }
 
 /************************************************/
@@ -1075,7 +1075,7 @@ void SetSORCommand(
    if (! UDFFirstArgument(context,SYMBOL_BIT,&theArg))
      { return; }
 
-   returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvSetSequenceOperatorRecognition(theEnv,theArg.value != theEnv->FalseSymbol));
+   returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvSetSequenceOperatorRecognition(theEnv,theArg.value != FalseSymbol(theEnv)));
 #else
    returnValue->lexemeValue = EnvCreateBoolean(theEnv,ExpressionData(theEnv)->SequenceOpMode);
 #endif
@@ -1202,7 +1202,7 @@ void FuncallFunction(
    /* Set up the default return value. */
    /*==================================*/
 
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
 
    /*============================================*/
    /* Get the name of the function to be called. */
@@ -1357,7 +1357,7 @@ void NewFunction(
    /* Set up the default return value. */
    /*==================================*/
 
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
 
    /*====================================*/
    /* Get the name of the language type. */
@@ -1407,7 +1407,7 @@ void CallFunction(
    /* Set up the default return value. */
    /*==================================*/
 
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
 
    /*=========================*/
    /* Get the first argument. */
@@ -1554,9 +1554,9 @@ static void ConvertTime(
    returnValue->multifieldValue->theFields[7].integerValue = EnvCreateInteger(theEnv,info->tm_yday);
 
    if (info->tm_isdst > 0)
-     { returnValue->multifieldValue->theFields[8].lexemeValue = theEnv->TrueSymbol; }
+     { returnValue->multifieldValue->theFields[8].lexemeValue = TrueSymbol(theEnv); }
    else if (info->tm_isdst == 0)
-     { returnValue->multifieldValue->theFields[8].lexemeValue = theEnv->FalseSymbol; }
+     { returnValue->multifieldValue->theFields[8].lexemeValue = FalseSymbol(theEnv); }
    else
      { returnValue->multifieldValue->theFields[8].lexemeValue = EnvCreateSymbol(theEnv,"UNKNOWN"); }
   }
@@ -1690,7 +1690,7 @@ void SlotValueFunction(
    /* Set up the default return value for errors. */
    /*=============================================*/
 
-   returnValue->value = theEnv->FalseSymbol;
+   returnValue->value = FalseSymbol(theEnv);
 
 #if DEFTEMPLATE_CONSTRUCT
 
@@ -1700,7 +1700,7 @@ void SlotValueFunction(
 
    if (! UDFNthArgument(context,3,SYMBOL_BIT,&variableSlotReference))
      {
-      returnValue->value = theEnv->FalseSymbol;
+      returnValue->value = FalseSymbol(theEnv);
       return;
      }
 
@@ -1714,7 +1714,7 @@ void SlotValueFunction(
       EnvPrintRouter(theEnv,WERROR,"The variable/slot reference ?");
       EnvPrintRouter(theEnv,WERROR,variableSlotReference.lexemeValue->contents);
       EnvPrintRouter(theEnv,WERROR," can not be resolved because the variable value is not a fact address\n");
-      returnValue->value = theEnv->FalseSymbol;
+      returnValue->value = FalseSymbol(theEnv);
       return;
      }
 
@@ -1736,7 +1736,7 @@ void SlotValueFunction(
 
    if (! UDFNthArgument(context,2,SYMBOL_BIT,&slotNameReference))
      {
-      returnValue->value = theEnv->FalseSymbol;
+      returnValue->value = FalseSymbol(theEnv);
       return;
      }
 

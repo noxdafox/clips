@@ -114,7 +114,7 @@ void ClassAbstractPCommand(
    if (cls == NULL)
      {
       ClassExistError(theEnv,"class-abstractp",theArg.lexemeValue->contents);
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -148,7 +148,7 @@ void ClassReactivePCommand(
    if (cls == NULL)
      {
       ClassExistError(theEnv,"class-reactivep",theArg.lexemeValue->contents);
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -946,7 +946,7 @@ void SlotAllowedValues(
 
    if ((sp->constraint != NULL) ? (sp->constraint->restrictionList == NULL) : true)
      {
-      returnValue->value = theEnv->FalseSymbol;
+      returnValue->value = FalseSymbol(theEnv);
       return;
      }
 
@@ -983,7 +983,7 @@ void SlotAllowedClasses(
      }
    if ((sp->constraint != NULL) ? (sp->constraint->classList == NULL) : true)
      {
-      returnValue->value = theEnv->FalseSymbol;
+      returnValue->value = FalseSymbol(theEnv);
       return;
      }
    returnValue->value = EnvCreateMultifield(theEnv,(unsigned long) ExpressionSize(sp->constraint->classList));
@@ -1025,7 +1025,7 @@ void SlotRange(
      }
    else
      {
-      returnValue->value = theEnv->FalseSymbol;
+      returnValue->value = FalseSymbol(theEnv);
       return;
      }
   }

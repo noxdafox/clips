@@ -766,7 +766,7 @@ Fact *AssertDriver(
 
    for (i = 0; i < length; i++)
      {
-      if (theField[i].value == theEnv->VoidConstant)
+      if (theField[i].value == VoidConstant(theEnv))
         {
          theField[i].value = EnvCreateSymbol(theEnv,"nil");
         }
@@ -1014,7 +1014,7 @@ Fact *EnvCreateFact(
       for (i = 0;
            i < (int) theDeftemplate->numberOfSlots;
            i++)
-        { newFact->theProposition.theFields[i].voidValue = theEnv->VoidConstant; }
+        { newFact->theProposition.theFields[i].voidValue = VoidConstant(theEnv); }
      }
 
    /*===========================================*/
@@ -1201,7 +1201,7 @@ bool EnvAssignFactSlotDefaults(
       /* then move on to the next slot.    */
       /*===================================*/
 
-      if (theFact->theProposition.theFields[i].value != theEnv->VoidConstant) continue;
+      if (theFact->theProposition.theFields[i].value != VoidConstant(theEnv)) continue;
 
       /*======================================================*/
       /* Assign the default value for the slot if one exists. */
@@ -1921,7 +1921,7 @@ FactBuilder *EnvCreateFactBuilder(
    theFB->fbValueArray = (CLIPSValue *) gm3(theEnv,sizeof(CLIPSValue) * theDeftemplate->numberOfSlots);
 
    for (i = 0; i < theDeftemplate->numberOfSlots; i++)
-     { theFB->fbValueArray[i].voidValue = theEnv->VoidConstant; }
+     { theFB->fbValueArray[i].voidValue = VoidConstant(theEnv); }
 
    return theFB;
   }
@@ -2108,11 +2108,11 @@ Fact *FBAssert(
    
    for (i = 0; i < theFB->fbDeftemplate->numberOfSlots; i++)
      {
-      if (theFB->fbValueArray[i].voidValue != theEnv->VoidConstant)
+      if (theFB->fbValueArray[i].voidValue != VoidConstant(theEnv))
         {
          theFact->theProposition.theFields[i].value = theFB->fbValueArray[i].value;
          CVAtomDeinstall(theEnv,theFB->fbValueArray[i].value);
-         theFB->fbValueArray[i].voidValue = theEnv->VoidConstant;
+         theFB->fbValueArray[i].voidValue = VoidConstant(theEnv);
         }
      }
 
@@ -2155,7 +2155,7 @@ void FBAbort(
       if (theFB->fbValueArray[i].header->type == MULTIFIELD_TYPE)
         { ReturnMultifield(theEnv,theFB->fbValueArray[i].multifieldValue); }
         
-      theFB->fbValueArray[i].voidValue = theEnv->VoidConstant;
+      theFB->fbValueArray[i].voidValue = VoidConstant(theEnv);
      }
   }
 
@@ -2185,7 +2185,7 @@ bool FBSetDeftemplate(
    theFB->fbValueArray = (CLIPSValue *) gm3(theEnv,sizeof(CLIPSValue) * theDeftemplate->numberOfSlots);
 
    for (i = 0; i < theDeftemplate->numberOfSlots; i++)
-     { theFB->fbValueArray[i].voidValue = theEnv->VoidConstant; }
+     { theFB->fbValueArray[i].voidValue = VoidConstant(theEnv); }
 
    return true;
   }
@@ -2214,7 +2214,7 @@ FactModifier *EnvCreateFactModifier(
    theFM->fmValueArray = (CLIPSValue *) gm3(theEnv,sizeof(CLIPSValue) * oldFact->whichDeftemplate->numberOfSlots);
 
    for (i = 0; i < oldFact->whichDeftemplate->numberOfSlots; i++)
-     { theFM->fmValueArray[i].voidValue = theEnv->VoidConstant; }
+     { theFM->fmValueArray[i].voidValue = VoidConstant(theEnv); }
 
    theFM->changeMap = (char *) gm2(theEnv,CountToBitMapSize(oldFact->whichDeftemplate->numberOfSlots));
    ClearBitString((void *) theFM->changeMap,CountToBitMapSize(oldFact->whichDeftemplate->numberOfSlots));

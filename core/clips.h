@@ -42,6 +42,7 @@
 #include "filecom.h"
 #include "strngfun.h"
 #include "envrnmnt.h"
+#include "envrnbld.h"
 #include "commline.h"
 #include "symbol.h"
 

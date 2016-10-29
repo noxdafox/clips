@@ -432,7 +432,7 @@ void DribbleOnCommand(
 
    if ((fileName = GetFileName(context)) == NULL)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -750,7 +750,7 @@ void BatchCommand(
 
    if ((fileName = GetFileName(context)) == NULL)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -1090,7 +1090,7 @@ void BatchStarCommand(
 
    if ((fileName = GetFileName(context)) == NULL)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -1235,7 +1235,7 @@ void LoadCommand(
 
    if ((theFileName = GetFileName(context)) == NULL)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -1245,17 +1245,17 @@ void LoadCommand(
      {
       SetPrintWhileLoading(theEnv,false);
       OpenErrorMessage(theEnv,"load",theFileName);
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
    SetPrintWhileLoading(theEnv,false);
 
-   if (rv == -1) returnValue->lexemeValue = theEnv->FalseSymbol;
-   else returnValue->lexemeValue = theEnv->TrueSymbol;
+   if (rv == -1) returnValue->lexemeValue = FalseSymbol(theEnv);
+   else returnValue->lexemeValue = TrueSymbol(theEnv);
 #else
    EnvPrintRouter(theEnv,WDIALOG,"Load is not available in this environment\n");
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
 #endif
   }
 
@@ -1273,22 +1273,22 @@ void LoadStarCommand(
 
    if ((theFileName = GetFileName(context)) == NULL)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
    if ((rv = EnvLoad(theEnv,theFileName)) == 0)
      {
       OpenErrorMessage(theEnv,"load*",theFileName);
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
-   if (rv == -1) returnValue->lexemeValue = theEnv->FalseSymbol;
-   else returnValue->lexemeValue = theEnv->TrueSymbol;
+   if (rv == -1) returnValue->lexemeValue = FalseSymbol(theEnv);
+   else returnValue->lexemeValue = TrueSymbol(theEnv);
 #else
    EnvPrintRouter(theEnv,WDIALOG,"Load* is not available in this environment\n");
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
 #endif
   }
 
@@ -1306,21 +1306,21 @@ void SaveCommand(
 
    if ((theFileName = GetFileName(context)) == NULL)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
    if (EnvSave(theEnv,theFileName) == false)
      {
       OpenErrorMessage(theEnv,"save",theFileName);
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
-   returnValue->lexemeValue = theEnv->TrueSymbol;
+   returnValue->lexemeValue = TrueSymbol(theEnv);
 #else
    EnvPrintRouter(theEnv,WDIALOG,"Save is not available in this environment\n");
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
 #endif
   }
 #endif
