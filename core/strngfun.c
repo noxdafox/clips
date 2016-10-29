@@ -564,7 +564,7 @@ void StrIndexFunction(
    const char *strg1, *strg2, *strg3;
    size_t i, j;
 
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
 
    /*===================================*/
    /* Check and retrieve the arguments. */
@@ -736,7 +736,7 @@ bool EnvEval(
    if (OpenStringSource(theEnv,logicalNameBuffer,theString,0) == 0)
      {
       if (returnValue != NULL)
-        { returnValue->lexemeValue = theEnv->FalseSymbol; }
+        { returnValue->lexemeValue = FalseSymbol(theEnv); }
       depth--;
       return false;
      }
@@ -775,7 +775,7 @@ bool EnvEval(
       EnvSetEvaluationError(theEnv,true);
       CloseStringSource(theEnv,logicalNameBuffer);
       if (returnValue != NULL)
-        { returnValue->lexemeValue = theEnv->FalseSymbol; }
+        { returnValue->lexemeValue = FalseSymbol(theEnv); }
       depth--;
       ConstructData(theEnv)->DanglingConstructs = danglingConstructs;
       return false;
@@ -793,7 +793,7 @@ bool EnvEval(
       EnvSetEvaluationError(theEnv,true);
       CloseStringSource(theEnv,logicalNameBuffer);
       if (returnValue != NULL)
-        { returnValue->lexemeValue = theEnv->FalseSymbol; }
+        { returnValue->lexemeValue = FalseSymbol(theEnv); }
       ReturnExpression(theEnv,top);
       depth--;
       ConstructData(theEnv)->DanglingConstructs = danglingConstructs;
@@ -812,7 +812,7 @@ bool EnvEval(
       EnvSetEvaluationError(theEnv,true);
       CloseStringSource(theEnv,logicalNameBuffer);
       if (returnValue != NULL)
-        { returnValue->lexemeValue = theEnv->FalseSymbol; }
+        { returnValue->lexemeValue = FalseSymbol(theEnv); }
       ReturnExpression(theEnv,top);
       depth--;
       ConstructData(theEnv)->DanglingConstructs = danglingConstructs;
@@ -1018,7 +1018,7 @@ void BuildFunction(
   {
    PrintErrorID(theEnv,"STRNGFUN",1,false);
    EnvPrintRouter(theEnv,WERROR,"Function build does not work in run time modules.\n");
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
   }
 
 /******************************************************/

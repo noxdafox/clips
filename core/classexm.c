@@ -367,7 +367,7 @@ void SuperclassPCommand(
 
    if (CheckTwoClasses(context,"superclassp",&c1,&c2) == false)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -410,7 +410,7 @@ void SubclassPCommand(
 
    if (CheckTwoClasses(context,"subclassp",&c1,&c2) == false)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -457,7 +457,7 @@ void SlotExistPCommand(
    sd = CheckSlotExists(context,"slot-existp",&cls,false,true);
    if (sd == NULL)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -470,7 +470,7 @@ void SlotExistPCommand(
         {
          UDFInvalidArgumentMessage(context,"keyword \"inherit\"");
          EnvSetEvaluationError(theEnv,true);
-         returnValue->lexemeValue = theEnv->FalseSymbol;
+         returnValue->lexemeValue = FalseSymbol(theEnv);
          return;
         }
       inheritFlag = true;
@@ -526,7 +526,7 @@ void MessageHandlerExistPCommand(
    if (cls == NULL)
      {
       ClassExistError(theEnv,"message-handler-existp",theArg.lexemeValue->contents);
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -543,15 +543,15 @@ void MessageHandlerExistPCommand(
       if (mtype == MERROR)
         {
          EnvSetEvaluationError(theEnv,true);
-         returnValue->lexemeValue = theEnv->FalseSymbol;
+         returnValue->lexemeValue = FalseSymbol(theEnv);
          return;
         }
      }
 
    if (FindHandlerByAddress(cls,mname,mtype) != NULL)
-     { returnValue->lexemeValue = theEnv->TrueSymbol; }
+     { returnValue->lexemeValue = TrueSymbol(theEnv); }
    else
-     { returnValue->lexemeValue = theEnv->FalseSymbol; }
+     { returnValue->lexemeValue = FalseSymbol(theEnv); }
   }
 
 /**********************************************************************
@@ -572,7 +572,7 @@ void SlotWritablePCommand(
 
    sd = CheckSlotExists(context,"slot-writablep",&theDefclass,true,true);
    if (sd == NULL)
-     { returnValue->lexemeValue = theEnv->FalseSymbol; }
+     { returnValue->lexemeValue = FalseSymbol(theEnv); }
    else
      { returnValue->lexemeValue = EnvCreateBoolean(theEnv,(sd->noWrite || sd->initializeOnly) ? false : true); }
   }
@@ -618,7 +618,7 @@ void SlotInitablePCommand(
 
    sd = CheckSlotExists(context,"slot-initablep",&theDefclass,true,true);
    if (sd == NULL)
-     { returnValue->lexemeValue = theEnv->FalseSymbol; }
+     { returnValue->lexemeValue = FalseSymbol(theEnv); }
    else
      { returnValue->lexemeValue = EnvCreateBoolean(theEnv,(sd->noWrite && (sd->initializeOnly == 0)) ? false : true); }
   }
@@ -664,7 +664,7 @@ void SlotPublicPCommand(
 
    sd = CheckSlotExists(context,"slot-publicp",&theDefclass,true,false);
    if (sd == NULL)
-     { returnValue->lexemeValue = theEnv->FalseSymbol; }
+     { returnValue->lexemeValue = FalseSymbol(theEnv); }
    else
      { returnValue->lexemeValue = EnvCreateBoolean(theEnv,(sd->publicVisibility ? true : false)); }
   }
@@ -741,7 +741,7 @@ void SlotDirectAccessPCommand(
 
    sd = CheckSlotExists(context,"slot-direct-accessp",&theDefclass,true,true);
    if (sd == NULL)
-     { returnValue->lexemeValue = theEnv->FalseSymbol; }
+     { returnValue->lexemeValue = FalseSymbol(theEnv); }
    else
      { returnValue->lexemeValue = EnvCreateBoolean(theEnv,((sd->publicVisibility || (sd->cls == theDefclass)) ? true : false)); }
   }
@@ -788,7 +788,7 @@ void SlotDefaultValueCommand(
    Defclass *theDefclass;
    SlotDescriptor *sd;
 
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
 
    sd = CheckSlotExists(context,"slot-default-value",&theDefclass,true,true);
    if (sd == NULL)
@@ -831,7 +831,7 @@ bool SlotDefaultValue(
    UDFValue *tmpPtr;
    Environment *theEnv = theDefclass->header.env;
    
-   theValue->value = theEnv->FalseSymbol;
+   theValue->value = FalseSymbol(theEnv);
    if ((sd = LookupSlot(theEnv,theDefclass,slotName,true)) == NULL)
      { return false; }
 

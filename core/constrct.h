@@ -70,50 +70,15 @@
 
 #define _H_constrct
 
-typedef struct constructHeader ConstructHeader;
 typedef struct construct Construct;
-
-typedef ConstructHeader *FindConstructFunction(Environment *,const char *);
-typedef ConstructHeader *GetNextConstructFunction(Environment *,ConstructHeader *);
-typedef bool *IsConstructDeletableFunction(ConstructHeader *);
-typedef bool *DeleteConstructFunction(ConstructHeader *,Environment *);
-typedef void *FreeConstructFunction(Environment *,ConstructHeader *);
-typedef void ParserErrorFunction(Environment *,const char *,const char *,const char *,long);
-typedef bool *BeforeResetFunction(Environment *);
 
 #include "symbol.h"
 #include "userdata.h"
 
-typedef enum
-  {
-   DEFMODULE,
-   DEFRULE,
-   DEFTEMPLATE,
-   DEFFACTS,
-   DEFGLOBAL,
-   DEFFUNCTION,
-   DEFGENERIC,
-   DEFMETHOD,
-   DEFCLASS,
-   DEFMESSAGE_HANDLER,
-   DEFINSTANCES
-  } ConstructType;
-
-struct defmoduleItemHeader; // TBD Can this be removed?
-
-struct constructHeader
-  {
-   ConstructType constructType;
-   CLIPSLexeme *name;
-   const char *ppForm;
-   struct defmoduleItemHeader *whichModule;
-   long bsaveID;
-   ConstructHeader *next;
-   struct userData *usrData;
-   Environment *env;
-  };
-
 #include "moduldef.h"
+
+typedef void ParserErrorFunction(Environment *,const char *,const char *,const char *,long);
+typedef bool *BeforeResetFunction(Environment *);
 
 #define CHS (ConstructHeader *)
 

@@ -156,12 +156,12 @@ bool EvaluateExpression(
    struct profileFrameInfo profileFrame;
 #endif
 
-   returnValue->voidValue = theEnv->VoidConstant;
+   returnValue->voidValue = VoidConstant(theEnv);
    returnValue->range = -1;
 
    if (problem == NULL)
      {
-      returnValue->value = theEnv->FalseSymbol;
+      returnValue->value = FalseSymbol(theEnv);
       return(EvaluationData(theEnv)->EvaluationError);
      }
 
@@ -224,7 +224,7 @@ bool EvaluateExpression(
            EnvPrintRouter(theEnv,WERROR,"Variable ");
            EnvPrintRouter(theEnv,WERROR,problem->lexemeValue->contents);
            EnvPrintRouter(theEnv,WERROR," is unbound\n");
-           returnValue->value = theEnv->FalseSymbol;
+           returnValue->value = FalseSymbol(theEnv);
            EnvSetEvaluationError(theEnv,true);
           }
         break;
@@ -738,7 +738,7 @@ bool FunctionCall2(
    /* Initialize the default return value. */
    /*======================================*/
 
-   returnValue->value = theEnv->FalseSymbol;
+   returnValue->value = FalseSymbol(theEnv);
 
    /*============================*/
    /* Parse the argument string. */

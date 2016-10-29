@@ -157,7 +157,7 @@ void WhileFunction(
    CLIPSBlockStart(theEnv,&gcBlock);
 
    UDFNthArgument(context,1,ANY_TYPE_BITS,&theResult);
-   while ((theResult.value != theEnv->FalseSymbol) &&
+   while ((theResult.value != FalseSymbol(theEnv)) &&
           (EvaluationData(theEnv)->HaltExecution != true))
      {
       if ((ProcedureFunctionData(theEnv)->BreakFlag == true) || (ProcedureFunctionData(theEnv)->ReturnFlag == true))
@@ -196,7 +196,7 @@ void WhileFunction(
      }
    else
      {
-      returnValue->value = theEnv->FalseSymbol;
+      returnValue->value = FalseSymbol(theEnv);
      }
 
    CLIPSBlockEnd(theEnv,&gcBlock,returnValue);
@@ -224,7 +224,7 @@ void LoopForCountFunction(
 
    if (! UDFNthArgument(context,1,INTEGER_BIT,&theArg))
      {
-      loopResult->value = theEnv->FalseSymbol;
+      loopResult->value = FalseSymbol(theEnv);
       ProcedureFunctionData(theEnv)->LoopCounterStack = tmpCounter->nxt;
       rtn_struct(theEnv,loopCounterStack,tmpCounter);
       return;
@@ -232,7 +232,7 @@ void LoopForCountFunction(
    tmpCounter->loopCounter = theArg.integerValue->contents;
    if (! UDFNthArgument(context,2,INTEGER_BIT,&theArg))
      {
-      loopResult->value = theEnv->FalseSymbol;
+      loopResult->value = FalseSymbol(theEnv);
       ProcedureFunctionData(theEnv)->LoopCounterStack = tmpCounter->nxt;
       rtn_struct(theEnv,loopCounterStack,tmpCounter);
       return;
@@ -267,7 +267,7 @@ void LoopForCountFunction(
      }
    else
      {
-      loopResult->value = theEnv->FalseSymbol;
+      loopResult->value = FalseSymbol(theEnv);
      }
    ProcedureFunctionData(theEnv)->LoopCounterStack = tmpCounter->nxt;
    rtn_struct(theEnv,loopCounterStack,tmpCounter);
@@ -318,14 +318,14 @@ void IfFunction(
 
    if (! UDFNthArgument(context,1,ANY_TYPE_BITS,returnValue))
      {
-      returnValue->value = theEnv->FalseSymbol;
+      returnValue->value = FalseSymbol(theEnv);
       return;
      }
 
    if ((ProcedureFunctionData(theEnv)->BreakFlag == true) ||
        (ProcedureFunctionData(theEnv)->ReturnFlag == true))
      {
-      returnValue->value = theEnv->FalseSymbol;
+      returnValue->value = FalseSymbol(theEnv);
       return;
      }
 
@@ -336,7 +336,7 @@ void IfFunction(
    /*=========================================*/
 
    numArgs = UDFArgumentCount(context);
-   if ((returnValue->value == theEnv->FalseSymbol) &&
+   if ((returnValue->value == FalseSymbol(theEnv)) &&
        (numArgs == 3))
      {
       UDFNthArgument(context,3,ANY_TYPE_BITS,returnValue);
@@ -348,7 +348,7 @@ void IfFunction(
    /* value, evaluate the "then" portion and return it. */
    /*===================================================*/
 
-   else if (returnValue->value != theEnv->FalseSymbol)
+   else if (returnValue->value != FalseSymbol(theEnv))
      {
       UDFNthArgument(context,2,ANY_TYPE_BITS,returnValue);
       return;
@@ -360,7 +360,7 @@ void IfFunction(
    /* of the if statement.                    */
    /*=========================================*/
 
-   returnValue->value = theEnv->FalseSymbol;
+   returnValue->value = FalseSymbol(theEnv);
   }
 
 /**************************************/
@@ -456,7 +456,7 @@ void BindFunction(
         }
       else
         {
-         returnValue->value = theEnv->FalseSymbol;
+         returnValue->value = FalseSymbol(theEnv);
          return;
         }
      }
@@ -480,7 +480,7 @@ void BindFunction(
       else lastBind->next = theBind->next;
       DecrementSymbolCount(theEnv,(struct symbolHashNode *) theBind->supplementalInfo);
       rtn_struct(theEnv,udfValue,theBind);
-      returnValue->value = theEnv->FalseSymbol;
+      returnValue->value = FalseSymbol(theEnv);
      }
   }
 
@@ -535,7 +535,7 @@ void PrognFunction(
 
    if (argPtr == NULL)
      {
-      returnValue->value = theEnv->FalseSymbol;
+      returnValue->value = FalseSymbol(theEnv);
       return;
      }
 
@@ -550,7 +550,7 @@ void PrognFunction(
 
    if (EnvGetHaltExecution(theEnv) == true)
      {
-      returnValue->value = theEnv->FalseSymbol;
+      returnValue->value = FalseSymbol(theEnv);
       return;
      }
 
@@ -567,7 +567,7 @@ void ReturnFunction(
   {
    if (! UDFHasNextArgument(context))
      {
-      returnValue->voidValue = theEnv->VoidConstant;
+      returnValue->voidValue = VoidConstant(theEnv);
      }
    else
      { UDFNextArgument(context,ANY_TYPE_BITS,returnValue); }
@@ -596,7 +596,7 @@ void SwitchFunction(
    UDFValue switch_val,case_val;
    EXPRESSION *theExp;
 
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
 
    /* ==========================
       Get the value to switch on

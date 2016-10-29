@@ -173,7 +173,7 @@ void GetQueryInstanceSlot(
    UDFValue temp;
    QUERY_CORE *core;
 
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
 
    core = FindQueryCore(theEnv,(int) GetFirstArgument()->integerValue->contents);
    ins = core->solns[(int) GetFirstArgument()->nextArg->integerValue->contents];
@@ -275,7 +275,7 @@ void AnyInstances(
                                       "any-instancep",&rcnt);
    if (qclasses == NULL)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -431,7 +431,7 @@ void QueryDoForInstance(
    QUERY_CLASS *qclasses;
    unsigned rcnt;
 
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
    qclasses = DetermineQueryClasses(theEnv,GetFirstArgument()->nextArg->nextArg,
                                       "do-for-instance",&rcnt);
    if (qclasses == NULL)
@@ -472,7 +472,7 @@ void QueryDoForAllInstances(
    QUERY_CLASS *qclasses;
    unsigned rcnt;
 
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
    qclasses = DetermineQueryClasses(theEnv,GetFirstArgument()->nextArg->nextArg,
                                       "do-for-all-instances",&rcnt);
    if (qclasses == NULL)
@@ -523,7 +523,7 @@ void DelayedQueryDoForAllInstances(
    unsigned i;
    CLIPSBlock gcBlock;
 
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
    qclasses = DetermineQueryClasses(theEnv,GetFirstArgument()->nextArg->nextArg,
                                       "delayed-do-for-all-instances",&rcnt);
    if (qclasses == NULL)
@@ -959,7 +959,7 @@ static bool TestForFirstInstanceInClass(
          ins->busy--;
          if (EvaluationData(theEnv)->HaltExecution == true)
            break;
-         if (temp.value != theEnv->FalseSymbol)
+         if (temp.value != FalseSymbol(theEnv))
            break;
         }
 
@@ -1079,7 +1079,7 @@ static void TestEntireClass(
          ins->busy--;
          if (EvaluationData(theEnv)->HaltExecution == true)
            break;
-         if (temp.value != theEnv->FalseSymbol)
+         if (temp.value != FalseSymbol(theEnv))
            {
             if (InstanceQueryData(theEnv)->QueryCore->action != NULL)
               {

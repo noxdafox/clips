@@ -3,7 +3,7 @@
    /*                                                     */
    /*             CLIPS Version 6.40  10/01/16            */
    /*                                                     */
-   /*                 SYMBOL_TYPE HEADER FILE                  */
+   /*                 SYMBOL HEADER FILE                  */
    /*******************************************************/
 
 /*************************************************************/
@@ -38,8 +38,8 @@
 /*            compilers/operating systems (IBM_MCW,          */
 /*            MAC_MCW, and IBM_TBC).                         */
 /*                                                           */
-/*            Support for hashing EXTERNAL_ADDRESS_TYPE data      */
-/*            type.                                          */
+/*            Support for hashing EXTERNAL_ADDRESS_TYPE      */
+/*            data type.                                     */
 /*                                                           */
 /*            Support for long long integers.                */
 /*                                                           */
@@ -91,8 +91,7 @@ typedef struct integerHashNode CLIPSInteger;
 typedef struct bitMapHashNode CLIPSBitMap;
 typedef struct externalAddressHashNode CLIPSExternalAddress;
 typedef struct genericHashNode GENERIC_HN;
-
-#include "evaluatn.h"
+typedef struct typeHeader TypeHeader;
 
 #ifndef SYMBOL_HASH_SIZE
 #define SYMBOL_HASH_SIZE       63559L
@@ -114,17 +113,26 @@ typedef struct genericHashNode GENERIC_HN;
 #define EXTERNAL_ADDRESS_HASH_SIZE        8191
 #endif
 
-/***************************/
-/* voidHashNode STRUCTURE: */
-/***************************/
+/**************/
+/* typeHeader */
+/**************/
+
+struct typeHeader
+  {
+   unsigned short type;
+  };
+
+/****************/
+/* voidHashNode */
+/****************/
 struct voidHashNode
   {
    TypeHeader th;
   };
 
-/*****************************/
-/* symbolHashNode STRUCTURE: */
-/*****************************/
+/******************/
+/* symbolHashNode */
+/******************/
 struct symbolHashNode
   {
    TypeHeader th;
@@ -137,9 +145,9 @@ struct symbolHashNode
    const char *contents;
   };
 
-/****************************/
-/* floatHashNode STRUCTURE: */
-/****************************/
+/*****************/
+/* floatHashNode */
+/*****************/
 struct floatHashNode
   {
    TypeHeader th;
@@ -167,9 +175,9 @@ struct integerHashNode
    long long contents;
   };
 
-/*****************************/
-/* bitMapHashNode STRUCTURE: */
-/*****************************/
+/******************/
+/* bitMapHashNode */
+/******************/
 struct bitMapHashNode
   {
    TypeHeader th;
@@ -183,9 +191,9 @@ struct bitMapHashNode
    unsigned short size;
   };
 
-/**************************************/
-/* externalAddressHashNode STRUCTURE: */
-/**************************************/
+/***************************/
+/* externalAddressHashNode */
+/***************************/
 struct externalAddressHashNode
   {
    TypeHeader th;
@@ -230,9 +238,9 @@ struct ephemeron
    struct ephemeron *next;
   };
 
-/**************************/
-/* symbolMatch STRUCTURE: */
-/**************************/
+/***************/
+/* symbolMatch */
+/***************/
 struct symbolMatch
   {
    CLIPSLexeme *match;

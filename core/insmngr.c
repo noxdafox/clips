@@ -137,7 +137,7 @@ void InitializeInstanceCommand(
   {
    Instance *ins;
 
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
    ins = CheckInstance(context);
    if (ins == NULL)
      return;
@@ -168,7 +168,7 @@ void MakeInstanceCommand(
    UDFValue temp;
    Defclass *cls;
 
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
    EvaluateExpression(theEnv,GetFirstArgument(),&temp);
    
    if (temp.header->type == INSTANCE_NAME_TYPE)
@@ -467,7 +467,7 @@ void InitSlotsCommand(
 
    if (CheckCurrentMessage(theEnv,"init-slots",true) == false)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -476,7 +476,7 @@ void InitSlotsCommand(
    if (! EvaluationData(theEnv)->EvaluationError)
      { returnValue->instanceValue = GetActiveInstance(theEnv); }
    else
-     { returnValue->lexemeValue = theEnv->FalseSymbol; }
+     { returnValue->lexemeValue = FalseSymbol(theEnv); }
   }
 
 /******************************************************

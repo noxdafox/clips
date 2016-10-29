@@ -10,7 +10,7 @@ OBJS = agenda.obj analysis.obj argacces.obj bload.obj bmathfun.obj bsave.obj \
  	cstrnutl.obj default.obj defins.obj developr.obj dffctbin.obj dffctbsc.obj \
  	dffctcmp.obj dffctdef.obj dffctpsr.obj dffnxbin.obj dffnxcmp.obj dffnxexe.obj \
  	dffnxfun.obj dffnxpsr.obj dfinsbin.obj dfinscmp.obj drive.obj emathfun.obj \
- 	engine.obj envrnmnt.obj evaluatn.obj expressn.obj exprnbin.obj exprnops.obj \
+ 	engine.obj envrnmnt.obj envrnbld.obj evaluatn.obj expressn.obj exprnbin.obj exprnops.obj \
  	exprnpsr.obj extnfunc.obj factbin.obj factbld.obj factcmp.obj factcom.obj \
  	factfun.obj factgen.obj facthsh.obj factlhs.obj factmch.obj factmngr.obj \
  	factprt.obj factqpsr.obj factqury.obj factrete.obj factrhs.obj filecom.obj \
@@ -487,6 +487,13 @@ engine.obj: engine.c setup.h envrnmnt.h symbol.h usrsetup.h agenda.h \
   prntutil.h ruledlt.h sysdep.h watch.h engine.h lgcldpnd.h
 
 envrnmnt.obj: envrnmnt.c setup.h envrnmnt.h symbol.h usrsetup.h memalloc.h \
+  prntutil.h moduldef.h conscomp.h constrct.h userdata.h evaluatn.h \
+  constant.h expressn.h exprnops.h exprnpsr.h extnfunc.h scanner.h \
+  pprint.h symblcmp.h modulpsr.h utility.h router.h engine.h lgcldpnd.h \
+  match.h network.h ruledef.h constrnt.h cstrccom.h agenda.h pattern.h \
+  reorder.h retract.h sysdep.h
+
+envrnbld.obj: envrnbld.c setup.h envrnmnt.h envrnbld.h symbol.h usrsetup.h memalloc.h \
   prntutil.h moduldef.h conscomp.h constrct.h userdata.h evaluatn.h \
   constant.h expressn.h exprnops.h exprnpsr.h extnfunc.h scanner.h \
   pprint.h symblcmp.h modulpsr.h utility.h router.h engine.h lgcldpnd.h \

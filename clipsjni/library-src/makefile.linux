@@ -14,7 +14,7 @@ OBJS = agenda.o analysis.o argacces.o bload.o bmathfun.o bsave.o \
  	cstrnutl.o default.o defins.o developr.o dffctbin.o dffctbsc.o \
  	dffctcmp.o dffctdef.o dffctpsr.o dffnxbin.o dffnxcmp.o dffnxexe.o \
  	dffnxfun.o dffnxpsr.o dfinsbin.o dfinscmp.o drive.o emathfun.o \
- 	engine.o envrnmnt.o evaluatn.o expressn.o exprnbin.o exprnops.o \
+ 	engine.o envrnmnt.o envrnbld.o evaluatn.o expressn.o exprnbin.o exprnops.o \
  	exprnpsr.o extnfunc.o factbin.o factbld.o factcmp.o factcom.o \
  	factfun.o factgen.o facthsh.o factlhs.o factmch.o factmngr.o \
  	factprt.o factqpsr.o factqury.o factrete.o factrhs.o filecom.o \
@@ -497,6 +497,13 @@ engine.o: engine.c setup.h envrnmnt.h symbol.h usrsetup.h agenda.h \
   prntutil.h ruledlt.h sysdep.h watch.h engine.h lgcldpnd.h
 
 envrnmnt.o: envrnmnt.c setup.h envrnmnt.h symbol.h usrsetup.h memalloc.h \
+  prntutil.h moduldef.h conscomp.h constrct.h userdata.h evaluatn.h \
+  constant.h expressn.h exprnops.h exprnpsr.h extnfunc.h scanner.h \
+  pprint.h symblcmp.h modulpsr.h utility.h router.h engine.h lgcldpnd.h \
+  match.h network.h ruledef.h constrnt.h cstrccom.h agenda.h pattern.h \
+  reorder.h retract.h sysdep.h
+
+envrnbld.o: envrnbld.c setup.h envrnmnt.h envrnbld.h symbol.h usrsetup.h memalloc.h \
   prntutil.h moduldef.h conscomp.h constrct.h userdata.h evaluatn.h \
   constant.h expressn.h exprnops.h exprnpsr.h extnfunc.h scanner.h \
   pprint.h symblcmp.h modulpsr.h utility.h router.h engine.h lgcldpnd.h \

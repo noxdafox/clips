@@ -48,8 +48,6 @@
 
 #include <stdio.h>
 
-#include "evaluatn.h"
-
 struct patternEntityRecord
   {
    struct entityRecord base;
@@ -60,8 +58,9 @@ struct patternEntityRecord
    bool (*isDeleted)(Environment *,void *);
   };
 
-typedef struct patternEntityRecord PTRN_ENTITY_RECORD;
-typedef struct patternEntityRecord *PTRN_ENTITY_RECORD_PTR;
+#ifndef _H_symbol
+#include "symbol.h"
+#endif
 
 struct patternEntity
   {
@@ -72,14 +71,7 @@ struct patternEntity
    unsigned long long timeTag;
   };
 
-typedef struct patternEntity PATTERN_ENTITY;
-typedef struct patternEntity * PATTERN_ENTITY_PTR;
 
-struct patternParser;
-
-#ifndef _H_symbol
-#include "symbol.h"
-#endif
 #ifndef _H_scanner
 #include "scanner.h"
 #endif

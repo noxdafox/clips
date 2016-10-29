@@ -124,7 +124,7 @@ void BsaveCommand(
      {
       if (EnvBsave(theEnv,fileName))
         {
-         returnValue->lexemeValue = theEnv->TrueSymbol;
+         returnValue->lexemeValue = TrueSymbol(theEnv);
          return;
         }
      }
@@ -133,7 +133,7 @@ void BsaveCommand(
 #pragma unused(theEnv,context)
 #endif
 #endif
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
   }
 
 #if BLOAD_AND_BSAVE

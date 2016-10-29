@@ -1019,7 +1019,7 @@ static void ResetDefinstancesAction(
      {
       EvaluateExpression(theEnv,theExp,&temp);
       if (EvaluationData(theEnv)->HaltExecution ||
-          (temp.value == theEnv->FalseSymbol))
+          (temp.value == FalseSymbol(theEnv)))
         {
          RestoreCurrentModule(theEnv);
          theDefinstances->busy--;

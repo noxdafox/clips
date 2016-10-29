@@ -521,7 +521,7 @@ void OpenFunction(
 
    if ((fileName = GetFileName(context)) == NULL)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -536,7 +536,7 @@ void OpenFunction(
       EnvSetHaltExecution(theEnv,true);
       EnvSetEvaluationError(theEnv,true);
       IllegalLogicalNameMessage(theEnv,"open");
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -553,7 +553,7 @@ void OpenFunction(
       EnvPrintRouter(theEnv,WERROR,"Logical name ");
       EnvPrintRouter(theEnv,WERROR,logicalName);
       EnvPrintRouter(theEnv,WERROR," already in use.\n");
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -584,7 +584,7 @@ void OpenFunction(
       EnvSetHaltExecution(theEnv,true);
       EnvSetEvaluationError(theEnv,true);
       ExpectedTypeError1(theEnv,"open",3,"string with value \"r\", \"w\", \"a\", \"rb\", \"wb\", or \"ab\"");
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -629,7 +629,7 @@ void CloseFunction(
       IllegalLogicalNameMessage(theEnv,"close");
       EnvSetHaltExecution(theEnv,true);
       EnvSetEvaluationError(theEnv,true);
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -761,7 +761,7 @@ void RemoveFunction(
 
    if ((theFileName = GetFileName(context)) == NULL)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -790,13 +790,13 @@ void RenameFunction(
 
    if ((oldFileName = GetFileName(context)) == NULL)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
    if ((newFileName = GetFileName(context)) == NULL)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 

@@ -133,7 +133,7 @@ void FactRelationFunction(
 
    if (theFact == NULL)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -219,7 +219,7 @@ void FactSlotValueFunction(
    theFact = GetFactAddressOrIndexArgument(context,true);
    if (theFact == NULL)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -262,7 +262,7 @@ void FactSlotValue(
          EnvSetEvaluationError(theEnv,true);
          InvalidDeftemplateSlotMessage(theEnv,theSlotName,
                                        theFact->whichDeftemplate->header.name->contents,false);
-         returnValue->lexemeValue = theEnv->FalseSymbol;
+         returnValue->lexemeValue = FalseSymbol(theEnv);
          return;
         }
      }
@@ -272,7 +272,7 @@ void FactSlotValue(
       EnvSetEvaluationError(theEnv,true);
       InvalidDeftemplateSlotMessage(theEnv,theSlotName,
                                     theFact->whichDeftemplate->header.name->contents,false);
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -305,7 +305,7 @@ void FactSlotNamesFunction(
    theFact = GetFactAddressOrIndexArgument(context,true);
    if (theFact == NULL)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -538,7 +538,7 @@ void PPFactFunction(
      {
       UDFNextArgument(context,ANY_TYPE_BITS,&theArg);
 
-      if (theArg.value == theEnv->FalseSymbol)
+      if (theArg.value == FalseSymbol(theEnv))
         { ignoreDefaults = false; }
       else
         { ignoreDefaults = true; }

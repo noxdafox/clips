@@ -1286,7 +1286,7 @@ void MethodRestrictions(
      {
       rptr = meth->restrictions + i;
       theList->theFields[rstrctIndex++].integerValue = EnvCreateInteger(theEnv,(long long) roffset + 1);
-      theList->theFields[roffset++].lexemeValue = (rptr->query != NULL) ? theEnv->TrueSymbol : theEnv->FalseSymbol;
+      theList->theFields[roffset++].lexemeValue = (rptr->query != NULL) ? TrueSymbol(theEnv) : FalseSymbol(theEnv);
       theList->theFields[roffset++].integerValue = EnvCreateInteger(theEnv,(long long) rptr->tcnt);
       for (j = 0 ; j < rptr->tcnt ; j++)
         {
@@ -1360,7 +1360,7 @@ static bool EvaluateGenericCall(
   {
    GenericDispatch(theEnv,theDefgeneric,NULL,NULL,GetFirstArgument(),returnValue);
    if ((returnValue->header->type == SYMBOL_TYPE) &&
-       (returnValue->value == theEnv->FalseSymbol))
+       (returnValue->value == FalseSymbol(theEnv)))
      return false;
    return true;
   }

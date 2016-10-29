@@ -635,7 +635,7 @@ bool FactSlotLength(
    long extraOffset = 0;
    struct multifieldMarker *tempMark;
 
-   returnValue->value = theEnv->FalseSymbol;
+   returnValue->value = FalseSymbol(theEnv);
 
    hack = (struct factCheckLengthPNCall *) ((CLIPSBitMap *) theValue)->contents;
 
@@ -655,7 +655,7 @@ bool FactSlotLength(
    if (hack->exactly && (segmentPtr->length > (hack->minLength + extraOffset)))
      { return false; }
 
-   returnValue->value = theEnv->TrueSymbol;
+   returnValue->value = TrueSymbol(theEnv);
    return true;
   }
 
@@ -818,8 +818,8 @@ bool FactPNCompVars1(
    if (fieldPtr1->value != fieldPtr2->value) rv = (int) hack->fail;
    else rv = (int) hack->pass;
 
-   if (rv) theResult->value = theEnv->TrueSymbol;
-   else theResult->value = theEnv->FalseSymbol;
+   if (rv) theResult->value = TrueSymbol(theEnv);
+   else theResult->value = FalseSymbol(theEnv);
 
    return(rv);
   }

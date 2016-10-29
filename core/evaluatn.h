@@ -76,12 +76,6 @@ struct udfValue;
 typedef struct clipsValue CLIPSValue;
 typedef struct udfValue UDFValue;
 typedef struct expr FUNCTION_REFERENCE;
-typedef struct typeHeader TypeHeader;
-
-struct typeHeader
-  {
-   unsigned short type;
-  };
 
 typedef void EntityPrintFunction(Environment *,const char *,void *);
 typedef bool EntityEvaluationFunction(Environment *,void *,UDFValue *);

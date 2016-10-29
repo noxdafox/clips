@@ -308,7 +308,7 @@ void ValidateFactIntegrityCommand(
 
    if (theEnv->initialized == false)
      {
-      returnValue->lexemeValue = theEnv->TrueSymbol;
+      returnValue->lexemeValue = TrueSymbol(theEnv);
       return;
      }
 
@@ -318,7 +318,7 @@ void ValidateFactIntegrityCommand(
      {
       if (theFact->factHeader.busyCount <= 0)
         {
-         returnValue->lexemeValue = theEnv->FalseSymbol;
+         returnValue->lexemeValue = FalseSymbol(theEnv);
          return;
         }
 
@@ -333,7 +333,7 @@ void ValidateFactIntegrityCommand(
             theSymbol = theSegment->theFields[i].lexemeValue;
             if (theSymbol->count <= 0)
               {
-               returnValue->lexemeValue = theEnv->FalseSymbol;
+               returnValue->lexemeValue = FalseSymbol(theEnv);
                return;
               }
            }
@@ -343,7 +343,7 @@ void ValidateFactIntegrityCommand(
             theInteger = theSegment->theFields[i].integerValue;
             if (theInteger->count <= 0)
               {
-               returnValue->lexemeValue = theEnv->FalseSymbol;
+               returnValue->lexemeValue = FalseSymbol(theEnv);
                return;
               }
            }
@@ -353,14 +353,14 @@ void ValidateFactIntegrityCommand(
             theFloat = theSegment->theFields[i].floatValue;
             if (theFloat->count <= 0)
               {
-               returnValue->lexemeValue = theEnv->FalseSymbol;
+               returnValue->lexemeValue = FalseSymbol(theEnv);
                return;
               }
            }
         }
      }
 
-   returnValue->lexemeValue = theEnv->TrueSymbol;
+   returnValue->lexemeValue = TrueSymbol(theEnv);
   }
 
 /*************************************************************/

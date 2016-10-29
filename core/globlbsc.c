@@ -144,7 +144,7 @@ static void ResetDefglobalAction(
 
    if (EvaluateExpression(theEnv,theDefglobal->initial,&assignValue))
      {
-      assignValue.value = theEnv->FalseSymbol;
+      assignValue.value = FalseSymbol(theEnv);
      }
 
    QSetDefglobalValue(theEnv,theDefglobal,&assignValue,false);

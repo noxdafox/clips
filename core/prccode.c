@@ -891,7 +891,7 @@ void EvaluateProcActions(
      { theTM = NULL; }
 
    for (i = 0 ; i < lvarcnt ; i++)
-     ProceduralPrimitiveData(theEnv)->LocalVarArray[i].supplementalInfo = theEnv->FalseSymbol;
+     ProceduralPrimitiveData(theEnv)->LocalVarArray[i].supplementalInfo = FalseSymbol(theEnv);
 
    oldModule = EnvGetCurrentModule(theEnv);
    if (oldModule != theModule)
@@ -901,7 +901,7 @@ void EvaluateProcActions(
 
    if (EvaluateExpression(theEnv,actions,returnValue))
      {
-      returnValue->value = theEnv->FalseSymbol;
+      returnValue->value = FalseSymbol(theEnv);
      }
 
    ProceduralPrimitiveData(theEnv)->CurrentProcActions = oldActions;
@@ -926,7 +926,7 @@ void EvaluateProcActions(
      {
       RemoveTrackedMemory(theEnv,theTM);
       for (i = 0 ; i < lvarcnt ; i++)
-        if (ProceduralPrimitiveData(theEnv)->LocalVarArray[i].supplementalInfo == theEnv->TrueSymbol)
+        if (ProceduralPrimitiveData(theEnv)->LocalVarArray[i].supplementalInfo == TrueSymbol(theEnv))
           ValueDeinstall(theEnv,&ProceduralPrimitiveData(theEnv)->LocalVarArray[i]);
       rm(theEnv,ProceduralPrimitiveData(theEnv)->LocalVarArray,(sizeof(UDFValue) * lvarcnt));
      }
@@ -1164,7 +1164,7 @@ static bool GetProcBind(
 
    pvar = (PACKED_PROC_VAR *) ((CLIPSBitMap *) value)->contents;
    src = &ProceduralPrimitiveData(theEnv)->LocalVarArray[pvar->first - 1];
-   if (src->supplementalInfo == theEnv->TrueSymbol)
+   if (src->supplementalInfo == TrueSymbol(theEnv))
      {
       returnValue->value = src->value;
       returnValue->begin = src->begin;
@@ -1189,7 +1189,7 @@ static bool GetProcBind(
         }
       else
         EnvPrintRouter(theEnv,WERROR," unbound.\n");
-      returnValue->value = theEnv->FalseSymbol;
+      returnValue->value = FalseSymbol(theEnv);
       return true;
      }
    if (pvar->secondFlag == 0)
@@ -1226,10 +1226,10 @@ static bool PutProcBind(
    dst = &ProceduralPrimitiveData(theEnv)->LocalVarArray[*((int *) ((CLIPSBitMap *) value)->contents) - 1];
    if (GetFirstArgument() == NULL)
      {
-      if (dst->supplementalInfo == theEnv->TrueSymbol)
+      if (dst->supplementalInfo == TrueSymbol(theEnv))
         ValueDeinstall(theEnv,dst);
-      dst->supplementalInfo = theEnv->FalseSymbol;
-      returnValue->value = theEnv->FalseSymbol;
+      dst->supplementalInfo = FalseSymbol(theEnv);
+      returnValue->value = FalseSymbol(theEnv);
      }
    else
      {
@@ -1237,9 +1237,9 @@ static bool PutProcBind(
         StoreInMultifield(theEnv,returnValue,GetFirstArgument(),true);
       else
         EvaluateExpression(theEnv,GetFirstArgument(),returnValue);
-      if (dst->supplementalInfo == theEnv->TrueSymbol)
+      if (dst->supplementalInfo == TrueSymbol(theEnv))
         ValueDeinstall(theEnv,dst);
-      dst->supplementalInfo = theEnv->TrueSymbol;
+      dst->supplementalInfo = TrueSymbol(theEnv);
       dst->value = returnValue->value;
       dst->begin = returnValue->begin;
       dst->range = returnValue->range;
@@ -1398,7 +1398,7 @@ static EXPRESSION *CompactActions(
    if (actions->argList == NULL)
      {
       actions->type = SYMBOL_TYPE;
-      actions->value = theEnv->FalseSymbol;
+      actions->value = FalseSymbol(theEnv);
      }
    else if (actions->argList->nextArg == NULL)
      {
@@ -1440,7 +1440,7 @@ static bool EvaluateBadCall(
    EnvPrintRouter(theEnv,WERROR,"Attempted to call a deffunction/generic function ");
    EnvPrintRouter(theEnv,WERROR,"which does not exist.\n");
    EnvSetEvaluationError(theEnv,true);
-   returnValue->value = theEnv->FalseSymbol;
+   returnValue->value = FalseSymbol(theEnv);
    return false;
   }
 

@@ -595,7 +595,7 @@ Instance *EnvMakeInstance(
    EXPRESSION *top;
    UDFValue returnValue;
 
-   returnValue.value = theEnv->FalseSymbol;
+   returnValue.value = FalseSymbol(theEnv);
    if (OpenStringSource(theEnv,router,mkstr,0) == 0)
      return NULL;
    GetToken(theEnv,router,&tkn);
@@ -627,7 +627,7 @@ Instance *EnvMakeInstance(
       CallPeriodicTasks(theEnv);
      }
 
-   if (returnValue.value == theEnv->FalseSymbol)
+   if (returnValue.value == FalseSymbol(theEnv))
      return NULL;
 
    return FindInstanceBySymbol(theEnv,returnValue.lexemeValue);
@@ -716,14 +716,14 @@ void EnvDirectGetSlot(
    if (theInstance->garbage == 1)
      {
       EnvSetEvaluationError(theEnv,true);
-      returnValue->value = theEnv->FalseSymbol;
+      returnValue->value = FalseSymbol(theEnv);
       return;
      }
    sp = FindISlotByName(theEnv,theInstance,sname);
    if (sp == NULL)
      {
       EnvSetEvaluationError(theEnv,true);
-      returnValue->value = theEnv->FalseSymbol;
+      returnValue->value = FalseSymbol(theEnv);
       return;
      }
 
@@ -1018,7 +1018,7 @@ void ClassCommand(
 
    func = EvaluationData(theEnv)->CurrentExpression->functionValue->callFunctionName->contents;
 
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
 
    EvaluateExpression(theEnv,GetFirstArgument(),&temp);
    if (temp.header->type == INSTANCE_ADDRESS_TYPE)
@@ -1084,7 +1084,7 @@ void CreateInstanceHandler(
 #pragma unused(theEnv,context)
 #endif
 
-   returnValue->lexemeValue = theEnv->TrueSymbol;
+   returnValue->lexemeValue = TrueSymbol(theEnv);
   }
 
 /******************************************************
@@ -1107,7 +1107,7 @@ void DeleteInstanceCommand(
    if (CheckCurrentMessage(theEnv,"delete-instance",true))
      { returnValue->lexemeValue = EnvCreateBoolean(theEnv,QuashInstance(theEnv,GetActiveInstance(theEnv))); }
    else
-     { returnValue->lexemeValue = theEnv->FalseSymbol; }
+     { returnValue->lexemeValue = FalseSymbol(theEnv); }
   }
 
 /********************************************************************
@@ -1140,7 +1140,7 @@ void UnmakeInstanceCommand(
          if ((ins == NULL) ? (strcmp(theArg.lexemeValue->contents,"*") != 0) : false)
            {
             NoInstanceError(theEnv,theArg.lexemeValue->contents,"unmake-instance");
-            returnValue->lexemeValue = theEnv->FalseSymbol;
+            returnValue->lexemeValue = FalseSymbol(theEnv);
             return;
            }
          }
@@ -1151,7 +1151,7 @@ void UnmakeInstanceCommand(
            {
             StaleInstanceAddress(theEnv,"unmake-instance",0);
             EnvSetEvaluationError(theEnv,true);
-            returnValue->lexemeValue = theEnv->FalseSymbol;
+            returnValue->lexemeValue = FalseSymbol(theEnv);
             return;
            }
         }
@@ -1159,7 +1159,7 @@ void UnmakeInstanceCommand(
         {
          ExpectedTypeError1(theEnv,"unmake-instance",argNumber,"instance-address, instance-name, or the symbol *");
          EnvSetEvaluationError(theEnv,true);
-         returnValue->lexemeValue = theEnv->FalseSymbol;
+         returnValue->lexemeValue = FalseSymbol(theEnv);
          return;
         }
       if (EnvUnmakeInstance(theEnv,ins) == false)
@@ -1234,12 +1234,12 @@ void InstanceAddressCommand(
    Defmodule *theModule;
    bool searchImports;
 
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
    if (UDFArgumentCount(context) > 1)
      {
       if (! UDFFirstArgument(context,SYMBOL_BIT,&temp))
         {
-         returnValue->lexemeValue = theEnv->FalseSymbol;
+         returnValue->lexemeValue = FalseSymbol(theEnv);
          return;
         }
       theModule = EnvFindDefmodule(theEnv,temp.lexemeValue->contents);
@@ -1259,7 +1259,7 @@ void InstanceAddressCommand(
 
       if (! UDFNextArgument(context,INSTANCE_NAME_BIT | SYMBOL_BIT,&temp))
         {
-         returnValue->lexemeValue = theEnv->FalseSymbol;
+         returnValue->lexemeValue = FalseSymbol(theEnv);
          return;
         }
       ins = FindInstanceInModule(theEnv,temp.lexemeValue,theModule,
@@ -1292,7 +1292,7 @@ void InstanceAddressCommand(
         }
      }
    else
-     { returnValue->lexemeValue = theEnv->FalseSymbol; }
+     { returnValue->lexemeValue = FalseSymbol(theEnv); }
   }
 
 /***************************************************************
@@ -1311,7 +1311,7 @@ void InstanceNameCommand(
    Instance *ins;
    UDFValue theArg;
 
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
    if (! UDFFirstArgument(context,INSTANCE_BITS | SYMBOL_BIT,&theArg))
      { return; }
 
@@ -1357,9 +1357,9 @@ void InstanceAddressPCommand(
      { return; }
 
    if (theArg.header->type == INSTANCE_ADDRESS_TYPE)
-     { returnValue->value = theEnv->TrueSymbol; }
+     { returnValue->value = TrueSymbol(theEnv); }
    else
-     { returnValue->value = theEnv->FalseSymbol; }
+     { returnValue->value = FalseSymbol(theEnv); }
   }
 
 /**************************************************************
@@ -1438,7 +1438,7 @@ void InstanceExistPCommand(
      }
    ExpectedTypeError1(theEnv,"instance-existp",1,"instance name, instance address or symbol");
    EnvSetEvaluationError(theEnv,true);
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
   }
 
 /* =========================================

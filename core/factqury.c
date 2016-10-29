@@ -176,7 +176,7 @@ void GetQueryFactSlot(
    QUERY_CORE *core;
    short position;
 
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
 
    core = FindQueryCore(theEnv,(int) GetFirstArgument()->integerValue->contents);
    theFact = core->solns[(int) GetFirstArgument()->nextArg->integerValue->contents];
@@ -290,7 +290,7 @@ void AnyFacts(
                                       "any-factp",&rcnt);
    if (qtemplates == NULL)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -443,7 +443,7 @@ void QueryDoForFact(
    QUERY_TEMPLATE *qtemplates;
    unsigned rcnt;
 
-   returnValue->value = theEnv->FalseSymbol;
+   returnValue->value = FalseSymbol(theEnv);
    qtemplates = DetermineQueryTemplates(theEnv,GetFirstArgument()->nextArg->nextArg,
                                       "do-for-fact",&rcnt);
    if (qtemplates == NULL)
@@ -484,7 +484,7 @@ void QueryDoForAllFacts(
    QUERY_TEMPLATE *qtemplates;
    unsigned rcnt;
 
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
 
    qtemplates = DetermineQueryTemplates(theEnv,GetFirstArgument()->nextArg->nextArg,
                                       "do-for-all-facts",&rcnt);
@@ -536,7 +536,7 @@ void DelayedQueryDoForAllFacts(
    unsigned i;
    CLIPSBlock gcBlock;
 
-   returnValue->value = theEnv->FalseSymbol;
+   returnValue->value = FalseSymbol(theEnv);
    qtemplates = DetermineQueryTemplates(theEnv,GetFirstArgument()->nextArg->nextArg,
                                       "delayed-do-for-all-facts",&rcnt);
    if (qtemplates == NULL)
@@ -954,7 +954,7 @@ static bool TestForFirstFactInTemplate(
          theFact->factHeader.busyCount--;
          if (EvaluationData(theEnv)->HaltExecution == true)
            break;
-         if (temp.value != theEnv->FalseSymbol)
+         if (temp.value != FalseSymbol(theEnv))
            break;
         }
       theFact = theFact->nextTemplateFact;
@@ -1050,7 +1050,7 @@ static void TestEntireTemplate(
          theFact->factHeader.busyCount--;
          if (EvaluationData(theEnv)->HaltExecution == true)
            break;
-         if (temp.value != theEnv->FalseSymbol)
+         if (temp.value != FalseSymbol(theEnv))
            {
             if (FactQueryData(theEnv)->QueryCore->action != NULL)
               {

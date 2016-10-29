@@ -186,7 +186,7 @@ void ModifyInstance(
                                      &overrideCount,&error);
    if (error)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -197,7 +197,7 @@ void ModifyInstance(
    ins = CheckInstance(context);
    if (ins == NULL)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       DeleteSlotOverrideEvaluations(theEnv,overrides,overrideCount);
       return;
      }
@@ -255,7 +255,7 @@ void MsgModifyInstance(
                                      &overrideCount,&error);
    if (error)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -266,7 +266,7 @@ void MsgModifyInstance(
    ins = CheckInstance(context);
    if (ins == NULL)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       DeleteSlotOverrideEvaluations(theEnv,overrides,overrideCount);
       return;
      }
@@ -325,7 +325,7 @@ void DuplicateInstance(
                                      &overrideCount,&error);
    if (error)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -336,14 +336,14 @@ void DuplicateInstance(
    ins = CheckInstance(context);
    if (ins == NULL)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       DeleteSlotOverrideEvaluations(theEnv,overrides,overrideCount);
       return;
      }
 
    if (! UDFNextArgument(context,INSTANCE_NAME_BIT | SYMBOL_BIT,&newName))
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       DeleteSlotOverrideEvaluations(theEnv,overrides,overrideCount);
       return;
      }
@@ -405,7 +405,7 @@ void MsgDuplicateInstance(
                                      &overrideCount,&error);
    if (error)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -416,13 +416,13 @@ void MsgDuplicateInstance(
    ins = CheckInstance(context);
    if (ins == NULL)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       DeleteSlotOverrideEvaluations(theEnv,overrides,overrideCount);
       return;
      }
    if (! UDFNextArgument(context,INSTANCE_NAME_BIT | SYMBOL_BIT,&newName))
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       DeleteSlotOverrideEvaluations(theEnv,overrides,overrideCount);
       return;
      }
@@ -772,7 +772,7 @@ static void ModifyMsgHandlerSupport(
    Instance *ins;
    INSTANCE_SLOT *insSlot;
 
-   returnValue->value = theEnv->FalseSymbol;
+   returnValue->value = FalseSymbol(theEnv);
    if (InstanceData(theEnv)->ObjectModDupMsgValid == false)
      {
       PrintErrorID(theEnv,"INSMODDP",1,false);
@@ -842,7 +842,7 @@ static void ModifyMsgHandlerSupport(
 
       slotOverrides = slotOverrides->next;
      }
-   returnValue->value = theEnv->TrueSymbol;
+   returnValue->value = TrueSymbol(theEnv);
   }
 
 /*************************************************************
@@ -874,7 +874,7 @@ static void DuplicateMsgHandlerSupport(
    UDFValue temp,junk,*newval;
    bool success;
 
-   returnValue->value = theEnv->FalseSymbol;
+   returnValue->value = FalseSymbol(theEnv);
    if (InstanceData(theEnv)->ObjectModDupMsgValid == false)
      {
       PrintErrorID(theEnv,"INSMODDP",2,false);
@@ -1018,7 +1018,7 @@ static void DuplicateMsgHandlerSupport(
    dstins->busy--;
    if (dstins->garbage)
      {
-      returnValue->value = theEnv->FalseSymbol;
+      returnValue->value = FalseSymbol(theEnv);
       EnvSetEvaluationError(theEnv,true);
      }
    else

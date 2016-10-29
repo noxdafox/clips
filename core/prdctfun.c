@@ -115,7 +115,7 @@ void EqFunction(
    numArgs = UDFArgumentCount(context);
    if (numArgs == 0)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -139,7 +139,7 @@ void EqFunction(
 
       if (nextItem.header->type != item.header->type)
         {
-         returnValue->lexemeValue = theEnv->FalseSymbol;
+         returnValue->lexemeValue = FalseSymbol(theEnv);
          return;
         }
 
@@ -147,13 +147,13 @@ void EqFunction(
         {
          if (MultifieldDOsEqual(&nextItem,&item) == false)
            {
-            returnValue->lexemeValue = theEnv->FalseSymbol;
+            returnValue->lexemeValue = FalseSymbol(theEnv);
             return;
            }
         }
       else if (nextItem.value != item.value)
         {
-         returnValue->lexemeValue = theEnv->FalseSymbol;
+         returnValue->lexemeValue = FalseSymbol(theEnv);
          return;
         }
 
@@ -165,7 +165,7 @@ void EqFunction(
    /* from the first. Return TRUE.        */
    /*=====================================*/
 
-   returnValue->lexemeValue = theEnv->TrueSymbol;
+   returnValue->lexemeValue = TrueSymbol(theEnv);
   }
 
 /*************************************/
@@ -188,7 +188,7 @@ void NeqFunction(
    numArgs = UDFArgumentCount(context);
    if (numArgs == 0)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -216,13 +216,13 @@ void NeqFunction(
         {
          if (MultifieldDOsEqual(&nextItem,&item) == true)
            {
-            returnValue->lexemeValue = theEnv->FalseSymbol;
+            returnValue->lexemeValue = FalseSymbol(theEnv);
             return;
            }
         }
       else if (nextItem.value == item.value)
         {
-         returnValue->lexemeValue = theEnv->FalseSymbol;
+         returnValue->lexemeValue = FalseSymbol(theEnv);
          return;
         }
      }
@@ -232,7 +232,7 @@ void NeqFunction(
    /* to the first. Return TRUE.          */
    /*=====================================*/
 
-   returnValue->lexemeValue = theEnv->TrueSymbol;
+   returnValue->lexemeValue = TrueSymbol(theEnv);
   }
 
 /*****************************************/
@@ -250,9 +250,9 @@ void StringpFunction(
      { return; }
 
    if (CVIsType(&item,STRING_BIT))
-     { returnValue->lexemeValue = theEnv->TrueSymbol; }
+     { returnValue->lexemeValue = TrueSymbol(theEnv); }
    else
-     { returnValue->lexemeValue = theEnv->FalseSymbol; }
+     { returnValue->lexemeValue = FalseSymbol(theEnv); }
   }
 
 /*****************************************/
@@ -270,9 +270,9 @@ void SymbolpFunction(
      { return; }
 
    if (CVIsType(&item,SYMBOL_BIT))
-     { returnValue->lexemeValue = theEnv->TrueSymbol; }
+     { returnValue->lexemeValue = TrueSymbol(theEnv); }
    else
-     { returnValue->lexemeValue = theEnv->FalseSymbol; }
+     { returnValue->lexemeValue = FalseSymbol(theEnv); }
   }
 
 /*****************************************/
@@ -290,9 +290,9 @@ void LexemepFunction(
      { return; }
 
    if (CVIsType(&item,LEXEME_BITS))
-     { returnValue->lexemeValue = theEnv->TrueSymbol; }
+     { returnValue->lexemeValue = TrueSymbol(theEnv); }
    else
-     { returnValue->lexemeValue = theEnv->FalseSymbol; }
+     { returnValue->lexemeValue = FalseSymbol(theEnv); }
   }
 
 /*****************************************/
@@ -310,9 +310,9 @@ void NumberpFunction(
      { return; }
 
    if (CVIsType(&item,NUMBER_BITS))
-     { returnValue->lexemeValue = theEnv->TrueSymbol; }
+     { returnValue->lexemeValue = TrueSymbol(theEnv); }
    else
-     { returnValue->lexemeValue = theEnv->FalseSymbol; }
+     { returnValue->lexemeValue = FalseSymbol(theEnv); }
   }
 
 /****************************************/
@@ -330,9 +330,9 @@ void FloatpFunction(
      { return; }
 
    if (CVIsType(&item,FLOAT_BIT))
-     { returnValue->lexemeValue = theEnv->TrueSymbol; }
+     { returnValue->lexemeValue = TrueSymbol(theEnv); }
    else
-     { returnValue->lexemeValue = theEnv->FalseSymbol; }
+     { returnValue->lexemeValue = FalseSymbol(theEnv); }
   }
 
 /******************************************/
@@ -350,9 +350,9 @@ void IntegerpFunction(
      { return; }
 
    if (CVIsType(&item,INTEGER_BIT))
-     { returnValue->lexemeValue = theEnv->TrueSymbol; }
+     { returnValue->lexemeValue = TrueSymbol(theEnv); }
    else
-     { returnValue->lexemeValue = theEnv->FalseSymbol; }
+     { returnValue->lexemeValue = FalseSymbol(theEnv); }
   }
 
 /*********************************************/
@@ -370,9 +370,9 @@ void MultifieldpFunction(
      { return; }
 
    if (CVIsType(&item,MULTIFIELD_BIT))
-     { returnValue->lexemeValue = theEnv->TrueSymbol; }
+     { returnValue->lexemeValue = TrueSymbol(theEnv); }
    else
-     { returnValue->lexemeValue = theEnv->FalseSymbol; }
+     { returnValue->lexemeValue = FalseSymbol(theEnv); }
   }
 
 /******************************************/
@@ -390,9 +390,9 @@ void PointerpFunction(
      { return; }
 
    if (CVIsType(&item,EXTERNAL_ADDRESS_BIT))
-     { returnValue->lexemeValue = theEnv->TrueSymbol; }
+     { returnValue->lexemeValue = TrueSymbol(theEnv); }
    else
-     { returnValue->lexemeValue = theEnv->FalseSymbol; }
+     { returnValue->lexemeValue = FalseSymbol(theEnv); }
   }
 
 /***********************************/
@@ -409,10 +409,10 @@ void NotFunction(
    if (! UDFFirstArgument(context,ANY_TYPE_BITS,&theArg))
      { return; }
 
-   if (theArg.value == theEnv->FalseSymbol)
-     { returnValue->lexemeValue = theEnv->TrueSymbol; }
+   if (theArg.value == FalseSymbol(theEnv))
+     { returnValue->lexemeValue = TrueSymbol(theEnv); }
    else
-     { returnValue->lexemeValue = theEnv->FalseSymbol; }
+     { returnValue->lexemeValue = FalseSymbol(theEnv); }
   }
 
 /*************************************/
@@ -431,14 +431,14 @@ void AndFunction(
       if (! UDFNextArgument(context,ANY_TYPE_BITS,&theArg))
         { return; }
 
-      if (theArg.value == theEnv->FalseSymbol)
+      if (theArg.value == FalseSymbol(theEnv))
         {
-         returnValue->lexemeValue = theEnv->FalseSymbol;
+         returnValue->lexemeValue = FalseSymbol(theEnv);
          return;
         }
      }
 
-   returnValue->lexemeValue = theEnv->TrueSymbol;
+   returnValue->lexemeValue = TrueSymbol(theEnv);
   }
 
 /************************************/
@@ -457,14 +457,14 @@ void OrFunction(
       if (! UDFNextArgument(context,ANY_TYPE_BITS,&theArg))
         { return; }
 
-      if (theArg.value != theEnv->FalseSymbol)
+      if (theArg.value != FalseSymbol(theEnv))
         {
-         returnValue->lexemeValue = theEnv->TrueSymbol;
+         returnValue->lexemeValue = TrueSymbol(theEnv);
          return;
         }
      }
 
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
   }
 
 /*****************************************/
@@ -499,7 +499,7 @@ void LessThanOrEqualFunction(
         {
          if (rv1.integerValue->contents > rv2.integerValue->contents)
            {
-            returnValue->lexemeValue = theEnv->FalseSymbol;
+            returnValue->lexemeValue = FalseSymbol(theEnv);
             return;
            }
         }
@@ -507,7 +507,7 @@ void LessThanOrEqualFunction(
         {
          if (CVCoerceToFloat(&rv1) > CVCoerceToFloat(&rv2))
            {
-            returnValue->lexemeValue = theEnv->FalseSymbol;
+            returnValue->lexemeValue = FalseSymbol(theEnv);
             return;
            }
         }
@@ -520,7 +520,7 @@ void LessThanOrEqualFunction(
    /* to its predecessor. Return TRUE.     */
    /*======================================*/
 
-   returnValue->lexemeValue = theEnv->TrueSymbol;
+   returnValue->lexemeValue = TrueSymbol(theEnv);
   }
 
 /********************************************/
@@ -555,7 +555,7 @@ void GreaterThanOrEqualFunction(
         {
          if (rv1.integerValue->contents < rv2.integerValue->contents)
            {
-            returnValue->lexemeValue = theEnv->FalseSymbol;
+            returnValue->lexemeValue = FalseSymbol(theEnv);
             return;
            }
         }
@@ -563,7 +563,7 @@ void GreaterThanOrEqualFunction(
         {
          if (CVCoerceToFloat(&rv1) < CVCoerceToFloat(&rv2))
            {
-            returnValue->lexemeValue = theEnv->FalseSymbol;
+            returnValue->lexemeValue = FalseSymbol(theEnv);
             return;
            }
         }
@@ -576,7 +576,7 @@ void GreaterThanOrEqualFunction(
    /* to its predecessor. Return TRUE.        */
    /*=========================================*/
 
-   returnValue->lexemeValue = theEnv->TrueSymbol;
+   returnValue->lexemeValue = TrueSymbol(theEnv);
   }
 
 /**********************************/
@@ -612,7 +612,7 @@ void LessThanFunction(
         {
          if (rv1.integerValue->contents >= rv2.integerValue->contents)
            {
-            returnValue->lexemeValue = theEnv->FalseSymbol;
+            returnValue->lexemeValue = FalseSymbol(theEnv);
             return;
            }
         }
@@ -620,7 +620,7 @@ void LessThanFunction(
         {
          if (CVCoerceToFloat(&rv1) >= CVCoerceToFloat(&rv2))
            {
-            returnValue->lexemeValue = theEnv->FalseSymbol;
+            returnValue->lexemeValue = FalseSymbol(theEnv);
             return;
            }
         }
@@ -633,7 +633,7 @@ void LessThanFunction(
    /* predecessor. Return TRUE.       */
    /*=================================*/
 
-   returnValue->lexemeValue = theEnv->TrueSymbol;
+   returnValue->lexemeValue = TrueSymbol(theEnv);
   }
 
 /*************************************/
@@ -669,7 +669,7 @@ void GreaterThanFunction(
         {
          if (rv1.integerValue->contents <= rv2.integerValue->contents)
            {
-            returnValue->lexemeValue = theEnv->FalseSymbol;
+            returnValue->lexemeValue = FalseSymbol(theEnv);
             return;
            }
         }
@@ -677,7 +677,7 @@ void GreaterThanFunction(
         {
          if (CVCoerceToFloat(&rv1) <= CVCoerceToFloat(&rv2))
            {
-            returnValue->lexemeValue = theEnv->FalseSymbol;
+            returnValue->lexemeValue = FalseSymbol(theEnv);
             return;
            }
         }
@@ -690,7 +690,7 @@ void GreaterThanFunction(
    /* its predecessor. Return TRUE.  */
    /*================================*/
 
-   returnValue->lexemeValue = theEnv->TrueSymbol;
+   returnValue->lexemeValue = TrueSymbol(theEnv);
   }
 
 /**************************************/
@@ -725,7 +725,7 @@ void NumericEqualFunction(
         {
          if (rv1.integerValue->contents != rv2.integerValue->contents)
            {
-            returnValue->lexemeValue = theEnv->FalseSymbol;
+            returnValue->lexemeValue = FalseSymbol(theEnv);
             return;
            }
         }
@@ -733,7 +733,7 @@ void NumericEqualFunction(
         {
          if (CVCoerceToFloat(&rv1) != CVCoerceToFloat(&rv2))
            {
-            returnValue->lexemeValue = theEnv->FalseSymbol;
+            returnValue->lexemeValue = FalseSymbol(theEnv);
             return;
            }
         }
@@ -744,7 +744,7 @@ void NumericEqualFunction(
    /* first argument. Return TRUE.    */
    /*=================================*/
 
-   returnValue->lexemeValue = theEnv->TrueSymbol;
+   returnValue->lexemeValue = TrueSymbol(theEnv);
   }
 
 /*****************************************/
@@ -779,7 +779,7 @@ void NumericNotEqualFunction(
         {
          if (rv1.integerValue->contents == rv2.integerValue->contents)
            {
-            returnValue->lexemeValue = theEnv->FalseSymbol;
+            returnValue->lexemeValue = FalseSymbol(theEnv);
             return;
            }
         }
@@ -787,7 +787,7 @@ void NumericNotEqualFunction(
         {
          if (CVCoerceToFloat(&rv1) == CVCoerceToFloat(&rv2))
            {
-            returnValue->lexemeValue = theEnv->FalseSymbol;
+            returnValue->lexemeValue = FalseSymbol(theEnv);
             return;
            }
         }
@@ -798,7 +798,7 @@ void NumericNotEqualFunction(
    /* first argument. Return TRUE.      */
    /*===================================*/
 
-   returnValue->lexemeValue = theEnv->TrueSymbol;
+   returnValue->lexemeValue = TrueSymbol(theEnv);
   }
 
 /**************************************/
@@ -827,8 +827,8 @@ void OddpFunction(
    num = item.integerValue->contents;
    halfnum = (num / 2) * 2;
 
-   if (num == halfnum) returnValue->lexemeValue = theEnv->FalseSymbol;
-   else returnValue->lexemeValue = theEnv->TrueSymbol;
+   if (num == halfnum) returnValue->lexemeValue = FalseSymbol(theEnv);
+   else returnValue->lexemeValue = TrueSymbol(theEnv);
   }
 
 /***************************************/
@@ -857,8 +857,8 @@ void EvenpFunction(
    num = item.integerValue->contents;;
    halfnum = (num / 2) * 2;
 
-   if (num != halfnum) returnValue->lexemeValue = theEnv->FalseSymbol;
-   else returnValue->lexemeValue = theEnv->TrueSymbol;
+   if (num != halfnum) returnValue->lexemeValue = FalseSymbol(theEnv);
+   else returnValue->lexemeValue = TrueSymbol(theEnv);
   }
 
 

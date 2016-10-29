@@ -1351,7 +1351,7 @@ void PopFocusFunction(
    theModule = EnvPopFocus(theEnv);
    if (theModule == NULL)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -1373,7 +1373,7 @@ void GetFocusFunction(
 
    if (rv == NULL)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -1423,7 +1423,7 @@ void FocusCommand(
       if (theModule == NULL)
         {
          CantFindItemErrorMessage(theEnv,"defmodule",argument);
-         returnValue->lexemeValue = theEnv->FalseSymbol;
+         returnValue->lexemeValue = FalseSymbol(theEnv);
          return;
         }
 
@@ -1434,7 +1434,7 @@ void FocusCommand(
    /* Return true to indicate success of focus command. */
    /*===================================================*/
 
-   returnValue->lexemeValue = theEnv->TrueSymbol;
+   returnValue->lexemeValue = TrueSymbol(theEnv);
   }
 
 /***********************************************************************/

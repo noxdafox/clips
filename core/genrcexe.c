@@ -151,7 +151,7 @@ void GenericDispatch(
 #endif
    CLIPSBlock gcBlock;
 
-   returnValue->value = theEnv->FalseSymbol;
+   returnValue->value = FalseSymbol(theEnv);
    EvaluationData(theEnv)->EvaluationError = false;
    if (EvaluationData(theEnv)->HaltExecution)
      return;
@@ -362,7 +362,7 @@ bool IsMethodApplicable(
         {
          DefgenericData(theEnv)->GenericCurrentArgument = &ProceduralPrimitiveData(theEnv)->ProcParamArray[i];
          EvaluateExpression(theEnv,rp->query,&temp);
-         if (temp.value == theEnv->FalseSymbol)
+         if (temp.value == FalseSymbol(theEnv))
            return false;
         }
       if (((int) k) != meth->restrictionCount-1)
@@ -429,7 +429,7 @@ void CallNextMethod(
    struct profileFrameInfo profileFrame;
 #endif
 
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
 
    if (EvaluationData(theEnv)->HaltExecution)
      return;
@@ -506,7 +506,7 @@ void CallSpecificMethod(
    Defgeneric *gfunc;
    int mi;
 
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
 
    if (! UDFFirstArgument(context,SYMBOL_BIT,&theArg)) return;
 
@@ -538,7 +538,7 @@ void OverrideNextMethod(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
    if (EvaluationData(theEnv)->HaltExecution)
      return;
    if (DefgenericData(theEnv)->CurrentMethod == NULL)

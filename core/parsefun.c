@@ -151,7 +151,7 @@ bool CheckSyntax(
    /* (TRUE for problems found).   */
    /*==============================*/
 
-   returnValue->lexemeValue = theEnv->TrueSymbol;
+   returnValue->lexemeValue = TrueSymbol(theEnv);
 
    /*===========================================*/
    /* Create a string source router so that the */
@@ -234,7 +234,7 @@ bool CheckSyntax(
          return true;
         }
 
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       DeactivateErrorCapture(theEnv);
       return false;
      }
@@ -266,7 +266,7 @@ bool CheckSyntax(
    DeactivateErrorCapture(theEnv);
 
    ReturnExpression(theEnv,top);
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
    return false;
   }
 
@@ -317,12 +317,12 @@ static void SetErrorCaptureValues(
    if (ParseFunctionData(theEnv)->ErrorString != NULL)
      { theMultifield->theFields[0].lexemeValue = EnvCreateString(theEnv,ParseFunctionData(theEnv)->ErrorString); }
    else
-     { theMultifield->theFields[0].lexemeValue = theEnv->FalseSymbol; }
+     { theMultifield->theFields[0].lexemeValue = FalseSymbol(theEnv); }
 
    if (ParseFunctionData(theEnv)->WarningString != NULL)
      { theMultifield->theFields[1].lexemeValue = EnvCreateString(theEnv,ParseFunctionData(theEnv)->WarningString); }
    else
-     { theMultifield->theFields[1].lexemeValue = theEnv->FalseSymbol; }
+     { theMultifield->theFields[1].lexemeValue = FalseSymbol(theEnv); }
 
    returnValue->begin = 0;
    returnValue->range = 2;
@@ -383,7 +383,7 @@ void CheckSyntaxFunction(
   {
    PrintErrorID(theEnv,"PARSEFUN",1,false);
    EnvPrintRouter(theEnv,WERROR,"Function check-syntax does not work in run time modules.\n");
-   returnValue->value = theEnv->TrueSymbol;
+   returnValue->value = TrueSymbol(theEnv);
   }
 
 /************************************************/
@@ -397,7 +397,7 @@ bool CheckSyntax(
   {
    PrintErrorID(theEnv,"PARSEFUN",1,false);
    EnvPrintRouter(theEnv,WERROR,"Function check-syntax does not work in run time modules.\n");
-   returnValue->value = theEnv->TrueSymbol;
+   returnValue->value = TrueSymbol(theEnv);
    return true;
   }
 

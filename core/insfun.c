@@ -555,7 +555,7 @@ bool PutSlotValue(
   {
    if (ValidSlotValue(theEnv,val,sp->desc,ins,theCommand) == false)
      {
-      setVal->value = theEnv->FalseSymbol;
+      setVal->value = FalseSymbol(theEnv);
       return false;
      }
    return(DirectPutSlotValue(theEnv,ins,sp,val,setVal));
@@ -592,7 +592,7 @@ bool DirectPutSlotValue(
 #endif
    UDFValue tmpVal;
 
-   setVal->value = theEnv->FalseSymbol;
+   setVal->value = FalseSymbol(theEnv);
    if (val == NULL)
      {
       SystemError(theEnv,"INSFUN",1);

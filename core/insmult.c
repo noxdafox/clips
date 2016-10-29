@@ -135,7 +135,7 @@ void MVSlotReplaceCommand(
    long rb,re;
    EXPRESSION arg;
 
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
    ins = CheckMultifieldSlotInstance(context);
    if (ins == NULL)
      return;
@@ -175,7 +175,7 @@ void MVSlotInsertCommand(
    long theIndex;
    EXPRESSION arg;
 
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
    ins = CheckMultifieldSlotInstance(context);
    if (ins == NULL)
      return;
@@ -216,7 +216,7 @@ void MVSlotDeleteCommand(
    long rb,re;
    EXPRESSION arg;
 
-   returnValue->lexemeValue = theEnv->FalseSymbol;
+   returnValue->lexemeValue = FalseSymbol(theEnv);
    ins = CheckMultifieldSlotInstance(context);
    if (ins == NULL)
      return;
@@ -255,7 +255,7 @@ void DirectMVReplaceCommand(
 
    if (CheckCurrentMessage(theEnv,"direct-slot-replace$",true) == false)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -264,21 +264,21 @@ void DirectMVReplaceCommand(
                             GetFirstArgument(),&rb,&re,&newval);
    if (sp == NULL)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
    AssignSlotToDataObject(&oldseg,sp);
    if (! ReplaceMultiValueField(theEnv,&newseg,&oldseg,rb,re,&newval,"direct-slot-replace$"))
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
    if (PutSlotValue(theEnv,ins,sp,&newseg,&newval,"function direct-slot-replace$"))
-     { returnValue->lexemeValue = theEnv->TrueSymbol; }
+     { returnValue->lexemeValue = TrueSymbol(theEnv); }
    else
-     { returnValue->lexemeValue = theEnv->FalseSymbol; }
+     { returnValue->lexemeValue = FalseSymbol(theEnv); }
   }
 
 /************************************************************************
@@ -301,7 +301,7 @@ void DirectMVInsertCommand(
 
    if (CheckCurrentMessage(theEnv,"direct-slot-insert$",true) == false)
      { 
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return; 
      }
 
@@ -310,21 +310,21 @@ void DirectMVInsertCommand(
                             GetFirstArgument(),&theIndex,NULL,&newval);
    if (sp == NULL)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
    AssignSlotToDataObject(&oldseg,sp);
    if (! InsertMultiValueField(theEnv,&newseg,&oldseg,theIndex,&newval,"direct-slot-insert$"))
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return; 
      }
 
    if (PutSlotValue(theEnv,ins,sp,&newseg,&newval,"function direct-slot-insert$"))
-     { returnValue->lexemeValue = theEnv->TrueSymbol; }
+     { returnValue->lexemeValue = TrueSymbol(theEnv); }
    else
-     { returnValue->lexemeValue = theEnv->FalseSymbol; }
+     { returnValue->lexemeValue = FalseSymbol(theEnv); }
   }
 
 /*****************************************************************
@@ -348,7 +348,7 @@ void DirectMVDeleteCommand(
 
    if (CheckCurrentMessage(theEnv,"direct-slot-delete$",true) == false)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
@@ -357,21 +357,21 @@ void DirectMVDeleteCommand(
                                   GetFirstArgument(),&rb,&re,NULL);
    if (sp == NULL)
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
    AssignSlotToDataObject(&oldseg,sp);
    if (! DeleteMultiValueField(theEnv,&newseg,&oldseg,rb,re,"direct-slot-delete$"))
      {
-      returnValue->lexemeValue = theEnv->FalseSymbol;
+      returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
    if (PutSlotValue(theEnv,ins,sp,&newseg,&oldseg,"function direct-slot-delete$"))
-     { returnValue->lexemeValue = theEnv->TrueSymbol; }
+     { returnValue->lexemeValue = TrueSymbol(theEnv); }
    else
-     { returnValue->lexemeValue = theEnv->FalseSymbol; }
+     { returnValue->lexemeValue = FalseSymbol(theEnv); }
   }
 
 /* =========================================
