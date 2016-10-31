@@ -74,11 +74,11 @@
 
 #define _H_factmngr
 
-typedef struct fact Fact;
 typedef struct factBuilder FactBuilder;
 typedef struct factModifier FactModifier;
 
 #include "conscomp.h"
+#include "entities.h"
 #include "evaluatn.h"
 #include "multifld.h"
 #include "pattern.h"

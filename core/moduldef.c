@@ -70,6 +70,7 @@
 #include "modulbsc.h"
 #include "modulcmp.h"
 #include "modulpsr.h"
+#include "prntutil.h"
 #include "router.h"
 #include "utility.h"
 
@@ -671,10 +672,11 @@ static void ReturnDefmodule(
 
 #endif /* (! RUN_TIME) */
 
-/**********************************************************************/
-/* EnvFindDefmodule: Searches for a defmodule in the list of defmodules. */
-/*   Returns a pointer to the defmodule if found, otherwise NULL.     */
-/**********************************************************************/
+/**************************************************/
+/* EnvFindDefmodule: Searches for a defmodule in  */
+/*   the list of defmodules. Returns a pointer to */
+/*   the defmodule if found, otherwise NULL.      */
+/**************************************************/
 Defmodule *EnvFindDefmodule(
   Environment *theEnv,
   const char *defmoduleName)

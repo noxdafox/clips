@@ -72,8 +72,8 @@
    static long                    ListToPacked(struct expr *,
                                                struct expr *,long);
 #endif
-   static EXPRESSION_HN          *FindHashedExpression(Environment *,EXPRESSION *,unsigned *,EXPRESSION_HN **);
-   static unsigned                HashExpression(EXPRESSION *);
+   static EXPRESSION_HN          *FindHashedExpression(Environment *,Expression *,unsigned *,EXPRESSION_HN **);
+   static unsigned                HashExpression(Expression *);
    static void                    DeallocateExpressionData(Environment *);
 
 /**************************************************/
@@ -312,7 +312,7 @@ void ReturnExpression(
  ***************************************************/
 static EXPRESSION_HN *FindHashedExpression(
   Environment *theEnv,
-  EXPRESSION *theExp,
+  Expression *theExp,
   unsigned *hashval,
   EXPRESSION_HN **prv)
   {
@@ -343,7 +343,7 @@ static EXPRESSION_HN *FindHashedExpression(
   NOTES        : None
  ***************************************************/
 static unsigned HashExpression(
-  EXPRESSION *theExp)
+  Expression *theExp)
   {
    unsigned long tally = PRIME_THREE;
    union
@@ -381,7 +381,7 @@ static unsigned HashExpression(
  ***************************************************/
 void RemoveHashedExpression(
   Environment *theEnv,
-  EXPRESSION *theExp)
+  Expression *theExp)
   {
    EXPRESSION_HN *exphash,*prv;
    unsigned hashval;
@@ -416,9 +416,9 @@ void RemoveHashedExpression(
                  routine copies, packs and installs
                  the given expression
  *****************************************************/
-EXPRESSION *AddHashedExpression(
+Expression *AddHashedExpression(
   Environment *theEnv,
-  EXPRESSION *theExp)
+  Expression *theExp)
   {
    EXPRESSION_HN *prv,*exphash;
    unsigned hashval;
@@ -456,7 +456,7 @@ EXPRESSION *AddHashedExpression(
  ***************************************************/
 long HashedExpressionIndex(
   Environment *theEnv,
-  EXPRESSION *theExp)
+  Expression *theExp)
   {
    EXPRESSION_HN *exphash,*prv;
    unsigned hashval;

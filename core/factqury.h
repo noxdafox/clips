@@ -68,7 +68,7 @@ typedef struct query_soln
 typedef struct query_core
   {
    struct fact **solns;
-   EXPRESSION *query,*action;
+   Expression *query,*action;
    QUERY_SOLN *soln_set,*soln_bottom;
    unsigned soln_size,soln_cnt;
    UDFValue *result;

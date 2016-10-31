@@ -92,6 +92,9 @@
 #include "inspsr.h"
 #include "memalloc.h"
 #include "modulpsr.h"
+#include "modulutl.h"
+#include "pprint.h"
+#include "prntutil.h"
 #include "router.h"
 #include "scanner.h"
 #include "symbol.h"
@@ -598,8 +601,8 @@ static bool ParseDefinstances(
   const char *readSource)
   {
    CLIPSLexeme *dname;
-   struct FunctionDefinition *mkinsfcall;
-   EXPRESSION *mkinstance,*mkbot = NULL;
+   struct functionDefinition *mkinsfcall;
+   Expression *mkinstance,*mkbot = NULL;
    Definstances *dobj;
    bool active;
 
@@ -859,7 +862,7 @@ static void DefinstancesDeleteError(
 static void CreateInitialDefinstances(
   Environment *theEnv)
   {
-   EXPRESSION *tmp;
+   Expression *tmp;
    Definstances *theDefinstances;
 
    theDefinstances = get_struct(theEnv,definstances);
@@ -1007,7 +1010,7 @@ static void ResetDefinstancesAction(
 #pragma unused(userBuffer)
 #endif
    Definstances *theDefinstances = (Definstances *) vDefinstances;
-   EXPRESSION *theExp;
+   Expression *theExp;
    UDFValue temp;
 
    SaveCurrentModule(theEnv);

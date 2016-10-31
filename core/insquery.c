@@ -69,6 +69,7 @@
 #include "insqypsr.h"
 #include "memalloc.h"
 #include "prcdrfun.h"
+#include "prntutil.h"
 #include "router.h"
 #include "utility.h"
 
@@ -81,7 +82,7 @@
    static void                    PushQueryCore(Environment *);
    static void                    PopQueryCore(Environment *);
    static QUERY_CORE             *FindQueryCore(Environment *,int);
-   static QUERY_CLASS            *DetermineQueryClasses(Environment *,EXPRESSION *,const char *,unsigned *);
+   static QUERY_CLASS            *DetermineQueryClasses(Environment *,Expression *,const char *,unsigned *);
    static QUERY_CLASS            *FormChain(Environment *,const char *,Defclass *,UDFValue *);
    static void                    DeleteQueryClasses(Environment *,QUERY_CLASS *);
    static bool                    TestForFirstInChain(Environment *,QUERY_CLASS *,int);
@@ -667,7 +668,7 @@ static QUERY_CORE *FindQueryCore(
  **********************************************************/
 static QUERY_CLASS *DetermineQueryClasses(
   Environment *theEnv,
-  EXPRESSION *classExp,
+  Expression *classExp,
   const char *func,
   unsigned *rcnt)
   {

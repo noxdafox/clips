@@ -60,6 +60,7 @@
 #include "exprnpsr.h"
 #include "memalloc.h"
 #include "moduldef.h"
+#include "prntutil.h"
 #include "router.h"
 #include "symblbin.h"
 
@@ -307,7 +308,7 @@ bool EnvBsave(
 static void InitializeFunctionNeededFlags(
   Environment *theEnv)
   {
-   struct FunctionDefinition *functionList;
+   struct functionDefinition *functionList;
 
    for (functionList = GetFunctionList(theEnv);
         functionList != NULL;
@@ -342,7 +343,7 @@ static void WriteNeededFunctions(
   {
    unsigned long int count = 0;
    size_t space, length;
-   struct FunctionDefinition *functionList;
+   struct functionDefinition *functionList;
 
    /*================================================*/
    /* Assign each function an index if it is needed. */
@@ -402,7 +403,7 @@ static size_t FunctionBinarySize(
   Environment *theEnv)
   {
    size_t size = 0;
-   struct FunctionDefinition *functionList;
+   struct functionDefinition *functionList;
 
    for (functionList = GetFunctionList(theEnv);
         functionList != NULL;

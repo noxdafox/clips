@@ -68,6 +68,7 @@
 #include "genrccom.h"
 #include "prcdrfun.h"
 #include "prccode.h"
+#include "prntutil.h"
 #include "proflfun.h"
 #include "router.h"
 #include "utility.h"
@@ -140,7 +141,7 @@ void GenericDispatch(
   Defgeneric *gfunc,
   Defmethod *prevmeth,
   Defmethod *meth,
-  EXPRESSION *params,
+  Expression *params,
   UDFValue *returnValue)
   {
    Defgeneric *previousGeneric;
@@ -212,7 +213,7 @@ void GenericDispatch(
 #endif
       if (DefgenericData(theEnv)->CurrentMethod->system)
         {
-         EXPRESSION fcall;
+         Expression fcall;
 
          fcall.type = FCALL;
          fcall.value = DefgenericData(theEnv)->CurrentMethod->actions->value;
@@ -451,7 +452,7 @@ void CallNextMethod(
 #endif
    if (DefgenericData(theEnv)->CurrentMethod->system)
      {
-      EXPRESSION fcall;
+      Expression fcall;
 
       fcall.type = FCALL;
       fcall.value = DefgenericData(theEnv)->CurrentMethod->actions->value;

@@ -60,6 +60,7 @@
 
 #include "memalloc.h"
 #include "pattern.h"
+#include "prntutil.h"
 #include "router.h"
 #include "ruledef.h"
 #include "symbol.h"

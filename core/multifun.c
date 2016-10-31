@@ -87,8 +87,10 @@
 #if OBJECT_SYSTEM
 #include "object.h"
 #endif
+#include "pprint.h"
 #include "prcdrpsr.h"
 #include "prcdrfun.h"
+#include "prntutil.h"
 #include "router.h"
 #if (! BLOAD_ONLY) && (! RUN_TIME)
 #include "scanner.h"
@@ -217,7 +219,7 @@ void ReplaceFunction(
   UDFValue *returnValue)
   {
    UDFValue value1, value2, value3, value4;
-   EXPRESSION *fieldarg;
+   Expression *fieldarg;
 
    /*=======================================*/
    /* Check for the correct argument types. */
@@ -389,7 +391,7 @@ void InsertFunction(
   UDFValue *returnValue)
   {
    UDFValue value1, value2, value3;
-   EXPRESSION *fieldarg;
+   Expression *fieldarg;
 
    /*=======================================*/
    /* Check for the correct argument types. */
@@ -1105,7 +1107,7 @@ static void MultifieldPrognDriver(
   UDFValue *returnValue,
   const char *functionName)
   {
-   EXPRESSION *theExp;
+   Expression *theExp;
    UDFValue argval;
    long i, end; /* 6.04 Bug Fix */
    FIELD_VAR_STACK *tmpField;
@@ -1321,7 +1323,7 @@ bool InsertMultiValueField(
   const char *funcName)
   {
    long i,j,k;
-   FIELD *deptr, *septr;
+   Field *deptr, *septr;
    long srclen,dstlen;
 
    srclen = (long) ((src != NULL) ? src->range : 0);
@@ -1448,7 +1450,7 @@ bool DeleteMultiValueField(
   const char *funcName)
   {
    long i,j;
-   FIELD_PTR deptr,septr;
+   Field *deptr, *septr;
    long srclen, dstlen;
 
    srclen = (long) ((src != NULL) ? src->range : 0);

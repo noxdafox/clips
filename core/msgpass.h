@@ -70,7 +70,7 @@ typedef struct messageHandlerLink
   } HANDLER_LINK;
 
    bool             DirectMessage(Environment *,CLIPSLexeme *,Instance *,
-                                  UDFValue *,EXPRESSION *);
+                                  UDFValue *,Expression *);
    void             EnvSend(Environment *,CLIPSValue *,const char *,const char *,CLIPSValue *);
    void             DestroyHandlerLinks(Environment *,HANDLER_LINK *);
    void             SendCommand(Environment *,UDFContext *,UDFValue *);

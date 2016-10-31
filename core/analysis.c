@@ -49,6 +49,7 @@
 #include "memalloc.h"
 #include "modulutl.h"
 #include "pattern.h"
+#include "prntutil.h"
 #include "reorder.h"
 #include "router.h"
 #include "rulecstr.h"

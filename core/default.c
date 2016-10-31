@@ -56,6 +56,8 @@
 #include "factmngr.h"
 #include "inscom.h"
 #include "multifld.h"
+#include "pprint.h"
+#include "prntutil.h"
 #include "router.h"
 #include "scanner.h"
 

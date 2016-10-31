@@ -72,9 +72,8 @@
 
 typedef struct construct Construct;
 
-#include "symbol.h"
+#include "entities.h"
 #include "userdata.h"
-
 #include "moduldef.h"
 
 typedef void ParserErrorFunction(Environment *,const char *,const char *,const char *,long);
@@ -98,13 +97,6 @@ struct construct
    FreeConstructFunction *freeFunction;
    Construct *next;
   };
-
-#ifndef _H_evaluatn
-#include "evaluatn.h"
-#endif
-#ifndef _H_scanner
-#include "scanner.h"
-#endif
 
 #define CONSTRUCT_DATA 42
 

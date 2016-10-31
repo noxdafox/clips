@@ -76,7 +76,7 @@ typedef struct definstances
   {
    ConstructHeader header;
    unsigned busy;
-   EXPRESSION *mkinstance;
+   Expression *mkinstance;
   } Definstances;
 
 #define DEFINSTANCES_DATA 22

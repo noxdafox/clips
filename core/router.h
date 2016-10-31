@@ -66,8 +66,6 @@
 
 #define _H_router
 
-#include "prntutil.h"
-
 #include <stdio.h>
 
 typedef struct router Router;
@@ -148,7 +146,6 @@ struct routerData
    FILE                          *GetFastLoad(Environment *);
    FILE                          *GetFastSave(Environment *);
    void                           UnrecognizedRouterMessage(Environment *,const char *);
-   void                           ExitCommand(Environment *,UDFContext *,UDFValue *);
    void                           PrintNRouter(Environment *,const char *,const char *,unsigned long);
    size_t                         EnvInputBufferCount(Environment *);
    Router                        *EnvFindRouter(Environment *,const char *);

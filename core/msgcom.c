@@ -88,6 +88,7 @@
 #include "msgpass.h"
 #include "memalloc.h"
 #include "prccode.h"
+#include "prntutil.h"
 #include "router.h"
 #if DEBUGGING_FUNCTIONS
 #include "watch.h"
@@ -108,12 +109,12 @@
 #endif
 
 #if DEBUGGING_FUNCTIONS
-   static bool                    DefmessageHandlerWatchAccess(Environment *,int,bool,EXPRESSION *);
-   static bool                    DefmessageHandlerWatchPrint(Environment *,const char *,int,EXPRESSION *);
+   static bool                    DefmessageHandlerWatchAccess(Environment *,int,bool,Expression *);
+   static bool                    DefmessageHandlerWatchPrint(Environment *,const char *,int,Expression *);
    static bool                    DefmessageHandlerWatchSupport(Environment *,const char *,const char *,bool,
                                                                 void (*)(Environment *,const char *,Defclass *,int),
                                                                 void (*)(Defclass *,int,bool),
-                                                                EXPRESSION *);
+                                                                Expression *);
    static bool                    WatchClassHandlers(Environment *,Defclass *,const char *,int,const char *,bool,bool,
                                                      void (*)(Environment *,const char *,Defclass *,int),
                                                      void (*)(Defclass *,int,bool));
@@ -914,7 +915,7 @@ static bool DefmessageHandlerWatchAccess(
   Environment *theEnv,
   int code,
   bool newState,
-  EXPRESSION *argExprs)
+  Expression *argExprs)
   {
 #if MAC_XCD
 #pragma unused(code)
@@ -945,7 +946,7 @@ static bool DefmessageHandlerWatchPrint(
   Environment *theEnv,
   const char *logName,
   int code,
-  EXPRESSION *argExprs)
+  Expression *argExprs)
   {
 #if MAC_XCD
 #pragma unused(code)
@@ -976,7 +977,7 @@ static bool DefmessageHandlerWatchSupport(
   bool newState,
   void (*printFunc)(Environment *,const char *,Defclass *,int),
   void (*traceFunc)(Defclass *,int,bool),
-  EXPRESSION *argExprs)
+  Expression *argExprs)
   {
    Defmodule *theModule;
    Defclass *theClass;

@@ -79,7 +79,9 @@
 #if OBJECT_SYSTEM
 #include "object.h"
 #endif
+#include "pprint.h"
 #include "prcdrpsr.h"
+#include "prntutil.h"
 #include "router.h"
 #include "utility.h"
 
@@ -102,7 +104,7 @@ typedef struct
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    EvaluateProcParameters(Environment *,EXPRESSION *,int,const char *,const char *);
+   static void                    EvaluateProcParameters(Environment *,Expression *,int,const char *,const char *);
    static bool                    RtnProcParam(Environment *,void *,UDFValue *);
    static bool                    GetProcBind(Environment *,void *,UDFValue *);
    static bool                    PutProcBind(Environment *,void *,UDFValue *);
@@ -111,10 +113,10 @@ typedef struct
    static void                    ReleaseProcParameters(Environment *);
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-   static int                     FindProcParameter(CLIPSLexeme *,EXPRESSION *,CLIPSLexeme *);
-   static bool                    ReplaceProcBinds(Environment *,EXPRESSION *,
-                                                   int (*)(Environment *,EXPRESSION *,void *),void *);
-   static EXPRESSION             *CompactActions(Environment *,EXPRESSION *);
+   static int                     FindProcParameter(CLIPSLexeme *,Expression *,CLIPSLexeme *);
+   static bool                    ReplaceProcBinds(Environment *,Expression *,
+                                                   int (*)(Environment *,Expression *,void *),void *);
+   static Expression             *CompactActions(Environment *,Expression *);
 #endif
 
 #if (! DEFFUNCTION_CONSTRUCT) || (! DEFGENERIC_CONSTRUCT)
@@ -250,18 +252,18 @@ static void DeallocateProceduralPrimitiveData(
   SIDE EFFECTS : Parameters parsed and expressions formed
   NOTES        : None
  ************************************************************/
-EXPRESSION *ParseProcParameters(
+Expression *ParseProcParameters(
   Environment *theEnv,
   const char *readSource,
   struct token *tkn,
-  EXPRESSION *parameterList,
+  Expression *parameterList,
   CLIPSLexeme **wildcard,
   int *min,
   int *max,
   bool *error,
   bool (*checkfunc)(Environment *,const char *))
   {
-   EXPRESSION *nextOne,*lastOne,*check;
+   Expression *nextOne,*lastOne,*check;
    int paramprintp = 0;
 
    *wildcard = NULL;
@@ -377,19 +379,19 @@ SIDE EFFECTS : Variable references replaced with runtime calls
                   to access the paramter and local variable array
 NOTES        : None
 *************************************************************************/
-EXPRESSION *ParseProcActions(
+Expression *ParseProcActions(
   Environment *theEnv,
   const char *bodytype,
   const char *readSource,
   struct token *tkn,
-  EXPRESSION *params,
+  Expression *params,
   CLIPSLexeme *wildcard,
-  int (*altvarfunc)(Environment *,EXPRESSION *,void *),
-  int (*altbindfunc)(Environment *,EXPRESSION *,void *),
+  int (*altvarfunc)(Environment *,Expression *,void *),
+  int (*altbindfunc)(Environment *,Expression *,void *),
   int *lvarcnt,
   void *userBuffer)
   {
-   EXPRESSION *actions,*pactions;
+   Expression *actions,*pactions;
 
    /* ====================================================================
       Clear parsed bind list - so that only local vars from this body will
@@ -484,15 +486,15 @@ EXPRESSION *ParseProcActions(
 int ReplaceProcVars(
   Environment *theEnv,
   const char *bodytype,
-  EXPRESSION *actions,
-  EXPRESSION *parameterList,
+  Expression *actions,
+  Expression *parameterList,
   CLIPSLexeme *wildcard,
-  int (*altvarfunc)(Environment *,EXPRESSION *,void *),
+  int (*altvarfunc)(Environment *,Expression *,void *),
   void *specdata)
   {
    int position,altcode;
    int boundPosn;
-   EXPRESSION *arg_lvl,*altvarexp;
+   Expression *arg_lvl,*altvarexp;
    CLIPSLexeme *bindName;
    PACKED_PROC_VAR pvar;
 
@@ -631,7 +633,7 @@ int ReplaceProcVars(
   SIDE EFFECTS : Expression allocated
   NOTES        : None
  *****************************************************/
-EXPRESSION *GenProcWildcardReference(
+Expression *GenProcWildcardReference(
   Environment *theEnv,
   int theIndex)
   {
@@ -672,7 +674,7 @@ EXPRESSION *GenProcWildcardReference(
  *******************************************************************/
 void PushProcParameters(
   Environment *theEnv,
-  EXPRESSION *parameterList,
+  Expression *parameterList,
   int numberOfParameters,
   const char *pname,
   const char *bodytype,
@@ -728,7 +730,7 @@ void PopProcParameters(
 
 #if DEFGENERIC_CONSTRUCT
    if (ProceduralPrimitiveData(theEnv)->ProcParamExpressions != NULL)
-     rm(theEnv,ProceduralPrimitiveData(theEnv)->ProcParamExpressions,(sizeof(EXPRESSION) * ProceduralPrimitiveData(theEnv)->ProcParamArraySize));
+     rm(theEnv,ProceduralPrimitiveData(theEnv)->ProcParamExpressions,(sizeof(Expression) * ProceduralPrimitiveData(theEnv)->ProcParamArraySize));
 #endif
 
    ptmp = ProceduralPrimitiveData(theEnv)->pstack;
@@ -779,7 +781,7 @@ static void ReleaseProcParameters(
 
 #if DEFGENERIC_CONSTRUCT
    if (ProceduralPrimitiveData(theEnv)->ProcParamExpressions != NULL)
-     rm(theEnv,ProceduralPrimitiveData(theEnv)->ProcParamExpressions,(sizeof(EXPRESSION) * ProceduralPrimitiveData(theEnv)->ProcParamArraySize));
+     rm(theEnv,ProceduralPrimitiveData(theEnv)->ProcParamExpressions,(sizeof(Expression) * ProceduralPrimitiveData(theEnv)->ProcParamArraySize));
 #endif
 
    ptmp = ProceduralPrimitiveData(theEnv)->pstack;
@@ -793,7 +795,7 @@ static void ReleaseProcParameters(
 
 #if DEFGENERIC_CONSTRUCT
       if (ptmp->ParamExpressions != NULL)
-        { rm(theEnv,ptmp->ParamExpressions,(sizeof(EXPRESSION) * ptmp->ParamArraySize)); }
+        { rm(theEnv,ptmp->ParamExpressions,(sizeof(Expression) * ptmp->ParamArraySize)); }
 #endif
 
       if (ptmp->WildcardValue != NULL)
@@ -823,15 +825,15 @@ static void ReleaseProcParameters(
   SIDE EFFECTS : Expression array created
   NOTES        : None
  ***********************************************************/
-EXPRESSION *GetProcParamExpressions(
+Expression *GetProcParamExpressions(
   Environment *theEnv)
   {
    int i;
 
    if ((ProceduralPrimitiveData(theEnv)->ProcParamArray == NULL) || (ProceduralPrimitiveData(theEnv)->ProcParamExpressions != NULL))
      return(ProceduralPrimitiveData(theEnv)->ProcParamExpressions);
-   ProceduralPrimitiveData(theEnv)->ProcParamExpressions = (EXPRESSION *)
-               gm2(theEnv,(sizeof(EXPRESSION) * ProceduralPrimitiveData(theEnv)->ProcParamArraySize));
+   ProceduralPrimitiveData(theEnv)->ProcParamExpressions = (Expression *)
+               gm2(theEnv,(sizeof(Expression) * ProceduralPrimitiveData(theEnv)->ProcParamArraySize));
    for (i = 0 ; i < ProceduralPrimitiveData(theEnv)->ProcParamArraySize ; i++)
      {
       ProceduralPrimitiveData(theEnv)->ProcParamExpressions[i].type = ProceduralPrimitiveData(theEnv)->ProcParamArray[i].header->type; // TBD Remove
@@ -870,7 +872,7 @@ EXPRESSION *GetProcParamExpressions(
 void EvaluateProcActions(
   Environment *theEnv,
   Defmodule *theModule,
-  EXPRESSION *actions,
+  Expression *actions,
   int lvarcnt,
   UDFValue *returnValue,
   void (*crtproc)(Environment *))
@@ -878,7 +880,7 @@ void EvaluateProcActions(
    UDFValue *oldLocalVarArray;
    int i;
    Defmodule *oldModule;
-   EXPRESSION *oldActions;
+   Expression *oldActions;
    struct trackedMemory *theTM;
 
    oldLocalVarArray = ProceduralPrimitiveData(theEnv)->LocalVarArray;
@@ -1065,7 +1067,7 @@ void GrabProcWildargs(
  *******************************************************************/
 static void EvaluateProcParameters(
   Environment *theEnv,
-  EXPRESSION *parameterList,
+  Expression *parameterList,
   int numberOfParameters,
   const char *pname,
   const char *bodytype)
@@ -1287,7 +1289,7 @@ static bool RtnProcWild(
  ***************************************************/
 static int FindProcParameter(
   CLIPSLexeme *name,
-  EXPRESSION *parameterList,
+  Expression *parameterList,
   CLIPSLexeme *wildcard)
   {
    int i = 1;
@@ -1344,8 +1346,8 @@ static int FindProcParameter(
  *************************************************************************/
 static bool ReplaceProcBinds(
   Environment *theEnv,
-  EXPRESSION *actions,
-  int (*altbindfunc)(Environment *,EXPRESSION *,void *),
+  Expression *actions,
+  int (*altbindfunc)(Environment *,Expression *,void *),
   void *userBuffer)
   {
    int bcode;
@@ -1389,9 +1391,9 @@ static bool ReplaceProcBinds(
   NOTES        : Assumes actions is a progn expression
                  and actions->nextArg == NULL
  *****************************************************/
-static EXPRESSION *CompactActions(
+static Expression *CompactActions(
   Environment *theEnv,
-  EXPRESSION *actions)
+  Expression *actions)
   {
    struct expr *tmp;
 

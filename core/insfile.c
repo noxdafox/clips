@@ -84,10 +84,12 @@
 #include "insmngr.h"
 #include "inspsr.h"
 #include "object.h"
+#include "prntutil.h"
 #include "router.h"
 #include "strngrtr.h"
 #include "symblbin.h"
 #include "sysdep.h"
+#include "utility.h"
 
 #include "insfile.h"
 
@@ -127,8 +129,8 @@ struct classItem
 
    static long                    InstancesSaveCommandParser(UDFContext *,
                                                              long (*)(Environment *,const char *,
-                                                                      int,EXPRESSION *,bool));
-   static struct classItem       *ProcessSaveClassList(Environment *,const char *,EXPRESSION *,int,bool);
+                                                                      int,Expression *,bool));
+   static struct classItem       *ProcessSaveClassList(Environment *,const char *,Expression *,int,bool);
    static void                    ReturnSaveClassList(Environment *,struct classItem *);
    static long                    SaveOrMarkInstances(Environment *,FILE *,int,struct classItem *,bool,bool,
                                                       void (*)(Environment *,FILE *,Instance *));
@@ -501,7 +503,7 @@ long EnvSaveInstancesDriver(
   Environment *theEnv,
   const char *file,
   int saveCode,
-  EXPRESSION *classExpressionList,
+  Expression *classExpressionList,
   bool inheritFlag)
   {
    FILE *sfile = NULL;
@@ -607,7 +609,7 @@ long EnvBinarySaveInstancesDriver(
   Environment *theEnv,
   const char *file,
   int saveCode,
-  EXPRESSION *classExpressionList,
+  Expression *classExpressionList,
   bool inheritFlag)
   {
    struct classItem *classList;
@@ -667,12 +669,12 @@ long EnvBinarySaveInstancesDriver(
  ******************************************************/
 static long InstancesSaveCommandParser(
   UDFContext *context,
-  long (*saveFunction)(Environment *,const char *,int,EXPRESSION *,bool))
+  long (*saveFunction)(Environment *,const char *,int,Expression *,bool))
   {
    const char *fileFound;
    UDFValue temp;
    int argCount,saveCode = LOCAL_SAVE;
-   EXPRESSION *classList = NULL;
+   Expression *classList = NULL;
    bool inheritFlag = false;
    Environment *theEnv = context->environment;
 
@@ -739,7 +741,7 @@ static long InstancesSaveCommandParser(
 static struct classItem *ProcessSaveClassList(
   Environment *theEnv,
   const char *functionName,
-  EXPRESSION *classExps,
+  Expression *classExps,
   int saveCode,
   bool inheritFlag)
   {
@@ -1282,7 +1284,7 @@ static long LoadOrRestoreInstances(
    UDFValue temp;
    FILE *sfile = NULL,*svload = NULL;
    const char *ilog;
-   EXPRESSION *top;
+   Expression *top;
    int svoverride;
    long instanceCount = 0L;
 

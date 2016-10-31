@@ -91,10 +91,12 @@
 #include "memalloc.h"
 #include "multifld.h"
 #include "pattern.h"
+#include "prntutil.h"
 #include "reteutil.h"
 #include "router.h"
 #include "ruledlt.h"
 #include "sysdep.h"
+#include "utility.h"
 #include "watch.h"
 
 #if BLOAD || BLOAD_AND_BSAVE || BLOAD_ONLY

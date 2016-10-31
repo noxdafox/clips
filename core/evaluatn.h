@@ -71,23 +71,15 @@
 #define _H_evaluatn
 
 struct entityRecord;
-struct udfValue;
-
-typedef struct clipsValue CLIPSValue;
-typedef struct udfValue UDFValue;
-typedef struct expr FUNCTION_REFERENCE;
 
 typedef void EntityPrintFunction(Environment *,const char *,void *);
 typedef bool EntityEvaluationFunction(Environment *,void *,UDFValue *);
 typedef void EntityBusyCountFunction(Environment *,void *);
 
 #include "constant.h"
-#include "symbol.h"
-#include "expressn.h"
+#include "entities.h"
 
 #define C_POINTER_EXTERNAL_ADDRESS 0
-
-#include "userdata.h"
 
 struct entityRecord
   {
@@ -108,47 +100,6 @@ struct entityRecord
    void (*install)(void *,void *);
    void (*deinstall)(void *,void *);
    struct userData *usrData;
-  };
-
-#include "factmngr.h"
-#include "object.h"
-
-struct clipsValue
-  {
-   union
-     {
-      void *value;
-      TypeHeader const *header;
-      Fact *factValue;
-      Instance *instanceValue;
-      CLIPSLexeme *lexemeValue;
-      CLIPSFloat *floatValue;
-      CLIPSInteger *integerValue;
-      CLIPSVoid *voidValue;
-      Multifield *multifieldValue;
-      CLIPSExternalAddress *externalAddressValue;
-     };
-  };
-
-struct udfValue
-  {
-   void *supplementalInfo;
-   union
-     {
-      void *value;
-      TypeHeader const *header;
-      Fact *factValue;
-      Instance *instanceValue;
-      CLIPSLexeme *lexemeValue;
-      CLIPSFloat *floatValue;
-      CLIPSInteger *integerValue;
-      CLIPSVoid *voidValue;
-      Multifield *multifieldValue;
-      CLIPSExternalAddress *externalAddressValue;
-     };
-   long begin;
-   long range;
-   struct udfValue *next;
   };
 
 struct externalAddressType
@@ -213,7 +164,7 @@ struct evaluationData
    void                           ValueDeinstall(Environment *,UDFValue *);
 #if DEFFUNCTION_CONSTRUCT || DEFGENERIC_CONSTRUCT
    bool                           EnvFunctionCall(Environment *,const char *,const char *,CLIPSValue *);
-   bool                           FunctionCall2(Environment *,FUNCTION_REFERENCE *,const char *,UDFValue *);
+   bool                           FunctionCall2(Environment *,Expression *,const char *,UDFValue *);
 #endif
    void                           CopyDataObject(Environment *,UDFValue *,UDFValue *,int);
    void                           AtomInstall(Environment *,int,void *);
@@ -226,9 +177,9 @@ struct evaluationData
    int                            InstallExternalAddressType(Environment *,struct externalAddressType *);
    void                           TransferDataObjectValues(UDFValue *,UDFValue *);
    struct expr                   *FunctionReferenceExpression(Environment *,const char *);
-   bool                           GetFunctionReference(Environment *,const char *,FUNCTION_REFERENCE *);
+   bool                           GetFunctionReference(Environment *,const char *,Expression *);
    bool                           DOsEqual(UDFValue *,UDFValue *);
-   bool                           EvaluateAndStoreInDataObject(Environment *,bool,EXPRESSION *,UDFValue *,bool);
+   bool                           EvaluateAndStoreInDataObject(Environment *,bool,Expression *,UDFValue *,bool);
 
 #define CVIsType(cv,cvType) ((1 << (((TypeHeader *) (cv)->value)->type)) & (cvType))
 

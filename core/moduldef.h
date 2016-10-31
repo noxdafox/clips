@@ -84,7 +84,7 @@ typedef enum
   } ConstructType;
 
 #include <stdio.h>
-#include "symbol.h"
+#include "entities.h"
 #include "userdata.h"
 
 struct constructHeader
@@ -202,10 +202,6 @@ struct moduleStackItem
   };
 
 #define DEFMODULE_DATA 4
-
-#include "extnfunc.h"
-#include "modulpsr.h"
-#include "utility.h"
 
 struct defmoduleData
   {

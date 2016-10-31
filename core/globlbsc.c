@@ -69,6 +69,7 @@
 #endif
 #include "globlcom.h"
 #include "globldef.h"
+#include "multifld.h"
 #include "watch.h"
 
 #include "globlbsc.h"
@@ -313,7 +314,7 @@ static bool DefglobalWatchAccess(
   Environment *theEnv,
   int code,
   bool newState,
-  EXPRESSION *argExprs)
+  Expression *argExprs)
   {
 #if MAC_XCD
 #pragma unused(code)
@@ -332,7 +333,7 @@ static bool DefglobalWatchPrint(
   Environment *theEnv,
   const char *logName,
   int code,
-  EXPRESSION *argExprs)
+  Expression *argExprs)
   {
 #if MAC_XCD
 #pragma unused(code)

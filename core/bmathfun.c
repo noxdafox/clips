@@ -55,6 +55,7 @@
 #include "argacces.h"
 #include "envrnmnt.h"
 #include "exprnpsr.h"
+#include "prntutil.h"
 #include "router.h"
 
 #include "bmathfun.h"

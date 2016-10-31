@@ -81,7 +81,9 @@
 #include "genrccom.h"
 #include "genrcexe.h"
 #include "memalloc.h"
+#include "modulutl.h"
 #include "prccode.h"
+#include "prntutil.h"
 #include "router.h"
 #include "sysdep.h"
 

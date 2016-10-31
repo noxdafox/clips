@@ -71,6 +71,8 @@
 
 #define COMMANDLINE_DATA 40
 
+#include <stdlib.h>
+
 typedef void AfterPromptFunction(Environment *);
 typedef bool BeforeCommandExecutionFunction(Environment *);
 typedef void EventFunction(Environment *);

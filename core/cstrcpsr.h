@@ -60,21 +60,12 @@
 
 #define _H_cstrcpsr
 
-#include "evaluatn.h"
-#include "scanner.h"
-#include "constrct.h"
-
+#if (! RUN_TIME) && (! BLOAD_ONLY)
    int                            EnvLoad(Environment *,const char *);
    int                            LoadConstructsFromLogicalName(Environment *,const char *);
    int                            ParseConstruct(Environment *,const char *,const char *);
-   void                           RemoveConstructFromModule(Environment *,ConstructHeader *);
-   CLIPSLexeme                   *GetConstructNameAndComment(Environment *,const char *,
-                                                             struct token *,const char *,
-                                                             FindConstructFunction *,
-                                                             DeleteConstructFunction *,
-                                                             const char *,bool,bool,bool,bool);
-   void                           ImportExportConflictMessage(Environment *,const char *,const char *,const char *,const char *);
-#if (! RUN_TIME) && (! BLOAD_ONLY)
+   void                           ImportExportConflictMessage(Environment *,const char *,const char *,
+                                                              const char *,const char *);
    void                           FlushParsingMessages(Environment *);
    char                          *EnvGetParsingFileName(Environment *);
    void                           EnvSetParsingFileName(Environment *,const char *);

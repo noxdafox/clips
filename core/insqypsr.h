@@ -52,8 +52,8 @@
 
 #include "expressn.h"
 
-   EXPRESSION                    *ParseQueryNoAction(Environment *,EXPRESSION *,const char *);
-   EXPRESSION                    *ParseQueryAction(Environment *,EXPRESSION *,const char *);
+   Expression                    *ParseQueryNoAction(Environment *,Expression *,const char *);
+   Expression                    *ParseQueryAction(Environment *,Expression *,const char *);
 
 #endif /* INSTANCE_SET_QUERIES && (! RUN_TIME) */
 

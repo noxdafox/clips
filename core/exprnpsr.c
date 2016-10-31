@@ -73,6 +73,7 @@
 #include "envrnmnt.h"
 #include "memalloc.h"
 #include "modulutl.h"
+#include "pprint.h"
 #include "prcdrfun.h"
 #include "prntutil.h"
 #include "router.h"
@@ -168,7 +169,7 @@ struct expr *Function2Parse(
   const char *logicalName,
   const char *name)
   {
-   struct FunctionDefinition *theFunction;
+   struct functionDefinition *theFunction;
    struct expr *top;
    bool moduleSpecified = false;
    unsigned position;
@@ -359,12 +360,12 @@ struct expr *Function2Parse(
  **********************************************************************/
 bool ReplaceSequenceExpansionOps(
   Environment *theEnv,
-  EXPRESSION *actions,
-  EXPRESSION *fcallexp,
+  Expression *actions,
+  Expression *fcallexp,
   void *expcall,
   void *expmult)
   {
-   EXPRESSION *theExp;
+   Expression *theExp;
 
    while (actions != NULL)
      {
@@ -486,7 +487,7 @@ bool RestrictionExists(
 bool CheckExpressionAgainstRestrictions(
   Environment *theEnv,
   struct expr *theExpression,
-  struct FunctionDefinition *theFunction,
+  struct functionDefinition *theFunction,
   const char *functionName)
   {
    int j = 1;
@@ -997,12 +998,12 @@ bool EnvGetSequenceOperatorRecognition(
 /* ParseConstantArguments: Parses a string */
 /*    into a set of constant expressions.  */
 /*******************************************/
-EXPRESSION *ParseConstantArguments(
+Expression *ParseConstantArguments(
   Environment *theEnv,
   const char *argstr,
   bool *error)
   {
-   EXPRESSION *top = NULL,*bot = NULL,*tmp;
+   Expression *top = NULL,*bot = NULL,*tmp;
    const char *router = "***FNXARGS***";
    struct token tkn;
 
@@ -1069,7 +1070,7 @@ struct expr *RemoveUnneededProgn(
   Environment *theEnv,
   struct expr *theExpression)
   {
-   struct FunctionDefinition *fptr;
+   struct functionDefinition *fptr;
    struct expr *temp;
 
    if (theExpression == NULL) return(theExpression);

@@ -80,6 +80,8 @@
 #include "memalloc.h"
 #include "modulutl.h"
 #include "modulpsr.h"
+#include "pprint.h"
+#include "prntutil.h"
 #include "sysdep.h"
 #include "utility.h"
 
@@ -523,8 +525,6 @@ static bool FindConstructBeginning(
    return false;
   }
 
-#if (! RUN_TIME) && (! BLOAD_ONLY)
-
 /*************************************************/
 /* FindError: Find routine for the error router. */
 /*************************************************/
@@ -682,8 +682,6 @@ void FlushParsingMessages(
    ConstructData(theEnv)->MaxWrnChars = 0;
   }
 
-#endif
-
 /***********************************************************/
 /* ParseConstruct: Parses a construct. Returns an integer. */
 /*   -1 if the construct name has no parsing function, 0   */
@@ -756,257 +754,6 @@ int ParseConstruct(
    /*==============================*/
 
    return(rv);
-  }
-
-/*********************************************************/
-/* GetConstructNameAndComment: Get the name and comment  */
-/*   field of a construct. Returns name of the construct */
-/*   if no errors are detected, otherwise returns NULL.  */
-/*********************************************************/
-CLIPSLexeme *GetConstructNameAndComment(
-  Environment *theEnv,
-  const char *readSource,
-  struct token *inputToken,
-  const char *constructName,
-  FindConstructFunction *findFunction,
-  DeleteConstructFunction *deleteFunction,
-  const char *constructSymbol,
-  bool fullMessageCR,
-  bool getComment,
-  bool moduleNameAllowed,
-  bool ignoreRedefinition)
-  {
-#if (MAC_XCD) && (! DEBUGGING_FUNCTIONS)
-#pragma unused(fullMessageCR)
-#endif
-   CLIPSLexeme *name, *moduleName;
-   bool redefining = false;
-   ConstructHeader *theConstruct;
-   unsigned separatorPosition;
-   Defmodule *theModule;
-
-   /*==========================*/
-   /* Next token should be the */
-   /* name of the construct.   */
-   /*==========================*/
-
-   GetToken(theEnv,readSource,inputToken);
-   if (inputToken->tknType != SYMBOL_TOKEN)
-     {
-      PrintErrorID(theEnv,"CSTRCPSR",2,true);
-      EnvPrintRouter(theEnv,WERROR,"Missing name for ");
-      EnvPrintRouter(theEnv,WERROR,constructName);
-      EnvPrintRouter(theEnv,WERROR," construct\n");
-      return NULL;
-     }
-
-   name = inputToken->lexemeValue;
-
-   /*===============================*/
-   /* Determine the current module. */
-   /*===============================*/
-
-   separatorPosition = FindModuleSeparator(name->contents);
-   if (separatorPosition)
-     {
-      if (moduleNameAllowed == false)
-        {
-         SyntaxErrorMessage(theEnv,"module specifier");
-         return NULL;
-        }
-
-      moduleName = ExtractModuleName(theEnv,separatorPosition,name->contents);
-      if (moduleName == NULL)
-        {
-         SyntaxErrorMessage(theEnv,"construct name");
-         return NULL;
-        }
-
-      theModule = EnvFindDefmodule(theEnv,moduleName->contents);
-      if (theModule == NULL)
-        {
-         CantFindItemErrorMessage(theEnv,"defmodule",moduleName->contents);
-         return NULL;
-        }
-
-      EnvSetCurrentModule(theEnv,theModule);
-      name = ExtractConstructName(theEnv,separatorPosition,name->contents,SYMBOL_TYPE);
-      if (name == NULL)
-        {
-         SyntaxErrorMessage(theEnv,"construct name");
-         return NULL;
-        }
-     }
-
-   /*=====================================================*/
-   /* If the module was not specified, record the current */
-   /* module name as part of the pretty-print form.       */
-   /*=====================================================*/
-
-   else
-     {
-      theModule = EnvGetCurrentModule(theEnv);
-      if (moduleNameAllowed)
-        {
-         PPBackup(theEnv);
-         SavePPBuffer(theEnv,DefmoduleName(theModule));
-         SavePPBuffer(theEnv,"::");
-         SavePPBuffer(theEnv,name->contents);
-        }
-     }
-
-   /*==================================================================*/
-   /* Check for import/export conflicts from the construct definition. */
-   /*==================================================================*/
-
-#if DEFMODULE_CONSTRUCT
-   if (FindImportExportConflict(theEnv,constructName,theModule,name->contents))
-     {
-      ImportExportConflictMessage(theEnv,constructName,name->contents,NULL,NULL);
-      return NULL;
-     }
-#endif
-
-   /*========================================================*/
-   /* Remove the construct if it is already in the knowledge */
-   /* base and we're not just checking syntax.               */
-   /*========================================================*/
-
-   if ((findFunction != NULL) && (! ConstructData(theEnv)->CheckSyntaxMode))
-     {
-      theConstruct = (*findFunction)(theEnv,name->contents);
-      if (theConstruct != NULL)
-        {
-         redefining = true;
-         if (deleteFunction != NULL)
-           {
-            if ((*deleteFunction)(theConstruct,theEnv) == false)
-              {
-               PrintErrorID(theEnv,"CSTRCPSR",4,true);
-               EnvPrintRouter(theEnv,WERROR,"Cannot redefine ");
-               EnvPrintRouter(theEnv,WERROR,constructName);
-               EnvPrintRouter(theEnv,WERROR," ");
-               EnvPrintRouter(theEnv,WERROR,name->contents);
-               EnvPrintRouter(theEnv,WERROR," while it is in use.\n");
-               return NULL;
-              }
-           }
-        }
-     }
-
-   /*=============================================*/
-   /* If compilations are being watched, indicate */
-   /* that a construct is being compiled.         */
-   /*=============================================*/
-
-#if DEBUGGING_FUNCTIONS
-   if ((EnvGetWatchItem(theEnv,"compilations") == true) &&
-       GetPrintWhileLoading(theEnv) && (! ConstructData(theEnv)->CheckSyntaxMode))
-     {
-      const char *outRouter = WDIALOG;
-      if (redefining && (! ignoreRedefinition))
-        {
-         outRouter = WWARNING;
-         PrintWarningID(theEnv,"CSTRCPSR",1,true);
-         EnvPrintRouter(theEnv,outRouter,"Redefining ");
-        }
-      else EnvPrintRouter(theEnv,outRouter,"Defining ");
-
-      EnvPrintRouter(theEnv,outRouter,constructName);
-      EnvPrintRouter(theEnv,outRouter,": ");
-      EnvPrintRouter(theEnv,outRouter,name->contents);
-
-      if (fullMessageCR) EnvPrintRouter(theEnv,outRouter,"\n");
-      else EnvPrintRouter(theEnv,outRouter," ");
-     }
-   else
-#endif
-     {
-      if (GetPrintWhileLoading(theEnv) && (! ConstructData(theEnv)->CheckSyntaxMode))
-        { EnvPrintRouter(theEnv,WDIALOG,constructSymbol); }
-     }
-
-   /*===============================*/
-   /* Get the comment if it exists. */
-   /*===============================*/
-
-   GetToken(theEnv,readSource,inputToken);
-   if ((inputToken->tknType == STRING_TOKEN) && getComment)
-     {
-      PPBackup(theEnv);
-      SavePPBuffer(theEnv," ");
-      SavePPBuffer(theEnv,inputToken->printForm);
-      GetToken(theEnv,readSource,inputToken);
-      if (inputToken->tknType != RIGHT_PARENTHESIS_TOKEN)
-        {
-         PPBackup(theEnv);
-         SavePPBuffer(theEnv,"\n   ");
-         SavePPBuffer(theEnv,inputToken->printForm);
-        }
-     }
-   else if (inputToken->tknType != RIGHT_PARENTHESIS_TOKEN)
-     {
-      PPBackup(theEnv);
-      SavePPBuffer(theEnv,"\n   ");
-      SavePPBuffer(theEnv,inputToken->printForm);
-     }
-
-   /*===================================*/
-   /* Return the name of the construct. */
-   /*===================================*/
-
-   return(name);
-  }
-
-/****************************************/
-/* RemoveConstructFromModule: Removes a */
-/*   construct from its module's list   */
-/****************************************/
-void RemoveConstructFromModule(
-  Environment *theEnv,
-  ConstructHeader *theConstruct)
-  {
-   ConstructHeader *lastConstruct,*currentConstruct;
-
-   /*==============================*/
-   /* Find the specified construct */
-   /* in the module's list.        */
-   /*==============================*/
-
-   lastConstruct = NULL;
-   currentConstruct = theConstruct->whichModule->firstItem;
-   while (currentConstruct != theConstruct)
-     {
-      lastConstruct = currentConstruct;
-      currentConstruct = currentConstruct->next;
-     }
-
-   /*========================================*/
-   /* If it wasn't there, something's wrong. */
-   /*========================================*/
-
-   if (currentConstruct == NULL)
-     {
-      SystemError(theEnv,"CSTRCPSR",1);
-      EnvExitRouter(theEnv,EXIT_FAILURE);
-     }
-
-   /*==========================*/
-   /* Remove it from the list. */
-   /*==========================*/
-
-   if (lastConstruct == NULL)
-     { theConstruct->whichModule->firstItem = theConstruct->next; }
-   else
-     { lastConstruct->next = theConstruct->next; }
-
-   /*=================================================*/
-   /* Update the pointer to the last item in the list */
-   /* if the construct just deleted was at the end.   */
-   /*=================================================*/
-
-   if (theConstruct == theConstruct->whichModule->lastItem)
-     { theConstruct->whichModule->lastItem = lastConstruct; }
   }
 
 /******************************************************/

@@ -97,7 +97,9 @@
 #include "factrhs.h"
 #include "memalloc.h"
 #include "modulutl.h"
+#include "pprint.h"
 #include "prcdrpsr.h"
+#include "prntutil.h"
 #include "reorder.h"
 #include "router.h"
 #include "scanner.h"
@@ -107,6 +109,7 @@
 #include "tmpltlhs.h"
 #include "tmpltrhs.h"
 #include "tmpltutl.h"
+#include "utility.h"
 
 #include "tmpltfun.h"
 
@@ -944,7 +947,7 @@ void DeftemplateSlotAllowedValues(
    short position;
    struct templateSlot *theSlot;
    int i;
-   EXPRESSION *theExp;
+   Expression *theExp;
    Environment *theEnv = theDeftemplate->header.env;
 
    /*===============================================*/

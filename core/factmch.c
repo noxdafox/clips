@@ -59,6 +59,7 @@
 #include "factrete.h"
 #include "incrrset.h"
 #include "memalloc.h"
+#include "prntutil.h"
 #include "reteutil.h"
 #include "router.h"
 #include "sysdep.h"

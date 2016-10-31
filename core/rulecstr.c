@@ -47,6 +47,7 @@
 #include "envrnmnt.h"
 #include "extnfunc.h"
 #include "prcdrpsr.h"
+#include "prntutil.h"
 #include "reorder.h"
 #include "router.h"
 #include "rulepsr.h"
@@ -66,7 +67,7 @@
    static void                    ConstraintConflictMessage(Environment *,CLIPSLexeme *,
                                                             int,int,CLIPSLexeme *);
    static bool                    CheckArgumentForConstraintError(Environment *,struct expr *,struct expr*,
-                                                                  int,struct FunctionDefinition *,
+                                                                  int,struct functionDefinition *,
                                                                   struct lhsParseNode *);
 
 /***********************************************************/
@@ -711,7 +712,7 @@ bool CheckRHSForConstraintErrors(
   struct expr *expressionList,
   struct lhsParseNode *theLHS)
   {
-   struct FunctionDefinition *theFunction;
+   struct functionDefinition *theFunction;
    int i;
    struct expr *lastOne = NULL, *checkList, *tmpPtr;
 
@@ -763,7 +764,7 @@ static bool CheckArgumentForConstraintError(
   struct expr *expressionList,
   struct expr *lastOne,
   int i,
-  struct FunctionDefinition *theFunction,
+  struct functionDefinition *theFunction,
   struct lhsParseNode *theLHS)
   {
    unsigned theRestriction2;

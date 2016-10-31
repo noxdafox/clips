@@ -61,6 +61,8 @@
 #include "memalloc.h"
 #include "modulutl.h"
 #include "multifld.h"
+#include "pprint.h"
+#include "prntutil.h"
 #include "router.h"
 #include "scanner.h"
 #include "utility.h"
@@ -88,7 +90,7 @@ struct procedureParserData
    static void                    DeallocateProceduralFunctionData(Environment *);
    static struct expr            *WhileParse(Environment *,struct expr *,const char *);
    static struct expr            *LoopForCountParse(Environment *,struct expr *,const char *);
-   static void                    ReplaceLoopCountVars(Environment *,CLIPSLexeme *,EXPRESSION *,int);
+   static void                    ReplaceLoopCountVars(Environment *,CLIPSLexeme *,Expression *,int);
    static struct expr            *IfParse(Environment *,struct expr *,const char *);
    static struct expr            *PrognParse(Environment *,struct expr *,const char *);
    static struct expr            *BindParse(Environment *,struct expr *,const char *);
@@ -280,7 +282,7 @@ static struct expr *LoopForCountParse(
   {
    struct token theToken;
    CLIPSLexeme *loopVar = NULL;
-   EXPRESSION *tmpexp;
+   Expression *tmpexp;
    bool read_first_paren;
    struct BindInfo *oldBindList,*newBindList,*prev;
 
@@ -463,7 +465,7 @@ LoopForCountParseError:
 static void ReplaceLoopCountVars(
   Environment *theEnv,
   CLIPSLexeme *loopVar,
-  EXPRESSION *theExp,
+  Expression *theExp,
   int depth)
   {
    while (theExp != NULL)
@@ -815,7 +817,7 @@ static struct expr *SwitchParse(
   const char *infile)
   {
    struct token theToken;
-   EXPRESSION *theExp,*chk;
+   Expression *theExp,*chk;
    int default_count = 0;
 
    /*============================*/

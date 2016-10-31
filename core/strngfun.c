@@ -86,11 +86,15 @@
 #include "exprnpsr.h"
 #include "extnfunc.h"
 #include "memalloc.h"
+#include "multifld.h"
 #include "prcdrpsr.h"
+#include "pprint.h"
+#include "prntutil.h"
 #include "router.h"
 #include "strngrtr.h"
 #include "scanner.h"
 #include "sysdep.h"
+#include "utility.h"
 
 #if DEFRULE_CONSTRUCT
 #include "drive.h"

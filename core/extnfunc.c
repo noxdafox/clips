@@ -61,6 +61,7 @@
 #include "argacces.h"
 #include "constant.h"
 #include "envrnmnt.h"
+#include "factmngr.h"
 #include "memalloc.h"
 #include "router.h"
 
@@ -74,11 +75,11 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    AddHashFunction(Environment *,struct FunctionDefinition *);
+   static void                    AddHashFunction(Environment *,struct functionDefinition *);
    static void                    InitializeFunctionHashTable(Environment *);
    static void                    DeallocateExternalFunctionData(Environment *);
 #if (! RUN_TIME)
-   static bool                    RemoveHashFunction(Environment *,struct FunctionDefinition *);
+   static bool                    RemoveHashFunction(Environment *,struct functionDefinition *);
    static bool                    DefineFunction(Environment *,const char *,unsigned,
                                                  void (*)(Environment *,UDFContext *,UDFValue *),
                                                  const char *,int,int,const char *,void *);
@@ -107,13 +108,13 @@ static void DeallocateExternalFunctionData(
    int i;
 
 #if ! RUN_TIME
-   struct FunctionDefinition *tmpPtr, *nextPtr;
+   struct functionDefinition *tmpPtr, *nextPtr;
 
    tmpPtr = ExternalFunctionData(theEnv)->ListOfFunctions;
    while (tmpPtr != NULL)
      {
       nextPtr = tmpPtr->next;
-      rtn_struct(theEnv,FunctionDefinition,tmpPtr);
+      rtn_struct(theEnv,functionDefinition,tmpPtr);
       tmpPtr = nextPtr;
      }
 #endif
@@ -180,12 +181,12 @@ static bool DefineFunction(
   const char *restrictions,
   void *context)
   {
-   struct FunctionDefinition *newFunction;
+   struct functionDefinition *newFunction;
 
    newFunction = FindFunction(theEnv,name);
    if (newFunction != NULL) return false;
 
-   newFunction = get_struct(theEnv,FunctionDefinition);
+   newFunction = get_struct(theEnv,functionDefinition);
    newFunction->callFunctionName = EnvCreateSymbol(theEnv,name);
    IncrementSymbolCount(newFunction->callFunctionName);
    newFunction->next = GetFunctionList(theEnv);
@@ -225,7 +226,7 @@ bool EnvRemoveUDF(
   const char *functionName)
   {
    CLIPSLexeme *findValue;
-   struct FunctionDefinition *fPtr, *lastPtr = NULL;
+   struct functionDefinition *fPtr, *lastPtr = NULL;
 
    findValue = FindSymbolHN(theEnv,functionName,SYMBOL_BIT);
 
@@ -246,7 +247,7 @@ bool EnvRemoveUDF(
          if (fPtr->restrictions != NULL)
            { DecrementSymbolCount(theEnv,fPtr->restrictions); }
          ClearUserDataList(theEnv,fPtr->usrData);
-         rtn_struct(theEnv,FunctionDefinition,fPtr);
+         rtn_struct(theEnv,functionDefinition,fPtr);
          return true;
         }
 
@@ -262,7 +263,7 @@ bool EnvRemoveUDF(
 /******************************************/
 static bool RemoveHashFunction(
   Environment *theEnv,
-  struct FunctionDefinition *fdPtr)
+  struct functionDefinition *fdPtr)
   {
    struct FunctionHash *fhPtr, *lastPtr = NULL;
    unsigned hashValue;
@@ -306,7 +307,7 @@ bool AddFunctionParser(
   const char *functionName,
   struct expr *(*fpPtr)(Environment *,struct expr *,const char *))
   {
-   struct FunctionDefinition *fdPtr;
+   struct functionDefinition *fdPtr;
 
    fdPtr = FindFunction(theEnv,functionName);
    if (fdPtr == NULL)
@@ -331,7 +332,7 @@ bool RemoveFunctionParser(
   Environment *theEnv,
   const char *functionName)
   {
-   struct FunctionDefinition *fdPtr;
+   struct functionDefinition *fdPtr;
 
    fdPtr = FindFunction(theEnv,functionName);
    if (fdPtr == NULL)
@@ -355,7 +356,7 @@ bool FuncSeqOvlFlags(
   bool seqp,
   bool ovlp)
   {
-   struct FunctionDefinition *fdPtr;
+   struct functionDefinition *fdPtr;
 
    fdPtr = FindFunction(theEnv,functionName);
    if (fdPtr == NULL)
@@ -447,7 +448,7 @@ const char *GetArgumentTypeName(
 /*   for the nth parameter of a function.          */
 /***************************************************/
 int GetNthRestriction(
-  struct FunctionDefinition *theFunction,
+  struct functionDefinition *theFunction,
   int position)
   {
    int defaultRestriction = (int) 'u';
@@ -502,7 +503,7 @@ int GetNthRestriction(
 /***************************************************/
 unsigned GetNthRestriction2(
   Environment *theEnv,
-  struct FunctionDefinition *theFunction,
+  struct functionDefinition *theFunction,
   int position)
   {
    unsigned rv, df;
@@ -522,7 +523,7 @@ unsigned GetNthRestriction2(
 /*************************************************/
 /* GetFunctionList: Returns the ListOfFunctions. */
 /*************************************************/
-struct FunctionDefinition *GetFunctionList(
+struct functionDefinition *GetFunctionList(
   Environment *theEnv)
   {
    return(ExternalFunctionData(theEnv)->ListOfFunctions);
@@ -534,7 +535,7 @@ struct FunctionDefinition *GetFunctionList(
 /**************************************************************/
 void InstallFunctionList(
   Environment *theEnv,
-  struct FunctionDefinition *value)
+  struct functionDefinition *value)
   {
    int i;
    struct FunctionHash *fhPtr, *nextPtr;
@@ -565,10 +566,10 @@ void InstallFunctionList(
 
 /********************************************************/
 /* FindFunction: Returns a pointer to the corresponding */
-/*   FunctionDefinition structure if a function name is */
+/*   functionDefinition structure if a function name is */
 /*   in the function list, otherwise returns NULL.      */
 /********************************************************/
-struct FunctionDefinition *FindFunction(
+struct functionDefinition *FindFunction(
   Environment *theEnv,
   const char *functionName)
   {
@@ -614,7 +615,7 @@ static void InitializeFunctionHashTable(
 /****************************************************************/
 static void AddHashFunction(
   Environment *theEnv,
-  struct FunctionDefinition *fdPtr)
+  struct functionDefinition *fdPtr)
   {
    struct FunctionHash *newhash, *temp;
    unsigned hashValue;
@@ -636,7 +637,7 @@ static void AddHashFunction(
 /*   arguments expected by an external function. */
 /*************************************************/
 int GetMinimumArgs(
-  struct FunctionDefinition *theFunction)
+  struct functionDefinition *theFunction)
   {
    return theFunction->minArgs;
   }
@@ -646,7 +647,7 @@ int GetMinimumArgs(
 /*   arguments expected by an external function. */
 /*************************************************/
 int GetMaximumArgs(
-  struct FunctionDefinition *theFunction)
+  struct functionDefinition *theFunction)
   {
    return theFunction->maxArgs;
   }

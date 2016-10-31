@@ -47,6 +47,8 @@
 
 #define _H_tmpltcmp
 
+#include "tmpltdef.h"
+
    void                           DeftemplateCompilerSetup(Environment *);
    void                           DeftemplateCModuleReference(Environment *,FILE *,int,int,int);
    void                           DeftemplateCConstructReference(Environment *,FILE *,Deftemplate *,int,int);

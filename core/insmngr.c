@@ -80,6 +80,7 @@
 #include "msgcom.h"
 #include "msgfun.h"
 #include "prccode.h"
+#include "prntutil.h"
 #include "router.h"
 #include "sysdep.h"
 #include "utility.h"
@@ -106,8 +107,8 @@
                                                        unsigned *);
    static void                    InstallInstance(Environment *,Instance *,bool);
    static void                    BuildDefaultSlots(Environment *,bool);
-   static bool                    CoreInitializeInstance(Environment *,Instance *,EXPRESSION *);
-   static bool                    InsertSlotOverrides(Environment *,Instance *,EXPRESSION *);
+   static bool                    CoreInitializeInstance(Environment *,Instance *,Expression *);
+   static bool                    InsertSlotOverrides(Environment *,Instance *,Expression *);
    static void                    EvaluateClassDefaults(Environment *,Instance *);
 
 #if DEBUGGING_FUNCTIONS
@@ -907,7 +908,7 @@ static void BuildDefaultSlots(
 static bool CoreInitializeInstance(
   Environment *theEnv,
   Instance *ins,
-  EXPRESSION *ovrexp)
+  Expression *ovrexp)
   {
    UDFValue temp;
 
@@ -981,7 +982,7 @@ static bool CoreInitializeInstance(
 static bool InsertSlotOverrides(
   Environment *theEnv,
   Instance *ins,
-  EXPRESSION *slot_exp)
+  Expression *slot_exp)
   {
    INSTANCE_SLOT *slot;
    UDFValue temp, junk;
@@ -1076,7 +1077,7 @@ static void EvaluateClassDefaults(
          if (slot->desc->dynamicDefault)
            {
             if (EvaluateAndStoreInDataObject(theEnv,(int) slot->desc->multiple,
-                                             (EXPRESSION *) slot->desc->defaultValue,
+                                             (Expression *) slot->desc->defaultValue,
                                              &temp,true))
               PutSlotValue(theEnv,ins,slot,&temp,&junk,"function init-slots");
            }

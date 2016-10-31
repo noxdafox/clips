@@ -53,8 +53,8 @@
 
 #include "expressn.h"
 
-   EXPRESSION                    *FactParseQueryNoAction(Environment *,EXPRESSION *,const char *);
-   EXPRESSION                    *FactParseQueryAction(Environment *,EXPRESSION *,const char *);
+   Expression                    *FactParseQueryNoAction(Environment *,Expression *,const char *);
+   Expression                    *FactParseQueryAction(Environment *,Expression *,const char *);
 
 #endif /* FACT_SET_QUERIES */
 

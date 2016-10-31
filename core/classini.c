@@ -428,7 +428,7 @@ void ObjectsRunTimeInitialize(
            {
             tmpexp = cls->slots[i].defaultValue;
             cls->slots[i].defaultValue = get_struct(theEnv,udfValue);
-            EvaluateAndStoreInDataObject(theEnv,(int) cls->slots[i].multiple,(EXPRESSION *) tmpexp,
+            EvaluateAndStoreInDataObject(theEnv,(int) cls->slots[i].multiple,(Expression *) tmpexp,
                                          (UDFValue *) cls->slots[i].defaultValue,true);
             ValueInstall(theEnv,(UDFValue *) cls->slots[i].defaultValue);
             ((UDFValue *) cls->slots[i].defaultValue)->supplementalInfo = tmpexp;

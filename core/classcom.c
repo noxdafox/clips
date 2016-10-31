@@ -74,6 +74,7 @@
 #include "envrnmnt.h"
 #include "modulutl.h"
 #include "msgcom.h"
+#include "prntutil.h"
 #include "router.h"
 
 #include "classcom.h"
@@ -576,7 +577,7 @@ bool DefclassWatchAccess(
   Environment *theEnv,
   int code,
   bool newState,
-  EXPRESSION *argExprs)
+  Expression *argExprs)
   {
    if (code)
      return(ConstructSetWatchAccess(theEnv,DefclassData(theEnv)->DefclassConstruct,newState,argExprs,
@@ -606,7 +607,7 @@ bool DefclassWatchPrint(
   Environment *theEnv,
   const char *logName,
   int code,
-  EXPRESSION *argExprs)
+  Expression *argExprs)
   {
    if (code)
      return(ConstructPrintWatchAccess(theEnv,DefclassData(theEnv)->DefclassConstruct,logName,argExprs,

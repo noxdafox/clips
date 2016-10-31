@@ -87,6 +87,7 @@
 #include "multifld.h"
 #include "prccode.h"
 #include "prcdrfun.h"
+#include "prntutil.h"
 #include "proflfun.h"
 #include "router.h"
 #include "strngfun.h"
@@ -98,7 +99,7 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static bool                    PerformMessage(Environment *,UDFValue *,EXPRESSION *,CLIPSLexeme *);
+   static bool                    PerformMessage(Environment *,UDFValue *,Expression *,CLIPSLexeme *);
    static HANDLER_LINK           *FindApplicableHandlers(Environment *,Defclass *,CLIPSLexeme *);
    static void                    CallHandlers(Environment *,UDFValue *);
    static void                    EarlySlotBindError(Environment *,Instance *,Defclass *,unsigned);
@@ -128,9 +129,9 @@ bool DirectMessage(
   CLIPSLexeme *msg,
   Instance *ins,
   UDFValue *resultbuf,
-  EXPRESSION *remargs)
+  Expression *remargs)
   {
-   EXPRESSION args;
+   Expression args;
    UDFValue temp;
 
    if (resultbuf == NULL)
@@ -166,7 +167,7 @@ void EnvSend(
   CLIPSValue *returnValue)
   {
    bool error;
-   EXPRESSION *iexp;
+   Expression *iexp;
    CLIPSLexeme *msym;
    UDFValue result;
 
@@ -240,7 +241,7 @@ void SendCommand(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   EXPRESSION args;
+   Expression args;
    CLIPSLexeme *msg;
    UDFValue theArg;
 
@@ -346,7 +347,7 @@ void CallNextHandler(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   EXPRESSION args;
+   Expression args;
    int overridep;
    HANDLER_LINK *oldNext,*oldCurrent;
 #if PROFILING_FUNCTIONS
@@ -980,7 +981,7 @@ void DynamicHandlerPutSlot(
 static bool PerformMessage(
   Environment *theEnv,
   UDFValue *returnValue,
-  EXPRESSION *args,
+  Expression *args,
   CLIPSLexeme *mname)
   {
    int oldce;

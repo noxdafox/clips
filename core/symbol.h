@@ -84,14 +84,9 @@
 
 #include <stdlib.h>
 
-typedef struct voidHashNode CLIPSVoid;
-typedef struct symbolHashNode CLIPSLexeme;
-typedef struct floatHashNode CLIPSFloat;
-typedef struct integerHashNode CLIPSInteger;
-typedef struct bitMapHashNode CLIPSBitMap;
-typedef struct externalAddressHashNode CLIPSExternalAddress;
+#include "entities.h"
+
 typedef struct genericHashNode GENERIC_HN;
-typedef struct typeHeader TypeHeader;
 
 #ifndef SYMBOL_HASH_SIZE
 #define SYMBOL_HASH_SIZE       63559L
@@ -112,100 +107,6 @@ typedef struct typeHeader TypeHeader;
 #ifndef EXTERNAL_ADDRESS_HASH_SIZE
 #define EXTERNAL_ADDRESS_HASH_SIZE        8191
 #endif
-
-/**************/
-/* typeHeader */
-/**************/
-
-struct typeHeader
-  {
-   unsigned short type;
-  };
-
-/****************/
-/* voidHashNode */
-/****************/
-struct voidHashNode
-  {
-   TypeHeader th;
-  };
-
-/******************/
-/* symbolHashNode */
-/******************/
-struct symbolHashNode
-  {
-   TypeHeader th;
-   struct symbolHashNode *next;
-   long count;
-   unsigned int permanent : 1;
-   unsigned int markedEphemeral : 1;
-   unsigned int neededSymbol : 1;
-   unsigned int bucket : 29;
-   const char *contents;
-  };
-
-/*****************/
-/* floatHashNode */
-/*****************/
-struct floatHashNode
-  {
-   TypeHeader th;
-   struct floatHashNode *next;
-   long count;
-   unsigned int permanent : 1;
-   unsigned int markedEphemeral : 1;
-   unsigned int neededFloat : 1;
-   unsigned int bucket : 29;
-   double contents;
-  };
-
-/******************************/
-/* integerHashNode STRUCTURE: */
-/******************************/
-struct integerHashNode
-  {
-   TypeHeader th;
-   struct integerHashNode *next;
-   long count;
-   unsigned int permanent : 1;
-   unsigned int markedEphemeral : 1;
-   unsigned int neededInteger : 1;
-   unsigned int bucket : 29;
-   long long contents;
-  };
-
-/******************/
-/* bitMapHashNode */
-/******************/
-struct bitMapHashNode
-  {
-   TypeHeader th;
-   struct bitMapHashNode *next;
-   long count;
-   unsigned int permanent : 1;
-   unsigned int markedEphemeral : 1;
-   unsigned int neededBitMap : 1;
-   unsigned int bucket : 29;
-   const char *contents;
-   unsigned short size;
-  };
-
-/***************************/
-/* externalAddressHashNode */
-/***************************/
-struct externalAddressHashNode
-  {
-   TypeHeader th;
-   struct externalAddressHashNode *next;
-   long count;
-   unsigned int permanent : 1;
-   unsigned int markedEphemeral : 1;
-   unsigned int neededPointer : 1;
-   unsigned int bucket : 29;
-   void *contents;
-   unsigned short type;
-  };
 
 /******************************/
 /* genericHashNode STRUCTURE: */

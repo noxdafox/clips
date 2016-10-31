@@ -69,6 +69,7 @@
 #include "engine.h"
 #include "envrnmnt.h"
 #include "extnfunc.h"
+#include "multifld.h"
 #include "reteutil.h"
 #include "router.h"
 #include "ruledef.h"

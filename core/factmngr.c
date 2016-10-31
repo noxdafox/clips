@@ -98,11 +98,13 @@
 #include "lgcldpnd.h"
 #include "memalloc.h"
 #include "retract.h"
+#include "prntutil.h"
 #include "router.h"
 #include "strngrtr.h"
 #include "sysdep.h"
 #include "tmpltbsc.h"
 #include "tmpltutl.h"
+#include "utility.h"
 #include "watch.h"
 
 #include "factmngr.h"
@@ -1208,7 +1210,7 @@ bool DeftemplateSlotDefault(
    else if (slotPtr->defaultDynamic)
      {
       if (! EvaluateAndStoreInDataObject(theEnv,(int) slotPtr->multislot,
-                                         (EXPRESSION *) slotPtr->defaultList,
+                                         (Expression *) slotPtr->defaultList,
                                          theResult,garbageMultifield))
         { return false; }
      }

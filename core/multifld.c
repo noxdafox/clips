@@ -68,6 +68,7 @@
 #include "object.h"
 #endif
 #include "scanner.h"
+#include "prntutil.h"
 #include "router.h"
 #include "strngrtr.h"
 #include "utility.h"
@@ -512,7 +513,7 @@ void PrintMultifield(
 void StoreInMultifield(
   Environment *theEnv,
   UDFValue *returnValue,
-  EXPRESSION *expptr,
+  Expression *expptr,
   bool garbageSegment)
   {
    UDFValue val_ptr;
@@ -633,7 +634,7 @@ bool MultifieldDOsEqual(
   UDFValue *dobj2)
   {
    long extent1,extent2; /* 6.04 Bug Fix */
-   FIELD_PTR e1,e2;
+   Field *e1, *e2;
 
    extent1 = dobj1->range;
    extent2 = dobj2->range;

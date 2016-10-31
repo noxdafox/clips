@@ -78,6 +78,7 @@
 #include "multifld.h"
 #include "objrtfnx.h"
 #include "objrtmch.h"
+#include "prntutil.h"
 #include "reteutil.h"
 #include "ruledlt.h"
 #include "reorder.h"
@@ -100,7 +101,7 @@
    static void                    ProcessPatternNode(Environment *,int,OBJECT_PATTERN_NODE *,struct multifieldMarker *);
    static void                    CreateObjectAlphaMatch(Environment *,OBJECT_ALPHA_NODE *);
    static bool                    EvaluateObjectPatternTest(Environment *,int,struct multifieldMarker *,
-                                                            EXPRESSION *,OBJECT_PATTERN_NODE *);
+                                                            Expression *,OBJECT_PATTERN_NODE *);
    static void                    ObjectAssertAction(Environment *,Instance *);
    static void                    ObjectModifyAction(Environment *,Instance *,SLOT_BITMAP *);
    static void                    ObjectRetractAction(Environment *,Instance *,SLOT_BITMAP *);
@@ -947,7 +948,7 @@ static void ProcessPatternNode(
         }
       else if ((patternNode->networkTest == NULL) ? true :
           (EvaluateObjectPatternTest(theEnv,objectSlotField,NULL,
-                                     (EXPRESSION *) patternNode->networkTest,patternNode)))
+                                     (Expression *) patternNode->networkTest,patternNode)))
         {
          if (patternNode->alphaNode != NULL)
            CreateObjectAlphaMatch(theEnv,patternNode->alphaNode);
@@ -980,7 +981,7 @@ static void ProcessPatternNode(
         }
       else if ((patternNode->networkTest == NULL) ? true :
           EvaluateObjectPatternTest(theEnv,objectSlotField,NULL,
-                                    (EXPRESSION *) patternNode->networkTest,patternNode))
+                                    (Expression *) patternNode->networkTest,patternNode))
         {
          if (patternNode->alphaNode != NULL)
            CreateObjectAlphaMatch(theEnv,patternNode->alphaNode);
@@ -1045,7 +1046,7 @@ static void ProcessPatternNode(
            }
          else if ((patternNode->networkTest == NULL) ? true :
               EvaluateObjectPatternTest(theEnv,objectSlotField,newMark,
-                        (EXPRESSION *) patternNode->networkTest,patternNode))
+                        (Expression *) patternNode->networkTest,patternNode))
            {
             if (patternNode->alphaNode != NULL)
               CreateObjectAlphaMatch(theEnv,patternNode->alphaNode);
@@ -1080,7 +1081,7 @@ static void ProcessPatternNode(
         }
       else if ((patternNode->networkTest == NULL) ? true :
           EvaluateObjectPatternTest(theEnv,objectSlotField,newMark,
-                                    (EXPRESSION *) patternNode->networkTest,patternNode))
+                                    (Expression *) patternNode->networkTest,patternNode))
         {
          if (patternNode->alphaNode != NULL)
            CreateObjectAlphaMatch(theEnv,patternNode->alphaNode);
@@ -1185,7 +1186,7 @@ static bool EvaluateObjectPatternTest(
   Environment *theEnv,
   int objectSlotField,
   struct multifieldMarker *selfSlotMarker,
-  EXPRESSION *networkTest,
+  Expression *networkTest,
   OBJECT_PATTERN_NODE *patternNode)
   {
    UDFValue vresult;

@@ -67,6 +67,7 @@
 #include "modulutl.h"
 #include "modulpsr.h"
 #include "pattern.h"
+#include "pprint.h"
 #include "prntutil.h"
 #include "router.h"
 #include "strngrtr.h"

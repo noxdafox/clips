@@ -55,6 +55,7 @@
 #include "envrnmnt.h"
 #include "prcdrfun.h"
 #include "prccode.h"
+#include "prntutil.h"
 #include "proflfun.h"
 #include "router.h"
 #include "utility.h"
@@ -102,7 +103,7 @@
 void CallDeffunction(
   Environment *theEnv,
   Deffunction *dptr,
-  EXPRESSION *args,
+  Expression *args,
   UDFValue *returnValue)
   {
    int oldce;

@@ -105,6 +105,7 @@
 #include "modulutl.h"
 #include "prccode.h"
 #include "prcdrfun.h"
+#include "prntutil.h"
 #include "proflfun.h"
 #include "reteutil.h"
 #include "retract.h"

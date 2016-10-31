@@ -594,7 +594,7 @@ void SwitchFunction(
   UDFValue *returnValue)
   {
    UDFValue switch_val,case_val;
-   EXPRESSION *theExp;
+   Expression *theExp;
 
    returnValue->lexemeValue = FalseSymbol(theEnv);
 

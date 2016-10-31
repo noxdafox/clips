@@ -57,6 +57,7 @@
 #include "incrrset.h"
 #include "memalloc.h"
 #include "pattern.h"
+#include "prntutil.h"
 #include "reteutil.h"
 #include "router.h"
 #include "rulebld.h"

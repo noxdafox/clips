@@ -77,6 +77,8 @@ struct bsaveDeftemplateModule
 
 #define TMPLTBIN_DATA 61
 
+#include "tmpltdef.h"
+
 struct deftemplateBinaryData
   {
    Deftemplate *DeftemplateArray;

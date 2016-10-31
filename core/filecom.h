@@ -60,21 +60,59 @@
 
 #define _H_filecom
 
+#include "evaluatn.h"
+
+/***************/
+/* STRUCTURES  */
+/***************/
+
+struct batchEntry
+  {
+   int batchType;
+   FILE *fileSource;
+   const char *logicalSource;
+   const char *theString;
+   const char *fileName;
+   long lineNumber;
+   struct batchEntry *next;
+  };
+
+/***************/
+/* DEFINITIONS */
+/***************/
+
+#define FILE_BATCH      0
+#define STRING_BATCH    1
+
+#define BUFFER_SIZE   120
+
+#define FILECOM_DATA 14
+
+struct fileCommandData
+  {
+#if DEBUGGING_FUNCTIONS
+   FILE *DribbleFP;
+   char *DribbleBuffer;
+   size_t DribbleCurrentPosition;
+   size_t DribbleMaximumPosition;
+   int (*DribbleStatusFunction)(Environment *,bool);
+#endif
+   int BatchType;
+   FILE *BatchFileSource;
+   const char *BatchLogicalSource;
+   char *BatchBuffer;
+   size_t BatchCurrentPosition;
+   size_t BatchMaximumPosition;
+   struct batchEntry *TopOfBatchList;
+   struct batchEntry *BottomOfBatchList;
+   char *batchPriorParsingFile;
+  };
+
+#define FileCommandData(theEnv) ((struct fileCommandData *) GetEnvironmentData(theEnv,FILECOM_DATA))
+
    void                           FileCommandDefinitions(Environment *);
-   bool                           EnvDribbleOn(Environment *,const char *);
-   bool                           EnvDribbleActive(Environment *);
-   bool                           EnvDribbleOff(Environment *);
-   void                           SetDribbleStatusFunction(Environment *,int (*)(Environment *,bool));
-   int                            LLGetcBatch(Environment *,const char *,bool);
-   bool                           Batch(Environment *,const char *);
-   bool                           OpenBatch(Environment *,const char *,bool);
-   bool                           OpenStringBatch(Environment *,const char *,const char *,bool);
-   bool                           RemoveBatch(Environment *);
-   bool                           BatchActive(Environment *);
-   void                           CloseAllBatchSources(Environment *);
    void                           BatchCommand(Environment *,UDFContext *,UDFValue *);
    void                           BatchStarCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           EnvBatchStar(Environment *,const char *);
    void                           LoadCommand(Environment *,UDFContext *,UDFValue *);
    void                           LoadStarCommand(Environment *,UDFContext *,UDFValue *);
    void                           SaveCommand(Environment *,UDFContext *,UDFValue *);

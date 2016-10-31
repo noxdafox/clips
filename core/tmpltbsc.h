@@ -63,6 +63,7 @@
 #define _H_tmpltbsc
 
 #include "evaluatn.h"
+#include "tmpltdef.h"
 
    void                           DeftemplateBasicCommands(Environment *);
    void                           UndeftemplateCommand(Environment *,UDFContext *,UDFValue *);

@@ -105,6 +105,7 @@
 #include "exprnpsr.h"
 #include "memalloc.h"
 #include "multifld.h"
+#include "prntutil.h"
 #include "router.h"
 #include "sysdep.h"
 #include "utility.h"
@@ -133,8 +134,8 @@ struct miscFunctionData
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    ExpandFuncMultifield(Environment *,UDFValue *,EXPRESSION *,
-                                                       EXPRESSION **,void *);
+   static void                    ExpandFuncMultifield(Environment *,UDFValue *,Expression *,
+                                                       Expression **,void *);
    static int                     FindLanguageType(Environment *,const char *);
    static void                    ConvertTime(Environment *,UDFValue *,struct tm *);
 
@@ -148,6 +149,8 @@ void MiscFunctionDefinitions(
    MiscFunctionData(theEnv)->GensymNumber = 1;
 
 #if ! RUN_TIME
+   EnvAddUDF(theEnv,"exit","v",0,1,"l",ExitCommand,"ExitCommand",NULL);
+
    EnvAddUDF(theEnv,"gensym","y",0,0,NULL,GensymFunction,"GensymFunction",NULL);
    EnvAddUDF(theEnv,"gensym*","y",0,0,NULL,GensymStarFunction,"GensymStarFunction",NULL);
    EnvAddUDF(theEnv,"setgen","l",1,1,"l",SetgenFunction,"SetgenFunction",NULL);
@@ -185,6 +188,35 @@ void MiscFunctionDefinitions(
    EnvAddUDF(theEnv,"call","*",1,UNBOUNDED,"*",CallFunction,"CallFunction",NULL);
    EnvAddUDF(theEnv,"timer","d",0,UNBOUNDED,NULL,TimerFunction,"TimerFunction",NULL);
 #endif
+  }
+
+/*****************************************************/
+/* ExitCommand: H/L command for exiting the program. */
+/*****************************************************/
+void ExitCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  UDFValue *returnValue)
+  {
+   int argCnt;
+   int status;
+   UDFValue theArg;
+
+   argCnt = UDFArgumentCount(context);
+
+   if (argCnt == 0)
+     { EnvExitRouter(theEnv,EXIT_SUCCESS); }
+   else
+    {
+     if (! UDFFirstArgument(context,INTEGER_BIT,&theArg))
+       { EnvExitRouter(theEnv,EXIT_SUCCESS); }
+
+     status = (int) theArg.integerValue->contents;
+     if (EnvGetEvaluationError(theEnv)) return;
+     EnvExitRouter(theEnv,status);
+    }
+
+   return;
   }
 
 /******************************************************************/
@@ -865,8 +897,8 @@ void ExpandFuncCall(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   EXPRESSION *newargexp,*fcallexp;
-   struct FunctionDefinition *func;
+   Expression *newargexp,*fcallexp;
+   struct functionDefinition *func;
 
    /* ======================================================================
       Copy the original function call's argument expression list.
@@ -956,16 +988,16 @@ void DummyExpandFuncMultifield(
                    which causes an evaluation error when evaluated
                    a second time by actual caller.
   NOTES        : THIS ROUTINE MODIFIES EXPRESSIONS AT RUNTIME!!  MAKE
-                 SURE THAT THE EXPRESSION PASSED IS SAFE TO CHANGE!!
+                 SURE THAT THE Expression PASSED IS SAFE TO CHANGE!!
  **********************************************************************/
 static void ExpandFuncMultifield(
   Environment *theEnv,
   UDFValue *returnValue,
-  EXPRESSION *theExp,
-  EXPRESSION **sto,
+  Expression *theExp,
+  Expression **sto,
   void *expmult)
   {
-   EXPRESSION *newexp,*top,*bot;
+   Expression *newexp,*top,*bot;
    long i; /* 6.04 Bug Fix */
 
    while (theExp != NULL)
@@ -1090,7 +1122,7 @@ void GetFunctionRestrictions(
   UDFValue *returnValue)
   {
    UDFValue theArg;
-   struct FunctionDefinition *fptr;
+   struct functionDefinition *fptr;
    char *stringBuffer = NULL;
    size_t bufferPosition = 0;
    size_t bufferMaximum = 0;
@@ -1154,7 +1186,7 @@ void GetFunctionListFunction(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   struct FunctionDefinition *theFunction;
+   struct functionDefinition *theFunction;
    Multifield *theList;
    unsigned long functionCount = 0;
 
@@ -1187,11 +1219,11 @@ void FuncallFunction(
   {
    int j;
    UDFValue theArg;
-   FUNCTION_REFERENCE theReference;
+   Expression theReference;
    const char *name;
    struct multifield *theMultifield;
    struct expr *lastAdd = NULL, *nextAdd, *multiAdd;
-   struct FunctionDefinition *theFunction;
+   struct functionDefinition *theFunction;
 
    /*==================================*/
    /* Set up the default return value. */

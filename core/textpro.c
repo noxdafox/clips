@@ -84,8 +84,10 @@
 #include "envrnmnt.h"
 #include "extnfunc.h"
 #include "memalloc.h"
+#include "prntutil.h"
 #include "router.h"
 #include "sysdep.h"
+#include "utility.h"
 
 #include "textpro.h"
 

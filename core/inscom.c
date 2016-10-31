@@ -93,6 +93,7 @@
 #include "memalloc.h"
 #include "msgcom.h"
 #include "msgfun.h"
+#include "prntutil.h"
 #include "router.h"
 #include "strngrtr.h"
 #include "sysdep.h"
@@ -592,7 +593,7 @@ Instance *EnvMakeInstance(
   {
    const char *router = "***MKINS***";
    struct token tkn;
-   EXPRESSION *top;
+   Expression *top;
    UDFValue returnValue;
 
    returnValue.value = FalseSymbol(theEnv);

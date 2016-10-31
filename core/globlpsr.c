@@ -68,6 +68,7 @@
 #include "modulutl.h"
 #include "multifld.h"
 #include "pprint.h"
+#include "prntutil.h"
 #include "router.h"
 #include "scanner.h"
 #include "watch.h"

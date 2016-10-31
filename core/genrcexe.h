@@ -52,7 +52,7 @@
 #include "expressn.h"
 #include "genrcfun.h"
 
-   void                           GenericDispatch(Environment *,Defgeneric *,Defmethod *,Defmethod *,EXPRESSION *,UDFValue *);
+   void                           GenericDispatch(Environment *,Defgeneric *,Defmethod *,Defmethod *,Expression *,UDFValue *);
    void                           UnboundMethodErr(Environment *);
    bool                           IsMethodApplicable(Environment *,Defmethod *);
 

@@ -71,6 +71,7 @@
 #include "evaluatn.h"
 #include "exprnpsr.h"
 #include "moduldef.h"
+#include "pprint.h"
 #include "prntutil.h"
 #include "router.h"
 
@@ -93,7 +94,7 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static bool                    ReplaceClassNameWithReference(Environment *,EXPRESSION *);
+   static bool                    ReplaceClassNameWithReference(Environment *,Expression *);
 
 /* =========================================
    *****************************************
@@ -104,7 +105,7 @@
 /*************************************************************************************
   NAME         : ParseInitializeInstance
   DESCRIPTION  : Parses initialize-instance and make-instance function
-                   calls into an EXPRESSION form that
+                   calls into an Expression form that
                    can later be evaluated with EvaluateExpression(theEnv,)
   INPUTS       : 1) The address of the top node of the expression
                     containing the initialize-instance function call
@@ -176,9 +177,9 @@
                                                            <value-expression>...
 
  *************************************************************************************/
-EXPRESSION *ParseInitializeInstance(
+Expression *ParseInitializeInstance(
   Environment *theEnv,
-  EXPRESSION *top,
+  Expression *top,
   const char *readSource)
   {
    bool error;
@@ -345,13 +346,13 @@ ParseInitializeInstanceError:
 
                  Assumes first token has already been scanned
  ********************************************************************************/
-EXPRESSION *ParseSlotOverrides(
+Expression *ParseSlotOverrides(
   Environment *theEnv,
   const char *readSource,
   bool *error)
   {
-   EXPRESSION *top = NULL,*bot = NULL,*theExp;
-   EXPRESSION *theExpNext;
+   Expression *top = NULL,*bot = NULL,*theExp;
+   Expression *theExpNext;
 
    while (DefclassData(theEnv)->ObjectParseToken.tknType == LEFT_PARENTHESIS_TOKEN)
      {
@@ -396,7 +397,7 @@ EXPRESSION *ParseSlotOverrides(
 /****************************************************************************
   NAME         : ParseSimpleInstance
   DESCRIPTION  : Parses instances from file for load-instances
-                   into an EXPRESSION forms that
+                   into an Expression forms that
                    can later be evaluated with EvaluateExpression(theEnv,)
   INPUTS       : 1) The address of the top node of the expression
                     containing the make-instance function call
@@ -426,12 +427,12 @@ EXPRESSION *ParseSlotOverrides(
                                                           <value-expression>...
 
  ****************************************************************************/
-EXPRESSION *ParseSimpleInstance(
+Expression *ParseSimpleInstance(
   Environment *theEnv,
-  EXPRESSION *top,
+  Expression *top,
   const char *readSource)
   {
-   EXPRESSION *theExp,*vals = NULL,*vbot,*tval;
+   Expression *theExp,*vals = NULL,*vbot,*tval;
    TokenType type;
 
    GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
@@ -549,7 +550,7 @@ SlotOverrideError:
  ***************************************************/
 static bool ReplaceClassNameWithReference(
   Environment *theEnv,
-  EXPRESSION *theExp)
+  Expression *theExp)
   {
    const char *theClassName;
    Defclass *theDefclass;

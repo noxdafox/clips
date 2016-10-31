@@ -90,7 +90,7 @@ struct deffunction
    unsigned busy;
    unsigned executing;
    bool trace;
-   EXPRESSION *code;
+   Expression *code;
    int minNumberOfParameters;
    int maxNumberOfParameters;
    int numberOfLocalVars;

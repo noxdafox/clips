@@ -63,6 +63,7 @@
 #include "memalloc.h"
 #include "msgcom.h"
 #include "prccode.h"
+#include "prntutil.h"
 #include "router.h"
 
 #include "msgfun.h"

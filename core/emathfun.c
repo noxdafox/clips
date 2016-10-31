@@ -53,6 +53,7 @@
 #include "argacces.h"
 #include "envrnmnt.h"
 #include "extnfunc.h"
+#include "prntutil.h"
 #include "router.h"
 
 #include "emathfun.h"

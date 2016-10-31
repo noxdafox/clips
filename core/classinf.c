@@ -933,7 +933,7 @@ void SlotAllowedValues(
   {
    int i;
    SlotDescriptor *sp;
-   EXPRESSION *theExp;
+   Expression *theExp;
    UDFValue result;
    Environment *theEnv = theDefclass->header.env;
 
@@ -971,7 +971,7 @@ void SlotAllowedClasses(
   {
    int i;
    SlotDescriptor *sp;
-   EXPRESSION *theExp;
+   Expression *theExp;
    UDFValue result;
    Environment *theEnv = theDefclass->header.env;
 

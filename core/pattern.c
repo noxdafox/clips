@@ -51,6 +51,8 @@
 #include "exprnpsr.h"
 #include "match.h"
 #include "memalloc.h"
+#include "pprint.h"
+#include "prntutil.h"
 #include "reteutil.h"
 #include "router.h"
 #include "rulecmp.h"

@@ -323,7 +323,7 @@ bool DeftemplateWatchAccess(
   Environment *theEnv,
   int code,
   bool newState,
-  EXPRESSION *argExprs)
+  Expression *argExprs)
   {
 #if MAC_XCD
 #pragma unused(code)
@@ -342,7 +342,7 @@ bool DeftemplateWatchPrint(
   Environment *theEnv,
   const char *logName,
   int code,
-  EXPRESSION *argExprs)
+  Expression *argExprs)
   {
 #if MAC_XCD
 #pragma unused(code)

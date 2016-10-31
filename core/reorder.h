@@ -100,7 +100,7 @@ struct lhsParseNode
      {
       void *value;
       CLIPSLexeme *lexemeValue;
-      struct FunctionDefinition *functionValue;
+      struct functionDefinition *functionValue;
      };
    unsigned int negated : 1;
    unsigned int exists : 1;

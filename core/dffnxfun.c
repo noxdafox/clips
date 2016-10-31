@@ -105,6 +105,9 @@
 #include "argacces.h"
 #include "cstrccom.h"
 #include "memalloc.h"
+#include "modulutl.h"
+#include "multifld.h"
+#include "prntutil.h"
 #include "router.h"
 
 #include "dffnxfun.h"
@@ -139,8 +142,8 @@
 #endif
 
 #if DEBUGGING_FUNCTIONS
-   static bool                    DeffunctionWatchAccess(Environment *,int,bool,EXPRESSION *);
-   static bool                    DeffunctionWatchPrint(Environment *,const char *,int,EXPRESSION *);
+   static bool                    DeffunctionWatchAccess(Environment *,int,bool,Expression *);
+   static bool                    DeffunctionWatchPrint(Environment *,const char *,int,Expression *);
 #endif
 
 /* =========================================
@@ -1051,7 +1054,7 @@ static bool DeffunctionWatchAccess(
   Environment *theEnv,
   int code,
   bool newState,
-  EXPRESSION *argExprs)
+  Expression *argExprs)
   {
 #if MAC_XCD
 #pragma unused(code)
@@ -1079,7 +1082,7 @@ static bool DeffunctionWatchPrint(
   Environment *theEnv,
   const char *logName,
   int code,
-  EXPRESSION *argExprs)
+  Expression *argExprs)
   {
 #if MAC_XCD
 #pragma unused(code)

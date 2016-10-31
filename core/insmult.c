@@ -61,6 +61,7 @@
 #include "msgfun.h"
 #include "msgpass.h"
 #include "multifun.h"
+#include "prntutil.h"
 #include "router.h"
 
 #include "insmult.h"
@@ -80,7 +81,7 @@
 
    static Instance               *CheckMultifieldSlotInstance(UDFContext *);
    static INSTANCE_SLOT          *CheckMultifieldSlotModify(Environment *,int,const char *,Instance *,
-                                                            EXPRESSION *,long *,long *,UDFValue *);
+                                                            Expression *,long *,long *,UDFValue *);
    static void                    AssignSlotToDataObject(UDFValue *,INSTANCE_SLOT *);
 
 /* =========================================
@@ -133,7 +134,7 @@ void MVSlotReplaceCommand(
    Instance *ins;
    INSTANCE_SLOT *sp;
    long rb,re;
-   EXPRESSION arg;
+   Expression arg;
 
    returnValue->lexemeValue = FalseSymbol(theEnv);
    ins = CheckMultifieldSlotInstance(context);
@@ -173,7 +174,7 @@ void MVSlotInsertCommand(
    Instance *ins;
    INSTANCE_SLOT *sp;
    long theIndex;
-   EXPRESSION arg;
+   Expression arg;
 
    returnValue->lexemeValue = FalseSymbol(theEnv);
    ins = CheckMultifieldSlotInstance(context);
@@ -214,7 +215,7 @@ void MVSlotDeleteCommand(
    Instance *ins;
    INSTANCE_SLOT *sp;
    long rb,re;
-   EXPRESSION arg;
+   Expression arg;
 
    returnValue->lexemeValue = FalseSymbol(theEnv);
    ins = CheckMultifieldSlotInstance(context);
@@ -451,7 +452,7 @@ static INSTANCE_SLOT *CheckMultifieldSlotModify(
   int code,
   const char *func,
   Instance *ins,
-  EXPRESSION *args,
+  Expression *args,
   long *rb,
   long *re,
   UDFValue *newval)
