@@ -65,11 +65,11 @@
 
    bool                           ParseDefgeneric(Environment *,const char *);
    bool                           ParseDefmethod(Environment *,const char *);
-   Defmethod                     *AddMethod(Environment *,Defgeneric *,Defmethod *,int,short,EXPRESSION *,
-                                            int,int,CLIPSLexeme *,EXPRESSION *,char *,bool);
-   void                           PackRestrictionTypes(Environment *,RESTRICTION *,EXPRESSION *);
-   void                           DeleteTempRestricts(Environment *,EXPRESSION *);
-   Defmethod                     *FindMethodByRestrictions(Defgeneric *,EXPRESSION *,int,
+   Defmethod                     *AddMethod(Environment *,Defgeneric *,Defmethod *,int,short,Expression *,
+                                            int,int,CLIPSLexeme *,Expression *,char *,bool);
+   void                           PackRestrictionTypes(Environment *,RESTRICTION *,Expression *);
+   void                           DeleteTempRestricts(Environment *,Expression *);
+   Defmethod                     *FindMethodByRestrictions(Defgeneric *,Expression *,int,
                                                            CLIPSLexeme *,int *);
 
 #endif /* DEFGENERIC_CONSTRUCT && (! BLOAD_ONLY) && (! RUN_TIME) */

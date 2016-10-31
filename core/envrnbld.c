@@ -36,6 +36,7 @@
 #include "miscfun.h"
 #include "multifun.h"
 #include "parsefun.h"
+#include "pprint.h"
 #include "prccode.h"
 #include "prcdrfun.h"
 #include "prdctfun.h"
@@ -97,13 +98,13 @@
    static Environment            *CreateEnvironmentDriver(CLIPSLexeme **,CLIPSFloat **,
                                                           CLIPSInteger **,struct bitMapHashNode **,
                                                           struct externalAddressHashNode **,
-                                                          struct FunctionDefinition *);
+                                                          struct functionDefinition *);
    static void                    SystemFunctionDefinitions(Environment *);
    static void                    InitializeKeywords(Environment *);
    static void                    EnvInitializeEnvironment(Environment *,CLIPSLexeme **,CLIPSFloat **,
 					   								       CLIPSInteger **,struct bitMapHashNode **,
 														   struct externalAddressHashNode **,
-                                                           struct FunctionDefinition *);
+                                                           struct functionDefinition *);
 
 /************************************************************/
 /* CreateEnvironment: Creates an environment data structure */
@@ -123,7 +124,7 @@ Environment *CreateRuntimeEnvironment(
   CLIPSFloat **floatTable,
   CLIPSInteger **integerTable,
   struct bitMapHashNode **bitmapTable,
-  struct FunctionDefinition *functions)
+  struct functionDefinition *functions)
   {
    return CreateEnvironmentDriver(symbolTable,floatTable,integerTable,bitmapTable,NULL,functions);
   }
@@ -138,7 +139,7 @@ Environment *CreateEnvironmentDriver(
   CLIPSInteger **integerTable,
   struct bitMapHashNode **bitmapTable,
   struct externalAddressHashNode **externalAddressTable,
-  struct FunctionDefinition *functions)
+  struct functionDefinition *functions)
   {
    struct environmentData *theEnvironment;
    void *theData;
@@ -291,7 +292,7 @@ static void EnvInitializeEnvironment(
   CLIPSInteger **integerTable,
   struct bitMapHashNode **bitmapTable,
   struct externalAddressHashNode **externalAddressTable,
-  struct FunctionDefinition *functions)
+  struct functionDefinition *functions)
   {
    /*================================================*/
    /* Don't allow the initialization to occur twice. */

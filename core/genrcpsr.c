@@ -84,8 +84,10 @@
 #include "immthpsr.h"
 #include "memalloc.h"
 #include "modulutl.h"
+#include "pprint.h"
 #include "prcdrpsr.h"
 #include "prccode.h"
+#include "prntutil.h"
 #include "router.h"
 #include "scanner.h"
 #include "sysdep.h"
@@ -116,16 +118,16 @@
    static void                    CreateDefaultGenericPPForm(Environment *,Defgeneric *);
 #endif
 
-   static int                     ParseMethodParameters(Environment *,const char *,EXPRESSION **,CLIPSLexeme **);
+   static int                     ParseMethodParameters(Environment *,const char *,Expression **,CLIPSLexeme **);
    static RESTRICTION            *ParseRestriction(Environment *,const char *);
-   static void                    ReplaceCurrentArgRefs(Environment *,EXPRESSION *);
-   static bool                    DuplicateParameters(Environment *,EXPRESSION *,EXPRESSION **,CLIPSLexeme *);
-   static EXPRESSION             *AddParameter(Environment *,EXPRESSION *,EXPRESSION *,CLIPSLexeme *,RESTRICTION *);
-   static EXPRESSION             *ValidType(Environment *,CLIPSLexeme *);
+   static void                    ReplaceCurrentArgRefs(Environment *,Expression *);
+   static bool                    DuplicateParameters(Environment *,Expression *,Expression **,CLIPSLexeme *);
+   static Expression             *AddParameter(Environment *,Expression *,Expression *,CLIPSLexeme *,RESTRICTION *);
+   static Expression             *ValidType(Environment *,CLIPSLexeme *);
    static bool                    RedundantClasses(Environment *,Defclass *,Defclass *);
    static Defgeneric             *AddGeneric(Environment *,CLIPSLexeme *,bool *);
    static Defmethod              *AddGenericMethod(Environment *,Defgeneric *,int,short);
-   static int                     RestrictionsCompare(EXPRESSION *,int,int,int,Defmethod *);
+   static int                     RestrictionsCompare(Expression *,int,int,int,Defmethod *);
    static int                     TypeListCompare(RESTRICTION *,RESTRICTION *);
    static Defgeneric             *NewGeneric(Environment *,CLIPSLexeme *);
 
@@ -222,7 +224,7 @@ bool ParseDefmethod(
    bool newMethod;
    bool mnew = false;
    bool error;
-   EXPRESSION *params,*actions,*tmp;
+   Expression *params,*actions,*tmp;
    CLIPSLexeme *wildcard;
    Defmethod *meth;
    Defgeneric *gfunc;
@@ -438,11 +440,11 @@ Defmethod *AddMethod(
   Defmethod *meth,
   int mposn,
   short mi,
-  EXPRESSION *params,
+  Expression *params,
   int rcnt,
   int lvars,
   CLIPSLexeme *wildcard,
-  EXPRESSION *actions,
+  Expression *actions,
   char *ppForm,
   bool copyRestricts)
   {
@@ -562,9 +564,9 @@ Defmethod *AddMethod(
 void PackRestrictionTypes(
   Environment *theEnv,
   RESTRICTION *rptr,
-  EXPRESSION *types)
+  Expression *types)
   {
-   EXPRESSION *tmp;
+   Expression *tmp;
    long i;
 
    rptr->tcnt = 0;
@@ -590,9 +592,9 @@ void PackRestrictionTypes(
  ***************************************************/
 void DeleteTempRestricts(
   Environment *theEnv,
-  EXPRESSION *phead)
+  Expression *phead)
   {
-   EXPRESSION *ptmp;
+   Expression *ptmp;
    RESTRICTION *rtmp;
 
    while (phead != NULL)
@@ -628,7 +630,7 @@ void DeleteTempRestricts(
  **********************************************************/
 Defmethod *FindMethodByRestrictions(
   Defgeneric *gfunc,
-  EXPRESSION *params,
+  Expression *params,
   int rcnt,
   CLIPSLexeme *wildcard,
   int *posn)
@@ -688,7 +690,7 @@ static bool ValidGenericName(
    Defmodule *theModule;
    Deffunction *theDeffunction;
 #endif
-   struct FunctionDefinition *systemFunction;
+   struct functionDefinition *systemFunction;
 
    /*==============================================*/
    /* A defgeneric cannot be named the same as a   */
@@ -872,10 +874,10 @@ static CLIPSLexeme *ParseMethodNameAndIndex(
 static int ParseMethodParameters(
   Environment *theEnv,
   const char *readSource,
-  EXPRESSION **params,
+  Expression **params,
   CLIPSLexeme **wildcard)
   {
-   EXPRESSION *phead = NULL,*pprv;
+   Expression *phead = NULL,*pprv;
    CLIPSLexeme *pname;
    RESTRICTION *rtmp;
    int rcnt = 0;
@@ -987,7 +989,7 @@ static RESTRICTION *ParseRestriction(
   Environment *theEnv,
   const char *readSource)
   {
-   EXPRESSION *types = NULL,*new_types,
+   Expression *types = NULL,*new_types,
               *typesbot,*tmp,*tmp2,
               *query = NULL;
    RESTRICTION *rptr;
@@ -1113,7 +1115,7 @@ static RESTRICTION *ParseRestriction(
  *****************************************************************/
 static void ReplaceCurrentArgRefs(
   Environment *theEnv,
-  EXPRESSION *query)
+  Expression *query)
   {
    while (query != NULL)
      {
@@ -1144,8 +1146,8 @@ static void ReplaceCurrentArgRefs(
  **********************************************************/
 static bool DuplicateParameters(
   Environment *theEnv,
-  EXPRESSION *head,
-  EXPRESSION **prv,
+  Expression *head,
+  Expression **prv,
   CLIPSLexeme *name)
   {
    *prv = NULL;
@@ -1179,21 +1181,21 @@ static bool DuplicateParameters(
                    and attached
   NOTES        : None
  *****************************************************************/
-static EXPRESSION *AddParameter(
+static Expression *AddParameter(
   Environment *theEnv,
-  EXPRESSION *phead,
-  EXPRESSION *pprv,
+  Expression *phead,
+  Expression *pprv,
   CLIPSLexeme *pname,
   RESTRICTION *rptr)
   {
-   EXPRESSION *ptmp;
+   Expression *ptmp;
 
    ptmp = GenConstant(theEnv,SYMBOL_TYPE,pname);
    if (phead == NULL)
      phead = ptmp;
    else
      pprv->nextArg = ptmp;
-   ptmp->argList = (EXPRESSION *) rptr;
+   ptmp->argList = (Expression *) rptr;
    return(phead);
   }
 
@@ -1210,7 +1212,7 @@ static EXPRESSION *AddParameter(
                    (or class addresses)
   NOTES        : None
  *************************************************************/
-static EXPRESSION *ValidType(
+static Expression *ValidType(
   Environment *theEnv,
   CLIPSLexeme *tname)
   {
@@ -1435,7 +1437,7 @@ static Defmethod *AddGenericMethod(
                    pointers of the parameter expressions
  ****************************************************************/
 static int RestrictionsCompare(
-  EXPRESSION *params,
+  Expression *params,
   int rcnt,
   int min,
   int max,

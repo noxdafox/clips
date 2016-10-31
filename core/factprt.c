@@ -44,6 +44,7 @@
 
 #include "envrnmnt.h"
 #include "factgen.h"
+#include "prntutil.h"
 #include "router.h"
 #include "symbol.h"
 

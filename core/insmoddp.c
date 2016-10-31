@@ -77,6 +77,7 @@
 #include "objrtmch.h"
 #endif
 #include "prccode.h"
+#include "prntutil.h"
 #include "router.h"
 
 #include "insmoddp.h"
@@ -85,7 +86,7 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static UDFValue             *EvaluateSlotOverrides(Environment *,EXPRESSION *,int *,bool *);
+   static UDFValue               *EvaluateSlotOverrides(Environment *,Expression *,int *,bool *);
    static void                    DeleteSlotOverrideEvaluations(Environment *,UDFValue *,int);
    static void                    ModifyMsgHandlerSupport(Environment *,UDFValue *,bool);
    static void                    DuplicateMsgHandlerSupport(Environment *,UDFValue *,bool);
@@ -169,7 +170,7 @@ void ModifyInstance(
   UDFValue *returnValue)
   {
    Instance *ins;
-   EXPRESSION theExp;
+   Expression theExp;
    UDFValue *overrides;
    bool oldOMDMV;
    int overrideCount;
@@ -239,7 +240,7 @@ void MsgModifyInstance(
   UDFValue *returnValue)
   {
    Instance *ins;
-   EXPRESSION theExp;
+   Expression theExp;
    UDFValue *overrides;
    bool oldOMDMV;
    int overrideCount;
@@ -309,7 +310,7 @@ void DuplicateInstance(
   {
    Instance *ins;
    UDFValue newName;
-   EXPRESSION theExp[2];
+   Expression theExp[2];
    UDFValue *overrides;
    bool oldOMDMV;
    int overrideCount;
@@ -389,7 +390,7 @@ void MsgDuplicateInstance(
   {
    Instance *ins;
    UDFValue newName;
-   EXPRESSION theExp[2];
+   Expression theExp[2];
    UDFValue *overrides;
    bool oldOMDMV;
    int overrideCount;
@@ -667,7 +668,7 @@ void MsgModifyMsgHandler(
  ***********************************************************/
 static UDFValue *EvaluateSlotOverrides(
   Environment *theEnv,
-  EXPRESSION *ovExprs,
+  Expression *ovExprs,
   int *ovCnt,
   bool *error)
   {
@@ -768,7 +769,7 @@ static void ModifyMsgHandlerSupport(
   bool msgpass)
   {
    UDFValue *slotOverrides,*newval,temp,junk;
-   EXPRESSION msgExp;
+   Expression msgExp;
    Instance *ins;
    INSTANCE_SLOT *insSlot;
 
@@ -867,7 +868,7 @@ static void DuplicateMsgHandlerSupport(
    Instance *srcins,*dstins;
    CLIPSLexeme *newName;
    UDFValue *slotOverrides;
-   EXPRESSION *valArg,msgExp;
+   Expression *valArg,msgExp;
    long i;
    int oldMkInsMsgPass;
    INSTANCE_SLOT *dstInsSlot;

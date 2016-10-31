@@ -76,10 +76,10 @@
    =========================================
    ***************************************** */
 
-   static void                    FormMethodsFromRestrictions(Environment *,Defgeneric *,struct FunctionDefinition *,EXPRESSION *);
+   static void                    FormMethodsFromRestrictions(Environment *,Defgeneric *,struct functionDefinition *,Expression *);
    static RESTRICTION            *ParseRestrictionType(Environment *,unsigned);
-   static EXPRESSION             *GenTypeExpression(Environment *,EXPRESSION *,int,int,const char *);
-   static EXPRESSION             *ParseRestrictionCreateTypes(Environment *,CONSTRAINT_RECORD *);
+   static Expression             *GenTypeExpression(Environment *,Expression *,int,int,const char *);
+   static Expression             *ParseRestrictionCreateTypes(Environment *,CONSTRAINT_RECORD *);
 
 /* =========================================
    *****************************************
@@ -101,8 +101,8 @@ void AddImplicitMethods(
   Environment *theEnv,
   Defgeneric *gfunc)
   {
-   struct FunctionDefinition *sysfunc;
-   EXPRESSION action;
+   struct functionDefinition *sysfunc;
+   Expression action;
 
    sysfunc = FindFunction(theEnv,gfunc->header.name->contents);
    if (sysfunc == NULL)
@@ -135,11 +135,11 @@ void AddImplicitMethods(
 static void FormMethodsFromRestrictions(
   Environment *theEnv,
   Defgeneric *gfunc,
-  struct FunctionDefinition *sysfunc,
-  EXPRESSION *actions)
+  struct functionDefinition *sysfunc,
+  Expression *actions)
   {
    Defmethod *meth;
-   EXPRESSION *plist,*tmp,*bot,*svBot;
+   Expression *plist,*tmp,*bot,*svBot;
    RESTRICTION *rptr;
    unsigned defaultc2, argRestriction2;
    int min,max,mposn;
@@ -172,7 +172,7 @@ static void FormMethodsFromRestrictions(
       PopulateRestriction(theEnv,&argRestriction2,defaultc2,rstring,i+1);
       rptr = ParseRestrictionType(theEnv,argRestriction2);
       tmp = get_struct(theEnv,expr);
-      tmp->argList = (EXPRESSION *) rptr;
+      tmp->argList = (Expression *) rptr;
       tmp->nextArg = NULL;
       if (plist == NULL)
         plist = tmp;
@@ -211,7 +211,7 @@ static void FormMethodsFromRestrictions(
       rptr = ParseRestrictionType(theEnv,argRestriction2);
 
       tmp = get_struct(theEnv,expr);
-      tmp->argList = (EXPRESSION *) rptr;
+      tmp->argList = (Expression *) rptr;
       tmp->nextArg = NULL;
       if (plist == NULL)
         plist = tmp;
@@ -257,7 +257,7 @@ static void FormMethodsFromRestrictions(
                GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,(long long) (max - min - i)));
         }
       tmp = get_struct(theEnv,expr);
-      tmp->argList = (EXPRESSION *) rptr;
+      tmp->argList = (Expression *) rptr;
       tmp->nextArg = NULL;
       if (plist == NULL)
         plist = tmp;
@@ -296,11 +296,11 @@ static void FormMethodsFromRestrictions(
 /*******************************/
 /* ParseRestrictionCreateTypes */
 /*******************************/
-static EXPRESSION *ParseRestrictionCreateTypes(
+static Expression *ParseRestrictionCreateTypes(
   Environment *theEnv,
   CONSTRAINT_RECORD *rv)
   {
-   EXPRESSION *types = NULL;
+   Expression *types = NULL;
 
    if (rv->anyAllowed == false)
      {
@@ -361,7 +361,7 @@ static RESTRICTION *ParseRestrictionType(
   {
    RESTRICTION *rptr;
    CONSTRAINT_RECORD *rv;
-   EXPRESSION *types = NULL;
+   Expression *types = NULL;
 
    rptr = get_struct(theEnv,restriction);
    rptr->query = NULL;
@@ -394,9 +394,9 @@ static RESTRICTION *ParseRestrictionType(
                  environment, they are pointers
                  to classes
  ***************************************************/
-static EXPRESSION *GenTypeExpression(
+static Expression *GenTypeExpression(
   Environment *theEnv,
-  EXPRESSION *top,
+  Expression *top,
   int nonCOOLCode,
   int primitiveCode,
   const char *COOLName)
@@ -411,7 +411,7 @@ static EXPRESSION *GenTypeExpression(
 #pragma unused(COOLName)
 #endif
 #endif
-   EXPRESSION *tmp;
+   Expression *tmp;
 
 #if OBJECT_SYSTEM
    if (primitiveCode != -1)

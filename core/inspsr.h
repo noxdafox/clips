@@ -50,9 +50,9 @@
 
 #include "expressn.h"
 
-   EXPRESSION                    *ParseInitializeInstance(Environment *,EXPRESSION *,const char *);
-   EXPRESSION                    *ParseSlotOverrides(Environment *,const char *,bool *);
-   EXPRESSION                    *ParseSimpleInstance(Environment *,EXPRESSION *,const char *);
+   Expression                    *ParseInitializeInstance(Environment *,Expression *,const char *);
+   Expression                    *ParseSlotOverrides(Environment *,const char *,bool *);
+   Expression                    *ParseSimpleInstance(Environment *,Expression *,const char *);
 
 #endif /* _H_inspsr */
 

@@ -65,9 +65,9 @@
 
 #define _H_prntutil
 
-#include "moduldef.h"
-
 #include <stdio.h>
+
+#include "entities.h"
 
 #define PRINT_UTILITY_DATA 53
 

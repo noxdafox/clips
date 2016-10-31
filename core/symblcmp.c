@@ -57,6 +57,7 @@
 #include "envrnmnt.h"
 #include "exprnpsr.h"
 #include "memalloc.h"
+#include "prntutil.h"
 #include "router.h"
 #include "symbol.h"
 #include "sysdep.h"

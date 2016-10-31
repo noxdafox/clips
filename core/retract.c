@@ -58,6 +58,7 @@
 #include "match.h"
 #include "memalloc.h"
 #include "network.h"
+#include "prntutil.h"
 #include "reteutil.h"
 #include "router.h"
 #include "symbol.h"

@@ -60,6 +60,7 @@
 #include "envrnmnt.h"
 #include "exprnpsr.h"
 #include "memalloc.h"
+#include "prntutil.h"
 #include "router.h"
 #include "utility.h"
 
@@ -71,8 +72,8 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static struct FunctionDefinition **ReadNeededFunctions(Environment *,long *,bool *);
-   static struct FunctionDefinition  *FastFindFunction(Environment *,const char *,struct FunctionDefinition *);
+   static struct functionDefinition **ReadNeededFunctions(Environment *,long *,bool *);
+   static struct functionDefinition  *FastFindFunction(Environment *,const char *,struct functionDefinition *);
    static bool                        ClearBload(Environment *);
    static void                        ClearBloadCallback(Environment *);
    static void                        AbortBload(Environment *);
@@ -376,7 +377,7 @@ bool EnvBload(
    if (BloadData(theEnv)->FunctionArray != NULL)
      {
       genfree(theEnv,BloadData(theEnv)->FunctionArray,
-              sizeof(struct FunctionDefinition *) * numberOfFunctions);
+              sizeof(struct functionDefinition *) * numberOfFunctions);
      }
    FreeAtomicValueStorage(theEnv);
 
@@ -475,7 +476,7 @@ void BloadandRefresh(
 /* ReadNeededFunctions: Reads in the names of */
 /*   functions needed by the binary image.    */
 /**********************************************/
-static struct FunctionDefinition **ReadNeededFunctions(
+static struct functionDefinition **ReadNeededFunctions(
   Environment *theEnv,
   long int *numberOfFunctions,
   bool *error)
@@ -484,7 +485,7 @@ static struct FunctionDefinition **ReadNeededFunctions(
    unsigned long int space;
    size_t temp;
    long i;
-   struct FunctionDefinition **newFunctionArray, *functionPtr;
+   struct functionDefinition **newFunctionArray, *functionPtr;
    int functionsNotFound = 0;
 
    /*===================================================*/
@@ -511,8 +512,8 @@ static struct FunctionDefinition **ReadNeededFunctions(
    /* Store the function pointers in the function array. */
    /*====================================================*/
 
-   temp = (unsigned long) sizeof(struct FunctionDefinition *) * *numberOfFunctions;
-   newFunctionArray = (struct FunctionDefinition **) genalloc(theEnv,temp);
+   temp = (unsigned long) sizeof(struct functionDefinition *) * *numberOfFunctions;
+   newFunctionArray = (struct functionDefinition **) genalloc(theEnv,temp);
    namePtr = functionNames;
    functionPtr = NULL;
    for (i = 0; i < *numberOfFunctions; i++)
@@ -566,12 +567,12 @@ static struct FunctionDefinition **ReadNeededFunctions(
 /* FastFindFunction: Search the function */
 /*   list for a specific function.       */
 /*****************************************/
-static struct FunctionDefinition *FastFindFunction(
+static struct functionDefinition *FastFindFunction(
   Environment *theEnv,
   const char *functionName,
-  struct FunctionDefinition *lastFunction)
+  struct functionDefinition *lastFunction)
   {
-   struct FunctionDefinition *theList, *theFunction;
+   struct functionDefinition *theList, *theFunction;
 
    /*========================*/
    /* Get the function list. */

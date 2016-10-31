@@ -48,7 +48,7 @@
 #include "expressn.h"
 #include "evaluatn.h"
 
-   void                           CallDeffunction(Environment *,Deffunction *,EXPRESSION *,UDFValue *);
+   void                           CallDeffunction(Environment *,Deffunction *,Expression *,UDFValue *);
 
 #endif /* DEFFUNCTION_CONSTRUCT */
 

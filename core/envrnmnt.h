@@ -67,7 +67,7 @@
 
 typedef struct environmentData Environment;
 
-#include "symbol.h"
+#include "entities.h"
 
 #define USER_ENVIRONMENT_DATA 70
 #define MAXIMUM_ENVIRONMENT_POSITIONS 100

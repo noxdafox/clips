@@ -68,6 +68,15 @@ typedef void PrintItemFunction(Environment *,const char *,void *);
                                                   int,void *);
    bool                           ConstructExported(Environment *,const char *,CLIPSLexeme *,CLIPSLexeme *);
 
+#if (! RUN_TIME) && (! BLOAD_ONLY)
+   void                           RemoveConstructFromModule(Environment *,ConstructHeader *);
+   CLIPSLexeme                   *GetConstructNameAndComment(Environment *,const char *,
+                                                             struct token *,const char *,
+                                                             FindConstructFunction *,
+                                                             DeleteConstructFunction *,
+                                                             const char *,bool,bool,bool,bool);
+#endif /* (! RUN_TIME) && (! BLOAD_ONLY) */
+
 #endif /* _H_modulutl */
 
 

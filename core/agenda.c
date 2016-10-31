@@ -75,6 +75,7 @@
 #include "moduldef.h"
 #include "modulutl.h"
 #include "multifld.h"
+#include "prntutil.h"
 #include "reteutil.h"
 #include "retract.h"
 #include "router.h"

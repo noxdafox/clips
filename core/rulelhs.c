@@ -51,6 +51,8 @@
 #include "exprnpsr.h"
 #include "memalloc.h"
 #include "pattern.h"
+#include "pprint.h"
+#include "prntutil.h"
 #include "reorder.h"
 #include "router.h"
 #include "ruledef.h"

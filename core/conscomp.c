@@ -91,6 +91,7 @@
 #include "envrnmnt.h"
 #include "memalloc.h"
 #include "modulcmp.h"
+#include "prntutil.h"
 #include "router.h"
 #include "symbol.h"
 #include "sysdep.h"
@@ -544,7 +545,7 @@ static void WriteFunctionExternDeclarations(
   Environment *theEnv,
   FILE *fp)
   {
-   struct FunctionDefinition *theFunction;
+   struct functionDefinition *theFunction;
 
    fprintf(fp,"\n");
    fprintf(fp,"/************************************/\n");
@@ -581,7 +582,7 @@ static bool FunctionsToCode(
    FILE *fp;
    int version = 1;
    bool newHeader = true;
-   struct FunctionDefinition *fctnPtr;
+   struct functionDefinition *fctnPtr;
 
    /*=============================*/
    /* Assign a reference index to */
@@ -617,8 +618,8 @@ static bool FunctionsToCode(
      {
       if (newHeader)
         {
-         fprintf(fp,"struct FunctionDefinition P%d_%d[] = {\n",ConstructCompilerData(theEnv)->ImageID,version);
-         fprintf(ConstructCompilerData(theEnv)->HeaderFP,"extern struct FunctionDefinition P%d_%d[];\n",ConstructCompilerData(theEnv)->ImageID,version);
+         fprintf(fp,"struct functionDefinition P%d_%d[] = {\n",ConstructCompilerData(theEnv)->ImageID,version);
+         fprintf(ConstructCompilerData(theEnv)->HeaderFP,"extern struct functionDefinition P%d_%d[];\n",ConstructCompilerData(theEnv)->ImageID,version);
          newHeader = false;
         }
 
@@ -663,7 +664,7 @@ static bool FunctionsToCode(
 void PrintFunctionReference(
   Environment *theEnv,
   FILE *fp,
-  struct FunctionDefinition *funcPtr)
+  struct functionDefinition *funcPtr)
   {
    if (funcPtr == NULL) fprintf(fp,"NULL");
    else

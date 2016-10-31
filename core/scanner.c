@@ -51,6 +51,8 @@
 #include "constant.h"
 #include "envrnmnt.h"
 #include "memalloc.h"
+#include "pprint.h"
+#include "prntutil.h"
 #include "router.h"
 #include "symbol.h"
 #include "sysdep.h"

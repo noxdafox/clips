@@ -56,6 +56,7 @@
 #include "network.h"
 #include "pattern.h"
 #include "prcdrpsr.h"
+#include "prntutil.h"
 #include "reteutil.h"
 #include "router.h"
 #include "scanner.h"
@@ -103,7 +104,7 @@ struct factgenData
    static void                      *FactGetVarPN3(Environment *,struct lhsParseNode *);
    static CLIPSLexeme               *ExtractSlotName(Environment *,unsigned,const char *);
    static CLIPSLexeme               *ExtractVariableName(Environment *,unsigned,const char *);
-   static void                       ReplaceVarSlotReference(Environment *,EXPRESSION *,CLIPSLexeme *,CLIPSLexeme *,CLIPSLexeme *);
+   static void                       ReplaceVarSlotReference(Environment *,Expression *,CLIPSLexeme *,CLIPSLexeme *,CLIPSLexeme *);
 #endif
 
 /*******************************************************************/
@@ -1400,7 +1401,7 @@ static CLIPSLexeme *ExtractVariableName(
 /****************************/
 static void ReplaceVarSlotReference(
   Environment *theEnv,
-  EXPRESSION *theExpr,
+  Expression *theExpr,
   CLIPSLexeme *variableName,
   CLIPSLexeme *slotName,
   CLIPSLexeme *varSlotName)
@@ -1418,7 +1419,7 @@ static void ReplaceVarSlotReference(
 /*************************/
 int FactSlotReferenceVar(
   Environment *theEnv,
-  EXPRESSION *varexp,
+  Expression *varexp,
   void *userBuffer)
   {
    const char *fullVar;
@@ -1461,7 +1462,7 @@ int FactSlotReferenceVar(
 /*****************************/
 int RuleFactSlotReferenceVar(
   Environment *theEnv,
-  EXPRESSION *varexp,
+  Expression *varexp,
   struct lhsParseNode *theLHS)
   {
    const char *fullVar;

@@ -131,7 +131,7 @@ void SortFunction(
    const char *functionName;
    struct expr *functionReference;
    int argumentSize = 0;
-   struct FunctionDefinition *fptr;
+   struct functionDefinition *fptr;
 #if DEFFUNCTION_CONSTRUCT
    Deffunction *dptr;
 #endif

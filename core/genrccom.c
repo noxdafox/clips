@@ -105,11 +105,13 @@
 #endif
 #include "memalloc.h"
 #include "modulpsr.h"
+#include "modulutl.h"
 #include "multifld.h"
 #include "router.h"
 #if DEBUGGING_FUNCTIONS
 #include "watch.h"
 #endif
+#include "prntutil.h"
 
 #include "genrccom.h"
 
@@ -140,14 +142,14 @@
 
 #if DEBUGGING_FUNCTIONS
    static long                    ListMethodsForGeneric(Environment *,const char *,Defgeneric *);
-   static bool                    DefgenericWatchAccess(Environment *,int,bool,EXPRESSION *);
-   static bool                    DefgenericWatchPrint(Environment *,const char *,int,EXPRESSION *);
-   static bool                    DefmethodWatchAccess(Environment *,int,bool,EXPRESSION *);
-   static bool                    DefmethodWatchPrint(Environment *,const char *,int,EXPRESSION *);
+   static bool                    DefgenericWatchAccess(Environment *,int,bool,Expression *);
+   static bool                    DefgenericWatchPrint(Environment *,const char *,int,Expression *);
+   static bool                    DefmethodWatchAccess(Environment *,int,bool,Expression *);
+   static bool                    DefmethodWatchPrint(Environment *,const char *,int,Expression *);
    static bool                    DefmethodWatchSupport(Environment *,const char *,const char *,bool,
                                                         void (*)(Environment *,const char *,Defgeneric *,long),
                                                         void (*)(Defgeneric *,long,bool),
-                                                        EXPRESSION *);
+                                                        Expression *);
    static void                    PrintMethodWatchFlag(Environment *,const char *,Defgeneric *,long);
 #endif
 
@@ -1581,7 +1583,7 @@ static bool DefgenericWatchAccess(
   Environment *theEnv,
   int code,
   bool newState,
-  EXPRESSION *argExprs)
+  Expression *argExprs)
   {
 #if MAC_XCD
 #pragma unused(code)
@@ -1609,7 +1611,7 @@ static bool DefgenericWatchPrint(
   Environment *theEnv,
   const char *logName,
   int code,
-  EXPRESSION *argExprs)
+  Expression *argExprs)
   {
 #if MAC_XCD
 #pragma unused(code)
@@ -1637,7 +1639,7 @@ static bool DefmethodWatchAccess(
   Environment *theEnv,
   int code,
   bool newState,
-  EXPRESSION *argExprs)
+  Expression *argExprs)
   {
 #if MAC_XCD
 #pragma unused(code)
@@ -1665,7 +1667,7 @@ static bool DefmethodWatchPrint(
   Environment *theEnv,
   const char *logName,
   int code,
-  EXPRESSION *argExprs)
+  Expression *argExprs)
   {
 #if MAC_XCD
 #pragma unused(code)
@@ -1696,7 +1698,7 @@ static bool DefmethodWatchSupport(
   bool newState,
   void (*printFunc)(Environment *,const char *,Defgeneric *,long),
   void (*traceFunc)(Defgeneric *,long,bool),
-  EXPRESSION *argExprs)
+  Expression *argExprs)
   {
    Defgeneric *theGeneric;
    unsigned long theMethod = 0;

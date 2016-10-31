@@ -60,7 +60,7 @@
    const char                    *GetConstructName(UDFContext *,const char *,const char *);
    void                           ExpectedCountError(Environment *,const char *,int,int);
    void                           OpenErrorMessage(Environment *,const char *,const char *);
-   bool                           CheckFunctionArgCount(Environment *,struct FunctionDefinition *,int);
+   bool                           CheckFunctionArgCount(Environment *,struct functionDefinition *,int);
    void                           ExpectedTypeError0(Environment *,const char *,int);
    void                           ExpectedTypeError1(Environment *,const char *,int,const char *);
    void                           ExpectedTypeError2(Environment *,const char *,int);

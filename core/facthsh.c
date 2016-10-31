@@ -57,6 +57,7 @@
 #include "memalloc.h"
 #include "router.h"
 #include "sysdep.h"
+#include "utility.h"
 
 #if DEFRULE_CONSTRUCT
 #include "lgcldpnd.h"

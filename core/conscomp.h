@@ -123,7 +123,7 @@ struct CodeGeneratorFile
    void                      ConstructsToCCommandDefinition(Environment *);
    FILE                     *NewCFile(Environment *,const char *,const char *,char *,int,int,bool);
    int                       ExpressionToCode(Environment *,FILE *,struct expr *);
-   void                      PrintFunctionReference(Environment *,FILE *,struct FunctionDefinition *);
+   void                      PrintFunctionReference(Environment *,FILE *,struct functionDefinition *);
    struct CodeGeneratorItem *AddCodeGeneratorItem(Environment *,const char *,int,
                                                   void (*)(Environment *),
                                                   void (*)(Environment *,FILE *,int,int),

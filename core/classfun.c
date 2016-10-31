@@ -83,6 +83,7 @@
 #include "memalloc.h"
 #include "modulutl.h"
 #include "msgfun.h"
+#include "prntutil.h"
 #include "router.h"
 #include "scanner.h"
 #include "sysdep.h"
@@ -761,7 +762,7 @@ void RemoveDefclass(
       if (cls->slots[i].defaultValue != NULL)
         {
          if (cls->slots[i].dynamicDefault)
-           ReturnPackedExpression(theEnv,(EXPRESSION *) cls->slots[i].defaultValue);
+           ReturnPackedExpression(theEnv,(Expression *) cls->slots[i].defaultValue);
          else
            rtn_struct(theEnv,udfValue,cls->slots[i].defaultValue);
         }
@@ -828,7 +829,7 @@ void DestroyDefclass(
         {
 #if ! RUN_TIME
          if (cls->slots[i].dynamicDefault)
-           ReturnPackedExpression(theEnv,(EXPRESSION *) cls->slots[i].defaultValue);
+           ReturnPackedExpression(theEnv,(Expression *) cls->slots[i].defaultValue);
          else
            rtn_struct(theEnv,udfValue,cls->slots[i].defaultValue);
 #else
@@ -931,7 +932,7 @@ void InstallClass(
          if (slot->defaultValue != NULL)
            {
             if (slot->dynamicDefault)
-              ExpressionDeinstall(theEnv,(EXPRESSION *) slot->defaultValue);
+              ExpressionDeinstall(theEnv,(Expression *) slot->defaultValue);
             else
               ValueDeinstall(theEnv,(UDFValue *) slot->defaultValue);
            }

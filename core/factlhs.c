@@ -51,6 +51,8 @@
 #include "modulpsr.h"
 #include "modulutl.h"
 #include "pattern.h"
+#include "pprint.h"
+#include "prntutil.h"
 #include "reorder.h"
 #include "router.h"
 #include "tmpltdef.h"

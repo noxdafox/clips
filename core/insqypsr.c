@@ -63,6 +63,7 @@
 #include "exprnpsr.h"
 #include "insquery.h"
 #include "prcdrpsr.h"
+#include "pprint.h"
 #include "prntutil.h"
 #include "router.h"
 #include "scanner.h"
@@ -81,14 +82,14 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static EXPRESSION             *ParseQueryRestrictions(Environment *,EXPRESSION *,const char *,struct token *);
-   static bool                    ReplaceClassNameWithReference(Environment *,EXPRESSION *);
-   static bool                    ParseQueryTestExpression(Environment *,EXPRESSION *,const char *);
-   static bool                    ParseQueryActionExpression(Environment *,EXPRESSION *,const char *,EXPRESSION *,struct token *);
-   static void                    ReplaceInstanceVariables(Environment *,EXPRESSION *,EXPRESSION *,bool,int);
-   static void                    ReplaceSlotReference(Environment *,EXPRESSION *,EXPRESSION *,
-                                                       struct FunctionDefinition *,int);
-   static bool                    IsQueryFunction(EXPRESSION *);
+   static Expression             *ParseQueryRestrictions(Environment *,Expression *,const char *,struct token *);
+   static bool                    ReplaceClassNameWithReference(Environment *,Expression *);
+   static bool                    ParseQueryTestExpression(Environment *,Expression *,const char *);
+   static bool                    ParseQueryActionExpression(Environment *,Expression *,const char *,Expression *,struct token *);
+   static void                    ReplaceInstanceVariables(Environment *,Expression *,Expression *,bool,int);
+   static void                    ReplaceSlotReference(Environment *,Expression *,Expression *,
+                                                       struct functionDefinition *,int);
+   static bool                    IsQueryFunction(Expression *);
 
 /* =========================================
    *****************************************
@@ -125,12 +126,12 @@
 
                  <class-2a> -> <class-2b> -> (QDS) -> ...
  ***********************************************************************/
-EXPRESSION *ParseQueryNoAction(
+Expression *ParseQueryNoAction(
   Environment *theEnv,
-  EXPRESSION *top,
+  Expression *top,
   const char *readSource)
   {
-   EXPRESSION *insQuerySetVars;
+   Expression *insQuerySetVars;
    struct token queryInputToken;
 
    insQuerySetVars = ParseQueryRestrictions(theEnv,top,readSource,&queryInputToken);
@@ -187,12 +188,12 @@ EXPRESSION *ParseQueryNoAction(
 
                  <class-2a> -> <class-2b> -> (QDS) -> ...
  ***********************************************************************/
-EXPRESSION *ParseQueryAction(
+Expression *ParseQueryAction(
   Environment *theEnv,
-  EXPRESSION *top,
+  Expression *top,
   const char *readSource)
   {
-   EXPRESSION *insQuerySetVars;
+   Expression *insQuerySetVars;
    struct token queryInputToken;
 
    insQuerySetVars = ParseQueryRestrictions(theEnv,top,readSource,&queryInputToken);
@@ -248,13 +249,13 @@ EXPRESSION *ParseQueryAction(
                    as arguments
   NOTES        : Expects top != NULL
  ***************************************************************/
-static EXPRESSION *ParseQueryRestrictions(
+static Expression *ParseQueryRestrictions(
   Environment *theEnv,
-  EXPRESSION *top,
+  Expression *top,
   const char *readSource,
   struct token *queryInputToken)
   {
-   EXPRESSION *insQuerySetVars = NULL,*lastInsQuerySetVars = NULL,
+   Expression *insQuerySetVars = NULL,*lastInsQuerySetVars = NULL,
               *classExp = NULL,*lastClassExp,
               *tmp,*lastOne = NULL;
    bool error = false;
@@ -358,7 +359,7 @@ ParseQueryRestrictionsError2:
  ***************************************************/
 static bool ReplaceClassNameWithReference(
   Environment *theEnv,
-  EXPRESSION *theExp)
+  Expression *theExp)
   {
    const char *theClassName;
    Defclass *theDefclass;
@@ -397,10 +398,10 @@ static bool ReplaceClassNameWithReference(
  *************************************************************/
 static bool ParseQueryTestExpression(
   Environment *theEnv,
-  EXPRESSION *top,
+  Expression *top,
   const char *readSource)
   {
-   EXPRESSION *qtest;
+   Expression *qtest;
    bool error;
    struct BindInfo *oldBindList;
 
@@ -456,12 +457,12 @@ static bool ParseQueryTestExpression(
  *************************************************************/
 static bool ParseQueryActionExpression(
   Environment *theEnv,
-  EXPRESSION *top,
+  Expression *top,
   const char *readSource,
-  EXPRESSION *insQuerySetVars,
+  Expression *insQuerySetVars,
   struct token *queryInputToken)
   {
-   EXPRESSION *qaction, *tmpInsSetVars;
+   Expression *qaction, *tmpInsSetVars;
    struct BindInfo *oldBindList,*newBindList,*prev;
 
    oldBindList = GetParsedBindNames(theEnv);
@@ -538,13 +539,13 @@ static bool ParseQueryActionExpression(
  ***********************************************************************************/
 static void ReplaceInstanceVariables(
   Environment *theEnv,
-  EXPRESSION *vlist,
-  EXPRESSION *bexp,
+  Expression *vlist,
+  Expression *bexp,
   bool sdirect,
   int ndepth)
   {
-   EXPRESSION *eptr;
-   struct FunctionDefinition *rindx_func,*rslot_func;
+   Expression *eptr;
+   struct functionDefinition *rindx_func,*rslot_func;
    int posn;
 
    rindx_func = FindFunction(theEnv,"(query-instance)");
@@ -599,9 +600,9 @@ static void ReplaceInstanceVariables(
  *************************************************************************/
 static void ReplaceSlotReference(
   Environment *theEnv,
-  EXPRESSION *vlist,
-  EXPRESSION *theExp,
-  struct FunctionDefinition *func,
+  Expression *vlist,
+  Expression *theExp,
+  struct functionDefinition *func,
   int ndepth)
   {
    size_t len;
@@ -609,7 +610,7 @@ static void ReplaceSlotReference(
    bool oldpp;
    size_t i;
    const char *str;
-   EXPRESSION *eptr;
+   Expression *eptr;
    struct token itkn;
 
    str = theExp->lexemeValue->contents;
@@ -658,7 +659,7 @@ static void ReplaceSlotReference(
   NOTES        : None
  ********************************************************************/
 static bool IsQueryFunction(
-  EXPRESSION *theExp)
+  Expression *theExp)
   {
    int (*fptr)(void);
 

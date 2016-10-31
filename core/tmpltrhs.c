@@ -48,6 +48,7 @@
 #include "factrhs.h"
 #include "memalloc.h"
 #include "modulutl.h"
+#include "pprint.h"
 #include "prntutil.h"
 #include "router.h"
 #include "tmpltdef.h"

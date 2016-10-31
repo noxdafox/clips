@@ -87,7 +87,7 @@ struct defgenericModule
 struct restriction
   {
    void **types;
-   EXPRESSION *query;
+   Expression *query;
    short tcnt;
   };
 
@@ -103,7 +103,7 @@ struct defmethod
    unsigned system : 1;
    unsigned trace : 1;
    RESTRICTION *restrictions;
-   EXPRESSION *actions;
+   Expression *actions;
   };
 
 struct defgeneric

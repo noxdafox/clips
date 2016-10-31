@@ -72,6 +72,7 @@
 #include "argacces.h"
 #include "multifld.h"
 #include "modulutl.h"
+#include "prntutil.h"
 #include "router.h"
 #include "utility.h"
 #include "commline.h"
@@ -96,7 +97,7 @@
                                                       ConstructHeader *,
                                                       ConstructGetWatchFunction *);
    static bool                    ConstructWatchSupport(Environment *,Construct *,const char *,
-                                                        const char *,EXPRESSION *,bool,
+                                                        const char *,Expression *,bool,
                                                         bool,ConstructGetWatchFunction *,
                                                         ConstructSetWatchFunction *);
 #endif
@@ -1432,7 +1433,7 @@ bool ConstructPrintWatchAccess(
   Environment *theEnv,
   Construct *constructClass,
   const char *logName,
-  EXPRESSION *argExprs,
+  Expression *argExprs,
   ConstructGetWatchFunction *getWatchFunc,
   ConstructSetWatchFunction *setWatchFunc)
   {
@@ -1448,7 +1449,7 @@ bool ConstructSetWatchAccess(
   Environment *theEnv,
   Construct *constructClass,
   bool newState,
-  EXPRESSION *argExprs,
+  Expression *argExprs,
   ConstructGetWatchFunction *getWatchFunc,
   ConstructSetWatchFunction *setWatchFunc)
   {
@@ -1465,7 +1466,7 @@ static bool ConstructWatchSupport(
   Construct *constructClass,
   const char *funcName,
   const char *logName,
-  EXPRESSION *argExprs,
+  Expression *argExprs,
   bool setFlag,
   bool newState,
   ConstructGetWatchFunction *getWatchFunc,

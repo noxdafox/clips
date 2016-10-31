@@ -72,10 +72,12 @@
 #include "exprnpsr.h"
 #include "insfun.h"
 #include "memalloc.h"
+#include "modulutl.h"
 #include "msgcom.h"
 #include "msgfun.h"
 #include "pprint.h"
 #include "prccode.h"
+#include "prntutil.h"
 #include "router.h"
 #include "scanner.h"
 #include "strngrtr.h"
@@ -96,10 +98,10 @@
 /***************************************/
 
    static bool                    IsParameterSlotReference(Environment *,const char *);
-   static int                     SlotReferenceVar(Environment *,EXPRESSION *,void *);
-   static int                     BindSlotReference(Environment *,EXPRESSION *,void *);
-   static SlotDescriptor         *CheckSlotReference(Environment *,Defclass *,int,void *,bool,EXPRESSION *);
-   static void                    GenHandlerSlotReference(Environment *,EXPRESSION *,unsigned short,SlotDescriptor *);
+   static int                     SlotReferenceVar(Environment *,Expression *,void *);
+   static int                     BindSlotReference(Environment *,Expression *,void *);
+   static SlotDescriptor         *CheckSlotReference(Environment *,Defclass *,int,void *,bool,Expression *);
+   static void                    GenHandlerSlotReference(Environment *,Expression *,unsigned short,SlotDescriptor *);
 
 /* =========================================
    *****************************************
@@ -130,7 +132,7 @@ bool ParseDefmessageHandler(
    unsigned mtype = MPRIMARY;
    int min,max,lvars;
    bool error;
-   EXPRESSION *hndParams,*actions;
+   Expression *hndParams,*actions;
    DefmessageHandler *hnd;
 
    SetPPBufferStatus(theEnv,true);
@@ -473,7 +475,7 @@ static bool IsParameterSlotReference(
  ****************************************************************************/
 static int SlotReferenceVar(
   Environment *theEnv,
-  EXPRESSION *varexp,
+  Expression *varexp,
   void *userBuffer)
   {
    struct token itkn;
@@ -526,14 +528,14 @@ static int SlotReferenceVar(
  ****************************************************************************/
 static int BindSlotReference(
   Environment *theEnv,
-  EXPRESSION *bindExp,
+  Expression *bindExp,
   void *userBuffer)
   {
    const char *bindName;
    struct token itkn;
    bool oldpp;
    SlotDescriptor *sd;
-   EXPRESSION *saveExp;
+   Expression *saveExp;
 
    bindName = bindExp->argList->lexemeValue->contents;
    if (strcmp(bindName,SELF_STRING) == 0)
@@ -601,7 +603,7 @@ static SlotDescriptor *CheckSlotReference(
   int theType,
   void *theValue,
   bool writeFlag,
-  EXPRESSION *writeExpression)
+  Expression *writeExpression)
   {
    int slotIndex;
    SlotDescriptor *sd;
@@ -676,7 +678,7 @@ static SlotDescriptor *CheckSlotReference(
  ***************************************************/
 static void GenHandlerSlotReference(
   Environment *theEnv,
-  EXPRESSION *theExp,
+  Expression *theExp,
   unsigned short theType,
   SlotDescriptor *sd)
   {

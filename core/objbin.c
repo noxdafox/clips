@@ -407,7 +407,7 @@ static void MarkDefclassItems(
 #endif
    Defclass *cls = (Defclass *) theDefclass;
    long i;
-   EXPRESSION *tmpexp;
+   Expression *tmpexp;
 
    MarkConstructHeaderNeededItems(&cls->header,ObjectBinaryData(theEnv)->ClassCount++);
    ObjectBinaryData(theEnv)->LinkCount += cls->directSuperclasses.classCount +
@@ -430,8 +430,8 @@ static void MarkDefclassItems(
          if (cls->slots[i].dynamicDefault)
            {
             ExpressionData(theEnv)->ExpressionCount +=
-              ExpressionSize((EXPRESSION *) cls->slots[i].defaultValue);
-            MarkNeededItems(theEnv,(EXPRESSION *) cls->slots[i].defaultValue);
+              ExpressionSize((Expression *) cls->slots[i].defaultValue);
+            MarkNeededItems(theEnv,(Expression *) cls->slots[i].defaultValue);
            }
          else
            {
@@ -513,14 +513,14 @@ static void BsaveDefaultSlotExpressions(
   {
    Defclass *cls = (Defclass *) theDefclass;
    long i;
-   EXPRESSION *tmpexp;
+   Expression *tmpexp;
 
    for (i = 0 ; i < cls->slotCount ; i++)
      {
       if (cls->slots[i].defaultValue != NULL)
         {
          if (cls->slots[i].dynamicDefault)
-           BsaveExpression(theEnv,(EXPRESSION *) cls->slots[i].defaultValue,(FILE *) buf);
+           BsaveExpression(theEnv,(Expression *) cls->slots[i].defaultValue,(FILE *) buf);
          else
            {
             /* =================================================
@@ -864,7 +864,7 @@ static void BsaveSlots(
    long i;
    BSAVE_SLOT_DESC dummy_slot;
    SlotDescriptor *sp;
-   EXPRESSION *tmpexp;
+   Expression *tmpexp;
 
    for (i = 0 ; i < cls->slotCount ; i++)
      {
@@ -888,7 +888,7 @@ static void BsaveSlots(
         {
          dummy_slot.defaultValue = ExpressionData(theEnv)->ExpressionCount;
          if (sp->dynamicDefault)
-           ExpressionData(theEnv)->ExpressionCount += ExpressionSize((EXPRESSION *) sp->defaultValue);
+           ExpressionData(theEnv)->ExpressionCount += ExpressionSize((Expression *) sp->defaultValue);
          else
            {
             tmpexp = ConvertValueToExpression(theEnv,(UDFValue *) sp->defaultValue);

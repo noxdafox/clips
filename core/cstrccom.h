@@ -94,11 +94,11 @@ typedef void ConstructActionFunction(Environment *,ConstructHeader *,void *);
    ConstructHeader        *LookupConstruct(Environment *,Construct *,const char *,bool);
 #if DEBUGGING_FUNCTIONS
    bool                           ConstructPrintWatchAccess(Environment *,Construct *,const char *,
-                                            EXPRESSION *,
+                                            Expression *,
                                             ConstructGetWatchFunction *,
                                             ConstructSetWatchFunction *);
    bool                           ConstructSetWatchAccess(Environment *,Construct *,bool,
-                                            EXPRESSION *,
+                                            Expression *,
                                             ConstructGetWatchFunction *,
                                             ConstructSetWatchFunction *);
 #endif

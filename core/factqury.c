@@ -67,6 +67,7 @@
 #include "insfun.h"
 #include "factqpsr.h"
 #include "prcdrfun.h"
+#include "prntutil.h"
 #include "router.h"
 #include "utility.h"
 
@@ -79,7 +80,7 @@
    static void                    PushQueryCore(Environment *);
    static void                    PopQueryCore(Environment *);
    static QUERY_CORE             *FindQueryCore(Environment *,int);
-   static QUERY_TEMPLATE         *DetermineQueryTemplates(Environment *,EXPRESSION *,const char *,unsigned *);
+   static QUERY_TEMPLATE         *DetermineQueryTemplates(Environment *,Expression *,const char *,unsigned *);
    static QUERY_TEMPLATE         *FormChain(Environment *,const char *,Deftemplate *,UDFValue *);
    static void                    DeleteQueryTemplates(Environment *,QUERY_TEMPLATE *);
    static bool                    TestForFirstInChain(Environment *,QUERY_TEMPLATE *,int);
@@ -681,7 +682,7 @@ static QUERY_CORE *FindQueryCore(
  **********************************************************/
 static QUERY_TEMPLATE *DetermineQueryTemplates(
   Environment *theEnv,
-  EXPRESSION *templateExp,
+  Expression *templateExp,
   const char *func,
   unsigned *rcnt)
   {

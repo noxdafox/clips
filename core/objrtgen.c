@@ -57,9 +57,9 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    GenObjectGetVar(Environment *,bool,EXPRESSION *,struct lhsParseNode *,int);
+   static void                    GenObjectGetVar(Environment *,bool,Expression *,struct lhsParseNode *,int);
    static bool                    IsSimpleSlotVariable(struct lhsParseNode *);
-   static EXPRESSION             *GenerateSlotComparisonTest(Environment *,bool,bool,struct lhsParseNode *,struct lhsParseNode *);
+   static Expression             *GenerateSlotComparisonTest(Environment *,bool,bool,struct lhsParseNode *,struct lhsParseNode *);
 
 /* =========================================
    *****************************************
@@ -73,26 +73,26 @@
  **********************************************/
 void ReplaceGetJNObjectValue(
   Environment *theEnv,
-  EXPRESSION *theItem,
+  Expression *theItem,
   struct lhsParseNode *theNode,
   int side)
   {
    GenObjectGetVar(theEnv,true,theItem,theNode,side);
   }
 
-EXPRESSION *GenGetJNObjectValue(
+Expression *GenGetJNObjectValue(
   Environment *theEnv,
   struct lhsParseNode *theNode,
   int side)
   {
-   EXPRESSION *theItem;
+   Expression *theItem;
 
    theItem = GenConstant(theEnv,0,NULL);
    GenObjectGetVar(theEnv,true,theItem,theNode,side);
    return(theItem);
   }
 
-EXPRESSION *ObjectJNVariableComparison(
+Expression *ObjectJNVariableComparison(
   Environment *theEnv,
   struct lhsParseNode *selfNode,
   struct lhsParseNode *referringNode,
@@ -105,12 +105,12 @@ EXPRESSION *ObjectJNVariableComparison(
   Build functions used by AddPatternParser() to
   provide object access to the pattern network
  **********************************************/
-EXPRESSION *GenObjectPNConstantCompare(
+Expression *GenObjectPNConstantCompare(
   Environment *theEnv,
   struct lhsParseNode *theNode)
   {
    struct ObjectCmpPNConstant hack;
-   EXPRESSION *theExp;
+   Expression *theExp;
    ParseNodeType tmpType;
 
    /* ===============================================================
@@ -166,24 +166,24 @@ EXPRESSION *GenObjectPNConstantCompare(
 
 void ReplaceGetPNObjectValue(
   Environment *theEnv,
-  EXPRESSION *theItem,
+  Expression *theItem,
   struct lhsParseNode *theNode)
   {
    GenObjectGetVar(theEnv,false,theItem,theNode,-1);
   }
 
-EXPRESSION *GenGetPNObjectValue(
+Expression *GenGetPNObjectValue(
   Environment *theEnv,
   struct lhsParseNode *theNode)
   {
-   EXPRESSION *theItem;
+   Expression *theItem;
 
    theItem = GenConstant(theEnv,0,NULL);
    GenObjectGetVar(theEnv,false,theItem,theNode,-1);
    return(theItem);
   }
 
-EXPRESSION *ObjectPNVariableComparison(
+Expression *ObjectPNVariableComparison(
   Environment *theEnv,
   struct lhsParseNode *selfNode,
   struct lhsParseNode *referringNode)
@@ -207,7 +207,7 @@ void GenObjectLengthTest(
   struct lhsParseNode *theNode)
   {
    struct ObjectMatchLength hack;
-   EXPRESSION *theTest;
+   Expression *theTest;
 
    if ((theNode->singleFieldsAfter == 0) &&
        (theNode->pnType != SF_VARIABLE_NODE) &&
@@ -253,7 +253,7 @@ void GenObjectZeroLengthTest(
   struct lhsParseNode *theNode)
   {
    struct ObjectMatchLength hack;
-   EXPRESSION *theTest;
+   Expression *theTest;
 
    ClearBitString(&hack,(int) sizeof(struct ObjectMatchLength));
    hack.exactly = 1;
@@ -291,7 +291,7 @@ void GenObjectZeroLengthTest(
 static void GenObjectGetVar(
   Environment *theEnv,
   bool joinReference,
-  EXPRESSION *theItem,
+  Expression *theItem,
   struct lhsParseNode *theNode,
   int side)
   {
@@ -472,14 +472,14 @@ static bool IsSimpleSlotVariable(
                  All other cases: EQ/NEQ general test
                  Example: (foo $? ?x $?) and (bar ?x)
  ***************************************************************/
-static EXPRESSION *GenerateSlotComparisonTest(
+static Expression *GenerateSlotComparisonTest(
   Environment *theEnv,
   bool joinTest,
   bool isNand,
   struct lhsParseNode *selfNode,
   struct lhsParseNode *referringNode)
   {
-   EXPRESSION *theExp;
+   Expression *theExp;
    struct ObjectCmpPNSingleSlotVars1 phack1;
    struct ObjectCmpPNSingleSlotVars2 phack2;
    struct ObjectCmpPNSingleSlotVars3 phack3;

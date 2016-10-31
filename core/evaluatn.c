@@ -76,6 +76,7 @@
 #include "commline.h"
 #include "constant.h"
 #include "envrnmnt.h"
+#include "factmngr.h"
 #include "memalloc.h"
 #include "router.h"
 #include "prcdrfun.h"
@@ -150,7 +151,7 @@ bool EvaluateExpression(
   {
    struct expr *oldArgument;
    void *oldContext;
-   struct FunctionDefinition *fptr;
+   struct functionDefinition *fptr;
    UDFContext theUDFContext;
 #if PROFILING_FUNCTIONS
    struct profileFrameInfo profileFrame;
@@ -672,7 +673,7 @@ bool EnvFunctionCall(
   const char *args,
   CLIPSValue *returnValue)
   {
-   FUNCTION_REFERENCE theReference;
+   Expression theReference;
    UDFValue evalResult;
    bool rv;
 
@@ -708,11 +709,11 @@ bool EnvFunctionCall(
 /********************************************/
 bool FunctionCall2(
   Environment *theEnv,
-  FUNCTION_REFERENCE *theReference,
+  Expression *theReference,
   const char *args,
   UDFValue *returnValue)
   {
-   EXPRESSION *argexps;
+   Expression *argexps;
    bool error = false;
 
    /*=============================================*/
@@ -916,7 +917,7 @@ struct expr *FunctionReferenceExpression(
 #if DEFFUNCTION_CONSTRUCT
    Deffunction *dptr;
 #endif
-   struct FunctionDefinition *fptr;
+   struct functionDefinition *fptr;
 
    /*=====================================================*/
    /* Check to see if the function call is a deffunction. */
@@ -961,7 +962,7 @@ struct expr *FunctionReferenceExpression(
 bool GetFunctionReference(
   Environment *theEnv,
   const char *name,
-  FUNCTION_REFERENCE *theReference)
+  Expression *theReference)
   {
 #if DEFGENERIC_CONSTRUCT
    Defgeneric *gfunc;
@@ -969,7 +970,7 @@ bool GetFunctionReference(
 #if DEFFUNCTION_CONSTRUCT
    Deffunction *dptr;
 #endif
-   struct FunctionDefinition *fptr;
+   struct functionDefinition *fptr;
 
    theReference->nextArg = NULL;
    theReference->argList = NULL;
@@ -1061,7 +1062,7 @@ bool DOsEqual(
 bool EvaluateAndStoreInDataObject(
   Environment *theEnv,
   bool mfp,
-  EXPRESSION *theExp,
+  Expression *theExp,
   UDFValue *val,
   bool garbageSegment)
   {

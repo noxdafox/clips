@@ -228,7 +228,7 @@ struct factCheckLengthPNCall
    struct expr               *FactGenGetvar(Environment *,struct lhsParseNode *,int);
    struct expr               *FactGenCheckLength(Environment *,struct lhsParseNode *);
    struct expr               *FactGenCheckZeroLength(Environment *,unsigned);
-   int                        FactSlotReferenceVar(Environment *,EXPRESSION *,void *);
-   int                        RuleFactSlotReferenceVar(Environment *,EXPRESSION *,struct lhsParseNode *);
+   int                        FactSlotReferenceVar(Environment *,Expression *,void *);
+   int                        RuleFactSlotReferenceVar(Environment *,Expression *,struct lhsParseNode *);
 
 #endif /* _H_factgen */

@@ -57,7 +57,7 @@
 
 #define _H_strngfun
 
-#include "evaluatn.h"
+#include "entities.h"
 
    bool                           EnvBuild(Environment *,const char *);
    bool                           EnvEval(Environment *,const char *,CLIPSValue *);

@@ -81,6 +81,7 @@
 #include "envrnmnt.h"
 #include "memalloc.h"
 #include "multifld.h"
+#include "prntutil.h"
 #include "router.h"
 #include "sysdep.h"
 #include "utility.h"

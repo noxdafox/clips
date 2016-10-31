@@ -83,6 +83,7 @@
 #include "network.h"
 #include "object.h"
 #include "pattern.h"
+#include "prntutil.h"
 #include "reteutil.h"
 #include "ruledef.h"
 #include "rulepsr.h"
@@ -96,6 +97,7 @@
 #include "objrtmch.h"
 #include "objrtgen.h"
 #include "objrtfnx.h"
+#include "pprint.h"
 #include "reorder.h"
 #include "router.h"
 
@@ -169,7 +171,7 @@
 
 #endif
 
-   static EXPRESSION             *ObjectMatchDelayParse(Environment *,EXPRESSION *,const char *);
+   static Expression             *ObjectMatchDelayParse(Environment *,Expression *,const char *);
 
 #if ! DEFINSTANCES_CONSTRUCT
    static void                    ResetInitialObject(Environment *);
@@ -487,7 +489,7 @@ static bool ReorderAndAnalyzeObjectPattern(
   struct lhsParseNode *topNode)
   {
    CLASS_BITMAP *clsset,*tmpset;
-   EXPRESSION *rexp,*tmpmin,*tmpmax;
+   Expression *rexp,*tmpmin,*tmpmax;
    Defclass *cls;
    struct lhsParseNode *tmpNode,*subNode,*bitmap_node,*isa_node,*name_node;
    unsigned short i;
@@ -1137,7 +1139,7 @@ static void DetachObjectPattern(
               upperLevel = NULL;
            }
 
-         RemoveHashedExpression(theEnv,(EXPRESSION *) patternPtr->networkTest);
+         RemoveHashedExpression(theEnv,(Expression *) patternPtr->networkTest);
          rtn_struct(theEnv,objectPatternNode,patternPtr);
         }
       else if (upperLevel->leftNode != NULL)
@@ -1158,7 +1160,7 @@ static void DetachObjectPattern(
          if (upperLevel->rightNode != NULL)
            { upperLevel->rightNode->leftNode = upperLevel->leftNode; }
 
-         RemoveHashedExpression(theEnv,(EXPRESSION *) patternPtr->networkTest);
+         RemoveHashedExpression(theEnv,(Expression *) patternPtr->networkTest);
          rtn_struct(theEnv,objectPatternNode,patternPtr);
          upperLevel = NULL;
         }
@@ -1183,7 +1185,7 @@ static void DetachObjectPattern(
            }
          patternPtr->rightNode->leftNode = NULL;
 
-         RemoveHashedExpression(theEnv,(EXPRESSION *) patternPtr->networkTest);
+         RemoveHashedExpression(theEnv,(Expression *) patternPtr->networkTest);
          rtn_struct(theEnv,objectPatternNode,patternPtr);
          upperLevel = NULL;
         }
@@ -2236,7 +2238,7 @@ static struct lhsParseNode *RemoveSlotExistenceTests(
                  top node
   NOTES        : None
  **************************************************************/
-static EXPRESSION *ObjectMatchDelayParse(
+static Expression *ObjectMatchDelayParse(
   Environment *theEnv,
   struct expr *top,
   const char *infile)

@@ -47,10 +47,7 @@
 
 #define _H_expressn
 
-struct expr;
 struct exprHashNode;
-
-typedef struct expr EXPRESSION;
 
 #include "exprnops.h"
 #include "constrct.h"
@@ -70,7 +67,7 @@ struct expr
        CLIPSInteger *integerValue;
        CLIPSBitMap *bitMapValue;
        ConstructHeader *constructValue;
-       struct FunctionDefinition *functionValue;
+       struct functionDefinition *functionValue;
       };
     struct expr *argList;
     struct expr *nextArg;
@@ -102,11 +99,11 @@ typedef struct exprHashNode
 
 struct expressionData
   {
-   struct FunctionDefinition *PTR_AND;
-   struct FunctionDefinition *PTR_OR;
-   struct FunctionDefinition *PTR_EQ;
-   struct FunctionDefinition *PTR_NEQ;
-   struct FunctionDefinition *PTR_NOT;
+   struct functionDefinition *PTR_AND;
+   struct functionDefinition *PTR_OR;
+   struct functionDefinition *PTR_EQ;
+   struct functionDefinition *PTR_NEQ;
+   struct functionDefinition *PTR_NOT;
    EXPRESSION_HN **ExpressionHashTable;
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE)
    long NumberOfExpressions;
@@ -133,11 +130,11 @@ struct expressionData
    void                           InitExpressionData(Environment *);
    void                           InitExpressionPointers(Environment *);
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-   EXPRESSION                    *AddHashedExpression(Environment *,EXPRESSION *);
+   Expression                    *AddHashedExpression(Environment *,Expression *);
 #endif
-   void                           RemoveHashedExpression(Environment *,EXPRESSION *);
+   void                           RemoveHashedExpression(Environment *,Expression *);
 #if BLOAD_AND_BSAVE || BLOAD_ONLY || BLOAD || CONSTRUCT_COMPILER
-   long                           HashedExpressionIndex(Environment *,EXPRESSION *);
+   long                           HashedExpressionIndex(Environment *,Expression *);
 #endif
 
 #endif

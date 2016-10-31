@@ -71,6 +71,7 @@
 #include "extnfunc.h"
 #include "memalloc.h"
 #include "modulutl.h"
+#include "prntutil.h"
 #include "router.h"
 #include "sysdep.h"
 #include "tmpltbsc.h"

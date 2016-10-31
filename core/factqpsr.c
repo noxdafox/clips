@@ -64,6 +64,7 @@
 #include "factqury.h"
 #include "modulutl.h"
 #include "prcdrpsr.h"
+#include "pprint.h"
 #include "prntutil.h"
 #include "router.h"
 #include "scanner.h"
@@ -88,14 +89,14 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static EXPRESSION             *ParseQueryRestrictions(Environment *,EXPRESSION *,const char *,struct token *);
-   static bool                    ReplaceTemplateNameWithReference(Environment *,EXPRESSION *);
-   static bool                    ParseQueryTestExpression(Environment *,EXPRESSION *,const char *);
-   static bool                    ParseQueryActionExpression(Environment *,EXPRESSION *,const char *,EXPRESSION *,struct token *);
-   static void                    ReplaceFactVariables(Environment *,EXPRESSION *,EXPRESSION *,bool,int);
-   static void                    ReplaceSlotReference(Environment *,EXPRESSION *,EXPRESSION *,
-                                                       struct FunctionDefinition *,int);
-   static bool                    IsQueryFunction(EXPRESSION *);
+   static Expression             *ParseQueryRestrictions(Environment *,Expression *,const char *,struct token *);
+   static bool                    ReplaceTemplateNameWithReference(Environment *,Expression *);
+   static bool                    ParseQueryTestExpression(Environment *,Expression *,const char *);
+   static bool                    ParseQueryActionExpression(Environment *,Expression *,const char *,Expression *,struct token *);
+   static void                    ReplaceFactVariables(Environment *,Expression *,Expression *,bool,int);
+   static void                    ReplaceSlotReference(Environment *,Expression *,Expression *,
+                                                       struct functionDefinition *,int);
+   static bool                    IsQueryFunction(Expression *);
 
 /* =========================================
    *****************************************
@@ -132,12 +133,12 @@
 
                  <template-2a> -> <template-2b> -> (QDS) -> ...
  ***********************************************************************/
-EXPRESSION *FactParseQueryNoAction(
+Expression *FactParseQueryNoAction(
   Environment *theEnv,
-  EXPRESSION *top,
+  Expression *top,
   const char *readSource)
   {
-   EXPRESSION *factQuerySetVars;
+   Expression *factQuerySetVars;
    struct token queryInputToken;
 
    factQuerySetVars = ParseQueryRestrictions(theEnv,top,readSource,&queryInputToken);
@@ -200,12 +201,12 @@ EXPRESSION *FactParseQueryNoAction(
 
                  <template-2a> -> <template-2b> -> (QDS) -> ...
  ***********************************************************************/
-EXPRESSION *FactParseQueryAction(
+Expression *FactParseQueryAction(
   Environment *theEnv,
-  EXPRESSION *top,
+  Expression *top,
   const char *readSource)
   {
-   EXPRESSION *factQuerySetVars;
+   Expression *factQuerySetVars;
    struct token queryInputToken;
 
    factQuerySetVars = ParseQueryRestrictions(theEnv,top,readSource,&queryInputToken);
@@ -268,13 +269,13 @@ EXPRESSION *FactParseQueryAction(
                    as arguments
   NOTES        : Expects top != NULL
  ***************************************************************/
-static EXPRESSION *ParseQueryRestrictions(
+static Expression *ParseQueryRestrictions(
   Environment *theEnv,
-  EXPRESSION *top,
+  Expression *top,
   const char *readSource,
   struct token *queryInputToken)
   {
-   EXPRESSION *factQuerySetVars = NULL,*lastFactQuerySetVars = NULL,
+   Expression *factQuerySetVars = NULL,*lastFactQuerySetVars = NULL,
               *templateExp = NULL,*lastTemplateExp,
               *tmp,*lastOne = NULL;
    bool error = false;
@@ -399,7 +400,7 @@ ParseQueryRestrictionsError2:
  ***************************************************/
 static bool ReplaceTemplateNameWithReference(
   Environment *theEnv,
-  EXPRESSION *theExp)
+  Expression *theExp)
   {
    const char *theTemplateName;
    void *theDeftemplate;
@@ -451,10 +452,10 @@ static bool ReplaceTemplateNameWithReference(
  *************************************************************/
 static bool ParseQueryTestExpression(
   Environment *theEnv,
-  EXPRESSION *top,
+  Expression *top,
   const char *readSource)
   {
-   EXPRESSION *qtest;
+   Expression *qtest;
    bool error;
    struct BindInfo *oldBindList;
 
@@ -517,12 +518,12 @@ static bool ParseQueryTestExpression(
  *************************************************************/
 static bool ParseQueryActionExpression(
   Environment *theEnv,
-  EXPRESSION *top,
+  Expression *top,
   const char *readSource,
-  EXPRESSION *factQuerySetVars,
+  Expression *factQuerySetVars,
   struct token *queryInputToken)
   {
-   EXPRESSION *qaction,*tmpFactSetVars;
+   Expression *qaction,*tmpFactSetVars;
    struct BindInfo *oldBindList,*newBindList,*prev;
 
    oldBindList = GetParsedBindNames(theEnv);
@@ -606,13 +607,13 @@ static bool ParseQueryActionExpression(
  ***********************************************************************************/
 static void ReplaceFactVariables(
   Environment *theEnv,
-  EXPRESSION *vlist,
-  EXPRESSION *bexp,
+  Expression *vlist,
+  Expression *bexp,
   bool sdirect,
   int ndepth)
   {
-   EXPRESSION *eptr;
-   struct FunctionDefinition *rindx_func,*rslot_func;
+   Expression *eptr;
+   struct functionDefinition *rindx_func,*rslot_func;
    int posn;
 
    rindx_func = FindFunction(theEnv,"(query-fact)");
@@ -667,9 +668,9 @@ static void ReplaceFactVariables(
  *************************************************************************/
 static void ReplaceSlotReference(
   Environment *theEnv,
-  EXPRESSION *vlist,
-  EXPRESSION *theExp,
-  struct FunctionDefinition *func,
+  Expression *vlist,
+  Expression *theExp,
+  struct functionDefinition *func,
   int ndepth)
   {
    size_t len;
@@ -677,7 +678,7 @@ static void ReplaceSlotReference(
    bool oldpp;
    size_t i;
    const char *str;
-   EXPRESSION *eptr;
+   Expression *eptr;
    struct token itkn;
 
    str = theExp->lexemeValue->contents;
@@ -726,7 +727,7 @@ static void ReplaceSlotReference(
   NOTES        : None
  ********************************************************************/
 static bool IsQueryFunction(
-  EXPRESSION *theExp)
+  Expression *theExp)
   {
    int (*fptr)(void);
 

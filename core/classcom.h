@@ -94,8 +94,8 @@
    void                    DefclassSetWatchInstances(Defclass *,bool);
    bool                    DefclassGetWatchSlots(Defclass *);
    void                    DefclassSetWatchSlots(Defclass *,bool);
-   bool                    DefclassWatchAccess(Environment *,int,bool,EXPRESSION *);
-   bool                    DefclassWatchPrint(Environment *,const char *,int,EXPRESSION *);
+   bool                    DefclassWatchAccess(Environment *,int,bool,Expression *);
+   bool                    DefclassWatchPrint(Environment *,const char *,int,Expression *);
 #endif
 
    void                    GetDefclassListFunction(Environment *,UDFContext *,UDFValue *);

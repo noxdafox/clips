@@ -84,6 +84,7 @@
 #include "memalloc.h"
 #include "msgcom.h"
 #include "msgfun.h"
+#include "prntutil.h"
 #include "router.h"
 #include "strngrtr.h"
 #include "sysdep.h"
@@ -802,7 +803,7 @@ void SlotDefaultValueCommand(
 
    if (sd->dynamicDefault)
      EvaluateAndStoreInDataObject(theEnv,(int) sd->multiple,
-                                  (EXPRESSION *) sd->defaultValue,
+                                  (Expression *) sd->defaultValue,
                                   returnValue,true);
    else
      GenCopyMemory(UDFValue,1,returnValue,sd->defaultValue);
@@ -844,7 +845,7 @@ bool SlotDefaultValue(
    if (sd->dynamicDefault)
      {
       rv = EvaluateAndStoreInDataObject(theEnv,(int) sd->multiple,
-                                         (EXPRESSION *) sd->defaultValue,
+                                         (Expression *) sd->defaultValue,
                                          &result,true);
       NormalizeMultifield(theEnv,&result);
       theValue->value = result.value;

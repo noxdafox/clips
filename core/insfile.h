@@ -82,11 +82,11 @@ struct instanceFileData
    void                           SaveInstancesCommand(Environment *,UDFContext *,UDFValue *);
    void                           LoadInstancesCommand(Environment *,UDFContext *,UDFValue *);
    void                           RestoreInstancesCommand(Environment *,UDFContext *,UDFValue *);
-   long                           EnvSaveInstancesDriver(Environment *,const char *,int,EXPRESSION *,bool);
+   long                           EnvSaveInstancesDriver(Environment *,const char *,int,Expression *,bool);
    long                           EnvSaveInstances(Environment *,const char *,int);
 #if BSAVE_INSTANCES
    void                           BinarySaveInstancesCommand(Environment *,UDFContext *,UDFValue *);
-   long                           EnvBinarySaveInstancesDriver(Environment *,const char *,int,EXPRESSION *,bool);
+   long                           EnvBinarySaveInstancesDriver(Environment *,const char *,int,Expression *,bool);
    long                           EnvBinarySaveInstances(Environment *,const char *,int);
 #endif
 #if BLOAD_INSTANCES

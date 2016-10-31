@@ -74,6 +74,8 @@
 
 #define _H_utility
 
+#include <stdlib.h>
+
 #include "evaluatn.h"
 
 typedef struct clipsBlock CLIPSBlock;

@@ -103,7 +103,7 @@ typedef struct objectPatternNode
    unsigned short leaveFields;
    unsigned long long matchTimeTag;
    int slotNameID;
-   EXPRESSION *networkTest;
+   Expression *networkTest;
    struct objectPatternNode *nextLevel;
    struct objectPatternNode *lastLevel;
    struct objectPatternNode *leftNode;

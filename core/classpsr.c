@@ -71,6 +71,8 @@
 #include "modulpsr.h"
 #include "modulutl.h"
 #include "msgpsr.h"
+#include "pprint.h"
+#include "prntutil.h"
 #include "router.h"
 #include "scanner.h"
 

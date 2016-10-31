@@ -41,7 +41,6 @@ typedef struct classLink CLASS_LINK;
 typedef struct slotName SLOT_NAME;
 typedef struct slotDescriptor SlotDescriptor;
 typedef struct defmessageHandler DefmessageHandler;
-typedef struct instance Instance;
 
 typedef struct instanceSlot INSTANCE_SLOT;
 
@@ -55,34 +54,16 @@ typedef struct instanceSlot INSTANCE_SLOT;
 #define VALUE_PROHIBITED   1
 #define VALUE_NOT_REQUIRED 2
 
-#ifndef _H_constrct
 #include "constrct.h"
-#endif
-#ifndef _H_constrnt
 #include "constrnt.h"
-#endif
-#ifndef _H_moduldef
 #include "moduldef.h"
-#endif
-#ifndef _H_evaluatn
+#include "entities.h"
 #include "evaluatn.h"
-#endif
-#ifndef _H_expressn
 #include "expressn.h"
-#endif
-#ifndef _H_multifld
 #include "multifld.h"
-#endif
-#ifndef _H_symbol
 #include "symbol.h"
-#endif
-
-#ifndef _H_match
 #include "match.h"
-#endif
-#ifndef _H_pattern
 #include "pattern.h"
-#endif
 
 struct packedClassLinks
   {
@@ -224,7 +205,7 @@ struct defmessageHandler
    short minParams;
    short maxParams;
    short localVarCount;
-   EXPRESSION *actions;
+   Expression *actions;
   };
 
 #endif /* _H_object */

@@ -64,40 +64,8 @@
 
 #define _H_multifld
 
-struct field;
-typedef struct multifield Multifield;
-
 #include "evaluatn.h"
 #include "object.h"
-
-struct field
-  {
-   union
-     {
-      void *value;
-      TypeHeader *header;
-      CLIPSLexeme *lexemeValue;
-      CLIPSFloat *floatValue;
-      CLIPSInteger *integerValue;
-      CLIPSVoid *voidValue;
-      Fact *factValue;
-      Instance *instanceValue;
-      Multifield *multifieldValue;
-      CLIPSExternalAddress *externalAddressValue;
-     };
-  };
-
-struct multifield
-  {
-   TypeHeader th;
-   unsigned busyCount;
-   long length;
-   struct multifield *next;
-   struct field theFields[1];
-  };
-
-typedef struct field FIELD;
-typedef struct field * FIELD_PTR;
 
    Multifield                    *CreateUnmanagedMultifield(Environment *,long);
    void                           ReturnMultifield(Environment *,struct multifield *);
@@ -112,7 +80,7 @@ typedef struct field * FIELD_PTR;
    void                           DuplicateMultifield(Environment *,UDFValue *,UDFValue *);
    void                           PrintMultifield(Environment *,const char *,Multifield *,long,long,bool);
    bool                           MultifieldDOsEqual(UDFValue *,UDFValue *);
-   void                           StoreInMultifield(Environment *,UDFValue *,EXPRESSION *,bool);
+   void                           StoreInMultifield(Environment *,UDFValue *,Expression *,bool);
    Multifield                    *CopyMultifield(Environment *,struct multifield *);
    bool                           MultifieldsEqual(struct multifield *,struct multifield *);
    Multifield                    *DOToMultifield(Environment *,UDFValue *);

@@ -84,6 +84,7 @@
 #define _H_miscfun
 
    void                           MiscFunctionDefinitions(Environment *);
+   void                           ExitCommand(Environment *,UDFContext *,UDFValue *);
    void                           CreateFunction(Environment *,UDFContext *,UDFValue *);
    void                           SetgenFunction(Environment *,UDFContext *,UDFValue *);
    void                           GensymFunction(Environment *,UDFContext *,UDFValue *);

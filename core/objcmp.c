@@ -1102,7 +1102,7 @@ static bool SlotsToCode(
   {
    long i;
    SlotDescriptor *sd;
-   EXPRESSION *tmpexp;
+   Expression *tmpexp;
    PACKED_LOCATION_INFO theLocationInfo;
 
    if (theDefclass->slotCount == 0)
@@ -1138,7 +1138,7 @@ static bool SlotsToCode(
         {
          fprintf(*slotFile,",(void *) ");
          if (sd->dynamicDefault)
-           ExpressionToCode(theEnv,*slotFile,(EXPRESSION *) sd->defaultValue);
+           ExpressionToCode(theEnv,*slotFile,(Expression *) sd->defaultValue);
          else
            {
             tmpexp = ConvertValueToExpression(theEnv,(UDFValue *) sd->defaultValue);

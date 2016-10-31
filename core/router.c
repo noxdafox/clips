@@ -71,6 +71,7 @@
 #include "extnfunc.h"
 #include "filertr.h"
 #include "memalloc.h"
+#include "prntutil.h"
 #include "strngrtr.h"
 #include "sysdep.h"
 
@@ -94,9 +95,6 @@ void InitializeDefaultRouters(
    RouterData(theEnv)->CommandBufferInputCount = 0;
    RouterData(theEnv)->AwaitingInput = true;
 
-#if (! RUN_TIME)
-   EnvAddUDF(theEnv,"exit","v",0,1,"l",ExitCommand,"ExitCommand",NULL);
-#endif
    InitializeFileRouter(theEnv);
    InitializeStringRouter(theEnv);
   }
@@ -334,35 +332,6 @@ int EnvUngetcRouter(
 
    UnrecognizedRouterMessage(theEnv,logicalName);
    return -1;
-  }
-
-/*****************************************************/
-/* ExitCommand: H/L command for exiting the program. */
-/*****************************************************/
-void ExitCommand(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
-   int argCnt;
-   int status;
-   UDFValue theArg;
-
-   argCnt = UDFArgumentCount(context);
-
-   if (argCnt == 0)
-     { EnvExitRouter(theEnv,EXIT_SUCCESS); }
-   else
-    {
-     if (! UDFFirstArgument(context,INTEGER_BIT,&theArg))
-       { EnvExitRouter(theEnv,EXIT_SUCCESS); }
-
-     status = (int) theArg.integerValue->contents;
-     if (EnvGetEvaluationError(theEnv)) return;
-     EnvExitRouter(theEnv,status);
-    }
-
-   return;
   }
 
 /***********************************************/

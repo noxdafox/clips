@@ -88,7 +88,10 @@
 #include "expressn.h"
 #include "exprnpsr.h"
 #include "memalloc.h"
+#include "modulutl.h"
+#include "pprint.h"
 #include "prccode.h"
+#include "prntutil.h"
 #include "router.h"
 #include "scanner.h"
 #include "symbol.h"
@@ -100,7 +103,7 @@
 /***************************************/
 
    static bool                    ValidDeffunctionName(Environment *,const char *);
-   static Deffunction            *AddDeffunction(Environment *,CLIPSLexeme *,EXPRESSION *,int,int,int,bool);
+   static Deffunction            *AddDeffunction(Environment *,CLIPSLexeme *,Expression *,int,int,int,bool);
 
 /***************************************************************************
   NAME         : ParseDeffunction
@@ -118,8 +121,8 @@ bool ParseDeffunction(
   const char *readSource)
   {
    CLIPSLexeme *deffunctionName;
-   EXPRESSION *actions;
-   EXPRESSION *parameterList;
+   Expression *actions;
+   Expression *parameterList;
    CLIPSLexeme *wildcard;
    int min,max,lvars;
    bool deffunctionError = false;
@@ -422,7 +425,7 @@ static bool ValidDeffunctionName(
 static Deffunction *AddDeffunction(
   Environment *theEnv,
   CLIPSLexeme *name,
-  EXPRESSION *actions,
+  Expression *actions,
   int min,
   int max,
   int lvars,

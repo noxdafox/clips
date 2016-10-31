@@ -104,6 +104,7 @@
 #include "msgcom.h"
 #include "msgfun.h"
 #include "prccode.h"
+#include "prntutil.h"
 #include "router.h"
 #include "utility.h"
 
@@ -604,7 +605,7 @@ bool DirectPutSlotValue(
         {
          val = &tmpVal;
          if (!EvaluateAndStoreInDataObject(theEnv,sp->desc->multiple,
-                                           (EXPRESSION *) sp->desc->defaultValue,val,true))
+                                           (Expression *) sp->desc->defaultValue,val,true))
            return false;
         }
       else if (sp->desc->defaultValue != NULL)

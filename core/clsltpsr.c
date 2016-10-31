@@ -61,6 +61,7 @@
 #include "envrnmnt.h"
 #include "insfun.h"
 #include "memalloc.h"
+#include "pprint.h"
 #include "prntutil.h"
 #include "router.h"
 #include "scanner.h"
@@ -394,8 +395,8 @@ void DeleteSlots(
       RemoveConstraint(theEnv,stmp->desc->constraint);
       if (stmp->desc->dynamicDefault == 1)
         {
-         ExpressionDeinstall(theEnv,(EXPRESSION *) stmp->desc->defaultValue);
-         ReturnPackedExpression(theEnv,(EXPRESSION *) stmp->desc->defaultValue);
+         ExpressionDeinstall(theEnv,(Expression *) stmp->desc->defaultValue);
+         ReturnPackedExpression(theEnv,(Expression *) stmp->desc->defaultValue);
         }
       else if (stmp->desc->defaultValue != NULL)
         {
@@ -624,7 +625,7 @@ static bool ParseDefaultFacet(
   char *specbits,
   SlotDescriptor *slot)
   {
-   EXPRESSION *tmp;
+   Expression *tmp;
    bool error, noneSpecified, deriveSpecified;
 
    if (TestBitMap(specbits,DEFAULT_BIT))
@@ -653,7 +654,7 @@ static bool ParseDefaultFacet(
      {
       slot->defaultValue = PackExpression(theEnv,tmp);
       ReturnExpression(theEnv,tmp);
-      ExpressionInstall(theEnv,(EXPRESSION *) slot->defaultValue);
+      ExpressionInstall(theEnv,(Expression *) slot->defaultValue);
       slot->defaultSpecified = 1;
      }
    return true;
@@ -712,8 +713,8 @@ static void BuildCompositeFacets(
            {
             if (sd->dynamicDefault)
               {
-               sd->defaultValue = PackExpression(theEnv,(EXPRESSION *) compslot->defaultValue);
-               ExpressionInstall(theEnv,(EXPRESSION *) sd->defaultValue);
+               sd->defaultValue = PackExpression(theEnv,(Expression *) compslot->defaultValue);
+               ExpressionInstall(theEnv,(Expression *) sd->defaultValue);
               }
             else
               {
@@ -853,15 +854,15 @@ static bool EvaluateSlotDefaultValue(
          SetExecutingConstruct(theEnv,true);
          olddcc = EnvSetDynamicConstraintChecking(theEnv,true);
          vPass = EvaluateAndStoreInDataObject(theEnv,sd->multiple,
-                  (EXPRESSION *) sd->defaultValue,&temp,true);
+                  (Expression *) sd->defaultValue,&temp,true);
          if (vPass != false)
            vPass = ValidSlotValue(theEnv,&temp,sd,NULL,"slot default value");
          EnvSetDynamicConstraintChecking(theEnv,olddcc);
          SetExecutingConstruct(theEnv,oldce);
          if (vPass)
            {
-            ExpressionDeinstall(theEnv,(EXPRESSION *) sd->defaultValue);
-            ReturnPackedExpression(theEnv,(EXPRESSION *) sd->defaultValue);
+            ExpressionDeinstall(theEnv,(Expression *) sd->defaultValue);
+            ReturnPackedExpression(theEnv,(Expression *) sd->defaultValue);
             sd->defaultValue = get_struct(theEnv,udfValue);
             GenCopyMemory(UDFValue,1,sd->defaultValue,&temp);
             ValueInstall(theEnv,(UDFValue *) sd->defaultValue);
@@ -882,7 +883,7 @@ static bool EvaluateSlotDefaultValue(
      }
    else
      {
-      vCode = ConstraintCheckExpressionChain(theEnv,(EXPRESSION *) sd->defaultValue,sd->constraint);
+      vCode = ConstraintCheckExpressionChain(theEnv,(Expression *) sd->defaultValue,sd->constraint);
       if (vCode != NO_VIOLATION)
         {
          PrintErrorID(theEnv,"CSTRNCHK",1,false);

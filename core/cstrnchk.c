@@ -61,6 +61,7 @@
 #include "envrnmnt.h"
 #include "extnfunc.h"
 #include "multifld.h"
+#include "prntutil.h"
 #include "router.h"
 
 #if OBJECT_SYSTEM

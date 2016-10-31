@@ -72,6 +72,7 @@
 #include "memalloc.h"
 #include "moduldef.h"
 #include "pattern.h"
+#include "prntutil.h"
 #include "retract.h"
 #include "router.h"
 #include "rulecom.h"

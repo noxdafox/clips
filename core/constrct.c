@@ -94,6 +94,7 @@
 #include "multifld.h"
 #include "prcdrfun.h"
 #include "prcdrpsr.h"
+#include "prntutil.h"
 #include "router.h"
 #include "ruledef.h"
 #include "scanner.h"

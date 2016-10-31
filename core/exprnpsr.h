@@ -76,7 +76,7 @@ typedef struct saved_contexts
    struct expr                   *CollectArguments(Environment *,struct expr *,const char *);
    struct expr                   *ArgumentParse(Environment *,const char *,bool *);
    struct expr                   *ParseAtomOrExpression(Environment *,const char *,struct token *);
-   EXPRESSION                    *ParseConstantArguments(Environment *,const char *,bool *);
+   Expression                    *ParseConstantArguments(Environment *,const char *,bool *);
    bool                           EnvSetSequenceOperatorRecognition(Environment *,bool);
    bool                           EnvGetSequenceOperatorRecognition(Environment *);
    struct expr                   *GroupActions(Environment *,const char *,struct token *,
@@ -86,7 +86,7 @@ typedef struct saved_contexts
 
 
    bool                           CheckExpressionAgainstRestrictions(Environment *,struct expr *,
-                                                                     struct FunctionDefinition *,const char *);
+                                                                     struct functionDefinition *,const char *);
 
 #if (! RUN_TIME)
    bool                           RestrictionExists(const char *,int);

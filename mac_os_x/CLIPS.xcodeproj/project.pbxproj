@@ -18,6 +18,10 @@
 		1EBA251A1C34C98B0013B169 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1EB429401C34C83400093F7A /* Preferences.xib */; };
 		1EBA251F1C34CB130013B169 /* CLIPSTerminal.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1EBA251B1C34CB0B0013B169 /* CLIPSTerminal.xib */; };
 		1EBA25201C34CB170013B169 /* CLIPSTextDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1EBA251D1C34CB0B0013B169 /* CLIPSTextDocument.xib */; };
+		1EFA0EFF1DC6D66200AE8FAA /* fileutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EFA0EFE1DC6D66200AE8FAA /* fileutil.c */; };
+		1EFA0F001DC6D68800AE8FAA /* fileutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EFA0EFE1DC6D66200AE8FAA /* fileutil.c */; };
+		1EFA0F051DC6D7A000AE8FAA /* fileutil.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EFA0F021DC6D77900AE8FAA /* fileutil.h */; };
+		1EFA0F061DC6D7C000AE8FAA /* entities.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EFA0F011DC6D77900AE8FAA /* entities.h */; };
 		8D15AC2C0486D014006FF6A4 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */; };
 		8D15AC2F0486D014006FF6A4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165FFE840EACC02AAC07 /* InfoPlist.strings */; };
 		B533575009D72E5900893C2F /* CLIPSConstructInspectorController.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B533574E09D72E5900893C2F /* CLIPSConstructInspectorController.h */; };
@@ -612,6 +616,9 @@
 		1EB429411C34C83400093F7A /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Preferences.xib; sourceTree = "<group>"; };
 		1EBA251C1C34CB0B0013B169 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/CLIPSTerminal.xib; sourceTree = "<group>"; };
 		1EBA251E1C34CB0B0013B169 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/CLIPSTextDocument.xib; sourceTree = "<group>"; };
+		1EFA0EFE1DC6D66200AE8FAA /* fileutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fileutil.c; path = CLIPS_Source/fileutil.c; sourceTree = "<group>"; };
+		1EFA0F011DC6D77900AE8FAA /* entities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = entities.h; path = CLIPS_Source/entities.h; sourceTree = "<group>"; };
+		1EFA0F021DC6D77900AE8FAA /* fileutil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fileutil.h; path = CLIPS_Source/fileutil.h; sourceTree = "<group>"; };
 		2A37F4BAFDCFA73011CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = English; path = English.lproj/Credits.rtf; sourceTree = "<group>"; };
 		B5134C1A0B9F9D5A007B3571 /* main.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = main.c; path = CLIPS_Source/main.c; sourceTree = "<group>"; };
 		B533574E09D72E5900893C2F /* CLIPSConstructInspectorController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CLIPSConstructInspectorController.h; path = Interface_Source/CLIPSConstructInspectorController.h; sourceTree = "<group>"; };
@@ -1191,6 +1198,7 @@
 				B5BCEFB409AD245A000E597B /* drive.h */,
 				B5BCEFBC09AD245A000E597B /* emathfun.h */,
 				B5BCEFBE09AD245A000E597B /* engine.h */,
+				1EFA0F011DC6D77900AE8FAA /* entities.h */,
 				1EA884001DC5345D005C05A0 /* envrnbld.h */,
 				B5BCEFC009AD245A000E597B /* envrnmnt.h */,
 				B5BCEFC209AD245A000E597B /* evaluatn.h */,
@@ -1216,6 +1224,7 @@
 				B5BCEFEA09AD245A000E597B /* factrhs.h */,
 				B5BCEFEC09AD245A000E597B /* filecom.h */,
 				B5BCEFEE09AD245A000E597B /* filertr.h */,
+				1EFA0F021DC6D77900AE8FAA /* fileutil.h */,
 				B5BCEFF009AD245A000E597B /* generate.h */,
 				B5BCEFF209AD245A000E597B /* genrcbin.h */,
 				B5BCEFF409AD245A000E597B /* genrccmp.h */,
@@ -1393,6 +1402,7 @@
 				B5BCEFE909AD245A000E597B /* factrhs.c */,
 				B5BCEFEB09AD245A000E597B /* filecom.c */,
 				B5BCEFED09AD245A000E597B /* filertr.c */,
+				1EFA0EFE1DC6D66200AE8FAA /* fileutil.c */,
 				B5BCEFEF09AD245A000E597B /* generate.c */,
 				B5BCEFF109AD245A000E597B /* genrcbin.c */,
 				B5BCEFF309AD245A000E597B /* genrccmp.c */,
@@ -1554,6 +1564,7 @@
 				B5BCF11209AD245B000E597B /* engine.h in Headers */,
 				B5BCF11409AD245B000E597B /* envrnmnt.h in Headers */,
 				B5BCF11609AD245B000E597B /* evaluatn.h in Headers */,
+				1EFA0F051DC6D7A000AE8FAA /* fileutil.h in Headers */,
 				B5BCF11809AD245B000E597B /* expressn.h in Headers */,
 				B5BCF11A09AD245B000E597B /* exprnbin.h in Headers */,
 				B5BCF11C09AD245B000E597B /* exprnops.h in Headers */,
@@ -1623,6 +1634,7 @@
 				B5BCF19A09AD245C000E597B /* objcmp.h in Headers */,
 				B5BCF19B09AD245C000E597B /* object.h in Headers */,
 				B5BCF19D09AD245C000E597B /* objrtbin.h in Headers */,
+				1EFA0F061DC6D7C000AE8FAA /* entities.h in Headers */,
 				B5BCF19F09AD245C000E597B /* objrtbld.h in Headers */,
 				B5BCF1A109AD245C000E597B /* objrtcmp.h in Headers */,
 				B5BCF1A309AD245C000E597B /* objrtfnx.h in Headers */,
@@ -1905,6 +1917,7 @@
 				B59979EE0D4D9B9E00C9B896 /* factqury.c in Sources */,
 				B59979EF0D4D9B9E00C9B896 /* factrete.c in Sources */,
 				B59979F00D4D9B9E00C9B896 /* factrhs.c in Sources */,
+				1EFA0EFF1DC6D66200AE8FAA /* fileutil.c in Sources */,
 				B59979F10D4D9B9E00C9B896 /* filecom.c in Sources */,
 				B59979F20D4D9B9E00C9B896 /* filertr.c in Sources */,
 				B59979F30D4D9B9E00C9B896 /* generate.c in Sources */,
@@ -2067,6 +2080,7 @@
 				B5BCF12509AD245B000E597B /* factcmp.c in Sources */,
 				B5BCF12709AD245B000E597B /* factcom.c in Sources */,
 				B5BCF12909AD245B000E597B /* factfun.c in Sources */,
+				1EFA0F001DC6D68800AE8FAA /* fileutil.c in Sources */,
 				B5BCF12B09AD245B000E597B /* factgen.c in Sources */,
 				B5BCF12D09AD245B000E597B /* facthsh.c in Sources */,
 				B5BCF12F09AD245B000E597B /* factlhs.c in Sources */,

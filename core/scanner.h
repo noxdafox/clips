@@ -69,8 +69,6 @@ typedef enum
    UNKNOWN_VALUE_TOKEN,
   } TokenType;
 
-#include "pprint.h"
-
 struct token
   {
    TokenType tknType;
