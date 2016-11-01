@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7702" systemVersion="14C1514" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7701"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
+                        <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="owK-fj-fL9">
+                                <rect key="frame" x="140" y="219" width="320" height="162"/>
+                                <connections>
+                                    <outlet property="dataSource" destination="BYZ-38-t0r" id="aLa-3l-Pcu"/>
+                                    <outlet property="delegate" destination="BYZ-38-t0r" id="O8h-7B-lVC"/>
+                                </connections>
+                            </pickerView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9Vf-06-Wuf">
+                                <rect key="frame" x="375" y="389" width="50" height="41"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="24"/>
+                                <state key="normal" title="Next">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="nextButtonAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="OVo-IE-2fe"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LC7-lV-qxJ">
+                                <rect key="frame" x="177" y="389" width="47" height="41"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="24"/>
+                                <state key="normal" title="Prev">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="prevButtonAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="uhz-d0-3JD"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Xft-m9-3cA">
+                                <rect key="frame" x="16" y="220" width="568" height="29"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="24"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="9Vf-06-Wuf" firstAttribute="top" secondItem="owK-fj-fL9" secondAttribute="bottom" constant="8" id="5ql-ja-Veb"/>
+                            <constraint firstItem="owK-fj-fL9" firstAttribute="centerX" secondItem="9Vf-06-Wuf" secondAttribute="centerX" constant="-100" id="BtO-7h-PZX"/>
+                            <constraint firstItem="Xft-m9-3cA" firstAttribute="bottom" secondItem="owK-fj-fL9" secondAttribute="top" constant="30" id="DC7-e2-OWd"/>
+                            <constraint firstAttribute="centerX" secondItem="owK-fj-fL9" secondAttribute="centerX" id="IbB-OI-T1C"/>
+                            <constraint firstItem="LC7-lV-qxJ" firstAttribute="top" secondItem="owK-fj-fL9" secondAttribute="bottom" constant="8" id="R56-y8-Dv3"/>
+                            <constraint firstItem="Xft-m9-3cA" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="gPU-rd-tEe"/>
+                            <constraint firstItem="LC7-lV-qxJ" firstAttribute="centerX" secondItem="owK-fj-fL9" secondAttribute="centerX" constant="-100" id="gnZ-TJ-CTc"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="Xft-m9-3cA" secondAttribute="trailing" id="jdk-Li-5Yo"/>
+                            <constraint firstAttribute="centerY" secondItem="owK-fj-fL9" secondAttribute="centerY" id="zbs-nB-FbW"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="answerPickerView" destination="owK-fj-fL9" id="PtN-n5-g2k"/>
+                        <outlet property="displayLabel" destination="Xft-m9-3cA" id="UJ5-qL-XnC"/>
+                        <outlet property="nextButton" destination="9Vf-06-Wuf" id="lC0-Ps-RS2"/>
+                        <outlet property="prevButton" destination="LC7-lV-qxJ" id="ilY-MN-OrU"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="411" y="577"/>
+        </scene>
+    </scenes>
+</document>
