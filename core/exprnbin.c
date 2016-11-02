@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/01/16             */
+   /*            CLIPS Version 6.40  11/01/16             */
    /*                                                     */
    /*             EXPRESSION BSAVE/BLOAD MODULE           */
    /*******************************************************/
@@ -55,6 +55,7 @@
 #endif
 
 #if DEFTEMPLATE_CONSTRUCT
+#include "factmngr.h"
 #include "tmpltbin.h"
 #endif
 

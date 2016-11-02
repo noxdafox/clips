@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  11/01/16             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -112,13 +112,13 @@
    ***************************************** */
 
    static bool                    ValidGenericName(Environment *,const char *);
-   static CLIPSLexeme            *ParseMethodNameAndIndex(Environment *,const char *,int *);
+   static CLIPSLexeme            *ParseMethodNameAndIndex(Environment *,const char *,int *,struct token *);
 
 #if DEBUGGING_FUNCTIONS
    static void                    CreateDefaultGenericPPForm(Environment *,Defgeneric *);
 #endif
 
-   static int                     ParseMethodParameters(Environment *,const char *,Expression **,CLIPSLexeme **);
+   static int                     ParseMethodParameters(Environment *,const char *,Expression **,CLIPSLexeme **,struct token *);
    static RESTRICTION            *ParseRestriction(Environment *,const char *);
    static void                    ReplaceCurrentArgRefs(Environment *,Expression *);
    static bool                    DuplicateParameters(Environment *,Expression *,Expression **,CLIPSLexeme *);
@@ -153,6 +153,7 @@ bool ParseDefgeneric(
    CLIPSLexeme *gname;
    Defgeneric *gfunc;
    bool newGeneric;
+   struct token genericInputToken;
 
    SetPPBufferStatus(theEnv,true);
    FlushPPBuffer(theEnv);
@@ -167,7 +168,7 @@ bool ParseDefgeneric(
      }
 #endif
 
-   gname = GetConstructNameAndComment(theEnv,readSource,&DefgenericData(theEnv)->GenericInputToken,"defgeneric",
+   gname = GetConstructNameAndComment(theEnv,readSource,&genericInputToken,"defgeneric",
                                       (FindConstructFunction *) EnvFindDefgenericInModule,
                                       NULL,"^",true,true,true,false);
    if (gname == NULL)
@@ -176,7 +177,7 @@ bool ParseDefgeneric(
    if (ValidGenericName(theEnv,gname->contents) == false)
      return true;
 
-   if (DefgenericData(theEnv)->GenericInputToken.tknType != RIGHT_PARENTHESIS_TOKEN)
+   if (genericInputToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       PrintErrorID(theEnv,"GENRCPSR",1,false);
       EnvPrintRouter(theEnv,WERROR,"Expected ')' to complete defgeneric.\n");
@@ -229,6 +230,7 @@ bool ParseDefmethod(
    Defmethod *meth;
    Defgeneric *gfunc;
    int theIndex;
+   struct token genericInputToken;
 
    SetPPBufferStatus(theEnv,true);
    FlushPPBuffer(theEnv);
@@ -243,7 +245,7 @@ bool ParseDefmethod(
      }
 #endif
 
-   gname = ParseMethodNameAndIndex(theEnv,readSource,&theIndex);
+   gname = ParseMethodNameAndIndex(theEnv,readSource,&theIndex,&genericInputToken);
    if (gname == NULL)
      return true;
 
@@ -262,7 +264,7 @@ bool ParseDefmethod(
 #endif
 
    IncrementIndentDepth(theEnv,1);
-   rcnt = ParseMethodParameters(theEnv,readSource,&params,&wildcard);
+   rcnt = ParseMethodParameters(theEnv,readSource,&params,&wildcard,&genericInputToken);
    DecrementIndentDepth(theEnv,1);
    if (rcnt == -1)
      goto DefmethodParseError;
@@ -323,14 +325,14 @@ bool ParseDefmethod(
      }
    ExpressionData(theEnv)->ReturnContext = true;
    actions = ParseProcActions(theEnv,"method",readSource,
-                              &DefgenericData(theEnv)->GenericInputToken,params,wildcard,
+                              &genericInputToken,params,wildcard,
                               NULL,NULL,&lvars,NULL);
 
    /*===========================================================*/
    /* Check for the closing right parenthesis of the defmethod. */
    /*===========================================================*/
 
-   if ((DefgenericData(theEnv)->GenericInputToken.tknType != RIGHT_PARENTHESIS_TOKEN) &&  /* DR0872 */
+   if ((genericInputToken.tknType != RIGHT_PARENTHESIS_TOKEN) &&  /* DR0872 */
        (actions != NULL))
      {
       SyntaxErrorMessage(theEnv,"defmethod");
@@ -364,7 +366,7 @@ bool ParseDefmethod(
 
    PPBackup(theEnv);
    PPBackup(theEnv);
-   SavePPBuffer(theEnv,DefgenericData(theEnv)->GenericInputToken.printForm);
+   SavePPBuffer(theEnv,genericInputToken.printForm);
    SavePPBuffer(theEnv,"\n");
 
 #if DEBUGGING_FUNCTIONS
@@ -814,25 +816,26 @@ static void CreateDefaultGenericPPForm(
 static CLIPSLexeme *ParseMethodNameAndIndex(
   Environment *theEnv,
   const char *readSource,
-  int *theIndex)
+  int *theIndex,
+  struct token *genericInputToken)
   {
    CLIPSLexeme *gname;
 
    *theIndex = 0;
-   gname = GetConstructNameAndComment(theEnv,readSource,&DefgenericData(theEnv)->GenericInputToken,"defgeneric",
+   gname = GetConstructNameAndComment(theEnv,readSource,genericInputToken,"defgeneric",
                                       (FindConstructFunction *) EnvFindDefgenericInModule,
                                       NULL,"&",true,false,true,true);
    if (gname == NULL)
      return NULL;
-   if (DefgenericData(theEnv)->GenericInputToken.tknType == INTEGER_TOKEN)
+   if (genericInputToken->tknType == INTEGER_TOKEN)
      {
       int tmp;
 
       PPBackup(theEnv);
       PPBackup(theEnv);
       SavePPBuffer(theEnv," ");
-      SavePPBuffer(theEnv,DefgenericData(theEnv)->GenericInputToken.printForm);
-      tmp = (int) DefgenericData(theEnv)->GenericInputToken.integerValue->contents;
+      SavePPBuffer(theEnv,genericInputToken->printForm);
+      tmp = (int) genericInputToken->integerValue->contents;
       if (tmp < 1)
         {
          PrintErrorID(theEnv,"GENRCPSR",6,false);
@@ -841,16 +844,16 @@ static CLIPSLexeme *ParseMethodNameAndIndex(
         }
       *theIndex = tmp;
       PPCRAndIndent(theEnv);
-      GetToken(theEnv,readSource,&DefgenericData(theEnv)->GenericInputToken);
+      GetToken(theEnv,readSource,genericInputToken);
      }
-   if (DefgenericData(theEnv)->GenericInputToken.tknType == STRING_TOKEN)
+   if (genericInputToken->tknType == STRING_TOKEN)
      {
       PPBackup(theEnv);
       PPBackup(theEnv);
       SavePPBuffer(theEnv," ");
-      SavePPBuffer(theEnv,DefgenericData(theEnv)->GenericInputToken.printForm);
+      SavePPBuffer(theEnv,genericInputToken->printForm);
       PPCRAndIndent(theEnv);
-      GetToken(theEnv,readSource,&DefgenericData(theEnv)->GenericInputToken);
+      GetToken(theEnv,readSource,genericInputToken);
      }
    return(gname);
   }
@@ -875,7 +878,8 @@ static int ParseMethodParameters(
   Environment *theEnv,
   const char *readSource,
   Expression **params,
-  CLIPSLexeme **wildcard)
+  CLIPSLexeme **wildcard,
+  struct token *genericInputToken)
   {
    Expression *phead = NULL,*pprv;
    CLIPSLexeme *pname;
@@ -884,14 +888,14 @@ static int ParseMethodParameters(
 
    *wildcard = NULL;
    *params = NULL;
-   if (DefgenericData(theEnv)->GenericInputToken.tknType != LEFT_PARENTHESIS_TOKEN)
+   if (genericInputToken->tknType != LEFT_PARENTHESIS_TOKEN)
      {
       PrintErrorID(theEnv,"GENRCPSR",7,false);
       EnvPrintRouter(theEnv,WERROR,"Expected a '(' to begin method parameter restrictions.\n");
       return(-1);
      }
-   GetToken(theEnv,readSource,&DefgenericData(theEnv)->GenericInputToken);
-   while (DefgenericData(theEnv)->GenericInputToken.tknType != RIGHT_PARENTHESIS_TOKEN)
+   GetToken(theEnv,readSource,genericInputToken);
+   while (genericInputToken->tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       if (*wildcard != NULL)
         {
@@ -900,16 +904,16 @@ static int ParseMethodParameters(
          EnvPrintRouter(theEnv,WERROR,"No parameters allowed after wildcard parameter.\n");
          return(-1);
         }
-      if ((DefgenericData(theEnv)->GenericInputToken.tknType == SF_VARIABLE_TOKEN) ||
-          (DefgenericData(theEnv)->GenericInputToken.tknType == MF_VARIABLE_TOKEN))
+      if ((genericInputToken->tknType == SF_VARIABLE_TOKEN) ||
+          (genericInputToken->tknType == MF_VARIABLE_TOKEN))
         {
-         pname = DefgenericData(theEnv)->GenericInputToken.lexemeValue;
+         pname = genericInputToken->lexemeValue;
          if (DuplicateParameters(theEnv,phead,&pprv,pname))
            {
             DeleteTempRestricts(theEnv,phead);
             return(-1);
            }
-         if (DefgenericData(theEnv)->GenericInputToken.tknType == MF_VARIABLE_TOKEN)
+         if (genericInputToken->tknType == MF_VARIABLE_TOKEN)
            *wildcard = pname;
          rtmp = get_struct(theEnv,restriction);
          PackRestrictionTypes(theEnv,rtmp,NULL);
@@ -917,24 +921,24 @@ static int ParseMethodParameters(
          phead = AddParameter(theEnv,phead,pprv,pname,rtmp);
          rcnt++;
         }
-      else if (DefgenericData(theEnv)->GenericInputToken.tknType == LEFT_PARENTHESIS_TOKEN)
+      else if (genericInputToken->tknType == LEFT_PARENTHESIS_TOKEN)
         {
-         GetToken(theEnv,readSource,&DefgenericData(theEnv)->GenericInputToken);
-         if ((DefgenericData(theEnv)->GenericInputToken.tknType != SF_VARIABLE_TOKEN) &&
-             (DefgenericData(theEnv)->GenericInputToken.tknType != MF_VARIABLE_TOKEN))
+         GetToken(theEnv,readSource,genericInputToken);
+         if ((genericInputToken->tknType != SF_VARIABLE_TOKEN) &&
+             (genericInputToken->tknType != MF_VARIABLE_TOKEN))
            {
             DeleteTempRestricts(theEnv,phead);
             PrintErrorID(theEnv,"GENRCPSR",8,false);
             EnvPrintRouter(theEnv,WERROR,"Expected a variable for parameter specification.\n");
             return(-1);
            }
-         pname = DefgenericData(theEnv)->GenericInputToken.lexemeValue;
+         pname = genericInputToken->lexemeValue;
          if (DuplicateParameters(theEnv,phead,&pprv,pname))
            {
             DeleteTempRestricts(theEnv,phead);
             return(-1);
            }
-         if (DefgenericData(theEnv)->GenericInputToken.tknType == MF_VARIABLE_TOKEN)
+         if (genericInputToken->tknType == MF_VARIABLE_TOKEN)
            *wildcard = pname;
          SavePPBuffer(theEnv," ");
          rtmp = ParseRestriction(theEnv,readSource);
@@ -954,7 +958,7 @@ static int ParseMethodParameters(
          return(-1);
         }
       PPCRAndIndent(theEnv);
-      GetToken(theEnv,readSource,&DefgenericData(theEnv)->GenericInputToken);
+      GetToken(theEnv,readSource,genericInputToken);
      }
    if (rcnt != 0)
      {
@@ -993,9 +997,10 @@ static RESTRICTION *ParseRestriction(
               *typesbot,*tmp,*tmp2,
               *query = NULL;
    RESTRICTION *rptr;
+   struct token genericInputToken;
 
-   GetToken(theEnv,readSource,&DefgenericData(theEnv)->GenericInputToken);
-   while (DefgenericData(theEnv)->GenericInputToken.tknType != RIGHT_PARENTHESIS_TOKEN)
+   GetToken(theEnv,readSource,&genericInputToken);
+   while (genericInputToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       if (query != NULL)
         {
@@ -1005,9 +1010,9 @@ static RESTRICTION *ParseRestriction(
          ReturnExpression(theEnv,types);
          return NULL;
         }
-      if (DefgenericData(theEnv)->GenericInputToken.tknType == SYMBOL_TOKEN)
+      if (genericInputToken.tknType == SYMBOL_TOKEN)
         {
-         new_types = ValidType(theEnv,DefgenericData(theEnv)->GenericInputToken.lexemeValue);
+         new_types = ValidType(theEnv,genericInputToken.lexemeValue);
          if (new_types == NULL)
            {
             ReturnExpression(theEnv,types);
@@ -1048,7 +1053,7 @@ static RESTRICTION *ParseRestriction(
             typesbot->nextArg = new_types;
            }
         }
-      else if (DefgenericData(theEnv)->GenericInputToken.tknType == LEFT_PARENTHESIS_TOKEN)
+      else if (genericInputToken.tknType == LEFT_PARENTHESIS_TOKEN)
         {
          query = Function1Parse(theEnv,readSource);
          if (query == NULL)
@@ -1066,8 +1071,8 @@ static RESTRICTION *ParseRestriction(
            }
         }
 #if DEFGLOBAL_CONSTRUCT
-      else if (DefgenericData(theEnv)->GenericInputToken.tknType == GBL_VARIABLE_TOKEN)
-        query = GenConstant(theEnv,GBL_VARIABLE,DefgenericData(theEnv)->GenericInputToken.value);
+      else if (genericInputToken.tknType == GBL_VARIABLE_TOKEN)
+        query = GenConstant(theEnv,GBL_VARIABLE,genericInputToken.value);
 #endif
       else
         {
@@ -1082,7 +1087,7 @@ static RESTRICTION *ParseRestriction(
          return NULL;
         }
       SavePPBuffer(theEnv," ");
-      GetToken(theEnv,readSource,&DefgenericData(theEnv)->GenericInputToken);
+      GetToken(theEnv,readSource,&genericInputToken);
      }
    PPBackup(theEnv);
    PPBackup(theEnv);

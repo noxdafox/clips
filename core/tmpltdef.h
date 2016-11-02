@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/06/16            */
+   /*             CLIPS Version 6.40  11/01/16            */
    /*                                                     */
    /*               DEFTEMPLATE HEADER FILE               */
    /*******************************************************/
@@ -68,13 +68,12 @@ typedef struct deftemplate Deftemplate;
 struct templateSlot;
 struct deftemplateModule;
 
+#include "entities.h"
+
 #include "constrct.h"
 #include "conscomp.h"
-#include "cstrccom.h"
 #include "evaluatn.h"
-#include "expressn.h"
 #include "moduldef.h"
-#include "symbol.h"
 
 struct deftemplateModule
   {
@@ -83,7 +82,6 @@ struct deftemplateModule
 
 #include "constrnt.h"
 #include "factbld.h"
-#include "factmngr.h"
 
 struct deftemplate
   {
@@ -95,8 +93,8 @@ struct deftemplate
    unsigned short numberOfSlots;
    long busyCount;
    struct factPatternNode *patternNetwork;
-   struct fact *factList;
-   struct fact *lastFact;
+   Fact *factList;
+   Fact *lastFact;
   };
 
 struct templateSlot
@@ -107,8 +105,8 @@ struct templateSlot
    unsigned int defaultPresent : 1;
    unsigned int defaultDynamic : 1;
    CONSTRAINT_RECORD *constraints;
-   struct expr *defaultList;
-   struct expr *facetList;
+   Expression *defaultList;
+   Expression *facetList;
    struct templateSlot *next;
   };
 

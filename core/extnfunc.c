@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.50  10/18/16             */
+   /*            CLIPS Version 6.50  11/01/16             */
    /*                                                     */
    /*               EXTERNAL FUNCTION MODULE              */
    /*******************************************************/
@@ -61,6 +61,7 @@
 #include "argacces.h"
 #include "constant.h"
 #include "envrnmnt.h"
+#include "exprnpsr.h"
 #include "factmngr.h"
 #include "memalloc.h"
 #include "router.h"

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.50  10/01/16             */
+   /*            CLIPS Version 6.50  11/01/16             */
    /*                                                     */
    /*                 FACT MANAGER MODULE                 */
    /*******************************************************/
@@ -104,6 +104,7 @@
 #include "factrhs.h"
 #include "lgcldpnd.h"
 #include "memalloc.h"
+#include "multifld.h"
 #include "retract.h"
 #include "prntutil.h"
 #include "router.h"

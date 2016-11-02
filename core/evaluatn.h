@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  10/01/16            */
+   /*             CLIPS Version 6.40  11/01/16            */
    /*                                                     */
    /*               EVALUATION HEADER FILE                */
    /*******************************************************/
@@ -70,37 +70,10 @@
 
 #define _H_evaluatn
 
-struct entityRecord;
-
-typedef void EntityPrintFunction(Environment *,const char *,void *);
-typedef bool EntityEvaluationFunction(Environment *,void *,UDFValue *);
-typedef void EntityBusyCountFunction(Environment *,void *);
-
 #include "constant.h"
 #include "entities.h"
 
 #define C_POINTER_EXTERNAL_ADDRESS 0
-
-struct entityRecord
-  {
-   const char *name;
-   unsigned int type : 13;
-   unsigned int copyToEvaluate : 1;
-   unsigned int bitMap : 1;
-   unsigned int addsToRuleComplexity : 1;
-   EntityPrintFunction *shortPrintFunction;
-   EntityPrintFunction *longPrintFunction;
-   bool (*deleteFunction)(void *,void *);
-   EntityEvaluationFunction *evaluateFunction;
-   void *(*getNextFunction)(void *,void *);
-   EntityBusyCountFunction *decrementBusyCount;
-   EntityBusyCountFunction *incrementBusyCount;
-   void (*propagateDepth)(void *,void *);
-   void (*markNeeded)(void *,void *);
-   void (*install)(void *,void *);
-   void (*deinstall)(void *,void *);
-   struct userData *usrData;
-  };
 
 struct externalAddressType
   {
@@ -111,9 +84,6 @@ struct externalAddressType
    void (*newFunction)(UDFContext *,UDFValue *);
    bool (*callFunction)(UDFContext *,UDFValue *,UDFValue *);
   };
-
-typedef struct entityRecord ENTITY_RECORD;
-typedef struct entityRecord * ENTITY_RECORD_PTR;
 
 #define CoerceToLongInteger(t,v) ((t == INTEGER_TYPE) ? ValueToLong(v) : (long int) ValueToDouble(v))
 #define CoerceToInteger(t,v) ((t == INTEGER_TYPE) ? (int) ValueToLong(v) : (int) ValueToDouble(v))

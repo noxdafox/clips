@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*               CLIPS Version 6.40  10/01/16          */
+   /*               CLIPS Version 6.40  11/01/16          */
    /*                                                     */
    /*                OBJECT SYSTEM DEFINITIONS            */
    /*******************************************************/
@@ -54,16 +54,15 @@ typedef struct instanceSlot INSTANCE_SLOT;
 #define VALUE_PROHIBITED   1
 #define VALUE_NOT_REQUIRED 2
 
+#include "entities.h"
 #include "constrct.h"
 #include "constrnt.h"
 #include "moduldef.h"
-#include "entities.h"
 #include "evaluatn.h"
 #include "expressn.h"
 #include "multifld.h"
 #include "symbol.h"
 #include "match.h"
-#include "pattern.h"
 
 struct packedClassLinks
   {

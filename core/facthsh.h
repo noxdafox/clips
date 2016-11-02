@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.50  08/25/16            */
+   /*             CLIPS Version 6.50  11/01/16            */
    /*                                                     */
    /*                 FACT HASHING MODULE                 */
    /*******************************************************/
@@ -51,14 +51,14 @@
 
 #define _H_facthsh
 
-struct factHashEntry;
+#include "entities.h"
 
-#include "factmngr.h"
+typedef struct factHashEntry FactHashEntry;
 
 struct factHashEntry
   {
-   struct fact *theFact;
-   struct factHashEntry *next;
+   Fact *theFact;
+   FactHashEntry *next;
   };
 
 #define SIZE_FACT_HASH 16231

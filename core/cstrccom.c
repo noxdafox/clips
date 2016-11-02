@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  11/01/16             */
    /*                                                     */
    /*              CONSTRUCT COMMANDS MODULE              */
    /*******************************************************/
@@ -67,6 +67,7 @@
 
 #include "constant.h"
 #include "envrnmnt.h"
+#include "extnfunc.h"
 #include "memalloc.h"
 #include "moduldef.h"
 #include "argacces.h"

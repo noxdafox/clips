@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/01/16             */
+   /*            CLIPS Version 6.40  11/01/16             */
    /*                                                     */
    /*                PRINT UTILITY MODULE                 */
    /*******************************************************/
@@ -80,6 +80,7 @@
 #include "memalloc.h"
 #include "multifun.h"
 #include "router.h"
+#include "scanner.h"
 #include "symbol.h"
 #include "sysdep.h"
 #include "utility.h"

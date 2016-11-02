@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.50  08/25/16            */
+   /*             CLIPS Version 6.50  11/01/16            */
    /*                                                     */
    /*              FACTS MANAGER HEADER FILE              */
    /*******************************************************/
@@ -82,11 +82,8 @@
 typedef struct factBuilder FactBuilder;
 typedef struct factModifier FactModifier;
 
-#include "conscomp.h"
 #include "entities.h"
-#include "evaluatn.h"
-#include "multifld.h"
-#include "pattern.h"
+#include "conscomp.h"
 #include "tmpltdef.h"
 
 struct fact

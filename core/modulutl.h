@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  07/30/16            */
+   /*             CLIPS Version 6.40  11/01/16            */
    /*                                                     */
    /*            DEFMODULE UTILITY HEADER FILE            */
    /*******************************************************/
@@ -46,6 +46,7 @@ typedef void PrintItemFunction(Environment *,const char *,void *);
 
 #include "moduldef.h"
 #include "symbol.h"
+#include "scanner.h"
 
    unsigned                       FindModuleSeparator(const char *);
    CLIPSLexeme                   *ExtractModuleName(Environment *,unsigned,const char *);

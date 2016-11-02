@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.50  07/30/16            */
+   /*             CLIPS Version 6.50  11/01/16            */
    /*                                                     */
    /*             CLASS FUNCTIONS HEADER FILE             */
    /*******************************************************/
@@ -54,6 +54,7 @@
 #define _H_classfun
 
 #include "object.h"
+#include "scanner.h"
 
 #define TestTraversalID(traversalRecord,id) TestBitMap(traversalRecord,id)
 #define SetTraversalID(traversalRecord,id) SetBitMap(traversalRecord,id)
@@ -119,7 +120,7 @@ struct defclassData
   {
    Construct *DefclassConstruct;
    int DefclassModuleIndex;
-   ENTITY_RECORD DefclassEntityRecord;
+   EntityRecord DefclassEntityRecord;
    Defclass *PrimitiveClassMap[PRIMITIVE_CLASSES];
    Defclass **ClassIDMap;
    Defclass **ClassTable;

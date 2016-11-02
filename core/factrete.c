@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/01/16             */
+   /*            CLIPS Version 6.40  11/01/16             */
    /*                                                     */
    /*          FACT RETE ACCESS FUNCTIONS MODULE          */
    /*******************************************************/
@@ -53,6 +53,7 @@
 #include "factmch.h"
 #include "incrrset.h"
 #include "memalloc.h"
+#include "multifld.h"
 #include "reteutil.h"
 #include "router.h"
 

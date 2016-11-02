@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/06/16             */
+   /*            CLIPS Version 6.40  11/01/16             */
    /*                                                     */
    /*                 DEFTEMPLATE MODULE                  */
    /*******************************************************/
@@ -143,7 +143,7 @@ void InitializeDeftemplates(
                    (DeleteConstructFunction *) Undeftemplate,
                    (FreeConstructFunction *) ReturnDeftemplate);
 
-   InstallPrimitive(theEnv,(ENTITY_RECORD_PTR) &DeftemplateData(theEnv)->DeftemplatePtrRecord,DEFTEMPLATE_PTR);
+   InstallPrimitive(theEnv,(EntityRecord *) &DeftemplateData(theEnv)->DeftemplatePtrRecord,DEFTEMPLATE_PTR);
   }
 
 /******************************************************/

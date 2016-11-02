@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  10/01/16            */
+   /*             CLIPS Version 6.40  11/01/16            */
    /*                                                     */
    /*                MULTIFIELD_TYPE HEADER FILE               */
    /*******************************************************/
@@ -64,30 +64,29 @@
 
 #define _H_multifld
 
-#include "evaluatn.h"
-#include "object.h"
+#include "entities.h"
 
    Multifield                    *CreateUnmanagedMultifield(Environment *,long);
-   void                           ReturnMultifield(Environment *,struct multifield *);
-   void                           MultifieldInstall(Environment *,struct multifield *);
-   void                           MultifieldDeinstall(Environment *,struct multifield *);
-   void                           CVMultifieldInstall(Environment *,struct multifield *);
-   void                           CVMultifieldDeinstall(Environment *,struct multifield *);
+   void                           ReturnMultifield(Environment *,Multifield *);
+   void                           MultifieldInstall(Environment *,Multifield *);
+   void                           MultifieldDeinstall(Environment *,Multifield *);
+   void                           CVMultifieldInstall(Environment *,Multifield *);
+   void                           CVMultifieldDeinstall(Environment *,Multifield *);
    Multifield                    *StringToMultifield(Environment *,const char *);
    Multifield                    *EnvCreateMultifield(Environment *,long);
-   void                           AddToMultifieldList(Environment *,struct multifield *);
+   void                           AddToMultifieldList(Environment *,Multifield *);
    void                           FlushMultifields(Environment *);
    void                           DuplicateMultifield(Environment *,UDFValue *,UDFValue *);
    void                           PrintMultifield(Environment *,const char *,Multifield *,long,long,bool);
    bool                           MultifieldDOsEqual(UDFValue *,UDFValue *);
    void                           StoreInMultifield(Environment *,UDFValue *,Expression *,bool);
-   Multifield                    *CopyMultifield(Environment *,struct multifield *);
-   bool                           MultifieldsEqual(struct multifield *,struct multifield *);
+   Multifield                    *CopyMultifield(Environment *,Multifield *);
+   bool                           MultifieldsEqual(Multifield *,Multifield *);
    Multifield                    *DOToMultifield(Environment *,UDFValue *);
-   unsigned long                  HashMultifield(struct multifield *,unsigned long);
+   unsigned long                  HashMultifield(Multifield *,unsigned long);
    Multifield                    *GetMultifieldList(Environment *);
    CLIPSLexeme                   *ImplodeMultifield(Environment *,UDFValue *);
-   void                           EphemerateMultifield(Environment *,struct multifield *);
+   void                           EphemerateMultifield(Environment *,Multifield *);
    Multifield                    *EnvArrayToMultifield(Environment *,CLIPSValue *,long size);
    void                           NormalizeMultifield(Environment *,UDFValue *);
    void                           CLIPSToUDFValue(CLIPSValue *,UDFValue *);

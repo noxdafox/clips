@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  11/01/16             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -171,7 +171,7 @@
 void SetupGenericFunctions(
   Environment *theEnv)
   {
-   ENTITY_RECORD genericEntityRecord =
+   EntityRecord genericEntityRecord =
                      { "GCALL", GCALL,0,0,1,
                        (EntityPrintFunction *) PrintGenericCall,
                        (EntityPrintFunction *) PrintGenericCall,

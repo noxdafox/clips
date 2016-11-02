@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.50  08/25/16             */
+   /*            CLIPS Version 6.50  11/01/16             */
    /*                                                     */
    /*            DEFTEMPLATE UTILITIES MODULE             */
    /*******************************************************/
@@ -71,6 +71,7 @@
 #include "extnfunc.h"
 #include "memalloc.h"
 #include "modulutl.h"
+#include "multifld.h"
 #include "prntutil.h"
 #include "router.h"
 #include "sysdep.h"

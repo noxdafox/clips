@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/25/16            */
+   /*             CLIPS Version 6.40  11/01/16            */
    /*                                                     */
    /*                 FILE UTILITY MODULE                 */
    /*******************************************************/
@@ -37,6 +37,7 @@
 #include "pprint.h"
 #include "prntutil.h"
 #include "router.h"
+#include "scanner.h"
 #include "strngrtr.h"
 #include "sysdep.h"
 #include "filecom.h"

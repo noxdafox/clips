@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  11/01/16             */
    /*                                                     */
    /*         IMPLICIT SYSTEM METHODS PARSING MODULE      */
    /*******************************************************/
@@ -63,6 +63,7 @@
 #endif
 #include "cstrnutl.h"
 #include "envrnmnt.h"
+#include "exprnpsr.h"
 #include "extnfunc.h"
 #include "genrcpsr.h"
 #include "memalloc.h"

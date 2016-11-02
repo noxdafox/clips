@@ -2,7 +2,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  11/01/16             */
    /*                                                     */
    /*     FACT PATTERN NETWORK CONSTRUCTS-TO-C MODULE     */
    /*******************************************************/
@@ -42,6 +42,7 @@
 #include <stdio.h>
 
 #include "factbld.h"
+#include "factmngr.h"
 #include "conscomp.h"
 #include "factcmp.h"
 #include "tmpltdef.h"

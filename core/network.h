@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  11/01/16             */
    /*                                                     */
    /*                 NETWORK HEADER FILE                 */
    /*******************************************************/
@@ -36,15 +36,16 @@ struct betaMemory;
 struct joinLink;
 struct joinNode;
 struct patternNodeHashEntry;
-struct patternNodeHeader;
-struct expr; // TBD Can this be removed
+typedef struct patternNodeHeader PatternNodeHeader;
+
+#include "entities.h"
 
 struct patternNodeHeader
   {
    struct alphaMemoryHash *firstHash;
    struct alphaMemoryHash *lastHash;
    struct joinNode *entryJoin;
-   struct expr *rightHash;
+   Expression *rightHash;
    unsigned int singlefieldNode : 1;
    unsigned int multifieldNode : 1;
    unsigned int stopNode : 1;
@@ -55,7 +56,6 @@ struct patternNodeHeader
    unsigned int selector : 1;
   };
 
-#include "expressn.h"
 #include "match.h"
 
 struct patternNodeHashEntry
@@ -73,8 +73,8 @@ struct alphaMemoryHash
   {
    unsigned long bucket;
    struct patternNodeHeader *owner;
-   struct partialMatch *alphaMemory;
-   struct partialMatch *endOfQueue;
+   PartialMatch *alphaMemory;
+   PartialMatch *endOfQueue;
    struct alphaMemoryHash *nextHash;
    struct alphaMemoryHash *prevHash;
    struct alphaMemoryHash *next;
@@ -124,10 +124,10 @@ struct joinNode
    long long memoryCompares;
    struct betaMemory *leftMemory;
    struct betaMemory *rightMemory;
-   struct expr *networkTest;
-   struct expr *secondaryNetworkTest;
-   struct expr *leftHash;
-   struct expr *rightHash;
+   Expression *networkTest;
+   Expression *secondaryNetworkTest;
+   Expression *leftHash;
+   Expression *rightHash;
    void *rightSideEntryStructure;
    struct joinLink *nextLinks;
    struct joinNode *lastLevel;

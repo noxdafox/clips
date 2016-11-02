@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.50  10/01/16             */
+   /*            CLIPS Version 6.50  11/01/16             */
    /*                                                     */
    /*          OBJECT PATTERN MATCHER MODULE              */
    /*******************************************************/
@@ -75,7 +75,6 @@
 #include "cstrnops.h"
 #include "drive.h"
 #include "envrnmnt.h"
-#include "exprnpsr.h"
 #include "inscom.h"
 #include "insfun.h"
 #include "insmngr.h"
@@ -94,6 +93,7 @@
 #endif
 
 #include "constrct.h"
+#include "exprnpsr.h"
 #include "objrtmch.h"
 #include "objrtgen.h"
 #include "objrtfnx.h"
