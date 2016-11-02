@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/25/16            */
+   /*             CLIPS Version 6.40  11/01/16            */
    /*                                                     */
    /*          DEFTEMPLATE FUNCTION HEADER FILE           */
    /*******************************************************/
@@ -78,8 +78,8 @@
 
 #include "expressn.h"
 #include "factmngr.h"
-#include "scanner.h"
 #include "symbol.h"
+#include "reorder.h"
 #include "tmpltdef.h"
 
    bool                           UpdateModifyDuplicate(Environment *,struct expr *,const char *,void *);

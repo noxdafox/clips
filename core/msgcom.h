@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/25/16            */
+   /*             CLIPS Version 6.40  11/01/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -68,8 +68,8 @@
 
 struct messageHandlerData
   {
-   ENTITY_RECORD HandlerGetInfo;
-   ENTITY_RECORD HandlerPutInfo;
+   EntityRecord HandlerGetInfo;
+   EntityRecord HandlerPutInfo;
    CLIPSLexeme *INIT_SYMBOL;
    CLIPSLexeme *DELETE_SYMBOL;
    CLIPSLexeme *CREATE_SYMBOL;

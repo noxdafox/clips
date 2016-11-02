@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/25/16            */
+   /*             CLIPS Version 6.40  11/01/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -68,16 +68,13 @@ typedef struct defgeneric Defgeneric;
 
 #include <stdio.h>
 
+#include "entities.h"
 #include "conscomp.h"
 #include "constrct.h"
 #include "expressn.h"
 #include "evaluatn.h"
 #include "moduldef.h"
 #include "symbol.h"
-
-#if OBJECT_SYSTEM
-#include "object.h"
-#endif
 
 struct defgenericModule
   {
@@ -122,7 +119,7 @@ struct defgenericData
   {
    Construct *DefgenericConstruct;
    int DefgenericModuleIndex;
-   ENTITY_RECORD GenericEntityRecord;
+   EntityRecord GenericEntityRecord;
 #if DEBUGGING_FUNCTIONS
    bool WatchGenerics;
    bool WatchMethods;
@@ -135,9 +132,6 @@ struct defgenericData
 #endif
 #if CONSTRUCT_COMPILER && (! RUN_TIME)
    struct CodeGeneratorItem *DefgenericCodeItem;
-#endif
-#if (! BLOAD_ONLY) && (! RUN_TIME)
-   struct token GenericInputToken;
 #endif
   };
 

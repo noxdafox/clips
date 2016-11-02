@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  11/01/16             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -54,6 +54,7 @@
 #include "memalloc.h"
 #include "insfun.h"
 #include "objrtmch.h"
+#include "pattern.h"
 #include "reteutil.h"
 #include "rulebin.h"
 

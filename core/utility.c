@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/01/16             */
+   /*            CLIPS Version 6.40  11/01/16             */
    /*                                                     */
    /*                   UTILITY MODULE                    */
    /*******************************************************/
@@ -79,10 +79,12 @@
 #include "commline.h"
 #include "envrnmnt.h"
 #include "evaluatn.h"
+#include "factmngr.h"
 #include "facthsh.h"
 #include "memalloc.h"
 #include "multifld.h"
 #include "prntutil.h"
+#include "symbol.h"
 #include "sysdep.h"
 
 #include "utility.h"

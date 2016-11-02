@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  11/01/16             */
    /*                                                     */
    /*                OBJECT MESSAGE COMMANDS              */
    /*******************************************************/
@@ -146,7 +146,7 @@
 void SetupMessageHandlers(
   Environment *theEnv)
   {
-   ENTITY_RECORD handlerGetInfo = { "HANDLER_GET", HANDLER_GET,0,1,1,
+   EntityRecord handlerGetInfo = { "HANDLER_GET", HANDLER_GET,0,1,1,
                                         PrintHandlerSlotGetFunction,
                                         PrintHandlerSlotGetFunction,NULL,
                                         HandlerSlotGetFunction,

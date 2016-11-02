@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/18/16             */
+   /*            CLIPS Version 6.40  11/01/16             */
    /*                                                     */
    /*                  EXPRESSION MODULE                  */
    /*******************************************************/
@@ -468,4 +468,29 @@ long HashedExpressionIndex(
   }
 
 #endif /* (BLOAD_AND_BSAVE || BLOAD_ONLY || BLOAD || CONSTRUCT_COMPILER) && (! RUN_TIME) */
+
+/********************************************************/
+/* EnvSetSequenceOperatorRecognition: C access routine  */
+/*   for the set-sequence-operator-recognition function */
+/********************************************************/
+bool EnvSetSequenceOperatorRecognition(
+  Environment *theEnv,
+  bool value)
+  {
+   bool ov;
+
+   ov = ExpressionData(theEnv)->SequenceOpMode;
+   ExpressionData(theEnv)->SequenceOpMode = value;
+   return ov;
+  }
+
+/********************************************************/
+/* EnvGetSequenceOperatorRecognition: C access routine  */
+/*   for the Get-sequence-operator-recognition function */
+/********************************************************/
+bool EnvGetSequenceOperatorRecognition(
+  Environment *theEnv)
+  {
+   return ExpressionData(theEnv)->SequenceOpMode;
+  }
 

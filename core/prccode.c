@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/01/16             */
+   /*            CLIPS Version 6.40  11/01/16             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -144,7 +144,7 @@ typedef struct
 void InstallProcedurePrimitives(
   Environment *theEnv)
   {
-   ENTITY_RECORD procParameterInfo = { "PROC_PARAM", PROC_PARAM,0,1,0,NULL,NULL,NULL,
+   EntityRecord procParameterInfo = { "PROC_PARAM", PROC_PARAM,0,1,0,NULL,NULL,NULL,
                                        (EntityEvaluationFunction *) RtnProcParam,
                                        NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL },
                      procWildInfo =  { "PROC_WILD_PARAM", PROC_WILD_PARAM,0,1,0,NULL,NULL,NULL,

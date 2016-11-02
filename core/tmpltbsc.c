@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  11/01/16             */
    /*                                                     */
    /*          DEFTEMPLATE BASIC COMMANDS MODULE          */
    /*******************************************************/
@@ -69,6 +69,7 @@
 #include "extnfunc.h"
 #include "factrhs.h"
 #include "memalloc.h"
+#include "multifld.h"
 #include "router.h"
 #include "scanner.h"
 #if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE

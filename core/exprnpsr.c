@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/18/16             */
+   /*            CLIPS Version 6.40  11/01/16             */
    /*                                                     */
    /*              EXPRESSION PARSER MODULE               */
    /*******************************************************/
@@ -71,6 +71,7 @@
 #include "constant.h"
 #include "cstrnchk.h"
 #include "envrnmnt.h"
+#include "expressn.h"
 #include "memalloc.h"
 #include "modulutl.h"
 #include "pprint.h"
@@ -425,9 +426,9 @@ bool ReplaceSequenceExpansionOps(
 void PushRtnBrkContexts(
   Environment *theEnv)
   {
-   SAVED_CONTEXTS *svtmp;
+   SavedContexts *svtmp;
 
-   svtmp = get_struct(theEnv,saved_contexts);
+   svtmp = get_struct(theEnv,savedContexts);
    svtmp->rtn = ExpressionData(theEnv)->ReturnContext;
    svtmp->brk = ExpressionData(theEnv)->BreakContext;
    svtmp->nxt = ExpressionData(theEnv)->svContexts;
@@ -441,13 +442,13 @@ void PushRtnBrkContexts(
 void PopRtnBrkContexts(
   Environment *theEnv)
   {
-   SAVED_CONTEXTS *svtmp;
+   SavedContexts *svtmp;
 
    ExpressionData(theEnv)->ReturnContext = ExpressionData(theEnv)->svContexts->rtn;
    ExpressionData(theEnv)->BreakContext = ExpressionData(theEnv)->svContexts->brk;
    svtmp = ExpressionData(theEnv)->svContexts;
    ExpressionData(theEnv)->svContexts = ExpressionData(theEnv)->svContexts->nxt;
-   rtn_struct(theEnv,saved_contexts,svtmp);
+   rtn_struct(theEnv,savedContexts,svtmp);
   }
   
 #if (! RUN_TIME)
@@ -968,31 +969,6 @@ void PopulateRestriction(
 
     *restriction = defaultRestriction;
    }
-
-/********************************************************/
-/* EnvSetSequenceOperatorRecognition: C access routine  */
-/*   for the set-sequence-operator-recognition function */
-/********************************************************/
-bool EnvSetSequenceOperatorRecognition(
-  Environment *theEnv,
-  bool value)
-  {
-   bool ov;
-
-   ov = ExpressionData(theEnv)->SequenceOpMode;
-   ExpressionData(theEnv)->SequenceOpMode = value;
-   return ov;
-  }
-
-/********************************************************/
-/* EnvGetSequenceOperatorRecognition: C access routine  */
-/*   for the Get-sequence-operator-recognition function */
-/********************************************************/
-bool EnvGetSequenceOperatorRecognition(
-  Environment *theEnv)
-  {
-   return ExpressionData(theEnv)->SequenceOpMode;
-  }
 
 /*******************************************/
 /* ParseConstantArguments: Parses a string */

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  11/01/16             */
    /*                                                     */
    /*                FACT BSAVE/BLOAD MODULE              */
    /*******************************************************/
@@ -40,8 +40,10 @@
 #include "bload.h"
 #include "bsave.h"
 #include "envrnmnt.h"
+#include "factmngr.h"
 #include "memalloc.h"
 #include "moduldef.h"
+#include "pattern.h"
 #include "reteutil.h"
 #include "rulebin.h"
 #include "tmpltdef.h"

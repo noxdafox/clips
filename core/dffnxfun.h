@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/25/16            */
+   /*             CLIPS Version 6.40  11/01/16            */
    /*                                                     */
    /*              DEFFUNCTION HEADER FILE                */
    /*******************************************************/
@@ -72,12 +72,10 @@
 typedef struct deffunction Deffunction;
 typedef struct deffunctionModuleData DeffunctionModuleData;
 
-#include "conscomp.h"
-#include "cstrccom.h"
-#include "evaluatn.h"
-#include "expressn.h"
+#include "entities.h"
 #include "moduldef.h"
-#include "symbol.h"
+#include "constrct.h"
+#include "evaluatn.h"
 
 struct deffunctionModuleData
   {
@@ -102,15 +100,12 @@ struct deffunctionData
   {
    Construct *DeffunctionConstruct;
    int DeffunctionModuleIndex;
-   ENTITY_RECORD DeffunctionEntityRecord;
+   EntityRecord DeffunctionEntityRecord;
 #if DEBUGGING_FUNCTIONS
    bool WatchDeffunctions;
 #endif
    struct CodeGeneratorItem *DeffunctionCodeItem;
    Deffunction *ExecutingDeffunction;
-#if (! BLOAD_ONLY) && (! RUN_TIME)
-   struct token DFInputToken;
-#endif
   };
 
 #define DeffunctionData(theEnv) ((struct deffunctionData *) GetEnvironmentData(theEnv,DEFFUNCTION_DATA))

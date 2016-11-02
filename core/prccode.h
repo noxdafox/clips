@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/25/16            */
+   /*             CLIPS Version 6.40  11/01/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -94,15 +94,15 @@ struct proceduralPrimitiveData
    UDFValue *WildcardValue;
    UDFValue *LocalVarArray;
    void (*ProcUnboundErrFunc)(Environment *);
-   ENTITY_RECORD ProcParameterInfo;
-   ENTITY_RECORD ProcWildInfo;
-   ENTITY_RECORD ProcGetInfo;
-   ENTITY_RECORD ProcBindInfo;
+   EntityRecord ProcParameterInfo;
+   EntityRecord ProcWildInfo;
+   EntityRecord ProcGetInfo;
+   EntityRecord ProcBindInfo;
 #if ! DEFFUNCTION_CONSTRUCT
-   ENTITY_RECORD DeffunctionEntityRecord;
+   EntityRecord DeffunctionEntityRecord;
 #endif
 #if ! DEFGENERIC_CONSTRUCT
-   ENTITY_RECORD GenericEntityRecord;
+   EntityRecord GenericEntityRecord;
 #endif
    int Oldindex;
   };

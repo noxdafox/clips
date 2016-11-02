@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  11/01/16             */
    /*                                                     */
    /*                  MATCH HEADER FILE                  */
    /*******************************************************/
@@ -34,41 +34,40 @@
 
 #define _H_match
 
-struct genericMatch;
-struct patternMatch;
+typedef struct genericMatch GenericMatch;
+typedef struct patternMatch PatternMatch;
 typedef struct partialMatch PartialMatch;
-struct alphaMatch;
-struct multifieldMarker;
+typedef struct alphaMatch AlphaMatch;
+typedef struct multifieldMarker MultifieldMarker;
 
-#include "evaluatn.h"
+#include "entities.h"
 #include "network.h"
-#include "pattern.h"
 
-/************************************************************/
-/* PATTERNMATCH STRUCTURE:                                  */
-/************************************************************/
+/****************/
+/* patternMatch */
+/****************/
 struct patternMatch
   {
-   struct patternMatch *next;
-   struct partialMatch *theMatch;
-   struct patternNodeHeader *matchingPattern;
+   PatternMatch *next;
+   PartialMatch *theMatch;
+   PatternNodeHeader *matchingPattern;
   };
 
-/**************************/
-/* genericMatch structure */
-/**************************/
+/****************/
+/* genericMatch */
+/****************/
 struct genericMatch
   {
    union
      {
       void *theValue;
-      struct alphaMatch *theMatch;
+      AlphaMatch *theMatch;
      } gm;
   };
 
-/************************************************************/
-/* PARTIALMATCH STRUCTURE:                                  */
-/************************************************************/
+/****************/
+/* partialMatch */
+/****************/
 struct partialMatch
   {
    unsigned int betaMemory  :  1;
@@ -79,38 +78,38 @@ struct partialMatch
    void *owner;
    void *marker;
    void *dependents;
-   struct partialMatch *nextInMemory;
-   struct partialMatch *prevInMemory;
-   struct partialMatch *children;
-   struct partialMatch *rightParent;
-   struct partialMatch *nextRightChild;
-   struct partialMatch *prevRightChild;
-   struct partialMatch *leftParent;
-   struct partialMatch *nextLeftChild;
-   struct partialMatch *prevLeftChild;
-   struct partialMatch *blockList;
-   struct partialMatch *nextBlocked;
-   struct partialMatch *prevBlocked;
-   struct genericMatch binds[1];
+   PartialMatch *nextInMemory;
+   PartialMatch *prevInMemory;
+   PartialMatch *children;
+   PartialMatch *rightParent;
+   PartialMatch *nextRightChild;
+   PartialMatch *prevRightChild;
+   PartialMatch *leftParent;
+   PartialMatch *nextLeftChild;
+   PartialMatch *prevLeftChild;
+   PartialMatch *blockList;
+   PartialMatch *nextBlocked;
+   PartialMatch *prevBlocked;
+   GenericMatch binds[1];
   };
 
-/************************************************************/
-/* ALPHAMATCH STRUCTURE:                                    */
-/************************************************************/
+/**************/
+/* alphaMatch */
+/**************/
 struct alphaMatch
   {
-   struct patternEntity *matchingItem;
-   struct multifieldMarker *markers;
-   struct alphaMatch *next;
+   PatternEntity *matchingItem;
+   MultifieldMarker *markers;
+   AlphaMatch *next;
    unsigned long bucket;
   };
 
-/************************************************************/
-/* MULTIFIELDMARKER STRUCTURE: Used in the pattern matching */
-/* process to mark the range of fields that the $? and      */
-/* $?variables match because a single pattern restriction   */
-/* may span zero or more fields..                           */
-/************************************************************/
+/******************************************************/
+/* multifieldMarker: Used in the pattern matching     */
+/*    process to mark the range of fields that the $? */
+/*    and $?variables match because a single pattern  */
+/*    restriction may span zero or more fields.       */
+/******************************************************/
 struct multifieldMarker
   {
    int whichField;
@@ -121,7 +120,7 @@ struct multifieldMarker
      } where;
     long startPosition;
     long endPosition;
-    struct multifieldMarker *next;
+    MultifieldMarker *next;
    };
 
 #define get_nth_pm_value(thePM,thePos) (thePM->binds[thePos].gm.theValue)

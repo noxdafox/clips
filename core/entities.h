@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  10/30/16            */
+   /*             CLIPS Version 6.40  11/01/16            */
    /*                                                     */
    /*                ENTITIES HEADER FILE                 */
    /*******************************************************/
@@ -46,6 +46,15 @@ typedef struct instance Instance;
 typedef struct expr Expression;
 typedef struct functionDefinition FunctionDefinition;
 typedef struct udfContext UDFContext;
+
+typedef struct entityRecord EntityRecord;
+
+typedef void EntityPrintFunction(Environment *,const char *,void *);
+typedef bool EntityEvaluationFunction(Environment *,void *,UDFValue *);
+typedef void EntityBusyCountFunction(Environment *,void *);
+
+typedef struct patternEntityRecord PatternEntityRecord;
+typedef struct patternEntity PatternEntity;
 
 /**************/
 /* typeHeader */
@@ -94,9 +103,9 @@ struct floatHashNode
    double contents;
   };
 
-/******************************/
-/* integerHashNode STRUCTURE: */
-/******************************/
+/*******************/
+/* integerHashNode */
+/*******************/
 struct integerHashNode
   {
    TypeHeader th;
@@ -227,6 +236,55 @@ struct udfContext
    int lastPosition;
    Expression *lastArg;
    UDFValue *returnValue;
+  };
+
+/****************/
+/* entityRecord */
+/****************/
+struct entityRecord
+  {
+   const char *name;
+   unsigned int type : 13;
+   unsigned int copyToEvaluate : 1;
+   unsigned int bitMap : 1;
+   unsigned int addsToRuleComplexity : 1;
+   EntityPrintFunction *shortPrintFunction;
+   EntityPrintFunction *longPrintFunction;
+   bool (*deleteFunction)(void *,void *);
+   EntityEvaluationFunction *evaluateFunction;
+   void *(*getNextFunction)(void *,void *);
+   EntityBusyCountFunction *decrementBusyCount;
+   EntityBusyCountFunction *incrementBusyCount;
+   void (*propagateDepth)(void *,void *);
+   void (*markNeeded)(void *,void *);
+   void (*install)(void *,void *);
+   void (*deinstall)(void *,void *);
+   struct userData *usrData;
+  };
+
+/***********************/
+/* patternEntityRecord */
+/***********************/
+struct patternEntityRecord
+  {
+   struct entityRecord base;
+   void (*decrementBasisCount)(Environment *,void *);
+   void (*incrementBasisCount)(Environment *,void *);
+   void (*matchFunction)(Environment *,void *);
+   bool (*synchronized)(Environment *,void *);
+   bool (*isDeleted)(Environment *,void *);
+  };
+
+/*****************/
+/* patternEntity */
+/*****************/
+struct patternEntity
+  {
+   TypeHeader th;
+   struct patternEntityRecord *theInfo;
+   void *dependents;
+   unsigned busyCount;
+   unsigned long long timeTag;
   };
 
 #endif /* _H_entities */

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/25/16            */
+   /*             CLIPS Version 6.40  11/01/16            */
    /*                                                     */
    /*               INSTANCE FUNCTIONS MODULE             */
    /*******************************************************/
@@ -76,10 +76,8 @@
 
 #define _H_insfun
 
-#include "evaluatn.h"
-#include "moduldef.h"
+#include "entities.h"
 #include "object.h"
-#include "pattern.h"
 
 typedef struct igarbage
   {

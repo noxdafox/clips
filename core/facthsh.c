@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  08/25/16             */
+   /*            CLIPS Version 6.40  11/01/16             */
    /*                                                     */
    /*                 FACT HASHING MODULE                 */
    /*******************************************************/
@@ -52,7 +52,9 @@
 
 #include "constant.h"
 #include "envrnmnt.h"
+#include "factmngr.h"
 #include "memalloc.h"
+#include "multifld.h"
 #include "router.h"
 #include "sysdep.h"
 

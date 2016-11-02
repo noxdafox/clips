@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  10/01/16            */
+   /*             CLIPS Version 6.40  11/01/16            */
    /*                                                     */
    /*                PATTERN HEADER FILE                  */
    /*******************************************************/
@@ -48,30 +48,13 @@
 
 #include <stdio.h>
 
-struct patternEntityRecord
-  {
-   struct entityRecord base;
-   void (*decrementBasisCount)(Environment *,void *);
-   void (*incrementBasisCount)(Environment *,void *);
-   void (*matchFunction)(Environment *,void *);
-   bool (*synchronized)(Environment *,void *);
-   bool (*isDeleted)(Environment *,void *);
-  };
+#include "evaluatn.h"
+#include "entities.h"
+
 
 #ifndef _H_symbol
 #include "symbol.h"
 #endif
-
-struct patternEntity
-  {
-   TypeHeader th;
-   struct patternEntityRecord *theInfo;
-   void *dependents;
-   unsigned busyCount;
-   unsigned long long timeTag;
-  };
-
-
 #ifndef _H_scanner
 #include "scanner.h"
 #endif

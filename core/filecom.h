@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/25/16            */
+   /*             CLIPS Version 6.40  11/01/16            */
    /*                                                     */
    /*              FILE COMMANDS HEADER FILE              */
    /*******************************************************/
@@ -60,7 +60,12 @@
 
 #define _H_filecom
 
-#include "evaluatn.h"
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "entities.h"
+
+typedef struct batchEntry BatchEntry;
 
 /***************/
 /* STRUCTURES  */
@@ -74,7 +79,7 @@ struct batchEntry
    const char *theString;
    const char *fileName;
    long lineNumber;
-   struct batchEntry *next;
+   BatchEntry *next;
   };
 
 /***************/
@@ -103,8 +108,8 @@ struct fileCommandData
    char *BatchBuffer;
    size_t BatchCurrentPosition;
    size_t BatchMaximumPosition;
-   struct batchEntry *TopOfBatchList;
-   struct batchEntry *BottomOfBatchList;
+   BatchEntry *TopOfBatchList;
+   BatchEntry *BottomOfBatchList;
    char *batchPriorParsingFile;
   };
 

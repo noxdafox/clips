@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  10/18/16            */
+   /*             CLIPS Version 6.40  11/01/16            */
    /*                                                     */
    /*            EXPRESSION PARSER HEADER FILE            */
    /*******************************************************/
@@ -56,13 +56,6 @@
 
 #define _H_exprnpsr
 
-typedef struct saved_contexts
-  {
-   bool rtn;
-   bool brk;
-   struct saved_contexts *nxt;
-  } SAVED_CONTEXTS;
-
 #include "extnfunc.h"
 #include "scanner.h"
 
@@ -77,8 +70,6 @@ typedef struct saved_contexts
    struct expr                   *ArgumentParse(Environment *,const char *,bool *);
    struct expr                   *ParseAtomOrExpression(Environment *,const char *,struct token *);
    Expression                    *ParseConstantArguments(Environment *,const char *,bool *);
-   bool                           EnvSetSequenceOperatorRecognition(Environment *,bool);
-   bool                           EnvGetSequenceOperatorRecognition(Environment *);
    struct expr                   *GroupActions(Environment *,const char *,struct token *,
                                                       bool,const char *,bool);
    struct expr                   *RemoveUnneededProgn(Environment *,struct expr *);

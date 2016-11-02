@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  08/25/16            */
+   /*             CLIPS Version 6.40  11/01/16            */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -60,12 +60,9 @@
 
 #define _H_genrccom
 
+#include "entities.h"
 #include "constrct.h"
-#include "cstrccom.h"
-#include "evaluatn.h"
 #include "genrcfun.h"
-#include "moduldef.h"
-#include "symbol.h"
 
    void                           SetupGenericFunctions(Environment *);
    Defgeneric                    *EnvFindDefgeneric(Environment *,const char *);

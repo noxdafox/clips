@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/18/16             */
+   /*            CLIPS Version 6.40  11/01/16             */
    /*                                                     */
    /*                FACT COMMANDS MODULE                 */
    /*******************************************************/
@@ -85,6 +85,7 @@
 #include "match.h"
 #include "memalloc.h"
 #include "modulutl.h"
+#include "multifld.h"
 #include "pprint.h"
 #include "prntutil.h"
 #include "router.h"

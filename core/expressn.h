@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  10/18/16            */
+   /*             CLIPS Version 6.40  11/01/16            */
    /*                                                     */
    /*               EXPRESSION HEADER FILE                */
    /*******************************************************/
@@ -48,7 +48,9 @@
 #define _H_expressn
 
 struct exprHashNode;
+typedef struct savedContexts SavedContexts;
 
+#include "entities.h"
 #include "exprnops.h"
 #include "constrct.h"
 
@@ -67,10 +69,10 @@ struct expr
        CLIPSInteger *integerValue;
        CLIPSBitMap *bitMapValue;
        ConstructHeader *constructValue;
-       struct functionDefinition *functionValue;
+       FunctionDefinition *functionValue;
       };
-    struct expr *argList;
-    struct expr *nextArg;
+    Expression *argList;
+    Expression *nextArg;
    };
 
 #define arg_list argList
@@ -80,10 +82,17 @@ typedef struct exprHashNode
   {
    unsigned hashval;
    unsigned count;
-   struct expr *exp;
+   Expression *exp;
    struct exprHashNode *next;
    long bsaveID;
   } EXPRESSION_HN;
+
+struct savedContexts
+  {
+   bool rtn;
+   bool brk;
+   struct savedContexts *nxt;
+  };
 
 #define EXPRESSION_HASH_SIZE 503
 
@@ -91,26 +100,22 @@ typedef struct exprHashNode
 /* ENVIRONMENT DATA */
 /********************/
 
-#ifndef _H_exprnpsr
-#include "exprnpsr.h"
-#endif
-
 #define EXPRESSION_DATA 45
 
 struct expressionData
   {
-   struct functionDefinition *PTR_AND;
-   struct functionDefinition *PTR_OR;
-   struct functionDefinition *PTR_EQ;
-   struct functionDefinition *PTR_NEQ;
-   struct functionDefinition *PTR_NOT;
+   FunctionDefinition *PTR_AND;
+   FunctionDefinition *PTR_OR;
+   FunctionDefinition *PTR_EQ;
+   FunctionDefinition *PTR_NEQ;
+   FunctionDefinition *PTR_NOT;
    EXPRESSION_HN **ExpressionHashTable;
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE)
    long NumberOfExpressions;
-   struct expr *ExpressionArray;
+   Expression *ExpressionArray;
    long int ExpressionCount;
 #endif
-   SAVED_CONTEXTS *svContexts;
+   SavedContexts *svContexts;
    bool ReturnContext;
    bool BreakContext;
    bool SequenceOpMode;
@@ -122,13 +127,15 @@ struct expressionData
 /* Global Functions */
 /********************/
 
-   void                           ReturnExpression(Environment *,struct expr *);
-   void                           ExpressionInstall(Environment *,struct expr *);
-   void                           ExpressionDeinstall(Environment *,struct expr *);
-   struct expr                   *PackExpression(Environment *,struct expr *);
-   void                           ReturnPackedExpression(Environment *,struct expr *);
+   void                           ReturnExpression(Environment *,Expression *);
+   void                           ExpressionInstall(Environment *,Expression *);
+   void                           ExpressionDeinstall(Environment *,Expression *);
+   Expression                    *PackExpression(Environment *,Expression *);
+   void                           ReturnPackedExpression(Environment *,Expression *);
    void                           InitExpressionData(Environment *);
    void                           InitExpressionPointers(Environment *);
+   bool                           EnvSetSequenceOperatorRecognition(Environment *,bool);
+   bool                           EnvGetSequenceOperatorRecognition(Environment *);
 #if (! BLOAD_ONLY) && (! RUN_TIME)
    Expression                    *AddHashedExpression(Environment *,Expression *);
 #endif

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  07/30/16             */
+   /*            CLIPS Version 6.40  11/01/16             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -123,7 +123,8 @@ bool ParseDeffunction(
    bool overwrite = false;
    short owMin = 0, owMax = 0;
    Deffunction *dptr;
-
+   struct token inputToken;
+   
    SetPPBufferStatus(theEnv,true);
 
    FlushPPBuffer(theEnv);
@@ -142,7 +143,7 @@ bool ParseDeffunction(
    /* Parse the name and comment fields of the deffunction. */
    /*=======================================================*/
 
-   deffunctionName = GetConstructNameAndComment(theEnv,readSource,&DeffunctionData(theEnv)->DFInputToken,"deffunction",
+   deffunctionName = GetConstructNameAndComment(theEnv,readSource,&inputToken,"deffunction",
                                                 (FindConstructFunction *) EnvFindDeffunctionInModule,
                                                 NULL,
                                                 "!",true,true,true,false);
@@ -157,7 +158,7 @@ bool ParseDeffunction(
    /* Parse the argument list. */
    /*==========================*/
 
-   parameterList = ParseProcParameters(theEnv,readSource,&DeffunctionData(theEnv)->DFInputToken,
+   parameterList = ParseProcParameters(theEnv,readSource,&inputToken,
                                        NULL,&wildcard,&min,&max,&deffunctionError,NULL);
    if (deffunctionError)
      { return true; }
@@ -197,14 +198,14 @@ bool ParseDeffunction(
 
    ExpressionData(theEnv)->ReturnContext = true;
    actions = ParseProcActions(theEnv,"deffunction",readSource,
-                              &DeffunctionData(theEnv)->DFInputToken,parameterList,wildcard,
+                              &inputToken,parameterList,wildcard,
                               NULL,NULL,&lvars,NULL);
 
    /*=============================================================*/
    /* Check for the closing right parenthesis of the deffunction. */
    /*=============================================================*/
 
-   if ((DeffunctionData(theEnv)->DFInputToken.tknType != RIGHT_PARENTHESIS_TOKEN) && /* DR0872 */
+   if ((inputToken.tknType != RIGHT_PARENTHESIS_TOKEN) && /* DR0872 */
        (actions != NULL))
      {
       SyntaxErrorMessage(theEnv,"deffunction");
@@ -272,7 +273,7 @@ bool ParseDeffunction(
 
    PPBackup(theEnv);
    PPBackup(theEnv);
-   SavePPBuffer(theEnv,DeffunctionData(theEnv)->DFInputToken.printForm);
+   SavePPBuffer(theEnv,inputToken.printForm);
    SavePPBuffer(theEnv,"\n");
 
    /*======================*/

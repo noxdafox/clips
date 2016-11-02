@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  10/01/16             */
+   /*            CLIPS Version 6.40  11/01/16             */
    /*                                                     */
    /*               CLASS INITIALIZATION MODULE           */
    /*******************************************************/
@@ -105,6 +105,7 @@
 #if RUN_TIME
 #include "insfun.h"
 #include "msgfun.h"
+#include "pattern.h"
 #endif
 
 #include "classini.h"
@@ -158,7 +159,7 @@
 void SetupObjectSystem(
   Environment *theEnv)
   {
-   ENTITY_RECORD defclassEntityRecord = { "DEFCLASS_PTR", DEFCLASS_PTR,1,0,0,
+   EntityRecord defclassEntityRecord = { "DEFCLASS_PTR", DEFCLASS_PTR,1,0,0,
                                               NULL,NULL,NULL,NULL,NULL,
                                               (EntityBusyCountFunction *) DecrementDefclassBusyCount,
                                               (EntityBusyCountFunction *) IncrementDefclassBusyCount,
