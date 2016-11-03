@@ -70,6 +70,6 @@ mdi_OnContextMenu(HWND hwnd, HWND hwndCtl, int xPos, int yPos, HMENU context);
 HWND mdi_Create(HWND hwnd, DWORD styles, unsigned classid,char *title,int,int,int,int);
 
 extern HWND MDIClientWnd;
-extern void *GlobalEnv;
+extern Environment *GlobalEnv;
 
 extern void ReportError(DWORD err);

@@ -168,7 +168,7 @@ struct factsData
    void                           FactDeinstall(Environment *,Fact *);
    Fact                          *EnvGetNextFact(Environment *,Fact *);
    Fact                          *GetNextFactInScope(Environment *,Fact *);
-   void                           EnvGetFactPPForm(Environment *,char *,size_t,Fact *);
+   void                           FactPPForm(Fact *,char *,size_t);
    bool                           EnvGetFactListChanged(Environment *);
    void                           EnvSetFactListChanged(Environment *,bool);
    unsigned long                  GetNumberOfFacts(Environment *);

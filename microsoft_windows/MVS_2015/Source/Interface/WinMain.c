@@ -45,11 +45,14 @@
 
 #include "setup.h"
 
+#include "envrnmnt.h"
 #include "commline.h"
 #include "engine.h"
 #include "filertr.h"
 #include "router.h"
 #include "sysdep.h"
+#include "envrnbld.h"
+#include "utility.h"
 
 #include "StdSDK.h"    
 #include "Initialization.h"  
@@ -73,14 +76,14 @@ void UserFunctions(void);
 /***************************************/
 
    static void                    SetUpRouters(void *);
-   static bool                    QueryInterfaceRouter(void *,const char *);
-   static int                     PrintInterfaceRouter(void *,const char *,const char *);
-   static int                     ExitInterfaceRouter(void *,int);
-   static int                     GetcInterfaceRouter(void *,const char *);
+   static bool                    QueryInterfaceRouter(Environment *,const char *);
+   static void                    PrintInterfaceRouter(Environment *,const char *,const char *);
+   static void                    ExitInterfaceRouter(Environment *,int);
+   static int                     GetcInterfaceRouter(Environment *,const char *);
    static int                     InterfaceEventFunction(void *);
    static void                    WinRunEvent(void *);
 
-   void                          *GlobalEnv;
+   Environment                   *GlobalEnv;
 
 /**************************************************/
 /* WinMain: Entry point for the application. This */
@@ -93,7 +96,7 @@ int WINAPI WinMain(
   LPSTR lpCmdLine, 
   int nCmdShow)
   {   
-   void *theEnv;
+   Environment *theEnv;
    HWND hEditWnd;
    
    /*=============================*/   
@@ -143,9 +146,7 @@ int WINAPI WinMain(
    /* the display to be cleared.         */
    /*====================================*/
   
-   EnvDefineFunction2(theEnv,"clear-window",'v',
-                      PTIEF ClearWindowCommand,
-                      "ClearWindowCommand", "00");
+   EnvAddUDF(theEnv,"clear-window","v",0,0,NULL,ClearWindowCommand,"ClearWindowCommand",NULL);
                       
    /*======================================*/
    /* Set the focus to the display window. */
@@ -204,20 +205,19 @@ static void SetUpRouters(
 /*   from the dialog window to make sure that     */
 /*   the user has an opportunity to save files.   */
 /**************************************************/
-static int ExitInterfaceRouter(
-  void *theEnv,
+static void ExitInterfaceRouter(
+  Environment *theEnv,
   int num)
   {   
   MSG msg;
-   if (num >= 0) return(TRUE);
+   if (num >= 0) return;
    
    //DoQuit();
    //AbortExit();
    //return(1);
    
    PostMessage(DialogWindow,WM_COMMAND,ID_APP_EXIT,0);
-   exitInstance(&msg);
-   return(FALSE); 
+   exitInstance(&msg); 
   }
 
 /**********************************************************/
@@ -225,7 +225,7 @@ static int ExitInterfaceRouter(
 /*   I/O directed to the display window.                  */
 /**********************************************************/
 static bool QueryInterfaceRouter(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName)
   {
    if ( (strcmp(logicalName,"stdout") == 0) ||
@@ -245,8 +245,8 @@ static bool QueryInterfaceRouter(
 /* PrintInterfaceRouter: Router function  */
 /*    which prints to the display window. */
 /******************************************/
-static int PrintInterfaceRouter(
-  void *theEnv,
+static void PrintInterfaceRouter(
+  Environment *theEnv,
   const char *logicalName,
   const char *str)
   {
@@ -257,8 +257,6 @@ static int PrintInterfaceRouter(
      { DisplayPrint(DialogWindow,str); }
    else
      { fprintf(fptr,"%s",str); }
-
-   return(TRUE);
   }
   
 /*******************************************/
@@ -267,7 +265,7 @@ static int PrintInterfaceRouter(
 /*   process other events.                 */
 /*******************************************/
 static int GetcInterfaceRouter(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName)
   { 
    FILE *fptr;

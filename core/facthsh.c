@@ -396,7 +396,7 @@ void ShowFactHashTableCommand(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   int i, count;
+   unsigned long i, count;
    struct factHashEntry *theEntry;
    char buffer[20];
 
@@ -409,7 +409,7 @@ void ShowFactHashTableCommand(
 
       if (count != 0)
         {
-         gensprintf(buffer,"%4d: %4d\n",i,count);
+         gensprintf(buffer,"%4lu: %4d\n",i,count);
          EnvPrintRouter(theEnv,WDISPLAY,buffer);
         }
      }

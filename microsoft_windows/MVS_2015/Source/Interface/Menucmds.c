@@ -33,9 +33,11 @@
 +------------------------*/
 
 #include "setup.h"
+#include "constant.h"
 #include "commline.h"
-#include "filecom.h"
+#include "fileutil.h"
 #include "router.h"
+#include "symbol.h"
 
 /*------------------------+
 | Interface Include Files |
@@ -64,7 +66,7 @@ void DoLoad(
    char Replace;
    int x;
    size_t size;
-   void *theEnv = GlobalEnv;
+   Environment *theEnv = GlobalEnv;
 
    File[0] = '\0';
    memset(&ofn,0,sizeof(OPENFILENAME));
@@ -220,7 +222,7 @@ void OpenDribbleFile(
    char Replace;
    int x;
    size_t size;
-   void *theEnv = GlobalEnv;
+   Environment *theEnv = GlobalEnv;
    HMENU hMenu = GetMenu(hMain);
 
    if (! EnvDribbleActive(theEnv))
@@ -306,7 +308,7 @@ void SaveBinaryFile(
    OPENFILENAME ofn;
    int x;
    size_t size;
-   void *theEnv = GlobalEnv;
+   Environment *theEnv = GlobalEnv;
 
    File[0] = '\0';
    memset ( &ofn,0, sizeof (OPENFILENAME));

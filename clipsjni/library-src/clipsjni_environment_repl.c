@@ -222,7 +222,7 @@ JNIEXPORT jlong JNICALL Java_net_sf_clipsrules_jni_Environment_setInputBufferCou
 
    rv = RouterData(JLongToPointer(clipsEnv))->CommandBufferInputCount;
    
-   RouterData(JLongToPointer(clipsEnv))->CommandBufferInputCount = theValue;
+   RouterData(JLongToPointer(clipsEnv))->CommandBufferInputCount = (size_t) theValue;
 
    SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
 

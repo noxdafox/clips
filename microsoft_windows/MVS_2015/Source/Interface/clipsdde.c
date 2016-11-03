@@ -35,14 +35,19 @@
 | CLIPS 6.0 Include Files |
 +------------------------*/
 #include "setup.h"
-#include "clips.h"
+#include "envrnmnt.h"
+#include "constant.h"
+#include "entities.h"
+#include "evaluatn.h"
 #include "router.h"
 #include "commline.h"
 #include "memalloc.h"
-#include "filecom.h"
+#include "fileutil.h"
+#include "multifld.h"
 #include "strngrtr.h"
 #include "prntutil.h"
 #include "cstrcpsr.h"
+#include "strngfun.h"
 
 /*------------------------+
 | Interface Include Files |
@@ -65,7 +70,7 @@ HSZ   hszCommand  = NULL;
 HSZ   hszResult   = NULL;
 HCONV hConvApp    = NULL;
 DWORD idInst      = 0;
-DATA_OBJECT DDE_RV;
+CLIPSValue DDE_RV;
 
 /*************************************************************
 * DDECallBack : This function is an application-defined dynamic
@@ -90,7 +95,7 @@ HDDEDATA CALLBACK DDECallBack(
    char *TheData;
    char *Data;
    const char *theString;
-   void *theEnv = GlobalEnv;
+   Environment *theEnv = GlobalEnv;
    
    /* 
    char theBuffer[100];
@@ -131,7 +136,8 @@ HDDEDATA CALLBACK DDECallBack(
         pszTopicName = (PSTR) LocalAlloc(LPTR, (UINT) cb); 
         DdeQueryString(idInst,hsz2, pszTopicName,cb,CP_WINANSI); 
 */
-        DDE_RV.type = RVOID;
+        DDE_RV.voidValue = VoidConstant(theEnv);
+
         if (hsz2 != hszService)
           { return ((HDDEDATA) FALSE); }
           
@@ -153,7 +159,10 @@ HDDEDATA CALLBACK DDECallBack(
 
         if (hsz1 == hszCommand)
           {
-           theString = DataObjectToString(GlobalEnv,&DDE_RV);
+           UDFValue converted;
+
+           CLIPSToUDFValue(&DDE_RV,&converted);
+           theString = DataObjectToString(GlobalEnv,&converted);
 
            hData = DdeCreateDataHandle (idInst,
                                         (unsigned char *) theString,
@@ -180,9 +189,13 @@ HDDEDATA CALLBACK DDECallBack(
         
         EnvEval(theEnv,TheData,&DDE_RV);
         
-        if (DDE_RV.type != RVOID)
+        if (DDE_RV.header->type != VOID_TYPE)
           {
-           PrintDataObject(GlobalEnv,"stdout",&DDE_RV);
+           UDFValue converted;
+
+           CLIPSToUDFValue(&DDE_RV,&converted);
+
+           PrintDataObject(GlobalEnv,"stdout",&converted);
            EnvPrintRouter(GlobalEnv,"stdout","\n");
           }
         

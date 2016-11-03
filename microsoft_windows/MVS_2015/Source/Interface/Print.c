@@ -394,7 +394,7 @@ static BOOL PrintIt(
                   if (count > (iLineNum + iLinesPerPage)) break;
                   if (count > iTotalLines) break;
                   
-                  (*theStatusData->getPPForm)(GlobalEnv,(char *) pstrBuffer,(unsigned) iCharsPerLine,valuePtr);
+                  (*theStatusData->getPPForm)(valuePtr,(char *) pstrBuffer,(unsigned) iCharsPerLine);
 
                   TextOut(PrintDialog.hDC,0,yChar * iLine,pstrBuffer,(int) strlen(pstrBuffer));
                   

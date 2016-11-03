@@ -23,18 +23,16 @@
 
 #define _H_status
 
-#include <stdbool.h>
-
 struct statusWindowData
   {
    char *baseName;
    int noLines;
    int lastLine;
    int lineSize;
-   void (*getPPForm)(void *,char *,size_t,void *);
+   void (*getPPForm)(void *,char *,size_t);
    void *(*getNextValue)(void *,void *);
-   bool (*getChanged)(void *);
-   void (*setChanged)(void *,bool);
+   bool (*getChanged)(Environment *);
+   void (*setChanged)(Environment *,bool);
    int (*getCount)(void *);
   };
 

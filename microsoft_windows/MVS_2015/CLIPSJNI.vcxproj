@@ -64,6 +64,7 @@
     <ClCompile Include="Source\CLIPS\drive.c" />
     <ClCompile Include="Source\CLIPS\emathfun.c" />
     <ClCompile Include="Source\CLIPS\engine.c" />
+    <ClCompile Include="Source\CLIPS\envrnbld.c" />
     <ClCompile Include="Source\CLIPS\envrnmnt.c" />
     <ClCompile Include="Source\CLIPS\evaluatn.c" />
     <ClCompile Include="Source\CLIPS\expressn.c" />
@@ -88,6 +89,7 @@
     <ClCompile Include="Source\CLIPS\factrhs.c" />
     <ClCompile Include="Source\CLIPS\filecom.c" />
     <ClCompile Include="Source\CLIPS\filertr.c" />
+    <ClCompile Include="Source\CLIPS\fileutil.c" />
     <ClCompile Include="Source\CLIPS\generate.c" />
     <ClCompile Include="Source\CLIPS\genrcbin.c" />
     <ClCompile Include="Source\CLIPS\genrccmp.c" />
@@ -182,7 +184,14 @@
     <ClCompile Include="Source\CLIPS\userfunctions.c" />
     <ClCompile Include="Source\CLIPS\utility.c" />
     <ClCompile Include="Source\CLIPS\watch.c" />
-    <ClCompile Include="Source\Integration\net_sf_clipsrules_jni_Environment.c" />
+    <ClCompile Include="Source\Integration\clipsjni_environment.c" />
+    <ClCompile Include="Source\Integration\clipsjni_environment_facts.c" />
+    <ClCompile Include="Source\Integration\clipsjni_environment_instances.c" />
+    <ClCompile Include="Source\Integration\clipsjni_environment_repl.c" />
+    <ClCompile Include="Source\Integration\clipsjni_environment_routers.c" />
+    <ClCompile Include="Source\Integration\clipsjni_environment_rules.c" />
+    <ClCompile Include="Source\Integration\clipsjni_glue.c" />
+    <ClCompile Include="Source\Integration\clipsjni_utilities.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\CLIPS\agenda.h" />
@@ -233,6 +242,8 @@
     <ClInclude Include="Source\CLIPS\drive.h" />
     <ClInclude Include="Source\CLIPS\emathfun.h" />
     <ClInclude Include="Source\CLIPS\engine.h" />
+    <ClInclude Include="Source\CLIPS\entities.h" />
+    <ClInclude Include="Source\CLIPS\envrnbld.h" />
     <ClInclude Include="Source\CLIPS\envrnmnt.h" />
     <ClInclude Include="Source\CLIPS\evaluatn.h" />
     <ClInclude Include="Source\CLIPS\expressn.h" />
@@ -257,6 +268,7 @@
     <ClInclude Include="Source\CLIPS\factrhs.h" />
     <ClInclude Include="Source\CLIPS\filecom.h" />
     <ClInclude Include="Source\CLIPS\filertr.h" />
+    <ClInclude Include="Source\CLIPS\fileutil.h" />
     <ClInclude Include="Source\CLIPS\generate.h" />
     <ClInclude Include="Source\CLIPS\genrcbin.h" />
     <ClInclude Include="Source\CLIPS\genrccmp.h" />
@@ -355,6 +367,9 @@
     <ClInclude Include="Source\CLIPS\usrsetup.h" />
     <ClInclude Include="Source\CLIPS\utility.h" />
     <ClInclude Include="Source\CLIPS\watch.h" />
+    <ClInclude Include="Source\Integration\clipsjni_data.h" />
+    <ClInclude Include="Source\Integration\clipsjni_glue.h" />
+    <ClInclude Include="Source\Integration\clipsjni_utilities.h" />
     <ClInclude Include="Source\Integration\net_sf_clipsrules_jni_Environment.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

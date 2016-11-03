@@ -113,6 +113,7 @@
 
 #if WIN_MVC
 #include <windows.h>
+#include <direct.h>
 #include <io.h>
 #include <fcntl.h>
 #include <signal.h>
@@ -514,10 +515,10 @@ int genchdir(
   const char *directory)
   {
 #if MAC_XCD || DARWIN || LINUX
-   return(chdir(directory));
+   return chdir(directory);
 #endif
 #if WIN_MVC
-   return(_chdir(directory));
+   return _chdir(directory);
 #endif
 
    return -1;

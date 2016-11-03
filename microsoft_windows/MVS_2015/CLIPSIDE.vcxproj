@@ -64,6 +64,7 @@
     <ClCompile Include="Source\CLIPS\drive.c" />
     <ClCompile Include="Source\CLIPS\emathfun.c" />
     <ClCompile Include="Source\CLIPS\engine.c" />
+    <ClCompile Include="Source\CLIPS\envrnbld.c" />
     <ClCompile Include="Source\CLIPS\envrnmnt.c" />
     <ClCompile Include="Source\CLIPS\evaluatn.c" />
     <ClCompile Include="Source\CLIPS\expressn.c" />
@@ -88,6 +89,7 @@
     <ClCompile Include="Source\CLIPS\factrhs.c" />
     <ClCompile Include="Source\CLIPS\filecom.c" />
     <ClCompile Include="Source\CLIPS\filertr.c" />
+    <ClCompile Include="Source\CLIPS\fileutil.c" />
     <ClCompile Include="Source\CLIPS\generate.c" />
     <ClCompile Include="Source\CLIPS\genrcbin.c" />
     <ClCompile Include="Source\CLIPS\genrccmp.c" />
@@ -252,6 +254,8 @@
     <ClInclude Include="Source\CLIPS\drive.h" />
     <ClInclude Include="Source\CLIPS\emathfun.h" />
     <ClInclude Include="Source\CLIPS\engine.h" />
+    <ClInclude Include="Source\CLIPS\entities.h" />
+    <ClInclude Include="Source\CLIPS\envrnbld.h" />
     <ClInclude Include="Source\CLIPS\envrnmnt.h" />
     <ClInclude Include="Source\CLIPS\evaluatn.h" />
     <ClInclude Include="Source\CLIPS\expressn.h" />
@@ -276,6 +280,7 @@
     <ClInclude Include="Source\CLIPS\factrhs.h" />
     <ClInclude Include="Source\CLIPS\filecom.h" />
     <ClInclude Include="Source\CLIPS\filertr.h" />
+    <ClInclude Include="Source\CLIPS\fileutil.h" />
     <ClInclude Include="Source\CLIPS\generate.h" />
     <ClInclude Include="Source\CLIPS\genrcbin.h" />
     <ClInclude Include="Source\CLIPS\genrccmp.h" />
@@ -527,6 +532,7 @@
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <CompileAs>Default</CompileAs>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -571,6 +577,7 @@
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <CompileAs>Default</CompileAs>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -611,6 +618,7 @@
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -653,6 +661,7 @@
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>

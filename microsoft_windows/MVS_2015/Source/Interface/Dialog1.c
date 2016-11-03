@@ -36,15 +36,10 @@
 | CLIPS 6.0 Include Files |
 +------------------------*/
 #include "setup.h"
-#include "factcom.h"
 #include "facthsh.h"
 #include "crstrtgy.h"
 #include "globlcom.h"
-#include "incrrset.h"
 #include "watch.h"
-#include "exprnpsr.h"
-#include "bmathfun.h"
-
 
 /*------------------------+
 | Interface Include Files |
@@ -84,7 +79,7 @@ INT_PTR CALLBACK ExecDlg(
   LPARAM lParam)
   {   
    WPARAM item;
-   void *theEnv = GlobalEnv;
+   Environment *theEnv = GlobalEnv;
    unsigned value;
    char Msg[40];
    
@@ -175,17 +170,12 @@ INT_PTR CALLBACK ExecDlg(
         /* Initalize Other Check Boxes. */
         /*==============================*/
         
-        SetCheckBox(hDlg,IDC_EXE_STATIC,EnvGetStaticConstraintChecking(theEnv));
         SetCheckBox(hDlg,IDC_EXE_DYNAMIC,EnvGetDynamicConstraintChecking(theEnv));
-        SetCheckBox(hDlg,IDC_EXE_AUTO,EnvGetAutoFloatDividend(theEnv));
 #if DEFGLOBAL_CONSTRUCT
         SetCheckBox(hDlg,IDC_EXE_GLOBAL,EnvGetResetGlobals(theEnv));
 #endif
 #if DEFTEMPLATE_CONSTRUCT
         SetCheckBox(hDlg,IDC_EXE_FACT,EnvGetFactDuplication(theEnv));
-#endif
-#if INCREMENTAL_RESET & (! RUN_TIME)
-        SetCheckBox(hDlg,IDC_EXE_RESET,EnvGetIncrementalReset(theEnv));
 #endif
 #if (!RUN_TIME)
         SetCheckBox(hDlg,IDC_EXE_SEQUENCE,EnvGetSequenceOperatorRecognition(theEnv));
@@ -238,9 +228,7 @@ INT_PTR CALLBACK ExecDlg(
              /* Decode Other Check Boxes */
              /*==========================*/
              
-             EnvSetStaticConstraintChecking(theEnv,(int) IsDlgButtonChecked(hDlg,IDC_EXE_STATIC));
              EnvSetDynamicConstraintChecking(theEnv,(int) IsDlgButtonChecked(hDlg,IDC_EXE_DYNAMIC));
-             EnvSetAutoFloatDividend(theEnv,(int) IsDlgButtonChecked(hDlg, IDC_EXE_AUTO));
 
 #if DEFGLOBAL_CONSTRUCT
              EnvSetResetGlobals(theEnv,(int) IsDlgButtonChecked(hDlg,IDC_EXE_GLOBAL));
@@ -266,12 +254,9 @@ INT_PTR CALLBACK ExecDlg(
           /* Toggle Check Boxes */
           /*====================*/
           
-          case IDC_EXE_RESET:
-          case IDC_EXE_STATIC:
           case IDC_EXE_DYNAMIC:
           case IDC_EXE_GLOBAL:
           case IDC_EXE_FACT:
-          case IDC_EXE_AUTO:
           case IDC_EXE_SEQUENCE:
             SetCheckBox(hDlg,(unsigned short) wParam,! IsDlgButtonChecked(hDlg,(int) wParam));
             return (TRUE);
@@ -362,7 +347,7 @@ INT_PTR CALLBACK WatchDlgProc(
   {  
    static int count = 0;
    WORD x;
-   void *theEnv = GlobalEnv;
+   Environment *theEnv = GlobalEnv;
    
    switch (message)
      {  

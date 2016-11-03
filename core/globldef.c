@@ -153,7 +153,7 @@ void InitializeDefglobals(
                    GetConstructModuleItem,
                    (GetNextConstructFunction *) EnvGetNextDefglobal,
                    SetNextConstruct,
-                   (IsConstructDeletableFunction *) EnvIsDefglobalDeletable,
+                   (IsConstructDeletableFunction *) DefglobalIsDeletable,
                    (DeleteConstructFunction *) Undefglobal,
                    (FreeConstructFunction *) ReturnDefglobal);
   }
@@ -309,11 +309,11 @@ Defglobal *EnvGetNextDefglobal(
    return (Defglobal *) GetNextConstructItem(theEnv,&defglobalPtr->header,DefglobalData(theEnv)->DefglobalModuleIndex);
   }
 
-/*********************************************************/
-/* EnvIsDefglobalDeletable: Returns true if a particular */
-/*   defglobal can be deleted, otherwise returns false.  */
-/*********************************************************/
-bool EnvIsDefglobalDeletable(
+/********************************************************/
+/* DefglobalIsDeletable: Returns true if a particular   */
+/*   defglobal can be deleted, otherwise returns false. */
+/********************************************************/
+bool DefglobalIsDeletable(
   Defglobal *theDefglobal)
   {
    Environment *theEnv = theDefglobal->header.env;
@@ -503,18 +503,19 @@ Defglobal *QFindDefglobal(
    return NULL;
   }
 
-/*********************************************************************/
-/* EnvGetDefglobalValueForm: Returns the pretty print representation */
-/*   of the current value of the specified defglobal. For example,   */
-/*   if the current value of ?*x* is 5, the string "?*x* = 5" would  */
-/*   be returned.                                                    */
-/*********************************************************************/
-void EnvGetDefglobalValueForm(
-  Environment *theEnv,
+/*******************************************************************/
+/* DefglobalValueForm: Returns the pretty print representation of  */
+/*   the current value of the specified defglobal. For example, if */
+/*   the current value of ?*x* is 5, the string "?*x* = 5" would   */
+/*   be returned.                                                  */
+/*******************************************************************/
+void DefglobalValueForm(
+  Defglobal *theGlobal,
   char *buffer,
-  size_t bufferLength,
-  Defglobal *theGlobal)
+  size_t bufferLength)
   {
+   Environment *theEnv = theGlobal->header.env;
+
    OpenStringDestination(theEnv,"GlobalValueForm",buffer,bufferLength);
    EnvPrintRouter(theEnv,"GlobalValueForm","?*");
    EnvPrintRouter(theEnv,"GlobalValueForm",theGlobal->header.name->contents);

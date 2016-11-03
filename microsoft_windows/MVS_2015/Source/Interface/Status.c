@@ -69,7 +69,7 @@
    static BOOL                    status_OnContextMenu(HWND,HWND,int,int);
    static void                    RedrawScreen(HWND,HDC);
    static void                    UpdateWnd(HWND);
-   static void                    GetFocusPPForm(void *,char *,size_t,void *);
+   static void                    GetFocusPPForm(struct focus *,char *,size_t);
    static int                     CountInstances(void *);
    static int                     CountDefglobals(void *);
    static int                     CountFocus(void *);
@@ -79,11 +79,11 @@
    static void                    UpdateStatusContent(HWND);
    static void                    SaveStatusWindow(HWND);
    static HWND                    statusWindow_New(HWND,char *,int,int,int,int,
-                                                   void (*)(void *,char *,size_t,void *),
+                                                   void (*)(void *,char *,size_t),
                                                    void *(*)(void *,void *),
-                                                   bool (*)(void *),
-                                                   void (*)(void *,bool),
-                                                   int (*)(void *));
+												               bool (*)(Environment *),
+                                                   void (*)(Environment *,bool),
+												               int (*)(void *));
   
 /****************************************/
 /* GLOBAL INTERNAL VARIABLE DEFINITIONS */
@@ -170,11 +170,11 @@ BOOL factsWindow_New(
       
    FactsWindow = statusWindow_New(hwnd,"Facts",xpos,ypos,
                                   wwidth,wheight,
-                                  EnvGetFactPPForm,
-								  GetNextFactInScope,
-								  EnvGetFactListChanged,
+                                  FactPPForm,
+								          GetNextFactInScope,
+								          EnvGetFactListChanged,
                                   EnvSetFactListChanged,
-								  CountFacts);
+								          CountFacts);
                                   
    if (FactsWindow == NULL)
      { return(FALSE); }
@@ -182,9 +182,9 @@ BOOL factsWindow_New(
    return(TRUE);    
   }
   
-/*********************************************************/
-/* agendaWindow_New:  */
-/*********************************************************/
+/*********************/
+/* agendaWindow_New: */
+/*********************/
 BOOL agendaWindow_New(
   HWND hwnd)
   {
@@ -200,11 +200,11 @@ BOOL agendaWindow_New(
    wheight = (int) (height * 0.33);
       
    AgendaWindow = statusWindow_New(hwnd,"Agenda",xpos,ypos,wwidth,wheight,
-                                   EnvGetActivationPPForm,
-								   EnvGetNextActivation,
-								   EnvGetAgendaChanged,
+                                   ActivationPPForm,
+								           EnvGetNextActivation,
+								           EnvGetAgendaChanged,
                                    EnvSetAgendaChanged,
-								   CountActivations);
+								           CountActivations);
                                   
    if (AgendaWindow == NULL)
      { return(FALSE); }
@@ -212,9 +212,9 @@ BOOL agendaWindow_New(
    return(TRUE);    
   }
 
-/*********************************************************/
-/* instancesWindow_New:  */
-/*********************************************************/
+/************************/
+/* instancesWindow_New: */
+/************************/
 BOOL instancesWindow_New(
   HWND hwnd)
   {
@@ -230,11 +230,11 @@ BOOL instancesWindow_New(
    wheight = (int) (height * 0.33) - 3;
       
    InstancesWindow = statusWindow_New(hwnd,"Instances",xpos,ypos,wwidth,wheight,
-                                      EnvGetInstancePPForm,
-									  GetNextInstanceInScope,
-									  EnvGetInstancesChanged,
+                                      InstancePPForm,
+									           GetNextInstanceInScope,
+									           EnvGetInstancesChanged,
                                       EnvSetInstancesChanged,
-									  CountInstances);
+									           CountInstances);
                                   
    if (InstancesWindow == NULL)
      { return(FALSE); }
@@ -260,11 +260,11 @@ BOOL globalsWindow_New(
    wheight = (int) (height * 0.33);
       
    GlobalsWindow = statusWindow_New(hwnd,"Globals",xpos,ypos,wwidth,wheight,
-                                    EnvGetDefglobalValueForm,
-									GetNextDefglobalInScope,
-									EnvGetGlobalsChanged,
+                                    DefglobalValueForm,
+									         GetNextDefglobalInScope,
+									         EnvGetGlobalsChanged,
                                     EnvSetGlobalsChanged,
-									CountDefglobals);
+									         CountDefglobals);
                                   
    if (GlobalsWindow == NULL)
      { return(FALSE); }
@@ -291,10 +291,10 @@ BOOL focusWindow_New(
 
    FocusWindow = statusWindow_New(hwnd,"Focus",xpos,ypos,wwidth,wheight,
                                   GetFocusPPForm,
-								  EnvGetNextFocus,
-								  EnvGetFocusChanged,
+								          EnvGetNextFocus,
+								          EnvGetFocusChanged,
                                   EnvSetFocusChanged,
-								  CountFocus);
+								          CountFocus);
                                   
    if (FocusWindow == NULL)
      { return(FALSE); }
@@ -369,9 +369,9 @@ void TileStatusWindows()
    MoveWindow(FocusWindow,xpos,ypos,wwidth,wheight,TRUE);
   }
   
-/*********************************************************/
-/* statusWindow_New:  */
-/*********************************************************/
+/*********************/
+/* statusWindow_New: */
+/*********************/
 static HWND statusWindow_New(
   HWND hwnd,
   char *baseName,
@@ -379,10 +379,10 @@ static HWND statusWindow_New(
   int ypos,
   int width,
   int height,
-  void (*getPPForm)(void *,char *,size_t,void *),
+  void (*getPPForm)(void *,char *,size_t),
   void *(*getNextValue)(void *,void *),
-  bool (*getChanged)(void *),
-  void (*setChanged)(void *,bool),
+  bool (*getChanged)(Environment *),
+  void (*setChanged)(Environment *,bool),
   int (*getCount)(void *))
   {
    HWND hwndChild;
@@ -777,7 +777,7 @@ static void RedrawScreen(
       do
         {  
          pos = GetScrollPos(hwnd,SB_HORZ);
-         (*theData->getPPForm)(GlobalEnv,Buffer,299,valuePtr);
+         (*theData->getPPForm)(valuePtr,Buffer,299);
          bufsize = lstrlen (Buffer);
          if (bufsize > sbmax) sbmax = bufsize;
          if (pos < bufsize)
@@ -802,13 +802,13 @@ static void RedrawScreen(
 /*   Names in printable form.        */
 /*************************************/
 static void GetFocusPPForm(
-  void *theEnv,
+  struct focus *theFocus,
   char *buffer,
-  size_t bufferLength,
-  void *vTheFocus)
+  size_t bufferLength)
   {  
-   struct focus *theFocus = (struct focus *) vTheFocus;
-   strncpy(buffer,EnvGetDefmoduleName(theEnv,theFocus->theModule),bufferLength);
+   Environment *theEnv = theFocus->theModule->header.env;
+
+   strncpy(buffer,DefmoduleName(theFocus->theModule),bufferLength);
   }
 
 /*************************************/
@@ -895,7 +895,7 @@ static int CountActivations(
 /**********************************************************/
 void UpdateStatus(void)
   {  
-   void *theEnv = GlobalEnv;
+   Environment *theEnv = GlobalEnv;
    static long lastModuleIndex = -1;
 
    if (lastModuleIndex != DefmoduleData(theEnv)->ModuleChangeIndex)
@@ -1003,7 +1003,7 @@ void UpdateWnd(
 static void UpdateStatusWndTitle(
   HWND hwnd)
   {  
-   void *theEnv = GlobalEnv;
+   Environment *theEnv = GlobalEnv;
    struct statusWindowData *theData;
    struct defmodule *theModule = (struct defmodule *) EnvGetCurrentModule(theEnv);
    char buffer[255];
@@ -1012,7 +1012,7 @@ static void UpdateStatusWndTitle(
    
    if (theData == NULL) return; 
    
-   sprintf(buffer,"%s (%s)",theData->baseName,EnvGetDefmoduleName(theEnv,theModule));
+   sprintf(buffer,"%s (%s)",theData->baseName,DefmoduleName(theModule));
    SetWindowText(hwnd,buffer);
   }
 
@@ -1095,7 +1095,7 @@ static void SaveStatusWindow(
         (valuePtr != NULL);
         valuePtr = (*theData->getNextValue)(GlobalEnv,valuePtr))
      {  
-      (*theData->getPPForm)(GlobalEnv,buffer,299,valuePtr);
+      (*theData->getPPForm)(valuePtr,buffer,299);
       fprintf(fp,"%s\n",buffer);
      }  
 

@@ -978,9 +978,9 @@ Instance *EnvGetNextInstanceInClassAndSubclasses(
   NOTES        : None
  ***************************************************/
 void InstancePPForm(
+  Instance *theInstance,
   char *buf,
-  size_t buflen,
-  Instance *theInstance)
+  size_t buflen)
   {
    const char *pbuf = "***InstancePPForm***";
    Environment *theEnv;

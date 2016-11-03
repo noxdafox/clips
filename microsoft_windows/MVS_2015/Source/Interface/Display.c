@@ -31,15 +31,16 @@
 #include <tchar.h>
 #include <windowsx.h>
 
+#include "setup.h"
+
+#include "envrnmnt.h"
+#include "argacces.h"
+#include "commline.h" 
+#include "fileutil.h"
+
 #include "mdi.h"
 #include "display.h"
 #include "Initialization.h"
-
-#include "setup.h"
-
-#include "argacces.h"
-#include "commline.h" 
-#include "filecom.h"
 
 #include "router.h"
 #include "resource.h"
@@ -1948,9 +1949,10 @@ static void SendToScreen(
 /*   for the clear-window command.        */
 /******************************************/
 void ClearWindowCommand(
-  void *theEnv)
+  Environment *theEnv,
+  UDFContext *context,
+  UDFValue *returnValue)
   {
-   if (EnvArgCountCheck(theEnv,"clear-window",EXACTLY,0) == -1) return;
    ClearDialogWnd();
   }
   
@@ -2582,8 +2584,8 @@ void StopWaitCursor()
 /*   history that can be invoked using the up/down arrow   */
 /*   keys.                                                 */
 /***********************************************************/
-int DisplayBeforeCommandExecution(
-  void *theEnv)
+bool DisplayBeforeCommandExecution(
+  Environment *theEnv)
   {
    struct displayWindowData *theData;
    char *theCommand;

@@ -331,12 +331,12 @@ void NewJavaAddress(
   UDFValue *rv)
   {
    jclass theClass, tempClass;
-   int i, numberOfArguments;
+   int numberOfArguments;
    JNIEnv *env;
    const char *className;
    char *classDescriptor;
    UDFValue theValue;
-   size_t length;
+   size_t i, length;
    jmethodID mid;
    jobjectArray constructorList, parameterList;
    jsize theSize, c; 
@@ -423,7 +423,7 @@ void NewJavaAddress(
    else
      {
       newArgs = (UDFValue *) genalloc(theEnv,sizeof(UDFValue) * (numberOfArguments - 2));
-      for (i = 0; i < numberOfArguments - 2; i++)
+      for (i = 0; i < (size_t) numberOfArguments - 2; i++)
         {
          UDFNthArgument(context,i+3,ANY_TYPE_BITS,&newArgs[i]);
          if (EnvGetEvaluationError(theEnv))
@@ -507,7 +507,7 @@ void NewJavaAddress(
             else if (strcmp(cStr,"int") == 0)  
               { 
                printf("p[%d] = %s\n",(int) p,cStr);
-               javaArgs[p].i = newArgs[p].integerValue->contents;
+               javaArgs[p].i = (jint) newArgs[p].integerValue->contents;
               }
             else
               { matches = false; }
@@ -780,7 +780,7 @@ bool CallJavaMethod(
                else if (strcmp(cStr,"int") == 0)  
                  { 
                   /* printf("p[%d] = %s\n",(int) p,cStr); */
-                  javaArgs[p].i = newArgs[p].integerValue->contents;
+                  javaArgs[p].i = (jint) newArgs[p].integerValue->contents;
                  }
                else
                  { matches = false; }

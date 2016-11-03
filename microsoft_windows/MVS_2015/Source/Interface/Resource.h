@@ -75,12 +75,9 @@
 
 #define IDC_EXE_SALIENCE        331
 #define IDC_EXE_STRATEGY        332
-#define IDC_EXE_STATIC          333
 #define IDC_EXE_DYNAMIC         334
 #define IDC_EXE_GLOBAL          335
 #define IDC_EXE_SEQUENCE        336
-#define IDC_EXE_RESET           337
-#define IDC_EXE_AUTO            338
 #define IDC_EXE_FACT            339
 
 #define IDC_WARN                301

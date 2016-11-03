@@ -403,9 +403,9 @@ int ActivationSetSalience(
 /*   print representation of an activation. */
 /********************************************/
 void ActivationPPForm(
+  Activation *theActivation,
   char *buffer,
-  size_t bufferLength,
-  Activation *theActivation)
+  size_t bufferLength)
   {
    Environment *theEnv = theActivation->theRule->header.env;
    

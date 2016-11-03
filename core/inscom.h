@@ -109,7 +109,7 @@ struct instanceData
    Instance                      *GetNextInstanceInScope(Environment *,Instance *);
    Instance                      *EnvGetNextInstanceInClass(Environment *,Defclass *,Instance *);
    Instance                      *EnvGetNextInstanceInClassAndSubclasses(Environment *,Defclass **,Instance *,UDFValue *);
-   void                           InstancePPForm(char *,size_t,Instance *);
+   void                           InstancePPForm(Instance *,char *,size_t);
    void                           ClassCommand(Environment *,UDFContext *,UDFValue *);
    void                           DeleteInstanceCommand(Environment *,UDFContext *,UDFValue *);
    void                           UnmakeInstanceCommand(Environment *,UDFContext *,UDFValue *);

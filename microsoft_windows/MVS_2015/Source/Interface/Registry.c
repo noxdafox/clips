@@ -31,7 +31,6 @@
 #include "agenda.h"
 #include "bmathfun.h"
 #include "crstrtgy.h"
-#include "exprnpsr.h"
 #include "facthsh.h"
 #include "globlcom.h"
 #include "incrrset.h"
@@ -140,7 +139,7 @@ void SaveWatchInformation()
    HKEY hKey;
    DWORD lpdwDisposition;
    struct WatchInformation watchInfo;
-   void *theEnv = GlobalEnv;
+   Environment *theEnv = GlobalEnv;
     
    if (RegCreateKeyEx(HKEY_CURRENT_USER,TEXT("Software\\CLIPS\\CLIPSWin"),0,"",0,
                       KEY_READ | KEY_WRITE,NULL,&hKey,&lpdwDisposition) != ERROR_SUCCESS)
@@ -187,12 +186,9 @@ void SaveExecutionInformation()
               
    executionInfo.salienceEvaluation = EnvGetSalienceEvaluation(GlobalEnv);
    executionInfo.strategy = EnvGetStrategy(GlobalEnv);
-   executionInfo.staticConstraintChecking = (boolean) EnvGetStaticConstraintChecking(GlobalEnv);
    executionInfo.dynamicConstraintChecking = (boolean) EnvGetDynamicConstraintChecking(GlobalEnv);
-   executionInfo.autoFloatDividend = (boolean) EnvGetAutoFloatDividend(GlobalEnv);
    executionInfo.resetGlobals = (boolean) EnvGetResetGlobals(GlobalEnv);
    executionInfo.factDuplication = (boolean) EnvGetFactDuplication(GlobalEnv);
-   executionInfo.incrementalReset = (boolean) EnvGetIncrementalReset(GlobalEnv);
    executionInfo.sequenceOperatorRecognition = (boolean) EnvGetSequenceOperatorRecognition(GlobalEnv);
 
    if (RegSetValueEx(hKey,"Execution",0,REG_BINARY,(BYTE *) &executionInfo,
@@ -323,12 +319,9 @@ static void RestoreExecutionInformation()
 
    EnvSetSalienceEvaluation(GlobalEnv,executionInfo.salienceEvaluation);
    EnvSetStrategy(GlobalEnv,executionInfo.strategy);
-   EnvSetStaticConstraintChecking(GlobalEnv,executionInfo.staticConstraintChecking);
    EnvSetDynamicConstraintChecking(GlobalEnv,executionInfo.dynamicConstraintChecking);
-   EnvSetAutoFloatDividend(GlobalEnv,executionInfo.autoFloatDividend);
    EnvSetResetGlobals(GlobalEnv,executionInfo.resetGlobals);
    EnvSetFactDuplication(GlobalEnv,executionInfo.factDuplication);
-   EnvSetIncrementalReset(GlobalEnv,executionInfo.incrementalReset);
    EnvSetSequenceOperatorRecognition(GlobalEnv,executionInfo.sequenceOperatorRecognition);
 
    RegCloseKey(hKey);

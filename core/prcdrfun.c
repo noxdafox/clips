@@ -284,7 +284,7 @@ void GetLoopCount(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   int depth;
+   long long depth;
    UDFValue theArg;
    LOOP_COUNTER_STACK *tmpCounter;
 

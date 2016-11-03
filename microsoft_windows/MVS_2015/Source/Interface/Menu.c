@@ -49,7 +49,7 @@
 #include "dffctdef.h"
 #include "dffnxfun.h"
 #include "engine.h"
-#include "filecom.h"
+#include "fileutil.h"
 #include "genrccom.h"
 #include "globldef.h"
 #include "router.h"
@@ -96,7 +96,7 @@ void DoExecutionChoice(
   WORD wParam)
   { 
    char buffer[20];
-   void *theEnv = GlobalEnv;
+   Environment *theEnv = GlobalEnv;
 
    switch (wParam)
      {   
@@ -403,7 +403,7 @@ void DoModuleChoice(
 void UpdateModuleMenu( 
   HMENU ModuleMenu)
   {  
-   void *theEnv = GlobalEnv;
+   Environment *theEnv = GlobalEnv;
    char moduleTitle[255];
    unsigned position;
    struct defmodule *theModule;
@@ -427,7 +427,7 @@ void UpdateModuleMenu(
         theModule != NULL;
         theModule = (struct defmodule *) EnvGetNextDefmodule(theEnv,theModule),position++)
      {  
-      strncpy ((char *)moduleTitle,EnvGetDefmoduleName(theEnv,theModule),255);
+      strncpy ((char *)moduleTitle,DefmoduleName(theModule),255);
       moduleTitle[254] = '\0';
       InsertMenu(ModuleMenu,(unsigned) GetMenuItemCount(ModuleMenu),MF_BYPOSITION|MF_STRING,position,moduleTitle);
       if (theModule == EnvGetCurrentModule(theEnv))
@@ -442,7 +442,7 @@ void UpdateModuleMenu(
 void UpdateMenu(
   HWND hwnd)
   {      
-   void *theEnv = GlobalEnv;
+   Environment *theEnv = GlobalEnv;
    HMENU hMenu = GetMenu(hwnd);
    static int value = 0;
    

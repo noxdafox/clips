@@ -259,7 +259,7 @@ void ConvertPrimitiveValueToDataObject(
       return;
      }
    
-   theType = (*env)->CallIntMethod(env,theValue,CLIPSJNIData(theEnv)->getCLIPSTypeValueMethod);
+   theType = (int) (*env)->CallIntMethod(env,theValue,CLIPSJNIData(theEnv)->getCLIPSTypeValueMethod);
 
    switch(theType)
      {

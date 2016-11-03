@@ -27,7 +27,6 @@
 #include <tchar.h>
 #include "MainFrameToolbar.h"   // For non-static function prototypes
 #include "resource.h"           // For resource identifiers
-#include "mdi.h"
 #include "text.h"
 #include "edit.h" 
 #include "clipsdde.h"
@@ -35,18 +34,20 @@
 #include "SearchDialog.h"
 #include "Text.h"
 
-#include "Initialization.h"
-#include "menucmds.h"
-#include "menu.h"
-#include "display.h"
-#include "dialog1.h"
-#include "dialog2.h"
-#include "status.h"
 #include "setup.h"
 
 #include "agenda.h"
 #include "commline.h"
 #include "router.h"
+
+#include "Initialization.h"
+#include "menucmds.h"
+#include "menu.h"
+#include "mdi.h"
+#include "display.h"
+#include "dialog1.h"
+#include "dialog2.h"
+#include "status.h"
 
 #include "Frame.h"
 

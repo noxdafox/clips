@@ -83,8 +83,8 @@ struct displayWindowData
    LOCALE void                           UpdateCursor(int); 
    LOCALE void                           StartWaitCursor(void);
    LOCALE void                           StopWaitCursor(void);
-   LOCALE int                            DisplayBeforeCommandExecution(void *);
-   LOCALE void                           ClearWindowCommand(void *);
+   LOCALE bool                           DisplayBeforeCommandExecution(Environment *);
+   LOCALE void                           ClearWindowCommand(Environment *,UDFContext *,UDFValue *);
    LOCALE void                           ClearCommandFromDisplay(HWND,void *);
    
 #ifndef _DISPLAY_SOURCE_

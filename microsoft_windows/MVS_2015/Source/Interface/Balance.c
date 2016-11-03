@@ -26,8 +26,10 @@
 #include "setup.h"
 
 #include "commline.h"
+#include "constant.h"
 #include "cstrcpsr.h"
-#include "filecom.h"
+#include "constrct.h"
+#include "fileutil.h"
 #include "router.h"
 #include "strngrtr.h"
 
@@ -290,7 +292,7 @@ void LoadBatchBufferSelection(
    size_t length;
    char *fullText, *tempText;
    size_t x, p;
-   void *theEnv = GlobalEnv;
+   Environment *theEnv = GlobalEnv;
 
    /*==============================*/
    /* Save the original selection. */
