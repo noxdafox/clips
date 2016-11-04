@@ -1,7 +1,7 @@
 JAVA_HOME = c:\Program Files\Java\jdk1.8.0_31
 JAVA_INCLUDE = $(JAVA_HOME)\include
 JAVA_LIB = $(JAVA_HOME)\lib
-	
+
 OBJS = agenda.obj analysis.obj argacces.obj bload.obj bmathfun.obj bsave.obj \
  	classcom.obj classexm.obj classfun.obj classinf.obj classini.obj \
  	classpsr.obj clsltpsr.obj commline.obj conscomp.obj constrct.obj \

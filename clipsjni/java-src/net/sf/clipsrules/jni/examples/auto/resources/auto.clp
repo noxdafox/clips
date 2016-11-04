@@ -177,6 +177,7 @@
    (printout t "nextLabel=" (find-text-for-id Next) crlf)
    (printout t "restartLabel=" (find-text-for-id Restart) crlf)
    (printout t "autoDemoLabel=" (find-text-for-id AutoDemo) crlf)
+   (assert (conclusion))
    (halt))
 
 ;;; GUI target (iOS and JNI)
@@ -215,6 +216,7 @@
                      (state ?state)
                      (valid-answers)
                      (display-answers)))
+   (assert (conclusion))
    (halt))
 
 ;;;****************
@@ -254,6 +256,7 @@
 
    (engine-starts yes)
    (not (runs-normally ?))
+   (not (conclusion))
    
    =>
 
@@ -270,6 +273,7 @@
 
    (engine-starts no)
    (not (engine-rotates ?))
+   (not (conclusion))
 
    =>
 
@@ -286,6 +290,7 @@
 
    (runs-normally no)
    (not (engine-sluggish ?))
+   (not (conclusion))
 
    =>
    (bind ?answers (create$ no yes))
@@ -301,6 +306,7 @@
 
    (runs-normally no)
    (not (engine-misfires ?))
+   (not (conclusion))
 
    =>
    
@@ -317,6 +323,7 @@
 
    (runs-normally no)
    (not (engine-knocks ?))
+   (not (conclusion))
 
    =>
    
@@ -333,6 +340,7 @@
 
    (runs-normally no)
    (not (engine-output-low ?))
+   (not (conclusion))
 
    =>
    
@@ -350,6 +358,7 @@
    (engine-starts no)
    (engine-rotates yes)
    (not (tank-has-gas ?))
+   (not (conclusion))
 
    =>
 
@@ -366,6 +375,7 @@
   
    (engine-rotates no)
    (not (battery-has-charge ?))
+   (not (conclusion))
 
    =>
    
@@ -384,6 +394,7 @@
             (engine-rotates yes))
        (engine-output-low yes))
    (not (point-surface-state ?))
+   (not (conclusion))
    
    =>
 
@@ -402,6 +413,7 @@
    (engine-rotates no)
    (battery-has-charge yes)
    (not (conductivity-test-positive ?))
+   (not (conclusion))
    
    =>
 
