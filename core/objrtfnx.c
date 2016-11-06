@@ -117,7 +117,7 @@
    static void                    GetObjectValueGeneral(Environment *,UDFValue *,Instance *,
                                                         struct multifieldMarker *,struct ObjectMatchVar1 *);
    static void                    GetObjectValueSimple(Environment *,UDFValue *,Instance *,struct ObjectMatchVar2 *);
-   static long                    CalculateSlotField(struct multifieldMarker *,INSTANCE_SLOT *,long,long *); /* 6.04 Bug Fix */
+   static long                    CalculateSlotField(struct multifieldMarker *,InstanceSlot *,long,long *); /* 6.04 Bug Fix */
    static void                    GetInsMultiSlotField(Field *,Instance *,unsigned,unsigned,unsigned);
    static void                    DeallocateObjectReteData(Environment *);
    static void                    DestroyObjectPatternNetwork(Environment *,OBJECT_PATTERN_NODE *);
@@ -677,7 +677,7 @@ static bool PNSimpleCompareFunction1(
   UDFValue *theResult)
   {
    struct ObjectCmpPNSingleSlotVars1 *hack;
-   INSTANCE_SLOT *is1,*is2;
+   InstanceSlot *is1,*is2;
    int rv;
 
    hack = (struct ObjectCmpPNSingleSlotVars1 *) ((CLIPSBitMap *) theValue)->contents;
@@ -728,7 +728,7 @@ static bool PNSimpleCompareFunction2(
    struct ObjectCmpPNSingleSlotVars2 *hack;
    int rv;
    Field f1;
-   INSTANCE_SLOT *is2;
+   InstanceSlot *is2;
 
    hack = (struct ObjectCmpPNSingleSlotVars2 *) ((CLIPSBitMap *) theValue)->contents;
    GetInsMultiSlotField(&f1,ObjectReteData(theEnv)->CurrentPatternObject,(unsigned) hack->firstSlot,
@@ -831,7 +831,7 @@ static bool JNSimpleCompareFunction1(
    struct multifieldMarker *theMarks;
    struct ObjectCmpJoinSingleSlotVars1 *hack;
    int rv;
-   INSTANCE_SLOT *is1,*is2;
+   InstanceSlot *is1,*is2;
 
    hack = (struct ObjectCmpJoinSingleSlotVars1 *) ((CLIPSBitMap *) theValue)->contents;
    GetPatternObjectAndMarks(theEnv,((int) hack->firstPattern),hack->firstPatternLHS,hack->firstPatternRHS,&ins1,&theMarks);
@@ -889,7 +889,7 @@ static bool JNSimpleCompareFunction2(
    struct ObjectCmpJoinSingleSlotVars2 *hack;
    int rv;
    Field f1;
-   INSTANCE_SLOT *is2;
+   InstanceSlot *is2;
 
    hack = (struct ObjectCmpJoinSingleSlotVars2 *) ((CLIPSBitMap *) theValue)->contents;
    GetPatternObjectAndMarks(theEnv,((int) hack->firstPattern),hack->firstPatternLHS,hack->firstPatternRHS,&ins1,&theMarks);
@@ -1047,7 +1047,7 @@ static void GetObjectValueGeneral(
   struct ObjectMatchVar1 *matchVar)
   {
    long field, extent; /* 6.04 Bug Fix */
-   INSTANCE_SLOT **insSlot,*basisSlot;
+   InstanceSlot **insSlot,*basisSlot;
 
    if (matchVar->objectAddress)
      {
@@ -1145,7 +1145,7 @@ static void GetObjectValueSimple(
   Instance *theInstance,
   struct ObjectMatchVar2 *matchVar)
   {
-   INSTANCE_SLOT **insSlot,*basisSlot;
+   InstanceSlot **insSlot,*basisSlot;
    Multifield *segmentPtr;
    Field *fieldPtr;
 
@@ -1220,7 +1220,7 @@ static void GetObjectValueSimple(
  ****************************************************/
 static long CalculateSlotField(
   struct multifieldMarker *theMarkers,
-  INSTANCE_SLOT *theSlot,
+  InstanceSlot *theSlot,
   long theIndex,
   long *extent)
   {
@@ -1280,7 +1280,7 @@ static void GetInsMultiSlotField(
   unsigned fromBeginning,
   unsigned offset)
   {
-   INSTANCE_SLOT * insSlot;
+   InstanceSlot * insSlot;
    Multifield *theSegment;
    Field *tmpField;
 

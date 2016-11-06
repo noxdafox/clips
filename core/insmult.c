@@ -80,9 +80,9 @@
 /***************************************/
 
    static Instance               *CheckMultifieldSlotInstance(UDFContext *);
-   static INSTANCE_SLOT          *CheckMultifieldSlotModify(Environment *,int,const char *,Instance *,
+   static InstanceSlot           *CheckMultifieldSlotModify(Environment *,int,const char *,Instance *,
                                                             Expression *,long *,long *,UDFValue *);
-   static void                    AssignSlotToDataObject(UDFValue *,INSTANCE_SLOT *);
+   static void                    AssignSlotToDataObject(UDFValue *,InstanceSlot *);
 
 /* =========================================
    *****************************************
@@ -132,7 +132,7 @@ void MVSlotReplaceCommand(
   {
    UDFValue newval,newseg,oldseg;
    Instance *ins;
-   INSTANCE_SLOT *sp;
+   InstanceSlot *sp;
    long rb,re;
    Expression arg;
 
@@ -172,7 +172,7 @@ void MVSlotInsertCommand(
   {
    UDFValue newval,newseg,oldseg;
    Instance *ins;
-   INSTANCE_SLOT *sp;
+   InstanceSlot *sp;
    long theIndex;
    Expression arg;
 
@@ -213,7 +213,7 @@ void MVSlotDeleteCommand(
   {
    UDFValue newseg,oldseg;
    Instance *ins;
-   INSTANCE_SLOT *sp;
+   InstanceSlot *sp;
    long rb,re;
    Expression arg;
 
@@ -249,7 +249,7 @@ void DirectMVReplaceCommand(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   INSTANCE_SLOT *sp;
+   InstanceSlot *sp;
    Instance *ins;
    long rb,re;
    UDFValue newval,newseg,oldseg;
@@ -295,7 +295,7 @@ void DirectMVInsertCommand(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   INSTANCE_SLOT *sp;
+   InstanceSlot *sp;
    Instance *ins;
    long theIndex;
    UDFValue newval,newseg,oldseg;
@@ -342,7 +342,7 @@ void DirectMVDeleteCommand(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   INSTANCE_SLOT *sp;
+   InstanceSlot *sp;
    Instance *ins;
    long rb,re;
    UDFValue newseg,oldseg;
@@ -447,7 +447,7 @@ static Instance *CheckMultifieldSlotInstance(
   NOTES        : Assume the argument chain is at least 2
                    expressions deep - slot, index, and optional values
  *********************************************************************/
-static INSTANCE_SLOT *CheckMultifieldSlotModify(
+static InstanceSlot *CheckMultifieldSlotModify(
   Environment *theEnv,
   int code,
   const char *func,
@@ -458,7 +458,7 @@ static INSTANCE_SLOT *CheckMultifieldSlotModify(
   UDFValue *newval)
   {
    UDFValue temp;
-   INSTANCE_SLOT *sp;
+   InstanceSlot *sp;
    int start;
 
    start = (args == GetFirstArgument()) ? 1 : 2;
@@ -530,7 +530,7 @@ static INSTANCE_SLOT *CheckMultifieldSlotModify(
  ***************************************************/
 static void AssignSlotToDataObject(
   UDFValue *theDataObject,
-  INSTANCE_SLOT *theSlot)
+  InstanceSlot *theSlot)
   {
    theDataObject->value = theSlot->value;
    theDataObject->begin = 0;
@@ -538,14 +538,3 @@ static void AssignSlotToDataObject(
   }
 
 #endif
-
-/***************************************************
-  NAME         :
-  DESCRIPTION  :
-  INPUTS       :
-  RETURNS      :
-  SIDE EFFECTS :
-  NOTES        :
- ***************************************************/
-
-

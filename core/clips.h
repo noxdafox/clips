@@ -122,6 +122,7 @@
 #include "inscom.h"
 #include "insfile.h"
 #include "insfun.h"
+#include "insmngr.h"
 #include "msgcom.h"
 #include "msgpass.h"
 #include "objrtmch.h"

@@ -771,7 +771,7 @@ static void ModifyMsgHandlerSupport(
    UDFValue *slotOverrides,*newval,temp,junk;
    Expression msgExp;
    Instance *ins;
-   INSTANCE_SLOT *insSlot;
+   InstanceSlot *insSlot;
 
    returnValue->value = FalseSymbol(theEnv);
    if (InstanceData(theEnv)->ObjectModDupMsgValid == false)
@@ -871,7 +871,7 @@ static void DuplicateMsgHandlerSupport(
    Expression *valArg,msgExp;
    long i;
    int oldMkInsMsgPass;
-   INSTANCE_SLOT *dstInsSlot;
+   InstanceSlot *dstInsSlot;
    UDFValue temp,junk,*newval;
    bool success;
 

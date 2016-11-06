@@ -94,7 +94,6 @@
 #include "factfun.h"
 #include "factmch.h"
 #include "factqury.h"
-#include "factmngr.h"
 #include "factrhs.h"
 #include "lgcldpnd.h"
 #include "memalloc.h"
@@ -2357,10 +2356,10 @@ bool FMPutSlot(
    return true;
   }
 
-/************/
-/* FMApply: */
-/************/
-Fact *FMApply(
+/*************/
+/* FMModify: */
+/*************/
+Fact *FMModify(
   FactModifier *theFM)
   {
    Environment *theEnv = theFM->fmEnv;

@@ -76,6 +76,7 @@
 #include "extnfunc.h"
 #include "insfun.h"
 #include "memalloc.h"
+#include "miscfun.h"
 #include "modulutl.h"
 #include "msgcom.h"
 #include "msgfun.h"
@@ -108,8 +109,11 @@
    static void                    InstallInstance(Environment *,Instance *,bool);
    static void                    BuildDefaultSlots(Environment *,bool);
    static bool                    CoreInitializeInstance(Environment *,Instance *,Expression *);
+   static bool                    CoreInitializeInstanceCV(Environment *,Instance *,CLIPSValue *);
    static bool                    InsertSlotOverrides(Environment *,Instance *,Expression *);
+   static bool                    InsertSlotOverridesCV(Environment *,Instance *,CLIPSValue *);
    static void                    EvaluateClassDefaults(Environment *,Instance *);
+   static bool                    IMModifySlots(Environment *,Instance *,CLIPSValue *);
 
 #if DEBUGGING_FUNCTIONS
    static void                    PrintInstanceWatch(Environment *,const char *,Instance *);
@@ -836,7 +840,7 @@ static void BuildDefaultSlots(
    unsigned i,j;
    unsigned scnt;
    unsigned lscnt;
-   INSTANCE_SLOT *dst = NULL,**adst;
+   InstanceSlot *dst = NULL,**adst;
    SlotDescriptor **src;
 
    scnt = InstanceData(theEnv)->CurrentInstance->cls->instanceSlotCount;
@@ -844,10 +848,10 @@ static void BuildDefaultSlots(
    if (scnt > 0)
      {
       InstanceData(theEnv)->CurrentInstance->slotAddresses = adst =
-         (INSTANCE_SLOT **) gm2(theEnv,(sizeof(INSTANCE_SLOT *) * scnt));
+         (InstanceSlot **) gm2(theEnv,(sizeof(InstanceSlot *) * scnt));
       if (lscnt != 0)
         InstanceData(theEnv)->CurrentInstance->slots = dst =
-           (INSTANCE_SLOT *) gm2(theEnv,(sizeof(INSTANCE_SLOT) * lscnt));
+           (InstanceSlot *) gm2(theEnv,(sizeof(InstanceSlot) * lscnt));
       src = InstanceData(theEnv)->CurrentInstance->cls->instanceTemplate;
 
       /* ==================================================
@@ -964,7 +968,80 @@ static bool CoreInitializeInstance(
      }
 
    ins->initializeInProgress = 0;
-   return((ins->initSlotsCalled == 0) ? false : true);
+   return (ins->initSlotsCalled == 0) ? false : true;
+  }
+
+/*******************************************************************
+  NAME         : CoreInitializeInstanceCV
+  DESCRIPTION  : Performs the core work for initializing an instance
+  INPUTS       : 1) The instance address
+                 2) Slot override CLIPSValues
+  RETURNS      : True if all OK, false otherwise
+  SIDE EFFECTS : EvaluationError set on errors - slots evaluated
+  NOTES        : None
+ *******************************************************************/
+static bool CoreInitializeInstanceCV(
+  Environment *theEnv,
+  Instance *ins,
+  CLIPSValue *overrides)
+  {
+   UDFValue temp;
+
+   if (ins->installed == 0)
+     {
+      PrintErrorID(theEnv,"INSMNGR",7,false);
+      EnvPrintRouter(theEnv,WERROR,"Instance ");
+      EnvPrintRouter(theEnv,WERROR,ins->name->contents);
+      EnvPrintRouter(theEnv,WERROR," is already being initialized.\n");
+      EnvSetEvaluationError(theEnv,true);
+      return false;
+     }
+     
+   /*==========================================================*/
+   /* Replace all default-slot values with any slot-overrides. */
+   /*==========================================================*/
+   
+   ins->busy++;
+   ins->installed = 0;
+   
+   /*===============================================*/
+   /* If the slots are initialized properly - the   */
+   /* initializeInProgress flag will be turned off. */
+   /*===============================================*/
+   
+   ins->initializeInProgress = 1;
+   ins->initSlotsCalled = 0;
+
+   if (InsertSlotOverridesCV(theEnv,ins,overrides) == false)
+      {
+       ins->installed = 1;
+       ins->busy--;
+       return false;
+      }
+
+   /*====================================================*/
+   /* Now that all the slot expressions are established, */
+   /* replace them  with their evaluation.               */
+   /*====================================================*/
+
+   if (InstanceData(theEnv)->MkInsMsgPass)
+     { DirectMessage(theEnv,MessageHandlerData(theEnv)->INIT_SYMBOL,ins,&temp,NULL); }
+   else
+     { EvaluateClassDefaults(theEnv,ins); }
+
+   ins->busy--;
+   ins->installed = 1;
+   if (EvaluationData(theEnv)->EvaluationError)
+     {
+      PrintErrorID(theEnv,"INSMNGR",8,false);
+      EnvPrintRouter(theEnv,WERROR,"An error occurred during the initialization of instance ");
+      EnvPrintRouter(theEnv,WERROR,ins->name->contents);
+      EnvPrintRouter(theEnv,WERROR,".\n");
+      return false;
+     }
+     
+   ins->initializeInProgress = 0;
+   return (ins->initSlotsCalled == 0) ? false : true;
   }
 
 /**********************************************************
@@ -984,7 +1061,7 @@ static bool InsertSlotOverrides(
   Instance *ins,
   Expression *slot_exp)
   {
-   INSTANCE_SLOT *slot;
+   InstanceSlot *slot;
    UDFValue temp, junk;
 
    EvaluationData(theEnv)->EvaluationError = false;
@@ -1036,6 +1113,46 @@ static bool InsertSlotOverrides(
    return true;
   }
 
+/**********************************************************
+  NAME         : InsertSlotOverridesCV
+  DESCRIPTION  : Replaces value-expression for a slot
+  INPUTS       : 1) The instance address
+                 2) The address of the beginning of the
+                    list of slot-expressions
+  RETURNS      : True if all okay, false otherwise
+  SIDE EFFECTS : Old slot expression deallocated
+  NOTES        : Assumes symbols not yet installed
+                 EVALUATES the slot-name expression but
+                    simply copies the slot value-expression
+ **********************************************************/
+static bool InsertSlotOverridesCV(
+  Environment *theEnv,
+  Instance *ins,
+  CLIPSValue *overrides)
+  {
+   int i;
+   InstanceSlot *slot;
+   UDFValue temp, junk;
+
+   EvaluationData(theEnv)->EvaluationError = false;
+
+   for (i = 0; i < ins->cls->slotCount; i++)
+     {
+      if (overrides[i].value == VoidConstant(theEnv)) continue;
+      
+      slot = ins->slotAddresses[i];
+      CLIPSToUDFValue(&overrides[i],&temp);
+      PutSlotValue(theEnv,ins,slot,&temp,&junk,"InstanceBuilder call");
+      
+      if (EvaluationData(theEnv)->EvaluationError)
+        { return false; }
+        
+      slot->override = true;
+     }
+     
+   return true;
+  }
+
 /*****************************************************************************
   NAME         : EvaluateClassDefaults
   DESCRIPTION  : Evaluates default slots only - slots that were specified
@@ -1052,7 +1169,7 @@ static void EvaluateClassDefaults(
   Environment *theEnv,
   Instance *ins)
   {
-   INSTANCE_SLOT *slot;
+   InstanceSlot *slot;
    UDFValue temp,junk;
    long i;
 
@@ -1133,6 +1250,727 @@ static void PrintInstanceWatch(
   }
 
 #endif
+
+/*****************************/
+/* EnvCreateInstanceBuilder: */
+/*****************************/
+InstanceBuilder *EnvCreateInstanceBuilder(
+  Environment *theEnv,
+  const char *defclassName)
+  {
+   InstanceBuilder *theIB;
+   Defclass *theDefclass;
+   int i;
+   
+   theDefclass = EnvFindDefclass(theEnv,defclassName);
+   if (theDefclass == NULL) return NULL;
+      
+   theIB = get_struct(theEnv,instanceBuilder);
+   if (theIB == NULL) return NULL;
+   
+   theIB->ibEnv = theEnv;
+   theIB->ibDefclass = theDefclass;
+      
+   theIB->ibValueArray = (CLIPSValue *) gm3(theEnv,sizeof(CLIPSValue) * theDefclass->slotCount);
+
+   for (i = 0; i < theDefclass->slotCount; i++)
+     { theIB->ibValueArray[i].voidValue = VoidConstant(theEnv); }
+
+   return theIB;
+  }
+
+/********************/
+/* IBPutSlotInteger */
+/********************/
+bool IBPutSlotInteger(
+  InstanceBuilder *theIB,
+  const char *slotName,
+  CLIPSInteger *slotValue)
+  {
+   CLIPSValue theValue;
+   
+   theValue.integerValue = slotValue;
+   return IBPutSlot(theIB,slotName,&theValue);
+  }
+
+/*******************/
+/* IBPutSlotLexeme */
+/*******************/
+bool IBPutSlotLexeme(
+  InstanceBuilder *theIB,
+  const char *slotName,
+  CLIPSLexeme *slotValue)
+  {
+   CLIPSValue theValue;
+   
+   theValue.lexemeValue = slotValue;
+   return IBPutSlot(theIB,slotName,&theValue);
+  }
+
+/******************/
+/* IBPutSlotFloat */
+/******************/
+bool IBPutSlotFloat(
+  InstanceBuilder *theIB,
+  const char *slotName,
+  CLIPSFloat *slotValue)
+  {
+   CLIPSValue theValue;
+   
+   theValue.floatValue = slotValue;
+   return IBPutSlot(theIB,slotName,&theValue);
+  }
+
+/*****************/
+/* IBPutSlotFact */
+/*****************/
+bool IBPutSlotFact(
+  InstanceBuilder *theIB,
+  const char *slotName,
+  Fact *slotValue)
+  {
+   CLIPSValue theValue;
+   
+   theValue.factValue = slotValue;
+   return IBPutSlot(theIB,slotName,&theValue);
+  }
+
+/*********************/
+/* IBPutSlotInstance */
+/*********************/
+bool IBPutSlotInstance(
+  InstanceBuilder *theIB,
+  const char *slotName,
+  Instance *slotValue)
+  {
+   CLIPSValue theValue;
+   
+   theValue.instanceValue = slotValue;
+   return IBPutSlot(theIB,slotName,&theValue);
+  }
+
+/****************************/
+/* IBPutSlotExternalAddress */
+/****************************/
+bool IBPutSlotExternalAddress(
+  InstanceBuilder *theIB,
+  const char *slotName,
+  CLIPSExternalAddress *slotValue)
+  {
+   CLIPSValue theValue;
+   
+   theValue.externalAddressValue = slotValue;
+   return IBPutSlot(theIB,slotName,&theValue);
+  }
+
+/***********************/
+/* IBPutSlotMultifield */
+/***********************/
+bool IBPutSlotMultifield(
+  InstanceBuilder *theIB,
+  const char *slotName,
+  Multifield *slotValue)
+  {
+   CLIPSValue theValue;
+   
+   theValue.multifieldValue = slotValue;
+   return IBPutSlot(theIB,slotName,&theValue);
+  }
+
+/**************/
+/* IBPutSlot: */
+/**************/
+bool IBPutSlot(
+  InstanceBuilder *theIB,
+  const char *slotName,
+  CLIPSValue *slotValue)
+  {
+   Environment *theEnv = theIB->ibEnv;
+   short whichSlot;
+   CLIPSValue oldValue;
+   int i;
+      
+   /*===================================*/
+   /* Make sure the slot name requested */
+   /* corresponds to a valid slot name. */
+   /*===================================*/
+
+   whichSlot = FindInstanceTemplateSlot(theEnv,theIB->ibDefclass,EnvCreateSymbol(theIB->ibEnv,slotName));
+   if (whichSlot == -1)
+     { return false; }
+     
+   /*===================================*/
+   /* Create the value array if needed. */
+   /*===================================*/
+     
+   if (theIB->ibValueArray == NULL)
+     {
+      theIB->ibValueArray = (CLIPSValue *) gm3(theIB->ibEnv,sizeof(CLIPSValue) * theIB->ibDefclass->slotCount);
+      for (i = 0; i < theIB->ibDefclass->slotCount; i++)
+        { theIB->ibValueArray[i].voidValue = theIB->ibEnv->VoidConstant; }
+     }
+
+   /*=====================*/
+   /* Set the slot value. */
+   /*=====================*/
+   
+   oldValue.value = theIB->ibValueArray[whichSlot].value;
+   
+   if (oldValue.header->type == MULTIFIELD_TYPE)
+     {
+      if (MultifieldsEqual(oldValue.multifieldValue,slotValue->multifieldValue))
+        { return true; }
+     }
+   else
+     {
+      if (oldValue.value == slotValue->value)
+        { return true; }
+     }
+   
+   CVAtomDeinstall(theEnv,oldValue.value);
+   
+   if (oldValue.header->type == MULTIFIELD_TYPE)
+     { ReturnMultifield(theEnv,oldValue.multifieldValue); }
+
+   if (slotValue->header->type == MULTIFIELD_TYPE)
+     { theIB->ibValueArray[whichSlot].multifieldValue = CopyMultifield(theEnv,slotValue->multifieldValue); }
+   else
+     { theIB->ibValueArray[whichSlot].value = slotValue->value; }
+      
+   CVAtomInstall(theEnv,theIB->ibValueArray[whichSlot].value);
+   
+   return true;
+  }
+
+/***********/
+/* IBMake: */
+/***********/
+Instance *IBMake(
+  InstanceBuilder *theIB,
+  const char *instanceName)
+  {
+   Environment *theEnv = theIB->ibEnv;
+   Instance *theInstance;
+   CLIPSLexeme *instanceLexeme;
+   UDFValue rv;
+   int i;
+
+   if (instanceName == NULL)
+     {
+      GensymStar(theIB->ibEnv,&rv);
+      instanceLexeme = rv.lexemeValue;
+     }
+   else
+     { instanceLexeme = EnvCreateInstanceName(theEnv,instanceName); }
+   
+   theInstance = BuildInstance(theEnv,instanceLexeme,theIB->ibDefclass,true);
+   if (theInstance == NULL) return NULL;
+   
+   if (CoreInitializeInstanceCV(theIB->ibEnv,theInstance,theIB->ibValueArray) == false)
+     {
+      QuashInstance(theIB->ibEnv,theInstance);
+      return NULL;
+     }
+ 
+   for (i = 0; i < theIB->ibDefclass->slotCount; i++)
+     {
+      if (theIB->ibValueArray[i].voidValue != VoidConstant(theEnv))
+        {
+         CVAtomDeinstall(theEnv,theIB->ibValueArray[i].value);
+
+         if (theIB->ibValueArray[i].header->type == MULTIFIELD_TYPE)
+           { ReturnMultifield(theEnv,theIB->ibValueArray[i].multifieldValue); }
+
+         theIB->ibValueArray[i].voidValue = VoidConstant(theEnv);
+        }
+     }
+
+   return theInstance;
+  }
+
+/**************/
+/* IBDispose: */
+/**************/
+void IBDispose(
+  InstanceBuilder *theIB)
+  {
+   Environment *theEnv = theIB->ibEnv;
+
+   IBAbort(theIB);
+   
+   if (theIB->ibValueArray != NULL)
+     { rm3(theEnv,theIB->ibValueArray,sizeof(CLIPSValue) * theIB->ibDefclass->slotCount); }
+   
+   rtn_struct(theEnv,instanceBuilder,theIB);
+  }
+
+/************/
+/* IBAbort: */
+/************/
+void IBAbort(
+  InstanceBuilder *theIB)
+  {
+   Environment *theEnv = theIB->ibEnv;
+   int i;
+   
+   for (i = 0; i < theIB->ibDefclass->slotCount; i++)
+     {
+      CVAtomDeinstall(theEnv,theIB->ibValueArray[i].value);
+      
+      if (theIB->ibValueArray[i].header->type == MULTIFIELD_TYPE)
+        { ReturnMultifield(theEnv,theIB->ibValueArray[i].multifieldValue); }
+        
+      theIB->ibValueArray[i].voidValue = VoidConstant(theEnv);
+     }
+  }
+  
+/*****************/
+/* IBSetDefclass */
+/*****************/
+bool IBSetDefclass(
+  InstanceBuilder *theIB,
+  const char *defclassName)
+  {
+   Defclass *theDefclass;
+   Environment *theEnv = theIB->ibEnv;
+   int i;
+   
+   IBAbort(theIB);
+   
+   theDefclass = EnvFindDefclass(theIB->ibEnv,defclassName);
+   
+   if (theDefclass == NULL) return false;
+
+   if (theIB->ibValueArray != NULL)
+     { rm3(theEnv,theIB->ibValueArray,sizeof(CLIPSValue) * theIB->ibDefclass->slotCount); }
+
+   theIB->ibDefclass = theDefclass;
+   
+   theIB->ibValueArray = (CLIPSValue *) gm3(theEnv,sizeof(CLIPSValue) * theDefclass->slotCount);
+
+   for (i = 0; i < theDefclass->slotCount; i++)
+     { theIB->ibValueArray[i].voidValue = VoidConstant(theEnv); }
+
+   return true;
+  }
+
+/******************************/
+/* EnvCreateInstanceModifier: */
+/******************************/
+InstanceModifier *EnvCreateInstanceModifier(
+  Environment *theEnv,
+  Instance *oldInstance)
+  {
+   InstanceModifier *theIM;
+   int i;
+
+   if (oldInstance->garbage) return NULL;
+   if (oldInstance->cls->slotCount == 0) return NULL;
+
+   theIM = get_struct(theEnv,instanceModifier);
+   if (theIM == NULL) return NULL;
+
+   theIM->imEnv = theEnv;
+   theIM->imOldInstance = oldInstance;
+
+   EnvIncrementInstanceCount(theEnv,oldInstance);
+
+   theIM->imValueArray = (CLIPSValue *) gm3(theEnv,sizeof(CLIPSValue) * oldInstance->cls->slotCount);
+
+   for (i = 0; i < oldInstance->cls->slotCount; i++)
+     { theIM->imValueArray[i].voidValue = VoidConstant(theEnv); }
+
+   theIM->changeMap = (char *) gm2(theEnv,CountToBitMapSize(oldInstance->cls->slotCount));
+   ClearBitString((void *) theIM->changeMap,CountToBitMapSize(oldInstance->cls->slotCount));
+
+   return theIM;
+  }
+
+/********************/
+/* IMPutSlotInteger */
+/********************/
+bool IMPutSlotInteger(
+  InstanceModifier *theFM,
+  const char *slotName,
+  CLIPSInteger *slotValue)
+  {
+   CLIPSValue theValue;
+   
+   theValue.integerValue = slotValue;
+   return IMPutSlot(theFM,slotName,&theValue);
+  }
+
+/*******************/
+/* IMPutSlotLexeme */
+/*******************/
+bool IMPutSlotLexeme(
+  InstanceModifier *theFM,
+  const char *slotName,
+  CLIPSLexeme *slotValue)
+  {
+   CLIPSValue theValue;
+   
+   theValue.lexemeValue = slotValue;
+   return IMPutSlot(theFM,slotName,&theValue);
+  }
+
+/******************/
+/* IMPutSlotFloat */
+/******************/
+bool IMPutSlotFloat(
+  InstanceModifier *theFM,
+  const char *slotName,
+  CLIPSFloat *slotValue)
+  {
+   CLIPSValue theValue;
+   
+   theValue.floatValue = slotValue;
+   return IMPutSlot(theFM,slotName,&theValue);
+  }
+
+/*****************/
+/* IMPutSlotFact */
+/*****************/
+bool IMPutSlotFact(
+  InstanceModifier *theFM,
+  const char *slotName,
+  Fact *slotValue)
+  {
+   CLIPSValue theValue;
+   
+   theValue.factValue = slotValue;
+   return IMPutSlot(theFM,slotName,&theValue);
+  }
+
+/*********************/
+/* IMPutSlotInstance */
+/*********************/
+bool IMPutSlotInstance(
+  InstanceModifier *theFM,
+  const char *slotName,
+  Instance *slotValue)
+  {
+   CLIPSValue theValue;
+   
+   theValue.instanceValue = slotValue;
+   return IMPutSlot(theFM,slotName,&theValue);
+  }
+
+/****************************/
+/* IMPutSlotExternalAddress */
+/****************************/
+bool IMPutSlotExternalAddress(
+  InstanceModifier *theFM,
+  const char *slotName,
+  CLIPSExternalAddress *slotValue)
+  {
+   CLIPSValue theValue;
+   
+   theValue.externalAddressValue = slotValue;
+   return IMPutSlot(theFM,slotName,&theValue);
+  }
+
+/***********************/
+/* IMPutSlotMultifield */
+/***********************/
+bool IMPutSlotMultifield(
+  InstanceModifier *theFM,
+  const char *slotName,
+  Multifield *slotValue)
+  {
+   CLIPSValue theValue;
+   
+   theValue.multifieldValue = slotValue;
+   return IMPutSlot(theFM,slotName,&theValue);
+  }
+
+/**************/
+/* IMPutSlot: */
+/**************/
+bool IMPutSlot(
+  InstanceModifier *theIM,
+  const char *slotName,
+  CLIPSValue *slotValue)
+  {
+   Environment *theEnv = theIM->imEnv;
+   short whichSlot;
+   CLIPSValue oldValue;
+   CLIPSValue oldInstanceValue;
+   int i;
+
+   /*===================================*/
+   /* Make sure the slot name requested */
+   /* corresponds to a valid slot name. */
+   /*===================================*/
+
+   whichSlot = FindInstanceTemplateSlot(theEnv,theIM->imOldInstance->cls,EnvCreateSymbol(theIM->imEnv,slotName));
+   if (whichSlot == -1)
+     { return false; }
+
+   /*=============================================*/
+   /* Make sure a single field value is not being */
+   /* stored in a multifield slot or vice versa.  */
+   /*=============================================*/
+/*
+   if (((theSlot->multislot == 0) && (slotValue->header->type == MULTIFIELD_TYPE)) ||
+       ((theSlot->multislot == 1) && (slotValue->header->type != MULTIFIELD_TYPE)))
+     { return false; }
+*/
+   if (theIM->imValueArray == NULL)
+     {
+      theIM->imValueArray = (CLIPSValue *) gm3(theIM->imEnv,sizeof(CLIPSValue) * theIM->imOldInstance->cls->slotCount);
+      for (i = 0; i < theIM->imOldInstance->cls->slotCount; i++)
+        { theIM->imValueArray[i].voidValue = theIM->imEnv->VoidConstant; }
+     }
+
+   if (theIM->changeMap == NULL)
+     {
+      theIM->changeMap = (char *) gm2(theIM->imEnv,CountToBitMapSize(theIM->imOldInstance->cls->slotCount));
+      ClearBitString((void *) theIM->changeMap,CountToBitMapSize(theIM->imOldInstance->cls->slotCount));
+     }
+     
+   /*=====================*/
+   /* Set the slot value. */
+   /*=====================*/
+
+   oldValue.value = theIM->imValueArray[whichSlot].value;
+   oldInstanceValue.value = theIM->imOldInstance->slotAddresses[whichSlot]->value;
+
+   if (oldInstanceValue.header->type == MULTIFIELD_TYPE)
+     {
+      if (MultifieldsEqual(oldInstanceValue.multifieldValue,slotValue->multifieldValue))
+        {
+         CVAtomDeinstall(theIM->imEnv,oldValue.value);
+         if (oldValue.header->type == MULTIFIELD_TYPE)
+           { ReturnMultifield(theIM->imEnv,oldValue.multifieldValue); }
+         theIM->imValueArray[whichSlot].voidValue = theIM->imEnv->VoidConstant;
+         ClearBitMap(theIM->changeMap,whichSlot);
+         return true;
+        }
+
+      if (MultifieldsEqual(oldValue.multifieldValue,slotValue->multifieldValue))
+        { return true; }
+     }
+   else
+     {
+      if (slotValue->value == oldInstanceValue.value)
+        {
+         CVAtomDeinstall(theIM->imEnv,oldValue.value);
+         theIM->imValueArray[whichSlot].voidValue = theIM->imEnv->VoidConstant;
+         ClearBitMap(theIM->changeMap,whichSlot);
+         return true;
+        }
+        
+      if (oldValue.value == slotValue->value)
+        { return true; }
+     }
+
+   SetBitMap(theIM->changeMap,whichSlot);
+
+   CVAtomDeinstall(theIM->imEnv,oldValue.value);
+
+   if (oldValue.header->type == MULTIFIELD_TYPE)
+     { ReturnMultifield(theIM->imEnv,oldValue.multifieldValue); }
+      
+   if (slotValue->header->type == MULTIFIELD_TYPE)
+     { theIM->imValueArray[whichSlot].multifieldValue = CopyMultifield(theIM->imEnv,slotValue->multifieldValue); }
+   else
+     { theIM->imValueArray[whichSlot].value = slotValue->value; }
+
+   CVAtomInstall(theIM->imEnv,theIM->imValueArray[whichSlot].value);
+
+   return true;
+  }
+
+/*************/
+/* IMModify: */
+/*************/
+Instance *IMModify(
+  InstanceModifier *theIM)
+  {
+   Instance *rv = theIM->imOldInstance;
+   bool ov;
+
+   if (! BitStringHasBitsSet(theIM->changeMap,CountToBitMapSize(theIM->imOldInstance->cls->slotCount)))
+     { return theIM->imOldInstance; }
+     
+   ov = SetDelayObjectPatternMatching(theIM->imEnv,true);
+   IMModifySlots(theIM->imEnv,theIM->imOldInstance,theIM->imValueArray);
+   SetDelayObjectPatternMatching(theIM->imEnv,ov);
+   
+   IMAbort(theIM);
+   
+   return rv;
+  }
+
+/*****************/
+/* IMModifySlots */
+/*****************/
+static bool IMModifySlots(
+  Environment *theEnv,
+  Instance *theInstance,
+  CLIPSValue *overrides)
+  {
+   UDFValue temp, junk;
+   InstanceSlot *insSlot;
+   int i;
+
+   for (i = 0; i < theInstance->cls->slotCount; i++)
+     {
+      if (overrides[i].value == VoidConstant(theEnv))
+        { continue; }
+        
+      insSlot = theInstance->slotAddresses[i];
+      
+      if (insSlot->desc->multiple && (overrides[i].header->type != MULTIFIELD_TYPE))
+        {
+         temp.value = EnvCreateMultifield(theEnv,1L);
+         temp.begin = 0;
+         temp.range = 1;
+         temp.multifieldValue->theFields[0].value = overrides[i].value;
+        }
+      else
+        { CLIPSToUDFValue(&overrides[i],&temp); }
+        
+      if (PutSlotValue(theEnv,theInstance,insSlot,&temp,&junk,"InstanceModifier call") == false)
+        { return false; }
+     }
+     
+   return true;
+  }
+
+/**************/
+/* IMDispose: */
+/**************/
+void IMDispose(
+  InstanceModifier *theIM)
+  {
+   Environment *theEnv = theIM->imEnv;
+   int i;
+
+   /*========================*/
+   /* Clear the value array. */
+   /*========================*/
+   
+   for (i = 0; i < theIM->imOldInstance->cls->slotCount; i++)
+     {
+      CVAtomDeinstall(theEnv,theIM->imValueArray[i].value);
+
+      if (theIM->imValueArray[i].header->type == MULTIFIELD_TYPE)
+        { ReturnMultifield(theEnv,theIM->imValueArray[i].multifieldValue); }
+     }
+   
+   /*=====================================*/
+   /* Return the value and change arrays. */
+   /*=====================================*/
+   
+   if (theIM->imValueArray != NULL)
+     { rm3(theEnv,theIM->imValueArray,sizeof(CLIPSValue) * theIM->imOldInstance->cls->slotCount); }
+      
+   if (theIM->changeMap != NULL)
+     { rm(theEnv,(void *) theIM->changeMap,CountToBitMapSize(theIM->imOldInstance->cls->slotCount)); }
+
+   /*========================================*/
+   /* Return the InstanceModifier structure. */
+   /*========================================*/
+   
+   EnvDecrementInstanceCount(theEnv,theIM->imOldInstance);
+   
+   rtn_struct(theEnv,instanceModifier,theIM);
+  }
+
+/************/
+/* IMAbort: */
+/************/
+void IMAbort(
+  InstanceModifier *theIM)
+  {
+   Environment *theEnv = theIM->imEnv;
+   int i;
+   
+   for (i = 0; i < theIM->imOldInstance->cls->slotCount; i++)
+     {
+      CVAtomDeinstall(theEnv,theIM->imValueArray[i].value);
+
+      if (theIM->imValueArray[i].header->type == MULTIFIELD_TYPE)
+        { ReturnMultifield(theEnv,theIM->imValueArray[i].multifieldValue); }
+        
+      theIM->imValueArray[i].voidValue = theIM->imEnv->VoidConstant;
+     }
+     
+   ClearBitString((void *) theIM->changeMap,CountToBitMapSize(theIM->imOldInstance->cls->slotCount));
+  }
+
+/******************/
+/* IMSetInstance: */
+/******************/
+bool IMSetInstance(
+  InstanceModifier *theIM,
+  Instance *oldInstance)
+  {
+   Environment *theEnv = theIM->imEnv;
+   unsigned short currentSlotCount = theIM->imOldInstance->cls->slotCount;
+   int i;
+   
+   /*=================================================*/
+   /* Modifiers can only be created for non-retracted */
+   /* deftemplate facts with at least one slot.       */
+   /*=================================================*/
+   
+   if (oldInstance->garbage) return false;
+   if (oldInstance->cls->slotCount == 0) return false;
+
+   /*========================*/
+   /* Clear the value array. */
+   /*========================*/
+   
+   for (i = 0; i < theIM->imOldInstance->cls->slotCount; i++)
+     {
+      CVAtomDeinstall(theEnv,theIM->imValueArray[i].value);
+
+      if (theIM->imValueArray[i].header->type == MULTIFIELD_TYPE)
+        { ReturnMultifield(theEnv,theIM->imValueArray[i].multifieldValue); }
+     }
+
+   /*==================================================*/
+   /* Resize the value and change arrays if necessary. */
+   /*==================================================*/
+   
+   if (oldInstance->cls->slotCount != currentSlotCount)
+     {
+      if (theIM->imValueArray != NULL)
+        { rm3(theEnv,theIM->imValueArray,sizeof(CLIPSValue) * currentSlotCount); }
+      
+      if (theIM->changeMap != NULL)
+        { rm(theEnv,(void *) theIM->changeMap,currentSlotCount); }
+        
+      theIM->imValueArray = (CLIPSValue *) gm3(theEnv,sizeof(CLIPSValue) * oldInstance->cls->slotCount);
+      theIM->changeMap = (char *) gm2(theEnv,CountToBitMapSize(oldInstance->cls->slotCount));
+     }
+   
+   /*=================================*/
+   /* Update the fact being modified. */
+   /*=================================*/
+   
+   EnvDecrementInstanceCount(theEnv,theIM->imOldInstance);
+   theIM->imOldInstance = oldInstance;
+   EnvIncrementInstanceCount(theEnv,theIM->imOldInstance);
+   
+   /*=========================================*/
+   /* Initialize the value and change arrays. */
+   /*=========================================*/
+   
+   for (i = 0; i < theIM->imOldInstance->cls->slotCount; i++)
+     { theIM->imValueArray[i].voidValue = theIM->imEnv->VoidConstant; }
+   
+   ClearBitString((void *) theIM->changeMap,CountToBitMapSize(theIM->imOldInstance->cls->slotCount));
+
+   /*================================================================*/
+   /* Return true to indicate the modifier was successfully created. */
+   /*================================================================*/
+   
+   return true;
+  }
 
 #endif
 

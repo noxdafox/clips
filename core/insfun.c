@@ -312,7 +312,7 @@ void RemoveInstanceData(
   Instance *ins)
   {
    long i;
-   INSTANCE_SLOT *sp;
+   InstanceSlot *sp;
 
    DecrementDefclassBusyCount(theEnv,ins->cls);
    for (i = 0 ; i < ins->cls->instanceSlotCount ; i++)
@@ -334,10 +334,10 @@ void RemoveInstanceData(
    if (ins->cls->instanceSlotCount != 0)
      {
       rm(theEnv,ins->slotAddresses,
-         (ins->cls->instanceSlotCount * sizeof(INSTANCE_SLOT *)));
+         (ins->cls->instanceSlotCount * sizeof(InstanceSlot *)));
       if (ins->cls->localInstanceSlotCount != 0)
         rm(theEnv,ins->slots,
-           (ins->cls->localInstanceSlotCount * sizeof(INSTANCE_SLOT)));
+           (ins->cls->localInstanceSlotCount * sizeof(InstanceSlot)));
      }
    ins->slots = NULL;
    ins->slotAddresses = NULL;
@@ -491,7 +491,7 @@ Instance *FindInstanceInModule(
   SIDE EFFECTS : None
   NOTES        : None
  ********************************************************************/
-INSTANCE_SLOT *FindInstanceSlot(
+InstanceSlot *FindInstanceSlot(
   Environment *theEnv,
   Instance *ins,
   CLIPSLexeme *sname)
@@ -549,7 +549,7 @@ int FindInstanceTemplateSlot(
 bool PutSlotValue(
   Environment *theEnv,
   Instance *ins,
-  INSTANCE_SLOT *sp,
+  InstanceSlot *sp,
   UDFValue *val,
   UDFValue *setVal,
   const char *theCommand)
@@ -582,14 +582,14 @@ bool PutSlotValue(
 bool DirectPutSlotValue(
   Environment *theEnv,
   Instance *ins,
-  INSTANCE_SLOT *sp,
+  InstanceSlot *sp,
   UDFValue *val,
   UDFValue *setVal)
   {
    long i,j; /* 6.04 Bug Fix */
 #if DEFRULE_CONSTRUCT
    int sharedTraversalID;
-   INSTANCE_SLOT *bsp,**spaddr;
+   InstanceSlot *bsp,**spaddr;
 #endif
    UDFValue tmpVal;
 
@@ -1156,7 +1156,7 @@ void DecrementObjectBasisCount(
                               theInstance->basisSlots[i].value);
              }
          rm(theEnv,theInstance->basisSlots,
-            (theInstance->cls->instanceSlotCount * sizeof(INSTANCE_SLOT)));
+            (theInstance->cls->instanceSlotCount * sizeof(InstanceSlot)));
          theInstance->basisSlots = NULL;
         }
      }
@@ -1188,8 +1188,8 @@ void IncrementObjectBasisCount(
      {
       if (theInstance->cls->instanceSlotCount != 0)
         {
-         theInstance->basisSlots = (INSTANCE_SLOT *)
-                            gm2(theEnv,(sizeof(INSTANCE_SLOT) * theInstance->cls->instanceSlotCount));
+         theInstance->basisSlots = (InstanceSlot *)
+                            gm2(theEnv,(sizeof(InstanceSlot) * theInstance->cls->instanceSlotCount));
          for (i = 0 ; i < theInstance->cls->instanceSlotCount ; i++)
            {
             theInstance->basisSlots[i].desc = theInstance->slotAddresses[i]->desc;

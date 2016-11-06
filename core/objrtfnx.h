@@ -180,7 +180,7 @@ struct ObjectCmpJoinSingleSlotVars3
 struct objectReteData
   {
    Instance *CurrentPatternObject;
-   INSTANCE_SLOT *CurrentPatternObjectSlot;
+   InstanceSlot *CurrentPatternObjectSlot;
    unsigned CurrentObjectSlotLength;
    struct multifieldMarker *CurrentPatternObjectMarks;
    struct entityRecord ObjectGVInfo1;

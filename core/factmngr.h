@@ -218,7 +218,7 @@ struct factsData
 
    FactModifier                  *EnvCreateFactModifier(Environment *,Fact *);
    bool                           FMPutSlot(FactModifier *,const char *,CLIPSValue *);
-   Fact                          *FMApply(FactModifier *);
+   Fact                          *FMModify(FactModifier *);
    void                           FMDispose(FactModifier *);
    void                           FMAbort(FactModifier *);
    bool                           FMSetFact(FactModifier *,Fact *);

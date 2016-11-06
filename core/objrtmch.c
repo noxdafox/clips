@@ -798,7 +798,7 @@ static void ObjectPatternMatch(
   struct multifieldMarker *endMark)
   {
    unsigned saveSlotLength;
-   INSTANCE_SLOT *saveSlot;
+   InstanceSlot *saveSlot;
    OBJECT_PATTERN_NODE *blockedNode;
 
    while (patternTop != NULL)
@@ -915,7 +915,7 @@ static void ProcessPatternNode(
    int patternSlotField,objectSlotField;
    unsigned objectSlotLength;
    int repeatCount;
-   INSTANCE_SLOT *objectSlot;
+   InstanceSlot *objectSlot;
    struct multifieldMarker *newMark;
    UDFValue theResult;
    OBJECT_PATTERN_NODE *tempPtr;
