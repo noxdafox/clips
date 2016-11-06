@@ -640,7 +640,7 @@ bool HandlerSlotGetFunction(
    HANDLER_SLOT_REFERENCE *theReference;
    Defclass *theDefclass;
    Instance *theInstance;
-   INSTANCE_SLOT *sp;
+   InstanceSlot *sp;
    unsigned instanceSlotIndex;
 
    theReference = (HANDLER_SLOT_REFERENCE *) ((CLIPSBitMap *) theValue)->contents;
@@ -763,7 +763,7 @@ bool HandlerSlotPutFunction(
    HANDLER_SLOT_REFERENCE *theReference;
    Defclass *theDefclass;
    Instance *theInstance;
-   INSTANCE_SLOT *sp;
+   InstanceSlot *sp;
    unsigned instanceSlotIndex;
    UDFValue theSetVal;
 
@@ -855,7 +855,7 @@ void DynamicHandlerGetSlot(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   INSTANCE_SLOT *sp;
+   InstanceSlot *sp;
    Instance *ins;
    UDFValue temp;
 
@@ -906,7 +906,7 @@ void DynamicHandlerPutSlot(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   INSTANCE_SLOT *sp;
+   InstanceSlot *sp;
    Instance *ins;
    UDFValue temp;
 

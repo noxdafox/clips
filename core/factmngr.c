@@ -1572,16 +1572,17 @@ Fact *GetNextFactInScope(
    return NULL;
   }
 
-/****************************************/
-/* EnvGetFactPPForm: Returns the pretty */
-/*   print representation of a fact.    */
-/****************************************/
-void EnvGetFactPPForm(
-  Environment *theEnv,
+/*************************************/
+/* FactPPForm: Returns the pretty    */
+/*   print representation of a fact. */
+/*************************************/
+void FactPPForm(
+  Fact *theFact,
   char *buffer,
-  size_t bufferLength,
-  Fact *theFact)
+  size_t bufferLength)
   {
+   Environment *theEnv = theFact->whichDeftemplate->header.env;
+   
    OpenStringDestination(theEnv,"FactPPForm",buffer,bufferLength);
    PrintFactWithIdentifier(theEnv,"FactPPForm",theFact,NULL);
    CloseStringDestination(theEnv,"FactPPForm");
@@ -2419,10 +2420,10 @@ bool FMPutSlot(
    return true;
   }
 
-/************/
-/* FMApply: */
-/************/
-Fact *FMApply(
+/*************/
+/* FMModify: */
+/*************/
+Fact *FMModify(
   FactModifier *theFM)
   {
    Fact *rv;

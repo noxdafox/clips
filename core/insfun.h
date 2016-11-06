@@ -98,10 +98,10 @@ typedef struct igarbage
    Instance                      *FindInstanceBySymbol(Environment *,CLIPSLexeme *);
    Instance                      *FindInstanceInModule(Environment *,CLIPSLexeme *,Defmodule *,
                                                        Defmodule *,bool);
-   INSTANCE_SLOT                 *FindInstanceSlot(Environment *,Instance *,CLIPSLexeme *);
+   InstanceSlot                  *FindInstanceSlot(Environment *,Instance *,CLIPSLexeme *);
    int                            FindInstanceTemplateSlot(Environment *,Defclass *,CLIPSLexeme *);
-   bool                           PutSlotValue(Environment *,Instance *,INSTANCE_SLOT *,UDFValue *,UDFValue *,const char *);
-   bool                           DirectPutSlotValue(Environment *,Instance *,INSTANCE_SLOT *,UDFValue *,UDFValue *);
+   bool                           PutSlotValue(Environment *,Instance *,InstanceSlot *,UDFValue *,UDFValue *,const char *);
+   bool                           DirectPutSlotValue(Environment *,Instance *,InstanceSlot *,UDFValue *,UDFValue *);
    bool                           ValidSlotValue(Environment *,UDFValue *,SlotDescriptor *,Instance *,const char *);
    Instance                      *CheckInstance(UDFContext *);
    void                           NoInstanceError(Environment *,const char *,const char *);

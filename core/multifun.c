@@ -204,7 +204,8 @@ void DeleteFunction(
    /*=================================================*/
 
    if (DeleteMultiValueField(theEnv,returnValue,&value1,
-            value2.integerValue->contents,value3.integerValue->contents,"delete$") == false)/* TBD */
+                             (long) value2.integerValue->contents,
+                             (long) value3.integerValue->contents,"delete$") == false)/* TBD */
      {
       EnvSetEvaluationError(theEnv,true);
       EnvSetMultifieldErrorValue(theEnv,returnValue);
@@ -553,8 +554,8 @@ void SubseqFunction(
    /*=========================*/
 
    returnValue->value = theList;
-   returnValue->range = (end - start) + 1;
-   returnValue->begin = offset + start - 1;
+   returnValue->range = (long) ((end - start) + 1);
+   returnValue->begin = (long) (offset + start - 1);
   }
 
 /***************************************/

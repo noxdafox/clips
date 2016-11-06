@@ -990,7 +990,7 @@ static void SaveSingleInstanceText(
   Instance *theInstance)
   {
    long i;
-   INSTANCE_SLOT *sp;
+   InstanceSlot *sp;
    const char *logicalName = (const char *) fastSaveFile;
 
    EnvPrintRouter(theEnv,logicalName,"([");
@@ -1058,7 +1058,7 @@ static void MarkSingleInstance(
 #if MAC_XCD
 #pragma unused(theOutput)
 #endif
-   INSTANCE_SLOT *sp;
+   InstanceSlot *sp;
    long i, j;
 
    InstanceFileData(theEnv)->BinaryInstanceFileSize += (unsigned long) (sizeof(long) * 2);
@@ -1143,7 +1143,7 @@ static void SaveSingleInstanceBinary(
   {
    long nameIndex;
    long i,j;
-   INSTANCE_SLOT *sp;
+   InstanceSlot *sp;
    struct bsaveSlotValue bs;
    long totalValueCount = 0L;
    long slotLen;
@@ -1433,7 +1433,7 @@ static bool LoadSingleBinaryInstance(
    long nameIndex;
    unsigned long totalValueCount;
    long i, j;
-   INSTANCE_SLOT *sp;
+   InstanceSlot *sp;
    UDFValue slotValue, junkValue;
 
    /* =====================

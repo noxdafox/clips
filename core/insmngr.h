@@ -64,6 +64,38 @@
    void                           InactiveMakeInstance(Environment *,UDFContext *,UDFValue *);
 #endif
 
+   InstanceBuilder               *EnvCreateInstanceBuilder(Environment *,const char *);
+   bool                           IBPutSlot(InstanceBuilder *,const char *,CLIPSValue *);
+
+   Instance                      *IBMake(InstanceBuilder *,const char *);
+
+   void                           IBDispose(InstanceBuilder *);
+   void                           IBAbort(InstanceBuilder *);
+   bool                           IBSetDefclass(InstanceBuilder *,const char *);
+
+   bool                           IBPutSlotInteger(InstanceBuilder *,const char *,CLIPSInteger *);
+   bool                           IBPutSlotFloat(InstanceBuilder *,const char *,CLIPSFloat *);
+   bool                           IBPutSlotLexeme(InstanceBuilder *,const char *,CLIPSLexeme *);
+   bool                           IBPutSlotFact(InstanceBuilder *,const char *,Fact *);
+   bool                           IBPutSlotInstance(InstanceBuilder *,const char *,Instance *);
+   bool                           IBPutSlotExternalAddress(InstanceBuilder *,const char *,CLIPSExternalAddress *);
+   bool                           IBPutSlotMultifield(InstanceBuilder *,const char *,Multifield *);
+
+   InstanceModifier              *EnvCreateInstanceModifier(Environment *,Instance *);
+   bool                           IMPutSlot(InstanceModifier *,const char *,CLIPSValue *);
+   void                           IMDispose(InstanceModifier *);
+   void                           IMAbort(InstanceModifier *);
+   bool                           IMSetInstance(InstanceModifier *,Instance *);
+   Instance                      *IMModify(InstanceModifier *);
+
+   bool                           IMPutSlotInteger(InstanceModifier *,const char *,CLIPSInteger *);
+   bool                           IMPutSlotFloat(InstanceModifier *,const char *,CLIPSFloat *);
+   bool                           IMPutSlotLexeme(InstanceModifier *,const char *,CLIPSLexeme *);
+   bool                           IMPutSlotFact(InstanceModifier *,const char *,Fact *);
+   bool                           IMPutSlotInstance(InstanceModifier *,const char *,Instance *);
+   bool                           IMPutSlotExternalAddress(InstanceModifier *,const char *,CLIPSExternalAddress *);
+   bool                           IMPutSlotMultifield(InstanceModifier *,const char *,Multifield *);
+
 #endif /* _H_insmngr */
 
 

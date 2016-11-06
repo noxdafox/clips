@@ -118,7 +118,7 @@
 #endif
 
    static void                    PrintInstance(Environment *,const char *,Instance *,const char *);
-   static INSTANCE_SLOT          *FindISlotByName(Environment *,Instance *,const char *);
+   static InstanceSlot           *FindISlotByName(Environment *,Instance *,const char *);
    static void                    DeallocateInstanceData(Environment *);
 
 /* =========================================
@@ -239,7 +239,7 @@ static void DeallocateInstanceData(
   {
    Instance *tmpIPtr, *nextIPtr;
    long i;
-   INSTANCE_SLOT *sp;
+   InstanceSlot *sp;
    IGARBAGE *tmpGPtr, *nextGPtr;
    struct patternMatch *theMatch, *tmpMatch;
 
@@ -285,11 +285,11 @@ static void DeallocateInstanceData(
       if (tmpIPtr->cls->instanceSlotCount != 0)
         {
          rm(theEnv,tmpIPtr->slotAddresses,
-            (tmpIPtr->cls->instanceSlotCount * sizeof(INSTANCE_SLOT *)));
+            (tmpIPtr->cls->instanceSlotCount * sizeof(InstanceSlot *)));
          if (tmpIPtr->cls->localInstanceSlotCount != 0)
            {
             rm(theEnv,tmpIPtr->slots,
-               (tmpIPtr->cls->localInstanceSlotCount * sizeof(INSTANCE_SLOT)));
+               (tmpIPtr->cls->localInstanceSlotCount * sizeof(InstanceSlot)));
            }
         }
 
@@ -711,7 +711,7 @@ void EnvDirectGetSlot(
   const char *sname,
   CLIPSValue *returnValue)
   {
-   INSTANCE_SLOT *sp;
+   InstanceSlot *sp;
    UDFValue temp;
 
    if (theInstance->garbage == 1)
@@ -755,7 +755,7 @@ bool EnvDirectPutSlot(
   const char *sname,
   CLIPSValue *val)
   {
-   INSTANCE_SLOT *sp;
+   InstanceSlot *sp;
    UDFValue junk, temp;
 
    if ((theInstance->garbage == 1) || (val == NULL))
@@ -978,9 +978,9 @@ Instance *EnvGetNextInstanceInClassAndSubclasses(
   NOTES        : None
  ***************************************************/
 void InstancePPForm(
+  Instance *theInstance,
   char *buf,
-  size_t buflen,
-  Instance *theInstance)
+  size_t buflen)
   {
    const char *pbuf = "***InstancePPForm***";
    Environment *theEnv;
@@ -1611,7 +1611,7 @@ static void PrintInstance(
   const char *separator)
   {
    long i;
-   INSTANCE_SLOT *sp;
+   InstanceSlot *sp;
 
    PrintInstanceNameAndClass(theEnv,logicalName,ins,false);
    for (i = 0 ; i < ins->cls->instanceSlotCount ; i++)
@@ -1646,7 +1646,7 @@ static void PrintInstance(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-static INSTANCE_SLOT *FindISlotByName(
+static InstanceSlot *FindISlotByName(
   Environment *theEnv,
   Instance *theInstance,
   const char *sname)

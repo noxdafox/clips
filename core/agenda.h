@@ -127,7 +127,7 @@ struct agendaData
    Defrule                *EnvGetActivationRule(Environment *,Activation *);
    int                     ActivationGetSalience(Activation *);
    int                     ActivationSetSalience(Activation *,int);
-   void                    ActivationPPForm(char *,size_t,Activation *);
+   void                    ActivationPPForm(Activation *,char *,size_t);
    void                    EnvGetActivationBasisPPForm(Environment *,char *,size_t,Activation *);
    bool                    MoveActivationToTop(Environment *,Activation *);
    bool                    ActivationDelete(Activation *,Environment *);

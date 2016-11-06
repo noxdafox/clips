@@ -1044,7 +1044,7 @@ void RoundFunction(
    /*==============================*/
 
    if (CVIsType(returnValue,FLOAT_BIT))
-     { returnValue->integerValue = EnvCreateInteger(theEnv,ceil(returnValue->floatValue->contents - 0.5)); }
+     { returnValue->integerValue = EnvCreateInteger(theEnv,(long long) ceil(returnValue->floatValue->contents - 0.5)); }
   }
 
 /*******************************************/

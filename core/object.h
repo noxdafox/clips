@@ -42,7 +42,10 @@ typedef struct slotName SLOT_NAME;
 typedef struct slotDescriptor SlotDescriptor;
 typedef struct defmessageHandler DefmessageHandler;
 
-typedef struct instanceSlot INSTANCE_SLOT;
+typedef struct instanceSlot InstanceSlot;
+
+typedef struct instanceBuilder InstanceBuilder;
+typedef struct instanceModifier InstanceModifier;
 
 /* Maximum # of simultaneous class hierarchy traversals
    should be a multiple of BITS_PER_BYTE and less than MAX_INT      */
@@ -168,14 +171,14 @@ struct slotDescriptor
    CONSTRAINT_RECORD *constraint;
    unsigned sharedCount;
    long bsaveIndex;
-   INSTANCE_SLOT sharedValue;
+   InstanceSlot sharedValue;
   };
 
 struct instance
   {
    struct patternEntity header;
    void *partialMatchList;
-   INSTANCE_SLOT *basisSlots;
+   InstanceSlot *basisSlots;
    unsigned installed            : 1;
    unsigned garbage              : 1;
    unsigned initSlotsCalled      : 1;
@@ -188,7 +191,7 @@ struct instance
    Instance *prvClass,*nxtClass,
                  *prvHash,*nxtHash,
                  *prvList,*nxtList;
-   INSTANCE_SLOT **slotAddresses,
+   InstanceSlot **slotAddresses,
                  *slots;
   };
 
@@ -205,6 +208,21 @@ struct defmessageHandler
    short maxParams;
    short localVarCount;
    Expression *actions;
+  };
+
+struct instanceBuilder
+  {
+   Environment *ibEnv;
+   Defclass *ibDefclass;
+   CLIPSValue *ibValueArray;
+  };
+
+struct instanceModifier
+  {
+   Environment *imEnv;
+   Instance *imOldInstance;
+   CLIPSValue *imValueArray;
+   char *changeMap;
   };
 
 #endif /* _H_object */

@@ -115,11 +115,11 @@ struct defglobalModule
    Defglobal                     *EnvFindDefglobalInModule(Environment *,const char *);
    Defglobal                     *EnvGetNextDefglobal(Environment *,Defglobal *);
    void                           CreateInitialFactDefglobal(void);
-   bool                           EnvIsDefglobalDeletable(Defglobal *);
+   bool                           DefglobalIsDeletable(Defglobal *);
    struct defglobalModule        *GetDefglobalModuleItem(Environment *,Defmodule *);
    void                           QSetDefglobalValue(Environment *,Defglobal *,UDFValue *,bool);
    Defglobal                     *QFindDefglobal(Environment *,CLIPSLexeme *);
-   void                           EnvGetDefglobalValueForm(Environment *,char *,size_t,Defglobal *);
+   void                           DefglobalValueForm(Defglobal *,char *,size_t);
    bool                           EnvGetGlobalsChanged(Environment *);
    void                           EnvSetGlobalsChanged(Environment *,bool);
    bool                           EnvGetDefglobalValue(Environment *,const char *,CLIPSValue *);

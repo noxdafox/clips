@@ -170,7 +170,7 @@ void GetQueryInstanceSlot(
   UDFValue *returnValue)
   {
    Instance *ins;
-   INSTANCE_SLOT *sp;
+   InstanceSlot *sp;
    UDFValue temp;
    QUERY_CORE *core;
 
