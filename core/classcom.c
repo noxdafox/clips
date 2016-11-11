@@ -327,7 +327,7 @@ bool DefclassInScope(
      { theModule = EnvGetCurrentModule(theEnv); }
    moduleID = (int) theModule->header.bsaveID;
 
-   return TestBitMap(scopeMap,moduleID) ? true : false;
+   return TestBitMap(scopeMap,moduleID);
 #else
 #if MAC_XCD
 #pragma unused(theEnv,theDefclass,theModule)

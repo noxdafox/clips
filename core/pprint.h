@@ -70,8 +70,8 @@ struct prettyPrintData
    void                           SetIndentDepth(Environment *,int);
    void                           SetPPBufferStatus(Environment *,bool);
    bool                           GetPPBufferStatus(Environment *);
-   int                            SetPPBufferEnabled(Environment *,int);
-   int                            GetPPBufferEnabled(Environment *);
+   bool                           SetPPBufferEnabled(Environment *,bool);
+   bool                           GetPPBufferEnabled(Environment *);
 
 #endif
 

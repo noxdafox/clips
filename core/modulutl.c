@@ -958,7 +958,7 @@ CLIPSLexeme *GetConstructNameAndComment(
    /*=============================================*/
 
 #if DEBUGGING_FUNCTIONS
-   if ((EnvGetWatchItem(theEnv,"compilations") == true) &&
+   if ((EnvGetWatchItem(theEnv,"compilations") == 1) &&
        GetPrintWhileLoading(theEnv) && (! ConstructData(theEnv)->CheckSyntaxMode))
      {
       const char *outRouter = WDIALOG;

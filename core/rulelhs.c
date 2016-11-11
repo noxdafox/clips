@@ -655,7 +655,7 @@ static struct lhsParseNode *ConnectedPatternParse(
    struct lhsParseNode *theNode, *tempNode, *theGroup;
    const char *errorCE = NULL;
    bool logical = false;
-   int tempValue;
+   bool tempValue;
 
    /*==========================================================*/
    /* Use appropriate spacing for pretty printing of the rule. */
@@ -717,7 +717,7 @@ static struct lhsParseNode *ConnectedPatternParse(
    /* then check to see if we're entering a new *not* CE. */
    /*=====================================================*/
 
-      tempValue = PatternData(theEnv)->WithinNotCE;
+   tempValue = PatternData(theEnv)->WithinNotCE;
    if ((connectorValue == NOT_CE_NODE) ||
        (connectorValue == EXISTS_CE_NODE) ||
        (connectorValue == FORALL_CE_NODE))

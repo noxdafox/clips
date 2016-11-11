@@ -636,7 +636,7 @@ static bool ParseDefaultFacet(
      }
    SetBitMap(specbits,DEFAULT_BIT);
    error = false;
-   tmp = ParseDefault(theEnv,readSource,true,(int) TestBitMap(specbits,DEFAULT_DYNAMIC_BIT),
+   tmp = ParseDefault(theEnv,readSource,true,TestBitMap(specbits,DEFAULT_DYNAMIC_BIT),
                       false,&noneSpecified,&deriveSpecified,&error);
    if (error == true)
      return false;
@@ -724,27 +724,27 @@ static void BuildCompositeFacets(
               }
            }
         }
-      if (TestBitMap(specbits,FIELD_BIT) == 0)
+      if (! TestBitMap(specbits,FIELD_BIT))
         sd->multiple = compslot->multiple;
-      if (TestBitMap(specbits,STORAGE_BIT) == 0)
+      if (! TestBitMap(specbits,STORAGE_BIT))
         sd->shared = compslot->shared;
-      if (TestBitMap(specbits,ACCESS_BIT) == 0)
+      if (! TestBitMap(specbits,ACCESS_BIT))
         {
          sd->noWrite = compslot->noWrite;
          sd->initializeOnly = compslot->initializeOnly;
         }
 #if DEFRULE_CONSTRUCT
-      if (TestBitMap(specbits,MATCH_BIT) == 0)
+      if (! TestBitMap(specbits,MATCH_BIT))
         sd->reactive = compslot->reactive;
 #endif
-      if (TestBitMap(specbits,VISIBILITY_BIT) == 0)
+      if (! TestBitMap(specbits,VISIBILITY_BIT))
         sd->publicVisibility = compslot->publicVisibility;
-      if (TestBitMap(specbits,CREATE_ACCESSOR_BIT) == 0)
+      if (! TestBitMap(specbits,CREATE_ACCESSOR_BIT))
         {
          sd->createReadAccessor = compslot->createReadAccessor;
          sd->createWriteAccessor = compslot->createWriteAccessor;
         }
-      if ((TestBitMap(specbits,OVERRIDE_MSG_BIT) == 0) &&
+      if ((! TestBitMap(specbits,OVERRIDE_MSG_BIT)) &&
           compslot->overrideMessageSpecified)
         {
          DecrementSymbolCount(theEnv,sd->overrideMessage);
@@ -840,7 +840,7 @@ static bool EvaluateSlotDefaultValue(
       was so that the evaluation of a static default value could be
       delayed until all the constraints were parsed.
       =================================================================== */
-   if (TestBitMap(specbits,DEFAULT_DYNAMIC_BIT) == 0)
+   if (! TestBitMap(specbits,DEFAULT_DYNAMIC_BIT))
      sd->dynamicDefault = 0;
 
    if (sd->noDefault)

@@ -146,7 +146,7 @@ void GenericDispatch(
   {
    Defgeneric *previousGeneric;
    Defmethod *previousMethod;
-   int oldce;
+   bool oldce;
 #if PROFILING_FUNCTIONS
    struct profileFrameInfo profileFrame;
 #endif

@@ -207,7 +207,12 @@ bool CheckSyntax(
    if (FindConstruct(theEnv,name))
      {
       ConstructData(theEnv)->CheckSyntaxMode = true;
-      rv = (short) ParseConstruct(theEnv,name,"check-syntax");
+      
+      if (ParseConstruct(theEnv,name,"check-syntax") == 1)
+        { rv = true; }
+       else
+        { rv = false; }
+         
       GetToken(theEnv,"check-syntax",&theToken);
       ConstructData(theEnv)->CheckSyntaxMode = false;
 

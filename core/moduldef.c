@@ -172,9 +172,9 @@ static void DeallocateDefmoduleData(
      }
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   DeallocateCallList(theEnv,DefmoduleData(theEnv)->AfterModuleDefinedFunctions);
+   DeallocateVoidCallList(theEnv,DefmoduleData(theEnv)->AfterModuleDefinedFunctions);
 #endif
-   DeallocateCallList(theEnv,DefmoduleData(theEnv)->AfterModuleChangeFunctions);
+   DeallocateVoidCallList(theEnv,DefmoduleData(theEnv)->AfterModuleChangeFunctions);
   }
 
 /**************************************************************/
@@ -293,7 +293,7 @@ Defmodule *EnvSetCurrentModule(
   Environment *theEnv,
   Defmodule *newModule)
   {
-   struct callFunctionItem *changeFunctions;
+   struct voidCallFunctionItem *changeFunctions;
    Defmodule *oldModule;
 
    /*=============================================*/
@@ -320,7 +320,7 @@ Defmodule *EnvSetCurrentModule(
       changeFunctions = DefmoduleData(theEnv)->AfterModuleChangeFunctions;
       while (changeFunctions != NULL)
         {
-         (* (void (*)(void *)) changeFunctions->func)(theEnv);
+         (*changeFunctions->func)(theEnv);
          changeFunctions = changeFunctions->next;
         }
      }
@@ -784,7 +784,7 @@ void AddAfterModuleChangeFunction(
   int priority)
   {
    DefmoduleData(theEnv)->AfterModuleChangeFunctions =
-     AddFunctionToCallList(theEnv,name,priority,func,DefmoduleData(theEnv)->AfterModuleChangeFunctions);
+     AddVoidFunctionToCallList(theEnv,name,priority,func,DefmoduleData(theEnv)->AfterModuleChangeFunctions);
   }
 
 /************************************************/

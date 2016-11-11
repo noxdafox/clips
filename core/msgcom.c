@@ -951,8 +951,8 @@ static bool DefmessageHandlerWatchPrint(
 #if MAC_XCD
 #pragma unused(code)
 #endif
-   return(DefmessageHandlerWatchSupport(theEnv,"list-watch-items",logName,-1,
-                                        PrintHandlerWatchFlag,NULL,argExprs));
+   return DefmessageHandlerWatchSupport(theEnv,"list-watch-items",logName,false,
+                                        PrintHandlerWatchFlag,NULL,argExprs);
   }
 
 /*******************************************************

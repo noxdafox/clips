@@ -62,7 +62,7 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static struct expr            *ParseAssertSlotValues(Environment *,const char *,struct token *,struct templateSlot *,bool *,int);
+   static struct expr            *ParseAssertSlotValues(Environment *,const char *,struct token *,struct templateSlot *,bool *,bool);
    static struct expr            *ReorderAssertSlotValues(Environment *,struct templateSlot *,struct expr *,bool *);
    static struct expr            *GetSlotAssertValues(Environment *,struct templateSlot *,struct expr *,bool *);
    static struct expr            *FindAssertSlotItem(struct templateSlot *,struct expr *);
@@ -263,7 +263,7 @@ static struct expr *ParseAssertSlotValues(
   struct token *tempToken,
   struct templateSlot *slotPtr,
   bool *error,
-  int constantsOnly)
+  bool constantsOnly)
   {
    struct expr *nextSlot;
    struct expr *newField, *valueList, *lastValue;

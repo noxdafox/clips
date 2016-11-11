@@ -333,7 +333,7 @@ bool ObjectCmpConstantFunction(
    struct ObjectCmpPNConstant *hack;
    UDFValue theVar;
    Expression *constantExp;
-   int rv;
+   bool rv;
    Multifield *theSegment;
 
    hack = (struct ObjectCmpPNConstant *) ((CLIPSBitMap *) theValue)->contents;
@@ -364,13 +364,13 @@ bool ObjectCmpConstantFunction(
         }
      }
    if (theVar.header->type != constantExp->type)
-     rv = hack->fail;
+     rv = hack->fail ? true : false;
    else if (theVar.value != constantExp->value)
-     rv = hack->fail;
+     rv = hack->fail ? true : false;
    else
-     rv = hack->pass;
+     rv = hack->pass ? true : false;
    theResult->value = rv ? TrueSymbol(theEnv) : FalseSymbol(theEnv);
-   return(rv);
+   return rv;
   }
 
 /* =========================================
@@ -678,7 +678,7 @@ static bool PNSimpleCompareFunction1(
   {
    struct ObjectCmpPNSingleSlotVars1 *hack;
    InstanceSlot *is1,*is2;
-   int rv;
+   bool rv;
 
    hack = (struct ObjectCmpPNSingleSlotVars1 *) ((CLIPSBitMap *) theValue)->contents;
    is1 = GetInsSlot(ObjectReteData(theEnv)->CurrentPatternObject,hack->firstSlot);
@@ -686,11 +686,11 @@ static bool PNSimpleCompareFunction1(
    if (is1->type != is2->type)
      rv = hack->fail;
    else if (is1->value != is2->value)
-     rv = hack->fail;
+     rv = hack->fail ? true : false;
    else
-     rv = hack->pass;
+     rv = hack->pass ? true : false;
    theResult->value = rv ? TrueSymbol(theEnv) : FalseSymbol(theEnv);
-   return(rv);
+   return rv;
   }
 
 static void PrintPNSimpleCompareFunction2(
@@ -726,7 +726,7 @@ static bool PNSimpleCompareFunction2(
   UDFValue *theResult)
   {
    struct ObjectCmpPNSingleSlotVars2 *hack;
-   int rv;
+   bool rv;
    Field f1;
    InstanceSlot *is2;
 
@@ -735,11 +735,11 @@ static bool PNSimpleCompareFunction2(
                              (unsigned) hack->fromBeginning,(unsigned) hack->offset);
    is2 = GetInsSlot(ObjectReteData(theEnv)->CurrentPatternObject,hack->secondSlot);
    if (f1.value != is2->value)
-     rv = hack->fail;
+     rv = hack->fail ? true : false;
    else
-     rv = hack->pass;
+     rv = hack->pass ? true : false;
    theResult->value = rv ? TrueSymbol(theEnv) : FalseSymbol(theEnv);
-   return(rv);
+   return rv;
   }
 
 static void PrintPNSimpleCompareFunction3(
@@ -777,7 +777,7 @@ static bool PNSimpleCompareFunction3(
   UDFValue *theResult)
   {
    struct ObjectCmpPNSingleSlotVars3 *hack;
-   int rv;
+   bool rv;
    Field f1, f2;
 
    hack = (struct ObjectCmpPNSingleSlotVars3 *) ((CLIPSBitMap *) theValue)->contents;
@@ -786,11 +786,11 @@ static bool PNSimpleCompareFunction3(
    GetInsMultiSlotField(&f2,ObjectReteData(theEnv)->CurrentPatternObject,(unsigned) hack->secondSlot,
                         (unsigned) hack->secondFromBeginning,(unsigned) hack->secondOffset);
    if (f1.value != f2.value)
-     rv = hack->fail;
+     rv = hack->fail ? true : false;
    else
-     rv = hack->pass;
+     rv = hack->pass ? true : false;
    theResult->value = rv ? TrueSymbol(theEnv) : FalseSymbol(theEnv);
-   return(rv);
+   return rv;
   }
 
 static void PrintJNSimpleCompareFunction1(
@@ -830,7 +830,7 @@ static bool JNSimpleCompareFunction1(
    Instance *ins1,*ins2;
    struct multifieldMarker *theMarks;
    struct ObjectCmpJoinSingleSlotVars1 *hack;
-   int rv;
+   bool rv;
    InstanceSlot *is1,*is2;
 
    hack = (struct ObjectCmpJoinSingleSlotVars1 *) ((CLIPSBitMap *) theValue)->contents;
@@ -841,11 +841,11 @@ static bool JNSimpleCompareFunction1(
    if (is1->type != is2->type)
      rv = hack->fail;
    else if (is1->value != is2->value)
-     rv = hack->fail;
+     rv = hack->fail ? true : false;
    else
-     rv = hack->pass;
+     rv = hack->pass ? true : false;
    theResult->value = rv ? TrueSymbol(theEnv) : FalseSymbol(theEnv);
-   return(rv);
+   return rv;
   }
 
 static void PrintJNSimpleCompareFunction2(
@@ -887,7 +887,7 @@ static bool JNSimpleCompareFunction2(
    Instance *ins1,*ins2;
    struct multifieldMarker *theMarks;
    struct ObjectCmpJoinSingleSlotVars2 *hack;
-   int rv;
+   bool rv;
    Field f1;
    InstanceSlot *is2;
 
@@ -898,11 +898,11 @@ static bool JNSimpleCompareFunction2(
    GetPatternObjectAndMarks(theEnv,((int) hack->secondPattern),hack->secondPatternLHS,hack->secondPatternRHS,&ins2,&theMarks);
    is2 = GetInsSlot(ins2,hack->secondSlot);
    if (f1.value != is2->value)
-     rv = hack->fail;
+     rv = hack->fail ? true : false;
    else
-     rv = hack->pass;
+     rv = hack->pass ? true : false;
    theResult->value = rv ? TrueSymbol(theEnv) : FalseSymbol(theEnv);
-   return(rv);
+   return rv;
   }
 
 static void PrintJNSimpleCompareFunction3(
@@ -946,7 +946,7 @@ static bool JNSimpleCompareFunction3(
    Instance *ins1,*ins2;
    struct multifieldMarker *theMarks;
    struct ObjectCmpJoinSingleSlotVars3 *hack;
-   int rv;
+   bool rv;
    Field f1,f2;
 
    hack = (struct ObjectCmpJoinSingleSlotVars3 *) ((CLIPSBitMap *) theValue)->contents;
@@ -959,11 +959,11 @@ static bool JNSimpleCompareFunction3(
                         (unsigned) hack->secondFromBeginning,
                         (unsigned) hack->secondOffset);
    if (f1.value != f2.value)
-     rv = hack->fail;
+     rv = hack->fail ? true : false;
    else
-     rv = hack->pass;
+     rv = hack->pass ? true : false;
    theResult->value = rv ? TrueSymbol(theEnv) : FalseSymbol(theEnv);
-   return(rv);
+   return rv;
   }
 
 /****************************************************

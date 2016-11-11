@@ -374,7 +374,7 @@ int LoadConstructsFromLogicalName(
    /*========================================================*/
 
 #if DEBUGGING_FUNCTIONS
-   if ((EnvGetWatchItem(theEnv,"compilations") != true) && GetPrintWhileLoading(theEnv))
+   if ((EnvGetWatchItem(theEnv,"compilations") != 1) && GetPrintWhileLoading(theEnv))
 #else
    if (GetPrintWhileLoading(theEnv))
 #endif
@@ -694,7 +694,8 @@ int ParseConstruct(
   const char *logicalName)
   {
    Construct *currentPtr;
-   int rv, ov;
+   int rv;
+   bool ov;
    CLIPSBlock gcBlock;
 
    /*=================================*/
@@ -728,7 +729,12 @@ int ParseConstruct(
    /*=======================================*/
 
    ConstructData(theEnv)->ParsingConstruct = true;
-   rv = (*currentPtr->parseFunction)(theEnv,logicalName);
+   
+   if ((*currentPtr->parseFunction)(theEnv,logicalName))
+     { rv = 1; }
+   else
+     { rv = 0; }
+     
    ConstructData(theEnv)->ParsingConstruct = false;
 
    /*===============================*/
@@ -753,7 +759,7 @@ int ParseConstruct(
    /* the construct.               */
    /*==============================*/
 
-   return(rv);
+   return rv;
   }
 
 /******************************************************/

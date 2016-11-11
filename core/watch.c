@@ -289,10 +289,15 @@ int EnvGetWatchItem(
    for (wPtr = WatchData(theEnv)->ListOfWatchItems; wPtr != NULL; wPtr = wPtr->next)
      {
       if (strcmp(itemName,wPtr->name) == 0)
-        { return((int) *(wPtr->flag)); }
+        {
+         if (*(wPtr->flag))
+           { return 1; }
+         else
+           { return 0; }
+        }
      }
 
-   return(-1);
+   return -1;
   }
 
 /***************************************************************/

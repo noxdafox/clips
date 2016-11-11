@@ -238,7 +238,7 @@ bool SetConstraintType(
          break;
 
       case SYMBOL_OR_STRING:
-         rv = (constraints->stringsAllowed | constraints->symbolsAllowed);
+         rv = (constraints->stringsAllowed || constraints->symbolsAllowed);
          constraints->symbolsAllowed = true;
          constraints->stringsAllowed = true;
          break;
@@ -254,7 +254,7 @@ bool SetConstraintType(
          break;
 
       case INTEGER_OR_FLOAT:
-         rv = (constraints->integersAllowed | constraints->floatsAllowed);
+         rv = (constraints->integersAllowed || constraints->floatsAllowed);
          constraints->integersAllowed = true;
          constraints->floatsAllowed = true;
          break;
@@ -270,7 +270,7 @@ bool SetConstraintType(
          break;
 
       case INSTANCE_OR_INSTANCE_NAME:
-         rv = (constraints->instanceNamesAllowed | constraints->instanceAddressesAllowed);
+         rv = (constraints->instanceNamesAllowed || constraints->instanceAddressesAllowed);
          constraints->instanceNamesAllowed = true;
          constraints->instanceAddressesAllowed = true;
          break;

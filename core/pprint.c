@@ -293,23 +293,23 @@ bool GetPPBufferStatus(
 /***********************/
 /* SetPPBufferEnabled: */
 /***********************/
-int SetPPBufferEnabled(
+bool SetPPBufferEnabled(
   Environment *theEnv,
-  int value)
+  bool value)
   {
-   int oldValue;
+   bool oldValue;
 
    oldValue = PrettyPrintData(theEnv)->PPBufferEnabled;
    PrettyPrintData(theEnv)->PPBufferEnabled = value;
-   return(oldValue);
+   return oldValue;
   }
 
 /***********************/
 /* GetPPBufferEnabled: */
 /***********************/
-int GetPPBufferEnabled(
+bool GetPPBufferEnabled(
   Environment *theEnv)
   {
-   return(PrettyPrintData(theEnv)->PPBufferEnabled);
+   return PrettyPrintData(theEnv)->PPBufferEnabled;
   }
 

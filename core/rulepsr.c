@@ -260,9 +260,11 @@ bool ParseDefrule(
 #if DEBUGGING_FUNCTIONS
    if (BitwiseTest(DefruleData(theEnv)->DeletedRuleDebugFlags,0))
      { DefruleSetBreak(topDisjunct); }
-   if (BitwiseTest(DefruleData(theEnv)->DeletedRuleDebugFlags,1) || EnvGetWatchItem(theEnv,"activations"))
+   if (BitwiseTest(DefruleData(theEnv)->DeletedRuleDebugFlags,1) ||
+       (EnvGetWatchItem(theEnv,"activations") == 1))
      { DefruleSetWatchActivations(topDisjunct,true); }
-   if (BitwiseTest(DefruleData(theEnv)->DeletedRuleDebugFlags,2) || EnvGetWatchItem(theEnv,"rules"))
+   if (BitwiseTest(DefruleData(theEnv)->DeletedRuleDebugFlags,2) ||
+       (EnvGetWatchItem(theEnv,"rules") == 1))
      { DefruleSetWatchFirings(topDisjunct,true); }
 #endif
 
@@ -364,7 +366,7 @@ static Defrule *ProcessRuleLHS(
       /*========================================================*/
 
 #if DEVELOPER && DEBUGGING_FUNCTIONS
-      if (EnvGetWatchItem(theEnv,"rule-analysis"))
+      if (EnvGetWatchItem(theEnv,"rule-analysis") == 1)
         { DumpRuleAnalysis(theEnv,tempNode); }
 #endif
 

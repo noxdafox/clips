@@ -109,7 +109,7 @@ struct constructData
    short ClearReadyLocks;
    int DanglingConstructs;
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   struct callFunctionItem *ListOfSaveFunctions;
+   struct saveCallFunctionItem *ListOfSaveFunctions;
    bool PrintWhileLoading;
    bool WatchCompilations;
    bool CheckSyntaxMode;
@@ -129,9 +129,9 @@ struct constructData
    ParserErrorFunction *ParserErrorCallback;
 #endif
    Construct *ListOfConstructs;
-   struct callFunctionItem *ListOfResetFunctions;
-   struct callFunctionItem *ListOfClearFunctions;
-   struct callFunctionItem *ListOfClearReadyFunctions;
+   struct voidCallFunctionItem *ListOfResetFunctions;
+   struct voidCallFunctionItem *ListOfClearFunctions;
+   struct boolCallFunctionItem *ListOfClearReadyFunctions;
    bool Executing;
    BeforeResetFunction *BeforeResetCallback;
   };
@@ -165,8 +165,8 @@ struct constructData
                                                DeleteConstructFunction *,
                                                FreeConstructFunction *);
    bool                           RemoveConstruct(Environment *,const char *);
-   void                           SetCompilationsWatch(Environment *,unsigned);
-   unsigned                       GetCompilationsWatch(Environment *);
+   void                           SetCompilationsWatch(Environment *,bool);
+   bool                           GetCompilationsWatch(Environment *);
    void                           SetPrintWhileLoading(Environment *,bool);
    bool                           GetPrintWhileLoading(Environment *);
    bool                           ExecutingConstruct(Environment *);

@@ -984,7 +984,7 @@ static bool PerformMessage(
   Expression *args,
   CLIPSLexeme *mname)
   {
-   int oldce;
+   bool oldce;
    /* HANDLER_LINK *oldCore; */
    Defclass *cls = NULL;
    Instance *ins = NULL;

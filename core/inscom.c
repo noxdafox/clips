@@ -327,7 +327,7 @@ bool EnvDeleteInstance(
   Instance *theInstance)
   {
    Instance *ins, *itmp;
-   int success = 1;
+   bool success = true;
 
    if (theInstance != NULL)
      { return QuashInstance(theEnv,theInstance); }
@@ -338,7 +338,7 @@ bool EnvDeleteInstance(
       itmp = ins;
       ins = ins->nxtList;
       if (QuashInstance(theEnv,itmp) == 0)
-        success = 0;
+        { success = false; }
      }
 
    if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&

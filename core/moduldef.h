@@ -206,7 +206,7 @@ struct moduleStackItem
 struct defmoduleData
   {
    struct moduleItem *LastModuleItem;
-   struct callFunctionItem *AfterModuleChangeFunctions;
+   struct voidCallFunctionItem *AfterModuleChangeFunctions;
    ModuleStackItem *ModuleStack;
    bool CallModuleChangeFunctions;
    Defmodule *ListOfDefmodules;
@@ -219,7 +219,7 @@ struct defmoduleData
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    struct portConstructItem *ListOfPortConstructItems;
    long NumberOfDefmodules;
-   struct callFunctionItem *AfterModuleDefinedFunctions;
+   struct voidCallFunctionItem *AfterModuleDefinedFunctions;
 #endif
 #if CONSTRUCT_COMPILER && (! RUN_TIME)
    struct CodeGeneratorItem *DefmoduleCodeItem;

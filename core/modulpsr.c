@@ -103,7 +103,7 @@ void AddAfterModuleDefinedFunction(
   int priority)
   {
    DefmoduleData(theEnv)->AfterModuleDefinedFunctions =
-     AddFunctionToCallList(theEnv,name,priority,func,DefmoduleData(theEnv)->AfterModuleDefinedFunctions);
+     AddVoidFunctionToCallList(theEnv,name,priority,func,DefmoduleData(theEnv)->AfterModuleDefinedFunctions);
   }
 
 /******************************************************/
@@ -140,7 +140,7 @@ bool ParseDefmodule(
    struct moduleItem *theItem;
    struct portItem *portSpecs, *nextSpec;
    struct defmoduleItemHeader *theHeader;
-   struct callFunctionItem *defineFunctions;
+   struct voidCallFunctionItem *defineFunctions;
    Defmodule *redefiningMainModule = NULL;
    bool parseError;
    struct portItem *oldImportList = NULL, *oldExportList = NULL;

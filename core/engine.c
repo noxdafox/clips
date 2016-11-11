@@ -147,7 +147,7 @@ static void DeallocateEngineData(
   {
    struct focus *tmpPtr, *nextPtr;
 
-   DeallocateCallList(theEnv,EngineData(theEnv)->ListOfRunFunctions);
+   DeallocateVoidCallList(theEnv,EngineData(theEnv)->ListOfRunFunctions);
    DeallocateCallListWithArg(theEnv,EngineData(theEnv)->ListOfBeforeRunFunctions);
 
    tmpPtr = EngineData(theEnv)->CurrentFocus;
@@ -169,7 +169,7 @@ long long EnvRun(
    long long rulesFired = 0;
    UDFValue returnValue;
    struct callFunctionItemWithArg *theBeforeRunFunction;
-   struct callFunctionItem *theRunFunction;
+   struct voidCallFunctionItem *theRunFunction;
 #if DEBUGGING_FUNCTIONS
    unsigned long maxActivations = 0, sumActivations = 0;
 #if DEFTEMPLATE_CONSTRUCT
@@ -931,7 +931,7 @@ bool EnvAddRunFunction(
   void (*functionPtr)(Environment *),
   int priority)
   {
-   EngineData(theEnv)->ListOfRunFunctions = AddFunctionToCallList(theEnv,name,priority,
+   EngineData(theEnv)->ListOfRunFunctions = AddVoidFunctionToCallList(theEnv,name,priority,
                                               functionPtr,
                                               EngineData(theEnv)->ListOfRunFunctions);
    return true;
@@ -965,7 +965,7 @@ bool EnvAddRunFunctionWithContext(
   void *context)
   {
    EngineData(theEnv)->ListOfRunFunctions =
-      AddFunctionToCallListWithContext(theEnv,name,priority,functionPtr,
+      AddVoidFunctionToCallListWithContext(theEnv,name,priority,functionPtr,
                                        EngineData(theEnv)->ListOfRunFunctions,
                                        context);
    return true;
@@ -1000,7 +1000,7 @@ bool EnvRemoveRunFunction(
    bool found;
 
    EngineData(theEnv)->ListOfRunFunctions =
-      RemoveFunctionFromCallList(theEnv,name,EngineData(theEnv)->ListOfRunFunctions,&found);
+      RemoveVoidFunctionFromCallList(theEnv,name,EngineData(theEnv)->ListOfRunFunctions,&found);
 
    return found;
   }

@@ -855,7 +855,7 @@ bool EnvSaveFactsDriver(
   int saveCode,
   struct expr *theList)
   {
-   int tempValue1, tempValue2, tempValue3;
+   bool tempValue1, tempValue2, tempValue3;
    struct fact *theFact;
    FILE *filePtr;
    Defmodule *theModule;

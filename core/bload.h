@@ -69,10 +69,10 @@ struct bloadData
    char *BinarySizes;
    struct functionDefinition **FunctionArray;
    bool BloadActive;
-   struct callFunctionItem *BeforeBloadFunctions;
-   struct callFunctionItem *AfterBloadFunctions;
-   struct callFunctionItem *ClearBloadReadyFunctions;
-   struct callFunctionItem *AbortBloadFunctions;
+   struct voidCallFunctionItem *BeforeBloadFunctions;
+   struct voidCallFunctionItem *AfterBloadFunctions;
+   struct boolCallFunctionItem *ClearBloadReadyFunctions;
+   struct voidCallFunctionItem *AbortBloadFunctions;
   };
 
 #define BloadData(theEnv) ((struct bloadData *) GetEnvironmentData(theEnv,BLOAD_DATA))
@@ -86,7 +86,7 @@ struct bloadData
    bool                    Bloaded(Environment *);
    void                    AddBeforeBloadFunction(Environment *,const char *,void (*)(Environment *),int);
    void                    AddAfterBloadFunction(Environment *,const char *,void (*)(Environment *),int);
-   void                    AddClearBloadReadyFunction(Environment *,const char *,int (*)(Environment *),int);
+   void                    AddClearBloadReadyFunction(Environment *,const char *,bool (*)(Environment *),int);
    void                    AddAbortBloadFunction(Environment *,const char *,void (*)(Environment *),int);
    void                    CannotLoadWithBloadMessage(Environment *,const char *);
 

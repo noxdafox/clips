@@ -106,7 +106,7 @@ void CallDeffunction(
   Expression *args,
   UDFValue *returnValue)
   {
-   int oldce;
+   bool oldce;
    Deffunction *previouslyExecutingDeffunction;
    CLIPSBlock gcBlock;
 #if PROFILING_FUNCTIONS
