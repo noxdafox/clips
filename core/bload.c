@@ -108,10 +108,10 @@ void InitializeBloadData(
 static void DeallocateBloadData(
   Environment *theEnv)
   {
-   DeallocateCallList(theEnv,BloadData(theEnv)->BeforeBloadFunctions);
-   DeallocateCallList(theEnv,BloadData(theEnv)->AfterBloadFunctions);
-   DeallocateCallList(theEnv,BloadData(theEnv)->ClearBloadReadyFunctions);
-   DeallocateCallList(theEnv,BloadData(theEnv)->AbortBloadFunctions);
+   DeallocateVoidCallList(theEnv,BloadData(theEnv)->BeforeBloadFunctions);
+   DeallocateVoidCallList(theEnv,BloadData(theEnv)->AfterBloadFunctions);
+   DeallocateBoolCallList(theEnv,BloadData(theEnv)->ClearBloadReadyFunctions);
+   DeallocateVoidCallList(theEnv,BloadData(theEnv)->AbortBloadFunctions);
    genfree(theEnv,BloadData(theEnv)->BinarySizes,strlen(BloadData(theEnv)->BinarySizes) + 1);
   }
 
@@ -130,7 +130,7 @@ bool EnvBload(
    char sizesBuffer[20];
    char constructBuffer[CONSTRUCT_HEADER_SIZE];
    struct BinaryItem *biPtr;
-   struct callFunctionItem *bfPtr;
+   struct voidCallFunctionItem *bfPtr;
 
    /*================*/
    /* Open the file. */
@@ -486,7 +486,7 @@ static struct functionDefinition **ReadNeededFunctions(
    size_t temp;
    long i;
    struct functionDefinition **newFunctionArray, *functionPtr;
-   int functionsNotFound = 0;
+   bool functionsNotFound = false;
 
    /*===================================================*/
    /* Determine the number of function names to be read */
@@ -530,7 +530,7 @@ static struct functionDefinition **ReadNeededFunctions(
          EnvPrintRouter(theEnv,WERROR,"   ");
          EnvPrintRouter(theEnv,WERROR,namePtr);
          EnvPrintRouter(theEnv,WERROR,"\n");
-         functionsNotFound = 1;
+         functionsNotFound = true;
         }
 
       newFunctionArray[i] = functionPtr;
@@ -560,7 +560,7 @@ static struct functionDefinition **ReadNeededFunctions(
    /*===================================*/
 
    *error = functionsNotFound;
-   return(newFunctionArray);
+   return newFunctionArray;
   }
 
 /*****************************************/
@@ -640,7 +640,7 @@ static bool ClearBload(
   Environment *theEnv)
   {
    struct BinaryItem *biPtr;
-   struct callFunctionItem *bfPtr;
+   struct boolCallFunctionItem *bfPtr;
    bool ready, error;
 
    /*======================================*/
@@ -660,7 +660,7 @@ static bool ClearBload(
         bfPtr != NULL;
         bfPtr = bfPtr->next)
      {
-      ready = (* ((int (*)(void *)) bfPtr->func))(theEnv);
+      ready = (bfPtr->func)(theEnv);
 
       if (ready == false)
         {
@@ -731,7 +731,7 @@ static bool ClearBload(
 static void AbortBload(
   Environment *theEnv)
   {
-   struct callFunctionItem *bfPtr;
+   struct voidCallFunctionItem *bfPtr;
 
    for (bfPtr = BloadData(theEnv)->AbortBloadFunctions;
         bfPtr != NULL;
@@ -751,7 +751,7 @@ void AddBeforeBloadFunction(
   int priority)
   {
    BloadData(theEnv)->BeforeBloadFunctions =
-     AddFunctionToCallList(theEnv,name,priority,func,BloadData(theEnv)->BeforeBloadFunctions);
+     AddVoidFunctionToCallList(theEnv,name,priority,func,BloadData(theEnv)->BeforeBloadFunctions);
   }
 
 /*******************************************/
@@ -766,7 +766,7 @@ void AddAfterBloadFunction(
   int priority)
   {
    BloadData(theEnv)->AfterBloadFunctions =
-      AddFunctionToCallList(theEnv,name,priority,func,BloadData(theEnv)->AfterBloadFunctions);
+      AddVoidFunctionToCallList(theEnv,name,priority,func,BloadData(theEnv)->AfterBloadFunctions);
   }
 
 /**************************************************/
@@ -777,12 +777,11 @@ void AddAfterBloadFunction(
 void AddClearBloadReadyFunction(
   Environment *theEnv,
   const char *name,
-  int (*func)(Environment *), // TBD bool
+  bool (*func)(Environment *),
   int priority)
   {
    BloadData(theEnv)->ClearBloadReadyFunctions =
-      AddFunctionToCallList(theEnv,name,priority,
-                            (void (*)(Environment *)) func,
+      AddBoolFunctionToCallList(theEnv,name,priority,func,
                             BloadData(theEnv)->ClearBloadReadyFunctions);
   }
 
@@ -797,7 +796,7 @@ void AddAbortBloadFunction(
   void (*func)(Environment *),
   int priority)
   {
-   BloadData(theEnv)->AbortBloadFunctions = AddFunctionToCallList(theEnv,name,priority,func,BloadData(theEnv)->AbortBloadFunctions);
+   BloadData(theEnv)->AbortBloadFunctions = AddVoidFunctionToCallList(theEnv,name,priority,func,BloadData(theEnv)->AbortBloadFunctions);
   }
 
 /*******************************************************

@@ -134,11 +134,11 @@ static void DeallocateConstructData(
    Construct *tmpPtr, *nextPtr;
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   DeallocateCallList(theEnv,ConstructData(theEnv)->ListOfSaveFunctions);
+   DeallocateSaveCallList(theEnv,ConstructData(theEnv)->ListOfSaveFunctions);
 #endif
-   DeallocateCallList(theEnv,ConstructData(theEnv)->ListOfResetFunctions);
-   DeallocateCallList(theEnv,ConstructData(theEnv)->ListOfClearFunctions);
-   DeallocateCallList(theEnv,ConstructData(theEnv)->ListOfClearReadyFunctions);
+   DeallocateVoidCallList(theEnv,ConstructData(theEnv)->ListOfResetFunctions);
+   DeallocateVoidCallList(theEnv,ConstructData(theEnv)->ListOfClearFunctions);
+   DeallocateBoolCallList(theEnv,ConstructData(theEnv)->ListOfClearReadyFunctions);
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    if (ConstructData(theEnv)->ErrorString != NULL)
@@ -242,7 +242,7 @@ bool EnvSave(
   Environment *theEnv,
   const char *fileName)
   {
-   struct callFunctionItem *saveFunction;
+   struct saveCallFunctionItem *saveFunction;
    FILE *filePtr;
    Defmodule *defmodulePtr;
    bool updated = false;
@@ -295,9 +295,7 @@ bool EnvSave(
             for (saveFunction = ConstructData(theEnv)->ListOfSaveFunctions;
                  saveFunction != NULL;
                  saveFunction = saveFunction->next)
-              {
-               ((* (void (*)(Environment *,void *,char *)) saveFunction->func))(theEnv,defmodulePtr,(char *) filePtr);
-              }
+              { (*saveFunction->func)(theEnv,defmodulePtr,(char *) filePtr); }
 
             updated = true;
             defmodulePtr->visitedFlag = true;
@@ -356,7 +354,7 @@ bool RemoveSaveFunction(
    bool found;
 
    ConstructData(theEnv)->ListOfSaveFunctions =
-     RemoveFunctionFromCallList(theEnv,name,ConstructData(theEnv)->ListOfSaveFunctions,&found);
+     RemoveSaveFunctionFromCallList(theEnv,name,ConstructData(theEnv)->ListOfSaveFunctions,&found);
 
    if (found) return true;
 
@@ -369,7 +367,7 @@ bool RemoveSaveFunction(
 /**********************************/
 void SetCompilationsWatch(
   Environment *theEnv,
-  unsigned value)
+  bool value)
   {
    ConstructData(theEnv)->WatchCompilations = value;
   }
@@ -378,10 +376,10 @@ void SetCompilationsWatch(
 /* GetCompilationsWatch: Returns the */
 /*   value of WatchCompilations.     */
 /*************************************/
-unsigned GetCompilationsWatch(
+bool GetCompilationsWatch(
   Environment *theEnv)
   {
-   return(ConstructData(theEnv)->WatchCompilations);
+   return ConstructData(theEnv)->WatchCompilations;
   }
 
 /**********************************/
@@ -480,7 +478,7 @@ void ResetCommand(
 void EnvReset(
   Environment *theEnv)
   {
-   struct callFunctionItem *resetPtr;
+   struct voidCallFunctionItem *resetPtr;
 
    /*=====================================*/
    /* The reset command can't be executed */
@@ -574,7 +572,7 @@ bool EnvAddResetFunction(
   void (*functionPtr)(Environment *),
   int priority)
   {
-   ConstructData(theEnv)->ListOfResetFunctions = AddFunctionToCallList(theEnv,name,priority,
+   ConstructData(theEnv)->ListOfResetFunctions = AddVoidFunctionToCallList(theEnv,name,priority,
                                                 functionPtr,
                                                 ConstructData(theEnv)->ListOfResetFunctions);
    return true;
@@ -591,7 +589,7 @@ bool EnvRemoveResetFunction(
    bool found;
 
    ConstructData(theEnv)->ListOfResetFunctions =
-      RemoveFunctionFromCallList(theEnv,name,ConstructData(theEnv)->ListOfResetFunctions,&found);
+      RemoveVoidFunctionFromCallList(theEnv,name,ConstructData(theEnv)->ListOfResetFunctions,&found);
 
    return found;
   }
@@ -623,7 +621,7 @@ void EnvDecrementClearReadyLocks(
 bool EnvClear(
   Environment *theEnv)
   {
-   struct callFunctionItem *theFunction;
+   struct voidCallFunctionItem *theFunction;
 
    /*==========================================*/
    /* Activate the watch router which captures */
@@ -716,15 +714,13 @@ bool EnvClear(
 bool ClearReady(
   Environment *theEnv)
   {
-   struct callFunctionItem *theFunction;
-   bool (*tempFunction)(Environment *);
+   struct boolCallFunctionItem *theFunction;
 
    for (theFunction = ConstructData(theEnv)->ListOfClearReadyFunctions;
         theFunction != NULL;
         theFunction = theFunction->next)
      {
-      tempFunction = (bool (*)(Environment *)) theFunction->func;
-      if ((*tempFunction)(theEnv) == false)
+      if ((*theFunction->func)(theEnv) == false)
         { return false; }
      }
 
@@ -742,9 +738,8 @@ bool AddClearReadyFunction(
   int priority)
   {
    ConstructData(theEnv)->ListOfClearReadyFunctions =
-     AddFunctionToCallList(theEnv,name,priority,
-                           (void (*)(Environment *)) functionPtr,
-                           ConstructData(theEnv)->ListOfClearReadyFunctions);
+     AddBoolFunctionToCallList(theEnv,name,priority,functionPtr,
+                               ConstructData(theEnv)->ListOfClearReadyFunctions);
    return true;
   }
 
@@ -759,7 +754,7 @@ bool RemoveClearReadyFunction(
    bool found;
 
    ConstructData(theEnv)->ListOfClearReadyFunctions =
-      RemoveFunctionFromCallList(theEnv,name,ConstructData(theEnv)->ListOfClearReadyFunctions,&found);
+      RemoveBoolFunctionFromCallList(theEnv,name,ConstructData(theEnv)->ListOfClearReadyFunctions,&found);
 
    if (found) return true;
 
@@ -777,7 +772,7 @@ bool EnvAddClearFunction(
   int priority)
   {
    ConstructData(theEnv)->ListOfClearFunctions =
-      AddFunctionToCallList(theEnv,name,priority,
+      AddVoidFunctionToCallList(theEnv,name,priority,
                             functionPtr,
                             ConstructData(theEnv)->ListOfClearFunctions);
    return true;
@@ -794,7 +789,7 @@ bool EnvRemoveClearFunction(
    bool found;
 
    ConstructData(theEnv)->ListOfClearFunctions =
-     RemoveFunctionFromCallList(theEnv,name,ConstructData(theEnv)->ListOfClearFunctions,&found);
+     RemoveVoidFunctionFromCallList(theEnv,name,ConstructData(theEnv)->ListOfClearFunctions,&found);
 
    if (found) return true;
 
@@ -937,8 +932,8 @@ bool AddSaveFunction(
   {
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    ConstructData(theEnv)->ListOfSaveFunctions =
-     AddFunctionToCallList(theEnv,name,priority,
-                           (void (*)(Environment *)) functionPtr,
+     AddSaveFunctionToCallList(theEnv,name,priority,
+                           functionPtr,
                            ConstructData(theEnv)->ListOfSaveFunctions);
 #else
 #if MAC_XCD

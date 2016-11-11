@@ -296,8 +296,18 @@ bool FactPNConstant1(
    /*====================================*/
 
    theConstant = GetFirstArgument();
-   if (theConstant->value != fieldPtr->value) return(1 - hack->testForEquality);
-   return(hack->testForEquality);
+   if (theConstant->value != fieldPtr->value)
+     {
+      if (1 - hack->testForEquality)
+        { return true; }
+      else
+        { return false; }
+     }
+
+   if (hack->testForEquality)
+     { return true; }
+   else
+     { return false; }
   }
 
 /****************************************************************/
@@ -353,8 +363,18 @@ bool FactPNConstant2(
    /*====================================*/
 
    theConstant = GetFirstArgument();
-   if (theConstant->value != fieldPtr->value) return(1 - hack->testForEquality);
-   return(hack->testForEquality);
+   if (theConstant->value != fieldPtr->value)
+     {
+      if (1 - hack->testForEquality)
+        { return true; }
+      else
+        { return false; }
+     }
+   
+   if (hack->testForEquality)
+     { return true; }
+   else
+     { return false; }
   }
 
 /**************************************************************/
@@ -800,7 +820,7 @@ bool FactPNCompVars1(
   void *theValue,
   UDFValue *theResult)
   {
-   int rv;
+   bool rv;
    struct field *fieldPtr1, *fieldPtr2;
    struct factCompVarsPN1Call *hack;
 
@@ -816,13 +836,13 @@ bool FactPNCompVars1(
    /* Compare the values. */
    /*=====================*/
 
-   if (fieldPtr1->value != fieldPtr2->value) rv = (int) hack->fail;
-   else rv = (int) hack->pass;
+   if (fieldPtr1->value != fieldPtr2->value) rv = (bool) hack->fail;
+   else rv = (bool) hack->pass;
 
    if (rv) theResult->value = TrueSymbol(theEnv);
    else theResult->value = FalseSymbol(theEnv);
 
-   return(rv);
+   return rv;
   }
 
 /*************************************************************************/

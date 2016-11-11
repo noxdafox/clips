@@ -507,7 +507,7 @@ long EnvSaveInstancesDriver(
   bool inheritFlag)
   {
    FILE *sfile = NULL;
-   int oldPEC,oldATS,oldIAN;
+   bool oldPEC, oldATS, oldIAN;
    struct classItem *classList;
    long instanceCount;
 
@@ -1285,7 +1285,7 @@ static long LoadOrRestoreInstances(
    FILE *sfile = NULL,*svload = NULL;
    const char *ilog;
    Expression *top;
-   int svoverride;
+   bool svoverride;
    long instanceCount = 0L;
 
    if (isFileName) {

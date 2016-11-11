@@ -103,7 +103,7 @@ struct engineData
    struct partialMatch *TheLogicalBind;
    struct dependency *UnsupportedDataEntities;
    bool alreadyEntered;
-   struct callFunctionItem *ListOfRunFunctions;
+   struct voidCallFunctionItem *ListOfRunFunctions;
    struct callFunctionItemWithArg *ListOfBeforeRunFunctions;
    struct focus *CurrentFocus;
    bool FocusChanged;

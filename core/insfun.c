@@ -275,7 +275,7 @@ void DestroyAllInstances(
   Environment *theEnv)
   {
    Instance *iptr;
-   int svmaintain;
+   bool svmaintain;
 
    SaveCurrentModule(theEnv);
    svmaintain = InstanceData(theEnv)->MaintainGarbageInstances;

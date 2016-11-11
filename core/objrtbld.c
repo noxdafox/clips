@@ -147,7 +147,7 @@
    static bool                    CheckDuplicateSlots(Environment *,struct lhsParseNode *,CLIPSLexeme *);
    static struct lhsParseNode    *ParseClassRestriction(Environment *,const char *,struct token *);
    static struct lhsParseNode    *ParseNameRestriction(Environment *,const char *,struct token *);
-   static struct lhsParseNode    *ParseSlotRestriction(Environment *,const char *,struct token *,CONSTRAINT_RECORD *,int);
+   static struct lhsParseNode    *ParseSlotRestriction(Environment *,const char *,struct token *,CONSTRAINT_RECORD *,bool);
    static CLASS_BITMAP           *NewClassBitMap(Environment *,int,int);
    static void                    InitializeClassBitMap(Environment *,CLASS_BITMAP *,int);
    static void                    DeleteIntermediateClassBitMap(Environment *,CLASS_BITMAP *);
@@ -1443,7 +1443,7 @@ static struct lhsParseNode *ParseSlotRestriction(
   const char *readSource,
   struct token *theToken,
   CONSTRAINT_RECORD *slotConstraints,
-  int multip)
+  bool multip)
   {
    struct lhsParseNode *tmpNode;
    CLIPSLexeme *slotName;

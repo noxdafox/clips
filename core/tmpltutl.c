@@ -588,7 +588,7 @@ Deftemplate *CreateImpliedDeftemplate(
    newDeftemplate->header.next = NULL;
 
 #if DEBUGGING_FUNCTIONS
-   if (EnvGetWatchItem(theEnv,"facts"))
+   if (EnvGetWatchItem(theEnv,"facts") == 1)
      { DeftemplateSetWatch(newDeftemplate,true); }
 #endif
 

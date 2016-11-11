@@ -250,7 +250,7 @@ static bool GetVariableDefinition(
    /*================================*/
 
 #if DEBUGGING_FUNCTIONS
-   if ((EnvGetWatchItem(theEnv,"compilations") == true) && GetPrintWhileLoading(theEnv))
+   if ((EnvGetWatchItem(theEnv,"compilations") == 1) && GetPrintWhileLoading(theEnv))
      {
       const char *outRouter = WDIALOG;
       if (QFindDefglobal(theEnv,variableName) != NULL)

@@ -97,7 +97,7 @@ struct externalAddressType
 
 #define BITS_PER_BYTE    8
 
-#define BitwiseTest(n,b)   ((n) & (char) (1 << (b)))
+#define BitwiseTest(n,b)   (((n) & (char) (1 << (b))) ? true : false)
 #define BitwiseSet(n,b)    (n |= (char) (1 << (b)))
 #define BitwiseClear(n,b)  (n &= (char) ~(1 << (b)))
 
@@ -151,7 +151,7 @@ struct evaluationData
    bool                           DOsEqual(UDFValue *,UDFValue *);
    bool                           EvaluateAndStoreInDataObject(Environment *,bool,Expression *,UDFValue *,bool);
 
-#define CVIsType(cv,cvType) ((1 << (((TypeHeader *) (cv)->value)->type)) & (cvType))
+#define CVIsType(cv,cvType) (((1 << (((TypeHeader *) (cv)->value)->type)) & (cvType)) ? true : false)
 
 #define ValueIsType(value,vType) ((1 << (((TypeHeader *) value)->type)) & (vType))
 

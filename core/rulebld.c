@@ -285,7 +285,7 @@ struct joinNode *ConstructJoins(
                                         leftHash,rightHash)) != NULL) )
         {
 #if DEBUGGING_FUNCTIONS
-         if ((EnvGetWatchItem(theEnv,"compilations") == true) && GetPrintWhileLoading(theEnv))
+         if ((EnvGetWatchItem(theEnv,"compilations") == 1) && GetPrintWhileLoading(theEnv))
            { EnvPrintRouter(theEnv,WDIALOG,"=j"); }
 #endif
          lastJoin = oldJoin;
@@ -344,7 +344,7 @@ struct joinNode *ConstructJoins(
 
 #if DEBUGGING_FUNCTIONS
    if ((startDepth == 1) &&
-       (EnvGetWatchItem(theEnv,"compilations") == true) &&
+       (EnvGetWatchItem(theEnv,"compilations") == 1) &&
        GetPrintWhileLoading(theEnv))
      { EnvPrintRouter(theEnv,WDIALOG,"\n"); }
 #endif
@@ -1092,7 +1092,7 @@ static struct joinNode *CreateNewJoin(
    /*===============================================*/
 
 #if DEBUGGING_FUNCTIONS
-   if ((EnvGetWatchItem(theEnv,"compilations") == true) && GetPrintWhileLoading(theEnv))
+   if ((EnvGetWatchItem(theEnv,"compilations") == 1) && GetPrintWhileLoading(theEnv))
      { EnvPrintRouter(theEnv,WDIALOG,"+j"); }
 #endif
 

@@ -870,7 +870,7 @@ static void DuplicateMsgHandlerSupport(
    UDFValue *slotOverrides;
    Expression *valArg,msgExp;
    long i;
-   int oldMkInsMsgPass;
+   bool oldMkInsMsgPass;
    InstanceSlot *dstInsSlot;
    UDFValue temp,junk,*newval;
    bool success;

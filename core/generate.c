@@ -71,7 +71,7 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    ExtractAnds(Environment *,struct lhsParseNode *,int,
+   static void                    ExtractAnds(Environment *,struct lhsParseNode *,bool,
                                               struct expr **,struct expr **,struct expr **,
                                               struct expr **,struct nandFrame *);
    static void                    ExtractFieldTest(Environment *,struct lhsParseNode *,bool,
@@ -314,7 +314,7 @@ void FieldConversion(
 static void ExtractAnds(
   Environment *theEnv,
   struct lhsParseNode *andField,
-  int testInPatternNetwork,
+  bool testInPatternNetwork,
   struct expr **patternNetTest,
   struct expr **joinNetTest,
   struct expr **constantSelector,

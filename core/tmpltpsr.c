@@ -86,7 +86,7 @@
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    static struct templateSlot    *SlotDeclarations(Environment *,const char *,struct token *);
    static struct templateSlot    *ParseSlot(Environment *,const char *,struct token *,struct templateSlot *);
-   static struct templateSlot    *DefinedSlots(Environment *,const char *,CLIPSLexeme *,int,struct token *);
+   static struct templateSlot    *DefinedSlots(Environment *,const char *,CLIPSLexeme *,bool,struct token *);
    static bool                    ParseFacetAttribute(Environment *,const char *,struct templateSlot *,bool);
 #endif
 
@@ -209,7 +209,8 @@ bool ParseDeftemplate(
    /*=======================================================================*/
 
 #if DEBUGGING_FUNCTIONS
-   if ((BitwiseTest(DeftemplateData(theEnv)->DeletedTemplateDebugFlags,0)) || EnvGetWatchItem(theEnv,"facts"))
+   if ((BitwiseTest(DeftemplateData(theEnv)->DeletedTemplateDebugFlags,0)) ||
+       (EnvGetWatchItem(theEnv,"facts") == 1))
      { DeftemplateSetWatch(newDeftemplate,true); }
 #endif
 
@@ -467,7 +468,7 @@ static struct templateSlot *DefinedSlots(
   Environment *theEnv,
   const char *readSource,
   CLIPSLexeme *slotName,
-  int multifieldSlot,
+  bool multifieldSlot,
   struct token *inputToken)
   {
    struct templateSlot *newSlot;
@@ -588,7 +589,7 @@ static struct templateSlot *DefinedSlots(
          /* Parse the list of default values. */
          /*===================================*/
 
-         defaultList = ParseDefault(theEnv,readSource,multifieldSlot,(int) newSlot->defaultDynamic,
+         defaultList = ParseDefault(theEnv,readSource,multifieldSlot,newSlot->defaultDynamic,
                                   true,&noneSpecified,&deriveSpecified,&DeftemplateData(theEnv)->DeftemplateError);
          if (DeftemplateData(theEnv)->DeftemplateError == true)
            {

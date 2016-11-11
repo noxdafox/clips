@@ -643,7 +643,7 @@ void PreviewGeneric(
   {
    Defgeneric *gfunc;
    Defgeneric *previousGeneric;
-   int oldce;
+   bool oldce;
    UDFValue theArg;
 
    EvaluationData(theEnv)->EvaluationError = false;
