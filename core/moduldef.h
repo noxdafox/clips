@@ -108,9 +108,9 @@ struct defmoduleItemHeader
 
 typedef ConstructHeader *FindConstructFunction(Environment *,const char *);
 typedef ConstructHeader *GetNextConstructFunction(Environment *,ConstructHeader *);
-typedef bool *IsConstructDeletableFunction(ConstructHeader *);
-typedef bool *DeleteConstructFunction(ConstructHeader *,Environment *);
-typedef void *FreeConstructFunction(Environment *,ConstructHeader *);
+typedef bool IsConstructDeletableFunction(ConstructHeader *);
+typedef bool DeleteConstructFunction(ConstructHeader *,Environment *);
+typedef void FreeConstructFunction(Environment *,ConstructHeader *);
 
 /**********************************************************************/
 /* defmodule                                                          */

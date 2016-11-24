@@ -703,7 +703,7 @@ bool EnvFunctionCall(
   }
 
 /********************************************/
-/* FunctionCall2: Allows Deffunctions and    */
+/* FunctionCall2: Allows Deffunctions and   */
 /*   Generic Functions to be called from C. */
 /*   Allows only constants as arguments.    */
 /********************************************/

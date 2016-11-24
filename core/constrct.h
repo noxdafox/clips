@@ -77,7 +77,7 @@ typedef struct construct Construct;
 #include "moduldef.h"
 
 typedef void ParserErrorFunction(Environment *,const char *,const char *,const char *,long);
-typedef bool *BeforeResetFunction(Environment *);
+typedef bool BeforeResetFunction(Environment *);
 
 #define CHS (ConstructHeader *)
 

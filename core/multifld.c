@@ -417,8 +417,8 @@ void NormalizeMultifield(
    
    if (theMF->header->type != MULTIFIELD_TYPE) return;
    
-   if ((theMF->begin != 0) ||
-       (theMF->range != theMF->multifieldValue->length))
+   if ((theMF->begin == 0) &&
+       (theMF->range == theMF->multifieldValue->length))
      { return; }
 
    copy = EnvCreateMultifield(theEnv,theMF->range);

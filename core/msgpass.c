@@ -824,7 +824,7 @@ bool HandlerSlotPutFunction(
    else
      {
       theSetVal.begin = 0;
-      theSetVal.begin = -1;
+      theSetVal.range = 0;
       theSetVal.value = ProceduralPrimitiveData(theEnv)->NoParamValue;
      }
    if (PutSlotValue(theEnv,theInstance,sp,&theSetVal,theResult,NULL) == false)

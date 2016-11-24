@@ -658,7 +658,7 @@ bool EnvGetDefglobalValue(
 
 /****************************************************************/
 /* EnvSetDefglobalValue: Sets the value of the specified global */
-/*   variable to the value stored in the supplied UDFValue.   */
+/*   variable to the value stored in the supplied UDFValue.     */
 /****************************************************************/
 bool EnvSetDefglobalValue(
   Environment *theEnv,

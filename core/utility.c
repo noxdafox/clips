@@ -1421,17 +1421,17 @@ bool EnablePeriodicFunctions(
 /************************/
 /* EnableYieldFunction: */
 /************************/
-short EnableYieldFunction(
+bool EnableYieldFunction(
   Environment *theEnv,
-  short value)
+  bool value)
   {
-   short oldValue;
+   bool oldValue;
 
    oldValue = UtilityData(theEnv)->YieldFunctionEnabled;
 
    UtilityData(theEnv)->YieldFunctionEnabled = value;
 
-   return(oldValue);
+   return oldValue;
   }
 
 /*************************************************************************/

@@ -233,7 +233,7 @@ struct utilityData
    void                           EnvIncrementGCLocks(Environment *);
    void                           EnvDecrementGCLocks(Environment *);
    bool                           EnablePeriodicFunctions(Environment *,bool);
-   short                          EnableYieldFunction(Environment *,short);
+   bool                           EnableYieldFunction(Environment *,bool);
    struct trackedMemory          *AddTrackedMemory(Environment *,void *,size_t);
    void                           RemoveTrackedMemory(Environment *,struct trackedMemory *);
    void                           UTF8Increment(const char *,size_t *);

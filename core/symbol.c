@@ -393,7 +393,7 @@ CLIPSLexeme *EnvAddSymbol(
 
     if (str == NULL)
       {
-       SystemError(theEnv,"SYMBOL_TYPE",1);
+       SystemError(theEnv,"SYMBOL",1);
        EnvExitRouter(theEnv,EXIT_FAILURE);
       }
 
@@ -651,7 +651,7 @@ void *EnvAddBitMap(
 
     if (theBitMap == NULL)
       {
-       SystemError(theEnv,"SYMBOL_TYPE",2);
+       SystemError(theEnv,"SYMBOL",2);
        EnvExitRouter(theEnv,EXIT_FAILURE);
       }
 
@@ -929,13 +929,13 @@ void DecrementSymbolCount(
   {
    if (theValue->count < 0)
      {
-      SystemError(theEnv,"SYMBOL_TYPE",3);
+      SystemError(theEnv,"SYMBOL",3);
       EnvExitRouter(theEnv,EXIT_FAILURE);
      }
 
    if (theValue->count == 0)
      {
-      SystemError(theEnv,"SYMBOL_TYPE",4);
+      SystemError(theEnv,"SYMBOL",4);
       EnvExitRouter(theEnv,EXIT_FAILURE);
      }
 
@@ -964,7 +964,7 @@ void DecrementFloatCount(
   {
    if (theValue->count <= 0)
      {
-      SystemError(theEnv,"SYMBOL_TYPE",5);
+      SystemError(theEnv,"SYMBOL",5);
       EnvExitRouter(theEnv,EXIT_FAILURE);
      }
 
@@ -993,7 +993,7 @@ void DecrementIntegerCount(
   {
    if (theValue->count <= 0)
      {
-      SystemError(theEnv,"SYMBOL_TYPE",6);
+      SystemError(theEnv,"SYMBOL",6);
       EnvExitRouter(theEnv,EXIT_FAILURE);
      }
 
@@ -1022,13 +1022,13 @@ void DecrementBitMapCount(
   {
    if (theValue->count < 0)
      {
-      SystemError(theEnv,"SYMBOL_TYPE",7);
+      SystemError(theEnv,"SYMBOL",7);
       EnvExitRouter(theEnv,EXIT_FAILURE);
      }
 
    if (theValue->count == 0)
      {
-      SystemError(theEnv,"SYMBOL_TYPE",8);
+      SystemError(theEnv,"SYMBOL",8);
       EnvExitRouter(theEnv,EXIT_FAILURE);
      }
 
@@ -1057,13 +1057,13 @@ void DecrementExternalAddressCount(
   {
    if (theValue->count < 0)
      {
-      SystemError(theEnv,"SYMBOL_TYPE",9);
+      SystemError(theEnv,"SYMBOL",9);
       EnvExitRouter(theEnv,EXIT_FAILURE);
      }
 
    if (theValue->count == 0)
      {
-      SystemError(theEnv,"SYMBOL_TYPE",10);
+      SystemError(theEnv,"SYMBOL",10);
       EnvExitRouter(theEnv,EXIT_FAILURE);
      }
 
@@ -1103,6 +1103,12 @@ static void RemoveHashNode(
    previousNode = NULL;
    currentNode = theTable[theValue->bucket];
 
+   if (currentNode == NULL)
+     {
+      SystemError(theEnv,"SYMBOL",111);
+      EnvExitRouter(theEnv,EXIT_FAILURE);
+     }
+
    while (currentNode != theValue)
      {
       previousNode = currentNode;
@@ -1110,7 +1116,7 @@ static void RemoveHashNode(
 
       if (currentNode == NULL)
         {
-         SystemError(theEnv,"SYMBOL_TYPE",11);
+         SystemError(theEnv,"SYMBOL",11);
          EnvExitRouter(theEnv,EXIT_FAILURE);
         }
      }
@@ -1180,7 +1186,7 @@ static void AddEphemeralHashNode(
 
    if (checkCount && (theHashNode->count != 0))
      {
-      SystemError(theEnv,"SYMBOL_TYPE",12);
+      SystemError(theEnv,"SYMBOL",12);
       EnvExitRouter(theEnv,EXIT_FAILURE);
      }
 
@@ -1759,7 +1765,7 @@ void SetAtomicValueIndices(
            {
             symbolPtr->bucket = count++;
             if (symbolPtr->bucket != (count - 1))
-              { SystemError(theEnv,"SYMBOL_TYPE",13); }
+              { SystemError(theEnv,"SYMBOL",13); }
            }
         }
      }
@@ -1781,7 +1787,7 @@ void SetAtomicValueIndices(
            {
             floatPtr->bucket = count++;
             if (floatPtr->bucket != (count - 1))
-              { SystemError(theEnv,"SYMBOL_TYPE",14); }
+              { SystemError(theEnv,"SYMBOL",14); }
            }
         }
      }
@@ -1803,7 +1809,7 @@ void SetAtomicValueIndices(
            {
             integerPtr->bucket = count++;
             if (integerPtr->bucket != (count - 1))
-              { SystemError(theEnv,"SYMBOL_TYPE",15); }
+              { SystemError(theEnv,"SYMBOL",15); }
            }
         }
      }
@@ -1825,7 +1831,7 @@ void SetAtomicValueIndices(
            {
             bitMapPtr->bucket = count++;
             if (bitMapPtr->bucket != (count - 1))
-              { SystemError(theEnv,"SYMBOL_TYPE",16); }
+              { SystemError(theEnv,"SYMBOL",16); }
            }
         }
      }
