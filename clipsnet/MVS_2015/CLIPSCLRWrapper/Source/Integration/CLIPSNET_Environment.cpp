@@ -241,8 +241,8 @@ namespace CLIPSNET
       inputBuffer = m_Env->GetInputBuffer();
       if (inputBuffer == NULL)
         { return gcnew String(""); }
-  
-      return gcnew String(inputBuffer);
+      
+      return gcnew String(inputBuffer,0, (int) strlen(inputBuffer), UTF8Encoding::UTF8);
      }
 
    /*******************/
@@ -252,6 +252,7 @@ namespace CLIPSNET
      String ^ commandString)
      {
       array<Byte>^ ebCommandString = Encoding::UTF8->GetBytes(commandString);    
+
       if (ebCommandString->Length)
         {  
          pin_ptr<Byte> pbCommandString = &ebCommandString[0];

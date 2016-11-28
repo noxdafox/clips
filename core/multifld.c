@@ -405,10 +405,10 @@ void CLIPSToUDFValue(
      }
   }
 
-/************************************************************************/
-/* NormalizeMultifield: Allocates a new segment and copies results from */
-/*   old value to new. This value is not put on the ListOfMultifields.  */
-/************************************************************************/
+/************************************************/
+/* NormalizeMultifield: Allocates a new segment */
+/*   and copies results from old value to new.  */
+/************************************************/
 void NormalizeMultifield(
   Environment *theEnv,
   UDFValue *theMF)

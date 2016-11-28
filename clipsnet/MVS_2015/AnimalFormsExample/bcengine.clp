@@ -176,7 +176,7 @@
    (bind ?answer (read))
    (if (lexemep ?answer) 
        then (bind ?answer (lowcase ?answer)))
-   (while (not (member ?answer ?display-answers)) do
+   (while (not (member$ ?answer ?display-answers)) do
       (format t "%s " ?question)
       (printout t ?display-answers " ")
       (bind ?answer (read))

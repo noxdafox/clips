@@ -52,8 +52,8 @@ namespace CLIPSNET
          CLIPSCPPRouterBridge(msclr::gcroot<Router^>);
          ~CLIPSCPPRouterBridge();
 
-		 int Query(CLIPSCPPEnv *,const char *);
-		 int Print(CLIPSCPPEnv *,const char *,const char *);
+		 bool Query(CLIPSCPPEnv *,const char *);
+		 void Print(CLIPSCPPEnv *,const char *,const char *);
 		 int Getc(CLIPSCPPEnv *,const char *);
 		 int Ungetc(CLIPSCPPEnv *,int,const char *);
 

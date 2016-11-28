@@ -347,12 +347,12 @@ bool IsMethodApplicable(
               }
            }
 #else
-         type = ProceduralPrimitiveData(theEnv)->ProcParamArray[i].type;
+         type = ProceduralPrimitiveData(theEnv)->ProcParamArray[i].header->type;
          for (j = 0 ; j < rp->tcnt ; j++)
            {
-            if (type == ValueToInteger(rp->types[j]))
+            if (type == ((CLIPSInteger *) (rp->types[j]))->contents)
               break;
-            if (SubsumeType(type,ValueToInteger(rp->types[j])))
+            if (SubsumeType(type,((CLIPSInteger *) (rp->types[j]))->contents))
               break;
            }
 #endif

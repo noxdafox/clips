@@ -77,6 +77,7 @@
 #include "classcom.h"
 #endif
 
+#include "cstrccom.h"
 #include "cstrcpsr.h"
 #include "envrnmnt.h"
 #include "exprnpsr.h"
@@ -124,7 +125,7 @@
    static bool                    DuplicateParameters(Environment *,Expression *,Expression **,CLIPSLexeme *);
    static Expression             *AddParameter(Environment *,Expression *,Expression *,CLIPSLexeme *,RESTRICTION *);
    static Expression             *ValidType(Environment *,CLIPSLexeme *);
-   static bool                    RedundantClasses(Environment *,Defclass *,Defclass *);
+   static bool                    RedundantClasses(Environment *,void *,void *);
    static Defgeneric             *AddGeneric(Environment *,CLIPSLexeme *,bool *);
    static Defmethod              *AddGenericMethod(Environment *,Defgeneric *,int,short);
    static int                     RestrictionsCompare(Expression *,int,int,int,Defmethod *);
@@ -544,7 +545,7 @@ Defmethod *AddMethod(
 #if OBJECT_SYSTEM
         IncrementDefclassBusyCount(theEnv,(Defclass *) rptr->types[j]);
 #else
-        IncrementIntegerCount((INTEGER_HN *) rptr->types[j]);
+        IncrementIntegerCount((CLIPSInteger *) rptr->types[j]);
 #endif
       params = params->nextArg;
      }
@@ -1040,7 +1041,7 @@ static RESTRICTION *ParseRestriction(
                      ReturnExpression(theEnv,new_types);
                      return NULL;
                     }
-                  if (RedundantClasses(theEnv,(Defclass *) tmp->value,(Defclass *) tmp2->value))
+                  if (RedundantClasses(theEnv,tmp->value,tmp2->value))
                     {
                      ReturnExpression(theEnv,query);
                      ReturnExpression(theEnv,types);
@@ -1288,21 +1289,21 @@ static Expression *ValidType(
  *************************************************************/
 static bool RedundantClasses(
   Environment *theEnv,
-  Defclass *c1,
-  Defclass *c2)
+  void *c1,
+  void *c2)
   {
    const char *tname;
 
 #if OBJECT_SYSTEM
-   if (HasSuperclass(c1,c2))
-     tname = DefclassName(c1);
-   else if (HasSuperclass(c2,c1))
-     tname = DefclassName(c2);
+   if (HasSuperclass((Defclass *) c1,(Defclass *) c2))
+     tname = DefclassName((Defclass *) c1);
+   else if (HasSuperclass((Defclass *) c2,(Defclass *) c1))
+     tname = DefclassName((Defclass *) c2);
 #else
-   if (SubsumeType(ValueToInteger(c1),ValueToInteger(c2)))
-     tname = TypeName(theEnv,ValueToInteger(c1));
-   else if (SubsumeType(ValueToInteger(c2),ValueToInteger(c1)))
-     tname = TypeName(theEnv,ValueToInteger(c2));
+   if (SubsumeType(((CLIPSInteger *) c1)->contents,((CLIPSInteger *) c2)->contents))
+     tname = TypeName(theEnv,((CLIPSInteger *) c1)->contents);
+   else if (SubsumeType(((CLIPSInteger *) c2)->contents,((CLIPSInteger *) c1)->contents))
+     tname = TypeName(theEnv,((CLIPSInteger *) c2)->contents);
 #endif
    else
      return false;
@@ -1551,9 +1552,9 @@ static int TypeListCompare(
          if (HasSuperclass((Defclass *) r2->types[i],(Defclass *) r1->types[i]))
            return(LOWER_PRECEDENCE);
 #else
-         if (SubsumeType(ValueToInteger(r1->types[i]),ValueToInteger(r2->types[i])))
+         if (SubsumeType(((CLIPSInteger *) r1->types[i])->contents,((CLIPSInteger *) r2->types[i])->contents))
            return(HIGHER_PRECEDENCE);
-         if (SubsumeType(ValueToInteger(r2->types[i]),ValueToInteger(r1->types[i])))
+         if (SubsumeType(((CLIPSInteger *) r2->types[i])->contents,((CLIPSInteger *) r1->types[i])->contents))
            return(LOWER_PRECEDENCE);
 #endif
         }

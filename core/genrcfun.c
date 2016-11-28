@@ -76,10 +76,12 @@
 
 #include "argacces.h"
 #include "constrct.h"
+#include "cstrccom.h"
 #include "cstrcpsr.h"
 #include "envrnmnt.h"
 #include "genrccom.h"
 #include "genrcexe.h"
+#include "genrcfun.h"
 #include "memalloc.h"
 #include "modulutl.h"
 #include "prccode.h"
@@ -416,7 +418,7 @@ void DeleteMethodInfo(
 #if OBJECT_SYSTEM
         DecrementDefclassBusyCount(theEnv,(Defclass *) rptr->types[k]);
 #else
-        DecrementIntegerCount(theEnv,(INTEGER_HN *) rptr->types[k]);
+        DecrementIntegerCount(theEnv,(CLIPSInteger *) rptr->types[k]);
 #endif
 
       if (rptr->types != NULL)
@@ -602,7 +604,7 @@ void PrintMethod(
 #if OBJECT_SYSTEM
          genstrncat(buf,DefclassName((Defclass *) rptr->types[k]),buflen-strlen(buf));
 #else
-         genstrncat(buf,TypeName(theEnv,ValueToInteger(rptr->types[k])),buflen-strlen(buf));
+         genstrncat(buf,TypeName(theEnv,((CLIPSInteger *) rptr->types[k])->contents),buflen-strlen(buf));
 #endif
          if (((int) k) < (((int) rptr->tcnt) - 1))
            genstrncat(buf," ",buflen-strlen(buf));

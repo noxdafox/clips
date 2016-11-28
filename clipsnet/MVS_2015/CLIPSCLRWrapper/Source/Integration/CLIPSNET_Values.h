@@ -8,8 +8,7 @@ using namespace CLIPS;
 namespace CLIPSNET
   {
    public enum class CLIPSNETType 
-     { UNKNOWN,
-       FLOAT, 
+     { FLOAT, 
        INTEGER, 
        SYMBOL, 
        STRING, 
@@ -18,7 +17,8 @@ namespace CLIPSNET
        FACT_ADDRESS, 
        INSTANCE_ADDRESS, 
        INSTANCE_NAME, 
-       VOID };
+       VOID,
+       UNKNOWN };
 
    /*##################################*/
    /* PrimitiveValue Class declaration */

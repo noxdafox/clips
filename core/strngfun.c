@@ -718,6 +718,13 @@ bool EnvEval(
    struct BindInfo *oldBinds;
    int danglingConstructs;
    UDFValue evalResult;
+   CLIPSBlock gcBlock;
+
+   /*========================================*/
+   /* Set up the frame for tracking garbage. */
+   /*========================================*/
+   
+   CLIPSBlockStart(theEnv,&gcBlock);
 
    /*=====================================*/
    /* If embedded, clear the error flags. */
@@ -739,6 +746,7 @@ bool EnvEval(
    gensprintf(logicalNameBuffer,"Eval-%d",depth);
    if (OpenStringSource(theEnv,logicalNameBuffer,theString,0) == 0)
      {
+      CLIPSBlockEnd(theEnv,&gcBlock,NULL);
       if (returnValue != NULL)
         { returnValue->lexemeValue = FalseSymbol(theEnv); }
       depth--;
@@ -778,6 +786,7 @@ bool EnvEval(
      {
       EnvSetEvaluationError(theEnv,true);
       CloseStringSource(theEnv,logicalNameBuffer);
+      CLIPSBlockEnd(theEnv,&gcBlock,NULL);
       if (returnValue != NULL)
         { returnValue->lexemeValue = FalseSymbol(theEnv); }
       depth--;
@@ -796,6 +805,7 @@ bool EnvEval(
       EnvPrintRouter(theEnv,WERROR,"expand$ must be used in the argument list of a function call.\n");
       EnvSetEvaluationError(theEnv,true);
       CloseStringSource(theEnv,logicalNameBuffer);
+      CLIPSBlockEnd(theEnv,&gcBlock,NULL);
       if (returnValue != NULL)
         { returnValue->lexemeValue = FalseSymbol(theEnv); }
       ReturnExpression(theEnv,top);
@@ -815,6 +825,7 @@ bool EnvEval(
       EnvPrintRouter(theEnv,WERROR,"Some variables could not be accessed by the eval function.\n");
       EnvSetEvaluationError(theEnv,true);
       CloseStringSource(theEnv,logicalNameBuffer);
+      CLIPSBlockEnd(theEnv,&gcBlock,NULL);
       if (returnValue != NULL)
         { returnValue->lexemeValue = FalseSymbol(theEnv); }
       ReturnExpression(theEnv,top);
@@ -849,6 +860,15 @@ bool EnvEval(
    if ((! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
        (EvaluationData(theEnv)->CurrentExpression == NULL))
      { ConstructData(theEnv)->DanglingConstructs = danglingConstructs; }
+
+   /*================================*/
+   /* Restore the old garbage frame. */
+   /*================================*/
+   
+   if (returnValue != NULL)
+     { CLIPSBlockEnd(theEnv,&gcBlock,&evalResult); }
+   else
+     { CLIPSBlockEnd(theEnv,&gcBlock,NULL); }
 
    /*==========================================*/
    /* Perform periodic cleanup if the eval was */

@@ -223,7 +223,8 @@ namespace CLIPSIDE
         bool isDelete) 
         {
          int textLength = this.Text.Length;
-         int commandLength = (int) clips.GetInputBuffer().Length;  
+         String oldCommand = clips.GetInputBuffer();
+         int commandLength = (int) oldCommand.Length;  
          int lockedLength = textLength - commandLength;
 
          /*========================================*/

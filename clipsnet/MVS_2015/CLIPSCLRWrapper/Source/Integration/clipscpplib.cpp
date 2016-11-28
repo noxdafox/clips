@@ -31,13 +31,13 @@ extern "C"
 /* Static Functions */
 /*##################*/
 
-static int CLIPSCPPQuery(void *,const char *);
-static int CLIPSCPPPrint(void *,const char *,const char *);
-static int CLIPSCPPGetc(void *,const char *);
-static int CLIPSCPPUngetc(void *,int,const char *);
-static int CLIPSCPPExit(void *,int);
-static Value *ConvertSingleFieldValue(void *,int,void *);
-static DataObject ConvertDataObject(void *,DATA_OBJECT *);
+static bool CLIPSCPPQuery(Environment *,const char *);
+static void CLIPSCPPPrint(Environment *,const char *,const char *);
+static int CLIPSCPPGetc(Environment *,const char *);
+static int CLIPSCPPUngetc(Environment *,int,const char *);
+static void CLIPSCPPExit(Environment *,int);
+static Value *ConvertSingleFieldValue(Environment *,int,void *);
+static DataObject ConvertDataObject(Environment *,CLIPSValue *);
 
 /*#####################*/
 /* CLIPSCPPEnv Methods */
@@ -51,7 +51,7 @@ CLIPSCPPEnv::CLIPSCPPEnv() : theEnv(NULL)
 #ifndef CLIPS_DLL_WRAPPER
    theEnv = CreateEnvironment();
 
-   SetEnvironmentContext(theEnv,this);
+   SetEnvironmentContext((Environment *) theEnv,this);
 #else
    theEnv = __CreateEnvironment();
    /* TBD */
@@ -64,9 +64,9 @@ CLIPSCPPEnv::CLIPSCPPEnv() : theEnv(NULL)
 CLIPSCPPEnv::~CLIPSCPPEnv()
   {
 #ifndef CLIPS_DLL_WRAPPER
-   DestroyEnvironment(theEnv);
+   DestroyEnvironment((Environment *) theEnv);
 #else
-   __DestroyEnvironment(theEnv);
+   __DestroyEnvironment((Environment *) theEnv);
 #endif
   }
 
@@ -76,9 +76,9 @@ CLIPSCPPEnv::~CLIPSCPPEnv()
 void CLIPSCPPEnv::CommandLoop()
   {
 #ifndef CLIPS_DLL_WRAPPER
-   ::CommandLoop(theEnv);
+   ::CommandLoop((Environment *) theEnv);
 #else
-   __CommandLoop(theEnv);
+   __CommandLoop((Environment *) theEnv);
 #endif
   }
 
@@ -88,9 +88,9 @@ void CLIPSCPPEnv::CommandLoop()
 void CLIPSCPPEnv::CommandLoopOnceThenBatch()
   {
 #ifndef CLIPS_DLL_WRAPPER
-   ::CommandLoopOnceThenBatch(theEnv);
+   ::CommandLoopOnceThenBatch((Environment *) theEnv);
 #else
-   __CommandLoopOnceThenBatch(theEnv);
+   __CommandLoopOnceThenBatch((Environment *) theEnv);
 #endif
   }
 
@@ -100,9 +100,9 @@ void CLIPSCPPEnv::CommandLoopOnceThenBatch()
 void CLIPSCPPEnv::PrintBanner()
   {
 #ifndef CLIPS_DLL_WRAPPER
-   ::PrintBanner(theEnv);
+   ::PrintBanner((Environment *) theEnv);
 #else
-   __PrintBanner(theEnv);
+   __PrintBanner((Environment *) theEnv);
 #endif
   }
 
@@ -112,9 +112,9 @@ void CLIPSCPPEnv::PrintBanner()
 void CLIPSCPPEnv::PrintPrompt()
   {
 #ifndef CLIPS_DLL_WRAPPER
-   ::PrintPrompt(theEnv);
+   ::PrintPrompt((Environment *) theEnv);
 #else
-   __PrintPrompt(theEnv);
+   __PrintPrompt((Environment *) theEnv);
 #endif
   }
 
@@ -124,9 +124,9 @@ void CLIPSCPPEnv::PrintPrompt()
 void CLIPSCPPEnv::Clear()
   {
 #ifndef CLIPS_DLL_WRAPPER
-   EnvClear(theEnv);
+   EnvClear((Environment *) theEnv);
 #else
-   __EnvClear(theEnv);
+   __EnvClear((Environment *) theEnv);
 #endif
   }
 
@@ -137,9 +137,9 @@ int CLIPSCPPEnv::Load(
   char *theFile)
   {
 #ifndef CLIPS_DLL_WRAPPER
-   return EnvLoad(theEnv,theFile);
+   return EnvLoad((Environment *) theEnv,theFile);
 #else
-   return __EnvLoad(theEnv,theFile);
+   return __EnvLoad((Environment *) theEnv,theFile);
 #endif
   }
 
@@ -150,13 +150,13 @@ void CLIPSCPPEnv::LoadFromString(
   char *loadString)
   {
 #ifndef CLIPS_DLL_WRAPPER
-   OpenStringSource(theEnv,"clipsnetloadfromstring",loadString,0); 
-   LoadConstructsFromLogicalName(theEnv,"clipsnetloadfromstring");
-   CloseStringSource(theEnv,"clipsnetloadfromstring");
+   OpenStringSource((Environment *) theEnv,"clipsnetloadfromstring",loadString,0); 
+   LoadConstructsFromLogicalName((Environment *) theEnv,"clipsnetloadfromstring");
+   CloseStringSource((Environment *) theEnv,"clipsnetloadfromstring");
 #else
-   __OpenStringSource(theEnv,"clipsnetloadfromstring",loadString,0); 
-   __LoadConstructsFromLogicalName(theEnv,"clipsnetloadfromstring");
-   __CloseStringSource(theEnv,"clipsnetloadfromstring");
+   __OpenStringSource((Environment *) theEnv,"clipsnetloadfromstring",loadString,0); 
+   __LoadConstructsFromLogicalName((Environment *) theEnv,"clipsnetloadfromstring");
+   __CloseStringSource((Environment *) theEnv,"clipsnetloadfromstring");
 #endif
   }
 
@@ -166,9 +166,9 @@ void CLIPSCPPEnv::LoadFromString(
 void CLIPSCPPEnv::Reset()
   {
 #ifndef CLIPS_DLL_WRAPPER
-   EnvReset(theEnv);
+   EnvReset((Environment *) theEnv);
 #else
-   __EnvReset(theEnv);
+   __EnvReset((Environment *) theEnv);
 #endif
   }
 
@@ -179,9 +179,9 @@ long long CLIPSCPPEnv::Run(
   long long runLimit)
   {
 #ifndef CLIPS_DLL_WRAPPER
-   return EnvRun(theEnv,runLimit);
+   return EnvRun((Environment *) theEnv,runLimit);
 #else
-   return __EnvRun(theEnv,runLimit);
+   return __EnvRun((Environment *) theEnv,runLimit);
 #endif
   }
 
@@ -192,12 +192,12 @@ bool CLIPSCPPEnv::Build(
   char *buildString)
   {   
 #ifndef CLIPS_DLL_WRAPPER
-   if (EnvBuild(theEnv,buildString))
+   if (EnvBuild((Environment *) theEnv,buildString))
      { return true; }
    else
      { return false; }
 #else
-   if (__EnvBuild(theEnv,buildString))
+   if (__EnvBuild((Environment *) theEnv,buildString))
      { return true; }
    else
      { return false; }
@@ -211,12 +211,12 @@ DataObject CLIPSCPPEnv::Eval(
   char *evalString)
   {
    int rc;
-   DATA_OBJECT rv;
+   CLIPSValue rv;
    
 #ifndef CLIPS_DLL_WRAPPER
-   rc = EnvEval(theEnv,evalString,&rv);
+   rc = EnvEval((Environment *) theEnv,evalString,&rv);
 #else
-   rc = __EnvEval(theEnv,evalString,&rv);
+   rc = __EnvEval((Environment *) theEnv,evalString,&rv);
 #endif
 
    if (rc == 0)
@@ -226,7 +226,7 @@ DataObject CLIPSCPPEnv::Eval(
       throw std::logic_error(excStr); 
      }
      
-   return ConvertDataObject(theEnv,&rv);
+   return ConvertDataObject((Environment *) theEnv,&rv);
   }
 
 /********************/
@@ -235,9 +235,9 @@ DataObject CLIPSCPPEnv::Eval(
 int CLIPSCPPEnv::GetHaltExecution()
 {
 #ifndef CLIPS_DLL_WRAPPER
-    return EnvGetHaltExecution(theEnv);
+    return EnvGetHaltExecution((Environment *) theEnv);
 #else
-    return __EnvGetHaltExecution(theEnv);
+    return __EnvGetHaltExecution((Environment *) theEnv);
 #endif
 }
 
@@ -245,12 +245,12 @@ int CLIPSCPPEnv::GetHaltExecution()
 /* SetHaltExecution */
 /********************/
 void CLIPSCPPEnv::SetHaltExecution(
-   int value)
+   bool value)
 {
 #ifndef CLIPS_DLL_WRAPPER
-    EnvSetHaltExecution(theEnv,value);
+    EnvSetHaltExecution((Environment *) theEnv,value);
 #else
-    __EnvSetHaltExecution(theEnv,value);
+    __EnvSetHaltExecution((Environment *) theEnv,value);
 #endif
 }
 
@@ -260,9 +260,9 @@ void CLIPSCPPEnv::SetHaltExecution(
 int CLIPSCPPEnv::GetEvaluationError()
 {
 #ifndef CLIPS_DLL_WRAPPER
-    return EnvGetEvaluationError(theEnv);
+    return EnvGetEvaluationError((Environment *) theEnv);
 #else
-    return __EnvGetEvaluationError(theEnv);
+    return __EnvGetEvaluationError((Environment *) theEnv);
 #endif
 }
 
@@ -270,12 +270,12 @@ int CLIPSCPPEnv::GetEvaluationError()
 /* SetEvaluationError */
 /**********************/
 void CLIPSCPPEnv::SetEvaluationError(
-    int value)
+  bool value)
 {
 #ifndef CLIPS_DLL_WRAPPER
-    EnvSetEvaluationError(theEnv, value);
+    EnvSetEvaluationError((Environment *) theEnv, value);
 #else
-    __EnvSetEvaluationError(theEnv, value);
+    __EnvSetEvaluationError((Environment *) theEnv, value);
 #endif
 }
 
@@ -285,9 +285,9 @@ void CLIPSCPPEnv::SetEvaluationError(
 int CLIPSCPPEnv::GetHaltRules()
 {
 #ifndef CLIPS_DLL_WRAPPER
-    return EnvGetHaltRules(theEnv);
+    return EnvGetHaltRules((Environment *) theEnv);
 #else
-    return __EnvGetHaltRules(theEnv);
+    return __EnvGetHaltRules((Environment *) theEnv);
 #endif
 }
 
@@ -295,12 +295,12 @@ int CLIPSCPPEnv::GetHaltRules()
 /* SetHaltRules */
 /****************/
 void CLIPSCPPEnv::SetHaltRules(
-    int value)
+    bool value)
 {
 #ifndef CLIPS_DLL_WRAPPER
-    EnvSetHaltRules(theEnv, value);
+    EnvSetHaltRules((Environment *) theEnv, value);
 #else
-    __EnvSetHaltRules(theEnv, value);
+    __EnvSetHaltRules((Environment *) theEnv, value);
 #endif
 }
 
@@ -330,9 +330,9 @@ FactAddressValue *CLIPSCPPEnv::AssertString(
    void *rv;
    
 #ifndef CLIPS_DLL_WRAPPER
-   rv = EnvAssertString(theEnv,factString);
+   rv = EnvAssertString((Environment *) theEnv,factString);
 #else
-   rv = __EnvAssertString(theEnv,factString);
+   rv = __EnvAssertString((Environment *) theEnv,factString);
 #endif
      
    if (rv == NULL) return(NULL);
@@ -343,31 +343,31 @@ FactAddressValue *CLIPSCPPEnv::AssertString(
 /* ConvertDataObject */
 /*********************/
 static DataObject ConvertDataObject(
-  void *theEnv,
-  DATA_OBJECT *theDO)
+  Environment *theEnv,
+  CLIPSValue *theCV)
   {
    DataObject tv;
-   
-   switch (GetpType(theDO))
+
+   switch (theCV->header->type)
      {
-      case RVOID:
-      case STRING:        
-      case SYMBOL:
-      case INSTANCE_NAME:
-      case INTEGER:
-      case FLOAT:
-      case FACT_ADDRESS:
-      case INSTANCE_ADDRESS:
-        return DataObject(ConvertSingleFieldValue(theEnv,GetpType(theDO),GetpValue(theDO)));
+      case VOID_TYPE:
+      case STRING_TYPE:        
+      case SYMBOL_TYPE:
+      case INSTANCE_NAME_TYPE:
+      case INTEGER_TYPE:
+      case FLOAT_TYPE:
+      case FACT_ADDRESS_TYPE:
+      case INSTANCE_ADDRESS_TYPE:
+        return DataObject(ConvertSingleFieldValue(theEnv,theCV->header->type,theCV->value));
      
-      case MULTIFIELD:
-        struct multifield *theList = (struct multifield *) DOPToPointer(theDO);;
-        size_t mfLength = GetpDOLength(theDO), i; 
+      case MULTIFIELD_TYPE:
+        Multifield *theList = theCV->multifieldValue;
+        size_t mfLength = theCV->multifieldValue->length, i; 
         
         MultifieldValue *theMultifield = new MultifieldValue(mfLength);
         
-        for (i = (unsigned) GetpDOBegin(theDO); i <= (unsigned) GetpDOEnd(theDO); i++)
-         { theMultifield->add(ConvertSingleFieldValue(theEnv,GetMFType(theList,i),GetMFValue(theList,i))); }
+        for (i = 0; i < mfLength; i++)
+         { theMultifield->add(ConvertSingleFieldValue(theEnv,theList->theFields[i].header->type,theList->theFields[i].value)); }
 
         return DataObject(theMultifield);
      }
@@ -379,34 +379,34 @@ static DataObject ConvertDataObject(
 /* ConvertSingleFieldValue: */
 /****************************/
 static Value *ConvertSingleFieldValue(
-  void *theEnv,
+  Environment *theEnv,
   int type,
-  void  *value)
+  void *value)
   {
    switch(type)
      {
-      case RVOID:
+      case VOID_TYPE:
         return new VoidValue();
 
-      case SYMBOL:
-        return new SymbolValue(ValueToString(value));
+      case SYMBOL_TYPE:
+        return new SymbolValue(((CLIPSLexeme *) value)->contents);
         
-      case STRING:
-        return new StringValue(ValueToString(value));
+      case STRING_TYPE:
+        return new StringValue(((CLIPSLexeme *) value)->contents);
         
-      case INSTANCE_NAME:
-        return new InstanceNameValue(ValueToString(value));
+      case INSTANCE_NAME_TYPE:
+        return new InstanceNameValue(((CLIPSLexeme *) value)->contents);
 
-      case INTEGER:
-        return new IntegerValue(ValueToLong(value));
+      case INTEGER_TYPE:
+        return new IntegerValue(((CLIPSInteger *) value)->contents);
 
-      case FLOAT:
-        return new FloatValue(ValueToDouble(value));
+      case FLOAT_TYPE:
+        return new FloatValue(((CLIPSFloat *) value)->contents);
 
-      case FACT_ADDRESS:
+      case FACT_ADDRESS_TYPE:
         return new FactAddressValue(theEnv,value);
 
-      case INSTANCE_ADDRESS:
+      case INSTANCE_ADDRESS_TYPE:
         return new InstanceAddressValue(theEnv,value);
      }
 
@@ -420,9 +420,9 @@ int CLIPSCPPEnv::Watch(
   char *item)
   {
 #ifndef CLIPS_DLL_WRAPPER
-   return EnvWatch(theEnv,item);
+   return EnvWatch((Environment *) theEnv,item);
 #else
-   return __EnvWatch(theEnv,item);
+   return __EnvWatch((Environment *) theEnv,item);
 #endif
   }
 
@@ -433,9 +433,9 @@ int CLIPSCPPEnv::Unwatch(
   char *item)
   {
 #ifndef CLIPS_DLL_WRAPPER
-   return EnvUnwatch(theEnv,item);
+   return EnvUnwatch((Environment *) theEnv,item);
 #else
-   return __EnvUnwatch(theEnv,item);
+   return __EnvUnwatch((Environment *) theEnv,item);
 #endif
   }
   
@@ -448,11 +448,11 @@ int CLIPSCPPEnv::AddRouter(
   CLIPSCPPRouter *router)
   {
 #ifndef CLIPS_DLL_WRAPPER
-   return EnvAddRouterWithContext(theEnv,routerName,priority,CLIPSCPPQuery,
+   return EnvAddRouterWithContext((Environment *) theEnv,routerName,priority,CLIPSCPPQuery,
                                   CLIPSCPPPrint,CLIPSCPPGetc,CLIPSCPPUngetc,
                                   CLIPSCPPExit,router);
 #else
-   return __EnvAddRouterWithContext(theEnv,routerName,priority,CLIPSCPPQuery,
+   return __EnvAddRouterWithContext((Environment *) theEnv,routerName,priority,CLIPSCPPQuery,
                                     CLIPSCPPPrint,CLIPSCPPGetc,CLIPSCPPUngetc,
                                     CLIPSCPPExit,router);
 #endif
@@ -465,9 +465,9 @@ int CLIPSCPPEnv::DeleteRouter(
   char *routerName)
   {
 #ifndef CLIPS_DLL_WRAPPER
-   return EnvDeleteRouter(theEnv,routerName);
+   return EnvDeleteRouter((Environment *) theEnv,routerName);
 #else
-   return __EnvDeleteRouter(theEnv,routerName);
+   return __EnvDeleteRouter((Environment *) theEnv,routerName);
 #endif
   }
 
@@ -477,9 +477,9 @@ int CLIPSCPPEnv::DeleteRouter(
 size_t CLIPSCPPEnv::InputBufferCount()
   {
 #ifndef CLIPS_DLL_WRAPPER
-   return EnvInputBufferCount(theEnv);
+   return EnvInputBufferCount((Environment *) theEnv);
 #else
-   return __EnvInputBufferCount(theEnv);
+   return __EnvInputBufferCount((Environment *) theEnv);
 #endif
   }
 
@@ -489,9 +489,9 @@ size_t CLIPSCPPEnv::InputBufferCount()
 const char *CLIPSCPPEnv::GetInputBuffer()
   {
 #ifndef CLIPS_DLL_WRAPPER
-   return GetCommandString(theEnv);
+   return GetCommandString((Environment *) theEnv);
 #else
-   return __GetCommandString(theEnv);
+   return __GetCommandString((Environment *) theEnv);
 #endif
   }
 
@@ -502,9 +502,9 @@ void CLIPSCPPEnv::SetInputBuffer(
   const char *command)
   {
 #ifndef CLIPS_DLL_WRAPPER
-   return SetCommandString(theEnv,command);
+   return SetCommandString((Environment *) theEnv,command);
 #else
-   return __SetCommandString(theEnv,command);
+   return __SetCommandString((Environment *) theEnv,command);
 #endif
   }
 
@@ -514,10 +514,10 @@ void CLIPSCPPEnv::SetInputBuffer(
 bool CLIPSCPPEnv::InputBufferContainsCommand()
   {
 #ifndef CLIPS_DLL_WRAPPER
-   if (CommandCompleteAndNotEmpty(theEnv)) return true;
+   if (CommandCompleteAndNotEmpty((Environment *) theEnv)) return true;
    else return false;
 #else
-   if ( __CommandCompleteAndNotEmpty(theEnv)) return true;
+   if ( __CommandCompleteAndNotEmpty((Environment *) theEnv)) return true;
    else return false;
 #endif
   }
@@ -538,22 +538,21 @@ const char *CLIPSCPPRouter::DISPLAY = WDISPLAY;
 /*********/
 /* Query */
 /*********/
-int CLIPSCPPRouter::Query(
+bool CLIPSCPPRouter::Query(
   CLIPSCPPEnv *theCPPEnv,
   const char *logicalName)
   { 
-   return FALSE;
+   return false;
   }
   
 /*********/
 /* Print */
 /*********/
-int CLIPSCPPRouter::Print(
+void CLIPSCPPRouter::Print(
   CLIPSCPPEnv *theCPPEnv,
   const char *logicalName,
   const char *printString)
   {
-   return FALSE;
   }
   
 /********/
@@ -580,11 +579,10 @@ int CLIPSCPPRouter::Ungetc(
 /********/
 /* Exit */
 /********/
-int CLIPSCPPRouter::Exit(
+void CLIPSCPPRouter::Exit(
   CLIPSCPPEnv *theCPPEnv,
   int exitCode)
   {
-   return FALSE;
   }
 
 /*####################*/
@@ -662,10 +660,10 @@ std::ostream& DataObject::print (std::ostream& o) const
 /****************/
 /* GetCLIPSType */
 /****************/
-CLIPSType DataObject::GetCLIPSType()
+CLIPSCPPType DataObject::GetCLIPSType()
   {
    if (theValue == NULL)
-     { return UNKNOWN_TYPE; }
+     { return CPP_UNKNOWN_TYPE; }
 
    return theValue->GetCLIPSType();
   }
@@ -699,9 +697,9 @@ Value::~Value()
 /****************/
 /* GetCLIPSType */
 /****************/
-CLIPSType Value::GetCLIPSType()
+CLIPSCPPType Value::GetCLIPSType()
   {
-   return UNKNOWN_TYPE;
+   return CPP_UNKNOWN_TYPE;
   }
   
 /***********/
@@ -761,9 +759,9 @@ VoidValue::~VoidValue()
 /****************/
 /* GetCLIPSType */
 /****************/
-CLIPSType VoidValue::GetCLIPSType()
+CLIPSCPPType VoidValue::GetCLIPSType()
   {
-   return VOID_TYPE;
+   return CPP_VOID_TYPE;
   }
 
 /***************/
@@ -830,9 +828,9 @@ StringValue::~StringValue()
 /****************/
 /* GetCLIPSType */
 /****************/
-CLIPSType StringValue::GetCLIPSType()
+CLIPSCPPType StringValue::GetCLIPSType()
   {
-   return STRING_TYPE;
+   return CPP_STRING_TYPE;
   }
 
 /******************/
@@ -911,9 +909,9 @@ SymbolValue::~SymbolValue()
 /****************/
 /* GetCLIPSType */
 /****************/
-CLIPSType SymbolValue::GetCLIPSType()
+CLIPSCPPType SymbolValue::GetCLIPSType()
   {
-   return SYMBOL_TYPE;
+   return CPP_SYMBOL_TYPE;
   }
 
 /******************/
@@ -982,9 +980,9 @@ InstanceNameValue::~InstanceNameValue()
 /****************/
 /* GetCLIPSType */
 /****************/
-CLIPSType InstanceNameValue::GetCLIPSType()
+CLIPSCPPType InstanceNameValue::GetCLIPSType()
   {
-   return INSTANCE_NAME_TYPE;
+   return CPP_INSTANCE_NAME_TYPE;
   }
 
 /************************/
@@ -1052,9 +1050,9 @@ IntegerValue::~IntegerValue()
 /****************/
 /* GetCLIPSType */
 /****************/
-CLIPSType IntegerValue::GetCLIPSType()
+CLIPSCPPType IntegerValue::GetCLIPSType()
   {
-   return INTEGER_TYPE;
+   return CPP_INTEGER_TYPE;
   }
 
 /*******************/
@@ -1130,9 +1128,9 @@ FloatValue::~FloatValue()
 /****************/
 /* GetCLIPSType */
 /****************/
-CLIPSType FloatValue::GetCLIPSType()
+CLIPSCPPType FloatValue::GetCLIPSType()
   {
-   return FLOAT_TYPE;
+   return CPP_FLOAT_TYPE;
   }
 
 /*******************/
@@ -1186,7 +1184,7 @@ FactAddressValue::FactAddressValue(
   void *theEnv,void *theFact) : theEnvironment(theEnv), theFactAddress(theFact)
   {
 #ifndef CLIPS_DLL_WRAPPER
-   EnvIncrementFactCount(theEnvironment,theFact);
+   EnvIncrementFactCount((Environment *) theEnvironment,(Fact *) theFact);
 #else
    __EnvIncrementFactCount(theEnvironment,theFact);
 #endif
@@ -1206,7 +1204,7 @@ FactAddressValue::FactAddressValue( const FactAddressValue& v) : theFactAddress(
 FactAddressValue::~FactAddressValue()
   {   
 #ifndef CLIPS_DLL_WRAPPER
-   EnvDecrementFactCount(theEnvironment,theFactAddress);
+   EnvDecrementFactCount((Environment *) theEnvironment,(Fact *) theFactAddress);
 #else
    __EnvDecrementFactCount(theEnvironment,theFactAddress);
 #endif
@@ -1215,9 +1213,9 @@ FactAddressValue::~FactAddressValue()
 /****************/
 /* GetCLIPSType */
 /****************/
-CLIPSType FactAddressValue::GetCLIPSType()
+CLIPSCPPType FactAddressValue::GetCLIPSType()
   {
-   return FACT_ADDRESS_TYPE;
+   return CPP_FACT_ADDRESS_TYPE;
   }
 
 /**********************/
@@ -1231,7 +1229,7 @@ FactAddressValue& FactAddressValue::operator = (
    if (theFactAddress != NULL)
      { 
 #ifndef CLIPS_DLL_WRAPPER
-      EnvDecrementFactCount(theEnvironment,theFactAddress);
+      EnvDecrementFactCount((Environment *) theEnvironment,(Fact *) theFactAddress);
 #else
       __EnvDecrementFactCount(theEnvironment,theFactAddress);
 #endif
@@ -1241,7 +1239,7 @@ FactAddressValue& FactAddressValue::operator = (
    theFactAddress = v.theFactAddress;
      
 #ifndef CLIPS_DLL_WRAPPER
-   EnvIncrementFactCount(theEnvironment,theFactAddress);
+   EnvIncrementFactCount((Environment *) theEnvironment,(Fact *) theFactAddress);
 #else
    __EnvIncrementFactCount(theEnvironment,theFactAddress);
 #endif
@@ -1255,7 +1253,7 @@ FactAddressValue& FactAddressValue::operator = (
 long long FactAddressValue::GetFactIndex() const
   {  
 #ifndef CLIPS_DLL_WRAPPER
-   return EnvFactIndex(theEnvironment,theFactAddress);
+   return EnvFactIndex((Environment *) theEnvironment,(Fact *) theFactAddress);
 #else
    return __EnvFactIndex(theEnvironment,theFactAddress);
 #endif
@@ -1281,13 +1279,13 @@ FactAddressValue *FactAddressValue::clone() const
 /***************/
 DataObject FactAddressValue::GetFactSlot(char *slotName) const
   {  
-   DATA_OBJECT theDO;
+   CLIPSValue theCV;
    int rv;
    
 #ifndef CLIPS_DLL_WRAPPER
-   rv = EnvGetFactSlot(theEnvironment,theFactAddress,slotName,&theDO);
+   rv = EnvGetFactSlot((Environment *) theEnvironment,(Fact *) theFactAddress,slotName,&theCV);
 #else
-   rv = __EnvGetFactSlot(theEnvironment,theFactAddress,slotName,&theDO);
+   rv = __EnvGetFactSlot((Environment *) theEnvironment,(Fact *) theFactAddress,slotName,&theCV);
 #endif
    
    if (! rv)
@@ -1298,7 +1296,7 @@ DataObject FactAddressValue::GetFactSlot(char *slotName) const
        throw std::logic_error(excStr); 
       }
 
-   return ConvertDataObject(theEnvironment,&theDO);
+   return ConvertDataObject((Environment *) theEnvironment,&theCV);
   }
 
 /***********************/
@@ -1318,9 +1316,9 @@ InstanceAddressValue::InstanceAddressValue(
   void *theEnv,void *theInstance) : theEnvironment(theEnv), theInstanceAddress(theInstance)
   {
 #ifndef CLIPS_DLL_WRAPPER
-   EnvIncrementInstanceCount(theEnvironment,theInstance);
+   EnvIncrementInstanceCount((Environment *) theEnvironment,(Instance *) theInstance);
 #else
-   __EnvIncrementInstanceCount(theEnvironment,theInstance);
+   __EnvIncrementInstanceCount((Environment *) theEnvironment,(Instance *) theInstance);
 #endif
   }
 
@@ -1338,9 +1336,9 @@ InstanceAddressValue::InstanceAddressValue( const InstanceAddressValue& v) : the
 InstanceAddressValue::~InstanceAddressValue()
   {   
 #ifndef CLIPS_DLL_WRAPPER
-   EnvDecrementInstanceCount(theEnvironment,theInstanceAddress);
+   EnvDecrementInstanceCount((Environment *) theEnvironment,(Instance *) theInstanceAddress);
 #else
-   __EnvDecrementInstanceCount(theEnvironment,theInstanceAddress);
+   __EnvDecrementInstanceCount((Environment *) theEnvironment,(Instance *) theInstanceAddress);
 #endif
   }
 
@@ -1355,9 +1353,9 @@ InstanceAddressValue& InstanceAddressValue::operator = (
    if (theInstanceAddress != NULL)
      { 
 #ifndef CLIPS_DLL_WRAPPER
-      EnvDecrementInstanceCount(theEnvironment,theInstanceAddress);
+      EnvDecrementInstanceCount((Environment *) theEnvironment,(Instance *) theInstanceAddress);
 #else
-      __EnvDecrementInstanceCount(theEnvironment,theInstanceAddress);
+      __EnvDecrementInstanceCount((Environment *) theEnvironment,(Instance *) theInstanceAddress);
 #endif
 
      }
@@ -1366,9 +1364,9 @@ InstanceAddressValue& InstanceAddressValue::operator = (
    theInstanceAddress = v.theInstanceAddress;
      
 #ifndef CLIPS_DLL_WRAPPER
-   EnvIncrementInstanceCount(theEnvironment,theInstanceAddress);
+   EnvIncrementInstanceCount((Environment *) theEnvironment,(Instance *) theInstanceAddress);
 #else
-   __EnvIncrementInstanceCount(theEnvironment,theInstanceAddress);
+   __EnvIncrementInstanceCount((Environment *) theEnvironment,(Instance *) theInstanceAddress);
 #endif
    
    return *this;
@@ -1377,9 +1375,9 @@ InstanceAddressValue& InstanceAddressValue::operator = (
 /****************/
 /* GetCLIPSType */
 /****************/
-CLIPSType InstanceAddressValue::GetCLIPSType()
+CLIPSCPPType InstanceAddressValue::GetCLIPSType()
   {
-   return INSTANCE_ADDRESS_TYPE;
+   return CPP_INSTANCE_ADDRESS_TYPE;
   }
 
 /*******************/
@@ -1388,9 +1386,9 @@ CLIPSType InstanceAddressValue::GetCLIPSType()
 const char *InstanceAddressValue::GetInstanceName() const
   {  
 #ifndef CLIPS_DLL_WRAPPER
-   return EnvGetInstanceName(theEnvironment,theInstanceAddress);
+   return InstanceName((Instance *) theInstanceAddress);
 #else
-   return __EnvGetInstanceName(theEnvironment,theInstanceAddress);
+   return __InstanceName((Environment *) theEnvironment,(Instance *) theInstanceAddress);
 #endif
   }
 
@@ -1399,15 +1397,15 @@ const char *InstanceAddressValue::GetInstanceName() const
 /*****************/
 DataObject InstanceAddressValue::DirectGetSlot(char *slotName) const
   {  
-   DATA_OBJECT theDO;
+   CLIPSValue theCV;
    
 #ifndef CLIPS_DLL_WRAPPER
-   EnvDirectGetSlot(theEnvironment,theInstanceAddress,slotName,&theDO);
+   EnvDirectGetSlot((Environment *) theEnvironment,(Instance *) theInstanceAddress,slotName,&theCV);
 #else
-   __EnvDirectGetSlot(theEnvironment,theInstanceAddress,slotName,&theDO);
+   __EnvDirectGetSlot((Environment *) theEnvironment,(Instance *) theInstanceAddress,slotName,&theCV);
 #endif
    
-   return ConvertDataObject(theEnvironment,&theDO);
+   return ConvertDataObject((Environment *) theEnvironment,&theCV);
   }
 
 /*********/
@@ -1474,9 +1472,9 @@ MultifieldValue::~MultifieldValue()
 /****************/
 /* GetCLIPSType */
 /****************/
-CLIPSType MultifieldValue::GetCLIPSType()
+CLIPSCPPType MultifieldValue::GetCLIPSType()
   {
-   return MULTIFIELD_TYPE;
+   return CPP_MULTIFIELD_TYPE;
   }
  
 /**********************/
@@ -1559,8 +1557,8 @@ MultifieldValue *MultifieldValue::clone() const
 /*****************/
 /* CLIPSCPPQuery */
 /*****************/
-static int CLIPSCPPQuery(
-  void *theEnv,
+static bool CLIPSCPPQuery(
+  Environment *theEnv,
   const char *logicalName)
   { 
 #ifndef CLIPS_DLL_WRAPPER
@@ -1571,14 +1569,14 @@ static int CLIPSCPPQuery(
    CLIPSCPPEnv *theCPPEnv = (CLIPSCPPEnv *) __GetEnvironmentContext(theEnv);
 #endif
    
-   return(theRouter->Query(theCPPEnv,logicalName));
+   return theRouter->Query(theCPPEnv,logicalName);
   }
 
 /*****************/
 /* CLIPSCPPPrint */
 /*****************/
-static int CLIPSCPPPrint(
-  void *theEnv,
+static void CLIPSCPPPrint(
+  Environment *theEnv,
   const char *logicalName,
   const char *printString)
   { 
@@ -1590,14 +1588,14 @@ static int CLIPSCPPPrint(
    CLIPSCPPEnv *theCPPEnv = (CLIPSCPPEnv *) __GetEnvironmentContext(theEnv);
 #endif
    
-   return(theRouter->Print(theCPPEnv,logicalName,printString));
+   theRouter->Print(theCPPEnv,logicalName,printString);
   }
 
 /*****************/
 /* CLIPSCPPGetc */
 /*****************/
 static int CLIPSCPPGetc(
-  void *theEnv,
+  Environment *theEnv,
   const char *logicalName)
   { 
 #ifndef CLIPS_DLL_WRAPPER
@@ -1615,7 +1613,7 @@ static int CLIPSCPPGetc(
 /* CLIPSCPPUngetc */
 /*****************/
 static int CLIPSCPPUngetc(
-  void *theEnv,
+  Environment *theEnv,
   int character,
   const char *logicalName)
   { 
@@ -1627,14 +1625,14 @@ static int CLIPSCPPUngetc(
    CLIPSCPPEnv *theCPPEnv = (CLIPSCPPEnv *) __GetEnvironmentContext(theEnv);
 #endif
    
-   return(theRouter->Ungetc(theCPPEnv,character,logicalName));
+   return theRouter->Ungetc(theCPPEnv,character,logicalName);
   }
   
 /*****************/
 /* CLIPSCPPExit */
 /*****************/
-static int CLIPSCPPExit(
-  void *theEnv,
+static void CLIPSCPPExit(
+  Environment *theEnv,
   int exitCode)
   { 
 #ifndef CLIPS_DLL_WRAPPER
@@ -1645,6 +1643,6 @@ static int CLIPSCPPExit(
    CLIPSCPPEnv *theCPPEnv = (CLIPSCPPEnv *) __GetEnvironmentContext(theEnv);
 #endif
    
-   return(theRouter->Exit(theCPPEnv,exitCode));
+   theRouter->Exit(theCPPEnv,exitCode);
   }
 

@@ -31,7 +31,7 @@ namespace CLIPSNET
    
    CLIPSCPPRouterBridge::~CLIPSCPPRouterBridge() {}
 
-   int CLIPSCPPRouterBridge::Query(
+   bool CLIPSCPPRouterBridge::Query(
      CLIPSCPPEnv *theCPPEnv,
      const char *logicalName)
      {
@@ -40,7 +40,7 @@ namespace CLIPSNET
       return m_Router->Query(cliLogicalName);
      }
 
-   int CLIPSCPPRouterBridge::Print(
+   void CLIPSCPPRouterBridge::Print(
      CLIPSCPPEnv *theCPPEnv,
      const char *logicalName,
      const char *printString)
@@ -49,8 +49,6 @@ namespace CLIPSNET
       String ^ cliPrintString = CharStarToString(printString);
 
       m_Router->Print(cliLogicalName,cliPrintString);
-
-	   return true;
      }
 
    int CLIPSCPPRouterBridge::Getc(

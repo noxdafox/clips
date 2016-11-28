@@ -6,18 +6,19 @@
 namespace CLIPS
 {
 
-enum CLIPSType 
-  { UNKNOWN_TYPE,
-    FLOAT_TYPE, 
-    INTEGER_TYPE, 
-    SYMBOL_TYPE, 
-    STRING_TYPE, 
-    MULTIFIELD_TYPE, 
-    EXTERNAL_ADDRESS_TYPE, 
-    FACT_ADDRESS_TYPE, 
-    INSTANCE_ADDRESS_TYPE, 
-    INSTANCE_NAME_TYPE, 
-    VOID_TYPE };
+enum CLIPSCPPType 
+  { 
+    CPP_FLOAT_TYPE, 
+    CPP_INTEGER_TYPE, 
+    CPP_SYMBOL_TYPE, 
+    CPP_STRING_TYPE, 
+    CPP_MULTIFIELD_TYPE, 
+    CPP_EXTERNAL_ADDRESS_TYPE, 
+    CPP_FACT_ADDRESS_TYPE, 
+    CPP_INSTANCE_ADDRESS_TYPE, 
+    CPP_INSTANCE_NAME_TYPE, 
+    CPP_VOID_TYPE,
+    CPP_UNKNOWN_TYPE };
 
 class CLIPSCPPRouter;
 
@@ -36,11 +37,11 @@ class CLIPSCPPEnv
       void CommandLoopOnceThenBatch();
       void Clear();
       int GetHaltExecution();
-      void SetHaltExecution(int);
+      void SetHaltExecution(bool);
       int GetEvaluationError();
-      void SetEvaluationError(int);
+      void SetEvaluationError(bool);
       int GetHaltRules();
-      void SetHaltRules(int);
+      void SetHaltRules(bool);
       int ChangeDirectory(char *);
       int Load(char *);
       void LoadFromString(char *);
@@ -64,11 +65,11 @@ class CLIPSCPPEnv
 class CLIPSCPPRouter
   {
    public:
-      virtual int Query(CLIPSCPPEnv *,const char *);
-      virtual int Print(CLIPSCPPEnv *,const char *,const char *);
+      virtual bool Query(CLIPSCPPEnv *,const char *);
+      virtual void Print(CLIPSCPPEnv *,const char *,const char *);
       virtual int Getc(CLIPSCPPEnv *,const char *);
       virtual int Ungetc(CLIPSCPPEnv *,int,const char *);
-      virtual int Exit(CLIPSCPPEnv *,int);
+      virtual void Exit(CLIPSCPPEnv *,int);
 
       const static char *STANDARD_OUTPUT;
       const static char *STANDARD_INPUT;
@@ -91,7 +92,7 @@ class Value
      friend std::ostream& operator<< (std::ostream& o, const Value* s);
      virtual std::ostream& print(std::ostream& o) const = 0;
      virtual Value *clone() const = 0; 
-	 virtual CLIPSType GetCLIPSType();
+	 virtual CLIPSCPPType GetCLIPSType();
   };
 
 class VoidValue : public Value
@@ -103,7 +104,7 @@ class VoidValue : public Value
      /* virtual VoidValue& operator= (const VoidValue& s); */
      virtual std::ostream& print(std::ostream& o) const;
      virtual VoidValue *clone() const; 
-	 CLIPSType GetCLIPSType();
+	 CLIPSCPPType GetCLIPSType();
   };
 
 class StringValue : public Value
@@ -116,7 +117,7 @@ class StringValue : public Value
      /* virtual StringValue& operator= (const StringValue& v); */
      virtual std::ostream& print(std::ostream& o) const;
      virtual StringValue *clone() const; 
-	 CLIPSType GetCLIPSType();
+	 CLIPSCPPType GetCLIPSType();
 	 std::string *GetStringValue();
 
    private:
@@ -133,7 +134,7 @@ class SymbolValue : public Value
      /* virtual SymbolValue& operator= (const SymbolValue& v); */
      virtual std::ostream& print(std::ostream& o) const;
      virtual SymbolValue *clone() const; 
-	 CLIPSType GetCLIPSType();
+	 CLIPSCPPType GetCLIPSType();
 	 std::string *GetSymbolValue();
   
    private:
@@ -150,7 +151,7 @@ class InstanceNameValue : public Value
      /* virtual InstanceNameValue& operator= (const InstanceNameValue& v); */
      virtual std::ostream& print(std::ostream& o) const;
      virtual InstanceNameValue *clone() const; 
-	 CLIPSType GetCLIPSType();
+	 CLIPSCPPType GetCLIPSType();
 	 std::string *GetInstanceNameValue();
   
    private:
@@ -167,7 +168,7 @@ class IntegerValue : public Value
      /* virtual IntegerValue& operator= (const IntegerValue& v); */
      virtual std::ostream& print(std::ostream& o) const;
      virtual IntegerValue *clone() const; 
-	 CLIPSType GetCLIPSType();
+	 CLIPSCPPType GetCLIPSType();
 	 long long GetIntegerValue();
 	 double GetFloatValue();
   
@@ -184,7 +185,7 @@ class FloatValue : public Value
      virtual ~FloatValue();
      virtual std::ostream& print(std::ostream& o) const;
      virtual FloatValue *clone() const; 
-     CLIPSType GetCLIPSType();
+     CLIPSCPPType GetCLIPSType();
      long long GetIntegerValue();
      double GetFloatValue();
   
@@ -202,7 +203,7 @@ class FactAddressValue : public Value
      virtual std::ostream& print(std::ostream& o) const;
      virtual FactAddressValue *clone() const; 
      virtual DataObject GetFactSlot(char *) const;
-     CLIPSType GetCLIPSType();
+     CLIPSCPPType GetCLIPSType();
      virtual long long GetFactIndex() const;
      void *GetFactAddressValue();
   
@@ -220,7 +221,7 @@ class InstanceAddressValue : public Value
      virtual InstanceAddressValue& operator= (const InstanceAddressValue& v);
      virtual std::ostream& print(std::ostream& o) const;
      virtual InstanceAddressValue *clone() const; 
-     CLIPSType GetCLIPSType();
+     CLIPSCPPType GetCLIPSType();
      virtual const char *GetInstanceName() const;
      virtual DataObject DirectGetSlot(char *) const;
      void *GetInstanceAddressValue();
@@ -241,7 +242,7 @@ class MultifieldValue : public Value
      virtual std::ostream& print(std::ostream& o) const;
      virtual MultifieldValue *clone() const; 
      void add(Value *);
-	 CLIPSType GetCLIPSType();
+	 CLIPSCPPType GetCLIPSType();
 	 std::vector<Value *> *GetMultifieldValue();
 
    private:
@@ -259,7 +260,7 @@ class DataObject
      friend std::ostream& operator<< (std::ostream& o, const DataObject& s);
      friend std::ostream& operator<< (std::ostream& o, const DataObject* s);
      virtual std::ostream& print(std::ostream& o) const;
-	 CLIPSType GetCLIPSType();
+	 CLIPSCPPType GetCLIPSType();
 	 Value *GetCLIPSValue();
      static DataObject Void();
      static DataObject String();

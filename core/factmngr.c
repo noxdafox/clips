@@ -1385,14 +1385,21 @@ void FactDeinstall(
   {
    Multifield *theSegment;
    int i;
-
+   void *afterValue;
+   
    FactData(theEnv)->NumberOfFacts--;
    theSegment = &newFact->theProposition;
    newFact->whichDeftemplate->busyCount--;
 
    for (i = 0 ; i < (int) theSegment->length ; i++)
      {
+      if (theSegment->theFields[i].header->type == MULTIFIELD_TYPE)
+        { afterValue = theSegment->theFields[i].value; }
+      else
+        { afterValue = theEnv->VoidConstant; }
+        
       AtomDeinstall(theEnv,theSegment->theFields[i].header->type,theSegment->theFields[i].value);
+      theSegment->theFields[i].value = afterValue;
      }
 
    newFact->factHeader.busyCount--;

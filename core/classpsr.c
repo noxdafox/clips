@@ -899,7 +899,7 @@ static void CreatePublicSlotMessageHandlers(
 
 #endif
 
-#if DEFMODULE_CONSTRUCT
+#if DEFMODULE_CONSTRUCT && OBJECT_SYSTEM
 
 /********************************************************
   NAME         : CreateClassScopeMap

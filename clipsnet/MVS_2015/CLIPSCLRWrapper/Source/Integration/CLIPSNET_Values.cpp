@@ -15,7 +15,7 @@ namespace CLIPSNET
    /*###################*/
 
    PrimitiveValue ^ SingleFieldToPrimitiveValue(
-     CLIPSType theType,
+     CLIPSCPPType theType,
 	  Value *theValue)
      {
 	  std::string *theCPPString;
@@ -31,48 +31,48 @@ namespace CLIPSNET
 
 	  switch (theType)
 	    {
-		 case STRING_TYPE:
+		 case CPP_STRING_TYPE:
 		   theStringValue = (CLIPS::StringValue *) theValue;
 		   theCPPString = theStringValue->GetStringValue();
 		   theCString = theCPPString->c_str();
 		   rv = gcnew StringValue(gcnew String(theCString));
 		   break;
 
-		 case SYMBOL_TYPE:
+		 case CPP_SYMBOL_TYPE:
 		   theSymbolValue = (CLIPS::SymbolValue *) theValue;
 		   theCPPString = theSymbolValue->GetSymbolValue();
 		   theCString = theCPPString->c_str();
 		   rv = gcnew SymbolValue(gcnew String(theCString));
 		   break;
 
-		 case INSTANCE_NAME_TYPE:
+		 case CPP_INSTANCE_NAME_TYPE:
 		   theInstanceNameValue = (CLIPS::InstanceNameValue *) theValue;
 		   theCPPString = theInstanceNameValue->GetInstanceNameValue();
 		   theCString = theCPPString->c_str();
 		   rv = gcnew InstanceNameValue(gcnew String(theCString));
 		   break;
 
-		 case INTEGER_TYPE:
+		 case CPP_INTEGER_TYPE:
 		   theIntegerValue = (CLIPS::IntegerValue *) theValue;
 		   rv = gcnew IntegerValue(theIntegerValue->GetIntegerValue());
 		   break;
 
-		 case FLOAT_TYPE:
+		 case CPP_FLOAT_TYPE:
 		   theFloatValue = (CLIPS::FloatValue *) theValue;
 		   rv = gcnew FloatValue(theFloatValue->GetFloatValue());
 		   break;
 
-		 case FACT_ADDRESS_TYPE:
+		 case CPP_FACT_ADDRESS_TYPE:
 		   theFactAddressValue = (CLIPS::FactAddressValue *) theValue;
 		   rv = gcnew FactAddressValue(theFactAddressValue);
 		   break;
 
-		 case INSTANCE_ADDRESS_TYPE:
+		 case CPP_INSTANCE_ADDRESS_TYPE:
 		   theInstanceAddressValue = (CLIPS::InstanceAddressValue *) theValue;
 		   rv = gcnew InstanceAddressValue(theInstanceAddressValue);
 		   break;
 
-		 case VOID_TYPE:
+		 case CPP_VOID_TYPE:
 		   rv = gcnew VoidValue();
 		   break;
 		}
@@ -82,7 +82,7 @@ namespace CLIPSNET
 
    PrimitiveValue ^ DataObjectToPrimitiveValue (DataObject theDO)
      {
-	  CLIPSType theType = theDO.GetCLIPSType();
+	  CLIPSCPPType theType = theDO.GetCLIPSType();
 	  List<PrimitiveValue ^> ^ theList;
 	  CLIPS::MultifieldValue *theMultifieldValue;
 	  std::vector<Value *> *theMultifield;
@@ -91,18 +91,18 @@ namespace CLIPSNET
 
      switch (theType)
 	    {
-		 case STRING_TYPE:
-		 case SYMBOL_TYPE:
-		 case INSTANCE_NAME_TYPE:
-		 case INTEGER_TYPE:
-		 case FLOAT_TYPE:
-		 case FACT_ADDRESS_TYPE:
-		 case INSTANCE_ADDRESS_TYPE:
-		 case VOID_TYPE:
+		 case CPP_STRING_TYPE:
+		 case CPP_SYMBOL_TYPE:
+		 case CPP_INSTANCE_NAME_TYPE:
+		 case CPP_INTEGER_TYPE:
+		 case CPP_FLOAT_TYPE:
+		 case CPP_FACT_ADDRESS_TYPE:
+		 case CPP_INSTANCE_ADDRESS_TYPE:
+		 case CPP_VOID_TYPE:
 		   rv = SingleFieldToPrimitiveValue(theType,theDO.GetCLIPSValue());
 		   break;
 
-		 case MULTIFIELD_TYPE:
+		 case CPP_MULTIFIELD_TYPE:
 		   theList = gcnew List<PrimitiveValue ^>;
 		   theMultifieldValue = (CLIPS::MultifieldValue *) theDO.GetCLIPSValue();
 		   theMultifield = theMultifieldValue->GetMultifieldValue();	

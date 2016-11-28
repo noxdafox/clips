@@ -90,8 +90,10 @@
 #include "inscom.h"
 #endif
 #include "constrct.h"
+#include "cstrccom.h"
 #include "cstrcpsr.h"
 #include "envrnmnt.h"
+#include "evaluatn.h"
 #include "extnfunc.h"
 #if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE
 #include "genrcbin.h"
@@ -1295,7 +1297,7 @@ void MethodRestrictions(
 #if OBJECT_SYSTEM
          theList->theFields[roffset++].lexemeValue = EnvCreateSymbol(theEnv,DefclassName((Defclass *) rptr->types[j]));
 #else
-         theList->theFields[roffset++].lexemeValue = EnvCreateSymbol(theEnv,TypeName(theEnv,ValueToInteger(rptr->types[j])));
+         theList->theFields[roffset++].lexemeValue = EnvCreateSymbol(theEnv,TypeName(theEnv,((CLIPSInteger *) rptr->types[j])->contents));
 #endif
         }
      }
@@ -1848,9 +1850,11 @@ void TypeCommand(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   EvaluateExpression(theEnv,GetFirstArgument(),result);
+   UDFValue result;
+   
+   EvaluateExpression(theEnv,GetFirstArgument(),&result);
 
-   returnValue->lexemeValue = EnvCreateSymbol(theEnv,TypeName(theEnv,result->type));
+   returnValue->lexemeValue = EnvCreateSymbol(theEnv,TypeName(theEnv,result.header->type));
   }
 
 #endif

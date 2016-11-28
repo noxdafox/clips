@@ -491,10 +491,12 @@ void CVAtomInstall(
         MultifieldInstall(theEnv,(Multifield *) vPtr);
         break;
         
+#if OBJECT_SYSTEM
       case INSTANCE_ADDRESS_TYPE:
         EnvIncrementInstanceCount(theEnv,(Instance *) vPtr);
         break;
-     
+#endif
+
       case FACT_ADDRESS_TYPE:
         EnvIncrementFactCount(theEnv,(Fact *) vPtr);
         break;
@@ -543,9 +545,11 @@ void CVAtomDeinstall(
         MultifieldDeinstall(theEnv,(Multifield *) vPtr);
         break;
         
+#if OBJECT_SYSTEM
       case INSTANCE_ADDRESS_TYPE:
         EnvDecrementInstanceCount(theEnv,(Instance *) vPtr);
         break;
+#endif
      
       case FACT_ADDRESS_TYPE:
         EnvDecrementFactCount(theEnv,(Fact *) vPtr);
@@ -773,7 +777,7 @@ bool FunctionCall2(
 
 /***************************************************/
 /* CopyDataObject: Copies the values from a source */
-/*   UDFValue to a destination UDFValue.       */
+/*   UDFValue to a destination UDFValue.           */
 /***************************************************/
 void CopyDataObject(
   Environment *theEnv,

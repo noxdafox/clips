@@ -1317,11 +1317,13 @@ unsigned long ItemHashValue(
   void *theValue,
   unsigned long theRange)
   {
+#if OBJECT_SYSTEM
    union
      {
       void *vv;
       unsigned uv;
      } fis;
+#endif
 
    switch(theType)
      {
@@ -1351,10 +1353,10 @@ unsigned long ItemHashValue(
 
 #if OBJECT_SYSTEM
       case INSTANCE_ADDRESS_TYPE:
-#endif
         fis.uv = 0;
         fis.vv = theValue;
         return(fis.uv % theRange);
+#endif
      }
 
    SystemError(theEnv,"UTILITY",1);

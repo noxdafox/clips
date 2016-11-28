@@ -450,6 +450,7 @@ void EnvReset(
   Environment *theEnv)
   {
    struct voidCallFunctionItem *resetPtr;
+   CLIPSBlock gcBlock;
 
    /*=====================================*/
    /* The reset command can't be executed */
@@ -467,6 +468,7 @@ void EnvReset(
    /*================================================*/
 
    if (UtilityData(theEnv)->CurrentGarbageFrame->topLevel) EnvSetHaltExecution(theEnv,false);
+   CLIPSBlockStart(theEnv,&gcBlock);
 
    /*=======================================================*/
    /* Call the before reset function to determine if the    */
@@ -504,12 +506,8 @@ void EnvReset(
    /* issued from an embedded controller.       */
    /*===========================================*/
 
-   if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
-       (EvaluationData(theEnv)->CurrentExpression == NULL) && (UtilityData(theEnv)->GarbageCollectionLocks == 0))
-     {
-      CleanCurrentGarbageFrame(theEnv,NULL);
-      CallPeriodicTasks(theEnv);
-     }
+   CLIPSBlockEnd(theEnv,&gcBlock,NULL);
+   CallPeriodicTasks(theEnv);
 
    /*===================================*/
    /* A reset is no longer in progress. */
@@ -593,6 +591,7 @@ void EnvClear(
   Environment *theEnv)
   {
    struct voidCallFunctionItem *theFunction;
+   CLIPSBlock gcBlock;
 
    /*==========================================*/
    /* Activate the watch router which captures */
@@ -623,6 +622,12 @@ void EnvClear(
      }
    ConstructData(theEnv)->ClearReadyInProgress = false;
 
+   /*========================================*/
+   /* Set up the frame for tracking garbage. */
+   /*========================================*/
+   
+   CLIPSBlockStart(theEnv,&gcBlock);
+
    /*===========================*/
    /* Call all clear functions. */
    /*===========================*/
@@ -643,17 +648,12 @@ void EnvClear(
    EnvDeactivateRouter(theEnv,WTRACE);
 #endif
 
-   /*===========================================*/
-   /* Perform periodic cleanup if the clear was */
-   /* issued from an embedded controller.       */
-   /*===========================================*/
-
-   if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
-       (EvaluationData(theEnv)->CurrentExpression == NULL) && (UtilityData(theEnv)->GarbageCollectionLocks == 0))
-     {
-      CleanCurrentGarbageFrame(theEnv,NULL);
-      CallPeriodicTasks(theEnv);
-     }
+   /*================================*/
+   /* Restore the old garbage frame. */
+   /*================================*/
+   
+   CLIPSBlockEnd(theEnv,&gcBlock,NULL);
+   CallPeriodicTasks(theEnv);
 
    /*===========================*/
    /* Clear has been completed. */

@@ -629,7 +629,7 @@ static void TypeToCode(
 #pragma unused(maxIndices)
 #endif
 
-   PrintIntegerReference(theEnv,theFile,(INTEGER_HN *) theType);
+   PrintIntegerReference(theEnv,theFile,(CLIPSInteger *) theType);
 #endif
   }
 
