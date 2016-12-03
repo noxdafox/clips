@@ -1103,12 +1103,6 @@ static void RemoveHashNode(
    previousNode = NULL;
    currentNode = theTable[theValue->bucket];
 
-   if (currentNode == NULL)
-     {
-      SystemError(theEnv,"SYMBOL",111);
-      EnvExitRouter(theEnv,EXIT_FAILURE);
-     }
-
    while (currentNode != theValue)
      {
       previousNode = currentNode;
