@@ -49,10 +49,10 @@ void JNIUserFunction(
    
    if ((*env)->ExceptionCheck(env)) 
      { 
-      EnvPrintRouter(theEnv,WERROR,"Exception occurred during evaluation of JNI User Function.\n");
+      PrintRouter(theEnv,WERROR,"Exception occurred during evaluation of JNI User Function.\n");
       (*env)->ExceptionDescribe(env); 
       (*env)->ExceptionClear(env); 
-      EnvSetEvaluationError(theEnv,true);
+      SetEvaluationError(theEnv,true);
      }
    else
      { ConvertPrimitiveValueToDataObject(theEnv,rv,result); }
@@ -296,7 +296,7 @@ void PrintJavaAddress(
    JNIEnv *env;
    char buffer[20];
 
-   EnvPrintRouter(theEnv,logicalName,"<Pointer-");
+   PrintRouter(theEnv,logicalName,"<Pointer-");
         
    theObject = (jobject) ((CLIPSExternalAddress *) theValue)->contents;
    
@@ -310,17 +310,17 @@ void PrintJavaAddress(
 
       cStr = (char *) (*env)->GetStringUTFChars(env,str,NULL);
       
-      EnvPrintRouter(theEnv,logicalName,cStr);
-      EnvPrintRouter(theEnv,logicalName,"-");
+      PrintRouter(theEnv,logicalName,cStr);
+      PrintRouter(theEnv,logicalName,"-");
    
       (*env)->ReleaseStringUTFChars(env,str,cStr);
      }
    else
-     { EnvPrintRouter(theEnv,logicalName,"java-"); }
+     { PrintRouter(theEnv,logicalName,"java-"); }
    
    gensprintf(buffer,"%p",(void *) theObject);
-   EnvPrintRouter(theEnv,logicalName,buffer);
-   EnvPrintRouter(theEnv,logicalName,">");
+   PrintRouter(theEnv,logicalName,buffer);
+   PrintRouter(theEnv,logicalName,">");
   }
 
 /********************/
@@ -409,7 +409,7 @@ void NewJavaAddress(
      {
       if ((*env)->ExceptionOccurred(env))
         { (*env)->ExceptionClear(env); }
-      EnvSetEvaluationError(theEnv,true);
+      SetEvaluationError(theEnv,true);
       ExpectedTypeError1(theEnv,"new (with type Java)",2,"Java class name");
       return;
      }
@@ -426,7 +426,7 @@ void NewJavaAddress(
       for (i = 0; i < (size_t) numberOfArguments - 2; i++)
         {
          UDFNthArgument(context,i+3,ANY_TYPE_BITS,&newArgs[i]);
-         if (EnvGetEvaluationError(theEnv))
+         if (GetEvaluationError(theEnv))
            {   
             (*env)->DeleteLocalRef(env,theClass);
             return;
@@ -585,7 +585,7 @@ void NewJavaAddress(
    
    if ((*env)->ExceptionOccurred(env))
      { 
-      EnvSetEvaluationError(theEnv,true);
+      SetEvaluationError(theEnv,true);
       (*env)->ExceptionClear(env); 
      }
 
@@ -597,7 +597,7 @@ void NewJavaAddress(
    
    if (theObject != NULL)
      {
-      rv->value = EnvAddExternalAddress(theEnv,theObject,CLIPSJNIData(theEnv)->javaExternalAddressID);
+      rv->value = AddExternalAddress(theEnv,theObject,CLIPSJNIData(theEnv)->javaExternalAddressID);
      }
   }
 
@@ -664,7 +664,7 @@ bool CallJavaMethod(
       for (i = 0; i < numberOfArguments - 2; i++)
         {
          UDFNthArgument(context,i+3,ANY_TYPE_BITS,&newArgs[i]);
-         if (EnvGetEvaluationError(theEnv))
+         if (GetEvaluationError(theEnv))
            { return false; }
         }
      }
@@ -1211,7 +1211,7 @@ jlong CreateCLIPSJNIEnvironment(
    /* Set up the parser error callback. */
    /*===================================*/
    
-   EnvSetParserErrorCallback(theEnv,JNIParserErrorCallback);
+   SetParserErrorCallback(theEnv,JNIParserErrorCallback);
    
    /*=========================*/
    /* Return the environment. */

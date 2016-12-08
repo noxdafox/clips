@@ -66,14 +66,14 @@
    void                           UndefglobalCommand(Environment *,UDFContext *,UDFValue *);
    bool                           Undefglobal(Defglobal *,Environment *);
    void                           GetDefglobalListFunction(Environment *,UDFContext *,UDFValue *);
-   void                           EnvGetDefglobalList(Environment *,CLIPSValue *,Defmodule *);
+   void                           GetDefglobalList(Environment *,CLIPSValue *,Defmodule *);
    void                           DefglobalModuleFunction(Environment *,UDFContext *,UDFValue *);
    void                           PPDefglobalCommand(Environment *,UDFContext *,UDFValue *);
    bool                           PPDefglobal(Environment *,const char *,const char *);
    void                           ListDefglobalsCommand(Environment *,UDFContext *,UDFValue *);
 #if DEBUGGING_FUNCTIONS
    bool                           DefglobalGetWatch(Defglobal *);
-   void                           EnvListDefglobals(Environment *,const char *,Defmodule *);
+   void                           ListDefglobals(Environment *,const char *,Defmodule *);
    void                           DefglobalSetWatch(Defglobal *,bool);
 #endif
    void                           ResetDefglobals(Environment *);

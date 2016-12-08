@@ -189,14 +189,14 @@ struct memoryData
    void                           InitializeMemory(Environment *);
    void                          *genalloc(Environment *,size_t);
    bool                           DefaultOutOfMemoryFunction(Environment *,size_t);
-   OutOfMemoryFunction           *EnvSetOutOfMemoryFunction(Environment *,OutOfMemoryFunction *);
+   OutOfMemoryFunction           *SetOutOfMemoryFunction(Environment *,OutOfMemoryFunction *);
    void                           genfree(Environment *,void *,size_t);
    void                          *genrealloc(Environment *,void *,size_t,size_t);
-   long                           EnvMemUsed(Environment *);
-   long                           EnvMemRequests(Environment *);
+   long                           MemUsed(Environment *);
+   long                           MemRequests(Environment *);
    long                           UpdateMemoryUsed(Environment *,long int);
    long                           UpdateMemoryRequests(Environment *,long int);
-   long                           EnvReleaseMem(Environment *,long);
+   long                           ReleaseMem(Environment *,long);
    void                          *gm1(Environment *,size_t);
    void                          *gm2(Environment *,size_t);
    void                          *gm3(Environment *,size_t);
@@ -206,8 +206,8 @@ struct memoryData
    unsigned long                  ActualPoolSize(Environment *);
    void                          *RequestChunk(Environment *,size_t);
    int                            ReturnChunk(Environment *,void *,size_t);
-   bool                           EnvSetConserveMemory(Environment *,bool);
-   bool                           EnvGetConserveMemory(Environment *);
+   bool                           SetConserveMemory(Environment *,bool);
+   bool                           GetConserveMemory(Environment *);
    void                           genmemcpy(char *,char *,unsigned long);
 
 #endif /* _H_memalloc */

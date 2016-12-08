@@ -229,9 +229,9 @@ static int TextLookupFetch(
    if (fp == NULL)
      {
       PrintErrorID(theEnv,"TEXTPRO",1,false);
-      EnvPrintRouter(theEnv,WERROR,"Could not open file \"");
-      EnvPrintRouter(theEnv,WERROR,file);
-      EnvPrintRouter(theEnv,WERROR,"\".\n");
+      PrintRouter(theEnv,WERROR,"Could not open file \"");
+      PrintRouter(theEnv,WERROR,file);
+      PrintRouter(theEnv,WERROR,"\".\n");
       return(-1);
      }
 
@@ -240,9 +240,9 @@ static int TextLookupFetch(
       GenClose(theEnv,fp);
 
       PrintErrorID(theEnv,"TEXTPRO",2,false);
-      EnvPrintRouter(theEnv,WERROR,"File \"");
-      EnvPrintRouter(theEnv,WERROR,file);
-      EnvPrintRouter(theEnv,WERROR,"\" already loaded.\n");
+      PrintRouter(theEnv,WERROR,"File \"");
+      PrintRouter(theEnv,WERROR,file);
+      PrintRouter(theEnv,WERROR,"\" already loaded.\n");
       return(-1);
      }
 
@@ -277,9 +277,9 @@ static int TextLookupFetch(
               GenClose(theEnv,fp);
               TextLookupToss(theEnv,file);
               PrintErrorID(theEnv,"TEXTPRO",8,false);
-              EnvPrintRouter(theEnv,WERROR,"Line ");
+              PrintRouter(theEnv,WERROR,"Line ");
               PrintLongInteger(theEnv,WERROR,line_ct);
-              EnvPrintRouter(theEnv,WERROR," : Unmatched end marker.\n");
+              PrintRouter(theEnv,WERROR," : Unmatched end marker.\n");
               return(-1);
              }
           }
@@ -296,9 +296,9 @@ static int TextLookupFetch(
                TextLookupToss(theEnv,file);
 
                PrintErrorID(theEnv,"TEXTPRO",4,false);
-               EnvPrintRouter(theEnv,WERROR,"Line ");
+               PrintRouter(theEnv,WERROR,"Line ");
                PrintLongInteger(theEnv,WERROR,line_ct);
-               EnvPrintRouter(theEnv,WERROR," : Previous entry not closed.\n");
+               PrintRouter(theEnv,WERROR," : Previous entry not closed.\n");
 
                return(-1);
               }
@@ -320,9 +320,9 @@ static int TextLookupFetch(
       TextLookupToss(theEnv,file);
 
       PrintErrorID(theEnv,"TEXTPRO",4,false);
-      EnvPrintRouter(theEnv,WERROR,"Line ");
+      PrintRouter(theEnv,WERROR,"Line ");
       PrintLongInteger(theEnv,WERROR,line_ct);
-      EnvPrintRouter(theEnv,WERROR," : Previous entry not closed.\n");
+      PrintRouter(theEnv,WERROR," : Previous entry not closed.\n");
 
       return(-1);
      }
@@ -645,9 +645,9 @@ static struct entries *AllocateEntryNode(
       TextLookupToss(theEnv,file);
 
       PrintErrorID(theEnv,"TEXTPRO",5,false);
-      EnvPrintRouter(theEnv,WERROR,"Line ");
+      PrintRouter(theEnv,WERROR,"Line ");
       PrintLongInteger(theEnv,WERROR,line_ct);
-      EnvPrintRouter(theEnv,WERROR," : Invalid delimeter string.\n");
+      PrintRouter(theEnv,WERROR," : Invalid delimeter string.\n");
 
       return NULL;
      }
@@ -662,9 +662,9 @@ static struct entries *AllocateEntryNode(
       TextLookupToss(theEnv,file);
 
       PrintErrorID(theEnv,"TEXTPRO",6,false);
-      EnvPrintRouter(theEnv,WERROR,"Line ");
+      PrintRouter(theEnv,WERROR,"Line ");
       PrintLongInteger(theEnv,WERROR,line_ct);
-      EnvPrintRouter(theEnv,WERROR," : Invalid entry type.\n");
+      PrintRouter(theEnv,WERROR," : Invalid entry type.\n");
 
       return NULL;
      }
@@ -675,9 +675,9 @@ static struct entries *AllocateEntryNode(
       TextLookupToss(theEnv,file);
 
       PrintErrorID(theEnv,"TEXTPRO",5,false);
-      EnvPrintRouter(theEnv,WERROR,"Line ");
+      PrintRouter(theEnv,WERROR,"Line ");
       PrintLongInteger(theEnv,WERROR,line_ct);
-      EnvPrintRouter(theEnv,WERROR," : Invalid delimeter string.\n");
+      PrintRouter(theEnv,WERROR," : Invalid delimeter string.\n");
 
       return NULL;
      }
@@ -748,9 +748,9 @@ static bool AttachLeaf(
         TextLookupToss(theEnv,file);
 
         PrintErrorID(theEnv,"TEXTPRO",7,false);
-        EnvPrintRouter(theEnv,WERROR,"Line ");
+        PrintRouter(theEnv,WERROR,"Line ");
         PrintLongInteger(theEnv,WERROR,line_ct);
-        EnvPrintRouter(theEnv,WERROR," : Non-menu entries cannot have subtopics.\n");
+        PrintRouter(theEnv,WERROR," : Non-menu entries cannot have subtopics.\n");
 
         return false;
        }
@@ -1057,13 +1057,13 @@ void FetchCommand(
       if (load_ct == 0)
         {
          PrintErrorID(theEnv,"TEXTPRO",3,false);
-         EnvPrintRouter(theEnv,WERROR,"No entries found.\n");
+         PrintRouter(theEnv,WERROR,"No entries found.\n");
         }
 
       return;
      }
 
-   returnValue->integerValue = EnvCreateInteger(theEnv,load_ct);
+   returnValue->integerValue = CreateInteger(theEnv,load_ct);
   }
 
 /******************************************************************************/
@@ -1102,9 +1102,9 @@ void PrintRegionCommand(
      {
       if (strcmp(params->name,"t") == 0)
         genstrcpy(params->name,STDOUT);
-      EnvPrintRouter(theEnv,params->name,"\n");
+      PrintRouter(theEnv,params->name,"\n");
       while (GrabString(theEnv,fp,buf,256) != NULL)
-        EnvPrintRouter(theEnv,params->name,buf);
+        PrintRouter(theEnv,params->name,buf);
       com_code = true;
      }
    else
@@ -1130,7 +1130,7 @@ void PrintRegionCommand(
       rm(theEnv,tptr,(int) sizeof(struct topics));
      }
 
-   returnValue->lexemeValue = EnvCreateBoolean(theEnv,com_code);
+   returnValue->lexemeValue = CreateBoolean(theEnv,com_code);
   }
 
 /***********************************************/
@@ -1182,7 +1182,7 @@ void GetRegionCommand(
      }
 
    if (theString == NULL)
-     { returnValue->lexemeValue = EnvCreateString(theEnv,""); }
+     { returnValue->lexemeValue = CreateString(theEnv,""); }
    else
      {
       sLength = strlen(theString);
@@ -1191,7 +1191,7 @@ void GetRegionCommand(
 		   ||
            ((theString[sLength-1] == '\n') && (theString[sLength-2] == '\r'))))
         { theString[sLength-2] = 0; }
-      returnValue->lexemeValue = EnvCreateString(theEnv,theString);
+      returnValue->lexemeValue = CreateString(theEnv,theString);
      }
 
    if (theString != NULL)
@@ -1218,7 +1218,7 @@ void TossCommand(
 
    file = theArg.lexemeValue->contents;
 
-   returnValue->lexemeValue = EnvCreateBoolean(theEnv,TextLookupToss(theEnv,file));
+   returnValue->lexemeValue = CreateBoolean(theEnv,TextLookupToss(theEnv,file));
   }
 
 #endif
@@ -1354,10 +1354,10 @@ void HelpFunctionDefinitions(
    AllocateEnvironmentData(theEnv,TEXTPRO_DATA,sizeof(struct textProcessingData),DeallocateTextProcessingData);
 #if ! RUN_TIME
 #if TEXTPRO_FUNCTIONS
-   EnvAddUDF(theEnv,"fetch","bl",1,1,"sy",FetchCommand,"FetchCommand",NULL);
-   EnvAddUDF(theEnv,"toss","b",1,1,"sy",TossCommand,"TossCommand",NULL);
-   EnvAddUDF(theEnv,"print-region","b",2,UNBOUNDED,"*;y;sy",PrintRegionCommand,"PrintRegionCommand",NULL);
-   EnvAddUDF(theEnv,"get-region","s",1,UNBOUNDED,"*;sy",GetRegionCommand,"GetRegionCommand", NULL);
+   AddUDF(theEnv,"fetch","bl",1,1,"sy",FetchCommand,"FetchCommand",NULL);
+   AddUDF(theEnv,"toss","b",1,1,"sy",TossCommand,"TossCommand",NULL);
+   AddUDF(theEnv,"print-region","b",2,UNBOUNDED,"*;y;sy",PrintRegionCommand,"PrintRegionCommand",NULL);
+   AddUDF(theEnv,"get-region","s",1,UNBOUNDED,"*;sy",GetRegionCommand,"GetRegionCommand", NULL);
 #endif
 #endif
   }

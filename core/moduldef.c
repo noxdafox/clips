@@ -195,9 +195,9 @@ void InitializeDefmodules(
 #endif
 
 #if (! RUN_TIME) && DEFMODULE_CONSTRUCT
-   EnvAddUDF(theEnv,"get-current-module","y",0,0,NULL,GetCurrentModuleCommand,"GetCurrentModuleCommand",NULL);
+   AddUDF(theEnv,"get-current-module","y",0,0,NULL,GetCurrentModuleCommand,"GetCurrentModuleCommand",NULL);
 
-   EnvAddUDF(theEnv,"set-current-module","y",1,1,"y",SetCurrentModuleCommand,"SetCurrentModuleCommand",NULL);
+   AddUDF(theEnv,"set-current-module","y",1,1,"y",SetCurrentModuleCommand,"SetCurrentModuleCommand",NULL);
 #endif
   }
 
@@ -276,20 +276,20 @@ struct moduleItem *FindModuleItem(
    return NULL;
   }
 
-/******************************************/
-/* EnvGetCurrentModule: Returns a pointer */
-/*   to the current module.               */
-/******************************************/
-Defmodule *EnvGetCurrentModule(
+/***************************************/
+/* GetCurrentModule: Returns a pointer */
+/*   to the current module.            */
+/***************************************/
+Defmodule *GetCurrentModule(
   Environment *theEnv)
   {
    return DefmoduleData(theEnv)->CurrentModule;
   }
 
-/**************************************************************/
-/* EnvSetCurrentModule: Sets the value of the current module. */
-/**************************************************************/
-Defmodule *EnvSetCurrentModule(
+/***********************************************************/
+/* SetCurrentModule: Sets the value of the current module. */
+/***********************************************************/
+Defmodule *SetCurrentModule(
   Environment *theEnv,
   Defmodule *newModule)
   {
@@ -428,7 +428,7 @@ void CreateMainModule(
    /*=======================================*/
 
    newDefmodule = get_struct(theEnv,defmodule);
-   newDefmodule->header.name = EnvCreateSymbol(theEnv,"MAIN");
+   newDefmodule->header.name = CreateSymbol(theEnv,"MAIN");
    IncrementSymbolCount(newDefmodule->header.name);
    newDefmodule->header.whichModule = NULL;
    newDefmodule->header.next = NULL;
@@ -479,7 +479,7 @@ void CreateMainModule(
 
    DefmoduleData(theEnv)->LastDefmodule = newDefmodule;
    DefmoduleData(theEnv)->ListOfDefmodules = newDefmodule;
-   EnvSetCurrentModule(theEnv,newDefmodule);
+   SetCurrentModule(theEnv,newDefmodule);
   }
 
 /*********************************************************************/
@@ -504,12 +504,12 @@ void SetListOfDefmodules(
      }
   }
 
-/********************************************************************/
-/* EnvGetNextDefmodule: If passed a NULL pointer, returns the first */
-/*   defmodule in the ListOfDefmodules. Otherwise returns the next  */
-/*   defmodule following the defmodule passed as an argument.       */
-/********************************************************************/
-Defmodule *EnvGetNextDefmodule(
+/*******************************************************************/
+/* GetNextDefmodule: If passed a NULL pointer, returns the first   */
+/*   defmodule in the ListOfDefmodules. Otherwise returns the next */
+/*   defmodule following the defmodule passed as an argument.      */
+/*******************************************************************/
+Defmodule *GetNextDefmodule(
   Environment *theEnv,
   Defmodule *defmodulePtr)
   {
@@ -581,7 +581,7 @@ static void ReturnDefmodule(
    if (theDefmodule == NULL) return;
 
    if (! environmentClear)
-     { EnvSetCurrentModule(theEnv,theDefmodule); }
+     { SetCurrentModule(theEnv,theDefmodule); }
 
    /*============================================*/
    /* Call the free functions for the constructs */
@@ -672,12 +672,12 @@ static void ReturnDefmodule(
 
 #endif /* (! RUN_TIME) */
 
-/**************************************************/
-/* EnvFindDefmodule: Searches for a defmodule in  */
-/*   the list of defmodules. Returns a pointer to */
-/*   the defmodule if found, otherwise NULL.      */
-/**************************************************/
-Defmodule *EnvFindDefmodule(
+/************************************************/
+/* FindDefmodule: Searches for a defmodule in   */
+/*   the list of defmodules. Returns a pointer  */
+/*   to the defmodule if found, otherwise NULL. */
+/************************************************/
+Defmodule *FindDefmodule(
   Environment *theEnv,
   const char *defmoduleName)
   {
@@ -709,7 +709,7 @@ void GetCurrentModuleCommand(
   {
    Defmodule *theModule;
 
-   theModule = EnvGetCurrentModule(theEnv);
+   theModule = GetCurrentModule(theEnv);
 
    if (theModule == NULL)
      {
@@ -738,7 +738,7 @@ void SetCurrentModuleCommand(
    /* Set the return value. */
    /*=======================*/
 
-   theModule = EnvGetCurrentModule(theEnv);
+   theModule = GetCurrentModule(theEnv);
    if (theModule == NULL)
      {
       returnValue->lexemeValue = FalseSymbol(theEnv);
@@ -761,7 +761,7 @@ void SetCurrentModuleCommand(
    /* Set the current module to the specified value. */
    /*================================================*/
 
-   theModule = EnvFindDefmodule(theEnv,argument);
+   theModule = FindDefmodule(theEnv,argument);
 
    if (theModule == NULL)
      {
@@ -769,7 +769,7 @@ void SetCurrentModuleCommand(
       return;
      }
 
-   EnvSetCurrentModule(theEnv,theModule);
+   SetCurrentModule(theEnv,theModule);
   }
 
 /*************************************************/
@@ -795,7 +795,7 @@ void IllegalModuleSpecifierMessage(
   Environment *theEnv)
   {
    PrintErrorID(theEnv,"MODULDEF",1,true);
-   EnvPrintRouter(theEnv,WERROR,"Illegal use of the module specifier.\n");
+   PrintRouter(theEnv,WERROR,"Illegal use of the module specifier.\n");
   }
 
 /*********************************************/

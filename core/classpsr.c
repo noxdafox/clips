@@ -195,7 +195,7 @@ bool ParseDefclass(
 #endif
 
    cname = GetConstructNameAndComment(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken,"defclass",
-                                      (FindConstructFunction *) EnvFindDefclassInModule,NULL,"#",true,
+                                      (FindConstructFunction *) FindDefclassInModule,NULL,"#",true,
                                       true,true,false);
    if (cname == NULL)
      return true;
@@ -336,7 +336,7 @@ bool ParseDefclass(
    if (abstract && reactive)
      {
       PrintErrorID(theEnv,"CLASSPSR",1,false);
-      EnvPrintRouter(theEnv,WERROR,"An abstract class cannot be reactive.\n");
+      PrintRouter(theEnv,WERROR,"An abstract class cannot be reactive.\n");
       DeletePackedClassLinks(theEnv,sclasses,true);
       DeletePackedClassLinks(theEnv,preclist,true);
       DeleteSlots(theEnv,slots);
@@ -412,7 +412,7 @@ static bool ValidClassName(
   const char *theClassName,
   Defclass **theDefclass)
   {
-   *theDefclass = EnvFindDefclassInModule(theEnv,theClassName);
+   *theDefclass = FindDefclassInModule(theEnv,theClassName);
    if (*theDefclass != NULL)
      {
       /* ===================================
@@ -422,7 +422,7 @@ static bool ValidClassName(
       if ((*theDefclass)->system)
         {
          PrintErrorID(theEnv,"CLASSPSR",2,false);
-         EnvPrintRouter(theEnv,WERROR,"Cannot redefine a predefined system class.\n");
+         PrintRouter(theEnv,WERROR,"Cannot redefine a predefined system class.\n");
          return false;
         }
 
@@ -435,9 +435,9 @@ static bool ValidClassName(
           (! ConstructData(theEnv)->CheckSyntaxMode))
         {
          PrintErrorID(theEnv,"CLASSPSR",3,false);
-         EnvPrintRouter(theEnv,WERROR,DefclassName(*theDefclass));
-         EnvPrintRouter(theEnv,WERROR," class cannot be redefined while\n");
-         EnvPrintRouter(theEnv,WERROR,"    outstanding references to it still exist.\n");
+         PrintRouter(theEnv,WERROR,DefclassName(*theDefclass));
+         PrintRouter(theEnv,WERROR," class cannot be redefined while\n");
+         PrintRouter(theEnv,WERROR,"    outstanding references to it still exist.\n");
          return false;
         }
      }
@@ -474,9 +474,9 @@ static bool ParseSimpleQualifier(
    if (*alreadyTestedFlag)
      {
       PrintErrorID(theEnv,"CLASSPSR",4,false);
-      EnvPrintRouter(theEnv,WERROR,"Class ");
-      EnvPrintRouter(theEnv,WERROR,classQualifier);
-      EnvPrintRouter(theEnv,WERROR," already declared.\n");
+      PrintRouter(theEnv,WERROR,"Class ");
+      PrintRouter(theEnv,WERROR,classQualifier);
+      PrintRouter(theEnv,WERROR," already declared.\n");
       return false;
      }
    SavePPBuffer(theEnv," ");
@@ -586,7 +586,7 @@ static void AddClass(
       form progeny links with all direct superclasses
       =============================================== */
    cls->hashTableIndex = HashClass(GetDefclassNamePointer(cls));
-   ctmp = EnvFindDefclassInModule(theEnv,DefclassName(cls));
+   ctmp = FindDefclassInModule(theEnv,DefclassName(cls));
 
    if (ctmp != NULL)
      {
@@ -623,8 +623,8 @@ static void AddClass(
 #endif
 
 #if DEBUGGING_FUNCTIONS
-   if (EnvGetConserveMemory(theEnv) == false)
-     EnvSetDefclassPPForm(theEnv,cls,CopyPPBuffer(theEnv));
+   if (GetConserveMemory(theEnv) == false)
+     SetDefclassPPForm(theEnv,cls,CopyPPBuffer(theEnv));
 #endif
 
 #if DEFMODULE_CONSTRUCT
@@ -931,18 +931,18 @@ void *CreateClassScopeMap(
 
    ClearBitString(scopeMap,scopeMapSize);
    SaveCurrentModule(theEnv);
-   for (theModule = EnvGetNextDefmodule(theEnv,NULL) ;
+   for (theModule = GetNextDefmodule(theEnv,NULL) ;
         theModule != NULL ;
-        theModule = EnvGetNextDefmodule(theEnv,theModule))
+        theModule = GetNextDefmodule(theEnv,theModule))
      {
-      EnvSetCurrentModule(theEnv,theModule);
+      SetCurrentModule(theEnv,theModule);
       moduleID = (int) theModule->header.bsaveID;
       if (FindImportedConstruct(theEnv,"defclass",matchModule,
                                 className,&count,true,NULL) != NULL)
         SetBitMap(scopeMap,moduleID);
      }
    RestoreCurrentModule(theEnv);
-   theBitMap = (CLIPSBitMap *) EnvAddBitMap(theEnv,scopeMap,scopeMapSize);
+   theBitMap = (CLIPSBitMap *) AddBitMap(theEnv,scopeMap,scopeMapSize);
    IncrementBitMapCount(theBitMap);
    rm(theEnv,scopeMap,scopeMapSize);
    return(theBitMap);

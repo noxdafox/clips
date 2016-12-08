@@ -158,7 +158,7 @@ bool ParseDefrule(
 #endif
 
    ruleName = GetConstructNameAndComment(theEnv,readSource,&theToken,"defrule",
-                                         (FindConstructFunction *) EnvFindDefruleInModule,
+                                         (FindConstructFunction *) FindDefruleInModule,
                                          (DeleteConstructFunction *) Undefrule,
                                          "*",false,
                                          true,true,false);
@@ -229,7 +229,7 @@ bool ParseDefrule(
    /*======================================*/
 
    SavePPBuffer(theEnv,"\n");
-   if (EnvGetConserveMemory(theEnv) == true)
+   if (GetConserveMemory(theEnv) == true)
      { topDisjunct->header.ppForm = NULL; }
    else
      { topDisjunct->header.ppForm = CopyPPBuffer(theEnv); }
@@ -261,10 +261,10 @@ bool ParseDefrule(
    if (BitwiseTest(DefruleData(theEnv)->DeletedRuleDebugFlags,0))
      { DefruleSetBreak(topDisjunct); }
    if (BitwiseTest(DefruleData(theEnv)->DeletedRuleDebugFlags,1) ||
-       (EnvGetWatchItem(theEnv,"activations") == 1))
+       (GetWatchItem(theEnv,"activations") == 1))
      { DefruleSetWatchActivations(topDisjunct,true); }
    if (BitwiseTest(DefruleData(theEnv)->DeletedRuleDebugFlags,2) ||
-       (EnvGetWatchItem(theEnv,"rules") == 1))
+       (GetWatchItem(theEnv,"rules") == 1))
      { DefruleSetWatchFirings(topDisjunct,true); }
 #endif
 
@@ -366,7 +366,7 @@ static Defrule *ProcessRuleLHS(
       /*========================================================*/
 
 #if DEVELOPER && DEBUGGING_FUNCTIONS
-      if (EnvGetWatchItem(theEnv,"rule-analysis") == 1)
+      if (GetWatchItem(theEnv,"rule-analysis") == 1)
         { DumpRuleAnalysis(theEnv,tempNode); }
 #endif
 
@@ -805,7 +805,7 @@ static int LogicalAnalysis(
       if (! firstLogical)
         {
          PrintErrorID(theEnv,"RULEPSR",1,true);
-         EnvPrintRouter(theEnv,WERROR,"Logical CEs must be placed first in a rule\n");
+         PrintRouter(theEnv,WERROR,"Logical CEs must be placed first in a rule\n");
          return -1;
         }
 
@@ -818,7 +818,7 @@ static int LogicalAnalysis(
       if (gap)
         {
          PrintErrorID(theEnv,"RULEPSR",2,true);
-         EnvPrintRouter(theEnv,WERROR,"Gaps may not exist between logical CEs\n");
+         PrintRouter(theEnv,WERROR,"Gaps may not exist between logical CEs\n");
          return -1;
         }
 
@@ -981,7 +981,7 @@ void DumpRuleAnalysis(
    struct lhsParseNode *traceNode;
    char buffer[20];
 
-   EnvPrintRouter(theEnv,WDISPLAY,"\n");
+   PrintRouter(theEnv,WDISPLAY,"\n");
    for (traceNode = tempNode; traceNode != NULL; traceNode = traceNode->bottom)
      {
       if (traceNode->userCE)
@@ -989,58 +989,58 @@ void DumpRuleAnalysis(
       else
         { gensprintf(buffer,"SCE %2d (%2d %2d): ",traceNode->whichCE,traceNode->beginNandDepth,traceNode->endNandDepth); }
 
-      EnvPrintRouter(theEnv,WDISPLAY,buffer);
+      PrintRouter(theEnv,WDISPLAY,buffer);
 
       PrintExpression(theEnv,WDISPLAY,traceNode->networkTest);
-      EnvPrintRouter(theEnv,WDISPLAY,"\n");
+      PrintRouter(theEnv,WDISPLAY,"\n");
 
       if (traceNode->externalNetworkTest != NULL)
         {
-         EnvPrintRouter(theEnv,WDISPLAY,"      ENT: ");
+         PrintRouter(theEnv,WDISPLAY,"      ENT: ");
          PrintExpression(theEnv,WDISPLAY,traceNode->externalNetworkTest);
-         EnvPrintRouter(theEnv,WDISPLAY,"\n");
+         PrintRouter(theEnv,WDISPLAY,"\n");
         }
 
       if (traceNode->secondaryNetworkTest != NULL)
         {
-         EnvPrintRouter(theEnv,WDISPLAY,"      SNT: ");
+         PrintRouter(theEnv,WDISPLAY,"      SNT: ");
          PrintExpression(theEnv,WDISPLAY,traceNode->secondaryNetworkTest);
-         EnvPrintRouter(theEnv,WDISPLAY,"\n");
+         PrintRouter(theEnv,WDISPLAY,"\n");
         }
 
       if (traceNode->externalRightHash != NULL)
         {
-         EnvPrintRouter(theEnv,WDISPLAY,"      ERH: ");
+         PrintRouter(theEnv,WDISPLAY,"      ERH: ");
          PrintExpression(theEnv,WDISPLAY,traceNode->externalRightHash);
-         EnvPrintRouter(theEnv,WDISPLAY,"\n");
+         PrintRouter(theEnv,WDISPLAY,"\n");
         }
 
       if (traceNode->externalLeftHash != NULL)
         {
-         EnvPrintRouter(theEnv,WDISPLAY,"      ELH: ");
+         PrintRouter(theEnv,WDISPLAY,"      ELH: ");
          PrintExpression(theEnv,WDISPLAY,traceNode->externalLeftHash);
-         EnvPrintRouter(theEnv,WDISPLAY,"\n");
+         PrintRouter(theEnv,WDISPLAY,"\n");
         }
 
       if (traceNode->leftHash != NULL)
         {
-         EnvPrintRouter(theEnv,WDISPLAY,"       LH: ");
+         PrintRouter(theEnv,WDISPLAY,"       LH: ");
          PrintExpression(theEnv,WDISPLAY,traceNode->leftHash);
-         EnvPrintRouter(theEnv,WDISPLAY,"\n");
+         PrintRouter(theEnv,WDISPLAY,"\n");
         }
 
       if (traceNode->rightHash != NULL)
         {
-         EnvPrintRouter(theEnv,WDISPLAY,"       RH: ");
+         PrintRouter(theEnv,WDISPLAY,"       RH: ");
          PrintExpression(theEnv,WDISPLAY,traceNode->rightHash);
-         EnvPrintRouter(theEnv,WDISPLAY,"\n");
+         PrintRouter(theEnv,WDISPLAY,"\n");
         }
 
       if (traceNode->betaHash != NULL)
         {
-         EnvPrintRouter(theEnv,WDISPLAY,"       BH: ");
+         PrintRouter(theEnv,WDISPLAY,"       BH: ");
          PrintExpression(theEnv,WDISPLAY,traceNode->betaHash);
-         EnvPrintRouter(theEnv,WDISPLAY,"\n");
+         PrintRouter(theEnv,WDISPLAY,"\n");
         }
      }
   }

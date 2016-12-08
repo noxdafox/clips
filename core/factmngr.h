@@ -150,59 +150,59 @@ struct factsData
 
 #define FactData(theEnv) ((struct factsData *) GetEnvironmentData(theEnv,FACTS_DATA))
 
-   Fact                          *EnvAssert(Environment *,Fact *);
+   Fact                          *Assert(Environment *,Fact *);
    Fact                          *AssertDriver(Environment *,Fact *);
-   Fact                          *EnvAssertString(Environment *,const char *);
-   Fact                          *EnvCreateFact(Environment *,Deftemplate *);
-   void                           EnvDecrementFactCount(Environment *,Fact *);
-   long long                      EnvFactIndex(Environment *,Fact *);
-   bool                           EnvGetFactSlot(Environment *,Fact *,const char *,CLIPSValue *);
+   Fact                          *AssertString(Environment *,const char *);
+   Fact                          *CreateFact(Environment *,Deftemplate *);
+   void                           DecrementFactCount(Environment *,Fact *);
+   long long                      FactIndex(Environment *,Fact *);
+   bool                           GetFactSlot(Environment *,Fact *,const char *,CLIPSValue *);
    void                           PrintFactWithIdentifier(Environment *,const char *,Fact *);
    void                           PrintFact(Environment *,const char *,Fact *,bool,bool);
    void                           PrintFactIdentifierInLongForm(Environment *,const char *,Fact *);
-   bool                           EnvRetract(Environment *,Fact *);
+   bool                           Retract(Environment *,Fact *);
    bool                           RetractDriver(Environment *,Fact *);
    void                           RemoveAllFacts(Environment *);
    struct fact                   *CreateFactBySize(Environment *,unsigned);
    void                           FactInstall(Environment *,Fact *);
    void                           FactDeinstall(Environment *,Fact *);
-   Fact                          *EnvGetNextFact(Environment *,Fact *);
+   Fact                          *GetNextFact(Environment *,Fact *);
    Fact                          *GetNextFactInScope(Environment *,Fact *);
    void                           FactPPForm(Fact *,char *,size_t);
-   bool                           EnvGetFactListChanged(Environment *);
-   void                           EnvSetFactListChanged(Environment *,bool);
+   bool                           GetFactListChanged(Environment *);
+   void                           SetFactListChanged(Environment *,bool);
    unsigned long                  GetNumberOfFacts(Environment *);
    void                           InitializeFacts(Environment *);
    Fact                          *FindIndexedFact(Environment *,long long);
-   void                           EnvIncrementFactCount(Environment *,Fact *);
+   void                           IncrementFactCount(Environment *,Fact *);
    void                           PrintFactIdentifier(Environment *,const char *,Fact *);
    void                           DecrementFactBasisCount(Environment *,Fact *);
    void                           IncrementFactBasisCount(Environment *,Fact *);
    bool                           FactIsDeleted(Environment *,Fact *);
    void                           ReturnFact(Environment *,Fact *);
    void                           MatchFactFunction(Environment *,Fact *);
-   bool                           EnvPutFactSlot(Environment *,Fact *,const char *,CLIPSValue *);
-   bool                           EnvAssignFactSlotDefaults(Environment *,Fact *);
+   bool                           PutFactSlot(Environment *,Fact *,const char *,CLIPSValue *);
+   bool                           AssignFactSlotDefaults(Environment *,Fact *);
    bool                           CopyFactSlotValues(Environment *,Fact *,Fact *);
    bool                           DeftemplateSlotDefault(Environment *,Deftemplate *,
                                                          struct templateSlot *,UDFValue *,bool);
-   bool                           EnvAddAssertFunction(Environment *,const char *,
+   bool                           AddAssertFunction(Environment *,const char *,
                                                        void (*)(Environment *,void *),int);
-   bool                           EnvAddAssertFunctionWithContext(Environment *,const char *,
+   bool                           AddAssertFunctionWithContext(Environment *,const char *,
                                                                   void (*)(Environment *,void *),int,void *);
-   bool                           EnvRemoveAssertFunction(Environment *,const char *);
-   bool                           EnvAddRetractFunction(Environment *,const char *,
+   bool                           RemoveAssertFunction(Environment *,const char *);
+   bool                           AddRetractFunction(Environment *,const char *,
                                                         void (*)(Environment *,void *),int);
-   bool                           EnvAddRetractFunctionWithContext(Environment *,const char *,
+   bool                           AddRetractFunctionWithContext(Environment *,const char *,
                                                                    void (*)(Environment *,void *),int,void *);
-   bool                           EnvRemoveRetractFunction(Environment *,const char *);
-   bool                           EnvAddModifyFunction(Environment *,const char *,
+   bool                           RemoveRetractFunction(Environment *,const char *);
+   bool                           AddModifyFunction(Environment *,const char *,
                                                        void (*)(Environment *,void *,void *),int);
-   bool                           EnvAddModifyFunctionWithContext(Environment *,const char *,
+   bool                           AddModifyFunctionWithContext(Environment *,const char *,
                                                                   void (*)(Environment *,void *,void *),int,void *);
-   bool                           EnvRemoveModifyFunction(Environment *,const char *);
+   bool                           RemoveModifyFunction(Environment *,const char *);
 
-   FactBuilder                   *EnvCreateFactBuilder(Environment *,const char *);
+   FactBuilder                   *CreateFactBuilder(Environment *,const char *);
    bool                           FBPutSlot(FactBuilder *,const char *,CLIPSValue *);
    Fact                          *FBAssert(FactBuilder *);
    void                           FBDispose(FactBuilder *);
@@ -216,7 +216,7 @@ struct factsData
    bool                           FBPutSlotExternalAddress(FactBuilder *,const char *,CLIPSExternalAddress *);
    bool                           FBPutSlotMultifield(FactBuilder *,const char *,Multifield *);
 
-   FactModifier                  *EnvCreateFactModifier(Environment *,Fact *);
+   FactModifier                  *CreateFactModifier(Environment *,Fact *);
    bool                           FMPutSlot(FactModifier *,const char *,CLIPSValue *);
    Fact                          *FMModify(FactModifier *);
    void                           FMDispose(FactModifier *);

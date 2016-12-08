@@ -29,9 +29,9 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_addRouter(
       
    nobj = (*env)->NewGlobalRef(env,context);
    
-   rv = EnvAddRouterWithContext(JLongToPointer(clipsEnv),(char *) cRouterName,(int) priority,
-                                QueryJNIRouter,PrintJNIRouter,GetcJNIRouter,
-                                UngetcJNIRouter,ExitJNIRouter,(void *) nobj);
+   rv = AddRouter(JLongToPointer(clipsEnv),(char *) cRouterName,(int) priority,
+                  QueryJNIRouter,PrintJNIRouter,GetcJNIRouter,
+                  UngetcJNIRouter,ExitJNIRouter,(void *) nobj);
    
    (*env)->ReleaseStringUTFChars(env,routerName,cRouterName);
 
@@ -55,20 +55,20 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_deleteRouter(
   jstring routerName)
   {
    int rv;
-   void *theCLIPSEnv = JLongToPointer(clipsEnv);
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
    const char *cRouterName = (*env)->GetStringUTFChars(env,routerName,NULL);
-   struct router *theRouter;
+   Router *theRouter;
    
-   theRouter = EnvFindRouter(theCLIPSEnv,cRouterName);
+   theRouter = FindRouter(theCLIPSEnv,cRouterName);
    if (theRouter == NULL) 
-     { return(0); }
+     { return 0; }
 
    if (GetEnvironmentRouterContext(theCLIPSEnv) == theRouter->context)
      { SetEnvironmentRouterContext(theCLIPSEnv,NULL); }
 
    (*env)->DeleteGlobalRef(env,theRouter->context);
      
-   rv = EnvDeleteRouter(theCLIPSEnv,cRouterName);
+   rv = DeleteRouter(theCLIPSEnv,cRouterName);
   
    (*env)->ReleaseStringUTFChars(env,routerName,cRouterName);
 
@@ -90,13 +90,13 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_printRouter(
   {
    const char *cLogName;
    const char *cPrintString;
-   void *theCLIPSEnv = JLongToPointer(clipsEnv);
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
    void *oldContext = SetEnvironmentContext(theCLIPSEnv,(void *) env);
    
    cLogName = (*env)->GetStringUTFChars(env,logName,NULL);
    cPrintString = (*env)->GetStringUTFChars(env,printString,NULL);
 
-   EnvPrintRouter(theCLIPSEnv,cLogName,cPrintString);
+   PrintRouter(theCLIPSEnv,cLogName,cPrintString);
 
    (*env)->ReleaseStringUTFChars(env,logName,cLogName);
    (*env)->ReleaseStringUTFChars(env,printString,cPrintString);
@@ -118,12 +118,12 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_activateRouter
   {
    jboolean rv;
    const char *cRouterName;
-   void *theCLIPSEnv = JLongToPointer(clipsEnv);
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
    void *oldContext = SetEnvironmentContext(theCLIPSEnv,(void *) env);
    
    cRouterName = (*env)->GetStringUTFChars(env,routerName,NULL);
 
-   rv = EnvActivateRouter(theCLIPSEnv,cRouterName);
+   rv = ActivateRouter(theCLIPSEnv,cRouterName);
 
    (*env)->ReleaseStringUTFChars(env,routerName,cRouterName);
    
@@ -146,12 +146,12 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_deactivateRout
   {
    jboolean rv;
    const char *cRouterName;
-   void *theCLIPSEnv = JLongToPointer(clipsEnv);
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
    void *oldContext = SetEnvironmentContext(theCLIPSEnv,(void *) env);
    
    cRouterName = (*env)->GetStringUTFChars(env,routerName,NULL);
 
-   rv = EnvDeactivateRouter(theCLIPSEnv,cRouterName);
+   rv = DeactivateRouter(theCLIPSEnv,cRouterName);
 
    (*env)->ReleaseStringUTFChars(env,routerName,cRouterName);
    
@@ -176,7 +176,7 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_openStringBatc
   {
    jboolean rv;
    const char *cStringName, *cData, *dataCopy;
-   void *theCLIPSEnv = JLongToPointer(clipsEnv);
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
    void *oldContext = SetEnvironmentContext(theCLIPSEnv,(void *) env);
    
    cStringName = (*env)->GetStringUTFChars(env,stringName,NULL);

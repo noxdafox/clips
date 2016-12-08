@@ -98,18 +98,18 @@
 void DeffactsBasicCommands(
   Environment *theEnv)
   {
-   EnvAddResetFunction(theEnv,"deffacts",ResetDeffacts,0);
-   EnvAddClearFunction(theEnv,"deffacts",ClearDeffacts,0);
+   AddResetFunction(theEnv,"deffacts",ResetDeffacts,0);
+   AddClearFunction(theEnv,"deffacts",ClearDeffacts,0);
    AddSaveFunction(theEnv,"deffacts",SaveDeffacts,10);
 
 #if ! RUN_TIME
-   EnvAddUDF(theEnv,"get-deffacts-list","m",0,1,"y",GetDeffactsListFunction,"GetDeffactsListFunction",NULL);
-   EnvAddUDF(theEnv,"undeffacts","v",1,1,"y",UndeffactsCommand,"UndeffactsCommand",NULL);
-   EnvAddUDF(theEnv,"deffacts-module","y",1,1,"y",DeffactsModuleFunction,"DeffactsModuleFunction",NULL);
+   AddUDF(theEnv,"get-deffacts-list","m",0,1,"y",GetDeffactsListFunction,"GetDeffactsListFunction",NULL);
+   AddUDF(theEnv,"undeffacts","v",1,1,"y",UndeffactsCommand,"UndeffactsCommand",NULL);
+   AddUDF(theEnv,"deffacts-module","y",1,1,"y",DeffactsModuleFunction,"DeffactsModuleFunction",NULL);
 
 #if DEBUGGING_FUNCTIONS
-   EnvAddUDF(theEnv,"list-deffacts","v",0,1,"y",ListDeffactsCommand,"ListDeffactsCommand",NULL);
-   EnvAddUDF(theEnv,"ppdeffacts","v",1,1,"y",PPDeffactsCommand,"PPDeffactsCommand",NULL);
+   AddUDF(theEnv,"list-deffacts","v",0,1,"y",ListDeffactsCommand,"ListDeffactsCommand",NULL);
+   AddUDF(theEnv,"ppdeffacts","v",1,1,"y",PPDeffactsCommand,"PPDeffactsCommand",NULL);
 #endif
 
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE)
@@ -154,7 +154,7 @@ static void ResetDeffactsAction(
 
    if (theDeffacts->assertList == NULL) return;
 
-   EnvSetEvaluationError(theEnv,false);
+   SetEvaluationError(theEnv,false);
 
    EvaluateExpression(theEnv,theDeffacts->assertList,&returnValue);
   }
@@ -176,7 +176,7 @@ static void ClearDeffacts(
    /*=====================================*/
 
    stub = GenConstant(theEnv,FCALL,FindFunction(theEnv,"assert"));
-   stub->argList = GenConstant(theEnv,DEFTEMPLATE_PTR,EnvFindDeftemplateInModule(theEnv,"initial-fact"));
+   stub->argList = GenConstant(theEnv,DEFTEMPLATE_PTR,FindDeftemplateInModule(theEnv,"initial-fact"));
    ExpressionInstall(theEnv,stub);
 
    /*=============================================*/
@@ -187,7 +187,7 @@ static void ClearDeffacts(
    newDeffacts = get_struct(theEnv,deffacts);
    newDeffacts->header.whichModule =
       (struct defmoduleItemHeader *) GetDeffactsModuleItem(theEnv,NULL);
-   newDeffacts->header.name = EnvCreateSymbol(theEnv,"initial-fact");
+   newDeffacts->header.name = CreateSymbol(theEnv,"initial-fact");
    IncrementSymbolCount(newDeffacts->header.name);
    newDeffacts->assertList = PackExpression(theEnv,stub);
    newDeffacts->header.next = NULL;
@@ -264,10 +264,10 @@ void GetDeffactsListFunction(
   }
 
 /*****************************************/
-/* EnvGetDeffactsList: C access routine  */
+/* GetDeffactsList: C access routine     */
 /*   for the get-deffacts-list function. */
 /*****************************************/
-void EnvGetDeffactsList(
+void GetDeffactsList(
   Environment *theEnv,
   CLIPSValue *returnValue,
   Defmodule *theModule)
@@ -329,11 +329,11 @@ void ListDeffactsCommand(
    ListConstructCommand(context,DeffactsData(theEnv)->DeffactsConstruct);
   }
 
-/*************************************/
-/* EnvListDeffacts: C access routine */
-/*   for the list-deffacts command.  */
-/*************************************/
-void EnvListDeffacts(
+/************************************/
+/* ListDeffacts: C access routine   */
+/*   for the list-deffacts command. */
+/************************************/
+void ListDeffacts(
   Environment *theEnv,
   const char *logicalName,
   Defmodule *theModule)

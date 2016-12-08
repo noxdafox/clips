@@ -173,15 +173,15 @@ void InitializeAtomTables(
    /* Predefine some values. */
    /*========================*/
 
-   TrueSymbol(theEnv) = EnvAddSymbol(theEnv,TRUE_STRING,SYMBOL_TYPE);
+   TrueSymbol(theEnv) = AddSymbol(theEnv,TRUE_STRING,SYMBOL_TYPE);
    IncrementSymbolCount(TrueSymbol(theEnv));
-   FalseSymbol(theEnv) = EnvAddSymbol(theEnv,FALSE_STRING,SYMBOL_TYPE);
+   FalseSymbol(theEnv) = AddSymbol(theEnv,FALSE_STRING,SYMBOL_TYPE);
    IncrementSymbolCount(FalseSymbol(theEnv));
-   SymbolData(theEnv)->PositiveInfinity = EnvAddSymbol(theEnv,POSITIVE_INFINITY_STRING,SYMBOL_TYPE);
+   SymbolData(theEnv)->PositiveInfinity = AddSymbol(theEnv,POSITIVE_INFINITY_STRING,SYMBOL_TYPE);
    IncrementSymbolCount(SymbolData(theEnv)->PositiveInfinity);
-   SymbolData(theEnv)->NegativeInfinity = EnvAddSymbol(theEnv,NEGATIVE_INFINITY_STRING,SYMBOL_TYPE);
+   SymbolData(theEnv)->NegativeInfinity = AddSymbol(theEnv,NEGATIVE_INFINITY_STRING,SYMBOL_TYPE);
    IncrementSymbolCount(SymbolData(theEnv)->NegativeInfinity);
-   SymbolData(theEnv)->Zero = EnvCreateInteger(theEnv,0LL);
+   SymbolData(theEnv)->Zero = CreateInteger(theEnv,0LL);
    IncrementIntegerCount(SymbolData(theEnv)->Zero);
 #else
    SetSymbolTable(theEnv,symbolTable);
@@ -327,10 +327,10 @@ static void DeallocateSymbolData(
 #endif
   }
 
-/********************/
-/* EnvCreateBoolean */
-/********************/
-CLIPSLexeme *EnvCreateBoolean(
+/*****************/
+/* CreateBoolean */
+/*****************/
+CLIPSLexeme *CreateBoolean(
   Environment *theEnv,
   bool theValue)
   {
@@ -340,44 +340,44 @@ CLIPSLexeme *EnvCreateBoolean(
      { return FalseSymbol(theEnv); }
   }
 
-/*******************/
-/* EnvCreateSymbol */
-/*******************/
-CLIPSLexeme *EnvCreateSymbol(
+/****************/
+/* CreateSymbol */
+/****************/
+CLIPSLexeme *CreateSymbol(
   Environment *theEnv,
   const char *str)
   {
-   return EnvAddSymbol(theEnv,str,SYMBOL_TYPE);
+   return AddSymbol(theEnv,str,SYMBOL_TYPE);
   }
 
 /****************/
 /* CreateString */
 /****************/
-CLIPSLexeme *EnvCreateString(
+CLIPSLexeme *CreateString(
   Environment *theEnv,
   const char *str)
   {
-   return EnvAddSymbol(theEnv,str,STRING_TYPE);
+   return AddSymbol(theEnv,str,STRING_TYPE);
   }
 
 /**********************/
 /* CreateInstanceName */
 /**********************/
-CLIPSLexeme *EnvCreateInstanceName(
+CLIPSLexeme *CreateInstanceName(
   Environment *theEnv,
   const char *str)
   {
-   return EnvAddSymbol(theEnv,str,INSTANCE_NAME_TYPE);
+   return AddSymbol(theEnv,str,INSTANCE_NAME_TYPE);
   }
 
-/*********************************************************************/
-/* EnvAddSymbol: Searches for the string in the symbol table. If the */
-/*   string is already in the symbol table, then the address of the  */
-/*   string's location in the symbol table is returned. Otherwise,   */
-/*   the string is added to the symbol table and then the address    */
-/*   of the string's location in the symbol table is returned.       */
-/*********************************************************************/
-CLIPSLexeme *EnvAddSymbol(
+/********************************************************************/
+/* AddSymbol: Searches for the string in the symbol table. If the   */
+/*   string is already in the symbol table, then the address of the */
+/*   string's location in the symbol table is returned. Otherwise,  */
+/*   the string is added to the symbol table and then the address   */
+/*   of the string's location in the symbol table is returned.      */
+/********************************************************************/
+CLIPSLexeme *AddSymbol(
   Environment *theEnv,
   const char *str,
   unsigned short theType)
@@ -394,7 +394,7 @@ CLIPSLexeme *EnvAddSymbol(
     if (str == NULL)
       {
        SystemError(theEnv,"SYMBOL",1);
-       EnvExitRouter(theEnv,EXIT_FAILURE);
+       ExitRouter(theEnv,EXIT_FAILURE);
       }
 
     tally = HashSymbol(str,SYMBOL_HASH_SIZE);
@@ -476,13 +476,13 @@ CLIPSLexeme *FindSymbolHN(
     return NULL;
    }
 
-/*********************************************************************/
-/* EnvCreateFloat: Searches for the double in the hash table. If the */
-/*   double is already in the hash table, then the address of the    */
-/*   double is returned. Otherwise, the double is hashed into the    */
-/*   table and the address of the double is also returned.           */
-/*********************************************************************/
-CLIPSFloat *EnvCreateFloat(
+/******************************************************************/
+/* CreateFloat: Searches for the double in the hash table. If the */
+/*   double is already in the hash table, then the address of the */
+/*   double is returned. Otherwise, the double is hashed into the */
+/*   table and the address of the double is also returned.        */
+/******************************************************************/
+CLIPSFloat *CreateFloat(
   Environment *theEnv,
   double number)
   {
@@ -542,13 +542,13 @@ CLIPSFloat *EnvCreateFloat(
     return peek;
    }
 
-/*****************************************************************/
-/* EnvCreateInteger: Searches for the long in the hash table. If */
-/*   the long is already in the hash table, then the address of  */
-/*   the long is returned. Otherwise, the long is hashed into    */
-/*   the table and the address of the long is also returned.     */
-/*****************************************************************/
-CLIPSInteger *EnvCreateInteger(
+/****************************************************************/
+/* CreateInteger: Searches for the long in the hash table. If   */
+/*   the long is already in the hash table, then the address of */
+/*   the long is returned. Otherwise, the long is hashed into   */
+/*   the table and the address of the long is also returned.    */
+/****************************************************************/
+CLIPSInteger *CreateInteger(
   Environment *theEnv,
   long long number)
   {
@@ -628,13 +628,13 @@ CLIPSInteger *FindLongHN(
    return NULL;
   }
 
-/*******************************************************************/
-/* EnvAddBitMap: Searches for the bitmap in the hash table. If the */
-/*   bitmap is already in the hash table, then the address of the  */
-/*   bitmap is returned. Otherwise, the bitmap is hashed into the  */
-/*   table and the address of the bitmap is also returned.         */
-/*******************************************************************/
-void *EnvAddBitMap(
+/******************************************************************/
+/* AddBitMap: Searches for the bitmap in the hash table. If the   */
+/*   bitmap is already in the hash table, then the address of the */
+/*   bitmap is returned. Otherwise, the bitmap is hashed into the */
+/*   table and the address of the bitmap is also returned.        */
+/******************************************************************/
+void *AddBitMap(
   Environment *theEnv,
   void *vTheBitMap,
   unsigned size)
@@ -652,7 +652,7 @@ void *EnvAddBitMap(
     if (theBitMap == NULL)
       {
        SystemError(theEnv,"SYMBOL",2);
-       EnvExitRouter(theEnv,EXIT_FAILURE);
+       ExitRouter(theEnv,EXIT_FAILURE);
       }
 
     tally = HashBitMap(theBitMap,BITMAP_HASH_SIZE,size);
@@ -712,14 +712,14 @@ void *EnvAddBitMap(
     return((void *) peek);
    }
 
-/*******************************************************************/
-/* EnvAddExternalAddress: Searches for the external address in the */
-/*   hash table. If the external address is already in the hash    */
-/*   table, then the address of the external address is returned.  */
-/*   Otherwise, the external address is hashed into the table and  */
-/*   the address of the external address is also returned.         */
-/*******************************************************************/
-void *EnvAddExternalAddress(
+/******************************************************************/
+/* AddExternalAddress: Searches for the external address in the   */
+/*   hash table. If the external address is already in the hash   */
+/*   table, then the address of the external address is returned. */
+/*   Otherwise, the external address is hashed into the table and */
+/*   the address of the external address is also returned.        */
+/******************************************************************/
+void *AddExternalAddress(
   Environment *theEnv,
   void *theExternalAddress,
   unsigned theType)
@@ -930,13 +930,13 @@ void DecrementSymbolCount(
    if (theValue->count < 0)
      {
       SystemError(theEnv,"SYMBOL",3);
-      EnvExitRouter(theEnv,EXIT_FAILURE);
+      ExitRouter(theEnv,EXIT_FAILURE);
      }
 
    if (theValue->count == 0)
      {
       SystemError(theEnv,"SYMBOL",4);
-      EnvExitRouter(theEnv,EXIT_FAILURE);
+      ExitRouter(theEnv,EXIT_FAILURE);
      }
 
    theValue->count--;
@@ -965,7 +965,7 @@ void DecrementFloatCount(
    if (theValue->count <= 0)
      {
       SystemError(theEnv,"SYMBOL",5);
-      EnvExitRouter(theEnv,EXIT_FAILURE);
+      ExitRouter(theEnv,EXIT_FAILURE);
      }
 
    theValue->count--;
@@ -994,7 +994,7 @@ void DecrementIntegerCount(
    if (theValue->count <= 0)
      {
       SystemError(theEnv,"SYMBOL",6);
-      EnvExitRouter(theEnv,EXIT_FAILURE);
+      ExitRouter(theEnv,EXIT_FAILURE);
      }
 
    theValue->count--;
@@ -1023,13 +1023,13 @@ void DecrementBitMapCount(
    if (theValue->count < 0)
      {
       SystemError(theEnv,"SYMBOL",7);
-      EnvExitRouter(theEnv,EXIT_FAILURE);
+      ExitRouter(theEnv,EXIT_FAILURE);
      }
 
    if (theValue->count == 0)
      {
       SystemError(theEnv,"SYMBOL",8);
-      EnvExitRouter(theEnv,EXIT_FAILURE);
+      ExitRouter(theEnv,EXIT_FAILURE);
      }
 
    theValue->count--;
@@ -1058,13 +1058,13 @@ void DecrementExternalAddressCount(
    if (theValue->count < 0)
      {
       SystemError(theEnv,"SYMBOL",9);
-      EnvExitRouter(theEnv,EXIT_FAILURE);
+      ExitRouter(theEnv,EXIT_FAILURE);
      }
 
    if (theValue->count == 0)
      {
       SystemError(theEnv,"SYMBOL",10);
-      EnvExitRouter(theEnv,EXIT_FAILURE);
+      ExitRouter(theEnv,EXIT_FAILURE);
      }
 
    theValue->count--;
@@ -1111,7 +1111,7 @@ static void RemoveHashNode(
       if (currentNode == NULL)
         {
          SystemError(theEnv,"SYMBOL",11);
-         EnvExitRouter(theEnv,EXIT_FAILURE);
+         ExitRouter(theEnv,EXIT_FAILURE);
         }
      }
 
@@ -1181,7 +1181,7 @@ static void AddEphemeralHashNode(
    if (checkCount && (theHashNode->count != 0))
      {
       SystemError(theEnv,"SYMBOL",12);
-      EnvExitRouter(theEnv,EXIT_FAILURE);
+      ExitRouter(theEnv,EXIT_FAILURE);
      }
 
    /*=====================================*/

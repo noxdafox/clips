@@ -71,11 +71,11 @@ void DefglobalCommandDefinitions(
   Environment *theEnv)
   {
 #if ! RUN_TIME
-   EnvAddUDF(theEnv,"set-reset-globals","b",1,1,NULL,SetResetGlobalsCommand,"SetResetGlobalsCommand",NULL);
-   EnvAddUDF(theEnv,"get-reset-globals","b",0,0,NULL,GetResetGlobalsCommand,"GetResetGlobalsCommand",NULL);
+   AddUDF(theEnv,"set-reset-globals","b",1,1,NULL,SetResetGlobalsCommand,"SetResetGlobalsCommand",NULL);
+   AddUDF(theEnv,"get-reset-globals","b",0,0,NULL,GetResetGlobalsCommand,"GetResetGlobalsCommand",NULL);
 
 #if DEBUGGING_FUNCTIONS
-   EnvAddUDF(theEnv,"show-defglobals","v",0,1,"y",ShowDefglobalsCommand,"ShowDefglobalsCommand",NULL);
+   AddUDF(theEnv,"show-defglobals","v",0,1,"y",ShowDefglobalsCommand,"ShowDefglobalsCommand",NULL);
 #endif
 
 #else
@@ -101,7 +101,7 @@ void SetResetGlobalsCommand(
    /* Remember the old value of this attribute. */
    /*===========================================*/
 
-   oldValue = EnvGetResetGlobals(theEnv);
+   oldValue = GetResetGlobals(theEnv);
 
    /*===========================================*/
    /* Determine the new value of the attribute. */
@@ -111,22 +111,22 @@ void SetResetGlobalsCommand(
      { return; }
 
    if (theArg.value == FalseSymbol(theEnv))
-     { EnvSetResetGlobals(theEnv,false); }
+     { SetResetGlobals(theEnv,false); }
    else
-     { EnvSetResetGlobals(theEnv,true); }
+     { SetResetGlobals(theEnv,true); }
 
    /*========================================*/
    /* Return the old value of the attribute. */
    /*========================================*/
 
-   returnValue->lexemeValue = EnvCreateBoolean(theEnv,oldValue);
+   returnValue->lexemeValue = CreateBoolean(theEnv,oldValue);
   }
 
 /****************************************/
-/* EnvSetResetGlobals: C access routine */
+/* SetResetGlobals: C access routine */
 /*   for the set-reset-globals command. */
 /****************************************/
-bool EnvSetResetGlobals(
+bool SetResetGlobals(
   Environment *theEnv,
   bool value)
   {
@@ -146,14 +146,14 @@ void GetResetGlobalsCommand(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvGetResetGlobals(theEnv));
+   returnValue->lexemeValue = CreateBoolean(theEnv,GetResetGlobals(theEnv));
   }
 
 /****************************************/
-/* EnvGetResetGlobals: C access routine */
+/* GetResetGlobals: C access routine    */
 /*   for the get-reset-globals command. */
 /****************************************/
-bool EnvGetResetGlobals(
+bool GetResetGlobals(
   Environment *theEnv)
   {
    return(DefglobalData(theEnv)->ResetGlobals);
@@ -182,16 +182,16 @@ void ShowDefglobalsCommand(
       if (error) return;
      }
    else
-     { theModule = EnvGetCurrentModule(theEnv); }
+     { theModule = GetCurrentModule(theEnv); }
 
-   EnvShowDefglobals(theEnv,WDISPLAY,theModule);
+   ShowDefglobals(theEnv,WDISPLAY,theModule);
   }
 
-/***************************************/
-/* EnvShowDefglobals: C access routine */
-/*   for the show-defglobals command.  */
-/***************************************/
-void EnvShowDefglobals(
+/**************************************/
+/* ShowDefglobals: C access routine   */
+/*   for the show-defglobals command. */
+/**************************************/
+void ShowDefglobals(
   Environment *theEnv,
   const char *logicalName,
   Defmodule *theModule)
@@ -207,7 +207,7 @@ void EnvShowDefglobals(
 
    if (theModule == NULL)
      {
-      theModule = EnvGetNextDefmodule(theEnv,NULL);
+      theModule = GetNextDefmodule(theEnv,NULL);
       allModules = true;
      }
 
@@ -217,7 +217,7 @@ void EnvShowDefglobals(
 
    for (;
         theModule != NULL;
-        theModule = EnvGetNextDefmodule(theEnv,theModule))
+        theModule = GetNextDefmodule(theEnv,theModule))
      {
       /*===========================================*/
       /* Print the module name before every group  */
@@ -227,8 +227,8 @@ void EnvShowDefglobals(
 
       if (allModules)
         {
-         EnvPrintRouter(theEnv,logicalName,DefmoduleName(theModule));
-         EnvPrintRouter(theEnv,logicalName,":\n");
+         PrintRouter(theEnv,logicalName,DefmoduleName(theModule));
+         PrintRouter(theEnv,logicalName,":\n");
         }
 
       /*=====================================*/
@@ -244,9 +244,9 @@ void EnvShowDefglobals(
         {
          if (EvaluationData(theEnv)->HaltExecution == true) return;
 
-         if (allModules) EnvPrintRouter(theEnv,logicalName,"   ");
+         if (allModules) PrintRouter(theEnv,logicalName,"   ");
          PrintDefglobalValueForm(theEnv,logicalName,(Defglobal *) constructPtr);
-         EnvPrintRouter(theEnv,logicalName,"\n");
+         PrintRouter(theEnv,logicalName,"\n");
         }
 
       /*===================================*/
@@ -268,9 +268,9 @@ static void PrintDefglobalValueForm(
   const char *logicalName,
   Defglobal *theGlobal)
   {
-   EnvPrintRouter(theEnv,logicalName,"?*");
-   EnvPrintRouter(theEnv,logicalName,theGlobal->header.name->contents);
-   EnvPrintRouter(theEnv,logicalName,"* = ");
+   PrintRouter(theEnv,logicalName,"?*");
+   PrintRouter(theEnv,logicalName,theGlobal->header.name->contents);
+   PrintRouter(theEnv,logicalName,"* = ");
    PrintDataObject(theEnv,logicalName,&theGlobal->current);
   }
 

@@ -20,10 +20,10 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getInstanceScop
   jlong clipsEnv)
   {
    jobject scopeMap, moduleSet, theDefclassIndex;
-   void *theCLIPSEnv = JLongToPointer(clipsEnv);
-   struct defmodule *theModule;
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
+   Defmodule *theModule;
    struct defclassModule *theModuleItem;
-   struct defclass *theDefclass;
+   Defclass *theDefclass;
    jint moduleCount = 0, whichBit;
    CLIPSBitMap *theScopeMap;
 
@@ -33,21 +33,21 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getInstanceScop
 
    if (scopeMap == NULL) return NULL;
 
-   for (theModule = (struct defmodule *) EnvGetNextDefmodule(theCLIPSEnv,NULL);
+   for (theModule = GetNextDefmodule(theCLIPSEnv,NULL);
         theModule != NULL;
-        theModule = (struct defmodule *) EnvGetNextDefmodule(theCLIPSEnv,theModule))
+        theModule = GetNextDefmodule(theCLIPSEnv,theModule))
      { moduleCount++; }
         
-   for (theModule = (struct defmodule *) EnvGetNextDefmodule(theCLIPSEnv,NULL);
+   for (theModule = GetNextDefmodule(theCLIPSEnv,NULL);
         theModule != NULL;
-        theModule = (struct defmodule *) EnvGetNextDefmodule(theCLIPSEnv,theModule))
+        theModule = GetNextDefmodule(theCLIPSEnv,theModule))
      { 
       theModuleItem = (struct defclassModule *) 
                       GetModuleItem(theCLIPSEnv,theModule,DefclassData(theCLIPSEnv)->DefclassModuleIndex);
 
-      for (theDefclass = (struct defclass *) theModuleItem->header.firstItem;
+      for (theDefclass = (Defclass *) theModuleItem->header.firstItem;
            theDefclass != NULL;
-           theDefclass = (struct defclass *) EnvGetNextDefclass(theCLIPSEnv,theDefclass))
+           theDefclass = GetNextDefclass(theCLIPSEnv,theDefclass))
         { 
          if (theDefclass->instanceList != NULL)
            { 
@@ -103,12 +103,12 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getInstanceList
    CLIPSValue temp;
    UDFValue slotValue;
    UDFValue defaultValue;
-   void *theCLIPSEnv = JLongToPointer(clipsEnv);
-   void *theClass;
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
+   Defclass *theClass;
   
-   for (instancePtr = EnvGetNextInstance(theCLIPSEnv,NULL);
+   for (instancePtr = GetNextInstance(theCLIPSEnv,NULL);
         instancePtr != NULL;
-        instancePtr = EnvGetNextInstance(theCLIPSEnv,instancePtr))
+        instancePtr = GetNextInstance(theCLIPSEnv,instancePtr))
      { instanceCount++; }
      
    arrayList = (*env)->NewObject(env,
@@ -119,9 +119,9 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getInstanceList
    if (arrayList == NULL)
      { return NULL; }
      
-   for (instancePtr = EnvGetNextInstance(theCLIPSEnv,NULL);
+   for (instancePtr = GetNextInstance(theCLIPSEnv,NULL);
         instancePtr != NULL;
-        instancePtr = EnvGetNextInstance(theCLIPSEnv,instancePtr))
+        instancePtr = GetNextInstance(theCLIPSEnv,instancePtr))
      {
       theClass = InstanceClass(instancePtr);
       
@@ -142,10 +142,10 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getInstanceList
          
          theCSlotName = slotNames.multifieldValue->theFields[i].lexemeValue->contents;
          
-         EnvDirectGetSlot(theCLIPSEnv,instancePtr,slotNames.multifieldValue->theFields[i].lexemeValue->contents,&temp);
+         DirectGetSlot(theCLIPSEnv,instancePtr,slotNames.multifieldValue->theFields[i].lexemeValue->contents,&temp);
          CLIPSToUDFValue(&temp,&slotValue);
 
-         if (EnvSlotDefaultP(theCLIPSEnv,theClass,theCSlotName) == STATIC_DEFAULT)
+         if (SlotDefaultP(theCLIPSEnv,theClass,theCSlotName) == STATIC_DEFAULT)
            {
             SlotDefaultValue(theClass,theCSlotName,&temp);
             CLIPSToUDFValue(&temp,&defaultValue);
@@ -212,13 +212,13 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_makeInstance(
   jstring instanceStr)
   {
    jobject rv;
-   void *theInstance;
-   void *theCLIPSEnv = JLongToPointer(clipsEnv);
+   Instance *theInstance;
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
    const char *cInstanceStr = (*env)->GetStringUTFChars(env,instanceStr,NULL);
    
    void *oldContext = SetEnvironmentContext(theCLIPSEnv,(void *) env);
 
-   theInstance = EnvMakeInstance(theCLIPSEnv,(char *) cInstanceStr);
+   theInstance = MakeInstance(theCLIPSEnv,(char *) cInstanceStr);
 
    (*env)->ReleaseStringUTFChars(env,instanceStr,cInstanceStr);
    
@@ -278,7 +278,7 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_incrementInstanceC
   {
    void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
 
-   EnvIncrementInstanceCount(JLongToPointer(clipsEnv),JLongToPointer(clipsInstance));
+   IncrementInstanceCount(JLongToPointer(clipsEnv),JLongToPointer(clipsInstance));
    
    SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
   }
@@ -301,7 +301,7 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_decrementInstanceC
   {
    void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
 
-   EnvDecrementInstanceCount(JLongToPointer(clipsEnv),JLongToPointer(clipsInstance));
+   DecrementInstanceCount(JLongToPointer(clipsEnv),JLongToPointer(clipsInstance));
    
    SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
   }
@@ -318,9 +318,9 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_getInstancesCh
   jlong clipsEnv)
   {
    jboolean rv;
-   void *theCLIPSEnv = JLongToPointer(clipsEnv);
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
    
-   rv = EnvGetInstancesChanged(theCLIPSEnv);
+   rv = GetInstancesChanged(theCLIPSEnv);
    return rv;
   } 
 
@@ -338,7 +338,7 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_setInstancesChange
   {
    void *theCLIPSEnv = JLongToPointer(clipsEnv);
    
-   EnvSetInstancesChanged(theCLIPSEnv,value);
+   SetInstancesChanged(theCLIPSEnv,value);
   }
 
 /*************************************************************************/
@@ -360,12 +360,12 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_directGetSlot(
   {
    jobject rv;
    CLIPSValue theDO;
-   void *theCLIPSEnv = JLongToPointer(clipsEnv);
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
    const char *cSlotName = (*env)->GetStringUTFChars(env,slotName,NULL);
 
    void *oldContext = SetEnvironmentContext(theCLIPSEnv,(void *) env);
    
-   EnvDirectGetSlot(JLongToPointer(clipsEnv),JLongToPointer(clipsInstance),(char *) cSlotName,&theDO);
+   DirectGetSlot(JLongToPointer(clipsEnv),JLongToPointer(clipsInstance),(char *) cSlotName,&theDO);
 
    (*env)->ReleaseStringUTFChars(env,slotName,cSlotName);
    
@@ -390,7 +390,7 @@ JNIEXPORT jstring JNICALL Java_net_sf_clipsrules_jni_Environment_getDefclassText
   jlong clipsEnv, 
   jlong defclassLong)
   {
-   void *defclassPtr = JLongToPointer(defclassLong);
+   Defclass *defclassPtr = JLongToPointer(defclassLong);
    const char *defclassText = NULL;
       
    if (defclassPtr != NULL)

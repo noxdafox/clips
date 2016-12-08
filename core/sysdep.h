@@ -121,8 +121,8 @@
    bool                        genrename(const char *,const char *);
    char                       *gengetcwd(char *,int);
    void                        GenWrite(void *,size_t,FILE *);
-   int                       (*EnvSetBeforeOpenFunction(Environment *,int (*)(Environment *)))(Environment *);
-   int                       (*EnvSetAfterOpenFunction(Environment *,int (*)(Environment *)))(Environment *);
+   int                       (*SetBeforeOpenFunction(Environment *,int (*)(Environment *)))(Environment *);
+   int                       (*SetAfterOpenFunction(Environment *,int (*)(Environment *)))(Environment *);
    int                         gensprintf(char *,const char *,...);
    char                       *genstrcpy(char *,const char *);
    char                       *genstrncpy(char *,const char *,size_t);

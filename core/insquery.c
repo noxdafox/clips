@@ -107,24 +107,24 @@ void SetupQuery(
    AllocateEnvironmentData(theEnv,INSTANCE_QUERY_DATA,sizeof(struct instanceQueryData),NULL);
 
 #if ! RUN_TIME
-   InstanceQueryData(theEnv)->QUERY_DELIMITER_SYMBOL = EnvCreateSymbol(theEnv,QUERY_DELIMITER_STRING);
+   InstanceQueryData(theEnv)->QUERY_DELIMITER_SYMBOL = CreateSymbol(theEnv,QUERY_DELIMITER_STRING);
    IncrementSymbolCount(InstanceQueryData(theEnv)->QUERY_DELIMITER_SYMBOL);
 
-   EnvAddUDF(theEnv,"(query-instance)","n",0,UNBOUNDED,NULL,GetQueryInstance,"GetQueryInstance",NULL);
+   AddUDF(theEnv,"(query-instance)","n",0,UNBOUNDED,NULL,GetQueryInstance,"GetQueryInstance",NULL);
 
-   EnvAddUDF(theEnv,"(query-instance-slot)","*",0,UNBOUNDED,NULL,GetQueryInstanceSlot,"GetQueryInstanceSlot",NULL);
+   AddUDF(theEnv,"(query-instance-slot)","*",0,UNBOUNDED,NULL,GetQueryInstanceSlot,"GetQueryInstanceSlot",NULL);
 
-   EnvAddUDF(theEnv,"any-instancep","b",0,UNBOUNDED,NULL,AnyInstances,"AnyInstances",NULL);
+   AddUDF(theEnv,"any-instancep","b",0,UNBOUNDED,NULL,AnyInstances,"AnyInstances",NULL);
 
-   EnvAddUDF(theEnv,"find-instance","m",0,UNBOUNDED,NULL,QueryFindInstance,"QueryFindInstance",NULL);
+   AddUDF(theEnv,"find-instance","m",0,UNBOUNDED,NULL,QueryFindInstance,"QueryFindInstance",NULL);
 
-   EnvAddUDF(theEnv,"find-all-instances","m",0,UNBOUNDED,NULL,QueryFindAllInstances,"QueryFindAllInstances",NULL);
+   AddUDF(theEnv,"find-all-instances","m",0,UNBOUNDED,NULL,QueryFindAllInstances,"QueryFindAllInstances",NULL);
 
-   EnvAddUDF(theEnv,"do-for-instance","*",0,UNBOUNDED,NULL,QueryDoForInstance,"QueryDoForInstance",NULL);
+   AddUDF(theEnv,"do-for-instance","*",0,UNBOUNDED,NULL,QueryDoForInstance,"QueryDoForInstance",NULL);
 
-   EnvAddUDF(theEnv,"do-for-all-instances","*",0,UNBOUNDED,NULL,QueryDoForAllInstances,"QueryDoForAllInstances",NULL);
+   AddUDF(theEnv,"do-for-all-instances","*",0,UNBOUNDED,NULL,QueryDoForAllInstances,"QueryDoForAllInstances",NULL);
 
-   EnvAddUDF(theEnv,"delayed-do-for-all-instances","*",0,UNBOUNDED,NULL,DelayedQueryDoForAllInstances,"DelayedQueryDoForAllInstances",NULL);
+   AddUDF(theEnv,"delayed-do-for-all-instances","*",0,UNBOUNDED,NULL,DelayedQueryDoForAllInstances,"DelayedQueryDoForAllInstances",NULL);
 #endif
 
    AddFunctionParser(theEnv,"any-instancep",ParseQueryNoAction);
@@ -182,7 +182,7 @@ void GetQueryInstanceSlot(
    if (temp.header->type != SYMBOL_TYPE)
      {
       ExpectedTypeError1(theEnv,"get",1,"symbol");
-      EnvSetEvaluationError(theEnv,true);
+      SetEvaluationError(theEnv,true);
       return;
      }
    sp = FindInstanceSlot(theEnv,ins,temp.lexemeValue);
@@ -291,7 +291,7 @@ void AnyInstances(
    PopQueryCore(theEnv);
    DeleteQueryClasses(theEnv,qclasses);
 
-   returnValue->lexemeValue = EnvCreateBoolean(theEnv,testResult);
+   returnValue->lexemeValue = CreateBoolean(theEnv,testResult);
   }
 
 /******************************************************************************
@@ -320,7 +320,7 @@ void QueryFindInstance(
                                       "find-instance",&rcnt);
    if (qclasses == NULL)
      {
-      returnValue->value = EnvCreateMultifield(theEnv,0L);
+      returnValue->value = CreateMultifield(theEnv,0L);
       return;
      }
    PushQueryCore(theEnv);
@@ -330,7 +330,7 @@ void QueryFindInstance(
    InstanceQueryData(theEnv)->QueryCore->query = GetFirstArgument();
    if (TestForFirstInChain(theEnv,qclasses,0) == true)
      {
-      returnValue->value = EnvCreateMultifield(theEnv,rcnt);
+      returnValue->value = CreateMultifield(theEnv,rcnt);
       returnValue->range = rcnt;
       for (i = 0 ; i < rcnt ; i++)
         {
@@ -339,7 +339,7 @@ void QueryFindInstance(
         }
      }
    else
-      returnValue->value = EnvCreateMultifield(theEnv,0L);
+      returnValue->value = CreateMultifield(theEnv,0L);
    InstanceQueryData(theEnv)->AbortQuery = false;
    rm(theEnv,InstanceQueryData(theEnv)->QueryCore->solns,(sizeof(Instance *) * rcnt));
    rtn_struct(theEnv,query_core,InstanceQueryData(theEnv)->QueryCore);
@@ -380,7 +380,7 @@ void QueryFindAllInstances(
                                       "find-all-instances",&rcnt);
    if (qclasses == NULL)
      {
-      returnValue->value = EnvCreateMultifield(theEnv,0L);
+      returnValue->value = CreateMultifield(theEnv,0L);
       return;
      }
    PushQueryCore(theEnv);
@@ -393,7 +393,7 @@ void QueryFindAllInstances(
    InstanceQueryData(theEnv)->QueryCore->soln_cnt = 0;
    TestEntireChain(theEnv,qclasses,0);
    InstanceQueryData(theEnv)->AbortQuery = false;
-   returnValue->value = EnvCreateMultifield(theEnv,InstanceQueryData(theEnv)->QueryCore->soln_cnt * rcnt);
+   returnValue->value = CreateMultifield(theEnv,InstanceQueryData(theEnv)->QueryCore->soln_cnt * rcnt);
    while (InstanceQueryData(theEnv)->QueryCore->soln_set != NULL)
      {
       for (i = 0 , j = (unsigned) returnValue->range ; i < rcnt ; i++ , j++)
@@ -717,7 +717,7 @@ static QUERY_CLASS *DetermineQueryClasses(
         {
          SyntaxErrorMessage(theEnv,"instance-set query class restrictions");
          DeleteQueryClasses(theEnv,clist);
-         EnvSetEvaluationError(theEnv,true);
+         SetEvaluationError(theEnv,true);
          return NULL;
         }
       classExp = classExp->nextArg;
@@ -750,7 +750,7 @@ static QUERY_CLASS *FormChain(
    const char *className;
    Defmodule *currentModule;
 
-   currentModule = EnvGetCurrentModule(theEnv);
+   currentModule = GetCurrentModule(theEnv);
    if (theClass != NULL)
      {
       IncrementDefclassBusyCount(theEnv,theClass);

@@ -119,11 +119,11 @@ static bool ConstructToCode(
    /* to the file as they are traversed.                          */
    /*=============================================================*/
 
-   theModule = EnvGetNextDefmodule(theEnv,NULL);
+   theModule = GetNextDefmodule(theEnv,NULL);
 
    while (theModule != NULL)
      {
-      EnvSetCurrentModule(theEnv,theModule);
+      SetCurrentModule(theEnv,theModule);
 
       moduleFile = OpenFileIfNeeded(theEnv,moduleFile,fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
                                     moduleArrayVersion,headerFP,
@@ -144,7 +144,7 @@ static bool ConstructToCode(
       /* Loop through each of the deftemplates in this module. */
       /*=======================================================*/
 
-      theTemplate = EnvGetNextDeftemplate(theEnv,NULL);
+      theTemplate = GetNextDeftemplate(theEnv,NULL);
 
       while (theTemplate != NULL)
         {
@@ -188,10 +188,10 @@ static bool ConstructToCode(
             slotPtr = slotPtr->next;
            }
 
-         theTemplate = EnvGetNextDeftemplate(theEnv,theTemplate);
+         theTemplate = GetNextDeftemplate(theEnv,theTemplate);
         }
 
-      theModule = EnvGetNextDefmodule(theEnv,theModule);
+      theModule = GetNextDefmodule(theEnv,theModule);
       moduleCount++;
       moduleArrayCount++;
 

@@ -256,20 +256,20 @@ unsigned long HandleFactDuplication(
   }
 
 /*******************************************/
-/* EnvGetFactDuplication: C access routine */
+/* GetFactDuplication: C access routine    */
 /*   for the get-fact-duplication command. */
 /*******************************************/
-bool EnvGetFactDuplication(
+bool GetFactDuplication(
   Environment *theEnv)
   {
    return(FactData(theEnv)->FactDuplication);
   }
 
 /*******************************************/
-/* EnvSetFactDuplication: C access routine */
+/* SetFactDuplication: C access routine    */
 /*   for the set-fact-duplication command. */
 /*******************************************/
-bool EnvSetFactDuplication(
+bool SetFactDuplication(
   Environment *theEnv,
   bool value)
   {
@@ -304,7 +304,7 @@ static struct factHashEntry **CreateFactHashTable(
     theTable = (struct factHashEntry **)
                gm3(theEnv,sizeof (struct factHashEntry *) * tableSize);
 
-    if (theTable == NULL) EnvExitRouter(theEnv,EXIT_FAILURE);
+    if (theTable == NULL) ExitRouter(theEnv,EXIT_FAILURE);
 
     for (i = 0; i < tableSize; i++) theTable[i] = NULL;
 
@@ -410,7 +410,7 @@ void ShowFactHashTableCommand(
       if (count != 0)
         {
          gensprintf(buffer,"%4lu: %4d\n",i,count);
-         EnvPrintRouter(theEnv,WDISPLAY,buffer);
+         PrintRouter(theEnv,WDISPLAY,buffer);
         }
      }
   }

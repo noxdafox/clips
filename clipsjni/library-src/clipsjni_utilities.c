@@ -199,12 +199,28 @@ static void *ConvertSingleFieldPrimitiveValue(
    switch (theType)
      {
       case SYMBOL_TYPE:
+        {
+         jstring theString = (*env)->CallObjectMethod(env,theValue,CLIPSJNIData(theEnv)->lexemeValueGetValueMethod);
+         const char *cString = (*env)->GetStringUTFChars(env,theString,NULL);
+         rv = CreateSymbol(theEnv,cString);
+         (*env)->ReleaseStringUTFChars(env,theString,cString);
+         break;
+        }
+
       case STRING_TYPE:
+        {
+         jstring theString = (*env)->CallObjectMethod(env,theValue,CLIPSJNIData(theEnv)->lexemeValueGetValueMethod);
+         const char *cString = (*env)->GetStringUTFChars(env,theString,NULL);
+         rv = CreateString(theEnv,cString);
+         (*env)->ReleaseStringUTFChars(env,theString,cString);
+         break;
+        }
+      
       case INSTANCE_NAME_TYPE:
         {
          jstring theString = (*env)->CallObjectMethod(env,theValue,CLIPSJNIData(theEnv)->lexemeValueGetValueMethod);
          const char *cString = (*env)->GetStringUTFChars(env,theString,NULL);
-         rv = EnvCreateSymbol(theEnv,cString);
+         rv = CreateInstanceName(theEnv,cString);
          (*env)->ReleaseStringUTFChars(env,theString,cString);
          break;
         }
@@ -212,14 +228,14 @@ static void *ConvertSingleFieldPrimitiveValue(
       case FLOAT_TYPE:
         {
          jdouble theDouble = (*env)->CallDoubleMethod(env,theValue,CLIPSJNIData(theEnv)->floatValueDoubleValueMethod);
-         rv = EnvCreateFloat(theEnv,theDouble);
+         rv = CreateFloat(theEnv,theDouble);
          break;
         }
 
       case INTEGER_TYPE:
         {
          jlong theLong = (*env)->CallLongMethod(env,theValue,CLIPSJNIData(theEnv)->integerValueLongValueMethod);
-         rv = EnvCreateInteger(theEnv,theLong);
+         rv = CreateInteger(theEnv,theLong);
          break;
         }
 
@@ -267,7 +283,7 @@ void ConvertPrimitiveValueToDataObject(
         {
          jint i;
          jint theSize = (*env)->CallIntMethod(env,theValue,CLIPSJNIData(theEnv)->multifieldValueSizeMethod);
-         result = EnvCreateMultifield(theEnv,theSize);
+         result = CreateMultifield(theEnv,theSize);
          for (i = 0; i < theSize; i++)
            {         
             jobject mfo = (*env)->CallObjectMethod(env,theValue,CLIPSJNIData(theEnv)->multifieldValueGetMethod,i);

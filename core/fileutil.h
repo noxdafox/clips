@@ -28,9 +28,9 @@
 
 #define _H_fileutil
 
-   bool                           EnvDribbleOn(Environment *,const char *);
-   bool                           EnvDribbleActive(Environment *);
-   bool                           EnvDribbleOff(Environment *);
+   bool                           DribbleOn(Environment *,const char *);
+   bool                           DribbleActive(Environment *);
+   bool                           DribbleOff(Environment *);
    void                           SetDribbleStatusFunction(Environment *,int (*)(Environment *,bool));
    int                            LLGetcBatch(Environment *,const char *,bool);
    bool                           Batch(Environment *,const char *);
@@ -39,7 +39,7 @@
    bool                           RemoveBatch(Environment *);
    bool                           BatchActive(Environment *);
    void                           CloseAllBatchSources(Environment *);
-   bool                           EnvBatchStar(Environment *,const char *);
+   bool                           BatchStar(Environment *,const char *);
 
 #endif /* _H_fileutil */
 

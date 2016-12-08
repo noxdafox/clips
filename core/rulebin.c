@@ -211,24 +211,24 @@ static void BsaveFind(
    /* Loop through each module. */
    /*===========================*/
 
-   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = EnvGetNextDefmodule(theEnv,theModule))
+        theModule = GetNextDefmodule(theEnv,theModule))
      {
       /*============================*/
       /* Set the current module to  */
       /* the module being examined. */
       /*============================*/
 
-      EnvSetCurrentModule(theEnv,theModule);
+      SetCurrentModule(theEnv,theModule);
 
       /*==================================================*/
       /* Loop through each defrule in the current module. */
       /*==================================================*/
 
-      for (theDefrule = EnvGetNextDefrule(theEnv,NULL);
+      for (theDefrule = GetNextDefrule(theEnv,NULL);
            theDefrule != NULL;
-           theDefrule = EnvGetNextDefrule(theEnv,theDefrule))
+           theDefrule = GetNextDefrule(theEnv,theDefrule))
         {
          /*================================================*/
          /* Initialize the construct header for the binary */
@@ -284,23 +284,23 @@ static void BsaveExpressions(
    /* Loop through each module. */
    /*===========================*/
 
-   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = EnvGetNextDefmodule(theEnv,theModule))
+        theModule = GetNextDefmodule(theEnv,theModule))
      {
       /*======================================================*/
       /* Set the current module to the module being examined. */
       /*======================================================*/
 
-      EnvSetCurrentModule(theEnv,theModule);
+      SetCurrentModule(theEnv,theModule);
 
       /*==================================================*/
       /* Loop through each defrule in the current module. */
       /*==================================================*/
 
-      for (theDefrule = EnvGetNextDefrule(theEnv,NULL);
+      for (theDefrule = GetNextDefrule(theEnv,NULL);
            theDefrule != NULL;
-           theDefrule = EnvGetNextDefrule(theEnv,theDefrule))
+           theDefrule = GetNextDefrule(theEnv,theDefrule))
         {
          /*===========================================*/
          /* Save the dynamic salience of the defrule. */
@@ -390,11 +390,11 @@ static void BsaveBinaryItem(
    /*===============================================*/
 
    DefruleBinaryData(theEnv)->NumberOfDefrules = 0;
-   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = EnvGetNextDefmodule(theEnv,theModule))
+        theModule = GetNextDefmodule(theEnv,theModule))
      {
-      EnvSetCurrentModule(theEnv,theModule);
+      SetCurrentModule(theEnv,theModule);
 
       theModuleItem = (struct defruleModule *)
                       GetModuleItem(theEnv,NULL,FindModuleItem(theEnv,"defrule")->moduleIndex);
@@ -407,15 +407,15 @@ static void BsaveBinaryItem(
    /* Write out each defrule data structure. */
    /*========================================*/
 
-   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = EnvGetNextDefmodule(theEnv,theModule))
+        theModule = GetNextDefmodule(theEnv,theModule))
      {
-      EnvSetCurrentModule(theEnv,theModule);
+      SetCurrentModule(theEnv,theModule);
 
-      for (theDefrule = EnvGetNextDefrule(theEnv,NULL);
+      for (theDefrule = GetNextDefrule(theEnv,NULL);
            theDefrule != NULL;
-           theDefrule = EnvGetNextDefrule(theEnv,theDefrule))
+           theDefrule = GetNextDefrule(theEnv,theDefrule))
         { BsaveDisjuncts(theEnv,fp,theDefrule); }
      }
 
@@ -551,17 +551,17 @@ static void BsaveJoins(
    /* Loop through each module. */
    /*===========================*/
 
-   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = EnvGetNextDefmodule(theEnv,theModule))
+        theModule = GetNextDefmodule(theEnv,theModule))
      {
-      EnvSetCurrentModule(theEnv,theModule);
+      SetCurrentModule(theEnv,theModule);
 
       /*===========================================*/
       /* Loop through each rule and its disjuncts. */
       /*===========================================*/
 
-      rulePtr = EnvGetNextDefrule(theEnv,NULL);
+      rulePtr = GetNextDefrule(theEnv,NULL);
       while (rulePtr != NULL)
         {
          /*=========================================*/
@@ -575,7 +575,7 @@ static void BsaveJoins(
          /* Move on to the next rule. */
          /*===========================*/
 
-         rulePtr = EnvGetNextDefrule(theEnv,rulePtr);
+         rulePtr = GetNextDefrule(theEnv,rulePtr);
         }
      }
   }
@@ -669,17 +669,17 @@ static void BsaveLinks(
    /* Loop through each module. */
    /*===========================*/
 
-   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = EnvGetNextDefmodule(theEnv,theModule))
+        theModule = GetNextDefmodule(theEnv,theModule))
      {
-      EnvSetCurrentModule(theEnv,theModule);
+      SetCurrentModule(theEnv,theModule);
 
       /*===========================================*/
       /* Loop through each rule and its disjuncts. */
       /*===========================================*/
 
-      rulePtr = EnvGetNextDefrule(theEnv,NULL);
+      rulePtr = GetNextDefrule(theEnv,NULL);
       while (rulePtr != NULL)
         {
          /*=========================================*/
@@ -693,7 +693,7 @@ static void BsaveLinks(
          /* Move on to the next rule or disjunct. */
          /*=======================================*/
 
-         rulePtr = EnvGetNextDefrule(theEnv,rulePtr);
+         rulePtr = GetNextDefrule(theEnv,rulePtr);
         }
      }
   }
@@ -1065,15 +1065,15 @@ static void ClearBload(
    /*=========================================*/
 
    SaveCurrentModule(theEnv);
-   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = EnvGetNextDefmodule(theEnv,theModule))
+        theModule = GetNextDefmodule(theEnv,theModule))
      {
-      EnvSetCurrentModule(theEnv,theModule);
+      SetCurrentModule(theEnv,theModule);
       RemoveAllActivations(theEnv);
      }
    RestoreCurrentModule(theEnv);
-   EnvClearFocusStack(theEnv);
+   ClearFocusStack(theEnv);
 
    /*==========================================================*/
    /* Remove all partial matches from the beta memories in the */

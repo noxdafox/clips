@@ -101,19 +101,19 @@ void DeftemplateBasicCommands(
   Environment *theEnv)
   {
 #if ! DEFFACTS_CONSTRUCT
-   EnvAddResetFunction(theEnv,"deftemplate",ResetDeftemplates,0);
+   AddResetFunction(theEnv,"deftemplate",ResetDeftemplates,0);
 #endif
-   EnvAddClearFunction(theEnv,"deftemplate",ClearDeftemplates,0);
+   AddClearFunction(theEnv,"deftemplate",ClearDeftemplates,0);
    AddSaveFunction(theEnv,"deftemplate",SaveDeftemplates,10);
 
 #if ! RUN_TIME
-   EnvAddUDF(theEnv,"get-deftemplate-list","m",0,1,"y",GetDeftemplateListFunction,"GetDeftemplateListFunction",NULL);
-   EnvAddUDF(theEnv,"undeftemplate","v",1,1,"y",UndeftemplateCommand,"UndeftemplateCommand",NULL);
-   EnvAddUDF(theEnv,"deftemplate-module","y",1,1,"y",DeftemplateModuleFunction,"DeftemplateModuleFunction",NULL);
+   AddUDF(theEnv,"get-deftemplate-list","m",0,1,"y",GetDeftemplateListFunction,"GetDeftemplateListFunction",NULL);
+   AddUDF(theEnv,"undeftemplate","v",1,1,"y",UndeftemplateCommand,"UndeftemplateCommand",NULL);
+   AddUDF(theEnv,"deftemplate-module","y",1,1,"y",DeftemplateModuleFunction,"DeftemplateModuleFunction",NULL);
 
 #if DEBUGGING_FUNCTIONS
-   EnvAddUDF(theEnv,"list-deftemplates","v",0,1,"y",ListDeftemplatesCommand,"ListDeftemplatesCommand",NULL);
-   EnvAddUDF(theEnv,"ppdeftemplate","v",1,1,"y",PPDeftemplateCommand,"PPDeftemplateCommand",NULL);
+   AddUDF(theEnv,"list-deftemplates","v",0,1,"y",ListDeftemplatesCommand,"ListDeftemplatesCommand",NULL);
+   AddUDF(theEnv,"ppdeftemplate","v",1,1,"y",PPDeftemplateCommand,"PPDeftemplateCommand",NULL);
 #endif
 
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE)
@@ -155,7 +155,7 @@ static void ClearDeftemplates(
   {
 #if (! RUN_TIME) && (! BLOAD_ONLY)
 
-   CreateImpliedDeftemplate(theEnv,EnvCreateSymbol(theEnv,"initial-fact"),false);
+   CreateImpliedDeftemplate(theEnv,CreateSymbol(theEnv,"initial-fact"),false);
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -217,11 +217,11 @@ void GetDeftemplateListFunction(
    GetConstructListFunction(context,returnValue,DeftemplateData(theEnv)->DeftemplateConstruct);
   }
 
-/***********************************************/
-/* EnvGetDeftemplateList: C access routine for */
-/*   the get-deftemplate-list function.        */
-/***********************************************/
-void EnvGetDeftemplateList(
+/********************************************/
+/* GetDeftemplateList: C access routine for */
+/*   the get-deftemplate-list function.     */
+/********************************************/
+void GetDeftemplateList(
   Environment *theEnv,
   CLIPSValue *returnValue,
   Defmodule *theModule)
@@ -283,11 +283,11 @@ void ListDeftemplatesCommand(
    ListConstructCommand(context,DeftemplateData(theEnv)->DeftemplateConstruct);
   }
 
-/*****************************************/
-/* EnvListDeftemplates: C access routine */
-/*   for the list-deftemplates command.  */
-/*****************************************/
-void EnvListDeftemplates(
+/****************************************/
+/* ListDeftemplates: C access routine   */
+/*   for the list-deftemplates command. */
+/****************************************/
+void ListDeftemplates(
   Environment *theEnv,
   const char *logicalName,
   Defmodule *theModule)

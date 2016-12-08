@@ -119,9 +119,9 @@ void PrintPartialMatch(
          (*matchingItem->theInfo->base.shortPrintFunction)(theEnv,logicalName,matchingItem);
         }
       else
-        { EnvPrintRouter(theEnv,logicalName,"*"); }
+        { PrintRouter(theEnv,logicalName,"*"); }
       i++;
-      if (i < list->bcount) EnvPrintRouter(theEnv,logicalName,",");
+      if (i < list->bcount) PrintRouter(theEnv,logicalName,",");
      }
   }
 
@@ -922,13 +922,13 @@ static void TraceErrorToRuleDriver(
      {
       joinPtr->marked = 1;
       name = DefruleName(joinPtr->ruleToActivate);
-      EnvPrintRouter(theEnv,WERROR,indentSpaces);
+      PrintRouter(theEnv,WERROR,indentSpaces);
 
-      EnvPrintRouter(theEnv,WERROR,"Of pattern #");
+      PrintRouter(theEnv,WERROR,"Of pattern #");
       PrintLongInteger(theEnv,WERROR,priorRightJoinPatterns+priorPatternCount);
-      EnvPrintRouter(theEnv,WERROR," in rule ");
-      EnvPrintRouter(theEnv,WERROR,name);
-      EnvPrintRouter(theEnv,WERROR,"\n");
+      PrintRouter(theEnv,WERROR," in rule ");
+      PrintRouter(theEnv,WERROR,name);
+      PrintRouter(theEnv,WERROR,"\n");
      }
    else
      {
@@ -983,17 +983,17 @@ void MarkRuleNetwork(
    /*===========================*/
 
    SaveCurrentModule(theEnv);
-   for (modulePtr = EnvGetNextDefmodule(theEnv,NULL);
+   for (modulePtr = GetNextDefmodule(theEnv,NULL);
         modulePtr != NULL;
-        modulePtr = EnvGetNextDefmodule(theEnv,modulePtr))
+        modulePtr = GetNextDefmodule(theEnv,modulePtr))
      {
-      EnvSetCurrentModule(theEnv,modulePtr);
+      SetCurrentModule(theEnv,modulePtr);
 
       /*=========================*/
       /* Loop through each rule. */
       /*=========================*/
 
-      rulePtr = EnvGetNextDefrule(theEnv,NULL);
+      rulePtr = GetNextDefrule(theEnv,NULL);
       while (rulePtr != NULL)
         {
          /*=============================*/
@@ -1011,7 +1011,7 @@ void MarkRuleNetwork(
          /* Move on to the next rule. */
          /*===========================*/
 
-         rulePtr = EnvGetNextDefrule(theEnv,rulePtr);
+         rulePtr = GetNextDefrule(theEnv,rulePtr);
         }
 
      }
@@ -1551,7 +1551,7 @@ unsigned long PrintBetaMemory(
    struct partialMatch *listOfMatches;
    unsigned long b, count = 0;
 
-   if (EnvGetHaltExecution(theEnv) == true)
+   if (GetHaltExecution(theEnv) == true)
      { return count; }
 
    for (b = 0; b < theMemory->size; b++)
@@ -1565,7 +1565,7 @@ unsigned long PrintBetaMemory(
          /* to stop the display of partial matches. */
          /*=========================================*/
 
-         if (EnvGetHaltExecution(theEnv) == true)
+         if (GetHaltExecution(theEnv) == true)
            { return count; }
 
          /*=========================================================*/
@@ -1577,7 +1577,7 @@ unsigned long PrintBetaMemory(
          if (output == VERBOSE)
            {
             if (indentFirst)
-              { EnvPrintRouter(theEnv,logName,indentString); }
+              { PrintRouter(theEnv,logName,indentString); }
             else
               { indentFirst = true; }
            }
@@ -1589,7 +1589,7 @@ unsigned long PrintBetaMemory(
          if (output == VERBOSE)
            {
             PrintPartialMatch(theEnv,logName,listOfMatches);
-            EnvPrintRouter(theEnv,logName,"\n");
+            PrintRouter(theEnv,logName,"\n");
            }
 
          count++;
@@ -1651,18 +1651,18 @@ void TagRuleNetwork(
    /* Loop through each module. */
    /*===========================*/
 
-   for (modulePtr = EnvGetNextDefmodule(theEnv,NULL);
+   for (modulePtr = GetNextDefmodule(theEnv,NULL);
         modulePtr != NULL;
-        modulePtr = EnvGetNextDefmodule(theEnv,modulePtr))
+        modulePtr = GetNextDefmodule(theEnv,modulePtr))
      {
       (*moduleCount)++;
-      EnvSetCurrentModule(theEnv,modulePtr);
+      SetCurrentModule(theEnv,modulePtr);
 
       /*=========================*/
       /* Loop through each rule. */
       /*=========================*/
 
-      rulePtr = EnvGetNextDefrule(theEnv,NULL);
+      rulePtr = GetNextDefrule(theEnv,NULL);
 
       while (rulePtr != NULL)
         {
@@ -1677,7 +1677,7 @@ void TagRuleNetwork(
             TagNetworkTraverseJoins(theEnv,joinCount,linkCount,disjunctPtr->lastJoin);
            }
 
-         rulePtr = EnvGetNextDefrule(theEnv,rulePtr);
+         rulePtr = GetNextDefrule(theEnv,rulePtr);
         }
      }
   }

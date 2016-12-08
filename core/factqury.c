@@ -109,24 +109,24 @@ void SetupFactQuery(
 #endif
 
 #if ! RUN_TIME
-   FactQueryData(theEnv)->QUERY_DELIMITER_SYMBOL = EnvCreateSymbol(theEnv,QUERY_DELIMITER_STRING);
+   FactQueryData(theEnv)->QUERY_DELIMITER_SYMBOL = CreateSymbol(theEnv,QUERY_DELIMITER_STRING);
    IncrementSymbolCount(FactQueryData(theEnv)->QUERY_DELIMITER_SYMBOL);
 
-   EnvAddUDF(theEnv,"(query-fact)","f",0,UNBOUNDED,NULL,GetQueryFact,"GetQueryFact",NULL);
+   AddUDF(theEnv,"(query-fact)","f",0,UNBOUNDED,NULL,GetQueryFact,"GetQueryFact",NULL);
 
-   EnvAddUDF(theEnv,"(query-fact-slot)","*",0,UNBOUNDED,NULL,GetQueryFactSlot,"GetQueryFactSlot",NULL);
+   AddUDF(theEnv,"(query-fact-slot)","*",0,UNBOUNDED,NULL,GetQueryFactSlot,"GetQueryFactSlot",NULL);
 
-   EnvAddUDF(theEnv,"any-factp","b",0,UNBOUNDED,NULL,AnyFacts,"AnyFacts",NULL);
+   AddUDF(theEnv,"any-factp","b",0,UNBOUNDED,NULL,AnyFacts,"AnyFacts",NULL);
 
-   EnvAddUDF(theEnv,"find-fact","m",0,UNBOUNDED,NULL,QueryFindFact,"QueryFindFact",NULL);
+   AddUDF(theEnv,"find-fact","m",0,UNBOUNDED,NULL,QueryFindFact,"QueryFindFact",NULL);
 
-   EnvAddUDF(theEnv,"find-all-facts","m",0,UNBOUNDED,NULL,QueryFindAllFacts,"QueryFindAllFacts",NULL);
+   AddUDF(theEnv,"find-all-facts","m",0,UNBOUNDED,NULL,QueryFindAllFacts,"QueryFindAllFacts",NULL);
 
-   EnvAddUDF(theEnv,"do-for-fact","*",0,UNBOUNDED,NULL,QueryDoForFact,"QueryDoForFact",NULL);
+   AddUDF(theEnv,"do-for-fact","*",0,UNBOUNDED,NULL,QueryDoForFact,"QueryDoForFact",NULL);
 
-   EnvAddUDF(theEnv,"do-for-all-facts","*",0,UNBOUNDED,NULL,QueryDoForAllFacts,"QueryDoForAllFacts",NULL);
+   AddUDF(theEnv,"do-for-all-facts","*",0,UNBOUNDED,NULL,QueryDoForAllFacts,"QueryDoForAllFacts",NULL);
 
-   EnvAddUDF(theEnv,"delayed-do-for-all-facts","*",0,UNBOUNDED,NULL,DelayedQueryDoForAllFacts,"DelayedQueryDoForAllFacts",NULL);
+   AddUDF(theEnv,"delayed-do-for-all-facts","*",0,UNBOUNDED,NULL,DelayedQueryDoForAllFacts,"DelayedQueryDoForAllFacts",NULL);
 #endif
 
    AddFunctionParser(theEnv,"any-factp",FactParseQueryNoAction);
@@ -185,7 +185,7 @@ void GetQueryFactSlot(
    if (temp.header->type != SYMBOL_TYPE)
      {
       ExpectedTypeError1(theEnv,"get",1,"symbol");
-      EnvSetEvaluationError(theEnv,true);
+      SetEvaluationError(theEnv,true);
       return;
      }
 
@@ -305,7 +305,7 @@ void AnyFacts(
    rtn_struct(theEnv,query_core,FactQueryData(theEnv)->QueryCore);
    PopQueryCore(theEnv);
    DeleteQueryTemplates(theEnv,qtemplates);
-   returnValue->lexemeValue = EnvCreateBoolean(theEnv,testResult);
+   returnValue->lexemeValue = CreateBoolean(theEnv,testResult);
   }
 
 /******************************************************************************
@@ -334,7 +334,7 @@ void QueryFindFact(
                                       "find-fact",&rcnt);
    if (qtemplates == NULL)
      {
-      returnValue->value = EnvCreateMultifield(theEnv,0L);
+      returnValue->value = CreateMultifield(theEnv,0L);
       return;
      }
    PushQueryCore(theEnv);
@@ -344,7 +344,7 @@ void QueryFindFact(
    FactQueryData(theEnv)->QueryCore->query = GetFirstArgument();
    if (TestForFirstInChain(theEnv,qtemplates,0) == true)
      {
-      returnValue->value = EnvCreateMultifield(theEnv,rcnt);
+      returnValue->value = CreateMultifield(theEnv,rcnt);
       returnValue->range = rcnt;
       for (i = 0 ; i < rcnt ; i++)
         {
@@ -352,7 +352,7 @@ void QueryFindFact(
         }
      }
    else
-      returnValue->value = EnvCreateMultifield(theEnv,0L);
+      returnValue->value = CreateMultifield(theEnv,0L);
    FactQueryData(theEnv)->AbortQuery = false;
    rm(theEnv,FactQueryData(theEnv)->QueryCore->solns,(sizeof(Fact *) * rcnt));
    rtn_struct(theEnv,query_core,FactQueryData(theEnv)->QueryCore);
@@ -393,7 +393,7 @@ void QueryFindAllFacts(
                                       "find-all-facts",&rcnt);
    if (qtemplates == NULL)
      {
-      returnValue->value = EnvCreateMultifield(theEnv,0L);
+      returnValue->value = CreateMultifield(theEnv,0L);
       return;
      }
    PushQueryCore(theEnv);
@@ -406,7 +406,7 @@ void QueryFindAllFacts(
    FactQueryData(theEnv)->QueryCore->soln_cnt = 0;
    TestEntireChain(theEnv,qtemplates,0);
    FactQueryData(theEnv)->AbortQuery = false;
-   returnValue->value = EnvCreateMultifield(theEnv,FactQueryData(theEnv)->QueryCore->soln_cnt * rcnt);
+   returnValue->value = CreateMultifield(theEnv,FactQueryData(theEnv)->QueryCore->soln_cnt * rcnt);
    while (FactQueryData(theEnv)->QueryCore->soln_set != NULL)
      {
       for (i = 0 , j = (unsigned) returnValue->range ; i < rcnt ; i++ , j++)
@@ -729,7 +729,7 @@ static QUERY_TEMPLATE *DetermineQueryTemplates(
         {
          SyntaxErrorMessage(theEnv,"fact-set query class restrictions");
          DeleteQueryTemplates(theEnv,clist);
-         EnvSetEvaluationError(theEnv,true);
+         SetEvaluationError(theEnv,true);
          return NULL;
         }
       templateExp = templateExp->nextArg;

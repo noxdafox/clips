@@ -255,7 +255,7 @@ static void FormMethodsFromRestrictions(
          rptr->query->argList = GenConstant(theEnv,FCALL,FindFunction(theEnv,"length$"));
          rptr->query->argList->argList = GenProcWildcardReference(theEnv,min + i + 1);
          rptr->query->argList->nextArg =
-               GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,(long long) (max - min - i)));
+               GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,(long long) (max - min - i)));
         }
       tmp = get_struct(theEnv,expr);
       tmp->argList = (Expression *) rptr;
@@ -420,7 +420,7 @@ static Expression *GenTypeExpression(
    else
      tmp = GenConstant(theEnv,0,LookupDefclassByMdlOrScope(theEnv,COOLName));
 #else
-   tmp = GenConstant(theEnv,0,EnvCreateInteger(theEnv,(long long) nonCOOLCode));
+   tmp = GenConstant(theEnv,0,CreateInteger(theEnv,(long long) nonCOOLCode));
 #endif
    tmp->nextArg = top;
    return(tmp);

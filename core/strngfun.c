@@ -47,8 +47,8 @@
 /*            Fixed str-cat bug that could be invoked by     */
 /*            (funcall str-cat).                             */
 /*                                                           */
-/*      6.40: Prior error flags are cleared before EnvEval   */
-/*            and EnvBuild are processed.                    */
+/*      6.40: Prior error flags are cleared before Eval      */
+/*            and Build are processed.                       */
 /*                                                           */
 /*            Added Env prefix to GetEvaluationError and     */
 /*            SetEvaluationError functions.                  */
@@ -116,17 +116,17 @@ void StringFunctionDefinitions(
   Environment *theEnv)
   {
 #if ! RUN_TIME
-   EnvAddUDF(theEnv,"str-cat","sy",1,UNBOUNDED,"synld" ,StrCatFunction,"StrCatFunction",NULL);
-   EnvAddUDF(theEnv,"sym-cat","sy",1,UNBOUNDED,"synld" ,SymCatFunction,"SymCatFunction",NULL);
-   EnvAddUDF(theEnv,"str-length","l",1,1,"syn",StrLengthFunction,"StrLengthFunction",NULL);
-   EnvAddUDF(theEnv,"str-compare","l",2,3,"*;syn;syn;l" ,StrCompareFunction,"StrCompareFunction",NULL);
-   EnvAddUDF(theEnv,"upcase","syn",1,1,"syn",UpcaseFunction,"UpcaseFunction",NULL);
-   EnvAddUDF(theEnv,"lowcase","syn",1,1,"syn",LowcaseFunction,"LowcaseFunction",NULL);
-   EnvAddUDF(theEnv,"sub-string","s",3,3,"*;l;l;syn",SubStringFunction,"SubStringFunction",NULL);
-   EnvAddUDF(theEnv,"str-index","bl",2,2,"syn",StrIndexFunction,"StrIndexFunction",NULL);
-   EnvAddUDF(theEnv,"eval","*",1,1,"sy",EvalFunction,"EvalFunction",NULL);
-   EnvAddUDF(theEnv,"build","b",1,1,"sy",BuildFunction,"BuildFunction",NULL);
-   EnvAddUDF(theEnv,"string-to-field","*",1,1,"syn",StringToFieldFunction,"StringToFieldFunction",NULL);
+   AddUDF(theEnv,"str-cat","sy",1,UNBOUNDED,"synld" ,StrCatFunction,"StrCatFunction",NULL);
+   AddUDF(theEnv,"sym-cat","sy",1,UNBOUNDED,"synld" ,SymCatFunction,"SymCatFunction",NULL);
+   AddUDF(theEnv,"str-length","l",1,1,"syn",StrLengthFunction,"StrLengthFunction",NULL);
+   AddUDF(theEnv,"str-compare","l",2,3,"*;syn;syn;l" ,StrCompareFunction,"StrCompareFunction",NULL);
+   AddUDF(theEnv,"upcase","syn",1,1,"syn",UpcaseFunction,"UpcaseFunction",NULL);
+   AddUDF(theEnv,"lowcase","syn",1,1,"syn",LowcaseFunction,"LowcaseFunction",NULL);
+   AddUDF(theEnv,"sub-string","s",3,3,"*;l;l;syn",SubStringFunction,"SubStringFunction",NULL);
+   AddUDF(theEnv,"str-index","bl",2,2,"syn",StrIndexFunction,"StrIndexFunction",NULL);
+   AddUDF(theEnv,"eval","*",1,1,"sy",EvalFunction,"EvalFunction",NULL);
+   AddUDF(theEnv,"build","b",1,1,"sy",BuildFunction,"BuildFunction",NULL);
+   AddUDF(theEnv,"string-to-field","*",1,1,"syn",StringToFieldFunction,"StringToFieldFunction",NULL);
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -210,20 +210,20 @@ static void StrOrSymCatFunction(
            break;
 
          case FLOAT_TYPE:
-           hashPtr = EnvCreateString(theEnv,FloatToString(theEnv,theArg.floatValue->contents));
+           hashPtr = CreateString(theEnv,FloatToString(theEnv,theArg.floatValue->contents));
            arrayOfStrings[i-1] = hashPtr;
            IncrementSymbolCount(hashPtr);
            break;
 
          case INTEGER_TYPE:
-           hashPtr = EnvCreateString(theEnv,LongIntegerToString(theEnv,theArg.integerValue->contents));
+           hashPtr = CreateString(theEnv,LongIntegerToString(theEnv,theArg.integerValue->contents));
            arrayOfStrings[i-1] = hashPtr;
            IncrementSymbolCount(hashPtr);
            break;
 
          default:
            UDFInvalidArgumentMessage(context,"string, instance name, symbol, float, or integer");
-           EnvSetEvaluationError(theEnv,true);
+           SetEvaluationError(theEnv,true);
            break;
         }
 
@@ -238,9 +238,9 @@ static void StrOrSymCatFunction(
          rm(theEnv,arrayOfStrings,sizeof(CLIPSLexeme *) * numArgs);
 
          if (returnType == STRING_TYPE)
-           { returnValue->value = EnvCreateString(theEnv,""); }
+           { returnValue->value = CreateString(theEnv,""); }
          else
-           { returnValue->value = EnvCreateSymbol(theEnv,"nil"); }
+           { returnValue->value = CreateSymbol(theEnv,"nil"); }
          return;
         }
 
@@ -268,9 +268,9 @@ static void StrOrSymCatFunction(
    /*=========================================*/
 
    if (returnType == STRING_TYPE)
-     { returnValue->value = EnvCreateString(theEnv,theString); }
+     { returnValue->value = CreateString(theEnv,theString); }
    else
-     { returnValue->value = EnvCreateSymbol(theEnv,theString); }
+     { returnValue->value = CreateSymbol(theEnv,theString); }
    rm(theEnv,theString,sizeof(char) * total);
 
    for (i = 0; i < numArgs; i++)
@@ -304,7 +304,7 @@ void StrLengthFunction(
    /* Return the length of the string or symbol. */
    /*============================================*/
 
-   returnValue->integerValue = EnvCreateInteger(theEnv,UTF8Length(theArg.lexemeValue->contents));
+   returnValue->integerValue = CreateInteger(theEnv,UTF8Length(theArg.lexemeValue->contents));
   }
 
 /****************************************/
@@ -353,11 +353,11 @@ void UpcaseFunction(
    /*========================================*/
 
    if (CVIsType(&theArg,SYMBOL_BIT))
-     { returnValue->value = EnvCreateSymbol(theEnv,nsptr); }
+     { returnValue->value = CreateSymbol(theEnv,nsptr); }
    else if (CVIsType(&theArg,INSTANCE_NAME_BIT))
-     { returnValue->value = EnvCreateInstanceName(theEnv,nsptr); }
+     { returnValue->value = CreateInstanceName(theEnv,nsptr); }
    else
-     { returnValue->value = EnvCreateString(theEnv,nsptr); }
+     { returnValue->value = CreateString(theEnv,nsptr); }
    rm(theEnv,nsptr,slen);
   }
 
@@ -407,11 +407,11 @@ void LowcaseFunction(
    /*========================================*/
 
    if (CVIsType(&theArg,SYMBOL_BIT))
-     { returnValue->value = EnvCreateSymbol(theEnv,nsptr); }
+     { returnValue->value = CreateSymbol(theEnv,nsptr); }
    else if (CVIsType(&theArg,INSTANCE_NAME_BIT))
-     { returnValue->value = EnvCreateInstanceName(theEnv,nsptr); }
+     { returnValue->value = CreateInstanceName(theEnv,nsptr); }
    else
-     { returnValue->value = EnvCreateString(theEnv,nsptr); }
+     { returnValue->value = CreateString(theEnv,nsptr); }
    rm(theEnv,nsptr,slen);
   }
 
@@ -461,11 +461,11 @@ void StrCompareFunction(
    /*========================================================*/
 
    if (compareResult < 0)
-     { returnValue->integerValue = EnvCreateInteger(theEnv,-1L); }
+     { returnValue->integerValue = CreateInteger(theEnv,-1L); }
    else if (compareResult > 0)
-     { returnValue->integerValue = EnvCreateInteger(theEnv,1L); }
+     { returnValue->integerValue = CreateInteger(theEnv,1L); }
    else
-     { returnValue->integerValue = EnvCreateInteger(theEnv,0L); }
+     { returnValue->integerValue = CreateInteger(theEnv,0L); }
   }
 
 /*******************************************/
@@ -499,7 +499,7 @@ void SubStringFunction(
 
    if (theArg.integerValue->contents < 1)
      {
-      returnValue->lexemeValue = EnvCreateString(theEnv,"");
+      returnValue->lexemeValue = CreateString(theEnv,"");
       return;
      }
    else
@@ -526,7 +526,7 @@ void SubStringFunction(
 
    if ((start > end) || (length == 0))
      {
-      returnValue->lexemeValue = EnvCreateString(theEnv,"");
+      returnValue->lexemeValue = CreateString(theEnv,"");
       return;
      }
 
@@ -551,7 +551,7 @@ void SubStringFunction(
    /* Return the new string. */
    /*========================*/
 
-   returnValue->lexemeValue = EnvCreateString(theEnv,returnString);
+   returnValue->lexemeValue = CreateString(theEnv,returnString);
    rm(theEnv,returnString,(unsigned) (end - start + 2));
   }
 
@@ -590,7 +590,7 @@ void StrIndexFunction(
 
    if (strlen(strg1) == 0)
      {
-      returnValue->integerValue = EnvCreateInteger(theEnv,(long long) UTF8Length(strg2) + 1LL);
+      returnValue->integerValue = CreateInteger(theEnv,(long long) UTF8Length(strg2) + 1LL);
       return;
      }
 
@@ -602,7 +602,7 @@ void StrIndexFunction(
 
       if (*(strg1+j) == '\0')
         {
-         returnValue->integerValue = EnvCreateInteger(theEnv,(long long) UTF8CharNum(strg3,i));
+         returnValue->integerValue = CreateInteger(theEnv,(long long) UTF8CharNum(strg3,i));
          return;
         }
      }
@@ -627,7 +627,7 @@ void StringToFieldFunction(
 
    if (! UDFFirstArgument(context,LEXEME_BITS | INSTANCE_NAME_BIT,&theArg))
      {
-      returnValue->lexemeValue = EnvCreateSymbol(theEnv,"*** ERROR ***");
+      returnValue->lexemeValue = CreateSymbol(theEnv,"*** ERROR ***");
       return;
      }
 
@@ -668,11 +668,11 @@ void StringToField(
        (theToken.tknType == SYMBOL_TOKEN) || (theToken.tknType == INTEGER_TOKEN))
      { returnValue->value = theToken.value; }
    else if (theToken.tknType == STOP_TOKEN)
-     { returnValue->value = EnvCreateSymbol(theEnv,"EOF"); }
+     { returnValue->value = CreateSymbol(theEnv,"EOF"); }
    else if (theToken.tknType == UNKNOWN_VALUE_TOKEN)
-     { returnValue->value = EnvCreateString(theEnv,"*** ERROR ***"); }
+     { returnValue->value = CreateString(theEnv,"*** ERROR ***"); }
    else
-     { returnValue->value = EnvCreateString(theEnv,theToken.printForm); }
+     { returnValue->value = CreateString(theEnv,theToken.printForm); }
   }
 
 /**************************************/
@@ -698,15 +698,15 @@ void EvalFunction(
    /* Evaluate the string. */
    /*======================*/
 
-   EnvEval(theEnv,theArg.lexemeValue->contents,&cv);
+   Eval(theEnv,theArg.lexemeValue->contents,&cv);
    CLIPSToUDFValue(&cv,returnValue);
   }
 
-/*****************************/
-/* EnvEval: C access routine */
-/*   for the eval function.  */
-/*****************************/
-bool EnvEval(
+/****************************/
+/* Eval: C access routine   */
+/*   for the eval function. */
+/****************************/
+bool Eval(
   Environment *theEnv,
   const char *theString,
   CLIPSValue *returnValue)
@@ -733,8 +733,8 @@ bool EnvEval(
    if ((! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
        (EvaluationData(theEnv)->CurrentExpression == NULL))
      {
-      EnvSetEvaluationError(theEnv,false);
-      EnvSetHaltExecution(theEnv,false);
+      SetEvaluationError(theEnv,false);
+      SetHaltExecution(theEnv,false);
      }
 
    /*======================================================*/
@@ -784,7 +784,7 @@ bool EnvEval(
 
    if (top == NULL)
      {
-      EnvSetEvaluationError(theEnv,true);
+      SetEvaluationError(theEnv,true);
       CloseStringSource(theEnv,logicalNameBuffer);
       CLIPSBlockEnd(theEnv,&gcBlock,NULL);
       if (returnValue != NULL)
@@ -802,8 +802,8 @@ bool EnvEval(
    if ((top->type == MF_GBL_VARIABLE) || (top->type == MF_VARIABLE))
      {
       PrintErrorID(theEnv,"MISCFUN",1,false);
-      EnvPrintRouter(theEnv,WERROR,"expand$ must be used in the argument list of a function call.\n");
-      EnvSetEvaluationError(theEnv,true);
+      PrintRouter(theEnv,WERROR,"expand$ must be used in the argument list of a function call.\n");
+      SetEvaluationError(theEnv,true);
       CloseStringSource(theEnv,logicalNameBuffer);
       CLIPSBlockEnd(theEnv,&gcBlock,NULL);
       if (returnValue != NULL)
@@ -822,8 +822,8 @@ bool EnvEval(
    if (ExpressionContainsVariables(top,false))
      {
       PrintErrorID(theEnv,"STRNGFUN",2,false);
-      EnvPrintRouter(theEnv,WERROR,"Some variables could not be accessed by the eval function.\n");
-      EnvSetEvaluationError(theEnv,true);
+      PrintRouter(theEnv,WERROR,"Some variables could not be accessed by the eval function.\n");
+      SetEvaluationError(theEnv,true);
       CloseStringSource(theEnv,logicalNameBuffer);
       CLIPSBlockEnd(theEnv,&gcBlock,NULL);
       if (returnValue != NULL)
@@ -888,7 +888,7 @@ bool EnvEval(
    if (returnValue != NULL)
      { returnValue->value = evalResult.value; }
    
-   if (EnvGetEvaluationError(theEnv)) return false;
+   if (GetEvaluationError(theEnv)) return false;
    return true;
   }
 
@@ -915,14 +915,14 @@ void BuildFunction(
    /* Build the construct. */
    /*======================*/
 
-   returnValue->lexemeValue = EnvCreateBoolean(theEnv,(EnvBuild(theEnv,theArg.lexemeValue->contents)));
+   returnValue->lexemeValue = CreateBoolean(theEnv,(Build(theEnv,theArg.lexemeValue->contents)));
   }
 
-/******************************/
-/* EnvBuild: C access routine */
-/*   for the build function.  */
-/******************************/
-bool EnvBuild(
+/*****************************/
+/* Build: C access routine   */
+/*   for the build function. */
+/*****************************/
+bool Build(
   Environment *theEnv,
   const char *theString)
   {
@@ -937,8 +937,8 @@ bool EnvBuild(
    if ((! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
        (EvaluationData(theEnv)->CurrentExpression == NULL))
      {
-      EnvSetEvaluationError(theEnv,false);
-      EnvSetHaltExecution(theEnv,false);
+      SetEvaluationError(theEnv,false);
+      SetHaltExecution(theEnv,false);
      }
 
    /*====================================================*/
@@ -1002,9 +1002,9 @@ bool EnvBuild(
 
    if (errorFlag == 1)
      {
-      EnvPrintRouter(theEnv,WERROR,"\nERROR:\n");
+      PrintRouter(theEnv,WERROR,"\nERROR:\n");
       PrintInChunks(theEnv,WERROR,GetPPBuffer(theEnv));
-      EnvPrintRouter(theEnv,WERROR,"\n");
+      PrintRouter(theEnv,WERROR,"\n");
      }
 
    DestroyPPBuffer(theEnv);
@@ -1041,20 +1041,20 @@ void BuildFunction(
   UDFValue *returnValue)
   {
    PrintErrorID(theEnv,"STRNGFUN",1,false);
-   EnvPrintRouter(theEnv,WERROR,"Function build does not work in run time modules.\n");
+   PrintRouter(theEnv,WERROR,"Function build does not work in run time modules.\n");
    returnValue->lexemeValue = FalseSymbol(theEnv);
   }
 
-/******************************************************/
-/* EnvBuild: This is the non-functional stub provided */
-/*   for use with a run-time version.                 */
-/******************************************************/
-bool EnvBuild(
+/***************************************************/
+/* Build: This is the non-functional stub provided */
+/*   for use with a run-time version.              */
+/***************************************************/
+bool Build(
   Environment *theEnv,
   const char *theString)
   {
    PrintErrorID(theEnv,"STRNGFUN",1,false);
-   EnvPrintRouter(theEnv,WERROR,"Function build does not work in run time modules.\n");
+   PrintRouter(theEnv,WERROR,"Function build does not work in run time modules.\n");
    return false;
   }
 #endif /* (! RUN_TIME) && (! BLOAD_ONLY) */

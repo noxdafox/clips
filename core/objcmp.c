@@ -448,11 +448,11 @@ static bool ObjectsToCode(
       Loop through all the modules and all the defclasses writing
       their C code representation to the file as they are traversed
       ============================================================= */
-   theModule = EnvGetNextDefmodule(theEnv,NULL);
+   theModule = GetNextDefmodule(theEnv,NULL);
 
    while (theModule != NULL)
      {
-      EnvSetCurrentModule(theEnv,theModule);
+      SetCurrentModule(theEnv,theModule);
 
       itemFiles[MODULEI] =
             OpenFileIfNeeded(theEnv,itemFiles[MODULEI],fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
@@ -468,9 +468,9 @@ static bool ObjectsToCode(
                             &itemArrayVersions[MODULEI],maxIndices,
                             &itemReopenFlags[MODULEI],&itemCodeFiles[MODULEI]);
 
-      for (theDefclass = EnvGetNextDefclass(theEnv,NULL) ;
+      for (theDefclass = GetNextDefclass(theEnv,NULL) ;
            theDefclass != NULL ;
-           theDefclass = EnvGetNextDefclass(theEnv,theDefclass))
+           theDefclass = GetNextDefclass(theEnv,theDefclass))
         {
          itemFiles[CLASSI] =
             OpenFileIfNeeded(theEnv,itemFiles[CLASSI],fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
@@ -536,7 +536,7 @@ static bool ObjectsToCode(
            goto ObjectCodeError;
         }
 
-      theModule = EnvGetNextDefmodule(theEnv,theModule);
+      theModule = GetNextDefmodule(theEnv,theModule);
       moduleCount++;
       itemArrayCounts[MODULEI]++;
      }

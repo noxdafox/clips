@@ -33,13 +33,13 @@
 
       [self setValue: [NSString stringWithUTF8String: FactRelation(theFact)->contents] forKey: @"relationName"];
       
-      [self setValue: [NSString stringWithFormat:@"%lld", EnvFactIndex(theEnvironment,theFact)] forKey: @"name"]; 
+      [self setValue: [NSString stringWithFormat:@"%lld", FactIndex(theEnvironment,theFact)] forKey: @"name"];
 
-      [self setValue: [NSNumber numberWithLongLong: EnvFactIndex(theEnvironment,theFact)] forKey: @"index"]; 
+      [self setValue: [NSNumber numberWithLongLong: FactIndex(theEnvironment,theFact)] forKey: @"index"]; 
 
       theCPointer = theFact; 
             
-      EnvFactSlotNames(theEnvironment,theFact,&slotNames);
+      FactSlotNames(theEnvironment,theFact,&slotNames);
       
       environment = theEnvironment;
 
@@ -65,9 +65,9 @@
 
          /* Only static defaults will be excluded from display. */
 
-         if (DeftemplateSlotDefaultP(EnvFactDeftemplate(theEnvironment,theFact),theCSlotName) == STATIC_DEFAULT)
+         if (DeftemplateSlotDefaultP(FactDeftemplate(theEnvironment,theFact),theCSlotName) == STATIC_DEFAULT)
            {
-            DeftemplateSlotDefaultValue(EnvFactDeftemplate(theEnvironment,theFact),
+            DeftemplateSlotDefaultValue(FactDeftemplate(theEnvironment,theFact),
                                         theCSlotName,&cv);
             CLIPSToUDFValue(&cv,&defaultValue);
             if (DOsEqual(&slotValue,&defaultValue))
@@ -86,7 +86,7 @@
       
       [self setValue: tempArray forKey: @"attributeValues"];
       
-      /* EnvIncrementFactCount(theEnvironment,theFact); */
+      /* IncrementFactCount(theEnvironment,theFact); */
      }
      
    return self;
@@ -143,14 +143,14 @@
          const char *theCSlotName = slotNames.multifieldValue->theFields[i].lexemeValue->contents;
          NSString *theSlotName = [NSString stringWithUTF8String: theCSlotName];
          
-         EnvDirectGetSlot(theEnvironment,theInstance,theCSlotName,&result);
+         DirectGetSlot(theEnvironment,theInstance,theCSlotName,&result);
          CLIPSToUDFValue(&result,&slotValue);
          
          NSString *theSlotValue = [NSString stringWithUTF8String: DataObjectToString(theEnvironment,&slotValue)];
 
          /* Only static defaults will be excluded from display. */
  
-         if (EnvSlotDefaultP(theEnvironment,theClass,theCSlotName) == STATIC_DEFAULT)
+         if (SlotDefaultP(theEnvironment,theClass,theCSlotName) == STATIC_DEFAULT)
            {
             SlotDefaultValue(theClass,theCSlotName,&result);
             CLIPSToUDFValue(&result,&defaultValue);
@@ -171,7 +171,7 @@
       
       [self setValue: tempArray forKey: @"attributeValues"];
 
-      /* EnvIncrementInstanceCount(theEnvironment,theInstance); */
+      /* IncrementInstanceCount(theEnvironment,theInstance); */
      }
      
    return self;
@@ -198,9 +198,9 @@
      { free(scopeMap); }
 /*
    if ([index longLongValue] == -1)
-     { EnvDecrementInstanceCount(environment,theCPointer); }
+     { DecremenInstanceCount(environment,theCPointer); }
    else
-     { EnvDecrementFactCount(environment,theCPointer); }
+     { DecrementFactCount(environment,theCPointer); }
 */  
   }
 

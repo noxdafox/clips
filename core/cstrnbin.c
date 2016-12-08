@@ -129,12 +129,12 @@ void WriteNeededConstraints(
    /* then no constraints are saved.              */
    /*=============================================*/
 
-   if ((! EnvGetDynamicConstraintChecking(theEnv)) && (numberOfUsedConstraints != 0))
+   if ((! GetDynamicConstraintChecking(theEnv)) && (numberOfUsedConstraints != 0))
      {
       numberOfUsedConstraints = 0;
       PrintWarningID(theEnv,"CSTRNBIN",1,false);
-      EnvPrintRouter(theEnv,WWARNING,"Constraints are not saved with a binary image\n");
-      EnvPrintRouter(theEnv,WWARNING,"  when dynamic constraint checking is disabled.\n");
+      PrintRouter(theEnv,WWARNING,"Constraints are not saved with a binary image\n");
+      PrintRouter(theEnv,WWARNING,"  when dynamic constraint checking is disabled.\n");
      }
 
    /*============================================*/

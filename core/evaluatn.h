@@ -123,17 +123,17 @@ struct evaluationData
 
    void                           InitializeEvaluationData(Environment *);
    bool                           EvaluateExpression(Environment *,struct expr *,UDFValue *);
-   void                           EnvSetEvaluationError(Environment *,bool);
-   bool                           EnvGetEvaluationError(Environment *);
-   void                           EnvSetHaltExecution(Environment *,bool);
-   bool                           EnvGetHaltExecution(Environment *);
+   void                           SetEvaluationError(Environment *,bool);
+   bool                           GetEvaluationError(Environment *);
+   void                           SetHaltExecution(Environment *,bool);
+   bool                           GetHaltExecution(Environment *);
    void                           ReturnValues(Environment *,UDFValue *,bool);
    void                           PrintDataObject(Environment *,const char *,UDFValue *);
-   void                           EnvSetMultifieldErrorValue(Environment *,UDFValue *);
+   void                           SetMultifieldErrorValue(Environment *,UDFValue *);
    void                           ValueInstall(Environment *,UDFValue *);
    void                           ValueDeinstall(Environment *,UDFValue *);
 #if DEFFUNCTION_CONSTRUCT || DEFGENERIC_CONSTRUCT
-   bool                           EnvFunctionCall(Environment *,const char *,const char *,CLIPSValue *);
+   bool                           FunctionCall(Environment *,const char *,const char *,CLIPSValue *);
    bool                           FunctionCall2(Environment *,Expression *,const char *,UDFValue *);
 #endif
    void                           CopyDataObject(Environment *,UDFValue *,UDFValue *,int);

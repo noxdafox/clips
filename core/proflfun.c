@@ -105,16 +105,16 @@ void ConstructProfilingFunctionDefinitions(
    ProfileFunctionData(theEnv)->OutputString = OUTPUT_STRING;
 
 #if ! RUN_TIME
-   EnvAddUDF(theEnv,"profile","v",1,1,"y",ProfileCommand,"ProfileCommand",NULL);
-   EnvAddUDF(theEnv,"profile-info","v",0,0,NULL, ProfileInfoCommand,"ProfileInfoCommand",NULL);
-   EnvAddUDF(theEnv,"profile-reset","v",0,0,NULL,ProfileResetCommand,"ProfileResetCommand",NULL);
+   AddUDF(theEnv,"profile","v",1,1,"y",ProfileCommand,"ProfileCommand",NULL);
+   AddUDF(theEnv,"profile-info","v",0,0,NULL, ProfileInfoCommand,"ProfileInfoCommand",NULL);
+   AddUDF(theEnv,"profile-reset","v",0,0,NULL,ProfileResetCommand,"ProfileResetCommand",NULL);
 
-   EnvAddUDF(theEnv,"set-profile-percent-threshold","d",1,1,"ld",SetProfilePercentThresholdCommand,"SetProfilePercentThresholdCommand",NULL);
-   EnvAddUDF(theEnv,"get-profile-percent-threshold","d",0,0,NULL,GetProfilePercentThresholdCommand,"GetProfilePercentThresholdCommand",NULL);
+   AddUDF(theEnv,"set-profile-percent-threshold","d",1,1,"ld",SetProfilePercentThresholdCommand,"SetProfilePercentThresholdCommand",NULL);
+   AddUDF(theEnv,"get-profile-percent-threshold","d",0,0,NULL,GetProfilePercentThresholdCommand,"GetProfilePercentThresholdCommand",NULL);
 
    ProfileFunctionData(theEnv)->ProfileDataID = InstallUserDataRecord(theEnv,&ProfileFunctionData(theEnv)->ProfileDataInfo);
 
-   EnvAddClearFunction(theEnv,"profile",ProfileClearFunction,0);
+   AddClearFunction(theEnv,"profile",ProfileClearFunction,0);
 #endif
   }
 
@@ -259,21 +259,21 @@ void ProfileInfoCommand(
      {
       gensprintf(buffer,"Profile elapsed time = %g seconds\n",
                       ProfileFunctionData(theEnv)->ProfileTotalTime);
-      EnvPrintRouter(theEnv,WDISPLAY,buffer);
+      PrintRouter(theEnv,WDISPLAY,buffer);
 
       if (ProfileFunctionData(theEnv)->LastProfileInfo == USER_FUNCTIONS)
-        { EnvPrintRouter(theEnv,WDISPLAY,"Function Name                            "); }
+        { PrintRouter(theEnv,WDISPLAY,"Function Name                            "); }
       else if (ProfileFunctionData(theEnv)->LastProfileInfo == CONSTRUCTS_CODE)
-        { EnvPrintRouter(theEnv,WDISPLAY,"Construct Name                           "); }
+        { PrintRouter(theEnv,WDISPLAY,"Construct Name                           "); }
 
-      EnvPrintRouter(theEnv,WDISPLAY,"Entries         Time           %          Time+Kids     %+Kids\n");
+      PrintRouter(theEnv,WDISPLAY,"Entries         Time           %          Time+Kids     %+Kids\n");
 
       if (ProfileFunctionData(theEnv)->LastProfileInfo == USER_FUNCTIONS)
-        { EnvPrintRouter(theEnv,WDISPLAY,"-------------                            "); }
+        { PrintRouter(theEnv,WDISPLAY,"-------------                            "); }
       else if (ProfileFunctionData(theEnv)->LastProfileInfo == CONSTRUCTS_CODE)
-        { EnvPrintRouter(theEnv,WDISPLAY,"--------------                           "); }
+        { PrintRouter(theEnv,WDISPLAY,"--------------                           "); }
 
-      EnvPrintRouter(theEnv,WDISPLAY,"-------        ------        -----        ---------     ------\n");
+      PrintRouter(theEnv,WDISPLAY,"-------        ------        -----        ---------     ------\n");
      }
 
    if (ProfileFunctionData(theEnv)->LastProfileInfo == USER_FUNCTIONS) OutputUserFunctionsInfo(theEnv);
@@ -387,23 +387,23 @@ static bool OutputProfileInfo(
 
    if ((banner != NULL) && (*banner != NULL))
      {
-      EnvPrintRouter(theEnv,WDISPLAY,*banner);
+      PrintRouter(theEnv,WDISPLAY,*banner);
       *banner = NULL;
      }
 
    if (printPrefixBefore != NULL)
-     { EnvPrintRouter(theEnv,WDISPLAY,printPrefixBefore); }
+     { PrintRouter(theEnv,WDISPLAY,printPrefixBefore); }
 
    if (printPrefix != NULL)
-     { EnvPrintRouter(theEnv,WDISPLAY,printPrefix); }
+     { PrintRouter(theEnv,WDISPLAY,printPrefix); }
 
    if (printPrefixAfter != NULL)
-     { EnvPrintRouter(theEnv,WDISPLAY,printPrefixAfter); }
+     { PrintRouter(theEnv,WDISPLAY,printPrefixAfter); }
 
    if (strlen(itemName) >= 40)
      {
-      EnvPrintRouter(theEnv,WDISPLAY,itemName);
-      EnvPrintRouter(theEnv,WDISPLAY,"\n");
+      PrintRouter(theEnv,WDISPLAY,itemName);
+      PrintRouter(theEnv,WDISPLAY,"\n");
       itemName = "";
      }
 
@@ -416,7 +416,7 @@ static bool OutputProfileInfo(
 
                         (double) profileInfo->totalWithChildrenTime,
                         (double) percentWithKids);
-   EnvPrintRouter(theEnv,WDISPLAY,buffer);
+   PrintRouter(theEnv,WDISPLAY,buffer);
 
    return true;
   }
@@ -472,9 +472,9 @@ void ProfileResetCommand(
      }
 
 #if DEFFUNCTION_CONSTRUCT
-   for (theDeffunction = EnvGetNextDeffunction(theEnv,NULL);
+   for (theDeffunction = GetNextDeffunction(theEnv,NULL);
         theDeffunction != NULL;
-        theDeffunction = EnvGetNextDeffunction(theEnv,theDeffunction))
+        theDeffunction = GetNextDeffunction(theEnv,theDeffunction))
      {
       ResetProfileInfo((struct constructProfileInfo *)
                        TestUserData(ProfileFunctionData(theEnv)->ProfileDataID,theDeffunction->header.usrData));
@@ -482,9 +482,9 @@ void ProfileResetCommand(
 #endif
 
 #if DEFRULE_CONSTRUCT
-   for (theDefrule = EnvGetNextDefrule(theEnv,NULL);
+   for (theDefrule = GetNextDefrule(theEnv,NULL);
         theDefrule != NULL;
-        theDefrule = EnvGetNextDefrule(theEnv,theDefrule))
+        theDefrule = GetNextDefrule(theEnv,theDefrule))
      {
       ResetProfileInfo((struct constructProfileInfo *)
                        TestUserData(ProfileFunctionData(theEnv)->ProfileDataID,theDefrule->header.usrData));
@@ -492,16 +492,16 @@ void ProfileResetCommand(
 #endif
 
 #if DEFGENERIC_CONSTRUCT
-   for (theDefgeneric = EnvGetNextDefgeneric(theEnv,NULL);
+   for (theDefgeneric = GetNextDefgeneric(theEnv,NULL);
         theDefgeneric != NULL;
-        theDefgeneric = EnvGetNextDefgeneric(theEnv,theDefgeneric))
+        theDefgeneric = GetNextDefgeneric(theEnv,theDefgeneric))
      {
       ResetProfileInfo((struct constructProfileInfo *)
                        TestUserData(ProfileFunctionData(theEnv)->ProfileDataID,theDefgeneric->header.usrData));
 
-      for (methodIndex = EnvGetNextDefmethod(theEnv,theDefgeneric,0);
+      for (methodIndex = GetNextDefmethod(theEnv,theDefgeneric,0);
            methodIndex != 0;
-           methodIndex = EnvGetNextDefmethod(theEnv,theDefgeneric,methodIndex))
+           methodIndex = GetNextDefmethod(theEnv,theDefgeneric,methodIndex))
         {
          theMethod = GetDefmethodPointer(theDefgeneric,methodIndex);
          ResetProfileInfo((struct constructProfileInfo *)
@@ -511,15 +511,15 @@ void ProfileResetCommand(
 #endif
 
 #if OBJECT_SYSTEM
-   for (theDefclass = EnvGetNextDefclass(theEnv,NULL);
+   for (theDefclass = GetNextDefclass(theEnv,NULL);
         theDefclass != NULL;
-        theDefclass = EnvGetNextDefclass(theEnv,theDefclass))
+        theDefclass = GetNextDefclass(theEnv,theDefclass))
      {
       ResetProfileInfo((struct constructProfileInfo *)
                        TestUserData(ProfileFunctionData(theEnv)->ProfileDataID,theDefclass->header.usrData));
-      for (handlerIndex = EnvGetNextDefmessageHandler(theEnv,theDefclass,0);
+      for (handlerIndex = GetNextDefmessageHandler(theEnv,theDefclass,0);
            handlerIndex != 0;
-           handlerIndex = EnvGetNextDefmessageHandler(theEnv,theDefclass,handlerIndex))
+           handlerIndex = GetNextDefmessageHandler(theEnv,theDefclass,handlerIndex))
         {
          theHandler = GetDefmessageHandlerPointer(theDefclass,handlerIndex);
          ResetProfileInfo((struct constructProfileInfo *)
@@ -613,9 +613,9 @@ static void OutputConstructsCodeInfo(
    banner = "\n*** Deffunctions ***\n\n";
 
 #if DEFFUNCTION_CONSTRUCT
-   for (theDeffunction = EnvGetNextDeffunction(theEnv,NULL);
+   for (theDeffunction = GetNextDeffunction(theEnv,NULL);
         theDeffunction != NULL;
-        theDeffunction = EnvGetNextDeffunction(theEnv,theDeffunction))
+        theDeffunction = GetNextDeffunction(theEnv,theDeffunction))
      {
       OutputProfileInfo(theEnv,DeffunctionName(theDeffunction),
                         (struct constructProfileInfo *)
@@ -626,17 +626,17 @@ static void OutputConstructsCodeInfo(
 
    banner = "\n*** Defgenerics ***\n";
 #if DEFGENERIC_CONSTRUCT
-   for (theDefgeneric = EnvGetNextDefgeneric(theEnv,NULL);
+   for (theDefgeneric = GetNextDefgeneric(theEnv,NULL);
         theDefgeneric != NULL;
-        theDefgeneric = EnvGetNextDefgeneric(theEnv,theDefgeneric))
+        theDefgeneric = GetNextDefgeneric(theEnv,theDefgeneric))
      {
       prefixBefore = "\n";
       prefix = DefgenericName(theDefgeneric);
       prefixAfter = "\n";
 
-      for (methodIndex = EnvGetNextDefmethod(theEnv,theDefgeneric,0);
+      for (methodIndex = GetNextDefmethod(theEnv,theDefgeneric,0);
            methodIndex != 0;
-           methodIndex = EnvGetNextDefmethod(theEnv,theDefgeneric,methodIndex))
+           methodIndex = GetNextDefmethod(theEnv,theDefgeneric,methodIndex))
         {
          theMethod = GetDefmethodPointer(theDefgeneric,methodIndex);
 
@@ -656,17 +656,17 @@ static void OutputConstructsCodeInfo(
 
    banner = "\n*** Defclasses ***\n";
 #if OBJECT_SYSTEM
-   for (theDefclass = EnvGetNextDefclass(theEnv,NULL);
+   for (theDefclass = GetNextDefclass(theEnv,NULL);
         theDefclass != NULL;
-        theDefclass = EnvGetNextDefclass(theEnv,theDefclass))
+        theDefclass = GetNextDefclass(theEnv,theDefclass))
      {
       prefixAfter = "\n";
       prefix = DefclassName(theDefclass);
       prefixBefore = "\n";
 
-      for (handlerIndex = EnvGetNextDefmessageHandler(theEnv,theDefclass,0);
+      for (handlerIndex = GetNextDefmessageHandler(theEnv,theDefclass,0);
            handlerIndex != 0;
-           handlerIndex = EnvGetNextDefmessageHandler(theEnv,theDefclass,handlerIndex))
+           handlerIndex = GetNextDefmessageHandler(theEnv,theDefclass,handlerIndex))
         {
          theHandler = GetDefmessageHandlerPointer(theDefclass,handlerIndex);
          if (OutputProfileInfo(theEnv,DefmessageHandlerName(theDefclass,handlerIndex),
@@ -687,9 +687,9 @@ static void OutputConstructsCodeInfo(
    banner = "\n*** Defrules ***\n\n";
 
 #if DEFRULE_CONSTRUCT
-   for (theDefrule = EnvGetNextDefrule(theEnv,NULL);
+   for (theDefrule = GetNextDefrule(theEnv,NULL);
         theDefrule != NULL;
-        theDefrule = EnvGetNextDefrule(theEnv,theDefrule))
+        theDefrule = GetNextDefrule(theEnv,theDefrule))
      {
       OutputProfileInfo(theEnv,DefruleName(theDefrule),
                         (struct constructProfileInfo *)
@@ -720,10 +720,10 @@ void SetProfilePercentThresholdCommand(
    if ((newThreshold < 0.0) || (newThreshold > 100.0))
      {
       UDFInvalidArgumentMessage(context,"number in the range 0 to 100");
-      returnValue->floatValue = EnvCreateFloat(theEnv,-1.0);
+      returnValue->floatValue = CreateFloat(theEnv,-1.0);
      }
    else
-     { returnValue->floatValue = EnvCreateFloat(theEnv,SetProfilePercentThreshold(theEnv,newThreshold)); }
+     { returnValue->floatValue = CreateFloat(theEnv,SetProfilePercentThreshold(theEnv,newThreshold)); }
   }
 
 /****************************************************/
@@ -755,7 +755,7 @@ void GetProfilePercentThresholdCommand(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   returnValue->floatValue = EnvCreateFloat(theEnv,ProfileFunctionData(theEnv)->PercentThreshold);
+   returnValue->floatValue = CreateFloat(theEnv,ProfileFunctionData(theEnv)->PercentThreshold);
   }
 
 /****************************************************/

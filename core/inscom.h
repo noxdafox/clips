@@ -89,26 +89,26 @@ struct instanceData
 #define InstanceData(theEnv) ((struct instanceData *) GetEnvironmentData(theEnv,INSTANCE_DATA))
 
    void                           SetupInstances(Environment *);
-   bool                           EnvDeleteInstance(Environment *,Instance *);
-   bool                           EnvUnmakeInstance(Environment *,Instance *);
+   bool                           DeleteInstance(Environment *,Instance *);
+   bool                           UnmakeInstance(Environment *,Instance *);
 #if DEBUGGING_FUNCTIONS
    void                           InstancesCommand(Environment *,UDFContext *,UDFValue *);
    void                           PPInstanceCommand(Environment *,UDFContext *,UDFValue *);
-   void                           EnvInstances(Environment *,const char *,Defmodule *,const char *,bool);
+   void                           Instances(Environment *,const char *,Defmodule *,const char *,bool);
 #endif
-   Instance                      *EnvMakeInstance(Environment *,const char *);
-   Instance                      *EnvCreateRawInstance(Environment *,Defclass *,const char *);
-   Instance                      *EnvFindInstance(Environment *,Defmodule *,const char *,bool);
+   Instance                      *MakeInstance(Environment *,const char *);
+   Instance                      *CreateRawInstance(Environment *,Defclass *,const char *);
+   Instance                      *FindInstance(Environment *,Defmodule *,const char *,bool);
    bool                           ValidInstanceAddress(Instance *);
-   void                           EnvDirectGetSlot(Environment *,Instance *,const char *,CLIPSValue *);
-   bool                           EnvDirectPutSlot(Environment *,Instance *,const char *,CLIPSValue *);
+   void                           DirectGetSlot(Environment *,Instance *,const char *,CLIPSValue *);
+   bool                           DirectPutSlot(Environment *,Instance *,const char *,CLIPSValue *);
    const char                    *InstanceName(Instance *);
    Defclass                      *InstanceClass(Instance *);
    unsigned long                  GetGlobalNumberOfInstances(Environment *);
-   Instance                      *EnvGetNextInstance(Environment *,Instance *);
+   Instance                      *GetNextInstance(Environment *,Instance *);
    Instance                      *GetNextInstanceInScope(Environment *,Instance *);
-   Instance                      *EnvGetNextInstanceInClass(Environment *,Defclass *,Instance *);
-   Instance                      *EnvGetNextInstanceInClassAndSubclasses(Environment *,Defclass **,Instance *,UDFValue *);
+   Instance                      *GetNextInstanceInClass(Environment *,Defclass *,Instance *);
+   Instance                      *GetNextInstanceInClassAndSubclasses(Environment *,Defclass **,Instance *,UDFValue *);
    void                           InstancePPForm(Instance *,char *,size_t);
    void                           ClassCommand(Environment *,UDFContext *,UDFValue *);
    void                           DeleteInstanceCommand(Environment *,UDFContext *,UDFValue *);

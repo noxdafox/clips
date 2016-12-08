@@ -328,7 +328,7 @@ struct expr *GetRHSPattern(
         }
 #endif
 #if DEFMODULE_CONSTRUCT
-      if (FindImportExportConflict(theEnv,"deftemplate",EnvGetCurrentModule(theEnv),templateName->contents))
+      if (FindImportExportConflict(theEnv,"deftemplate",GetCurrentModule(theEnv),templateName->contents))
         {
          ImportExportConflictMessage(theEnv,"implied deftemplate",templateName->contents,NULL,NULL);
          *error = true;
@@ -427,7 +427,7 @@ struct expr *GetRHSPattern(
    /* single multifield slot.                                  */
    /*==========================================================*/
 
-   firstOne->nextArg = GenConstant(theEnv,FACT_STORE_MULTIFIELD,EnvAddBitMap(theEnv,(void *) nullBitMap,1));
+   firstOne->nextArg = GenConstant(theEnv,FACT_STORE_MULTIFIELD,AddBitMap(theEnv,(void *) nullBitMap,1));
    firstOne->nextArg->argList = argHead;
 
    /*==============================*/
@@ -503,7 +503,7 @@ struct expr *GetAssertArgument(
       else
         {
          theToken->tknType= RIGHT_PARENTHESIS_TOKEN;
-         theToken->value = EnvCreateString(theEnv,")");
+         theToken->value = CreateString(theEnv,")");
          theToken->printForm = ")";
         }
 #endif
@@ -572,7 +572,7 @@ struct fact *StringToFact(
    /* using the router as an input source.    */
    /*=========================================*/
 
-   EnvSetEvaluationError(theEnv,false);
+   SetEvaluationError(theEnv,false);
 
    OpenStringSource(theEnv,"assert_str",str,0);
 
@@ -602,7 +602,7 @@ struct fact *StringToFact(
    if (ExpressionContainsVariables(assertArgs,false))
      {
       LocalVariableErrorMessage(theEnv,"the assert-string function");
-      EnvSetEvaluationError(theEnv,true);
+      SetEvaluationError(theEnv,true);
       ReturnExpression(theEnv,assertArgs);
       return NULL;
      }
@@ -622,7 +622,7 @@ struct fact *StringToFact(
    /* Copy the fields to the fact data structure. */
    /*=============================================*/
 
-   EnvIncrementClearReadyLocks(theEnv);
+   IncrementClearReadyLocks(theEnv);
    ExpressionInstall(theEnv,assertArgs); /* DR0836 */
    whichField = 0;
    for (tempPtr = assertArgs->nextArg; tempPtr != NULL; tempPtr = tempPtr->nextArg)
@@ -633,7 +633,7 @@ struct fact *StringToFact(
      }
    ExpressionDeinstall(theEnv,assertArgs); /* DR0836 */
    ReturnExpression(theEnv,assertArgs);
-   EnvDecrementClearReadyLocks(theEnv);
+   DecrementClearReadyLocks(theEnv);
 
    /*==================*/
    /* Return the fact. */
@@ -655,9 +655,9 @@ static void NoSuchTemplateError(
   const char *templateName)
   {
    PrintErrorID(theEnv,"FACTRHS",1,false);
-   EnvPrintRouter(theEnv,WERROR,"Template ");
-   EnvPrintRouter(theEnv,WERROR,templateName);
-   EnvPrintRouter(theEnv,WERROR," does not exist for assert.\n");
+   PrintRouter(theEnv,WERROR,"Template ");
+   PrintRouter(theEnv,WERROR,templateName);
+   PrintRouter(theEnv,WERROR," does not exist for assert.\n");
   }
 
 #endif /* RUN_TIME || BLOAD_ONLY || BLOAD || BLOAD_AND_BSAVE */

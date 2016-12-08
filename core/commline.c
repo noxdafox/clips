@@ -207,29 +207,29 @@ void RerouteStdin(
       else if (theSwitch == NO_SWITCH)
         {
          PrintErrorID(theEnv,"SYSDEP",2,false);
-         EnvPrintRouter(theEnv,WERROR,"Invalid option\n");
+         PrintRouter(theEnv,WERROR,"Invalid option\n");
         }
 
       if (i > (argc-1))
         {
          PrintErrorID(theEnv,"SYSDEP",1,false);
-         EnvPrintRouter(theEnv,WERROR,"No file found for ");
+         PrintRouter(theEnv,WERROR,"No file found for ");
 
          switch(theSwitch)
            {
             case BATCH_SWITCH:
-               EnvPrintRouter(theEnv,WERROR,"-f");
+               PrintRouter(theEnv,WERROR,"-f");
                break;
 
             case BATCH_STAR_SWITCH:
-               EnvPrintRouter(theEnv,WERROR,"-f2");
+               PrintRouter(theEnv,WERROR,"-f2");
                break;
 
             case LOAD_SWITCH:
-               EnvPrintRouter(theEnv,WERROR,"-l");
+               PrintRouter(theEnv,WERROR,"-l");
            }
 
-         EnvPrintRouter(theEnv,WERROR," option\n");
+         PrintRouter(theEnv,WERROR," option\n");
          return;
         }
 
@@ -241,11 +241,11 @@ void RerouteStdin(
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
          case BATCH_STAR_SWITCH:
-            EnvBatchStar(theEnv,argv[++i]);
+            BatchStar(theEnv,argv[++i]);
             break;
 
          case LOAD_SWITCH:
-            EnvLoad(theEnv,argv[++i]);
+            Load(theEnv,argv[++i]);
             break;
 #endif
         }
@@ -634,9 +634,9 @@ void CommandLoop(
   {
    int inchar;
 
-   EnvPrintRouter(theEnv,WPROMPT,CommandLineData(theEnv)->BannerString);
-   EnvSetHaltExecution(theEnv,false);
-   EnvSetEvaluationError(theEnv,false);
+   PrintRouter(theEnv,WPROMPT,CommandLineData(theEnv)->BannerString);
+   SetHaltExecution(theEnv,false);
+   SetEvaluationError(theEnv,false);
 
    CleanCurrentGarbageFrame(theEnv,NULL);
    CallPeriodicTasks(theEnv);
@@ -669,15 +669,15 @@ void CommandLoop(
       /* from the command buffer.                        */
       /*=================================================*/
 
-      if (EnvGetHaltExecution(theEnv) == true)
+      if (GetHaltExecution(theEnv) == true)
         {
-         EnvSetHaltExecution(theEnv,false);
-         EnvSetEvaluationError(theEnv,false);
+         SetHaltExecution(theEnv,false);
+         SetEvaluationError(theEnv,false);
          FlushCommandString(theEnv);
 #if ! WINDOW_INTERFACE
          fflush(stdin);
 #endif
-         EnvPrintRouter(theEnv,WPROMPT,"\n");
+         PrintRouter(theEnv,WPROMPT,"\n");
          PrintPrompt(theEnv);
         }
 
@@ -698,8 +698,8 @@ void CommandLoop(
 void CommandLoopBatch(
   Environment *theEnv)
   {
-   EnvSetHaltExecution(theEnv,false);
-   EnvSetEvaluationError(theEnv,false);
+   SetHaltExecution(theEnv,false);
+   SetEvaluationError(theEnv,false);
 
    CleanCurrentGarbageFrame(theEnv,NULL);
    CallPeriodicTasks(theEnv);
@@ -764,15 +764,15 @@ void CommandLoopBatchDriver(
       /* from the command buffer.                        */
       /*=================================================*/
 
-      if (EnvGetHaltExecution(theEnv) == true)
+      if (GetHaltExecution(theEnv) == true)
         {
-         EnvSetHaltExecution(theEnv,false);
-         EnvSetEvaluationError(theEnv,false);
+         SetHaltExecution(theEnv,false);
+         SetEvaluationError(theEnv,false);
          FlushCommandString(theEnv);
 #if ! WINDOW_INTERFACE
          fflush(stdin);
 #endif
-         EnvPrintRouter(theEnv,WPROMPT,"\n");
+         PrintRouter(theEnv,WPROMPT,"\n");
          PrintPrompt(theEnv);
         }
 
@@ -812,8 +812,8 @@ bool ExecuteIfCommandComplete(
 #if (! BLOAD_ONLY)
    FlushParsingMessages(theEnv);
 #endif
-   EnvSetHaltExecution(theEnv,false);
-   EnvSetEvaluationError(theEnv,false);
+   SetHaltExecution(theEnv,false);
+   SetEvaluationError(theEnv,false);
    FlushCommandString(theEnv);
 
    CleanCurrentGarbageFrame(theEnv,NULL);
@@ -844,7 +844,7 @@ bool CommandCompleteAndNotEmpty(
 void PrintPrompt(
    Environment *theEnv)
    {
-    EnvPrintRouter(theEnv,WPROMPT,COMMAND_PROMPT);
+    PrintRouter(theEnv,WPROMPT,COMMAND_PROMPT);
 
     if (CommandLineData(theEnv)->AfterPromptCallback != NULL)
       { (*CommandLineData(theEnv)->AfterPromptCallback)(theEnv); }
@@ -856,7 +856,7 @@ void PrintPrompt(
 void PrintBanner(
    Environment *theEnv)
    {
-    EnvPrintRouter(theEnv,WPROMPT,CommandLineData(theEnv)->BannerString);
+    PrintRouter(theEnv,WPROMPT,CommandLineData(theEnv)->BannerString);
    }
 
 /************************************************/
@@ -920,7 +920,7 @@ bool RouteCommand(
       if (printResult)
         {
          PrintAtom(theEnv,STDOUT,TokenTypeToType(theToken.tknType),theToken.value);
-         EnvPrintRouter(theEnv,STDOUT,"\n");
+         PrintRouter(theEnv,STDOUT,"\n");
         }
       return true;
      }
@@ -940,7 +940,7 @@ bool RouteCommand(
       if (printResult)
         {
          PrintDataObject(theEnv,STDOUT,&returnValue);
-         EnvPrintRouter(theEnv,STDOUT,"\n");
+         PrintRouter(theEnv,STDOUT,"\n");
         }
       return true;
      }
@@ -954,7 +954,7 @@ bool RouteCommand(
    if (theToken.tknType != LEFT_PARENTHESIS_TOKEN)
      {
       PrintErrorID(theEnv,"COMMLINE",1,false);
-      EnvPrintRouter(theEnv,WERROR,"Expected a '(', constant, or variable\n");
+      PrintRouter(theEnv,WERROR,"Expected a '(', constant, or variable\n");
       CloseStringSource(theEnv,"command");
       return false;
      }
@@ -967,7 +967,7 @@ bool RouteCommand(
    if (theToken.tknType != SYMBOL_TOKEN)
      {
       PrintErrorID(theEnv,"COMMLINE",2,false);
-      EnvPrintRouter(theEnv,WERROR,"Expected a command.\n");
+      PrintRouter(theEnv,WERROR,"Expected a command.\n");
       CloseStringSource(theEnv,"command");
       return false;
      }
@@ -988,9 +988,9 @@ bool RouteCommand(
        CloseStringSource(theEnv,"command");
        if (errorFlag == 1)
          {
-          EnvPrintRouter(theEnv,WERROR,"\nERROR:\n");
+          PrintRouter(theEnv,WERROR,"\nERROR:\n");
           PrintInChunks(theEnv,WERROR,GetPPBuffer(theEnv));
-          EnvPrintRouter(theEnv,WERROR,"\n");
+          PrintRouter(theEnv,WERROR,"\n");
          }
        DestroyPPBuffer(theEnv);
        if (errorFlag) return false;
@@ -1044,7 +1044,7 @@ bool RouteCommand(
    if ((returnValue.header->type != VOID_TYPE) && printResult)
      {
       PrintDataObject(theEnv,STDOUT,&returnValue);
-      EnvPrintRouter(theEnv,STDOUT,"\n");
+      PrintRouter(theEnv,STDOUT,"\n");
      }
 
    return true;
@@ -1061,7 +1061,7 @@ static void DefaultGetNextEvent(
   {
    int inchar;
 
-   inchar = EnvGetcRouter(theEnv,STDIN);
+   inchar = GetcRouter(theEnv,STDIN);
 
    if (inchar == EOF) inchar = '\n';
 

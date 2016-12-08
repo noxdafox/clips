@@ -134,8 +134,8 @@ struct expressionData
    void                           ReturnPackedExpression(Environment *,Expression *);
    void                           InitExpressionData(Environment *);
    void                           InitExpressionPointers(Environment *);
-   bool                           EnvSetSequenceOperatorRecognition(Environment *,bool);
-   bool                           EnvGetSequenceOperatorRecognition(Environment *);
+   bool                           SetSequenceOperatorRecognition(Environment *,bool);
+   bool                           GetSequenceOperatorRecognition(Environment *);
 #if (! BLOAD_ONLY) && (! RUN_TIME)
    Expression                    *AddHashedExpression(Environment *,Expression *);
 #endif

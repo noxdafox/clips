@@ -170,9 +170,9 @@ static void BsaveFind(
    /* Loop through each module. */
    /*===========================*/
 
-   for (defmodulePtr = EnvGetNextDefmodule(theEnv,NULL);
+   for (defmodulePtr = GetNextDefmodule(theEnv,NULL);
         defmodulePtr != NULL;
-        defmodulePtr = EnvGetNextDefmodule(theEnv,defmodulePtr))
+        defmodulePtr = GetNextDefmodule(theEnv,defmodulePtr))
      {
       /*==============================================*/
       /* Increment the number of modules encountered. */
@@ -274,9 +274,9 @@ static void BsaveBinaryItem(
 
    DefmoduleData(theEnv)->BNumberOfDefmodules = 0;
    DefmoduleData(theEnv)->NumberOfPortItems = 0;
-   for (defmodulePtr = EnvGetNextDefmodule(theEnv,NULL);
+   for (defmodulePtr = GetNextDefmodule(theEnv,NULL);
         defmodulePtr != NULL;
-        defmodulePtr = EnvGetNextDefmodule(theEnv,defmodulePtr))
+        defmodulePtr = GetNextDefmodule(theEnv,defmodulePtr))
      {
       AssignBsaveConstructHeaderVals(&newDefmodule.header,&defmodulePtr->header);
 
@@ -313,7 +313,7 @@ static void BsaveBinaryItem(
    /*==========================================*/
 
    DefmoduleData(theEnv)->NumberOfPortItems = 0;
-   defmodulePtr = EnvGetNextDefmodule(theEnv,NULL);
+   defmodulePtr = GetNextDefmodule(theEnv,NULL);
    while (defmodulePtr != NULL)
      {
       for (theList = defmodulePtr->importList;
@@ -356,7 +356,7 @@ static void BsaveBinaryItem(
          GenWrite(&newPortItem,sizeof(struct bsavePortItem),fp);
         }
 
-      defmodulePtr = EnvGetNextDefmodule(theEnv,defmodulePtr);
+      defmodulePtr = GetNextDefmodule(theEnv,defmodulePtr);
      }
 
    /*=============================================================*/
@@ -435,7 +435,7 @@ static void BloadBinaryItem(
    BloadandRefresh(theEnv,DefmoduleData(theEnv)->NumberOfPortItems,sizeof(struct bsavePortItem),UpdatePortItem);
 
    SetListOfDefmodules(theEnv,DefmoduleData(theEnv)->DefmoduleArray);
-   EnvSetCurrentModule(theEnv,EnvGetNextDefmodule(theEnv,NULL));
+   SetCurrentModule(theEnv,GetNextDefmodule(theEnv,NULL));
   }
 
 /******************************************/

@@ -146,7 +146,7 @@ bool ParseDefglobal(
       /* Determine if the module exists. */
       /*=================================*/
 
-      theModule = EnvFindDefmodule(theEnv,theToken.lexemeValue->contents);
+      theModule = FindDefmodule(theEnv,theToken.lexemeValue->contents);
       if (theModule == NULL)
         {
          CantFindItemErrorMessage(theEnv,"defmodule",theToken.lexemeValue->contents);
@@ -159,7 +159,7 @@ bool ParseDefglobal(
       /*=========================================*/
 
       SavePPBuffer(theEnv," ");
-      EnvSetCurrentModule(theEnv,theModule);
+      SetCurrentModule(theEnv,theModule);
      }
 
    /*===========================================*/
@@ -171,7 +171,7 @@ bool ParseDefglobal(
    else
      {
       PPBackup(theEnv);
-      SavePPBuffer(theEnv,DefmoduleName(EnvGetCurrentModule(theEnv)));
+      SavePPBuffer(theEnv,DefmoduleName(GetCurrentModule(theEnv)));
       SavePPBuffer(theEnv," ");
       SavePPBuffer(theEnv,theToken.printForm);
      }
@@ -186,7 +186,7 @@ bool ParseDefglobal(
 
       FlushPPBuffer(theEnv);
       SavePPBuffer(theEnv,"(defglobal ");
-      SavePPBuffer(theEnv,DefmoduleName(EnvGetCurrentModule(theEnv)));
+      SavePPBuffer(theEnv,DefmoduleName(GetCurrentModule(theEnv)));
       SavePPBuffer(theEnv," ");
      }
 
@@ -250,29 +250,29 @@ static bool GetVariableDefinition(
    /*================================*/
 
 #if DEBUGGING_FUNCTIONS
-   if ((EnvGetWatchItem(theEnv,"compilations") == 1) && GetPrintWhileLoading(theEnv))
+   if ((GetWatchItem(theEnv,"compilations") == 1) && GetPrintWhileLoading(theEnv))
      {
       const char *outRouter = WDIALOG;
       if (QFindDefglobal(theEnv,variableName) != NULL)
         {
          outRouter = WWARNING;
          PrintWarningID(theEnv,"CSTRCPSR",1,true);
-         EnvPrintRouter(theEnv,outRouter,"Redefining defglobal: ");
+         PrintRouter(theEnv,outRouter,"Redefining defglobal: ");
         }
-      else EnvPrintRouter(theEnv,outRouter,"Defining defglobal: ");
-      EnvPrintRouter(theEnv,outRouter,variableName->contents);
-      EnvPrintRouter(theEnv,outRouter,"\n");
+      else PrintRouter(theEnv,outRouter,"Defining defglobal: ");
+      PrintRouter(theEnv,outRouter,variableName->contents);
+      PrintRouter(theEnv,outRouter,"\n");
      }
    else
 #endif
-     { if (GetPrintWhileLoading(theEnv)) EnvPrintRouter(theEnv,WDIALOG,":"); }
+     { if (GetPrintWhileLoading(theEnv)) PrintRouter(theEnv,WDIALOG,":"); }
 
    /*==================================================================*/
    /* Check for import/export conflicts from the construct definition. */
    /*==================================================================*/
 
 #if DEFMODULE_CONSTRUCT
-   if (FindImportExportConflict(theEnv,"defglobal",EnvGetCurrentModule(theEnv),variableName->contents))
+   if (FindImportExportConflict(theEnv,"defglobal",GetCurrentModule(theEnv),variableName->contents))
      {
       ImportExportConflictMessage(theEnv,"defglobal",variableName->contents,NULL,NULL);
       *defglobalError = true;
@@ -311,7 +311,7 @@ static bool GetVariableDefinition(
 
    if (! ConstructData(theEnv)->CheckSyntaxMode)
      {
-      EnvSetEvaluationError(theEnv,false);
+      SetEvaluationError(theEnv,false);
       if (EvaluateExpression(theEnv,assignPtr,&assignValue))
         {
          ReturnExpression(theEnv,assignPtr);
@@ -419,7 +419,7 @@ static void AddDefglobal(
    IncrementSymbolCount(name);
 
    SavePPBuffer(theEnv,"\n");
-   if (EnvGetConserveMemory(theEnv) == true)
+   if (GetConserveMemory(theEnv) == true)
      { defglobalPtr->header.ppForm = NULL; }
    else
      { defglobalPtr->header.ppForm = CopyPPBuffer(theEnv); }
@@ -512,9 +512,9 @@ void GlobalReferenceErrorMessage(
   const char *variableName)
   {
    PrintErrorID(theEnv,"GLOBLPSR",1,true);
-   EnvPrintRouter(theEnv,WERROR,"\nGlobal variable ?*");
-   EnvPrintRouter(theEnv,WERROR,variableName);
-   EnvPrintRouter(theEnv,WERROR,"* was referenced, but is not defined.\n");
+   PrintRouter(theEnv,WERROR,"\nGlobal variable ?*");
+   PrintRouter(theEnv,WERROR,variableName);
+   PrintRouter(theEnv,WERROR,"* was referenced, but is not defined.\n");
   }
 
 #endif /* DEFGLOBAL_CONSTRUCT */

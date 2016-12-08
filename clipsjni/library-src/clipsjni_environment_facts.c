@@ -19,10 +19,10 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getFactScopes(
   jlong clipsEnv)
   {
    jobject scopeMap, moduleSet, theDeftemplateIndex;
-   void *theCLIPSEnv = JLongToPointer(clipsEnv);
-   struct defmodule *theModule;
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
+   Defmodule *theModule;
    struct deftemplateModule *theModuleItem;
-   struct deftemplate *theDeftemplate;
+   Deftemplate *theDeftemplate;
    jint moduleCount = 0, whichBit;
    CLIPSBitMap *theScopeMap;
 
@@ -32,21 +32,21 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getFactScopes(
 
    if (scopeMap == NULL) return NULL;
 
-   for (theModule = (struct defmodule *) EnvGetNextDefmodule(theCLIPSEnv,NULL);
+   for (theModule = GetNextDefmodule(theCLIPSEnv,NULL);
         theModule != NULL;
-        theModule = (struct defmodule *) EnvGetNextDefmodule(theCLIPSEnv,theModule))
+        theModule = GetNextDefmodule(theCLIPSEnv,theModule))
      { moduleCount++; }
         
-   for (theModule = (struct defmodule *) EnvGetNextDefmodule(theCLIPSEnv,NULL);
+   for (theModule = GetNextDefmodule(theCLIPSEnv,NULL);
         theModule != NULL;
-        theModule = (struct defmodule *) EnvGetNextDefmodule(theCLIPSEnv,theModule))
+        theModule = GetNextDefmodule(theCLIPSEnv,theModule))
      { 
       theModuleItem = (struct deftemplateModule *) 
                    GetModuleItem(theCLIPSEnv,theModule,DeftemplateData(theCLIPSEnv)->DeftemplateModuleIndex);
 
       for (theDeftemplate = (struct deftemplate *) theModuleItem->header.firstItem;
            theDeftemplate != NULL;
-           theDeftemplate = (struct deftemplate *) EnvGetNextDeftemplate(theCLIPSEnv,theDeftemplate))
+           theDeftemplate = (struct deftemplate *) GetNextDeftemplate(theCLIPSEnv,theDeftemplate))
         { 
          if (theDeftemplate->factList != NULL)
            { 
@@ -103,11 +103,11 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getFactList(
    UDFValue slotValue;
    UDFValue defaultValue;
    char factNameBuffer[32]; 
-   void *theCLIPSEnv = JLongToPointer(clipsEnv);
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
    
-   for (factPtr = EnvGetNextFact(theCLIPSEnv,NULL);
+   for (factPtr = GetNextFact(theCLIPSEnv,NULL);
         factPtr != NULL;
-        factPtr = EnvGetNextFact(theCLIPSEnv,factPtr))
+        factPtr = GetNextFact(theCLIPSEnv,factPtr))
      { factCount++; }
      
    arrayList = (*env)->NewObject(env,
@@ -118,11 +118,11 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getFactList(
    if (arrayList == NULL)
      { return NULL; }
      
-   for (factPtr = EnvGetNextFact(theCLIPSEnv,NULL);
+   for (factPtr = GetNextFact(theCLIPSEnv,NULL);
         factPtr != NULL;
-        factPtr = EnvGetNextFact(theCLIPSEnv,factPtr))
+        factPtr = GetNextFact(theCLIPSEnv,factPtr))
      {
-      EnvFactSlotNames(theCLIPSEnv,factPtr,&slotNames);
+      FactSlotNames(theCLIPSEnv,factPtr,&slotNames);
    
       slotValueList = (*env)->NewObject(env,
                                         CLIPSJNIData(clipsEnv)->arrayListClass,
@@ -141,9 +141,9 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getFactList(
          
          FactSlotValue(theCLIPSEnv,factPtr,slotNames.multifieldValue->theFields[i].lexemeValue->contents,&temp);
          CLIPSToUDFValue(&temp,&slotValue);
-         if (DeftemplateSlotDefaultP(EnvFactDeftemplate(theCLIPSEnv,factPtr),theCSlotName) == STATIC_DEFAULT)
+         if (DeftemplateSlotDefaultP(FactDeftemplate(theCLIPSEnv,factPtr),theCSlotName) == STATIC_DEFAULT)
            {
-            DeftemplateSlotDefaultValue(EnvFactDeftemplate(theCLIPSEnv,factPtr),
+            DeftemplateSlotDefaultValue(FactDeftemplate(theCLIPSEnv,factPtr),
                                         theCSlotName,&temp);
             CLIPSToUDFValue(&temp,&defaultValue);
                              
@@ -171,7 +171,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getFactList(
            }
         }
 
-      sprintf(factNameBuffer,"f-%lld", EnvFactIndex(theCLIPSEnv,factPtr));
+      sprintf(factNameBuffer,"f-%lld", FactIndex(theCLIPSEnv,factPtr));
       
       factName = (*env)->NewStringUTF(env,factNameBuffer);
       factRelation = (*env)->NewStringUTF(env,factPtr->whichDeftemplate->header.name->contents);
@@ -217,7 +217,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_assertString(
    
    void *oldContext = SetEnvironmentContext(theCLIPSEnv,(void *) env);
 
-   theFact = EnvAssertString(theCLIPSEnv,(char *) cFactStr);
+   theFact = AssertString(theCLIPSEnv,(char *) cFactStr);
 
    (*env)->ReleaseStringUTFChars(env,factStr,cFactStr);
    
@@ -250,7 +250,7 @@ JNIEXPORT jlong JNICALL Java_net_sf_clipsrules_jni_Environment_factIndex(
    
    void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
 
-   rv = EnvFactIndex(JLongToPointer(clipsEnv),JLongToPointer(clipsFact));
+   rv = FactIndex(JLongToPointer(clipsEnv),JLongToPointer(clipsFact));
 
    SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
 
@@ -277,12 +277,12 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getFactSlot(
    jobject rv;
    CLIPSValue theDO;
    
-   void *theCLIPSEnv = JLongToPointer(clipsEnv);
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
    const char *cSlotName = (*env)->GetStringUTFChars(env,slotName,NULL);
 
    void *oldContext = SetEnvironmentContext(theCLIPSEnv,(void *) env);
    
-   EnvGetFactSlot(JLongToPointer(clipsEnv),JLongToPointer(clipsFact),(char *) cSlotName,&theDO);
+   GetFactSlot(JLongToPointer(clipsEnv),JLongToPointer(clipsFact),(char *) cSlotName,&theDO);
 
    (*env)->ReleaseStringUTFChars(env,slotName,cSlotName);
    
@@ -310,7 +310,7 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_incrementFactCount
   {
    void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
 
-   EnvIncrementFactCount(JLongToPointer(clipsEnv),JLongToPointer(clipsFact));
+   IncrementFactCount(JLongToPointer(clipsEnv),JLongToPointer(clipsFact));
    
    SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
   }
@@ -332,7 +332,7 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_decrementFactCount
   {
    void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
 
-   EnvDecrementFactCount(JLongToPointer(clipsEnv),JLongToPointer(clipsFact));
+   DecrementFactCount(JLongToPointer(clipsEnv),JLongToPointer(clipsFact));
    
    SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
   }
@@ -349,9 +349,9 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_getFactListCha
   jlong clipsEnv)
   {
    jboolean rv;
-   void *theCLIPSEnv = JLongToPointer(clipsEnv);
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
    
-   rv = EnvGetFactListChanged(theCLIPSEnv);
+   rv = GetFactListChanged(theCLIPSEnv);
    return rv;
   } 
 
@@ -367,9 +367,9 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_setFactListChanged
   jlong clipsEnv,
   jboolean value)
   {
-   void *theCLIPSEnv = JLongToPointer(clipsEnv);
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
    
-   EnvSetFactListChanged(theCLIPSEnv,value);
+   SetFactListChanged(theCLIPSEnv,value);
   }
   
 /************************************************************/
@@ -391,7 +391,7 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_loadFacts(
    
    void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
 
-   rv = EnvLoadFacts(JLongToPointer(clipsEnv),(char *) cFileName);
+   rv = LoadFacts(JLongToPointer(clipsEnv),(char *) cFileName);
    
    (*env)->ReleaseStringUTFChars(env,fileName,cFileName);
    
@@ -414,7 +414,7 @@ JNIEXPORT jstring JNICALL Java_net_sf_clipsrules_jni_Environment_getDeftemplateT
   jlong clipsEnv, 
   jlong deftemplateLong)
   {
-   void *deftemplatePtr = JLongToPointer(deftemplateLong);
+   Deftemplate *deftemplatePtr = JLongToPointer(deftemplateLong);
    const char *deftemplateText = NULL;
       
    if (deftemplatePtr != NULL)

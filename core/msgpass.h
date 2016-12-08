@@ -71,7 +71,7 @@ typedef struct messageHandlerLink
 
    bool             DirectMessage(Environment *,CLIPSLexeme *,Instance *,
                                   UDFValue *,Expression *);
-   void             EnvSend(Environment *,CLIPSValue *,const char *,const char *,CLIPSValue *);
+   void             Send(Environment *,CLIPSValue *,const char *,const char *,CLIPSValue *);
    void             DestroyHandlerLinks(Environment *,HANDLER_LINK *);
    void             SendCommand(Environment *,UDFContext *,UDFValue *);
    UDFValue      *GetNthMessageArgument(Environment *,int);

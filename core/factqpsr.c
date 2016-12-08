@@ -302,9 +302,9 @@ static Expression *ParseQueryRestrictions(
          if (tmp->value == queryInputToken->value)
            {
             PrintErrorID(theEnv,"FACTQPSR",1,false);
-            EnvPrintRouter(theEnv,WERROR,"Duplicate fact member variable name in function ");
-            EnvPrintRouter(theEnv,WERROR,ExpressionFunctionCallName(top)->contents);
-            EnvPrintRouter(theEnv,WERROR,".\n");
+            PrintRouter(theEnv,WERROR,"Duplicate fact member variable name in function ");
+            PrintRouter(theEnv,WERROR,ExpressionFunctionCallName(top)->contents);
+            PrintRouter(theEnv,WERROR,".\n");
             goto ParseQueryRestrictionsError2;
            }
 
@@ -490,9 +490,9 @@ static bool ParseQueryTestExpression(
       ClearParsedBindNames(theEnv);
       SetParsedBindNames(theEnv,oldBindList);
       PrintErrorID(theEnv,"FACTQPSR",2,false);
-      EnvPrintRouter(theEnv,WERROR,"Binds are not allowed in fact-set query in function ");
-      EnvPrintRouter(theEnv,WERROR,ExpressionFunctionCallName(top)->contents);
-      EnvPrintRouter(theEnv,WERROR,".\n");
+      PrintRouter(theEnv,WERROR,"Binds are not allowed in fact-set query in function ");
+      PrintRouter(theEnv,WERROR,ExpressionFunctionCallName(top)->contents);
+      PrintRouter(theEnv,WERROR,".\n");
       ReturnExpression(theEnv,top);
       return false;
      }
@@ -564,11 +564,11 @@ static bool ParseQueryActionExpression(
             ClearParsedBindNames(theEnv);
             SetParsedBindNames(theEnv,oldBindList);
             PrintErrorID(theEnv,"FACTQPSR",3,false);
-            EnvPrintRouter(theEnv,WERROR,"Cannot rebind fact-set member variable ");
-            EnvPrintRouter(theEnv,WERROR,tmpFactSetVars->lexemeValue->contents);
-            EnvPrintRouter(theEnv,WERROR," in function ");
-            EnvPrintRouter(theEnv,WERROR,ExpressionFunctionCallName(top)->contents);
-            EnvPrintRouter(theEnv,WERROR,".\n");
+            PrintRouter(theEnv,WERROR,"Cannot rebind fact-set member variable ");
+            PrintRouter(theEnv,WERROR,tmpFactSetVars->lexemeValue->contents);
+            PrintRouter(theEnv,WERROR," in function ");
+            PrintRouter(theEnv,WERROR,ExpressionFunctionCallName(top)->contents);
+            PrintRouter(theEnv,WERROR,".\n");
             ReturnExpression(theEnv,top);
             return false;
            }
@@ -633,8 +633,8 @@ static void ReplaceFactVariables(
            {
             bexp->type = FCALL;
             bexp->value = rindx_func;
-            eptr = GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,(long long) ndepth));
-            eptr->nextArg = GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,(long long) posn));
+            eptr = GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,(long long) ndepth));
+            eptr->nextArg = GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,(long long) posn));
             bexp->argList = eptr;
            }
          else if (sdirect == true)
@@ -708,9 +708,9 @@ static void ReplaceSlotReference(
             CloseStringSource(theEnv,"query-var");
             theExp->type = FCALL;
             theExp->value = func;
-            theExp->argList = GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,(long long) ndepth));
+            theExp->argList = GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,(long long) ndepth));
             theExp->argList->nextArg =
-              GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,(long long) posn));
+              GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,(long long) posn));
             theExp->argList->nextArg->nextArg = GenConstant(theEnv,TokenTypeToType(itkn.tknType),itkn.value);
             break;
            }

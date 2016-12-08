@@ -225,7 +225,7 @@ struct multifield *StringToMultifield(
           (theToken.tknType == INSTANCE_NAME_TOKEN))
         { theAtom = GenConstant(theEnv,TokenTypeToType(theToken.tknType),theToken.value); }
       else
-        { theAtom = GenConstant(theEnv,STRING_TYPE,EnvCreateString(theEnv,theToken.printForm)); }
+        { theAtom = GenConstant(theEnv,STRING_TYPE,CreateString(theEnv,theToken.printForm)); }
 
       numberOfFields++;
       if (topAtom == NULL) topAtom = theAtom;
@@ -241,7 +241,7 @@ struct multifield *StringToMultifield(
    /* Create a multifield of the appropriate size for the values parsed. */
    /*====================================================================*/
 
-   theSegment = EnvCreateMultifield(theEnv,numberOfFields);
+   theSegment = CreateMultifield(theEnv,numberOfFields);
    theFields = theSegment->theFields;
 
    /*====================================*/
@@ -270,10 +270,10 @@ struct multifield *StringToMultifield(
    return(theSegment);
   }
 
-/*************************/
-/* EnvArrayToMultifield: */
-/*************************/
-Multifield *EnvArrayToMultifield(
+/**********************/
+/* ArrayToMultifield: */
+/**********************/
+Multifield *ArrayToMultifield(
   Environment *theEnv,
   CLIPSValue *theArray,
   long size)
@@ -281,7 +281,7 @@ Multifield *EnvArrayToMultifield(
    Multifield *rv;
    int i;
    
-   rv = EnvCreateMultifield(theEnv,size);
+   rv = CreateMultifield(theEnv,size);
    
    for (i = 0; i < size; i++)
      { rv->theFields[i].value = theArray[i].value; }
@@ -289,11 +289,11 @@ Multifield *EnvArrayToMultifield(
    return rv;
   }
 
-/**************************************************************/
-/* EnvCreateMultifield: Creates a multifield of the specified */
-/*   size and adds it to the list of segments.                */
-/**************************************************************/
-Multifield *EnvCreateMultifield(
+/***********************************************************/
+/* CreateMultifield: Creates a multifield of the specified */
+/*   size and adds it to the list of segments.             */
+/***********************************************************/
+Multifield *CreateMultifield(
   Environment *theEnv,
   long size)
   {
@@ -421,7 +421,7 @@ void NormalizeMultifield(
        (theMF->range == theMF->multifieldValue->length))
      { return; }
 
-   copy = EnvCreateMultifield(theEnv,theMF->range);
+   copy = CreateMultifield(theEnv,theMF->range);
    GenCopyMemory(struct field,theMF->range,&copy->theFields[0],
                  &theMF->multifieldValue->theFields[theMF->begin]);
    theMF->begin = 0;
@@ -495,16 +495,16 @@ void PrintMultifield(
 
    theMultifield = segment->theFields;
    if (printParens)
-     EnvPrintRouter(theEnv,fileid,"(");
+     PrintRouter(theEnv,fileid,"(");
    i = begin;
    while (i <= end)
      {
       PrintAtom(theEnv,fileid,theMultifield[i].header->type,theMultifield[i].value);
       i++;
-      if (i <= end) EnvPrintRouter(theEnv,fileid," ");
+      if (i <= end) PrintRouter(theEnv,fileid," ");
      }
    if (printParens)
-     EnvPrintRouter(theEnv,fileid,")");
+     PrintRouter(theEnv,fileid,")");
   }
 
 /****************************************************/
@@ -534,7 +534,7 @@ void StoreInMultifield(
      {
       returnValue->begin = 0;
       returnValue->range = 0;
-      if (garbageSegment) theMultifield = EnvCreateMultifield(theEnv,0L);
+      if (garbageSegment) theMultifield = CreateMultifield(theEnv,0L);
       else theMultifield = CreateUnmanagedMultifield(theEnv,0L);
       returnValue->value = theMultifield;
       return;
@@ -557,7 +557,7 @@ void StoreInMultifield(
             returnValue->begin = 0;
             returnValue->range = 0;
             if (garbageSegment)
-              { theMultifield = EnvCreateMultifield(theEnv,0L); }
+              { theMultifield = CreateMultifield(theEnv,0L); }
             else theMultifield = CreateUnmanagedMultifield(theEnv,0L);
             returnValue->value = theMultifield;
             rm3(theEnv,val_arr,(long) sizeof(UDFValue) * argCount);
@@ -588,7 +588,7 @@ void StoreInMultifield(
         }
 
       if (garbageSegment)
-        { theMultifield = EnvCreateMultifield(theEnv,seg_size); }
+        { theMultifield = CreateMultifield(theEnv,seg_size); }
       else theMultifield = CreateUnmanagedMultifield(theEnv,seg_size);
 
       /*========================================*/
@@ -861,7 +861,7 @@ CLIPSLexeme *ImplodeMultifield(
    /* of the MULTIFIELD_TYPE variable to it.           */
    /*=============================================*/
 
-   if (strsize == 0) return(EnvCreateString(theEnv,""));
+   if (strsize == 0) return(CreateString(theEnv,""));
    ret_str = (char *) gm2(theEnv,strsize);
    for(j = 0, i = value->begin ; i < (value->begin + value->range) ; i++)
      {
@@ -960,7 +960,7 @@ CLIPSLexeme *ImplodeMultifield(
    /* Return the string. */
    /*====================*/
 
-   rv = EnvCreateString(theEnv,ret_str);
+   rv = CreateString(theEnv,ret_str);
    rm(theEnv,ret_str,strsize);
    return rv;
   }

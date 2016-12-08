@@ -458,11 +458,11 @@ void ReadNeededSymbols(
    for (i = 0; i < SymbolData(theEnv)->NumberOfSymbols; i++)
      {
       if (types[i] == SYMBOL_TYPE)
-        { SymbolData(theEnv)->SymbolArray[i] = EnvCreateSymbol(theEnv,namePtr); }
+        { SymbolData(theEnv)->SymbolArray[i] = CreateSymbol(theEnv,namePtr); }
       else if (types[i] == STRING_TYPE)
-        { SymbolData(theEnv)->SymbolArray[i] = EnvCreateString(theEnv,namePtr); }
+        { SymbolData(theEnv)->SymbolArray[i] = CreateString(theEnv,namePtr); }
       else
-        { SymbolData(theEnv)->SymbolArray[i] = EnvCreateInstanceName(theEnv,namePtr); }
+        { SymbolData(theEnv)->SymbolArray[i] = CreateInstanceName(theEnv,namePtr); }
 
       namePtr += strlen(namePtr) + 1;
      }
@@ -510,7 +510,7 @@ void ReadNeededFloats(
    SymbolData(theEnv)->FloatArray = (CLIPSFloat **)
                gm3(theEnv,(long) sizeof(CLIPSFloat *) * SymbolData(theEnv)->NumberOfFloats);
    for (i = 0; i < SymbolData(theEnv)->NumberOfFloats; i++)
-     { SymbolData(theEnv)->FloatArray[i] = EnvCreateFloat(theEnv,floatValues[i]); }
+     { SymbolData(theEnv)->FloatArray[i] = CreateFloat(theEnv,floatValues[i]); }
 
    /*========================*/
    /* Free the float buffer. */
@@ -554,7 +554,7 @@ void ReadNeededIntegers(
    SymbolData(theEnv)->IntegerArray = (CLIPSInteger **)
            gm3(theEnv,(long) (sizeof(CLIPSInteger *) * SymbolData(theEnv)->NumberOfIntegers));
    for (i = 0; i < SymbolData(theEnv)->NumberOfIntegers; i++)
-     { SymbolData(theEnv)->IntegerArray[i] = EnvCreateInteger(theEnv,integerValues[i]); }
+     { SymbolData(theEnv)->IntegerArray[i] = CreateInteger(theEnv,integerValues[i]); }
 
    /*==========================*/
    /* Free the integer buffer. */
@@ -605,7 +605,7 @@ static void ReadNeededBitMaps(
    for (i = 0; i < SymbolData(theEnv)->NumberOfBitMaps; i++)
      {
       tempSize = (unsigned short *) bitMapPtr;
-      SymbolData(theEnv)->BitMapArray[i] = (CLIPSBitMap *) EnvAddBitMap(theEnv,bitMapPtr+sizeof(unsigned short),*tempSize);
+      SymbolData(theEnv)->BitMapArray[i] = (CLIPSBitMap *) AddBitMap(theEnv,bitMapPtr+sizeof(unsigned short),*tempSize);
       bitMapPtr += *tempSize + sizeof(unsigned short);
      }
 

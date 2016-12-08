@@ -150,25 +150,25 @@ void MultifieldFunctionDefinitions(
    AllocateEnvironmentData(theEnv,MULTIFUN_DATA,sizeof(struct multiFunctionData),NULL);
 
 #if ! RUN_TIME
-   EnvAddUDF(theEnv,"first$","m",1,1,"m",FirstFunction,"FirstFunction",NULL);
-   EnvAddUDF(theEnv,"rest$","m",1,1,"m",RestFunction,"RestFunction",NULL);
-   EnvAddUDF(theEnv,"subseq$","m",3,3,"l;m",SubseqFunction,"SubseqFunction",NULL);
-   EnvAddUDF(theEnv,"delete-member$","m",2,UNBOUNDED,"*;m",DeleteMemberFunction,"DeleteMemberFunction",NULL);
-   EnvAddUDF(theEnv,"replace-member$","m",3,UNBOUNDED,"*;m",ReplaceMemberFunction,"ReplaceMemberFunction",NULL);
-   EnvAddUDF(theEnv,"delete$","m",3,3,"l;m",DeleteFunction,"DeleteFunction",NULL);
-   EnvAddUDF(theEnv,"replace$","m",4,UNBOUNDED,"*;m;l;l",ReplaceFunction,"ReplaceFunction",NULL);
-   EnvAddUDF(theEnv,"insert$","m",3,UNBOUNDED,"*;m;l",InsertFunction,"InsertFunction",NULL);
-   EnvAddUDF(theEnv,"explode$","m",1,1,"s",ExplodeFunction,"ExplodeFunction",NULL);
-   EnvAddUDF(theEnv,"implode$","s",1,1,"m",ImplodeFunction,"ImplodeFunction",NULL);
-   EnvAddUDF(theEnv,"nth$","synldife",2,2,";l;m",NthFunction,"NthFunction",NULL);
-   EnvAddUDF(theEnv,"member$","blm",2,2,";*;m",MemberFunction,"MemberFunction",NULL);
-   EnvAddUDF(theEnv,"subsetp","b",2,2,";m;m",SubsetpFunction,"SubsetpFunction",NULL);
-   EnvAddUDF(theEnv,"progn$","*",0,UNBOUNDED,NULL,MultifieldPrognFunction,"MultifieldPrognFunction",NULL);
-   EnvAddUDF(theEnv,"foreach","*",0,UNBOUNDED,NULL,ForeachFunction,"ForeachFunction",NULL);
+   AddUDF(theEnv,"first$","m",1,1,"m",FirstFunction,"FirstFunction",NULL);
+   AddUDF(theEnv,"rest$","m",1,1,"m",RestFunction,"RestFunction",NULL);
+   AddUDF(theEnv,"subseq$","m",3,3,"l;m",SubseqFunction,"SubseqFunction",NULL);
+   AddUDF(theEnv,"delete-member$","m",2,UNBOUNDED,"*;m",DeleteMemberFunction,"DeleteMemberFunction",NULL);
+   AddUDF(theEnv,"replace-member$","m",3,UNBOUNDED,"*;m",ReplaceMemberFunction,"ReplaceMemberFunction",NULL);
+   AddUDF(theEnv,"delete$","m",3,3,"l;m",DeleteFunction,"DeleteFunction",NULL);
+   AddUDF(theEnv,"replace$","m",4,UNBOUNDED,"*;m;l;l",ReplaceFunction,"ReplaceFunction",NULL);
+   AddUDF(theEnv,"insert$","m",3,UNBOUNDED,"*;m;l",InsertFunction,"InsertFunction",NULL);
+   AddUDF(theEnv,"explode$","m",1,1,"s",ExplodeFunction,"ExplodeFunction",NULL);
+   AddUDF(theEnv,"implode$","s",1,1,"m",ImplodeFunction,"ImplodeFunction",NULL);
+   AddUDF(theEnv,"nth$","synldife",2,2,";l;m",NthFunction,"NthFunction",NULL);
+   AddUDF(theEnv,"member$","blm",2,2,";*;m",MemberFunction,"MemberFunction",NULL);
+   AddUDF(theEnv,"subsetp","b",2,2,";m;m",SubsetpFunction,"SubsetpFunction",NULL);
+   AddUDF(theEnv,"progn$","*",0,UNBOUNDED,NULL,MultifieldPrognFunction,"MultifieldPrognFunction",NULL);
+   AddUDF(theEnv,"foreach","*",0,UNBOUNDED,NULL,ForeachFunction,"ForeachFunction",NULL);
    FuncSeqOvlFlags(theEnv,"progn$",false,false);
    FuncSeqOvlFlags(theEnv,"foreach",false,false);
-   EnvAddUDF(theEnv,"(get-progn$-field)","*",0,0,NULL,GetMvPrognField,"GetMvPrognField",NULL);
-   EnvAddUDF(theEnv,"(get-progn$-index)","l",0,0,NULL,GetMvPrognIndex,"GetMvPrognIndex",NULL);
+   AddUDF(theEnv,"(get-progn$-field)","*",0,0,NULL,GetMvPrognField,"GetMvPrognField",NULL);
+   AddUDF(theEnv,"(get-progn$-index)","l",0,0,NULL,GetMvPrognIndex,"GetMvPrognIndex",NULL);
 #endif
 
 #if ! BLOAD_ONLY
@@ -205,8 +205,8 @@ void DeleteFunction(
                              (long) value2.integerValue->contents,
                              (long) value3.integerValue->contents,"delete$") == false)/* TBD */
      {
-      EnvSetEvaluationError(theEnv,true);
-      EnvSetMultifieldErrorValue(theEnv,returnValue);
+      SetEvaluationError(theEnv,true);
+      SetMultifieldErrorValue(theEnv,returnValue);
      }
   }
 
@@ -248,8 +248,8 @@ void ReplaceFunction(
    if (ReplaceMultiValueField(theEnv,returnValue,&value1,(long) value2.integerValue->contents,
                    (long) value3.integerValue->contents,&value4,"replace$") == false) /* TBD */
      {
-      EnvSetEvaluationError(theEnv,true);
-      EnvSetMultifieldErrorValue(theEnv,returnValue);
+      SetEvaluationError(theEnv,true);
+      SetMultifieldErrorValue(theEnv,returnValue);
      }
   }
 
@@ -302,8 +302,8 @@ void DeleteMemberFunction(
                                 j,k,"delete-member$") == false)
         {
          rm(theEnv,delVals,delSize);
-         EnvSetEvaluationError(theEnv,true);
-         EnvSetMultifieldErrorValue(theEnv,returnValue);
+         SetEvaluationError(theEnv,true);
+         SetMultifieldErrorValue(theEnv,returnValue);
          return;
         }
       GenCopyMemory(UDFValue,1,&resultValue,&tmpVal);
@@ -369,8 +369,8 @@ void ReplaceMemberFunction(
                                  &replVal,"replace-member$") == false)
         {
          rm(theEnv,delVals,delSize);
-         EnvSetEvaluationError(theEnv,true);
-         EnvSetMultifieldErrorValue(theEnv,returnValue);
+         SetEvaluationError(theEnv,true);
+         SetMultifieldErrorValue(theEnv,returnValue);
          return;
         }
       GenCopyMemory(UDFValue,1,&resultValue,&tmpVal);
@@ -419,8 +419,8 @@ void InsertFunction(
    if (InsertMultiValueField(theEnv,returnValue,&value1,(long) value2.integerValue->contents, /* TBD */
                              &value3,"insert$") == false)
      {
-      EnvSetEvaluationError(theEnv,true);
-      EnvSetMultifieldErrorValue(theEnv,returnValue);
+      SetEvaluationError(theEnv,true);
+      SetMultifieldErrorValue(theEnv,returnValue);
      }
   }
 
@@ -451,7 +451,7 @@ void ExplodeFunction(
    theMultifield = StringToMultifield(theEnv,value.lexemeValue->contents);
    if (theMultifield == NULL)
      {
-      theMultifield = EnvCreateMultifield(theEnv,0L);
+      theMultifield = CreateMultifield(theEnv,0L);
       end = 0;
      }
    else
@@ -531,7 +531,7 @@ void SubseqFunction(
 
    if ((end < 1) || (end < start))
      {
-      EnvSetMultifieldErrorValue(theEnv,returnValue);
+      SetMultifieldErrorValue(theEnv,returnValue);
       return;
      }
 
@@ -541,7 +541,7 @@ void SubseqFunction(
 
    if (start > length)
      {
-      EnvSetMultifieldErrorValue(theEnv,returnValue);
+      SetMultifieldErrorValue(theEnv,returnValue);
       return;
      }
    if (end > length) end = length;
@@ -646,7 +646,7 @@ void NthFunction(
    n = value1.integerValue->contents; /* 6.04 Bug Fix */
    if ((n > value2.range) || (n < 1))
 	 {
-      returnValue->lexemeValue = EnvCreateSymbol(theEnv,"nil");
+      returnValue->lexemeValue = CreateSymbol(theEnv,"nil");
 	  return;
 	 }
 
@@ -737,13 +737,13 @@ void MemberFunction(
      {
       if (j == k)
         {
-         returnValue->integerValue = EnvCreateInteger(theEnv,j);
+         returnValue->integerValue = CreateInteger(theEnv,j);
         }
       else
         {
-         returnValue->value = EnvCreateMultifield(theEnv,2);
-         returnValue->multifieldValue->theFields[0].integerValue = EnvCreateInteger(theEnv,j);
-         returnValue->multifieldValue->theFields[1].integerValue = EnvCreateInteger(theEnv,k);
+         returnValue->value = CreateMultifield(theEnv,2);
+         returnValue->multifieldValue->theFields[0].integerValue = CreateInteger(theEnv,j);
+         returnValue->multifieldValue->theFields[1].integerValue = CreateInteger(theEnv,k);
          returnValue->begin = 0;
          returnValue->range = 2;
         }
@@ -924,7 +924,7 @@ static struct expr *MultifieldPrognParser(
          ClearParsedBindNames(theEnv);
          SetParsedBindNames(theEnv,oldBindList);
          PrintErrorID(theEnv,"MULTIFUN",2,false);
-         EnvPrintRouter(theEnv,WERROR,"Cannot rebind field variable in function progn$.\n");
+         PrintRouter(theEnv,WERROR,"Cannot rebind field variable in function progn$.\n");
          ReturnExpression(theEnv,top);
          return NULL;
         }
@@ -1008,7 +1008,7 @@ static struct expr *ForeachParser(
          ClearParsedBindNames(theEnv);
          SetParsedBindNames(theEnv,oldBindList);
          PrintErrorID(theEnv,"MULTIFUN",2,false);
-         EnvPrintRouter(theEnv,WERROR,"Cannot rebind field variable in function foreach.\n");
+         PrintRouter(theEnv,WERROR,"Cannot rebind field variable in function foreach.\n");
          ReturnExpression(theEnv,top);
          return NULL;
         }
@@ -1052,13 +1052,13 @@ static void ReplaceMvPrognFieldVars(
            {
             theExp->type = FCALL;
             theExp->value = FindFunction(theEnv,"(get-progn$-field)");
-            theExp->argList = GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,(long long) depth));
+            theExp->argList = GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,(long long) depth));
            }
          else if (strcmp(theExp->lexemeValue->contents + flen,"-index") == 0)
            {
             theExp->type = FCALL;
             theExp->value = FindFunction(theEnv,"(get-progn$-index)");
-            theExp->argList = GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,(long long) depth));
+            theExp->argList = GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,(long long) depth));
            }
         }
       else if (theExp->argList != NULL)
@@ -1215,7 +1215,7 @@ void GetMvPrognIndex(
       tmpField = tmpField->nxt;
       depth--;
      }
-   returnValue->integerValue = EnvCreateInteger(theEnv,tmpField->index);
+   returnValue->integerValue = CreateInteger(theEnv,tmpField->index);
   }
 
 #endif /* MULTIFIELD_FUNCTIONS */
@@ -1267,7 +1267,7 @@ bool ReplaceMultiValueField(
    else
 	 dstlen = srclen + 1 - (re-rb+1);
    dst->begin = 0;
-   dst->value = EnvCreateMultifield(theEnv,dstlen);
+   dst->value = CreateMultifield(theEnv,dstlen);
    dst->range = dstlen;
    for (i = 0 , j = src->begin ; j < rb ; i++ , j++)
 	 {
@@ -1345,7 +1345,7 @@ bool InsertMultiValueField(
         }
       else
         {
-         dst->value = EnvCreateMultifield(theEnv,0L);
+         dst->value = CreateMultifield(theEnv,0L);
          dst->range = 1;
          deptr = &dst->multifieldValue->theFields[0];
          deptr->value = field->value;
@@ -1353,7 +1353,7 @@ bool InsertMultiValueField(
       return true;
      }
    dstlen = (field->header->type == MULTIFIELD_TYPE) ? field->range + srclen : srclen + 1;
-   dst->value = EnvCreateMultifield(theEnv,dstlen);
+   dst->value = CreateMultifield(theEnv,dstlen);
    dst->range = dstlen;
    theIndex--;
    for (i = 0 , j = src->begin ; i < theIndex ; i++ , j++)
@@ -1407,24 +1407,24 @@ static void MVRangeError(
   const char *funcName)
   {
    PrintErrorID(theEnv,"MULTIFUN",1,false);
-   EnvPrintRouter(theEnv,WERROR,"Multifield index ");
+   PrintRouter(theEnv,WERROR,"Multifield index ");
    if (brb == bre)
      PrintLongInteger(theEnv,WERROR,(long long) brb);
    else
      {
-      EnvPrintRouter(theEnv,WERROR,"range ");
+      PrintRouter(theEnv,WERROR,"range ");
       PrintLongInteger(theEnv,WERROR,(long long) brb);
-      EnvPrintRouter(theEnv,WERROR,"..");
+      PrintRouter(theEnv,WERROR,"..");
       PrintLongInteger(theEnv,WERROR,(long long) bre);
      }
-   EnvPrintRouter(theEnv,WERROR," out of range 1..");
+   PrintRouter(theEnv,WERROR," out of range 1..");
    PrintLongInteger(theEnv,WERROR,(long long) max);
    if (funcName != NULL)
      {
-      EnvPrintRouter(theEnv,WERROR," in function ");
-      EnvPrintRouter(theEnv,WERROR,funcName);
+      PrintRouter(theEnv,WERROR," in function ");
+      PrintRouter(theEnv,WERROR,funcName);
      }
-   EnvPrintRouter(theEnv,WERROR,".\n");
+   PrintRouter(theEnv,WERROR,".\n");
   }
 
 /**************************************************************************
@@ -1465,7 +1465,7 @@ bool DeleteMultiValueField(
    dst->begin = 0;
    if (srclen == 0)
     {
-     dst->value = EnvCreateMultifield(theEnv,0L);
+     dst->value = CreateMultifield(theEnv,0L);
      dst->range = 0;
      return true;
     }
@@ -1473,7 +1473,7 @@ bool DeleteMultiValueField(
    re = src->begin + re -1;
    dstlen = srclen-(re-rb+1);
    dst->range = dstlen;
-   dst->value = EnvCreateMultifield(theEnv,dstlen);
+   dst->value = CreateMultifield(theEnv,dstlen);
    for (i = 0 , j = src->begin ; j < rb ; i++ , j++)
      {
       deptr = &dst->multifieldValue->theFields[i];

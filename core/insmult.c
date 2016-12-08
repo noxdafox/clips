@@ -103,12 +103,12 @@ void SetupInstanceMultifieldCommands(
   Environment *theEnv)
   {
 #if (! RUN_TIME)
-   EnvAddUDF(theEnv,"slot-direct-replace$","b",4,UNBOUNDED,"*;y;l;l",DirectMVReplaceCommand,"DirectMVReplaceCommand",NULL);
-   EnvAddUDF(theEnv,"slot-direct-insert$","b",3,UNBOUNDED,"*;y;l",DirectMVInsertCommand,"DirectMVInsertCommand",NULL);
-   EnvAddUDF(theEnv,"slot-direct-delete$","b",3,3,"l;y",DirectMVDeleteCommand,"DirectMVDeleteCommand",NULL);
-   EnvAddUDF(theEnv,"slot-replace$","*",5,UNBOUNDED,"*;iny;y;l;l",MVSlotReplaceCommand,"MVSlotReplaceCommand",NULL);
-   EnvAddUDF(theEnv,"slot-insert$","*",4,UNBOUNDED,"*;iny;y;l",MVSlotInsertCommand,"MVSlotInsertCommand",NULL);
-   EnvAddUDF(theEnv,"slot-delete$","*",4,4,"l;iny;y",MVSlotDeleteCommand,"MVSlotDeleteCommand",NULL);
+   AddUDF(theEnv,"slot-direct-replace$","b",4,UNBOUNDED,"*;y;l;l",DirectMVReplaceCommand,"DirectMVReplaceCommand",NULL);
+   AddUDF(theEnv,"slot-direct-insert$","b",3,UNBOUNDED,"*;y;l",DirectMVInsertCommand,"DirectMVInsertCommand",NULL);
+   AddUDF(theEnv,"slot-direct-delete$","b",3,3,"l;y",DirectMVDeleteCommand,"DirectMVDeleteCommand",NULL);
+   AddUDF(theEnv,"slot-replace$","*",5,UNBOUNDED,"*;iny;y;l;l",MVSlotReplaceCommand,"MVSlotReplaceCommand",NULL);
+   AddUDF(theEnv,"slot-insert$","*",4,UNBOUNDED,"*;iny;y;l",MVSlotInsertCommand,"MVSlotInsertCommand",NULL);
+   AddUDF(theEnv,"slot-delete$","*",4,4,"l;iny;y",MVSlotDeleteCommand,"MVSlotDeleteCommand",NULL);
 #endif
   }
 
@@ -406,7 +406,7 @@ static Instance *CheckMultifieldSlotInstance(
       if (ins->garbage == 1)
         {
          StaleInstanceAddress(theEnv,UDFContextFunctionName(context),0);
-         EnvSetEvaluationError(theEnv,true);
+         SetEvaluationError(theEnv,true);
          return NULL;
         }
      }
@@ -467,7 +467,7 @@ static InstanceSlot *CheckMultifieldSlotModify(
    if (temp.header->type != SYMBOL_TYPE)
      {
       ExpectedTypeError1(theEnv,func,start,"symbol");
-      EnvSetEvaluationError(theEnv,true);
+      SetEvaluationError(theEnv,true);
       return NULL;
      }
    sp = FindInstanceSlot(theEnv,ins,temp.lexemeValue);
@@ -479,21 +479,21 @@ static InstanceSlot *CheckMultifieldSlotModify(
    if (sp->desc->multiple == 0)
      {
       PrintErrorID(theEnv,"INSMULT",1,false);
-      EnvPrintRouter(theEnv,WERROR,"Function ");
-      EnvPrintRouter(theEnv,WERROR,func);
-      EnvPrintRouter(theEnv,WERROR," cannot be used on single-field slot ");
-      EnvPrintRouter(theEnv,WERROR,sp->desc->slotName->name->contents);
-      EnvPrintRouter(theEnv,WERROR," in instance ");
-      EnvPrintRouter(theEnv,WERROR,ins->name->contents);
-      EnvPrintRouter(theEnv,WERROR,".\n");
-      EnvSetEvaluationError(theEnv,true);
+      PrintRouter(theEnv,WERROR,"Function ");
+      PrintRouter(theEnv,WERROR,func);
+      PrintRouter(theEnv,WERROR," cannot be used on single-field slot ");
+      PrintRouter(theEnv,WERROR,sp->desc->slotName->name->contents);
+      PrintRouter(theEnv,WERROR," in instance ");
+      PrintRouter(theEnv,WERROR,ins->name->contents);
+      PrintRouter(theEnv,WERROR,".\n");
+      SetEvaluationError(theEnv,true);
       return NULL;
      }
    EvaluateExpression(theEnv,args->nextArg,&temp);
    if (temp.header->type != INTEGER_TYPE)
      {
       ExpectedTypeError1(theEnv,func,start+1,"integer");
-      EnvSetEvaluationError(theEnv,true);
+      SetEvaluationError(theEnv,true);
       return NULL;
      }
    args = args->nextArg->nextArg;
@@ -504,7 +504,7 @@ static InstanceSlot *CheckMultifieldSlotModify(
       if (temp.header->type != INTEGER_TYPE)
         {
          ExpectedTypeError1(theEnv,func,start+2,"integer");
-         EnvSetEvaluationError(theEnv,true);
+         SetEvaluationError(theEnv,true);
          return NULL;
         }
       *re = (long) temp.integerValue->contents;

@@ -547,11 +547,11 @@ bool genrename(
    return true;
   }
 
-/**************************************/
-/* EnvSetBeforeOpenFunction: Sets the */
-/*  value of BeforeOpenFunction.      */
-/**************************************/
-int (*EnvSetBeforeOpenFunction(Environment *theEnv,
+/***********************************/
+/* SetBeforeOpenFunction: Sets the */
+/*  value of BeforeOpenFunction.   */
+/***********************************/
+int (*SetBeforeOpenFunction(Environment *theEnv,
                                int (*theFunction)(Environment *)))(Environment *)
   {
    int (*tempFunction)(Environment *);
@@ -561,11 +561,11 @@ int (*EnvSetBeforeOpenFunction(Environment *theEnv,
    return(tempFunction);
   }
 
-/*************************************/
-/* EnvSetAfterOpenFunction: Sets the */
-/*  value of AfterOpenFunction.      */
-/*************************************/
-int (*EnvSetAfterOpenFunction(Environment *theEnv,
+/**********************************/
+/* SetAfterOpenFunction: Sets the */
+/*  value of AfterOpenFunction.   */
+/**********************************/
+int (*SetAfterOpenFunction(Environment *theEnv,
                               int (*theFunction)(Environment *)))(Environment *)
   {
    int (*tempFunction)(Environment *);

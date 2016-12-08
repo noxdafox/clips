@@ -59,8 +59,8 @@
 
 #include "entities.h"
 
-   bool                           EnvBuild(Environment *,const char *);
-   bool                           EnvEval(Environment *,const char *,CLIPSValue *);
+   bool                           Build(Environment *,const char *);
+   bool                           Eval(Environment *,const char *,CLIPSValue *);
    void                           StringFunctionDefinitions(Environment *);
    void                           StrCatFunction(Environment *,UDFContext *,UDFValue *);
    void                           SymCatFunction(Environment *,UDFContext *,UDFValue *);

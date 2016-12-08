@@ -94,13 +94,13 @@
    static bool                    FindConstructBeginning(Environment *,const char *,struct token *,bool,bool *);
 
 /************************************************************/
-/* EnvLoad: C access routine for the load command. Returns  */
+/* Load: C access routine for the load command. Returns     */
 /*   0 if the file couldn't be opened, -1 if the file was   */
 /*   opened but an error occurred while loading constructs, */
 /*   and 1 if the file was opened and no errors occured     */
 /*   while loading.                                         */
 /************************************************************/
-int EnvLoad(
+int Load(
   Environment *theEnv,
   const char *fileName)
   {
@@ -123,12 +123,12 @@ int EnvLoad(
 
    SetFastLoad(theEnv,theFile);
 
-   oldParsingFileName = CopyString(theEnv,EnvGetParsingFileName(theEnv));
-   EnvSetParsingFileName(theEnv,fileName);
+   oldParsingFileName = CopyString(theEnv,GetParsingFileName(theEnv));
+   SetParsingFileName(theEnv,fileName);
 
    noErrorsDetected = LoadConstructsFromLogicalName(theEnv,(char *) theFile);
 
-   EnvSetParsingFileName(theEnv,oldParsingFileName);
+   SetParsingFileName(theEnv,oldParsingFileName);
    DeleteString(theEnv,oldParsingFileName);
 
    SetFastLoad(theEnv,NULL);
@@ -150,11 +150,11 @@ int EnvLoad(
    return -1;
   }
 
-/*******************************************************/
-/* EnvSetParsingFileName: Sets the file name currently */
-/*   being parsed by the load/batch command.           */
-/*******************************************************/
-void EnvSetParsingFileName(
+/****************************************************/
+/* SetParsingFileName: Sets the file name currently */
+/*   being parsed by the load/batch command.        */
+/****************************************************/
+void SetParsingFileName(
   Environment *theEnv,
   const char *fileName)
   {
@@ -174,21 +174,21 @@ void EnvSetParsingFileName(
    ConstructData(theEnv)->ParsingFileName = fileNameCopy;
   }
 
-/**********************************************************/
-/* EnvGetParsingFileName: Returns the file name currently */
-/*   being parsed by the load/batch command.              */
-/**********************************************************/
-char *EnvGetParsingFileName(
+/*******************************************************/
+/* GetParsingFileName: Returns the file name currently */
+/*   being parsed by the load/batch command.           */
+/*******************************************************/
+char *GetParsingFileName(
   Environment *theEnv)
   {
    return ConstructData(theEnv)->ParsingFileName;
   }
 
 /**********************************************/
-/* EnvSetErrorFileName: Sets the file name    */
+/* SetErrorFileName: Sets the file name       */
 /*   associated with the last error detected. */
 /**********************************************/
-void EnvSetErrorFileName(
+void SetErrorFileName(
   Environment *theEnv,
   const char *fileName)
   {
@@ -209,20 +209,20 @@ void EnvSetErrorFileName(
   }
 
 /**********************************************/
-/* EnvGetErrorFileName: Returns the file name */
+/* GetErrorFileName: Returns the file name    */
 /*   associated with the last error detected. */
 /**********************************************/
-char *EnvGetErrorFileName(
+char *GetErrorFileName(
   Environment *theEnv)
   {
    return ConstructData(theEnv)->ErrorFileName;
   }
 
 /************************************************/
-/* EnvSetWarningFileName: Sets the file name    */
+/* SetWarningFileName: Sets the file name       */
 /*   associated with the last warning detected. */
 /************************************************/
-void EnvSetWarningFileName(
+void SetWarningFileName(
   Environment *theEnv,
   const char *fileName)
   {
@@ -243,10 +243,10 @@ void EnvSetWarningFileName(
   }
 
 /************************************************/
-/* EnvGetWarningFileName: Returns the file name */
+/* GetWarningFileName: Returns the file name    */
 /*   associated with the last warning detected. */
 /************************************************/
-char *EnvGetWarningFileName(
+char *GetWarningFileName(
   Environment *theEnv)
   {
    return ConstructData(theEnv)->WarningFileName;
@@ -287,8 +287,8 @@ int LoadConstructsFromLogicalName(
    /* error flags in preparation for parsing. */
    /*=========================================*/
 
-   if (UtilityData(theEnv)->CurrentGarbageFrame->topLevel) EnvSetHaltExecution(theEnv,false);
-   EnvSetEvaluationError(theEnv,false);
+   if (UtilityData(theEnv)->CurrentGarbageFrame->topLevel) SetHaltExecution(theEnv,false);
+   SetEvaluationError(theEnv,false);
 
    /*==========================================*/
    /* Set up the frame for garbage collection. */
@@ -307,7 +307,7 @@ int LoadConstructsFromLogicalName(
    /* Parse the file until the end of file is reached. */
    /*==================================================*/
 
-   while ((foundConstruct == true) && (EnvGetHaltExecution(theEnv) == false))
+   while ((foundConstruct == true) && (GetHaltExecution(theEnv) == false))
      {
       /*===========================================================*/
       /* Clear the pretty print buffer in preparation for parsing. */
@@ -330,9 +330,9 @@ int LoadConstructsFromLogicalName(
 
       if (constructFlag == 1)
         {
-         EnvPrintRouter(theEnv,WERROR,"\nERROR:\n");
+         PrintRouter(theEnv,WERROR,"\nERROR:\n");
          PrintInChunks(theEnv,WERROR,GetPPBuffer(theEnv));
-         EnvPrintRouter(theEnv,WERROR,"\n");
+         PrintRouter(theEnv,WERROR,"\n");
 
          FlushParsingMessages(theEnv);
 
@@ -374,11 +374,11 @@ int LoadConstructsFromLogicalName(
    /*========================================================*/
 
 #if DEBUGGING_FUNCTIONS
-   if ((EnvGetWatchItem(theEnv,"compilations") != 1) && GetPrintWhileLoading(theEnv))
+   if ((GetWatchItem(theEnv,"compilations") != 1) && GetPrintWhileLoading(theEnv))
 #else
    if (GetPrintWhileLoading(theEnv))
 #endif
-     { EnvPrintRouter(theEnv,WDIALOG,"\n"); }
+     { PrintRouter(theEnv,WDIALOG,"\n"); }
 
    /*=============================================================*/
    /* Once the load is complete, destroy the pretty print buffer. */
@@ -478,7 +478,7 @@ static bool FindConstructBeginning(
             errorCorrection = true;
             *noErrors = false;
             PrintErrorID(theEnv,"CSTRCPSR",1,true);
-            EnvPrintRouter(theEnv,WERROR,"Expected the beginning of a construct.\n");
+            PrintRouter(theEnv,WERROR,"Expected the beginning of a construct.\n");
            }
 
          /*======================================================*/
@@ -504,7 +504,7 @@ static bool FindConstructBeginning(
             errorCorrection = true;
             *noErrors = false;
             PrintErrorID(theEnv,"CSTRCPSR",1,true);
-            EnvPrintRouter(theEnv,WERROR,"Expected the beginning of a construct.\n");
+            PrintRouter(theEnv,WERROR,"Expected the beginning of a construct.\n");
            }
 
          firstAttempt = false;
@@ -566,9 +566,9 @@ static void PrintError(
                                    &ConstructData(theEnv)->MaxWrnChars);
      }
 
-   EnvDeactivateRouter(theEnv,"error-capture");
-   EnvPrintRouter(theEnv,logicalName,str);
-   EnvActivateRouter(theEnv,"error-capture");
+   DeactivateRouter(theEnv,"error-capture");
+   PrintRouter(theEnv,logicalName,str);
+   ActivateRouter(theEnv,"error-capture");
   }
 
 /***********************************************/
@@ -593,9 +593,8 @@ void CreateErrorCaptureRouter(
 
    if (ConstructData(theEnv)->errorCaptureRouterCount == 0)
      {
-      EnvAddRouter(theEnv,"error-capture", 40,
-                      FindError, PrintError,
-                      NULL, NULL,NULL);
+      AddRouter(theEnv,"error-capture",40,FindError,PrintError,
+                NULL, NULL,NULL,NULL);
      }
 
    /*==================================================*/
@@ -625,7 +624,7 @@ void DeleteErrorCaptureRouter(
     ConstructData(theEnv)->errorCaptureRouterCount--;
 
     if (ConstructData(theEnv)->errorCaptureRouterCount == 0)
-      { EnvDeleteRouter(theEnv,"error-capture"); }
+      { DeleteRouter(theEnv,"error-capture"); }
    }
 
 /*******************************************************/
@@ -651,14 +650,14 @@ void FlushParsingMessages(
 
    if (ConstructData(theEnv)->ErrorString != NULL)
      {
-      (*ConstructData(theEnv)->ParserErrorCallback)(theEnv,EnvGetErrorFileName(theEnv),
+      (*ConstructData(theEnv)->ParserErrorCallback)(theEnv,GetErrorFileName(theEnv),
                                                            NULL,ConstructData(theEnv)->ErrorString,
                                                            ConstructData(theEnv)->ErrLineNumber);
      }
 
    if (ConstructData(theEnv)->WarningString != NULL)
      {
-      (*ConstructData(theEnv)->ParserErrorCallback)(theEnv,EnvGetWarningFileName(theEnv),
+      (*ConstructData(theEnv)->ParserErrorCallback)(theEnv,GetWarningFileName(theEnv),
                                                            ConstructData(theEnv)->WarningString,NULL,
                                                            ConstructData(theEnv)->WrnLineNumber);
      }
@@ -667,14 +666,14 @@ void FlushParsingMessages(
    /* Delete the error capture strings. */
    /*===================================*/
 
-   EnvSetErrorFileName(theEnv,NULL);
+   SetErrorFileName(theEnv,NULL);
    if (ConstructData(theEnv)->ErrorString != NULL)
      { genfree(theEnv,ConstructData(theEnv)->ErrorString,strlen(ConstructData(theEnv)->ErrorString) + 1); }
    ConstructData(theEnv)->ErrorString = NULL;
    ConstructData(theEnv)->CurErrPos = 0;
    ConstructData(theEnv)->MaxErrChars = 0;
 
-   EnvSetWarningFileName(theEnv,NULL);
+   SetWarningFileName(theEnv,NULL);
    if (ConstructData(theEnv)->WarningString != NULL)
      { genfree(theEnv,ConstructData(theEnv)->WarningString,strlen(ConstructData(theEnv)->WarningString) + 1); }
    ConstructData(theEnv)->WarningString = NULL;
@@ -716,9 +715,9 @@ int ParseConstruct(
    /* Prepare the parsing environment. */
    /*==================================*/
 
-   ov = EnvGetHaltExecution(theEnv);
-   EnvSetEvaluationError(theEnv,false);
-   EnvSetHaltExecution(theEnv,false);
+   ov = GetHaltExecution(theEnv);
+   SetEvaluationError(theEnv,false);
+   SetHaltExecution(theEnv,false);
    ClearParsedBindNames(theEnv);
    PushRtnBrkContexts(theEnv);
    ExpressionData(theEnv)->ReturnContext = false;
@@ -745,7 +744,7 @@ int ParseConstruct(
 
    ClearParsedBindNames(theEnv);
    SetPPBufferStatus(theEnv,false);
-   EnvSetHaltExecution(theEnv,ov);
+   SetHaltExecution(theEnv,ov);
 
    /*======================================*/
    /* Remove the garbage collection frame. */
@@ -775,20 +774,20 @@ void ImportExportConflictMessage(
   const char *causedByName)
   {
    PrintErrorID(theEnv,"CSTRCPSR",3,true);
-   EnvPrintRouter(theEnv,WERROR,"Cannot define ");
-   EnvPrintRouter(theEnv,WERROR,constructName);
-   EnvPrintRouter(theEnv,WERROR," ");
-   EnvPrintRouter(theEnv,WERROR,itemName);
-   EnvPrintRouter(theEnv,WERROR," because of an import/export conflict");
+   PrintRouter(theEnv,WERROR,"Cannot define ");
+   PrintRouter(theEnv,WERROR,constructName);
+   PrintRouter(theEnv,WERROR," ");
+   PrintRouter(theEnv,WERROR,itemName);
+   PrintRouter(theEnv,WERROR," because of an import/export conflict");
 
-   if (causedByConstruct == NULL) EnvPrintRouter(theEnv,WERROR,".\n");
+   if (causedByConstruct == NULL) PrintRouter(theEnv,WERROR,".\n");
    else
      {
-      EnvPrintRouter(theEnv,WERROR," caused by the ");
-      EnvPrintRouter(theEnv,WERROR,causedByConstruct);
-      EnvPrintRouter(theEnv,WERROR," ");
-      EnvPrintRouter(theEnv,WERROR,causedByName);
-      EnvPrintRouter(theEnv,WERROR,".\n");
+      PrintRouter(theEnv,WERROR," caused by the ");
+      PrintRouter(theEnv,WERROR,causedByConstruct);
+      PrintRouter(theEnv,WERROR," ");
+      PrintRouter(theEnv,WERROR,causedByName);
+      PrintRouter(theEnv,WERROR,".\n");
      }
   }
 

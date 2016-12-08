@@ -154,15 +154,15 @@ static bool ConstructToCode(
    /* the file as they are traversed.                         */
    /*=========================================================*/
 
-   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = EnvGetNextDefmodule(theEnv,theModule))
+        theModule = GetNextDefmodule(theEnv,theModule))
      {
       /*=========================*/
       /* Set the current module. */
       /*=========================*/
 
-      EnvSetCurrentModule(theEnv,theModule);
+      SetCurrentModule(theEnv,theModule);
 
       /*==========================*/
       /* Save the defrule module. */
@@ -188,9 +188,9 @@ static bool ConstructToCode(
       /* their disjuncts) in the current module. */
       /*=========================================*/
 
-      for (theDefrule = EnvGetNextDefrule(theEnv,NULL);
+      for (theDefrule = GetNextDefrule(theEnv,NULL);
            theDefrule != NULL;
-           theDefrule = EnvGetNextDefrule(theEnv,theDefrule))
+           theDefrule = GetNextDefrule(theEnv,theDefrule))
         {
          for (theDisjunct = theDefrule;
               theDisjunct != NULL;

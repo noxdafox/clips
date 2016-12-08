@@ -109,9 +109,9 @@ static void PrintDribble(
    /* Send the output to any routers interested in printing it. */
    /*===========================================================*/
 
-   EnvDeactivateRouter(theEnv,"dribble");
-   EnvPrintRouter(theEnv,logicalName,str);
-   EnvActivateRouter(theEnv,"dribble");
+   DeactivateRouter(theEnv,"dribble");
+   PrintRouter(theEnv,logicalName,str);
+   ActivateRouter(theEnv,"dribble");
   }
 
 /*****************************************************/
@@ -128,9 +128,9 @@ static int GetcDribble(
    /* character from another active router.     */
    /*===========================================*/
 
-   EnvDeactivateRouter(theEnv,"dribble");
-   rv = EnvGetcRouter(theEnv,logicalName);
-   EnvActivateRouter(theEnv,"dribble");
+   DeactivateRouter(theEnv,"dribble");
+   rv = GetcRouter(theEnv,logicalName);
+   ActivateRouter(theEnv,"dribble");
 
    /*==========================================*/
    /* Put the character retrieved from another */
@@ -225,9 +225,9 @@ static int UngetcDribble(
    /* ungetc request to the other active routers. */
    /*=============================================*/
 
-   EnvDeactivateRouter(theEnv,"dribble");
-   rv = EnvUngetcRouter(theEnv,ch,logicalName);
-   EnvActivateRouter(theEnv,"dribble");
+   DeactivateRouter(theEnv,"dribble");
+   rv = UngetcRouter(theEnv,ch,logicalName);
+   ActivateRouter(theEnv,"dribble");
 
    /*==========================================*/
    /* Return the result of the ungetc request. */
@@ -253,11 +253,11 @@ static void ExitDribble(
    if (FileCommandData(theEnv)->DribbleFP != NULL) GenClose(theEnv,FileCommandData(theEnv)->DribbleFP);
   }
 
-/**********************************/
-/* EnvDribbleOn: C access routine */
-/*   for the dribble-on command.  */
-/**********************************/
-bool EnvDribbleOn(
+/*********************************/
+/* DribbleOn: C access routine   */
+/*   for the dribble-on command. */
+/*********************************/
+bool DribbleOn(
   Environment *theEnv,
   const char *fileName)
   {
@@ -267,7 +267,7 @@ bool EnvDribbleOn(
    /*==============================*/
 
    if (FileCommandData(theEnv)->DribbleFP != NULL)
-     { EnvDribbleOff(theEnv); }
+     { DribbleOff(theEnv); }
 
    /*========================*/
    /* Open the dribble file. */
@@ -284,10 +284,10 @@ bool EnvDribbleOn(
    /* Create the dribble router. */
    /*============================*/
 
-   EnvAddRouter(theEnv,"dribble", 40,
+   AddRouter(theEnv,"dribble", 40,
              FindDribble, PrintDribble,
              GetcDribble, UngetcDribble,
-             ExitDribble);
+             ExitDribble,NULL);
 
    FileCommandData(theEnv)->DribbleCurrentPosition = 0;
 
@@ -310,11 +310,11 @@ bool EnvDribbleOn(
    return true;
   }
 
-/*************************************************/
-/* EnvDribbleActive: Returns true if the dribble */
-/*   router is active, otherwise false.          */
-/*************************************************/
-bool EnvDribbleActive(
+/**********************************************/
+/* DribbleActive: Returns true if the dribble */
+/*   router is active, otherwise false.       */
+/**********************************************/
+bool DribbleActive(
   Environment *theEnv)
   {
    if (FileCommandData(theEnv)->DribbleFP != NULL) return true;
@@ -322,11 +322,11 @@ bool EnvDribbleActive(
    return false;
   }
 
-/***********************************/
-/* EnvDribbleOff: C access routine */
-/*   for the dribble-off command.  */
-/***********************************/
-bool EnvDribbleOff(
+/**********************************/
+/* DribbleOff: C access routine   */
+/*   for the dribble-off command. */
+/**********************************/
+bool DribbleOff(
   Environment *theEnv)
   {
    bool rv = false;
@@ -351,7 +351,7 @@ bool EnvDribbleOff(
      {
       if (FileCommandData(theEnv)->DribbleCurrentPosition > 0)
         { fprintf(FileCommandData(theEnv)->DribbleFP,"%s",FileCommandData(theEnv)->DribbleBuffer); }
-      EnvDeleteRouter(theEnv,"dribble");
+      DeleteRouter(theEnv,"dribble");
       if (GenClose(theEnv,FileCommandData(theEnv)->DribbleFP) == 0) rv = true;
      }
    else
@@ -430,11 +430,11 @@ int LLGetcBatch(
       if (FileCommandData(theEnv)->BatchType == FILE_BATCH)
         { rv = getc(FileCommandData(theEnv)->BatchFileSource); }
       else
-        { rv = EnvGetcRouter(theEnv,FileCommandData(theEnv)->BatchLogicalSource); }
+        { rv = GetcRouter(theEnv,FileCommandData(theEnv)->BatchLogicalSource); }
 
       if (rv == EOF)
         {
-         if (FileCommandData(theEnv)->BatchCurrentPosition > 0) EnvPrintRouter(theEnv,STDOUT,(char *) FileCommandData(theEnv)->BatchBuffer);
+         if (FileCommandData(theEnv)->BatchCurrentPosition > 0) PrintRouter(theEnv,STDOUT,(char *) FileCommandData(theEnv)->BatchBuffer);
          flag = RemoveBatch(theEnv);
         }
      }
@@ -447,13 +447,13 @@ int LLGetcBatch(
 
    if (rv == EOF)
      {
-      if (FileCommandData(theEnv)->BatchCurrentPosition > 0) EnvPrintRouter(theEnv,STDOUT,(char *) FileCommandData(theEnv)->BatchBuffer);
-      EnvDeleteRouter(theEnv,"batch");
+      if (FileCommandData(theEnv)->BatchCurrentPosition > 0) PrintRouter(theEnv,STDOUT,(char *) FileCommandData(theEnv)->BatchBuffer);
+      DeleteRouter(theEnv,"batch");
       RemoveBatch(theEnv);
       if (returnOnEOF == true)
         { return (EOF); }
       else
-        { return(EnvGetcRouter(theEnv,logicalName)); }
+        { return GetcRouter(theEnv,logicalName); }
      }
 
    /*========================================*/
@@ -470,7 +470,7 @@ int LLGetcBatch(
 
    if ((char) rv == '\n')
      {
-      EnvPrintRouter(theEnv,STDOUT,(char *) FileCommandData(theEnv)->BatchBuffer);
+      PrintRouter(theEnv,STDOUT,(char *) FileCommandData(theEnv)->BatchBuffer);
       FileCommandData(theEnv)->BatchCurrentPosition = 0;
       if ((FileCommandData(theEnv)->BatchBuffer != NULL) && (FileCommandData(theEnv)->BatchMaximumPosition > BUFFER_SIZE))
         {
@@ -511,7 +511,7 @@ static int UngetcBatch(
    if (FileCommandData(theEnv)->BatchType == FILE_BATCH)
      { return(ungetc(ch,FileCommandData(theEnv)->BatchFileSource)); }
 
-   return(EnvUngetcRouter(theEnv,ch,FileCommandData(theEnv)->BatchLogicalSource));
+   return UngetcRouter(theEnv,ch,FileCommandData(theEnv)->BatchLogicalSource);
   }
 
 /*************************************************/
@@ -565,10 +565,8 @@ bool OpenBatch(
 
    if (FileCommandData(theEnv)->TopOfBatchList == NULL)
      {
-      EnvAddRouter(theEnv,"batch", 20,
-                 FindBatch, NULL,
-                 GetcBatch, UngetcBatch,
-                 ExitBatch);
+      AddRouter(theEnv,"batch",20,FindBatch,NULL,
+                GetcBatch,UngetcBatch,ExitBatch,NULL);
      }
 
    /*===============================================================*/
@@ -585,13 +583,13 @@ bool OpenBatch(
    /*========================================================================*/
 
    if (FileCommandData(theEnv)->TopOfBatchList == NULL)
-     { FileCommandData(theEnv)->batchPriorParsingFile = CopyString(theEnv,EnvGetParsingFileName(theEnv)); }
+     { FileCommandData(theEnv)->batchPriorParsingFile = CopyString(theEnv,GetParsingFileName(theEnv)); }
 
    /*=======================================================*/
    /* Create the error capture router if it does not exist. */
    /*=======================================================*/
 
-   EnvSetParsingFileName(theEnv,fileName);
+   SetParsingFileName(theEnv,fileName);
    SetLineCount(theEnv,0);
 
    CreateErrorCaptureRouter(theEnv);
@@ -630,10 +628,10 @@ bool OpenStringBatch(
 
    if (FileCommandData(theEnv)->TopOfBatchList == NULL)
      {
-      EnvAddRouter(theEnv,"batch", 20,
-                 FindBatch, NULL,
-                 GetcBatch, UngetcBatch,
-                 ExitBatch);
+      AddRouter(theEnv,"batch", 20,
+                FindBatch, NULL,
+                GetcBatch, UngetcBatch,
+                ExitBatch,NULL);
      }
 
    AddBatch(theEnv,placeAtEnd,NULL,stringName,STRING_BATCH,theString,NULL);
@@ -762,7 +760,7 @@ bool RemoveBatch(
 #if (! RUN_TIME) && (! BLOAD_ONLY)
       if (fileBatch)
         {
-         EnvSetParsingFileName(theEnv,FileCommandData(theEnv)->batchPriorParsingFile);
+         SetParsingFileName(theEnv,FileCommandData(theEnv)->batchPriorParsingFile);
          DeleteString(theEnv,FileCommandData(theEnv)->batchPriorParsingFile);
          FileCommandData(theEnv)->batchPriorParsingFile = NULL;
         }
@@ -782,7 +780,7 @@ bool RemoveBatch(
       rv = true;
 #if (! RUN_TIME) && (! BLOAD_ONLY)
       if (FileCommandData(theEnv)->TopOfBatchList->batchType == FILE_BATCH)
-        { EnvSetParsingFileName(theEnv,FileCommandData(theEnv)->TopOfBatchList->fileName); }
+        { SetParsingFileName(theEnv,FileCommandData(theEnv)->TopOfBatchList->fileName); }
 
       SetLineCount(theEnv,FileCommandData(theEnv)->TopOfBatchList->lineNumber);
 #endif
@@ -820,7 +818,7 @@ void CloseAllBatchSources(
 
    if (FileCommandData(theEnv)->BatchBuffer != NULL)
      {
-      if (FileCommandData(theEnv)->BatchCurrentPosition > 0) EnvPrintRouter(theEnv,STDOUT,(char *) FileCommandData(theEnv)->BatchBuffer);
+      if (FileCommandData(theEnv)->BatchCurrentPosition > 0) PrintRouter(theEnv,STDOUT,(char *) FileCommandData(theEnv)->BatchBuffer);
       rm(theEnv,FileCommandData(theEnv)->BatchBuffer,FileCommandData(theEnv)->BatchMaximumPosition);
       FileCommandData(theEnv)->BatchBuffer = NULL;
       FileCommandData(theEnv)->BatchCurrentPosition = 0;
@@ -831,7 +829,7 @@ void CloseAllBatchSources(
    /* Delete the batch router. */
    /*==========================*/
 
-   EnvDeleteRouter(theEnv,"batch");
+   DeleteRouter(theEnv,"batch");
 
    /*=====================================*/
    /* Close each of the open batch files. */
@@ -843,10 +841,10 @@ void CloseAllBatchSources(
 
 #if ! RUN_TIME
 
-/**********************************************************/
-/* EnvBatchStar: C access routine for the batch* command. */
-/**********************************************************/
-bool EnvBatchStar(
+/*******************************************************/
+/* BatchStar: C access routine for the batch* command. */
+/*******************************************************/
+bool BatchStar(
   Environment *theEnv,
   const char *fileName)
   {
@@ -876,8 +874,8 @@ bool EnvBatchStar(
    /*======================================*/
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   oldParsingFileName = CopyString(theEnv,EnvGetParsingFileName(theEnv));
-   EnvSetParsingFileName(theEnv,fileName);
+   oldParsingFileName = CopyString(theEnv,GetParsingFileName(theEnv));
+   SetParsingFileName(theEnv,fileName);
 
    CreateErrorCaptureRouter(theEnv);
 
@@ -888,8 +886,8 @@ bool EnvBatchStar(
    /* Reset the error state. */
    /*========================*/
 
-   EnvSetHaltExecution(theEnv,false);
-   EnvSetEvaluationError(theEnv,false);
+   SetHaltExecution(theEnv,false);
+   SetEvaluationError(theEnv,false);
 
    /*=============================================*/
    /* Evaluate commands from the file one by one. */
@@ -906,8 +904,8 @@ bool EnvBatchStar(
          SetPPBufferStatus(theEnv,false);
          RouteCommand(theEnv,theString,false);
          FlushPPBuffer(theEnv);
-         EnvSetHaltExecution(theEnv,false);
-         EnvSetEvaluationError(theEnv,false);
+         SetHaltExecution(theEnv,false);
+         SetEvaluationError(theEnv,false);
          FlushBindList(theEnv);
          genfree(theEnv,theString,(unsigned) maxChars);
          theString = NULL;
@@ -941,7 +939,7 @@ bool EnvBatchStar(
 
    SetLineCount(theEnv,oldLineCountValue);
 
-   EnvSetParsingFileName(theEnv,oldParsingFileName);
+   SetParsingFileName(theEnv,oldParsingFileName);
    DeleteString(theEnv,oldParsingFileName);
 #endif
 
@@ -950,16 +948,16 @@ bool EnvBatchStar(
 
 #else
 
-/**************************************************/
-/* EnvBatchStar: This is the non-functional stub  */
-/*   provided for use with a run-time version.    */
-/**************************************************/
-bool EnvBatchStar(
+/***********************************************/
+/* BatchStar: This is the non-functional stub  */
+/*   provided for use with a run-time version. */
+/***********************************************/
+bool BatchStar(
   Environment *theEnv,
   const char *fileName)
   {
    PrintErrorID(theEnv,"FILECOM",1,false);
-   EnvPrintRouter(theEnv,WERROR,"Function batch* does not work in run time modules.\n");
+   PrintRouter(theEnv,WERROR,"Function batch* does not work in run time modules.\n");
    return false;
   }
 

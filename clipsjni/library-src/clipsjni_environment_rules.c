@@ -19,7 +19,7 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_setHaltRules(
   jlong clipsEnv,
   jboolean value)
   {
-   EnvSetHaltRules(JLongToPointer(clipsEnv),value);
+   SetHaltRules(JLongToPointer(clipsEnv),value);
   }
 
 /******************************************************/
@@ -39,7 +39,7 @@ JNIEXPORT jlong JNICALL Java_net_sf_clipsrules_jni_Environment_run(
    jlong rv;
    void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
 
-   rv = EnvRun(JLongToPointer(clipsEnv),runLimit);
+   rv = Run(JLongToPointer(clipsEnv),runLimit);
    
    SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
 
@@ -61,23 +61,23 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getAgenda(
   jlong clipsEnv, 
   jstring moduleName)
   {
-   struct defmodule *theModule;
+   Defmodule *theModule;
    struct defruleModule *theModuleItem;
-   struct activation *theActivation;
-   void *theCLIPSEnv = JLongToPointer(clipsEnv);
+   Activation *theActivation;
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
    const char *cModuleName = (*env)->GetStringUTFChars(env,moduleName,NULL);
    int activationCount = 0;
    jobject arrayList, theJActivation, ruleName, basis, result;
    char bindingsBuffer[1024]; // TBD Replace
    void *oldContext;
 
-   theModule = (struct defmodule *) EnvFindDefmodule(theCLIPSEnv,cModuleName);
+   theModule = FindDefmodule(theCLIPSEnv,cModuleName);
    (*env)->ReleaseStringUTFChars(env,moduleName,cModuleName);
    if (theModule == NULL) return NULL;
 
    SaveCurrentModule(theCLIPSEnv);
 
-   EnvSetCurrentModule(theCLIPSEnv,(void *) theModule);
+   SetCurrentModule(theCLIPSEnv,theModule);
 
    theModuleItem = (struct defruleModule *) 
                    GetModuleItem(theCLIPSEnv,NULL,DefruleData(theCLIPSEnv)->DefruleModuleIndex);
@@ -92,7 +92,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getAgenda(
    
    for (theActivation = theModuleItem->agenda;
         theActivation != NULL;
-        theActivation = EnvGetNextActivation(theCLIPSEnv,theActivation))
+        theActivation = GetNextActivation(theCLIPSEnv,theActivation))
      { activationCount++; }
      
    arrayList = (*env)->NewObject(env,
@@ -107,11 +107,11 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getAgenda(
    
    for (theActivation = theModuleItem->agenda;
         theActivation != NULL;
-        theActivation = EnvGetNextActivation(theCLIPSEnv,theActivation))
+        theActivation = GetNextActivation(theCLIPSEnv,theActivation))
      { 
       ruleName = (*env)->NewStringUTF(env,theActivation->theRule->header.name->contents);
 
-      EnvGetActivationBasisPPForm(theCLIPSEnv,bindingsBuffer,1024,theActivation);
+      GetActivationBasisPPForm(theCLIPSEnv,bindingsBuffer,1024,theActivation);
       basis = (*env)->NewStringUTF(env,bindingsBuffer);
 
       theJActivation = (*env)->NewObject(env,
@@ -157,7 +157,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getFocusStack(
    int moduleCount = 0;
    struct focus *theFocus;
    
-   void *theCLIPSEnv = JLongToPointer(clipsEnv);
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
  
    for (theFocus = EngineData(theCLIPSEnv)->CurrentFocus; 
         theFocus != NULL; 
@@ -212,9 +212,9 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_getAgendaChang
   jlong clipsEnv)
   {
    jboolean rv;
-   void *theCLIPSEnv = JLongToPointer(clipsEnv);
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
    
-   rv = EnvGetAgendaChanged(theCLIPSEnv);
+   rv = GetAgendaChanged(theCLIPSEnv);
    return rv;
   } 
 
@@ -230,9 +230,9 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_setAgendaChanged(
   jlong clipsEnv,
   jboolean value)
   {
-   void *theCLIPSEnv = JLongToPointer(clipsEnv);
+   Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
    
-   EnvSetAgendaChanged(theCLIPSEnv,value);
+   SetAgendaChanged(theCLIPSEnv,value);
   }
 
 /*********************************************************/
@@ -248,13 +248,13 @@ JNIEXPORT jstring JNICALL Java_net_sf_clipsrules_jni_Environment_getDefruleText(
   jstring defruleName)
   {
    const char *cDefruleName = (*env)->GetStringUTFChars(env,defruleName,NULL);
-   void *defrulePtr;
-   void *theEnv;
+   Defrule *defrulePtr;
+   Environment *theEnv;
    const char *ruleText = NULL;
    
    theEnv = JLongToPointer(clipsEnv);
    
-   defrulePtr = EnvFindDefrule(theEnv,cDefruleName);
+   defrulePtr = FindDefrule(theEnv,cDefruleName);
 
    (*env)->ReleaseStringUTFChars(env,defruleName,cDefruleName);
 

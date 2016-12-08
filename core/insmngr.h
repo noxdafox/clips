@@ -64,7 +64,7 @@
    void                           InactiveMakeInstance(Environment *,UDFContext *,UDFValue *);
 #endif
 
-   InstanceBuilder               *EnvCreateInstanceBuilder(Environment *,const char *);
+   InstanceBuilder               *CreateInstanceBuilder(Environment *,const char *);
    bool                           IBPutSlot(InstanceBuilder *,const char *,CLIPSValue *);
 
    Instance                      *IBMake(InstanceBuilder *,const char *);
@@ -81,7 +81,7 @@
    bool                           IBPutSlotExternalAddress(InstanceBuilder *,const char *,CLIPSExternalAddress *);
    bool                           IBPutSlotMultifield(InstanceBuilder *,const char *,Multifield *);
 
-   InstanceModifier              *EnvCreateInstanceModifier(Environment *,Instance *);
+   InstanceModifier              *CreateInstanceModifier(Environment *,Instance *);
    bool                           IMPutSlot(InstanceModifier *,const char *,CLIPSValue *);
    void                           IMDispose(InstanceModifier *);
    void                           IMAbort(InstanceModifier *);

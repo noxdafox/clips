@@ -175,11 +175,11 @@ struct lhsParseNode *CreateInitialFactPattern(
    if (theDeftemplate == NULL)
      {
       PrintWarningID(theEnv,"FACTLHS",1,false);
-      EnvPrintRouter(theEnv,WWARNING,"Creating implied initial-fact deftemplate in module ");
-      EnvPrintRouter(theEnv,WWARNING,DefmoduleName(EnvGetCurrentModule(theEnv)));
-      EnvPrintRouter(theEnv,WWARNING,".\n");
-      EnvPrintRouter(theEnv,WWARNING,"  You probably want to import this deftemplate from the MAIN module.\n");
-      CreateImpliedDeftemplate(theEnv,EnvCreateSymbol(theEnv,"initial-fact"),false);
+      PrintRouter(theEnv,WWARNING,"Creating implied initial-fact deftemplate in module ");
+      PrintRouter(theEnv,WWARNING,DefmoduleName(GetCurrentModule(theEnv)));
+      PrintRouter(theEnv,WWARNING,".\n");
+      PrintRouter(theEnv,WWARNING,"  You probably want to import this deftemplate from the MAIN module.\n");
+      CreateImpliedDeftemplate(theEnv,CreateSymbol(theEnv,"initial-fact"),false);
      }
 
    /*====================================*/
@@ -193,7 +193,7 @@ struct lhsParseNode *CreateInitialFactPattern(
 
    topNode->bottom = GetLHSParseNode(theEnv);
    topNode->bottom->pnType = SYMBOL_NODE;
-   topNode->bottom->value = EnvCreateSymbol(theEnv,"initial-fact");
+   topNode->bottom->value = CreateSymbol(theEnv,"initial-fact");
 
    /*=====================*/
    /* Return the pattern. */
@@ -264,7 +264,7 @@ struct lhsParseNode *FactPatternParse(
    if (theDeftemplate == NULL)
      {
 #if DEFMODULE_CONSTRUCT
-      if (FindImportExportConflict(theEnv,"deftemplate",EnvGetCurrentModule(theEnv),theToken->lexemeValue->contents))
+      if (FindImportExportConflict(theEnv,"deftemplate",GetCurrentModule(theEnv),theToken->lexemeValue->contents))
         {
          ImportExportConflictMessage(theEnv,"implied deftemplate",theToken->lexemeValue->contents,NULL,NULL);
          return NULL;

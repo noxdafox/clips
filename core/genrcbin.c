@@ -431,7 +431,7 @@ static void BsaveGenerics(
       Write out the generic function modules
       ====================================== */
    DefgenericBinaryData(theEnv)->GenericCount = 0L;
-   theModule = EnvGetNextDefmodule(theEnv,NULL);
+   theModule = GetNextDefmodule(theEnv,NULL);
    while (theModule != NULL)
      {
       theModuleItem = (DEFGENERIC_MODULE *)
@@ -440,7 +440,7 @@ static void BsaveGenerics(
                                            &theModuleItem->header);
       GenWrite(&dummy_generic_module,
                sizeof(BSAVE_DEFGENERIC_MODULE),fp);
-      theModule = EnvGetNextDefmodule(theEnv,theModule);
+      theModule = GetNextDefmodule(theEnv,theModule);
      }
 
 
@@ -824,12 +824,12 @@ static void UpdateType(
    if ((* (long *) buf) > (long) INSTANCE_TYPE_CODE)
      {
       PrintWarningID(theEnv,"GENRCBIN",1,false);
-      EnvPrintRouter(theEnv,WWARNING,"COOL not installed!  User-defined class\n");
-      EnvPrintRouter(theEnv,WWARNING,"  in method restriction substituted with OBJECT.\n");
-      DefgenericBinaryData(theEnv)->TypeArray[obji] = EnvCreateInteger(theEnv,(long long) OBJECT_TYPE_CODE);
+      PrintRouter(theEnv,WWARNING,"COOL not installed!  User-defined class\n");
+      PrintRouter(theEnv,WWARNING,"  in method restriction substituted with OBJECT.\n");
+      DefgenericBinaryData(theEnv)->TypeArray[obji] = CreateInteger(theEnv,(long long) OBJECT_TYPE_CODE);
      }
    else
-     DefgenericBinaryData(theEnv)->TypeArray[obji] = EnvCreateInteger(theEnv,* (long *) buf);
+     DefgenericBinaryData(theEnv)->TypeArray[obji] = CreateInteger(theEnv,* (long *) buf);
    IncrementIntegerCount((CLIPSInteger *) DefgenericBinaryData(theEnv)->TypeArray[obji]);
 #endif
   }

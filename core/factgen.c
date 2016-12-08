@@ -251,7 +251,7 @@ struct expr *FactGenPNConstant(
 
       hack1.whichSlot = (unsigned short) (theField->slotNumber - 1);
 
-      top = GenConstant(theEnv,FACT_PN_CONSTANT1,EnvAddBitMap(theEnv,&hack1,sizeof(struct factConstantPN1Call)));
+      top = GenConstant(theEnv,FACT_PN_CONSTANT1,AddBitMap(theEnv,&hack1,sizeof(struct factConstantPN1Call)));
 
       top->argList = GenConstant(theEnv,NodeTypeToType(theField),theField->value);
 
@@ -286,7 +286,7 @@ struct expr *FactGenPNConstant(
          hack2.offset = theField->singleFieldsAfter;
         }
 
-      top = GenConstant(theEnv,FACT_PN_CONSTANT2,EnvAddBitMap(theEnv,&hack2,sizeof(struct factConstantPN2Call)));
+      top = GenConstant(theEnv,FACT_PN_CONSTANT2,AddBitMap(theEnv,&hack2,sizeof(struct factConstantPN2Call)));
 
       top->argList = GenConstant(theEnv,NodeTypeToType(theField),theField->value);
 
@@ -461,7 +461,7 @@ struct expr *FactGenCheckLength(
    /* Generate call to test the length of a multifield slot. */
    /*========================================================*/
 
-   return(GenConstant(theEnv,FACT_SLOT_LENGTH,EnvAddBitMap(theEnv,&hack,sizeof(struct factCheckLengthPNCall))));
+   return(GenConstant(theEnv,FACT_SLOT_LENGTH,AddBitMap(theEnv,&hack,sizeof(struct factCheckLengthPNCall))));
   }
 
 /**************************************************************/
@@ -481,7 +481,7 @@ struct expr *FactGenCheckZeroLength(
    hack.exactly = 1;
    hack.minLength = 0;
 
-   return(GenConstant(theEnv,FACT_SLOT_LENGTH,EnvAddBitMap(theEnv,&hack,sizeof(struct factCheckLengthPNCall))));
+   return(GenConstant(theEnv,FACT_SLOT_LENGTH,AddBitMap(theEnv,&hack,sizeof(struct factCheckLengthPNCall))));
   }
 
 /*********************************************************************/
@@ -685,7 +685,7 @@ static void *FactGetVarJN1(
    /* Return the argument bitmap. */
    /*=============================*/
 
-   return(EnvAddBitMap(theEnv,&hack,sizeof(struct factGetVarJN1Call)));
+   return(AddBitMap(theEnv,&hack,sizeof(struct factGetVarJN1Call)));
   }
 
 /**************************************************************/
@@ -739,7 +739,7 @@ static void *FactGetVarJN2(
    /* Return the argument bitmap. */
    /*=============================*/
 
-   return(EnvAddBitMap(theEnv,&hack,sizeof(struct factGetVarJN2Call)));
+   return(AddBitMap(theEnv,&hack,sizeof(struct factGetVarJN2Call)));
   }
 
 /*************************************************************/
@@ -832,7 +832,7 @@ static void *FactGetVarJN3(
       /* Return the argument bitmap. */
       /*=============================*/
 
-      return(EnvAddBitMap(theEnv,&hack,sizeof(struct factGetVarJN3Call)));
+      return(AddBitMap(theEnv,&hack,sizeof(struct factGetVarJN3Call)));
      }
 
    /*============================================================*/
@@ -855,7 +855,7 @@ static void *FactGetVarJN3(
    /* Return the argument bitmap. */
    /*=============================*/
 
-   return(EnvAddBitMap(theEnv,&hack,sizeof(struct factGetVarJN3Call)));
+   return(AddBitMap(theEnv,&hack,sizeof(struct factGetVarJN3Call)));
   }
 
 /**************************************************************/
@@ -924,7 +924,7 @@ static void *FactGetVarPN1(
    /* Return the argument bitmap. */
    /*=============================*/
 
-   return(EnvAddBitMap(theEnv,&hack,sizeof(struct factGetVarPN1Call)));
+   return(AddBitMap(theEnv,&hack,sizeof(struct factGetVarPN1Call)));
   }
 
 /***************************************************************/
@@ -957,7 +957,7 @@ static void *FactGetVarPN2(
    /* Return the argument bitmap. */
    /*=============================*/
 
-   return(EnvAddBitMap(theEnv,&hack,sizeof(struct factGetVarPN2Call)));
+   return(AddBitMap(theEnv,&hack,sizeof(struct factGetVarPN2Call)));
   }
 
 /*************************************************************/
@@ -1025,7 +1025,7 @@ static void *FactGetVarPN3(
          hack.endOffset = theNode->singleFieldsAfter;
         }
 
-      return(EnvAddBitMap(theEnv,&hack,sizeof(struct factGetVarPN3Call)));
+      return(AddBitMap(theEnv,&hack,sizeof(struct factGetVarPN3Call)));
      }
 
    /*============================================================*/
@@ -1048,7 +1048,7 @@ static void *FactGetVarPN3(
    /* Return the argument bitmap. */
    /*=============================*/
 
-   return(EnvAddBitMap(theEnv,&hack,sizeof(struct factGetVarPN3Call)));
+   return(AddBitMap(theEnv,&hack,sizeof(struct factGetVarPN3Call)));
   }
 
 /*************************************************************/
@@ -1088,7 +1088,7 @@ struct expr *FactPNVariableComparison(
       if (selfNode->negated) hack.fail = 1;
       else hack.pass = 1;
 
-      top = GenConstant(theEnv,FACT_PN_CMP1,EnvAddBitMap(theEnv,&hack,sizeof(struct factCompVarsPN1Call)));
+      top = GenConstant(theEnv,FACT_PN_CMP1,AddBitMap(theEnv,&hack,sizeof(struct factCompVarsPN1Call)));
      }
 
    /*================================================================*/
@@ -1166,7 +1166,7 @@ struct expr *FactJNVariableComparison(
       if (selfNode->negated) hack1.fail = 1;
       else hack1.pass = 1;
 
-      top = GenConstant(theEnv,FACT_JN_CMP1,EnvAddBitMap(theEnv,&hack1,sizeof(struct factCompVarsJN1Call)));
+      top = GenConstant(theEnv,FACT_JN_CMP1,AddBitMap(theEnv,&hack1,sizeof(struct factCompVarsJN1Call)));
      }
 
    /*===============================================================*/
@@ -1234,7 +1234,7 @@ struct expr *FactJNVariableComparison(
       if (selfNode->negated) hack2.fail = 1;
       else hack2.pass = 1;
 
-      top = GenConstant(theEnv,FACT_JN_CMP2,EnvAddBitMap(theEnv,&hack2,sizeof(struct factCompVarsJN2Call)));
+      top = GenConstant(theEnv,FACT_JN_CMP2,AddBitMap(theEnv,&hack2,sizeof(struct factCompVarsJN2Call)));
      }
 
    /*===============================================================*/

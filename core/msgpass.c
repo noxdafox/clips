@@ -146,7 +146,7 @@ bool DirectMessage(
   }
 
 /***************************************************
-  NAME         : EnvSend
+  NAME         : Send
   DESCRIPTION  : C Interface for sending messages to
                   instances
   INPUTS       : 1) The data object of the instance
@@ -159,7 +159,7 @@ bool DirectMessage(
                    caller's buffer
   NOTES        : None
  ***************************************************/
-void EnvSend(
+void Send(
   Environment *theEnv,
   CLIPSValue *idata,
   const char *msg,
@@ -178,14 +178,14 @@ void EnvSend(
       CallPeriodicTasks(theEnv);
      }
 
-   EnvSetEvaluationError(theEnv,false);
+   SetEvaluationError(theEnv,false);
 
    returnValue->value = FalseSymbol(theEnv);
    msym = FindSymbolHN(theEnv,msg,SYMBOL_BIT);
    if (msym == NULL)
      {
       PrintNoHandlerError(theEnv,msg);
-      EnvSetEvaluationError(theEnv,true);
+      SetEvaluationError(theEnv,true);
       return;
      }
    iexp = GenConstant(theEnv,idata->header->type,idata->value);
@@ -193,7 +193,7 @@ void EnvSend(
    if (error == true)
      {
       ReturnExpression(theEnv,iexp);
-      EnvSetEvaluationError(theEnv,true);
+      SetEvaluationError(theEnv,true);
       return;
      }
    PerformMessage(theEnv,&result,iexp,msym);
@@ -289,7 +289,7 @@ void NextHandlerAvailableFunction(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   returnValue->lexemeValue = EnvCreateBoolean(theEnv,NextHandlerAvailable(theEnv));
+   returnValue->lexemeValue = CreateBoolean(theEnv,NextHandlerAvailable(theEnv));
   }
 
 /*****************************************************
@@ -362,8 +362,8 @@ void CallNextHandler(
    if (NextHandlerAvailable(theEnv) == false)
      {
       PrintErrorID(theEnv,"MSGPASS",1,false);
-      EnvPrintRouter(theEnv,WERROR,"Shadowed message-handlers not applicable in current context.\n");
-      EnvSetEvaluationError(theEnv,true);
+      PrintRouter(theEnv,WERROR,"Shadowed message-handlers not applicable in current context.\n");
+      SetEvaluationError(theEnv,true);
       return;
      }
    if (EvaluationData(theEnv)->CurrentExpression->value == (void *) FindFunction(theEnv,"override-next-handler"))
@@ -547,7 +547,7 @@ HANDLER_LINK *JoinHandlerLinks(
      PrintNoHandlerError(theEnv,mname->contents);
      for (i = MAROUND ; i <= MAFTER ; i++)
        DestroyHandlerLinks(theEnv,tops[i]);
-     EnvSetEvaluationError(theEnv,true);
+     SetEvaluationError(theEnv,true);
      return NULL;
     }
 
@@ -592,12 +592,12 @@ void PrintHandlerSlotGetFunction(
    SlotDescriptor *sd;
 
    theReference = (HANDLER_SLOT_REFERENCE *) ((CLIPSBitMap *) theValue)->contents;
-   EnvPrintRouter(theEnv,logicalName,"?self:[");
+   PrintRouter(theEnv,logicalName,"?self:[");
    theDefclass = DefclassData(theEnv)->ClassIDMap[theReference->classID];
-   EnvPrintRouter(theEnv,logicalName,theDefclass->header.name->contents);
-   EnvPrintRouter(theEnv,logicalName,"]");
+   PrintRouter(theEnv,logicalName,theDefclass->header.name->contents);
+   PrintRouter(theEnv,logicalName,"]");
    sd = theDefclass->instanceTemplate[theDefclass->slotNameMap[theReference->slotID] - 1];
-   EnvPrintRouter(theEnv,logicalName,sd->slotName->name->contents);
+   PrintRouter(theEnv,logicalName,sd->slotName->name->contents);
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -651,7 +651,7 @@ bool HandlerSlotGetFunction(
      {
       StaleInstanceAddress(theEnv,"for slot get",0);
       theResult->value = FalseSymbol(theEnv);
-      EnvSetEvaluationError(theEnv,true);
+      SetEvaluationError(theEnv,true);
       return false;
      }
 
@@ -683,7 +683,7 @@ bool HandlerSlotGetFunction(
 HandlerGetError:
    EarlySlotBindError(theEnv,theInstance,theDefclass,theReference->slotID);
    theResult->value = FalseSymbol(theEnv);
-   EnvSetEvaluationError(theEnv,true);
+   SetEvaluationError(theEnv,true);
    return false;
   }
 
@@ -709,18 +709,18 @@ void PrintHandlerSlotPutFunction(
    SlotDescriptor *sd;
 
    theReference = (HANDLER_SLOT_REFERENCE *) ((CLIPSBitMap *) theValue)->contents;
-   EnvPrintRouter(theEnv,logicalName,"(bind ?self:[");
+   PrintRouter(theEnv,logicalName,"(bind ?self:[");
    theDefclass = DefclassData(theEnv)->ClassIDMap[theReference->classID];
-   EnvPrintRouter(theEnv,logicalName,theDefclass->header.name->contents);
-   EnvPrintRouter(theEnv,logicalName,"]");
+   PrintRouter(theEnv,logicalName,theDefclass->header.name->contents);
+   PrintRouter(theEnv,logicalName,"]");
    sd = theDefclass->instanceTemplate[theDefclass->slotNameMap[theReference->slotID] - 1];
-   EnvPrintRouter(theEnv,logicalName,sd->slotName->name->contents);
+   PrintRouter(theEnv,logicalName,sd->slotName->name->contents);
    if (GetFirstArgument() != NULL)
      {
-      EnvPrintRouter(theEnv,logicalName," ");
+      PrintRouter(theEnv,logicalName," ");
       PrintExpression(theEnv,logicalName,GetFirstArgument());
      }
-   EnvPrintRouter(theEnv,logicalName,")");
+   PrintRouter(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -775,7 +775,7 @@ bool HandlerSlotPutFunction(
      {
       StaleInstanceAddress(theEnv,"for slot put",0);
       theResult->value = FalseSymbol(theEnv);
-      EnvSetEvaluationError(theEnv,true);
+      SetEvaluationError(theEnv,true);
       return false;
      }
 
@@ -836,7 +836,7 @@ HandlerPutError:
 
 HandlerPutError2:
    theResult->value = FalseSymbol(theEnv);
-   EnvSetEvaluationError(theEnv,true);
+   SetEvaluationError(theEnv,true);
 
    return false;
   }
@@ -866,7 +866,7 @@ void DynamicHandlerGetSlot(
    if (temp.header->type != SYMBOL_TYPE)
      {
       ExpectedTypeError1(theEnv,"dynamic-get",1,"symbol");
-      EnvSetEvaluationError(theEnv,true);
+      SetEvaluationError(theEnv,true);
       return;
      }
    ins = GetActiveInstance(theEnv);
@@ -880,7 +880,7 @@ void DynamicHandlerGetSlot(
        (MessageHandlerData(theEnv)->CurrentCore->hnd->cls != sp->desc->cls))
      {
       SlotVisibilityViolationError(theEnv,sp->desc,MessageHandlerData(theEnv)->CurrentCore->hnd->cls,false);
-      EnvSetEvaluationError(theEnv,true);
+      SetEvaluationError(theEnv,true);
       return;
      }
    returnValue->value = sp->value;
@@ -917,7 +917,7 @@ void DynamicHandlerPutSlot(
    if (temp.header->type != SYMBOL_TYPE)
      {
       ExpectedTypeError1(theEnv,"dynamic-put",1,"symbol");
-      EnvSetEvaluationError(theEnv,true);
+      SetEvaluationError(theEnv,true);
       return;
      }
    ins = GetActiveInstance(theEnv);
@@ -932,14 +932,14 @@ void DynamicHandlerPutSlot(
      {
       SlotAccessViolationError(theEnv,sp->desc->slotName->name->contents,
                                ins,NULL);
-      EnvSetEvaluationError(theEnv,true);
+      SetEvaluationError(theEnv,true);
       return;
      }
    if ((sp->desc->publicVisibility == 0) &&
        (MessageHandlerData(theEnv)->CurrentCore->hnd->cls != sp->desc->cls))
      {
       SlotVisibilityViolationError(theEnv,sp->desc,MessageHandlerData(theEnv)->CurrentCore->hnd->cls,false);
-      EnvSetEvaluationError(theEnv,true);
+      SetEvaluationError(theEnv,true);
       return;
      }
    if (GetFirstArgument()->nextArg)
@@ -1030,7 +1030,7 @@ static bool PerformMessage(
       if (ins->garbage == 1)
         {
          StaleInstanceAddress(theEnv,"send",0);
-         EnvSetEvaluationError(theEnv,true);
+         SetEvaluationError(theEnv,true);
         }
       else
         {
@@ -1044,10 +1044,10 @@ static bool PerformMessage(
       if (ins == NULL)
         {
          PrintErrorID(theEnv,"MSGPASS",2,false);
-         EnvPrintRouter(theEnv,WERROR,"No such instance ");
-         EnvPrintRouter(theEnv,WERROR,ProceduralPrimitiveData(theEnv)->ProcParamArray->lexemeValue->contents);
-         EnvPrintRouter(theEnv,WERROR," in function send.\n");
-         EnvSetEvaluationError(theEnv,true);
+         PrintRouter(theEnv,WERROR,"No such instance ");
+         PrintRouter(theEnv,WERROR,ProceduralPrimitiveData(theEnv)->ProcParamArray->lexemeValue->contents);
+         PrintRouter(theEnv,WERROR," in function send.\n");
+         SetEvaluationError(theEnv,true);
         }
       else
         {
@@ -1059,7 +1059,7 @@ static bool PerformMessage(
    else if ((cls = DefclassData(theEnv)->PrimitiveClassMap[ProceduralPrimitiveData(theEnv)->ProcParamArray->header->type]) == NULL)
      {
       SystemError(theEnv,"MSGPASS",1);
-      EnvExitRouter(theEnv,EXIT_FAILURE);
+      ExitRouter(theEnv,EXIT_FAILURE);
      }
    if (EvaluationData(theEnv)->EvaluationError)
      {
@@ -1412,11 +1412,11 @@ static void EarlySlotBindError(
 
    sd = theDefclass->instanceTemplate[theDefclass->slotNameMap[slotID] - 1];
    PrintErrorID(theEnv,"MSGPASS",3,false);
-   EnvPrintRouter(theEnv,WERROR,"Static reference to slot ");
-   EnvPrintRouter(theEnv,WERROR,sd->slotName->name->contents);
-   EnvPrintRouter(theEnv,WERROR," of class ");
+   PrintRouter(theEnv,WERROR,"Static reference to slot ");
+   PrintRouter(theEnv,WERROR,sd->slotName->name->contents);
+   PrintRouter(theEnv,WERROR," of class ");
    PrintClassName(theEnv,WERROR,theDefclass,false);
-   EnvPrintRouter(theEnv,WERROR," does not apply to ");
+   PrintRouter(theEnv,WERROR," does not apply to ");
    PrintInstanceNameAndClass(theEnv,WERROR,theInstance,true);
   }
 

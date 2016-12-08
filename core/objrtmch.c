@@ -137,10 +137,10 @@ void ObjectMatchDelay(
 
    if (EvaluationData(theEnv)->EvaluationError)
      {
-      EnvSetHaltExecution(theEnv,false);
-      EnvSetEvaluationError(theEnv,false);
+      SetHaltExecution(theEnv,false);
+      SetEvaluationError(theEnv,false);
       SetDelayObjectPatternMatching(theEnv,ov);
-      EnvSetEvaluationError(theEnv,true);
+      SetEvaluationError(theEnv,true);
      }
    else
      SetDelayObjectPatternMatching(theEnv,ov);
@@ -1442,17 +1442,17 @@ static void ObjectPatternNetErrorMessage(
   OBJECT_PATTERN_NODE *patternPtr)
   {
    PrintErrorID(theEnv,"OBJRTMCH",1,true);
-   EnvPrintRouter(theEnv,WERROR,"This error occurred in the object pattern network\n");
-   EnvPrintRouter(theEnv,WERROR,"   Currently active instance: [");
-   EnvPrintRouter(theEnv,WERROR,ObjectReteData(theEnv)->CurrentPatternObject->name->contents);
-   EnvPrintRouter(theEnv,WERROR,"]\n");
-   EnvPrintRouter(theEnv,WERROR,"   Problem resides in slot ");
-   EnvPrintRouter(theEnv,WERROR,FindIDSlotName(theEnv,patternPtr->slotNameID)->contents);
-   EnvPrintRouter(theEnv,WERROR," field #");
+   PrintRouter(theEnv,WERROR,"This error occurred in the object pattern network\n");
+   PrintRouter(theEnv,WERROR,"   Currently active instance: [");
+   PrintRouter(theEnv,WERROR,ObjectReteData(theEnv)->CurrentPatternObject->name->contents);
+   PrintRouter(theEnv,WERROR,"]\n");
+   PrintRouter(theEnv,WERROR,"   Problem resides in slot ");
+   PrintRouter(theEnv,WERROR,FindIDSlotName(theEnv,patternPtr->slotNameID)->contents);
+   PrintRouter(theEnv,WERROR," field #");
    PrintLongInteger(theEnv,WERROR,(long long) patternPtr->whichField);
-   EnvPrintRouter(theEnv,WERROR,"\n");
+   PrintRouter(theEnv,WERROR,"\n");
    TraceErrorToObjectPattern(theEnv,true,patternPtr);
-   EnvPrintRouter(theEnv,WERROR,"\n");
+   PrintRouter(theEnv,WERROR,"\n");
   }
 
 /*********************************************************

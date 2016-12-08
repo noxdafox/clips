@@ -92,15 +92,15 @@ void ProceduralFunctionDefinitions(
    AllocateEnvironmentData(theEnv,PRCDRFUN_DATA,sizeof(struct procedureFunctionData),DeallocateProceduralFunctionData);
 
 #if ! RUN_TIME
-   EnvAddUDF(theEnv,"if","*",0,UNBOUNDED,NULL,IfFunction,"IfFunction",NULL);
-   EnvAddUDF(theEnv,"while","*",0,UNBOUNDED,NULL,WhileFunction,"WhileFunction",NULL);
-   EnvAddUDF(theEnv,"loop-for-count","*",0,UNBOUNDED,NULL,LoopForCountFunction,"LoopForCountFunction",NULL);
-   EnvAddUDF(theEnv,"(get-loop-count)","l",1,1,NULL,GetLoopCount,"GetLoopCount",NULL);
-   EnvAddUDF(theEnv,"bind","*",0,UNBOUNDED,NULL,BindFunction,"BindFunction",NULL);
-   EnvAddUDF(theEnv,"progn","*",0,UNBOUNDED,NULL,PrognFunction,"PrognFunction",NULL);
-   EnvAddUDF(theEnv,"return","*",0,UNBOUNDED,NULL,ReturnFunction,"ReturnFunction",NULL);
-   EnvAddUDF(theEnv,"break","v",0,0,NULL,BreakFunction,"BreakFunction",NULL);
-   EnvAddUDF(theEnv,"switch","*",0,UNBOUNDED,NULL,SwitchFunction,"SwitchFunction",NULL);
+   AddUDF(theEnv,"if","*",0,UNBOUNDED,NULL,IfFunction,"IfFunction",NULL);
+   AddUDF(theEnv,"while","*",0,UNBOUNDED,NULL,WhileFunction,"WhileFunction",NULL);
+   AddUDF(theEnv,"loop-for-count","*",0,UNBOUNDED,NULL,LoopForCountFunction,"LoopForCountFunction",NULL);
+   AddUDF(theEnv,"(get-loop-count)","l",1,1,NULL,GetLoopCount,"GetLoopCount",NULL);
+   AddUDF(theEnv,"bind","*",0,UNBOUNDED,NULL,BindFunction,"BindFunction",NULL);
+   AddUDF(theEnv,"progn","*",0,UNBOUNDED,NULL,PrognFunction,"PrognFunction",NULL);
+   AddUDF(theEnv,"return","*",0,UNBOUNDED,NULL,ReturnFunction,"ReturnFunction",NULL);
+   AddUDF(theEnv,"break","v",0,0,NULL,BreakFunction,"BreakFunction",NULL);
+   AddUDF(theEnv,"switch","*",0,UNBOUNDED,NULL,SwitchFunction,"SwitchFunction",NULL);
 #endif
 
    ProceduralFunctionParsers(theEnv);
@@ -114,8 +114,8 @@ void ProceduralFunctionDefinitions(
    FuncSeqOvlFlags(theEnv,"switch",false,false);
 #endif
 
-   EnvAddResetFunction(theEnv,"bind",FlushBindList,0);
-   EnvAddClearFunction(theEnv,"bind",FlushBindList,0);
+   AddResetFunction(theEnv,"bind",FlushBindList,0);
+   AddClearFunction(theEnv,"bind",FlushBindList,0);
   }
 
 /*************************************************************/
@@ -298,7 +298,7 @@ void GetLoopCount(
       depth--;
      }
 
-   returnValue->integerValue = EnvCreateInteger(theEnv,tmpCounter->loopCounter);
+   returnValue->integerValue = CreateInteger(theEnv,tmpCounter->loopCounter);
   }
 
 /************************************/
@@ -539,7 +539,7 @@ void PrognFunction(
       return;
      }
 
-   while ((argPtr != NULL) && (EnvGetHaltExecution(theEnv) != true))
+   while ((argPtr != NULL) && (GetHaltExecution(theEnv) != true))
      {
       EvaluateExpression(theEnv,argPtr,returnValue);
 
@@ -548,7 +548,7 @@ void PrognFunction(
       argPtr = argPtr->nextArg;
      }
 
-   if (EnvGetHaltExecution(theEnv) == true)
+   if (GetHaltExecution(theEnv) == true)
      {
       returnValue->value = FalseSymbol(theEnv);
       return;

@@ -158,16 +158,16 @@ static void BsaveFind(
    /* Loop through each module. */
    /*===========================*/
 
-   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = EnvGetNextDefmodule(theEnv,theModule))
+        theModule = GetNextDefmodule(theEnv,theModule))
      {
       /*===============================*/
       /* Set the current module to the */
       /* module being examined.        */
       /*===============================*/
 
-      EnvSetCurrentModule(theEnv,theModule);
+      SetCurrentModule(theEnv,theModule);
 
       /*=====================================================*/
       /* Loop through each deftemplate in the current module */
@@ -175,9 +175,9 @@ static void BsaveFind(
       /* be saved for its pattern network.                   */
       /*=====================================================*/
 
-      for (theDeftemplate = EnvGetNextDeftemplate(theEnv,NULL);
+      for (theDeftemplate = GetNextDeftemplate(theEnv,NULL);
            theDeftemplate != NULL;
-           theDeftemplate = EnvGetNextDeftemplate(theEnv,theDeftemplate))
+           theDeftemplate = GetNextDeftemplate(theEnv,theDeftemplate))
         { BsaveDriver(theEnv,BSAVE_FIND,NULL,theDeftemplate->patternNetwork); }
      }
   }
@@ -263,19 +263,19 @@ static void BsaveFactPatterns(
    /* Loop through each module. */
    /*===========================*/
 
-   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = EnvGetNextDefmodule(theEnv,theModule))
+        theModule = GetNextDefmodule(theEnv,theModule))
      {
       /*=====================================================*/
       /* Loop through each deftemplate in the current module */
       /* and save its fact pattern network to the file.      */
       /*=====================================================*/
 
-      EnvSetCurrentModule(theEnv,theModule);
-      for (theDeftemplate = EnvGetNextDeftemplate(theEnv,NULL);
+      SetCurrentModule(theEnv,theModule);
+      for (theDeftemplate = GetNextDeftemplate(theEnv,NULL);
            theDeftemplate != NULL;
-           theDeftemplate = EnvGetNextDeftemplate(theEnv,theDeftemplate))
+           theDeftemplate = GetNextDeftemplate(theEnv,theDeftemplate))
         { BsaveDriver(theEnv,BSAVE_PATTERNS,fp,theDeftemplate->patternNetwork); }
     }
 

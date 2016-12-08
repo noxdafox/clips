@@ -116,8 +116,8 @@ struct constraintData
    void                           InitializeConstraints(Environment *);
    void                           GDCCommand(Environment *,UDFContext *,UDFValue *);
    void                           SDCCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           EnvSetDynamicConstraintChecking(Environment *,bool);
-   bool                           EnvGetDynamicConstraintChecking(Environment *);
+   bool                           SetDynamicConstraintChecking(Environment *,bool);
+   bool                           GetDynamicConstraintChecking(Environment *);
 #if (! BLOAD_ONLY) && (! RUN_TIME)
    unsigned long                  HashConstraint(struct constraintRecord *);
    struct constraintRecord       *AddConstraint(Environment *,struct constraintRecord *);

@@ -132,11 +132,11 @@ struct deftemplateData
 #define DeftemplateData(theEnv) ((struct deftemplateData *) GetEnvironmentData(theEnv,DEFTEMPLATE_DATA))
 
    void                           InitializeDeftemplates(Environment *);
-   Deftemplate                   *EnvFindDeftemplate(Environment *,const char *);
-   Deftemplate                   *EnvFindDeftemplateInModule(Environment *,const char *);
-   Deftemplate                   *EnvGetNextDeftemplate(Environment *,Deftemplate *);
+   Deftemplate                   *FindDeftemplate(Environment *,const char *);
+   Deftemplate                   *FindDeftemplateInModule(Environment *,const char *);
+   Deftemplate                   *GetNextDeftemplate(Environment *,Deftemplate *);
    bool                           DeftemplateIsDeletable(Deftemplate *);
-   Fact                          *EnvGetNextFactInTemplate(Environment *,Deftemplate *,Fact *);
+   Fact                          *GetNextFactInTemplate(Environment *,Deftemplate *,Fact *);
    struct deftemplateModule      *GetDeftemplateModuleItem(Environment *,Defmodule *);
    void                           ReturnSlots(Environment *,struct templateSlot *);
    void                           IncrementDeftemplateBusyCount(Environment *,Deftemplate *);

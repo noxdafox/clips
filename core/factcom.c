@@ -126,20 +126,20 @@ void FactCommandDefinitions(
   {
 #if ! RUN_TIME
 #if DEBUGGING_FUNCTIONS
-   EnvAddUDF(theEnv,"facts","v",0,4,"l;*",FactsCommand,"FactsCommand",NULL);
+   AddUDF(theEnv,"facts","v",0,4,"l;*",FactsCommand,"FactsCommand",NULL);
 #endif
 
-   EnvAddUDF(theEnv,"assert","bf",0,UNBOUNDED,NULL,AssertCommand,"AssertCommand",NULL);
-   EnvAddUDF(theEnv,"retract", "v",1,UNBOUNDED,"fly",RetractCommand,"RetractCommand",NULL);
-   EnvAddUDF(theEnv,"assert-string","bf",1,1,"s",AssertStringFunction,"AssertStringFunction",NULL);
-   EnvAddUDF(theEnv,"str-assert","bf",1,1,"s",AssertStringFunction,"AssertStringFunction",NULL);
+   AddUDF(theEnv,"assert","bf",0,UNBOUNDED,NULL,AssertCommand,"AssertCommand",NULL);
+   AddUDF(theEnv,"retract", "v",1,UNBOUNDED,"fly",RetractCommand,"RetractCommand",NULL);
+   AddUDF(theEnv,"assert-string","bf",1,1,"s",AssertStringFunction,"AssertStringFunction",NULL);
+   AddUDF(theEnv,"str-assert","bf",1,1,"s",AssertStringFunction,"AssertStringFunction",NULL);
 
-   EnvAddUDF(theEnv,"get-fact-duplication","b",0,0,NULL,GetFactDuplicationCommand,"GetFactDuplicationCommand", NULL);
-   EnvAddUDF(theEnv,"set-fact-duplication","b",1,1,NULL,SetFactDuplicationCommand,"SetFactDuplicationCommand", NULL);
+   AddUDF(theEnv,"get-fact-duplication","b",0,0,NULL,GetFactDuplicationCommand,"GetFactDuplicationCommand", NULL);
+   AddUDF(theEnv,"set-fact-duplication","b",1,1,NULL,SetFactDuplicationCommand,"SetFactDuplicationCommand", NULL);
 
-   EnvAddUDF(theEnv,"save-facts","b",1,UNBOUNDED,"y;sy",SaveFactsCommand,"SaveFactsCommand",NULL);
-   EnvAddUDF(theEnv,"load-facts","b",1,1,"sy",LoadFactsCommand,"LoadFactsCommand",NULL);
-   EnvAddUDF(theEnv,"fact-index","l",1,1,"f",FactIndexFunction,"FactIndexFunction",NULL);
+   AddUDF(theEnv,"save-facts","b",1,UNBOUNDED,"y;sy",SaveFactsCommand,"SaveFactsCommand",NULL);
+   AddUDF(theEnv,"load-facts","b",1,1,"sy",LoadFactsCommand,"LoadFactsCommand",NULL);
+   AddUDF(theEnv,"fact-index","l",1,1,"f",FactIndexFunction,"FactIndexFunction",NULL);
 
    FuncSeqOvlFlags(theEnv,"assert",false,false);
 #else
@@ -205,7 +205,7 @@ void AssertCommand(
    /* the newly created fact.                           */
    /*===================================================*/
 
-   EnvIncrementClearReadyLocks(theEnv);
+   IncrementClearReadyLocks(theEnv);
 
    theField = newFact->theProposition.theFields;
 
@@ -245,7 +245,7 @@ void AssertCommand(
       if (slotPtr != NULL) slotPtr = slotPtr->next;
      }
 
-   EnvDecrementClearReadyLocks(theEnv);
+   DecrementClearReadyLocks(theEnv);
 
    /*============================================*/
    /* If an error occured while generating the   */
@@ -263,7 +263,7 @@ void AssertCommand(
    /* Add the fact to the fact-list. */
    /*================================*/
 
-   theFact = EnvAssert(theEnv,newFact);
+   theFact = Assert(theEnv,newFact);
 
    /*========================================*/
    /* The asserted fact is the return value. */
@@ -334,7 +334,7 @@ void RetractCommand(
          /*=====================================*/
 
          if (ptr != NULL)
-           { EnvRetract(theEnv,ptr); }
+           { Retract(theEnv,ptr); }
          else
            {
             char tempBuffer[20];
@@ -349,7 +349,7 @@ void RetractCommand(
       /*===============================================*/
 
       else if (CVIsType(&theArg,FACT_ADDRESS_BIT))
-        { EnvRetract(theEnv,theArg.factValue); }
+        { Retract(theEnv,theArg.factValue); }
 
       /*============================================*/
       /* Otherwise if the argument evaluates to the */
@@ -371,7 +371,7 @@ void RetractCommand(
       else
         {
          UDFInvalidArgumentMessage(context,"fact-address, fact-index, or the symbol *");
-         EnvSetEvaluationError(theEnv,true);
+         SetEvaluationError(theEnv,true);
         }
      }
   }
@@ -391,7 +391,7 @@ void SetFactDuplicationCommand(
    /* Get the old value of the fact duplication behavior. */
    /*=====================================================*/
 
-   returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvGetFactDuplication(theEnv));
+   returnValue->lexemeValue = CreateBoolean(theEnv,GetFactDuplication(theEnv));
 
    /*========================*/
    /* Evaluate the argument. */
@@ -405,7 +405,7 @@ void SetFactDuplicationCommand(
    /* behavior is disabled, otherwise it is enabled.                */
    /*===============================================================*/
 
-   EnvSetFactDuplication(theEnv,theArg.value != FalseSymbol(theEnv));
+   SetFactDuplication(theEnv,theArg.value != FalseSymbol(theEnv));
   }
 
 /***************************************************/
@@ -417,7 +417,7 @@ void GetFactDuplicationCommand(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvGetFactDuplication(theEnv));
+   returnValue->lexemeValue = CreateBoolean(theEnv,GetFactDuplication(theEnv));
   }
 
 /*******************************************/
@@ -446,11 +446,11 @@ void FactIndexFunction(
 
    if (theArg.factValue->garbage)
      {
-      returnValue->integerValue = EnvCreateInteger(theEnv,-1L);
+      returnValue->integerValue = CreateInteger(theEnv,-1L);
       return;
      }
 
-   returnValue->integerValue = EnvCreateInteger(theEnv,EnvFactIndex(theEnv,theArg.factValue));
+   returnValue->integerValue = CreateInteger(theEnv,FactIndex(theEnv,theArg.factValue));
   }
 
 #if DEBUGGING_FUNCTIONS
@@ -473,7 +473,7 @@ void FactsCommand(
    /* command is the current module.   */
    /*==================================*/
 
-   theModule = EnvGetCurrentModule(theEnv);
+   theModule = GetCurrentModule(theEnv);
 
    /*==========================================*/
    /* If no arguments were specified, then use */
@@ -482,7 +482,7 @@ void FactsCommand(
 
    if (! UDFHasNextArgument(context))
      {
-      EnvFacts(theEnv,WDISPLAY,theModule,start,end,max);
+      Facts(theEnv,WDISPLAY,theModule,start,end,max);
       return;
      }
 
@@ -500,10 +500,10 @@ void FactsCommand(
 
    if (CVIsType(&theArg,SYMBOL_BIT))
      {
-      theModule = EnvFindDefmodule(theEnv,theArg.lexemeValue->contents);
+      theModule = FindDefmodule(theEnv,theArg.lexemeValue->contents);
       if ((theModule == NULL) && (strcmp(theArg.lexemeValue->contents,"*") != 0))
         {
-         EnvSetEvaluationError(theEnv,true);
+         SetEvaluationError(theEnv,true);
          CantFindItemErrorMessage(theEnv,"defmodule",theArg.lexemeValue->contents);
          return;
         }
@@ -522,8 +522,8 @@ void FactsCommand(
       if (start < 0)
         {
          ExpectedTypeError1(theEnv,"facts",1,"symbol or positive number");
-         EnvSetHaltExecution(theEnv,true);
-         EnvSetEvaluationError(theEnv,true);
+         SetHaltExecution(theEnv,true);
+         SetEvaluationError(theEnv,true);
          return;
         }
      }
@@ -535,8 +535,8 @@ void FactsCommand(
    else
      {
       UDFInvalidArgumentMessage(context,"symbol or positive number");
-      EnvSetHaltExecution(theEnv,true);
-      EnvSetEvaluationError(theEnv,true);
+      SetHaltExecution(theEnv,true);
+      SetEvaluationError(theEnv,true);
       return;
      }
 
@@ -551,13 +551,13 @@ void FactsCommand(
    /* List the facts. */
    /*=================*/
 
-   EnvFacts(theEnv,WDISPLAY,theModule,start,end,max);
+   Facts(theEnv,WDISPLAY,theModule,start,end,max);
   }
 
-/*****************************************************/
-/* EnvFacts: C access routine for the facts command. */
-/*****************************************************/
-void EnvFacts(
+/**************************************************/
+/* Facts: C access routine for the facts command. */
+/**************************************************/
+void Facts(
   Environment *theEnv,
   const char *logicalName,
   Defmodule *theModule,
@@ -574,7 +574,7 @@ void EnvFacts(
    /* Save the current module. */
    /*==========================*/
 
-   oldModule = EnvGetCurrentModule(theEnv);
+   oldModule = GetCurrentModule(theEnv);
 
    /*=========================================================*/
    /* Determine if facts from all modules are to be displayed */
@@ -582,13 +582,13 @@ void EnvFacts(
    /*=========================================================*/
 
    if (theModule == NULL) allModules = true;
-   else EnvSetCurrentModule(theEnv,theModule);
+   else SetCurrentModule(theEnv,theModule);
 
    /*=====================================*/
    /* Get the first fact to be displayed. */
    /*=====================================*/
 
-   if (allModules) factPtr = EnvGetNextFact(theEnv,NULL);
+   if (allModules) factPtr = GetNextFact(theEnv,NULL);
    else factPtr = GetNextFactInScope(theEnv,NULL);
 
    /*===============================*/
@@ -603,9 +603,9 @@ void EnvFacts(
       /* flag has been set (normally by user action).     */
       /*==================================================*/
 
-      if (EnvGetHaltExecution(theEnv) == true)
+      if (GetHaltExecution(theEnv) == true)
         {
-         EnvSetCurrentModule(theEnv,oldModule);
+         SetCurrentModule(theEnv,oldModule);
          return;
         }
 
@@ -617,7 +617,7 @@ void EnvFacts(
       if ((factPtr->factIndex > end) && (end != UNSPECIFIED))
         {
          PrintTally(theEnv,logicalName,count,"fact","facts");
-         EnvSetCurrentModule(theEnv,oldModule);
+         SetCurrentModule(theEnv,oldModule);
          return;
         }
 
@@ -629,7 +629,7 @@ void EnvFacts(
       if (max == 0)
         {
          PrintTally(theEnv,logicalName,count,"fact","facts");
-         EnvSetCurrentModule(theEnv,oldModule);
+         SetCurrentModule(theEnv,oldModule);
          return;
         }
 
@@ -641,7 +641,7 @@ void EnvFacts(
       if (factPtr->factIndex >= start)
         {
          PrintFactWithIdentifier(theEnv,logicalName,factPtr);
-         EnvPrintRouter(theEnv,logicalName,"\n");
+         PrintRouter(theEnv,logicalName,"\n");
          count++;
          if (max > 0) max--;
         }
@@ -650,7 +650,7 @@ void EnvFacts(
       /* Proceed to the next fact to be listed. */
       /*========================================*/
 
-      if (allModules) factPtr = EnvGetNextFact(theEnv,factPtr);
+      if (allModules) factPtr = GetNextFact(theEnv,factPtr);
       else factPtr = GetNextFactInScope(theEnv,factPtr);
      }
 
@@ -664,7 +664,7 @@ void EnvFacts(
    /* Restore the current module. */
    /*=============================*/
 
-   EnvSetCurrentModule(theEnv,oldModule);
+   SetCurrentModule(theEnv,oldModule);
   }
 
 /****************************************************************/
@@ -689,8 +689,8 @@ static long long GetFactsArgument(
    if (factIndex < 0)
      {
       UDFInvalidArgumentMessage(context,"positive number");
-      EnvSetHaltExecution(context->environment,true);
-      EnvSetEvaluationError(context->environment,true);
+      SetHaltExecution(context->environment,true);
+      SetEvaluationError(context->environment,true);
       return(INVALID);
      }
 
@@ -723,7 +723,7 @@ void AssertStringFunction(
    /* string to a fact and then assert it.     */
    /*==========================================*/
 
-   theFact = EnvAssertString(theEnv,theArg.lexemeValue->contents);
+   theFact = AssertString(theEnv,theArg.lexemeValue->contents);
    if (theFact != NULL)
      { returnValue->factValue = theFact; }
    else
@@ -801,7 +801,7 @@ void SaveFactsCommand(
    /* Call the SaveFacts driver routine. */
    /*====================================*/
 
-   if (EnvSaveFactsDriver(theEnv,fileName,saveCode,theList) == false)
+   if (SaveFactsDriver(theEnv,fileName,saveCode,theList) == false)
      { returnValue->lexemeValue = FalseSymbol(theEnv); }
    else
      { returnValue->lexemeValue = TrueSymbol(theEnv); }
@@ -832,24 +832,24 @@ void LoadFactsCommand(
    /* Call the LoadFacts driver routine. */
    /*====================================*/
 
-   returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvLoadFacts(theEnv,fileName));
+   returnValue->lexemeValue = CreateBoolean(theEnv,LoadFacts(theEnv,fileName));
   }
 
-/**************************************************************/
-/* EnvSaveFacts: C access routine for the save-facts command. */
-/**************************************************************/
-bool EnvSaveFacts(
+/***********************************************************/
+/* SaveFacts: C access routine for the save-facts command. */
+/***********************************************************/
+bool SaveFacts(
   Environment *theEnv,
   const char *fileName,
   int saveCode)
   {
-   return EnvSaveFactsDriver(theEnv,fileName,saveCode,NULL);
+   return SaveFactsDriver(theEnv,fileName,saveCode,NULL);
   }
 
-/********************************************************************/
-/* EnvSaveFactsDriver: C access routine for the save-facts command. */
-/********************************************************************/
-bool EnvSaveFactsDriver(
+/*****************************************************************/
+/* SaveFactsDriver: C access routine for the save-facts command. */
+/*****************************************************************/
+bool SaveFactsDriver(
   Environment *theEnv,
   const char *fileName,
   int saveCode,
@@ -907,7 +907,7 @@ bool EnvSaveFactsDriver(
    /* Save the facts. */
    /*=================*/
 
-   theModule = EnvGetCurrentModule(theEnv);
+   theModule = GetCurrentModule(theEnv);
 
    for (theFact = GetNextFactInScope(theEnv,NULL);
         theFact != NULL;
@@ -959,7 +959,7 @@ bool EnvSaveFactsDriver(
       if (printFact)
         {
          PrintFact(theEnv,(char *) filePtr,theFact,false,false);
-         EnvPrintRouter(theEnv,(char *) filePtr,"\n");
+         PrintRouter(theEnv,(char *) filePtr,"\n");
         }
      }
 
@@ -1084,7 +1084,7 @@ static Deftemplate **GetSaveFactsDeftemplateNames(
 
       if (saveCode == LOCAL_SAVE)
         {
-         theDeftemplate = EnvFindDeftemplateInModule(theEnv,tempArg.lexemeValue->contents);
+         theDeftemplate = FindDeftemplateInModule(theEnv,tempArg.lexemeValue->contents);
          if (theDeftemplate == NULL)
            {
             *error = true;
@@ -1123,10 +1123,10 @@ static Deftemplate **GetSaveFactsDeftemplateNames(
    return deftemplateArray;
   }
 
-/**************************************************************/
-/* EnvLoadFacts: C access routine for the load-facts command. */
-/**************************************************************/
-bool EnvLoadFacts(
+/***********************************************************/
+/* LoadFacts: C access routine for the load-facts command. */
+/***********************************************************/
+bool LoadFacts(
   Environment *theEnv,
   const char *fileName)
   {
@@ -1176,10 +1176,10 @@ bool EnvLoadFacts(
    return true;
   }
 
-/*********************************************/
-/* EnvLoadFactsFromString: C access routine. */
-/*********************************************/
-bool EnvLoadFactsFromString(
+/******************************************/
+/* LoadFactsFromString: C access routine. */
+/******************************************/
+bool LoadFactsFromString(
   Environment *theEnv,
   const char *theString,
   long theMax)
@@ -1245,8 +1245,8 @@ static struct expr *StandardLoadFact(
 
    if (error == true)
      {
-      EnvPrintRouter(theEnv,WERROR,"Function load-facts encountered an error\n");
-      EnvSetEvaluationError(theEnv,true);
+      PrintRouter(theEnv,WERROR,"Function load-facts encountered an error\n");
+      SetEvaluationError(theEnv,true);
       ReturnExpression(theEnv,temp);
       return NULL;
      }

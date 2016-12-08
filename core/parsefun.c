@@ -104,7 +104,7 @@ void ParseFunctionDefinitions(
    AllocateEnvironmentData(theEnv,PARSEFUN_DATA,sizeof(struct parseFunctionData),NULL);
 
 #if ! RUN_TIME
-   EnvAddUDF(theEnv,"check-syntax","ym",1,1,"s",CheckSyntaxFunction,"CheckSyntaxFunction",NULL);
+   AddUDF(theEnv,"check-syntax","ym",1,1,"s",CheckSyntaxFunction,"CheckSyntaxFunction",NULL);
 #endif
   }
 
@@ -173,7 +173,7 @@ bool CheckSyntax(
    if (theToken.tknType != LEFT_PARENTHESIS_TOKEN)
      {
       CloseStringSource(theEnv,"check-syntax");
-      returnValue->lexemeValue = EnvCreateSymbol(theEnv,"MISSING-LEFT-PARENTHESIS");
+      returnValue->lexemeValue = CreateSymbol(theEnv,"MISSING-LEFT-PARENTHESIS");
       return true;
      }
 
@@ -186,7 +186,7 @@ bool CheckSyntax(
    if (theToken.tknType != SYMBOL_TOKEN)
      {
       CloseStringSource(theEnv,"check-syntax");
-      returnValue->lexemeValue = EnvCreateSymbol(theEnv,"EXPECTED-SYMBOL_TYPE-AFTER-LEFT-PARENTHESIS");
+      returnValue->lexemeValue = CreateSymbol(theEnv,"EXPECTED-SYMBOL_TYPE-AFTER-LEFT-PARENTHESIS");
       return true;
      }
 
@@ -196,9 +196,9 @@ bool CheckSyntax(
    /* Set up a router to capture the error output. */
    /*==============================================*/
 
-   EnvAddRouter(theEnv,"cs-error-capture",40,
-                FindErrorCapture, PrintErrorCapture,
-                NULL, NULL, NULL);
+   AddRouter(theEnv,"cs-error-capture",40,
+             FindErrorCapture, PrintErrorCapture,
+             NULL,NULL,NULL,NULL);
 
    /*================================*/
    /* Determine if it's a construct. */
@@ -218,9 +218,9 @@ bool CheckSyntax(
 
       if (rv)
         {
-         EnvPrintRouter(theEnv,WERROR,"\nERROR:\n");
+         PrintRouter(theEnv,WERROR,"\nERROR:\n");
          PrintInChunks(theEnv,WERROR,GetPPBuffer(theEnv));
-         EnvPrintRouter(theEnv,WERROR,"\n");
+         PrintRouter(theEnv,WERROR,"\n");
         }
 
       DestroyPPBuffer(theEnv);
@@ -236,7 +236,7 @@ bool CheckSyntax(
 
       if (theToken.tknType != STOP_TOKEN)
         {
-         returnValue->value = EnvCreateSymbol(theEnv,"EXTRANEOUS-INPUT-AFTER-LAST-PARENTHESIS");
+         returnValue->value = CreateSymbol(theEnv,"EXTRANEOUS-INPUT-AFTER-LAST-PARENTHESIS");
          DeactivateErrorCapture(theEnv);
          return true;
         }
@@ -264,7 +264,7 @@ bool CheckSyntax(
 
    if (theToken.tknType != STOP_TOKEN)
      {
-      returnValue->lexemeValue = EnvCreateSymbol(theEnv,"EXTRANEOUS-INPUT-AFTER-LAST-PARENTHESIS");
+      returnValue->lexemeValue = CreateSymbol(theEnv,"EXTRANEOUS-INPUT-AFTER-LAST-PARENTHESIS");
       DeactivateErrorCapture(theEnv);
       ReturnExpression(theEnv,top);
       return true;
@@ -302,7 +302,7 @@ static void DeactivateErrorCapture(
    ParseFunctionData(theEnv)->WarningCurrentPosition = 0;
    ParseFunctionData(theEnv)->WarningMaximumPosition = 0;
 
-   EnvDeleteRouter(theEnv,"cs-error-capture");
+   DeleteRouter(theEnv,"cs-error-capture");
   }
 
 /*******************************************************************/
@@ -319,15 +319,15 @@ static void SetErrorCaptureValues(
   {
    Multifield *theMultifield;
 
-   theMultifield = EnvCreateMultifield(theEnv,2L);
+   theMultifield = CreateMultifield(theEnv,2L);
 
    if (ParseFunctionData(theEnv)->ErrorString != NULL)
-     { theMultifield->theFields[0].lexemeValue = EnvCreateString(theEnv,ParseFunctionData(theEnv)->ErrorString); }
+     { theMultifield->theFields[0].lexemeValue = CreateString(theEnv,ParseFunctionData(theEnv)->ErrorString); }
    else
      { theMultifield->theFields[0].lexemeValue = FalseSymbol(theEnv); }
 
    if (ParseFunctionData(theEnv)->WarningString != NULL)
-     { theMultifield->theFields[1].lexemeValue = EnvCreateString(theEnv,ParseFunctionData(theEnv)->WarningString); }
+     { theMultifield->theFields[1].lexemeValue = CreateString(theEnv,ParseFunctionData(theEnv)->WarningString); }
    else
      { theMultifield->theFields[1].lexemeValue = FalseSymbol(theEnv); }
 
@@ -389,7 +389,7 @@ void CheckSyntaxFunction(
   UDFValue *returnValue)
   {
    PrintErrorID(theEnv,"PARSEFUN",1,false);
-   EnvPrintRouter(theEnv,WERROR,"Function check-syntax does not work in run time modules.\n");
+   PrintRouter(theEnv,WERROR,"Function check-syntax does not work in run time modules.\n");
    returnValue->value = TrueSymbol(theEnv);
   }
 
@@ -403,7 +403,7 @@ bool CheckSyntax(
   UDFValue *returnValue)
   {
    PrintErrorID(theEnv,"PARSEFUN",1,false);
-   EnvPrintRouter(theEnv,WERROR,"Function check-syntax does not work in run time modules.\n");
+   PrintRouter(theEnv,WERROR,"Function check-syntax does not work in run time modules.\n");
    returnValue->value = TrueSymbol(theEnv);
    return true;
   }

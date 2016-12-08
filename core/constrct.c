@@ -68,6 +68,8 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Modified EnvClear to return completion status. */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -143,9 +145,9 @@ static void DeallocateConstructData(
    ConstructData(theEnv)->ErrorString = NULL;
    ConstructData(theEnv)->WarningString = NULL;
 
-   EnvSetParsingFileName(theEnv,NULL);
-   EnvSetWarningFileName(theEnv,NULL);
-   EnvSetErrorFileName(theEnv,NULL);
+   SetParsingFileName(theEnv,NULL);
+   SetWarningFileName(theEnv,NULL);
+   SetErrorFileName(theEnv,NULL);
 #endif
 
    tmpPtr = ConstructData(theEnv)->ListOfConstructs;
@@ -159,12 +161,12 @@ static void DeallocateConstructData(
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
 
-/**************************************************/
-/* EnvSetParserErrorCallback: Allows the function */
-/*   which is called when a construct parsing     */
-/*    error occurs to be changed.                 */
-/**************************************************/
-ParserErrorFunction *EnvSetParserErrorCallback(
+/***********************************************/
+/* SetParserErrorCallback: Allows the function */
+/*   which is called when a construct parsing  */
+/*    error occurs to be changed.              */
+/***********************************************/
+ParserErrorFunction *SetParserErrorCallback(
    Environment *theEnv,
    ParserErrorFunction *functionPtr)
   {
@@ -231,7 +233,7 @@ bool RemoveConstruct(
 /************************************************/
 /* Save: C access routine for the save command. */
 /************************************************/
-bool EnvSave(
+bool Save(
   Environment *theEnv,
   const char *fileName)
   {
@@ -270,9 +272,9 @@ bool EnvSave(
       unvisited = false;
       updated = false;
 
-      for (defmodulePtr = EnvGetNextDefmodule(theEnv,NULL);
+      for (defmodulePtr = GetNextDefmodule(theEnv,NULL);
            defmodulePtr != NULL;
-           defmodulePtr = EnvGetNextDefmodule(theEnv,defmodulePtr))
+           defmodulePtr = GetNextDefmodule(theEnv,defmodulePtr))
         {
          /*=================================================================*/
          /* We only want to save a module if all of the modules it imports  */
@@ -405,8 +407,8 @@ void InitializeConstructs(
   Environment *theEnv)
   {
 #if (! RUN_TIME)
-   EnvAddUDF(theEnv,"clear","v",0,0,NULL,ClearCommand,"ClearCommand",NULL);
-   EnvAddUDF(theEnv,"reset","v",0,0,NULL,ResetCommand,"ResetCommand",NULL);
+   AddUDF(theEnv,"clear","v",0,0,NULL,ClearCommand,"ClearCommand",NULL);
+   AddUDF(theEnv,"reset","v",0,0,NULL,ResetCommand,"ResetCommand",NULL);
 
 #if DEBUGGING_FUNCTIONS && (! BLOAD_ONLY)
    AddWatchItem(theEnv,"compilations",0,&ConstructData(theEnv)->WatchCompilations,30,NULL,NULL);
@@ -427,7 +429,7 @@ void ClearCommand(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   EnvClear(theEnv);
+   Clear(theEnv);
   }
 
 /**************************************/
@@ -439,14 +441,14 @@ void ResetCommand(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   EnvReset(theEnv);
+   Reset(theEnv);
   }
 
-/******************************/
-/* EnvReset: C access routine */
-/*   for the reset command.   */
-/******************************/
-void EnvReset(
+/****************************/
+/* Reset: C access routine  */
+/*   for the reset command. */
+/****************************/
+void Reset(
   Environment *theEnv)
   {
    struct voidCallFunctionItem *resetPtr;
@@ -467,7 +469,7 @@ void EnvReset(
    /* command prompt, reset the halt execution flag. */
    /*================================================*/
 
-   if (UtilityData(theEnv)->CurrentGarbageFrame->topLevel) EnvSetHaltExecution(theEnv,false);
+   if (UtilityData(theEnv)->CurrentGarbageFrame->topLevel) SetHaltExecution(theEnv,false);
    CLIPSBlockStart(theEnv,&gcBlock);
 
    /*=======================================================*/
@@ -491,7 +493,7 @@ void EnvReset(
    /*===========================*/
 
    for (resetPtr = ConstructData(theEnv)->ListOfResetFunctions;
-        (resetPtr != NULL) && (EnvGetHaltExecution(theEnv) == false);
+        (resetPtr != NULL) && (GetHaltExecution(theEnv) == false);
         resetPtr = resetPtr->next)
      { (*resetPtr->func)(theEnv); }
 
@@ -499,7 +501,7 @@ void EnvReset(
    /* Set the current module to the MAIN module. */
    /*============================================*/
 
-   EnvSetCurrentModule(theEnv,EnvFindDefmodule(theEnv,"MAIN"));
+   SetCurrentModule(theEnv,FindDefmodule(theEnv,"MAIN"));
 
    /*===========================================*/
    /* Perform periodic cleanup if the reset was */
@@ -531,11 +533,11 @@ BeforeResetFunction *SetBeforeResetFunction(
    return tempFunction;
   }
 
-/****************************************/
-/* EnvAddResetFunction: Adds a function */
-/*   to ListOfResetFunctions.           */
-/****************************************/
-bool EnvAddResetFunction(
+/*************************************/
+/* AddResetFunction: Adds a function */
+/*   to ListOfResetFunctions.        */
+/*************************************/
+bool AddResetFunction(
   Environment *theEnv,
   const char *name,
   void (*functionPtr)(Environment *),
@@ -547,11 +549,11 @@ bool EnvAddResetFunction(
    return true;
   }
 
-/**********************************************/
-/* EnvRemoveResetFunction: Removes a function */
-/*   from the ListOfResetFunctions.           */
-/**********************************************/
-bool EnvRemoveResetFunction(
+/*******************************************/
+/* RemoveResetFunction: Removes a function */
+/*   from the ListOfResetFunctions.        */
+/*******************************************/
+bool RemoveResetFunction(
   Environment *theEnv,
   const char *name)
   {
@@ -563,31 +565,31 @@ bool EnvRemoveResetFunction(
    return found;
   }
 
-/*******************************************/
-/* EnvIncrementClearReadyLocks: Increments */
-/*   the number of clear ready locks.      */
-/*******************************************/
-void EnvIncrementClearReadyLocks(
+/****************************************/
+/* IncrementClearReadyLocks: Increments */
+/*   the number of clear ready locks.   */
+/****************************************/
+void IncrementClearReadyLocks(
   Environment *theEnv)
   {
    ConstructData(theEnv)->ClearReadyLocks++;
   }
 
 /*******************************************/
-/* EnvDecrementClearReadyLocks: Decrements */
+/* DecrementClearReadyLocks: Decrements    */
 /*   the number of clear locks.            */
 /*******************************************/
-void EnvDecrementClearReadyLocks(
+void DecrementClearReadyLocks(
   Environment *theEnv)
   {
    if (ConstructData(theEnv)->ClearReadyLocks > 0)
      { ConstructData(theEnv)->ClearReadyLocks--; }
   }
 
-/*****************************************************/
-/* EnvClear: C access routine for the clear command. */
-/*****************************************************/
-void EnvClear(
+/**************************************************/
+/* Clear: C access routine for the clear command. */
+/**************************************************/
+bool Clear(
   Environment *theEnv)
   {
    struct voidCallFunctionItem *theFunction;
@@ -600,7 +602,7 @@ void EnvClear(
    /*==========================================*/
 
 #if DEBUGGING_FUNCTIONS
-   EnvActivateRouter(theEnv,WTRACE);
+   ActivateRouter(theEnv,WTRACE);
 #endif
 
    /*===================================*/
@@ -613,12 +615,12 @@ void EnvClear(
        (ClearReady(theEnv) == false))
      {
       PrintErrorID(theEnv,"CONSTRCT",1,false);
-      EnvPrintRouter(theEnv,WERROR,"Some constructs are still in use. Clear cannot continue.\n");
+      PrintRouter(theEnv,WERROR,"Some constructs are still in use. Clear cannot continue.\n");
 #if DEBUGGING_FUNCTIONS
-      EnvDeactivateRouter(theEnv,WTRACE);
+      DeactivateRouter(theEnv,WTRACE);
 #endif
       ConstructData(theEnv)->ClearReadyInProgress = false;
-      return;
+      return false;
      }
    ConstructData(theEnv)->ClearReadyInProgress = false;
 
@@ -645,7 +647,7 @@ void EnvClear(
    /*=============================*/
 
 #if DEBUGGING_FUNCTIONS
-   EnvDeactivateRouter(theEnv,WTRACE);
+   DeactivateRouter(theEnv,WTRACE);
 #endif
 
    /*================================*/
@@ -671,7 +673,9 @@ void EnvClear(
    /* Perform reset after clear. */
    /*============================*/
 
-   EnvReset(theEnv);
+   Reset(theEnv);
+
+   return true;
   }
 
 /*********************************************************/
@@ -730,11 +734,11 @@ bool RemoveClearReadyFunction(
    return false;
   }
 
-/****************************************/
-/* EnvAddClearFunction: Adds a function */
-/*   to ListOfClearFunctions.           */
-/****************************************/
-bool EnvAddClearFunction(
+/*************************************/
+/* AddClearFunction: Adds a function */
+/*   to ListOfClearFunctions.        */
+/*************************************/
+bool AddClearFunction(
   Environment *theEnv,
   const char *name,
   void (*functionPtr)(Environment *),
@@ -747,11 +751,11 @@ bool EnvAddClearFunction(
    return true;
   }
 
-/**********************************************/
-/* EnvRemoveClearFunction: Removes a function */
-/*    from the ListOfClearFunctions.          */
-/**********************************************/
-bool EnvRemoveClearFunction(
+/*******************************************/
+/* RemoveClearFunction: Removes a function */
+/*    from the ListOfClearFunctions.       */
+/*******************************************/
+bool RemoveClearFunction(
   Environment *theEnv,
   const char *name)
   {

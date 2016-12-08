@@ -99,10 +99,10 @@ void InitializeDeffacts(
 
    DeffactsData(theEnv)->DeffactsConstruct =
       AddConstruct(theEnv,"deffacts","deffacts",ParseDeffacts,
-                   (FindConstructFunction *) EnvFindDeffacts,
+                   (FindConstructFunction *) FindDeffacts,
                    GetConstructNamePointer,GetConstructPPForm,
                    GetConstructModuleItem,
-                   (GetNextConstructFunction *) EnvGetNextDeffacts,
+                   (GetNextConstructFunction *) GetNextDeffacts,
                    SetNextConstruct,
                    (IsConstructDeletableFunction *) DeffactsIsDeletable,
                    (DeleteConstructFunction *) Undeffacts,
@@ -129,9 +129,9 @@ static void DeallocateDeffactsData(
                       DeffactsData(theEnv)->DeffactsModuleIndex,
                       false,NULL);
 
-   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = EnvGetNextDefmodule(theEnv,theModule))
+        theModule = GetNextDefmodule(theEnv,theModule))
      {
       theModuleItem = (struct deffactsModule *)
                       GetModuleItem(theEnv,theModule,
@@ -228,7 +228,7 @@ static void InitializeDeffactsModules(
 #else
                          NULL,
 #endif
-                         (FindConstructFunction *) EnvFindDeffactsInModule);
+                         (FindConstructFunction *) FindDeffactsInModule);
   }
 
 /************************************************/
@@ -262,24 +262,24 @@ struct deffactsModule *GetDeffactsModuleItem(
    return((struct deffactsModule *) GetConstructModuleItemByIndex(theEnv,theModule,DeffactsData(theEnv)->DeffactsModuleIndex));
   }
 
-/**************************************************/
-/* EnvFindDeffacts: Searches for a deffact in the */
-/*   list of deffacts. Returns a pointer to the   */
-/*   deffact if found, otherwise NULL.            */
-/**************************************************/
-Deffacts *EnvFindDeffacts(
+/************************************************/
+/* FindDeffacts: Searches for a deffact in the  */
+/*   list of deffacts. Returns a pointer to the */
+/*   deffact if found, otherwise NULL.          */
+/************************************************/
+Deffacts *FindDeffacts(
   Environment *theEnv,
   const char *deffactsName)
   {
    return (Deffacts *) FindNamedConstructInModuleOrImports(theEnv,deffactsName,DeffactsData(theEnv)->DeffactsConstruct);
   }
 
-/**************************************************/
-/* EnvFindDeffactsInModule: Searches for a deffact in the */
-/*   list of deffacts. Returns a pointer to the   */
-/*   deffact if found, otherwise NULL.            */
-/**************************************************/
-Deffacts *EnvFindDeffactsInModule(
+/************************************************/
+/* FindDeffactsInModule: Searches for a deffact */
+/*   in the list of deffacts. Returns a pointer */
+/*   to the deffact if found, otherwise NULL.   */
+/************************************************/
+Deffacts *FindDeffactsInModule(
   Environment *theEnv,
   const char *deffactsName)
   {
@@ -287,12 +287,12 @@ Deffacts *EnvFindDeffactsInModule(
   }
 
 /*********************************************************/
-/* EnvGetNextDeffacts: If passed a NULL pointer, returns */
+/* GetNextDeffacts: If passed a NULL pointer, returns    */
 /*   the first deffacts in the ListOfDeffacts. Otherwise */
 /*   returns the next deffacts following the deffacts    */
 /*   passed as an argument.                              */
 /*********************************************************/
-Deffacts *EnvGetNextDeffacts(
+Deffacts *GetNextDeffacts(
   Environment *theEnv,
   Deffacts *deffactsPtr)
   {

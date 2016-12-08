@@ -65,31 +65,31 @@
    const char             *DefclassName(Defclass *);
    const char             *DefclassPPForm(Defclass *);
    struct defmoduleItemHeader
-                          *EnvGetDefclassModule(Environment *,Defclass *);
+                          *GetDefclassModule(Environment *,Defclass *);
    const char             *DefclassModule(Defclass *);
    CLIPSLexeme            *GetDefclassNamePointer(Defclass *);
    void                    SetNextDefclass(Defclass *,Defclass *);
-   void                    EnvSetDefclassPPForm(Environment *,Defclass *,char *);
+   void                    SetDefclassPPForm(Environment *,Defclass *,char *);
 
-   Defclass               *EnvFindDefclass(Environment *,const char *);
-   Defclass               *EnvFindDefclassInModule(Environment *,const char *);
+   Defclass               *FindDefclass(Environment *,const char *);
+   Defclass               *FindDefclassInModule(Environment *,const char *);
    Defclass               *LookupDefclassByMdlOrScope(Environment *,const char *);
    Defclass               *LookupDefclassInScope(Environment *,const char *);
    Defclass               *LookupDefclassAnywhere(Environment *,Defmodule *,const char *);
    bool                    DefclassInScope(Environment *,Defclass *,Defmodule *);
-   Defclass               *EnvGetNextDefclass(Environment *,Defclass *);
+   Defclass               *GetNextDefclass(Environment *,Defclass *);
    bool                    DefclassIsDeletable(Defclass *);
 
    void                    UndefclassCommand(Environment *,UDFContext *,UDFValue *);
-   unsigned short          EnvSetClassDefaultsMode(Environment *,unsigned short);
-   unsigned short          EnvGetClassDefaultsMode(Environment *);
+   unsigned short          SetClassDefaultsMode(Environment *,unsigned short);
+   unsigned short          GetClassDefaultsMode(Environment *);
    void                    GetClassDefaultsModeCommand(Environment *,UDFContext *,UDFValue *);
    void                    SetClassDefaultsModeCommand(Environment *,UDFContext *,UDFValue *);
 
 #if DEBUGGING_FUNCTIONS
    void                    PPDefclassCommand(Environment *,UDFContext *,UDFValue *);
    void                    ListDefclassesCommand(Environment *,UDFContext *,UDFValue *);
-   void                    EnvListDefclasses(Environment *,const char *,Defmodule *);
+   void                    ListDefclasses(Environment *,const char *,Defmodule *);
    bool                    DefclassGetWatchInstances(Defclass *);
    void                    DefclassSetWatchInstances(Defclass *,bool);
    bool                    DefclassGetWatchSlots(Defclass *);
@@ -99,7 +99,7 @@
 #endif
 
    void                    GetDefclassListFunction(Environment *,UDFContext *,UDFValue *);
-   void                    EnvGetDefclassList(Environment *,CLIPSValue *,Defmodule *);
+   void                    GetDefclassList(Environment *,CLIPSValue *,Defmodule *);
    bool                    Undefclass(Defclass *,Environment *);
    bool                    HasSuperclass(Defclass *,Defclass *);
 

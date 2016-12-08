@@ -149,44 +149,44 @@ void MiscFunctionDefinitions(
    MiscFunctionData(theEnv)->GensymNumber = 1;
 
 #if ! RUN_TIME
-   EnvAddUDF(theEnv,"exit","v",0,1,"l",ExitCommand,"ExitCommand",NULL);
+   AddUDF(theEnv,"exit","v",0,1,"l",ExitCommand,"ExitCommand",NULL);
 
-   EnvAddUDF(theEnv,"gensym","y",0,0,NULL,GensymFunction,"GensymFunction",NULL);
-   EnvAddUDF(theEnv,"gensym*","y",0,0,NULL,GensymStarFunction,"GensymStarFunction",NULL);
-   EnvAddUDF(theEnv,"setgen","l",1,1,"l",SetgenFunction,"SetgenFunction",NULL);
+   AddUDF(theEnv,"gensym","y",0,0,NULL,GensymFunction,"GensymFunction",NULL);
+   AddUDF(theEnv,"gensym*","y",0,0,NULL,GensymStarFunction,"GensymStarFunction",NULL);
+   AddUDF(theEnv,"setgen","l",1,1,"l",SetgenFunction,"SetgenFunction",NULL);
 
-   EnvAddUDF(theEnv,"system","v",1,UNBOUNDED,"sy",SystemCommand,"SystemCommand",NULL);
-   EnvAddUDF(theEnv,"length$","l",1,1,"sym",LengthFunction,"LengthFunction",NULL);
-   EnvAddUDF(theEnv,"time","d",0,0,NULL,TimeFunction,"TimeFunction",NULL);
-   EnvAddUDF(theEnv,"local-time","m",0,0,NULL,LocalTimeFunction,"LocalTimeFunction",NULL);
-   EnvAddUDF(theEnv,"gm-time","m",0,0,NULL,GMTimeFunction,"GMTimeFunction",NULL);
+   AddUDF(theEnv,"system","v",1,UNBOUNDED,"sy",SystemCommand,"SystemCommand",NULL);
+   AddUDF(theEnv,"length$","l",1,1,"sym",LengthFunction,"LengthFunction",NULL);
+   AddUDF(theEnv,"time","d",0,0,NULL,TimeFunction,"TimeFunction",NULL);
+   AddUDF(theEnv,"local-time","m",0,0,NULL,LocalTimeFunction,"LocalTimeFunction",NULL);
+   AddUDF(theEnv,"gm-time","m",0,0,NULL,GMTimeFunction,"GMTimeFunction",NULL);
 
-   EnvAddUDF(theEnv,"random","l",0,2,"l",RandomFunction,"RandomFunction",NULL);
-   EnvAddUDF(theEnv,"seed","v",1,1,"l",SeedFunction,"SeedFunction",NULL);
-   EnvAddUDF(theEnv,"conserve-mem","v",1,1,"y",ConserveMemCommand,"ConserveMemCommand",NULL);
-   EnvAddUDF(theEnv,"release-mem","l",0,0,NULL,ReleaseMemCommand,"ReleaseMemCommand",NULL);
+   AddUDF(theEnv,"random","l",0,2,"l",RandomFunction,"RandomFunction",NULL);
+   AddUDF(theEnv,"seed","v",1,1,"l",SeedFunction,"SeedFunction",NULL);
+   AddUDF(theEnv,"conserve-mem","v",1,1,"y",ConserveMemCommand,"ConserveMemCommand",NULL);
+   AddUDF(theEnv,"release-mem","l",0,0,NULL,ReleaseMemCommand,"ReleaseMemCommand",NULL);
 #if DEBUGGING_FUNCTIONS
-   EnvAddUDF(theEnv,"mem-used","l",0,0,NULL,MemUsedCommand,"MemUsedCommand",NULL);
-   EnvAddUDF(theEnv,"mem-requests","l",0,0,NULL,MemRequestsCommand,"MemRequestsCommand",NULL);
+   AddUDF(theEnv,"mem-used","l",0,0,NULL,MemUsedCommand,"MemUsedCommand",NULL);
+   AddUDF(theEnv,"mem-requests","l",0,0,NULL,MemRequestsCommand,"MemRequestsCommand",NULL);
 #endif
 
-   EnvAddUDF(theEnv,"options","v",0,0,NULL,OptionsCommand,"OptionsCommand",NULL);
+   AddUDF(theEnv,"options","v",0,0,NULL,OptionsCommand,"OptionsCommand",NULL);
 
-   EnvAddUDF(theEnv,"operating-system","y",0,0,NULL,OperatingSystemFunction,"OperatingSystemFunction",NULL);
-   EnvAddUDF(theEnv,"(expansion-call)","*",0,UNBOUNDED,NULL,ExpandFuncCall,"ExpandFuncCall",NULL);
-   EnvAddUDF(theEnv,"expand$","*",1,1,"m",DummyExpandFuncMultifield,"DummyExpandFuncMultifield",NULL);
+   AddUDF(theEnv,"operating-system","y",0,0,NULL,OperatingSystemFunction,"OperatingSystemFunction",NULL);
+   AddUDF(theEnv,"(expansion-call)","*",0,UNBOUNDED,NULL,ExpandFuncCall,"ExpandFuncCall",NULL);
+   AddUDF(theEnv,"expand$","*",1,1,"m",DummyExpandFuncMultifield,"DummyExpandFuncMultifield",NULL);
    FuncSeqOvlFlags(theEnv,"expand$",false,false);
-   EnvAddUDF(theEnv,"(set-evaluation-error)","y",0,0,NULL,CauseEvaluationError,"CauseEvaluationError",NULL);
-   EnvAddUDF(theEnv,"set-sequence-operator-recognition","b",1,1,"y",SetSORCommand,"SetSORCommand",NULL);
-   EnvAddUDF(theEnv,"get-sequence-operator-recognition","b",0,0,NULL,GetSORCommand,"GetSORCommand",NULL);
-   EnvAddUDF(theEnv,"get-function-restrictions","s",1,1,"y",GetFunctionRestrictions,"GetFunctionRestrictions",NULL);
-   EnvAddUDF(theEnv,"create$","m",0,UNBOUNDED,NULL,CreateFunction,"CreateFunction",NULL);
-   EnvAddUDF(theEnv,"apropos","v",1,1,"y",AproposCommand,"AproposCommand",NULL);
-   EnvAddUDF(theEnv,"get-function-list","m",0,0,NULL,GetFunctionListFunction,"GetFunctionListFunction",NULL);
-   EnvAddUDF(theEnv,"funcall","*",1,UNBOUNDED,"*;sy",FuncallFunction,"FuncallFunction",NULL);
-   EnvAddUDF(theEnv,"new","*",1,UNBOUNDED,"*;y",NewFunction,"NewFunction",NULL);
-   EnvAddUDF(theEnv,"call","*",1,UNBOUNDED,"*",CallFunction,"CallFunction",NULL);
-   EnvAddUDF(theEnv,"timer","d",0,UNBOUNDED,NULL,TimerFunction,"TimerFunction",NULL);
+   AddUDF(theEnv,"(set-evaluation-error)","y",0,0,NULL,CauseEvaluationError,"CauseEvaluationError",NULL);
+   AddUDF(theEnv,"set-sequence-operator-recognition","b",1,1,"y",SetSORCommand,"SetSORCommand",NULL);
+   AddUDF(theEnv,"get-sequence-operator-recognition","b",0,0,NULL,GetSORCommand,"GetSORCommand",NULL);
+   AddUDF(theEnv,"get-function-restrictions","s",1,1,"y",GetFunctionRestrictions,"GetFunctionRestrictions",NULL);
+   AddUDF(theEnv,"create$","m",0,UNBOUNDED,NULL,CreateFunction,"CreateFunction",NULL);
+   AddUDF(theEnv,"apropos","v",1,1,"y",AproposCommand,"AproposCommand",NULL);
+   AddUDF(theEnv,"get-function-list","m",0,0,NULL,GetFunctionListFunction,"GetFunctionListFunction",NULL);
+   AddUDF(theEnv,"funcall","*",1,UNBOUNDED,"*;sy",FuncallFunction,"FuncallFunction",NULL);
+   AddUDF(theEnv,"new","*",1,UNBOUNDED,"*;y",NewFunction,"NewFunction",NULL);
+   AddUDF(theEnv,"call","*",1,UNBOUNDED,"*",CallFunction,"CallFunction",NULL);
+   AddUDF(theEnv,"timer","d",0,UNBOUNDED,NULL,TimerFunction,"TimerFunction",NULL);
 #endif
   }
 
@@ -205,15 +205,15 @@ void ExitCommand(
    argCnt = UDFArgumentCount(context);
 
    if (argCnt == 0)
-     { EnvExitRouter(theEnv,EXIT_SUCCESS); }
+     { ExitRouter(theEnv,EXIT_SUCCESS); }
    else
     {
      if (! UDFFirstArgument(context,INTEGER_BIT,&theArg))
-       { EnvExitRouter(theEnv,EXIT_SUCCESS); }
+       { ExitRouter(theEnv,EXIT_SUCCESS); }
 
      status = (int) theArg.integerValue->contents;
-     if (EnvGetEvaluationError(theEnv)) return;
-     EnvExitRouter(theEnv,status);
+     if (GetEvaluationError(theEnv)) return;
+     ExitRouter(theEnv,status);
     }
 
    return;
@@ -256,7 +256,7 @@ void SetgenFunction(
    if (theLong < 1LL)
      {
       UDFInvalidArgumentMessage(context,"integer (greater than or equal to 1)");
-      returnValue->integerValue = EnvCreateInteger(theEnv,MiscFunctionData(theEnv)->GensymNumber);
+      returnValue->integerValue = CreateInteger(theEnv,MiscFunctionData(theEnv)->GensymNumber);
       return;
      }
 
@@ -290,7 +290,7 @@ void GensymFunction(
    /* Return the symbol. */
    /*====================*/
 
-   returnValue->lexemeValue = EnvCreateSymbol(theEnv,genstring);
+   returnValue->lexemeValue = CreateSymbol(theEnv,genstring);
   }
 
 /************************************************/
@@ -337,7 +337,7 @@ void GensymStar(
    /* Return the symbol. */
    /*====================*/
 
-   returnValue->lexemeValue = EnvCreateSymbol(theEnv,genstring);
+   returnValue->lexemeValue = CreateSymbol(theEnv,genstring);
   }
 
 /********************************************/
@@ -364,7 +364,7 @@ void RandomFunction(
    if ((argCount != 0) && (argCount != 2))
      {
       PrintErrorID(theEnv,"MISCFUN",2,false);
-      EnvPrintRouter(theEnv,WERROR,"Function random expected either 0 or 2 arguments\n");
+      PrintRouter(theEnv,WERROR,"Function random expected either 0 or 2 arguments\n");
      }
 
    /*========================================*/
@@ -386,15 +386,15 @@ void RandomFunction(
       if (end < begin)
         {
          PrintErrorID(theEnv,"MISCFUN",3,false);
-         EnvPrintRouter(theEnv,WERROR,"Function random expected argument #1 to be less than argument #2\n");
-         returnValue->integerValue = EnvCreateInteger(theEnv,rv);
+         PrintRouter(theEnv,WERROR,"Function random expected argument #1 to be less than argument #2\n");
+         returnValue->integerValue = CreateInteger(theEnv,rv);
          return;
         }
 
       rv = begin + (rv % ((end - begin) + 1));
      }
 
-   returnValue->integerValue = EnvCreateInteger(theEnv,rv);
+   returnValue->integerValue = CreateInteger(theEnv,rv);
   }
 
 /******************************************/
@@ -447,7 +447,7 @@ void LengthFunction(
 
    if (CVIsType(&theArg,LEXEME_BITS))
      {
-      returnValue->integerValue = EnvCreateInteger(theEnv,strlen(theArg.lexemeValue->contents));
+      returnValue->integerValue = CreateInteger(theEnv,strlen(theArg.lexemeValue->contents));
       return;
      }
 
@@ -458,7 +458,7 @@ void LengthFunction(
 
    else if (CVIsType(&theArg,MULTIFIELD_BIT))
      {
-      returnValue->value = EnvCreateInteger(theEnv,theArg.range);
+      returnValue->value = CreateInteger(theEnv,theArg.range);
       return;
      }
   }
@@ -477,7 +477,7 @@ void ReleaseMemCommand(
    /* and return the amount of memory freed. */
    /*========================================*/
 
-   returnValue->integerValue = EnvCreateInteger(theEnv,EnvReleaseMem(theEnv,-1L));
+   returnValue->integerValue = CreateInteger(theEnv,ReleaseMem(theEnv,-1L));
   }
 
 /******************************************/
@@ -509,7 +509,7 @@ void ConserveMemCommand(
    /*====================================================*/
 
    if (strcmp(argument,"on") == 0)
-     { EnvSetConserveMemory(theEnv,true); }
+     { SetConserveMemory(theEnv,true); }
 
    /*======================================================*/
    /* Otherwise, if the argument is the symbol "off", then */
@@ -518,7 +518,7 @@ void ConserveMemCommand(
    /*======================================================*/
 
    else if (strcmp(argument,"off") == 0)
-     { EnvSetConserveMemory(theEnv,false); }
+     { SetConserveMemory(theEnv,false); }
 
    /*=====================================================*/
    /* Otherwise, generate an error since the only allowed */
@@ -550,7 +550,7 @@ void MemUsedCommand(
    /* (both for current use and for later use).  */
    /*============================================*/
 
-   returnValue->integerValue = EnvCreateInteger(theEnv,EnvMemUsed(theEnv));
+   returnValue->integerValue = CreateInteger(theEnv,MemUsed(theEnv));
   }
 
 /********************************************/
@@ -567,7 +567,7 @@ void MemRequestsCommand(
    /* memory requests.                 */
    /*==================================*/
 
-   returnValue->integerValue = EnvCreateInteger(theEnv,EnvMemRequests(theEnv));
+   returnValue->integerValue = CreateInteger(theEnv,MemRequests(theEnv));
   }
 
 #endif
@@ -609,8 +609,8 @@ void AproposCommand(
 
    while ((hashPtr = GetNextSymbolMatch(theEnv,argument,theLength,hashPtr,true,NULL)) != NULL)
      {
-      EnvPrintRouter(theEnv,WDISPLAY,hashPtr->contents);
-      EnvPrintRouter(theEnv,WDISPLAY,"\n");
+      PrintRouter(theEnv,WDISPLAY,hashPtr->contents);
+      PrintRouter(theEnv,WDISPLAY,"\n");
      }
   }
 
@@ -634,216 +634,216 @@ void OptionsCommand(
    /* flags for this executable.      */
    /*=================================*/
 
-   EnvPrintRouter(theEnv,WDISPLAY,"Machine type: ");
+   PrintRouter(theEnv,WDISPLAY,"Machine type: ");
 
 #if GENERIC
-   EnvPrintRouter(theEnv,WDISPLAY,"Generic ");
+   PrintRouter(theEnv,WDISPLAY,"Generic ");
 #endif
 #if UNIX_V
-   EnvPrintRouter(theEnv,WDISPLAY,"UNIX System V or 4.2BSD ");
+   PrintRouter(theEnv,WDISPLAY,"UNIX System V or 4.2BSD ");
 #endif
 #if DARWIN
-   EnvPrintRouter(theEnv,WDISPLAY,"Darwin ");
+   PrintRouter(theEnv,WDISPLAY,"Darwin ");
 #endif
 #if LINUX
-   EnvPrintRouter(theEnv,WDISPLAY,"Linux ");
+   PrintRouter(theEnv,WDISPLAY,"Linux ");
 #endif
 #if UNIX_7
-   EnvPrintRouter(theEnv,WDISPLAY,"UNIX System III Version 7 or Sun Unix ");
+   PrintRouter(theEnv,WDISPLAY,"UNIX System III Version 7 or Sun Unix ");
 #endif
 #if MAC_XCD
-   EnvPrintRouter(theEnv,WDISPLAY,"Apple Macintosh with Xcode");
+   PrintRouter(theEnv,WDISPLAY,"Apple Macintosh with Xcode");
 #endif
 #if WIN_MVC
-   EnvPrintRouter(theEnv,WDISPLAY,"Microsoft Windows with Microsoft Visual C++");
+   PrintRouter(theEnv,WDISPLAY,"Microsoft Windows with Microsoft Visual C++");
 #endif
 #if WIN_GCC
-   EnvPrintRouter(theEnv,WDISPLAY,"Microsoft Windows with DJGPP");
+   PrintRouter(theEnv,WDISPLAY,"Microsoft Windows with DJGPP");
 #endif
-EnvPrintRouter(theEnv,WDISPLAY,"\n");
+PrintRouter(theEnv,WDISPLAY,"\n");
 
-EnvPrintRouter(theEnv,WDISPLAY,"Defrule construct is ");
+PrintRouter(theEnv,WDISPLAY,"Defrule construct is ");
 #if DEFRULE_CONSTRUCT
-  EnvPrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintRouter(theEnv,WDISPLAY,"ON\n");
 #else
-  EnvPrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintRouter(theEnv,WDISPLAY,"OFF\n");
 #endif
 
-EnvPrintRouter(theEnv,WDISPLAY,"Defmodule construct is ");
+PrintRouter(theEnv,WDISPLAY,"Defmodule construct is ");
 #if DEFMODULE_CONSTRUCT
-  EnvPrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintRouter(theEnv,WDISPLAY,"ON\n");
 #else
-  EnvPrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintRouter(theEnv,WDISPLAY,"OFF\n");
 #endif
 
-EnvPrintRouter(theEnv,WDISPLAY,"Deftemplate construct is ");
+PrintRouter(theEnv,WDISPLAY,"Deftemplate construct is ");
 #if DEFTEMPLATE_CONSTRUCT
-  EnvPrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintRouter(theEnv,WDISPLAY,"ON\n");
 #else
-  EnvPrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintRouter(theEnv,WDISPLAY,"OFF\n");
 #endif
 
-EnvPrintRouter(theEnv,WDISPLAY,"  Fact-set queries are ");
+PrintRouter(theEnv,WDISPLAY,"  Fact-set queries are ");
 #if FACT_SET_QUERIES
-  EnvPrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintRouter(theEnv,WDISPLAY,"ON\n");
 #else
-  EnvPrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintRouter(theEnv,WDISPLAY,"OFF\n");
 #endif
 
 #if DEFTEMPLATE_CONSTRUCT
 
-EnvPrintRouter(theEnv,WDISPLAY,"  Deffacts construct is ");
+PrintRouter(theEnv,WDISPLAY,"  Deffacts construct is ");
 #if DEFFACTS_CONSTRUCT
-  EnvPrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintRouter(theEnv,WDISPLAY,"ON\n");
 #else
-  EnvPrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintRouter(theEnv,WDISPLAY,"OFF\n");
 #endif
 
 #endif
 
-EnvPrintRouter(theEnv,WDISPLAY,"Defglobal construct is ");
+PrintRouter(theEnv,WDISPLAY,"Defglobal construct is ");
 #if DEFGLOBAL_CONSTRUCT
-  EnvPrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintRouter(theEnv,WDISPLAY,"ON\n");
 #else
-  EnvPrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintRouter(theEnv,WDISPLAY,"OFF\n");
 #endif
 
-EnvPrintRouter(theEnv,WDISPLAY,"Deffunction construct is ");
+PrintRouter(theEnv,WDISPLAY,"Deffunction construct is ");
 #if DEFFUNCTION_CONSTRUCT
-  EnvPrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintRouter(theEnv,WDISPLAY,"ON\n");
 #else
-  EnvPrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintRouter(theEnv,WDISPLAY,"OFF\n");
 #endif
 
-EnvPrintRouter(theEnv,WDISPLAY,"Defgeneric/Defmethod constructs are ");
+PrintRouter(theEnv,WDISPLAY,"Defgeneric/Defmethod constructs are ");
 #if DEFGENERIC_CONSTRUCT
-  EnvPrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintRouter(theEnv,WDISPLAY,"ON\n");
 #else
-  EnvPrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintRouter(theEnv,WDISPLAY,"OFF\n");
 #endif
 
-EnvPrintRouter(theEnv,WDISPLAY,"Object System is ");
+PrintRouter(theEnv,WDISPLAY,"Object System is ");
 #if OBJECT_SYSTEM
-  EnvPrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintRouter(theEnv,WDISPLAY,"ON\n");
 #else
-  EnvPrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintRouter(theEnv,WDISPLAY,"OFF\n");
 #endif
 
 #if OBJECT_SYSTEM
 
-EnvPrintRouter(theEnv,WDISPLAY,"  Definstances construct is ");
+PrintRouter(theEnv,WDISPLAY,"  Definstances construct is ");
 #if DEFINSTANCES_CONSTRUCT
-  EnvPrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintRouter(theEnv,WDISPLAY,"ON\n");
 #else
-  EnvPrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintRouter(theEnv,WDISPLAY,"OFF\n");
 #endif
 
-EnvPrintRouter(theEnv,WDISPLAY,"  Instance-set queries are ");
+PrintRouter(theEnv,WDISPLAY,"  Instance-set queries are ");
 #if INSTANCE_SET_QUERIES
-  EnvPrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintRouter(theEnv,WDISPLAY,"ON\n");
 #else
-  EnvPrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintRouter(theEnv,WDISPLAY,"OFF\n");
 #endif
 
-EnvPrintRouter(theEnv,WDISPLAY,"  Binary loading of instances is ");
+PrintRouter(theEnv,WDISPLAY,"  Binary loading of instances is ");
 #if BLOAD_INSTANCES
-  EnvPrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintRouter(theEnv,WDISPLAY,"ON\n");
 #else
-  EnvPrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintRouter(theEnv,WDISPLAY,"OFF\n");
 #endif
 
-EnvPrintRouter(theEnv,WDISPLAY,"  Binary saving of instances is ");
+PrintRouter(theEnv,WDISPLAY,"  Binary saving of instances is ");
 #if BSAVE_INSTANCES
-  EnvPrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintRouter(theEnv,WDISPLAY,"ON\n");
 #else
-  EnvPrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintRouter(theEnv,WDISPLAY,"OFF\n");
 #endif
 
 #endif
 
-EnvPrintRouter(theEnv,WDISPLAY,"Extended math function package is ");
+PrintRouter(theEnv,WDISPLAY,"Extended math function package is ");
 #if EXTENDED_MATH_FUNCTIONS
-  EnvPrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintRouter(theEnv,WDISPLAY,"ON\n");
 #else
-  EnvPrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintRouter(theEnv,WDISPLAY,"OFF\n");
 #endif
 
-EnvPrintRouter(theEnv,WDISPLAY,"Text processing function package is ");
+PrintRouter(theEnv,WDISPLAY,"Text processing function package is ");
 #if TEXTPRO_FUNCTIONS
-  EnvPrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintRouter(theEnv,WDISPLAY,"ON\n");
 #else
-  EnvPrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintRouter(theEnv,WDISPLAY,"OFF\n");
 #endif
 
-EnvPrintRouter(theEnv,WDISPLAY,"Bload capability is ");
+PrintRouter(theEnv,WDISPLAY,"Bload capability is ");
 #if BLOAD_ONLY
-  EnvPrintRouter(theEnv,WDISPLAY,"BLOAD ONLY");
+  PrintRouter(theEnv,WDISPLAY,"BLOAD ONLY");
 #endif
 #if BLOAD
-  EnvPrintRouter(theEnv,WDISPLAY,"BLOAD");
+  PrintRouter(theEnv,WDISPLAY,"BLOAD");
 #endif
 #if BLOAD_AND_BSAVE
-  EnvPrintRouter(theEnv,WDISPLAY,"BLOAD AND BSAVE");
+  PrintRouter(theEnv,WDISPLAY,"BLOAD AND BSAVE");
 #endif
 #if (! BLOAD_ONLY) && (! BLOAD) && (! BLOAD_AND_BSAVE)
-  EnvPrintRouter(theEnv,WDISPLAY,"OFF ");
+  PrintRouter(theEnv,WDISPLAY,"OFF ");
 #endif
-EnvPrintRouter(theEnv,WDISPLAY,"\n");
+PrintRouter(theEnv,WDISPLAY,"\n");
 
-EnvPrintRouter(theEnv,WDISPLAY,"Construct compiler is ");
+PrintRouter(theEnv,WDISPLAY,"Construct compiler is ");
 #if CONSTRUCT_COMPILER
-  EnvPrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintRouter(theEnv,WDISPLAY,"ON\n");
 #else
-  EnvPrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintRouter(theEnv,WDISPLAY,"OFF\n");
 #endif
 
-EnvPrintRouter(theEnv,WDISPLAY,"I/O function package is ");
+PrintRouter(theEnv,WDISPLAY,"I/O function package is ");
 #if IO_FUNCTIONS
-  EnvPrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintRouter(theEnv,WDISPLAY,"ON\n");
 #else
-  EnvPrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintRouter(theEnv,WDISPLAY,"OFF\n");
 #endif
 
-EnvPrintRouter(theEnv,WDISPLAY,"String function package is ");
+PrintRouter(theEnv,WDISPLAY,"String function package is ");
 #if STRING_FUNCTIONS
-  EnvPrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintRouter(theEnv,WDISPLAY,"ON\n");
 #else
-  EnvPrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintRouter(theEnv,WDISPLAY,"OFF\n");
 #endif
 
-EnvPrintRouter(theEnv,WDISPLAY,"Multifield function package is ");
+PrintRouter(theEnv,WDISPLAY,"Multifield function package is ");
 #if MULTIFIELD_FUNCTIONS
-  EnvPrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintRouter(theEnv,WDISPLAY,"ON\n");
 #else
-  EnvPrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintRouter(theEnv,WDISPLAY,"OFF\n");
 #endif
 
-EnvPrintRouter(theEnv,WDISPLAY,"Debugging function package is ");
+PrintRouter(theEnv,WDISPLAY,"Debugging function package is ");
 #if DEBUGGING_FUNCTIONS
-  EnvPrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintRouter(theEnv,WDISPLAY,"ON\n");
 #else
-  EnvPrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintRouter(theEnv,WDISPLAY,"OFF\n");
 #endif
 
-EnvPrintRouter(theEnv,WDISPLAY,"Window Interface flag is ");
+PrintRouter(theEnv,WDISPLAY,"Window Interface flag is ");
 #if WINDOW_INTERFACE
-   EnvPrintRouter(theEnv,WDISPLAY,"ON\n");
+   PrintRouter(theEnv,WDISPLAY,"ON\n");
 #else
-   EnvPrintRouter(theEnv,WDISPLAY,"OFF\n");
+   PrintRouter(theEnv,WDISPLAY,"OFF\n");
 #endif
 
-EnvPrintRouter(theEnv,WDISPLAY,"Developer flag is ");
+PrintRouter(theEnv,WDISPLAY,"Developer flag is ");
 #if DEVELOPER
-   EnvPrintRouter(theEnv,WDISPLAY,"ON\n");
+   PrintRouter(theEnv,WDISPLAY,"ON\n");
 #else
-   EnvPrintRouter(theEnv,WDISPLAY,"OFF\n");
+   PrintRouter(theEnv,WDISPLAY,"OFF\n");
 #endif
 
-EnvPrintRouter(theEnv,WDISPLAY,"Run time module is ");
+PrintRouter(theEnv,WDISPLAY,"Run time module is ");
 #if RUN_TIME
-  EnvPrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintRouter(theEnv,WDISPLAY,"ON\n");
 #else
-  EnvPrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintRouter(theEnv,WDISPLAY,"OFF\n");
 #endif
   }
 
@@ -857,23 +857,23 @@ void OperatingSystemFunction(
   UDFValue *returnValue)
   {
 #if GENERIC
-   returnValue->lexemeValue = EnvCreateSymbol(theEnv,"UNKNOWN");
+   returnValue->lexemeValue = CreateSymbol(theEnv,"UNKNOWN");
 #elif UNIX_V
-   returnValue->lexemeValue = EnvCreateSymbol(theEnv,"UNIX-V");
+   returnValue->lexemeValue = CreateSymbol(theEnv,"UNIX-V");
 #elif UNIX_7
-   returnValue->lexemeValue = EnvCreateSymbol(theEnv,"UNIX-7");
+   returnValue->lexemeValue = CreateSymbol(theEnv,"UNIX-7");
 #elif LINUX
-   returnValue->lexemeValue = EnvCreateSymbol(theEnv,"LINUX");
+   returnValue->lexemeValue = CreateSymbol(theEnv,"LINUX");
 #elif DARWIN
-   returnValue->lexemeValue = EnvCreateSymbol(theEnv,"DARWIN");
+   returnValue->lexemeValue = CreateSymbol(theEnv,"DARWIN");
 #elif MAC_XCD
-   returnValue->lexemeValue = EnvCreateSymbol(theEnv,"MAC-OS-X");
+   returnValue->lexemeValue = CreateSymbol(theEnv,"MAC-OS-X");
 #elif IBM && (! WINDOW_INTERFACE)
-   returnValue->lexemeValue = EnvCreateSymbol(theEnv,"DOS");
+   returnValue->lexemeValue = CreateSymbol(theEnv,"DOS");
 #elif IBM && WINDOW_INTERFACE
-   returnValue->lexemeValue = EnvCreateSymbol(theEnv,"WINDOWS");
+   returnValue->lexemeValue = CreateSymbol(theEnv,"WINDOWS");
 #else
-   returnValue->lexemeValue = EnvCreateSymbol(theEnv,"UNKNOWN");
+   returnValue->lexemeValue = CreateSymbol(theEnv,"UNKNOWN");
 #endif
   }
 
@@ -937,7 +937,7 @@ void ExpandFuncCall(
         {
          returnValue->lexemeValue = FalseSymbol(theEnv);
          ReturnExpression(theEnv,fcallexp);
-         EnvSetEvaluationError(theEnv,true);
+         SetEvaluationError(theEnv,true);
          return;
         }
      }
@@ -966,9 +966,9 @@ void DummyExpandFuncMultifield(
   UDFValue *returnValue)
   {
    returnValue->lexemeValue = FalseSymbol(theEnv);
-   EnvSetEvaluationError(theEnv,true);
+   SetEvaluationError(theEnv,true);
    PrintErrorID(theEnv,"MISCFUN",1,false);
-   EnvPrintRouter(theEnv,WERROR,"expand$ must be used in the argument list of a function call.\n");
+   PrintRouter(theEnv,WERROR,"expand$ must be used in the argument list of a function call.\n");
   }
 
 /***********************************************************************
@@ -1071,7 +1071,7 @@ void CauseEvaluationError(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   EnvSetEvaluationError(theEnv,true);
+   SetEvaluationError(theEnv,true);
    returnValue->lexemeValue = FalseSymbol(theEnv);
   }
 
@@ -1084,7 +1084,7 @@ void GetSORCommand(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvGetSequenceOperatorRecognition(theEnv));
+   returnValue->lexemeValue = CreateBoolean(theEnv,GetSequenceOperatorRecognition(theEnv));
   }
 
 /************************************************/
@@ -1102,9 +1102,9 @@ void SetSORCommand(
    if (! UDFFirstArgument(context,SYMBOL_BIT,&theArg))
      { return; }
 
-   returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvSetSequenceOperatorRecognition(theEnv,theArg.value != FalseSymbol(theEnv)));
+   returnValue->lexemeValue = CreateBoolean(theEnv,SetSequenceOperatorRecognition(theEnv,theArg.value != FalseSymbol(theEnv)));
 #else
-   returnValue->lexemeValue = EnvCreateBoolean(theEnv,ExpressionData(theEnv)->SequenceOpMode);
+   returnValue->lexemeValue = CreateBoolean(theEnv,ExpressionData(theEnv)->SequenceOpMode);
 #endif
   }
 
@@ -1134,8 +1134,8 @@ void GetFunctionRestrictions(
    if (fptr == NULL)
      {
       CantFindItemErrorMessage(theEnv,"function",theArg.lexemeValue->contents);
-      EnvSetEvaluationError(theEnv,true);
-      returnValue->lexemeValue = EnvCreateString(theEnv,"");
+      SetEvaluationError(theEnv,true);
+      returnValue->lexemeValue = CreateString(theEnv,"");
       return;
      }
 
@@ -1172,7 +1172,7 @@ void GetFunctionRestrictions(
                                     stringBuffer,&bufferPosition,&bufferMaximum);
      }
 
-   returnValue->lexemeValue = EnvCreateString(theEnv,stringBuffer);
+   returnValue->lexemeValue = CreateString(theEnv,stringBuffer);
 
    rm(theEnv,stringBuffer,bufferMaximum);
   }
@@ -1197,7 +1197,7 @@ void GetFunctionListFunction(
 
    returnValue->begin = 0;
    returnValue->range = functionCount;
-   theList = EnvCreateMultifield(theEnv,functionCount);
+   theList = CreateMultifield(theEnv,functionCount);
    returnValue->value = theList;
 
    for (theFunction = GetFunctionList(theEnv), functionCount = 0;
@@ -1327,9 +1327,9 @@ void FuncallFunction(
       if (CheckDeffunctionCall(theEnv,(Deffunction *) theReference.value,CountArguments(theReference.argList)) == false)
         {
          PrintErrorID(theEnv,"MISCFUN",4,false);
-         EnvPrintRouter(theEnv,WERROR,"Function funcall called with the wrong number of arguments for deffunction ");
-         EnvPrintRouter(theEnv,WERROR,DeffunctionName((Deffunction *) theReference.value));
-         EnvPrintRouter(theEnv,WERROR,"\n");
+         PrintRouter(theEnv,WERROR,"Function funcall called with the wrong number of arguments for deffunction ");
+         PrintRouter(theEnv,WERROR,DeffunctionName((Deffunction *) theReference.value));
+         PrintRouter(theEnv,WERROR,"\n");
          ExpressionDeinstall(theEnv,&theReference);
          ReturnExpression(theEnv,theReference.argList);
          return;
@@ -1525,7 +1525,7 @@ void TimeFunction(
    /* Return the time. */
    /*==================*/
 
-   returnValue->floatValue = EnvCreateFloat(theEnv,gentime());
+   returnValue->floatValue = CreateFloat(theEnv,gentime());
   }
 
 /****************************************/
@@ -1539,54 +1539,54 @@ static void ConvertTime(
   {
    returnValue->begin = 0;
    returnValue->range = 9;
-   returnValue->value = EnvCreateMultifield(theEnv,9L);
+   returnValue->value = CreateMultifield(theEnv,9L);
    
-   returnValue->multifieldValue->theFields[0].integerValue = EnvCreateInteger(theEnv,info->tm_year + 1900);
-   returnValue->multifieldValue->theFields[1].integerValue = EnvCreateInteger(theEnv,info->tm_mon + 1);
-   returnValue->multifieldValue->theFields[2].integerValue = EnvCreateInteger(theEnv,info->tm_mday);
-   returnValue->multifieldValue->theFields[3].integerValue = EnvCreateInteger(theEnv,info->tm_hour);
-   returnValue->multifieldValue->theFields[4].integerValue = EnvCreateInteger(theEnv,info->tm_min);
-   returnValue->multifieldValue->theFields[5].integerValue = EnvCreateInteger(theEnv,info->tm_sec);
+   returnValue->multifieldValue->theFields[0].integerValue = CreateInteger(theEnv,info->tm_year + 1900);
+   returnValue->multifieldValue->theFields[1].integerValue = CreateInteger(theEnv,info->tm_mon + 1);
+   returnValue->multifieldValue->theFields[2].integerValue = CreateInteger(theEnv,info->tm_mday);
+   returnValue->multifieldValue->theFields[3].integerValue = CreateInteger(theEnv,info->tm_hour);
+   returnValue->multifieldValue->theFields[4].integerValue = CreateInteger(theEnv,info->tm_min);
+   returnValue->multifieldValue->theFields[5].integerValue = CreateInteger(theEnv,info->tm_sec);
 
    switch (info->tm_wday)
      {
       case 0:
-        returnValue->multifieldValue->theFields[6].lexemeValue = EnvCreateSymbol(theEnv,"Sunday");
+        returnValue->multifieldValue->theFields[6].lexemeValue = CreateSymbol(theEnv,"Sunday");
         break;
 
       case 1:
-        returnValue->multifieldValue->theFields[6].lexemeValue = EnvCreateSymbol(theEnv,"Monday");
+        returnValue->multifieldValue->theFields[6].lexemeValue = CreateSymbol(theEnv,"Monday");
         break;
 
       case 2:
-        returnValue->multifieldValue->theFields[6].lexemeValue = EnvCreateSymbol(theEnv,"Tuesday");
+        returnValue->multifieldValue->theFields[6].lexemeValue = CreateSymbol(theEnv,"Tuesday");
         break;
 
       case 3:
-        returnValue->multifieldValue->theFields[6].lexemeValue = EnvCreateSymbol(theEnv,"Wednesday");
+        returnValue->multifieldValue->theFields[6].lexemeValue = CreateSymbol(theEnv,"Wednesday");
         break;
 
       case 4:
-        returnValue->multifieldValue->theFields[6].lexemeValue = EnvCreateSymbol(theEnv,"Thursday");
+        returnValue->multifieldValue->theFields[6].lexemeValue = CreateSymbol(theEnv,"Thursday");
         break;
 
       case 5:
-        returnValue->multifieldValue->theFields[6].lexemeValue = EnvCreateSymbol(theEnv,"Friday");
+        returnValue->multifieldValue->theFields[6].lexemeValue = CreateSymbol(theEnv,"Friday");
         break;
 
       case 6:
-        returnValue->multifieldValue->theFields[6].lexemeValue = EnvCreateSymbol(theEnv,"Saturday");
+        returnValue->multifieldValue->theFields[6].lexemeValue = CreateSymbol(theEnv,"Saturday");
         break;
      }
 
-   returnValue->multifieldValue->theFields[7].integerValue = EnvCreateInteger(theEnv,info->tm_yday);
+   returnValue->multifieldValue->theFields[7].integerValue = CreateInteger(theEnv,info->tm_yday);
 
    if (info->tm_isdst > 0)
      { returnValue->multifieldValue->theFields[8].lexemeValue = TrueSymbol(theEnv); }
    else if (info->tm_isdst == 0)
      { returnValue->multifieldValue->theFields[8].lexemeValue = FalseSymbol(theEnv); }
    else
-     { returnValue->multifieldValue->theFields[8].lexemeValue = EnvCreateSymbol(theEnv,"UNKNOWN"); }
+     { returnValue->multifieldValue->theFields[8].lexemeValue = CreateSymbol(theEnv,"UNKNOWN"); }
   }
 
 /*****************************************/
@@ -1648,10 +1648,10 @@ void TimerFunction(
    startTime = gentime();
 
    while (UDFHasNextArgument(context) &&
-          (! EnvGetHaltExecution(theEnv)))
+          (! GetHaltExecution(theEnv)))
      { UDFNextArgument(context,ANY_TYPE_BITS,&theArg); }
 
-   returnValue->floatValue = EnvCreateFloat(theEnv,gentime() - startTime);
+   returnValue->floatValue = CreateFloat(theEnv,gentime() - startTime);
   }
 
 /***************************************/

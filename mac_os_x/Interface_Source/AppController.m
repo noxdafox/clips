@@ -271,7 +271,7 @@
 /**************/
 - (IBAction) haltRules: (id) sender
   {
-   EnvSetHaltRules([mainEnvironment environment],true);
+   SetHaltRules([mainEnvironment environment],true);
   }
 
 /******************/
@@ -282,7 +282,7 @@
    /* Need to abort waitForChar */
    /* Need to abort batch */
    SetHaltCommandLoopBatch([mainEnvironment environment],true);
-   EnvSetHaltExecution([mainEnvironment environment],true);
+   SetHaltExecution([mainEnvironment environment],true);
   }
 
 /********************/

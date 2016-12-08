@@ -93,9 +93,9 @@ static void BeforeDefmodulesToCode(
    int value = 0;
    Defmodule *theModule;
 
-   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = EnvGetNextDefmodule(theEnv,theModule))
+        theModule = GetNextDefmodule(theEnv,theModule))
      { theModule->header.bsaveID = value++; }
   }
 
@@ -128,11 +128,11 @@ static void InitDefmoduleCode(
 #pragma unused(maxIndices)
 #endif
 
-   if (EnvGetNextDefmodule(theEnv,NULL) != NULL)
+   if (GetNextDefmodule(theEnv,NULL) != NULL)
      { fprintf(initFP,"   SetListOfDefmodules(theEnv,%s%d_1);\n",DefmodulePrefix(),imageID); }
    else
      { fprintf(initFP,"   SetListOfDefmodules(theEnv,NULL);\n"); }
-   fprintf(initFP,"   EnvSetCurrentModule(theEnv,EnvGetNextDefmodule(theEnv,NULL));\n");
+   fprintf(initFP,"   SetCurrentModule(theEnv,GetNextDefmodule(theEnv,NULL));\n");
   }
 
 /***********************************************************/
@@ -181,9 +181,9 @@ static bool ConstructToCode(
    /* representation to the file as they are traversed.    */
    /*======================================================*/
 
-   for (theConstruct = EnvGetNextDefmodule(theEnv,NULL);
+   for (theConstruct = GetNextDefmodule(theEnv,NULL);
         theConstruct != NULL;
-        theConstruct = EnvGetNextDefmodule(theEnv,theConstruct))
+        theConstruct = GetNextDefmodule(theEnv,theConstruct))
      {
       /*===========================================*/
       /* Open a new file to write to if necessary. */
@@ -417,7 +417,7 @@ static struct portItem *GetNextPortItem(
 
    if (*theDefmodule == NULL)
      {
-      *theDefmodule = EnvGetNextDefmodule(theEnv,NULL);
+      *theDefmodule = GetNextDefmodule(theEnv,NULL);
       *thePortItem = NULL;
       *importChecked = false;
       *exportChecked = false;
@@ -479,7 +479,7 @@ static struct portItem *GetNextPortItem(
       /* for a portItem data structure.   */
       /*==================================*/
 
-      *theDefmodule = EnvGetNextDefmodule(theEnv,*theDefmodule);
+      *theDefmodule = GetNextDefmodule(theEnv,*theDefmodule);
       *importChecked = false;
       *exportChecked = false;
      }

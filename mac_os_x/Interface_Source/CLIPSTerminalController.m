@@ -93,8 +93,8 @@
       self->topCommand = nextCommand;
      }
 
-   EnvSetBeforeOpenFunction(theEnvironment,NULL);
-   EnvSetAfterOpenFunction(theEnvironment,NULL);
+   SetBeforeOpenFunction(theEnvironment,NULL);
+   SetAfterOpenFunction(theEnvironment,NULL);
   }
     
 /*****************/
@@ -206,11 +206,11 @@
    
    SetEnvironmentContext(theEnvironment,(__bridge void *)(self));
    
-   EnvAddRouterWithContext(theEnvironment,"CLIPSTerminalController",10,QueryInterfaceRouter,PrintInterfaceRouter,
-                           GetcInterfaceRouter,NULL,ExitInterfaceRouter,(__bridge void *)(self));
+   AddRouter(theEnvironment,"CLIPSTerminalController",10,QueryInterfaceRouter,PrintInterfaceRouter,
+             GetcInterfaceRouter,NULL,ExitInterfaceRouter,(__bridge void *)(self));
         
-   EnvSetBeforeOpenFunction(theEnvironment,MacBeforeOpenFunction);
-   EnvSetAfterOpenFunction(theEnvironment,MacAfterOpenFunction);
+   SetBeforeOpenFunction(theEnvironment,MacBeforeOpenFunction);
+   SetAfterOpenFunction(theEnvironment,MacAfterOpenFunction);
    
    /*===================================*/
    /* Create the lock used for pausing. */ // TBD Why here and not init?
@@ -222,9 +222,9 @@
    /* Define the clear-window function. */
    /*===================================*/
    
-   EnvAddUDF(theEnvironment,"clear-window","v",0,0,NULL,ClearEnvironmentWindowCommand,"ClearEnvironmentWindowCommand",NULL);
+   AddUDF(theEnvironment,"clear-window","v",0,0,NULL,ClearEnvironmentWindowCommand,"ClearEnvironmentWindowCommand",NULL);
 
-   EnvAddPeriodicFunction(theEnvironment,"mac-pf",MacPeriodicFunction,0);
+   AddPeriodicFunction(theEnvironment,"mac-pf",MacPeriodicFunction,0);
 
    commandTimer = [NSTimer scheduledTimerWithTimeInterval: 0.2 // TBD Need to lock input once command found.
                      target: self
@@ -968,21 +968,21 @@
    Environment *theEnv = [environment environment];
 
    theValues = [[NSUserDefaultsController sharedUserDefaultsController] values];
-   
-   EnvSetWatchItem(theEnv,"compilations", [[theValues valueForKey: @"compilations"] boolValue], NULL);
-   EnvSetWatchItem(theEnv,"facts", [[theValues valueForKey: @"facts"] boolValue], NULL);
-   EnvSetWatchItem(theEnv,"rules", [[theValues valueForKey: @"rules"] boolValue], NULL);
-   EnvSetWatchItem(theEnv,"statistics", [[theValues valueForKey: @"statistics"] boolValue], NULL);
-   EnvSetWatchItem(theEnv,"activations", [[theValues valueForKey: @"activations"] boolValue], NULL);
-   EnvSetWatchItem(theEnv,"focus", [[theValues valueForKey: @"focus"] boolValue], NULL);
-   EnvSetWatchItem(theEnv,"globals", [[theValues valueForKey: @"globals"] boolValue], NULL);
-   EnvSetWatchItem(theEnv,"deffunctions", [[theValues valueForKey: @"deffunctions"] boolValue], NULL);
-   EnvSetWatchItem(theEnv,"generic-functions", [[theValues valueForKey: @"generic-functions"] boolValue], NULL);
-   EnvSetWatchItem(theEnv,"methods", [[theValues valueForKey: @"methods"] boolValue], NULL);
-   EnvSetWatchItem(theEnv,"instances", [[theValues valueForKey: @"instances"] boolValue], NULL);
-   EnvSetWatchItem(theEnv,"slots", [[theValues valueForKey: @"slots"] boolValue], NULL);
-   EnvSetWatchItem(theEnv,"message-handlers", [[theValues valueForKey: @"message-handlers"] boolValue], NULL);
-   EnvSetWatchItem(theEnv,"messages", [[theValues valueForKey: @"messages"] boolValue], NULL);
+
+   SetWatchItem(theEnv,"compilations", [[theValues valueForKey: @"compilations"] boolValue], NULL);
+   SetWatchItem(theEnv,"facts", [[theValues valueForKey: @"facts"] boolValue], NULL);
+   SetWatchItem(theEnv,"rules", [[theValues valueForKey: @"rules"] boolValue], NULL);
+   SetWatchItem(theEnv,"statistics", [[theValues valueForKey: @"statistics"] boolValue], NULL);
+   SetWatchItem(theEnv,"activations", [[theValues valueForKey: @"activations"] boolValue], NULL);
+   SetWatchItem(theEnv,"focus", [[theValues valueForKey: @"focus"] boolValue], NULL);
+   SetWatchItem(theEnv,"globals", [[theValues valueForKey: @"globals"] boolValue], NULL);
+   SetWatchItem(theEnv,"deffunctions", [[theValues valueForKey: @"deffunctions"] boolValue], NULL);
+   SetWatchItem(theEnv,"generic-functions", [[theValues valueForKey: @"generic-functions"] boolValue], NULL);
+   SetWatchItem(theEnv,"methods", [[theValues valueForKey: @"methods"] boolValue], NULL);
+   SetWatchItem(theEnv,"instances", [[theValues valueForKey: @"instances"] boolValue], NULL);
+   SetWatchItem(theEnv,"slots", [[theValues valueForKey: @"slots"] boolValue], NULL);
+   SetWatchItem(theEnv,"message-handlers", [[theValues valueForKey: @"message-handlers"] boolValue], NULL);
+   SetWatchItem(theEnv,"messages", [[theValues valueForKey: @"messages"] boolValue], NULL);
   }
   
 /**********/    
@@ -1302,7 +1302,7 @@
 /*********/
 - (IBAction) halt: (id) sender
   {
-   EnvSetHaltRules([environment environment],true);
+   SetHaltRules([environment environment],true);
   }
 
 /*********************/    
@@ -1313,7 +1313,7 @@
    /* Need to abort waitForChar */
    /* Need to abort batch */
    SetHaltCommandLoopBatch([environment environment],true);
-   EnvSetHaltExecution([environment environment],true);
+   SetHaltExecution([environment environment],true);
   }
       
 /*%%%%%%%%%%%%%%%%%%%%%%%%%*/

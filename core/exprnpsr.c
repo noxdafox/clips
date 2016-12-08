@@ -148,7 +148,7 @@ struct expr *Function1Parse(
    if (theToken.tknType != SYMBOL_TOKEN)
      {
       PrintErrorID(theEnv,"EXPRNPSR",1,true);
-      EnvPrintRouter(theEnv,WERROR,"A function name must be a symbol\n");
+      PrintRouter(theEnv,WERROR,"A function name must be a symbol\n");
       return NULL;
      }
 
@@ -203,8 +203,8 @@ struct expr *Function2Parse(
    if (moduleSpecified)
      {
       if (ConstructExported(theEnv,"defgeneric",moduleName,constructName) ||
-          EnvGetCurrentModule(theEnv) == EnvFindDefmodule(theEnv,moduleName->contents))
-        { gfunc = EnvFindDefgenericInModule(theEnv,name); }
+          GetCurrentModule(theEnv) == FindDefmodule(theEnv,moduleName->contents))
+        { gfunc = FindDefgenericInModule(theEnv,name); }
       else
         { gfunc = NULL; }
      }
@@ -222,8 +222,8 @@ struct expr *Function2Parse(
      if (moduleSpecified)
        {
         if (ConstructExported(theEnv,"deffunction",moduleName,constructName) ||
-            EnvGetCurrentModule(theEnv) == EnvFindDefmodule(theEnv,moduleName->contents))
-          { dptr = EnvFindDeffunctionInModule(theEnv,name); }
+            GetCurrentModule(theEnv) == FindDefmodule(theEnv,moduleName->contents))
+          { dptr = FindDeffunctionInModule(theEnv,name); }
         else
           { dptr = NULL; }
        }
@@ -252,9 +252,9 @@ struct expr *Function2Parse(
    else
      {
       PrintErrorID(theEnv,"EXPRNPSR",3,true);
-      EnvPrintRouter(theEnv,WERROR,"Missing function declaration for ");
-      EnvPrintRouter(theEnv,WERROR,name);
-      EnvPrintRouter(theEnv,WERROR,".\n");
+      PrintRouter(theEnv,WERROR,"Missing function declaration for ");
+      PrintRouter(theEnv,WERROR,name);
+      PrintRouter(theEnv,WERROR,".\n");
       return NULL;
      }
 
@@ -379,9 +379,9 @@ bool ReplaceSequenceExpansionOps(
              (fcallexp->functionValue->sequenceuseok == false))
            {
             PrintErrorID(theEnv,"EXPRNPSR",4,false);
-            EnvPrintRouter(theEnv,WERROR,"$ Sequence operator not a valid argument for ");
-            EnvPrintRouter(theEnv,WERROR,fcallexp->functionValue->callFunctionName->contents);
-            EnvPrintRouter(theEnv,WERROR,".\n");
+            PrintRouter(theEnv,WERROR,"$ Sequence operator not a valid argument for ");
+            PrintRouter(theEnv,WERROR,fcallexp->functionValue->callFunctionName->contents);
+            PrintRouter(theEnv,WERROR,".\n");
             return true;
            }
          if (fcallexp->value != expcall)
@@ -677,7 +677,7 @@ struct expr *ArgumentParse(
    if (theToken.tknType != LEFT_PARENTHESIS_TOKEN)
      {
       PrintErrorID(theEnv,"EXPRNPSR",2,true);
-      EnvPrintRouter(theEnv,WERROR,"Expected a constant, variable, or expression.\n");
+      PrintRouter(theEnv,WERROR,"Expected a constant, variable, or expression.\n");
       *errorFlag = true;
       return NULL;
      }
@@ -726,7 +726,7 @@ struct expr *ParseAtomOrExpression(
    else
      {
       PrintErrorID(theEnv,"EXPRNPSR",2,true);
-      EnvPrintRouter(theEnv,WERROR,"Expected a constant, variable, or expression.\n");
+      PrintRouter(theEnv,WERROR,"Expected a constant, variable, or expression.\n");
       return NULL;
      }
 
@@ -950,9 +950,9 @@ void PopulateRestriction(
           default:
             buffer[0] = theChar;
             buffer[1] = 0;
-            EnvPrintRouter(theEnv,WERROR,"Invalid argument type character ");
-            EnvPrintRouter(theEnv,WERROR,buffer);
-            EnvPrintRouter(theEnv,WERROR,"\n");
+            PrintRouter(theEnv,WERROR,"Invalid argument type character ");
+            PrintRouter(theEnv,WERROR,buffer);
+            PrintRouter(theEnv,WERROR,"\n");
             valuesRead++;
             break;
          }
@@ -994,7 +994,7 @@ Expression *ParseConstantArguments(
    if (OpenStringSource(theEnv,router,argstr,0) == 0)
      {
       PrintErrorID(theEnv,"EXPRNPSR",6,false);
-      EnvPrintRouter(theEnv,WERROR,"Cannot read arguments for external call.\n");
+      PrintRouter(theEnv,WERROR,"Cannot read arguments for external call.\n");
       *error = true;
       return NULL;
      }
@@ -1011,7 +1011,7 @@ Expression *ParseConstantArguments(
           (tkn.tknType != INSTANCE_NAME_TOKEN))
         {
          PrintErrorID(theEnv,"EXPRNPSR",7,false);
-         EnvPrintRouter(theEnv,WERROR,"Only constant arguments allowed for external function call.\n");
+         PrintRouter(theEnv,WERROR,"Only constant arguments allowed for external function call.\n");
          ReturnExpression(theEnv,top);
          *error = true;
          CloseStringSource(theEnv,router);

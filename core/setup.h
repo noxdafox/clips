@@ -449,7 +449,7 @@
 /********************************************/
 
 #ifndef DEVELOPER
-#define DEVELOPER 1
+#define DEVELOPER 0
 #endif
 
 #if DEVELOPER

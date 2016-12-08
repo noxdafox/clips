@@ -305,14 +305,14 @@ static void BsaveDeffunctions(
       Write out each deffunction module
       ================================= */
    DeffunctionBinaryData(theEnv)->DeffunctionCount = 0L;
-   theModule = EnvGetNextDefmodule(theEnv,NULL);
+   theModule = GetNextDefmodule(theEnv,NULL);
    while (theModule != NULL)
      {
       theModuleItem = (DeffunctionModuleData *)
                       GetModuleItem(theEnv,theModule,FindModuleItem(theEnv,"deffunction")->moduleIndex);
       AssignBsaveDefmdlItemHdrVals(&dummy_mitem.header,&theModuleItem->header);
       GenWrite(&dummy_mitem,sizeof(BSAVE_DEFFUNCTION_MODULE),fp);
-      theModule = EnvGetNextDefmodule(theEnv,theModule);
+      theModule = GetNextDefmodule(theEnv,theModule);
      }
 
    /* ==========================

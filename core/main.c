@@ -95,7 +95,7 @@ int main(
 
    DestroyEnvironment(mainEnv);
 
-   return(-1);
+   return -1;
   }
 
 #if UNIX_V || LINUX || DARWIN || UNIX_7 || WIN_GCC || WIN_MVC || DARWIN
@@ -105,7 +105,7 @@ int main(
 static void CatchCtrlC(
   int sgnl)
   {
-   EnvSetHaltExecution(mainEnv,true);
+   SetHaltExecution(mainEnv,true);
    CloseAllBatchSources(mainEnv);
    signal(SIGINT,CatchCtrlC);
   }

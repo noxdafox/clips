@@ -74,7 +74,7 @@
    bool                           ClassReactiveP(Defclass *);
 #endif
    void                           ClassSlots(Defclass *,CLIPSValue *,bool);
-   void                           EnvGetDefmessageHandlerList(Environment *,Defclass *,CLIPSValue *,bool);
+   void                           GetDefmessageHandlerList(Environment *,Defclass *,CLIPSValue *,bool);
    void                           ClassSuperclasses(Defclass *,CLIPSValue *,bool);
    void                           ClassSubclasses(Defclass *,CLIPSValue *,bool);
    void                           ClassSubclassAddresses(Environment *,Defclass *,UDFValue *,bool);

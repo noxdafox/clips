@@ -138,10 +138,10 @@ void InitializeDefrules(
    DefruleData(theEnv)->DefruleConstruct =
       AddConstruct(theEnv,"defrule","defrules",
                    ParseDefrule,
-                   (FindConstructFunction *) EnvFindDefrule,
+                   (FindConstructFunction *) FindDefrule,
                    GetConstructNamePointer,GetConstructPPForm,
                    GetConstructModuleItem,
-                   (GetNextConstructFunction *) EnvGetNextDefrule,
+                   (GetNextConstructFunction *) GetNextDefrule,
                    SetNextConstruct,
                    (IsConstructDeletableFunction *) DefruleIsDeletable,
                    (DeleteConstructFunction *) Undefrule,
@@ -178,9 +178,9 @@ static void DeallocateDefruleData(
    DoForAllConstructs(theEnv,DestroyDefruleAction,
                       DefruleData(theEnv)->DefruleModuleIndex,false,NULL);
 
-   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = EnvGetNextDefmodule(theEnv,theModule))
+        theModule = GetNextDefmodule(theEnv,theModule))
      {
       theModuleItem = (struct defruleModule *)
                       GetModuleItem(theEnv,theModule,
@@ -251,7 +251,7 @@ static void InitializeDefruleModules(
 #else
                                     NULL,
 #endif
-                                    (FindConstructFunction *) EnvFindDefruleInModule);
+                                    (FindConstructFunction *) FindDefruleInModule);
   }
 
 /***********************************************/
@@ -290,22 +290,22 @@ struct defruleModule *GetDefruleModuleItem(
    return((struct defruleModule *) GetConstructModuleItemByIndex(theEnv,theModule,DefruleData(theEnv)->DefruleModuleIndex));
   }
 
-/*******************************************************************/
-/* EnvFindDefrule: Searches for a defrule in the list of defrules. */
-/*   Returns a pointer to the defrule if found, otherwise NULL.    */
-/*******************************************************************/
-Defrule *EnvFindDefrule(
+/****************************************************************/
+/* FindDefrule: Searches for a defrule in the list of defrules. */
+/*   Returns a pointer to the defrule if found, otherwise NULL. */
+/****************************************************************/
+Defrule *FindDefrule(
   Environment *theEnv,
   const char *defruleName)
   {
    return (Defrule *) FindNamedConstructInModuleOrImports(theEnv,defruleName,DefruleData(theEnv)->DefruleConstruct);
   }
 
-/***************************************************************************/
-/* EnvFindDefruleInModule: Searches for a defrule in the list of defrules. */
-/*   Returns a pointer to the defrule if found, otherwise NULL.            */
-/***************************************************************************/
-Defrule *EnvFindDefruleInModule(
+/************************************************************************/
+/* FindDefruleInModule: Searches for a defrule in the list of defrules. */
+/*   Returns a pointer to the defrule if found, otherwise NULL.         */
+/************************************************************************/
+Defrule *FindDefruleInModule(
   Environment *theEnv,
   const char *defruleName)
   {
@@ -313,12 +313,12 @@ Defrule *EnvFindDefruleInModule(
   }
 
 /************************************************************/
-/* EnvGetNextDefrule: If passed a NULL pointer, returns the */
+/* GetNextDefrule: If passed a NULL pointer, returns the    */
 /*   first defrule in the ListOfDefrules. Otherwise returns */
 /*   the next defrule following the defrule passed as an    */
 /*   argument.                                              */
 /************************************************************/
-Defrule *EnvGetNextDefrule(
+Defrule *GetNextDefrule(
   Environment *theEnv,
   Defrule *defrulePtr)
   {
@@ -347,11 +347,11 @@ bool DefruleIsDeletable(
    return true;
   }
 
-/***********************************************************/
-/* EnvGetDisjunctCount: Returns the number of disjuncts of */
-/*   a rule (permutations caused by the use of or CEs).    */
-/***********************************************************/
-long EnvGetDisjunctCount(
+/********************************************************/
+/* GetDisjunctCount: Returns the number of disjuncts of */
+/*   a rule (permutations caused by the use of or CEs). */
+/********************************************************/
+long GetDisjunctCount(
   Environment *theEnv,
   Defrule *theDefrule)
   {
@@ -365,12 +365,12 @@ long EnvGetDisjunctCount(
    return(count);
   }
 
-/**********************************************************/
-/* EnvGetNthDisjunct: Returns the nth disjunct of a rule. */
-/*   The disjunct indices run from 1 to N rather than 0   */
-/*   to N - 1.                                            */
-/**********************************************************/
-Defrule *EnvGetNthDisjunct(
+/*******************************************************/
+/* GetNthDisjunct: Returns the nth disjunct of a rule. */
+/*   The disjunct indices run from 1 to N rather than  */
+/*   0 to N - 1.                                       */
+/*******************************************************/
+Defrule *GetNthDisjunct(
   Environment *theEnv,
   Defrule *theDefrule,
   long index)
@@ -408,11 +408,11 @@ void DefruleRunTimeInitialize(
 
    SaveCurrentModule(theEnv);
 
-   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = EnvGetNextDefmodule(theEnv,theModule))
+        theModule = GetNextDefmodule(theEnv,theModule))
      {
-      EnvSetCurrentModule(theEnv,theModule);
+      SetCurrentModule(theEnv,theModule);
       for (theRule = EnvGetNextDefrule(theEnv,NULL);
            theRule != NULL;
            theRule = EnvGetNextDefrule(theEnv,theRule))

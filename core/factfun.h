@@ -58,17 +58,17 @@
    void                           FactFunctionDefinitions(Environment *);
    void                           FactRelationFunction(Environment *,UDFContext *,UDFValue *);
    CLIPSLexeme                   *FactRelation(Fact *);
-   Deftemplate                   *EnvFactDeftemplate(Environment *,Fact *);
+   Deftemplate                   *FactDeftemplate(Environment *,Fact *);
    void                           FactExistpFunction(Environment *,UDFContext *,UDFValue *);
-   bool                           EnvFactExistp(Environment *,Fact *);
+   bool                           FactExistp(Environment *,Fact *);
    void                           FactSlotValueFunction(Environment *,UDFContext *,UDFValue *);
    void                           FactSlotValue(Environment *,Fact *,const char *,CLIPSValue *);
    void                           FactSlotNamesFunction(Environment *,UDFContext *,UDFValue *);
-   void                           EnvFactSlotNames(Environment *,Fact *,CLIPSValue *);
+   void                           FactSlotNames(Environment *,Fact *,CLIPSValue *);
    void                           GetFactListFunction(Environment *,UDFContext *,UDFValue *);
-   void                           EnvGetFactList(Environment *,CLIPSValue *,Defmodule *);
+   void                           GetFactList(Environment *,CLIPSValue *,Defmodule *);
    void                           PPFactFunction(Environment *,UDFContext *,UDFValue *);
-   void                           EnvPPFact(Environment *,Fact *,const char *,bool);
+   void                           PPFact(Environment *,Fact *,const char *,bool);
    Fact                          *GetFactAddressOrIndexArgument(UDFContext *,bool);
 
 #endif /* _H_factfun */

@@ -41,7 +41,7 @@
 #include "evaluatn.h"
 #include "constrnt.h"
 
-#define ConstraintIndex(theConstraint) (((! EnvGetDynamicConstraintChecking(theEnv)) || (theConstraint == NULL)) ? -1L : ((long) theConstraint->bsaveIndex))
+#define ConstraintIndex(theConstraint) (((! GetDynamicConstraintChecking(theEnv)) || (theConstraint == NULL)) ? -1L : ((long) theConstraint->bsaveIndex))
 #define ConstraintPointer(i) (((i) == -1L) ? NULL : (CONSTRAINT_RECORD *) &ConstraintData(theEnv)->ConstraintArray[i])
 
 #if BLOAD_AND_BSAVE

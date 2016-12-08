@@ -400,7 +400,7 @@ static void ParseSalience(
    /* Evaluate the expression and determine if it is an integer. */
    /*============================================================*/
 
-   EnvSetEvaluationError(theEnv,false);
+   SetEvaluationError(theEnv,false);
    if (EvaluateExpression(theEnv,PatternData(theEnv)->SalienceExpression,&salienceValue))
      {
       SalienceInformationError(theEnv,"defrule",ruleName);
@@ -707,7 +707,7 @@ static struct lhsParseNode *ConnectedPatternParse(
    if (PatternData(theEnv)->WithinNotCE && logical)
      {
       PrintErrorID(theEnv,"RULELHS",1,true);
-      EnvPrintRouter(theEnv,WERROR,"The logical CE cannot be used within a not/exists/forall CE.\n");
+      PrintRouter(theEnv,WERROR,"The logical CE cannot be used within a not/exists/forall CE.\n");
       *error = true;
       return NULL;
      }
@@ -1036,7 +1036,7 @@ static struct lhsParseNode *AssignmentParse(
    if (PatternData(theEnv)->WithinNotCE)
      {
       PrintErrorID(theEnv,"RULELHS",2,true);
-      EnvPrintRouter(theEnv,WERROR,"A pattern CE cannot be bound to a pattern-address within a not CE\n");
+      PrintRouter(theEnv,WERROR,"A pattern CE cannot be bound to a pattern-address within a not CE\n");
       *error = true;
       return NULL;
      }

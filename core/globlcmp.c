@@ -135,11 +135,11 @@ static bool ConstructToCode(
    /*  C code representation to the file as they are traversed.         */
    /*===================================================================*/
 
-   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = EnvGetNextDefmodule(theEnv,theModule))
+        theModule = GetNextDefmodule(theEnv,theModule))
      {
-      EnvSetCurrentModule(theEnv,theModule);
+      SetCurrentModule(theEnv,theModule);
 
       moduleFile = OpenFileIfNeeded(theEnv,moduleFile,fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
                                     moduleArrayVersion,headerFP,
@@ -156,9 +156,9 @@ static bool ConstructToCode(
       moduleFile = CloseFileIfNeeded(theEnv,moduleFile,&moduleArrayCount,&moduleArrayVersion,
                                      maxIndices,NULL,NULL);
 
-      for (theDefglobal = EnvGetNextDefglobal(theEnv,NULL);
+      for (theDefglobal = GetNextDefglobal(theEnv,NULL);
            theDefglobal != NULL;
-           theDefglobal = EnvGetNextDefglobal(theEnv,theDefglobal))
+           theDefglobal = GetNextDefglobal(theEnv,theDefglobal))
         {
          defglobalFile = OpenFileIfNeeded(theEnv,defglobalFile,fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
                                          defglobalArrayVersion,headerFP,

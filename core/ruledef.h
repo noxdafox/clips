@@ -157,9 +157,9 @@ struct defruleData
     ((theJoin)->rightSideEntryStructure))
 
    void                           InitializeDefrules(Environment *);
-   Defrule                       *EnvFindDefrule(Environment *,const char *);
-   Defrule                       *EnvFindDefruleInModule(Environment *,const char *);
-   Defrule                       *EnvGetNextDefrule(Environment *,Defrule *);
+   Defrule                       *FindDefrule(Environment *,const char *);
+   Defrule                       *FindDefruleInModule(Environment *,const char *);
+   Defrule                       *GetNextDefrule(Environment *,Defrule *);
    struct defruleModule          *GetDefruleModuleItem(Environment *,Defmodule *);
    bool                           DefruleIsDeletable(Defrule *);
 #if RUN_TIME
@@ -168,8 +168,8 @@ struct defruleData
 #if RUN_TIME || BLOAD_ONLY || BLOAD || BLOAD_AND_BSAVE
    void                           AddBetaMemoriesToJoin(Environment *,struct joinNode *);
 #endif
-   long                           EnvGetDisjunctCount(Environment *,Defrule *);
-   Defrule                       *EnvGetNthDisjunct(Environment *,Defrule *,long);
+   long                           GetDisjunctCount(Environment *,Defrule *);
+   Defrule                       *GetNthDisjunct(Environment *,Defrule *,long);
    const char                    *DefruleModule(Defrule *);
    const char                    *DefruleName(Defrule *);
    const char                    *DefrulePPForm(Defrule *);

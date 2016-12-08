@@ -35,7 +35,7 @@
 /*                                                           */
 /*            Converted API macros to function calls.        */
 /*                                                           */
-/*      6.40: Added EnvInputBufferCount function.            */
+/*      6.40: Added InputBufferCount function.               */
 /*                                                           */
 /*            Added check for reuse of existing router name. */
 /*                                                           */
@@ -119,10 +119,10 @@ static void DeallocateRouterData(
      }
   }
 
-/*******************************************/
-/* EnvPrintRouter: Generic print function. */
-/*******************************************/
-void EnvPrintRouter(
+/****************************************/
+/* PrintRouter: Generic print function. */
+/****************************************/
+void PrintRouter(
   Environment *theEnv,
   const char *logicalName,
   const char *str)
@@ -167,10 +167,10 @@ void EnvPrintRouter(
      { UnrecognizedRouterMessage(theEnv,logicalName); }
   }
 
-/**************************************************/
-/* EnvGetcRouter: Generic get character function. */
-/**************************************************/
-int EnvGetcRouter(
+/***********************************************/
+/* GetcRouter: Generic get character function. */
+/***********************************************/
+int GetcRouter(
   Environment *theEnv,
   const char *logicalName)
   {
@@ -256,10 +256,10 @@ int EnvGetcRouter(
    return(-1);
   }
 
-/******************************************************/
-/* EnvUngetcRouter: Generic unget character function. */
-/******************************************************/
-int EnvUngetcRouter(
+/***************************************************/
+/* UngetcRouter: Generic unget character function. */
+/***************************************************/
+int UngetcRouter(
   Environment *theEnv,
   int ch,
   const char *logicalName)
@@ -335,11 +335,11 @@ int EnvUngetcRouter(
    return -1;
   }
 
-/***********************************************/
-/* EnvExitRouter: Generic exit function. Calls */
-/*   all of the router exit functions.         */
-/***********************************************/
-void EnvExitRouter(
+/********************************************/
+/* ExitRouter: Generic exit function. Calls */
+/*   all of the router exit functions.      */
+/********************************************/
+void ExitRouter(
   Environment *theEnv,
   int num)
   {
@@ -375,28 +375,10 @@ void AbortExit(
    RouterData(theEnv)->Abort = true;
   }
 
-/************************************************************/
-/* EnvAddRouter: Adds an I/O router to the list of routers. */
-/************************************************************/
-bool EnvAddRouter(
-  Environment *theEnv,
-  const char *routerName,
-  int priority,
-  RouterQueryFunction *queryFunction,
-  RouterPrintFunction *printFunction,
-  RouterGetcFunction *getcFunction,
-  RouterUngetcFunction *ungetcFunction,
-  RouterExitFunction *exitFunction)
-  {
-   return EnvAddRouterWithContext(theEnv,routerName,priority,
-                                  queryFunction,printFunction,getcFunction,
-                                  ungetcFunction,exitFunction,NULL);
-  }
-
-/***********************************************************************/
-/* EnvAddRouterWithContext: Adds an I/O router to the list of routers. */
-/***********************************************************************/
-bool EnvAddRouterWithContext(
+/*********************************************************/
+/* AddRouter: Adds an I/O router to the list of routers. */
+/*********************************************************/
+bool AddRouter(
   Environment *theEnv,
   const char *routerName,
   int priority,
@@ -466,10 +448,10 @@ bool EnvAddRouterWithContext(
    return true;
   }
 
-/********************************************************************/
-/* EnvDeleteRouter: Removes an I/O router from the list of routers. */
-/********************************************************************/
-bool EnvDeleteRouter(
+/*****************************************************************/
+/* DeleteRouter: Removes an I/O router from the list of routers. */
+/*****************************************************************/
+bool DeleteRouter(
   Environment *theEnv,
   const char *routerName)
   {
@@ -554,9 +536,9 @@ static bool QueryRouter(
   }
 
 /*******************************************************/
-/* EnvDeactivateRouter: Deactivates a specific router. */
+/* DeactivateRouter: Deactivates a specific router. */
 /*******************************************************/
-bool EnvDeactivateRouter(
+bool DeactivateRouter(
   Environment *theEnv,
   const char *routerName)
   {
@@ -577,10 +559,10 @@ bool EnvDeactivateRouter(
    return false;
   }
 
-/***************************************************/
-/* EnvActivateRouter: Activates a specific router. */
-/***************************************************/
-bool EnvActivateRouter(
+/************************************************/
+/* ActivateRouter: Activates a specific router. */
+/************************************************/
+bool ActivateRouter(
   Environment *theEnv,
   const char *routerName)
   {
@@ -601,21 +583,21 @@ bool EnvActivateRouter(
    return false;
   }
 
-/********************************************/
-/* EnvFindRouter: Locates the named router. */
-/********************************************/
-struct router *EnvFindRouter(
+/*****************************************/
+/* FindRouter: Locates the named router. */
+/*****************************************/
+Router *FindRouter(
   Environment *theEnv,
   const char *routerName)
   {
-   struct router *currentPtr;
+   Router *currentPtr;
 
    for (currentPtr = RouterData(theEnv)->ListOfRouters;
         currentPtr != NULL;
         currentPtr = currentPtr->next)
      {
       if (strcmp(currentPtr->name,routerName) == 0)
-        { return(currentPtr); }
+        { return currentPtr; }
      }
 
    return NULL;
@@ -668,9 +650,9 @@ void UnrecognizedRouterMessage(
   const char *logicalName)
   {
    PrintErrorID(theEnv,"ROUTER",1,false);
-   EnvPrintRouter(theEnv,WERROR,"Logical name ");
-   EnvPrintRouter(theEnv,WERROR,logicalName);
-   EnvPrintRouter(theEnv,WERROR," was not recognized by any routers\n");
+   PrintRouter(theEnv,WERROR,"Logical name ");
+   PrintRouter(theEnv,WERROR,logicalName);
+   PrintRouter(theEnv,WERROR," was not recognized by any routers\n");
   }
 
 /*****************************************/
@@ -687,14 +669,14 @@ void PrintNRouter(
    tempStr = (char *) genalloc(theEnv,length+1);
    genstrncpy(tempStr,str,length);
    tempStr[length] = 0;
-   EnvPrintRouter(theEnv,logicalName,tempStr);
+   PrintRouter(theEnv,logicalName,tempStr);
    genfree(theEnv,tempStr,length+1);
   }
 
-/************************/
-/* EnvInputBufferCount: */
-/************************/
-size_t EnvInputBufferCount(
+/*********************/
+/* InputBufferCount: */
+/*********************/
+size_t InputBufferCount(
    Environment *theEnv)
    {
     return RouterData(theEnv)->CommandBufferInputCount;

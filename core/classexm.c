@@ -230,17 +230,17 @@ void DescribeClass(
    DisplaySeparator(theEnv,logicalName,buf,82,'=');
    DisplaySeparator(theEnv,logicalName,buf,82,'*');
    if (theDefclass->abstract)
-     EnvPrintRouter(theEnv,logicalName,"Abstract: direct instances of this class cannot be created.\n\n");
+     PrintRouter(theEnv,logicalName,"Abstract: direct instances of this class cannot be created.\n\n");
    else
      {
-      EnvPrintRouter(theEnv,logicalName,"Concrete: direct instances of this class can be created.\n");
+      PrintRouter(theEnv,logicalName,"Concrete: direct instances of this class can be created.\n");
 #if DEFRULE_CONSTRUCT
       if (theDefclass->reactive)
-        EnvPrintRouter(theEnv,logicalName,"Reactive: direct instances of this class can match defrule patterns.\n\n");
+        PrintRouter(theEnv,logicalName,"Reactive: direct instances of this class can match defrule patterns.\n\n");
       else
-        EnvPrintRouter(theEnv,logicalName,"Non-reactive: direct instances of this class cannot match defrule patterns.\n\n");
+        PrintRouter(theEnv,logicalName,"Non-reactive: direct instances of this class cannot match defrule patterns.\n\n");
 #else
-      EnvPrintRouter(theEnv,logicalName,"\n");
+      PrintRouter(theEnv,logicalName,"\n");
 #endif
      }
    PrintPackedClassLinks(theEnv,logicalName,"Direct Superclasses:",&theDefclass->directSuperclasses);
@@ -283,7 +283,7 @@ void DescribeClass(
 #endif
 
       DisplaySlotBasicInfo(theEnv,logicalName,slotNamePrintFormat,overrideMessagePrintFormat,buf,theDefclass);
-      EnvPrintRouter(theEnv,logicalName,"\nConstraint information for slots:\n\n");
+      PrintRouter(theEnv,logicalName,"\nConstraint information for slots:\n\n");
       DisplaySlotConstraintInfo(theEnv,logicalName,slotNamePrintFormat,buf,82,theDefclass);
      }
    if (theDefclass->handlerCount > 0)
@@ -301,7 +301,7 @@ void DescribeClass(
    if (messageBanner)
      {
       DisplaySeparator(theEnv,logicalName,buf,82,'-');
-      EnvPrintRouter(theEnv,logicalName,"Recognized message-handlers:\n");
+      PrintRouter(theEnv,logicalName,"Recognized message-handlers:\n");
       DisplayHandlersInLinks(theEnv,logicalName,&theDefclass->allSuperclasses,0);
      }
    DisplaySeparator(theEnv,logicalName,buf,82,'*');
@@ -372,7 +372,7 @@ void SuperclassPCommand(
       return;
      }
 
-   returnValue->lexemeValue = EnvCreateBoolean(theEnv,SuperclassP(c1,c2));
+   returnValue->lexemeValue = CreateBoolean(theEnv,SuperclassP(c1,c2));
   }
 
 /***************************************************
@@ -415,7 +415,7 @@ void SubclassPCommand(
       return;
      }
 
-   returnValue->lexemeValue = EnvCreateBoolean(theEnv,SubclassP(c1,c2));
+   returnValue->lexemeValue = CreateBoolean(theEnv,SubclassP(c1,c2));
   }
 
 /***************************************************
@@ -470,14 +470,14 @@ void SlotExistPCommand(
       if (strcmp(theArg.lexemeValue->contents,"inherit") != 0)
         {
          UDFInvalidArgumentMessage(context,"keyword \"inherit\"");
-         EnvSetEvaluationError(theEnv,true);
+         SetEvaluationError(theEnv,true);
          returnValue->lexemeValue = FalseSymbol(theEnv);
          return;
         }
       inheritFlag = true;
      }
 
-   returnValue->lexemeValue = EnvCreateBoolean(theEnv,((sd->cls == cls) ? true : inheritFlag));
+   returnValue->lexemeValue = CreateBoolean(theEnv,((sd->cls == cls) ? true : inheritFlag));
   }
 
 /***************************************************
@@ -543,7 +543,7 @@ void MessageHandlerExistPCommand(
       mtype = HandlerType(theEnv,"message-handler-existp",theArg.lexemeValue->contents);
       if (mtype == MERROR)
         {
-         EnvSetEvaluationError(theEnv,true);
+         SetEvaluationError(theEnv,true);
          returnValue->lexemeValue = FalseSymbol(theEnv);
          return;
         }
@@ -575,7 +575,7 @@ void SlotWritablePCommand(
    if (sd == NULL)
      { returnValue->lexemeValue = FalseSymbol(theEnv); }
    else
-     { returnValue->lexemeValue = EnvCreateBoolean(theEnv,(sd->noWrite || sd->initializeOnly) ? false : true); }
+     { returnValue->lexemeValue = CreateBoolean(theEnv,(sd->noWrite || sd->initializeOnly) ? false : true); }
   }
 
 /***************************************************
@@ -621,7 +621,7 @@ void SlotInitablePCommand(
    if (sd == NULL)
      { returnValue->lexemeValue = FalseSymbol(theEnv); }
    else
-     { returnValue->lexemeValue = EnvCreateBoolean(theEnv,(sd->noWrite && (sd->initializeOnly == 0)) ? false : true); }
+     { returnValue->lexemeValue = CreateBoolean(theEnv,(sd->noWrite && (sd->initializeOnly == 0)) ? false : true); }
   }
 
 /***************************************************
@@ -667,7 +667,7 @@ void SlotPublicPCommand(
    if (sd == NULL)
      { returnValue->lexemeValue = FalseSymbol(theEnv); }
    else
-     { returnValue->lexemeValue = EnvCreateBoolean(theEnv,(sd->publicVisibility ? true : false)); }
+     { returnValue->lexemeValue = CreateBoolean(theEnv,(sd->publicVisibility ? true : false)); }
   }
 
 /***************************************************
@@ -693,7 +693,7 @@ bool SlotPublicP(
   }
 
 /***************************************************
-  NAME         : EnvSlotDefaultP
+  NAME         : SlotDefaultP
   DESCRIPTION  : Determines if a slot has a default value
   INPUTS       : 1) The class
                  2) The slot name
@@ -702,7 +702,7 @@ bool SlotPublicP(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-int EnvSlotDefaultP(
+int SlotDefaultP(
   Environment *theEnv,
   Defclass *theDefclass,
   const char *slotName)
@@ -744,7 +744,7 @@ void SlotDirectAccessPCommand(
    if (sd == NULL)
      { returnValue->lexemeValue = FalseSymbol(theEnv); }
    else
-     { returnValue->lexemeValue = EnvCreateBoolean(theEnv,((sd->publicVisibility || (sd->cls == theDefclass)) ? true : false)); }
+     { returnValue->lexemeValue = CreateBoolean(theEnv,((sd->publicVisibility || (sd->cls == theDefclass)) ? true : false)); }
   }
 
 /***************************************************
@@ -797,7 +797,7 @@ void SlotDefaultValueCommand(
 
    if (sd->noDefault)
      {
-      returnValue->lexemeValue = EnvCreateSymbol(theEnv,"?NONE");
+      returnValue->lexemeValue = CreateSymbol(theEnv,"?NONE");
       return;
      }
 
@@ -838,7 +838,7 @@ bool SlotDefaultValue(
 
    if (sd->noDefault)
      {
-      theValue->value = EnvCreateSymbol(theEnv,"?NONE");
+      theValue->value = CreateSymbol(theEnv,"?NONE");
       return true;
      }
 
@@ -875,7 +875,7 @@ void ClassExistPCommand(
    if (! UDFFirstArgument(context,SYMBOL_BIT,&theArg))
      { return; }
 
-   returnValue->lexemeValue = EnvCreateBoolean(theEnv,((LookupDefclassByMdlOrScope(theEnv,theArg.lexemeValue->contents) != NULL) ? true : false));
+   returnValue->lexemeValue = CreateBoolean(theEnv,((LookupDefclassByMdlOrScope(theEnv,theArg.lexemeValue->contents) != NULL) ? true : false));
   }
 
 /* =========================================
@@ -967,7 +967,7 @@ static SlotDescriptor *CheckSlotExists(
       if (existsErrorFlag)
         {
          SlotExistError(theEnv,ssym->contents,func);
-         EnvSetEvaluationError(theEnv,true);
+         SetEvaluationError(theEnv,true);
         }
       return NULL;
      }
@@ -977,14 +977,14 @@ static SlotDescriptor *CheckSlotExists(
      { return sd; }
 
    PrintErrorID(theEnv,"CLASSEXM",1,false);
-   EnvPrintRouter(theEnv,WERROR,"Inherited slot ");
-   EnvPrintRouter(theEnv,WERROR,ssym->contents);
-   EnvPrintRouter(theEnv,WERROR," from class ");
+   PrintRouter(theEnv,WERROR,"Inherited slot ");
+   PrintRouter(theEnv,WERROR,ssym->contents);
+   PrintRouter(theEnv,WERROR," from class ");
    PrintClassName(theEnv,WERROR,sd->cls,false);
-   EnvPrintRouter(theEnv,WERROR," is not valid for function ");
-   EnvPrintRouter(theEnv,WERROR,func);
-   EnvPrintRouter(theEnv,WERROR,"\n");
-   EnvSetEvaluationError(theEnv,true);
+   PrintRouter(theEnv,WERROR," is not valid for function ");
+   PrintRouter(theEnv,WERROR,func);
+   PrintRouter(theEnv,WERROR,"\n");
+   SetEvaluationError(theEnv,true);
    return NULL;
   }
 
@@ -1090,11 +1090,11 @@ static void PrintClassBrowse(
    long i;
 
    for (i = 0 ; i < depth ; i++)
-     EnvPrintRouter(theEnv,logicalName,"  ");
-   EnvPrintRouter(theEnv,logicalName,DefclassName(cls));
+     PrintRouter(theEnv,logicalName,"  ");
+   PrintRouter(theEnv,logicalName,DefclassName(cls));
    if (cls->directSuperclasses.classCount > 1)
-     EnvPrintRouter(theEnv,logicalName," *");
-   EnvPrintRouter(theEnv,logicalName,"\n");
+     PrintRouter(theEnv,logicalName," *");
+   PrintRouter(theEnv,logicalName,"\n");
    for (i = 0 ;i < cls->directSubclasses.classCount ; i++)
      PrintClassBrowse(theEnv,logicalName,cls->directSubclasses.classArray[i],depth+1);
   }
@@ -1123,7 +1123,7 @@ static void DisplaySeparator(
      buf[i] = (char) sepchar;
    buf[i++] = '\n';
    buf[i] = '\0';
-   EnvPrintRouter(theEnv,logicalName,buf);
+   PrintRouter(theEnv,logicalName,buf);
   }
 
 /*************************************************************
@@ -1173,10 +1173,10 @@ static void DisplaySlotBasicInfo(
 #else
    genstrcat(buf,"FLD DEF PRP ACC STO SRC VIS CRT ");
 #endif
-   EnvPrintRouter(theEnv,logicalName,buf);
+   PrintRouter(theEnv,logicalName,buf);
    gensprintf(buf,overrideMessagePrintFormat,"OVRD-MSG");
-   EnvPrintRouter(theEnv,logicalName,buf);
-   EnvPrintRouter(theEnv,logicalName,"SOURCE(S)\n");
+   PrintRouter(theEnv,logicalName,buf);
+   PrintRouter(theEnv,logicalName,"SOURCE(S)\n");
    for (i = 0 ; i < cls->instanceSlotCount ; i++)
      {
       sp = cls->instanceTemplate[i];
@@ -1206,12 +1206,12 @@ static void DisplaySlotBasicInfo(
       if ((createString[1] == '\0') ? true : (createString[2] == '\0'))
         genstrcat(buf," ");
       genstrcat(buf," ");
-      EnvPrintRouter(theEnv,logicalName,buf);
+      PrintRouter(theEnv,logicalName,buf);
       gensprintf(buf,overrideMessagePrintFormat,
               sp->noWrite ? "NIL" : sp->overrideMessage->contents);
-      EnvPrintRouter(theEnv,logicalName,buf);
+      PrintRouter(theEnv,logicalName,buf);
       PrintSlotSources(theEnv,logicalName,sp->slotName->name,&sp->cls->allSuperclasses,0,true);
-      EnvPrintRouter(theEnv,logicalName,"\n");
+      PrintRouter(theEnv,logicalName,"\n");
      }
   }
 
@@ -1253,7 +1253,7 @@ static bool PrintSlotSources(
       if (csp->composite)
         {
          if (PrintSlotSources(theEnv,logicalName,sname,sprec,theIndex+1,false))
-           EnvPrintRouter(theEnv,logicalName," ");
+           PrintRouter(theEnv,logicalName," ");
         }
       PrintClassName(theEnv,logicalName,sprec->classArray[theIndex],false);
       return true;
@@ -1301,7 +1301,7 @@ static void DisplaySlotConstraintInfo(
 
    gensprintf(buf,slotNamePrintFormat,"SLOTS");
    genstrcat(buf,"SYM STR INN INA EXA FTA INT FLT\n");
-   EnvPrintRouter(theEnv,logicalName,buf);
+   PrintRouter(theEnv,logicalName,buf);
    for (i = 0 ; i < cls->instanceSlotCount ; i++)
      {
       cr = cls->instanceTemplate[i]->constraint;
@@ -1325,31 +1325,31 @@ static void DisplaySlotConstraintInfo(
          OpenStringDestination(theEnv,strdest,buf + strlen(buf),(maxlen - strlen(buf) - 1));
          if (cr->integersAllowed || cr->floatsAllowed || cr->anyAllowed)
            {
-            EnvPrintRouter(theEnv,strdest,"RNG:[");
+            PrintRouter(theEnv,strdest,"RNG:[");
             PrintExpression(theEnv,strdest,cr->minValue);
-            EnvPrintRouter(theEnv,strdest,"..");
+            PrintRouter(theEnv,strdest,"..");
             PrintExpression(theEnv,strdest,cr->maxValue);
-            EnvPrintRouter(theEnv,strdest,"] ");
+            PrintRouter(theEnv,strdest,"] ");
            }
          if (cls->instanceTemplate[i]->multiple)
            {
-            EnvPrintRouter(theEnv,strdest,"CRD:[");
+            PrintRouter(theEnv,strdest,"CRD:[");
             PrintExpression(theEnv,strdest,cr->minFields);
-            EnvPrintRouter(theEnv,strdest,"..");
+            PrintRouter(theEnv,strdest,"..");
             PrintExpression(theEnv,strdest,cr->maxFields);
-            EnvPrintRouter(theEnv,strdest,"]");
+            PrintRouter(theEnv,strdest,"]");
            }
         }
       else
         {
          OpenStringDestination(theEnv,strdest,buf,maxlen);
-         EnvPrintRouter(theEnv,strdest," +   +   +   +   +   +   +   +  RNG:[-oo..+oo]");
+         PrintRouter(theEnv,strdest," +   +   +   +   +   +   +   +  RNG:[-oo..+oo]");
          if (cls->instanceTemplate[i]->multiple)
-           EnvPrintRouter(theEnv,strdest," CRD:[0..+oo]");
+           PrintRouter(theEnv,strdest," CRD:[0..+oo]");
         }
-      EnvPrintRouter(theEnv,strdest,"\n");
+      PrintRouter(theEnv,strdest,"\n");
       CloseStringDestination(theEnv,strdest);
-      EnvPrintRouter(theEnv,logicalName,buf);
+      PrintRouter(theEnv,logicalName,buf);
      }
   }
 

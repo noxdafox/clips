@@ -294,7 +294,7 @@
       
       theInstanceName = (char *) [[theInstance name] UTF8String];
       if (theInstanceName != NULL)
-        { clipsInstance = EnvFindInstance(theEnvironment,NULL,theInstanceName,true); }
+        { clipsInstance = FindInstance(theEnvironment,NULL,theInstanceName,true); }
       
       /*===========================================================*/
       /* If we were able to find the corresponding CLIPS instance, */

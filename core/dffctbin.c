@@ -131,9 +131,9 @@ static void BsaveFind(
    /* Loop through each module. */
    /*===========================*/
 
-   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = EnvGetNextDefmodule(theEnv,theModule))
+        theModule = GetNextDefmodule(theEnv,theModule))
      {
       /*===============================================*/
       /* Set the current module to the module being    */
@@ -141,16 +141,16 @@ static void BsaveFind(
       /* modules encountered.                          */
       /*===============================================*/
 
-      EnvSetCurrentModule(theEnv,theModule);
+      SetCurrentModule(theEnv,theModule);
       DeffactsBinaryData(theEnv)->NumberOfDeffactsModules++;
 
       /*===================================================*/
       /* Loop through each deffacts in the current module. */
       /*===================================================*/
 
-      for (theDeffacts = EnvGetNextDeffacts(theEnv,NULL);
+      for (theDeffacts = GetNextDeffacts(theEnv,NULL);
            theDeffacts != NULL;
-           theDeffacts = EnvGetNextDeffacts(theEnv,theDeffacts))
+           theDeffacts = GetNextDeffacts(theEnv,theDeffacts))
         {
          /*======================================================*/
          /* Initialize the construct header for the binary save. */
@@ -185,24 +185,24 @@ static void BsaveExpressions(
    /* Loop through each module. */
    /*===========================*/
 
-   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = EnvGetNextDefmodule(theEnv,theModule))
+        theModule = GetNextDefmodule(theEnv,theModule))
      {
       /*======================================================*/
       /* Set the current module to the module being examined. */
       /*======================================================*/
 
-      EnvSetCurrentModule(theEnv,theModule);
+      SetCurrentModule(theEnv,theModule);
 
       /*==================================================*/
       /* Loop through each deffacts in the current module */
       /* and save the assertion list expression.          */
       /*==================================================*/
 
-      for (theDeffacts = EnvGetNextDeffacts(theEnv,NULL);
+      for (theDeffacts = GetNextDeffacts(theEnv,NULL);
            theDeffacts != NULL;
-           theDeffacts = EnvGetNextDeffacts(theEnv,theDeffacts))
+           theDeffacts = GetNextDeffacts(theEnv,theDeffacts))
         { BsaveExpression(theEnv,theDeffacts->assertList,fp); }
      }
   }
@@ -259,11 +259,11 @@ static void BsaveBinaryItem(
    /*================================================*/
 
    DeffactsBinaryData(theEnv)->NumberOfDeffacts = 0;
-   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = EnvGetNextDefmodule(theEnv,theModule))
+        theModule = GetNextDefmodule(theEnv,theModule))
      {
-      EnvSetCurrentModule(theEnv,theModule);
+      SetCurrentModule(theEnv,theModule);
 
       theModuleItem = (struct deffactsModule *) GetModuleItem(theEnv,NULL,DeffactsData(theEnv)->DeffactsModuleIndex);
       AssignBsaveDefmdlItemHdrVals(&tempDeffactsModule.header,&theModuleItem->header);
@@ -274,15 +274,15 @@ static void BsaveBinaryItem(
    /* Write out each deffacts. */
    /*==========================*/
 
-   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = EnvGetNextDefmodule(theEnv,theModule))
+        theModule = GetNextDefmodule(theEnv,theModule))
      {
-      EnvSetCurrentModule(theEnv,theModule);
+      SetCurrentModule(theEnv,theModule);
 
-      for (theDeffacts = EnvGetNextDeffacts(theEnv,NULL);
+      for (theDeffacts = GetNextDeffacts(theEnv,NULL);
            theDeffacts != NULL;
-           theDeffacts = EnvGetNextDeffacts(theEnv,theDeffacts))
+           theDeffacts = GetNextDeffacts(theEnv,theDeffacts))
         {
          AssignBsaveConstructHeaderVals(&newDeffacts.header,&theDeffacts->header);
          if (theDeffacts->assertList != NULL)

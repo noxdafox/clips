@@ -87,23 +87,23 @@ static void BeforePatternNetworkToCode(
    /* Loop through each module. */
    /*===========================*/
 
-   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = EnvGetNextDefmodule(theEnv,theModule))
+        theModule = GetNextDefmodule(theEnv,theModule))
      {
       /*=========================*/
       /* Set the current module. */
       /*=========================*/
 
-      EnvSetCurrentModule(theEnv,theModule);
+      SetCurrentModule(theEnv,theModule);
 
       /*======================================================*/
       /* Loop through each deftemplate in the current module. */
       /*======================================================*/
 
-      for (theDeftemplate = EnvGetNextDeftemplate(theEnv,NULL);
+      for (theDeftemplate = GetNextDeftemplate(theEnv,NULL);
            theDeftemplate != NULL;
-           theDeftemplate = EnvGetNextDeftemplate(theEnv,theDeftemplate))
+           theDeftemplate = GetNextDeftemplate(theEnv,theDeftemplate))
         {
          /*=================================================*/
          /* Assign each pattern node in the pattern network */
@@ -192,24 +192,24 @@ static bool PatternNetworkToCode(
    /* Loop through all the modules. */
    /*===============================*/
 
-   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = EnvGetNextDefmodule(theEnv,theModule))
+        theModule = GetNextDefmodule(theEnv,theModule))
      {
       /*=========================*/
       /* Set the current module. */
       /*=========================*/
 
-      EnvSetCurrentModule(theEnv,theModule);
+      SetCurrentModule(theEnv,theModule);
 
       /*======================================*/
       /* Loop through all of the deftemplates */
       /* in the current module.               */
       /*======================================*/
 
-      for (theTemplate = EnvGetNextDeftemplate(theEnv,NULL);
+      for (theTemplate = GetNextDeftemplate(theEnv,NULL);
            theTemplate != NULL;
-           theTemplate = EnvGetNextDeftemplate(theEnv,theTemplate))
+           theTemplate = GetNextDeftemplate(theEnv,theTemplate))
         {
          /*======================================================*/
          /* Loop through each pattern node in the deftemplate's  */

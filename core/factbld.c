@@ -907,15 +907,15 @@ static void FindAndSetDeftemplatePatternNetwork(
    /* associated with the specified root node.              */
    /*=======================================================*/
 
-   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = EnvGetNextDefmodule(theEnv,theModule))
+        theModule = GetNextDefmodule(theEnv,theModule))
      {
       /*======================================================*/
       /* Set the current module to the module being examined. */
       /*======================================================*/
 
-      EnvSetCurrentModule(theEnv,theModule);
+      SetCurrentModule(theEnv,theModule);
 
       /*======================================================*/
       /* Loop through every deftemplate in the current module */
@@ -923,9 +923,9 @@ static void FindAndSetDeftemplatePatternNetwork(
       /* specified root node.                                 */
       /*======================================================*/
 
-      for (theDeftemplate = EnvGetNextDeftemplate(theEnv,NULL);
+      for (theDeftemplate = GetNextDeftemplate(theEnv,NULL);
            theDeftemplate != NULL;
-           theDeftemplate = EnvGetNextDeftemplate(theEnv,theDeftemplate))
+           theDeftemplate = GetNextDeftemplate(theEnv,theDeftemplate))
         {
          /*===========================================================*/
          /* When the associated deftemplate is found, change its root */
@@ -970,9 +970,9 @@ static void ClearPatternMatches(
    /* Loop through every fact in the fact list. */
    /*===========================================*/
 
-   for (theFact = EnvGetNextFact(theEnv,NULL);
+   for (theFact = GetNextFact(theEnv,NULL);
         theFact != NULL;
-        theFact = EnvGetNextFact(theEnv,theFact))
+        theFact = GetNextFact(theEnv,theFact))
      {
       /*========================================*/
       /* Loop through every match for the fact. */

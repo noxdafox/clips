@@ -61,18 +61,18 @@
 #define _H_cstrcpsr
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   int                            EnvLoad(Environment *,const char *);
+   int                            Load(Environment *,const char *);
    int                            LoadConstructsFromLogicalName(Environment *,const char *);
    int                            ParseConstruct(Environment *,const char *,const char *);
    void                           ImportExportConflictMessage(Environment *,const char *,const char *,
                                                               const char *,const char *);
    void                           FlushParsingMessages(Environment *);
-   char                          *EnvGetParsingFileName(Environment *);
-   void                           EnvSetParsingFileName(Environment *,const char *);
-   char                          *EnvGetErrorFileName(Environment *);
-   void                           EnvSetErrorFileName(Environment *,const char *);
-   char                          *EnvGetWarningFileName(Environment *);
-   void                           EnvSetWarningFileName(Environment *,const char *);
+   char                          *GetParsingFileName(Environment *);
+   void                           SetParsingFileName(Environment *,const char *);
+   char                          *GetErrorFileName(Environment *);
+   void                           SetErrorFileName(Environment *,const char *);
+   char                          *GetWarningFileName(Environment *);
+   void                           SetWarningFileName(Environment *,const char *);
    void                           CreateErrorCaptureRouter(Environment *);
    void                           DeleteErrorCaptureRouter(Environment *);
 #endif

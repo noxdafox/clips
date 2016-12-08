@@ -113,10 +113,10 @@ struct FunctionHash
 #define SIZE_FUNCTION_HASH 517
 
    void                           InitializeExternalFunctionData(Environment *);
-   bool                           EnvAddUDF(Environment *,const char *,const char *,
-                                            int,int,const char *,
-                                            void (*)(Environment *,UDFContext *,UDFValue *),
-                                            const char *,void *);
+   bool                           AddUDF(Environment *,const char *,const char *,
+                                         int,int,const char *,
+                                         void (*)(Environment *,UDFContext *,UDFValue *),
+                                         const char *,void *);
    bool                           AddFunctionParser(Environment *,const char *,
                                                            struct expr *(*)( Environment *,struct expr *,const char *));
    bool                           RemoveFunctionParser(Environment *,const char *);
@@ -127,7 +127,7 @@ struct FunctionHash
    int                            GetNthRestriction(struct functionDefinition *,int);
    unsigned                       GetNthRestriction2(Environment *,struct functionDefinition *,int);
    const char                    *GetArgumentTypeName(int);
-   bool                           EnvRemoveUDF(Environment *,const char *);
+   bool                           RemoveUDF(Environment *,const char *);
    int                            GetMinimumArgs(struct functionDefinition *);
    int                            GetMaximumArgs(struct functionDefinition *);
    int                            UDFArgumentCount(UDFContext *);

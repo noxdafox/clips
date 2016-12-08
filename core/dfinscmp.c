@@ -187,11 +187,11 @@ static bool DefinstancesToCode(
       Loop through all the modules and all the definstances writing
       their C code representation to the file as they are traversed
       ============================================================= */
-   theModule = EnvGetNextDefmodule(theEnv,NULL);
+   theModule = GetNextDefmodule(theEnv,NULL);
 
    while (theModule != NULL)
      {
-      EnvSetCurrentModule(theEnv,theModule);
+      SetCurrentModule(theEnv,theModule);
 
       moduleFile = OpenFileIfNeeded(theEnv,moduleFile,fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
                                     moduleArrayVersion,headerFP,
@@ -208,7 +208,7 @@ static bool DefinstancesToCode(
       moduleFile = CloseFileIfNeeded(theEnv,moduleFile,&moduleArrayCount,&moduleArrayVersion,
                                      maxIndices,NULL,NULL);
 
-      theDefinstances = EnvGetNextDefinstances(theEnv,NULL);
+      theDefinstances = GetNextDefinstances(theEnv,NULL);
 
       while (theDefinstances != NULL)
         {
@@ -228,10 +228,10 @@ static bool DefinstancesToCode(
          definstancesFile = CloseFileIfNeeded(theEnv,definstancesFile,&definstancesArrayCount,
                                               &definstancesArrayVersion,maxIndices,NULL,NULL);
 
-         theDefinstances = EnvGetNextDefinstances(theEnv,theDefinstances);
+         theDefinstances = GetNextDefinstances(theEnv,theDefinstances);
         }
 
-      theModule = EnvGetNextDefmodule(theEnv,theModule);
+      theModule = GetNextDefmodule(theEnv,theModule);
       moduleCount++;
       moduleArrayCount++;
      }
