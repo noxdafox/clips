@@ -125,9 +125,9 @@ void CLIPSCPPEnv::PrintPrompt()
 void CLIPSCPPEnv::Clear()
   {
 #ifndef CLIPS_DLL_WRAPPER
-   ::EnvClear(theEnv);
+   ::Clear(theEnv);
 #else
-   __EnvClear(theEnv);
+   __Clear(theEnv);
 #endif
   }
 
@@ -138,9 +138,9 @@ int CLIPSCPPEnv::Load(
   char *theFile)
   {
 #ifndef CLIPS_DLL_WRAPPER
-   return EnvLoad(theEnv,theFile);
+   return ::Load(theEnv,theFile);
 #else
-   return __EnvLoad(theEnv,theFile);
+   return __Load(theEnv,theFile);
 #endif
   }
 
@@ -167,9 +167,9 @@ void CLIPSCPPEnv::LoadFromString(
 void CLIPSCPPEnv::Reset()
   {
 #ifndef CLIPS_DLL_WRAPPER
-   EnvReset(theEnv);
+   ::Reset(theEnv);
 #else
-   __EnvReset(theEnv);
+   __Reset(theEnv);
 #endif
   }
 
@@ -180,9 +180,9 @@ long long CLIPSCPPEnv::Run(
   long long runLimit)
   {
 #ifndef CLIPS_DLL_WRAPPER
-   return EnvRun(theEnv,runLimit);
+   return ::Run(theEnv,runLimit);
 #else
-   return __EnvRun(theEnv,runLimit);
+   return __Run(theEnv,runLimit);
 #endif
   }
 
@@ -193,12 +193,12 @@ bool CLIPSCPPEnv::Build(
   char *buildString)
   {   
 #ifndef CLIPS_DLL_WRAPPER
-   if (EnvBuild(theEnv,buildString))
+   if (::Build(theEnv,buildString))
      { return true; }
    else
      { return false; }
 #else
-   if (__EnvBuild(theEnv,buildString))
+   if (__Build(theEnv,buildString))
      { return true; }
    else
      { return false; }
@@ -215,9 +215,9 @@ DataObject CLIPSCPPEnv::Eval(
    CLIPSValue rv;
    
 #ifndef CLIPS_DLL_WRAPPER
-   rc = EnvEval(theEnv,evalString,&rv);
+   rc = ::Eval(theEnv,evalString,&rv);
 #else
-   rc = __EnvEval(theEnv,evalString,&rv);
+   rc = __Eval(theEnv,evalString,&rv);
 #endif
 
    if (rc == 0)
@@ -236,9 +236,9 @@ DataObject CLIPSCPPEnv::Eval(
 int CLIPSCPPEnv::GetHaltExecution()
 {
 #ifndef CLIPS_DLL_WRAPPER
-    return EnvGetHaltExecution(theEnv);
+    return ::GetHaltExecution(theEnv);
 #else
-    return __EnvGetHaltExecution(theEnv);
+    return __GetHaltExecution(theEnv);
 #endif
 }
 
@@ -249,9 +249,9 @@ void CLIPSCPPEnv::SetHaltExecution(
    bool value)
 {
 #ifndef CLIPS_DLL_WRAPPER
-    EnvSetHaltExecution(theEnv,value);
+    ::SetHaltExecution(theEnv,value);
 #else
-    __EnvSetHaltExecution(theEnv,value);
+    __SetHaltExecution(theEnv,value);
 #endif
 }
 
@@ -261,9 +261,9 @@ void CLIPSCPPEnv::SetHaltExecution(
 int CLIPSCPPEnv::GetEvaluationError()
 {
 #ifndef CLIPS_DLL_WRAPPER
-    return EnvGetEvaluationError(theEnv);
+    return ::GetEvaluationError(theEnv);
 #else
-    return __EnvGetEvaluationError(theEnv);
+    return __GetEvaluationError(theEnv);
 #endif
 }
 
@@ -274,9 +274,9 @@ void CLIPSCPPEnv::SetEvaluationError(
   bool value)
 {
 #ifndef CLIPS_DLL_WRAPPER
-    EnvSetEvaluationError(theEnv,value);
+    ::SetEvaluationError(theEnv,value);
 #else
-    __EnvSetEvaluationError(theEnv,value);
+    __SetEvaluationError(theEnv,value);
 #endif
 }
 
@@ -286,9 +286,9 @@ void CLIPSCPPEnv::SetEvaluationError(
 int CLIPSCPPEnv::GetHaltRules()
 {
 #ifndef CLIPS_DLL_WRAPPER
-    return EnvGetHaltRules(theEnv);
+    return ::GetHaltRules(theEnv);
 #else
-    return __EnvGetHaltRules(theEnv);
+    return __GetHaltRules(theEnv);
 #endif
 }
 
@@ -299,9 +299,9 @@ void CLIPSCPPEnv::SetHaltRules(
     bool value)
 {
 #ifndef CLIPS_DLL_WRAPPER
-    EnvSetHaltRules(theEnv,value);
+    ::SetHaltRules(theEnv,value);
 #else
-    __EnvSetHaltRules(theEnv,value);
+    __SetHaltRules(theEnv,value);
 #endif
 }
 
@@ -331,9 +331,9 @@ FactAddressValue *CLIPSCPPEnv::AssertString(
    Fact *rv;
    
 #ifndef CLIPS_DLL_WRAPPER
-   rv = EnvAssertString(theEnv,factString);
+   rv = ::AssertString(theEnv,factString);
 #else
-   rv = __EnvAssertString(theEnv,factString);
+   rv = __AssertString(theEnv,factString);
 #endif
      
    if (rv == NULL) return NULL;
@@ -421,9 +421,9 @@ int CLIPSCPPEnv::Watch(
   char *item)
   {
 #ifndef CLIPS_DLL_WRAPPER
-   return EnvWatch(theEnv,item);
+   return ::Watch(theEnv,item);
 #else
-   return __EnvWatch(theEnv,item);
+   return __Watch(theEnv,item);
 #endif
   }
 
@@ -434,26 +434,26 @@ int CLIPSCPPEnv::Unwatch(
   char *item)
   {
 #ifndef CLIPS_DLL_WRAPPER
-   return EnvUnwatch(theEnv,item);
+   return ::Unwatch(theEnv,item);
 #else
-   return __EnvUnwatch(theEnv,item);
+   return __Unwatch(theEnv,item);
 #endif
   }
   
 /*************/
 /* AddRouter */
 /*************/
-int CLIPSCPPEnv::AddRouter(
+bool CLIPSCPPEnv::AddRouter(
   char *routerName,
   int priority,
   CLIPSCPPRouter *router)
   {
 #ifndef CLIPS_DLL_WRAPPER
-   return EnvAddRouterWithContext(theEnv,routerName,priority,CLIPSCPPQuery,
+   return ::AddRouter(theEnv,routerName,priority,CLIPSCPPQuery,
                                   CLIPSCPPPrint,CLIPSCPPGetc,CLIPSCPPUngetc,
                                   CLIPSCPPExit,router);
 #else
-   return __EnvAddRouterWithContext(theEnv,routerName,priority,CLIPSCPPQuery,
+   return __AddRouter(theEnv,routerName,priority,CLIPSCPPQuery,
                                     CLIPSCPPPrint,CLIPSCPPGetc,CLIPSCPPUngetc,
                                     CLIPSCPPExit,router);
 #endif
@@ -466,9 +466,9 @@ bool CLIPSCPPEnv::DeleteRouter(
   char *routerName)
   {
 #ifndef CLIPS_DLL_WRAPPER
-   return EnvDeleteRouter(theEnv,routerName);
+   return ::DeleteRouter(theEnv,routerName);
 #else
-   return __EnvDeleteRouter(theEnv,routerName);
+   return __DeleteRouter(theEnv,routerName);
 #endif
   }
 
@@ -478,9 +478,9 @@ bool CLIPSCPPEnv::DeleteRouter(
 size_t CLIPSCPPEnv::InputBufferCount()
   {
 #ifndef CLIPS_DLL_WRAPPER
-   return EnvInputBufferCount(theEnv);
+   return ::InputBufferCount(theEnv);
 #else
-   return __EnvInputBufferCount(theEnv);
+   return __InputBufferCount(theEnv);
 #endif
   }
 
@@ -1185,9 +1185,9 @@ FactAddressValue::FactAddressValue(
   Environment *theEnv,Fact *theFact) : theEnvironment(theEnv), theFactAddress(theFact)
   {
 #ifndef CLIPS_DLL_WRAPPER
-   EnvIncrementFactCount(theEnvironment,theFact);
+   IncrementFactCount(theEnvironment,theFact);
 #else
-   __EnvIncrementFactCount(theEnvironment,theFact);
+   __IncrementFactCount(theEnvironment,theFact);
 #endif
   }
 
@@ -1205,9 +1205,9 @@ FactAddressValue::FactAddressValue( const FactAddressValue& v) : theFactAddress(
 FactAddressValue::~FactAddressValue()
   {   
 #ifndef CLIPS_DLL_WRAPPER
-   EnvDecrementFactCount(theEnvironment,theFactAddress);
+   ::DecrementFactCount(theEnvironment,theFactAddress);
 #else
-   __EnvDecrementFactCount(theEnvironment,theFactAddress);
+   __DecrementFactCount(theEnvironment,theFactAddress);
 #endif
   }
 
@@ -1230,9 +1230,9 @@ FactAddressValue& FactAddressValue::operator = (
    if (theFactAddress != NULL)
      { 
 #ifndef CLIPS_DLL_WRAPPER
-      EnvDecrementFactCount(theEnvironment,theFactAddress);
+      ::DecrementFactCount(theEnvironment,theFactAddress);
 #else
-      __EnvDecrementFactCount(theEnvironment,theFactAddress);
+      __DecrementFactCount(theEnvironment,theFactAddress);
 #endif
      }
         
@@ -1240,9 +1240,9 @@ FactAddressValue& FactAddressValue::operator = (
    theFactAddress = v.theFactAddress;
      
 #ifndef CLIPS_DLL_WRAPPER
-   EnvIncrementFactCount(theEnvironment,theFactAddress);
+   IncrementFactCount(theEnvironment,theFactAddress);
 #else
-   __EnvIncrementFactCount(theEnvironment,theFactAddress);
+   __IncrementFactCount(theEnvironment,theFactAddress);
 #endif
    
    return *this;
@@ -1254,9 +1254,9 @@ FactAddressValue& FactAddressValue::operator = (
 long long FactAddressValue::GetFactIndex() const
   {  
 #ifndef CLIPS_DLL_WRAPPER
-   return EnvFactIndex(theEnvironment,theFactAddress);
+   return FactIndex(theEnvironment,theFactAddress);
 #else
-   return __EnvFactIndex(theEnvironment,theFactAddress);
+   return __FactIndex(theEnvironment,theFactAddress);
 #endif
 
   }
@@ -1284,9 +1284,9 @@ DataObject FactAddressValue::GetFactSlot(char *slotName) const
    int rv;
    
 #ifndef CLIPS_DLL_WRAPPER
-   rv = EnvGetFactSlot(theEnvironment,theFactAddress,slotName,&theCV);
+   rv = ::GetFactSlot(theEnvironment,theFactAddress,slotName,&theCV);
 #else
-   rv = __EnvGetFactSlot(theEnvironment,theFactAddress,slotName,&theCV);
+   rv = __GetFactSlot(theEnvironment,theFactAddress,slotName,&theCV);
 #endif
    
    if (! rv)
@@ -1317,9 +1317,9 @@ InstanceAddressValue::InstanceAddressValue(
   Environment *theEnv,Instance *theInstance) : theEnvironment(theEnv), theInstanceAddress(theInstance)
   {
 #ifndef CLIPS_DLL_WRAPPER
-   EnvIncrementInstanceCount(theEnvironment,theInstance);
+   IncrementInstanceCount(theEnvironment,theInstance);
 #else
-   __EnvIncrementInstanceCount(theEnvironment,theInstance);
+   __IncrementInstanceCount(theEnvironment,theInstance);
 #endif
   }
 
@@ -1337,9 +1337,9 @@ InstanceAddressValue::InstanceAddressValue( const InstanceAddressValue& v) : the
 InstanceAddressValue::~InstanceAddressValue()
   {   
 #ifndef CLIPS_DLL_WRAPPER
-   EnvDecrementInstanceCount(theEnvironment,theInstanceAddress);
+   ::DecrementInstanceCount(theEnvironment,theInstanceAddress);
 #else
-   __EnvDecrementInstanceCount(theEnvironment,theInstanceAddress);
+   __DecrementInstanceCount(theEnvironment,theInstanceAddress);
 #endif
   }
 
@@ -1354,9 +1354,9 @@ InstanceAddressValue& InstanceAddressValue::operator = (
    if (theInstanceAddress != NULL)
      { 
 #ifndef CLIPS_DLL_WRAPPER
-      EnvDecrementInstanceCount(theEnvironment,theInstanceAddress);
+      ::DecrementInstanceCount(theEnvironment,theInstanceAddress);
 #else
-      __EnvDecrementInstanceCount(theEnvironment,theInstanceAddress);
+      __DecrementInstanceCount(theEnvironment,theInstanceAddress);
 #endif
 
      }
@@ -1365,9 +1365,9 @@ InstanceAddressValue& InstanceAddressValue::operator = (
    theInstanceAddress = v.theInstanceAddress;
      
 #ifndef CLIPS_DLL_WRAPPER
-   EnvIncrementInstanceCount(theEnvironment,theInstanceAddress);
+   ::IncrementInstanceCount(theEnvironment,theInstanceAddress);
 #else
-   __EnvIncrementInstanceCount(theEnvironment,theInstanceAddress);
+   __IncrementInstanceCount(theEnvironment,theInstanceAddress);
 #endif
    
    return *this;
@@ -1401,9 +1401,9 @@ DataObject InstanceAddressValue::DirectGetSlot(char *slotName) const
    CLIPSValue theCV;
    
 #ifndef CLIPS_DLL_WRAPPER
-   EnvDirectGetSlot(theEnvironment,theInstanceAddress,slotName,&theCV);
+   ::DirectGetSlot(theEnvironment,theInstanceAddress,slotName,&theCV);
 #else
-   __EnvDirectGetSlot(theEnvironment,theInstanceAddress,slotName,&theCV);
+   __DirectGetSlot(theEnvironment,theInstanceAddress,slotName,&theCV);
 #endif
    
    return ConvertDataObject(theEnvironment,&theCV);

@@ -11,40 +11,40 @@
 #define DECLSPEC __declspec(dllimport)
 #endif
 
-int DECLSPEC __EnvLoad(Environment *,const char *);
+int DECLSPEC __Load(Environment *,const char *);
 int DECLSPEC __genchdir(const char *);
 
 bool DECLSPEC __DestroyEnvironment(Environment *);
-bool DECLSPEC __EnvDeleteRouter(Environment *,const char *);
+bool DECLSPEC __DeleteRouter(Environment *,const char *);
 bool DECLSPEC __CommandCompleteAndNotEmpty(Environment *);
 bool DECLSPEC __OpenStringSource(Environment *,const char *,const char *,size_t);
 bool DECLSPEC __CloseStringSource(Environment *,const char *);
-bool DECLSPEC __EnvBuild(Environment *,const char *);
-bool DECLSPEC __EnvEval(Environment *,const char *,CLIPSValue *);
-bool DECLSPEC __EnvGetFactSlot(Environment *,Fact *,const char *,CLIPSValue *);
-bool DECLSPEC __EnvWatch(Environment *,const char *);
-bool DECLSPEC __EnvUnwatch(Environment *,const char *);
-bool DECLSPEC __EnvGetHaltExecution(Environment *);
-bool DECLSPEC __EnvGetHaltRules(Environment *);
-bool DECLSPEC __EnvGetEvaluationError(Environment *);
-bool DECLSPEC __EnvAddRouterWithContext(Environment *,const char *,int,
-                                                     RouterQueryFunction *,RouterPrintFunction *,
-                                                     RouterGetcFunction *,RouterUngetcFunction *,
-													 RouterExitFunction *,void *);
+bool DECLSPEC __Build(Environment *,const char *);
+bool DECLSPEC __Eval(Environment *,const char *,CLIPSValue *);
+bool DECLSPEC __GetFactSlot(Environment *,Fact *,const char *,CLIPSValue *);
+bool DECLSPEC __Watch(Environment *,const char *);
+bool DECLSPEC __Unwatch(Environment *,const char *);
+bool DECLSPEC __GetHaltExecution(Environment *);
+bool DECLSPEC __GetHaltRules(Environment *);
+bool DECLSPEC __GetEvaluationError(Environment *);
+bool DECLSPEC __AddRouter(Environment *,const char *,int,
+                          RouterQueryFunction *,RouterPrintFunction *,
+                          RouterGetcFunction *,RouterUngetcFunction *,
+								  RouterExitFunction *,void *);
 
 void DECLSPEC __SetCommandString(Environment *,const char *);
 void DECLSPEC __CommandLoop(Environment *);
-void DECLSPEC __EnvClear(Environment *);
-void DECLSPEC __EnvReset(Environment *);
+void DECLSPEC __Clear(Environment *);
+void DECLSPEC __Reset(Environment *);
 void DECLSPEC __LoadConstructsFromLogicalName(Environment *,const char *);
-void DECLSPEC __EnvIncrementFactCount(Environment *,Fact *);
-void DECLSPEC __EnvDecrementFactCount(Environment *,Fact *);
-void DECLSPEC __EnvIncrementInstanceCount(Environment *,Instance *);
-void DECLSPEC __EnvDecrementInstanceCount(Environment *theEnv,Instance *);
-void DECLSPEC __EnvDirectGetSlot(Environment *,Instance *,const char *,CLIPSValue *);  
-void DECLSPEC __EnvSetHaltExecution(Environment *,bool);
-void DECLSPEC __EnvSetHaltRules(Environment *,bool);
-void DECLSPEC __EnvSetEvaluationError(Environment *,bool);
+void DECLSPEC __IncrementFactCount(Environment *,Fact *);
+void DECLSPEC __DecrementFactCount(Environment *,Fact *);
+void DECLSPEC __IncrementInstanceCount(Environment *,Instance *);
+void DECLSPEC __DecrementInstanceCount(Environment *theEnv,Instance *);
+void DECLSPEC __DirectGetSlot(Environment *,Instance *,const char *,CLIPSValue *);  
+void DECLSPEC __SetHaltExecution(Environment *,bool);
+void DECLSPEC __SetHaltRules(Environment *,bool);
+void DECLSPEC __SetEvaluationError(Environment *,bool);
 void DECLSPEC __PrintPrompt(Environment *);
 void DECLSPEC __PrintBanner(Environment *);
 void DECLSPEC __CommandLoopOnceThenBatch(Environment *);
@@ -53,12 +53,12 @@ char DECLSPEC * __GetCommandString(Environment *theEnv);
 void DECLSPEC * __GetEnvironmentContext(Environment *theEnv);
 void DECLSPEC * __GetEnvironmentRouterContext(Environment *);
 
-Fact DECLSPEC * __EnvAssertString(Environment *,const char *);
+Fact DECLSPEC * __AssertString(Environment *,const char *);
 
-size_t DECLSPEC __EnvInputBufferCount(Environment *);
+size_t DECLSPEC __InputBufferCount(Environment *);
 
-long long DECLSPEC __EnvFactIndex(Environment *,Fact *);
-long long DECLSPEC __EnvRun(Environment *,long long);
+long long DECLSPEC __FactIndex(Environment *,Fact *);
+long long DECLSPEC __Run(Environment *,long long);
 
 const char DECLSPEC * __InstanceName(Environment *,Instance *);
   

@@ -3,6 +3,8 @@
 #include <iostream>
 #include <vector>
 
+#include "envrnmnt.h"
+
 namespace CLIPS
 {
 
@@ -28,7 +30,7 @@ class FactAddressValue;
 class CLIPSCPPEnv
   {
    private:
-      void *theEnv;
+      Environment *theEnv;
 
    public:
       CLIPSCPPEnv();
@@ -52,8 +54,8 @@ class CLIPSCPPEnv
       DataObject Eval(char *);
       bool Build(char *);
       FactAddressValue *AssertString(char *);
-      int AddRouter(char *,int,CLIPSCPPRouter *);
-      int DeleteRouter(char *);
+      bool AddRouter(char *,int,CLIPSCPPRouter *);
+      bool DeleteRouter(char *);
       size_t InputBufferCount();
       const char *GetInputBuffer();
       void SetInputBuffer(const char *);
@@ -196,7 +198,7 @@ class FloatValue : public Value
 class FactAddressValue : public Value
   { 
    public:
-     FactAddressValue(void *,void *);
+     FactAddressValue(Environment *,Fact *);
      FactAddressValue(const FactAddressValue& v);
      virtual ~FactAddressValue();
      virtual FactAddressValue& operator= (const FactAddressValue& v);
@@ -205,17 +207,17 @@ class FactAddressValue : public Value
      virtual DataObject GetFactSlot(char *) const;
      CLIPSCPPType GetCLIPSType();
      virtual long long GetFactIndex() const;
-     void *GetFactAddressValue();
+     Fact *GetFactAddressValue();
   
    private:
-     void *theEnvironment;
-     void *theFactAddress;
+     Environment *theEnvironment;
+     Fact *theFactAddress;
   };
  
 class InstanceAddressValue : public Value
   { 
    public:
-     InstanceAddressValue(void *,void *);
+     InstanceAddressValue(Environment *,Instance *);
      InstanceAddressValue(const InstanceAddressValue& v);
      virtual ~InstanceAddressValue();
      virtual InstanceAddressValue& operator= (const InstanceAddressValue& v);
@@ -224,11 +226,11 @@ class InstanceAddressValue : public Value
      CLIPSCPPType GetCLIPSType();
      virtual const char *GetInstanceName() const;
      virtual DataObject DirectGetSlot(char *) const;
-     void *GetInstanceAddressValue();
+     Instance *GetInstanceAddressValue();
   
    private:
-     void *theEnvironment;
-     void *theInstanceAddress;
+     Environment *theEnvironment;
+     Instance *theInstanceAddress;
   };
   
 class MultifieldValue : public Value
@@ -275,8 +277,8 @@ class DataObject
      static DataObject Integer(long long);
      static DataObject Float();
      static DataObject Float(double);
-     static DataObject FactAddress(void *,void *);
-     static DataObject InstanceAddress(void *,void *);
+     static DataObject FactAddress(Environment *,Fact *);
+     static DataObject InstanceAddress(Environment *,Instance *);
 
    private:
      Value *theValue;
@@ -324,10 +326,10 @@ inline DataObject DataObject::Float()
 inline DataObject DataObject::Float(double theFloat)
   { return DataObject(new FloatValue(theFloat)); }
 
-inline DataObject DataObject::FactAddress(void *theEnv,void *theFact)
+inline DataObject DataObject::FactAddress(Environment *theEnv,Fact *theFact)
   { return DataObject(new FactAddressValue(theEnv,theFact)); }
 
-inline DataObject DataObject::InstanceAddress(void *theEnv,void *theInstance)
+inline DataObject DataObject::InstanceAddress(Environment *theEnv,Instance *theInstance)
   { return DataObject(new InstanceAddressValue(theEnv,theInstance)); }
 
 }

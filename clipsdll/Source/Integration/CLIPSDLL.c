@@ -42,23 +42,23 @@ void __declspec(dllexport) __CommandLoop(
    CommandLoop(theEnv);
   }
 
-void __declspec(dllexport) __EnvClear(
+void __declspec(dllexport) __Clear(
   Environment *theEnv)
   {
-   EnvClear(theEnv);
+   Clear(theEnv);
   }
 
-void __declspec(dllexport) __EnvReset(
+void __declspec(dllexport) __Reset(
   Environment *theEnv)
   {
-   EnvReset(theEnv);
+   Reset(theEnv);
   }
 
-int __declspec(dllexport) __EnvLoad(
+int __declspec(dllexport) __Load(
   Environment *theEnv,
   const char *theFile)
   {
-   return EnvLoad(theEnv,theFile);
+   return Load(theEnv,theFile);
   }
 
 void __declspec(dllexport) __LoadConstructsFromLogicalName(
@@ -81,11 +81,11 @@ bool __declspec(dllexport) __CommandCompleteAndNotEmpty(
    return CommandCompleteAndNotEmpty(theEnv);
   }
 
-bool __declspec(dllexport) __EnvDeleteRouter(
+bool __declspec(dllexport) __DeleteRouter(
   Environment *theEnv,
   const char *name)
   {
-   return EnvDeleteRouter(theEnv,name);
+   return DeleteRouter(theEnv,name);
   }
 
 char __declspec(dllexport) * __GetCommandString(
@@ -134,77 +134,77 @@ void __declspec(dllexport) __CommandLoopOnceThenBatch(
    CommandLoopOnceThenBatch(theEnv);
   }
 
-long long __declspec(dllexport) __EnvRun(
+long long __declspec(dllexport) __Run(
   Environment *theEnv,
   long long runLimit)
   {
-   return EnvRun(theEnv,runLimit);
+   return Run(theEnv,runLimit);
   }
   
-bool __declspec(dllexport) __EnvBuild(
+bool __declspec(dllexport) __Build(
   Environment *theEnv,
   const char *buildString)
   {
-   return EnvBuild(theEnv,buildString);
+   return Build(theEnv,buildString);
   }
   
-bool __declspec(dllexport) __EnvEval(
+bool __declspec(dllexport) __Eval(
   Environment *theEnv,
   const char *evalString,
   CLIPSValue *rv)
   {
-   return EnvEval(theEnv,evalString,rv);
+   return Eval(theEnv,evalString,rv);
   }  
 
-void __declspec(dllexport) __EnvIncrementFactCount(
+void __declspec(dllexport) __IncrementFactCount(
   Environment *theEnv,
   Fact *theFact)
   {
-   EnvIncrementFactCount(theEnv,theFact);
+   IncrementFactCount(theEnv,theFact);
   }
 
-void __declspec(dllexport) __EnvDecrementFactCount(
+void __declspec(dllexport) __DecrementFactCount(
   Environment *theEnv,
   Fact *theFact)
   {
-   EnvDecrementFactCount(theEnv,theFact);
+   DecrementFactCount(theEnv,theFact);
   }
 
-void __declspec(dllexport) __EnvIncrementInstanceCount(
+void __declspec(dllexport) __IncrementInstanceCount(
   Environment *theEnv,
   Instance *theInstance)
   {
-   EnvIncrementInstanceCount(theEnv,theInstance);
+   IncrementInstanceCount(theEnv,theInstance);
   }
 
-void __declspec(dllexport) __EnvDecrementInstanceCount(
+void __declspec(dllexport) __DecrementInstanceCount(
   Environment *theEnv,
   Instance *theInstance)
   {
-   EnvDecrementInstanceCount(theEnv,theInstance);
+   DecrementInstanceCount(theEnv,theInstance);
   }
 
-long long __declspec(dllexport) __EnvFactIndex(
+long long __declspec(dllexport) __FactIndex(
   Environment *theEnv,
   Fact *theFact)
   {
-   return EnvFactIndex(theEnv,theFact);
+   return FactIndex(theEnv,theFact);
   }
 
-bool __declspec(dllexport) __EnvGetFactSlot(
+bool __declspec(dllexport) __GetFactSlot(
   Environment *theEnv,
   Fact *theFact,
   const char *slotName,
   CLIPSValue *returnValue)
   {
-   return EnvGetFactSlot(theEnv,theFact,slotName,returnValue);  
+   return GetFactSlot(theEnv,theFact,slotName,returnValue);  
   }  
 
-Fact __declspec(dllexport) * __EnvAssertString(
+Fact __declspec(dllexport) * __AssertString(
   Environment *theEnv,
   const char *factString)
   {
-   return EnvAssertString(theEnv,factString);
+   return AssertString(theEnv,factString);
   }
 
 const char __declspec(dllexport) * __InstanceName(
@@ -214,27 +214,27 @@ const char __declspec(dllexport) * __InstanceName(
    return InstanceName(theInstance);  
   } 
   
-void __declspec(dllexport) __EnvDirectGetSlot(
+void __declspec(dllexport) __DirectGetSlot(
   Environment *theEnv,
   Instance *theInstance,
   const char *slotName,
   CLIPSValue *returnValue)
   {
-   EnvDirectGetSlot(theEnv,theInstance,slotName,returnValue);  
+   DirectGetSlot(theEnv,theInstance,slotName,returnValue);  
   }  
   
-bool __declspec(dllexport) __EnvWatch(
+bool __declspec(dllexport) __Watch(
   Environment *theEnv,
   const char *item)
   {
-   return EnvWatch(theEnv,item);
+   return Watch(theEnv,item);
   }
 
-bool __declspec(dllexport) __EnvUnwatch(
+bool __declspec(dllexport) __Unwatch(
   Environment *theEnv,
   const char *item)
   {
-   return EnvUnwatch(theEnv,item);
+   return Unwatch(theEnv,item);
   }
 
 void __declspec(dllexport) * __GetEnvironmentContext(
@@ -249,7 +249,7 @@ void __declspec(dllexport) * __GetEnvironmentRouterContext(
    return GetEnvironmentRouterContext(theEnv);
   }
 
-bool __declspec(dllexport) __EnvAddRouterWithContext(
+bool __declspec(dllexport) __AddRouter(
   Environment *theEnv,
   const char *routerName,
   int priority,
@@ -260,50 +260,50 @@ bool __declspec(dllexport) __EnvAddRouterWithContext(
   RouterExitFunction *exitFunction,
   void *context)
   {
-   return EnvAddRouterWithContext(theEnv,routerName,priority,queryFunction,printFunction,getcFunction,ungetcFunction,exitFunction,context);
+   return AddRouter(theEnv,routerName,priority,queryFunction,printFunction,getcFunction,ungetcFunction,exitFunction,context);
   }
  
- size_t __declspec(dllexport) __EnvInputBufferCount(
+ size_t __declspec(dllexport) __InputBufferCount(
   Environment *theEnv)
   {
-   return EnvInputBufferCount(theEnv);
+   return InputBufferCount(theEnv);
   }
  
-bool __declspec(dllexport) __EnvGetHaltExecution(
+bool __declspec(dllexport) __GetHaltExecution(
   Environment *theEnv)
   {
-   return EnvGetHaltExecution(theEnv);
+   return GetHaltExecution(theEnv);
   }
 
-void __declspec(dllexport) __EnvSetHaltExecution(
+void __declspec(dllexport) __SetHaltExecution(
   Environment *theEnv,
   bool value)
   {
-   EnvSetHaltExecution(theEnv,value);
+   SetHaltExecution(theEnv,value);
   }
 
-bool __declspec(dllexport) __EnvGetHaltRules(
+bool __declspec(dllexport) __GetHaltRules(
   Environment *theEnv)
   {
-   return EnvGetHaltRules(theEnv);
+   return GetHaltRules(theEnv);
   }
 
-void __declspec(dllexport) __EnvSetHaltRules(
+void __declspec(dllexport) __SetHaltRules(
   Environment *theEnv,
   bool value)
   {
-   EnvSetHaltRules(theEnv,value);
+   SetHaltRules(theEnv,value);
   }
 
-bool __declspec(dllexport) __EnvGetEvaluationError(
+bool __declspec(dllexport) __GetEvaluationError(
   Environment *theEnv)
   {
-   return EnvGetEvaluationError(theEnv);
+   return GetEvaluationError(theEnv);
   }
 
-void __declspec(dllexport) __EnvSetEvaluationError(
+void __declspec(dllexport) __SetEvaluationError(
   Environment *theEnv,
   bool value)
   {
-   EnvSetEvaluationError(theEnv,value);
+   SetEvaluationError(theEnv,value);
   }
