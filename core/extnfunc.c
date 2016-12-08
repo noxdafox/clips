@@ -140,11 +140,11 @@ static void DeallocateExternalFunctionData(
 
 #if (! RUN_TIME)
 
-/*******************************************************/
-/* EnvAddUDF: Used to define a system or user external */
-/*   function so that the KB can access it.            */
-/*******************************************************/
-bool EnvAddUDF(
+/****************************************************/
+/* AddUDF: Used to define a system or user external */
+/*   function so that the KB can access it.         */
+/****************************************************/
+bool AddUDF(
   Environment *theEnv,
   const char *clipsFunctionName,
   const char *returnTypes,
@@ -188,7 +188,7 @@ static bool DefineFunction(
    if (newFunction != NULL) return false;
 
    newFunction = get_struct(theEnv,functionDefinition);
-   newFunction->callFunctionName = EnvCreateSymbol(theEnv,name);
+   newFunction->callFunctionName = CreateSymbol(theEnv,name);
    IncrementSymbolCount(newFunction->callFunctionName);
    newFunction->next = GetFunctionList(theEnv);
    ExternalFunctionData(theEnv)->ListOfFunctions = newFunction;
@@ -205,7 +205,7 @@ static bool DefineFunction(
      { newFunction->restrictions = NULL; }
    else
      {
-      newFunction->restrictions = EnvCreateString(theEnv,restrictions);
+      newFunction->restrictions = CreateString(theEnv,restrictions);
       IncrementSymbolCount(newFunction->restrictions);
      }
 
@@ -219,10 +219,10 @@ static bool DefineFunction(
   }
 
 /********************************************/
-/* EnvRemoveUDF: Used to remove a function  */
+/* RemoveUDF: Used to remove a function     */
 /*   definition from the list of functions. */
 /********************************************/
-bool EnvRemoveUDF(
+bool RemoveUDF(
   Environment *theEnv,
   const char *functionName)
   {
@@ -313,7 +313,7 @@ bool AddFunctionParser(
    fdPtr = FindFunction(theEnv,functionName);
    if (fdPtr == NULL)
      {
-      EnvPrintRouter(theEnv,WERROR,"Function parsers can only be added for existing functions.\n");
+      PrintRouter(theEnv,WERROR,"Function parsers can only be added for existing functions.\n");
       return false;
      }
    fdPtr->restrictions = NULL;
@@ -338,7 +338,7 @@ bool RemoveFunctionParser(
    fdPtr = FindFunction(theEnv,functionName);
    if (fdPtr == NULL)
      {
-      EnvPrintRouter(theEnv,WERROR,"Function parsers can only be removed from existing functions.\n");
+      PrintRouter(theEnv,WERROR,"Function parsers can only be removed from existing functions.\n");
       return false;
      }
 
@@ -362,7 +362,7 @@ bool FuncSeqOvlFlags(
    fdPtr = FindFunction(theEnv,functionName);
    if (fdPtr == NULL)
      {
-      EnvPrintRouter(theEnv,WERROR,"Only existing functions can be marked as using sequence expansion arguments/overloadable or not.\n");
+      PrintRouter(theEnv,WERROR,"Only existing functions can be marked as using sequence expansion arguments/overloadable or not.\n");
       return false;
      }
    fdPtr->sequenceuseok = (short) (seqp ? true : false);
@@ -662,23 +662,25 @@ void AssignErrorValue(
    if (context->theFunction->unknownReturnValueType & BOOLEAN_BIT)
      { context->returnValue->lexemeValue = context->environment->FalseSymbol; }
    else if (context->theFunction->unknownReturnValueType & STRING_BIT)
-     { context->returnValue->lexemeValue = EnvCreateString(context->environment,""); }
+     { context->returnValue->lexemeValue = CreateString(context->environment,""); }
    else if (context->theFunction->unknownReturnValueType & SYMBOL_BIT)
-     { context->returnValue->lexemeValue = EnvCreateSymbol(context->environment,"nil"); }
+     { context->returnValue->lexemeValue = CreateSymbol(context->environment,"nil"); }
    else if (context->theFunction->unknownReturnValueType & INTEGER_BIT)
-     { context->returnValue->integerValue = EnvCreateInteger(context->environment,0); }
+     { context->returnValue->integerValue = CreateInteger(context->environment,0); }
    else if (context->theFunction->unknownReturnValueType & FLOAT_BIT)
-     { context->returnValue->floatValue = EnvCreateFloat(context->environment,0.0); }
+     { context->returnValue->floatValue = CreateFloat(context->environment,0.0); }
    else if (context->theFunction->unknownReturnValueType & MULTIFIELD_BIT)
-     { EnvSetMultifieldErrorValue(context->environment,context->returnValue); }
+     { SetMultifieldErrorValue(context->environment,context->returnValue); }
    else if (context->theFunction->unknownReturnValueType & INSTANCE_NAME_BIT)
-     { context->returnValue->lexemeValue = EnvCreateInstanceName(context->environment,"nil"); }
+     { context->returnValue->lexemeValue = CreateInstanceName(context->environment,"nil"); }
    else if (context->theFunction->unknownReturnValueType & FACT_ADDRESS_BIT)
      { context->returnValue->factValue = &FactData(context->environment)->DummyFact; }
+#if OBJECT_SYSTEM
    else if (context->theFunction->unknownReturnValueType & INSTANCE_ADDRESS_BIT)
      { context->returnValue->value = &InstanceData(context->environment)->DummyInstance; }
+#endif
    else if (context->theFunction->unknownReturnValueType & EXTERNAL_ADDRESS_BIT)
-     { context->returnValue->value = EnvAddExternalAddress(context->environment,NULL,0); }
+     { context->returnValue->value = AddExternalAddress(context->environment,NULL,0); }
    else
      { context->returnValue->value = context->environment->VoidConstant; }
   }
@@ -727,8 +729,8 @@ bool UDFNextArgument(
 
    if (argPtr == NULL)
      {
-      EnvSetHaltExecution(theEnv,true);
-      EnvSetEvaluationError(theEnv,true);
+      SetHaltExecution(theEnv,true);
+      SetEvaluationError(theEnv,true);
       return false;
      }
 
@@ -742,8 +744,8 @@ bool UDFNextArgument(
         if (expectedType & INTEGER_BIT) return true;
         ExpectedTypeError0(theEnv,UDFContextFunctionName(context),argumentPosition);
         PrintTypesString(theEnv,WERROR,expectedType,true);
-        EnvSetHaltExecution(theEnv,true);
-        EnvSetEvaluationError(theEnv,true);
+        SetHaltExecution(theEnv,true);
+        SetEvaluationError(theEnv,true);
         AssignErrorValue(context);
         return false;
         break;
@@ -753,8 +755,8 @@ bool UDFNextArgument(
         if (expectedType & FLOAT_BIT) return true;
         ExpectedTypeError0(theEnv,UDFContextFunctionName(context),argumentPosition);
         PrintTypesString(theEnv,WERROR,expectedType,true);
-        EnvSetHaltExecution(theEnv,true);
-        EnvSetEvaluationError(theEnv,true);
+        SetHaltExecution(theEnv,true);
+        SetEvaluationError(theEnv,true);
         AssignErrorValue(context);
         return false;
         break;
@@ -764,8 +766,8 @@ bool UDFNextArgument(
         if (expectedType & SYMBOL_BIT) return true;
         ExpectedTypeError0(theEnv,UDFContextFunctionName(context),argumentPosition);
         PrintTypesString(theEnv,WERROR,expectedType,true);
-        EnvSetHaltExecution(theEnv,true);
-        EnvSetEvaluationError(theEnv,true);
+        SetHaltExecution(theEnv,true);
+        SetEvaluationError(theEnv,true);
         AssignErrorValue(context);
         return false;
         break;
@@ -775,8 +777,8 @@ bool UDFNextArgument(
         if (expectedType & STRING_BIT) return true;
         ExpectedTypeError0(theEnv,UDFContextFunctionName(context),argumentPosition);
         PrintTypesString(theEnv,WERROR,expectedType,true);
-        EnvSetHaltExecution(theEnv,true);
-        EnvSetEvaluationError(theEnv,true);
+        SetHaltExecution(theEnv,true);
+        SetEvaluationError(theEnv,true);
         AssignErrorValue(context);
         return false;
         break;
@@ -786,8 +788,8 @@ bool UDFNextArgument(
         if (expectedType & INSTANCE_NAME_BIT) return true;
         ExpectedTypeError0(theEnv,UDFContextFunctionName(context),argumentPosition);
         PrintTypesString(theEnv,WERROR,expectedType,true);
-        EnvSetHaltExecution(theEnv,true);
-        EnvSetEvaluationError(theEnv,true);
+        SetHaltExecution(theEnv,true);
+        SetEvaluationError(theEnv,true);
         AssignErrorValue(context);
         return false;
         break;
@@ -921,8 +923,8 @@ bool UDFNextArgument(
    ExpectedTypeError0(theEnv,UDFContextFunctionName(context),argumentPosition);
    PrintTypesString(theEnv,WERROR,expectedType,true);
 
-   EnvSetHaltExecution(theEnv,true);
-   EnvSetEvaluationError(theEnv,true);
+   SetHaltExecution(theEnv,true);
+   SetEvaluationError(theEnv,true);
    AssignErrorValue(context);
 
    return false;
@@ -970,8 +972,8 @@ void UDFThrowError(
   {
    Environment *theEnv = context->environment;
 
-   EnvSetHaltExecution(theEnv,true);
-   EnvSetEvaluationError(theEnv,true);
+   SetHaltExecution(theEnv,true);
+   SetEvaluationError(theEnv,true);
   }
 
 /***************************/
@@ -995,19 +997,19 @@ static void PrintType(
   {
    if (*typesPrinted == 0)
      {
-      EnvPrintRouter(theEnv,logicalName,typeName);
+      PrintRouter(theEnv,logicalName,typeName);
       (*typesPrinted)++;
       return;
      }
 
    if (typeCount == 2)
-     { EnvPrintRouter(theEnv,logicalName," or "); }
+     { PrintRouter(theEnv,logicalName," or "); }
    else if (((*typesPrinted) + 1) == typeCount)
-     { EnvPrintRouter(theEnv,logicalName,", or "); }
+     { PrintRouter(theEnv,logicalName,", or "); }
    else
-     { EnvPrintRouter(theEnv,logicalName,", "); }
+     { PrintRouter(theEnv,logicalName,", "); }
 
-   EnvPrintRouter(theEnv,logicalName,typeName);
+   PrintRouter(theEnv,logicalName,typeName);
    (*typesPrinted)++;
   }
 
@@ -1062,5 +1064,5 @@ void PrintTypesString(
      { PrintType(theEnv,logicalName,typeCount,&typesPrinted,"multifield"); }
 
    if (printCRLF)
-     { EnvPrintRouter(theEnv,logicalName,"\n"); }
+     { PrintRouter(theEnv,logicalName,"\n"); }
   }

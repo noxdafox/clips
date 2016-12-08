@@ -95,7 +95,7 @@
    ***************************************** */
 
 /*******************************************************************
-  NAME         : EnvFindDefclass
+  NAME         : FindDefclass
   DESCRIPTION  : Looks up a specified class in the class hash table
                  (Only looks in current or specified module)
   INPUTS       : The name-string of the class (including module)
@@ -103,7 +103,7 @@
   SIDE EFFECTS : None
   NOTES        : None
  ******************************************************************/
-Defclass *EnvFindDefclass( // TBD Needs to look in imported
+Defclass *FindDefclass( // TBD Needs to look in imported
   Environment *theEnv,
   const char *classAndModuleName)
   {
@@ -118,7 +118,7 @@ Defclass *EnvFindDefclass( // TBD Needs to look in imported
    if (className != NULL)
      {
       classSymbol = FindSymbolHN(theEnv,ExtractModuleAndConstructName(theEnv,classAndModuleName),SYMBOL_BIT);
-      theModule = EnvGetCurrentModule(theEnv);
+      theModule = GetCurrentModule(theEnv);
      }
 
    RestoreCurrentModule(theEnv);
@@ -141,7 +141,7 @@ Defclass *EnvFindDefclass( // TBD Needs to look in imported
   }
 
 /*******************************************************************
-  NAME         : EnvFindDefclass
+  NAME         : FindDefclassInModule
   DESCRIPTION  : Looks up a specified class in the class hash table
                  (Only looks in current or specified module)
   INPUTS       : The name-string of the class (including module)
@@ -149,7 +149,7 @@ Defclass *EnvFindDefclass( // TBD Needs to look in imported
   SIDE EFFECTS : None
   NOTES        : None
  ******************************************************************/
-Defclass *EnvFindDefclassInModule(
+Defclass *FindDefclassInModule(
   Environment *theEnv,
   const char *classAndModuleName)
   {
@@ -163,7 +163,7 @@ Defclass *EnvFindDefclassInModule(
    if (className != NULL)
      {
       classSymbol = FindSymbolHN(theEnv,ExtractModuleAndConstructName(theEnv,classAndModuleName),SYMBOL_BIT);
-      theModule = EnvGetCurrentModule(theEnv);
+      theModule = GetCurrentModule(theEnv);
      }
    RestoreCurrentModule(theEnv);
 
@@ -210,7 +210,7 @@ Defclass *LookupDefclassByMdlOrScope(
 
    SaveCurrentModule(theEnv);
    className = ExtractModuleAndConstructName(theEnv,classAndModuleName);
-   theModule = EnvGetCurrentModule(theEnv);
+   theModule = GetCurrentModule(theEnv);
    RestoreCurrentModule(theEnv);
 
    if (className == NULL)
@@ -324,7 +324,7 @@ bool DefclassInScope(
 
    scopeMap = (char *) theDefclass->scopeMap->contents;
    if (theModule == NULL)
-     { theModule = EnvGetCurrentModule(theEnv); }
+     { theModule = GetCurrentModule(theEnv); }
    moduleID = (int) theModule->header.bsaveID;
 
    return TestBitMap(scopeMap,moduleID);
@@ -337,7 +337,7 @@ bool DefclassInScope(
   }
 
 /***********************************************************
-  NAME         : EnvGetNextDefclass
+  NAME         : GetNextDefclass
   DESCRIPTION  : Finds first or next defclass
   INPUTS       : The address of the current defclass
   RETURNS      : The address of the next defclass
@@ -346,7 +346,7 @@ bool DefclassInScope(
   NOTES        : If ptr == NULL, the first defclass
                     is returned.
  ***********************************************************/
-Defclass *EnvGetNextDefclass(
+Defclass *GetNextDefclass(
   Environment *theEnv,
   Defclass *theDefclass)
   {
@@ -469,7 +469,7 @@ void ListDefclassesCommand(
   }
 
 /***************************************************
-  NAME         : EnvListDefclasses
+  NAME         : ListDefclasses
   DESCRIPTION  : Displays all defclass names
   INPUTS       : 1) The logical name of the output
                  2) The module
@@ -477,7 +477,7 @@ void ListDefclassesCommand(
   SIDE EFFECTS : Defclass names printed
   NOTES        : C Interface
  ***************************************************/
-void EnvListDefclasses(
+void ListDefclasses(
   Environment *theEnv,
   const char *logicalName,
   Defmodule *theModule)
@@ -542,7 +542,7 @@ bool DefclassGetWatchSlots(
   }
 
 /**********************************************************
-  NAME         : EnvSetDefclassWatchSlots
+  NAME         : SetDefclassWatchSlots
   DESCRIPTION  : Sets the trace to ON/OFF for the
                  changes to slots of instances of the class
   INPUTS       : 1) true to set the trace on,
@@ -639,7 +639,7 @@ void GetDefclassListFunction(
   }
 
 /***************************************************************
-  NAME         : EnvGetDefclassList
+  NAME         : GetDefclassList
   DESCRIPTION  : Groups all defclass names into
                  a multifield list
   INPUTS       : 1) A data object buffer to hold
@@ -649,7 +649,7 @@ void GetDefclassListFunction(
   SIDE EFFECTS : Multifield allocated and filled
   NOTES        : External C access
  ***************************************************************/
-void EnvGetDefclassList(
+void GetDefclassList(
   Environment *theEnv,
   CLIPSValue *returnValue,
   Defmodule *theModule)
@@ -778,28 +778,28 @@ static void SaveDefclass(
    if (ppForm != NULL)
      {
       PrintInChunks(theEnv,logName,ppForm);
-      EnvPrintRouter(theEnv,logName,"\n");
-      hnd = EnvGetNextDefmessageHandler(theEnv,theDefclass,0);
+      PrintRouter(theEnv,logName,"\n");
+      hnd = GetNextDefmessageHandler(theEnv,theDefclass,0);
       while (hnd != 0)
         {
          ppForm = DefmessageHandlerPPForm(theDefclass,hnd);
          if (ppForm != NULL)
            {
             PrintInChunks(theEnv,logName,ppForm);
-            EnvPrintRouter(theEnv,logName,"\n");
+            PrintRouter(theEnv,logName,"\n");
            }
-         hnd = EnvGetNextDefmessageHandler(theEnv,theDefclass,hnd);
+         hnd = GetNextDefmessageHandler(theEnv,theDefclass,hnd);
         }
      }
   }
 
 #endif
 
-/***********************************************/
-/* EnvSetClassDefaultsMode: Allows the setting */
-/*    of the class defaults mode.              */
-/***********************************************/
-unsigned short EnvSetClassDefaultsMode(
+/********************************************/
+/* SetClassDefaultsMode: Allows the setting */
+/*    of the class defaults mode.           */
+/********************************************/
+unsigned short SetClassDefaultsMode(
   Environment *theEnv,
   unsigned short value)
   {
@@ -811,10 +811,10 @@ unsigned short EnvSetClassDefaultsMode(
   }
 
 /****************************************/
-/* EnvGetClassDefaultsMode: Returns the */
+/* GetClassDefaultsMode: Returns the    */
 /*    value of the class defaults mode. */
 /****************************************/
-unsigned short EnvGetClassDefaultsMode(
+unsigned short GetClassDefaultsMode(
   Environment *theEnv)
   {
    return DefclassData(theEnv)->ClassDefaultsMode;
@@ -829,7 +829,7 @@ void GetClassDefaultsModeCommand(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   returnValue->lexemeValue = EnvCreateSymbol(theEnv,GetClassDefaultsModeName(EnvGetClassDefaultsMode(theEnv)));
+   returnValue->lexemeValue = CreateSymbol(theEnv,GetClassDefaultsModeName(GetClassDefaultsMode(theEnv)));
   }
 
 /***************************************************/
@@ -861,13 +861,13 @@ void SetClassDefaultsModeCommand(
    /*=============================================*/
 
    if (strcmp(argument,"conservation") == 0)
-     { EnvSetClassDefaultsMode(theEnv,CONSERVATION_MODE); }
+     { SetClassDefaultsMode(theEnv,CONSERVATION_MODE); }
    else if (strcmp(argument,"convenience") == 0)
-     { EnvSetClassDefaultsMode(theEnv,CONVENIENCE_MODE); }
+     { SetClassDefaultsMode(theEnv,CONVENIENCE_MODE); }
    else
      {
       UDFInvalidArgumentMessage(context,"symbol with value conservation or convenience");
-      returnValue->lexemeValue = EnvCreateSymbol(theEnv,GetClassDefaultsModeName(EnvGetClassDefaultsMode(theEnv)));
+      returnValue->lexemeValue = CreateSymbol(theEnv,GetClassDefaultsModeName(GetClassDefaultsMode(theEnv)));
       return;
      }
 
@@ -875,7 +875,7 @@ void SetClassDefaultsModeCommand(
    /* Return the old value of the mode. */
    /*===================================*/
 
-   returnValue->lexemeValue = EnvCreateSymbol(theEnv,GetClassDefaultsModeName(oldMode));
+   returnValue->lexemeValue = CreateSymbol(theEnv,GetClassDefaultsModeName(oldMode));
   }
 
 /*******************************************************************/
@@ -938,7 +938,7 @@ const char *DefclassPPForm(
    return GetConstructPPForm(&theClass->header);
   }
 
-struct defmoduleItemHeader *EnvGetDefclassModule(
+struct defmoduleItemHeader *GetDefclassModule(
   Environment *theEnv,
   Defclass *theClass)
   {
@@ -951,7 +951,7 @@ const char *DefclassModule(
    return GetConstructModuleName(&theClass->header);
   }
 
-void EnvSetDefclassPPForm(
+void SetDefclassPPForm(
   Environment *theEnv,
   Defclass *theClass,
   char *thePPForm)

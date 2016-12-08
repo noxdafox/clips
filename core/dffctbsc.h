@@ -61,12 +61,12 @@
    void                           UndeffactsCommand(Environment *,UDFContext *,UDFValue *);
    bool                           Undeffacts(Deffacts *,Environment *);
    void                           GetDeffactsListFunction(Environment *,UDFContext *,UDFValue *);
-   void                           EnvGetDeffactsList(Environment *,CLIPSValue *,Defmodule *);
+   void                           GetDeffactsList(Environment *,CLIPSValue *,Defmodule *);
    void                           DeffactsModuleFunction(Environment *,UDFContext *,UDFValue *);
    void                           PPDeffactsCommand(Environment *,UDFContext *,UDFValue *);
    bool                           PPDeffacts(Environment *,const char *,const char *);
    void                           ListDeffactsCommand(Environment *,UDFContext *,UDFValue *);
-   void                           EnvListDeffacts(Environment *,const char *,Defmodule *);
+   void                           ListDeffacts(Environment *,const char *,Defmodule *);
 
 #endif /* _H_dffctbsc */
 

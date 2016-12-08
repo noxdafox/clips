@@ -108,9 +108,9 @@ struct defmoduleItemHeader
 
 typedef ConstructHeader *FindConstructFunction(Environment *,const char *);
 typedef ConstructHeader *GetNextConstructFunction(Environment *,ConstructHeader *);
-typedef bool *IsConstructDeletableFunction(ConstructHeader *);
-typedef bool *DeleteConstructFunction(ConstructHeader *,Environment *);
-typedef void *FreeConstructFunction(Environment *,ConstructHeader *);
+typedef bool IsConstructDeletableFunction(ConstructHeader *);
+typedef bool DeleteConstructFunction(ConstructHeader *,Environment *);
+typedef void FreeConstructFunction(Environment *,ConstructHeader *);
 
 /**********************************************************************/
 /* defmodule                                                          */
@@ -235,10 +235,10 @@ struct defmoduleData
 #define DefmoduleData(theEnv) ((struct defmoduleData *) GetEnvironmentData(theEnv,DEFMODULE_DATA))
 
    void                           InitializeDefmodules(Environment *);
-   Defmodule                     *EnvFindDefmodule(Environment *,const char *);
+   Defmodule                     *FindDefmodule(Environment *,const char *);
    const char                    *DefmoduleName(Defmodule *);
    const char                    *DefmodulePPForm(Defmodule *);
-   Defmodule                     *EnvGetNextDefmodule(Environment *,Defmodule *);
+   Defmodule                     *GetNextDefmodule(Environment *,Defmodule *);
    void                           RemoveAllDefmodules(Environment *);
    int                            AllocateModuleStorage(void);
    int                            RegisterModuleItem(Environment *,const char *,
@@ -249,8 +249,8 @@ struct defmoduleData
                                                      FindConstructFunction *);
    void                          *GetModuleItem(Environment *,Defmodule *,int);
    void                           SetModuleItem(Environment *,Defmodule *,int,void *);
-   Defmodule                     *EnvGetCurrentModule(Environment *);
-   Defmodule                     *EnvSetCurrentModule(Environment *,Defmodule *);
+   Defmodule                     *GetCurrentModule(Environment *);
+   Defmodule                     *SetCurrentModule(Environment *,Defmodule *);
    void                           GetCurrentModuleCommand(Environment *,UDFContext *,UDFValue *);
    void                           SetCurrentModuleCommand(Environment *,UDFContext *,UDFValue *);
    int                            GetNumberOfModuleItems(Environment *);

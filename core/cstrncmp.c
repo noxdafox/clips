@@ -93,12 +93,12 @@ int ConstraintsToCode(
    /* which could be saved, then issue a warning message. */
    /*=====================================================*/
 
-   if ((! EnvGetDynamicConstraintChecking(theEnv)) && (numberOfConstraints != 0))
+   if ((! GetDynamicConstraintChecking(theEnv)) && (numberOfConstraints != 0))
      {
       numberOfConstraints = 0;
       PrintWarningID(theEnv,"CSTRNCMP",1,false);
-      EnvPrintRouter(theEnv,WWARNING,"Constraints are not saved with a constructs-to-c image\n");
-      EnvPrintRouter(theEnv,WWARNING,"  when dynamic constraint checking is disabled.\n");
+      PrintRouter(theEnv,WWARNING,"Constraints are not saved with a constructs-to-c image\n");
+      PrintRouter(theEnv,WWARNING,"  when dynamic constraint checking is disabled.\n");
      }
 
    if (numberOfConstraints == 0)
@@ -225,7 +225,7 @@ void PrintConstraintReference(
   int imageID,
   int maxIndices)
   {
-   if ((cPtr == NULL) || (! EnvGetDynamicConstraintChecking(theEnv)))
+   if ((cPtr == NULL) || (! GetDynamicConstraintChecking(theEnv)))
      { fprintf(fp,"NULL"); }
    else fprintf(fp,"&C%d_%d[%d]",imageID,
                                  (int) (cPtr->bsaveIndex / maxIndices) + 1,

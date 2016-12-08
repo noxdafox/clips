@@ -92,6 +92,6 @@
    void                           SlotDefaultValueCommand(Environment *,UDFContext *,UDFValue *);
    bool                           SlotDefaultValue(Defclass *,const char *,CLIPSValue *);
    void                           ClassExistPCommand(Environment *,UDFContext *,UDFValue *);
-   int                            EnvSlotDefaultP(Environment *,Defclass *,const char *);
+   int                            SlotDefaultP(Environment *,Defclass *,const char *);
 
 #endif /* _H_classexm */

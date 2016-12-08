@@ -99,14 +99,14 @@ void InitializeConstraints(
                           gm2(theEnv,(int) sizeof (struct constraintRecord *) *
                                     SIZE_CONSTRAINT_HASH);
 
-    if (ConstraintData(theEnv)->ConstraintHashtable == NULL) EnvExitRouter(theEnv,EXIT_FAILURE);
+    if (ConstraintData(theEnv)->ConstraintHashtable == NULL) ExitRouter(theEnv,EXIT_FAILURE);
 
     for (i = 0; i < SIZE_CONSTRAINT_HASH; i++) ConstraintData(theEnv)->ConstraintHashtable[i] = NULL;
 #endif
 
 #if (! RUN_TIME)
-   EnvAddUDF(theEnv,"get-dynamic-constraint-checking","b",0,0,NULL,GDCCommand,"GDCCommand",NULL);
-   EnvAddUDF(theEnv,"set-dynamic-constraint-checking","b",1,1,NULL,SDCCommand,"SDCCommand",NULL);
+   AddUDF(theEnv,"get-dynamic-constraint-checking","b",0,0,NULL,GDCCommand,"GDCCommand",NULL);
+   AddUDF(theEnv,"set-dynamic-constraint-checking","b",1,1,NULL,SDCCommand,"SDCCommand",NULL);
 #endif
   }
 
@@ -507,12 +507,12 @@ void SDCCommand(
   {
    UDFValue theArg;
 
-   returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvGetDynamicConstraintChecking(theEnv));
+   returnValue->lexemeValue = CreateBoolean(theEnv,GetDynamicConstraintChecking(theEnv));
 
    if (! UDFFirstArgument(context,ANY_TYPE_BITS,&theArg))
      { return; }
 
-   EnvSetDynamicConstraintChecking(theEnv,theArg.value != FalseSymbol(theEnv));
+   SetDynamicConstraintChecking(theEnv,theArg.value != FalseSymbol(theEnv));
   }
 
 /**********************************************/
@@ -524,14 +524,14 @@ void GDCCommand(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvGetDynamicConstraintChecking(theEnv));
+   returnValue->lexemeValue = CreateBoolean(theEnv,GetDynamicConstraintChecking(theEnv));
   }
 
 /******************************************************/
-/* EnvSetDynamicConstraintChecking: C access routine  */
+/* SetDynamicConstraintChecking: C access routine     */
 /*   for the set-dynamic-constraint-checking command. */
 /******************************************************/
-bool EnvSetDynamicConstraintChecking(
+bool SetDynamicConstraintChecking(
   Environment *theEnv,
   bool value)
   {
@@ -542,10 +542,10 @@ bool EnvSetDynamicConstraintChecking(
   }
 
 /******************************************************/
-/* EnvGetDynamicConstraintChecking: C access routine  */
+/* GetDynamicConstraintChecking: C access routine     */
 /*   for the get-dynamic-constraint-checking command. */
 /******************************************************/
-bool EnvGetDynamicConstraintChecking(
+bool GetDynamicConstraintChecking(
   Environment *theEnv)
   {
    return(ConstraintData(theEnv)->DynamicConstraintChecking);

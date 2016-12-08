@@ -69,13 +69,13 @@
    void                           UndeftemplateCommand(Environment *,UDFContext *,UDFValue *);
    bool                           Undeftemplate(Deftemplate *,Environment *);
    void                           GetDeftemplateListFunction(Environment *,UDFContext *,UDFValue *);
-   void                           EnvGetDeftemplateList(Environment *,CLIPSValue *,Defmodule *);
+   void                           GetDeftemplateList(Environment *,CLIPSValue *,Defmodule *);
    void                           DeftemplateModuleFunction(Environment *,UDFContext *,UDFValue *);
 #if DEBUGGING_FUNCTIONS
    void                           PPDeftemplateCommand(Environment *,UDFContext *,UDFValue *);
    bool                           PPDeftemplate(Environment *,const char *,const char *);
    void                           ListDeftemplatesCommand(Environment *,UDFContext *,UDFValue *);
-   void                           EnvListDeftemplates(Environment *,const char *,Defmodule *);
+   void                           ListDeftemplates(Environment *,const char *,Defmodule *);
    bool                           DeftemplateGetWatch(Deftemplate *);
    void                           DeftemplateSetWatch(Deftemplate *,bool);
    bool                           DeftemplateWatchAccess(Environment *,int,bool,struct expr *);

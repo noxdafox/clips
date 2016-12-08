@@ -118,7 +118,7 @@ void ClassAbstractPCommand(
       return;
      }
 
-   returnValue->lexemeValue = EnvCreateBoolean(theEnv,(ClassAbstractP(cls)));
+   returnValue->lexemeValue = CreateBoolean(theEnv,(ClassAbstractP(cls)));
   }
 
 #if DEFRULE_CONSTRUCT
@@ -152,7 +152,7 @@ void ClassReactivePCommand(
       return;
      }
 
-   returnValue->lexemeValue = EnvCreateBoolean(theEnv,ClassReactiveP(cls));
+   returnValue->lexemeValue = CreateBoolean(theEnv,ClassReactiveP(cls));
   }
 
 #endif
@@ -202,7 +202,7 @@ Defclass *ClassInfoFnxArgs(
       else
         {
          SyntaxErrorMessage(theEnv,fnx);
-         EnvSetEvaluationError(theEnv,true);
+         SetEvaluationError(theEnv,true);
          return NULL;
         }
      }
@@ -232,7 +232,7 @@ void ClassSlotsCommand(
    clsptr = ClassInfoFnxArgs(context,"class-slots",&inhp);
    if (clsptr == NULL)
      {
-      EnvSetMultifieldErrorValue(theEnv,returnValue);
+      SetMultifieldErrorValue(theEnv,returnValue);
       return;
      }
    ClassSlots(clsptr,&result,inhp);
@@ -261,7 +261,7 @@ void ClassSuperclassesCommand(
    clsptr = ClassInfoFnxArgs(context,"class-superclasses",&inhp);
    if (clsptr == NULL)
      {
-      EnvSetMultifieldErrorValue(theEnv,returnValue);
+      SetMultifieldErrorValue(theEnv,returnValue);
       return;
      }
    ClassSuperclasses(clsptr,&result,inhp);
@@ -290,7 +290,7 @@ void ClassSubclassesCommand(
    clsptr = ClassInfoFnxArgs(context,"class-subclasses",&inhp);
    if (clsptr == NULL)
      {
-      EnvSetMultifieldErrorValue(theEnv,returnValue);
+      SetMultifieldErrorValue(theEnv,returnValue);
       return;
      }
    ClassSubclasses(clsptr,&result,inhp);
@@ -318,7 +318,7 @@ void GetDefmessageHandlersListCmd(
 
    if (! UDFHasNextArgument(context))
      {
-      EnvGetDefmessageHandlerList(theEnv,NULL,&result,false);
+      GetDefmessageHandlerList(theEnv,NULL,&result,false);
       CLIPSToUDFValue(&result,returnValue);
      }
    else
@@ -326,11 +326,11 @@ void GetDefmessageHandlersListCmd(
       clsptr = ClassInfoFnxArgs(context,"get-defmessage-handler-list",&inhp);
       if (clsptr == NULL)
         {
-         EnvSetMultifieldErrorValue(theEnv,returnValue);
+         SetMultifieldErrorValue(theEnv,returnValue);
          return;
         }
         
-      EnvGetDefmessageHandlerList(theEnv,clsptr,&result,inhp);
+      GetDefmessageHandlerList(theEnv,clsptr,&result,inhp);
       CLIPSToUDFValue(&result,returnValue);
      }
   }
@@ -449,7 +449,7 @@ void ClassSlots(
 
    size = inhp ? theDefclass->instanceSlotCount : theDefclass->slotCount;
 
-   returnValue->value = EnvCreateMultifield(theEnv,size);
+   returnValue->value = CreateMultifield(theEnv,size);
 
    if (size == 0)
      { return; }
@@ -473,7 +473,7 @@ void ClassSlots(
   }
 
 /************************************************************************
-  NAME         : EnvGetDefmessageHandlerList
+  NAME         : GetDefmessageHandlerList
   DESCRIPTION  : Groups handler info for a class into a multifield value
                    for dynamic perusal
   INPUTS       : 1) Generic pointer to class (NULL to get handlers for
@@ -485,7 +485,7 @@ void ClassSlots(
                     the message-handlers of the class
   NOTES        : None
  ************************************************************************/
-void EnvGetDefmessageHandlerList(
+void GetDefmessageHandlerList(
   Environment *theEnv,
   Defclass *theDefclass,
   CLIPSValue *returnValue,
@@ -499,19 +499,19 @@ void EnvGetDefmessageHandlerList(
    if (theDefclass == NULL)
      {
       inhp = 0;
-      cls = EnvGetNextDefclass(theEnv,NULL);
-      svnxt = EnvGetNextDefclass(theEnv,cls);
+      cls = GetNextDefclass(theEnv,NULL);
+      svnxt = GetNextDefclass(theEnv,cls);
      }
    else
      {
       cls = theDefclass;
-      svnxt = EnvGetNextDefclass(theEnv,theDefclass);
+      svnxt = GetNextDefclass(theEnv,theDefclass);
       SetNextDefclass(cls,NULL);
      }
 
    for (svcls = cls , i = 0 ;
         cls != NULL ;
-        cls = EnvGetNextDefclass(theEnv,cls))
+        cls = GetNextDefclass(theEnv,cls))
      {
       classiLimit = inhp ? cls->allSuperclasses.classCount : 1;
       for (classi = 0 ; classi < classiLimit ; classi++)
@@ -520,11 +520,11 @@ void EnvGetDefmessageHandlerList(
 
    len = i * 3;
 
-   returnValue->value = EnvCreateMultifield(theEnv,len);
+   returnValue->value = CreateMultifield(theEnv,len);
 
    for (cls = svcls , sublen = 0 ;
         cls != NULL ;
-        cls = EnvGetNextDefclass(theEnv,cls))
+        cls = GetNextDefclass(theEnv,cls))
      {
       classiLimit = inhp ? cls->allSuperclasses.classCount : 1;
       for (classi = 0 ; classi < classiLimit ; classi++)
@@ -540,7 +540,7 @@ void EnvGetDefmessageHandlerList(
            {
             returnValue->multifieldValue->theFields[i++].value = GetDefclassNamePointer(supcls);
             returnValue->multifieldValue->theFields[i++].value = supcls->handlers[j].header.name;
-            returnValue->multifieldValue->theFields[i++].value = EnvCreateSymbol(theEnv,MessageHandlerData(theEnv)->hndquals[supcls->handlers[j].type]);
+            returnValue->multifieldValue->theFields[i++].value = CreateSymbol(theEnv,MessageHandlerData(theEnv)->hndquals[supcls->handlers[j].type]);
            }
 
          sublen += supcls->handlerCount * 3;
@@ -584,7 +584,7 @@ void ClassSuperclasses(
       offset = 0;
      }
 
-   returnValue->value = EnvCreateMultifield(theEnv,(plinks->classCount - offset));
+   returnValue->value = CreateMultifield(theEnv,(plinks->classCount - offset));
 
    if (returnValue->multifieldValue->length == 0)
      { return; }
@@ -623,7 +623,7 @@ void ClassSubclasses(
 
    ReleaseTraversalID(theEnv);
 
-   returnValue->value = EnvCreateMultifield(theEnv,i);
+   returnValue->value = CreateMultifield(theEnv,i);
 
    if (i == 0)
      { return; }
@@ -665,7 +665,7 @@ void ClassSubclassAddresses(
 
    returnValue->begin = 0;
    returnValue->range = i;
-   returnValue->value = EnvCreateMultifield(theEnv,i);
+   returnValue->value = CreateMultifield(theEnv,i);
 
    if (i == 0)
      { return; }
@@ -710,74 +710,74 @@ void SlotFacets(
      }
 
 #if DEFRULE_CONSTRUCT
-   returnValue->value = EnvCreateMultifield(theEnv,10L);
+   returnValue->value = CreateMultifield(theEnv,10L);
 #else
-   returnValue->value = EnvCreateMultifield(theEnv,9L);
+   returnValue->value = CreateMultifield(theEnv,9L);
 #endif
 
    if (sp->multiple)
-     { returnValue->multifieldValue->theFields[0].lexemeValue = EnvCreateSymbol(theEnv,"MLT"); }
+     { returnValue->multifieldValue->theFields[0].lexemeValue = CreateSymbol(theEnv,"MLT"); }
    else
-     { returnValue->multifieldValue->theFields[0].lexemeValue = EnvCreateSymbol(theEnv,"SGL"); }
+     { returnValue->multifieldValue->theFields[0].lexemeValue = CreateSymbol(theEnv,"SGL"); }
 
    if (sp->noDefault)
-     returnValue->multifieldValue->theFields[1].lexemeValue = EnvCreateSymbol(theEnv,"NIL");
+     returnValue->multifieldValue->theFields[1].lexemeValue = CreateSymbol(theEnv,"NIL");
    else
      {
       if (sp->dynamicDefault)
-        { returnValue->multifieldValue->theFields[1].lexemeValue = EnvCreateSymbol(theEnv,"DYN"); }
+        { returnValue->multifieldValue->theFields[1].lexemeValue = CreateSymbol(theEnv,"DYN"); }
       else
-        { returnValue->multifieldValue->theFields[1].lexemeValue = EnvCreateSymbol(theEnv,"STC"); }
+        { returnValue->multifieldValue->theFields[1].lexemeValue = CreateSymbol(theEnv,"STC"); }
      }
 
    if (sp->noInherit)
-     returnValue->multifieldValue->theFields[2].lexemeValue = EnvCreateSymbol(theEnv,"NIL");
+     returnValue->multifieldValue->theFields[2].lexemeValue = CreateSymbol(theEnv,"NIL");
    else
-     returnValue->multifieldValue->theFields[2].lexemeValue = EnvCreateSymbol(theEnv,"INH");
+     returnValue->multifieldValue->theFields[2].lexemeValue = CreateSymbol(theEnv,"INH");
 
    if (sp->initializeOnly)
-     returnValue->multifieldValue->theFields[3].lexemeValue = EnvCreateSymbol(theEnv,"INT");
+     returnValue->multifieldValue->theFields[3].lexemeValue = CreateSymbol(theEnv,"INT");
    else if (sp->noWrite)
-     returnValue->multifieldValue->theFields[3].lexemeValue = EnvCreateSymbol(theEnv,"R");
+     returnValue->multifieldValue->theFields[3].lexemeValue = CreateSymbol(theEnv,"R");
    else
-     returnValue->multifieldValue->theFields[3].lexemeValue = EnvCreateSymbol(theEnv,"RW");
+     returnValue->multifieldValue->theFields[3].lexemeValue = CreateSymbol(theEnv,"RW");
 
    if (sp->shared)
-     returnValue->multifieldValue->theFields[4].lexemeValue = EnvCreateSymbol(theEnv,"SHR");
+     returnValue->multifieldValue->theFields[4].lexemeValue = CreateSymbol(theEnv,"SHR");
    else
-     returnValue->multifieldValue->theFields[4].lexemeValue = EnvCreateSymbol(theEnv,"LCL");
+     returnValue->multifieldValue->theFields[4].lexemeValue = CreateSymbol(theEnv,"LCL");
 
 #if DEFRULE_CONSTRUCT
    if (sp->reactive)
-     returnValue->multifieldValue->theFields[5].lexemeValue = EnvCreateSymbol(theEnv,"RCT");
+     returnValue->multifieldValue->theFields[5].lexemeValue = CreateSymbol(theEnv,"RCT");
    else
-     returnValue->multifieldValue->theFields[5].lexemeValue = EnvCreateSymbol(theEnv,"NIL");
+     returnValue->multifieldValue->theFields[5].lexemeValue = CreateSymbol(theEnv,"NIL");
 
    if (sp->composite)
-     returnValue->multifieldValue->theFields[6].lexemeValue = EnvCreateSymbol(theEnv,"CMP");
+     returnValue->multifieldValue->theFields[6].lexemeValue = CreateSymbol(theEnv,"CMP");
    else
-     returnValue->multifieldValue->theFields[6].lexemeValue = EnvCreateSymbol(theEnv,"EXC");
+     returnValue->multifieldValue->theFields[6].lexemeValue = CreateSymbol(theEnv,"EXC");
 
    if (sp->publicVisibility)
-     returnValue->multifieldValue->theFields[7].lexemeValue = EnvCreateSymbol(theEnv,"PUB");
+     returnValue->multifieldValue->theFields[7].lexemeValue = CreateSymbol(theEnv,"PUB");
    else
-     returnValue->multifieldValue->theFields[7].lexemeValue = EnvCreateSymbol(theEnv,"PRV");
+     returnValue->multifieldValue->theFields[7].lexemeValue = CreateSymbol(theEnv,"PRV");
 
-   returnValue->multifieldValue->theFields[8].lexemeValue = EnvCreateSymbol(theEnv,GetCreateAccessorString(sp));
-   returnValue->multifieldValue->theFields[9].lexemeValue = (sp->noWrite ? EnvCreateSymbol(theEnv,"NIL") : sp->overrideMessage);
+   returnValue->multifieldValue->theFields[8].lexemeValue = CreateSymbol(theEnv,GetCreateAccessorString(sp));
+   returnValue->multifieldValue->theFields[9].lexemeValue = (sp->noWrite ? CreateSymbol(theEnv,"NIL") : sp->overrideMessage);
 #else
    if (sp->composite)
-     returnValue->multifieldValue->theFields[5].lexemeValue = EnvCreateSymbol(theEnv,"CMP");
+     returnValue->multifieldValue->theFields[5].lexemeValue = CreateSymbol(theEnv,"CMP");
    else
-     returnValue->multifieldValue->theFields[5].lexemeValue = EnvCreateSymbol(theEnv,"EXC");
+     returnValue->multifieldValue->theFields[5].lexemeValue = CreateSymbol(theEnv,"EXC");
 
    if (sp->publicVisibility)
-     returnValue->multifieldValue->theFields[6].lexemeValue = EnvCreateSymbol(theEnv,"PUB");
+     returnValue->multifieldValue->theFields[6].lexemeValue = CreateSymbol(theEnv,"PUB");
    else
-     returnValue->multifieldValue->theFields[6].lexemeValue = EnvCreateSymbol(theEnv,"PRV"));
+     returnValue->multifieldValue->theFields[6].lexemeValue = CreateSymbol(theEnv,"PRV"));
 
-   returnValue->multifieldValue->theFields[7].lexemeValue = EnvCreateSymbol(theEnv,GetCreateAccessorString(sp));
-   returnValue->multifieldValue->theFields[8].lexemeValue = (sp->noWrite ? EnvCreateSymbol(theEnv,"NIL") : sp->overrideMessage);
+   returnValue->multifieldValue->theFields[7].lexemeValue = CreateSymbol(theEnv,GetCreateAccessorString(sp));
+   returnValue->multifieldValue->theFields[8].lexemeValue = (sp->noWrite ? CreateSymbol(theEnv,"NIL") : sp->overrideMessage);
 #endif
   }
 
@@ -826,7 +826,7 @@ void SlotSources(
         }
      }
 
-   returnValue->value = EnvCreateMultifield(theEnv,i);
+   returnValue->value = CreateMultifield(theEnv,i);
    for (ctmp = ctop , i = 0 ; ctmp != NULL ; ctmp = ctmp->nxt , i++)
      {
       returnValue->multifieldValue->theFields[i].value = GetDefclassNamePointer(ctmp->cls);
@@ -908,7 +908,7 @@ void SlotTypes(
         }
      }
 
-   returnValue->value = EnvCreateMultifield(theEnv,msize);
+   returnValue->value = CreateMultifield(theEnv,msize);
    i = 0;
    j = 0;
    while (i < msize)
@@ -950,7 +950,7 @@ void SlotAllowedValues(
       return;
      }
 
-   returnValue->value = EnvCreateMultifield(theEnv,(unsigned long) ExpressionSize(sp->constraint->restrictionList));
+   returnValue->value = CreateMultifield(theEnv,(unsigned long) ExpressionSize(sp->constraint->restrictionList));
    i = 0;
    theExp = sp->constraint->restrictionList;
    while (theExp != NULL)
@@ -986,7 +986,7 @@ void SlotAllowedClasses(
       returnValue->value = FalseSymbol(theEnv);
       return;
      }
-   returnValue->value = EnvCreateMultifield(theEnv,(unsigned long) ExpressionSize(sp->constraint->classList));
+   returnValue->value = CreateMultifield(theEnv,(unsigned long) ExpressionSize(sp->constraint->classList));
    i = 0;
    theExp = sp->constraint->classList;
    while (theExp != NULL)
@@ -1019,7 +1019,7 @@ void SlotRange(
        (sp->constraint->anyAllowed || sp->constraint->floatsAllowed ||
         sp->constraint->integersAllowed))
      {
-      returnValue->value = EnvCreateMultifield(theEnv,2L);
+      returnValue->value = CreateMultifield(theEnv,2L);
       returnValue->multifieldValue->theFields[0].value = sp->constraint->minValue->value;
       returnValue->multifieldValue->theFields[1].value = sp->constraint->maxValue->value;
      }
@@ -1051,11 +1051,11 @@ void SlotCardinality(
      
    if (sp->multiple == 0)
      {
-      returnValue->multifieldValue = EnvCreateMultifield(theEnv,0L);
+      returnValue->multifieldValue = CreateMultifield(theEnv,0L);
       return;
      }
 
-   returnValue->value = EnvCreateMultifield(theEnv,2L);
+   returnValue->value = CreateMultifield(theEnv,2L);
    if (sp->constraint != NULL)
      {
       returnValue->multifieldValue->theFields[0].value = sp->constraint->minFields->value;
@@ -1099,7 +1099,7 @@ static void SlotInfoSupportFunction(
    ssym = CheckClassAndSlot(context,fnxname,&cls);
    if (ssym == NULL)
      {
-      EnvSetMultifieldErrorValue(context->environment,returnValue);
+      SetMultifieldErrorValue(context->environment,returnValue);
       return;
      }
    (*fnx)(cls,ssym->contents,&result);
@@ -1211,16 +1211,16 @@ static SlotDescriptor *SlotInfoSlot(
 
    if ((ssym = FindSymbolHN(theEnv,sname,SYMBOL_BIT)) == NULL)
      {
-      EnvSetEvaluationError(theEnv,true);
-      EnvSetMultifieldErrorValue(theEnv,returnValue);
+      SetEvaluationError(theEnv,true);
+      SetMultifieldErrorValue(theEnv,returnValue);
       return NULL;
      }
    i = FindInstanceTemplateSlot(theEnv,cls,ssym);
    if (i == -1)
      {
       SlotExistError(theEnv,sname,fnxname);
-      EnvSetEvaluationError(theEnv,true);
-      EnvSetMultifieldErrorValue(theEnv,returnValue);
+      SetEvaluationError(theEnv,true);
+      SetMultifieldErrorValue(theEnv,returnValue);
       return NULL;
      }
    returnValue->begin = 0;

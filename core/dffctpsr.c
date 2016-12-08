@@ -105,7 +105,7 @@ bool ParseDeffacts(
    /*============================*/
 
    deffactsName = GetConstructNameAndComment(theEnv,readSource,&inputToken,"deffacts",
-                                             (FindConstructFunction *) EnvFindDeffactsInModule,
+                                             (FindConstructFunction *) FindDeffactsInModule,
                                              (DeleteConstructFunction *) Undeffacts,"$",true,
                                              true,true,false);
    if (deffactsName == NULL) { return true; }
@@ -154,7 +154,7 @@ bool ParseDeffacts(
    /* Save the pretty print representation of the deffacts. */
    /*=======================================================*/
 
-   if (EnvGetConserveMemory(theEnv) == true)
+   if (GetConserveMemory(theEnv) == true)
      { newDeffacts->header.ppForm = NULL; }
    else
      { newDeffacts->header.ppForm = CopyPPBuffer(theEnv); }

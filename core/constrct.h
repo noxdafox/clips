@@ -62,9 +62,9 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
-/*      6.50: Modified EnvClear to return completion status. */
+/*            Modified EnvClear to return completion status. */
 /*                                                           */
-/*            File name/line count displayed for errors      */
+/*      6.50: File name/line count displayed for errors      */
 /*            and warnings during load command.              */
 /*                                                           */
 /*************************************************************/
@@ -82,7 +82,7 @@ typedef struct construct Construct;
 #include "moduldef.h"
 
 typedef void ParserErrorFunction(Environment *,const char *,const char *,const char *,long);
-typedef bool *BeforeResetFunction(Environment *);
+typedef bool BeforeResetFunction(Environment *);
 
 #define CHS (ConstructHeader *)
 
@@ -144,21 +144,21 @@ struct constructData
 
 #define ConstructData(theEnv) ((struct constructData *) GetEnvironmentData(theEnv,CONSTRUCT_DATA))
 
-   bool                           EnvClear(Environment *);
-   void                           EnvReset(Environment *);
-   bool                           EnvSave(Environment *,const char *);
+   bool                           Clear(Environment *);
+   void                           Reset(Environment *);
+   bool                           Save(Environment *,const char *);
 
    void                           InitializeConstructData(Environment *);
    bool                           AddSaveFunction(Environment *,const char *,void (*)(Environment *,Defmodule *,const char *),int);
    bool                           RemoveSaveFunction(Environment *,const char *);
-   bool                           EnvAddResetFunction(Environment *,const char *,void (*)(Environment *),int);
-   bool                           EnvRemoveResetFunction(Environment *,const char *);
+   bool                           AddResetFunction(Environment *,const char *,void (*)(Environment *),int);
+   bool                           RemoveResetFunction(Environment *,const char *);
    bool                           AddClearReadyFunction(Environment *,const char *,bool (*)(Environment *),int);
    bool                           RemoveClearReadyFunction(Environment *,const char *);
-   bool                           EnvAddClearFunction(Environment *,const char *,void (*)(Environment *),int);
-   bool                           EnvRemoveClearFunction(Environment *,const char *);
-   void                           EnvIncrementClearReadyLocks(Environment *);
-   void                           EnvDecrementClearReadyLocks(Environment *);
+   bool                           AddClearFunction(Environment *,const char *,void (*)(Environment *),int);
+   bool                           RemoveClearFunction(Environment *,const char *);
+   void                           IncrementClearReadyLocks(Environment *);
+   void                           DecrementClearReadyLocks(Environment *);
    Construct                     *AddConstruct(Environment *,const char *,const char *,
                                                bool (*)(Environment *,const char *),
                                                FindConstructFunction *,
@@ -187,7 +187,7 @@ struct constructData
    Construct                     *FindConstruct(Environment *,const char *);
    void                           DeinstallConstructHeader(Environment *,ConstructHeader *);
    void                           DestroyConstructHeader(Environment *,ConstructHeader *);
-   ParserErrorFunction           *EnvSetParserErrorCallback(Environment *,ParserErrorFunction *);
+   ParserErrorFunction           *SetParserErrorCallback(Environment *,ParserErrorFunction *);
 
 #endif /* _H_constrct */
 

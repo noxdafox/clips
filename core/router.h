@@ -37,7 +37,7 @@
 /*            Added STDOUT and STDIN logical name            */
 /*            definitions.                                   */
 /*                                                           */
-/*      6.40: Added EnvInputBufferCount function.            */
+/*      6.40: Added InputBufferCount function.               */
 /*                                                           */
 /*            Added check for reuse of existing router name. */
 /*                                                           */
@@ -117,37 +117,26 @@ struct routerData
 #define RouterData(theEnv) ((struct routerData *) GetEnvironmentData(theEnv,ROUTER_DATA))
 
    void                           InitializeDefaultRouters(Environment *);
-   void                           EnvPrintRouter(Environment *,const char *,const char *);
-   int                            EnvGetcRouter(Environment *,const char *);
-   int                            EnvUngetcRouter(Environment *,int,const char *);
-   void                           EnvExitRouter(Environment *,int);
+   void                           PrintRouter(Environment *,const char *,const char *);
+   int                            GetcRouter(Environment *,const char *);
+   int                            UngetcRouter(Environment *,int,const char *);
+   void                           ExitRouter(Environment *,int);
    void                           AbortExit(Environment *);
-   bool                           EnvAddRouterWithContext(Environment *,
-                                                          const char *,int,
-                                                          RouterQueryFunction *,
-                                                          RouterPrintFunction *,
-                                                          RouterGetcFunction *,
-                                                          RouterUngetcFunction *,
-                                                          RouterExitFunction *,
-                                                          void *);
-   bool                           EnvAddRouter(Environment *,
-                                               const char *,int,
-                                               RouterQueryFunction *,
-                                               RouterPrintFunction *,
-                                               RouterGetcFunction *,
-                                               RouterUngetcFunction *,
-                                               RouterExitFunction *);
-   bool                           EnvDeleteRouter(Environment *,const char *);
+   bool                           AddRouter(Environment *,const char *,int,
+                                            RouterQueryFunction *,RouterPrintFunction *,
+                                            RouterGetcFunction *,RouterUngetcFunction *,
+                                            RouterExitFunction *,void *);
+   bool                           DeleteRouter(Environment *,const char *);
    bool                           QueryRouters(Environment *,const char *);
-   bool                           EnvDeactivateRouter(Environment *,const char *);
-   bool                           EnvActivateRouter(Environment *,const char *);
+   bool                           DeactivateRouter(Environment *,const char *);
+   bool                           ActivateRouter(Environment *,const char *);
    void                           SetFastLoad(Environment *,FILE *);
    void                           SetFastSave(Environment *,FILE *);
    FILE                          *GetFastLoad(Environment *);
    FILE                          *GetFastSave(Environment *);
    void                           UnrecognizedRouterMessage(Environment *,const char *);
    void                           PrintNRouter(Environment *,const char *,const char *,unsigned long);
-   size_t                         EnvInputBufferCount(Environment *);
-   Router                        *EnvFindRouter(Environment *,const char *);
+   size_t                         InputBufferCount(Environment *);
+   Router                        *FindRouter(Environment *,const char *);
 
 #endif /* _H_router */

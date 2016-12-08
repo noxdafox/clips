@@ -106,21 +106,21 @@ void FileCommandDefinitions(
 
 #if ! RUN_TIME
 #if DEBUGGING_FUNCTIONS
-   EnvAddUDF(theEnv,"batch","b",1,1,"sy",BatchCommand,"BatchCommand",NULL);
-   EnvAddUDF(theEnv,"batch*","b",1,1,"sy",BatchStarCommand,"BatchStarCommand",NULL);
-   EnvAddUDF(theEnv,"dribble-on","b",1,1,"sy",DribbleOnCommand,"DribbleOnCommand",NULL);
-   EnvAddUDF(theEnv,"dribble-off","b",0,0,NULL,DribbleOffCommand,"DribbleOffCommand",NULL);
-   EnvAddUDF(theEnv,"save","b",1,1,"sy",SaveCommand,"SaveCommand",NULL);
+   AddUDF(theEnv,"batch","b",1,1,"sy",BatchCommand,"BatchCommand",NULL);
+   AddUDF(theEnv,"batch*","b",1,1,"sy",BatchStarCommand,"BatchStarCommand",NULL);
+   AddUDF(theEnv,"dribble-on","b",1,1,"sy",DribbleOnCommand,"DribbleOnCommand",NULL);
+   AddUDF(theEnv,"dribble-off","b",0,0,NULL,DribbleOffCommand,"DribbleOffCommand",NULL);
+   AddUDF(theEnv,"save","b",1,1,"sy",SaveCommand,"SaveCommand",NULL);
 #endif
-   EnvAddUDF(theEnv,"load","b",1,1,"sy",LoadCommand,"LoadCommand",NULL);
-   EnvAddUDF(theEnv,"load*","b",1,1,"sy",LoadStarCommand,"LoadStarCommand",NULL);
+   AddUDF(theEnv,"load","b",1,1,"sy",LoadCommand,"LoadCommand",NULL);
+   AddUDF(theEnv,"load*","b",1,1,"sy",LoadStarCommand,"LoadStarCommand",NULL);
 #if BLOAD_AND_BSAVE
-   EnvAddUDF(theEnv,"bsave","b",1,1,"sy",BsaveCommand,"BsaveCommand",NULL);
+   AddUDF(theEnv,"bsave","b",1,1,"sy",BsaveCommand,"BsaveCommand",NULL);
 #endif
 #if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE
    InitializeBsaveData(theEnv);
    InitializeBloadData(theEnv);
-   EnvAddUDF(theEnv,"bload","b",1,1,"sy",BloadCommand,"BloadCommand",NULL);
+   AddUDF(theEnv,"bload","b",1,1,"sy",BloadCommand,"BloadCommand",NULL);
 #endif
 #endif
   }
@@ -184,7 +184,7 @@ void DribbleOnCommand(
       return;
      }
 
-   returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvDribbleOn(theEnv,fileName));
+   returnValue->lexemeValue = CreateBoolean(theEnv,DribbleOn(theEnv,fileName));
   }
 
 /*******************************************/
@@ -196,7 +196,7 @@ void DribbleOffCommand(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvDribbleOff(theEnv));
+   returnValue->lexemeValue = CreateBoolean(theEnv,DribbleOff(theEnv));
   }
 
 #endif /* DEBUGGING_FUNCTIONS */
@@ -218,7 +218,7 @@ void BatchCommand(
       return;
      }
 
-   returnValue->lexemeValue = EnvCreateBoolean(theEnv,OpenBatch(theEnv,fileName,false));
+   returnValue->lexemeValue = CreateBoolean(theEnv,OpenBatch(theEnv,fileName,false));
   }
 
 /******************************************/
@@ -238,7 +238,7 @@ void BatchStarCommand(
       return;
      }
 
-   returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvBatchStar(theEnv,fileName));
+   returnValue->lexemeValue = CreateBoolean(theEnv,BatchStar(theEnv,fileName));
   }
 
 /***********************************************************/
@@ -261,7 +261,7 @@ void LoadCommand(
 
    SetPrintWhileLoading(theEnv,true);
 
-   if ((rv = EnvLoad(theEnv,theFileName)) == 0)
+   if ((rv = Load(theEnv,theFileName)) == 0)
      {
       SetPrintWhileLoading(theEnv,false);
       OpenErrorMessage(theEnv,"load",theFileName);
@@ -274,7 +274,7 @@ void LoadCommand(
    if (rv == -1) returnValue->lexemeValue = FalseSymbol(theEnv);
    else returnValue->lexemeValue = TrueSymbol(theEnv);
 #else
-   EnvPrintRouter(theEnv,WDIALOG,"Load is not available in this environment\n");
+   PrintRouter(theEnv,WDIALOG,"Load is not available in this environment\n");
    returnValue->lexemeValue = FalseSymbol(theEnv);
 #endif
   }
@@ -297,7 +297,7 @@ void LoadStarCommand(
       return;
      }
 
-   if ((rv = EnvLoad(theEnv,theFileName)) == 0)
+   if ((rv = Load(theEnv,theFileName)) == 0)
      {
       OpenErrorMessage(theEnv,"load*",theFileName);
       returnValue->lexemeValue = FalseSymbol(theEnv);
@@ -307,7 +307,7 @@ void LoadStarCommand(
    if (rv == -1) returnValue->lexemeValue = FalseSymbol(theEnv);
    else returnValue->lexemeValue = TrueSymbol(theEnv);
 #else
-   EnvPrintRouter(theEnv,WDIALOG,"Load* is not available in this environment\n");
+   PrintRouter(theEnv,WDIALOG,"Load* is not available in this environment\n");
    returnValue->lexemeValue = FalseSymbol(theEnv);
 #endif
   }
@@ -330,7 +330,7 @@ void SaveCommand(
       return;
      }
 
-   if (EnvSave(theEnv,theFileName) == false)
+   if (Save(theEnv,theFileName) == false)
      {
       OpenErrorMessage(theEnv,"save",theFileName);
       returnValue->lexemeValue = FalseSymbol(theEnv);
@@ -339,7 +339,7 @@ void SaveCommand(
 
    returnValue->lexemeValue = TrueSymbol(theEnv);
 #else
-   EnvPrintRouter(theEnv,WDIALOG,"Save is not available in this environment\n");
+   PrintRouter(theEnv,WDIALOG,"Save is not available in this environment\n");
    returnValue->lexemeValue = FalseSymbol(theEnv);
 #endif
   }

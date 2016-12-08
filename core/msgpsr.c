@@ -155,7 +155,7 @@ bool ParseDefmessageHandler(
    if (cls == NULL)
      {
       PrintErrorID(theEnv,"MSGPSR",1,false);
-      EnvPrintRouter(theEnv,WERROR,"A class must be defined before its message-handlers.\n");
+      PrintRouter(theEnv,WERROR,"A class must be defined before its message-handlers.\n");
       return true;
      }
    if ((cls == DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_NAME_TYPE]) ||
@@ -163,16 +163,16 @@ bool ParseDefmessageHandler(
        (cls == DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_NAME_TYPE]->directSuperclasses.classArray[0]))
      {
       PrintErrorID(theEnv,"MSGPSR",8,false);
-      EnvPrintRouter(theEnv,WERROR,"Message-handlers cannot be attached to the class ");
-      EnvPrintRouter(theEnv,WERROR,DefclassName(cls));
-      EnvPrintRouter(theEnv,WERROR,".\n");
+      PrintRouter(theEnv,WERROR,"Message-handlers cannot be attached to the class ");
+      PrintRouter(theEnv,WERROR,DefclassName(cls));
+      PrintRouter(theEnv,WERROR,".\n");
       return true;
      }
    if (HandlersExecuting(cls))
      {
       PrintErrorID(theEnv,"MSGPSR",2,false);
-      EnvPrintRouter(theEnv,WERROR,"Cannot (re)define message-handlers during execution of \n");
-      EnvPrintRouter(theEnv,WERROR,"  other message-handlers for the same class.\n");
+      PrintRouter(theEnv,WERROR,"Cannot (re)define message-handlers during execution of \n");
+      PrintRouter(theEnv,WERROR,"  other message-handlers for the same class.\n");
       return true;
      }
    if (DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TOKEN)
@@ -222,20 +222,20 @@ bool ParseDefmessageHandler(
    hnd = FindHandlerByAddress(cls,mname,mtype);
    if (GetPrintWhileLoading(theEnv) && GetCompilationsWatch(theEnv))
      {
-      EnvPrintRouter(theEnv,WDIALOG,"   Handler ");
-      EnvPrintRouter(theEnv,WDIALOG,mname->contents);
-      EnvPrintRouter(theEnv,WDIALOG," ");
-      EnvPrintRouter(theEnv,WDIALOG,MessageHandlerData(theEnv)->hndquals[mtype]);
+      PrintRouter(theEnv,WDIALOG,"   Handler ");
+      PrintRouter(theEnv,WDIALOG,mname->contents);
+      PrintRouter(theEnv,WDIALOG," ");
+      PrintRouter(theEnv,WDIALOG,MessageHandlerData(theEnv)->hndquals[mtype]);
       if (hnd == NULL)
-        EnvPrintRouter(theEnv,WDIALOG," defined.\n");
+        PrintRouter(theEnv,WDIALOG," defined.\n");
       else
-        EnvPrintRouter(theEnv,WDIALOG," redefined.\n");
+        PrintRouter(theEnv,WDIALOG," redefined.\n");
      }
 
    if ((hnd != NULL) ? hnd->system : false)
      {
       PrintErrorID(theEnv,"MSGPSR",3,false);
-      EnvPrintRouter(theEnv,WERROR,"System message-handlers may not be modified.\n");
+      PrintRouter(theEnv,WERROR,"System message-handlers may not be modified.\n");
       return true;
      }
 
@@ -304,7 +304,7 @@ bool ParseDefmessageHandler(
    /* ===================================================
       Old handler trace status is automatically preserved
       =================================================== */
-   if (EnvGetConserveMemory(theEnv) == false)
+   if (GetConserveMemory(theEnv) == false)
      hnd->header.ppForm = CopyPPBuffer(theEnv);
    else
 #endif
@@ -358,7 +358,7 @@ void CreateGetAndPutHandlers(
 
    oldPWL = GetPrintWhileLoading(theEnv);
    SetPrintWhileLoading(theEnv,false);
-   oldCM = EnvSetConserveMemory(theEnv,true);
+   oldCM = SetConserveMemory(theEnv,true);
 
    if (sd->createReadAccessor)
      {
@@ -417,7 +417,7 @@ void CreateGetAndPutHandlers(
      }
 
    SetPrintWhileLoading(theEnv,oldPWL);
-   EnvSetConserveMemory(theEnv,oldCM);
+   SetConserveMemory(theEnv,oldCM);
 
    rm(theEnv,buf,bufsz);
   }
@@ -447,7 +447,7 @@ static bool IsParameterSlotReference(
                   (pname[SELF_LEN] == SELF_SLOT_REF) : false)
      {
       PrintErrorID(theEnv,"MSGPSR",4,false);
-      EnvPrintRouter(theEnv,WERROR,"Illegal slot reference in parameter list.\n");
+      PrintRouter(theEnv,WERROR,"Illegal slot reference in parameter list.\n");
       return true;
      }
    return false;
@@ -541,7 +541,7 @@ static int BindSlotReference(
    if (strcmp(bindName,SELF_STRING) == 0)
      {
       PrintErrorID(theEnv,"MSGPSR",5,false);
-      EnvPrintRouter(theEnv,WERROR,"Active instance parameter cannot be changed.\n");
+      PrintRouter(theEnv,WERROR,"Active instance parameter cannot be changed.\n");
       return -1;
      }
    if ((strncmp(bindName,SELF_STRING,SELF_LEN) == 0) ?
@@ -612,18 +612,18 @@ static SlotDescriptor *CheckSlotReference(
    if (theType != SYMBOL_TYPE)
      {
       PrintErrorID(theEnv,"MSGPSR",7,false);
-      EnvPrintRouter(theEnv,WERROR,"Illegal value for ?self reference.\n");
+      PrintRouter(theEnv,WERROR,"Illegal value for ?self reference.\n");
       return NULL;
      }
    slotIndex = FindInstanceTemplateSlot(theEnv,theDefclass,(CLIPSLexeme *) theValue);
    if (slotIndex == -1)
      {
       PrintErrorID(theEnv,"MSGPSR",6,false);
-      EnvPrintRouter(theEnv,WERROR,"No such slot ");
-      EnvPrintRouter(theEnv,WERROR,((CLIPSLexeme *) theValue)->contents);
-      EnvPrintRouter(theEnv,WERROR," in class ");
-      EnvPrintRouter(theEnv,WERROR,DefclassName(theDefclass));
-      EnvPrintRouter(theEnv,WERROR," for ?self reference.\n");
+      PrintRouter(theEnv,WERROR,"No such slot ");
+      PrintRouter(theEnv,WERROR,((CLIPSLexeme *) theValue)->contents);
+      PrintRouter(theEnv,WERROR," in class ");
+      PrintRouter(theEnv,WERROR,DefclassName(theDefclass));
+      PrintRouter(theEnv,WERROR," for ?self reference.\n");
       return NULL;
      }
    sd = theDefclass->instanceTemplate[slotIndex];
@@ -652,7 +652,7 @@ static SlotDescriptor *CheckSlotReference(
    if (vCode != NO_VIOLATION)
      {
       PrintErrorID(theEnv,"CSTRNCHK",1,false);
-      EnvPrintRouter(theEnv,WERROR,"Expression for ");
+      PrintRouter(theEnv,WERROR,"Expression for ");
       PrintSlot(theEnv,WERROR,sd,NULL,"direct slot write");
       ConstraintViolationErrorMessage(theEnv,NULL,NULL,0,0,NULL,0,
                                       vCode,sd->constraint,false);
@@ -688,7 +688,7 @@ static void GenHandlerSlotReference(
    handlerReference.classID = (unsigned short) sd->cls->id;
    handlerReference.slotID = (unsigned) sd->slotName->id;
    theExp->type = theType;
-   theExp->value =  EnvAddBitMap(theEnv,&handlerReference,
+   theExp->value =  AddBitMap(theEnv,&handlerReference,
                            (int) sizeof(HANDLER_SLOT_REFERENCE));
   }
 

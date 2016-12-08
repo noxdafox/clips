@@ -134,10 +134,10 @@ void InitializeDeftemplates(
 
    DeftemplateData(theEnv)->DeftemplateConstruct =
       AddConstruct(theEnv,"deftemplate","deftemplates",ParseDeftemplate,
-                   (FindConstructFunction *) EnvFindDeftemplate,
+                   (FindConstructFunction *) FindDeftemplate,
                    GetConstructNamePointer,GetConstructPPForm,
                    GetConstructModuleItem,
-                   (GetNextConstructFunction *) EnvGetNextDeftemplate,
+                   (GetNextConstructFunction *) GetNextDeftemplate,
                    SetNextConstruct,
                    (IsConstructDeletableFunction *) DeftemplateIsDeletable,
                    (DeleteConstructFunction *) Undeftemplate,
@@ -164,9 +164,9 @@ static void DeallocateDeftemplateData(
    DoForAllConstructs(theEnv,DestroyDeftemplateAction,DeftemplateData(theEnv)->DeftemplateModuleIndex,false,NULL);
 
 #if ! RUN_TIME
-   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = EnvGetNextDefmodule(theEnv,theModule))
+        theModule = GetNextDefmodule(theEnv,theModule))
      {
       theModuleItem = (struct deftemplateModule *)
                       GetModuleItem(theEnv,theModule,
@@ -216,7 +216,7 @@ static void InitializeDeftemplateModules(
 #else
                                     NULL,
 #endif
-                                    (FindConstructFunction *) EnvFindDeftemplateInModule);
+                                    (FindConstructFunction *) FindDeftemplateInModule);
 
 #if (! BLOAD_ONLY) && (! RUN_TIME) && DEFMODULE_CONSTRUCT
    AddPortConstructItem(theEnv,"deftemplate",SYMBOL_TOKEN);
@@ -254,24 +254,24 @@ struct deftemplateModule *GetDeftemplateModuleItem(
    return((struct deftemplateModule *) GetConstructModuleItemByIndex(theEnv,theModule,DeftemplateData(theEnv)->DeftemplateModuleIndex));
   }
 
-/*****************************************************/
-/* EnvFindDeftemplate: Searches for a deftemplate in */
-/*   the list of deftemplates. Returns a pointer to  */
-/*   the deftemplate if  found, otherwise NULL.      */
-/*****************************************************/
-Deftemplate *EnvFindDeftemplate(
+/***************************************************/
+/* FindDeftemplate: Searches for a deftemplate in  */
+/*   the list of deftemplates. Returns a pointer   */
+/*   to the deftemplate if  found, otherwise NULL. */
+/***************************************************/
+Deftemplate *FindDeftemplate(
   Environment *theEnv,
   const char *deftemplateName)
   {
    return (Deftemplate *) FindNamedConstructInModuleOrImports(theEnv,deftemplateName,DeftemplateData(theEnv)->DeftemplateConstruct);
   }
 
-/*****************************************************/
-/* EnvFindDeftemplateInModule: Searches for a deftemplate in */
-/*   the list of deftemplates. Returns a pointer to  */
-/*   the deftemplate if  found, otherwise NULL.      */
-/*****************************************************/
-Deftemplate *EnvFindDeftemplateInModule(
+/*******************************************************/
+/* FindDeftemplateInModule: Searches for a deftemplate */
+/*   in the list of deftemplates. Returns a pointer    */
+/*   to the deftemplate if  found, otherwise NULL.     */
+/*******************************************************/
+Deftemplate *FindDeftemplateInModule(
   Environment *theEnv,
   const char *deftemplateName)
   {
@@ -279,11 +279,11 @@ Deftemplate *EnvFindDeftemplateInModule(
   }
 
 /***********************************************************************/
-/* EnvGetNextDeftemplate: If passed a NULL pointer, returns the first  */
+/* GetNextDeftemplate: If passed a NULL pointer, returns the first     */
 /*   deftemplate in the ListOfDeftemplates. Otherwise returns the next */
 /*   deftemplate following the deftemplate passed as an argument.      */
 /***********************************************************************/
-Deftemplate *EnvGetNextDeftemplate(
+Deftemplate *GetNextDeftemplate(
   Environment *theEnv,
   Deftemplate *deftemplatePtr)
   {
@@ -446,11 +446,11 @@ void IncrementDeftemplateBusyCount(
   }
 
 /*******************************************************************/
-/* EnvGetNextFactInTemplate: If passed a NULL pointer, returns the */
+/* GetNextFactInTemplate: If passed a NULL pointer, returns the    */
 /*   first fact in the template's fact-list. Otherwise returns the */
 /*   next template fact following the fact passed as an argument.  */
 /*******************************************************************/
-Fact *EnvGetNextFactInTemplate(
+Fact *GetNextFactInTemplate(
   Environment *theEnv,
   Deftemplate *theTemplate,
   Fact *factPtr)
@@ -490,18 +490,18 @@ void *CreateDeftemplateScopeMap(
 
    ClearBitString((void *) scopeMap,scopeMapSize);
    SaveCurrentModule(theEnv);
-   for (theModule = EnvGetNextDefmodule(theEnv,NULL) ;
+   for (theModule = GetNextDefmodule(theEnv,NULL) ;
         theModule != NULL ;
-        theModule = EnvGetNextDefmodule(theEnv,theModule))
+        theModule = GetNextDefmodule(theEnv,theModule))
      {
-      EnvSetCurrentModule(theEnv,theModule);
+      SetCurrentModule(theEnv,theModule);
       moduleID = (int) theModule->header.bsaveID;
       if (FindImportedConstruct(theEnv,"deftemplate",matchModule,
                                 templateName,&count,true,NULL) != NULL)
         SetBitMap(scopeMap,moduleID);
      }
    RestoreCurrentModule(theEnv);
-   theBitMap = EnvAddBitMap(theEnv,scopeMap,scopeMapSize);
+   theBitMap = AddBitMap(theEnv,scopeMap,scopeMapSize);
    IncrementBitMapCount(theBitMap);
    rm(theEnv,scopeMap,scopeMapSize);
    return(theBitMap);

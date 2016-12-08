@@ -104,7 +104,7 @@ void PlaceActivation(
    /* been made to the agenda.                       */
    /*================================================*/
 
-   EnvSetAgendaChanged(theEnv,true);
+   SetAgendaChanged(theEnv,true);
 
    /*=============================================*/
    /* Determine the location where the activation */
@@ -948,11 +948,11 @@ static int ComparePartialMatches(
    return(EQUAL);
   }
 
-/************************************/
-/* EnvSetStrategy: C access routine */
-/*   for the set-strategy command.  */
-/************************************/
-int EnvSetStrategy(
+/***********************************/
+/* SetStrategy: C access routine   */
+/*   for the set-strategy command. */
+/***********************************/
+int SetStrategy(
   Environment *theEnv,
   int value)
   {
@@ -964,17 +964,17 @@ int EnvSetStrategy(
    if (oldStrategy != AgendaData(theEnv)->Strategy)
      { DefmoduleReorderAgenda(NULL,theEnv); }
 
-   return(oldStrategy);
+   return oldStrategy;
   }
 
-/************************************/
-/* EnvGetStrategy: C access routine */
-/*   for the get-strategy command.  */
-/************************************/
-int EnvGetStrategy(
+/***********************************/
+/* GetStrategy: C access routine   */
+/*   for the get-strategy command. */
+/***********************************/
+int GetStrategy(
   Environment *theEnv)
   {
-   return(AgendaData(theEnv)->Strategy);
+   return AgendaData(theEnv)->Strategy;
   }
 
 /********************************************/
@@ -986,7 +986,7 @@ void GetStrategyCommand(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   returnValue->lexemeValue = EnvCreateSymbol(theEnv,GetStrategyName(EnvGetStrategy(theEnv)));
+   returnValue->lexemeValue = CreateSymbol(theEnv,GetStrategyName(GetStrategy(theEnv)));
   }
 
 /********************************************/
@@ -1006,8 +1006,8 @@ void SetStrategyCommand(
    /* Set the return value. */
    /*=======================*/
 
-   oldStrategy = EnvGetStrategy(theEnv);
-   returnValue->lexemeValue = EnvCreateSymbol(theEnv,GetStrategyName(oldStrategy));
+   oldStrategy = GetStrategy(theEnv);
+   returnValue->lexemeValue = CreateSymbol(theEnv,GetStrategyName(oldStrategy));
 
    /*=========================================*/
    /* Check for the correct type of argument. */
@@ -1023,19 +1023,19 @@ void SetStrategyCommand(
    argument = theArg.lexemeValue->contents;
 
    if (strcmp(argument,"depth") == 0)
-     { EnvSetStrategy(theEnv,DEPTH_STRATEGY); }
+     { SetStrategy(theEnv,DEPTH_STRATEGY); }
    else if (strcmp(argument,"breadth") == 0)
-     { EnvSetStrategy(theEnv,BREADTH_STRATEGY); }
+     { SetStrategy(theEnv,BREADTH_STRATEGY); }
    else if (strcmp(argument,"lex") == 0)
-     { EnvSetStrategy(theEnv,LEX_STRATEGY); }
+     { SetStrategy(theEnv,LEX_STRATEGY); }
    else if (strcmp(argument,"mea") == 0)
-     { EnvSetStrategy(theEnv,MEA_STRATEGY); }
+     { SetStrategy(theEnv,MEA_STRATEGY); }
    else if (strcmp(argument,"complexity") == 0)
-     { EnvSetStrategy(theEnv,COMPLEXITY_STRATEGY); }
+     { SetStrategy(theEnv,COMPLEXITY_STRATEGY); }
    else if (strcmp(argument,"simplicity") == 0)
-     { EnvSetStrategy(theEnv,SIMPLICITY_STRATEGY); }
+     { SetStrategy(theEnv,SIMPLICITY_STRATEGY); }
    else if (strcmp(argument,"random") == 0)
-     { EnvSetStrategy(theEnv,RANDOM_STRATEGY); }
+     { SetStrategy(theEnv,RANDOM_STRATEGY); }
    else
      {
       UDFInvalidArgumentMessage(context,

@@ -133,7 +133,7 @@ bool ParseDeftemplate(
 #endif
 
    deftemplateName = GetConstructNameAndComment(theEnv,readSource,&inputToken,"deftemplate",
-                                                (FindConstructFunction *) EnvFindDeftemplateInModule,
+                                                (FindConstructFunction *) FindDeftemplateInModule,
                                                 (DeleteConstructFunction *) Undeftemplate,"%",
                                                 true,true,true,false);
 
@@ -199,7 +199,7 @@ bool ParseDeftemplate(
    /* Store pretty print representation. */
    /*====================================*/
 
-   if (EnvGetConserveMemory(theEnv) == true)
+   if (GetConserveMemory(theEnv) == true)
      { newDeftemplate->header.ppForm = NULL; }
    else
      { newDeftemplate->header.ppForm = CopyPPBuffer(theEnv); }
@@ -210,7 +210,7 @@ bool ParseDeftemplate(
 
 #if DEBUGGING_FUNCTIONS
    if ((BitwiseTest(DeftemplateData(theEnv)->DeletedTemplateDebugFlags,0)) ||
-       (EnvGetWatchItem(theEnv,"facts") == 1))
+       (GetWatchItem(theEnv,"facts") == 1))
      { DeftemplateSetWatch(newDeftemplate,true); }
 #endif
 

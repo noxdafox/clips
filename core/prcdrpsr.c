@@ -298,7 +298,7 @@ static struct expr *LoopForCountParse(
       ========================================== */
    if (theToken.tknType != LEFT_PARENTHESIS_TOKEN)
      {
-      parse->argList = GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,1LL));
+      parse->argList = GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,1LL));
       parse->argList->nextArg = ParseAtomOrExpression(theEnv,infile,&theToken);
       if (parse->argList->nextArg == NULL)
         {
@@ -313,7 +313,7 @@ static struct expr *LoopForCountParse(
         {
          if (theToken.tknType != SYMBOL_TOKEN)
            goto LoopForCountParseError;
-         parse->argList = GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,1LL));
+         parse->argList = GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,1LL));
          parse->argList->nextArg = Function2Parse(theEnv,infile,theToken.lexemeValue->contents);
          if (parse->argList->nextArg == NULL)
            {
@@ -346,7 +346,7 @@ static struct expr *LoopForCountParse(
             PPBackup(theEnv);
             PPBackup(theEnv);
             SavePPBuffer(theEnv,theToken.printForm);
-            tmpexp = GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,1LL));
+            tmpexp = GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,1LL));
             tmpexp->nextArg = parse->argList;
             parse->argList = tmpexp;
            }
@@ -421,7 +421,7 @@ static struct expr *LoopForCountParse(
          ClearParsedBindNames(theEnv);
          SetParsedBindNames(theEnv,oldBindList);
          PrintErrorID(theEnv,"PRCDRPSR",1,true);
-         EnvPrintRouter(theEnv,WERROR,"Cannot rebind loop variable in function loop-for-count.\n");
+         PrintRouter(theEnv,WERROR,"Cannot rebind loop variable in function loop-for-count.\n");
          ReturnExpression(theEnv,parse);
          return NULL;
         }
@@ -475,7 +475,7 @@ static void ReplaceLoopCountVars(
         {
          theExp->type = FCALL;
          theExp->value = FindFunction(theEnv,"(get-loop-count)");
-         theExp->argList = GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,(long long) depth));
+         theExp->argList = GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,(long long) depth));
         }
       else if (theExp->argList != NULL)
         {
@@ -739,7 +739,7 @@ static struct expr *ReturnParse(
    if (ExpressionData(theEnv)->ReturnContext == false)
      {
       PrintErrorID(theEnv,"PRCDRPSR",2,true);
-      EnvPrintRouter(theEnv,WERROR,"The return function is not valid in this context.\n");
+      PrintRouter(theEnv,WERROR,"The return function is not valid in this context.\n");
       ReturnExpression(theEnv,top);
       return NULL;
      }
@@ -789,7 +789,7 @@ static struct expr *BreakParse(
    if (ExpressionData(theEnv)->svContexts->brk == false)
      {
       PrintErrorID(theEnv,"PRCDRPSR",2,true);
-      EnvPrintRouter(theEnv,WERROR,"The break function not valid in this context.\n");
+      PrintRouter(theEnv,WERROR,"The break function not valid in this context.\n");
       ReturnExpression(theEnv,top);
       return NULL;
      }
@@ -858,7 +858,7 @@ static struct expr *SwitchParse(
                 IdenticalExpression(chk->argList,theExp->nextArg->argList))
               {
                PrintErrorID(theEnv,"PRCDRPSR",3,true);
-               EnvPrintRouter(theEnv,WERROR,"Duplicate case found in switch function.\n");
+               PrintRouter(theEnv,WERROR,"Duplicate case found in switch function.\n");
                goto SwitchParseError;
               }
            }

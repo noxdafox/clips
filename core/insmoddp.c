@@ -113,30 +113,30 @@ void SetupInstanceModDupCommands(
 #if ! RUN_TIME
 
 #if DEFRULE_CONSTRUCT
-   EnvAddUDF(theEnv,"modify-instance","*",0,UNBOUNDED,NULL,InactiveModifyInstance,"InactiveModifyInstance",NULL);
-   EnvAddUDF(theEnv,"active-modify-instance","*",0,UNBOUNDED,NULL,ModifyInstance,"ModifyInstance",NULL);
+   AddUDF(theEnv,"modify-instance","*",0,UNBOUNDED,NULL,InactiveModifyInstance,"InactiveModifyInstance",NULL);
+   AddUDF(theEnv,"active-modify-instance","*",0,UNBOUNDED,NULL,ModifyInstance,"ModifyInstance",NULL);
    AddFunctionParser(theEnv,"active-modify-instance",ParseInitializeInstance);
-   EnvAddUDF(theEnv,"message-modify-instance","*",0,UNBOUNDED,NULL,InactiveMsgModifyInstance,"InactiveMsgModifyInstance",NULL);
-   EnvAddUDF(theEnv,"active-message-modify-instance","*",0,UNBOUNDED,NULL,MsgModifyInstance,"MsgModifyInstance",NULL);
+   AddUDF(theEnv,"message-modify-instance","*",0,UNBOUNDED,NULL,InactiveMsgModifyInstance,"InactiveMsgModifyInstance",NULL);
+   AddUDF(theEnv,"active-message-modify-instance","*",0,UNBOUNDED,NULL,MsgModifyInstance,"MsgModifyInstance",NULL);
    AddFunctionParser(theEnv,"active-message-modify-instance",ParseInitializeInstance);
 
-   EnvAddUDF(theEnv,"duplicate-instance","*",0,UNBOUNDED,NULL,InactiveDuplicateInstance,"InactiveDuplicateInstance",NULL);
-   EnvAddUDF(theEnv,"active-duplicate-instance","*",0,UNBOUNDED,NULL,DuplicateInstance,"DuplicateInstance",NULL);
+   AddUDF(theEnv,"duplicate-instance","*",0,UNBOUNDED,NULL,InactiveDuplicateInstance,"InactiveDuplicateInstance",NULL);
+   AddUDF(theEnv,"active-duplicate-instance","*",0,UNBOUNDED,NULL,DuplicateInstance,"DuplicateInstance",NULL);
    AddFunctionParser(theEnv,"active-duplicate-instance",ParseInitializeInstance);
-   EnvAddUDF(theEnv,"message-duplicate-instance","*",0,UNBOUNDED,NULL,InactiveMsgDuplicateInstance,"InactiveMsgDuplicateInstance",NULL);
-   EnvAddUDF(theEnv,"active-message-duplicate-instance","*",0,UNBOUNDED,NULL,MsgDuplicateInstance,"MsgDuplicateInstance",NULL);
+   AddUDF(theEnv,"message-duplicate-instance","*",0,UNBOUNDED,NULL,InactiveMsgDuplicateInstance,"InactiveMsgDuplicateInstance",NULL);
+   AddUDF(theEnv,"active-message-duplicate-instance","*",0,UNBOUNDED,NULL,MsgDuplicateInstance,"MsgDuplicateInstance",NULL);
    AddFunctionParser(theEnv,"active-message-duplicate-instance",ParseInitializeInstance);
 #else
-   EnvAddUDF(theEnv,"modify-instance","*",0,UNBOUNDED,NULL,ModifyInstance,"ModifyInstance",NULL);
-   EnvAddUDF(theEnv,"message-modify-instance","*",0,UNBOUNDED,NULL,MsgModifyInstance,"MsgModifyInstance",NULL);
-   EnvAddUDF(theEnv,"duplicate-instance","*",0,UNBOUNDED,NULL,DuplicateInstance,"DuplicateInstance",NULL);
-   EnvAddUDF(theEnv,"message-duplicate-instance","*",0,UNBOUNDED,NULL,MsgDuplicateInstance,"MsgDuplicateInstance",NULL);
+   AddUDF(theEnv,"modify-instance","*",0,UNBOUNDED,NULL,ModifyInstance,"ModifyInstance",NULL);
+   AddUDF(theEnv,"message-modify-instance","*",0,UNBOUNDED,NULL,MsgModifyInstance,"MsgModifyInstance",NULL);
+   AddUDF(theEnv,"duplicate-instance","*",0,UNBOUNDED,NULL,DuplicateInstance,"DuplicateInstance",NULL);
+   AddUDF(theEnv,"message-duplicate-instance","*",0,UNBOUNDED,NULL,MsgDuplicateInstance,"MsgDuplicateInstance",NULL);
 #endif
 
-   EnvAddUDF(theEnv,"(direct-modify)","*",0,UNBOUNDED,NULL,DirectModifyMsgHandler,"DirectModifyMsgHandler",NULL);
-   EnvAddUDF(theEnv,"(message-modify)","*",0,UNBOUNDED,NULL,MsgModifyMsgHandler,"MsgModifyMsgHandler",NULL);
-   EnvAddUDF(theEnv,"(direct-duplicate)","*",0,UNBOUNDED,NULL,DirectDuplicateMsgHandler,"DirectDuplicateMsgHandler",NULL);
-   EnvAddUDF(theEnv,"(message-duplicate)","*",0,UNBOUNDED,NULL,MsgDuplicateMsgHandler,"MsgDuplicateMsgHandler",NULL);
+   AddUDF(theEnv,"(direct-modify)","*",0,UNBOUNDED,NULL,DirectModifyMsgHandler,"DirectModifyMsgHandler",NULL);
+   AddUDF(theEnv,"(message-modify)","*",0,UNBOUNDED,NULL,MsgModifyMsgHandler,"MsgModifyMsgHandler",NULL);
+   AddUDF(theEnv,"(direct-duplicate)","*",0,UNBOUNDED,NULL,DirectDuplicateMsgHandler,"DirectDuplicateMsgHandler",NULL);
+   AddUDF(theEnv,"(message-duplicate)","*",0,UNBOUNDED,NULL,MsgDuplicateMsgHandler,"MsgDuplicateMsgHandler",NULL);
 
 #endif
 
@@ -211,7 +211,7 @@ void ModifyInstance(
       ====================================== */
 
    theExp.type = EXTERNAL_ADDRESS_TYPE;
-   theExp.value = EnvAddExternalAddress(theEnv,overrides,0);
+   theExp.value = AddExternalAddress(theEnv,overrides,0);
    theExp.argList = NULL;
    theExp.nextArg = NULL;
 
@@ -280,7 +280,7 @@ void MsgModifyInstance(
       ====================================== */
 
    theExp.type = EXTERNAL_ADDRESS_TYPE;
-   theExp.value = EnvAddExternalAddress(theEnv,overrides,0);
+   theExp.value = AddExternalAddress(theEnv,overrides,0);
    theExp.argList = NULL;
    theExp.nextArg = NULL;
 
@@ -360,7 +360,7 @@ void DuplicateInstance(
    theExp[0].argList = NULL;
    theExp[0].nextArg = &theExp[1];
    theExp[1].type = EXTERNAL_ADDRESS_TYPE;
-   theExp[1].value = EnvAddExternalAddress(theEnv,overrides,0);
+   theExp[1].value = AddExternalAddress(theEnv,overrides,0);
    theExp[1].argList = NULL;
    theExp[1].nextArg = NULL;
 
@@ -439,7 +439,7 @@ void MsgDuplicateInstance(
    theExp[0].argList = NULL;
    theExp[0].nextArg = &theExp[1];
    theExp[1].type = EXTERNAL_ADDRESS_TYPE;
-   theExp[1].value = EnvAddExternalAddress(theEnv,overrides,0);
+   theExp[1].value = AddExternalAddress(theEnv,overrides,0);
    theExp[1].argList = NULL;
    theExp[1].nextArg = NULL;
 
@@ -701,7 +701,7 @@ static UDFValue *EvaluateSlotOverrides(
         {
          ExpectedTypeError1(theEnv,ExpressionFunctionCallName(EvaluationData(theEnv)->CurrentExpression)->contents,
                             ovi+1,"slot name");
-         EnvSetEvaluationError(theEnv,true);
+         SetEvaluationError(theEnv,true);
          goto EvaluateOverridesError;
         }
       slotName = ovs[ovi].value;
@@ -777,8 +777,8 @@ static void ModifyMsgHandlerSupport(
    if (InstanceData(theEnv)->ObjectModDupMsgValid == false)
      {
       PrintErrorID(theEnv,"INSMODDP",1,false);
-      EnvPrintRouter(theEnv,WERROR,"Direct/message-modify message valid only in modify-instance.\n");
-      EnvSetEvaluationError(theEnv,true);
+      PrintRouter(theEnv,WERROR,"Direct/message-modify message valid only in modify-instance.\n");
+      SetEvaluationError(theEnv,true);
       return;
      }
    InstanceData(theEnv)->ObjectModDupMsgValid = false;
@@ -787,7 +787,7 @@ static void ModifyMsgHandlerSupport(
    if (ins->garbage)
      {
       StaleInstanceAddress(theEnv,"modify-instance",0);
-      EnvSetEvaluationError(theEnv,true);
+      SetEvaluationError(theEnv,true);
       return;
      }
 
@@ -810,7 +810,7 @@ static void ModifyMsgHandlerSupport(
       if (insSlot == NULL)
         {
          SlotExistError(theEnv,((CLIPSLexeme *) slotOverrides->supplementalInfo)->contents,"modify-instance");
-         EnvSetEvaluationError(theEnv,true);
+         SetEvaluationError(theEnv,true);
          return;
         }
       if (msgpass)
@@ -829,7 +829,7 @@ static void ModifyMsgHandlerSupport(
         {
          if (insSlot->desc->multiple && (slotOverrides->header->type != MULTIFIELD_TYPE))
            {
-            temp.value = EnvCreateMultifield(theEnv,1L);
+            temp.value = CreateMultifield(theEnv,1L);
             temp.begin = 0;
             temp.range = 1;
             temp.multifieldValue->theFields[0].value = slotOverrides->value;
@@ -879,8 +879,8 @@ static void DuplicateMsgHandlerSupport(
    if (InstanceData(theEnv)->ObjectModDupMsgValid == false)
      {
       PrintErrorID(theEnv,"INSMODDP",2,false);
-      EnvPrintRouter(theEnv,WERROR,"Direct/message-duplicate message valid only in duplicate-instance.\n");
-      EnvSetEvaluationError(theEnv,true);
+      PrintRouter(theEnv,WERROR,"Direct/message-duplicate message valid only in duplicate-instance.\n");
+      SetEvaluationError(theEnv,true);
       return;
      }
    InstanceData(theEnv)->ObjectModDupMsgValid = false;
@@ -896,14 +896,14 @@ static void DuplicateMsgHandlerSupport(
    if (srcins->garbage)
      {
       StaleInstanceAddress(theEnv,"duplicate-instance",0);
-      EnvSetEvaluationError(theEnv,true);
+      SetEvaluationError(theEnv,true);
       return;
      }
    if (newName == srcins->name)
      {
       PrintErrorID(theEnv,"INSMODDP",3,false);
-      EnvPrintRouter(theEnv,WERROR,"Instance copy must have a different name in duplicate-instance.\n");
-      EnvSetEvaluationError(theEnv,true);
+      PrintRouter(theEnv,WERROR,"Instance copy must have a different name in duplicate-instance.\n");
+      SetEvaluationError(theEnv,true);
       return;
      }
 
@@ -953,7 +953,7 @@ static void DuplicateMsgHandlerSupport(
         {
          if (dstInsSlot->desc->multiple && (slotOverrides->header->type != MULTIFIELD_TYPE))
            {
-            temp.value = EnvCreateMultifield(theEnv,1L);
+            temp.value = CreateMultifield(theEnv,1L);
             temp.begin = 0;
             temp.range = 1;
             temp.multifieldValue->theFields[0].value = slotOverrides->value;
@@ -1020,7 +1020,7 @@ static void DuplicateMsgHandlerSupport(
    if (dstins->garbage)
      {
       returnValue->value = FalseSymbol(theEnv);
-      EnvSetEvaluationError(theEnv,true);
+      SetEvaluationError(theEnv,true);
      }
    else
      {
@@ -1031,7 +1031,7 @@ static void DuplicateMsgHandlerSupport(
 DuplicateError:
    dstins->busy--;
    QuashInstance(theEnv,dstins);
-   EnvSetEvaluationError(theEnv,true);
+   SetEvaluationError(theEnv,true);
   }
 
 #endif

@@ -71,13 +71,13 @@
    void                           UndefruleCommand(Environment *,UDFContext *,UDFValue *);
    bool                           Undefrule(Defrule *,Environment *);
    void                           GetDefruleListFunction(Environment *,UDFContext *,UDFValue *);
-   void                           EnvGetDefruleList(Environment *,UDFValue *,Defmodule *);
+   void                           GetDefruleList(Environment *,UDFValue *,Defmodule *);
    void                           DefruleModuleFunction(Environment *,UDFContext *,UDFValue *);
 #if DEBUGGING_FUNCTIONS
    void                           PPDefruleCommand(Environment *,UDFContext *,UDFValue *);
    bool                           PPDefrule(Environment *,const char *,const char *);
    void                           ListDefrulesCommand(Environment *,UDFContext *,UDFValue *);
-   void                           EnvListDefrules(Environment *,const char *,Defmodule *);
+   void                           ListDefrules(Environment *,const char *,Defmodule *);
    bool                           DefruleGetWatchFirings(Defrule *);
    bool                           DefruleGetWatchActivations(Defrule *);
    void                           DefruleSetWatchFirings(Defrule *,bool);

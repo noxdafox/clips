@@ -111,9 +111,9 @@
    void                           DeftemplateSlotDefaultPFunction(Environment *,UDFContext *,UDFValue *);
    int                            DeftemplateSlotDefaultP(Deftemplate *,const char *);
    void                           DeftemplateSlotFacetExistPFunction(Environment *,UDFContext *,UDFValue *);
-   bool                           EnvDeftemplateSlotFacetExistP(Environment *,Deftemplate *,const char *,const char *);
+   bool                           DeftemplateSlotFacetExistP(Environment *,Deftemplate *,const char *,const char *);
    void                           DeftemplateSlotFacetValueFunction(Environment *,UDFContext *,UDFValue *);
-   bool                           EnvDeftemplateSlotFacetValue(Environment *,Deftemplate *,const char *,const char *,UDFValue *);
+   bool                           DeftemplateSlotFacetValue(Environment *,Deftemplate *,const char *,const char *,UDFValue *);
    CLIPSLexeme                   *FindTemplateForFactAddress(CLIPSLexeme *,struct lhsParseNode *);
    Fact                          *ReplaceFact(Environment *,Fact *,CLIPSValue *,char *);
 

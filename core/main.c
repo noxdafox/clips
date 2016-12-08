@@ -75,13 +75,12 @@ int main(
   char *argv[])
   {
    mainEnv = CreateEnvironment();
-   
+
 #if UNIX_V || LINUX || DARWIN || UNIX_7 || WIN_GCC || WIN_MVC
    signal(SIGINT,CatchCtrlC);
 #endif
 
    RerouteStdin(mainEnv,argc,argv);
-
    CommandLoop(mainEnv);
 
    /*==================================================================*/
@@ -106,7 +105,7 @@ int main(
 static void CatchCtrlC(
   int sgnl)
   {
-   EnvSetHaltExecution(mainEnv,true);
+   SetHaltExecution(mainEnv,true);
    CloseAllBatchSources(mainEnv);
    signal(SIGINT,CatchCtrlC);
   }

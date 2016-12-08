@@ -178,7 +178,7 @@ void SetupDefinstances(
 #else
                                     NULL,
 #endif
-                                    (FindConstructFunction *) EnvFindDefinstancesInModule);
+                                    (FindConstructFunction *) FindDefinstancesInModule);
 
    DefinstancesData(theEnv)->DefinstancesConstruct =
       AddConstruct(theEnv,"definstances","definstances",
@@ -187,10 +187,10 @@ void SetupDefinstances(
 #else
                    NULL,
 #endif
-                   (FindConstructFunction *) EnvFindDefinstances,
+                   (FindConstructFunction *) FindDefinstances,
                    GetConstructNamePointer,GetConstructPPForm,
                    GetConstructModuleItem,
-                   (GetNextConstructFunction *) EnvGetNextDefinstances,
+                   (GetNextConstructFunction *) GetNextDefinstances,
                    SetNextConstruct,
                    (IsConstructDeletableFunction *) DefinstancesIsDeletable,
                    (DeleteConstructFunction *) Undefinstances,
@@ -205,21 +205,21 @@ void SetupDefinstances(
    AddClearReadyFunction(theEnv,"definstances",ClearDefinstancesReady,0);
 
 #if ! BLOAD_ONLY
-   EnvAddUDF(theEnv,"undefinstances","v",1,1,"y",UndefinstancesCommand,"UndefinstancesCommand",NULL);
+   AddUDF(theEnv,"undefinstances","v",1,1,"y",UndefinstancesCommand,"UndefinstancesCommand",NULL);
    AddSaveFunction(theEnv,"definstances",SaveDefinstances,0);
 
 #endif
 
 #if DEBUGGING_FUNCTIONS
-   EnvAddUDF(theEnv,"ppdefinstances","v",1,1,"y",PPDefinstancesCommand,"PPDefinstancesCommand",NULL);
-   EnvAddUDF(theEnv,"list-definstances","v",0,1,"y",ListDefinstancesCommand,"ListDefinstancesCommand",NULL);
+   AddUDF(theEnv,"ppdefinstances","v",1,1,"y",PPDefinstancesCommand,"PPDefinstancesCommand",NULL);
+   AddUDF(theEnv,"list-definstances","v",0,1,"y",ListDefinstancesCommand,"ListDefinstancesCommand",NULL);
 #endif
 
-   EnvAddUDF(theEnv,"get-definstances-list","m",0,1,"y",GetDefinstancesListFunction,"GetDefinstancesListFunction",NULL);
-   EnvAddUDF(theEnv,"definstances-module","y",1,1,"y",GetDefinstancesModuleCommand,"GetDefinstancesModuleCommand",NULL);
+   AddUDF(theEnv,"get-definstances-list","m",0,1,"y",GetDefinstancesListFunction,"GetDefinstancesListFunction",NULL);
+   AddUDF(theEnv,"definstances-module","y",1,1,"y",GetDefinstancesModuleCommand,"GetDefinstancesModuleCommand",NULL);
 
 #endif
-   EnvAddResetFunction(theEnv,"definstances",ResetDefinstances,0);
+   AddResetFunction(theEnv,"definstances",ResetDefinstances,0);
 
 #if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE
    SetupDefinstancesBload(theEnv);
@@ -247,9 +247,9 @@ static void DeallocateDefinstancesData(
 
    DoForAllConstructs(theEnv,DestroyDefinstancesAction,DefinstancesData(theEnv)->DefinstancesModuleIndex,false,NULL);
 
-   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = EnvGetNextDefmodule(theEnv,theModule))
+        theModule = GetNextDefmodule(theEnv,theModule))
      {
       theModuleItem = (struct definstancesModule *)
                       GetModuleItem(theEnv,theModule,
@@ -326,7 +326,7 @@ void DefinstancesRunTimeInitialize(
 #endif
 
 /***********************************************************
-  NAME         : EnvGetNextDefinstances
+  NAME         : GetNextDefinstances
   DESCRIPTION  : Finds first or next definstances
   INPUTS       : The address of the current definstances
   RETURNS      : The address of the next definstances
@@ -335,7 +335,7 @@ void DefinstancesRunTimeInitialize(
   NOTES        : If ptr == NULL, the first definstances
                     is returned.
  ***********************************************************/
-Definstances *EnvGetNextDefinstances(
+Definstances *GetNextDefinstances(
   Environment *theEnv,
   Definstances *theDefinstances)
   {
@@ -344,7 +344,7 @@ Definstances *EnvGetNextDefinstances(
   }
 
 /***************************************************
-  NAME         : EnvFindDefinstances
+  NAME         : FindDefinstances
   DESCRIPTION  : Looks up a definstance construct
                    by name-string
   INPUTS       : The symbolic name
@@ -353,7 +353,7 @@ Definstances *EnvGetNextDefinstances(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-Definstances *EnvFindDefinstances(
+Definstances *FindDefinstances(
   Environment *theEnv,
   const char *name)
   {
@@ -361,7 +361,7 @@ Definstances *EnvFindDefinstances(
   }
 
 /***************************************************
-  NAME         : EnvFindDefinstancesInModule
+  NAME         : FindDefinstancesInModule
   DESCRIPTION  : Looks up a definstance construct
                    by name-string
   INPUTS       : The symbolic name
@@ -370,7 +370,7 @@ Definstances *EnvFindDefinstances(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-Definstances *EnvFindDefinstancesInModule(
+Definstances *FindDefinstancesInModule(
   Environment *theEnv,
   const char *name)
   {
@@ -507,7 +507,7 @@ void ListDefinstancesCommand(
   }
 
 /***************************************************
-  NAME         : EnvListDefinstances
+  NAME         : ListDefinstances
   DESCRIPTION  : Displays all definstances names
   INPUTS       : 1) The logical name of the output
                  2) The module
@@ -515,7 +515,7 @@ void ListDefinstancesCommand(
   SIDE EFFECTS : Definstances names printed
   NOTES        : C Interface
  ***************************************************/
-void EnvListDefinstances(
+void ListDefinstances(
   Environment *theEnv,
   const char *logicalName,
   Defmodule *theModule)
@@ -544,7 +544,7 @@ void GetDefinstancesListFunction(
   }
 
 /***************************************************************
-  NAME         : EnvGetDefinstancesList
+  NAME         : GetDefinstancesList
   DESCRIPTION  : Groups all definstances names into
                  a multifield list
   INPUTS       : 1) A data object buffer to hold
@@ -554,7 +554,7 @@ void GetDefinstancesListFunction(
   SIDE EFFECTS : Multifield allocated and filled
   NOTES        : External C access
  ***************************************************************/
-void EnvGetDefinstancesList(
+void GetDefinstancesList(
   Environment *theEnv,
   UDFValue *returnValue,
   Defmodule *theModule)
@@ -673,19 +673,19 @@ static bool ParseDefinstances(
          return false;
         }
 #if DEBUGGING_FUNCTIONS
-      if (EnvGetConserveMemory(theEnv) == false)
+      if (GetConserveMemory(theEnv) == false)
         {
          if (dobj->mkinstance != NULL)
            PPBackup(theEnv);
          PPBackup(theEnv);
          SavePPBuffer(theEnv,")\n");
-         EnvSetDefinstancesPPForm(theEnv,dobj,CopyPPBuffer(theEnv));
+         SetDefinstancesPPForm(theEnv,dobj,CopyPPBuffer(theEnv));
         }
 #endif
       mkinstance = dobj->mkinstance;
       dobj->mkinstance = PackExpression(theEnv,mkinstance);
       ReturnExpression(theEnv,mkinstance);
-      IncrementSymbolCount(EnvGetDefinstancesNamePointer(theEnv,dobj));
+      IncrementSymbolCount(GetDefinstancesNamePointer(theEnv,dobj));
       ExpressionInstall(theEnv,dobj->mkinstance);
      }
 
@@ -716,7 +716,7 @@ static CLIPSLexeme *ParseDefinstancesName(
 
    *active = false;
    dname = GetConstructNameAndComment(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken,"definstances",
-                                      (FindConstructFunction *) EnvFindDefinstancesInModule,
+                                      (FindConstructFunction *) FindDefinstancesInModule,
                                       (DeleteConstructFunction *) Undefinstances,"@",
                                       true,false,true,false);
    if (dname == NULL)
@@ -759,10 +759,10 @@ static void RemoveDefinstances(
   Environment *theEnv,
   Definstances *theDefinstances)
   {
-   DecrementSymbolCount(theEnv,EnvGetDefinstancesNamePointer(theEnv,theDefinstances));
+   DecrementSymbolCount(theEnv,GetDefinstancesNamePointer(theEnv,theDefinstances));
    ExpressionDeinstall(theEnv,theDefinstances->mkinstance);
    ReturnPackedExpression(theEnv,theDefinstances->mkinstance);
-   EnvSetDefinstancesPPForm(theEnv,theDefinstances,NULL);
+   SetDefinstancesPPForm(theEnv,theDefinstances,NULL);
    ClearUserDataList(theEnv,theDefinstances->header.usrData);
    rtn_struct(theEnv,definstances,theDefinstances);
   }
@@ -804,11 +804,11 @@ static bool RemoveAllDefinstances(
    if (Bloaded(theEnv))
      return false;
 #endif
-  dhead = EnvGetNextDefinstances(theEnv,NULL);
+  dhead = GetNextDefinstances(theEnv,NULL);
   while (dhead != NULL)
     {
      dptr = dhead;
-     dhead = EnvGetNextDefinstances(theEnv,dhead);
+     dhead = GetNextDefinstances(theEnv,dhead);
      if (DefinstancesIsDeletable(dptr))
        {
         RemoveConstructFromModule(theEnv,&dptr->header);
@@ -972,7 +972,7 @@ static void ResetDefinstancesAction(
    UDFValue temp;
 
    SaveCurrentModule(theEnv);
-   EnvSetCurrentModule(theEnv,vDefinstances->whichModule->theModule);
+   SetCurrentModule(theEnv,vDefinstances->whichModule->theModule);
    theDefinstances->busy++;
    for (theExp = theDefinstances->mkinstance ;
         theExp != NULL ;
@@ -1007,7 +1007,7 @@ const char *DefinstancesPPForm(
    return GetConstructPPForm(&theDefinstances->header);
   }
 
-void EnvSetDefinstancesPPForm(
+void SetDefinstancesPPForm(
   Environment *theEnv,
   Definstances *theDefinstances,
   const char *thePPForm)
@@ -1021,14 +1021,14 @@ const char *DefinstancesModule(
    return GetConstructModuleName(&theDefinstances->header);
   }
 
-CLIPSLexeme *EnvGetDefinstancesNamePointer(
+CLIPSLexeme *GetDefinstancesNamePointer(
   Environment *theEnv,
   Definstances *theDefinstances)
   {
    return GetConstructNamePointer(&theDefinstances->header);
   }
 
-const char *EnvDefinstancesModuleName(
+const char *DefinstancesModuleName(
   Environment *theEnv,
   Definstances *theDefinstances)
   {

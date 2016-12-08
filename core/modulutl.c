@@ -130,7 +130,7 @@ CLIPSLexeme *ExtractModuleName(
    /* name) to the symbol table.                          */
    /*=====================================================*/
 
-   returnValue = EnvCreateSymbol(theEnv,newString);
+   returnValue = CreateSymbol(theEnv,newString);
 
    /*=============================================*/
    /* Return the storage of the temporary string. */
@@ -166,7 +166,7 @@ CLIPSLexeme *ExtractConstructName(
    /* contain the :: symbol.               */
    /*======================================*/
 
-   if (thePosition == 0) return EnvCreateSymbol(theEnv,theString);
+   if (thePosition == 0) return CreateSymbol(theEnv,theString);
 
    /*=====================================*/
    /* Determine the length of the string. */
@@ -201,11 +201,11 @@ CLIPSLexeme *ExtractConstructName(
    /*=============================================*/
 
    if (returnType == SYMBOL_TYPE)
-     { returnValue = EnvCreateSymbol(theEnv,newString); }
+     { returnValue = CreateSymbol(theEnv,newString); }
    else if (returnType == INSTANCE_NAME_TYPE)
-     { returnValue = EnvCreateInstanceName(theEnv,newString); }
+     { returnValue = CreateInstanceName(theEnv,newString); }
    else
-     { returnValue = EnvCreateString(theEnv,newString); }
+     { returnValue = CreateString(theEnv,newString); }
 
    /*=============================================*/
    /* Return the storage of the temporary string. */
@@ -251,14 +251,14 @@ const char *ExtractModuleAndConstructName(
    /* Check to see if the module exists. */
    /*====================================*/
 
-   theModule = EnvFindDefmodule(theEnv,moduleName->contents);
+   theModule = FindDefmodule(theEnv,moduleName->contents);
    if (theModule == NULL) return NULL;
 
    /*============================*/
    /* Change the current module. */
    /*============================*/
 
-   EnvSetCurrentModule(theEnv,theModule);
+   SetCurrentModule(theEnv,theModule);
 
    /*=============================*/
    /* Extract the construct name. */
@@ -340,9 +340,9 @@ ConstructHeader *FindImportedConstruct(
    /* Search for the construct. */
    /*===========================*/
 
-   rv = SearchImportedConstructModules(theEnv,EnvCreateSymbol(theEnv,constructName),
+   rv = SearchImportedConstructModules(theEnv,CreateSymbol(theEnv,constructName),
                                        matchModule,theModuleItem,
-                                       EnvCreateSymbol(theEnv,findName),count,
+                                       CreateSymbol(theEnv,findName),count,
                                        searchCurrent,notYetDefinedInModule);
 
    /*=============================*/
@@ -368,11 +368,11 @@ void AmbiguousReferenceErrorMessage(
   const char *constructName,
   const char *findName)
   {
-   EnvPrintRouter(theEnv,WERROR,"Ambiguous reference to ");
-   EnvPrintRouter(theEnv,WERROR,constructName);
-   EnvPrintRouter(theEnv,WERROR," ");
-   EnvPrintRouter(theEnv,WERROR,findName);
-   EnvPrintRouter(theEnv,WERROR,".\nIt is imported from more than one module.\n");
+   PrintRouter(theEnv,WERROR,"Ambiguous reference to ");
+   PrintRouter(theEnv,WERROR,constructName);
+   PrintRouter(theEnv,WERROR," ");
+   PrintRouter(theEnv,WERROR,findName);
+   PrintRouter(theEnv,WERROR,".\nIt is imported from more than one module.\n");
   }
 
 /****************************************************/
@@ -386,9 +386,9 @@ void MarkModulesAsUnvisited(
    Defmodule *theModule;
 
    DefmoduleData(theEnv)->CurrentModule->visitedFlag = false;
-   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = EnvGetNextDefmodule(theEnv,theModule))
+        theModule = GetNextDefmodule(theEnv,theModule))
      { theModule->visitedFlag = false; }
   }
 
@@ -419,7 +419,7 @@ static ConstructHeader *SearchImportedConstructModules(
    /* visited, then return.                   */
    /*=========================================*/
 
-   currentModule = EnvGetCurrentModule(theEnv);
+   currentModule = GetCurrentModule(theEnv);
    if (currentModule->visitedFlag) return NULL;
 
    /*=======================================================*/
@@ -479,7 +479,7 @@ static ConstructHeader *SearchImportedConstructModules(
    /* imported by the current module.   */
    /*===================================*/
 
-   theModule = EnvGetCurrentModule(theEnv);
+   theModule = GetCurrentModule(theEnv);
    theImportList = theModule->importList;
 
    while (theImportList != NULL)
@@ -506,7 +506,7 @@ static ConstructHeader *SearchImportedConstructModules(
 
       if (searchModule)
         {
-         theModule = EnvFindDefmodule(theEnv,theImportList->moduleName->contents);
+         theModule = FindDefmodule(theEnv,theImportList->moduleName->contents);
          if (theModule == NULL) searchModule = false;
         }
 
@@ -540,7 +540,7 @@ static ConstructHeader *SearchImportedConstructModules(
 
       if (searchModule)
         {
-         EnvSetCurrentModule(theEnv,theModule);
+         SetCurrentModule(theEnv,theModule);
          if ((rv = SearchImportedConstructModules(theEnv,constructType,matchModule,
                                                   theModuleItem,findName,
                                                   count,true,
@@ -578,7 +578,7 @@ bool ConstructExported(
    struct portItem *theExportList;
 
    constructType = FindSymbolHN(theEnv,constructTypeStr,SYMBOL_BIT);
-   theModule = EnvFindDefmodule(theEnv,moduleName->contents);
+   theModule = FindDefmodule(theEnv,moduleName->contents);
 
    if ((constructType == NULL) || (theModule == NULL) || (findName == NULL))
      { return false; }
@@ -614,7 +614,7 @@ bool AllImportedModulesVisited(
    theImportList = theModule->importList;
    while (theImportList != NULL)
      {
-      theImportModule = EnvFindDefmodule(theEnv,theImportList->moduleName->contents);
+      theImportModule = FindDefmodule(theEnv,theImportList->moduleName->contents);
 
       if (! theImportModule->visitedFlag) return false;
 
@@ -657,7 +657,7 @@ void ListItemsDriver(
 
    if (theModule == NULL)
      {
-      theModule = EnvGetNextDefmodule(theEnv,NULL);
+      theModule = GetNextDefmodule(theEnv,NULL);
       allModules = true;
      }
 
@@ -665,11 +665,11 @@ void ListItemsDriver(
      {
       if (allModules)
         {
-         EnvPrintRouter(theEnv,logicalName,DefmoduleName(theModule));
-         EnvPrintRouter(theEnv,logicalName,":\n");
+         PrintRouter(theEnv,logicalName,DefmoduleName(theModule));
+         PrintRouter(theEnv,logicalName,":\n");
         }
 
-      EnvSetCurrentModule(theEnv,theModule);
+      SetCurrentModule(theEnv,theModule);
       constructPtr = (*nextFunction)(theEnv,NULL);
       while (constructPtr != NULL)
         {
@@ -684,23 +684,23 @@ void ListItemsDriver(
             constructName = (*nameFunction)(constructPtr);
             if (constructName != NULL)
               {
-               if (allModules) EnvPrintRouter(theEnv,logicalName,"   ");
-               EnvPrintRouter(theEnv,logicalName,constructName);
-               EnvPrintRouter(theEnv,logicalName,"\n");
+               if (allModules) PrintRouter(theEnv,logicalName,"   ");
+               PrintRouter(theEnv,logicalName,constructName);
+               PrintRouter(theEnv,logicalName,"\n");
               }
            }
          else if (printFunction != NULL)
            {
-            if (allModules) EnvPrintRouter(theEnv,logicalName,"   ");
+            if (allModules) PrintRouter(theEnv,logicalName,"   ");
             (*printFunction)(theEnv,logicalName,constructPtr);
-            EnvPrintRouter(theEnv,logicalName,"\n");
+            PrintRouter(theEnv,logicalName,"\n");
            }
 
          constructPtr = (*nextFunction)(theEnv,constructPtr);
          count++;
         }
 
-      if (allModules) theModule = EnvGetNextDefmodule(theEnv,theModule);
+      if (allModules) theModule = GetNextDefmodule(theEnv,theModule);
       else theModule = NULL;
      }
 
@@ -735,13 +735,13 @@ long DoForAllModules(
    /* Loop through all of the modules. */
    /*==================================*/
 
-   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = EnvGetNextDefmodule(theEnv,theModule), moduleCount++)
+        theModule = GetNextDefmodule(theEnv,theModule), moduleCount++)
      {
-      EnvSetCurrentModule(theEnv,theModule);
+      SetCurrentModule(theEnv,theModule);
 
-      if ((interruptable) && EnvGetHaltExecution(theEnv))
+      if ((interruptable) && GetHaltExecution(theEnv))
         {
          RestoreCurrentModule(theEnv);
          return(-1L);
@@ -795,7 +795,7 @@ void RemoveConstructFromModule(
    if (currentConstruct == NULL)
      {
       SystemError(theEnv,"CSTRCPSR",1);
-      EnvExitRouter(theEnv,EXIT_FAILURE);
+      ExitRouter(theEnv,EXIT_FAILURE);
      }
 
    /*==========================*/
@@ -852,9 +852,9 @@ CLIPSLexeme *GetConstructNameAndComment(
    if (inputToken->tknType != SYMBOL_TOKEN)
      {
       PrintErrorID(theEnv,"CSTRCPSR",2,true);
-      EnvPrintRouter(theEnv,WERROR,"Missing name for ");
-      EnvPrintRouter(theEnv,WERROR,constructName);
-      EnvPrintRouter(theEnv,WERROR," construct\n");
+      PrintRouter(theEnv,WERROR,"Missing name for ");
+      PrintRouter(theEnv,WERROR,constructName);
+      PrintRouter(theEnv,WERROR," construct\n");
       return NULL;
      }
 
@@ -880,14 +880,14 @@ CLIPSLexeme *GetConstructNameAndComment(
          return NULL;
         }
 
-      theModule = EnvFindDefmodule(theEnv,moduleName->contents);
+      theModule = FindDefmodule(theEnv,moduleName->contents);
       if (theModule == NULL)
         {
          CantFindItemErrorMessage(theEnv,"defmodule",moduleName->contents);
          return NULL;
         }
 
-      EnvSetCurrentModule(theEnv,theModule);
+      SetCurrentModule(theEnv,theModule);
       name = ExtractConstructName(theEnv,separatorPosition,name->contents,SYMBOL_TYPE);
       if (name == NULL)
         {
@@ -903,7 +903,7 @@ CLIPSLexeme *GetConstructNameAndComment(
 
    else
      {
-      theModule = EnvGetCurrentModule(theEnv);
+      theModule = GetCurrentModule(theEnv);
       if (moduleNameAllowed)
         {
          PPBackup(theEnv);
@@ -941,11 +941,11 @@ CLIPSLexeme *GetConstructNameAndComment(
             if ((*deleteFunction)(theConstruct,theEnv) == false)
               {
                PrintErrorID(theEnv,"CSTRCPSR",4,true);
-               EnvPrintRouter(theEnv,WERROR,"Cannot redefine ");
-               EnvPrintRouter(theEnv,WERROR,constructName);
-               EnvPrintRouter(theEnv,WERROR," ");
-               EnvPrintRouter(theEnv,WERROR,name->contents);
-               EnvPrintRouter(theEnv,WERROR," while it is in use.\n");
+               PrintRouter(theEnv,WERROR,"Cannot redefine ");
+               PrintRouter(theEnv,WERROR,constructName);
+               PrintRouter(theEnv,WERROR," ");
+               PrintRouter(theEnv,WERROR,name->contents);
+               PrintRouter(theEnv,WERROR," while it is in use.\n");
                return NULL;
               }
            }
@@ -958,7 +958,7 @@ CLIPSLexeme *GetConstructNameAndComment(
    /*=============================================*/
 
 #if DEBUGGING_FUNCTIONS
-   if ((EnvGetWatchItem(theEnv,"compilations") == 1) &&
+   if ((GetWatchItem(theEnv,"compilations") == 1) &&
        GetPrintWhileLoading(theEnv) && (! ConstructData(theEnv)->CheckSyntaxMode))
      {
       const char *outRouter = WDIALOG;
@@ -966,22 +966,22 @@ CLIPSLexeme *GetConstructNameAndComment(
         {
          outRouter = WWARNING;
          PrintWarningID(theEnv,"CSTRCPSR",1,true);
-         EnvPrintRouter(theEnv,outRouter,"Redefining ");
+         PrintRouter(theEnv,outRouter,"Redefining ");
         }
-      else EnvPrintRouter(theEnv,outRouter,"Defining ");
+      else PrintRouter(theEnv,outRouter,"Defining ");
 
-      EnvPrintRouter(theEnv,outRouter,constructName);
-      EnvPrintRouter(theEnv,outRouter,": ");
-      EnvPrintRouter(theEnv,outRouter,name->contents);
+      PrintRouter(theEnv,outRouter,constructName);
+      PrintRouter(theEnv,outRouter,": ");
+      PrintRouter(theEnv,outRouter,name->contents);
 
-      if (fullMessageCR) EnvPrintRouter(theEnv,outRouter,"\n");
-      else EnvPrintRouter(theEnv,outRouter," ");
+      if (fullMessageCR) PrintRouter(theEnv,outRouter,"\n");
+      else PrintRouter(theEnv,outRouter," ");
      }
    else
 #endif
      {
       if (GetPrintWhileLoading(theEnv) && (! ConstructData(theEnv)->CheckSyntaxMode))
-        { EnvPrintRouter(theEnv,WDIALOG,constructSymbol); }
+        { PrintRouter(theEnv,WDIALOG,constructSymbol); }
      }
 
    /*===============================*/

@@ -76,11 +76,11 @@ struct watchData
 
 #define WatchData(theEnv) ((struct watchData *) GetEnvironmentData(theEnv,WATCH_DATA))
 
-   bool                           EnvWatch(Environment *,const char *);
-   bool                           EnvUnwatch(Environment *,const char *);
+   bool                           Watch(Environment *,const char *);
+   bool                           Unwatch(Environment *,const char *);
    void                           InitializeWatchData(Environment *);
-   bool                           EnvSetWatchItem(Environment *,const char *,bool,struct expr *);
-   int                            EnvGetWatchItem(Environment *,const char *);
+   bool                           SetWatchItem(Environment *,const char *,bool,struct expr *);
+   int                            GetWatchItem(Environment *,const char *);
    bool                           AddWatchItem(Environment *,const char *,int,bool *,int,
                                                       bool (*)(Environment *,int,bool,struct expr *),
                                                       bool (*)(Environment *,const char *,int,struct expr *));

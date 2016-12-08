@@ -304,14 +304,14 @@ static void BsaveDefinstancesDriver(
       Write out each definstances module
       ================================= */
    DefinstancesBinaryData(theEnv)->DefinstancesCount = 0L;
-   theModule = EnvGetNextDefmodule(theEnv,NULL);
+   theModule = GetNextDefmodule(theEnv,NULL);
    while (theModule != NULL)
      {
       theModuleItem = (DEFINSTANCES_MODULE *)
                       GetModuleItem(theEnv,theModule,FindModuleItem(theEnv,"definstances")->moduleIndex);
       AssignBsaveDefmdlItemHdrVals(&dummy_mitem.header,&theModuleItem->header);
       GenWrite(&dummy_mitem,sizeof(BSAVE_DEFINSTANCES_MODULE),fp);
-      theModule = EnvGetNextDefmodule(theEnv,theModule);
+      theModule = GetNextDefmodule(theEnv,theModule);
      }
 
    /*==============================*/

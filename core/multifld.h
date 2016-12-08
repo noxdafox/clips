@@ -73,7 +73,7 @@
    void                           CVMultifieldInstall(Environment *,Multifield *);
    void                           CVMultifieldDeinstall(Environment *,Multifield *);
    Multifield                    *StringToMultifield(Environment *,const char *);
-   Multifield                    *EnvCreateMultifield(Environment *,long);
+   Multifield                    *CreateMultifield(Environment *,long);
    void                           AddToMultifieldList(Environment *,Multifield *);
    void                           FlushMultifields(Environment *);
    void                           DuplicateMultifield(Environment *,UDFValue *,UDFValue *);
@@ -87,7 +87,7 @@
    Multifield                    *GetMultifieldList(Environment *);
    CLIPSLexeme                   *ImplodeMultifield(Environment *,UDFValue *);
    void                           EphemerateMultifield(Environment *,Multifield *);
-   Multifield                    *EnvArrayToMultifield(Environment *,CLIPSValue *,long size);
+   Multifield                    *ArrayToMultifield(Environment *,CLIPSValue *,long size);
    void                           NormalizeMultifield(Environment *,UDFValue *);
    void                           CLIPSToUDFValue(CLIPSValue *,UDFValue *);
 

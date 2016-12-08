@@ -67,16 +67,16 @@ void BasicMathFunctionDefinitions(
   Environment *theEnv)
   {
 #if ! RUN_TIME
-   EnvAddUDF(theEnv,"+","ld",2,UNBOUNDED,"ld",AdditionFunction,"AdditionFunction",NULL);
-   EnvAddUDF(theEnv,"*","ld",2,UNBOUNDED,"ld",MultiplicationFunction,"MultiplicationFunction",NULL);
-   EnvAddUDF(theEnv,"-","ld",2,UNBOUNDED,"ld",SubtractionFunction,"SubtractionFunction",NULL);
-   EnvAddUDF(theEnv,"/","d",2,UNBOUNDED,"ld",DivisionFunction,"DivisionFunction",NULL);
-   EnvAddUDF(theEnv,"div","l",2,UNBOUNDED,"ld",DivFunction,"DivFunction",NULL);
-   EnvAddUDF(theEnv,"integer","l",1,1,"ld",IntegerFunction,"IntegerFunction",NULL);
-   EnvAddUDF(theEnv,"float","d",1,1,"ld",FloatFunction,"FloatFunction",NULL);
-   EnvAddUDF(theEnv,"abs","ld",1,1,"ld",AbsFunction,"AbsFunction",NULL);
-   EnvAddUDF(theEnv,"min","ld",1,UNBOUNDED,"ld",MinFunction,"MinFunction",NULL);
-   EnvAddUDF(theEnv,"max","ld",1,UNBOUNDED,"ld",MaxFunction,"MaxFunction",NULL);
+   AddUDF(theEnv,"+","ld",2,UNBOUNDED,"ld",AdditionFunction,"AdditionFunction",NULL);
+   AddUDF(theEnv,"*","ld",2,UNBOUNDED,"ld",MultiplicationFunction,"MultiplicationFunction",NULL);
+   AddUDF(theEnv,"-","ld",2,UNBOUNDED,"ld",SubtractionFunction,"SubtractionFunction",NULL);
+   AddUDF(theEnv,"/","d",2,UNBOUNDED,"ld",DivisionFunction,"DivisionFunction",NULL);
+   AddUDF(theEnv,"div","l",2,UNBOUNDED,"ld",DivFunction,"DivFunction",NULL);
+   AddUDF(theEnv,"integer","l",1,1,"ld",IntegerFunction,"IntegerFunction",NULL);
+   AddUDF(theEnv,"float","d",1,1,"ld",FloatFunction,"FloatFunction",NULL);
+   AddUDF(theEnv,"abs","ld",1,1,"ld",AbsFunction,"AbsFunction",NULL);
+   AddUDF(theEnv,"min","ld",1,UNBOUNDED,"ld",MinFunction,"MinFunction",NULL);
+   AddUDF(theEnv,"max","ld",1,UNBOUNDED,"ld",MaxFunction,"MaxFunction",NULL);
 #endif
   }
 
@@ -126,9 +126,9 @@ void AdditionFunction(
    /*======================================================*/
 
    if (useFloatTotal)
-     { returnValue->floatValue = EnvCreateFloat(theEnv,ftotal); }
+     { returnValue->floatValue = CreateFloat(theEnv,ftotal); }
    else
-     { returnValue->integerValue = EnvCreateInteger(theEnv,ltotal); }
+     { returnValue->integerValue = CreateInteger(theEnv,ltotal); }
   }
 
 /****************************************/
@@ -177,9 +177,9 @@ void MultiplicationFunction(
    /*======================================================*/
 
    if (useFloatTotal)
-     { returnValue->floatValue = EnvCreateFloat(theEnv,ftotal); }
+     { returnValue->floatValue = CreateFloat(theEnv,ftotal); }
    else
-     { returnValue->integerValue = EnvCreateInteger(theEnv,ltotal); }
+     { returnValue->integerValue = CreateInteger(theEnv,ltotal); }
   }
 
 /*************************************/
@@ -245,9 +245,9 @@ void SubtractionFunction(
    /*======================================================*/
 
    if (useFloatTotal)
-     { returnValue->floatValue = EnvCreateFloat(theEnv,ftotal); }
+     { returnValue->floatValue = CreateFloat(theEnv,ftotal); }
    else
-     { returnValue->integerValue = EnvCreateInteger(theEnv,ltotal); }
+     { returnValue->integerValue = CreateInteger(theEnv,ltotal); }
   }
 
 /***********************************/
@@ -294,8 +294,8 @@ void DivisionFunction(
       if (theNumber == 0.0)
         {
          DivideByZeroErrorMessage(theEnv,"/");
-         EnvSetEvaluationError(theEnv,true);
-         returnValue->floatValue = EnvCreateFloat(theEnv,1.0);
+         SetEvaluationError(theEnv,true);
+         returnValue->floatValue = CreateFloat(theEnv,1.0);
          return;
         }
 
@@ -307,7 +307,7 @@ void DivisionFunction(
    /* then return a float, otherwise return an integer.    */
    /*======================================================*/
 
-   returnValue->floatValue = EnvCreateFloat(theEnv,ftotal);
+   returnValue->floatValue = CreateFloat(theEnv,ftotal);
   }
 
 /*************************************/
@@ -350,8 +350,8 @@ void DivFunction(
       if (theNumber == 0LL)
         {
          DivideByZeroErrorMessage(theEnv,"div");
-         EnvSetEvaluationError(theEnv,true);
-         returnValue->integerValue = EnvCreateInteger(theEnv,1L);
+         SetEvaluationError(theEnv,true);
+         returnValue->integerValue = CreateInteger(theEnv,1L);
          return;
         }
 
@@ -362,7 +362,7 @@ void DivFunction(
    /* The result of the div function is always an integer. */
    /*======================================================*/
 
-   returnValue->integerValue = EnvCreateInteger(theEnv,total);
+   returnValue->integerValue = CreateInteger(theEnv,total);
   }
 
 /*****************************************/
@@ -387,7 +387,7 @@ void IntegerFunction(
    /*============================================*/
 
    if (CVIsType(returnValue,FLOAT_BIT))
-     { returnValue->integerValue = EnvCreateInteger(theEnv,CVCoerceToInteger(returnValue)); }
+     { returnValue->integerValue = CreateInteger(theEnv,CVCoerceToInteger(returnValue)); }
   }
 
 /***************************************/
@@ -412,7 +412,7 @@ void FloatFunction(
    /*=============================================*/
 
    if (CVIsType(returnValue,INTEGER_BIT))
-     { returnValue->floatValue = EnvCreateFloat(theEnv,CVCoerceToFloat(returnValue)); }
+     { returnValue->floatValue = CreateFloat(theEnv,CVCoerceToFloat(returnValue)); }
   }
 
 /*************************************/
@@ -439,13 +439,13 @@ void AbsFunction(
      {
       long long lv = returnValue->integerValue->contents;
       if (lv < 0L)
-        { returnValue->integerValue = EnvCreateInteger(theEnv,-lv); }
+        { returnValue->integerValue = CreateInteger(theEnv,-lv); }
      }
    else
      {
       double dv = returnValue->floatValue->contents;
       if (dv < 0.0)
-        { returnValue->floatValue = EnvCreateFloat(theEnv,-dv); }
+        { returnValue->floatValue = CreateFloat(theEnv,-dv); }
      }
   }
 

@@ -85,22 +85,22 @@ struct joinInformation
 #define SUCCINCT 1
 #define TERSE    2
 
-   bool                           EnvGetBetaMemoryResizing(Environment *);
-   bool                           EnvSetBetaMemoryResizing(Environment *,bool);
+   bool                           GetBetaMemoryResizing(Environment *);
+   bool                           SetBetaMemoryResizing(Environment *,bool);
    void                           GetBetaMemoryResizingCommand(Environment *,UDFContext *,UDFValue *);
    void                           SetBetaMemoryResizingCommand(Environment *,UDFContext *,UDFValue *);
    void                           DefruleMatches(Defrule *,int,CLIPSValue *);
-   void                           EnvJoinActivity(Environment *,Defrule *,int,UDFValue *);
+   void                           JoinActivity(Environment *,Defrule *,int,UDFValue *);
    void                           DefruleCommands(Environment *);
    void                           MatchesCommand(Environment *,UDFContext *,UDFValue *);
    void                           JoinActivityCommand(Environment *,UDFContext *,UDFValue *);
    void                           TimetagFunction(Environment *,UDFContext *,UDFValue *);
-   long                           EnvAlphaJoinCount(Environment *,Defrule *);
-   long                           EnvBetaJoinCount(Environment *,Defrule *);
-   struct joinInformation        *EnvCreateJoinArray(Environment *,long);
-   void                           EnvFreeJoinArray(Environment *,struct joinInformation *,long);
-   void                           EnvAlphaJoins(Environment *,Defrule *,long,struct joinInformation *);
-   void                           EnvBetaJoins(Environment *,Defrule *,long,struct joinInformation *);
+   long                           AlphaJoinCount(Environment *,Defrule *);
+   long                           BetaJoinCount(Environment *,Defrule *);
+   struct joinInformation        *CreateJoinArray(Environment *,long);
+   void                           FreeJoinArray(Environment *,struct joinInformation *,long);
+   void                           AlphaJoins(Environment *,Defrule *,long,struct joinInformation *);
+   void                           BetaJoins(Environment *,Defrule *,long,struct joinInformation *);
    void                           JoinActivityResetCommand(Environment *,UDFContext *,UDFValue *);
 #if DEVELOPER
    void                           ShowJoinsCommand(Environment *,UDFContext *,UDFValue *);

@@ -97,7 +97,7 @@ static struct patternNodeHashEntry **CreatePatternHashTable(
     theTable = (struct patternNodeHashEntry **)
                gm3(theEnv,sizeof (struct patternNodeHashEntry *) * tableSize);
 
-    if (theTable == NULL) EnvExitRouter(theEnv,EXIT_FAILURE);
+    if (theTable == NULL) ExitRouter(theEnv,EXIT_FAILURE);
 
     for (i = 0; i < tableSize; i++) theTable[i] = NULL;
 
@@ -310,12 +310,12 @@ void ReservedPatternSymbolErrorMsg(
   const char *usedFor)
   {
    PrintErrorID(theEnv,"PATTERN",1,true);
-   EnvPrintRouter(theEnv,WERROR,"The symbol ");
-   EnvPrintRouter(theEnv,WERROR,theSymbol);
-   EnvPrintRouter(theEnv,WERROR," has special meaning\n");
-   EnvPrintRouter(theEnv,WERROR,"and may not be used as ");
-   EnvPrintRouter(theEnv,WERROR,usedFor);
-   EnvPrintRouter(theEnv,WERROR,".\n");
+   PrintRouter(theEnv,WERROR,"The symbol ");
+   PrintRouter(theEnv,WERROR,theSymbol);
+   PrintRouter(theEnv,WERROR," has special meaning\n");
+   PrintRouter(theEnv,WERROR,"and may not be used as ");
+   PrintRouter(theEnv,WERROR,usedFor);
+   PrintRouter(theEnv,WERROR,".\n");
   }
 
 /************************************************************/
@@ -370,7 +370,7 @@ void GetNextPatternEntity(
    else
      {
       SystemError(theEnv,"PATTERN",1);
-      EnvExitRouter(theEnv,EXIT_FAILURE);
+      ExitRouter(theEnv,EXIT_FAILURE);
      }
 
    /*================================================*/
@@ -770,13 +770,13 @@ struct lhsParseNode *RestrictionParse(
       if (theConstraints->maxFields->value != SymbolData(theEnv)->PositiveInfinity)
         {
          ReturnExpression(theEnv,tempConstraints->maxFields);
-         tempConstraints->maxFields = GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,theConstraints->maxFields->integerValue->contents - numberOfSingleFields));
+         tempConstraints->maxFields = GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,theConstraints->maxFields->integerValue->contents - numberOfSingleFields));
         }
 
       if ((numberOfMultifields == 1) && (theConstraints->minFields->value != SymbolData(theEnv)->NegativeInfinity))
         {
          ReturnExpression(theEnv,tempConstraints->minFields);
-         tempConstraints->minFields = GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,theConstraints->minFields->integerValue->contents - numberOfSingleFields));
+         tempConstraints->minFields = GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,theConstraints->minFields->integerValue->contents - numberOfSingleFields));
         }
      }
 
@@ -992,7 +992,7 @@ static struct lhsParseNode *ConjuctiveRestrictionParse(
       else
         {
          SystemError(theEnv,"RULEPSR",1);
-         EnvExitRouter(theEnv,EXIT_FAILURE);
+         ExitRouter(theEnv,EXIT_FAILURE);
         }
 
       /*==================================================*/
@@ -1101,7 +1101,7 @@ static bool CheckForVariableMixing(
 
      {
       PrintErrorID(theEnv,"PATTERN",2,true);
-      EnvPrintRouter(theEnv,WERROR,"Single and multifield constraints cannot be mixed in a field constraint\n");
+      PrintRouter(theEnv,WERROR,"Single and multifield constraints cannot be mixed in a field constraint\n");
       return true;
      }
 

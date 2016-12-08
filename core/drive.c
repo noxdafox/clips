@@ -247,7 +247,7 @@ void NetworkAssertRight(
          if (EvaluationData(theEnv)->EvaluationError)
            {
             if (join->patternIsNegated) exprResult = true;
-            EnvSetEvaluationError(theEnv,false);
+            SetEvaluationError(theEnv,false);
            }
 
 #if DEVELOPER
@@ -261,7 +261,7 @@ void NetworkAssertRight(
          EngineData(theEnv)->GlobalLHSBinds = lhsBinds;
          exprResult = EvaluateJoinExpression(theEnv,join->secondaryNetworkTest,join);
          if (EvaluationData(theEnv)->EvaluationError)
-           { EnvSetEvaluationError(theEnv,false); }
+           { SetEvaluationError(theEnv,false); }
         }
 
       /*====================================================*/
@@ -375,7 +375,7 @@ void NetworkAssertLeft(
 
          exprResult = EvaluateJoinExpression(theEnv,join->networkTest,join);
          if (EvaluationData(theEnv)->EvaluationError)
-           { EnvSetEvaluationError(theEnv,false); }
+           { SetEvaluationError(theEnv,false); }
 
          EngineData(theEnv)->GlobalLHSBinds = oldLHSBinds;
          EngineData(theEnv)->GlobalRHSBinds = oldRHSBinds;
@@ -463,7 +463,7 @@ void NetworkAssertLeft(
          if (EvaluationData(theEnv)->EvaluationError)
            {
             if (join->patternIsNegated) exprResult = true;
-            EnvSetEvaluationError(theEnv,false);
+            SetEvaluationError(theEnv,false);
            }
 
 #if DEVELOPER
@@ -479,7 +479,7 @@ void NetworkAssertLeft(
          EngineData(theEnv)->GlobalRHSBinds = rhsBinds;
          exprResult = EvaluateJoinExpression(theEnv,join->secondaryNetworkTest,join);
          if (EvaluationData(theEnv)->EvaluationError)
-           { EnvSetEvaluationError(theEnv,false); }
+           { SetEvaluationError(theEnv,false); }
         }
 
       /*====================================================*/
@@ -563,7 +563,7 @@ void NetworkAssertLeft(
 
          exprResult = EvaluateJoinExpression(theEnv,join->secondaryNetworkTest,join);
          if (EvaluationData(theEnv)->EvaluationError)
-           { EnvSetEvaluationError(theEnv,false); }
+           { SetEvaluationError(theEnv,false); }
 
          if (exprResult)
             { PPDrive(theEnv,lhsBinds,NULL,join,operation); }
@@ -1182,15 +1182,15 @@ static void JoinNetErrorMessage(
   struct joinNode *joinPtr)
   {
    PrintErrorID(theEnv,"DRIVE",1,true);
-   EnvPrintRouter(theEnv,WERROR,"This error occurred in the join network\n");
+   PrintRouter(theEnv,WERROR,"This error occurred in the join network\n");
 
-   EnvPrintRouter(theEnv,WERROR,"   Problem resides in associated join\n"); /* TBD generate test case for join with JFTR */
+   PrintRouter(theEnv,WERROR,"   Problem resides in associated join\n"); /* TBD generate test case for join with JFTR */
 /*
    sprintf(buffer,"   Problem resides in join #%d in rule(s):\n",joinPtr->depth);
-   EnvPrintRouter(theEnv,WERROR,buffer);
+   PrintRouter(theEnv,WERROR,buffer);
 */
    TraceErrorToRule(theEnv,joinPtr,"      ");
-   EnvPrintRouter(theEnv,WERROR,"\n");
+   PrintRouter(theEnv,WERROR,"\n");
   }
 
 #endif /* DEFRULE_CONSTRUCT */

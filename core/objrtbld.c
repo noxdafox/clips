@@ -203,7 +203,7 @@ void SetupObjectPatternStuff(
    if (ReservedPatternSymbol(theEnv,"object",NULL) == true)
      {
       SystemError(theEnv,"OBJRTBLD",1);
-      EnvExitRouter(theEnv,EXIT_FAILURE);
+      ExitRouter(theEnv,EXIT_FAILURE);
      }
    AddReservedPatternSymbol(theEnv,"object",NULL);
 
@@ -248,7 +248,7 @@ void SetupObjectPatternStuff(
 #endif
 
 #if (! RUN_TIME)
-   EnvAddUDF(theEnv,"object-pattern-match-delay","*",0,UNBOUNDED,NULL,ObjectMatchDelay,"ObjectMatchDelay",NULL);
+   AddUDF(theEnv,"object-pattern-match-delay","*",0,UNBOUNDED,NULL,ObjectMatchDelay,"ObjectMatchDelay",NULL);
    FuncSeqOvlFlags(theEnv,"object-pattern-match-delay",false,false);
 #endif
 
@@ -332,7 +332,7 @@ static struct lhsParseNode *ObjectLHSParse(
    if (EmptyClassBitMap(clsset))
      {
       PrintErrorID(theEnv,"OBJRTBLD",1,false);
-      EnvPrintRouter(theEnv,WERROR,"No objects of existing classes can satisfy pattern.\n");
+      PrintRouter(theEnv,WERROR,"No objects of existing classes can satisfy pattern.\n");
       DeleteIntermediateClassBitMap(theEnv,clsset);
       return NULL;
      }
@@ -403,16 +403,16 @@ static struct lhsParseNode *ObjectLHSParse(
       if (EmptyClassBitMap(tmpset))
         {
          PrintErrorID(theEnv,"OBJRTBLD",2,false);
-         EnvPrintRouter(theEnv,WERROR,"No objects of existing classes can satisfy ");
-         EnvPrintRouter(theEnv,WERROR,tmpNode->slot->contents);
-         EnvPrintRouter(theEnv,WERROR," restriction in object pattern.\n");
+         PrintRouter(theEnv,WERROR,"No objects of existing classes can satisfy ");
+         PrintRouter(theEnv,WERROR,tmpNode->slot->contents);
+         PrintRouter(theEnv,WERROR," restriction in object pattern.\n");
          ReturnLHSParseNodes(theEnv,tmpNode);
          goto ObjectLHSParseERROR;
         }
       if (EmptyClassBitMap(clsset))
         {
          PrintErrorID(theEnv,"OBJRTBLD",1,false);
-         EnvPrintRouter(theEnv,WERROR,"No objects of existing classes can satisfy pattern.\n");
+         PrintRouter(theEnv,WERROR,"No objects of existing classes can satisfy pattern.\n");
          ReturnLHSParseNodes(theEnv,tmpNode);
          goto ObjectLHSParseERROR;
         }
@@ -432,7 +432,7 @@ static struct lhsParseNode *ObjectLHSParse(
       if (EmptyClassBitMap(clsset))
         {
          PrintErrorID(theEnv,"OBJRTBLD",1,false);
-         EnvPrintRouter(theEnv,WERROR,"No objects of existing classes can satisfy pattern.\n");
+         PrintRouter(theEnv,WERROR,"No objects of existing classes can satisfy pattern.\n");
          goto ObjectLHSParseERROR;
         }
       firstNode = GetLHSParseNode(theEnv);
@@ -449,7 +449,7 @@ static struct lhsParseNode *ObjectLHSParse(
      }
    DeleteIntermediateClassBitMap(theEnv,tmpset);
    clsset = PackClassBitMap(theEnv,clsset);
-   firstNode->userData = EnvAddBitMap(theEnv,clsset,ClassBitMapSize(clsset));
+   firstNode->userData = AddBitMap(theEnv,clsset,ClassBitMapSize(clsset));
    IncrementBitMapCount(firstNode->userData);
    DeleteIntermediateClassBitMap(theEnv,clsset);
    DecrementIndentDepth(theEnv,7);
@@ -622,14 +622,14 @@ static bool ReorderAndAnalyzeObjectPattern(
         {
          PrintErrorID(theEnv,"OBJRTBLD",3,true);
          DeleteIntermediateClassBitMap(theEnv,tmpset);
-         EnvPrintRouter(theEnv,WERROR,"No objects of existing classes can satisfy pattern #");
+         PrintRouter(theEnv,WERROR,"No objects of existing classes can satisfy pattern #");
          PrintLongInteger(theEnv,WERROR,(long long) topNode->pattern);
-         EnvPrintRouter(theEnv,WERROR,".\n");
+         PrintRouter(theEnv,WERROR,".\n");
          return true;
         }
       clsset = PackClassBitMap(theEnv,tmpset);
       DeleteClassBitMap(theEnv,bitmap_node->userData);
-      bitmap_node->userData = EnvAddBitMap(theEnv,clsset,ClassBitMapSize(clsset));
+      bitmap_node->userData = AddBitMap(theEnv,clsset,ClassBitMapSize(clsset));
       IncrementBitMapCount(bitmap_node->userData);
       DeleteIntermediateClassBitMap(theEnv,clsset);
      }
@@ -1304,9 +1304,9 @@ static bool CheckDuplicateSlots(
       if (nodeList->slot == slotName)
         {
          PrintErrorID(theEnv,"OBJRTBLD",4,true);
-         EnvPrintRouter(theEnv,WERROR,"Multiple restrictions on attribute ");
-         EnvPrintRouter(theEnv,WERROR,slotName->contents);
-         EnvPrintRouter(theEnv,WERROR," not allowed.\n");
+         PrintRouter(theEnv,WERROR,"Multiple restrictions on attribute ");
+         PrintRouter(theEnv,WERROR,slotName->contents);
+         PrintRouter(theEnv,WERROR," not allowed.\n");
          return true;
         }
       nodeList = nodeList->right;
@@ -1538,7 +1538,7 @@ static void InitializeClassBitMap(
      }
    if (set)
      {
-      currentModule = EnvGetCurrentModule(theEnv);
+      currentModule = GetCurrentModule(theEnv);
       for (i = 0 ; i <= (int) bmp->maxid ; i++)
         {
          cls = DefclassData(theEnv)->ClassIDMap[i];
@@ -1742,7 +1742,7 @@ static bool ProcessClassRestriction(
          if (chk->value == NULL)
            {
             PrintErrorID(theEnv,"OBJRTBLD",5,false);
-            EnvPrintRouter(theEnv,WERROR,"Undefined class in object pattern.\n");
+            PrintRouter(theEnv,WERROR,"Undefined class in object pattern.\n");
             DeleteIntermediateClassBitMap(theEnv,tmpset1);
             DeleteIntermediateClassBitMap(theEnv,tmpset2);
             return false;
@@ -1765,8 +1765,8 @@ static bool ProcessClassRestriction(
    if (EmptyClassBitMap(tmpset1))
      {
       PrintErrorID(theEnv,"OBJRTBLD",2,false);
-      EnvPrintRouter(theEnv,WERROR,"No objects of existing classes can satisfy ");
-      EnvPrintRouter(theEnv,WERROR,"is-a restriction in object pattern.\n");
+      PrintRouter(theEnv,WERROR,"No objects of existing classes can satisfy ");
+      PrintRouter(theEnv,WERROR,"is-a restriction in object pattern.\n");
       DeleteIntermediateClassBitMap(theEnv,tmpset1);
       DeleteIntermediateClassBitMap(theEnv,tmpset2);
       return false;
@@ -2046,7 +2046,7 @@ static CLIPSBitMap *FormSlotBitMap(
       ============================================ */
    for (node = thePattern ; node != NULL ; node = node->right)
      SetBitMap(bmp->map,node->slotNumber);
-   hshBmp = (CLIPSBitMap *) EnvAddBitMap(theEnv,bmp,SlotBitMapSize(bmp));
+   hshBmp = (CLIPSBitMap *) AddBitMap(theEnv,bmp,SlotBitMapSize(bmp));
    rm(theEnv,bmp,size);
    return(hshBmp);
   }

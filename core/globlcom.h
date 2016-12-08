@@ -53,11 +53,11 @@
 
    void                           DefglobalCommandDefinitions(Environment *);
    void                           SetResetGlobalsCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           EnvSetResetGlobals(Environment *,bool);
+   bool                           SetResetGlobals(Environment *,bool);
    void                           GetResetGlobalsCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           EnvGetResetGlobals(Environment *);
+   bool                           GetResetGlobals(Environment *);
    void                           ShowDefglobalsCommand(Environment *,UDFContext *,UDFValue *);
-   void                           EnvShowDefglobals(Environment *,const char *,Defmodule *);
+   void                           ShowDefglobals(Environment *,const char *,Defmodule *);
 
 #endif /* _H_globlcom */
 

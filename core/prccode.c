@@ -293,14 +293,14 @@ Expression *ParseProcParameters(
         if (check->value == tkn->value)
          {
           PrintErrorID(theEnv,"PRCCODE",7,false);
-          EnvPrintRouter(theEnv,WERROR,"Duplicate parameter names not allowed.\n");
+          PrintRouter(theEnv,WERROR,"Duplicate parameter names not allowed.\n");
           ReturnExpression(theEnv,parameterList);
           return NULL;
          }
       if (*wildcard != NULL)
         {
          PrintErrorID(theEnv,"PRCCODE",8,false);
-         EnvPrintRouter(theEnv,WERROR,"No parameters allowed after wildcard parameter.\n");
+         PrintRouter(theEnv,WERROR,"No parameters allowed after wildcard parameter.\n");
          ReturnExpression(theEnv,parameterList);
          return NULL;
         }
@@ -542,11 +542,11 @@ int ReplaceProcVars( // TBD should be bool? returns -1, 0, 1
                if (errorCode == 0)
                  {
                   PrintErrorID(theEnv,"PRCCODE",3,true);
-                  EnvPrintRouter(theEnv,WERROR,"Undefined variable ");
-                  EnvPrintRouter(theEnv,WERROR,bindName->contents);
-                  EnvPrintRouter(theEnv,WERROR," referenced in ");
-                  EnvPrintRouter(theEnv,WERROR,bodytype);
-                  EnvPrintRouter(theEnv,WERROR,".\n");
+                  PrintRouter(theEnv,WERROR,"Undefined variable ");
+                  PrintRouter(theEnv,WERROR,bindName->contents);
+                  PrintRouter(theEnv,WERROR," referenced in ");
+                  PrintRouter(theEnv,WERROR,bodytype);
+                  PrintRouter(theEnv,WERROR,".\n");
                  }
                return 1;
               }
@@ -560,7 +560,7 @@ int ReplaceProcVars( // TBD should be bool? returns -1, 0, 1
          else if ((position > 0) && (boundPosn == 0))
            {
             actions->type = (unsigned short) ((bindName != wildcard) ? PROC_PARAM : PROC_WILD_PARAM);
-            actions->value = EnvAddBitMap(theEnv,&position,(int) sizeof(int));
+            actions->value = AddBitMap(theEnv,&position,(int) sizeof(int));
            }
 
          /*=========================================================*/
@@ -591,7 +591,7 @@ int ReplaceProcVars( // TBD should be bool? returns -1, 0, 1
             pvar.first = boundPosn;
             pvar.second = position;
             pvar.secondFlag = (bindName != wildcard) ? 0 : 1;
-            actions->value = EnvAddBitMap(theEnv,&pvar,(int) sizeof(PACKED_PROC_VAR));
+            actions->value = AddBitMap(theEnv,&pvar,(int) sizeof(PACKED_PROC_VAR));
             actions->argList = GenConstant(theEnv,SYMBOL_TYPE,bindName);
             actions->argList->nextArg = altvarexp;
            }
@@ -624,7 +624,7 @@ int ReplaceProcVars( // TBD should be bool? returns -1, 0, 1
            {
             actions->type = PROC_BIND;
             boundPosn = SearchParsedBindNames(theEnv,actions->argList->lexemeValue);
-            actions->value = EnvAddBitMap(theEnv,&boundPosn,(int) sizeof(int));
+            actions->value = AddBitMap(theEnv,&boundPosn,(int) sizeof(int));
             arg_lvl = actions->argList->nextArg;
             rtn_struct(theEnv,expr,actions->argList);
             actions->argList = arg_lvl;
@@ -651,7 +651,7 @@ Expression *GenProcWildcardReference(
   Environment *theEnv,
   int theIndex)
   {
-   return(GenConstant(theEnv,PROC_WILD_PARAM,EnvAddBitMap(theEnv,&theIndex,(int) sizeof(int))));
+   return(GenConstant(theEnv,PROC_WILD_PARAM,AddBitMap(theEnv,&theIndex,(int) sizeof(int))));
   }
 
 #endif
@@ -909,9 +909,9 @@ void EvaluateProcActions(
    for (i = 0 ; i < lvarcnt ; i++)
      ProceduralPrimitiveData(theEnv)->LocalVarArray[i].supplementalInfo = FalseSymbol(theEnv);
 
-   oldModule = EnvGetCurrentModule(theEnv);
+   oldModule = GetCurrentModule(theEnv);
    if (oldModule != theModule)
-     EnvSetCurrentModule(theEnv,theModule);
+     SetCurrentModule(theEnv,theModule);
    oldActions = ProceduralPrimitiveData(theEnv)->CurrentProcActions;
    ProceduralPrimitiveData(theEnv)->CurrentProcActions = actions;
 
@@ -921,12 +921,12 @@ void EvaluateProcActions(
      }
 
    ProceduralPrimitiveData(theEnv)->CurrentProcActions = oldActions;
-   if (oldModule != EnvGetCurrentModule(theEnv))
-     EnvSetCurrentModule(theEnv,oldModule);
+   if (oldModule != GetCurrentModule(theEnv))
+     SetCurrentModule(theEnv,oldModule);
    if ((crtproc != NULL) ? EvaluationData(theEnv)->HaltExecution : false)
      {
       PrintErrorID(theEnv,"PRCCODE",4,false);
-      EnvPrintRouter(theEnv,WERROR,"Execution halted during the actions of ");
+      PrintRouter(theEnv,WERROR,"Execution halted during the actions of ");
       (*crtproc)(theEnv);
      }
    if ((ProceduralPrimitiveData(theEnv)->WildcardValue != NULL) ? (returnValue->value == ProceduralPrimitiveData(theEnv)->WildcardValue->value) : false)
@@ -965,14 +965,14 @@ void PrintProcParamArray(
   {
    int i;
 
-   EnvPrintRouter(theEnv,logName," (");
+   PrintRouter(theEnv,logName," (");
    for (i = 0 ; i < ProceduralPrimitiveData(theEnv)->ProcParamArraySize ; i++)
      {
       PrintDataObject(theEnv,logName,&ProceduralPrimitiveData(theEnv)->ProcParamArray[i]);
       if (i != ProceduralPrimitiveData(theEnv)->ProcParamArraySize-1)
-        EnvPrintRouter(theEnv,logName," ");
+        PrintRouter(theEnv,logName," ");
      }
-   EnvPrintRouter(theEnv,logName,")\n");
+   PrintRouter(theEnv,logName,")\n");
   }
 
 /****************************************************************
@@ -1105,18 +1105,18 @@ static void EvaluateProcParameters(
          if (temp.header->type == VOID_TYPE)
            {
             PrintErrorID(theEnv,"PRCCODE",2,false);
-            EnvPrintRouter(theEnv,WERROR,"Functions without a return value are illegal as ");
-            EnvPrintRouter(theEnv,WERROR,bodytype);
-            EnvPrintRouter(theEnv,WERROR," arguments.\n");
-            EnvSetEvaluationError(theEnv,true);
+            PrintRouter(theEnv,WERROR,"Functions without a return value are illegal as ");
+            PrintRouter(theEnv,WERROR,bodytype);
+            PrintRouter(theEnv,WERROR," arguments.\n");
+            SetEvaluationError(theEnv,true);
            }
          PrintErrorID(theEnv,"PRCCODE",6,false);
-         EnvPrintRouter(theEnv,WERROR,"This error occurred while evaluating arguments ");
-         EnvPrintRouter(theEnv,WERROR,"for the ");
-         EnvPrintRouter(theEnv,WERROR,bodytype);
-         EnvPrintRouter(theEnv,WERROR," ");
-         EnvPrintRouter(theEnv,WERROR,pname);
-         EnvPrintRouter(theEnv,WERROR,".\n");
+         PrintRouter(theEnv,WERROR,"This error occurred while evaluating arguments ");
+         PrintRouter(theEnv,WERROR,"for the ");
+         PrintRouter(theEnv,WERROR,bodytype);
+         PrintRouter(theEnv,WERROR," ");
+         PrintRouter(theEnv,WERROR,pname);
+         PrintRouter(theEnv,WERROR,".\n");
          rm(theEnv,rva,(sizeof(UDFValue) * numberOfParameters));
          return;
         }
@@ -1195,16 +1195,16 @@ static bool GetProcBind(
    if (pvar->second == 0)
      {
       PrintErrorID(theEnv,"PRCCODE",5,false);
-      EnvSetEvaluationError(theEnv,true);
-      EnvPrintRouter(theEnv,WERROR,"Variable ");
-      EnvPrintRouter(theEnv,WERROR,GetFirstArgument()->lexemeValue->contents);
+      SetEvaluationError(theEnv,true);
+      PrintRouter(theEnv,WERROR,"Variable ");
+      PrintRouter(theEnv,WERROR,GetFirstArgument()->lexemeValue->contents);
       if (ProceduralPrimitiveData(theEnv)->ProcUnboundErrFunc != NULL)
         {
-         EnvPrintRouter(theEnv,WERROR," unbound in ");
+         PrintRouter(theEnv,WERROR," unbound in ");
          (*ProceduralPrimitiveData(theEnv)->ProcUnboundErrFunc)(theEnv);
         }
       else
-        EnvPrintRouter(theEnv,WERROR," unbound.\n");
+        PrintRouter(theEnv,WERROR," unbound.\n");
       returnValue->value = FalseSymbol(theEnv);
       return true;
      }
@@ -1453,9 +1453,9 @@ static bool EvaluateBadCall(
 #pragma unused(value)
 #endif
    PrintErrorID(theEnv,"PRCCODE",1,false);
-   EnvPrintRouter(theEnv,WERROR,"Attempted to call a deffunction/generic function ");
-   EnvPrintRouter(theEnv,WERROR,"which does not exist.\n");
-   EnvSetEvaluationError(theEnv,true);
+   PrintRouter(theEnv,WERROR,"Attempted to call a deffunction/generic function ");
+   PrintRouter(theEnv,WERROR,"which does not exist.\n");
+   SetEvaluationError(theEnv,true);
    returnValue->value = FalseSymbol(theEnv);
    return false;
   }

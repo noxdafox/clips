@@ -723,10 +723,10 @@ static void PatternNetErrorMessage(
    /*=======================================*/
 
    PrintErrorID(theEnv,"FACTMCH",1,true);
-   EnvPrintRouter(theEnv,WERROR,"This error occurred in the fact pattern network\n");
-   EnvPrintRouter(theEnv,WERROR,"   Currently active fact: ");
+   PrintRouter(theEnv,WERROR,"This error occurred in the fact pattern network\n");
+   PrintRouter(theEnv,WERROR,"   Currently active fact: ");
    PrintFact(theEnv,WERROR,FactData(theEnv)->CurrentPatternFact,false,false,NULL);
-   EnvPrintRouter(theEnv,WERROR,"\n");
+   PrintRouter(theEnv,WERROR,"\n");
 
    /*==============================================*/
    /* Print the field position or slot name of the */
@@ -742,7 +742,7 @@ static void PatternNetErrorMessage(
       gensprintf(buffer,"   Problem resides in slot %s\n",theSlots->slotName->contents);
      }
 
-   EnvPrintRouter(theEnv,WERROR,buffer);
+   PrintRouter(theEnv,WERROR,buffer);
 
    /*==========================================================*/
    /* Trace the pattern to its entry point to the join network */
@@ -752,7 +752,7 @@ static void PatternNetErrorMessage(
    /*==========================================================*/
 
    TraceErrorToJoin(theEnv,patternPtr,false);
-   EnvPrintRouter(theEnv,WERROR,"\n");
+   PrintRouter(theEnv,WERROR,"\n");
   }
 
 /***************************************************************************/
@@ -875,9 +875,9 @@ void FactsIncrementalReset(
   {
    Fact *factPtr;
 
-   for (factPtr = EnvGetNextFact(theEnv,NULL);
+   for (factPtr = GetNextFact(theEnv,NULL);
         factPtr != NULL;
-        factPtr = EnvGetNextFact(theEnv,factPtr))
+        factPtr = GetNextFact(theEnv,factPtr))
      {
       EngineData(theEnv)->JoinOperationInProgress = true;
       FactPatternMatch(theEnv,factPtr,

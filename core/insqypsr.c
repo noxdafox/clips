@@ -278,9 +278,9 @@ static Expression *ParseQueryRestrictions(
          if (tmp->value == queryInputToken->value)
            {
             PrintErrorID(theEnv,"INSQYPSR",1,false);
-            EnvPrintRouter(theEnv,WERROR,"Duplicate instance member variable name in function ");
-            EnvPrintRouter(theEnv,WERROR,ExpressionFunctionCallName(top)->contents);
-            EnvPrintRouter(theEnv,WERROR,".\n");
+            PrintRouter(theEnv,WERROR,"Duplicate instance member variable name in function ");
+            PrintRouter(theEnv,WERROR,ExpressionFunctionCallName(top)->contents);
+            PrintRouter(theEnv,WERROR,".\n");
             goto ParseQueryRestrictionsError2;
            }
          tmp = tmp->nextArg;
@@ -431,9 +431,9 @@ static bool ParseQueryTestExpression(
       ClearParsedBindNames(theEnv);
       SetParsedBindNames(theEnv,oldBindList);
       PrintErrorID(theEnv,"INSQYPSR",2,false);
-      EnvPrintRouter(theEnv,WERROR,"Binds are not allowed in instance-set query in function ");
-      EnvPrintRouter(theEnv,WERROR,ExpressionFunctionCallName(top)->contents);
-      EnvPrintRouter(theEnv,WERROR,".\n");
+      PrintRouter(theEnv,WERROR,"Binds are not allowed in instance-set query in function ");
+      PrintRouter(theEnv,WERROR,ExpressionFunctionCallName(top)->contents);
+      PrintRouter(theEnv,WERROR,".\n");
       ReturnExpression(theEnv,top);
       return false;
      }
@@ -498,11 +498,11 @@ static bool ParseQueryActionExpression(
             ClearParsedBindNames(theEnv);
             SetParsedBindNames(theEnv,oldBindList);
             PrintErrorID(theEnv,"INSQYPSR",3,false);
-            EnvPrintRouter(theEnv,WERROR,"Cannot rebind instance-set member variable ");
-            EnvPrintRouter(theEnv,WERROR,tmpInsSetVars->lexemeValue->contents);
-            EnvPrintRouter(theEnv,WERROR," in function ");
-            EnvPrintRouter(theEnv,WERROR,ExpressionFunctionCallName(top)->contents);
-            EnvPrintRouter(theEnv,WERROR,".\n");
+            PrintRouter(theEnv,WERROR,"Cannot rebind instance-set member variable ");
+            PrintRouter(theEnv,WERROR,tmpInsSetVars->lexemeValue->contents);
+            PrintRouter(theEnv,WERROR," in function ");
+            PrintRouter(theEnv,WERROR,ExpressionFunctionCallName(top)->contents);
+            PrintRouter(theEnv,WERROR,".\n");
             ReturnExpression(theEnv,top);
             return false;
            }
@@ -565,8 +565,8 @@ static void ReplaceInstanceVariables(
            {
             bexp->type = FCALL;
             bexp->value = rindx_func;
-            eptr = GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,(long long) ndepth));
-            eptr->nextArg = GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,(long long) posn));
+            eptr = GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,(long long) ndepth));
+            eptr->nextArg = GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,(long long) posn));
             bexp->argList = eptr;
            }
          else if (sdirect == true)
@@ -640,9 +640,9 @@ static void ReplaceSlotReference(
             CloseStringSource(theEnv,"query-var");
             theExp->type = FCALL;
             theExp->value = func;
-            theExp->argList = GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,(long long) ndepth));
+            theExp->argList = GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,(long long) ndepth));
             theExp->argList->nextArg =
-              GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,(long long) posn));
+              GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,(long long) posn));
             theExp->argList->nextArg->nextArg = GenConstant(theEnv,TokenTypeToType(itkn.tknType),itkn.value);
             break;
            }

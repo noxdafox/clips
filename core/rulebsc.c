@@ -102,12 +102,12 @@
 void DefruleBasicCommands(
   Environment *theEnv)
   {
-   EnvAddResetFunction(theEnv,"defrule",ResetDefrules,70);
-   EnvAddResetFunction(theEnv,"defrule",ResetDefrulesPrime,10);
+   AddResetFunction(theEnv,"defrule",ResetDefrules,70);
+   AddResetFunction(theEnv,"defrule",ResetDefrulesPrime,10);
    AddSaveFunction(theEnv,"defrule",SaveDefrules,0);
 #if (! RUN_TIME)
    AddClearReadyFunction(theEnv,"defrule",ClearDefrulesReady,0);
-   EnvAddClearFunction(theEnv,"defrule",ClearDefrules,0);
+   AddClearFunction(theEnv,"defrule",ClearDefrules,0);
 #endif
 
 #if DEBUGGING_FUNCTIONS
@@ -115,14 +115,14 @@ void DefruleBasicCommands(
 #endif
 
 #if ! RUN_TIME
-   EnvAddUDF(theEnv,"get-defrule-list","m",0,1,"y",GetDefruleListFunction,"GetDefruleListFunction",NULL);
-   EnvAddUDF(theEnv,"undefrule","v",1,1,"y",UndefruleCommand,"UndefruleCommand",NULL);
-   EnvAddUDF(theEnv,"defrule-module","y",1,1,"y",DefruleModuleFunction,"DefruleModuleFunction",NULL);
+   AddUDF(theEnv,"get-defrule-list","m",0,1,"y",GetDefruleListFunction,"GetDefruleListFunction",NULL);
+   AddUDF(theEnv,"undefrule","v",1,1,"y",UndefruleCommand,"UndefruleCommand",NULL);
+   AddUDF(theEnv,"defrule-module","y",1,1,"y",DefruleModuleFunction,"DefruleModuleFunction",NULL);
 
 #if DEBUGGING_FUNCTIONS
-   EnvAddUDF(theEnv,"rules","v",0,1,"y",ListDefrulesCommand,"ListDefrulesCommand",NULL);
-   EnvAddUDF(theEnv,"list-defrules","v",0,1,"y",ListDefrulesCommand,"ListDefrulesCommand",NULL);
-   EnvAddUDF(theEnv,"ppdefrule","v",1,1,"y",PPDefruleCommand,"PPDefruleCommand",NULL);
+   AddUDF(theEnv,"rules","v",0,1,"y",ListDefrulesCommand,"ListDefrulesCommand",NULL);
+   AddUDF(theEnv,"list-defrules","v",0,1,"y",ListDefrulesCommand,"ListDefrulesCommand",NULL);
+   AddUDF(theEnv,"ppdefrule","v",1,1,"y",PPDefruleCommand,"PPDefruleCommand",NULL);
 #endif
 
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE)
@@ -151,8 +151,8 @@ static void ResetDefrules(
    struct partialMatch *notParent;
 
    DefruleData(theEnv)->CurrentEntityTimeTag = 1L;
-   EnvClearFocusStack(theEnv);
-   theModule = EnvFindDefmodule(theEnv,"MAIN");
+   ClearFocusStack(theEnv);
+   theModule = FindDefmodule(theEnv,"MAIN");
    DefmoduleFocus(theModule);
 
    for (theLink = DefruleData(theEnv)->RightPrimeJoins;
@@ -236,8 +236,8 @@ static bool ClearDefrulesReady(
 
    if (EngineData(theEnv)->JoinOperationInProgress) return false;
 
-   EnvClearFocusStack(theEnv);
-   if (EnvGetCurrentModule(theEnv) == NULL) return false;
+   ClearFocusStack(theEnv);
+   if (GetCurrentModule(theEnv) == NULL) return false;
 
    DefruleData(theEnv)->CurrentEntityTimeTag = 1L;
 
@@ -252,7 +252,7 @@ static void ClearDefrules(
   {
    Defmodule *theModule;
 
-   theModule = EnvFindDefmodule(theEnv,"MAIN");
+   theModule = FindDefmodule(theEnv,"MAIN");
    DefmoduleFocus(theModule);
   }
 
@@ -313,10 +313,10 @@ void GetDefruleListFunction(
   }
 
 /****************************************/
-/* EnvGetDefruleList: C access routine  */
+/* GetDefruleList: C access routine     */
 /*   for the get-defrule-list function. */
 /****************************************/
-void EnvGetDefruleList(
+void GetDefruleList(
   Environment *theEnv,
   UDFValue *returnValue,
   Defmodule *theModule)
@@ -378,11 +378,11 @@ void ListDefrulesCommand(
    ListConstructCommand(context,DefruleData(theEnv)->DefruleConstruct);
   }
 
-/*************************************/
-/* EnvListDefrules: C access routine */
-/*   for the list-defrules command.  */
-/*************************************/
-void EnvListDefrules(
+/************************************/
+/* ListDefrules: C access routine   */
+/*   for the list-defrules command. */
+/************************************/
+void ListDefrules(
   Environment *theEnv,
   const char *logicalName,
   Defmodule *theModule)

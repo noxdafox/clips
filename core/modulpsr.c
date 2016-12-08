@@ -176,13 +176,13 @@ bool ParseDefmodule(
    /*=====================================================*/
 
    defmoduleName = GetConstructNameAndComment(theEnv,readSource,&inputToken,"defmodule",
-                                              (FindConstructFunction *) EnvFindDefmodule,
+                                              (FindConstructFunction *) FindDefmodule,
                                               (DeleteConstructFunction *) DeleteDefmodule,"+",
                                               true,true,false,false);
    if (defmoduleName == NULL) { return true; }
 
    if (strcmp(defmoduleName->contents,"MAIN") == 0)
-     { redefiningMainModule = EnvFindDefmodule(theEnv,"MAIN"); }
+     { redefiningMainModule = FindDefmodule(theEnv,"MAIN"); }
 
    /*==============================================*/
    /* Create the defmodule structure if necessary. */
@@ -190,7 +190,7 @@ bool ParseDefmodule(
 
    if (redefiningMainModule == NULL)
      {
-      newDefmodule = EnvFindDefmodule(theEnv,defmoduleName->contents);
+      newDefmodule = FindDefmodule(theEnv,defmoduleName->contents);
       if (newDefmodule)
         { overwrite = true; }
       else
@@ -329,7 +329,7 @@ bool ParseDefmodule(
 
    SavePPBuffer(theEnv,"\n");
 
-   if (EnvGetConserveMemory(theEnv) == true)
+   if (GetConserveMemory(theEnv) == true)
      { newDefmodule->header.ppForm = NULL; }
    else
      { newDefmodule->header.ppForm = CopyPPBuffer(theEnv); }
@@ -346,7 +346,7 @@ bool ParseDefmodule(
       newDefmodule->header.bsaveID = DefmoduleData(theEnv)->NumberOfDefmodules++;
      }
 
-   EnvSetCurrentModule(theEnv,newDefmodule);
+   SetCurrentModule(theEnv,newDefmodule);
 
    /*=========================================*/
    /* Call any functions required by other    */
@@ -519,7 +519,7 @@ static bool ParseImportSpec(
    /* Verify the existence of the module. */
    /*=====================================*/
 
-   if ((theModule = EnvFindDefmodule(theEnv,theToken->lexemeValue->contents)) == NULL)
+   if ((theModule = FindDefmodule(theEnv,theToken->lexemeValue->contents)) == NULL)
      {
       CantFindItemErrorMessage(theEnv,"defmodule",theToken->lexemeValue->contents);
       return true;
@@ -612,7 +612,7 @@ static bool ParseImportSpec(
    /*======================================================*/
 
    SaveCurrentModule(theEnv);
-   EnvSetCurrentModule(theEnv,newModule);
+   SetCurrentModule(theEnv,newModule);
 
    for (thePort = newModule->importList;
         thePort != NULL;
@@ -621,8 +621,8 @@ static bool ParseImportSpec(
       if ((thePort->constructType == NULL) || (thePort->constructName == NULL))
         { continue; }
 
-      theModule = EnvFindDefmodule(theEnv,thePort->moduleName->contents);
-      EnvSetCurrentModule(theEnv,theModule);
+      theModule = FindDefmodule(theEnv,thePort->moduleName->contents);
+      SetCurrentModule(theEnv,theModule);
       if (FindImportedConstruct(theEnv,thePort->constructType->contents,NULL,
                                 thePort->constructName->contents,&count,
                                 true,NULL) == NULL)
@@ -967,9 +967,9 @@ static bool FindMultiImportConflict(
    /* Loop through every module. */
    /*============================*/
 
-   for (testModule = EnvGetNextDefmodule(theEnv,NULL);
+   for (testModule = GetNextDefmodule(theEnv,NULL);
         testModule != NULL;
-        testModule = EnvGetNextDefmodule(theEnv,testModule))
+        testModule = GetNextDefmodule(theEnv,testModule))
      {
       /*========================================*/
       /* Loop through every construct type that */
@@ -980,7 +980,7 @@ static bool FindMultiImportConflict(
            thePCItem != NULL;
            thePCItem = thePCItem->next)
         {
-         EnvSetCurrentModule(theEnv,testModule);
+         SetCurrentModule(theEnv,testModule);
 
          /*=====================================================*/
          /* Loop through every construct of the specified type. */
@@ -999,7 +999,7 @@ static bool FindMultiImportConflict(
              /* ambiguous import  specifications.             */
              /*===============================================*/
 
-             EnvSetCurrentModule(theEnv,theModule);
+             SetCurrentModule(theEnv,theModule);
              FindImportedConstruct(theEnv,thePCItem->constructName,NULL,
                                    (*theConstruct->getConstructNameFunction)(theCItem)->contents,
                                    &count,false,NULL);
@@ -1012,7 +1012,7 @@ static bool FindMultiImportConflict(
                 return true;
                }
 
-             EnvSetCurrentModule(theEnv,testModule);
+             SetCurrentModule(theEnv,testModule);
             }
         }
      }
@@ -1043,26 +1043,26 @@ static void NotExportedErrorMessage(
   const char *theName)
   {
    PrintErrorID(theEnv,"MODULPSR",1,true);
-   EnvPrintRouter(theEnv,WERROR,"Module ");
-   EnvPrintRouter(theEnv,WERROR,theModule);
-   EnvPrintRouter(theEnv,WERROR," does not export ");
+   PrintRouter(theEnv,WERROR,"Module ");
+   PrintRouter(theEnv,WERROR,theModule);
+   PrintRouter(theEnv,WERROR," does not export ");
 
-   if (theConstruct == NULL) EnvPrintRouter(theEnv,WERROR,"any constructs");
+   if (theConstruct == NULL) PrintRouter(theEnv,WERROR,"any constructs");
    else if (theName == NULL)
      {
-      EnvPrintRouter(theEnv,WERROR,"any ");
-      EnvPrintRouter(theEnv,WERROR,theConstruct);
-      EnvPrintRouter(theEnv,WERROR," constructs");
+      PrintRouter(theEnv,WERROR,"any ");
+      PrintRouter(theEnv,WERROR,theConstruct);
+      PrintRouter(theEnv,WERROR," constructs");
      }
    else
      {
-      EnvPrintRouter(theEnv,WERROR,"the ");
-      EnvPrintRouter(theEnv,WERROR,theConstruct);
-      EnvPrintRouter(theEnv,WERROR," ");
-      EnvPrintRouter(theEnv,WERROR,theName);
+      PrintRouter(theEnv,WERROR,"the ");
+      PrintRouter(theEnv,WERROR,theConstruct);
+      PrintRouter(theEnv,WERROR," ");
+      PrintRouter(theEnv,WERROR,theName);
      }
 
-   EnvPrintRouter(theEnv,WERROR,".\n");
+   PrintRouter(theEnv,WERROR,".\n");
   }
 
 /*************************************************************/
@@ -1120,11 +1120,11 @@ bool FindImportExportConflict(
    /* and true is returned.                                          */
    /*================================================================*/
 
-   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = EnvGetNextDefmodule(theEnv,theModule))
+        theModule = GetNextDefmodule(theEnv,theModule))
      {
-      EnvSetCurrentModule(theEnv,theModule);
+      SetCurrentModule(theEnv,theModule);
 
       FindImportedConstruct(theEnv,constructName,NULL,findName,&count,true,matchModule);
       if (count > 1)

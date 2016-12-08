@@ -179,12 +179,12 @@ void MakeInstanceCommand(
    if (temp.header->type == INSTANCE_NAME_TYPE)
      { iname = temp.lexemeValue; }
    else if (temp.header->type == SYMBOL_TYPE)
-     { iname = EnvCreateInstanceName(theEnv,temp.lexemeValue->contents); }
+     { iname = CreateInstanceName(theEnv,temp.lexemeValue->contents); }
    else
      {
       PrintErrorID(theEnv,"INSMNGR",1,false);
-      EnvPrintRouter(theEnv,WERROR,"Expected a valid name for new instance.\n");
-      EnvSetEvaluationError(theEnv,true);
+      PrintRouter(theEnv,WERROR,"Expected a valid name for new instance.\n");
+      SetEvaluationError(theEnv,true);
       return;
      }
 
@@ -196,8 +196,8 @@ void MakeInstanceCommand(
       if (temp.header->type != SYMBOL_TYPE)
         {
          PrintErrorID(theEnv,"INSMNGR",2,false);
-         EnvPrintRouter(theEnv,WERROR,"Expected a valid class name for new instance.\n");
-         EnvSetEvaluationError(theEnv,true);
+         PrintRouter(theEnv,WERROR,"Expected a valid class name for new instance.\n");
+         SetEvaluationError(theEnv,true);
          return;
         }
 
@@ -207,7 +207,7 @@ void MakeInstanceCommand(
         {
          ClassExistError(theEnv,ExpressionFunctionCallName(EvaluationData(theEnv)->CurrentExpression)->contents,
                          temp.lexemeValue->contents);
-         EnvSetEvaluationError(theEnv,true);
+         SetEvaluationError(theEnv,true);
          return;
         }
      }
@@ -250,7 +250,7 @@ CLIPSLexeme *GetFullInstanceName(
   Instance *ins)
   {
    if (ins == &InstanceData(theEnv)->DummyInstance)
-     { return EnvCreateInstanceName(theEnv,"Dummy Instance"); }
+     { return CreateInstanceName(theEnv,"Dummy Instance"); }
 
    return ins->name;
   }
@@ -288,19 +288,19 @@ Instance *BuildInstance(
    if (EngineData(theEnv)->JoinOperationInProgress && cls->reactive)
      {
       PrintErrorID(theEnv,"INSMNGR",10,false);
-      EnvPrintRouter(theEnv,WERROR,"Cannot create instances of reactive classes while\n");
-      EnvPrintRouter(theEnv,WERROR,"  pattern-matching is in process.\n");
-      EnvSetEvaluationError(theEnv,true);
+      PrintRouter(theEnv,WERROR,"Cannot create instances of reactive classes while\n");
+      PrintRouter(theEnv,WERROR,"  pattern-matching is in process.\n");
+      SetEvaluationError(theEnv,true);
       return NULL;
      }
 #endif
    if (cls->abstract)
      {
       PrintErrorID(theEnv,"INSMNGR",3,false);
-      EnvPrintRouter(theEnv,WERROR,"Cannot create instances of abstract class ");
-      EnvPrintRouter(theEnv,WERROR,DefclassName(cls));
-      EnvPrintRouter(theEnv,WERROR,".\n");
-      EnvSetEvaluationError(theEnv,true);
+      PrintRouter(theEnv,WERROR,"Cannot create instances of abstract class ");
+      PrintRouter(theEnv,WERROR,DefclassName(cls));
+      PrintRouter(theEnv,WERROR,".\n");
+      SetEvaluationError(theEnv,true);
       return NULL;
      }
    modulePosition = FindModuleSeparator(iname->contents);
@@ -311,8 +311,8 @@ Instance *BuildInstance(
           (moduleName != cls->header.whichModule->theModule->header.name))
         {
          PrintErrorID(theEnv,"INSMNGR",11,true);
-         EnvPrintRouter(theEnv,WERROR,"Invalid module specifier in new instance name.\n");
-         EnvSetEvaluationError(theEnv,true);
+         PrintRouter(theEnv,WERROR,"Invalid module specifier in new instance name.\n");
+         SetEvaluationError(theEnv,true);
          return NULL;
         }
       iname = ExtractConstructName(theEnv,modulePosition,iname->contents,INSTANCE_NAME_TYPE);
@@ -324,22 +324,22 @@ Instance *BuildInstance(
       if (ins->cls != cls)
         {
          PrintErrorID(theEnv,"INSMNGR",16,false);
-         EnvPrintRouter(theEnv,WERROR,"The instance name ");
-         EnvPrintRouter(theEnv,WERROR,iname->contents);
-         EnvPrintRouter(theEnv,WERROR," is in use by an instance of class ");
-         EnvPrintRouter(theEnv,WERROR,ins->cls->header.name->contents);
-         EnvPrintRouter(theEnv,WERROR,".\n");
-         EnvSetEvaluationError(theEnv,true);
+         PrintRouter(theEnv,WERROR,"The instance name ");
+         PrintRouter(theEnv,WERROR,iname->contents);
+         PrintRouter(theEnv,WERROR," is in use by an instance of class ");
+         PrintRouter(theEnv,WERROR,ins->cls->header.name->contents);
+         PrintRouter(theEnv,WERROR,".\n");
+         SetEvaluationError(theEnv,true);
          return NULL;
         }
 
       if (ins->installed == 0)
         {
          PrintErrorID(theEnv,"INSMNGR",4,false);
-         EnvPrintRouter(theEnv,WERROR,"The instance ");
-         EnvPrintRouter(theEnv,WERROR,iname->contents);
-         EnvPrintRouter(theEnv,WERROR," has a slot-value which depends on the instance definition.\n");
-         EnvSetEvaluationError(theEnv,true);
+         PrintRouter(theEnv,WERROR,"The instance ");
+         PrintRouter(theEnv,WERROR,iname->contents);
+         PrintRouter(theEnv,WERROR," has a slot-value which depends on the instance definition.\n");
+         SetEvaluationError(theEnv,true);
          return NULL;
         }
       ins->busy++;
@@ -356,10 +356,10 @@ Instance *BuildInstance(
       if (ins->garbage == 0)
         {
          PrintErrorID(theEnv,"INSMNGR",5,false);
-         EnvPrintRouter(theEnv,WERROR,"Unable to delete old instance ");
-         EnvPrintRouter(theEnv,WERROR,iname->contents);
-         EnvPrintRouter(theEnv,WERROR,".\n");
-         EnvSetEvaluationError(theEnv,true);
+         PrintRouter(theEnv,WERROR,"Unable to delete old instance ");
+         PrintRouter(theEnv,WERROR,iname->contents);
+         PrintRouter(theEnv,WERROR,".\n");
+         SetEvaluationError(theEnv,true);
          return NULL;
         }
      }
@@ -511,9 +511,9 @@ bool QuashInstance(
    if (EngineData(theEnv)->JoinOperationInProgress && ins->cls->reactive)
      {
       PrintErrorID(theEnv,"INSMNGR",12,false);
-      EnvPrintRouter(theEnv,WERROR,"Cannot delete instances of reactive classes while\n");
-      EnvPrintRouter(theEnv,WERROR,"  pattern-matching is in process.\n");
-      EnvSetEvaluationError(theEnv,true);
+      PrintRouter(theEnv,WERROR,"Cannot delete instances of reactive classes while\n");
+      PrintRouter(theEnv,WERROR,"  pattern-matching is in process.\n");
+      SetEvaluationError(theEnv,true);
       return false;
      }
 #endif
@@ -522,10 +522,10 @@ bool QuashInstance(
    if (ins->installed == 0)
      {
       PrintErrorID(theEnv,"INSMNGR",6,false);
-      EnvPrintRouter(theEnv,WERROR,"Cannot delete instance ");
-      EnvPrintRouter(theEnv,WERROR,ins->name->contents);
-      EnvPrintRouter(theEnv,WERROR," during initialization.\n");
-      EnvSetEvaluationError(theEnv,true);
+      PrintRouter(theEnv,WERROR,"Cannot delete instance ");
+      PrintRouter(theEnv,WERROR,ins->name->contents);
+      PrintRouter(theEnv,WERROR," during initialization.\n");
+      SetEvaluationError(theEnv,true);
       return false;
      }
 #if DEBUGGING_FUNCTIONS
@@ -889,7 +889,7 @@ static void BuildDefaultSlots(
             else
               {
                adst[i]->type = SYMBOL_TYPE;
-               adst[i]->value = EnvCreateSymbol(theEnv,"nil");
+               adst[i]->value = CreateSymbol(theEnv,"nil");
                AtomInstall(theEnv,(int) adst[i]->type,adst[i]->value);
               }
            }
@@ -919,10 +919,10 @@ static bool CoreInitializeInstance(
    if (ins->installed == 0)
      {
       PrintErrorID(theEnv,"INSMNGR",7,false);
-      EnvPrintRouter(theEnv,WERROR,"Instance ");
-      EnvPrintRouter(theEnv,WERROR,ins->name->contents);
-      EnvPrintRouter(theEnv,WERROR," is already being initialized.\n");
-      EnvSetEvaluationError(theEnv,true);
+      PrintRouter(theEnv,WERROR,"Instance ");
+      PrintRouter(theEnv,WERROR,ins->name->contents);
+      PrintRouter(theEnv,WERROR," is already being initialized.\n");
+      SetEvaluationError(theEnv,true);
       return false;
      }
 
@@ -961,9 +961,9 @@ static bool CoreInitializeInstance(
    if (EvaluationData(theEnv)->EvaluationError)
      {
       PrintErrorID(theEnv,"INSMNGR",8,false);
-      EnvPrintRouter(theEnv,WERROR,"An error occurred during the initialization of instance ");
-      EnvPrintRouter(theEnv,WERROR,ins->name->contents);
-      EnvPrintRouter(theEnv,WERROR,".\n");
+      PrintRouter(theEnv,WERROR,"An error occurred during the initialization of instance ");
+      PrintRouter(theEnv,WERROR,ins->name->contents);
+      PrintRouter(theEnv,WERROR,".\n");
       return false;
      }
 
@@ -990,10 +990,10 @@ static bool CoreInitializeInstanceCV(
    if (ins->installed == 0)
      {
       PrintErrorID(theEnv,"INSMNGR",7,false);
-      EnvPrintRouter(theEnv,WERROR,"Instance ");
-      EnvPrintRouter(theEnv,WERROR,ins->name->contents);
-      EnvPrintRouter(theEnv,WERROR," is already being initialized.\n");
-      EnvSetEvaluationError(theEnv,true);
+      PrintRouter(theEnv,WERROR,"Instance ");
+      PrintRouter(theEnv,WERROR,ins->name->contents);
+      PrintRouter(theEnv,WERROR," is already being initialized.\n");
+      SetEvaluationError(theEnv,true);
       return false;
      }
      
@@ -1034,9 +1034,9 @@ static bool CoreInitializeInstanceCV(
    if (EvaluationData(theEnv)->EvaluationError)
      {
       PrintErrorID(theEnv,"INSMNGR",8,false);
-      EnvPrintRouter(theEnv,WERROR,"An error occurred during the initialization of instance ");
-      EnvPrintRouter(theEnv,WERROR,ins->name->contents);
-      EnvPrintRouter(theEnv,WERROR,".\n");
+      PrintRouter(theEnv,WERROR,"An error occurred during the initialization of instance ");
+      PrintRouter(theEnv,WERROR,ins->name->contents);
+      PrintRouter(theEnv,WERROR,".\n");
       return false;
      }
      
@@ -1071,20 +1071,20 @@ static bool InsertSlotOverrides(
           (temp.header->type != SYMBOL_TYPE))
         {
          PrintErrorID(theEnv,"INSMNGR",9,false);
-         EnvPrintRouter(theEnv,WERROR,"Expected a valid slot name for slot-override.\n");
-         EnvSetEvaluationError(theEnv,true);
+         PrintRouter(theEnv,WERROR,"Expected a valid slot name for slot-override.\n");
+         SetEvaluationError(theEnv,true);
          return false;
         }
       slot = FindInstanceSlot(theEnv,ins,temp.lexemeValue);
       if (slot == NULL)
         {
          PrintErrorID(theEnv,"INSMNGR",13,false);
-         EnvPrintRouter(theEnv,WERROR,"Slot ");
-         EnvPrintRouter(theEnv,WERROR,temp.lexemeValue->contents);
-         EnvPrintRouter(theEnv,WERROR," does not exist in instance ");
-         EnvPrintRouter(theEnv,WERROR,ins->name->contents);
-         EnvPrintRouter(theEnv,WERROR,".\n");
-         EnvSetEvaluationError(theEnv,true);
+         PrintRouter(theEnv,WERROR,"Slot ");
+         PrintRouter(theEnv,WERROR,temp.lexemeValue->contents);
+         PrintRouter(theEnv,WERROR," does not exist in instance ");
+         PrintRouter(theEnv,WERROR,ins->name->contents);
+         PrintRouter(theEnv,WERROR,".\n");
+         SetEvaluationError(theEnv,true);
          return false;
         }
 
@@ -1176,8 +1176,8 @@ static void EvaluateClassDefaults(
    if (ins->initializeInProgress == 0)
      {
       PrintErrorID(theEnv,"INSMNGR",15,false);
-      EnvSetEvaluationError(theEnv,true);
-      EnvPrintRouter(theEnv,WERROR,"init-slots not valid in this context.\n");
+      SetEvaluationError(theEnv,true);
+      PrintRouter(theEnv,WERROR,"init-slots not valid in this context.\n");
       return;
      }
    for (i = 0 ; i < ins->cls->instanceSlotCount ; i++)
@@ -1204,19 +1204,19 @@ static void EvaluateClassDefaults(
          else if (slot->valueRequired)
            {
             PrintErrorID(theEnv,"INSMNGR",14,false);
-            EnvPrintRouter(theEnv,WERROR,"Override required for slot ");
-            EnvPrintRouter(theEnv,WERROR,slot->desc->slotName->name->contents);
-            EnvPrintRouter(theEnv,WERROR," in instance ");
-            EnvPrintRouter(theEnv,WERROR,ins->name->contents);
-            EnvPrintRouter(theEnv,WERROR,".\n");
-            EnvSetEvaluationError(theEnv,true);
+            PrintRouter(theEnv,WERROR,"Override required for slot ");
+            PrintRouter(theEnv,WERROR,slot->desc->slotName->name->contents);
+            PrintRouter(theEnv,WERROR," in instance ");
+            PrintRouter(theEnv,WERROR,ins->name->contents);
+            PrintRouter(theEnv,WERROR,".\n");
+            SetEvaluationError(theEnv,true);
            }
          slot->valueRequired = false;
          if (ins->garbage == 1)
            {
-            EnvPrintRouter(theEnv,WERROR,ins->name->contents);
-            EnvPrintRouter(theEnv,WERROR," instance deleted by slot-override evaluation.\n");
-            EnvSetEvaluationError(theEnv,true);
+            PrintRouter(theEnv,WERROR,ins->name->contents);
+            PrintRouter(theEnv,WERROR," instance deleted by slot-override evaluation.\n");
+            SetEvaluationError(theEnv,true);
            }
          if (EvaluationData(theEnv)->EvaluationError)
             return;
@@ -1244,17 +1244,17 @@ static void PrintInstanceWatch(
   const char *traceString,
   Instance *theInstance)
   {
-   EnvPrintRouter(theEnv,WTRACE,traceString);
-   EnvPrintRouter(theEnv,WTRACE," instance ");
+   PrintRouter(theEnv,WTRACE,traceString);
+   PrintRouter(theEnv,WTRACE," instance ");
    PrintInstanceNameAndClass(theEnv,WTRACE,theInstance,true);
   }
 
 #endif
 
-/*****************************/
-/* EnvCreateInstanceBuilder: */
-/*****************************/
-InstanceBuilder *EnvCreateInstanceBuilder(
+/**************************/
+/* CreateInstanceBuilder: */
+/**************************/
+InstanceBuilder *CreateInstanceBuilder(
   Environment *theEnv,
   const char *defclassName)
   {
@@ -1262,7 +1262,7 @@ InstanceBuilder *EnvCreateInstanceBuilder(
    Defclass *theDefclass;
    int i;
    
-   theDefclass = EnvFindDefclass(theEnv,defclassName);
+   theDefclass = FindDefclass(theEnv,defclassName);
    if (theDefclass == NULL) return NULL;
       
    theIB = get_struct(theEnv,instanceBuilder);
@@ -1395,7 +1395,7 @@ bool IBPutSlot(
    /* corresponds to a valid slot name. */
    /*===================================*/
 
-   whichSlot = FindInstanceTemplateSlot(theEnv,theIB->ibDefclass,EnvCreateSymbol(theIB->ibEnv,slotName));
+   whichSlot = FindInstanceTemplateSlot(theEnv,theIB->ibDefclass,CreateSymbol(theIB->ibEnv,slotName));
    if (whichSlot == -1)
      { return false; }
      
@@ -1461,7 +1461,7 @@ Instance *IBMake(
       instanceLexeme = rv.lexemeValue;
      }
    else
-     { instanceLexeme = EnvCreateInstanceName(theEnv,instanceName); }
+     { instanceLexeme = CreateInstanceName(theEnv,instanceName); }
    
    theInstance = BuildInstance(theEnv,instanceLexeme,theIB->ibDefclass,true);
    if (theInstance == NULL) return NULL;
@@ -1537,7 +1537,7 @@ bool IBSetDefclass(
    
    IBAbort(theIB);
    
-   theDefclass = EnvFindDefclass(theIB->ibEnv,defclassName);
+   theDefclass = FindDefclass(theIB->ibEnv,defclassName);
    
    if (theDefclass == NULL) return false;
 
@@ -1554,10 +1554,10 @@ bool IBSetDefclass(
    return true;
   }
 
-/******************************/
-/* EnvCreateInstanceModifier: */
-/******************************/
-InstanceModifier *EnvCreateInstanceModifier(
+/***************************/
+/* CreateInstanceModifier: */
+/***************************/
+InstanceModifier *CreateInstanceModifier(
   Environment *theEnv,
   Instance *oldInstance)
   {
@@ -1573,7 +1573,7 @@ InstanceModifier *EnvCreateInstanceModifier(
    theIM->imEnv = theEnv;
    theIM->imOldInstance = oldInstance;
 
-   EnvIncrementInstanceCount(theEnv,oldInstance);
+   IncrementInstanceCount(theEnv,oldInstance);
 
    theIM->imValueArray = (CLIPSValue *) gm3(theEnv,sizeof(CLIPSValue) * oldInstance->cls->slotCount);
 
@@ -1703,7 +1703,7 @@ bool IMPutSlot(
    /* corresponds to a valid slot name. */
    /*===================================*/
 
-   whichSlot = FindInstanceTemplateSlot(theEnv,theIM->imOldInstance->cls,EnvCreateSymbol(theIM->imEnv,slotName));
+   whichSlot = FindInstanceTemplateSlot(theEnv,theIM->imOldInstance->cls,CreateSymbol(theIM->imEnv,slotName));
    if (whichSlot == -1)
      { return false; }
 
@@ -1824,7 +1824,7 @@ static bool IMModifySlots(
       
       if (insSlot->desc->multiple && (overrides[i].header->type != MULTIFIELD_TYPE))
         {
-         temp.value = EnvCreateMultifield(theEnv,1L);
+         temp.value = CreateMultifield(theEnv,1L);
          temp.begin = 0;
          temp.range = 1;
          temp.multifieldValue->theFields[0].value = overrides[i].value;
@@ -1874,7 +1874,7 @@ void IMDispose(
    /* Return the InstanceModifier structure. */
    /*========================================*/
    
-   EnvDecrementInstanceCount(theEnv,theIM->imOldInstance);
+   DecrementInstanceCount(theEnv,theIM->imOldInstance);
    
    rtn_struct(theEnv,instanceModifier,theIM);
   }
@@ -1952,9 +1952,9 @@ bool IMSetInstance(
    /* Update the fact being modified. */
    /*=================================*/
    
-   EnvDecrementInstanceCount(theEnv,theIM->imOldInstance);
+   DecrementInstanceCount(theEnv,theIM->imOldInstance);
    theIM->imOldInstance = oldInstance;
-   EnvIncrementInstanceCount(theEnv,theIM->imOldInstance);
+   IncrementInstanceCount(theEnv,theIM->imOldInstance);
    
    /*=========================================*/
    /* Initialize the value and change arrays. */

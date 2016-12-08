@@ -121,7 +121,7 @@ void GetToken(
    /* GetToken() request.                          */
    /*==============================================*/
 
-   inchar = EnvGetcRouter(theEnv,logicalName);
+   inchar = GetcRouter(theEnv,logicalName);
    while ((inchar == ' ') || (inchar == '\n') || (inchar == '\f') ||
           (inchar == '\r') || (inchar == ';') || (inchar == '\t'))
      {
@@ -131,11 +131,11 @@ void GetToken(
 
       if (inchar == ';')
         {
-         inchar = EnvGetcRouter(theEnv,logicalName);
+         inchar = GetcRouter(theEnv,logicalName);
          while ((inchar != '\n') && (inchar != '\r') && (inchar != EOF) )
-           { inchar = EnvGetcRouter(theEnv,logicalName); }
+           { inchar = GetcRouter(theEnv,logicalName); }
         }
-      inchar = EnvGetcRouter(theEnv,logicalName);
+      inchar = GetcRouter(theEnv,logicalName);
      }
 
    /*==========================*/
@@ -145,7 +145,7 @@ void GetToken(
    if (isalpha(inchar) || IsUTF8MultiByteStart(inchar))
      {
       theToken->tknType = SYMBOL_TOKEN;
-      EnvUngetcRouter(theEnv,inchar,logicalName);
+      UngetcRouter(theEnv,inchar,logicalName);
       theToken->lexemeValue = ScanSymbol(theEnv,logicalName,0,&type);
       theToken->printForm = theToken->lexemeValue->contents;
      }
@@ -156,7 +156,7 @@ void GetToken(
 
    else if (isdigit(inchar))
      {
-      EnvUngetcRouter(theEnv,inchar,logicalName);
+      UngetcRouter(theEnv,inchar,logicalName);
       ScanNumber(theEnv,logicalName,theToken);
      }
 
@@ -179,7 +179,7 @@ void GetToken(
       case '-':
       case '.':
       case '+':
-         EnvUngetcRouter(theEnv,inchar,logicalName);
+         UngetcRouter(theEnv,inchar,logicalName);
          ScanNumber(theEnv,logicalName,theToken);
          break;
 
@@ -188,7 +188,7 @@ void GetToken(
       /*===================================*/
 
        case '?':
-          inchar = EnvGetcRouter(theEnv,logicalName);
+          inchar = GetcRouter(theEnv,logicalName);
           if (isalpha(inchar) || IsUTF8MultiByteStart(inchar)
 #if DEFGLOBAL_CONSTRUCT
               || (inchar == '*'))
@@ -196,7 +196,7 @@ void GetToken(
               )
 #endif
             {
-             EnvUngetcRouter(theEnv,inchar,logicalName);
+             UngetcRouter(theEnv,inchar,logicalName);
              theToken->lexemeValue = ScanSymbol(theEnv,logicalName,0,&type);
              theToken->tknType = SF_VARIABLE_TOKEN;
 #if DEFGLOBAL_CONSTRUCT
@@ -210,7 +210,7 @@ void GetToken(
                 theToken->printForm = AppendStrings(theEnv,"?",theToken->lexemeValue->contents);
                 count = strlen(ScannerData(theEnv)->GlobalString);
                 ScannerData(theEnv)->GlobalString[count-1] = EOS;
-                theToken->lexemeValue = EnvCreateSymbol(theEnv,ScannerData(theEnv)->GlobalString+1);
+                theToken->lexemeValue = CreateSymbol(theEnv,ScannerData(theEnv)->GlobalString+1);
                 ScannerData(theEnv)->GlobalString[count-1] = (char) inchar;
 
                }
@@ -221,8 +221,8 @@ void GetToken(
           else
             {
              theToken->tknType = SF_WILDCARD_TOKEN;
-             theToken->lexemeValue = EnvCreateSymbol(theEnv,"?");
-             EnvUngetcRouter(theEnv,inchar,logicalName);
+             theToken->lexemeValue = CreateSymbol(theEnv,"?");
+             UngetcRouter(theEnv,inchar,logicalName);
              theToken->printForm = "?";
             }
           break;
@@ -232,9 +232,9 @@ void GetToken(
       /*=====================================*/
 
       case '$':
-         if ((inchar = EnvGetcRouter(theEnv,logicalName)) == '?')
+         if ((inchar = GetcRouter(theEnv,logicalName)) == '?')
            {
-            inchar = EnvGetcRouter(theEnv,logicalName);
+            inchar = GetcRouter(theEnv,logicalName);
             if (isalpha(inchar) || IsUTF8MultiByteStart(inchar)
 #if DEFGLOBAL_CONSTRUCT
                  || (inchar == '*'))
@@ -242,7 +242,7 @@ void GetToken(
                  )
 #endif
               {
-               EnvUngetcRouter(theEnv,inchar,logicalName);
+               UngetcRouter(theEnv,inchar,logicalName);
                theToken->lexemeValue = ScanSymbol(theEnv,logicalName,0,&type);
                theToken->tknType = MF_VARIABLE_TOKEN;
 #if DEFGLOBAL_CONSTRUCT
@@ -256,7 +256,7 @@ void GetToken(
                 theToken->printForm = AppendStrings(theEnv,"$?",theToken->lexemeValue->contents);
                 count = strlen(ScannerData(theEnv)->GlobalString);
                 ScannerData(theEnv)->GlobalString[count-1] = EOS;
-                theToken->lexemeValue = EnvCreateSymbol(theEnv,ScannerData(theEnv)->GlobalString+1);
+                theToken->lexemeValue = CreateSymbol(theEnv,ScannerData(theEnv)->GlobalString+1);
                 ScannerData(theEnv)->GlobalString[count-1] = (char) inchar;
                }
              else
@@ -266,16 +266,16 @@ void GetToken(
             else
               {
                theToken->tknType = MF_WILDCARD_TOKEN;
-               theToken->lexemeValue = EnvCreateSymbol(theEnv,"$?");
+               theToken->lexemeValue = CreateSymbol(theEnv,"$?");
                theToken->printForm = "$?";
-               EnvUngetcRouter(theEnv,inchar,logicalName);
+               UngetcRouter(theEnv,inchar,logicalName);
               }
            }
          else
            {
             theToken->tknType = SYMBOL_TOKEN;
             ScannerData(theEnv)->GlobalString = ExpandStringWithChar(theEnv,'$',ScannerData(theEnv)->GlobalString,&ScannerData(theEnv)->GlobalPos,&ScannerData(theEnv)->GlobalMax,ScannerData(theEnv)->GlobalMax+80);
-            EnvUngetcRouter(theEnv,inchar,logicalName);
+            UngetcRouter(theEnv,inchar,logicalName);
             theToken->lexemeValue = ScanSymbol(theEnv,logicalName,1,&type);
             theToken->printForm = theToken->lexemeValue->contents;
            }
@@ -298,31 +298,31 @@ void GetToken(
 
       case '(':
          theToken->tknType = LEFT_PARENTHESIS_TOKEN;
-         theToken->lexemeValue = EnvCreateString(theEnv,"(");
+         theToken->lexemeValue = CreateString(theEnv,"(");
          theToken->printForm = "(";
          break;
 
       case ')':
          theToken->tknType= RIGHT_PARENTHESIS_TOKEN;
-         theToken->lexemeValue = EnvCreateString(theEnv,")");
+         theToken->lexemeValue = CreateString(theEnv,")");
          theToken->printForm = ")";
          break;
 
       case '~':
          theToken->tknType = NOT_CONSTRAINT_TOKEN;
-         theToken->lexemeValue = EnvCreateString(theEnv,"~");
+         theToken->lexemeValue = CreateString(theEnv,"~");
          theToken->printForm = "~";
          break;
 
       case '|':
          theToken->tknType = OR_CONSTRAINT_TOKEN;
-         theToken->lexemeValue = EnvCreateString(theEnv,"|");
+         theToken->lexemeValue = CreateString(theEnv,"|");
          theToken->printForm = "|";
          break;
 
       case '&':
          theToken->tknType =  AND_CONSTRAINT_TOKEN;
-         theToken->lexemeValue = EnvCreateString(theEnv,"&");
+         theToken->lexemeValue = CreateString(theEnv,"&");
          theToken->printForm = "&";
          break;
 
@@ -334,7 +334,7 @@ void GetToken(
       case 0:
       case 3:
          theToken->tknType = STOP_TOKEN;
-         theToken->lexemeValue = EnvCreateSymbol(theEnv,"stop");
+         theToken->lexemeValue = CreateSymbol(theEnv,"stop");
          theToken->printForm = "";
          break;
 
@@ -345,7 +345,7 @@ void GetToken(
       default:
          if (isprint(inchar))
            {
-            EnvUngetcRouter(theEnv,inchar,logicalName);
+            UngetcRouter(theEnv,inchar,logicalName);
             theToken->lexemeValue = ScanSymbol(theEnv,logicalName,0,&type);
             theToken->tknType = type;
             theToken->printForm = theToken->lexemeValue->contents;
@@ -404,7 +404,7 @@ static CLIPSLexeme *ScanSymbol(
    /* symbol until a delimiter is found.  */
    /*=====================================*/
 
-   inchar = EnvGetcRouter(theEnv,logicalName);
+   inchar = GetcRouter(theEnv,logicalName);
    while ( (inchar != '<') && (inchar != '"') &&
            (inchar != '(') && (inchar != ')') &&
            (inchar != '&') && (inchar != '|') && (inchar != '~') &&
@@ -416,7 +416,7 @@ static CLIPSLexeme *ScanSymbol(
       ScannerData(theEnv)->GlobalString = ExpandStringWithChar(theEnv,inchar,ScannerData(theEnv)->GlobalString,&ScannerData(theEnv)->GlobalPos,&ScannerData(theEnv)->GlobalMax,ScannerData(theEnv)->GlobalMax+80);
 
       count++;
-      inchar = EnvGetcRouter(theEnv,logicalName);
+      inchar = GetcRouter(theEnv,logicalName);
      }
 
    /*===================================================*/
@@ -425,7 +425,7 @@ static CLIPSLexeme *ScanSymbol(
    /* of the next token.                                */
    /*===================================================*/
 
-   EnvUngetcRouter(theEnv,inchar,logicalName);
+   UngetcRouter(theEnv,inchar,logicalName);
 
    /*====================================================*/
    /* Add the symbol to the symbol table and return the  */
@@ -445,21 +445,21 @@ static CLIPSLexeme *ScanSymbol(
       else
         {
          *type = SYMBOL_TOKEN;
-         return EnvCreateSymbol(theEnv,ScannerData(theEnv)->GlobalString);
+         return CreateSymbol(theEnv,ScannerData(theEnv)->GlobalString);
         }
       ScannerData(theEnv)->GlobalString[count-1] = EOS;
-      symbol = EnvCreateInstanceName(theEnv,ScannerData(theEnv)->GlobalString+1);
+      symbol = CreateInstanceName(theEnv,ScannerData(theEnv)->GlobalString+1);
       ScannerData(theEnv)->GlobalString[count-1] = (char) inchar;
       return symbol;
      }
    else
      {
       *type = SYMBOL_TOKEN;
-      return EnvCreateSymbol(theEnv,ScannerData(theEnv)->GlobalString);
+      return CreateSymbol(theEnv,ScannerData(theEnv)->GlobalString);
      }
 #else
    *type = SYMBOL_TOKEN;
-   return EnvCreateSymbol(theEnv,ScannerData(theEnv)->GlobalString);
+   return CreateSymbol(theEnv,ScannerData(theEnv)->GlobalString);
 #endif
   }
 
@@ -481,20 +481,20 @@ static CLIPSLexeme *ScanString(
    /* until the " delimiter is found.            */
    /*============================================*/
 
-   inchar = EnvGetcRouter(theEnv,logicalName);
+   inchar = GetcRouter(theEnv,logicalName);
    while ((inchar != '"') && (inchar != EOF))
      {
       if (inchar == '\\')
-        { inchar = EnvGetcRouter(theEnv,logicalName); }
+        { inchar = GetcRouter(theEnv,logicalName); }
 
       theString = ExpandStringWithChar(theEnv,inchar,theString,&pos,&max,max+80);
-      inchar = EnvGetcRouter(theEnv,logicalName);
+      inchar = GetcRouter(theEnv,logicalName);
      }
 
    if ((inchar == EOF) && (ScannerData(theEnv)->IgnoreCompletionErrors == false))
      {
       PrintErrorID(theEnv,"SCANNER",1,true);
-      EnvPrintRouter(theEnv,WERROR,"Encountered End-Of-File while scanning a string\n");
+      PrintRouter(theEnv,WERROR,"Encountered End-Of-File while scanning a string\n");
      }
 
    /*===============================================*/
@@ -503,10 +503,10 @@ static CLIPSLexeme *ScanString(
    /*===============================================*/
 
    if (theString == NULL)
-     { thePtr = EnvCreateString(theEnv,""); }
+     { thePtr = CreateString(theEnv,""); }
    else
      {
-      thePtr = EnvCreateString(theEnv,theString);
+      thePtr = CreateString(theEnv,theString);
       rm(theEnv,theString,max);
      }
 
@@ -538,7 +538,7 @@ static void ScanNumber(
    /*   5 = done           */
    /*   9 = error          */
 
-   inchar = EnvGetcRouter(theEnv,logicalName);
+   inchar = GetcRouter(theEnv,logicalName);
    phase = -1;
 
    while ((phase != 5) && (phase != 9))
@@ -703,7 +703,7 @@ static void ScanNumber(
         }
 
       if ((phase != 5) && (phase != 9))
-        { inchar = EnvGetcRouter(theEnv,logicalName); }
+        { inchar = GetcRouter(theEnv,logicalName); }
      }
 
    if (phase == 9)
@@ -719,12 +719,12 @@ static void ScanNumber(
    /* and return the number.                */
    /*=======================================*/
 
-   EnvUngetcRouter(theEnv,inchar,logicalName);
+   UngetcRouter(theEnv,inchar,logicalName);
 
    if (! digitFound)
      {
       theToken->tknType = SYMBOL_TOKEN;
-      theToken->lexemeValue = EnvCreateSymbol(theEnv,ScannerData(theEnv)->GlobalString);
+      theToken->lexemeValue = CreateSymbol(theEnv,ScannerData(theEnv)->GlobalString);
       theToken->printForm = theToken->lexemeValue->contents;
       return;
      }
@@ -733,7 +733,7 @@ static void ScanNumber(
      {
       fvalue = atof(ScannerData(theEnv)->GlobalString);
       theToken->tknType = FLOAT_TOKEN;
-      theToken->floatValue = EnvCreateFloat(theEnv,fvalue);
+      theToken->floatValue = CreateFloat(theEnv,fvalue);
       theToken->printForm = FloatToString(theEnv,theToken->floatValue->contents);
      }
    else
@@ -747,10 +747,10 @@ static void ScanNumber(
       if (errno)
         {
          PrintWarningID(theEnv,"SCANNER",1,false);
-         EnvPrintRouter(theEnv,WWARNING,"Over or underflow of long long integer.\n");
+         PrintRouter(theEnv,WWARNING,"Over or underflow of long long integer.\n");
         }
       theToken->tknType = INTEGER_TOKEN;
-      theToken->integerValue = EnvCreateInteger(theEnv,lvalue);
+      theToken->integerValue = CreateInteger(theEnv,lvalue);
       theToken->printForm = LongIntegerToString(theEnv,theToken->integerValue->contents);
      }
 

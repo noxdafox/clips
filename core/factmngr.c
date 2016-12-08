@@ -139,11 +139,11 @@ void InitializeFacts(
       { { "FACT_ADDRESS_TYPE", FACT_ADDRESS_TYPE,1,0,0,
           (EntityPrintFunction *) PrintFactIdentifier,
           (EntityPrintFunction *) PrintFactIdentifierInLongForm,
-          (bool (*)(void *,void *)) EnvRetract,
+          (bool (*)(void *,void *)) Retract,
           NULL,
-          (void *(*)(void *,void *)) EnvGetNextFact,
-          (EntityBusyCountFunction *) EnvDecrementFactCount,
-          (EntityBusyCountFunction *) EnvIncrementFactCount,
+          (void *(*)(void *,void *)) GetNextFact,
+          (EntityBusyCountFunction *) DecrementFactCount,
+          (EntityBusyCountFunction *) IncrementFactCount,
           NULL,NULL,NULL,NULL,NULL
         },
         (void (*)(Environment *,void *)) DecrementFactBasisCount,
@@ -177,7 +177,7 @@ void InitializeFacts(
    /* use with the reset and clear commands.     */
    /*============================================*/
 
-   EnvAddResetFunction(theEnv,"facts",ResetFacts,60);
+   AddResetFunction(theEnv,"facts",ResetFacts,60);
    AddClearReadyFunction(theEnv,"facts",ClearFactsReady,0);
 
    /*=============================*/
@@ -310,7 +310,7 @@ void PrintFactWithIdentifier(
    char printSpace[20];
 
    gensprintf(printSpace,"f-%-5lld ",factPtr->factIndex);
-   EnvPrintRouter(theEnv,logicalName,printSpace);
+   PrintRouter(theEnv,logicalName,printSpace);
    PrintFact(theEnv,logicalName,factPtr,false,false,changeMap);
   }
 
@@ -325,7 +325,7 @@ void PrintFactIdentifier(
    char printSpace[20];
 
    gensprintf(printSpace,"f-%lld",factPtr->factIndex);
-   EnvPrintRouter(theEnv,logicalName,printSpace);
+   PrintRouter(theEnv,logicalName,printSpace);
   }
 
 /********************************************/
@@ -337,17 +337,17 @@ void PrintFactIdentifierInLongForm(
   const char *logicalName,
   Fact *factPtr)
   {
-   if (PrintUtilityData(theEnv)->AddressesToStrings) EnvPrintRouter(theEnv,logicalName,"\"");
+   if (PrintUtilityData(theEnv)->AddressesToStrings) PrintRouter(theEnv,logicalName,"\"");
    if (factPtr != &FactData(theEnv)->DummyFact)
      {
-      EnvPrintRouter(theEnv,logicalName,"<Fact-");
+      PrintRouter(theEnv,logicalName,"<Fact-");
       PrintLongInteger(theEnv,logicalName,factPtr->factIndex);
-      EnvPrintRouter(theEnv,logicalName,">");
+      PrintRouter(theEnv,logicalName,">");
      }
    else
-     { EnvPrintRouter(theEnv,logicalName,"<Dummy Fact>"); }
+     { PrintRouter(theEnv,logicalName,"<Dummy Fact>"); }
 
-   if (PrintUtilityData(theEnv)->AddressesToStrings) EnvPrintRouter(theEnv,logicalName,"\"");
+   if (PrintUtilityData(theEnv)->AddressesToStrings) PrintRouter(theEnv,logicalName,"\"");
   }
 
 /*******************************************/
@@ -361,7 +361,7 @@ void DecrementFactBasisCount(
    struct multifield *theSegment;
    int i;
 
-   EnvDecrementFactCount(theEnv,factPtr);
+   DecrementFactCount(theEnv,factPtr);
 
    if (factPtr->basisSlots != NULL)
      {
@@ -392,7 +392,7 @@ void IncrementFactBasisCount(
    struct multifield *theSegment;
    int i;
 
-   EnvIncrementFactCount(theEnv,factPtr);
+   IncrementFactCount(theEnv,factPtr);
 
    theSegment = &factPtr->theProposition;
 
@@ -460,20 +460,20 @@ void PrintFact(
    /* has an implied deftemplate). */
    /*==============================*/
 
-   EnvPrintRouter(theEnv,logicalName,"(");
+   PrintRouter(theEnv,logicalName,"(");
 
-   EnvPrintRouter(theEnv,logicalName,factPtr->whichDeftemplate->header.name->contents);
+   PrintRouter(theEnv,logicalName,factPtr->whichDeftemplate->header.name->contents);
 
    theMultifield = factPtr->theProposition.theFields[0].multifieldValue;
    if (theMultifield->length != 0)
      {
-      EnvPrintRouter(theEnv,logicalName," ");
+      PrintRouter(theEnv,logicalName," ");
       PrintMultifield(theEnv,logicalName,theMultifield,0,
                       (long) (theMultifield->length - 1),
                       false);
      }
 
-   EnvPrintRouter(theEnv,logicalName,")");
+   PrintRouter(theEnv,logicalName,")");
   }
 
 /*********************************************/
@@ -487,9 +487,9 @@ void MatchFactFunction(
    FactPatternMatch(theEnv,theFact,theFact->whichDeftemplate->patternNetwork,0,NULL,NULL);
   }
 
-/*************************************************/
-/* RetractDriver: Driver routine for EnvRetract. */
-/*************************************************/
+/**********************************************/
+/* RetractDriver: Driver routine for Retract. */
+/**********************************************/
 bool RetractDriver(
   Environment *theEnv,
   Fact *theFact,
@@ -507,7 +507,7 @@ bool RetractDriver(
    if (EngineData(theEnv)->JoinOperationInProgress)
      {
       PrintErrorID(theEnv,"FACTMNGR",1,true);
-      EnvPrintRouter(theEnv,WERROR,"Facts may not be retracted during pattern-matching\n");
+      PrintRouter(theEnv,WERROR,"Facts may not be retracted during pattern-matching\n");
       return false;
      }
 
@@ -549,9 +549,9 @@ bool RetractDriver(
 #if DEBUGGING_FUNCTIONS
    if (theFact->whichDeftemplate->watch)
      {
-      EnvPrintRouter(theEnv,WTRACE,"<== ");
+      PrintRouter(theEnv,WTRACE,"<== ");
       PrintFactWithIdentifier(theEnv,WTRACE,theFact,changeMap);
-      EnvPrintRouter(theEnv,WTRACE,"\n");
+      PrintRouter(theEnv,WTRACE,"\n");
      }
 #endif
 
@@ -638,7 +638,7 @@ bool RetractDriver(
    /* will be evaluated as part of the retract.         */
    /*===================================================*/
 
-   EnvSetEvaluationError(theEnv,false);
+   SetEvaluationError(theEnv,false);
 
    /*===========================================*/
    /* Loop through the list of all the patterns */
@@ -690,10 +690,10 @@ bool RetractDriver(
    return true;
   }
 
-/*********************************************************/
-/* EnvRetract: C access routine for the retract command. */
-/*********************************************************/
-bool EnvRetract(
+/******************************************************/
+/* Retract: C access routine for the retract command. */
+/******************************************************/
+bool Retract(
   Environment *theEnv,
   Fact *theFact)
   {
@@ -756,7 +756,7 @@ Fact *AssertDriver(
      {
       ReturnFact(theEnv,theFact);
       PrintErrorID(theEnv,"FACTMNGR",2,true);
-      EnvPrintRouter(theEnv,WERROR,"Facts may not be asserted during pattern-matching\n");
+      PrintRouter(theEnv,WERROR,"Facts may not be asserted during pattern-matching\n");
       return NULL;
      }
 
@@ -770,7 +770,7 @@ Fact *AssertDriver(
    for (i = 0; i < length; i++)
      {
       if (theField[i].value == VoidConstant(theEnv))
-        { theField[i].value = EnvCreateSymbol(theEnv,"nil"); }
+        { theField[i].value = CreateSymbol(theEnv,"nil"); }
      }
 
    /*========================================================*/
@@ -898,9 +898,9 @@ Fact *AssertDriver(
 #if DEBUGGING_FUNCTIONS
    if (theFact->whichDeftemplate->watch)
      {
-      EnvPrintRouter(theEnv,WTRACE,"==> ");
+      PrintRouter(theEnv,WTRACE,"==> ");
       PrintFactWithIdentifier(theEnv,WTRACE,theFact,changeMap);
-      EnvPrintRouter(theEnv,WTRACE,"\n");
+      PrintRouter(theEnv,WTRACE,"\n");
      }
 #endif
 
@@ -922,7 +922,7 @@ Fact *AssertDriver(
    /* will be evaluated as part of the assert .         */
    /*===================================================*/
 
-   EnvSetEvaluationError(theEnv,false);
+   SetEvaluationError(theEnv,false);
 
    /*=============================================*/
    /* Pattern match the fact using the associated */
@@ -966,10 +966,10 @@ Fact *AssertDriver(
    return theFact;
   }
 
-/********************************************************/
-/* EnvAssert: C access routine for the assert function. */
-/********************************************************/
-Fact *EnvAssert(
+/*****************************************************/
+/* Assert: C access routine for the assert function. */
+/*****************************************************/
+Fact *Assert(
   Environment *theEnv,
   Fact *theFact)
   {
@@ -984,14 +984,14 @@ void RemoveAllFacts(
   Environment *theEnv)
   {
    while (FactData(theEnv)->FactList != NULL)
-     { EnvRetract(theEnv,FactData(theEnv)->FactList); }
+     { Retract(theEnv,FactData(theEnv)->FactList); }
   }
 
-/************************************************/
-/* EnvCreateFact: Creates a fact data structure */
-/*   of the specified deftemplate.              */
-/************************************************/
-Fact *EnvCreateFact(
+/*********************************************/
+/* CreateFact: Creates a fact data structure */
+/*   of the specified deftemplate.           */
+/*********************************************/
+Fact *CreateFact(
   Environment *theEnv,
   Deftemplate *theDeftemplate)
   {
@@ -1037,11 +1037,11 @@ Fact *EnvCreateFact(
    return newFact;
   }
 
-/******************************************/
-/* EnvGetFactSlot: Returns the slot value */
-/*   from the specified slot of a fact.   */
-/******************************************/
-bool EnvGetFactSlot(
+/****************************************/
+/* GetFactSlot: Returns the slot value  */
+/*   from the specified slot of a fact. */
+/****************************************/
+bool GetFactSlot(
   Environment *theEnv,
   Fact *theFact,
   const char *slotName,
@@ -1074,7 +1074,7 @@ bool EnvGetFactSlot(
    /* corresponds to a valid slot name. */
    /*===================================*/
 
-   if (FindSlot(theDeftemplate,EnvCreateSymbol(theEnv,slotName),&whichSlot) == NULL)
+   if (FindSlot(theDeftemplate,CreateSymbol(theEnv,slotName),&whichSlot) == NULL)
      { return false; }
 
    /*======================================================*/
@@ -1090,11 +1090,11 @@ bool EnvGetFactSlot(
    return true;
   }
 
-/***************************************/
-/* EnvPutFactSlot: Sets the slot value */
-/*   of the specified slot of a fact.  */
-/***************************************/
-bool EnvPutFactSlot(
+/**************************************/
+/* PutFactSlot: Sets the slot value   */
+/*   of the specified slot of a fact. */
+/**************************************/
+bool PutFactSlot(
   Environment *theEnv,
   Fact *theFact,
   const char *slotName,
@@ -1134,7 +1134,7 @@ bool EnvPutFactSlot(
    /* corresponds to a valid slot name. */
    /*===================================*/
 
-   if ((theSlot = FindSlot(theDeftemplate,EnvCreateSymbol(theEnv,slotName),&whichSlot)) == NULL)
+   if ((theSlot = FindSlot(theDeftemplate,CreateSymbol(theEnv,slotName),&whichSlot)) == NULL)
      { return false; }
 
    /*=============================================*/
@@ -1161,12 +1161,12 @@ bool EnvPutFactSlot(
    return true;
   }
 
-/********************************************************/
-/* EnvAssignFactSlotDefaults: Sets a fact's slot values */
-/*   to its default value if the value of the slot has  */
-/*   not yet been set.                                  */
-/********************************************************/
-bool EnvAssignFactSlotDefaults(
+/*******************************************************/
+/* AssignFactSlotDefaults: Sets a fact's slot values   */
+/*   to its default value if the value of the slot has */
+/*   not yet been set.                                 */
+/*******************************************************/
+bool AssignFactSlotDefaults(
   Environment *theEnv,
   Fact *theFact)
   {
@@ -1462,11 +1462,11 @@ void FactDeinstall(
    newFact->factHeader.busyCount--;
   }
 
-/************************************************/
-/* EnvIncrementFactCount: Increments the number */
-/*   of references to a specified fact.         */
-/************************************************/
-void EnvIncrementFactCount(
+/*********************************************/
+/* IncrementFactCount: Increments the number */
+/*   of references to a specified fact.      */
+/*********************************************/
+void IncrementFactCount(
   Environment *theEnv,
   Fact *factPtr)
   {
@@ -1477,11 +1477,11 @@ void EnvIncrementFactCount(
    factPtr->factHeader.busyCount++;
   }
 
-/************************************************/
-/* EnvDecrementFactCount: Decrements the number */
-/*   of references to a specified fact.         */
-/************************************************/
-void EnvDecrementFactCount(
+/*********************************************/
+/* DecrementFactCount: Decrements the number */
+/*   of references to a specified fact.      */
+/*********************************************/
+void DecrementFactCount(
   Environment *theEnv,
   Fact *factPtr)
   {
@@ -1493,11 +1493,11 @@ void EnvDecrementFactCount(
   }
 
 /*********************************************************/
-/* EnvGetNextFact: If passed a NULL pointer, returns the */
+/* GetNextFact: If passed a NULL pointer, returns the */
 /*   first fact in the fact-list. Otherwise returns the  */
 /*   next fact following the fact passed as an argument. */
 /*********************************************************/
-Fact *EnvGetNextFact(
+Fact *GetNextFact(
   Environment *theEnv,
   Fact *factPtr)
   {
@@ -1589,10 +1589,10 @@ void FactPPForm(
   }
 
 /**********************************/
-/* EnvFactIndex: C access routine */
+/* FactIndex: C access routine    */
 /*   for the fact-index function. */
 /**********************************/
-long long EnvFactIndex(
+long long FactIndex(
   Environment *theEnv,
   Fact *factPtr)
   {
@@ -1604,10 +1604,10 @@ long long EnvFactIndex(
   }
 
 /*************************************/
-/* EnvAssertString: C access routine */
+/* AssertString: C access routine    */
 /*   for the assert-string function. */
 /*************************************/
-Fact *EnvAssertString(
+Fact *AssertString(
   Environment *theEnv,
   const char *theString)
   {
@@ -1621,24 +1621,24 @@ Fact *EnvAssertString(
        (EvaluationData(theEnv)->CurrentExpression == NULL))
      { ConstructData(theEnv)->DanglingConstructs = danglingConstructs; }
 
-   return EnvAssert(theEnv,theFact);
+   return Assert(theEnv,theFact);
   }
 
 /******************************************************/
-/* EnvGetFactListChanged: Returns the flag indicating */
+/* GetFactListChanged: Returns the flag indicating    */
 /*   whether a change to the fact-list has been made. */
 /******************************************************/
-bool EnvGetFactListChanged(
+bool GetFactListChanged(
   Environment *theEnv)
   {
    return(FactData(theEnv)->ChangeToFactList);
   }
 
-/***********************************************************/
-/* EnvSetFactListChanged: Sets the flag indicating whether */
-/*   a change to the fact-list has been made.              */
-/***********************************************************/
-void EnvSetFactListChanged(
+/********************************************************/
+/* SetFactListChanged: Sets the flag indicating whether */
+/*   a change to the fact-list has been made.           */
+/********************************************************/
+void SetFactListChanged(
   Environment *theEnv,
   bool value)
   {
@@ -1707,7 +1707,7 @@ static bool ClearFactsReady(
    /* remaining, don't continue with the clear.    */
    /*==============================================*/
 
-   if (EnvGetNextFact(theEnv,NULL) != NULL) return false;
+   if (GetNextFact(theEnv,NULL) != NULL) return false;
 
    /*=============================*/
    /* Return true to indicate the */
@@ -1727,9 +1727,9 @@ Fact *FindIndexedFact(
   {
    Fact *theFact;
 
-   for (theFact = EnvGetNextFact(theEnv,NULL);
+   for (theFact = GetNextFact(theEnv,NULL);
         theFact != NULL;
-        theFact = EnvGetNextFact(theEnv,theFact))
+        theFact = GetNextFact(theEnv,theFact))
      {
       if (theFact->factIndex == factIndexSought)
         { return(theFact); }
@@ -1738,11 +1738,11 @@ Fact *FindIndexedFact(
    return NULL;
   }
 
-/*****************************************/
-/* EnvAddAssertFunction: Adds a function */
-/*   to the ListOfAssertFunctions.       */
-/*****************************************/
-bool EnvAddAssertFunction(
+/**************************************/
+/* AddAssertFunction: Adds a function */
+/*   to the ListOfAssertFunctions.    */
+/**************************************/
+bool AddAssertFunction(
   Environment *theEnv,
   const char *name,
   void (*functionPtr)(Environment *, void *),
@@ -1756,10 +1756,10 @@ bool EnvAddAssertFunction(
   }
 
 /********************************************/
-/* EnvAddAssertFunctionWithContext: Adds a  */
+/* AddAssertFunctionWithContext: Adds a     */
 /*   function to the ListOfAssertFunctions. */
 /********************************************/
-bool EnvAddAssertFunctionWithContext(
+bool AddAssertFunctionWithContext(
   Environment *theEnv,
   const char *name,
   void (*functionPtr)(Environment *, void *),
@@ -1773,11 +1773,11 @@ bool EnvAddAssertFunctionWithContext(
    return true;
   }
 
-/***********************************************/
-/* EnvRemoveAssertFunction: Removes a function */
-/*   from the ListOfAssertFunctions.           */
-/***********************************************/
-bool EnvRemoveAssertFunction(
+/********************************************/
+/* RemoveAssertFunction: Removes a function */
+/*   from the ListOfAssertFunctions.        */
+/********************************************/
+bool RemoveAssertFunction(
   Environment *theEnv,
   const char *name)
   {
@@ -1791,11 +1791,11 @@ bool EnvRemoveAssertFunction(
    return false;
   }
 
-/******************************************/
-/* EnvAddRetractFunction: Adds a function */
-/*   to the ListOfRetractFunctions.       */
-/******************************************/
-bool EnvAddRetractFunction(
+/***************************************/
+/* AddRetractFunction: Adds a function */
+/*   to the ListOfRetractFunctions.    */
+/***************************************/
+bool AddRetractFunction(
   Environment *theEnv,
   const char *name,
   void (*functionPtr)(Environment *, void *),
@@ -1809,10 +1809,10 @@ bool EnvAddRetractFunction(
   }
 
 /*********************************************/
-/* EnvAddRetractFunctionWithContext: Adds a  */
+/* AddRetractFunctionWithContext: Adds a     */
 /*   function to the ListOfRetractFunctions. */
 /*********************************************/
-bool EnvAddRetractFunctionWithContext(
+bool AddRetractFunctionWithContext(
   Environment *theEnv,
   const char *name,
   void (*functionPtr)(Environment *, void *),
@@ -1826,11 +1826,11 @@ bool EnvAddRetractFunctionWithContext(
    return true;
   }
 
-/************************************************/
-/* EnvRemoveRetractFunction: Removes a function */
-/*   from the ListOfRetractFunctions.           */
-/************************************************/
-bool EnvRemoveRetractFunction(
+/*********************************************/
+/* RemoveRetractFunction: Removes a function */
+/*   from the ListOfRetractFunctions.        */
+/*********************************************/
+bool RemoveRetractFunction(
   Environment *theEnv,
   const char *name)
   {
@@ -1844,11 +1844,11 @@ bool EnvRemoveRetractFunction(
    return false;
   }
 
-/*****************************************/
-/* EnvAddModifyFunction: Adds a function */
-/*   to the ListOfModifyFunctions.       */
-/*****************************************/
-bool EnvAddModifyFunction(
+/**************************************/
+/* AddModifyFunction: Adds a function */
+/*   to the ListOfModifyFunctions.    */
+/**************************************/
+bool AddModifyFunction(
   Environment *theEnv,
   const char *name,
   void (*functionPtr)(Environment *, void *, void *),
@@ -1862,10 +1862,10 @@ bool EnvAddModifyFunction(
   }
 
 /********************************************/
-/* EnvAddModifyFunctionWithContext: Adds a  */
+/* AddModifyFunctionWithContext: Adds a     */
 /*   function to the ListOfModifyFunctions. */
 /********************************************/
-bool EnvAddModifyFunctionWithContext(
+bool AddModifyFunctionWithContext(
   Environment *theEnv,
   const char *name,
   void (*functionPtr)(Environment *, void *, void *),
@@ -1880,11 +1880,11 @@ bool EnvAddModifyFunctionWithContext(
    return true;
   }
 
-/***********************************************/
-/* EnvRemoveModifyFunction: Removes a function */
-/*   from the ListOfModifyFunctions.           */
-/***********************************************/
-bool EnvRemoveModifyFunction(
+/********************************************/
+/* RemoveModifyFunction: Removes a function */
+/*   from the ListOfModifyFunctions.        */
+/********************************************/
+bool RemoveModifyFunction(
   Environment *theEnv,
   const char *name)
   {
@@ -1898,10 +1898,10 @@ bool EnvRemoveModifyFunction(
    return false;
   }
 
-/*************************/
-/* EnvCreateFactBuilder: */
-/*************************/
-FactBuilder *EnvCreateFactBuilder(
+/**********************/
+/* CreateFactBuilder: */
+/**********************/
+FactBuilder *CreateFactBuilder(
   Environment *theEnv,
   const char *deftemplateName)
   {
@@ -1909,7 +1909,7 @@ FactBuilder *EnvCreateFactBuilder(
    Deftemplate *theDeftemplate;
    int i;
    
-   theDeftemplate = EnvFindDeftemplate(theEnv,deftemplateName);
+   theDeftemplate = FindDeftemplate(theEnv,deftemplateName);
    if (theDeftemplate == NULL) return NULL;
    
    if (theDeftemplate->implied) return NULL;
@@ -2045,7 +2045,7 @@ bool FBPutSlot(
    /* corresponds to a valid slot name. */
    /*===================================*/
 
-   if ((theSlot = FindSlot(theFB->fbDeftemplate,EnvCreateSymbol(theFB->fbEnv,slotName),&whichSlot)) == NULL)
+   if ((theSlot = FindSlot(theFB->fbDeftemplate,CreateSymbol(theFB->fbEnv,slotName),&whichSlot)) == NULL)
      { return false; }
      
    /*=============================================*/
@@ -2106,7 +2106,7 @@ Fact *FBAssert(
    int i;
    Fact *theFact;
    
-   theFact = EnvCreateFact(theEnv,theFB->fbDeftemplate);
+   theFact = CreateFact(theEnv,theFB->fbDeftemplate);
    
    for (i = 0; i < theFB->fbDeftemplate->numberOfSlots; i++)
      {
@@ -2118,9 +2118,9 @@ Fact *FBAssert(
         }
      }
 
-   EnvAssignFactSlotDefaults(theEnv,theFact);
+   AssignFactSlotDefaults(theEnv,theFact);
    
-   theFact = EnvAssert(theEnv,theFact);
+   theFact = Assert(theEnv,theFact);
       
    return theFact;
   }
@@ -2174,7 +2174,7 @@ bool FBSetDeftemplate(
    
    FBAbort(theFB);
    
-   theDeftemplate = EnvFindDeftemplate(theFB->fbEnv,deftemplateName);
+   theDeftemplate = FindDeftemplate(theFB->fbEnv,deftemplateName);
    
    if (theDeftemplate == NULL) return false;
    if (theDeftemplate->implied) return false;
@@ -2192,10 +2192,10 @@ bool FBSetDeftemplate(
    return true;
   }
 
-/**************************/
-/* EnvCreateFactModifier: */
-/**************************/
-FactModifier *EnvCreateFactModifier(
+/***********************/
+/* CreateFactModifier: */
+/***********************/
+FactModifier *CreateFactModifier(
   Environment *theEnv,
   Fact *oldFact)
   {
@@ -2211,7 +2211,7 @@ FactModifier *EnvCreateFactModifier(
 
    theFM->fmEnv = theEnv;
    theFM->fmOldFact = oldFact;
-   EnvIncrementFactCount(theEnv,oldFact);
+   IncrementFactCount(theEnv,oldFact);
 
    theFM->fmValueArray = (CLIPSValue *) gm3(theEnv,sizeof(CLIPSValue) * oldFact->whichDeftemplate->numberOfSlots);
 
@@ -2342,7 +2342,7 @@ bool FMPutSlot(
    /* corresponds to a valid slot name. */
    /*===================================*/
 
-   if ((theSlot = FindSlot(theFM->fmOldFact->whichDeftemplate,EnvCreateSymbol(theEnv,slotName),&whichSlot)) == NULL)
+   if ((theSlot = FindSlot(theFM->fmOldFact->whichDeftemplate,CreateSymbol(theEnv,slotName),&whichSlot)) == NULL)
      { return false; }
 
    /*=============================================*/
@@ -2473,7 +2473,7 @@ void FMDispose(
    /* Return the FactModifier structure. */
    /*====================================*/
    
-   EnvDecrementFactCount(theEnv,theFM->fmOldFact);
+   DecrementFactCount(theEnv,theFM->fmOldFact);
    
    rtn_struct(theEnv,factModifier,theFM);
   }
@@ -2552,9 +2552,9 @@ bool FMSetFact(
    /* Update the fact being modified. */
    /*=================================*/
    
-   EnvDecrementFactCount(theEnv,theFM->fmOldFact);
+   DecrementFactCount(theEnv,theFM->fmOldFact);
    theFM->fmOldFact = oldFact;
-   EnvIncrementFactCount(theEnv,theFM->fmOldFact);
+   IncrementFactCount(theEnv,theFM->fmOldFact);
    
    /*=========================================*/
    /* Initialize the value and change arrays. */

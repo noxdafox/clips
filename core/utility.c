@@ -369,11 +369,11 @@ bool AddCleanupFunction(
    return true;
   }
 
-/******************************************************/
-/* EnvGetPeriodicFunctionContext: Returns the context */
-/*   associated with a periodic function.             */
-/******************************************************/
-void *EnvGetPeriodicFunctionContext(
+/***************************************************/
+/* GetPeriodicFunctionContext: Returns the context */
+/*   associated with a periodic function.          */
+/***************************************************/
+void *GetPeriodicFunctionContext(
   Environment *theEnv,
   const char *name)
   {
@@ -387,11 +387,11 @@ void *EnvGetPeriodicFunctionContext(
    return theItem->context;
   }
 
-/*************************************************************/
-/* EnvAddPeriodicFunctionWithContext: Adds a function to the */
-/*   list of functions called to handle periodic tasks.      */
-/*************************************************************/
-bool EnvAddPeriodicFunctionWithContext(
+/**********************************************************/
+/* AddPeriodicFunctionWithContext: Adds a function to the */
+/*   list of functions called to handle periodic tasks.   */
+/**********************************************************/
+bool AddPeriodicFunctionWithContext(
   Environment *theEnv,
   const char *name,
   void (*theFunction)(Environment *),
@@ -404,17 +404,17 @@ bool EnvAddPeriodicFunctionWithContext(
    return true;
   }
 
-/*******************************************************/
-/* EnvAddPeriodicFunction: Adds a function to the list */
-/*   of functions called to handle periodic tasks.     */
-/*******************************************************/
-bool EnvAddPeriodicFunction(
+/****************************************************/
+/* AddPeriodicFunction: Adds a function to the list */
+/*   of functions called to handle periodic tasks.  */
+/****************************************************/
+bool AddPeriodicFunction(
   Environment *theEnv,
   const char *name,
   void (*theFunction)(Environment *),
   int priority)
   {
-   return EnvAddPeriodicFunctionWithContext(theEnv,name,theFunction,priority,NULL);
+   return AddPeriodicFunctionWithContext(theEnv,name,theFunction,priority,NULL);
   }
 
 /*******************************************************/
@@ -434,11 +434,11 @@ bool RemoveCleanupFunction(
    return found;
   }
 
-/**********************************************************/
-/* EnvRemovePeriodicFunction: Removes a function from the */
-/*   list of functions called to handle periodic tasks.   */
-/**********************************************************/
-bool EnvRemovePeriodicFunction(
+/********************************************************/
+/* RemovePeriodicFunction: Removes a function from the  */
+/*   list of functions called to handle periodic tasks. */
+/********************************************************/
+bool RemovePeriodicFunction(
   Environment *theEnv,
   const char *name)
   {
@@ -479,7 +479,7 @@ const char *StringPrintForm(
 
    theString = ExpandStringWithChar(theEnv,'"',theString,&pos,&max,max+80);
 
-   thePtr = EnvCreateString(theEnv,theString);
+   thePtr = CreateString(theEnv,theString);
    rm(theEnv,theString,max);
    
    return thePtr->contents;
@@ -532,7 +532,7 @@ const char *AppendStrings(
    theString = AppendToString(theEnv,str1,theString,&pos,&max);
    theString = AppendToString(theEnv,str2,theString,&pos,&max);
 
-   thePtr = EnvCreateString(theEnv,theString);
+   thePtr = CreateString(theEnv,theString);
    rm(theEnv,theString,max);
    return thePtr->contents;
   }
@@ -1317,11 +1317,13 @@ unsigned long ItemHashValue(
   void *theValue,
   unsigned long theRange)
   {
+#if OBJECT_SYSTEM
    union
      {
       void *vv;
       unsigned uv;
      } fis;
+#endif
 
    switch(theType)
      {
@@ -1351,10 +1353,10 @@ unsigned long ItemHashValue(
 
 #if OBJECT_SYSTEM
       case INSTANCE_ADDRESS_TYPE:
-#endif
         fis.uv = 0;
         fis.vv = theValue;
         return(fis.uv % theRange);
+#endif
      }
 
    SystemError(theEnv,"UTILITY",1);
@@ -1374,21 +1376,21 @@ void YieldTime(
      { (*UtilityData(theEnv)->YieldTimeFunction)(); }
   }
 
-/**********************************************/
-/* EnvIncrementGCLocks: Increments the number */
-/*   of garbage collection locks.             */
-/**********************************************/
-void EnvIncrementGCLocks(
+/*******************************************/
+/* IncrementGCLocks: Increments the number */
+/*   of garbage collection locks.          */
+/*******************************************/
+void IncrementGCLocks(
   Environment *theEnv)
   {
    UtilityData(theEnv)->GarbageCollectionLocks++;
   }
 
-/**********************************************/
-/* EnvDecrementGCLocks: Decrements the number */
-/*   of garbage collection locks.             */
-/**********************************************/
-void EnvDecrementGCLocks(
+/*******************************************/
+/* DecrementGCLocks: Decrements the number */
+/*   of garbage collection locks.          */
+/*******************************************/
+void DecrementGCLocks(
   Environment *theEnv)
   {
    if (UtilityData(theEnv)->GarbageCollectionLocks > 0)
@@ -1421,17 +1423,17 @@ bool EnablePeriodicFunctions(
 /************************/
 /* EnableYieldFunction: */
 /************************/
-short EnableYieldFunction(
+bool EnableYieldFunction(
   Environment *theEnv,
-  short value)
+  bool value)
   {
-   short oldValue;
+   bool oldValue;
 
    oldValue = UtilityData(theEnv)->YieldFunctionEnabled;
 
    UtilityData(theEnv)->YieldFunctionEnabled = value;
 
-   return(oldValue);
+   return oldValue;
   }
 
 /*************************************************************************/
@@ -1556,10 +1558,10 @@ size_t UTF8CharNum(
    return charnum;
   }
 
-/***************************/
-/* EnvCreateStringBuilder: */
-/***************************/
-StringBuilder *EnvCreateStringBuilder(
+/************************/
+/* CreateStringBuilder: */
+/************************/
+StringBuilder *CreateStringBuilder(
   Environment *theEnv,
   size_t theSize)
   {

@@ -72,8 +72,8 @@
 #define DEFAULT_STRATEGY DEPTH_STRATEGY
 
    void                           PlaceActivation(Environment *,Activation **,Activation *,struct salienceGroup *);
-   int                            EnvSetStrategy(Environment *,int);
-   int                            EnvGetStrategy(Environment *);
+   int                            SetStrategy(Environment *,int);
+   int                            GetStrategy(Environment *);
    void                           SetStrategyCommand(Environment *,UDFContext *,UDFValue *);
    void                           GetStrategyCommand(Environment *,UDFContext *,UDFValue *);
 

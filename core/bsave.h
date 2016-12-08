@@ -103,7 +103,7 @@ struct bsaveData
    void                    InitializeBsaveData(Environment *);
    void                    BsaveCommand(Environment *,UDFContext *,UDFValue *);
 #if BLOAD_AND_BSAVE
-   bool                    EnvBsave(Environment *,const char *);
+   bool                    Bsave(Environment *,const char *);
    void                    MarkNeededItems(Environment *,struct expr *);
    void                    SaveBloadCount(Environment *,long);
    void                    RestoreBloadCount(Environment *,long *);

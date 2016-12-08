@@ -222,11 +222,11 @@ bool EvaluateExpression(
         if (GetBoundVariable(theEnv,returnValue,problem->lexemeValue) == false)
           {
            PrintErrorID(theEnv,"EVALUATN",1,false);
-           EnvPrintRouter(theEnv,WERROR,"Variable ");
-           EnvPrintRouter(theEnv,WERROR,problem->lexemeValue->contents);
-           EnvPrintRouter(theEnv,WERROR," is unbound\n");
+           PrintRouter(theEnv,WERROR,"Variable ");
+           PrintRouter(theEnv,WERROR,problem->lexemeValue->contents);
+           PrintRouter(theEnv,WERROR," is unbound\n");
            returnValue->value = FalseSymbol(theEnv);
-           EnvSetEvaluationError(theEnv,true);
+           SetEvaluationError(theEnv,true);
           }
         break;
 
@@ -234,7 +234,7 @@ bool EvaluateExpression(
         if (EvaluationData(theEnv)->PrimitivesArray[problem->type] == NULL)
           {
            SystemError(theEnv,"EVALUATN",3);
-           EnvExitRouter(theEnv,EXIT_FAILURE);
+           ExitRouter(theEnv,EXIT_FAILURE);
           }
 
         if (EvaluationData(theEnv)->PrimitivesArray[problem->type]->copyToEvaluate)
@@ -246,7 +246,7 @@ bool EvaluateExpression(
         if (EvaluationData(theEnv)->PrimitivesArray[problem->type]->evaluateFunction == NULL)
           {
            SystemError(theEnv,"EVALUATN",4);
-           EnvExitRouter(theEnv,EXIT_FAILURE);
+           ExitRouter(theEnv,EXIT_FAILURE);
           }
 
         oldArgument = EvaluationData(theEnv)->CurrentExpression;
@@ -283,7 +283,7 @@ void InstallPrimitive(
    if (EvaluationData(theEnv)->PrimitivesArray[whichPosition] != NULL)
      {
       SystemError(theEnv,"EVALUATN",5);
-      EnvExitRouter(theEnv,EXIT_FAILURE);
+      ExitRouter(theEnv,EXIT_FAILURE);
      }
 
    EvaluationData(theEnv)->PrimitivesArray[whichPosition] = thePrimitive;
@@ -304,7 +304,7 @@ int InstallExternalAddressType(
    if (EvaluationData(theEnv)->numberOfAddressTypes == MAXIMUM_EXTERNAL_ADDRESS_TYPES)
      {
       SystemError(theEnv,"EVALUATN",6);
-      EnvExitRouter(theEnv,EXIT_FAILURE);
+      ExitRouter(theEnv,EXIT_FAILURE);
      }
 
    copyEAT = (struct externalAddressType *) genalloc(theEnv,sizeof(struct externalAddressType));
@@ -314,10 +314,10 @@ int InstallExternalAddressType(
    return rv;
   }
 
-/*********************************************************/
-/* EnvSetEvaluationError: Sets the EvaluationError flag. */
-/*********************************************************/
-void EnvSetEvaluationError(
+/******************************************************/
+/* SetEvaluationError: Sets the EvaluationError flag. */
+/******************************************************/
+void SetEvaluationError(
   Environment *theEnv,
   bool value)
   {
@@ -326,29 +326,29 @@ void EnvSetEvaluationError(
      { EvaluationData(theEnv)->HaltExecution = true; }
   }
 
-/************************************************************/
-/* EnvGetEvaluationError: Returns the EvaluationError flag. */
-/************************************************************/
-bool EnvGetEvaluationError(
+/*********************************************************/
+/* GetEvaluationError: Returns the EvaluationError flag. */
+/*********************************************************/
+bool GetEvaluationError(
   Environment *theEnv)
   {
    return(EvaluationData(theEnv)->EvaluationError);
   }
 
-/*****************************************************/
-/* EnvSetHaltExecution: Sets the HaltExecution flag. */
-/*****************************************************/
-void EnvSetHaltExecution(
+/**************************************************/
+/* SetHaltExecution: Sets the HaltExecution flag. */
+/**************************************************/
+void SetHaltExecution(
   Environment *theEnv,
   bool value)
   {
    EvaluationData(theEnv)->HaltExecution = value;
   }
 
-/********************************************************/
-/* EnvGetHaltExecution: Returns the HaltExecution flag. */
-/********************************************************/
-bool EnvGetHaltExecution(
+/*****************************************************/
+/* GetHaltExecution: Returns the HaltExecution flag. */
+/*****************************************************/
+bool GetHaltExecution(
   Environment *theEnv)
   {
    return(EvaluationData(theEnv)->HaltExecution);
@@ -407,24 +407,24 @@ void PrintDataObject(
         break;
 
       default:
-        EnvPrintRouter(theEnv,fileid,"<UnknownPrintType");
+        PrintRouter(theEnv,fileid,"<UnknownPrintType");
         PrintLongInteger(theEnv,fileid,(long int) argPtr->header->type);
-        EnvPrintRouter(theEnv,fileid,">");
-        EnvSetHaltExecution(theEnv,true);
-        EnvSetEvaluationError(theEnv,true);
+        PrintRouter(theEnv,fileid,">");
+        SetHaltExecution(theEnv,true);
+        SetEvaluationError(theEnv,true);
         break;
      }
   }
 
-/****************************************************/
-/* EnvSetMultifieldErrorValue: Creates a multifield */
-/*   value of length zero for error returns.        */
-/****************************************************/
-void EnvSetMultifieldErrorValue(
+/*************************************************/
+/* SetMultifieldErrorValue: Creates a multifield */
+/*   value of length zero for error returns.     */
+/*************************************************/
+void SetMultifieldErrorValue(
   Environment *theEnv,
   UDFValue *returnValue)
   {
-   returnValue->value = EnvCreateMultifield(theEnv,0L);
+   returnValue->value = CreateMultifield(theEnv,0L);
    returnValue->begin = 0;
    returnValue->range = 0;
   }
@@ -491,12 +491,14 @@ void CVAtomInstall(
         MultifieldInstall(theEnv,(Multifield *) vPtr);
         break;
         
+#if OBJECT_SYSTEM
       case INSTANCE_ADDRESS_TYPE:
-        EnvIncrementInstanceCount(theEnv,(Instance *) vPtr);
+        IncrementInstanceCount(theEnv,(Instance *) vPtr);
         break;
-     
+#endif
+
       case FACT_ADDRESS_TYPE:
-        EnvIncrementFactCount(theEnv,(Fact *) vPtr);
+        IncrementFactCount(theEnv,(Fact *) vPtr);
         break;
      
       case VOID_TYPE:
@@ -504,7 +506,7 @@ void CVAtomInstall(
 
       default:
         SystemError(theEnv,"EVALUATN",7);
-        EnvExitRouter(theEnv,EXIT_FAILURE);
+        ExitRouter(theEnv,EXIT_FAILURE);
         break;
      }
   }
@@ -543,12 +545,14 @@ void CVAtomDeinstall(
         MultifieldDeinstall(theEnv,(Multifield *) vPtr);
         break;
         
+#if OBJECT_SYSTEM
       case INSTANCE_ADDRESS_TYPE:
-        EnvDecrementInstanceCount(theEnv,(Instance *) vPtr);
+        DecrementInstanceCount(theEnv,(Instance *) vPtr);
         break;
+#endif
      
       case FACT_ADDRESS_TYPE:
-        EnvDecrementFactCount(theEnv,(Fact *) vPtr);
+        DecrementFactCount(theEnv,(Fact *) vPtr);
         break;
 
       case VOID_TYPE:
@@ -556,7 +560,7 @@ void CVAtomDeinstall(
 
       default:
         SystemError(theEnv,"EVALUATN",8);
-        EnvExitRouter(theEnv,EXIT_FAILURE);
+        ExitRouter(theEnv,EXIT_FAILURE);
         break;
      }
   }
@@ -663,11 +667,11 @@ void AtomDeinstall(
 #if DEFFUNCTION_CONSTRUCT || DEFGENERIC_CONSTRUCT
 
 /********************************************/
-/* EnvFunctionCall: Allows Deffunctions and */
+/* FunctionCall: Allows Deffunctions and    */
 /*   Generic Functions to be called from C. */
 /*   Allows only constants as arguments.    */
 /********************************************/
-bool EnvFunctionCall(
+bool FunctionCall(
   Environment *theEnv,
   const char *name,
   const char *args,
@@ -696,14 +700,14 @@ bool EnvFunctionCall(
    /*=========================================================*/
 
    PrintErrorID(theEnv,"EVALUATN",2,false);
-   EnvPrintRouter(theEnv,WERROR,"No function, generic function or deffunction of name ");
-   EnvPrintRouter(theEnv,WERROR,name);
-   EnvPrintRouter(theEnv,WERROR," exists for external call.\n");
+   PrintRouter(theEnv,WERROR,"No function, generic function or deffunction of name ");
+   PrintRouter(theEnv,WERROR,name);
+   PrintRouter(theEnv,WERROR," exists for external call.\n");
    return true;
   }
 
 /********************************************/
-/* FunctionCall2: Allows Deffunctions and    */
+/* FunctionCall2: Allows Deffunctions and   */
 /*   Generic Functions to be called from C. */
 /*   Allows only constants as arguments.    */
 /********************************************/
@@ -732,7 +736,7 @@ bool FunctionCall2(
    /* Reset the error state. */
    /*========================*/
 
-   if (UtilityData(theEnv)->CurrentGarbageFrame->topLevel) EnvSetHaltExecution(theEnv,false);
+   if (UtilityData(theEnv)->CurrentGarbageFrame->topLevel) SetHaltExecution(theEnv,false);
    EvaluationData(theEnv)->EvaluationError = false;
 
    /*======================================*/
@@ -773,7 +777,7 @@ bool FunctionCall2(
 
 /***************************************************/
 /* CopyDataObject: Copies the values from a source */
-/*   UDFValue to a destination UDFValue.       */
+/*   UDFValue to a destination UDFValue.           */
 /***************************************************/
 void CopyDataObject(
   Environment *theEnv,
@@ -1071,7 +1075,7 @@ bool EvaluateAndStoreInDataObject(
 
    if (theExp == NULL)
      {
-      if (garbageSegment) val->value = EnvCreateMultifield(theEnv,0L);
+      if (garbageSegment) val->value = CreateMultifield(theEnv,0L);
       else val->value = CreateUnmanagedMultifield(theEnv,0L);
 
       return true;
@@ -1095,11 +1099,11 @@ static void PrintCAddress(
   {
    char buffer[20];
 
-   EnvPrintRouter(theEnv,logicalName,"<Pointer-C-");
+   PrintRouter(theEnv,logicalName,"<Pointer-C-");
 
    gensprintf(buffer,"%p",((CLIPSExternalAddress *) theValue)->contents);
-   EnvPrintRouter(theEnv,logicalName,buffer);
-   EnvPrintRouter(theEnv,logicalName,">");
+   PrintRouter(theEnv,logicalName,buffer);
+   PrintRouter(theEnv,logicalName,">");
   }
 
 /****************/
@@ -1117,12 +1121,12 @@ static void NewCAddress(
    if (numberOfArguments != 1)
      {
       PrintErrorID(theEnv,"NEW",1,false);
-      EnvPrintRouter(theEnv,WERROR,"Function new expected no additional arguments for the C external language type.\n");
-      EnvSetEvaluationError(theEnv,true);
+      PrintRouter(theEnv,WERROR,"Function new expected no additional arguments for the C external language type.\n");
+      SetEvaluationError(theEnv,true);
       return;
      }
 
-   rv->value = EnvAddExternalAddress(theEnv,NULL,0);
+   rv->value = AddExternalAddress(theEnv,NULL,0);
   }
 
 /*******************************/
@@ -1133,7 +1137,7 @@ static bool DiscardCAddress(
   Environment *theEnv,
   void *theValue)
   {
-   EnvPrintRouter(theEnv,WDISPLAY,"Discarding C Address\n");
+   PrintRouter(theEnv,WDISPLAY,"Discarding C Address\n");
 
    return true;
   }

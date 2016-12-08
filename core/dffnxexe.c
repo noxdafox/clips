@@ -196,9 +196,9 @@ void CallDeffunction(
 static void UnboundDeffunctionErr(
   Environment *theEnv)
   {
-   EnvPrintRouter(theEnv,WERROR,"deffunction ");
-   EnvPrintRouter(theEnv,WERROR,DeffunctionName(DeffunctionData(theEnv)->ExecutingDeffunction));
-   EnvPrintRouter(theEnv,WERROR,".\n");
+   PrintRouter(theEnv,WERROR,"deffunction ");
+   PrintRouter(theEnv,WERROR,DeffunctionName(DeffunctionData(theEnv)->ExecutingDeffunction));
+   PrintRouter(theEnv,WERROR,".\n");
   }
 
 #if DEBUGGING_FUNCTIONS
@@ -219,15 +219,15 @@ static void WatchDeffunction(
   Environment *theEnv,
   const char *tstring)
   {
-   EnvPrintRouter(theEnv,WTRACE,"DFN ");
-   EnvPrintRouter(theEnv,WTRACE,tstring);
-   if (DeffunctionData(theEnv)->ExecutingDeffunction->header.whichModule->theModule != EnvGetCurrentModule(theEnv))
+   PrintRouter(theEnv,WTRACE,"DFN ");
+   PrintRouter(theEnv,WTRACE,tstring);
+   if (DeffunctionData(theEnv)->ExecutingDeffunction->header.whichModule->theModule != GetCurrentModule(theEnv))
      {
-      EnvPrintRouter(theEnv,WTRACE,DeffunctionModule(DeffunctionData(theEnv)->ExecutingDeffunction));;
-      EnvPrintRouter(theEnv,WTRACE,"::");
+      PrintRouter(theEnv,WTRACE,DeffunctionModule(DeffunctionData(theEnv)->ExecutingDeffunction));;
+      PrintRouter(theEnv,WTRACE,"::");
      }
-   EnvPrintRouter(theEnv,WTRACE,DeffunctionData(theEnv)->ExecutingDeffunction->header.name->contents);
-   EnvPrintRouter(theEnv,WTRACE," ED:");
+   PrintRouter(theEnv,WTRACE,DeffunctionData(theEnv)->ExecutingDeffunction->header.name->contents);
+   PrintRouter(theEnv,WTRACE," ED:");
    PrintLongInteger(theEnv,WTRACE,(long long) EvaluationData(theEnv)->CurrentEvaluationDepth);
    PrintProcParamArray(theEnv,WTRACE);
   }

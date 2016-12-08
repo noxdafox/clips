@@ -391,26 +391,26 @@ static void PrintObjectGetVarJN1(
 
    if (hack->objectAddress)
      {
-      EnvPrintRouter(theEnv,logicalName,"(obj-ptr ");
+      PrintRouter(theEnv,logicalName,"(obj-ptr ");
       PrintLongInteger(theEnv,logicalName,(long long) hack->whichPattern);
      }
    else if (hack->allFields)
      {
-      EnvPrintRouter(theEnv,logicalName,"(obj-slot-contents ");
+      PrintRouter(theEnv,logicalName,"(obj-slot-contents ");
       PrintLongInteger(theEnv,logicalName,(long long) hack->whichPattern);
-      EnvPrintRouter(theEnv,logicalName," ");
-      EnvPrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->whichSlot)->contents);
+      PrintRouter(theEnv,logicalName," ");
+      PrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->whichSlot)->contents);
      }
    else
      {
-      EnvPrintRouter(theEnv,logicalName,"(obj-slot-var ");
+      PrintRouter(theEnv,logicalName,"(obj-slot-var ");
       PrintLongInteger(theEnv,logicalName,(long long) hack->whichPattern);
-      EnvPrintRouter(theEnv,logicalName," ");
-      EnvPrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->whichSlot)->contents);
-      EnvPrintRouter(theEnv,logicalName," ");
+      PrintRouter(theEnv,logicalName," ");
+      PrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->whichSlot)->contents);
+      PrintRouter(theEnv,logicalName," ");
       PrintLongInteger(theEnv,logicalName,(long long) hack->whichField);
      }
-   EnvPrintRouter(theEnv,logicalName,")");
+   PrintRouter(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -444,21 +444,21 @@ static void PrintObjectGetVarJN2(
    struct ObjectMatchVar2 *hack;
 
    hack = (struct ObjectMatchVar2 *) ((CLIPSBitMap *) theValue)->contents;
-   EnvPrintRouter(theEnv,logicalName,"(obj-slot-quick-var ");
+   PrintRouter(theEnv,logicalName,"(obj-slot-quick-var ");
    PrintLongInteger(theEnv,logicalName,(long long) hack->whichPattern);
-   EnvPrintRouter(theEnv,logicalName," ");
-   EnvPrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->whichSlot)->contents);
+   PrintRouter(theEnv,logicalName," ");
+   PrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->whichSlot)->contents);
    if (hack->fromBeginning)
      {
-      EnvPrintRouter(theEnv,logicalName," B");
+      PrintRouter(theEnv,logicalName," B");
       PrintLongInteger(theEnv,logicalName,(long long) (hack->beginningOffset + 1));
      }
    if (hack->fromEnd)
      {
-      EnvPrintRouter(theEnv,logicalName," E");
+      PrintRouter(theEnv,logicalName," E");
       PrintLongInteger(theEnv,logicalName,(long long) (hack->endOffset + 1));
      }
-   EnvPrintRouter(theEnv,logicalName,")");
+   PrintRouter(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -494,20 +494,20 @@ static void PrintObjectGetVarPN1(
    hack = (struct ObjectMatchVar1 *) ((CLIPSBitMap *) theValue)->contents;
 
    if (hack->objectAddress)
-     EnvPrintRouter(theEnv,logicalName,"(ptn-obj-ptr ");
+     PrintRouter(theEnv,logicalName,"(ptn-obj-ptr ");
    else if (hack->allFields)
      {
-      EnvPrintRouter(theEnv,logicalName,"(ptn-obj-slot-contents ");
-      EnvPrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->whichSlot)->contents);
+      PrintRouter(theEnv,logicalName,"(ptn-obj-slot-contents ");
+      PrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->whichSlot)->contents);
      }
    else
      {
-      EnvPrintRouter(theEnv,logicalName,"(ptn-obj-slot-var ");
-      EnvPrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->whichSlot)->contents);
-      EnvPrintRouter(theEnv,logicalName," ");
+      PrintRouter(theEnv,logicalName,"(ptn-obj-slot-var ");
+      PrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->whichSlot)->contents);
+      PrintRouter(theEnv,logicalName," ");
       PrintLongInteger(theEnv,logicalName,(long long) hack->whichField);
      }
-   EnvPrintRouter(theEnv,logicalName,")");
+   PrintRouter(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -538,19 +538,19 @@ static void PrintObjectGetVarPN2(
    struct ObjectMatchVar2 *hack;
 
    hack = (struct ObjectMatchVar2 *) ((CLIPSBitMap *) theValue)->contents;
-   EnvPrintRouter(theEnv,logicalName,"(ptn-obj-slot-quick-var ");
-   EnvPrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->whichSlot)->contents);
+   PrintRouter(theEnv,logicalName,"(ptn-obj-slot-quick-var ");
+   PrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->whichSlot)->contents);
    if (hack->fromBeginning)
      {
-      EnvPrintRouter(theEnv,logicalName," B");
+      PrintRouter(theEnv,logicalName," B");
       PrintLongInteger(theEnv,logicalName,(long long) (hack->beginningOffset + 1));
      }
    if (hack->fromEnd)
      {
-      EnvPrintRouter(theEnv,logicalName," E");
+      PrintRouter(theEnv,logicalName," E");
       PrintLongInteger(theEnv,logicalName,(long long) (hack->endOffset + 1));
      }
-   EnvPrintRouter(theEnv,logicalName,")");
+   PrintRouter(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -582,18 +582,18 @@ static void PrintObjectCmpConstant(
 
    hack = (struct ObjectCmpPNConstant *) ((CLIPSBitMap *) theValue)->contents;
 
-   EnvPrintRouter(theEnv,logicalName,"(obj-const ");
-   EnvPrintRouter(theEnv,logicalName,hack->pass ? "p " : "n ");
+   PrintRouter(theEnv,logicalName,"(obj-const ");
+   PrintRouter(theEnv,logicalName,hack->pass ? "p " : "n ");
    if (hack->general)
      PrintExpression(theEnv,logicalName,GetFirstArgument());
    else
      {
-      EnvPrintRouter(theEnv,logicalName,hack->fromBeginning ? "B" : "E");
+      PrintRouter(theEnv,logicalName,hack->fromBeginning ? "B" : "E");
       PrintLongInteger(theEnv,logicalName,(long long) hack->offset);
-      EnvPrintRouter(theEnv,logicalName," ");
+      PrintRouter(theEnv,logicalName," ");
       PrintExpression(theEnv,logicalName,GetFirstArgument());
      }
-   EnvPrintRouter(theEnv,logicalName,")");
+   PrintRouter(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -613,13 +613,13 @@ static void PrintSlotLengthTest(
 
    hack = (struct ObjectMatchLength *) ((CLIPSBitMap *) theValue)->contents;
 
-   EnvPrintRouter(theEnv,logicalName,"(obj-slot-len ");
+   PrintRouter(theEnv,logicalName,"(obj-slot-len ");
    if (hack->exactly)
-     EnvPrintRouter(theEnv,logicalName,"= ");
+     PrintRouter(theEnv,logicalName,"= ");
    else
-     EnvPrintRouter(theEnv,logicalName,">= ");
+     PrintRouter(theEnv,logicalName,">= ");
    PrintLongInteger(theEnv,logicalName,(long long) hack->minLength);
-   EnvPrintRouter(theEnv,logicalName,")");
+   PrintRouter(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -656,12 +656,12 @@ static void PrintPNSimpleCompareFunction1(
 
    hack = (struct ObjectCmpPNSingleSlotVars1 *) ((CLIPSBitMap *) theValue)->contents;
 
-   EnvPrintRouter(theEnv,logicalName,"(pslot-cmp1 ");
-   EnvPrintRouter(theEnv,logicalName,hack->pass ? "p " : "n ");
-   EnvPrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->firstSlot)->contents);
-   EnvPrintRouter(theEnv,logicalName," ");
-   EnvPrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->secondSlot)->contents);
-   EnvPrintRouter(theEnv,logicalName,")");
+   PrintRouter(theEnv,logicalName,"(pslot-cmp1 ");
+   PrintRouter(theEnv,logicalName,hack->pass ? "p " : "n ");
+   PrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->firstSlot)->contents);
+   PrintRouter(theEnv,logicalName," ");
+   PrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->secondSlot)->contents);
+   PrintRouter(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -703,14 +703,14 @@ static void PrintPNSimpleCompareFunction2(
 
    hack = (struct ObjectCmpPNSingleSlotVars2 *) ((CLIPSBitMap *) theValue)->contents;
 
-   EnvPrintRouter(theEnv,logicalName,"(pslot-cmp2 ");
-   EnvPrintRouter(theEnv,logicalName,hack->pass ? "p " : "n ");
-   EnvPrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->firstSlot)->contents);
-   EnvPrintRouter(theEnv,logicalName,hack->fromBeginning ? " B" : " E");
+   PrintRouter(theEnv,logicalName,"(pslot-cmp2 ");
+   PrintRouter(theEnv,logicalName,hack->pass ? "p " : "n ");
+   PrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->firstSlot)->contents);
+   PrintRouter(theEnv,logicalName,hack->fromBeginning ? " B" : " E");
    PrintLongInteger(theEnv,logicalName,(long long) hack->offset);
-   EnvPrintRouter(theEnv,logicalName," ");
-   EnvPrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->secondSlot)->contents);
-   EnvPrintRouter(theEnv,logicalName,")");
+   PrintRouter(theEnv,logicalName," ");
+   PrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->secondSlot)->contents);
+   PrintRouter(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -752,16 +752,16 @@ static void PrintPNSimpleCompareFunction3(
 
    hack = (struct ObjectCmpPNSingleSlotVars3 *) ((CLIPSBitMap *) theValue)->contents;
 
-   EnvPrintRouter(theEnv,logicalName,"(pslot-cmp3 ");
-   EnvPrintRouter(theEnv,logicalName,hack->pass ? "p " : "n ");
-   EnvPrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->firstSlot)->contents);
-   EnvPrintRouter(theEnv,logicalName,hack->firstFromBeginning ? " B" : " E");
+   PrintRouter(theEnv,logicalName,"(pslot-cmp3 ");
+   PrintRouter(theEnv,logicalName,hack->pass ? "p " : "n ");
+   PrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->firstSlot)->contents);
+   PrintRouter(theEnv,logicalName,hack->firstFromBeginning ? " B" : " E");
    PrintLongInteger(theEnv,logicalName,(long long) hack->firstOffset);
-   EnvPrintRouter(theEnv,logicalName," ");
-   EnvPrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->secondSlot)->contents);
-   EnvPrintRouter(theEnv,logicalName,hack->secondFromBeginning ? " B" : " E");
+   PrintRouter(theEnv,logicalName," ");
+   PrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->secondSlot)->contents);
+   PrintRouter(theEnv,logicalName,hack->secondFromBeginning ? " B" : " E");
    PrintLongInteger(theEnv,logicalName,(long long) hack->secondOffset);
-   EnvPrintRouter(theEnv,logicalName,")");
+   PrintRouter(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -803,16 +803,16 @@ static void PrintJNSimpleCompareFunction1(
 
    hack = (struct ObjectCmpJoinSingleSlotVars1 *) ((CLIPSBitMap *) theValue)->contents;
 
-   EnvPrintRouter(theEnv,logicalName,"(jslot-cmp1 ");
-   EnvPrintRouter(theEnv,logicalName,hack->pass ? "p " : "n ");
+   PrintRouter(theEnv,logicalName,"(jslot-cmp1 ");
+   PrintRouter(theEnv,logicalName,hack->pass ? "p " : "n ");
    PrintLongInteger(theEnv,logicalName,(long long) hack->firstPattern);
-   EnvPrintRouter(theEnv,logicalName," ");
-   EnvPrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->firstSlot)->contents);
-   EnvPrintRouter(theEnv,logicalName," ");
+   PrintRouter(theEnv,logicalName," ");
+   PrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->firstSlot)->contents);
+   PrintRouter(theEnv,logicalName," ");
    PrintLongInteger(theEnv,logicalName,(long long) hack->secondPattern);
-   EnvPrintRouter(theEnv,logicalName," ");
-   EnvPrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->secondSlot)->contents);
-   EnvPrintRouter(theEnv,logicalName,")");
+   PrintRouter(theEnv,logicalName," ");
+   PrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->secondSlot)->contents);
+   PrintRouter(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -858,18 +858,18 @@ static void PrintJNSimpleCompareFunction2(
 
    hack = (struct ObjectCmpJoinSingleSlotVars2 *) ((CLIPSBitMap *) theValue)->contents;
 
-   EnvPrintRouter(theEnv,logicalName,"(jslot-cmp2 ");
-   EnvPrintRouter(theEnv,logicalName,hack->pass ? "p " : "n ");
+   PrintRouter(theEnv,logicalName,"(jslot-cmp2 ");
+   PrintRouter(theEnv,logicalName,hack->pass ? "p " : "n ");
    PrintLongInteger(theEnv,logicalName,(long long) hack->firstPattern);
-   EnvPrintRouter(theEnv,logicalName," ");
-   EnvPrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->firstSlot)->contents);
-   EnvPrintRouter(theEnv,logicalName,hack->fromBeginning ? " B" : " E");
+   PrintRouter(theEnv,logicalName," ");
+   PrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->firstSlot)->contents);
+   PrintRouter(theEnv,logicalName,hack->fromBeginning ? " B" : " E");
    PrintLongInteger(theEnv,logicalName,(long long) hack->offset);
-   EnvPrintRouter(theEnv,logicalName," ");
+   PrintRouter(theEnv,logicalName," ");
    PrintLongInteger(theEnv,logicalName,(long long) hack->secondPattern);
-   EnvPrintRouter(theEnv,logicalName," ");
-   EnvPrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->secondSlot)->contents);
-   EnvPrintRouter(theEnv,logicalName,")");
+   PrintRouter(theEnv,logicalName," ");
+   PrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->secondSlot)->contents);
+   PrintRouter(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -915,20 +915,20 @@ static void PrintJNSimpleCompareFunction3(
 
    hack = (struct ObjectCmpJoinSingleSlotVars3 *) ((CLIPSBitMap *) theValue)->contents;
 
-   EnvPrintRouter(theEnv,logicalName,"(jslot-cmp3 ");
-   EnvPrintRouter(theEnv,logicalName,hack->pass ? "p " : "n ");
+   PrintRouter(theEnv,logicalName,"(jslot-cmp3 ");
+   PrintRouter(theEnv,logicalName,hack->pass ? "p " : "n ");
    PrintLongInteger(theEnv,logicalName,(long long) hack->firstPattern);
-   EnvPrintRouter(theEnv,logicalName," ");
-   EnvPrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->firstSlot)->contents);
-   EnvPrintRouter(theEnv,logicalName,hack->firstFromBeginning ? " B" : " E");
+   PrintRouter(theEnv,logicalName," ");
+   PrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->firstSlot)->contents);
+   PrintRouter(theEnv,logicalName,hack->firstFromBeginning ? " B" : " E");
    PrintLongInteger(theEnv,logicalName,(long long) hack->firstOffset);
-   EnvPrintRouter(theEnv,logicalName," ");
+   PrintRouter(theEnv,logicalName," ");
    PrintLongInteger(theEnv,logicalName,(long long) hack->secondPattern);
-   EnvPrintRouter(theEnv,logicalName," ");
-   EnvPrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->secondSlot)->contents);
-   EnvPrintRouter(theEnv,logicalName,hack->secondFromBeginning ? " B" : " E");
+   PrintRouter(theEnv,logicalName," ");
+   PrintRouter(theEnv,logicalName,FindIDSlotName(theEnv,(unsigned) hack->secondSlot)->contents);
+   PrintRouter(theEnv,logicalName,hack->secondFromBeginning ? " B" : " E");
    PrintLongInteger(theEnv,logicalName,(long long) hack->secondOffset);
-   EnvPrintRouter(theEnv,logicalName,")");
+   PrintRouter(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)

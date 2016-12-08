@@ -133,37 +133,37 @@ void DefruleCommands(
   Environment *theEnv)
   {
 #if ! RUN_TIME
-   EnvAddUDF(theEnv,"run","v",0,1,"l",RunCommand,"RunCommand",NULL);
-   EnvAddUDF(theEnv,"halt","v",0,0,NULL,HaltCommand,"HaltCommand",NULL);
-   EnvAddUDF(theEnv,"focus","b",1,UNBOUNDED,"y",FocusCommand,"FocusCommand",NULL);
-   EnvAddUDF(theEnv,"clear-focus-stack","v",0,0,NULL,ClearFocusStackCommand,"ClearFocusStackCommand",NULL);
-   EnvAddUDF(theEnv,"get-focus-stack","m",0,0,NULL,GetFocusStackFunction,"GetFocusStackFunction",NULL);
-   EnvAddUDF(theEnv,"pop-focus","y",0,0,NULL,PopFocusFunction,"PopFocusFunction",NULL);
-   EnvAddUDF(theEnv,"get-focus","y",0,0,NULL,GetFocusFunction,"GetFocusFunction",NULL);
+   AddUDF(theEnv,"run","v",0,1,"l",RunCommand,"RunCommand",NULL);
+   AddUDF(theEnv,"halt","v",0,0,NULL,HaltCommand,"HaltCommand",NULL);
+   AddUDF(theEnv,"focus","b",1,UNBOUNDED,"y",FocusCommand,"FocusCommand",NULL);
+   AddUDF(theEnv,"clear-focus-stack","v",0,0,NULL,ClearFocusStackCommand,"ClearFocusStackCommand",NULL);
+   AddUDF(theEnv,"get-focus-stack","m",0,0,NULL,GetFocusStackFunction,"GetFocusStackFunction",NULL);
+   AddUDF(theEnv,"pop-focus","y",0,0,NULL,PopFocusFunction,"PopFocusFunction",NULL);
+   AddUDF(theEnv,"get-focus","y",0,0,NULL,GetFocusFunction,"GetFocusFunction",NULL);
 #if DEBUGGING_FUNCTIONS
-   EnvAddUDF(theEnv,"set-break","v",1,1,"y",SetBreakCommand,"SetBreakCommand",NULL);
-   EnvAddUDF(theEnv,"remove-break","v",0,1,"y",RemoveBreakCommand,"RemoveBreakCommand",NULL);
-   EnvAddUDF(theEnv,"show-breaks","v",0,1,"y",ShowBreaksCommand,"ShowBreaksCommand",NULL);
-   EnvAddUDF(theEnv,"matches","bm",1,2,"y",MatchesCommand,"MatchesCommand",NULL);
-   EnvAddUDF(theEnv,"join-activity","bm",1,2,"y",JoinActivityCommand,"JoinActivityCommand",NULL);
-   EnvAddUDF(theEnv,"join-activity-reset","v",0,0,NULL,JoinActivityResetCommand,"JoinActivityResetCommand",NULL);
-   EnvAddUDF(theEnv,"list-focus-stack","v",0,0,NULL,ListFocusStackCommand,"ListFocusStackCommand",NULL);
-   EnvAddUDF(theEnv,"dependencies","v",1,1,"infly",DependenciesCommand,"DependenciesCommand",NULL);
-   EnvAddUDF(theEnv,"dependents","v",1,1,"infly",DependentsCommand,"DependentsCommand",NULL);
+   AddUDF(theEnv,"set-break","v",1,1,"y",SetBreakCommand,"SetBreakCommand",NULL);
+   AddUDF(theEnv,"remove-break","v",0,1,"y",RemoveBreakCommand,"RemoveBreakCommand",NULL);
+   AddUDF(theEnv,"show-breaks","v",0,1,"y",ShowBreaksCommand,"ShowBreaksCommand",NULL);
+   AddUDF(theEnv,"matches","bm",1,2,"y",MatchesCommand,"MatchesCommand",NULL);
+   AddUDF(theEnv,"join-activity","bm",1,2,"y",JoinActivityCommand,"JoinActivityCommand",NULL);
+   AddUDF(theEnv,"join-activity-reset","v",0,0,NULL,JoinActivityResetCommand,"JoinActivityResetCommand",NULL);
+   AddUDF(theEnv,"list-focus-stack","v",0,0,NULL,ListFocusStackCommand,"ListFocusStackCommand",NULL);
+   AddUDF(theEnv,"dependencies","v",1,1,"infly",DependenciesCommand,"DependenciesCommand",NULL);
+   AddUDF(theEnv,"dependents","v",1,1,"infly",DependentsCommand,"DependentsCommand",NULL);
 
-   EnvAddUDF(theEnv,"timetag","l",1,1,"infly" ,TimetagFunction,"TimetagFunction",NULL);
+   AddUDF(theEnv,"timetag","l",1,1,"infly" ,TimetagFunction,"TimetagFunction",NULL);
 #endif /* DEBUGGING_FUNCTIONS */
 
-   EnvAddUDF(theEnv,"get-beta-memory-resizing","b",0,0,NULL,GetBetaMemoryResizingCommand,"GetBetaMemoryResizingCommand",NULL);
-   EnvAddUDF(theEnv,"set-beta-memory-resizing","b",1,1,NULL,SetBetaMemoryResizingCommand,"SetBetaMemoryResizingCommand",NULL);
+   AddUDF(theEnv,"get-beta-memory-resizing","b",0,0,NULL,GetBetaMemoryResizingCommand,"GetBetaMemoryResizingCommand",NULL);
+   AddUDF(theEnv,"set-beta-memory-resizing","b",1,1,NULL,SetBetaMemoryResizingCommand,"SetBetaMemoryResizingCommand",NULL);
 
-   EnvAddUDF(theEnv,"get-strategy","y",0,0,NULL,GetStrategyCommand,"GetStrategyCommand",NULL);
-   EnvAddUDF(theEnv,"set-strategy","y",1,1,"y",SetStrategyCommand,"SetStrategyCommand",NULL);
+   AddUDF(theEnv,"get-strategy","y",0,0,NULL,GetStrategyCommand,"GetStrategyCommand",NULL);
+   AddUDF(theEnv,"set-strategy","y",1,1,"y",SetStrategyCommand,"SetStrategyCommand",NULL);
 
 #if DEVELOPER && (! BLOAD_ONLY)
-   EnvAddUDF(theEnv,"rule-complexity","l",1,1,"y",RuleComplexityCommand,"RuleComplexityCommand",NULL);
-   EnvAddUDF(theEnv,"show-joins","v",1,1,"y",ShowJoinsCommand,"ShowJoinsCommand",NULL);
-   EnvAddUDF(theEnv,"show-aht","v",0,0,NULL,ShowAlphaHashTable,"ShowAlphaHashTable",NULL);
+   AddUDF(theEnv,"rule-complexity","l",1,1,"y",RuleComplexityCommand,"RuleComplexityCommand",NULL);
+   AddUDF(theEnv,"show-joins","v",1,1,"y",ShowJoinsCommand,"ShowJoinsCommand",NULL);
+   AddUDF(theEnv,"show-aht","v",0,0,NULL,ShowAlphaHashTable,"ShowAlphaHashTable",NULL);
 #if DEBUGGING_FUNCTIONS
    AddWatchItem(theEnv,"rule-analysis",0,&DefruleData(theEnv)->WatchRuleAnalysis,0,NULL,NULL);
 #endif
@@ -177,20 +177,20 @@ void DefruleCommands(
   }
 
 /***********************************************/
-/* EnvGetBetaMemoryResizing: C access routine  */
+/* GetBetaMemoryResizing: C access routine     */
 /*   for the get-beta-memory-resizing command. */
 /***********************************************/
-bool EnvGetBetaMemoryResizing(
+bool GetBetaMemoryResizing(
   Environment *theEnv)
   {
-   return(DefruleData(theEnv)->BetaMemoryResizingFlag);
+   return DefruleData(theEnv)->BetaMemoryResizingFlag;
   }
 
 /***********************************************/
-/* EnvSetBetaMemoryResizing: C access routine  */
+/* SetBetaMemoryResizing: C access routine     */
 /*   for the set-beta-memory-resizing command. */
 /***********************************************/
-bool EnvSetBetaMemoryResizing(
+bool SetBetaMemoryResizing(
   Environment *theEnv,
   bool value)
   {
@@ -214,7 +214,7 @@ void SetBetaMemoryResizingCommand(
   {
    UDFValue theArg;
 
-   returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvGetBetaMemoryResizing(theEnv));
+   returnValue->lexemeValue = CreateBoolean(theEnv,GetBetaMemoryResizing(theEnv));
 
    /*=================================================*/
    /* The symbol FALSE disables beta memory resizing. */
@@ -225,9 +225,9 @@ void SetBetaMemoryResizingCommand(
      { return; }
 
    if (theArg.value == FalseSymbol(theEnv))
-     { EnvSetBetaMemoryResizing(theEnv,false); }
+     { SetBetaMemoryResizing(theEnv,false); }
    else
-     { EnvSetBetaMemoryResizing(theEnv,true); }
+     { SetBetaMemoryResizing(theEnv,true); }
   }
 
 /****************************************************/
@@ -239,7 +239,7 @@ void GetBetaMemoryResizingCommand(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   returnValue->lexemeValue = EnvCreateBoolean(theEnv,EnvGetBetaMemoryResizing(theEnv));
+   returnValue->lexemeValue = CreateBoolean(theEnv,GetBetaMemoryResizing(theEnv));
   }
 
 #if DEBUGGING_FUNCTIONS
@@ -264,7 +264,7 @@ void MatchesCommand(
 
    ruleName = theArg.lexemeValue->contents;
 
-   rulePtr = EnvFindDefrule(theEnv,ruleName);
+   rulePtr = FindDefrule(theEnv,ruleName);
    if (rulePtr == NULL)
      {
       CantFindItemErrorMessage(theEnv,"defrule",ruleName);
@@ -322,7 +322,7 @@ void DefruleMatches(
    /* Set up the return value. */
    /*==========================*/
 
-   returnValue->value = EnvCreateMultifield(theEnv,3L);
+   returnValue->value = CreateMultifield(theEnv,3L);
 
    returnValue->multifieldValue->theFields[0].integerValue = SymbolData(theEnv)->Zero;
    returnValue->multifieldValue->theFields[1].integerValue = SymbolData(theEnv)->Zero;
@@ -339,11 +339,11 @@ void DefruleMatches(
       /* join nodes (those connected to a pattern CE). */
       /*===============================================*/
 
-      arraySize = EnvAlphaJoinCount(theEnv,rulePtr);
+      arraySize = AlphaJoinCount(theEnv,rulePtr);
 
-      theInfo = EnvCreateJoinArray(theEnv,arraySize);
+      theInfo = CreateJoinArray(theEnv,arraySize);
 
-      EnvAlphaJoins(theEnv,rulePtr,arraySize,theInfo);
+      AlphaJoins(theEnv,rulePtr,arraySize,theInfo);
 
       /*=========================*/
       /* List the alpha matches. */
@@ -352,14 +352,14 @@ void DefruleMatches(
       for (joinIndex = 0; joinIndex < arraySize; joinIndex++)
         {
          alphaMatchCount += ListAlphaMatches(theEnv,&theInfo[joinIndex],output);
-         returnValue->multifieldValue->theFields[0].integerValue = EnvCreateInteger(theEnv,alphaMatchCount);
+         returnValue->multifieldValue->theFields[0].integerValue = CreateInteger(theEnv,alphaMatchCount);
         }
 
       /*================================*/
       /* Free the array of alpha joins. */
       /*================================*/
 
-      EnvFreeJoinArray(theEnv,theInfo,arraySize);
+      FreeJoinArray(theEnv,theInfo,arraySize);
 
       /*==============================================*/
       /* Create the array containing the list of beta */
@@ -367,11 +367,11 @@ void DefruleMatches(
       /* connected to a pattern CE).                  */
       /*==============================================*/
 
-      arraySize = EnvBetaJoinCount(theEnv,rulePtr);
+      arraySize = BetaJoinCount(theEnv,rulePtr);
 
-      theInfo = EnvCreateJoinArray(theEnv,arraySize);
+      theInfo = CreateJoinArray(theEnv,arraySize);
 
-      EnvBetaJoins(theEnv,rulePtr,arraySize,theInfo);
+      BetaJoins(theEnv,rulePtr,arraySize,theInfo);
 
       /*======================================*/
       /* List the beta matches (for all joins */
@@ -381,14 +381,14 @@ void DefruleMatches(
       for (joinIndex = 1; joinIndex < arraySize; joinIndex++)
         {
          betaMatchCount += ListBetaMatches(theEnv,theInfo,joinIndex,arraySize,output);
-         returnValue->multifieldValue->theFields[1].integerValue = EnvCreateInteger(theEnv,betaMatchCount);
+         returnValue->multifieldValue->theFields[1].integerValue = CreateInteger(theEnv,betaMatchCount);
         }
 
       /*================================*/
       /* Free the array of alpha joins. */
       /*================================*/
 
-      EnvFreeJoinArray(theEnv,theInfo,arraySize);
+      FreeJoinArray(theEnv,theInfo,arraySize);
      }
 
    /*===================*/
@@ -396,13 +396,13 @@ void DefruleMatches(
    /*===================*/
 
    if (output == VERBOSE)
-     { EnvPrintRouter(theEnv,WDISPLAY,"Activations\n"); }
+     { PrintRouter(theEnv,WDISPLAY,"Activations\n"); }
 
    for (agendaPtr = ((struct defruleModule *) topDisjunct->header.whichModule)->agenda;
         agendaPtr != NULL;
-        agendaPtr = (struct activation *) EnvGetNextActivation(theEnv,agendaPtr))
+        agendaPtr = (struct activation *) GetNextActivation(theEnv,agendaPtr))
      {
-      if (EnvGetHaltExecution(theEnv) == true) return;
+      if (GetHaltExecution(theEnv) == true) return;
 
       if (((struct activation *) agendaPtr)->theRule->header.name == topDisjunct->header.name)
         {
@@ -410,22 +410,22 @@ void DefruleMatches(
 
          if (output == VERBOSE)
            {
-            PrintPartialMatch(theEnv,WDISPLAY,EnvGetActivationBasis(theEnv,agendaPtr));
-            EnvPrintRouter(theEnv,WDISPLAY,"\n");
+            PrintPartialMatch(theEnv,WDISPLAY,GetActivationBasis(theEnv,agendaPtr));
+            PrintRouter(theEnv,WDISPLAY,"\n");
            }
         }
      }
 
    if (output == SUCCINCT)
      {
-      EnvPrintRouter(theEnv,WDISPLAY,"Activations: ");
+      PrintRouter(theEnv,WDISPLAY,"Activations: ");
       PrintLongInteger(theEnv,WDISPLAY,activations);
-      EnvPrintRouter(theEnv,WDISPLAY,"\n");
+      PrintRouter(theEnv,WDISPLAY,"\n");
      }
 
-   if ((activations == 0) && (output == VERBOSE)) EnvPrintRouter(theEnv,WDISPLAY," None\n");
+   if ((activations == 0) && (output == VERBOSE)) PrintRouter(theEnv,WDISPLAY," None\n");
 
-   returnValue->multifieldValue->theFields[2].integerValue = EnvCreateInteger(theEnv,activations);
+   returnValue->multifieldValue->theFields[2].integerValue = CreateInteger(theEnv,activations);
   }
 
 /****************************************************/
@@ -452,11 +452,11 @@ static long AlphaJoinCountDriver(
    return(alphaCount);
   }
 
-/**************************************************/
-/* EnvAlphaJoinCount: Returns the number of alpha */
-/*   joins associated with the specified rule.    */
-/**************************************************/
-long EnvAlphaJoinCount(
+/***********************************************/
+/* AlphaJoinCount: Returns the number of alpha */
+/*   joins associated with the specified rule. */
+/***********************************************/
+long AlphaJoinCount(
   Environment *theEnv,
   Defrule *theDefrule)
   {
@@ -490,11 +490,11 @@ static void AlphaJoinsDriver(
    return;
   }
 
-/********************************************/
-/* EnvAlphaJoins: Retrieves the alpha joins */
-/*   associated with the specified rule.    */
-/********************************************/
-void EnvAlphaJoins(
+/*****************************************/
+/* AlphaJoins: Retrieves the alpha joins */
+/*   associated with the specified rule. */
+/*****************************************/
+void AlphaJoins(
   Environment *theEnv,
   Defrule *theDefrule,
   long alphaCount,
@@ -527,11 +527,11 @@ static long BetaJoinCountDriver(
    return(betaCount);
   }
 
-/************************************************/
-/* EnvBetaJoinCount: Returns the number of beta */
-/*   joins associated with the specified rule.  */
-/************************************************/
-long EnvBetaJoinCount(
+/***********************************************/
+/* BetaJoinCount: Returns the number of beta   */
+/*   joins associated with the specified rule. */
+/***********************************************/
+long BetaJoinCount(
   Environment *theEnv,
   Defrule *theDefrule)
   {
@@ -603,11 +603,11 @@ static void BetaJoinsDriver(
    return;
   }
 
-/******************************************/
-/* EnvBetaJoins: Retrieves the beta joins */
-/*   associated with the specified rule.  */
-/******************************************/
-void EnvBetaJoins(
+/*****************************************/
+/* BetaJoins: Retrieves the beta joins   */
+/*   associated with the specified rule. */
+/*****************************************/
+void BetaJoins(
   Environment *theEnv,
   Defrule *theDefrule,
   long betaArraySize,
@@ -616,11 +616,11 @@ void EnvBetaJoins(
    BetaJoinsDriver(theEnv,theDefrule->lastJoin->lastLevel,betaArraySize,theInfo,theDefrule->lastJoin->leftMemory,theDefrule->lastJoin);
   }
 
-/**************************************************/
-/* EnvCreateJoinArray: Creates a join information */
-/*    array of the specified size.                */
-/**************************************************/
-struct joinInformation *EnvCreateJoinArray(
+/***********************************************/
+/* CreateJoinArray: Creates a join information */
+/*    array of the specified size.             */
+/***********************************************/
+struct joinInformation *CreateJoinArray(
    Environment *theEnv,
    long size)
    {
@@ -629,11 +629,11 @@ struct joinInformation *EnvCreateJoinArray(
     return (struct joinInformation *) genalloc(theEnv,sizeof(struct joinInformation) * size);
    }
 
-/**********************************************/
-/* EnvFreeJoinArray: Frees a join information */
-/*    array of the specified size.            */
-/**********************************************/
-void EnvFreeJoinArray(
+/*******************************************/
+/* FreeJoinArray: Frees a join information */
+/*    array of the specified size.         */
+/*******************************************/
+void FreeJoinArray(
    Environment *theEnv,
    struct joinInformation *theArray,
    long size)
@@ -657,16 +657,16 @@ static long long ListAlphaMatches(
    struct joinNode *theJoin;
    long long alphaCount = 0;
 
-   if (EnvGetHaltExecution(theEnv) == true)
+   if (GetHaltExecution(theEnv) == true)
      { return(alphaCount); }
 
    theJoin = theInfo->theJoin;
 
    if (output == VERBOSE)
      {
-      EnvPrintRouter(theEnv,WDISPLAY,"Matches for Pattern ");
+      PrintRouter(theEnv,WDISPLAY,"Matches for Pattern ");
       PrintLongInteger(theEnv,WDISPLAY,theInfo->whichCE);
-      EnvPrintRouter(theEnv,WDISPLAY,"\n");
+      PrintRouter(theEnv,WDISPLAY,"\n");
      }
 
    if (theJoin->rightSideEntryStructure == NULL)
@@ -677,21 +677,21 @@ static long long ListAlphaMatches(
       if (output == VERBOSE)
         {
          if (theJoin->rightMemory->beta[0]->children != NULL)
-           { EnvPrintRouter(theEnv,WDISPLAY,"*\n"); }
+           { PrintRouter(theEnv,WDISPLAY,"*\n"); }
          else
-           { EnvPrintRouter(theEnv,WDISPLAY," None\n"); }
+           { PrintRouter(theEnv,WDISPLAY," None\n"); }
         }
       else if (output == SUCCINCT)
         {
-         EnvPrintRouter(theEnv,WDISPLAY,"Pattern ");
+         PrintRouter(theEnv,WDISPLAY,"Pattern ");
          PrintLongInteger(theEnv,WDISPLAY,theInfo->whichCE);
-         EnvPrintRouter(theEnv,WDISPLAY,": ");
+         PrintRouter(theEnv,WDISPLAY,": ");
 
          if (theJoin->rightMemory->beta[0]->children != NULL)
-           { EnvPrintRouter(theEnv,WDISPLAY,"1"); }
+           { PrintRouter(theEnv,WDISPLAY,"1"); }
          else
-           { EnvPrintRouter(theEnv,WDISPLAY,"0"); }
-         EnvPrintRouter(theEnv,WDISPLAY,"\n");
+           { PrintRouter(theEnv,WDISPLAY,"0"); }
+         PrintRouter(theEnv,WDISPLAY,"\n");
         }
 
       return(alphaCount);
@@ -707,14 +707,14 @@ static long long ListAlphaMatches(
 
       while (listOfMatches != NULL)
         {
-         if (EnvGetHaltExecution(theEnv) == true)
+         if (GetHaltExecution(theEnv) == true)
            { return(alphaCount); }
 
          count++;
          if (output == VERBOSE)
            {
             PrintPartialMatch(theEnv,WDISPLAY,listOfMatches);
-            EnvPrintRouter(theEnv,WDISPLAY,"\n");
+            PrintRouter(theEnv,WDISPLAY,"\n");
            }
          listOfMatches = listOfMatches->nextInMemory;
         }
@@ -722,15 +722,15 @@ static long long ListAlphaMatches(
 
    alphaCount += count;
 
-   if ((count == 0) && (output == VERBOSE)) EnvPrintRouter(theEnv,WDISPLAY," None\n");
+   if ((count == 0) && (output == VERBOSE)) PrintRouter(theEnv,WDISPLAY," None\n");
 
    if (output == SUCCINCT)
      {
-      EnvPrintRouter(theEnv,WDISPLAY,"Pattern ");
+      PrintRouter(theEnv,WDISPLAY,"Pattern ");
       PrintLongInteger(theEnv,WDISPLAY,theInfo->whichCE);
-      EnvPrintRouter(theEnv,WDISPLAY,": ");
+      PrintRouter(theEnv,WDISPLAY,": ");
       PrintLongInteger(theEnv,WDISPLAY,count);
-      EnvPrintRouter(theEnv,WDISPLAY,"\n");
+      PrintRouter(theEnv,WDISPLAY,"\n");
      }
 
    return(alphaCount);
@@ -880,17 +880,17 @@ static long long ListBetaMatches(
    struct joinInformation *theInfo;
    long int count;
 
-   if (EnvGetHaltExecution(theEnv) == true)
+   if (GetHaltExecution(theEnv) == true)
      { return(betaCount); }
 
    theInfo = &infoArray[joinIndex];
 
    if (output == VERBOSE)
      {
-      EnvPrintRouter(theEnv,WDISPLAY,"Partial matches for CEs ");
-      EnvPrintRouter(theEnv,WDISPLAY,
+      PrintRouter(theEnv,WDISPLAY,"Partial matches for CEs ");
+      PrintRouter(theEnv,WDISPLAY,
                      BetaHeaderString(theEnv,infoArray,joinIndex,arraySize));
-      EnvPrintRouter(theEnv,WDISPLAY,"\n");
+      PrintRouter(theEnv,WDISPLAY,"\n");
      }
 
    count = PrintBetaMemory(theEnv,WDISPLAY,theInfo->theMemory,true,"",output);
@@ -898,15 +898,15 @@ static long long ListBetaMatches(
    betaCount += count;
 
    if ((output == VERBOSE) && (count == 0))
-     { EnvPrintRouter(theEnv,WDISPLAY," None\n"); }
+     { PrintRouter(theEnv,WDISPLAY," None\n"); }
    else if (output == SUCCINCT)
      {
-      EnvPrintRouter(theEnv,WDISPLAY,"CEs ");
-      EnvPrintRouter(theEnv,WDISPLAY,
+      PrintRouter(theEnv,WDISPLAY,"CEs ");
+      PrintRouter(theEnv,WDISPLAY,
                      BetaHeaderString(theEnv,infoArray,joinIndex,arraySize));
-      EnvPrintRouter(theEnv,WDISPLAY,": ");
+      PrintRouter(theEnv,WDISPLAY,": ");
       PrintLongInteger(theEnv,WDISPLAY,betaCount);
-      EnvPrintRouter(theEnv,WDISPLAY,"\n");
+      PrintRouter(theEnv,WDISPLAY,"\n");
      }
 
    return(betaCount);
@@ -967,7 +967,7 @@ void JoinActivityCommand(
 
    ruleName = theArg.lexemeValue->contents;
 
-   rulePtr = EnvFindDefrule(theEnv,ruleName);
+   rulePtr = FindDefrule(theEnv,ruleName);
    if (rulePtr == NULL)
      {
       CantFindItemErrorMessage(theEnv,"defrule",ruleName);
@@ -997,14 +997,14 @@ void JoinActivityCommand(
    else
      { output = VERBOSE; }
 
-   EnvJoinActivity(theEnv,rulePtr,output,returnValue);
+   JoinActivity(theEnv,rulePtr,output,returnValue);
   }
 
-/*************************************/
-/* EnvJoinActivity: C access routine */
-/*   for the join-activity command.  */
-/*************************************/
-void EnvJoinActivity(
+/************************************/
+/* JoinActivity: C access routine   */
+/*   for the join-activity command. */
+/************************************/
+void JoinActivity(
   Environment *theEnv,
   Defrule *theRule,
   int output,
@@ -1021,7 +1021,7 @@ void EnvJoinActivity(
 
    returnValue->begin = 0;
    returnValue->range = 3;
-   returnValue->value = EnvCreateMultifield(theEnv,3L);
+   returnValue->value = CreateMultifield(theEnv,3L);
 
    returnValue->multifieldValue->theFields[0].integerValue = SymbolData(theEnv)->Zero;
    returnValue->multifieldValue->theFields[1].integerValue = SymbolData(theEnv)->Zero;
@@ -1031,11 +1031,11 @@ void EnvJoinActivity(
    /* Loop through each of the disjuncts for the rule */
    /*=================================================*/
 
-   disjunctCount = EnvGetDisjunctCount(theEnv,theRule);
+   disjunctCount = GetDisjunctCount(theEnv,theRule);
 
    for (disjunctIndex = 1; disjunctIndex <= disjunctCount; disjunctIndex++)
      {
-      rulePtr = EnvGetNthDisjunct(theEnv,theRule,disjunctIndex);
+      rulePtr = GetNthDisjunct(theEnv,theRule,disjunctIndex);
 
       /*==============================================*/
       /* Create the array containing the list of beta */
@@ -1043,11 +1043,11 @@ void EnvJoinActivity(
       /* connected to a pattern CE).                  */
       /*==============================================*/
 
-      arraySize = EnvBetaJoinCount(theEnv,rulePtr);
+      arraySize = BetaJoinCount(theEnv,rulePtr);
 
-      theInfo = EnvCreateJoinArray(theEnv,arraySize);
+      theInfo = CreateJoinArray(theEnv,arraySize);
 
-      EnvBetaJoins(theEnv,rulePtr,arraySize,theInfo);
+      BetaJoins(theEnv,rulePtr,arraySize,theInfo);
 
       /*======================================*/
       /* List the beta matches (for all joins */
@@ -1061,7 +1061,7 @@ void EnvJoinActivity(
       /* Free the array of alpha joins. */
       /*================================*/
 
-      EnvFreeJoinArray(theEnv,theInfo,arraySize);
+      FreeJoinArray(theEnv,theInfo,arraySize);
      }
   }
 
@@ -1155,7 +1155,7 @@ static void ListBetaJoinActivity(
    struct joinNode *theJoin, *nextJoin;
    struct joinInformation *theInfo;
 
-   if (EnvGetHaltExecution(theEnv) == true)
+   if (GetHaltExecution(theEnv) == true)
      { return; }
 
    theInfo = &infoArray[joinIndex];
@@ -1181,35 +1181,35 @@ static void ListBetaJoinActivity(
      {
       char buffer[100];
 
-      EnvPrintRouter(theEnv,WDISPLAY,"Activity for CE ");
-      EnvPrintRouter(theEnv,WDISPLAY,
+      PrintRouter(theEnv,WDISPLAY,"Activity for CE ");
+      PrintRouter(theEnv,WDISPLAY,
                      ActivityHeaderString(theEnv,infoArray,joinIndex,arraySize));
-      EnvPrintRouter(theEnv,WDISPLAY,"\n");
+      PrintRouter(theEnv,WDISPLAY,"\n");
 
       sprintf(buffer,"   Compares: %10lld\n",compares);
-      EnvPrintRouter(theEnv,WDISPLAY,buffer);
+      PrintRouter(theEnv,WDISPLAY,buffer);
       sprintf(buffer,"   Adds:     %10lld\n",adds);
-      EnvPrintRouter(theEnv,WDISPLAY,buffer);
+      PrintRouter(theEnv,WDISPLAY,buffer);
       sprintf(buffer,"   Deletes:  %10lld\n",deletes);
-      EnvPrintRouter(theEnv,WDISPLAY,buffer);
+      PrintRouter(theEnv,WDISPLAY,buffer);
      }
    else if (output == SUCCINCT)
      {
-      EnvPrintRouter(theEnv,WDISPLAY,"CE ");
-      EnvPrintRouter(theEnv,WDISPLAY,
+      PrintRouter(theEnv,WDISPLAY,"CE ");
+      PrintRouter(theEnv,WDISPLAY,
                      ActivityHeaderString(theEnv,infoArray,joinIndex,arraySize));
-      EnvPrintRouter(theEnv,WDISPLAY,": ");
+      PrintRouter(theEnv,WDISPLAY,": ");
       PrintLongInteger(theEnv,WDISPLAY,activity);
-      EnvPrintRouter(theEnv,WDISPLAY,"\n");
+      PrintRouter(theEnv,WDISPLAY,"\n");
      }
 
    compares += returnValue->multifieldValue->theFields[0].integerValue->contents;
    adds += returnValue->multifieldValue->theFields[1].integerValue->contents;
    deletes += returnValue->multifieldValue->theFields[2].integerValue->contents;
 
-   returnValue->multifieldValue->theFields[0].integerValue = EnvCreateInteger(theEnv,compares);
-   returnValue->multifieldValue->theFields[1].integerValue = EnvCreateInteger(theEnv,adds);
-   returnValue->multifieldValue->theFields[2].integerValue = EnvCreateInteger(theEnv,deletes);
+   returnValue->multifieldValue->theFields[0].integerValue = CreateInteger(theEnv,compares);
+   returnValue->multifieldValue->theFields[1].integerValue = CreateInteger(theEnv,adds);
+   returnValue->multifieldValue->theFields[2].integerValue = CreateInteger(theEnv,deletes);
   }
 
 /*********************************************/
@@ -1272,11 +1272,11 @@ void TimetagFunction(
 
    if (ptr == NULL)
      {
-      returnValue->integerValue = EnvCreateInteger(theEnv,-1LL);
+      returnValue->integerValue = CreateInteger(theEnv,-1LL);
       return;
      }
 
-   returnValue->integerValue = EnvCreateInteger(theEnv,((struct patternEntity *) ptr)->timeTag);
+   returnValue->integerValue = CreateInteger(theEnv,((struct patternEntity *) ptr)->timeTag);
   }
 
 #endif /* DEBUGGING_FUNCTIONS */
@@ -1297,19 +1297,19 @@ void RuleComplexityCommand(
    ruleName = GetConstructName(context,"rule-complexity","rule name");
    if (ruleName == NULL)
      {
-      returnValue->integerValue = EnvCreateInteger(theEnv,-1);
+      returnValue->integerValue = CreateInteger(theEnv,-1);
       return;
      }
 
-   rulePtr = EnvFindDefrule(theEnv,ruleName);
+   rulePtr = FindDefrule(theEnv,ruleName);
    if (rulePtr == NULL)
      {
       CantFindItemErrorMessage(theEnv,"defrule",ruleName);
-      returnValue->integerValue = EnvCreateInteger(theEnv,-1);
+      returnValue->integerValue = CreateInteger(theEnv,-1);
       return;
      }
 
-   returnValue->integerValue = EnvCreateInteger(theEnv,rulePtr->complexity);
+   returnValue->integerValue = CreateInteger(theEnv,rulePtr->complexity);
   }
 
 /******************************************/
@@ -1327,7 +1327,7 @@ void ShowJoinsCommand(
    ruleName = GetConstructName(context,"show-joins","rule name");
    if (ruleName == NULL) return;
 
-   rulePtr = EnvFindDefrule(theEnv,ruleName);
+   rulePtr = FindDefrule(theEnv,ruleName);
    if (rulePtr == NULL)
      {
       CantFindItemErrorMessage(theEnv,"defrule",ruleName);
@@ -1368,9 +1368,9 @@ static void ShowJoins(
      {
       if (disjunct > 0)
         {
-         EnvPrintRouter(theEnv,WDISPLAY,"Disjunct #");
+         PrintRouter(theEnv,WDISPLAY,"Disjunct #");
          PrintLongInteger(theEnv, WDISPLAY, (long long) disjunct++);
-         EnvPrintRouter(theEnv,WDISPLAY,"\n");
+         PrintRouter(theEnv,WDISPLAY,"\n");
         }
 
       /*=====================================*/
@@ -1415,61 +1415,61 @@ static void ShowJoins(
                                      rhsType,
                                      (joinList[numberOfJoins]->joinFromTheRight) ? 'j' : ' ',
                                      (joinList[numberOfJoins]->logicalJoin) ? 'l' : ' ');
-         EnvPrintRouter(theEnv,WDISPLAY,buffer);
+         PrintRouter(theEnv,WDISPLAY,buffer);
          PrintExpression(theEnv,WDISPLAY,joinList[numberOfJoins]->networkTest);
-         EnvPrintRouter(theEnv,WDISPLAY,"\n");
+         PrintRouter(theEnv,WDISPLAY,"\n");
 
          if (joinList[numberOfJoins]->ruleToActivate != NULL)
            {
-            EnvPrintRouter(theEnv,WDISPLAY,"    RA : ");
-            EnvPrintRouter(theEnv,WDISPLAY,DefruleName(joinList[numberOfJoins]->ruleToActivate));
-            EnvPrintRouter(theEnv,WDISPLAY,"\n");
+            PrintRouter(theEnv,WDISPLAY,"    RA : ");
+            PrintRouter(theEnv,WDISPLAY,DefruleName(joinList[numberOfJoins]->ruleToActivate));
+            PrintRouter(theEnv,WDISPLAY,"\n");
            }
 
          if (joinList[numberOfJoins]->secondaryNetworkTest != NULL)
            {
-            EnvPrintRouter(theEnv,WDISPLAY,"    SNT : ");
+            PrintRouter(theEnv,WDISPLAY,"    SNT : ");
             PrintExpression(theEnv,WDISPLAY,joinList[numberOfJoins]->secondaryNetworkTest);
-            EnvPrintRouter(theEnv,WDISPLAY,"\n");
+            PrintRouter(theEnv,WDISPLAY,"\n");
            }
 
          if (joinList[numberOfJoins]->leftHash != NULL)
            {
-            EnvPrintRouter(theEnv,WDISPLAY,"    LH : ");
+            PrintRouter(theEnv,WDISPLAY,"    LH : ");
             PrintExpression(theEnv,WDISPLAY,joinList[numberOfJoins]->leftHash);
-            EnvPrintRouter(theEnv,WDISPLAY,"\n");
+            PrintRouter(theEnv,WDISPLAY,"\n");
            }
 
          if (joinList[numberOfJoins]->rightHash != NULL)
            {
-            EnvPrintRouter(theEnv,WDISPLAY,"    RH : ");
+            PrintRouter(theEnv,WDISPLAY,"    RH : ");
             PrintExpression(theEnv,WDISPLAY,joinList[numberOfJoins]->rightHash);
-            EnvPrintRouter(theEnv,WDISPLAY,"\n");
+            PrintRouter(theEnv,WDISPLAY,"\n");
            }
 
          if (! joinList[numberOfJoins]->firstJoin)
            {
-            EnvPrintRouter(theEnv,WDISPLAY,"    LM : ");
+            PrintRouter(theEnv,WDISPLAY,"    LM : ");
             count = PrintBetaMemory(theEnv,WDISPLAY,joinList[numberOfJoins]->leftMemory,false,"",SUCCINCT);
             if (count == 0)
-              { EnvPrintRouter(theEnv,WDISPLAY,"None\n"); }
+              { PrintRouter(theEnv,WDISPLAY,"None\n"); }
             else
               {
                sprintf(buffer,"%lu\n",count);
-               EnvPrintRouter(theEnv,WDISPLAY,buffer);
+               PrintRouter(theEnv,WDISPLAY,buffer);
               }
            }
 
          if (joinList[numberOfJoins]->joinFromTheRight)
            {
-            EnvPrintRouter(theEnv,WDISPLAY,"    RM : ");
+            PrintRouter(theEnv,WDISPLAY,"    RM : ");
             count = PrintBetaMemory(theEnv,WDISPLAY,joinList[numberOfJoins]->rightMemory,false,"",SUCCINCT);
             if (count == 0)
-              { EnvPrintRouter(theEnv,WDISPLAY,"None\n"); }
+              { PrintRouter(theEnv,WDISPLAY,"None\n"); }
             else
               {
                sprintf(buffer,"%lu\n",count);
-               EnvPrintRouter(theEnv,WDISPLAY,buffer);
+               PrintRouter(theEnv,WDISPLAY,buffer);
               }
            }
 
@@ -1481,7 +1481,7 @@ static void ShowJoins(
       /*===============================*/
 
       rulePtr = rulePtr->disjunct;
-      if (rulePtr != NULL) EnvPrintRouter(theEnv,WDISPLAY,"\n");
+      if (rulePtr != NULL) PrintRouter(theEnv,WDISPLAY,"\n");
      }
   }
 
@@ -1511,7 +1511,7 @@ void ShowAlphaHashTable(
          {
           totalCount += count;
           gensprintf(buffer,"%4d: %4d ->",i,count);
-          EnvPrintRouter(theEnv,WDISPLAY,buffer);
+          PrintRouter(theEnv,WDISPLAY,buffer);
 
           for (theEntry =  DefruleData(theEnv)->AlphaMemoryTable[i], count = 0;
                theEntry != NULL;
@@ -1523,16 +1523,16 @@ void ShowAlphaHashTable(
                { count++; }
 
              gensprintf(buffer," %4d",count);
-             EnvPrintRouter(theEnv,WDISPLAY,buffer);
+             PrintRouter(theEnv,WDISPLAY,buffer);
              if (theEntry->owner->rightHash == NULL)
-               { EnvPrintRouter(theEnv,WDISPLAY,"*"); }
+               { PrintRouter(theEnv,WDISPLAY,"*"); }
             }
 
-          EnvPrintRouter(theEnv,WDISPLAY,"\n");
+          PrintRouter(theEnv,WDISPLAY,"\n");
          }
       }
     gensprintf(buffer,"Total Count: %ld\n",totalCount);
-    EnvPrintRouter(theEnv,WDISPLAY,buffer);
+    PrintRouter(theEnv,WDISPLAY,buffer);
    }
 
 #endif /* DEVELOPER */

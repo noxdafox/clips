@@ -145,9 +145,9 @@ static void BsaveFind(
    DefglobalBinaryData(theEnv)->NumberOfDefglobals = 0;
    DefglobalBinaryData(theEnv)->NumberOfDefglobalModules = 0;
 
-   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = EnvGetNextDefmodule(theEnv,theModule))
+        theModule = GetNextDefmodule(theEnv,theModule))
      {
       /*================================================*/
       /* Set the current module to the module being     */
@@ -155,16 +155,16 @@ static void BsaveFind(
       /* modules encountered.                           */
       /*================================================*/
 
-      EnvSetCurrentModule(theEnv,theModule);
+      SetCurrentModule(theEnv,theModule);
       DefglobalBinaryData(theEnv)->NumberOfDefglobalModules++;
 
       /*====================================================*/
       /* Loop through each defglobal in the current module. */
       /*====================================================*/
 
-      for (defglobalPtr = EnvGetNextDefglobal(theEnv,NULL);
+      for (defglobalPtr = GetNextDefglobal(theEnv,NULL);
            defglobalPtr != NULL;
-           defglobalPtr = EnvGetNextDefglobal(theEnv,defglobalPtr))
+           defglobalPtr = GetNextDefglobal(theEnv,defglobalPtr))
         {
          /*======================================================*/
          /* Initialize the construct header for the binary save. */
@@ -226,11 +226,11 @@ static void BsaveBinaryItem(
    /*=================================================*/
 
    DefglobalBinaryData(theEnv)->NumberOfDefglobals = 0;
-   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = EnvGetNextDefmodule(theEnv,theModule))
+        theModule = GetNextDefmodule(theEnv,theModule))
      {
-      EnvSetCurrentModule(theEnv,theModule);
+      SetCurrentModule(theEnv,theModule);
 
       theModuleItem = (struct defglobalModule *)
                       GetModuleItem(theEnv,NULL,FindModuleItem(theEnv,"defglobal")->moduleIndex);
@@ -244,15 +244,15 @@ static void BsaveBinaryItem(
    /*===========================*/
 
    DefglobalBinaryData(theEnv)->NumberOfDefglobals = 0;
-   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = EnvGetNextDefmodule(theEnv,theModule))
+        theModule = GetNextDefmodule(theEnv,theModule))
      {
-      EnvSetCurrentModule(theEnv,theModule);
+      SetCurrentModule(theEnv,theModule);
 
-      for (theDefglobal = EnvGetNextDefglobal(theEnv,NULL);
+      for (theDefglobal = GetNextDefglobal(theEnv,NULL);
            theDefglobal != NULL;
-           theDefglobal = EnvGetNextDefglobal(theEnv,theDefglobal))
+           theDefglobal = GetNextDefglobal(theEnv,theDefglobal))
         {
          AssignBsaveConstructHeaderVals(&newDefglobal.header,
                                           &theDefglobal->header);

@@ -134,11 +134,11 @@ static bool ConstructToCode(
    /* C code representation to the file as they are traversed.        */
    /*=================================================================*/
 
-   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = EnvGetNextDefmodule(theEnv,theModule))
+        theModule = GetNextDefmodule(theEnv,theModule))
      {
-      EnvSetCurrentModule(theEnv,theModule);
+      SetCurrentModule(theEnv,theModule);
 
       moduleFile = OpenFileIfNeeded(theEnv,moduleFile,fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
                                     moduleArrayVersion,headerFP,
@@ -159,9 +159,9 @@ static bool ConstructToCode(
       /* Loop through each of the deffacts in this module. */
       /*===================================================*/
 
-      for (theDeffacts = EnvGetNextDeffacts(theEnv,NULL);
+      for (theDeffacts = GetNextDeffacts(theEnv,NULL);
            theDeffacts != NULL;
-           theDeffacts = EnvGetNextDeffacts(theEnv,theDeffacts))
+           theDeffacts = GetNextDeffacts(theEnv,theDeffacts))
         {
          deffactsFile = OpenFileIfNeeded(theEnv,deffactsFile,fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
                                          deffactsArrayVersion,headerFP,

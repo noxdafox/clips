@@ -92,16 +92,16 @@ void DefglobalBasicCommands(
   Environment *theEnv)
   {
    AddSaveFunction(theEnv,"defglobal",SaveDefglobals,40);
-   EnvAddResetFunction(theEnv,"defglobal",ResetDefglobals,50);
+   AddResetFunction(theEnv,"defglobal",ResetDefglobals,50);
 
 #if ! RUN_TIME
-   EnvAddUDF(theEnv,"get-defglobal-list","m",0,1,"y",GetDefglobalListFunction,"GetDefglobalListFunction",NULL);
-   EnvAddUDF(theEnv,"undefglobal","v",1,1,"y",UndefglobalCommand,"UndefglobalCommand",NULL);
-   EnvAddUDF(theEnv,"defglobal-module","y",1,1,"y",DefglobalModuleFunction,"DefglobalModuleFunction",NULL);
+   AddUDF(theEnv,"get-defglobal-list","m",0,1,"y",GetDefglobalListFunction,"GetDefglobalListFunction",NULL);
+   AddUDF(theEnv,"undefglobal","v",1,1,"y",UndefglobalCommand,"UndefglobalCommand",NULL);
+   AddUDF(theEnv,"defglobal-module","y",1,1,"y",DefglobalModuleFunction,"DefglobalModuleFunction",NULL);
 
 #if DEBUGGING_FUNCTIONS
-   EnvAddUDF(theEnv,"list-defglobals","v",0,1,"y",ListDefglobalsCommand,"ListDefglobalsCommand",NULL);
-   EnvAddUDF(theEnv,"ppdefglobal","v",1,1,"y",PPDefglobalCommand,"PPDefglobalCommand",NULL);
+   AddUDF(theEnv,"list-defglobals","v",0,1,"y",ListDefglobalsCommand,"ListDefglobalsCommand",NULL);
+   AddUDF(theEnv,"ppdefglobal","v",1,1,"y",PPDefglobalCommand,"PPDefglobalCommand",NULL);
    AddWatchItem(theEnv,"globals",0,&DefglobalData(theEnv)->WatchGlobals,0,DefglobalWatchAccess,DefglobalWatchPrint);
 #endif
 
@@ -123,7 +123,7 @@ void DefglobalBasicCommands(
 void ResetDefglobals(
   Environment *theEnv)
   {
-   if (! EnvGetResetGlobals(theEnv)) return;
+   if (! GetResetGlobals(theEnv)) return;
    DoForAllConstructs(theEnv,ResetDefglobalAction,
                       DefglobalData(theEnv)->DefglobalModuleIndex,true,NULL);
   }
@@ -206,10 +206,10 @@ void GetDefglobalListFunction(
   }
 
 /******************************************/
-/* EnvGetDefglobalList: C access routine  */
+/* GetDefglobalList: C access routine     */
 /*   for the get-defglobal-list function. */
 /******************************************/
-void EnvGetDefglobalList(
+void GetDefglobalList(
   Environment *theEnv,
   CLIPSValue *returnValue,
   Defmodule *theModule)
@@ -271,11 +271,11 @@ void ListDefglobalsCommand(
    ListConstructCommand(context,DefglobalData(theEnv)->DefglobalConstruct);
   }
 
-/***************************************/
-/* EnvListDefglobals: C access routine */
-/*   for the list-defglobals command.  */
-/***************************************/
-void EnvListDefglobals(
+/**************************************/
+/* ListDefglobals: C access routine   */
+/*   for the list-defglobals command. */
+/**************************************/
+void ListDefglobals(
   Environment *theEnv,
   const char *logicalName,
   Defmodule *theModule)

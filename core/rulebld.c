@@ -285,8 +285,8 @@ struct joinNode *ConstructJoins(
                                         leftHash,rightHash)) != NULL) )
         {
 #if DEBUGGING_FUNCTIONS
-         if ((EnvGetWatchItem(theEnv,"compilations") == 1) && GetPrintWhileLoading(theEnv))
-           { EnvPrintRouter(theEnv,WDIALOG,"=j"); }
+         if ((GetWatchItem(theEnv,"compilations") == 1) && GetPrintWhileLoading(theEnv))
+           { PrintRouter(theEnv,WDIALOG,"=j"); }
 #endif
          lastJoin = oldJoin;
         }
@@ -344,9 +344,9 @@ struct joinNode *ConstructJoins(
 
 #if DEBUGGING_FUNCTIONS
    if ((startDepth == 1) &&
-       (EnvGetWatchItem(theEnv,"compilations") == 1) &&
+       (GetWatchItem(theEnv,"compilations") == 1) &&
        GetPrintWhileLoading(theEnv))
-     { EnvPrintRouter(theEnv,WDIALOG,"\n"); }
+     { PrintRouter(theEnv,WDIALOG,"\n"); }
 #endif
 
    /*=============================*/
@@ -672,7 +672,7 @@ static void AttachTestCEsToPatternCEs(
          else
            {
             SystemError(theEnv,"RULEBLD",1);
-            EnvExitRouter(theEnv,EXIT_FAILURE);
+            ExitRouter(theEnv,EXIT_FAILURE);
            }
         }
 
@@ -880,7 +880,7 @@ static void AttachTestCEsToPatternCEs(
          else
            {
             SystemError(theEnv,"RULEBLD",2);
-            EnvExitRouter(theEnv,EXIT_FAILURE);
+            ExitRouter(theEnv,EXIT_FAILURE);
            }
         }
 
@@ -891,7 +891,7 @@ static void AttachTestCEsToPatternCEs(
       else
         {
          SystemError(theEnv,"RULEBLD",3);
-         EnvExitRouter(theEnv,EXIT_FAILURE);
+         ExitRouter(theEnv,EXIT_FAILURE);
         }
 
       /*=================================================*/
@@ -1092,8 +1092,8 @@ static struct joinNode *CreateNewJoin(
    /*===============================================*/
 
 #if DEBUGGING_FUNCTIONS
-   if ((EnvGetWatchItem(theEnv,"compilations") == 1) && GetPrintWhileLoading(theEnv))
-     { EnvPrintRouter(theEnv,WDIALOG,"+j"); }
+   if ((GetWatchItem(theEnv,"compilations") == 1) && GetPrintWhileLoading(theEnv))
+     { PrintRouter(theEnv,WDIALOG,"+j"); }
 #endif
 
    /*======================*/

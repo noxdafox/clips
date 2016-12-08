@@ -273,11 +273,11 @@ static bool DefgenericsToCode(
       Loop through all the modules and all the defgenerics writing
       their C code representation to the file as they are traversed
       ============================================================= */
-   theModule = EnvGetNextDefmodule(theEnv,NULL);
+   theModule = GetNextDefmodule(theEnv,NULL);
 
    while (theModule != NULL)
      {
-      EnvSetCurrentModule(theEnv,theModule);
+      SetCurrentModule(theEnv,theModule);
 
       itemFiles[MODULEI] =
          OpenFileIfNeeded(theEnv,itemFiles[MODULEI],fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
@@ -293,7 +293,7 @@ static bool DefgenericsToCode(
                             &itemArrayVersions[MODULEI],maxIndices,
                             &itemReopenFlags[MODULEI],&itemCodeFiles[MODULEI]);
 
-      theDefgeneric = EnvGetNextDefgeneric(theEnv,NULL);
+      theDefgeneric = GetNextDefgeneric(theEnv,NULL);
 
       while (theDefgeneric != NULL)
         {
@@ -398,10 +398,10 @@ static bool DefgenericsToCode(
                                  &itemArrayVersions[METHODI],maxIndices,
                                  &itemReopenFlags[METHODI],&itemCodeFiles[METHODI]);
            }
-         theDefgeneric = EnvGetNextDefgeneric(theEnv,theDefgeneric);
+         theDefgeneric = GetNextDefgeneric(theEnv,theDefgeneric);
         }
 
-      theModule = EnvGetNextDefmodule(theEnv,theModule);
+      theModule = GetNextDefmodule(theEnv,theModule);
       moduleCount++;
       itemArrayCounts[MODULEI]++;
      }
@@ -629,7 +629,7 @@ static void TypeToCode(
 #pragma unused(maxIndices)
 #endif
 
-   PrintIntegerReference(theEnv,theFile,(INTEGER_HN *) theType);
+   PrintIntegerReference(theEnv,theFile,(CLIPSInteger *) theType);
 #endif
   }
 

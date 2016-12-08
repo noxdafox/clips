@@ -31,7 +31,7 @@
 /*            Used genstrncpy function instead of strncpy    */
 /*            function.                                      */
 /*                                                           */
-/*            Support for typed EXTERNAL_ADDRESS_TYPE.            */
+/*            Support for typed EXTERNAL_ADDRESS_TYPE.       */
 /*                                                           */
 /*            Support for tracked memory (allows memory to   */
 /*            be freed if CLIPS is exited while executing).  */
@@ -180,11 +180,10 @@ struct utilityData
 
    void                           InitializeUtilityData(Environment *);
    bool                           AddCleanupFunction(Environment *,const char *,void (*)(Environment *),int);
-   bool                           EnvAddPeriodicFunction(Environment *,const char *,void (*)(Environment *),int);
-   bool                           EnvAddPeriodicFunctionWithContext(Environment *,const char *,void (*)(Environment *),int,void *);
-   bool                           AddPeriodicFunction(const char *,void (*)(void),int);
+   bool                           AddPeriodicFunction(Environment *,const char *,void (*)(Environment *),int);
+   bool                           AddPeriodicFunctionWithContext(Environment *,const char *,void (*)(Environment *),int,void *);
    bool                           RemoveCleanupFunction(Environment *,const char *);
-   bool                           EnvRemovePeriodicFunction(Environment *,const char *);
+   bool                           RemovePeriodicFunction(Environment *,const char *);
    char                          *CopyString(Environment *,const char *);
    void                           DeleteString(Environment *,char *);
    const char                    *AppendStrings(Environment *,const char *,const char *);
@@ -227,13 +226,13 @@ struct utilityData
    void                           DeallocateCallListWithArg(Environment *,struct callFunctionItemWithArg *);
    struct voidCallFunctionItem   *GetVoidFunctionFromCallList(Environment *,const char *,struct voidCallFunctionItem *);
    struct boolCallFunctionItem   *GetBoolFunctionFromCallList(Environment *,const char *,struct boolCallFunctionItem *);
-   void                          *EnvGetPeriodicFunctionContext(Environment *,const char *);
+   void                          *GetPeriodicFunctionContext(Environment *,const char *);
    unsigned long                  ItemHashValue(Environment *,unsigned short,void *,unsigned long);
    void                           YieldTime(Environment *);
-   void                           EnvIncrementGCLocks(Environment *);
-   void                           EnvDecrementGCLocks(Environment *);
+   void                           IncrementGCLocks(Environment *);
+   void                           DecrementGCLocks(Environment *);
    bool                           EnablePeriodicFunctions(Environment *,bool);
-   short                          EnableYieldFunction(Environment *,short);
+   bool                           EnableYieldFunction(Environment *,bool);
    struct trackedMemory          *AddTrackedMemory(Environment *,void *,size_t);
    void                           RemoveTrackedMemory(Environment *,struct trackedMemory *);
    void                           UTF8Increment(const char *,size_t *);
@@ -246,7 +245,7 @@ struct utilityData
    void                           CleanCurrentGarbageFrame(Environment *,UDFValue *);
    void                           CLIPSBlockStart(Environment *,CLIPSBlock *);
    void                           CLIPSBlockEnd(Environment *,CLIPSBlock *,UDFValue *);
-   StringBuilder                 *EnvCreateStringBuilder(Environment *,size_t);
+   StringBuilder                 *CreateStringBuilder(Environment *,size_t);
    void                           StringBuilderDispose(StringBuilder *);
    void                           StringBuilderAppend(StringBuilder *,const char *);
    void                           StringBuilderReset(StringBuilder *);

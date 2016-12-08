@@ -215,11 +215,11 @@ static bool DeffunctionsToCode(
       Loop through all the modules and all the deffunctions writing
       their C code representation to the file as they are traversed
       ============================================================= */
-   theModule = EnvGetNextDefmodule(theEnv,NULL);
+   theModule = GetNextDefmodule(theEnv,NULL);
 
    while (theModule != NULL)
      {
-      EnvSetCurrentModule(theEnv,theModule);
+      SetCurrentModule(theEnv,theModule);
 
       moduleFile = OpenFileIfNeeded(theEnv,moduleFile,fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
                                     moduleArrayVersion,headerFP,
@@ -236,7 +236,7 @@ static bool DeffunctionsToCode(
       moduleFile = CloseFileIfNeeded(theEnv,moduleFile,&moduleArrayCount,&moduleArrayVersion,
                                      maxIndices,NULL,NULL);
 
-      theDeffunction = EnvGetNextDeffunction(theEnv,NULL);
+      theDeffunction = GetNextDeffunction(theEnv,NULL);
 
       while (theDeffunction != NULL)
         {
@@ -256,10 +256,10 @@ static bool DeffunctionsToCode(
          deffunctionFile = CloseFileIfNeeded(theEnv,deffunctionFile,&deffunctionArrayCount,
                                              &deffunctionArrayVersion,maxIndices,NULL,NULL);
 
-         theDeffunction = EnvGetNextDeffunction(theEnv,theDeffunction);
+         theDeffunction = GetNextDeffunction(theEnv,theDeffunction);
         }
 
-      theModule = EnvGetNextDefmodule(theEnv,theModule);
+      theModule = GetNextDefmodule(theEnv,theModule);
       moduleCount++;
       moduleArrayCount++;
      }

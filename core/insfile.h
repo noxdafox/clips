@@ -82,21 +82,21 @@ struct instanceFileData
    void                           SaveInstancesCommand(Environment *,UDFContext *,UDFValue *);
    void                           LoadInstancesCommand(Environment *,UDFContext *,UDFValue *);
    void                           RestoreInstancesCommand(Environment *,UDFContext *,UDFValue *);
-   long                           EnvSaveInstancesDriver(Environment *,const char *,int,Expression *,bool);
-   long                           EnvSaveInstances(Environment *,const char *,int);
+   long                           SaveInstancesDriver(Environment *,const char *,int,Expression *,bool);
+   long                           SaveInstances(Environment *,const char *,int);
 #if BSAVE_INSTANCES
    void                           BinarySaveInstancesCommand(Environment *,UDFContext *,UDFValue *);
-   long                           EnvBinarySaveInstancesDriver(Environment *,const char *,int,Expression *,bool);
-   long                           EnvBinarySaveInstances(Environment *,const char *,int);
+   long                           BinarySaveInstancesDriver(Environment *,const char *,int,Expression *,bool);
+   long                           BinarySaveInstances(Environment *,const char *,int);
 #endif
 #if BLOAD_INSTANCES
    void                           BinaryLoadInstancesCommand(Environment *,UDFContext *,UDFValue *);
-   long                           EnvBinaryLoadInstances(Environment *,const char *);
+   long                           BinaryLoadInstances(Environment *,const char *);
 #endif
-   long                           EnvLoadInstances(Environment *,const char *);
-   long                           EnvLoadInstancesFromString(Environment *,const char *,size_t);
-   long                           EnvRestoreInstances(Environment *,const char *);
-   long                           EnvRestoreInstancesFromString(Environment *,const char *,size_t);
+   long                           LoadInstances(Environment *,const char *);
+   long                           LoadInstancesFromString(Environment *,const char *,size_t);
+   long                           RestoreInstances(Environment *,const char *);
+   long                           RestoreInstancesFromString(Environment *,const char *,size_t);
 
 #endif /* _H_insfile */
 

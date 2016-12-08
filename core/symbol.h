@@ -189,12 +189,12 @@ struct symbolData
    void                           InitializeAtomTables(Environment *,CLIPSLexeme **,CLIPSFloat **,
                                                               CLIPSInteger **,struct bitMapHashNode **,
                                                               CLIPSExternalAddress **);
-   CLIPSLexeme                   *EnvAddSymbol(Environment *,const char *,unsigned short);
+   CLIPSLexeme                   *AddSymbol(Environment *,const char *,unsigned short);
    CLIPSLexeme                   *FindSymbolHN(Environment *,const char *,unsigned short);
-   CLIPSFloat                    *EnvCreateFloat(Environment *,double);
-   CLIPSInteger                  *EnvCreateInteger(Environment *,long long);
-   void                          *EnvAddBitMap(Environment *,void *,unsigned);
-   void                          *EnvAddExternalAddress(Environment *,void *,unsigned);
+   CLIPSFloat                    *CreateFloat(Environment *,double);
+   CLIPSInteger                  *CreateInteger(Environment *,long long);
+   void                          *AddBitMap(Environment *,void *,unsigned);
+   void                          *AddExternalAddress(Environment *,void *,unsigned);
    CLIPSInteger                  *FindLongHN(Environment *,long long);
    unsigned long                  HashSymbol(const char *,unsigned long);
    unsigned long                  HashFloat(double,unsigned long);
@@ -225,10 +225,10 @@ struct symbolData
    void                           SetAtomicValueIndices(Environment *,bool);
    void                           RestoreAtomicValueBuckets(Environment *);
    void                           EphemerateValue(Environment *,void *);
-   CLIPSLexeme                   *EnvCreateSymbol(Environment *,const char *);
-   CLIPSLexeme                   *EnvCreateString(Environment *,const char *);
-   CLIPSLexeme                   *EnvCreateInstanceName(Environment *,const char *);
-   CLIPSLexeme                   *EnvCreateBoolean(Environment *,bool);
+   CLIPSLexeme                   *CreateSymbol(Environment *,const char *);
+   CLIPSLexeme                   *CreateString(Environment *,const char *);
+   CLIPSLexeme                   *CreateInstanceName(Environment *,const char *);
+   CLIPSLexeme                   *CreateBoolean(Environment *,bool);
    bool                           BitStringHasBitsSet(void *,unsigned);
 
 #endif /* _H_symbol */

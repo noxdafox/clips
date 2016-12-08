@@ -507,7 +507,7 @@ void Dependencies(
 
    if (theEntity->dependents == NULL)
      {
-      EnvPrintRouter(theEnv,WDISPLAY,"None\n");
+      PrintRouter(theEnv,WDISPLAY,"None\n");
       return;
      }
 
@@ -520,9 +520,9 @@ void Dependencies(
         fdPtr != NULL;
         fdPtr = fdPtr->next)
      {
-      if (EnvGetHaltExecution(theEnv) == true) return;
+      if (GetHaltExecution(theEnv) == true) return;
       PrintPartialMatch(theEnv,WDISPLAY,(struct partialMatch *) fdPtr->dPtr);
-      EnvPrintRouter(theEnv,WDISPLAY,"\n");
+      PrintRouter(theEnv,WDISPLAY,"\n");
      }
   }
 
@@ -547,7 +547,7 @@ void Dependents(
         entityPtr != NULL;
         GetNextPatternEntity(theEnv,&theParser,&entityPtr))
      {
-      if (EnvGetHaltExecution(theEnv) == true) return;
+      if (GetHaltExecution(theEnv) == true) return;
 
       /*====================================*/
       /* Loop through every dependency link */
@@ -558,7 +558,7 @@ void Dependents(
            fdPtr != NULL;
            fdPtr = fdPtr->next)
         {
-         if (EnvGetHaltExecution(theEnv) == true) return;
+         if (GetHaltExecution(theEnv) == true) return;
 
          /*=====================================================*/
          /* If the data entity which was the argument passed to */
@@ -572,7 +572,7 @@ void Dependents(
          theBinds = (struct partialMatch *) fdPtr->dPtr;
          if (FindEntityInPartialMatch(theEntity,theBinds) == true)
            {
-            if (found) EnvPrintRouter(theEnv,WDISPLAY,",");
+            if (found) PrintRouter(theEnv,WDISPLAY,",");
             (*entityPtr->theInfo->base.shortPrintFunction)(theEnv,WDISPLAY,entityPtr);
             found = true;
             break;
@@ -586,8 +586,8 @@ void Dependents(
    /* list of dependents.                             */
    /*=================================================*/
 
-   if (! found) EnvPrintRouter(theEnv,WDISPLAY,"None\n");
-   else EnvPrintRouter(theEnv,WDISPLAY,"\n");
+   if (! found) PrintRouter(theEnv,WDISPLAY,"None\n");
+   else PrintRouter(theEnv,WDISPLAY,"\n");
   }
 
 #if DEBUGGING_FUNCTIONS
@@ -611,7 +611,7 @@ void DependenciesCommand(
 #if DEFRULE_CONSTRUCT
    Dependencies(theEnv,(struct patternEntity *) ptr);
 #else
-   EnvPrintRouter(theEnv,WDISPLAY,"None\n");
+   PrintRouter(theEnv,WDISPLAY,"None\n");
 #endif
   }
 
@@ -634,7 +634,7 @@ void DependentsCommand(
 #if DEFRULE_CONSTRUCT
    Dependents(theEnv,(struct patternEntity *) ptr);
 #else
-   EnvPrintRouter(theEnv,WDISPLAY,"None\n");
+   PrintRouter(theEnv,WDISPLAY,"None\n");
 #endif
   }
 

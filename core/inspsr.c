@@ -320,7 +320,7 @@ Expression *ParseInitializeInstance(
    return(top);
 
 ParseInitializeInstanceError:
-   EnvSetEvaluationError(theEnv,true);
+   SetEvaluationError(theEnv,true);
    ReturnExpression(theEnv,top);
    DecrementIndentDepth(theEnv,3);
    return NULL;
@@ -368,7 +368,7 @@ Expression *ParseSlotOverrides(
          SyntaxErrorMessage(theEnv,"slot-override");
          *error = true;
          ReturnExpression(theEnv,top);
-         EnvSetEvaluationError(theEnv,true);
+         SetEvaluationError(theEnv,true);
          return NULL;
         }
       theExpNext = GenConstant(theEnv,SYMBOL_TYPE,TrueSymbol(theEnv));
@@ -513,13 +513,13 @@ Expression *ParseSimpleInstance(
 
 MakeInstanceError:
    SyntaxErrorMessage(theEnv,"make-instance");
-   EnvSetEvaluationError(theEnv,true);
+   SetEvaluationError(theEnv,true);
    ReturnExpression(theEnv,top);
    return NULL;
 
 SlotOverrideError:
    SyntaxErrorMessage(theEnv,"slot-override");
-   EnvSetEvaluationError(theEnv,true);
+   SetEvaluationError(theEnv,true);
    ReturnExpression(theEnv,top);
    ReturnExpression(theEnv,vals);
    return NULL;
@@ -568,9 +568,9 @@ static bool ReplaceClassNameWithReference(
       if (ClassAbstractP(theDefclass))
         {
          PrintErrorID(theEnv,"INSMNGR",3,false);
-         EnvPrintRouter(theEnv,WERROR,"Cannot create instances of abstract class ");
-         EnvPrintRouter(theEnv,WERROR,theClassName);
-         EnvPrintRouter(theEnv,WERROR,".\n");
+         PrintRouter(theEnv,WERROR,"Cannot create instances of abstract class ");
+         PrintRouter(theEnv,WERROR,theClassName);
+         PrintRouter(theEnv,WERROR,".\n");
          return false;
         }
       theExp->type = DEFCLASS_PTR;

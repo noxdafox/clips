@@ -150,7 +150,7 @@ bool ParseDeffunction(
    /*=======================================================*/
 
    deffunctionName = GetConstructNameAndComment(theEnv,readSource,&inputToken,"deffunction",
-                                                (FindConstructFunction *) EnvFindDeffunctionInModule,
+                                                (FindConstructFunction *) FindDeffunctionInModule,
                                                 NULL,
                                                 "!",true,true,true,false);
 
@@ -175,7 +175,7 @@ bool ParseDeffunction(
 
    if (ConstructData(theEnv)->CheckSyntaxMode)
      {
-      dptr = EnvFindDeffunctionInModule(theEnv,deffunctionName->contents);
+      dptr = FindDeffunctionInModule(theEnv,deffunctionName->contents);
       if (dptr == NULL)
         { dptr = AddDeffunction(theEnv,deffunctionName,NULL,min,max,0,true); }
       else
@@ -336,7 +336,7 @@ static bool ValidDeffunctionName(
    if (FindConstruct(theEnv,theDeffunctionName) != NULL)
      {
       PrintErrorID(theEnv,"DFFNXPSR",1,false);
-      EnvPrintRouter(theEnv,WERROR,"Deffunctions are not allowed to replace constructs.\n");
+      PrintRouter(theEnv,WERROR,"Deffunctions are not allowed to replace constructs.\n");
       return false;
      }
 
@@ -349,7 +349,7 @@ static bool ValidDeffunctionName(
    if (FindFunction(theEnv,theDeffunctionName) != NULL)
      {
       PrintErrorID(theEnv,"DFFNXPSR",2,false);
-      EnvPrintRouter(theEnv,WERROR,"Deffunctions are not allowed to replace external functions.\n");
+      PrintRouter(theEnv,WERROR,"Deffunctions are not allowed to replace external functions.\n");
       return false;
      }
 
@@ -366,26 +366,26 @@ static bool ValidDeffunctionName(
    if (theDefgeneric != NULL)
      {
       theModule = GetConstructModuleItem(&theDefgeneric->header)->theModule;
-      if (theModule != EnvGetCurrentModule(theEnv))
+      if (theModule != GetCurrentModule(theEnv))
         {
          PrintErrorID(theEnv,"DFFNXPSR",5,false);
-         EnvPrintRouter(theEnv,WERROR,"Defgeneric ");
-         EnvPrintRouter(theEnv,WERROR,DefgenericName(theDefgeneric));
-         EnvPrintRouter(theEnv,WERROR," imported from module ");
-         EnvPrintRouter(theEnv,WERROR,DefmoduleName(theModule));
-         EnvPrintRouter(theEnv,WERROR," conflicts with this deffunction.\n");
+         PrintRouter(theEnv,WERROR,"Defgeneric ");
+         PrintRouter(theEnv,WERROR,DefgenericName(theDefgeneric));
+         PrintRouter(theEnv,WERROR," imported from module ");
+         PrintRouter(theEnv,WERROR,DefmoduleName(theModule));
+         PrintRouter(theEnv,WERROR," conflicts with this deffunction.\n");
          return false;
         }
       else
         {
          PrintErrorID(theEnv,"DFFNXPSR",3,false);
-         EnvPrintRouter(theEnv,WERROR,"Deffunctions are not allowed to replace generic functions.\n");
+         PrintRouter(theEnv,WERROR,"Deffunctions are not allowed to replace generic functions.\n");
         }
       return false;
      }
 #endif
 
-   theDeffunction = EnvFindDeffunctionInModule(theEnv,theDeffunctionName);
+   theDeffunction = FindDeffunctionInModule(theEnv,theDeffunctionName);
    if (theDeffunction != NULL)
      {
       /*=============================================*/
@@ -396,9 +396,9 @@ static bool ValidDeffunctionName(
       if (theDeffunction->executing)
         {
          PrintErrorID(theEnv,"DFNXPSR",4,false);
-         EnvPrintRouter(theEnv,WERROR,"Deffunction ");
-         EnvPrintRouter(theEnv,WERROR,DeffunctionName(theDeffunction));
-         EnvPrintRouter(theEnv,WERROR," may not be redefined while it is executing.\n");
+         PrintRouter(theEnv,WERROR,"Deffunction ");
+         PrintRouter(theEnv,WERROR,DeffunctionName(theDeffunction));
+         PrintRouter(theEnv,WERROR," may not be redefined while it is executing.\n");
          return false;
         }
      }
@@ -449,7 +449,7 @@ static Deffunction *AddDeffunction(
    /* and interpretive code.                                        */
    /*===============================================================*/
 
-   dfuncPtr = EnvFindDeffunctionInModule(theEnv,name->contents);
+   dfuncPtr = FindDeffunctionInModule(theEnv,name->contents);
    if (dfuncPtr == NULL)
      {
       dfuncPtr = get_struct(theEnv,deffunction);
@@ -475,7 +475,7 @@ static Deffunction *AddDeffunction(
       dfuncPtr->busy = oldbusy;
       ReturnPackedExpression(theEnv,dfuncPtr->code);
       dfuncPtr->code = NULL;
-      EnvSetDeffunctionPPForm(theEnv,dfuncPtr,NULL);
+      SetDeffunctionPPForm(theEnv,dfuncPtr,NULL);
 
       /*======================================*/
       /* Remove the deffunction from the list */
@@ -512,8 +512,8 @@ static Deffunction *AddDeffunction(
 #if DEBUGGING_FUNCTIONS
    DeffunctionSetWatch(dfuncPtr,DFHadWatch ? true : DeffunctionData(theEnv)->WatchDeffunctions);
 
-   if ((EnvGetConserveMemory(theEnv) == false) && (headerp == false))
-     { EnvSetDeffunctionPPForm(theEnv,dfuncPtr,CopyPPBuffer(theEnv)); }
+   if ((GetConserveMemory(theEnv) == false) && (headerp == false))
+     { SetDeffunctionPPForm(theEnv,dfuncPtr,CopyPPBuffer(theEnv)); }
 #endif
 
    return(dfuncPtr);

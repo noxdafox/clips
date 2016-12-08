@@ -157,7 +157,7 @@
    
    str = (char *) [theCommand UTF8String];
    
-   EnvPrintRouter(environment,WDIALOG,str);
+   PrintRouter(environment,WDIALOG,str);
    AppendCommandString(environment,str);
   }
 
@@ -327,8 +327,8 @@
   {
    if (agendaListenerCount > 0)
      {
-      if ((EnvGetAgendaChanged(environment)) ||
-          (EnvGetFocusChanged(environment)))
+      if ((GetAgendaChanged(environment)) ||
+          (GetFocusChanged(environment)))
         { [self fetchAgenda: YES]; }
         
       if (runningFocusStack != NULL)
@@ -337,7 +337,7 @@
 
    if (factsListenerCount > 0)
      {
-      if (EnvGetFactListChanged(environment))
+      if (GetFactListChanged(environment))
         { [self fetchFacts: YES]; }
         
       if ((runningFactModule != NULL) ||
@@ -347,7 +347,7 @@
 
    if (instancesListenerCount > 0)
      {
-      if (EnvGetInstancesChanged(environment))
+      if (GetInstancesChanged(environment))
         { [self fetchInstances: YES]; }
         
       if ((runningInstanceModule != NULL) ||
@@ -397,11 +397,11 @@
    /* agenda was fetched, nothing needs to be done.  */
    /*================================================*/
    
-   if ((EnvGetAgendaChanged(environment) == false) &&
-       (EnvGetFocusChanged(environment) == false)) return;
+   if ((GetAgendaChanged(environment) == false) &&
+       (GetFocusChanged(environment) == false)) return;
    
-   EnvSetAgendaChanged(environment,false);
-   EnvSetFocusChanged(environment,false);
+   SetAgendaChanged(environment,false);
+   SetFocusChanged(environment,false);
 
    if (lockAgenda)
      { [agendaLock lock]; }
@@ -411,9 +411,9 @@
    /*=====================================================*/
    
    focusCount = 0;
-   for (theFocus = (struct focus *) EnvGetNextFocus(environment,NULL);
+   for (theFocus = GetNextFocus(environment,NULL);
         theFocus != NULL;
-        theFocus = (struct focus *) EnvGetNextFocus(environment,theFocus))
+        theFocus = GetNextFocus(environment,theFocus))
      { focusCount++; }
      
    /*============================================================*/
@@ -429,9 +429,9 @@
    /* Iterate over the CLIPS focus stack. */
    /*=====================================*/
    
-   for (theFocus = (struct focus *) EnvGetNextFocus(environment,NULL);
+   for (theFocus = GetNextFocus(environment,NULL);
         theFocus != NULL;
-        theFocus = (struct focus *) EnvGetNextFocus(environment,theFocus))
+        theFocus = GetNextFocus(environment,theFocus))
      {
       /*==========================================*/
       /* Create an object to represent the focus. */
@@ -465,7 +465,7 @@
       agendaCount = 0;
       for (theActivation = theFocus->theDefruleModule->agenda;
            theActivation != NULL;
-           theActivation = (struct activation *) EnvGetNextActivation(environment,theActivation))
+           theActivation = (struct activation *) GetNextActivation(environment,theActivation))
         { agendaCount++; }
      
       newAgenda = [[NSMutableArray alloc] initWithCapacity: agendaCount];
@@ -476,7 +476,7 @@
       
       for (theActivation = theFocus->theDefruleModule->agenda;
            theActivation != NULL;
-           theActivation = (struct activation *) EnvGetNextActivation(environment,theActivation))
+           theActivation = (struct activation *) GetNextActivation(environment,theActivation))
         {
          newActivation  = [[CLIPSActivation alloc] init];
          
@@ -486,7 +486,7 @@
          
          [newActivation setRuleName: [NSString stringWithUTF8String: DefruleName(theActivation->theRule)]];
 
-         EnvGetActivationBasisPPForm(environment,bindingsBuffer,1024,theActivation);
+         GetActivationBasisPPForm(environment,bindingsBuffer,1024,theActivation);
          [newActivation setBindings: [NSString stringWithFormat:@"%s", bindingsBuffer]];
 
          [newAgenda addObject: newActivation];
@@ -529,8 +529,8 @@
    /* fact list was fetched, nothing needs to be done.  */
    /*===================================================*/
    
-   if (EnvGetFactListChanged(environment) == false) return;
-   EnvSetFactListChanged(environment,false);
+   if (GetFactListChanged(environment) == false) return;
+   SetFactListChanged(environment,false);
 
    if (lockFacts)
      { [factsLock lock]; }
@@ -541,9 +541,9 @@
    /*=====================================*/
    
    moduleCount = 0;
-   for (theModule = EnvGetNextDefmodule(environment,NULL);
+   for (theModule = GetNextDefmodule(environment,NULL);
         theModule != NULL;
-        theModule = EnvGetNextDefmodule(environment,theModule))
+        theModule = GetNextDefmodule(environment,theModule))
      { moduleCount++; }
 
    runningFactModule = [[NSMutableArray alloc] initWithCapacity: moduleCount];
@@ -554,9 +554,9 @@
    /*===================================*/
 
    factCount = 0;
-   for (theFact = EnvGetNextFact(environment,NULL);
+   for (theFact = GetNextFact(environment,NULL);
         theFact != NULL;
-        theFact = EnvGetNextFact(environment,theFact))
+        theFact = GetNextFact(environment,theFact))
      { factCount++; }
      
    runningFactList = [[NSMutableArray alloc] initWithCapacity: factCount];
@@ -565,9 +565,9 @@
    /* Get a list of all the modules. */
    /*================================*/
    
-   for (theModule = EnvGetNextDefmodule(environment,NULL);
+   for (theModule = GetNextDefmodule(environment,NULL);
         theModule != NULL;
-        theModule = EnvGetNextDefmodule(environment,theModule))
+        theModule = GetNextDefmodule(environment,theModule))
      {
       newModule = [[CLIPSModule alloc] init];
 
@@ -584,9 +584,9 @@
    /* Get the list of all the facts. */
    /*================================*/
    
-   for (theFact = EnvGetNextFact(environment,NULL);
+   for (theFact = GetNextFact(environment,NULL);
         theFact != NULL;
-        theFact = EnvGetNextFact(environment,theFact))
+        theFact = GetNextFact(environment,theFact))
      {
       newFact = [[CLIPSFactInstance alloc] initWithFact: theFact fromEnvironment: environment];
 
@@ -616,8 +616,8 @@
    /* done.                                          */
    /*================================================*/
    
-   if (EnvGetInstancesChanged(environment) == false) return;
-   EnvSetInstancesChanged(environment,false);
+   if (GetInstancesChanged(environment) == false) return;
+   SetInstancesChanged(environment,false);
 
    if (lockInstances)
      { [instancesLock lock]; }
@@ -628,9 +628,9 @@
    /*=====================================*/
    
    moduleCount = 0;
-   for (theModule = EnvGetNextDefmodule(environment,NULL);
+   for (theModule = GetNextDefmodule(environment,NULL);
         theModule != NULL;
-        theModule = EnvGetNextDefmodule(environment,theModule))
+        theModule = GetNextDefmodule(environment,theModule))
      { moduleCount++; }
 
    runningInstanceModule = [[NSMutableArray alloc] initWithCapacity: moduleCount];
@@ -641,9 +641,9 @@
    /*=======================================*/
 
    instanceCount = 0;
-   for (theInstance = EnvGetNextInstance(environment,NULL);
+   for (theInstance = GetNextInstance(environment,NULL);
         theInstance != NULL;
-        theInstance = EnvGetNextInstance(environment,theInstance))
+        theInstance = GetNextInstance(environment,theInstance))
      { instanceCount++; }
      
    runningInstanceList = [[NSMutableArray alloc] initWithCapacity: instanceCount];
@@ -652,9 +652,9 @@
    /* Get a list of all the modules. */
    /*================================*/
    
-   for (theModule = EnvGetNextDefmodule(environment,NULL);
+   for (theModule = GetNextDefmodule(environment,NULL);
         theModule != NULL;
-        theModule = EnvGetNextDefmodule(environment,theModule))
+        theModule = GetNextDefmodule(environment,theModule))
      {
       newModule = [[CLIPSModule alloc] init];
 
@@ -671,9 +671,9 @@
    /* Get the list of all the instances. */
    /*====================================*/
    
-   for (theInstance = EnvGetNextInstance(environment,NULL);
+   for (theInstance = GetNextInstance(environment,NULL);
         theInstance != NULL;
-        theInstance = EnvGetNextInstance(environment,theInstance))
+        theInstance = GetNextInstance(environment,theInstance))
      {
       newInstance = [[CLIPSFactInstance alloc] initWithInstance: theInstance fromEnvironment: environment];
 
@@ -1164,7 +1164,7 @@
   {
    int rv;
    
-   rv = EnvGetWatchItem(environment,watchItem);
+   rv = GetWatchItem(environment,watchItem);
    
    if (rv == 1) return YES;
    
@@ -1177,9 +1177,9 @@
 - (void) setWatchItem: (const char *) watchItem toValue: (bool) newValue
   {
    if (newValue)
-     { EnvWatch(environment,watchItem); }
+     { Watch(environment,watchItem); }
    else
-     { EnvUnwatch(environment,watchItem); }
+     { Unwatch(environment,watchItem); }
   }
 
 @end

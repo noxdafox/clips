@@ -123,7 +123,7 @@ void BsaveCommand(
    fileName = GetFileName(context);
    if (fileName != NULL)
      {
-      if (EnvBsave(theEnv,fileName))
+      if (Bsave(theEnv,fileName))
         {
          returnValue->lexemeValue = TrueSymbol(theEnv);
          return;
@@ -139,11 +139,11 @@ void BsaveCommand(
 
 #if BLOAD_AND_BSAVE
 
-/******************************/
-/* EnvBsave: C access routine */
-/*   for the bsave command.   */
-/******************************/
-bool EnvBsave(
+/****************************/
+/* Bsave: C access routine  */
+/*   for the bsave command. */
+/****************************/
+bool Bsave(
   Environment *theEnv,
   const char *fileName)
   {
@@ -160,7 +160,7 @@ bool EnvBsave(
    if (Bloaded(theEnv))
      {
       PrintErrorID(theEnv,"BSAVE",1,false);
-      EnvPrintRouter(theEnv,WERROR,
+      PrintRouter(theEnv,WERROR,
           "Cannot perform a binary save while a binary load is in effect.\n");
       return false;
      }

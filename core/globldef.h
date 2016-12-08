@@ -111,19 +111,19 @@ struct defglobalModule
 #define DefglobalData(theEnv) ((struct defglobalData *) GetEnvironmentData(theEnv,DEFGLOBAL_DATA))
 
    void                           InitializeDefglobals(Environment *);
-   Defglobal                     *EnvFindDefglobal(Environment *,const char *);
-   Defglobal                     *EnvFindDefglobalInModule(Environment *,const char *);
-   Defglobal                     *EnvGetNextDefglobal(Environment *,Defglobal *);
+   Defglobal                     *FindDefglobal(Environment *,const char *);
+   Defglobal                     *FindDefglobalInModule(Environment *,const char *);
+   Defglobal                     *GetNextDefglobal(Environment *,Defglobal *);
    void                           CreateInitialFactDefglobal(void);
    bool                           DefglobalIsDeletable(Defglobal *);
    struct defglobalModule        *GetDefglobalModuleItem(Environment *,Defmodule *);
    void                           QSetDefglobalValue(Environment *,Defglobal *,UDFValue *,bool);
    Defglobal                     *QFindDefglobal(Environment *,CLIPSLexeme *);
    void                           DefglobalValueForm(Defglobal *,char *,size_t);
-   bool                           EnvGetGlobalsChanged(Environment *);
-   void                           EnvSetGlobalsChanged(Environment *,bool);
-   bool                           EnvGetDefglobalValue(Environment *,const char *,CLIPSValue *);
-   bool                           EnvSetDefglobalValue(Environment *,const char *,CLIPSValue *);
+   bool                           GetGlobalsChanged(Environment *);
+   void                           SetGlobalsChanged(Environment *,bool);
+   bool                           GetDefglobalValue(Environment *,const char *,CLIPSValue *);
+   bool                           SetDefglobalValue(Environment *,const char *,CLIPSValue *);
    void                           UpdateDefglobalScope(Environment *);
    Defglobal                     *GetNextDefglobalInScope(Environment *,Defglobal *);
    bool                           QGetDefglobalValue(Environment *,Defglobal *,UDFValue *);

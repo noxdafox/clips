@@ -244,9 +244,9 @@ void ConstructsToCCommand(
       if (*(fileName+i) == '.')
         {
          PrintErrorID(theEnv,"CONSCOMP",1,false);
-         EnvPrintRouter(theEnv,WERROR,"Invalid file name ");
-         EnvPrintRouter(theEnv,WERROR,fileName);
-         EnvPrintRouter(theEnv,WERROR," contains \'.\'\n");
+         PrintRouter(theEnv,WERROR,"Invalid file name ");
+         PrintRouter(theEnv,WERROR,fileName);
+         PrintRouter(theEnv,WERROR," contains \'.\'\n");
          return;
         }
       }
@@ -263,9 +263,9 @@ void ConstructsToCCommand(
    if ((nameLength + EXTRA_FILE_NAME) > FILENAME_MAX)
      {
       PrintErrorID(theEnv,"CONSCOMP",1,false);
-      EnvPrintRouter(theEnv,WERROR,"Aborting because the base file name may cause the fopen maximum of ");
+      PrintRouter(theEnv,WERROR,"Aborting because the base file name may cause the fopen maximum of ");
       PrintLongInteger(theEnv,WERROR,FILENAME_MAX);
-      EnvPrintRouter(theEnv,WERROR," to be violated when file names are generated.\n");
+      PrintRouter(theEnv,WERROR," to be violated when file names are generated.\n");
       return;
      }
 
@@ -279,9 +279,9 @@ void ConstructsToCCommand(
    if (nameLength > 3)
      {
       PrintWarningID(theEnv,"CONSCOMP",1,false);
-      EnvPrintRouter(theEnv,WWARNING,"Base file name exceeds 3 characters.\n");
-      EnvPrintRouter(theEnv,WWARNING,"  This may cause files to be overwritten if file name length\n");
-      EnvPrintRouter(theEnv,WWARNING,"  is limited on your platform.\n");
+      PrintRouter(theEnv,WWARNING,"Base file name exceeds 3 characters.\n");
+      PrintRouter(theEnv,WWARNING,"  This may cause files to be overwritten if file name length\n");
+      PrintRouter(theEnv,WWARNING,"  is limited on your platform.\n");
      }
 
    /*====================================*/
@@ -733,7 +733,7 @@ static bool WriteInitializationFunction(
            ConstructCompilerData(theEnv)->ImageID,ConstructCompilerData(theEnv)->ImageID,
            ConstructCompilerData(theEnv)->ImageID);
 
-   fprintf(fp,"   EnvClear(theEnv);\n");
+   fprintf(fp,"   Clear(theEnv);\n");
 
    fprintf(fp,"   RefreshSpecialSymbols(theEnv);\n");
    fprintf(fp,"   InitExpressionPointers(theEnv);\n");
@@ -1084,7 +1084,7 @@ static void DumpExpression(
 void ConstructsToCCommandDefinition(
   Environment *theEnv)
   {
-   EnvAddUDF(theEnv,"constructs-to-c","v",2,4,"*;sy;l;sy;l",ConstructsToCCommand,"ConstructsToCCommand",NULL);
+   AddUDF(theEnv,"constructs-to-c","v",2,4,"*;sy;l;sy;l",ConstructsToCCommand,"ConstructsToCCommand",NULL);
   }
 
 /*********************************************************/
@@ -1132,7 +1132,7 @@ struct CodeGeneratorItem *AddCodeGeneratorItem(
       if ((arrayCount + ConstructCompilerData(theEnv)->CodeGeneratorCount) > (PRIMARY_LEN + SECONDARY_LEN))
         {
          SystemError(theEnv,"CONSCOMP",2);
-         EnvExitRouter(theEnv,EXIT_FAILURE);
+         ExitRouter(theEnv,EXIT_FAILURE);
         }
 
       newPtr->arrayNames = (char **) gm2(theEnv,(sizeof(char *) * arrayCount));
@@ -1247,7 +1247,7 @@ FILE *CloseFileIfNeeded(
       if ((canBeReopened == NULL) || (codeFile == NULL))
         {
          SystemError(theEnv,"CONSCOMP",3);
-         EnvExitRouter(theEnv,EXIT_FAILURE);
+         ExitRouter(theEnv,EXIT_FAILURE);
         }
 
       if (codeFile->filePrefix == NULL)
@@ -1257,7 +1257,7 @@ FILE *CloseFileIfNeeded(
       if (theFile == NULL)
         {
          SystemError(theEnv,"CONSCOMP",4);
-         EnvExitRouter(theEnv,EXIT_FAILURE);
+         ExitRouter(theEnv,EXIT_FAILURE);
         }
      }
 
@@ -1322,7 +1322,7 @@ FILE *OpenFileIfNeeded(
       if (codeFile == NULL)
         {
          SystemError(theEnv,"CONSCOMP",5);
-         EnvExitRouter(theEnv,EXIT_FAILURE);
+         ExitRouter(theEnv,EXIT_FAILURE);
         }
 
       newName = codeFile->filePrefix;

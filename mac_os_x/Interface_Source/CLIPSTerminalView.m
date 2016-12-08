@@ -779,7 +779,7 @@
       
       if ([theEvent modifierFlags] & NSShiftKeyMask)
         {
-         EnvSetHaltExecution(theEnvironment,true);
+         SetHaltExecution(theEnvironment,true);
          CloseAllBatchSources(theEnvironment);
         }
       else
@@ -790,7 +790,7 @@
          else
 #endif
            {
-            EnvSetHaltExecution(theEnvironment,true);
+            SetHaltExecution(theEnvironment,true);
             CloseAllBatchSources(theEnvironment);
            }
         }

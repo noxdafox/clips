@@ -86,9 +86,9 @@ struct deffactsModule
 #define DeffactsData(theEnv) ((struct deffactsData *) GetEnvironmentData(theEnv,DEFFACTS_DATA))
 
    void                           InitializeDeffacts(Environment *);
-   Deffacts                      *EnvFindDeffacts(Environment *,const char *);
-   Deffacts                      *EnvFindDeffactsInModule(Environment *,const char *);
-   Deffacts                      *EnvGetNextDeffacts(Environment *,Deffacts *);
+   Deffacts                      *FindDeffacts(Environment *,const char *);
+   Deffacts                      *FindDeffactsInModule(Environment *,const char *);
+   Deffacts                      *GetNextDeffacts(Environment *,Deffacts *);
    void                           CreateInitialFactDeffacts(void);
    bool                           DeffactsIsDeletable(Deffacts *);
    struct deffactsModule         *GetDeffactsModuleItem(Environment *,Defmodule *);

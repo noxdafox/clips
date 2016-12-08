@@ -651,14 +651,14 @@ static void BsaveObjects(
    /* =================================
       Write out each defclass module
       ================================= */
-   theModule = EnvGetNextDefmodule(theEnv,NULL);
+   theModule = GetNextDefmodule(theEnv,NULL);
    while (theModule != NULL)
      {
       theModuleItem = (DEFCLASS_MODULE *)
                       GetModuleItem(theEnv,theModule,FindModuleItem(theEnv,"defclass")->moduleIndex);
       AssignBsaveDefmdlItemHdrVals(&dummy_mitem.header,&theModuleItem->header);
       GenWrite(&dummy_mitem,sizeof(BSAVE_DEFCLASS_MODULE),fp);
-      theModule = EnvGetNextDefmodule(theEnv,theModule);
+      theModule = GetNextDefmodule(theEnv,theModule);
      }
 
    /* =====================
@@ -1046,7 +1046,7 @@ static void BloadStorageObjects(
    if ((DefclassData(theEnv)->ClassIDMap != NULL) || (DefclassData(theEnv)->MaxClassID != 0))
      {
       SystemError(theEnv,"OBJBIN",1);
-      EnvExitRouter(theEnv,EXIT_FAILURE);
+      ExitRouter(theEnv,EXIT_FAILURE);
      }
    GenReadBinary(theEnv,&space,sizeof(size_t));
    if (space == 0L)

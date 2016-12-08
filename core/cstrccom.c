@@ -513,7 +513,7 @@ Defmodule *GetConstructModule(
      {
       theName = ExtractModuleName(theEnv,position,constructName);
       if (theName != NULL)
-        { return EnvFindDefmodule(theEnv,theName->contents); }
+        { return FindDefmodule(theEnv,theName->contents); }
      }
 
    /*============================================*/
@@ -681,7 +681,7 @@ void SaveConstruct(
    /* the one we're examining.  */
    /*===========================*/
 
-   EnvSetCurrentModule(theEnv,theModule);
+   SetCurrentModule(theEnv,theModule);
 
    /*==============================================*/
    /* Loop through each construct of the specified */
@@ -700,7 +700,7 @@ void SaveConstruct(
       if (ppform != NULL)
         {
          PrintInChunks(theEnv,logicalName,ppform);
-         EnvPrintRouter(theEnv,logicalName,"\n");
+         PrintRouter(theEnv,logicalName,"\n");
         }
       }
 
@@ -770,11 +770,11 @@ void GetConstructListFunction(
       /* list for all modules).                    */
       /*===========================================*/
 
-      if ((theModule = EnvFindDefmodule(theEnv,result.lexemeValue->contents)) == NULL)
+      if ((theModule = FindDefmodule(theEnv,result.lexemeValue->contents)) == NULL)
         {
          if (strcmp("*",result.lexemeValue->contents) != 0)
            {
-            EnvSetMultifieldErrorValue(theEnv,returnValue);
+            SetMultifieldErrorValue(theEnv,returnValue);
             ExpectedTypeError1(theEnv,UDFContextFunctionName(context),1,"defmodule name");
             return;
            }
@@ -789,7 +789,7 @@ void GetConstructListFunction(
    /*=====================================*/
 
    else
-     { theModule = EnvGetCurrentModule(theEnv); }
+     { theModule = GetCurrentModule(theEnv); }
 
    /*=============================*/
    /* Call the driver routine to  */
@@ -831,7 +831,7 @@ void GetConstructList(
 
    if (theModule == NULL)
      {
-      theModule = EnvGetNextDefmodule(theEnv,NULL);
+      theModule = GetNextDefmodule(theEnv,NULL);
       allModules = true;
      }
 
@@ -850,7 +850,7 @@ void GetConstructList(
       /* Set the current module to the module being examined. */
       /*======================================================*/
 
-      EnvSetCurrentModule(theEnv,loopModule);
+      SetCurrentModule(theEnv,loopModule);
 
       /*===========================================*/
       /* Loop over every construct in the  module. */
@@ -894,7 +894,7 @@ void GetConstructList(
       /* Move on to the next module. */
       /*=============================*/
 
-      if (allModules) loopModule = EnvGetNextDefmodule(theEnv,loopModule);
+      if (allModules) loopModule = GetNextDefmodule(theEnv,loopModule);
       else loopModule = NULL;
      }
 
@@ -911,7 +911,7 @@ void GetConstructList(
 
    returnValue->begin = 0;
    returnValue->range = count;
-   theList = EnvCreateMultifield(theEnv,count);
+   theList = CreateMultifield(theEnv,count);
    returnValue->value = theList;
 
    /*===========================*/
@@ -928,7 +928,7 @@ void GetConstructList(
       /* the module being examined. */
       /*============================*/
 
-      EnvSetCurrentModule(theEnv,loopModule);
+      SetCurrentModule(theEnv,loopModule);
 
       /*===============================*/
       /* Add each construct name found */
@@ -944,10 +944,10 @@ void GetConstructList(
             genstrcpy(buffer,DefmoduleName(loopModule));
             genstrcat(buffer,"::");
             genstrcat(buffer,theName->contents);
-            theList->theFields[count].value = EnvCreateSymbol(theEnv,buffer);
+            theList->theFields[count].value = CreateSymbol(theEnv,buffer);
            }
          else
-           { theList->theFields[count].value = EnvCreateSymbol(theEnv,theName->contents); }
+           { theList->theFields[count].value = CreateSymbol(theEnv,theName->contents); }
          count++;
         }
 
@@ -957,7 +957,7 @@ void GetConstructList(
       /* of constructs from all modules). */
       /*==================================*/
 
-      if (allModules) loopModule = EnvGetNextDefmodule(theEnv,loopModule);
+      if (allModules) loopModule = GetNextDefmodule(theEnv,loopModule);
       else loopModule = NULL;
      }
 
@@ -1008,7 +1008,7 @@ void ListConstructCommand(
       /* list for all modules).                    */
       /*===========================================*/
 
-      if ((theModule = EnvFindDefmodule(theEnv,result.lexemeValue->contents)) == NULL)
+      if ((theModule = FindDefmodule(theEnv,result.lexemeValue->contents)) == NULL)
         {
          if (strcmp("*",result.lexemeValue->contents) != 0)
            {
@@ -1026,7 +1026,7 @@ void ListConstructCommand(
    /*=====================================*/
 
    else
-     { theModule = EnvGetCurrentModule(theEnv); }
+     { theModule = GetCurrentModule(theEnv); }
 
    /*=========================*/
    /* Call the driver routine */
@@ -1064,7 +1064,7 @@ void ListConstruct(
 
    if (theModule == NULL)
      {
-      theModule = EnvGetNextDefmodule(theEnv,NULL);
+      theModule = GetNextDefmodule(theEnv,NULL);
       allModules = true;
      }
 
@@ -1082,8 +1082,8 @@ void ListConstruct(
 
       if (allModules)
         {
-         EnvPrintRouter(theEnv,logicalName,DefmoduleName(theModule));
-         EnvPrintRouter(theEnv,logicalName,":\n");
+         PrintRouter(theEnv,logicalName,DefmoduleName(theModule));
+         PrintRouter(theEnv,logicalName,":\n");
         }
 
       /*===============================*/
@@ -1091,7 +1091,7 @@ void ListConstruct(
       /* module we're examining.       */
       /*===============================*/
 
-      EnvSetCurrentModule(theEnv,theModule);
+      SetCurrentModule(theEnv,theModule);
 
       /*===========================================*/
       /* List all of the constructs in the module. */
@@ -1107,9 +1107,9 @@ void ListConstruct(
 
          if (constructName != NULL)
            {
-            if (allModules) EnvPrintRouter(theEnv,WDISPLAY,"   ");
-            EnvPrintRouter(theEnv,logicalName,constructName->contents);
-            EnvPrintRouter(theEnv,logicalName,"\n");
+            if (allModules) PrintRouter(theEnv,WDISPLAY,"   ");
+            PrintRouter(theEnv,logicalName,constructName->contents);
+            PrintRouter(theEnv,logicalName,"\n");
            }
 
          count++;
@@ -1121,7 +1121,7 @@ void ListConstruct(
       /* constructs from all modules).      */
       /*====================================*/
 
-      if (allModules) theModule = EnvGetNextDefmodule(theEnv,theModule);
+      if (allModules) theModule = GetNextDefmodule(theEnv,theModule);
       else theModule = NULL;
      }
 
@@ -1206,7 +1206,7 @@ struct defmoduleItemHeader *GetConstructModuleItemByIndex(
      }
 
    return((struct defmoduleItemHeader *)
-          GetModuleItem(theEnv,EnvGetCurrentModule(theEnv),moduleIndex));
+          GetModuleItem(theEnv,GetCurrentModule(theEnv),moduleIndex));
   }
 
 /******************************************/
@@ -1257,16 +1257,16 @@ long DoForAllConstructs(
    /* Loop through all of the modules. */
    /*==================================*/
 
-   for (theModule = EnvGetNextDefmodule(theEnv,NULL);
+   for (theModule = GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = EnvGetNextDefmodule(theEnv,theModule), moduleCount++)
+        theModule = GetNextDefmodule(theEnv,theModule), moduleCount++)
      {
       /*=============================*/
       /* Set the current module to   */
       /* the module we're examining. */
       /*=============================*/
 
-      EnvSetCurrentModule(theEnv,theModule);
+      SetCurrentModule(theEnv,theModule);
 
       /*================================================*/
       /* Perform the action for each of the constructs. */
@@ -1285,7 +1285,7 @@ long DoForAllConstructs(
 
          if (interruptable)
            {
-            if (EnvGetHaltExecution(theEnv) == true)
+            if (GetHaltExecution(theEnv) == true)
               {
                RestoreCurrentModule(theEnv);
                return(-1L);
@@ -1346,7 +1346,7 @@ void DoForAllConstructsInModule(
    /* the module we're examining. */
    /*=============================*/
 
-   EnvSetCurrentModule(theEnv,theModule);
+   SetCurrentModule(theEnv,theModule);
 
    /*================================================*/
    /* Perform the action for each of the constructs. */
@@ -1361,7 +1361,7 @@ void DoForAllConstructsInModule(
      {
       if (interruptable)
         {
-         if (EnvGetHaltExecution(theEnv) == true)
+         if (GetHaltExecution(theEnv) == true)
            {
             RestoreCurrentModule(theEnv);
             return;
@@ -1495,16 +1495,16 @@ static bool ConstructWatchSupport(
       /* Loop through each module. */
       /*===========================*/
 
-      for (theModule = EnvGetNextDefmodule(theEnv,NULL);
+      for (theModule = GetNextDefmodule(theEnv,NULL);
            theModule != NULL;
-           theModule = EnvGetNextDefmodule(theEnv,theModule))
+           theModule = GetNextDefmodule(theEnv,theModule))
         {
          /*============================*/
          /* Set the current module to  */
          /* the module being examined. */
          /*============================*/
 
-         EnvSetCurrentModule(theEnv,theModule);
+         SetCurrentModule(theEnv,theModule);
 
          /*====================================================*/
          /* If we're displaying the names of constructs with   */
@@ -1514,8 +1514,8 @@ static bool ConstructWatchSupport(
 
          if (setFlag == false)
            {
-            EnvPrintRouter(theEnv,logName,DefmoduleName(theModule));
-            EnvPrintRouter(theEnv,logName,":\n");
+            PrintRouter(theEnv,logName,DefmoduleName(theModule));
+            PrintRouter(theEnv,logName,":\n");
            }
 
          /*============================================*/
@@ -1535,7 +1535,7 @@ static bool ConstructWatchSupport(
               { (*setWatchFunc)(theConstruct,newState); }
             else
               {
-               EnvPrintRouter(theEnv,logName,"   ");
+               PrintRouter(theEnv,logName,"   ");
                ConstructPrintWatch(theEnv,logName,constructClass,theConstruct,getWatchFunc);
               }
            }
@@ -1619,11 +1619,11 @@ static void ConstructPrintWatch(
   ConstructHeader *theConstruct,
   ConstructGetWatchFunction *getWatchFunc)
   {
-   EnvPrintRouter(theEnv,logName,(*constructClass->getConstructNameFunction)(theConstruct)->contents);
+   PrintRouter(theEnv,logName,(*constructClass->getConstructNameFunction)(theConstruct)->contents);
    if ((*getWatchFunc)(theConstruct))
-     EnvPrintRouter(theEnv,logName," = on\n");
+     PrintRouter(theEnv,logName," = on\n");
    else
-     EnvPrintRouter(theEnv,logName," = off\n");
+     PrintRouter(theEnv,logName," = off\n");
   }
 
 #endif /* DEBUGGING_FUNCTIONS */

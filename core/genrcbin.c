@@ -44,12 +44,15 @@
 #include "bsave.h"
 #include "constant.h"
 #include "cstrcbin.h"
+#include "cstrccom.h"
 #include "envrnmnt.h"
 #include "genrccom.h"
 #include "memalloc.h"
 #include "modulbin.h"
 #if OBJECT_SYSTEM
 #include "objbin.h"
+#else
+#include "prntutil.h"
 #endif
 #include "router.h"
 
@@ -428,7 +431,7 @@ static void BsaveGenerics(
       Write out the generic function modules
       ====================================== */
    DefgenericBinaryData(theEnv)->GenericCount = 0L;
-   theModule = EnvGetNextDefmodule(theEnv,NULL);
+   theModule = GetNextDefmodule(theEnv,NULL);
    while (theModule != NULL)
      {
       theModuleItem = (DEFGENERIC_MODULE *)
@@ -437,7 +440,7 @@ static void BsaveGenerics(
                                            &theModuleItem->header);
       GenWrite(&dummy_generic_module,
                sizeof(BSAVE_DEFGENERIC_MODULE),fp);
-      theModule = EnvGetNextDefmodule(theEnv,theModule);
+      theModule = GetNextDefmodule(theEnv,theModule);
      }
 
 
@@ -630,7 +633,7 @@ static void BsaveRestrictionTypes(
 #if OBJECT_SYSTEM
             dummy_type = DefclassIndex(rptr->types[k]);
 #else
-            dummy_type = (long) ((INTEGER_HN *) rptr->types[k])->contents;
+            dummy_type = (long) ((CLIPSInteger *) rptr->types[k])->contents;
 #endif
             GenWrite(&dummy_type,sizeof(long),(FILE *) userBuffer);
            }
@@ -821,13 +824,13 @@ static void UpdateType(
    if ((* (long *) buf) > (long) INSTANCE_TYPE_CODE)
      {
       PrintWarningID(theEnv,"GENRCBIN",1,false);
-      EnvPrintRouter(theEnv,WWARNING,"COOL not installed!  User-defined class\n");
-      EnvPrintRouter(theEnv,WWARNING,"  in method restriction substituted with OBJECT.\n");
-      DefgenericBinaryData(theEnv)->TypeArray[obji] = EnvCreateInteger(theEnv,(long long) OBJECT_TYPE_CODE);
+      PrintRouter(theEnv,WWARNING,"COOL not installed!  User-defined class\n");
+      PrintRouter(theEnv,WWARNING,"  in method restriction substituted with OBJECT.\n");
+      DefgenericBinaryData(theEnv)->TypeArray[obji] = CreateInteger(theEnv,(long long) OBJECT_TYPE_CODE);
      }
    else
-     DefgenericBinaryData(theEnv)->TypeArray[obji] = EnvCreateInteger(theEnv,* (long *) buf);
-   IncrementIntegerCount((INTEGER_HN *) DefgenericBinaryData(theEnv)->TypeArray[obji]);
+     DefgenericBinaryData(theEnv)->TypeArray[obji] = CreateInteger(theEnv,* (long *) buf);
+   IncrementIntegerCount((CLIPSInteger *) DefgenericBinaryData(theEnv)->TypeArray[obji]);
 #endif
   }
 
@@ -880,7 +883,7 @@ static void ClearBloadGenerics(
 
 #if ! OBJECT_SYSTEM
    for (i = 0 ; i < DefgenericBinaryData(theEnv)->TypeCount ; i++)
-     DecrementIntegerCount(theEnv,(INTEGER_HN *) DefgenericBinaryData(theEnv)->TypeArray[i]);
+     DecrementIntegerCount(theEnv,(CLIPSInteger *) DefgenericBinaryData(theEnv)->TypeArray[i]);
 #endif
    space = (sizeof(void *) * DefgenericBinaryData(theEnv)->TypeCount);
    if (space == 0L)

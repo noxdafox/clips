@@ -90,8 +90,8 @@ void InitializeMemory(
    if (MemoryData(theEnv)->MemoryTable == NULL)
      {
       PrintErrorID(theEnv,"MEMORY",1,true);
-      EnvPrintRouter(theEnv,WERROR,"Out of memory.\n");
-      EnvExitRouter(theEnv,EXIT_FAILURE);
+      PrintRouter(theEnv,WERROR,"Out of memory.\n");
+      ExitRouter(theEnv,EXIT_FAILURE);
      }
    else
      {
@@ -117,11 +117,11 @@ void *genalloc(
 
    if (memPtr == NULL)
      {
-      EnvReleaseMem(theEnv,(long) ((size * 5 > 4096) ? size * 5 : 4096));
+      ReleaseMem(theEnv,(long) ((size * 5 > 4096) ? size * 5 : 4096));
       memPtr = malloc(size);
       if (memPtr == NULL)
         {
-         EnvReleaseMem(theEnv,-1L);
+         ReleaseMem(theEnv,-1L);
          memPtr = malloc(size);
          while (memPtr == NULL)
            {
@@ -151,16 +151,16 @@ bool DefaultOutOfMemoryFunction(
 #endif
 
    PrintErrorID(theEnv,"MEMORY",1,true);
-   EnvPrintRouter(theEnv,WERROR,"Out of memory.\n");
-   EnvExitRouter(theEnv,EXIT_FAILURE);
+   PrintRouter(theEnv,WERROR,"Out of memory.\n");
+   ExitRouter(theEnv,EXIT_FAILURE);
    return true;
   }
 
-/***********************************************************/
-/* EnvSetOutOfMemoryFunction: Allows the function which is */
-/*   called when the KB runs out of memory to be changed.  */
-/***********************************************************/
-OutOfMemoryFunction *EnvSetOutOfMemoryFunction(
+/**********************************************************/
+/* SetOutOfMemoryFunction: Allows the function which is   */
+/*   called when the KB runs out of memory to be changed. */
+/**********************************************************/
+OutOfMemoryFunction *SetOutOfMemoryFunction(
   Environment *theEnv,
   OutOfMemoryFunction *functionPtr)
   {
@@ -214,23 +214,23 @@ void *genrealloc(
   }
 
 /********************************/
-/* EnvMemUsed: C access routine */
+/* MemUsed: C access routine */
 /*   for the mem-used command.  */
 /********************************/
-long int EnvMemUsed(
+long int MemUsed(
   Environment *theEnv)
   {
-   return(MemoryData(theEnv)->MemoryAmount);
+   return MemoryData(theEnv)->MemoryAmount;
   }
 
-/************************************/
-/* EnvMemRequests: C access routine */
-/*   for the mem-requests command.  */
-/************************************/
-long int EnvMemRequests(
+/***********************************/
+/* MemRequests: C access routine   */
+/*   for the mem-requests command. */
+/***********************************/
+long int MemRequests(
   Environment *theEnv)
   {
-   return(MemoryData(theEnv)->MemoryCalls);
+   return MemoryData(theEnv)->MemoryCalls;
   }
 
 /***************************************/
@@ -242,7 +242,7 @@ long int UpdateMemoryUsed(
   long int value)
   {
    MemoryData(theEnv)->MemoryAmount += value;
-   return(MemoryData(theEnv)->MemoryAmount);
+   return MemoryData(theEnv)->MemoryAmount;
   }
 
 /*******************************************/
@@ -257,11 +257,11 @@ long int UpdateMemoryRequests(
    return(MemoryData(theEnv)->MemoryCalls);
   }
 
-/***********************************/
-/* EnvReleaseMem: C access routine */
-/*   for the release-mem command.  */
-/***********************************/
-long int EnvReleaseMem(
+/**********************************/
+/* ReleaseMem: C access routine   */
+/*   for the release-mem command. */
+/**********************************/
+long int ReleaseMem(
   Environment *theEnv,
   long int maximum)
   {
@@ -405,7 +405,7 @@ void rm(
    if (size == 0)
      {
       SystemError(theEnv,"MEMORY",1);
-      EnvExitRouter(theEnv,EXIT_FAILURE);
+      ExitRouter(theEnv,EXIT_FAILURE);
       return;
      }
 
@@ -443,7 +443,7 @@ void rm3(
    if (size == 0)
      {
       SystemError(theEnv,"MEMORY",1);
-      EnvExitRouter(theEnv,EXIT_FAILURE);
+      ExitRouter(theEnv,EXIT_FAILURE);
       return;
      }
 
@@ -501,11 +501,11 @@ unsigned long ActualPoolSize(
    return(PoolSize(theEnv));
   }
 
-/********************************************/
-/* EnvSetConserveMemory: Allows the setting */
-/*    of the memory conservation flag.      */
-/********************************************/
-bool EnvSetConserveMemory(
+/*****************************************/
+/* SetConserveMemory: Allows the setting */
+/*    of the memory conservation flag.   */
+/*****************************************/
+bool SetConserveMemory(
   Environment *theEnv,
   bool value)
   {
@@ -513,17 +513,17 @@ bool EnvSetConserveMemory(
 
    ov = MemoryData(theEnv)->ConserveMemory;
    MemoryData(theEnv)->ConserveMemory = value;
-   return(ov);
+   return ov;
   }
 
-/*******************************************/
-/* EnvGetConserveMemory: Returns the value */
-/*    of the memory conservation flag.     */
-/*******************************************/
-bool EnvGetConserveMemory(
+/****************************************/
+/* GetConserveMemory: Returns the value */
+/*    of the memory conservation flag.  */
+/****************************************/
+bool GetConserveMemory(
   Environment *theEnv)
   {
-   return(MemoryData(theEnv)->ConserveMemory);
+   return MemoryData(theEnv)->ConserveMemory;
   }
 
 /**************************/

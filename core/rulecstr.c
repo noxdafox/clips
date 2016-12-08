@@ -115,14 +115,14 @@ static void ConstraintConflictMessage(
 
    if (variableName != NULL)
      {
-      EnvPrintRouter(theEnv,WERROR,"Variable ?");
-      EnvPrintRouter(theEnv,WERROR,variableName->contents);
-      EnvPrintRouter(theEnv,WERROR," in CE #");
+      PrintRouter(theEnv,WERROR,"Variable ?");
+      PrintRouter(theEnv,WERROR,variableName->contents);
+      PrintRouter(theEnv,WERROR," in CE #");
       PrintLongInteger(theEnv,WERROR,(long int) thePattern);
      }
    else
      {
-      EnvPrintRouter(theEnv,WERROR,"Pattern #");
+      PrintRouter(theEnv,WERROR,"Pattern #");
       PrintLongInteger(theEnv,WERROR,(long int) thePattern);
      }
 
@@ -133,20 +133,20 @@ static void ConstraintConflictMessage(
 
    if (theSlot == NULL)
      {
-      EnvPrintRouter(theEnv,WERROR," field #");
+      PrintRouter(theEnv,WERROR," field #");
       PrintLongInteger(theEnv,WERROR,(long int) theField);
      }
    else
      {
-      EnvPrintRouter(theEnv,WERROR," slot ");
-      EnvPrintRouter(theEnv,WERROR,theSlot->contents);
+      PrintRouter(theEnv,WERROR," slot ");
+      PrintRouter(theEnv,WERROR,theSlot->contents);
      }
 
    /*======================================*/
    /* Print the rest of the error message. */
    /*======================================*/
 
-   EnvPrintRouter(theEnv,WERROR,"\nhas constraint conflicts which make the pattern unmatchable.\n");
+   PrintRouter(theEnv,WERROR,"\nhas constraint conflicts which make the pattern unmatchable.\n");
   }
 
 /***************************************************************/
@@ -242,9 +242,9 @@ static bool MultifieldCardinalityViolation(
    else tempConstraint = CopyConstraintRecord(theEnv,theNode->constraints);
    ReturnExpression(theEnv,tempConstraint->minFields);
    ReturnExpression(theEnv,tempConstraint->maxFields);
-   tempConstraint->minFields = GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,(long long) minFields));
+   tempConstraint->minFields = GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,(long long) minFields));
    if (posInfinity) tempConstraint->maxFields = GenConstant(theEnv,SYMBOL_TYPE,SymbolData(theEnv)->PositiveInfinity);
-   else tempConstraint->maxFields = GenConstant(theEnv,INTEGER_TYPE,EnvCreateInteger(theEnv,(long long) maxFields));
+   else tempConstraint->maxFields = GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,(long long) maxFields));
 
    /*================================================================*/
    /* Determine the final cardinality for the multifield slot by     */
@@ -427,27 +427,27 @@ void ConstraintReferenceErrorMessage(
    /* Print the variable name. */
    /*==========================*/
 
-   EnvPrintRouter(theEnv,WERROR,"Previous variable bindings of ?");
-   EnvPrintRouter(theEnv,WERROR,theVariable->contents);
-   EnvPrintRouter(theEnv,WERROR," caused the type restrictions");
+   PrintRouter(theEnv,WERROR,"Previous variable bindings of ?");
+   PrintRouter(theEnv,WERROR,theVariable->contents);
+   PrintRouter(theEnv,WERROR," caused the type restrictions");
 
    /*============================*/
    /* Print the argument number. */
    /*============================*/
 
-   EnvPrintRouter(theEnv,WERROR,"\nfor argument #");
+   PrintRouter(theEnv,WERROR,"\nfor argument #");
    PrintLongInteger(theEnv,WERROR,(long int) whichArgument);
 
    /*=======================*/
    /* Print the expression. */
    /*=======================*/
 
-   EnvPrintRouter(theEnv,WERROR," of the expression ");
+   PrintRouter(theEnv,WERROR," of the expression ");
    temprv = LHSParseNodesToExpression(theEnv,theExpression);
    ReturnExpression(theEnv,temprv->nextArg);
    temprv->nextArg = NULL;
    PrintExpression(theEnv,WERROR,temprv);
-   EnvPrintRouter(theEnv,WERROR,"\n");
+   PrintRouter(theEnv,WERROR,"\n");
    ReturnExpression(theEnv,temprv);
 
    /*========================================*/
@@ -456,23 +456,23 @@ void ConstraintReferenceErrorMessage(
    /* index where the violation occured.     */
    /*========================================*/
 
-   EnvPrintRouter(theEnv,WERROR,"found in CE #");
+   PrintRouter(theEnv,WERROR,"found in CE #");
    PrintLongInteger(theEnv,WERROR,(long int) theExpression->whichCE);
    if (slotName == NULL)
      {
       if (theField > 0)
         {
-         EnvPrintRouter(theEnv,WERROR," field #");
+         PrintRouter(theEnv,WERROR," field #");
          PrintLongInteger(theEnv,WERROR,(long int) theField);
         }
      }
    else
      {
-      EnvPrintRouter(theEnv,WERROR," slot ");
-      EnvPrintRouter(theEnv,WERROR,slotName->contents);
+      PrintRouter(theEnv,WERROR," slot ");
+      PrintRouter(theEnv,WERROR,slotName->contents);
      }
 
-   EnvPrintRouter(theEnv,WERROR," to be violated.\n");
+   PrintRouter(theEnv,WERROR," to be violated.\n");
   }
 
 /********************************************************/
@@ -840,17 +840,17 @@ static bool CheckArgumentForConstraintError(
    if (UnmatchableConstraint(constraint4))
      {
       PrintErrorID(theEnv,"RULECSTR",3,true);
-      EnvPrintRouter(theEnv,WERROR,"Previous variable bindings of ?");
-      EnvPrintRouter(theEnv,WERROR,expressionList->lexemeValue->contents);
-      EnvPrintRouter(theEnv,WERROR," caused the type restrictions");
-      EnvPrintRouter(theEnv,WERROR,"\nfor argument #");
+      PrintRouter(theEnv,WERROR,"Previous variable bindings of ?");
+      PrintRouter(theEnv,WERROR,expressionList->lexemeValue->contents);
+      PrintRouter(theEnv,WERROR," caused the type restrictions");
+      PrintRouter(theEnv,WERROR,"\nfor argument #");
       PrintLongInteger(theEnv,WERROR,(long int) i);
-      EnvPrintRouter(theEnv,WERROR," of the expression ");
+      PrintRouter(theEnv,WERROR," of the expression ");
       tmpPtr = lastOne->nextArg;
       lastOne->nextArg = NULL;
       PrintExpression(theEnv,WERROR,lastOne);
       lastOne->nextArg = tmpPtr;
-      EnvPrintRouter(theEnv,WERROR,"\nfound in the rule's RHS to be violated.\n");
+      PrintRouter(theEnv,WERROR,"\nfound in the rule's RHS to be violated.\n");
 
       rv = true;
      }

@@ -154,7 +154,7 @@ void InitExpressionPointers(
        (ExpressionData(theEnv)->PTR_EQ == NULL) || (ExpressionData(theEnv)->PTR_NEQ == NULL) || (ExpressionData(theEnv)->PTR_NOT == NULL))
      {
       SystemError(theEnv,"EXPRESSN",1);
-      EnvExitRouter(theEnv,EXIT_FAILURE);
+      ExitRouter(theEnv,EXIT_FAILURE);
      }
   }
 
@@ -470,10 +470,10 @@ long HashedExpressionIndex(
 #endif /* (BLOAD_AND_BSAVE || BLOAD_ONLY || BLOAD || CONSTRUCT_COMPILER) && (! RUN_TIME) */
 
 /********************************************************/
-/* EnvSetSequenceOperatorRecognition: C access routine  */
+/* SetSequenceOperatorRecognition: C access routine     */
 /*   for the set-sequence-operator-recognition function */
 /********************************************************/
-bool EnvSetSequenceOperatorRecognition(
+bool SetSequenceOperatorRecognition(
   Environment *theEnv,
   bool value)
   {
@@ -485,10 +485,10 @@ bool EnvSetSequenceOperatorRecognition(
   }
 
 /********************************************************/
-/* EnvGetSequenceOperatorRecognition: C access routine  */
+/* GetSequenceOperatorRecognition: C access routine     */
 /*   for the Get-sequence-operator-recognition function */
 /********************************************************/
-bool EnvGetSequenceOperatorRecognition(
+bool GetSequenceOperatorRecognition(
   Environment *theEnv)
   {
    return ExpressionData(theEnv)->SequenceOpMode;

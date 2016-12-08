@@ -77,7 +77,7 @@ void SortFunctionDefinitions(
   {
    AllocateEnvironmentData(theEnv,SORTFUN_DATA,sizeof(struct sortFunctionData),DeallocateSortFunctionData);
 #if ! RUN_TIME
-   EnvAddUDF(theEnv,"sort","bm",1,UNBOUNDED,"*;y",SortFunction,"SortFunction",NULL);
+   AddUDF(theEnv,"sort","bm",1,UNBOUNDED,"*;y",SortFunction,"SortFunction",NULL);
 #endif
   }
 
@@ -204,7 +204,7 @@ void SortFunction(
 
    if (argumentCount == 1)
      {
-      EnvSetMultifieldErrorValue(theEnv,returnValue);
+      SetMultifieldErrorValue(theEnv,returnValue);
       ReturnExpression(theEnv,functionReference);
       return;
      }
@@ -229,7 +229,7 @@ void SortFunction(
    if (argumentSize == 0)
      {
       genfree(theEnv,theArguments,(argumentCount - 1) * sizeof(UDFValue)); /* Bug Fix */
-      EnvSetMultifieldErrorValue(theEnv,returnValue);
+      SetMultifieldErrorValue(theEnv,returnValue);
       ReturnExpression(theEnv,functionReference);
       return;
      }
@@ -275,7 +275,7 @@ void SortFunction(
    functionReference->nextArg = NULL;
    ReturnExpression(theEnv,functionReference);
 
-   theMultifield = EnvCreateMultifield(theEnv,(unsigned long) argumentSize);
+   theMultifield = CreateMultifield(theEnv,(unsigned long) argumentSize);
 
    for (i = 0; i < argumentSize; i++)
      {

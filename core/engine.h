@@ -137,23 +137,23 @@ struct engineData
 
 #define MAX_PATTERNS_CHECKED 64
 
-   long long               EnvRun(Environment *,long long);
-   bool                    EnvAddRunFunction(Environment *,const char *,
+   long long               Run(Environment *,long long);
+   bool                    AddRunFunction(Environment *,const char *,
                                              void (*)(Environment *),int);
-   bool                    EnvAddRunFunctionWithContext(Environment *,const char *,
+   bool                    AddRunFunctionWithContext(Environment *,const char *,
                                                         void (*)(Environment *),int,void *);
-   bool                    EnvRemoveRunFunction(Environment *,const char *);
-   bool                    EnvAddBeforeRunFunction(Environment *,const char *,
+   bool                    RemoveRunFunction(Environment *,const char *);
+   bool                    AddBeforeRunFunction(Environment *,const char *,
                                                    void (*)(Environment *,void *),int);
-   bool                    EnvAddBeforeRunFunctionWithContext(Environment *,const char *,
+   bool                    AddBeforeRunFunctionWithContext(Environment *,const char *,
                                                               void (*)(Environment *, void *),int,void *);
-   bool                    EnvRemoveBeforeRunFunction(Environment *,const char *);
+   bool                    RemoveBeforeRunFunction(Environment *,const char *);
    void                    InitializeEngine(Environment *);
    void                    DefruleSetBreak(Defrule *);
-   void                    EnvHalt(Environment *);
+   void                    Halt(Environment *);
    bool                    DefruleRemoveBreak(Defrule *);
    void                    RemoveAllBreakpoints(Environment *);
-   void                    EnvShowBreaks(Environment *,const char *,Defmodule *);
+   void                    ShowBreaks(Environment *,const char *,Defmodule *);
    bool                    DefruleHasBreakpoint(Defrule *);
    void                    RunCommand(Environment *,UDFContext *,UDFValue *);
    void                    SetBreakCommand(Environment *,UDFContext *,UDFValue *);
@@ -162,21 +162,21 @@ struct engineData
    void                    HaltCommand(Environment *,UDFContext *,UDFValue *);
    void                    FocusCommand(Environment *,UDFContext *,UDFValue *);
    void                    ClearFocusStackCommand(Environment *,UDFContext *,UDFValue *);
-   void                    EnvClearFocusStack(Environment *);
-   struct focus           *EnvGetNextFocus(Environment *,struct focus *);
+   void                    ClearFocusStack(Environment *);
+   struct focus           *GetNextFocus(Environment *,struct focus *);
    void                    DefmoduleFocus(Defmodule *);
-   bool                    EnvGetFocusChanged(Environment *);
-   void                    EnvSetFocusChanged(Environment *,bool);
+   bool                    GetFocusChanged(Environment *);
+   void                    SetFocusChanged(Environment *,bool);
    void                    ListFocusStackCommand(Environment *,UDFContext *,UDFValue *);
-   void                    EnvListFocusStack(Environment *,const char *);
+   void                    ListFocusStack(Environment *,const char *);
    void                    GetFocusStackFunction(Environment *,UDFContext *,UDFValue *);
-   void                    EnvGetFocusStack(Environment *,CLIPSValue *);
+   void                    GetFocusStack(Environment *,CLIPSValue *);
    void                    PopFocusFunction(Environment *,UDFContext *,UDFValue *);
    void                    GetFocusFunction(Environment *,UDFContext *,UDFValue *);
-   Defmodule              *EnvPopFocus(Environment *);
-   Defmodule              *EnvGetFocus(Environment *);
-   bool                    EnvGetHaltRules(Environment *);
-   void                    EnvSetHaltRules(Environment *,bool);
+   Defmodule              *PopFocus(Environment *);
+   Defmodule              *GetFocus(Environment *);
+   bool                    GetHaltRules(Environment *);
+   void                    SetHaltRules(Environment *,bool);
    Activation             *NextActivationToFire(Environment *);
 
 #endif /* _H_engine */

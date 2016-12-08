@@ -171,31 +171,31 @@ bool AddWatchItem(
    return true;
   }
 
-/*****************************************************/
-/* EnvWatch: C access routine for the watch command. */
-/*****************************************************/
-bool EnvWatch(
+/**************************************************/
+/* Watch: C access routine for the watch command. */
+/**************************************************/
+bool Watch(
   Environment *theEnv,
   const char *itemName)
   {
-   return(EnvSetWatchItem(theEnv,itemName,true,NULL));
+   return SetWatchItem(theEnv,itemName,true,NULL);
   }
 
-/*********************************************************/
-/* EnvUnwatch: C access routine for the unwatch command. */
-/*********************************************************/
-bool EnvUnwatch(
+/******************************************************/
+/* Unwatch: C access routine for the unwatch command. */
+/******************************************************/
+bool Unwatch(
   Environment *theEnv,
   const char *itemName)
   {
-   return(EnvSetWatchItem(theEnv,itemName,false,NULL));
+   return SetWatchItem(theEnv,itemName,false,NULL);
   }
 
-/***********************************************************************/
-/* EnvSetWatchItem: Sets the state of a specified watch item to either */
-/*   on or off. Returns true if the item was set, otherwise false.     */
-/***********************************************************************/
-bool EnvSetWatchItem(
+/********************************************************************/
+/* SetWatchItem: Sets the state of a specified watch item to either */
+/*   on or off. Returns true if the item was set, otherwise false.  */
+/********************************************************************/
+bool SetWatchItem(
   Environment *theEnv,
   const char *itemName,
   bool newState,
@@ -227,7 +227,7 @@ bool EnvSetWatchItem(
          if ((wPtr->accessFunc == NULL) ? false :
              ((*wPtr->accessFunc)(theEnv,wPtr->code,newState,argExprs) == false))
            {
-            EnvSetEvaluationError(theEnv,true);
+            SetEvaluationError(theEnv,true);
             return false;
            }
         }
@@ -258,7 +258,7 @@ bool EnvSetWatchItem(
          if ((wPtr->accessFunc == NULL) ? false :
              ((*wPtr->accessFunc)(theEnv,wPtr->code,newState,argExprs) == false))
            {
-            EnvSetEvaluationError(theEnv,true);
+            SetEvaluationError(theEnv,true);
             return false;
            }
 
@@ -274,13 +274,13 @@ bool EnvSetWatchItem(
    return false;
   }
 
-/******************************************************************/
-/* EnvGetWatchItem: Gets the current state of the specified watch */
-/*   item. Returns the state of the watch item (0 for off and 1   */
-/*   for on) if the watch item is found in the list of watch      */
-/*   items, otherwise -1 is returned.                             */
-/******************************************************************/
-int EnvGetWatchItem(
+/****************************************************************/
+/* GetWatchItem: Gets the current state of the specified watch  */
+/*   item. Returns the state of the watch item (0 for off and 1 */
+/*   for on) if the watch item is found in the list of watch    */
+/*   items, otherwise -1 is returned.                           */
+/****************************************************************/
+int GetWatchItem(
   Environment *theEnv,
   const char *itemName)
   {
@@ -386,7 +386,7 @@ void WatchCommand(
    wPtr = ValidWatchItem(theEnv,argument,&recognized);
    if (recognized == false)
      {
-      EnvSetEvaluationError(theEnv,true);
+      SetEvaluationError(theEnv,true);
       UDFInvalidArgumentMessage(context,"watchable symbol");
       return;
      }
@@ -399,7 +399,7 @@ void WatchCommand(
      {
       if ((wPtr == NULL) ? true : (wPtr->accessFunc == NULL))
         {
-         EnvSetEvaluationError(theEnv,true);
+         SetEvaluationError(theEnv,true);
          ExpectedCountError(theEnv,"watch",EXACTLY,1);
          return;
         }
@@ -409,7 +409,7 @@ void WatchCommand(
    /* Set the watch item. */
    /*=====================*/
 
-   EnvSetWatchItem(theEnv,argument,true,GetNextArgument(GetFirstArgument()));
+   SetWatchItem(theEnv,argument,true,GetNextArgument(GetFirstArgument()));
   }
 
 /****************************************/
@@ -436,7 +436,7 @@ void UnwatchCommand(
    wPtr = ValidWatchItem(theEnv,argument,&recognized);
    if (recognized == false)
      {
-      EnvSetEvaluationError(theEnv,true);
+      SetEvaluationError(theEnv,true);
       UDFInvalidArgumentMessage(context,"watchable symbol");
       return;
      }
@@ -449,7 +449,7 @@ void UnwatchCommand(
      {
       if ((wPtr == NULL) ? true : (wPtr->accessFunc == NULL))
         {
-         EnvSetEvaluationError(theEnv,true);
+         SetEvaluationError(theEnv,true);
          ExpectedCountError(theEnv,"unwatch",EXACTLY,1);
          return;
         }
@@ -459,7 +459,7 @@ void UnwatchCommand(
    /* Set the watch item. */
    /*=====================*/
 
-   EnvSetWatchItem(theEnv,argument,false,GetNextArgument(GetFirstArgument()));
+   SetWatchItem(theEnv,argument,false,GetNextArgument(GetFirstArgument()));
   }
 
 /************************************************/
@@ -483,9 +483,9 @@ void ListWatchItemsCommand(
      {
       for (wPtr = WatchData(theEnv)->ListOfWatchItems; wPtr != NULL; wPtr = wPtr->next)
         {
-         EnvPrintRouter(theEnv,WDISPLAY,wPtr->name);
-         if (*(wPtr->flag)) EnvPrintRouter(theEnv,WDISPLAY," = on\n");
-         else EnvPrintRouter(theEnv,WDISPLAY," = off\n");
+         PrintRouter(theEnv,WDISPLAY,wPtr->name);
+         if (*(wPtr->flag)) PrintRouter(theEnv,WDISPLAY," = on\n");
+         else PrintRouter(theEnv,WDISPLAY," = off\n");
         }
       return;
      }
@@ -498,7 +498,7 @@ void ListWatchItemsCommand(
    wPtr = ValidWatchItem(theEnv,theValue.lexemeValue->contents,&recognized);
    if ((recognized == false) || (wPtr == NULL))
      {
-      EnvSetEvaluationError(theEnv,true);
+      SetEvaluationError(theEnv,true);
       ExpectedTypeError1(theEnv,"list-watch-items",1,"watchable symbol");
       return;
      }
@@ -510,7 +510,7 @@ void ListWatchItemsCommand(
    if ((wPtr->printFunc == NULL) &&
        (GetNextArgument(GetFirstArgument()) != NULL))
      {
-      EnvSetEvaluationError(theEnv,true);
+      SetEvaluationError(theEnv,true);
       ExpectedCountError(theEnv,"list-watch-items",EXACTLY,1);
       return;
      }
@@ -519,9 +519,9 @@ void ListWatchItemsCommand(
    /* List the status of the watch item. */
    /*====================================*/
 
-   EnvPrintRouter(theEnv,WDISPLAY,wPtr->name);
-   if (*(wPtr->flag)) EnvPrintRouter(theEnv,WDISPLAY," = on\n");
-   else EnvPrintRouter(theEnv,WDISPLAY," = off\n");
+   PrintRouter(theEnv,WDISPLAY,wPtr->name);
+   if (*(wPtr->flag)) PrintRouter(theEnv,WDISPLAY," = on\n");
+   else PrintRouter(theEnv,WDISPLAY," = off\n");
 
    /*============================================*/
    /* List the status of individual watch items. */
@@ -531,7 +531,7 @@ void ListWatchItemsCommand(
      {
       if ((*wPtr->printFunc)(theEnv,WDISPLAY,wPtr->code,
                              GetNextArgument(GetFirstArgument())) == false)
-        { EnvSetEvaluationError(theEnv,true); }
+        { SetEvaluationError(theEnv,true); }
      }
   }
 
@@ -559,7 +559,7 @@ void GetWatchItemCommand(
    ValidWatchItem(theEnv,argument,&recognized);
    if (recognized == false)
      {
-      EnvSetEvaluationError(theEnv,true);
+      SetEvaluationError(theEnv,true);
       ExpectedTypeError1(theEnv,"get-watch-item",1,"watchable symbol");
       returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
@@ -569,7 +569,7 @@ void GetWatchItemCommand(
    /* Get the watch item value. */
    /*===========================*/
 
-   if (EnvGetWatchItem(theEnv,argument) == 1)
+   if (GetWatchItem(theEnv,argument) == 1)
      { returnValue->lexemeValue = TrueSymbol(theEnv); }
    else
      { returnValue->lexemeValue = FalseSymbol(theEnv); }
@@ -582,14 +582,14 @@ void WatchFunctionDefinitions(
   Environment *theEnv)
   {
 #if ! RUN_TIME
-   EnvAddUDF(theEnv,"watch","v",1,UNBOUNDED,"*;y",WatchCommand,"WatchCommand",NULL);
-   EnvAddUDF(theEnv,"unwatch","v",1,UNBOUNDED,"*;y",UnwatchCommand,"UnwatchCommand",NULL);
-   EnvAddUDF(theEnv,"get-watch-item","b",1,1,"y",GetWatchItemCommand,"GetWatchItemCommand",NULL);
-   EnvAddUDF(theEnv,"list-watch-items","v",0,UNBOUNDED,"*;y",ListWatchItemsCommand,"ListWatchItemsCommand",NULL);
+   AddUDF(theEnv,"watch","v",1,UNBOUNDED,"*;y",WatchCommand,"WatchCommand",NULL);
+   AddUDF(theEnv,"unwatch","v",1,UNBOUNDED,"*;y",UnwatchCommand,"UnwatchCommand",NULL);
+   AddUDF(theEnv,"get-watch-item","b",1,1,"y",GetWatchItemCommand,"GetWatchItemCommand",NULL);
+   AddUDF(theEnv,"list-watch-items","v",0,UNBOUNDED,"*;y",ListWatchItemsCommand,"ListWatchItemsCommand",NULL);
 #endif
 
-   EnvAddRouter(theEnv,WTRACE,1000,RecognizeWatchRouters,CaptureWatchPrints,NULL,NULL,NULL);
-   EnvDeactivateRouter(theEnv,WTRACE);
+   AddRouter(theEnv,WTRACE,1000,RecognizeWatchRouters,CaptureWatchPrints,NULL,NULL,NULL,NULL);
+   DeactivateRouter(theEnv,WTRACE);
   }
 
 /**************************************************/
