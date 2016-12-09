@@ -774,7 +774,7 @@ void SlotFacets(
    if (sp->publicVisibility)
      returnValue->multifieldValue->theFields[6].lexemeValue = CreateSymbol(theEnv,"PUB");
    else
-     returnValue->multifieldValue->theFields[6].lexemeValue = CreateSymbol(theEnv,"PRV"));
+     returnValue->multifieldValue->theFields[6].lexemeValue = CreateSymbol(theEnv,"PRV");
 
    returnValue->multifieldValue->theFields[7].lexemeValue = CreateSymbol(theEnv,GetCreateAccessorString(sp));
    returnValue->multifieldValue->theFields[8].lexemeValue = (sp->noWrite ? CreateSymbol(theEnv,"NIL") : sp->overrideMessage);

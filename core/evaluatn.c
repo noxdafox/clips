@@ -497,9 +497,11 @@ void CVAtomInstall(
         break;
 #endif
 
+#if DEFTEMPLATE_CONSTRUCT
       case FACT_ADDRESS_TYPE:
         IncrementFactCount(theEnv,(Fact *) vPtr);
         break;
+#endif
      
       case VOID_TYPE:
         break;
@@ -551,9 +553,11 @@ void CVAtomDeinstall(
         break;
 #endif
      
+#if DEFTEMPLATE_CONSTRUCT
       case FACT_ADDRESS_TYPE:
         DecrementFactCount(theEnv,(Fact *) vPtr);
         break;
+#endif
 
       case VOID_TYPE:
         break;

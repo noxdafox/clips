@@ -63,6 +63,7 @@
 #include "constant.h"
 #include "envrnmnt.h"
 #include "evaluatn.h"
+#include "exprnops.h"
 #include "memalloc.h"
 #if OBJECT_SYSTEM
 #include "object.h"
@@ -71,6 +72,7 @@
 #include "prntutil.h"
 #include "router.h"
 #include "strngrtr.h"
+#include "symbol.h"
 #include "utility.h"
 
 #include "multifld.h"

@@ -158,14 +158,14 @@ void InstallProcedurePrimitives(
                                        NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL };
 
 #if ! DEFFUNCTION_CONSTRUCT
-   ENTITY_RECORD deffunctionEntityRecord =
+   EntityRecord deffunctionEntityRecord =
                      { "PCALL", PCALL,0,0,1,
                        NULL,NULL,NULL,
                        EvaluateBadCall,
                        NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL };
 #endif
 #if ! DEFGENERIC_CONSTRUCT
-   ENTITY_RECORD genericEntityRecord =
+   EntityRecord genericEntityRecord =
                      { "GCALL", GCALL,0,0,1,
                        NULL,NULL,NULL,
                        EvaluateBadCall,

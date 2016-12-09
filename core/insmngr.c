@@ -1789,15 +1789,21 @@ Instance *IMModify(
   InstanceModifier *theIM)
   {
    Instance *rv = theIM->imOldInstance;
+#if DEFRULE_CONSTRUCT
    bool ov;
+#endif
 
    if (! BitStringHasBitsSet(theIM->changeMap,CountToBitMapSize(theIM->imOldInstance->cls->slotCount)))
      { return theIM->imOldInstance; }
-     
+
+#if DEFRULE_CONSTRUCT
    ov = SetDelayObjectPatternMatching(theIM->imEnv,true);
+#endif
    IMModifySlots(theIM->imEnv,theIM->imOldInstance,theIM->imValueArray);
+#if DEFRULE_CONSTRUCT
    SetDelayObjectPatternMatching(theIM->imEnv,ov);
-   
+#endif
+
    IMAbort(theIM);
    
    return rv;

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/01/16             */
+   /*            CLIPS Version 6.40  12/09/16             */
    /*                                                     */
    /*                   UTILITY MODULE                    */
    /*******************************************************/
@@ -34,7 +34,7 @@
 /*            Used genstrncpy function instead of strncpy    */
 /*            function.                                      */
 /*                                                           */
-/*            Support for typed EXTERNAL_ADDRESS_TYPE.       */
+/*            Support for typed EXTERNAL_ADDRESS.            */
 /*                                                           */
 /*            Support for tracked memory (allows memory to   */
 /*            be freed if CLIPS is exited while executing).  */
@@ -46,7 +46,9 @@
 /*                                                           */
 /*            Converted API macros to function calls.        */
 /*                                                           */
-/*      6.40: Added EnvAddPeriodicFunctionWithContext        */
+/*      6.40: Fix for memory used discrepancy.               */
+/*                                                           */
+/*            Added EnvAddPeriodicFunctionWithContext        */
 /*            function.                                      */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
@@ -635,6 +637,8 @@ char *EnlargeString(
   size_t *oldPos,
   size_t *oldMax)
   {
+   size_t newMax;
+   
    /*=========================================*/
    /* Expand the old string so it can contain */
    /* the new string (if necessary).          */
@@ -642,8 +646,13 @@ char *EnlargeString(
 
    if (length + *oldPos + 1 > *oldMax)
      {
-      oldStr = (char *) genrealloc(theEnv,oldStr,*oldMax,length + *oldPos + 1);
-      *oldMax = length + *oldPos + 1;
+      newMax = length + *oldPos + 1;
+      if (newMax < sizeof(char *))
+        { newMax = sizeof(char *); }
+
+      oldStr = (char *) genrealloc(theEnv,oldStr,*oldMax,newMax);
+      
+      *oldMax = newMax;
      }
 
    /*==============================================================*/
@@ -670,6 +679,7 @@ char *AppendNToString(
   size_t *oldMax)
   {
    size_t lengthWithEOS;
+   size_t newSize;
 
    /*====================================*/
    /* Determine the number of characters */
@@ -686,8 +696,12 @@ char *AppendNToString(
 
    if (lengthWithEOS + *oldPos > *oldMax)
      {
-      oldStr = (char *) genrealloc(theEnv,oldStr,*oldMax,*oldPos + lengthWithEOS);
-      *oldMax = *oldPos + lengthWithEOS;
+      newSize = *oldPos + lengthWithEOS;
+      if (newSize < sizeof(char *))
+        { newSize = sizeof(char *); }
+
+      oldStr = (char *) genrealloc(theEnv,oldStr,*oldMax,newSize);
+      *oldMax = newSize;
      }
 
    /*==============================================================*/
@@ -729,6 +743,8 @@ char *ExpandStringWithChar(
   {
    if ((*pos + 1) >= *max)
      {
+      if (newSize < sizeof(char *))
+        { newSize = sizeof(char *); }
       str = (char *) genrealloc(theEnv,str,*max,newSize);
       *max = newSize;
      }
@@ -1287,11 +1303,11 @@ struct callFunctionItemWithArg *RemoveFunctionFromCallListWithArg(
    return(head);
   }
 
-/**************************************************************/
-/* DeallocateCallListWithArg: Removes all functions from a list of   */
-/*   functions which are called to perform certain operations */
-/*   (e.g. clear, reset, and bload functions).                */
-/**************************************************************/
+/****************************************************************/
+/* DeallocateCallListWithArg: Removes all functions from a list */
+/*   of functions which are called to perform certain           */
+/*   operations (e.g. clear, reset, and bload functions).       */
+/****************************************************************/
 void DeallocateCallListWithArg(
   Environment *theEnv,
   struct callFunctionItemWithArg *theList)

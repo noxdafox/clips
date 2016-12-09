@@ -75,6 +75,7 @@
 #endif
 
 #include "constant.h"
+#include "cstrccom.h"
 #include "cstrcpsr.h"
 #include "constrct.h"
 #include "dffnxfun.h"
