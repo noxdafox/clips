@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.30  02/03/15            */
+   /*            CLIPS Version 6.31  12/09/16             */
    /*                                                     */
    /*                   UTILITY MODULE                    */
    /*******************************************************/
@@ -45,6 +45,8 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*            Converted API macros to function calls.        */
+/*                                                           */
+/*      6.31: Fix for memory used discrepancy.               */
 /*                                                           */
 /*************************************************************/
 
@@ -602,6 +604,8 @@ globle char *EnlargeString(
   size_t *oldPos,
   size_t *oldMax)
   {
+   size_t newMax;
+   
    /*=========================================*/
    /* Expand the old string so it can contain */
    /* the new string (if necessary).          */
@@ -609,8 +613,13 @@ globle char *EnlargeString(
 
    if (length + *oldPos + 1 > *oldMax)
      {
-      oldStr = (char *) genrealloc(theEnv,oldStr,*oldMax,length + *oldPos + 1);
-      *oldMax = length + *oldPos + 1;
+      newMax = length + *oldPos + 1;
+      if (newMax < sizeof(char *))
+        { newMax = sizeof(char *); }
+
+      oldStr = (char *) genrealloc(theEnv,oldStr,*oldMax,newMax);
+      
+      *oldMax = newMax;
      }
 
    /*==============================================================*/
@@ -637,6 +646,7 @@ globle char *AppendNToString(
   size_t *oldMax)
   {
    size_t lengthWithEOS;
+   size_t newSize;
 
    /*====================================*/
    /* Determine the number of characters */
@@ -653,8 +663,12 @@ globle char *AppendNToString(
 
    if (lengthWithEOS + *oldPos > *oldMax)
      {
-      oldStr = (char *) genrealloc(theEnv,oldStr,*oldMax,*oldPos + lengthWithEOS);
-      *oldMax = *oldPos + lengthWithEOS;
+      newSize = *oldPos + lengthWithEOS;
+      if (newSize < sizeof(char *))
+        { newSize = sizeof(char *); }
+
+      oldStr = (char *) genrealloc(theEnv,oldStr,*oldMax,newSize);
+      *oldMax = newSize;
      }
 
    /*==============================================================*/
@@ -696,6 +710,8 @@ globle char *ExpandStringWithChar(
   {
    if ((*pos + 1) >= *max)
      {
+      if (newSize < sizeof(char *))
+        { newSize = sizeof(char *); }
       str = (char *) genrealloc(theEnv,str,*max,newSize);
       *max = newSize;
      }
