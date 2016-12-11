@@ -34,7 +34,8 @@ void ClearEnvironmentWindowCommand(
 /**********************************************************/
 bool QueryInterfaceRouter(
   Environment *theEnv,
-  const char *logicalName)
+  const char *logicalName,
+  void *context)
   {
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -60,10 +61,11 @@ bool QueryInterfaceRouter(
 void PrintInterfaceRouter(
   Environment *theEnv,
   const char *logicalName,
-  const char *str)
+  const char *str,
+  void *context)
   {
    FILE *fptr;
-   CLIPSTerminalController *theObject = (__bridge CLIPSTerminalController *) GetEnvironmentRouterContext(theEnv);
+   CLIPSTerminalController *theObject = (__bridge CLIPSTerminalController *) context;
 
    fptr = FindFptr(theEnv,logicalName);
    if (fptr == stdout)
@@ -79,10 +81,11 @@ void PrintInterfaceRouter(
 /*******************************************/
 int GetcInterfaceRouter(
   Environment *theEnv,
-  const char *logicalName)
+  const char *logicalName,
+  void *context)
   {
    int theChar;
-   CLIPSTerminalController *theObject = (__bridge CLIPSTerminalController *) GetEnvironmentRouterContext(theEnv);
+   CLIPSTerminalController *theObject = (__bridge CLIPSTerminalController *) context;
 
    theChar = [theObject waitForChar];
    
@@ -96,9 +99,10 @@ int GetcInterfaceRouter(
 /*************************************************/
 void ExitInterfaceRouter(
   Environment *theEnv,
-  int num)
+  int num,
+  void *context)
   {   
-   CLIPSTerminalController *theController = (__bridge CLIPSTerminalController *) GetEnvironmentRouterContext(theEnv);
+   CLIPSTerminalController *theController = (__bridge CLIPSTerminalController *) context;
 
    [[NSApplication sharedApplication] terminate: NULL];
    [theController exit];
@@ -109,7 +113,8 @@ void ExitInterfaceRouter(
 /* MacPeriodicFunction: */
 /************************/
 void MacPeriodicFunction(
-  Environment *theEnv)
+  Environment *theEnv,
+  void *context)
   {
    CLIPSTerminalController *theController = (__bridge CLIPSTerminalController *) GetEnvironmentContext(theEnv);
    NSConditionLock *theAgendaLock, *theFactsLock;

@@ -87,9 +87,9 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    ResetDeffacts(Environment *);
-   static void                    ClearDeffacts(Environment *);
-   static void                    SaveDeffacts(Environment *,Defmodule *,const char *);
+   static void                    ResetDeffacts(Environment *,void *);
+   static void                    ClearDeffacts(Environment *,void *);
+   static void                    SaveDeffacts(Environment *,Defmodule *,const char *,void *);
    static void                    ResetDeffactsAction(Environment *,ConstructHeader *,void *);
 
 /***************************************************************/
@@ -98,9 +98,9 @@
 void DeffactsBasicCommands(
   Environment *theEnv)
   {
-   AddResetFunction(theEnv,"deffacts",ResetDeffacts,0);
-   AddClearFunction(theEnv,"deffacts",ClearDeffacts,0);
-   AddSaveFunction(theEnv,"deffacts",SaveDeffacts,10);
+   AddResetFunction(theEnv,"deffacts",ResetDeffacts,0,NULL);
+   AddClearFunction(theEnv,"deffacts",ClearDeffacts,0,NULL);
+   AddSaveFunction(theEnv,"deffacts",SaveDeffacts,10,NULL);
 
 #if ! RUN_TIME
    AddUDF(theEnv,"get-deffacts-list","m",0,1,"y",GetDeffactsListFunction,"GetDeffactsListFunction",NULL);
@@ -129,7 +129,8 @@ void DeffactsBasicCommands(
 /*   deffacts constructs.                                 */
 /**********************************************************/
 static void ResetDeffacts(
-  Environment *theEnv)
+  Environment *theEnv,
+  void *context)
   {
    DoForAllConstructs(theEnv,
                       ResetDeffactsAction,
@@ -164,7 +165,8 @@ static void ResetDeffactsAction(
 /*   clear command. Creates the initial-facts deffacts.   */
 /**********************************************************/
 static void ClearDeffacts(
-  Environment *theEnv)
+  Environment *theEnv,
+  void *context)
   {
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    struct expr *stub;
@@ -216,7 +218,8 @@ static void ClearDeffacts(
 static void SaveDeffacts(
   Environment *theEnv,
   Defmodule *theModule,
-  const char *logicalName)
+  const char *logicalName,
+  void *context)
   {
    SaveConstruct(theEnv,theModule,logicalName,DeffactsData(theEnv)->DeffactsConstruct);
   }

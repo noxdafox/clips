@@ -62,7 +62,7 @@
 #if RUN_TIME
    void                           ObjectsRunTimeInitialize(Environment *,Defclass *[],SLOT_NAME *[],Defclass *[],unsigned);
 #else
-   void                           CreateSystemClasses(Environment *);
+   void                           CreateSystemClasses(Environment *,void *);
 #endif /* RUN_TIME */
 
 #endif /* OBJECT_SYSTEM */

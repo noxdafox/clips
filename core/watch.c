@@ -75,8 +75,8 @@
 /***************************************/
 
    static struct watchItem       *ValidWatchItem(Environment *,const char *,bool *);
-   static bool                    RecognizeWatchRouters(Environment *,const char *);
-   static void                    CaptureWatchPrints(Environment *,const char *,const char *);
+   static bool                    RecognizeWatchRouters(Environment *,const char *,void *);
+   static void                    CaptureWatchPrints(Environment *,const char *,const char *,void *);
    static void                    DeallocateWatchData(Environment *);
 
 /**********************************************/
@@ -597,7 +597,8 @@ void WatchFunctionDefinitions(
 /**************************************************/
 static bool RecognizeWatchRouters(
   Environment *theEnv,
-  const char *logName)
+  const char *logName,
+  void *context)
   {
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -614,7 +615,8 @@ static bool RecognizeWatchRouters(
 static void CaptureWatchPrints(
   Environment *theEnv,
   const char *logName,
-  const char *str)
+  const char *str,
+  void *context)
   {
 #if MAC_XCD
 #pragma unused(logName)

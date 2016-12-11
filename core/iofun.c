@@ -546,7 +546,7 @@ void OpenFunction(
    /* is already in use.               */
    /*==================================*/
 
-   if (FindFile(theEnv,logicalName))
+   if (FindFile(theEnv,logicalName,NULL))
      {
       SetHaltExecution(theEnv,true);
       SetEvaluationError(theEnv,true);

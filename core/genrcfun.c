@@ -128,7 +128,8 @@
   NOTES        : Used by (clear) and (bload)
  ***************************************************/
 bool ClearDefgenericsReady(
-  Environment *theEnv)
+  Environment *theEnv,
+  void *context)
   {
    return((DefgenericData(theEnv)->CurrentGeneric != NULL) ? false : true);
   }

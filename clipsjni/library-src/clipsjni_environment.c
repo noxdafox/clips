@@ -567,9 +567,9 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_addPeriodicCallbac
       
    nobj = (*env)->NewGlobalRef(env,context);
    
-   AddPeriodicFunctionWithContext(JLongToPointer(clipsEnv),(char *) cListenerName,
-                                     JNIPeriodicCallback,
-                                     (int) priority,(void *) nobj);
+   AddPeriodicFunction(JLongToPointer(clipsEnv),(char *) cListenerName,
+                       JNIPeriodicCallback,
+                       (int) priority,(void *) nobj);
    
    (*env)->ReleaseStringUTFChars(env,listenerName,cListenerName);
    

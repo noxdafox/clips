@@ -86,6 +86,7 @@ typedef enum
 #include <stdio.h>
 #include "entities.h"
 #include "userdata.h"
+#include "utility.h"
 
 struct constructHeader
   {
@@ -239,7 +240,7 @@ struct defmoduleData
    const char                    *DefmoduleName(Defmodule *);
    const char                    *DefmodulePPForm(Defmodule *);
    Defmodule                     *GetNextDefmodule(Environment *,Defmodule *);
-   void                           RemoveAllDefmodules(Environment *);
+   void                           RemoveAllDefmodules(Environment *,void *);
    int                            AllocateModuleStorage(void);
    int                            RegisterModuleItem(Environment *,const char *,
                                                      AllocateModuleFunction *,
@@ -254,13 +255,13 @@ struct defmoduleData
    void                           GetCurrentModuleCommand(Environment *,UDFContext *,UDFValue *);
    void                           SetCurrentModuleCommand(Environment *,UDFContext *,UDFValue *);
    int                            GetNumberOfModuleItems(Environment *);
-   void                           CreateMainModule(Environment *);
+   void                           CreateMainModule(Environment *,void *);
    void                           SetListOfDefmodules(Environment *,Defmodule *);
    struct moduleItem             *GetListOfModuleItems(Environment *);
    struct moduleItem             *FindModuleItem(Environment *,const char *);
    void                           SaveCurrentModule(Environment *);
    void                           RestoreCurrentModule(Environment *);
-   void                           AddAfterModuleChangeFunction(Environment *,const char *,void (*)(Environment *),int);
+   void                           AddAfterModuleChangeFunction(Environment *,const char *,VoidCallFunction *,int,void *);
    void                           IllegalModuleSpecifierMessage(Environment *);
    void                           AllocateDefmoduleGlobals(Environment *);
    long                           GetNumberOfDefmodules(Environment *);

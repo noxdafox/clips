@@ -82,7 +82,7 @@ struct procedureFunctionData
    void                           BreakFunction(Environment *,UDFContext *,UDFValue *);
    void                           SwitchFunction(Environment *,UDFContext *,UDFValue *);
    bool                           GetBoundVariable(Environment *,UDFValue *,CLIPSLexeme *);
-   void                           FlushBindList(Environment *);
+   void                           FlushBindList(Environment *,void *);
 
 #endif /* _H_prcdrfun */
 

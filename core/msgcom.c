@@ -101,7 +101,7 @@
 /***************************************/
 
 #if ! RUN_TIME
-   static void                    CreateSystemHandlers(Environment *);
+   static void                    CreateSystemHandlers(Environment *,void *);
 #endif
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
@@ -180,7 +180,7 @@ void SetupMessageHandlers(
    MessageHandlerData(theEnv)->CREATE_SYMBOL = CreateSymbol(theEnv,CREATE_STRING);
    IncrementSymbolCount(MessageHandlerData(theEnv)->CREATE_SYMBOL);
 
-   AddClearFunction(theEnv,"defclass",CreateSystemHandlers,-100);
+   AddClearFunction(theEnv,"defclass",CreateSystemHandlers,-100,NULL);
 
 #if ! BLOAD_ONLY
    MessageHandlerData(theEnv)->SELF_SYMBOL = CreateSymbol(theEnv,SELF_STRING);
@@ -831,7 +831,8 @@ long DisplayHandlersInLinks(
   NOTES        : Must be called after CreateSystemClasses()
  **********************************************************/
 static void CreateSystemHandlers(
-  Environment *theEnv)
+  Environment *theEnv,
+  void *context)
   {
    NewSystemHandler(theEnv,USER_TYPE_NAME,INIT_STRING,"init-slots",0);
    NewSystemHandler(theEnv,USER_TYPE_NAME,DELETE_STRING,"delete-instance",0);

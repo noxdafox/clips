@@ -63,9 +63,6 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_deleteRouter(
    if (theRouter == NULL) 
      { return 0; }
 
-   if (GetEnvironmentRouterContext(theCLIPSEnv) == theRouter->context)
-     { SetEnvironmentRouterContext(theCLIPSEnv,NULL); }
-
    (*env)->DeleteGlobalRef(env,theRouter->context);
      
    rv = DeleteRouter(theCLIPSEnv,cRouterName);

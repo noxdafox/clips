@@ -168,10 +168,11 @@ void DecrementDefclassBusyCount(
   NOTES        : None
  ****************************************************/
 bool InstancesPurge(
-  Environment *theEnv)
+  Environment *theEnv,
+  void *context)
   {
-   DestroyAllInstances(theEnv);
-   CleanupInstances(theEnv);
+   DestroyAllInstances(theEnv,NULL);
+   CleanupInstances(theEnv,NULL);
    return((InstanceData(theEnv)->InstanceList != NULL) ? false : true);
   }
 

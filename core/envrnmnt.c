@@ -218,33 +218,6 @@ void *SetEnvironmentContext(
    return oldContext;
   }
 
-/***************************************************/
-/* GetEnvironmentRouterContext: Returns the router */
-/*   context of the specified environment.         */
-/***************************************************/
-void *GetEnvironmentRouterContext(
-  Environment *theEnvironment)
-  {
-   return theEnvironment->routerContext;
-  }
-
-/************************************************/
-/* SetEnvironmentRouterContext: Sets the router */
-/*   context of the specified environment.      */
-/************************************************/
-void *SetEnvironmentRouterContext(
-  Environment *theEnvironment,
-  void *theRouterContext)
-  {
-   void *oldRouterContext;
-
-   oldRouterContext = theEnvironment->routerContext;
-
-   theEnvironment->routerContext = theRouterContext;
-
-   return oldRouterContext;
-  }
-
 /*******************************************************/
 /* GetEnvironmentFunctionContext: Returns the function */
 /*   context of the specified environment.             */
@@ -270,33 +243,6 @@ void *SetEnvironmentFunctionContext(
    theEnvironment->functionContext = theFunctionContext;
 
    return oldFunctionContext;
-  }
-
-/*******************************************************/
-/* GetEnvironmentCallbackContext: Returns the callback */
-/*   context of the specified environment.             */
-/*******************************************************/
-void *GetEnvironmentCallbackContext(
-  Environment *theEnvironment)
-  {
-   return theEnvironment->callbackContext;
-  }
-
-/****************************************************/
-/* SetEnvironmentCallbackContext: Sets the callback */
-/*   context of the specified environment.          */
-/****************************************************/
-void *SetEnvironmentCallbackContext(
-  Environment *theEnvironment,
-  void *theCallbackContext)
-  {
-   void *oldCallbackContext;
-
-   oldCallbackContext = theEnvironment->callbackContext;
-
-   theEnvironment->callbackContext = theCallbackContext;
-
-   return oldCallbackContext;
   }
 
 /**************************************************/

@@ -5,12 +5,12 @@
 #define _Included_clipsjni_glue
 
 void       JNIUserFunction(Environment *,UDFContext *,UDFValue *);
-bool       QueryJNIRouter(Environment *,const char *);
-void       ExitJNIRouter(Environment *,int);
-void       PrintJNIRouter(Environment *,const char *,const char *);
-int        GetcJNIRouter(Environment *,const char *);
-int        UngetcJNIRouter(Environment *,int,const char *);
-void       JNIPeriodicCallback(Environment *);
+bool       QueryJNIRouter(Environment *,const char *,void *);
+void       ExitJNIRouter(Environment *,int,void *);
+void       PrintJNIRouter(Environment *,const char *,const char *,void *);
+int        GetcJNIRouter(Environment *,const char *,void *);
+int        UngetcJNIRouter(Environment *,const char *,int, void *);
+void       JNIPeriodicCallback(Environment *,void *);
 void       JNIParserErrorCallback(Environment *,const char *,const char *,const char *,long);
 void       PrintJavaAddress(Environment *,const char *,void *);
 void       NewJavaAddress(UDFContext *,UDFValue *);

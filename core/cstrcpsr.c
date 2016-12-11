@@ -530,10 +530,11 @@ static bool FindConstructBeginning(
 /*************************************************/
 static bool FindError(
   Environment *theEnv,
-  const char *logicalName)
+  const char *logicalName,
+  void *context)
   {
 #if MAC_XCD
-#pragma unused(theEnv)
+#pragma unused(theEnv,context)
 #endif
 
    if ((strcmp(logicalName,WERROR) == 0) ||
@@ -549,7 +550,8 @@ static bool FindError(
 static void PrintError(
   Environment *theEnv,
   const char *logicalName,
-  const char *str)
+  const char *str,
+  void *context)
   {
    if (strcmp(logicalName,WERROR) == 0)
      {

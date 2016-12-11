@@ -114,8 +114,8 @@ void ProceduralFunctionDefinitions(
    FuncSeqOvlFlags(theEnv,"switch",false,false);
 #endif
 
-   AddResetFunction(theEnv,"bind",FlushBindList,0);
-   AddClearFunction(theEnv,"bind",FlushBindList,0);
+   AddResetFunction(theEnv,"bind",FlushBindList,0,NULL);
+   AddClearFunction(theEnv,"bind",FlushBindList,0,NULL);
   }
 
 /*************************************************************/
@@ -514,7 +514,8 @@ bool GetBoundVariable(
 /*   list of currently bound local variables.    */
 /*************************************************/
 void FlushBindList(
-  Environment *theEnv)
+  Environment *theEnv,
+  void *context)
   {
    ReturnValues(theEnv,ProcedureFunctionData(theEnv)->BindList,true);
    ProcedureFunctionData(theEnv)->BindList = NULL;

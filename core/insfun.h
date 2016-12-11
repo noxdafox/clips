@@ -91,9 +91,9 @@ typedef struct igarbage
    void                           IncrementInstanceCount(Environment *,Instance *);
    void                           DecrementInstanceCount(Environment *,Instance *);
    void                           InitializeInstanceTable(Environment *);
-   void                           CleanupInstances(Environment *);
+   void                           CleanupInstances(Environment *,void *);
    unsigned                       HashInstance(CLIPSLexeme *);
-   void                           DestroyAllInstances(Environment *);
+   void                           DestroyAllInstances(Environment *,void *);
    void                           RemoveInstanceData(Environment *,Instance *);
    Instance                      *FindInstanceBySymbol(Environment *,CLIPSLexeme *);
    Instance                      *FindInstanceInModule(Environment *,CLIPSLexeme *,Defmodule *,

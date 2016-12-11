@@ -114,9 +114,9 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    ResetFacts(Environment *);
-   static bool                    ClearFactsReady(Environment *);
-   static void                    RemoveGarbageFacts(Environment *);
+   static void                    ResetFacts(Environment *,void *);
+   static bool                    ClearFactsReady(Environment *,void *);
+   static void                    RemoveGarbageFacts(Environment *,void *);
    static void                    DeallocateFactData(Environment *);
 
 /**************************************************************/
@@ -169,15 +169,15 @@ void InitializeFacts(
    /* use with the reset and clear commands.     */
    /*============================================*/
 
-   AddResetFunction(theEnv,"facts",ResetFacts,60);
-   AddClearReadyFunction(theEnv,"facts",ClearFactsReady,0);
+   AddResetFunction(theEnv,"facts",ResetFacts,60,NULL);
+   AddClearReadyFunction(theEnv,"facts",ClearFactsReady,0,NULL);
 
    /*=============================*/
    /* Initialize periodic garbage */
    /* collection for facts.       */
    /*=============================*/
 
-   AddCleanupFunction(theEnv,"facts",RemoveGarbageFacts,0);
+   AddCleanupFunction(theEnv,"facts",RemoveGarbageFacts,0,NULL);
 
    /*===================================*/
    /* Initialize fact pattern matching. */
@@ -286,7 +286,7 @@ static void DeallocateFactData(
 
    DeallocateCallListWithArg(theEnv,FactData(theEnv)->ListOfAssertFunctions);
    DeallocateCallListWithArg(theEnv,FactData(theEnv)->ListOfRetractFunctions);
-   DeallocateCallListWithArg(theEnv,FactData(theEnv)->ListOfModifyFunctions);
+   DeallocateModifyCallList(theEnv,FactData(theEnv)->ListOfModifyFunctions);
   }
 
 /**********************************************/
@@ -525,8 +525,7 @@ bool RetractDriver(
         theRetractFunction != NULL;
         theRetractFunction = theRetractFunction->next)
      {
-      SetEnvironmentCallbackContext(theEnv,theRetractFunction->context);
-      (*theRetractFunction->func)(theEnv,theFact);
+      (*theRetractFunction->func)(theEnv,theFact,theRetractFunction->context);
      }
 
    /*============================*/
@@ -687,7 +686,8 @@ bool Retract(
 /*   and the facts may be in use in other data structures.         */
 /*******************************************************************/
 static void RemoveGarbageFacts(
-  Environment *theEnv)
+  Environment *theEnv,
+  void *context)
   {
    struct fact *factPtr, *nextPtr, *lastPtr = NULL;
 
@@ -821,10 +821,7 @@ Fact *AssertDriver(
    for (theAssertFunction = FactData(theEnv)->ListOfAssertFunctions;
         theAssertFunction != NULL;
         theAssertFunction = theAssertFunction->next)
-     {
-      SetEnvironmentCallbackContext(theEnv,theAssertFunction->context);
-      (*theAssertFunction->func)(theEnv,theFact);
-     }
+     { (*theAssertFunction->func)(theEnv,theFact,theAssertFunction->context); }
 
    /*==========================*/
    /* Print assert output if   */
@@ -1603,7 +1600,8 @@ unsigned long GetNumberOfFacts(
 /*   fact index to zero and removes all facts.             */
 /***********************************************************/
 static void ResetFacts(
-  Environment *theEnv)
+  Environment *theEnv,
+  void *context)
   {
    /*====================================*/
    /* Initialize the fact index to zero. */
@@ -1624,7 +1622,8 @@ static void ResetFacts(
 /*   command can continue, otherwise false.                 */
 /************************************************************/
 static bool ClearFactsReady(
-  Environment *theEnv)
+  Environment *theEnv,
+  void *context)
   {
    /*======================================*/
    /* Facts can not be deleted when a join */
@@ -1688,31 +1687,13 @@ Fact *FindIndexedFact(
 bool AddAssertFunction(
   Environment *theEnv,
   const char *name,
-  void (*functionPtr)(Environment *, void *),
-  int priority)
-  {
-   FactData(theEnv)->ListOfAssertFunctions =
-      AddFunctionToCallListWithArg(theEnv,name,priority,
-                                              functionPtr,
-                                              FactData(theEnv)->ListOfAssertFunctions);
-   return true;
-  }
-
-/********************************************/
-/* AddAssertFunctionWithContext: Adds a     */
-/*   function to the ListOfAssertFunctions. */
-/********************************************/
-bool AddAssertFunctionWithContext(
-  Environment *theEnv,
-  const char *name,
-  void (*functionPtr)(Environment *, void *),
+  VoidCallFunctionWithArg *functionPtr,
   int priority,
   void *context)
   {
    FactData(theEnv)->ListOfAssertFunctions =
-      AddFunctionToCallListWithArgWithContext(theEnv,name,priority,functionPtr,
-                                       FactData(theEnv)->ListOfAssertFunctions,
-                                       context);
+      AddFunctionToCallListWithArg(theEnv,name,priority,functionPtr,
+                                   FactData(theEnv)->ListOfAssertFunctions,context);
    return true;
   }
 
@@ -1741,31 +1722,13 @@ bool RemoveAssertFunction(
 bool AddRetractFunction(
   Environment *theEnv,
   const char *name,
-  void (*functionPtr)(Environment *, void *),
-  int priority)
-  {
-   FactData(theEnv)->ListOfRetractFunctions =
-      AddFunctionToCallListWithArg(theEnv,name,priority,
-                                              functionPtr,
-                                              FactData(theEnv)->ListOfRetractFunctions);
-   return true;
-  }
-
-/*********************************************/
-/* AddRetractFunctionWithContext: Adds a     */
-/*   function to the ListOfRetractFunctions. */
-/*********************************************/
-bool AddRetractFunctionWithContext(
-  Environment *theEnv,
-  const char *name,
-  void (*functionPtr)(Environment *, void *),
+  VoidCallFunctionWithArg *functionPtr,
   int priority,
   void *context)
   {
    FactData(theEnv)->ListOfRetractFunctions =
-      AddFunctionToCallListWithArgWithContext(theEnv,name,priority,functionPtr,
-                                       FactData(theEnv)->ListOfRetractFunctions,
-                                       context);
+      AddFunctionToCallListWithArg(theEnv,name,priority,functionPtr,
+                                   FactData(theEnv)->ListOfRetractFunctions,context);
    return true;
   }
 
@@ -1794,32 +1757,14 @@ bool RemoveRetractFunction(
 bool AddModifyFunction(
   Environment *theEnv,
   const char *name,
-  void (*functionPtr)(Environment *, void *, void *),
-  int priority)
-  {
-   FactData(theEnv)->ListOfModifyFunctions =
-      AddFunctionToCallListWithArg(theEnv,name,priority,
-                                              (void (*)(Environment *, void *)) functionPtr,
-                                              FactData(theEnv)->ListOfModifyFunctions);
-   return true;
-  }
-
-/********************************************/
-/* AddModifyFunctionWithContext: Adds a     */
-/*   function to the ListOfModifyFunctions. */
-/********************************************/
-bool AddModifyFunctionWithContext(
-  Environment *theEnv,
-  const char *name,
-  void (*functionPtr)(Environment *, void *, void *),
+  ModifyCallFunction *functionPtr,
   int priority,
   void *context)
   {
    FactData(theEnv)->ListOfModifyFunctions =
-      AddFunctionToCallListWithArgWithContext(theEnv,name,priority,
-                                       (void (*)(Environment *, void *)) functionPtr,
-                                       FactData(theEnv)->ListOfModifyFunctions,
-                                       context);
+      AddModifyFunctionToCallList(theEnv,name,priority,functionPtr,
+                                  FactData(theEnv)->ListOfModifyFunctions,context);
+      
    return true;
   }
 
@@ -1834,11 +1779,125 @@ bool RemoveModifyFunction(
    bool found;
 
    FactData(theEnv)->ListOfModifyFunctions =
-      RemoveFunctionFromCallListWithArg(theEnv,name,FactData(theEnv)->ListOfModifyFunctions,&found);
+      RemoveModifyFunctionFromCallList(theEnv,name,FactData(theEnv)->ListOfModifyFunctions,&found);
 
    if (found) return true;
 
    return false;
+  }
+
+/**********************************************************/
+/* AddModifyFunctionToCallList: Adds a function to a list */
+/*   of functions which are called to perform certain     */
+/*   operations (e.g. clear, reset, and bload functions). */
+/**********************************************************/
+ModifyCallFunctionItem *AddModifyFunctionToCallList(
+  Environment *theEnv,
+  const char *name,
+  int priority,
+  ModifyCallFunction *func,
+  ModifyCallFunctionItem *head,
+  void *context)
+  {
+   ModifyCallFunctionItem *newPtr, *currentPtr, *lastPtr = NULL;
+   char  *nameCopy;
+
+   newPtr = get_struct(theEnv,modifyCallFunctionItem);
+
+   nameCopy = (char *) genalloc(theEnv,strlen(name) + 1);
+   genstrcpy(nameCopy,name);
+   newPtr->name = nameCopy;
+
+   newPtr->func = func;
+   newPtr->priority = priority;
+   newPtr->context = context;
+
+   if (head == NULL)
+     {
+      newPtr->next = NULL;
+      return(newPtr);
+     }
+
+   currentPtr = head;
+   while ((currentPtr != NULL) ? (priority < currentPtr->priority) : false)
+     {
+      lastPtr = currentPtr;
+      currentPtr = currentPtr->next;
+     }
+
+   if (lastPtr == NULL)
+     {
+      newPtr->next = head;
+      head = newPtr;
+     }
+   else
+     {
+      newPtr->next = currentPtr;
+      lastPtr->next = newPtr;
+     }
+
+   return(head);
+  }
+
+/********************************************************************/
+/* RemoveModifyFunctionFromCallList: Removes a function from a list */
+/*   of functions which are called to perform certain operations    */
+/*   (e.g. clear, reset, and bload functions).                      */
+/********************************************************************/
+ModifyCallFunctionItem *RemoveModifyFunctionFromCallList(
+  Environment *theEnv,
+  const char *name,
+  ModifyCallFunctionItem *head,
+  bool *found)
+  {
+   ModifyCallFunctionItem *currentPtr, *lastPtr;
+
+   *found = false;
+   lastPtr = NULL;
+   currentPtr = head;
+
+   while (currentPtr != NULL)
+     {
+      if (strcmp(name,currentPtr->name) == 0)
+        {
+         *found = true;
+         if (lastPtr == NULL)
+           { head = currentPtr->next; }
+         else
+           { lastPtr->next = currentPtr->next; }
+
+         genfree(theEnv,(void *) currentPtr->name,strlen(currentPtr->name) + 1);
+         rtn_struct(theEnv,modifyCallFunctionItem,currentPtr);
+         return head;
+        }
+
+      lastPtr = currentPtr;
+      currentPtr = currentPtr->next;
+     }
+
+   return head;
+  }
+
+
+/***************************************************************/
+/* DeallocateModifyCallList: Removes all functions from a list */
+/*   of functions which are called to perform certain          */
+/*   operations (e.g. clear, reset, and bload functions).      */
+/***************************************************************/
+void DeallocateModifyCallList(
+  Environment *theEnv,
+  ModifyCallFunctionItem *theList)
+  {
+   ModifyCallFunctionItem *tmpPtr, *nextPtr;
+
+   tmpPtr = theList;
+   while (tmpPtr != NULL)
+     {
+      nextPtr = tmpPtr->next;
+      genfree(theEnv,(void *) tmpPtr->name,strlen(tmpPtr->name) + 1);
+      rtn_struct(theEnv,modifyCallFunctionItem,tmpPtr);
+      tmpPtr = nextPtr;
+     }
   }
 
 /**********************/

@@ -441,7 +441,7 @@ static void DuplicateModifyCommand(
    if (retractIt &&
        (FactData(theEnv)->ListOfModifyFunctions != NULL))
      {
-      struct callFunctionItemWithArg *theModifyFunction;
+      ModifyCallFunctionItem *theModifyFunction;
       struct fact *replacement = newFact;
 
       /*==================================================================*/
@@ -476,8 +476,7 @@ static void DuplicateModifyCommand(
            theModifyFunction != NULL;
            theModifyFunction = theModifyFunction->next)
         {
-         SetEnvironmentCallbackContext(theEnv,theModifyFunction->context);
-         ((void (*)(void *,void *,void *))(*theModifyFunction->func))(theEnv,oldFact,replacement);
+         (*theModifyFunction->func)(theEnv,oldFact,replacement,theModifyFunction->context);
         }
      }
 

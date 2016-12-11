@@ -226,8 +226,8 @@ void SetupInstances(
 
    SetupInstanceFileCommands(theEnv); /* DR0866 */
 
-   AddCleanupFunction(theEnv,"instances",CleanupInstances,0);
-   AddResetFunction(theEnv,"instances",DestroyAllInstances,60);
+   AddCleanupFunction(theEnv,"instances",CleanupInstances,0,NULL);
+   AddResetFunction(theEnv,"instances",DestroyAllInstances,60,NULL);
   }
 
 /***************************************/
@@ -396,7 +396,7 @@ bool UnmakeInstance(
      }
 
    InstanceData(theEnv)->MaintainGarbageInstances = svmaintain;
-   CleanupInstances(theEnv);
+   CleanupInstances(theEnv,NULL);
 
    if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
        (EvaluationData(theEnv)->CurrentExpression == NULL) && (UtilityData(theEnv)->GarbageCollectionLocks == 0))

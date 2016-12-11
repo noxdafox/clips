@@ -224,7 +224,7 @@
    
    AddUDF(theEnvironment,"clear-window","v",0,0,NULL,ClearEnvironmentWindowCommand,"ClearEnvironmentWindowCommand",NULL);
 
-   AddPeriodicFunction(theEnvironment,"mac-pf",MacPeriodicFunction,0);
+   AddPeriodicFunction(theEnvironment,"mac-pf",MacPeriodicFunction,0,NULL);
 
    commandTimer = [NSTimer scheduledTimerWithTimeInterval: 0.2 // TBD Need to lock input once command found.
                      target: self

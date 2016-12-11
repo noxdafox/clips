@@ -64,7 +64,8 @@ void JNIUserFunction(
 /* JNIPeriodicCallback: */
 /************************/
 void JNIPeriodicCallback(
-  Environment *theEnv)
+  Environment *theEnv,
+  void *vcontext)
   {
    jobject context;
    jclass cls;
@@ -73,7 +74,7 @@ void JNIPeriodicCallback(
   
    env = (JNIEnv *) GetEnvironmentContext(theEnv);
 
-   context = GetEnvironmentCallbackContext(theEnv);
+   context = vcontext;
   
    cls = (*env)->GetObjectClass(env,context);
 
@@ -125,7 +126,8 @@ void JNIParserErrorCallback(
 /*************************************************/
 bool QueryJNIRouter(
   Environment *theEnv,
-  const char *logicalName)
+  const char *logicalName,
+  void *vcontext)
   {
    jobject context;
    jclass cls;
@@ -136,7 +138,7 @@ bool QueryJNIRouter(
   
    env = (JNIEnv *) GetEnvironmentContext(theEnv);
 
-   context = GetEnvironmentRouterContext(theEnv);
+   context = vcontext;
   
    cls = (*env)->GetObjectClass(env,context);
 
@@ -161,7 +163,8 @@ bool QueryJNIRouter(
 /*************************************************/
 void ExitJNIRouter(
   Environment *theEnv,
-  int num)
+  int num,
+  void *vcontext)
   {
 #if MAC_XCD
 #pragma unused(num)
@@ -178,7 +181,8 @@ void ExitJNIRouter(
 void PrintJNIRouter(
   Environment *theEnv,
   const char *logicalName,
-  const char *str)
+  const char *str,
+  void *vcontext)
   {
    jobject context;
    JNIEnv *env;
@@ -188,7 +192,7 @@ void PrintJNIRouter(
 
    env = (JNIEnv *) GetEnvironmentContext(theEnv);
 
-   context = GetEnvironmentRouterContext(theEnv);
+   context = vcontext;
 
    cls = (*env)->GetObjectClass(env,context);
 
@@ -213,7 +217,8 @@ void PrintJNIRouter(
 /************************************************/
 int GetcJNIRouter(
   Environment *theEnv,
-  const char *logicalName)
+  const char *logicalName,
+  void *vcontext)
   {
    jint theChar;
    jobject context;
@@ -224,7 +229,7 @@ int GetcJNIRouter(
 
    env = (JNIEnv *) GetEnvironmentContext(theEnv);
 
-   context = GetEnvironmentRouterContext(theEnv);
+   context = vcontext;
 
    cls = (*env)->GetObjectClass(env,context);
 
@@ -249,8 +254,9 @@ int GetcJNIRouter(
 /****************************************************/
 int UngetcJNIRouter(
   Environment *theEnv,
+  const char *logicalName,
   int ch,
-  const char *logicalName)
+  void *vcontext)
   {
    jint theChar;
    jobject context;
@@ -261,7 +267,7 @@ int UngetcJNIRouter(
 
    env = (JNIEnv *) GetEnvironmentContext(theEnv);
 
-   context = GetEnvironmentRouterContext(theEnv);
+   context = vcontext;
 
    cls = (*env)->GetObjectClass(env,context);
 

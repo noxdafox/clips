@@ -76,7 +76,7 @@
    void                           ListDefglobals(Environment *,const char *,Defmodule *);
    void                           DefglobalSetWatch(Defglobal *,bool);
 #endif
-   void                           ResetDefglobals(Environment *);
+   void                           ResetDefglobals(Environment *,void *);
 
 #endif /* _H_globlbsc */
 

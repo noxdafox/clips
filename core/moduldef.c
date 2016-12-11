@@ -186,7 +186,7 @@ void InitializeDefmodules(
    DefmoduleBasicCommands(theEnv);
 
 #if (! RUN_TIME)
-   CreateMainModule(theEnv);
+   CreateMainModule(theEnv,NULL);
 #endif
 
 #if DEFMODULE_CONSTRUCT && (! RUN_TIME) && (! BLOAD_ONLY)
@@ -320,7 +320,7 @@ Defmodule *SetCurrentModule(
       changeFunctions = DefmoduleData(theEnv)->AfterModuleChangeFunctions;
       while (changeFunctions != NULL)
         {
-         (*changeFunctions->func)(theEnv);
+         (*changeFunctions->func)(theEnv,changeFunctions->context);
          changeFunctions = changeFunctions->next;
         }
      }
@@ -415,7 +415,8 @@ void SetModuleItem(
 /* CreateMainModule: Creates the default MAIN module. */
 /******************************************************/
 void CreateMainModule(
-  Environment *theEnv)
+  Environment *theEnv,
+  void *context)
   {
    Defmodule *newDefmodule;
    struct moduleItem *theItem;
@@ -546,7 +547,8 @@ const char *DefmodulePPForm(
 /*   from the current environment.             */
 /***********************************************/
 void RemoveAllDefmodules(
-  Environment *theEnv)
+  Environment *theEnv,
+  void *context)
   {
    Defmodule *nextDefmodule;
 
@@ -780,11 +782,12 @@ void SetCurrentModuleCommand(
 void AddAfterModuleChangeFunction(
   Environment *theEnv,
   const char *name,
-  void (*func)(Environment *),
-  int priority)
+  VoidCallFunction *func,
+  int priority,
+  void *context)
   {
    DefmoduleData(theEnv)->AfterModuleChangeFunctions =
-     AddVoidFunctionToCallList(theEnv,name,priority,func,DefmoduleData(theEnv)->AfterModuleChangeFunctions);
+     AddVoidFunctionToCallList(theEnv,name,priority,func,DefmoduleData(theEnv)->AfterModuleChangeFunctions,context);
   }
 
 /************************************************/

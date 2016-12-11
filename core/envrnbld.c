@@ -168,9 +168,7 @@ Environment *CreateEnvironmentDriver(
    theEnvironment->next = NULL;
    theEnvironment->listOfCleanupEnvironmentFunctions = NULL;
    theEnvironment->context = NULL;
-   theEnvironment->routerContext = NULL;
    theEnvironment->functionContext = NULL;
-   theEnvironment->callbackContext = NULL;
 
    /*=============================================*/
    /* Allocate storage for the cleanup functions. */

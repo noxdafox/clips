@@ -77,11 +77,24 @@ typedef struct construct Construct;
 #include "entities.h"
 #include "userdata.h"
 #include "moduldef.h"
+#include "utility.h"
+
+typedef void SaveCallFunction(Environment *,Defmodule *,const char *,void *);
+typedef struct saveCallFunctionItem SaveCallFunctionItem;
 
 typedef void ParserErrorFunction(Environment *,const char *,const char *,const char *,long);
 typedef bool BeforeResetFunction(Environment *);
 
 #define CHS (ConstructHeader *)
+
+struct saveCallFunctionItem
+  {
+   const char *name;
+   SaveCallFunction *func;
+   int priority;
+   SaveCallFunctionItem *next;
+   void *context;
+  };
 
 struct construct
   {
@@ -111,7 +124,7 @@ struct constructData
    short ClearReadyLocks;
    int DanglingConstructs;
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   struct saveCallFunctionItem *ListOfSaveFunctions;
+   SaveCallFunctionItem *ListOfSaveFunctions;
    bool PrintWhileLoading;
    bool WatchCompilations;
    bool CheckSyntaxMode;
@@ -145,13 +158,11 @@ struct constructData
    bool                           Save(Environment *,const char *);
 
    void                           InitializeConstructData(Environment *);
-   bool                           AddSaveFunction(Environment *,const char *,void (*)(Environment *,Defmodule *,const char *),int);
-   bool                           RemoveSaveFunction(Environment *,const char *);
-   bool                           AddResetFunction(Environment *,const char *,void (*)(Environment *),int);
+   bool                           AddResetFunction(Environment *,const char *,VoidCallFunction *,int,void *);
    bool                           RemoveResetFunction(Environment *,const char *);
-   bool                           AddClearReadyFunction(Environment *,const char *,bool (*)(Environment *),int);
+   bool                           AddClearReadyFunction(Environment *,const char *,BoolCallFunction,int,void *);
    bool                           RemoveClearReadyFunction(Environment *,const char *);
-   bool                           AddClearFunction(Environment *,const char *,void (*)(Environment *),int);
+   bool                           AddClearFunction(Environment *,const char *,VoidCallFunction *,int,void *);
    bool                           RemoveClearFunction(Environment *,const char *);
    void                           IncrementClearReadyLocks(Environment *);
    void                           DecrementClearReadyLocks(Environment *);
@@ -182,6 +193,14 @@ struct constructData
    void                           DeinstallConstructHeader(Environment *,ConstructHeader *);
    void                           DestroyConstructHeader(Environment *,ConstructHeader *);
    ParserErrorFunction           *SetParserErrorCallback(Environment *,ParserErrorFunction *);
+   
+   bool                           AddSaveFunction(Environment *,const char *,SaveCallFunction *,int,void *);
+   bool                           RemoveSaveFunction(Environment *,const char *);
+   SaveCallFunctionItem          *AddSaveFunctionToCallList(Environment *,const char *,int,
+                                                            SaveCallFunction *,SaveCallFunctionItem *,void *);
+   SaveCallFunctionItem          *RemoveSaveFunctionFromCallList(Environment *,const char *,
+                                                                 SaveCallFunctionItem *,bool *);
+   void                           DeallocateSaveCallList(Environment *,SaveCallFunctionItem *);
 
 #endif /* _H_constrct */
 

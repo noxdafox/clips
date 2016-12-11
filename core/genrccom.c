@@ -135,8 +135,8 @@
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
 
-   static void                    SaveDefgenerics(Environment *,Defmodule *,const char *);
-   static void                    SaveDefmethods(Environment *,Defmodule *,const char *);
+   static void                    SaveDefgenerics(Environment *,Defmodule *,const char *,void *);
+   static void                    SaveDefmethods(Environment *,Defmodule *,const char *,void *);
    static void                    SaveDefmethodsForDefgeneric(Environment *,ConstructHeader *,void *);
    static void                    RemoveDefgenericMethod(Environment *,Defgeneric *,long);
 
@@ -231,7 +231,7 @@ void SetupGenericFunctions(
 
 
 #if ! RUN_TIME
-   AddClearReadyFunction(theEnv,"defgeneric",ClearDefgenericsReady,0);
+   AddClearReadyFunction(theEnv,"defgeneric",ClearDefgenericsReady,0,NULL);
 
 #if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE
    SetupGenericsBload(theEnv);
@@ -255,8 +255,8 @@ void SetupGenericFunctions(
      Need to be cleared in two stages so that mutually dependent
        constructs (like classes) can be cleared
      ================================================================ */
-   AddSaveFunction(theEnv,"defgeneric",SaveDefgenerics,1000);
-   AddSaveFunction(theEnv,"defmethod",SaveDefmethods,-1000);
+   AddSaveFunction(theEnv,"defgeneric",SaveDefgenerics,1000,NULL);
+   AddSaveFunction(theEnv,"defmethod",SaveDefmethods,-1000,NULL);
    AddUDF(theEnv,"undefgeneric","v",1,1,"y",UndefgenericCommand,"UndefgenericCommand",NULL);
    AddUDF(theEnv,"undefmethod","v",2,2,"*;y;ly",UndefmethodCommand,"UndefmethodCommand",NULL);
 #endif
@@ -1430,7 +1430,8 @@ static void IncrementGenericBusyCount(
 static void SaveDefgenerics(
   Environment *theEnv,
   Defmodule *theModule,
-  const char *logName)
+  const char *logName,
+  void *context)
   {
    SaveConstruct(theEnv,theModule,logName,DefgenericData(theEnv)->DefgenericConstruct);
   }
@@ -1446,7 +1447,8 @@ static void SaveDefgenerics(
 static void SaveDefmethods(
   Environment *theEnv,
   Defmodule *theModule,
-  const char *logName)
+  const char *logName,
+  void *context)
   {
    DoForAllConstructsInModule(theEnv,theModule,
                               SaveDefmethodsForDefgeneric,

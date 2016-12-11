@@ -68,7 +68,7 @@
 
    void                           IncrementDefclassBusyCount(Environment *,Defclass *);
    void                           DecrementDefclassBusyCount(Environment *,Defclass *);
-   bool                           InstancesPurge(Environment *);
+   bool                           InstancesPurge(Environment *,void *);
 
 #if ! RUN_TIME
    void                           InitializeClasses(Environment *);

@@ -138,7 +138,7 @@
 #endif
 
 #if (! BLOAD_ONLY) && (! RUN_TIME) && DEFMODULE_CONSTRUCT
-   static void                    UpdateDefclassesScope(Environment *);
+   static void                    UpdateDefclassesScope(Environment *,void *);
 #endif
 
 /* =========================================
@@ -478,7 +478,8 @@ static void SearchForHashedPatternNodes(
                 WARNING!!: Assumes no classes exist yet!
  ***************************************************************/
 void CreateSystemClasses(
-  Environment *theEnv)
+  Environment *theEnv,
+  void *context)
   {
    Defclass *user,*any,*primitive,*number,*lexeme,*address,*instance;
 #if DEFRULE_CONSTRUCT
@@ -624,20 +625,20 @@ static void SetupDefclasses(
 #endif
                                      );
 
-   AddClearReadyFunction(theEnv,"defclass",InstancesPurge,0);
+   AddClearReadyFunction(theEnv,"defclass",InstancesPurge,0,NULL);
 
 #if ! RUN_TIME
-   AddClearFunction(theEnv,"defclass",CreateSystemClasses,0);
+   AddClearFunction(theEnv,"defclass",CreateSystemClasses,0,NULL);
    InitializeClasses(theEnv);
 
 #if ! BLOAD_ONLY
 #if DEFMODULE_CONSTRUCT
    AddPortConstructItem(theEnv,"defclass",SYMBOL_TOKEN);
-   AddAfterModuleDefinedFunction(theEnv,"defclass",UpdateDefclassesScope,0);
+   AddAfterModuleDefinedFunction(theEnv,"defclass",UpdateDefclassesScope,0,NULL);
 #endif
    AddUDF(theEnv,"undefclass","v",1,1,"y",UndefclassCommand,"UndefclassCommand",NULL);
 
-   AddSaveFunction(theEnv,"defclass",SaveDefclasses,10);
+   AddSaveFunction(theEnv,"defclass",SaveDefclasses,10,NULL);
 #endif
 
 #if DEBUGGING_FUNCTIONS
@@ -797,7 +798,8 @@ static void ReturnModule(
   NOTES        : None
  ***************************************************/
 static void UpdateDefclassesScope(
-  Environment *theEnv)
+  Environment *theEnv,
+  void *context)
   {
    unsigned i;
    Defclass *theDefclass;

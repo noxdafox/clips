@@ -59,10 +59,10 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static bool                    FindString(Environment *,const char *);
-   static void                    PrintString(Environment *,const char *,const char *);
-   static int                     GetcString(Environment *,const char *);
-   static int                     UngetcString(Environment *,int,const char *);
+   static bool                    FindString(Environment *,const char *,void *);
+   static void                    PrintString(Environment *,const char *,const char *,void *);
+   static int                     GetcString(Environment *,const char *,void *);
+   static int                     UngetcString(Environment *,const char *,int,void *);
    static struct stringRouter    *FindStringRouter(Environment *,const char *);
    static bool                    CreateReadStringSource(Environment *,const char *,const char *,size_t,size_t);
    static void                    DeallocateStringRouterData(Environment *);
@@ -102,14 +102,15 @@ static void DeallocateStringRouterData(
 /*************************************************************/
 static bool FindString(
   Environment *theEnv,
-  const char *fileid)
+  const char *logicalName,
+  void *context)
   {
    struct stringRouter *head;
 
    head = StringRouterData(theEnv)->ListOfStringRouters;
    while (head != NULL)
      {
-      if (strcmp(head->name,fileid) == 0)
+      if (strcmp(head->name,logicalName) == 0)
         { return true; }
       head = head->next;
      }
@@ -123,7 +124,8 @@ static bool FindString(
 static void PrintString(
   Environment *theEnv,
   const char *logicalName,
-  const char *str)
+  const char *str,
+  void *context)
   {
    struct stringRouter *head;
 
@@ -152,7 +154,8 @@ static void PrintString(
 /************************************************/
 static int GetcString(
   Environment *theEnv,
-  const char *logicalName)
+  const char *logicalName,
+  void *context)
   {
    struct stringRouter *head;
    int rc;
@@ -182,8 +185,9 @@ static int GetcString(
 /****************************************************/
 static int UngetcString(
   Environment *theEnv,
+  const char *logicalName,
   int ch,
-  const char *logicalName)
+  void *context)
   {
    struct stringRouter *head;
 #if MAC_XCD

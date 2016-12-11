@@ -147,8 +147,8 @@ static void DeallocateEngineData(
   {
    struct focus *tmpPtr, *nextPtr;
 
-   DeallocateVoidCallList(theEnv,EngineData(theEnv)->ListOfRunFunctions);
-   DeallocateCallListWithArg(theEnv,EngineData(theEnv)->ListOfBeforeRunFunctions);
+   DeallocateVoidCallList(theEnv,EngineData(theEnv)->ListOfAfterRuleFiresFunctions);
+   DeallocateCallListWithArg(theEnv,EngineData(theEnv)->ListOfBeforeRuleFiresFunctions);
 
    tmpPtr = EngineData(theEnv)->CurrentFocus;
    while (tmpPtr != NULL)
@@ -168,8 +168,8 @@ long long Run(
   {
    long long rulesFired = 0;
    UDFValue returnValue;
-   struct callFunctionItemWithArg *theBeforeRunFunction;
-   struct voidCallFunctionItem *theRunFunction;
+   struct callFunctionItemWithArg *theBeforeRuleFiresFunction;
+   struct voidCallFunctionItem *theAfterRuleFiresFunction;
 #if DEBUGGING_FUNCTIONS
    unsigned long maxActivations = 0, sumActivations = 0;
 #if DEFTEMPLATE_CONSTRUCT
@@ -264,12 +264,11 @@ long long Run(
       /* to be called before each rule firing.  */
       /*========================================*/
 
-      for (theBeforeRunFunction = EngineData(theEnv)->ListOfBeforeRunFunctions;
-           theBeforeRunFunction != NULL;
-           theBeforeRunFunction = theBeforeRunFunction->next)
+      for (theBeforeRuleFiresFunction = EngineData(theEnv)->ListOfBeforeRuleFiresFunctions;
+           theBeforeRuleFiresFunction != NULL;
+           theBeforeRuleFiresFunction = theBeforeRuleFiresFunction->next)
         {
-         SetEnvironmentCallbackContext(theEnv,theBeforeRunFunction->context);
-         (*theBeforeRunFunction->func)(theEnv,theActivation);
+         (*theBeforeRuleFiresFunction->func)(theEnv,theActivation,theBeforeRuleFiresFunction->context);
         }
 
       /*===========================================*/
@@ -486,13 +485,10 @@ long long Run(
       /* to be called after each rule firing.   */
       /*========================================*/
 
-      for (theRunFunction = EngineData(theEnv)->ListOfRunFunctions;
-           theRunFunction != NULL;
-           theRunFunction = theRunFunction->next)
-        {
-         SetEnvironmentCallbackContext(theEnv,theRunFunction->context);
-         (*theRunFunction->func)(theEnv);
-        }
+      for (theAfterRuleFiresFunction = EngineData(theEnv)->ListOfAfterRuleFiresFunctions;
+           theAfterRuleFiresFunction != NULL;
+           theAfterRuleFiresFunction = theAfterRuleFiresFunction->next)
+        { (*theAfterRuleFiresFunction->func)(theEnv,theAfterRuleFiresFunction->context); }
 
       /*========================================*/
       /* If a return was issued on the RHS of a */
@@ -532,10 +528,10 @@ long long Run(
 
    if (rulesFired == 0)
      {
-      for (theRunFunction = EngineData(theEnv)->ListOfRunFunctions;
-           theRunFunction != NULL;
-           theRunFunction = theRunFunction->next)
-        { (*theRunFunction->func)(theEnv); }
+      for (theAfterRuleFiresFunction = EngineData(theEnv)->ListOfAfterRuleFiresFunctions;
+           theAfterRuleFiresFunction != NULL;
+           theAfterRuleFiresFunction = theAfterRuleFiresFunction->next)
+        { (*theAfterRuleFiresFunction->func)(theEnv,theAfterRuleFiresFunction->context); }
      }
 
    /*======================================================*/
@@ -921,102 +917,68 @@ void ClearFocusStack(
    EngineData(theEnv)->FocusChanged = true;
   }
 
-/***********************************/
-/* AddRunFunction: Adds a function */
-/*   to the ListOfRunFunctions.    */
-/***********************************/
-bool AddRunFunction(
+/**********************************************/
+/* AddAfterRuleFiresFunction: Adds a function */
+/*   to the ListOfAfterRuleFiresFunctions.    */
+/**********************************************/
+bool AddAfterRuleFiresFunction(
   Environment *theEnv,
   const char *name,
-  void (*functionPtr)(Environment *),
-  int priority)
-  {
-   EngineData(theEnv)->ListOfRunFunctions = AddVoidFunctionToCallList(theEnv,name,priority,
-                                              functionPtr,
-                                              EngineData(theEnv)->ListOfRunFunctions);
-   return true;
-  }
-
-/*****************************************/
-/* AddBeforeRunFunction: Adds a function */
-/*   to the ListOfBeforeRunFunctions.    */
-/*****************************************/
-bool AddBeforeRunFunction(
-  Environment *theEnv,
-  const char *name,
-  void (*functionPtr)(Environment *, void *),
-  int priority)
-  {
-   EngineData(theEnv)->ListOfBeforeRunFunctions = AddFunctionToCallListWithArg(theEnv,name,priority,
-                                              functionPtr,
-                                              EngineData(theEnv)->ListOfBeforeRunFunctions);
-   return true;
-  }
-
-/*****************************************/
-/* AddRunFunctionWithContext: Adds a     */
-/*   function to the ListOfRunFunctions. */
-/*****************************************/
-bool AddRunFunctionWithContext(
-  Environment *theEnv,
-  const char *name,
-  void (*functionPtr)(Environment *),
+  VoidCallFunction *functionPtr,
   int priority,
   void *context)
   {
-   EngineData(theEnv)->ListOfRunFunctions =
-      AddVoidFunctionToCallListWithContext(theEnv,name,priority,functionPtr,
-                                       EngineData(theEnv)->ListOfRunFunctions,
-                                       context);
+   EngineData(theEnv)->ListOfAfterRuleFiresFunctions = AddVoidFunctionToCallList(theEnv,name,priority,
+                                              functionPtr,
+                                              EngineData(theEnv)->ListOfAfterRuleFiresFunctions,context);
    return true;
   }
 
 /***********************************************/
-/* AddBeforeRunFunctionWithContext: Adds a     */
-/*   function to the ListOfBeforeRunFunctions. */
+/* AddBeforeRuleFiresFunction: Adds a function */
+/*   to the ListOfBeforeRuleFiresFunctions.    */
 /***********************************************/
-bool AddBeforeRunFunctionWithContext(
+bool AddBeforeRuleFiresFunction(
   Environment *theEnv,
   const char *name,
-  void (*functionPtr)(Environment *, void *),
+  VoidCallFunctionWithArg *functionPtr,
   int priority,
   void *context)
   {
-   EngineData(theEnv)->ListOfBeforeRunFunctions =
-      AddFunctionToCallListWithArgWithContext(theEnv,name,priority,functionPtr,
-                                       EngineData(theEnv)->ListOfBeforeRunFunctions,
-                                       context);
+   EngineData(theEnv)->ListOfBeforeRuleFiresFunctions =
+      AddFunctionToCallListWithArg(theEnv,name,priority,functionPtr,
+                                   EngineData(theEnv)->ListOfBeforeRuleFiresFunctions,context);
    return true;
   }
 
-/*****************************************/
-/* RemoveRunFunction: Removes a function */
-/*   from the ListOfRunFunctions.        */
-/*****************************************/
-bool RemoveRunFunction(
+/****************************************************/
+/* RemoveAfterRuleFiresFunction: Removes a function */
+/*   from the ListOfAfterRuleFiresFunctions.        */
+/****************************************************/
+bool RemoveAfterRuleFiresFunction(
   Environment *theEnv,
   const char *name)
   {
    bool found;
 
-   EngineData(theEnv)->ListOfRunFunctions =
-      RemoveVoidFunctionFromCallList(theEnv,name,EngineData(theEnv)->ListOfRunFunctions,&found);
+   EngineData(theEnv)->ListOfAfterRuleFiresFunctions =
+      RemoveVoidFunctionFromCallList(theEnv,name,EngineData(theEnv)->ListOfAfterRuleFiresFunctions,&found);
 
    return found;
   }
 
-/***********************************************/
-/* RemoveBeforeRunFunction: Removes a function */
-/*   from the ListOfBeforeRunFunctions.        */
-/***********************************************/
-bool RemoveBeforeRunFunction(
+/*****************************************************/
+/* RemoveBeforeRuleFiresFunction: Removes a function */
+/*   from the ListOfBeforeRuleFiresFunctions.        */
+/*****************************************************/
+bool RemoveBeforeRuleFiresFunction(
   Environment *theEnv,
   const char *name)
   {
    bool found;
 
-   EngineData(theEnv)->ListOfBeforeRunFunctions =
-      RemoveFunctionFromCallListWithArg(theEnv,name,EngineData(theEnv)->ListOfBeforeRunFunctions,&found);
+   EngineData(theEnv)->ListOfBeforeRuleFiresFunctions =
+      RemoveFunctionFromCallListWithArg(theEnv,name,EngineData(theEnv)->ListOfBeforeRuleFiresFunctions,&found);
 
    return found;
   }

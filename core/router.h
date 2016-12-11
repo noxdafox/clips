@@ -69,11 +69,11 @@
 #include <stdio.h>
 
 typedef struct router Router;
-typedef bool RouterQueryFunction(Environment *,const char *);
-typedef void RouterPrintFunction(Environment *,const char *,const char *);
-typedef void RouterExitFunction(Environment *,int);
-typedef int RouterGetcFunction(Environment *,const char *);
-typedef int RouterUngetcFunction(Environment *,int,const char *);
+typedef bool RouterQueryFunction(Environment *,const char *,void *);
+typedef void RouterPrintFunction(Environment *,const char *,const char *,void *);
+typedef void RouterExitFunction(Environment *,int,void *);
+typedef int RouterGetcFunction(Environment *,const char *,void *);
+typedef int RouterUngetcFunction(Environment *,const char *,int,void *);
 
 #define WWARNING "wwarning"
 #define WERROR "werror"

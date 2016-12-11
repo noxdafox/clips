@@ -78,7 +78,7 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    SaveDefglobals(Environment *,Defmodule *,const char *);
+   static void                    SaveDefglobals(Environment *,Defmodule *,const char *,void *);
    static void                    ResetDefglobalAction(Environment *,ConstructHeader *,void *);
 #if DEBUGGING_FUNCTIONS && (! RUN_TIME)
    static bool                    DefglobalWatchAccess(Environment *,int,bool,struct expr *);
@@ -91,8 +91,8 @@
 void DefglobalBasicCommands(
   Environment *theEnv)
   {
-   AddSaveFunction(theEnv,"defglobal",SaveDefglobals,40);
-   AddResetFunction(theEnv,"defglobal",ResetDefglobals,50);
+   AddSaveFunction(theEnv,"defglobal",SaveDefglobals,40,NULL);
+   AddResetFunction(theEnv,"defglobal",ResetDefglobals,50,NULL);
 
 #if ! RUN_TIME
    AddUDF(theEnv,"get-defglobal-list","m",0,1,"y",GetDefglobalListFunction,"GetDefglobalListFunction",NULL);
@@ -121,7 +121,8 @@ void DefglobalBasicCommands(
 /*   reset command. Restores the values of the defglobals.   */
 /*************************************************************/
 void ResetDefglobals(
-  Environment *theEnv)
+  Environment *theEnv,
+  void *context)
   {
    if (! GetResetGlobals(theEnv)) return;
    DoForAllConstructs(theEnv,ResetDefglobalAction,
@@ -158,7 +159,8 @@ static void ResetDefglobalAction(
 static void SaveDefglobals(
   Environment *theEnv,
   Defmodule *theModule,
-  const char *logicalName)
+  const char *logicalName,
+  void *context)
   {
    SaveConstruct(theEnv,theModule,logicalName,DefglobalData(theEnv)->DefglobalConstruct);
   }

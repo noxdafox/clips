@@ -71,7 +71,7 @@ void DefglobalBinarySetup(
   {
    AllocateEnvironmentData(theEnv,GLOBLBIN_DATA,sizeof(struct defglobalBinaryData),DeallocateDefglobalBloadData);
 #if (BLOAD_AND_BSAVE || BLOAD)
-   AddAfterBloadFunction(theEnv,"defglobal",ResetDefglobals,50);
+   AddAfterBloadFunction(theEnv,"defglobal",ResetDefglobals,50,NULL);
 #endif
 
 #if BLOAD_AND_BSAVE

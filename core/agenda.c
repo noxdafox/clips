@@ -92,7 +92,7 @@
 /***************************************/
 
    static void                    PrintActivation(Environment *,const char *,Activation *);
-   static void                    AgendaClearFunction(Environment *);
+   static void                    AgendaClearFunction(Environment *,void *);
    static const char             *SalienceEvaluationName(int);
    static int                     EvaluateSalience(Environment *,Defrule *);
    static struct salienceGroup   *ReuseOrCreateSalienceGroup(Environment *,struct defruleModule *,int);
@@ -113,7 +113,7 @@ void InitializeAgenda(
 
    AgendaData(theEnv)->Strategy = DEFAULT_STRATEGY;
 
-   AddClearFunction(theEnv,"agenda",AgendaClearFunction,0);
+   AddClearFunction(theEnv,"agenda",AgendaClearFunction,0,NULL);
 #if DEBUGGING_FUNCTIONS
    AddWatchItem(theEnv,"activations",1,&AgendaData(theEnv)->WatchActivations,40,DefruleWatchAccess,DefruleWatchPrint);
 #endif
@@ -741,7 +741,8 @@ static void RemoveActivationFromGroup(
 /*   clear command. Resets the current time tag to zero.      */
 /**************************************************************/
 static void AgendaClearFunction(
-  Environment *theEnv)
+  Environment *theEnv,
+  void *context)
   {
    AgendaData(theEnv)->CurrentTimetag = 0;
   }

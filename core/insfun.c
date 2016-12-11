@@ -205,7 +205,8 @@ void InitializeInstanceTable(
   NOTES        : None
  *******************************************************/
 void CleanupInstances(
-  Environment *theEnv)
+  Environment *theEnv,
+  void *context)
   {
    IGARBAGE *gprv,*gtmp,*dump;
 
@@ -272,7 +273,8 @@ unsigned HashInstance(
   NOTES        : None
  ***************************************************/
 void DestroyAllInstances(
-  Environment *theEnv)
+  Environment *theEnv,
+  void *context)
   {
    Instance *iptr;
    bool svmaintain;

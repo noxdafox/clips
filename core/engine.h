@@ -103,8 +103,8 @@ struct engineData
    struct partialMatch *TheLogicalBind;
    struct dependency *UnsupportedDataEntities;
    bool alreadyEntered;
-   struct voidCallFunctionItem *ListOfRunFunctions;
-   struct callFunctionItemWithArg *ListOfBeforeRunFunctions;
+   VoidCallFunctionItem *ListOfAfterRuleFiresFunctions;
+   CallFunctionItemWithArg *ListOfBeforeRuleFiresFunctions;
    struct focus *CurrentFocus;
    bool FocusChanged;
 #if DEBUGGING_FUNCTIONS
@@ -138,16 +138,12 @@ struct engineData
 #define MAX_PATTERNS_CHECKED 64
 
    long long               Run(Environment *,long long);
-   bool                    AddRunFunction(Environment *,const char *,
-                                             void (*)(Environment *),int);
-   bool                    AddRunFunctionWithContext(Environment *,const char *,
-                                                        void (*)(Environment *),int,void *);
-   bool                    RemoveRunFunction(Environment *,const char *);
-   bool                    AddBeforeRunFunction(Environment *,const char *,
-                                                   void (*)(Environment *,void *),int);
-   bool                    AddBeforeRunFunctionWithContext(Environment *,const char *,
-                                                              void (*)(Environment *, void *),int,void *);
-   bool                    RemoveBeforeRunFunction(Environment *,const char *);
+   bool                    AddAfterRuleFiresFunction(Environment *,const char *,
+                                                     VoidCallFunction *,int,void *);
+   bool                    RemoveAfterRuleFiresFunction(Environment *,const char *);
+   bool                    AddBeforeRuleFiresFunction(Environment *,const char *,
+                                                      VoidCallFunctionWithArg *,int,void *);
+   bool                    RemoveBeforeRuleFiresFunction(Environment *,const char *);
    void                    InitializeEngine(Environment *);
    void                    DefruleSetBreak(Defrule *);
    void                    Halt(Environment *);

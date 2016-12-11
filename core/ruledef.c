@@ -413,9 +413,9 @@ void DefruleRunTimeInitialize(
         theModule = GetNextDefmodule(theEnv,theModule))
      {
       SetCurrentModule(theEnv,theModule);
-      for (theRule = EnvGetNextDefrule(theEnv,NULL);
+      for (theRule = GetNextDefrule(theEnv,NULL);
            theRule != NULL;
-           theRule = EnvGetNextDefrule(theEnv,theRule))
+           theRule = GetNextDefrule(theEnv,theRule))
         {
          for (theDisjunct = theRule;
               theDisjunct != NULL;

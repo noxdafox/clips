@@ -89,10 +89,10 @@
 /***************************************/
 
 #if ! DEFFACTS_CONSTRUCT
-   static void                    ResetDeftemplates(Environment *);
+   static void                    ResetDeftemplates(Environment *,void *);
 #endif
-   static void                    ClearDeftemplates(Environment *);
-   static void                    SaveDeftemplates(Environment *,Defmodule *,const char *);
+   static void                    ClearDeftemplates(Environment *,void *);
+   static void                    SaveDeftemplates(Environment *,Defmodule *,const char *,void *);
 
 /*********************************************************************/
 /* DeftemplateBasicCommands: Initializes basic deftemplate commands. */
@@ -101,10 +101,10 @@ void DeftemplateBasicCommands(
   Environment *theEnv)
   {
 #if ! DEFFACTS_CONSTRUCT
-   AddResetFunction(theEnv,"deftemplate",ResetDeftemplates,0);
+   AddResetFunction(theEnv,"deftemplate",ResetDeftemplates,0,NULL);
 #endif
-   AddClearFunction(theEnv,"deftemplate",ClearDeftemplates,0);
-   AddSaveFunction(theEnv,"deftemplate",SaveDeftemplates,10);
+   AddClearFunction(theEnv,"deftemplate",ClearDeftemplates,0,NULL);
+   AddSaveFunction(theEnv,"deftemplate",SaveDeftemplates,10,NULL);
 
 #if ! RUN_TIME
    AddUDF(theEnv,"get-deftemplate-list","m",0,1,"y",GetDeftemplateListFunction,"GetDeftemplateListFunction",NULL);
@@ -134,7 +134,8 @@ void DeftemplateBasicCommands(
 /*************************************************************/
 #if ! DEFFACTS_CONSTRUCT
 static void ResetDeftemplates(
-  Environment *theEnv)
+  Environment *theEnv,
+  void *context)
   {
    Fact *factPtr;
 
@@ -151,7 +152,8 @@ static void ResetDeftemplates(
 /*   clear command. Creates the initial-facts deftemplate.       */
 /*****************************************************************/
 static void ClearDeftemplates(
-  Environment *theEnv)
+  Environment *theEnv,
+  void *context)
   {
 #if (! RUN_TIME) && (! BLOAD_ONLY)
 
@@ -170,7 +172,8 @@ static void ClearDeftemplates(
 static void SaveDeftemplates(
   Environment *theEnv,
   Defmodule *theModule,
-  const char *logicalName)
+  const char *logicalName,
+  void *context)
   {
    SaveConstruct(theEnv,theModule,logicalName,DeftemplateData(theEnv)->DeftemplateConstruct);
   }

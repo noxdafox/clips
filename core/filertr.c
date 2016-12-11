@@ -68,10 +68,10 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    ExitFile(Environment *,int);
-   static void                    PrintFile(Environment *,const char *,const char *);
-   static int                     GetcFile(Environment *,const char *);
-   static int                     UngetcFile(Environment *,int,const char *);
+   static void                    ExitFile(Environment *,int,void *);
+   static void                    PrintFile(Environment *,const char *,const char *,void *);
+   static int                     GetcFile(Environment *,const char *,void *);
+   static int                     UngetcFile(Environment *,const char *,int,void *);
    static void                    DeallocateFileRouterData(Environment *);
 
 /***************************************************************/
@@ -160,7 +160,8 @@ FILE *FindFptr(
 /*****************************************************/
 bool FindFile(
   Environment *theEnv,
-  const char *logicalName)
+  const char *logicalName,
+  void *context)
   {
    if (FindFptr(theEnv,logicalName) != NULL) return true;
 
@@ -172,7 +173,8 @@ bool FindFile(
 /********************************************/
 static void ExitFile(
   Environment *theEnv,
-  int num)
+  int num,
+  void *context)
   {
 #if MAC_XCD
 #pragma unused(num)
@@ -192,7 +194,8 @@ static void ExitFile(
 static void PrintFile(
   Environment *theEnv,
   const char *logicalName,
-  const char *str)
+  const char *str,
+  void *context)
   {
    FILE *fptr;
 
@@ -206,7 +209,8 @@ static void PrintFile(
 /*******************************************/
 static int GetcFile(
   Environment *theEnv,
-  const char *logicalName)
+  const char *logicalName,
+  void *context)
   {
    FILE *fptr;
    int theChar;
@@ -233,8 +237,9 @@ static int GetcFile(
 /***********************************************/
 static int UngetcFile(
   Environment *theEnv,
+  const char *logicalName,
   int ch,
-  const char *logicalName)
+  void *context)
   {
    FILE *fptr;
 

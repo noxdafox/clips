@@ -81,6 +81,18 @@ typedef struct factModifier FactModifier;
 #include "conscomp.h"
 #include "tmpltdef.h"
 
+typedef void ModifyCallFunction(Environment *,Fact *,Fact *,void *);
+typedef struct modifyCallFunctionItem ModifyCallFunctionItem;
+
+struct modifyCallFunctionItem
+  {
+   const char *name;
+   ModifyCallFunction *func;
+   int priority;
+   ModifyCallFunctionItem *next;
+   void *context;
+  };
+
 struct fact
   {
    struct patternEntity factHeader;
@@ -130,7 +142,7 @@ struct factsData
    unsigned long NumberOfFacts;
    struct callFunctionItemWithArg *ListOfAssertFunctions;
    struct callFunctionItemWithArg *ListOfRetractFunctions;
-   struct callFunctionItemWithArg *ListOfModifyFunctions;
+   ModifyCallFunctionItem *ListOfModifyFunctions;
    struct patternEntityRecord  FactInfo;
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    Deftemplate *CurrentDeftemplate;
@@ -187,21 +199,11 @@ struct factsData
    bool                           DeftemplateSlotDefault(Environment *,Deftemplate *,
                                                          struct templateSlot *,UDFValue *,bool);
    bool                           AddAssertFunction(Environment *,const char *,
-                                                       void (*)(Environment *,void *),int);
-   bool                           AddAssertFunctionWithContext(Environment *,const char *,
-                                                                  void (*)(Environment *,void *),int,void *);
+                                                    VoidCallFunctionWithArg *,int,void *);
    bool                           RemoveAssertFunction(Environment *,const char *);
    bool                           AddRetractFunction(Environment *,const char *,
-                                                        void (*)(Environment *,void *),int);
-   bool                           AddRetractFunctionWithContext(Environment *,const char *,
-                                                                   void (*)(Environment *,void *),int,void *);
+                                                     VoidCallFunctionWithArg *,int,void *);
    bool                           RemoveRetractFunction(Environment *,const char *);
-   bool                           AddModifyFunction(Environment *,const char *,
-                                                       void (*)(Environment *,void *,void *),int);
-   bool                           AddModifyFunctionWithContext(Environment *,const char *,
-                                                                  void (*)(Environment *,void *,void *),int,void *);
-   bool                           RemoveModifyFunction(Environment *,const char *);
-
    FactBuilder                   *CreateFactBuilder(Environment *,const char *);
    bool                           FBPutSlot(FactBuilder *,const char *,CLIPSValue *);
    Fact                          *FBAssert(FactBuilder *);
@@ -229,6 +231,14 @@ struct factsData
    bool                           FMPutSlotInstance(FactModifier *,const char *,Instance *);
    bool                           FMPutSlotExternalAddress(FactModifier *,const char *,CLIPSExternalAddress *);
    bool                           FMPutSlotMultifield(FactModifier *,const char *,Multifield *);
+
+   bool                           AddModifyFunction(Environment *,const char *,ModifyCallFunction *,int,void *);
+   bool                           RemoveModifyFunction(Environment *,const char *);
+   ModifyCallFunctionItem        *AddModifyFunctionToCallList(Environment *,const char *,int,
+                                                              ModifyCallFunction *,ModifyCallFunctionItem *,void *);
+   ModifyCallFunctionItem        *RemoveModifyFunctionFromCallList(Environment *,const char *,
+                                                                   ModifyCallFunctionItem *,bool *);
+   void                           DeallocateModifyCallList(Environment *,ModifyCallFunctionItem *);
 
 #endif /* _H_factmngr */
 
