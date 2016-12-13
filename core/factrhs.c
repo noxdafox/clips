@@ -273,7 +273,7 @@ struct expr *GetRHSPattern(
    /* Check to see if the relation name is a reserved symbol. */
    /*=========================================================*/
 
-   templateName = (struct symbolHashNode *) tempToken->value;
+   templateName = (CLIPSLexeme *) tempToken->value;
 
    if (ReservedPatternSymbol(theEnv,templateName->contents,NULL))
      {
@@ -556,7 +556,7 @@ struct expr *GetAssertArgument(
 /* StringToFact: Converts the string representation */
 /*   of a fact to a fact data structure.            */
 /****************************************************/
-struct fact *StringToFact(
+Fact *StringToFact(
   Environment *theEnv,
   const char *str)
   {
@@ -628,7 +628,7 @@ struct fact *StringToFact(
    for (tempPtr = assertArgs->nextArg; tempPtr != NULL; tempPtr = tempPtr->nextArg)
      {
       EvaluateExpression(theEnv,tempPtr,&theResult);
-      factPtr->theProposition.theFields[whichField].value = theResult.value;
+      factPtr->theProposition.contents[whichField].value = theResult.value;
       whichField++;
      }
    ExpressionDeinstall(theEnv,assertArgs); /* DR0836 */

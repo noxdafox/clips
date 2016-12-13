@@ -144,7 +144,7 @@ void CheckTemplateFact(
   Environment *theEnv,
   Fact *theFact)
   {
-   struct field *sublist;
+   CLIPSValue *sublist;
    int i;
    Deftemplate *theDeftemplate;
    struct templateSlot *slotPtr;
@@ -154,7 +154,7 @@ void CheckTemplateFact(
 
    if (! GetDynamicConstraintChecking(theEnv)) return;
 
-   sublist = theFact->theProposition.theFields;
+   sublist = theFact->theProposition.contents;
 
    /*========================================================*/
    /* If the deftemplate corresponding to the first field of */
@@ -300,7 +300,7 @@ void PrintTemplateFact(
   bool separateLines,
   bool ignoreDefaults)
   {
-   struct field *sublist;
+   CLIPSValue *sublist;
    int i;
    Deftemplate *theDeftemplate;
    struct templateSlot *slotPtr;
@@ -312,7 +312,7 @@ void PrintTemplateFact(
    /*==============================*/
 
    theDeftemplate = theFact->whichDeftemplate;
-   sublist = theFact->theProposition.theFields;
+   sublist = theFact->theProposition.contents;
 
    /*=============================================*/
    /* Print the relation name of the deftemplate. */

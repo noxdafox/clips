@@ -520,7 +520,7 @@
    CLIPSModule *newModule;
    const char *moduleName;
    NSString *theStr;
-   struct fact *theFact;
+   Fact *theFact;
    CLIPSFactInstance *newFact;
    unsigned moduleCount, factCount;
 

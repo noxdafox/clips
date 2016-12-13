@@ -94,7 +94,7 @@ class Value
      friend std::ostream& operator<< (std::ostream& o, const Value* s);
      virtual std::ostream& print(std::ostream& o) const = 0;
      virtual Value *clone() const = 0; 
-	  virtual CLIPSCPPType GetCLIPSType();
+	 virtual CLIPSCPPType GetCLIPSType();
   };
 
 class VoidValue : public Value
@@ -106,7 +106,7 @@ class VoidValue : public Value
      /* virtual VoidValue& operator= (const VoidValue& s); */
      virtual std::ostream& print(std::ostream& o) const;
      virtual VoidValue *clone() const; 
-	  CLIPSCPPType GetCLIPSType();
+	 CLIPSCPPType GetCLIPSType();
   };
 
 class StringValue : public Value
@@ -119,8 +119,8 @@ class StringValue : public Value
      /* virtual StringValue& operator= (const StringValue& v); */
      virtual std::ostream& print(std::ostream& o) const;
      virtual StringValue *clone() const; 
-	  CLIPSCPPType GetCLIPSType();
-	  std::string *GetStringValue();
+	 CLIPSCPPType GetCLIPSType();
+	 std::string *GetStringValue();
 
    private:
      std::string theString;
@@ -136,8 +136,8 @@ class SymbolValue : public Value
      /* virtual SymbolValue& operator= (const SymbolValue& v); */
      virtual std::ostream& print(std::ostream& o) const;
      virtual SymbolValue *clone() const; 
-	  CLIPSCPPType GetCLIPSType();
-	  std::string *GetSymbolValue();
+	 CLIPSCPPType GetCLIPSType();
+	 std::string *GetSymbolValue();
   
    private:
      std::string theString;
@@ -170,9 +170,9 @@ class IntegerValue : public Value
      /* virtual IntegerValue& operator= (const IntegerValue& v); */
      virtual std::ostream& print(std::ostream& o) const;
      virtual IntegerValue *clone() const; 
-	  CLIPSCPPType GetCLIPSType();
-	  long long GetIntegerValue();
-	  double GetFloatValue();
+	 CLIPSCPPType GetCLIPSType();
+	 long long GetIntegerValue();
+	 double GetFloatValue();
   
    private:
      long long theInteger;
@@ -244,8 +244,8 @@ class MultifieldValue : public Value
      virtual std::ostream& print(std::ostream& o) const;
      virtual MultifieldValue *clone() const; 
      void add(Value *);
-	  CLIPSCPPType GetCLIPSType();
-	  std::vector<Value *> *GetMultifieldValue();
+	 CLIPSCPPType GetCLIPSType();
+	 std::vector<Value *> *GetMultifieldValue();
 
    private:
      std::vector<Value *> theMultifield;
@@ -262,8 +262,8 @@ class DataObject
      friend std::ostream& operator<< (std::ostream& o, const DataObject& s);
      friend std::ostream& operator<< (std::ostream& o, const DataObject* s);
      virtual std::ostream& print(std::ostream& o) const;
-	  CLIPSCPPType GetCLIPSType();
-	  Value *GetCLIPSValue();
+	 CLIPSCPPType GetCLIPSType();
+	 Value *GetCLIPSValue();
      static DataObject Void();
      static DataObject String();
      static DataObject String(char *);

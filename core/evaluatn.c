@@ -370,7 +370,7 @@ void ReturnValues(
       nextPtr = garbagePtr->next;
       ValueDeinstall(theEnv,garbagePtr);
       if ((garbagePtr->supplementalInfo != NULL) && decrementSupplementalInfo)
-        { DecrementSymbolCount(theEnv,(struct symbolHashNode *) garbagePtr->supplementalInfo); }
+        { DecrementSymbolCount(theEnv,(struct clipsLexeme *) garbagePtr->supplementalInfo); }
       rtn_struct(theEnv,udfValue,garbagePtr);
       garbagePtr = nextPtr;
      }
@@ -835,8 +835,8 @@ struct expr *ConvertValueToExpression(
 
    for (i = theValue->begin; i < (theValue->begin + theValue->range); i++)
      {
-      newItem = GenConstant(theEnv,theValue->multifieldValue->theFields[i].header->type,
-                                   theValue->multifieldValue->theFields[i].value);
+      newItem = GenConstant(theEnv,theValue->multifieldValue->contents[i].header->type,
+                                   theValue->multifieldValue->contents[i].value);
       if (last == NULL) head = newItem;
       else last->nextArg = newItem;
       last = newItem;

@@ -172,7 +172,7 @@ void GetQueryFactSlot(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   struct fact *theFact;
+   Fact *theFact;
    UDFValue temp;
    QUERY_CORE *core;
    short position;
@@ -205,13 +205,13 @@ void GetQueryFactSlot(
      }
 
    else if (FindSlot(theFact->whichDeftemplate,
-                     (struct symbolHashNode *) temp.value,&position) == NULL)
+                     (CLIPSLexeme *) temp.value,&position) == NULL)
      {
       SlotExistError(theEnv,temp.lexemeValue->contents,"fact-set query");
       return;
      }
 
-   returnValue->value = theFact->theProposition.theFields[position-1].value;
+   returnValue->value = theFact->theProposition.contents[position-1].value;
    if (returnValue->header->type == MULTIFIELD_TYPE)
      {
       returnValue->begin = 0;
@@ -339,7 +339,7 @@ void QueryFindFact(
      }
    PushQueryCore(theEnv);
    FactQueryData(theEnv)->QueryCore = get_struct(theEnv,query_core);
-   FactQueryData(theEnv)->QueryCore->solns = (struct fact **)
+   FactQueryData(theEnv)->QueryCore->solns = (Fact **)
                       gm2(theEnv,(sizeof(Fact *) * rcnt));
    FactQueryData(theEnv)->QueryCore->query = GetFirstArgument();
    if (TestForFirstInChain(theEnv,qtemplates,0) == true)
@@ -348,7 +348,7 @@ void QueryFindFact(
       returnValue->range = rcnt;
       for (i = 0 ; i < rcnt ; i++)
         {
-         returnValue->multifieldValue->theFields[i].value = FactQueryData(theEnv)->QueryCore->solns[i];
+         returnValue->multifieldValue->contents[i].value = FactQueryData(theEnv)->QueryCore->solns[i];
         }
      }
    else
@@ -411,7 +411,7 @@ void QueryFindAllFacts(
      {
       for (i = 0 , j = (unsigned) returnValue->range ; i < rcnt ; i++ , j++)
         {
-         returnValue->multifieldValue->theFields[j].value = FactQueryData(theEnv)->QueryCore->soln_set->soln[i];
+         returnValue->multifieldValue->contents[j].value = FactQueryData(theEnv)->QueryCore->soln_set->soln[i];
         }
       returnValue->range = (long) j;
       PopQuerySoln(theEnv);
@@ -804,9 +804,9 @@ static QUERY_TEMPLATE *FormChain(
 
       for (i = val->begin ; i < (val->begin + val->range) ; i++)
         {
-         if (val->multifieldValue->theFields[i].header->type == SYMBOL_TYPE)
+         if (val->multifieldValue->contents[i].header->type == SYMBOL_TYPE)
            {
-            templateName = val->multifieldValue->theFields[i].lexemeValue->contents;
+            templateName = val->multifieldValue->contents[i].lexemeValue->contents;
 
             templatePtr = (Deftemplate *)
                           FindImportedConstruct(theEnv,"deftemplate",NULL,templateName,
@@ -922,7 +922,7 @@ static bool TestForFirstFactInTemplate(
   QUERY_TEMPLATE *qchain,
   int indx)
   {
-   struct fact *theFact;
+   Fact *theFact;
    UDFValue temp;
    CLIPSBlock gcBlock;
 
@@ -1024,7 +1024,7 @@ static void TestEntireTemplate(
   QUERY_TEMPLATE *qchain,
   int indx)
   {
-   struct fact *theFact;
+   Fact *theFact;
    UDFValue temp;
    CLIPSBlock gcBlock;
 
@@ -1093,7 +1093,7 @@ static void TestEntireTemplate(
   INPUTS       : None
   RETURNS      : Nothing useful
   SIDE EFFECTS : Global list and count updated
-  NOTES        : Solutions are stored as sequential arrays of struct fact *
+  NOTES        : Solutions are stored as sequential arrays of Fact *
  ***************************************************************************/
 static void AddSolution(
   Environment *theEnv)
@@ -1102,7 +1102,7 @@ static void AddSolution(
    unsigned i;
 
    new_soln = (QUERY_SOLN *) gm2(theEnv,(int) sizeof(QUERY_SOLN));
-   new_soln->soln = (struct fact **)
+   new_soln->soln = (Fact **)
                     gm2(theEnv,(sizeof(Fact *) * (FactQueryData(theEnv)->QueryCore->soln_size)));
    for (i = 0 ; i < FactQueryData(theEnv)->QueryCore->soln_size ; i++)
      new_soln->soln[i] = FactQueryData(theEnv)->QueryCore->solns[i];

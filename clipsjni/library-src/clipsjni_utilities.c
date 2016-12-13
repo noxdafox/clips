@@ -53,8 +53,8 @@ jobject ConvertDataObject(
         for (i = 0; i < theDO->multifieldValue->length; i++)
          {
           tresult = ConvertSingleFieldValue(env,javaEnv,clipsEnv,
-                                            theList->theFields[i].header->type,
-                                            theList->theFields[i].value);
+                                            theList->contents[i].header->type,
+                                            theList->contents[i].value);
           
           if (tresult != NULL)
              { (*env)->CallBooleanMethod(env,result,CLIPSJNIData(clipsEnv)->arrayListAddMethod,tresult); }
@@ -289,7 +289,7 @@ void ConvertPrimitiveValueToDataObject(
             jobject mfo = (*env)->CallObjectMethod(env,theValue,CLIPSJNIData(theEnv)->multifieldValueGetMethod,i);
             int mft = (*env)->CallIntMethod(env,mfo,CLIPSJNIData(theEnv)->getCLIPSTypeValueMethod);
             void *mfv = ConvertSingleFieldPrimitiveValue(theEnv,mft,mfo);  
-            result->theFields[i].value = mfv;
+            result->contents[i].value = mfv;
            }
            
          theDO->begin = 0;

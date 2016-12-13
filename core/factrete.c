@@ -69,10 +69,10 @@ bool FactPNGetVar1(
   UDFValue *returnValue)
   {
    unsigned short theField, theSlot;
-   struct fact *factPtr;
-   struct field *fieldPtr;
+   Fact *factPtr;
+   CLIPSValue *fieldPtr;
    struct multifieldMarker *marks;
-   struct multifield *segmentPtr;
+   Multifield *segmentPtr;
    int extent;
    struct factGetVarPN1Call *hack;
 
@@ -107,7 +107,7 @@ bool FactPNGetVar1(
    if (hack->allFields)
      {
       theSlot = hack->whichSlot;
-      fieldPtr = &factPtr->theProposition.theFields[theSlot];
+      fieldPtr = &factPtr->theProposition.contents[theSlot];
       returnValue->value = fieldPtr->value;
       if (returnValue->header->type == MULTIFIELD_TYPE)
         {
@@ -129,7 +129,7 @@ bool FactPNGetVar1(
 
    theField = hack->whichField;
    theSlot = hack->whichSlot;
-   fieldPtr = &factPtr->theProposition.theFields[theSlot];
+   fieldPtr = &factPtr->theProposition.contents[theSlot];
 
    /*==========================================================*/
    /* Retrieve a value from a multifield slot. First determine */
@@ -158,7 +158,7 @@ bool FactPNGetVar1(
    /*========================================================*/
 
    segmentPtr = fieldPtr->multifieldValue;
-   fieldPtr = &segmentPtr->theFields[theField];
+   fieldPtr = &segmentPtr->contents[theField];
 
    returnValue->value = fieldPtr->value;
 
@@ -175,9 +175,9 @@ bool FactPNGetVar2(
   void *theValue,
   UDFValue *returnValue)
   {
-   struct fact *factPtr;
+   Fact *factPtr;
    struct factGetVarPN2Call *hack;
-   struct field *fieldPtr;
+   CLIPSValue *fieldPtr;
 
    /*==========================================*/
    /* Retrieve the arguments for the function. */
@@ -195,7 +195,7 @@ bool FactPNGetVar2(
    /* Extract the value from the specified slot. */
    /*============================================*/
 
-   fieldPtr = &factPtr->theProposition.theFields[hack->whichSlot];
+   fieldPtr = &factPtr->theProposition.contents[hack->whichSlot];
 
    returnValue->value = fieldPtr->value;
 
@@ -212,9 +212,9 @@ bool FactPNGetVar3(
   void *theValue,
   UDFValue *returnValue)
   {
-   struct fact *factPtr;
-   struct multifield *segmentPtr;
-   struct field *fieldPtr;
+   Fact *factPtr;
+   Multifield *segmentPtr;
+   CLIPSValue *fieldPtr;
    struct factGetVarPN3Call *hack;
 
    /*==========================================*/
@@ -233,7 +233,7 @@ bool FactPNGetVar3(
    /* Get the multifield value from which the data is retrieved. */
    /*============================================================*/
 
-   segmentPtr = factPtr->theProposition.theFields[hack->whichSlot].multifieldValue;
+   segmentPtr = factPtr->theProposition.contents[hack->whichSlot].multifieldValue;
 
    /*=========================================*/
    /* If the beginning and end flags are set, */
@@ -253,9 +253,9 @@ bool FactPNGetVar3(
    /*=====================================================*/
 
    if (hack->fromBeginning)
-     { fieldPtr = &segmentPtr->theFields[hack->beginOffset]; }
+     { fieldPtr = &segmentPtr->contents[hack->beginOffset]; }
    else
-     { fieldPtr = &segmentPtr->theFields[segmentPtr->length - (hack->endOffset + 1)]; }
+     { fieldPtr = &segmentPtr->contents[segmentPtr->length - (hack->endOffset + 1)]; }
 
    returnValue->value = fieldPtr->value;
 
@@ -276,7 +276,7 @@ bool FactPNConstant1(
 #pragma unused(returnValue)
 #endif
    struct factConstantPN1Call *hack;
-   struct field *fieldPtr;
+   CLIPSValue *fieldPtr;
    struct expr *theConstant;
 
    /*==========================================*/
@@ -289,7 +289,7 @@ bool FactPNConstant1(
    /* Extract the value from the specified slot. */
    /*============================================*/
 
-   fieldPtr = &FactData(theEnv)->CurrentPatternFact->theProposition.theFields[hack->whichSlot];
+   fieldPtr = &FactData(theEnv)->CurrentPatternFact->theProposition.contents[hack->whichSlot];
 
    /*====================================*/
    /* Compare the value to the constant. */
@@ -326,9 +326,9 @@ bool FactPNConstant2(
 #pragma unused(returnValue)
 #endif
    struct factConstantPN2Call *hack;
-   struct field *fieldPtr;
+   CLIPSValue *fieldPtr;
    struct expr *theConstant;
-   struct multifield *segmentPtr;
+   Multifield *segmentPtr;
 
    /*==========================================*/
    /* Retrieve the arguments for the function. */
@@ -343,17 +343,17 @@ bool FactPNConstant2(
    /* multifield slots.                                        */
    /*==========================================================*/
 
-   fieldPtr = &FactData(theEnv)->CurrentPatternFact->theProposition.theFields[hack->whichSlot];
+   fieldPtr = &FactData(theEnv)->CurrentPatternFact->theProposition.contents[hack->whichSlot];
 
    if (fieldPtr->header->type == MULTIFIELD_TYPE)
      {
       segmentPtr = fieldPtr->multifieldValue;
 
       if (hack->fromBeginning)
-        { fieldPtr = &segmentPtr->theFields[hack->offset]; }
+        { fieldPtr = &segmentPtr->contents[hack->offset]; }
       else
         {
-         fieldPtr = &segmentPtr->theFields[segmentPtr->length -
+         fieldPtr = &segmentPtr->contents[segmentPtr->length -
                     (hack->offset + 1)];
         }
      }
@@ -387,13 +387,13 @@ bool FactJNGetVar1(
   UDFValue *returnValue)
   {
    unsigned short theField, theSlot;
-   struct fact *factPtr;
-   struct field *fieldPtr;
+   Fact *factPtr;
+   CLIPSValue *fieldPtr;
    struct multifieldMarker *marks;
    Multifield *segmentPtr;
    int extent;
    struct factGetVarJN1Call *hack;
-   struct multifield *theSlots = NULL;
+   Multifield *theSlots = NULL;
 
    /*==========================================*/
    /* Retrieve the arguments for the function. */
@@ -455,7 +455,7 @@ bool FactJNGetVar1(
    if (hack->allFields)
      {
       theSlot = hack->whichSlot;
-      fieldPtr = &theSlots->theFields[theSlot];
+      fieldPtr = &theSlots->contents[theSlot];
       returnValue->value = fieldPtr->value;
       if (returnValue->header->type == MULTIFIELD_TYPE)
         {
@@ -477,7 +477,7 @@ bool FactJNGetVar1(
 
    theField = hack->whichField;
    theSlot = hack->whichSlot;
-   fieldPtr = &theSlots->theFields[theSlot];
+   fieldPtr = &theSlots->contents[theSlot];
 
    if (fieldPtr->header->type != MULTIFIELD_TYPE)
      {
@@ -511,8 +511,8 @@ bool FactJNGetVar1(
    /* a multifield slot. Just return the type and value.     */
    /*========================================================*/
 
-   segmentPtr = theSlots->theFields[theSlot].multifieldValue;
-   fieldPtr = &segmentPtr->theFields[theField];
+   segmentPtr = theSlots->contents[theSlot].multifieldValue;
+   fieldPtr = &segmentPtr->contents[theField];
 
    returnValue->value = fieldPtr->value;
 
@@ -529,9 +529,9 @@ bool FactJNGetVar2(
   void *theValue,
   UDFValue *returnValue)
   {
-   struct fact *factPtr;
+   Fact *factPtr;
    struct factGetVarJN2Call *hack;
-   struct field *fieldPtr;
+   CLIPSValue *fieldPtr;
 
    /*==========================================*/
    /* Retrieve the arguments for the function. */
@@ -560,9 +560,9 @@ bool FactJNGetVar2(
 
    if ((factPtr->basisSlots != NULL) &&
        (! EngineData(theEnv)->JoinOperationInProgress))
-     { fieldPtr = &factPtr->basisSlots->theFields[hack->whichSlot]; }
+     { fieldPtr = &factPtr->basisSlots->contents[hack->whichSlot]; }
    else
-     { fieldPtr = &factPtr->theProposition.theFields[hack->whichSlot]; }
+     { fieldPtr = &factPtr->theProposition.contents[hack->whichSlot]; }
 
    returnValue->value = fieldPtr->value;
 
@@ -579,9 +579,9 @@ bool FactJNGetVar3(
   void *theValue,
   UDFValue *returnValue)
   {
-   struct fact *factPtr;
-   struct multifield *segmentPtr;
-   struct field *fieldPtr;
+   Fact *factPtr;
+   Multifield *segmentPtr;
+   CLIPSValue *fieldPtr;
    struct factGetVarJN3Call *hack;
 
    /*==========================================*/
@@ -611,9 +611,9 @@ bool FactJNGetVar3(
 
    if ((factPtr->basisSlots != NULL) &&
        (! EngineData(theEnv)->JoinOperationInProgress))
-     { segmentPtr = factPtr->basisSlots->theFields[hack->whichSlot].multifieldValue; }
+     { segmentPtr = factPtr->basisSlots->contents[hack->whichSlot].multifieldValue; }
    else
-     { segmentPtr = factPtr->theProposition.theFields[hack->whichSlot].multifieldValue; }
+     { segmentPtr = factPtr->theProposition.contents[hack->whichSlot].multifieldValue; }
 
    /*=========================================*/
    /* If the beginning and end flags are set, */
@@ -633,9 +633,9 @@ bool FactJNGetVar3(
    /*=====================================================*/
 
    if (hack->fromBeginning)
-     { fieldPtr = &segmentPtr->theFields[hack->beginOffset]; }
+     { fieldPtr = &segmentPtr->contents[hack->beginOffset]; }
    else
-     { fieldPtr = &segmentPtr->theFields[segmentPtr->length - (hack->endOffset + 1)]; }
+     { fieldPtr = &segmentPtr->contents[segmentPtr->length - (hack->endOffset + 1)]; }
 
    returnValue->value = fieldPtr->value;
 
@@ -668,7 +668,7 @@ bool FactSlotLength(
       extraOffset += ((tempMark->endPosition - tempMark->startPosition) + 1);
      }
 
-   segmentPtr = FactData(theEnv)->CurrentPatternFact->theProposition.theFields[hack->whichSlot].multifieldValue;
+   segmentPtr = FactData(theEnv)->CurrentPatternFact->theProposition.contents[hack->whichSlot].multifieldValue;
 
    if (segmentPtr->length < (hack->minLength + extraOffset))
      { return false; }
@@ -693,7 +693,7 @@ bool FactJNCompVars1(
 #pragma unused(theResult)
 #endif
    int p1, e1, p2, e2;
-   struct fact *fact1, *fact2;
+   Fact *fact1, *fact2;
    struct factCompVarsJN1Call *hack;
 
    /*=========================================*/
@@ -723,8 +723,8 @@ bool FactJNCompVars1(
    e1 = (int) hack->slot1;
    e2 = (int) hack->slot2;
 
-   if (fact1->theProposition.theFields[e1].value !=
-       fact2->theProposition.theFields[e2].value)
+   if (fact1->theProposition.contents[e1].value !=
+       fact2->theProposition.contents[e2].value)
      { return((bool) hack->fail); }
 
    return((bool) hack->pass);
@@ -746,10 +746,10 @@ bool FactJNCompVars2(
 #pragma unused(theResult)
 #endif
    int p1, s1, p2, s2;
-   struct fact *fact1, *fact2;
+   Fact *fact1, *fact2;
    struct factCompVarsJN2Call *hack;
-   struct multifield *segment;
-   struct field *fieldPtr1, *fieldPtr2;
+   Multifield *segment;
+   CLIPSValue *fieldPtr1, *fieldPtr2;
 
    /*=========================================*/
    /* Retrieve the arguments to the function. */
@@ -777,28 +777,28 @@ bool FactJNCompVars2(
    /* Retrieve the values. */
    /*======================*/
 
-   if (fact1->theProposition.theFields[s1].header->type != MULTIFIELD_TYPE)
-     { fieldPtr1 = &fact1->theProposition.theFields[s1]; }
+   if (fact1->theProposition.contents[s1].header->type != MULTIFIELD_TYPE)
+     { fieldPtr1 = &fact1->theProposition.contents[s1]; }
    else
      {
-      segment = fact1->theProposition.theFields[s1].multifieldValue;
+      segment = fact1->theProposition.contents[s1].multifieldValue;
 
       if (hack->fromBeginning1)
-        { fieldPtr1 = &segment->theFields[hack->offset1]; }
+        { fieldPtr1 = &segment->contents[hack->offset1]; }
       else
-        { fieldPtr1 = &segment->theFields[segment->length - (hack->offset1 + 1)]; }
+        { fieldPtr1 = &segment->contents[segment->length - (hack->offset1 + 1)]; }
      }
 
-   if (fact2->theProposition.theFields[s2].header->type != MULTIFIELD_TYPE)
-     { fieldPtr2 = &fact2->theProposition.theFields[s2]; }
+   if (fact2->theProposition.contents[s2].header->type != MULTIFIELD_TYPE)
+     { fieldPtr2 = &fact2->theProposition.contents[s2]; }
    else
      {
-      segment = fact2->theProposition.theFields[s2].multifieldValue;
+      segment = fact2->theProposition.contents[s2].multifieldValue;
 
       if (hack->fromBeginning2)
-        { fieldPtr2 = &segment->theFields[hack->offset2]; }
+        { fieldPtr2 = &segment->contents[hack->offset2]; }
       else
-        { fieldPtr2 = &segment->theFields[segment->length - (hack->offset2 + 1)]; }
+        { fieldPtr2 = &segment->contents[segment->length - (hack->offset2 + 1)]; }
      }
 
    /*=====================*/
@@ -821,7 +821,7 @@ bool FactPNCompVars1(
   UDFValue *theResult)
   {
    bool rv;
-   struct field *fieldPtr1, *fieldPtr2;
+   CLIPSValue *fieldPtr1, *fieldPtr2;
    struct factCompVarsPN1Call *hack;
 
    /*========================================*/
@@ -829,8 +829,8 @@ bool FactPNCompVars1(
    /*========================================*/
 
    hack = (struct factCompVarsPN1Call *) ((CLIPSBitMap *) theValue)->contents;
-   fieldPtr1 = &FactData(theEnv)->CurrentPatternFact->theProposition.theFields[hack->field1];
-   fieldPtr2 = &FactData(theEnv)->CurrentPatternFact->theProposition.theFields[hack->field2];
+   fieldPtr1 = &FactData(theEnv)->CurrentPatternFact->theProposition.contents[hack->field1];
+   fieldPtr2 = &FactData(theEnv)->CurrentPatternFact->theProposition.contents[hack->field2];
 
    /*=====================*/
    /* Compare the values. */

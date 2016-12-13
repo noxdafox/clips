@@ -328,11 +328,11 @@ void ValidateFactIntegrityCommand(
 
       for (i = 0 ; i < (int) theSegment->length ; i++)
         {
-         if ((theSegment->theFields[i].header->type == SYMBOL_TYPE) ||
-             (theSegment->theFields[i].header->type == STRING_TYPE) ||
-             (theSegment->theFields[i].header->type == INSTANCE_NAME_TYPE))
+         if ((theSegment->contents[i].header->type == SYMBOL_TYPE) ||
+             (theSegment->contents[i].header->type == STRING_TYPE) ||
+             (theSegment->contents[i].header->type == INSTANCE_NAME_TYPE))
            {
-            theSymbol = theSegment->theFields[i].lexemeValue;
+            theSymbol = theSegment->contents[i].lexemeValue;
             if (theSymbol->count <= 0)
               {
                returnValue->lexemeValue = FalseSymbol(theEnv);
@@ -340,9 +340,9 @@ void ValidateFactIntegrityCommand(
               }
            }
 
-         if (theSegment->theFields[i].header->type == INTEGER_TYPE)
+         if (theSegment->contents[i].header->type == INTEGER_TYPE)
            {
-            theInteger = theSegment->theFields[i].integerValue;
+            theInteger = theSegment->contents[i].integerValue;
             if (theInteger->count <= 0)
               {
                returnValue->lexemeValue = FalseSymbol(theEnv);
@@ -350,9 +350,9 @@ void ValidateFactIntegrityCommand(
               }
            }
 
-         if (theSegment->theFields[i].header->type == FLOAT_TYPE)
+         if (theSegment->contents[i].header->type == FLOAT_TYPE)
            {
-            theFloat = theSegment->theFields[i].floatValue;
+            theFloat = theSegment->contents[i].floatValue;
             if (theFloat->count <= 0)
               {
                returnValue->lexemeValue = FalseSymbol(theEnv);

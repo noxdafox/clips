@@ -1296,7 +1296,7 @@ void GetFocusStack(
         theFocus != NULL;
         theFocus = theFocus->next, count++)
      {
-      theList->theFields[count].value = theFocus->theModule->header.name;
+      theList->contents[count].value = theFocus->theModule->header.name;
      }
   }
 

@@ -201,7 +201,7 @@ void GetDefmoduleList(
          returnValue->multifieldValue = CreateMultifield(theEnv,0L);
          return;
         }
-      theList->theFields[count].lexemeValue = CreateSymbol(theEnv,DefmoduleName(theConstruct));
+      theList->contents[count].lexemeValue = CreateSymbol(theEnv,DefmoduleName(theConstruct));
      }
   }
 

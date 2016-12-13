@@ -133,8 +133,8 @@ struct garbageFrame
    struct ephemeron *ephemeralIntegerList;
    struct ephemeron *ephemeralBitMapList;
    struct ephemeron *ephemeralExternalAddressList;
-   struct multifield *ListOfMultifields;
-   struct multifield *LastMultifield;
+   Multifield *ListOfMultifields;
+   Multifield *LastMultifield;
   };
 
 struct clipsBlock

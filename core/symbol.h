@@ -187,7 +187,7 @@ struct symbolData
 #define SymbolData(theEnv) ((struct symbolData *) GetEnvironmentData(theEnv,SYMBOL_DATA))
 
    void                           InitializeAtomTables(Environment *,CLIPSLexeme **,CLIPSFloat **,
-                                                              CLIPSInteger **,struct bitMapHashNode **,
+                                                              CLIPSInteger **,CLIPSBitMap **,
                                                               CLIPSExternalAddress **);
    CLIPSLexeme                   *AddSymbol(Environment *,const char *,unsigned short);
    CLIPSLexeme                   *FindSymbolHN(Environment *,const char *,unsigned short);
@@ -204,7 +204,7 @@ struct symbolData
    void                           DecrementSymbolCount(Environment *,CLIPSLexeme *);
    void                           DecrementFloatCount(Environment *,CLIPSFloat *);
    void                           DecrementIntegerCount(Environment *,CLIPSInteger *);
-   void                           DecrementBitMapCount(Environment *,struct bitMapHashNode *);
+   void                           DecrementBitMapCount(Environment *,CLIPSBitMap *);
    void                           DecrementExternalAddressCount(Environment *,CLIPSExternalAddress *);
    void                           RemoveEphemeralAtoms(Environment *);
    CLIPSLexeme                  **GetSymbolTable(Environment *);
@@ -213,8 +213,8 @@ struct symbolData
    void                           SetFloatTable(Environment *,CLIPSFloat **);
    CLIPSInteger                 **GetIntegerTable(Environment *);
    void                           SetIntegerTable(Environment *,CLIPSInteger **);
-   struct bitMapHashNode        **GetBitMapTable(Environment *);
-   void                           SetBitMapTable(Environment *,struct bitMapHashNode **);
+   CLIPSBitMap                  **GetBitMapTable(Environment *);
+   void                           SetBitMapTable(Environment *,CLIPSBitMap **);
    CLIPSExternalAddress         **GetExternalAddressTable(Environment *);
    void                           SetExternalAddressTable(Environment *,CLIPSExternalAddress **);
    void                           RefreshSpecialSymbols(Environment *);

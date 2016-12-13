@@ -52,7 +52,7 @@
 #include "factbld.h"
 #include "factmngr.h"
 
-   void                           FactPatternMatch(Environment *,struct fact *,
+   void                           FactPatternMatch(Environment *,Fact *,
                                                    struct factPatternNode *,int,
                                                    struct multifieldMarker *,
                                                    struct multifieldMarker *);

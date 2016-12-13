@@ -1833,7 +1833,7 @@ static bool IMModifySlots(
          temp.value = CreateMultifield(theEnv,1L);
          temp.begin = 0;
          temp.range = 1;
-         temp.multifieldValue->theFields[0].value = overrides[i].value;
+         temp.multifieldValue->contents[0].value = overrides[i].value;
         }
       else
         { CLIPSToUDFValue(&overrides[i],&temp); }

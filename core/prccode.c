@@ -1024,7 +1024,7 @@ void GrabProcWildargs(
      {
       if (ProceduralPrimitiveData(theEnv)->ProcParamArray[i].header->type != MULTIFIELD_TYPE)
         {
-         returnValue->multifieldValue->theFields[j].value = ProceduralPrimitiveData(theEnv)->ProcParamArray[i].value;
+         returnValue->multifieldValue->contents[j].value = ProceduralPrimitiveData(theEnv)->ProcParamArray[i].value;
          j++;
         }
       else
@@ -1032,7 +1032,7 @@ void GrabProcWildargs(
          val = &ProceduralPrimitiveData(theEnv)->ProcParamArray[i];
          for (k = val->begin ; k < (val->begin + val->range)  ; k++ , j++)
            {
-            returnValue->multifieldValue->theFields[j].value = val->multifieldValue->theFields[k].value;
+            returnValue->multifieldValue->contents[j].value = val->multifieldValue->contents[k].value;
            }
         }
      }

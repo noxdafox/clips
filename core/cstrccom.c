@@ -944,10 +944,10 @@ void GetConstructList(
             genstrcpy(buffer,DefmoduleName(loopModule));
             genstrcat(buffer,"::");
             genstrcat(buffer,theName->contents);
-            theList->theFields[count].value = CreateSymbol(theEnv,buffer);
+            theList->contents[count].value = CreateSymbol(theEnv,buffer);
            }
          else
-           { theList->theFields[count].value = CreateSymbol(theEnv,theName->contents); }
+           { theList->contents[count].value = CreateSymbol(theEnv,theName->contents); }
          count++;
         }
 

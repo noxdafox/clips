@@ -223,10 +223,10 @@ static int BitMapHashNodesToCode(
   int version)
   {
    int i, j;
-   struct bitMapHashNode *hashPtr;
+   CLIPSBitMap *hashPtr;
    int count;
    int numberOfEntries;
-   struct bitMapHashNode **bitMapTable;
+   CLIPSBitMap **bitMapTable;
    bool newHeader = true;
    int arrayVersion = 1;
    FILE *fp;
@@ -250,7 +250,7 @@ static int BitMapHashNodesToCode(
    if (numberOfEntries == 0) return(version);
 
    for (i = 1; i <= (numberOfEntries / ConstructCompilerData(theEnv)->MaxIndices) + 1 ; i++)
-     { fprintf(ConstructCompilerData(theEnv)->HeaderFP,"extern struct bitMapHashNode B%d_%d[];\n",ConstructCompilerData(theEnv)->ImageID,i); }
+     { fprintf(ConstructCompilerData(theEnv)->HeaderFP,"extern struct clipsBitMap B%d_%d[];\n",ConstructCompilerData(theEnv)->ImageID,i); }
 
    /*==================*/
    /* Create the file. */
@@ -272,7 +272,7 @@ static int BitMapHashNodesToCode(
         {
          if (newHeader)
            {
-            fprintf(fp,"struct bitMapHashNode B%d_%d[] = {\n",ConstructCompilerData(theEnv)->ImageID,arrayVersion);
+            fprintf(fp,"struct clipsBitMap B%d_%d[] = {\n",ConstructCompilerData(theEnv)->ImageID,arrayVersion);
             newHeader = false;
            }
            
@@ -341,10 +341,10 @@ static int BitMapValuesToCode(
   {
    int i, j, k;
    unsigned l;
-   struct bitMapHashNode *hashPtr;
+   CLIPSBitMap *hashPtr;
    int count;
    int numberOfEntries;
-   struct bitMapHashNode **bitMapTable;
+   CLIPSBitMap **bitMapTable;
    bool newHeader = true;
    int arrayVersion = 1;
    FILE *fp;
@@ -667,7 +667,7 @@ static int HashTablesToCode(
    CLIPSLexeme **symbolTable;
    CLIPSFloat **floatTable;
    CLIPSInteger **integerTable;
-   struct bitMapHashNode **bitMapTable;
+   CLIPSBitMap **bitMapTable;
 
    /*======================================*/
    /* Write the code for the symbol table. */
@@ -749,8 +749,8 @@ static int HashTablesToCode(
    if ((fp = NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,4,false)) == NULL)
      { return 0; }
 
-   fprintf(ConstructCompilerData(theEnv)->HeaderFP,"extern struct bitMapHashNode *bmht%d[];\n",ConstructCompilerData(theEnv)->ImageID);
-   fprintf(fp,"struct bitMapHashNode *bmht%d[%d] = {\n",ConstructCompilerData(theEnv)->ImageID,BITMAP_HASH_SIZE);
+   fprintf(ConstructCompilerData(theEnv)->HeaderFP,"extern struct clipsBitMap *bmht%d[];\n",ConstructCompilerData(theEnv)->ImageID);
+   fprintf(fp,"struct clipsBitMap *bmht%d[%d] = {\n",ConstructCompilerData(theEnv)->ImageID,BITMAP_HASH_SIZE);
 
    for (i = 0; i < BITMAP_HASH_SIZE; i++)
       {
@@ -820,7 +820,7 @@ void PrintIntegerReference(
 void PrintBitMapReference(
   Environment *theEnv,
   FILE *theFile,
-  struct bitMapHashNode *theBitMap)
+  CLIPSBitMap *theBitMap)
   {
    if (theBitMap == NULL) fprintf(theFile,"NULL");
    else fprintf(theFile,"&B%d_%d[%d]",

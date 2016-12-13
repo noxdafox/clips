@@ -68,7 +68,7 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static struct fact            *FactExists(Environment *,Fact *,unsigned long);
+   static Fact                   *FactExists(Environment *,Fact *,unsigned long);
    static struct factHashEntry  **CreateFactHashTable(Environment *,unsigned long);
    static void                    ResizeFactHashTable(Environment *);
    static void                    ResetFactHashTable(Environment *);
@@ -210,7 +210,7 @@ bool FactWillBeAsserted(
   Environment *theEnv,
   Fact *theFact)
   {
-   struct fact *tempPtr;
+   Fact *tempPtr;
    unsigned long hashValue;
 
    if (FactData(theEnv)->FactDuplication) return true;
@@ -234,7 +234,7 @@ unsigned long HandleFactDuplication(
   Fact *theFact,
   bool *duplicate)
   {
-   struct fact *tempPtr;
+   Fact *tempPtr;
    unsigned long hashValue;
    *duplicate = false;
 

@@ -1355,7 +1355,7 @@ void SetLocaleFunction(
    /* Change the value of the locale to the one specified. */
    /*======================================================*/
 
-   DecrementSymbolCount(theEnv,(struct symbolHashNode *) IOFunctionData(theEnv)->locale);
+   DecrementSymbolCount(theEnv,IOFunctionData(theEnv)->locale);
    IOFunctionData(theEnv)->locale = theArg.lexemeValue;
    IncrementSymbolCount(IOFunctionData(theEnv)->locale);
   }

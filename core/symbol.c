@@ -195,7 +195,7 @@ void InitializeAtomTables(
    for (i = 0; i < EXTERNAL_ADDRESS_HASH_SIZE; i++) SymbolData(theEnv)->ExternalAddressTable[i] = NULL;
 #endif
 
-   theEnv->VoidConstant = get_struct(theEnv,voidHashNode);
+   theEnv->VoidConstant = get_struct(theEnv,clipsVoid);
    theEnv->VoidConstant->th.type = VOID_TYPE;
   }
 
@@ -232,7 +232,7 @@ static void DeallocateSymbolData(
          if (! shPtr->permanent)
            {
             rm(theEnv,(void *) shPtr->contents,strlen(shPtr->contents)+1);
-            rtn_struct(theEnv,symbolHashNode,shPtr);
+            rtn_struct(theEnv,clipsLexeme,shPtr);
            }
          shPtr = nextSHPtr;
         }
@@ -246,7 +246,7 @@ static void DeallocateSymbolData(
         {
          nextFHPtr = fhPtr->next;
          if (! fhPtr->permanent)
-           { rtn_struct(theEnv,floatHashNode,fhPtr); }
+           { rtn_struct(theEnv,clipsFloat,fhPtr); }
          fhPtr = nextFHPtr;
         }
      }
@@ -259,7 +259,7 @@ static void DeallocateSymbolData(
         {
          nextIHPtr = ihPtr->next;
          if (! ihPtr->permanent)
-           { rtn_struct(theEnv,integerHashNode,ihPtr); }
+           { rtn_struct(theEnv,clipsInteger,ihPtr); }
          ihPtr = nextIHPtr;
         }
      }
@@ -274,7 +274,7 @@ static void DeallocateSymbolData(
          if (! bmhPtr->permanent)
            {
             rm(theEnv,(void *) bmhPtr->contents,bmhPtr->size);
-            rtn_struct(theEnv,bitMapHashNode,bmhPtr);
+            rtn_struct(theEnv,clipsBitMap,bmhPtr);
            }
          bmhPtr = nextBMHPtr;
         }
@@ -289,7 +289,7 @@ static void DeallocateSymbolData(
          nextEAHPtr = eahPtr->next;
          if (! eahPtr->permanent)
            {
-            rtn_struct(theEnv,externalAddressHashNode,eahPtr);
+            rtn_struct(theEnv,clipsExternalAddress,eahPtr);
            }
          eahPtr = nextEAHPtr;
         }
@@ -420,7 +420,7 @@ CLIPSLexeme *AddSymbol(
     /* for this symbol table location.                  */
     /*==================================================*/
 
-    peek = get_struct(theEnv,symbolHashNode);
+    peek = get_struct(theEnv,clipsLexeme);
 
     if (past == NULL) SymbolData(theEnv)->SymbolTable[tally] = peek;
     else past->next = peek;
@@ -515,7 +515,7 @@ CLIPSFloat *CreateFloat(
     /* for this hash location.                         */
     /*=================================================*/
 
-    peek = get_struct(theEnv,floatHashNode);
+    peek = get_struct(theEnv,clipsFloat);
 
     if (past == NULL) SymbolData(theEnv)->FloatTable[tally] = peek;
     else past->next = peek;
@@ -581,7 +581,7 @@ CLIPSInteger *CreateInteger(
     /* for this hash location.                        */
     /*================================================*/
 
-    peek = get_struct(theEnv,integerHashNode);
+    peek = get_struct(theEnv,clipsInteger);
     if (past == NULL) SymbolData(theEnv)->IntegerTable[tally] = peek;
     else past->next = peek;
 
@@ -683,7 +683,7 @@ void *AddBitMap(
     /* for this hash table location.  Return the        */
     /*==================================================*/
 
-    peek = get_struct(theEnv,bitMapHashNode);
+    peek = get_struct(theEnv,clipsBitMap);
     if (past == NULL) SymbolData(theEnv)->BitMapTable[tally] = peek;
     else past->next = peek;
 
@@ -756,7 +756,7 @@ void *AddExternalAddress(
     /* of entries for this hash table location.        */
     /*=================================================*/
 
-    peek = get_struct(theEnv,externalAddressHashNode);
+    peek = get_struct(theEnv,clipsExternalAddress);
     if (past == NULL) SymbolData(theEnv)->ExternalAddressTable[tally] = peek;
     else past->next = peek;
 
@@ -1094,7 +1094,7 @@ static void RemoveHashNode(
   int type)
   {
    GENERIC_HN *previousNode, *currentNode;
-   struct externalAddressHashNode *theAddress;
+   CLIPSExternalAddress *theAddress;
 
    /*=============================================*/
    /* Find the entry in the specified hash table. */
@@ -1142,7 +1142,7 @@ static void RemoveHashNode(
      }
    else if (type == EXTERNAL_ADDRESS_TYPE)
      {
-      theAddress = (struct externalAddressHashNode *) theValue;
+      theAddress = (CLIPSExternalAddress *) theValue;
 
       if ((EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type] != NULL) &&
           (EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type]->discardFunction != NULL))

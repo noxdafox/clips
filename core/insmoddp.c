@@ -832,7 +832,7 @@ static void ModifyMsgHandlerSupport(
             temp.value = CreateMultifield(theEnv,1L);
             temp.begin = 0;
             temp.range = 1;
-            temp.multifieldValue->theFields[0].value = slotOverrides->value;
+            temp.multifieldValue->contents[0].value = slotOverrides->value;
             newval = &temp;
            }
          else
@@ -956,7 +956,7 @@ static void DuplicateMsgHandlerSupport(
             temp.value = CreateMultifield(theEnv,1L);
             temp.begin = 0;
             temp.range = 1;
-            temp.multifieldValue->theFields[0].value = slotOverrides->value;
+            temp.multifieldValue->contents[0].value = slotOverrides->value;
             newval = &temp;
            }
          else

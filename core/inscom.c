@@ -956,7 +956,7 @@ Instance *GetNextInstanceInClassAndSubclasses(
    while ((nextInstance == NULL) &&
           (iterationInfo->begin < (iterationInfo->begin + iterationInfo->range)))
      {
-      theClass = (Defclass *) iterationInfo->multifieldValue->theFields[iterationInfo->begin].value;
+      theClass = (Defclass *) iterationInfo->multifieldValue->contents[iterationInfo->begin].value;
       *cptr = theClass;
       iterationInfo->begin = iterationInfo->begin + 1;
       nextInstance = theClass->instanceList;

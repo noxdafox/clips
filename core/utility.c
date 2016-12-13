@@ -126,7 +126,7 @@ static void DeallocateUtilityData(
    struct trackedMemory *tmpTM, *nextTM;
    struct garbageFrame *theGarbageFrame;
    struct ephemeron *edPtr, *nextEDPtr;
-   struct multifield *tmpMFPtr, *nextMFPtr;
+   Multifield *tmpMFPtr, *nextMFPtr;
 
    /*======================*/
    /* Free tracked memory. */

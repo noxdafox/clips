@@ -50,18 +50,18 @@
 
 #include "clips.h"
 
-void EnvUserFunctions(Environment *);
+void UserFunctions(Environment *);
 
-/***********************************************************/
-/* EnvUserFunctions: Informs the expert system environment */
-/*   of any user defined functions. In the default case,   */
-/*   there are no user defined functions. To define        */
-/*   functions, either this function must be replaced by   */
-/*   a function with the same name within this file, or    */
-/*   this function can be deleted from this file and       */
-/*   included in another file.                             */
-/***********************************************************/
-void EnvUserFunctions(
+/*********************************************************/
+/* UserFunctions: Informs the expert system environment  */
+/*   of any user defined functions. In the default case, */
+/*   there are no user defined functions. To define      */
+/*   functions, either this function must be replaced by */
+/*   a function with the same name within this file, or  */
+/*   this function can be deleted from this file and     */
+/*   included in another file.                           */
+/*********************************************************/
+void UserFunctions(
   Environment *environment)
   {
 #if MAC_XCD

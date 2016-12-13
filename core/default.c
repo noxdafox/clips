@@ -155,7 +155,7 @@ void DeriveDefaultFromConstraints(
       else theDefault->value = CreateUnmanagedMultifield(theEnv,minFields);
 
       for (; minFields > 0; minFields--)
-        { theDefault->multifieldValue->theFields[minFields-1].value = theValue; }
+        { theDefault->multifieldValue->contents[minFields-1].value = theValue; }
      }
    else
      {

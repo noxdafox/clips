@@ -243,12 +243,6 @@ void __declspec(dllexport) * __GetEnvironmentContext(
    return GetEnvironmentContext(theEnv);
   }
 
-void __declspec(dllexport) * __GetEnvironmentRouterContext(
-  Environment *theEnv)
-  {
-   return GetEnvironmentRouterContext(theEnv);
-  }
-
 bool __declspec(dllexport) __AddRouter(
   Environment *theEnv,
   const char *routerName,

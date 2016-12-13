@@ -324,9 +324,9 @@ void DefruleMatches(
 
    returnValue->value = CreateMultifield(theEnv,3L);
 
-   returnValue->multifieldValue->theFields[0].integerValue = SymbolData(theEnv)->Zero;
-   returnValue->multifieldValue->theFields[1].integerValue = SymbolData(theEnv)->Zero;
-   returnValue->multifieldValue->theFields[2].integerValue = SymbolData(theEnv)->Zero;
+   returnValue->multifieldValue->contents[0].integerValue = SymbolData(theEnv)->Zero;
+   returnValue->multifieldValue->contents[1].integerValue = SymbolData(theEnv)->Zero;
+   returnValue->multifieldValue->contents[2].integerValue = SymbolData(theEnv)->Zero;
 
    /*=================================================*/
    /* Loop through each of the disjuncts for the rule */
@@ -352,7 +352,7 @@ void DefruleMatches(
       for (joinIndex = 0; joinIndex < arraySize; joinIndex++)
         {
          alphaMatchCount += ListAlphaMatches(theEnv,&theInfo[joinIndex],output);
-         returnValue->multifieldValue->theFields[0].integerValue = CreateInteger(theEnv,alphaMatchCount);
+         returnValue->multifieldValue->contents[0].integerValue = CreateInteger(theEnv,alphaMatchCount);
         }
 
       /*================================*/
@@ -381,7 +381,7 @@ void DefruleMatches(
       for (joinIndex = 1; joinIndex < arraySize; joinIndex++)
         {
          betaMatchCount += ListBetaMatches(theEnv,theInfo,joinIndex,arraySize,output);
-         returnValue->multifieldValue->theFields[1].integerValue = CreateInteger(theEnv,betaMatchCount);
+         returnValue->multifieldValue->contents[1].integerValue = CreateInteger(theEnv,betaMatchCount);
         }
 
       /*================================*/
@@ -425,7 +425,7 @@ void DefruleMatches(
 
    if ((activations == 0) && (output == VERBOSE)) PrintRouter(theEnv,WDISPLAY," None\n");
 
-   returnValue->multifieldValue->theFields[2].integerValue = CreateInteger(theEnv,activations);
+   returnValue->multifieldValue->contents[2].integerValue = CreateInteger(theEnv,activations);
   }
 
 /****************************************************/
@@ -1023,9 +1023,9 @@ void JoinActivity(
    returnValue->range = 3;
    returnValue->value = CreateMultifield(theEnv,3L);
 
-   returnValue->multifieldValue->theFields[0].integerValue = SymbolData(theEnv)->Zero;
-   returnValue->multifieldValue->theFields[1].integerValue = SymbolData(theEnv)->Zero;
-   returnValue->multifieldValue->theFields[2].integerValue = SymbolData(theEnv)->Zero;
+   returnValue->multifieldValue->contents[0].integerValue = SymbolData(theEnv)->Zero;
+   returnValue->multifieldValue->contents[1].integerValue = SymbolData(theEnv)->Zero;
+   returnValue->multifieldValue->contents[2].integerValue = SymbolData(theEnv)->Zero;
 
    /*=================================================*/
    /* Loop through each of the disjuncts for the rule */
@@ -1203,13 +1203,13 @@ static void ListBetaJoinActivity(
       PrintRouter(theEnv,WDISPLAY,"\n");
      }
 
-   compares += returnValue->multifieldValue->theFields[0].integerValue->contents;
-   adds += returnValue->multifieldValue->theFields[1].integerValue->contents;
-   deletes += returnValue->multifieldValue->theFields[2].integerValue->contents;
+   compares += returnValue->multifieldValue->contents[0].integerValue->contents;
+   adds += returnValue->multifieldValue->contents[1].integerValue->contents;
+   deletes += returnValue->multifieldValue->contents[2].integerValue->contents;
 
-   returnValue->multifieldValue->theFields[0].integerValue = CreateInteger(theEnv,compares);
-   returnValue->multifieldValue->theFields[1].integerValue = CreateInteger(theEnv,adds);
-   returnValue->multifieldValue->theFields[2].integerValue = CreateInteger(theEnv,deletes);
+   returnValue->multifieldValue->contents[0].integerValue = CreateInteger(theEnv,compares);
+   returnValue->multifieldValue->contents[1].integerValue = CreateInteger(theEnv,adds);
+   returnValue->multifieldValue->contents[2].integerValue = CreateInteger(theEnv,deletes);
   }
 
 /*********************************************/

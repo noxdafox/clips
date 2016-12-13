@@ -666,8 +666,8 @@ bool DirectPutSlotValue(
          ====================================== */
       if (val->header->type == MULTIFIELD_TYPE)
         {
-         sp->type = val->multifieldValue->theFields[val->begin].header->type;
-         sp->value = val->multifieldValue->theFields[val->begin].value;
+         sp->type = val->multifieldValue->contents[val->begin].header->type;
+         sp->value = val->multifieldValue->contents[val->begin].value;
         }
       else
         {
@@ -687,13 +687,13 @@ bool DirectPutSlotValue(
          sp->value = CreateUnmanagedMultifield(theEnv,(unsigned long) val->range);
          for (i = 0 , j = val->begin ; i < val->range ; i++ , j++)
            {
-            sp->multifieldValue->theFields[i].value = val->multifieldValue->theFields[j].value;
+            sp->multifieldValue->contents[i].value = val->multifieldValue->contents[j].value;
            }
         }
       else
         {
          sp->multifieldValue = CreateUnmanagedMultifield(theEnv,1L);
-         sp->multifieldValue->theFields[0].value = val->value;
+         sp->multifieldValue->contents[0].value = val->value;
         }
       MultifieldInstall(theEnv,sp->multifieldValue);
       setVal->value = sp->value;
@@ -821,8 +821,8 @@ bool ValidSlotValue(
         {
          PrintErrorID(theEnv,"CSTRNCHK",1,false);
          if ((val->header->type == MULTIFIELD_TYPE) && (sd->multiple == 0))
-           PrintAtom(theEnv,WERROR,val->multifieldValue->theFields[val->begin].header->type,
-                                   val->multifieldValue->theFields[val->begin].value);
+           PrintAtom(theEnv,WERROR,val->multifieldValue->contents[val->begin].header->type,
+                                   val->multifieldValue->contents[val->begin].value);
          else
            PrintDataObject(theEnv,WERROR,val);
          PrintRouter(theEnv,WERROR," for ");

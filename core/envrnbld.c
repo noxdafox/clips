@@ -88,7 +88,7 @@
 /* GLOBAL EXTERNAL FUNCTION DEFINITIONS */
 /****************************************/
 
-   extern void                    EnvUserFunctions(Environment *);
+   extern void                    UserFunctions(Environment *);
 
 /***************************************/
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
@@ -96,14 +96,14 @@
 
    static void                    RemoveEnvironmentCleanupFunctions(struct environmentData *);
    static Environment            *CreateEnvironmentDriver(CLIPSLexeme **,CLIPSFloat **,
-                                                          CLIPSInteger **,struct bitMapHashNode **,
-                                                          struct externalAddressHashNode **,
+                                                          CLIPSInteger **,CLIPSBitMap **,
+                                                          CLIPSExternalAddress **,
                                                           struct functionDefinition *);
    static void                    SystemFunctionDefinitions(Environment *);
    static void                    InitializeKeywords(Environment *);
    static void                    InitializeEnvironment(Environment *,CLIPSLexeme **,CLIPSFloat **,
-					   								       CLIPSInteger **,struct bitMapHashNode **,
-														   struct externalAddressHashNode **,
+					   								       CLIPSInteger **,CLIPSBitMap **,
+														   CLIPSExternalAddress **,
                                                            struct functionDefinition *);
 
 /************************************************************/
@@ -123,7 +123,7 @@ Environment *CreateRuntimeEnvironment(
   CLIPSLexeme **symbolTable,
   CLIPSFloat **floatTable,
   CLIPSInteger **integerTable,
-  struct bitMapHashNode **bitmapTable,
+  CLIPSBitMap **bitmapTable,
   struct functionDefinition *functions)
   {
    return CreateEnvironmentDriver(symbolTable,floatTable,integerTable,bitmapTable,NULL,functions);
@@ -137,8 +137,8 @@ Environment *CreateEnvironmentDriver(
   CLIPSLexeme **symbolTable,
   CLIPSFloat **floatTable,
   CLIPSInteger **integerTable,
-  struct bitMapHashNode **bitmapTable,
-  struct externalAddressHashNode **externalAddressTable,
+  CLIPSBitMap **bitmapTable,
+  CLIPSExternalAddress **externalAddressTable,
   struct functionDefinition *functions)
   {
    struct environmentData *theEnvironment;
@@ -288,8 +288,8 @@ static void InitializeEnvironment(
   CLIPSLexeme **symbolTable,
   CLIPSFloat **floatTable,
   CLIPSInteger **integerTable,
-  struct bitMapHashNode **bitmapTable,
-  struct externalAddressHashNode **externalAddressTable,
+  CLIPSBitMap **bitmapTable,
+  CLIPSExternalAddress **externalAddressTable,
   struct functionDefinition *functions)
   {
    /*================================================*/
@@ -351,7 +351,7 @@ static void InitializeEnvironment(
      { InstallFunctionList(theEnvironment,functions); }
 
    SystemFunctionDefinitions(theEnvironment);
-   EnvUserFunctions(theEnvironment);
+   UserFunctions(theEnvironment);
 
    /*====================================*/
    /* Initialize the constraint manager. */

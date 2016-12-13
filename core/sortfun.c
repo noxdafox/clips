@@ -248,7 +248,7 @@ void SortFunction(
          tempMultifield = theArguments[i-2].multifieldValue;
          for (j = theArguments[i-2].begin; j < (theArguments[i-2].begin + theArguments[i-2].range); j++, k++)
            {
-            theArguments2[k].value = tempMultifield->theFields[j].value;
+            theArguments2[k].value = tempMultifield->contents[j].value;
            }
         }
       else
@@ -279,7 +279,7 @@ void SortFunction(
 
    for (i = 0; i < argumentSize; i++)
      {
-      theMultifield->theFields[i].value = theArguments2[i].value;
+      theMultifield->contents[i].value = theArguments2[i].value;
      }
 
    genfree(theEnv,theArguments2,argumentSize * sizeof(UDFValue));

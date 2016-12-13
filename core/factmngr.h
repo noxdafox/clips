@@ -101,12 +101,12 @@ struct fact
    long long factIndex;
    unsigned long hashValue;
    unsigned int garbage : 1;
-   struct fact *previousFact;
-   struct fact *nextFact;
-   struct fact *previousTemplateFact;
-   struct fact *nextTemplateFact;
-   struct multifield *basisSlots;
-   struct multifield theProposition;
+   Fact *previousFact;
+   Fact *nextFact;
+   Fact *previousTemplateFact;
+   Fact *nextTemplateFact;
+   Multifield *basisSlots;
+   Multifield theProposition;
   };
 
 struct factBuilder
@@ -135,9 +135,9 @@ struct factsData
    bool WatchFacts;
 #endif
    Fact DummyFact;
-   struct fact *GarbageFacts;
-   struct fact *LastFact;
-   struct fact *FactList;
+   Fact *GarbageFacts;
+   Fact *LastFact;
+   Fact *FactList;
    long long NextFactIndex;
    unsigned long NumberOfFacts;
    struct callFunctionItemWithArg *ListOfAssertFunctions;
@@ -154,7 +154,7 @@ struct factsData
    unsigned long FactHashTableSize;
    bool FactDuplication;
 #if DEFRULE_CONSTRUCT
-   struct fact             *CurrentPatternFact;
+   Fact                    *CurrentPatternFact;
    struct multifieldMarker *CurrentPatternMarks;
 #endif
    long LastModuleIndex;
@@ -175,7 +175,7 @@ struct factsData
    bool                           Retract(Environment *,Fact *);
    bool                           RetractDriver(Environment *,Fact *);
    void                           RemoveAllFacts(Environment *);
-   struct fact                   *CreateFactBySize(Environment *,unsigned);
+   Fact                          *CreateFactBySize(Environment *,unsigned);
    void                           FactInstall(Environment *,Fact *);
    void                           FactDeinstall(Environment *,Fact *);
    Fact                          *GetNextFact(Environment *,Fact *);

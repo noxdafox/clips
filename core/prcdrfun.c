@@ -478,7 +478,7 @@ void BindFunction(
      {
       if (lastBind == NULL) ProcedureFunctionData(theEnv)->BindList = theBind->next;
       else lastBind->next = theBind->next;
-      DecrementSymbolCount(theEnv,(struct symbolHashNode *) theBind->supplementalInfo);
+      DecrementSymbolCount(theEnv,(CLIPSLexeme *) theBind->supplementalInfo);
       rtn_struct(theEnv,udfValue,theBind);
       returnValue->value = FalseSymbol(theEnv);
      }

@@ -237,7 +237,7 @@ static void DeallocateFactData(
   Environment *theEnv)
   {
    struct factHashEntry *tmpFHEPtr, *nextFHEPtr;
-   struct fact *tmpFactPtr, *nextFactPtr;
+   Fact *tmpFactPtr, *nextFactPtr;
    unsigned long i;
    struct patternMatch *theMatch, *tmpMatch;
 
@@ -349,7 +349,7 @@ void DecrementFactBasisCount(
   Environment *theEnv,
   Fact *factPtr)
   {
-   struct multifield *theSegment;
+   Multifield *theSegment;
    int i;
 
    DecrementFactCount(theEnv,factPtr);
@@ -363,7 +363,7 @@ void DecrementFactBasisCount(
      { theSegment = &factPtr->theProposition; }
 
    for (i = 0 ; i < (int) theSegment->length ; i++)
-     { AtomDeinstall(theEnv,theSegment->theFields[i].header->type,theSegment->theFields[i].value); }
+     { AtomDeinstall(theEnv,theSegment->contents[i].header->type,theSegment->contents[i].value); }
 
    if ((factPtr->basisSlots != NULL) && (factPtr->basisSlots->busyCount == 0))
      {
@@ -380,7 +380,7 @@ void IncrementFactBasisCount(
   Environment *theEnv,
   Fact *factPtr)
   {
-   struct multifield *theSegment;
+   Multifield *theSegment;
    int i;
 
    IncrementFactCount(theEnv,factPtr);
@@ -403,7 +403,7 @@ void IncrementFactBasisCount(
 
    for (i = 0 ; i < (int) theSegment->length ; i++)
      {
-      AtomInstall(theEnv,theSegment->theFields[i].header->type,theSegment->theFields[i].value);
+      AtomInstall(theEnv,theSegment->contents[i].header->type,theSegment->contents[i].value);
      }
   }
 
@@ -454,7 +454,7 @@ void PrintFact(
 
    PrintRouter(theEnv,logicalName,factPtr->whichDeftemplate->header.name->contents);
 
-   theMultifield = factPtr->theProposition.theFields[0].multifieldValue;
+   theMultifield = factPtr->theProposition.contents[0].multifieldValue;
    if (theMultifield->length != 0)
      {
       PrintRouter(theEnv,logicalName," ");
@@ -689,7 +689,7 @@ static void RemoveGarbageFacts(
   Environment *theEnv,
   void *context)
   {
-   struct fact *factPtr, *nextPtr, *lastPtr = NULL;
+   Fact *factPtr, *nextPtr, *lastPtr = NULL;
 
    factPtr = FactData(theEnv)->GarbageFacts;
 
@@ -718,7 +718,7 @@ Fact *AssertDriver(
   {
    unsigned long hashValue;
    unsigned long length, i;
-   struct field *theField;
+   CLIPSValue *theField;
    bool duplicate;
    struct callFunctionItemWithArg *theAssertFunction;
 
@@ -740,7 +740,7 @@ Fact *AssertDriver(
    /*=============================================================*/
 
    length = theFact->theProposition.length;
-   theField = theFact->theProposition.theFields;
+   theField = theFact->theProposition.contents;
 
    for (i = 0; i < length; i++)
      {
@@ -948,7 +948,7 @@ Fact *CreateFact(
       for (i = 0;
            i < (int) theDeftemplate->numberOfSlots;
            i++)
-        { newFact->theProposition.theFields[i].voidValue = VoidConstant(theEnv); }
+        { newFact->theProposition.contents[i].voidValue = VoidConstant(theEnv); }
      }
 
    /*===========================================*/
@@ -958,7 +958,7 @@ Fact *CreateFact(
    else
      {
       newFact = CreateFactBySize(theEnv,1);
-      newFact->theProposition.theFields[0].value = CreateUnmanagedMultifield(theEnv,0L);
+      newFact->theProposition.contents[0].value = CreateUnmanagedMultifield(theEnv,0L);
      }
 
    /*===============================*/
@@ -998,7 +998,7 @@ bool GetFactSlot(
    if (theDeftemplate->implied)
      {
       if (slotName != NULL) return false;
-      theValue->value = theFact->theProposition.theFields[0].value;
+      theValue->value = theFact->theProposition.contents[0].value;
       return true;
      }
 
@@ -1016,7 +1016,7 @@ bool GetFactSlot(
    /* slot value wasn't available.                         */
    /*======================================================*/
 
-   theValue->value = theFact->theProposition.theFields[whichSlot-1].value;
+   theValue->value = theFact->theProposition.contents[whichSlot-1].value;
 
    if (theValue->header->type == VOID_TYPE) return false;
 
@@ -1054,10 +1054,10 @@ bool PutFactSlot(
       if ((slotName != NULL) || (theValue->header->type != MULTIFIELD_TYPE))
         { return false; }
 
-      if (theFact->theProposition.theFields[0].header->type == MULTIFIELD_TYPE)
-        { ReturnMultifield(theEnv,theFact->theProposition.theFields[0].multifieldValue); }
+      if (theFact->theProposition.contents[0].header->type == MULTIFIELD_TYPE)
+        { ReturnMultifield(theEnv,theFact->theProposition.contents[0].multifieldValue); }
 
-      theFact->theProposition.theFields[0].value = CopyMultifield(theEnv,theValue->multifieldValue);
+      theFact->theProposition.contents[0].value = CopyMultifield(theEnv,theValue->multifieldValue);
 
       return true;
      }
@@ -1083,13 +1083,13 @@ bool PutFactSlot(
    /* Set the slot value. */
    /*=====================*/
 
-   if (theFact->theProposition.theFields[whichSlot-1].header->type == MULTIFIELD_TYPE)
-     { ReturnMultifield(theEnv,theFact->theProposition.theFields[whichSlot-1].multifieldValue); }
+   if (theFact->theProposition.contents[whichSlot-1].header->type == MULTIFIELD_TYPE)
+     { ReturnMultifield(theEnv,theFact->theProposition.contents[whichSlot-1].multifieldValue); }
 
    if (theValue->header->type == MULTIFIELD_TYPE)
-     { theFact->theProposition.theFields[whichSlot-1].multifieldValue = CopyMultifield(theEnv,theValue->multifieldValue); }
+     { theFact->theProposition.contents[whichSlot-1].multifieldValue = CopyMultifield(theEnv,theValue->multifieldValue); }
    else
-     { theFact->theProposition.theFields[whichSlot-1].value = theValue->value; }
+     { theFact->theProposition.contents[whichSlot-1].value = theValue->value; }
 
    return true;
   }
@@ -1135,7 +1135,7 @@ bool AssignFactSlotDefaults(
       /* then move on to the next slot.    */
       /*===================================*/
 
-      if (theFact->theProposition.theFields[i].value != VoidConstant(theEnv)) continue;
+      if (theFact->theProposition.contents[i].value != VoidConstant(theEnv)) continue;
 
       /*======================================================*/
       /* Assign the default value for the slot if one exists. */
@@ -1143,7 +1143,7 @@ bool AssignFactSlotDefaults(
 
       if (DeftemplateSlotDefault(theEnv,theDeftemplate,slotPtr,&theResult,false))
         {
-         theFact->theProposition.theFields[i].value = theResult.value;
+         theFact->theProposition.contents[i].value = theResult.value;
         }
      }
 
@@ -1262,15 +1262,15 @@ bool CopyFactSlotValues(
         i < (int) theDeftemplate->numberOfSlots;
         i++, slotPtr = slotPtr->next)
      {
-      if (theSourceFact->theProposition.theFields[i].header->type != MULTIFIELD_TYPE)
+      if (theSourceFact->theProposition.contents[i].header->type != MULTIFIELD_TYPE)
         {
-         theDestFact->theProposition.theFields[i].value =
-           theSourceFact->theProposition.theFields[i].value;
+         theDestFact->theProposition.contents[i].value =
+           theSourceFact->theProposition.contents[i].value;
         }
       else
         {
-         theDestFact->theProposition.theFields[i].value = 
-           CopyMultifield(theEnv,theSourceFact->theProposition.theFields[i].multifieldValue);
+         theDestFact->theProposition.contents[i].value = 
+           CopyMultifield(theEnv,theSourceFact->theProposition.contents[i].multifieldValue);
         }
      }
 
@@ -1290,13 +1290,13 @@ Fact *CreateFactBySize(
   Environment *theEnv,
   unsigned size)
   {
-   struct fact *theFact;
+   Fact *theFact;
    unsigned newSize;
 
    if (size <= 0) newSize = 1;
    else newSize = size;
 
-   theFact = get_var_struct(theEnv,fact,sizeof(struct field) * (newSize - 1));
+   theFact = get_var_struct(theEnv,fact,sizeof(struct clipsValue) * (newSize - 1));
 
    theFact->factHeader.th.type = FACT_ADDRESS_TYPE;
    theFact->garbage = false;
@@ -1333,9 +1333,9 @@ void ReturnFact(
 
    for (i = 0; i < theSegment->length; i++)
      {
-      if (theSegment->theFields[i].header->type == MULTIFIELD_TYPE)
+      if (theSegment->contents[i].header->type == MULTIFIELD_TYPE)
         {
-         subSegment = theSegment->theFields[i].multifieldValue;
+         subSegment = theSegment->contents[i].multifieldValue;
          if (subSegment->busyCount == 0)
            { ReturnMultifield(theEnv,subSegment); }
          else
@@ -1346,7 +1346,7 @@ void ReturnFact(
    if (theFact->theProposition.length == 0) newSize = 1;
    else newSize = theFact->theProposition.length;
 
-   rtn_var_struct(theEnv,fact,sizeof(struct field) * (newSize - 1),theFact);
+   rtn_var_struct(theEnv,fact,sizeof(struct clipsValue) * (newSize - 1),theFact);
   }
 
 /*************************************************************/
@@ -1357,7 +1357,7 @@ void FactInstall(
   Environment *theEnv,
   Fact *newFact)
   {
-   struct multifield *theSegment;
+   Multifield *theSegment;
    int i;
 
    FactData(theEnv)->NumberOfFacts++;
@@ -1366,7 +1366,7 @@ void FactInstall(
 
    for (i = 0 ; i < (int) theSegment->length ; i++)
      {
-      AtomInstall(theEnv,theSegment->theFields[i].header->type,theSegment->theFields[i].value);
+      AtomInstall(theEnv,theSegment->contents[i].header->type,theSegment->contents[i].value);
      }
 
    newFact->factHeader.busyCount++;
@@ -1390,13 +1390,13 @@ void FactDeinstall(
 
    for (i = 0 ; i < (int) theSegment->length ; i++)
      {
-      if (theSegment->theFields[i].header->type == MULTIFIELD_TYPE)
-        { afterValue = theSegment->theFields[i].value; }
+      if (theSegment->contents[i].header->type == MULTIFIELD_TYPE)
+        { afterValue = theSegment->contents[i].value; }
       else
         { afterValue = theEnv->VoidConstant; }
         
-      AtomDeinstall(theEnv,theSegment->theFields[i].header->type,theSegment->theFields[i].value);
-      theSegment->theFields[i].value = afterValue;
+      AtomDeinstall(theEnv,theSegment->contents[i].header->type,theSegment->contents[i].value);
+      theSegment->contents[i].value = afterValue;
      }
 
    newFact->factHeader.busyCount--;
@@ -1551,7 +1551,7 @@ Fact *AssertString(
   Environment *theEnv,
   const char *theString)
   {
-   struct fact *theFact;
+   Fact *theFact;
    int danglingConstructs;
    danglingConstructs = ConstructData(theEnv)->DanglingConstructs;
 
@@ -2114,7 +2114,7 @@ Fact *FBAssert(
      {
       if (theFB->fbValueArray[i].voidValue != VoidConstant(theEnv))
         {
-         theFact->theProposition.theFields[i].value = theFB->fbValueArray[i].value;
+         theFact->theProposition.contents[i].value = theFB->fbValueArray[i].value;
          CVAtomDeinstall(theEnv,theFB->fbValueArray[i].value);
          theFB->fbValueArray[i].voidValue = VoidConstant(theEnv);
         }
@@ -2374,7 +2374,7 @@ bool FMPutSlot(
    /*=====================*/
 
    oldValue.value = theFM->fmValueArray[whichSlot-1].value;
-   oldFactValue.value = theFM->fmOldFact->theProposition.theFields[whichSlot-1].value;
+   oldFactValue.value = theFM->fmOldFact->theProposition.contents[whichSlot-1].value;
 
    if (oldFactValue.header->type == MULTIFIELD_TYPE)
      {
@@ -2443,15 +2443,15 @@ Fact *FMModify(
       if (theFM->fmValueArray[i].voidValue == VoidConstant(theEnv))
         {
          CLIPSValue theValue;
-         theValue.value = oldFact->theProposition.theFields[i].value;
+         theValue.value = oldFact->theProposition.contents[i].value;
          
          if (theValue.header->type == MULTIFIELD_TYPE)
-           { newFact->theProposition.theFields[i].value = CopyMultifield(theEnv,theValue.multifieldValue); }
+           { newFact->theProposition.contents[i].value = CopyMultifield(theEnv,theValue.multifieldValue); }
          else
-           { newFact->theProposition.theFields[i].value = oldFact->theProposition.theFields[i].value; }
+           { newFact->theProposition.contents[i].value = oldFact->theProposition.contents[i].value; }
         }
       else
-        { newFact->theProposition.theFields[i].value = theFM->fmValueArray[i].value; }
+        { newFact->theProposition.contents[i].value = theFM->fmValueArray[i].value; }
      }
 
    DecrementFactCount(theEnv,oldFact);
