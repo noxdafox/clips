@@ -370,7 +370,7 @@ void ReturnValues(
       nextPtr = garbagePtr->next;
       ValueDeinstall(theEnv,garbagePtr);
       if ((garbagePtr->supplementalInfo != NULL) && decrementSupplementalInfo)
-        { DecrementSymbolCount(theEnv,(struct clipsLexeme *) garbagePtr->supplementalInfo); }
+        { DecrementSymbolCount(theEnv,(CLIPSLexeme *) garbagePtr->supplementalInfo); }
       rtn_struct(theEnv,udfValue,garbagePtr);
       garbagePtr = nextPtr;
      }
@@ -1130,7 +1130,7 @@ static void NewCAddress(
       return;
      }
 
-   rv->value = AddExternalAddress(theEnv,NULL,0);
+   rv->value = CreateExternalAddress(theEnv,NULL,0);
   }
 
 /*******************************/

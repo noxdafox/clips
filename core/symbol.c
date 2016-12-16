@@ -196,7 +196,7 @@ void InitializeAtomTables(
 #endif
 
    theEnv->VoidConstant = get_struct(theEnv,clipsVoid);
-   theEnv->VoidConstant->th.type = VOID_TYPE;
+   theEnv->VoidConstant->header.type = VOID_TYPE;
   }
 
 /*************************************************/
@@ -408,7 +408,7 @@ CLIPSLexeme *AddSymbol(
 
     while (peek != NULL)
       {
-       if ((peek->th.type == theType) &&
+       if ((peek->header.type == theType) &&
            (strcmp(str,peek->contents) == 0))
          { return peek; }
        past = peek;
@@ -433,7 +433,7 @@ CLIPSLexeme *AddSymbol(
     peek->bucket = tally;
     peek->count = 0;
     peek->permanent = false;
-    peek->th.type = theType;
+    peek->header.type = theType;
 
     /*================================================*/
     /* Add the string to the list of ephemeral items. */
@@ -468,7 +468,7 @@ CLIPSLexeme *FindSymbolHN(
          peek != NULL;
          peek = peek->next)
       {
-       if (((1 << peek->th.type) & expectedType) &&
+       if (((1 << peek->header.type) & expectedType) &&
            (strcmp(str,peek->contents) == 0))
          { return(peek); }
       }
@@ -525,7 +525,7 @@ CLIPSFloat *CreateFloat(
     peek->bucket = tally;
     peek->count = 0;
     peek->permanent = false;
-    peek->th.type = FLOAT_TYPE;
+    peek->header.type = FLOAT_TYPE;
 
     /*===============================================*/
     /* Add the float to the list of ephemeral items. */
@@ -590,7 +590,7 @@ CLIPSInteger *CreateInteger(
     peek->bucket = tally;
     peek->count = 0;
     peek->permanent = false;
-    peek->th.type = INTEGER_TYPE;
+    peek->header.type = INTEGER_TYPE;
 
     /*=================================================*/
     /* Add the integer to the list of ephemeral items. */
@@ -695,7 +695,7 @@ void *AddBitMap(
     peek->count = 0;
     peek->permanent = false;
     peek->size = (unsigned short) size;
-    peek->th.type = BITMAP;
+    peek->header.type = BITMAP;
 
     /*================================================*/
     /* Add the bitmap to the list of ephemeral items. */
@@ -712,14 +712,14 @@ void *AddBitMap(
     return((void *) peek);
    }
 
-/******************************************************************/
-/* AddExternalAddress: Searches for the external address in the   */
-/*   hash table. If the external address is already in the hash   */
-/*   table, then the address of the external address is returned. */
-/*   Otherwise, the external address is hashed into the table and */
-/*   the address of the external address is also returned.        */
-/******************************************************************/
-void *AddExternalAddress(
+/*******************************************************************/
+/* CreateExternalAddress: Searches for the external address in the */
+/*   hash table. If the external address is already in the hash    */
+/*   table, then the address of the external address is returned.  */
+/*   Otherwise, the external address is hashed into the table and  */
+/*   the address of the external address is also returned.         */
+/*******************************************************************/
+CLIPSExternalAddress *CreateExternalAddress(
   Environment *theEnv,
   void *theExternalAddress,
   unsigned theType)
@@ -766,7 +766,7 @@ void *AddExternalAddress(
     peek->bucket = tally;
     peek->count = 0;
     peek->permanent = false;
-    peek->th.type = EXTERNAL_ADDRESS_TYPE;
+    peek->header.type = EXTERNAL_ADDRESS_TYPE;
 
     /*================================================*/
     /* Add the bitmap to the list of ephemeral items. */

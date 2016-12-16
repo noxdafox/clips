@@ -165,9 +165,9 @@ static int SymbolHashNodesToCode(
             newHeader = false;
            }
 
-         if (hashPtr->th.type == SYMBOL_TYPE)
+         if (hashPtr->header.type == SYMBOL_TYPE)
            { fprintf(fp,"{{SYMBOL_TYPE},"); }
-         else if (hashPtr->th.type == STRING_TYPE)
+         else if (hashPtr->header.type == STRING_TYPE)
            { fprintf(fp,"{{STRING_TYPE},"); }
          else
            { fprintf(fp,"{{INSTANCE_NAME_TYPE},"); }

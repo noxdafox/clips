@@ -211,7 +211,7 @@ void ModifyInstance(
       ====================================== */
 
    theExp.type = EXTERNAL_ADDRESS_TYPE;
-   theExp.value = AddExternalAddress(theEnv,overrides,0);
+   theExp.value = CreateExternalAddress(theEnv,overrides,0);
    theExp.argList = NULL;
    theExp.nextArg = NULL;
 
@@ -280,7 +280,7 @@ void MsgModifyInstance(
       ====================================== */
 
    theExp.type = EXTERNAL_ADDRESS_TYPE;
-   theExp.value = AddExternalAddress(theEnv,overrides,0);
+   theExp.value = CreateExternalAddress(theEnv,overrides,0);
    theExp.argList = NULL;
    theExp.nextArg = NULL;
 
@@ -360,7 +360,7 @@ void DuplicateInstance(
    theExp[0].argList = NULL;
    theExp[0].nextArg = &theExp[1];
    theExp[1].type = EXTERNAL_ADDRESS_TYPE;
-   theExp[1].value = AddExternalAddress(theEnv,overrides,0);
+   theExp[1].value = CreateExternalAddress(theEnv,overrides,0);
    theExp[1].argList = NULL;
    theExp[1].nextArg = NULL;
 
@@ -439,7 +439,7 @@ void MsgDuplicateInstance(
    theExp[0].argList = NULL;
    theExp[0].nextArg = &theExp[1];
    theExp[1].type = EXTERNAL_ADDRESS_TYPE;
-   theExp[1].value = AddExternalAddress(theEnv,overrides,0);
+   theExp[1].value = CreateExternalAddress(theEnv,overrides,0);
    theExp[1].argList = NULL;
    theExp[1].nextArg = NULL;
 

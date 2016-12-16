@@ -670,7 +670,7 @@ Instance *FindInstance(
   {
    CLIPSLexeme *isym;
 
-   isym = FindSymbolHN(theEnv,iname,LEXEME_BITS | INSTANCE_NAME_TYPE);
+   isym = FindSymbolHN(theEnv,iname,LEXEME_BITS | INSTANCE_NAME_BIT);
 
    if (isym == NULL)
      { return NULL; }
@@ -1653,7 +1653,7 @@ static InstanceSlot *FindISlotByName(
   {
    CLIPSLexeme *ssym;
 
-   ssym = FindSymbolHN(theEnv,sname,LEXEME_BITS | INSTANCE_NAME_TYPE);
+   ssym = FindSymbolHN(theEnv,sname,LEXEME_BITS | INSTANCE_NAME_BIT);
    
    if (ssym == NULL)
      { return NULL; }

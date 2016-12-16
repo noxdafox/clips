@@ -376,7 +376,7 @@ Instance *FindInstanceBySymbol(
    if (modulePosition == 0)
      {
       Instance *ins;
-      if (moduleAndInstanceName->th.type == SYMBOL_TYPE)
+      if (moduleAndInstanceName->header.type == SYMBOL_TYPE)
         { moduleAndInstanceName = CreateInstanceName(theEnv,moduleAndInstanceName->contents); }
 
       ins = InstanceData(theEnv)->InstanceTable[HashInstance(moduleAndInstanceName)];

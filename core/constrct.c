@@ -1012,7 +1012,6 @@ struct saveCallFunctionItem *RemoveSaveFunctionFromCallList(
    return head;
   }
 
-
 /*************************************************************/
 /* DeallocateSaveCallList: Removes all functions from a list */
 /*   of functions which are called to perform certain        */

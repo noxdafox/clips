@@ -861,7 +861,7 @@ struct lhsParseNode *FindVariable(
   CLIPSLexeme *name,
   struct lhsParseNode *theLHS)
   {
-   struct lhsParseNode *contents, *tmpFields = NULL;
+   struct lhsParseNode *theFields, *tmpFields = NULL;
    struct lhsParseNode *theReturnValue = NULL;
 
    /*==============================================*/
@@ -895,17 +895,17 @@ struct lhsParseNode *FindVariable(
       /* Check for the variable inside the pattern. */
       /*============================================*/
 
-      contents = theLHS->right;
-      while (contents != NULL)
+      theFields = theLHS->right;
+      while (theFields != NULL)
         {
          /*=================================================*/
          /* Go one level deeper to check a multifield slot. */
          /*=================================================*/
 
-         if (contents->multifieldSlot)
+         if (theFields->multifieldSlot)
            {
-            tmpFields = contents;
-            contents = contents->bottom;
+            tmpFields = theFields;
+            theFields = theFields->bottom;
            }
 
          /*=================================*/
@@ -913,28 +913,28 @@ struct lhsParseNode *FindVariable(
          /* is the variable being sought.   */
          /*=================================*/
 
-         if (contents == NULL)
+         if (theFields == NULL)
            { /* Do Nothing */ }
-         else if (((contents->pnType == SF_VARIABLE_NODE) ||
-                   (contents->pnType == MF_VARIABLE_NODE)) &&
-             (contents->value == (void *) name))
-           { theReturnValue = contents; }
+         else if (((theFields->pnType == SF_VARIABLE_NODE) ||
+                   (theFields->pnType == MF_VARIABLE_NODE)) &&
+             (theFields->value == (void *) name))
+           { theReturnValue = theFields; }
 
          /*============================*/
          /* Move on to the next field. */
          /*============================*/
 
-         if (contents == NULL)
+         if (theFields == NULL)
            {
-            contents = tmpFields;
+            theFields = tmpFields;
             tmpFields = NULL;
            }
-         else if ((contents->right == NULL) && (tmpFields != NULL))
+         else if ((theFields->right == NULL) && (tmpFields != NULL))
            {
-            contents = tmpFields;
+            theFields = tmpFields;
             tmpFields = NULL;
            }
-         contents = contents->right;
+         theFields = theFields->right;
         }
      }
 

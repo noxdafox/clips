@@ -209,7 +209,7 @@ void WriteNeededSymbols(
            symbolPtr = symbolPtr->next)
         {
          if (symbolPtr->neededSymbol)
-           { GenWrite(&symbolPtr->th.type,sizeof(unsigned short),fp); }
+           { GenWrite(&symbolPtr->header.type,sizeof(unsigned short),fp); }
         }
      }
      

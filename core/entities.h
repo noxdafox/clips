@@ -69,7 +69,7 @@ struct typeHeader
 /*************/
 struct clipsVoid
   {
-   TypeHeader th;
+   TypeHeader header;
   };
 
 /***************/
@@ -77,7 +77,7 @@ struct clipsVoid
 /***************/
 struct clipsLexeme
   {
-   TypeHeader th;
+   TypeHeader header;
    CLIPSLexeme *next;
    long count;
    unsigned int permanent : 1;
@@ -92,7 +92,7 @@ struct clipsLexeme
 /**************/
 struct clipsFloat
   {
-   TypeHeader th;
+   TypeHeader header;
    CLIPSFloat *next;
    long count;
    unsigned int permanent : 1;
@@ -107,7 +107,7 @@ struct clipsFloat
 /****************/
 struct clipsInteger
   {
-   TypeHeader th;
+   TypeHeader header;
    CLIPSInteger *next;
    long count;
    unsigned int permanent : 1;
@@ -122,7 +122,7 @@ struct clipsInteger
 /***************/
 struct clipsBitMap
   {
-   TypeHeader th;
+   TypeHeader header;
    CLIPSBitMap *next;
    long count;
    unsigned int permanent : 1;
@@ -138,7 +138,7 @@ struct clipsBitMap
 /************************/
 struct clipsExternalAddress
   {
-   TypeHeader th;
+   TypeHeader header;
    CLIPSExternalAddress *next;
    long count;
    unsigned int permanent : 1;
@@ -174,7 +174,7 @@ struct clipsValue
 /**************/
 struct multifield
   {
-   TypeHeader th;
+   TypeHeader header;
    unsigned busyCount;
    long length;
    Multifield *next;

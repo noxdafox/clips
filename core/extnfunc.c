@@ -680,7 +680,7 @@ void AssignErrorValue(
      { context->returnValue->value = &InstanceData(context->environment)->DummyInstance; }
 #endif
    else if (context->theFunction->unknownReturnValueType & EXTERNAL_ADDRESS_BIT)
-     { context->returnValue->value = AddExternalAddress(context->environment,NULL,0); }
+     { context->returnValue->value = CreateExternalAddress(context->environment,NULL,0); }
    else
      { context->returnValue->value = context->environment->VoidConstant; }
   }

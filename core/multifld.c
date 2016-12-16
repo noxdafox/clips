@@ -91,7 +91,7 @@ Multifield *CreateUnmanagedMultifield(
 
    theSegment = get_var_struct(theEnv,multifield,(long) sizeof(struct clipsValue) * (newSize - 1L));
 
-   theSegment->th.type = MULTIFIELD_TYPE;
+   theSegment->header.type = MULTIFIELD_TYPE;
    theSegment->length = size;
    theSegment->busyCount = 0;
    theSegment->next = NULL;
@@ -307,7 +307,7 @@ Multifield *CreateMultifield(
 
    theSegment = get_var_struct(theEnv,multifield,(long) sizeof(struct clipsValue) * (newSize - 1L));
 
-   theSegment->th.type = MULTIFIELD_TYPE;
+   theSegment->header.type = MULTIFIELD_TYPE;
    theSegment->length = size;
    theSegment->busyCount = 0;
    theSegment->next = NULL;
