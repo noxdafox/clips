@@ -131,7 +131,7 @@ void FactRelationFunction(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   struct fact *theFact;
+   Fact *theFact;
 
    theFact = GetFactAddressOrIndexArgument(context,false);
 
@@ -212,7 +212,7 @@ void FactSlotValueFunction(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   struct fact *theFact;
+   Fact *theFact;
    UDFValue theArg;
    CLIPSValue result;
 
@@ -342,7 +342,7 @@ void FactSlotNames(
    if (theFact->whichDeftemplate->implied)
      {
       theList = CreateMultifield(theEnv,(int) 1);
-      theList->theFields[0].lexemeValue = CreateSymbol(theEnv,"implied");
+      theList->contents[0].lexemeValue = CreateSymbol(theEnv,"implied");
       returnValue->value = theList;
       return;
      }
@@ -371,7 +371,7 @@ void FactSlotNames(
         theSlot != NULL;
         count++, theSlot = theSlot->next)
      {
-      theList->theFields[count].lexemeValue = theSlot->slotName;
+      theList->contents[count].lexemeValue = theSlot->slotName;
      }
   }
 
@@ -477,7 +477,7 @@ void GetFactList(
            theFact != NULL;
            theFact = GetNextFact(theEnv,theFact), count++)
         {
-         theList->theFields[count].factValue = theFact;
+         theList->contents[count].factValue = theFact;
         }
      }
    else
@@ -486,7 +486,7 @@ void GetFactList(
            theFact != NULL;
            theFact = GetNextFactInScope(theEnv,theFact), count++)
         {
-         theList->theFields[count].factValue = theFact;
+         theList->contents[count].factValue = theFact;
         }
      }
 
@@ -507,7 +507,7 @@ void PPFactFunction(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   struct fact *theFact;
+   Fact *theFact;
    const char *logicalName = NULL;      /* Avoids warning */
    bool ignoreDefaults = false;
    UDFValue theArg;

@@ -334,7 +334,7 @@ void QueryFindInstance(
       returnValue->range = rcnt;
       for (i = 0 ; i < rcnt ; i++)
         {
-         returnValue->multifieldValue->theFields[i].lexemeValue =
+         returnValue->multifieldValue->contents[i].lexemeValue =
             GetFullInstanceName(theEnv,InstanceQueryData(theEnv)->QueryCore->solns[i]);
         }
      }
@@ -398,7 +398,7 @@ void QueryFindAllInstances(
      {
       for (i = 0 , j = (unsigned) returnValue->range ; i < rcnt ; i++ , j++)
         {
-         returnValue->multifieldValue->theFields[j].lexemeValue =
+         returnValue->multifieldValue->contents[j].lexemeValue =
             GetFullInstanceName(theEnv,InstanceQueryData(theEnv)->QueryCore->soln_set->soln[i]);
         }
       returnValue->range = (long) j;
@@ -797,9 +797,9 @@ static QUERY_CLASS *FormChain(
       end = (val->begin + val->range) - 1;
       for (i = val->begin ; i <= end ; i++)
         {
-         if (val->multifieldValue->theFields[i].header->type == SYMBOL_TYPE)
+         if (val->multifieldValue->contents[i].header->type == SYMBOL_TYPE)
            {
-            className = val->multifieldValue->theFields[i].lexemeValue->contents;
+            className = val->multifieldValue->contents[i].lexemeValue->contents;
             cls = LookupDefclassByMdlOrScope(theEnv,className);
             if (cls == NULL)
               {

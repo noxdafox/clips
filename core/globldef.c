@@ -627,9 +627,9 @@ bool QGetDefglobalValue(
    if (vPtr->header->type == MULTIFIELD_TYPE)
      {
       vPtr->value = CreateMultifield(theEnv,(unsigned long) vPtr->range);
-      GenCopyMemory(struct field,vPtr->range,
-                                &vPtr->multifieldValue->theFields[0],
-                                &theGlobal->current.multifieldValue->theFields[theGlobal->current.begin]);
+      GenCopyMemory(struct clipsValue,vPtr->range,
+                                &vPtr->multifieldValue->contents[0],
+                                &theGlobal->current.multifieldValue->contents[theGlobal->current.begin]);
      }
 
    return true;

@@ -654,7 +654,7 @@ int ConstraintCheckDataObject(
   {
    long i; /* 6.04 Bug Fix */
    int rv;
-   struct field *theMultifield;
+   CLIPSValue *theMultifield;
 
    if (theConstraints == NULL) return(NO_VIOLATION);
 
@@ -664,7 +664,7 @@ int ConstraintCheckDataObject(
                                      theConstraints) == false)
         { return(CARDINALITY_VIOLATION); }
 
-      theMultifield = theData->multifieldValue->theFields;
+      theMultifield = theData->multifieldValue->contents;
       for (i = theData->begin; i < theData->begin + theData->range; i++)
         {
          if ((rv = ConstraintCheckValue(theEnv,theMultifield[i].header->type,

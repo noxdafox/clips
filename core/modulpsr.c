@@ -99,11 +99,12 @@ void SetNumberOfDefmodules(
 void AddAfterModuleDefinedFunction(
   Environment *theEnv,
   const char *name,
-  void (*func)(Environment *),
-  int priority)
+  VoidCallFunction *func,
+  int priority,
+  void *context)
   {
    DefmoduleData(theEnv)->AfterModuleDefinedFunctions =
-     AddVoidFunctionToCallList(theEnv,name,priority,func,DefmoduleData(theEnv)->AfterModuleDefinedFunctions);
+     AddVoidFunctionToCallList(theEnv,name,priority,func,DefmoduleData(theEnv)->AfterModuleDefinedFunctions,context);
   }
 
 /******************************************************/

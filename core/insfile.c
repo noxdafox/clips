@@ -1077,8 +1077,8 @@ static void MarkSingleInstance(
       if (sp->desc->multiple)
         {
          for (j = 0 ; j < sp->multifieldValue->length ; j++)
-           MarkNeededAtom(theEnv,sp->multifieldValue->theFields[j].header->type,
-                                 sp->multifieldValue->theFields[j].value);
+           MarkNeededAtom(theEnv,sp->multifieldValue->contents[j].header->type,
+                                 sp->multifieldValue->contents[j].value);
         }
       else
         MarkNeededAtom(theEnv,(int) sp->type,sp->value);
@@ -1203,8 +1203,8 @@ static void SaveSingleInstanceBinary(
       if (sp->desc->multiple)
         {
          for (j = 0 ; j < slotLen ; j++)
-           SaveAtomBinary(theEnv,sp->multifieldValue->theFields[j].header->type,
-                                 sp->multifieldValue->theFields[j].value,bsaveFP);
+           SaveAtomBinary(theEnv,sp->multifieldValue->contents[j].header->type,
+                                 sp->multifieldValue->contents[j].value,bsaveFP);
         }
       else
         SaveAtomBinary(theEnv,(unsigned short) sp->type,sp->value,bsaveFP);
@@ -1601,7 +1601,7 @@ static void CreateSlotValue(
       returnValue->range = valueCount;
       for (i = 0 ; i < valueCount ; i++)
         {
-         returnValue->multifieldValue->theFields[i].value = GetBinaryAtomValue(theEnv,&bsaValues[i-1]);
+         returnValue->multifieldValue->contents[i].value = GetBinaryAtomValue(theEnv,&bsaValues[i-1]);
         }
      }
   }

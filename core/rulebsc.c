@@ -88,12 +88,12 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    ResetDefrules(Environment *);
-   static void                    ResetDefrulesPrime(Environment *);
-   static void                    SaveDefrules(Environment *,Defmodule *,const char *);
+   static void                    ResetDefrules(Environment *,void *);
+   static void                    ResetDefrulesPrime(Environment *,void *);
+   static void                    SaveDefrules(Environment *,Defmodule *,const char *,void *);
 #if (! RUN_TIME)
-   static bool                    ClearDefrulesReady(Environment *);
-   static void                    ClearDefrules(Environment *);
+   static bool                    ClearDefrulesReady(Environment *,void *);
+   static void                    ClearDefrules(Environment *,void *);
 #endif
 
 /*************************************************************/
@@ -102,12 +102,12 @@
 void DefruleBasicCommands(
   Environment *theEnv)
   {
-   AddResetFunction(theEnv,"defrule",ResetDefrules,70);
-   AddResetFunction(theEnv,"defrule",ResetDefrulesPrime,10);
-   AddSaveFunction(theEnv,"defrule",SaveDefrules,0);
+   AddResetFunction(theEnv,"defrule",ResetDefrules,70,NULL);
+   AddResetFunction(theEnv,"defrule",ResetDefrulesPrime,10,NULL);
+   AddSaveFunction(theEnv,"defrule",SaveDefrules,0,NULL);
 #if (! RUN_TIME)
-   AddClearReadyFunction(theEnv,"defrule",ClearDefrulesReady,0);
-   AddClearFunction(theEnv,"defrule",ClearDefrules,0);
+   AddClearReadyFunction(theEnv,"defrule",ClearDefrulesReady,0,NULL);
+   AddClearFunction(theEnv,"defrule",ClearDefrules,0,NULL);
 #endif
 
 #if DEBUGGING_FUNCTIONS
@@ -144,7 +144,8 @@ void DefruleBasicCommands(
 /*   cleared.                                        */
 /*****************************************************/
 static void ResetDefrules(
-  Environment *theEnv)
+  Environment *theEnv,
+  void *context)
   {
    Defmodule *theModule;
    struct joinLink *theLink;
@@ -191,7 +192,8 @@ static void ResetDefrules(
 /* ResetDefrulesPrime: */
 /***********************/
 static void ResetDefrulesPrime(
-  Environment *theEnv)
+  Environment *theEnv,
+  void *context)
   {
    struct joinLink *theLink;
    struct partialMatch *notParent;
@@ -230,7 +232,8 @@ static void ResetDefrulesPrime(
 /* ClearDefrulesReady: Indicates whether defrules can be cleared. */
 /******************************************************************/
 static bool ClearDefrulesReady(
-  Environment *theEnv)
+  Environment *theEnv,
+  void *context)
   {
    if (EngineData(theEnv)->ExecutingRule != NULL) return false;
 
@@ -248,7 +251,8 @@ static bool ClearDefrulesReady(
 /* ClearDefrules: Pushes the MAIN module as the current focus. */
 /***************************************************************/
 static void ClearDefrules(
-  Environment *theEnv)
+  Environment *theEnv,
+  void *context)
   {
    Defmodule *theModule;
 
@@ -265,7 +269,8 @@ static void ClearDefrules(
 static void SaveDefrules(
   Environment *theEnv,
   Defmodule *theModule,
-  const char *logicalName)
+  const char *logicalName,
+  void *context)
   {
    SaveConstruct(theEnv,theModule,logicalName,DefruleData(theEnv)->DefruleConstruct);
   }

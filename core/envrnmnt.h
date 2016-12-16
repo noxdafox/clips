@@ -84,9 +84,7 @@ struct environmentData
   {
    unsigned int initialized : 1;
    void *context;
-   void *routerContext;
    void *functionContext;
-   void *callbackContext;
    CLIPSLexeme *TrueSymbol;
    CLIPSLexeme *FalseSymbol;
    CLIPSVoid *VoidConstant;
@@ -107,12 +105,8 @@ struct environmentData
    bool                           AddEnvironmentCleanupFunction(Environment *,const char *,void (*)(Environment *),int);
    void                          *GetEnvironmentContext(Environment *);
    void                          *SetEnvironmentContext(Environment *,void *);
-   void                          *GetEnvironmentRouterContext(Environment *);
-   void                          *SetEnvironmentRouterContext(Environment *,void *);
    void                          *GetEnvironmentFunctionContext(Environment *);
    void                          *SetEnvironmentFunctionContext(Environment *,void *);
-   void                          *GetEnvironmentCallbackContext(Environment *);
-   void                          *SetEnvironmentCallbackContext(Environment *,void *);
 
 #endif /* _H_envrnmnt */
 

@@ -1789,15 +1789,21 @@ Instance *IMModify(
   InstanceModifier *theIM)
   {
    Instance *rv = theIM->imOldInstance;
+#if DEFRULE_CONSTRUCT
    bool ov;
+#endif
 
    if (! BitStringHasBitsSet(theIM->changeMap,CountToBitMapSize(theIM->imOldInstance->cls->slotCount)))
      { return theIM->imOldInstance; }
-     
+
+#if DEFRULE_CONSTRUCT
    ov = SetDelayObjectPatternMatching(theIM->imEnv,true);
+#endif
    IMModifySlots(theIM->imEnv,theIM->imOldInstance,theIM->imValueArray);
+#if DEFRULE_CONSTRUCT
    SetDelayObjectPatternMatching(theIM->imEnv,ov);
-   
+#endif
+
    IMAbort(theIM);
    
    return rv;
@@ -1827,7 +1833,7 @@ static bool IMModifySlots(
          temp.value = CreateMultifield(theEnv,1L);
          temp.begin = 0;
          temp.range = 1;
-         temp.multifieldValue->theFields[0].value = overrides[i].value;
+         temp.multifieldValue->contents[0].value = overrides[i].value;
         }
       else
         { CLIPSToUDFValue(&overrides[i],&temp); }

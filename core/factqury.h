@@ -61,13 +61,13 @@ typedef struct query_template
 
 typedef struct query_soln
   {
-   struct fact **soln;
+   Fact **soln;
    struct query_soln *nxt;
   } QUERY_SOLN;
 
 typedef struct query_core
   {
-   struct fact **solns;
+   Fact **solns;
    Expression *query,*action;
    QUERY_SOLN *soln_set,*soln_bottom;
    unsigned soln_size,soln_cnt;

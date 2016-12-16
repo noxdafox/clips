@@ -66,7 +66,7 @@
 /*      6.31: Added local-time and gm-time functions.        */
 /*                                                           */
 /*      6.40: Changed restrictions from char * to            */
-/*            symbolHashNode * to support strings            */
+/*            CLIPSLexeme * to support strings               */
 /*            originating from sources that are not          */
 /*            statically allocated.                          */
 /*                                                           */
@@ -1027,8 +1027,8 @@ static void ExpandFuncMultifield(
          for (i = returnValue->begin ; i < (returnValue->begin + returnValue->range) ; i++)
            {
             newexp = get_struct(theEnv,expr);
-            newexp->type = returnValue->multifieldValue->theFields[i].header->type;
-            newexp->value = returnValue->multifieldValue->theFields[i].value;
+            newexp->type = returnValue->multifieldValue->contents[i].header->type;
+            newexp->value = returnValue->multifieldValue->contents[i].value;
             newexp->argList = NULL;
             newexp->nextArg = NULL;
             if (top == NULL)
@@ -1209,7 +1209,7 @@ void GetFunctionListFunction(
         theFunction != NULL;
         theFunction = theFunction->next, functionCount++)
      {
-      theList->theFields[functionCount].lexemeValue = theFunction->callFunctionName;
+      theList->contents[functionCount].lexemeValue = theFunction->callFunctionName;
      }
   }
 
@@ -1226,7 +1226,7 @@ void FuncallFunction(
    UDFValue theArg;
    Expression theReference;
    const char *name;
-   struct multifield *theMultifield;
+   Multifield *theMultifield;
    struct expr *lastAdd = NULL, *nextAdd, *multiAdd;
    struct functionDefinition *theFunction;
 
@@ -1298,8 +1298,8 @@ void FuncallFunction(
            theMultifield = theArg.multifieldValue;
            for (j = theArg.begin; j < (theArg.begin + theArg.range); j++)
              {
-              nextAdd = GenConstant(theEnv,theMultifield->theFields[j].header->type,
-                                           theMultifield->theFields[j].value);
+              nextAdd = GenConstant(theEnv,theMultifield->contents[j].header->type,
+                                           theMultifield->contents[j].value);
               if (multiAdd == NULL)
                 { lastAdd->argList = nextAdd; }
               else
@@ -1433,7 +1433,7 @@ void CallFunction(
    int theType;
    UDFValue theValue;
    const char *name;
-   struct externalAddressHashNode *theEA;
+   CLIPSExternalAddress *theEA;
 
    /*==================================*/
    /* Set up the default return value. */
@@ -1486,7 +1486,7 @@ void CallFunction(
 
    if (theValue.header->type == EXTERNAL_ADDRESS_TYPE)
      {
-      theEA = (struct externalAddressHashNode *) theValue.value;
+      theEA = theValue.externalAddressValue;
 
       theType = theEA->type;
 
@@ -1545,52 +1545,52 @@ static void ConvertTime(
    returnValue->range = 9;
    returnValue->value = CreateMultifield(theEnv,9L);
    
-   returnValue->multifieldValue->theFields[0].integerValue = CreateInteger(theEnv,info->tm_year + 1900);
-   returnValue->multifieldValue->theFields[1].integerValue = CreateInteger(theEnv,info->tm_mon + 1);
-   returnValue->multifieldValue->theFields[2].integerValue = CreateInteger(theEnv,info->tm_mday);
-   returnValue->multifieldValue->theFields[3].integerValue = CreateInteger(theEnv,info->tm_hour);
-   returnValue->multifieldValue->theFields[4].integerValue = CreateInteger(theEnv,info->tm_min);
-   returnValue->multifieldValue->theFields[5].integerValue = CreateInteger(theEnv,info->tm_sec);
+   returnValue->multifieldValue->contents[0].integerValue = CreateInteger(theEnv,info->tm_year + 1900);
+   returnValue->multifieldValue->contents[1].integerValue = CreateInteger(theEnv,info->tm_mon + 1);
+   returnValue->multifieldValue->contents[2].integerValue = CreateInteger(theEnv,info->tm_mday);
+   returnValue->multifieldValue->contents[3].integerValue = CreateInteger(theEnv,info->tm_hour);
+   returnValue->multifieldValue->contents[4].integerValue = CreateInteger(theEnv,info->tm_min);
+   returnValue->multifieldValue->contents[5].integerValue = CreateInteger(theEnv,info->tm_sec);
 
    switch (info->tm_wday)
      {
       case 0:
-        returnValue->multifieldValue->theFields[6].lexemeValue = CreateSymbol(theEnv,"Sunday");
+        returnValue->multifieldValue->contents[6].lexemeValue = CreateSymbol(theEnv,"Sunday");
         break;
 
       case 1:
-        returnValue->multifieldValue->theFields[6].lexemeValue = CreateSymbol(theEnv,"Monday");
+        returnValue->multifieldValue->contents[6].lexemeValue = CreateSymbol(theEnv,"Monday");
         break;
 
       case 2:
-        returnValue->multifieldValue->theFields[6].lexemeValue = CreateSymbol(theEnv,"Tuesday");
+        returnValue->multifieldValue->contents[6].lexemeValue = CreateSymbol(theEnv,"Tuesday");
         break;
 
       case 3:
-        returnValue->multifieldValue->theFields[6].lexemeValue = CreateSymbol(theEnv,"Wednesday");
+        returnValue->multifieldValue->contents[6].lexemeValue = CreateSymbol(theEnv,"Wednesday");
         break;
 
       case 4:
-        returnValue->multifieldValue->theFields[6].lexemeValue = CreateSymbol(theEnv,"Thursday");
+        returnValue->multifieldValue->contents[6].lexemeValue = CreateSymbol(theEnv,"Thursday");
         break;
 
       case 5:
-        returnValue->multifieldValue->theFields[6].lexemeValue = CreateSymbol(theEnv,"Friday");
+        returnValue->multifieldValue->contents[6].lexemeValue = CreateSymbol(theEnv,"Friday");
         break;
 
       case 6:
-        returnValue->multifieldValue->theFields[6].lexemeValue = CreateSymbol(theEnv,"Saturday");
+        returnValue->multifieldValue->contents[6].lexemeValue = CreateSymbol(theEnv,"Saturday");
         break;
      }
 
-   returnValue->multifieldValue->theFields[7].integerValue = CreateInteger(theEnv,info->tm_yday);
+   returnValue->multifieldValue->contents[7].integerValue = CreateInteger(theEnv,info->tm_yday);
 
    if (info->tm_isdst > 0)
-     { returnValue->multifieldValue->theFields[8].lexemeValue = TrueSymbol(theEnv); }
+     { returnValue->multifieldValue->contents[8].lexemeValue = TrueSymbol(theEnv); }
    else if (info->tm_isdst == 0)
-     { returnValue->multifieldValue->theFields[8].lexemeValue = FalseSymbol(theEnv); }
+     { returnValue->multifieldValue->contents[8].lexemeValue = FalseSymbol(theEnv); }
    else
-     { returnValue->multifieldValue->theFields[8].lexemeValue = CreateSymbol(theEnv,"UNKNOWN"); }
+     { returnValue->multifieldValue->contents[8].lexemeValue = CreateSymbol(theEnv,"UNKNOWN"); }
   }
 
 /*****************************************/
@@ -1780,7 +1780,7 @@ void SlotValueFunction(
      {
       if (strcmp(slotNameReference.lexemeValue->contents,"implied") == 0)
         {
-         returnValue->value = theFact->theProposition.theFields[0].value;
+         returnValue->value = theFact->theProposition.contents[0].value;
          returnValue->begin = 0;
          returnValue->range = returnValue->multifieldValue->length;
          return;
@@ -1789,7 +1789,7 @@ void SlotValueFunction(
    else if (FindSlot(theFact->whichDeftemplate,
                      slotNameReference.lexemeValue,&position) != NULL)
      {
-      returnValue->value = theFact->theProposition.theFields[position-1].value;
+      returnValue->value = theFact->theProposition.contents[position-1].value;
       if (returnValue->header->type == MULTIFIELD_TYPE)
         {
          returnValue->begin = 0;

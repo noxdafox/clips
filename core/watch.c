@@ -74,9 +74,9 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static struct watchItem       *ValidWatchItem(Environment *,const char *,bool *);
-   static bool                    RecognizeWatchRouters(Environment *,const char *);
-   static void                    CaptureWatchPrints(Environment *,const char *,const char *);
+   static WatchItemRecord        *ValidWatchItem(Environment *,const char *,bool *);
+   static bool                    RecognizeWatchRouters(Environment *,const char *,void *);
+   static void                    CaptureWatchPrints(Environment *,const char *,const char *,void *);
    static void                    DeallocateWatchData(Environment *);
 
 /**********************************************/
@@ -96,13 +96,13 @@ void InitializeWatchData(
 static void DeallocateWatchData(
   Environment *theEnv)
   {
-   struct watchItem *tmpPtr, *nextPtr;
+   WatchItemRecord *tmpPtr, *nextPtr;
 
    tmpPtr = WatchData(theEnv)->ListOfWatchItems;
    while (tmpPtr != NULL)
      {
       nextPtr = tmpPtr->next;
-      rtn_struct(theEnv,watchItem,tmpPtr);
+      rtn_struct(theEnv,watchItemRecord,tmpPtr);
       tmpPtr = nextPtr;
      }
   }
@@ -122,7 +122,7 @@ bool AddWatchItem(
   bool (*accessFunc)(Environment *,int,bool,struct expr *),
   bool (*printFunc)(Environment *,const char *,int,struct expr *))
   {
-   struct watchItem *newPtr, *currentPtr, *lastPtr;
+   WatchItemRecord *newPtr, *currentPtr, *lastPtr;
 
    /*================================================================*/
    /* Find the insertion point in the watchable items list to place  */
@@ -141,7 +141,7 @@ bool AddWatchItem(
    /* Create the new watch item. */
    /*============================*/
 
-   newPtr = get_struct(theEnv,watchItem);
+   newPtr = get_struct(theEnv,watchItemRecord);
    newPtr->name = name;
    newPtr->flag = flag;
    newPtr->code = code;
@@ -176,15 +176,131 @@ bool AddWatchItem(
 /**************************************************/
 bool Watch(
   Environment *theEnv,
+  WatchItem item)
+  {
+   switch (item)
+     {
+      case ALL:
+        return SetWatchItem(theEnv,"all",true,NULL);
+
+      case FACTS:
+        return SetWatchItem(theEnv,"facts",true,NULL);
+        
+      case INSTANCES:
+        return SetWatchItem(theEnv,"instances",true,NULL);
+        
+      case SLOTS:
+        return SetWatchItem(theEnv,"slots",true,NULL);
+        
+      case RULES:
+        return SetWatchItem(theEnv,"rules",true,NULL);
+        
+      case ACTIVATIONS:
+        return SetWatchItem(theEnv,"activations",true,NULL);
+        
+      case MESSAGES:
+        return SetWatchItem(theEnv,"messages",true,NULL);
+        
+      case MESSAGE_HANDLERS:
+        return SetWatchItem(theEnv,"message-handlers",true,NULL);
+        
+      case GENERIC_FUNCTIONS:
+        return SetWatchItem(theEnv,"generic-functions",true,NULL);
+        
+      case METHODS:
+        return SetWatchItem(theEnv,"methods",true,NULL);
+        
+      case DEFFUNCTIONS:
+        return SetWatchItem(theEnv,"deffunctions",true,NULL);
+        
+      case COMPILATIONS:
+        return SetWatchItem(theEnv,"compilations",true,NULL);
+        
+      case STATISTICS:
+        return SetWatchItem(theEnv,"statistics",true,NULL);
+        
+      case GLOBALS:
+        return SetWatchItem(theEnv,"globals",true,NULL);
+        
+      case FOCUS:
+        return SetWatchItem(theEnv,"focus",true,NULL);
+     }
+     
+   return false;
+  }
+
+/****************************************************/
+/* Unwatch: C access routine for the watch command. */
+/****************************************************/
+bool Unwatch(
+  Environment *theEnv,
+  WatchItem item)
+  {
+   switch (item)
+     {
+      case ALL:
+        return SetWatchItem(theEnv,"all",false,NULL);
+
+      case FACTS:
+        return SetWatchItem(theEnv,"facts",false,NULL);
+        
+      case INSTANCES:
+        return SetWatchItem(theEnv,"instances",false,NULL);
+        
+      case SLOTS:
+        return SetWatchItem(theEnv,"slots",false,NULL);
+        
+      case RULES:
+        return SetWatchItem(theEnv,"rules",false,NULL);
+        
+      case ACTIVATIONS:
+        return SetWatchItem(theEnv,"activations",false,NULL);
+        
+      case MESSAGES:
+        return SetWatchItem(theEnv,"messages",false,NULL);
+        
+      case MESSAGE_HANDLERS:
+        return SetWatchItem(theEnv,"message-handlers",false,NULL);
+        
+      case GENERIC_FUNCTIONS:
+        return SetWatchItem(theEnv,"generic-functions",false,NULL);
+        
+      case METHODS:
+        return SetWatchItem(theEnv,"methods",false,NULL);
+        
+      case DEFFUNCTIONS:
+        return SetWatchItem(theEnv,"deffunctions",false,NULL);
+        
+      case COMPILATIONS:
+        return SetWatchItem(theEnv,"compilations",false,NULL);
+        
+      case STATISTICS:
+        return SetWatchItem(theEnv,"statistics",false,NULL);
+        
+      case GLOBALS:
+        return SetWatchItem(theEnv,"globals",false,NULL);
+        
+      case FOCUS:
+        return SetWatchItem(theEnv,"focus",false,NULL);
+     }
+     
+   return false;
+  }
+
+/********************************************************/
+/* WatchString: C access routine for the watch command. */
+/********************************************************/
+bool WatchString(
+  Environment *theEnv,
   const char *itemName)
   {
    return SetWatchItem(theEnv,itemName,true,NULL);
   }
 
-/******************************************************/
-/* Unwatch: C access routine for the unwatch command. */
-/******************************************************/
-bool Unwatch(
+/************************************************************/
+/* UnwatchString: C access routine for the unwatch command. */
+/************************************************************/
+bool UnwatchString(
   Environment *theEnv,
   const char *itemName)
   {
@@ -201,7 +317,7 @@ bool SetWatchItem(
   bool newState,
   struct expr *argExprs)
   {
-   struct watchItem *wPtr;
+   WatchItemRecord *wPtr;
 
    /*===================================================*/
    /* If the name of the watch item to set is all, then */
@@ -284,7 +400,7 @@ int GetWatchItem(
   Environment *theEnv,
   const char *itemName)
   {
-   struct watchItem *wPtr;
+   WatchItemRecord *wPtr;
 
    for (wPtr = WatchData(theEnv)->ListOfWatchItems; wPtr != NULL; wPtr = wPtr->next)
      {
@@ -304,12 +420,12 @@ int GetWatchItem(
 /* ValidWatchItem: Returns true if the specified name is found */
 /*   in the list of watch items, otherwise returns false.      */
 /***************************************************************/
-static struct watchItem *ValidWatchItem(
+static WatchItemRecord *ValidWatchItem(
   Environment *theEnv,
   const char *itemName,
   bool *recognized)
   {
-   struct watchItem *wPtr;
+   WatchItemRecord *wPtr;
 
    *recognized = true;
    if (strcmp(itemName,"all") == 0)
@@ -332,7 +448,7 @@ const char *GetNthWatchName(
   int whichItem)
   {
    int i;
-   struct watchItem *wPtr;
+   WatchItemRecord *wPtr;
 
    for (wPtr = WatchData(theEnv)->ListOfWatchItems, i = 1;
         wPtr != NULL;
@@ -352,7 +468,7 @@ int GetNthWatchValue(
   int whichItem)
   {
    int i;
-   struct watchItem *wPtr;
+   WatchItemRecord *wPtr;
 
    for (wPtr = WatchData(theEnv)->ListOfWatchItems, i = 1;
         wPtr != NULL;
@@ -374,7 +490,7 @@ void WatchCommand(
    UDFValue theValue;
    const char *argument;
    bool recognized;
-   struct watchItem *wPtr;
+   WatchItemRecord *wPtr;
 
    /*========================================*/
    /* Determine which item is to be watched. */
@@ -424,7 +540,7 @@ void UnwatchCommand(
    UDFValue theValue;
    const char *argument;
    bool recognized;
-   struct watchItem *wPtr;
+   WatchItemRecord *wPtr;
 
    /*==========================================*/
    /* Determine which item is to be unwatched. */
@@ -471,7 +587,7 @@ void ListWatchItemsCommand(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   struct watchItem *wPtr;
+   WatchItemRecord *wPtr;
    UDFValue theValue;
    bool recognized;
 
@@ -597,7 +713,8 @@ void WatchFunctionDefinitions(
 /**************************************************/
 static bool RecognizeWatchRouters(
   Environment *theEnv,
-  const char *logName)
+  const char *logName,
+  void *context)
   {
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -614,7 +731,8 @@ static bool RecognizeWatchRouters(
 static void CaptureWatchPrints(
   Environment *theEnv,
   const char *logName,
-  const char *str)
+  const char *str,
+  void *context)
   {
 #if MAC_XCD
 #pragma unused(logName)

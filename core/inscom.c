@@ -226,8 +226,8 @@ void SetupInstances(
 
    SetupInstanceFileCommands(theEnv); /* DR0866 */
 
-   AddCleanupFunction(theEnv,"instances",CleanupInstances,0);
-   AddResetFunction(theEnv,"instances",DestroyAllInstances,60);
+   AddCleanupFunction(theEnv,"instances",CleanupInstances,0,NULL);
+   AddResetFunction(theEnv,"instances",DestroyAllInstances,60,NULL);
   }
 
 /***************************************/
@@ -396,7 +396,7 @@ bool UnmakeInstance(
      }
 
    InstanceData(theEnv)->MaintainGarbageInstances = svmaintain;
-   CleanupInstances(theEnv);
+   CleanupInstances(theEnv,NULL);
 
    if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
        (EvaluationData(theEnv)->CurrentExpression == NULL) && (UtilityData(theEnv)->GarbageCollectionLocks == 0))
@@ -670,7 +670,7 @@ Instance *FindInstance(
   {
    CLIPSLexeme *isym;
 
-   isym = FindSymbolHN(theEnv,iname,LEXEME_BITS | INSTANCE_NAME_TYPE);
+   isym = FindSymbolHN(theEnv,iname,LEXEME_BITS | INSTANCE_NAME_BIT);
 
    if (isym == NULL)
      { return NULL; }
@@ -956,7 +956,7 @@ Instance *GetNextInstanceInClassAndSubclasses(
    while ((nextInstance == NULL) &&
           (iterationInfo->begin < (iterationInfo->begin + iterationInfo->range)))
      {
-      theClass = (Defclass *) iterationInfo->multifieldValue->theFields[iterationInfo->begin].value;
+      theClass = (Defclass *) iterationInfo->multifieldValue->contents[iterationInfo->begin].value;
       *cptr = theClass;
       iterationInfo->begin = iterationInfo->begin + 1;
       nextInstance = theClass->instanceList;
@@ -1653,7 +1653,7 @@ static InstanceSlot *FindISlotByName(
   {
    CLIPSLexeme *ssym;
 
-   ssym = FindSymbolHN(theEnv,sname,LEXEME_BITS | INSTANCE_NAME_TYPE);
+   ssym = FindSymbolHN(theEnv,sname,LEXEME_BITS | INSTANCE_NAME_BIT);
    
    if (ssym == NULL)
      { return NULL; }

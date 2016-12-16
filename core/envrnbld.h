@@ -32,7 +32,7 @@
 
    Environment                   *CreateEnvironment(void);
    Environment                   *CreateRuntimeEnvironment(CLIPSLexeme **,CLIPSFloat **,
-                                                           CLIPSInteger **,struct bitMapHashNode **,
+                                                           CLIPSInteger **,CLIPSBitMap **,
                                                            struct functionDefinition *);
    bool                           DestroyEnvironment(Environment *);
 

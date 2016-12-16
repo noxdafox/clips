@@ -84,7 +84,7 @@
    static void                        OutputUserFunctionsInfo(Environment *);
    static void                        OutputConstructsCodeInfo(Environment *);
 #if (! RUN_TIME)
-   static void                        ProfileClearFunction(Environment *);
+   static void                        ProfileClearFunction(Environment *,void *);
 #endif
 
 /******************************************************/
@@ -114,7 +114,7 @@ void ConstructProfilingFunctionDefinitions(
 
    ProfileFunctionData(theEnv)->ProfileDataID = InstallUserDataRecord(theEnv,&ProfileFunctionData(theEnv)->ProfileDataInfo);
 
-   AddClearFunction(theEnv,"profile",ProfileClearFunction,0);
+   AddClearFunction(theEnv,"profile",ProfileClearFunction,0,NULL);
 #endif
   }
 
@@ -793,7 +793,8 @@ const char *SetProfileOutputString(
 /*   clear command. Removes user data attached to user functions. */
 /******************************************************************/
 static void ProfileClearFunction(
-  Environment *theEnv)
+  Environment *theEnv,
+  void *context)
   {
    struct functionDefinition *theFunction;
    int i;

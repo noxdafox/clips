@@ -32,7 +32,7 @@
 /*            Converted API macros to function calls.        */
 /*                                                           */
 /*      6.40: Changed restrictions from char * to            */
-/*            symbolHashNode * to support strings            */
+/*            CLIPSLexeme * to support strings               */
 /*            originating from sources that are not          */
 /*            statically allocated.                          */
 /*                                                           */
@@ -680,7 +680,7 @@ void AssignErrorValue(
      { context->returnValue->value = &InstanceData(context->environment)->DummyInstance; }
 #endif
    else if (context->theFunction->unknownReturnValueType & EXTERNAL_ADDRESS_BIT)
-     { context->returnValue->value = AddExternalAddress(context->environment,NULL,0); }
+     { context->returnValue->value = CreateExternalAddress(context->environment,NULL,0); }
    else
      { context->returnValue->value = context->environment->VoidConstant; }
   }

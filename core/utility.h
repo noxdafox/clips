@@ -43,10 +43,7 @@
 /*                                                           */
 /*            Converted API macros to function calls.        */
 /*                                                           */
-/*      6.40: Added EnvAddPeriodicFunctionWithContext        */
-/*            function.                                      */
-/*                                                           */
-/*            Removed LOCALE definition.                     */
+/*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -76,6 +73,15 @@
 
 #include <stdlib.h>
 
+typedef bool BoolCallFunction(Environment *,void *);
+typedef void VoidCallFunction(Environment *,void *);
+typedef void VoidCallFunctionWithArg(Environment *,void *,void *);
+
+typedef struct callFunctionItem CallFunctionItem;
+typedef struct callFunctionItemWithArg CallFunctionItemWithArg;
+typedef struct boolCallFunctionItem BoolCallFunctionItem;
+typedef struct voidCallFunctionItem VoidCallFunctionItem;
+
 #include "evaluatn.h"
 #include "moduldef.h"
 
@@ -85,7 +91,7 @@ typedef struct stringBuilder StringBuilder;
 struct voidCallFunctionItem
   {
    const char *name;
-   void (*func)(Environment *);
+   VoidCallFunction *func;
    int priority;
    struct voidCallFunctionItem *next;
    void *context;
@@ -94,25 +100,16 @@ struct voidCallFunctionItem
 struct boolCallFunctionItem
   {
    const char *name;
-   bool (*func)(Environment *);
+   BoolCallFunction *func;
    int priority;
    struct boolCallFunctionItem *next;
-   void *context;
-  };
-
-struct saveCallFunctionItem
-  {
-   const char *name;
-   void (*func)(Environment *,Defmodule *,const char *);
-   int priority;
-   struct saveCallFunctionItem *next;
    void *context;
   };
 
 struct callFunctionItemWithArg
   {
    const char *name;
-   void (*func)(Environment *,void *);
+   VoidCallFunctionWithArg *func;
    int priority;
    struct callFunctionItemWithArg *next;
    void *context;
@@ -136,8 +133,8 @@ struct garbageFrame
    struct ephemeron *ephemeralIntegerList;
    struct ephemeron *ephemeralBitMapList;
    struct ephemeron *ephemeralExternalAddressList;
-   struct multifield *ListOfMultifields;
-   struct multifield *LastMultifield;
+   Multifield *ListOfMultifields;
+   Multifield *LastMultifield;
   };
 
 struct clipsBlock
@@ -179,9 +176,8 @@ struct utilityData
 #define IsUTF8MultiByteContinuation(ch) ((((unsigned char) ch) >= 0x80) && (((unsigned char) ch) <= 0xBF))
 
    void                           InitializeUtilityData(Environment *);
-   bool                           AddCleanupFunction(Environment *,const char *,void (*)(Environment *),int);
-   bool                           AddPeriodicFunction(Environment *,const char *,void (*)(Environment *),int);
-   bool                           AddPeriodicFunctionWithContext(Environment *,const char *,void (*)(Environment *),int,void *);
+   bool                           AddCleanupFunction(Environment *,const char *,VoidCallFunction *,int,void *);
+   bool                           AddPeriodicFunction(Environment *,const char *,VoidCallFunction *,int,void *);
    bool                           RemoveCleanupFunction(Environment *,const char *);
    bool                           RemovePeriodicFunction(Environment *,const char *);
    char                          *CopyString(Environment *,const char *);
@@ -193,40 +189,25 @@ struct utilityData
    char                          *AppendNToString(Environment *,const char *,char *,size_t,size_t *,size_t *);
    char                          *EnlargeString(Environment *,size_t,char *,size_t *,size_t *);
    char                          *ExpandStringWithChar(Environment *,int,char *,size_t *,size_t *,size_t);
-   struct voidCallFunctionItem   *AddVoidFunctionToCallList(Environment *,const char *,int,void (*)(Environment *),
-                                                            struct voidCallFunctionItem *);
-   struct boolCallFunctionItem   *AddBoolFunctionToCallList(Environment *,const char *,int,bool (*)(Environment *),
-                                                            struct boolCallFunctionItem *);
-   struct saveCallFunctionItem   *AddSaveFunctionToCallList(Environment *,const char *,int,
-                                                            void (*)(Environment *,Defmodule *,const char *),
-                                                            struct saveCallFunctionItem *);
-   struct voidCallFunctionItem   *AddVoidFunctionToCallListWithContext(Environment *,const char *,int,void (*)(Environment *),
-                                                                   struct voidCallFunctionItem *,void *);
-   struct boolCallFunctionItem   *AddBoolFunctionToCallListWithContext(Environment *,const char *,int,bool (*)(Environment *),
-                                                                   struct boolCallFunctionItem *,void *);
-   struct saveCallFunctionItem   *AddSaveFunctionToCallListWithContext(Environment *,const char *,int,
-                                                                       void (*)(Environment *,Defmodule *,const char *),
-                                                                       struct saveCallFunctionItem *,void *);
-   struct voidCallFunctionItem   *RemoveVoidFunctionFromCallList(Environment *,const char *,
-                                                                 struct voidCallFunctionItem *,bool *);
-   struct saveCallFunctionItem   *RemoveSaveFunctionFromCallList(Environment *,const char *,
-                                                                 struct saveCallFunctionItem *,bool *);
-   struct boolCallFunctionItem   *RemoveBoolFunctionFromCallList(Environment *,const char *,
-                                                                 struct boolCallFunctionItem *,bool *);
-   void                           DeallocateVoidCallList(Environment *,struct voidCallFunctionItem *);
-   void                           DeallocateBoolCallList(Environment *,struct boolCallFunctionItem *);
-   void                           DeallocateSaveCallList(Environment *,struct saveCallFunctionItem *);
-   struct callFunctionItemWithArg *AddFunctionToCallListWithArg(Environment *,const char *,int,void (*)(Environment *, void *),
-                                                                       struct callFunctionItemWithArg *);
-   struct callFunctionItemWithArg *AddFunctionToCallListWithArgWithContext(Environment *,const char *,int,void (*)(Environment *, void *),
-                                                                                  struct callFunctionItemWithArg *,void *);
-   struct callFunctionItemWithArg *RemoveFunctionFromCallListWithArg(Environment *,const char *,
+   VoidCallFunctionItem          *AddVoidFunctionToCallList(Environment *,const char *,int,VoidCallFunction *,
+                                                            VoidCallFunctionItem *,void *);
+   BoolCallFunctionItem          *AddBoolFunctionToCallList(Environment *,const char *,int,BoolCallFunction *,
+                                                            BoolCallFunctionItem *,void *);
+   VoidCallFunctionItem          *RemoveVoidFunctionFromCallList(Environment *,const char *,
+                                                                 VoidCallFunctionItem *,bool *);
+   BoolCallFunctionItem          *RemoveBoolFunctionFromCallList(Environment *,const char *,
+                                                                 BoolCallFunctionItem *,bool *);
+   void                           DeallocateVoidCallList(Environment *,VoidCallFunctionItem *);
+   void                           DeallocateBoolCallList(Environment *,BoolCallFunctionItem *);
+   CallFunctionItemWithArg       *AddFunctionToCallListWithArg(Environment *,const char *,int,
+                                                               VoidCallFunctionWithArg *,
+                                                               CallFunctionItemWithArg *,void *);
+   CallFunctionItemWithArg       *RemoveFunctionFromCallListWithArg(Environment *,const char *,
                                                                             struct callFunctionItemWithArg *,
                                                                             bool *);
    void                           DeallocateCallListWithArg(Environment *,struct callFunctionItemWithArg *);
-   struct voidCallFunctionItem   *GetVoidFunctionFromCallList(Environment *,const char *,struct voidCallFunctionItem *);
-   struct boolCallFunctionItem   *GetBoolFunctionFromCallList(Environment *,const char *,struct boolCallFunctionItem *);
-   void                          *GetPeriodicFunctionContext(Environment *,const char *);
+   VoidCallFunctionItem          *GetVoidFunctionFromCallList(Environment *,const char *,VoidCallFunctionItem *);
+   BoolCallFunctionItem          *GetBoolFunctionFromCallList(Environment *,const char *,BoolCallFunctionItem *);
    unsigned long                  ItemHashValue(Environment *,unsigned short,void *,unsigned long);
    void                           YieldTime(Environment *);
    void                           IncrementGCLocks(Environment *);
@@ -250,6 +231,7 @@ struct utilityData
    void                           StringBuilderAppend(StringBuilder *,const char *);
    void                           StringBuilderReset(StringBuilder *);
    char                          *StringBuilderCopy(StringBuilder *);
+   void                          *GetPeriodicFunctionContext(Environment *,const char *);
 
 #endif /* _H_utility */
 

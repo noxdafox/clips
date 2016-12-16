@@ -135,8 +135,8 @@
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
 
-   static void                    SaveDefgenerics(Environment *,Defmodule *,const char *);
-   static void                    SaveDefmethods(Environment *,Defmodule *,const char *);
+   static void                    SaveDefgenerics(Environment *,Defmodule *,const char *,void *);
+   static void                    SaveDefmethods(Environment *,Defmodule *,const char *,void *);
    static void                    SaveDefmethodsForDefgeneric(Environment *,ConstructHeader *,void *);
    static void                    RemoveDefgenericMethod(Environment *,Defgeneric *,long);
 
@@ -231,7 +231,7 @@ void SetupGenericFunctions(
 
 
 #if ! RUN_TIME
-   AddClearReadyFunction(theEnv,"defgeneric",ClearDefgenericsReady,0);
+   AddClearReadyFunction(theEnv,"defgeneric",ClearDefgenericsReady,0,NULL);
 
 #if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE
    SetupGenericsBload(theEnv);
@@ -255,8 +255,8 @@ void SetupGenericFunctions(
      Need to be cleared in two stages so that mutually dependent
        constructs (like classes) can be cleared
      ================================================================ */
-   AddSaveFunction(theEnv,"defgeneric",SaveDefgenerics,1000);
-   AddSaveFunction(theEnv,"defmethod",SaveDefmethods,-1000);
+   AddSaveFunction(theEnv,"defgeneric",SaveDefgenerics,1000,NULL);
+   AddSaveFunction(theEnv,"defmethod",SaveDefmethods,-1000,NULL);
    AddUDF(theEnv,"undefgeneric","v",1,1,"y",UndefgenericCommand,"UndefgenericCommand",NULL);
    AddUDF(theEnv,"undefmethod","v",2,2,"*;y;ly",UndefmethodCommand,"UndefmethodCommand",NULL);
 #endif
@@ -1179,8 +1179,8 @@ void GetDefmethodList(
      {
       for (j = 0 ; j < gfunc->mcnt ; j++)
         {
-         theList->theFields[i++].value = GetDefgenericNamePointer(gfunc);
-         theList->theFields[i++].integerValue = CreateInteger(theEnv,(long long) gfunc->methods[j].index);
+         theList->contents[i++].value = GetDefgenericNamePointer(gfunc);
+         theList->contents[i++].integerValue = CreateInteger(theEnv,(long long) gfunc->methods[j].index);
         }
      }
    if (svg != NULL)
@@ -1281,23 +1281,23 @@ void MethodRestrictions(
    theList = CreateMultifield(theEnv,count);
 
    returnValue->value = theList;
-   theList->theFields[0].integerValue = CreateInteger(theEnv,(long long) meth->minRestrictions);
-   theList->theFields[1].integerValue = CreateInteger(theEnv,(long long) meth->maxRestrictions);
-   theList->theFields[2].integerValue = CreateInteger(theEnv,(long long) meth->restrictionCount);
+   theList->contents[0].integerValue = CreateInteger(theEnv,(long long) meth->minRestrictions);
+   theList->contents[1].integerValue = CreateInteger(theEnv,(long long) meth->maxRestrictions);
+   theList->contents[2].integerValue = CreateInteger(theEnv,(long long) meth->restrictionCount);
    roffset = 3 + meth->restrictionCount;
    rstrctIndex = 3;
    for (i = 0 ; i < meth->restrictionCount ; i++)
      {
       rptr = meth->restrictions + i;
-      theList->theFields[rstrctIndex++].integerValue = CreateInteger(theEnv,(long long) roffset + 1);
-      theList->theFields[roffset++].lexemeValue = (rptr->query != NULL) ? TrueSymbol(theEnv) : FalseSymbol(theEnv);
-      theList->theFields[roffset++].integerValue = CreateInteger(theEnv,(long long) rptr->tcnt);
+      theList->contents[rstrctIndex++].integerValue = CreateInteger(theEnv,(long long) roffset + 1);
+      theList->contents[roffset++].lexemeValue = (rptr->query != NULL) ? TrueSymbol(theEnv) : FalseSymbol(theEnv);
+      theList->contents[roffset++].integerValue = CreateInteger(theEnv,(long long) rptr->tcnt);
       for (j = 0 ; j < rptr->tcnt ; j++)
         {
 #if OBJECT_SYSTEM
-         theList->theFields[roffset++].lexemeValue = CreateSymbol(theEnv,DefclassName((Defclass *) rptr->types[j]));
+         theList->contents[roffset++].lexemeValue = CreateSymbol(theEnv,DefclassName((Defclass *) rptr->types[j]));
 #else
-         theList->theFields[roffset++].lexemeValue = CreateSymbol(theEnv,TypeName(theEnv,((CLIPSInteger *) rptr->types[j])->contents));
+         theList->contents[roffset++].lexemeValue = CreateSymbol(theEnv,TypeName(theEnv,((CLIPSInteger *) rptr->types[j])->contents));
 #endif
         }
      }
@@ -1430,7 +1430,8 @@ static void IncrementGenericBusyCount(
 static void SaveDefgenerics(
   Environment *theEnv,
   Defmodule *theModule,
-  const char *logName)
+  const char *logName,
+  void *context)
   {
    SaveConstruct(theEnv,theModule,logName,DefgenericData(theEnv)->DefgenericConstruct);
   }
@@ -1446,7 +1447,8 @@ static void SaveDefgenerics(
 static void SaveDefmethods(
   Environment *theEnv,
   Defmodule *theModule,
-  const char *logName)
+  const char *logName,
+  void *context)
   {
    DoForAllConstructsInModule(theEnv,theModule,
                               SaveDefmethodsForDefgeneric,

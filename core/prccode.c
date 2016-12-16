@@ -162,14 +162,14 @@ void InstallProcedurePrimitives(
                                        NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL };
 
 #if ! DEFFUNCTION_CONSTRUCT
-   ENTITY_RECORD deffunctionEntityRecord =
+   EntityRecord deffunctionEntityRecord =
                      { "PCALL", PCALL,0,0,1,
                        NULL,NULL,NULL,
                        EvaluateBadCall,
                        NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL };
 #endif
 #if ! DEFGENERIC_CONSTRUCT
-   ENTITY_RECORD genericEntityRecord =
+   EntityRecord genericEntityRecord =
                      { "GCALL", GCALL,0,0,1,
                        NULL,NULL,NULL,
                        EvaluateBadCall,
@@ -1038,7 +1038,7 @@ void GrabProcWildargs(
      {
       if (ProceduralPrimitiveData(theEnv)->ProcParamArray[i].header->type != MULTIFIELD_TYPE)
         {
-         returnValue->multifieldValue->theFields[j].value = ProceduralPrimitiveData(theEnv)->ProcParamArray[i].value;
+         returnValue->multifieldValue->contents[j].value = ProceduralPrimitiveData(theEnv)->ProcParamArray[i].value;
          j++;
         }
       else
@@ -1046,7 +1046,7 @@ void GrabProcWildargs(
          val = &ProceduralPrimitiveData(theEnv)->ProcParamArray[i];
          for (k = val->begin ; k < (val->begin + val->range)  ; k++ , j++)
            {
-            returnValue->multifieldValue->theFields[j].value = val->multifieldValue->theFields[k].value;
+            returnValue->multifieldValue->contents[j].value = val->multifieldValue->contents[k].value;
            }
         }
      }

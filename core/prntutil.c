@@ -175,7 +175,7 @@ void PrintAtom(
   int type,
   void *value)
   {
-   struct externalAddressHashNode *theAddress;
+   CLIPSExternalAddress *theAddress;
    char buffer[20];
 
    switch (type)
@@ -201,7 +201,7 @@ void PrintAtom(
         break;
 
       case EXTERNAL_ADDRESS_TYPE:
-        theAddress = (struct externalAddressHashNode *) value;
+        theAddress = (CLIPSExternalAddress *) value;
 
         if (PrintUtilityData(theEnv)->AddressesToStrings) PrintRouter(theEnv,logicalName,"\"");
 
@@ -561,7 +561,7 @@ const char *DataObjectToString(
    char *newString;
    const char *prefix, *postfix;
    size_t length;
-   struct externalAddressHashNode *theAddress;
+   CLIPSExternalAddress *theAddress;
    char buffer[30];
 
    switch (theDO->header->type)
@@ -618,7 +618,7 @@ const char *DataObjectToString(
 #endif
 
       case EXTERNAL_ADDRESS_TYPE:
-        theAddress = (struct externalAddressHashNode *) theDO->value;
+        theAddress = theDO->externalAddressValue;
         /* TBD Need specific routine for creating name string. */
         gensprintf(buffer,"<Pointer-%d-%p>",(int) theAddress->type,theDO->value);
         thePtr = CreateString(theEnv,buffer);

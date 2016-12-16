@@ -220,7 +220,7 @@ void SetupObjectsBload(
   {
    AllocateEnvironmentData(theEnv,OBJECTBIN_DATA,sizeof(struct objectBinaryData),DeallocateObjectBinaryData);
 
-   AddAbortBloadFunction(theEnv,"defclass",CreateSystemClasses,0);
+   AddAbortBloadFunction(theEnv,"defclass",CreateSystemClasses,0,NULL);
 
 #if BLOAD_AND_BSAVE
    AddBinaryItem(theEnv,"defclass",0,BsaveObjectsFind,BsaveObjectsExpressions,

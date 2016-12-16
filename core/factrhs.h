@@ -49,7 +49,7 @@
    struct expr                   *GetAssertArgument(Environment *,const char *,struct token *,bool *,TokenType,bool,bool *);
    struct expr                   *GetRHSPattern(Environment*,const char *,struct token *,bool *,bool,
                                                        bool,bool,TokenType);
-   struct fact                   *StringToFact(Environment *,const char *);
+   Fact                          *StringToFact(Environment *,const char *);
 
 #endif /* _H_factrhs */
 

@@ -63,9 +63,9 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    ClearDefmodules(Environment *);
+   static void                    ClearDefmodules(Environment *,void *);
 #if DEFMODULE_CONSTRUCT
-   static void                    SaveDefmodules(Environment *,Defmodule *,const char *);
+   static void                    SaveDefmodules(Environment *,Defmodule *,const char *,void *);
 #endif
 
 /*****************************************************************/
@@ -74,10 +74,10 @@
 void DefmoduleBasicCommands(
   Environment *theEnv)
   {
-   AddClearFunction(theEnv,"defmodule",ClearDefmodules,2000);
+   AddClearFunction(theEnv,"defmodule",ClearDefmodules,2000,NULL);
 
 #if DEFMODULE_CONSTRUCT
-   AddSaveFunction(theEnv,"defmodule",SaveDefmodules,1100);
+   AddSaveFunction(theEnv,"defmodule",SaveDefmodules,1100,NULL);
 
 #if ! RUN_TIME
    AddUDF(theEnv,"get-defmodule-list","m",0,0,NULL,GetDefmoduleListFunction,"GetDefmoduleListFunction",NULL);
@@ -103,15 +103,16 @@ void DefmoduleBasicCommands(
 /*   the clear command. Creates the MAIN module.         */
 /*********************************************************/
 static void ClearDefmodules(
-  Environment *theEnv)
+  Environment *theEnv,
+  void *context)
   {
 #if (BLOAD || BLOAD_AND_BSAVE || BLOAD_ONLY) && (! RUN_TIME)
    if (Bloaded(theEnv) == true) return;
 #endif
 #if (! RUN_TIME)
-   RemoveAllDefmodules(theEnv);
+   RemoveAllDefmodules(theEnv,NULL);
 
-   CreateMainModule(theEnv);
+   CreateMainModule(theEnv,NULL);
    DefmoduleData(theEnv)->MainModuleRedefinable = true;
 #else
 #if MAC_XCD
@@ -129,7 +130,8 @@ static void ClearDefmodules(
 static void SaveDefmodules(
   Environment *theEnv,
   Defmodule *theModule,
-  const char *logicalName)
+  const char *logicalName,
+  void *context)
   {
    const char *ppform;
 
@@ -199,7 +201,7 @@ void GetDefmoduleList(
          returnValue->multifieldValue = CreateMultifield(theEnv,0L);
          return;
         }
-      theList->theFields[count].lexemeValue = CreateSymbol(theEnv,DefmoduleName(theConstruct));
+      theList->contents[count].lexemeValue = CreateSymbol(theEnv,DefmoduleName(theConstruct));
      }
   }
 

@@ -152,8 +152,7 @@ void PrintRouter(
      {
       if ((currentPtr->printCallback != NULL) ? QueryRouter(theEnv,logicalName,currentPtr) : false)
         {
-         SetEnvironmentRouterContext(theEnv,currentPtr->context);
-         (*currentPtr->printCallback)(theEnv,logicalName,str);
+         (*currentPtr->printCallback)(theEnv,logicalName,str,currentPtr->context);
          return;
         }
       currentPtr = currentPtr->next;
@@ -233,8 +232,7 @@ int GetcRouter(
      {
       if ((currentPtr->getcCallback != NULL) ? QueryRouter(theEnv,logicalName,currentPtr) : false)
         {
-         SetEnvironmentRouterContext(theEnv,currentPtr->context);
-         inchar = (*currentPtr->getcCallback)(theEnv,logicalName);
+         inchar = (*currentPtr->getcCallback)(theEnv,logicalName,currentPtr->context);
 
          if ((inchar == '\r') || (inchar == '\n'))
            {
@@ -320,8 +318,7 @@ int UngetcRouter(
               { DecrementLineCount(theEnv); }
            }
 
-         SetEnvironmentRouterContext(theEnv,currentPtr->context);
-         return (*currentPtr->ungetcCallback)(theEnv,ch,logicalName);
+         return (*currentPtr->ungetcCallback)(theEnv,logicalName,ch,currentPtr->context);
         }
 
       currentPtr = currentPtr->next;
@@ -354,8 +351,7 @@ void ExitRouter(
         {
          if (currentPtr->exitCallback != NULL)
            {
-            SetEnvironmentRouterContext(theEnv,currentPtr->context);
-            (*currentPtr->exitCallback)(theEnv,num);
+            (*currentPtr->exitCallback)(theEnv,num,currentPtr->context);
            }
         }
       currentPtr = nextPtr;
@@ -528,8 +524,7 @@ static bool QueryRouter(
    /* if it recognizes the logical name.      */
    /*=========================================*/
 
-   SetEnvironmentRouterContext(theEnv,currentPtr->context);
-   if ((*currentPtr->queryCallback)(theEnv,logicalName) == true)
+   if ((*currentPtr->queryCallback)(theEnv,logicalName,currentPtr->context) == true)
      { return true; }
 
    return false;

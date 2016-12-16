@@ -67,7 +67,7 @@
 void DefmoduleBinarySetup(
   Environment *theEnv)
   {
-   AddBeforeBloadFunction(theEnv,"defmodule",RemoveAllDefmodules,2000);
+   AddBeforeBloadFunction(theEnv,"defmodule",RemoveAllDefmodules,2000,NULL);
 
 #if BLOAD_AND_BSAVE
    AddBinaryItem(theEnv,"defmodule",0,BsaveFind,NULL,
@@ -76,7 +76,7 @@ void DefmoduleBinarySetup(
                              ClearBload);
 #endif
 
-   AddAbortBloadFunction(theEnv,"defmodule",CreateMainModule,0);
+   AddAbortBloadFunction(theEnv,"defmodule",CreateMainModule,0,NULL);
 
 #if (BLOAD || BLOAD_ONLY)
    AddBinaryItem(theEnv,"defmodule",0,NULL,NULL,NULL,NULL,
@@ -598,7 +598,7 @@ static void ClearBload(
    /*===========================*/
 
    SetListOfDefmodules(theEnv,NULL);
-   CreateMainModule(theEnv);
+   CreateMainModule(theEnv,NULL);
    DefmoduleData(theEnv)->MainModuleRedefinable = true;
   }
 

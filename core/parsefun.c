@@ -88,8 +88,8 @@ struct parseFunctionData
 /***************************************/
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   static bool                    FindErrorCapture(Environment *,const char *);
-   static void                    PrintErrorCapture(Environment *,const char *,const char *);
+   static bool                    FindErrorCapture(Environment *,const char *,void *);
+   static void                    PrintErrorCapture(Environment *,const char *,const char *,void *);
    static void                    DeactivateErrorCapture(Environment *);
    static void                    SetErrorCaptureValues(Environment *,UDFValue *);
 #endif
@@ -322,14 +322,14 @@ static void SetErrorCaptureValues(
    theMultifield = CreateMultifield(theEnv,2L);
 
    if (ParseFunctionData(theEnv)->ErrorString != NULL)
-     { theMultifield->theFields[0].lexemeValue = CreateString(theEnv,ParseFunctionData(theEnv)->ErrorString); }
+     { theMultifield->contents[0].lexemeValue = CreateString(theEnv,ParseFunctionData(theEnv)->ErrorString); }
    else
-     { theMultifield->theFields[0].lexemeValue = FalseSymbol(theEnv); }
+     { theMultifield->contents[0].lexemeValue = FalseSymbol(theEnv); }
 
    if (ParseFunctionData(theEnv)->WarningString != NULL)
-     { theMultifield->theFields[1].lexemeValue = CreateString(theEnv,ParseFunctionData(theEnv)->WarningString); }
+     { theMultifield->contents[1].lexemeValue = CreateString(theEnv,ParseFunctionData(theEnv)->WarningString); }
    else
-     { theMultifield->theFields[1].lexemeValue = FalseSymbol(theEnv); }
+     { theMultifield->contents[1].lexemeValue = FalseSymbol(theEnv); }
 
    returnValue->begin = 0;
    returnValue->range = 2;
@@ -342,10 +342,11 @@ static void SetErrorCaptureValues(
 /**********************************/
 static bool FindErrorCapture(
   Environment *theEnv,
-  const char *logicalName)
+  const char *logicalName,
+  void *context)
   {
 #if MAC_XCD
-#pragma unused(theEnv)
+#pragma unused(theEnv,context)
 #endif
 
    if ((strcmp(logicalName,WERROR) == 0) ||
@@ -362,7 +363,8 @@ static bool FindErrorCapture(
 static void PrintErrorCapture(
   Environment *theEnv,
   const char *logicalName,
-  const char *str)
+  const char *str,
+  void *context)
   {
    if (strcmp(logicalName,WERROR) == 0)
      {

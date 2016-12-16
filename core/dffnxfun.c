@@ -128,7 +128,7 @@
    static void                    DestroyDeffunctionAction(Environment *,ConstructHeader *,void *);
    static void                   *AllocateModule(Environment *);
    static void                    ReturnModule(Environment *,void *);
-   static bool                    ClearDeffunctionsReady(Environment *);
+   static bool                    ClearDeffunctionsReady(Environment *,void *);
 #else
    static void                    RuntimeDeffunctionAction(Environment *,ConstructHeader *,void *);
 #endif
@@ -136,9 +136,9 @@
 #if (! BLOAD_ONLY) && (! RUN_TIME)
    static bool                    RemoveAllDeffunctions(Environment *);
    static void                    DeffunctionDeleteError(Environment *,const char *);
-   static void                    SaveDeffunctionHeaders(Environment *,Defmodule *,const char *);
+   static void                    SaveDeffunctionHeaders(Environment *,Defmodule *,const char *,void *);
    static void                    SaveDeffunctionHeader(Environment *,ConstructHeader *,void *);
-   static void                    SaveDeffunctions(Environment *,Defmodule *,const char *);
+   static void                    SaveDeffunctions(Environment *,Defmodule *,const char *,void *);
 #endif
 
 #if DEBUGGING_FUNCTIONS
@@ -220,14 +220,14 @@ void SetupDeffunctions(
                                        );
 
 #if ! RUN_TIME
-   AddClearReadyFunction(theEnv,"deffunction",ClearDeffunctionsReady,0);
+   AddClearReadyFunction(theEnv,"deffunction",ClearDeffunctionsReady,0,NULL);
 
 #if ! BLOAD_ONLY
 #if DEFMODULE_CONSTRUCT
    AddPortConstructItem(theEnv,"deffunction",SYMBOL_TOKEN);
 #endif
-   AddSaveFunction(theEnv,"deffunction-headers",SaveDeffunctionHeaders,1000);
-   AddSaveFunction(theEnv,"deffunctions",SaveDeffunctions,0);
+   AddSaveFunction(theEnv,"deffunction-headers",SaveDeffunctionHeaders,1000,NULL);
+   AddSaveFunction(theEnv,"deffunctions",SaveDeffunctions,0,NULL);
    AddUDF(theEnv,"undeffunction","v",1,1,"y",UndeffunctionCommand,"UndeffunctionCommand",NULL);
 #endif
 
@@ -826,7 +826,8 @@ static void ReturnModule(
   NOTES        : Used by (clear) and (bload)
  ***************************************************/
 static bool ClearDeffunctionsReady(
-  Environment *theEnv)
+  Environment *theEnv,
+  void *context)
   {
    return((DeffunctionData(theEnv)->ExecutingDeffunction != NULL) ? false : true);
   }
@@ -964,7 +965,8 @@ static void DeffunctionDeleteError(
 static void SaveDeffunctionHeaders(
   Environment *theEnv,
   Defmodule *theModule,
-  const char *logicalName)
+  const char *logicalName,
+  void *context)
   {
    DoForAllConstructsInModule(theEnv,theModule,
                               SaveDeffunctionHeader,
@@ -1028,7 +1030,8 @@ static void SaveDeffunctionHeader(
 static void SaveDeffunctions(
   Environment *theEnv,
   Defmodule *theModule,
-  const char *logicalName)
+  const char *logicalName,
+  void *context)
   {
    SaveConstruct(theEnv,theModule,logicalName,DeffunctionData(theEnv)->DeffunctionConstruct);
   }

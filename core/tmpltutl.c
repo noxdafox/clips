@@ -87,7 +87,7 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                     PrintTemplateSlot(Environment *,const char *,struct templateSlot *,struct field *);
+   static void                     PrintTemplateSlot(Environment *,const char *,struct templateSlot *,CLIPSValue *);
    static struct templateSlot     *GetNextTemplateSlotToPrint(Environment *,struct fact *,struct templateSlot *,int *,int,const char *);
 
 /********************************************************/
@@ -154,7 +154,7 @@ void CheckTemplateFact(
   Environment *theEnv,
   Fact *theFact)
   {
-   struct field *sublist;
+   CLIPSValue *sublist;
    int i;
    Deftemplate *theDeftemplate;
    struct templateSlot *slotPtr;
@@ -164,7 +164,7 @@ void CheckTemplateFact(
 
    if (! GetDynamicConstraintChecking(theEnv)) return;
 
-   sublist = theFact->theProposition.theFields;
+   sublist = theFact->theProposition.contents;
 
    /*========================================================*/
    /* If the deftemplate corresponding to the first field of */
@@ -305,7 +305,7 @@ static void PrintTemplateSlot(
   Environment *theEnv,
   const char *logicalName,
   struct templateSlot *slotPtr,
-  struct field *slotValue)
+  CLIPSValue *slotValue)
   {
    PrintRouter(theEnv,logicalName,"(");
    PrintRouter(theEnv,logicalName,slotPtr->slotName->contents);
@@ -356,9 +356,9 @@ static struct templateSlot *GetNextTemplateSlotToPrint(
   const char *changeMap)
   {
    UDFValue tempDO;
-   struct field *sublist;
+   CLIPSValue *sublist;
 
-   sublist = theFact->theProposition.theFields;
+   sublist = theFact->theProposition.contents;
    if (slotPtr == NULL)
      { slotPtr = theFact->whichDeftemplate->slotList; }
    else
@@ -417,7 +417,7 @@ void PrintTemplateFact(
   bool ignoreDefaults,
   const char *changeMap)
   {
-   struct field *sublist;
+   CLIPSValue *sublist;
    int i;
    Deftemplate *theDeftemplate;
    struct templateSlot *slotPtr, *lastPtr = NULL;
@@ -428,7 +428,7 @@ void PrintTemplateFact(
    /*==============================*/
 
    theDeftemplate = theFact->whichDeftemplate;
-   sublist = theFact->theProposition.theFields;
+   sublist = theFact->theProposition.contents;
 
    /*=============================================*/
    /* Print the relation name of the deftemplate. */

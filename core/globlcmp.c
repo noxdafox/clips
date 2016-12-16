@@ -100,7 +100,7 @@ static void InitDefglobalsCode(
 #pragma unused(theEnv)
 #endif
    fprintf(initFP,"   DefglobalRunTimeInitialize(theEnv);\n");
-   fprintf(initFP,"   ResetDefglobals(theEnv);\n");
+   fprintf(initFP,"   ResetDefglobals(theEnv,NULL);\n");
   }
 
 /***********************************************************/

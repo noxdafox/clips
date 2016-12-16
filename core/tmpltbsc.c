@@ -90,7 +90,7 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    SaveDeftemplates(Environment *,Defmodule *,const char *);
+   static void                    SaveDeftemplates(Environment *,Defmodule *,const char *,void *);
 
 /*********************************************************************/
 /* DeftemplateBasicCommands: Initializes basic deftemplate commands. */
@@ -98,7 +98,7 @@
 void DeftemplateBasicCommands(
   Environment *theEnv)
   {
-   AddSaveFunction(theEnv,"deftemplate",SaveDeftemplates,10);
+   AddSaveFunction(theEnv,"deftemplate",SaveDeftemplates,10,NULL);
 
 #if ! RUN_TIME
    AddUDF(theEnv,"get-deftemplate-list","m",0,1,"y",GetDeftemplateListFunction,"GetDeftemplateListFunction",NULL);
@@ -128,7 +128,8 @@ void DeftemplateBasicCommands(
 static void SaveDeftemplates(
   Environment *theEnv,
   Defmodule *theModule,
-  const char *logicalName)
+  const char *logicalName,
+  void *context)
   {
    SaveConstruct(theEnv,theModule,logicalName,DeftemplateData(theEnv)->DeftemplateConstruct);
   }

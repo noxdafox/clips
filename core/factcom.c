@@ -163,7 +163,7 @@ void AssertCommand(
   UDFValue *returnValue)
   {
    Deftemplate *theDeftemplate;
-   struct field *theField;
+   CLIPSValue *theField;
    UDFValue theValue;
    struct expr *theExpression;
    struct templateSlot *slotPtr;
@@ -195,7 +195,7 @@ void AssertCommand(
       newFact = CreateFactBySize(theEnv,1);
       if (theExpression->nextArg == NULL)
         {
-         newFact->theProposition.theFields[0].multifieldValue = CreateUnmanagedMultifield(theEnv,0L);
+         newFact->theProposition.contents[0].multifieldValue = CreateUnmanagedMultifield(theEnv,0L);
         }
       slotPtr = NULL;
      }
@@ -210,7 +210,7 @@ void AssertCommand(
 
    IncrementClearReadyLocks(theEnv);
 
-   theField = newFact->theProposition.theFields;
+   theField = newFact->theProposition.contents;
 
    for (theExpression = theExpression->nextArg, i = 0;
         theExpression != NULL;
@@ -856,7 +856,7 @@ bool SaveFactsDriver(
   struct expr *theList)
   {
    bool tempValue1, tempValue2, tempValue3;
-   struct fact *theFact;
+   Fact *theFact;
    FILE *filePtr;
    Defmodule *theModule;
    Deftemplate **deftemplateArray;

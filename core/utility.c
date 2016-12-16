@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/01/16             */
+   /*            CLIPS Version 6.40  12/09/16             */
    /*                                                     */
    /*                   UTILITY MODULE                    */
    /*******************************************************/
@@ -34,7 +34,7 @@
 /*            Used genstrncpy function instead of strncpy    */
 /*            function.                                      */
 /*                                                           */
-/*            Support for typed EXTERNAL_ADDRESS_TYPE.       */
+/*            Support for typed EXTERNAL_ADDRESS.            */
 /*                                                           */
 /*            Support for tracked memory (allows memory to   */
 /*            be freed if CLIPS is exited while executing).  */
@@ -46,8 +46,7 @@
 /*                                                           */
 /*            Converted API macros to function calls.        */
 /*                                                           */
-/*      6.40: Added EnvAddPeriodicFunctionWithContext        */
-/*            function.                                      */
+/*      6.40: Fix for memory used discrepancy.               */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -127,7 +126,7 @@ static void DeallocateUtilityData(
    struct trackedMemory *tmpTM, *nextTM;
    struct garbageFrame *theGarbageFrame;
    struct ephemeron *edPtr, *nextEDPtr;
-   struct multifield *tmpMFPtr, *nextMFPtr;
+   Multifield *tmpMFPtr, *nextMFPtr;
 
    /*======================*/
    /* Free tracked memory. */
@@ -325,7 +324,7 @@ void CallCleanupFunctions(
    for (cleanupPtr = UtilityData(theEnv)->ListOfCleanupFunctions;
         cleanupPtr != NULL;
         cleanupPtr = cleanupPtr->next)
-     { (*cleanupPtr->func)(theEnv); }
+     { (*cleanupPtr->func)(theEnv,cleanupPtr->context); }
   }
 
 /**************************************************/
@@ -342,13 +341,7 @@ void CallPeriodicTasks(
       for (periodPtr = UtilityData(theEnv)->ListOfPeriodicFunctions;
            periodPtr != NULL;
            periodPtr = periodPtr->next)
-        {
-         void *oldContext = SetEnvironmentCallbackContext(theEnv,periodPtr->context);
-
-         (*periodPtr->func)(theEnv);
-
-         SetEnvironmentCallbackContext(theEnv,oldContext);
-        }
+        { (*periodPtr->func)(theEnv,periodPtr->context); }
      }
   }
 
@@ -360,12 +353,30 @@ void CallPeriodicTasks(
 bool AddCleanupFunction(
   Environment *theEnv,
   const char *name,
-  void (*theFunction)(Environment *),
-  int priority)
+  VoidCallFunction *theFunction,
+  int priority,
+  void *context)
   {
    UtilityData(theEnv)->ListOfCleanupFunctions =
      AddVoidFunctionToCallList(theEnv,name,priority,theFunction,
-                           UtilityData(theEnv)->ListOfCleanupFunctions);
+                           UtilityData(theEnv)->ListOfCleanupFunctions,context);
+   return true;
+  }
+
+/****************************************************/
+/* AddPeriodicFunction: Adds a function to the list */
+/*   of functions called to handle periodic tasks.  */
+/****************************************************/
+bool AddPeriodicFunction(
+  Environment *theEnv,
+  const char *name,
+  VoidCallFunction *theFunction,
+  int priority,
+  void *context)
+  {
+   UtilityData(theEnv)->ListOfPeriodicFunctions =
+     AddVoidFunctionToCallList(theEnv,name,priority,theFunction,
+                           UtilityData(theEnv)->ListOfPeriodicFunctions,context);
    return true;
   }
 
@@ -380,41 +391,11 @@ void *GetPeriodicFunctionContext(
    struct voidCallFunctionItem *theItem;
 
    theItem = GetVoidFunctionFromCallList(theEnv,name,
-                                     UtilityData(theEnv)->ListOfPeriodicFunctions);
+                                         UtilityData(theEnv)->ListOfPeriodicFunctions);
 
    if (theItem == NULL) return NULL;
 
    return theItem->context;
-  }
-
-/**********************************************************/
-/* AddPeriodicFunctionWithContext: Adds a function to the */
-/*   list of functions called to handle periodic tasks.   */
-/**********************************************************/
-bool AddPeriodicFunctionWithContext(
-  Environment *theEnv,
-  const char *name,
-  void (*theFunction)(Environment *),
-  int priority,
-  void *context)
-  {
-   UtilityData(theEnv)->ListOfPeriodicFunctions =
-     AddVoidFunctionToCallListWithContext(theEnv,name,priority,theFunction,
-                           UtilityData(theEnv)->ListOfPeriodicFunctions,context);
-   return true;
-  }
-
-/****************************************************/
-/* AddPeriodicFunction: Adds a function to the list */
-/*   of functions called to handle periodic tasks.  */
-/****************************************************/
-bool AddPeriodicFunction(
-  Environment *theEnv,
-  const char *name,
-  void (*theFunction)(Environment *),
-  int priority)
-  {
-   return AddPeriodicFunctionWithContext(theEnv,name,theFunction,priority,NULL);
   }
 
 /*******************************************************/
@@ -635,6 +616,8 @@ char *EnlargeString(
   size_t *oldPos,
   size_t *oldMax)
   {
+   size_t newMax;
+   
    /*=========================================*/
    /* Expand the old string so it can contain */
    /* the new string (if necessary).          */
@@ -642,8 +625,13 @@ char *EnlargeString(
 
    if (length + *oldPos + 1 > *oldMax)
      {
-      oldStr = (char *) genrealloc(theEnv,oldStr,*oldMax,length + *oldPos + 1);
-      *oldMax = length + *oldPos + 1;
+      newMax = length + *oldPos + 1;
+      if (newMax < sizeof(char *))
+        { newMax = sizeof(char *); }
+
+      oldStr = (char *) genrealloc(theEnv,oldStr,*oldMax,newMax);
+      
+      *oldMax = newMax;
      }
 
    /*==============================================================*/
@@ -670,6 +658,7 @@ char *AppendNToString(
   size_t *oldMax)
   {
    size_t lengthWithEOS;
+   size_t newSize;
 
    /*====================================*/
    /* Determine the number of characters */
@@ -686,8 +675,12 @@ char *AppendNToString(
 
    if (lengthWithEOS + *oldPos > *oldMax)
      {
-      oldStr = (char *) genrealloc(theEnv,oldStr,*oldMax,*oldPos + lengthWithEOS);
-      *oldMax = *oldPos + lengthWithEOS;
+      newSize = *oldPos + lengthWithEOS;
+      if (newSize < sizeof(char *))
+        { newSize = sizeof(char *); }
+
+      oldStr = (char *) genrealloc(theEnv,oldStr,*oldMax,newSize);
+      *oldMax = newSize;
      }
 
    /*==============================================================*/
@@ -729,6 +722,8 @@ char *ExpandStringWithChar(
   {
    if ((*pos + 1) >= *max)
      {
+      if (newSize < sizeof(char *))
+        { newSize = sizeof(char *); }
       str = (char *) genrealloc(theEnv,str,*max,newSize);
       *max = newSize;
      }
@@ -759,61 +754,16 @@ char *ExpandStringWithChar(
    return(str);
   }
 
-/**************************************************************/
-/* AddVoidFunctionToCallList: Adds a function to a list of    */
-/*   functions which are called to perform certain operations */
-/*   (e.g. clear, reset, and bload functions).                */
-/**************************************************************/
+/**********************************************************/
+/* AddVoidFunctionToCallList: Adds a function to a list   */
+/*   of functions which are called to perform certain     */
+/*   operations (e.g. clear, reset, and bload functions). */
+/**********************************************************/
 struct voidCallFunctionItem *AddVoidFunctionToCallList(
   Environment *theEnv,
   const char *name,
   int priority,
-  void (*func)(Environment *),
-  struct voidCallFunctionItem *head)
-  {
-   return AddVoidFunctionToCallListWithContext(theEnv,name,priority,func,head,NULL);
-  }
-
-/**************************************************************/
-/* AddBoolFunctionToCallList: Adds a function to a list of    */
-/*   functions which are called to perform certain operations */
-/*   (e.g. clear, reset, and bload functions).                */
-/**************************************************************/
-struct boolCallFunctionItem *AddBoolFunctionToCallList(
-  Environment *theEnv,
-  const char *name,
-  int priority,
-  bool (*func)(Environment *),
-  struct boolCallFunctionItem *head)
-  {
-   return AddBoolFunctionToCallListWithContext(theEnv,name,priority,func,head,NULL);
-  }
-
-/**************************************************************/
-/* AddSaveFunctionToCallList: Adds a function to a list of    */
-/*   functions which are called to perform certain operations */
-/*   (e.g. clear, reset, and bload functions).                */
-/**************************************************************/
-struct saveCallFunctionItem *AddSaveFunctionToCallList(
-  Environment *theEnv,
-  const char *name,
-  int priority,
-  void (*func)(Environment *,Defmodule *,const char *),
-  struct saveCallFunctionItem *head)
-  {
-   return AddSaveFunctionToCallListWithContext(theEnv,name,priority,func,head,NULL);
-  }
-
-/*************************************************************/
-/* AddVoidFunctionToCallListWithContext: Adds a function to  */
-/*   a list of functions which are called to perform certain */
-/*   operations (e.g. clear, reset, and bload functions).    */
-/*************************************************************/
-struct voidCallFunctionItem *AddVoidFunctionToCallListWithContext(
-  Environment *theEnv,
-  const char *name,
-  int priority,
-  void (*func)(Environment *),
+  VoidCallFunction *func,
   struct voidCallFunctionItem *head,
   void *context)
   {
@@ -857,76 +807,23 @@ struct voidCallFunctionItem *AddVoidFunctionToCallListWithContext(
    return(head);
   }
 
-/*************************************************************/
-/* AddBoolFunctionToCallListWithContext: Adds a function to  */
-/*   a list of functions which are called to perform certain */
-/*   operations (e.g. clear, reset, and bload functions).    */
-/*************************************************************/
-struct boolCallFunctionItem *AddBoolFunctionToCallListWithContext(
+/**********************************************************/
+/* AddBoolFunctionToCallList: Adds a function to a list   */
+/*   of functions which are called to perform certain     */
+/*   operations (e.g. clear, reset, and bload functions). */
+/**********************************************************/
+BoolCallFunctionItem *AddBoolFunctionToCallList(
   Environment *theEnv,
   const char *name,
   int priority,
-  bool (*func)(Environment *),
-  struct boolCallFunctionItem *head,
+  BoolCallFunction *func,
+  BoolCallFunctionItem *head,
   void *context)
   {
    struct boolCallFunctionItem *newPtr, *currentPtr, *lastPtr = NULL;
    char  *nameCopy;
 
    newPtr = get_struct(theEnv,boolCallFunctionItem);
-
-   nameCopy = (char *) genalloc(theEnv,strlen(name) + 1);
-   genstrcpy(nameCopy,name);
-   newPtr->name = nameCopy;
-
-   newPtr->func = func;
-   newPtr->priority = priority;
-   newPtr->context = context;
-
-   if (head == NULL)
-     {
-      newPtr->next = NULL;
-      return(newPtr);
-     }
-
-   currentPtr = head;
-   while ((currentPtr != NULL) ? (priority < currentPtr->priority) : false)
-     {
-      lastPtr = currentPtr;
-      currentPtr = currentPtr->next;
-     }
-
-   if (lastPtr == NULL)
-     {
-      newPtr->next = head;
-      head = newPtr;
-     }
-   else
-     {
-      newPtr->next = currentPtr;
-      lastPtr->next = newPtr;
-     }
-
-   return(head);
-  }
-
-/*************************************************************/
-/* AddSaveFunctionToCallListWithContext: Adds a function to  */
-/*   a list of functions which are called to perform certain */
-/*   operations (e.g. clear, reset, and bload functions).    */
-/*************************************************************/
-struct saveCallFunctionItem *AddSaveFunctionToCallListWithContext(
-  Environment *theEnv,
-  const char *name,
-  int priority,
-  void (*func)(Environment *,Defmodule *,const char *),
-  struct saveCallFunctionItem *head,
-  void *context)
-  {
-   struct saveCallFunctionItem *newPtr, *currentPtr, *lastPtr = NULL;
-   char  *nameCopy;
-
-   newPtr = get_struct(theEnv,saveCallFunctionItem);
 
    nameCopy = (char *) genalloc(theEnv,strlen(name) + 1);
    genstrcpy(nameCopy,name);
@@ -1083,45 +980,6 @@ struct boolCallFunctionItem *RemoveBoolFunctionFromCallList(
    return head;
   }
 
-/******************************************************************/
-/* RemoveSaveFunctionFromCallList: Removes a function from a list */
-/*   of functions which are called to perform certain operations  */
-/*   (e.g. clear, reset, and bload functions).                    */
-/******************************************************************/
-struct saveCallFunctionItem *RemoveSaveFunctionFromCallList(
-  Environment *theEnv,
-  const char *name,
-  struct saveCallFunctionItem *head,
-  bool *found)
-  {
-   struct saveCallFunctionItem *currentPtr, *lastPtr;
-
-   *found = false;
-   lastPtr = NULL;
-   currentPtr = head;
-
-   while (currentPtr != NULL)
-     {
-      if (strcmp(name,currentPtr->name) == 0)
-        {
-         *found = true;
-         if (lastPtr == NULL)
-           { head = currentPtr->next; }
-         else
-           { lastPtr->next = currentPtr->next; }
-
-         genfree(theEnv,(void *) currentPtr->name,strlen(currentPtr->name) + 1);
-         rtn_struct(theEnv,saveCallFunctionItem,currentPtr);
-         return head;
-        }
-
-      lastPtr = currentPtr;
-      currentPtr = currentPtr->next;
-     }
-
-   return head;
-  }
-
 /*************************************************************/
 /* DeallocateVoidCallList: Removes all functions from a list */
 /*   of functions which are called to perform certain        */
@@ -1164,52 +1022,16 @@ void DeallocateBoolCallList(
      }
   }
 
-/*************************************************************/
-/* DeallocateSaveCallList: Removes all functions from a list */
-/*   of functions which are called to perform certain        */
-/*   operations (e.g. clear, reset, and bload functions).    */
-/*************************************************************/
-void DeallocateSaveCallList(
-  Environment *theEnv,
-  struct saveCallFunctionItem *theList)
-  {
-   struct saveCallFunctionItem *tmpPtr, *nextPtr;
-
-   tmpPtr = theList;
-   while (tmpPtr != NULL)
-     {
-      nextPtr = tmpPtr->next;
-      genfree(theEnv,(void *) tmpPtr->name,strlen(tmpPtr->name) + 1);
-      rtn_struct(theEnv,boolCallFunctionItem,tmpPtr);
-      tmpPtr = nextPtr;
-     }
-  }
-
-/***************************************************************/
-/* AddFunctionToCallListWithArg: Adds a function to a list of  */
-/*   functions which are called to perform certain operations  */
-/*   (e.g. clear,reset, and bload functions).                  */
-/***************************************************************/
+/***********************************************************/
+/* AddFunctionToCallListWithArg: Adds a function to a list */
+/*   of functions which are called to perform certain      */
+/*   operations (e.g. clear, reset, and bload functions).  */
+/***********************************************************/
 struct callFunctionItemWithArg *AddFunctionToCallListWithArg(
   Environment *theEnv,
   const char *name,
   int priority,
-  void (*func)(Environment *, void *),
-  struct callFunctionItemWithArg *head)
-  {
-   return AddFunctionToCallListWithArgWithContext(theEnv,name,priority,func,head,NULL);
-  }
-
-/***************************************************************/
-/* AddFunctionToCallListWithArgWithContext: Adds a function to */
-/*   a list of functions which are called to perform certain   */
-/*   operations (e.g. clear, reset, and bload functions).      */
-/***************************************************************/
-struct callFunctionItemWithArg *AddFunctionToCallListWithArgWithContext(
-  Environment *theEnv,
-  const char *name,
-  int priority,
-  void (*func)(Environment *,void *),
+  VoidCallFunctionWithArg *func,
   struct callFunctionItemWithArg *head,
   void *context)
   {
@@ -1287,11 +1109,11 @@ struct callFunctionItemWithArg *RemoveFunctionFromCallListWithArg(
    return(head);
   }
 
-/**************************************************************/
-/* DeallocateCallListWithArg: Removes all functions from a list of   */
-/*   functions which are called to perform certain operations */
-/*   (e.g. clear, reset, and bload functions).                */
-/**************************************************************/
+/****************************************************************/
+/* DeallocateCallListWithArg: Removes all functions from a list */
+/*   of functions which are called to perform certain           */
+/*   operations (e.g. clear, reset, and bload functions).       */
+/****************************************************************/
 void DeallocateCallListWithArg(
   Environment *theEnv,
   struct callFunctionItemWithArg *theList)

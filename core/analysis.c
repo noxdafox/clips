@@ -454,7 +454,7 @@ static bool ProcessVariable(
    if (thePattern->pnType == PATTERN_CE_NODE)
      {
       theType = SF_VARIABLE_NODE;
-      theVariable = (struct symbolHashNode *) thePattern->value;
+      theVariable = (CLIPSLexeme *) thePattern->value;
       if (thePattern->derivedConstraints) RemoveConstraint(theEnv,thePattern->constraints);
       theConstraints = GetConstraintRecord(theEnv);
       thePattern->constraints = theConstraints;
@@ -471,7 +471,7 @@ static bool ProcessVariable(
    else
      {
       theType = thePattern->pnType;
-      theVariable = (struct symbolHashNode *) thePattern->value;
+      theVariable = (CLIPSLexeme *) thePattern->value;
      }
 
    /*===================================================*/

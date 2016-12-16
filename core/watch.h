@@ -59,25 +59,49 @@
 
 #define WATCH_DATA 54
 
-struct watchItem
+typedef struct watchItemRecord WatchItemRecord;
+
+typedef enum
+  {
+   ALL,
+   FACTS,
+   INSTANCES,
+   SLOTS,
+   RULES,
+   ACTIVATIONS,
+   MESSAGES,
+   MESSAGE_HANDLERS,
+   GENERIC_FUNCTIONS,
+   METHODS,
+   DEFFUNCTIONS,
+   COMPILATIONS,
+   STATISTICS,
+   GLOBALS,
+   FOCUS
+  } WatchItem;
+
+struct watchItemRecord
   {
    const char *name;
    bool *flag;
    int code,priority;
    bool (*accessFunc)(Environment *,int,bool,struct expr *);
    bool (*printFunc)(Environment *,const char *,int,struct expr *);
-   struct watchItem *next;
+   WatchItemRecord *next;
   };
 
 struct watchData
   {
-   struct watchItem *ListOfWatchItems;
+   WatchItemRecord *ListOfWatchItems;
   };
 
 #define WatchData(theEnv) ((struct watchData *) GetEnvironmentData(theEnv,WATCH_DATA))
 
-   bool                           Watch(Environment *,const char *);
-   bool                           Unwatch(Environment *,const char *);
+   bool                           Watch(Environment *,WatchItem);
+   bool                           Unwatch(Environment *,WatchItem);
+
+   bool                           WatchString(Environment *,const char *);
+   bool                           UnwatchString(Environment *,const char *);
    void                           InitializeWatchData(Environment *);
    bool                           SetWatchItem(Environment *,const char *,bool,struct expr *);
    int                            GetWatchItem(Environment *,const char *);

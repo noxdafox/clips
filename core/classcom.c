@@ -731,7 +731,8 @@ CLIPSLexeme *CheckClassAndSlot(
 void SaveDefclasses(
   Environment *theEnv,
   Defmodule *theModule,
-  const char *logName)
+  const char *logName,
+  void *context)
   {
 #if DEBUGGING_FUNCTIONS
    DoForAllConstructsInModule(theEnv,theModule,SaveDefclass,

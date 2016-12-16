@@ -63,6 +63,7 @@
 #include "constant.h"
 #include "envrnmnt.h"
 #include "evaluatn.h"
+#include "exprnops.h"
 #include "memalloc.h"
 #if OBJECT_SYSTEM
 #include "object.h"
@@ -71,6 +72,7 @@
 #include "prntutil.h"
 #include "router.h"
 #include "strngrtr.h"
+#include "symbol.h"
 #include "utility.h"
 
 #include "multifld.h"
@@ -87,9 +89,9 @@ Multifield *CreateUnmanagedMultifield(
 
    if (size <= 0) newSize = 1;
 
-   theSegment = get_var_struct(theEnv,multifield,(long) sizeof(struct field) * (newSize - 1L));
+   theSegment = get_var_struct(theEnv,multifield,(long) sizeof(struct clipsValue) * (newSize - 1L));
 
-   theSegment->th.type = MULTIFIELD_TYPE;
+   theSegment->header.type = MULTIFIELD_TYPE;
    theSegment->length = size;
    theSegment->busyCount = 0;
    theSegment->next = NULL;
@@ -111,7 +113,7 @@ void ReturnMultifield(
    if (theSegment->length == 0) newSize = 1;
    else newSize = theSegment->length;
 
-   rtn_var_struct(theEnv,multifield,sizeof(struct field) * (newSize - 1),theSegment);
+   rtn_var_struct(theEnv,multifield,sizeof(struct clipsValue) * (newSize - 1),theSegment);
   }
 
 /**********************/
@@ -119,20 +121,20 @@ void ReturnMultifield(
 /**********************/
 void MultifieldInstall(
   Environment *theEnv,
-  struct multifield *theSegment)
+  Multifield *theSegment)
   {
    unsigned long length, i;
-   struct field *theFields;
+   CLIPSValue *contents;
 
    if (theSegment == NULL) return;
 
    length = theSegment->length;
 
    theSegment->busyCount++;
-   theFields = theSegment->theFields;
+   contents = theSegment->contents;
 
    for (i = 0 ; i < length ; i++)
-     { AtomInstall(theEnv,theFields[i].header->type,theFields[i].value); }
+     { AtomInstall(theEnv,contents[i].header->type,contents[i].value); }
   }
 
 /************************/
@@ -140,19 +142,19 @@ void MultifieldInstall(
 /************************/
 void MultifieldDeinstall(
   Environment *theEnv,
-  struct multifield *theSegment)
+  Multifield *theSegment)
   {
    unsigned long length, i;
-   struct field *theFields;
+   CLIPSValue *contents;
 
    if (theSegment == NULL) return;
 
    length = theSegment->length;
    theSegment->busyCount--;
-   theFields = theSegment->theFields;
+   contents = theSegment->contents;
 
    for (i = 0 ; i < length ; i++)
-     { AtomDeinstall(theEnv,theFields[i].header->type,theFields[i].value); }
+     { AtomDeinstall(theEnv,contents[i].header->type,contents[i].value); }
   }
 
 /************************/
@@ -160,20 +162,20 @@ void MultifieldDeinstall(
 /************************/
 void CVMultifieldInstall(
   Environment *theEnv,
-  struct multifield *theSegment)
+  Multifield *theSegment)
   {
    unsigned long length, i;
-   struct field *theFields;
+   CLIPSValue *contents;
 
    if (theSegment == NULL) return;
 
    length = theSegment->length;
 
    theSegment->busyCount++;
-   theFields = theSegment->theFields;
+   contents = theSegment->contents;
 
    for (i = 0 ; i < length ; i++)
-     { CVAtomInstall(theEnv,theFields[i].value); }
+     { CVAtomInstall(theEnv,contents[i].value); }
   }
 
 /**************************/
@@ -181,32 +183,32 @@ void CVMultifieldInstall(
 /**************************/
 void CVMultifieldDeinstall(
   Environment *theEnv,
-  struct multifield *theSegment)
+  Multifield *theSegment)
   {
    unsigned long length, i;
-   struct field *theFields;
+   CLIPSValue *contents;
 
    if (theSegment == NULL) return;
 
    length = theSegment->length;
    theSegment->busyCount--;
-   theFields = theSegment->theFields;
+   contents = theSegment->contents;
 
    for (i = 0 ; i < length ; i++)
-     { CVAtomDeinstall(theEnv,theFields[i].value); }
+     { CVAtomDeinstall(theEnv,contents[i].value); }
   }
 
 /*******************************************************/
 /* StringToMultifield: Returns a multifield structure  */
 /*    that represents the string sent as the argument. */
 /*******************************************************/
-struct multifield *StringToMultifield(
+Multifield *StringToMultifield(
   Environment *theEnv,
   const char *theString)
   {
    struct token theToken;
    Multifield *theSegment;
-   struct field *theFields;
+   CLIPSValue *contents;
    unsigned long numberOfFields = 0;
    struct expr *topAtom = NULL, *lastAtom = NULL, *theAtom;
 
@@ -242,7 +244,7 @@ struct multifield *StringToMultifield(
    /*====================================================================*/
 
    theSegment = CreateMultifield(theEnv,numberOfFields);
-   theFields = theSegment->theFields;
+   contents = theSegment->contents;
 
    /*====================================*/
    /* Copy the values to the multifield. */
@@ -252,7 +254,7 @@ struct multifield *StringToMultifield(
    numberOfFields = 0;
    while (theAtom != NULL)
      {
-      theFields[numberOfFields].value = theAtom->value;
+      contents[numberOfFields].value = theAtom->value;
       numberOfFields++;
       theAtom = theAtom->nextArg;
      }
@@ -284,7 +286,7 @@ Multifield *ArrayToMultifield(
    rv = CreateMultifield(theEnv,size);
    
    for (i = 0; i < size; i++)
-     { rv->theFields[i].value = theArray[i].value; }
+     { rv->contents[i].value = theArray[i].value; }
    
    return rv;
   }
@@ -303,9 +305,9 @@ Multifield *CreateMultifield(
    if (size <= 0) newSize = 1;
    else newSize = size;
 
-   theSegment = get_var_struct(theEnv,multifield,(long) sizeof(struct field) * (newSize - 1L));
+   theSegment = get_var_struct(theEnv,multifield,(long) sizeof(struct clipsValue) * (newSize - 1L));
 
-   theSegment->th.type = MULTIFIELD_TYPE;
+   theSegment->header.type = MULTIFIELD_TYPE;
    theSegment->length = size;
    theSegment->busyCount = 0;
    theSegment->next = NULL;
@@ -333,8 +335,8 @@ Multifield *DOToMultifield(
    dst = CreateUnmanagedMultifield(theEnv,(unsigned long) theValue->range);
 
    src = theValue->multifieldValue;
-   GenCopyMemory(struct field,dst->length,
-              &(dst->theFields[0]),&(src->theFields[theValue->begin]));
+   GenCopyMemory(struct clipsValue,dst->length,
+              &(dst->contents[0]),&(src->contents[theValue->begin]));
 
    return dst;
   }
@@ -344,7 +346,7 @@ Multifield *DOToMultifield(
 /************************/
 void AddToMultifieldList(
   Environment *theEnv,
-  struct multifield *theSegment)
+  Multifield *theSegment)
   {
    theSegment->next = UtilityData(theEnv)->CurrentGarbageFrame->ListOfMultifields;
    UtilityData(theEnv)->CurrentGarbageFrame->ListOfMultifields = theSegment;
@@ -359,7 +361,7 @@ void AddToMultifieldList(
 void FlushMultifields(
   Environment *theEnv)
   {
-   struct multifield *theSegment, *nextPtr, *lastPtr = NULL;
+   Multifield *theSegment, *nextPtr, *lastPtr = NULL;
    unsigned long newSize;
 
    theSegment = UtilityData(theEnv)->CurrentGarbageFrame->ListOfMultifields;
@@ -370,7 +372,7 @@ void FlushMultifields(
         {
          if (theSegment->length == 0) newSize = 1;
          else newSize = theSegment->length;
-         rtn_var_struct(theEnv,multifield,sizeof(struct field) * (newSize - 1),theSegment);
+         rtn_var_struct(theEnv,multifield,sizeof(struct clipsValue) * (newSize - 1),theSegment);
          if (lastPtr == NULL) UtilityData(theEnv)->CurrentGarbageFrame->ListOfMultifields = nextPtr;
          else lastPtr->next = nextPtr;
 
@@ -422,8 +424,8 @@ void NormalizeMultifield(
      { return; }
 
    copy = CreateMultifield(theEnv,theMF->range);
-   GenCopyMemory(struct field,theMF->range,&copy->theFields[0],
-                 &theMF->multifieldValue->theFields[theMF->begin]);
+   GenCopyMemory(struct clipsValue,theMF->range,&copy->contents[0],
+                 &theMF->multifieldValue->contents[theMF->begin]);
    theMF->begin = 0;
    theMF->value = copy;
   }
@@ -440,8 +442,8 @@ void DuplicateMultifield(
    dst->begin = 0;
    dst->range = src->range;
    dst->value = CreateUnmanagedMultifield(theEnv,(unsigned long) dst->range);
-   GenCopyMemory(struct field,dst->range,&dst->multifieldValue->theFields[0],
-                                         &src->multifieldValue->theFields[src->begin]);
+   GenCopyMemory(struct clipsValue,dst->range,&dst->multifieldValue->contents[0],
+                                         &src->multifieldValue->contents[src->begin]);
   }
 
 /*******************/
@@ -454,7 +456,7 @@ Multifield *CopyMultifield(
    Multifield *dst;
 
    dst = CreateUnmanagedMultifield(theEnv,src->length);
-   GenCopyMemory(struct field,src->length,&(dst->theFields[0]),&(src->theFields[0]));
+   GenCopyMemory(struct clipsValue,src->length,&(dst->contents[0]),&(src->contents[0]));
    return dst;
   }
 
@@ -464,19 +466,19 @@ Multifield *CopyMultifield(
 /**********************************************************/
 void EphemerateMultifield(
   Environment *theEnv,
-  struct multifield *theSegment)
+  Multifield *theSegment)
   {
    unsigned long length, i;
-   struct field *theFields;
+   CLIPSValue *contents;
 
    if (theSegment == NULL) return;
 
    length = theSegment->length;
 
-   theFields = theSegment->theFields;
+   contents = theSegment->contents;
 
    for (i = 0 ; i < length ; i++)
-     { EphemerateValue(theEnv,theFields[i].value); }
+     { EphemerateValue(theEnv,contents[i].value); }
   }
 
 /*********************************************/
@@ -485,15 +487,15 @@ void EphemerateMultifield(
 void PrintMultifield(
   Environment *theEnv,
   const char *fileid,
-  struct multifield *segment,
+  Multifield *segment,
   long begin,
   long end,
   bool printParens)
   {
-   struct field *theMultifield;
+   CLIPSValue *theMultifield;
    int i;
 
-   theMultifield = segment->theFields;
+   theMultifield = segment->contents;
    if (printParens)
      PrintRouter(theEnv,fileid,"(");
    i = begin;
@@ -604,12 +606,12 @@ void StoreInMultifield(
             orig_ptr = (val_arr+k)->multifieldValue;
             for (i = start; i < (start + range); i++, j++)
               {
-               theMultifield->theFields[j].value = orig_ptr->theFields[i].value;
+               theMultifield->contents[j].value = orig_ptr->contents[i].value;
               }
            }
          else if ((val_arr+k)->header->type != VOID_TYPE)
            {
-            theMultifield->theFields[j].value = (val_arr+k)->value;
+            theMultifield->contents[j].value = (val_arr+k)->value;
             j++;
            }
         }
@@ -634,15 +636,15 @@ bool MultifieldDOsEqual(
   UDFValue *dobj2)
   {
    long extent1,extent2; /* 6.04 Bug Fix */
-   Field *e1, *e2;
+   CLIPSValue *e1, *e2;
 
    extent1 = dobj1->range;
    extent2 = dobj2->range;
    if (extent1 != extent2)
      { return false; }
 
-   e1 = &dobj1->multifieldValue->theFields[dobj1->begin];
-   e2 = &dobj2->multifieldValue->theFields[dobj2->begin];
+   e1 = &dobj1->multifieldValue->contents[dobj1->begin];
+   e2 = &dobj2->multifieldValue->contents[dobj2->begin];
 
    while (extent1 != 0)
      {
@@ -664,19 +666,19 @@ bool MultifieldDOsEqual(
 /* MultifieldsEqual: Determines if two multifields are identical. */
 /******************************************************************/
 bool MultifieldsEqual(
-  struct multifield *segment1,
-  struct multifield *segment2)
+  Multifield *segment1,
+  Multifield *segment2)
   {
-   struct field *elem1;
-   struct field *elem2;
+   CLIPSValue *elem1;
+   CLIPSValue *elem2;
    long length, i = 0;
 
    length = segment1->length;
    if (length != segment2->length)
      { return false; }
 
-   elem1 = segment1->theFields;
-   elem2 = segment2->theFields;
+   elem1 = segment1->contents;
+   elem2 = segment2->contents;
 
    /*==================================================*/
    /* Compare each field of both facts until the facts */
@@ -703,13 +705,13 @@ bool MultifieldsEqual(
 /* HashMultifield: Returns the hash value for a multifield. */
 /************************************************************/
 unsigned long HashMultifield(
-  struct multifield *theSegment,
+  Multifield *theSegment,
   unsigned long theRange)
   {
    unsigned long length, i;
    unsigned long tvalue;
    unsigned long count;
-   struct field *fieldPtr;
+   CLIPSValue *fieldPtr;
    union
      {
       double fv;
@@ -723,7 +725,7 @@ unsigned long HashMultifield(
 
    count = 0;
    length = theSegment->length;
-   fieldPtr = theSegment->theFields;
+   fieldPtr = theSegment->contents;
 
    /*====================================================*/
    /* Loop through each value in the multifield, compute */
@@ -817,20 +819,20 @@ CLIPSLexeme *ImplodeMultifield(
    theMultifield = value->multifieldValue;
    for (i = value->begin ; i < (value->begin + value->range) ; i++)
      {
-      if (theMultifield->theFields[i].header->type == FLOAT_TYPE)
+      if (theMultifield->contents[i].header->type == FLOAT_TYPE)
         {
-         tmp_str = FloatToString(theEnv,theMultifield->theFields[i].floatValue->contents);
+         tmp_str = FloatToString(theEnv,theMultifield->contents[i].floatValue->contents);
          strsize += strlen(tmp_str) + 1;
         }
-      else if (theMultifield->theFields[i].header->type == INTEGER_TYPE)
+      else if (theMultifield->contents[i].header->type == INTEGER_TYPE)
         {
-         tmp_str = LongIntegerToString(theEnv,theMultifield->theFields[i].integerValue->contents);
+         tmp_str = LongIntegerToString(theEnv,theMultifield->contents[i].integerValue->contents);
          strsize += strlen(tmp_str) + 1;
         }
-      else if (theMultifield->theFields[i].header->type == STRING_TYPE)
+      else if (theMultifield->contents[i].header->type == STRING_TYPE)
         {
-         strsize += strlen(theMultifield->theFields[i].lexemeValue->contents) + 3;
-         tmp_str = theMultifield->theFields[i].lexemeValue->contents;
+         strsize += strlen(theMultifield->contents[i].lexemeValue->contents) + 3;
+         tmp_str = theMultifield->contents[i].lexemeValue->contents;
          while(*tmp_str)
            {
             if (*tmp_str == '"')
@@ -841,17 +843,17 @@ CLIPSLexeme *ImplodeMultifield(
            }
         }
 #if OBJECT_SYSTEM
-      else if (theMultifield->theFields[i].header->type == INSTANCE_NAME_TYPE)
-        { strsize += strlen(theMultifield->theFields[i].lexemeValue->contents) + 3; }
-      else if (theMultifield->theFields[i].header->type == INSTANCE_ADDRESS_TYPE)
+      else if (theMultifield->contents[i].header->type == INSTANCE_NAME_TYPE)
+        { strsize += strlen(theMultifield->contents[i].lexemeValue->contents) + 3; }
+      else if (theMultifield->contents[i].header->type == INSTANCE_ADDRESS_TYPE)
         {
-         strsize += strlen(theMultifield->theFields[i].instanceValue->name->contents) + 3;
+         strsize += strlen(theMultifield->contents[i].instanceValue->name->contents) + 3;
         }
 #endif
 
       else
         {
-         tempDO.value = theMultifield->theFields[i].value;
+         tempDO.value = theMultifield->contents[i].value;
          strsize += strlen(DataObjectToString(theEnv,&tempDO)) + 1;
         }
      }
@@ -869,18 +871,18 @@ CLIPSLexeme *ImplodeMultifield(
       /* Convert numbers to strings */
       /*============================*/
 
-      if (theMultifield->theFields[i].header->type == FLOAT_TYPE)
+      if (theMultifield->contents[i].header->type == FLOAT_TYPE)
         {
-         tmp_str = FloatToString(theEnv,theMultifield->theFields[i].floatValue->contents);
+         tmp_str = FloatToString(theEnv,theMultifield->contents[i].floatValue->contents);
          while(*tmp_str)
            {
             *(ret_str+j) = *tmp_str;
             j++, tmp_str++;
            }
         }
-      else if (theMultifield->theFields[i].header->type == INTEGER_TYPE)
+      else if (theMultifield->contents[i].header->type == INTEGER_TYPE)
         {
-         tmp_str = LongIntegerToString(theEnv,theMultifield->theFields[i].integerValue->contents);
+         tmp_str = LongIntegerToString(theEnv,theMultifield->contents[i].integerValue->contents);
          while(*tmp_str)
            {
             *(ret_str+j) = *tmp_str;
@@ -893,9 +895,9 @@ CLIPSLexeme *ImplodeMultifield(
       /* imbedded quotes with a backslash      */
       /*=======================================*/
 
-      else if (theMultifield->theFields[i].header->type == STRING_TYPE)
+      else if (theMultifield->contents[i].header->type == STRING_TYPE)
         {
-         tmp_str = theMultifield->theFields[i].lexemeValue->contents;
+         tmp_str = theMultifield->contents[i].lexemeValue->contents;
          *(ret_str+j) = '"';
          j++;
          while(*tmp_str)
@@ -918,9 +920,9 @@ CLIPSLexeme *ImplodeMultifield(
          j++;
         }
 #if OBJECT_SYSTEM
-      else if (theMultifield->theFields[i].header->type == INSTANCE_NAME_TYPE)
+      else if (theMultifield->contents[i].header->type == INSTANCE_NAME_TYPE)
         {
-         tmp_str = theMultifield->theFields[i].lexemeValue->contents;
+         tmp_str = theMultifield->contents[i].lexemeValue->contents;
          *(ret_str + j++) = '[';
          while(*tmp_str)
            {
@@ -929,9 +931,9 @@ CLIPSLexeme *ImplodeMultifield(
            }
          *(ret_str + j++) = ']';
         }
-      else if (theMultifield->theFields[i].header->type == INSTANCE_ADDRESS_TYPE)
+      else if (theMultifield->contents[i].header->type == INSTANCE_ADDRESS_TYPE)
         {
-         tmp_str = theMultifield->theFields[i].instanceValue->name->contents;
+         tmp_str = theMultifield->contents[i].instanceValue->name->contents;
          *(ret_str + j++) = '[';
          while(*tmp_str)
            {
@@ -943,7 +945,7 @@ CLIPSLexeme *ImplodeMultifield(
 #endif
       else
         {
-         tempDO.value = theMultifield->theFields[i].value;
+         tempDO.value = theMultifield->contents[i].value;
          tmp_str = DataObjectToString(theEnv,&tempDO);
          while(*tmp_str)
            {

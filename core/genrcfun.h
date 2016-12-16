@@ -140,7 +140,7 @@ struct defgenericData
 #define RestoreBusyCount(gfunc) (gfunc->busy = DefgenericData(theEnv)->OldGenericBusySave)
 
 #if ! RUN_TIME
-   bool                           ClearDefgenericsReady(Environment *);
+   bool                           ClearDefgenericsReady(Environment *,void *);
    void                          *AllocateDefgenericModule(Environment *);
    void                           FreeDefgenericModule(Environment *,void *);
 #else

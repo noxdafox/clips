@@ -39,7 +39,7 @@
 /*            named construct.                               */
 /*                                                           */
 /*      6.40: Changed restrictions from char * to            */
-/*            symbolHashNode * to support strings            */
+/*            CLIPSLexeme * to support strings               */
 /*            originating from sources that are not          */
 /*            statically allocated.                          */
 /*                                                           */
@@ -462,6 +462,9 @@ bool RestrictionExists(
    {
     int i = 0, currentPosition = 0;
 
+    if (restrictionString == NULL)
+      { return false; }
+      
     while (restrictionString[i] != '\0')
       {
        if (restrictionString[i] == ';')
@@ -873,6 +876,12 @@ void PopulateRestriction(
     char buffer[2];
 
     *restriction = 0;
+
+    if (restrictionString == NULL)
+      {
+       *restriction = defaultRestriction;
+       return;
+      }
 
     while (restrictionString[i] != '\0')
       {

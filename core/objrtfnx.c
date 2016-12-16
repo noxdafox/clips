@@ -118,7 +118,7 @@
                                                         struct multifieldMarker *,struct ObjectMatchVar1 *);
    static void                    GetObjectValueSimple(Environment *,UDFValue *,Instance *,struct ObjectMatchVar2 *);
    static long                    CalculateSlotField(struct multifieldMarker *,InstanceSlot *,long,long *); /* 6.04 Bug Fix */
-   static void                    GetInsMultiSlotField(Field *,Instance *,unsigned,unsigned,unsigned);
+   static void                    GetInsMultiSlotField(CLIPSValue *,Instance *,unsigned,unsigned,unsigned);
    static void                    DeallocateObjectReteData(Environment *);
    static void                    DestroyObjectPatternNetwork(Environment *,OBJECT_PATTERN_NODE *);
    static void                    DestroyObjectAlphaNodes(Environment *,OBJECT_ALPHA_NODE *);
@@ -350,11 +350,11 @@ bool ObjectCmpConstantFunction(
          theSegment = ObjectReteData(theEnv)->CurrentPatternObjectSlot->multifieldValue;
          if (hack->fromBeginning)
            {
-            theVar.value = theSegment->theFields[hack->offset].value;
+            theVar.value = theSegment->contents[hack->offset].value;
            }
          else
            {
-            theVar.value = theSegment->theFields[theSegment->length -
+            theVar.value = theSegment->contents[theSegment->length -
                                       (hack->offset + 1)].value;
            }
         }
@@ -727,7 +727,7 @@ static bool PNSimpleCompareFunction2(
   {
    struct ObjectCmpPNSingleSlotVars2 *hack;
    bool rv;
-   Field f1;
+   CLIPSValue f1;
    InstanceSlot *is2;
 
    hack = (struct ObjectCmpPNSingleSlotVars2 *) ((CLIPSBitMap *) theValue)->contents;
@@ -778,7 +778,7 @@ static bool PNSimpleCompareFunction3(
   {
    struct ObjectCmpPNSingleSlotVars3 *hack;
    bool rv;
-   Field f1, f2;
+   CLIPSValue f1, f2;
 
    hack = (struct ObjectCmpPNSingleSlotVars3 *) ((CLIPSBitMap *) theValue)->contents;
    GetInsMultiSlotField(&f1,ObjectReteData(theEnv)->CurrentPatternObject,(unsigned) hack->firstSlot,
@@ -888,7 +888,7 @@ static bool JNSimpleCompareFunction2(
    struct multifieldMarker *theMarks;
    struct ObjectCmpJoinSingleSlotVars2 *hack;
    bool rv;
-   Field f1;
+   CLIPSValue f1;
    InstanceSlot *is2;
 
    hack = (struct ObjectCmpJoinSingleSlotVars2 *) ((CLIPSBitMap *) theValue)->contents;
@@ -947,7 +947,7 @@ static bool JNSimpleCompareFunction3(
    struct multifieldMarker *theMarks;
    struct ObjectCmpJoinSingleSlotVars3 *hack;
    bool rv;
-   Field f1,f2;
+   CLIPSValue f1,f2;
 
    hack = (struct ObjectCmpJoinSingleSlotVars3 *) ((CLIPSBitMap *) theValue)->contents;
    GetPatternObjectAndMarks(theEnv,((int) hack->firstPattern),hack->firstPatternLHS,hack->firstPatternRHS,&ins1,&theMarks);
@@ -1111,7 +1111,7 @@ static void GetObjectValueGeneral(
      {
       if ((*insSlot)->desc->multiple)
         {
-         returnValue->value = (*insSlot)->multifieldValue->theFields[field-1].value;
+         returnValue->value = (*insSlot)->multifieldValue->contents[field-1].value;
         }
       else
         {
@@ -1147,7 +1147,7 @@ static void GetObjectValueSimple(
   {
    InstanceSlot **insSlot,*basisSlot;
    Multifield *segmentPtr;
-   Field *fieldPtr;
+   CLIPSValue *fieldPtr;
 
    insSlot =
      &theInstance->slotAddresses
@@ -1186,13 +1186,13 @@ static void GetObjectValueSimple(
            }
          else
            {
-            fieldPtr = &segmentPtr->theFields[matchVar->beginningOffset];
+            fieldPtr = &segmentPtr->contents[matchVar->beginningOffset];
             returnValue->value = fieldPtr->value;
            }
         }
       else
         {
-         fieldPtr = &segmentPtr->theFields[segmentPtr->length -
+         fieldPtr = &segmentPtr->contents[segmentPtr->length -
                                            (matchVar->endOffset + 1)];
          returnValue->value = fieldPtr->value;
         }
@@ -1274,7 +1274,7 @@ static long CalculateSlotField(
                  comparisons
  ****************************************************/
 static void GetInsMultiSlotField(
-  Field *theField,
+  CLIPSValue *theField,
   Instance *theInstance,
   unsigned theSlotID,
   unsigned fromBeginning,
@@ -1282,7 +1282,7 @@ static void GetInsMultiSlotField(
   {
    InstanceSlot * insSlot;
    Multifield *theSegment;
-   Field *tmpField;
+   CLIPSValue *tmpField;
 
    insSlot = theInstance->slotAddresses
                [theInstance->cls->slotNameMap[theSlotID] - 1];
@@ -1293,9 +1293,9 @@ static void GetInsMultiSlotField(
      {
       theSegment = insSlot->multifieldValue;
       if (fromBeginning)
-        tmpField = &theSegment->theFields[offset];
+        tmpField = &theSegment->contents[offset];
       else
-        tmpField = &theSegment->theFields[theSegment->length - offset - 1];
+        tmpField = &theSegment->contents[theSegment->length - offset - 1];
       theField->value = tmpField->value;
      }
    else

@@ -370,7 +370,7 @@ void ReturnValues(
       nextPtr = garbagePtr->next;
       ValueDeinstall(theEnv,garbagePtr);
       if ((garbagePtr->supplementalInfo != NULL) && decrementSupplementalInfo)
-        { DecrementSymbolCount(theEnv,(struct symbolHashNode *) garbagePtr->supplementalInfo); }
+        { DecrementSymbolCount(theEnv,(CLIPSLexeme *) garbagePtr->supplementalInfo); }
       rtn_struct(theEnv,udfValue,garbagePtr);
       garbagePtr = nextPtr;
      }
@@ -497,9 +497,11 @@ void CVAtomInstall(
         break;
 #endif
 
+#if DEFTEMPLATE_CONSTRUCT
       case FACT_ADDRESS_TYPE:
         IncrementFactCount(theEnv,(Fact *) vPtr);
         break;
+#endif
      
       case VOID_TYPE:
         break;
@@ -551,9 +553,11 @@ void CVAtomDeinstall(
         break;
 #endif
      
+#if DEFTEMPLATE_CONSTRUCT
       case FACT_ADDRESS_TYPE:
         DecrementFactCount(theEnv,(Fact *) vPtr);
         break;
+#endif
 
       case VOID_TYPE:
         break;
@@ -831,8 +835,8 @@ struct expr *ConvertValueToExpression(
 
    for (i = theValue->begin; i < (theValue->begin + theValue->range); i++)
      {
-      newItem = GenConstant(theEnv,theValue->multifieldValue->theFields[i].header->type,
-                                   theValue->multifieldValue->theFields[i].value);
+      newItem = GenConstant(theEnv,theValue->multifieldValue->contents[i].header->type,
+                                   theValue->multifieldValue->contents[i].value);
       if (last == NULL) head = newItem;
       else last->nextArg = newItem;
       last = newItem;
@@ -1126,7 +1130,7 @@ static void NewCAddress(
       return;
      }
 
-   rv->value = AddExternalAddress(theEnv,NULL,0);
+   rv->value = CreateExternalAddress(theEnv,NULL,0);
   }
 
 /*******************************/

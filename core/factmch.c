@@ -76,7 +76,7 @@
 
    static bool                     EvaluatePatternExpression(Environment *,struct factPatternNode *,struct expr *);
    static void                     TraceErrorToJoin(Environment *,struct factPatternNode *,bool);
-   static void                     ProcessFactAlphaMatch(Environment *,struct fact *,struct multifieldMarker *,struct factPatternNode *);
+   static void                     ProcessFactAlphaMatch(Environment *,Fact *,struct multifieldMarker *,struct factPatternNode *);
    static struct factPatternNode  *GetNextFactPatternNode(Environment *,bool,struct factPatternNode *);
    static bool                     SkipFactPatternNode(Environment *,struct factPatternNode *);
    static void                     ProcessMultifieldNode(Environment *,
@@ -90,7 +90,7 @@
 /*************************************************************************/
 void FactPatternMatch(
   Environment *theEnv,
-  struct fact *theFact,
+  Fact *theFact,
   struct factPatternNode *patternPtr,
   int offset,
   struct multifieldMarker *markers,
@@ -175,11 +175,11 @@ void FactPatternMatch(
              ((FactData(theEnv)->CurrentPatternMarks == NULL) ?
               false :
               (FactData(theEnv)->CurrentPatternMarks->where.whichSlotNumber == patternPtr->whichSlot)) &&
-             (FactData(theEnv)->CurrentPatternFact->theProposition.theFields
+             (FactData(theEnv)->CurrentPatternFact->theProposition.contents
                   [patternPtr->whichSlot].header->type == MULTIFIELD_TYPE))
            {
             if ((patternPtr->leaveFields + theSlotField) != (int)
-                  FactData(theEnv)->CurrentPatternFact->theProposition.theFields
+                  FactData(theEnv)->CurrentPatternFact->theProposition.contents
                                       [patternPtr->whichSlot].multifieldValue->length)
               { skipit = true; }
            }
@@ -306,7 +306,7 @@ static void ProcessMultifieldNode(
    /*========================================*/
 
    theSlotValue =
-     FactData(theEnv)->CurrentPatternFact->theProposition.theFields[thePattern->whichSlot].multifieldValue;
+     FactData(theEnv)->CurrentPatternFact->theProposition.contents[thePattern->whichSlot].multifieldValue;
 
    /*===============================================*/
    /* Save the value of the markers already stored. */
@@ -533,7 +533,7 @@ static struct factPatternNode *GetNextFactPatternNode(
 /*******************************************************/
 static void ProcessFactAlphaMatch(
   Environment *theEnv,
-  struct fact *theFact,
+  Fact *theFact,
   struct multifieldMarker *theMarks,
   struct factPatternNode *thePattern)
   {

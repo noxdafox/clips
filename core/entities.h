@@ -26,15 +26,14 @@
 
 #define _H_entities
 
-typedef struct voidHashNode CLIPSVoid;
-typedef struct symbolHashNode CLIPSLexeme;
-typedef struct floatHashNode CLIPSFloat;
-typedef struct integerHashNode CLIPSInteger;
-typedef struct bitMapHashNode CLIPSBitMap;
-typedef struct externalAddressHashNode CLIPSExternalAddress;
+typedef struct clipsVoid CLIPSVoid;
+typedef struct clipsLexeme CLIPSLexeme;
+typedef struct clipsFloat CLIPSFloat;
+typedef struct clipsInteger CLIPSInteger;
+typedef struct clipsBitMap CLIPSBitMap;
+typedef struct clipsExternalAddress CLIPSExternalAddress;
 typedef struct typeHeader TypeHeader;
 
-typedef struct field Field;
 typedef struct multifield Multifield;
 
 typedef struct clipsValue CLIPSValue;
@@ -65,21 +64,21 @@ struct typeHeader
    unsigned short type;
   };
 
-/****************/
-/* voidHashNode */
-/****************/
-struct voidHashNode
+/*************/
+/* clipsVoid */
+/*************/
+struct clipsVoid
   {
-   TypeHeader th;
+   TypeHeader header;
   };
 
-/******************/
-/* symbolHashNode */
-/******************/
-struct symbolHashNode
+/***************/
+/* clipsLexeme */
+/***************/
+struct clipsLexeme
   {
-   TypeHeader th;
-   struct symbolHashNode *next;
+   TypeHeader header;
+   CLIPSLexeme *next;
    long count;
    unsigned int permanent : 1;
    unsigned int markedEphemeral : 1;
@@ -88,13 +87,13 @@ struct symbolHashNode
    const char *contents;
   };
 
-/*****************/
-/* floatHashNode */
-/*****************/
-struct floatHashNode
+/**************/
+/* clipsFloat */
+/**************/
+struct clipsFloat
   {
-   TypeHeader th;
-   struct floatHashNode *next;
+   TypeHeader header;
+   CLIPSFloat *next;
    long count;
    unsigned int permanent : 1;
    unsigned int markedEphemeral : 1;
@@ -103,13 +102,13 @@ struct floatHashNode
    double contents;
   };
 
-/*******************/
-/* integerHashNode */
-/*******************/
-struct integerHashNode
+/****************/
+/* clipsInteger */
+/****************/
+struct clipsInteger
   {
-   TypeHeader th;
-   struct integerHashNode *next;
+   TypeHeader header;
+   CLIPSInteger *next;
    long count;
    unsigned int permanent : 1;
    unsigned int markedEphemeral : 1;
@@ -118,13 +117,13 @@ struct integerHashNode
    long long contents;
   };
 
-/******************/
-/* bitMapHashNode */
-/******************/
-struct bitMapHashNode
+/***************/
+/* clipsBitMap */
+/***************/
+struct clipsBitMap
   {
-   TypeHeader th;
-   struct bitMapHashNode *next;
+   TypeHeader header;
+   CLIPSBitMap *next;
    long count;
    unsigned int permanent : 1;
    unsigned int markedEphemeral : 1;
@@ -134,13 +133,13 @@ struct bitMapHashNode
    unsigned short size;
   };
 
-/***************************/
-/* externalAddressHashNode */
-/***************************/
-struct externalAddressHashNode
+/************************/
+/* clipsExternalAddress */
+/************************/
+struct clipsExternalAddress
   {
-   TypeHeader th;
-   struct externalAddressHashNode *next;
+   TypeHeader header;
+   CLIPSExternalAddress *next;
    long count;
    unsigned int permanent : 1;
    unsigned int markedEphemeral : 1;
@@ -148,38 +147,6 @@ struct externalAddressHashNode
    unsigned int bucket : 29;
    void *contents;
    unsigned short type;
-  };
-
-/*********/
-/* field */
-/*********/
-struct field
-  {
-   union
-     {
-      void *value;
-      TypeHeader *header;
-      CLIPSLexeme *lexemeValue;
-      CLIPSFloat *floatValue;
-      CLIPSInteger *integerValue;
-      CLIPSVoid *voidValue;
-      Fact *factValue;
-      Instance *instanceValue;
-      Multifield *multifieldValue;
-      CLIPSExternalAddress *externalAddressValue;
-     };
-  };
-
-/**************/
-/* multifield */
-/**************/
-struct multifield
-  {
-   TypeHeader th;
-   unsigned busyCount;
-   long length;
-   struct multifield *next;
-   struct field theFields[1];
   };
 
 /**************/
@@ -191,15 +158,27 @@ struct clipsValue
      {
       void *value;
       TypeHeader const *header;
-      Fact *factValue;
-      Instance *instanceValue;
       CLIPSLexeme *lexemeValue;
       CLIPSFloat *floatValue;
       CLIPSInteger *integerValue;
       CLIPSVoid *voidValue;
       Multifield *multifieldValue;
+      Fact *factValue;
+      Instance *instanceValue;
       CLIPSExternalAddress *externalAddressValue;
      };
+  };
+
+/**************/
+/* multifield */
+/**************/
+struct multifield
+  {
+   TypeHeader header;
+   unsigned busyCount;
+   long length;
+   Multifield *next;
+   CLIPSValue contents[1];
   };
 
 /************/
@@ -212,13 +191,13 @@ struct udfValue
      {
       void *value;
       TypeHeader const *header;
-      Fact *factValue;
-      Instance *instanceValue;
       CLIPSLexeme *lexemeValue;
       CLIPSFloat *floatValue;
       CLIPSInteger *integerValue;
       CLIPSVoid *voidValue;
       Multifield *multifieldValue;
+      Fact *factValue;
+      Instance *instanceValue;
       CLIPSExternalAddress *externalAddressValue;
      };
    long begin;

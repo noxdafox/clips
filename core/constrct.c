@@ -295,7 +295,7 @@ bool Save(
             for (saveFunction = ConstructData(theEnv)->ListOfSaveFunctions;
                  saveFunction != NULL;
                  saveFunction = saveFunction->next)
-              { (*saveFunction->func)(theEnv,defmodulePtr,(char *) filePtr); }
+              { (*saveFunction->func)(theEnv,defmodulePtr,(char *) filePtr,saveFunction->context); }
 
             updated = true;
             defmodulePtr->visitedFlag = true;
@@ -522,7 +522,7 @@ void Reset(
    for (resetPtr = ConstructData(theEnv)->ListOfResetFunctions;
         (resetPtr != NULL) && (GetHaltExecution(theEnv) == false);
         resetPtr = resetPtr->next)
-     { (*resetPtr->func)(theEnv); }
+     { (*resetPtr->func)(theEnv,resetPtr->context); }
 
    /*============================================*/
    /* Set the current module to the MAIN module. */
@@ -567,12 +567,13 @@ BeforeResetFunction *SetBeforeResetFunction(
 bool AddResetFunction(
   Environment *theEnv,
   const char *name,
-  void (*functionPtr)(Environment *),
-  int priority)
+  VoidCallFunction *functionPtr,
+  int priority,
+  void *context)
   {
-   ConstructData(theEnv)->ListOfResetFunctions = AddVoidFunctionToCallList(theEnv,name,priority,
-                                                functionPtr,
-                                                ConstructData(theEnv)->ListOfResetFunctions);
+   ConstructData(theEnv)->ListOfResetFunctions =
+      AddVoidFunctionToCallList(theEnv,name,priority,functionPtr,
+                                ConstructData(theEnv)->ListOfResetFunctions,context);
    return true;
   }
 
@@ -666,7 +667,7 @@ bool Clear(
    for (theFunction = ConstructData(theEnv)->ListOfClearFunctions;
         theFunction != NULL;
         theFunction = theFunction->next)
-     { (*theFunction->func)(theEnv); }
+     { (*theFunction->func)(theEnv,theFunction->context); }
 
    /*=============================*/
    /* Deactivate the watch router */
@@ -720,7 +721,7 @@ bool ClearReady(
         theFunction != NULL;
         theFunction = theFunction->next)
      {
-      if ((*theFunction->func)(theEnv) == false)
+      if ((*theFunction->func)(theEnv,theFunction->context) == false)
         { return false; }
      }
 
@@ -734,12 +735,13 @@ bool ClearReady(
 bool AddClearReadyFunction(
   Environment *theEnv,
   const char *name,
-  bool (*functionPtr)(Environment *),
-  int priority)
+  BoolCallFunction *functionPtr,
+  int priority,
+  void *context)
   {
    ConstructData(theEnv)->ListOfClearReadyFunctions =
      AddBoolFunctionToCallList(theEnv,name,priority,functionPtr,
-                               ConstructData(theEnv)->ListOfClearReadyFunctions);
+                               ConstructData(theEnv)->ListOfClearReadyFunctions,context);
    return true;
   }
 
@@ -768,13 +770,13 @@ bool RemoveClearReadyFunction(
 bool AddClearFunction(
   Environment *theEnv,
   const char *name,
-  void (*functionPtr)(Environment *),
-  int priority)
+  VoidCallFunction *functionPtr,
+  int priority,
+  void *context)
   {
    ConstructData(theEnv)->ListOfClearFunctions =
-      AddVoidFunctionToCallList(theEnv,name,priority,
-                            functionPtr,
-                            ConstructData(theEnv)->ListOfClearFunctions);
+      AddVoidFunctionToCallList(theEnv,name,priority,functionPtr,
+                                ConstructData(theEnv)->ListOfClearFunctions,context);
    return true;
   }
 
@@ -927,14 +929,15 @@ Construct *AddConstruct(
 bool AddSaveFunction(
   Environment *theEnv,
   const char *name,
-  void (*functionPtr)(Environment *,Defmodule *,const char *),
-  int priority)
+  SaveCallFunction *functionPtr,
+  int priority,
+  void *context)
   {
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    ConstructData(theEnv)->ListOfSaveFunctions =
      AddSaveFunctionToCallList(theEnv,name,priority,
                            functionPtr,
-                           ConstructData(theEnv)->ListOfSaveFunctions);
+                           ConstructData(theEnv)->ListOfSaveFunctions,context);
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -942,5 +945,118 @@ bool AddSaveFunction(
 #endif
 
    return true;
+  }
+
+/**********************************************************/
+/* AddSaveFunctionToCallList: Adds a function to a list   */
+/*   of functions which are called to perform certain     */
+/*   operations (e.g. clear, reset, and bload functions). */
+/**********************************************************/
+SaveCallFunctionItem *AddSaveFunctionToCallList(
+  Environment *theEnv,
+  const char *name,
+  int priority,
+  SaveCallFunction *func,
+  struct saveCallFunctionItem *head,
+  void *context)
+  {
+   struct saveCallFunctionItem *newPtr, *currentPtr, *lastPtr = NULL;
+   char  *nameCopy;
+
+   newPtr = get_struct(theEnv,saveCallFunctionItem);
+
+   nameCopy = (char *) genalloc(theEnv,strlen(name) + 1);
+   genstrcpy(nameCopy,name);
+   newPtr->name = nameCopy;
+
+   newPtr->func = func;
+   newPtr->priority = priority;
+   newPtr->context = context;
+
+   if (head == NULL)
+     {
+      newPtr->next = NULL;
+      return(newPtr);
+     }
+
+   currentPtr = head;
+   while ((currentPtr != NULL) ? (priority < currentPtr->priority) : false)
+     {
+      lastPtr = currentPtr;
+      currentPtr = currentPtr->next;
+     }
+
+   if (lastPtr == NULL)
+     {
+      newPtr->next = head;
+      head = newPtr;
+     }
+   else
+     {
+      newPtr->next = currentPtr;
+      lastPtr->next = newPtr;
+     }
+
+   return(head);
+  }
+
+/******************************************************************/
+/* RemoveSaveFunctionFromCallList: Removes a function from a list */
+/*   of functions which are called to perform certain operations  */
+/*   (e.g. clear, reset, and bload functions).                    */
+/******************************************************************/
+struct saveCallFunctionItem *RemoveSaveFunctionFromCallList(
+  Environment *theEnv,
+  const char *name,
+  struct saveCallFunctionItem *head,
+  bool *found)
+  {
+   struct saveCallFunctionItem *currentPtr, *lastPtr;
+
+   *found = false;
+   lastPtr = NULL;
+   currentPtr = head;
+
+   while (currentPtr != NULL)
+     {
+      if (strcmp(name,currentPtr->name) == 0)
+        {
+         *found = true;
+         if (lastPtr == NULL)
+           { head = currentPtr->next; }
+         else
+           { lastPtr->next = currentPtr->next; }
+
+         genfree(theEnv,(void *) currentPtr->name,strlen(currentPtr->name) + 1);
+         rtn_struct(theEnv,saveCallFunctionItem,currentPtr);
+         return head;
+        }
+
+      lastPtr = currentPtr;
+      currentPtr = currentPtr->next;
+     }
+
+   return head;
+  }
+
+/*************************************************************/
+/* DeallocateSaveCallList: Removes all functions from a list */
+/*   of functions which are called to perform certain        */
+/*   operations (e.g. clear, reset, and bload functions).    */
+/*************************************************************/
+void DeallocateSaveCallList(
+  Environment *theEnv,
+  struct saveCallFunctionItem *theList)
+  {
+   struct saveCallFunctionItem *tmpPtr, *nextPtr;
+
+   tmpPtr = theList;
+   while (tmpPtr != NULL)
+     {
+      nextPtr = tmpPtr->next;
+      genfree(theEnv,(void *) tmpPtr->name,strlen(tmpPtr->name) + 1);
+      rtn_struct(theEnv,saveCallFunctionItem,tmpPtr);
+      tmpPtr = nextPtr;
+     }
   }
 

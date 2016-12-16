@@ -358,7 +358,7 @@ void ModifyCommand(
       /* If a single field slot is being replaced, then... */
       /*===================================================*/
 
-      if (oldFact->theProposition.theFields[position].header->type != MULTIFIELD_TYPE)
+      if (oldFact->theProposition.contents[position].header->type != MULTIFIELD_TYPE)
         {
          /*======================================================*/
          /* If the list of values to store in the slot is empty  */
@@ -404,7 +404,7 @@ void ModifyCommand(
          /* Store the value in the slot */
          /*=============================*/
 
-         if (oldFact->theProposition.theFields[position].value != computeResult.value)
+         if (oldFact->theProposition.contents[position].value != computeResult.value)
            {
             replacementCount++;
             theValueArray[position].value = computeResult.value;
@@ -432,8 +432,8 @@ void ModifyCommand(
          /* Store the value in the slot */
          /*=============================*/
 
-         if ((oldFact->theProposition.theFields[position].header->type != computeResult.header->type) ||
-             (! MultifieldsEqual((Multifield *) oldFact->theProposition.theFields[position].value,(Multifield *) computeResult.value)))
+         if ((oldFact->theProposition.contents[position].header->type != computeResult.header->type) ||
+             (! MultifieldsEqual((Multifield *) oldFact->theProposition.contents[position].value,(Multifield *) computeResult.value)))
            {
             theValueArray[position].value = computeResult.value;
             replacementCount++;
@@ -503,14 +503,13 @@ Fact *ReplaceFact(
 
    if (FactData(theEnv)->ListOfModifyFunctions != NULL)
      {
-      struct callFunctionItemWithArg *theModifyFunction;
-
+      ModifyCallFunctionItem *theModifyFunction;
+      
       for (theModifyFunction = FactData(theEnv)->ListOfModifyFunctions;
            theModifyFunction != NULL;
            theModifyFunction = theModifyFunction->next)
         {
-         SetEnvironmentCallbackContext(theEnv,theModifyFunction->context);
-         ((void (*)(void *,void *,void *))(*theModifyFunction->func))(theEnv,oldFact,NULL);
+         (*theModifyFunction->func)(theEnv,oldFact,NULL,theModifyFunction->context);
         }
      }
 
@@ -538,16 +537,16 @@ Fact *ReplaceFact(
      {
       if (theValueArray[i].voidValue != VoidConstant(theEnv))
         {
-         if (oldFact->theProposition.theFields[i].header->type == MULTIFIELD_TYPE)
+         if (oldFact->theProposition.contents[i].header->type == MULTIFIELD_TYPE)
            {
-            Multifield *theSegment = (Multifield *) oldFact->theProposition.theFields[i].value;
+            Multifield *theSegment = (Multifield *) oldFact->theProposition.contents[i].value;
             if (theSegment->busyCount == 0)
               { ReturnMultifield(theEnv,theSegment); }
             else
               { AddToMultifieldList(theEnv,theSegment); }
            }
 
-         oldFact->theProposition.theFields[i].value = theValueArray[i].value;
+         oldFact->theProposition.contents[i].value = theValueArray[i].value;
         }
      }
 
@@ -564,14 +563,13 @@ Fact *ReplaceFact(
 
    if (FactData(theEnv)->ListOfModifyFunctions != NULL)
      {
-      struct callFunctionItemWithArg *theModifyFunction;
+      ModifyCallFunctionItem *theModifyFunction;
 
       for (theModifyFunction = FactData(theEnv)->ListOfModifyFunctions;
            theModifyFunction != NULL;
            theModifyFunction = theModifyFunction->next)
         {
-         SetEnvironmentCallbackContext(theEnv,theModifyFunction->context);
-         ((void (*)(void *,void *,void *))(*theModifyFunction->func))(theEnv,NULL,theFact);
+         (*theModifyFunction->func)(theEnv,NULL,theFact,theModifyFunction->context);
         }
      }
      
@@ -679,10 +677,10 @@ void DuplicateCommand(
    newFact->whichDeftemplate = templatePtr;
    for (i = 0; i < (int) oldFact->theProposition.length; i++)
      {
-      if (oldFact->theProposition.theFields[i].header->type != MULTIFIELD_TYPE)
-        { newFact->theProposition.theFields[i].value = oldFact->theProposition.theFields[i].value; }
+      if (oldFact->theProposition.contents[i].header->type != MULTIFIELD_TYPE)
+        { newFact->theProposition.contents[i].value = oldFact->theProposition.contents[i].value; }
       else
-        { newFact->theProposition.theFields[i].value = NULL; }
+        { newFact->theProposition.contents[i].value = NULL; }
      }
 
    /*========================*/
@@ -735,7 +733,7 @@ void DuplicateCommand(
       /* If a single field slot is being replaced, then... */
       /*===================================================*/
 
-      if (newFact->theProposition.theFields[position].value != NULL)
+      if (newFact->theProposition.contents[position].value != NULL)
         {
          /*======================================================*/
          /* If the list of values to store in the slot is empty  */
@@ -777,7 +775,7 @@ void DuplicateCommand(
          /* Store the value in the slot */
          /*=============================*/
 
-         newFact->theProposition.theFields[position].value = computeResult.value;
+         newFact->theProposition.contents[position].value = computeResult.value;
         }
 
       /*=================================*/
@@ -799,7 +797,7 @@ void DuplicateCommand(
          /* Store the value in the slot */
          /*=============================*/
 
-         newFact->theProposition.theFields[position].value = computeResult.value;
+         newFact->theProposition.contents[position].value = computeResult.value;
         }
 
       testPtr = testPtr->nextArg;
@@ -812,12 +810,12 @@ void DuplicateCommand(
 
    for (i = 0; i < (int) oldFact->theProposition.length; i++)
      {
-      if ((oldFact->theProposition.theFields[i].header->type == MULTIFIELD_TYPE) &&
-          (newFact->theProposition.theFields[i].value == NULL))
+      if ((oldFact->theProposition.contents[i].header->type == MULTIFIELD_TYPE) &&
+          (newFact->theProposition.contents[i].value == NULL))
 
         {
-         newFact->theProposition.theFields[i].value =
-            CopyMultifield(theEnv,oldFact->theProposition.theFields[i].multifieldValue);
+         newFact->theProposition.contents[i].value =
+            CopyMultifield(theEnv,oldFact->theProposition.contents[i].multifieldValue);
         }
      }
 
@@ -903,7 +901,7 @@ void DeftemplateSlotNames(
       returnValue->begin = 0;
       returnValue->range = 1;
       theList = CreateMultifield(theEnv,(int) 1);
-      theList->theFields[0].lexemeValue = CreateSymbol(theEnv,"implied");
+      theList->contents[0].lexemeValue = CreateSymbol(theEnv,"implied");
       returnValue->value = theList;
       return;
      }
@@ -934,7 +932,7 @@ void DeftemplateSlotNames(
         theSlot != NULL;
         count++, theSlot = theSlot->next)
      {
-      theList->theFields[count].lexemeValue = theSlot->slotName;
+      theList->contents[count].lexemeValue = theSlot->slotName;
      }
   }
 
@@ -1191,8 +1189,8 @@ void DeftemplateSlotCardinality(
       if (strcmp(slotName,"implied") == 0)
         {
          returnValue->value = CreateMultifield(theEnv,2L);
-         returnValue->multifieldValue->theFields[0].integerValue = SymbolData(theEnv)->Zero;
-         returnValue->multifieldValue->theFields[1].lexemeValue = SymbolData(theEnv)->PositiveInfinity;
+         returnValue->multifieldValue->contents[0].integerValue = SymbolData(theEnv)->Zero;
+         returnValue->multifieldValue->contents[1].lexemeValue = SymbolData(theEnv)->PositiveInfinity;
          return;
         }
       else
@@ -1233,13 +1231,13 @@ void DeftemplateSlotCardinality(
 
    if (theSlot->constraints != NULL)
      {
-      returnValue->multifieldValue->theFields[0].value = theSlot->constraints->minFields->value;
-      returnValue->multifieldValue->theFields[1].value = theSlot->constraints->maxFields->value;
+      returnValue->multifieldValue->contents[0].value = theSlot->constraints->minFields->value;
+      returnValue->multifieldValue->contents[1].value = theSlot->constraints->maxFields->value;
      }
    else
      {
-      returnValue->multifieldValue->theFields[0].integerValue = SymbolData(theEnv)->Zero;
-      returnValue->multifieldValue->theFields[1].lexemeValue = SymbolData(theEnv)->PositiveInfinity;
+      returnValue->multifieldValue->contents[0].integerValue = SymbolData(theEnv)->Zero;
+      returnValue->multifieldValue->contents[1].lexemeValue = SymbolData(theEnv)->PositiveInfinity;
      }
   }
 
@@ -1342,7 +1340,7 @@ void DeftemplateSlotAllowedValues(
    theExp = theSlot->constraints->restrictionList;
    while (theExp != NULL)
      {
-      returnValue->multifieldValue->theFields[i].value = theExp->value;
+      returnValue->multifieldValue->contents[i].value = theExp->value;
       theExp = theExp->nextArg;
       i++;
      }
@@ -1403,9 +1401,9 @@ void DeftemplateSlotRange(
       if (strcmp(slotName,"implied") == 0)
         {
          returnValue->value = CreateMultifield(theEnv,2L);
-         returnValue->multifieldValue->theFields[0].lexemeValue =
+         returnValue->multifieldValue->contents[0].lexemeValue =
             SymbolData(theEnv)->NegativeInfinity;
-         returnValue->multifieldValue->theFields[1].lexemeValue =
+         returnValue->multifieldValue->contents[1].lexemeValue =
             SymbolData(theEnv)->PositiveInfinity;
          return;
         }
@@ -1442,8 +1440,8 @@ void DeftemplateSlotRange(
         theSlot->constraints->integersAllowed))
      {
       returnValue->value = CreateMultifield(theEnv,2L);
-      returnValue->multifieldValue->theFields[0].value = theSlot->constraints->minValue->value;
-      returnValue->multifieldValue->theFields[1].value = theSlot->constraints->maxValue->value;
+      returnValue->multifieldValue->contents[0].value = theSlot->constraints->minValue->value;
+      returnValue->multifieldValue->contents[1].value = theSlot->constraints->maxValue->value;
      }
    else
      {
@@ -1573,43 +1571,43 @@ void DeftemplateSlotTypes(
 
    if (allTypes || theSlot->constraints->floatsAllowed)
      {
-      returnValue->multifieldValue->theFields[i++].lexemeValue = CreateSymbol(theEnv,"FLOAT");
+      returnValue->multifieldValue->contents[i++].lexemeValue = CreateSymbol(theEnv,"FLOAT");
      }
 
    if (allTypes || theSlot->constraints->integersAllowed)
      {
-      returnValue->multifieldValue->theFields[i++].lexemeValue = CreateSymbol(theEnv,"INTEGER");
+      returnValue->multifieldValue->contents[i++].lexemeValue = CreateSymbol(theEnv,"INTEGER");
      }
 
    if (allTypes || theSlot->constraints->symbolsAllowed)
      {
-      returnValue->multifieldValue->theFields[i++].lexemeValue = CreateSymbol(theEnv,"SYMBOL");
+      returnValue->multifieldValue->contents[i++].lexemeValue = CreateSymbol(theEnv,"SYMBOL");
      }
 
    if (allTypes || theSlot->constraints->stringsAllowed)
      {
-      returnValue->multifieldValue->theFields[i++].lexemeValue = CreateSymbol(theEnv,"STRING");
+      returnValue->multifieldValue->contents[i++].lexemeValue = CreateSymbol(theEnv,"STRING");
      }
 
    if (allTypes || theSlot->constraints->externalAddressesAllowed)
      {
-      returnValue->multifieldValue->theFields[i++].lexemeValue = CreateSymbol(theEnv,"EXTERNAL-ADDRESS");
+      returnValue->multifieldValue->contents[i++].lexemeValue = CreateSymbol(theEnv,"EXTERNAL-ADDRESS");
      }
 
    if (allTypes || theSlot->constraints->factAddressesAllowed)
      {
-      returnValue->multifieldValue->theFields[i++].lexemeValue = CreateSymbol(theEnv,"FACT-ADDRESS");
+      returnValue->multifieldValue->contents[i++].lexemeValue = CreateSymbol(theEnv,"FACT-ADDRESS");
      }
 
 #if OBJECT_SYSTEM
    if (allTypes || theSlot->constraints->instanceAddressesAllowed)
      {
-      returnValue->multifieldValue->theFields[i++].lexemeValue = CreateSymbol(theEnv,"INSTANCE-ADDRESS");
+      returnValue->multifieldValue->contents[i++].lexemeValue = CreateSymbol(theEnv,"INSTANCE-ADDRESS");
      }
 
    if (allTypes || theSlot->constraints->instanceNamesAllowed)
      {
-      returnValue->multifieldValue->theFields[i++].lexemeValue = CreateSymbol(theEnv,"INSTANCE-NAME");
+      returnValue->multifieldValue->contents[i++].lexemeValue = CreateSymbol(theEnv,"INSTANCE-NAME");
      }
 #endif
   }

@@ -121,7 +121,7 @@
    static bool                    ParseDefinstances(Environment *,const char *);
    static CLIPSLexeme            *ParseDefinstancesName(Environment *,const char *,bool *);
    static void                    RemoveDefinstances(Environment *,Definstances *);
-   static void                    SaveDefinstances(Environment *,Defmodule *,const char *);
+   static void                    SaveDefinstances(Environment *,Defmodule *,const char *,void *);
    static bool                    RemoveAllDefinstances(Environment *);
    static void                    DefinstancesDeleteError(Environment *,const char *);
 #endif
@@ -129,14 +129,14 @@
 #if ! RUN_TIME
    static void                   *AllocateModule(Environment *);
    static void                    ReturnModule(Environment *,void *);
-   static bool                    ClearDefinstancesReady(Environment *);
+   static bool                    ClearDefinstancesReady(Environment *,void *);
    static void                    CheckDefinstancesBusy(Environment *,ConstructHeader *,void *);
    static void                    DestroyDefinstancesAction(Environment *,ConstructHeader *,void *);
 #else
    static void                    RuntimeDefinstancesAction(Environment *,ConstructHeader *,void *);
 #endif
 
-   static void                    ResetDefinstances(Environment *);
+   static void                    ResetDefinstances(Environment *,void *);
    static void                    ResetDefinstancesAction(Environment *,ConstructHeader *,void *);
    static void                    DeallocateDefinstancesData(Environment *);
 
@@ -202,11 +202,11 @@ void SetupDefinstances(
                    );
 
 #if ! RUN_TIME
-   AddClearReadyFunction(theEnv,"definstances",ClearDefinstancesReady,0);
+   AddClearReadyFunction(theEnv,"definstances",ClearDefinstancesReady,0,NULL);
 
 #if ! BLOAD_ONLY
    AddUDF(theEnv,"undefinstances","v",1,1,"y",UndefinstancesCommand,"UndefinstancesCommand",NULL);
-   AddSaveFunction(theEnv,"definstances",SaveDefinstances,0);
+   AddSaveFunction(theEnv,"definstances",SaveDefinstances,0,NULL);
 
 #endif
 
@@ -219,7 +219,7 @@ void SetupDefinstances(
    AddUDF(theEnv,"definstances-module","y",1,1,"y",GetDefinstancesModuleCommand,"GetDefinstancesModuleCommand",NULL);
 
 #endif
-   AddResetFunction(theEnv,"definstances",ResetDefinstances,0);
+   AddResetFunction(theEnv,"definstances",ResetDefinstances,0,NULL);
 
 #if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE
    SetupDefinstancesBload(theEnv);
@@ -779,7 +779,8 @@ static void RemoveDefinstances(
 static void SaveDefinstances(
   Environment *theEnv,
   Defmodule *theModule,
-  const char *logName)
+  const char *logName,
+  void *context)
   {
    SaveConstruct(theEnv,theModule,logName,DefinstancesData(theEnv)->DefinstancesConstruct);
   }
@@ -891,7 +892,8 @@ static void ReturnModule(
   NOTES        : Used by (clear) and (bload)
  ***************************************************/
 static bool ClearDefinstancesReady(
-  Environment *theEnv)
+  Environment *theEnv,
+  void *context)
   {
    bool flagBuffer = true;
 
@@ -944,7 +946,8 @@ static void CheckDefinstancesBusy(
   NOTES        : None
  ***************************************************/
 static void ResetDefinstances(
-  Environment *theEnv)
+  Environment *theEnv,
+  void *context)
   {
    DoForAllConstructs(theEnv,ResetDefinstancesAction,DefinstancesData(theEnv)->DefinstancesModuleIndex,true,NULL);
   }

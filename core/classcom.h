@@ -106,7 +106,7 @@
    CLIPSLexeme            *CheckClassAndSlot(UDFContext *,const char *,Defclass **);
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-   void                    SaveDefclasses(Environment *,Defmodule *,const char *);
+   void                    SaveDefclasses(Environment *,Defmodule *,const char *,void *);
 #endif
 
 #endif /* _H_classcom */

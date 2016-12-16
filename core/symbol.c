@@ -195,8 +195,8 @@ void InitializeAtomTables(
    for (i = 0; i < EXTERNAL_ADDRESS_HASH_SIZE; i++) SymbolData(theEnv)->ExternalAddressTable[i] = NULL;
 #endif
 
-   theEnv->VoidConstant = get_struct(theEnv,voidHashNode);
-   theEnv->VoidConstant->th.type = VOID_TYPE;
+   theEnv->VoidConstant = get_struct(theEnv,clipsVoid);
+   theEnv->VoidConstant->header.type = VOID_TYPE;
   }
 
 /*************************************************/
@@ -232,7 +232,7 @@ static void DeallocateSymbolData(
          if (! shPtr->permanent)
            {
             rm(theEnv,(void *) shPtr->contents,strlen(shPtr->contents)+1);
-            rtn_struct(theEnv,symbolHashNode,shPtr);
+            rtn_struct(theEnv,clipsLexeme,shPtr);
            }
          shPtr = nextSHPtr;
         }
@@ -246,7 +246,7 @@ static void DeallocateSymbolData(
         {
          nextFHPtr = fhPtr->next;
          if (! fhPtr->permanent)
-           { rtn_struct(theEnv,floatHashNode,fhPtr); }
+           { rtn_struct(theEnv,clipsFloat,fhPtr); }
          fhPtr = nextFHPtr;
         }
      }
@@ -259,7 +259,7 @@ static void DeallocateSymbolData(
         {
          nextIHPtr = ihPtr->next;
          if (! ihPtr->permanent)
-           { rtn_struct(theEnv,integerHashNode,ihPtr); }
+           { rtn_struct(theEnv,clipsInteger,ihPtr); }
          ihPtr = nextIHPtr;
         }
      }
@@ -274,7 +274,7 @@ static void DeallocateSymbolData(
          if (! bmhPtr->permanent)
            {
             rm(theEnv,(void *) bmhPtr->contents,bmhPtr->size);
-            rtn_struct(theEnv,bitMapHashNode,bmhPtr);
+            rtn_struct(theEnv,clipsBitMap,bmhPtr);
            }
          bmhPtr = nextBMHPtr;
         }
@@ -289,7 +289,7 @@ static void DeallocateSymbolData(
          nextEAHPtr = eahPtr->next;
          if (! eahPtr->permanent)
            {
-            rtn_struct(theEnv,externalAddressHashNode,eahPtr);
+            rtn_struct(theEnv,clipsExternalAddress,eahPtr);
            }
          eahPtr = nextEAHPtr;
         }
@@ -408,7 +408,7 @@ CLIPSLexeme *AddSymbol(
 
     while (peek != NULL)
       {
-       if ((peek->th.type == theType) &&
+       if ((peek->header.type == theType) &&
            (strcmp(str,peek->contents) == 0))
          { return peek; }
        past = peek;
@@ -420,7 +420,7 @@ CLIPSLexeme *AddSymbol(
     /* for this symbol table location.                  */
     /*==================================================*/
 
-    peek = get_struct(theEnv,symbolHashNode);
+    peek = get_struct(theEnv,clipsLexeme);
 
     if (past == NULL) SymbolData(theEnv)->SymbolTable[tally] = peek;
     else past->next = peek;
@@ -433,7 +433,7 @@ CLIPSLexeme *AddSymbol(
     peek->bucket = tally;
     peek->count = 0;
     peek->permanent = false;
-    peek->th.type = theType;
+    peek->header.type = theType;
 
     /*================================================*/
     /* Add the string to the list of ephemeral items. */
@@ -468,7 +468,7 @@ CLIPSLexeme *FindSymbolHN(
          peek != NULL;
          peek = peek->next)
       {
-       if (((1 << peek->th.type) & expectedType) &&
+       if (((1 << peek->header.type) & expectedType) &&
            (strcmp(str,peek->contents) == 0))
          { return(peek); }
       }
@@ -515,7 +515,7 @@ CLIPSFloat *CreateFloat(
     /* for this hash location.                         */
     /*=================================================*/
 
-    peek = get_struct(theEnv,floatHashNode);
+    peek = get_struct(theEnv,clipsFloat);
 
     if (past == NULL) SymbolData(theEnv)->FloatTable[tally] = peek;
     else past->next = peek;
@@ -525,7 +525,7 @@ CLIPSFloat *CreateFloat(
     peek->bucket = tally;
     peek->count = 0;
     peek->permanent = false;
-    peek->th.type = FLOAT_TYPE;
+    peek->header.type = FLOAT_TYPE;
 
     /*===============================================*/
     /* Add the float to the list of ephemeral items. */
@@ -581,7 +581,7 @@ CLIPSInteger *CreateInteger(
     /* for this hash location.                        */
     /*================================================*/
 
-    peek = get_struct(theEnv,integerHashNode);
+    peek = get_struct(theEnv,clipsInteger);
     if (past == NULL) SymbolData(theEnv)->IntegerTable[tally] = peek;
     else past->next = peek;
 
@@ -590,7 +590,7 @@ CLIPSInteger *CreateInteger(
     peek->bucket = tally;
     peek->count = 0;
     peek->permanent = false;
-    peek->th.type = INTEGER_TYPE;
+    peek->header.type = INTEGER_TYPE;
 
     /*=================================================*/
     /* Add the integer to the list of ephemeral items. */
@@ -683,7 +683,7 @@ void *AddBitMap(
     /* for this hash table location.  Return the        */
     /*==================================================*/
 
-    peek = get_struct(theEnv,bitMapHashNode);
+    peek = get_struct(theEnv,clipsBitMap);
     if (past == NULL) SymbolData(theEnv)->BitMapTable[tally] = peek;
     else past->next = peek;
 
@@ -695,7 +695,7 @@ void *AddBitMap(
     peek->count = 0;
     peek->permanent = false;
     peek->size = (unsigned short) size;
-    peek->th.type = BITMAP;
+    peek->header.type = BITMAP;
 
     /*================================================*/
     /* Add the bitmap to the list of ephemeral items. */
@@ -712,14 +712,14 @@ void *AddBitMap(
     return((void *) peek);
    }
 
-/******************************************************************/
-/* AddExternalAddress: Searches for the external address in the   */
-/*   hash table. If the external address is already in the hash   */
-/*   table, then the address of the external address is returned. */
-/*   Otherwise, the external address is hashed into the table and */
-/*   the address of the external address is also returned.        */
-/******************************************************************/
-void *AddExternalAddress(
+/*******************************************************************/
+/* CreateExternalAddress: Searches for the external address in the */
+/*   hash table. If the external address is already in the hash    */
+/*   table, then the address of the external address is returned.  */
+/*   Otherwise, the external address is hashed into the table and  */
+/*   the address of the external address is also returned.         */
+/*******************************************************************/
+CLIPSExternalAddress *CreateExternalAddress(
   Environment *theEnv,
   void *theExternalAddress,
   unsigned theType)
@@ -756,7 +756,7 @@ void *AddExternalAddress(
     /* of entries for this hash table location.        */
     /*=================================================*/
 
-    peek = get_struct(theEnv,externalAddressHashNode);
+    peek = get_struct(theEnv,clipsExternalAddress);
     if (past == NULL) SymbolData(theEnv)->ExternalAddressTable[tally] = peek;
     else past->next = peek;
 
@@ -766,7 +766,7 @@ void *AddExternalAddress(
     peek->bucket = tally;
     peek->count = 0;
     peek->permanent = false;
-    peek->th.type = EXTERNAL_ADDRESS_TYPE;
+    peek->header.type = EXTERNAL_ADDRESS_TYPE;
 
     /*================================================*/
     /* Add the bitmap to the list of ephemeral items. */
@@ -1094,7 +1094,7 @@ static void RemoveHashNode(
   int type)
   {
    GENERIC_HN *previousNode, *currentNode;
-   struct externalAddressHashNode *theAddress;
+   CLIPSExternalAddress *theAddress;
 
    /*=============================================*/
    /* Find the entry in the specified hash table. */
@@ -1142,7 +1142,7 @@ static void RemoveHashNode(
      }
    else if (type == EXTERNAL_ADDRESS_TYPE)
      {
-      theAddress = (struct externalAddressHashNode *) theValue;
+      theAddress = (CLIPSExternalAddress *) theValue;
 
       if ((EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type] != NULL) &&
           (EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type]->discardFunction != NULL))

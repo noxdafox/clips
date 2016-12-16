@@ -50,17 +50,17 @@
 /***************************************/
 
 #if DEBUGGING_FUNCTIONS
-   static bool                    FindDribble(Environment *,const char *);
-   static int                     GetcDribble(Environment *,const char *);
-   static int                     UngetcDribble(Environment *,int,const char *);
-   static void                    ExitDribble(Environment *,int);
-   static void                    PrintDribble(Environment *,const char *,const char *);
+   static bool                    FindDribble(Environment *,const char *,void *);
+   static int                     GetcDribble(Environment *,const char *,void *);
+   static int                     UngetcDribble(Environment *,const char *,int,void *);
+   static void                    ExitDribble(Environment *,int,void *);
+   static void                    PrintDribble(Environment *,const char *,const char *,void *);
    static void                    PutcDribbleBuffer(Environment *,int);
 #endif
-   static bool                    FindBatch(Environment *,const char *);
-   static int                     GetcBatch(Environment *,const char *);
-   static int                     UngetcBatch(Environment *,int,const char *);
-   static void                    ExitBatch(Environment *,int);
+   static bool                    FindBatch(Environment *,const char *,void *);
+   static int                     GetcBatch(Environment *,const char *,void *);
+   static int                     UngetcBatch(Environment *,const char *,int,void *);
+   static void                    ExitBatch(Environment *,int,void *);
    static void                    AddBatch(Environment *,bool,FILE *,const char *,int,const char *,const char *);
 
 #if DEBUGGING_FUNCTIONS
@@ -69,10 +69,11 @@
 /*****************************************************/
 static bool FindDribble(
   Environment *theEnv,
-  const char *logicalName)
+  const char *logicalName,
+  void *context)
   {
 #if MAC_XCD
-#pragma unused(theEnv)
+#pragma unused(theEnv,context)
 #endif
 
    if ( (strcmp(logicalName,STDOUT) == 0) ||
@@ -94,7 +95,8 @@ static bool FindDribble(
 static void PrintDribble(
   Environment *theEnv,
   const char *logicalName,
-  const char *str)
+  const char *str,
+  void *context)
   {
    int i;
 
@@ -119,7 +121,8 @@ static void PrintDribble(
 /*****************************************************/
 static int GetcDribble(
   Environment *theEnv,
-  const char *logicalName)
+  const char *logicalName,
+  void *context)
   {
    int rv;
 
@@ -208,8 +211,9 @@ static void PutcDribbleBuffer(
 /*********************************************************/
 static int UngetcDribble(
   Environment *theEnv,
+  const char *logicalName,
   int ch,
-  const char *logicalName)
+  void *context)
   {
    int rv;
 
@@ -241,7 +245,8 @@ static int UngetcDribble(
 /*****************************************************/
 static void ExitDribble(
   Environment *theEnv,
-  int num)
+  int num,
+  void *context)
   {
 #if MAC_XCD
 #pragma unused(num)
@@ -387,7 +392,8 @@ bool DribbleOff(
 /*************************************************/
 static bool FindBatch(
   Environment *theEnv,
-  const char *logicalName)
+  const char *logicalName,
+  void *context)
   {
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -404,7 +410,8 @@ static bool FindBatch(
 /*************************************************/
 static int GetcBatch(
   Environment *theEnv,
-  const char *logicalName)
+  const char *logicalName,
+  void *context)
   {
    return(LLGetcBatch(theEnv,logicalName,false));
   }
@@ -499,8 +506,9 @@ int LLGetcBatch(
 /*****************************************************/
 static int UngetcBatch(
   Environment *theEnv,
+  const char *logicalName,
   int ch,
-  const char *logicalName)
+  void *context)
   {
 #if MAC_XCD
 #pragma unused(logicalName)
@@ -519,10 +527,11 @@ static int UngetcBatch(
 /*************************************************/
 static void ExitBatch(
   Environment *theEnv,
-  int num)
+  int num,
+  void *context)
   {
 #if MAC_XCD
-#pragma unused(num)
+#pragma unused(num,context)
 #endif
    CloseAllBatchSources(theEnv);
   }
@@ -906,7 +915,7 @@ bool BatchStar(
          FlushPPBuffer(theEnv);
          SetHaltExecution(theEnv,false);
          SetEvaluationError(theEnv,false);
-         FlushBindList(theEnv);
+         FlushBindList(theEnv,NULL);
          genfree(theEnv,theString,(unsigned) maxChars);
          theString = NULL;
          maxChars = 0;
