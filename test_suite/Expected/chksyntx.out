@@ -96,18 +96,16 @@ CLIPS> (check-syntax "(defmessage-handler a9 a11 (?u) (* ?self:q 10))")
 FALSE
 CLIPS> (reset)
 CLIPS> (facts)
-f-0     (initial-fact)
 f-1     (x y z)
-For a total of 2 facts.
+For a total of 1 fact.
 CLIPS> (agenda)
 0      a3: f-1
 For a total of 1 activation.
 CLIPS> (assert (a2 (r 2) (s 1 3)))
 <Fact-2>
 CLIPS> (instances)
-[initial-object] of INITIAL-OBJECT
 [a10i] of a9
-For a total of 2 instances.
+For a total of 1 instance.
 CLIPS> ?*a4*
 9
 CLIPS> (list-deftemplates a5)
@@ -232,14 +230,12 @@ ERROR:
 (defmessage-handler MAIN::a9 c11 ?u 
 " FALSE)
 CLIPS> (list-deffacts)
-initial-fact
 a1
-For a total of 2 deffacts.
+For a total of 1 deffacts.
 CLIPS> (list-deftemplates)
-initial-fact
 x
 a2
-For a total of 3 deftemplates.
+For a total of 2 deftemplates.
 CLIPS> (list-defrules)
 a3
 For a total of 1 defrule.
@@ -278,13 +274,11 @@ LEXEME
 ADDRESS
 INSTANCE
 USER
-INITIAL-OBJECT
 a9
-For a total of 18 defclasses.
+For a total of 17 defclasses.
 CLIPS> (list-definstances)
-initial-object
 a10
-For a total of 2 definstances.
+For a total of 1 definstances.
 CLIPS> (list-defmessage-handlers)
 init primary in class USER
 delete primary in class USER
@@ -327,18 +321,16 @@ CLIPS> (check-syntax "(defmessage-handler a9 a11 (?u) (* ?self:q 10))")
 FALSE
 CLIPS> (reset)
 CLIPS> (facts)
-f-0     (initial-fact)
 f-1     (x y z)
-For a total of 2 facts.
+For a total of 1 fact.
 CLIPS> (agenda)
 0      a3: f-1
 For a total of 1 activation.
 CLIPS> (assert (a2 (r 2) (s 1 3)))
 <Fact-2>
 CLIPS> (instances)
-[initial-object] of INITIAL-OBJECT
 [a10i] of a9
-For a total of 2 instances.
+For a total of 1 instance.
 CLIPS> ?*a4*
 9
 CLIPS> (list-deftemplates a5)
@@ -463,14 +455,12 @@ ERROR:
 (defmessage-handler MAIN::a9 c11 ?u 
 " FALSE)
 CLIPS> (list-deffacts)
-initial-fact
 a1
-For a total of 2 deffacts.
+For a total of 1 deffacts.
 CLIPS> (list-deftemplates)
-initial-fact
 x
 a2
-For a total of 3 deftemplates.
+For a total of 2 deftemplates.
 CLIPS> (list-defrules)
 a3
 For a total of 1 defrule.
@@ -509,13 +499,11 @@ LEXEME
 ADDRESS
 INSTANCE
 USER
-INITIAL-OBJECT
 a9
-For a total of 18 defclasses.
+For a total of 17 defclasses.
 CLIPS> (list-definstances)
-initial-object
 a10
-For a total of 2 definstances.
+For a total of 1 definstances.
 CLIPS> (list-defmessage-handlers)
 init primary in class USER
 delete primary in class USER

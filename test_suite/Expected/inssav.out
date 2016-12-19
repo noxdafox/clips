@@ -10,7 +10,6 @@ CLIPS> (generate-instances WOZ 100 F G)
 FALSE
 CLIPS> (instances *)
 MAIN:
-   [initial-object] of INITIAL-OBJECT
    [gen1] of B
    [gen2] of B
    [gen3] of B
@@ -514,9 +513,8 @@ WOZ:
    [gen399] of F
    [gen400] of F
 FOO:
-For a total of 501 instances.
+For a total of 500 instances.
 CLIPS> (instances)
-[initial-object] of INITIAL-OBJECT
 [gen1] of B
 [gen2] of B
 [gen3] of B
@@ -617,11 +615,10 @@ CLIPS> (instances)
 [gen98] of B
 [gen99] of B
 [gen100] of B
-For a total of 101 instances.
+For a total of 100 instances.
 CLIPS> (set-current-module BAR)
 MAIN
 CLIPS> (instances)
-[initial-object] of INITIAL-OBJECT
 [gen1] of MAIN::B
 [gen2] of MAIN::B
 [gen3] of MAIN::B
@@ -922,7 +919,7 @@ CLIPS> (instances)
 [gen298] of E
 [gen299] of E
 [gen300] of E
-For a total of 301 instances.
+For a total of 300 instances.
 CLIPS> (bsave-instances "Temp//inssav1.bin")
 200
 CLIPS> (bload-instances inssav.clp)
@@ -966,11 +963,11 @@ CLIPS> (save-instances "Actual//inssav2.out" local)
 CLIPS> (file-message "Actual//inssav2.out" "D E")
 TRUE
 CLIPS> (bsave-instances "Temp//inssav3.bin" visible)
-301
+300
 CLIPS> (bload-instances "Temp//inssav3.bin")
-301
+300
 CLIPS> (save-instances "Actual//inssav3.out" visible)
-301
+300
 CLIPS> (file-message "Actual//inssav3.out" "INITIAL-OBJECT B D E")
 TRUE
 CLIPS> (save-instances "Actual//inssav4.out" local inherit)
@@ -1103,7 +1100,6 @@ CLIPS> (instances)
 [gen398] of WOZ::F
 [gen399] of WOZ::F
 [gen400] of WOZ::F
-[initial-object] of INITIAL-OBJECT
 [gen1] of MAIN::B
 [gen2] of MAIN::B
 [gen3] of MAIN::B
@@ -1304,7 +1300,7 @@ CLIPS> (instances)
 [gen298] of BAR::E
 [gen299] of BAR::E
 [gen300] of BAR::E
-For a total of 301 instances.
+For a total of 300 instances.
 CLIPS> (open "Actual//inssav6.out" inssav6 "w")
 TRUE
 CLIPS> (close inssav6)

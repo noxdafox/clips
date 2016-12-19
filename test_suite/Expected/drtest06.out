@@ -142,11 +142,10 @@ CLIPS> (clear)                            ; DR0520
 CLIPS> (assert (a) (b) (c))               ; DR0520
 <Fact-3>
 CLIPS> (facts)                            ; DR0520
-f-0     (initial-fact)
 f-1     (a)
 f-2     (b)
 f-3     (c)
-For a total of 4 facts.
+For a total of 3 facts.
 CLIPS> (facts 1 3 2)                      ; DR0520
 f-1     (a)
 f-2     (b)
@@ -164,8 +163,6 @@ CLIPS> (assert (foo (x (1 2))))           ; DR0522 - Error
 
 [EXPRNPSR1] A function name must be a symbol
 CLIPS> (facts)                            ; DR0522 - None
-f-0     (initial-fact)
-For a total of 1 fact.
 CLIPS> (print-region 1 1)                 ; DR0524 - Error
 [ARGACCES5] Function print-region expected argument #1 to be of type symbol
 CLIPS> (print-region 3 "foo.lis" ROOT SUBTOPIC)    
@@ -319,9 +316,8 @@ CLIPS> (deftemplate foo                   ; DR0561
 CLIPS> (assert (foo))                     ; DR0561
 <Fact-1>
 CLIPS> (facts)                            ; DR0561
-f-0     (initial-fact)
 f-1     (foo (x <Pointer-C-0x0>)) ;; Any NULL pointer is OK
-For a total of 2 facts.
+For a total of 1 fact.
 CLIPS> (clear)                            ; DR0562
 CLIPS> (deffunction foo ()                ; DR0562
    (+ ?a 1) (bind ?a 2))           ; DR0562
@@ -419,15 +415,13 @@ CLIPS> (defclass C (is-a A B) (role concrete)) ; DR0573
 CLIPS> (make-instance c of C)             ; DR0573 - [c]
 [c]
 CLIPS> (instances)                        ; DR0573 - 1 instance
-[initial-object] of INITIAL-OBJECT
 [c] of C
-For a total of 2 instances.
+For a total of 1 instance.
 CLIPS> (instances MAIN B inherit)              ; DR0573 - 1 instance
 [c] of C
 For a total of 1 instance.
 CLIPS> (do-for-all-instances ((?u USER)) TRUE
     (printout t ?u crlf))          ; DR0573 - 1 instance
-[initial-object]
 [c]
 CLIPS> (clear)                            ; DR0575
 CLIPS> (defrule try-or (or (a) (b)) =>)   ; DR0575
@@ -464,27 +458,23 @@ CLIPS> (defmessage-handler A put-foo primary (?value)
 CLIPS> (make-instance a of A)             ; DR0584 - [a]
 [a]
 CLIPS> (instances)                        ; DR0584
-[initial-object] of INITIAL-OBJECT
 [a] of A
-For a total of 2 instances.
+For a total of 1 instance.
 CLIPS> (save-instances "Temp//drtest06.tmp")    ; DR0584
-2
+1
 CLIPS> (unmake-instance a)                ; DR0584
 TRUE
 CLIPS> (load-instances "Temp//drtest06.tmp")    ; DR0584
 [MSGFUN3] foo slot in [a] of A: write access denied.
 [PRCCODE4] Execution halted during the actions of message-handler put-foo primary in class A
 [INSFILE1] Function load-instances could not completely process file Temp//drtest06.tmp.
+0
+CLIPS> (instances)                        ; DR0584
+CLIPS> (restore-instances "Temp//drtest06.tmp") ; See CRS
 1
 CLIPS> (instances)                        ; DR0584
-[initial-object] of INITIAL-OBJECT
-For a total of 1 instance.
-CLIPS> (restore-instances "Temp//drtest06.tmp") ; See CRS
-2
-CLIPS> (instances)                        ; DR0584
-[initial-object] of INITIAL-OBJECT
 [a] of A
-For a total of 2 instances.
+For a total of 1 instance.
 CLIPS> (clear)                            ; DR0588
 CLIPS> (ppdefinstances Teams)             ; DR0588
 [PRNTUTIL1] Unable to find definstances Teams.

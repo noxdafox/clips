@@ -32,6 +32,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            Removed initial-fact support.                  */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -588,14 +590,6 @@ static void ClearBload(
    space =  DeftemplateBinaryData(theEnv)->NumberOfTemplateSlots * sizeof(struct templateSlot);
    if (space != 0) genfree(theEnv,DeftemplateBinaryData(theEnv)->SlotArray,space);
    DeftemplateBinaryData(theEnv)->NumberOfTemplateSlots = 0;
-
-   /*======================================*/
-   /* Create the initial-fact deftemplate. */
-   /*======================================*/
-
-#if (! BLOAD_ONLY)
-   CreateImpliedDeftemplate(theEnv,CreateSymbol(theEnv,""),false);
-#endif
   }
 
 /************************************************************/

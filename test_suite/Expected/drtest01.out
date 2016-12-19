@@ -193,8 +193,6 @@ CLIPS> (assert (a~b))                    ; DR0075
 
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for RHS patterns.
 CLIPS> (facts)                           ; DR0075
-f-0     (initial-fact)
-For a total of 1 fact.
 CLIPS> (print-region t "f.f")            ; DR0077
 FALSE
 CLIPS> (printout q)                      ; DR0080
@@ -222,10 +220,9 @@ CLIPS> (assert (x q))                    ; DR0087
 <Fact-1>
 CLIPS> (run)                             ; DR0087
 CLIPS> (facts)                           ; DR0087
-f-0     (initial-fact)
 f-1     (x q)
 f-2     (z q)
-For a total of 3 facts.
+For a total of 2 facts.
 CLIPS> (subseq$ a 2 4)                   ; DR0090
 [ARGACCES5] Function subseq$ expected argument #1 to be of type multifield
 CLIPS> (sub-string)                      ; DR0092

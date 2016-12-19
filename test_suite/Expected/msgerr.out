@@ -188,15 +188,11 @@ CLIPS> (definstances A-OBJECTS
  ((gensym) of A (x 65)))
 CLIPS> (watch instances)
 CLIPS> (reset)
-<== instance [initial-object] of INITIAL-OBJECT
-==> instance [initial-object] of INITIAL-OBJECT
 ==> instance [a1] of A
 ==> instance [gen1] of A
 CLIPS> (reset)
-<== instance [initial-object] of INITIAL-OBJECT
 <== instance [a1] of A
 <== instance [gen1] of A
-==> instance [initial-object] of INITIAL-OBJECT
 ==> instance [a1] of A
 ==> instance [gen2] of A
 CLIPS> (unwatch all)

@@ -1186,13 +1186,11 @@ cd))
 
 (defrule salience-max-value
  (declare (salience 10000))
- (initial-fact)
 =>
  (printout t crlf "TESTING CLIPS - BASIC PROGRAMMING GUIDE" crlf))
 
 (defrule salience-positive
  (declare (salience 100))
- (initial-fact)
 =>
  (printout t "common capabilities such as:" crlf
               "assert, retract, salience, fprintout" crlf
@@ -1200,9 +1198,7 @@ cd))
 
 (defrule salience-min-value
  (declare (salience -10000))
- ?f <- (initial-fact)
 =>
- (retract ?f)
  (printout t "list of facts that were not cleaned up, error if any" crlf)
  (facts)
  (printout t "file text.tmp may be deleted" crlf

@@ -7,6 +7,7 @@
 (dribble-on "Actual//pataddtn.out")
 (load "pataddtn.clp")
 (reset)
+(assert (factoid))
 (agenda)
 (dribble-off)
 (printout pataddtn "pataddtn.clp differences are as follows:" crlf)

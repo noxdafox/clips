@@ -278,11 +278,12 @@
    (printout t ?y " " ?*x* crlf))
 (foo)                              ; DR0672
 (clear)
+(deffacts initial (factoid))
 (reset)                   ; DR0675
-(defrule foo (initial-fact) (test (> 4 3)) =>)
+(defrule foo (factoid) (test (> 4 3)) =>)
 (agenda)
 (assert (a))
-(defrule bar (initial-fact) (or (test (> 5 3)) (a)) =>)
+(defrule bar (factoid) (or (test (> 5 3)) (a)) =>)
 (agenda)
 (reset)
 (assert (a))

@@ -31,9 +31,8 @@ LEXEME
 ADDRESS
 INSTANCE
 USER
-INITIAL-OBJECT
 PP-TEST
-For a total of 18 defclasses.
+For a total of 17 defclasses.
 CLIPS> (defclass TEST (is-a USER) (role concrete))
 CLIPS> (defclass ANOTHER-TEST (is-a TEST))
 CLIPS> (defclass * (is-a OBJECT))
@@ -42,8 +41,6 @@ CLIPS> (undefclass BOGUS)
 CLIPS> (undefclass *)
 CLIPS> (undefclass OBJECT)
 [PRNTUTIL4] Unable to delete defclass OBJECT.
-CLIPS> (undefclass USER)
-[PRNTUTIL4] Unable to delete defclass USER.
 CLIPS> (undefclass PRIMITIVE)
 [PRNTUTIL4] Unable to delete defclass PRIMITIVE.
 CLIPS> (undefclass MULTIFIELD)
@@ -90,9 +87,8 @@ LEXEME
 ADDRESS
 INSTANCE
 USER
-INITIAL-OBJECT
 PP-TEST
-For a total of 18 defclasses.
+For a total of 17 defclasses.
 CLIPS> (undefclass *)
 CLIPS> (list-defclasses)
 FLOAT
@@ -111,8 +107,7 @@ LEXEME
 ADDRESS
 INSTANCE
 USER
-INITIAL-OBJECT
-For a total of 17 defclasses.
+For a total of 16 defclasses.
 CLIPS> (defclass CHILD (is-a USER) (role abstract)
   (slot age (create-accessor ?NONE))
   (slot sex (access read-only)
@@ -211,7 +206,6 @@ OBJECT
       INSTANCE-ADDRESS *
       INSTANCE-NAME
   USER
-    INITIAL-OBJECT
     CHILD
       BOY
     a
@@ -412,25 +406,22 @@ CLIPS> (ppdefinstances TEST-CASES)
    (t2 of TEST
       (y blah)))
 CLIPS> (list-definstances)
-initial-object
 TEST-CASES
-For a total of 2 definstances.
+For a total of 1 definstances.
 CLIPS> (reset)
 CLIPS> (instances)
-[initial-object] of INITIAL-OBJECT
 [t1] of TEST
 [t2] of TEST
-For a total of 3 instances.
+For a total of 2 instances.
 CLIPS> (instances MAIN TEST)
 [t1] of TEST
 [t2] of TEST
 For a total of 2 instances.
 CLIPS> (instances MAIN USER)
 CLIPS> (instances MAIN USER inherit)
-[initial-object] of INITIAL-OBJECT
 [t1] of TEST
 [t2] of TEST
-For a total of 3 instances.
+For a total of 2 instances.
 CLIPS> (instances MAIN BOGUS)
 [CLASSFUN1] Unable to find class BOGUS in function instances.
 CLIPS> (instances MAIN USER junk)
@@ -461,9 +452,8 @@ CLIPS> (undefinstances)
 CLIPS> (definstances * (t3 of TEST))
 CLIPS> (undefinstances *)
 CLIPS> (list-definstances)
-initial-object
 TEST-CASES
-For a total of 2 definstances.
+For a total of 1 definstances.
 CLIPS> (undefinstances *)
 CLIPS> (list-definstances)
 CLIPS> (load-instances)
@@ -484,14 +474,13 @@ CLIPS> (send [t2] put-z (instance-address t1))
 CLIPS> (slot-replace$ t1 y 2 2 (instance-address t2))
 (a <Instance-t2> c d e f)
 CLIPS> (save-instances "Actual//coolcmd2.out")
-3
+2
 CLIPS> (reset)
 CLIPS> (load-instances "Actual//coolcmd2.out")
-3
+2
 CLIPS> (restore-instances "Actual//coolcmd2.out")
-3
+2
 CLIPS> (do-for-all-instances ((?a OBJECT)) TRUE (send ?a print))
-[initial-object] of INITIAL-OBJECT
 Printing twice...
 [t1] of TEST
 (x 100)

@@ -43,6 +43,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            Removed initial-object support.                */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_classfun
@@ -60,8 +62,6 @@
 
 #define CLASS_TABLE_HASH_SIZE     167
 #define SLOT_NAME_TABLE_HASH_SIZE 167
-
-#define INITIAL_OBJECT_CLASS_NAME "INITIAL-OBJECT"
 
 #define ISA_ID  0
 #define NAME_ID 1
@@ -129,9 +129,6 @@ struct defclassData
    SLOT_NAME **SlotNameTable;
    CLIPSLexeme *ISA_SYMBOL;
    CLIPSLexeme *NAME_SYMBOL;
-#if DEFRULE_CONSTRUCT
-   CLIPSLexeme *INITIAL_OBJECT_SYMBOL;
-#endif
 #if DEBUGGING_FUNCTIONS
    bool WatchInstances;
    bool WatchSlots;

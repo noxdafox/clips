@@ -27,33 +27,28 @@ CLIPS> (reset)
 CLIPS> (set-current-module WOZ)
 MAIN
 CLIPS> (instances)
-[initial-object] of INITIAL-OBJECT
 [c] of FOO::C
-For a total of 2 instances.
+For a total of 1 instance.
 CLIPS> (instances MAIN)
-[initial-object] of INITIAL-OBJECT
 [a-main] of A
-For a total of 2 instances.
+For a total of 1 instance.
 CLIPS> (instances FOO)
-[initial-object] of INITIAL-OBJECT
 [a-foo] of A
 [c] of C
-For a total of 3 instances.
+For a total of 2 instances.
 CLIPS> (instances BAR)
-[initial-object] of INITIAL-OBJECT
 [a-main] of MAIN::A
 [c] of FOO::C
-For a total of 3 instances.
+For a total of 2 instances.
 CLIPS> (instances *)
 MAIN:
-   [initial-object] of INITIAL-OBJECT
    [a-main] of A
 FOO:
    [a-foo] of A
    [c] of C
 BAR:
 WOZ:
-For a total of 4 instances.
+For a total of 3 instances.
 CLIPS> (instances FOO B)
 CLIPS> (instances FOO B inherit)
 [c] of C
@@ -81,7 +76,6 @@ FRIBBAN
 CLIPS> (reset)
 CLIPS> (instances *)
 MAIN:
-   [initial-object] of INITIAL-OBJECT
 QUIX:
    [gen1] of A
    [gen2] of A
@@ -91,35 +85,28 @@ FOO:
 BAR:
 WOZ:
 FRIBBAN:
-For a total of 5 instances.
+For a total of 4 instances.
 CLIPS> (instances MAIN)
-[initial-object] of INITIAL-OBJECT
-For a total of 1 instance.
 CLIPS> (instances QUIX)
-[initial-object] of INITIAL-OBJECT
 [gen1] of A
 [gen2] of A
-For a total of 3 instances.
+For a total of 2 instances.
 CLIPS> (instances FOO)
-[initial-object] of INITIAL-OBJECT
 [gen3] of A
 [gen4] of A
-For a total of 3 instances.
+For a total of 2 instances.
 CLIPS> (instances BAR)
-[initial-object] of INITIAL-OBJECT
 [gen1] of QUIX::A
 [gen2] of QUIX::A
-For a total of 3 instances.
+For a total of 2 instances.
 CLIPS> (instances WOZ)
-[initial-object] of INITIAL-OBJECT
 [gen3] of FOO::A
 [gen4] of FOO::A
-For a total of 3 instances.
+For a total of 2 instances.
 CLIPS> (instances FRIBBAN)
-[initial-object] of INITIAL-OBJECT
 [gen1] of QUIX::A
 [gen2] of QUIX::A
-For a total of 3 instances.
+For a total of 2 instances.
 CLIPS> (clear)
 CLIPS> (defmodule FOO (export defclass FOO))
 CLIPS> (defclass FOO (is-a USER) (role concrete))
@@ -156,43 +143,38 @@ CLIPS>
 )
 CLIPS> (testit)
 MAIN:
-[initial-object] of INITIAL-OBJECT
 [a] of FOO::FOO
 [b] of BAR::BAR
-For a total of 3 instances.
+For a total of 2 instances.
 
 TRUE TRUE FOO
 TRUE TRUE BAR
 TRUE FALSE WOZ
 FOO:
-[initial-object] of INITIAL-OBJECT
 [a] of FOO
-For a total of 2 instances.
+For a total of 1 instance.
 
 TRUE TRUE FOO
 TRUE FALSE BAR
 TRUE FALSE WOZ
 BAR:
-[initial-object] of INITIAL-OBJECT
 [b] of BAR
-For a total of 2 instances.
+For a total of 1 instance.
 
 TRUE FALSE FOO
 TRUE TRUE BAR
 TRUE FALSE WOZ
 WOZ:
-[initial-object] of INITIAL-OBJECT
 [a] of FOO::FOO
 [c] of WOZ
-For a total of 3 instances.
+For a total of 2 instances.
 
 TRUE TRUE FOO
 TRUE FALSE BAR
 TRUE TRUE WOZ
 FRIBBAN:
-[initial-object] of INITIAL-OBJECT
 [b] of BAR::BAR
-For a total of 2 instances.
+For a total of 1 instance.
 
 TRUE FALSE FOO
 TRUE TRUE BAR

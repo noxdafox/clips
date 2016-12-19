@@ -49,7 +49,6 @@ CLIPS> (assert (G (x 1)) (F (x 1)) (G (x 2)))
 CLIPS> (set-current-module MAIN)
 WOZ
 CLIPS> (facts *)
-f-0     (initial-fact)
 f-1     (A (x 1))
 f-2     (B (x 1))
 f-3     (B (x 2))
@@ -60,13 +59,12 @@ f-7     (E (x 1))
 f-8     (G (x 1))
 f-9     (F (x 1))
 f-10    (G (x 2))
-For a total of 11 facts.
+For a total of 10 facts.
 CLIPS> (facts)
-f-0     (initial-fact)
 f-1     (A (x 1))
 f-2     (B (x 1))
 f-3     (B (x 2))
-For a total of 4 facts.
+For a total of 3 facts.
 CLIPS> (save-facts "Temp//fctsav1.fct" visible)
 TRUE
 CLIPS> (save-facts "Temp//fctsav2.fct" local A)
@@ -101,13 +99,12 @@ TRUE
 CLIPS> (set-current-module FOO)
 WOZ
 CLIPS> (facts)
-f-0     (initial-fact)
 f-1     (A (x 1))
 f-2     (B (x 1))
 f-3     (B (x 2))
 f-7     (E (x 1))
 f-9     (F (x 1))
-For a total of 6 facts.
+For a total of 5 facts.
 CLIPS> (save-facts "Temp//fctsav7.fct" local)
 TRUE
 CLIPS> (save-facts "Temp//fctsav8.fct" visible)
@@ -118,11 +115,10 @@ MAIN
 CLIPS> (load-facts "Temp//fctsav1.fct")
 TRUE
 CLIPS> (facts *)
-f-0     (initial-fact)
 f-1     (A (x 1))
 f-2     (B (x 1))
 f-3     (B (x 2))
-For a total of 4 facts.
+For a total of 3 facts.
 CLIPS> (retract *)
 CLIPS> (load-facts "Temp//fctsav2.fct")
 TRUE
@@ -181,12 +177,11 @@ CLIPS> (retract *)
 CLIPS> (load-facts "Temp//fctsav8.fct")
 TRUE
 CLIPS> (facts *)
-f-16    (initial-fact)
-f-17    (A (x 1))
-f-18    (B (x 1))
-f-19    (B (x 2))
-f-20    (E (x 1))
-f-21    (F (x 1))
-For a total of 6 facts.
+f-16    (A (x 1))
+f-17    (B (x 1))
+f-18    (B (x 2))
+f-19    (E (x 1))
+f-20    (F (x 1))
+For a total of 5 facts.
 CLIPS> (retract *)
 CLIPS> (dribble-off)

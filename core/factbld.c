@@ -33,6 +33,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            Removed initial-fact support.                  */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -130,14 +132,12 @@ void InitializeFactPatterns(
    newPtr->incrementalResetFunction = FactsIncrementalReset;
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   newPtr->initialPatternFunction = CreateInitialFactPattern;
 #if CONSTRUCT_COMPILER
    newPtr->codeReferenceFunction = FactPatternNodeReference;
 #else
    newPtr->codeReferenceFunction = NULL;
 #endif
 #else
-   newPtr->initialPatternFunction = NULL;
    newPtr->codeReferenceFunction = NULL;
 #endif
 

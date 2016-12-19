@@ -290,8 +290,6 @@ ERROR:
 (deftemplate MAIN::error33 "Wrong Type"
    (multifield x (allowed-symbols a b c) (default 8 7 a 9 d))
 CLIPS> (list-deftemplates)
-initial-fact
-For a total of 1 deftemplate.
 CLIPS> (watch facts)                
 CLIPS> (deftemplate foo1 (field x))
 CLIPS> (assert (foo1))

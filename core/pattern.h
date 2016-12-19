@@ -38,6 +38,9 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            Removed initial-fact and initial-object        */
+/*            support.                                       */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_pattern
@@ -95,7 +98,6 @@ struct patternParser
    void *(*copyUserDataFunction)(Environment *,void *);
    void (*markIRPatternFunction)(Environment *,struct patternNodeHeader *,int);
    void (*incrementalResetFunction)(Environment *);
-   struct lhsParseNode *(*initialPatternFunction)(Environment *);
    void (*codeReferenceFunction)(Environment *,void *,FILE *,int,int);
    int priority;
    struct patternParser *next;

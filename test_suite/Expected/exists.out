@@ -9,8 +9,6 @@ CLIPS>
    (exists (a ?))
    =>)
 CLIPS> (reset)
-<== f-0     (initial-fact)
-==> f-0     (initial-fact)
 CLIPS> (assert (a 1))
 ==> f-1     (a 1)
 ==> Activation 0      test: *
@@ -33,15 +31,12 @@ CLIPS> (assert (a 4))
 ==> Activation 0      test: *
 <Fact-4>
 CLIPS> (clear)
-==> f-0     (initial-fact)
 CLIPS> 
 (defrule test
    (a ?x)
    (exists (b ?x ?))
    =>)
 CLIPS> (reset)
-<== f-0     (initial-fact)
-==> f-0     (initial-fact)
 CLIPS> (assert (b 1 1))
 ==> f-1     (b 1 1)
 <Fact-1>

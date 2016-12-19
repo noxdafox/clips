@@ -16,11 +16,11 @@
   =>)
 
 (defrule should-not-fire-1a
-  (not (and (initial-fact)))
+  (not (and (factoid)))
   =>)
 
 (defrule should-not-fire-1b
-  (not (initial-fact))
+  (not (factoid))
   =>)
 
 ; Single test CE
@@ -32,7 +32,7 @@
 
 (defrule should-fire-2b
   (declare (salience 3))
-  (initial-fact)
+  (factoid)
   (test (> 5 3))
   =>)
 
@@ -41,7 +41,7 @@
   =>)
 
 (defrule should-not-fire-2b
-  (initial-fact)
+  (factoid)
   (test (< 5 3))
   =>)
 
@@ -54,7 +54,7 @@
 
 (defrule should-fire-3b
   (declare (salience 5))
-  (and (initial-fact)
+  (and (factoid)
        (test (> 5 3)))
   =>)
 
@@ -63,7 +63,7 @@
   =>)
 
 (defrule should-not-fire-3b
-  (and (initial-fact)
+  (and (factoid)
        (test (< 5 3)))
   =>)
 
@@ -81,21 +81,21 @@
   
 (defrule should-fire-4c
   (declare (salience 8))
-  (not (and (initial-fact) 
+  (not (and (factoid) 
             (test (< 5 3))))
   =>)
 
 (defrule should-fire-4d
   (declare (salience 9))
-  (initial-fact)
-  (not (and (initial-fact) 
+  (factoid)
+  (not (and (factoid) 
             (test (< 5 3))))
   =>)
   
 (defrule should-fire-4e
   (declare (salience 10))
   (not (and (test (< 5 3)) 
-            (initial-fact)))
+            (factoid)))
   =>)
   
 (defrule should-not-fire-4a
@@ -103,13 +103,13 @@
   =>)
 
 (defrule should-not-fire-4b
-  (not (and (initial-fact) 
+  (not (and (factoid) 
             (test (> 5 3))))
   =>)
   
 (defrule should-not-fire-4c
-  (initial-fact)
-  (not (and (initial-fact) 
+  (factoid)
+  (not (and (factoid) 
             (test (> 5 3))))
   =>)
 
@@ -119,7 +119,7 @@
   
 (defrule should-not-fire-4e
   (not (and (test (> 5 3)) 
-            (initial-fact)))
+            (factoid)))
   =>)
   
 ; Single test CE within two not CEs
@@ -136,26 +136,26 @@
 
 (defrule should-fire-5c
   (declare (salience 13))
-  (initial-fact)
+  (factoid)
   (exists (test (< 3 5)))
   =>)
 
 (defrule should-fire-5d
   (declare (salience 14))
-  (initial-fact)
+  (factoid)
   (not (not (test (< 3 5))))
   =>)
   
 (defrule should-fire-5e
   (declare (salience 15))
-  (initial-fact)
-  (exists (and (initial-fact) (test (< 3 5))))
+  (factoid)
+  (exists (and (factoid) (test (< 3 5))))
   =>)
 
 (defrule should-fire-5f
   (declare (salience 16))
-  (initial-fact)
-  (not (not (and (initial-fact) (test (< 3 5)))))
+  (factoid)
+  (not (not (and (factoid) (test (< 3 5)))))
   =>)
 
 (defrule should-not-fire-5a
@@ -167,43 +167,43 @@
   =>)
 
 (defrule should-not-fire-5c
-  (initial-fact)
+  (factoid)
   (exists (test (> 3 5)))
   =>)
 
 (defrule should-not-fire-5d
-  (initial-fact)
+  (factoid)
   (not (not (test (> 3 5))))
   =>)
   
 (defrule should-not-fire-5e
-  (initial-fact)
-  (exists (and (initial-fact) (test (> 3 5))))
+  (factoid)
+  (exists (and (factoid) (test (> 3 5))))
   =>)
 
 (defrule should-not-fire-5f
-  (initial-fact)
-  (not (not (and (initial-fact) (test (> 3 5)))))
+  (factoid)
+  (not (not (and (factoid) (test (> 3 5)))))
   =>)
 
 ; Forall CE
 
 (defrule should-fire-6a
   (declare (salience 17))
-  (forall (initial-fact) 
-          (initial-fact))
+  (forall (factoid) 
+          (factoid))
   =>)
 
 (defrule should-fire-6b
   (declare (salience 18))
-  (forall (initial-fact) 
+  (forall (factoid) 
           (test (> 5 3)))
   =>)
 
 (defrule should-fire-6c
   (declare (salience 19))
   (forall (test (> 5 3)) 
-          (initial-fact))
+          (factoid))
   =>)
 
 (defrule should-fire-6d
@@ -215,7 +215,7 @@
 (defrule should-fire-6e
   (declare (salience 21))
   (forall (test (< 5 3)) 
-          (initial-fact))
+          (factoid))
   =>)
 
 (defrule should-fire-6f
@@ -231,7 +231,7 @@
   =>)
 
 (defrule should-not-fire-6a
-  (forall (initial-fact) 
+  (forall (factoid) 
           (test (< 5 3)))
   =>)
 

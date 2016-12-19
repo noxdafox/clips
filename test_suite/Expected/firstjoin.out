@@ -94,7 +94,6 @@ CLIPS> (assert (a))
 <== f-1     (b)
 <Fact-2>
 CLIPS> (clear)                     ; First CE is not/and
-==> f-0     (initial-fact)
 CLIPS> (defrule foo (not (and (a) (b))) =>)
 ==> Activation 0      foo: *
 CLIPS> (assert (a))
@@ -108,7 +107,6 @@ CLIPS> (retract 2)
 <== f-2     (b)
 ==> Activation 0      foo: *
 CLIPS> (clear)                     ; First CE is test
-==> f-0     (initial-fact)
 CLIPS> (defrule foo (test (> 4 3)) =>)
 ==> Activation 0      foo: *
 CLIPS> (defrule bar (test (< 4 3)) =>)

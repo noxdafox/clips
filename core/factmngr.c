@@ -77,6 +77,8 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Removed initial-fact support.                  */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -1596,7 +1598,7 @@ static void ResetFacts(
    /* Initialize the fact index to zero. */
    /*====================================*/
 
-   FactData(theEnv)->NextFactIndex = 0L;
+   FactData(theEnv)->NextFactIndex = 1L;
 
    /*======================================*/
    /* Remove all facts from the fact list. */
@@ -1625,7 +1627,7 @@ static bool ClearFactsReady(
    /* Initialize the fact index to zero. */
    /*====================================*/
 
-   FactData(theEnv)->NextFactIndex = 0L;
+   FactData(theEnv)->NextFactIndex = 1L;
 
    /*======================================*/
    /* Remove all facts from the fact list. */

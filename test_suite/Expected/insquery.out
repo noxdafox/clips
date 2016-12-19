@@ -248,7 +248,6 @@ CLIPS> (delayed-do-for-all-instances ((?b1 BOY))
 <== instance [Boy-1] of BOY
 TRUE
 CLIPS> (reset)
-<== instance [initial-object] of INITIAL-OBJECT
 <== instance [Man-1] of MAN
 <== instance [Man-2] of MAN
 <== instance [Woman-1] of WOMAN
@@ -259,7 +258,6 @@ CLIPS> (reset)
 <== instance [Boy-4] of BOY
 <== instance [Girl-1] of GIRL
 <== instance [Girl-2] of GIRL
-==> instance [initial-object] of INITIAL-OBJECT
 ==> instance [Man-1] of MAN
 ==> instance [Man-2] of MAN
 ==> instance [Woman-1] of WOMAN
@@ -586,13 +584,13 @@ CLIPS> (while TRUE do
    (do-for-all-instances ((?b OBJECT)) TRUE 
      (progn (printout t DO-FOR-ALL ?b crlf) (break)))
    (break))
-DELAYED[initial-object]
-DO-FOR-ALL[initial-object]
+DELAYED[Girl-1]
+DO-FOR-ALL[Girl-1]
 FALSE
 CLIPS> (deffunction quoxnar ()
    (do-for-all-instances ((?b OBJECT)) TRUE 
      (progn (printout t INS-RETURN ?b crlf) (return))))
 CLIPS> (quoxnar)
-INS-RETURN[initial-object]
+INS-RETURN[Girl-1]
 CLIPS> 
 (dribble-off)

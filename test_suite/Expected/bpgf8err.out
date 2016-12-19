@@ -12,8 +12,6 @@ FALSE
 CLIPS> (clear)
 CLIPS> (defmethod foo (?a))
 CLIPS> (foo (instances))
-[initial-object] of INITIAL-OBJECT
-For a total of 1 instance.
 [PRCCODE2] Functions without a return value are illegal as generic function arguments.
 [PRCCODE6] This error occurred while evaluating arguments for the generic function foo.
 FALSE
@@ -103,9 +101,8 @@ CLIPS> (defclass A (is-a USER) (role concrete)
 CLIPS> (make-instance a of A)
 [a]
 CLIPS> (slot-insert$ a foo 1 (instances))
-[initial-object] of INITIAL-OBJECT
 [a] of A
-For a total of 2 instances.
+For a total of 1 instance.
 ()
 CLIPS> (clear)
 CLIPS> (defclass A (is-a USER) (role concrete)

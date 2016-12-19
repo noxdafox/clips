@@ -50,6 +50,8 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Removed initial-object support.                */
+/*                                                           */
 /*************************************************************/
 /* =========================================
    *****************************************
@@ -164,7 +166,6 @@
                                               struct lhsParseNode **,struct lhsParseNode **);
    static CLIPSBitMap            *FormSlotBitMap(Environment *,struct lhsParseNode *);
    static struct lhsParseNode    *RemoveSlotExistenceTests(Environment *,struct lhsParseNode *,CLIPSBitMap **);
-   static struct lhsParseNode    *CreateInitialObjectPattern(Environment *);
    static void                    MarkObjectPtnIncrementalReset(Environment *,struct patternNodeHeader *,int);
    static void                    ObjectIncrementalReset(Environment *);
 
@@ -236,8 +237,6 @@ void SetupObjectPatternStuff(
    newPtr->markIRPatternFunction = MarkObjectPtnIncrementalReset;
    newPtr->incrementalResetFunction = ObjectIncrementalReset;
 
-   newPtr->initialPatternFunction = CreateInitialObjectPattern;
-
 #if CONSTRUCT_COMPILER && (! RUN_TIME)
    newPtr->codeReferenceFunction = ObjectPatternNodeReference;
 #else
@@ -261,10 +260,6 @@ void SetupObjectPatternStuff(
    ObjectPatternsCompilerSetup(theEnv);
 #endif
 
-#if ! DEFINSTANCES_CONSTRUCT
-   AddResetFunction(theEnv,"reset-initial-object",ResetInitialObject,0);
-#endif
-
 #if BLOAD_AND_BSAVE || BLOAD || BLOAD_ONLY
    SetupObjectPatternsBload(theEnv);
 #endif
@@ -275,24 +270,6 @@ void SetupObjectPatternStuff(
           INTERNALLY VISIBLE FUNCTIONS
    =========================================
    ***************************************** */
-
-#if ! DEFINSTANCES_CONSTRUCT
-
-static void ResetInitialObject(
-  Environment *theEnv)
-  {
-   Expression *tmp;
-   UDFValue rtn;
-
-   tmp = GenConstant(theEnv,FCALL,FindFunction(theEnv,"make-instance"));
-   tmp->argList = GenConstant(theEnv,INSTANCE_NAME_TYPE,DefclassData(theEnv)->INITIAL_OBJECT_SYMBOL);
-   tmp->argList->nextArg =
-       GenConstant(theEnv,DEFCLASS_PTR,LookupDefclassInScope(theEnv,INITIAL_OBJECT_CLASS_NAME));
-   EvaluateExpression(theEnv,tmp,&rtn);
-   ReturnExpression(theEnv,tmp);
-  }
-
-#endif
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
 
@@ -2247,45 +2224,6 @@ static struct lhsParseNode *RemoveSlotExistenceTests(
    return(head);
   }
 
-/***************************************************
-  NAME         : CreateInitialObjectPattern
-  DESCRIPTION  : Creates a default object pattern
-                 for use in defrules
-  INPUTS       : None
-  RETURNS      : The default initial pattern
-  SIDE EFFECTS : Pattern created
-  NOTES        : The pattern created is:
-                 (object (is-a INITIAL-OBJECT)
-                         (name [initial-object]))
- ***************************************************/
-static struct lhsParseNode *CreateInitialObjectPattern(
-  Environment *theEnv)
-  {
-   struct lhsParseNode *topNode;
-   CLASS_BITMAP *clsset;
-   int initialObjectClassID;
-
-   initialObjectClassID = LookupDefclassInScope(theEnv,INITIAL_OBJECT_CLASS_NAME)->id;
-   clsset = NewClassBitMap(theEnv,initialObjectClassID,0);
-   SetBitMap(clsset->map,initialObjectClassID);
-   clsset = PackClassBitMap(theEnv,clsset);
-
-   topNode = GetLHSParseNode(theEnv);
-   topNode->userData = AddBitMap(theEnv,clsset,ClassBitMapSize(clsset));
-   IncrementBitMapCount(topNode->userData);
-   DeleteIntermediateClassBitMap(theEnv,clsset);
-   topNode->pnType = SF_WILDCARD_NODE;
-   topNode->index = 1;
-   topNode->slot = DefclassData(theEnv)->NAME_SYMBOL;
-   topNode->slotNumber = NAME_ID;
-
-   topNode->bottom = GetLHSParseNode(theEnv);
-   topNode->bottom->pnType = INSTANCE_NAME_NODE;
-   topNode->bottom->value = DefclassData(theEnv)->INITIAL_OBJECT_SYMBOL;
-
-   return(topNode);
-  }
-  
 #endif
 
 /**************************************************************

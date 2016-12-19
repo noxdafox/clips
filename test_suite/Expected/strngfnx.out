@@ -153,8 +153,6 @@ CLIPS> (eval "[ab]")                      ; 10.4.5
 CLIPS> (eval "(+ 3 (* 4 5))")             ; 10.4.5
 23
 CLIPS> (eval "(facts)")                   ; 10.4.5
-f-0     (initial-fact)
-For a total of 1 fact.
 CLIPS> (eval "?x")                        ; 10.4.5
 [STRNGFUN2] Some variables could not be accessed by the eval function.
 FALSE

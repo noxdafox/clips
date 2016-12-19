@@ -53,6 +53,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            Removed initial-fact support.                  */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -214,8 +216,7 @@ struct lhsParseNode *ReorderPatterns(
 
    /*===========================================================*/
    /* Number the user specified patterns. Patterns added while  */
-   /* analyzing the rule (such as placing initial-fact patterns */
-   /* before not CEs) are not numbered so that there is no      */
+   /* analyzing the rule are not numbered so that there is no   */
    /* confusion when an error message refers to a CE. Also      */
    /* propagate field and slot values throughout each pattern.  */
    /*===========================================================*/

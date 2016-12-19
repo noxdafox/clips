@@ -209,7 +209,6 @@ E:
 For a total of 3 defrules.
 CLIPS> (list-deffacts *)
 MAIN:
-   initial-fact
 A:
    foo
 B:
@@ -218,10 +217,9 @@ C:
    foo
 D:
 E:
-For a total of 4 deffacts.
+For a total of 3 deffacts.
 CLIPS> (list-deftemplates *)
 MAIN:
-   initial-fact
 A:
    a
    foo
@@ -230,7 +228,7 @@ B:
 C:
 D:
 E:
-For a total of 4 deftemplates.
+For a total of 3 deftemplates.
 CLIPS> (list-defglobals *)
 MAIN:
 A:
@@ -276,14 +274,13 @@ MAIN:
    ADDRESS
    INSTANCE
    USER
-   INITIAL-OBJECT
 A:
    FOO
 B:
 C:
 D:
 E:
-For a total of 18 defclasses.
+For a total of 17 defclasses.
 CLIPS> (list-defmessage-handlers A::FOO)
 bar primary in class A::FOO
 For a total of 1 message-handler.
@@ -295,7 +292,6 @@ CLIPS> (list-defmessage-handlers D::FOO)
 [CLASSFUN1] Unable to find class D::FOO in function list-defmessage-handlers.
 CLIPS> (list-definstances *)
 MAIN:
-   initial-object
 A:
    foo
 B:
@@ -304,7 +300,7 @@ C:
    foo
 D:
 E:
-For a total of 4 definstances.
+For a total of 3 definstances.
 CLIPS> (clear) ; Test for scope
 CLIPS> (setgen 1)
 1
@@ -320,9 +316,8 @@ CLIPS> (defrule B::bar (foo (x 3)) => (printout t ?*foo* " " (foo)))
 CLIPS> (make-instance of FOO)
 [gen1]
 CLIPS> (instances)
-[initial-object] of INITIAL-OBJECT
 [gen1] of A::FOO
-For a total of 2 instances.
+For a total of 1 instance.
 CLIPS> (clear) ; Test fact scoping
 CLIPS> (defmodule A)
 CLIPS> (assert (a))
@@ -345,15 +340,12 @@ f-3     (b)
 f-4     (c)
 For a total of 2 facts.
 CLIPS> (facts MAIN)
-f-0     (initial-fact)
-For a total of 1 fact.
 CLIPS> (facts *)
-f-0     (initial-fact)
 f-1     (a)
 f-2     (b)
 f-3     (b)
 f-4     (c)
-For a total of 5 facts.
+For a total of 4 facts.
 CLIPS> (clear) ; Test redefinition of MAIN module
 CLIPS> (defmodule MAIN (export ?ALL))
 CLIPS> (defmodule MAIN (export deftemplate ?ALL))
@@ -496,10 +488,9 @@ ERROR:
    (b
 CLIPS> (list-deftemplates *)
 MAIN:
-   initial-fact
 BAR:
    b
-For a total of 2 deftemplates.
+For a total of 1 deftemplate.
 CLIPS> (clear)
 CLIPS> (defmodule MAIN (export ?ALL))
 CLIPS> (deftemplate a (slot x))

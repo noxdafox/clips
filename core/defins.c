@@ -58,6 +58,8 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Removed initial-object support.                */
+/*                                                           */
 /*************************************************************/
 
 /* =========================================
@@ -122,10 +124,6 @@
    static void                    SaveDefinstances(Environment *,Defmodule *,const char *,void *);
    static bool                    RemoveAllDefinstances(Environment *);
    static void                    DefinstancesDeleteError(Environment *,const char *);
-
-#if DEFRULE_CONSTRUCT
-   static void                    CreateInitialDefinstances(Environment *,void *);
-#endif
 #endif
 
 #if ! RUN_TIME
@@ -209,11 +207,6 @@ void SetupDefinstances(
 #if ! BLOAD_ONLY
    AddUDF(theEnv,"undefinstances","v",1,1,"y",UndefinstancesCommand,"UndefinstancesCommand",NULL);
    AddSaveFunction(theEnv,"definstances",SaveDefinstances,0,NULL);
-
-#if DEFRULE_CONSTRUCT
-   AddClearFunction(theEnv,"definstances",CreateInitialDefinstances,-1000,NULL);
-#endif
-
 #endif
 
 #if DEBUGGING_FUNCTIONS
@@ -846,43 +839,6 @@ static void DefinstancesDeleteError(
   {
    CantDeleteItemErrorMessage(theEnv,"definstances",dname);
   }
-
-#if DEFRULE_CONSTRUCT
-
-/********************************************************
-  NAME         : CreateInitialDefinstances
-  DESCRIPTION  : Makes the initial-object definstances
-                 structure for creating an initial-object
-                 which will match default object patterns
-                 in defrules
-  INPUTS       : None
-  RETURNS      : Nothing useful
-  SIDE EFFECTS : initial-object definstances created
-  NOTES        : None
- ********************************************************/
-static void CreateInitialDefinstances(
-  Environment *theEnv,
-  void *context)
-  {
-   Expression *tmp;
-   Definstances *theDefinstances;
-
-   theDefinstances = get_struct(theEnv,definstances);
-   InitializeConstructHeader(theEnv,"definstances",DEFINSTANCES,&theDefinstances->header,
-                             DefclassData(theEnv)->INITIAL_OBJECT_SYMBOL);
-   theDefinstances->busy = 0;
-   tmp = GenConstant(theEnv,FCALL,FindFunction(theEnv,"make-instance"));
-   tmp->argList = GenConstant(theEnv,INSTANCE_NAME_TYPE,DefclassData(theEnv)->INITIAL_OBJECT_SYMBOL);
-   tmp->argList->nextArg =
-       GenConstant(theEnv,DEFCLASS_PTR,LookupDefclassInScope(theEnv,INITIAL_OBJECT_CLASS_NAME));
-   theDefinstances->mkinstance = PackExpression(theEnv,tmp);
-   ReturnExpression(theEnv,tmp);
-   IncrementSymbolCount(GetDefinstancesNamePointer(theEnv,theDefinstances));
-   ExpressionInstall(theEnv,theDefinstances->mkinstance);
-   AddConstructToModule(&theDefinstances->header);
-  }
-
-#endif
 
 #endif
 

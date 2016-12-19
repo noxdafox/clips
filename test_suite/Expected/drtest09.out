@@ -18,7 +18,8 @@ CLIPS>
 (defmessage-handler A delete before ()
   (if (instance-existp ?self:container) then
      (unmake-instance ?self:container)))
-CLIPS>      
+CLIPS> (defclass INITIAL-OBJECT (is-a USER))
+CLIPS> 
 (defrule A-rule
   (logical ?obj <- (object (is-a A) (match yes)))
 =>
@@ -122,6 +123,7 @@ Activations
 CLIPS> (clear)                   ; DR0806
 CLIPS> (setgen 1)
 1
+CLIPS> (defclass INITIAL-OBJECT (is-a USER))     
 CLIPS> 
 (defclass A (is-a INITIAL-OBJECT)
    (multislot foo))
@@ -160,7 +162,9 @@ CLIPS> (send [a] pins)
 [PRCCODE4] Execution halted during the actions of message-handler pins primary in class USER
 FALSE
 CLIPS> (clear)                   ; DR0810
-CLIPS> (deffunction MAIN::foo
+CLIPS> (defclass INITIAL-OBJECT (is-a USER))     
+CLIPS> 
+(deffunction MAIN::foo
    (?garbage)
    (setgen 1)
    (loop-for-count ?garbage
@@ -175,6 +179,7 @@ gen101
 CLIPS> (foo 500)
 gen501
 CLIPS> (clear)                   ; DR0813
+CLIPS> (defclass INITIAL-OBJECT (is-a USER))     
 CLIPS> 
 (defclass A (is-a INITIAL-OBJECT)
    (multislot foo (create-accessor read-write)))
@@ -313,6 +318,7 @@ CLIPS> (defmethod B::foo ((?arg B)))
 ERROR:
 (defmethod B::foo
 CLIPS> (clear)                   ; DR0819
+CLIPS> (defclass INITIAL-OBJECT (is-a USER))     
 CLIPS> 
 (defclass A 
    (is-a INITIAL-OBJECT)
@@ -348,7 +354,6 @@ CLIPS>
    (printout t "2nd output line: iii = " (send [a] get-iii) crlf))
 CLIPS> 
 (defrule test
-   (initial-fact)
    =>
    (make-instance [a] of A)
    (make-instance [b] of B))
@@ -760,7 +765,7 @@ CLIPS> (clear)                   ; DR0879
 CLIPS> (assert (a) (b) (c))
 <Fact-3>
 CLIPS> (implode$ (get-fact-list))
-"<Fact-0> <Fact-1> <Fact-2> <Fact-3>"
+"<Fact-1> <Fact-2> <Fact-3>"
 CLIPS> (clear)                   ; DR0880
 CLIPS> (deftemplate matrix (slot ID) (slot JD))
 CLIPS> (deffacts blah (matrix (ID 5) (JD 5)))
@@ -791,16 +796,14 @@ CLIPS>
    (as_score (segment_id 12)(score 9))) 
 CLIPS> (reset)
 CLIPS> (facts)
-f-0     (initial-fact)
 f-1     (as_score (segment_id 11) (score 5))
 f-2     (as_score (segment_id 12) (score 9))
-For a total of 3 facts.
+For a total of 2 facts.
 CLIPS> (reset)
 CLIPS> (facts)
-f-0     (initial-fact)
 f-1     (as_score (segment_id 11) (score 5))
 f-2     (as_score (segment_id 12) (score 9))
-For a total of 3 facts.
+For a total of 2 facts.
 CLIPS> (clear)
 CLIPS> (clear)                   ; SourceForge 1881324: CLIPS 6.3 Beta Release 3
 CLIPS> 
@@ -860,8 +863,8 @@ CLIPS> (make-instance of BEO)
 CLIPS> (make-instance of BEO)
 [gen507]
 CLIPS> (bsave-instances "Temp//d.bins")
-3
+2
 CLIPS> (reset)
 CLIPS> (bload-instances "Temp//d.bins")
-3
+2
 CLIPS> (dribble-off)

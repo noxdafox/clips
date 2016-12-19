@@ -11,9 +11,10 @@
 (assert (b))
 (unwatch all)
 (clear) ; Test Thing #3
+(deffacts initial (factoid))
 (reset)
-(defrule foo (initial-fact) (not (a)) =>)
-(defrule bar (initial-fact) =>)
+(defrule foo (factoid) (not (a)) =>)
+(defrule bar (factoid) =>)
 (agenda)
 (unwatch all)
 (clear) ; Test Thing #4

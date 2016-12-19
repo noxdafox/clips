@@ -52,6 +52,8 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Removed initial-fact support.                  */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -88,10 +90,6 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-#if ! DEFFACTS_CONSTRUCT
-   static void                    ResetDeftemplates(Environment *,void *);
-#endif
-   static void                    ClearDeftemplates(Environment *,void *);
    static void                    SaveDeftemplates(Environment *,Defmodule *,const char *,void *);
 
 /*********************************************************************/
@@ -100,10 +98,6 @@
 void DeftemplateBasicCommands(
   Environment *theEnv)
   {
-#if ! DEFFACTS_CONSTRUCT
-   AddResetFunction(theEnv,"deftemplate",ResetDeftemplates,0,NULL);
-#endif
-   AddClearFunction(theEnv,"deftemplate",ClearDeftemplates,0,NULL);
    AddSaveFunction(theEnv,"deftemplate",SaveDeftemplates,10,NULL);
 
 #if ! RUN_TIME
@@ -124,44 +118,6 @@ void DeftemplateBasicCommands(
    DeftemplateCompilerSetup(theEnv);
 #endif
 
-#endif
-  }
-
-/*************************************************************/
-/* ResetDeftemplates: Deftemplate reset routine for use with */
-/*   the reset command. Asserts the initial-fact fact when   */
-/*   the deffacts construct has been disabled.               */
-/*************************************************************/
-#if ! DEFFACTS_CONSTRUCT
-static void ResetDeftemplates(
-  Environment *theEnv,
-  void *context)
-  {
-   Fact *factPtr;
-
-   factPtr = StringToFact(theEnv,"(initial-fact)");
-
-   if (factPtr == NULL) return;
-
-   EnvAssert(theEnv,factPtr);
- }
-#endif
-
-/*****************************************************************/
-/* ClearDeftemplates: Deftemplate clear routine for use with the */
-/*   clear command. Creates the initial-facts deftemplate.       */
-/*****************************************************************/
-static void ClearDeftemplates(
-  Environment *theEnv,
-  void *context)
-  {
-#if (! RUN_TIME) && (! BLOAD_ONLY)
-
-   CreateImpliedDeftemplate(theEnv,CreateSymbol(theEnv,"initial-fact"),false);
-#else
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
 #endif
   }
 

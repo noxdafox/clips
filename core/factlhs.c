@@ -10,9 +10,8 @@
 /* Purpose: Contains routines for integration of ordered and */
 /*   deftemplate fact patterns with the defrule LHS pattern  */
 /*   parser including routines for recognizing fact          */
-/*   patterns, parsing ordered fact patterns, initiating the */
-/*   parsing of deftemplate fact patterns, and creating the  */
-/*   default initial-fact fact pattern.                      */
+/*   patterns, parsing ordered fact patterns, and initiating */
+/*   the parsing of deftemplate fact patterns.               */
 /*                                                           */
 /* Principal Programmer(s):                                  */
 /*      Gary D. Riley                                        */
@@ -36,6 +35,8 @@
 /*                                                           */
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
+/*                                                           */
+/*            Removed initial-fact support.                  */
 /*                                                           */
 /*************************************************************/
 
@@ -149,55 +150,6 @@ struct lhsParseNode *SequenceRestrictionParse(
    /*===================================*/
    /* If no errors, return the pattern. */
    /*===================================*/
-
-   return(topNode);
-  }
-
-/****************************************************************/
-/* CreateInitialFactPattern: Creates the pattern (initial-fact) */
-/*   for use in rules which have no LHS patterns.               */
-/****************************************************************/
-struct lhsParseNode *CreateInitialFactPattern(
-  Environment *theEnv)
-  {
-   struct lhsParseNode *topNode;
-   Deftemplate *theDeftemplate;
-   int count;
-
-   /*==================================*/
-   /* If the initial-fact deftemplate  */
-   /* doesn't exist, then create it.   */
-   /*==================================*/
-
-   theDeftemplate = (Deftemplate *)
-                    FindImportedConstruct(theEnv,"deftemplate",NULL,"initial-fact",
-                                          &count,true,NULL);
-   if (theDeftemplate == NULL)
-     {
-      PrintWarningID(theEnv,"FACTLHS",1,false);
-      PrintRouter(theEnv,WWARNING,"Creating implied initial-fact deftemplate in module ");
-      PrintRouter(theEnv,WWARNING,DefmoduleName(GetCurrentModule(theEnv)));
-      PrintRouter(theEnv,WWARNING,".\n");
-      PrintRouter(theEnv,WWARNING,"  You probably want to import this deftemplate from the MAIN module.\n");
-      CreateImpliedDeftemplate(theEnv,CreateSymbol(theEnv,"initial-fact"),false);
-     }
-
-   /*====================================*/
-   /* Create the (initial-fact) pattern. */
-   /*====================================*/
-
-   topNode = GetLHSParseNode(theEnv);
-   topNode->pnType = SF_WILDCARD_NODE;
-   topNode->index = 0;
-   topNode->slotNumber = 1;
-
-   topNode->bottom = GetLHSParseNode(theEnv);
-   topNode->bottom->pnType = SYMBOL_NODE;
-   topNode->bottom->value = CreateSymbol(theEnv,"initial-fact");
-
-   /*=====================*/
-   /* Return the pattern. */
-   /*=====================*/
 
    return(topNode);
   }

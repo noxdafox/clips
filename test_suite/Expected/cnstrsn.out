@@ -9,21 +9,19 @@ For a total of 3 defrules.
 CLIPS> (get-defrule-list)
 (foo bar woz)
 CLIPS> (list-deffacts)
-initial-fact
 foo
 bar
 woz
-For a total of 4 deffacts.
+For a total of 3 deffacts.
 CLIPS> (get-deffacts-list)
-(initial-fact foo bar woz)
+(foo bar woz)
 CLIPS> (list-deftemplates)
-initial-fact
 foo
 bar
 woz
-For a total of 4 deftemplates.
+For a total of 3 deftemplates.
 CLIPS> (get-deftemplate-list)
-(initial-fact foo bar woz)
+(foo bar woz)
 CLIPS> (list-defglobals)
 foo
 bar
@@ -84,13 +82,12 @@ LEXEME
 ADDRESS
 INSTANCE
 USER
-INITIAL-OBJECT
 foo
 bar
 woz
-For a total of 20 defclasses.
+For a total of 19 defclasses.
 CLIPS> (get-defclass-list)
-(FLOAT INTEGER SYMBOL STRING MULTIFIELD EXTERNAL-ADDRESS FACT-ADDRESS INSTANCE-ADDRESS INSTANCE-NAME OBJECT PRIMITIVE NUMBER LEXEME ADDRESS INSTANCE USER INITIAL-OBJECT foo bar woz)
+(FLOAT INTEGER SYMBOL STRING MULTIFIELD EXTERNAL-ADDRESS FACT-ADDRESS INSTANCE-ADDRESS INSTANCE-NAME OBJECT PRIMITIVE NUMBER LEXEME ADDRESS INSTANCE USER foo bar woz)
 CLIPS> (describe-class woz)
 ================================================================================
 ********************************************************************************
@@ -180,13 +177,12 @@ For a total of 11 message-handlers.
 CLIPS> (get-defmessage-handler-list woz inherit)
 (USER init primary USER delete primary USER create primary USER print primary USER direct-modify primary USER message-modify primary USER direct-duplicate primary USER message-duplicate primary foo foo primary bar bar primary woz woz primary)
 CLIPS> (list-definstances)
-initial-object
 foo
 bar
 woz
-For a total of 4 definstances.
+For a total of 3 definstances.
 CLIPS> (get-definstances-list)
-(initial-object foo bar woz)
+(foo bar woz)
 CLIPS> (get-defrule-list abc)
 [ARGACCES5] Function get-defrule-list expected argument #1 to be of type defmodule name
 ()

@@ -106,7 +106,6 @@ CLIPS> (unmake-instance mea)
 <== instance [mea] of MY-EXTERNAL-ADDRESS
 TRUE
 CLIPS> (unmake-instance *)
-<== instance [initial-object] of INITIAL-OBJECT
 <== instance [a1] of A1
 <== instance [a2] of A2
 TRUE
@@ -376,7 +375,7 @@ CLIPS> (class-subclasses NUMBER junk)
 CLIPS> (class-subclasses NUMBER inherit)
 (INTEGER WOZBANG BOOGLE COOGLE DOOGLE FLOAT)
 CLIPS> (class-subclasses OBJECT inherit)
-(PRIMITIVE NUMBER INTEGER WOZBANG BOOGLE COOGLE DOOGLE FLOAT LEXEME SYMBOL STRING MULTIFIELD ADDRESS EXTERNAL-ADDRESS MY-EXTERNAL-ADDRESS FACT-ADDRESS INSTANCE-ADDRESS INSTANCE INSTANCE-NAME USER INITIAL-OBJECT TEST SUBTEST A A1 B1 A2 JUNK)
+(PRIMITIVE NUMBER INTEGER WOZBANG BOOGLE COOGLE DOOGLE FLOAT LEXEME SYMBOL STRING MULTIFIELD ADDRESS EXTERNAL-ADDRESS MY-EXTERNAL-ADDRESS FACT-ADDRESS INSTANCE-ADDRESS INSTANCE INSTANCE-NAME USER TEST SUBTEST A A1 B1 A2 JUNK)
 CLIPS> (get-defmessage-handler-list)
 (USER init primary USER delete primary USER create primary USER print primary USER direct-modify primary USER message-modify primary USER direct-duplicate primary USER message-duplicate primary USER print-args primary TEST get-x primary TEST put-x primary A1 get-x primary A1 put-x primary A1 print-args primary A2 print-args primary MY-EXTERNAL-ADDRESS get-blah primary MY-EXTERNAL-ADDRESS put-blah primary MY-EXTERNAL-ADDRESS create primary MY-EXTERNAL-ADDRESS init primary MY-EXTERNAL-ADDRESS delete primary JUNK get-x primary JUNK put-x primary JUNK put-y primary JUNK my-put primary JUNK my-get primary JUNK my-replace primary JUNK my-insert primary JUNK my-delete primary BOOGLE put-z primary)
 CLIPS> (get-defmessage-handler-list 1)

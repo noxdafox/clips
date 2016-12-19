@@ -34,6 +34,8 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            Removed initial-fact support.                  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_factlhs
@@ -48,6 +50,5 @@
    bool                           FactPatternParserFind(CLIPSLexeme *);
    struct lhsParseNode           *FactPatternParse(Environment *,const char *,struct token *);
    struct lhsParseNode           *SequenceRestrictionParse(Environment *,const char *,struct token *);
-   struct lhsParseNode           *CreateInitialFactPattern(Environment *);
 
 #endif /* _H_factlhs */

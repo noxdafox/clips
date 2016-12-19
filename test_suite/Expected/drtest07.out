@@ -21,17 +21,15 @@ TRUE
 CLIPS> (reset)                            ; DR0604
 CLIPS> (run)                              ; DR0604
 CLIPS> (facts)                            ; DR0604
-f-0     (initial-fact)
 f-1     (x)
-For a total of 2 facts.
+For a total of 1 fact.
 CLIPS> (bload "Temp//bar.bin")            ; DR0604
 TRUE
 CLIPS> (reset)                            ; DR0604
 CLIPS> (run)                              ; DR0604
 CLIPS> (facts)                            ; DR0604
-f-0     (initial-fact)
 f-1     (y)
-For a total of 2 facts.
+For a total of 1 fact.
 CLIPS> (clear)                            ; DR0606
 CLIPS> 
 (defrule blah                             ; DR0606
@@ -232,9 +230,8 @@ CLIPS> (assert (i-f))                     ; DR0630
 [FACTMNGR1] Facts may not be retracted during pattern-matching
 <Fact-1>
 CLIPS> (facts)                            ; DR0630
-f-0     (initial-fact)
 f-1     (i-f)
-For a total of 2 facts.
+For a total of 1 fact.
 CLIPS> (agenda)                           ; DR0630
 0      blah: f-1
 For a total of 1 activation.
@@ -248,9 +245,8 @@ CLIPS> (defrule blah                      ; DR0630
 
 [FACTMNGR1] Facts may not be retracted during pattern-matching
 CLIPS> (facts)                            ; DR0630
-f-0     (initial-fact)
 f-1     (i-f)
-For a total of 2 facts.
+For a total of 1 fact.
 CLIPS> (agenda)                           ; DR0630
 0      blah: f-1
 For a total of 1 activation.
@@ -413,19 +409,17 @@ CLIPS> (deffacts *)                       ; DR0650
 CLIPS> (defrule * =>)                     ; DR0650
 CLIPS> (deftemplate *)                    ; DR0650
 CLIPS> (list-deffacts)                    ; DR0650
-initial-fact
 foo
 *
-For a total of 3 deffacts.
+For a total of 2 deffacts.
 CLIPS> (list-defrules)                    ; DR0650
 foo
 *
 For a total of 2 defrules.
 CLIPS> (list-deftemplates)                ; DR0650
-initial-fact
 foo
 *
-For a total of 3 deftemplates.
+For a total of 2 deftemplates.
 CLIPS> (clear)                            ; DR0654
 CLIPS> (fetch "XYZBEDQ.txt")              ; DR0654
 [TEXTPRO1] Could not open file "XYZBEDQ.txt".
@@ -444,7 +438,7 @@ CLIPS> (defclass A (is-a USER) (role concrete) (multislot x (create-accessor rea
 CLIPS> (make-instance a of A (x (instance-address a) 34))
 [a]
 CLIPS> (save-instances "Temp//ins.sav")   ; DR0656
-2
+1
 CLIPS> (clear)                            ; DR0657
 CLIPS> (defclass A (is-a USER) (role concrete) (slot x (create-accessor read-write)))
 CLIPS> (defmessage-handler A foo (?a) 
@@ -495,8 +489,7 @@ LEXEME
 ADDRESS
 INSTANCE
 USER
-INITIAL-OBJECT
-For a total of 17 defclasses.
+For a total of 16 defclasses.
 CLIPS> (clear)                            ; DR0660
 CLIPS> (definstances bad (a of))          ; DR0660
 
@@ -514,8 +507,6 @@ ERROR:
    (a of BOGUS
 CLIPS> (reset)                            ; DR0661
 CLIPS> (facts)                            ; DR0661
-f-0     (initial-fact)
-For a total of 1 fact.
 CLIPS> (clear)                            ; DR0662
 CLIPS> (sub-string 0 0 abc)               ; DR0662
 ""
@@ -599,26 +590,27 @@ CLIPS> (foo)                              ; DR0672
 (a b c d) (a b c d)
 (a b c d) (e f g h)
 CLIPS> (clear)
+CLIPS> (deffacts initial (factoid))
 CLIPS> (reset)                   ; DR0675
-CLIPS> (defrule foo (initial-fact) (test (> 4 3)) =>)
+CLIPS> (defrule foo (factoid) (test (> 4 3)) =>)
 CLIPS> (agenda)
-0      foo: f-0
+0      foo: f-1
 For a total of 1 activation.
 CLIPS> (assert (a))
-<Fact-1>
-CLIPS> (defrule bar (initial-fact) (or (test (> 5 3)) (a)) =>)
+<Fact-2>
+CLIPS> (defrule bar (factoid) (or (test (> 5 3)) (a)) =>)
 CLIPS> (agenda)
-0      bar: f-0,f-1
-0      bar: f-0
-0      foo: f-0
+0      bar: f-1,f-2
+0      bar: f-1
+0      foo: f-1
 For a total of 3 activations.
 CLIPS> (reset)
 CLIPS> (assert (a))
-<Fact-1>
+<Fact-2>
 CLIPS> (agenda)
-0      bar: f-0,f-1
-0      foo: f-0
-0      bar: f-0
+0      bar: f-1,f-2
+0      foo: f-1
+0      bar: f-1
 For a total of 3 activations.
 CLIPS> (clear)
 CLIPS> (defmethod foo (?a)       ; DR0676
@@ -839,8 +831,6 @@ CLIPS> (unwatch all)  ;; DR0693
 CLIPS> (defrule foo (logical (not (a))) => (assert (b)))
 CLIPS> (watch facts)
 CLIPS> (reset)
-<== f-0     (initial-fact)
-==> f-0     (initial-fact)
 CLIPS> (run)
 ==> f-1     (b)
 CLIPS> (assert (a))
@@ -848,9 +838,7 @@ CLIPS> (assert (a))
 <== f-1     (b)
 <Fact-2>
 CLIPS> (reset)
-<== f-0     (initial-fact)
 <== f-2     (a)
-==> f-0     (initial-fact)
 CLIPS> (defrule bar (declare (salience -1)) => (assert (a)))
 CLIPS> (run)
 ==> f-1     (b)
@@ -875,10 +863,10 @@ CLIPS> (send (send [quoxnar] get-foo) print)
 [INSFUN4] Invalid instance-address in function send.
 FALSE
 CLIPS> (save-instances "Temp//badfile.tmp")
-2
+1
 CLIPS> (reset)
 CLIPS> (restore-instances "Temp//badfile.tmp")
-2
+1
 CLIPS> (send [quoxnar] print)
 [quoxnar] of A
 (foo [fribban])
@@ -918,11 +906,11 @@ CLIPS> (send [a] print)
 [a] of A
 (foo)
 CLIPS> (save-instances "Temp//ins.tmp")
-2
+1
 CLIPS> (unmake-instance [a])
 TRUE
 CLIPS> (load-instances "Temp//ins.tmp")
-2
+1
 CLIPS> (send [a] print)
 [a] of A
 (foo)

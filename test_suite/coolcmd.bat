@@ -12,7 +12,6 @@
 (undefclass BOGUS)
 (undefclass *)
 (undefclass OBJECT)
-(undefclass USER)
 (undefclass PRIMITIVE)
 (undefclass MULTIFIELD)
 (undefclass EXTERNAL-ADDRESS)

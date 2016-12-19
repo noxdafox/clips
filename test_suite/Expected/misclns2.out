@@ -410,12 +410,8 @@ CLIPS> (assert (quo b a))
 CLIPS> (clear) ; Thing 6
 CLIPS> (watch facts)
 CLIPS> (reset)
-<== f-0     (initial-fact)
-==> f-0     (initial-fact)
 CLIPS> (clear)
-==> f-0     (initial-fact)
 CLIPS> (clear) ; Thing 7
-==> f-0     (initial-fact)
 CLIPS> (deftemplate bar (slot y) (slot x) (slot z))
 CLIPS> (defrule foo1 (bar (x ?x&:(> ?x 3))) =>)
 CLIPS> (defrule foo2 (bar (y ?x&:(> ?x 3))) =>)
@@ -451,7 +447,6 @@ CLIPS> (assert (bar (x 1) (y 1) (z a)))
 
 <Fact-3>
 CLIPS> (clear) ; Thing 8
-==> f-0     (initial-fact)
 CLIPS> (defrule foo1 (bar ?x&:(> ?x 3) ?) =>)
 CLIPS> (defrule foo2 (bar ? ?x&:(> ?x 3)) =>)
 CLIPS> (assert (bar a 1))
@@ -475,7 +470,6 @@ CLIPS> (assert (bar 1 a))
 
 <Fact-2>
 CLIPS> (clear) ; Can't delete deftemplates while they're being used
-==> f-0     (initial-fact)
 CLIPS> (deftemplate foo)
 CLIPS> (undeftemplate foo)
 CLIPS> (deftemplate foo)
@@ -494,7 +488,6 @@ CLIPS> (undeftemplate foo)
 CLIPS> (undefrule foobar)
 CLIPS> (undeftemplate foo)
 CLIPS> (clear)
-==> f-0     (initial-fact)
 CLIPS> (deftemplate foo)
 CLIPS> (defrule bar (foo) =>)
 CLIPS> (deftemplate foo)
@@ -504,9 +497,7 @@ CLIPS> (deftemplate foo)
 ERROR:
 (deftemplate MAIN::foo
 CLIPS> (clear)
-==> f-0     (initial-fact)
 CLIPS> (deftemplate foo)
 CLIPS> (deftemplate foo (slot x))
 CLIPS> (clear) ; Next Thing
-==> f-0     (initial-fact)
 CLIPS> (dribble-off)

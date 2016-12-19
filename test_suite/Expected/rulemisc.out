@@ -21,12 +21,13 @@ CLIPS> (assert (b))
 <Fact-2>
 CLIPS> (unwatch all)
 CLIPS> (clear) ; Test Thing #3
+CLIPS> (deffacts initial (factoid))
 CLIPS> (reset)
-CLIPS> (defrule foo (initial-fact) (not (a)) =>)
-CLIPS> (defrule bar (initial-fact) =>)
+CLIPS> (defrule foo (factoid) (not (a)) =>)
+CLIPS> (defrule bar (factoid) =>)
 CLIPS> (agenda)
-0      bar: f-0
-0      foo: f-0,*
+0      bar: f-1
+0      foo: f-1,*
 For a total of 2 activations.
 CLIPS> (unwatch all)
 CLIPS> (clear) ; Test Thing #4
@@ -459,10 +460,9 @@ CLIPS> (run)
 <== f-1     (foo (bar 1))
 ==> f-3     (foo (bar TRUE))
 CLIPS> (facts)
-f-0     (initial-fact)
 f-2     (something)
 f-3     (foo (bar TRUE))
-For a total of 3 facts.
+For a total of 2 facts.
 CLIPS> (unwatch all)
 CLIPS> (clear)
 CLIPS> (watch activations) 
@@ -485,9 +485,8 @@ CLIPS> (assert (something))
 CLIPS> (run) 
 <== f-1     (foo (bar 1))
 CLIPS> (facts)
-f-0     (initial-fact)
 f-2     (something)
-For a total of 2 facts.
+For a total of 1 fact.
 CLIPS> (unwatch all)
 CLIPS> (clear) ; Test Thing #16
 CLIPS> (watch facts)
@@ -497,8 +496,6 @@ CLIPS> (defrule prop
    =>
    (assert (level-search (+ ?n 1))))
 CLIPS> (reset)
-<== f-0     (initial-fact)
-==> f-0     (initial-fact)
 CLIPS> (assert (level-search 1))
 ==> f-1     (level-search 1)
 <Fact-1>
@@ -743,8 +740,6 @@ CLIPS>
 CLIPS> (watch facts)
 CLIPS> (watch activations)
 CLIPS> (reset)
-<== f-0     (initial-fact)
-==> f-0     (initial-fact)
 ==> f-1     (csp (y A) (u B))
 ==> f-2     (link (z B) (y A))
 ==> f-3     (link (z C) (y A))

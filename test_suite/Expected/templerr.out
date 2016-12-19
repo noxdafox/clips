@@ -600,7 +600,6 @@ ERROR:
 %
 FALSE
 CLIPS> (list-deftemplates)
-initial-fact
 aok-foo01
 aok-foo02
 aok-foo03
@@ -652,5 +651,5 @@ aok-foo44
 aok-foo45
 aok-foo46
 aok-foo47
-For a total of 52 deftemplates.
+For a total of 51 deftemplates.
 CLIPS> (dribble-off)

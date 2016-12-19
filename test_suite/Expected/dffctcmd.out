@@ -13,7 +13,6 @@ CLIPS> (deffacts *)
 CLIPS> (list-deffacts d6)
 [ARGACCES5] Function list-deffacts expected argument #1 to be of type defmodule name
 CLIPS> (list-deffacts)
-initial-fact
 d1
 d2
 d3
@@ -21,7 +20,7 @@ d4
 d5
 d6
 *
-For a total of 8 deffacts.
+For a total of 7 deffacts.
 CLIPS> (ppdeffacts d1)
 (deffacts MAIN::d1)
 CLIPS> (ppdeffacts d2)
@@ -54,7 +53,6 @@ CLIPS> (undeffacts bad-name)
 CLIPS> (undeffacts d6 10)
 [ARGACCES4] Function undeffacts expected exactly 1 argument(s)
 CLIPS> (list-deffacts)
-initial-fact
 d1
 d2
 d3
@@ -62,24 +60,22 @@ d4
 d5
 d6
 *
-For a total of 8 deffacts.
+For a total of 7 deffacts.
 CLIPS> (undeffacts d1)
 CLIPS> (undeffacts d2)
 CLIPS> (undeffacts d3)
 CLIPS> (list-deffacts)
-initial-fact
 d4
 d5
 d6
 *
-For a total of 5 deffacts.
+For a total of 4 deffacts.
 CLIPS> (undeffacts *)
 CLIPS> (list-deffacts)
-initial-fact
 d4
 d5
 d6
-For a total of 4 deffacts.
+For a total of 3 deffacts.
 CLIPS> (undeffacts *)
 CLIPS> (list-deffacts)
 CLIPS> (clear) ; Some new 6.0 features
@@ -112,14 +108,13 @@ d3
 For a total of 2 deffacts.
 CLIPS> (list-deffacts *)
 MAIN:
-   initial-fact
 FOO:
    d1
    d2
 BAR:
    d2
    d3
-For a total of 5 deffacts.
+For a total of 4 deffacts.
 CLIPS> (get-deffacts-list 7)
 [ARGACCES5] Function get-deffacts-list expected argument #1 to be of type symbol
 CLIPS> (get-deffacts-list BOGUS 7)
@@ -134,7 +129,7 @@ CLIPS> (get-deffacts-list FOO)
 CLIPS> (get-deffacts-list BAR)
 (d2 d3)
 CLIPS> (get-deffacts-list *)
-(MAIN::initial-fact FOO::d1 FOO::d2 BAR::d2 BAR::d3)
+(FOO::d1 FOO::d2 BAR::d2 BAR::d3)
 CLIPS> (ppdeffacts d1)
 [PRNTUTIL1] Unable to find deffacts d1.
 CLIPS> (ppdeffacts d2)
@@ -179,28 +174,25 @@ CLIPS> (undeffacts BOGUS::d2)
 CLIPS> (undeffacts FOO::d2)
 CLIPS> (list-deffacts *)
 MAIN:
-   initial-fact
 FOO:
    d1
 BAR:
    d2
    d3
-For a total of 4 deffacts.
+For a total of 3 deffacts.
 CLIPS> (undeffacts BAR::d2)
 CLIPS> (list-deffacts *)
 MAIN:
-   initial-fact
 FOO:
    d1
 BAR:
    d3
-For a total of 3 deffacts.
+For a total of 2 deffacts.
 CLIPS> (undeffacts *)
 CLIPS> (list-deffacts *)
 MAIN:
-   initial-fact
 FOO:
    d1
 BAR:
-For a total of 2 deffacts.
+For a total of 1 deffacts.
 CLIPS> (dribble-off)

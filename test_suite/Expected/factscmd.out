@@ -3,19 +3,16 @@ CLIPS> (batch "factscmd.bat")
 TRUE
 CLIPS> (clear)
 CLIPS> (facts)                            ; facts
-f-0     (initial-fact)
-For a total of 1 fact.
 CLIPS> (assert (a) (b) (c) (d) (e) (f))
 <Fact-6>
 CLIPS> (facts)
-f-0     (initial-fact)
 f-1     (a)
 f-2     (b)
 f-3     (c)
 f-4     (d)
 f-5     (e)
 f-6     (f)
-For a total of 7 facts.
+For a total of 6 facts.
 CLIPS> (facts 1 2 3 4 5)
 [ARGACCES4] Function facts expected no more than 4 argument(s)
 CLIPS> (facts "a")
@@ -54,8 +51,6 @@ CLIPS> (save-facts "Temp//factscmd.tmp")
 TRUE
 CLIPS> (clear)
 CLIPS> (facts)
-f-0     (initial-fact)
-For a total of 1 fact.
 CLIPS> (load-facts)
 [ARGACCES4] Function load-facts expected exactly 1 argument(s)
 CLIPS> (load-facts 10)
@@ -65,14 +60,13 @@ CLIPS> (load-facts "Temp//factscmd.tmp" 10)
 CLIPS> (load-facts "Temp//factscmd.tmp")
 TRUE
 CLIPS> (facts)
-f-0     (initial-fact)
 f-1     (a)
 f-2     (b)
 f-3     (c)
 f-4     (d)
 f-5     (e)
 f-6     (f)
-For a total of 7 facts.
+For a total of 6 facts.
 CLIPS> (clear)                            ; dependencies and dependents
 CLIPS> (defrule foo1 (logical (a) (b)) => (assert (e)))
 CLIPS> (defrule foo2 (logical (b)) (c) => (assert (e)))
@@ -87,7 +81,6 @@ CLIPS> (assert (a) (b) (c) (d))
 <Fact-4>
 CLIPS> (run)
 CLIPS> (facts)
-f-0     (initial-fact)
 f-1     (a)
 f-2     (b)
 f-3     (c)
@@ -95,7 +88,7 @@ f-4     (d)
 f-5     (e)
 f-6     (f)
 f-7     (g)
-For a total of 8 facts.
+For a total of 7 facts.
 CLIPS> (dependencies)
 [ARGACCES4] Function dependencies expected exactly 1 argument(s)
 CLIPS> (dependencies a)
@@ -138,9 +131,8 @@ CLIPS> (assert (a))
 CLIPS> (assert (a))
 FALSE
 CLIPS> (facts)
-f-0     (initial-fact)
 f-1     (a)
-For a total of 2 facts.
+For a total of 1 fact.
 CLIPS> (get-fact-duplication)  
 FALSE
 CLIPS> (get-fact-duplication TRUE)
@@ -163,10 +155,9 @@ CLIPS> (assert (a))
 CLIPS> (assert (a))
 <Fact-2>
 CLIPS> (facts)
-f-0     (initial-fact)
 f-1     (a)
 f-2     (a)
-For a total of 3 facts.
+For a total of 2 facts.
 CLIPS> (set-fact-duplication FALSE)
 TRUE
 CLIPS> (get-fact-duplication)
@@ -177,9 +168,8 @@ CLIPS> (assert (a))
 CLIPS> (assert (a))
 FALSE
 CLIPS> (facts)
-f-0     (initial-fact)
 f-1     (a)
-For a total of 2 facts.
+For a total of 1 fact.
 CLIPS> (clear) ;; New 6.0 Stuff
 CLIPS> (defmodule A)
 CLIPS> (assert (x) (y) (z))
@@ -203,14 +193,13 @@ f-5     (b)
 f-6     (c)
 For a total of 3 facts.
 CLIPS> (facts *)
-f-0     (initial-fact)
 f-1     (x)
 f-2     (y)
 f-3     (z)
 f-4     (a)
 f-5     (b)
 f-6     (c)
-For a total of 7 facts.
+For a total of 6 facts.
 CLIPS> (clear) ;; New 6.24 stuff
 CLIPS> (ppfact)
 [ARGACCES4] Function ppfact expected at least 1 argument(s)

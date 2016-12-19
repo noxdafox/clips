@@ -14,7 +14,8 @@
 (defmessage-handler A delete before ()
   (if (instance-existp ?self:container) then
      (unmake-instance ?self:container)))
-     
+(defclass INITIAL-OBJECT (is-a USER))
+
 (defrule A-rule
   (logical ?obj <- (object (is-a A) (match yes)))
 =>
@@ -92,6 +93,7 @@
 (matches rule1)
 (clear)                   ; DR0806
 (setgen 1)
+(defclass INITIAL-OBJECT (is-a USER))     
 
 (defclass A (is-a INITIAL-OBJECT)
    (multislot foo))
@@ -120,6 +122,8 @@
 (make-instance a of A)
 (send [a] pins)
 (clear)                   ; DR0810
+(defclass INITIAL-OBJECT (is-a USER))     
+
 (deffunction MAIN::foo
    (?garbage)
    (setgen 1)
@@ -133,6 +137,7 @@
 (foo 100)
 (foo 500)
 (clear)                   ; DR0813
+(defclass INITIAL-OBJECT (is-a USER))     
 
 (defclass A (is-a INITIAL-OBJECT)
    (multislot foo (create-accessor read-write)))
@@ -242,6 +247,7 @@
 (defclass B (is-a USER))
 (defmethod B::foo ((?arg B)))
 (clear)                   ; DR0819
+(defclass INITIAL-OBJECT (is-a USER))     
 
 (defclass A 
    (is-a INITIAL-OBJECT)
@@ -273,7 +279,6 @@
    (printout t "2nd output line: iii = " (send [a] get-iii) crlf))
 
 (defrule test
-   (initial-fact)
    =>
    (make-instance [a] of A)
    (make-instance [b] of B))

@@ -40,10 +40,9 @@ CLIPS> (assert (bar (b x y z) (a w)))     ; DR0365
 CLIPS> (assert (bar (a g) (b =(create$ h i j))))
 <Fact-2>
 CLIPS> (facts)                            ; DR0365
-f-0     (initial-fact)
 f-1     (bar (a w) (b x y z))
 f-2     (bar (a g) (b h i j))
-For a total of 3 facts.
+For a total of 2 facts.
 CLIPS> (clear)                            ; DR0380
 CLIPS> (if (= 2 2)                        ; DR0380
     then (eval (str-cat (run))))   ; DR0380
@@ -81,7 +80,6 @@ CLIPS> (assert-string (str-cat " (" (bind ?var (read)) ")"))
 anything
 <Fact-1>
 CLIPS> (facts)                            ; DR0397
-f-0     (initial-fact)
 f-1     (anything)
-For a total of 2 facts.
+For a total of 1 fact.
 CLIPS> (dribble-off)

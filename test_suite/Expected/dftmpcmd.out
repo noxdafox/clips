@@ -20,7 +20,6 @@ CLIPS> (deftemplate *)
 CLIPS> (list-deftemplates d6)
 [ARGACCES5] Function list-deftemplates expected argument #1 to be of type defmodule name
 CLIPS> (list-deftemplates)
-initial-fact
 d1
 d2
 d3
@@ -28,7 +27,7 @@ d4
 d5
 d6
 *
-For a total of 8 deftemplates.
+For a total of 7 deftemplates.
 CLIPS> (ppdeftemplate d1)
 (deftemplate MAIN::d1)
 CLIPS> (ppdeftemplate d2)
@@ -63,15 +62,12 @@ CLIPS> (assert (d3 (x 7)))
 [CSTRNCHK1] A literal slot value found in the assert command
 does not match the allowed types for slot x.
 CLIPS> (facts)
-f-0     (initial-fact)
-For a total of 1 fact.
 CLIPS> (assert (d3 (x =(read))))
 7
 <Fact-1>
 CLIPS> (facts)
-f-0     (initial-fact)
 f-1     (d3 (x 7))
-For a total of 2 facts.
+For a total of 1 fact.
 CLIPS> (retract *)
 CLIPS> (set-dynamic-constraint-checking)
 [ARGACCES4] Function set-dynamic-constraint-checking expected exactly 1 argument(s)
@@ -111,7 +107,6 @@ CLIPS> (undeftemplate bad-name)
 CLIPS> (undeftemplate d6 10)
 [ARGACCES4] Function undeftemplate expected exactly 1 argument(s)
 CLIPS> (list-deftemplates)
-initial-fact
 d1
 d2
 d3
@@ -119,25 +114,24 @@ d4
 d5
 d6
 *
-For a total of 8 deftemplates.
+For a total of 7 deftemplates.
 CLIPS> (undeftemplate d1)
 CLIPS> (undeftemplate d2)
 CLIPS> (undeftemplate d3)
 CLIPS> (list-deftemplates)
-initial-fact
 d4
 d5
 d6
 *
-For a total of 5 deftemplates.
+For a total of 4 deftemplates.
 CLIPS> (undeffacts initial-fact)
+[PRNTUTIL1] Unable to find deffacts initial-fact.
 CLIPS> (undeftemplate *)
 CLIPS> (list-deftemplates)
-initial-fact
 d4
 d5
 d6
-For a total of 4 deftemplates.
+For a total of 3 deftemplates.
 CLIPS> (undeftemplate *)
 CLIPS> (list-deftemplates)
 CLIPS> (clear) ; Some new 6.0 features
@@ -170,14 +164,13 @@ d3
 For a total of 2 deftemplates.
 CLIPS> (list-deftemplates *)
 MAIN:
-   initial-fact
 FOO:
    d1
    d2
 BAR:
    d2
    d3
-For a total of 5 deftemplates.
+For a total of 4 deftemplates.
 CLIPS> (get-deftemplate-list 7)
 [ARGACCES5] Function get-deftemplate-list expected argument #1 to be of type symbol
 CLIPS> (get-deftemplate-list BOGUS 7)
@@ -192,7 +185,7 @@ CLIPS> (get-deftemplate-list FOO)
 CLIPS> (get-deftemplate-list BAR)
 (d2 d3)
 CLIPS> (get-deftemplate-list *)
-(MAIN::initial-fact FOO::d1 FOO::d2 BAR::d2 BAR::d3)
+(FOO::d1 FOO::d2 BAR::d2 BAR::d3)
 CLIPS> (ppdeftemplate d1)
 [PRNTUTIL1] Unable to find deftemplate d1.
 CLIPS> (ppdeftemplate d2)
@@ -237,28 +230,25 @@ CLIPS> (undeftemplate BOGUS::d2)
 CLIPS> (undeftemplate FOO::d2)
 CLIPS> (list-deftemplates *)
 MAIN:
-   initial-fact
 FOO:
    d1
 BAR:
    d2
    d3
-For a total of 4 deftemplates.
+For a total of 3 deftemplates.
 CLIPS> (undeftemplate BAR::d2)
 CLIPS> (list-deftemplates *)
 MAIN:
-   initial-fact
 FOO:
    d1
 BAR:
    d3
-For a total of 3 deftemplates.
+For a total of 2 deftemplates.
 CLIPS> (undeftemplate *)
 CLIPS> (list-deftemplates *)
 MAIN:
-   initial-fact
 FOO:
    d1
 BAR:
-For a total of 2 deftemplates.
+For a total of 1 deftemplate.
 CLIPS> (dribble-off)

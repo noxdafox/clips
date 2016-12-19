@@ -51,6 +51,8 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Removed initial-fact support.                  */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -64,6 +66,7 @@
 #include "constrct.h"
 #include "cstrccom.h"
 #include "cstrcpsr.h"
+#include "dffctdef.h"
 #include "dffctpsr.h"
 #include "envrnmnt.h"
 #include "extnfunc.h"
@@ -88,7 +91,6 @@
 /***************************************/
 
    static void                    ResetDeffacts(Environment *,void *);
-   static void                    ClearDeffacts(Environment *,void *);
    static void                    SaveDeffacts(Environment *,Defmodule *,const char *,void *);
    static void                    ResetDeffactsAction(Environment *,ConstructHeader *,void *);
 
@@ -99,7 +101,6 @@ void DeffactsBasicCommands(
   Environment *theEnv)
   {
    AddResetFunction(theEnv,"deffacts",ResetDeffacts,0,NULL);
-   AddClearFunction(theEnv,"deffacts",ClearDeffacts,0,NULL);
    AddSaveFunction(theEnv,"deffacts",SaveDeffacts,10,NULL);
 
 #if ! RUN_TIME
@@ -158,57 +159,6 @@ static void ResetDeffactsAction(
    SetEvaluationError(theEnv,false);
 
    EvaluateExpression(theEnv,theDeffacts->assertList,&returnValue);
-  }
-
-/**********************************************************/
-/* ClearDeffacts: Deffacts clear routine for use with the */
-/*   clear command. Creates the initial-facts deffacts.   */
-/**********************************************************/
-static void ClearDeffacts(
-  Environment *theEnv,
-  void *context)
-  {
-#if (! RUN_TIME) && (! BLOAD_ONLY)
-   struct expr *stub;
-   Deffacts *newDeffacts;
-
-   /*=====================================*/
-   /* Create the data structures for the  */
-   /* expression (assert (initial-fact)). */
-   /*=====================================*/
-
-   stub = GenConstant(theEnv,FCALL,FindFunction(theEnv,"assert"));
-   stub->argList = GenConstant(theEnv,DEFTEMPLATE_PTR,FindDeftemplateInModule(theEnv,"initial-fact"));
-   ExpressionInstall(theEnv,stub);
-
-   /*=============================================*/
-   /* Create a deffacts data structure to contain */
-   /* the expression and initialize it.           */
-   /*=============================================*/
-
-   newDeffacts = get_struct(theEnv,deffacts);
-   newDeffacts->header.whichModule =
-      (struct defmoduleItemHeader *) GetDeffactsModuleItem(theEnv,NULL);
-   newDeffacts->header.name = CreateSymbol(theEnv,"initial-fact");
-   IncrementSymbolCount(newDeffacts->header.name);
-   newDeffacts->assertList = PackExpression(theEnv,stub);
-   newDeffacts->header.next = NULL;
-   newDeffacts->header.ppForm = NULL;
-   newDeffacts->header.usrData = NULL;
-   newDeffacts->header.constructType = DEFFACTS;
-   newDeffacts->header.env = theEnv;
-   ReturnExpression(theEnv,stub);
-
-   /*===========================================*/
-   /* Store the deffacts in the current module. */
-   /*===========================================*/
-
-   AddConstructToModule(&newDeffacts->header);
-#else
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
-#endif
   }
 
 /***************************************/

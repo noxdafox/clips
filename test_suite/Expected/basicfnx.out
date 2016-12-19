@@ -53,7 +53,6 @@ CLIPS> (retract 8 9)                      ; 10.1.2
 [PRNTUTIL1] Unable to find fact f-8.
 [PRNTUTIL1] Unable to find fact f-9.
 CLIPS> (retract *)                        ; 10.1.2
-<== f-0     (initial-fact)
 <== f-3     (f)
 <== f-5     (h)
 <== f-6     (i 7)
@@ -73,10 +72,9 @@ CLIPS> (assert-string "(x y z)")          ; 10.1.5
 CLIPS> (assert-string "(foo (y 3))")      ; 10.1.5
 <Fact-2>
 CLIPS> (facts)                            ; 10.1.5
-f-0     (initial-fact)
 f-1     (x y z)
 f-2     (foo (x nil) (y 3))
-For a total of 3 facts.
+For a total of 2 facts.
 CLIPS> (clear)                            ; 10.1.5
 CLIPS> (bind)                             ; 10.1.6
 

@@ -84,10 +84,9 @@ CLIPS> (assert (a =(+ 3 4)))
 CLIPS> (assert (a (+ 5 6)))
 <Fact-2>
 CLIPS> (facts)
-f-0     (initial-fact)
 f-1     (a 7)
 f-2     (a 11)
-For a total of 3 facts.
+For a total of 2 facts.
 CLIPS> (remove) ;; CR0240
 [ARGACCES4] Function remove expected exactly 1 argument(s)
 CLIPS> (remove 7)
@@ -168,9 +167,8 @@ CLIPS> (clear) ;; CR0264
 CLIPS> (assert (foo))
 <Fact-1>
 CLIPS> (list-deftemplates)
-initial-fact
 foo
-For a total of 2 deftemplates.
+For a total of 1 deftemplate.
 CLIPS> (undeftemplate foo)
 [PRNTUTIL4] Unable to delete deftemplate foo.
 CLIPS> (retract 1)
@@ -180,9 +178,8 @@ CLIPS> (defglobal ?*x* = 3)
 CLIPS> (str-assert "(foo ?*x* (+ 3 4))")
 <Fact-1>
 CLIPS> (facts)
-f-0     (initial-fact)
 f-1     (foo 3 7)
-For a total of 2 facts.
+For a total of 1 fact.
 CLIPS> (str-assert "(foo ?*x* (+ 3 4))")
 FALSE
 CLIPS> (clear) ;; CR0269
@@ -197,9 +194,8 @@ FALSE
 CLIPS> (assert (foo))
 <Fact-1>
 CLIPS> (list-deftemplates)
-initial-fact
 foo
-For a total of 2 deftemplates.
+For a total of 1 deftemplate.
 CLIPS> (ppdeftemplate foo)
 CLIPS> (trunc) ;; CR0271
 
@@ -262,7 +258,6 @@ CLIPS> (assert-string "d e f")
 [PRNTUTIL2] Syntax Error:  Check appropriate syntax for RHS patterns.
 FALSE
 CLIPS> (facts)
-f-0     (initial-fact)
 f-1     (a b c)
-For a total of 2 facts.
+For a total of 1 fact.
 CLIPS> (dribble-off)

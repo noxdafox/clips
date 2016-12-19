@@ -83,15 +83,11 @@ CLIPS> (unmake-instance b)
 TRUE
 CLIPS> (watch instances)
 CLIPS> (reset)
-<== instance [initial-object] of INITIAL-OBJECT
-==> instance [initial-object] of INITIAL-OBJECT
 ==> instance [c1] of C
 ==> instance [gen1] of C
 CLIPS> (reset)
-<== instance [initial-object] of INITIAL-OBJECT
 <== instance [c1] of C
 <== instance [gen1] of C
-==> instance [initial-object] of INITIAL-OBJECT
 ==> instance [c1] of C
 ==> instance [gen2] of C
 CLIPS> (unwatch instances)

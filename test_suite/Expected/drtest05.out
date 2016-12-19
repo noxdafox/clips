@@ -5,9 +5,8 @@ CLIPS> (clear)                            ; DR0405
 CLIPS> (deffacts first (fact1 =(reset)))  ; DR0405
 CLIPS> (reset)                            ; DR0405
 CLIPS> (facts)                            ; DR0405
-f-0     (initial-fact)
 f-1     (fact1)
-For a total of 2 facts.
+For a total of 1 fact.
 CLIPS> (clear)                            ; DR0410
 CLIPS> (defrule foo                       ; DR0410
    (fact ?x&:(and (< ?x 3) (> ?x 1)))
@@ -36,20 +35,18 @@ CLIPS> (agenda)                           ; DR0411
 0      foo: f-1,f-2
 For a total of 1 activation.
 CLIPS> (facts)                            ; DR0411
-f-0     (initial-fact)
 f-1     (fact "a b c")
 f-2     (fact a b c)
-For a total of 3 facts.
+For a total of 2 facts.
 CLIPS> (save-facts "Temp//foo.tmp")       ; DR0411
 TRUE
 CLIPS> (reset)                            ; DR0411
 CLIPS> (load-facts "Temp//foo.tmp")       ; DR0411
 TRUE
 CLIPS> (facts)                            ; DR0411
-f-0     (initial-fact)
 f-1     (fact "a b c")
 f-2     (fact a b c)
-For a total of 3 facts.
+For a total of 2 facts.
 CLIPS> (agenda)                           ; DR0411
 0      foo: f-1,f-2
 For a total of 1 activation.
@@ -62,8 +59,6 @@ ERROR:
 (deftemplate MAIN::first
    (fild
 CLIPS> (list-deftemplates)                ; DR0427
-initial-fact
-For a total of 1 deftemplate.
 CLIPS> (eval (str-cat                     ; DR0435
       (printout t " fact-list "))) ; DR0435
 [ARGACCES5] Function str-cat expected argument #1 to be of type integer, float, symbol, string, or instance name
@@ -73,8 +68,6 @@ CLIPS> (assert (a))                       ; DR0441
 <Fact-1>
 CLIPS> (clear)                            ; DR0441
 CLIPS> (list-deftemplates)                ; DR0441
-initial-fact
-For a total of 1 deftemplate.
 CLIPS> (clear)                            ; DR0445
 CLIPS> (deftemplate congestion            ; DR0445
    (field no-of-nets))
@@ -98,8 +91,6 @@ CLIPS> (defrule p410                      ; DR0445
    (retract ?t))
 CLIPS> (watch facts)                      ; DR0445
 CLIPS> (reset)                            ; DR0445
-<== f-0     (initial-fact)
-==> f-0     (initial-fact)
 ==> f-1     (congestion (no-of-nets 5))
 ==> f-2     (total (net-name 8) (cong nil))
 ==> f-3     (total (net-name 4) (cong 5))
@@ -189,9 +180,8 @@ CLIPS> (run)                              ; DR0466
 [STRNGFUN2] Some variables could not be accessed by the eval function.
 [PRCCODE4] Execution halted during the actions of defrule a.
 CLIPS> (facts)                            ; DR0466
-f-0     (initial-fact)
 f-1     (fact 1)
-For a total of 2 facts.
+For a total of 1 fact.
 CLIPS> (mod 160 100)                      ; DR0475
 60
 CLIPS> (mod (+ 100 60) 100)               ; DR0475

@@ -141,9 +141,8 @@ CLIPS> (reset)
 CLIPS> (run)
 (Q R S) D (T A B) ()
 CLIPS> (facts)
-f-0     (initial-fact)
 f-2     (set (members Q R S D T A B))
-For a total of 2 facts.
+For a total of 1 fact.
 CLIPS> (clear) ;; Case 12
 CLIPS> 
 (deftemplate set 
@@ -166,9 +165,8 @@ CLIPS> (run)
 (Q R S) D (T A B) ()
 (Q R) D (A B) (S)
 CLIPS> (facts)
-f-0     (initial-fact)
 f-2     (set (m1 Q R S D T A B) (m2 Q R D A B S))
-For a total of 2 facts.
+For a total of 1 fact.
 CLIPS> (clear) ;; Case 13
 CLIPS> 
 (deftemplate set 
@@ -186,9 +184,8 @@ CLIPS> (reset)
 CLIPS> (run)
 D () (S)
 CLIPS> (facts)
-f-0     (initial-fact)
 f-2     (set (m2 D S))
-For a total of 2 facts.
+For a total of 1 fact.
 CLIPS> (clear) ;; Case 14
 CLIPS> (defglobal ?*x* = 0)
 CLIPS> (defmodule  MAIN (export ?ALL))
@@ -400,7 +397,6 @@ MAIN:
 CLIPS> (list-watch-items facts)
 facts = off
 MAIN:
-   initial-fact = off
    foo = on
    bar = off
 CLIPS> (list-watch-items rules)
@@ -443,7 +439,6 @@ MAIN:
 CLIPS> (list-watch-items facts)
 facts = off
 MAIN:
-   initial-fact = off
    foo = off
    bar = off
 CLIPS> (list-watch-items rules)
@@ -467,10 +462,10 @@ CLIPS> (defclass A (is-a USER) (slot x))
 CLIPS> (make-instance a of A (x 1))
 [a]
 CLIPS> (bsave-instances "Temp//bug.bin")
-2
+1
 CLIPS> (reset)
 CLIPS> (bload-instances "Temp//bug.bin")
-2
+1
 CLIPS> (clear) ;; incremental reset issue
 CLIPS> (assert (B NP14 NP))
 <Fact-1>
@@ -579,10 +574,9 @@ CLIPS> (assert (foo a (agenda) b (agenda) c (agenda)))
 CLIPS> (assert (foo (agenda) a))
 <Fact-2>
 CLIPS> (facts)
-f-0     (initial-fact)
 f-1     (foo a b c)
 f-2     (foo a)
-For a total of 3 facts.
+For a total of 2 facts.
 CLIPS> (fact-slot-value 1 implied)
 (a b c)
 CLIPS> (fact-slot-value 2 implied)
@@ -600,5 +594,32 @@ CLIPS> (defrule blah (bar (x $?)) =>)
 ERROR:
 (defrule MAIN::blah
    (bar (x $?)
+CLIPS> (clear)
+CLIPS> (defmethod clear ((?a EXTERNAL-ADDRESS))) ; Crash
+CLIPS> (undefgeneric clear)
+CLIPS> (clear)
+CLIPS> 
+(deftemplate factoid
+   (slot source)
+   (slot status)
+   (slot processed))
+CLIPS> 
+(deffacts initial
+   (factoid (source input) 
+            (status normal) 
+            (processed no)))
+CLIPS>             
+(defrule overwrite ""
+   ?f <- (factoid (source input) (processed no))
+   =>   
+   (modify ?f (processed yes))
+   (duplicate ?f (source output)
+                 (processed yes)))
+CLIPS> (reset)
+CLIPS> (run)
+CLIPS> (facts)
+f-2     (factoid (source input) (status normal) (processed yes))
+f-3     (factoid (source output) (status normal) (processed yes))
+For a total of 2 facts.
 CLIPS> (clear)
 CLIPS> (dribble-off)

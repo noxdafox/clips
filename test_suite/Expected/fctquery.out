@@ -512,19 +512,21 @@ CLIPS> (do-for-all-facts ((?ins1 ?*list* X (create$ Y Z))
 [z] [z]
 [z] [v]
 [z] [w]
+CLIPS> (assert (factoid))
+<Fact-40>
 CLIPS> (while TRUE do
-   (delayed-do-for-all-facts ((?b initial-fact)) TRUE 
+   (delayed-do-for-all-facts ((?b factoid)) TRUE 
      (progn (printout t DELAYED ?b crlf) (break)))
-   (do-for-all-facts ((?b initial-fact)) TRUE 
+   (do-for-all-facts ((?b factoid)) TRUE 
      (progn (printout t DO-FOR-ALL ?b crlf) (break)))
    (break))
-DELAYED<Fact-0>
-DO-FOR-ALL<Fact-0>
+DELAYED<Fact-40>
+DO-FOR-ALL<Fact-40>
 FALSE
 CLIPS> (deffunction quoxnar ()
-   (do-for-all-facts ((?b initial-fact)) TRUE 
+   (do-for-all-facts ((?b factoid)) TRUE 
      (progn (printout t INS-RETURN ?b crlf) (return))))
 CLIPS> (quoxnar)
-INS-RETURN<Fact-0>
+INS-RETURN<Fact-40>
 CLIPS> 
 (dribble-off)

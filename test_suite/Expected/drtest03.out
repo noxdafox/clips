@@ -4,8 +4,6 @@ TRUE
 CLIPS> (reset)                            ; DR0201
 CLIPS> (progn (assert (red)) (retract 1)) ; DR0201
 CLIPS> (facts)                            ; DR0201
-f-0     (initial-fact)
-For a total of 1 fact.
 CLIPS> (clear)                            ; DR0202
 CLIPS> (deffacts stuff
    (point 1)
@@ -32,8 +30,10 @@ FIRE    2 get-min: f-3,*,f-4,*
 This rule fires
 CLIPS> (unwatch rules)                    ; DR0202
 CLIPS> (clear)                            ; DR0204
+CLIPS> (deffacts initial (factoid))
+CLIPS> (reset)
 CLIPS> (defrule test
-   ?fact <- (initial-fact)
+   ?fact <- (factoid)
    =>
    (printout t "any thing" crlf)
    (retract ?fact))
@@ -104,11 +104,10 @@ CLIPS> (assert (colors (standard black))) ; DR0235
 CLIPS> (assert (colors (metallic "navy blue")))
 <Fact-3>
 CLIPS> (facts)                            ; DR0235
-f-0     (initial-fact)
 f-1     (colors (standard white) (metallic "plain black"))
 f-2     (colors (standard black) (metallic "plain black"))
 f-3     (colors (standard white) (metallic "navy blue"))
-For a total of 4 facts.
+For a total of 3 facts.
 CLIPS> (clear)                            ; DR0238
 CLIPS> (deftemplate auto (field name))
 CLIPS> (defrule one 
@@ -155,10 +154,9 @@ CLIPS> (assert (fact))                    ; DR0246
 <Fact-1>
 CLIPS> (run)                              ; DR0246
 CLIPS> (facts)                            ; DR0246
-f-0     (initial-fact)
 f-1     (fact)
 f-2     (new-fact <Fact-1>)
-For a total of 3 facts.
+For a total of 2 facts.
 CLIPS> (clear)                            ; DR0248
 CLIPS> (deffacts a)                       ; DR0248
 CLIPS> (clear)                            ; DR0251
@@ -199,9 +197,8 @@ CLIPS> (clear)                            ; DR0261
 CLIPS> (deffacts a (one =(reset)))        ; DR0261
 CLIPS> (reset)                            ; DR0261
 CLIPS> (facts)                            ; DR0261
-f-0     (initial-fact)
 f-1     (one)
-For a total of 2 facts.
+For a total of 1 fact.
 CLIPS> (clear)                            ; DR0279
 CLIPS> (defrule with-error                ; DR0279
    (value ?a&:(> ?a max))
@@ -227,9 +224,8 @@ CLIPS> (eval "(create$ / 3 1)")         ; DR0296
 CLIPS> (deffacts a (one =(eval "(create$ / 3 1)")))
 CLIPS> (reset)                            ; DR0296
 CLIPS> (facts)                            ; DR0296
-f-0     (initial-fact)
 f-1     (one / 3 1)
-For a total of 2 facts.
+For a total of 1 fact.
 CLIPS> (clear)                            ; DR0298
 CLIPS> (deftemplate foo (field x) (field y))
 CLIPS> (defrule this-rule-doesnt-work     ; DR0298

@@ -23,8 +23,6 @@ CLIPS>
    =>
    (assert (doo)))
 CLIPS> (reset)
-<== f-0     (initial-fact)
-==> f-0     (initial-fact)
 CLIPS> (assert (a 1) (b 1) (a 2) (b 2) (c 1))
 ==> f-1     (a 1)
 ==> f-2     (b 1)
@@ -94,9 +92,7 @@ CLIPS> (watch activations)
 CLIPS> (watch facts)
 CLIPS> (reset)
 <== Activation 0      all-trained: *
-<== f-0     (initial-fact)
 ==> Activation 0      all-trained: *
-==> f-0     (initial-fact)
 CLIPS> (agenda)
 0      all-trained: *
 For a total of 1 activation.
@@ -139,7 +135,6 @@ CLIPS> (retract 5)
 ==> Activation 0      all-trained: *
 CLIPS> (reset)
 <== Activation 0      all-trained: *
-<== f-0     (initial-fact)
 <== f-1     (player Gary)
 <== f-2     (pitched Gary)
 <== f-3     (batted Gary)
@@ -148,7 +143,6 @@ CLIPS> (reset)
 <== f-7     (pitched Brian)
 <== f-9     (batted Brian)
 ==> Activation 0      all-trained: *
-==> f-0     (initial-fact)
 CLIPS> (agenda)
 0      all-trained: *
 For a total of 1 activation.
@@ -182,13 +176,11 @@ CLIPS> (retract 4)
 ==> Activation 0      all-trained: *
 CLIPS> (reset)
 <== Activation 0      all-trained: *
-<== f-0     (initial-fact)
 <== f-1     (player Gary)
 <== f-2     (pitched Gary)
 <== f-3     (batted Gary)
 <== f-5     (pitched Tom)
 ==> Activation 0      all-trained: *
-==> f-0     (initial-fact)
 CLIPS> (agenda)
 0      all-trained: *
 For a total of 1 activation.
@@ -210,7 +202,6 @@ CLIPS> (retract 1)
 <== f-1     (player Gary)
 ==> Activation 0      all-trained: *
 CLIPS> (clear)
-==> f-0     (initial-fact)
 CLIPS> (unwatch all)
 CLIPS> 
 (defrule rule-1

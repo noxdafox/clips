@@ -129,14 +129,15 @@
                        (?ins2 X (create$ Y Z) ?*list*))
   TRUE
   (printout t ?ins1:name " " ?ins2:name crlf))
+(assert (factoid))
 (while TRUE do
-   (delayed-do-for-all-facts ((?b initial-fact)) TRUE 
+   (delayed-do-for-all-facts ((?b factoid)) TRUE 
      (progn (printout t DELAYED ?b crlf) (break)))
-   (do-for-all-facts ((?b initial-fact)) TRUE 
+   (do-for-all-facts ((?b factoid)) TRUE 
      (progn (printout t DO-FOR-ALL ?b crlf) (break)))
    (break))
 (deffunction quoxnar ()
-   (do-for-all-facts ((?b initial-fact)) TRUE 
+   (do-for-all-facts ((?b factoid)) TRUE 
      (progn (printout t INS-RETURN ?b crlf) (return))))
 (quoxnar)
 

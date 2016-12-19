@@ -50,6 +50,8 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Removed initial-object support.                 */
+/*                                                            */
 /**************************************************************/
 
 /* =========================================
@@ -117,7 +119,6 @@
    ***************************************** */
 #define SUPERCLASS_RLN       "is-a"
 #define NAME_RLN             "name"
-#define INITIAL_OBJECT_NAME  "initial-object"
 
 /* =========================================
    *****************************************
@@ -176,10 +177,6 @@ void SetupObjectSystem(
    IncrementSymbolCount(DefclassData(theEnv)->ISA_SYMBOL);
    DefclassData(theEnv)->NAME_SYMBOL = CreateSymbol(theEnv,NAME_RLN);
    IncrementSymbolCount(DefclassData(theEnv)->NAME_SYMBOL);
-#if DEFRULE_CONSTRUCT
-   DefclassData(theEnv)->INITIAL_OBJECT_SYMBOL = CreateInstanceName(theEnv,INITIAL_OBJECT_NAME);
-   IncrementSymbolCount(DefclassData(theEnv)->INITIAL_OBJECT_SYMBOL);
-#endif
 #endif
 
    SetupDefclasses(theEnv);
@@ -393,9 +390,6 @@ void ObjectsRunTimeInitialize(
    MessageHandlerData(theEnv)->CREATE_SYMBOL = FindSymbolHN(theEnv,CREATE_STRING,SYMBOL_BIT);
    DefclassData(theEnv)->ISA_SYMBOL = FindSymbolHN(theEnv,SUPERCLASS_RLN,SYMBOL_BIT);
    DefclassData(theEnv)->NAME_SYMBOL = FindSymbolHN(theEnv,NAME_RLN,SYMBOL_BIT);
-#if DEFRULE_CONSTRUCT
-   DefclassData(theEnv)->INITIAL_OBJECT_SYMBOL = FindSymbolHN(theEnv,INITIAL_OBJECT_NAME,INSTANCE_NAME_BIT);
-#endif
 
    DefclassData(theEnv)->ClassTable = (Defclass **) ctable;
    DefclassData(theEnv)->SlotNameTable = (SLOT_NAME **) sntable;
@@ -482,9 +476,6 @@ void CreateSystemClasses(
   void *context)
   {
    Defclass *user,*any,*primitive,*number,*lexeme,*address,*instance;
-#if DEFRULE_CONSTRUCT
-   Defclass *initialObject;
-#endif
 
    /* ===================================
       Add canonical slot name entries for
@@ -520,11 +511,6 @@ void CreateSystemClasses(
    instance = AddSystemClass(theEnv,INSTANCE_TYPE_NAME,primitive);
    DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_ADDRESS_TYPE] = AddSystemClass(theEnv,INSTANCE_ADDRESS_TYPE_NAME,instance);
    DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_NAME_TYPE] = AddSystemClass(theEnv,INSTANCE_NAME_TYPE_NAME,instance);
-#if DEFRULE_CONSTRUCT
-   initialObject = AddSystemClass(theEnv,INITIAL_OBJECT_CLASS_NAME,user);
-   initialObject->abstract = 0;
-   initialObject->reactive = 1;
-#endif
 
    /* ================================================================================
        INSTANCE-ADDRESS is-a INSTANCE and ADDRESS.  The links between INSTANCE-ADDRESS
@@ -554,9 +540,7 @@ void CreateSystemClasses(
    AddConstructToModule(&address->header);
    AddConstructToModule(&instance->header);
    AddConstructToModule(&user->header);
-#if DEFRULE_CONSTRUCT
-   AddConstructToModule(&initialObject->header);
-#endif
+
    for (any = GetNextDefclass(theEnv,NULL) ;
         any != NULL ;
         any = GetNextDefclass(theEnv,any))

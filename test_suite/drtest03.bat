@@ -21,8 +21,10 @@
 (run)                              ; DR0202
 (unwatch rules)                    ; DR0202
 (clear)                            ; DR0204
+(deffacts initial (factoid))
+(reset)
 (defrule test
-   ?fact <- (initial-fact)
+   ?fact <- (factoid)
    =>
    (printout t "any thing" crlf)
    (retract ?fact))

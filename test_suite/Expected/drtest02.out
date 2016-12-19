@@ -137,7 +137,6 @@ CLIPS> (defrule total
 CLIPS> (reset)                           ; DR0198
 CLIPS> (run)                             ; DR0198
 CLIPS> (facts)                           ; DR0198
-f-0     (initial-fact)
 f-3     (count-bases strand_13 [ a 2 ] [ t 3 ])
-For a total of 2 facts.
+For a total of 1 fact.
 CLIPS> (dribble-off)
