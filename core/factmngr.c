@@ -77,9 +77,9 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
-/*      6.50: Removed initial-fact support.                  */
+/*            Removed initial-fact support.                  */
 /*                                                           */
-/*            Modify command preserves fact id and address.  */
+/*      6.50: Modify command preserves fact id and address.  */
 /*                                                           */
 /*            Watch facts for modify command only prints     */
 /*            changed slots.                                 */

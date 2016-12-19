@@ -51,7 +51,7 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
-/*      6.50: Removed initial-fact support.                  */
+/*            Removed initial-fact support.                  */
 /*                                                           */
 /*************************************************************/
 

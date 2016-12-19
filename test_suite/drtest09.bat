@@ -14,7 +14,7 @@
 (defmessage-handler A delete before ()
   (if (instance-existp ?self:container) then
      (unmake-instance ?self:container)))
-(defclass INITIAL-OBJECT (is-a USER))     
+(defclass INITIAL-OBJECT (is-a USER))
 
 (defrule A-rule
   (logical ?obj <- (object (is-a A) (match yes)))

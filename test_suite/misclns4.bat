@@ -333,4 +333,31 @@
 (fact-slot-value 2 implied)
 (length$ (fact-slot-value 1 implied))
 (length$ (fact-slot-value 2 implied))
+(clear) ; Multifield wildcard not allowed in single field slot
+(deftemplate bar (slot x))
+(defrule blah (bar (x $?)) =>) 
+(clear)
+(defmethod clear ((?a EXTERNAL-ADDRESS))) ; Crash
+(undefgeneric clear)
+(clear)
+
+(deftemplate factoid
+   (slot source)
+   (slot status)
+   (slot processed))
+
+(deffacts initial
+   (factoid (source input) 
+            (status normal) 
+            (processed no)))
+            
+(defrule overwrite ""
+   ?f <- (factoid (source input) (processed no))
+   =>   
+   (modify ?f (processed yes))
+   (duplicate ?f (source output)
+                 (processed yes)))
+(reset)
+(run)
+(facts)
 (clear)

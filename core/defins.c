@@ -58,7 +58,7 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
-/*      6.50: Removed initial-object support.                */
+/*            Removed initial-object support.                */
 /*                                                           */
 /*************************************************************/
 
@@ -207,7 +207,6 @@ void SetupDefinstances(
 #if ! BLOAD_ONLY
    AddUDF(theEnv,"undefinstances","v",1,1,"y",UndefinstancesCommand,"UndefinstancesCommand",NULL);
    AddSaveFunction(theEnv,"definstances",SaveDefinstances,0,NULL);
-
 #endif
 
 #if DEBUGGING_FUNCTIONS

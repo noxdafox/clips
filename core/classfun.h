@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.50  11/01/16            */
+   /*             CLIPS Version 6.40  11/01/16            */
    /*                                                     */
    /*             CLASS FUNCTIONS HEADER FILE             */
    /*******************************************************/
@@ -43,7 +43,7 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
-/*      6.50: Removed initial-object support.                */
+/*            Removed initial-object support.                */
 /*                                                           */
 /*************************************************************/
 

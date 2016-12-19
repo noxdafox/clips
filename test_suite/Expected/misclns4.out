@@ -585,5 +585,41 @@ CLIPS> (length$ (fact-slot-value 1 implied))
 3
 CLIPS> (length$ (fact-slot-value 2 implied))
 1
+CLIPS> (clear) ; Multifield wildcard not allowed in single field slot
+CLIPS> (deftemplate bar (slot x))
+CLIPS> (defrule blah (bar (x $?)) =>) 
+
+[TMPLTDEF2] The single field slot x can only contain a single field value.
+
+ERROR:
+(defrule MAIN::blah
+   (bar (x $?)
+CLIPS> (clear)
+CLIPS> (defmethod clear ((?a EXTERNAL-ADDRESS))) ; Crash
+CLIPS> (undefgeneric clear)
+CLIPS> (clear)
+CLIPS> 
+(deftemplate factoid
+   (slot source)
+   (slot status)
+   (slot processed))
+CLIPS> 
+(deffacts initial
+   (factoid (source input) 
+            (status normal) 
+            (processed no)))
+CLIPS>             
+(defrule overwrite ""
+   ?f <- (factoid (source input) (processed no))
+   =>   
+   (modify ?f (processed yes))
+   (duplicate ?f (source output)
+                 (processed yes)))
+CLIPS> (reset)
+CLIPS> (run)
+CLIPS> (facts)
+f-1     (factoid (source input) (status normal) (processed yes))
+f-2     (factoid (source output) (status normal) (processed yes))
+For a total of 2 facts.
 CLIPS> (clear)
 CLIPS> (dribble-off)
