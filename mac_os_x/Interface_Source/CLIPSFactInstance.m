@@ -55,7 +55,7 @@
 
       for (i = 0; i < slotNames.multifieldValue->length; i++)
         {
-         const char *theCSlotName = slotNames.multifieldValue->theFields[i].lexemeValue->contents;
+         const char *theCSlotName = slotNames.multifieldValue->contents[i].lexemeValue->contents;
          NSString *theSlotName = [NSString stringWithUTF8String: theCSlotName];
          
          FactSlotValue(theEnvironment,theFact,theCSlotName,&cv);
@@ -140,7 +140,7 @@
 
       for (i = 0; i < slotNames.multifieldValue->length; i++)
         {
-         const char *theCSlotName = slotNames.multifieldValue->theFields[i].lexemeValue->contents;
+         const char *theCSlotName = slotNames.multifieldValue->contents[i].lexemeValue->contents;
          NSString *theSlotName = [NSString stringWithUTF8String: theCSlotName];
          
          DirectGetSlot(theEnvironment,theInstance,theCSlotName,&result);

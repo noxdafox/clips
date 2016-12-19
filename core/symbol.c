@@ -745,7 +745,7 @@ CLIPSExternalAddress *CreateExternalAddress(
       {
        if ((peek->type == (unsigned short) theType) &&
            (peek->contents == theExternalAddress))
-         { return((void *) peek); }
+         { return peek; }
 
        past = peek;
        peek = peek->next;
@@ -780,7 +780,7 @@ CLIPSExternalAddress *CreateExternalAddress(
     /* Return the address of the external address. */
     /*=============================================*/
 
-    return((void *) peek);
+    return peek;
    }
 
 /***************************************************/

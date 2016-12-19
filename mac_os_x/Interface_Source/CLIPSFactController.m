@@ -279,7 +279,7 @@
    if (theRow != -1)
      {
       Environment *theEnvironment = [environment environment];
-      struct fact *clipsFact;
+      Fact *clipsFact;
       long long theFactIndex;
       NSArray *theArray = [factListController arrangedObjects];
       CLIPSFactInstance *theFact = [theArray objectAtIndex: theRow];

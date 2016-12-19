@@ -287,7 +287,6 @@ static void DeallocateFactData(
    while (tmpFactPtr != NULL)
      {
       nextFactPtr = tmpFactPtr->nextFact;
-
       ReturnFact(theEnv,tmpFactPtr);
       tmpFactPtr = nextFactPtr;
      }
@@ -717,6 +716,7 @@ static void RemoveGarbageFacts(
    while (factPtr != NULL)
      {
       nextPtr = factPtr->nextFact;
+        
       if (factPtr->factHeader.busyCount == 0)
         {
          ReturnFact(theEnv,factPtr);
