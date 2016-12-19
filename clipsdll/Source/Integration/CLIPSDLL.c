@@ -223,18 +223,18 @@ void __declspec(dllexport) __DirectGetSlot(
    DirectGetSlot(theEnv,theInstance,slotName,returnValue);  
   }  
   
-bool __declspec(dllexport) __Watch(
+bool __declspec(dllexport) __WatchString(
   Environment *theEnv,
   const char *item)
   {
-   return Watch(theEnv,item);
+   return WatchString(theEnv,item);
   }
 
-bool __declspec(dllexport) __Unwatch(
+bool __declspec(dllexport) __UnwatchString(
   Environment *theEnv,
   const char *item)
   {
-   return Unwatch(theEnv,item);
+   return UnwatchString(theEnv,item);
   }
 
 void __declspec(dllexport) * __GetEnvironmentContext(

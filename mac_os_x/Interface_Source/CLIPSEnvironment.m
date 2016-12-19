@@ -1177,9 +1177,9 @@
 - (void) setWatchItem: (const char *) watchItem toValue: (bool) newValue
   {
    if (newValue)
-     { Watch(environment,watchItem); }
+     { WatchString(environment,watchItem); }
    else
-     { Unwatch(environment,watchItem); }
+     { UnwatchString(environment,watchItem); }
   }
 
 @end

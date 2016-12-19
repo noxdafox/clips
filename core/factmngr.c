@@ -279,7 +279,6 @@ static void DeallocateFactData(
    while (tmpFactPtr != NULL)
      {
       nextFactPtr = tmpFactPtr->nextFact;
-
       ReturnFact(theEnv,tmpFactPtr);
       tmpFactPtr = nextFactPtr;
      }
@@ -698,6 +697,13 @@ static void RemoveGarbageFacts(
       nextPtr = factPtr->nextFact;
       if (factPtr->factHeader.busyCount == 0)
         {
+         Multifield *theSegment;
+         int i;
+         
+         theSegment = &factPtr->theProposition;
+         for (i = 0 ; i < (int) theSegment->length ; i++)
+           { AtomDeinstall(theEnv,theSegment->contents[i].header->type,theSegment->contents[i].value); }
+
          ReturnFact(theEnv,factPtr);
          if (lastPtr == NULL) FactData(theEnv)->GarbageFacts = nextPtr;
          else lastPtr->nextFact = nextPtr;
@@ -1380,25 +1386,8 @@ void FactDeinstall(
   Environment *theEnv,
   Fact *newFact)
   {
-   Multifield *theSegment;
-   int i;
-   void *afterValue;
-   
    FactData(theEnv)->NumberOfFacts--;
-   theSegment = &newFact->theProposition;
    newFact->whichDeftemplate->busyCount--;
-
-   for (i = 0 ; i < (int) theSegment->length ; i++)
-     {
-      if (theSegment->contents[i].header->type == MULTIFIELD_TYPE)
-        { afterValue = theSegment->contents[i].value; }
-      else
-        { afterValue = theEnv->VoidConstant; }
-        
-      AtomDeinstall(theEnv,theSegment->contents[i].header->type,theSegment->contents[i].value);
-      theSegment->contents[i].value = afterValue;
-     }
-
    newFact->factHeader.busyCount--;
   }
 

@@ -421,9 +421,9 @@ int CLIPSCPPEnv::Watch(
   char *item)
   {
 #ifndef CLIPS_DLL_WRAPPER
-   return ::Watch(theEnv,item);
+   return ::WatchString(theEnv,item);
 #else
-   return __Watch(theEnv,item);
+   return __WatchString(theEnv,item);
 #endif
   }
 
@@ -434,9 +434,9 @@ int CLIPSCPPEnv::Unwatch(
   char *item)
   {
 #ifndef CLIPS_DLL_WRAPPER
-   return ::Unwatch(theEnv,item);
+   return ::UnwatchString(theEnv,item);
 #else
-   return __Unwatch(theEnv,item);
+   return __UnwatchString(theEnv,item);
 #endif
   }
   

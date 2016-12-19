@@ -603,7 +603,7 @@ void NewJavaAddress(
    
    if (theObject != NULL)
      {
-      rv->value = AddExternalAddress(theEnv,theObject,CLIPSJNIData(theEnv)->javaExternalAddressID);
+      rv->value = CreateExternalAddress(theEnv,theObject,CLIPSJNIData(theEnv)->javaExternalAddressID);
      }
   }
 
