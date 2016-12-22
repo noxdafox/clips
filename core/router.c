@@ -259,8 +259,8 @@ int GetcRouter(
 /***************************************************/
 int UngetcRouter(
   Environment *theEnv,
-  int ch,
-  const char *logicalName)
+  const char *logicalName,
+  int ch)
   {
    struct router *currentPtr;
 

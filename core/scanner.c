@@ -145,7 +145,7 @@ void GetToken(
    if (isalpha(inchar) || IsUTF8MultiByteStart(inchar))
      {
       theToken->tknType = SYMBOL_TOKEN;
-      UngetcRouter(theEnv,inchar,logicalName);
+      UngetcRouter(theEnv,logicalName,inchar);
       theToken->lexemeValue = ScanSymbol(theEnv,logicalName,0,&type);
       theToken->printForm = theToken->lexemeValue->contents;
      }
@@ -156,7 +156,7 @@ void GetToken(
 
    else if (isdigit(inchar))
      {
-      UngetcRouter(theEnv,inchar,logicalName);
+      UngetcRouter(theEnv,logicalName,inchar);
       ScanNumber(theEnv,logicalName,theToken);
      }
 
@@ -179,7 +179,7 @@ void GetToken(
       case '-':
       case '.':
       case '+':
-         UngetcRouter(theEnv,inchar,logicalName);
+         UngetcRouter(theEnv,logicalName,inchar);
          ScanNumber(theEnv,logicalName,theToken);
          break;
 
@@ -196,7 +196,7 @@ void GetToken(
               )
 #endif
             {
-             UngetcRouter(theEnv,inchar,logicalName);
+             UngetcRouter(theEnv,logicalName,inchar);
              theToken->lexemeValue = ScanSymbol(theEnv,logicalName,0,&type);
              theToken->tknType = SF_VARIABLE_TOKEN;
 #if DEFGLOBAL_CONSTRUCT
@@ -222,7 +222,7 @@ void GetToken(
             {
              theToken->tknType = SF_WILDCARD_TOKEN;
              theToken->lexemeValue = CreateSymbol(theEnv,"?");
-             UngetcRouter(theEnv,inchar,logicalName);
+             UngetcRouter(theEnv,logicalName,inchar);
              theToken->printForm = "?";
             }
           break;
@@ -242,7 +242,7 @@ void GetToken(
                  )
 #endif
               {
-               UngetcRouter(theEnv,inchar,logicalName);
+               UngetcRouter(theEnv,logicalName,inchar);
                theToken->lexemeValue = ScanSymbol(theEnv,logicalName,0,&type);
                theToken->tknType = MF_VARIABLE_TOKEN;
 #if DEFGLOBAL_CONSTRUCT
@@ -268,14 +268,14 @@ void GetToken(
                theToken->tknType = MF_WILDCARD_TOKEN;
                theToken->lexemeValue = CreateSymbol(theEnv,"$?");
                theToken->printForm = "$?";
-               UngetcRouter(theEnv,inchar,logicalName);
+               UngetcRouter(theEnv,logicalName,inchar);
               }
            }
          else
            {
             theToken->tknType = SYMBOL_TOKEN;
             ScannerData(theEnv)->GlobalString = ExpandStringWithChar(theEnv,'$',ScannerData(theEnv)->GlobalString,&ScannerData(theEnv)->GlobalPos,&ScannerData(theEnv)->GlobalMax,ScannerData(theEnv)->GlobalMax+80);
-            UngetcRouter(theEnv,inchar,logicalName);
+            UngetcRouter(theEnv,logicalName,inchar);
             theToken->lexemeValue = ScanSymbol(theEnv,logicalName,1,&type);
             theToken->printForm = theToken->lexemeValue->contents;
            }
@@ -345,7 +345,7 @@ void GetToken(
       default:
          if (isprint(inchar))
            {
-            UngetcRouter(theEnv,inchar,logicalName);
+            UngetcRouter(theEnv,logicalName,inchar);
             theToken->lexemeValue = ScanSymbol(theEnv,logicalName,0,&type);
             theToken->tknType = type;
             theToken->printForm = theToken->lexemeValue->contents;
@@ -425,7 +425,7 @@ static CLIPSLexeme *ScanSymbol(
    /* of the next token.                                */
    /*===================================================*/
 
-   UngetcRouter(theEnv,inchar,logicalName);
+   UngetcRouter(theEnv,logicalName,inchar);
 
    /*====================================================*/
    /* Add the symbol to the symbol table and return the  */
@@ -719,7 +719,7 @@ static void ScanNumber(
    /* and return the number.                */
    /*=======================================*/
 
-   UngetcRouter(theEnv,inchar,logicalName);
+   UngetcRouter(theEnv,logicalName,inchar);
 
    if (! digitFound)
      {

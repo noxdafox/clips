@@ -555,7 +555,7 @@ char *AppendToString(
    /* Return the expanded string containing the appended string. */
    /*============================================================*/
 
-   return(oldStr);
+   return oldStr;
   }
 
 /**********************************************************/
@@ -1412,6 +1412,18 @@ void StringBuilderAppend(
   {
    theSB->stringBuffer = AppendToString(theSB->sbEnv,appendString,
                                         theSB->stringBuffer,&theSB->bufferPosition,&theSB->bufferMaximum);
+  }
+
+/*************************/
+/* StringBuilderAddChar: */
+/*************************/
+void StringBuilderAddChar(
+  StringBuilder *theSB,
+  int theChar)
+  {
+   theSB->stringBuffer = ExpandStringWithChar(theSB->sbEnv,theChar,theSB->stringBuffer,
+                                              &theSB->bufferPosition,&theSB->bufferMaximum,
+                                              theSB->bufferMaximum+80);
   }
 
 /**********************/

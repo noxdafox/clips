@@ -132,19 +132,9 @@
 bool AllocateEnvironmentData(
   Environment *theEnvironment,
   unsigned int position,
-  unsigned long size,
-  void (*cleanupFunction)(Environment *))
+  size_t size,
+  EnvironmentCleanupFunction *cleanupFunction)
   {
-   /*===========================================*/
-   /* Environment data can't be of length zero. */
-   /*===========================================*/
-
-   if (size <= 0)
-     {
-      printf("\n[ENVRNMNT1] Environment data position %d allocated with size of 0 or less.\n",position);
-      return false;
-     }
-
    /*================================================================*/
    /* Check to see if the data position exceeds the maximum allowed. */
    /*================================================================*/
@@ -252,7 +242,7 @@ void *SetEnvironmentFunctionContext(
 bool AddEnvironmentCleanupFunction(
   Environment *theEnv,
   const char *name,
-  void (*functionPtr)(Environment *),
+  EnvironmentCleanupFunction *functionPtr,
   int priority)
   {
    struct environmentCleanupFunction *newPtr, *currentPtr, *lastPtr = NULL;

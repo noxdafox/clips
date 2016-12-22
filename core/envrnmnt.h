@@ -64,8 +64,11 @@
 #define _H_envrnmnt
 
 #include <stdbool.h>
+#include <stdlib.h>
 
 typedef struct environmentData Environment;
+
+typedef void EnvironmentCleanupFunction(Environment *);
 
 #include "entities.h"
 
@@ -101,8 +104,8 @@ struct environmentData
 #define GetEnvironmentData(theEnv,position) (((struct environmentData *) theEnv)->theData[position])
 #define SetEnvironmentData(theEnv,position,value) (((struct environmentData *) theEnv)->theData[position] = value)
 
-   bool                           AllocateEnvironmentData(Environment *,unsigned int,unsigned long,void (*)(Environment *));
-   bool                           AddEnvironmentCleanupFunction(Environment *,const char *,void (*)(Environment *),int);
+   bool                           AllocateEnvironmentData(Environment *,unsigned int,size_t,EnvironmentCleanupFunction);
+   bool                           AddEnvironmentCleanupFunction(Environment *,const char *,EnvironmentCleanupFunction,int);
    void                          *GetEnvironmentContext(Environment *);
    void                          *SetEnvironmentContext(Environment *,void *);
    void                          *GetEnvironmentFunctionContext(Environment *);
