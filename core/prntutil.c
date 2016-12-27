@@ -59,7 +59,7 @@
 /*                                                           */
 /*            Removed DATA_OBJECT_ARRAY primitive type.      */
 /*                                                           */
-/*      6.50: File name/line count displayed for errors      */
+/*            File name/line count displayed for errors      */
 /*            and warnings during load command.              */
 /*                                                           */
 /*************************************************************/

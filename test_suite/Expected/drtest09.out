@@ -18,7 +18,7 @@ CLIPS>
 (defmessage-handler A delete before ()
   (if (instance-existp ?self:container) then
      (unmake-instance ?self:container)))
-CLIPS> (defclass INITIAL-OBJECT (is-a USER))     
+CLIPS> (defclass INITIAL-OBJECT (is-a USER))
 CLIPS> 
 (defrule A-rule
   (logical ?obj <- (object (is-a A) (match yes)))

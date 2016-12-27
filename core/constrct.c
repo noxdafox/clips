@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.50  08/25/16             */
+   /*            CLIPS Version 6.40  08/25/16             */
    /*                                                     */
    /*                  CONSTRUCT MODULE                   */
    /*******************************************************/
@@ -70,7 +70,7 @@
 /*                                                           */
 /*            Modified EnvClear to return completion status. */
 /*                                                           */
-/*      6.50: Compilation watch flag defaults to off.        */
+/*            Compilation watch flag defaults to off.        */
 /*                                                           */
 /*            File name/line count displayed for errors      */
 /*            and warnings during load command.              */

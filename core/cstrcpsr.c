@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.50  10/01/16             */
+   /*            CLIPS Version 6.40  10/01/16             */
    /*                                                     */
    /*              CONSTRUCT PARSER MODULE                */
    /*******************************************************/
@@ -61,7 +61,7 @@
 /*            Added CLIPSBlockStart and CLIPSBlockEnd        */
 /*            functions for garbage collection blocks.       */
 /*                                                           */
-/*      6.50: File name/line count displayed for errors      */
+/*            File name/line count displayed for errors      */
 /*            and warnings during load command.              */
 /*                                                           */
 /*************************************************************/
