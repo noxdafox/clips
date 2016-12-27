@@ -1,7 +1,7 @@
 TRUE
 CLIPS> (load "ceerr.clp")
 *
-[ANALYSIS4] Variable ?x found in the expression (> ?x ?y)
+[ANALYSIS4] ceerr.clp, Line 5: Variable ?x found in the expression (> ?x ?y)
 was referenced in CE #2 before being defined.
 
 ERROR:
@@ -10,7 +10,7 @@ ERROR:
    (test (> ?x ?y))
    =>)
 *
-[ANALYSIS4] Variable ?x found in the expression (> ?x ?y)
+[ANALYSIS4] ceerr.clp, Line 10: Variable ?x found in the expression (> ?x ?y)
 was referenced in CE #2 before being defined.
 
 ERROR:
@@ -19,7 +19,7 @@ ERROR:
    (test (> ?x ?y))
    =>)
 *
-[ANALYSIS4] Variable ?x found in the expression (> ?x ?y)
+[ANALYSIS4] ceerr.clp, Line 16: Variable ?x found in the expression (> ?x ?y)
 was referenced in CE #3 field #1 before being defined.
 
 ERROR:
@@ -29,7 +29,7 @@ ERROR:
    (foo :(> ?x ?y))
    =>)
 *
-[ANALYSIS4] Variable ?x found in the expression (> ?x ?y)
+[ANALYSIS4] ceerr.clp, Line 23: Variable ?x found in the expression (> ?x ?y)
 was referenced in CE #4 before being defined.
 
 ERROR:
@@ -40,7 +40,7 @@ ERROR:
    (test (> ?x ?y))
    =>)
 *
-[ANALYSIS4] Variable ?x found in the expression (> ?x ?y)
+[ANALYSIS4] ceerr.clp, Line 27: Variable ?x found in the expression (> ?x ?y)
 was referenced in CE #1 field #1 before being defined.
 
 ERROR:
@@ -48,7 +48,7 @@ ERROR:
    (not (a b&:(> ?x ?y)))
    =>)
 *
-[ANALYSIS4] Variable ?x found in the expression (> ?x ?y)
+[ANALYSIS4] ceerr.clp, Line 33: Variable ?x found in the expression (> ?x ?y)
 was referenced in CE #3 before being defined.
 
 ERROR:
@@ -58,7 +58,7 @@ ERROR:
                        (not (and (test (> ?x ?y))))))))
    =>)
 *
-[ANALYSIS4] Variable ?x was referenced in CE #4 field #1 before being defined.
+[ANALYSIS4] ceerr.clp, Line 40: Variable ?x was referenced in CE #4 field #1 before being defined.
 
 ERROR:
 (defrule MAIN::error-7 ""
@@ -68,7 +68,7 @@ ERROR:
                                  (a ~?x)))))))
    =>)
 *
-[ANALYSIS4] Variable ?x found in the expression (> ?x ?y)
+[ANALYSIS4] ceerr.clp, Line 48: Variable ?x found in the expression (> ?x ?y)
 was referenced in CE #5 field #1 before being defined.
 
 ERROR:
@@ -80,19 +80,19 @@ ERROR:
    (foo :(> ?x ?y))
    =>)
 *
-[PRNTUTIL2] Syntax Error:  Check appropriate syntax for the exists conditional element.
+[PRNTUTIL2] ceerr.clp, Line 51: Syntax Error:  Check appropriate syntax for the exists conditional element.
 
 ERROR:
 (defrule MAIN::error-9
    (exists)
 *
-[PRNTUTIL2] Syntax Error:  Check appropriate syntax for the forall conditional element.
+[PRNTUTIL2] ceerr.clp, Line 55: Syntax Error:  Check appropriate syntax for the forall conditional element.
 
 ERROR:
 (defrule MAIN::error-10
    (forall)
 *
-[PRNTUTIL2] Syntax Error:  Check appropriate syntax for the forall conditional element.
+[PRNTUTIL2] ceerr.clp, Line 59: Syntax Error:  Check appropriate syntax for the forall conditional element.
 
 ERROR:
 (defrule MAIN::error-11

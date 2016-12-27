@@ -1,69 +1,69 @@
 TRUE
 CLIPS> (load "globlerr.clp")
 :
-[PRNTUTIL2] Syntax Error:  Check appropriate syntax for defglobal.
+[PRNTUTIL2] globlerr.clp, Line 9: Syntax Error:  Check appropriate syntax for defglobal.
 
 ERROR:
 (defglobal MAIN ?*x* )
 
-[PRNTUTIL2] Syntax Error:  Check appropriate syntax for defglobal.
+[PRNTUTIL2] globlerr.clp, Line 10: Syntax Error:  Check appropriate syntax for defglobal.
 
 ERROR:
 (defglobal MAIN ?x
-[PRNTUTIL1] Unable to find defmodule =.
+[PRNTUTIL1] globlerr.clp, Line 11: Unable to find defmodule =.
 
 ERROR:
 (defglobal =
 :
-[EXPRNPSR2] Expected a constant, variable, or expression.
+[EXPRNPSR2] globlerr.clp, Line 12: Expected a constant, variable, or expression.
 
 ERROR:
 (defglobal MAIN ?*x* = )
-:[ARGACCES5] Function + expected argument #1 to be of type integer or float
+:[ARGACCES5] globlerr.clp, Line 13: Function + expected argument #1 to be of type integer or float
 
 ERROR:
 (defglobal MAIN ?*x* = (+ a b)
-:[GLOBLDEF1] Global variable ?*r* is unbound.
+:[GLOBLDEF1] globlerr.clp, Line 14: Global variable ?*r* is unbound.
 
 ERROR:
 (defglobal MAIN ?*x* = ?*r*
-:[EVALUATN1] Variable x is unbound
+:[EVALUATN1] globlerr.clp, Line 15: Variable x is unbound
 
 ERROR:
 (defglobal MAIN ?*x* = ?x
 ::
-[PRNTUTIL2] Syntax Error:  Check appropriate syntax for defglobal.
+[PRNTUTIL2] globlerr.clp, Line 17: Syntax Error:  Check appropriate syntax for defglobal.
 
 ERROR:
 (defglobal MAIN ?*x* )
 :
-[PRNTUTIL2] Syntax Error:  Check appropriate syntax for defglobal.
+[PRNTUTIL2] globlerr.clp, Line 18: Syntax Error:  Check appropriate syntax for defglobal.
 
 ERROR:
 (defglobal MAIN ?x
 :
-[PRNTUTIL2] Syntax Error:  Check appropriate syntax for defglobal.
+[PRNTUTIL2] globlerr.clp, Line 19: Syntax Error:  Check appropriate syntax for defglobal.
 
 ERROR:
 (defglobal MAIN =
 ::
-[EXPRNPSR2] Expected a constant, variable, or expression.
+[EXPRNPSR2] globlerr.clp, Line 20: Expected a constant, variable, or expression.
 
 ERROR:
 (defglobal MAIN ?*x* = )
-::[ARGACCES5] Function + expected argument #1 to be of type integer or float
+::[ARGACCES5] globlerr.clp, Line 22: Function + expected argument #1 to be of type integer or float
 
 ERROR:
 (defglobal MAIN ?*x* = (+ a b)
-::[GLOBLDEF1] Global variable ?*r* is unbound.
+::[GLOBLDEF1] globlerr.clp, Line 23: Global variable ?*r* is unbound.
 
 ERROR:
 (defglobal MAIN ?*x* = ?*r*
-::[EVALUATN1] Variable x is unbound
+::[EVALUATN1] globlerr.clp, Line 24: Variable x is unbound
 
 ERROR:
 (defglobal MAIN ?*x* = ?x
-::[EVALUATN1] Variable x is unbound
+::[EVALUATN1] globlerr.clp, Line 25: Variable x is unbound
 
 ERROR:
 (defglobal MAIN ?*x* = ?x

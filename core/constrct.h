@@ -64,6 +64,9 @@
 /*                                                           */
 /*            Modified EnvClear to return completion status. */
 /*                                                           */
+/*            File name/line count displayed for errors      */
+/*            and warnings during load command.              */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_constrct
@@ -126,6 +129,7 @@ struct constructData
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    SaveCallFunctionItem *ListOfSaveFunctions;
    bool PrintWhileLoading;
+   bool LoadInProgress;
    bool WatchCompilations;
    bool CheckSyntaxMode;
    bool ParsingConstruct;
@@ -182,6 +186,8 @@ struct constructData
    bool                           GetCompilationsWatch(Environment *);
    void                           SetPrintWhileLoading(Environment *,bool);
    bool                           GetPrintWhileLoading(Environment *);
+   void                           SetLoadInProgress(Environment *,bool);
+   bool                           GetLoadInProgress(Environment *);
    bool                           ExecutingConstruct(Environment *);
    void                           SetExecutingConstruct(Environment *,bool);
    void                           InitializeConstructs(Environment *);

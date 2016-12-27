@@ -61,6 +61,9 @@
 /*            Added CLIPSBlockStart and CLIPSBlockEnd        */
 /*            functions for garbage collection blocks.       */
 /*                                                           */
+/*            File name/line count displayed for errors      */
+/*            and warnings during load command.              */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -126,10 +129,15 @@ int Load(
    oldParsingFileName = CopyString(theEnv,GetParsingFileName(theEnv));
    SetParsingFileName(theEnv,fileName);
 
+   SetLoadInProgress(theEnv,true);
    noErrorsDetected = LoadConstructsFromLogicalName(theEnv,(char *) theFile);
+   SetLoadInProgress(theEnv,false);
 
    SetParsingFileName(theEnv,oldParsingFileName);
    DeleteString(theEnv,oldParsingFileName);
+
+   SetWarningFileName(theEnv,NULL);
+   SetErrorFileName(theEnv,NULL);
 
    SetFastLoad(theEnv,NULL);
 
@@ -159,8 +167,6 @@ void SetParsingFileName(
   const char *fileName)
   {
    char *fileNameCopy = NULL;
-
-   if (ConstructData(theEnv)->ParserErrorCallback == NULL) return;
 
    if (fileName != NULL)
      {
@@ -194,8 +200,6 @@ void SetErrorFileName(
   {
    char *fileNameCopy = NULL;
 
-   if (ConstructData(theEnv)->ParserErrorCallback == NULL) return;
-
    if (fileName != NULL)
      {
       fileNameCopy = (char *) genalloc(theEnv,strlen(fileName) + 1);
@@ -227,8 +231,6 @@ void SetWarningFileName(
   const char *fileName)
   {
    char *fileNameCopy = NULL;
-
-   if (ConstructData(theEnv)->ParserErrorCallback == NULL) return;
 
    if (fileName != NULL)
      {

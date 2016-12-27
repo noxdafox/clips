@@ -993,6 +993,10 @@ bool RouteCommand(
           PrintRouter(theEnv,WERROR,"\n");
          }
        DestroyPPBuffer(theEnv);
+       
+       SetWarningFileName(theEnv,NULL);
+       SetErrorFileName(theEnv,NULL);
+
        if (errorFlag) return false;
        else return true;
       }
@@ -1021,6 +1025,8 @@ bool RouteCommand(
 
    if (top == NULL)
      {
+      SetWarningFileName(theEnv,NULL);
+      SetErrorFileName(theEnv,NULL);
       ConstructData(theEnv)->DanglingConstructs = danglingConstructs;
       return false;
      }
@@ -1036,6 +1042,9 @@ bool RouteCommand(
    ExpressionDeinstall(theEnv,top);
    ReturnExpression(theEnv,top);
    ConstructData(theEnv)->DanglingConstructs = danglingConstructs;
+   
+   SetWarningFileName(theEnv,NULL);
+   SetErrorFileName(theEnv,NULL);
 
    /*=================================================*/
    /* Print the return value of the function/command. */

@@ -685,7 +685,7 @@ CLIPS> (slot-default-value A x)
 CLIPS> (clear)                   ; DR0872
 CLIPS> (load dr0872-1.clp)
 !
-[PRNTUTIL2] Syntax Error:  Check appropriate syntax for deffunction.
+[PRNTUTIL2] dr0872-1.clp, Line 4: Syntax Error:  Check appropriate syntax for deffunction.
 
 ERROR:
 (deffunction MAIN::testUnmatched
@@ -696,7 +696,7 @@ ERROR:
 FALSE
 CLIPS> (load dr0872-2.clp)
 &
-[PRNTUTIL2] Syntax Error:  Check appropriate syntax for defmethod.
+[PRNTUTIL2] dr0872-2.clp, Line 2: Syntax Error:  Check appropriate syntax for defmethod.
 
 ERROR:
 (defmethod MAIN::foo

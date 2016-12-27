@@ -59,6 +59,9 @@
 /*                                                           */
 /*            Removed DATA_OBJECT_ARRAY primitive type.      */
 /*                                                           */
+/*            File name/line count displayed for errors      */
+/*            and warnings during load command.              */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -287,6 +290,28 @@ void PrintErrorID(
    PrintRouter(theEnv,WERROR,module);
    PrintLongInteger(theEnv,WERROR,(long int) errorID);
    PrintRouter(theEnv,WERROR,"] ");
+
+   /*==================================================*/
+   /* Print the file name and line number if available */
+   /* and there is no callback for errors/warnings.    */
+   /*==================================================*/
+
+#if (! RUN_TIME) && (! BLOAD_ONLY)
+   if ((ConstructData(theEnv)->ParserErrorCallback == NULL) &&
+       (GetLoadInProgress(theEnv) == true))
+     {
+      const char *fileName;
+
+      fileName = GetParsingFileName(theEnv);
+      if (fileName != NULL)
+        {
+         PrintRouter(theEnv,WERROR,fileName);
+         PrintRouter(theEnv,WERROR,", Line ");
+         PrintLongInteger(theEnv,WERROR,GetLineCount(theEnv));
+         PrintRouter(theEnv,WERROR,": ");
+        }
+     }
+#endif
   }
 
 /**********************************************/
@@ -308,7 +333,31 @@ void PrintWarningID(
    PrintRouter(theEnv,WWARNING,"[");
    PrintRouter(theEnv,WWARNING,module);
    PrintLongInteger(theEnv,WWARNING,(long int) warningID);
-   PrintRouter(theEnv,WWARNING,"] WARNING: ");
+   PrintRouter(theEnv,WWARNING,"] ");
+
+   /*==================================================*/
+   /* Print the file name and line number if available */
+   /* and there is no callback for errors/warnings.    */
+   /*==================================================*/
+
+#if (! RUN_TIME) && (! BLOAD_ONLY)
+   if ((ConstructData(theEnv)->ParserErrorCallback == NULL) &&
+       (GetLoadInProgress(theEnv) == true))
+     {
+      const char *fileName;
+
+      fileName = GetParsingFileName(theEnv);
+      if (fileName != NULL)
+        {
+         PrintRouter(theEnv,WERROR,fileName);
+         PrintRouter(theEnv,WERROR,", Line ");
+         PrintLongInteger(theEnv,WERROR,GetLineCount(theEnv));
+         PrintRouter(theEnv,WERROR,", ");
+        }
+     }
+#endif
+
+   PrintRouter(theEnv,WWARNING,"WARNING: ");
   }
 
 /***************************************************/

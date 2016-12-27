@@ -3,7 +3,7 @@ CLIPS> (batch "stobjcst.bat")
 TRUE
 CLIPS> (load "stobjcst.clp")
 ##*
-[RULECSTR1] Variable ?x in CE #1 slot y
+[RULECSTR1] stobjcst.clp, Line 12: Variable ?x in CE #1 slot y
 has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
@@ -13,7 +13,7 @@ ERROR:
            (y ?x))
    =>)
 *
-[RULECSTR1] Variable ?x in CE #2 slot y
+[RULECSTR1] stobjcst.clp, Line 17: Variable ?x in CE #2 slot y
 has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
@@ -24,7 +24,7 @@ ERROR:
            (y ?x))
    =>)
 *
-[RULECSTR1] Variable ?x in CE #1 slot c
+[RULECSTR1] stobjcst.clp, Line 21: Variable ?x in CE #1 slot c
 has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
@@ -35,7 +35,7 @@ ERROR:
            (c ?x))
    =>)
 *
-[RULECSTR1] Variable ?x in CE #3 slot c
+[RULECSTR1] stobjcst.clp, Line 27: Variable ?x in CE #3 slot c
 has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
@@ -48,7 +48,7 @@ ERROR:
            (c ?x))
    =>)
 *####*
-[RULECSTR1] Variable ?x in CE #2 slot a
+[RULECSTR1] stobjcst.clp, Line 49: Variable ?x in CE #2 slot a
 has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
@@ -59,7 +59,7 @@ ERROR:
            (a ?x))
    =>)
 *
-[RULECSTR1] Variable ?x in CE #3 slot a
+[RULECSTR1] stobjcst.clp, Line 55: Variable ?x in CE #3 slot a
 has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
@@ -72,7 +72,7 @@ ERROR:
            (a ?x))
    =>)
 *
-[RULECSTR1] Pattern #3 slot a
+[RULECSTR1] stobjcst.clp, Line 61: Pattern #3 slot a
 has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
@@ -85,7 +85,7 @@ ERROR:
            (a ?x|?y))
    =>)
 *#*
-[RULECSTR1] Variable ?x in CE #1 slot y
+[RULECSTR1] stobjcst.clp, Line 75: Variable ?x in CE #1 slot y
 has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
@@ -95,7 +95,7 @@ ERROR:
            (y ?x&~on))
    =>)
 ###**
-[RULECSTR1] Variable ?x in CE #3 slot x
+[RULECSTR1] stobjcst.clp, Line 98: Variable ?x in CE #3 slot x
 has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
@@ -108,7 +108,7 @@ ERROR:
            (x ?x))
    =>)
 ##**##*
-[RULECSTR1] Variable ?x in CE #2 slot q
+[RULECSTR1] stobjcst.clp, Line 129: Variable ?x in CE #2 slot q
 has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
@@ -119,7 +119,7 @@ ERROR:
            (q $?x))
    =>)
 ###*
-[CSTRNCHK1] The group of restrictions found in CE #3
+[CSTRNCHK1] stobjcst.clp, Line 147: The group of restrictions found in CE #3
 does not satisfy the cardinality restrictions for slot z.
 
 ERROR:
@@ -132,7 +132,7 @@ ERROR:
            (z $?x $?y))
    =>)
 ####*
-[CSTRNCHK1] The group of restrictions found in CE #4
+[CSTRNCHK1] stobjcst.clp, Line 165: The group of restrictions found in CE #4
 does not satisfy the cardinality restrictions for slot q.
 
 ERROR:
@@ -147,7 +147,7 @@ ERROR:
            (q $?x ? $?y ? b $?z))
    =>)
 *
-[CSTRNCHK1] The group of restrictions found in CE #1
+[CSTRNCHK1] stobjcst.clp, Line 169: The group of restrictions found in CE #1
 does not satisfy the cardinality restrictions for slot x.
 
 ERROR:
@@ -156,7 +156,7 @@ ERROR:
            (x ?))
    =>)
 *#*#*
-[RULECSTR1] Pattern #1 slot x
+[RULECSTR1] stobjcst.clp, Line 198: Pattern #1 slot x
 has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
@@ -166,7 +166,7 @@ ERROR:
            (x =(+ ?y 3)))
    =>)
 #*
-[RULECSTR2] Previous variable bindings of ?x caused the type restrictions
+[RULECSTR2] stobjcst.clp, Line 211: Previous variable bindings of ?x caused the type restrictions
 for argument #2 of the expression (> ?y ?x)
 found in CE #1 slot y to be violated.
 
@@ -177,7 +177,7 @@ ERROR:
            (y ?y&:(> ?y ?x)))
    =>)
 *
-[RULECSTR2] Previous variable bindings of ?x caused the type restrictions
+[RULECSTR2] stobjcst.clp, Line 217: Previous variable bindings of ?x caused the type restrictions
 for argument #2 of the expression (> ?y ?x)
 found in CE #2 to be violated.
 
@@ -189,7 +189,7 @@ ERROR:
    (test (> ?y ?x))
    =>)
 #*
-[RULECSTR3] Previous variable bindings of ?q caused the type restrictions
+[RULECSTR3] stobjcst.clp, Line 229: Previous variable bindings of ?q caused the type restrictions
 for argument #3 of the expression (+ 3 5 ?q)
 found in the rule's RHS to be violated.
 
@@ -200,7 +200,7 @@ ERROR:
    =>
    (+ 3 5 ?q))
 **
-[RULECSTR3] Previous variable bindings of ?q caused the type restrictions
+[RULECSTR3] stobjcst.clp, Line 241: Previous variable bindings of ?q caused the type restrictions
 for argument #3 of the expression (+ 3 5 ?q)
 found in the rule's RHS to be violated.
 
@@ -211,7 +211,7 @@ ERROR:
    (bind ?q (gensym))
    (+ 3 5 ?q))
 *#*
-[RULECSTR1] Variable ?x in CE #1 slot y
+[RULECSTR1] stobjcst.clp, Line 260: Variable ?x in CE #1 slot y
 has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
@@ -221,7 +221,7 @@ ERROR:
            (y ?x))
    =>)
 #*
-[RULECSTR1] Variable ?x in CE #2 slot foo
+[RULECSTR1] stobjcst.clp, Line 272: Variable ?x in CE #2 slot foo
 has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
@@ -231,7 +231,7 @@ ERROR:
            (foo ?x))
    =>)
 *
-[RULECSTR2] Previous variable bindings of ?x caused the type restrictions
+[RULECSTR2] stobjcst.clp, Line 277: Previous variable bindings of ?x caused the type restrictions
 for argument #1 of the expression (> ?x 5)
 found in CE #2 to be violated.
 
@@ -242,7 +242,7 @@ ERROR:
    (test (> ?x 5))
    =>)
 *
-[RULECSTR1] Variable ?x in CE #3 slot foo
+[RULECSTR1] stobjcst.clp, Line 283: Variable ?x in CE #3 slot foo
 has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
@@ -253,7 +253,7 @@ ERROR:
            (foo ?x))
    =>)
 ###
-[CSTRNPSR1] The type attribute conflicts with the allowed-integers/numbers attribute.
+[CSTRNPSR1] stobjcst.clp, Line 296: The type attribute conflicts with the allowed-integers/numbers attribute.
 
 ERROR:
 (defclass MAIN::DERIVE2

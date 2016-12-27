@@ -1,7 +1,7 @@
 TRUE
 CLIPS> (load "fctpcstr.clp")
 %%*
-[RULECSTR1] Variable ?x in CE #1 slot y
+[RULECSTR1] fctpcstr.clp, Line 12: Variable ?x in CE #1 slot y
 has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
@@ -9,7 +9,7 @@ ERROR:
    (foo (x ?x) (y ?x))
    =>)
 *
-[RULECSTR1] Variable ?x in CE #2 slot y
+[RULECSTR1] fctpcstr.clp, Line 17: Variable ?x in CE #2 slot y
 has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
@@ -18,7 +18,7 @@ ERROR:
    (foo (y ?x))
    =>)
 *
-[RULECSTR1] Variable ?x in CE #1 slot c
+[RULECSTR1] fctpcstr.clp, Line 21: Variable ?x in CE #1 slot c
 has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
@@ -26,7 +26,7 @@ ERROR:
    (bar (a ?x) (b ?x) (c ?x))
    =>)
 *
-[RULECSTR1] Variable ?x in CE #3 slot c
+[RULECSTR1] fctpcstr.clp, Line 27: Variable ?x in CE #3 slot c
 has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
@@ -36,7 +36,7 @@ ERROR:
    (bar (c ?x))
    =>)
 *%%%%*
-[RULECSTR1] Variable ?x in CE #2 slot a
+[RULECSTR1] fctpcstr.clp, Line 53: Variable ?x in CE #2 slot a
 has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
@@ -45,7 +45,7 @@ ERROR:
    (obo (a ?x))
    =>)
 *
-[RULECSTR1] Variable ?x in CE #3 slot a
+[RULECSTR1] fctpcstr.clp, Line 59: Variable ?x in CE #3 slot a
 has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
@@ -55,7 +55,7 @@ ERROR:
    (obo (a ?x))
    =>)
 *
-[RULECSTR1] Pattern #3 slot a
+[RULECSTR1] fctpcstr.clp, Line 65: Pattern #3 slot a
 has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
@@ -65,7 +65,7 @@ ERROR:
    (vod (a ?x|?y))
    =>)
 *%*
-[RULECSTR1] Variable ?x in CE #1 slot y
+[RULECSTR1] fctpcstr.clp, Line 80: Variable ?x in CE #1 slot y
 has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
@@ -73,7 +73,7 @@ ERROR:
    (kji (x ?x) (y ?x&~on))
    =>)
 %%%**
-[RULECSTR1] Variable ?x in CE #3 slot x
+[RULECSTR1] fctpcstr.clp, Line 107: Variable ?x in CE #3 slot x
 has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
@@ -83,7 +83,7 @@ ERROR:
    (yak7 (x ?x))
    =>)
 %%**%%*
-[RULECSTR1] Variable ?x in CE #2 slot q
+[RULECSTR1] fctpcstr.clp, Line 140: Variable ?x in CE #2 slot q
 has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
@@ -92,7 +92,7 @@ ERROR:
    (yxk (q $?x))
    =>)
 %%%*
-[CSTRNCHK1] The group of restrictions found in CE #3
+[CSTRNCHK1] fctpcstr.clp, Line 155: The group of restrictions found in CE #3
 does not satisfy the cardinality restrictions for slot z.
 
 ERROR:
@@ -102,7 +102,7 @@ ERROR:
    (wak (z $?x $?y))
    =>)
 %%%%*
-[CSTRNCHK1] The group of restrictions found in CE #4
+[CSTRNCHK1] fctpcstr.clp, Line 170: The group of restrictions found in CE #4
 does not satisfy the cardinality restrictions for slot q.
 
 ERROR:
@@ -113,7 +113,7 @@ ERROR:
    (ylk (q $?x ? $?y ? b $?z))
    =>)
 *
-[CSTRNCHK1] The group of restrictions found in CE #1
+[CSTRNCHK1] fctpcstr.clp, Line 174: The group of restrictions found in CE #1
 does not satisfy the cardinality restrictions for slot x.
 
 ERROR:
@@ -121,7 +121,7 @@ ERROR:
    (fll (x ?))
    =>)
 *%*%*
-[RULECSTR1] Pattern #1 slot x
+[RULECSTR1] fctpcstr.clp, Line 203: Pattern #1 slot x
 has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
@@ -129,7 +129,7 @@ ERROR:
    (kbp (y ?y) (x =(+ ?y 3)))
    =>)
 %*
-[RULECSTR2] Previous variable bindings of ?x caused the type restrictions
+[RULECSTR2] fctpcstr.clp, Line 214: Previous variable bindings of ?x caused the type restrictions
 for argument #2 of the expression (> ?y ?x)
 found in CE #1 slot y to be violated.
 
@@ -138,7 +138,7 @@ ERROR:
    (zc8 (x ?x) (y ?y&:(> ?y ?x)))
    =>)
 *
-[RULECSTR2] Previous variable bindings of ?x caused the type restrictions
+[RULECSTR2] fctpcstr.clp, Line 220: Previous variable bindings of ?x caused the type restrictions
 for argument #2 of the expression (> ?y ?x)
 found in CE #2 to be violated.
 
@@ -148,7 +148,7 @@ ERROR:
    (test (> ?y ?x))
    =>)
 *
-[ANALYSIS4] Variable ?x found in the expression (> ?x 3)
+[ANALYSIS4] fctpcstr.clp, Line 229: Variable ?x found in the expression (> ?x 3)
 was referenced in CE #2 before being defined.
 
 ERROR:
@@ -157,26 +157,26 @@ ERROR:
    (test (> ?x 3))
    =>)
 *
-[ANALYSIS4] Variable ?x found in the expression (> ?x 3)
+[ANALYSIS4] fctpcstr.clp, Line 233: Variable ?x found in the expression (> ?x 3)
 was referenced in CE #1 field #1 before being defined.
 
 ERROR:
 (defrule MAIN::error-18 "Unbound variable error: Not caught by CRSV"
    (a ?y&:(or (> ?x 3) (< ?x 5)))
    =>)
-*[ARGACCES5] Function + expected argument #2 to be of type integer or float
+*[ARGACCES5] fctpcstr.clp, Line 241: Function + expected argument #2 to be of type integer or float
 
 ERROR:
 (defrule MAIN::error-19 "Wrong argument type: Not caught by CRSV"
    =>
    (+ 3 a)
-*[ARGACCES5] Function + expected argument #2 to be of type integer or float
+*[ARGACCES5] fctpcstr.clp, Line 248: Function + expected argument #2 to be of type integer or float
 
 ERROR:
 (defrule MAIN::error-20 "Wrong argument type: Not caught by CRSV"
    (buffy =(+ 3 a)
 %*
-[RULECSTR1] Pattern #1 field #1
+[RULECSTR1] fctpcstr.clp, Line 259: Pattern #1 field #1
 has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
@@ -184,7 +184,7 @@ ERROR:
    (buffy a&b)
    =>)
 *
-[RULECSTR1] Pattern #1 field #1
+[RULECSTR1] fctpcstr.clp, Line 263: Pattern #1 field #1
 has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
@@ -192,7 +192,7 @@ ERROR:
    (buffy a&~a)
    =>)
 *%*
-[RULECSTR3] Previous variable bindings of ?q caused the type restrictions
+[RULECSTR3] fctpcstr.clp, Line 278: Previous variable bindings of ?q caused the type restrictions
 for argument #3 of the expression (+ 3 5 ?q)
 found in the rule's RHS to be violated.
 
@@ -202,7 +202,7 @@ ERROR:
    =>
    (+ 3 5 ?q))
 **
-[RULECSTR3] Previous variable bindings of ?q caused the type restrictions
+[RULECSTR3] fctpcstr.clp, Line 290: Previous variable bindings of ?q caused the type restrictions
 for argument #3 of the expression (+ 3 5 ?q)
 found in the rule's RHS to be violated.
 
@@ -213,7 +213,7 @@ ERROR:
    (bind ?q (gensym))
    (+ 3 5 ?q))
 *%*
-[RULECSTR1] Variable ?x in CE #1 slot y
+[RULECSTR1] fctpcstr.clp, Line 307: Variable ?x in CE #1 slot y
 has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
@@ -221,7 +221,7 @@ ERROR:
    (jhj (x ?x&2) (y ?x))
    =>)
 %*
-[RULECSTR1] Variable ?x in CE #2 slot foo
+[RULECSTR1] fctpcstr.clp, Line 318: Variable ?x in CE #2 slot foo
 has constraint conflicts which make the pattern unmatchable.
 
 ERROR:
@@ -230,7 +230,7 @@ ERROR:
    (yuck (foo ?x))
    =>)
 *
-[RULECSTR2] Previous variable bindings of ?x caused the type restrictions
+[RULECSTR2] fctpcstr.clp, Line 323: Previous variable bindings of ?x caused the type restrictions
 for argument #1 of the expression (> ?x 5)
 found in CE #2 to be violated.
 
@@ -240,7 +240,7 @@ ERROR:
    (test (> ?x 5))
    =>)
 *
-[RULECSTR1] Variable ?x in CE #3 slot foo
+[RULECSTR1] fctpcstr.clp, Line 329: Variable ?x in CE #3 slot foo
 has constraint conflicts which make the pattern unmatchable.
 
 ERROR:

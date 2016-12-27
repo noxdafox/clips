@@ -2,7 +2,7 @@ TRUE
 CLIPS> (batch "dyobjcst.bat")
 TRUE
 CLIPS> (load "dyobjcst.clp")
-####[CSTRNCHK1] 36 for slot float found in slot default value
+####[CSTRNCHK1] dyobjcst.clp, Line 47: 36 for slot float found in slot default value
 does not match the allowed types.
 
 ERROR:
@@ -11,7 +11,7 @@ ERROR:
    (slot float
       (source composite)
       (default 36))
-#[CSTRNCHK1] Expression for slot float found in dynamic default value
+#[CSTRNCHK1] dyobjcst.clp, Line 50: Expression for slot float found in dynamic default value
 does not match the allowed types.
 
 ERROR:
@@ -20,7 +20,7 @@ ERROR:
    (slot float
       (source composite)
       (default-dynamic (sym-cat abc)))
-#[CSTRNCHK1] 36.0 for slot float found in slot default value
+#[CSTRNCHK1] dyobjcst.clp, Line 54: 36.0 for slot float found in slot default value
 does not match the allowed values.
 
 ERROR:
@@ -29,7 +29,7 @@ ERROR:
    (slot float
       (source composite)
       (default 36.0))
-#[CSTRNCHK1] () for slot any found in slot default value
+#[CSTRNCHK1] dyobjcst.clp, Line 58: () for slot any found in slot default value
 does not satisfy the cardinality restrictions.
 
 ERROR:

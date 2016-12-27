@@ -70,6 +70,11 @@
 /*                                                           */
 /*            Modified EnvClear to return completion status. */
 /*                                                           */
+/*            Compilation watch flag defaults to off.        */
+/*                                                           */
+/*            File name/line count displayed for errors      */
+/*            and warnings during load command.              */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -113,10 +118,6 @@ void InitializeConstructData(
   Environment *theEnv)
   {
    AllocateEnvironmentData(theEnv,CONSTRUCT_DATA,sizeof(struct constructData),DeallocateConstructData);
-
-#if (! RUN_TIME) && (! BLOAD_ONLY)
-   ConstructData(theEnv)->WatchCompilations = true;
-#endif
   }
 
 /****************************************************/
@@ -397,6 +398,28 @@ bool GetPrintWhileLoading(
   {
    return(ConstructData(theEnv)->PrintWhileLoading);
   }
+
+/*******************************/
+/* SetLoadInProgress: Sets the */
+/*   value of LoadInProgress.  */
+/*******************************/
+void SetLoadInProgress(
+  Environment *theEnv,
+  bool value)
+  {
+   ConstructData(theEnv)->LoadInProgress = value;
+  }
+
+/**********************************/
+/* GetLoadInProgress: Returns the */
+/*   value of LoadInProgress.     */
+/**********************************/
+bool GetLoadInProgress(
+  Environment *theEnv)
+  {
+   return(ConstructData(theEnv)->LoadInProgress);
+  }
+
 #endif
 
 /*************************************/

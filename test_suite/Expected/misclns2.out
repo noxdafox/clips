@@ -37,7 +37,7 @@ CLIPS> (close misc2)
 TRUE
 CLIPS> (load "Temp//misclns2.tmp")
 *
-[PRNTUTIL2] Syntax Error:  Check appropriate syntax for defrule.
+[PRNTUTIL2] Temp//misclns2.tmp, Line 1: Syntax Error:  Check appropriate syntax for defrule.
 
 ERROR:
 (defrule MAIN::foo
@@ -362,7 +362,7 @@ For a total of 3 activations.
 CLIPS> (clear) ; Thing 3
 CLIPS> (load other1.clp)
 %$
-[CSTRCPSR1] Expected the beginning of a construct.
+[CSTRCPSR1] other1.clp, Line 3: Expected the beginning of a construct.
 $
 FALSE
 CLIPS> (clear) ; Thing 4

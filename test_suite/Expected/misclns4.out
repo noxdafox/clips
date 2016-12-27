@@ -562,10 +562,10 @@ Defining defgeneric: splunge
    Method #2 defined.
 Defining defgeneric: splunge
 
-[CSTRCPSR1] WARNING: Method #1 redefined.
+[CSTRCPSR1] gnrcdef.clp, Line 3, WARNING: Method #1 redefined.
 Defining defgeneric: foobar
 
-[CSTRCPSR1] WARNING: Redefining defgeneric: foobar
+[CSTRCPSR1] gnrcdef.clp, Line 6, WARNING: Redefining defgeneric: foobar
 TRUE
 CLIPS> (unwatch compilations)
 CLIPS> (clear) ;; void value in implied deftemplate fact
