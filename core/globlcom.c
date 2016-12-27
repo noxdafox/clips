@@ -271,7 +271,7 @@ static void PrintDefglobalValueForm(
    PrintRouter(theEnv,logicalName,"?*");
    PrintRouter(theEnv,logicalName,theGlobal->header.name->contents);
    PrintRouter(theEnv,logicalName,"* = ");
-   PrintDataObject(theEnv,logicalName,&theGlobal->current);
+   PrintUDFValue(theEnv,logicalName,&theGlobal->current);
   }
 
 #endif /* DEBUGGING_FUNCTIONS */

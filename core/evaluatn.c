@@ -377,10 +377,50 @@ void ReturnValues(
   }
 
 /**************************************************/
-/* PrintDataObject: Prints a UDFValue structure */
+/* PrintCLIPSValue: Prints a CLIPSValue structure */
 /*   to the specified logical name.               */
 /**************************************************/
-void PrintDataObject(
+void PrintCLIPSValue(
+  Environment *theEnv,
+  const char *fileid,
+  CLIPSValue *argPtr)
+  {
+   switch(argPtr->header->type)
+     {
+      case VOID_TYPE:
+      case SYMBOL_TYPE:
+      case STRING_TYPE:
+      case INTEGER_TYPE:
+      case FLOAT_TYPE:
+      case EXTERNAL_ADDRESS_TYPE:
+      case FACT_ADDRESS_TYPE:
+#if OBJECT_SYSTEM
+      case INSTANCE_NAME_TYPE:
+      case INSTANCE_ADDRESS_TYPE:
+#endif
+        PrintAtom(theEnv,fileid,argPtr->header->type,argPtr->value);
+        break;
+
+      case MULTIFIELD_TYPE:
+        PrintMultifield(theEnv,fileid,argPtr->multifieldValue,
+                        0,argPtr->multifieldValue->length,true);
+        break;
+
+      default:
+        PrintRouter(theEnv,fileid,"<UnknownPrintType");
+        PrintLongInteger(theEnv,fileid,(long int) argPtr->header->type);
+        PrintRouter(theEnv,fileid,">");
+        SetHaltExecution(theEnv,true);
+        SetEvaluationError(theEnv,true);
+        break;
+     }
+  }
+
+/**********************************************/
+/* PrintUDFValue: Prints a UDFValue structure */
+/*   to the specified logical name.           */
+/**********************************************/
+void PrintUDFValue(
   Environment *theEnv,
   const char *fileid,
   UDFValue *argPtr)

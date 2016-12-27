@@ -205,7 +205,7 @@ void CheckTemplateFact(
 
          PrintErrorID(theEnv,"CSTRNCHK",1,true);
          PrintRouter(theEnv,WERROR,"Slot value ");
-         PrintDataObject(theEnv,WERROR,&theData);
+         PrintUDFValue(theEnv,WERROR,&theData);
          PrintRouter(theEnv,WERROR," ");
          ConstraintViolationErrorMessage(theEnv,NULL,thePlace,false,0,slotPtr->slotName,
                                          0,rv,slotPtr->constraints,true);

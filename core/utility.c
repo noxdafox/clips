@@ -1396,9 +1396,9 @@ StringBuilder *CreateStringBuilder(
    theSB->sbEnv = theEnv;
    theSB->bufferReset = theSize;
    theSB->bufferMaximum = theSize;
-   theSB->bufferPosition = 0;
-   theSB->stringBuffer = (char *) genalloc(theEnv,theSize);
-   theSB->stringBuffer[0] = EOS;
+   theSB->length = 0;
+   theSB->contents = (char *) genalloc(theEnv,theSize);
+   theSB->contents[0] = EOS;
    
    return theSB;
   }
@@ -1410,8 +1410,8 @@ void StringBuilderAppend(
   StringBuilder *theSB,
   const char *appendString)
   {
-   theSB->stringBuffer = AppendToString(theSB->sbEnv,appendString,
-                                        theSB->stringBuffer,&theSB->bufferPosition,&theSB->bufferMaximum);
+   theSB->contents = AppendToString(theSB->sbEnv,appendString,
+                                    theSB->contents,&theSB->length,&theSB->bufferMaximum);
   }
 
 /*************************/
@@ -1421,9 +1421,9 @@ void StringBuilderAddChar(
   StringBuilder *theSB,
   int theChar)
   {
-   theSB->stringBuffer = ExpandStringWithChar(theSB->sbEnv,theChar,theSB->stringBuffer,
-                                              &theSB->bufferPosition,&theSB->bufferMaximum,
-                                              theSB->bufferMaximum+80);
+   theSB->contents = ExpandStringWithChar(theSB->sbEnv,theChar,theSB->contents,
+                                          &theSB->length,&theSB->bufferMaximum,
+                                          theSB->bufferMaximum+80);
   }
 
 /**********************/
@@ -1434,12 +1434,12 @@ void StringBuilderReset(
   {
    if (theSB->bufferReset != theSB->bufferMaximum)
      {
-      rm(theSB->sbEnv,theSB->stringBuffer,theSB->bufferMaximum);
-      theSB->stringBuffer = (char *) genalloc(theSB->sbEnv,theSB->bufferReset);
+      rm(theSB->sbEnv,theSB->contents,theSB->bufferMaximum);
+      theSB->contents = (char *) genalloc(theSB->sbEnv,theSB->bufferReset);
      }
      
-   theSB->bufferPosition = 0;
-   theSB->stringBuffer[0] = EOS;
+   theSB->length = 0;
+   theSB->contents[0] = EOS;
   }
 
 /*********************/
@@ -1450,8 +1450,8 @@ char *StringBuilderCopy(
   {
    char *stringCopy;
 
-   stringCopy = (char *) malloc(strlen(theSB->stringBuffer) + 1);
-   strcpy(stringCopy,theSB->stringBuffer);
+   stringCopy = (char *) malloc(strlen(theSB->contents) + 1);
+   strcpy(stringCopy,theSB->contents);
 
    return stringCopy;
   }
@@ -1463,7 +1463,7 @@ void StringBuilderDispose(
   StringBuilder *theSB)
   {
    Environment *theEnv = theSB->sbEnv;
-   rm(theEnv,theSB->stringBuffer,theSB->bufferMaximum);
+   rm(theEnv,theSB->contents,theSB->bufferMaximum);
    rtn_struct(theEnv,stringBuilder,theSB);
   }
 

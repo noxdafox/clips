@@ -954,7 +954,7 @@ void PrintProcParamArray(
    PrintRouter(theEnv,logName," (");
    for (i = 0 ; i < ProceduralPrimitiveData(theEnv)->ProcParamArraySize ; i++)
      {
-      PrintDataObject(theEnv,logName,&ProceduralPrimitiveData(theEnv)->ProcParamArray[i]);
+      PrintUDFValue(theEnv,logName,&ProceduralPrimitiveData(theEnv)->ProcParamArray[i]);
       if (i != ProceduralPrimitiveData(theEnv)->ProcParamArraySize-1)
         PrintRouter(theEnv,logName," ");
      }

@@ -446,9 +446,9 @@ void QSetDefglobalValue(
       PrintRouter(theEnv,WTRACE,":== ?*");
       PrintRouter(theEnv,WTRACE,theGlobal->header.name->contents);
       PrintRouter(theEnv,WTRACE,"* ==> ");
-      PrintDataObject(theEnv,WTRACE,vPtr);
+      PrintUDFValue(theEnv,WTRACE,vPtr);
       PrintRouter(theEnv,WTRACE," <== ");
-      PrintDataObject(theEnv,WTRACE,&theGlobal->current);
+      PrintUDFValue(theEnv,WTRACE,&theGlobal->current);
       PrintRouter(theEnv,WTRACE,"\n");
      }
 #endif
@@ -520,7 +520,7 @@ void DefglobalValueForm(
    PrintRouter(theEnv,"GlobalValueForm","?*");
    PrintRouter(theEnv,"GlobalValueForm",theGlobal->header.name->contents);
    PrintRouter(theEnv,"GlobalValueForm","* = ");
-   PrintDataObject(theEnv,"GlobalValueForm",&theGlobal->current);
+   PrintUDFValue(theEnv,"GlobalValueForm",&theGlobal->current);
    CloseStringDestination(theEnv,"GlobalValueForm");
   }
 

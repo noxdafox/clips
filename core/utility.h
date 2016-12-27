@@ -147,9 +147,9 @@ struct clipsBlock
 struct stringBuilder
   {
    Environment *sbEnv;
-   char *stringBuffer;
+   char *contents;
    size_t bufferReset;
-   size_t bufferPosition;
+   size_t length;
    size_t bufferMaximum;
   };
 

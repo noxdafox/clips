@@ -939,7 +939,7 @@ bool RouteCommand(
       rtn_struct(theEnv,expr,top);
       if (printResult)
         {
-         PrintDataObject(theEnv,STDOUT,&returnValue);
+         PrintUDFValue(theEnv,STDOUT,&returnValue);
          PrintRouter(theEnv,STDOUT,"\n");
         }
       return true;
@@ -1043,7 +1043,7 @@ bool RouteCommand(
 
    if ((returnValue.header->type != VOID_TYPE) && printResult)
      {
-      PrintDataObject(theEnv,STDOUT,&returnValue);
+      PrintUDFValue(theEnv,STDOUT,&returnValue);
       PrintRouter(theEnv,STDOUT,"\n");
      }
 

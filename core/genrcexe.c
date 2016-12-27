@@ -714,7 +714,7 @@ static Defclass *DetermineRestrictionClass(
       SetEvaluationError(theEnv,true);
       PrintErrorID(theEnv,"GENRCEXE",3,false);
       PrintRouter(theEnv,WERROR,"Unable to determine class of ");
-      PrintDataObject(theEnv,WERROR,dobj);
+      PrintUDFValue(theEnv,WERROR,dobj);
       PrintRouter(theEnv,WERROR," in generic function ");
       PrintRouter(theEnv,WERROR,DefgenericName(DefgenericData(theEnv)->CurrentGeneric));
       PrintRouter(theEnv,WERROR,".\n");

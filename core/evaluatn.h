@@ -128,7 +128,8 @@ struct evaluationData
    void                           SetHaltExecution(Environment *,bool);
    bool                           GetHaltExecution(Environment *);
    void                           ReturnValues(Environment *,UDFValue *,bool);
-   void                           PrintDataObject(Environment *,const char *,UDFValue *);
+   void                           PrintUDFValue(Environment *,const char *,UDFValue *);
+   void                           PrintCLIPSValue(Environment *,const char *,CLIPSValue *);
    void                           SetMultifieldErrorValue(Environment *,UDFValue *);
    void                           ValueInstall(Environment *,UDFValue *);
    void                           ValueDeinstall(Environment *,UDFValue *);
