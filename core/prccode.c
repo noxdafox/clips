@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.50  11/01/16             */
+   /*            CLIPS Version 6.40  11/01/16             */
    /*                                                     */
    /*                                                     */
    /*******************************************************/
@@ -45,16 +45,16 @@
 /*      6.40: Added Env prefix to GetEvaluationError and      */
 /*            SetEvaluationError functions.                   */
 /*                                                            */
-/*            Pragma once and other inclusion changes.       */
-/*                                                           */
-/*            Added support for booleans with <stdbool.h>.   */
-/*                                                           */
-/*            Removed use of void pointers for specific      */
-/*            data structures.                               */
-/*                                                           */
-/*            UDF redesign.                                  */
-/*                                                           */
-/*      6.50: Generic error message no longer printed when    */
+/*            Pragma once and other inclusion changes.        */
+/*                                                            */
+/*            Added support for booleans with <stdbool.h>.    */
+/*                                                            */
+/*            Removed use of void pointers for specific       */
+/*            data structures.                                */
+/*                                                            */
+/*            UDF redesign.                                   */
+/*                                                            */
+/*            Generic error message no longer printed when    */
 /*            an alternate variable handling function         */
 /*            generates an error.                             */
 /*                                                            */

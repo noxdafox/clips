@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.50  10/18/16             */
+   /*            CLIPS Version 6.40  10/18/16             */
    /*                                                     */
    /*               STRING_TYPE FUNCTIONS MODULE               */
    /*******************************************************/
@@ -67,7 +67,7 @@
 /*                                                           */
 /*            Eval support for run time and bload only.      */
 /*                                                           */
-/*      6.50: The eval function can now access any local     */
+/*            The eval function can now access any local     */
 /*            variables that have been defined.              */
 /*                                                           */
 /*************************************************************/
