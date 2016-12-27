@@ -78,6 +78,7 @@
 #include "bload.h"
 #include "bsave.h"
 #endif
+#include "commline.h"
 #include "cstrcpsr.h"
 #include "envrnmnt.h"
 #include "extnfunc.h"
@@ -259,7 +260,8 @@ void LoadCommand(
       return;
      }
 
-   SetPrintWhileLoading(theEnv,true);
+   if (CommandLineData(theEnv)->EvaluatingTopLevelCommand)
+     { SetPrintWhileLoading(theEnv,true); }
 
    if ((rv = Load(theEnv,theFileName)) == 0)
      {
@@ -269,7 +271,8 @@ void LoadCommand(
       return;
      }
 
-   SetPrintWhileLoading(theEnv,false);
+   if (CommandLineData(theEnv)->EvaluatingTopLevelCommand)
+     { SetPrintWhileLoading(theEnv,false); }
 
    if (rv == -1) returnValue->lexemeValue = FalseSymbol(theEnv);
    else returnValue->lexemeValue = TrueSymbol(theEnv);

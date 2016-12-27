@@ -798,7 +798,7 @@ bool ValidSlotValue(
                               (val->range != 1))
      {
       PrintErrorID(theEnv,"INSFUN",7,false);
-      PrintDataObject(theEnv,WERROR,val);
+      PrintUDFValue(theEnv,WERROR,val);
       PrintRouter(theEnv,WERROR," illegal for single-field ");
       PrintSlot(theEnv,WERROR,sd,ins,theCommand);
       PrintRouter(theEnv,WERROR,".\n");
@@ -824,7 +824,7 @@ bool ValidSlotValue(
            PrintAtom(theEnv,WERROR,val->multifieldValue->contents[val->begin].header->type,
                                    val->multifieldValue->contents[val->begin].value);
          else
-           PrintDataObject(theEnv,WERROR,val);
+           PrintUDFValue(theEnv,WERROR,val);
          PrintRouter(theEnv,WERROR," for ");
          PrintSlot(theEnv,WERROR,sd,ins,theCommand);
          ConstraintViolationErrorMessage(theEnv,NULL,NULL,0,0,NULL,0,

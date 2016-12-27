@@ -119,7 +119,7 @@ struct routerData
    void                           InitializeDefaultRouters(Environment *);
    void                           PrintRouter(Environment *,const char *,const char *);
    int                            GetcRouter(Environment *,const char *);
-   int                            UngetcRouter(Environment *,int,const char *);
+   int                            UngetcRouter(Environment *,const char *,int);
    void                           ExitRouter(Environment *,int);
    void                           AbortExit(Environment *);
    bool                           AddRouter(Environment *,const char *,int,

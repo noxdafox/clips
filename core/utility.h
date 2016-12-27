@@ -147,9 +147,9 @@ struct clipsBlock
 struct stringBuilder
   {
    Environment *sbEnv;
-   char *stringBuffer;
+   char *contents;
    size_t bufferReset;
-   size_t bufferPosition;
+   size_t length;
    size_t bufferMaximum;
   };
 
@@ -229,6 +229,7 @@ struct utilityData
    StringBuilder                 *CreateStringBuilder(Environment *,size_t);
    void                           StringBuilderDispose(StringBuilder *);
    void                           StringBuilderAppend(StringBuilder *,const char *);
+   void                           StringBuilderAddChar(StringBuilder *,int);
    void                           StringBuilderReset(StringBuilder *);
    char                          *StringBuilderCopy(StringBuilder *);
    void                          *GetPeriodicFunctionContext(Environment *,const char *);

@@ -118,10 +118,6 @@ void InitializeConstructData(
   Environment *theEnv)
   {
    AllocateEnvironmentData(theEnv,CONSTRUCT_DATA,sizeof(struct constructData),DeallocateConstructData);
-
-#if (! RUN_TIME) && (! BLOAD_ONLY)
-   ConstructData(theEnv)->WatchCompilations = true;
-#endif
   }
 
 /****************************************************/

@@ -230,7 +230,7 @@ static int UngetcDribble(
    /*=============================================*/
 
    DeactivateRouter(theEnv,"dribble");
-   rv = UngetcRouter(theEnv,ch,logicalName);
+   rv = UngetcRouter(theEnv,logicalName,ch);
    ActivateRouter(theEnv,"dribble");
 
    /*==========================================*/
@@ -519,7 +519,7 @@ static int UngetcBatch(
    if (FileCommandData(theEnv)->BatchType == FILE_BATCH)
      { return(ungetc(ch,FileCommandData(theEnv)->BatchFileSource)); }
 
-   return UngetcRouter(theEnv,ch,FileCommandData(theEnv)->BatchLogicalSource);
+   return UngetcRouter(theEnv,FileCommandData(theEnv)->BatchLogicalSource,ch);
   }
 
 /*************************************************/

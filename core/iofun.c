@@ -307,7 +307,7 @@ static void PrintDriver(
            break;
 
          default:
-           PrintDataObject(theEnv,logicalName,&theArg);
+           PrintUDFValue(theEnv,logicalName,&theArg);
            break;
         }
      }
