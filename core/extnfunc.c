@@ -964,6 +964,18 @@ void UDFInvalidArgumentMessage(
                       context->lastPosition-1,typeString);
   }
 
+/******************/
+/* UDFThrowError: */
+/******************/
+void UDFThrowError(
+  UDFContext *context)
+  {
+   Environment *theEnv = context->environment;
+
+   SetHaltExecution(theEnv,true);
+   SetEvaluationError(theEnv,true);
+  }
+
 /***************************/
 /* UDFContextFunctionName: */
 /***************************/

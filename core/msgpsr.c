@@ -629,7 +629,7 @@ static SlotDescriptor *CheckSlotReference(
    sd = theDefclass->instanceTemplate[slotIndex];
    if ((sd->publicVisibility == 0) && (sd->cls != theDefclass))
      {
-      SlotVisibilityViolationError(theEnv,sd,theDefclass,false);
+      SlotVisibilityViolationError(theEnv,sd,theDefclass,true);
       return NULL;
      }
    if (! writeFlag)

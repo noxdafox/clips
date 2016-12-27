@@ -820,7 +820,7 @@ Defmodule *PopFocus(
 /************************************************************/
 /* GetNextFocus: Returns the next focus on the focus stack. */
 /************************************************************/
-struct focus *GetNextFocus( // TBD Add to API when EnvFocus and not Focus is available
+struct focus *GetNextFocus( // TBD Add to API
   Environment *theEnv,
   struct focus *theFocus)
   {

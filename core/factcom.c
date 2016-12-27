@@ -522,8 +522,7 @@ void FactsCommand(
       if (start < 0)
         {
          ExpectedTypeError1(theEnv,"facts",1,"symbol or positive number");
-         SetHaltExecution(theEnv,true);
-         SetEvaluationError(theEnv,true);
+         UDFThrowError(context);
          return;
         }
      }
@@ -535,8 +534,7 @@ void FactsCommand(
    else
      {
       UDFInvalidArgumentMessage(context,"symbol or positive number");
-      SetHaltExecution(theEnv,true);
-      SetEvaluationError(theEnv,true);
+      UDFThrowError(context);
       return;
      }
 
@@ -689,8 +687,7 @@ static long long GetFactsArgument(
    if (factIndex < 0)
      {
       UDFInvalidArgumentMessage(context,"positive number");
-      SetHaltExecution(context->environment,true);
-      SetEvaluationError(context->environment,true);
+      UDFThrowError(context);
       return(INVALID);
      }
 

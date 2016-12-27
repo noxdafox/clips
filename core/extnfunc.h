@@ -137,6 +137,7 @@ struct FunctionHash
    void                           PrintTypesString(Environment *,const char *,unsigned,bool);
    bool                           UDFFirstArgument(UDFContext *,unsigned,UDFValue *);
    bool                           UDFNextArgument(UDFContext *,unsigned,UDFValue *);
+   void                           UDFThrowError(UDFContext *);
 
 #define UDFHasNextArgument(context) (context->lastArg != NULL)
 

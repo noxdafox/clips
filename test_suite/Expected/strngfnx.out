@@ -154,7 +154,7 @@ CLIPS> (eval "(+ 3 (* 4 5))")             ; 10.4.5
 23
 CLIPS> (eval "(facts)")                   ; 10.4.5
 CLIPS> (eval "?x")                        ; 10.4.5
-[STRNGFUN2] Some variables could not be accessed by the eval function.
+[EVALUATN1] Variable x is unbound
 FALSE
 CLIPS> (eval "(defrule foo =>)")          ; 10.4.5
 

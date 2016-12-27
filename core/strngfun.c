@@ -67,6 +67,9 @@
 /*                                                           */
 /*            Eval support for run time and bload only.      */
 /*                                                           */
+/*            The eval function can now access any local     */
+/*            variables that have been defined.              */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -803,26 +806,6 @@ bool Eval(
      {
       PrintErrorID(theEnv,"MISCFUN",1,false);
       PrintRouter(theEnv,WERROR,"expand$ must be used in the argument list of a function call.\n");
-      SetEvaluationError(theEnv,true);
-      CloseStringSource(theEnv,logicalNameBuffer);
-      CLIPSBlockEnd(theEnv,&gcBlock,NULL);
-      if (returnValue != NULL)
-        { returnValue->lexemeValue = FalseSymbol(theEnv); }
-      ReturnExpression(theEnv,top);
-      depth--;
-      ConstructData(theEnv)->DanglingConstructs = danglingConstructs;
-      return false;
-     }
-
-   /*=======================================*/
-   /* The expression to be evaluated cannot */
-   /* contain any local variables.          */
-   /*=======================================*/
-
-   if (ExpressionContainsVariables(top,false))
-     {
-      PrintErrorID(theEnv,"STRNGFUN",2,false);
-      PrintRouter(theEnv,WERROR,"Some variables could not be accessed by the eval function.\n");
       SetEvaluationError(theEnv,true);
       CloseStringSource(theEnv,logicalNameBuffer);
       CLIPSBlockEnd(theEnv,&gcBlock,NULL);

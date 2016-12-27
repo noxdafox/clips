@@ -177,7 +177,7 @@ CLIPS> (reset)                            ; DR0466
 CLIPS> (assert (fact 1))                  ; DR0466
 <Fact-1>
 CLIPS> (run)                              ; DR0466
-[STRNGFUN2] Some variables could not be accessed by the eval function.
+[EVALUATN1] Variable f1 is unbound
 [PRCCODE4] Execution halted during the actions of defrule a.
 CLIPS> (facts)                            ; DR0466
 f-1     (fact 1)

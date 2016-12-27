@@ -45,15 +45,19 @@
 /*      6.40: Added Env prefix to GetEvaluationError and      */
 /*            SetEvaluationError functions.                   */
 /*                                                            */
-/*            Pragma once and other inclusion changes.       */
-/*                                                           */
-/*            Added support for booleans with <stdbool.h>.   */
-/*                                                           */
-/*            Removed use of void pointers for specific      */
-/*            data structures.                               */
-/*                                                           */
-/*            UDF redesign.                                  */
-/*                                                           */
+/*            Pragma once and other inclusion changes.        */
+/*                                                            */
+/*            Added support for booleans with <stdbool.h>.    */
+/*                                                            */
+/*            Removed use of void pointers for specific       */
+/*            data structures.                                */
+/*                                                            */
+/*            UDF redesign.                                   */
+/*                                                            */
+/*            Generic error message no longer printed when    */
+/*            an alternate variable handling function         */
+/*            generates an error.                             */
+/*                                                            */
 /**************************************************************/
 
 /* =========================================
@@ -497,6 +501,7 @@ int ReplaceProcVars(
    Expression *arg_lvl,*altvarexp;
    CLIPSLexeme *bindName;
    PACKED_PROC_VAR pvar;
+   int errorCode;
 
    while (actions != NULL)
      {
@@ -526,14 +531,23 @@ int ReplaceProcVars(
             /* Check to see if the variable has a special access function,    */
             /* such as direct slot reference or a rule RHS pattern reference. */
             /*================================================================*/
-            if ((altvarfunc != NULL) ? ((*altvarfunc)(theEnv,actions,specdata) != 1) : true)
+
+            if (altvarfunc == NULL)
+              { errorCode = 0; }
+            else
+              { errorCode = (*altvarfunc)(theEnv,actions,specdata); }
+
+            if (errorCode != 1)
               {
-               PrintErrorID(theEnv,"PRCCODE",3,true);
-               PrintRouter(theEnv,WERROR,"Undefined variable ");
-               PrintRouter(theEnv,WERROR,bindName->contents);
-               PrintRouter(theEnv,WERROR," referenced in ");
-               PrintRouter(theEnv,WERROR,bodytype);
-               PrintRouter(theEnv,WERROR,".\n");
+               if (errorCode == 0)
+                 {
+                  PrintErrorID(theEnv,"PRCCODE",3,true);
+                  PrintRouter(theEnv,WERROR,"Undefined variable ");
+                  PrintRouter(theEnv,WERROR,bindName->contents);
+                  PrintRouter(theEnv,WERROR," referenced in ");
+                  PrintRouter(theEnv,WERROR,bodytype);
+                  PrintRouter(theEnv,WERROR,".\n");
+                 }
                return 1;
               }
            }
