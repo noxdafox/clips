@@ -79,6 +79,9 @@
 /*                                                           */
 /*            Removed initial-fact support.                  */
 /*                                                           */
+/*            Watch facts for modify command only prints     */
+/*            changed slots.                                 */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -297,13 +300,14 @@ static void DeallocateFactData(
 void PrintFactWithIdentifier(
   Environment *theEnv,
   const char *logicalName,
-  Fact *factPtr)
+  Fact *factPtr,
+  const char *changeMap)
   {
    char printSpace[20];
 
    gensprintf(printSpace,"f-%-5lld ",factPtr->factIndex);
    PrintRouter(theEnv,logicalName,printSpace);
-   PrintFact(theEnv,logicalName,factPtr,false,false);
+   PrintFact(theEnv,logicalName,factPtr,false,false,changeMap);
   }
 
 /****************************************************/
@@ -432,7 +436,8 @@ void PrintFact(
   const char *logicalName,
   Fact *factPtr,
   bool separateLines,
-  bool ignoreDefaults)
+  bool ignoreDefaults,
+  const char *changeMap)
   {
    Multifield *theMultifield;
 
@@ -442,7 +447,7 @@ void PrintFact(
 
    if (factPtr->whichDeftemplate->implied == false)
      {
-      PrintTemplateFact(theEnv,logicalName,factPtr,separateLines,ignoreDefaults);
+      PrintTemplateFact(theEnv,logicalName,factPtr,separateLines,ignoreDefaults,changeMap);
       return;
      }
 
@@ -483,7 +488,8 @@ void MatchFactFunction(
 /**********************************************/
 bool RetractDriver(
   Environment *theEnv,
-  Fact *theFact)
+  Fact *theFact,
+  char *changeMap)
   {
    Deftemplate *theTemplate = theFact->whichDeftemplate;
    struct callFunctionItemWithArg *theRetractFunction;
@@ -538,7 +544,7 @@ bool RetractDriver(
    if (theFact->whichDeftemplate->watch)
      {
       PrintRouter(theEnv,WTRACE,"<== ");
-      PrintFactWithIdentifier(theEnv,WTRACE,theFact);
+      PrintFactWithIdentifier(theEnv,WTRACE,theFact,changeMap);
       PrintRouter(theEnv,WTRACE,"\n");
      }
 #endif
@@ -676,7 +682,7 @@ bool Retract(
   Environment *theEnv,
   Fact *theFact)
   {
-   return RetractDriver(theEnv,theFact);
+   return RetractDriver(theEnv,theFact,NULL);
   }
 
 /*******************************************************************/
@@ -697,6 +703,7 @@ static void RemoveGarbageFacts(
    while (factPtr != NULL)
      {
       nextPtr = factPtr->nextFact;
+        
       if (factPtr->factHeader.busyCount == 0)
         {
          Multifield *theSegment;
@@ -722,7 +729,8 @@ static void RemoveGarbageFacts(
 /********************************************************/
 Fact *AssertDriver(
   Environment *theEnv,
-  Fact *theFact)
+  Fact *theFact,
+  char *changeMap)
   {
    unsigned long hashValue;
    unsigned long length, i;
@@ -840,7 +848,7 @@ Fact *AssertDriver(
    if (theFact->whichDeftemplate->watch)
      {
       PrintRouter(theEnv,WTRACE,"==> ");
-      PrintFactWithIdentifier(theEnv,WTRACE,theFact);
+      PrintFactWithIdentifier(theEnv,WTRACE,theFact,changeMap);
       PrintRouter(theEnv,WTRACE,"\n");
      }
 #endif
@@ -914,7 +922,7 @@ Fact *Assert(
   Environment *theEnv,
   Fact *theFact)
   {
-   return AssertDriver(theEnv,theFact);
+   return AssertDriver(theEnv,theFact,NULL);
   }
 
 /**************************************/
@@ -1515,7 +1523,7 @@ void FactPPForm(
    Environment *theEnv = theFact->whichDeftemplate->header.env;
    
    OpenStringDestination(theEnv,"FactPPForm",buffer,bufferLength);
-   PrintFactWithIdentifier(theEnv,"FactPPForm",theFact);
+   PrintFactWithIdentifier(theEnv,"FactPPForm",theFact,NULL);
    CloseStringDestination(theEnv,"FactPPForm");
   }
 

@@ -43,6 +43,9 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Watch facts for modify command only prints     */
+/*            changed slots.                                 */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -722,7 +725,7 @@ static void PatternNetErrorMessage(
    PrintErrorID(theEnv,"FACTMCH",1,true);
    PrintRouter(theEnv,WERROR,"This error occurred in the fact pattern network\n");
    PrintRouter(theEnv,WERROR,"   Currently active fact: ");
-   PrintFact(theEnv,WERROR,FactData(theEnv)->CurrentPatternFact,false,false);
+   PrintFact(theEnv,WERROR,FactData(theEnv)->CurrentPatternFact,false,false,NULL);
    PrintRouter(theEnv,WERROR,"\n");
 
    /*==============================================*/

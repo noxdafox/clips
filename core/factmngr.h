@@ -66,6 +66,9 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Watch facts for modify command only prints     */
+/*            changed slots.                                 */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_factmngr
@@ -163,17 +166,17 @@ struct factsData
 #define FactData(theEnv) ((struct factsData *) GetEnvironmentData(theEnv,FACTS_DATA))
 
    Fact                          *Assert(Environment *,Fact *);
-   Fact                          *AssertDriver(Environment *,Fact *);
+   Fact                          *AssertDriver(Environment *,Fact *,char *);
    Fact                          *AssertString(Environment *,const char *);
    Fact                          *CreateFact(Environment *,Deftemplate *);
    void                           DecrementFactCount(Environment *,Fact *);
    long long                      FactIndex(Environment *,Fact *);
    bool                           GetFactSlot(Environment *,Fact *,const char *,CLIPSValue *);
-   void                           PrintFactWithIdentifier(Environment *,const char *,Fact *);
-   void                           PrintFact(Environment *,const char *,Fact *,bool,bool);
+   void                           PrintFactWithIdentifier(Environment *,const char *,Fact *,const char *);
+   void                           PrintFact(Environment *,const char *,Fact *,bool,bool,const char *);
    void                           PrintFactIdentifierInLongForm(Environment *,const char *,Fact *);
    bool                           Retract(Environment *,Fact *);
-   bool                           RetractDriver(Environment *,Fact *);
+   bool                           RetractDriver(Environment *,Fact *,char *);
    void                           RemoveAllFacts(Environment *);
    Fact                          *CreateFactBySize(Environment *,unsigned);
    void                           FactInstall(Environment *,Fact *);

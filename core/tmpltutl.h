@@ -43,6 +43,9 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
+/*            Watch facts for modify command only prints     */
+/*            changed slots.                                 */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_tmpltutl
@@ -64,7 +67,7 @@
    bool                           CheckRHSSlotTypes(Environment *,struct expr *,struct templateSlot *,const char *);
    struct templateSlot           *GetNthSlot(Deftemplate *,int);
    int                            FindSlotPosition(Deftemplate *,CLIPSLexeme *);
-   void                           PrintTemplateFact(Environment *,const char *,Fact *,bool,bool);
+   void                           PrintTemplateFact(Environment *,const char *,Fact *,bool,bool,const char *);
    void                           UpdateDeftemplateScope(Environment *);
    struct templateSlot           *FindSlot(Deftemplate *,CLIPSLexeme *,short *);
    Deftemplate                   *CreateImpliedDeftemplate(Environment *,CLIPSLexeme *,bool);

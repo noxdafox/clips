@@ -77,6 +77,9 @@
 /*                                                           */
 /*            Eval support for run time and bload only.      */
 /*                                                           */
+/*            Watch facts for modify command only prints     */
+/*            changed slots.                                 */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -205,6 +208,7 @@ static void DuplicateModifyCommand(
    struct templateSlot *slotPtr;
    int i, position;
    bool found;
+   char *changeMap;
 
    /*===================================================*/
    /* Set the default return value to the symbol FALSE. */
@@ -283,6 +287,20 @@ static void DuplicateModifyCommand(
    templatePtr = oldFact->whichDeftemplate;
 
    if (templatePtr->implied) return;
+   
+   /*========================================================*/
+   /* Create a data object array to hold the updated values. */
+   /*========================================================*/
+   
+   if ((templatePtr->numberOfSlots == 0) || (! retractIt))
+     {
+      changeMap = NULL;
+     }
+   else
+     {
+      changeMap = (char *) gm2(theEnv,CountToBitMapSize(templatePtr->numberOfSlots));
+      ClearBitString((void *) changeMap,CountToBitMapSize(templatePtr->numberOfSlots));
+     }
 
    /*================================================================*/
    /* Duplicate the values from the old fact (skipping multifields). */
@@ -340,6 +358,8 @@ static void DuplicateModifyCommand(
                                           templatePtr->header.name->contents,true);
             SetEvaluationError(theEnv,true);
             ReturnFact(theEnv,newFact);
+            if (changeMap != NULL)
+              { rm(theEnv,(void *) changeMap,CountToBitMapSize(templatePtr->numberOfSlots)); }
             return;
            }
         }
@@ -361,6 +381,8 @@ static void DuplicateModifyCommand(
            {
             MultiIntoSingleFieldSlotError(theEnv,GetNthSlot(templatePtr,position),templatePtr);
             ReturnFact(theEnv,newFact);
+            if (changeMap != NULL)
+              { rm(theEnv,(void *) changeMap,CountToBitMapSize(templatePtr->numberOfSlots)); }
             return;
            }
 
@@ -383,6 +405,8 @@ static void DuplicateModifyCommand(
            {
             ReturnFact(theEnv,newFact);
             MultiIntoSingleFieldSlotError(theEnv,GetNthSlot(templatePtr,position),templatePtr);
+            if (changeMap != NULL)
+              { rm(theEnv,(void *) changeMap,CountToBitMapSize(templatePtr->numberOfSlots)); }
             return;
            }
 
@@ -391,6 +415,11 @@ static void DuplicateModifyCommand(
          /*=============================*/
 
          newFact->theProposition.contents[position].value = computeResult.value;
+         if (oldFact->theProposition.contents[position].value != computeResult.value)
+           {
+            if (changeMap != NULL)
+              { SetBitMap(changeMap,position); }
+           }
         }
 
       /*=================================*/
@@ -413,6 +442,12 @@ static void DuplicateModifyCommand(
          /*=============================*/
 
          newFact->theProposition.contents[position].value = computeResult.value;
+         if ((oldFact->theProposition.contents[position].header->type != computeResult.header->type) ||
+             (! MultifieldsEqual((Multifield *) oldFact->theProposition.contents[position].value,(Multifield *) computeResult.value)))
+           {
+            if (changeMap != NULL)
+              { SetBitMap(changeMap,position); }
+           }
         }
 
       testPtr = testPtr->nextArg;
@@ -484,8 +519,8 @@ static void DuplicateModifyCommand(
    /* Perform the duplicate/modify action. */
    /*======================================*/
 
-   if (retractIt) Retract(theEnv,oldFact);
-   theFact = Assert(theEnv,newFact);
+   if (retractIt) RetractDriver(theEnv,oldFact,changeMap);
+   theFact = AssertDriver(theEnv,newFact,changeMap);
 
    /*========================================*/
    /* The asserted fact is the return value. */
@@ -497,6 +532,9 @@ static void DuplicateModifyCommand(
       returnValue->range = theFact->theProposition.length;
       returnValue->value = theFact;
      }
+     
+   if (changeMap != NULL)
+     { rm(theEnv,(void *) changeMap,CountToBitMapSize(templatePtr->numberOfSlots)); }
 
    return;
   }

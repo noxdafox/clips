@@ -691,7 +691,7 @@ void EvalFunction(
    CLIPSValue cv;
 
    /*==================================================*/
-   /* The argument should be of type SYMBOL_TYPE or STRING_TYPE. */
+   /* The argument should be of type SYMBOL or STRING. */
    /*==================================================*/
 
    if (! UDFFirstArgument(context,LEXEME_BITS,&theArg))

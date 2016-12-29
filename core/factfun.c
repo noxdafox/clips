@@ -79,6 +79,9 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Watch facts for modify command only prints     */
+/*            changed slots.                                 */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -578,7 +581,7 @@ void PPFact(
 
    if (theFact->garbage) return;
 
-   PrintFact(theEnv,logicalName,theFact,true,ignoreDefaults);
+   PrintFact(theEnv,logicalName,theFact,true,ignoreDefaults,NULL);
 
    PrintRouter(theEnv,logicalName,"\n");
   }

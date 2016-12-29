@@ -64,6 +64,9 @@
 /*                                                           */
 /*            Eval support for run time and bload only.      */
 /*                                                           */
+/*            Watch facts for modify command only prints     */
+/*            changed slots.                                 */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -303,13 +306,21 @@ void RetractCommand(
       if (! UDFNextArgument(context,INTEGER_BIT | FACT_ADDRESS_BIT | SYMBOL_BIT,&theArg))
         { return; }
 
+      /*======================================*/
+      /* If the argument evaluates to a fact  */
+      /* address, we can directly retract it. */
+      /*======================================*/
+
+      if (CVIsType(&theArg,FACT_ADDRESS_BIT))
+        { Retract(theEnv,(Fact *) theArg.value); }
+
       /*===============================================*/
       /* If the argument evaluates to an integer, then */
       /* it's assumed to be the fact index of the fact */
       /* to be retracted.                              */
       /*===============================================*/
 
-      if (CVIsType(&theArg,INTEGER_BIT))
+      else if (CVIsType(&theArg,INTEGER_BIT))
         {
          /*==========================================*/
          /* A fact index must be a positive integer. */
@@ -342,14 +353,6 @@ void RetractCommand(
             CantFindItemErrorMessage(theEnv,"fact",tempBuffer);
            }
         }
-
-      /*===============================================*/
-      /* Otherwise if the argument evaluates to a fact */
-      /* address, we can directly retract it.          */
-      /*===============================================*/
-
-      else if (CVIsType(&theArg,FACT_ADDRESS_BIT))
-        { Retract(theEnv,theArg.factValue); }
 
       /*============================================*/
       /* Otherwise if the argument evaluates to the */
@@ -638,7 +641,7 @@ void Facts(
 
       if (factPtr->factIndex >= start)
         {
-         PrintFactWithIdentifier(theEnv,logicalName,factPtr);
+         PrintFactWithIdentifier(theEnv,logicalName,factPtr,NULL);
          PrintRouter(theEnv,logicalName,"\n");
          count++;
          if (max > 0) max--;
@@ -955,7 +958,7 @@ bool SaveFactsDriver(
 
       if (printFact)
         {
-         PrintFact(theEnv,(char *) filePtr,theFact,false,false);
+         PrintFact(theEnv,(char *) filePtr,theFact,false,false,NULL);
          PrintRouter(theEnv,(char *) filePtr,"\n");
         }
      }
