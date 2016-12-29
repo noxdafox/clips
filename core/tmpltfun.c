@@ -77,10 +77,10 @@
 /*                                                           */
 /*            Eval support for run time and bload only.      */
 /*                                                           */
-/*      6.50: Modify command preserves fact id and address.  */
-/*                                                           */
 /*            Watch facts for modify command only prints     */
 /*            changed slots.                                 */
+/*                                                           */
+/*      6.50: Modify command preserves fact id and address.  */
 /*                                                           */
 /*            Fact ?var:slot references in defrule actions.  */
 /*                                                           */
