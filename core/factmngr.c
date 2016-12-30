@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.50  12/30/16             */
+   /*            CLIPS Version 6.40  12/30/16             */
    /*                                                     */
    /*                 FACT MANAGER MODULE                 */
    /*******************************************************/
@@ -82,7 +82,7 @@
 /*            Watch facts for modify command only prints     */
 /*            changed slots.                                 */
 /*                                                           */
-/*      6.50: Modify command preserves fact id and address.  */
+/*            Modify command preserves fact id and address.  */
 /*                                                           */
 /*            Assert returns duplicate fact. FALSE is now    */
 /*            returned only if an error occurs.              */

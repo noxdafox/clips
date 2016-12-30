@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.50  11/01/16            */
+   /*             CLIPS Version 6.40  11/01/16            */
    /*                                                     */
    /*              FACTS MANAGER HEADER FILE              */
    /*******************************************************/
@@ -69,7 +69,7 @@
 /*            Watch facts for modify command only prints     */
 /*            changed slots.                                 */
 /*                                                           */
-/*      6.50: Modify command preserves fact id and address.  */
+/*            Modify command preserves fact id and address.  */
 /*                                                           */
 /*************************************************************/
 

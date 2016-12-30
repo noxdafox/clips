@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.50  11/01/16            */
+   /*             CLIPS Version 6.40  11/01/16            */
    /*                                                     */
    /*          DEFTEMPLATE FUNCTION HEADER FILE           */
    /*******************************************************/
@@ -68,7 +68,7 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
-/*      6.50: Fact ?var:slot references in defrule actions.  */
+/*            Modify command preserves fact id and address.  */
 /*                                                           */
 /*************************************************************/
 

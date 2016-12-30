@@ -6,7 +6,7 @@
 ;;;     This example selects an appropriate wine
 ;;;     to drink with a meal.
 ;;;
-;;;     CLIPS Version 6.0 Example
+;;;     CLIPS Version 6.4 Example
 ;;;
 ;;;     To execute, merely load, reset and run.
 ;;;======================================================

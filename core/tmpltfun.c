@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.50  12/30/16             */
+   /*            CLIPS Version 6.40  12/30/16             */
    /*                                                     */
    /*             DEFTEMPLATE FUNCTIONS MODULE            */
    /*******************************************************/
@@ -80,9 +80,7 @@
 /*            Watch facts for modify command only prints     */
 /*            changed slots.                                 */
 /*                                                           */
-/*      6.50: Modify command preserves fact id and address.  */
-/*                                                           */
-/*            Fact ?var:slot references in defrule actions.  */
+/*            Modify command preserves fact id and address.  */
 /*                                                           */
 /*            Assert returns duplicate fact. FALSE is now    */
 /*            returned only if an error occurs.              */
@@ -200,10 +198,10 @@ void ModifyCommand(
   UDFValue *returnValue)
   {
    long long factNum;
-   struct fact *oldFact;
+   Fact *oldFact;
    struct expr *testPtr;
    UDFValue computeResult;
-   struct deftemplate *templatePtr;
+   Deftemplate *templatePtr;
    struct templateSlot *slotPtr;
    int i, position, replacementCount = 0;
    bool found;
@@ -241,7 +239,7 @@ void ModifyCommand(
          return;
         }
 
-      oldFact = (struct fact *) GetNextFact(theEnv,NULL);
+      oldFact = GetNextFact(theEnv,NULL);
       while (oldFact != NULL)
         {
          if (oldFact->factIndex == factNum)
@@ -265,7 +263,7 @@ void ModifyCommand(
    /*==========================================*/
 
    else if (computeResult.header->type == FACT_ADDRESS_TYPE)
-     { oldFact = (struct fact *) computeResult.value; }
+     { oldFact = computeResult.factValue; }
 
    /*===========================================*/
    /* Otherwise, the first argument is invalid. */
@@ -333,7 +331,7 @@ void ModifyCommand(
          slotPtr = templatePtr->slotList;
          while (slotPtr != NULL)
            {
-            if (slotPtr->slotName == (CLIPSLexeme *) testPtr->value)
+            if (slotPtr->slotName == testPtr->lexemeValue)
               {
                found = true;
                slotPtr = NULL;
@@ -444,7 +442,7 @@ void ModifyCommand(
               { SetBitMap(changeMap,position); }
            }
          else
-           { ReturnMultifield(theEnv,(Multifield *) computeResult.value); }
+           { ReturnMultifield(theEnv,computeResult.multifieldValue); }
         }
 
       testPtr = testPtr->nextArg;
@@ -2104,7 +2102,7 @@ bool UpdateModifyDuplicate(
    functionArgs = top->argList;
    if (functionArgs->type == SF_VARIABLE)
      {
-      if (SearchParsedBindNames(theEnv,(CLIPSLexeme *) functionArgs->value) != 0)
+      if (SearchParsedBindNames(theEnv,functionArgs->lexemeValue) != 0)
         { return true; }
       templateName = FindTemplateForFactAddress(functionArgs->lexemeValue,
                                                 (struct lhsParseNode *) vTheLHS);
