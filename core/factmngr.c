@@ -719,6 +719,13 @@ static void RemoveGarbageFacts(
         
       if (factPtr->factHeader.busyCount == 0)
         {
+         Multifield *theSegment;
+         int i;
+         
+         theSegment = &factPtr->theProposition;
+         for (i = 0 ; i < (int) theSegment->length ; i++)
+           { AtomDeinstall(theEnv,theSegment->contents[i].header->type,theSegment->contents[i].value); }
+
          ReturnFact(theEnv,factPtr);
          if (lastPtr == NULL) FactData(theEnv)->GarbageFacts = nextPtr;
          else lastPtr->nextFact = nextPtr;
@@ -876,6 +883,15 @@ Fact *AssertDriver(
    /*=====================*/
 
    FactInstall(theEnv,theFact);
+
+   if (reuseIndex == 0)
+     {
+      Multifield *theSegment = &theFact->theProposition;
+      for (i = 0 ; i < (int) theSegment->length ; i++)
+        {
+         AtomInstall(theEnv,theSegment->contents[i].header->type,theSegment->contents[i].value);
+        }
+     }
 
    /*==========================================*/
    /* Execute the list of functions that are   */
@@ -1421,18 +1437,8 @@ void FactInstall(
   Environment *theEnv,
   Fact *newFact)
   {
-   Multifield *theSegment;
-   int i;
-
    FactData(theEnv)->NumberOfFacts++;
    newFact->whichDeftemplate->busyCount++;
-   theSegment = &newFact->theProposition;
-
-   for (i = 0 ; i < (int) theSegment->length ; i++)
-     {
-      AtomInstall(theEnv,theSegment->contents[i].header->type,theSegment->contents[i].value);
-     }
-
    newFact->factHeader.busyCount++;
   }
 
@@ -1444,18 +1450,8 @@ void FactDeinstall(
   Environment *theEnv,
   Fact *newFact)
   {
-   Multifield *theSegment;
-   int i;
-
    FactData(theEnv)->NumberOfFacts--;
-   theSegment = &newFact->theProposition;
    newFact->whichDeftemplate->busyCount--;
-
-   for (i = 0 ; i < (int) theSegment->length ; i++)
-     {
-      AtomDeinstall(theEnv,theSegment->contents[i].header->type,theSegment->contents[i].value);
-     }
-
    newFact->factHeader.busyCount--;
   }
 

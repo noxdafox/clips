@@ -537,9 +537,11 @@ Fact *ReplaceFact(
      {
       if (theValueArray[i].voidValue != VoidConstant(theEnv))
         {
+         AtomDeinstall(theEnv,oldFact->theProposition.contents[i].header->type,oldFact->theProposition.contents[i].value);
+         
          if (oldFact->theProposition.contents[i].header->type == MULTIFIELD_TYPE)
            {
-            Multifield *theSegment = (Multifield *) oldFact->theProposition.contents[i].value;
+            Multifield *theSegment = oldFact->theProposition.contents[i].multifieldValue;
             if (theSegment->busyCount == 0)
               { ReturnMultifield(theEnv,theSegment); }
             else
@@ -547,6 +549,8 @@ Fact *ReplaceFact(
            }
 
          oldFact->theProposition.contents[i].value = theValueArray[i].value;
+         
+         AtomInstall(theEnv,oldFact->theProposition.contents[i].header->type,oldFact->theProposition.contents[i].value);
         }
      }
 
