@@ -181,7 +181,7 @@ CLIPS> (facts)
 f-1     (foo 3 7)
 For a total of 1 fact.
 CLIPS> (str-assert "(foo ?*x* (+ 3 4))")
-FALSE
+<Fact-1>
 CLIPS> (clear) ;; CR0269
 CLIPS> (remove blah.txt)
 FALSE

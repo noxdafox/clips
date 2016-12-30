@@ -75,7 +75,7 @@
 (assert (r (yours this-is-a-word)))
 (modify 1 (mine "string"))         ; DR0517
 (modify 2 (yours wordie))          ; DR0517
-(modify 4 (yours is-mine))         ; DR0517
+(modify 2 (yours is-mine))         ; DR0517
 (unwatch facts)                    ; DR0517
 (clear)                            ; DR0519
 (deftemplate result                ; DR0519

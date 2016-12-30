@@ -458,10 +458,10 @@ CLIPS> (assert (something))
 <Fact-2>
 CLIPS> (run) 
 <== f-1     (foo (bar 1))
-==> f-3     (foo (bar TRUE))
+==> f-1     (foo (bar TRUE))
 CLIPS> (facts)
+f-1     (foo (bar TRUE))
 f-2     (something)
-f-3     (foo (bar TRUE))
 For a total of 2 facts.
 CLIPS> (unwatch all)
 CLIPS> (clear)
@@ -888,5 +888,29 @@ CLIPS>
 CLIPS> (agenda)
 CLIPS> (reset)
 CLIPS> (agenda)
+CLIPS> (clear) ; Fact duplication bug
+CLIPS> 
+(deftemplate pay
+   (slot code)
+   (slot processed))
+CLIPS> 
+(deffacts initial-data
+   (pay (code A) (processed 1))
+   (pay (code A) (processed 2)))
+CLIPS>    
+(defrule Secondary ""
+   ?p <- (pay (processed ~TRUE))
+   =>
+   (modify ?p (processed TRUE))) 
+CLIPS> (reset)
+CLIPS> (watch facts)
+CLIPS> (watch rules)
+CLIPS> (run)
+FIRE    1 Secondary: f-2
+<== f-2     (pay ... (processed 2))
+==> f-2     (pay ... (processed TRUE))
+FIRE    2 Secondary: f-1
+<== f-1     (pay ... (processed 1))
+CLIPS> (unwatch all)
 CLIPS> (clear)
 CLIPS> (dribble-off)

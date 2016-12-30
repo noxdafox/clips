@@ -129,7 +129,7 @@ CLIPS> (clear)                            ; get-fact-duplication and set-fact-du
 CLIPS> (assert (a))
 <Fact-1>
 CLIPS> (assert (a))
-FALSE
+<Fact-1>
 CLIPS> (facts)
 f-1     (a)
 For a total of 1 fact.
@@ -166,7 +166,7 @@ CLIPS> (clear)
 CLIPS> (assert (a))
 <Fact-1>
 CLIPS> (assert (a))
-FALSE
+<Fact-1>
 CLIPS> (facts)
 f-1     (a)
 For a total of 1 fact.

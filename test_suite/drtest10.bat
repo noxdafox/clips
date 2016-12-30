@@ -390,6 +390,10 @@
     )
    =>)
 (assert (C (x 1)))
+(clear) ; Memory leak
+(deftemplate TAG (multislot attributes)))
+(assert (TAG))
+(modify 1 (attributes (create$)))
 (clear) ; Load Crash
 
 (defrule bug

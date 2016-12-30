@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*             CLIPS Version 6.40  11/01/16            */
+   /*             CLIPS Version 6.40  12/30/16            */
    /*                                                     */
    /*                 FACT HASHING MODULE                 */
    /*******************************************************/
@@ -41,6 +41,11 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Modify command preserves fact id and address.  */
+/*                                                           */
+/*            Assert returns duplicate fact. FALSE is now    */
+/*            returned only if an error occurs.              */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_facthsh
@@ -63,7 +68,7 @@ struct factHashEntry
 
    void                           AddHashedFact(Environment *,Fact *,unsigned long);
    bool                           RemoveHashedFact(Environment *,Fact *);
-   unsigned long                  HandleFactDuplication(Environment *,Fact *,bool *);
+   unsigned long                  HandleFactDuplication(Environment *,Fact *,Fact **,long long);
    bool                           GetFactDuplication(Environment *);
    bool                           SetFactDuplication(Environment *,bool);
    void                           InitializeFactHashTable(Environment *);

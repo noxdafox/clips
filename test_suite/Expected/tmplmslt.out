@@ -132,39 +132,39 @@ CLIPS> (assert (foo (a) (b) (x 1) (y 2)))
 <Fact-1>
 CLIPS> (modify 1 (a 1))
 <== f-1     (foo (a) ...)
-==> f-2     (foo (a 1) ...)
-<Fact-2>
-CLIPS> (modify 2 (b 1))
-<== f-2     (foo ... (b) ...)
-==> f-3     (foo ... (b 1) ...)
-<Fact-3>
-CLIPS> (modify 3 (a 1 2))
-<== f-3     (foo (a 1) ...)
-==> f-4     (foo (a 1 2) ...)
-<Fact-4>
-CLIPS> (modify 4 (b 1 2 3))
-<== f-4     (foo ... (b 1) ...)
-==> f-5     (foo ... (b 1 2 3) ...)
-<Fact-5>
-CLIPS> (modify 5 (a))
-<== f-5     (foo (a 1 2) ...)
-==> f-6     (foo (a) ...)
-<Fact-6>
-CLIPS> (modify 6 (b 1))
-<== f-6     (foo ... (b 1 2 3) ...)
-==> f-7     (foo ... (b 1) ...)
-<Fact-7>
-CLIPS> (modify 7 (a 1) (b 1 2))
-<== f-7     (foo (a) ... (b 1) ...)
-==> f-8     (foo (a 1) ... (b 1 2) ...)
-<Fact-8>
-CLIPS> (modify 8 (a 1 2) (b))
-<== f-8     (foo (a 1) ... (b 1 2) ...)
-==> f-9     (foo (a 1 2) ... (b) ...)
-<Fact-9>
-CLIPS> (modify 9 (a) (b))
-<== f-9     (foo (a 1 2) ...)
-==> f-10    (foo (a) ...)
-<Fact-10>
+==> f-1     (foo (a 1) ...)
+<Fact-1>
+CLIPS> (modify 1 (b 1))
+<== f-1     (foo ... (b) ...)
+==> f-1     (foo ... (b 1) ...)
+<Fact-1>
+CLIPS> (modify 1 (a 1 2))
+<== f-1     (foo (a 1) ...)
+==> f-1     (foo (a 1 2) ...)
+<Fact-1>
+CLIPS> (modify 1 (b 1 2 3))
+<== f-1     (foo ... (b 1) ...)
+==> f-1     (foo ... (b 1 2 3) ...)
+<Fact-1>
+CLIPS> (modify 1 (a))
+<== f-1     (foo (a 1 2) ...)
+==> f-1     (foo (a) ...)
+<Fact-1>
+CLIPS> (modify 1 (b 1))
+<== f-1     (foo ... (b 1 2 3) ...)
+==> f-1     (foo ... (b 1) ...)
+<Fact-1>
+CLIPS> (modify 1 (a 1) (b 1 2))
+<== f-1     (foo (a) ... (b 1) ...)
+==> f-1     (foo (a 1) ... (b 1 2) ...)
+<Fact-1>
+CLIPS> (modify 1 (a 1 2) (b))
+<== f-1     (foo (a 1) ... (b 1 2) ...)
+==> f-1     (foo (a 1 2) ... (b) ...)
+<Fact-1>
+CLIPS> (modify 1 (a) (b))
+<== f-1     (foo (a 1 2) ...)
+==> f-1     (foo (a) ...)
+<Fact-1>
 CLIPS> (unwatch facts)
 CLIPS> (dribble-off)

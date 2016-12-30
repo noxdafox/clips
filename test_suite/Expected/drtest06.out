@@ -115,17 +115,15 @@ CLIPS> (assert (r (yours this-is-a-word)))
 ==> f-2     (r (mine nil) (yours this-is-a-word))
 <Fact-2>
 CLIPS> (modify 1 (mine "string"))         ; DR0517
-<== f-1     (r ...)
-==> f-3     (r ...)
-<Fact-3>
+<Fact-1>
 CLIPS> (modify 2 (yours wordie))          ; DR0517
 <== f-2     (r ... (yours this-is-a-word))
-==> f-4     (r ... (yours wordie))
-<Fact-4>
-CLIPS> (modify 4 (yours is-mine))         ; DR0517
-<== f-4     (r ... (yours wordie))
-==> f-5     (r ... (yours is-mine))
-<Fact-5>
+==> f-2     (r ... (yours wordie))
+<Fact-2>
+CLIPS> (modify 2 (yours is-mine))         ; DR0517
+<== f-2     (r ... (yours wordie))
+==> f-2     (r ... (yours is-mine))
+<Fact-2>
 CLIPS> (unwatch facts)                    ; DR0517
 CLIPS> (clear)                            ; DR0519
 CLIPS> (deftemplate result                ; DR0519

@@ -141,7 +141,7 @@ CLIPS> (reset)
 CLIPS> (run)
 (Q R S) D (T A B) ()
 CLIPS> (facts)
-f-2     (set (members Q R S D T A B))
+f-1     (set (members Q R S D T A B))
 For a total of 1 fact.
 CLIPS> (clear) ;; Case 12
 CLIPS> 
@@ -165,7 +165,7 @@ CLIPS> (run)
 (Q R S) D (T A B) ()
 (Q R) D (A B) (S)
 CLIPS> (facts)
-f-2     (set (m1 Q R S D T A B) (m2 Q R D A B S))
+f-1     (set (m1 Q R S D T A B) (m2 Q R D A B S))
 For a total of 1 fact.
 CLIPS> (clear) ;; Case 13
 CLIPS> 
@@ -184,7 +184,7 @@ CLIPS> (reset)
 CLIPS> (run)
 D () (S)
 CLIPS> (facts)
-f-2     (set (m2 D S))
+f-1     (set (m2 D S))
 For a total of 1 fact.
 CLIPS> (clear) ;; Case 14
 CLIPS> (defglobal ?*x* = 0)
@@ -618,8 +618,8 @@ CLIPS>
 CLIPS> (reset)
 CLIPS> (run)
 CLIPS> (facts)
-f-2     (factoid (source input) (status normal) (processed yes))
-f-3     (factoid (source output) (status normal) (processed yes))
+f-1     (factoid (source input) (status normal) (processed yes))
+f-2     (factoid (source output) (status normal) (processed yes))
 For a total of 2 facts.
 CLIPS> (clear)
 CLIPS> (dribble-off)

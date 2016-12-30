@@ -52,6 +52,16 @@ CLIPS> (bar 1 2)
 CLIPS> (bar 1 2 3)
 
 [EXPRNPSR3] Missing function declaration for bar.
+CLIPS> (> (expand$ (create$ 3)))
+[ARGACCES4] Function > expected at least 2 argument(s)
+FALSE
+CLIPS> (> (expand$ (create$ 4 3)))
+TRUE
+CLIPS> (> (expand$ (create$ 4)) (expand$ (create$ 3)))
+TRUE
+CLIPS> (> (expand$ (create$ 3)) (expand$ (create$)))
+[ARGACCES4] Function > expected at least 2 argument(s)
+FALSE
 CLIPS> (set-sequence-operator-recognition TRUE)
 FALSE
 CLIPS> (batch "seqop2.bat")
@@ -99,6 +109,16 @@ Foo arguments: 1 2
 CLIPS> (bar 1 2 3)
 [ARGACCES4] Function foo expected exactly 2 argument(s)
 [PRCCODE4] Execution halted during the actions of deffunction bar.
+FALSE
+CLIPS> (> (expand$ (create$ 3)))
+[ARGACCES4] Function > expected at least 2 argument(s)
+FALSE
+CLIPS> (> (expand$ (create$ 4 3)))
+TRUE
+CLIPS> (> (expand$ (create$ 4)) (expand$ (create$ 3)))
+TRUE
+CLIPS> (> (expand$ (create$ 3)) (expand$ (create$)))
+[ARGACCES4] Function > expected at least 2 argument(s)
 FALSE
 CLIPS> (load seqop.clp)
 %$#@&&**!~&

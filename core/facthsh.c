@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/01/16             */
+   /*            CLIPS Version 6.40  12/30/16             */
    /*                                                     */
    /*                 FACT HASHING MODULE                 */
    /*******************************************************/
@@ -41,6 +41,11 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Modify command preserves fact id and address.  */
+/*                                                           */
+/*            Assert returns duplicate fact. FALSE is now    */
+/*            returned only if an error occurs.              */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -57,6 +62,7 @@
 #include "multifld.h"
 #include "router.h"
 #include "sysdep.h"
+#include "utility.h"
 
 #if DEFRULE_CONSTRUCT
 #include "lgcldpnd.h"
@@ -232,25 +238,33 @@ bool FactWillBeAsserted(
 unsigned long HandleFactDuplication(
   Environment *theEnv,
   Fact *theFact,
-  bool *duplicate)
+  Fact **duplicate,
+  long long reuseIndex)
   {
-   Fact *tempPtr;
    unsigned long hashValue;
-   *duplicate = false;
+   *duplicate = NULL;
 
    hashValue = HashFact(theFact);
 
    if (FactData(theEnv)->FactDuplication)
      { return hashValue; }
 
-   tempPtr = FactExists(theEnv,theFact,hashValue);
-   if (tempPtr == NULL) return(hashValue);
+   *duplicate = FactExists(theEnv,theFact,hashValue);
+   if (*duplicate == NULL) return hashValue;
 
-   ReturnFact(theEnv,theFact);
+   if (reuseIndex == 0)
+     { ReturnFact(theEnv,theFact); }
+   else
+     {
+      theFact->nextFact = FactData(theEnv)->GarbageFacts;
+      FactData(theEnv)->GarbageFacts = theFact;
+      UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
+      theFact->garbage = true;
+     }
+
 #if DEFRULE_CONSTRUCT
-   AddLogicalDependencies(theEnv,(struct patternEntity *) tempPtr,true);
+   AddLogicalDependencies(theEnv,(struct patternEntity *) *duplicate,true);
 #endif
-   *duplicate = true;
 
    return 0;
   }

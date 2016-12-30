@@ -288,9 +288,9 @@ f-1     (foo (x 1))
 For a total of 1 fact.
 CLIPS> (modify 1 (x (clear) 2))
 [CONSTRCT1] Some constructs are still in use. Clear cannot continue.
-<Fact-2>
+<Fact-1>
 CLIPS> (facts)
-f-2     (foo (x 2))
+f-1     (foo (x 2))
 For a total of 1 fact.
 CLIPS> (clear) ; SourceForge Bug
 CLIPS> 
@@ -751,6 +751,12 @@ CLIPS>
     )
    =>)
 CLIPS> (assert (C (x 1)))
+<Fact-1>
+CLIPS> (clear) ; Memory leak
+CLIPS> (deftemplate TAG (multislot attributes)))
+CLIPS> (assert (TAG))
+<Fact-1>
+CLIPS> (modify 1 (attributes (create$)))
 <Fact-1>
 CLIPS> (clear) ; Load Crash
 CLIPS> 

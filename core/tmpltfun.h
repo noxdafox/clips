@@ -68,6 +68,8 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Modify command preserves fact id and address.  */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_tmpltfun
@@ -113,6 +115,7 @@
    void                           DeftemplateSlotFacetValueFunction(Environment *,UDFContext *,UDFValue *);
    bool                           DeftemplateSlotFacetValue(Environment *,Deftemplate *,const char *,const char *,UDFValue *);
    CLIPSLexeme                   *FindTemplateForFactAddress(CLIPSLexeme *,struct lhsParseNode *);
+   Fact                          *ReplaceFact(Environment *,Fact *,CLIPSValue *,char *);
 
 #endif /* _H_tmpltfun */
 

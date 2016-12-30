@@ -19,3 +19,7 @@
 (deffunction bar ($?a) (foo $?a))
 (bar 1 2)
 (bar 1 2 3)
+(> (expand$ (create$ 3)))
+(> (expand$ (create$ 4 3)))
+(> (expand$ (create$ 4)) (expand$ (create$ 3)))
+(> (expand$ (create$ 3)) (expand$ (create$)))

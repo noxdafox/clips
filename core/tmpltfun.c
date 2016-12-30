@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/01/16             */
+   /*            CLIPS Version 6.40  12/30/16             */
    /*                                                     */
    /*             DEFTEMPLATE FUNCTIONS MODULE            */
    /*******************************************************/
@@ -80,6 +80,11 @@
 /*            Watch facts for modify command only prints     */
 /*            changed slots.                                 */
 /*                                                           */
+/*            Modify command preserves fact id and address.  */
+/*                                                           */
+/*            Assert returns duplicate fact. FALSE is now    */
+/*            returned only if an error occurs.              */
+/*                                                           */
 /*************************************************************/
 
 #include "setup.h"
@@ -121,8 +126,8 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    DuplicateModifyCommand(Environment *,int,UDFValue *);
    static CLIPSLexeme            *CheckDeftemplateAndSlotArguments(UDFContext *,Deftemplate **);
+   static void                    FreeTemplateValueArray(Environment *,CLIPSValue *,Deftemplate *);
    static struct expr            *ModAndDupParse(Environment *,struct expr *,const char *,const char *);
 
 /****************************************************************/
@@ -163,51 +168,44 @@ void DeftemplateFunctions(
    AddFunctionParser(theEnv,"duplicate",DuplicateParse);
   }
 
-/*********************************************************************/
-/* ModifyCommand: H/L access routine for the modify command. Calls   */
-/*   the DuplicateModifyCommand function to perform the actual work. */
-/*********************************************************************/
+/***************************/
+/* FreeTemplateValueArray: */
+/***************************/
+static void FreeTemplateValueArray(
+  Environment *theEnv,
+  CLIPSValue *theValueArray,
+  Deftemplate *templatePtr)
+  {
+   int i;
+
+   if (theValueArray == NULL) return;
+
+   for (i = 0; i < (int) templatePtr->numberOfSlots; i++)
+     {
+      if (theValueArray[i].header->type == MULTIFIELD_TYPE)
+        { ReturnMultifield(theEnv,theValueArray[i].multifieldValue); }
+     }
+
+   rm3(theEnv,theValueArray,sizeof(CLIPSValue) * templatePtr->numberOfSlots);
+  }
+
+/*************************************************************/
+/* ModifyCommand: H/L access routine for the modify command. */
+/*************************************************************/
 void ModifyCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
-   DuplicateModifyCommand(theEnv,true,returnValue);
-  }
-
-/***************************************************************************/
-/* DuplicateCommand: H/L access routine for the duplicate command. Calls   */
-/*   the DuplicateModifyCommand function to perform the actual work.       */
-/***************************************************************************/
-void DuplicateCommand(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
-   DuplicateModifyCommand(theEnv,false,returnValue);
-  }
-
-/***************************************************************/
-/* DuplicateModifyCommand: Implements the duplicate and modify */
-/*   commands. The fact being duplicated or modified is first  */
-/*   copied to a new fact. Replacements to the fields of the   */
-/*   new fact are then made. If a modify command is being      */
-/*   performed, the original fact is retracted. Lastly, the    */
-/*   new fact is asserted.                                     */
-/***************************************************************/
-static void DuplicateModifyCommand(
-  Environment *theEnv,
-  int retractIt,
-  UDFValue *returnValue)
-  {
    long long factNum;
-   Fact *oldFact, *newFact, *theFact;
+   Fact *oldFact;
    struct expr *testPtr;
    UDFValue computeResult;
    Deftemplate *templatePtr;
    struct templateSlot *slotPtr;
-   int i, position;
+   int i, position, replacementCount = 0;
    bool found;
+   CLIPSValue *theValueArray;
    char *changeMap;
 
    /*===================================================*/
@@ -236,8 +234,7 @@ static void DuplicateModifyCommand(
       factNum = computeResult.integerValue->contents;
       if (factNum < 0)
         {
-         if (retractIt) ExpectedTypeError2(theEnv,"modify",1);
-         else ExpectedTypeError2(theEnv,"duplicate",1);
+         ExpectedTypeError2(theEnv,"modify",1);
          SetEvaluationError(theEnv,true);
          return;
         }
@@ -274,8 +271,7 @@ static void DuplicateModifyCommand(
 
    else
      {
-      if (retractIt) ExpectedTypeError2(theEnv,"modify",1);
-      else ExpectedTypeError2(theEnv,"duplicate",1);
+      ExpectedTypeError2(theEnv,"modify",1);
       SetEvaluationError(theEnv,true);
       return;
      }
@@ -287,20 +283,396 @@ static void DuplicateModifyCommand(
    templatePtr = oldFact->whichDeftemplate;
 
    if (templatePtr->implied) return;
-   
+
    /*========================================================*/
    /* Create a data object array to hold the updated values. */
    /*========================================================*/
    
-   if ((templatePtr->numberOfSlots == 0) || (! retractIt))
+   if (templatePtr->numberOfSlots == 0)
      {
+      theValueArray = NULL;
       changeMap = NULL;
      }
    else
      {
+      theValueArray = (CLIPSValue *) gm3(theEnv,sizeof(void *) * templatePtr->numberOfSlots);
       changeMap = (char *) gm2(theEnv,CountToBitMapSize(templatePtr->numberOfSlots));
       ClearBitString((void *) changeMap,CountToBitMapSize(templatePtr->numberOfSlots));
      }
+
+   /*================================================================*/
+   /* Duplicate the values from the old fact (skipping multifields). */
+   /*================================================================*/
+
+   for (i = 0; i < (int) oldFact->theProposition.length; i++)
+     { theValueArray[i].voidValue = VoidConstant(theEnv); }
+
+   /*========================*/
+   /* Start replacing slots. */
+   /*========================*/
+
+   testPtr = testPtr->nextArg;
+   while (testPtr != NULL)
+     {
+      /*============================================================*/
+      /* If the slot identifier is an integer, then the slot was    */
+      /* previously identified and its position within the template */
+      /* was stored. Otherwise, the position of the slot within the */
+      /* deftemplate has to be determined by comparing the name of  */
+      /* the slot against the list of slots for the deftemplate.    */
+      /*============================================================*/
+
+      if (testPtr->type == INTEGER_TYPE)
+        { position = (int) testPtr->integerValue->contents; }
+      else
+        {
+         found = false;
+         position = 0;
+         slotPtr = templatePtr->slotList;
+         while (slotPtr != NULL)
+           {
+            if (slotPtr->slotName == testPtr->lexemeValue)
+              {
+               found = true;
+               slotPtr = NULL;
+              }
+            else
+              {
+               slotPtr = slotPtr->next;
+               position++;
+              }
+           }
+
+         if (! found)
+           {
+            InvalidDeftemplateSlotMessage(theEnv,testPtr->lexemeValue->contents,
+                                          templatePtr->header.name->contents,true);
+            SetEvaluationError(theEnv,true);
+            FreeTemplateValueArray(theEnv,theValueArray,templatePtr);
+            if (changeMap != NULL)
+              { rm(theEnv,(void *) changeMap,CountToBitMapSize(templatePtr->numberOfSlots)); }
+            return;
+           }
+        }
+
+      /*===================================================*/
+      /* If a single field slot is being replaced, then... */
+      /*===================================================*/
+
+      if (oldFact->theProposition.contents[position].header->type != MULTIFIELD_TYPE)
+        {
+         /*======================================================*/
+         /* If the list of values to store in the slot is empty  */
+         /* or contains more than one member than an error has   */
+         /* occured because a single field slot can only contain */
+         /* a single value.                                      */
+         /*======================================================*/
+
+         if ((testPtr->argList == NULL) ? true : (testPtr->argList->nextArg != NULL))
+           {
+            MultiIntoSingleFieldSlotError(theEnv,GetNthSlot(templatePtr,position),templatePtr);
+            FreeTemplateValueArray(theEnv,theValueArray,templatePtr);
+            if (changeMap != NULL)
+              { rm(theEnv,(void *) changeMap,CountToBitMapSize(templatePtr->numberOfSlots)); }
+            return;
+           }
+
+         /*===================================================*/
+         /* Evaluate the expression to be stored in the slot. */
+         /*===================================================*/
+
+         IncrementClearReadyLocks(theEnv);
+         EvaluateExpression(theEnv,testPtr->argList,&computeResult);
+         SetEvaluationError(theEnv,false);
+         DecrementClearReadyLocks(theEnv);
+
+         /*====================================================*/
+         /* If the expression evaluated to a multifield value, */
+         /* then an error occured since a multifield value can */
+         /* not be stored in a single field slot.              */
+         /*====================================================*/
+
+         if (computeResult.header->type == MULTIFIELD_TYPE)
+           {
+            MultiIntoSingleFieldSlotError(theEnv,GetNthSlot(templatePtr,position),templatePtr);
+            FreeTemplateValueArray(theEnv,theValueArray,templatePtr);
+            if (changeMap != NULL)
+              { rm(theEnv,(void *) changeMap,CountToBitMapSize(templatePtr->numberOfSlots)); }
+            return;
+           }
+
+         /*=============================*/
+         /* Store the value in the slot */
+         /*=============================*/
+
+         if (oldFact->theProposition.contents[position].value != computeResult.value)
+           {
+            replacementCount++;
+            theValueArray[position].value = computeResult.value;
+            if (changeMap != NULL)
+              { SetBitMap(changeMap,position); }
+           }
+        }
+
+      /*=================================*/
+      /* Else replace a multifield slot. */
+      /*=================================*/
+
+      else
+        {
+         /*======================================*/
+         /* Determine the new value of the slot. */
+         /*======================================*/
+
+         IncrementClearReadyLocks(theEnv);
+         StoreInMultifield(theEnv,&computeResult,testPtr->argList,false);
+         SetEvaluationError(theEnv,false);
+         DecrementClearReadyLocks(theEnv);
+
+         /*=============================*/
+         /* Store the value in the slot */
+         /*=============================*/
+
+         if ((oldFact->theProposition.contents[position].header->type != computeResult.header->type) ||
+             (! MultifieldsEqual((Multifield *) oldFact->theProposition.contents[position].value,(Multifield *) computeResult.value)))
+           {
+            theValueArray[position].value = computeResult.value;
+            replacementCount++;
+            if (changeMap != NULL)
+              { SetBitMap(changeMap,position); }
+           }
+         else
+           { ReturnMultifield(theEnv,computeResult.multifieldValue); }
+        }
+
+      testPtr = testPtr->nextArg;
+     }
+
+   /*==================================*/
+   /* If no slots have changed, then a */
+   /* retract/assert is not performed. */
+   /*==================================*/
+
+   if (replacementCount == 0)
+     {
+      if (theValueArray != NULL)
+        { rm3(theEnv,theValueArray,sizeof(void *) * templatePtr->numberOfSlots); }
+      if (changeMap != NULL)
+        { rm(theEnv,(void *) changeMap,CountToBitMapSize(templatePtr->numberOfSlots)); }
+      
+      returnValue->value = oldFact;
+      return;
+     }
+    
+   /*=========================================*/
+   /* Replace the old values with the values. */
+   /*=========================================*/
+   
+   if ((oldFact = ReplaceFact(theEnv,oldFact,theValueArray,changeMap)) != NULL)
+     { returnValue->factValue = oldFact; }
+
+   /*=============================*/
+   /* Free the data object array. */
+   /*=============================*/
+
+   if (theValueArray != NULL)
+     { rm3(theEnv,theValueArray,sizeof(void *) * templatePtr->numberOfSlots); }
+
+   if (changeMap != NULL)
+     { rm(theEnv,(void *) changeMap,CountToBitMapSize(templatePtr->numberOfSlots)); }
+
+   return;
+  }
+
+/****************/
+/* ReplaceFact: */
+/****************/
+Fact *ReplaceFact(
+  Environment *theEnv,
+  Fact *oldFact,
+  CLIPSValue *theValueArray,
+  char *changeMap)
+  {
+   int i;
+   Fact *theFact;
+   Fact *factListPosition, *templatePosition;
+   
+   /*===============================================*/
+   /* Call registered modify notification functions */
+   /* for the existing version of the fact.         */
+   /*===============================================*/
+
+   if (FactData(theEnv)->ListOfModifyFunctions != NULL)
+     {
+      ModifyCallFunctionItem *theModifyFunction;
+      
+      for (theModifyFunction = FactData(theEnv)->ListOfModifyFunctions;
+           theModifyFunction != NULL;
+           theModifyFunction = theModifyFunction->next)
+        {
+         (*theModifyFunction->func)(theEnv,oldFact,NULL,theModifyFunction->context);
+        }
+     }
+
+   /*==========================================*/
+   /* Remember the position of the fact before */
+   /* it is retracted so this can be restored  */
+   /* when the modified fact is asserted.      */
+   /*==========================================*/
+
+   factListPosition = oldFact->previousFact;
+   templatePosition = oldFact->previousTemplateFact;
+   
+   /*===================*/
+   /* Retract the fact. */
+   /*===================*/
+
+   RetractDriver(theEnv,oldFact,true,changeMap);
+   oldFact->garbage = false;
+
+   /*======================================*/
+   /* Copy the new values to the old fact. */
+   /*======================================*/
+
+   for (i = 0; i < (int) oldFact->theProposition.length; i++)
+     {
+      if (theValueArray[i].voidValue != VoidConstant(theEnv))
+        {
+         AtomDeinstall(theEnv,oldFact->theProposition.contents[i].header->type,oldFact->theProposition.contents[i].value);
+         
+         if (oldFact->theProposition.contents[i].header->type == MULTIFIELD_TYPE)
+           {
+            Multifield *theSegment = oldFact->theProposition.contents[i].multifieldValue;
+            if (theSegment->busyCount == 0)
+              { ReturnMultifield(theEnv,theSegment); }
+            else
+              { AddToMultifieldList(theEnv,theSegment); }
+           }
+
+         oldFact->theProposition.contents[i].value = theValueArray[i].value;
+         
+         AtomInstall(theEnv,oldFact->theProposition.contents[i].header->type,oldFact->theProposition.contents[i].value);
+        }
+     }
+
+   /*======================*/
+   /* Assert the new fact. */
+   /*======================*/
+
+   theFact = AssertDriver(theEnv,oldFact,oldFact->factIndex,factListPosition,templatePosition,changeMap);
+
+   /*===============================================*/
+   /* Call registered modify notification functions */
+   /* for the new version of the fact.              */
+   /*===============================================*/
+
+   if (FactData(theEnv)->ListOfModifyFunctions != NULL)
+     {
+      ModifyCallFunctionItem *theModifyFunction;
+
+      for (theModifyFunction = FactData(theEnv)->ListOfModifyFunctions;
+           theModifyFunction != NULL;
+           theModifyFunction = theModifyFunction->next)
+        {
+         (*theModifyFunction->func)(theEnv,NULL,theFact,theModifyFunction->context);
+        }
+     }
+     
+   return theFact;
+  }
+
+/*******************************************************************/
+/* DuplicateCommand: H/L access routine for the duplicate command. */
+/*******************************************************************/
+void DuplicateCommand(
+  Environment *theEnv,
+  UDFContext *context,
+  UDFValue *returnValue)
+  {
+   long long factNum;
+   Fact *oldFact, *newFact, *theFact;
+   struct expr *testPtr;
+   UDFValue computeResult;
+   Deftemplate *templatePtr;
+   struct templateSlot *slotPtr;
+   int i, position;
+   bool found;
+
+   /*===================================================*/
+   /* Set the default return value to the symbol FALSE. */
+   /*===================================================*/
+
+   returnValue->lexemeValue = FalseSymbol(theEnv);
+
+   /*==================================================*/
+   /* Evaluate the first argument which is used to get */
+   /* a pointer to the fact to be modified/duplicated. */
+   /*==================================================*/
+
+   testPtr = GetFirstArgument();
+   IncrementClearReadyLocks(theEnv);
+   EvaluateExpression(theEnv,testPtr,&computeResult);
+   DecrementClearReadyLocks(theEnv);
+
+   /*==============================================================*/
+   /* If an integer is supplied, then treat it as a fact-index and */
+   /* search the fact-list for the fact with that fact-index.      */
+   /*==============================================================*/
+
+   if (computeResult.header->type == INTEGER_TYPE)
+     {
+      factNum = computeResult.integerValue->contents;
+      if (factNum < 0)
+        {
+         ExpectedTypeError2(theEnv,"duplicate",1);
+         SetEvaluationError(theEnv,true);
+         return;
+        }
+
+      oldFact = GetNextFact(theEnv,NULL);
+      while (oldFact != NULL)
+        {
+         if (oldFact->factIndex == factNum)
+           { break; }
+         else
+           { oldFact = oldFact->nextFact; }
+        }
+
+      if (oldFact == NULL)
+        {
+         char tempBuffer[20];
+         gensprintf(tempBuffer,"f-%lld",factNum);
+         CantFindItemErrorMessage(theEnv,"fact",tempBuffer);
+         return;
+        }
+     }
+
+   /*==========================================*/
+   /* Otherwise, if a pointer is supplied then */
+   /* no lookup is required.                   */
+   /*==========================================*/
+
+   else if (computeResult.header->type == FACT_ADDRESS_TYPE)
+     { oldFact = computeResult.factValue; }
+
+   /*===========================================*/
+   /* Otherwise, the first argument is invalid. */
+   /*===========================================*/
+
+   else
+     {
+      ExpectedTypeError2(theEnv,"duplicate",1);
+      SetEvaluationError(theEnv,true);
+      return;
+     }
+
+   /*==================================*/
+   /* See if it is a deftemplate fact. */
+   /*==================================*/
+
+   templatePtr = oldFact->whichDeftemplate;
+
+   if (templatePtr->implied) return;
 
    /*================================================================*/
    /* Duplicate the values from the old fact (skipping multifields). */
@@ -358,8 +730,6 @@ static void DuplicateModifyCommand(
                                           templatePtr->header.name->contents,true);
             SetEvaluationError(theEnv,true);
             ReturnFact(theEnv,newFact);
-            if (changeMap != NULL)
-              { rm(theEnv,(void *) changeMap,CountToBitMapSize(templatePtr->numberOfSlots)); }
             return;
            }
         }
@@ -381,8 +751,6 @@ static void DuplicateModifyCommand(
            {
             MultiIntoSingleFieldSlotError(theEnv,GetNthSlot(templatePtr,position),templatePtr);
             ReturnFact(theEnv,newFact);
-            if (changeMap != NULL)
-              { rm(theEnv,(void *) changeMap,CountToBitMapSize(templatePtr->numberOfSlots)); }
             return;
            }
 
@@ -405,8 +773,6 @@ static void DuplicateModifyCommand(
            {
             ReturnFact(theEnv,newFact);
             MultiIntoSingleFieldSlotError(theEnv,GetNthSlot(templatePtr,position),templatePtr);
-            if (changeMap != NULL)
-              { rm(theEnv,(void *) changeMap,CountToBitMapSize(templatePtr->numberOfSlots)); }
             return;
            }
 
@@ -415,11 +781,6 @@ static void DuplicateModifyCommand(
          /*=============================*/
 
          newFact->theProposition.contents[position].value = computeResult.value;
-         if (oldFact->theProposition.contents[position].value != computeResult.value)
-           {
-            if (changeMap != NULL)
-              { SetBitMap(changeMap,position); }
-           }
         }
 
       /*=================================*/
@@ -442,12 +803,6 @@ static void DuplicateModifyCommand(
          /*=============================*/
 
          newFact->theProposition.contents[position].value = computeResult.value;
-         if ((oldFact->theProposition.contents[position].header->type != computeResult.header->type) ||
-             (! MultifieldsEqual((Multifield *) oldFact->theProposition.contents[position].value,(Multifield *) computeResult.value)))
-           {
-            if (changeMap != NULL)
-              { SetBitMap(changeMap,position); }
-           }
         }
 
       testPtr = testPtr->nextArg;
@@ -469,58 +824,11 @@ static void DuplicateModifyCommand(
         }
      }
 
-   /*================================================*/
-   /* Call registered modify notification functions. */
-   /*================================================*/
+   /*===============================*/
+   /* Perform the duplicate action. */
+   /*===============================*/
 
-   if (retractIt &&
-       (FactData(theEnv)->ListOfModifyFunctions != NULL))
-     {
-      ModifyCallFunctionItem *theModifyFunction;
-      Fact *replacement = newFact;
-
-      /*==================================================================*/
-      /* If the fact already exists, determine if it's the fact we're     */
-      /* modifying. If so it will be retracted and reasserted. If not,    */
-      /* it will just be retracted, so pass NULL as the replacement fact. */
-      /*==================================================================*/
-
-      if (! FactWillBeAsserted(theEnv,newFact))
-        {
-         if (! MultifieldsEqual(&oldFact->theProposition,
-                              &newFact->theProposition))
-           { replacement = NULL; }
-        }
-
-      /*=========================================================*/
-      /* Preassign the factIndex and timeTag so the notification */
-      /* function will see the correct values.                   */
-      /*=========================================================*/
-
-      if (replacement != NULL)
-        {
-         replacement->factIndex = FactData(theEnv)->NextFactIndex;
-         replacement->factHeader.timeTag = DefruleData(theEnv)->CurrentEntityTimeTag;
-        }
-
-      /*=========================================*/
-      /* Call each modify notification function. */
-      /*=========================================*/
-
-      for (theModifyFunction = FactData(theEnv)->ListOfModifyFunctions;
-           theModifyFunction != NULL;
-           theModifyFunction = theModifyFunction->next)
-        {
-         (*theModifyFunction->func)(theEnv,oldFact,replacement,theModifyFunction->context);
-        }
-     }
-
-   /*======================================*/
-   /* Perform the duplicate/modify action. */
-   /*======================================*/
-
-   if (retractIt) RetractDriver(theEnv,oldFact,changeMap);
-   theFact = AssertDriver(theEnv,newFact,changeMap);
+   theFact = AssertDriver(theEnv,newFact,0,NULL,NULL,NULL);
 
    /*========================================*/
    /* The asserted fact is the return value. */
@@ -532,9 +840,6 @@ static void DuplicateModifyCommand(
       returnValue->range = theFact->theProposition.length;
       returnValue->value = theFact;
      }
-     
-   if (changeMap != NULL)
-     { rm(theEnv,(void *) changeMap,CountToBitMapSize(templatePtr->numberOfSlots)); }
 
    return;
   }
@@ -1797,6 +2102,8 @@ bool UpdateModifyDuplicate(
    functionArgs = top->argList;
    if (functionArgs->type == SF_VARIABLE)
      {
+      if (SearchParsedBindNames(theEnv,functionArgs->lexemeValue) != 0)
+        { return true; }
       templateName = FindTemplateForFactAddress(functionArgs->lexemeValue,
                                                 (struct lhsParseNode *) vTheLHS);
       if (templateName == NULL) return true;

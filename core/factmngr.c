@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.40  11/01/16             */
+   /*            CLIPS Version 6.40  12/30/16             */
    /*                                                     */
    /*                 FACT MANAGER MODULE                 */
    /*******************************************************/
@@ -82,6 +82,11 @@
 /*            Watch facts for modify command only prints     */
 /*            changed slots.                                 */
 /*                                                           */
+/*            Modify command preserves fact id and address.  */
+/*                                                           */
+/*            Assert returns duplicate fact. FALSE is now    */
+/*            returned only if an error occurs.              */
+/*                                                           */
 /*************************************************************/
 
 #include <stdio.h>
@@ -109,6 +114,7 @@
 #include "strngrtr.h"
 #include "sysdep.h"
 #include "tmpltbsc.h"
+#include "tmpltfun.h"
 #include "tmpltutl.h"
 #include "utility.h"
 #include "watch.h"
@@ -489,6 +495,7 @@ void MatchFactFunction(
 bool RetractDriver(
   Environment *theEnv,
   Fact *theFact,
+  bool modifyOperation,
   char *changeMap)
   {
    Deftemplate *theTemplate = theFact->whichDeftemplate;
@@ -610,14 +617,22 @@ bool RetractDriver(
         { theFact->nextFact->previousFact = theFact->previousFact; }
      }
 
-   /*========================================*/
-   /* Add the fact to the fact garbage list. */
-   /*========================================*/
+   /*===================================================*/
+   /* Add the fact to the fact garbage list unless this */
+   /* fact is being retract as part of a modify action. */
+   /*===================================================*/
 
-   theFact->nextFact = FactData(theEnv)->GarbageFacts;
-   FactData(theEnv)->GarbageFacts = theFact;
+   if (! modifyOperation)
+     {
+      theFact->nextFact = FactData(theEnv)->GarbageFacts;
+      FactData(theEnv)->GarbageFacts = theFact;
+      UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
+     }
+   else
+     {
+      theFact->nextFact = NULL;
+     }
    theFact->garbage = true;
-   UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
 
    /*===================================================*/
    /* Reset the evaluation error flag since expressions */
@@ -634,6 +649,7 @@ bool RetractDriver(
 
    EngineData(theEnv)->JoinOperationInProgress = true;
    NetworkRetract(theEnv,(struct patternMatch *) theFact->list);
+   theFact->list = NULL;
    EngineData(theEnv)->JoinOperationInProgress = false;
 
    /*=========================================*/
@@ -682,7 +698,7 @@ bool Retract(
   Environment *theEnv,
   Fact *theFact)
   {
-   return RetractDriver(theEnv,theFact,NULL);
+   return RetractDriver(theEnv,theFact,false,NULL);
   }
 
 /*******************************************************************/
@@ -730,12 +746,15 @@ static void RemoveGarbageFacts(
 Fact *AssertDriver(
   Environment *theEnv,
   Fact *theFact,
+  long long reuseIndex,
+  Fact *factListPosition,
+  Fact *templatePosition,
   char *changeMap)
   {
    unsigned long hashValue;
    unsigned long length, i;
    CLIPSValue *theField;
-   bool duplicate;
+   Fact *duplicate;
    struct callFunctionItemWithArg *theAssertFunction;
 
    /*==========================================*/
@@ -769,8 +788,8 @@ Fact *AssertDriver(
    /* then search the fact list for a duplicate fact.        */
    /*========================================================*/
 
-   hashValue = HandleFactDuplication(theEnv,theFact,&duplicate);
-   if (duplicate) return NULL;
+   hashValue = HandleFactDuplication(theEnv,theFact,&duplicate,reuseIndex);
+   if (duplicate != NULL) return duplicate;
 
    /*==========================================================*/
    /* If necessary, add logical dependency links between the   */
@@ -779,7 +798,15 @@ Fact *AssertDriver(
 
    if (AddLogicalDependencies(theEnv,(struct patternEntity *) theFact,false) == false)
      {
-      ReturnFact(theEnv,theFact);
+      if (reuseIndex == 0)
+        { ReturnFact(theEnv,theFact); }
+      else
+        {
+         theFact->nextFact = FactData(theEnv)->GarbageFacts;
+         FactData(theEnv)->GarbageFacts = theFact;
+         UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
+         theFact->garbage = true;
+        }
       return NULL;
      }
 
@@ -793,34 +820,65 @@ Fact *AssertDriver(
    /* Add the fact to the fact list. */
    /*================================*/
 
-   theFact->nextFact = NULL;
-   theFact->list = NULL;
-   theFact->previousFact = FactData(theEnv)->LastFact;
-   if (FactData(theEnv)->LastFact == NULL)
-     { FactData(theEnv)->FactList = theFact; }
+   if (reuseIndex == 0)
+     { factListPosition = FactData(theEnv)->LastFact; }
+
+   if (factListPosition == NULL)
+     {
+      theFact->nextFact = FactData(theEnv)->FactList;
+      FactData(theEnv)->FactList = theFact;
+      theFact->previousFact = NULL;
+      if (theFact->nextFact != NULL)
+        { theFact->nextFact->previousFact = theFact; }
+     }
    else
-     { FactData(theEnv)->LastFact->nextFact = theFact; }
-   FactData(theEnv)->LastFact = theFact;
+     {
+      theFact->nextFact = factListPosition->nextFact;
+      theFact->previousFact = factListPosition;
+      factListPosition->nextFact = theFact;
+      if (theFact->nextFact != NULL)
+        { theFact->nextFact->previousFact = theFact; }
+     }
+
+   if ((FactData(theEnv)->LastFact == NULL) || (theFact->nextFact == NULL))
+     { FactData(theEnv)->LastFact = theFact; }
 
    /*====================================*/
    /* Add the fact to its template list. */
    /*====================================*/
 
-   theFact->previousTemplateFact = theFact->whichDeftemplate->lastFact;
-   theFact->nextTemplateFact = NULL;
+   if (reuseIndex == 0)
+     { templatePosition = theFact->whichDeftemplate->lastFact; }
 
-   if (theFact->whichDeftemplate->lastFact == NULL)
-     { theFact->whichDeftemplate->factList = theFact; }
+   if (templatePosition == NULL)
+     {
+      theFact->nextTemplateFact = theFact->whichDeftemplate->factList;
+      theFact->whichDeftemplate->factList = theFact;
+      theFact->previousTemplateFact = NULL;
+      if (theFact->nextTemplateFact != NULL)
+        { theFact->nextTemplateFact->previousTemplateFact = theFact; }
+     }
    else
-     { theFact->whichDeftemplate->lastFact->nextTemplateFact = theFact; }
+     {
+      theFact->nextTemplateFact = templatePosition->nextTemplateFact;
+      theFact->previousTemplateFact = templatePosition;
+      templatePosition->nextTemplateFact = theFact;
+      if (theFact->nextTemplateFact != NULL)
+        { theFact->nextTemplateFact->previousTemplateFact = theFact; }
+     }
 
-   theFact->whichDeftemplate->lastFact = theFact;
+   if ((theFact->whichDeftemplate->lastFact == NULL) || (theFact->nextTemplateFact == NULL))
+     { theFact->whichDeftemplate->lastFact = theFact; }
 
    /*==================================*/
    /* Set the fact index and time tag. */
    /*==================================*/
 
-   theFact->factIndex = FactData(theEnv)->NextFactIndex++;
+   if (reuseIndex > 0)
+     { theFact->factIndex = reuseIndex; }
+   else
+     { theFact->factIndex = FactData(theEnv)->NextFactIndex++; }
+
    theFact->factHeader.timeTag = DefruleData(theEnv)->CurrentEntityTimeTag++;
 
    /*=====================*/
@@ -828,6 +886,15 @@ Fact *AssertDriver(
    /*=====================*/
 
    FactInstall(theEnv,theFact);
+
+   if (reuseIndex == 0)
+     {
+      Multifield *theSegment = &theFact->theProposition;
+      for (i = 0 ; i < (int) theSegment->length ; i++)
+        {
+         AtomInstall(theEnv,theSegment->contents[i].header->type,theSegment->contents[i].value);
+        }
+     }
 
    /*==========================================*/
    /* Execute the list of functions that are   */
@@ -922,7 +989,7 @@ Fact *Assert(
   Environment *theEnv,
   Fact *theFact)
   {
-   return AssertDriver(theEnv,theFact,NULL);
+   return AssertDriver(theEnv,theFact,0,NULL,NULL,NULL);
   }
 
 /**************************************/
@@ -1373,18 +1440,8 @@ void FactInstall(
   Environment *theEnv,
   Fact *newFact)
   {
-   Multifield *theSegment;
-   int i;
-
    FactData(theEnv)->NumberOfFacts++;
    newFact->whichDeftemplate->busyCount++;
-   theSegment = &newFact->theProposition;
-
-   for (i = 0 ; i < (int) theSegment->length ; i++)
-     {
-      AtomInstall(theEnv,theSegment->contents[i].header->type,theSegment->contents[i].value);
-     }
-
    newFact->factHeader.busyCount++;
   }
 
@@ -2427,52 +2484,16 @@ bool FMPutSlot(
 Fact *FMModify(
   FactModifier *theFM)
   {
-   Environment *theEnv = theFM->fmEnv;
-   Fact *newFact;
-   Fact *oldFact = theFM->fmOldFact;
-   int i;
+   Fact *rv;
    
-   if (! BitStringHasBitsSet(theFM->changeMap,CountToBitMapSize(oldFact->whichDeftemplate->numberOfSlots)))
+   if (! BitStringHasBitsSet(theFM->changeMap,CountToBitMapSize(theFM->fmOldFact->whichDeftemplate->numberOfSlots)))
      { return theFM->fmOldFact; }
-
-   newFact = CreateFact(theEnv,oldFact->whichDeftemplate);
-   
-   for (i = 0; i < oldFact->whichDeftemplate->numberOfSlots; i++)
-     {
-      if (theFM->fmValueArray[i].voidValue == VoidConstant(theEnv))
-        {
-         CLIPSValue theValue;
-         theValue.value = oldFact->theProposition.contents[i].value;
-         
-         if (theValue.header->type == MULTIFIELD_TYPE)
-           { newFact->theProposition.contents[i].value = CopyMultifield(theEnv,theValue.multifieldValue); }
-         else
-           { newFact->theProposition.contents[i].value = oldFact->theProposition.contents[i].value; }
-        }
-      else
-        { newFact->theProposition.contents[i].value = theFM->fmValueArray[i].value; }
-     }
-
-   DecrementFactCount(theEnv,oldFact);
-   
-   Retract(theEnv,oldFact);
-
-   newFact = Assert(theEnv,newFact);
-
-   if (newFact != NULL)
-     { IncrementFactCount(theEnv,newFact); }
      
-   theFM->fmOldFact = newFact;
-
-   for (i = 0; i < oldFact->whichDeftemplate->numberOfSlots; i++)
-     {
-      CVAtomDeinstall(theEnv,theFM->fmValueArray[i].value);
-      theFM->fmValueArray[i].voidValue = theFM->fmEnv->VoidConstant;
-     }
-     
+   rv = ReplaceFact(theFM->fmEnv,theFM->fmOldFact,theFM->fmValueArray,theFM->changeMap);
+   
    FMAbort(theFM);
    
-   return newFact;
+   return rv;
   }
 
 /**************/
