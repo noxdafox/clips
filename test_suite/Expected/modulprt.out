@@ -330,7 +330,7 @@ CLIPS> (assert (b))
 CLIPS> (assert (c))
 <Fact-4>
 CLIPS> (assert (c))
-FALSE
+<Fact-4>
 CLIPS> (facts A)
 f-1     (a)
 f-2     (b)

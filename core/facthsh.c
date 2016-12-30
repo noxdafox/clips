@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.50  11/01/16             */
+   /*            CLIPS Version 6.50  12/30/16             */
    /*                                                     */
    /*                 FACT HASHING MODULE                 */
    /*******************************************************/
@@ -42,6 +42,9 @@
 /*            UDF redesign.                                  */
 /*                                                           */
 /*      6.50: Modify command preserves fact id and address.  */
+/*                                                           */
+/*            Assert returns duplicate fact. FALSE is now    */
+/*            returned only if an error occurs.              */
 /*                                                           */
 /*************************************************************/
 
@@ -235,20 +238,19 @@ bool FactWillBeAsserted(
 unsigned long HandleFactDuplication(
   Environment *theEnv,
   Fact *theFact,
-  bool *duplicate,
+  Fact **duplicate,
   long long reuseIndex)
   {
-   Fact *tempPtr;
    unsigned long hashValue;
-   *duplicate = false;
+   *duplicate = NULL;
 
    hashValue = HashFact(theFact);
 
    if (FactData(theEnv)->FactDuplication)
      { return hashValue; }
 
-   tempPtr = FactExists(theEnv,theFact,hashValue);
-   if (tempPtr == NULL) return(hashValue);
+   *duplicate = FactExists(theEnv,theFact,hashValue);
+   if (*duplicate == NULL) return hashValue;
 
    if (reuseIndex == 0)
      { ReturnFact(theEnv,theFact); }
@@ -261,9 +263,8 @@ unsigned long HandleFactDuplication(
      }
 
 #if DEFRULE_CONSTRUCT
-   AddLogicalDependencies(theEnv,(struct patternEntity *) tempPtr,true);
+   AddLogicalDependencies(theEnv,(struct patternEntity *) *duplicate,true);
 #endif
-   *duplicate = true;
 
    return 0;
   }

@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.50  11/01/16             */
+   /*            CLIPS Version 6.50  12/30/16             */
    /*                                                     */
    /*                 FACT MANAGER MODULE                 */
    /*******************************************************/
@@ -83,6 +83,9 @@
 /*            changed slots.                                 */
 /*                                                           */
 /*      6.50: Modify command preserves fact id and address.  */
+/*                                                           */
+/*            Assert returns duplicate fact. FALSE is now    */
+/*            returned only if an error occurs.              */
 /*                                                           */
 /*************************************************************/
 
@@ -751,7 +754,7 @@ Fact *AssertDriver(
    unsigned long hashValue;
    unsigned long length, i;
    CLIPSValue *theField;
-   bool duplicate;
+   Fact *duplicate;
    struct callFunctionItemWithArg *theAssertFunction;
 
    /*==========================================*/
@@ -786,7 +789,7 @@ Fact *AssertDriver(
    /*========================================================*/
 
    hashValue = HandleFactDuplication(theEnv,theFact,&duplicate,reuseIndex);
-   if (duplicate) return NULL;
+   if (duplicate != NULL) return duplicate;
 
    /*==========================================================*/
    /* If necessary, add logical dependency links between the   */

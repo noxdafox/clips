@@ -1,7 +1,7 @@
    /*******************************************************/
    /*      "C" Language Integrated Production System      */
    /*                                                     */
-   /*            CLIPS Version 6.50  11/01/16             */
+   /*            CLIPS Version 6.50  12/30/16             */
    /*                                                     */
    /*             DEFTEMPLATE FUNCTIONS MODULE            */
    /*******************************************************/
@@ -83,6 +83,9 @@
 /*      6.50: Modify command preserves fact id and address.  */
 /*                                                           */
 /*            Fact ?var:slot references in defrule actions.  */
+/*                                                           */
+/*            Assert returns duplicate fact. FALSE is now    */
+/*            returned only if an error occurs.              */
 /*                                                           */
 /*************************************************************/
 
@@ -467,7 +470,7 @@ void ModifyCommand(
    /* Replace the old values with the values. */
    /*=========================================*/
    
-   if (ReplaceFact(theEnv,oldFact,theValueArray,changeMap) != NULL)
+   if ((oldFact = ReplaceFact(theEnv,oldFact,theValueArray,changeMap)) != NULL)
      { returnValue->factValue = oldFact; }
 
    /*=============================*/

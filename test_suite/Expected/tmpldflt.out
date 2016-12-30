@@ -382,7 +382,7 @@ CLIPS> (assert (foo22))
 ==> f-21    (foo22 (x b) (y gen1))
 <Fact-21>
 CLIPS> (assert (foo22))
-FALSE
+<Fact-21>
 CLIPS> (deftemplate foo23 (field x (default-dynamic b)) (field y (default-dynamic (gensym))))
 CLIPS> (assert (foo23))
 ==> f-22    (foo23 (x b) (y gen2))
