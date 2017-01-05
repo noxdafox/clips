@@ -314,9 +314,9 @@ TEMP_SLOT_LINK *ParseSlot(
            goto ParseSlotError;
          if (rtnCode == 4)
            {
-            DecrementSymbolCount(theEnv,slot->overrideMessage);
+            DecrementLexemeReferenceCount(theEnv,slot->overrideMessage);
             slot->overrideMessage = newOverrideMsg;
-            IncrementSymbolCount(slot->overrideMessage);
+            IncrementLexemeCount(slot->overrideMessage);
            }
          slot->overrideMessageSpecified = true;
         }
@@ -391,7 +391,7 @@ void DeleteSlots(
       stmp = slots;
       slots = slots->nxt;
       DeleteSlotName(theEnv,stmp->desc->slotName);
-      DecrementSymbolCount(theEnv,stmp->desc->overrideMessage);
+      DecrementLexemeReferenceCount(theEnv,stmp->desc->overrideMessage);
       RemoveConstraint(theEnv,stmp->desc->constraint);
       if (stmp->desc->dynamicDefault == 1)
         {
@@ -400,7 +400,7 @@ void DeleteSlots(
         }
       else if (stmp->desc->defaultValue != NULL)
         {
-         ValueDeinstall(theEnv,(UDFValue *) stmp->desc->defaultValue);
+         DecrementUDFValueReferenceCount(theEnv,(UDFValue *) stmp->desc->defaultValue);
          rtn_struct(theEnv,udfValue,stmp->desc->defaultValue);
         }
       rtn_struct(theEnv,slotDescriptor,stmp->desc);
@@ -452,7 +452,7 @@ static SlotDescriptor *NewSlot(
    slot->constraint = GetConstraintRecord(theEnv);
    slot->slotName = AddSlotName(theEnv,name,0,false);
    slot->overrideMessage = slot->slotName->putHandlerName;
-   IncrementSymbolCount(slot->overrideMessage);
+   IncrementLexemeCount(slot->overrideMessage);
    return(slot);
   }
 
@@ -720,7 +720,7 @@ static void BuildCompositeFacets(
               {
                sd->defaultValue = get_struct(theEnv,udfValue);
                GenCopyMemory(UDFValue,1,sd->defaultValue,compslot->defaultValue);
-               ValueInstall(theEnv,(UDFValue *) sd->defaultValue);
+               IncrementUDFValueReferenceCount(theEnv,(UDFValue *) sd->defaultValue);
               }
            }
         }
@@ -747,9 +747,9 @@ static void BuildCompositeFacets(
       if ((! TestBitMap(specbits,OVERRIDE_MSG_BIT)) &&
           compslot->overrideMessageSpecified)
         {
-         DecrementSymbolCount(theEnv,sd->overrideMessage);
+         DecrementLexemeReferenceCount(theEnv,sd->overrideMessage);
          sd->overrideMessage = compslot->overrideMessage;
-         IncrementSymbolCount(sd->overrideMessage);
+         IncrementLexemeCount(sd->overrideMessage);
          sd->overrideMessageSpecified = true;
         }
       OverlayConstraint(theEnv,parsedConstraint,sd->constraint,compslot->constraint);
@@ -865,7 +865,7 @@ static bool EvaluateSlotDefaultValue(
             ReturnPackedExpression(theEnv,(Expression *) sd->defaultValue);
             sd->defaultValue = get_struct(theEnv,udfValue);
             GenCopyMemory(UDFValue,1,sd->defaultValue,&temp);
-            ValueInstall(theEnv,(UDFValue *) sd->defaultValue);
+            IncrementUDFValueReferenceCount(theEnv,(UDFValue *) sd->defaultValue);
            }
          else
            {
@@ -878,7 +878,7 @@ static bool EvaluateSlotDefaultValue(
          sd->defaultValue = get_struct(theEnv,udfValue);
          DeriveDefaultFromConstraints(theEnv,sd->constraint,
                                       (UDFValue *) sd->defaultValue,(int) sd->multiple,true);
-         ValueInstall(theEnv,(UDFValue *) sd->defaultValue);
+         IncrementUDFValueReferenceCount(theEnv,(UDFValue *) sd->defaultValue);
         }
      }
    else

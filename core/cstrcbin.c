@@ -145,7 +145,7 @@ void UpdateConstructHeader(
    if (theBsaveConstruct->name != -1L)
      {
       theConstruct->name = SymbolPointer(theBsaveConstruct->name);
-      IncrementSymbolCount(theConstruct->name);
+      IncrementLexemeCount(theConstruct->name);
      }
    else
      { theConstruct->name = NULL; }
@@ -178,7 +178,7 @@ void UnmarkConstructHeader(
   Environment *theEnv,
   ConstructHeader *theConstruct)
   {
-   DecrementSymbolCount(theEnv,theConstruct->name);
+   DecrementLexemeReferenceCount(theEnv,theConstruct->name);
   }
 
 #endif /* BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE */

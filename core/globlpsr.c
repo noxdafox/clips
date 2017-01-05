@@ -380,7 +380,7 @@ static void AddDefglobal(
 
    if (newGlobal == false)
      {
-      ValueDeinstall(theEnv,&defglobalPtr->current);
+      DecrementUDFValueReferenceCount(theEnv,&defglobalPtr->current);
       if (defglobalPtr->current.header->type == MULTIFIELD_TYPE)
         { ReturnMultifield(theEnv,defglobalPtr->current.multifieldValue); }
 
@@ -393,7 +393,7 @@ static void AddDefglobal(
 
    if (vPtr->header->type != MULTIFIELD_TYPE) defglobalPtr->current.value = vPtr->value;
    else DuplicateMultifield(theEnv,&defglobalPtr->current,vPtr);
-   ValueInstall(theEnv,&defglobalPtr->current);
+   IncrementUDFValueReferenceCount(theEnv,&defglobalPtr->current);
 
    defglobalPtr->initial = AddHashedExpression(theEnv,ePtr);
    ReturnExpression(theEnv,ePtr);
@@ -416,7 +416,7 @@ static void AddDefglobal(
    defglobalPtr->header.usrData = NULL;
    defglobalPtr->header.constructType = DEFGLOBAL;
    defglobalPtr->header.env = theEnv;
-   IncrementSymbolCount(name);
+   IncrementLexemeCount(name);
 
    SavePPBuffer(theEnv,"\n");
    if (GetConserveMemory(theEnv) == true)

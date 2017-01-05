@@ -278,7 +278,7 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_incrementInstanceC
   {
    void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
 
-   IncrementInstanceCount(JLongToPointer(clipsEnv),JLongToPointer(clipsInstance));
+   IncrementInstanceReferenceCount(JLongToPointer(clipsEnv),JLongToPointer(clipsInstance));
    
    SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
   }
@@ -301,7 +301,7 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_decrementInstanceC
   {
    void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
 
-   DecrementInstanceCount(JLongToPointer(clipsEnv),JLongToPointer(clipsInstance));
+   DecrementInstanceReferenceCount(JLongToPointer(clipsEnv),JLongToPointer(clipsInstance));
    
    SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
   }

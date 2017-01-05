@@ -419,7 +419,7 @@ static void ClearBload(
      {
       UnmarkConstructHeader(theEnv,&DefglobalBinaryData(theEnv)->DefglobalArray[i].header);
 
-      ValueDeinstall(theEnv,&(DefglobalBinaryData(theEnv)->DefglobalArray[i].current));
+      DecrementUDFValueReferenceCount(theEnv,&(DefglobalBinaryData(theEnv)->DefglobalArray[i].current));
       if (DefglobalBinaryData(theEnv)->DefglobalArray[i].current.header->type == MULTIFIELD_TYPE)
         { ReturnMultifield(theEnv,DefglobalBinaryData(theEnv)->DefglobalArray[i].current.multifieldValue); }
      }

@@ -341,7 +341,7 @@ static void ReturnDefglobal(
    /* Return the global's current value. */
    /*====================================*/
 
-   ValueDeinstall(theEnv,&theDefglobal->current);
+   DecrementUDFValueReferenceCount(theEnv,&theDefglobal->current);
    if (theDefglobal->current.header->type == MULTIFIELD_TYPE)
      { ReturnMultifield(theEnv,theDefglobal->current.multifieldValue); }
 
@@ -457,7 +457,7 @@ void QSetDefglobalValue(
    /* Remove the old value of the global variable. */
    /*==============================================*/
 
-   ValueDeinstall(theEnv,&theGlobal->current);
+   DecrementUDFValueReferenceCount(theEnv,&theGlobal->current);
    if (theGlobal->current.header->type == MULTIFIELD_TYPE)
      { ReturnMultifield(theEnv,theGlobal->current.multifieldValue); }
 
@@ -467,7 +467,7 @@ void QSetDefglobalValue(
 
    if (vPtr->header->type != MULTIFIELD_TYPE) theGlobal->current.value = vPtr->value;
    else DuplicateMultifield(theEnv,&theGlobal->current,vPtr);
-   ValueInstall(theEnv,&theGlobal->current);
+   IncrementUDFValueReferenceCount(theEnv,&theGlobal->current);
 
    /*===========================================*/
    /* Set the variable indicating that a change */

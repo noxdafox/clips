@@ -251,7 +251,7 @@ void NewSystemHandler(
 
    cls = LookupDefclassInScope(theEnv,cname);
    hnd = InsertHandlerHeader(theEnv,cls,CreateSymbol(theEnv,mname),MPRIMARY);
-   IncrementSymbolCount(hnd->header.name);
+   IncrementLexemeCount(hnd->header.name);
    hnd->system = 1;
    hnd->minParams = hnd->maxParams = (short) (extraargs + 1);
    hnd->localVarCount = 0;
@@ -496,7 +496,7 @@ void DeallocateMarkedHandlers(
       if (hnd->mark == 1)
         {
          count++;
-         DecrementSymbolCount(theEnv,hnd->header.name);
+         DecrementLexemeReferenceCount(theEnv,hnd->header.name);
          ExpressionDeinstall(theEnv,hnd->actions);
          ReturnPackedExpression(theEnv,hnd->actions);
          ClearUserDataList(theEnv,hnd->header.usrData);

@@ -1185,9 +1185,9 @@ FactAddressValue::FactAddressValue(
   Environment *theEnv,Fact *theFact) : theEnvironment(theEnv), theFactAddress(theFact)
   {
 #ifndef CLIPS_DLL_WRAPPER
-   IncrementFactCount(theEnvironment,theFact);
+   IncrementFactReferenceCount(theEnvironment,theFact);
 #else
-   __IncrementFactCount(theEnvironment,theFact);
+   __IncrementFactReferenceCount(theEnvironment,theFact);
 #endif
   }
 
@@ -1205,9 +1205,9 @@ FactAddressValue::FactAddressValue( const FactAddressValue& v) : theFactAddress(
 FactAddressValue::~FactAddressValue()
   {   
 #ifndef CLIPS_DLL_WRAPPER
-   ::DecrementFactCount(theEnvironment,theFactAddress);
+   ::DecrementFactReferenceCount(theEnvironment,theFactAddress);
 #else
-   __DecrementFactCount(theEnvironment,theFactAddress);
+   __DecrementFactReferenceCount(theEnvironment,theFactAddress);
 #endif
   }
 
@@ -1230,9 +1230,9 @@ FactAddressValue& FactAddressValue::operator = (
    if (theFactAddress != NULL)
      { 
 #ifndef CLIPS_DLL_WRAPPER
-      ::DecrementFactCount(theEnvironment,theFactAddress);
+      ::DecrementFactReferenceCount(theEnvironment,theFactAddress);
 #else
-      __DecrementFactCount(theEnvironment,theFactAddress);
+      __DecrementFactReferenceCount(theEnvironment,theFactAddress);
 #endif
      }
         
@@ -1240,9 +1240,9 @@ FactAddressValue& FactAddressValue::operator = (
    theFactAddress = v.theFactAddress;
      
 #ifndef CLIPS_DLL_WRAPPER
-   IncrementFactCount(theEnvironment,theFactAddress);
+   IncrementFactReferenceCount(theEnvironment,theFactAddress);
 #else
-   __IncrementFactCount(theEnvironment,theFactAddress);
+   __IncrementFactReferenceCount(theEnvironment,theFactAddress);
 #endif
    
    return *this;
@@ -1317,9 +1317,9 @@ InstanceAddressValue::InstanceAddressValue(
   Environment *theEnv,Instance *theInstance) : theEnvironment(theEnv), theInstanceAddress(theInstance)
   {
 #ifndef CLIPS_DLL_WRAPPER
-   IncrementInstanceCount(theEnvironment,theInstance);
+   IncrementInstanceReferenceCount(theEnvironment,theInstance);
 #else
-   __IncrementInstanceCount(theEnvironment,theInstance);
+   __IncrementInstanceReferenceCount(theEnvironment,theInstance);
 #endif
   }
 
@@ -1337,9 +1337,9 @@ InstanceAddressValue::InstanceAddressValue( const InstanceAddressValue& v) : the
 InstanceAddressValue::~InstanceAddressValue()
   {   
 #ifndef CLIPS_DLL_WRAPPER
-   ::DecrementInstanceCount(theEnvironment,theInstanceAddress);
+   ::DecrementInstanceReferenceCount(theEnvironment,theInstanceAddress);
 #else
-   __DecrementInstanceCount(theEnvironment,theInstanceAddress);
+   __DecrementInstanceReferenceCount(theEnvironment,theInstanceAddress);
 #endif
   }
 
@@ -1354,9 +1354,9 @@ InstanceAddressValue& InstanceAddressValue::operator = (
    if (theInstanceAddress != NULL)
      { 
 #ifndef CLIPS_DLL_WRAPPER
-      ::DecrementInstanceCount(theEnvironment,theInstanceAddress);
+      ::DecrementInstanceReferenceCount(theEnvironment,theInstanceAddress);
 #else
-      __DecrementInstanceCount(theEnvironment,theInstanceAddress);
+      __DecrementInstanceReferenceCount(theEnvironment,theInstanceAddress);
 #endif
 
      }
@@ -1365,9 +1365,9 @@ InstanceAddressValue& InstanceAddressValue::operator = (
    theInstanceAddress = v.theInstanceAddress;
      
 #ifndef CLIPS_DLL_WRAPPER
-   ::IncrementInstanceCount(theEnvironment,theInstanceAddress);
+   ::IncrementInstanceReferenceCount(theEnvironment,theInstanceAddress);
 #else
-   __IncrementInstanceCount(theEnvironment,theInstanceAddress);
+   __IncrementInstanceReferenceCount(theEnvironment,theInstanceAddress);
 #endif
    
    return *this;

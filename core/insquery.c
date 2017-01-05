@@ -108,7 +108,7 @@ void SetupQuery(
 
 #if ! RUN_TIME
    InstanceQueryData(theEnv)->QUERY_DELIMITER_SYMBOL = CreateSymbol(theEnv,QUERY_DELIMITER_STRING);
-   IncrementSymbolCount(InstanceQueryData(theEnv)->QUERY_DELIMITER_SYMBOL);
+   IncrementLexemeCount(InstanceQueryData(theEnv)->QUERY_DELIMITER_SYMBOL);
 
    AddUDF(theEnv,"(query-instance)","n",0,UNBOUNDED,NULL,GetQueryInstance,"GetQueryInstance",NULL);
 
@@ -485,9 +485,9 @@ void QueryDoForAllInstances(
    InstanceQueryData(theEnv)->QueryCore->query = GetFirstArgument();
    InstanceQueryData(theEnv)->QueryCore->action = GetFirstArgument()->nextArg;
    InstanceQueryData(theEnv)->QueryCore->result = returnValue;
-   ValueInstall(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
+   IncrementUDFValueReferenceCount(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
    TestEntireChain(theEnv,qclasses,0);
-   ValueDeinstall(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
+   DecrementUDFValueReferenceCount(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
 
    InstanceQueryData(theEnv)->AbortQuery = false;
    ProcedureFunctionData(theEnv)->BreakFlag = false;
@@ -1086,9 +1086,9 @@ static void TestEntireClass(
               {
                ins->busy++;
 
-               ValueDeinstall(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
+               DecrementUDFValueReferenceCount(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
                EvaluateExpression(theEnv,InstanceQueryData(theEnv)->QueryCore->action,InstanceQueryData(theEnv)->QueryCore->result);
-               ValueInstall(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
+               IncrementUDFValueReferenceCount(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
 
                ins->busy--;
                if (ProcedureFunctionData(theEnv)->BreakFlag || ProcedureFunctionData(theEnv)->ReturnFlag)

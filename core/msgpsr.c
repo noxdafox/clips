@@ -290,7 +290,7 @@ bool ParseDefmessageHandler(
    else
      {
       hnd = InsertHandlerHeader(theEnv,cls,mname,(int) mtype);
-      IncrementSymbolCount(hnd->header.name);
+      IncrementLexemeCount(hnd->header.name);
      }
    ReturnExpression(theEnv,hndParams);
 

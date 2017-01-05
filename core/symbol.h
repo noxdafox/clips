@@ -113,7 +113,7 @@ typedef struct genericHashNode GENERIC_HN;
 /******************************/
 struct genericHashNode
   {
-   TypeHeader th;
+   TypeHeader header;
    struct genericHashNode *next;
    long count;
    unsigned int permanent : 1;
@@ -148,7 +148,7 @@ struct symbolMatch
    struct symbolMatch *next;
   };
 
-#define IncrementSymbolCount(theValue) (((CLIPSLexeme *) theValue)->count++)
+#define IncrementLexemeCount(theValue) (((CLIPSLexeme *) theValue)->count++)
 #define IncrementFloatCount(theValue) (((CLIPSFloat *) theValue)->count++)
 #define IncrementIntegerCount(theValue) (((CLIPSInteger *) theValue)->count++)
 #define IncrementBitMapCount(theValue) (((CLIPSBitMap *) theValue)->count++)
@@ -201,11 +201,16 @@ struct symbolData
    unsigned long                  HashInteger(long long,unsigned long);
    unsigned long                  HashBitMap(const char *,unsigned long,unsigned);
    unsigned long                  HashExternalAddress(void *,unsigned long);
-   void                           DecrementSymbolCount(Environment *,CLIPSLexeme *);
-   void                           DecrementFloatCount(Environment *,CLIPSFloat *);
-   void                           DecrementIntegerCount(Environment *,CLIPSInteger *);
-   void                           DecrementBitMapCount(Environment *,CLIPSBitMap *);
-   void                           DecrementExternalAddressCount(Environment *,CLIPSExternalAddress *);
+   void                           IncrementLexemeReferenceCount(Environment *,CLIPSLexeme *);
+   void                           IncrementFloatReferenceCount(Environment *,CLIPSFloat *);
+   void                           IncrementIntegerReferenceCount(Environment *,CLIPSInteger *);
+   void                           IncrementBitMapReferenceCount(Environment *,CLIPSBitMap *);
+   void                           IncrementExternalAddressReferenceCount(Environment *,CLIPSExternalAddress *);
+   void                           DecrementLexemeReferenceCount(Environment *,CLIPSLexeme *);
+   void                           DecrementFloatReferenceCount(Environment *,CLIPSFloat *);
+   void                           DecrementIntegerReferenceCount(Environment *,CLIPSInteger *);
+   void                           DecrementBitMapReferenceCount(Environment *,CLIPSBitMap *);
+   void                           DecrementExternalAddressReferenceCount(Environment *,CLIPSExternalAddress *);
    void                           RemoveEphemeralAtoms(Environment *);
    CLIPSLexeme                  **GetSymbolTable(Environment *);
    void                           SetSymbolTable(Environment *,CLIPSLexeme **);

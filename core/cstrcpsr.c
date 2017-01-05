@@ -359,7 +359,7 @@ int LoadConstructsFromLogicalName(
       /*=====================================================*/
 
       if (foundConstruct)
-         { IncrementSymbolCount(theToken.value); }
+         { IncrementLexemeCount(theToken.value); }
 
       CleanCurrentGarbageFrame(theEnv,NULL);
       CallPeriodicTasks(theEnv);
@@ -367,7 +367,7 @@ int LoadConstructsFromLogicalName(
       YieldTime(theEnv);
 
       if (foundConstruct)
-         { DecrementSymbolCount(theEnv,theToken.lexemeValue); }
+         { DecrementLexemeReferenceCount(theEnv,theToken.lexemeValue); }
      }
 
    /*========================================================*/

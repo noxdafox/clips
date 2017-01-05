@@ -161,7 +161,7 @@ void ReturnDefrule(
       /* Decrement the count for the defrule name. */
       /*===========================================*/
 
-      DecrementSymbolCount(theEnv,theDefrule->header.name);
+      DecrementLexemeReferenceCount(theEnv,theDefrule->header.name);
 
       /*========================================*/
       /* Get rid of the the rule's RHS actions. */

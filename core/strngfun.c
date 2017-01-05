@@ -209,19 +209,19 @@ static void StrOrSymCatFunction(
          case SYMBOL_TYPE:
            hashPtr = theArg.lexemeValue;
            arrayOfStrings[i-1] = hashPtr;
-           IncrementSymbolCount(hashPtr);
+           IncrementLexemeCount(hashPtr);
            break;
 
          case FLOAT_TYPE:
            hashPtr = CreateString(theEnv,FloatToString(theEnv,theArg.floatValue->contents));
            arrayOfStrings[i-1] = hashPtr;
-           IncrementSymbolCount(hashPtr);
+           IncrementLexemeCount(hashPtr);
            break;
 
          case INTEGER_TYPE:
            hashPtr = CreateString(theEnv,LongIntegerToString(theEnv,theArg.integerValue->contents));
            arrayOfStrings[i-1] = hashPtr;
-           IncrementSymbolCount(hashPtr);
+           IncrementLexemeCount(hashPtr);
            break;
 
          default:
@@ -235,7 +235,7 @@ static void StrOrSymCatFunction(
          for (i = 0; i < numArgs; i++)
            {
             if (arrayOfStrings[i] != NULL)
-              { DecrementSymbolCount(theEnv,arrayOfStrings[i]); }
+              { DecrementLexemeReferenceCount(theEnv,arrayOfStrings[i]); }
            }
 
          rm(theEnv,arrayOfStrings,sizeof(CLIPSLexeme *) * numArgs);
@@ -279,7 +279,7 @@ static void StrOrSymCatFunction(
    for (i = 0; i < numArgs; i++)
      {
       if (arrayOfStrings[i] != NULL)
-        { DecrementSymbolCount(theEnv,arrayOfStrings[i]); }
+        { DecrementLexemeReferenceCount(theEnv,arrayOfStrings[i]); }
      }
 
    rm(theEnv,arrayOfStrings,sizeof(CLIPSLexeme *) * numArgs);

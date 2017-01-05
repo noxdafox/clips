@@ -174,9 +174,9 @@ void SetupObjectSystem(
 #if ! RUN_TIME
    DefclassData(theEnv)->ClassDefaultsMode = CONVENIENCE_MODE;
    DefclassData(theEnv)->ISA_SYMBOL = CreateSymbol(theEnv,SUPERCLASS_RLN);
-   IncrementSymbolCount(DefclassData(theEnv)->ISA_SYMBOL);
+   IncrementLexemeCount(DefclassData(theEnv)->ISA_SYMBOL);
    DefclassData(theEnv)->NAME_SYMBOL = CreateSymbol(theEnv,NAME_RLN);
-   IncrementSymbolCount(DefclassData(theEnv)->NAME_SYMBOL);
+   IncrementLexemeCount(DefclassData(theEnv)->NAME_SYMBOL);
 #endif
 
    SetupDefclasses(theEnv);
@@ -373,7 +373,7 @@ void ObjectsRunTimeInitialize(
               if ((cls->slots[i].defaultValue != NULL) && (cls->slots[i].dynamicDefault == 0))
                 {
                  tmpexp = ((UDFValue *) cls->slots[i].defaultValue)->supplementalInfo;
-                 ValueDeinstall(theEnv,(UDFValue *) cls->slots[i].defaultValue);
+                 DecrementUDFValueReferenceCount(theEnv,(UDFValue *) cls->slots[i].defaultValue);
                  rtn_struct(theEnv,udfValue,cls->slots[i].defaultValue);
                  cls->slots[i].defaultValue = tmpexp;
                 }
@@ -425,7 +425,7 @@ void ObjectsRunTimeInitialize(
             cls->slots[i].defaultValue = get_struct(theEnv,udfValue);
             EvaluateAndStoreInDataObject(theEnv,(int) cls->slots[i].multiple,(Expression *) tmpexp,
                                          (UDFValue *) cls->slots[i].defaultValue,true);
-            ValueInstall(theEnv,(UDFValue *) cls->slots[i].defaultValue);
+            IncrementUDFValueReferenceCount(theEnv,(UDFValue *) cls->slots[i].defaultValue);
             ((UDFValue *) cls->slots[i].defaultValue)->supplementalInfo = tmpexp;
            }
         }
@@ -702,7 +702,7 @@ static Defclass *AddSystemClass(
 #if DEFRULE_CONSTRUCT
    sys->reactive = 0;
 #endif
-   IncrementSymbolCount(sys->header.name);
+   IncrementLexemeCount(sys->header.name);
    sys->installed = 1;
    sys->system = 1;
    sys->hashTableIndex = HashClass(sys->header.name);
@@ -806,7 +806,7 @@ static void UpdateDefclassesScope(
         ClearBitString(newScopeMap,newScopeMapSize);
         GenCopyMemory(char,theDefclass->scopeMap->size,
                    newScopeMap,theDefclass->scopeMap->contents);
-        DecrementBitMapCount(theEnv,theDefclass->scopeMap);
+        DecrementBitMapReferenceCount(theEnv,theDefclass->scopeMap);
         if (theDefclass->system)
           SetBitMap(newScopeMap,newModuleID);
         else if (FindImportedConstruct(theEnv,"defclass",matchModule,

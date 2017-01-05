@@ -828,7 +828,7 @@ void DeinstallConstructHeader(
   Environment *theEnv,
   ConstructHeader *theHeader)
   {
-   DecrementSymbolCount(theEnv,theHeader->name);
+   DecrementLexemeReferenceCount(theEnv,theHeader->name);
    if (theHeader->ppForm != NULL)
      {
       rm(theEnv,(void *) theHeader->ppForm,

@@ -100,7 +100,11 @@ struct modifyCallFunctionItem
 
 struct fact
   {
-   struct patternEntity factHeader;
+   union
+     {
+      struct patternEntity patternHeader;
+      TypeHeader header;
+     };
    Deftemplate *whichDeftemplate;
    void *list;
    long long factIndex;
@@ -171,7 +175,7 @@ struct factsData
    Fact                          *AssertDriver(Environment *,Fact *,long long,Fact *,Fact *,char *);
    Fact                          *AssertString(Environment *,const char *);
    Fact                          *CreateFact(Environment *,Deftemplate *);
-   void                           DecrementFactCount(Environment *,Fact *);
+   void                           DecrementFactReferenceCount(Environment *,Fact *);
    long long                      FactIndex(Environment *,Fact *);
    bool                           GetFactSlot(Environment *,Fact *,const char *,CLIPSValue *);
    void                           PrintFactWithIdentifier(Environment *,const char *,Fact *,const char *);
@@ -191,7 +195,7 @@ struct factsData
    unsigned long                  GetNumberOfFacts(Environment *);
    void                           InitializeFacts(Environment *);
    Fact                          *FindIndexedFact(Environment *,long long);
-   void                           IncrementFactCount(Environment *,Fact *);
+   void                           IncrementFactReferenceCount(Environment *,Fact *);
    void                           PrintFactIdentifier(Environment *,const char *,Fact *);
    void                           DecrementFactBasisCount(Environment *,Fact *);
    void                           IncrementFactBasisCount(Environment *,Fact *);

@@ -525,7 +525,7 @@ static void UpdateDeftemplateSlot(
    theSlot = (struct templateSlot *) &DeftemplateBinaryData(theEnv)->SlotArray[obji];
 
    theSlot->slotName = SymbolPointer(btsPtr->slotName);
-   IncrementSymbolCount(theSlot->slotName);
+   IncrementLexemeCount(theSlot->slotName);
    theSlot->defaultList = HashedExpressionPointer(btsPtr->defaultList);
    theSlot->facetList = HashedExpressionPointer(btsPtr->facetList);
    theSlot->constraints = ConstraintPointer(btsPtr->constraints);
@@ -565,7 +565,7 @@ static void ClearBload(
    /*=======================================*/
 
    for (i = 0; i < DeftemplateBinaryData(theEnv)->NumberOfTemplateSlots; i++)
-     { DecrementSymbolCount(theEnv,DeftemplateBinaryData(theEnv)->SlotArray[i].slotName); }
+     { DecrementLexemeReferenceCount(theEnv,DeftemplateBinaryData(theEnv)->SlotArray[i].slotName); }
 
    /*======================================================================*/
    /* Deallocate the space used for the deftemplateModule data structures. */

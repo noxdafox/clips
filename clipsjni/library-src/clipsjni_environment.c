@@ -292,7 +292,7 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_watch(
    
    void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
 
-   rv = Watch(JLongToPointer(clipsEnv),(char *) cWatchItem);
+   rv = WatchString(JLongToPointer(clipsEnv),(char *) cWatchItem);
    
    (*env)->ReleaseStringUTFChars(env,watchItem,cWatchItem);
    
@@ -320,7 +320,7 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_unwatch(
 
    void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
 
-   rv = Unwatch(JLongToPointer(clipsEnv),(char *) cWatchItem);
+   rv = UnwatchString(JLongToPointer(clipsEnv),(char *) cWatchItem);
    
    (*env)->ReleaseStringUTFChars(env,watchItem,cWatchItem);
 
@@ -482,7 +482,7 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_incrementAddressCo
   {
    void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
 
-   IncrementExternalAddressCount(JLongToPointer(clipsExternalAddress));
+   IncrementExternalAddressReferenceCount(JLongToPointer(clipsEnv),JLongToPointer(clipsExternalAddress));
    
    SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
   }
@@ -504,7 +504,7 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_decrementAddressCo
   {
    void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
 
-   DecrementExternalAddressCount(JLongToPointer(clipsEnv),JLongToPointer(clipsExternalAddress));
+   DecrementExternalAddressReferenceCount(JLongToPointer(clipsEnv),JLongToPointer(clipsExternalAddress));
    
    SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
   }

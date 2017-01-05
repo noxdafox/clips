@@ -145,8 +145,8 @@ void InitializeFacts(
           (bool (*)(void *,void *)) Retract,
           NULL,
           (void *(*)(void *,void *)) GetNextFact,
-          (EntityBusyCountFunction *) DecrementFactCount,
-          (EntityBusyCountFunction *) IncrementFactCount,
+          (EntityBusyCountFunction *) DecrementFactReferenceCount,
+          (EntityBusyCountFunction *) IncrementFactReferenceCount,
           NULL,NULL,NULL,NULL,NULL
         },
         (void (*)(Environment *,void *)) DecrementFactBasisCount,
@@ -156,7 +156,7 @@ void InitializeFacts(
         (bool (*)(Environment *,void *)) FactIsDeleted
       };
 
-   Fact dummyFact = { { { FACT_ADDRESS_TYPE }, NULL, NULL, 0, 0L },
+   Fact dummyFact = { { { { FACT_ADDRESS_TYPE } , NULL, NULL, 0, 0L } },
                       NULL, NULL, -1L, 0, 1,
                       NULL, NULL, NULL, NULL, NULL, 
                       { {MULTIFIELD_TYPE } , 1, 0UL, NULL, { { { NULL } } } } };
@@ -164,7 +164,7 @@ void InitializeFacts(
    AllocateEnvironmentData(theEnv,FACTS_DATA,sizeof(struct factsData),DeallocateFactData);
 
    memcpy(&FactData(theEnv)->FactInfo,&factInfo,sizeof(struct patternEntityRecord));
-   dummyFact.factHeader.theInfo = &FactData(theEnv)->FactInfo;
+   dummyFact.patternHeader.theInfo = &FactData(theEnv)->FactInfo;
    memcpy(&FactData(theEnv)->DummyFact,&dummyFact,sizeof(struct fact));
    FactData(theEnv)->LastModuleIndex = -1;
 
@@ -363,7 +363,7 @@ void DecrementFactBasisCount(
    Multifield *theSegment;
    int i;
 
-   DecrementFactCount(theEnv,factPtr);
+   DecrementFactReferenceCount(theEnv,factPtr);
 
    if (factPtr->basisSlots != NULL)
      {
@@ -394,7 +394,7 @@ void IncrementFactBasisCount(
    Multifield *theSegment;
    int i;
 
-   IncrementFactCount(theEnv,factPtr);
+   IncrementFactReferenceCount(theEnv,factPtr);
 
    theSegment = &factPtr->theProposition;
 
@@ -720,7 +720,7 @@ static void RemoveGarbageFacts(
      {
       nextPtr = factPtr->nextFact;
         
-      if (factPtr->factHeader.busyCount == 0)
+      if (factPtr->patternHeader.busyCount == 0)
         {
          Multifield *theSegment;
          int i;
@@ -879,7 +879,7 @@ Fact *AssertDriver(
    else
      { theFact->factIndex = FactData(theEnv)->NextFactIndex++; }
 
-   theFact->factHeader.timeTag = DefruleData(theEnv)->CurrentEntityTimeTag++;
+   theFact->patternHeader.timeTag = DefruleData(theEnv)->CurrentEntityTimeTag++;
 
    /*=====================*/
    /* Update busy counts. */
@@ -890,7 +890,7 @@ Fact *AssertDriver(
    if (reuseIndex == 0)
      {
       Multifield *theSegment = &theFact->theProposition;
-      for (i = 0 ; i < (int) theSegment->length ; i++)
+      for (i = 0 ; i < (unsigned long) theSegment->length ; i++)
         {
          AtomInstall(theEnv,theSegment->contents[i].header->type,theSegment->contents[i].value);
         }
@@ -1381,12 +1381,12 @@ Fact *CreateFactBySize(
 
    theFact = get_var_struct(theEnv,fact,sizeof(struct clipsValue) * (newSize - 1));
 
-   theFact->factHeader.th.type = FACT_ADDRESS_TYPE;
+   theFact->patternHeader.header.type = FACT_ADDRESS_TYPE;
    theFact->garbage = false;
    theFact->factIndex = 0LL;
-   theFact->factHeader.busyCount = 0;
-   theFact->factHeader.theInfo = &FactData(theEnv)->FactInfo;
-   theFact->factHeader.dependents = NULL;
+   theFact->patternHeader.busyCount = 0;
+   theFact->patternHeader.theInfo = &FactData(theEnv)->FactInfo;
+   theFact->patternHeader.dependents = NULL;
    theFact->whichDeftemplate = NULL;
    theFact->nextFact = NULL;
    theFact->previousFact = NULL;
@@ -1442,7 +1442,7 @@ void FactInstall(
   {
    FactData(theEnv)->NumberOfFacts++;
    newFact->whichDeftemplate->busyCount++;
-   newFact->factHeader.busyCount++;
+   newFact->patternHeader.busyCount++;
   }
 
 /***************************************************************/
@@ -1455,14 +1455,14 @@ void FactDeinstall(
   {
    FactData(theEnv)->NumberOfFacts--;
    newFact->whichDeftemplate->busyCount--;
-   newFact->factHeader.busyCount--;
+   newFact->patternHeader.busyCount--;
   }
 
-/*********************************************/
-/* IncrementFactCount: Increments the number */
-/*   of references to a specified fact.      */
-/*********************************************/
-void IncrementFactCount(
+/***********************************************/
+/* IncrementFactReferenceCount: Increments the */
+/*   number of references to a specified fact. */
+/***********************************************/
+void IncrementFactReferenceCount(
   Environment *theEnv,
   Fact *factPtr)
   {
@@ -1470,14 +1470,14 @@ void IncrementFactCount(
 #pragma unused(theEnv)
 #endif
 
-   factPtr->factHeader.busyCount++;
+   factPtr->patternHeader.busyCount++;
   }
 
-/*********************************************/
-/* DecrementFactCount: Decrements the number */
-/*   of references to a specified fact.      */
-/*********************************************/
-void DecrementFactCount(
+/***********************************************/
+/* DecrementFactReferenceCount: Decrements the */
+/*   number of references to a specified fact. */
+/***********************************************/
+void DecrementFactReferenceCount(
   Environment *theEnv,
   Fact *factPtr)
   {
@@ -1485,7 +1485,7 @@ void DecrementFactCount(
 #pragma unused(theEnv)
 #endif
 
-   factPtr->factHeader.busyCount--;
+   factPtr->patternHeader.busyCount--;
   }
 
 /*********************************************************/
@@ -2139,7 +2139,7 @@ bool FBPutSlot(
         { return true; }
      }
    
-   CVAtomDeinstall(theEnv,oldValue.value);
+   DecrementReferenceCount(theEnv,oldValue.header);
    
    if (oldValue.header->type == MULTIFIELD_TYPE)
      { ReturnMultifield(theEnv,oldValue.multifieldValue); }
@@ -2149,7 +2149,7 @@ bool FBPutSlot(
    else
      { theFB->fbValueArray[whichSlot-1].value = slotValue->value; }
       
-   CVAtomInstall(theEnv,theFB->fbValueArray[whichSlot-1].value);
+   IncrementReferenceCount(theEnv,theFB->fbValueArray[whichSlot-1].header);
    
    return true;
   }
@@ -2171,7 +2171,7 @@ Fact *FBAssert(
       if (theFB->fbValueArray[i].voidValue != VoidConstant(theEnv))
         {
          theFact->theProposition.contents[i].value = theFB->fbValueArray[i].value;
-         CVAtomDeinstall(theEnv,theFB->fbValueArray[i].value);
+         DecrementReferenceCount(theEnv,theFB->fbValueArray[i].header);
          theFB->fbValueArray[i].voidValue = VoidConstant(theEnv);
         }
      }
@@ -2210,7 +2210,7 @@ void FBAbort(
    
    for (i = 0; i < theFB->fbDeftemplate->numberOfSlots; i++)
      {
-      CVAtomDeinstall(theEnv,theFB->fbValueArray[i].value);
+      DecrementReferenceCount(theEnv,theFB->fbValueArray[i].header);
       
       if (theFB->fbValueArray[i].header->type == MULTIFIELD_TYPE)
         { ReturnMultifield(theEnv,theFB->fbValueArray[i].multifieldValue); }
@@ -2269,7 +2269,7 @@ FactModifier *CreateFactModifier(
 
    theFM->fmEnv = theEnv;
    theFM->fmOldFact = oldFact;
-   IncrementFactCount(theEnv,oldFact);
+   IncrementFactReferenceCount(theEnv,oldFact);
 
    theFM->fmValueArray = (CLIPSValue *) gm3(theEnv,sizeof(CLIPSValue) * oldFact->whichDeftemplate->numberOfSlots);
 
@@ -2436,7 +2436,7 @@ bool FMPutSlot(
      {
       if (MultifieldsEqual(oldFactValue.multifieldValue,slotValue->multifieldValue))
         {
-         CVAtomDeinstall(theFM->fmEnv,oldValue.value);
+         DecrementReferenceCount(theFM->fmEnv,oldValue.header);
          if (oldValue.header->type == MULTIFIELD_TYPE)
            { ReturnMultifield(theFM->fmEnv,oldValue.multifieldValue); }
          theFM->fmValueArray[whichSlot-1].voidValue = theFM->fmEnv->VoidConstant;
@@ -2451,7 +2451,7 @@ bool FMPutSlot(
      {
       if (slotValue->value == oldFactValue.value)
         {
-         CVAtomDeinstall(theFM->fmEnv,oldValue.value);
+         DecrementReferenceCount(theFM->fmEnv,oldValue.header);
          theFM->fmValueArray[whichSlot-1].voidValue = theFM->fmEnv->VoidConstant;
          ClearBitMap(theFM->changeMap,whichSlot-1);
          return true;
@@ -2463,7 +2463,7 @@ bool FMPutSlot(
 
    SetBitMap(theFM->changeMap,whichSlot-1);
 
-   CVAtomDeinstall(theFM->fmEnv,oldValue.value);
+   DecrementReferenceCount(theFM->fmEnv,oldValue.header);
 
    if (oldValue.header->type == MULTIFIELD_TYPE)
      { ReturnMultifield(theFM->fmEnv,oldValue.multifieldValue); }
@@ -2473,7 +2473,7 @@ bool FMPutSlot(
    else
      { theFM->fmValueArray[whichSlot-1].value = slotValue->value; }
 
-   CVAtomInstall(theFM->fmEnv,theFM->fmValueArray[whichSlot-1].value);
+   IncrementReferenceCount(theFM->fmEnv,theFM->fmValueArray[whichSlot-1].header);
 
    return true;
   }
@@ -2511,7 +2511,7 @@ void FMDispose(
    
    for (i = 0; i < theFM->fmOldFact->whichDeftemplate->numberOfSlots; i++)
      {
-      CVAtomDeinstall(theEnv,theFM->fmValueArray[i].value);
+      DecrementReferenceCount(theEnv,theFM->fmValueArray[i].header);
 
       if (theFM->fmValueArray[i].header->type == MULTIFIELD_TYPE)
         { ReturnMultifield(theEnv,theFM->fmValueArray[i].multifieldValue); }
@@ -2531,7 +2531,7 @@ void FMDispose(
    /* Return the FactModifier structure. */
    /*====================================*/
    
-   DecrementFactCount(theEnv,theFM->fmOldFact);
+   DecrementFactReferenceCount(theEnv,theFM->fmOldFact);
    
    rtn_struct(theEnv,factModifier,theFM);
   }
@@ -2547,7 +2547,7 @@ void FMAbort(
    
    for (i = 0; i < theFM->fmOldFact->whichDeftemplate->numberOfSlots; i++)
      {
-      CVAtomDeinstall(theEnv,theFM->fmValueArray[i].value);
+      DecrementReferenceCount(theEnv,theFM->fmValueArray[i].header);
 
       if (theFM->fmValueArray[i].header->type == MULTIFIELD_TYPE)
         { ReturnMultifield(theEnv,theFM->fmValueArray[i].multifieldValue); }
@@ -2584,7 +2584,7 @@ bool FMSetFact(
    
    for (i = 0; i < theFM->fmOldFact->whichDeftemplate->numberOfSlots; i++)
      {
-      CVAtomDeinstall(theEnv,theFM->fmValueArray[i].value);
+      DecrementReferenceCount(theEnv,theFM->fmValueArray[i].header);
 
       if (theFM->fmValueArray[i].header->type == MULTIFIELD_TYPE)
         { ReturnMultifield(theEnv,theFM->fmValueArray[i].multifieldValue); }
@@ -2610,9 +2610,9 @@ bool FMSetFact(
    /* Update the fact being modified. */
    /*=================================*/
    
-   DecrementFactCount(theEnv,theFM->fmOldFact);
+   DecrementFactReferenceCount(theEnv,theFM->fmOldFact);
    theFM->fmOldFact = oldFact;
-   IncrementFactCount(theEnv,theFM->fmOldFact);
+   IncrementFactReferenceCount(theEnv,theFM->fmOldFact);
    
    /*=========================================*/
    /* Initialize the value and change arrays. */

@@ -176,7 +176,11 @@ struct slotDescriptor
 
 struct instance
   {
-   struct patternEntity header;
+   union
+     {
+      struct patternEntity patternHeader;
+      TypeHeader header;
+     };
    void *partialMatchList;
    InstanceSlot *basisSlots;
    unsigned installed            : 1;

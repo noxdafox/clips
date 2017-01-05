@@ -156,32 +156,32 @@ bool __declspec(dllexport) __Eval(
    return Eval(theEnv,evalString,rv);
   }  
 
-void __declspec(dllexport) __IncrementFactCount(
+void __declspec(dllexport) __IncrementFactReferenceCount(
   Environment *theEnv,
   Fact *theFact)
   {
-   IncrementFactCount(theEnv,theFact);
+   IncrementFactReferenceCount(theEnv,theFact);
   }
 
-void __declspec(dllexport) __DecrementFactCount(
+void __declspec(dllexport) __DecrementFactReferenceCount(
   Environment *theEnv,
   Fact *theFact)
   {
-   DecrementFactCount(theEnv,theFact);
+   DecrementFactReferenceCount(theEnv,theFact);
   }
 
-void __declspec(dllexport) __IncrementInstanceCount(
+void __declspec(dllexport) __IncrementInstanceReferenceCount(
   Environment *theEnv,
   Instance *theInstance)
   {
-   IncrementInstanceCount(theEnv,theInstance);
+   IncrementInstanceReferenceCount(theEnv,theInstance);
   }
 
-void __declspec(dllexport) __DecrementInstanceCount(
+void __declspec(dllexport) __DecrementInstanceReferenceCount(
   Environment *theEnv,
   Instance *theInstance)
   {
-   DecrementInstanceCount(theEnv,theInstance);
+   DecrementInstanceReferenceCount(theEnv,theInstance);
   }
 
 long long __declspec(dllexport) __FactIndex(

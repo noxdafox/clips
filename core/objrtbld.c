@@ -1055,7 +1055,7 @@ static void DetachObjectPattern(
    MarkBitMapClassesBusy(theEnv,alphaPtr->classbmp,-1);
    DeleteClassBitMap(theEnv,alphaPtr->classbmp);
    if (alphaPtr->slotbmp != NULL)
-     { DecrementBitMapCount(theEnv,alphaPtr->slotbmp); }
+     { DecrementBitMapReferenceCount(theEnv,alphaPtr->slotbmp); }
 
    /*=========================================*/
    /* Only continue deleting this pattern if  */
@@ -1607,7 +1607,7 @@ static void DeleteClassBitMap(
   {
    if (gset == NULL)
      return;
-   DecrementBitMapCount(theEnv,(CLIPSBitMap *) gset);
+   DecrementBitMapReferenceCount(theEnv,(CLIPSBitMap *) gset);
   }
 
 /***************************************************

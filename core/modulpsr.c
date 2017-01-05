@@ -275,7 +275,7 @@ bool ParseDefmodule(
    /*===============================================*/
 
    if (redefiningMainModule == NULL)
-     { IncrementSymbolCount(newDefmodule->header.name); }
+     { IncrementLexemeCount(newDefmodule->header.name); }
    else
      {
       if ((newDefmodule->importList != NULL) ||
@@ -285,16 +285,16 @@ bool ParseDefmodule(
 
    for (portSpecs = newDefmodule->importList; portSpecs != NULL; portSpecs = portSpecs->next)
      {
-      if (portSpecs->moduleName != NULL) IncrementSymbolCount(portSpecs->moduleName);
-      if (portSpecs->constructType != NULL) IncrementSymbolCount(portSpecs->constructType);
-      if (portSpecs->constructName != NULL) IncrementSymbolCount(portSpecs->constructName);
+      if (portSpecs->moduleName != NULL) IncrementLexemeCount(portSpecs->moduleName);
+      if (portSpecs->constructType != NULL) IncrementLexemeCount(portSpecs->constructType);
+      if (portSpecs->constructName != NULL) IncrementLexemeCount(portSpecs->constructName);
      }
 
    for (portSpecs = newDefmodule->exportList; portSpecs != NULL; portSpecs = portSpecs->next)
      {
-      if (portSpecs->moduleName != NULL) IncrementSymbolCount(portSpecs->moduleName);
-      if (portSpecs->constructType != NULL) IncrementSymbolCount(portSpecs->constructType);
-      if (portSpecs->constructName != NULL) IncrementSymbolCount(portSpecs->constructName);
+      if (portSpecs->moduleName != NULL) IncrementLexemeCount(portSpecs->moduleName);
+      if (portSpecs->constructType != NULL) IncrementLexemeCount(portSpecs->constructType);
+      if (portSpecs->constructName != NULL) IncrementLexemeCount(portSpecs->constructName);
      }
 
    /*====================================================*/

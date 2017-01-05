@@ -1276,7 +1276,7 @@ static void UpdateSlot(
    sp->cls = DefclassPointer(bsp->cls);
    sp->slotName = SlotNamePointer(bsp->slotName);
    sp->overrideMessage = SymbolPointer(bsp->overrideMessage);
-   IncrementSymbolCount(sp->overrideMessage);
+   IncrementLexemeCount(sp->overrideMessage);
    if (bsp->defaultValue != -1L)
      {
       if (sp->dynamicDefault)
@@ -1286,7 +1286,7 @@ static void UpdateSlot(
          sp->defaultValue = get_struct(theEnv,udfValue);
          EvaluateAndStoreInDataObject(theEnv,(int) sp->multiple,ExpressionPointer(bsp->defaultValue),
                                       (UDFValue *) sp->defaultValue,true);
-         ValueInstall(theEnv,(UDFValue *) sp->defaultValue);
+         IncrementUDFValueReferenceCount(theEnv,(UDFValue *) sp->defaultValue);
         }
      }
    else
@@ -1314,9 +1314,9 @@ static void UpdateSlotName(
    snp = (SLOT_NAME *) &ObjectBinaryData(theEnv)->SlotNameArray[obji];
    snp->id = bsnp->id;
    snp->name = SymbolPointer(bsnp->name);
-   IncrementSymbolCount(snp->name);
+   IncrementLexemeCount(snp->name);
    snp->putHandlerName = SymbolPointer(bsnp->putHandlerName);
-   IncrementSymbolCount(snp->putHandlerName);
+   IncrementLexemeCount(snp->putHandlerName);
    snp->hashTableIndex = bsnp->hashTableIndex;
    snp->nxt = DefclassData(theEnv)->SlotNameTable[snp->hashTableIndex];
    DefclassData(theEnv)->SlotNameTable[snp->hashTableIndex] = snp;
@@ -1351,7 +1351,7 @@ static void UpdateHandler(
    hnd->maxParams = bhnd->maxParams;
    hnd->localVarCount = bhnd->localVarCount;
    hnd->cls = DefclassPointer(bhnd->cls);
-   //IncrementSymbolCount(hnd->header.name);
+   //IncrementLexemeCount(hnd->header.name);
    hnd->actions = ExpressionPointer(bhnd->actions);
    hnd->header.ppForm = NULL;
    hnd->busy = 0;
@@ -1394,24 +1394,24 @@ static void ClearBloadObjects(
         {
          UnmarkConstructHeader(theEnv,&ObjectBinaryData(theEnv)->DefclassArray[i].header);
 #if DEFMODULE_CONSTRUCT
-         DecrementBitMapCount(theEnv,ObjectBinaryData(theEnv)->DefclassArray[i].scopeMap);
+         DecrementBitMapReferenceCount(theEnv,ObjectBinaryData(theEnv)->DefclassArray[i].scopeMap);
 #endif
          RemoveClassFromTable(theEnv,&ObjectBinaryData(theEnv)->DefclassArray[i]);
         }
       for (i = 0L ; i < ObjectBinaryData(theEnv)->SlotCount ; i++)
         {
-         DecrementSymbolCount(theEnv,ObjectBinaryData(theEnv)->SlotArray[i].overrideMessage);
+         DecrementLexemeReferenceCount(theEnv,ObjectBinaryData(theEnv)->SlotArray[i].overrideMessage);
          if ((ObjectBinaryData(theEnv)->SlotArray[i].defaultValue != NULL) && (ObjectBinaryData(theEnv)->SlotArray[i].dynamicDefault == 0))
            {
-            ValueDeinstall(theEnv,(UDFValue *) ObjectBinaryData(theEnv)->SlotArray[i].defaultValue);
+            DecrementUDFValueReferenceCount(theEnv,(UDFValue *) ObjectBinaryData(theEnv)->SlotArray[i].defaultValue);
             rtn_struct(theEnv,udfValue,ObjectBinaryData(theEnv)->SlotArray[i].defaultValue);
            }
         }
       for (i = 0L ; i < ObjectBinaryData(theEnv)->SlotNameCount ; i++)
         {
          DefclassData(theEnv)->SlotNameTable[ObjectBinaryData(theEnv)->SlotNameArray[i].hashTableIndex] = NULL;
-         DecrementSymbolCount(theEnv,ObjectBinaryData(theEnv)->SlotNameArray[i].name);
-         DecrementSymbolCount(theEnv,ObjectBinaryData(theEnv)->SlotNameArray[i].putHandlerName);
+         DecrementLexemeReferenceCount(theEnv,ObjectBinaryData(theEnv)->SlotNameArray[i].name);
+         DecrementLexemeReferenceCount(theEnv,ObjectBinaryData(theEnv)->SlotNameArray[i].putHandlerName);
         }
 
       space = (sizeof(Defclass) * ObjectBinaryData(theEnv)->ClassCount);
@@ -1466,7 +1466,7 @@ static void ClearBloadObjects(
    if (ObjectBinaryData(theEnv)->HandlerCount != 0L)
      {
       for (i = 0L ; i < ObjectBinaryData(theEnv)->HandlerCount ; i++)
-        DecrementSymbolCount(theEnv,ObjectBinaryData(theEnv)->HandlerArray[i].header.name);
+        DecrementLexemeReferenceCount(theEnv,ObjectBinaryData(theEnv)->HandlerArray[i].header.name);
 
       space = (sizeof(DefmessageHandler) * ObjectBinaryData(theEnv)->HandlerCount);
       if (space != 0L)

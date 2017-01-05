@@ -442,7 +442,7 @@ static Deffunction *AddDeffunction(
      {
       dfuncPtr = get_struct(theEnv,deffunction);
       InitializeConstructHeader(theEnv,"deffunction",DEFFUNCTION,&dfuncPtr->header,name);
-      IncrementSymbolCount(name);
+      IncrementLexemeCount(name);
       dfuncPtr->code = NULL;
       dfuncPtr->minNumberOfParameters = min;
       dfuncPtr->maxNumberOfParameters = max;

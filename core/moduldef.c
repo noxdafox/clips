@@ -430,7 +430,7 @@ void CreateMainModule(
 
    newDefmodule = get_struct(theEnv,defmodule);
    newDefmodule->header.name = CreateSymbol(theEnv,"MAIN");
-   IncrementSymbolCount(newDefmodule->header.name);
+   IncrementLexemeCount(newDefmodule->header.name);
    newDefmodule->header.whichModule = NULL;
    newDefmodule->header.next = NULL;
    newDefmodule->header.ppForm = NULL;
@@ -611,7 +611,7 @@ static void ReturnDefmodule(
    /*======================================================*/
 
    if (! environmentClear)
-     { DecrementSymbolCount(theEnv,theDefmodule->header.name); }
+     { DecrementLexemeReferenceCount(theEnv,theDefmodule->header.name); }
 
    /*====================================*/
    /* Free the items in the import list. */
@@ -623,9 +623,9 @@ static void ReturnDefmodule(
       nextSpec = theSpec->next;
       if (! environmentClear)
         {
-         if (theSpec->moduleName != NULL) DecrementSymbolCount(theEnv,theSpec->moduleName);
-         if (theSpec->constructType != NULL) DecrementSymbolCount(theEnv,theSpec->constructType);
-         if (theSpec->constructName != NULL) DecrementSymbolCount(theEnv,theSpec->constructName);
+         if (theSpec->moduleName != NULL) DecrementLexemeReferenceCount(theEnv,theSpec->moduleName);
+         if (theSpec->constructType != NULL) DecrementLexemeReferenceCount(theEnv,theSpec->constructType);
+         if (theSpec->constructName != NULL) DecrementLexemeReferenceCount(theEnv,theSpec->constructName);
         }
       rtn_struct(theEnv,portItem,theSpec);
       theSpec = nextSpec;
@@ -641,9 +641,9 @@ static void ReturnDefmodule(
       nextSpec = theSpec->next;
       if (! environmentClear)
         {
-         if (theSpec->moduleName != NULL) DecrementSymbolCount(theEnv,theSpec->moduleName);
-         if (theSpec->constructType != NULL) DecrementSymbolCount(theEnv,theSpec->constructType);
-         if (theSpec->constructName != NULL) DecrementSymbolCount(theEnv,theSpec->constructName);
+         if (theSpec->moduleName != NULL) DecrementLexemeReferenceCount(theEnv,theSpec->moduleName);
+         if (theSpec->constructType != NULL) DecrementLexemeReferenceCount(theEnv,theSpec->constructType);
+         if (theSpec->constructName != NULL) DecrementLexemeReferenceCount(theEnv,theSpec->constructName);
         }
       rtn_struct(theEnv,portItem,theSpec);
       theSpec = nextSpec;

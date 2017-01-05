@@ -510,7 +510,7 @@ static Defrule *CreateNewDisjunct(
    newDisjunct->header.constructType = DEFRULE;
    newDisjunct->header.env = theEnv;
    newDisjunct->header.name = ruleName;
-   IncrementSymbolCount(newDisjunct->header.name);
+   IncrementLexemeCount(newDisjunct->header.name);
    newDisjunct->actions = theActions;
    newDisjunct->salience = PatternData(theEnv)->GlobalSalience;
    newDisjunct->afterBreakpoint = 0;

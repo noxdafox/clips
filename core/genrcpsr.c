@@ -1352,7 +1352,7 @@ static Defgeneric *AddGeneric(
      {
       *newGeneric = true;
       gfunc = NewGeneric(theEnv,name);
-      IncrementSymbolCount(name);
+      IncrementLexemeCount(name);
       AddImplicitMethods(theEnv,gfunc);
      }
    AddConstructToModule(&gfunc->header);

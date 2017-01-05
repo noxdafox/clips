@@ -110,7 +110,7 @@ void SetupFactQuery(
 
 #if ! RUN_TIME
    FactQueryData(theEnv)->QUERY_DELIMITER_SYMBOL = CreateSymbol(theEnv,QUERY_DELIMITER_STRING);
-   IncrementSymbolCount(FactQueryData(theEnv)->QUERY_DELIMITER_SYMBOL);
+   IncrementLexemeCount(FactQueryData(theEnv)->QUERY_DELIMITER_SYMBOL);
 
    AddUDF(theEnv,"(query-fact)","f",0,UNBOUNDED,NULL,GetQueryFact,"GetQueryFact",NULL);
 
@@ -498,9 +498,9 @@ void QueryDoForAllFacts(
    FactQueryData(theEnv)->QueryCore->query = GetFirstArgument();
    FactQueryData(theEnv)->QueryCore->action = GetFirstArgument()->nextArg;
    FactQueryData(theEnv)->QueryCore->result = returnValue;
-   ValueInstall(theEnv,FactQueryData(theEnv)->QueryCore->result);
+   IncrementUDFValueReferenceCount(theEnv,FactQueryData(theEnv)->QueryCore->result);
    TestEntireChain(theEnv,qtemplates,0);
-   ValueDeinstall(theEnv,FactQueryData(theEnv)->QueryCore->result);
+   DecrementUDFValueReferenceCount(theEnv,FactQueryData(theEnv)->QueryCore->result);
 
    FactQueryData(theEnv)->AbortQuery = false;
    ProcedureFunctionData(theEnv)->BreakFlag = false;
@@ -934,25 +934,25 @@ static bool TestForFirstFactInTemplate(
       FactQueryData(theEnv)->QueryCore->solns[indx] = theFact;
       if (qchain->nxt != NULL)
         {
-         theFact->factHeader.busyCount++;
+         theFact->patternHeader.busyCount++;
          if (TestForFirstInChain(theEnv,qchain->nxt,indx+1) == true)
            {
-            theFact->factHeader.busyCount--;
+            theFact->patternHeader.busyCount--;
             break;
            }
-         theFact->factHeader.busyCount--;
+         theFact->patternHeader.busyCount--;
          if ((EvaluationData(theEnv)->HaltExecution == true) || (FactQueryData(theEnv)->AbortQuery == true))
            break;
         }
       else
         {
-         theFact->factHeader.busyCount++;
+         theFact->patternHeader.busyCount++;
          EvaluateExpression(theEnv,FactQueryData(theEnv)->QueryCore->query,&temp);
 
          CleanCurrentGarbageFrame(theEnv,NULL);
          CallPeriodicTasks(theEnv);
 
-         theFact->factHeader.busyCount--;
+         theFact->patternHeader.busyCount--;
          if (EvaluationData(theEnv)->HaltExecution == true)
            break;
          if (temp.value != FalseSymbol(theEnv))
@@ -1036,31 +1036,31 @@ static void TestEntireTemplate(
       FactQueryData(theEnv)->QueryCore->solns[indx] = theFact;
       if (qchain->nxt != NULL)
         {
-         theFact->factHeader.busyCount++;
+         theFact->patternHeader.busyCount++;
          TestEntireChain(theEnv,qchain->nxt,indx+1);
-         theFact->factHeader.busyCount--;
+         theFact->patternHeader.busyCount--;
          if ((EvaluationData(theEnv)->HaltExecution == true) || (FactQueryData(theEnv)->AbortQuery == true))
            break;
         }
       else
         {
-         theFact->factHeader.busyCount++;
+         theFact->patternHeader.busyCount++;
 
          EvaluateExpression(theEnv,FactQueryData(theEnv)->QueryCore->query,&temp);
 
-         theFact->factHeader.busyCount--;
+         theFact->patternHeader.busyCount--;
          if (EvaluationData(theEnv)->HaltExecution == true)
            break;
          if (temp.value != FalseSymbol(theEnv))
            {
             if (FactQueryData(theEnv)->QueryCore->action != NULL)
               {
-               theFact->factHeader.busyCount++;
-               ValueDeinstall(theEnv,FactQueryData(theEnv)->QueryCore->result);
+               theFact->patternHeader.busyCount++;
+               DecrementUDFValueReferenceCount(theEnv,FactQueryData(theEnv)->QueryCore->result);
                EvaluateExpression(theEnv,FactQueryData(theEnv)->QueryCore->action,FactQueryData(theEnv)->QueryCore->result);
-               ValueInstall(theEnv,FactQueryData(theEnv)->QueryCore->result);
+               IncrementUDFValueReferenceCount(theEnv,FactQueryData(theEnv)->QueryCore->result);
 
-               theFact->factHeader.busyCount--;
+               theFact->patternHeader.busyCount--;
                if (ProcedureFunctionData(theEnv)->BreakFlag || ProcedureFunctionData(theEnv)->ReturnFlag)
                  {
                   FactQueryData(theEnv)->AbortQuery = true;

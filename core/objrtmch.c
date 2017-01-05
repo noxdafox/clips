@@ -1293,7 +1293,7 @@ static void ObjectAssertAction(
   Environment *theEnv,
   Instance *ins)
   {
-   ins->header.timeTag = ObjectReteData(theEnv)->UseEntityTimeTag;
+   ins->patternHeader.timeTag = ObjectReteData(theEnv)->UseEntityTimeTag;
    ObjectReteData(theEnv)->CurrentPatternObject = ins;
    ObjectReteData(theEnv)->CurrentPatternObjectSlot = NULL;
    MarkObjectPatternNetwork(theEnv,NULL);
@@ -1319,7 +1319,7 @@ static void ObjectModifyAction(
   Instance *ins,
   SLOT_BITMAP *slotNameIDs)
   {
-   ins->header.timeTag = ObjectReteData(theEnv)->UseEntityTimeTag;
+   ins->patternHeader.timeTag = ObjectReteData(theEnv)->UseEntityTimeTag;
    ObjectRetractAction(theEnv,ins,slotNameIDs);
    ObjectReteData(theEnv)->CurrentPatternObject = ins;
    ObjectReteData(theEnv)->CurrentPatternObjectSlot = NULL;
@@ -1418,10 +1418,10 @@ static void ObjectRetractAction(
          ============================================= */
       if (deleteMatch != NULL)
         {
-         saveDependents = ins->header.dependents;
-         ins->header.dependents = NULL;
+         saveDependents = ins->patternHeader.dependents;
+         ins->patternHeader.dependents = NULL;
          NetworkRetract(theEnv,deleteMatch);
-         ins->header.dependents = saveDependents;
+         ins->patternHeader.dependents = saveDependents;
         }
      }
    ins->reteSynchronized = true;

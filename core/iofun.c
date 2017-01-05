@@ -163,7 +163,7 @@ void IOFunctionDefinitions(
 #if IO_FUNCTIONS
    IOFunctionData(theEnv)->useFullCRLF = false;
    IOFunctionData(theEnv)->locale = CreateSymbol(theEnv,setlocale(LC_ALL,NULL));
-   IncrementSymbolCount(IOFunctionData(theEnv)->locale);
+   IncrementLexemeCount(IOFunctionData(theEnv)->locale);
 #endif
 
 #if ! RUN_TIME
@@ -1355,9 +1355,9 @@ void SetLocaleFunction(
    /* Change the value of the locale to the one specified. */
    /*======================================================*/
 
-   DecrementSymbolCount(theEnv,IOFunctionData(theEnv)->locale);
+   DecrementLexemeReferenceCount(theEnv,IOFunctionData(theEnv)->locale);
    IOFunctionData(theEnv)->locale = theArg.lexemeValue;
-   IncrementSymbolCount(IOFunctionData(theEnv)->locale);
+   IncrementLexemeCount(IOFunctionData(theEnv)->locale);
   }
 
 /******************************************/

@@ -134,7 +134,7 @@
    ***************************************** */
 
 /***************************************************
-  NAME         : IncrementInstanceCount
+  NAME         : IncrementInstanceReferenceCount
   DESCRIPTION  : Increments instance busy count -
                    prevents it from being deleted
   INPUTS       : The address of the instance
@@ -142,7 +142,7 @@
   SIDE EFFECTS : Count set
   NOTES        : None
  ***************************************************/
-void IncrementInstanceCount(
+void IncrementInstanceReferenceCount(
   Environment *theEnv,
   Instance *theInstance)
   {
@@ -154,7 +154,7 @@ void IncrementInstanceCount(
   }
 
 /***************************************************
-  NAME         : DecrementInstanceCount
+  NAME         : DecrementInstanceReferenceCount
   DESCRIPTION  : Decrements instance busy count -
                    might allow it to be deleted
   INPUTS       : The address of the instance
@@ -162,7 +162,7 @@ void IncrementInstanceCount(
   SIDE EFFECTS : Count set
   NOTES        : None
  ***************************************************/
-void DecrementInstanceCount(
+void DecrementInstanceReferenceCount(
   Environment *theEnv,
   Instance *theInstance)
   {
@@ -218,12 +218,12 @@ void CleanupInstances(
      {
 #if DEFRULE_CONSTRUCT
       if ((gtmp->ins->busy == 0)
-          && (gtmp->ins->header.busyCount == 0))
+          && (gtmp->ins->patternHeader.busyCount == 0))
 #else
       if (gtmp->ins->busy == 0)
 #endif
         {
-         DecrementSymbolCount(theEnv,gtmp->ins->name);
+         DecrementLexemeReferenceCount(theEnv,gtmp->ins->name);
          rtn_struct(theEnv,instance,gtmp->ins);
          if (gprv == NULL)
            InstanceData(theEnv)->InstanceGarbageList = gtmp->nxt;
@@ -325,7 +325,7 @@ void RemoveInstanceData(
         {
          if (sp->desc->multiple)
            {
-            MultifieldDeinstall(theEnv,sp->multifieldValue);
+            DecrementMultifieldReferenceCount(theEnv,sp->multifieldValue);
             AddToMultifieldList(theEnv,sp->multifieldValue);
            }
          else
@@ -649,7 +649,7 @@ bool DirectPutSlotValue(
          bsp->type = sp->type;
          bsp->value = sp->value;
          if (sp->desc->multiple)
-           MultifieldInstall(theEnv,bsp->multifieldValue);
+           IncrementMultifieldReferenceCount(theEnv,bsp->multifieldValue);
          else
            AtomInstall(theEnv,(int) bsp->type,bsp->value);
         }
@@ -679,7 +679,7 @@ bool DirectPutSlotValue(
      }
    else
      {
-      MultifieldDeinstall(theEnv,sp->multifieldValue);
+      DecrementMultifieldReferenceCount(theEnv,sp->multifieldValue);
       AddToMultifieldList(theEnv,sp->multifieldValue);
       sp->type = MULTIFIELD_TYPE;
       if (val->header->type == MULTIFIELD_TYPE)
@@ -695,7 +695,7 @@ bool DirectPutSlotValue(
          sp->multifieldValue = CreateUnmanagedMultifield(theEnv,1L);
          sp->multifieldValue->contents[0].value = val->value;
         }
-      MultifieldInstall(theEnv,sp->multifieldValue);
+      IncrementMultifieldReferenceCount(theEnv,sp->multifieldValue);
       setVal->value = sp->value;
       setVal->begin = 0;
       setVal->range = sp->multifieldValue->length;
@@ -1141,8 +1141,8 @@ void DecrementObjectBasisCount(
   {
    long i;
 
-   theInstance->header.busyCount--;
-   if (theInstance->header.busyCount == 0)
+   theInstance->patternHeader.busyCount--;
+   if (theInstance->patternHeader.busyCount == 0)
      {
       if (theInstance->garbage)
         RemoveInstanceData(theEnv,theInstance);
@@ -1152,7 +1152,7 @@ void DecrementObjectBasisCount(
            if (theInstance->basisSlots[i].value != NULL)
              {
               if (theInstance->basisSlots[i].desc->multiple)
-                MultifieldDeinstall(theEnv,theInstance->basisSlots[i].multifieldValue);
+                DecrementMultifieldReferenceCount(theEnv,theInstance->basisSlots[i].multifieldValue);
               else
                 AtomDeinstall(theEnv,(int) theInstance->basisSlots[i].type,
                               theInstance->basisSlots[i].value);
@@ -1186,7 +1186,7 @@ void IncrementObjectBasisCount(
   {
    long i;
 
-   if (theInstance->header.busyCount == 0)
+   if (theInstance->patternHeader.busyCount == 0)
      {
       if (theInstance->cls->instanceSlotCount != 0)
         {
@@ -1199,7 +1199,7 @@ void IncrementObjectBasisCount(
            }
         }
      }
-   theInstance->header.busyCount++;
+   theInstance->patternHeader.busyCount++;
   }
 
 /***************************************************
