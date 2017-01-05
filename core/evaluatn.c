@@ -368,9 +368,9 @@ void ReturnValues(
    while (garbagePtr != NULL)
      {
       nextPtr = garbagePtr->next;
-      ValueDeinstall(theEnv,garbagePtr);
+      DecrementUDFValueReferenceCount(theEnv,garbagePtr);
       if ((garbagePtr->supplementalInfo != NULL) && decrementSupplementalInfo)
-        { DecrementSymbolCount(theEnv,(CLIPSLexeme *) garbagePtr->supplementalInfo); }
+        { DecrementLexemeReferenceCount(theEnv,(CLIPSLexeme *) garbagePtr->supplementalInfo); }
       rtn_struct(theEnv,udfValue,garbagePtr);
       garbagePtr = nextPtr;
      }
@@ -469,77 +469,77 @@ void SetMultifieldErrorValue(
    returnValue->range = 0;
   }
 
-/**************************************************/
-/* ValueInstall: Increments the appropriate count */
-/*   (in use) values for a UDFValue structure.  */
-/**************************************************/
-void ValueInstall(
+/***************************************************************/
+/* IncrementUDFValueReferenceCount: Increments the appropriate */
+/*   count (in use) values for a UDFValue structure.           */
+/***************************************************************/
+void IncrementUDFValueReferenceCount(
   Environment *theEnv,
   UDFValue *vPtr)
   {
    if (vPtr->header->type == MULTIFIELD_TYPE)
-     { CVMultifieldInstall(theEnv,vPtr->multifieldValue); }
+     { IncrementCLIPSValueMultifieldReferenceCount(theEnv,vPtr->multifieldValue); }
    else
-     { CVAtomInstall(theEnv,vPtr->value); }
+     { IncrementReferenceCount(theEnv,vPtr->header); }
   }
 
-/****************************************************/
-/* ValueDeinstall: Decrements the appropriate count */
-/*   (in use) values for a UDFValue structure.    */
-/****************************************************/
-void ValueDeinstall(
+/***************************************************************/
+/* IncrementUDFValueReferenceCount: Decrements the appropriate */
+/*   count (in use) values for a UDFValue structure.           */
+/***************************************************************/
+void DecrementUDFValueReferenceCount(
   Environment *theEnv,
   UDFValue *vPtr)
   {
    if (vPtr->header->type == MULTIFIELD_TYPE)
-     { CVMultifieldDeinstall(theEnv,vPtr->multifieldValue); }
+     { DecrementCLIPSValueMultifieldReferenceCount(theEnv,vPtr->multifieldValue); }
    else
-     { CVAtomDeinstall(theEnv,vPtr->value); }
+     { DecrementReferenceCount(theEnv,vPtr->header); }
   }
 
-/*******************************************/
-/* CVAtomInstall: Increments the reference */
-/*   count of an atomic data type.         */
-/*******************************************/
-void CVAtomInstall(
+/*********************************************/
+/* IncrementReferenceCount: Increments the   */
+/*   reference count of an atomic data type. */
+/*********************************************/
+void IncrementReferenceCount(
   Environment *theEnv,
-  void *vPtr)
+  TypeHeader *th)
   {
-   switch (((TypeHeader *) vPtr)->type)
+   switch (th->type)
      {
       case SYMBOL_TYPE:
       case STRING_TYPE:
 #if OBJECT_SYSTEM
       case INSTANCE_NAME_TYPE:
 #endif
-        IncrementSymbolCount(vPtr);
+        IncrementLexemeCount(th);
         break;
 
       case FLOAT_TYPE:
-        IncrementFloatCount(vPtr);
+        IncrementFloatCount(th);
         break;
 
       case INTEGER_TYPE:
-        IncrementIntegerCount(vPtr);
+        IncrementIntegerCount(th);
         break;
 
       case EXTERNAL_ADDRESS_TYPE:
-        IncrementExternalAddressCount(vPtr);
+        IncrementExternalAddressCount(th);
         break;
 
       case MULTIFIELD_TYPE:
-        MultifieldInstall(theEnv,(Multifield *) vPtr);
+        IncrementMultifieldReferenceCount(theEnv,(Multifield *) th);
         break;
         
 #if OBJECT_SYSTEM
       case INSTANCE_ADDRESS_TYPE:
-        IncrementInstanceCount(theEnv,(Instance *) vPtr);
+        IncrementInstanceReferenceCount(theEnv,(Instance *) th);
         break;
 #endif
 
 #if DEFTEMPLATE_CONSTRUCT
       case FACT_ADDRESS_TYPE:
-        IncrementFactCount(theEnv,(Fact *) vPtr);
+        IncrementFactReferenceCount(theEnv,(Fact *) th);
         break;
 #endif
      
@@ -554,48 +554,48 @@ void CVAtomInstall(
   }
 
 /*********************************************/
-/* CVAtomDeinstall: Decrements the reference */
-/*   count of an atomic data type.           */
+/* DecrementReferenceCount: Decrements the   */
+/*   reference count of an atomic data type. */
 /*********************************************/
-void CVAtomDeinstall(
+void DecrementReferenceCount(
   Environment *theEnv,
-  void *vPtr)
+  TypeHeader *th)
   {
-   switch (((TypeHeader *) vPtr)->type)
+   switch (th->type)
      {
       case SYMBOL_TYPE:
       case STRING_TYPE:
 #if OBJECT_SYSTEM
       case INSTANCE_NAME_TYPE:
 #endif
-        DecrementSymbolCount(theEnv,(CLIPSLexeme *) vPtr);
+        DecrementLexemeReferenceCount(theEnv,(CLIPSLexeme *) th);
         break;
 
       case FLOAT_TYPE:
-        DecrementFloatCount(theEnv,(CLIPSFloat *) vPtr);
+        DecrementFloatReferenceCount(theEnv,(CLIPSFloat *) th);
         break;
 
       case INTEGER_TYPE:
-        DecrementIntegerCount(theEnv,(CLIPSInteger *) vPtr);
+        DecrementIntegerReferenceCount(theEnv,(CLIPSInteger *) th);
         break;
 
       case EXTERNAL_ADDRESS_TYPE:
-        DecrementExternalAddressCount(theEnv,(CLIPSExternalAddress *) vPtr);
+        DecrementExternalAddressReferenceCount(theEnv,(CLIPSExternalAddress *) th);
         break;
 
       case MULTIFIELD_TYPE:
-        MultifieldDeinstall(theEnv,(Multifield *) vPtr);
+        DecrementMultifieldReferenceCount(theEnv,(Multifield *) th);
         break;
         
 #if OBJECT_SYSTEM
       case INSTANCE_ADDRESS_TYPE:
-        DecrementInstanceCount(theEnv,(Instance *) vPtr);
+        DecrementInstanceReferenceCount(theEnv,(Instance *) th);
         break;
 #endif
      
 #if DEFTEMPLATE_CONSTRUCT
       case FACT_ADDRESS_TYPE:
-        DecrementFactCount(theEnv,(Fact *) vPtr);
+        DecrementFactReferenceCount(theEnv,(Fact *) th);
         break;
 #endif
 
@@ -628,7 +628,7 @@ void AtomInstall(
 #if OBJECT_SYSTEM
       case INSTANCE_NAME_TYPE:
 #endif
-        IncrementSymbolCount(vPtr);
+        IncrementLexemeCount(vPtr);
         break;
 
       case FLOAT_TYPE:
@@ -644,7 +644,7 @@ void AtomInstall(
         break;
 
       case MULTIFIELD_TYPE:
-        MultifieldInstall(theEnv,(Multifield *) vPtr);
+        IncrementMultifieldReferenceCount(theEnv,(Multifield *) vPtr);
         break;
 
       case VOID_TYPE:
@@ -678,23 +678,23 @@ void AtomDeinstall(
 #if OBJECT_SYSTEM
       case INSTANCE_NAME_TYPE:
 #endif
-        DecrementSymbolCount(theEnv,(CLIPSLexeme *) vPtr);
+        DecrementLexemeReferenceCount(theEnv,(CLIPSLexeme *) vPtr);
         break;
 
       case FLOAT_TYPE:
-        DecrementFloatCount(theEnv,(CLIPSFloat *) vPtr);
+        DecrementFloatReferenceCount(theEnv,(CLIPSFloat *) vPtr);
         break;
 
       case INTEGER_TYPE:
-        DecrementIntegerCount(theEnv,(CLIPSInteger *) vPtr);
+        DecrementIntegerReferenceCount(theEnv,(CLIPSInteger *) vPtr);
         break;
 
       case EXTERNAL_ADDRESS_TYPE:
-        DecrementExternalAddressCount(theEnv,(CLIPSExternalAddress *) vPtr);
+        DecrementExternalAddressReferenceCount(theEnv,(CLIPSExternalAddress *) vPtr);
         break;
 
       case MULTIFIELD_TYPE:
-        MultifieldDeinstall(theEnv,(Multifield *) vPtr);
+        DecrementMultifieldReferenceCount(theEnv,(Multifield *) vPtr);
         break;
 
       case VOID_TYPE:
@@ -702,7 +702,7 @@ void AtomDeinstall(
 
       default:
         if (EvaluationData(theEnv)->PrimitivesArray[type] == NULL) break;
-        if (EvaluationData(theEnv)->PrimitivesArray[type]->bitMap) DecrementBitMapCount(theEnv,(CLIPSBitMap *) vPtr);
+        if (EvaluationData(theEnv)->PrimitivesArray[type]->bitMap) DecrementBitMapReferenceCount(theEnv,(CLIPSBitMap *) vPtr);
         else if (EvaluationData(theEnv)->PrimitivesArray[type]->decrementBusyCount)
           { (*EvaluationData(theEnv)->PrimitivesArray[type]->decrementBusyCount)(theEnv,vPtr); }
      }

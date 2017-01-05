@@ -88,8 +88,8 @@ typedef struct igarbage
 #define INSTANCE_TABLE_HASH_SIZE 8191
 #define InstanceSizeHeuristic(ins)      sizeof(Instance)
 
-   void                           IncrementInstanceCount(Environment *,Instance *);
-   void                           DecrementInstanceCount(Environment *,Instance *);
+   void                           IncrementInstanceReferenceCount(Environment *,Instance *);
+   void                           DecrementInstanceReferenceCount(Environment *,Instance *);
    void                           InitializeInstanceTable(Environment *);
    void                           CleanupInstances(Environment *,void *);
    unsigned                       HashInstance(CLIPSLexeme *);

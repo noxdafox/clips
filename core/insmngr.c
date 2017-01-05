@@ -343,7 +343,7 @@ Instance *BuildInstance(
          return NULL;
         }
       ins->busy++;
-      IncrementSymbolCount(iname);
+      IncrementLexemeCount(iname);
       if (ins->garbage == 0)
         {
          if (InstanceData(theEnv)->MkInsMsgPass)
@@ -352,7 +352,7 @@ Instance *BuildInstance(
            QuashInstance(theEnv,ins);
         }
       ins->busy--;
-      DecrementSymbolCount(theEnv,iname);
+      DecrementLexemeReferenceCount(theEnv,iname);
       if (ins->garbage == 0)
         {
          PrintErrorID(theEnv,"INSMNGR",5,false);
@@ -575,7 +575,7 @@ bool QuashInstance(
       ============================================== */
 #if DEFRULE_CONSTRUCT
    if ((iflag == 1)
-       && (ins->header.busyCount == 0))
+       && (ins->patternHeader.busyCount == 0))
 #else
    if (iflag == 1)
 #endif
@@ -584,11 +584,11 @@ bool QuashInstance(
    if ((ins->busy == 0) &&
        (InstanceData(theEnv)->MaintainGarbageInstances == false)
 #if DEFRULE_CONSTRUCT
-        && (ins->header.busyCount == 0)
+        && (ins->patternHeader.busyCount == 0)
 #endif
        )
      {
-      DecrementSymbolCount(theEnv,ins->name);
+      DecrementLexemeReferenceCount(theEnv,ins->name);
       rtn_struct(theEnv,instance,ins);
      }
    else
@@ -680,17 +680,17 @@ static Instance *NewInstance(
 
    instance = get_struct(theEnv,instance);
 #if DEFRULE_CONSTRUCT
-   instance->header.theInfo = &InstanceData(theEnv)->InstanceInfo;
+   instance->patternHeader.theInfo = &InstanceData(theEnv)->InstanceInfo;
 
-   instance->header.dependents = NULL;
-   instance->header.busyCount = 0;
-   instance->header.timeTag = 0L;
+   instance->patternHeader.dependents = NULL;
+   instance->patternHeader.busyCount = 0;
+   instance->patternHeader.timeTag = 0L;
 
    instance->partialMatchList = NULL;
    instance->basisSlots = NULL;
    instance->reteSynchronized = false;
 #endif
-   instance->header.th.type = INSTANCE_ADDRESS_TYPE;
+   instance->patternHeader.header.type = INSTANCE_ADDRESS_TYPE;
    instance->busy = 0;
    instance->installed = 0;
    instance->garbage = 0;
@@ -796,7 +796,7 @@ static void InstallInstance(
         PrintInstanceWatch(theEnv,MAKE_TRACE,ins);
 #endif
       ins->installed = 1;
-      IncrementSymbolCount(ins->name);
+      IncrementLexemeCount(ins->name);
       IncrementDefclassBusyCount(theEnv,ins->cls);
       InstanceData(theEnv)->GlobalNumberOfInstances++;
      }
@@ -884,7 +884,7 @@ static void BuildDefaultSlots(
               {
                adst[i]->type = MULTIFIELD_TYPE;
                adst[i]->value = CreateUnmanagedMultifield(theEnv,0L);
-               MultifieldInstall(theEnv,adst[i]->multifieldValue);
+               IncrementMultifieldReferenceCount(theEnv,adst[i]->multifieldValue);
               }
             else
               {
@@ -1427,7 +1427,7 @@ bool IBPutSlot(
         { return true; }
      }
    
-   CVAtomDeinstall(theEnv,oldValue.value);
+   DecrementReferenceCount(theEnv,oldValue.header);
    
    if (oldValue.header->type == MULTIFIELD_TYPE)
      { ReturnMultifield(theEnv,oldValue.multifieldValue); }
@@ -1437,7 +1437,7 @@ bool IBPutSlot(
    else
      { theIB->ibValueArray[whichSlot].value = slotValue->value; }
       
-   CVAtomInstall(theEnv,theIB->ibValueArray[whichSlot].value);
+   IncrementReferenceCount(theEnv,theIB->ibValueArray[whichSlot].header);
    
    return true;
   }
@@ -1476,7 +1476,7 @@ Instance *IBMake(
      {
       if (theIB->ibValueArray[i].voidValue != VoidConstant(theEnv))
         {
-         CVAtomDeinstall(theEnv,theIB->ibValueArray[i].value);
+         DecrementReferenceCount(theEnv,theIB->ibValueArray[i].header);
 
          if (theIB->ibValueArray[i].header->type == MULTIFIELD_TYPE)
            { ReturnMultifield(theEnv,theIB->ibValueArray[i].multifieldValue); }
@@ -1515,7 +1515,7 @@ void IBAbort(
    
    for (i = 0; i < theIB->ibDefclass->slotCount; i++)
      {
-      CVAtomDeinstall(theEnv,theIB->ibValueArray[i].value);
+      DecrementReferenceCount(theEnv,theIB->ibValueArray[i].header);
       
       if (theIB->ibValueArray[i].header->type == MULTIFIELD_TYPE)
         { ReturnMultifield(theEnv,theIB->ibValueArray[i].multifieldValue); }
@@ -1573,7 +1573,7 @@ InstanceModifier *CreateInstanceModifier(
    theIM->imEnv = theEnv;
    theIM->imOldInstance = oldInstance;
 
-   IncrementInstanceCount(theEnv,oldInstance);
+   IncrementInstanceReferenceCount(theEnv,oldInstance);
 
    theIM->imValueArray = (CLIPSValue *) gm3(theEnv,sizeof(CLIPSValue) * oldInstance->cls->slotCount);
 
@@ -1740,7 +1740,7 @@ bool IMPutSlot(
      {
       if (MultifieldsEqual(oldInstanceValue.multifieldValue,slotValue->multifieldValue))
         {
-         CVAtomDeinstall(theIM->imEnv,oldValue.value);
+         DecrementReferenceCount(theIM->imEnv,oldValue.header);
          if (oldValue.header->type == MULTIFIELD_TYPE)
            { ReturnMultifield(theIM->imEnv,oldValue.multifieldValue); }
          theIM->imValueArray[whichSlot].voidValue = theIM->imEnv->VoidConstant;
@@ -1755,7 +1755,7 @@ bool IMPutSlot(
      {
       if (slotValue->value == oldInstanceValue.value)
         {
-         CVAtomDeinstall(theIM->imEnv,oldValue.value);
+         DecrementReferenceCount(theIM->imEnv,oldValue.header);
          theIM->imValueArray[whichSlot].voidValue = theIM->imEnv->VoidConstant;
          ClearBitMap(theIM->changeMap,whichSlot);
          return true;
@@ -1767,7 +1767,7 @@ bool IMPutSlot(
 
    SetBitMap(theIM->changeMap,whichSlot);
 
-   CVAtomDeinstall(theIM->imEnv,oldValue.value);
+   DecrementReferenceCount(theIM->imEnv,oldValue.header);
 
    if (oldValue.header->type == MULTIFIELD_TYPE)
      { ReturnMultifield(theIM->imEnv,oldValue.multifieldValue); }
@@ -1777,7 +1777,7 @@ bool IMPutSlot(
    else
      { theIM->imValueArray[whichSlot].value = slotValue->value; }
 
-   CVAtomInstall(theIM->imEnv,theIM->imValueArray[whichSlot].value);
+   IncrementReferenceCount(theIM->imEnv,theIM->imValueArray[whichSlot].header);
 
    return true;
   }
@@ -1860,7 +1860,7 @@ void IMDispose(
    
    for (i = 0; i < theIM->imOldInstance->cls->slotCount; i++)
      {
-      CVAtomDeinstall(theEnv,theIM->imValueArray[i].value);
+      DecrementReferenceCount(theEnv,theIM->imValueArray[i].header);
 
       if (theIM->imValueArray[i].header->type == MULTIFIELD_TYPE)
         { ReturnMultifield(theEnv,theIM->imValueArray[i].multifieldValue); }
@@ -1880,7 +1880,7 @@ void IMDispose(
    /* Return the InstanceModifier structure. */
    /*========================================*/
    
-   DecrementInstanceCount(theEnv,theIM->imOldInstance);
+   DecrementInstanceReferenceCount(theEnv,theIM->imOldInstance);
    
    rtn_struct(theEnv,instanceModifier,theIM);
   }
@@ -1896,7 +1896,7 @@ void IMAbort(
    
    for (i = 0; i < theIM->imOldInstance->cls->slotCount; i++)
      {
-      CVAtomDeinstall(theEnv,theIM->imValueArray[i].value);
+      DecrementReferenceCount(theEnv,theIM->imValueArray[i].header);
 
       if (theIM->imValueArray[i].header->type == MULTIFIELD_TYPE)
         { ReturnMultifield(theEnv,theIM->imValueArray[i].multifieldValue); }
@@ -1932,7 +1932,7 @@ bool IMSetInstance(
    
    for (i = 0; i < theIM->imOldInstance->cls->slotCount; i++)
      {
-      CVAtomDeinstall(theEnv,theIM->imValueArray[i].value);
+      DecrementReferenceCount(theEnv,theIM->imValueArray[i].header);
 
       if (theIM->imValueArray[i].header->type == MULTIFIELD_TYPE)
         { ReturnMultifield(theEnv,theIM->imValueArray[i].multifieldValue); }
@@ -1958,9 +1958,9 @@ bool IMSetInstance(
    /* Update the fact being modified. */
    /*=================================*/
    
-   DecrementInstanceCount(theEnv,theIM->imOldInstance);
+   DecrementInstanceReferenceCount(theEnv,theIM->imOldInstance);
    theIM->imOldInstance = oldInstance;
-   IncrementInstanceCount(theEnv,theIM->imOldInstance);
+   IncrementInstanceReferenceCount(theEnv,theIM->imOldInstance);
    
    /*=========================================*/
    /* Initialize the value and change arrays. */

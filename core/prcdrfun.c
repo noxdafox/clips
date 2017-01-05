@@ -447,7 +447,7 @@ void BindFunction(
         {
          theBind = get_struct(theEnv,udfValue);
          theBind->supplementalInfo = (void *) variableName;
-         IncrementSymbolCount(variableName);
+         IncrementLexemeCount(variableName);
          theBind->next = NULL;
          if (lastBind == NULL)
            { ProcedureFunctionData(theEnv)->BindList = theBind; }
@@ -461,7 +461,7 @@ void BindFunction(
         }
      }
    else
-     { ValueDeinstall(theEnv,theBind); }
+     { DecrementUDFValueReferenceCount(theEnv,theBind); }
 
    /*================================*/
    /* Set the value of the variable. */
@@ -472,13 +472,13 @@ void BindFunction(
       theBind->value = returnValue->value;
       theBind->begin = returnValue->begin;
       theBind->range = returnValue->range;
-      ValueInstall(theEnv,returnValue);
+      IncrementUDFValueReferenceCount(theEnv,returnValue);
      }
    else
      {
       if (lastBind == NULL) ProcedureFunctionData(theEnv)->BindList = theBind->next;
       else lastBind->next = theBind->next;
-      DecrementSymbolCount(theEnv,(CLIPSLexeme *) theBind->supplementalInfo);
+      DecrementLexemeReferenceCount(theEnv,(CLIPSLexeme *) theBind->supplementalInfo);
       rtn_struct(theEnv,udfValue,theBind);
       returnValue->value = FalseSymbol(theEnv);
      }

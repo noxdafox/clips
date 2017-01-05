@@ -321,7 +321,7 @@ void RemoveDefgeneric(
 
    if (theDefgeneric->mcnt != 0)
      { rm(theEnv,theDefgeneric->methods,(sizeof(Defmethod) * theDefgeneric->mcnt)); }
-   DecrementSymbolCount(theEnv,GetDefgenericNamePointer(theDefgeneric));
+   DecrementLexemeReferenceCount(theEnv,GetDefgenericNamePointer(theDefgeneric));
    SetDefgenericPPForm(theEnv,theDefgeneric,NULL);
    ClearUserDataList(theEnv,theDefgeneric->header.usrData);
    rtn_struct(theEnv,defgeneric,theDefgeneric);

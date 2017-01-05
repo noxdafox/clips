@@ -197,20 +197,20 @@ static void UpdateExpression(
       case SYMBOL_TYPE:
       case STRING_TYPE:
         ExpressionData(theEnv)->ExpressionArray[obji].value = SymbolData(theEnv)->SymbolArray[bexp->value];
-        IncrementSymbolCount(ExpressionData(theEnv)->ExpressionArray[obji].lexemeValue);
+        IncrementLexemeCount(ExpressionData(theEnv)->ExpressionArray[obji].lexemeValue);
         break;
 
 #if DEFTEMPLATE_CONSTRUCT
       case FACT_ADDRESS_TYPE:
         ExpressionData(theEnv)->ExpressionArray[obji].value = &FactData(theEnv)->DummyFact;
-        IncrementFactCount(theEnv,(Fact *) ExpressionData(theEnv)->ExpressionArray[obji].value);
+        IncrementFactReferenceCount(theEnv,(Fact *) ExpressionData(theEnv)->ExpressionArray[obji].value);
         break;
 #endif
 
 #if OBJECT_SYSTEM
       case INSTANCE_ADDRESS_TYPE:
         ExpressionData(theEnv)->ExpressionArray[obji].value = &InstanceData(theEnv)->DummyInstance;
-        IncrementInstanceCount(theEnv,(Instance *) ExpressionData(theEnv)->ExpressionArray[obji].value);
+        IncrementInstanceReferenceCount(theEnv,(Instance *) ExpressionData(theEnv)->ExpressionArray[obji].value);
         break;
 #endif
 
@@ -266,24 +266,24 @@ void ClearBloadedExpressions(
          case STRING_TYPE          :
          case INSTANCE_NAME_TYPE   :
          case GBL_VARIABLE    :
-           DecrementSymbolCount(theEnv,ExpressionData(theEnv)->ExpressionArray[i].lexemeValue);
+           DecrementLexemeReferenceCount(theEnv,ExpressionData(theEnv)->ExpressionArray[i].lexemeValue);
            break;
          case FLOAT_TYPE           :
-           DecrementFloatCount(theEnv,ExpressionData(theEnv)->ExpressionArray[i].floatValue);
+           DecrementFloatReferenceCount(theEnv,ExpressionData(theEnv)->ExpressionArray[i].floatValue);
            break;
          case INTEGER_TYPE         :
-           DecrementIntegerCount(theEnv,ExpressionData(theEnv)->ExpressionArray[i].integerValue);
+           DecrementIntegerReferenceCount(theEnv,ExpressionData(theEnv)->ExpressionArray[i].integerValue);
            break;
 
 #if DEFTEMPLATE_CONSTRUCT
          case FACT_ADDRESS_TYPE    :
-           DecrementFactCount(theEnv,(Fact *) ExpressionData(theEnv)->ExpressionArray[i].value);
+           DecrementFactReferenceCount(theEnv,(Fact *) ExpressionData(theEnv)->ExpressionArray[i].value);
            break;
 #endif
 
 #if OBJECT_SYSTEM
          case INSTANCE_ADDRESS_TYPE :
-           DecrementInstanceCount(theEnv,(Instance *) ExpressionData(theEnv)->ExpressionArray[i].value);
+           DecrementInstanceReferenceCount(theEnv,(Instance *) ExpressionData(theEnv)->ExpressionArray[i].value);
            break;
 #endif
 
@@ -293,7 +293,7 @@ void ClearBloadedExpressions(
          default:
            if (EvaluationData(theEnv)->PrimitivesArray[ExpressionData(theEnv)->ExpressionArray[i].type] == NULL) break;
            if (EvaluationData(theEnv)->PrimitivesArray[ExpressionData(theEnv)->ExpressionArray[i].type]->bitMap)
-             { DecrementBitMapCount(theEnv,(CLIPSBitMap *) ExpressionData(theEnv)->ExpressionArray[i].value); }
+             { DecrementBitMapReferenceCount(theEnv,(CLIPSBitMap *) ExpressionData(theEnv)->ExpressionArray[i].value); }
            break;
         }
      }

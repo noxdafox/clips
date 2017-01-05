@@ -157,7 +157,7 @@ struct clipsValue
    union
      {
       void *value;
-      TypeHeader const *header;
+      TypeHeader *header;
       CLIPSLexeme *lexemeValue;
       CLIPSFloat *floatValue;
       CLIPSInteger *integerValue;
@@ -190,7 +190,7 @@ struct udfValue
    union
      {
       void *value;
-      TypeHeader const *header;
+      TypeHeader *header;
       CLIPSLexeme *lexemeValue;
       CLIPSFloat *floatValue;
       CLIPSInteger *integerValue;
@@ -259,7 +259,7 @@ struct patternEntityRecord
 /*****************/
 struct patternEntity
   {
-   TypeHeader th;
+   TypeHeader header;
    struct patternEntityRecord *theInfo;
    void *dependents;
    unsigned busyCount;

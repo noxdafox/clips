@@ -684,7 +684,7 @@ static bool ParseDefinstances(
       mkinstance = dobj->mkinstance;
       dobj->mkinstance = PackExpression(theEnv,mkinstance);
       ReturnExpression(theEnv,mkinstance);
-      IncrementSymbolCount(GetDefinstancesNamePointer(theEnv,dobj));
+      IncrementLexemeCount(GetDefinstancesNamePointer(theEnv,dobj));
       ExpressionInstall(theEnv,dobj->mkinstance);
      }
 
@@ -758,7 +758,7 @@ static void RemoveDefinstances(
   Environment *theEnv,
   Definstances *theDefinstances)
   {
-   DecrementSymbolCount(theEnv,GetDefinstancesNamePointer(theEnv,theDefinstances));
+   DecrementLexemeReferenceCount(theEnv,GetDefinstancesNamePointer(theEnv,theDefinstances));
    ExpressionDeinstall(theEnv,theDefinstances->mkinstance);
    ReturnPackedExpression(theEnv,theDefinstances->mkinstance);
    SetDefinstancesPPForm(theEnv,theDefinstances,NULL);

@@ -116,10 +116,10 @@ void ReturnMultifield(
    rtn_var_struct(theEnv,multifield,sizeof(struct clipsValue) * (newSize - 1),theSegment);
   }
 
-/**********************/
-/* MultifieldInstall: */
-/**********************/
-void MultifieldInstall(
+/**************************************/
+/* IncrementMultifieldReferenceCount: */
+/**************************************/
+void IncrementMultifieldReferenceCount(
   Environment *theEnv,
   Multifield *theSegment)
   {
@@ -137,10 +137,10 @@ void MultifieldInstall(
      { AtomInstall(theEnv,contents[i].header->type,contents[i].value); }
   }
 
-/************************/
-/* MultifieldDeinstall: */
-/************************/
-void MultifieldDeinstall(
+/**************************************/
+/* DecrementMultifieldReferenceCount: */
+/**************************************/
+void DecrementMultifieldReferenceCount(
   Environment *theEnv,
   Multifield *theSegment)
   {
@@ -157,10 +157,10 @@ void MultifieldDeinstall(
      { AtomDeinstall(theEnv,contents[i].header->type,contents[i].value); }
   }
 
-/************************/
-/* CVMultifieldInstall: */
-/************************/
-void CVMultifieldInstall(
+/************************************************/
+/* IncrementCLIPSValueMultifieldReferenceCount: */
+/************************************************/
+void IncrementCLIPSValueMultifieldReferenceCount(
   Environment *theEnv,
   Multifield *theSegment)
   {
@@ -175,13 +175,13 @@ void CVMultifieldInstall(
    contents = theSegment->contents;
 
    for (i = 0 ; i < length ; i++)
-     { CVAtomInstall(theEnv,contents[i].value); }
+     { IncrementReferenceCount(theEnv,contents[i].header); }
   }
 
-/**************************/
-/* CVMultifieldDeinstall: */
-/**************************/
-void CVMultifieldDeinstall(
+/************************************************/
+/* DecrementCLIPSValueMultifieldReferenceCount: */
+/************************************************/
+void DecrementCLIPSValueMultifieldReferenceCount(
   Environment *theEnv,
   Multifield *theSegment)
   {
@@ -195,7 +195,7 @@ void CVMultifieldDeinstall(
    contents = theSegment->contents;
 
    for (i = 0 ; i < length ; i++)
-     { CVAtomDeinstall(theEnv,contents[i].value); }
+     { DecrementReferenceCount(theEnv,contents[i].header); }
   }
 
 /*******************************************************/

@@ -542,9 +542,9 @@ static void ClearBloadObjectPatterns(
       ================================================ */
    for (i = 0L ; i < ObjectReteBinaryData(theEnv)->AlphaNodeCount ; i++)
      {
-      DecrementBitMapCount(theEnv,ObjectReteBinaryData(theEnv)->AlphaArray[i].classbmp);
+      DecrementBitMapReferenceCount(theEnv,ObjectReteBinaryData(theEnv)->AlphaArray[i].classbmp);
       if (ObjectReteBinaryData(theEnv)->AlphaArray[i].slotbmp != NULL)
-        DecrementBitMapCount(theEnv,ObjectReteBinaryData(theEnv)->AlphaArray[i].slotbmp);
+        DecrementBitMapReferenceCount(theEnv,ObjectReteBinaryData(theEnv)->AlphaArray[i].slotbmp);
      }
 
    if (ObjectReteBinaryData(theEnv)->AlphaNodeCount != 0L)

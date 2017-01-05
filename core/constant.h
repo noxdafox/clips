@@ -91,11 +91,11 @@
 #endif
 
 #ifndef CREATION_DATE_STRING
-#define CREATION_DATE_STRING "12/27/16"
+#define CREATION_DATE_STRING "01/05/17"
 #endif
 
 #ifndef BANNER_STRING
-#define BANNER_STRING "         CLIPS (Forge Alpha 12/27/16)\n"
+#define BANNER_STRING "         CLIPS (Forge Alpha 01/05/17)\n"
 #endif
 
 /*************************/

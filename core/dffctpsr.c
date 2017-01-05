@@ -144,7 +144,7 @@ bool ParseDeffacts(
 
    ExpressionInstall(theEnv,temp);
    newDeffacts = get_struct(theEnv,deffacts);
-   IncrementSymbolCount(deffactsName);
+   IncrementLexemeCount(deffactsName);
    InitializeConstructHeader(theEnv,"deffacts",DEFFACTS,&newDeffacts->header,deffactsName);
 
    newDeffacts->assertList = PackExpression(theEnv,temp);

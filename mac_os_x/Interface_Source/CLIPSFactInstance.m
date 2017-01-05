@@ -49,7 +49,7 @@
       
       memcpy(scopeMap,theScopeMap->contents,theScopeMap->size);
       
-      DecrementBitMapCount(theEnvironment,theScopeMap);
+      DecrementBitMapReferenceCount(theEnvironment,theScopeMap);
 
       tempArray = [NSMutableArray arrayWithCapacity: (unsigned) slotNames.multifieldValue->length];
 
@@ -134,7 +134,7 @@
       
       memcpy(scopeMap,theScopeMap->contents,theScopeMap->size);
       
-      DecrementBitMapCount(theEnvironment,theScopeMap);
+      DecrementBitMapReferenceCount(theEnvironment,theScopeMap);
 
       tempArray = [NSMutableArray arrayWithCapacity: (unsigned) slotNames.multifieldValue->length];
 
@@ -171,7 +171,7 @@
       
       [self setValue: tempArray forKey: @"attributeValues"];
 
-      /* IncrementInstanceCount(theEnvironment,theInstance); */
+      /* IncrementInstanceReferenceCount(theEnvironment,theInstance); */
      }
      
    return self;

@@ -665,14 +665,14 @@ SLOT_NAME *AddSlotName(
       snp->id = (short) (usenewid ? newid : NewSlotNameID(theEnv));
       snp->nxt = DefclassData(theEnv)->SlotNameTable[hashTableIndex];
       DefclassData(theEnv)->SlotNameTable[hashTableIndex] = snp;
-      IncrementSymbolCount(slotName);
+      IncrementLexemeCount(slotName);
       bufsz = (sizeof(char) *
                      (PUT_PREFIX_LENGTH + strlen(slotName->contents) + 1));
       buf = (char *) gm2(theEnv,bufsz);
       genstrcpy(buf,PUT_PREFIX);
       genstrcat(buf,slotName->contents);
       snp->putHandlerName = CreateSymbol(theEnv,buf);
-      IncrementSymbolCount(snp->putHandlerName);
+      IncrementLexemeCount(snp->putHandlerName);
       rm(theEnv,buf,bufsz);
       snp->bsaveIndex = 0L;
     }
@@ -712,8 +712,8 @@ void DeleteSlotName(
      DefclassData(theEnv)->SlotNameTable[snp->hashTableIndex] = snp->nxt;
    else
      prv->nxt = snp->nxt;
-   DecrementSymbolCount(theEnv,snp->name);
-   DecrementSymbolCount(theEnv,snp->putHandlerName);
+   DecrementLexemeReferenceCount(theEnv,snp->name);
+   DecrementLexemeReferenceCount(theEnv,snp->putHandlerName);
    rtn_struct(theEnv,slotName,snp);
   }
 
@@ -919,29 +919,29 @@ void InstallClass(
      {
       cls->installed = 0;
 
-      DecrementSymbolCount(theEnv,cls->header.name);
+      DecrementLexemeReferenceCount(theEnv,cls->header.name);
 
 #if DEFMODULE_CONSTRUCT
-      DecrementBitMapCount(theEnv,cls->scopeMap);
+      DecrementBitMapReferenceCount(theEnv,cls->scopeMap);
 #endif
       ClearUserDataList(theEnv,cls->header.usrData);
 
       for (i = 0 ; i < cls->slotCount ; i++)
         {
          slot = &cls->slots[i];
-         DecrementSymbolCount(theEnv,slot->overrideMessage);
+         DecrementLexemeReferenceCount(theEnv,slot->overrideMessage);
          if (slot->defaultValue != NULL)
            {
             if (slot->dynamicDefault)
               ExpressionDeinstall(theEnv,(Expression *) slot->defaultValue);
             else
-              ValueDeinstall(theEnv,(UDFValue *) slot->defaultValue);
+              DecrementUDFValueReferenceCount(theEnv,(UDFValue *) slot->defaultValue);
            }
         }
       for (i = 0 ; i < cls->handlerCount ; i++)
         {
          hnd = &cls->handlers[i];
-         DecrementSymbolCount(theEnv,hnd->header.name);
+         DecrementLexemeReferenceCount(theEnv,hnd->header.name);
          if (hnd->actions != NULL)
            ExpressionDeinstall(theEnv,hnd->actions);
         }
@@ -949,7 +949,7 @@ void InstallClass(
    else
      {
       cls->installed = 1;
-      IncrementSymbolCount(cls->header.name);
+      IncrementLexemeCount(cls->header.name);
      }
   }
 

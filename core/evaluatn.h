@@ -131,8 +131,8 @@ struct evaluationData
    void                           PrintUDFValue(Environment *,const char *,UDFValue *);
    void                           PrintCLIPSValue(Environment *,const char *,CLIPSValue *);
    void                           SetMultifieldErrorValue(Environment *,UDFValue *);
-   void                           ValueInstall(Environment *,UDFValue *);
-   void                           ValueDeinstall(Environment *,UDFValue *);
+   void                           IncrementUDFValueReferenceCount(Environment *,UDFValue *);
+   void                           DecrementUDFValueReferenceCount(Environment *,UDFValue *);
 #if DEFFUNCTION_CONSTRUCT || DEFGENERIC_CONSTRUCT
    bool                           FunctionCall(Environment *,const char *,const char *,CLIPSValue *);
    bool                           FunctionCall2(Environment *,Expression *,const char *,UDFValue *);
@@ -140,8 +140,10 @@ struct evaluationData
    void                           CopyDataObject(Environment *,UDFValue *,UDFValue *,int);
    void                           AtomInstall(Environment *,int,void *);
    void                           AtomDeinstall(Environment *,int,void *);
-   void                           CVAtomInstall(Environment *,void *);
-   void                           CVAtomDeinstall(Environment *,void *);
+   void                           IncrementReferenceCount(Environment *,TypeHeader *);
+   void                           DecrementReferenceCount(Environment *,TypeHeader *);
+   void                           IncrementCLIPSValueReferenceCount(Environment *,CLIPSValue *);
+   void                           DecrementCLIPSValueReferenceCount(Environment *,CLIPSValue *);
    struct expr                   *ConvertValueToExpression(Environment *,UDFValue *);
    unsigned long                  GetAtomicHashValue(unsigned short,void *,int);
    void                           InstallPrimitive(Environment *,struct entityRecord *,int);

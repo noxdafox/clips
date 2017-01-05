@@ -68,10 +68,10 @@
 
    Multifield                    *CreateUnmanagedMultifield(Environment *,long);
    void                           ReturnMultifield(Environment *,Multifield *);
-   void                           MultifieldInstall(Environment *,Multifield *);
-   void                           MultifieldDeinstall(Environment *,Multifield *);
-   void                           CVMultifieldInstall(Environment *,Multifield *);
-   void                           CVMultifieldDeinstall(Environment *,Multifield *);
+   void                           IncrementMultifieldReferenceCount(Environment *,Multifield *);
+   void                           DecrementMultifieldReferenceCount(Environment *,Multifield *);
+   void                           IncrementCLIPSValueMultifieldReferenceCount(Environment *,Multifield *);
+   void                           DecrementCLIPSValueMultifieldReferenceCount(Environment *,Multifield *);
    Multifield                    *StringToMultifield(Environment *,const char *);
    Multifield                    *CreateMultifield(Environment *,long);
    void                           AddToMultifieldList(Environment *,Multifield *);

@@ -508,7 +508,7 @@ static void UpdatePortItem(
    if (bdp->moduleName != -1L)
      {
       DefmoduleData(theEnv)->PortItemArray[obji].moduleName = SymbolPointer(bdp->moduleName);
-      IncrementSymbolCount(DefmoduleData(theEnv)->PortItemArray[obji].moduleName);
+      IncrementLexemeCount(DefmoduleData(theEnv)->PortItemArray[obji].moduleName);
      }
    else
      { DefmoduleData(theEnv)->PortItemArray[obji].moduleName = NULL; }
@@ -516,7 +516,7 @@ static void UpdatePortItem(
    if (bdp->constructType != -1L)
      {
       DefmoduleData(theEnv)->PortItemArray[obji].constructType = SymbolPointer(bdp->constructType);
-      IncrementSymbolCount(DefmoduleData(theEnv)->PortItemArray[obji].constructType);
+      IncrementLexemeCount(DefmoduleData(theEnv)->PortItemArray[obji].constructType);
      }
    else
      { DefmoduleData(theEnv)->PortItemArray[obji].constructType = NULL; }
@@ -524,7 +524,7 @@ static void UpdatePortItem(
    if (bdp->constructName != -1L)
      {
       DefmoduleData(theEnv)->PortItemArray[obji].constructName = SymbolPointer(bdp->constructName);
-      IncrementSymbolCount(DefmoduleData(theEnv)->PortItemArray[obji].constructName);
+      IncrementLexemeCount(DefmoduleData(theEnv)->PortItemArray[obji].constructName);
      }
    else
      { DefmoduleData(theEnv)->PortItemArray[obji].constructName = NULL; }
@@ -553,23 +553,23 @@ static void ClearBload(
 
    for (i = 0; i < DefmoduleData(theEnv)->BNumberOfDefmodules; i++)
      {
-      DecrementSymbolCount(theEnv,DefmoduleData(theEnv)->DefmoduleArray[i].header.name);
+      DecrementLexemeReferenceCount(theEnv,DefmoduleData(theEnv)->DefmoduleArray[i].header.name);
       for (theList = DefmoduleData(theEnv)->DefmoduleArray[i].importList;
            theList != NULL;
            theList = theList->next)
         {
-         if (theList->moduleName != NULL) DecrementSymbolCount(theEnv,theList->moduleName);
-         if (theList->constructType != NULL) DecrementSymbolCount(theEnv,theList->constructType);
-         if (theList->constructName != NULL) DecrementSymbolCount(theEnv,theList->constructName);
+         if (theList->moduleName != NULL) DecrementLexemeReferenceCount(theEnv,theList->moduleName);
+         if (theList->constructType != NULL) DecrementLexemeReferenceCount(theEnv,theList->constructType);
+         if (theList->constructName != NULL) DecrementLexemeReferenceCount(theEnv,theList->constructName);
         }
 
       for (theList = DefmoduleData(theEnv)->DefmoduleArray[i].exportList;
            theList != NULL;
            theList = theList->next)
         {
-         if (theList->moduleName != NULL) DecrementSymbolCount(theEnv,theList->moduleName);
-         if (theList->constructType != NULL) DecrementSymbolCount(theEnv,theList->constructType);
-         if (theList->constructName != NULL) DecrementSymbolCount(theEnv,theList->constructName);
+         if (theList->moduleName != NULL) DecrementLexemeReferenceCount(theEnv,theList->moduleName);
+         if (theList->constructType != NULL) DecrementLexemeReferenceCount(theEnv,theList->constructType);
+         if (theList->constructName != NULL) DecrementLexemeReferenceCount(theEnv,theList->constructName);
         }
 
       rm(theEnv,DefmoduleData(theEnv)->DefmoduleArray[i].itemsArray,sizeof(void *) * GetNumberOfModuleItems(theEnv));

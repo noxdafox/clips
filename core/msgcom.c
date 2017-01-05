@@ -172,19 +172,19 @@ void SetupMessageHandlers(
 
 #if ! RUN_TIME
    MessageHandlerData(theEnv)->INIT_SYMBOL = CreateSymbol(theEnv,INIT_STRING);
-   IncrementSymbolCount(MessageHandlerData(theEnv)->INIT_SYMBOL);
+   IncrementLexemeCount(MessageHandlerData(theEnv)->INIT_SYMBOL);
 
    MessageHandlerData(theEnv)->DELETE_SYMBOL = CreateSymbol(theEnv,DELETE_STRING);
-   IncrementSymbolCount(MessageHandlerData(theEnv)->DELETE_SYMBOL);
+   IncrementLexemeCount(MessageHandlerData(theEnv)->DELETE_SYMBOL);
 
    MessageHandlerData(theEnv)->CREATE_SYMBOL = CreateSymbol(theEnv,CREATE_STRING);
-   IncrementSymbolCount(MessageHandlerData(theEnv)->CREATE_SYMBOL);
+   IncrementLexemeCount(MessageHandlerData(theEnv)->CREATE_SYMBOL);
 
    AddClearFunction(theEnv,"defclass",CreateSystemHandlers,-100,NULL);
 
 #if ! BLOAD_ONLY
    MessageHandlerData(theEnv)->SELF_SYMBOL = CreateSymbol(theEnv,SELF_STRING);
-   IncrementSymbolCount(MessageHandlerData(theEnv)->SELF_SYMBOL);
+   IncrementLexemeCount(MessageHandlerData(theEnv)->SELF_SYMBOL);
 
    AddConstruct(theEnv,"defmessage-handler","defmessage-handlers",
                 ParseDefmessageHandler,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);

@@ -318,7 +318,7 @@ void ValidateFactIntegrityCommand(
         theFact != NULL;
         theFact = GetNextFact(theEnv,theFact))
      {
-      if (theFact->factHeader.busyCount <= 0)
+      if (theFact->patternHeader.busyCount <= 0)
         {
          returnValue->lexemeValue = FalseSymbol(theEnv);
          return;

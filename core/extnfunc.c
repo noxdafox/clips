@@ -189,7 +189,7 @@ static bool DefineFunction(
 
    newFunction = get_struct(theEnv,functionDefinition);
    newFunction->callFunctionName = CreateSymbol(theEnv,name);
-   IncrementSymbolCount(newFunction->callFunctionName);
+   IncrementLexemeCount(newFunction->callFunctionName);
    newFunction->next = GetFunctionList(theEnv);
    ExternalFunctionData(theEnv)->ListOfFunctions = newFunction;
    AddHashFunction(theEnv,newFunction);
@@ -206,7 +206,7 @@ static bool DefineFunction(
    else
      {
       newFunction->restrictions = CreateString(theEnv,restrictions);
-      IncrementSymbolCount(newFunction->restrictions);
+      IncrementLexemeCount(newFunction->restrictions);
      }
 
    newFunction->parser = NULL;
@@ -237,7 +237,7 @@ bool RemoveUDF(
      {
       if (fPtr->callFunctionName == findValue)
         {
-         DecrementSymbolCount(theEnv,fPtr->callFunctionName);
+         DecrementLexemeReferenceCount(theEnv,fPtr->callFunctionName);
          RemoveHashFunction(theEnv,fPtr);
 
          if (lastPtr == NULL)
@@ -246,7 +246,7 @@ bool RemoveUDF(
            { lastPtr->next = fPtr->next; }
 
          if (fPtr->restrictions != NULL)
-           { DecrementSymbolCount(theEnv,fPtr->restrictions); }
+           { DecrementLexemeReferenceCount(theEnv,fPtr->restrictions); }
          ClearUserDataList(theEnv,fPtr->usrData);
          rtn_struct(theEnv,functionDefinition,fPtr);
          return true;

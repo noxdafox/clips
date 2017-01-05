@@ -264,12 +264,12 @@ void SortFunction(
    SortFunctionData(theEnv)->SortComparisonFunction = functionReference;
 
    for (i = 0; i < argumentSize; i++)
-     { ValueInstall(theEnv,&theArguments2[i]); }
+     { IncrementUDFValueReferenceCount(theEnv,&theArguments2[i]); }
 
    MergeSort(theEnv,(unsigned long) argumentSize,theArguments2,DefaultCompareSwapFunction);
 
    for (i = 0; i < argumentSize; i++)
-     { ValueDeinstall(theEnv,&theArguments2[i]); }
+     { DecrementUDFValueReferenceCount(theEnv,&theArguments2[i]); }
 
    SortFunctionData(theEnv)->SortComparisonFunction = SortFunctionData(theEnv)->SortComparisonFunction->nextArg;
    functionReference->nextArg = NULL;

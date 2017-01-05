@@ -146,8 +146,8 @@ void SetupInstances(
                                                      (bool (*)(void *,void *)) UnmakeInstance,
                                                      NULL,
                                                      (void *(*)(void *,void *)) GetNextInstance,
-                                                     (EntityBusyCountFunction *) DecrementInstanceCount,
-                                                     (EntityBusyCountFunction *) IncrementInstanceCount,
+                                                     (EntityBusyCountFunction *) DecrementInstanceReferenceCount,
+                                                     (EntityBusyCountFunction *) IncrementInstanceReferenceCount,
                                                      NULL,NULL,NULL,NULL,NULL
                                                    },
 #if DEFRULE_CONSTRUCT && OBJECT_SYSTEM
@@ -161,7 +161,7 @@ void SetupInstances(
 #endif
                                          };
 
-   Instance dummyInstance = { { { INSTANCE_ADDRESS_TYPE } , NULL, NULL, 0, 0L },
+   Instance dummyInstance = { { { { INSTANCE_ADDRESS_TYPE } , NULL, NULL, 0, 0L } },
                               NULL, NULL, 0, 1, 0, 0, 0,
                               NULL,  0, 0, NULL, NULL, NULL, NULL,
                               NULL, NULL, NULL, NULL, NULL };
@@ -170,7 +170,7 @@ void SetupInstances(
 
    InstanceData(theEnv)->MkInsMsgPass = true;
    memcpy(&InstanceData(theEnv)->InstanceInfo,&instanceInfo,sizeof(struct patternEntityRecord));
-   dummyInstance.header.theInfo = &InstanceData(theEnv)->InstanceInfo;
+   dummyInstance.patternHeader.theInfo = &InstanceData(theEnv)->InstanceInfo;
    memcpy(&InstanceData(theEnv)->DummyInstance,&dummyInstance,sizeof(Instance));
 
    InitializeInstanceTable(theEnv);
