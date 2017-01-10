@@ -313,7 +313,7 @@ bool AddFunctionParser(
    fdPtr = FindFunction(theEnv,functionName);
    if (fdPtr == NULL)
      {
-      PrintRouter(theEnv,WERROR,"Function parsers can only be added for existing functions.\n");
+      PrintString(theEnv,WERROR,"Function parsers can only be added for existing functions.\n");
       return false;
      }
    fdPtr->restrictions = NULL;
@@ -338,7 +338,7 @@ bool RemoveFunctionParser(
    fdPtr = FindFunction(theEnv,functionName);
    if (fdPtr == NULL)
      {
-      PrintRouter(theEnv,WERROR,"Function parsers can only be removed from existing functions.\n");
+      PrintString(theEnv,WERROR,"Function parsers can only be removed from existing functions.\n");
       return false;
      }
 
@@ -362,7 +362,7 @@ bool FuncSeqOvlFlags(
    fdPtr = FindFunction(theEnv,functionName);
    if (fdPtr == NULL)
      {
-      PrintRouter(theEnv,WERROR,"Only existing functions can be marked as using sequence expansion arguments/overloadable or not.\n");
+      PrintString(theEnv,WERROR,"Only existing functions can be marked as using sequence expansion arguments/overloadable or not.\n");
       return false;
      }
    fdPtr->sequenceuseok = (short) (seqp ? true : false);
@@ -997,19 +997,19 @@ static void PrintType(
   {
    if (*typesPrinted == 0)
      {
-      PrintRouter(theEnv,logicalName,typeName);
+      PrintString(theEnv,logicalName,typeName);
       (*typesPrinted)++;
       return;
      }
 
    if (typeCount == 2)
-     { PrintRouter(theEnv,logicalName," or "); }
+     { PrintString(theEnv,logicalName," or "); }
    else if (((*typesPrinted) + 1) == typeCount)
-     { PrintRouter(theEnv,logicalName,", or "); }
+     { PrintString(theEnv,logicalName,", or "); }
    else
-     { PrintRouter(theEnv,logicalName,", "); }
+     { PrintString(theEnv,logicalName,", "); }
 
-   PrintRouter(theEnv,logicalName,typeName);
+   PrintString(theEnv,logicalName,typeName);
    (*typesPrinted)++;
   }
 
@@ -1064,5 +1064,5 @@ void PrintTypesString(
      { PrintType(theEnv,logicalName,typeCount,&typesPrinted,"multifield"); }
 
    if (printCRLF)
-     { PrintRouter(theEnv,logicalName,"\n"); }
+     { PrintString(theEnv,logicalName,"\n"); }
   }

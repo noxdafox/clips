@@ -924,7 +924,7 @@ static struct expr *MultifieldPrognParser(
          ClearParsedBindNames(theEnv);
          SetParsedBindNames(theEnv,oldBindList);
          PrintErrorID(theEnv,"MULTIFUN",2,false);
-         PrintRouter(theEnv,WERROR,"Cannot rebind field variable in function progn$.\n");
+         PrintString(theEnv,WERROR,"Cannot rebind field variable in function progn$.\n");
          ReturnExpression(theEnv,top);
          return NULL;
         }
@@ -1008,7 +1008,7 @@ static struct expr *ForeachParser(
          ClearParsedBindNames(theEnv);
          SetParsedBindNames(theEnv,oldBindList);
          PrintErrorID(theEnv,"MULTIFUN",2,false);
-         PrintRouter(theEnv,WERROR,"Cannot rebind field variable in function foreach.\n");
+         PrintString(theEnv,WERROR,"Cannot rebind field variable in function foreach.\n");
          ReturnExpression(theEnv,top);
          return NULL;
         }
@@ -1407,24 +1407,24 @@ static void MVRangeError(
   const char *funcName)
   {
    PrintErrorID(theEnv,"MULTIFUN",1,false);
-   PrintRouter(theEnv,WERROR,"Multifield index ");
+   PrintString(theEnv,WERROR,"Multifield index ");
    if (brb == bre)
-     PrintLongInteger(theEnv,WERROR,(long long) brb);
+     PrintInteger(theEnv,WERROR,(long long) brb);
    else
      {
-      PrintRouter(theEnv,WERROR,"range ");
-      PrintLongInteger(theEnv,WERROR,(long long) brb);
-      PrintRouter(theEnv,WERROR,"..");
-      PrintLongInteger(theEnv,WERROR,(long long) bre);
+      PrintString(theEnv,WERROR,"range ");
+      PrintInteger(theEnv,WERROR,(long long) brb);
+      PrintString(theEnv,WERROR,"..");
+      PrintInteger(theEnv,WERROR,(long long) bre);
      }
-   PrintRouter(theEnv,WERROR," out of range 1..");
-   PrintLongInteger(theEnv,WERROR,(long long) max);
+   PrintString(theEnv,WERROR," out of range 1..");
+   PrintInteger(theEnv,WERROR,(long long) max);
    if (funcName != NULL)
      {
-      PrintRouter(theEnv,WERROR," in function ");
-      PrintRouter(theEnv,WERROR,funcName);
+      PrintString(theEnv,WERROR," in function ");
+      PrintString(theEnv,WERROR,funcName);
      }
-   PrintRouter(theEnv,WERROR,".\n");
+   PrintString(theEnv,WERROR,".\n");
   }
 
 /**************************************************************************

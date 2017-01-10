@@ -222,9 +222,9 @@ bool EvaluateExpression(
         if (GetBoundVariable(theEnv,returnValue,problem->lexemeValue) == false)
           {
            PrintErrorID(theEnv,"EVALUATN",1,false);
-           PrintRouter(theEnv,WERROR,"Variable ");
-           PrintRouter(theEnv,WERROR,problem->lexemeValue->contents);
-           PrintRouter(theEnv,WERROR," is unbound\n");
+           PrintString(theEnv,WERROR,"Variable ");
+           PrintString(theEnv,WERROR,problem->lexemeValue->contents);
+           PrintString(theEnv,WERROR," is unbound\n");
            returnValue->value = FalseSymbol(theEnv);
            SetEvaluationError(theEnv,true);
           }
@@ -407,9 +407,9 @@ void PrintCLIPSValue(
         break;
 
       default:
-        PrintRouter(theEnv,fileid,"<UnknownPrintType");
-        PrintLongInteger(theEnv,fileid,(long int) argPtr->header->type);
-        PrintRouter(theEnv,fileid,">");
+        PrintString(theEnv,fileid,"<UnknownPrintType");
+        PrintInteger(theEnv,fileid,argPtr->header->type);
+        PrintString(theEnv,fileid,">");
         SetHaltExecution(theEnv,true);
         SetEvaluationError(theEnv,true);
         break;
@@ -447,9 +447,9 @@ void PrintUDFValue(
         break;
 
       default:
-        PrintRouter(theEnv,fileid,"<UnknownPrintType");
-        PrintLongInteger(theEnv,fileid,(long int) argPtr->header->type);
-        PrintRouter(theEnv,fileid,">");
+        PrintString(theEnv,fileid,"<UnknownPrintType");
+        PrintInteger(theEnv,fileid,argPtr->header->type);
+        PrintString(theEnv,fileid,">");
         SetHaltExecution(theEnv,true);
         SetEvaluationError(theEnv,true);
         break;
@@ -744,9 +744,9 @@ bool FunctionCall(
    /*=========================================================*/
 
    PrintErrorID(theEnv,"EVALUATN",2,false);
-   PrintRouter(theEnv,WERROR,"No function, generic function or deffunction of name ");
-   PrintRouter(theEnv,WERROR,name);
-   PrintRouter(theEnv,WERROR," exists for external call.\n");
+   PrintString(theEnv,WERROR,"No function, generic function or deffunction of name ");
+   PrintString(theEnv,WERROR,name);
+   PrintString(theEnv,WERROR," exists for external call.\n");
    return true;
   }
 
@@ -1143,11 +1143,11 @@ static void PrintCAddress(
   {
    char buffer[20];
 
-   PrintRouter(theEnv,logicalName,"<Pointer-C-");
+   PrintString(theEnv,logicalName,"<Pointer-C-");
 
    gensprintf(buffer,"%p",((CLIPSExternalAddress *) theValue)->contents);
-   PrintRouter(theEnv,logicalName,buffer);
-   PrintRouter(theEnv,logicalName,">");
+   PrintString(theEnv,logicalName,buffer);
+   PrintString(theEnv,logicalName,">");
   }
 
 /****************/
@@ -1165,7 +1165,7 @@ static void NewCAddress(
    if (numberOfArguments != 1)
      {
       PrintErrorID(theEnv,"NEW",1,false);
-      PrintRouter(theEnv,WERROR,"Function new expected no additional arguments for the C external language type.\n");
+      PrintString(theEnv,WERROR,"Function new expected no additional arguments for the C external language type.\n");
       SetEvaluationError(theEnv,true);
       return;
      }
@@ -1181,7 +1181,7 @@ static bool DiscardCAddress(
   Environment *theEnv,
   void *theValue)
   {
-   PrintRouter(theEnv,WDISPLAY,"Discarding C Address\n");
+   PrintString(theEnv,WDISPLAY,"Discarding C Address\n");
 
    return true;
   }

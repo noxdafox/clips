@@ -259,21 +259,21 @@ void ProfileInfoCommand(
      {
       gensprintf(buffer,"Profile elapsed time = %g seconds\n",
                       ProfileFunctionData(theEnv)->ProfileTotalTime);
-      PrintRouter(theEnv,WDISPLAY,buffer);
+      PrintString(theEnv,WDISPLAY,buffer);
 
       if (ProfileFunctionData(theEnv)->LastProfileInfo == USER_FUNCTIONS)
-        { PrintRouter(theEnv,WDISPLAY,"Function Name                            "); }
+        { PrintString(theEnv,WDISPLAY,"Function Name                            "); }
       else if (ProfileFunctionData(theEnv)->LastProfileInfo == CONSTRUCTS_CODE)
-        { PrintRouter(theEnv,WDISPLAY,"Construct Name                           "); }
+        { PrintString(theEnv,WDISPLAY,"Construct Name                           "); }
 
-      PrintRouter(theEnv,WDISPLAY,"Entries         Time           %          Time+Kids     %+Kids\n");
+      PrintString(theEnv,WDISPLAY,"Entries         Time           %          Time+Kids     %+Kids\n");
 
       if (ProfileFunctionData(theEnv)->LastProfileInfo == USER_FUNCTIONS)
-        { PrintRouter(theEnv,WDISPLAY,"-------------                            "); }
+        { PrintString(theEnv,WDISPLAY,"-------------                            "); }
       else if (ProfileFunctionData(theEnv)->LastProfileInfo == CONSTRUCTS_CODE)
-        { PrintRouter(theEnv,WDISPLAY,"--------------                           "); }
+        { PrintString(theEnv,WDISPLAY,"--------------                           "); }
 
-      PrintRouter(theEnv,WDISPLAY,"-------        ------        -----        ---------     ------\n");
+      PrintString(theEnv,WDISPLAY,"-------        ------        -----        ---------     ------\n");
      }
 
    if (ProfileFunctionData(theEnv)->LastProfileInfo == USER_FUNCTIONS) OutputUserFunctionsInfo(theEnv);
@@ -387,23 +387,23 @@ static bool OutputProfileInfo(
 
    if ((banner != NULL) && (*banner != NULL))
      {
-      PrintRouter(theEnv,WDISPLAY,*banner);
+      PrintString(theEnv,WDISPLAY,*banner);
       *banner = NULL;
      }
 
    if (printPrefixBefore != NULL)
-     { PrintRouter(theEnv,WDISPLAY,printPrefixBefore); }
+     { PrintString(theEnv,WDISPLAY,printPrefixBefore); }
 
    if (printPrefix != NULL)
-     { PrintRouter(theEnv,WDISPLAY,printPrefix); }
+     { PrintString(theEnv,WDISPLAY,printPrefix); }
 
    if (printPrefixAfter != NULL)
-     { PrintRouter(theEnv,WDISPLAY,printPrefixAfter); }
+     { PrintString(theEnv,WDISPLAY,printPrefixAfter); }
 
    if (strlen(itemName) >= 40)
      {
-      PrintRouter(theEnv,WDISPLAY,itemName);
-      PrintRouter(theEnv,WDISPLAY,"\n");
+      PrintString(theEnv,WDISPLAY,itemName);
+      PrintString(theEnv,WDISPLAY,"\n");
       itemName = "";
      }
 
@@ -416,7 +416,7 @@ static bool OutputProfileInfo(
 
                         (double) profileInfo->totalWithChildrenTime,
                         (double) percentWithKids);
-   PrintRouter(theEnv,WDISPLAY,buffer);
+   PrintString(theEnv,WDISPLAY,buffer);
 
    return true;
   }

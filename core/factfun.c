@@ -583,7 +583,7 @@ void PPFact(
 
    PrintFact(theEnv,logicalName,theFact,true,ignoreDefaults,NULL);
 
-   PrintRouter(theEnv,logicalName,"\n");
+   PrintString(theEnv,logicalName,"\n");
   }
 
 /**************************************************************/

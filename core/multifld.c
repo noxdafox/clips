@@ -497,16 +497,16 @@ void PrintMultifield(
 
    theMultifield = segment->contents;
    if (printParens)
-     PrintRouter(theEnv,fileid,"(");
+     PrintString(theEnv,fileid,"(");
    i = begin;
    while (i <= end)
      {
       PrintAtom(theEnv,fileid,theMultifield[i].header->type,theMultifield[i].value);
       i++;
-      if (i <= end) PrintRouter(theEnv,fileid," ");
+      if (i <= end) PrintString(theEnv,fileid," ");
      }
    if (printParens)
-     PrintRouter(theEnv,fileid,")");
+     PrintString(theEnv,fileid,")");
   }
 
 /****************************************************/

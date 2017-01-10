@@ -599,9 +599,9 @@ void ListWatchItemsCommand(
      {
       for (wPtr = WatchData(theEnv)->ListOfWatchItems; wPtr != NULL; wPtr = wPtr->next)
         {
-         PrintRouter(theEnv,WDISPLAY,wPtr->name);
-         if (*(wPtr->flag)) PrintRouter(theEnv,WDISPLAY," = on\n");
-         else PrintRouter(theEnv,WDISPLAY," = off\n");
+         PrintString(theEnv,WDISPLAY,wPtr->name);
+         if (*(wPtr->flag)) PrintString(theEnv,WDISPLAY," = on\n");
+         else PrintString(theEnv,WDISPLAY," = off\n");
         }
       return;
      }
@@ -635,9 +635,9 @@ void ListWatchItemsCommand(
    /* List the status of the watch item. */
    /*====================================*/
 
-   PrintRouter(theEnv,WDISPLAY,wPtr->name);
-   if (*(wPtr->flag)) PrintRouter(theEnv,WDISPLAY," = on\n");
-   else PrintRouter(theEnv,WDISPLAY," = off\n");
+   PrintString(theEnv,WDISPLAY,wPtr->name);
+   if (*(wPtr->flag)) PrintString(theEnv,WDISPLAY," = on\n");
+   else PrintString(theEnv,WDISPLAY," = off\n");
 
    /*============================================*/
    /* List the status of individual watch items. */

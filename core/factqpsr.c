@@ -302,9 +302,9 @@ static Expression *ParseQueryRestrictions(
          if (tmp->value == queryInputToken->value)
            {
             PrintErrorID(theEnv,"FACTQPSR",1,false);
-            PrintRouter(theEnv,WERROR,"Duplicate fact member variable name in function ");
-            PrintRouter(theEnv,WERROR,ExpressionFunctionCallName(top)->contents);
-            PrintRouter(theEnv,WERROR,".\n");
+            PrintString(theEnv,WERROR,"Duplicate fact member variable name in function ");
+            PrintString(theEnv,WERROR,ExpressionFunctionCallName(top)->contents);
+            PrintString(theEnv,WERROR,".\n");
             goto ParseQueryRestrictionsError2;
            }
 
@@ -490,9 +490,9 @@ static bool ParseQueryTestExpression(
       ClearParsedBindNames(theEnv);
       SetParsedBindNames(theEnv,oldBindList);
       PrintErrorID(theEnv,"FACTQPSR",2,false);
-      PrintRouter(theEnv,WERROR,"Binds are not allowed in fact-set query in function ");
-      PrintRouter(theEnv,WERROR,ExpressionFunctionCallName(top)->contents);
-      PrintRouter(theEnv,WERROR,".\n");
+      PrintString(theEnv,WERROR,"Binds are not allowed in fact-set query in function ");
+      PrintString(theEnv,WERROR,ExpressionFunctionCallName(top)->contents);
+      PrintString(theEnv,WERROR,".\n");
       ReturnExpression(theEnv,top);
       return false;
      }
@@ -564,11 +564,11 @@ static bool ParseQueryActionExpression(
             ClearParsedBindNames(theEnv);
             SetParsedBindNames(theEnv,oldBindList);
             PrintErrorID(theEnv,"FACTQPSR",3,false);
-            PrintRouter(theEnv,WERROR,"Cannot rebind fact-set member variable ");
-            PrintRouter(theEnv,WERROR,tmpFactSetVars->lexemeValue->contents);
-            PrintRouter(theEnv,WERROR," in function ");
-            PrintRouter(theEnv,WERROR,ExpressionFunctionCallName(top)->contents);
-            PrintRouter(theEnv,WERROR,".\n");
+            PrintString(theEnv,WERROR,"Cannot rebind fact-set member variable ");
+            PrintString(theEnv,WERROR,tmpFactSetVars->lexemeValue->contents);
+            PrintString(theEnv,WERROR," in function ");
+            PrintString(theEnv,WERROR,ExpressionFunctionCallName(top)->contents);
+            PrintString(theEnv,WERROR,".\n");
             ReturnExpression(theEnv,top);
             return false;
            }

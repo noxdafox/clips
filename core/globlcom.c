@@ -227,8 +227,8 @@ void ShowDefglobals(
 
       if (allModules)
         {
-         PrintRouter(theEnv,logicalName,DefmoduleName(theModule));
-         PrintRouter(theEnv,logicalName,":\n");
+         PrintString(theEnv,logicalName,DefmoduleName(theModule));
+         PrintString(theEnv,logicalName,":\n");
         }
 
       /*=====================================*/
@@ -244,9 +244,9 @@ void ShowDefglobals(
         {
          if (EvaluationData(theEnv)->HaltExecution == true) return;
 
-         if (allModules) PrintRouter(theEnv,logicalName,"   ");
+         if (allModules) PrintString(theEnv,logicalName,"   ");
          PrintDefglobalValueForm(theEnv,logicalName,(Defglobal *) constructPtr);
-         PrintRouter(theEnv,logicalName,"\n");
+         PrintString(theEnv,logicalName,"\n");
         }
 
       /*===================================*/
@@ -268,9 +268,9 @@ static void PrintDefglobalValueForm(
   const char *logicalName,
   Defglobal *theGlobal)
   {
-   PrintRouter(theEnv,logicalName,"?*");
-   PrintRouter(theEnv,logicalName,theGlobal->header.name->contents);
-   PrintRouter(theEnv,logicalName,"* = ");
+   PrintString(theEnv,logicalName,"?*");
+   PrintString(theEnv,logicalName,theGlobal->header.name->contents);
+   PrintString(theEnv,logicalName,"* = ");
    PrintUDFValue(theEnv,logicalName,&theGlobal->current);
   }
 

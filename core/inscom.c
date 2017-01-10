@@ -496,7 +496,7 @@ void PPInstanceCommand(
    if (ins->garbage == 1)
      return;
    PrintInstance(theEnv,WDISPLAY,ins,"\n");
-   PrintRouter(theEnv,WDISPLAY,"\n");
+   PrintString(theEnv,WDISPLAY,"\n");
   }
 
 /***************************************************************
@@ -548,8 +548,8 @@ void Instances(
             return;
            }
 
-         PrintRouter(theEnv,logicalName,DefmoduleName(theModule));
-         PrintRouter(theEnv,logicalName,":\n");
+         PrintString(theEnv,logicalName,DefmoduleName(theModule));
+         PrintString(theEnv,logicalName,":\n");
          SetCurrentModule(theEnv,theModule);
          count += ListInstancesInModule(theEnv,id,logicalName,className,inheritFlag,true);
          theModule = GetNextDefmodule(theEnv,theModule);
@@ -1059,9 +1059,9 @@ void ClassCommand(
                          return;
 
          default       : PrintErrorID(theEnv,"INSCOM",1,false);
-                         PrintRouter(theEnv,WERROR,"Undefined type in function ");
-                         PrintRouter(theEnv,WERROR,func);
-                         PrintRouter(theEnv,WERROR,".\n");
+                         PrintString(theEnv,WERROR,"Undefined type in function ");
+                         PrintString(theEnv,WERROR,func);
+                         PrintString(theEnv,WERROR,".\n");
                          SetEvaluationError(theEnv,true);
         }
      }
@@ -1574,7 +1574,7 @@ static long TabulateInstances(
       if (EvaluationData(theEnv)->HaltExecution)
         return(count);
       if (allModulesFlag)
-        PrintRouter(theEnv,logicalName,"   ");
+        PrintString(theEnv,logicalName,"   ");
       PrintInstanceNameAndClass(theEnv,logicalName,ins,true);
       count++;
      }
@@ -1616,22 +1616,22 @@ static void PrintInstance(
    PrintInstanceNameAndClass(theEnv,logicalName,ins,false);
    for (i = 0 ; i < ins->cls->instanceSlotCount ; i++)
      {
-      PrintRouter(theEnv,logicalName,separator);
+      PrintString(theEnv,logicalName,separator);
       sp = ins->slotAddresses[i];
-      PrintRouter(theEnv,logicalName,"(");
-      PrintRouter(theEnv,logicalName,sp->desc->slotName->name->contents);
+      PrintString(theEnv,logicalName,"(");
+      PrintString(theEnv,logicalName,sp->desc->slotName->name->contents);
       if (sp->type != MULTIFIELD_TYPE)
         {
-         PrintRouter(theEnv,logicalName," ");
+         PrintString(theEnv,logicalName," ");
          PrintAtom(theEnv,logicalName,(int) sp->type,sp->value);
         }
       else if (sp->multifieldValue->length != 0)
         {
-         PrintRouter(theEnv,logicalName," ");
+         PrintString(theEnv,logicalName," ");
          PrintMultifield(theEnv,logicalName,sp->multifieldValue,0,
                          sp->multifieldValue->length - 1,false);
         }
-      PrintRouter(theEnv,logicalName,")");
+      PrintString(theEnv,logicalName,")");
      }
   }
 

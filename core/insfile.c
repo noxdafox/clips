@@ -993,29 +993,29 @@ static void SaveSingleInstanceText(
    InstanceSlot *sp;
    const char *logicalName = (const char *) fastSaveFile;
 
-   PrintRouter(theEnv,logicalName,"([");
-   PrintRouter(theEnv,logicalName,theInstance->name->contents);
-   PrintRouter(theEnv,logicalName,"] of ");
-   PrintRouter(theEnv,logicalName,theInstance->cls->header.name->contents);
+   PrintString(theEnv,logicalName,"([");
+   PrintString(theEnv,logicalName,theInstance->name->contents);
+   PrintString(theEnv,logicalName,"] of ");
+   PrintString(theEnv,logicalName,theInstance->cls->header.name->contents);
    for (i = 0 ; i < theInstance->cls->instanceSlotCount ; i++)
      {
       sp = theInstance->slotAddresses[i];
-      PrintRouter(theEnv,logicalName,"\n   (");
-      PrintRouter(theEnv,logicalName,sp->desc->slotName->name->contents);
+      PrintString(theEnv,logicalName,"\n   (");
+      PrintString(theEnv,logicalName,sp->desc->slotName->name->contents);
       if (sp->type != MULTIFIELD_TYPE)
         {
-         PrintRouter(theEnv,logicalName," ");
+         PrintString(theEnv,logicalName," ");
          PrintAtom(theEnv,logicalName,(int) sp->type,sp->value);
         }
       else if (sp->multifieldValue->length != 0)
         {
-         PrintRouter(theEnv,logicalName," ");
+         PrintString(theEnv,logicalName," ");
          PrintMultifield(theEnv,logicalName,sp->multifieldValue,0,
                          (long) (sp->multifieldValue->length - 1),false);
         }
-      PrintRouter(theEnv,logicalName,")");
+      PrintString(theEnv,logicalName,")");
      }
-   PrintRouter(theEnv,logicalName,")\n\n");
+   PrintString(theEnv,logicalName,")\n\n");
   }
 
 #if BSAVE_INSTANCES
@@ -1363,11 +1363,11 @@ static void ProcessFileErrorMessage(
   const char *fileName)
   {
    PrintErrorID(theEnv,"INSFILE",1,false);
-   PrintRouter(theEnv,WERROR,"Function ");
-   PrintRouter(theEnv,WERROR,functionName);
-   PrintRouter(theEnv,WERROR," could not completely process file ");
-   PrintRouter(theEnv,WERROR,fileName);
-   PrintRouter(theEnv,WERROR,".\n");
+   PrintString(theEnv,WERROR,"Function ");
+   PrintString(theEnv,WERROR,functionName);
+   PrintString(theEnv,WERROR," could not completely process file ");
+   PrintString(theEnv,WERROR,fileName);
+   PrintString(theEnv,WERROR,".\n");
   }
 
 #if BLOAD_INSTANCES
@@ -1393,16 +1393,16 @@ static bool VerifyBinaryHeader(
    if (strcmp(buf,InstanceFileData(theEnv)->InstanceBinaryPrefixID) != 0)
      {
       PrintErrorID(theEnv,"INSFILE",2,false);
-      PrintRouter(theEnv,WERROR,theFile);
-      PrintRouter(theEnv,WERROR," file is not a binary instances file.\n");
+      PrintString(theEnv,WERROR,theFile);
+      PrintString(theEnv,WERROR," file is not a binary instances file.\n");
       return false;
      }
    GenReadBinary(theEnv,buf,(unsigned long) (strlen(InstanceFileData(theEnv)->InstanceBinaryVersionID) + 1));
    if (strcmp(buf,InstanceFileData(theEnv)->InstanceBinaryVersionID) != 0)
      {
       PrintErrorID(theEnv,"INSFILE",3,false);
-      PrintRouter(theEnv,WERROR,theFile);
-      PrintRouter(theEnv,WERROR," file is not a compatible binary instances file.\n");
+      PrintString(theEnv,WERROR,theFile);
+      PrintString(theEnv,WERROR," file is not a compatible binary instances file.\n");
       return false;
      }
    return true;
@@ -1556,9 +1556,9 @@ static void BinaryLoadInstanceError(
   Defclass *theDefclass)
   {
    PrintErrorID(theEnv,"INSFILE",4,false);
-   PrintRouter(theEnv,WERROR,"Function bload-instances unable to load instance [");
-   PrintRouter(theEnv,WERROR,instanceName->contents);
-   PrintRouter(theEnv,WERROR,"] of class ");
+   PrintString(theEnv,WERROR,"Function bload-instances unable to load instance [");
+   PrintString(theEnv,WERROR,instanceName->contents);
+   PrintString(theEnv,WERROR,"] of class ");
    PrintClassName(theEnv,WERROR,theDefclass,true);
   }
 

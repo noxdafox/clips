@@ -364,7 +364,7 @@ void RandomFunction(
    if ((argCount != 0) && (argCount != 2))
      {
       PrintErrorID(theEnv,"MISCFUN",2,false);
-      PrintRouter(theEnv,WERROR,"Function random expected either 0 or 2 arguments\n");
+      PrintString(theEnv,WERROR,"Function random expected either 0 or 2 arguments\n");
      }
 
    /*========================================*/
@@ -386,7 +386,7 @@ void RandomFunction(
       if (end < begin)
         {
          PrintErrorID(theEnv,"MISCFUN",3,false);
-         PrintRouter(theEnv,WERROR,"Function random expected argument #1 to be less than argument #2\n");
+         PrintString(theEnv,WERROR,"Function random expected argument #1 to be less than argument #2\n");
          returnValue->integerValue = CreateInteger(theEnv,rv);
          return;
         }
@@ -609,8 +609,8 @@ void AproposCommand(
 
    while ((hashPtr = GetNextSymbolMatch(theEnv,argument,theLength,hashPtr,true,NULL)) != NULL)
      {
-      PrintRouter(theEnv,WDISPLAY,hashPtr->contents);
-      PrintRouter(theEnv,WDISPLAY,"\n");
+      PrintString(theEnv,WDISPLAY,hashPtr->contents);
+      PrintString(theEnv,WDISPLAY,"\n");
      }
   }
 
@@ -634,216 +634,216 @@ void OptionsCommand(
    /* flags for this executable.      */
    /*=================================*/
 
-   PrintRouter(theEnv,WDISPLAY,"Machine type: ");
+   PrintString(theEnv,WDISPLAY,"Machine type: ");
 
 #if GENERIC
-   PrintRouter(theEnv,WDISPLAY,"Generic ");
+   PrintString(theEnv,WDISPLAY,"Generic ");
 #endif
 #if UNIX_V
-   PrintRouter(theEnv,WDISPLAY,"UNIX System V or 4.2BSD ");
+   PrintString(theEnv,WDISPLAY,"UNIX System V or 4.2BSD ");
 #endif
 #if DARWIN
-   PrintRouter(theEnv,WDISPLAY,"Darwin ");
+   PrintString(theEnv,WDISPLAY,"Darwin ");
 #endif
 #if LINUX
-   PrintRouter(theEnv,WDISPLAY,"Linux ");
+   PrintString(theEnv,WDISPLAY,"Linux ");
 #endif
 #if UNIX_7
-   PrintRouter(theEnv,WDISPLAY,"UNIX System III Version 7 or Sun Unix ");
+   PrintString(theEnv,WDISPLAY,"UNIX System III Version 7 or Sun Unix ");
 #endif
 #if MAC_XCD
-   PrintRouter(theEnv,WDISPLAY,"Apple Macintosh with Xcode");
+   PrintString(theEnv,WDISPLAY,"Apple Macintosh with Xcode");
 #endif
 #if WIN_MVC
-   PrintRouter(theEnv,WDISPLAY,"Microsoft Windows with Microsoft Visual C++");
+   PrintString(theEnv,WDISPLAY,"Microsoft Windows with Microsoft Visual C++");
 #endif
 #if WIN_GCC
-   PrintRouter(theEnv,WDISPLAY,"Microsoft Windows with DJGPP");
+   PrintString(theEnv,WDISPLAY,"Microsoft Windows with DJGPP");
 #endif
-PrintRouter(theEnv,WDISPLAY,"\n");
+PrintString(theEnv,WDISPLAY,"\n");
 
-PrintRouter(theEnv,WDISPLAY,"Defrule construct is ");
+PrintString(theEnv,WDISPLAY,"Defrule construct is ");
 #if DEFRULE_CONSTRUCT
-  PrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,WDISPLAY,"ON\n");
 #else
-  PrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,WDISPLAY,"OFF\n");
 #endif
 
-PrintRouter(theEnv,WDISPLAY,"Defmodule construct is ");
+PrintString(theEnv,WDISPLAY,"Defmodule construct is ");
 #if DEFMODULE_CONSTRUCT
-  PrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,WDISPLAY,"ON\n");
 #else
-  PrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,WDISPLAY,"OFF\n");
 #endif
 
-PrintRouter(theEnv,WDISPLAY,"Deftemplate construct is ");
+PrintString(theEnv,WDISPLAY,"Deftemplate construct is ");
 #if DEFTEMPLATE_CONSTRUCT
-  PrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,WDISPLAY,"ON\n");
 #else
-  PrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,WDISPLAY,"OFF\n");
 #endif
 
-PrintRouter(theEnv,WDISPLAY,"  Fact-set queries are ");
+PrintString(theEnv,WDISPLAY,"  Fact-set queries are ");
 #if FACT_SET_QUERIES
-  PrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,WDISPLAY,"ON\n");
 #else
-  PrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,WDISPLAY,"OFF\n");
 #endif
 
 #if DEFTEMPLATE_CONSTRUCT
 
-PrintRouter(theEnv,WDISPLAY,"  Deffacts construct is ");
+PrintString(theEnv,WDISPLAY,"  Deffacts construct is ");
 #if DEFFACTS_CONSTRUCT
-  PrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,WDISPLAY,"ON\n");
 #else
-  PrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,WDISPLAY,"OFF\n");
 #endif
 
 #endif
 
-PrintRouter(theEnv,WDISPLAY,"Defglobal construct is ");
+PrintString(theEnv,WDISPLAY,"Defglobal construct is ");
 #if DEFGLOBAL_CONSTRUCT
-  PrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,WDISPLAY,"ON\n");
 #else
-  PrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,WDISPLAY,"OFF\n");
 #endif
 
-PrintRouter(theEnv,WDISPLAY,"Deffunction construct is ");
+PrintString(theEnv,WDISPLAY,"Deffunction construct is ");
 #if DEFFUNCTION_CONSTRUCT
-  PrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,WDISPLAY,"ON\n");
 #else
-  PrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,WDISPLAY,"OFF\n");
 #endif
 
-PrintRouter(theEnv,WDISPLAY,"Defgeneric/Defmethod constructs are ");
+PrintString(theEnv,WDISPLAY,"Defgeneric/Defmethod constructs are ");
 #if DEFGENERIC_CONSTRUCT
-  PrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,WDISPLAY,"ON\n");
 #else
-  PrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,WDISPLAY,"OFF\n");
 #endif
 
-PrintRouter(theEnv,WDISPLAY,"Object System is ");
+PrintString(theEnv,WDISPLAY,"Object System is ");
 #if OBJECT_SYSTEM
-  PrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,WDISPLAY,"ON\n");
 #else
-  PrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,WDISPLAY,"OFF\n");
 #endif
 
 #if OBJECT_SYSTEM
 
-PrintRouter(theEnv,WDISPLAY,"  Definstances construct is ");
+PrintString(theEnv,WDISPLAY,"  Definstances construct is ");
 #if DEFINSTANCES_CONSTRUCT
-  PrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,WDISPLAY,"ON\n");
 #else
-  PrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,WDISPLAY,"OFF\n");
 #endif
 
-PrintRouter(theEnv,WDISPLAY,"  Instance-set queries are ");
+PrintString(theEnv,WDISPLAY,"  Instance-set queries are ");
 #if INSTANCE_SET_QUERIES
-  PrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,WDISPLAY,"ON\n");
 #else
-  PrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,WDISPLAY,"OFF\n");
 #endif
 
-PrintRouter(theEnv,WDISPLAY,"  Binary loading of instances is ");
+PrintString(theEnv,WDISPLAY,"  Binary loading of instances is ");
 #if BLOAD_INSTANCES
-  PrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,WDISPLAY,"ON\n");
 #else
-  PrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,WDISPLAY,"OFF\n");
 #endif
 
-PrintRouter(theEnv,WDISPLAY,"  Binary saving of instances is ");
+PrintString(theEnv,WDISPLAY,"  Binary saving of instances is ");
 #if BSAVE_INSTANCES
-  PrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,WDISPLAY,"ON\n");
 #else
-  PrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,WDISPLAY,"OFF\n");
 #endif
 
 #endif
 
-PrintRouter(theEnv,WDISPLAY,"Extended math function package is ");
+PrintString(theEnv,WDISPLAY,"Extended math function package is ");
 #if EXTENDED_MATH_FUNCTIONS
-  PrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,WDISPLAY,"ON\n");
 #else
-  PrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,WDISPLAY,"OFF\n");
 #endif
 
-PrintRouter(theEnv,WDISPLAY,"Text processing function package is ");
+PrintString(theEnv,WDISPLAY,"Text processing function package is ");
 #if TEXTPRO_FUNCTIONS
-  PrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,WDISPLAY,"ON\n");
 #else
-  PrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,WDISPLAY,"OFF\n");
 #endif
 
-PrintRouter(theEnv,WDISPLAY,"Bload capability is ");
+PrintString(theEnv,WDISPLAY,"Bload capability is ");
 #if BLOAD_ONLY
-  PrintRouter(theEnv,WDISPLAY,"BLOAD ONLY");
+  PrintString(theEnv,WDISPLAY,"BLOAD ONLY");
 #endif
 #if BLOAD
-  PrintRouter(theEnv,WDISPLAY,"BLOAD");
+  PrintString(theEnv,WDISPLAY,"BLOAD");
 #endif
 #if BLOAD_AND_BSAVE
-  PrintRouter(theEnv,WDISPLAY,"BLOAD AND BSAVE");
+  PrintString(theEnv,WDISPLAY,"BLOAD AND BSAVE");
 #endif
 #if (! BLOAD_ONLY) && (! BLOAD) && (! BLOAD_AND_BSAVE)
-  PrintRouter(theEnv,WDISPLAY,"OFF ");
+  PrintString(theEnv,WDISPLAY,"OFF ");
 #endif
-PrintRouter(theEnv,WDISPLAY,"\n");
+PrintString(theEnv,WDISPLAY,"\n");
 
-PrintRouter(theEnv,WDISPLAY,"Construct compiler is ");
+PrintString(theEnv,WDISPLAY,"Construct compiler is ");
 #if CONSTRUCT_COMPILER
-  PrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,WDISPLAY,"ON\n");
 #else
-  PrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,WDISPLAY,"OFF\n");
 #endif
 
-PrintRouter(theEnv,WDISPLAY,"I/O function package is ");
+PrintString(theEnv,WDISPLAY,"I/O function package is ");
 #if IO_FUNCTIONS
-  PrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,WDISPLAY,"ON\n");
 #else
-  PrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,WDISPLAY,"OFF\n");
 #endif
 
-PrintRouter(theEnv,WDISPLAY,"String function package is ");
+PrintString(theEnv,WDISPLAY,"String function package is ");
 #if STRING_FUNCTIONS
-  PrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,WDISPLAY,"ON\n");
 #else
-  PrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,WDISPLAY,"OFF\n");
 #endif
 
-PrintRouter(theEnv,WDISPLAY,"Multifield function package is ");
+PrintString(theEnv,WDISPLAY,"Multifield function package is ");
 #if MULTIFIELD_FUNCTIONS
-  PrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,WDISPLAY,"ON\n");
 #else
-  PrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,WDISPLAY,"OFF\n");
 #endif
 
-PrintRouter(theEnv,WDISPLAY,"Debugging function package is ");
+PrintString(theEnv,WDISPLAY,"Debugging function package is ");
 #if DEBUGGING_FUNCTIONS
-  PrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,WDISPLAY,"ON\n");
 #else
-  PrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,WDISPLAY,"OFF\n");
 #endif
 
-PrintRouter(theEnv,WDISPLAY,"Window Interface flag is ");
+PrintString(theEnv,WDISPLAY,"Window Interface flag is ");
 #if WINDOW_INTERFACE
-   PrintRouter(theEnv,WDISPLAY,"ON\n");
+   PrintString(theEnv,WDISPLAY,"ON\n");
 #else
-   PrintRouter(theEnv,WDISPLAY,"OFF\n");
+   PrintString(theEnv,WDISPLAY,"OFF\n");
 #endif
 
-PrintRouter(theEnv,WDISPLAY,"Developer flag is ");
+PrintString(theEnv,WDISPLAY,"Developer flag is ");
 #if DEVELOPER
-   PrintRouter(theEnv,WDISPLAY,"ON\n");
+   PrintString(theEnv,WDISPLAY,"ON\n");
 #else
-   PrintRouter(theEnv,WDISPLAY,"OFF\n");
+   PrintString(theEnv,WDISPLAY,"OFF\n");
 #endif
 
-PrintRouter(theEnv,WDISPLAY,"Run time module is ");
+PrintString(theEnv,WDISPLAY,"Run time module is ");
 #if RUN_TIME
-  PrintRouter(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,WDISPLAY,"ON\n");
 #else
-  PrintRouter(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,WDISPLAY,"OFF\n");
 #endif
   }
 
@@ -968,7 +968,7 @@ void DummyExpandFuncMultifield(
    returnValue->lexemeValue = FalseSymbol(theEnv);
    SetEvaluationError(theEnv,true);
    PrintErrorID(theEnv,"MISCFUN",1,false);
-   PrintRouter(theEnv,WERROR,"expand$ must be used in the argument list of a function call.\n");
+   PrintString(theEnv,WERROR,"expand$ must be used in the argument list of a function call.\n");
   }
 
 /***********************************************************************
@@ -1327,9 +1327,9 @@ void FuncallFunction(
       if (CheckDeffunctionCall(theEnv,(Deffunction *) theReference.value,CountArguments(theReference.argList)) == false)
         {
          PrintErrorID(theEnv,"MISCFUN",4,false);
-         PrintRouter(theEnv,WERROR,"Function funcall called with the wrong number of arguments for deffunction ");
-         PrintRouter(theEnv,WERROR,DeffunctionName((Deffunction *) theReference.value));
-         PrintRouter(theEnv,WERROR,"\n");
+         PrintString(theEnv,WERROR,"Function funcall called with the wrong number of arguments for deffunction ");
+         PrintString(theEnv,WERROR,DeffunctionName((Deffunction *) theReference.value));
+         PrintString(theEnv,WERROR,"\n");
          ExpressionDeinstall(theEnv,&theReference);
          ReturnExpression(theEnv,theReference.argList);
          return;

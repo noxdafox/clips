@@ -160,7 +160,7 @@ PACKED_CLASS_LINKS *ParseSuperclasses(
       if (DefclassData(theEnv)->ObjectParseToken.value == (void *) newClassName)
         {
          PrintErrorID(theEnv,"INHERPSR",1,false);
-         PrintRouter(theEnv,WERROR,"A class may not have itself as a superclass.\n");
+         PrintString(theEnv,WERROR,"A class may not have itself as a superclass.\n");
          goto SuperclassParseError;
         }
       for (ctmp = clink ; ctmp != NULL ; ctmp = ctmp->nxt)
@@ -168,7 +168,7 @@ PACKED_CLASS_LINKS *ParseSuperclasses(
          if (DefclassData(theEnv)->ObjectParseToken.value == (void *) ctmp->cls->header.name)
            {
             PrintErrorID(theEnv,"INHERPSR",2,false);
-            PrintRouter(theEnv,WERROR,"A class may inherit from a superclass only once.\n");
+            PrintString(theEnv,WERROR,"A class may inherit from a superclass only once.\n");
             goto SuperclassParseError;
            }
         }
@@ -176,7 +176,7 @@ PACKED_CLASS_LINKS *ParseSuperclasses(
       if (sclass == NULL)
         {
          PrintErrorID(theEnv,"INHERPSR",3,false);
-         PrintRouter(theEnv,WERROR,"A class must be defined after all its superclasses.\n");
+         PrintString(theEnv,WERROR,"A class must be defined after all its superclasses.\n");
          goto SuperclassParseError;
         }
       if ((sclass == DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_NAME_TYPE]) ||
@@ -184,9 +184,9 @@ PACKED_CLASS_LINKS *ParseSuperclasses(
           (sclass == DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_NAME_TYPE]->directSuperclasses.classArray[0]))
         {
          PrintErrorID(theEnv,"INHERPSR",6,false);
-         PrintRouter(theEnv,WERROR,"A user-defined class cannot be a subclass of ");
-         PrintRouter(theEnv,WERROR,DefclassName(sclass));
-         PrintRouter(theEnv,WERROR,".\n");
+         PrintString(theEnv,WERROR,"A user-defined class cannot be a subclass of ");
+         PrintString(theEnv,WERROR,DefclassName(sclass));
+         PrintString(theEnv,WERROR,".\n");
          goto SuperclassParseError;
         }
       ctmp = get_struct(theEnv,classLink);
@@ -204,7 +204,7 @@ PACKED_CLASS_LINKS *ParseSuperclasses(
    if (clink == NULL)
      {
       PrintErrorID(theEnv,"INHERPSR",4,false);
-      PrintRouter(theEnv,WERROR,"Must have at least one superclass.\n");
+      PrintString(theEnv,WERROR,"Must have at least one superclass.\n");
       return NULL;
      }
    PPBackup(theEnv);
@@ -805,15 +805,15 @@ static void PrintPartialOrderLoop(
       pop1 = pop1->suc->po;
      }
 
-   PrintRouter(theEnv,WERROR,"Precedence loop in superclasses:");
+   PrintString(theEnv,WERROR,"Precedence loop in superclasses:");
    while (pop1->pre == 1)
      {
-      PrintRouter(theEnv,WERROR," ");
+      PrintString(theEnv,WERROR," ");
       PrintClassName(theEnv,WERROR,pop1->cls,false);
       pop1->pre = 0;
       pop1 = pop1->suc->po;
      }
-   PrintRouter(theEnv,WERROR," ");
+   PrintString(theEnv,WERROR," ");
    PrintClassName(theEnv,WERROR,pop1->cls,true);
   }
 
@@ -835,14 +835,14 @@ static void PrintClassLinks(
   CLASS_LINK *clink)
   {
    if (title != NULL)
-     PrintRouter(theEnv,logicalName,title);
+     PrintString(theEnv,logicalName,title);
    while (clink != NULL)
      {
-      PrintRouter(theEnv,logicalName," ");
+      PrintString(theEnv,logicalName," ");
       PrintClassName(theEnv,logicalName,clink->cls,false);
       clink = clink->nxt;
      }
-   PrintRouter(theEnv,logicalName,"\n");
+   PrintString(theEnv,logicalName,"\n");
   }
 
 #endif

@@ -83,7 +83,7 @@ struct printUtilityData
    void                           InitializePrintUtilityData(Environment *);
    void                           PrintInChunks(Environment *,const char *,const char *);
    void                           PrintFloat(Environment *,const char *,double);
-   void                           PrintLongInteger(Environment *,const char *,long long);
+   void                           PrintInteger(Environment *,const char *,long long);
    void                           PrintAtom(Environment *,const char *,int,void *);
    void                           PrintTally(Environment *,const char *,long long,const char *,const char *);
    const char                    *FloatToString(Environment *,double);

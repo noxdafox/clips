@@ -112,7 +112,7 @@ static void PrintDribble(
    /*===========================================================*/
 
    DeactivateRouter(theEnv,"dribble");
-   PrintRouter(theEnv,logicalName,str);
+   PrintString(theEnv,logicalName,str);
    ActivateRouter(theEnv,"dribble");
   }
 
@@ -441,7 +441,7 @@ int LLGetcBatch(
 
       if (rv == EOF)
         {
-         if (FileCommandData(theEnv)->BatchCurrentPosition > 0) PrintRouter(theEnv,STDOUT,(char *) FileCommandData(theEnv)->BatchBuffer);
+         if (FileCommandData(theEnv)->BatchCurrentPosition > 0) PrintString(theEnv,STDOUT,(char *) FileCommandData(theEnv)->BatchBuffer);
          flag = RemoveBatch(theEnv);
         }
      }
@@ -454,7 +454,7 @@ int LLGetcBatch(
 
    if (rv == EOF)
      {
-      if (FileCommandData(theEnv)->BatchCurrentPosition > 0) PrintRouter(theEnv,STDOUT,(char *) FileCommandData(theEnv)->BatchBuffer);
+      if (FileCommandData(theEnv)->BatchCurrentPosition > 0) PrintString(theEnv,STDOUT,(char *) FileCommandData(theEnv)->BatchBuffer);
       DeleteRouter(theEnv,"batch");
       RemoveBatch(theEnv);
       if (returnOnEOF == true)
@@ -477,7 +477,7 @@ int LLGetcBatch(
 
    if ((char) rv == '\n')
      {
-      PrintRouter(theEnv,STDOUT,(char *) FileCommandData(theEnv)->BatchBuffer);
+      PrintString(theEnv,STDOUT,(char *) FileCommandData(theEnv)->BatchBuffer);
       FileCommandData(theEnv)->BatchCurrentPosition = 0;
       if ((FileCommandData(theEnv)->BatchBuffer != NULL) && (FileCommandData(theEnv)->BatchMaximumPosition > BUFFER_SIZE))
         {
@@ -827,7 +827,7 @@ void CloseAllBatchSources(
 
    if (FileCommandData(theEnv)->BatchBuffer != NULL)
      {
-      if (FileCommandData(theEnv)->BatchCurrentPosition > 0) PrintRouter(theEnv,STDOUT,(char *) FileCommandData(theEnv)->BatchBuffer);
+      if (FileCommandData(theEnv)->BatchCurrentPosition > 0) PrintString(theEnv,STDOUT,(char *) FileCommandData(theEnv)->BatchBuffer);
       rm(theEnv,FileCommandData(theEnv)->BatchBuffer,FileCommandData(theEnv)->BatchMaximumPosition);
       FileCommandData(theEnv)->BatchBuffer = NULL;
       FileCommandData(theEnv)->BatchCurrentPosition = 0;
@@ -966,7 +966,7 @@ bool BatchStar(
   const char *fileName)
   {
    PrintErrorID(theEnv,"FILECOM",1,false);
-   PrintRouter(theEnv,WERROR,"Function batch* does not work in run time modules.\n");
+   PrintString(theEnv,WERROR,"Function batch* does not work in run time modules.\n");
    return false;
   }
 

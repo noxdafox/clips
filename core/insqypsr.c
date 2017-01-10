@@ -278,9 +278,9 @@ static Expression *ParseQueryRestrictions(
          if (tmp->value == queryInputToken->value)
            {
             PrintErrorID(theEnv,"INSQYPSR",1,false);
-            PrintRouter(theEnv,WERROR,"Duplicate instance member variable name in function ");
-            PrintRouter(theEnv,WERROR,ExpressionFunctionCallName(top)->contents);
-            PrintRouter(theEnv,WERROR,".\n");
+            PrintString(theEnv,WERROR,"Duplicate instance member variable name in function ");
+            PrintString(theEnv,WERROR,ExpressionFunctionCallName(top)->contents);
+            PrintString(theEnv,WERROR,".\n");
             goto ParseQueryRestrictionsError2;
            }
          tmp = tmp->nextArg;
@@ -431,9 +431,9 @@ static bool ParseQueryTestExpression(
       ClearParsedBindNames(theEnv);
       SetParsedBindNames(theEnv,oldBindList);
       PrintErrorID(theEnv,"INSQYPSR",2,false);
-      PrintRouter(theEnv,WERROR,"Binds are not allowed in instance-set query in function ");
-      PrintRouter(theEnv,WERROR,ExpressionFunctionCallName(top)->contents);
-      PrintRouter(theEnv,WERROR,".\n");
+      PrintString(theEnv,WERROR,"Binds are not allowed in instance-set query in function ");
+      PrintString(theEnv,WERROR,ExpressionFunctionCallName(top)->contents);
+      PrintString(theEnv,WERROR,".\n");
       ReturnExpression(theEnv,top);
       return false;
      }
@@ -498,11 +498,11 @@ static bool ParseQueryActionExpression(
             ClearParsedBindNames(theEnv);
             SetParsedBindNames(theEnv,oldBindList);
             PrintErrorID(theEnv,"INSQYPSR",3,false);
-            PrintRouter(theEnv,WERROR,"Cannot rebind instance-set member variable ");
-            PrintRouter(theEnv,WERROR,tmpInsSetVars->lexemeValue->contents);
-            PrintRouter(theEnv,WERROR," in function ");
-            PrintRouter(theEnv,WERROR,ExpressionFunctionCallName(top)->contents);
-            PrintRouter(theEnv,WERROR,".\n");
+            PrintString(theEnv,WERROR,"Cannot rebind instance-set member variable ");
+            PrintString(theEnv,WERROR,tmpInsSetVars->lexemeValue->contents);
+            PrintString(theEnv,WERROR," in function ");
+            PrintString(theEnv,WERROR,ExpressionFunctionCallName(top)->contents);
+            PrintString(theEnv,WERROR,".\n");
             ReturnExpression(theEnv,top);
             return false;
            }

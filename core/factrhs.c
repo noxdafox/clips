@@ -655,9 +655,9 @@ static void NoSuchTemplateError(
   const char *templateName)
   {
    PrintErrorID(theEnv,"FACTRHS",1,false);
-   PrintRouter(theEnv,WERROR,"Template ");
-   PrintRouter(theEnv,WERROR,templateName);
-   PrintRouter(theEnv,WERROR," does not exist for assert.\n");
+   PrintString(theEnv,WERROR,"Template ");
+   PrintString(theEnv,WERROR,templateName);
+   PrintString(theEnv,WERROR," does not exist for assert.\n");
   }
 
 #endif /* RUN_TIME || BLOAD_ONLY || BLOAD || BLOAD_AND_BSAVE */

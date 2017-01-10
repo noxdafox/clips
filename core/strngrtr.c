@@ -59,10 +59,10 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static bool                    FindString(Environment *,const char *,void *);
-   static void                    PrintString(Environment *,const char *,const char *,void *);
-   static int                     GetcString(Environment *,const char *,void *);
-   static int                     UngetcString(Environment *,const char *,int,void *);
+   static bool                    FindStringCallback(Environment *,const char *,void *);
+   static void                    PrintStringCallback(Environment *,const char *,const char *,void *);
+   static int                     GetcStringCallback(Environment *,const char *,void *);
+   static int                     UngetcStringCallback(Environment *,const char *,int,void *);
    static struct stringRouter    *FindStringRouter(Environment *,const char *);
    static bool                    CreateReadStringSource(Environment *,const char *,const char *,size_t,size_t);
    static void                    DeallocateStringRouterData(Environment *);
@@ -75,7 +75,7 @@ void InitializeStringRouter(
   {
    AllocateEnvironmentData(theEnv,STRING_ROUTER_DATA,sizeof(struct stringRouterData),DeallocateStringRouterData);
 
-   AddRouter(theEnv,"string",0,FindString,PrintString,GetcString,UngetcString,NULL,NULL);
+   AddRouter(theEnv,"string",0,FindStringCallback,PrintStringCallback,GetcStringCallback,UngetcStringCallback,NULL,NULL);
   }
 
 /*******************************************/
@@ -97,10 +97,10 @@ static void DeallocateStringRouterData(
      }
   }
 
-/*************************************************************/
-/* FindString: Find routine for string router logical names. */
-/*************************************************************/
-static bool FindString(
+/*********************************************************************/
+/* FindStringCallback: Find routine for string router logical names. */
+/*********************************************************************/
+static bool FindStringCallback(
   Environment *theEnv,
   const char *logicalName,
   void *context)
@@ -118,10 +118,10 @@ static bool FindString(
    return false;
   }
 
-/**************************************************/
-/* PrintString: Print routine for string routers. */
-/**************************************************/
-static void PrintString(
+/**********************************************************/
+/* PrintStringCallback: Print routine for string routers. */
+/**********************************************************/
+static void PrintStringCallback(
   Environment *theEnv,
   const char *logicalName,
   const char *str,
@@ -149,10 +149,10 @@ static void PrintString(
    head->currentPosition += strlen(str);
   }
 
-/************************************************/
-/* GetcString: Getc routine for string routers. */
-/************************************************/
-static int GetcString(
+/********************************************************/
+/* GetcStringCallback: Getc routine for string routers. */
+/********************************************************/
+static int GetcStringCallback(
   Environment *theEnv,
   const char *logicalName,
   void *context)
@@ -180,10 +180,10 @@ static int GetcString(
    return(rc);
   }
 
-/****************************************************/
-/* UngetcString: Ungetc routine for string routers. */
-/****************************************************/
-static int UngetcString(
+/************************************************************/
+/* UngetcStringCallback: Ungetc routine for string routers. */
+/************************************************************/
+static int UngetcStringCallback(
   Environment *theEnv,
   const char *logicalName,
   int ch,

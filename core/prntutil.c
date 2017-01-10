@@ -115,7 +115,7 @@ void PrintInChunks(
    /* and just print the entire string.                   */
    /*=====================================================*/
 
-   PrintRouter(theEnv,logicalName,bigString);
+   PrintString(theEnv,logicalName,bigString);
 
 /*
    char tc, *subString;
@@ -129,12 +129,12 @@ void PrintInChunks(
       if (EvaluationData(theEnv)->HaltExecution) return;
       tc = subString[500];
       subString[500] = EOS;
-      PrintRouter(theEnv,logicalName,subString);
+      PrintString(theEnv,logicalName,subString);
       subString[500] = tc;
       subString += 500;
      }
 
-   PrintRouter(theEnv,logicalName,subString);
+   PrintString(theEnv,logicalName,subString);
 */
   }
 
@@ -149,13 +149,13 @@ void PrintFloat(
    const char *theString;
 
    theString = FloatToString(theEnv,number);
-   PrintRouter(theEnv,fileid,theString);
+   PrintString(theEnv,fileid,theString);
   }
 
-/****************************************************/
-/* PrintLongInteger: Controls printout of integers. */
-/****************************************************/
-void PrintLongInteger(
+/************************************************/
+/* PrintInteger: Controls printout of integers. */
+/************************************************/
+void PrintInteger(
   Environment *theEnv,
   const char *logicalName,
   long long number)
@@ -163,7 +163,7 @@ void PrintLongInteger(
    char printBuffer[32];
 
    gensprintf(printBuffer,"%lld",number);
-   PrintRouter(theEnv,logicalName,printBuffer);
+   PrintString(theEnv,logicalName,printBuffer);
   }
 
 /**************************************/
@@ -184,50 +184,50 @@ void PrintAtom(
         PrintFloat(theEnv,logicalName,((CLIPSFloat *) value)->contents);
         break;
       case INTEGER_TYPE:
-        PrintLongInteger(theEnv,logicalName,((CLIPSInteger *) value)->contents);
+        PrintInteger(theEnv,logicalName,((CLIPSInteger *) value)->contents);
         break;
       case SYMBOL_TYPE:
-        PrintRouter(theEnv,logicalName,((CLIPSLexeme *) value)->contents);
+        PrintString(theEnv,logicalName,((CLIPSLexeme *) value)->contents);
         break;
       case STRING_TYPE:
         if (PrintUtilityData(theEnv)->PreserveEscapedCharacters)
-          { PrintRouter(theEnv,logicalName,StringPrintForm(theEnv,((CLIPSLexeme *) value)->contents)); }
+          { PrintString(theEnv,logicalName,StringPrintForm(theEnv,((CLIPSLexeme *) value)->contents)); }
         else
           {
-           PrintRouter(theEnv,logicalName,"\"");
-           PrintRouter(theEnv,logicalName,((CLIPSLexeme *) value)->contents);
-           PrintRouter(theEnv,logicalName,"\"");
+           PrintString(theEnv,logicalName,"\"");
+           PrintString(theEnv,logicalName,((CLIPSLexeme *) value)->contents);
+           PrintString(theEnv,logicalName,"\"");
           }
         break;
 
       case EXTERNAL_ADDRESS_TYPE:
         theAddress = (CLIPSExternalAddress *) value;
 
-        if (PrintUtilityData(theEnv)->AddressesToStrings) PrintRouter(theEnv,logicalName,"\"");
+        if (PrintUtilityData(theEnv)->AddressesToStrings) PrintString(theEnv,logicalName,"\"");
 
         if ((EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type] != NULL) &&
             (EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type]->longPrintFunction != NULL))
           { (*EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type]->longPrintFunction)(theEnv,logicalName,value); }
         else
           {
-           PrintRouter(theEnv,logicalName,"<Pointer-");
+           PrintString(theEnv,logicalName,"<Pointer-");
 
            gensprintf(buffer,"%d-",theAddress->type);
-           PrintRouter(theEnv,logicalName,buffer);
+           PrintString(theEnv,logicalName,buffer);
 
            gensprintf(buffer,"%p",((CLIPSExternalAddress *) value)->contents);
-           PrintRouter(theEnv,logicalName,buffer);
-           PrintRouter(theEnv,logicalName,">");
+           PrintString(theEnv,logicalName,buffer);
+           PrintString(theEnv,logicalName,">");
           }
 
-        if (PrintUtilityData(theEnv)->AddressesToStrings) PrintRouter(theEnv,logicalName,"\"");
+        if (PrintUtilityData(theEnv)->AddressesToStrings) PrintString(theEnv,logicalName,"\"");
         break;
 
 #if OBJECT_SYSTEM
       case INSTANCE_NAME_TYPE:
-        PrintRouter(theEnv,logicalName,"[");
-        PrintRouter(theEnv,logicalName,((CLIPSLexeme *) value)->contents);
-        PrintRouter(theEnv,logicalName,"]");
+        PrintString(theEnv,logicalName,"[");
+        PrintString(theEnv,logicalName,((CLIPSLexeme *) value)->contents);
+        PrintString(theEnv,logicalName,"]");
         break;
 #endif
 
@@ -238,7 +238,7 @@ void PrintAtom(
         if (EvaluationData(theEnv)->PrimitivesArray[type] == NULL) break;
         if (EvaluationData(theEnv)->PrimitivesArray[type]->longPrintFunction == NULL)
           {
-           PrintRouter(theEnv,logicalName,"<unknown atom type>");
+           PrintString(theEnv,logicalName,"<unknown atom type>");
            break;
           }
         (*EvaluationData(theEnv)->PrimitivesArray[type]->longPrintFunction)(theEnv,logicalName,value);
@@ -260,14 +260,14 @@ void PrintTally(
   {
    if (count == 0) return;
 
-   PrintRouter(theEnv,logicalName,"For a total of ");
-   PrintLongInteger(theEnv,logicalName,count);
-   PrintRouter(theEnv,logicalName," ");
+   PrintString(theEnv,logicalName,"For a total of ");
+   PrintInteger(theEnv,logicalName,count);
+   PrintString(theEnv,logicalName," ");
 
-   if (count == 1) PrintRouter(theEnv,logicalName,singular);
-   else PrintRouter(theEnv,logicalName,plural);
+   if (count == 1) PrintString(theEnv,logicalName,singular);
+   else PrintString(theEnv,logicalName,plural);
 
-   PrintRouter(theEnv,logicalName,".\n");
+   PrintString(theEnv,logicalName,".\n");
   }
 
 /********************************************/
@@ -285,11 +285,11 @@ void PrintErrorID(
    SetErrorFileName(theEnv,GetParsingFileName(theEnv));
    ConstructData(theEnv)->ErrLineNumber = GetLineCount(theEnv);
 #endif
-   if (printCR) PrintRouter(theEnv,WERROR,"\n");
-   PrintRouter(theEnv,WERROR,"[");
-   PrintRouter(theEnv,WERROR,module);
-   PrintLongInteger(theEnv,WERROR,(long int) errorID);
-   PrintRouter(theEnv,WERROR,"] ");
+   if (printCR) PrintString(theEnv,WERROR,"\n");
+   PrintString(theEnv,WERROR,"[");
+   PrintString(theEnv,WERROR,module);
+   PrintInteger(theEnv,WERROR,errorID);
+   PrintString(theEnv,WERROR,"] ");
 
    /*==================================================*/
    /* Print the file name and line number if available */
@@ -305,10 +305,10 @@ void PrintErrorID(
       fileName = GetParsingFileName(theEnv);
       if (fileName != NULL)
         {
-         PrintRouter(theEnv,WERROR,fileName);
-         PrintRouter(theEnv,WERROR,", Line ");
-         PrintLongInteger(theEnv,WERROR,GetLineCount(theEnv));
-         PrintRouter(theEnv,WERROR,": ");
+         PrintString(theEnv,WERROR,fileName);
+         PrintString(theEnv,WERROR,", Line ");
+         PrintInteger(theEnv,WERROR,GetLineCount(theEnv));
+         PrintString(theEnv,WERROR,": ");
         }
      }
 #endif
@@ -329,11 +329,11 @@ void PrintWarningID(
    SetWarningFileName(theEnv,GetParsingFileName(theEnv));
    ConstructData(theEnv)->WrnLineNumber = GetLineCount(theEnv);
 #endif
-   if (printCR) PrintRouter(theEnv,WWARNING,"\n");
-   PrintRouter(theEnv,WWARNING,"[");
-   PrintRouter(theEnv,WWARNING,module);
-   PrintLongInteger(theEnv,WWARNING,(long int) warningID);
-   PrintRouter(theEnv,WWARNING,"] ");
+   if (printCR) PrintString(theEnv,WWARNING,"\n");
+   PrintString(theEnv,WWARNING,"[");
+   PrintString(theEnv,WWARNING,module);
+   PrintInteger(theEnv,WWARNING,warningID);
+   PrintString(theEnv,WWARNING,"] ");
 
    /*==================================================*/
    /* Print the file name and line number if available */
@@ -349,15 +349,15 @@ void PrintWarningID(
       fileName = GetParsingFileName(theEnv);
       if (fileName != NULL)
         {
-         PrintRouter(theEnv,WERROR,fileName);
-         PrintRouter(theEnv,WERROR,", Line ");
-         PrintLongInteger(theEnv,WERROR,GetLineCount(theEnv));
-         PrintRouter(theEnv,WERROR,", ");
+         PrintString(theEnv,WERROR,fileName);
+         PrintString(theEnv,WERROR,", Line ");
+         PrintInteger(theEnv,WERROR,GetLineCount(theEnv));
+         PrintString(theEnv,WERROR,", ");
         }
      }
 #endif
 
-   PrintRouter(theEnv,WWARNING,"WARNING: ");
+   PrintString(theEnv,WWARNING,"WARNING: ");
   }
 
 /***************************************************/
@@ -370,11 +370,11 @@ void CantFindItemErrorMessage(
   const char *itemName)
   {
    PrintErrorID(theEnv,"PRNTUTIL",1,false);
-   PrintRouter(theEnv,WERROR,"Unable to find ");
-   PrintRouter(theEnv,WERROR,itemType);
-   PrintRouter(theEnv,WERROR," ");
-   PrintRouter(theEnv,WERROR,itemName);
-   PrintRouter(theEnv,WERROR,".\n");
+   PrintString(theEnv,WERROR,"Unable to find ");
+   PrintString(theEnv,WERROR,itemType);
+   PrintString(theEnv,WERROR," ");
+   PrintString(theEnv,WERROR,itemName);
+   PrintString(theEnv,WERROR,".\n");
   }
 
 /*****************************************************/
@@ -388,13 +388,13 @@ void CantFindItemInFunctionErrorMessage(
   const char *func)
   {
    PrintErrorID(theEnv,"PRNTUTIL",1,false);
-   PrintRouter(theEnv,WERROR,"Unable to find ");
-   PrintRouter(theEnv,WERROR,itemType);
-   PrintRouter(theEnv,WERROR," ");
-   PrintRouter(theEnv,WERROR,itemName);
-   PrintRouter(theEnv,WERROR," in function ");
-   PrintRouter(theEnv,WERROR,func);
-   PrintRouter(theEnv,WERROR,".\n");
+   PrintString(theEnv,WERROR,"Unable to find ");
+   PrintString(theEnv,WERROR,itemType);
+   PrintString(theEnv,WERROR," ");
+   PrintString(theEnv,WERROR,itemName);
+   PrintString(theEnv,WERROR," in function ");
+   PrintString(theEnv,WERROR,func);
+   PrintString(theEnv,WERROR,".\n");
   }
 
 /*****************************************************/
@@ -407,11 +407,11 @@ void CantDeleteItemErrorMessage(
   const char *itemName)
   {
    PrintErrorID(theEnv,"PRNTUTIL",4,false);
-   PrintRouter(theEnv,WERROR,"Unable to delete ");
-   PrintRouter(theEnv,WERROR,itemType);
-   PrintRouter(theEnv,WERROR," ");
-   PrintRouter(theEnv,WERROR,itemName);
-   PrintRouter(theEnv,WERROR,".\n");
+   PrintString(theEnv,WERROR,"Unable to delete ");
+   PrintString(theEnv,WERROR,itemType);
+   PrintString(theEnv,WERROR," ");
+   PrintString(theEnv,WERROR,itemName);
+   PrintString(theEnv,WERROR,".\n");
   }
 
 /****************************************************/
@@ -424,10 +424,10 @@ void AlreadyParsedErrorMessage(
   const char *itemName)
   {
    PrintErrorID(theEnv,"PRNTUTIL",5,true);
-   PrintRouter(theEnv,WERROR,"The ");
-   if (itemType != NULL) PrintRouter(theEnv,WERROR,itemType);
-   if (itemName != NULL) PrintRouter(theEnv,WERROR,itemName);
-   PrintRouter(theEnv,WERROR," has already been parsed.\n");
+   PrintString(theEnv,WERROR,"The ");
+   if (itemType != NULL) PrintString(theEnv,WERROR,itemType);
+   if (itemName != NULL) PrintString(theEnv,WERROR,itemName);
+   PrintString(theEnv,WERROR," has already been parsed.\n");
   }
 
 /*********************************************************/
@@ -438,14 +438,14 @@ void SyntaxErrorMessage(
   const char *location)
   {
    PrintErrorID(theEnv,"PRNTUTIL",2,true);
-   PrintRouter(theEnv,WERROR,"Syntax Error");
+   PrintString(theEnv,WERROR,"Syntax Error");
    if (location != NULL)
      {
-      PrintRouter(theEnv,WERROR,":  Check appropriate syntax for ");
-      PrintRouter(theEnv,WERROR,location);
+      PrintString(theEnv,WERROR,":  Check appropriate syntax for ");
+      PrintString(theEnv,WERROR,location);
      }
 
-   PrintRouter(theEnv,WERROR,".\n");
+   PrintString(theEnv,WERROR,".\n");
    SetEvaluationError(theEnv,true);
   }
 
@@ -459,9 +459,9 @@ void LocalVariableErrorMessage(
   const char *byWhat)
   {
    PrintErrorID(theEnv,"PRNTUTIL",6,true);
-   PrintRouter(theEnv,WERROR,"Local variables can not be accessed by ");
-   PrintRouter(theEnv,WERROR,byWhat);
-   PrintRouter(theEnv,WERROR,".\n");
+   PrintString(theEnv,WERROR,"Local variables can not be accessed by ");
+   PrintString(theEnv,WERROR,byWhat);
+   PrintString(theEnv,WERROR,".\n");
   }
 
 /******************************************/
@@ -475,19 +475,19 @@ void SystemError(
   {
    PrintErrorID(theEnv,"PRNTUTIL",3,true);
 
-   PrintRouter(theEnv,WERROR,"\n*** ");
-   PrintRouter(theEnv,WERROR,APPLICATION_NAME);
-   PrintRouter(theEnv,WERROR," SYSTEM ERROR ***\n");
+   PrintString(theEnv,WERROR,"\n*** ");
+   PrintString(theEnv,WERROR,APPLICATION_NAME);
+   PrintString(theEnv,WERROR," SYSTEM ERROR ***\n");
 
-   PrintRouter(theEnv,WERROR,"ID = ");
-   PrintRouter(theEnv,WERROR,module);
-   PrintLongInteger(theEnv,WERROR,(long int) errorID);
-   PrintRouter(theEnv,WERROR,"\n");
+   PrintString(theEnv,WERROR,"ID = ");
+   PrintString(theEnv,WERROR,module);
+   PrintInteger(theEnv,WERROR,errorID);
+   PrintString(theEnv,WERROR,"\n");
 
-   PrintRouter(theEnv,WERROR,APPLICATION_NAME);
-   PrintRouter(theEnv,WERROR," data structures are in an inconsistent or corrupted state.\n");
-   PrintRouter(theEnv,WERROR,"This error may have occurred from errors in user defined code.\n");
-   PrintRouter(theEnv,WERROR,"**************************\n");
+   PrintString(theEnv,WERROR,APPLICATION_NAME);
+   PrintString(theEnv,WERROR," data structures are in an inconsistent or corrupted state.\n");
+   PrintString(theEnv,WERROR,"This error may have occurred from errors in user defined code.\n");
+   PrintString(theEnv,WERROR,"**************************\n");
   }
 
 /*******************************************************/
@@ -499,9 +499,9 @@ void DivideByZeroErrorMessage(
   const char *functionName)
   {
    PrintErrorID(theEnv,"PRNTUTIL",7,false);
-   PrintRouter(theEnv,WERROR,"Attempt to divide by zero in ");
-   PrintRouter(theEnv,WERROR,functionName);
-   PrintRouter(theEnv,WERROR," function.\n");
+   PrintString(theEnv,WERROR,"Attempt to divide by zero in ");
+   PrintString(theEnv,WERROR,functionName);
+   PrintString(theEnv,WERROR," function.\n");
   }
 
 /*******************************************************/
@@ -659,15 +659,15 @@ void SalienceInformationError(
   const char *constructName)
   {
    PrintErrorID(theEnv,"PRNTUTIL",8,true);
-   PrintRouter(theEnv,WERROR,"This error occurred while evaluating the salience");
+   PrintString(theEnv,WERROR,"This error occurred while evaluating the salience");
    if (constructName != NULL)
      {
-      PrintRouter(theEnv,WERROR," for ");
-      PrintRouter(theEnv,WERROR,constructType);
-      PrintRouter(theEnv,WERROR," ");
-      PrintRouter(theEnv,WERROR,constructName);
+      PrintString(theEnv,WERROR," for ");
+      PrintString(theEnv,WERROR,constructType);
+      PrintString(theEnv,WERROR," ");
+      PrintString(theEnv,WERROR,constructName);
      }
-   PrintRouter(theEnv,WERROR,".\n");
+   PrintString(theEnv,WERROR,".\n");
   }
 
 /**********************************************************/
@@ -681,11 +681,11 @@ void SalienceRangeError(
   int max)
   {
    PrintErrorID(theEnv,"PRNTUTIL",9,true);
-   PrintRouter(theEnv,WERROR,"Salience value out of range ");
-   PrintLongInteger(theEnv,WERROR,(long int) min);
-   PrintRouter(theEnv,WERROR," to ");
-   PrintLongInteger(theEnv,WERROR,(long int) max);
-   PrintRouter(theEnv,WERROR,".\n");
+   PrintString(theEnv,WERROR,"Salience value out of range ");
+   PrintInteger(theEnv,WERROR,min);
+   PrintString(theEnv,WERROR," to ");
+   PrintInteger(theEnv,WERROR,max);
+   PrintString(theEnv,WERROR,".\n");
   }
 
 /***************************************************************/
@@ -696,7 +696,7 @@ void SalienceNonIntegerError(
   Environment *theEnv)
   {
    PrintErrorID(theEnv,"PRNTUTIL",10,true);
-   PrintRouter(theEnv,WERROR,"Salience value must be an integer value.\n");
+   PrintString(theEnv,WERROR,"Salience value must be an integer value.\n");
   }
 
 /***************************************************/
@@ -711,10 +711,10 @@ void SlotExistError(
   const char *func)
   {
    PrintErrorID(theEnv,"INSFUN",3,false);
-   PrintRouter(theEnv,WERROR,"No such slot ");
-   PrintRouter(theEnv,WERROR,sname);
-   PrintRouter(theEnv,WERROR," in function ");
-   PrintRouter(theEnv,WERROR,func);
-   PrintRouter(theEnv,WERROR,".\n");
+   PrintString(theEnv,WERROR,"No such slot ");
+   PrintString(theEnv,WERROR,sname);
+   PrintString(theEnv,WERROR," in function ");
+   PrintString(theEnv,WERROR,func);
+   PrintString(theEnv,WERROR,".\n");
    SetEvaluationError(theEnv,true);
   }

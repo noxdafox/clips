@@ -443,13 +443,13 @@ void QSetDefglobalValue(
 #if DEBUGGING_FUNCTIONS
    if (theGlobal->watch)
      {
-      PrintRouter(theEnv,WTRACE,":== ?*");
-      PrintRouter(theEnv,WTRACE,theGlobal->header.name->contents);
-      PrintRouter(theEnv,WTRACE,"* ==> ");
+      PrintString(theEnv,WTRACE,":== ?*");
+      PrintString(theEnv,WTRACE,theGlobal->header.name->contents);
+      PrintString(theEnv,WTRACE,"* ==> ");
       PrintUDFValue(theEnv,WTRACE,vPtr);
-      PrintRouter(theEnv,WTRACE," <== ");
+      PrintString(theEnv,WTRACE," <== ");
       PrintUDFValue(theEnv,WTRACE,&theGlobal->current);
-      PrintRouter(theEnv,WTRACE,"\n");
+      PrintString(theEnv,WTRACE,"\n");
      }
 #endif
 
@@ -517,9 +517,9 @@ void DefglobalValueForm(
    Environment *theEnv = theGlobal->header.env;
 
    OpenStringDestination(theEnv,"GlobalValueForm",buffer,bufferLength);
-   PrintRouter(theEnv,"GlobalValueForm","?*");
-   PrintRouter(theEnv,"GlobalValueForm",theGlobal->header.name->contents);
-   PrintRouter(theEnv,"GlobalValueForm","* = ");
+   PrintString(theEnv,"GlobalValueForm","?*");
+   PrintString(theEnv,"GlobalValueForm",theGlobal->header.name->contents);
+   PrintString(theEnv,"GlobalValueForm","* = ");
    PrintUDFValue(theEnv,"GlobalValueForm",&theGlobal->current);
    CloseStringDestination(theEnv,"GlobalValueForm");
   }
@@ -571,9 +571,9 @@ static bool EntityGetDefglobalValue(
    if (theGlobal == NULL)
      {
       PrintErrorID(theEnv,"GLOBLDEF",1,false);
-      PrintRouter(theEnv,WERROR,"Global variable ?*");
-      PrintRouter(theEnv,WERROR,((CLIPSLexeme *) theValue)->contents);
-      PrintRouter(theEnv,WERROR,"* is unbound.\n");
+      PrintString(theEnv,WERROR,"Global variable ?*");
+      PrintString(theEnv,WERROR,((CLIPSLexeme *) theValue)->contents);
+      PrintString(theEnv,WERROR,"* is unbound.\n");
       vPtr->value = FalseSymbol(theEnv);
       SetEvaluationError(theEnv,true);
       return false;

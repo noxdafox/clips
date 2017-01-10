@@ -779,7 +779,7 @@ static void SaveDefclass(
    if (ppForm != NULL)
      {
       PrintInChunks(theEnv,logName,ppForm);
-      PrintRouter(theEnv,logName,"\n");
+      PrintString(theEnv,logName,"\n");
       hnd = GetNextDefmessageHandler(theEnv,theDefclass,0);
       while (hnd != 0)
         {
@@ -787,7 +787,7 @@ static void SaveDefclass(
          if (ppForm != NULL)
            {
             PrintInChunks(theEnv,logName,ppForm);
-            PrintRouter(theEnv,logName,"\n");
+            PrintString(theEnv,logName,"\n");
            }
          hnd = GetNextDefmessageHandler(theEnv,theDefclass,hnd);
         }

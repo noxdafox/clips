@@ -181,7 +181,7 @@ bool ParseDefgeneric(
    if (genericInputToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       PrintErrorID(theEnv,"GENRCPSR",1,false);
-      PrintRouter(theEnv,WERROR,"Expected ')' to complete defgeneric.\n");
+      PrintString(theEnv,WERROR,"Expected ')' to complete defgeneric.\n");
       return true;
      }
    SavePPBuffer(theEnv,"\n");
@@ -287,19 +287,19 @@ bool ParseDefmethod(
       if (meth->system)
         {
          PrintErrorID(theEnv,"GENRCPSR",17,false);
-         PrintRouter(theEnv,WERROR,"Cannot replace the implicit system method #");
-         PrintLongInteger(theEnv,WERROR,(long long) meth->index);
-         PrintRouter(theEnv,WERROR,".\n");
+         PrintString(theEnv,WERROR,"Cannot replace the implicit system method #");
+         PrintInteger(theEnv,WERROR,(long long) meth->index);
+         PrintString(theEnv,WERROR,".\n");
          error = true;
         }
       else if ((theIndex != 0) && (theIndex != meth->index))
         {
          PrintErrorID(theEnv,"GENRCPSR",2,false);
-         PrintRouter(theEnv,WERROR,"New method #");
-         PrintLongInteger(theEnv,WERROR,(long long) theIndex);
-         PrintRouter(theEnv,WERROR," would be indistinguishable from method #");
-         PrintLongInteger(theEnv,WERROR,(long long) meth->index);
-         PrintRouter(theEnv,WERROR,".\n");
+         PrintString(theEnv,WERROR,"New method #");
+         PrintInteger(theEnv,WERROR,(long long) theIndex);
+         PrintString(theEnv,WERROR," would be indistinguishable from method #");
+         PrintInteger(theEnv,WERROR,(long long) meth->index);
+         PrintString(theEnv,WERROR,".\n");
          error = true;
         }
      }
@@ -311,9 +311,9 @@ bool ParseDefmethod(
       else if (gfunc->methods[mi].system)
         {
          PrintErrorID(theEnv,"GENRCPSR",17,false);
-         PrintRouter(theEnv,WERROR,"Cannot replace the implicit system method #");
-         PrintLongInteger(theEnv,WERROR,(long long) theIndex);
-         PrintRouter(theEnv,WERROR,".\n");
+         PrintString(theEnv,WERROR,"Cannot replace the implicit system method #");
+         PrintInteger(theEnv,WERROR,(long long) theIndex);
+         PrintString(theEnv,WERROR,".\n");
          error = true;
         }
      }
@@ -384,17 +384,17 @@ bool ParseDefmethod(
 
       if (mnew)
         {
-         PrintRouter(theEnv,outRouter,"   Method #");
-         PrintLongInteger(theEnv,outRouter,(long long) meth->index);
-         PrintRouter(theEnv,outRouter," defined.\n");
+         PrintString(theEnv,outRouter,"   Method #");
+         PrintInteger(theEnv,outRouter,(long long) meth->index);
+         PrintString(theEnv,outRouter," defined.\n");
         }
       else
         {
          outRouter = WWARNING;
          PrintWarningID(theEnv,"CSTRCPSR",1,true);
-         PrintRouter(theEnv,outRouter,"Method #");
-         PrintLongInteger(theEnv,outRouter,(long long) meth->index);
-         PrintRouter(theEnv,outRouter," redefined.\n");
+         PrintString(theEnv,outRouter,"Method #");
+         PrintInteger(theEnv,outRouter,(long long) meth->index);
+         PrintString(theEnv,outRouter," redefined.\n");
         }
      }
    return false;
@@ -703,7 +703,7 @@ static bool ValidGenericName(
    if (FindConstruct(theEnv,theDefgenericName) != NULL)
      {
       PrintErrorID(theEnv,"GENRCPSR",3,false);
-      PrintRouter(theEnv,WERROR,"Defgenerics are not allowed to replace constructs.\n");
+      PrintString(theEnv,WERROR,"Defgenerics are not allowed to replace constructs.\n");
       return false;
      }
 
@@ -720,17 +720,17 @@ static bool ValidGenericName(
       if (theModule != GetCurrentModule(theEnv))
         {
          PrintErrorID(theEnv,"GENRCPSR",4,false);
-         PrintRouter(theEnv,WERROR,"Deffunction ");
-         PrintRouter(theEnv,WERROR,DeffunctionName(theDeffunction));
-         PrintRouter(theEnv,WERROR," imported from module ");
-         PrintRouter(theEnv,WERROR,DefmoduleName(theModule));
-         PrintRouter(theEnv,WERROR," conflicts with this defgeneric.\n");
+         PrintString(theEnv,WERROR,"Deffunction ");
+         PrintString(theEnv,WERROR,DeffunctionName(theDeffunction));
+         PrintString(theEnv,WERROR," imported from module ");
+         PrintString(theEnv,WERROR,DefmoduleName(theModule));
+         PrintString(theEnv,WERROR," conflicts with this defgeneric.\n");
          return false;
         }
       else
         {
          PrintErrorID(theEnv,"GENRCPSR",5,false);
-         PrintRouter(theEnv,WERROR,"Defgenerics are not allowed to replace deffunctions.\n");
+         PrintString(theEnv,WERROR,"Defgenerics are not allowed to replace deffunctions.\n");
         }
       return false;
      }
@@ -765,9 +765,9 @@ static bool ValidGenericName(
        (systemFunction->overloadable == false) : false)
      {
       PrintErrorID(theEnv,"GENRCPSR",16,false);
-      PrintRouter(theEnv,WERROR,"The system function ");
-      PrintRouter(theEnv,WERROR,theDefgenericName);
-      PrintRouter(theEnv,WERROR," cannot be overloaded.\n");
+      PrintString(theEnv,WERROR,"The system function ");
+      PrintString(theEnv,WERROR,theDefgenericName);
+      PrintString(theEnv,WERROR," cannot be overloaded.\n");
       return false;
      }
    return true;
@@ -840,7 +840,7 @@ static CLIPSLexeme *ParseMethodNameAndIndex(
       if (tmp < 1)
         {
          PrintErrorID(theEnv,"GENRCPSR",6,false);
-         PrintRouter(theEnv,WERROR,"Method index out of range.\n");
+         PrintString(theEnv,WERROR,"Method index out of range.\n");
          return NULL;
         }
       *theIndex = tmp;
@@ -892,7 +892,7 @@ static int ParseMethodParameters(
    if (genericInputToken->tknType != LEFT_PARENTHESIS_TOKEN)
      {
       PrintErrorID(theEnv,"GENRCPSR",7,false);
-      PrintRouter(theEnv,WERROR,"Expected a '(' to begin method parameter restrictions.\n");
+      PrintString(theEnv,WERROR,"Expected a '(' to begin method parameter restrictions.\n");
       return(-1);
      }
    GetToken(theEnv,readSource,genericInputToken);
@@ -902,7 +902,7 @@ static int ParseMethodParameters(
         {
          DeleteTempRestricts(theEnv,phead);
          PrintErrorID(theEnv,"PRCCODE",8,false);
-         PrintRouter(theEnv,WERROR,"No parameters allowed after wildcard parameter.\n");
+         PrintString(theEnv,WERROR,"No parameters allowed after wildcard parameter.\n");
          return(-1);
         }
       if ((genericInputToken->tknType == SF_VARIABLE_TOKEN) ||
@@ -930,7 +930,7 @@ static int ParseMethodParameters(
            {
             DeleteTempRestricts(theEnv,phead);
             PrintErrorID(theEnv,"GENRCPSR",8,false);
-            PrintRouter(theEnv,WERROR,"Expected a variable for parameter specification.\n");
+            PrintString(theEnv,WERROR,"Expected a variable for parameter specification.\n");
             return(-1);
            }
          pname = genericInputToken->lexemeValue;
@@ -955,7 +955,7 @@ static int ParseMethodParameters(
         {
          DeleteTempRestricts(theEnv,phead);
          PrintErrorID(theEnv,"GENRCPSR",9,false);
-         PrintRouter(theEnv,WERROR,"Expected a variable or '(' for parameter specification.\n");
+         PrintString(theEnv,WERROR,"Expected a variable or '(' for parameter specification.\n");
          return(-1);
         }
       PPCRAndIndent(theEnv);
@@ -1006,7 +1006,7 @@ static RESTRICTION *ParseRestriction(
       if (query != NULL)
         {
          PrintErrorID(theEnv,"GENRCPSR",10,false);
-         PrintRouter(theEnv,WERROR,"Query must be last in parameter restriction.\n");
+         PrintString(theEnv,WERROR,"Query must be last in parameter restriction.\n");
          ReturnExpression(theEnv,query);
          ReturnExpression(theEnv,types);
          return NULL;
@@ -1032,9 +1032,9 @@ static RESTRICTION *ParseRestriction(
                     {
                      PrintErrorID(theEnv,"GENRCPSR",11,false);
 #if OBJECT_SYSTEM
-                     PrintRouter(theEnv,WERROR,"Duplicate classes not allowed in parameter restriction.\n");
+                     PrintString(theEnv,WERROR,"Duplicate classes not allowed in parameter restriction.\n");
 #else
-                     PrintRouter(theEnv,WERROR,"Duplicate types not allowed in parameter restriction.\n");
+                     PrintString(theEnv,WERROR,"Duplicate types not allowed in parameter restriction.\n");
 #endif
                      ReturnExpression(theEnv,query);
                      ReturnExpression(theEnv,types);
@@ -1065,7 +1065,7 @@ static RESTRICTION *ParseRestriction(
          if (GetParsedBindNames(theEnv) != NULL)
            {
             PrintErrorID(theEnv,"GENRCPSR",12,false);
-            PrintRouter(theEnv,WERROR,"Binds are not allowed in query expressions.\n");
+            PrintString(theEnv,WERROR,"Binds are not allowed in query expressions.\n");
             ReturnExpression(theEnv,query);
             ReturnExpression(theEnv,types);
             return NULL;
@@ -1079,9 +1079,9 @@ static RESTRICTION *ParseRestriction(
         {
          PrintErrorID(theEnv,"GENRCPSR",13,false);
 #if OBJECT_SYSTEM
-         PrintRouter(theEnv,WERROR,"Expected a valid class name or query.\n");
+         PrintString(theEnv,WERROR,"Expected a valid class name or query.\n");
 #else
-         PrintRouter(theEnv,WERROR,"Expected a valid type name or query.\n");
+         PrintString(theEnv,WERROR,"Expected a valid type name or query.\n");
 #endif
          ReturnExpression(theEnv,query);
          ReturnExpression(theEnv,types);
@@ -1097,9 +1097,9 @@ static RESTRICTION *ParseRestriction(
      {
       PrintErrorID(theEnv,"GENRCPSR",13,false);
 #if OBJECT_SYSTEM
-      PrintRouter(theEnv,WERROR,"Expected a valid class name or query.\n");
+      PrintString(theEnv,WERROR,"Expected a valid class name or query.\n");
 #else
-      PrintRouter(theEnv,WERROR,"Expected a valid type name or query.\n");
+      PrintString(theEnv,WERROR,"Expected a valid type name or query.\n");
 #endif
       return NULL;
      }
@@ -1162,7 +1162,7 @@ static bool DuplicateParameters(
       if (head->value == (void *) name)
         {
          PrintErrorID(theEnv,"PRCCODE",7,false);
-         PrintRouter(theEnv,WERROR,"Duplicate parameter names not allowed.\n");
+         PrintString(theEnv,WERROR,"Duplicate parameter names not allowed.\n");
          return true;
         }
       *prv = head;
@@ -1233,7 +1233,7 @@ static Expression *ValidType(
       if (cls == NULL)
         {
          PrintErrorID(theEnv,"GENRCPSR",14,false);
-         PrintRouter(theEnv,WERROR,"Unknown class in method.\n");
+         PrintString(theEnv,WERROR,"Unknown class in method.\n");
          return NULL;
         }
       return(GenConstant(theEnv,DEFCLASS_PTR,cls));
@@ -1271,7 +1271,7 @@ static Expression *ValidType(
      return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,(long long) INSTANCE_ADDRESS_TYPE)));
 
    PrintErrorID(theEnv,"GENRCPSR",14,false);
-   PrintRouter(theEnv,WERROR,"Unknown type in method.\n");
+   PrintString(theEnv,WERROR,"Unknown type in method.\n");
 #endif
    return NULL;
   }
@@ -1308,8 +1308,8 @@ static bool RedundantClasses(
    else
      return false;
    PrintErrorID(theEnv,"GENRCPSR",15,false);
-   PrintRouter(theEnv,WERROR,tname);
-   PrintRouter(theEnv,WERROR," class is redundant.\n");
+   PrintString(theEnv,WERROR,tname);
+   PrintString(theEnv,WERROR," class is redundant.\n");
    return true;
   }
 

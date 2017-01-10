@@ -368,11 +368,11 @@ void AmbiguousReferenceErrorMessage(
   const char *constructName,
   const char *findName)
   {
-   PrintRouter(theEnv,WERROR,"Ambiguous reference to ");
-   PrintRouter(theEnv,WERROR,constructName);
-   PrintRouter(theEnv,WERROR," ");
-   PrintRouter(theEnv,WERROR,findName);
-   PrintRouter(theEnv,WERROR,".\nIt is imported from more than one module.\n");
+   PrintString(theEnv,WERROR,"Ambiguous reference to ");
+   PrintString(theEnv,WERROR,constructName);
+   PrintString(theEnv,WERROR," ");
+   PrintString(theEnv,WERROR,findName);
+   PrintString(theEnv,WERROR,".\nIt is imported from more than one module.\n");
   }
 
 /****************************************************/
@@ -665,8 +665,8 @@ void ListItemsDriver(
      {
       if (allModules)
         {
-         PrintRouter(theEnv,logicalName,DefmoduleName(theModule));
-         PrintRouter(theEnv,logicalName,":\n");
+         PrintString(theEnv,logicalName,DefmoduleName(theModule));
+         PrintString(theEnv,logicalName,":\n");
         }
 
       SetCurrentModule(theEnv,theModule);
@@ -684,16 +684,16 @@ void ListItemsDriver(
             constructName = (*nameFunction)(constructPtr);
             if (constructName != NULL)
               {
-               if (allModules) PrintRouter(theEnv,logicalName,"   ");
-               PrintRouter(theEnv,logicalName,constructName);
-               PrintRouter(theEnv,logicalName,"\n");
+               if (allModules) PrintString(theEnv,logicalName,"   ");
+               PrintString(theEnv,logicalName,constructName);
+               PrintString(theEnv,logicalName,"\n");
               }
            }
          else if (printFunction != NULL)
            {
-            if (allModules) PrintRouter(theEnv,logicalName,"   ");
+            if (allModules) PrintString(theEnv,logicalName,"   ");
             (*printFunction)(theEnv,logicalName,constructPtr);
-            PrintRouter(theEnv,logicalName,"\n");
+            PrintString(theEnv,logicalName,"\n");
            }
 
          constructPtr = (*nextFunction)(theEnv,constructPtr);
@@ -852,9 +852,9 @@ CLIPSLexeme *GetConstructNameAndComment(
    if (inputToken->tknType != SYMBOL_TOKEN)
      {
       PrintErrorID(theEnv,"CSTRCPSR",2,true);
-      PrintRouter(theEnv,WERROR,"Missing name for ");
-      PrintRouter(theEnv,WERROR,constructName);
-      PrintRouter(theEnv,WERROR," construct\n");
+      PrintString(theEnv,WERROR,"Missing name for ");
+      PrintString(theEnv,WERROR,constructName);
+      PrintString(theEnv,WERROR," construct\n");
       return NULL;
      }
 
@@ -941,11 +941,11 @@ CLIPSLexeme *GetConstructNameAndComment(
             if ((*deleteFunction)(theConstruct,theEnv) == false)
               {
                PrintErrorID(theEnv,"CSTRCPSR",4,true);
-               PrintRouter(theEnv,WERROR,"Cannot redefine ");
-               PrintRouter(theEnv,WERROR,constructName);
-               PrintRouter(theEnv,WERROR," ");
-               PrintRouter(theEnv,WERROR,name->contents);
-               PrintRouter(theEnv,WERROR," while it is in use.\n");
+               PrintString(theEnv,WERROR,"Cannot redefine ");
+               PrintString(theEnv,WERROR,constructName);
+               PrintString(theEnv,WERROR," ");
+               PrintString(theEnv,WERROR,name->contents);
+               PrintString(theEnv,WERROR," while it is in use.\n");
                return NULL;
               }
            }
@@ -966,22 +966,22 @@ CLIPSLexeme *GetConstructNameAndComment(
         {
          outRouter = WWARNING;
          PrintWarningID(theEnv,"CSTRCPSR",1,true);
-         PrintRouter(theEnv,outRouter,"Redefining ");
+         PrintString(theEnv,outRouter,"Redefining ");
         }
-      else PrintRouter(theEnv,outRouter,"Defining ");
+      else PrintString(theEnv,outRouter,"Defining ");
 
-      PrintRouter(theEnv,outRouter,constructName);
-      PrintRouter(theEnv,outRouter,": ");
-      PrintRouter(theEnv,outRouter,name->contents);
+      PrintString(theEnv,outRouter,constructName);
+      PrintString(theEnv,outRouter,": ");
+      PrintString(theEnv,outRouter,name->contents);
 
-      if (fullMessageCR) PrintRouter(theEnv,outRouter,"\n");
-      else PrintRouter(theEnv,outRouter," ");
+      if (fullMessageCR) PrintString(theEnv,outRouter,"\n");
+      else PrintString(theEnv,outRouter," ");
      }
    else
 #endif
      {
       if (GetPrintWhileLoading(theEnv) && (! ConstructData(theEnv)->CheckSyntaxMode))
-        { PrintRouter(theEnv,WDIALOG,constructSymbol); }
+        { PrintString(theEnv,WDIALOG,constructSymbol); }
      }
 
    /*===============================*/

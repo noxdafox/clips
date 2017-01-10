@@ -507,7 +507,7 @@ void Dependencies(
 
    if (theEntity->dependents == NULL)
      {
-      PrintRouter(theEnv,WDISPLAY,"None\n");
+      PrintString(theEnv,WDISPLAY,"None\n");
       return;
      }
 
@@ -522,7 +522,7 @@ void Dependencies(
      {
       if (GetHaltExecution(theEnv) == true) return;
       PrintPartialMatch(theEnv,WDISPLAY,(struct partialMatch *) fdPtr->dPtr);
-      PrintRouter(theEnv,WDISPLAY,"\n");
+      PrintString(theEnv,WDISPLAY,"\n");
      }
   }
 
@@ -572,7 +572,7 @@ void Dependents(
          theBinds = (struct partialMatch *) fdPtr->dPtr;
          if (FindEntityInPartialMatch(theEntity,theBinds) == true)
            {
-            if (found) PrintRouter(theEnv,WDISPLAY,",");
+            if (found) PrintString(theEnv,WDISPLAY,",");
             (*entityPtr->theInfo->base.shortPrintFunction)(theEnv,WDISPLAY,entityPtr);
             found = true;
             break;
@@ -586,8 +586,8 @@ void Dependents(
    /* list of dependents.                             */
    /*=================================================*/
 
-   if (! found) PrintRouter(theEnv,WDISPLAY,"None\n");
-   else PrintRouter(theEnv,WDISPLAY,"\n");
+   if (! found) PrintString(theEnv,WDISPLAY,"None\n");
+   else PrintString(theEnv,WDISPLAY,"\n");
   }
 
 #if DEBUGGING_FUNCTIONS
@@ -611,7 +611,7 @@ void DependenciesCommand(
 #if DEFRULE_CONSTRUCT
    Dependencies(theEnv,(struct patternEntity *) ptr);
 #else
-   PrintRouter(theEnv,WDISPLAY,"None\n");
+   PrintString(theEnv,WDISPLAY,"None\n");
 #endif
   }
 
@@ -634,7 +634,7 @@ void DependentsCommand(
 #if DEFRULE_CONSTRUCT
    Dependents(theEnv,(struct patternEntity *) ptr);
 #else
-   PrintRouter(theEnv,WDISPLAY,"None\n");
+   PrintString(theEnv,WDISPLAY,"None\n");
 #endif
   }
 

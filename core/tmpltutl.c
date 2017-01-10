@@ -102,11 +102,11 @@ void InvalidDeftemplateSlotMessage(
   bool printCR)
   {
    PrintErrorID(theEnv,"TMPLTDEF",1,printCR);
-   PrintRouter(theEnv,WERROR,"Invalid slot ");
-   PrintRouter(theEnv,WERROR,slotName);
-   PrintRouter(theEnv,WERROR," not defined in corresponding deftemplate ");
-   PrintRouter(theEnv,WERROR,deftemplateName);
-   PrintRouter(theEnv,WERROR,".\n");
+   PrintString(theEnv,WERROR,"Invalid slot ");
+   PrintString(theEnv,WERROR,slotName);
+   PrintString(theEnv,WERROR," not defined in corresponding deftemplate ");
+   PrintString(theEnv,WERROR,deftemplateName);
+   PrintString(theEnv,WERROR,".\n");
   }
 
 /**********************************************************/
@@ -119,9 +119,9 @@ void SingleFieldSlotCardinalityError(
   const char *slotName)
   {
    PrintErrorID(theEnv,"TMPLTDEF",2,true);
-   PrintRouter(theEnv,WERROR,"The single field slot ");
-   PrintRouter(theEnv,WERROR,slotName);
-   PrintRouter(theEnv,WERROR," can only contain a single field value.\n");
+   PrintString(theEnv,WERROR,"The single field slot ");
+   PrintString(theEnv,WERROR,slotName);
+   PrintString(theEnv,WERROR," can only contain a single field value.\n");
   }
 
 /**********************************************************************/
@@ -134,14 +134,14 @@ void MultiIntoSingleFieldSlotError(
   Deftemplate *theDeftemplate)
   {
    PrintErrorID(theEnv,"TMPLTFUN",2,true);
-   PrintRouter(theEnv,WERROR,"Attempted to assert a multifield value \n");
-   PrintRouter(theEnv,WERROR,"into the single field slot ");
-   if (theSlot != NULL) PrintRouter(theEnv,WERROR,theSlot->slotName->contents);
-   else PrintRouter(theEnv,WERROR,"<<unknown>>");
-   PrintRouter(theEnv,WERROR," of deftemplate ");
-   if (theDeftemplate != NULL) PrintRouter(theEnv,WERROR,theDeftemplate->header.name->contents);
-   else PrintRouter(theEnv,WERROR,"<<unknown>>");
-   PrintRouter(theEnv,WERROR,".\n");
+   PrintString(theEnv,WERROR,"Attempted to assert a multifield value \n");
+   PrintString(theEnv,WERROR,"into the single field slot ");
+   if (theSlot != NULL) PrintString(theEnv,WERROR,theSlot->slotName->contents);
+   else PrintString(theEnv,WERROR,"<<unknown>>");
+   PrintString(theEnv,WERROR," of deftemplate ");
+   if (theDeftemplate != NULL) PrintString(theEnv,WERROR,theDeftemplate->header.name->contents);
+   else PrintString(theEnv,WERROR,"<<unknown>>");
+   PrintString(theEnv,WERROR,".\n");
 
    SetEvaluationError(theEnv,true);
   }
@@ -214,9 +214,9 @@ void CheckTemplateFact(
          gensprintf(thePlace,"fact f-%-5lld ",theFact->factIndex);
 
          PrintErrorID(theEnv,"CSTRNCHK",1,true);
-         PrintRouter(theEnv,WERROR,"Slot value ");
+         PrintString(theEnv,WERROR,"Slot value ");
          PrintUDFValue(theEnv,WERROR,&theData);
-         PrintRouter(theEnv,WERROR," ");
+         PrintString(theEnv,WERROR," ");
          ConstraintViolationErrorMessage(theEnv,NULL,thePlace,false,0,slotPtr->slotName,
                                          0,rv,slotPtr->constraints,true);
          SetHaltExecution(theEnv,true);
@@ -307,8 +307,8 @@ static void PrintTemplateSlot(
   struct templateSlot *slotPtr,
   CLIPSValue *slotValue)
   {
-   PrintRouter(theEnv,logicalName,"(");
-   PrintRouter(theEnv,logicalName,slotPtr->slotName->contents);
+   PrintString(theEnv,logicalName,"(");
+   PrintString(theEnv,logicalName,slotPtr->slotName->contents);
 
    /*======================================================*/
    /* Print the value of the slot for a single field slot. */
@@ -316,7 +316,7 @@ static void PrintTemplateSlot(
 
    if (slotPtr->multislot == false)
      {
-      PrintRouter(theEnv,logicalName," ");
+      PrintString(theEnv,logicalName," ");
       PrintAtom(theEnv,logicalName,((TypeHeader *) slotValue->value)->type,slotValue->value);
      }
 
@@ -331,7 +331,7 @@ static void PrintTemplateSlot(
       theSegment = (Multifield *) slotValue->value;
       if (theSegment->length > 0)
         {
-         PrintRouter(theEnv,logicalName," ");
+         PrintString(theEnv,logicalName," ");
          PrintMultifield(theEnv,logicalName,theSegment,
                          0,(long) theSegment->length-1,false);
         }
@@ -341,7 +341,7 @@ static void PrintTemplateSlot(
    /* Print the closing parenthesis of the slot. */
    /*============================================*/
 
-   PrintRouter(theEnv,logicalName,")");
+   PrintString(theEnv,logicalName,")");
   }
 
 /********************************/
@@ -434,8 +434,8 @@ void PrintTemplateFact(
    /* Print the relation name of the deftemplate. */
    /*=============================================*/
 
-   PrintRouter(theEnv,logicalName,"(");
-   PrintRouter(theEnv,logicalName,theDeftemplate->header.name->contents);
+   PrintString(theEnv,logicalName,"(");
+   PrintString(theEnv,logicalName,theDeftemplate->header.name->contents);
 
    /*===================================================*/
    /* Print each of the field slots of the deftemplate. */
@@ -447,7 +447,7 @@ void PrintTemplateFact(
 
    if ((changeMap != NULL) &&
        (theFact->whichDeftemplate->slotList != slotPtr))
-     { PrintRouter(theEnv,logicalName," ..."); }
+     { PrintString(theEnv,logicalName," ..."); }
 
    while (slotPtr != NULL)
      {
@@ -459,11 +459,11 @@ void PrintTemplateFact(
       if (! slotPrinted)
         {
          slotPrinted = true;
-         PrintRouter(theEnv,logicalName," ");
+         PrintString(theEnv,logicalName," ");
         }
 
       if (separateLines)
-        { PrintRouter(theEnv,logicalName,"\n   "); }
+        { PrintString(theEnv,logicalName,"\n   "); }
 
       /*====================================*/
       /* Print the slot name and its value. */
@@ -480,12 +480,12 @@ void PrintTemplateFact(
                                            ignoreDefaults,changeMap);
 
       if ((changeMap != NULL) && (lastPtr->next != slotPtr))
-        { PrintRouter(theEnv,logicalName," ..."); }
+        { PrintString(theEnv,logicalName," ..."); }
 
-      if (slotPtr != NULL) PrintRouter(theEnv,logicalName," ");
+      if (slotPtr != NULL) PrintString(theEnv,logicalName," ");
      }
 
-   PrintRouter(theEnv,logicalName,")");
+   PrintString(theEnv,logicalName,")");
   }
 
 /***************************************************************************/

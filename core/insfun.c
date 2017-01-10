@@ -149,7 +149,8 @@ void IncrementInstanceReferenceCount(
 #if MAC_XCD
 #pragma unused(theEnv)
 #endif
-
+   if (theInstance == NULL) return;
+   
    theInstance->busy++;
   }
 
@@ -169,6 +170,7 @@ void DecrementInstanceReferenceCount(
 #if MAC_XCD
 #pragma unused(theEnv)
 #endif
+   if (theInstance == NULL) return;
 
    theInstance->busy--;
   }
@@ -615,11 +617,11 @@ bool DirectPutSlotValue(
       else
         {
          PrintErrorID(theEnv,"INSMNGR",14,false);
-         PrintRouter(theEnv,WERROR,"Override required for slot ");
-         PrintRouter(theEnv,WERROR,sp->desc->slotName->name->contents);
-         PrintRouter(theEnv,WERROR," in instance ");
-         PrintRouter(theEnv,WERROR,ins->name->contents);
-         PrintRouter(theEnv,WERROR,".\n");
+         PrintString(theEnv,WERROR,"Override required for slot ");
+         PrintString(theEnv,WERROR,sp->desc->slotName->name->contents);
+         PrintString(theEnv,WERROR," in instance ");
+         PrintString(theEnv,WERROR,ins->name->contents);
+         PrintString(theEnv,WERROR,".\n");
          SetEvaluationError(theEnv,true);
          return false;
         }
@@ -629,8 +631,8 @@ bool DirectPutSlotValue(
        (ins->cls->reactive || sp->desc->shared))
      {
       PrintErrorID(theEnv,"INSFUN",5,false);
-      PrintRouter(theEnv,WERROR,"Cannot modify reactive instance slots while\n");
-      PrintRouter(theEnv,WERROR,"  pattern-matching is in process.\n");
+      PrintString(theEnv,WERROR,"Cannot modify reactive instance slots while\n");
+      PrintString(theEnv,WERROR,"  pattern-matching is in process.\n");
       SetEvaluationError(theEnv,true);
       return false;
      }
@@ -713,19 +715,19 @@ bool DirectPutSlotValue(
    if (ins->cls->traceSlots)
      {
       if (sp->desc->shared)
-        PrintRouter(theEnv,WTRACE,"::= shared slot ");
+        PrintString(theEnv,WTRACE,"::= shared slot ");
       else
-        PrintRouter(theEnv,WTRACE,"::= local slot ");
-      PrintRouter(theEnv,WTRACE,sp->desc->slotName->name->contents);
-      PrintRouter(theEnv,WTRACE," in instance ");
-      PrintRouter(theEnv,WTRACE,ins->name->contents);
-      PrintRouter(theEnv,WTRACE," <- ");
+        PrintString(theEnv,WTRACE,"::= local slot ");
+      PrintString(theEnv,WTRACE,sp->desc->slotName->name->contents);
+      PrintString(theEnv,WTRACE," in instance ");
+      PrintString(theEnv,WTRACE,ins->name->contents);
+      PrintString(theEnv,WTRACE," <- ");
       if (sp->type != MULTIFIELD_TYPE)
         PrintAtom(theEnv,WTRACE,(int) sp->type,sp->value);
       else
         PrintMultifield(theEnv,WTRACE,sp->multifieldValue,0,
                         (long) (sp->multifieldValue->length - 1),true);
-      PrintRouter(theEnv,WTRACE,"\n");
+      PrintString(theEnv,WTRACE,"\n");
      }
 #endif
    InstanceData(theEnv)->ChangesToInstances = true;
@@ -749,11 +751,11 @@ bool DirectPutSlotValue(
          else
            {
             PrintErrorID(theEnv,"INSFUN",6,false);
-            PrintRouter(theEnv,WERROR,"Unable to pattern-match on shared slot ");
-            PrintRouter(theEnv,WERROR,sp->desc->slotName->name->contents);
-            PrintRouter(theEnv,WERROR," in class ");
-            PrintRouter(theEnv,WERROR,DefclassName(sp->desc->cls));
-            PrintRouter(theEnv,WERROR,".\n");
+            PrintString(theEnv,WERROR,"Unable to pattern-match on shared slot ");
+            PrintString(theEnv,WERROR,sp->desc->slotName->name->contents);
+            PrintString(theEnv,WERROR," in class ");
+            PrintString(theEnv,WERROR,DefclassName(sp->desc->cls));
+            PrintString(theEnv,WERROR,".\n");
            }
         }
       else
@@ -799,18 +801,18 @@ bool ValidSlotValue(
      {
       PrintErrorID(theEnv,"INSFUN",7,false);
       PrintUDFValue(theEnv,WERROR,val);
-      PrintRouter(theEnv,WERROR," illegal for single-field ");
+      PrintString(theEnv,WERROR," illegal for single-field ");
       PrintSlot(theEnv,WERROR,sd,ins,theCommand);
-      PrintRouter(theEnv,WERROR,".\n");
+      PrintString(theEnv,WERROR,".\n");
       SetEvaluationError(theEnv,true);
       return false;
      }
    if (val->header->type == VOID_TYPE)
      {
       PrintErrorID(theEnv,"INSFUN",8,false);
-      PrintRouter(theEnv,WERROR,"Void function illegal value for ");
+      PrintString(theEnv,WERROR,"Void function illegal value for ");
       PrintSlot(theEnv,WERROR,sd,ins,theCommand);
-      PrintRouter(theEnv,WERROR,".\n");
+      PrintString(theEnv,WERROR,".\n");
       SetEvaluationError(theEnv,true);
       return false;
      }
@@ -825,7 +827,7 @@ bool ValidSlotValue(
                                    val->multifieldValue->contents[val->begin].value);
          else
            PrintUDFValue(theEnv,WERROR,val);
-         PrintRouter(theEnv,WERROR," for ");
+         PrintString(theEnv,WERROR," for ");
          PrintSlot(theEnv,WERROR,sd,ins,theCommand);
          ConstraintViolationErrorMessage(theEnv,NULL,NULL,0,0,NULL,0,
                                          violationCode,sd->constraint,false);
@@ -886,9 +888,9 @@ Instance *CheckInstance(
    else
      {
       PrintErrorID(theEnv,"INSFUN",1,false);
-      PrintRouter(theEnv,WERROR,"Expected a valid instance in function ");
-      PrintRouter(theEnv,WERROR,UDFContextFunctionName(context));
-      PrintRouter(theEnv,WERROR,".\n");
+      PrintString(theEnv,WERROR,"Expected a valid instance in function ");
+      PrintString(theEnv,WERROR,UDFContextFunctionName(context));
+      PrintString(theEnv,WERROR,".\n");
       SetEvaluationError(theEnv,true);
       return NULL;
      }
@@ -912,11 +914,11 @@ void NoInstanceError(
   const char *func)
   {
    PrintErrorID(theEnv,"INSFUN",2,false);
-   PrintRouter(theEnv,WERROR,"No such instance ");
-   PrintRouter(theEnv,WERROR,iname);
-   PrintRouter(theEnv,WERROR," in function ");
-   PrintRouter(theEnv,WERROR,func);
-   PrintRouter(theEnv,WERROR,".\n");
+   PrintString(theEnv,WERROR,"No such instance ");
+   PrintString(theEnv,WERROR,iname);
+   PrintString(theEnv,WERROR," in function ");
+   PrintString(theEnv,WERROR,func);
+   PrintString(theEnv,WERROR,".\n");
    SetEvaluationError(theEnv,true);
   }
 
@@ -936,14 +938,14 @@ void StaleInstanceAddress(
   int whichArg)
   {
    PrintErrorID(theEnv,"INSFUN",4,false);
-   PrintRouter(theEnv,WERROR,"Invalid instance-address in function ");
-   PrintRouter(theEnv,WERROR,func);
+   PrintString(theEnv,WERROR,"Invalid instance-address in function ");
+   PrintString(theEnv,WERROR,func);
    if (whichArg > 0)
      {
-      PrintRouter(theEnv,WERROR,", argument #");
-      PrintLongInteger(theEnv,WERROR,(long long) whichArg);
+      PrintString(theEnv,WERROR,", argument #");
+      PrintInteger(theEnv,WERROR,(long long) whichArg);
      }
-   PrintRouter(theEnv,WERROR,".\n");
+   PrintString(theEnv,WERROR,".\n");
   }
 
 /**********************************************************************
@@ -997,22 +999,22 @@ void PrintSlot(
   Instance *ins,
   const char *theCommand)
   {
-   PrintRouter(theEnv,logName,"slot ");
-   PrintRouter(theEnv,logName,sd->slotName->name->contents);
+   PrintString(theEnv,logName,"slot ");
+   PrintString(theEnv,logName,sd->slotName->name->contents);
    if (ins != NULL)
      {
-      PrintRouter(theEnv,logName," of instance [");
-      PrintRouter(theEnv,logName,ins->name->contents);
-      PrintRouter(theEnv,logName,"]");
+      PrintString(theEnv,logName," of instance [");
+      PrintString(theEnv,logName,ins->name->contents);
+      PrintString(theEnv,logName,"]");
      }
    else if (sd->cls != NULL)
      {
-      PrintRouter(theEnv,logName," of class ");
-      PrintRouter(theEnv,logName,DefclassName(sd->cls));
+      PrintString(theEnv,logName," of class ");
+      PrintString(theEnv,logName,DefclassName(sd->cls));
      }
-   PrintRouter(theEnv,logName," found in ");
+   PrintString(theEnv,logName," found in ");
    if (theCommand != NULL)
-     PrintRouter(theEnv,logName,theCommand);
+     PrintString(theEnv,logName,theCommand);
    else
      PrintHandler(theEnv,logName,MessageHandlerData(theEnv)->CurrentCore->hnd,false);
   }
@@ -1034,9 +1036,9 @@ void PrintInstanceNameAndClass(
   Instance *theInstance,
   bool linefeedFlag)
   {
-   PrintRouter(theEnv,logicalName,"[");
-   PrintRouter(theEnv,logicalName,InstanceName(theInstance));
-   PrintRouter(theEnv,logicalName,"] of ");
+   PrintString(theEnv,logicalName,"[");
+   PrintString(theEnv,logicalName,InstanceName(theInstance));
+   PrintString(theEnv,logicalName,"] of ");
    PrintClassName(theEnv,logicalName,theInstance->cls,linefeedFlag);
   }
 
@@ -1058,15 +1060,15 @@ void PrintInstanceName(
   {
    if (theInstance->garbage)
      {
-      PrintRouter(theEnv,logName,"<stale instance [");
-      PrintRouter(theEnv,logName,theInstance->name->contents);
-      PrintRouter(theEnv,logName,"]>");
+      PrintString(theEnv,logName,"<stale instance [");
+      PrintString(theEnv,logName,theInstance->name->contents);
+      PrintString(theEnv,logName,"]>");
      }
    else
      {
-      PrintRouter(theEnv,logName,"[");
-      PrintRouter(theEnv,logName,GetFullInstanceName(theEnv,theInstance)->contents);
-      PrintRouter(theEnv,logName,"]");
+      PrintString(theEnv,logName,"[");
+      PrintString(theEnv,logName,GetFullInstanceName(theEnv,theInstance)->contents);
+      PrintString(theEnv,logName,"]");
      }
   }
 
@@ -1088,34 +1090,34 @@ void PrintInstanceLongForm(
    if (PrintUtilityData(theEnv)->InstanceAddressesToNames)
      {
       if (theInstance == &InstanceData(theEnv)->DummyInstance)
-        PrintRouter(theEnv,logName,"\"<Dummy Instance>\"");
+        PrintString(theEnv,logName,"\"<Dummy Instance>\"");
       else
         {
-         PrintRouter(theEnv,logName,"[");
-         PrintRouter(theEnv,logName,GetFullInstanceName(theEnv,theInstance)->contents);
-         PrintRouter(theEnv,logName,"]");
+         PrintString(theEnv,logName,"[");
+         PrintString(theEnv,logName,GetFullInstanceName(theEnv,theInstance)->contents);
+         PrintString(theEnv,logName,"]");
         }
      }
    else
      {
       if (PrintUtilityData(theEnv)->AddressesToStrings)
-        PrintRouter(theEnv,logName,"\"");
+        PrintString(theEnv,logName,"\"");
       if (theInstance == &InstanceData(theEnv)->DummyInstance)
-        PrintRouter(theEnv,logName,"<Dummy Instance>");
+        PrintString(theEnv,logName,"<Dummy Instance>");
       else if (theInstance->garbage)
         {
-         PrintRouter(theEnv,logName,"<Stale Instance-");
-         PrintRouter(theEnv,logName,theInstance->name->contents);
-         PrintRouter(theEnv,logName,">");
+         PrintString(theEnv,logName,"<Stale Instance-");
+         PrintString(theEnv,logName,theInstance->name->contents);
+         PrintString(theEnv,logName,">");
         }
       else
         {
-         PrintRouter(theEnv,logName,"<Instance-");
-         PrintRouter(theEnv,logName,GetFullInstanceName(theEnv,theInstance)->contents);
-         PrintRouter(theEnv,logName,">");
+         PrintString(theEnv,logName,"<Instance-");
+         PrintString(theEnv,logName,GetFullInstanceName(theEnv,theInstance)->contents);
+         PrintString(theEnv,logName,">");
         }
       if (PrintUtilityData(theEnv)->AddressesToStrings)
-        PrintRouter(theEnv,logName,"\"");
+        PrintString(theEnv,logName,"\"");
      }
   }
 

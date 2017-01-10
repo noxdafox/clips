@@ -707,7 +707,7 @@ static struct lhsParseNode *ConnectedPatternParse(
    if (PatternData(theEnv)->WithinNotCE && logical)
      {
       PrintErrorID(theEnv,"RULELHS",1,true);
-      PrintRouter(theEnv,WERROR,"The logical CE cannot be used within a not/exists/forall CE.\n");
+      PrintString(theEnv,WERROR,"The logical CE cannot be used within a not/exists/forall CE.\n");
       *error = true;
       return NULL;
      }
@@ -1036,7 +1036,7 @@ static struct lhsParseNode *AssignmentParse(
    if (PatternData(theEnv)->WithinNotCE)
      {
       PrintErrorID(theEnv,"RULELHS",2,true);
-      PrintRouter(theEnv,WERROR,"A pattern CE cannot be bound to a pattern-address within a not CE\n");
+      PrintString(theEnv,WERROR,"A pattern CE cannot be bound to a pattern-address within a not CE\n");
       *error = true;
       return NULL;
      }
