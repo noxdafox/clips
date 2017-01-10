@@ -490,7 +490,7 @@ static TEMP_SLOT_LINK *InsertSlot(
             tmp->nxt = slist;
             DeleteSlots(theEnv,tmp);
             PrintErrorID(theEnv,"CLSLTPSR",1,false);
-            PrintRouter(theEnv,WERROR,"Duplicate slots not allowed.\n");
+            PrintString(theEnv,WERROR,"Duplicate slots not allowed.\n");
             return NULL;
            }
          sprv = stmp;
@@ -551,8 +551,8 @@ static int ParseSimpleFacet(
    if (TestBitMap(specbits,testBit))
      {
       PrintErrorID(theEnv,"CLSLTPSR",2,false);
-      PrintRouter(theEnv,WERROR,facetName);
-      PrintRouter(theEnv,WERROR," facet already specified.\n");
+      PrintString(theEnv,WERROR,facetName);
+      PrintString(theEnv,WERROR," facet already specified.\n");
       return(-1);
      }
    SetBitMap(specbits,testBit);
@@ -631,7 +631,7 @@ static bool ParseDefaultFacet(
    if (TestBitMap(specbits,DEFAULT_BIT))
      {
       PrintErrorID(theEnv,"CLSLTPSR",2,false);
-      PrintRouter(theEnv,WERROR,"default facet already specified.\n");
+      PrintString(theEnv,WERROR,"default facet already specified.\n");
       return false;
      }
    SetBitMap(specbits,DEFAULT_BIT);
@@ -780,7 +780,7 @@ static bool CheckForFacetConflicts(
       if (parsedConstraint->cardinality)
         {
          PrintErrorID(theEnv,"CLSLTPSR",3,true);
-         PrintRouter(theEnv,WERROR,"Cardinality facet can only be used with multifield slots\n");
+         PrintString(theEnv,WERROR,"Cardinality facet can only be used with multifield slots\n");
          return false;
         }
       else
@@ -794,19 +794,19 @@ static bool CheckForFacetConflicts(
    if (sd->noDefault && sd->noWrite)
      {
       PrintErrorID(theEnv,"CLSLTPSR",4,true);
-      PrintRouter(theEnv,WERROR,"read-only slots must have a default value\n");
+      PrintString(theEnv,WERROR,"read-only slots must have a default value\n");
       return false;
      }
    if (sd->noWrite && (sd->createWriteAccessor || sd->overrideMessageSpecified))
      {
       PrintErrorID(theEnv,"CLSLTPSR",5,true);
-      PrintRouter(theEnv,WERROR,"read-only slots cannot have a write accessor\n");
+      PrintString(theEnv,WERROR,"read-only slots cannot have a write accessor\n");
       return false;
      }
    if (sd->noInherit && sd->publicVisibility)
      {
       PrintErrorID(theEnv,"CLSLTPSR",6,true);
-      PrintRouter(theEnv,WERROR,"no-inherit slots cannot also be public\n");
+      PrintString(theEnv,WERROR,"no-inherit slots cannot also be public\n");
       return false;
      }
    return true;
@@ -887,7 +887,7 @@ static bool EvaluateSlotDefaultValue(
       if (vCode != NO_VIOLATION)
         {
          PrintErrorID(theEnv,"CSTRNCHK",1,false);
-         PrintRouter(theEnv,WERROR,"Expression for ");
+         PrintString(theEnv,WERROR,"Expression for ");
          PrintSlot(theEnv,WERROR,sd,NULL,"dynamic default value");
          ConstraintViolationErrorMessage(theEnv,NULL,NULL,0,0,NULL,0,
                                          vCode,sd->constraint,false);

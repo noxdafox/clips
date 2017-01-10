@@ -568,9 +568,9 @@ static bool ReplaceClassNameWithReference(
       if (ClassAbstractP(theDefclass))
         {
          PrintErrorID(theEnv,"INSMNGR",3,false);
-         PrintRouter(theEnv,WERROR,"Cannot create instances of abstract class ");
-         PrintRouter(theEnv,WERROR,theClassName);
-         PrintRouter(theEnv,WERROR,".\n");
+         PrintString(theEnv,WERROR,"Cannot create instances of abstract class ");
+         PrintString(theEnv,WERROR,theClassName);
+         PrintString(theEnv,WERROR,".\n");
          return false;
         }
       theExp->type = DEFCLASS_PTR;

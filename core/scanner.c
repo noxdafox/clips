@@ -494,7 +494,7 @@ static CLIPSLexeme *ScanString(
    if ((inchar == EOF) && (ScannerData(theEnv)->IgnoreCompletionErrors == false))
      {
       PrintErrorID(theEnv,"SCANNER",1,true);
-      PrintRouter(theEnv,WERROR,"Encountered End-Of-File while scanning a string\n");
+      PrintString(theEnv,WERROR,"Encountered End-Of-File while scanning a string\n");
      }
 
    /*===============================================*/
@@ -747,7 +747,7 @@ static void ScanNumber(
       if (errno)
         {
          PrintWarningID(theEnv,"SCANNER",1,false);
-         PrintRouter(theEnv,WWARNING,"Over or underflow of long long integer.\n");
+         PrintString(theEnv,WWARNING,"Over or underflow of long long integer.\n");
         }
       theToken->tknType = INTEGER_TOKEN;
       theToken->integerValue = CreateInteger(theEnv,lvalue);

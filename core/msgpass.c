@@ -362,7 +362,7 @@ void CallNextHandler(
    if (NextHandlerAvailable(theEnv) == false)
      {
       PrintErrorID(theEnv,"MSGPASS",1,false);
-      PrintRouter(theEnv,WERROR,"Shadowed message-handlers not applicable in current context.\n");
+      PrintString(theEnv,WERROR,"Shadowed message-handlers not applicable in current context.\n");
       SetEvaluationError(theEnv,true);
       return;
      }
@@ -592,12 +592,12 @@ void PrintHandlerSlotGetFunction(
    SlotDescriptor *sd;
 
    theReference = (HANDLER_SLOT_REFERENCE *) ((CLIPSBitMap *) theValue)->contents;
-   PrintRouter(theEnv,logicalName,"?self:[");
+   PrintString(theEnv,logicalName,"?self:[");
    theDefclass = DefclassData(theEnv)->ClassIDMap[theReference->classID];
-   PrintRouter(theEnv,logicalName,theDefclass->header.name->contents);
-   PrintRouter(theEnv,logicalName,"]");
+   PrintString(theEnv,logicalName,theDefclass->header.name->contents);
+   PrintString(theEnv,logicalName,"]");
    sd = theDefclass->instanceTemplate[theDefclass->slotNameMap[theReference->slotID] - 1];
-   PrintRouter(theEnv,logicalName,sd->slotName->name->contents);
+   PrintString(theEnv,logicalName,sd->slotName->name->contents);
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -709,18 +709,18 @@ void PrintHandlerSlotPutFunction(
    SlotDescriptor *sd;
 
    theReference = (HANDLER_SLOT_REFERENCE *) ((CLIPSBitMap *) theValue)->contents;
-   PrintRouter(theEnv,logicalName,"(bind ?self:[");
+   PrintString(theEnv,logicalName,"(bind ?self:[");
    theDefclass = DefclassData(theEnv)->ClassIDMap[theReference->classID];
-   PrintRouter(theEnv,logicalName,theDefclass->header.name->contents);
-   PrintRouter(theEnv,logicalName,"]");
+   PrintString(theEnv,logicalName,theDefclass->header.name->contents);
+   PrintString(theEnv,logicalName,"]");
    sd = theDefclass->instanceTemplate[theDefclass->slotNameMap[theReference->slotID] - 1];
-   PrintRouter(theEnv,logicalName,sd->slotName->name->contents);
+   PrintString(theEnv,logicalName,sd->slotName->name->contents);
    if (GetFirstArgument() != NULL)
      {
-      PrintRouter(theEnv,logicalName," ");
+      PrintString(theEnv,logicalName," ");
       PrintExpression(theEnv,logicalName,GetFirstArgument());
      }
-   PrintRouter(theEnv,logicalName,")");
+   PrintString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -1044,9 +1044,9 @@ static bool PerformMessage(
       if (ins == NULL)
         {
          PrintErrorID(theEnv,"MSGPASS",2,false);
-         PrintRouter(theEnv,WERROR,"No such instance ");
-         PrintRouter(theEnv,WERROR,ProceduralPrimitiveData(theEnv)->ProcParamArray->lexemeValue->contents);
-         PrintRouter(theEnv,WERROR," in function send.\n");
+         PrintString(theEnv,WERROR,"No such instance ");
+         PrintString(theEnv,WERROR,ProceduralPrimitiveData(theEnv)->ProcParamArray->lexemeValue->contents);
+         PrintString(theEnv,WERROR," in function send.\n");
          SetEvaluationError(theEnv,true);
         }
       else
@@ -1412,11 +1412,11 @@ static void EarlySlotBindError(
 
    sd = theDefclass->instanceTemplate[theDefclass->slotNameMap[slotID] - 1];
    PrintErrorID(theEnv,"MSGPASS",3,false);
-   PrintRouter(theEnv,WERROR,"Static reference to slot ");
-   PrintRouter(theEnv,WERROR,sd->slotName->name->contents);
-   PrintRouter(theEnv,WERROR," of class ");
+   PrintString(theEnv,WERROR,"Static reference to slot ");
+   PrintString(theEnv,WERROR,sd->slotName->name->contents);
+   PrintString(theEnv,WERROR," of class ");
    PrintClassName(theEnv,WERROR,theDefclass,false);
-   PrintRouter(theEnv,WERROR," does not apply to ");
+   PrintString(theEnv,WERROR," does not apply to ");
    PrintInstanceNameAndClass(theEnv,WERROR,theInstance,true);
   }
 

@@ -150,9 +150,9 @@ bool Bload(
    if (strcmp(IDbuffer,BloadData(theEnv)->BinaryPrefixID) != 0)
      {
       PrintErrorID(theEnv,"BLOAD",2,false);
-      PrintRouter(theEnv,WERROR,"File ");
-      PrintRouter(theEnv,WERROR,fileName);
-      PrintRouter(theEnv,WERROR," is not a binary construct file.\n");
+      PrintString(theEnv,WERROR,"File ");
+      PrintString(theEnv,WERROR,fileName);
+      PrintString(theEnv,WERROR," is not a binary construct file.\n");
       GenCloseBinary(theEnv);
       return false;
      }
@@ -166,9 +166,9 @@ bool Bload(
    if (strcmp(IDbuffer,BloadData(theEnv)->BinaryVersionID) != 0)
      {
       PrintErrorID(theEnv,"BLOAD",3,false);
-      PrintRouter(theEnv,WERROR,"File ");
-      PrintRouter(theEnv,WERROR,fileName);
-      PrintRouter(theEnv,WERROR," is an incompatible binary construct file.\n");
+      PrintString(theEnv,WERROR,"File ");
+      PrintString(theEnv,WERROR,fileName);
+      PrintString(theEnv,WERROR," is an incompatible binary construct file.\n");
       GenCloseBinary(theEnv);
       return false;
      }
@@ -182,9 +182,9 @@ bool Bload(
    if (strcmp(sizesBuffer,BloadData(theEnv)->BinarySizes) != 0)
      {
       PrintErrorID(theEnv,"BLOAD",3,false);
-      PrintRouter(theEnv,WERROR,"File ");
-      PrintRouter(theEnv,WERROR,fileName);
-      PrintRouter(theEnv,WERROR," is an incompatible binary construct file.\n");
+      PrintString(theEnv,WERROR,"File ");
+      PrintString(theEnv,WERROR,fileName);
+      PrintString(theEnv,WERROR," is an incompatible binary construct file.\n");
       GenCloseBinary(theEnv);
       return false;
      }
@@ -210,10 +210,10 @@ bool Bload(
    if (ClearReady(theEnv) == false)
      {
       GenCloseBinary(theEnv);
-      PrintRouter(theEnv,WERROR,"The ");
-      PrintRouter(theEnv,WERROR,APPLICATION_NAME);
-      PrintRouter(theEnv,WERROR," environment could not be cleared.\n");
-      PrintRouter(theEnv,WERROR,"Binary load cannot continue.\n");
+      PrintString(theEnv,WERROR,"The ");
+      PrintString(theEnv,WERROR,APPLICATION_NAME);
+      PrintString(theEnv,WERROR," environment could not be cleared.\n");
+      PrintString(theEnv,WERROR,"Binary load cannot continue.\n");
       return false;
      }
 
@@ -300,9 +300,9 @@ bool Bload(
          GetSeekCurBinary(theEnv,(long) space);
          if (space != 0)
            {
-            PrintRouter(theEnv,WDIALOG,"\nSkipping ");
-            PrintRouter(theEnv,WDIALOG,constructBuffer);
-            PrintRouter(theEnv,WDIALOG," constructs because of unavailability\n");
+            PrintString(theEnv,WDIALOG,"\nSkipping ");
+            PrintString(theEnv,WDIALOG,constructBuffer);
+            PrintString(theEnv,WDIALOG," constructs because of unavailability\n");
            }
         }
      }
@@ -523,13 +523,13 @@ static struct functionDefinition **ReadNeededFunctions(
          if (! functionsNotFound)
            {
             PrintErrorID(theEnv,"BLOAD",6,false);
-            PrintRouter(theEnv,WERROR,"The following undefined functions are ");
-            PrintRouter(theEnv,WERROR,"referenced by this binary image:\n");
+            PrintString(theEnv,WERROR,"The following undefined functions are ");
+            PrintString(theEnv,WERROR,"referenced by this binary image:\n");
            }
 
-         PrintRouter(theEnv,WERROR,"   ");
-         PrintRouter(theEnv,WERROR,namePtr);
-         PrintRouter(theEnv,WERROR,"\n");
+         PrintString(theEnv,WERROR,"   ");
+         PrintString(theEnv,WERROR,namePtr);
+         PrintString(theEnv,WERROR,"\n");
          functionsNotFound = true;
         }
 
@@ -668,12 +668,12 @@ static bool ClearBload(
          if (! error)
            {
             PrintErrorID(theEnv,"BLOAD",5,false);
-            PrintRouter(theEnv,WERROR,
+            PrintString(theEnv,WERROR,
                        "Some constructs are still in use by the current binary image:\n");
            }
-         PrintRouter(theEnv,WERROR,"   ");
-         PrintRouter(theEnv,WERROR,bfPtr->name);
-         PrintRouter(theEnv,WERROR,"\n");
+         PrintString(theEnv,WERROR,"   ");
+         PrintString(theEnv,WERROR,bfPtr->name);
+         PrintString(theEnv,WERROR,"\n");
          error = true;
         }
      }
@@ -686,7 +686,7 @@ static bool ClearBload(
 
    if (error == true)
      {
-      PrintRouter(theEnv,WERROR,"Binary clear cannot continue.\n");
+      PrintString(theEnv,WERROR,"Binary clear cannot continue.\n");
       return false;
      }
 
@@ -838,9 +838,9 @@ void CannotLoadWithBloadMessage(
   const char *constructName)
   {
    PrintErrorID(theEnv,"BLOAD",1,true);
-   PrintRouter(theEnv,WERROR,"Cannot load ");
-   PrintRouter(theEnv,WERROR,constructName);
-   PrintRouter(theEnv,WERROR," construct with binary load in effect.\n");
+   PrintString(theEnv,WERROR,"Cannot load ");
+   PrintString(theEnv,WERROR,constructName);
+   PrintString(theEnv,WERROR," construct with binary load in effect.\n");
   }
 
 #endif /* (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE) */

@@ -300,11 +300,11 @@ long long Run(
          char printSpace[60];
 
          gensprintf(printSpace,"FIRE %4lld ",rulesFired);
-         PrintRouter(theEnv,WTRACE,printSpace);
-         PrintRouter(theEnv,WTRACE,ruleFiring);
-         PrintRouter(theEnv,WTRACE,": ");
+         PrintString(theEnv,WTRACE,printSpace);
+         PrintString(theEnv,WTRACE,ruleFiring);
+         PrintString(theEnv,WTRACE,": ");
          PrintPartialMatch(theEnv,WTRACE,theBasis);
-         PrintRouter(theEnv,WTRACE,"\n");
+         PrintString(theEnv,WTRACE,"\n");
         }
 #endif
 
@@ -408,9 +408,9 @@ long long Run(
 
         {
          PrintErrorID(theEnv,"PRCCODE",4,false);
-         PrintRouter(theEnv,WERROR,"Execution halted during the actions of defrule ");
-         PrintRouter(theEnv,WERROR,ruleFiring);
-         PrintRouter(theEnv,WERROR,".\n");
+         PrintString(theEnv,WERROR,"Execution halted during the actions of defrule ");
+         PrintString(theEnv,WERROR,ruleFiring);
+         PrintString(theEnv,WERROR,".\n");
         }
 
       /*===================================================*/
@@ -515,9 +515,9 @@ long long Run(
          if (GetActivationRule(theEnv,theActivation)->afterBreakpoint)
            {
             EngineData(theEnv)->HaltRules = true;
-            PrintRouter(theEnv,WDIALOG,"Breaking on rule ");
-            PrintRouter(theEnv,WDIALOG,ActivationRuleName(theActivation));
-            PrintRouter(theEnv,WDIALOG,".\n");
+            PrintString(theEnv,WDIALOG,"Breaking on rule ");
+            PrintString(theEnv,WDIALOG,ActivationRuleName(theActivation));
+            PrintString(theEnv,WDIALOG,".\n");
            }
         }
      }
@@ -540,7 +540,7 @@ long long Run(
    /*======================================================*/
 
    if (runLimit == rulesFired)
-     { PrintRouter(theEnv,WDIALOG,"rule firing limit reached\n"); }
+     { PrintString(theEnv,WDIALOG,"rule firing limit reached\n"); }
 
    /*==============================*/
    /* Restore execution variables. */
@@ -560,83 +560,83 @@ long long Run(
 
       endTime = gentime();
 
-      PrintLongInteger(theEnv,WDIALOG,rulesFired);
-      PrintRouter(theEnv,WDIALOG," rules fired");
+      PrintInteger(theEnv,WDIALOG,rulesFired);
+      PrintString(theEnv,WDIALOG," rules fired");
 
 #if (! GENERIC)
       if (startTime != endTime)
         {
-         PrintRouter(theEnv,WDIALOG,"        Run time is ");
+         PrintString(theEnv,WDIALOG,"        Run time is ");
          PrintFloat(theEnv,WDIALOG,endTime - startTime);
-         PrintRouter(theEnv,WDIALOG," seconds.\n");
+         PrintString(theEnv,WDIALOG," seconds.\n");
          PrintFloat(theEnv,WDIALOG,(double) rulesFired / (endTime - startTime));
-         PrintRouter(theEnv,WDIALOG," rules per second.\n");
+         PrintString(theEnv,WDIALOG," rules per second.\n");
         }
       else
-        { PrintRouter(theEnv,WDIALOG,"\n"); }
+        { PrintString(theEnv,WDIALOG,"\n"); }
 #else
-      PrintRouter(theEnv,WDIALOG,"\n");
+      PrintString(theEnv,WDIALOG,"\n");
 #endif
 
 #if DEFTEMPLATE_CONSTRUCT
       gensprintf(printSpace,"%ld mean number of facts (%ld maximum).\n",
                           (long) (((double) sumFacts / (rulesFired + 1)) + 0.5),
                           maxFacts);
-      PrintRouter(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,WDIALOG,printSpace);
 #endif
 
 #if OBJECT_SYSTEM
       gensprintf(printSpace,"%ld mean number of instances (%ld maximum).\n",
                           (long) (((double) sumInstances / (rulesFired + 1)) + 0.5),
                           maxInstances);
-      PrintRouter(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,WDIALOG,printSpace);
 #endif
 
       gensprintf(printSpace,"%ld mean number of activations (%ld maximum).\n",
                           (long) (((double) sumActivations / (rulesFired + 1)) + 0.5),
                           maxActivations);
-      PrintRouter(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,WDIALOG,printSpace);
 
 #if DEVELOPER
       gensprintf(printSpace,"%9ld left to right comparisons.\n",
                           EngineData(theEnv)->leftToRightComparisons);
-      PrintRouter(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,WDIALOG,printSpace);
 
       gensprintf(printSpace,"%9ld left to right succeeds.\n",
                           EngineData(theEnv)->leftToRightSucceeds);
-      PrintRouter(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,WDIALOG,printSpace);
 
       gensprintf(printSpace,"%9ld left to right loops.\n",
                           EngineData(theEnv)->leftToRightLoops);
-      PrintRouter(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,WDIALOG,printSpace);
 
       gensprintf(printSpace,"%9ld right to left comparisons.\n",
                           EngineData(theEnv)->rightToLeftComparisons);
-      PrintRouter(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,WDIALOG,printSpace);
 
       gensprintf(printSpace,"%9ld right to left succeeds.\n",
                           EngineData(theEnv)->rightToLeftSucceeds);
-      PrintRouter(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,WDIALOG,printSpace);
 
       gensprintf(printSpace,"%9ld right to left loops.\n",
                           EngineData(theEnv)->rightToLeftLoops);
-      PrintRouter(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,WDIALOG,printSpace);
 
       gensprintf(printSpace,"%9ld find next conflicting comparisons.\n",
                           EngineData(theEnv)->findNextConflictingComparisons);
-      PrintRouter(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,WDIALOG,printSpace);
 
       gensprintf(printSpace,"%9ld beta hash list skips.\n",
                           EngineData(theEnv)->betaHashListSkips);
-      PrintRouter(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,WDIALOG,printSpace);
 
       gensprintf(printSpace,"%9ld beta hash hash table skips.\n",
                           EngineData(theEnv)->betaHashHTSkips);
-      PrintRouter(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,WDIALOG,printSpace);
 
       gensprintf(printSpace,"%9ld unneeded marker compare.\n",
                           EngineData(theEnv)->unneededMarkerCompare);
-      PrintRouter(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,WDIALOG,printSpace);
 
 #endif
      }
@@ -776,16 +776,16 @@ static Defmodule *RemoveFocus(
 #if DEBUGGING_FUNCTIONS
    if (EngineData(theEnv)->WatchFocus)
      {
-      PrintRouter(theEnv,WTRACE,"<== Focus ");
-      PrintRouter(theEnv,WTRACE,theModule->header.name->contents);
+      PrintString(theEnv,WTRACE,"<== Focus ");
+      PrintString(theEnv,WTRACE,theModule->header.name->contents);
 
       if ((EngineData(theEnv)->CurrentFocus != NULL) && currentFocusRemoved)
         {
-         PrintRouter(theEnv,WTRACE," to ");
-         PrintRouter(theEnv,WTRACE,EngineData(theEnv)->CurrentFocus->theModule->header.name->contents);
+         PrintString(theEnv,WTRACE," to ");
+         PrintString(theEnv,WTRACE,EngineData(theEnv)->CurrentFocus->theModule->header.name->contents);
         }
 
-      PrintRouter(theEnv,WTRACE,"\n");
+      PrintString(theEnv,WTRACE,"\n");
      }
 #endif
 
@@ -870,14 +870,14 @@ void DefmoduleFocus(
 #if DEBUGGING_FUNCTIONS
    if (EngineData(theEnv)->WatchFocus)
      {
-      PrintRouter(theEnv,WTRACE,"==> Focus ");
-      PrintRouter(theEnv,WTRACE,theModule->header.name->contents);
+      PrintString(theEnv,WTRACE,"==> Focus ");
+      PrintString(theEnv,WTRACE,theModule->header.name->contents);
       if (EngineData(theEnv)->CurrentFocus != NULL)
         {
-         PrintRouter(theEnv,WTRACE," from ");
-         PrintRouter(theEnv,WTRACE,EngineData(theEnv)->CurrentFocus->theModule->header.name->contents);
+         PrintString(theEnv,WTRACE," from ");
+         PrintString(theEnv,WTRACE,EngineData(theEnv)->CurrentFocus->theModule->header.name->contents);
         }
-      PrintRouter(theEnv,WTRACE,"\n");
+      PrintString(theEnv,WTRACE,"\n");
      }
 #endif
 
@@ -1170,9 +1170,9 @@ void RemoveBreakCommand(
 
    if (DefruleRemoveBreak(defrulePtr) == false)
      {
-      PrintRouter(theEnv,WERROR,"Rule ");
-      PrintRouter(theEnv,WERROR,argument);
-      PrintRouter(theEnv,WERROR," does not have a breakpoint set.\n");
+      PrintString(theEnv,WERROR,"Rule ");
+      PrintString(theEnv,WERROR,argument);
+      PrintString(theEnv,WERROR," does not have a breakpoint set.\n");
      }
   }
 
@@ -1228,8 +1228,8 @@ void ListFocusStack(
         theFocus != NULL;
         theFocus = theFocus->next)
      {
-      PrintRouter(theEnv,logicalName,DefmoduleName(theFocus->theModule));
-      PrintRouter(theEnv,logicalName,"\n");
+      PrintString(theEnv,logicalName,DefmoduleName(theFocus->theModule));
+      PrintString(theEnv,logicalName,"\n");
      }
   }
 

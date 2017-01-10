@@ -2011,55 +2011,55 @@ static void PrintNodes(
       switch (theNode->type)
         {
          case PATTERN_CE:
-           PrintRouter(theEnv,fileid,"(");
-           if (theNode->negated) PrintRouter(theEnv,fileid,"n");
-           if (theNode->exists) PrintRouter(theEnv,fileid,"x");
-           if (theNode->logical) PrintRouter(theEnv,fileid,"l");
-           PrintLongInteger(theEnv,fileid,(long long) theNode->beginNandDepth);
-           PrintRouter(theEnv,fileid,"-");
-           PrintLongInteger(theEnv,fileid,(long long) theNode->endNandDepth);
-           PrintRouter(theEnv,fileid," ");
-           PrintRouter(theEnv,fileid,ValueToString(theNode->right->bottom->value));
-           PrintRouter(theEnv,fileid,")");
+           PrintString(theEnv,fileid,"(");
+           if (theNode->negated) PrintString(theEnv,fileid,"n");
+           if (theNode->exists) PrintString(theEnv,fileid,"x");
+           if (theNode->logical) PrintString(theEnv,fileid,"l");
+           PrintInteger(theEnv,fileid,(long long) theNode->beginNandDepth);
+           PrintString(theEnv,fileid,"-");
+           PrintInteger(theEnv,fileid,(long long) theNode->endNandDepth);
+           PrintString(theEnv,fileid," ");
+           PrintString(theEnv,fileid,ValueToString(theNode->right->bottom->value));
+           PrintString(theEnv,fileid,")");
            break;
 
          case TEST_CE:
-           PrintRouter(theEnv,fileid,"(test ");
-           PrintLongInteger(theEnv,fileid,(long long) theNode->beginNandDepth);
-           PrintRouter(theEnv,fileid,"-");
-           PrintLongInteger(theEnv,fileid,(long long) theNode->endNandDepth);
-           PrintRouter(theEnv,fileid,")");
+           PrintString(theEnv,fileid,"(test ");
+           PrintInteger(theEnv,fileid,(long long) theNode->beginNandDepth);
+           PrintString(theEnv,fileid,"-");
+           PrintInteger(theEnv,fileid,(long long) theNode->endNandDepth);
+           PrintString(theEnv,fileid,")");
            break;
 
          case NOT_CE:
-           if (theNode->logical) PrintRouter(theEnv,fileid,"(lnot ");
-           else PrintRouter(theEnv,fileid,"(not ");;
+           if (theNode->logical) PrintString(theEnv,fileid,"(lnot ");
+           else PrintString(theEnv,fileid,"(not ");;
            PrintNodes(theEnv,fileid,theNode->right);
-           PrintRouter(theEnv,fileid,")");
+           PrintString(theEnv,fileid,")");
            break;
 
          case OR_CE:
-           if (theNode->logical) PrintRouter(theEnv,fileid,"(lor ");
-           else PrintRouter(theEnv,fileid,"(or ");
+           if (theNode->logical) PrintString(theEnv,fileid,"(lor ");
+           else PrintString(theEnv,fileid,"(or ");
            PrintNodes(theEnv,fileid,theNode->right);
-           PrintRouter(theEnv,fileid,")");
+           PrintString(theEnv,fileid,")");
            break;
 
          case AND_CE:
-           if (theNode->logical) PrintRouter(theEnv,fileid,"(land ");
-           else PrintRouter(theEnv,fileid,"(and ");
+           if (theNode->logical) PrintString(theEnv,fileid,"(land ");
+           else PrintString(theEnv,fileid,"(and ");
            PrintNodes(theEnv,fileid,theNode->right);
-           PrintRouter(theEnv,fileid,")");
+           PrintString(theEnv,fileid,")");
            break;
 
          default:
-           PrintRouter(theEnv,fileid,"(unknown)");
+           PrintString(theEnv,fileid,"(unknown)");
            break;
 
         }
 
       theNode = theNode->bottom;
-      if (theNode != NULL) PrintRouter(theEnv,fileid," ");
+      if (theNode != NULL) PrintString(theEnv,fileid," ");
      }
 
    return;

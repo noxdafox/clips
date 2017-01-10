@@ -288,22 +288,22 @@ static void PrintDriver(
            if (strcmp(theArg.lexemeValue->contents,"crlf") == 0)
              {
               if (IOFunctionData(theEnv)->useFullCRLF)
-                { PrintRouter(theEnv,logicalName,"\r\n"); }
+                { PrintString(theEnv,logicalName,"\r\n"); }
               else
-                { PrintRouter(theEnv,logicalName,"\n"); }
+                { PrintString(theEnv,logicalName,"\n"); }
              }
            else if (strcmp(theArg.lexemeValue->contents,"tab") == 0)
-             { PrintRouter(theEnv,logicalName,"\t"); }
+             { PrintString(theEnv,logicalName,"\t"); }
            else if (strcmp(theArg.lexemeValue->contents,"vtab") == 0)
-             { PrintRouter(theEnv,logicalName,"\v"); }
+             { PrintString(theEnv,logicalName,"\v"); }
            else if (strcmp(theArg.lexemeValue->contents,"ff") == 0)
-             { PrintRouter(theEnv,logicalName,"\f"); }
+             { PrintString(theEnv,logicalName,"\f"); }
            else
-             { PrintRouter(theEnv,logicalName,theArg.lexemeValue->contents); }
+             { PrintString(theEnv,logicalName,theArg.lexemeValue->contents); }
            break;
 
          case STRING_TYPE:
-           PrintRouter(theEnv,logicalName,theArg.lexemeValue->contents);
+           PrintString(theEnv,logicalName,theArg.lexemeValue->contents);
            break;
 
          default:
@@ -315,9 +315,9 @@ static void PrintDriver(
    if (endCRLF)
      {
       if (IOFunctionData(theEnv)->useFullCRLF)
-        { PrintRouter(theEnv,logicalName,"\r\n"); }
+        { PrintString(theEnv,logicalName,"\r\n"); }
       else
-        { PrintRouter(theEnv,logicalName,"\n"); }
+        { PrintString(theEnv,logicalName,"\n"); }
      }
   }
 
@@ -551,9 +551,9 @@ void OpenFunction(
       SetHaltExecution(theEnv,true);
       SetEvaluationError(theEnv,true);
       PrintErrorID(theEnv,"IOFUN",2,false);
-      PrintRouter(theEnv,WERROR,"Logical name ");
-      PrintRouter(theEnv,WERROR,logicalName);
-      PrintRouter(theEnv,WERROR," already in use.\n");
+      PrintString(theEnv,WERROR,"Logical name ");
+      PrintString(theEnv,WERROR,logicalName);
+      PrintString(theEnv,WERROR," already in use.\n");
       returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
@@ -929,7 +929,7 @@ void FormatFunction(
    if (fstr != NULL)
      {
       hptr = CreateString(theEnv,fstr);
-      if (strcmp(logicalName,"nil") != 0) PrintRouter(theEnv,logicalName,fstr);
+      if (strcmp(logicalName,"nil") != 0) PrintString(theEnv,logicalName,fstr);
       rm(theEnv,fstr,fmaxm);
      }
    else
@@ -968,9 +968,9 @@ static const char *ControlStringCheck(
          if (formatFlag == '-')
            {
             PrintErrorID(theEnv,"IOFUN",3,false);
-            PrintRouter(theEnv,WERROR,"Invalid format flag \"");
-            PrintRouter(theEnv,WERROR,print_buff);
-            PrintRouter(theEnv,WERROR,"\" specified in format function.\n");
+            PrintString(theEnv,WERROR,"Invalid format flag \"");
+            PrintString(theEnv,WERROR,print_buff);
+            PrintString(theEnv,WERROR,"\" specified in format function.\n");
             SetEvaluationError(theEnv,true);
             return (NULL);
            }
@@ -1203,8 +1203,8 @@ static const char *PrintFormatFlag(
         break;
 
       default:
-         PrintRouter(theEnv,WERROR," Error in format, the conversion character");
-         PrintRouter(theEnv,WERROR," for formatted output is not valid\n");
+         PrintString(theEnv,WERROR," Error in format, the conversion character");
+         PrintString(theEnv,WERROR," for formatted output is not valid\n");
          return NULL;
      }
 

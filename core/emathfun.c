@@ -191,9 +191,9 @@ static void DomainErrorMessage(
    Environment *theEnv = context->environment;
 
    PrintErrorID(theEnv,"EMATHFUN",1,false);
-   PrintRouter(theEnv,WERROR,"Domain error for ");
-   PrintRouter(theEnv,WERROR,UDFContextFunctionName(context));
-   PrintRouter(theEnv,WERROR," function.\n");
+   PrintString(theEnv,WERROR,"Domain error for ");
+   PrintString(theEnv,WERROR,UDFContextFunctionName(context));
+   PrintString(theEnv,WERROR," function.\n");
    SetHaltExecution(theEnv,true);
    SetEvaluationError(theEnv,true);
    returnValue->floatValue = CreateFloat(theEnv,0.0);
@@ -211,9 +211,9 @@ static void ArgumentOverflowErrorMessage(
    Environment *theEnv = context->environment;
 
    PrintErrorID(theEnv,"EMATHFUN",2,false);
-   PrintRouter(theEnv,WERROR,"Argument overflow for ");
-   PrintRouter(theEnv,WERROR,UDFContextFunctionName(context));
-   PrintRouter(theEnv,WERROR," function.\n");
+   PrintString(theEnv,WERROR,"Argument overflow for ");
+   PrintString(theEnv,WERROR,UDFContextFunctionName(context));
+   PrintString(theEnv,WERROR," function.\n");
    SetHaltExecution(theEnv,true);
    SetEvaluationError(theEnv,true);
    returnValue->floatValue = CreateFloat(theEnv,0.0);
@@ -231,9 +231,9 @@ static void SingularityErrorMessage(
    Environment *theEnv = context->environment;
 
    PrintErrorID(theEnv,"EMATHFUN",3,false);
-   PrintRouter(theEnv,WERROR,"Singularity at asymptote in ");
-   PrintRouter(theEnv,WERROR,UDFContextFunctionName(context));
-   PrintRouter(theEnv,WERROR," function.\n");
+   PrintString(theEnv,WERROR,"Singularity at asymptote in ");
+   PrintString(theEnv,WERROR,UDFContextFunctionName(context));
+   PrintString(theEnv,WERROR," function.\n");
    SetHaltExecution(theEnv,true);
    SetEvaluationError(theEnv,true);
    returnValue->floatValue = CreateFloat(theEnv,0.0);

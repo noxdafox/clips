@@ -700,7 +700,7 @@ void SaveConstruct(
       if (ppform != NULL)
         {
          PrintInChunks(theEnv,logicalName,ppform);
-         PrintRouter(theEnv,logicalName,"\n");
+         PrintString(theEnv,logicalName,"\n");
         }
       }
 
@@ -1082,8 +1082,8 @@ void ListConstruct(
 
       if (allModules)
         {
-         PrintRouter(theEnv,logicalName,DefmoduleName(theModule));
-         PrintRouter(theEnv,logicalName,":\n");
+         PrintString(theEnv,logicalName,DefmoduleName(theModule));
+         PrintString(theEnv,logicalName,":\n");
         }
 
       /*===============================*/
@@ -1107,9 +1107,9 @@ void ListConstruct(
 
          if (constructName != NULL)
            {
-            if (allModules) PrintRouter(theEnv,WDISPLAY,"   ");
-            PrintRouter(theEnv,logicalName,constructName->contents);
-            PrintRouter(theEnv,logicalName,"\n");
+            if (allModules) PrintString(theEnv,WDISPLAY,"   ");
+            PrintString(theEnv,logicalName,constructName->contents);
+            PrintString(theEnv,logicalName,"\n");
            }
 
          count++;
@@ -1514,8 +1514,8 @@ static bool ConstructWatchSupport(
 
          if (setFlag == false)
            {
-            PrintRouter(theEnv,logName,DefmoduleName(theModule));
-            PrintRouter(theEnv,logName,":\n");
+            PrintString(theEnv,logName,DefmoduleName(theModule));
+            PrintString(theEnv,logName,":\n");
            }
 
          /*============================================*/
@@ -1535,7 +1535,7 @@ static bool ConstructWatchSupport(
               { (*setWatchFunc)(theConstruct,newState); }
             else
               {
-               PrintRouter(theEnv,logName,"   ");
+               PrintString(theEnv,logName,"   ");
                ConstructPrintWatch(theEnv,logName,constructClass,theConstruct,getWatchFunc);
               }
            }
@@ -1619,11 +1619,11 @@ static void ConstructPrintWatch(
   ConstructHeader *theConstruct,
   ConstructGetWatchFunction *getWatchFunc)
   {
-   PrintRouter(theEnv,logName,(*constructClass->getConstructNameFunction)(theConstruct)->contents);
+   PrintString(theEnv,logName,(*constructClass->getConstructNameFunction)(theConstruct)->contents);
    if ((*getWatchFunc)(theConstruct))
-     PrintRouter(theEnv,logName," = on\n");
+     PrintString(theEnv,logName," = on\n");
    else
-     PrintRouter(theEnv,logName," = off\n");
+     PrintString(theEnv,logName," = off\n");
   }
 
 #endif /* DEBUGGING_FUNCTIONS */

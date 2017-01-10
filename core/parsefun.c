@@ -218,9 +218,9 @@ bool CheckSyntax(
 
       if (rv)
         {
-         PrintRouter(theEnv,WERROR,"\nERROR:\n");
+         PrintString(theEnv,WERROR,"\nERROR:\n");
          PrintInChunks(theEnv,WERROR,GetPPBuffer(theEnv));
-         PrintRouter(theEnv,WERROR,"\n");
+         PrintString(theEnv,WERROR,"\n");
         }
 
       DestroyPPBuffer(theEnv);
@@ -391,7 +391,7 @@ void CheckSyntaxFunction(
   UDFValue *returnValue)
   {
    PrintErrorID(theEnv,"PARSEFUN",1,false);
-   PrintRouter(theEnv,WERROR,"Function check-syntax does not work in run time modules.\n");
+   PrintString(theEnv,WERROR,"Function check-syntax does not work in run time modules.\n");
    returnValue->value = TrueSymbol(theEnv);
   }
 
@@ -405,7 +405,7 @@ bool CheckSyntax(
   UDFValue *returnValue)
   {
    PrintErrorID(theEnv,"PARSEFUN",1,false);
-   PrintRouter(theEnv,WERROR,"Function check-syntax does not work in run time modules.\n");
+   PrintString(theEnv,WERROR,"Function check-syntax does not work in run time modules.\n");
    returnValue->value = TrueSymbol(theEnv);
    return true;
   }

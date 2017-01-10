@@ -165,20 +165,20 @@ bool VariableAnalysis(
             if (patternPtr->referringNode->index == -1)
               {
                PrintErrorID(theEnv,"ANALYSIS",1,true);
-               PrintRouter(theEnv,WERROR,"Duplicate pattern-address ?");
-               PrintRouter(theEnv,WERROR,patternPtr->lexemeValue->contents);
-               PrintRouter(theEnv,WERROR," found in CE #");
-               PrintLongInteger(theEnv,WERROR,(long) patternPtr->whichCE);
-               PrintRouter(theEnv,WERROR,".\n");
+               PrintString(theEnv,WERROR,"Duplicate pattern-address ?");
+               PrintString(theEnv,WERROR,patternPtr->lexemeValue->contents);
+               PrintString(theEnv,WERROR," found in CE #");
+               PrintInteger(theEnv,WERROR,patternPtr->whichCE);
+               PrintString(theEnv,WERROR,".\n");
               }
             else
               {
                PrintErrorID(theEnv,"ANALYSIS",2,true);
-               PrintRouter(theEnv,WERROR,"Pattern-address ?");
-               PrintRouter(theEnv,WERROR,patternPtr->lexemeValue->contents);
-               PrintRouter(theEnv,WERROR," used in CE #");
-               PrintLongInteger(theEnv,WERROR,(long) patternPtr->whichCE);
-               PrintRouter(theEnv,WERROR," was previously bound within a pattern CE.\n");
+               PrintString(theEnv,WERROR,"Pattern-address ?");
+               PrintString(theEnv,WERROR,patternPtr->lexemeValue->contents);
+               PrintString(theEnv,WERROR," used in CE #");
+               PrintInteger(theEnv,WERROR,patternPtr->whichCE);
+               PrintString(theEnv,WERROR," was previously bound within a pattern CE.\n");
               }
            }
 
@@ -1069,9 +1069,9 @@ static void VariableReferenceErrorMessage(
    /* Print the name of the variable. */
    /*=================================*/
 
-   PrintRouter(theEnv,WERROR,"Variable ?");
-   PrintRouter(theEnv,WERROR,theVariable->contents);
-   PrintRouter(theEnv,WERROR," ");
+   PrintString(theEnv,WERROR,"Variable ?");
+   PrintString(theEnv,WERROR,theVariable->contents);
+   PrintString(theEnv,WERROR," ");
 
    /*=================================================*/
    /* If the variable was found inside an expression, */
@@ -1084,9 +1084,9 @@ static void VariableReferenceErrorMessage(
       temprv = LHSParseNodesToExpression(theEnv,theExpression);
       ReturnExpression(theEnv,temprv->nextArg);
       temprv->nextArg = NULL;
-      PrintRouter(theEnv,WERROR,"found in the expression ");
+      PrintString(theEnv,WERROR,"found in the expression ");
       PrintExpression(theEnv,WERROR,temprv);
-      PrintRouter(theEnv,WERROR,"\n");
+      PrintString(theEnv,WERROR,"\n");
       ReturnExpression(theEnv,temprv);
      }
 
@@ -1094,8 +1094,8 @@ static void VariableReferenceErrorMessage(
    /* Print the CE in which the variable was referenced. */
    /*====================================================*/
 
-   PrintRouter(theEnv,WERROR,"was referenced in CE #");
-   PrintLongInteger(theEnv,WERROR,(long int) whichCE);
+   PrintString(theEnv,WERROR,"was referenced in CE #");
+   PrintInteger(theEnv,WERROR,whichCE);
 
    /*=====================================*/
    /* Identify the slot or field in which */
@@ -1106,17 +1106,17 @@ static void VariableReferenceErrorMessage(
      {
       if (theField > 0)
         {
-         PrintRouter(theEnv,WERROR," field #");
-         PrintLongInteger(theEnv,WERROR,(long int) theField);
+         PrintString(theEnv,WERROR," field #");
+         PrintInteger(theEnv,WERROR,theField);
         }
      }
    else
      {
-      PrintRouter(theEnv,WERROR," slot ");
-      PrintRouter(theEnv,WERROR,slotName->contents);
+      PrintString(theEnv,WERROR," slot ");
+      PrintString(theEnv,WERROR,slotName->contents);
      }
 
-   PrintRouter(theEnv,WERROR," before being defined.\n");
+   PrintString(theEnv,WERROR," before being defined.\n");
   }
 
 /************************************************************/
@@ -1129,9 +1129,9 @@ static void VariableMixingErrorMessage(
   CLIPSLexeme *theVariable)
   {
    PrintErrorID(theEnv,"ANALYSIS",3,true);
-   PrintRouter(theEnv,WERROR,"Variable ?");
-   PrintRouter(theEnv,WERROR,theVariable->contents);
-   PrintRouter(theEnv,WERROR," is used as both a single and multifield variable in the LHS\n");
+   PrintString(theEnv,WERROR,"Variable ?");
+   PrintString(theEnv,WERROR,theVariable->contents);
+   PrintString(theEnv,WERROR," is used as both a single and multifield variable in the LHS\n");
   }
 
 #endif /* (! RUN_TIME) && (! BLOAD_ONLY) && DEFRULE_CONSTRUCT */

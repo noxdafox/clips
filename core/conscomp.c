@@ -244,9 +244,9 @@ void ConstructsToCCommand(
       if (*(fileName+i) == '.')
         {
          PrintErrorID(theEnv,"CONSCOMP",1,false);
-         PrintRouter(theEnv,WERROR,"Invalid file name ");
-         PrintRouter(theEnv,WERROR,fileName);
-         PrintRouter(theEnv,WERROR," contains \'.\'\n");
+         PrintString(theEnv,WERROR,"Invalid file name ");
+         PrintString(theEnv,WERROR,fileName);
+         PrintString(theEnv,WERROR," contains \'.\'\n");
          return;
         }
       }
@@ -263,9 +263,9 @@ void ConstructsToCCommand(
    if ((nameLength + EXTRA_FILE_NAME) > FILENAME_MAX)
      {
       PrintErrorID(theEnv,"CONSCOMP",1,false);
-      PrintRouter(theEnv,WERROR,"Aborting because the base file name may cause the fopen maximum of ");
-      PrintLongInteger(theEnv,WERROR,FILENAME_MAX);
-      PrintRouter(theEnv,WERROR," to be violated when file names are generated.\n");
+      PrintString(theEnv,WERROR,"Aborting because the base file name may cause the fopen maximum of ");
+      PrintInteger(theEnv,WERROR,FILENAME_MAX);
+      PrintString(theEnv,WERROR," to be violated when file names are generated.\n");
       return;
      }
 
@@ -279,9 +279,9 @@ void ConstructsToCCommand(
    if (nameLength > 3)
      {
       PrintWarningID(theEnv,"CONSCOMP",1,false);
-      PrintRouter(theEnv,WWARNING,"Base file name exceeds 3 characters.\n");
-      PrintRouter(theEnv,WWARNING,"  This may cause files to be overwritten if file name length\n");
-      PrintRouter(theEnv,WWARNING,"  is limited on your platform.\n");
+      PrintString(theEnv,WWARNING,"Base file name exceeds 3 characters.\n");
+      PrintString(theEnv,WWARNING,"  This may cause files to be overwritten if file name length\n");
+      PrintString(theEnv,WWARNING,"  is limited on your platform.\n");
      }
 
    /*====================================*/

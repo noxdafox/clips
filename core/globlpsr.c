@@ -257,15 +257,15 @@ static bool GetVariableDefinition(
         {
          outRouter = WWARNING;
          PrintWarningID(theEnv,"CSTRCPSR",1,true);
-         PrintRouter(theEnv,outRouter,"Redefining defglobal: ");
+         PrintString(theEnv,outRouter,"Redefining defglobal: ");
         }
-      else PrintRouter(theEnv,outRouter,"Defining defglobal: ");
-      PrintRouter(theEnv,outRouter,variableName->contents);
-      PrintRouter(theEnv,outRouter,"\n");
+      else PrintString(theEnv,outRouter,"Defining defglobal: ");
+      PrintString(theEnv,outRouter,variableName->contents);
+      PrintString(theEnv,outRouter,"\n");
      }
    else
 #endif
-     { if (GetPrintWhileLoading(theEnv)) PrintRouter(theEnv,WDIALOG,":"); }
+     { if (GetPrintWhileLoading(theEnv)) PrintString(theEnv,WDIALOG,":"); }
 
    /*==================================================================*/
    /* Check for import/export conflicts from the construct definition. */
@@ -512,9 +512,9 @@ void GlobalReferenceErrorMessage(
   const char *variableName)
   {
    PrintErrorID(theEnv,"GLOBLPSR",1,true);
-   PrintRouter(theEnv,WERROR,"\nGlobal variable ?*");
-   PrintRouter(theEnv,WERROR,variableName);
-   PrintRouter(theEnv,WERROR,"* was referenced, but is not defined.\n");
+   PrintString(theEnv,WERROR,"\nGlobal variable ?*");
+   PrintString(theEnv,WERROR,variableName);
+   PrintString(theEnv,WERROR,"* was referenced, but is not defined.\n");
   }
 
 #endif /* DEFGLOBAL_CONSTRUCT */

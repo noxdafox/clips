@@ -805,7 +805,7 @@ bool Eval(
    if ((top->type == MF_GBL_VARIABLE) || (top->type == MF_VARIABLE))
      {
       PrintErrorID(theEnv,"MISCFUN",1,false);
-      PrintRouter(theEnv,WERROR,"expand$ must be used in the argument list of a function call.\n");
+      PrintString(theEnv,WERROR,"expand$ must be used in the argument list of a function call.\n");
       SetEvaluationError(theEnv,true);
       CloseStringSource(theEnv,logicalNameBuffer);
       CLIPSBlockEnd(theEnv,&gcBlock,NULL);
@@ -985,9 +985,9 @@ bool Build(
 
    if (errorFlag == 1)
      {
-      PrintRouter(theEnv,WERROR,"\nERROR:\n");
+      PrintString(theEnv,WERROR,"\nERROR:\n");
       PrintInChunks(theEnv,WERROR,GetPPBuffer(theEnv));
-      PrintRouter(theEnv,WERROR,"\n");
+      PrintString(theEnv,WERROR,"\n");
      }
 
    DestroyPPBuffer(theEnv);
@@ -1024,7 +1024,7 @@ void BuildFunction(
   UDFValue *returnValue)
   {
    PrintErrorID(theEnv,"STRNGFUN",1,false);
-   PrintRouter(theEnv,WERROR,"Function build does not work in run time modules.\n");
+   PrintString(theEnv,WERROR,"Function build does not work in run time modules.\n");
    returnValue->lexemeValue = FalseSymbol(theEnv);
   }
 
@@ -1037,7 +1037,7 @@ bool Build(
   const char *theString)
   {
    PrintErrorID(theEnv,"STRNGFUN",1,false);
-   PrintRouter(theEnv,WERROR,"Function build does not work in run time modules.\n");
+   PrintString(theEnv,WERROR,"Function build does not work in run time modules.\n");
    return false;
   }
 #endif /* (! RUN_TIME) && (! BLOAD_ONLY) */

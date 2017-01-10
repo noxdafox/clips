@@ -1044,26 +1044,26 @@ static void NotExportedErrorMessage(
   const char *theName)
   {
    PrintErrorID(theEnv,"MODULPSR",1,true);
-   PrintRouter(theEnv,WERROR,"Module ");
-   PrintRouter(theEnv,WERROR,theModule);
-   PrintRouter(theEnv,WERROR," does not export ");
+   PrintString(theEnv,WERROR,"Module ");
+   PrintString(theEnv,WERROR,theModule);
+   PrintString(theEnv,WERROR," does not export ");
 
-   if (theConstruct == NULL) PrintRouter(theEnv,WERROR,"any constructs");
+   if (theConstruct == NULL) PrintString(theEnv,WERROR,"any constructs");
    else if (theName == NULL)
      {
-      PrintRouter(theEnv,WERROR,"any ");
-      PrintRouter(theEnv,WERROR,theConstruct);
-      PrintRouter(theEnv,WERROR," constructs");
+      PrintString(theEnv,WERROR,"any ");
+      PrintString(theEnv,WERROR,theConstruct);
+      PrintString(theEnv,WERROR," constructs");
      }
    else
      {
-      PrintRouter(theEnv,WERROR,"the ");
-      PrintRouter(theEnv,WERROR,theConstruct);
-      PrintRouter(theEnv,WERROR," ");
-      PrintRouter(theEnv,WERROR,theName);
+      PrintString(theEnv,WERROR,"the ");
+      PrintString(theEnv,WERROR,theConstruct);
+      PrintString(theEnv,WERROR," ");
+      PrintString(theEnv,WERROR,theName);
      }
 
-   PrintRouter(theEnv,WERROR,".\n");
+   PrintString(theEnv,WERROR,".\n");
   }
 
 /*************************************************************/

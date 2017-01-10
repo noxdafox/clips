@@ -133,11 +133,11 @@ void OpenErrorMessage(
   const char *fileName)
   {
    PrintErrorID(theEnv,"ARGACCES",2,false);
-   PrintRouter(theEnv,WERROR,"Function ");
-   PrintRouter(theEnv,WERROR,functionName);
-   PrintRouter(theEnv,WERROR," was unable to open file ");
-   PrintRouter(theEnv,WERROR,fileName);
-   PrintRouter(theEnv,WERROR,".\n");
+   PrintString(theEnv,WERROR,"Function ");
+   PrintString(theEnv,WERROR,functionName);
+   PrintString(theEnv,WERROR," was unable to open file ");
+   PrintString(theEnv,WERROR,fileName);
+   PrintString(theEnv,WERROR,".\n");
   }
 
 /************************************************************/
@@ -229,20 +229,20 @@ void ExpectedCountError(
   int expectedNumber)
   {
    PrintErrorID(theEnv,"ARGACCES",4,false);
-   PrintRouter(theEnv,WERROR,"Function ");
-   PrintRouter(theEnv,WERROR,functionName);
+   PrintString(theEnv,WERROR,"Function ");
+   PrintString(theEnv,WERROR,functionName);
 
    if (countRelation == EXACTLY)
-     { PrintRouter(theEnv,WERROR," expected exactly "); }
+     { PrintString(theEnv,WERROR," expected exactly "); }
    else if (countRelation == AT_LEAST)
-     { PrintRouter(theEnv,WERROR," expected at least "); }
+     { PrintString(theEnv,WERROR," expected at least "); }
    else if (countRelation == NO_MORE_THAN)
-     { PrintRouter(theEnv,WERROR," expected no more than "); }
+     { PrintString(theEnv,WERROR," expected no more than "); }
    else
-     { PrintRouter(theEnv,WERROR," generated an illegal argument check for "); }
+     { PrintString(theEnv,WERROR," generated an illegal argument check for "); }
 
-   PrintLongInteger(theEnv,WERROR,(long int) expectedNumber);
-   PrintRouter(theEnv,WERROR," argument(s)\n");
+   PrintInteger(theEnv,WERROR,expectedNumber);
+   PrintString(theEnv,WERROR," argument(s)\n");
   }
 
 /*************************************************************/
@@ -349,11 +349,11 @@ void ExpectedTypeError0(
   int whichArg)
   {
    PrintErrorID(theEnv,"ARGACCES",5,false);
-   PrintRouter(theEnv,WERROR,"Function ");
-   PrintRouter(theEnv,WERROR,functionName);
-   PrintRouter(theEnv,WERROR," expected argument #");
-   PrintLongInteger(theEnv,WERROR,(long int) whichArg);
-   PrintRouter(theEnv,WERROR," to be of type ");
+   PrintString(theEnv,WERROR,"Function ");
+   PrintString(theEnv,WERROR,functionName);
+   PrintString(theEnv,WERROR," expected argument #");
+   PrintInteger(theEnv,WERROR,whichArg);
+   PrintString(theEnv,WERROR," to be of type ");
   }
 
 /*******************************************************************/
@@ -368,8 +368,8 @@ void ExpectedTypeError1(
   const char *expectedType)
   {
    ExpectedTypeError0(theEnv,functionName,whichArg);
-   PrintRouter(theEnv,WERROR,expectedType);
-   PrintRouter(theEnv,WERROR,"\n");
+   PrintString(theEnv,WERROR,expectedType);
+   PrintString(theEnv,WERROR,"\n");
   }
 
 /**************************************************************/
@@ -473,7 +473,7 @@ void IllegalLogicalNameMessage(
   const char *theFunction)
   {
    PrintErrorID(theEnv,"IOFUN",1,false);
-   PrintRouter(theEnv,WERROR,"Illegal logical name used for ");
-   PrintRouter(theEnv,WERROR,theFunction);
-   PrintRouter(theEnv,WERROR," function.\n");
+   PrintString(theEnv,WERROR,"Illegal logical name used for ");
+   PrintString(theEnv,WERROR,theFunction);
+   PrintString(theEnv,WERROR," function.\n");
   }

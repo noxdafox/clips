@@ -614,9 +614,9 @@ void UndefmethodCommand(
    if ((gfunc == NULL) ? (strcmp(theArg.lexemeValue->contents,"*") != 0) : false)
      {
       PrintErrorID(theEnv,"GENRCCOM",1,false);
-      PrintRouter(theEnv,WERROR,"No such generic function ");
-      PrintRouter(theEnv,WERROR,theArg.lexemeValue->contents);
-      PrintRouter(theEnv,WERROR," in function undefmethod.\n");
+      PrintString(theEnv,WERROR,"No such generic function ");
+      PrintString(theEnv,WERROR,theArg.lexemeValue->contents);
+      PrintString(theEnv,WERROR," in function undefmethod.\n");
       return;
      }
 
@@ -627,7 +627,7 @@ void UndefmethodCommand(
       if (strcmp(theArg.lexemeValue->contents,"*") != 0)
         {
          PrintErrorID(theEnv,"GENRCCOM",2,false);
-         PrintRouter(theEnv,WERROR,"Expected a valid method index in function undefmethod.\n");
+         PrintString(theEnv,WERROR,"Expected a valid method index in function undefmethod.\n");
          return;
         }
       mi = 0;
@@ -638,14 +638,14 @@ void UndefmethodCommand(
       if (mi == 0)
         {
          PrintErrorID(theEnv,"GENRCCOM",2,false);
-         PrintRouter(theEnv,WERROR,"Expected a valid method index in function undefmethod.\n");
+         PrintString(theEnv,WERROR,"Expected a valid method index in function undefmethod.\n");
          return;
         }
      }
    else
      {
       PrintErrorID(theEnv,"GENRCCOM",2,false);
-      PrintRouter(theEnv,WERROR,"Expected a valid method index in function undefmethod.\n");
+      PrintString(theEnv,WERROR,"Expected a valid method index in function undefmethod.\n");
       return;
      }
    Undefmethod(gfunc,mi,theEnv);
@@ -715,16 +715,16 @@ bool Undefmethod(
    
 #if RUN_TIME || BLOAD_ONLY
    PrintErrorID(theEnv,"PRNTUTIL",4,false);
-   PrintRouter(theEnv,WERROR,"Unable to delete method ");
+   PrintString(theEnv,WERROR,"Unable to delete method ");
    if (theDefgeneric != NULL)
      {
       PrintGenericName(theEnv,WERROR,theDefgeneric);
-      PrintRouter(theEnv,WERROR," #");
-      PrintLongInteger(theEnv,WERROR,(long long) mi);
+      PrintString(theEnv,WERROR," #");
+      PrintInteger(theEnv,WERROR,(long long) mi);
      }
    else
-     PrintRouter(theEnv,WERROR,"*");
-   PrintRouter(theEnv,WERROR,".\n");
+     PrintString(theEnv,WERROR,"*");
+   PrintString(theEnv,WERROR,".\n");
    return false;
 #else
    long nmi;
@@ -733,16 +733,16 @@ bool Undefmethod(
    if (Bloaded(theEnv) == true)
      {
       PrintErrorID(theEnv,"PRNTUTIL",4,false);
-      PrintRouter(theEnv,WERROR,"Unable to delete method ");
+      PrintString(theEnv,WERROR,"Unable to delete method ");
       if (theDefgeneric != NULL)
         {
-         PrintRouter(theEnv,WERROR,DefgenericName(theDefgeneric));
-         PrintRouter(theEnv,WERROR," #");
-         PrintLongInteger(theEnv,WERROR,(long long) mi);
+         PrintString(theEnv,WERROR,DefgenericName(theDefgeneric));
+         PrintString(theEnv,WERROR," #");
+         PrintInteger(theEnv,WERROR,(long long) mi);
         }
       else
-        PrintRouter(theEnv,WERROR,"*");
-      PrintRouter(theEnv,WERROR,".\n");
+        PrintString(theEnv,WERROR,"*");
+      PrintString(theEnv,WERROR,".\n");
       return false;
      }
 #endif
@@ -751,7 +751,7 @@ bool Undefmethod(
       if (mi != 0)
         {
          PrintErrorID(theEnv,"GENRCCOM",3,false);
-         PrintRouter(theEnv,WERROR,"Incomplete method specification for deletion.\n");
+         PrintString(theEnv,WERROR,"Incomplete method specification for deletion.\n");
          return false;
         }
       return(ClearDefmethods(theEnv));
@@ -1045,7 +1045,7 @@ void ListDefmethods(
         {
          count += ListMethodsForGeneric(theEnv,logicalName,gfunc);
          if (GetNextDefgeneric(theEnv,gfunc) != NULL)
-           PrintRouter(theEnv,logicalName,"\n");
+           PrintString(theEnv,logicalName,"\n");
         }
      }
    PrintTally(theEnv,logicalName,count,"method","methods");
@@ -1326,14 +1326,14 @@ static void PrintGenericCall(
   {
 #if DEVELOPER
 
-   PrintRouter(theEnv,logName,"(");
-   PrintRouter(theEnv,logName,DefgenericName(theDefgeneric));
+   PrintString(theEnv,logName,"(");
+   PrintString(theEnv,logName,DefgenericName(theDefgeneric));
    if (GetFirstArgument() != NULL)
      {
-      PrintRouter(theEnv,logName," ");
+      PrintString(theEnv,logName," ");
       PrintExpression(theEnv,logName,GetFirstArgument());
      }
-   PrintRouter(theEnv,logName,")");
+   PrintString(theEnv,logName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -1481,7 +1481,7 @@ static void SaveDefmethodsForDefgeneric(
       if (gfunc->methods[i].header.ppForm != NULL)
         {
          PrintInChunks(theEnv,logName,gfunc->methods[i].header.ppForm);
-         PrintRouter(theEnv,logName,"\n");
+         PrintString(theEnv,logName,"\n");
         }
      }
   }
@@ -1510,9 +1510,9 @@ static void RemoveDefgenericMethod(
      {
       SetEvaluationError(theEnv,true);
       PrintErrorID(theEnv,"GENRCCOM",4,false);
-      PrintRouter(theEnv,WERROR,"Cannot remove implicit system function method for generic function ");
-      PrintRouter(theEnv,WERROR,DefgenericName(gfunc));
-      PrintRouter(theEnv,WERROR,".\n");
+      PrintString(theEnv,WERROR,"Cannot remove implicit system function method for generic function ");
+      PrintString(theEnv,WERROR,DefgenericName(gfunc));
+      PrintString(theEnv,WERROR,".\n");
       return;
      }
    DeleteMethodInfo(theEnv,gfunc,&gfunc->methods[gi]);
@@ -1561,11 +1561,11 @@ static long ListMethodsForGeneric(
 
    for (gi = 0 ; gi < gfunc->mcnt ; gi++)
      {
-      PrintRouter(theEnv,logicalName,DefgenericName(gfunc));
-      PrintRouter(theEnv,logicalName," #");
+      PrintString(theEnv,logicalName,DefgenericName(gfunc));
+      PrintString(theEnv,logicalName," #");
       PrintMethod(theEnv,buf,255,&gfunc->methods[gi]);
-      PrintRouter(theEnv,logicalName,buf);
-      PrintRouter(theEnv,logicalName,"\n");
+      PrintString(theEnv,logicalName,buf);
+      PrintString(theEnv,logicalName,"\n");
      }
    return((long) gfunc->mcnt);
   }
@@ -1724,8 +1724,8 @@ static bool DefmethodWatchSupport(
          SetCurrentModule(theEnv,theModule);
          if (traceFunc == NULL)
            {
-            PrintRouter(theEnv,logName,DefmoduleName(theModule));
-            PrintRouter(theEnv,logName,":\n");
+            PrintString(theEnv,logName,DefmoduleName(theModule));
+            PrintString(theEnv,logName,":\n");
            }
          theGeneric = GetNextDefgeneric(theEnv,NULL);
          while (theGeneric != NULL)
@@ -1737,7 +1737,7 @@ static bool DefmethodWatchSupport(
                   (*traceFunc)(theGeneric,theMethod,newState);
                 else
                   {
-                   PrintRouter(theEnv,logName,"   ");
+                   PrintString(theEnv,logName,"   ");
                    (*printFunc)(theEnv,logName,theGeneric,theMethod);
                   }
                 theMethod = GetNextDefmethod(theEnv,theGeneric,theMethod);
@@ -1825,14 +1825,14 @@ static void PrintMethodWatchFlag(
   {
    char buf[60];
 
-   PrintRouter(theEnv,logName,DefgenericName(theGeneric));
-   PrintRouter(theEnv,logName," ");
+   PrintString(theEnv,logName,DefgenericName(theGeneric));
+   PrintString(theEnv,logName," ");
    DefmethodDescription(buf,59,theGeneric,theMethod);
-   PrintRouter(theEnv,logName,buf);
+   PrintString(theEnv,logName,buf);
    if (DefmethodGetWatch(theGeneric,theMethod))
-     PrintRouter(theEnv,logName," = on\n");
+     PrintString(theEnv,logName," = on\n");
    else
-     PrintRouter(theEnv,logName," = off\n");
+     PrintString(theEnv,logName," = off\n");
   }
 
 #endif

@@ -685,14 +685,14 @@ static void PrintDeffunctionCall(
   {
 #if DEVELOPER
 
-   PrintRouter(theEnv,logName,"(");
-   PrintRouter(theEnv,logName,DeffunctionName(theDeffunction));
+   PrintString(theEnv,logName,"(");
+   PrintString(theEnv,logName,DeffunctionName(theDeffunction));
    if (GetFirstArgument() != NULL)
      {
-      PrintRouter(theEnv,logName," ");
+      PrintString(theEnv,logName," ");
       PrintExpression(theEnv,logName,GetFirstArgument());
      }
-   PrintRouter(theEnv,logName,")");
+   PrintString(theEnv,logName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -918,9 +918,9 @@ static bool RemoveAllDeffunctions(
          if (dtmp->busy > 0)
            {
             PrintWarningID(theEnv,"DFFNXFUN",1,false);
-            PrintRouter(theEnv,WWARNING,"Deffunction ");
-            PrintRouter(theEnv,WWARNING,DeffunctionName(dtmp));
-            PrintRouter(theEnv,WWARNING," only partially deleted due to usage by other constructs.\n");
+            PrintString(theEnv,WWARNING,"Deffunction ");
+            PrintString(theEnv,WWARNING,DeffunctionName(dtmp));
+            PrintString(theEnv,WWARNING," only partially deleted due to usage by other constructs.\n");
             SetDeffunctionPPForm(theEnv,dtmp,NULL);
             success = false;
            }
@@ -995,26 +995,26 @@ static void SaveDeffunctionHeader(
 
    if (DeffunctionPPForm(dfnxPtr) != NULL)
      {
-      PrintRouter(theEnv,logicalName,"(deffunction ");
-      PrintRouter(theEnv,logicalName,DeffunctionModule(dfnxPtr));
-      PrintRouter(theEnv,logicalName,"::");
-      PrintRouter(theEnv,logicalName,DeffunctionName(dfnxPtr));
-      PrintRouter(theEnv,logicalName," (");
+      PrintString(theEnv,logicalName,"(deffunction ");
+      PrintString(theEnv,logicalName,DeffunctionModule(dfnxPtr));
+      PrintString(theEnv,logicalName,"::");
+      PrintString(theEnv,logicalName,DeffunctionName(dfnxPtr));
+      PrintString(theEnv,logicalName," (");
       for (i = 0 ; i < dfnxPtr->minNumberOfParameters ; i++)
         {
-         PrintRouter(theEnv,logicalName,"?p");
-         PrintLongInteger(theEnv,logicalName,(long long) i);
+         PrintString(theEnv,logicalName,"?p");
+         PrintInteger(theEnv,logicalName,(long long) i);
          if (i != dfnxPtr->minNumberOfParameters-1)
-           PrintRouter(theEnv,logicalName," ");
+           PrintString(theEnv,logicalName," ");
         }
       if (dfnxPtr->maxNumberOfParameters == -1)
         {
          if (dfnxPtr->minNumberOfParameters != 0)
-           PrintRouter(theEnv,logicalName," ");
-         PrintRouter(theEnv,logicalName,"$?wildargs))\n\n");
+           PrintString(theEnv,logicalName," ");
+         PrintString(theEnv,logicalName,"$?wildargs))\n\n");
         }
       else
-        PrintRouter(theEnv,logicalName,"))\n\n");
+        PrintString(theEnv,logicalName,"))\n\n");
      }
   }
 

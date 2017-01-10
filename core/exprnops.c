@@ -342,22 +342,22 @@ void PrintExpression(
         {
          case SF_VARIABLE:
          case GBL_VARIABLE:
-            PrintRouter(theEnv,fileid,"?");
-            PrintRouter(theEnv,fileid,theExpression->lexemeValue->contents);
+            PrintString(theEnv,fileid,"?");
+            PrintString(theEnv,fileid,theExpression->lexemeValue->contents);
             break;
 
          case MF_VARIABLE:
          case MF_GBL_VARIABLE:
-            PrintRouter(theEnv,fileid,"$?");
-            PrintRouter(theEnv,fileid,theExpression->lexemeValue->contents);
+            PrintString(theEnv,fileid,"$?");
+            PrintString(theEnv,fileid,theExpression->lexemeValue->contents);
             break;
 
          case FCALL:
-           PrintRouter(theEnv,fileid,"(");
-           PrintRouter(theEnv,fileid,ExpressionFunctionCallName(theExpression)->contents);
-           if (theExpression->argList != NULL) { PrintRouter(theEnv,fileid," "); }
+           PrintString(theEnv,fileid,"(");
+           PrintString(theEnv,fileid,ExpressionFunctionCallName(theExpression)->contents);
+           if (theExpression->argList != NULL) { PrintString(theEnv,fileid," "); }
            PrintExpression(theEnv,fileid,theExpression->argList);
-           PrintRouter(theEnv,fileid,")");
+           PrintString(theEnv,fileid,")");
            break;
 
          default:
@@ -369,7 +369,7 @@ void PrintExpression(
         }
 
       theExpression = theExpression->nextArg;
-      if (theExpression != NULL) PrintRouter(theEnv,fileid," ");
+      if (theExpression != NULL) PrintString(theEnv,fileid," ");
      }
 
    return;

@@ -120,9 +120,9 @@ static void DeallocateRouterData(
   }
 
 /****************************************/
-/* PrintRouter: Generic print function. */
+/* PrintString: Generic print function. */
 /****************************************/
-void PrintRouter(
+void PrintString(
   Environment *theEnv,
   const char *logicalName,
   const char *str)
@@ -645,9 +645,9 @@ void UnrecognizedRouterMessage(
   const char *logicalName)
   {
    PrintErrorID(theEnv,"ROUTER",1,false);
-   PrintRouter(theEnv,WERROR,"Logical name ");
-   PrintRouter(theEnv,WERROR,logicalName);
-   PrintRouter(theEnv,WERROR," was not recognized by any routers\n");
+   PrintString(theEnv,WERROR,"Logical name ");
+   PrintString(theEnv,WERROR,logicalName);
+   PrintString(theEnv,WERROR," was not recognized by any routers\n");
   }
 
 /*****************************************/
@@ -664,7 +664,7 @@ void PrintNRouter(
    tempStr = (char *) genalloc(theEnv,length+1);
    genstrncpy(tempStr,str,length);
    tempStr[length] = 0;
-   PrintRouter(theEnv,logicalName,tempStr);
+   PrintString(theEnv,logicalName,tempStr);
    genfree(theEnv,tempStr,length+1);
   }
 

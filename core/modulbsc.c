@@ -139,7 +139,7 @@ static void SaveDefmodules(
    if (ppform != NULL)
      {
       PrintInChunks(theEnv,logicalName,ppform);
-      PrintRouter(theEnv,logicalName,"\n");
+      PrintString(theEnv,logicalName,"\n");
      }
   }
 
@@ -277,8 +277,8 @@ void ListDefmodules(
         theModule != NULL;
         theModule = GetNextDefmodule(theEnv,theModule))
     {
-     PrintRouter(theEnv,logicalName,DefmoduleName(theModule));
-     PrintRouter(theEnv,logicalName,"\n");
+     PrintString(theEnv,logicalName,DefmoduleName(theModule));
+     PrintString(theEnv,logicalName,"\n");
      count++;
     }
 

@@ -518,9 +518,9 @@ static struct expr *GetSlotAssertValues(
       if (slotPtr->noDefault)
         {
          PrintErrorID(theEnv,"TMPLTRHS",1,true);
-         PrintRouter(theEnv,WERROR,"Slot ");
-         PrintRouter(theEnv,WERROR,slotPtr->slotName->contents);
-         PrintRouter(theEnv,WERROR," requires a value because of its (default ?NONE) attribute.\n");
+         PrintString(theEnv,WERROR,"Slot ");
+         PrintString(theEnv,WERROR,slotPtr->slotName->contents);
+         PrintString(theEnv,WERROR," requires a value because of its (default ?NONE) attribute.\n");
          *error = true;
          return NULL;
         }

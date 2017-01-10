@@ -456,7 +456,7 @@ void UndefmessageHandlerCommand(
   {
 #if RUN_TIME || BLOAD_ONLY
    PrintErrorID(theEnv,"MSGCOM",3,false);
-   PrintRouter(theEnv,WERROR,"Unable to delete message-handlers.\n");
+   PrintString(theEnv,WERROR,"Unable to delete message-handlers.\n");
 #else
    CLIPSLexeme *mname;
    const char *tname;
@@ -467,7 +467,7 @@ void UndefmessageHandlerCommand(
    if (Bloaded(theEnv))
      {
       PrintErrorID(theEnv,"MSGCOM",3,false);
-      PrintRouter(theEnv,WERROR,"Unable to delete message-handlers.\n");
+      PrintString(theEnv,WERROR,"Unable to delete message-handlers.\n");
       return;
      }
 #endif
@@ -519,7 +519,7 @@ bool UndefmessageHandler(
 
 #if RUN_TIME || BLOAD_ONLY
    PrintErrorID(theEnv,"MSGCOM",3,false);
-   PrintRouter(theEnv,WERROR,"Unable to delete message-handlers.\n");
+   PrintString(theEnv,WERROR,"Unable to delete message-handlers.\n");
    return false;
 #else
      
@@ -527,7 +527,7 @@ bool UndefmessageHandler(
    if (Bloaded(theEnv))
      {
       PrintErrorID(theEnv,"MSGCOM",3,false);
-      PrintRouter(theEnv,WERROR,"Unable to delete message-handlers.\n");
+      PrintString(theEnv,WERROR,"Unable to delete message-handlers.\n");
       return false;
      }
 #endif
@@ -536,7 +536,7 @@ bool UndefmessageHandler(
       if (mhi != 0)
         {
          PrintErrorID(theEnv,"MSGCOM",1,false);
-         PrintRouter(theEnv,WERROR,"Incomplete message-handler specification for deletion.\n");
+         PrintString(theEnv,WERROR,"Incomplete message-handler specification for deletion.\n");
          return false;
         }
       return WildDeleteHandler(theEnv,NULL,NULL,NULL);
@@ -609,13 +609,13 @@ void PPDefmessageHandlerCommand(
        ((hnd = FindHandlerByAddress(cls,msym,(unsigned) mtype)) == NULL))
      {
       PrintErrorID(theEnv,"MSGCOM",2,false);
-      PrintRouter(theEnv,WERROR,"Unable to find message-handler ");
-      PrintRouter(theEnv,WERROR,msym->contents);
-      PrintRouter(theEnv,WERROR," ");
-      PrintRouter(theEnv,WERROR,tname);
-      PrintRouter(theEnv,WERROR," for class ");
-      PrintRouter(theEnv,WERROR,csym->contents);
-      PrintRouter(theEnv,WERROR," in function ppdefmessage-handler.\n");
+      PrintString(theEnv,WERROR,"Unable to find message-handler ");
+      PrintString(theEnv,WERROR,msym->contents);
+      PrintString(theEnv,WERROR," ");
+      PrintString(theEnv,WERROR,tname);
+      PrintString(theEnv,WERROR," for class ");
+      PrintString(theEnv,WERROR,csym->contents);
+      PrintString(theEnv,WERROR," in function ppdefmessage-handler.\n");
       SetEvaluationError(theEnv,true);
       return;
      }
@@ -1001,8 +1001,8 @@ static bool DefmessageHandlerWatchSupport(
          SetCurrentModule(theEnv,theModule);
          if (traceFunc == NULL)
            {
-            PrintRouter(theEnv,logName,DefmoduleName(theModule));
-            PrintRouter(theEnv,logName,":\n");
+            PrintString(theEnv,logName,DefmoduleName(theModule));
+            PrintString(theEnv,logName,":\n");
            }
          theClass = GetNextDefclass(theEnv,NULL);
          while (theClass != NULL)
@@ -1126,7 +1126,7 @@ static bool WatchClassHandlers(
              else
                {
                 if (indentp)
-                  PrintRouter(theEnv,logName,"   ");
+                  PrintString(theEnv,logName,"   ");
                 (*printFunc)(theEnv,logName,theClass,theHandler);
                }
              found = true;
@@ -1155,16 +1155,16 @@ static void PrintHandlerWatchFlag(
   Defclass *theClass,
   int theHandler)
   {
-   PrintRouter(theEnv,logName,DefclassName(theClass));
-   PrintRouter(theEnv,logName," ");
-   PrintRouter(theEnv,logName,DefmessageHandlerName(theClass,theHandler));
-   PrintRouter(theEnv,logName," ");
-   PrintRouter(theEnv,logName,DefmessageHandlerType(theClass,theHandler));
+   PrintString(theEnv,logName,DefclassName(theClass));
+   PrintString(theEnv,logName," ");
+   PrintString(theEnv,logName,DefmessageHandlerName(theClass,theHandler));
+   PrintString(theEnv,logName," ");
+   PrintString(theEnv,logName,DefmessageHandlerType(theClass,theHandler));
 
    if (DefmessageHandlerGetWatch(theClass,theHandler))
-     PrintRouter(theEnv,logName," = on\n");
+     PrintString(theEnv,logName," = on\n");
    else
-     PrintRouter(theEnv,logName," = off\n");
+     PrintString(theEnv,logName," = off\n");
   }
 
 #endif /* DEBUGGING_FUNCTIONS */

@@ -479,13 +479,13 @@ static InstanceSlot *CheckMultifieldSlotModify(
    if (sp->desc->multiple == 0)
      {
       PrintErrorID(theEnv,"INSMULT",1,false);
-      PrintRouter(theEnv,WERROR,"Function ");
-      PrintRouter(theEnv,WERROR,func);
-      PrintRouter(theEnv,WERROR," cannot be used on single-field slot ");
-      PrintRouter(theEnv,WERROR,sp->desc->slotName->name->contents);
-      PrintRouter(theEnv,WERROR," in instance ");
-      PrintRouter(theEnv,WERROR,ins->name->contents);
-      PrintRouter(theEnv,WERROR,".\n");
+      PrintString(theEnv,WERROR,"Function ");
+      PrintString(theEnv,WERROR,func);
+      PrintString(theEnv,WERROR," cannot be used on single-field slot ");
+      PrintString(theEnv,WERROR,sp->desc->slotName->name->contents);
+      PrintString(theEnv,WERROR," in instance ");
+      PrintString(theEnv,WERROR,ins->name->contents);
+      PrintString(theEnv,WERROR,".\n");
       SetEvaluationError(theEnv,true);
       return NULL;
      }

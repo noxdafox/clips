@@ -117,7 +117,7 @@ struct routerData
 #define RouterData(theEnv) ((struct routerData *) GetEnvironmentData(theEnv,ROUTER_DATA))
 
    void                           InitializeDefaultRouters(Environment *);
-   void                           PrintRouter(Environment *,const char *,const char *);
+   void                           PrintString(Environment *,const char *,const char *);
    int                            GetcRouter(Environment *,const char *);
    int                            UngetcRouter(Environment *,const char *,int);
    void                           ExitRouter(Environment *,int);

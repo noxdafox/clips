@@ -332,9 +332,9 @@ int LoadConstructsFromLogicalName(
 
       if (constructFlag == 1)
         {
-         PrintRouter(theEnv,WERROR,"\nERROR:\n");
+         PrintString(theEnv,WERROR,"\nERROR:\n");
          PrintInChunks(theEnv,WERROR,GetPPBuffer(theEnv));
-         PrintRouter(theEnv,WERROR,"\n");
+         PrintString(theEnv,WERROR,"\n");
 
          FlushParsingMessages(theEnv);
 
@@ -380,7 +380,7 @@ int LoadConstructsFromLogicalName(
 #else
    if (GetPrintWhileLoading(theEnv))
 #endif
-     { PrintRouter(theEnv,WDIALOG,"\n"); }
+     { PrintString(theEnv,WDIALOG,"\n"); }
 
    /*=============================================================*/
    /* Once the load is complete, destroy the pretty print buffer. */
@@ -480,7 +480,7 @@ static bool FindConstructBeginning(
             errorCorrection = true;
             *noErrors = false;
             PrintErrorID(theEnv,"CSTRCPSR",1,true);
-            PrintRouter(theEnv,WERROR,"Expected the beginning of a construct.\n");
+            PrintString(theEnv,WERROR,"Expected the beginning of a construct.\n");
            }
 
          /*======================================================*/
@@ -506,7 +506,7 @@ static bool FindConstructBeginning(
             errorCorrection = true;
             *noErrors = false;
             PrintErrorID(theEnv,"CSTRCPSR",1,true);
-            PrintRouter(theEnv,WERROR,"Expected the beginning of a construct.\n");
+            PrintString(theEnv,WERROR,"Expected the beginning of a construct.\n");
            }
 
          firstAttempt = false;
@@ -571,7 +571,7 @@ static void PrintError(
      }
 
    DeactivateRouter(theEnv,"error-capture");
-   PrintRouter(theEnv,logicalName,str);
+   PrintString(theEnv,logicalName,str);
    ActivateRouter(theEnv,"error-capture");
   }
 
@@ -778,20 +778,20 @@ void ImportExportConflictMessage(
   const char *causedByName)
   {
    PrintErrorID(theEnv,"CSTRCPSR",3,true);
-   PrintRouter(theEnv,WERROR,"Cannot define ");
-   PrintRouter(theEnv,WERROR,constructName);
-   PrintRouter(theEnv,WERROR," ");
-   PrintRouter(theEnv,WERROR,itemName);
-   PrintRouter(theEnv,WERROR," because of an import/export conflict");
+   PrintString(theEnv,WERROR,"Cannot define ");
+   PrintString(theEnv,WERROR,constructName);
+   PrintString(theEnv,WERROR," ");
+   PrintString(theEnv,WERROR,itemName);
+   PrintString(theEnv,WERROR," because of an import/export conflict");
 
-   if (causedByConstruct == NULL) PrintRouter(theEnv,WERROR,".\n");
+   if (causedByConstruct == NULL) PrintString(theEnv,WERROR,".\n");
    else
      {
-      PrintRouter(theEnv,WERROR," caused by the ");
-      PrintRouter(theEnv,WERROR,causedByConstruct);
-      PrintRouter(theEnv,WERROR," ");
-      PrintRouter(theEnv,WERROR,causedByName);
-      PrintRouter(theEnv,WERROR,".\n");
+      PrintString(theEnv,WERROR," caused by the ");
+      PrintString(theEnv,WERROR,causedByConstruct);
+      PrintString(theEnv,WERROR," ");
+      PrintString(theEnv,WERROR,causedByName);
+      PrintString(theEnv,WERROR,".\n");
      }
   }
 

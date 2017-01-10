@@ -639,7 +639,7 @@ bool Clear(
        (ClearReady(theEnv) == false))
      {
       PrintErrorID(theEnv,"CONSTRCT",1,false);
-      PrintRouter(theEnv,WERROR,"Some constructs are still in use. Clear cannot continue.\n");
+      PrintString(theEnv,WERROR,"Some constructs are still in use. Clear cannot continue.\n");
 #if DEBUGGING_FUNCTIONS
       DeactivateRouter(theEnv,WTRACE);
 #endif

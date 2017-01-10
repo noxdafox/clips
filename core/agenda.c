@@ -187,9 +187,9 @@ void AddActivation(
 #if DEBUGGING_FUNCTIONS
    if (newActivation->theRule->watchActivation)
      {
-      PrintRouter(theEnv,WTRACE,"==> Activation ");
+      PrintString(theEnv,WTRACE,"==> Activation ");
       PrintActivation(theEnv,WTRACE,newActivation);
-      PrintRouter(theEnv,WTRACE,"\n");
+      PrintString(theEnv,WTRACE,"\n");
      }
 #endif
 
@@ -572,9 +572,9 @@ static void PrintActivation(
    char printSpace[20];
 
    gensprintf(printSpace,"%-6d ",theActivation->salience);
-   PrintRouter(theEnv,logicalName,printSpace);
-   PrintRouter(theEnv,logicalName,theActivation->theRule->header.name->contents);
-   PrintRouter(theEnv,logicalName,": ");
+   PrintString(theEnv,logicalName,printSpace);
+   PrintString(theEnv,logicalName,theActivation->theRule->header.name->contents);
+   PrintString(theEnv,logicalName,": ");
    PrintPartialMatch(theEnv,logicalName,theActivation->basis);
   }
 
@@ -646,9 +646,9 @@ void RemoveActivation(
 #if DEBUGGING_FUNCTIONS
       if (theActivation->theRule->watchActivation)
         {
-         PrintRouter(theEnv,WTRACE,"<== Activation ");
+         PrintString(theEnv,WTRACE,"<== Activation ");
          PrintActivation(theEnv,WTRACE,theActivation);
-         PrintRouter(theEnv,WTRACE,"\n");
+         PrintString(theEnv,WTRACE,"\n");
         }
 #endif
 

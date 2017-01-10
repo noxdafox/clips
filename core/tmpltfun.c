@@ -2300,9 +2300,9 @@ static struct expr *ModAndDupParse(
       if (! TopLevelCommand(theEnv))
         {
          PrintErrorID(theEnv,"TMPLTFUN",1,true);
-         PrintRouter(theEnv,WERROR,"Fact-indexes can only be used by ");
-         PrintRouter(theEnv,WERROR,name);
-         PrintRouter(theEnv,WERROR," as a top level command.\n");
+         PrintString(theEnv,WERROR,"Fact-indexes can only be used by ");
+         PrintString(theEnv,WERROR,name);
+         PrintString(theEnv,WERROR," as a top level command.\n");
          ReturnExpression(theEnv,top);
          return NULL;
         }

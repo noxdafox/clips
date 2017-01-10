@@ -229,9 +229,9 @@ static int TextLookupFetch(
    if (fp == NULL)
      {
       PrintErrorID(theEnv,"TEXTPRO",1,false);
-      PrintRouter(theEnv,WERROR,"Could not open file \"");
-      PrintRouter(theEnv,WERROR,file);
-      PrintRouter(theEnv,WERROR,"\".\n");
+      PrintString(theEnv,WERROR,"Could not open file \"");
+      PrintString(theEnv,WERROR,file);
+      PrintString(theEnv,WERROR,"\".\n");
       return(-1);
      }
 
@@ -240,9 +240,9 @@ static int TextLookupFetch(
       GenClose(theEnv,fp);
 
       PrintErrorID(theEnv,"TEXTPRO",2,false);
-      PrintRouter(theEnv,WERROR,"File \"");
-      PrintRouter(theEnv,WERROR,file);
-      PrintRouter(theEnv,WERROR,"\" already loaded.\n");
+      PrintString(theEnv,WERROR,"File \"");
+      PrintString(theEnv,WERROR,file);
+      PrintString(theEnv,WERROR,"\" already loaded.\n");
       return(-1);
      }
 
@@ -277,9 +277,9 @@ static int TextLookupFetch(
               GenClose(theEnv,fp);
               TextLookupToss(theEnv,file);
               PrintErrorID(theEnv,"TEXTPRO",8,false);
-              PrintRouter(theEnv,WERROR,"Line ");
-              PrintLongInteger(theEnv,WERROR,line_ct);
-              PrintRouter(theEnv,WERROR," : Unmatched end marker.\n");
+              PrintString(theEnv,WERROR,"Line ");
+              PrintInteger(theEnv,WERROR,line_ct);
+              PrintString(theEnv,WERROR," : Unmatched end marker.\n");
               return(-1);
              }
           }
@@ -296,9 +296,9 @@ static int TextLookupFetch(
                TextLookupToss(theEnv,file);
 
                PrintErrorID(theEnv,"TEXTPRO",4,false);
-               PrintRouter(theEnv,WERROR,"Line ");
-               PrintLongInteger(theEnv,WERROR,line_ct);
-               PrintRouter(theEnv,WERROR," : Previous entry not closed.\n");
+               PrintString(theEnv,WERROR,"Line ");
+               PrintInteger(theEnv,WERROR,line_ct);
+               PrintString(theEnv,WERROR," : Previous entry not closed.\n");
 
                return(-1);
               }
@@ -320,9 +320,9 @@ static int TextLookupFetch(
       TextLookupToss(theEnv,file);
 
       PrintErrorID(theEnv,"TEXTPRO",4,false);
-      PrintRouter(theEnv,WERROR,"Line ");
-      PrintLongInteger(theEnv,WERROR,line_ct);
-      PrintRouter(theEnv,WERROR," : Previous entry not closed.\n");
+      PrintString(theEnv,WERROR,"Line ");
+      PrintInteger(theEnv,WERROR,line_ct);
+      PrintString(theEnv,WERROR," : Previous entry not closed.\n");
 
       return(-1);
      }
@@ -645,9 +645,9 @@ static struct entries *AllocateEntryNode(
       TextLookupToss(theEnv,file);
 
       PrintErrorID(theEnv,"TEXTPRO",5,false);
-      PrintRouter(theEnv,WERROR,"Line ");
-      PrintLongInteger(theEnv,WERROR,line_ct);
-      PrintRouter(theEnv,WERROR," : Invalid delimeter string.\n");
+      PrintString(theEnv,WERROR,"Line ");
+      PrintInteger(theEnv,WERROR,line_ct);
+      PrintString(theEnv,WERROR," : Invalid delimeter string.\n");
 
       return NULL;
      }
@@ -662,9 +662,9 @@ static struct entries *AllocateEntryNode(
       TextLookupToss(theEnv,file);
 
       PrintErrorID(theEnv,"TEXTPRO",6,false);
-      PrintRouter(theEnv,WERROR,"Line ");
-      PrintLongInteger(theEnv,WERROR,line_ct);
-      PrintRouter(theEnv,WERROR," : Invalid entry type.\n");
+      PrintString(theEnv,WERROR,"Line ");
+      PrintInteger(theEnv,WERROR,line_ct);
+      PrintString(theEnv,WERROR," : Invalid entry type.\n");
 
       return NULL;
      }
@@ -675,9 +675,9 @@ static struct entries *AllocateEntryNode(
       TextLookupToss(theEnv,file);
 
       PrintErrorID(theEnv,"TEXTPRO",5,false);
-      PrintRouter(theEnv,WERROR,"Line ");
-      PrintLongInteger(theEnv,WERROR,line_ct);
-      PrintRouter(theEnv,WERROR," : Invalid delimeter string.\n");
+      PrintString(theEnv,WERROR,"Line ");
+      PrintInteger(theEnv,WERROR,line_ct);
+      PrintString(theEnv,WERROR," : Invalid delimeter string.\n");
 
       return NULL;
      }
@@ -748,9 +748,9 @@ static bool AttachLeaf(
         TextLookupToss(theEnv,file);
 
         PrintErrorID(theEnv,"TEXTPRO",7,false);
-        PrintRouter(theEnv,WERROR,"Line ");
-        PrintLongInteger(theEnv,WERROR,line_ct);
-        PrintRouter(theEnv,WERROR," : Non-menu entries cannot have subtopics.\n");
+        PrintString(theEnv,WERROR,"Line ");
+        PrintInteger(theEnv,WERROR,line_ct);
+        PrintString(theEnv,WERROR," : Non-menu entries cannot have subtopics.\n");
 
         return false;
        }
@@ -1057,7 +1057,7 @@ void FetchCommand(
       if (load_ct == 0)
         {
          PrintErrorID(theEnv,"TEXTPRO",3,false);
-         PrintRouter(theEnv,WERROR,"No entries found.\n");
+         PrintString(theEnv,WERROR,"No entries found.\n");
         }
 
       return;
@@ -1102,9 +1102,9 @@ void PrintRegionCommand(
      {
       if (strcmp(params->name,"t") == 0)
         genstrcpy(params->name,STDOUT);
-      PrintRouter(theEnv,params->name,"\n");
+      PrintString(theEnv,params->name,"\n");
       while (GrabString(theEnv,fp,buf,256) != NULL)
-        PrintRouter(theEnv,params->name,buf);
+        PrintString(theEnv,params->name,buf);
       com_code = true;
      }
    else
