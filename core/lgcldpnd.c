@@ -481,7 +481,7 @@ void ForceLogicalRetractions(
       /*=========================*/
 
       (*theEntity->theInfo->base.decrementBusyCount)(theEnv,theEntity);
-      (*theEntity->theInfo->base.deleteFunction)(theEnv,theEntity);
+      (*theEntity->theInfo->base.deleteFunction)(theEntity,theEnv);
      }
 
    /*============================================*/

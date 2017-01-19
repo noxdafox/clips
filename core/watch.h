@@ -115,6 +115,8 @@ struct watchData
    void                           ListWatchItemsCommand(Environment *,UDFContext *,UDFValue *);
    void                           WatchFunctionDefinitions(Environment *);
    void                           GetWatchItemCommand(Environment *,UDFContext *,UDFValue *);
+   bool                           GetWatchState(Environment *,WatchItem);
+   void                           SetWatchState(Environment *,WatchItem,bool);
 
 #endif /* _H_watch */
 

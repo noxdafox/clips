@@ -1157,29 +1157,20 @@
    return instancesListenerCount;
   }
 
-/****************/
-/* getWatchItem */
-/****************/
-- (bool) getWatchItem: (const char *) watchItem
+/*****************/
+/* getWatchState */
+/*****************/
+- (bool) getWatchState: (WatchItem) watchItem
   {
-   int rv;
-   
-   rv = GetWatchItem(environment,watchItem);
-   
-   if (rv == 1) return YES;
-   
-   return NO;
+   return GetWatchState(environment,watchItem);
   }
 
-/****************/
-/* setWatchItem */
-/****************/
-- (void) setWatchItem: (const char *) watchItem toValue: (bool) newValue
+/*****************/
+/* setWatchState */
+/*****************/
+- (void) setWatchState: (WatchItem) watchItem toValue: (bool) newValue
   {
-   if (newValue)
-     { WatchString(environment,watchItem); }
-   else
-     { UnwatchString(environment,watchItem); }
+   SetWatchState(environment,watchItem,newValue);
   }
 
 @end

@@ -117,7 +117,7 @@ struct deffunctionData
    const char                    *DeffunctionModule(Deffunction *);
    Deffunction                   *FindDeffunction(Environment *,const char *);
    Deffunction                   *FindDeffunctionInModule(Environment *,const char *);
-   void                           GetDeffunctionList(Environment *,UDFValue *,Defmodule *);
+   void                           GetDeffunctionList(Environment *,CLIPSValue *,Defmodule *);
    const char                    *DeffunctionName(Deffunction *);
    CLIPSLexeme                   *GetDeffunctionNamePointer(Environment *,Deffunction *);
    const char                    *DeffunctionPPForm(Deffunction *);

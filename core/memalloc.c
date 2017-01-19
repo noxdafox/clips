@@ -303,9 +303,8 @@ void *gm1(
    char *tmpPtr;
    size_t i;
 
-   if (size < (long) sizeof(char *)) size = sizeof(char *);
-
-   if (size >= MEM_TABLE_SIZE)
+   if ((size < (long) sizeof(char *)) ||
+       (size >= MEM_TABLE_SIZE))
      {
       tmpPtr = (char *) genalloc(theEnv,(unsigned) size);
       for (i = 0 ; i < size ; i++)
@@ -342,50 +341,21 @@ void *gm2(
    struct memoryPtr *memPtr;
 #endif
 
-   if (size < sizeof(char *)) size = sizeof(char *);
+   if (size < sizeof(char *))
+     { return genalloc(theEnv,size); }
 
 #if (MEM_TABLE_SIZE > 0)
-   if (size >= MEM_TABLE_SIZE) return(genalloc(theEnv,(unsigned) size));
+   if (size >= MEM_TABLE_SIZE) return genalloc(theEnv,size);
 
    memPtr = (struct memoryPtr *) MemoryData(theEnv)->MemoryTable[size];
    if (memPtr == NULL)
-     {
-      return(genalloc(theEnv,size));
-     }
+     { return genalloc(theEnv,size); }
 
    MemoryData(theEnv)->MemoryTable[size] = memPtr->next;
 
    return ((void *) memPtr);
 #else
-   return(genalloc(theEnv,size));
-#endif
-  }
-
-/*****************************************************/
-/* gm3: Allocates memory and does not initialize it. */
-/*****************************************************/
-void *gm3(
-  Environment *theEnv,
-  size_t size)
-  {
-#if (MEM_TABLE_SIZE > 0)
-   struct memoryPtr *memPtr;
-#endif
-
-   if (size < (long) sizeof(char *)) size = sizeof(char *);
-
-#if (MEM_TABLE_SIZE > 0)
-   if (size >= MEM_TABLE_SIZE) return(genalloc(theEnv,size));
-
-   memPtr = (struct memoryPtr *) MemoryData(theEnv)->MemoryTable[(int) size];
-   if (memPtr == NULL)
-     { return(genalloc(theEnv,size)); }
-
-   MemoryData(theEnv)->MemoryTable[(int) size] = memPtr->next;
-
-   return ((void *) memPtr);
-#else
-   return(genalloc(theEnv,size));
+   return genalloc(theEnv,size);
 #endif
   }
 
@@ -409,7 +379,11 @@ void rm(
       return;
      }
 
-   if (size < sizeof(char *)) size = sizeof(char *);
+   if (size < sizeof(char *)) 
+     {
+      genfree(theEnv,str,size);
+      return;
+     }
 
 #if (MEM_TABLE_SIZE > 0)
    if (size >= MEM_TABLE_SIZE)
@@ -421,44 +395,6 @@ void rm(
    memPtr = (struct memoryPtr *) str;
    memPtr->next = MemoryData(theEnv)->MemoryTable[size];
    MemoryData(theEnv)->MemoryTable[size] = memPtr;
-#else
-   genfree(theEnv,str,size);
-#endif
-  }
-
-/********************************************/
-/* rm3: Returns a block of memory to the    */
-/*   maintained pool of free memory that's  */
-/*   size is indicated with a long integer. */
-/********************************************/
-void rm3(
-  Environment *theEnv,
-  void *str,
-  size_t size)
-  {
-#if (MEM_TABLE_SIZE > 0)
-   struct memoryPtr *memPtr;
-#endif
-
-   if (size == 0)
-     {
-      SystemError(theEnv,"MEMORY",1);
-      ExitRouter(theEnv,EXIT_FAILURE);
-      return;
-     }
-
-   if (size < (long) sizeof(char *)) size = sizeof(char *);
-
-#if (MEM_TABLE_SIZE > 0)
-   if (size >= MEM_TABLE_SIZE)
-     {
-      genfree(theEnv,str,size);
-      return;
-     }
-
-   memPtr = (struct memoryPtr *) str;
-   memPtr->next = MemoryData(theEnv)->MemoryTable[(int) size];
-   MemoryData(theEnv)->MemoryTable[(int) size] = memPtr;
 #else
    genfree(theEnv,str,size);
 #endif

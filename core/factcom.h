@@ -73,8 +73,8 @@
    void                           GetFactDuplicationCommand(Environment *,UDFContext *,UDFValue *);
    void                           SaveFactsCommand(Environment *,UDFContext *,UDFValue *);
    void                           LoadFactsCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           SaveFacts(Environment *,const char *,int);
-   bool                           SaveFactsDriver(Environment *,const char *,int,struct expr *);
+   bool                           SaveFacts(Environment *,const char *,SaveScope);
+   bool                           SaveFactsDriver(Environment *,const char *,SaveScope,struct expr *);
    bool                           LoadFacts(Environment *,const char *);
    bool                           LoadFactsFromString(Environment *,const char *,long);
    void                           FactIndexFunction(Environment *,UDFContext *,UDFValue *);

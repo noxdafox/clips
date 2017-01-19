@@ -33,13 +33,13 @@
 
       [self setValue: [NSString stringWithUTF8String: FactRelation(theFact)->contents] forKey: @"relationName"];
       
-      [self setValue: [NSString stringWithFormat:@"%lld", FactIndex(theEnvironment,theFact)] forKey: @"name"];
+      [self setValue: [NSString stringWithFormat:@"%lld", FactIndex(theFact)] forKey: @"name"];
 
-      [self setValue: [NSNumber numberWithLongLong: FactIndex(theEnvironment,theFact)] forKey: @"index"]; 
+      [self setValue: [NSNumber numberWithLongLong: FactIndex(theFact)] forKey: @"index"];
 
       theCPointer = theFact; 
             
-      FactSlotNames(theEnvironment,theFact,&slotNames);
+      FactSlotNames(theFact,&slotNames);
       
       environment = theEnvironment;
 
@@ -65,9 +65,9 @@
 
          /* Only static defaults will be excluded from display. */
 
-         if (DeftemplateSlotDefaultP(FactDeftemplate(theEnvironment,theFact),theCSlotName) == STATIC_DEFAULT)
+         if (DeftemplateSlotDefaultP(FactDeftemplate(theFact),theCSlotName) == STATIC_DEFAULT)
            {
-            DeftemplateSlotDefaultValue(FactDeftemplate(theEnvironment,theFact),
+            DeftemplateSlotDefaultValue(FactDeftemplate(theFact),
                                         theCSlotName,&cv);
             CLIPSToUDFValue(&cv,&defaultValue);
             if (DOsEqual(&slotValue,&defaultValue))
@@ -143,7 +143,7 @@
          const char *theCSlotName = slotNames.multifieldValue->contents[i].lexemeValue->contents;
          NSString *theSlotName = [NSString stringWithUTF8String: theCSlotName];
          
-         DirectGetSlot(theEnvironment,theInstance,theCSlotName,&result);
+         DirectGetSlot(theInstance,theCSlotName,&result);
          CLIPSToUDFValue(&result,&slotValue);
          
          NSString *theSlotValue = [NSString stringWithUTF8String: DataObjectToString(theEnvironment,&slotValue)];
@@ -171,7 +171,7 @@
       
       [self setValue: tempArray forKey: @"attributeValues"];
 
-      /* IncrementInstanceReferenceCount(theEnvironment,theInstance); */
+      /* IncrementInstanceReferenceCount(theInstance); */
      }
      
    return self;

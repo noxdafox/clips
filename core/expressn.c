@@ -211,7 +211,7 @@ struct expr *PackExpression(
 
    if (original == NULL) return (NULL);
    packPtr = (struct expr *)
-             gm3(theEnv,(long) sizeof (struct expr) *
+             gm2(theEnv,(long) sizeof (struct expr) *
                  (long) ExpressionSize(original));
    ListToPacked(original,packPtr,0L);
    return(packPtr);
@@ -272,7 +272,7 @@ void ReturnPackedExpression(
   {
    if (packPtr != NULL)
      {
-      rm3(theEnv,packPtr,(long) sizeof (struct expr) *
+      rm(theEnv,packPtr,(long) sizeof (struct expr) *
                          ExpressionSize(packPtr));
      }
   }

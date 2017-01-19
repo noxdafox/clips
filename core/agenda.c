@@ -151,7 +151,7 @@ void AddActivation(
    /*=======================================*/
 
    if (theRule->autoFocus)
-     { DefmoduleFocus(theRule->header.whichModule->theModule); }
+     { Focus(theRule->header.whichModule->theModule); }
 
    /*=======================================================*/
    /* Create the activation. The activation stores pointers */
@@ -404,14 +404,13 @@ int ActivationSetSalience(
 /********************************************/
 void ActivationPPForm(
   Activation *theActivation,
-  char *buffer,
-  size_t bufferLength)
+  StringBuilder *theSB)
   {
    Environment *theEnv = theActivation->theRule->header.env;
    
-   OpenStringDestination(theEnv,"ActPPForm",buffer,bufferLength);
+   OpenStringBuilderDestination(theEnv,"ActPPForm",theSB);
    PrintActivation(theEnv,"ActPPForm",theActivation);
-   CloseStringDestination(theEnv,"ActPPForm");
+   CloseStringBuilderDestination(theEnv,"ActPPForm");
   }
 
 /****************************************************/
@@ -920,14 +919,14 @@ void RefreshCommand(
    /* Refresh the rule. */
    /*===================*/
 
-   DefruleRefresh(rulePtr);
+   Refresh(rulePtr);
   }
 
-/****************************************************************/
-/* DefruleRefresh: Refreshes a defrule. Activations of the rule */
-/*   that have already been fired are added to the agenda.      */
-/****************************************************************/
-bool DefruleRefresh(
+/***********************************************************/
+/* Refresh: Refreshes a defrule. Activations of the rule   */
+/*   that have already been fired are added to the agenda. */
+/***********************************************************/
+bool Refresh(
   Defrule *theRule)
   {
    Defrule *rulePtr;
@@ -1010,19 +1009,19 @@ void RefreshAgendaCommand(
    /* Refresh the agenda of the appropriate module. */
    /*===============================================*/
 
-   DefmoduleRefreshAgenda(theModule,theEnv);
+   RefreshAgenda(theModule,theEnv);
   }
 
-/********************************************/
-/* DefmoduleRefreshAgenda: C access routine */
-/*   for the refresh-agenda command.        */
-/********************************************/
-void DefmoduleRefreshAgenda(
+/*************************************/
+/* RefreshAgenda: C access routine   */
+/*   for the refresh-agenda command. */
+/*************************************/
+void RefreshAgenda(
   Defmodule *theModule,
   Environment *allEnv)
   {
    Activation *theActivation;
-   int oldValue;
+   SalienceEvaluationType oldValue;
    bool allModules = false;
    Environment *theEnv;
    
@@ -1215,7 +1214,7 @@ static const char *SalienceEvaluationName(
 /*  type of salience evaluation (e.g., when defined,   */
 /*  when activated, or every cycle).                   */
 /*******************************************************/
-int GetSalienceEvaluation(
+SalienceEvaluationType GetSalienceEvaluation(
   Environment *theEnv)
   {
    return AgendaData(theEnv)->SalienceEvaluation;
@@ -1225,11 +1224,11 @@ int GetSalienceEvaluation(
 /* SetSalienceEvaluation: Sets the value of   */
 /*   the current type of salience evaluation. */
 /**********************************************/
-int SetSalienceEvaluation(
+SalienceEvaluationType SetSalienceEvaluation(
   Environment *theEnv,
-  int value)
+  SalienceEvaluationType value)
   {
-   int ov;
+   SalienceEvaluationType ov;
 
    ov = AgendaData(theEnv)->SalienceEvaluation;
    AgendaData(theEnv)->SalienceEvaluation = value;

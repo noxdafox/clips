@@ -60,9 +60,9 @@
 /**************************/
 /* setWatchMenuItemState: */
 /**************************/
-- (void) setWatchMenuItemState: (NSMenuItem *) menuItem forItem: (char *) watchItem
+- (void) setWatchMenuItemState: (NSMenuItem *) menuItem forItem: (WatchItem) watchItem
   {
-   if ([mainEnvironment getWatchItem: watchItem])
+   if ([mainEnvironment getWatchState: watchItem])
      { [menuItem setState: NSOnState]; }
    else
      { [menuItem setState: NSOffState]; }
@@ -78,46 +78,46 @@
    /*===================================*/
 
    if ([menuItem action] == @selector(watchCompilations:))
-     { [self setWatchMenuItemState: menuItem forItem: "compilations"]; }
+     { [self setWatchMenuItemState: menuItem forItem: COMPILATIONS]; }
 
    if ([menuItem action] == @selector(watchStatistics:))
-     { [self setWatchMenuItemState: menuItem forItem: "statistics"]; }
+     { [self setWatchMenuItemState: menuItem forItem: STATISTICS]; }
 
    if ([menuItem action] == @selector(watchFacts:))
-     { [self setWatchMenuItemState: menuItem forItem: "facts"]; }
+     { [self setWatchMenuItemState: menuItem forItem: FACTS]; }
 
    if ([menuItem action] == @selector(watchRules:))
-     { [self setWatchMenuItemState: menuItem forItem: "rules"]; }
+     { [self setWatchMenuItemState: menuItem forItem: RULES]; }
 
    if ([menuItem action] == @selector(watchActivations:))
-     { [self setWatchMenuItemState: menuItem forItem: "activations"]; }
+     { [self setWatchMenuItemState: menuItem forItem: ACTIVATIONS]; }
 
    if ([menuItem action] == @selector(watchFocus:))
-     { [self setWatchMenuItemState: menuItem forItem: "focus"]; }
+     { [self setWatchMenuItemState: menuItem forItem: FOCUS]; }
 
    if ([menuItem action] == @selector(watchGlobals:))
-     { [self setWatchMenuItemState: menuItem forItem: "globals"]; }
+     { [self setWatchMenuItemState: menuItem forItem: GLOBALS]; }
 
    if ([menuItem action] == @selector(watchDeffunctions:))
-     { [self setWatchMenuItemState: menuItem forItem: "deffunctions"]; }
+     { [self setWatchMenuItemState: menuItem forItem: DEFFUNCTIONS]; }
 
    if ([menuItem action] == @selector(watchGenericFunctions:))
-     { [self setWatchMenuItemState: menuItem forItem: "generic-functions"]; }
+     { [self setWatchMenuItemState: menuItem forItem: GENERIC_FUNCTIONS]; }
 
    if ([menuItem action] == @selector(watchMethods:))
-     { [self setWatchMenuItemState: menuItem forItem: "methods"]; }
+     { [self setWatchMenuItemState: menuItem forItem: METHODS]; }
 
    if ([menuItem action] == @selector(watchInstances:))
-     { [self setWatchMenuItemState: menuItem forItem: "instances"]; }
+     { [self setWatchMenuItemState: menuItem forItem: INSTANCES]; }
 
    if ([menuItem action] == @selector(watchSlots:))
-     { [self setWatchMenuItemState: menuItem forItem: "slots"]; }
+     { [self setWatchMenuItemState: menuItem forItem: SLOTS]; }
 
    if ([menuItem action] == @selector(watchMessageHandlers:))
-     { [self setWatchMenuItemState: menuItem forItem: "message-handlers"]; }
+     { [self setWatchMenuItemState: menuItem forItem: MESSAGE_HANDLERS]; }
 
    if ([menuItem action] == @selector(watchMessages:))
-     { [self setWatchMenuItemState: menuItem forItem: "messages"]; }
+     { [self setWatchMenuItemState: menuItem forItem: MESSAGES]; }
 
    /*===================================================*/
    /* The Halt and Halt Immediately menu items are only */
@@ -307,18 +307,18 @@
 /*******************/
 /* toggleWatchItem */
 /*******************/
-- (void) toggleWatchItem: (char *) watchItem
+- (void) toggleWatchItem: (WatchItem) watchItem
   {
-   [mainEnvironment setWatchItem: watchItem
-                         toValue: ! [mainEnvironment getWatchItem: watchItem]];
+   [mainEnvironment setWatchState: watchItem
+                         toValue: ! [mainEnvironment getWatchState: watchItem]];
   }
 
-/****************/
-/* setWatchItem */
-/****************/
-- (void) setWatchItem: (char *) watchItem toValue: (bool) value
+/*****************/
+/* setWatchState */
+/*****************/
+- (void) setWatchState: (WatchItem) watchItem toValue: (bool) value
   {
-   [mainEnvironment setWatchItem: watchItem
+   [mainEnvironment setWatchState: watchItem
                          toValue: value];
   }
 
@@ -327,7 +327,7 @@
 /*********************/
 - (IBAction) watchCompilations: (id) sender
   {
-   [self toggleWatchItem: "compilations"];
+   [self toggleWatchItem: COMPILATIONS];
   }
 
 /*******************/
@@ -335,7 +335,7 @@
 /*******************/
 - (IBAction) watchStatistics: (id) sender
   {
-   [self toggleWatchItem: "statistics"];
+   [self toggleWatchItem: STATISTICS];
   }
 
 /**************/
@@ -343,7 +343,7 @@
 /**************/
 - (IBAction) watchFacts: (id) sender
   {
-   [self toggleWatchItem: "facts"];
+   [self toggleWatchItem: FACTS];
   }
 
 /**************/
@@ -351,7 +351,7 @@
 /**************/
 - (IBAction) watchRules: (id) sender
   {
-   [self toggleWatchItem: "rules"];
+   [self toggleWatchItem: RULES];
   }
 
 /********************/
@@ -359,7 +359,7 @@
 /********************/
 - (IBAction) watchActivations: (id) sender
   {
-   [self toggleWatchItem: "activations"];
+   [self toggleWatchItem: ACTIVATIONS];
   }
 
 /**************/
@@ -367,7 +367,7 @@
 /**************/
 - (IBAction) watchFocus: (id) sender
   {
-   [self toggleWatchItem: "focus"];
+   [self toggleWatchItem: FOCUS];
   }
 
 /****************/
@@ -375,7 +375,7 @@
 /****************/
 - (IBAction) watchGlobals: (id) sender
   {
-   [self toggleWatchItem: "globals"];
+   [self toggleWatchItem: GLOBALS];
   }
 
 /*********************/
@@ -383,7 +383,7 @@
 /*********************/
 - (IBAction) watchDeffunctions: (id) sender
   {
-   [self toggleWatchItem: "deffunctions"];
+   [self toggleWatchItem: DEFFUNCTIONS];
   }
 
 /*************************/
@@ -391,7 +391,7 @@
 /*************************/
 - (IBAction) watchGenericFunctions: (id) sender
   {
-   [self toggleWatchItem: "generic-functions"];
+   [self toggleWatchItem: GENERIC_FUNCTIONS];
   }
 
 /****************/
@@ -399,7 +399,7 @@
 /****************/
 - (IBAction) watchMethods: (id) sender
   {
-   [self toggleWatchItem: "methods"];
+   [self toggleWatchItem: METHODS];
   }
 
 /******************/
@@ -407,7 +407,7 @@
 /******************/
 - (IBAction) watchInstances: (id) sender
   {
-   [self toggleWatchItem: "instances"];
+   [self toggleWatchItem: INSTANCES];
   }
 
 /**************/
@@ -415,7 +415,7 @@
 /**************/
 - (IBAction) watchSlots: (id) sender
   {
-   [self toggleWatchItem: "slots"];
+   [self toggleWatchItem: SLOTS];
   }
 
 /*************/
@@ -423,20 +423,20 @@
 /*************/
 - (IBAction) watchAll: (id) sender
   {
-   [self setWatchItem: "compilations" toValue: YES];
-   [self setWatchItem: "facts" toValue: YES];
-   [self setWatchItem: "rules" toValue: YES];
-   [self setWatchItem: "statistics" toValue: YES];
-   [self setWatchItem: "activations" toValue: YES];
-   [self setWatchItem: "focus" toValue: YES];
-   [self setWatchItem: "globals" toValue: YES];
-   [self setWatchItem: "deffunctions" toValue: YES];
-   [self setWatchItem: "generic-functions" toValue: YES];
-   [self setWatchItem: "methods" toValue: YES];
-   [self setWatchItem: "instances" toValue: YES];
-   [self setWatchItem: "slots" toValue: YES];
-   [self setWatchItem: "message-handlers" toValue: YES];
-   [self setWatchItem: "messages" toValue: YES];
+   [self setWatchState: COMPILATIONS toValue: YES];
+   [self setWatchState: FACTS toValue: YES];
+   [self setWatchState: RULES toValue: YES];
+   [self setWatchState: STATISTICS toValue: YES];
+   [self setWatchState: ACTIVATIONS toValue: YES];
+   [self setWatchState: FOCUS toValue: YES];
+   [self setWatchState: GLOBALS toValue: YES];
+   [self setWatchState: DEFFUNCTIONS toValue: YES];
+   [self setWatchState: GENERIC_FUNCTIONS toValue: YES];
+   [self setWatchState: METHODS toValue: YES];
+   [self setWatchState: INSTANCES toValue: YES];
+   [self setWatchState: SLOTS toValue: YES];
+   [self setWatchState: MESSAGE_HANDLERS toValue: YES];
+   [self setWatchState: MESSAGES toValue: YES];
   }
   
 /**************/
@@ -444,20 +444,20 @@
 /**************/
 - (IBAction) watchNone: (id) sender
   {
-   [self setWatchItem: "compilations" toValue: NO];
-   [self setWatchItem: "facts" toValue: NO];
-   [self setWatchItem: "rules" toValue: NO];
-   [self setWatchItem: "statistics" toValue: NO];
-   [self setWatchItem: "activations" toValue: NO];
-   [self setWatchItem: "focus" toValue: NO];
-   [self setWatchItem: "globals" toValue: NO];
-   [self setWatchItem: "deffunctions" toValue: NO];
-   [self setWatchItem: "generic-functions" toValue: NO];
-   [self setWatchItem: "methods" toValue: NO];
-   [self setWatchItem: "instances" toValue: NO];
-   [self setWatchItem: "slots" toValue: NO];
-   [self setWatchItem: "message-handlers" toValue: NO];
-   [self setWatchItem: "messages" toValue: NO];
+   [self setWatchState: COMPILATIONS toValue: NO];
+   [self setWatchState: FACTS toValue: NO];
+   [self setWatchState: RULES toValue: NO];
+   [self setWatchState: STATISTICS toValue: NO];
+   [self setWatchState: ACTIVATIONS toValue: NO];
+   [self setWatchState: FOCUS toValue: NO];
+   [self setWatchState: GLOBALS toValue: NO];
+   [self setWatchState: DEFFUNCTIONS toValue: NO];
+   [self setWatchState: GENERIC_FUNCTIONS toValue: NO];
+   [self setWatchState: METHODS toValue: NO];
+   [self setWatchState: INSTANCES toValue: NO];
+   [self setWatchState: SLOTS toValue: NO];
+   [self setWatchState: MESSAGE_HANDLERS toValue: NO];
+   [self setWatchState: MESSAGES toValue: NO];
   }
 
 /************************/
@@ -465,7 +465,7 @@
 /************************/
 - (IBAction) watchMessageHandlers: (id) sender
   {
-   [self toggleWatchItem: "message-handlers"];
+   [self toggleWatchItem: MESSAGE_HANDLERS];
   }
 
 /*****************/
@@ -473,7 +473,7 @@
 /*****************/
 - (IBAction) watchMessages: (id) sender
   {
-   [self toggleWatchItem: "messages"];
+   [self toggleWatchItem: MESSAGES];
   }
 
 /******************/
@@ -601,46 +601,46 @@
    theDefaultsController = [NSUserDefaultsController sharedUserDefaultsController];
    theValues = [theDefaultsController values];
 
-   watchValue = [NSNumber numberWithBool: [theEnv getWatchItem: "compilations"]];
+   watchValue = [NSNumber numberWithBool: [theEnv getWatchState: COMPILATIONS]];
    [theValues setValue: watchValue forKey: @"compilations"];
    
-   watchValue = [NSNumber numberWithBool: [theEnv getWatchItem: "facts"]];
+   watchValue = [NSNumber numberWithBool: [theEnv getWatchState: FACTS]];
    [theValues setValue: watchValue forKey: @"facts"];
 
-   watchValue = [NSNumber numberWithBool: [theEnv getWatchItem: "rules"]];
+   watchValue = [NSNumber numberWithBool: [theEnv getWatchState: RULES]];
    [theValues setValue: watchValue forKey: @"rules"];
 
-   watchValue = [NSNumber numberWithBool: [theEnv getWatchItem: "statistics"]];
+   watchValue = [NSNumber numberWithBool: [theEnv getWatchState: STATISTICS]];
    [theValues setValue: watchValue forKey: @"statistics"];
 
-   watchValue = [NSNumber numberWithBool: [theEnv getWatchItem: "activations"]];
+   watchValue = [NSNumber numberWithBool: [theEnv getWatchState: ACTIVATIONS]];
    [theValues setValue: watchValue forKey: @"activations"];
 
-   watchValue = [NSNumber numberWithBool: [theEnv getWatchItem: "focus"]];
+   watchValue = [NSNumber numberWithBool: [theEnv getWatchState: FOCUS]];
    [theValues setValue: watchValue forKey: @"focus"];
 
-   watchValue = [NSNumber numberWithBool: [theEnv getWatchItem: "globals"]];
+   watchValue = [NSNumber numberWithBool: [theEnv getWatchState: GLOBALS]];
    [theValues setValue: watchValue forKey: @"globals"];
 
-   watchValue = [NSNumber numberWithBool: [theEnv getWatchItem: "deffunctions"]];
+   watchValue = [NSNumber numberWithBool: [theEnv getWatchState: DEFFUNCTIONS]];
    [theValues setValue: watchValue forKey: @"deffunctions"];
 
-   watchValue = [NSNumber numberWithBool: [theEnv getWatchItem: "generic-functions"]];
+   watchValue = [NSNumber numberWithBool: [theEnv getWatchState: GENERIC_FUNCTIONS]];
    [theValues setValue: watchValue forKey: @"generic-functions"];
 
-   watchValue = [NSNumber numberWithBool: [theEnv getWatchItem: "methods"]];
+   watchValue = [NSNumber numberWithBool: [theEnv getWatchState: METHODS]];
    [theValues setValue: watchValue forKey: @"methods"];
 
-   watchValue = [NSNumber numberWithBool: [theEnv getWatchItem: "instances"]];
+   watchValue = [NSNumber numberWithBool: [theEnv getWatchState: INSTANCES]];
    [theValues setValue: watchValue forKey: @"instances"];
 
-   watchValue = [NSNumber numberWithBool: [theEnv getWatchItem: "slots"]];
+   watchValue = [NSNumber numberWithBool: [theEnv getWatchState: SLOTS]];
    [theValues setValue: watchValue forKey: @"slots"];
 
-   watchValue = [NSNumber numberWithBool: [theEnv getWatchItem: "message-handlers"]];
+   watchValue = [NSNumber numberWithBool: [theEnv getWatchState: MESSAGE_HANDLERS]];
    [theValues setValue: watchValue forKey: @"message-handlers"];
 
-   watchValue = [NSNumber numberWithBool: [theEnv getWatchItem: "messages"]];
+   watchValue = [NSNumber numberWithBool: [theEnv getWatchState: MESSAGES]];
    [theValues setValue: watchValue forKey: @"messages"];
    
    [theDefaultsController save: self];

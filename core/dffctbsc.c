@@ -197,11 +197,15 @@ bool Undeffacts(
    Environment *theEnv;
    
    if (theDeffacts == NULL)
-     { theEnv = allEnv; }
+     {
+      theEnv = allEnv;
+      return Undefconstruct(theEnv,NULL,DeffactsData(theEnv)->DeffactsConstruct);
+     }
    else
-     { theEnv = theDeffacts->header.env; }
-   
-   return Undefconstruct(theEnv,&theDeffacts->header,DeffactsData(theEnv)->DeffactsConstruct);
+     {
+      theEnv = theDeffacts->header.env;
+      return Undefconstruct(theEnv,&theDeffacts->header,DeffactsData(theEnv)->DeffactsConstruct);
+     }
   }
 
 /*************************************************/

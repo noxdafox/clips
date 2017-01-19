@@ -1185,9 +1185,9 @@ FactAddressValue::FactAddressValue(
   Environment *theEnv,Fact *theFact) : theEnvironment(theEnv), theFactAddress(theFact)
   {
 #ifndef CLIPS_DLL_WRAPPER
-   IncrementFactReferenceCount(theEnvironment,theFact);
+   IncrementFactReferenceCount(theFact);
 #else
-   __IncrementFactReferenceCount(theEnvironment,theFact);
+   __IncrementFactReferenceCount(theFact);
 #endif
   }
 
@@ -1205,9 +1205,9 @@ FactAddressValue::FactAddressValue( const FactAddressValue& v) : theFactAddress(
 FactAddressValue::~FactAddressValue()
   {   
 #ifndef CLIPS_DLL_WRAPPER
-   ::DecrementFactReferenceCount(theEnvironment,theFactAddress);
+   ::DecrementFactReferenceCount(theFactAddress);
 #else
-   __DecrementFactReferenceCount(theEnvironment,theFactAddress);
+   __DecrementFactReferenceCount(theFactAddress);
 #endif
   }
 
@@ -1230,9 +1230,9 @@ FactAddressValue& FactAddressValue::operator = (
    if (theFactAddress != NULL)
      { 
 #ifndef CLIPS_DLL_WRAPPER
-      ::DecrementFactReferenceCount(theEnvironment,theFactAddress);
+      ::DecrementFactReferenceCount(theFactAddress);
 #else
-      __DecrementFactReferenceCount(theEnvironment,theFactAddress);
+      __DecrementFactReferenceCount(theFactAddress);
 #endif
      }
         
@@ -1240,9 +1240,9 @@ FactAddressValue& FactAddressValue::operator = (
    theFactAddress = v.theFactAddress;
      
 #ifndef CLIPS_DLL_WRAPPER
-   IncrementFactReferenceCount(theEnvironment,theFactAddress);
+   IncrementFactReferenceCount(theFactAddress);
 #else
-   __IncrementFactReferenceCount(theEnvironment,theFactAddress);
+   __IncrementFactReferenceCount(theFactAddress);
 #endif
    
    return *this;
@@ -1254,9 +1254,9 @@ FactAddressValue& FactAddressValue::operator = (
 long long FactAddressValue::GetFactIndex() const
   {  
 #ifndef CLIPS_DLL_WRAPPER
-   return FactIndex(theEnvironment,theFactAddress);
+   return FactIndex(theFactAddress);
 #else
-   return __FactIndex(theEnvironment,theFactAddress);
+   return __FactIndex(theFactAddress);
 #endif
 
   }
@@ -1284,9 +1284,9 @@ DataObject FactAddressValue::GetFactSlot(char *slotName) const
    int rv;
    
 #ifndef CLIPS_DLL_WRAPPER
-   rv = ::GetFactSlot(theEnvironment,theFactAddress,slotName,&theCV);
+   rv = ::GetFactSlot(theFactAddress,slotName,&theCV);
 #else
-   rv = __GetFactSlot(theEnvironment,theFactAddress,slotName,&theCV);
+   rv = __GetFactSlot(theFactAddress,slotName,&theCV);
 #endif
    
    if (! rv)
@@ -1317,9 +1317,9 @@ InstanceAddressValue::InstanceAddressValue(
   Environment *theEnv,Instance *theInstance) : theEnvironment(theEnv), theInstanceAddress(theInstance)
   {
 #ifndef CLIPS_DLL_WRAPPER
-   IncrementInstanceReferenceCount(theEnvironment,theInstance);
+   IncrementInstanceReferenceCount(theInstance);
 #else
-   __IncrementInstanceReferenceCount(theEnvironment,theInstance);
+   __IncrementInstanceReferenceCount(theInstance);
 #endif
   }
 
@@ -1337,9 +1337,9 @@ InstanceAddressValue::InstanceAddressValue( const InstanceAddressValue& v) : the
 InstanceAddressValue::~InstanceAddressValue()
   {   
 #ifndef CLIPS_DLL_WRAPPER
-   ::DecrementInstanceReferenceCount(theEnvironment,theInstanceAddress);
+   ::DecrementInstanceReferenceCount(theInstanceAddress);
 #else
-   __DecrementInstanceReferenceCount(theEnvironment,theInstanceAddress);
+   __DecrementInstanceReferenceCount(theInstanceAddress);
 #endif
   }
 
@@ -1354,9 +1354,9 @@ InstanceAddressValue& InstanceAddressValue::operator = (
    if (theInstanceAddress != NULL)
      { 
 #ifndef CLIPS_DLL_WRAPPER
-      ::DecrementInstanceReferenceCount(theEnvironment,theInstanceAddress);
+      ::DecrementInstanceReferenceCount(theInstanceAddress);
 #else
-      __DecrementInstanceReferenceCount(theEnvironment,theInstanceAddress);
+      __DecrementInstanceReferenceCount(theInstanceAddress);
 #endif
 
      }
@@ -1365,9 +1365,9 @@ InstanceAddressValue& InstanceAddressValue::operator = (
    theInstanceAddress = v.theInstanceAddress;
      
 #ifndef CLIPS_DLL_WRAPPER
-   ::IncrementInstanceReferenceCount(theEnvironment,theInstanceAddress);
+   ::IncrementInstanceReferenceCount(theInstanceAddress);
 #else
-   __IncrementInstanceReferenceCount(theEnvironment,theInstanceAddress);
+   __IncrementInstanceReferenceCount(theInstanceAddress);
 #endif
    
    return *this;
@@ -1401,9 +1401,9 @@ DataObject InstanceAddressValue::DirectGetSlot(char *slotName) const
    CLIPSValue theCV;
    
 #ifndef CLIPS_DLL_WRAPPER
-   ::DirectGetSlot(theEnvironment,theInstanceAddress,slotName,&theCV);
+   ::DirectGetSlot(theInstanceAddress,slotName,&theCV);
 #else
-   __DirectGetSlot(theEnvironment,theInstanceAddress,slotName,&theCV);
+   __DirectGetSlot(theInstanceAddress,slotName,&theCV);
 #endif
    
    return ConvertDataObject(theEnvironment,&theCV);

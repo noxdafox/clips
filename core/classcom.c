@@ -780,7 +780,7 @@ static void SaveDefclass(
      {
       PrintInChunks(theEnv,logName,ppForm);
       PrintString(theEnv,logName,"\n");
-      hnd = GetNextDefmessageHandler(theEnv,theDefclass,0);
+      hnd = GetNextDefmessageHandler(theDefclass,0);
       while (hnd != 0)
         {
          ppForm = DefmessageHandlerPPForm(theDefclass,hnd);
@@ -789,7 +789,7 @@ static void SaveDefclass(
             PrintInChunks(theEnv,logName,ppForm);
             PrintString(theEnv,logName,"\n");
            }
-         hnd = GetNextDefmessageHandler(theEnv,theDefclass,hnd);
+         hnd = GetNextDefmessageHandler(theDefclass,hnd);
         }
      }
   }
@@ -800,25 +800,25 @@ static void SaveDefclass(
 /* SetClassDefaultsMode: Allows the setting */
 /*    of the class defaults mode.           */
 /********************************************/
-unsigned short SetClassDefaultsMode(
+ClassDefaultsMode SetClassDefaultsMode(
   Environment *theEnv,
-  unsigned short value)
+  ClassDefaultsMode value)
   {
-   unsigned short ov;
+   ClassDefaultsMode ov;
 
-   ov = DefclassData(theEnv)->ClassDefaultsMode;
-   DefclassData(theEnv)->ClassDefaultsMode = value;
-   return(ov);
+   ov = DefclassData(theEnv)->ClassDefaultsModeValue;
+   DefclassData(theEnv)->ClassDefaultsModeValue = value;
+   return ov;
   }
 
 /****************************************/
 /* GetClassDefaultsMode: Returns the    */
 /*    value of the class defaults mode. */
 /****************************************/
-unsigned short GetClassDefaultsMode(
+ClassDefaultsMode GetClassDefaultsMode(
   Environment *theEnv)
   {
-   return DefclassData(theEnv)->ClassDefaultsMode;
+   return DefclassData(theEnv)->ClassDefaultsModeValue;
   }
 
 /***************************************************/
@@ -846,7 +846,7 @@ void SetClassDefaultsModeCommand(
    const char *argument;
    unsigned short oldMode;
 
-   oldMode = DefclassData(theEnv)->ClassDefaultsMode;
+   oldMode = DefclassData(theEnv)->ClassDefaultsModeValue;
 
    /*=====================================================*/
    /* Check for the correct number and type of arguments. */

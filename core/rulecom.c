@@ -256,7 +256,7 @@ void MatchesCommand(
    const char *ruleName, *argument;
    Defrule *rulePtr;
    UDFValue theArg;
-   int output;
+   Verbosity output;
    CLIPSValue result;
 
    if (! UDFFirstArgument(context,SYMBOL_BIT,&theArg))
@@ -294,17 +294,17 @@ void MatchesCommand(
    else
      { output = VERBOSE; }
 
-   DefruleMatches(rulePtr,output,&result);
+   Matches(rulePtr,output,&result);
    CLIPSToUDFValue(&result,returnValue);
   }
 
-/************************************/
-/* DefruleMatches: C access routine */
-/*   for the matches command.       */
-/************************************/
-void DefruleMatches(
+/******************************/
+/* Matches: C access routine  */
+/*   for the matches command. */
+/******************************/
+void Matches(
   Defrule *theDefrule,
-  int output,
+  Verbosity output,
   CLIPSValue *returnValue)
   {
    Defrule *rulePtr;

@@ -136,7 +136,7 @@ struct deftemplateData
    Deftemplate                   *FindDeftemplateInModule(Environment *,const char *);
    Deftemplate                   *GetNextDeftemplate(Environment *,Deftemplate *);
    bool                           DeftemplateIsDeletable(Deftemplate *);
-   Fact                          *GetNextFactInTemplate(Environment *,Deftemplate *,Fact *);
+   Fact                          *GetNextFactInTemplate(Deftemplate *,Fact *);
    struct deftemplateModule      *GetDeftemplateModuleItem(Environment *,Defmodule *);
    void                           ReturnSlots(Environment *,struct templateSlot *);
    void                           IncrementDeftemplateBusyCount(Environment *,Deftemplate *);

@@ -1271,7 +1271,7 @@ InstanceBuilder *CreateInstanceBuilder(
    theIB->ibEnv = theEnv;
    theIB->ibDefclass = theDefclass;
       
-   theIB->ibValueArray = (CLIPSValue *) gm3(theEnv,sizeof(CLIPSValue) * theDefclass->slotCount);
+   theIB->ibValueArray = (CLIPSValue *) gm2(theEnv,sizeof(CLIPSValue) * theDefclass->slotCount);
 
    for (i = 0; i < theDefclass->slotCount; i++)
      { theIB->ibValueArray[i].voidValue = VoidConstant(theEnv); }
@@ -1405,7 +1405,7 @@ bool IBPutSlot(
      
    if (theIB->ibValueArray == NULL)
      {
-      theIB->ibValueArray = (CLIPSValue *) gm3(theIB->ibEnv,sizeof(CLIPSValue) * theIB->ibDefclass->slotCount);
+      theIB->ibValueArray = (CLIPSValue *) gm2(theIB->ibEnv,sizeof(CLIPSValue) * theIB->ibDefclass->slotCount);
       for (i = 0; i < theIB->ibDefclass->slotCount; i++)
         { theIB->ibValueArray[i].voidValue = theIB->ibEnv->VoidConstant; }
      }
@@ -1499,7 +1499,7 @@ void IBDispose(
    IBAbort(theIB);
    
    if (theIB->ibValueArray != NULL)
-     { rm3(theEnv,theIB->ibValueArray,sizeof(CLIPSValue) * theIB->ibDefclass->slotCount); }
+     { rm(theEnv,theIB->ibValueArray,sizeof(CLIPSValue) * theIB->ibDefclass->slotCount); }
    
    rtn_struct(theEnv,instanceBuilder,theIB);
   }
@@ -1542,11 +1542,11 @@ bool IBSetDefclass(
    if (theDefclass == NULL) return false;
 
    if (theIB->ibValueArray != NULL)
-     { rm3(theEnv,theIB->ibValueArray,sizeof(CLIPSValue) * theIB->ibDefclass->slotCount); }
+     { rm(theEnv,theIB->ibValueArray,sizeof(CLIPSValue) * theIB->ibDefclass->slotCount); }
 
    theIB->ibDefclass = theDefclass;
    
-   theIB->ibValueArray = (CLIPSValue *) gm3(theEnv,sizeof(CLIPSValue) * theDefclass->slotCount);
+   theIB->ibValueArray = (CLIPSValue *) gm2(theEnv,sizeof(CLIPSValue) * theDefclass->slotCount);
 
    for (i = 0; i < theDefclass->slotCount; i++)
      { theIB->ibValueArray[i].voidValue = VoidConstant(theEnv); }
@@ -1573,9 +1573,9 @@ InstanceModifier *CreateInstanceModifier(
    theIM->imEnv = theEnv;
    theIM->imOldInstance = oldInstance;
 
-   IncrementInstanceReferenceCount(theEnv,oldInstance);
+   IncrementInstanceReferenceCount(oldInstance);
 
-   theIM->imValueArray = (CLIPSValue *) gm3(theEnv,sizeof(CLIPSValue) * oldInstance->cls->slotCount);
+   theIM->imValueArray = (CLIPSValue *) gm2(theEnv,sizeof(CLIPSValue) * oldInstance->cls->slotCount);
 
    for (i = 0; i < oldInstance->cls->slotCount; i++)
      { theIM->imValueArray[i].voidValue = VoidConstant(theEnv); }
@@ -1718,7 +1718,7 @@ bool IMPutSlot(
 */
    if (theIM->imValueArray == NULL)
      {
-      theIM->imValueArray = (CLIPSValue *) gm3(theIM->imEnv,sizeof(CLIPSValue) * theIM->imOldInstance->cls->slotCount);
+      theIM->imValueArray = (CLIPSValue *) gm2(theIM->imEnv,sizeof(CLIPSValue) * theIM->imOldInstance->cls->slotCount);
       for (i = 0; i < theIM->imOldInstance->cls->slotCount; i++)
         { theIM->imValueArray[i].voidValue = theIM->imEnv->VoidConstant; }
      }
@@ -1871,7 +1871,7 @@ void IMDispose(
    /*=====================================*/
    
    if (theIM->imValueArray != NULL)
-     { rm3(theEnv,theIM->imValueArray,sizeof(CLIPSValue) * theIM->imOldInstance->cls->slotCount); }
+     { rm(theEnv,theIM->imValueArray,sizeof(CLIPSValue) * theIM->imOldInstance->cls->slotCount); }
       
    if (theIM->changeMap != NULL)
      { rm(theEnv,(void *) theIM->changeMap,CountToBitMapSize(theIM->imOldInstance->cls->slotCount)); }
@@ -1880,7 +1880,7 @@ void IMDispose(
    /* Return the InstanceModifier structure. */
    /*========================================*/
    
-   DecrementInstanceReferenceCount(theEnv,theIM->imOldInstance);
+   DecrementInstanceReferenceCount(theIM->imOldInstance);
    
    rtn_struct(theEnv,instanceModifier,theIM);
   }
@@ -1945,12 +1945,12 @@ bool IMSetInstance(
    if (oldInstance->cls->slotCount != currentSlotCount)
      {
       if (theIM->imValueArray != NULL)
-        { rm3(theEnv,theIM->imValueArray,sizeof(CLIPSValue) * currentSlotCount); }
+        { rm(theEnv,theIM->imValueArray,sizeof(CLIPSValue) * currentSlotCount); }
       
       if (theIM->changeMap != NULL)
         { rm(theEnv,(void *) theIM->changeMap,currentSlotCount); }
         
-      theIM->imValueArray = (CLIPSValue *) gm3(theEnv,sizeof(CLIPSValue) * oldInstance->cls->slotCount);
+      theIM->imValueArray = (CLIPSValue *) gm2(theEnv,sizeof(CLIPSValue) * oldInstance->cls->slotCount);
       theIM->changeMap = (char *) gm2(theEnv,CountToBitMapSize(oldInstance->cls->slotCount));
      }
    
@@ -1958,9 +1958,9 @@ bool IMSetInstance(
    /* Update the fact being modified. */
    /*=================================*/
    
-   DecrementInstanceReferenceCount(theEnv,theIM->imOldInstance);
+   DecrementInstanceReferenceCount(theIM->imOldInstance);
    theIM->imOldInstance = oldInstance;
-   IncrementInstanceReferenceCount(theEnv,theIM->imOldInstance);
+   IncrementInstanceReferenceCount(theIM->imOldInstance);
    
    /*=========================================*/
    /* Initialize the value and change arrays. */

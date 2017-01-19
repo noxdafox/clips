@@ -66,9 +66,9 @@
 #if DEBUGGING_FUNCTIONS
 
    void                           BrowseClassesCommand(Environment *,UDFContext *,UDFValue *);
-   void                           BrowseClasses(const char *,Defclass *);
+   void                           BrowseClasses(Defclass *,const char *);
    void                           DescribeClassCommand(Environment *,UDFContext *,UDFValue *);
-   void                           DescribeClass(const char *,Defclass *);
+   void                           DescribeClass(Defclass *,const char *);
 
 #endif /* DEBUGGING_FUNCTIONS */
 

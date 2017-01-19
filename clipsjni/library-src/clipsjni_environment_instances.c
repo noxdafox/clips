@@ -142,7 +142,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getInstanceList
          
          theCSlotName = slotNames.multifieldValue->contents[i].lexemeValue->contents;
          
-         DirectGetSlot(theCLIPSEnv,instancePtr,slotNames.multifieldValue->contents[i].lexemeValue->contents,&temp);
+         DirectGetSlot(instancePtr,slotNames.multifieldValue->contents[i].lexemeValue->contents,&temp);
          CLIPSToUDFValue(&temp,&slotValue);
 
          if (SlotDefaultP(theCLIPSEnv,theClass,theCSlotName) == STATIC_DEFAULT)
@@ -278,7 +278,7 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_incrementInstanceC
   {
    void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
 
-   IncrementInstanceReferenceCount(JLongToPointer(clipsEnv),JLongToPointer(clipsInstance));
+   IncrementInstanceReferenceCount(JLongToPointer(clipsInstance));
    
    SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
   }
@@ -301,7 +301,7 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_decrementInstanceC
   {
    void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
 
-   DecrementInstanceReferenceCount(JLongToPointer(clipsEnv),JLongToPointer(clipsInstance));
+   DecrementInstanceReferenceCount(JLongToPointer(clipsInstance));
    
    SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
   }
@@ -365,7 +365,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_directGetSlot(
 
    void *oldContext = SetEnvironmentContext(theCLIPSEnv,(void *) env);
    
-   DirectGetSlot(JLongToPointer(clipsEnv),JLongToPointer(clipsInstance),(char *) cSlotName,&theDO);
+   DirectGetSlot(JLongToPointer(clipsInstance),(char *) cSlotName,&theDO);
 
    (*env)->ReleaseStringUTFChars(env,slotName,cSlotName);
    

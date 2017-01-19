@@ -129,6 +129,7 @@
    static bool                    ClearFactsReady(Environment *,void *);
    static void                    RemoveGarbageFacts(Environment *,void *);
    static void                    DeallocateFactData(Environment *);
+   static bool                    RetractCallback(Fact *,Environment *);
 
 /**************************************************************/
 /* InitializeFacts: Initializes the fact data representation. */
@@ -142,11 +143,11 @@ void InitializeFacts(
       { { "FACT_ADDRESS_TYPE", FACT_ADDRESS_TYPE,1,0,0,
           (EntityPrintFunction *) PrintFactIdentifier,
           (EntityPrintFunction *) PrintFactIdentifierInLongForm,
-          (bool (*)(void *,void *)) Retract,
+          (bool (*)(void *,Environment *)) RetractCallback,
           NULL,
           (void *(*)(void *,void *)) GetNextFact,
-          (EntityBusyCountFunction *) DecrementFactReferenceCount,
-          (EntityBusyCountFunction *) IncrementFactReferenceCount,
+          (EntityBusyCountFunction *) DecrementFactCallback,
+          (EntityBusyCountFunction *) IncrementFactCallback,
           NULL,NULL,NULL,NULL,NULL
         },
         (void (*)(Environment *,void *)) DecrementFactBasisCount,
@@ -264,7 +265,7 @@ static void DeallocateFactData(
         }
      }
 
-   rm3(theEnv,FactData(theEnv)->FactHashTable,
+   rm(theEnv,FactData(theEnv)->FactHashTable,
        sizeof(struct factHashEntry *) * FactData(theEnv)->FactHashTableSize);
 
    tmpFactPtr = FactData(theEnv)->FactList;
@@ -363,7 +364,7 @@ void DecrementFactBasisCount(
    Multifield *theSegment;
    int i;
 
-   DecrementFactReferenceCount(theEnv,factPtr);
+   DecrementFactReferenceCount(factPtr);
 
    if (factPtr->basisSlots != NULL)
      {
@@ -394,7 +395,7 @@ void IncrementFactBasisCount(
    Multifield *theSegment;
    int i;
 
-   IncrementFactReferenceCount(theEnv,factPtr);
+   IncrementFactReferenceCount(factPtr);
 
    theSegment = &factPtr->theProposition;
 
@@ -691,14 +692,23 @@ bool RetractDriver(
    return true;
   }
 
+/*******************/
+/* RetractCallback */
+/*******************/
+static bool RetractCallback(
+  Fact *theFact,
+  Environment *theEnv)
+  {
+   return RetractDriver(theEnv,theFact,false,NULL);
+  }
+
 /******************************************************/
 /* Retract: C access routine for the retract command. */
 /******************************************************/
 bool Retract(
-  Environment *theEnv,
   Fact *theFact)
   {
-   return RetractDriver(theEnv,theFact,false,NULL);
+   return RetractDriver(theFact->whichDeftemplate->header.env,theFact,false,NULL);
   }
 
 /*******************************************************************/
@@ -1000,7 +1010,7 @@ void RemoveAllFacts(
   Environment *theEnv)
   {
    while (FactData(theEnv)->FactList != NULL)
-     { Retract(theEnv,FactData(theEnv)->FactList); }
+     { Retract(FactData(theEnv)->FactList); }
   }
 
 /*********************************************/
@@ -1058,13 +1068,13 @@ Fact *CreateFact(
 /*   from the specified slot of a fact. */
 /****************************************/
 bool GetFactSlot(
-  Environment *theEnv,
   Fact *theFact,
   const char *slotName,
   CLIPSValue *theValue)
   {
    Deftemplate *theDeftemplate;
    short whichSlot;
+   Environment *theEnv = theFact->whichDeftemplate->header.env;
 
    /*===============================================*/
    /* Get the deftemplate associated with the fact. */
@@ -1459,10 +1469,10 @@ void FactDeinstall(
   }
 
 /***********************************************/
-/* IncrementFactReferenceCount: Increments the */
+/* IncrementFactCallback: Increments the       */
 /*   number of references to a specified fact. */
 /***********************************************/
-void IncrementFactReferenceCount(
+void IncrementFactCallback(
   Environment *theEnv,
   Fact *factPtr)
   {
@@ -1475,16 +1485,40 @@ void IncrementFactReferenceCount(
   }
 
 /***********************************************/
-/* DecrementFactReferenceCount: Decrements the */
+/* DecrementFactCallback: Decrements the       */
 /*   number of references to a specified fact. */
 /***********************************************/
-void DecrementFactReferenceCount(
+void DecrementFactCallback(
   Environment *theEnv,
   Fact *factPtr)
   {
 #if MAC_XCD
 #pragma unused(theEnv)
 #endif
+   if (factPtr == NULL) return;
+
+   factPtr->patternHeader.busyCount--;
+  }
+
+/***********************************************/
+/* IncrementFactReferenceCount: Increments the */
+/*   number of references to a specified fact. */
+/***********************************************/
+void IncrementFactReferenceCount(
+  Fact *factPtr)
+  {
+   if (factPtr == NULL) return;
+
+   factPtr->patternHeader.busyCount++;
+  }
+
+/***********************************************/
+/* DecrementFactReferenceCount: Decrements the */
+/*   number of references to a specified fact. */
+/***********************************************/
+void DecrementFactReferenceCount(
+  Fact *factPtr)
+  {
    if (factPtr == NULL) return;
 
    factPtr->patternHeader.busyCount--;
@@ -1576,14 +1610,13 @@ Fact *GetNextFactInScope(
 /*************************************/
 void FactPPForm(
   Fact *theFact,
-  char *buffer,
-  size_t bufferLength)
+  StringBuilder *theSB)
   {
    Environment *theEnv = theFact->whichDeftemplate->header.env;
    
-   OpenStringDestination(theEnv,"FactPPForm",buffer,bufferLength);
+   OpenStringBuilderDestination(theEnv,"FactPPForm",theSB);
    PrintFactWithIdentifier(theEnv,"FactPPForm",theFact,NULL);
-   CloseStringDestination(theEnv,"FactPPForm");
+   CloseStringBuilderDestination(theEnv,"FactPPForm");
   }
 
 /**********************************/
@@ -1591,13 +1624,8 @@ void FactPPForm(
 /*   for the fact-index function. */
 /**********************************/
 long long FactIndex(
-  Environment *theEnv,
   Fact *factPtr)
   {
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
-
    return factPtr->factIndex;
   }
 
@@ -1980,7 +2008,7 @@ FactBuilder *CreateFactBuilder(
    theFB->fbEnv = theEnv;
    theFB->fbDeftemplate = theDeftemplate;
       
-   theFB->fbValueArray = (CLIPSValue *) gm3(theEnv,sizeof(CLIPSValue) * theDeftemplate->numberOfSlots);
+   theFB->fbValueArray = (CLIPSValue *) gm2(theEnv,sizeof(CLIPSValue) * theDeftemplate->numberOfSlots);
 
    for (i = 0; i < theDeftemplate->numberOfSlots; i++)
      { theFB->fbValueArray[i].voidValue = VoidConstant(theEnv); }
@@ -2239,7 +2267,7 @@ bool FBPutSlot(
      
    if (theFB->fbValueArray == NULL)
      {
-      theFB->fbValueArray = (CLIPSValue *) gm3(theFB->fbEnv,sizeof(CLIPSValue) * theFB->fbDeftemplate->numberOfSlots);
+      theFB->fbValueArray = (CLIPSValue *) gm2(theFB->fbEnv,sizeof(CLIPSValue) * theFB->fbDeftemplate->numberOfSlots);
       for (i = 0; i < theFB->fbDeftemplate->numberOfSlots; i++)
         { theFB->fbValueArray[i].voidValue = theFB->fbEnv->VoidConstant; }
      }
@@ -2316,7 +2344,7 @@ void FBDispose(
    FBAbort(theFB);
    
    if (theFB->fbValueArray != NULL)
-     { rm3(theEnv,theFB->fbValueArray,sizeof(CLIPSValue) * theFB->fbDeftemplate->numberOfSlots); }
+     { rm(theEnv,theFB->fbValueArray,sizeof(CLIPSValue) * theFB->fbDeftemplate->numberOfSlots); }
    
    rtn_struct(theEnv,factBuilder,theFB);
   }
@@ -2360,11 +2388,11 @@ bool FBSetDeftemplate(
    if (theDeftemplate->implied) return false;
 
    if (theFB->fbValueArray != NULL)
-     { rm3(theEnv,theFB->fbValueArray,sizeof(CLIPSValue) * theFB->fbDeftemplate->numberOfSlots); }
+     { rm(theEnv,theFB->fbValueArray,sizeof(CLIPSValue) * theFB->fbDeftemplate->numberOfSlots); }
 
    theFB->fbDeftemplate = theDeftemplate;
    
-   theFB->fbValueArray = (CLIPSValue *) gm3(theEnv,sizeof(CLIPSValue) * theDeftemplate->numberOfSlots);
+   theFB->fbValueArray = (CLIPSValue *) gm2(theEnv,sizeof(CLIPSValue) * theDeftemplate->numberOfSlots);
 
    for (i = 0; i < theDeftemplate->numberOfSlots; i++)
      { theFB->fbValueArray[i].voidValue = VoidConstant(theEnv); }
@@ -2402,9 +2430,9 @@ FactModifier *CreateFactModifier(
       return theFM;
      }
      
-   IncrementFactReferenceCount(theEnv,oldFact);
+   IncrementFactReferenceCount(oldFact);
 
-   theFM->fmValueArray = (CLIPSValue *) gm3(theEnv,sizeof(CLIPSValue) * oldFact->whichDeftemplate->numberOfSlots);
+   theFM->fmValueArray = (CLIPSValue *) gm2(theEnv,sizeof(CLIPSValue) * oldFact->whichDeftemplate->numberOfSlots);
 
    for (i = 0; i < oldFact->whichDeftemplate->numberOfSlots; i++)
      { theFM->fmValueArray[i].voidValue = VoidConstant(theEnv); }
@@ -2682,7 +2710,7 @@ bool FMPutSlot(
 
    if (theFM->fmValueArray == NULL)
      {
-      theFM->fmValueArray = (CLIPSValue *) gm3(theFM->fmEnv,sizeof(CLIPSValue) * theFM->fmOldFact->whichDeftemplate->numberOfSlots);
+      theFM->fmValueArray = (CLIPSValue *) gm2(theFM->fmEnv,sizeof(CLIPSValue) * theFM->fmOldFact->whichDeftemplate->numberOfSlots);
       for (i = 0; i < theFM->fmOldFact->whichDeftemplate->numberOfSlots; i++)
         { theFM->fmValueArray[i].voidValue = theFM->fmEnv->VoidConstant; }
      }
@@ -2802,7 +2830,7 @@ void FMDispose(
    /*=====================================*/
    
    if (theFM->fmValueArray != NULL)
-     { rm3(theEnv,theFM->fmValueArray,sizeof(CLIPSValue) * theFM->fmOldFact->whichDeftemplate->numberOfSlots); }
+     { rm(theEnv,theFM->fmValueArray,sizeof(CLIPSValue) * theFM->fmOldFact->whichDeftemplate->numberOfSlots); }
       
    if (theFM->changeMap != NULL)
      { rm(theEnv,(void *) theFM->changeMap,CountToBitMapSize(theFM->fmOldFact->whichDeftemplate->numberOfSlots)); }
@@ -2812,7 +2840,7 @@ void FMDispose(
    /*====================================*/
    
    if (theFM->fmOldFact != NULL)
-     { DecrementFactReferenceCount(theEnv,theFM->fmOldFact); }
+     { DecrementFactReferenceCount(theFM->fmOldFact); }
       
    rtn_struct(theEnv,factModifier,theFM);
   }
@@ -2893,7 +2921,7 @@ bool FMSetFact(
    if (oldFact == NULL)
      {
       if (theFM->fmValueArray != NULL)
-        { rm3(theEnv,theFM->fmValueArray,sizeof(CLIPSValue) * currentSlotCount); }
+        { rm(theEnv,theFM->fmValueArray,sizeof(CLIPSValue) * currentSlotCount); }
       
       if (theFM->changeMap != NULL)
         { rm(theEnv,(void *) theFM->changeMap,currentSlotCount); }
@@ -2904,12 +2932,12 @@ bool FMSetFact(
    else if (oldFact->whichDeftemplate->numberOfSlots != currentSlotCount)
      {
       if (theFM->fmValueArray != NULL)
-        { rm3(theEnv,theFM->fmValueArray,sizeof(CLIPSValue) * currentSlotCount); }
+        { rm(theEnv,theFM->fmValueArray,sizeof(CLIPSValue) * currentSlotCount); }
       
       if (theFM->changeMap != NULL)
         { rm(theEnv,(void *) theFM->changeMap,currentSlotCount); }
         
-      theFM->fmValueArray = (CLIPSValue *) gm3(theEnv,sizeof(CLIPSValue) * oldFact->whichDeftemplate->numberOfSlots);
+      theFM->fmValueArray = (CLIPSValue *) gm2(theEnv,sizeof(CLIPSValue) * oldFact->whichDeftemplate->numberOfSlots);
       theFM->changeMap = (char *) gm2(theEnv,CountToBitMapSize(oldFact->whichDeftemplate->numberOfSlots));
      }
    
@@ -2917,9 +2945,9 @@ bool FMSetFact(
    /* Update the fact being modified. */
    /*=================================*/
    
-   DecrementFactReferenceCount(theEnv,theFM->fmOldFact);
+   DecrementFactReferenceCount(theFM->fmOldFact);
    theFM->fmOldFact = oldFact;
-   IncrementFactReferenceCount(theEnv,theFM->fmOldFact);
+   IncrementFactReferenceCount(theFM->fmOldFact);
    
    /*=========================================*/
    /* Initialize the value and change arrays. */

@@ -159,13 +159,8 @@ CLIPSLexeme *FactRelation(
 /*   to retrieve a fact's deftemplate. */
 /***************************************/
 Deftemplate *FactDeftemplate(
-  Environment *theEnv,
   Fact *theFact)
   {
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
-
    return theFact->whichDeftemplate;
   }
 
@@ -182,7 +177,7 @@ void FactExistpFunction(
 
    theFact = GetFactAddressOrIndexArgument(context,false);
 
-   returnValue->lexemeValue = CreateBoolean(theEnv,FactExistp(theEnv,theFact));
+   returnValue->lexemeValue = CreateBoolean(theEnv,FactExistp(theFact));
   }
 
 /***********************************/
@@ -190,12 +185,8 @@ void FactExistpFunction(
 /*   for the fact-existp function. */
 /***********************************/
 bool FactExistp(
-  Environment *theEnv,
   Fact *theFact)
   {
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
    if (theFact == NULL) return false;
 
    if (theFact->garbage) return false;
@@ -285,9 +276,9 @@ void FactSlotValue(
    /*==========================*/
 
    if (theFact->whichDeftemplate->implied)
-     { GetFactSlot(theEnv,theFact,NULL,returnValue); }
+     { GetFactSlot(theFact,NULL,returnValue); }
    else
-     { GetFactSlot(theEnv,theFact,theSlotName,returnValue); }
+     { GetFactSlot(theFact,theSlotName,returnValue); }
   }
 
 /***********************************************/
@@ -317,7 +308,7 @@ void FactSlotNamesFunction(
    /* Get the slot names. */
    /*=====================*/
 
-   FactSlotNames(theEnv,theFact,&result);
+   FactSlotNames(theFact,&result);
    CLIPSToUDFValue(&result,returnValue);
   }
 
@@ -326,13 +317,13 @@ void FactSlotNamesFunction(
 /*   for the fact-slot-names function. */
 /***************************************/
 void FactSlotNames(
-  Environment *theEnv,
   Fact *theFact,
   CLIPSValue *returnValue)
   {
    Multifield *theList;
    struct templateSlot *theSlot;
    unsigned long count;
+   Environment *theEnv = theFact->whichDeftemplate->header.env;
 
    /*===============================================*/
    /* If we're dealing with an implied deftemplate, */
@@ -560,7 +551,7 @@ void PPFactFunction(
       return;
      }
 
-   PPFact(theEnv,theFact,logicalName,ignoreDefaults);
+   PPFact(theFact,logicalName,ignoreDefaults);
   }
 
 /******************************/
@@ -568,15 +559,12 @@ void PPFactFunction(
 /*   for the ppfact function. */
 /******************************/
 void PPFact(
-  Environment *theEnv,
   Fact *theFact,
   const char *logicalName,
   bool ignoreDefaults)
   {
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
-
+   Environment *theEnv = theFact->whichDeftemplate->header.env;
+   
    if (theFact == NULL) return;
 
    if (theFact->garbage) return;

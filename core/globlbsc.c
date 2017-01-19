@@ -188,11 +188,15 @@ bool Undefglobal(
    Environment *theEnv;
    
    if (theDefglobal == NULL)
-     { theEnv = allEnv; }
+     {
+      theEnv = allEnv;
+      return(Undefconstruct(theEnv,NULL,DefglobalData(theEnv)->DefglobalConstruct));
+     }
    else 
-     { theEnv = theDefglobal->header.env; }
-   
-   return(Undefconstruct(theEnv,&theDefglobal->header,DefglobalData(theEnv)->DefglobalConstruct));
+     {
+      theEnv = theDefglobal->header.env;
+      return(Undefconstruct(theEnv,&theDefglobal->header,DefglobalData(theEnv)->DefglobalConstruct));
+     }
   }
 
 /**************************************************/

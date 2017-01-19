@@ -157,47 +157,41 @@ bool __declspec(dllexport) __Eval(
   }  
 
 void __declspec(dllexport) __IncrementFactReferenceCount(
-  Environment *theEnv,
   Fact *theFact)
   {
-   IncrementFactReferenceCount(theEnv,theFact);
+   IncrementFactReferenceCount(theFact);
   }
 
 void __declspec(dllexport) __DecrementFactReferenceCount(
-  Environment *theEnv,
   Fact *theFact)
   {
-   DecrementFactReferenceCount(theEnv,theFact);
+   DecrementFactReferenceCount(theFact);
   }
 
 void __declspec(dllexport) __IncrementInstanceReferenceCount(
-  Environment *theEnv,
   Instance *theInstance)
   {
-   IncrementInstanceReferenceCount(theEnv,theInstance);
+   IncrementInstanceReferenceCount(theInstance);
   }
 
 void __declspec(dllexport) __DecrementInstanceReferenceCount(
-  Environment *theEnv,
   Instance *theInstance)
   {
-   DecrementInstanceReferenceCount(theEnv,theInstance);
+   DecrementInstanceReferenceCount(theInstance);
   }
 
 long long __declspec(dllexport) __FactIndex(
-  Environment *theEnv,
   Fact *theFact)
   {
-   return FactIndex(theEnv,theFact);
+   return FactIndex(theFact);
   }
 
 bool __declspec(dllexport) __GetFactSlot(
-  Environment *theEnv,
   Fact *theFact,
   const char *slotName,
   CLIPSValue *returnValue)
   {
-   return GetFactSlot(theEnv,theFact,slotName,returnValue);  
+   return GetFactSlot(theFact,slotName,returnValue);  
   }  
 
 Fact __declspec(dllexport) * __AssertString(
@@ -215,12 +209,11 @@ const char __declspec(dllexport) * __InstanceName(
   } 
   
 void __declspec(dllexport) __DirectGetSlot(
-  Environment *theEnv,
   Instance *theInstance,
   const char *slotName,
   CLIPSValue *returnValue)
   {
-   DirectGetSlot(theEnv,theInstance,slotName,returnValue);  
+   DirectGetSlot(theInstance,slotName,returnValue);  
   }  
   
 bool __declspec(dllexport) __WatchString(

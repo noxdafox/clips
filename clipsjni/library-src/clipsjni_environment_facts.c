@@ -122,7 +122,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getFactList(
         factPtr != NULL;
         factPtr = GetNextFact(theCLIPSEnv,factPtr))
      {
-      FactSlotNames(theCLIPSEnv,factPtr,&slotNames);
+      FactSlotNames(factPtr,&slotNames);
    
       slotValueList = (*env)->NewObject(env,
                                         CLIPSJNIData(clipsEnv)->arrayListClass,
@@ -141,9 +141,9 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getFactList(
          
          FactSlotValue(theCLIPSEnv,factPtr,slotNames.multifieldValue->contents[i].lexemeValue->contents,&temp);
          CLIPSToUDFValue(&temp,&slotValue);
-         if (DeftemplateSlotDefaultP(FactDeftemplate(theCLIPSEnv,factPtr),theCSlotName) == STATIC_DEFAULT)
+         if (DeftemplateSlotDefaultP(FactDeftemplate(factPtr),theCSlotName) == STATIC_DEFAULT)
            {
-            DeftemplateSlotDefaultValue(FactDeftemplate(theCLIPSEnv,factPtr),
+            DeftemplateSlotDefaultValue(FactDeftemplate(factPtr),
                                         theCSlotName,&temp);
             CLIPSToUDFValue(&temp,&defaultValue);
                              
@@ -171,7 +171,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getFactList(
            }
         }
 
-      sprintf(factNameBuffer,"f-%lld", FactIndex(theCLIPSEnv,factPtr));
+      sprintf(factNameBuffer,"f-%lld", FactIndex(factPtr));
       
       factName = (*env)->NewStringUTF(env,factNameBuffer);
       factRelation = (*env)->NewStringUTF(env,factPtr->whichDeftemplate->header.name->contents);
@@ -250,7 +250,7 @@ JNIEXPORT jlong JNICALL Java_net_sf_clipsrules_jni_Environment_factIndex(
    
    void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
 
-   rv = FactIndex(JLongToPointer(clipsEnv),JLongToPointer(clipsFact));
+   rv = FactIndex(JLongToPointer(clipsFact));
 
    SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
 
@@ -282,7 +282,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getFactSlot(
 
    void *oldContext = SetEnvironmentContext(theCLIPSEnv,(void *) env);
    
-   GetFactSlot(JLongToPointer(clipsEnv),JLongToPointer(clipsFact),(char *) cSlotName,&theDO);
+   GetFactSlot(JLongToPointer(clipsFact),(char *) cSlotName,&theDO);
 
    (*env)->ReleaseStringUTFChars(env,slotName,cSlotName);
    
@@ -310,7 +310,7 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_incrementFactCount
   {
    void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
 
-   IncrementFactReferenceCount(JLongToPointer(clipsEnv),JLongToPointer(clipsFact));
+   IncrementFactReferenceCount(JLongToPointer(clipsFact));
    
    SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
   }
@@ -332,7 +332,7 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_decrementFactCount
   {
    void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
 
-   DecrementFactReferenceCount(JLongToPointer(clipsEnv),JLongToPointer(clipsFact));
+   DecrementFactReferenceCount(JLongToPointer(clipsFact));
    
    SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
   }

@@ -229,7 +229,7 @@ struct entityRecord
    unsigned int addsToRuleComplexity : 1;
    EntityPrintFunction *shortPrintFunction;
    EntityPrintFunction *longPrintFunction;
-   bool (*deleteFunction)(void *,void *);
+   bool (*deleteFunction)(void *,Environment *);
    EntityEvaluationFunction *evaluateFunction;
    void *(*getNextFunction)(void *,void *);
    EntityBusyCountFunction *decrementBusyCount;

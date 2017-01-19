@@ -301,14 +301,9 @@ const char *DefmessageHandlerType(
                  (i.e. 1) returned
  **************************************************************/
 int GetNextDefmessageHandler(
-  Environment *theEnv,
   Defclass *theDefclass,
   int theIndex)
   {
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
-
    if (theIndex == 0)
      { return (theDefclass->handlers != NULL) ? 1 : 0; }
 
@@ -391,7 +386,6 @@ void DefmessageHandlerSetWatch(
   NOTES        : None
  ***************************************************/
 unsigned FindDefmessageHandler(
-  Environment *theEnv,
   Defclass *theDefclass,
   const char *hname,
   const char *htypestr)
@@ -399,6 +393,7 @@ unsigned FindDefmessageHandler(
    unsigned htype;
    CLIPSLexeme *hsym;
    int theIndex;
+   Environment *theEnv = theDefclass->header.env;
 
    htype = HandlerType(theEnv,"handler-lookup",htypestr);
    if (htype == MERROR)
@@ -641,13 +636,13 @@ void ListDefmessageHandlersCommand(
    Defclass *clsptr;
 
    if (UDFArgumentCount(context) == 0)
-     ListDefmessageHandlers(theEnv,WDISPLAY,NULL,0);
+     ListDefmessageHandlers(theEnv,NULL,WDISPLAY,false);
    else
      {
       clsptr = ClassInfoFnxArgs(context,"list-defmessage-handlers",&inhp);
       if (clsptr == NULL)
         return;
-      ListDefmessageHandlers(theEnv,WDISPLAY,clsptr,inhp);
+      ListDefmessageHandlers(theEnv,clsptr,WDISPLAY,inhp);
      }
   }
 
@@ -686,7 +681,7 @@ void PreviewSendCommand(
    if (! UDFNextArgument(context,SYMBOL_BIT,&theArg))
      { return; }
 
-   PreviewSend(WDISPLAY,cls,theArg.lexemeValue->contents);
+   PreviewSend(cls,WDISPLAY,theArg.lexemeValue->contents);
   }
 
 /********************************************************
@@ -718,8 +713,8 @@ const char *DefmessageHandlerPPForm(
  *******************************************************************/
 void ListDefmessageHandlers(
   Environment *theEnv,
-  const char *logName,
   Defclass *theDefclass,
+  const char *logName,
   bool inhp)
   {
    long cnt;
@@ -763,8 +758,8 @@ void ListDefmessageHandlers(
   NOTES        : None
  ********************************************************************/
 void PreviewSend(
-  const char *logicalName,
   Defclass *theDefclass,
+  const char *logicalName,
   const char *msgname)
   {
    HANDLER_LINK *core;
@@ -1112,7 +1107,7 @@ static bool WatchClassHandlers(
    unsigned theHandler;
    bool found = false;
 
-   theHandler = GetNextDefmessageHandler(theEnv,theClass,0);
+   theHandler = GetNextDefmessageHandler(theClass,0);
    while (theHandler != 0)
      {
       if ((theType == -1) ? true :
@@ -1132,7 +1127,7 @@ static bool WatchClassHandlers(
              found = true;
             }
         }
-      theHandler = GetNextDefmessageHandler(theEnv,theClass,theHandler);
+      theHandler = GetNextDefmessageHandler(theClass,theHandler);
      }
    if ((theHandlerStr != NULL) && (theType != -1) && (found == false))
      return false;

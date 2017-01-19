@@ -21,7 +21,7 @@ bool DECLSPEC __OpenStringSource(Environment *,const char *,const char *,size_t)
 bool DECLSPEC __CloseStringSource(Environment *,const char *);
 bool DECLSPEC __Build(Environment *,const char *);
 bool DECLSPEC __Eval(Environment *,const char *,CLIPSValue *);
-bool DECLSPEC __GetFactSlot(Environment *,Fact *,const char *,CLIPSValue *);
+bool DECLSPEC __GetFactSlot(Fact *,const char *,CLIPSValue *);
 bool DECLSPEC __WatchString(Environment *,const char *);
 bool DECLSPEC __UnwatchString(Environment *,const char *);
 bool DECLSPEC __GetHaltExecution(Environment *);
@@ -37,11 +37,11 @@ void DECLSPEC __CommandLoop(Environment *);
 void DECLSPEC __Clear(Environment *);
 void DECLSPEC __Reset(Environment *);
 void DECLSPEC __LoadConstructsFromLogicalName(Environment *,const char *);
-void DECLSPEC __IncrementFactReferenceCount(Environment *,Fact *);
-void DECLSPEC __DecrementFactReferenceCount(Environment *,Fact *);
-void DECLSPEC __IncrementInstanceReferenceCount(Environment *,Instance *);
-void DECLSPEC __DecrementInstanceReferenceCount(Environment *theEnv,Instance *);
-void DECLSPEC __DirectGetSlot(Environment *,Instance *,const char *,CLIPSValue *);  
+void DECLSPEC __IncrementFactReferenceCount(Fact *);
+void DECLSPEC __DecrementFactReferenceCount(Fact *);
+void DECLSPEC __IncrementInstanceReferenceCount(Instance *);
+void DECLSPEC __DecrementInstanceReferenceCount(Instance *);
+void DECLSPEC __DirectGetSlot(Instance *,const char *,CLIPSValue *);  
 void DECLSPEC __SetHaltExecution(Environment *,bool);
 void DECLSPEC __SetHaltRules(Environment *,bool);
 void DECLSPEC __SetEvaluationError(Environment *,bool);
@@ -57,7 +57,7 @@ Fact DECLSPEC * __AssertString(Environment *,const char *);
 
 size_t DECLSPEC __InputBufferCount(Environment *);
 
-long long DECLSPEC __FactIndex(Environment *,Fact *);
+long long DECLSPEC __FactIndex(Fact *);
 long long DECLSPEC __Run(Environment *,long long);
 
 const char DECLSPEC * __InstanceName(Environment *,Instance *);

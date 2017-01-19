@@ -169,7 +169,7 @@ static void DeallocateDefruleBloadData(
    if (space != 0) genfree(theEnv,DefruleBinaryData(theEnv)->LinkArray,space);
 
    if (Bloaded(theEnv))
-     { rm3(theEnv,DefruleData(theEnv)->AlphaMemoryTable,sizeof(ALPHA_MEMORY_HASH *) * ALPHA_MEMORY_HASH_SIZE); }
+     { rm(theEnv,DefruleData(theEnv)->AlphaMemoryTable,sizeof(ALPHA_MEMORY_HASH *) * ALPHA_MEMORY_HASH_SIZE); }
 #endif
   }
 
@@ -1055,7 +1055,7 @@ static void ClearBload(
    GetNextPatternEntity(theEnv,&theParser,&theEntity);
    while (theEntity != NULL)
      {
-      (*theEntity->theInfo->base.deleteFunction)(theEnv,theEntity);
+      (*theEntity->theInfo->base.deleteFunction)(theEntity,theEnv);
       theEntity = NULL;
       GetNextPatternEntity(theEnv,&theParser,&theEntity);
      }

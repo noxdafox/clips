@@ -96,14 +96,14 @@ struct messageHandlerData
    void             SetupMessageHandlers(Environment *);
    const char      *DefmessageHandlerName(Defclass *,int);
    const char      *DefmessageHandlerType(Defclass *,int);
-   int              GetNextDefmessageHandler(Environment *,Defclass *,int);
+   int              GetNextDefmessageHandler(Defclass *,int);
    DefmessageHandler
                    *GetDefmessageHandlerPointer(Defclass *,int);
 #if DEBUGGING_FUNCTIONS
    bool             DefmessageHandlerGetWatch(Defclass *,int);
    void             DefmessageHandlerSetWatch(Defclass *,int,bool);
 #endif
-   unsigned         FindDefmessageHandler(Environment *,Defclass *,const char *,const char *);
+   unsigned         FindDefmessageHandler(Defclass *,const char *,const char *);
    bool             DefmessageHandlerIsDeletable(Defclass *,int);
    void             UndefmessageHandlerCommand(Environment *,UDFContext *,UDFValue *);
    bool             UndefmessageHandler(Defclass *,int,Environment *);
@@ -112,8 +112,8 @@ struct messageHandlerData
    void             ListDefmessageHandlersCommand(Environment *,UDFContext *,UDFValue *);
    void             PreviewSendCommand(Environment *,UDFContext *,UDFValue *);
    const char      *DefmessageHandlerPPForm(Defclass *,int);
-   void             ListDefmessageHandlers(Environment *,const char *,Defclass *,bool);
-   void             PreviewSend(const char *,Defclass *,const char *);
+   void             ListDefmessageHandlers(Environment *,Defclass *,const char *,bool);
+   void             PreviewSend(Defclass *,const char *,const char *);
    long             DisplayHandlersInLinks(Environment *,const char *,PACKED_CLASS_LINKS *,int);
 #endif
 

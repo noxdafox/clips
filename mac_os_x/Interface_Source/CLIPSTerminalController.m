@@ -969,20 +969,20 @@
 
    theValues = [[NSUserDefaultsController sharedUserDefaultsController] values];
 
-   SetWatchItem(theEnv,"compilations", [[theValues valueForKey: @"compilations"] boolValue], NULL);
-   SetWatchItem(theEnv,"facts", [[theValues valueForKey: @"facts"] boolValue], NULL);
-   SetWatchItem(theEnv,"rules", [[theValues valueForKey: @"rules"] boolValue], NULL);
-   SetWatchItem(theEnv,"statistics", [[theValues valueForKey: @"statistics"] boolValue], NULL);
-   SetWatchItem(theEnv,"activations", [[theValues valueForKey: @"activations"] boolValue], NULL);
-   SetWatchItem(theEnv,"focus", [[theValues valueForKey: @"focus"] boolValue], NULL);
-   SetWatchItem(theEnv,"globals", [[theValues valueForKey: @"globals"] boolValue], NULL);
-   SetWatchItem(theEnv,"deffunctions", [[theValues valueForKey: @"deffunctions"] boolValue], NULL);
-   SetWatchItem(theEnv,"generic-functions", [[theValues valueForKey: @"generic-functions"] boolValue], NULL);
-   SetWatchItem(theEnv,"methods", [[theValues valueForKey: @"methods"] boolValue], NULL);
-   SetWatchItem(theEnv,"instances", [[theValues valueForKey: @"instances"] boolValue], NULL);
-   SetWatchItem(theEnv,"slots", [[theValues valueForKey: @"slots"] boolValue], NULL);
-   SetWatchItem(theEnv,"message-handlers", [[theValues valueForKey: @"message-handlers"] boolValue], NULL);
-   SetWatchItem(theEnv,"messages", [[theValues valueForKey: @"messages"] boolValue], NULL);
+   SetWatchState(theEnv,COMPILATIONS,[[theValues valueForKey: @"compilations"] boolValue]);
+   SetWatchState(theEnv,FACTS,[[theValues valueForKey: @"facts"] boolValue]);
+   SetWatchState(theEnv,RULES,[[theValues valueForKey: @"rules"] boolValue]);
+   SetWatchState(theEnv,STATISTICS,[[theValues valueForKey: @"statistics"] boolValue]);
+   SetWatchState(theEnv,ACTIVATIONS,[[theValues valueForKey: @"activations"] boolValue]);
+   SetWatchState(theEnv,FOCUS,[[theValues valueForKey: @"focus"] boolValue]);
+   SetWatchState(theEnv,GLOBALS,[[theValues valueForKey: @"globals"] boolValue]);
+   SetWatchState(theEnv,DEFFUNCTIONS,[[theValues valueForKey: @"deffunctions"] boolValue]);
+   SetWatchState(theEnv,GENERIC_FUNCTIONS,[[theValues valueForKey: @"generic-functions"] boolValue]);
+   SetWatchState(theEnv,METHODS,[[theValues valueForKey: @"methods"] boolValue]);
+   SetWatchState(theEnv,INSTANCES,[[theValues valueForKey: @"instances"] boolValue]);
+   SetWatchState(theEnv,SLOTS,[[theValues valueForKey: @"slots"] boolValue]);
+   SetWatchState(theEnv,MESSAGE_HANDLERS,[[theValues valueForKey: @"message-handlers"] boolValue]);
+   SetWatchState(theEnv,MESSAGES,[[theValues valueForKey: @"messages"] boolValue]);
   }
   
 /**********/    

@@ -129,8 +129,8 @@ struct classItem
 
    static long                    InstancesSaveCommandParser(UDFContext *,
                                                              long (*)(Environment *,const char *,
-                                                                      int,Expression *,bool));
-   static struct classItem       *ProcessSaveClassList(Environment *,const char *,Expression *,int,bool);
+                                                                      SaveScope,Expression *,bool));
+   static struct classItem       *ProcessSaveClassList(Environment *,const char *,Expression *,SaveScope,bool);
    static void                    ReturnSaveClassList(Environment *,struct classItem *);
    static long                    SaveOrMarkInstances(Environment *,FILE *,int,struct classItem *,bool,bool,
                                                       void (*)(Environment *,FILE *,Instance *));
@@ -476,7 +476,7 @@ long BinaryLoadInstances(
 long SaveInstances(
   Environment *theEnv,
   const char *file,
-  int saveCode)
+  SaveScope saveCode)
   {
    return SaveInstancesDriver(theEnv,file,saveCode,NULL,true);
   }
@@ -502,7 +502,7 @@ long SaveInstances(
 long SaveInstancesDriver(
   Environment *theEnv,
   const char *file,
-  int saveCode,
+  SaveScope saveCode,
   Expression *classExpressionList,
   bool inheritFlag)
   {
@@ -582,7 +582,7 @@ void BinarySaveInstancesCommand(
 long BinarySaveInstances(
   Environment *theEnv,
   const char *file,
-  int saveCode)
+  SaveScope saveCode)
   {
    return BinarySaveInstancesDriver(theEnv,file,saveCode,NULL,true);
   }
@@ -608,7 +608,7 @@ long BinarySaveInstances(
 long BinarySaveInstancesDriver(
   Environment *theEnv,
   const char *file,
-  int saveCode,
+  SaveScope saveCode,
   Expression *classExpressionList,
   bool inheritFlag)
   {
@@ -669,11 +669,12 @@ long BinarySaveInstancesDriver(
  ******************************************************/
 static long InstancesSaveCommandParser(
   UDFContext *context,
-  long (*saveFunction)(Environment *,const char *,int,Expression *,bool))
+  long (*saveFunction)(Environment *,const char *,SaveScope,Expression *,bool))
   {
    const char *fileFound;
    UDFValue temp;
-   int argCount,saveCode = LOCAL_SAVE;
+   int argCount;
+   SaveScope saveCode = LOCAL_SAVE;
    Expression *classList = NULL;
    bool inheritFlag = false;
    Environment *theEnv = context->environment;
@@ -742,7 +743,7 @@ static struct classItem *ProcessSaveClassList(
   Environment *theEnv,
   const char *functionName,
   Expression *classExps,
-  int saveCode,
+  SaveScope saveCode,
   bool inheritFlag)
   {
    struct classItem *head = NULL, *prv, *newItem;
@@ -953,9 +954,9 @@ static long SaveOrMarkInstancesOfClass(
        ((saveCode == VISIBLE_SAVE) &&
         DefclassInScope(theEnv,theDefclass,currentModule)))
      {
-      for (theInstance = GetNextInstanceInClass(theEnv,theDefclass,NULL);
+      for (theInstance = GetNextInstanceInClass(theDefclass,NULL);
            theInstance != NULL;
-           theInstance = GetNextInstanceInClass(theEnv,theDefclass,theInstance))
+           theInstance = GetNextInstanceInClass(theDefclass,theInstance))
         {
          if (saveInstanceFunc != NULL)
            (*saveInstanceFunc)(theEnv,theOutput,theInstance);
@@ -1493,7 +1494,7 @@ static bool LoadSingleBinaryInstance(
    if (totalValueCount != 0L)
      {
       bsaArray = (struct bsaveSlotValueAtom *)
-                  gm3(theEnv,(long) (totalValueCount * sizeof(struct bsaveSlotValueAtom)));
+                  gm2(theEnv,(long) (totalValueCount * sizeof(struct bsaveSlotValueAtom)));
       BufferedRead(theEnv,bsaArray,
                    (unsigned long) (totalValueCount * sizeof(struct bsaveSlotValueAtom)));
      }
@@ -1524,7 +1525,7 @@ static bool LoadSingleBinaryInstance(
    rm(theEnv,bsArray,(sizeof(struct bsaveSlotValue) * slotCount));
 
    if (totalValueCount != 0L)
-     rm3(theEnv,bsaArray,
+     rm(theEnv,bsaArray,
          (long) (totalValueCount * sizeof(struct bsaveSlotValueAtom)));
 
    return true;
@@ -1533,7 +1534,7 @@ LoadError:
    BinaryLoadInstanceError(theEnv,instanceName,theDefclass);
    QuashInstance(theEnv,newInstance);
    rm(theEnv,bsArray,(sizeof(struct bsaveSlotValue) * slotCount));
-   rm3(theEnv,bsaArray,
+   rm(theEnv,bsaArray,
        (long) (totalValueCount * sizeof(struct bsaveSlotValueAtom)));
    return false;
   }

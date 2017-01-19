@@ -148,7 +148,7 @@ void InitializeDefrules(
                    (FreeConstructFunction *) ReturnDefrule);
 
    DefruleData(theEnv)->AlphaMemoryTable = (ALPHA_MEMORY_HASH **)
-                  gm3(theEnv,sizeof (ALPHA_MEMORY_HASH *) * ALPHA_MEMORY_HASH_SIZE);
+                  gm2(theEnv,sizeof (ALPHA_MEMORY_HASH *) * ALPHA_MEMORY_HASH_SIZE);
 
    for (i = 0; i < ALPHA_MEMORY_HASH_SIZE; i++) DefruleData(theEnv)->AlphaMemoryTable[i] = NULL;
 
@@ -211,7 +211,7 @@ static void DeallocateDefruleData(
 #endif
      }
 
-   rm3(theEnv,DefruleData(theEnv)->AlphaMemoryTable,sizeof (ALPHA_MEMORY_HASH *) * ALPHA_MEMORY_HASH_SIZE);
+   rm(theEnv,DefruleData(theEnv)->AlphaMemoryTable,sizeof (ALPHA_MEMORY_HASH *) * ALPHA_MEMORY_HASH_SIZE);
   }
 
 /********************************************************/

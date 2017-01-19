@@ -145,7 +145,7 @@ void InitializeAtomTables(
    /*=========================*/
 
    SymbolData(theEnv)->SymbolTable = (CLIPSLexeme **)
-                  gm3(theEnv,sizeof (CLIPSLexeme *) * SYMBOL_HASH_SIZE);
+                  gm2(theEnv,sizeof (CLIPSLexeme *) * SYMBOL_HASH_SIZE);
 
    SymbolData(theEnv)->FloatTable = (CLIPSFloat **)
                   gm2(theEnv,(int) sizeof (CLIPSFloat *) * FLOAT_HASH_SIZE);
@@ -300,7 +300,7 @@ static void DeallocateSymbolData(
    /*================================*/
 
  #if ! RUN_TIME
-   rm3(theEnv,SymbolData(theEnv)->SymbolTable,sizeof (CLIPSLexeme *) * SYMBOL_HASH_SIZE);
+   rm(theEnv,SymbolData(theEnv)->SymbolTable,sizeof (CLIPSLexeme *) * SYMBOL_HASH_SIZE);
 
    genfree(theEnv,SymbolData(theEnv)->FloatTable,(int) sizeof (CLIPSFloat *) * FLOAT_HASH_SIZE);
 
@@ -317,13 +317,13 @@ static void DeallocateSymbolData(
 
 #if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE || BLOAD_INSTANCES || BSAVE_INSTANCES
    if (SymbolData(theEnv)->SymbolArray != NULL)
-     rm3(theEnv,SymbolData(theEnv)->SymbolArray,(long) sizeof(CLIPSLexeme *) * SymbolData(theEnv)->NumberOfSymbols);
+     rm(theEnv,SymbolData(theEnv)->SymbolArray,(long) sizeof(CLIPSLexeme *) * SymbolData(theEnv)->NumberOfSymbols);
    if (SymbolData(theEnv)->FloatArray != NULL)
-     rm3(theEnv,SymbolData(theEnv)->FloatArray,(long) sizeof(CLIPSFloat *) * SymbolData(theEnv)->NumberOfFloats);
+     rm(theEnv,SymbolData(theEnv)->FloatArray,(long) sizeof(CLIPSFloat *) * SymbolData(theEnv)->NumberOfFloats);
    if (SymbolData(theEnv)->IntegerArray != NULL)
-     rm3(theEnv,SymbolData(theEnv)->IntegerArray,(long) sizeof(CLIPSInteger *) * SymbolData(theEnv)->NumberOfIntegers);
+     rm(theEnv,SymbolData(theEnv)->IntegerArray,(long) sizeof(CLIPSInteger *) * SymbolData(theEnv)->NumberOfIntegers);
    if (SymbolData(theEnv)->BitMapArray != NULL)
-     rm3(theEnv,SymbolData(theEnv)->BitMapArray,(long) sizeof(CLIPSBitMap *) * SymbolData(theEnv)->NumberOfBitMaps);
+     rm(theEnv,SymbolData(theEnv)->BitMapArray,(long) sizeof(CLIPSBitMap *) * SymbolData(theEnv)->NumberOfBitMaps);
 #endif
   }
 

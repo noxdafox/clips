@@ -157,11 +157,15 @@ bool Undeftemplate(
    Environment *theEnv;
    
    if (theDeftemplate == NULL)
-     { theEnv = allEnv; }
+     {
+      theEnv = allEnv;
+      return Undefconstruct(theEnv,NULL,DeftemplateData(theEnv)->DeftemplateConstruct);
+     }
    else
-     { theEnv = theDeftemplate->header.env; }
-   
-   return Undefconstruct(theEnv,&theDeftemplate->header,DeftemplateData(theEnv)->DeftemplateConstruct);
+     {
+      theEnv = theDeftemplate->header.env;
+      return Undefconstruct(theEnv,&theDeftemplate->header,DeftemplateData(theEnv)->DeftemplateConstruct);
+     }
   }
 
 /****************************************************/

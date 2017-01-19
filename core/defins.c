@@ -555,7 +555,7 @@ void GetDefinstancesListFunction(
  ***************************************************************/
 void GetDefinstancesList(
   Environment *theEnv,
-  UDFValue *returnValue,
+  CLIPSValue *returnValue,
   Defmodule *theModule)
   {
    UDFValue result;

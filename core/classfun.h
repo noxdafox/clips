@@ -116,6 +116,8 @@
 
 #define PRIMITIVE_CLASSES 9
 
+#include "classcom.h"
+
 struct defclassData
   {
    Construct *DefclassConstruct;
@@ -135,7 +137,7 @@ struct defclassData
 #endif
    unsigned short CTID;
    struct token ObjectParseToken;
-   unsigned short ClassDefaultsMode;
+   ClassDefaultsMode ClassDefaultsModeValue;
   };
 
 #define DefclassData(theEnv) ((struct defclassData *) GetEnvironmentData(theEnv,DEFCLASS_DATA))

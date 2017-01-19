@@ -95,7 +95,7 @@ static struct patternNodeHashEntry **CreatePatternHashTable(
     struct patternNodeHashEntry **theTable;
 
     theTable = (struct patternNodeHashEntry **)
-               gm3(theEnv,sizeof (struct patternNodeHashEntry *) * tableSize);
+               gm2(theEnv,sizeof (struct patternNodeHashEntry *) * tableSize);
 
     if (theTable == NULL) ExitRouter(theEnv,EXIT_FAILURE);
 
@@ -144,7 +144,7 @@ static void DeallocatePatternData(
         }
      }
 
-   rm3(theEnv,PatternData(theEnv)->PatternHashTable,
+   rm(theEnv,PatternData(theEnv)->PatternHashTable,
        sizeof(struct patternNodeHashEntry *) * PatternData(theEnv)->PatternHashTableSize);
   }
 

@@ -145,9 +145,9 @@ struct engineData
                                                       VoidCallFunctionWithArg *,int,void *);
    bool                    RemoveBeforeRuleFiresFunction(Environment *,const char *);
    void                    InitializeEngine(Environment *);
-   void                    DefruleSetBreak(Defrule *);
+   void                    SetBreak(Defrule *);
    void                    Halt(Environment *);
-   bool                    DefruleRemoveBreak(Defrule *);
+   bool                    RemoveBreak(Defrule *);
    void                    RemoveAllBreakpoints(Environment *);
    void                    ShowBreaks(Environment *,const char *,Defmodule *);
    bool                    DefruleHasBreakpoint(Defrule *);
@@ -160,7 +160,7 @@ struct engineData
    void                    ClearFocusStackCommand(Environment *,UDFContext *,UDFValue *);
    void                    ClearFocusStack(Environment *);
    struct focus           *GetNextFocus(Environment *,struct focus *);
-   void                    DefmoduleFocus(Defmodule *);
+   void                    Focus(Defmodule *);
    bool                    GetFocusChanged(Environment *);
    void                    SetFocusChanged(Environment *,bool);
    void                    ListFocusStackCommand(Environment *,UDFContext *,UDFValue *);

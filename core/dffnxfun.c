@@ -614,7 +614,7 @@ void GetDeffunctionListFunction(
  ***************************************************************/
 void GetDeffunctionList(
   Environment *theEnv,
-  UDFValue *returnValue,
+  CLIPSValue *returnValue,
   Defmodule *theModule)
   {
    UDFValue result;

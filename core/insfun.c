@@ -133,6 +133,38 @@
    =========================================
    ***************************************** */
 
+/***************************************************/
+/* IncrementInstanceCallback: Increments the       */
+/*   number of references to a specified instance. */
+/***************************************************/
+void IncrementInstanceCallback(
+  Environment *theEnv,
+  Instance *theInstance)
+  {
+#if MAC_XCD
+#pragma unused(theEnv)
+#endif
+   if (theInstance == NULL) return;
+
+   theInstance->busy++;
+  }
+
+/***************************************************/
+/* DecrementInstanceCallback: Decrements the       */
+/*   number of references to a specified instance. */
+/***************************************************/
+void DecrementInstanceCallback(
+  Environment *theEnv,
+  Instance *theInstance)
+  {
+#if MAC_XCD
+#pragma unused(theEnv)
+#endif
+   if (theInstance == NULL) return;
+
+   theInstance->busy--;
+  }
+
 /***************************************************
   NAME         : IncrementInstanceReferenceCount
   DESCRIPTION  : Increments instance busy count -
@@ -143,12 +175,8 @@
   NOTES        : None
  ***************************************************/
 void IncrementInstanceReferenceCount(
-  Environment *theEnv,
   Instance *theInstance)
   {
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
    if (theInstance == NULL) return;
    
    theInstance->busy++;
@@ -164,12 +192,8 @@ void IncrementInstanceReferenceCount(
   NOTES        : None
  ***************************************************/
 void DecrementInstanceReferenceCount(
-  Environment *theEnv,
   Instance *theInstance)
   {
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
    if (theInstance == NULL) return;
 
    theInstance->busy--;

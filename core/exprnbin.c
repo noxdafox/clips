@@ -203,14 +203,14 @@ static void UpdateExpression(
 #if DEFTEMPLATE_CONSTRUCT
       case FACT_ADDRESS_TYPE:
         ExpressionData(theEnv)->ExpressionArray[obji].value = &FactData(theEnv)->DummyFact;
-        IncrementFactReferenceCount(theEnv,(Fact *) ExpressionData(theEnv)->ExpressionArray[obji].value);
+        IncrementFactReferenceCount((Fact *) ExpressionData(theEnv)->ExpressionArray[obji].value);
         break;
 #endif
 
 #if OBJECT_SYSTEM
       case INSTANCE_ADDRESS_TYPE:
         ExpressionData(theEnv)->ExpressionArray[obji].value = &InstanceData(theEnv)->DummyInstance;
-        IncrementInstanceReferenceCount(theEnv,(Instance *) ExpressionData(theEnv)->ExpressionArray[obji].value);
+        IncrementInstanceReferenceCount((Instance *) ExpressionData(theEnv)->ExpressionArray[obji].value);
         break;
 #endif
 
@@ -277,13 +277,13 @@ void ClearBloadedExpressions(
 
 #if DEFTEMPLATE_CONSTRUCT
          case FACT_ADDRESS_TYPE    :
-           DecrementFactReferenceCount(theEnv,(Fact *) ExpressionData(theEnv)->ExpressionArray[i].value);
+           DecrementFactReferenceCount((Fact *) ExpressionData(theEnv)->ExpressionArray[i].value);
            break;
 #endif
 
 #if OBJECT_SYSTEM
          case INSTANCE_ADDRESS_TYPE :
-           DecrementInstanceReferenceCount(theEnv,(Instance *) ExpressionData(theEnv)->ExpressionArray[i].value);
+           DecrementInstanceReferenceCount((Instance *) ExpressionData(theEnv)->ExpressionArray[i].value);
            break;
 #endif
 

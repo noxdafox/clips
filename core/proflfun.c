@@ -517,9 +517,9 @@ void ProfileResetCommand(
      {
       ResetProfileInfo((struct constructProfileInfo *)
                        TestUserData(ProfileFunctionData(theEnv)->ProfileDataID,theDefclass->header.usrData));
-      for (handlerIndex = GetNextDefmessageHandler(theEnv,theDefclass,0);
+      for (handlerIndex = GetNextDefmessageHandler(theDefclass,0);
            handlerIndex != 0;
-           handlerIndex = GetNextDefmessageHandler(theEnv,theDefclass,handlerIndex))
+           handlerIndex = GetNextDefmessageHandler(theDefclass,handlerIndex))
         {
          theHandler = GetDefmessageHandlerPointer(theDefclass,handlerIndex);
          ResetProfileInfo((struct constructProfileInfo *)
@@ -598,7 +598,7 @@ static void OutputConstructsCodeInfo(
    Defgeneric *theDefgeneric;
    Defmethod *theMethod;
    unsigned methodIndex;
-   char methodBuffer[512];
+   StringBuilder *theSB;
 #endif
 #if OBJECT_SYSTEM
    Defclass *theDefclass;
@@ -626,6 +626,7 @@ static void OutputConstructsCodeInfo(
 
    banner = "\n*** Defgenerics ***\n";
 #if DEFGENERIC_CONSTRUCT
+   theSB = CreateStringBuilder(theEnv,512);
    for (theDefgeneric = GetNextDefgeneric(theEnv,NULL);
         theDefgeneric != NULL;
         theDefgeneric = GetNextDefgeneric(theEnv,theDefgeneric))
@@ -640,8 +641,8 @@ static void OutputConstructsCodeInfo(
         {
          theMethod = GetDefmethodPointer(theDefgeneric,methodIndex);
 
-         DefmethodDescription(methodBuffer,510,theDefgeneric,methodIndex);
-         if (OutputProfileInfo(theEnv,methodBuffer,
+         DefmethodDescription(theDefgeneric,methodIndex,theSB);
+         if (OutputProfileInfo(theEnv,theSB->contents,
                                (struct constructProfileInfo *)
                                   TestUserData(ProfileFunctionData(theEnv)->ProfileDataID,theMethod->header.usrData),
                                prefixBefore,prefix,prefixAfter,&banner))
@@ -652,6 +653,7 @@ static void OutputConstructsCodeInfo(
            }
         }
      }
+   StringBuilderDispose(theSB);
 #endif
 
    banner = "\n*** Defclasses ***\n";
@@ -664,9 +666,9 @@ static void OutputConstructsCodeInfo(
       prefix = DefclassName(theDefclass);
       prefixBefore = "\n";
 
-      for (handlerIndex = GetNextDefmessageHandler(theEnv,theDefclass,0);
+      for (handlerIndex = GetNextDefmessageHandler(theDefclass,0);
            handlerIndex != 0;
-           handlerIndex = GetNextDefmessageHandler(theEnv,theDefclass,handlerIndex))
+           handlerIndex = GetNextDefmessageHandler(theDefclass,handlerIndex))
         {
          theHandler = GetDefmessageHandlerPointer(theDefclass,handlerIndex);
          if (OutputProfileInfo(theEnv,DefmessageHandlerName(theDefclass,handlerIndex),
