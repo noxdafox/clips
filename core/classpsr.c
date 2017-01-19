@@ -312,7 +312,7 @@ bool ParseDefclass(
    if (roleSpecified == false)
      {
       if (preclist->classArray[1]->system &&                             /* Change to cause         */
-          (DefclassData(theEnv)->ClassDefaultsMode == CONVENIENCE_MODE)) /* default role of         */
+          (DefclassData(theEnv)->ClassDefaultsModeValue == CONVENIENCE_MODE)) /* default role of         */
         { abstract = false; }                                            /* classes to be concrete. */
       else
         { abstract = preclist->classArray[1]->abstract; }
@@ -322,7 +322,7 @@ bool ParseDefclass(
      {
       if ((preclist->classArray[1]->system) &&                           /* Change to cause       */
           (! abstract) &&                                                /* default pattern-match */
-          (DefclassData(theEnv)->ClassDefaultsMode == CONVENIENCE_MODE)) /* of classes to be      */
+          (DefclassData(theEnv)->ClassDefaultsModeValue == CONVENIENCE_MODE)) /* of classes to be      */
         { reactive = true; }                                             /* reactive.             */
       else
         { reactive = preclist->classArray[1]->reactive; }

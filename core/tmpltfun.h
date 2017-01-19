@@ -91,7 +91,7 @@
    void                           ModifyCommand(Environment *,UDFContext *,UDFValue *);
    void                           DuplicateCommand(Environment *,UDFContext *,UDFValue *);
    void                           DeftemplateSlotNamesFunction(Environment *,UDFContext *,UDFValue *);
-   void                           DeftemplateSlotNames(Deftemplate *,UDFValue *);
+   void                           DeftemplateSlotNames(Deftemplate *,CLIPSValue *);
    void                           DeftemplateSlotDefaultValueFunction(Environment *,UDFContext *,UDFValue *);
    bool                           DeftemplateSlotDefaultValue(Deftemplate *,const char *,CLIPSValue *);
    void                           DeftemplateSlotCardinalityFunction(Environment *,UDFContext *,UDFValue *);
@@ -109,7 +109,7 @@
    void                           DeftemplateSlotExistPFunction(Environment *,UDFContext *,UDFValue *);
    bool                           DeftemplateSlotExistP(Deftemplate *,const char *);
    void                           DeftemplateSlotDefaultPFunction(Environment *,UDFContext *,UDFValue *);
-   int                            DeftemplateSlotDefaultP(Deftemplate *,const char *);
+   DefaultType                    DeftemplateSlotDefaultP(Deftemplate *,const char *);
    void                           DeftemplateSlotFacetExistPFunction(Environment *,UDFContext *,UDFValue *);
    bool                           DeftemplateSlotFacetExistP(Environment *,Deftemplate *,const char *,const char *);
    void                           DeftemplateSlotFacetValueFunction(Environment *,UDFContext *,UDFValue *);

@@ -83,7 +83,7 @@
    void                           TypeCommand(Environment *,UDFContext *,UDFValue *);
 #endif
 #if DEBUGGING_FUNCTIONS || PROFILING_FUNCTIONS
-   void                           DefmethodDescription(char *,size_t,Defgeneric *,long);
+   void                           DefmethodDescription(Defgeneric *,long,StringBuilder *);
 #endif
 #if DEBUGGING_FUNCTIONS
    bool                           DefgenericGetWatch(Defgeneric *);
@@ -99,11 +99,11 @@
    void                           ListDefmethods(Environment *,const char *,Defgeneric *);
 #endif
    void                           GetDefgenericListFunction(Environment *,UDFContext *,UDFValue *);
-   void                           GetDefgenericList(Environment *,UDFValue *,Defmodule *);
+   void                           GetDefgenericList(Environment *,CLIPSValue *,Defmodule *);
    void                           GetDefmethodListCommand(Environment *,UDFContext *,UDFValue *);
    void                           GetDefmethodList(Environment *,Defgeneric *,CLIPSValue *);
    void                           GetMethodRestrictionsCommand(Environment *,UDFContext *,UDFValue *);
-   void                           MethodRestrictions(Defgeneric *,long,CLIPSValue *);
+   void                           GetMethodRestrictions(Defgeneric *,long,CLIPSValue *);
    void                           SetNextDefgeneric(Defgeneric *,Defgeneric *);
    const char                    *DefgenericModule(Defgeneric *);
    const char                    *DefgenericName(Defgeneric *);

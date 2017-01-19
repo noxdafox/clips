@@ -63,9 +63,12 @@
    static void                    PrintStringCallback(Environment *,const char *,const char *,void *);
    static int                     GetcStringCallback(Environment *,const char *,void *);
    static int                     UngetcStringCallback(Environment *,const char *,int,void *);
-   static struct stringRouter    *FindStringRouter(Environment *,const char *);
+   static StringRouter           *FindStringRouter(Environment *,const char *);
    static bool                    CreateReadStringSource(Environment *,const char *,const char *,size_t,size_t);
    static void                    DeallocateStringRouterData(Environment *);
+   static StringBuilderRouter    *FindStringBuilderRouter(Environment *,const char *);
+   static bool                    FindStringBuilderCallback(Environment *,const char *,void *);
+   static void                    PrintStringBuilderCallback(Environment *,const char *,const char *,void *);
 
 /**********************************************************/
 /* InitializeStringRouter: Initializes string I/O router. */
@@ -76,6 +79,7 @@ void InitializeStringRouter(
    AllocateEnvironmentData(theEnv,STRING_ROUTER_DATA,sizeof(struct stringRouterData),DeallocateStringRouterData);
 
    AddRouter(theEnv,"string",0,FindStringCallback,PrintStringCallback,GetcStringCallback,UngetcStringCallback,NULL,NULL);
+   AddRouter(theEnv,"stringBuilder",0,FindStringBuilderCallback,PrintStringBuilderCallback,NULL,NULL,NULL,NULL);
   }
 
 /*******************************************/
@@ -85,7 +89,8 @@ void InitializeStringRouter(
 static void DeallocateStringRouterData(
   Environment *theEnv)
   {
-   struct stringRouter *tmpPtr, *nextPtr;
+   StringRouter *tmpPtr, *nextPtr;
+   StringBuilderRouter *tmpSBPtr, *nextSBPtr;
 
    tmpPtr = StringRouterData(theEnv)->ListOfStringRouters;
    while (tmpPtr != NULL)
@@ -94,6 +99,15 @@ static void DeallocateStringRouterData(
       rm(theEnv,(void *) tmpPtr->name,strlen(tmpPtr->name) + 1);
       rtn_struct(theEnv,stringRouter,tmpPtr);
       tmpPtr = nextPtr;
+     }
+
+   tmpSBPtr = StringRouterData(theEnv)->ListOfStringBuilderRouters;
+   while (tmpSBPtr != NULL)
+     {
+      nextSBPtr = tmpSBPtr->next;
+      rm(theEnv,(void *) tmpSBPtr->name,strlen(tmpSBPtr->name) + 1);
+      rtn_struct(theEnv,stringBuilderRouter,tmpSBPtr);
+      tmpSBPtr = nextSBPtr;
      }
   }
 
@@ -354,7 +368,7 @@ bool CloseStringDestination(
   Environment *theEnv,
   const char *name)
   {
-   return(CloseStringSource(theEnv,name));
+   return CloseStringSource(theEnv,name);
   }
 
 /*******************************************************************/
@@ -377,6 +391,133 @@ static struct stringRouter *FindStringRouter(
    return NULL;
   }
 
+/*********************************************/
+/* OpenStringBuilderDestination: Opens a new */
+/*   StringBuilder router for printing.      */
+/*********************************************/
+bool OpenStringBuilderDestination(
+  Environment *theEnv,
+  const char *name,
+  StringBuilder *theSB)
+  {
+   StringBuilderRouter *newStringRouter;
+   char *theName;
 
+   if (FindStringBuilderRouter(theEnv,name) != NULL) return false;
+
+   newStringRouter = get_struct(theEnv,stringBuilderRouter);
+   theName = (char *) gm1(theEnv,(int) strlen(name) + 1);
+   genstrcpy(theName,name);
+   newStringRouter->name = theName;
+   newStringRouter->SBR = theSB;
+   newStringRouter->next = StringRouterData(theEnv)->ListOfStringBuilderRouters;
+   StringRouterData(theEnv)->ListOfStringBuilderRouters = newStringRouter;
+
+   return true;
+  }
+
+/*****************************************/
+/* CloseStringBuilderDestination: Closes */
+/*   a StringBuilder router.             */
+/*****************************************/
+bool CloseStringBuilderDestination(
+  Environment *theEnv,
+  const char *name)
+  {
+   StringBuilderRouter *head, *last;
+
+   last = NULL;
+   head = StringRouterData(theEnv)->ListOfStringBuilderRouters;
+   while (head != NULL)
+     {
+      if (strcmp(head->name,name) == 0)
+        {
+         if (last == NULL)
+           {
+            StringRouterData(theEnv)->ListOfStringBuilderRouters = head->next;
+            rm(theEnv,(void *) head->name,strlen(head->name) + 1);
+            rtn_struct(theEnv,stringBuilderRouter,head);
+            return true;
+           }
+         else
+           {
+            last->next = head->next;
+            rm(theEnv,(void *) head->name,strlen(head->name) + 1);
+            rtn_struct(theEnv,stringBuilderRouter,head);
+            return true;
+           }
+        }
+      last = head;
+      head = head->next;
+     }
+
+   return false;
+  }
+
+/**********************************************/
+/* FindStringBuilderRouter: Returns a pointer */
+/*   to the named StringBuilder router.       */
+/**********************************************/
+static struct stringBuilderRouter *FindStringBuilderRouter(
+  Environment *theEnv,
+  const char *name)
+  {
+   StringBuilderRouter *head;
+
+   head = StringRouterData(theEnv)->ListOfStringBuilderRouters;
+   while (head != NULL)
+     {
+      if (strcmp(head->name,name) == 0)
+        { return head; }
+      head = head->next;
+     }
+
+   return NULL;
+  }
+
+/***********************************************/
+/* FindStringBuilderCallback: Find routine for */
+/*   stringBuilder router logical names.       */
+/***********************************************/
+static bool FindStringBuilderCallback(
+  Environment *theEnv,
+  const char *logicalName,
+  void *context)
+  {
+   StringBuilderRouter *head;
+
+   head = StringRouterData(theEnv)->ListOfStringBuilderRouters;
+   while (head != NULL)
+     {
+      if (strcmp(head->name,logicalName) == 0)
+        { return true; }
+      head = head->next;
+     }
+
+   return false;
+  }
+
+/*********************************************/
+/* PrintStringBuilderCallback: Print routine */
+/*    for stringBuilder routers.             */
+/*********************************************/
+static void PrintStringBuilderCallback(
+  Environment *theEnv,
+  const char *logicalName,
+  const char *str,
+  void *context)
+  {
+   StringBuilderRouter *head;
+
+   head = FindStringBuilderRouter(theEnv,logicalName);
+   if (head == NULL)
+     {
+      SystemError(theEnv,"ROUTER",3);
+      ExitRouter(theEnv,EXIT_FAILURE);
+      return;
+     }
+     
+   StringBuilderAppend(head->SBR,str);
+  }
 
 

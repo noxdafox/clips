@@ -84,7 +84,7 @@
    static Activation             *PlaceSimplicityActivation(Activation *,struct salienceGroup *);
    static Activation             *PlaceRandomActivation(Activation *,struct salienceGroup *);
    static int                     ComparePartialMatches(Environment *,Activation *,Activation *);
-   static const char             *GetStrategyName(int);
+   static const char             *GetStrategyName(StrategyType);
    static unsigned long long     *SortPartialMatch(Environment *,struct partialMatch *);
 
 /******************************************************************/
@@ -952,11 +952,11 @@ static int ComparePartialMatches(
 /* SetStrategy: C access routine   */
 /*   for the set-strategy command. */
 /***********************************/
-int SetStrategy(
+StrategyType SetStrategy(
   Environment *theEnv,
-  int value)
+  StrategyType value)
   {
-   int oldStrategy;
+   StrategyType oldStrategy;
 
    oldStrategy = AgendaData(theEnv)->Strategy;
    AgendaData(theEnv)->Strategy = value;
@@ -971,7 +971,7 @@ int SetStrategy(
 /* GetStrategy: C access routine   */
 /*   for the get-strategy command. */
 /***********************************/
-int GetStrategy(
+StrategyType GetStrategy(
   Environment *theEnv)
   {
    return AgendaData(theEnv)->Strategy;
@@ -1000,7 +1000,7 @@ void SetStrategyCommand(
   {
    UDFValue theArg;
    const char *argument;
-   int oldStrategy;
+   StrategyType oldStrategy;
 
    /*=======================*/
    /* Set the return value. */
@@ -1049,7 +1049,7 @@ void SetStrategyCommand(
 /*   of the strategy's name.                              */
 /**********************************************************/
 static const char *GetStrategyName(
-  int strategy)
+  StrategyType strategy)
   {
    const char *sname;
 

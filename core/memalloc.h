@@ -199,9 +199,7 @@ struct memoryData
    long                           ReleaseMem(Environment *,long);
    void                          *gm1(Environment *,size_t);
    void                          *gm2(Environment *,size_t);
-   void                          *gm3(Environment *,size_t);
    void                           rm(Environment *,void *,size_t);
-   void                           rm3(Environment *,void *,size_t);
    unsigned long                  PoolSize(Environment *);
    unsigned long                  ActualPoolSize(Environment *);
    void                          *RequestChunk(Environment *,size_t);

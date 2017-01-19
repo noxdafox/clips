@@ -81,15 +81,18 @@ struct joinInformation
    struct joinNode *nextJoin;
   };
 
-#define VERBOSE  0
-#define SUCCINCT 1
-#define TERSE    2
+typedef enum
+  {
+   VERBOSE,
+   SUCCINCT,
+   TERSE
+  } Verbosity;
 
    bool                           GetBetaMemoryResizing(Environment *);
    bool                           SetBetaMemoryResizing(Environment *,bool);
    void                           GetBetaMemoryResizingCommand(Environment *,UDFContext *,UDFValue *);
    void                           SetBetaMemoryResizingCommand(Environment *,UDFContext *,UDFValue *);
-   void                           DefruleMatches(Defrule *,int,CLIPSValue *);
+   void                           Matches(Defrule *,Verbosity,CLIPSValue *);
    void                           JoinActivity(Environment *,Defrule *,int,UDFValue *);
    void                           DefruleCommands(Environment *);
    void                           MatchesCommand(Environment *,UDFContext *,UDFValue *);

@@ -1397,7 +1397,7 @@ StringBuilder *CreateStringBuilder(
    theSB->bufferReset = theSize;
    theSB->bufferMaximum = theSize;
    theSB->length = 0;
-   theSB->contents = (char *) genalloc(theEnv,theSize);
+   theSB->contents = (char *) gm2(theEnv,theSize);
    theSB->contents[0] = EOS;
    
    return theSB;
@@ -1435,7 +1435,8 @@ void StringBuilderReset(
    if (theSB->bufferReset != theSB->bufferMaximum)
      {
       rm(theSB->sbEnv,theSB->contents,theSB->bufferMaximum);
-      theSB->contents = (char *) genalloc(theSB->sbEnv,theSB->bufferReset);
+      theSB->contents = (char *) gm2(theSB->sbEnv,theSB->bufferReset);
+      theSB->bufferMaximum = theSB->bufferReset;
      }
      
    theSB->length = 0;

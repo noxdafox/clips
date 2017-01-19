@@ -154,7 +154,7 @@ static void ResetDefrules(
    DefruleData(theEnv)->CurrentEntityTimeTag = 1L;
    ClearFocusStack(theEnv);
    theModule = FindDefmodule(theEnv,"MAIN");
-   DefmoduleFocus(theModule);
+   Focus(theModule);
 
    for (theLink = DefruleData(theEnv)->RightPrimeJoins;
         theLink != NULL;
@@ -257,7 +257,7 @@ static void ClearDefrules(
    Defmodule *theModule;
 
    theModule = FindDefmodule(theEnv,"MAIN");
-   DefmoduleFocus(theModule);
+   Focus(theModule);
   }
 
 #endif
@@ -298,11 +298,15 @@ bool Undefrule(
    Environment *theEnv;
    
    if (theDefrule == NULL)
-     { theEnv = allEnv; }
+     {
+      theEnv = allEnv;
+      return Undefconstruct(theEnv,NULL,DefruleData(theEnv)->DefruleConstruct);
+     }
    else
-     { theEnv = theDefrule->header.env; }
-   
-   return Undefconstruct(theEnv,&theDefrule->header,DefruleData(theEnv)->DefruleConstruct);
+     {
+      theEnv = theDefrule->header.env;
+      return Undefconstruct(theEnv,&theDefrule->header,DefruleData(theEnv)->DefruleConstruct);
+     }
   }
 
 /************************************************/
@@ -323,7 +327,7 @@ void GetDefruleListFunction(
 /****************************************/
 void GetDefruleList(
   Environment *theEnv,
-  UDFValue *returnValue,
+  CLIPSValue *returnValue,
   Defmodule *theModule)
   {
    UDFValue result;

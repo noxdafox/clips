@@ -119,7 +119,7 @@ struct defglobalModule
    struct defglobalModule        *GetDefglobalModuleItem(Environment *,Defmodule *);
    void                           QSetDefglobalValue(Environment *,Defglobal *,UDFValue *,bool);
    Defglobal                     *QFindDefglobal(Environment *,CLIPSLexeme *);
-   void                           DefglobalValueForm(Defglobal *,char *,size_t);
+   void                           DefglobalValueForm(Defglobal *,StringBuilder *);
    bool                           GetGlobalsChanged(Environment *);
    void                           SetGlobalsChanged(Environment *,bool);
    bool                           GetDefglobalValue(Environment *,const char *,CLIPSValue *);

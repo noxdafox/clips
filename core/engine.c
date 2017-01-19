@@ -478,7 +478,7 @@ long long Run(
       /*==================================*/
 
       if (GetSalienceEvaluation(theEnv) == EVERY_CYCLE)
-        { DefmoduleRefreshAgenda(NULL,theEnv); }
+        { RefreshAgenda(NULL,theEnv); }
 
       /*========================================*/
       /* Execute the list of functions that are */
@@ -686,7 +686,7 @@ Activation *NextActivationToFire(
    if (EngineData(theEnv)->CurrentFocus == NULL)
      {
       theModule = FindDefmodule(theEnv,"MAIN");
-      DefmoduleFocus(theModule);
+      Focus(theModule);
      }
 
    /*===========================================================*/
@@ -839,10 +839,10 @@ struct focus *GetNextFocus( // TBD Add to API
    return theFocus->next;
   }
 
-/************************************************************/
-/* DefmoduleFocus: C access routine for the focus function. */
-/************************************************************/
-void DefmoduleFocus(
+/***************************************************/
+/* Focus: C access routine for the focus function. */
+/***************************************************/
+void Focus(
   Defmodule *theModule)
   {
    struct focus *tempFocus;
@@ -1030,11 +1030,11 @@ void Halt(
 
 #if DEBUGGING_FUNCTIONS
 
-/*************************************/
-/* DefruleSetBreak: C access routine */
-/*   for the set-break command.      */
-/*************************************/
-void DefruleSetBreak(
+/********************************/
+/* SetBreak: C access routine   */
+/*   for the set-break command. */
+/********************************/
+void SetBreak(
   Defrule *theRule)
   {
    Defrule *thePtr;
@@ -1045,11 +1045,11 @@ void DefruleSetBreak(
      { thePtr->afterBreakpoint = 1; }
   }
 
-/****************************************/
-/* DefruleRemoveBreak: C access routine */
-/*   for the remove-break command.      */
-/****************************************/
-bool DefruleRemoveBreak(
+/***********************************/
+/* RemoveBreak: C access routine   */
+/*   for the remove-break command. */
+/***********************************/
+bool RemoveBreak(
   Defrule *theRule)
   {
    Defrule *thePtr;
@@ -1082,7 +1082,7 @@ void RemoveAllBreakpoints(
      {
       theRule = NULL;
       while ((theRule = GetNextDefrule(theEnv,theRule)) != NULL)
-        { DefruleRemoveBreak(theRule); }
+        { RemoveBreak(theRule); }
      }
   }
 
@@ -1136,7 +1136,7 @@ void SetBreakCommand(
       return;
      }
 
-   DefruleSetBreak(defrulePtr);
+   SetBreak(defrulePtr);
   }
 
 /********************************************/
@@ -1168,7 +1168,7 @@ void RemoveBreakCommand(
       return;
      }
 
-   if (DefruleRemoveBreak(defrulePtr) == false)
+   if (RemoveBreak(defrulePtr) == false)
      {
       PrintString(theEnv,WERROR,"Rule ");
       PrintString(theEnv,WERROR,argument);
@@ -1390,7 +1390,7 @@ void FocusCommand(
          return;
         }
 
-      DefmoduleFocus(theModule);
+      Focus(theModule);
      }
 
    /*===================================================*/

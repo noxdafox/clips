@@ -54,8 +54,11 @@
 
 #define _H_classcom
 
-#define CONVENIENCE_MODE  0
-#define CONSERVATION_MODE 1
+typedef enum
+  {
+   CONVENIENCE_MODE,
+   CONSERVATION_MODE
+  } ClassDefaultsMode;
 
 #include "cstrccom.h"
 #include "moduldef.h"
@@ -81,8 +84,8 @@
    bool                    DefclassIsDeletable(Defclass *);
 
    void                    UndefclassCommand(Environment *,UDFContext *,UDFValue *);
-   unsigned short          SetClassDefaultsMode(Environment *,unsigned short);
-   unsigned short          GetClassDefaultsMode(Environment *);
+   ClassDefaultsMode       SetClassDefaultsMode(Environment *,ClassDefaultsMode);
+   ClassDefaultsMode       GetClassDefaultsMode(Environment *);
    void                    GetClassDefaultsModeCommand(Environment *,UDFContext *,UDFValue *);
    void                    SetClassDefaultsModeCommand(Environment *,UDFContext *,UDFValue *);
 

@@ -96,7 +96,7 @@ struct definstancesData
    const char                    *DefinstancesModuleName(Environment *,Definstances *);
    Definstances                  *FindDefinstances(Environment *,const char *);
    Definstances                  *FindDefinstancesInModule(Environment *,const char *);
-   void                           GetDefinstancesList(Environment *,UDFValue *,Defmodule *);
+   void                           GetDefinstancesList(Environment *,CLIPSValue *,Defmodule *);
    const char                    *DefinstancesName(Definstances *);
    CLIPSLexeme                   *GetDefinstancesNamePointer(Environment *,Definstances *);
    const char                    *DefinstancesPPForm(Definstances *);

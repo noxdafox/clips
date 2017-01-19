@@ -1,6 +1,7 @@
 /* CLIPSEnvironment */
 
 #import <Cocoa/Cocoa.h>
+#import <CLIPS/clips.h>
 
 #define NO_AGENDA_LISTENERS     0
 #define START_AGENDA_LISTENING  1
@@ -147,7 +148,7 @@
 - (void)                         decrementInstancesListeners;
 - (int)                          instancesListenerCount;
 
-- (bool)                         getWatchItem: (const char *)  watchItem;
-- (void)                         setWatchItem: (const char *) watchItem toValue: (bool) newValue;
+- (bool)                         getWatchState: (WatchItem) watchItem;
+- (void)                         setWatchState: (WatchItem) watchItem toValue: (bool) newValue;
 
 @end

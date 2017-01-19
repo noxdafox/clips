@@ -180,7 +180,8 @@ void Send(
 
    SetEvaluationError(theEnv,false);
 
-   returnValue->value = FalseSymbol(theEnv);
+   if (returnValue != NULL)
+     { returnValue->value = FalseSymbol(theEnv); }
    msym = FindSymbolHN(theEnv,msg,SYMBOL_BIT);
    if (msym == NULL)
      {
@@ -198,7 +199,8 @@ void Send(
      }
    PerformMessage(theEnv,&result,iexp,msym);
    NormalizeMultifield(theEnv,&result);
-   returnValue->value = result.value;
+   if (returnValue != NULL)
+     { returnValue->value = result.value; }
    ReturnExpression(theEnv,iexp);
   }
 

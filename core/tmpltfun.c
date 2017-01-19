@@ -186,7 +186,7 @@ static void FreeTemplateValueArray(
         { ReturnMultifield(theEnv,theValueArray[i].multifieldValue); }
      }
 
-   rm3(theEnv,theValueArray,sizeof(CLIPSValue) * templatePtr->numberOfSlots);
+   rm(theEnv,theValueArray,sizeof(CLIPSValue) * templatePtr->numberOfSlots);
   }
 
 /*************************************************************/
@@ -295,7 +295,7 @@ void ModifyCommand(
      }
    else
      {
-      theValueArray = (CLIPSValue *) gm3(theEnv,sizeof(void *) * templatePtr->numberOfSlots);
+      theValueArray = (CLIPSValue *) gm2(theEnv,sizeof(void *) * templatePtr->numberOfSlots);
       changeMap = (char *) gm2(theEnv,CountToBitMapSize(templatePtr->numberOfSlots));
       ClearBitString((void *) changeMap,CountToBitMapSize(templatePtr->numberOfSlots));
      }
@@ -456,7 +456,7 @@ void ModifyCommand(
    if (replacementCount == 0)
      {
       if (theValueArray != NULL)
-        { rm3(theEnv,theValueArray,sizeof(void *) * templatePtr->numberOfSlots); }
+        { rm(theEnv,theValueArray,sizeof(void *) * templatePtr->numberOfSlots); }
       if (changeMap != NULL)
         { rm(theEnv,(void *) changeMap,CountToBitMapSize(templatePtr->numberOfSlots)); }
       
@@ -476,7 +476,7 @@ void ModifyCommand(
    /*=============================*/
 
    if (theValueArray != NULL)
-     { rm3(theEnv,theValueArray,sizeof(void *) * templatePtr->numberOfSlots); }
+     { rm(theEnv,theValueArray,sizeof(void *) * templatePtr->numberOfSlots); }
 
    if (changeMap != NULL)
      { rm(theEnv,(void *) changeMap,CountToBitMapSize(templatePtr->numberOfSlots)); }
@@ -855,6 +855,7 @@ void DeftemplateSlotNamesFunction(
   {
    const char *deftemplateName;
    Deftemplate *theDeftemplate;
+   CLIPSValue cv;
 
    /*=============================================*/
    /* Set up the default return value for errors. */
@@ -880,7 +881,8 @@ void DeftemplateSlotNamesFunction(
    /* Get the slot names. */
    /*=====================*/
 
-   DeftemplateSlotNames(theDeftemplate,returnValue);
+   DeftemplateSlotNames(theDeftemplate,&cv);
+   CLIPSToUDFValue(&cv,returnValue);
   }
 
 /**********************************************/
@@ -889,7 +891,7 @@ void DeftemplateSlotNamesFunction(
 /**********************************************/
 void DeftemplateSlotNames(
   Deftemplate *theDeftemplate,
-  UDFValue *returnValue)
+  CLIPSValue *returnValue)
   {
    Multifield *theList;
    struct templateSlot *theSlot;
@@ -903,8 +905,6 @@ void DeftemplateSlotNames(
 
    if (theDeftemplate->implied)
      {
-      returnValue->begin = 0;
-      returnValue->range = 1;
       theList = CreateMultifield(theEnv,(int) 1);
       theList->contents[0].lexemeValue = CreateSymbol(theEnv,"implied");
       returnValue->value = theList;
@@ -924,8 +924,6 @@ void DeftemplateSlotNames(
    /* Create a multifield value in which to store the slot names. */
    /*=============================================================*/
 
-   returnValue->begin = 0;
-   returnValue->range = count;
    theList = CreateMultifield(theEnv,count);
    returnValue->value = theList;
 
@@ -983,7 +981,7 @@ void DeftemplateSlotDefaultPFunction(
 /* DeftemplateSlotDefaultP: C access routine for */
 /*   the deftemplate-slot-defaultp function.     */
 /*************************************************/
-int DeftemplateSlotDefaultP(
+DefaultType DeftemplateSlotDefaultP(
   Deftemplate *theDeftemplate,
   const char *slotName)
   {
@@ -1000,14 +998,14 @@ int DeftemplateSlotDefaultP(
      {
       if (strcmp(slotName,"implied") == 0)
         {
-         return(STATIC_DEFAULT);
+         return STATIC_DEFAULT;
         }
       else
         {
          SetEvaluationError(theEnv,true);
          InvalidDeftemplateSlotMessage(theEnv,slotName,
                                        theDeftemplate->header.name->contents,false);
-         return(NO_DEFAULT);
+         return NO_DEFAULT;
         }
      }
 
@@ -1021,7 +1019,7 @@ int DeftemplateSlotDefaultP(
       SetEvaluationError(theEnv,true);
       InvalidDeftemplateSlotMessage(theEnv,slotName,
                                     theDeftemplate->header.name->contents,false);
-      return(NO_DEFAULT);
+      return NO_DEFAULT;
      }
 
    /*======================================*/
@@ -1029,11 +1027,11 @@ int DeftemplateSlotDefaultP(
    /*======================================*/
 
    if (theSlot->noDefault)
-     { return(NO_DEFAULT); }
+     { return NO_DEFAULT; }
    else if (theSlot->defaultDynamic)
-     { return(DYNAMIC_DEFAULT); }
+     { return DYNAMIC_DEFAULT; }
 
-   return(STATIC_DEFAULT);
+   return STATIC_DEFAULT;
   }
 
 /*************************************************************/

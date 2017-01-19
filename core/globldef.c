@@ -511,17 +511,16 @@ Defglobal *QFindDefglobal(
 /*******************************************************************/
 void DefglobalValueForm(
   Defglobal *theGlobal,
-  char *buffer,
-  size_t bufferLength)
+  StringBuilder *theSB)
   {
    Environment *theEnv = theGlobal->header.env;
 
-   OpenStringDestination(theEnv,"GlobalValueForm",buffer,bufferLength);
+   OpenStringBuilderDestination(theEnv,"GlobalValueForm",theSB);
    PrintString(theEnv,"GlobalValueForm","?*");
    PrintString(theEnv,"GlobalValueForm",theGlobal->header.name->contents);
    PrintString(theEnv,"GlobalValueForm","* = ");
    PrintUDFValue(theEnv,"GlobalValueForm",&theGlobal->current);
-   CloseStringDestination(theEnv,"GlobalValueForm");
+   CloseStringBuilderDestination(theEnv,"GlobalValueForm");
   }
 
 /*********************************************************/

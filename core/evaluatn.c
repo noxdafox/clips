@@ -403,7 +403,7 @@ void PrintCLIPSValue(
 
       case MULTIFIELD_TYPE:
         PrintMultifield(theEnv,fileid,argPtr->multifieldValue,
-                        0,argPtr->multifieldValue->length,true);
+                        0,argPtr->multifieldValue->length - 1,true);
         break;
 
       default:
@@ -533,13 +533,13 @@ void IncrementReferenceCount(
         
 #if OBJECT_SYSTEM
       case INSTANCE_ADDRESS_TYPE:
-        IncrementInstanceReferenceCount(theEnv,(Instance *) th);
+        IncrementInstanceReferenceCount((Instance *) th);
         break;
 #endif
 
 #if DEFTEMPLATE_CONSTRUCT
       case FACT_ADDRESS_TYPE:
-        IncrementFactReferenceCount(theEnv,(Fact *) th);
+        IncrementFactReferenceCount((Fact *) th);
         break;
 #endif
      
@@ -589,13 +589,13 @@ void DecrementReferenceCount(
         
 #if OBJECT_SYSTEM
       case INSTANCE_ADDRESS_TYPE:
-        DecrementInstanceReferenceCount(theEnv,(Instance *) th);
+        DecrementInstanceReferenceCount((Instance *) th);
         break;
 #endif
      
 #if DEFTEMPLATE_CONSTRUCT
       case FACT_ADDRESS_TYPE:
-        DecrementFactReferenceCount(theEnv,(Fact *) th);
+        DecrementFactReferenceCount((Fact *) th);
         break;
 #endif
 

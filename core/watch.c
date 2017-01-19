@@ -287,6 +287,138 @@ bool Unwatch(
    return false;
   }
 
+/******************************************/
+/* GetWatchState: Returns the watch state */
+/*   for the specified watch item.        */
+/******************************************/
+bool GetWatchState(
+  Environment *theEnv,
+  WatchItem item)
+  {
+   switch (item)
+     {
+      case ALL:
+        return false;
+
+      case FACTS:
+        return (GetWatchItem(theEnv,"facts") == 1);
+        
+      case INSTANCES:
+        return (GetWatchItem(theEnv,"instances") == 1);
+        
+      case SLOTS:
+        return (GetWatchItem(theEnv,"slots") == 1);
+        
+      case RULES:
+        return (GetWatchItem(theEnv,"rules") == 1);
+        
+      case ACTIVATIONS:
+        return (GetWatchItem(theEnv,"activations") == 1);
+        
+      case MESSAGES:
+        return (GetWatchItem(theEnv,"messages") == 1);
+        
+      case MESSAGE_HANDLERS:
+        return (GetWatchItem(theEnv,"message-handlers") == 1);
+        
+      case GENERIC_FUNCTIONS:
+        return (GetWatchItem(theEnv,"generic-functions") == 1);
+        
+      case METHODS:
+        return (GetWatchItem(theEnv,"methods") == 1);
+        
+      case DEFFUNCTIONS:
+        return (GetWatchItem(theEnv,"deffunctions") == 1);
+        
+      case COMPILATIONS:
+        return (GetWatchItem(theEnv,"compilations") == 1);
+        
+      case STATISTICS:
+        return (GetWatchItem(theEnv,"statistics") == 1);
+        
+      case GLOBALS:
+        return (GetWatchItem(theEnv,"globals") == 1);
+        
+      case FOCUS:
+        return (GetWatchItem(theEnv,"focus") == 1);
+     }
+     
+   return false;
+  }
+
+/******************************************/
+/* SetWatchState: Returns the watch state */
+/*   for the specified watch item.        */
+/******************************************/
+void SetWatchState(
+  Environment *theEnv,
+  WatchItem item,
+  bool newState)
+  {
+   switch (item)
+     {
+      case ALL:
+        SetWatchItem(theEnv,"all",newState,NULL);
+        return;
+
+      case FACTS:
+        SetWatchItem(theEnv,"facts",newState,NULL);
+        return;
+        
+      case INSTANCES:
+        SetWatchItem(theEnv,"instances",newState,NULL);
+        return;
+        
+      case SLOTS:
+        SetWatchItem(theEnv,"slots",newState,NULL);
+        return;
+        
+      case RULES:
+        SetWatchItem(theEnv,"rules",newState,NULL);
+        return;
+        
+      case ACTIVATIONS:
+        SetWatchItem(theEnv,"activations",newState,NULL);
+        return;
+        
+      case MESSAGES:
+        SetWatchItem(theEnv,"messages",newState,NULL);
+        return;
+        
+      case MESSAGE_HANDLERS:
+        SetWatchItem(theEnv,"message-handlers",newState,NULL);
+        return;
+        
+      case GENERIC_FUNCTIONS:
+        SetWatchItem(theEnv,"generic-functions",newState,NULL);
+        return;
+        
+      case METHODS:
+        SetWatchItem(theEnv,"methods",newState,NULL);
+        return;
+        
+      case DEFFUNCTIONS:
+        SetWatchItem(theEnv,"deffunctions",newState,NULL);
+        return;
+        
+      case COMPILATIONS:
+        SetWatchItem(theEnv,"compilations",newState,NULL);
+        return;
+        
+      case STATISTICS:
+        SetWatchItem(theEnv,"statistics",newState,NULL);
+        return;
+        
+      case GLOBALS:
+        SetWatchItem(theEnv,"globals",newState,NULL);
+        return;
+        
+      case FOCUS:
+        SetWatchItem(theEnv,"focus",newState,NULL);
+        return;
+     }
+  }
+
 /********************************************************/
 /* WatchString: C access routine for the watch command. */
 /********************************************************/

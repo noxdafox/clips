@@ -66,6 +66,17 @@
 
 #include "entities.h"
 
+typedef struct multifieldBuilder MultifieldBuilder;
+
+struct multifieldBuilder
+  {
+   Environment *mbEnv;
+   CLIPSValue *mbValueArray;
+   size_t bufferReset;
+   size_t length;
+   size_t bufferMaximum;
+  };
+
    Multifield                    *CreateUnmanagedMultifield(Environment *,long);
    void                           ReturnMultifield(Environment *,Multifield *);
    void                           IncrementMultifieldReferenceCount(Environment *,Multifield *);
@@ -90,6 +101,11 @@
    Multifield                    *ArrayToMultifield(Environment *,CLIPSValue *,long size);
    void                           NormalizeMultifield(Environment *,UDFValue *);
    void                           CLIPSToUDFValue(CLIPSValue *,UDFValue *);
+   MultifieldBuilder             *CreateMultifieldBuilder(Environment *,size_t);
+   void                           MBReset(MultifieldBuilder *);
+   void                           MBDispose(MultifieldBuilder *);
+   bool                           MBAppend(MultifieldBuilder *theMB,CLIPSValue *);
+   Multifield                    *MBCreate(MultifieldBuilder *);
 
 #endif /* _H_multifld */
 

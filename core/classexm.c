@@ -151,7 +151,7 @@ void BrowseClassesCommand(
          return;
         }
      }
-   BrowseClasses(WDISPLAY,cls);
+   BrowseClasses(cls,WDISPLAY);
   }
 
 /****************************************************************
@@ -164,8 +164,8 @@ void BrowseClassesCommand(
   NOTES        : None
  ****************************************************************/
 void BrowseClasses(
-  const char *logicalName,
-  Defclass *theDefclass)
+  Defclass *theDefclass,
+  const char *logicalName)
   {
    Environment *theEnv = theDefclass->header.env;
    
@@ -200,7 +200,7 @@ void DescribeClassCommand(
    if (theDefclass == NULL)
      { return; }
 
-   DescribeClass(WDISPLAY,theDefclass);
+   DescribeClass(theDefclass,WDISPLAY);
   }
 
 /******************************************************
@@ -215,8 +215,8 @@ void DescribeClassCommand(
   NOTES        : None
  ******************************************************/
 void DescribeClass(
-  const char *logicalName,
-  Defclass *theDefclass)
+  Defclass *theDefclass,
+  const char *logicalName)
   {
    char buf[83],
         slotNamePrintFormat[12],

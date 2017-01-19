@@ -68,9 +68,12 @@ typedef struct activation Activation;
 #include "symbol.h"
 #include "match.h"
 
-#define WHEN_DEFINED 0
-#define WHEN_ACTIVATED 1
-#define EVERY_CYCLE 2
+typedef enum
+  {
+   WHEN_DEFINED,
+   WHEN_ACTIVATED,
+   EVERY_CYCLE
+  } SalienceEvaluationType;
 
 #define MAX_DEFRULE_SALIENCE  10000
 #define MIN_DEFRULE_SALIENCE -10000
@@ -99,6 +102,8 @@ struct salienceGroup
    struct salienceGroup *prev;
   };
 
+#include "crstrtgy.h"
+
 #define AGENDA_DATA 17
 
 struct agendaData
@@ -109,8 +114,8 @@ struct agendaData
    unsigned long NumberOfActivations;
    unsigned long long CurrentTimetag;
    bool AgendaChanged;
-   int SalienceEvaluation;
-   int Strategy;
+   SalienceEvaluationType SalienceEvaluation;
+   StrategyType Strategy;
   };
 
 #define AgendaData(theEnv) ((struct agendaData *) GetEnvironmentData(theEnv,AGENDA_DATA))
@@ -127,7 +132,7 @@ struct agendaData
    Defrule                *GetActivationRule(Environment *,Activation *);
    int                     ActivationGetSalience(Activation *);
    int                     ActivationSetSalience(Activation *,int);
-   void                    ActivationPPForm(Activation *,char *,size_t);
+   void                    ActivationPPForm(Activation *,StringBuilder *);
    void                    GetActivationBasisPPForm(Environment *,char *,size_t,Activation *);
    bool                    MoveActivationToTop(Environment *,Activation *);
    bool                    ActivationDelete(Activation *,Environment *);
@@ -138,16 +143,16 @@ struct agendaData
    bool                    GetAgendaChanged(Environment *);
    void                    SetAgendaChanged(Environment *,bool);
    unsigned long           GetNumberOfActivations(Environment *);
-   int                     GetSalienceEvaluation(Environment *);
-   int                     SetSalienceEvaluation(Environment *,int);
-   void                    DefmoduleRefreshAgenda(Defmodule *,Environment *);
+   SalienceEvaluationType  GetSalienceEvaluation(Environment *);
+   SalienceEvaluationType  SetSalienceEvaluation(Environment *,SalienceEvaluationType);
+   void                    RefreshAgenda(Defmodule *,Environment *);
    void                    DefmoduleReorderAgenda(Defmodule *,Environment *);
    void                    InitializeAgenda(Environment *);
    void                    SetSalienceEvaluationCommand(Environment *,UDFContext *,UDFValue *);
    void                    GetSalienceEvaluationCommand(Environment *,UDFContext *,UDFValue *);
    void                    RefreshAgendaCommand(Environment *,UDFContext *,UDFValue *);
    void                    RefreshCommand(Environment *,UDFContext *,UDFValue *);
-   bool                    DefruleRefresh(Defrule *);
+   bool                    Refresh(Defrule *);
 #if DEBUGGING_FUNCTIONS
    void                    AgendaCommand(Environment *,UDFContext *,UDFValue *);
 #endif

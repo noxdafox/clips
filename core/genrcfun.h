@@ -164,7 +164,7 @@ struct defgenericData
 
    long                           FindMethodByIndex(Defgeneric *,long);
 #if DEBUGGING_FUNCTIONS || PROFILING_FUNCTIONS
-   void                           PrintMethod(Environment *,char *,size_t,Defmethod *);
+   void                           PrintMethod(Environment *,Defmethod *,StringBuilder *);
 #endif
 #if DEBUGGING_FUNCTIONS
    void                           PreviewGeneric(Environment *,UDFContext *,UDFValue *);

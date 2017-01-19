@@ -570,9 +570,8 @@ long FindMethodByIndex(
  ******************************************************************/
 void PrintMethod(
   Environment *theEnv,
-  char *buf,
-  size_t buflen,
-  Defmethod *meth)
+  Defmethod *meth,
+  StringBuilder *theSB)
   {
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -581,11 +580,11 @@ void PrintMethod(
    RESTRICTION *rptr;
    char numbuf[15];
 
-   buf[0] = '\0';
+   StringBuilderReset(theSB);
    if (meth->system)
-     genstrncpy(buf,"SYS",(STD_SIZE) buflen);
+     StringBuilderAppend(theSB,"SYS");
    gensprintf(numbuf,"%-2d ",meth->index);
-   genstrncat(buf,numbuf,(STD_SIZE) buflen-3);
+   StringBuilderAppend(theSB,numbuf);
    for (j = 0 ; j < meth->restrictionCount ; j++)
      {
       rptr = &meth->restrictions[j];
@@ -593,32 +592,32 @@ void PrintMethod(
         {
          if ((rptr->tcnt == 0) && (rptr->query == NULL))
            {
-            genstrncat(buf,"$?",buflen-strlen(buf));
+            StringBuilderAppend(theSB,"$?");
             break;
            }
-         genstrncat(buf,"($? ",buflen-strlen(buf));
+         StringBuilderAppend(theSB,"($? ");
         }
       else
-        genstrncat(buf,"(",buflen-strlen(buf));
+        StringBuilderAppend(theSB,"(");
       for (k = 0 ; k < rptr->tcnt ; k++)
         {
 #if OBJECT_SYSTEM
-         genstrncat(buf,DefclassName((Defclass *) rptr->types[k]),buflen-strlen(buf));
+         StringBuilderAppend(theSB,DefclassName((Defclass *) rptr->types[k]));
 #else
-         genstrncat(buf,TypeName(theEnv,((CLIPSInteger *) rptr->types[k])->contents),buflen-strlen(buf));
+         StringBuilderAppend(theSB,TypeName(theEnv,((CLIPSInteger *) rptr->types[k])->contents));
 #endif
          if (((int) k) < (((int) rptr->tcnt) - 1))
-           genstrncat(buf," ",buflen-strlen(buf));
+           StringBuilderAppend(theSB," ");
         }
       if (rptr->query != NULL)
         {
          if (rptr->tcnt != 0)
-           genstrncat(buf," ",buflen-strlen(buf));
-         genstrncat(buf,"<qry>",buflen-strlen(buf));
+           StringBuilderAppend(theSB," ");
+         StringBuilderAppend(theSB,"<qry>");
         }
-      genstrncat(buf,")",buflen-strlen(buf));
+      StringBuilderAppend(theSB,")");
       if (((int) j) != (((int) meth->restrictionCount)-1))
-        genstrncat(buf," ",buflen-strlen(buf));
+        StringBuilderAppend(theSB," ");
      }
   }
 
@@ -850,8 +849,10 @@ static void DisplayGenericCore(
   Defgeneric *gfunc)
   {
    long i;
-   char buf[256];
    bool rtn = false;
+   StringBuilder *theSB;
+   
+   theSB = CreateStringBuilder(theEnv,256);
 
    for (i = 0 ; i < gfunc->mcnt ; i++)
      {
@@ -861,8 +862,8 @@ static void DisplayGenericCore(
          rtn = true;
          PrintString(theEnv,WDISPLAY,DefgenericName(gfunc));
          PrintString(theEnv,WDISPLAY," #");
-         PrintMethod(theEnv,buf,255,&gfunc->methods[i]);
-         PrintString(theEnv,WDISPLAY,buf);
+         PrintMethod(theEnv,&gfunc->methods[i],theSB);
+         PrintString(theEnv,WDISPLAY,theSB->contents);
          PrintString(theEnv,WDISPLAY,"\n");
         }
       gfunc->methods[i].busy--;
@@ -873,6 +874,8 @@ static void DisplayGenericCore(
       PrintString(theEnv,WDISPLAY,DefgenericName(gfunc));
       PrintString(theEnv,WDISPLAY,".\n");
      }
+     
+   StringBuilderDispose(theSB);
   }
 
 #endif

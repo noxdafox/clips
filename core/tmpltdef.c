@@ -451,13 +451,9 @@ void IncrementDeftemplateBusyCount(
 /*   next template fact following the fact passed as an argument.  */
 /*******************************************************************/
 Fact *GetNextFactInTemplate(
-  Environment *theEnv,
   Deftemplate *theTemplate,
   Fact *factPtr)
   {
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
    if (factPtr == NULL)
      { return(theTemplate->factList); }
 

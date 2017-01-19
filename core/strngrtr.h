@@ -45,7 +45,11 @@
 
 #define _H_strngrtr
 
+typedef struct stringRouter StringRouter;
+typedef struct stringBuilderRouter StringBuilderRouter;
+
 #include <stdio.h>
+#include "utility.h"
 
 #define STRING_ROUTER_DATA 48
 
@@ -57,12 +61,20 @@ struct stringRouter
    size_t currentPosition;
    size_t maximumPosition;
    int readWriteType;
-   struct stringRouter *next;
+   StringRouter *next;
+  };
+
+struct stringBuilderRouter
+  {
+   const char *name;
+   StringBuilder *SBR;
+   StringBuilderRouter *next;
   };
 
 struct stringRouterData
   {
-   struct stringRouter *ListOfStringRouters;
+   StringRouter *ListOfStringRouters;
+   StringBuilderRouter *ListOfStringBuilderRouters;
   };
 
 #define StringRouterData(theEnv) ((struct stringRouterData *) GetEnvironmentData(theEnv,STRING_ROUTER_DATA))
@@ -77,6 +89,8 @@ struct stringRouterData
    bool                           CloseStringSource(Environment *,const char *);
    bool                           OpenStringDestination(Environment *,const char *,char *,size_t);
    bool                           CloseStringDestination(Environment *,const char *);
+   bool                           OpenStringBuilderDestination(Environment *,const char *,StringBuilder *);
+   bool                           CloseStringBuilderDestination(Environment *,const char *);
 
 #endif /* _H_strngrtr */
 

@@ -172,7 +172,7 @@ void SetupObjectSystem(
    memcpy(&DefclassData(theEnv)->DefclassEntityRecord,&defclassEntityRecord,sizeof(struct entityRecord));
 
 #if ! RUN_TIME
-   DefclassData(theEnv)->ClassDefaultsMode = CONVENIENCE_MODE;
+   DefclassData(theEnv)->ClassDefaultsModeValue = CONVENIENCE_MODE;
    DefclassData(theEnv)->ISA_SYMBOL = CreateSymbol(theEnv,SUPERCLASS_RLN);
    IncrementLexemeCount(DefclassData(theEnv)->ISA_SYMBOL);
    DefclassData(theEnv)->NAME_SYMBOL = CreateSymbol(theEnv,NAME_RLN);

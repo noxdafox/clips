@@ -110,6 +110,7 @@
 #include "modulutl.h"
 #include "multifld.h"
 #include "router.h"
+#include "strngrtr.h"
 #if DEBUGGING_FUNCTIONS
 #include "watch.h"
 #endif
@@ -790,16 +791,21 @@ bool Undefmethod(
   NOTES        : Terminating '\n' not written
  *****************************************************/
 void DefmethodDescription(
-  char *buf,
-  size_t buflen,
   Defgeneric *theDefgeneric,
-  long theIndex)
+  long theIndex,
+  StringBuilder *theSB)
   {
    long mi;
    Environment *theEnv = theDefgeneric->header.env;
-   
+
    mi = FindMethodByIndex(theDefgeneric,theIndex);
-   PrintMethod(theEnv,buf,buflen,&theDefgeneric->methods[mi]);
+
+   OpenStringBuilderDestination(theEnv,"MethodDescription",theSB);
+
+   PrintMethod(theEnv,&theDefgeneric->methods[mi],theSB);
+   
+   CloseStringBuilderDestination(theEnv,"MethodDescription");
+
   }
 #endif /* DEBUGGING_FUNCTIONS || PROFILING_FUNCTIONS */
 
@@ -1084,7 +1090,7 @@ void GetDefgenericListFunction(
  ***************************************************************/
 void GetDefgenericList(
   Environment *theEnv,
-  UDFValue *returnValue,
+  CLIPSValue *returnValue,
   Defmodule *theModule)
   {
    UDFValue result;
@@ -1221,12 +1227,12 @@ void GetMethodRestrictionsCommand(
       SetMultifieldErrorValue(theEnv,returnValue);
       return;
      }
-   MethodRestrictions(gfunc,(unsigned) theArg.integerValue->contents,&result);
+   GetMethodRestrictions(gfunc,(unsigned) theArg.integerValue->contents,&result);
    CLIPSToUDFValue(&result,returnValue);
   }
 
 /***********************************************************************
-  NAME         : MethodRestrictions
+  NAME         : GetMethodRestrictions
   DESCRIPTION  : Stores restrictions of a method in multifield
   INPUTS       : 1) Pointer to the generic function
                  2) The method index
@@ -1261,7 +1267,7 @@ void GetMethodRestrictionsCommand(
 
                   (2 -1 3 7 11 13 FALSE 2 NUMBER SYMBOL_TYPE TRUE 0 FALSE 0)
  ***********************************************************************/
-void MethodRestrictions(
+void GetMethodRestrictions(
   Defgeneric *theDefgeneric,
   long mi,
   CLIPSValue *returnValue)
@@ -1557,16 +1563,21 @@ static long ListMethodsForGeneric(
   Defgeneric *gfunc)
   {
    long gi;
-   char buf[256];
+   StringBuilder *theSB;
+   
+   theSB = CreateStringBuilder(theEnv,256);
 
    for (gi = 0 ; gi < gfunc->mcnt ; gi++)
      {
       PrintString(theEnv,logicalName,DefgenericName(gfunc));
       PrintString(theEnv,logicalName," #");
-      PrintMethod(theEnv,buf,255,&gfunc->methods[gi]);
-      PrintString(theEnv,logicalName,buf);
+      PrintMethod(theEnv,&gfunc->methods[gi],theSB);
+      PrintString(theEnv,logicalName,theSB->contents);
       PrintString(theEnv,logicalName,"\n");
      }
+     
+   StringBuilderDispose(theSB);
+   
    return((long) gfunc->mcnt);
   }
 
@@ -1823,16 +1834,18 @@ static void PrintMethodWatchFlag(
   Defgeneric *theGeneric,
   long theMethod)
   {
-   char buf[60];
+   StringBuilder *theSB = CreateStringBuilder(theEnv,60);
 
    PrintString(theEnv,logName,DefgenericName(theGeneric));
    PrintString(theEnv,logName," ");
-   DefmethodDescription(buf,59,theGeneric,theMethod);
-   PrintString(theEnv,logName,buf);
+   DefmethodDescription(theGeneric,theMethod,theSB);
+   PrintString(theEnv,logName,theSB->contents);
    if (DefmethodGetWatch(theGeneric,theMethod))
      PrintString(theEnv,logName," = on\n");
    else
      PrintString(theEnv,logName," = off\n");
+     
+   StringBuilderDispose(theSB);
   }
 
 #endif

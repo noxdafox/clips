@@ -312,7 +312,7 @@ void RetractCommand(
       /*======================================*/
 
       if (CVIsType(&theArg,FACT_ADDRESS_BIT))
-        { Retract(theEnv,(Fact *) theArg.value); }
+        { Retract(theArg.factValue); }
 
       /*===============================================*/
       /* If the argument evaluates to an integer, then */
@@ -345,7 +345,7 @@ void RetractCommand(
          /*=====================================*/
 
          if (ptr != NULL)
-           { Retract(theEnv,ptr); }
+           { Retract(ptr); }
          else
            {
             char tempBuffer[20];
@@ -453,7 +453,7 @@ void FactIndexFunction(
       return;
      }
 
-   returnValue->integerValue = CreateInteger(theEnv,FactIndex(theEnv,theArg.factValue));
+   returnValue->integerValue = CreateInteger(theEnv,FactIndex(theArg.factValue));
   }
 
 #if DEBUGGING_FUNCTIONS
@@ -740,7 +740,8 @@ void SaveFactsCommand(
   UDFValue *returnValue)
   {
    const char *fileName;
-   int numArgs, saveCode = LOCAL_SAVE;
+   int numArgs;
+   SaveScope saveCode = LOCAL_SAVE;
    const char *argument;
    UDFValue theValue;
    struct expr *theList = NULL;
@@ -841,7 +842,7 @@ void LoadFactsCommand(
 bool SaveFacts(
   Environment *theEnv,
   const char *fileName,
-  int saveCode)
+  SaveScope saveCode)
   {
    return SaveFactsDriver(theEnv,fileName,saveCode,NULL);
   }
@@ -852,7 +853,7 @@ bool SaveFacts(
 bool SaveFactsDriver(
   Environment *theEnv,
   const char *fileName,
-  int saveCode,
+  SaveScope saveCode,
   struct expr *theList)
   {
    bool tempValue1, tempValue2, tempValue3;
@@ -983,7 +984,7 @@ bool SaveFactsDriver(
    /*==================================*/
 
    if (theList != NULL)
-     { rm3(theEnv,deftemplateArray,(long) sizeof(Deftemplate *) * count); }
+     { rm(theEnv,deftemplateArray,(long) sizeof(Deftemplate *) * count); }
 
    /*===================================*/
    /* Return true to indicate no errors */
@@ -1041,7 +1042,7 @@ static Deftemplate **GetSaveFactsDeftemplateNames(
    /* Allocate the storage for the name list. */
    /*=========================================*/
 
-   deftemplateArray = (Deftemplate **) gm3(theEnv,(long) sizeof(Deftemplate *) * *count);
+   deftemplateArray = (Deftemplate **) gm2(theEnv,(long) sizeof(Deftemplate *) * *count);
 
    /*=====================================*/
    /* Loop through each of the arguments. */
@@ -1060,7 +1061,7 @@ static Deftemplate **GetSaveFactsDeftemplateNames(
       if (EvaluationData(theEnv)->EvaluationError)
         {
          *error = true;
-         rm3(theEnv,deftemplateArray,(long) sizeof(Deftemplate *) * *count);
+         rm(theEnv,deftemplateArray,(long) sizeof(Deftemplate *) * *count);
          return NULL;
         }
 
@@ -1072,7 +1073,7 @@ static Deftemplate **GetSaveFactsDeftemplateNames(
         {
          *error = true;
          ExpectedTypeError1(theEnv,"save-facts",3+i,"symbol");
-         rm3(theEnv,deftemplateArray,(long) sizeof(Deftemplate *) * *count);
+         rm(theEnv,deftemplateArray,(long) sizeof(Deftemplate *) * *count);
          return NULL;
         }
 
@@ -1089,7 +1090,7 @@ static Deftemplate **GetSaveFactsDeftemplateNames(
            {
             *error = true;
             ExpectedTypeError1(theEnv,"save-facts",3+i,"local deftemplate name");
-            rm3(theEnv,deftemplateArray,(long) sizeof(Deftemplate *) * *count);
+            rm(theEnv,deftemplateArray,(long) sizeof(Deftemplate *) * *count);
             return NULL;
            }
         }
@@ -1103,7 +1104,7 @@ static Deftemplate **GetSaveFactsDeftemplateNames(
            {
             *error = true;
             ExpectedTypeError1(theEnv,"save-facts",3+i,"visible deftemplate name");
-            rm3(theEnv,deftemplateArray,(long) sizeof(Deftemplate *) * *count);
+            rm(theEnv,deftemplateArray,(long) sizeof(Deftemplate *) * *count);
             return NULL;
            }
         }

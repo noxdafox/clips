@@ -265,7 +265,7 @@ bool ParseDefrule(
 
 #if DEBUGGING_FUNCTIONS
    if (BitwiseTest(DefruleData(theEnv)->DeletedRuleDebugFlags,0))
-     { DefruleSetBreak(topDisjunct); }
+     { SetBreak(topDisjunct); }
    if (BitwiseTest(DefruleData(theEnv)->DeletedRuleDebugFlags,1) ||
        (GetWatchItem(theEnv,"activations") == 1))
      { DefruleSetWatchActivations(topDisjunct,true); }

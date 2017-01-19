@@ -339,7 +339,7 @@ TEMP_SLOT_LINK *ParseSlot(
       goto ParseSlotError;
      }
 
-   if (DefclassData(theEnv)->ClassDefaultsMode == CONVENIENCE_MODE)
+   if (DefclassData(theEnv)->ClassDefaultsModeValue == CONVENIENCE_MODE)
      {
       if (! TestBitMap(specbits,CREATE_ACCESSOR_BIT))
         {

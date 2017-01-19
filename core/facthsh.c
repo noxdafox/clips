@@ -276,7 +276,7 @@ unsigned long HandleFactDuplication(
 bool GetFactDuplication(
   Environment *theEnv)
   {
-   return(FactData(theEnv)->FactDuplication);
+   return FactData(theEnv)->FactDuplication;
   }
 
 /*******************************************/
@@ -291,7 +291,7 @@ bool SetFactDuplication(
 
    ov = FactData(theEnv)->FactDuplication;
    FactData(theEnv)->FactDuplication = value;
-   return(ov);
+   return ov;
   }
 
 /**************************************************/
@@ -316,7 +316,7 @@ static struct factHashEntry **CreateFactHashTable(
     struct factHashEntry **theTable;
 
     theTable = (struct factHashEntry **)
-               gm3(theEnv,sizeof (struct factHashEntry *) * tableSize);
+               gm2(theEnv,sizeof (struct factHashEntry *) * tableSize);
 
     if (theTable == NULL) ExitRouter(theEnv,EXIT_FAILURE);
 
@@ -363,7 +363,7 @@ static void ResizeFactHashTable(
     /* Replace the old hash table with the new hash table. */
     /*=====================================================*/
 
-    rm3(theEnv,theTable,sizeof(struct factHashEntry *) * FactData(theEnv)->FactHashTableSize);
+    rm(theEnv,theTable,sizeof(struct factHashEntry *) * FactData(theEnv)->FactHashTableSize);
     FactData(theEnv)->FactHashTableSize = newSize;
     FactData(theEnv)->FactHashTable = newTable;
    }
@@ -394,7 +394,7 @@ static void ResetFactHashTable(
     /* Replace the old hash table with the new hash table. */
     /*=====================================================*/
 
-    rm3(theEnv,FactData(theEnv)->FactHashTable,sizeof(struct factHashEntry *) * FactData(theEnv)->FactHashTableSize);
+    rm(theEnv,FactData(theEnv)->FactHashTable,sizeof(struct factHashEntry *) * FactData(theEnv)->FactHashTableSize);
     FactData(theEnv)->FactHashTableSize = SIZE_FACT_HASH;
     FactData(theEnv)->FactHashTable = newTable;
    }

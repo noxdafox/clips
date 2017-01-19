@@ -442,10 +442,10 @@ void ReadNeededSymbols(
    /* Allocate area for strings to be read. */
    /*=======================================*/
    
-   types = (unsigned short *) gm3(theEnv,sizeof(unsigned short) * SymbolData(theEnv)->NumberOfSymbols);
+   types = (unsigned short *) gm2(theEnv,sizeof(unsigned short) * SymbolData(theEnv)->NumberOfSymbols);
    GenReadBinary(theEnv,types,sizeof(unsigned short) * SymbolData(theEnv)->NumberOfSymbols);
 
-   symbolNames = (char *) gm3(theEnv,(long) space);
+   symbolNames = (char *) gm2(theEnv,(long) space);
    GenReadBinary(theEnv,symbolNames,space);
 
    /*================================================*/
@@ -453,7 +453,7 @@ void ReadNeededSymbols(
    /*================================================*/
 
    SymbolData(theEnv)->SymbolArray = (CLIPSLexeme **)
-                 gm3(theEnv,(long) sizeof(CLIPSLexeme *) * SymbolData(theEnv)->NumberOfSymbols);
+                 gm2(theEnv,(long) sizeof(CLIPSLexeme *) * SymbolData(theEnv)->NumberOfSymbols);
    namePtr = symbolNames;
    for (i = 0; i < SymbolData(theEnv)->NumberOfSymbols; i++)
      {
@@ -471,8 +471,8 @@ void ReadNeededSymbols(
    /* Free the name buffer. */
    /*=======================*/
 
-   rm3(theEnv,types,sizeof(unsigned short) * SymbolData(theEnv)->NumberOfSymbols);
-   rm3(theEnv,symbolNames,(long) space);
+   rm(theEnv,types,sizeof(unsigned short) * SymbolData(theEnv)->NumberOfSymbols);
+   rm(theEnv,symbolNames,(long) space);
   }
 
 /*****************************************/
@@ -500,7 +500,7 @@ void ReadNeededFloats(
    /* Allocate area for the floats. */
    /*===============================*/
 
-   floatValues = (double *) gm3(theEnv,(long) sizeof(double) * SymbolData(theEnv)->NumberOfFloats);
+   floatValues = (double *) gm2(theEnv,(long) sizeof(double) * SymbolData(theEnv)->NumberOfFloats);
    GenReadBinary(theEnv,floatValues,(unsigned long) (sizeof(double) * SymbolData(theEnv)->NumberOfFloats));
 
    /*======================================*/
@@ -508,7 +508,7 @@ void ReadNeededFloats(
    /*======================================*/
 
    SymbolData(theEnv)->FloatArray = (CLIPSFloat **)
-               gm3(theEnv,(long) sizeof(CLIPSFloat *) * SymbolData(theEnv)->NumberOfFloats);
+               gm2(theEnv,(long) sizeof(CLIPSFloat *) * SymbolData(theEnv)->NumberOfFloats);
    for (i = 0; i < SymbolData(theEnv)->NumberOfFloats; i++)
      { SymbolData(theEnv)->FloatArray[i] = CreateFloat(theEnv,floatValues[i]); }
 
@@ -516,7 +516,7 @@ void ReadNeededFloats(
    /* Free the float buffer. */
    /*========================*/
 
-   rm3(theEnv,floatValues,(long) (sizeof(double) * SymbolData(theEnv)->NumberOfFloats));
+   rm(theEnv,floatValues,(long) (sizeof(double) * SymbolData(theEnv)->NumberOfFloats));
   }
 
 /*********************************************/
@@ -544,7 +544,7 @@ void ReadNeededIntegers(
    /* Allocate area for the integers. */
    /*=================================*/
 
-   integerValues = (long long *) gm3(theEnv,(long) (sizeof(long long) * SymbolData(theEnv)->NumberOfIntegers));
+   integerValues = (long long *) gm2(theEnv,(long) (sizeof(long long) * SymbolData(theEnv)->NumberOfIntegers));
    GenReadBinary(theEnv,integerValues,(unsigned long) (sizeof(long long) * SymbolData(theEnv)->NumberOfIntegers));
 
    /*==========================================*/
@@ -552,7 +552,7 @@ void ReadNeededIntegers(
    /*==========================================*/
 
    SymbolData(theEnv)->IntegerArray = (CLIPSInteger **)
-           gm3(theEnv,(long) (sizeof(CLIPSInteger *) * SymbolData(theEnv)->NumberOfIntegers));
+           gm2(theEnv,(long) (sizeof(CLIPSInteger *) * SymbolData(theEnv)->NumberOfIntegers));
    for (i = 0; i < SymbolData(theEnv)->NumberOfIntegers; i++)
      { SymbolData(theEnv)->IntegerArray[i] = CreateInteger(theEnv,integerValues[i]); }
 
@@ -560,7 +560,7 @@ void ReadNeededIntegers(
    /* Free the integer buffer. */
    /*==========================*/
 
-   rm3(theEnv,integerValues,(long) (sizeof(long long) * SymbolData(theEnv)->NumberOfIntegers));
+   rm(theEnv,integerValues,(long) (sizeof(long long) * SymbolData(theEnv)->NumberOfIntegers));
   }
 
 /*******************************************/
@@ -592,7 +592,7 @@ static void ReadNeededBitMaps(
    /* Allocate area for bitmaps to be read. */
    /*=======================================*/
 
-   bitMapStorage = (char *) gm3(theEnv,(long) space);
+   bitMapStorage = (char *) gm2(theEnv,(long) space);
    GenReadBinary(theEnv,bitMapStorage,space);
 
    /*================================================*/
@@ -600,7 +600,7 @@ static void ReadNeededBitMaps(
    /*================================================*/
 
    SymbolData(theEnv)->BitMapArray = (CLIPSBitMap **)
-                 gm3(theEnv,(long) sizeof(CLIPSBitMap *) * SymbolData(theEnv)->NumberOfBitMaps);
+                 gm2(theEnv,(long) sizeof(CLIPSBitMap *) * SymbolData(theEnv)->NumberOfBitMaps);
    bitMapPtr = bitMapStorage;
    for (i = 0; i < SymbolData(theEnv)->NumberOfBitMaps; i++)
      {
@@ -613,7 +613,7 @@ static void ReadNeededBitMaps(
    /* Free the bitmap buffer. */
    /*=========================*/
 
-   rm3(theEnv,bitMapStorage,(long) space);
+   rm(theEnv,bitMapStorage,(long) space);
   }
 
 /**********************************************************/
@@ -625,13 +625,13 @@ void FreeAtomicValueStorage(
   Environment *theEnv)
   {
    if (SymbolData(theEnv)->SymbolArray != NULL)
-     rm3(theEnv,SymbolData(theEnv)->SymbolArray,(long) sizeof(CLIPSLexeme *) * SymbolData(theEnv)->NumberOfSymbols);
+     rm(theEnv,SymbolData(theEnv)->SymbolArray,(long) sizeof(CLIPSLexeme *) * SymbolData(theEnv)->NumberOfSymbols);
    if (SymbolData(theEnv)->FloatArray != NULL)
-     rm3(theEnv,SymbolData(theEnv)->FloatArray,(long) sizeof(CLIPSFloat *) * SymbolData(theEnv)->NumberOfFloats);
+     rm(theEnv,SymbolData(theEnv)->FloatArray,(long) sizeof(CLIPSFloat *) * SymbolData(theEnv)->NumberOfFloats);
    if (SymbolData(theEnv)->IntegerArray != NULL)
-     rm3(theEnv,SymbolData(theEnv)->IntegerArray,(long) sizeof(CLIPSInteger *) * SymbolData(theEnv)->NumberOfIntegers);
+     rm(theEnv,SymbolData(theEnv)->IntegerArray,(long) sizeof(CLIPSInteger *) * SymbolData(theEnv)->NumberOfIntegers);
    if (SymbolData(theEnv)->BitMapArray != NULL)
-     rm3(theEnv,SymbolData(theEnv)->BitMapArray,(long) sizeof(CLIPSBitMap *) * SymbolData(theEnv)->NumberOfBitMaps);
+     rm(theEnv,SymbolData(theEnv)->BitMapArray,(long) sizeof(CLIPSBitMap *) * SymbolData(theEnv)->NumberOfBitMaps);
 
    SymbolData(theEnv)->SymbolArray = NULL;
    SymbolData(theEnv)->FloatArray = NULL;

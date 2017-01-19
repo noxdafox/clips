@@ -66,13 +66,18 @@
 #define GREATER_THAN  1
 #define EQUAL         2
 
-#define GLOBAL_SAVE   0
-#define LOCAL_SAVE    1
-#define VISIBLE_SAVE  2
+typedef enum
+  {
+   LOCAL_SAVE,
+   VISIBLE_SAVE
+  } SaveScope;
 
-#define NO_DEFAULT      0
-#define STATIC_DEFAULT  1
-#define DYNAMIC_DEFAULT 2
+typedef enum
+  {
+   NO_DEFAULT,
+   STATIC_DEFAULT,
+   DYNAMIC_DEFAULT
+  } DefaultType;
 
 #ifndef WPROMPT_STRING
 #define WPROMPT_STRING "wclips"

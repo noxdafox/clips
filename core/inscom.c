@@ -143,11 +143,11 @@ void SetupInstances(
                                                      INSTANCE_ADDRESS_TYPE,0,0,0,
                                                      (EntityPrintFunction *) PrintInstanceName,
                                                      (EntityPrintFunction *) PrintInstanceLongForm,
-                                                     (bool (*)(void *,void *)) UnmakeInstance,
+                                                     (bool (*)(void *,Environment *)) UnmakeInstance,
                                                      NULL,
                                                      (void *(*)(void *,void *)) GetNextInstance,
-                                                     (EntityBusyCountFunction *) DecrementInstanceReferenceCount,
-                                                     (EntityBusyCountFunction *) IncrementInstanceReferenceCount,
+                                                     (EntityBusyCountFunction *) DecrementInstanceCallback,
+                                                     (EntityBusyCountFunction *) IncrementInstanceCallback,
                                                      NULL,NULL,NULL,NULL,NULL
                                                    },
 #if DEFRULE_CONSTRUCT && OBJECT_SYSTEM
@@ -323,8 +323,8 @@ static void DeallocateInstanceData(
   NOTES        : C interface for deleting instances
  *******************************************************************/
 bool DeleteInstance(
-  Environment *theEnv,
-  Instance *theInstance)
+  Instance *theInstance,
+  Environment *theEnv)
   {
    Instance *ins, *itmp;
    bool success = true;
@@ -360,8 +360,8 @@ bool DeleteInstance(
   NOTES        : C interface for deleting instances
  *******************************************************************/
 bool UnmakeInstance(
-  Environment *theEnv,
-  Instance *theInstance)
+  Instance *theInstance,
+  Environment *theEnv)
   {
    bool success = true, svmaintain;
 
@@ -706,14 +706,14 @@ bool ValidInstanceAddress(
   NOTES        : None
  ***************************************************/
 void DirectGetSlot(
-  Environment *theEnv,
   Instance *theInstance,
   const char *sname,
   CLIPSValue *returnValue)
   {
    InstanceSlot *sp;
    UDFValue temp;
-
+   Environment *theEnv = theInstance->cls->header.env;
+   
    if (theInstance->garbage == 1)
      {
       SetEvaluationError(theEnv,true);
@@ -750,14 +750,14 @@ void DirectGetSlot(
   NOTES        : None
  *********************************************************/
 bool DirectPutSlot(
-  Environment *theEnv,
   Instance *theInstance,
   const char *sname,
   CLIPSValue *val)
   {
    InstanceSlot *sp;
    UDFValue junk, temp;
-
+   Environment *theEnv = theInstance->cls->header.env;
+   
    if ((theInstance->garbage == 1) || (val == NULL))
      {
       SetEvaluationError(theEnv,true);
@@ -903,14 +903,9 @@ Instance *GetNextInstanceInScope(
   NOTES        : None
  ***************************************************/
 Instance *GetNextInstanceInClass(
-  Environment *theEnv,
   Defclass *theDefclass,
   Instance *theInstance)
   {
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
-
    if (theInstance == NULL)
      { return theDefclass->instanceList; }
 
@@ -933,15 +928,16 @@ Instance *GetNextInstanceInClass(
   NOTES        : None
  ***************************************************/
 Instance *GetNextInstanceInClassAndSubclasses(
-  Environment *theEnv,
   Defclass **cptr,
   Instance *theInstance,
   UDFValue *iterationInfo)
   {
    Instance *nextInstance;
    Defclass *theClass;
+   Environment *theEnv;
 
    theClass = *cptr;
+   theEnv = theClass->header.env;
 
    if (theInstance == NULL)
      {
@@ -954,7 +950,7 @@ Instance *GetNextInstanceInClassAndSubclasses(
      { nextInstance = theInstance->nxtClass; }
 
    while ((nextInstance == NULL) &&
-          (iterationInfo->begin < (iterationInfo->begin + iterationInfo->range)))
+          (iterationInfo->begin < iterationInfo->range))
      {
       theClass = (Defclass *) iterationInfo->multifieldValue->contents[iterationInfo->begin].value;
       *cptr = theClass;
@@ -979,8 +975,7 @@ Instance *GetNextInstanceInClassAndSubclasses(
  ***************************************************/
 void InstancePPForm(
   Instance *theInstance,
-  char *buf,
-  size_t buflen)
+  StringBuilder *theSB)
   {
    const char *pbuf = "***InstancePPForm***";
    Environment *theEnv;
@@ -989,13 +984,14 @@ void InstancePPForm(
      { return; }
 
    theEnv = theInstance->cls->header.env;
-   
-   if (OpenStringDestination(theEnv,pbuf,buf,buflen+1) == 0)
-     { return; }
 
+   if (OpenStringBuilderDestination(theEnv,pbuf,theSB) == 0)
+     { return; }
+   
    PrintInstance(theEnv,pbuf,theInstance," ");
 
-   CloseStringDestination(theEnv,pbuf);
+   CloseStringBuilderDestination(theEnv,pbuf);
+
   }
 
 /*********************************************************
@@ -1163,7 +1159,7 @@ void UnmakeInstanceCommand(
          returnValue->lexemeValue = FalseSymbol(theEnv);
          return;
         }
-      if (UnmakeInstance(theEnv,ins) == false)
+      if (UnmakeInstance(ins,theEnv) == false)
         rtn = false;
 
       if (ins == NULL)
