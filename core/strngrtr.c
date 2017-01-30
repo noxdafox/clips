@@ -517,7 +517,7 @@ static void PrintStringBuilderCallback(
       return;
      }
      
-   StringBuilderAppend(head->SBR,str);
+   SBAppend(head->SBR,str);
   }
 
 

@@ -475,7 +475,7 @@ void Reset(
   Environment *theEnv)
   {
    struct voidCallFunctionItem *resetPtr;
-   CLIPSBlock gcBlock;
+   GCBlock gcb;
 
    /*=====================================*/
    /* The reset command can't be executed */
@@ -493,7 +493,7 @@ void Reset(
    /*================================================*/
 
    if (UtilityData(theEnv)->CurrentGarbageFrame->topLevel) SetHaltExecution(theEnv,false);
-   CLIPSBlockStart(theEnv,&gcBlock);
+   GCBlockStart(theEnv,&gcb);
 
    /*=======================================================*/
    /* Call the before reset function to determine if the    */
@@ -531,7 +531,7 @@ void Reset(
    /* issued from an embedded controller.       */
    /*===========================================*/
 
-   CLIPSBlockEnd(theEnv,&gcBlock,NULL);
+   GCBlockEnd(theEnv,&gcb);
    CallPeriodicTasks(theEnv);
 
    /*===================================*/
@@ -617,7 +617,7 @@ bool Clear(
   Environment *theEnv)
   {
    struct voidCallFunctionItem *theFunction;
-   CLIPSBlock gcBlock;
+   GCBlock gcb;
 
    /*==========================================*/
    /* Activate the watch router which captures */
@@ -652,7 +652,7 @@ bool Clear(
    /* Set up the frame for tracking garbage. */
    /*========================================*/
    
-   CLIPSBlockStart(theEnv,&gcBlock);
+   GCBlockStart(theEnv,&gcb);
 
    /*===========================*/
    /* Call all clear functions. */
@@ -678,7 +678,7 @@ bool Clear(
    /* Restore the old garbage frame. */
    /*================================*/
    
-   CLIPSBlockEnd(theEnv,&gcBlock,NULL);
+   GCBlockEnd(theEnv,&gcb);
    CallPeriodicTasks(theEnv);
 
    /*===========================*/

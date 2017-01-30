@@ -61,8 +61,8 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
-/*            Added CLIPSBlockStart and CLIPSBlockEnd        */
-/*            functions for garbage collection blocks.       */
+/*            Added GCBlockStart and GCBlockEnd functions    */
+/*            for garbage collection blocks.                 */
 /*                                                           */
 /*            Added StringBuilder functions.                 */
 /*                                                           */
@@ -289,12 +289,12 @@ void RestorePriorGarbageFrame(
      { EphemerateValue(theEnv,returnValue->value); }
   }
 
-/********************/
-/* CLIPSBlockStart: */
-/********************/
-void CLIPSBlockStart(
+/*****************/
+/* GCBlockStart: */
+/*****************/
+void GCBlockStart(
   Environment *theEnv,
-  CLIPSBlock *theBlock)
+  GCBlock *theBlock)
   {
    theBlock->oldGarbageFrame = UtilityData(theEnv)->CurrentGarbageFrame;
    memset(&theBlock->newGarbageFrame,0,sizeof(struct garbageFrame));
@@ -302,12 +302,22 @@ void CLIPSBlockStart(
    UtilityData(theEnv)->CurrentGarbageFrame = &theBlock->newGarbageFrame;
   }
 
-/******************/
-/* CLIPSBlockEnd: */
-/******************/
-void CLIPSBlockEnd(
+/***************/
+/* GCBlockEnd: */
+/***************/
+void GCBlockEnd(
   Environment *theEnv,
-  CLIPSBlock *theBlock,
+  GCBlock *theBlock)
+  {
+   RestorePriorGarbageFrame(theEnv,&theBlock->newGarbageFrame,theBlock->oldGarbageFrame,NULL);
+  }
+
+/******************/
+/* GCBlockEndUDF: */
+/******************/
+void GCBlockEndUDF(
+  Environment *theEnv,
+  GCBlock *theBlock,
   UDFValue *rv)
   {
    RestorePriorGarbageFrame(theEnv,&theBlock->newGarbageFrame,theBlock->oldGarbageFrame,rv);
@@ -1403,10 +1413,10 @@ StringBuilder *CreateStringBuilder(
    return theSB;
   }
 
-/************************/
-/* StringBuilderAppend: */
-/************************/
-void StringBuilderAppend(
+/*************/
+/* SBAppend: */
+/*************/
+void SBAppend(
   StringBuilder *theSB,
   const char *appendString)
   {
@@ -1414,10 +1424,10 @@ void StringBuilderAppend(
                                     theSB->contents,&theSB->length,&theSB->bufferMaximum);
   }
 
-/*************************/
-/* StringBuilderAddChar: */
-/*************************/
-void StringBuilderAddChar(
+/**************/
+/* SBAddChar: */
+/**************/
+void SBAddChar(
   StringBuilder *theSB,
   int theChar)
   {
@@ -1426,10 +1436,10 @@ void StringBuilderAddChar(
                                           theSB->bufferMaximum+80);
   }
 
-/**********************/
-/* StringBuilderReset */
-/**********************/
-void StringBuilderReset(
+/***********/
+/* SBReset */
+/***********/
+void SBReset(
   StringBuilder *theSB)
   {
    if (theSB->bufferReset != theSB->bufferMaximum)
@@ -1443,10 +1453,10 @@ void StringBuilderReset(
    theSB->contents[0] = EOS;
   }
 
-/*********************/
-/* StringBuilderCopy */
-/*********************/
-char *StringBuilderCopy(
+/**********/
+/* SBCopy */
+/**********/
+char *SBCopy(
   StringBuilder *theSB)
   {
    char *stringCopy;
@@ -1457,10 +1467,10 @@ char *StringBuilderCopy(
    return stringCopy;
   }
 
-/*************************/
-/* StringBuilderDispose: */
-/*************************/
-void StringBuilderDispose(
+/**************/
+/* SBDispose: */
+/**************/
+void SBDispose(
   StringBuilder *theSB)
   {
    Environment *theEnv = theSB->sbEnv;

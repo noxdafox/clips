@@ -297,12 +297,12 @@ Multifield *ArrayToMultifield(
 /***********************************************************/
 Multifield *CreateMultifield(
   Environment *theEnv,
-  long size)
+  size_t size)
   {
    Multifield *theSegment;
    long newSize;
 
-   if (size <= 0) newSize = 1;
+   if (size == 0) newSize = 1;
    else newSize = size;
 
    theSegment = get_var_struct(theEnv,multifield,(long) sizeof(struct clipsValue) * (newSize - 1L));

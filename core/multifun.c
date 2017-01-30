@@ -64,8 +64,8 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
-/*            Added CLIPSBlockStart and CLIPSBlockEnd        */
-/*            functions for garbage collection blocks.       */
+/*            Added GCBlockStart and GCBlockEnd functions    */
+/*            for garbage collection blocks.                 */
 /*                                                           */
 /*            Eval support for run time and bload only.      */
 /*                                                           */
@@ -1112,7 +1112,7 @@ static void MultifieldPrognDriver(
    UDFValue argval;
    long i, end; /* 6.04 Bug Fix */
    FIELD_VAR_STACK *tmpField;
-   CLIPSBlock gcBlock;
+   GCBlock gcb;
    Environment *theEnv = context->environment;
 
    tmpField = get_struct(theEnv,fieldVarStack);
@@ -1130,7 +1130,7 @@ static void MultifieldPrognDriver(
       return;
      }
 
-   CLIPSBlockStart(theEnv,&gcBlock);
+   GCBlockStart(theEnv,&gcb);
 
    end = (argval.begin + argval.range) - 1;
    for (i = argval.begin ; i <= end ; i++)
@@ -1151,7 +1151,7 @@ static void MultifieldPrognDriver(
               }
             MultiFunctionData(theEnv)->FieldVarStack = tmpField->nxt;
             rtn_struct(theEnv,fieldVarStack,tmpField);
-            CLIPSBlockEnd(theEnv,&gcBlock,returnValue);
+            GCBlockEndUDF(theEnv,&gcb,returnValue);
             return;
            }
 
@@ -1172,7 +1172,7 @@ static void MultifieldPrognDriver(
    MultiFunctionData(theEnv)->FieldVarStack = tmpField->nxt;
    rtn_struct(theEnv,fieldVarStack,tmpField);
 
-   CLIPSBlockEnd(theEnv,&gcBlock,returnValue);
+   GCBlockEndUDF(theEnv,&gcb,returnValue);
    CallPeriodicTasks(theEnv);
   }
 

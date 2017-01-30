@@ -152,7 +152,7 @@ struct agendaData
    void                    GetSalienceEvaluationCommand(Environment *,UDFContext *,UDFValue *);
    void                    RefreshAgendaCommand(Environment *,UDFContext *,UDFValue *);
    void                    RefreshCommand(Environment *,UDFContext *,UDFValue *);
-   bool                    Refresh(Defrule *);
+   void                    Refresh(Defrule *);
 #if DEBUGGING_FUNCTIONS
    void                    AgendaCommand(Environment *,UDFContext *,UDFValue *);
 #endif

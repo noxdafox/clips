@@ -653,7 +653,7 @@ static void OutputConstructsCodeInfo(
            }
         }
      }
-   StringBuilderDispose(theSB);
+   SBDispose(theSB);
 #endif
 
    banner = "\n*** Defclasses ***\n";

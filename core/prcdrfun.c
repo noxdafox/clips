@@ -46,8 +46,8 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
-/*            Added CLIPSBlockStart and CLIPSBlockEnd        */
-/*            functions for garbage collection blocks.       */
+/*            Added GCBlockStart and GCBlockEnd functions    */
+/*            for garbage collection blocks.                 */
 /*                                                           */
 /*            Eval support for run time and bload only.      */
 /*                                                           */
@@ -147,14 +147,14 @@ void WhileFunction(
   UDFValue *returnValue)
   {
    UDFValue theResult;
-   CLIPSBlock gcBlock;
+   GCBlock gcb;
 
    /*====================================================*/
    /* Evaluate the body of the while loop as long as the */
    /* while condition evaluates to a non-FALSE value.    */
    /*====================================================*/
 
-   CLIPSBlockStart(theEnv,&gcBlock);
+   GCBlockStart(theEnv,&gcb);
 
    UDFNthArgument(context,1,ANY_TYPE_BITS,&theResult);
    while ((theResult.value != FalseSymbol(theEnv)) &&
@@ -199,7 +199,7 @@ void WhileFunction(
       returnValue->value = FalseSymbol(theEnv);
      }
 
-   CLIPSBlockEnd(theEnv,&gcBlock,returnValue);
+   GCBlockEndUDF(theEnv,&gcb,returnValue);
    CallPeriodicTasks(theEnv);
   }
 
@@ -215,7 +215,7 @@ void LoopForCountFunction(
    UDFValue theArg;
    long long iterationEnd;
    LOOP_COUNTER_STACK *tmpCounter;
-   CLIPSBlock gcBlock;
+   GCBlock gcb;
 
    tmpCounter = get_struct(theEnv,loopCounterStack);
    tmpCounter->loopCounter = 0L;
@@ -238,7 +238,7 @@ void LoopForCountFunction(
       return;
      }
 
-   CLIPSBlockStart(theEnv,&gcBlock);
+   GCBlockStart(theEnv,&gcb);
 
    iterationEnd = theArg.integerValue->contents;
    while ((tmpCounter->loopCounter <= iterationEnd) &&
@@ -272,7 +272,7 @@ void LoopForCountFunction(
    ProcedureFunctionData(theEnv)->LoopCounterStack = tmpCounter->nxt;
    rtn_struct(theEnv,loopCounterStack,tmpCounter);
 
-   CLIPSBlockEnd(theEnv,&gcBlock,loopResult);
+   GCBlockEndUDF(theEnv,&gcb,loopResult);
    CallPeriodicTasks(theEnv);
   }
 

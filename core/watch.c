@@ -174,117 +174,143 @@ bool AddWatchItem(
 /**************************************************/
 /* Watch: C access routine for the watch command. */
 /**************************************************/
-bool Watch(
+void Watch(
   Environment *theEnv,
   WatchItem item)
   {
    switch (item)
      {
       case ALL:
-        return SetWatchItem(theEnv,"all",true,NULL);
+        SetWatchItem(theEnv,"all",true,NULL);
+        break;
 
       case FACTS:
-        return SetWatchItem(theEnv,"facts",true,NULL);
+        SetWatchItem(theEnv,"facts",true,NULL);
+        break;
         
       case INSTANCES:
-        return SetWatchItem(theEnv,"instances",true,NULL);
+        SetWatchItem(theEnv,"instances",true,NULL);
+        break;
         
       case SLOTS:
-        return SetWatchItem(theEnv,"slots",true,NULL);
+        SetWatchItem(theEnv,"slots",true,NULL);
+        break;
         
       case RULES:
-        return SetWatchItem(theEnv,"rules",true,NULL);
+        SetWatchItem(theEnv,"rules",true,NULL);
+        break;
         
       case ACTIVATIONS:
-        return SetWatchItem(theEnv,"activations",true,NULL);
+        SetWatchItem(theEnv,"activations",true,NULL);
+        break;
         
       case MESSAGES:
-        return SetWatchItem(theEnv,"messages",true,NULL);
+        SetWatchItem(theEnv,"messages",true,NULL);
+        break;
         
       case MESSAGE_HANDLERS:
-        return SetWatchItem(theEnv,"message-handlers",true,NULL);
+        SetWatchItem(theEnv,"message-handlers",true,NULL);
+        break;
         
       case GENERIC_FUNCTIONS:
-        return SetWatchItem(theEnv,"generic-functions",true,NULL);
+        SetWatchItem(theEnv,"generic-functions",true,NULL);
+        break;
         
       case METHODS:
-        return SetWatchItem(theEnv,"methods",true,NULL);
+        SetWatchItem(theEnv,"methods",true,NULL);
+        break;
         
       case DEFFUNCTIONS:
-        return SetWatchItem(theEnv,"deffunctions",true,NULL);
+        SetWatchItem(theEnv,"deffunctions",true,NULL);
+        break;
         
       case COMPILATIONS:
-        return SetWatchItem(theEnv,"compilations",true,NULL);
+        SetWatchItem(theEnv,"compilations",true,NULL);
+        break;
         
       case STATISTICS:
-        return SetWatchItem(theEnv,"statistics",true,NULL);
+        SetWatchItem(theEnv,"statistics",true,NULL);
+        break;
         
       case GLOBALS:
-        return SetWatchItem(theEnv,"globals",true,NULL);
+        SetWatchItem(theEnv,"globals",true,NULL);
+        break;
         
       case FOCUS:
-        return SetWatchItem(theEnv,"focus",true,NULL);
+        SetWatchItem(theEnv,"focus",true,NULL);
+        break;
      }
-     
-   return false;
   }
 
 /****************************************************/
 /* Unwatch: C access routine for the watch command. */
 /****************************************************/
-bool Unwatch(
+void Unwatch(
   Environment *theEnv,
   WatchItem item)
   {
    switch (item)
      {
       case ALL:
-        return SetWatchItem(theEnv,"all",false,NULL);
+        SetWatchItem(theEnv,"all",false,NULL);
+        break;
 
       case FACTS:
-        return SetWatchItem(theEnv,"facts",false,NULL);
+        SetWatchItem(theEnv,"facts",false,NULL);
+        break;
         
       case INSTANCES:
-        return SetWatchItem(theEnv,"instances",false,NULL);
+        SetWatchItem(theEnv,"instances",false,NULL);
+        break;
         
       case SLOTS:
-        return SetWatchItem(theEnv,"slots",false,NULL);
+        SetWatchItem(theEnv,"slots",false,NULL);
+        break;
         
       case RULES:
-        return SetWatchItem(theEnv,"rules",false,NULL);
+        SetWatchItem(theEnv,"rules",false,NULL);
+        break;
         
       case ACTIVATIONS:
-        return SetWatchItem(theEnv,"activations",false,NULL);
+        SetWatchItem(theEnv,"activations",false,NULL);
+        break;
         
       case MESSAGES:
-        return SetWatchItem(theEnv,"messages",false,NULL);
+        SetWatchItem(theEnv,"messages",false,NULL);
+        break;
         
       case MESSAGE_HANDLERS:
-        return SetWatchItem(theEnv,"message-handlers",false,NULL);
+        SetWatchItem(theEnv,"message-handlers",false,NULL);
+        break;
         
       case GENERIC_FUNCTIONS:
-        return SetWatchItem(theEnv,"generic-functions",false,NULL);
+        SetWatchItem(theEnv,"generic-functions",false,NULL);
+        break;
         
       case METHODS:
-        return SetWatchItem(theEnv,"methods",false,NULL);
+        SetWatchItem(theEnv,"methods",false,NULL);
+        break;
         
       case DEFFUNCTIONS:
-        return SetWatchItem(theEnv,"deffunctions",false,NULL);
+        SetWatchItem(theEnv,"deffunctions",false,NULL);
+        break;
         
       case COMPILATIONS:
-        return SetWatchItem(theEnv,"compilations",false,NULL);
+        SetWatchItem(theEnv,"compilations",false,NULL);
+        break;
         
       case STATISTICS:
-        return SetWatchItem(theEnv,"statistics",false,NULL);
+        SetWatchItem(theEnv,"statistics",false,NULL);
+        break;
         
       case GLOBALS:
-        return SetWatchItem(theEnv,"globals",false,NULL);
+        SetWatchItem(theEnv,"globals",false,NULL);
+        break;
         
       case FOCUS:
-        return SetWatchItem(theEnv,"focus",false,NULL);
+        SetWatchItem(theEnv,"focus",false,NULL);
+        break;
      }
-     
-   return false;
   }
 
 /******************************************/

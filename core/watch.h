@@ -97,8 +97,8 @@ struct watchData
 
 #define WatchData(theEnv) ((struct watchData *) GetEnvironmentData(theEnv,WATCH_DATA))
 
-   bool                           Watch(Environment *,WatchItem);
-   bool                           Unwatch(Environment *,WatchItem);
+   void                           Watch(Environment *,WatchItem);
+   void                           Unwatch(Environment *,WatchItem);
 
    bool                           WatchString(Environment *,const char *);
    bool                           UnwatchString(Environment *,const char *);

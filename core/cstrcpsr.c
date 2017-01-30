@@ -58,8 +58,8 @@
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
-/*            Added CLIPSBlockStart and CLIPSBlockEnd        */
-/*            functions for garbage collection blocks.       */
+/*            Added GCBlockStart and GCBlockEnd functions    */
+/*            for garbage collection blocks.                 */
 /*                                                           */
 /*            File name/line count displayed for errors      */
 /*            and warnings during load command.              */
@@ -266,7 +266,7 @@ int LoadConstructsFromLogicalName(
    struct token theToken;
    bool noErrors = true;
    bool foundConstruct;
-   CLIPSBlock gcBlock;
+   GCBlock gcb;
    long oldLineCountValue;
    const char *oldLineCountRouter;
 
@@ -296,7 +296,7 @@ int LoadConstructsFromLogicalName(
    /* Set up the frame for garbage collection. */
    /*==========================================*/
 
-   CLIPSBlockStart(theEnv,&gcBlock);
+   GCBlockStart(theEnv,&gcb);
 
    /*========================================================*/
    /* Find the beginning of the first construct in the file. */
@@ -396,7 +396,7 @@ int LoadConstructsFromLogicalName(
    /* Remove the garbage collection frame. */
    /*======================================*/
 
-   CLIPSBlockEnd(theEnv,&gcBlock,NULL);
+   GCBlockEnd(theEnv,&gcb);
    CallPeriodicTasks(theEnv);
 
    /*==============================*/
@@ -699,7 +699,7 @@ int ParseConstruct(
    Construct *currentPtr;
    int rv;
    bool ov;
-   CLIPSBlock gcBlock;
+   GCBlock gcb;
 
    /*=================================*/
    /* Look for a valid construct name */
@@ -713,7 +713,7 @@ int ParseConstruct(
    /* Set up the frame for garbage collection. */
    /*==========================================*/
 
-   CLIPSBlockStart(theEnv,&gcBlock);
+   GCBlockStart(theEnv,&gcb);
 
    /*==================================*/
    /* Prepare the parsing environment. */
@@ -754,7 +754,7 @@ int ParseConstruct(
    /* Remove the garbage collection frame. */
    /*======================================*/
 
-   CLIPSBlockEnd(theEnv,&gcBlock,NULL);
+   GCBlockEnd(theEnv,&gcb);
    CallPeriodicTasks(theEnv);
 
    /*==============================*/

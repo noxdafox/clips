@@ -84,7 +84,7 @@ struct multifieldBuilder
    void                           IncrementCLIPSValueMultifieldReferenceCount(Environment *,Multifield *);
    void                           DecrementCLIPSValueMultifieldReferenceCount(Environment *,Multifield *);
    Multifield                    *StringToMultifield(Environment *,const char *);
-   Multifield                    *CreateMultifield(Environment *,long);
+   Multifield                    *CreateMultifield(Environment *,size_t);
    void                           AddToMultifieldList(Environment *,Multifield *);
    void                           FlushMultifields(Environment *);
    void                           DuplicateMultifield(Environment *,UDFValue *,UDFValue *);

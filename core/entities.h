@@ -176,7 +176,7 @@ struct multifield
   {
    TypeHeader header;
    unsigned busyCount;
-   long length;
+   size_t length;
    Multifield *next;
    CLIPSValue contents[1];
   };

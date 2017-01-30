@@ -926,7 +926,7 @@ void RefreshCommand(
 /* Refresh: Refreshes a defrule. Activations of the rule   */
 /*   that have already been fired are added to the agenda. */
 /***********************************************************/
-bool Refresh(
+void Refresh(
   Defrule *theRule)
   {
    Defrule *rulePtr;
@@ -968,8 +968,6 @@ bool Refresh(
            }
         }
      }
-
-   return true;
   }
 
 /**********************************************/

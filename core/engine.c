@@ -82,8 +82,8 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
-/*            Added CLIPSBlockStart and CLIPSBlockEnd        */
-/*            functions for garbage collection blocks.       */
+/*            Added GCBlockStart and GCBlockEnd functions    */
+/*            for garbage collection blocks.                 */
 /*                                                           */
 /*************************************************************/
 
@@ -191,7 +191,7 @@ long long Run(
 #endif
    struct trackedMemory *theTM;
    int danglingConstructs;
-   CLIPSBlock gcBlock;
+   GCBlock gcb;
 
    /*=====================================================*/
    /* Make sure the run command is not already executing. */
@@ -205,7 +205,7 @@ long long Run(
    /* Set up the frame for tracking garbage. */
    /*========================================*/
 
-   CLIPSBlockStart(theEnv,&gcBlock);
+   GCBlockStart(theEnv,&gcb);
 
    /*================================*/
    /* Set up statistics information. */
@@ -657,7 +657,7 @@ long long Run(
    /* Restore the old garbage frame. */
    /*================================*/
 
-   CLIPSBlockEnd(theEnv,&gcBlock,NULL);
+   GCBlockEnd(theEnv,&gcb);
    CallPeriodicTasks(theEnv);
 
    /*===================================*/
@@ -1066,7 +1066,7 @@ bool RemoveBreak(
         }
      }
 
-   return(rv);
+   return rv;
   }
 
 /**************************************************/

@@ -1576,7 +1576,7 @@ static long ListMethodsForGeneric(
       PrintString(theEnv,logicalName,"\n");
      }
      
-   StringBuilderDispose(theSB);
+   SBDispose(theSB);
    
    return((long) gfunc->mcnt);
   }
@@ -1845,7 +1845,7 @@ static void PrintMethodWatchFlag(
    else
      PrintString(theEnv,logName," = off\n");
      
-   StringBuilderDispose(theSB);
+   SBDispose(theSB);
   }
 
 #endif
