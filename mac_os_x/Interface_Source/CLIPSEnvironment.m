@@ -381,8 +381,8 @@
 /****************/
 - (void) fetchAgenda: (BOOL) lockAgenda
   {
-   struct focus *theFocus;
-   struct activation *theActivation;
+   FocalModule *theFocus;
+   Activation *theActivation;
    const char *moduleName;
    NSString *theStr;
    unsigned focusCount, agendaCount;
