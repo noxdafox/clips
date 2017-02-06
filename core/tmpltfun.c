@@ -1173,7 +1173,7 @@ void DeftemplateSlotCardinalityFunction(
 /* DeftemplateSlotCardinality: C access routine for */
 /*   the deftemplate-slot-cardinality function.     */
 /****************************************************/
-void DeftemplateSlotCardinality(
+bool DeftemplateSlotCardinality(
   Deftemplate *theDeftemplate,
   const char *slotName,
   CLIPSValue *returnValue)
@@ -1194,7 +1194,7 @@ void DeftemplateSlotCardinality(
          returnValue->value = CreateMultifield(theEnv,2L);
          returnValue->multifieldValue->contents[0].integerValue = SymbolData(theEnv)->Zero;
          returnValue->multifieldValue->contents[1].lexemeValue = SymbolData(theEnv)->PositiveInfinity;
-         return;
+         return true;
         }
       else
         {
@@ -1202,7 +1202,7 @@ void DeftemplateSlotCardinality(
          SetEvaluationError(theEnv,true);
          InvalidDeftemplateSlotMessage(theEnv,slotName,
                                        theDeftemplate->header.name->contents,false);
-         return;
+         return false;
         }
      }
 
@@ -1217,7 +1217,7 @@ void DeftemplateSlotCardinality(
       SetEvaluationError(theEnv,true);
       InvalidDeftemplateSlotMessage(theEnv,slotName,
                                     theDeftemplate->header.name->contents,false);
-      return;
+      return false;
      }
 
    /*=====================================*/
@@ -1227,7 +1227,7 @@ void DeftemplateSlotCardinality(
    if (theSlot->multislot == 0)
      {
       returnValue->multifieldValue = CreateMultifield(theEnv,0L);
-      return;
+      return true;
      }
 
    returnValue->value = CreateMultifield(theEnv,2L);
@@ -1242,6 +1242,8 @@ void DeftemplateSlotCardinality(
       returnValue->multifieldValue->contents[0].integerValue = SymbolData(theEnv)->Zero;
       returnValue->multifieldValue->contents[1].lexemeValue = SymbolData(theEnv)->PositiveInfinity;
      }
+     
+   return true;
   }
 
 /************************************************************/
@@ -1277,10 +1279,10 @@ void DeftemplateSlotAllowedValuesFunction(
   }
 
 /*******************************************************/
-/* DeftemplateSlotAllowedValues: C access routine   */
+/* DeftemplateSlotAllowedValues: C access routine      */
 /*   for the deftemplate-slot-allowed-values function. */
 /*******************************************************/
-void DeftemplateSlotAllowedValues(
+bool DeftemplateSlotAllowedValues(
   Deftemplate *theDeftemplate,
   const char *slotName,
   CLIPSValue *returnValue)
@@ -1301,7 +1303,7 @@ void DeftemplateSlotAllowedValues(
       if (strcmp(slotName,"implied") == 0)
         {
          returnValue->value = FalseSymbol(theEnv);
-         return;
+         return true;
         }
       else
         {
@@ -1309,7 +1311,7 @@ void DeftemplateSlotAllowedValues(
          SetEvaluationError(theEnv,true);
          InvalidDeftemplateSlotMessage(theEnv,slotName,
                                        theDeftemplate->header.name->contents,false);
-         return;
+         return false;
         }
      }
 
@@ -1324,7 +1326,7 @@ void DeftemplateSlotAllowedValues(
       SetEvaluationError(theEnv,true);
       InvalidDeftemplateSlotMessage(theEnv,slotName,
                                     theDeftemplate->header.name->contents,false);
-      return;
+      return false;
      }
 
    /*========================================*/
@@ -1334,7 +1336,7 @@ void DeftemplateSlotAllowedValues(
    if ((theSlot->constraints != NULL) ? (theSlot->constraints->restrictionList == NULL) : true)
      {
       returnValue->value = FalseSymbol(theEnv);
-      return;
+      return true;
      }
 
    returnValue->value = CreateMultifield(theEnv,ExpressionSize(theSlot->constraints->restrictionList));
@@ -1347,6 +1349,8 @@ void DeftemplateSlotAllowedValues(
       theExp = theExp->nextArg;
       i++;
      }
+     
+   return true;
   }
 
 /****************************************************/
@@ -1385,7 +1389,7 @@ void DeftemplateSlotRangeFunction(
 /* DeftemplateSlotRange: C access routine for */
 /*   the deftemplate-slot-range function.     */
 /**********************************************/
-void DeftemplateSlotRange(
+bool DeftemplateSlotRange(
   Deftemplate *theDeftemplate,
   const char *slotName,
   CLIPSValue *returnValue)
@@ -1408,7 +1412,7 @@ void DeftemplateSlotRange(
             SymbolData(theEnv)->NegativeInfinity;
          returnValue->multifieldValue->contents[1].lexemeValue =
             SymbolData(theEnv)->PositiveInfinity;
-         return;
+         return true;
         }
       else
         {
@@ -1416,7 +1420,7 @@ void DeftemplateSlotRange(
          SetEvaluationError(theEnv,true);
          InvalidDeftemplateSlotMessage(theEnv,slotName,
                                        theDeftemplate->header.name->contents,false);
-         return;
+         return false;
         }
      }
 
@@ -1431,7 +1435,7 @@ void DeftemplateSlotRange(
       SetEvaluationError(theEnv,true);
       InvalidDeftemplateSlotMessage(theEnv,slotName,
                                     theDeftemplate->header.name->contents,false);
-      return;
+      return false;
      }
 
    /*===============================*/
@@ -1447,10 +1451,9 @@ void DeftemplateSlotRange(
       returnValue->multifieldValue->contents[1].value = theSlot->constraints->maxValue->value;
      }
    else
-     {
-      returnValue->value = FalseSymbol(theEnv);
-      return;
-     }
+     { returnValue->value = FalseSymbol(theEnv); }
+     
+   return true;
   }
 
 /****************************************************/
@@ -1489,7 +1492,7 @@ void DeftemplateSlotTypesFunction(
 /* DeftemplateSlotTypes: C access routine for */
 /*   the deftemplate-slot-types function.     */
 /**********************************************/
-void DeftemplateSlotTypes(
+bool DeftemplateSlotTypes(
   Deftemplate *theDeftemplate,
   const char *slotName,
   CLIPSValue *returnValue)
@@ -1513,7 +1516,7 @@ void DeftemplateSlotTypes(
          SetEvaluationError(theEnv,true);
          InvalidDeftemplateSlotMessage(theEnv,slotName,
                                        theDeftemplate->header.name->contents,false);
-         return;
+         return false;
         }
      }
 
@@ -1528,7 +1531,7 @@ void DeftemplateSlotTypes(
       SetEvaluationError(theEnv,true);
       InvalidDeftemplateSlotMessage(theEnv,slotName,
                                     theDeftemplate->header.name->contents,false);
-      return;
+      return false;
      }
 
    /*==============================================*/
@@ -1613,6 +1616,8 @@ void DeftemplateSlotTypes(
       returnValue->multifieldValue->contents[i++].lexemeValue = CreateSymbol(theEnv,"INSTANCE-NAME");
      }
 #endif
+
+   return true;
   }
 
 /*****************************************************/

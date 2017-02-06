@@ -145,16 +145,16 @@ void InitializeEngine(
 static void DeallocateEngineData(
   Environment *theEnv)
   {
-   struct focus *tmpPtr, *nextPtr;
+   FocalModule *tmpPtr, *nextPtr;
 
-   DeallocateVoidCallList(theEnv,EngineData(theEnv)->ListOfAfterRuleFiresFunctions);
-   DeallocateCallListWithArg(theEnv,EngineData(theEnv)->ListOfBeforeRuleFiresFunctions);
+   DeallocateRuleFiredCallList(theEnv,EngineData(theEnv)->ListOfAfterRuleFiresFunctions);
+   DeallocateRuleFiredCallList(theEnv,EngineData(theEnv)->ListOfBeforeRuleFiresFunctions);
 
    tmpPtr = EngineData(theEnv)->CurrentFocus;
    while (tmpPtr != NULL)
      {
       nextPtr = tmpPtr->next;
-      rtn_struct(theEnv,focus,tmpPtr);
+      rtn_struct(theEnv,focalModule,tmpPtr);
       tmpPtr = nextPtr;
      }
   }
@@ -168,8 +168,7 @@ long long Run(
   {
    long long rulesFired = 0;
    UDFValue returnValue;
-   struct callFunctionItemWithArg *theBeforeRuleFiresFunction;
-   struct voidCallFunctionItem *theAfterRuleFiresFunction;
+   RuleFiredFunctionItem *ruleFiresFunction;
 #if DEBUGGING_FUNCTIONS
    unsigned long maxActivations = 0, sumActivations = 0;
 #if DEFTEMPLATE_CONSTRUCT
@@ -264,11 +263,11 @@ long long Run(
       /* to be called before each rule firing.  */
       /*========================================*/
 
-      for (theBeforeRuleFiresFunction = EngineData(theEnv)->ListOfBeforeRuleFiresFunctions;
-           theBeforeRuleFiresFunction != NULL;
-           theBeforeRuleFiresFunction = theBeforeRuleFiresFunction->next)
+      for (ruleFiresFunction = EngineData(theEnv)->ListOfBeforeRuleFiresFunctions;
+           ruleFiresFunction != NULL;
+           ruleFiresFunction = ruleFiresFunction->next)
         {
-         (*theBeforeRuleFiresFunction->func)(theEnv,theActivation,theBeforeRuleFiresFunction->context);
+         (*ruleFiresFunction->func)(theEnv,theActivation,ruleFiresFunction->context);
         }
 
       /*===========================================*/
@@ -383,6 +382,16 @@ long long Run(
       if ((! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
           (EvaluationData(theEnv)->CurrentExpression == NULL))
         { ConstructData(theEnv)->DanglingConstructs = danglingConstructs; }
+        
+      /*========================================*/
+      /* Execute the list of functions that are */
+      /* to be called after each rule firing.   */
+      /*========================================*/
+
+      for (ruleFiresFunction = EngineData(theEnv)->ListOfAfterRuleFiresFunctions;
+           ruleFiresFunction != NULL;
+           ruleFiresFunction = ruleFiresFunction->next)
+        { (*ruleFiresFunction->func)(theEnv,theActivation,ruleFiresFunction->context); }
 
       /*=====================================*/
       /* Remove information for logical CEs. */
@@ -481,16 +490,6 @@ long long Run(
         { RefreshAgenda(NULL,theEnv); }
 
       /*========================================*/
-      /* Execute the list of functions that are */
-      /* to be called after each rule firing.   */
-      /*========================================*/
-
-      for (theAfterRuleFiresFunction = EngineData(theEnv)->ListOfAfterRuleFiresFunctions;
-           theAfterRuleFiresFunction != NULL;
-           theAfterRuleFiresFunction = theAfterRuleFiresFunction->next)
-        { (*theAfterRuleFiresFunction->func)(theEnv,theAfterRuleFiresFunction->context); }
-
-      /*========================================*/
       /* If a return was issued on the RHS of a */
       /* rule, then remove *that* rule's module */
       /* from the focus stack                   */
@@ -528,10 +527,10 @@ long long Run(
 
    if (rulesFired == 0)
      {
-      for (theAfterRuleFiresFunction = EngineData(theEnv)->ListOfAfterRuleFiresFunctions;
-           theAfterRuleFiresFunction != NULL;
-           theAfterRuleFiresFunction = theAfterRuleFiresFunction->next)
-        { (*theAfterRuleFiresFunction->func)(theEnv,theAfterRuleFiresFunction->context); }
+      for (ruleFiresFunction = EngineData(theEnv)->ListOfAfterRuleFiresFunctions;
+           ruleFiresFunction != NULL;
+           ruleFiresFunction = ruleFiresFunction->next)
+        { (*ruleFiresFunction->func)(theEnv,NULL,ruleFiresFunction->context); }
      }
 
    /*======================================================*/
@@ -718,7 +717,7 @@ static Defmodule *RemoveFocus(
   Environment *theEnv,
   Defmodule *theModule)
   {
-   struct focus *tempFocus,*prevFocus, *nextFocus;
+   FocalModule *tempFocus,*prevFocus, *nextFocus;
    bool found = false;
    bool currentFocusRemoved = false;
 
@@ -743,7 +742,7 @@ static Defmodule *RemoveFocus(
          found = true;
 
          nextFocus = tempFocus->next;
-         rtn_struct(theEnv,focus,tempFocus);
+         rtn_struct(theEnv,focalModule,tempFocus);
          tempFocus = nextFocus;
 
          if (prevFocus == NULL)
@@ -766,7 +765,7 @@ static Defmodule *RemoveFocus(
    /* stack, simply return the current focus  */
    /*=========================================*/
 
-   if (! found) return(EngineData(theEnv)->CurrentFocus->theModule);
+   if (! found) return EngineData(theEnv)->CurrentFocus->theModule;
 
    /*========================================*/
    /* If the current focus is being watched, */
@@ -820,9 +819,9 @@ Defmodule *PopFocus(
 /************************************************************/
 /* GetNextFocus: Returns the next focus on the focus stack. */
 /************************************************************/
-struct focus *GetNextFocus( // TBD Add to API
+FocalModule *GetNextFocus(
   Environment *theEnv,
-  struct focus *theFocus)
+  FocalModule *theFocus)
   {
    /*==================================================*/
    /* If NULL is passed as an argument, return the top */
@@ -839,13 +838,31 @@ struct focus *GetNextFocus( // TBD Add to API
    return theFocus->next;
   }
 
+/*********************************************************/
+/* FocalModuleName: Returns the name of the FocalModule. */
+/*********************************************************/
+const char *FocalModuleName(
+  FocalModule *theFocus)
+  {
+   return theFocus->theModule->header.name->contents;
+  }
+
+/****************************************************************/
+/* FocalModuleModule: Returns the Defmodule of the FocalModule. */
+/****************************************************************/
+Defmodule *FocalModuleModule(
+  FocalModule *theFocus)
+  {
+   return theFocus->theModule;
+  }
+
 /***************************************************/
 /* Focus: C access routine for the focus function. */
 /***************************************************/
 void Focus(
   Defmodule *theModule)
   {
-   struct focus *tempFocus;
+   FocalModule *tempFocus;
    Environment *theEnv;
    
    if (theModule == NULL) return;
@@ -885,7 +902,7 @@ void Focus(
    /* Add the new focus to the focus stack. */
    /*=======================================*/
 
-   tempFocus = get_struct(theEnv,focus);
+   tempFocus = get_struct(theEnv,focalModule);
    tempFocus->theModule = theModule;
    tempFocus->theDefruleModule = GetDefruleModuleItem(theEnv,theModule);
    tempFocus->next = EngineData(theEnv)->CurrentFocus;
@@ -924,13 +941,13 @@ void ClearFocusStack(
 bool AddAfterRuleFiresFunction(
   Environment *theEnv,
   const char *name,
-  VoidCallFunction *functionPtr,
+  RuleFiredFunction *functionPtr,
   int priority,
   void *context)
   {
-   EngineData(theEnv)->ListOfAfterRuleFiresFunctions = AddVoidFunctionToCallList(theEnv,name,priority,
-                                              functionPtr,
-                                              EngineData(theEnv)->ListOfAfterRuleFiresFunctions,context);
+   EngineData(theEnv)->ListOfAfterRuleFiresFunctions =
+      AddRuleFiredFunctionToCallList(theEnv,name,priority,functionPtr,
+                                     EngineData(theEnv)->ListOfAfterRuleFiresFunctions,context);
    return true;
   }
 
@@ -941,13 +958,13 @@ bool AddAfterRuleFiresFunction(
 bool AddBeforeRuleFiresFunction(
   Environment *theEnv,
   const char *name,
-  VoidCallFunctionWithArg *functionPtr,
+  RuleFiredFunction *functionPtr,
   int priority,
   void *context)
   {
    EngineData(theEnv)->ListOfBeforeRuleFiresFunctions =
-      AddFunctionToCallListWithArg(theEnv,name,priority,functionPtr,
-                                   EngineData(theEnv)->ListOfBeforeRuleFiresFunctions,context);
+      AddRuleFiredFunctionToCallList(theEnv,name,priority,functionPtr,
+                                     EngineData(theEnv)->ListOfBeforeRuleFiresFunctions,context);
    return true;
   }
 
@@ -962,7 +979,7 @@ bool RemoveAfterRuleFiresFunction(
    bool found;
 
    EngineData(theEnv)->ListOfAfterRuleFiresFunctions =
-      RemoveVoidFunctionFromCallList(theEnv,name,EngineData(theEnv)->ListOfAfterRuleFiresFunctions,&found);
+      RemoveRuleFiredFunctionFromCallList(theEnv,name,EngineData(theEnv)->ListOfAfterRuleFiresFunctions,&found);
 
    return found;
   }
@@ -978,14 +995,124 @@ bool RemoveBeforeRuleFiresFunction(
    bool found;
 
    EngineData(theEnv)->ListOfBeforeRuleFiresFunctions =
-      RemoveFunctionFromCallListWithArg(theEnv,name,EngineData(theEnv)->ListOfBeforeRuleFiresFunctions,&found);
+      RemoveRuleFiredFunctionFromCallList(theEnv,name,EngineData(theEnv)->ListOfBeforeRuleFiresFunctions,&found);
 
    return found;
   }
 
-/*********************************************************/
-/* RunCommand: H/L access routine for the run command.   */
-/*********************************************************/
+/***************************************************/
+/* AddRuleFiredFunctionToCallList: Adds a function */
+/*   to a rule fired function list.                */
+/***************************************************/
+RuleFiredFunctionItem *AddRuleFiredFunctionToCallList(
+  Environment *theEnv,
+  const char *name,
+  int priority,
+  RuleFiredFunction *func,
+  RuleFiredFunctionItem *head,
+  void *context)
+  {
+   RuleFiredFunctionItem *newPtr, *currentPtr, *lastPtr = NULL;
+   char  *nameCopy;
+
+   newPtr = get_struct(theEnv,ruleFiredFunctionItem);
+
+   nameCopy = (char *) genalloc(theEnv,strlen(name) + 1);
+   genstrcpy(nameCopy,name);
+   newPtr->name = nameCopy;
+
+   newPtr->func = func;
+   newPtr->priority = priority;
+   newPtr->context = context;
+
+   if (head == NULL)
+     {
+      newPtr->next = NULL;
+      return newPtr;
+     }
+
+   currentPtr = head;
+   while ((currentPtr != NULL) ? (priority < currentPtr->priority) : false)
+     {
+      lastPtr = currentPtr;
+      currentPtr = currentPtr->next;
+     }
+
+   if (lastPtr == NULL)
+     {
+      newPtr->next = head;
+      head = newPtr;
+     }
+   else
+     {
+      newPtr->next = currentPtr;
+      lastPtr->next = newPtr;
+     }
+
+   return head;
+  }
+
+/***********************************************************/
+/* RemoveRuleFiredFunctionFromCallList: Removes a function */
+/*   from a rule fired function list.                      */
+/***********************************************************/
+RuleFiredFunctionItem *RemoveRuleFiredFunctionFromCallList(
+  Environment *theEnv,
+  const char *name,
+  RuleFiredFunctionItem *head,
+  bool *found)
+  {
+   RuleFiredFunctionItem *currentPtr, *lastPtr;
+
+   *found = false;
+   lastPtr = NULL;
+   currentPtr = head;
+
+   while (currentPtr != NULL)
+     {
+      if (strcmp(name,currentPtr->name) == 0)
+        {
+         *found = true;
+         if (lastPtr == NULL)
+           { head = currentPtr->next; }
+         else
+           { lastPtr->next = currentPtr->next; }
+
+         genfree(theEnv,(void *) currentPtr->name,strlen(currentPtr->name) + 1);
+         rtn_struct(theEnv,voidCallFunctionItem,currentPtr);
+         return head;
+        }
+
+      lastPtr = currentPtr;
+      currentPtr = currentPtr->next;
+     }
+
+   return head;
+  }
+
+/******************************************************/
+/* DeallocateRuleFiredCallList: Removes all functions */
+/*   from a list of rule fired functions.             */
+/******************************************************/
+void DeallocateRuleFiredCallList(
+  Environment *theEnv,
+  RuleFiredFunctionItem *theList)
+  {
+   RuleFiredFunctionItem *tmpPtr, *nextPtr;
+
+   tmpPtr = theList;
+   while (tmpPtr != NULL)
+     {
+      nextPtr = tmpPtr->next;
+      genfree(theEnv,(void *) tmpPtr->name,strlen(tmpPtr->name) + 1);
+      rtn_struct(theEnv,ruleFiredFunctionItem,tmpPtr);
+      tmpPtr = nextPtr;
+     }
+  }
+
+/*******************************************************/
+/* RunCommand: H/L access routine for the run command. */
+/*******************************************************/
 void RunCommand(
   Environment *theEnv,
   UDFContext *context,
@@ -1222,7 +1349,7 @@ void ListFocusStack(
   Environment *theEnv,
   const char *logicalName)
   {
-   struct focus *theFocus;
+   FocalModule *theFocus;
 
    for (theFocus = EngineData(theEnv)->CurrentFocus;
         theFocus != NULL;
@@ -1258,7 +1385,7 @@ void GetFocusStack(
   Environment *theEnv,
   CLIPSValue *returnValue)
   {
-   struct focus *theFocus;
+   FocalModule *theFocus;
    Multifield *theList;
    unsigned long count = 0;
 

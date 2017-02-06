@@ -70,7 +70,7 @@
    Defgeneric                    *LookupDefgenericByMdlOrScope(Environment *,const char *);
    Defgeneric                    *LookupDefgenericInScope(Environment *,const char *);
    Defgeneric                    *GetNextDefgeneric(Environment *,Defgeneric *);
-   long                           GetNextDefmethod(Environment *,Defgeneric *,long);
+   long                           GetNextDefmethod(Defgeneric *,long);
    bool                           DefgenericIsDeletable(Defgeneric *);
    bool                           DefmethodIsDeletable(Defgeneric *,long);
    void                           UndefgenericCommand(Environment *,UDFContext *,UDFValue *);
@@ -101,7 +101,7 @@
    void                           GetDefgenericListFunction(Environment *,UDFContext *,UDFValue *);
    void                           GetDefgenericList(Environment *,CLIPSValue *,Defmodule *);
    void                           GetDefmethodListCommand(Environment *,UDFContext *,UDFValue *);
-   void                           GetDefmethodList(Environment *,Defgeneric *,CLIPSValue *);
+   void                           GetDefmethodList(Environment *,CLIPSValue *,Defgeneric *);
    void                           GetMethodRestrictionsCommand(Environment *,UDFContext *,UDFValue *);
    void                           GetMethodRestrictions(Defgeneric *,long,CLIPSValue *);
    void                           SetNextDefgeneric(Defgeneric *,Defgeneric *);

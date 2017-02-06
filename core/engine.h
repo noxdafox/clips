@@ -80,17 +80,31 @@
 
 #define _H_engine
 
+typedef struct focalModule FocalModule;
+
 #include "lgcldpnd.h"
 #include "ruledef.h"
 #include "network.h"
 #include "moduldef.h"
 #include "retract.h"
 
-struct focus
+struct focalModule
   {
    Defmodule *theModule;
    struct defruleModule *theDefruleModule;
-   struct focus *next;
+   FocalModule *next;
+  };
+
+typedef struct ruleFiredFunctionItem RuleFiredFunctionItem;
+typedef void RuleFiredFunction(Environment *,Activation *,void *);
+
+struct ruleFiredFunctionItem
+  {
+   const char *name;
+   RuleFiredFunction *func;
+   int priority;
+   RuleFiredFunctionItem *next;
+   void *context;
   };
 
 #define ENGINE_DATA 18
@@ -103,9 +117,9 @@ struct engineData
    struct partialMatch *TheLogicalBind;
    struct dependency *UnsupportedDataEntities;
    bool alreadyEntered;
-   VoidCallFunctionItem *ListOfAfterRuleFiresFunctions;
-   CallFunctionItemWithArg *ListOfBeforeRuleFiresFunctions;
-   struct focus *CurrentFocus;
+   RuleFiredFunctionItem *ListOfAfterRuleFiresFunctions;
+   RuleFiredFunctionItem *ListOfBeforeRuleFiresFunctions;
+   FocalModule *CurrentFocus;
    bool FocusChanged;
 #if DEBUGGING_FUNCTIONS
    bool WatchStatistics;
@@ -139,11 +153,16 @@ struct engineData
 
    long long               Run(Environment *,long long);
    bool                    AddAfterRuleFiresFunction(Environment *,const char *,
-                                                     VoidCallFunction *,int,void *);
+                                                     RuleFiredFunction *,int,void *);
    bool                    RemoveAfterRuleFiresFunction(Environment *,const char *);
    bool                    AddBeforeRuleFiresFunction(Environment *,const char *,
-                                                      VoidCallFunctionWithArg *,int,void *);
+                                                      RuleFiredFunction *,int,void *);
    bool                    RemoveBeforeRuleFiresFunction(Environment *,const char *);
+   RuleFiredFunctionItem  *AddRuleFiredFunctionToCallList(Environment *,const char *,int,RuleFiredFunction *,
+                                                          RuleFiredFunctionItem *,void *);
+   RuleFiredFunctionItem  *RemoveRuleFiredFunctionFromCallList(Environment *,const char *,
+                                                               RuleFiredFunctionItem *,bool *);
+   void                    DeallocateRuleFiredCallList(Environment *,RuleFiredFunctionItem *);
    void                    InitializeEngine(Environment *);
    void                    SetBreak(Defrule *);
    void                    Halt(Environment *);
@@ -159,7 +178,9 @@ struct engineData
    void                    FocusCommand(Environment *,UDFContext *,UDFValue *);
    void                    ClearFocusStackCommand(Environment *,UDFContext *,UDFValue *);
    void                    ClearFocusStack(Environment *);
-   struct focus           *GetNextFocus(Environment *,struct focus *);
+   FocalModule            *GetNextFocus(Environment *,FocalModule *);
+   const char             *FocalModuleName(FocalModule *);
+   Defmodule              *FocalModuleModule(FocalModule *);
    void                    Focus(Defmodule *);
    bool                    GetFocusChanged(Environment *);
    void                    SetFocusChanged(Environment *,bool);

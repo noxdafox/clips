@@ -473,14 +473,10 @@ Defgeneric *GetNextDefgeneric(
                    method is returned
  ***********************************************************/
 long GetNextDefmethod(
-  Environment *theEnv,
   Defgeneric *theDefgeneric,
   long theIndex)
   {
    long mi;
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
 
    if (theIndex == 0)
      {
@@ -1121,7 +1117,7 @@ void GetDefmethodListCommand(
 
    if (! UDFHasNextArgument(context))
      {
-      GetDefmethodList(theEnv,NULL,&result);
+      GetDefmethodList(theEnv,&result,NULL);
       CLIPSToUDFValue(&result,returnValue);
      }
    else
@@ -1131,7 +1127,7 @@ void GetDefmethodListCommand(
       gfunc = CheckGenericExists(theEnv,"get-defmethod-list",theArg.lexemeValue->contents);
       if (gfunc != NULL)
         {
-         GetDefmethodList(theEnv,gfunc,&result);
+         GetDefmethodList(theEnv,&result,gfunc);
          CLIPSToUDFValue(&result,returnValue);
         }
       else
@@ -1152,8 +1148,8 @@ void GetDefmethodListCommand(
  ***********************************************************/
 void GetDefmethodList(
   Environment *theEnv,
-  Defgeneric *theDefgeneric,
-  CLIPSValue *returnValue)
+  CLIPSValue *returnValue,
+  Defgeneric *theDefgeneric)
   {
    Defgeneric *gfunc, *svg, *svnxt;
    long i,j;
@@ -1741,7 +1737,7 @@ static bool DefmethodWatchSupport(
          theGeneric = GetNextDefgeneric(theEnv,NULL);
          while (theGeneric != NULL)
             {
-             theMethod = GetNextDefmethod(theEnv,theGeneric,0);
+             theMethod = GetNextDefmethod(theGeneric,0);
              while (theMethod != 0)
                {
                 if (traceFunc != NULL)
@@ -1751,7 +1747,7 @@ static bool DefmethodWatchSupport(
                    PrintString(theEnv,logName,"   ");
                    (*printFunc)(theEnv,logName,theGeneric,theMethod);
                   }
-                theMethod = GetNextDefmethod(theEnv,theGeneric,theMethod);
+                theMethod = GetNextDefmethod(theGeneric,theMethod);
                }
              theGeneric = GetNextDefgeneric(theEnv,theGeneric);
             }
@@ -1795,14 +1791,14 @@ static bool DefmethodWatchSupport(
         }
       if (theMethod == 0)
         {
-         theMethod = GetNextDefmethod(theEnv,theGeneric,0);
+         theMethod = GetNextDefmethod(theGeneric,0);
          while (theMethod != 0)
            {
             if (traceFunc != NULL)
               (*traceFunc)(theGeneric,theMethod,newState);
             else
               (*printFunc)(theEnv,logName,theGeneric,theMethod);
-            theMethod = GetNextDefmethod(theEnv,theGeneric,theMethod);
+            theMethod = GetNextDefmethod(theGeneric,theMethod);
            }
         }
       else

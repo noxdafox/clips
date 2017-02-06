@@ -78,13 +78,13 @@
    void                           ClassSuperclasses(Defclass *,CLIPSValue *,bool);
    void                           ClassSubclasses(Defclass *,CLIPSValue *,bool);
    void                           ClassSubclassAddresses(Environment *,Defclass *,UDFValue *,bool);
-   void                           SlotFacets(Defclass *,const char *,CLIPSValue *);
-   void                           SlotSources(Defclass *,const char *,CLIPSValue *);
-   void                           SlotTypes(Defclass *,const char *,CLIPSValue *);
-   void                           SlotAllowedValues(Defclass *,const char *,CLIPSValue *);
-   void                           SlotAllowedClasses(Defclass *,const char *,CLIPSValue *);
-   void                           SlotRange(Defclass *,const char *,CLIPSValue *);
-   void                           SlotCardinality(Defclass *,const char *,CLIPSValue *);
+   bool                           SlotFacets(Defclass *,const char *,CLIPSValue *);
+   bool                           SlotSources(Defclass *,const char *,CLIPSValue *);
+   bool                           SlotTypes(Defclass *,const char *,CLIPSValue *);
+   bool                           SlotAllowedValues(Defclass *,const char *,CLIPSValue *);
+   bool                           SlotAllowedClasses(Defclass *,const char *,CLIPSValue *);
+   bool                           SlotRange(Defclass *,const char *,CLIPSValue *);
+   bool                           SlotCardinality(Defclass *,const char *,CLIPSValue *);
 
 #endif /* _H_classinf */
 

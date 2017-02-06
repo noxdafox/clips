@@ -95,13 +95,13 @@
    void                           DeftemplateSlotDefaultValueFunction(Environment *,UDFContext *,UDFValue *);
    bool                           DeftemplateSlotDefaultValue(Deftemplate *,const char *,CLIPSValue *);
    void                           DeftemplateSlotCardinalityFunction(Environment *,UDFContext *,UDFValue *);
-   void                           DeftemplateSlotCardinality(Deftemplate *,const char *,CLIPSValue *);
+   bool                           DeftemplateSlotCardinality(Deftemplate *,const char *,CLIPSValue *);
    void                           DeftemplateSlotAllowedValuesFunction(Environment *,UDFContext *,UDFValue *);
-   void                           DeftemplateSlotAllowedValues(Deftemplate *,const char *,CLIPSValue *);
+   bool                           DeftemplateSlotAllowedValues(Deftemplate *,const char *,CLIPSValue *);
    void                           DeftemplateSlotRangeFunction(Environment *,UDFContext *,UDFValue *);
-   void                           DeftemplateSlotRange(Deftemplate *,const char *,CLIPSValue *);
+   bool                           DeftemplateSlotRange(Deftemplate *,const char *,CLIPSValue *);
    void                           DeftemplateSlotTypesFunction(Environment *,UDFContext *,UDFValue *);
-   void                           DeftemplateSlotTypes(Deftemplate *,const char *,CLIPSValue *);
+   bool                           DeftemplateSlotTypes(Deftemplate *,const char *,CLIPSValue *);
    void                           DeftemplateSlotMultiPFunction(Environment *,UDFContext *,UDFValue *);
    bool                           DeftemplateSlotMultiP(Deftemplate *,const char *);
    void                           DeftemplateSlotSinglePFunction(Environment *,UDFContext *,UDFValue *);

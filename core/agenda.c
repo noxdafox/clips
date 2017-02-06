@@ -393,6 +393,11 @@ int ActivationSetSalience(
   {
    int temp;
 
+   if (value > MAX_DEFRULE_SALIENCE)
+     { value = MAX_DEFRULE_SALIENCE; }
+   else if (value < MIN_DEFRULE_SALIENCE)
+     { value = MIN_DEFRULE_SALIENCE; }
+    
    temp = actPtr->salience;
    actPtr->salience = value;
    return temp;

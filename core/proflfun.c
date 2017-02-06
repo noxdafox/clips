@@ -499,9 +499,9 @@ void ProfileResetCommand(
       ResetProfileInfo((struct constructProfileInfo *)
                        TestUserData(ProfileFunctionData(theEnv)->ProfileDataID,theDefgeneric->header.usrData));
 
-      for (methodIndex = GetNextDefmethod(theEnv,theDefgeneric,0);
+      for (methodIndex = GetNextDefmethod(theDefgeneric,0);
            methodIndex != 0;
-           methodIndex = GetNextDefmethod(theEnv,theDefgeneric,methodIndex))
+           methodIndex = GetNextDefmethod(theDefgeneric,methodIndex))
         {
          theMethod = GetDefmethodPointer(theDefgeneric,methodIndex);
          ResetProfileInfo((struct constructProfileInfo *)
@@ -635,9 +635,9 @@ static void OutputConstructsCodeInfo(
       prefix = DefgenericName(theDefgeneric);
       prefixAfter = "\n";
 
-      for (methodIndex = GetNextDefmethod(theEnv,theDefgeneric,0);
+      for (methodIndex = GetNextDefmethod(theDefgeneric,0);
            methodIndex != 0;
-           methodIndex = GetNextDefmethod(theEnv,theDefgeneric,methodIndex))
+           methodIndex = GetNextDefmethod(theDefgeneric,methodIndex))
         {
          theMethod = GetDefmethodPointer(theDefgeneric,methodIndex);
 
