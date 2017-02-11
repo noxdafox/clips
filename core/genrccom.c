@@ -150,10 +150,10 @@
    static bool                    DefmethodWatchAccess(Environment *,int,bool,Expression *);
    static bool                    DefmethodWatchPrint(Environment *,const char *,int,Expression *);
    static bool                    DefmethodWatchSupport(Environment *,const char *,const char *,bool,
-                                                        void (*)(Environment *,const char *,Defgeneric *,long),
-                                                        void (*)(Defgeneric *,long,bool),
+                                                        void (*)(Environment *,const char *,Defgeneric *,unsigned),
+                                                        void (*)(Defgeneric *,unsigned,bool),
                                                         Expression *);
-   static void                    PrintMethodWatchFlag(Environment *,const char *,Defgeneric *,long);
+   static void                    PrintMethodWatchFlag(Environment *,const char *,Defgeneric *,unsigned);
 #endif
 
 /* =========================================
@@ -472,21 +472,25 @@ Defgeneric *GetNextDefgeneric(
   NOTES        : If index == 0, the index of the first
                    method is returned
  ***********************************************************/
-long GetNextDefmethod(
+unsigned GetNextDefmethod(
   Defgeneric *theDefgeneric,
-  long theIndex)
+  unsigned theIndex)
   {
    long mi;
 
    if (theIndex == 0)
      {
       if (theDefgeneric->methods != NULL)
-        return(theDefgeneric->methods[0].index);
+        { return theDefgeneric->methods[0].index; }
+        
       return 0;
      }
+     
    mi = FindMethodByIndex(theDefgeneric,theIndex);
+   
    if ((mi+1) == theDefgeneric->mcnt)
      { return 0; }
+     
    return theDefgeneric->methods[mi+1].index;
   }
 
@@ -539,7 +543,7 @@ bool DefgenericIsDeletable(
  ***************************************************/
 bool DefmethodIsDeletable(
   Defgeneric *theDefgeneric,
-  long theIndex)
+  unsigned theIndex)
   {
    Environment *theEnv = theDefgeneric->header.env;
    
@@ -700,7 +704,7 @@ bool Undefgeneric(
  **************************************************************/
 bool Undefmethod(
   Defgeneric *theDefgeneric,
-  long mi,
+  unsigned mi,
   Environment *allEnv)
   {
    Environment *theEnv;
@@ -788,7 +792,7 @@ bool Undefmethod(
  *****************************************************/
 void DefmethodDescription(
   Defgeneric *theDefgeneric,
-  long theIndex,
+  unsigned theIndex,
   StringBuilder *theSB)
   {
    long mi;
@@ -854,7 +858,7 @@ void DefgenericSetWatch(
  *********************************************************/
 bool DefmethodGetWatch(
   Defgeneric *theGeneric,
-  long theIndex)
+  unsigned theIndex)
   {
    long mi;
 
@@ -876,7 +880,7 @@ bool DefmethodGetWatch(
  *********************************************************/
 void DefmethodSetWatch(
   Defgeneric *theGeneric,
-  long theIndex,
+  unsigned theIndex,
   bool newState)
   {
    long mi;
@@ -977,7 +981,7 @@ void ListDefmethodsCommand(
  ***************************************************************/
 const char *DefmethodPPForm(
   Defgeneric *theDefgeneric,
-  long theIndex)
+  unsigned theIndex)
   {
    int mi;
 
@@ -1265,7 +1269,7 @@ void GetMethodRestrictionsCommand(
  ***********************************************************************/
 void GetMethodRestrictions(
   Defgeneric *theDefgeneric,
-  long mi,
+  unsigned mi,
   CLIPSValue *returnValue)
   {
    short i,j;
@@ -1707,12 +1711,12 @@ static bool DefmethodWatchSupport(
   const char *funcName,
   const char *logName,
   bool newState,
-  void (*printFunc)(Environment *,const char *,Defgeneric *,long),
-  void (*traceFunc)(Defgeneric *,long,bool),
+  void (*printFunc)(Environment *,const char *,Defgeneric *,unsigned),
+  void (*traceFunc)(Defgeneric *,unsigned,bool),
   Expression *argExprs)
   {
    Defgeneric *theGeneric;
-   unsigned long theMethod = 0;
+   unsigned theMethod = 0;
    int argIndex = 2;
    UDFValue genericName, methodIndex;
    Defmodule *theModule;
@@ -1828,7 +1832,7 @@ static void PrintMethodWatchFlag(
   Environment *theEnv,
   const char *logName,
   Defgeneric *theGeneric,
-  long theMethod)
+  unsigned theMethod)
   {
    StringBuilder *theSB = CreateStringBuilder(theEnv,60);
 

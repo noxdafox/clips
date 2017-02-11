@@ -546,14 +546,14 @@ bool SubsumeType(
  *****************************************************/
 long FindMethodByIndex(
   Defgeneric *gfunc,
-  long theIndex)
+  unsigned theIndex)
   {
    long i;
 
    for (i = 0 ; i < gfunc->mcnt ; i++)
      if (gfunc->methods[i].index == theIndex)
-       return(i);
-   return(-1);
+       return i;
+   return -1;
   }
 
 #if DEBUGGING_FUNCTIONS || PROFILING_FUNCTIONS
@@ -583,7 +583,7 @@ void PrintMethod(
    SBReset(theSB);
    if (meth->system)
      SBAppend(theSB,"SYS");
-   gensprintf(numbuf,"%-2d ",meth->index);
+   gensprintf(numbuf,"%-2d ",meth->index); //TBD
    SBAppend(theSB,numbuf);
    for (j = 0 ; j < meth->restrictionCount ; j++)
      {
@@ -737,7 +737,7 @@ long CheckMethodExists(
   Environment *theEnv,
   const char *fname,
   Defgeneric *gfunc,
-  long mi)
+  unsigned mi)
   {
    long fi;
 
@@ -754,7 +754,7 @@ long CheckMethodExists(
       PrintString(theEnv,WERROR,".\n");
       SetEvaluationError(theEnv,true);
      }
-   return(fi);
+   return fi;
   }
 
 #if ! OBJECT_SYSTEM

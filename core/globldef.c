@@ -635,45 +635,34 @@ bool QGetDefglobalValue(
   }
 
 /*********************************************************/
-/* GetDefglobalValue: Returns the value of the specified */
+/* DefglobalGetValue: Returns the value of the specified */
 /*   global variable in the supplied UDFValue.           */
 /*********************************************************/
-bool GetDefglobalValue(
-  Environment *theEnv,
-  const char *variableName,
+void DefglobalGetValue(
+  Defglobal *theDefglobal,
   CLIPSValue *vPtr)
   {
-   Defglobal *theDefglobal;
    UDFValue temp;
-   
-   if ((theDefglobal = FindDefglobal(theEnv,variableName)) == NULL)
-     { return false; }
-
-   CLIPSToUDFValue(vPtr,&temp);
+   Environment *theEnv = theDefglobal->header.env;
+      
    QGetDefglobalValue(theEnv,theDefglobal,&temp);
-
-   return true;
+   NormalizeMultifield(theEnv,&temp);
+   vPtr->value = temp.value;
   }
 
 /*************************************************************/
-/* SetDefglobalValue: Sets the value of the specified global */
+/* DefglobalSetValue: Sets the value of the specified global */
 /*   variable to the value stored in the supplied UDFValue.  */
 /*************************************************************/
-bool SetDefglobalValue(
-  Environment *theEnv,
-  const char *variableName,
+void DefglobalSetValue(
+  Defglobal *theDefglobal,
   CLIPSValue *vPtr)
   {
-   Defglobal *theGlobal;
    UDFValue temp;
-   
-   if ((theGlobal = QFindDefglobal(theEnv,CreateSymbol(theEnv,variableName))) == NULL)
-     { return false; }
-
+   Environment *theEnv = theDefglobal->header.env;
+  
    CLIPSToUDFValue(vPtr,&temp);
-   QSetDefglobalValue(theEnv,theGlobal,&temp,false);
-
-   return true;
+   QSetDefglobalValue(theEnv,theDefglobal,&temp,false);
   }
 
 /**********************************************************/

@@ -521,7 +521,7 @@ bool RetractDriver(
 
    if (theFact == NULL)
      {
-      RemoveAllFacts(theEnv);
+      RetractAllFacts(theEnv);
       return true;
      }
 
@@ -1003,14 +1003,21 @@ Fact *Assert(
   }
 
 /**************************************/
-/* RemoveAllFacts: Loops through the  */
+/* RetractAllFacts: Loops through the */
 /*   fact-list and removes each fact. */
 /**************************************/
-void RemoveAllFacts(
+bool RetractAllFacts(
   Environment *theEnv)
   {
+   bool rv = true;
+   
    while (FactData(theEnv)->FactList != NULL)
-     { Retract(FactData(theEnv)->FactList); }
+     {
+      if (! Retract(FactData(theEnv)->FactList))
+        { rv = false; }
+     }
+     
+   return rv;
   }
 
 /*********************************************/
@@ -1699,7 +1706,7 @@ static void ResetFacts(
    /* Remove all facts from the fact list. */
    /*======================================*/
 
-   RemoveAllFacts(theEnv);
+   RetractAllFacts(theEnv);
   }
 
 /************************************************************/
@@ -1728,7 +1735,7 @@ static bool ClearFactsReady(
    /* Remove all facts from the fact list. */
    /*======================================*/
 
-   RemoveAllFacts(theEnv);
+   RetractAllFacts(theEnv);
 
    /*==============================================*/
    /* If for some reason there are any facts still */

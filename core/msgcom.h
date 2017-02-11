@@ -94,24 +94,24 @@ struct messageHandlerData
 #define CREATE_STRING "create"
 
    void             SetupMessageHandlers(Environment *);
-   const char      *DefmessageHandlerName(Defclass *,int);
-   const char      *DefmessageHandlerType(Defclass *,int);
-   int              GetNextDefmessageHandler(Defclass *,int);
+   const char      *DefmessageHandlerName(Defclass *,unsigned);
+   const char      *DefmessageHandlerType(Defclass *,unsigned);
+   unsigned         GetNextDefmessageHandler(Defclass *,unsigned);
    DefmessageHandler
                    *GetDefmessageHandlerPointer(Defclass *,int);
 #if DEBUGGING_FUNCTIONS
-   bool             DefmessageHandlerGetWatch(Defclass *,int);
-   void             DefmessageHandlerSetWatch(Defclass *,int,bool);
+   bool             DefmessageHandlerGetWatch(Defclass *,unsigned);
+   void             DefmessageHandlerSetWatch(Defclass *,unsigned,bool);
 #endif
    unsigned         FindDefmessageHandler(Defclass *,const char *,const char *);
-   bool             DefmessageHandlerIsDeletable(Defclass *,int);
+   bool             DefmessageHandlerIsDeletable(Defclass *,unsigned);
    void             UndefmessageHandlerCommand(Environment *,UDFContext *,UDFValue *);
-   bool             UndefmessageHandler(Defclass *,int,Environment *);
+   bool             UndefmessageHandler(Defclass *,unsigned,Environment *);
 #if DEBUGGING_FUNCTIONS
    void             PPDefmessageHandlerCommand(Environment *,UDFContext *,UDFValue *);
    void             ListDefmessageHandlersCommand(Environment *,UDFContext *,UDFValue *);
    void             PreviewSendCommand(Environment *,UDFContext *,UDFValue *);
-   const char      *DefmessageHandlerPPForm(Defclass *,int);
+   const char      *DefmessageHandlerPPForm(Defclass *,unsigned);
    void             ListDefmessageHandlers(Environment *,Defclass *,const char *,bool);
    void             PreviewSend(Defclass *,const char *,const char *);
    long             DisplayHandlersInLinks(Environment *,const char *,PACKED_CLASS_LINKS *,int);

@@ -275,7 +275,7 @@ long LoadInstances(
 long LoadInstancesFromString(
   Environment *theEnv,
   const char *theString,
-  size_t theMax)
+  long theMax)
   {
    long theCount;
    const char * theStrRouter = "*** load-instances-from-string ***";
@@ -349,7 +349,7 @@ long RestoreInstances(
 long RestoreInstancesFromString(
   Environment *theEnv,
   const char *theString,
-  size_t theMax)
+  long theMax)
   {
    long theCount;
    const char *theStrRouter = "*** load-instances-from-string ***";

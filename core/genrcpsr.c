@@ -113,7 +113,7 @@
    ***************************************** */
 
    static bool                    ValidGenericName(Environment *,const char *);
-   static CLIPSLexeme            *ParseMethodNameAndIndex(Environment *,const char *,int *,struct token *);
+   static CLIPSLexeme            *ParseMethodNameAndIndex(Environment *,const char *,unsigned *,struct token *);
 
 #if DEBUGGING_FUNCTIONS
    static void                    CreateDefaultGenericPPForm(Environment *,Defgeneric *);
@@ -230,7 +230,7 @@ bool ParseDefmethod(
    CLIPSLexeme *wildcard;
    Defmethod *meth;
    Defgeneric *gfunc;
-   int theIndex;
+   unsigned theIndex;
    struct token genericInputToken;
 
    SetPPBufferStatus(theEnv,true);
@@ -371,7 +371,7 @@ bool ParseDefmethod(
    SavePPBuffer(theEnv,"\n");
 
 #if DEBUGGING_FUNCTIONS
-   meth = AddMethod(theEnv,gfunc,meth,mposn,(short) theIndex,params,rcnt,lvars,wildcard,actions,
+   meth = AddMethod(theEnv,gfunc,meth,mposn,theIndex,params,rcnt,lvars,wildcard,actions,
              GetConserveMemory(theEnv) ? NULL : CopyPPBuffer(theEnv),false);
 #else
    meth = AddMethod(theEnv,gfunc,meth,mposn,theIndex,params,rcnt,lvars,wildcard,actions,NULL,false);
@@ -442,7 +442,7 @@ Defmethod *AddMethod(
   Defgeneric *gfunc,
   Defmethod *meth,
   int mposn,
-  short mi,
+  unsigned mi,
   Expression *params,
   int rcnt,
   int lvars,
@@ -817,7 +817,7 @@ static void CreateDefaultGenericPPForm(
 static CLIPSLexeme *ParseMethodNameAndIndex(
   Environment *theEnv,
   const char *readSource,
-  int *theIndex,
+  unsigned *theIndex,
   struct token *genericInputToken)
   {
    CLIPSLexeme *gname;
@@ -843,7 +843,7 @@ static CLIPSLexeme *ParseMethodNameAndIndex(
          PrintString(theEnv,WERROR,"Method index out of range.\n");
          return NULL;
         }
-      *theIndex = tmp;
+      *theIndex = (unsigned) tmp;
       PPCRAndIndent(theEnv);
       GetToken(theEnv,readSource,genericInputToken);
      }

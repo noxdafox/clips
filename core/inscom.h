@@ -89,8 +89,11 @@ struct instanceData
 #define InstanceData(theEnv) ((struct instanceData *) GetEnvironmentData(theEnv,INSTANCE_DATA))
 
    void                           SetupInstances(Environment *);
-   bool                           DeleteInstance(Instance *,Environment *);
-   bool                           UnmakeInstance(Instance *,Environment *);
+   bool                           DeleteInstance(Instance *);
+   bool                           DeleteAllInstances(Environment *);
+   bool                           UnmakeInstance(Instance *);
+   bool                           UnmakeInstanceCallback(Instance *,Environment *);
+   bool                           UnmakeAllInstances(Environment *);
 #if DEBUGGING_FUNCTIONS
    void                           InstancesCommand(Environment *,UDFContext *,UDFValue *);
    void                           PPInstanceCommand(Environment *,UDFContext *,UDFValue *);

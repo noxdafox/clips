@@ -555,7 +555,7 @@ static void MethodToCode(
                          ModulePrefix(DefgenericData(theEnv)->DefgenericCodeItem),
                          "");
 
-   fprintf(theFile,",%hd,0,%hd,%hd,%hd,%hd,%u,0,",
+   fprintf(theFile,",%u,0,%hd,%hd,%hd,%hd,%u,0,",
                    theMethod->index,theMethod->restrictionCount,
                    theMethod->minRestrictions,theMethod->maxRestrictions,
                    theMethod->localVarCount,theMethod->system);

@@ -362,7 +362,7 @@ void RetractCommand(
       else if ((CVIsType(&theArg,SYMBOL_BIT)) ?
                (strcmp(theArg.lexemeValue->contents,"*") == 0) : false)
         {
-         RemoveAllFacts(theEnv);
+         RetractAllFacts(theEnv);
          return;
         }
 

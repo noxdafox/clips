@@ -70,30 +70,30 @@
    Defgeneric                    *LookupDefgenericByMdlOrScope(Environment *,const char *);
    Defgeneric                    *LookupDefgenericInScope(Environment *,const char *);
    Defgeneric                    *GetNextDefgeneric(Environment *,Defgeneric *);
-   long                           GetNextDefmethod(Defgeneric *,long);
+   unsigned                       GetNextDefmethod(Defgeneric *,unsigned);
    bool                           DefgenericIsDeletable(Defgeneric *);
-   bool                           DefmethodIsDeletable(Defgeneric *,long);
+   bool                           DefmethodIsDeletable(Defgeneric *,unsigned);
    void                           UndefgenericCommand(Environment *,UDFContext *,UDFValue *);
    void                           GetDefgenericModuleCommand(Environment *,UDFContext *,UDFValue *);
    void                           UndefmethodCommand(Environment *,UDFContext *,UDFValue *);
    Defmethod                     *GetDefmethodPointer(Defgeneric *,long);
    bool                           Undefgeneric(Defgeneric *,Environment *);
-   bool                           Undefmethod(Defgeneric *,long,Environment *);
+   bool                           Undefmethod(Defgeneric *,unsigned,Environment *);
 #if ! OBJECT_SYSTEM
    void                           TypeCommand(Environment *,UDFContext *,UDFValue *);
 #endif
 #if DEBUGGING_FUNCTIONS || PROFILING_FUNCTIONS
-   void                           DefmethodDescription(Defgeneric *,long,StringBuilder *);
+   void                           DefmethodDescription(Defgeneric *,unsigned,StringBuilder *);
 #endif
 #if DEBUGGING_FUNCTIONS
    bool                           DefgenericGetWatch(Defgeneric *);
    void                           DefgenericSetWatch(Defgeneric *,bool);
-   bool                           DefmethodGetWatch(Defgeneric *,long);
-   void                           DefmethodSetWatch(Defgeneric *,long,bool);
+   bool                           DefmethodGetWatch(Defgeneric *,unsigned);
+   void                           DefmethodSetWatch(Defgeneric *,unsigned,bool);
    void                           PPDefgenericCommand(Environment *,UDFContext *,UDFValue *);
    void                           PPDefmethodCommand(Environment *,UDFContext *,UDFValue *);
    void                           ListDefmethodsCommand(Environment *,UDFContext *,UDFValue *);
-   const char                    *DefmethodPPForm(Defgeneric *,long);
+   const char                    *DefmethodPPForm(Defgeneric *,unsigned);
    void                           ListDefgenericsCommand(Environment *,UDFContext *,UDFValue *);
    void                           ListDefgenerics(Environment *,const char *,Defmodule *);
    void                           ListDefmethods(Environment *,const char *,Defgeneric *);
@@ -103,7 +103,7 @@
    void                           GetDefmethodListCommand(Environment *,UDFContext *,UDFValue *);
    void                           GetDefmethodList(Environment *,CLIPSValue *,Defgeneric *);
    void                           GetMethodRestrictionsCommand(Environment *,UDFContext *,UDFValue *);
-   void                           GetMethodRestrictions(Defgeneric *,long,CLIPSValue *);
+   void                           GetMethodRestrictions(Defgeneric *,unsigned,CLIPSValue *);
    void                           SetNextDefgeneric(Defgeneric *,Defgeneric *);
    const char                    *DefgenericModule(Defgeneric *);
    const char                    *DefgenericName(Defgeneric *);

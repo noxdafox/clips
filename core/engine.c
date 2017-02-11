@@ -487,7 +487,7 @@ long long Run(
       /*==================================*/
 
       if (GetSalienceEvaluation(theEnv) == EVERY_CYCLE)
-        { RefreshAgenda(NULL,theEnv); }
+        { RefreshAllAgendas(theEnv); }
 
       /*========================================*/
       /* If a return was issued on the RHS of a */

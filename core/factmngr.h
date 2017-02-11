@@ -184,7 +184,7 @@ struct factsData
    void                           PrintFactIdentifierInLongForm(Environment *,const char *,Fact *);
    bool                           Retract(Fact *);
    bool                           RetractDriver(Environment *,Fact *,bool,char *);
-   void                           RemoveAllFacts(Environment *);
+   bool                           RetractAllFacts(Environment *);
    Fact                          *CreateFactBySize(Environment *,unsigned);
    void                           FactInstall(Environment *,Fact *);
    void                           FactDeinstall(Environment *,Fact *);
