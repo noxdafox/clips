@@ -1060,7 +1060,8 @@ static void MarkSingleInstance(
 #pragma unused(theOutput)
 #endif
    InstanceSlot *sp;
-   long i, j;
+   long i;
+   size_t j;
 
    InstanceFileData(theEnv)->BinaryInstanceFileSize += (unsigned long) (sizeof(long) * 2);
    theInstance->name->neededSymbol = true;

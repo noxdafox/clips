@@ -1001,7 +1001,7 @@ bool MBAppend(
   {
    Environment *theEnv = theMB->mbEnv;
    size_t i, neededSize, newSize;
-   long j; // TBD size_t for multifield length?
+   size_t j;
    CLIPSValue *newArray;
 
    /*==============================================*/

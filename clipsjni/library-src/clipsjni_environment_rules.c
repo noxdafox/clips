@@ -155,7 +155,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_clipsrules_jni_Environment_getFocusStack(
   {
    jobject arrayList, focusModule, moduleName, result;
    int moduleCount = 0;
-   struct focus *theFocus;
+   FocalModule *theFocus;
    
    Environment *theCLIPSEnv = JLongToPointer(clipsEnv);
  

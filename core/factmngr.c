@@ -1427,7 +1427,7 @@ void ReturnFact(
   Fact *theFact)
   {
    Multifield *theSegment, *subSegment;
-   long newSize, i;
+   size_t newSize, i;
 
    theSegment = &theFact->theProposition;
 
