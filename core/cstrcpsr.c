@@ -380,7 +380,7 @@ int LoadConstructsFromLogicalName(
 #else
    if (GetPrintWhileLoading(theEnv))
 #endif
-     { PrintString(theEnv,WDIALOG,"\n"); }
+     { PrintString(theEnv,STDOUT,"\n"); }
 
    /*=============================================================*/
    /* Once the load is complete, destroy the pretty print buffer. */

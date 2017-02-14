@@ -485,7 +485,7 @@ void FactsCommand(
 
    if (! UDFHasNextArgument(context))
      {
-      Facts(theEnv,WDISPLAY,theModule,start,end,max);
+      Facts(theEnv,STDOUT,theModule,start,end,max);
       return;
      }
 
@@ -552,7 +552,7 @@ void FactsCommand(
    /* List the facts. */
    /*=================*/
 
-   Facts(theEnv,WDISPLAY,theModule,start,end,max);
+   Facts(theEnv,STDOUT,theModule,start,end,max);
   }
 
 /**************************************************/

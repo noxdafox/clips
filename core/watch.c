@@ -75,8 +75,6 @@
 /***************************************/
 
    static WatchItemRecord        *ValidWatchItem(Environment *,const char *,bool *);
-   static bool                    RecognizeWatchRouters(Environment *,const char *,void *);
-   static void                    CaptureWatchPrints(Environment *,const char *,const char *,void *);
    static void                    DeallocateWatchData(Environment *);
 
 /**********************************************/
@@ -757,9 +755,9 @@ void ListWatchItemsCommand(
      {
       for (wPtr = WatchData(theEnv)->ListOfWatchItems; wPtr != NULL; wPtr = wPtr->next)
         {
-         PrintString(theEnv,WDISPLAY,wPtr->name);
-         if (*(wPtr->flag)) PrintString(theEnv,WDISPLAY," = on\n");
-         else PrintString(theEnv,WDISPLAY," = off\n");
+         PrintString(theEnv,STDOUT,wPtr->name);
+         if (*(wPtr->flag)) PrintString(theEnv,STDOUT," = on\n");
+         else PrintString(theEnv,STDOUT," = off\n");
         }
       return;
      }
@@ -793,9 +791,9 @@ void ListWatchItemsCommand(
    /* List the status of the watch item. */
    /*====================================*/
 
-   PrintString(theEnv,WDISPLAY,wPtr->name);
-   if (*(wPtr->flag)) PrintString(theEnv,WDISPLAY," = on\n");
-   else PrintString(theEnv,WDISPLAY," = off\n");
+   PrintString(theEnv,STDOUT,wPtr->name);
+   if (*(wPtr->flag)) PrintString(theEnv,STDOUT," = on\n");
+   else PrintString(theEnv,STDOUT," = off\n");
 
    /*============================================*/
    /* List the status of individual watch items. */
@@ -803,7 +801,7 @@ void ListWatchItemsCommand(
 
    if (wPtr->printFunc != NULL)
      {
-      if ((*wPtr->printFunc)(theEnv,WDISPLAY,wPtr->code,
+      if ((*wPtr->printFunc)(theEnv,STDOUT,wPtr->code,
                              GetNextArgument(GetFirstArgument())) == false)
         { SetEvaluationError(theEnv,true); }
      }
@@ -860,42 +858,6 @@ void WatchFunctionDefinitions(
    AddUDF(theEnv,"unwatch","v",1,UNBOUNDED,"*;y",UnwatchCommand,"UnwatchCommand",NULL);
    AddUDF(theEnv,"get-watch-item","b",1,1,"y",GetWatchItemCommand,"GetWatchItemCommand",NULL);
    AddUDF(theEnv,"list-watch-items","v",0,UNBOUNDED,"*;y",ListWatchItemsCommand,"ListWatchItemsCommand",NULL);
-#endif
-
-   AddRouter(theEnv,WTRACE,1000,RecognizeWatchRouters,CaptureWatchPrints,NULL,NULL,NULL,NULL);
-   DeactivateRouter(theEnv,WTRACE);
-  }
-
-/**************************************************/
-/* RecognizeWatchRouters: Looks for WTRACE prints */
-/**************************************************/
-static bool RecognizeWatchRouters(
-  Environment *theEnv,
-  const char *logName,
-  void *context)
-  {
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
-
-   if (strcmp(logName,WTRACE) == 0) return true;
-
-   return false;
-  }
-
-/**************************************************/
-/* CaptureWatchPrints: Suppresses WTRACE messages */
-/**************************************************/
-static void CaptureWatchPrints(
-  Environment *theEnv,
-  const char *logName,
-  const char *str,
-  void *context)
-  {
-#if MAC_XCD
-#pragma unused(logName)
-#pragma unused(str)
-#pragma unused(theEnv)
 #endif
   }
 

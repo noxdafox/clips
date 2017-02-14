@@ -619,16 +619,6 @@ bool Clear(
    struct voidCallFunctionItem *theFunction;
    GCBlock gcb;
 
-   /*==========================================*/
-   /* Activate the watch router which captures */
-   /* trace output so that it is not displayed */
-   /* during a clear.                          */
-   /*==========================================*/
-
-#if DEBUGGING_FUNCTIONS
-   ActivateRouter(theEnv,WTRACE);
-#endif
-
    /*===================================*/
    /* Determine if a clear is possible. */
    /*===================================*/
@@ -640,9 +630,6 @@ bool Clear(
      {
       PrintErrorID(theEnv,"CONSTRCT",1,false);
       PrintString(theEnv,WERROR,"Some constructs are still in use. Clear cannot continue.\n");
-#if DEBUGGING_FUNCTIONS
-      DeactivateRouter(theEnv,WTRACE);
-#endif
       ConstructData(theEnv)->ClearReadyInProgress = false;
       return false;
      }
@@ -664,15 +651,6 @@ bool Clear(
         theFunction != NULL;
         theFunction = theFunction->next)
      { (*theFunction->func)(theEnv,theFunction->context); }
-
-   /*=============================*/
-   /* Deactivate the watch router */
-   /* for capturing output.       */
-   /*=============================*/
-
-#if DEBUGGING_FUNCTIONS
-   DeactivateRouter(theEnv,WTRACE);
-#endif
 
    /*================================*/
    /* Restore the old garbage frame. */

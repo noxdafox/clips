@@ -938,7 +938,7 @@ void PPDefmethodCommand(
    if (gi == -1)
      return;
    if (gfunc->methods[gi].header.ppForm != NULL)
-     PrintInChunks(theEnv,WDISPLAY,gfunc->methods[gi].header.ppForm);
+     PrintInChunks(theEnv,STDOUT,gfunc->methods[gi].header.ppForm);
   }
 
 /******************************************************
@@ -959,14 +959,14 @@ void ListDefmethodsCommand(
    Defgeneric *gfunc;
 
    if (! UDFHasNextArgument(context))
-     { ListDefmethods(theEnv,WDISPLAY,NULL); }
+     { ListDefmethods(theEnv,STDOUT,NULL); }
    else
      {
       if (! UDFFirstArgument(context,SYMBOL_BIT,&theArg)) return;
 
       gfunc = CheckGenericExists(theEnv,"list-defmethods",theArg.lexemeValue->contents);
       if (gfunc != NULL)
-        { ListDefmethods(theEnv,WDISPLAY,gfunc); }
+        { ListDefmethods(theEnv,STDOUT,gfunc); }
      }
   }
 

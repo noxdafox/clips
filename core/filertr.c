@@ -125,14 +125,6 @@ FILE *FindFptr(
      { return(stdout); }
    else if (strcmp(logicalName,STDIN) == 0)
      { return(stdin);  }
-   else if (strcmp(logicalName,WTRACE) == 0)
-     { return(stdout); }
-   else if (strcmp(logicalName,WDIALOG) == 0)
-     { return(stdout); }
-   else if (strcmp(logicalName,WPROMPT) == 0)
-     { return(stdout); }
-   else if (strcmp(logicalName,WDISPLAY) == 0)
-     { return(stdout); }
    else if (strcmp(logicalName,WERROR) == 0)
      { return(stdout); }
    else if (strcmp(logicalName,WWARNING) == 0)

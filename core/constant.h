@@ -79,10 +79,6 @@ typedef enum
    DYNAMIC_DEFAULT
   } DefaultType;
 
-#ifndef WPROMPT_STRING
-#define WPROMPT_STRING "wclips"
-#endif
-
 #ifndef APPLICATION_NAME
 #define APPLICATION_NAME "CLIPS"
 #endif

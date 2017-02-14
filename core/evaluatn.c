@@ -1181,7 +1181,7 @@ static bool DiscardCAddress(
   Environment *theEnv,
   void *theValue)
   {
-   PrintString(theEnv,WDISPLAY,"Discarding C Address\n");
+   PrintString(theEnv,STDOUT,"Discarding C Address\n");
 
    return true;
   }

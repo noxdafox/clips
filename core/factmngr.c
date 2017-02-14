@@ -549,11 +549,13 @@ bool RetractDriver(
    /*============================*/
 
 #if DEBUGGING_FUNCTIONS
-   if (theFact->whichDeftemplate->watch)
+   if (theFact->whichDeftemplate->watch &&
+       (! ConstructData(theEnv)->ClearReadyInProgress) &&
+       (! ConstructData(theEnv)->ClearInProgress))
      {
-      PrintString(theEnv,WTRACE,"<== ");
-      PrintFactWithIdentifier(theEnv,WTRACE,theFact,changeMap);
-      PrintString(theEnv,WTRACE,"\n");
+      PrintString(theEnv,STDOUT,"<== ");
+      PrintFactWithIdentifier(theEnv,STDOUT,theFact,changeMap);
+      PrintString(theEnv,STDOUT,"\n");
      }
 #endif
 
@@ -922,11 +924,13 @@ Fact *AssertDriver(
    /*==========================*/
 
 #if DEBUGGING_FUNCTIONS
-   if (theFact->whichDeftemplate->watch)
+   if (theFact->whichDeftemplate->watch &&
+       (! ConstructData(theEnv)->ClearReadyInProgress) &&
+       (! ConstructData(theEnv)->ClearInProgress))
      {
-      PrintString(theEnv,WTRACE,"==> ");
-      PrintFactWithIdentifier(theEnv,WTRACE,theFact,changeMap);
-      PrintString(theEnv,WTRACE,"\n");
+      PrintString(theEnv,STDOUT,"==> ");
+      PrintFactWithIdentifier(theEnv,STDOUT,theFact,changeMap);
+      PrintString(theEnv,STDOUT,"\n");
      }
 #endif
 

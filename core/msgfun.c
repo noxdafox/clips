@@ -918,6 +918,10 @@ void WatchMessage(
   const char *logName,
   const char *tstring)
   {
+   if (ConstructData(theEnv)->ClearReadyInProgress ||
+       ConstructData(theEnv)->ClearInProgress)
+     { return; }
+
    PrintString(theEnv,logName,"MSG ");
    PrintString(theEnv,logName,tstring);
    PrintString(theEnv,logName," ");
@@ -946,12 +950,16 @@ void WatchHandler(
   const char *tstring)
   {
    DefmessageHandler *hnd;
+   
+   if (ConstructData(theEnv)->ClearReadyInProgress ||
+       ConstructData(theEnv)->ClearInProgress)
+     { return; }
 
    PrintString(theEnv,logName,"HND ");
    PrintString(theEnv,logName,tstring);
    PrintString(theEnv,logName," ");
    hnd = hndl->hnd;
-   PrintHandler(theEnv,WTRACE,hnd,true);
+   PrintHandler(theEnv,logName,hnd,true);
    PrintString(theEnv,logName,"       ED:");
    PrintInteger(theEnv,logName,(long long) EvaluationData(theEnv)->CurrentEvaluationDepth);
    PrintProcParamArray(theEnv,logName);

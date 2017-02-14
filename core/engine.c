@@ -299,11 +299,11 @@ long long Run(
          char printSpace[60];
 
          gensprintf(printSpace,"FIRE %4lld ",rulesFired);
-         PrintString(theEnv,WTRACE,printSpace);
-         PrintString(theEnv,WTRACE,ruleFiring);
-         PrintString(theEnv,WTRACE,": ");
-         PrintPartialMatch(theEnv,WTRACE,theBasis);
-         PrintString(theEnv,WTRACE,"\n");
+         PrintString(theEnv,STDOUT,printSpace);
+         PrintString(theEnv,STDOUT,ruleFiring);
+         PrintString(theEnv,STDOUT,": ");
+         PrintPartialMatch(theEnv,STDOUT,theBasis);
+         PrintString(theEnv,STDOUT,"\n");
         }
 #endif
 
@@ -514,9 +514,9 @@ long long Run(
          if (GetActivationRule(theEnv,theActivation)->afterBreakpoint)
            {
             EngineData(theEnv)->HaltRules = true;
-            PrintString(theEnv,WDIALOG,"Breaking on rule ");
-            PrintString(theEnv,WDIALOG,ActivationRuleName(theActivation));
-            PrintString(theEnv,WDIALOG,".\n");
+            PrintString(theEnv,STDOUT,"Breaking on rule ");
+            PrintString(theEnv,STDOUT,ActivationRuleName(theActivation));
+            PrintString(theEnv,STDOUT,".\n");
            }
         }
      }
@@ -539,7 +539,7 @@ long long Run(
    /*======================================================*/
 
    if (runLimit == rulesFired)
-     { PrintString(theEnv,WDIALOG,"rule firing limit reached\n"); }
+     { PrintString(theEnv,STDOUT,"rule firing limit reached\n"); }
 
    /*==============================*/
    /* Restore execution variables. */
@@ -559,83 +559,83 @@ long long Run(
 
       endTime = gentime();
 
-      PrintInteger(theEnv,WDIALOG,rulesFired);
-      PrintString(theEnv,WDIALOG," rules fired");
+      PrintInteger(theEnv,STDOUT,rulesFired);
+      PrintString(theEnv,STDOUT," rules fired");
 
 #if (! GENERIC)
       if (startTime != endTime)
         {
-         PrintString(theEnv,WDIALOG,"        Run time is ");
-         PrintFloat(theEnv,WDIALOG,endTime - startTime);
-         PrintString(theEnv,WDIALOG," seconds.\n");
-         PrintFloat(theEnv,WDIALOG,(double) rulesFired / (endTime - startTime));
-         PrintString(theEnv,WDIALOG," rules per second.\n");
+         PrintString(theEnv,STDOUT,"        Run time is ");
+         PrintFloat(theEnv,STDOUT,endTime - startTime);
+         PrintString(theEnv,STDOUT," seconds.\n");
+         PrintFloat(theEnv,STDOUT,(double) rulesFired / (endTime - startTime));
+         PrintString(theEnv,STDOUT," rules per second.\n");
         }
       else
-        { PrintString(theEnv,WDIALOG,"\n"); }
+        { PrintString(theEnv,STDOUT,"\n"); }
 #else
-      PrintString(theEnv,WDIALOG,"\n");
+      PrintString(theEnv,STDOUT,"\n");
 #endif
 
 #if DEFTEMPLATE_CONSTRUCT
       gensprintf(printSpace,"%ld mean number of facts (%ld maximum).\n",
                           (long) (((double) sumFacts / (rulesFired + 1)) + 0.5),
                           maxFacts);
-      PrintString(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,STDOUT,printSpace);
 #endif
 
 #if OBJECT_SYSTEM
       gensprintf(printSpace,"%ld mean number of instances (%ld maximum).\n",
                           (long) (((double) sumInstances / (rulesFired + 1)) + 0.5),
                           maxInstances);
-      PrintString(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,STDOUT,printSpace);
 #endif
 
       gensprintf(printSpace,"%ld mean number of activations (%ld maximum).\n",
                           (long) (((double) sumActivations / (rulesFired + 1)) + 0.5),
                           maxActivations);
-      PrintString(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,STDOUT,printSpace);
 
 #if DEVELOPER
       gensprintf(printSpace,"%9ld left to right comparisons.\n",
                           EngineData(theEnv)->leftToRightComparisons);
-      PrintString(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,STDOUT,printSpace);
 
       gensprintf(printSpace,"%9ld left to right succeeds.\n",
                           EngineData(theEnv)->leftToRightSucceeds);
-      PrintString(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,STDOUT,printSpace);
 
       gensprintf(printSpace,"%9ld left to right loops.\n",
                           EngineData(theEnv)->leftToRightLoops);
-      PrintString(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,STDOUT,printSpace);
 
       gensprintf(printSpace,"%9ld right to left comparisons.\n",
                           EngineData(theEnv)->rightToLeftComparisons);
-      PrintString(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,STDOUT,printSpace);
 
       gensprintf(printSpace,"%9ld right to left succeeds.\n",
                           EngineData(theEnv)->rightToLeftSucceeds);
-      PrintString(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,STDOUT,printSpace);
 
       gensprintf(printSpace,"%9ld right to left loops.\n",
                           EngineData(theEnv)->rightToLeftLoops);
-      PrintString(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,STDOUT,printSpace);
 
       gensprintf(printSpace,"%9ld find next conflicting comparisons.\n",
                           EngineData(theEnv)->findNextConflictingComparisons);
-      PrintString(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,STDOUT,printSpace);
 
       gensprintf(printSpace,"%9ld beta hash list skips.\n",
                           EngineData(theEnv)->betaHashListSkips);
-      PrintString(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,STDOUT,printSpace);
 
       gensprintf(printSpace,"%9ld beta hash hash table skips.\n",
                           EngineData(theEnv)->betaHashHTSkips);
-      PrintString(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,STDOUT,printSpace);
 
       gensprintf(printSpace,"%9ld unneeded marker compare.\n",
                           EngineData(theEnv)->unneededMarkerCompare);
-      PrintString(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,STDOUT,printSpace);
 
 #endif
      }
@@ -773,18 +773,20 @@ static Defmodule *RemoveFocus(
    /*========================================*/
 
 #if DEBUGGING_FUNCTIONS
-   if (EngineData(theEnv)->WatchFocus)
+   if (EngineData(theEnv)->WatchFocus &&
+       (! ConstructData(theEnv)->ClearReadyInProgress) &&
+       (! ConstructData(theEnv)->ClearInProgress))
      {
-      PrintString(theEnv,WTRACE,"<== Focus ");
-      PrintString(theEnv,WTRACE,theModule->header.name->contents);
+      PrintString(theEnv,STDOUT,"<== Focus ");
+      PrintString(theEnv,STDOUT,theModule->header.name->contents);
 
       if ((EngineData(theEnv)->CurrentFocus != NULL) && currentFocusRemoved)
         {
-         PrintString(theEnv,WTRACE," to ");
-         PrintString(theEnv,WTRACE,EngineData(theEnv)->CurrentFocus->theModule->header.name->contents);
+         PrintString(theEnv,STDOUT," to ");
+         PrintString(theEnv,STDOUT,EngineData(theEnv)->CurrentFocus->theModule->header.name->contents);
         }
 
-      PrintString(theEnv,WTRACE,"\n");
+      PrintString(theEnv,STDOUT,"\n");
      }
 #endif
 
@@ -885,16 +887,18 @@ void Focus(
    /*=====================================*/
 
 #if DEBUGGING_FUNCTIONS
-   if (EngineData(theEnv)->WatchFocus)
+   if (EngineData(theEnv)->WatchFocus &&
+       (! ConstructData(theEnv)->ClearReadyInProgress) &&
+       (! ConstructData(theEnv)->ClearInProgress))
      {
-      PrintString(theEnv,WTRACE,"==> Focus ");
-      PrintString(theEnv,WTRACE,theModule->header.name->contents);
+      PrintString(theEnv,STDOUT,"==> Focus ");
+      PrintString(theEnv,STDOUT,theModule->header.name->contents);
       if (EngineData(theEnv)->CurrentFocus != NULL)
         {
-         PrintString(theEnv,WTRACE," from ");
-         PrintString(theEnv,WTRACE,EngineData(theEnv)->CurrentFocus->theModule->header.name->contents);
+         PrintString(theEnv,STDOUT," from ");
+         PrintString(theEnv,STDOUT,EngineData(theEnv)->CurrentFocus->theModule->header.name->contents);
         }
-      PrintString(theEnv,WTRACE,"\n");
+      PrintString(theEnv,STDOUT,"\n");
      }
 #endif
 
@@ -1326,7 +1330,7 @@ void ShowBreaksCommand(
    else
      { theModule = GetCurrentModule(theEnv); }
 
-   ShowBreaks(theEnv,WDISPLAY,theModule);
+   ShowBreaks(theEnv,STDOUT,theModule);
   }
 
 /***********************************************/
@@ -1338,7 +1342,7 @@ void ListFocusStackCommand(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   ListFocusStack(theEnv,WDISPLAY);
+   ListFocusStack(theEnv,STDOUT);
   }
 
 /***************************************/

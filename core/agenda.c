@@ -185,11 +185,13 @@ void AddActivation(
    /*====================================================*/
 
 #if DEBUGGING_FUNCTIONS
-   if (newActivation->theRule->watchActivation)
+   if (newActivation->theRule->watchActivation &&
+       (! ConstructData(theEnv)->ClearReadyInProgress) &&
+       (! ConstructData(theEnv)->ClearInProgress))
      {
-      PrintString(theEnv,WTRACE,"==> Activation ");
-      PrintActivation(theEnv,WTRACE,newActivation);
-      PrintString(theEnv,WTRACE,"\n");
+      PrintString(theEnv,STDOUT,"==> Activation ");
+      PrintActivation(theEnv,STDOUT,newActivation);
+      PrintString(theEnv,STDOUT,"\n");
      }
 #endif
 
@@ -672,11 +674,13 @@ void RemoveActivation(
       /*===================================*/
 
 #if DEBUGGING_FUNCTIONS
-      if (theActivation->theRule->watchActivation)
+      if (theActivation->theRule->watchActivation &&
+          (! ConstructData(theEnv)->ClearReadyInProgress) &&
+          (! ConstructData(theEnv)->ClearInProgress))
         {
-         PrintString(theEnv,WTRACE,"<== Activation ");
-         PrintActivation(theEnv,WTRACE,theActivation);
-         PrintString(theEnv,WTRACE,"\n");
+         PrintString(theEnv,STDOUT,"<== Activation ");
+         PrintActivation(theEnv,STDOUT,theActivation);
+         PrintString(theEnv,STDOUT,"\n");
         }
 #endif
 
@@ -1343,7 +1347,7 @@ void AgendaCommand(
    /* Display the agenda of the appropriate module. */
    /*===============================================*/
 
-   Agenda(theEnv,WDISPLAY,theModule);
+   Agenda(theEnv,STDOUT,theModule);
   }
 
 #endif /* DEBUGGING_FUNCTIONS */

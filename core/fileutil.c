@@ -78,12 +78,8 @@ static bool FindDribble(
 
    if ( (strcmp(logicalName,STDOUT) == 0) ||
         (strcmp(logicalName,STDIN) == 0) ||
-        (strcmp(logicalName,WPROMPT) == 0) ||
-        (strcmp(logicalName,WTRACE) == 0) ||
         (strcmp(logicalName,WERROR) == 0) ||
-        (strcmp(logicalName,WWARNING) == 0) ||
-        (strcmp(logicalName,WDISPLAY) == 0) ||
-        (strcmp(logicalName,WDIALOG) == 0) )
+        (strcmp(logicalName,WWARNING) == 0) )
      { return true; }
 
     return false;

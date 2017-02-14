@@ -398,7 +398,7 @@ void PPConstructCommand(
    /* pretty printing the construct. */
    /*================================*/
 
-   if (PPConstruct(theEnv,constructName,WDISPLAY,constructClass) == false)
+   if (PPConstruct(theEnv,constructName,STDOUT,constructClass) == false)
      { CantFindItemErrorMessage(theEnv,constructClass->constructName,constructName); }
   }
 
@@ -1033,7 +1033,7 @@ void ListConstructCommand(
    /* to list the constructs. */
    /*=========================*/
 
-   ListConstruct(theEnv,constructClass,WDISPLAY,theModule);
+   ListConstruct(theEnv,constructClass,STDOUT,theModule);
   }
 
 /*****************************************/
@@ -1107,7 +1107,7 @@ void ListConstruct(
 
          if (constructName != NULL)
            {
-            if (allModules) PrintString(theEnv,WDISPLAY,"   ");
+            if (allModules) PrintString(theEnv,STDOUT,"   ");
             PrintString(theEnv,logicalName,constructName->contents);
             PrintString(theEnv,logicalName,"\n");
            }
@@ -1129,7 +1129,7 @@ void ListConstruct(
    /* Print the tally and restore the current module. */
    /*=================================================*/
 
-   PrintTally(theEnv,WDISPLAY,count,constructClass->constructName,
+   PrintTally(theEnv,STDOUT,count,constructClass->constructName,
                              constructClass->pluralName);
 
    RestoreCurrentModule(theEnv);

@@ -219,17 +219,21 @@ static void WatchDeffunction(
   Environment *theEnv,
   const char *tstring)
   {
-   PrintString(theEnv,WTRACE,"DFN ");
-   PrintString(theEnv,WTRACE,tstring);
+   if (ConstructData(theEnv)->ClearReadyInProgress ||
+       ConstructData(theEnv)->ClearInProgress)
+     { return; }
+
+   PrintString(theEnv,STDOUT,"DFN ");
+   PrintString(theEnv,STDOUT,tstring);
    if (DeffunctionData(theEnv)->ExecutingDeffunction->header.whichModule->theModule != GetCurrentModule(theEnv))
      {
-      PrintString(theEnv,WTRACE,DeffunctionModule(DeffunctionData(theEnv)->ExecutingDeffunction));;
-      PrintString(theEnv,WTRACE,"::");
+      PrintString(theEnv,STDOUT,DeffunctionModule(DeffunctionData(theEnv)->ExecutingDeffunction));;
+      PrintString(theEnv,STDOUT,"::");
      }
-   PrintString(theEnv,WTRACE,DeffunctionData(theEnv)->ExecutingDeffunction->header.name->contents);
-   PrintString(theEnv,WTRACE," ED:");
-   PrintInteger(theEnv,WTRACE,(long long) EvaluationData(theEnv)->CurrentEvaluationDepth);
-   PrintProcParamArray(theEnv,WTRACE);
+   PrintString(theEnv,STDOUT,DeffunctionData(theEnv)->ExecutingDeffunction->header.name->contents);
+   PrintString(theEnv,STDOUT," ED:");
+   PrintInteger(theEnv,STDOUT,(long long) EvaluationData(theEnv)->CurrentEvaluationDepth);
+   PrintProcParamArray(theEnv,STDOUT);
   }
 
 #endif

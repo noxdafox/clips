@@ -860,19 +860,19 @@ static void DisplayGenericCore(
       if (IsMethodApplicable(theEnv,&gfunc->methods[i]))
         {
          rtn = true;
-         PrintString(theEnv,WDISPLAY,DefgenericName(gfunc));
-         PrintString(theEnv,WDISPLAY," #");
+         PrintString(theEnv,STDOUT,DefgenericName(gfunc));
+         PrintString(theEnv,STDOUT," #");
          PrintMethod(theEnv,&gfunc->methods[i],theSB);
-         PrintString(theEnv,WDISPLAY,theSB->contents);
-         PrintString(theEnv,WDISPLAY,"\n");
+         PrintString(theEnv,STDOUT,theSB->contents);
+         PrintString(theEnv,STDOUT,"\n");
         }
       gfunc->methods[i].busy--;
      }
    if (rtn == false)
      {
-      PrintString(theEnv,WDISPLAY,"No applicable methods for ");
-      PrintString(theEnv,WDISPLAY,DefgenericName(gfunc));
-      PrintString(theEnv,WDISPLAY,".\n");
+      PrintString(theEnv,STDOUT,"No applicable methods for ");
+      PrintString(theEnv,STDOUT,DefgenericName(gfunc));
+      PrintString(theEnv,STDOUT,".\n");
      }
      
    SBDispose(theSB);

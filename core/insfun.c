@@ -736,22 +736,24 @@ bool DirectPutSlotValue(
    sp->override = ins->initializeInProgress;
 
 #if DEBUGGING_FUNCTIONS
-   if (ins->cls->traceSlots)
+   if (ins->cls->traceSlots &&
+       (! ConstructData(theEnv)->ClearReadyInProgress) &&
+       (! ConstructData(theEnv)->ClearInProgress))
      {
       if (sp->desc->shared)
-        PrintString(theEnv,WTRACE,"::= shared slot ");
+        PrintString(theEnv,STDOUT,"::= shared slot ");
       else
-        PrintString(theEnv,WTRACE,"::= local slot ");
-      PrintString(theEnv,WTRACE,sp->desc->slotName->name->contents);
-      PrintString(theEnv,WTRACE," in instance ");
-      PrintString(theEnv,WTRACE,ins->name->contents);
-      PrintString(theEnv,WTRACE," <- ");
+        PrintString(theEnv,STDOUT,"::= local slot ");
+      PrintString(theEnv,STDOUT,sp->desc->slotName->name->contents);
+      PrintString(theEnv,STDOUT," in instance ");
+      PrintString(theEnv,STDOUT,ins->name->contents);
+      PrintString(theEnv,STDOUT," <- ");
       if (sp->type != MULTIFIELD_TYPE)
-        PrintAtom(theEnv,WTRACE,(int) sp->type,sp->value);
+        PrintAtom(theEnv,STDOUT,(int) sp->type,sp->value);
       else
-        PrintMultifield(theEnv,WTRACE,sp->multifieldValue,0,
+        PrintMultifield(theEnv,STDOUT,sp->multifieldValue,0,
                         (long) (sp->multifieldValue->length - 1),true);
-      PrintString(theEnv,WTRACE,"\n");
+      PrintString(theEnv,STDOUT,"\n");
      }
 #endif
    InstanceData(theEnv)->ChangesToInstances = true;

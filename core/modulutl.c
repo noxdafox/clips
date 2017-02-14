@@ -961,7 +961,7 @@ CLIPSLexeme *GetConstructNameAndComment(
    if ((GetWatchItem(theEnv,"compilations") == 1) &&
        GetPrintWhileLoading(theEnv) && (! ConstructData(theEnv)->CheckSyntaxMode))
      {
-      const char *outRouter = WDIALOG;
+      const char *outRouter = STDOUT;
       if (redefining && (! ignoreRedefinition))
         {
          outRouter = WWARNING;
@@ -981,7 +981,7 @@ CLIPSLexeme *GetConstructNameAndComment(
 #endif
      {
       if (GetPrintWhileLoading(theEnv) && (! ConstructData(theEnv)->CheckSyntaxMode))
-        { PrintString(theEnv,WDIALOG,constructSymbol); }
+        { PrintString(theEnv,STDOUT,constructSymbol); }
      }
 
    /*===============================*/

@@ -981,7 +981,7 @@ void DumpRuleAnalysis(
    struct lhsParseNode *traceNode;
    char buffer[20];
 
-   PrintString(theEnv,WDISPLAY,"\n");
+   PrintString(theEnv,STDOUT,"\n");
    for (traceNode = tempNode; traceNode != NULL; traceNode = traceNode->bottom)
      {
       if (traceNode->userCE)
@@ -989,58 +989,58 @@ void DumpRuleAnalysis(
       else
         { gensprintf(buffer,"SCE %2d (%2d %2d): ",traceNode->whichCE,traceNode->beginNandDepth,traceNode->endNandDepth); }
 
-      PrintString(theEnv,WDISPLAY,buffer);
+      PrintString(theEnv,STDOUT,buffer);
 
-      PrintExpression(theEnv,WDISPLAY,traceNode->networkTest);
-      PrintString(theEnv,WDISPLAY,"\n");
+      PrintExpression(theEnv,STDOUT,traceNode->networkTest);
+      PrintString(theEnv,STDOUT,"\n");
 
       if (traceNode->externalNetworkTest != NULL)
         {
-         PrintString(theEnv,WDISPLAY,"      ENT: ");
-         PrintExpression(theEnv,WDISPLAY,traceNode->externalNetworkTest);
-         PrintString(theEnv,WDISPLAY,"\n");
+         PrintString(theEnv,STDOUT,"      ENT: ");
+         PrintExpression(theEnv,STDOUT,traceNode->externalNetworkTest);
+         PrintString(theEnv,STDOUT,"\n");
         }
 
       if (traceNode->secondaryNetworkTest != NULL)
         {
-         PrintString(theEnv,WDISPLAY,"      SNT: ");
-         PrintExpression(theEnv,WDISPLAY,traceNode->secondaryNetworkTest);
-         PrintString(theEnv,WDISPLAY,"\n");
+         PrintString(theEnv,STDOUT,"      SNT: ");
+         PrintExpression(theEnv,STDOUT,traceNode->secondaryNetworkTest);
+         PrintString(theEnv,STDOUT,"\n");
         }
 
       if (traceNode->externalRightHash != NULL)
         {
-         PrintString(theEnv,WDISPLAY,"      ERH: ");
-         PrintExpression(theEnv,WDISPLAY,traceNode->externalRightHash);
-         PrintString(theEnv,WDISPLAY,"\n");
+         PrintString(theEnv,STDOUT,"      ERH: ");
+         PrintExpression(theEnv,STDOUT,traceNode->externalRightHash);
+         PrintString(theEnv,STDOUT,"\n");
         }
 
       if (traceNode->externalLeftHash != NULL)
         {
-         PrintString(theEnv,WDISPLAY,"      ELH: ");
-         PrintExpression(theEnv,WDISPLAY,traceNode->externalLeftHash);
-         PrintString(theEnv,WDISPLAY,"\n");
+         PrintString(theEnv,STDOUT,"      ELH: ");
+         PrintExpression(theEnv,STDOUT,traceNode->externalLeftHash);
+         PrintString(theEnv,STDOUT,"\n");
         }
 
       if (traceNode->leftHash != NULL)
         {
-         PrintString(theEnv,WDISPLAY,"       LH: ");
-         PrintExpression(theEnv,WDISPLAY,traceNode->leftHash);
-         PrintString(theEnv,WDISPLAY,"\n");
+         PrintString(theEnv,STDOUT,"       LH: ");
+         PrintExpression(theEnv,STDOUT,traceNode->leftHash);
+         PrintString(theEnv,STDOUT,"\n");
         }
 
       if (traceNode->rightHash != NULL)
         {
-         PrintString(theEnv,WDISPLAY,"       RH: ");
-         PrintExpression(theEnv,WDISPLAY,traceNode->rightHash);
-         PrintString(theEnv,WDISPLAY,"\n");
+         PrintString(theEnv,STDOUT,"       RH: ");
+         PrintExpression(theEnv,STDOUT,traceNode->rightHash);
+         PrintString(theEnv,STDOUT,"\n");
         }
 
       if (traceNode->betaHash != NULL)
         {
-         PrintString(theEnv,WDISPLAY,"       BH: ");
-         PrintExpression(theEnv,WDISPLAY,traceNode->betaHash);
-         PrintString(theEnv,WDISPLAY,"\n");
+         PrintString(theEnv,STDOUT,"       BH: ");
+         PrintExpression(theEnv,STDOUT,traceNode->betaHash);
+         PrintString(theEnv,STDOUT,"\n");
         }
      }
   }

@@ -537,7 +537,7 @@ void GetDeffunctionModuleCommand(
   INPUTS       : None
   RETURNS      : Nothing useful
   SIDE EFFECTS : Pretty-print form displayed to
-                 WDISPLAY logical name
+                 STDOUT logical name
   NOTES        : H/L Syntax: (ppdeffunction <name>)
  ****************************************************/
 void PPDeffunctionCommand(

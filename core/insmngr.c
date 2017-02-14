@@ -1244,9 +1244,13 @@ static void PrintInstanceWatch(
   const char *traceString,
   Instance *theInstance)
   {
-   PrintString(theEnv,WTRACE,traceString);
-   PrintString(theEnv,WTRACE," instance ");
-   PrintInstanceNameAndClass(theEnv,WTRACE,theInstance,true);
+   if (ConstructData(theEnv)->ClearReadyInProgress ||
+       ConstructData(theEnv)->ClearInProgress)
+     { return; }
+
+   PrintString(theEnv,STDOUT,traceString);
+   PrintString(theEnv,STDOUT," instance ");
+   PrintInstanceNameAndClass(theEnv,STDOUT,theInstance,true);
   }
 
 #endif

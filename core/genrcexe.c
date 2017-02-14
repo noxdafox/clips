@@ -627,19 +627,23 @@ static void WatchGeneric(
   Environment *theEnv,
   const char *tstring)
   {
-   PrintString(theEnv,WTRACE,"GNC ");
-   PrintString(theEnv,WTRACE,tstring);
-   PrintString(theEnv,WTRACE," ");
+   if (ConstructData(theEnv)->ClearReadyInProgress ||
+       ConstructData(theEnv)->ClearInProgress)
+     { return; }
+
+   PrintString(theEnv,STDOUT,"GNC ");
+   PrintString(theEnv,STDOUT,tstring);
+   PrintString(theEnv,STDOUT," ");
    if (DefgenericData(theEnv)->CurrentGeneric->header.whichModule->theModule != GetCurrentModule(theEnv))
      {
-      PrintString(theEnv,WTRACE,DefgenericModule(DefgenericData(theEnv)->CurrentGeneric));
-      PrintString(theEnv,WTRACE,"::");
+      PrintString(theEnv,STDOUT,DefgenericModule(DefgenericData(theEnv)->CurrentGeneric));
+      PrintString(theEnv,STDOUT,"::");
      }
-   PrintString(theEnv,WTRACE,DefgenericData(theEnv)->CurrentGeneric->header.name->contents);
-   PrintString(theEnv,WTRACE," ");
-   PrintString(theEnv,WTRACE," ED:");
-   PrintInteger(theEnv,WTRACE,(long long) EvaluationData(theEnv)->CurrentEvaluationDepth);
-   PrintProcParamArray(theEnv,WTRACE);
+   PrintString(theEnv,STDOUT,DefgenericData(theEnv)->CurrentGeneric->header.name->contents);
+   PrintString(theEnv,STDOUT," ");
+   PrintString(theEnv,STDOUT," ED:");
+   PrintInteger(theEnv,STDOUT,(long long) EvaluationData(theEnv)->CurrentEvaluationDepth);
+   PrintProcParamArray(theEnv,STDOUT);
   }
 
 /**********************************************************************
@@ -658,23 +662,27 @@ static void WatchMethod(
   Environment *theEnv,
   const char *tstring)
   {
-   PrintString(theEnv,WTRACE,"MTH ");
-   PrintString(theEnv,WTRACE,tstring);
-   PrintString(theEnv,WTRACE," ");
+   if (ConstructData(theEnv)->ClearReadyInProgress ||
+       ConstructData(theEnv)->ClearInProgress)
+     { return; }
+
+   PrintString(theEnv,STDOUT,"MTH ");
+   PrintString(theEnv,STDOUT,tstring);
+   PrintString(theEnv,STDOUT," ");
    if (DefgenericData(theEnv)->CurrentGeneric->header.whichModule->theModule != GetCurrentModule(theEnv))
      {
-      PrintString(theEnv,WTRACE,DefgenericModule(DefgenericData(theEnv)->CurrentGeneric));
-      PrintString(theEnv,WTRACE,"::");
+      PrintString(theEnv,STDOUT,DefgenericModule(DefgenericData(theEnv)->CurrentGeneric));
+      PrintString(theEnv,STDOUT,"::");
      }
-   PrintString(theEnv,WTRACE,DefgenericData(theEnv)->CurrentGeneric->header.name->contents);
-   PrintString(theEnv,WTRACE,":#");
+   PrintString(theEnv,STDOUT,DefgenericData(theEnv)->CurrentGeneric->header.name->contents);
+   PrintString(theEnv,STDOUT,":#");
    if (DefgenericData(theEnv)->CurrentMethod->system)
-     PrintString(theEnv,WTRACE,"SYS");
-   PrintInteger(theEnv,WTRACE,(long long) DefgenericData(theEnv)->CurrentMethod->index);
-   PrintString(theEnv,WTRACE," ");
-   PrintString(theEnv,WTRACE," ED:");
-   PrintInteger(theEnv,WTRACE,(long long) EvaluationData(theEnv)->CurrentEvaluationDepth);
-   PrintProcParamArray(theEnv,WTRACE);
+     PrintString(theEnv,STDOUT,"SYS");
+   PrintInteger(theEnv,STDOUT,(long long) DefgenericData(theEnv)->CurrentMethod->index);
+   PrintString(theEnv,STDOUT," ");
+   PrintString(theEnv,STDOUT," ED:");
+   PrintInteger(theEnv,STDOUT,(long long) EvaluationData(theEnv)->CurrentEvaluationDepth);
+   PrintProcParamArray(theEnv,STDOUT);
   }
 
 #endif

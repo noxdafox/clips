@@ -520,7 +520,7 @@ void InstancesCommand(
            }
         }
      }
-   Instances(theEnv,WDISPLAY,theDefmodule,className,inheritFlag);
+   Instances(theEnv,STDOUT,theDefmodule,className,inheritFlag);
   }
 
 /********************************************************
@@ -544,8 +544,8 @@ void PPInstanceCommand(
    ins = GetActiveInstance(theEnv);
    if (ins->garbage == 1)
      return;
-   PrintInstance(theEnv,WDISPLAY,ins,"\n");
-   PrintString(theEnv,WDISPLAY,"\n");
+   PrintInstance(theEnv,STDOUT,ins,"\n");
+   PrintString(theEnv,STDOUT,"\n");
   }
 
 /***************************************************************

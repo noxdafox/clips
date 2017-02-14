@@ -380,7 +380,7 @@ bool ParseDefmethod(
    if (GetPrintWhileLoading(theEnv) && GetCompilationsWatch(theEnv) &&
        (! ConstructData(theEnv)->CheckSyntaxMode))
      {
-      const char *outRouter = WDIALOG;
+      const char *outRouter = STDOUT;
 
       if (mnew)
         {

@@ -157,7 +157,7 @@
    
    str = (char *) [theCommand UTF8String];
    
-   PrintString(environment,WDIALOG,str);
+   PrintString(environment,STDOUT,str);
    AppendCommandString(environment,str);
   }
 

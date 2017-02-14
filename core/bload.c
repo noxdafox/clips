@@ -300,9 +300,9 @@ bool Bload(
          GetSeekCurBinary(theEnv,(long) space);
          if (space != 0)
            {
-            PrintString(theEnv,WDIALOG,"\nSkipping ");
-            PrintString(theEnv,WDIALOG,constructBuffer);
-            PrintString(theEnv,WDIALOG," constructs because of unavailability\n");
+            PrintString(theEnv,STDOUT,"\nSkipping ");
+            PrintString(theEnv,STDOUT,constructBuffer);
+            PrintString(theEnv,STDOUT," constructs because of unavailability\n");
            }
         }
      }

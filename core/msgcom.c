@@ -615,7 +615,7 @@ void PPDefmessageHandlerCommand(
       return;
      }
    if (hnd->header.ppForm != NULL)
-     PrintInChunks(theEnv,WDISPLAY,hnd->header.ppForm);
+     PrintInChunks(theEnv,STDOUT,hnd->header.ppForm);
   }
 
 /*****************************************************************************
@@ -636,13 +636,13 @@ void ListDefmessageHandlersCommand(
    Defclass *clsptr;
 
    if (UDFArgumentCount(context) == 0)
-     ListDefmessageHandlers(theEnv,NULL,WDISPLAY,false);
+     ListDefmessageHandlers(theEnv,NULL,STDOUT,false);
    else
      {
       clsptr = ClassInfoFnxArgs(context,"list-defmessage-handlers",&inhp);
       if (clsptr == NULL)
         return;
-      ListDefmessageHandlers(theEnv,clsptr,WDISPLAY,inhp);
+      ListDefmessageHandlers(theEnv,clsptr,STDOUT,inhp);
      }
   }
 
@@ -681,7 +681,7 @@ void PreviewSendCommand(
    if (! UDFNextArgument(context,SYMBOL_BIT,&theArg))
      { return; }
 
-   PreviewSend(cls,WDISPLAY,theArg.lexemeValue->contents);
+   PreviewSend(cls,STDOUT,theArg.lexemeValue->contents);
   }
 
 /********************************************************

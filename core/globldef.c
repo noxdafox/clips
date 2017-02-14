@@ -441,15 +441,17 @@ void QSetDefglobalValue(
    /*==========================================*/
 
 #if DEBUGGING_FUNCTIONS
-   if (theGlobal->watch)
+   if (theGlobal->watch &&
+       (! ConstructData(theEnv)->ClearReadyInProgress) &&
+       (! ConstructData(theEnv)->ClearInProgress))
      {
-      PrintString(theEnv,WTRACE,":== ?*");
-      PrintString(theEnv,WTRACE,theGlobal->header.name->contents);
-      PrintString(theEnv,WTRACE,"* ==> ");
-      PrintUDFValue(theEnv,WTRACE,vPtr);
-      PrintString(theEnv,WTRACE," <== ");
-      PrintUDFValue(theEnv,WTRACE,&theGlobal->current);
-      PrintString(theEnv,WTRACE,"\n");
+      PrintString(theEnv,STDOUT,":== ?*");
+      PrintString(theEnv,STDOUT,theGlobal->header.name->contents);
+      PrintString(theEnv,STDOUT,"* ==> ");
+      PrintUDFValue(theEnv,STDOUT,vPtr);
+      PrintString(theEnv,STDOUT," <== ");
+      PrintUDFValue(theEnv,STDOUT,&theGlobal->current);
+      PrintString(theEnv,STDOUT,"\n");
      }
 #endif
 
