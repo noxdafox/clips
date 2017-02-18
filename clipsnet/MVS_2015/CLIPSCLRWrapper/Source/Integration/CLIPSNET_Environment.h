@@ -42,6 +42,7 @@ namespace CLIPSNET
         String ^ GetInputBuffer();
         void SetInputBuffer(String ^);
         bool InputBufferContainsCommand();
+        void AppendToDribble(String ^);
         void CommandLoopOnceThenBatch();
         void PrintBanner();
         void PrintPrompt();

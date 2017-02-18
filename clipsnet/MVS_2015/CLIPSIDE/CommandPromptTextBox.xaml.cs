@@ -466,6 +466,7 @@ namespace CLIPSIDE
       private void ExecuteCommand()
         {
          executingCommand = clips.GetInputBuffer();      
+         clips.AppendToDribble(executingCommand + "\n");
          SetExecuting(true);
 
          this.commandBackgroundWorker.WorkerSupportsCancellation = true;

@@ -269,6 +269,21 @@ namespace CLIPSNET
      {
       return m_Env->InputBufferContainsCommand();
      }
+   
+   /********************/
+   /* AppendToDribble: */
+   /********************/
+   void Environment::AppendToDribble(
+     String ^ commandString)
+     {
+      array<Byte>^ ebCommandString = Encoding::UTF8->GetBytes(commandString);    
+
+      if (ebCommandString->Length)
+        {  
+         pin_ptr<Byte> pbCommandString = &ebCommandString[0];
+         m_Env->AppendToDribble((char *) pbCommandString);
+        }
+     }
 
    /********************/
    /* GetHaltExecution */

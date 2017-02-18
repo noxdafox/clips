@@ -254,6 +254,31 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_appendInputBuffer(
    SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
   }
 
+/****************************************************************/
+/* Java_net_sf_clipsrules_jni_Environment_appendDribble: Native */
+/*   function for the CLIPSJNI appendDribble method.            */
+/*                                                              */
+/* Class:     net_sf_clipsrules_jni_Environment                 */
+/* Method:    appendDribble                                     */
+/* Signature: (JLjava/lang/String;)V                            */
+/****************************************************************/
+JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_appendDribble(
+  JNIEnv *env,
+  jobject obj,
+  jlong clipsEnv,
+  jstring commandString)
+  {
+   const char *cCommandString = (*env)->GetStringUTFChars(env,commandString,NULL);
+   
+   void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env);
+   
+   AppendDribble(JLongToPointer(clipsEnv),(char *) cCommandString);
+
+   (*env)->ReleaseStringUTFChars(env,commandString,cCommandString);
+   
+   SetEnvironmentContext(JLongToPointer(clipsEnv),oldContext);
+  }
+
 /********************************************************************/
 /* Java_net_sf_clipsrules_jni_Environment_expandInputBuffer: Native */
 /*   function for the CLIPSJNI expandInputBuffer method.            */

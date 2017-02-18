@@ -379,6 +379,14 @@ JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_appendInputBuffer
 
 /*
  * Class:     net_sf_clipsrules_jni_Environment
+ * Method:    appendDribble
+ * Signature: (JLjava/lang/String;)V
+ */
+JNIEXPORT void JNICALL Java_net_sf_clipsrules_jni_Environment_appendDribble
+  (JNIEnv *, jobject, jlong, jstring);
+
+/*
+ * Class:     net_sf_clipsrules_jni_Environment
  * Method:    inputBufferContainsCommand
  * Signature: (J)Z
  */

@@ -479,6 +479,7 @@ public class CommandPromptTextArea extends RouterTextArea
      {
       Timer periodicTimer = new Timer();
 
+      clips.appendDribble(executingCommand);
       callExecutionCommandListeners(executingCommand,CommandExecutionEvent.START_EVENT);
       clips.addPeriodicCallback(periodicName,0,this);      
       periodicTimer.schedule(new PeriodicTask(),0,periodicTaskFrequency);

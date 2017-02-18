@@ -71,11 +71,7 @@ namespace CLIPSIDE
             {
              if (logicalName.Equals(CLIPSNET.Router.STANDARD_OUTPUT) ||
                  logicalName.Equals(CLIPSNET.Router.STANDARD_INPUT) ||
-                 logicalName.Equals(CLIPSNET.Router.DIALOG) ||
-                 logicalName.Equals(CLIPSNET.Router.DISPLAY) ||
                  logicalName.Equals(CLIPSNET.Router.ERROR) ||
-                 logicalName.Equals(CLIPSNET.Router.PROMPT) ||
-                 logicalName.Equals(CLIPSNET.Router.TRACE) ||
                  logicalName.Equals(CLIPSNET.Router.WARNING))
                return true;
              else

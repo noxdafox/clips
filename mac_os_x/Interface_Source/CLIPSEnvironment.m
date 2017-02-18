@@ -189,6 +189,10 @@
    
    if (! CommandCompleteAndNotEmpty(environment)) return NO;
 
+#if DEBUGGING_FUNCTIONS
+    AppendDribble(environment,CommandLineData(environment)->CommandString);
+#endif
+
    [NSThread detachNewThreadSelector: @selector(CommandLoopOnceThenBatchThread:) 
                             toTarget: self
                           withObject: nil];

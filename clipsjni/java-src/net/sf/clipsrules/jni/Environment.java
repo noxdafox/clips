@@ -876,6 +876,20 @@ public class Environment
       appendInputBuffer(theEnvironment,theString);
      }
 
+   /******************/
+   /* appendDribble: */
+   /******************/
+   private native void appendDribble(long env,String theString);
+
+   /******************/
+   /* appendDribble: */
+   /******************/
+   public void appendDribble(
+     String theString)
+     {
+      appendDribble(theEnvironment,theString);
+     }
+
    /*******************************/
    /* inputBufferContainsCommand: */
    /*******************************/

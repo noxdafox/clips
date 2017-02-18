@@ -29,10 +29,6 @@ namespace CLIPSNET
       const static String ^STANDARD_INPUT = gcnew String(CLIPSCPPRouter::STANDARD_INPUT);
       const static String ^WARNING = gcnew String(CLIPSCPPRouter::WARNING);
       const static String ^ERROR = gcnew String(CLIPSCPPRouter::ERROR);
-      const static String ^TRACE = gcnew String(CLIPSCPPRouter::TRACE);
-      const static String ^DIALOG = gcnew String(CLIPSCPPRouter::DIALOG);
-      const static String ^PROMPT = gcnew String(CLIPSCPPRouter::PROMPT);
-      const static String ^DISPLAY = gcnew String(CLIPSCPPRouter::DISPLAY);
 
       protected:
         !Router();

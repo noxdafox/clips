@@ -31,7 +31,7 @@
    bool                           DribbleOn(Environment *,const char *);
    bool                           DribbleActive(Environment *);
    bool                           DribbleOff(Environment *);
-   void                           SetDribbleStatusFunction(Environment *,int (*)(Environment *,bool));
+   void                           AppendDribble(Environment *,const char *);
    int                            LLGetcBatch(Environment *,const char *,bool);
    bool                           Batch(Environment *,const char *);
    bool                           OpenBatch(Environment *,const char *,bool);
