@@ -234,6 +234,19 @@ static int FindDribble(
     return(FALSE);
   }
 
+/******************/
+/* AppendDribble: */
+/******************/
+void AppendDribble(
+  void *theEnv,
+  const char *str)
+  {
+   if (! EnvDribbleActive(theEnv)) return;
+   
+   for (int i = 0 ; str[i] != EOS ; i++)
+     { PutcDribbleBuffer(theEnv,str[i]); }
+  }
+
 /*******************************************************/
 /* PrintDribble: Print routine for the dribble router. */
 /*******************************************************/

@@ -59,6 +59,7 @@
    LOCALE intBool                        EnvDribbleOn(void *,const char *);
    LOCALE intBool                        EnvDribbleActive(void *);
    LOCALE intBool                        EnvDribbleOff(void *);
+   LOCALE void                           AppendDribble(void *,const char *);
    LOCALE void                           SetDribbleStatusFunction(void *,int (*)(void *,int));
    LOCALE int                            LLGetcBatch(void *,const char *,int);
    LOCALE int                            Batch(void *,const char *);
