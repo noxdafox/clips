@@ -86,7 +86,7 @@ struct bloadData
    bool                    Bloaded(Environment *);
    void                    AddBeforeBloadFunction(Environment *,const char *,VoidCallFunction *,int,void *);
    void                    AddAfterBloadFunction(Environment *,const char *,VoidCallFunction *,int,void *);
-   void                    AddClearBloadReadyFunction(Environment *,const char *,BoolCallFunction,int,void *);
+   void                    AddClearBloadReadyFunction(Environment *,const char *,BoolCallFunction *,int,void *);
    void                    AddAbortBloadFunction(Environment *,const char *,VoidCallFunction *,int,void *);
    void                    CannotLoadWithBloadMessage(Environment *,const char *);
 

@@ -10,6 +10,7 @@
 #include "engine.h"
 #include "envrnbld.h"
 #include "factmngr.h"
+#include "fileutil.h"
 #include "inscom.h"
 #include "router.h"
 #include "strngfun.h"
@@ -79,6 +80,13 @@ bool __declspec(dllexport) __CommandCompleteAndNotEmpty(
   Environment *theEnv)
   {
    return CommandCompleteAndNotEmpty(theEnv);
+  }
+
+void __declspec(dllexport) __AppendDribble(
+  Environment *theEnv,
+  const char *theString)
+  {
+   AppendDribble(theEnv,theString);
   }
 
 bool __declspec(dllexport) __DeleteRouter(

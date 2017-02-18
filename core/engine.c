@@ -1452,40 +1452,6 @@ void PopFocusFunction(
    returnValue->value = theModule->header.name;
   }
 
-/******************************************/
-/* GetFocusFunction: H/L access routine   */
-/*   for the get-focus function.          */
-/******************************************/
-void GetFocusFunction(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
-   Defmodule *rv;
-
-   rv = GetFocus(theEnv);
-
-   if (rv == NULL)
-     {
-      returnValue->lexemeValue = FalseSymbol(theEnv);
-      return;
-     }
-
-   returnValue->value = rv->header.name;
-  }
-
-/*********************************/
-/* GetFocus: C access routine    */
-/*   for the get-focus function. */
-/*********************************/
-Defmodule *GetFocus(
-  Environment *theEnv)
-  {
-   if (EngineData(theEnv)->CurrentFocus == NULL) return NULL;
-
-   return EngineData(theEnv)->CurrentFocus->theModule;
-  }
-
 /**************************************/
 /* FocusCommand: H/L access routine   */
 /*   for the focus function.          */

@@ -189,9 +189,7 @@ struct engineData
    void                    GetFocusStackFunction(Environment *,UDFContext *,UDFValue *);
    void                    GetFocusStack(Environment *,CLIPSValue *);
    void                    PopFocusFunction(Environment *,UDFContext *,UDFValue *);
-   void                    GetFocusFunction(Environment *,UDFContext *,UDFValue *);
    Defmodule              *PopFocus(Environment *);
-   Defmodule              *GetFocus(Environment *);
    bool                    GetHaltRules(Environment *);
    void                    SetHaltRules(Environment *,bool);
    Activation             *NextActivationToFire(Environment *);

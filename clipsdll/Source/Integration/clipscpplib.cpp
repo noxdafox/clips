@@ -21,6 +21,7 @@ using std::string;
 #include "engine.h"
 #include "envrnbld.h"
 #include "factmngr.h"
+#include "fileutil.h"
 #include "inscom.h"
 #include "router.h"
 #include "strngfun.h"
@@ -485,7 +486,7 @@ size_t CLIPSCPPEnv::InputBufferCount()
   }
 
 /*******************/
-/* getInputBuffer: */
+/* GetInputBuffer: */
 /*******************/
 const char *CLIPSCPPEnv::GetInputBuffer()
   {
@@ -497,7 +498,7 @@ const char *CLIPSCPPEnv::GetInputBuffer()
   }
 
 /*******************/
-/* setInputBuffer: */
+/* SetInputBuffer: */
 /*******************/
 void CLIPSCPPEnv::SetInputBuffer(
   const char *command)
@@ -523,6 +524,19 @@ bool CLIPSCPPEnv::InputBufferContainsCommand()
 #endif
   }
 
+/********************/
+/* AppendToDribble: */
+/********************/
+void CLIPSCPPEnv::AppendToDribble(
+  const char *command)
+  {
+#ifndef CLIPS_DLL_WRAPPER
+   AppendDribble(theEnv,command);
+#else
+   __AppendDribble(theEnv,command);
+#endif
+  }
+
 /*########################*/
 /* CLIPSCPPRouter Methods */
 /*########################*/
@@ -531,10 +545,6 @@ const char *CLIPSCPPRouter::STANDARD_OUTPUT = STDOUT;
 const char *CLIPSCPPRouter::STANDARD_INPUT = STDIN;
 const char *CLIPSCPPRouter::WARNING = WWARNING;
 const char *CLIPSCPPRouter::ERROR = WERROR;
-const char *CLIPSCPPRouter::TRACE = WTRACE;
-const char *CLIPSCPPRouter::DIALOG = WDIALOG;
-const char *CLIPSCPPRouter::PROMPT = WPROMPT;
-const char *CLIPSCPPRouter::DISPLAY = WDISPLAY;
 
 /*********/
 /* Query */

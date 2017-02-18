@@ -33,7 +33,7 @@
 /*            to user defined functions and callback         */
 /*            functions.                                     */
 /*                                                           */
-/*            Support for hashing EXTERNAL_ADDRESS_TYPE data      */
+/*            Support for hashing EXTERNAL_ADDRESS_TYPE data */
 /*            type.                                          */
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
@@ -104,8 +104,8 @@ struct environmentData
 #define GetEnvironmentData(theEnv,position) (((struct environmentData *) theEnv)->theData[position])
 #define SetEnvironmentData(theEnv,position,value) (((struct environmentData *) theEnv)->theData[position] = value)
 
-   bool                           AllocateEnvironmentData(Environment *,unsigned int,size_t,EnvironmentCleanupFunction);
-   bool                           AddEnvironmentCleanupFunction(Environment *,const char *,EnvironmentCleanupFunction,int);
+   bool                           AllocateEnvironmentData(Environment *,unsigned int,size_t,EnvironmentCleanupFunction *);
+   bool                           AddEnvironmentCleanupFunction(Environment *,const char *,EnvironmentCleanupFunction *,int);
    void                          *GetEnvironmentContext(Environment *);
    void                          *SetEnvironmentContext(Environment *,void *);
    void                          *GetEnvironmentFunctionContext(Environment *);

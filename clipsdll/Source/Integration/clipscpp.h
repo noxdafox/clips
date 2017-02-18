@@ -60,6 +60,7 @@ class CLIPSCPPEnv
       const char *GetInputBuffer();
       void SetInputBuffer(const char *);
       bool InputBufferContainsCommand();
+      void AppendToDribble(const char *);
       void PrintBanner();
       void PrintPrompt();
   };

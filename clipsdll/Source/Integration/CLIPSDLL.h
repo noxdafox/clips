@@ -17,6 +17,7 @@ int DECLSPEC __genchdir(const char *);
 bool DECLSPEC __DestroyEnvironment(Environment *);
 bool DECLSPEC __DeleteRouter(Environment *,const char *);
 bool DECLSPEC __CommandCompleteAndNotEmpty(Environment *);
+void DECLSPEC __AppendDribble(Environment *,const char *);
 bool DECLSPEC __OpenStringSource(Environment *,const char *,const char *,size_t);
 bool DECLSPEC __CloseStringSource(Environment *,const char *);
 bool DECLSPEC __Build(Environment *,const char *);

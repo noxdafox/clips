@@ -164,7 +164,7 @@ struct constructData
    void                           InitializeConstructData(Environment *);
    bool                           AddResetFunction(Environment *,const char *,VoidCallFunction *,int,void *);
    bool                           RemoveResetFunction(Environment *,const char *);
-   bool                           AddClearReadyFunction(Environment *,const char *,BoolCallFunction,int,void *);
+   bool                           AddClearReadyFunction(Environment *,const char *,BoolCallFunction *,int,void *);
    bool                           RemoveClearReadyFunction(Environment *,const char *);
    bool                           AddClearFunction(Environment *,const char *,VoidCallFunction *,int,void *);
    bool                           RemoveClearFunction(Environment *,const char *);
