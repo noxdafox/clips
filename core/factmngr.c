@@ -471,9 +471,9 @@ void PrintFact(
    if (theMultifield->length != 0)
      {
       PrintString(theEnv,logicalName," ");
-      PrintMultifield(theEnv,logicalName,theMultifield,0,
-                      (long) (theMultifield->length - 1),
-                      false);
+      PrintMultifieldDriver(theEnv,logicalName,theMultifield,0,
+                            (long) (theMultifield->length - 1),
+                            false);
      }
 
    PrintString(theEnv,logicalName,")");

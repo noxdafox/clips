@@ -291,6 +291,16 @@ Multifield *ArrayToMultifield(
    return rv;
   }
 
+/***************************************************/
+/* EmptyMultifield: Creates a multifield of length */
+/*   0 and adds it to the list of segments.        */
+/***************************************************/
+Multifield *EmptyMultifield(
+  Environment *theEnv)
+  {
+   return CreateMultifield(theEnv,0);
+  }
+
 /***********************************************************/
 /* CreateMultifield: Creates a multifield of the specified */
 /*   size and adds it to the list of segments.             */
@@ -485,6 +495,19 @@ void EphemerateMultifield(
 /* PrintMultifield: Prints out a multifield. */
 /*********************************************/
 void PrintMultifield(
+  Environment *theEnv,
+  const char *fileid,
+  Multifield *segment)
+  {
+   PrintMultifieldDriver(theEnv,fileid,segment,0,
+                         (long) (segment->length - 1),
+                         true);
+  }
+  
+/***************************************************/
+/* PrintMultifieldDriver: Prints out a multifield. */
+/***************************************************/
+void PrintMultifieldDriver(
   Environment *theEnv,
   const char *fileid,
   Multifield *segment,
@@ -995,7 +1018,7 @@ MultifieldBuilder *CreateMultifieldBuilder(
 /*************/
 /* MBAppend: */
 /*************/
-bool MBAppend(
+void MBAppend(
   MultifieldBuilder *theMB,
   CLIPSValue *theValue)
   {
@@ -1009,7 +1032,7 @@ bool MBAppend(
    /*==============================================*/
    
    if (theValue->header->type == VOID_TYPE)
-     { return false; }
+     { return; }
 
    /*=======================================*/
    /* Determine the amount of space needed. */
@@ -1018,7 +1041,7 @@ bool MBAppend(
    if (theValue->header->type == MULTIFIELD_TYPE)
      {
       if (theValue->multifieldValue->length == 0)
-        { return true; }
+        { return; }
         
       neededSize = theMB->length + theValue->multifieldValue->length;
      }
@@ -1064,8 +1087,209 @@ bool MBAppend(
       IncrementReferenceCount(theEnv,theMB->mbValueArray[theMB->length].header);
       theMB->length++;
      }
-      
-   return true;
+  }
+
+/*************************/
+/* MBAppendCLIPSInteger: */
+/*************************/
+void MBAppendCLIPSInteger(
+  MultifieldBuilder *theMB,
+  CLIPSInteger *pv)
+  {
+   CLIPSValue theValue;
+   
+   theValue.integerValue = pv;
+   MBAppend(theMB,&theValue);
+  }
+
+/****************/
+/* MBAppendInt: */
+/****************/
+void MBAppendInt(
+  MultifieldBuilder *theMB,
+  int intValue)
+  {
+   CLIPSValue theValue;
+   CLIPSInteger *pv = CreateInteger(theMB->mbEnv,intValue);
+   
+   theValue.integerValue = pv;
+   MBAppend(theMB,&theValue);
+  }
+
+/*****************/
+/* MBAppendLong: */
+/****************/
+void MBAppendLong(
+  MultifieldBuilder *theMB,
+  long intValue)
+  {
+   CLIPSValue theValue;
+   CLIPSInteger *pv = CreateInteger(theMB->mbEnv,intValue);
+   
+   theValue.integerValue = pv;
+   MBAppend(theMB,&theValue);
+  }
+
+/*********************/
+/* MBAppendLongLong: */
+/*********************/
+void MBAppendLongLong(
+  MultifieldBuilder *theMB,
+  long long intValue)
+  {
+   CLIPSValue theValue;
+   CLIPSInteger *pv = CreateInteger(theMB->mbEnv,intValue);
+   
+   theValue.integerValue = pv;
+   MBAppend(theMB,&theValue);
+  }
+
+/***********************/
+/* MBAppendCLIPSFloat: */
+/***********************/
+void MBAppendCLIPSFloat(
+  MultifieldBuilder *theMB,
+  CLIPSFloat *pv)
+  {
+   CLIPSValue theValue;
+   
+   theValue.floatValue = pv;
+   MBAppend(theMB,&theValue);
+  }
+
+/******************/
+/* MBAppendFloat: */
+/******************/
+void MBAppendFloat(
+  MultifieldBuilder *theMB,
+  float floatValue)
+  {
+   CLIPSValue theValue;
+   CLIPSFloat *pv = CreateFloat(theMB->mbEnv,floatValue);
+   
+   theValue.floatValue = pv;
+   MBAppend(theMB,&theValue);
+  }
+
+/*******************/
+/* MBAppendDouble: */
+/*******************/
+void MBAppendDouble(
+  MultifieldBuilder *theMB,
+  double floatValue)
+  {
+   CLIPSValue theValue;
+   CLIPSFloat *pv = CreateFloat(theMB->mbEnv,floatValue);
+   
+   theValue.floatValue = pv;
+   MBAppend(theMB,&theValue);
+  }
+
+/************************/
+/* MBAppendCLIPSLexeme: */
+/************************/
+void MBAppendCLIPSLexeme(
+  MultifieldBuilder *theMB,
+  CLIPSLexeme *pv)
+  {
+   CLIPSValue theValue;
+   
+   theValue.lexemeValue = pv;
+   MBAppend(theMB,&theValue);
+  }
+
+/*******************/
+/* MBAppendSymbol: */
+/*******************/
+void MBAppendSymbol(
+  MultifieldBuilder *theMB,
+  const char *strValue)
+  {
+   CLIPSValue theValue;
+   CLIPSLexeme *pv = CreateSymbol(theMB->mbEnv,strValue);
+   
+   theValue.lexemeValue = pv;
+   MBAppend(theMB,&theValue);
+  }
+
+/*******************/
+/* MBAppendString: */
+/*******************/
+void MBAppendString(
+  MultifieldBuilder *theMB,
+  const char *strValue)
+  {
+   CLIPSValue theValue;
+   CLIPSLexeme *pv = CreateString(theMB->mbEnv,strValue);
+   
+   theValue.lexemeValue = pv;
+   MBAppend(theMB,&theValue);
+  }
+
+/*************************/
+/* MBAppendInstanceName: */
+/*************************/
+void MBAppendInstanceName(
+  MultifieldBuilder *theMB,
+  const char *strValue)
+  {
+   CLIPSValue theValue;
+   CLIPSLexeme *pv = CreateInstanceName(theMB->mbEnv,strValue);
+   
+   theValue.lexemeValue = pv;
+   MBAppend(theMB,&theValue);
+  }
+
+/*********************************/
+/* MBAppendCLIPSExternalAddress: */
+/*********************************/
+void MBAppendCLIPSExternalAddress(
+  MultifieldBuilder *theMB,
+  CLIPSExternalAddress *pv)
+  {
+   CLIPSValue theValue;
+   
+   theValue.externalAddressValue = pv;
+   MBAppend(theMB,&theValue);
+  }
+
+/*****************/
+/* MBAppendFact: */
+/*****************/
+void MBAppendFact(
+  MultifieldBuilder *theMB,
+  Fact *pv)
+  {
+   CLIPSValue theValue;
+   
+   theValue.factValue = pv;
+   MBAppend(theMB,&theValue);
+  }
+
+/*********************/
+/* MBAppendInstance: */
+/*********************/
+void MBAppendInstance(
+  MultifieldBuilder *theMB,
+  Instance *pv)
+  {
+   CLIPSValue theValue;
+   
+   theValue.instanceValue = pv;
+   MBAppend(theMB,&theValue);
+  }
+
+/***********************/
+/* MBAppendMultifield: */
+/***********************/
+void MBAppendMultifield(
+  MultifieldBuilder *theMB,
+  Multifield *pv)
+  {
+   CLIPSValue theValue;
+   
+   theValue.multifieldValue = pv;
+   MBAppend(theMB,&theValue);
   }
 
 /*************/

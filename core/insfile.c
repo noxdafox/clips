@@ -1011,8 +1011,8 @@ static void SaveSingleInstanceText(
       else if (sp->multifieldValue->length != 0)
         {
          PrintString(theEnv,logicalName," ");
-         PrintMultifield(theEnv,logicalName,sp->multifieldValue,0,
-                         (long) (sp->multifieldValue->length - 1),false);
+         PrintMultifieldDriver(theEnv,logicalName,sp->multifieldValue,0,
+                               (long) (sp->multifieldValue->length - 1),false);
         }
       PrintString(theEnv,logicalName,")");
      }

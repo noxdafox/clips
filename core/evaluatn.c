@@ -402,8 +402,8 @@ void PrintCLIPSValue(
         break;
 
       case MULTIFIELD_TYPE:
-        PrintMultifield(theEnv,fileid,argPtr->multifieldValue,
-                        0,argPtr->multifieldValue->length - 1,true);
+        PrintMultifieldDriver(theEnv,fileid,argPtr->multifieldValue,
+                              0,argPtr->multifieldValue->length - 1,true);
         break;
 
       default:
@@ -442,8 +442,8 @@ void PrintUDFValue(
         break;
 
       case MULTIFIELD_TYPE:
-        PrintMultifield(theEnv,fileid,argPtr->multifieldValue,
-                        argPtr->begin,(argPtr->begin + argPtr->range) - 1,true);
+        PrintMultifieldDriver(theEnv,fileid,argPtr->multifieldValue,
+                              argPtr->begin,(argPtr->begin + argPtr->range) - 1,true);
         break;
 
       default:

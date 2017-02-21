@@ -751,8 +751,8 @@ bool DirectPutSlotValue(
       if (sp->type != MULTIFIELD_TYPE)
         PrintAtom(theEnv,STDOUT,(int) sp->type,sp->value);
       else
-        PrintMultifield(theEnv,STDOUT,sp->multifieldValue,0,
-                        (long) (sp->multifieldValue->length - 1),true);
+        PrintMultifieldDriver(theEnv,STDOUT,sp->multifieldValue,0,
+                              (long) (sp->multifieldValue->length - 1),true);
       PrintString(theEnv,STDOUT,"\n");
      }
 #endif

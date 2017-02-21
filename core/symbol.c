@@ -712,6 +712,17 @@ void *AddBitMap(
     return((void *) peek);
    }
 
+/***********************************************/
+/* CreateCExternalAddress: Creates an external */
+/*    address for a C pointer.                 */
+/***********************************************/
+CLIPSExternalAddress *CreateCExternalAddress(
+  Environment *theEnv,
+  void *theExternalAddress)
+  {
+   return CreateExternalAddress(theEnv,theExternalAddress,C_POINTER_EXTERNAL_ADDRESS);
+  }
+
 /*******************************************************************/
 /* CreateExternalAddress: Searches for the external address in the */
 /*   hash table. If the external address is already in the hash    */

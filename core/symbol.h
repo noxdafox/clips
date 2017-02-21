@@ -195,6 +195,7 @@ struct symbolData
    CLIPSInteger                  *CreateInteger(Environment *,long long);
    void                          *AddBitMap(Environment *,void *,unsigned);
    CLIPSExternalAddress          *CreateExternalAddress(Environment *,void *,unsigned);
+   CLIPSExternalAddress          *CreateCExternalAddress(Environment *,void *);
    CLIPSInteger                  *FindLongHN(Environment *,long long);
    unsigned long                  HashSymbol(const char *,unsigned long);
    unsigned long                  HashFloat(double,unsigned long);

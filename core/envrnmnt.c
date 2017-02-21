@@ -131,7 +131,7 @@
 /*******************************************************/
 bool AllocateEnvironmentData(
   Environment *theEnvironment,
-  unsigned int position,
+  unsigned position,
   size_t size,
   EnvironmentCleanupFunction *cleanupFunction)
   {

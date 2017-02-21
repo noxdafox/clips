@@ -1679,8 +1679,8 @@ static void PrintInstance(
       else if (sp->multifieldValue->length != 0)
         {
          PrintString(theEnv,logicalName," ");
-         PrintMultifield(theEnv,logicalName,sp->multifieldValue,0,
-                         sp->multifieldValue->length - 1,false);
+         PrintMultifieldDriver(theEnv,logicalName,sp->multifieldValue,0,
+                               sp->multifieldValue->length - 1,false);
         }
       PrintString(theEnv,logicalName,")");
      }

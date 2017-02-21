@@ -104,7 +104,7 @@ struct environmentData
 #define GetEnvironmentData(theEnv,position) (((struct environmentData *) theEnv)->theData[position])
 #define SetEnvironmentData(theEnv,position,value) (((struct environmentData *) theEnv)->theData[position] = value)
 
-   bool                           AllocateEnvironmentData(Environment *,unsigned int,size_t,EnvironmentCleanupFunction *);
+   bool                           AllocateEnvironmentData(Environment *,unsigned,size_t,EnvironmentCleanupFunction *);
    bool                           AddEnvironmentCleanupFunction(Environment *,const char *,EnvironmentCleanupFunction *,int);
    void                          *GetEnvironmentContext(Environment *);
    void                          *SetEnvironmentContext(Environment *,void *);

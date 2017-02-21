@@ -332,7 +332,7 @@ static void PrintTemplateSlot(
       if (theSegment->length > 0)
         {
          PrintString(theEnv,logicalName," ");
-         PrintMultifield(theEnv,logicalName,theSegment,
+         PrintMultifieldDriver(theEnv,logicalName,theSegment,
                          0,(long) theSegment->length-1,false);
         }
      }

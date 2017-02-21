@@ -1154,13 +1154,13 @@ static bool SlotsToCode(
       if (sd->shared)
         {
          theLocationInfo.theLong = sd->sharedValue.desc->bsaveIndex;
-         fprintf(*slotFile,"{ &%s%d_%u[%u],0,0,0,NULL } }",
+         fprintf(*slotFile,"{ &%s%d_%u[%u],0,0,0,{ NULL } } }",
                            SlotPrefix(),imageID,
                            theLocationInfo.theLocation.thePartition,
                            theLocationInfo.theLocation.theOffset);
         }
       else
-        fprintf(*slotFile,"{ NULL,0,0,0,NULL } }");
+        fprintf(*slotFile,"{ NULL,0,0,0, { NULL } } }");
      }
    *slotArrayCount += (int) theDefclass->slotCount;
    *slotFile = CloseFileIfNeeded(theEnv,*slotFile,slotArrayCount,
