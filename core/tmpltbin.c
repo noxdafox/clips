@@ -214,9 +214,9 @@ static void BsaveStorage(
 
    space = sizeof(long) * 3;
    GenWrite(&space,sizeof(size_t),fp);
-   GenWrite(&DeftemplateBinaryData(theEnv)->NumberOfDeftemplates,sizeof(long int),fp);
-   GenWrite(&DeftemplateBinaryData(theEnv)->NumberOfTemplateSlots,sizeof(long int),fp);
-   GenWrite(&DeftemplateBinaryData(theEnv)->NumberOfTemplateModules,sizeof(long int),fp);
+   GenWrite(&DeftemplateBinaryData(theEnv)->NumberOfDeftemplates,sizeof(long),fp);
+   GenWrite(&DeftemplateBinaryData(theEnv)->NumberOfTemplateSlots,sizeof(long),fp);
+   GenWrite(&DeftemplateBinaryData(theEnv)->NumberOfTemplateModules,sizeof(long),fp);
   }
 
 /***********************************************/
@@ -361,9 +361,9 @@ static void BloadStorage(
    /*=========================================================*/
 
    GenReadBinary(theEnv,&space,sizeof(size_t));
-   GenReadBinary(theEnv,&DeftemplateBinaryData(theEnv)->NumberOfDeftemplates,sizeof(long int));
-   GenReadBinary(theEnv,&DeftemplateBinaryData(theEnv)->NumberOfTemplateSlots,sizeof(long int));
-   GenReadBinary(theEnv,&DeftemplateBinaryData(theEnv)->NumberOfTemplateModules,sizeof(long int));
+   GenReadBinary(theEnv,&DeftemplateBinaryData(theEnv)->NumberOfDeftemplates,sizeof(long));
+   GenReadBinary(theEnv,&DeftemplateBinaryData(theEnv)->NumberOfTemplateSlots,sizeof(long));
+   GenReadBinary(theEnv,&DeftemplateBinaryData(theEnv)->NumberOfTemplateModules,sizeof(long));
 
    /*====================================*/
    /* Allocate the space needed for the  */

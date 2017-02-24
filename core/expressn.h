@@ -113,7 +113,7 @@ struct expressionData
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE)
    long NumberOfExpressions;
    Expression *ExpressionArray;
-   long int ExpressionCount;
+   long ExpressionCount;
 #endif
    SavedContexts *svContexts;
    bool ReturnContext;

@@ -73,9 +73,20 @@
    void                           IBAbort(InstanceBuilder *);
    bool                           IBSetDefclass(InstanceBuilder *,const char *);
 
-   bool                           IBPutSlotInteger(InstanceBuilder *,const char *,CLIPSInteger *);
-   bool                           IBPutSlotFloat(InstanceBuilder *,const char *,CLIPSFloat *);
-   bool                           IBPutSlotLexeme(InstanceBuilder *,const char *,CLIPSLexeme *);
+   bool                           IBPutSlotCLIPSInteger(InstanceBuilder *,const char *,CLIPSInteger *);
+   bool                           IBPutSlotInt(InstanceBuilder *,const char *,int);
+   bool                           IBPutSlotLong(InstanceBuilder *,const char *,long);
+   bool                           IBPutSlotLongLong(InstanceBuilder *,const char *,long long);
+
+   bool                           IBPutSlotCLIPSFloat(InstanceBuilder *,const char *,CLIPSFloat *);
+   bool                           IBPutSlotFloat(InstanceBuilder *,const char *,float);
+   bool                           IBPutSlotDouble(InstanceBuilder *,const char *,double);
+
+   bool                           IBPutSlotCLIPSLexeme(InstanceBuilder *,const char *,CLIPSLexeme *);
+   bool                           IBPutSlotSymbol(InstanceBuilder *,const char *,const char *);
+   bool                           IBPutSlotString(InstanceBuilder *,const char *,const char *);
+   bool                           IBPutSlotInstanceName(InstanceBuilder *,const char *,const char *);
+
    bool                           IBPutSlotFact(InstanceBuilder *,const char *,Fact *);
    bool                           IBPutSlotInstance(InstanceBuilder *,const char *,Instance *);
    bool                           IBPutSlotExternalAddress(InstanceBuilder *,const char *,CLIPSExternalAddress *);
@@ -88,9 +99,20 @@
    bool                           IMSetInstance(InstanceModifier *,Instance *);
    Instance                      *IMModify(InstanceModifier *);
 
-   bool                           IMPutSlotInteger(InstanceModifier *,const char *,CLIPSInteger *);
-   bool                           IMPutSlotFloat(InstanceModifier *,const char *,CLIPSFloat *);
-   bool                           IMPutSlotLexeme(InstanceModifier *,const char *,CLIPSLexeme *);
+   bool                           IMPutSlotCLIPSInteger(InstanceModifier *,const char *,CLIPSInteger *);
+   bool                           IMPutSlotInt(InstanceModifier *,const char *,int);
+   bool                           IMPutSlotLong(InstanceModifier *,const char *,long);
+   bool                           IMPutSlotLongLong(InstanceModifier *,const char *,long long);
+
+   bool                           IMPutSlotCLIPSFloat(InstanceModifier *,const char *,CLIPSFloat *);
+   bool                           IMPutSlotFloat(InstanceModifier *,const char *,float);
+   bool                           IMPutSlotDouble(InstanceModifier *,const char *,double);
+
+   bool                           IMPutSlotCLIPSLexeme(InstanceModifier *,const char *,CLIPSLexeme *);
+   bool                           IMPutSlotSymbol(InstanceModifier *,const char *,const char *);
+   bool                           IMPutSlotString(InstanceModifier *,const char *,const char *);
+   bool                           IMPutSlotInstanceName(InstanceModifier *,const char *,const char *);
+
    bool                           IMPutSlotFact(InstanceModifier *,const char *,Fact *);
    bool                           IMPutSlotInstance(InstanceModifier *,const char *,Instance *);
    bool                           IMPutSlotExternalAddress(InstanceModifier *,const char *,CLIPSExternalAddress *);

@@ -229,8 +229,6 @@ typedef enum
 #define SYMBOL_OR_STRING              181
 #define INSTANCE_OR_INSTANCE_NAME     182
 
-typedef long int FACT_ID;
-
 /*************************/
 /* Macintosh Definitions */
 /*************************/

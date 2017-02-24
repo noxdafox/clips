@@ -912,7 +912,7 @@ static long long ListBetaMatches(
   {
    long betaCount = 0;
    struct joinInformation *theInfo;
-   long int count;
+   long count;
 
    if (GetHaltExecution(theEnv) == true)
      { return(betaCount); }

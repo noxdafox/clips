@@ -754,7 +754,7 @@ bool ValidInstanceAddress(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-void DirectGetSlot(
+bool DirectGetSlot(
   Instance *theInstance,
   const char *sname,
   CLIPSValue *returnValue)
@@ -767,14 +767,14 @@ void DirectGetSlot(
      {
       SetEvaluationError(theEnv,true);
       returnValue->value = FalseSymbol(theEnv);
-      return;
+      return false;
      }
    sp = FindISlotByName(theEnv,theInstance,sname);
    if (sp == NULL)
      {
       SetEvaluationError(theEnv,true);
       returnValue->value = FalseSymbol(theEnv);
-      return;
+      return false;
      }
 
    returnValue->value = sp->value;
@@ -786,6 +786,8 @@ void DirectGetSlot(
       CleanCurrentGarbageFrame(theEnv,&temp);
       CallPeriodicTasks(theEnv);
      }
+     
+   return true;
   }
 
 /*********************************************************

@@ -65,6 +65,8 @@
 #include "symbol.h"
 #include "userdata.h"
 
+typedef void UserDefinedFunction(Environment *,UDFContext *,UDFValue *);
+
 struct functionDefinition
   {
    CLIPSLexeme *callFunctionName;
@@ -115,7 +117,7 @@ struct FunctionHash
    void                           InitializeExternalFunctionData(Environment *);
    bool                           AddUDF(Environment *,const char *,const char *,
                                          int,int,const char *,
-                                         void (*)(Environment *,UDFContext *,UDFValue *),
+                                         UserDefinedFunction *,
                                          const char *,void *);
    bool                           AddFunctionParser(Environment *,const char *,
                                                            struct expr *(*)( Environment *,struct expr *,const char *));

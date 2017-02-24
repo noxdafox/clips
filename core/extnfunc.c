@@ -151,7 +151,7 @@ bool AddUDF(
   int minArgs,
   int maxArgs,
   const char *argumentTypes,
-  void (*cFunctionPointer)(Environment *,UDFContext *,UDFValue *),
+  UserDefinedFunction *cFunctionPointer,
   const char *cFunctionName,
   void *context)
   {

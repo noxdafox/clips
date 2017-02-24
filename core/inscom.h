@@ -103,7 +103,7 @@ struct instanceData
    Instance                      *CreateRawInstance(Environment *,Defclass *,const char *);
    Instance                      *FindInstance(Environment *,Defmodule *,const char *,bool);
    bool                           ValidInstanceAddress(Instance *);
-   void                           DirectGetSlot(Instance *,const char *,CLIPSValue *);
+   bool                           DirectGetSlot(Instance *,const char *,CLIPSValue *);
    bool                           DirectPutSlot(Instance *,const char *,CLIPSValue *);
    const char                    *InstanceName(Instance *);
    Defclass                      *InstanceClass(Instance *);

@@ -127,8 +127,8 @@ void PrimitiveTablesInfoCommand(
    CLIPSFloat **floatArray, *floatPtr;
    CLIPSInteger **integerArray, *integerPtr;
    CLIPSBitMap **bitMapArray, *bitMapPtr;
-   unsigned long int symbolCount = 0, integerCount = 0;
-   unsigned long int floatCount = 0, bitMapCount = 0;
+   unsigned long symbolCount = 0, integerCount = 0;
+   unsigned long floatCount = 0, bitMapCount = 0;
 
    /*====================================*/
    /* Count entries in the symbol table. */
@@ -212,8 +212,8 @@ void PrimitiveTablesUsageCommand(
    int symbolCounts[COUNT_SIZE], floatCounts[COUNT_SIZE];
    CLIPSLexeme **symbolArray, *symbolPtr;
    CLIPSFloat **floatArray, *floatPtr;
-   unsigned long int symbolCount, totalSymbolCount = 0;
-   unsigned long int floatCount, totalFloatCount = 0;
+   unsigned long symbolCount, totalSymbolCount = 0;
+   unsigned long floatCount, totalFloatCount = 0;
 
    for (i = 0; i < 21; i++)
      {
@@ -558,7 +558,7 @@ void InstanceTableUsageCommand(
    unsigned long i;
    int instanceCounts[COUNT_SIZE];
    Instance *ins;
-   unsigned long int instanceCount, totalInstanceCount = 0;
+   unsigned long instanceCount, totalInstanceCount = 0;
 
    for (i = 0; i < COUNT_SIZE; i++)
      { instanceCounts[i] = 0; }

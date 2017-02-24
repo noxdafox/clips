@@ -226,8 +226,8 @@ static void BsaveStorage(
 
    space = sizeof(long) * 2;
    GenWrite(&space,sizeof(size_t),fp);
-   GenWrite(&DeffactsBinaryData(theEnv)->NumberOfDeffacts,sizeof(long int),fp);
-   GenWrite(&DeffactsBinaryData(theEnv)->NumberOfDeffactsModules,sizeof(long int),fp);
+   GenWrite(&DeffactsBinaryData(theEnv)->NumberOfDeffacts,sizeof(long),fp);
+   GenWrite(&DeffactsBinaryData(theEnv)->NumberOfDeffactsModules,sizeof(long),fp);
   }
 
 /********************************************/
@@ -325,8 +325,8 @@ static void BloadStorage(
    /*=====================================================*/
 
    GenReadBinary(theEnv,&space,sizeof(size_t));
-   GenReadBinary(theEnv,&DeffactsBinaryData(theEnv)->NumberOfDeffacts,sizeof(long int));
-   GenReadBinary(theEnv,&DeffactsBinaryData(theEnv)->NumberOfDeffactsModules,sizeof(long int));
+   GenReadBinary(theEnv,&DeffactsBinaryData(theEnv)->NumberOfDeffacts,sizeof(long));
+   GenReadBinary(theEnv,&DeffactsBinaryData(theEnv)->NumberOfDeffactsModules,sizeof(long));
 
    /*===================================*/
    /* Allocate the space needed for the */

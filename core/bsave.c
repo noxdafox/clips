@@ -341,7 +341,7 @@ static void WriteNeededFunctions(
   Environment *theEnv,
   FILE *fp)
   {
-   unsigned long int count = 0;
+   unsigned long count = 0;
    size_t space, length;
    struct functionDefinition *functionList;
 
@@ -363,10 +363,10 @@ static void WriteNeededFunctions(
    /* Write the number of function names to be written. */
    /*===================================================*/
 
-   GenWrite(&count,(unsigned long) sizeof(unsigned long int),fp);
+   GenWrite(&count,(unsigned long) sizeof(unsigned long),fp);
    if (count == 0)
      {
-      GenWrite(&count,(unsigned long) sizeof(unsigned long int),fp);
+      GenWrite(&count,(unsigned long) sizeof(unsigned long),fp);
       return;
      }
 
@@ -376,7 +376,7 @@ static void WriteNeededFunctions(
    /*================================*/
 
    space = FunctionBinarySize(theEnv);
-   GenWrite(&space,(unsigned long) sizeof(unsigned long int),fp);
+   GenWrite(&space,(unsigned long) sizeof(unsigned long),fp);
 
    /*===============================*/
    /* Write out the function names. */

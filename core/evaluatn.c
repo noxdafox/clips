@@ -158,6 +158,7 @@ bool EvaluateExpression(
 #endif
 
    returnValue->voidValue = VoidConstant(theEnv);
+   returnValue->begin = 0;
    returnValue->range = -1;
 
    if (problem == NULL)
@@ -201,6 +202,9 @@ bool EvaluateExpression(
          theUDFContext.lastPosition = 1;
          theUDFContext.returnValue = returnValue;
          fptr->functionPointer(theEnv,&theUDFContext,returnValue);
+         if ((returnValue->header->type == MULTIFIELD_TYPE) &&
+             (returnValue->range == -1))
+           { returnValue->range = returnValue->multifieldValue->length; }
 
 #if PROFILING_FUNCTIONS
         EndProfile(theEnv,&profileFrame);

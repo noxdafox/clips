@@ -164,7 +164,7 @@ void WriteNeededSymbols(
    size_t length;
    CLIPSLexeme **symbolArray;
    CLIPSLexeme *symbolPtr;
-   unsigned long int numberOfUsedSymbols = 0;
+   unsigned long numberOfUsedSymbols = 0;
    size_t size = 0;
 
    /*=================================*/
@@ -195,8 +195,8 @@ void WriteNeededSymbols(
    /* Write out the symbols and the string sizes. */
    /*=============================================*/
 
-   GenWrite(&numberOfUsedSymbols,(unsigned long) sizeof(unsigned long int),fp);
-   GenWrite(&size,(unsigned long) sizeof(unsigned long int),fp);
+   GenWrite(&numberOfUsedSymbols,(unsigned long) sizeof(unsigned long),fp);
+   GenWrite(&size,(unsigned long) sizeof(unsigned long),fp);
 
    /*=============================*/
    /* Write out the symbol types. */
@@ -243,7 +243,7 @@ void WriteNeededFloats(
    int i;
    CLIPSFloat **floatArray;
    CLIPSFloat *floatPtr;
-   unsigned long int numberOfUsedFloats = 0;
+   unsigned long numberOfUsedFloats = 0;
 
    /*================================*/
    /* Get a copy of the float table. */
@@ -267,7 +267,7 @@ void WriteNeededFloats(
    /* Write out the number of floats and the float values. */
    /*======================================================*/
 
-   GenWrite(&numberOfUsedFloats,(unsigned long) sizeof(unsigned long int),fp);
+   GenWrite(&numberOfUsedFloats,(unsigned long) sizeof(unsigned long),fp);
 
    for (i = 0 ; i < FLOAT_HASH_SIZE; i++)
      {
@@ -293,7 +293,7 @@ void WriteNeededIntegers(
    int i;
    CLIPSInteger **integerArray;
    CLIPSInteger *integerPtr;
-   unsigned long int numberOfUsedIntegers = 0;
+   unsigned long numberOfUsedIntegers = 0;
 
    /*==================================*/
    /* Get a copy of the integer table. */
@@ -319,7 +319,7 @@ void WriteNeededIntegers(
    /* Write out the number of integers and the integer values. */
    /*==========================================================*/
 
-   GenWrite(&numberOfUsedIntegers,(unsigned long) sizeof(unsigned long int),fp);
+   GenWrite(&numberOfUsedIntegers,(unsigned long) sizeof(unsigned long),fp);
 
    for (i = 0 ; i < INTEGER_HASH_SIZE; i++)
      {
@@ -347,7 +347,7 @@ static void WriteNeededBitMaps(
    int i;
    CLIPSBitMap **bitMapArray;
    CLIPSBitMap *bitMapPtr;
-   unsigned long int numberOfUsedBitMaps = 0, size = 0;
+   unsigned long numberOfUsedBitMaps = 0, size = 0;
    unsigned short tempSize;
 
    /*=================================*/
@@ -378,8 +378,8 @@ static void WriteNeededBitMaps(
    /* Write out the bitmaps and their sizes. */
    /*========================================*/
 
-   GenWrite(&numberOfUsedBitMaps,(unsigned long) sizeof(unsigned long int),fp);
-   GenWrite(&size,(unsigned long) sizeof(unsigned long int),fp);
+   GenWrite(&numberOfUsedBitMaps,(unsigned long) sizeof(unsigned long),fp);
+   GenWrite(&size,(unsigned long) sizeof(unsigned long),fp);
 
    for (i = 0; i < BITMAP_HASH_SIZE; i++)
      {
@@ -430,8 +430,8 @@ void ReadNeededSymbols(
    /* and space required for them.                    */
    /*=================================================*/
 
-   GenReadBinary(theEnv,&SymbolData(theEnv)->NumberOfSymbols,(unsigned long) sizeof(long int));
-   GenReadBinary(theEnv,&space,(unsigned long) sizeof(unsigned long int));
+   GenReadBinary(theEnv,&SymbolData(theEnv)->NumberOfSymbols,(unsigned long) sizeof(long));
+   GenReadBinary(theEnv,&space,(unsigned long) sizeof(unsigned long));
    if (SymbolData(theEnv)->NumberOfSymbols == 0)
      {
       SymbolData(theEnv)->SymbolArray = NULL;
@@ -489,7 +489,7 @@ void ReadNeededFloats(
    /* Determine the number of floats to be read. */
    /*============================================*/
 
-   GenReadBinary(theEnv,&SymbolData(theEnv)->NumberOfFloats,(unsigned long) sizeof(long int));
+   GenReadBinary(theEnv,&SymbolData(theEnv)->NumberOfFloats,(unsigned long) sizeof(long));
    if (SymbolData(theEnv)->NumberOfFloats == 0)
      {
       SymbolData(theEnv)->FloatArray = NULL;
@@ -533,7 +533,7 @@ void ReadNeededIntegers(
    /* Determine the number of integers to be read. */
    /*==============================================*/
 
-   GenReadBinary(theEnv,&SymbolData(theEnv)->NumberOfIntegers,(unsigned long) sizeof(unsigned long int));
+   GenReadBinary(theEnv,&SymbolData(theEnv)->NumberOfIntegers,(unsigned long) sizeof(unsigned long));
    if (SymbolData(theEnv)->NumberOfIntegers == 0)
      {
       SymbolData(theEnv)->IntegerArray = NULL;
@@ -580,8 +580,8 @@ static void ReadNeededBitMaps(
    /* read and space required for them.     */
    /*=======================================*/
 
-   GenReadBinary(theEnv,&SymbolData(theEnv)->NumberOfBitMaps,(unsigned long) sizeof(long int));
-   GenReadBinary(theEnv,&space,(unsigned long) sizeof(unsigned long int));
+   GenReadBinary(theEnv,&SymbolData(theEnv)->NumberOfBitMaps,(unsigned long) sizeof(long));
+   GenReadBinary(theEnv,&space,(unsigned long) sizeof(unsigned long));
    if (SymbolData(theEnv)->NumberOfBitMaps == 0)
      {
       SymbolData(theEnv)->BitMapArray = NULL;

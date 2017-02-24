@@ -96,7 +96,7 @@ void DefruleCompilerSetup(
 static void BeforeDefrulesCode(
   Environment *theEnv)
   {
-   long int moduleCount, ruleCount, joinCount, linkCount;
+   long moduleCount, ruleCount, joinCount, linkCount;
 
    TagRuleNetwork(theEnv,&moduleCount,&ruleCount,&joinCount,&linkCount);
   }

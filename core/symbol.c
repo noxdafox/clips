@@ -899,9 +899,9 @@ unsigned long HashBitMap(
 
    tmpPtr = (char *) &tmpLong;
 
-   /*================================================================ */
-   /* Add up the first part of the word as unsigned long int values.  */
-   /*================================================================ */
+   /*============================================================*/
+   /* Add up the first part of the word as unsigned long values. */
+   /*============================================================*/
 
    longLength = length / sizeof(unsigned long);
    for (i = 0 , j = 0 ; i < longLength; i++)
