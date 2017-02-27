@@ -1008,11 +1008,85 @@ MultifieldBuilder *CreateMultifieldBuilder(
    theMB->length = 0;
    
    if (theSize == 0)
-     { theMB->mbValueArray = NULL; }
+     { theMB->contents = NULL; }
    else
-     { theMB->mbValueArray = (CLIPSValue *) gm2(theEnv,sizeof(CLIPSValue) * theSize); }
+     { theMB->contents = (CLIPSValue *) gm2(theEnv,sizeof(CLIPSValue) * theSize); }
    
    return theMB;
+  }
+
+/*********************/
+/* MBAppendUDFValue: */
+/*********************/
+void MBAppendUDFValue(
+  MultifieldBuilder *theMB,
+  UDFValue *theValue)
+  {
+   Environment *theEnv = theMB->mbEnv;
+   size_t i, neededSize, newSize;
+   size_t j;
+   CLIPSValue *newArray;
+
+   /*==============================================*/
+   /* A void value can't be added to a multifield. */
+   /*==============================================*/
+   
+   if (theValue->header->type == VOID_TYPE)
+     { return; }
+
+   /*=======================================*/
+   /* Determine the amount of space needed. */
+   /*=======================================*/
+   
+   if (theValue->header->type == MULTIFIELD_TYPE)
+     {
+      if (theValue->range == 0)
+        { return; }
+        
+      neededSize = theMB->length + theValue->range;
+     }
+   else
+     { neededSize = theMB->length + 1; }
+
+   /*============================================*/
+   /* Increase the size of the buffer if needed. */
+   /*============================================*/
+   
+   if (neededSize > theMB->bufferMaximum)
+     {
+      newSize = neededSize * 2;
+      
+      newArray = (CLIPSValue *) gm2(theEnv,sizeof(CLIPSValue) * newSize);
+      
+      for (i = 0; i < theMB->length; i++)
+        { newArray[i] = theMB->contents[i]; }
+        
+      if (theMB->bufferMaximum != 0)
+        { rm(theMB->mbEnv,theMB->contents,sizeof(CLIPSValue) * theMB->bufferMaximum); }
+        
+      theMB->bufferMaximum = newSize;
+      theMB->contents = newArray;
+     }
+     
+   /*===================================*/
+   /* Copy the new values to the array. */
+   /*===================================*/
+
+   if (theValue->header->type == MULTIFIELD_TYPE)
+     {
+      for (j = theValue->begin; j < (theValue->begin +theValue->range); j++)
+        {
+         theMB->contents[theMB->length].value = theValue->multifieldValue->contents[j].value;
+         IncrementReferenceCount(theEnv,theMB->contents[theMB->length].header);
+         theMB->length++;
+        }
+     }
+   else
+     {
+      theMB->contents[theMB->length].value = theValue->value;
+      IncrementReferenceCount(theEnv,theMB->contents[theMB->length].header);
+      theMB->length++;
+     }
   }
 
 /*************/
@@ -1059,13 +1133,13 @@ void MBAppend(
       newArray = (CLIPSValue *) gm2(theEnv,sizeof(CLIPSValue) * newSize);
       
       for (i = 0; i < theMB->length; i++)
-        { newArray[i] = theMB->mbValueArray[i]; }
+        { newArray[i] = theMB->contents[i]; }
         
       if (theMB->bufferMaximum != 0)
-        { rm(theMB->mbEnv,theMB->mbValueArray,sizeof(CLIPSValue) * theMB->bufferMaximum); }
+        { rm(theMB->mbEnv,theMB->contents,sizeof(CLIPSValue) * theMB->bufferMaximum); }
         
       theMB->bufferMaximum = newSize;
-      theMB->mbValueArray = newArray;
+      theMB->contents = newArray;
      }
      
    /*===================================*/
@@ -1076,15 +1150,15 @@ void MBAppend(
      {
       for (j = 0; j < theValue->multifieldValue->length; j++)
         {
-         theMB->mbValueArray[theMB->length].value = theValue->multifieldValue->contents[j].value;
-         IncrementReferenceCount(theEnv,theMB->mbValueArray[theMB->length].header);
+         theMB->contents[theMB->length].value = theValue->multifieldValue->contents[j].value;
+         IncrementReferenceCount(theEnv,theMB->contents[theMB->length].header);
          theMB->length++;
         }
      }
    else
      {
-      theMB->mbValueArray[theMB->length].value = theValue->value;
-      IncrementReferenceCount(theEnv,theMB->mbValueArray[theMB->length].header);
+      theMB->contents[theMB->length].value = theValue->value;
+      IncrementReferenceCount(theEnv,theMB->contents[theMB->length].header);
       theMB->length++;
      }
   }
@@ -1307,7 +1381,7 @@ Multifield *MBCreate(
    
    for (i = 0; i < theMB->length; i++)
      {
-      rv->contents[i].value = theMB->mbValueArray[i].value;
+      rv->contents[i].value = theMB->contents[i].value;
       DecrementReferenceCount(theMB->mbEnv,rv->contents[i].header);
      }
 
@@ -1325,17 +1399,17 @@ void MBReset(
    size_t i;
    
    for (i = 0; i < theMB->length; i++)
-     { DecrementReferenceCount(theMB->mbEnv,theMB->mbValueArray[i].header); }
+     { DecrementReferenceCount(theMB->mbEnv,theMB->contents[i].header); }
      
    if (theMB->bufferReset != theMB->bufferMaximum)
      {
       if (theMB->bufferMaximum != 0)
-        { rm(theMB->mbEnv,theMB->mbValueArray,sizeof(CLIPSValue) * theMB->bufferMaximum); }
+        { rm(theMB->mbEnv,theMB->contents,sizeof(CLIPSValue) * theMB->bufferMaximum); }
       
       if (theMB->bufferReset == 0)
-        { theMB->mbValueArray = NULL; }
+        { theMB->contents = NULL; }
       else
-        { theMB->mbValueArray = (CLIPSValue *) gm2(theMB->mbEnv,sizeof(CLIPSValue) * theMB->bufferReset); }
+        { theMB->contents = (CLIPSValue *) gm2(theMB->mbEnv,sizeof(CLIPSValue) * theMB->bufferReset); }
       
       theMB->bufferMaximum = theMB->bufferReset;
      }
@@ -1353,10 +1427,10 @@ void MBDispose(
    size_t i;
    
    for (i = 0; i < theMB->length; i++)
-     { DecrementReferenceCount(theMB->mbEnv,theMB->mbValueArray[i].header); }
+     { DecrementReferenceCount(theMB->mbEnv,theMB->contents[i].header); }
    
    if (theMB->bufferMaximum != 0)
-     { rm(theMB->mbEnv,theMB->mbValueArray,sizeof(CLIPSValue) * theMB->bufferMaximum); }
+     { rm(theMB->mbEnv,theMB->contents,sizeof(CLIPSValue) * theMB->bufferMaximum); }
      
    rtn_struct(theEnv,multifieldBuilder,theMB);
   }

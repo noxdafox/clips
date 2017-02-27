@@ -71,7 +71,7 @@ typedef struct multifieldBuilder MultifieldBuilder;
 struct multifieldBuilder
   {
    Environment *mbEnv;
-   CLIPSValue *mbValueArray;
+   CLIPSValue *contents;
    size_t bufferReset;
    size_t length;
    size_t bufferMaximum;
@@ -123,6 +123,7 @@ struct multifieldBuilder
    void                           MBAppendFact(MultifieldBuilder *,Fact *);
    void                           MBAppendInstance(MultifieldBuilder *,Instance *);
    void                           MBAppendMultifield(MultifieldBuilder *,Multifield *);
+   void                           MBAppendUDFValue(MultifieldBuilder *theMB,UDFValue *);
 
 #endif /* _H_multifld */
 
