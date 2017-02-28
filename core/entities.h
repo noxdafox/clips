@@ -200,8 +200,8 @@ struct udfValue
       Instance *instanceValue;
       CLIPSExternalAddress *externalAddressValue;
      };
-   long begin;
-   long range;
+   size_t begin;
+   size_t range;
    struct udfValue *next;
   };
 
