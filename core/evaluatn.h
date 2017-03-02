@@ -85,7 +85,7 @@ struct externalAddressType
    bool (*callFunction)(UDFContext *,UDFValue *,UDFValue *);
   };
 
-#define CoerceToLongInteger(t,v) ((t == INTEGER_TYPE) ? ValueToLong(v) : (long int) ValueToDouble(v))
+#define CoerceToLongInteger(t,v) ((t == INTEGER_TYPE) ? ValueToLong(v) : (long) ValueToDouble(v))
 #define CoerceToInteger(t,v) ((t == INTEGER_TYPE) ? (int) ValueToLong(v) : (int) ValueToDouble(v))
 #define CoerceToDouble(t,v) ((t == INTEGER_TYPE) ? (double) ValueToLong(v) : ValueToDouble(v))
 

@@ -107,7 +107,7 @@ struct constraintData
    bool DynamicConstraintChecking;
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE) && (! RUN_TIME)
    struct constraintRecord *ConstraintArray;
-   long int NumberOfConstraints;
+   long NumberOfConstraints;
 #endif
   };
 

@@ -221,7 +221,7 @@ void PPDefmoduleCommand(
    defmoduleName = GetConstructName(context,"ppdefmodule","defmodule name");
    if (defmoduleName == NULL) return;
 
-   PPDefmodule(theEnv,defmoduleName,WDISPLAY);
+   PPDefmodule(theEnv,defmoduleName,STDOUT);
 
    return;
   }
@@ -259,7 +259,7 @@ void ListDefmodulesCommand(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   ListDefmodules(theEnv,WDISPLAY);
+   ListDefmodules(theEnv,STDOUT);
   }
 
 /**************************************/

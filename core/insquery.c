@@ -43,8 +43,8 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
-/*            Added CLIPSBlockStart and CLIPSBlockEnd        */
-/*            functions for garbage collection blocks.       */
+/*            Added GCBlockStart and GCBlockEnd functions    */
+/*            for garbage collection blocks.                 */
 /*                                                           */
 /*            Eval support for run time and bload only.      */
 /*                                                           */
@@ -522,7 +522,7 @@ void DelayedQueryDoForAllInstances(
    QUERY_CLASS *qclasses;
    unsigned rcnt;
    unsigned i;
-   CLIPSBlock gcBlock;
+   GCBlock gcb;
 
    returnValue->lexemeValue = FalseSymbol(theEnv);
    qclasses = DetermineQueryClasses(theEnv,GetFirstArgument()->nextArg->nextArg,
@@ -542,7 +542,7 @@ void DelayedQueryDoForAllInstances(
    InstanceQueryData(theEnv)->AbortQuery = false;
    InstanceQueryData(theEnv)->QueryCore->action = GetFirstArgument()->nextArg;
 
-   CLIPSBlockStart(theEnv,&gcBlock);
+   GCBlockStart(theEnv,&gcb);
 
    while (InstanceQueryData(theEnv)->QueryCore->soln_set != NULL)
      {
@@ -562,7 +562,7 @@ void DelayedQueryDoForAllInstances(
       CallPeriodicTasks(theEnv);
      }
 
-   CLIPSBlockEnd(theEnv,&gcBlock,returnValue);
+   GCBlockEndUDF(theEnv,&gcb,returnValue);
    CallPeriodicTasks(theEnv);
 
    ProcedureFunctionData(theEnv)->BreakFlag = false;
@@ -927,7 +927,7 @@ static bool TestForFirstInstanceInClass(
    long i;
    Instance *ins;
    UDFValue temp;
-   CLIPSBlock gcBlock;
+   GCBlock gcb;
 
    if (TestTraversalID(cls->traversalRecord,id))
      return false;
@@ -935,7 +935,7 @@ static bool TestForFirstInstanceInClass(
    if (DefclassInScope(theEnv,cls,theModule) == false)
      return false;
 
-   CLIPSBlockStart(theEnv,&gcBlock);
+   GCBlockStart(theEnv,&gcb);
 
    ins = cls->instanceList;
    while (ins != NULL)
@@ -972,7 +972,7 @@ static bool TestForFirstInstanceInClass(
         ins = ins->nxtClass;
      }
 
-   CLIPSBlockEnd(theEnv,&gcBlock,NULL);
+   GCBlockEnd(theEnv,&gcb);
    CallPeriodicTasks(theEnv);
 
    if (ins != NULL)
@@ -1049,7 +1049,7 @@ static void TestEntireClass(
    long i;
    Instance *ins;
    UDFValue temp;
-   CLIPSBlock gcBlock;
+   GCBlock gcb;
 
    if (TestTraversalID(cls->traversalRecord,id))
      return;
@@ -1057,7 +1057,7 @@ static void TestEntireClass(
    if (DefclassInScope(theEnv,cls,theModule) == false)
      return;
 
-   CLIPSBlockStart(theEnv,&gcBlock);
+   GCBlockStart(theEnv,&gcb);
 
    ins = cls->instanceList;
    while (ins != NULL)
@@ -1112,7 +1112,7 @@ static void TestEntireClass(
       CallPeriodicTasks(theEnv);
      }
 
-   CLIPSBlockEnd(theEnv,&gcBlock,NULL);
+   GCBlockEnd(theEnv,&gcb);
    CallPeriodicTasks(theEnv);
 
    if (ins != NULL)

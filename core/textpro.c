@@ -126,7 +126,7 @@ struct entries
    int level;              /*Level of entry node in the lookup tree  */
    int type;               /*Entry node data type : menu or info     */
    char name[NAMESIZE];    /*Entry node name                         */
-   long int offset;        /*Location of entry info in the file      */
+   long offset;            /*Location of entry info in the file      */
    struct entries *child;  /*Address of list of subtopic entries     */
    struct entries *parent; /*Address of parent topic entry           */
    struct entries *next;   /*Address of next entry at the same level */
@@ -400,7 +400,7 @@ static FILE *GetEntries(
   int *code)
   {
    FILE *fp;          /*Lookup file stream*/
-   long int offset;   /*Offset from beginning of file to beginning of topic*/
+   long offset;       /*Offset from beginning of file to beginning of topic*/
 
    offset = LookupEntry(theEnv,file,menu,name,code);
    if (offset < 0)
@@ -839,7 +839,7 @@ static bool AttachLeaf(
 /*         2) If an entry-topic is not found, the file position of the current*/
 /*            main topic (or menu) is returned (status NO_TOPIC).             */
 /******************************************************************************/
-static long int LookupEntry(
+static long LookupEntry(
   Environment *theEnv,
   const char *file,
   char **menu,

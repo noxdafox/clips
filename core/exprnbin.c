@@ -231,13 +231,13 @@ static void UpdateExpression(
         break;
      }
 
-   theIndex = (long int) bexp->nextArg;
+   theIndex = (long) bexp->nextArg;
    if (theIndex == -1L)
      { ExpressionData(theEnv)->ExpressionArray[obji].nextArg = NULL; }
    else
      { ExpressionData(theEnv)->ExpressionArray[obji].nextArg = (struct expr *) &ExpressionData(theEnv)->ExpressionArray[theIndex]; }
 
-   theIndex = (long int) bexp->argList;
+   theIndex = (long) bexp->argList;
    if (theIndex == -1L)
      { ExpressionData(theEnv)->ExpressionArray[obji].argList = NULL; }
    else
@@ -251,7 +251,7 @@ static void UpdateExpression(
 void ClearBloadedExpressions(
   Environment *theEnv)
   {
-   unsigned long int i;
+   unsigned long i;
    size_t space;
 
    /*===============================================*/
@@ -385,7 +385,7 @@ void BsaveExpression(
   FILE *fp)
   {
    BSAVE_EXPRESSION newTest;
-   long int newIndex;
+   long newIndex;
 
    while (testPtr != NULL)
      {

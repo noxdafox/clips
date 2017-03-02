@@ -242,6 +242,40 @@ void GetBetaMemoryResizingCommand(
    returnValue->lexemeValue = CreateBoolean(theEnv,GetBetaMemoryResizing(theEnv));
   }
 
+/******************************************/
+/* GetFocusFunction: H/L access routine   */
+/*   for the get-focus function.          */
+/******************************************/
+void GetFocusFunction(
+  Environment *theEnv,
+  UDFContext *context,
+  UDFValue *returnValue)
+  {
+   Defmodule *rv;
+
+   rv = GetFocus(theEnv);
+
+   if (rv == NULL)
+     {
+      returnValue->lexemeValue = FalseSymbol(theEnv);
+      return;
+     }
+
+   returnValue->value = rv->header.name;
+  }
+
+/*********************************/
+/* GetFocus: C access routine    */
+/*   for the get-focus function. */
+/*********************************/
+Defmodule *GetFocus(
+  Environment *theEnv)
+  {
+   if (EngineData(theEnv)->CurrentFocus == NULL) return NULL;
+
+   return EngineData(theEnv)->CurrentFocus->theModule;
+  }
+
 #if DEBUGGING_FUNCTIONS
 
 /****************************************/
@@ -396,7 +430,7 @@ void Matches(
    /*===================*/
 
    if (output == VERBOSE)
-     { PrintString(theEnv,WDISPLAY,"Activations\n"); }
+     { PrintString(theEnv,STDOUT,"Activations\n"); }
 
    for (agendaPtr = ((struct defruleModule *) topDisjunct->header.whichModule)->agenda;
         agendaPtr != NULL;
@@ -410,20 +444,20 @@ void Matches(
 
          if (output == VERBOSE)
            {
-            PrintPartialMatch(theEnv,WDISPLAY,GetActivationBasis(theEnv,agendaPtr));
-            PrintString(theEnv,WDISPLAY,"\n");
+            PrintPartialMatch(theEnv,STDOUT,GetActivationBasis(theEnv,agendaPtr));
+            PrintString(theEnv,STDOUT,"\n");
            }
         }
      }
 
    if (output == SUCCINCT)
      {
-      PrintString(theEnv,WDISPLAY,"Activations: ");
-      PrintInteger(theEnv,WDISPLAY,activations);
-      PrintString(theEnv,WDISPLAY,"\n");
+      PrintString(theEnv,STDOUT,"Activations: ");
+      PrintInteger(theEnv,STDOUT,activations);
+      PrintString(theEnv,STDOUT,"\n");
      }
 
-   if ((activations == 0) && (output == VERBOSE)) PrintString(theEnv,WDISPLAY," None\n");
+   if ((activations == 0) && (output == VERBOSE)) PrintString(theEnv,STDOUT," None\n");
 
    returnValue->multifieldValue->contents[2].integerValue = CreateInteger(theEnv,activations);
   }
@@ -664,9 +698,9 @@ static long long ListAlphaMatches(
 
    if (output == VERBOSE)
      {
-      PrintString(theEnv,WDISPLAY,"Matches for Pattern ");
-      PrintInteger(theEnv,WDISPLAY,theInfo->whichCE);
-      PrintString(theEnv,WDISPLAY,"\n");
+      PrintString(theEnv,STDOUT,"Matches for Pattern ");
+      PrintInteger(theEnv,STDOUT,theInfo->whichCE);
+      PrintString(theEnv,STDOUT,"\n");
      }
 
    if (theJoin->rightSideEntryStructure == NULL)
@@ -677,21 +711,21 @@ static long long ListAlphaMatches(
       if (output == VERBOSE)
         {
          if (theJoin->rightMemory->beta[0]->children != NULL)
-           { PrintString(theEnv,WDISPLAY,"*\n"); }
+           { PrintString(theEnv,STDOUT,"*\n"); }
          else
-           { PrintString(theEnv,WDISPLAY," None\n"); }
+           { PrintString(theEnv,STDOUT," None\n"); }
         }
       else if (output == SUCCINCT)
         {
-         PrintString(theEnv,WDISPLAY,"Pattern ");
-         PrintInteger(theEnv,WDISPLAY,theInfo->whichCE);
-         PrintString(theEnv,WDISPLAY,": ");
+         PrintString(theEnv,STDOUT,"Pattern ");
+         PrintInteger(theEnv,STDOUT,theInfo->whichCE);
+         PrintString(theEnv,STDOUT,": ");
 
          if (theJoin->rightMemory->beta[0]->children != NULL)
-           { PrintString(theEnv,WDISPLAY,"1"); }
+           { PrintString(theEnv,STDOUT,"1"); }
          else
-           { PrintString(theEnv,WDISPLAY,"0"); }
-         PrintString(theEnv,WDISPLAY,"\n");
+           { PrintString(theEnv,STDOUT,"0"); }
+         PrintString(theEnv,STDOUT,"\n");
         }
 
       return(alphaCount);
@@ -713,8 +747,8 @@ static long long ListAlphaMatches(
          count++;
          if (output == VERBOSE)
            {
-            PrintPartialMatch(theEnv,WDISPLAY,listOfMatches);
-            PrintString(theEnv,WDISPLAY,"\n");
+            PrintPartialMatch(theEnv,STDOUT,listOfMatches);
+            PrintString(theEnv,STDOUT,"\n");
            }
          listOfMatches = listOfMatches->nextInMemory;
         }
@@ -722,15 +756,15 @@ static long long ListAlphaMatches(
 
    alphaCount += count;
 
-   if ((count == 0) && (output == VERBOSE)) PrintString(theEnv,WDISPLAY," None\n");
+   if ((count == 0) && (output == VERBOSE)) PrintString(theEnv,STDOUT," None\n");
 
    if (output == SUCCINCT)
      {
-      PrintString(theEnv,WDISPLAY,"Pattern ");
-      PrintInteger(theEnv,WDISPLAY,theInfo->whichCE);
-      PrintString(theEnv,WDISPLAY,": ");
-      PrintInteger(theEnv,WDISPLAY,count);
-      PrintString(theEnv,WDISPLAY,"\n");
+      PrintString(theEnv,STDOUT,"Pattern ");
+      PrintInteger(theEnv,STDOUT,theInfo->whichCE);
+      PrintString(theEnv,STDOUT,": ");
+      PrintInteger(theEnv,STDOUT,count);
+      PrintString(theEnv,STDOUT,"\n");
      }
 
    return(alphaCount);
@@ -878,7 +912,7 @@ static long long ListBetaMatches(
   {
    long betaCount = 0;
    struct joinInformation *theInfo;
-   long int count;
+   long count;
 
    if (GetHaltExecution(theEnv) == true)
      { return(betaCount); }
@@ -887,26 +921,26 @@ static long long ListBetaMatches(
 
    if (output == VERBOSE)
      {
-      PrintString(theEnv,WDISPLAY,"Partial matches for CEs ");
-      PrintString(theEnv,WDISPLAY,
+      PrintString(theEnv,STDOUT,"Partial matches for CEs ");
+      PrintString(theEnv,STDOUT,
                      BetaHeaderString(theEnv,infoArray,joinIndex,arraySize));
-      PrintString(theEnv,WDISPLAY,"\n");
+      PrintString(theEnv,STDOUT,"\n");
      }
 
-   count = PrintBetaMemory(theEnv,WDISPLAY,theInfo->theMemory,true,"",output);
+   count = PrintBetaMemory(theEnv,STDOUT,theInfo->theMemory,true,"",output);
 
    betaCount += count;
 
    if ((output == VERBOSE) && (count == 0))
-     { PrintString(theEnv,WDISPLAY," None\n"); }
+     { PrintString(theEnv,STDOUT," None\n"); }
    else if (output == SUCCINCT)
      {
-      PrintString(theEnv,WDISPLAY,"CEs ");
-      PrintString(theEnv,WDISPLAY,
+      PrintString(theEnv,STDOUT,"CEs ");
+      PrintString(theEnv,STDOUT,
                      BetaHeaderString(theEnv,infoArray,joinIndex,arraySize));
-      PrintString(theEnv,WDISPLAY,": ");
-      PrintInteger(theEnv,WDISPLAY,betaCount);
-      PrintString(theEnv,WDISPLAY,"\n");
+      PrintString(theEnv,STDOUT,": ");
+      PrintInteger(theEnv,STDOUT,betaCount);
+      PrintString(theEnv,STDOUT,"\n");
      }
 
    return(betaCount);
@@ -1181,26 +1215,26 @@ static void ListBetaJoinActivity(
      {
       char buffer[100];
 
-      PrintString(theEnv,WDISPLAY,"Activity for CE ");
-      PrintString(theEnv,WDISPLAY,
+      PrintString(theEnv,STDOUT,"Activity for CE ");
+      PrintString(theEnv,STDOUT,
                      ActivityHeaderString(theEnv,infoArray,joinIndex,arraySize));
-      PrintString(theEnv,WDISPLAY,"\n");
+      PrintString(theEnv,STDOUT,"\n");
 
       sprintf(buffer,"   Compares: %10lld\n",compares);
-      PrintString(theEnv,WDISPLAY,buffer);
+      PrintString(theEnv,STDOUT,buffer);
       sprintf(buffer,"   Adds:     %10lld\n",adds);
-      PrintString(theEnv,WDISPLAY,buffer);
+      PrintString(theEnv,STDOUT,buffer);
       sprintf(buffer,"   Deletes:  %10lld\n",deletes);
-      PrintString(theEnv,WDISPLAY,buffer);
+      PrintString(theEnv,STDOUT,buffer);
      }
    else if (output == SUCCINCT)
      {
-      PrintString(theEnv,WDISPLAY,"CE ");
-      PrintString(theEnv,WDISPLAY,
+      PrintString(theEnv,STDOUT,"CE ");
+      PrintString(theEnv,STDOUT,
                      ActivityHeaderString(theEnv,infoArray,joinIndex,arraySize));
-      PrintString(theEnv,WDISPLAY,": ");
-      PrintInteger(theEnv,WDISPLAY,activity);
-      PrintString(theEnv,WDISPLAY,"\n");
+      PrintString(theEnv,STDOUT,": ");
+      PrintInteger(theEnv,STDOUT,activity);
+      PrintString(theEnv,STDOUT,"\n");
      }
 
    compares += returnValue->multifieldValue->contents[0].integerValue->contents;
@@ -1368,9 +1402,9 @@ static void ShowJoins(
      {
       if (disjunct > 0)
         {
-         PrintString(theEnv,WDISPLAY,"Disjunct #");
-         PrintInteger(theEnv, WDISPLAY, (long long) disjunct++);
-         PrintString(theEnv,WDISPLAY,"\n");
+         PrintString(theEnv,STDOUT,"Disjunct #");
+         PrintInteger(theEnv,STDOUT, (long long) disjunct++);
+         PrintString(theEnv,STDOUT,"\n");
         }
 
       /*=====================================*/
@@ -1415,61 +1449,61 @@ static void ShowJoins(
                                      rhsType,
                                      (joinList[numberOfJoins]->joinFromTheRight) ? 'j' : ' ',
                                      (joinList[numberOfJoins]->logicalJoin) ? 'l' : ' ');
-         PrintString(theEnv,WDISPLAY,buffer);
-         PrintExpression(theEnv,WDISPLAY,joinList[numberOfJoins]->networkTest);
-         PrintString(theEnv,WDISPLAY,"\n");
+         PrintString(theEnv,STDOUT,buffer);
+         PrintExpression(theEnv,STDOUT,joinList[numberOfJoins]->networkTest);
+         PrintString(theEnv,STDOUT,"\n");
 
          if (joinList[numberOfJoins]->ruleToActivate != NULL)
            {
-            PrintString(theEnv,WDISPLAY,"    RA : ");
-            PrintString(theEnv,WDISPLAY,DefruleName(joinList[numberOfJoins]->ruleToActivate));
-            PrintString(theEnv,WDISPLAY,"\n");
+            PrintString(theEnv,STDOUT,"    RA : ");
+            PrintString(theEnv,STDOUT,DefruleName(joinList[numberOfJoins]->ruleToActivate));
+            PrintString(theEnv,STDOUT,"\n");
            }
 
          if (joinList[numberOfJoins]->secondaryNetworkTest != NULL)
            {
-            PrintString(theEnv,WDISPLAY,"    SNT : ");
-            PrintExpression(theEnv,WDISPLAY,joinList[numberOfJoins]->secondaryNetworkTest);
-            PrintString(theEnv,WDISPLAY,"\n");
+            PrintString(theEnv,STDOUT,"    SNT : ");
+            PrintExpression(theEnv,STDOUT,joinList[numberOfJoins]->secondaryNetworkTest);
+            PrintString(theEnv,STDOUT,"\n");
            }
 
          if (joinList[numberOfJoins]->leftHash != NULL)
            {
-            PrintString(theEnv,WDISPLAY,"    LH : ");
-            PrintExpression(theEnv,WDISPLAY,joinList[numberOfJoins]->leftHash);
-            PrintString(theEnv,WDISPLAY,"\n");
+            PrintString(theEnv,STDOUT,"    LH : ");
+            PrintExpression(theEnv,STDOUT,joinList[numberOfJoins]->leftHash);
+            PrintString(theEnv,STDOUT,"\n");
            }
 
          if (joinList[numberOfJoins]->rightHash != NULL)
            {
-            PrintString(theEnv,WDISPLAY,"    RH : ");
-            PrintExpression(theEnv,WDISPLAY,joinList[numberOfJoins]->rightHash);
-            PrintString(theEnv,WDISPLAY,"\n");
+            PrintString(theEnv,STDOUT,"    RH : ");
+            PrintExpression(theEnv,STDOUT,joinList[numberOfJoins]->rightHash);
+            PrintString(theEnv,STDOUT,"\n");
            }
 
          if (! joinList[numberOfJoins]->firstJoin)
            {
-            PrintString(theEnv,WDISPLAY,"    LM : ");
-            count = PrintBetaMemory(theEnv,WDISPLAY,joinList[numberOfJoins]->leftMemory,false,"",SUCCINCT);
+            PrintString(theEnv,STDOUT,"    LM : ");
+            count = PrintBetaMemory(theEnv,STDOUT,joinList[numberOfJoins]->leftMemory,false,"",SUCCINCT);
             if (count == 0)
-              { PrintString(theEnv,WDISPLAY,"None\n"); }
+              { PrintString(theEnv,STDOUT,"None\n"); }
             else
               {
                sprintf(buffer,"%lu\n",count);
-               PrintString(theEnv,WDISPLAY,buffer);
+               PrintString(theEnv,STDOUT,buffer);
               }
            }
 
          if (joinList[numberOfJoins]->joinFromTheRight)
            {
-            PrintString(theEnv,WDISPLAY,"    RM : ");
-            count = PrintBetaMemory(theEnv,WDISPLAY,joinList[numberOfJoins]->rightMemory,false,"",SUCCINCT);
+            PrintString(theEnv,STDOUT,"    RM : ");
+            count = PrintBetaMemory(theEnv,STDOUT,joinList[numberOfJoins]->rightMemory,false,"",SUCCINCT);
             if (count == 0)
-              { PrintString(theEnv,WDISPLAY,"None\n"); }
+              { PrintString(theEnv,STDOUT,"None\n"); }
             else
               {
                sprintf(buffer,"%lu\n",count);
-               PrintString(theEnv,WDISPLAY,buffer);
+               PrintString(theEnv,STDOUT,buffer);
               }
            }
 
@@ -1481,7 +1515,7 @@ static void ShowJoins(
       /*===============================*/
 
       rulePtr = rulePtr->disjunct;
-      if (rulePtr != NULL) PrintString(theEnv,WDISPLAY,"\n");
+      if (rulePtr != NULL) PrintString(theEnv,STDOUT,"\n");
      }
   }
 
@@ -1511,7 +1545,7 @@ void ShowAlphaHashTable(
          {
           totalCount += count;
           gensprintf(buffer,"%4d: %4d ->",i,count);
-          PrintString(theEnv,WDISPLAY,buffer);
+          PrintString(theEnv,STDOUT,buffer);
 
           for (theEntry =  DefruleData(theEnv)->AlphaMemoryTable[i], count = 0;
                theEntry != NULL;
@@ -1523,16 +1557,16 @@ void ShowAlphaHashTable(
                { count++; }
 
              gensprintf(buffer," %4d",count);
-             PrintString(theEnv,WDISPLAY,buffer);
+             PrintString(theEnv,STDOUT,buffer);
              if (theEntry->owner->rightHash == NULL)
-               { PrintString(theEnv,WDISPLAY,"*"); }
+               { PrintString(theEnv,STDOUT,"*"); }
             }
 
-          PrintString(theEnv,WDISPLAY,"\n");
+          PrintString(theEnv,STDOUT,"\n");
          }
       }
     gensprintf(buffer,"Total Count: %ld\n",totalCount);
-    PrintString(theEnv,WDISPLAY,buffer);
+    PrintString(theEnv,STDOUT,buffer);
    }
 
 #endif /* DEVELOPER */

@@ -1244,9 +1244,13 @@ static void PrintInstanceWatch(
   const char *traceString,
   Instance *theInstance)
   {
-   PrintString(theEnv,WTRACE,traceString);
-   PrintString(theEnv,WTRACE," instance ");
-   PrintInstanceNameAndClass(theEnv,WTRACE,theInstance,true);
+   if (ConstructData(theEnv)->ClearReadyInProgress ||
+       ConstructData(theEnv)->ClearInProgress)
+     { return; }
+
+   PrintString(theEnv,STDOUT,traceString);
+   PrintString(theEnv,STDOUT," instance ");
+   PrintInstanceNameAndClass(theEnv,STDOUT,theInstance,true);
   }
 
 #endif
@@ -1279,10 +1283,10 @@ InstanceBuilder *CreateInstanceBuilder(
    return theIB;
   }
 
-/********************/
-/* IBPutSlotInteger */
-/********************/
-bool IBPutSlotInteger(
+/*************************/
+/* IBPutSlotCLIPSInteger */
+/*************************/
+bool IBPutSlotCLIPSInteger(
   InstanceBuilder *theIB,
   const char *slotName,
   CLIPSInteger *slotValue)
@@ -1293,10 +1297,55 @@ bool IBPutSlotInteger(
    return IBPutSlot(theIB,slotName,&theValue);
   }
 
-/*******************/
-/* IBPutSlotLexeme */
-/*******************/
-bool IBPutSlotLexeme(
+/****************/
+/* IBPutSlotInt */
+/****************/
+bool IBPutSlotInt(
+  InstanceBuilder *theIB,
+  const char *slotName,
+  int intValue)
+  {
+   CLIPSValue theValue;
+   CLIPSInteger *slotValue = CreateInteger(theIB->ibEnv,intValue);
+   
+   theValue.integerValue = slotValue;
+   return IBPutSlot(theIB,slotName,&theValue);
+  }
+
+/*****************/
+/* IBPutSlotLong */
+/*****************/
+bool IBPutSlotLong(
+  InstanceBuilder *theIB,
+  const char *slotName,
+  long longValue)
+  {
+   CLIPSValue theValue;
+   CLIPSInteger *slotValue = CreateInteger(theIB->ibEnv,longValue);
+   
+   theValue.integerValue = slotValue;
+   return IBPutSlot(theIB,slotName,&theValue);
+  }
+
+/*********************/
+/* IBPutSlotLongLong */
+/*********************/
+bool IBPutSlotLongLong(
+  InstanceBuilder *theIB,
+  const char *slotName,
+  long long longLongValue)
+  {
+   CLIPSValue theValue;
+   CLIPSInteger *slotValue = CreateInteger(theIB->ibEnv,longLongValue);
+   
+   theValue.integerValue = slotValue;
+   return IBPutSlot(theIB,slotName,&theValue);
+  }
+
+/************************/
+/* IBPutSlotCLIPSLexeme */
+/************************/
+bool IBPutSlotCLIPSLexeme(
   InstanceBuilder *theIB,
   const char *slotName,
   CLIPSLexeme *slotValue)
@@ -1307,15 +1356,90 @@ bool IBPutSlotLexeme(
    return IBPutSlot(theIB,slotName,&theValue);
   }
 
+/*******************/
+/* IBPutSlotSymbol */
+/*******************/
+bool IBPutSlotSymbol(
+  InstanceBuilder *theIB,
+  const char *slotName,
+  const char *stringValue)
+  {
+   CLIPSValue theValue;
+   CLIPSLexeme *slotValue = CreateSymbol(theIB->ibEnv,stringValue);
+   
+   theValue.lexemeValue = slotValue;
+   return IBPutSlot(theIB,slotName,&theValue);
+  }
+
+/*******************/
+/* IBPutSlotString */
+/*******************/
+bool IBPutSlotString(
+  InstanceBuilder *theIB,
+  const char *slotName,
+  const char *stringValue)
+  {
+   CLIPSValue theValue;
+   CLIPSLexeme *slotValue = CreateString(theIB->ibEnv,stringValue);
+   
+   theValue.lexemeValue = slotValue;
+   return IBPutSlot(theIB,slotName,&theValue);
+  }
+
+/*************************/
+/* IBPutSlotInstanceName */
+/*************************/
+bool IBPutSlotInstanceName(
+  InstanceBuilder *theIB,
+  const char *slotName,
+  const char *stringValue)
+  {
+   CLIPSValue theValue;
+   CLIPSLexeme *slotValue = CreateInstanceName(theIB->ibEnv,stringValue);
+   
+   theValue.lexemeValue = slotValue;
+   return IBPutSlot(theIB,slotName,&theValue);
+  }
+
+/***********************/
+/* IBPutSlotCLIPSFloat */
+/***********************/
+bool IBPutSlotCLIPSFloat(
+  InstanceBuilder *theIB,
+  const char *slotName,
+  CLIPSFloat *slotValue)
+  {
+   CLIPSValue theValue;
+   
+   theValue.floatValue = slotValue;
+   return IBPutSlot(theIB,slotName,&theValue);
+  }
+
 /******************/
 /* IBPutSlotFloat */
 /******************/
 bool IBPutSlotFloat(
   InstanceBuilder *theIB,
   const char *slotName,
-  CLIPSFloat *slotValue)
+  float floatValue)
   {
    CLIPSValue theValue;
+   CLIPSFloat *slotValue = CreateFloat(theIB->ibEnv,floatValue);
+   
+   theValue.floatValue = slotValue;
+   return IBPutSlot(theIB,slotName,&theValue);
+  }
+
+/*******************/
+/* IBPutSlotDouble */
+/*******************/
+bool IBPutSlotDouble(
+  InstanceBuilder *theIB,
+  const char *slotName,
+  double doubleValue)
+  {
+   CLIPSValue theValue;
+   CLIPSFloat *slotValue = CreateFloat(theIB->ibEnv,doubleValue);
    
    theValue.floatValue = slotValue;
    return IBPutSlot(theIB,slotName,&theValue);
@@ -1586,10 +1710,10 @@ InstanceModifier *CreateInstanceModifier(
    return theIM;
   }
 
-/********************/
-/* IMPutSlotInteger */
-/********************/
-bool IMPutSlotInteger(
+/*************************/
+/* IMPutSlotCLIPSInteger */
+/*************************/
+bool IMPutSlotCLIPSInteger(
   InstanceModifier *theFM,
   const char *slotName,
   CLIPSInteger *slotValue)
@@ -1600,10 +1724,55 @@ bool IMPutSlotInteger(
    return IMPutSlot(theFM,slotName,&theValue);
   }
 
-/*******************/
-/* IMPutSlotLexeme */
-/*******************/
-bool IMPutSlotLexeme(
+/****************/
+/* IMPutSlotInt */
+/****************/
+bool IMPutSlotInt(
+  InstanceModifier *theIM,
+  const char *slotName,
+  int intValue)
+  {
+   CLIPSValue theValue;
+   CLIPSInteger *slotValue = CreateInteger(theIM->imEnv,intValue);
+   
+   theValue.integerValue = slotValue;
+   return IMPutSlot(theIM,slotName,&theValue);
+  }
+
+/*****************/
+/* IMPutSlotLong */
+/*****************/
+bool IMPutSlotLong(
+  InstanceModifier *theIM,
+  const char *slotName,
+  long longValue)
+  {
+   CLIPSValue theValue;
+   CLIPSInteger *slotValue = CreateInteger(theIM->imEnv,longValue);
+   
+   theValue.integerValue = slotValue;
+   return IMPutSlot(theIM,slotName,&theValue);
+  }
+
+/*********************/
+/* IMPutSlotLongLong */
+/*********************/
+bool IMPutSlotLongLong(
+  InstanceModifier *theIM,
+  const char *slotName,
+  long long longLongValue)
+  {
+   CLIPSValue theValue;
+   CLIPSInteger *slotValue = CreateInteger(theIM->imEnv,longLongValue);
+   
+   theValue.integerValue = slotValue;
+   return IMPutSlot(theIM,slotName,&theValue);
+  }
+
+/************************/
+/* IMPutSlotCLIPSLexeme */
+/************************/
+bool IMPutSlotCLIPSLexeme(
   InstanceModifier *theFM,
   const char *slotName,
   CLIPSLexeme *slotValue)
@@ -1614,10 +1783,55 @@ bool IMPutSlotLexeme(
    return IMPutSlot(theFM,slotName,&theValue);
   }
 
-/******************/
-/* IMPutSlotFloat */
-/******************/
-bool IMPutSlotFloat(
+/*******************/
+/* IMPutSlotSymbol */
+/*******************/
+bool IMPutSlotSymbol(
+  InstanceModifier *theIM,
+  const char *slotName,
+  const char *stringValue)
+  {
+   CLIPSValue theValue;
+   CLIPSLexeme *slotValue = CreateSymbol(theIM->imEnv,stringValue);
+   
+   theValue.lexemeValue = slotValue;
+   return IMPutSlot(theIM,slotName,&theValue);
+  }
+
+/*******************/
+/* IMPutSlotString */
+/*******************/
+bool IMPutSlotString(
+  InstanceModifier *theIM,
+  const char *slotName,
+  const char *stringValue)
+  {
+   CLIPSValue theValue;
+   CLIPSLexeme *slotValue = CreateString(theIM->imEnv,stringValue);
+   
+   theValue.lexemeValue = slotValue;
+   return IMPutSlot(theIM,slotName,&theValue);
+  }
+
+/*************************/
+/* IMPutSlotInstanceName */
+/*************************/
+bool IMPutSlotInstanceName(
+  InstanceModifier *theIM,
+  const char *slotName,
+  const char *stringValue)
+  {
+   CLIPSValue theValue;
+   CLIPSLexeme *slotValue = CreateInstanceName(theIM->imEnv,stringValue);
+   
+   theValue.lexemeValue = slotValue;
+   return IMPutSlot(theIM,slotName,&theValue);
+  }
+
+/***********************/
+/* IMPutSlotCLIPSFloat */
+/***********************/
+bool IMPutSlotCLIPSFloat(
   InstanceModifier *theFM,
   const char *slotName,
   CLIPSFloat *slotValue)
@@ -1626,6 +1840,36 @@ bool IMPutSlotFloat(
    
    theValue.floatValue = slotValue;
    return IMPutSlot(theFM,slotName,&theValue);
+  }
+
+/******************/
+/* IMPutSlotFloat */
+/******************/
+bool IMPutSlotFloat(
+  InstanceModifier *theIM,
+  const char *slotName,
+  float floatValue)
+  {
+   CLIPSValue theValue;
+   CLIPSFloat *slotValue = CreateFloat(theIM->imEnv,floatValue);
+   
+   theValue.floatValue = slotValue;
+   return IMPutSlot(theIM,slotName,&theValue);
+  }
+
+/*******************/
+/* IMPutSlotDouble */
+/*******************/
+bool IMPutSlotDouble(
+  InstanceModifier *theIM,
+  const char *slotName,
+  double doubleValue)
+  {
+   CLIPSValue theValue;
+   CLIPSFloat *slotValue = CreateFloat(theIM->imEnv,doubleValue);
+   
+   theValue.floatValue = slotValue;
+   return IMPutSlot(theIM,slotName,&theValue);
   }
 
 /*****************/

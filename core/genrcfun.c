@@ -546,14 +546,14 @@ bool SubsumeType(
  *****************************************************/
 long FindMethodByIndex(
   Defgeneric *gfunc,
-  long theIndex)
+  unsigned theIndex)
   {
    long i;
 
    for (i = 0 ; i < gfunc->mcnt ; i++)
      if (gfunc->methods[i].index == theIndex)
-       return(i);
-   return(-1);
+       return i;
+   return -1;
   }
 
 #if DEBUGGING_FUNCTIONS || PROFILING_FUNCTIONS
@@ -580,11 +580,11 @@ void PrintMethod(
    RESTRICTION *rptr;
    char numbuf[15];
 
-   StringBuilderReset(theSB);
+   SBReset(theSB);
    if (meth->system)
-     StringBuilderAppend(theSB,"SYS");
-   gensprintf(numbuf,"%-2d ",meth->index);
-   StringBuilderAppend(theSB,numbuf);
+     SBAppend(theSB,"SYS");
+   gensprintf(numbuf,"%-2d ",meth->index); //TBD
+   SBAppend(theSB,numbuf);
    for (j = 0 ; j < meth->restrictionCount ; j++)
      {
       rptr = &meth->restrictions[j];
@@ -592,32 +592,32 @@ void PrintMethod(
         {
          if ((rptr->tcnt == 0) && (rptr->query == NULL))
            {
-            StringBuilderAppend(theSB,"$?");
+            SBAppend(theSB,"$?");
             break;
            }
-         StringBuilderAppend(theSB,"($? ");
+         SBAppend(theSB,"($? ");
         }
       else
-        StringBuilderAppend(theSB,"(");
+        SBAppend(theSB,"(");
       for (k = 0 ; k < rptr->tcnt ; k++)
         {
 #if OBJECT_SYSTEM
-         StringBuilderAppend(theSB,DefclassName((Defclass *) rptr->types[k]));
+         SBAppend(theSB,DefclassName((Defclass *) rptr->types[k]));
 #else
-         StringBuilderAppend(theSB,TypeName(theEnv,((CLIPSInteger *) rptr->types[k])->contents));
+         SBAppend(theSB,TypeName(theEnv,((CLIPSInteger *) rptr->types[k])->contents));
 #endif
          if (((int) k) < (((int) rptr->tcnt) - 1))
-           StringBuilderAppend(theSB," ");
+           SBAppend(theSB," ");
         }
       if (rptr->query != NULL)
         {
          if (rptr->tcnt != 0)
-           StringBuilderAppend(theSB," ");
-         StringBuilderAppend(theSB,"<qry>");
+           SBAppend(theSB," ");
+         SBAppend(theSB,"<qry>");
         }
-      StringBuilderAppend(theSB,")");
+      SBAppend(theSB,")");
       if (((int) j) != (((int) meth->restrictionCount)-1))
-        StringBuilderAppend(theSB," ");
+        SBAppend(theSB," ");
      }
   }
 
@@ -737,7 +737,7 @@ long CheckMethodExists(
   Environment *theEnv,
   const char *fname,
   Defgeneric *gfunc,
-  long mi)
+  unsigned mi)
   {
    long fi;
 
@@ -754,7 +754,7 @@ long CheckMethodExists(
       PrintString(theEnv,WERROR,".\n");
       SetEvaluationError(theEnv,true);
      }
-   return(fi);
+   return fi;
   }
 
 #if ! OBJECT_SYSTEM
@@ -860,22 +860,22 @@ static void DisplayGenericCore(
       if (IsMethodApplicable(theEnv,&gfunc->methods[i]))
         {
          rtn = true;
-         PrintString(theEnv,WDISPLAY,DefgenericName(gfunc));
-         PrintString(theEnv,WDISPLAY," #");
+         PrintString(theEnv,STDOUT,DefgenericName(gfunc));
+         PrintString(theEnv,STDOUT," #");
          PrintMethod(theEnv,&gfunc->methods[i],theSB);
-         PrintString(theEnv,WDISPLAY,theSB->contents);
-         PrintString(theEnv,WDISPLAY,"\n");
+         PrintString(theEnv,STDOUT,theSB->contents);
+         PrintString(theEnv,STDOUT,"\n");
         }
       gfunc->methods[i].busy--;
      }
    if (rtn == false)
      {
-      PrintString(theEnv,WDISPLAY,"No applicable methods for ");
-      PrintString(theEnv,WDISPLAY,DefgenericName(gfunc));
-      PrintString(theEnv,WDISPLAY,".\n");
+      PrintString(theEnv,STDOUT,"No applicable methods for ");
+      PrintString(theEnv,STDOUT,DefgenericName(gfunc));
+      PrintString(theEnv,STDOUT,".\n");
      }
      
-   StringBuilderDispose(theSB);
+   SBDispose(theSB);
   }
 
 #endif

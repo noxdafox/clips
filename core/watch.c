@@ -75,8 +75,6 @@
 /***************************************/
 
    static WatchItemRecord        *ValidWatchItem(Environment *,const char *,bool *);
-   static bool                    RecognizeWatchRouters(Environment *,const char *,void *);
-   static void                    CaptureWatchPrints(Environment *,const char *,const char *,void *);
    static void                    DeallocateWatchData(Environment *);
 
 /**********************************************/
@@ -174,117 +172,143 @@ bool AddWatchItem(
 /**************************************************/
 /* Watch: C access routine for the watch command. */
 /**************************************************/
-bool Watch(
+void Watch(
   Environment *theEnv,
   WatchItem item)
   {
    switch (item)
      {
       case ALL:
-        return SetWatchItem(theEnv,"all",true,NULL);
+        SetWatchItem(theEnv,"all",true,NULL);
+        break;
 
       case FACTS:
-        return SetWatchItem(theEnv,"facts",true,NULL);
+        SetWatchItem(theEnv,"facts",true,NULL);
+        break;
         
       case INSTANCES:
-        return SetWatchItem(theEnv,"instances",true,NULL);
+        SetWatchItem(theEnv,"instances",true,NULL);
+        break;
         
       case SLOTS:
-        return SetWatchItem(theEnv,"slots",true,NULL);
+        SetWatchItem(theEnv,"slots",true,NULL);
+        break;
         
       case RULES:
-        return SetWatchItem(theEnv,"rules",true,NULL);
+        SetWatchItem(theEnv,"rules",true,NULL);
+        break;
         
       case ACTIVATIONS:
-        return SetWatchItem(theEnv,"activations",true,NULL);
+        SetWatchItem(theEnv,"activations",true,NULL);
+        break;
         
       case MESSAGES:
-        return SetWatchItem(theEnv,"messages",true,NULL);
+        SetWatchItem(theEnv,"messages",true,NULL);
+        break;
         
       case MESSAGE_HANDLERS:
-        return SetWatchItem(theEnv,"message-handlers",true,NULL);
+        SetWatchItem(theEnv,"message-handlers",true,NULL);
+        break;
         
       case GENERIC_FUNCTIONS:
-        return SetWatchItem(theEnv,"generic-functions",true,NULL);
+        SetWatchItem(theEnv,"generic-functions",true,NULL);
+        break;
         
       case METHODS:
-        return SetWatchItem(theEnv,"methods",true,NULL);
+        SetWatchItem(theEnv,"methods",true,NULL);
+        break;
         
       case DEFFUNCTIONS:
-        return SetWatchItem(theEnv,"deffunctions",true,NULL);
+        SetWatchItem(theEnv,"deffunctions",true,NULL);
+        break;
         
       case COMPILATIONS:
-        return SetWatchItem(theEnv,"compilations",true,NULL);
+        SetWatchItem(theEnv,"compilations",true,NULL);
+        break;
         
       case STATISTICS:
-        return SetWatchItem(theEnv,"statistics",true,NULL);
+        SetWatchItem(theEnv,"statistics",true,NULL);
+        break;
         
       case GLOBALS:
-        return SetWatchItem(theEnv,"globals",true,NULL);
+        SetWatchItem(theEnv,"globals",true,NULL);
+        break;
         
       case FOCUS:
-        return SetWatchItem(theEnv,"focus",true,NULL);
+        SetWatchItem(theEnv,"focus",true,NULL);
+        break;
      }
-     
-   return false;
   }
 
 /****************************************************/
 /* Unwatch: C access routine for the watch command. */
 /****************************************************/
-bool Unwatch(
+void Unwatch(
   Environment *theEnv,
   WatchItem item)
   {
    switch (item)
      {
       case ALL:
-        return SetWatchItem(theEnv,"all",false,NULL);
+        SetWatchItem(theEnv,"all",false,NULL);
+        break;
 
       case FACTS:
-        return SetWatchItem(theEnv,"facts",false,NULL);
+        SetWatchItem(theEnv,"facts",false,NULL);
+        break;
         
       case INSTANCES:
-        return SetWatchItem(theEnv,"instances",false,NULL);
+        SetWatchItem(theEnv,"instances",false,NULL);
+        break;
         
       case SLOTS:
-        return SetWatchItem(theEnv,"slots",false,NULL);
+        SetWatchItem(theEnv,"slots",false,NULL);
+        break;
         
       case RULES:
-        return SetWatchItem(theEnv,"rules",false,NULL);
+        SetWatchItem(theEnv,"rules",false,NULL);
+        break;
         
       case ACTIVATIONS:
-        return SetWatchItem(theEnv,"activations",false,NULL);
+        SetWatchItem(theEnv,"activations",false,NULL);
+        break;
         
       case MESSAGES:
-        return SetWatchItem(theEnv,"messages",false,NULL);
+        SetWatchItem(theEnv,"messages",false,NULL);
+        break;
         
       case MESSAGE_HANDLERS:
-        return SetWatchItem(theEnv,"message-handlers",false,NULL);
+        SetWatchItem(theEnv,"message-handlers",false,NULL);
+        break;
         
       case GENERIC_FUNCTIONS:
-        return SetWatchItem(theEnv,"generic-functions",false,NULL);
+        SetWatchItem(theEnv,"generic-functions",false,NULL);
+        break;
         
       case METHODS:
-        return SetWatchItem(theEnv,"methods",false,NULL);
+        SetWatchItem(theEnv,"methods",false,NULL);
+        break;
         
       case DEFFUNCTIONS:
-        return SetWatchItem(theEnv,"deffunctions",false,NULL);
+        SetWatchItem(theEnv,"deffunctions",false,NULL);
+        break;
         
       case COMPILATIONS:
-        return SetWatchItem(theEnv,"compilations",false,NULL);
+        SetWatchItem(theEnv,"compilations",false,NULL);
+        break;
         
       case STATISTICS:
-        return SetWatchItem(theEnv,"statistics",false,NULL);
+        SetWatchItem(theEnv,"statistics",false,NULL);
+        break;
         
       case GLOBALS:
-        return SetWatchItem(theEnv,"globals",false,NULL);
+        SetWatchItem(theEnv,"globals",false,NULL);
+        break;
         
       case FOCUS:
-        return SetWatchItem(theEnv,"focus",false,NULL);
+        SetWatchItem(theEnv,"focus",false,NULL);
+        break;
      }
-     
-   return false;
   }
 
 /******************************************/
@@ -731,9 +755,9 @@ void ListWatchItemsCommand(
      {
       for (wPtr = WatchData(theEnv)->ListOfWatchItems; wPtr != NULL; wPtr = wPtr->next)
         {
-         PrintString(theEnv,WDISPLAY,wPtr->name);
-         if (*(wPtr->flag)) PrintString(theEnv,WDISPLAY," = on\n");
-         else PrintString(theEnv,WDISPLAY," = off\n");
+         PrintString(theEnv,STDOUT,wPtr->name);
+         if (*(wPtr->flag)) PrintString(theEnv,STDOUT," = on\n");
+         else PrintString(theEnv,STDOUT," = off\n");
         }
       return;
      }
@@ -767,9 +791,9 @@ void ListWatchItemsCommand(
    /* List the status of the watch item. */
    /*====================================*/
 
-   PrintString(theEnv,WDISPLAY,wPtr->name);
-   if (*(wPtr->flag)) PrintString(theEnv,WDISPLAY," = on\n");
-   else PrintString(theEnv,WDISPLAY," = off\n");
+   PrintString(theEnv,STDOUT,wPtr->name);
+   if (*(wPtr->flag)) PrintString(theEnv,STDOUT," = on\n");
+   else PrintString(theEnv,STDOUT," = off\n");
 
    /*============================================*/
    /* List the status of individual watch items. */
@@ -777,7 +801,7 @@ void ListWatchItemsCommand(
 
    if (wPtr->printFunc != NULL)
      {
-      if ((*wPtr->printFunc)(theEnv,WDISPLAY,wPtr->code,
+      if ((*wPtr->printFunc)(theEnv,STDOUT,wPtr->code,
                              GetNextArgument(GetFirstArgument())) == false)
         { SetEvaluationError(theEnv,true); }
      }
@@ -834,42 +858,6 @@ void WatchFunctionDefinitions(
    AddUDF(theEnv,"unwatch","v",1,UNBOUNDED,"*;y",UnwatchCommand,"UnwatchCommand",NULL);
    AddUDF(theEnv,"get-watch-item","b",1,1,"y",GetWatchItemCommand,"GetWatchItemCommand",NULL);
    AddUDF(theEnv,"list-watch-items","v",0,UNBOUNDED,"*;y",ListWatchItemsCommand,"ListWatchItemsCommand",NULL);
-#endif
-
-   AddRouter(theEnv,WTRACE,1000,RecognizeWatchRouters,CaptureWatchPrints,NULL,NULL,NULL,NULL);
-   DeactivateRouter(theEnv,WTRACE);
-  }
-
-/**************************************************/
-/* RecognizeWatchRouters: Looks for WTRACE prints */
-/**************************************************/
-static bool RecognizeWatchRouters(
-  Environment *theEnv,
-  const char *logName,
-  void *context)
-  {
-#if MAC_XCD
-#pragma unused(theEnv)
-#endif
-
-   if (strcmp(logName,WTRACE) == 0) return true;
-
-   return false;
-  }
-
-/**************************************************/
-/* CaptureWatchPrints: Suppresses WTRACE messages */
-/**************************************************/
-static void CaptureWatchPrints(
-  Environment *theEnv,
-  const char *logName,
-  const char *str,
-  void *context)
-  {
-#if MAC_XCD
-#pragma unused(logName)
-#pragma unused(str)
-#pragma unused(theEnv)
 #endif
   }
 

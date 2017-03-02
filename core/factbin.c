@@ -235,7 +235,7 @@ static void BsaveStorage(
 
    space = sizeof(long);
    GenWrite(&space,sizeof(size_t),fp);
-   GenWrite(&FactBinaryData(theEnv)->NumberOfPatterns,sizeof(long int),fp);
+   GenWrite(&FactBinaryData(theEnv)->NumberOfPatterns,sizeof(long),fp);
   }
 
 /*****************************************************/
@@ -331,7 +331,7 @@ static void BloadStorage(
    /*=========================================*/
 
    GenReadBinary(theEnv,&space,sizeof(size_t));
-   GenReadBinary(theEnv,&FactBinaryData(theEnv)->NumberOfPatterns,sizeof(long int));
+   GenReadBinary(theEnv,&FactBinaryData(theEnv)->NumberOfPatterns,sizeof(long));
 
    /*===================================*/
    /* Allocate the space needed for the */

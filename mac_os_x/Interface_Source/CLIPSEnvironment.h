@@ -41,14 +41,14 @@
    NSArray *instanceList;
    NSMutableArray *runningInstanceList;
 
-   long int agendaChanged;
-   long int lastAgendaFetch;
+   long agendaChanged;
+   long lastAgendaFetch;
 
-   long int factsChanged;
-   long int lastFactsFetch;
+   long factsChanged;
+   long lastFactsFetch;
 
-   long int instancesChanged;
-   long int lastInstancesFetch;
+   long instancesChanged;
+   long lastInstancesFetch;
    
    IBOutlet id delegate;
    NSLock *executionLock;
@@ -119,14 +119,14 @@
 - (void)                         setName: (NSString *) theName;
 - (NSString *)                   name;
 
-- (void)                         setAgendaChanged: (long int) theCount;
-- (long int)                     agendaChanged;
+- (void)                         setAgendaChanged: (long) theCount;
+- (long)                         agendaChanged;
 
-- (void)                         setFactsChanged: (long int) theCount;
-- (long int)                     factsChanged;
+- (void)                         setFactsChanged: (long) theCount;
+- (long)                         factsChanged;
 
-- (void)                         setInstancesChanged: (long int) theCount;
-- (long int)                     instancesChanged;
+- (void)                         setInstancesChanged: (long) theCount;
+- (long)                         instancesChanged;
 
 - (void)                         setExecuting: (BOOL) theValue;
 - (BOOL)                         executing;

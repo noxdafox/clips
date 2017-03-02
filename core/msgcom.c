@@ -112,13 +112,13 @@
    static bool                    DefmessageHandlerWatchAccess(Environment *,int,bool,Expression *);
    static bool                    DefmessageHandlerWatchPrint(Environment *,const char *,int,Expression *);
    static bool                    DefmessageHandlerWatchSupport(Environment *,const char *,const char *,bool,
-                                                                void (*)(Environment *,const char *,Defclass *,int),
-                                                                void (*)(Defclass *,int,bool),
+                                                                void (*)(Environment *,const char *,Defclass *,unsigned),
+                                                                void (*)(Defclass *,unsigned,bool),
                                                                 Expression *);
    static bool                    WatchClassHandlers(Environment *,Defclass *,const char *,int,const char *,bool,bool,
-                                                     void (*)(Environment *,const char *,Defclass *,int),
-                                                     void (*)(Defclass *,int,bool));
-   static void                    PrintHandlerWatchFlag(Environment *,const char *,Defclass *,int);
+                                                     void (*)(Environment *,const char *,Defclass *,unsigned),
+                                                     void (*)(Defclass *,unsigned,bool));
+   static void                    PrintHandlerWatchFlag(Environment *,const char *,Defclass *,unsigned);
 #endif
 
    static void                    DeallocateMessageHandlerData(Environment *);
@@ -265,7 +265,7 @@ static void DeallocateMessageHandlerData(
  *****************************************************/
 const char *DefmessageHandlerName(
   Defclass *theDefclass,
-  int theIndex)
+  unsigned theIndex)
   {
    return theDefclass->handlers[theIndex-1].header.name->contents;
   }
@@ -282,7 +282,7 @@ const char *DefmessageHandlerName(
  *****************************************************/
 const char *DefmessageHandlerType(
   Defclass *theDefclass,
-  int theIndex)
+  unsigned theIndex)
   {
    Environment *theEnv = theDefclass->header.env;
    
@@ -300,9 +300,9 @@ const char *DefmessageHandlerType(
   NOTES        : If index == 0, the first handler array index
                  (i.e. 1) returned
  **************************************************************/
-int GetNextDefmessageHandler(
+unsigned GetNextDefmessageHandler(
   Defclass *theDefclass,
-  int theIndex)
+  unsigned theIndex)
   {
    if (theIndex == 0)
      { return (theDefclass->handlers != NULL) ? 1 : 0; }
@@ -345,7 +345,7 @@ DefmessageHandler *GetDefmessageHandlerPointer(
  *********************************************************/
 bool DefmessageHandlerGetWatch(
   Defclass *theDefclass,
-  int theIndex)
+  unsigned theIndex)
   {
    return theDefclass->handlers[theIndex-1].trace;
   }
@@ -364,7 +364,7 @@ bool DefmessageHandlerGetWatch(
  *********************************************************/
 void DefmessageHandlerSetWatch(
   Defclass *theClass,
-  int theIndex,
+  unsigned theIndex,
   bool newState)
   {
    theClass->handlers[theIndex-1].trace = newState;
@@ -419,7 +419,7 @@ unsigned FindDefmessageHandler(
  ***************************************************/
 bool DefmessageHandlerIsDeletable(
   Defclass *theDefclass,
-  int theIndex)
+  unsigned theIndex)
   {
    Environment *theEnv = theDefclass->header.env;
 
@@ -502,7 +502,7 @@ void UndefmessageHandlerCommand(
  ***********************************************************/
 bool UndefmessageHandler(
   Defclass *theDefclass,
-  int mhi,
+  unsigned mhi,
   Environment *allEnv)
   {
    Environment *theEnv;
@@ -615,7 +615,7 @@ void PPDefmessageHandlerCommand(
       return;
      }
    if (hnd->header.ppForm != NULL)
-     PrintInChunks(theEnv,WDISPLAY,hnd->header.ppForm);
+     PrintInChunks(theEnv,STDOUT,hnd->header.ppForm);
   }
 
 /*****************************************************************************
@@ -636,13 +636,13 @@ void ListDefmessageHandlersCommand(
    Defclass *clsptr;
 
    if (UDFArgumentCount(context) == 0)
-     ListDefmessageHandlers(theEnv,NULL,WDISPLAY,false);
+     ListDefmessageHandlers(theEnv,NULL,STDOUT,false);
    else
      {
       clsptr = ClassInfoFnxArgs(context,"list-defmessage-handlers",&inhp);
       if (clsptr == NULL)
         return;
-      ListDefmessageHandlers(theEnv,clsptr,WDISPLAY,inhp);
+      ListDefmessageHandlers(theEnv,clsptr,STDOUT,inhp);
      }
   }
 
@@ -681,7 +681,7 @@ void PreviewSendCommand(
    if (! UDFNextArgument(context,SYMBOL_BIT,&theArg))
      { return; }
 
-   PreviewSend(cls,WDISPLAY,theArg.lexemeValue->contents);
+   PreviewSend(cls,STDOUT,theArg.lexemeValue->contents);
   }
 
 /********************************************************
@@ -695,7 +695,7 @@ void PreviewSendCommand(
  ********************************************************/
 const char *DefmessageHandlerPPForm(
   Defclass *theDefclass,
-  int theIndex)
+  unsigned theIndex)
   {
    return theDefclass->handlers[theIndex-1].header.ppForm;
   }
@@ -971,8 +971,8 @@ static bool DefmessageHandlerWatchSupport(
   const char *funcName,
   const char *logName,
   bool newState,
-  void (*printFunc)(Environment *,const char *,Defclass *,int),
-  void (*traceFunc)(Defclass *,int,bool),
+  void (*printFunc)(Environment *,const char *,Defclass *,unsigned),
+  void (*traceFunc)(Defclass *,unsigned,bool),
   Expression *argExprs)
   {
    Defmodule *theModule;
@@ -1101,8 +1101,8 @@ static bool WatchClassHandlers(
   const char *logName,
   bool newState,
   bool indentp,
-  void (*printFunc)(Environment *,const char *,Defclass *,int),
-  void (*traceFunc)(Defclass *,int,bool))
+  void (*printFunc)(Environment *,const char *,Defclass *,unsigned),
+  void (*traceFunc)(Defclass *,unsigned,bool))
   {
    unsigned theHandler;
    bool found = false;
@@ -1148,7 +1148,7 @@ static void PrintHandlerWatchFlag(
   Environment *theEnv,
   const char *logName,
   Defclass *theClass,
-  int theHandler)
+  unsigned theHandler)
   {
    PrintString(theEnv,logName,DefclassName(theClass));
    PrintString(theEnv,logName," ");

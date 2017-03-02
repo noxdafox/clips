@@ -150,7 +150,6 @@ bool EvaluateExpression(
   UDFValue *returnValue)
   {
    struct expr *oldArgument;
-   void *oldContext;
    struct functionDefinition *fptr;
    UDFContext theUDFContext;
 #if PROFILING_FUNCTIONS
@@ -158,7 +157,8 @@ bool EvaluateExpression(
 #endif
 
    returnValue->voidValue = VoidConstant(theEnv);
-   returnValue->range = -1;
+   returnValue->begin = 0;
+   returnValue->range = SIZE_MAX;
 
    if (problem == NULL)
      {
@@ -184,7 +184,6 @@ bool EvaluateExpression(
       case FCALL:
         {
          fptr = problem->functionValue;
-         oldContext = SetEnvironmentFunctionContext(theEnv,fptr->context);
 
 #if PROFILING_FUNCTIONS
          StartProfile(theEnv,&profileFrame,
@@ -196,17 +195,20 @@ bool EvaluateExpression(
          EvaluationData(theEnv)->CurrentExpression = problem;
 
          theUDFContext.environment = theEnv;
+         theUDFContext.context = fptr->context;
          theUDFContext.theFunction = fptr;
          theUDFContext.lastArg = problem->argList;
          theUDFContext.lastPosition = 1;
          theUDFContext.returnValue = returnValue;
          fptr->functionPointer(theEnv,&theUDFContext,returnValue);
+         if ((returnValue->header->type == MULTIFIELD_TYPE) &&
+             (returnValue->range == SIZE_MAX))
+           { returnValue->range = returnValue->multifieldValue->length; }
 
 #if PROFILING_FUNCTIONS
         EndProfile(theEnv,&profileFrame);
 #endif
 
-        SetEnvironmentFunctionContext(theEnv,oldContext);
         EvaluationData(theEnv)->CurrentExpression = oldArgument;
         break;
         }
@@ -402,8 +404,8 @@ void PrintCLIPSValue(
         break;
 
       case MULTIFIELD_TYPE:
-        PrintMultifield(theEnv,fileid,argPtr->multifieldValue,
-                        0,argPtr->multifieldValue->length - 1,true);
+        PrintMultifieldDriver(theEnv,fileid,argPtr->multifieldValue,
+                              0,argPtr->multifieldValue->length - 1,true);
         break;
 
       default:
@@ -442,8 +444,8 @@ void PrintUDFValue(
         break;
 
       case MULTIFIELD_TYPE:
-        PrintMultifield(theEnv,fileid,argPtr->multifieldValue,
-                        argPtr->begin,(argPtr->begin + argPtr->range) - 1,true);
+        PrintMultifieldDriver(theEnv,fileid,argPtr->multifieldValue,
+                              argPtr->begin,(argPtr->begin + argPtr->range) - 1,true);
         break;
 
       default:
@@ -1181,7 +1183,7 @@ static bool DiscardCAddress(
   Environment *theEnv,
   void *theValue)
   {
-   PrintString(theEnv,WDISPLAY,"Discarding C Address\n");
+   PrintString(theEnv,STDOUT,"Discarding C Address\n");
 
    return true;
   }

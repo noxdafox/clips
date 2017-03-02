@@ -962,7 +962,7 @@ StrategyType SetStrategy(
    AgendaData(theEnv)->Strategy = value;
 
    if (oldStrategy != AgendaData(theEnv)->Strategy)
-     { DefmoduleReorderAgenda(NULL,theEnv); }
+     { ReorderAllAgendas(theEnv); }
 
    return oldStrategy;
   }

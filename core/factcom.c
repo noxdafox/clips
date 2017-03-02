@@ -362,7 +362,7 @@ void RetractCommand(
       else if ((CVIsType(&theArg,SYMBOL_BIT)) ?
                (strcmp(theArg.lexemeValue->contents,"*") == 0) : false)
         {
-         RemoveAllFacts(theEnv);
+         RetractAllFacts(theEnv);
          return;
         }
 
@@ -485,7 +485,7 @@ void FactsCommand(
 
    if (! UDFHasNextArgument(context))
      {
-      Facts(theEnv,WDISPLAY,theModule,start,end,max);
+      Facts(theEnv,STDOUT,theModule,start,end,max);
       return;
      }
 
@@ -552,7 +552,7 @@ void FactsCommand(
    /* List the facts. */
    /*=================*/
 
-   Facts(theEnv,WDISPLAY,theModule,start,end,max);
+   Facts(theEnv,STDOUT,theModule,start,end,max);
   }
 
 /**************************************************/

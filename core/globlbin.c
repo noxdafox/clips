@@ -193,8 +193,8 @@ static void BsaveStorage(
 
    space = sizeof(long) * 2;
    GenWrite(&space,sizeof(size_t),fp);
-   GenWrite(&DefglobalBinaryData(theEnv)->NumberOfDefglobals,sizeof(long int),fp);
-   GenWrite(&DefglobalBinaryData(theEnv)->NumberOfDefglobalModules,sizeof(long int),fp);
+   GenWrite(&DefglobalBinaryData(theEnv)->NumberOfDefglobals,sizeof(long),fp);
+   GenWrite(&DefglobalBinaryData(theEnv)->NumberOfDefglobalModules,sizeof(long),fp);
   }
 
 /*********************************************/
@@ -290,8 +290,8 @@ static void BloadStorageDefglobals(
    /*=======================================================*/
 
    GenReadBinary(theEnv,&space,sizeof(size_t));
-   GenReadBinary(theEnv,&DefglobalBinaryData(theEnv)->NumberOfDefglobals,sizeof(long int));
-   GenReadBinary(theEnv,&DefglobalBinaryData(theEnv)->NumberOfDefglobalModules,sizeof(long int));
+   GenReadBinary(theEnv,&DefglobalBinaryData(theEnv)->NumberOfDefglobals,sizeof(long));
+   GenReadBinary(theEnv,&DefglobalBinaryData(theEnv)->NumberOfDefglobalModules,sizeof(long));
 
    /*===================================*/
    /* Allocate the space needed for the */

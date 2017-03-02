@@ -300,9 +300,9 @@ bool Bload(
          GetSeekCurBinary(theEnv,(long) space);
          if (space != 0)
            {
-            PrintString(theEnv,WDIALOG,"\nSkipping ");
-            PrintString(theEnv,WDIALOG,constructBuffer);
-            PrintString(theEnv,WDIALOG," constructs because of unavailability\n");
+            PrintString(theEnv,STDOUT,"\nSkipping ");
+            PrintString(theEnv,STDOUT,constructBuffer);
+            PrintString(theEnv,STDOUT," constructs because of unavailability\n");
            }
         }
      }
@@ -478,11 +478,11 @@ void BloadandRefresh(
 /**********************************************/
 static struct functionDefinition **ReadNeededFunctions(
   Environment *theEnv,
-  long int *numberOfFunctions,
+  long *numberOfFunctions,
   bool *error)
   {
    char *functionNames, *namePtr;
-   unsigned long int space;
+   unsigned long space;
    size_t temp;
    long i;
    struct functionDefinition **newFunctionArray, *functionPtr;
@@ -493,8 +493,8 @@ static struct functionDefinition **ReadNeededFunctions(
    /* and the space required for them.                  */
    /*===================================================*/
 
-   GenReadBinary(theEnv,numberOfFunctions,(unsigned long) sizeof(long int));
-   GenReadBinary(theEnv,&space,(unsigned long) sizeof(unsigned long int));
+   GenReadBinary(theEnv,numberOfFunctions,(unsigned long) sizeof(long));
+   GenReadBinary(theEnv,&space,(unsigned long) sizeof(unsigned long));
    if (*numberOfFunctions == 0)
      {
       *error = false;

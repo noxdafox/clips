@@ -269,21 +269,6 @@ void ConstructsToCCommand(
       return;
      }
 
-   /*===========================================*/
-   /* If the base file name is greater than 3   */
-   /* characters, issue a warning that the file */
-   /* name lengths may exceed what is allowed   */
-   /* under some operating systems.             */
-   /*===========================================*/
-
-   if (nameLength > 3)
-     {
-      PrintWarningID(theEnv,"CONSCOMP",1,false);
-      PrintString(theEnv,WWARNING,"Base file name exceeds 3 characters.\n");
-      PrintString(theEnv,WWARNING,"  This may cause files to be overwritten if file name length\n");
-      PrintString(theEnv,WWARNING,"  is limited on your platform.\n");
-     }
-
    /*====================================*/
    /* Get the runtime image ID argument. */
    /*====================================*/

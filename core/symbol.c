@@ -712,6 +712,17 @@ void *AddBitMap(
     return((void *) peek);
    }
 
+/***********************************************/
+/* CreateCExternalAddress: Creates an external */
+/*    address for a C pointer.                 */
+/***********************************************/
+CLIPSExternalAddress *CreateCExternalAddress(
+  Environment *theEnv,
+  void *theExternalAddress)
+  {
+   return CreateExternalAddress(theEnv,theExternalAddress,C_POINTER_EXTERNAL_ADDRESS);
+  }
+
 /*******************************************************************/
 /* CreateExternalAddress: Searches for the external address in the */
 /*   hash table. If the external address is already in the hash    */
@@ -888,9 +899,9 @@ unsigned long HashBitMap(
 
    tmpPtr = (char *) &tmpLong;
 
-   /*================================================================ */
-   /* Add up the first part of the word as unsigned long int values.  */
-   /*================================================================ */
+   /*============================================================*/
+   /* Add up the first part of the word as unsigned long values. */
+   /*============================================================*/
 
    longLength = length / sizeof(unsigned long);
    for (i = 0 , j = 0 ; i < longLength; i++)

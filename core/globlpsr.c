@@ -252,7 +252,7 @@ static bool GetVariableDefinition(
 #if DEBUGGING_FUNCTIONS
    if ((GetWatchItem(theEnv,"compilations") == 1) && GetPrintWhileLoading(theEnv))
      {
-      const char *outRouter = WDIALOG;
+      const char *outRouter = STDOUT;
       if (QFindDefglobal(theEnv,variableName) != NULL)
         {
          outRouter = WWARNING;
@@ -265,7 +265,7 @@ static bool GetVariableDefinition(
      }
    else
 #endif
-     { if (GetPrintWhileLoading(theEnv)) PrintString(theEnv,WDIALOG,":"); }
+     { if (GetPrintWhileLoading(theEnv)) PrintString(theEnv,STDOUT,":"); }
 
    /*==================================================================*/
    /* Check for import/export conflicts from the construct definition. */

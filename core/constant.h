@@ -79,10 +79,6 @@ typedef enum
    DYNAMIC_DEFAULT
   } DefaultType;
 
-#ifndef WPROMPT_STRING
-#define WPROMPT_STRING "wclips"
-#endif
-
 #ifndef APPLICATION_NAME
 #define APPLICATION_NAME "CLIPS"
 #endif
@@ -96,11 +92,11 @@ typedef enum
 #endif
 
 #ifndef CREATION_DATE_STRING
-#define CREATION_DATE_STRING "01/05/17"
+#define CREATION_DATE_STRING "03/01/17"
 #endif
 
 #ifndef BANNER_STRING
-#define BANNER_STRING "         CLIPS (Forge Alpha 01/05/17)\n"
+#define BANNER_STRING "         CLIPS (Forge Alpha 03/01/17)\n"
 #endif
 
 /*************************/
@@ -232,8 +228,6 @@ typedef enum
 #define INTEGER_OR_FLOAT              180
 #define SYMBOL_OR_STRING              181
 #define INSTANCE_OR_INSTANCE_NAME     182
-
-typedef long int FACT_ID;
 
 /*************************/
 /* Macintosh Definitions */

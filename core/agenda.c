@@ -185,11 +185,13 @@ void AddActivation(
    /*====================================================*/
 
 #if DEBUGGING_FUNCTIONS
-   if (newActivation->theRule->watchActivation)
+   if (newActivation->theRule->watchActivation &&
+       (! ConstructData(theEnv)->ClearReadyInProgress) &&
+       (! ConstructData(theEnv)->ClearInProgress))
      {
-      PrintString(theEnv,WTRACE,"==> Activation ");
-      PrintActivation(theEnv,WTRACE,newActivation);
-      PrintString(theEnv,WTRACE,"\n");
+      PrintString(theEnv,STDOUT,"==> Activation ");
+      PrintActivation(theEnv,STDOUT,newActivation);
+      PrintString(theEnv,STDOUT,"\n");
      }
 #endif
 
@@ -393,6 +395,11 @@ int ActivationSetSalience(
   {
    int temp;
 
+   if (value > MAX_DEFRULE_SALIENCE)
+     { value = MAX_DEFRULE_SALIENCE; }
+   else if (value < MIN_DEFRULE_SALIENCE)
+     { value = MIN_DEFRULE_SALIENCE; }
+    
    temp = actPtr->salience;
    actPtr->salience = value;
    return temp;
@@ -483,18 +490,42 @@ bool MoveActivationToTop(
   }
 
 /*******************************************/
-/* ActivationDelete: Removes the specified */
+/* DeleteActivation: Removes the specified */
 /*   activation from the agenda.           */
 /*******************************************/
-bool ActivationDelete(
-  Activation *theActivation,
-  Environment *allEnv)
-  {   
-   if (theActivation == NULL) RemoveAllActivations(allEnv);
-   else RemoveActivation(theActivation->theRule->header.env,theActivation,true,true);
-
-   return true;
+void DeleteActivation(
+  Activation *theActivation)
+  {
+   RemoveActivation(theActivation->theRule->header.env,theActivation,true,true);
   }
+
+/*************************************************/
+/* DeleteAllActivations: Removes all activations */
+/*   from the agenda of the specified module.    */
+/*************************************************/
+void DeleteAllActivations(
+  Defmodule *theModule)
+  {
+   struct activation *tempPtr, *theActivation;
+   struct salienceGroup *theGroup, *tempGroup;
+   Environment *theEnv = theModule->header.env;
+
+   theActivation = GetDefruleModuleItem(theEnv,NULL)->agenda;
+   while (theActivation != NULL)
+     {
+      tempPtr = theActivation->next;
+      RemoveActivation(theEnv,theActivation,true,true);
+      theActivation = tempPtr;
+     }
+
+   theGroup = GetDefruleModuleItem(theEnv,NULL)->groupings;
+   while (theGroup != NULL)
+     {
+      tempGroup = theGroup->next;
+      rtn_struct(theEnv,salienceGroup,theGroup);
+      theGroup = tempGroup;
+     }
+ }
 
 /*******************************************************/
 /* DetachActivation: Detaches the specified activation */
@@ -643,11 +674,13 @@ void RemoveActivation(
       /*===================================*/
 
 #if DEBUGGING_FUNCTIONS
-      if (theActivation->theRule->watchActivation)
+      if (theActivation->theRule->watchActivation &&
+          (! ConstructData(theEnv)->ClearReadyInProgress) &&
+          (! ConstructData(theEnv)->ClearInProgress))
         {
-         PrintString(theEnv,WTRACE,"<== Activation ");
-         PrintActivation(theEnv,WTRACE,theActivation);
-         PrintString(theEnv,WTRACE,"\n");
+         PrintString(theEnv,STDOUT,"<== Activation ");
+         PrintActivation(theEnv,STDOUT,theActivation);
+         PrintString(theEnv,STDOUT,"\n");
         }
 #endif
 
@@ -795,83 +828,67 @@ void SetAgendaChanged(
    AgendaData(theEnv)->AgendaChanged = value;
   }
 
-/**********************************************************/
-/* DefmoduleReorderAgenda: Completely reorders the agenda */
-/*   based on the current conflict resolution strategy.   */
-/**********************************************************/
-void DefmoduleReorderAgenda(
-  Defmodule *theModule,
-  Environment *allEnv)
+/**********************/
+/* ReorderAllAgendas: */
+/**********************/
+void ReorderAllAgendas(
+  Environment *theEnv)
+  {
+   Defmodule *theModule;
+   
+   for (theModule = GetNextDefmodule(theEnv,NULL);
+        theModule != NULL;
+        theModule = GetNextDefmodule(theEnv,theModule))
+     { ReorderAgenda(theModule); }
+  }
+
+/*******************************************************/
+/* ReorderAgenda: Completely reorders the agenda based */
+/*   on the current conflict resolution strategy.      */
+/*******************************************************/
+void ReorderAgenda(
+  Defmodule *theModule)
   {
    struct activation *theActivation, *tempPtr;
-   bool allModules = false;
    struct defruleModule *theModuleItem;
    struct salienceGroup *theGroup, *tempGroup;
    Environment *theEnv;
 
-   if (theModule == NULL)
-     { theEnv = allEnv; }
-   else
-     { theEnv = theModule->header.env; }
+   if (theModule == NULL) return;
+   theEnv = theModule->header.env;
      
-   /*=============================================*/
-   /* If the module specified is a NULL pointer,  */
-   /* then every module has its agenda reordered. */
-   /*=============================================*/
+   /*=================================*/
+   /* Get the list of activations and */
+   /* remove them from the agenda.    */
+   /*=================================*/
 
-   if (theModule == NULL)
+   theModuleItem = GetDefruleModuleItem(theEnv,theModule);
+   theActivation = theModuleItem->agenda;
+   theModuleItem->agenda = NULL;
+
+   theGroup = theModuleItem->groupings;
+   while (theGroup != NULL)
      {
-      allModules = true;
-      theModule = GetNextDefmodule(theEnv,NULL);
+      tempGroup = theGroup->next;
+      rtn_struct(theEnv,salienceGroup,theGroup);
+      theGroup = tempGroup;
      }
 
-   /*========================*/
-   /* Reorder the agenda(s). */
-   /*========================*/
+   theModuleItem->groupings = NULL;
 
-   for (;
-        theModule != NULL;
-        theModule = GetNextDefmodule(theEnv,theModule))
+   /*=========================================*/
+   /* Reorder the activations by placing them */
+   /* back on the agenda one by one.          */
+   /*=========================================*/
+
+   while (theActivation != NULL)
      {
-      /*=================================*/
-      /* Get the list of activations and */
-      /* remove them from the agenda.    */
-      /*=================================*/
-
-      theModuleItem = GetDefruleModuleItem(theEnv,theModule);
-      theActivation = theModuleItem->agenda;
-      theModuleItem->agenda = NULL;
-
-      theGroup = theModuleItem->groupings;
-      while (theGroup != NULL)
-        {
-         tempGroup = theGroup->next;
-         rtn_struct(theEnv,salienceGroup,theGroup);
-         theGroup = tempGroup;
-        }
-
-      theModuleItem->groupings = NULL;
-
-      /*=========================================*/
-      /* Reorder the activations by placing them */
-      /* back on the agenda one by one.          */
-      /*=========================================*/
-
-      while (theActivation != NULL)
-        {
-         tempPtr = theActivation->next;
-         theActivation->next = NULL;
-         theActivation->prev = NULL;
-         theGroup = ReuseOrCreateSalienceGroup(theEnv,theModuleItem,theActivation->salience);
-         PlaceActivation(theEnv,&(theModuleItem->agenda),theActivation,theGroup);
-         theActivation = tempPtr;
-        }
-
-      /*===============================================*/
-      /* Return if only one agenda is being reordered. */
-      /*===============================================*/
-
-      if (! allModules) return;
+      tempPtr = theActivation->next;
+      theActivation->next = NULL;
+      theActivation->prev = NULL;
+      theGroup = ReuseOrCreateSalienceGroup(theEnv,theModuleItem,theActivation->salience);
+      PlaceActivation(theEnv,&(theModuleItem->agenda),theActivation,theGroup);
+      theActivation = tempPtr;
      }
   }
 
@@ -926,7 +943,7 @@ void RefreshCommand(
 /* Refresh: Refreshes a defrule. Activations of the rule   */
 /*   that have already been fired are added to the agenda. */
 /***********************************************************/
-bool Refresh(
+void Refresh(
   Defrule *theRule)
   {
    Defrule *rulePtr;
@@ -968,8 +985,6 @@ bool Refresh(
            }
         }
      }
-
-   return true;
   }
 
 /**********************************************/
@@ -1009,7 +1024,24 @@ void RefreshAgendaCommand(
    /* Refresh the agenda of the appropriate module. */
    /*===============================================*/
 
-   RefreshAgenda(theModule,theEnv);
+   if (theModule == NULL)
+     { RefreshAllAgendas(theEnv); }
+   else
+     { RefreshAgenda(theModule); }
+  }
+
+/**********************/
+/* RefreshAllAgendas: */
+/**********************/
+void RefreshAllAgendas(
+  Environment *theEnv)
+  {
+  Defmodule *theModule;
+  
+  for (theModule = GetNextDefmodule(theEnv,NULL);
+       theModule != NULL;
+       theModule = GetNextDefmodule(theEnv,theModule))
+     { RefreshAgenda(theModule); }
   }
 
 /*************************************/
@@ -1017,35 +1049,20 @@ void RefreshAgendaCommand(
 /*   for the refresh-agenda command. */
 /*************************************/
 void RefreshAgenda(
-  Defmodule *theModule,
-  Environment *allEnv)
+  Defmodule *theModule)
   {
    Activation *theActivation;
    SalienceEvaluationType oldValue;
-   bool allModules = false;
    Environment *theEnv;
    
-   if (theModule == NULL)
-     { theEnv = allEnv; }
-   else
-     { theEnv = theModule->header.env; }
+   if (theModule == NULL) return;
+   theEnv = theModule->header.env;
 
    /*==========================*/
    /* Save the current module. */
    /*==========================*/
 
    SaveCurrentModule(theEnv);
-
-   /*=============================================*/
-   /* If the module specified is a NULL pointer,  */
-   /* then every module has its agenda refreshed. */
-   /*=============================================*/
-
-   if (theModule == NULL)
-     {
-      allModules = true;
-      theModule = GetNextDefmodule(theEnv,NULL);
-     }
 
    /*=======================================================*/
    /* Remember the current setting for salience evaluation. */
@@ -1056,47 +1073,26 @@ void RefreshAgenda(
    oldValue = GetSalienceEvaluation(theEnv);
    SetSalienceEvaluation(theEnv,WHEN_ACTIVATED);
 
-   /*========================*/
-   /* Refresh the agenda(s). */
-   /*========================*/
+   /*============================*/
+   /* Change the current module. */
+   /*============================*/
 
-   for (;
-        theModule != NULL;
-        theModule = GetNextDefmodule(theEnv,theModule))
-     {
-      /*=========================================*/
-      /* Change the current module to the module */
-      /* of the agenda being refreshed.          */
-      /*=========================================*/
+   SetCurrentModule(theEnv,theModule);
 
-      SetCurrentModule(theEnv,theModule);
+   /*================================================================*/
+   /* Recompute the salience values for the current module's agenda. */
+   /*================================================================*/
 
-      /*================================================================*/
-      /* Recompute the salience values for the current module's agenda. */
-      /*================================================================*/
+   for (theActivation = GetNextActivation(theEnv,NULL);
+        theActivation != NULL;
+        theActivation = GetNextActivation(theEnv,theActivation))
+     { theActivation->salience = EvaluateSalience(theEnv,theActivation->theRule); }
 
-      for (theActivation = GetNextActivation(theEnv,NULL);
-           theActivation != NULL;
-           theActivation = GetNextActivation(theEnv,theActivation))
-        { theActivation->salience = EvaluateSalience(theEnv,theActivation->theRule); }
+   /*======================================================*/
+   /* Reorder the agenda based on the new salience values. */
+   /*======================================================*/
 
-      /*======================================================*/
-      /* Reorder the agenda based on the new salience values. */
-      /*======================================================*/
-
-      DefmoduleReorderAgenda(theModule,theEnv);
-
-      /*===============================================*/
-      /* Return if only one agenda is being refreshed. */
-      /*===============================================*/
-
-      if (! allModules)
-        {
-         SetSalienceEvaluation(theEnv,oldValue);
-         RestoreCurrentModule(theEnv);
-         return;
-        }
-     }
+   ReorderAgenda(theModule);
 
    /*==========================================*/
    /* Restore the salience evaluation setting. */
@@ -1351,7 +1347,7 @@ void AgendaCommand(
    /* Display the agenda of the appropriate module. */
    /*===============================================*/
 
-   Agenda(theEnv,WDISPLAY,theModule);
+   Agenda(theEnv,STDOUT,theModule);
   }
 
 #endif /* DEBUGGING_FUNCTIONS */

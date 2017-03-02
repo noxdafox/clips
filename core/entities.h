@@ -176,7 +176,7 @@ struct multifield
   {
    TypeHeader header;
    unsigned busyCount;
-   long length;
+   size_t length;
    Multifield *next;
    CLIPSValue contents[1];
   };
@@ -200,8 +200,8 @@ struct udfValue
       Instance *instanceValue;
       CLIPSExternalAddress *externalAddressValue;
      };
-   long begin;
-   long range;
+   size_t begin;
+   size_t range;
    struct udfValue *next;
   };
 
@@ -211,6 +211,7 @@ struct udfValue
 struct udfContext
   {
    Environment *environment;
+   void *context;
    FunctionDefinition *theFunction;
    int lastPosition;
    Expression *lastArg;

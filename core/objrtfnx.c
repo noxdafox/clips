@@ -1181,8 +1181,6 @@ static void GetObjectValueSimple(
             returnValue->value = segmentPtr;
             returnValue->begin = matchVar->beginningOffset;
             returnValue->range = segmentPtr->length - (matchVar->endOffset + matchVar->beginningOffset);
-            if (returnValue->range < 0)
-              { returnValue->range = 0; } 
            }
          else
            {

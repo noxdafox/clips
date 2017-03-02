@@ -58,8 +58,8 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
-/*            Added CLIPSBlockStart and CLIPSBlockEnd        */
-/*            functions for garbage collection blocks.       */
+/*            Added GCBlockStart and GCBlockEnd functions    */
+/*            for garbage collection blocks.                 */
 /*                                                           */
 /*            Added StringBuilder functions.                 */
 /*                                                           */
@@ -85,7 +85,7 @@ typedef struct voidCallFunctionItem VoidCallFunctionItem;
 #include "evaluatn.h"
 #include "moduldef.h"
 
-typedef struct clipsBlock CLIPSBlock;
+typedef struct gcBlock GCBlock;
 typedef struct stringBuilder StringBuilder;
 
 struct voidCallFunctionItem
@@ -137,7 +137,7 @@ struct garbageFrame
    Multifield *LastMultifield;
   };
 
-struct clipsBlock
+struct gcBlock
   {
    struct garbageFrame newGarbageFrame;
    struct garbageFrame *oldGarbageFrame;
@@ -224,14 +224,15 @@ struct utilityData
    void                           CallCleanupFunctions(Environment *);
    void                           CallPeriodicTasks(Environment *);
    void                           CleanCurrentGarbageFrame(Environment *,UDFValue *);
-   void                           CLIPSBlockStart(Environment *,CLIPSBlock *);
-   void                           CLIPSBlockEnd(Environment *,CLIPSBlock *,UDFValue *);
+   void                           GCBlockStart(Environment *,GCBlock *);
+   void                           GCBlockEnd(Environment *,GCBlock *);
+   void                           GCBlockEndUDF(Environment *,GCBlock *,UDFValue *);
    StringBuilder                 *CreateStringBuilder(Environment *,size_t);
-   void                           StringBuilderDispose(StringBuilder *);
-   void                           StringBuilderAppend(StringBuilder *,const char *);
-   void                           StringBuilderAddChar(StringBuilder *,int);
-   void                           StringBuilderReset(StringBuilder *);
-   char                          *StringBuilderCopy(StringBuilder *);
+   void                           SBDispose(StringBuilder *);
+   void                           SBAppend(StringBuilder *,const char *);
+   void                           SBAddChar(StringBuilder *,int);
+   void                           SBReset(StringBuilder *);
+   char                          *SBCopy(StringBuilder *);
    void                          *GetPeriodicFunctionContext(Environment *,const char *);
 
 #endif /* _H_utility */

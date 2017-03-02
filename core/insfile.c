@@ -275,7 +275,7 @@ long LoadInstances(
 long LoadInstancesFromString(
   Environment *theEnv,
   const char *theString,
-  size_t theMax)
+  long theMax)
   {
    long theCount;
    const char * theStrRouter = "*** load-instances-from-string ***";
@@ -349,7 +349,7 @@ long RestoreInstances(
 long RestoreInstancesFromString(
   Environment *theEnv,
   const char *theString,
-  size_t theMax)
+  long theMax)
   {
    long theCount;
    const char *theStrRouter = "*** load-instances-from-string ***";
@@ -1011,8 +1011,8 @@ static void SaveSingleInstanceText(
       else if (sp->multifieldValue->length != 0)
         {
          PrintString(theEnv,logicalName," ");
-         PrintMultifield(theEnv,logicalName,sp->multifieldValue,0,
-                         (long) (sp->multifieldValue->length - 1),false);
+         PrintMultifieldDriver(theEnv,logicalName,sp->multifieldValue,0,
+                               (long) (sp->multifieldValue->length - 1),false);
         }
       PrintString(theEnv,logicalName,")");
      }
@@ -1060,7 +1060,8 @@ static void MarkSingleInstance(
 #pragma unused(theOutput)
 #endif
    InstanceSlot *sp;
-   long i, j;
+   long i;
+   size_t j;
 
    InstanceFileData(theEnv)->BinaryInstanceFileSize += (unsigned long) (sizeof(long) * 2);
    theInstance->name->neededSymbol = true;

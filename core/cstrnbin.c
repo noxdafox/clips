@@ -105,7 +105,7 @@ void WriteNeededConstraints(
   {
    int i;
    unsigned short theIndex = 0;
-   unsigned long int numberOfUsedConstraints = 0;
+   unsigned long numberOfUsedConstraints = 0;
    CONSTRAINT_RECORD *tmpPtr;
    BSAVE_CONSTRAINT_RECORD bsaveConstraints;
 
@@ -143,7 +143,7 @@ void WriteNeededConstraints(
    /* constraints in the constraint table.       */
    /*============================================*/
 
-   GenWrite(&numberOfUsedConstraints,sizeof(unsigned long int),fp);
+   GenWrite(&numberOfUsedConstraints,sizeof(unsigned long),fp);
    if (numberOfUsedConstraints == 0) return;
 
    for (i = 0 ; i < SIZE_CONSTRAINT_HASH; i++)
@@ -204,7 +204,7 @@ static void CopyToBsaveConstraintRecord(
 void ReadNeededConstraints(
   Environment *theEnv)
   {
-   GenReadBinary(theEnv,&ConstraintData(theEnv)->NumberOfConstraints,sizeof(unsigned long int));
+   GenReadBinary(theEnv,&ConstraintData(theEnv)->NumberOfConstraints,sizeof(unsigned long));
    if (ConstraintData(theEnv)->NumberOfConstraints == 0) return;
 
    ConstraintData(theEnv)->ConstraintArray = (CONSTRAINT_RECORD *)

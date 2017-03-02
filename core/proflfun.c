@@ -259,21 +259,21 @@ void ProfileInfoCommand(
      {
       gensprintf(buffer,"Profile elapsed time = %g seconds\n",
                       ProfileFunctionData(theEnv)->ProfileTotalTime);
-      PrintString(theEnv,WDISPLAY,buffer);
+      PrintString(theEnv,STDOUT,buffer);
 
       if (ProfileFunctionData(theEnv)->LastProfileInfo == USER_FUNCTIONS)
-        { PrintString(theEnv,WDISPLAY,"Function Name                            "); }
+        { PrintString(theEnv,STDOUT,"Function Name                            "); }
       else if (ProfileFunctionData(theEnv)->LastProfileInfo == CONSTRUCTS_CODE)
-        { PrintString(theEnv,WDISPLAY,"Construct Name                           "); }
+        { PrintString(theEnv,STDOUT,"Construct Name                           "); }
 
-      PrintString(theEnv,WDISPLAY,"Entries         Time           %          Time+Kids     %+Kids\n");
+      PrintString(theEnv,STDOUT,"Entries         Time           %          Time+Kids     %+Kids\n");
 
       if (ProfileFunctionData(theEnv)->LastProfileInfo == USER_FUNCTIONS)
-        { PrintString(theEnv,WDISPLAY,"-------------                            "); }
+        { PrintString(theEnv,STDOUT,"-------------                            "); }
       else if (ProfileFunctionData(theEnv)->LastProfileInfo == CONSTRUCTS_CODE)
-        { PrintString(theEnv,WDISPLAY,"--------------                           "); }
+        { PrintString(theEnv,STDOUT,"--------------                           "); }
 
-      PrintString(theEnv,WDISPLAY,"-------        ------        -----        ---------     ------\n");
+      PrintString(theEnv,STDOUT,"-------        ------        -----        ---------     ------\n");
      }
 
    if (ProfileFunctionData(theEnv)->LastProfileInfo == USER_FUNCTIONS) OutputUserFunctionsInfo(theEnv);
@@ -387,23 +387,23 @@ static bool OutputProfileInfo(
 
    if ((banner != NULL) && (*banner != NULL))
      {
-      PrintString(theEnv,WDISPLAY,*banner);
+      PrintString(theEnv,STDOUT,*banner);
       *banner = NULL;
      }
 
    if (printPrefixBefore != NULL)
-     { PrintString(theEnv,WDISPLAY,printPrefixBefore); }
+     { PrintString(theEnv,STDOUT,printPrefixBefore); }
 
    if (printPrefix != NULL)
-     { PrintString(theEnv,WDISPLAY,printPrefix); }
+     { PrintString(theEnv,STDOUT,printPrefix); }
 
    if (printPrefixAfter != NULL)
-     { PrintString(theEnv,WDISPLAY,printPrefixAfter); }
+     { PrintString(theEnv,STDOUT,printPrefixAfter); }
 
    if (strlen(itemName) >= 40)
      {
-      PrintString(theEnv,WDISPLAY,itemName);
-      PrintString(theEnv,WDISPLAY,"\n");
+      PrintString(theEnv,STDOUT,itemName);
+      PrintString(theEnv,STDOUT,"\n");
       itemName = "";
      }
 
@@ -416,7 +416,7 @@ static bool OutputProfileInfo(
 
                         (double) profileInfo->totalWithChildrenTime,
                         (double) percentWithKids);
-   PrintString(theEnv,WDISPLAY,buffer);
+   PrintString(theEnv,STDOUT,buffer);
 
    return true;
   }
@@ -499,9 +499,9 @@ void ProfileResetCommand(
       ResetProfileInfo((struct constructProfileInfo *)
                        TestUserData(ProfileFunctionData(theEnv)->ProfileDataID,theDefgeneric->header.usrData));
 
-      for (methodIndex = GetNextDefmethod(theEnv,theDefgeneric,0);
+      for (methodIndex = GetNextDefmethod(theDefgeneric,0);
            methodIndex != 0;
-           methodIndex = GetNextDefmethod(theEnv,theDefgeneric,methodIndex))
+           methodIndex = GetNextDefmethod(theDefgeneric,methodIndex))
         {
          theMethod = GetDefmethodPointer(theDefgeneric,methodIndex);
          ResetProfileInfo((struct constructProfileInfo *)
@@ -635,9 +635,9 @@ static void OutputConstructsCodeInfo(
       prefix = DefgenericName(theDefgeneric);
       prefixAfter = "\n";
 
-      for (methodIndex = GetNextDefmethod(theEnv,theDefgeneric,0);
+      for (methodIndex = GetNextDefmethod(theDefgeneric,0);
            methodIndex != 0;
-           methodIndex = GetNextDefmethod(theEnv,theDefgeneric,methodIndex))
+           methodIndex = GetNextDefmethod(theDefgeneric,methodIndex))
         {
          theMethod = GetDefmethodPointer(theDefgeneric,methodIndex);
 
@@ -653,7 +653,7 @@ static void OutputConstructsCodeInfo(
            }
         }
      }
-   StringBuilderDispose(theSB);
+   SBDispose(theSB);
 #endif
 
    banner = "\n*** Defclasses ***\n";

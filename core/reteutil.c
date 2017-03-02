@@ -94,7 +94,7 @@
    static void                        ResizeBetaMemory(Environment *,struct betaMemory *);
    static void                        ResetBetaMemory(Environment *,struct betaMemory *);
 #if (CONSTRUCT_COMPILER || BLOAD_AND_BSAVE) && (! RUN_TIME)
-   static void                        TagNetworkTraverseJoins(Environment *,long int *,long int *,struct joinNode *);
+   static void                        TagNetworkTraverseJoins(Environment *,long *,long *,struct joinNode *);
 #endif
 
 /***********************************************************/
@@ -1615,10 +1615,10 @@ unsigned long PrintBetaMemory(
 /*************************************************************/
 void TagRuleNetwork(
   Environment *theEnv,
-  long int *moduleCount,
-  long int *ruleCount,
-  long int *joinCount,
-  long int *linkCount)
+  long *moduleCount,
+  long *ruleCount,
+  long *joinCount,
+  long *linkCount)
   {
    Defmodule *modulePtr;
    Defrule *rulePtr, *disjunctPtr;
@@ -1687,8 +1687,8 @@ void TagRuleNetwork(
 /*******************************************************************/
 static void TagNetworkTraverseJoins(
   Environment *theEnv,
-  long int *joinCount,
-  long int *linkCount,
+  long *joinCount,
+  long *linkCount,
   struct joinNode *joinPtr)
   {
    struct joinLink *theLink;

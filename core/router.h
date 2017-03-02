@@ -58,6 +58,9 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            Removed WPROMPT, WDISPLAY, WTRACE, and WDIALOG */
+/*            logical names.                                 */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_router
@@ -77,10 +80,6 @@ typedef int RouterUngetcFunction(Environment *,const char *,int,void *);
 
 #define WWARNING "wwarning"
 #define WERROR "werror"
-#define WTRACE "wtrace"
-#define WDIALOG "wdialog"
-#define WPROMPT  WPROMPT_STRING
-#define WDISPLAY "wdisplay"
 #define STDOUT "stdout"
 #define STDIN "stdin"
 

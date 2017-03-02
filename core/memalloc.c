@@ -217,7 +217,7 @@ void *genrealloc(
 /* MemUsed: C access routine */
 /*   for the mem-used command.  */
 /********************************/
-long int MemUsed(
+long MemUsed(
   Environment *theEnv)
   {
    return MemoryData(theEnv)->MemoryAmount;
@@ -227,7 +227,7 @@ long int MemUsed(
 /* MemRequests: C access routine   */
 /*   for the mem-requests command. */
 /***********************************/
-long int MemRequests(
+long MemRequests(
   Environment *theEnv)
   {
    return MemoryData(theEnv)->MemoryCalls;
@@ -237,9 +237,9 @@ long int MemRequests(
 /* UpdateMemoryUsed: Allows the amount */
 /*   of memory used to be updated.     */
 /***************************************/
-long int UpdateMemoryUsed(
+long UpdateMemoryUsed(
   Environment *theEnv,
-  long int value)
+  long value)
   {
    MemoryData(theEnv)->MemoryAmount += value;
    return MemoryData(theEnv)->MemoryAmount;
@@ -249,9 +249,9 @@ long int UpdateMemoryUsed(
 /* UpdateMemoryRequests: Allows the number */
 /*   of memory requests to be updated.     */
 /*******************************************/
-long int UpdateMemoryRequests(
+long UpdateMemoryRequests(
   Environment *theEnv,
-  long int value)
+  long value)
   {
    MemoryData(theEnv)->MemoryCalls += value;
    return(MemoryData(theEnv)->MemoryCalls);
@@ -261,14 +261,14 @@ long int UpdateMemoryRequests(
 /* ReleaseMem: C access routine   */
 /*   for the release-mem command. */
 /**********************************/
-long int ReleaseMem(
+long ReleaseMem(
   Environment *theEnv,
-  long int maximum)
+  long maximum)
   {
    struct memoryPtr *tmpPtr, *memPtr;
    int i;
-   long int returns = 0;
-   long int amount = 0;
+   long returns = 0;
+   long amount = 0;
 
    for (i = (MEM_TABLE_SIZE - 1) ; i >= (int) sizeof(char *) ; i--)
      {
@@ -286,10 +286,10 @@ long int ReleaseMem(
         }
       MemoryData(theEnv)->MemoryTable[i] = NULL;
       if ((amount > maximum) && (maximum > 0))
-        { return(amount); }
+        { return amount; }
      }
 
-   return(amount);
+   return amount;
   }
 
 /*****************************************************/

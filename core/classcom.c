@@ -438,7 +438,7 @@ bool Undefclass(
 /*********************************************************
   NAME         : PPDefclassCommand
   DESCRIPTION  : Displays the pretty print form of
-                 a class to the wdialog router.
+                 a class to stdout.
   INPUTS       : None
   RETURNS      : Nothing useful
   SIDE EFFECTS : None

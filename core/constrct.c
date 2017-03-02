@@ -475,7 +475,7 @@ void Reset(
   Environment *theEnv)
   {
    struct voidCallFunctionItem *resetPtr;
-   CLIPSBlock gcBlock;
+   GCBlock gcb;
 
    /*=====================================*/
    /* The reset command can't be executed */
@@ -493,7 +493,7 @@ void Reset(
    /*================================================*/
 
    if (UtilityData(theEnv)->CurrentGarbageFrame->topLevel) SetHaltExecution(theEnv,false);
-   CLIPSBlockStart(theEnv,&gcBlock);
+   GCBlockStart(theEnv,&gcb);
 
    /*=======================================================*/
    /* Call the before reset function to determine if the    */
@@ -531,7 +531,7 @@ void Reset(
    /* issued from an embedded controller.       */
    /*===========================================*/
 
-   CLIPSBlockEnd(theEnv,&gcBlock,NULL);
+   GCBlockEnd(theEnv,&gcb);
    CallPeriodicTasks(theEnv);
 
    /*===================================*/
@@ -617,17 +617,7 @@ bool Clear(
   Environment *theEnv)
   {
    struct voidCallFunctionItem *theFunction;
-   CLIPSBlock gcBlock;
-
-   /*==========================================*/
-   /* Activate the watch router which captures */
-   /* trace output so that it is not displayed */
-   /* during a clear.                          */
-   /*==========================================*/
-
-#if DEBUGGING_FUNCTIONS
-   ActivateRouter(theEnv,WTRACE);
-#endif
+   GCBlock gcb;
 
    /*===================================*/
    /* Determine if a clear is possible. */
@@ -640,9 +630,6 @@ bool Clear(
      {
       PrintErrorID(theEnv,"CONSTRCT",1,false);
       PrintString(theEnv,WERROR,"Some constructs are still in use. Clear cannot continue.\n");
-#if DEBUGGING_FUNCTIONS
-      DeactivateRouter(theEnv,WTRACE);
-#endif
       ConstructData(theEnv)->ClearReadyInProgress = false;
       return false;
      }
@@ -652,7 +639,7 @@ bool Clear(
    /* Set up the frame for tracking garbage. */
    /*========================================*/
    
-   CLIPSBlockStart(theEnv,&gcBlock);
+   GCBlockStart(theEnv,&gcb);
 
    /*===========================*/
    /* Call all clear functions. */
@@ -665,20 +652,11 @@ bool Clear(
         theFunction = theFunction->next)
      { (*theFunction->func)(theEnv,theFunction->context); }
 
-   /*=============================*/
-   /* Deactivate the watch router */
-   /* for capturing output.       */
-   /*=============================*/
-
-#if DEBUGGING_FUNCTIONS
-   DeactivateRouter(theEnv,WTRACE);
-#endif
-
    /*================================*/
    /* Restore the old garbage frame. */
    /*================================*/
    
-   CLIPSBlockEnd(theEnv,&gcBlock,NULL);
+   GCBlockEnd(theEnv,&gcb);
    CallPeriodicTasks(theEnv);
 
    /*===========================*/

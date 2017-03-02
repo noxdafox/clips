@@ -653,7 +653,7 @@ bool FactSlotLength(
   {
    struct factCheckLengthPNCall *hack;
    Multifield *segmentPtr;
-   long extraOffset = 0;
+   size_t extraOffset = 0;
    struct multifieldMarker *tempMark;
 
    returnValue->value = FalseSymbol(theEnv);

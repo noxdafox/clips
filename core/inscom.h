@@ -89,8 +89,11 @@ struct instanceData
 #define InstanceData(theEnv) ((struct instanceData *) GetEnvironmentData(theEnv,INSTANCE_DATA))
 
    void                           SetupInstances(Environment *);
-   bool                           DeleteInstance(Instance *,Environment *);
-   bool                           UnmakeInstance(Instance *,Environment *);
+   bool                           DeleteInstance(Instance *);
+   bool                           DeleteAllInstances(Environment *);
+   bool                           UnmakeInstance(Instance *);
+   bool                           UnmakeInstanceCallback(Instance *,Environment *);
+   bool                           UnmakeAllInstances(Environment *);
 #if DEBUGGING_FUNCTIONS
    void                           InstancesCommand(Environment *,UDFContext *,UDFValue *);
    void                           PPInstanceCommand(Environment *,UDFContext *,UDFValue *);
@@ -100,7 +103,7 @@ struct instanceData
    Instance                      *CreateRawInstance(Environment *,Defclass *,const char *);
    Instance                      *FindInstance(Environment *,Defmodule *,const char *,bool);
    bool                           ValidInstanceAddress(Instance *);
-   void                           DirectGetSlot(Instance *,const char *,CLIPSValue *);
+   bool                           DirectGetSlot(Instance *,const char *,CLIPSValue *);
    bool                           DirectPutSlot(Instance *,const char *,CLIPSValue *);
    const char                    *InstanceName(Instance *);
    Defclass                      *InstanceClass(Instance *);

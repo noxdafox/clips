@@ -69,7 +69,7 @@
    void                           PrintPartialMatch(Environment *,const char *,struct partialMatch *);
    struct partialMatch           *CopyPartialMatch(Environment *,struct partialMatch *);
    struct partialMatch           *MergePartialMatches(Environment *,struct partialMatch *,struct partialMatch *);
-   long int                       IncrementPseudoFactIndex(void);
+   long                           IncrementPseudoFactIndex(void);
    struct partialMatch           *GetAlphaMemory(Environment *,struct patternNodeHeader *,unsigned long);
    struct partialMatch           *GetLeftBetaMemory(struct joinNode *,unsigned long);
    struct partialMatch           *GetRightBetaMemory(struct joinNode *,unsigned long);

@@ -82,8 +82,8 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
-/*            Added CLIPSBlockStart and CLIPSBlockEnd        */
-/*            functions for garbage collection blocks.       */
+/*            Added GCBlockStart and GCBlockEnd functions    */
+/*            for garbage collection blocks.                 */
 /*                                                           */
 /*************************************************************/
 
@@ -145,16 +145,16 @@ void InitializeEngine(
 static void DeallocateEngineData(
   Environment *theEnv)
   {
-   struct focus *tmpPtr, *nextPtr;
+   FocalModule *tmpPtr, *nextPtr;
 
-   DeallocateVoidCallList(theEnv,EngineData(theEnv)->ListOfAfterRuleFiresFunctions);
-   DeallocateCallListWithArg(theEnv,EngineData(theEnv)->ListOfBeforeRuleFiresFunctions);
+   DeallocateRuleFiredCallList(theEnv,EngineData(theEnv)->ListOfAfterRuleFiresFunctions);
+   DeallocateRuleFiredCallList(theEnv,EngineData(theEnv)->ListOfBeforeRuleFiresFunctions);
 
    tmpPtr = EngineData(theEnv)->CurrentFocus;
    while (tmpPtr != NULL)
      {
       nextPtr = tmpPtr->next;
-      rtn_struct(theEnv,focus,tmpPtr);
+      rtn_struct(theEnv,focalModule,tmpPtr);
       tmpPtr = nextPtr;
      }
   }
@@ -168,8 +168,7 @@ long long Run(
   {
    long long rulesFired = 0;
    UDFValue returnValue;
-   struct callFunctionItemWithArg *theBeforeRuleFiresFunction;
-   struct voidCallFunctionItem *theAfterRuleFiresFunction;
+   RuleFiredFunctionItem *ruleFiresFunction;
 #if DEBUGGING_FUNCTIONS
    unsigned long maxActivations = 0, sumActivations = 0;
 #if DEFTEMPLATE_CONSTRUCT
@@ -191,7 +190,7 @@ long long Run(
 #endif
    struct trackedMemory *theTM;
    int danglingConstructs;
-   CLIPSBlock gcBlock;
+   GCBlock gcb;
 
    /*=====================================================*/
    /* Make sure the run command is not already executing. */
@@ -205,7 +204,7 @@ long long Run(
    /* Set up the frame for tracking garbage. */
    /*========================================*/
 
-   CLIPSBlockStart(theEnv,&gcBlock);
+   GCBlockStart(theEnv,&gcb);
 
    /*================================*/
    /* Set up statistics information. */
@@ -264,11 +263,11 @@ long long Run(
       /* to be called before each rule firing.  */
       /*========================================*/
 
-      for (theBeforeRuleFiresFunction = EngineData(theEnv)->ListOfBeforeRuleFiresFunctions;
-           theBeforeRuleFiresFunction != NULL;
-           theBeforeRuleFiresFunction = theBeforeRuleFiresFunction->next)
+      for (ruleFiresFunction = EngineData(theEnv)->ListOfBeforeRuleFiresFunctions;
+           ruleFiresFunction != NULL;
+           ruleFiresFunction = ruleFiresFunction->next)
         {
-         (*theBeforeRuleFiresFunction->func)(theEnv,theActivation,theBeforeRuleFiresFunction->context);
+         (*ruleFiresFunction->func)(theEnv,theActivation,ruleFiresFunction->context);
         }
 
       /*===========================================*/
@@ -300,11 +299,11 @@ long long Run(
          char printSpace[60];
 
          gensprintf(printSpace,"FIRE %4lld ",rulesFired);
-         PrintString(theEnv,WTRACE,printSpace);
-         PrintString(theEnv,WTRACE,ruleFiring);
-         PrintString(theEnv,WTRACE,": ");
-         PrintPartialMatch(theEnv,WTRACE,theBasis);
-         PrintString(theEnv,WTRACE,"\n");
+         PrintString(theEnv,STDOUT,printSpace);
+         PrintString(theEnv,STDOUT,ruleFiring);
+         PrintString(theEnv,STDOUT,": ");
+         PrintPartialMatch(theEnv,STDOUT,theBasis);
+         PrintString(theEnv,STDOUT,"\n");
         }
 #endif
 
@@ -383,6 +382,16 @@ long long Run(
       if ((! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
           (EvaluationData(theEnv)->CurrentExpression == NULL))
         { ConstructData(theEnv)->DanglingConstructs = danglingConstructs; }
+        
+      /*========================================*/
+      /* Execute the list of functions that are */
+      /* to be called after each rule firing.   */
+      /*========================================*/
+
+      for (ruleFiresFunction = EngineData(theEnv)->ListOfAfterRuleFiresFunctions;
+           ruleFiresFunction != NULL;
+           ruleFiresFunction = ruleFiresFunction->next)
+        { (*ruleFiresFunction->func)(theEnv,theActivation,ruleFiresFunction->context); }
 
       /*=====================================*/
       /* Remove information for logical CEs. */
@@ -478,17 +487,7 @@ long long Run(
       /*==================================*/
 
       if (GetSalienceEvaluation(theEnv) == EVERY_CYCLE)
-        { RefreshAgenda(NULL,theEnv); }
-
-      /*========================================*/
-      /* Execute the list of functions that are */
-      /* to be called after each rule firing.   */
-      /*========================================*/
-
-      for (theAfterRuleFiresFunction = EngineData(theEnv)->ListOfAfterRuleFiresFunctions;
-           theAfterRuleFiresFunction != NULL;
-           theAfterRuleFiresFunction = theAfterRuleFiresFunction->next)
-        { (*theAfterRuleFiresFunction->func)(theEnv,theAfterRuleFiresFunction->context); }
+        { RefreshAllAgendas(theEnv); }
 
       /*========================================*/
       /* If a return was issued on the RHS of a */
@@ -515,9 +514,9 @@ long long Run(
          if (GetActivationRule(theEnv,theActivation)->afterBreakpoint)
            {
             EngineData(theEnv)->HaltRules = true;
-            PrintString(theEnv,WDIALOG,"Breaking on rule ");
-            PrintString(theEnv,WDIALOG,ActivationRuleName(theActivation));
-            PrintString(theEnv,WDIALOG,".\n");
+            PrintString(theEnv,STDOUT,"Breaking on rule ");
+            PrintString(theEnv,STDOUT,ActivationRuleName(theActivation));
+            PrintString(theEnv,STDOUT,".\n");
            }
         }
      }
@@ -528,10 +527,10 @@ long long Run(
 
    if (rulesFired == 0)
      {
-      for (theAfterRuleFiresFunction = EngineData(theEnv)->ListOfAfterRuleFiresFunctions;
-           theAfterRuleFiresFunction != NULL;
-           theAfterRuleFiresFunction = theAfterRuleFiresFunction->next)
-        { (*theAfterRuleFiresFunction->func)(theEnv,theAfterRuleFiresFunction->context); }
+      for (ruleFiresFunction = EngineData(theEnv)->ListOfAfterRuleFiresFunctions;
+           ruleFiresFunction != NULL;
+           ruleFiresFunction = ruleFiresFunction->next)
+        { (*ruleFiresFunction->func)(theEnv,NULL,ruleFiresFunction->context); }
      }
 
    /*======================================================*/
@@ -540,7 +539,7 @@ long long Run(
    /*======================================================*/
 
    if (runLimit == rulesFired)
-     { PrintString(theEnv,WDIALOG,"rule firing limit reached\n"); }
+     { PrintString(theEnv,STDOUT,"rule firing limit reached\n"); }
 
    /*==============================*/
    /* Restore execution variables. */
@@ -560,83 +559,83 @@ long long Run(
 
       endTime = gentime();
 
-      PrintInteger(theEnv,WDIALOG,rulesFired);
-      PrintString(theEnv,WDIALOG," rules fired");
+      PrintInteger(theEnv,STDOUT,rulesFired);
+      PrintString(theEnv,STDOUT," rules fired");
 
 #if (! GENERIC)
       if (startTime != endTime)
         {
-         PrintString(theEnv,WDIALOG,"        Run time is ");
-         PrintFloat(theEnv,WDIALOG,endTime - startTime);
-         PrintString(theEnv,WDIALOG," seconds.\n");
-         PrintFloat(theEnv,WDIALOG,(double) rulesFired / (endTime - startTime));
-         PrintString(theEnv,WDIALOG," rules per second.\n");
+         PrintString(theEnv,STDOUT,"        Run time is ");
+         PrintFloat(theEnv,STDOUT,endTime - startTime);
+         PrintString(theEnv,STDOUT," seconds.\n");
+         PrintFloat(theEnv,STDOUT,(double) rulesFired / (endTime - startTime));
+         PrintString(theEnv,STDOUT," rules per second.\n");
         }
       else
-        { PrintString(theEnv,WDIALOG,"\n"); }
+        { PrintString(theEnv,STDOUT,"\n"); }
 #else
-      PrintString(theEnv,WDIALOG,"\n");
+      PrintString(theEnv,STDOUT,"\n");
 #endif
 
 #if DEFTEMPLATE_CONSTRUCT
       gensprintf(printSpace,"%ld mean number of facts (%ld maximum).\n",
                           (long) (((double) sumFacts / (rulesFired + 1)) + 0.5),
                           maxFacts);
-      PrintString(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,STDOUT,printSpace);
 #endif
 
 #if OBJECT_SYSTEM
       gensprintf(printSpace,"%ld mean number of instances (%ld maximum).\n",
                           (long) (((double) sumInstances / (rulesFired + 1)) + 0.5),
                           maxInstances);
-      PrintString(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,STDOUT,printSpace);
 #endif
 
       gensprintf(printSpace,"%ld mean number of activations (%ld maximum).\n",
                           (long) (((double) sumActivations / (rulesFired + 1)) + 0.5),
                           maxActivations);
-      PrintString(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,STDOUT,printSpace);
 
 #if DEVELOPER
       gensprintf(printSpace,"%9ld left to right comparisons.\n",
                           EngineData(theEnv)->leftToRightComparisons);
-      PrintString(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,STDOUT,printSpace);
 
       gensprintf(printSpace,"%9ld left to right succeeds.\n",
                           EngineData(theEnv)->leftToRightSucceeds);
-      PrintString(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,STDOUT,printSpace);
 
       gensprintf(printSpace,"%9ld left to right loops.\n",
                           EngineData(theEnv)->leftToRightLoops);
-      PrintString(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,STDOUT,printSpace);
 
       gensprintf(printSpace,"%9ld right to left comparisons.\n",
                           EngineData(theEnv)->rightToLeftComparisons);
-      PrintString(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,STDOUT,printSpace);
 
       gensprintf(printSpace,"%9ld right to left succeeds.\n",
                           EngineData(theEnv)->rightToLeftSucceeds);
-      PrintString(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,STDOUT,printSpace);
 
       gensprintf(printSpace,"%9ld right to left loops.\n",
                           EngineData(theEnv)->rightToLeftLoops);
-      PrintString(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,STDOUT,printSpace);
 
       gensprintf(printSpace,"%9ld find next conflicting comparisons.\n",
                           EngineData(theEnv)->findNextConflictingComparisons);
-      PrintString(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,STDOUT,printSpace);
 
       gensprintf(printSpace,"%9ld beta hash list skips.\n",
                           EngineData(theEnv)->betaHashListSkips);
-      PrintString(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,STDOUT,printSpace);
 
       gensprintf(printSpace,"%9ld beta hash hash table skips.\n",
                           EngineData(theEnv)->betaHashHTSkips);
-      PrintString(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,STDOUT,printSpace);
 
       gensprintf(printSpace,"%9ld unneeded marker compare.\n",
                           EngineData(theEnv)->unneededMarkerCompare);
-      PrintString(theEnv,WDIALOG,printSpace);
+      PrintString(theEnv,STDOUT,printSpace);
 
 #endif
      }
@@ -657,7 +656,7 @@ long long Run(
    /* Restore the old garbage frame. */
    /*================================*/
 
-   CLIPSBlockEnd(theEnv,&gcBlock,NULL);
+   GCBlockEnd(theEnv,&gcb);
    CallPeriodicTasks(theEnv);
 
    /*===================================*/
@@ -718,7 +717,7 @@ static Defmodule *RemoveFocus(
   Environment *theEnv,
   Defmodule *theModule)
   {
-   struct focus *tempFocus,*prevFocus, *nextFocus;
+   FocalModule *tempFocus,*prevFocus, *nextFocus;
    bool found = false;
    bool currentFocusRemoved = false;
 
@@ -743,7 +742,7 @@ static Defmodule *RemoveFocus(
          found = true;
 
          nextFocus = tempFocus->next;
-         rtn_struct(theEnv,focus,tempFocus);
+         rtn_struct(theEnv,focalModule,tempFocus);
          tempFocus = nextFocus;
 
          if (prevFocus == NULL)
@@ -766,7 +765,7 @@ static Defmodule *RemoveFocus(
    /* stack, simply return the current focus  */
    /*=========================================*/
 
-   if (! found) return(EngineData(theEnv)->CurrentFocus->theModule);
+   if (! found) return EngineData(theEnv)->CurrentFocus->theModule;
 
    /*========================================*/
    /* If the current focus is being watched, */
@@ -774,18 +773,20 @@ static Defmodule *RemoveFocus(
    /*========================================*/
 
 #if DEBUGGING_FUNCTIONS
-   if (EngineData(theEnv)->WatchFocus)
+   if (EngineData(theEnv)->WatchFocus &&
+       (! ConstructData(theEnv)->ClearReadyInProgress) &&
+       (! ConstructData(theEnv)->ClearInProgress))
      {
-      PrintString(theEnv,WTRACE,"<== Focus ");
-      PrintString(theEnv,WTRACE,theModule->header.name->contents);
+      PrintString(theEnv,STDOUT,"<== Focus ");
+      PrintString(theEnv,STDOUT,theModule->header.name->contents);
 
       if ((EngineData(theEnv)->CurrentFocus != NULL) && currentFocusRemoved)
         {
-         PrintString(theEnv,WTRACE," to ");
-         PrintString(theEnv,WTRACE,EngineData(theEnv)->CurrentFocus->theModule->header.name->contents);
+         PrintString(theEnv,STDOUT," to ");
+         PrintString(theEnv,STDOUT,EngineData(theEnv)->CurrentFocus->theModule->header.name->contents);
         }
 
-      PrintString(theEnv,WTRACE,"\n");
+      PrintString(theEnv,STDOUT,"\n");
      }
 #endif
 
@@ -820,9 +821,9 @@ Defmodule *PopFocus(
 /************************************************************/
 /* GetNextFocus: Returns the next focus on the focus stack. */
 /************************************************************/
-struct focus *GetNextFocus( // TBD Add to API
+FocalModule *GetNextFocus(
   Environment *theEnv,
-  struct focus *theFocus)
+  FocalModule *theFocus)
   {
    /*==================================================*/
    /* If NULL is passed as an argument, return the top */
@@ -839,13 +840,31 @@ struct focus *GetNextFocus( // TBD Add to API
    return theFocus->next;
   }
 
+/*********************************************************/
+/* FocalModuleName: Returns the name of the FocalModule. */
+/*********************************************************/
+const char *FocalModuleName(
+  FocalModule *theFocus)
+  {
+   return theFocus->theModule->header.name->contents;
+  }
+
+/****************************************************************/
+/* FocalModuleModule: Returns the Defmodule of the FocalModule. */
+/****************************************************************/
+Defmodule *FocalModuleModule(
+  FocalModule *theFocus)
+  {
+   return theFocus->theModule;
+  }
+
 /***************************************************/
 /* Focus: C access routine for the focus function. */
 /***************************************************/
 void Focus(
   Defmodule *theModule)
   {
-   struct focus *tempFocus;
+   FocalModule *tempFocus;
    Environment *theEnv;
    
    if (theModule == NULL) return;
@@ -868,16 +887,18 @@ void Focus(
    /*=====================================*/
 
 #if DEBUGGING_FUNCTIONS
-   if (EngineData(theEnv)->WatchFocus)
+   if (EngineData(theEnv)->WatchFocus &&
+       (! ConstructData(theEnv)->ClearReadyInProgress) &&
+       (! ConstructData(theEnv)->ClearInProgress))
      {
-      PrintString(theEnv,WTRACE,"==> Focus ");
-      PrintString(theEnv,WTRACE,theModule->header.name->contents);
+      PrintString(theEnv,STDOUT,"==> Focus ");
+      PrintString(theEnv,STDOUT,theModule->header.name->contents);
       if (EngineData(theEnv)->CurrentFocus != NULL)
         {
-         PrintString(theEnv,WTRACE," from ");
-         PrintString(theEnv,WTRACE,EngineData(theEnv)->CurrentFocus->theModule->header.name->contents);
+         PrintString(theEnv,STDOUT," from ");
+         PrintString(theEnv,STDOUT,EngineData(theEnv)->CurrentFocus->theModule->header.name->contents);
         }
-      PrintString(theEnv,WTRACE,"\n");
+      PrintString(theEnv,STDOUT,"\n");
      }
 #endif
 
@@ -885,7 +906,7 @@ void Focus(
    /* Add the new focus to the focus stack. */
    /*=======================================*/
 
-   tempFocus = get_struct(theEnv,focus);
+   tempFocus = get_struct(theEnv,focalModule);
    tempFocus->theModule = theModule;
    tempFocus->theDefruleModule = GetDefruleModuleItem(theEnv,theModule);
    tempFocus->next = EngineData(theEnv)->CurrentFocus;
@@ -924,13 +945,13 @@ void ClearFocusStack(
 bool AddAfterRuleFiresFunction(
   Environment *theEnv,
   const char *name,
-  VoidCallFunction *functionPtr,
+  RuleFiredFunction *functionPtr,
   int priority,
   void *context)
   {
-   EngineData(theEnv)->ListOfAfterRuleFiresFunctions = AddVoidFunctionToCallList(theEnv,name,priority,
-                                              functionPtr,
-                                              EngineData(theEnv)->ListOfAfterRuleFiresFunctions,context);
+   EngineData(theEnv)->ListOfAfterRuleFiresFunctions =
+      AddRuleFiredFunctionToCallList(theEnv,name,priority,functionPtr,
+                                     EngineData(theEnv)->ListOfAfterRuleFiresFunctions,context);
    return true;
   }
 
@@ -941,13 +962,13 @@ bool AddAfterRuleFiresFunction(
 bool AddBeforeRuleFiresFunction(
   Environment *theEnv,
   const char *name,
-  VoidCallFunctionWithArg *functionPtr,
+  RuleFiredFunction *functionPtr,
   int priority,
   void *context)
   {
    EngineData(theEnv)->ListOfBeforeRuleFiresFunctions =
-      AddFunctionToCallListWithArg(theEnv,name,priority,functionPtr,
-                                   EngineData(theEnv)->ListOfBeforeRuleFiresFunctions,context);
+      AddRuleFiredFunctionToCallList(theEnv,name,priority,functionPtr,
+                                     EngineData(theEnv)->ListOfBeforeRuleFiresFunctions,context);
    return true;
   }
 
@@ -962,7 +983,7 @@ bool RemoveAfterRuleFiresFunction(
    bool found;
 
    EngineData(theEnv)->ListOfAfterRuleFiresFunctions =
-      RemoveVoidFunctionFromCallList(theEnv,name,EngineData(theEnv)->ListOfAfterRuleFiresFunctions,&found);
+      RemoveRuleFiredFunctionFromCallList(theEnv,name,EngineData(theEnv)->ListOfAfterRuleFiresFunctions,&found);
 
    return found;
   }
@@ -978,14 +999,124 @@ bool RemoveBeforeRuleFiresFunction(
    bool found;
 
    EngineData(theEnv)->ListOfBeforeRuleFiresFunctions =
-      RemoveFunctionFromCallListWithArg(theEnv,name,EngineData(theEnv)->ListOfBeforeRuleFiresFunctions,&found);
+      RemoveRuleFiredFunctionFromCallList(theEnv,name,EngineData(theEnv)->ListOfBeforeRuleFiresFunctions,&found);
 
    return found;
   }
 
-/*********************************************************/
-/* RunCommand: H/L access routine for the run command.   */
-/*********************************************************/
+/***************************************************/
+/* AddRuleFiredFunctionToCallList: Adds a function */
+/*   to a rule fired function list.                */
+/***************************************************/
+RuleFiredFunctionItem *AddRuleFiredFunctionToCallList(
+  Environment *theEnv,
+  const char *name,
+  int priority,
+  RuleFiredFunction *func,
+  RuleFiredFunctionItem *head,
+  void *context)
+  {
+   RuleFiredFunctionItem *newPtr, *currentPtr, *lastPtr = NULL;
+   char  *nameCopy;
+
+   newPtr = get_struct(theEnv,ruleFiredFunctionItem);
+
+   nameCopy = (char *) genalloc(theEnv,strlen(name) + 1);
+   genstrcpy(nameCopy,name);
+   newPtr->name = nameCopy;
+
+   newPtr->func = func;
+   newPtr->priority = priority;
+   newPtr->context = context;
+
+   if (head == NULL)
+     {
+      newPtr->next = NULL;
+      return newPtr;
+     }
+
+   currentPtr = head;
+   while ((currentPtr != NULL) ? (priority < currentPtr->priority) : false)
+     {
+      lastPtr = currentPtr;
+      currentPtr = currentPtr->next;
+     }
+
+   if (lastPtr == NULL)
+     {
+      newPtr->next = head;
+      head = newPtr;
+     }
+   else
+     {
+      newPtr->next = currentPtr;
+      lastPtr->next = newPtr;
+     }
+
+   return head;
+  }
+
+/***********************************************************/
+/* RemoveRuleFiredFunctionFromCallList: Removes a function */
+/*   from a rule fired function list.                      */
+/***********************************************************/
+RuleFiredFunctionItem *RemoveRuleFiredFunctionFromCallList(
+  Environment *theEnv,
+  const char *name,
+  RuleFiredFunctionItem *head,
+  bool *found)
+  {
+   RuleFiredFunctionItem *currentPtr, *lastPtr;
+
+   *found = false;
+   lastPtr = NULL;
+   currentPtr = head;
+
+   while (currentPtr != NULL)
+     {
+      if (strcmp(name,currentPtr->name) == 0)
+        {
+         *found = true;
+         if (lastPtr == NULL)
+           { head = currentPtr->next; }
+         else
+           { lastPtr->next = currentPtr->next; }
+
+         genfree(theEnv,(void *) currentPtr->name,strlen(currentPtr->name) + 1);
+         rtn_struct(theEnv,voidCallFunctionItem,currentPtr);
+         return head;
+        }
+
+      lastPtr = currentPtr;
+      currentPtr = currentPtr->next;
+     }
+
+   return head;
+  }
+
+/******************************************************/
+/* DeallocateRuleFiredCallList: Removes all functions */
+/*   from a list of rule fired functions.             */
+/******************************************************/
+void DeallocateRuleFiredCallList(
+  Environment *theEnv,
+  RuleFiredFunctionItem *theList)
+  {
+   RuleFiredFunctionItem *tmpPtr, *nextPtr;
+
+   tmpPtr = theList;
+   while (tmpPtr != NULL)
+     {
+      nextPtr = tmpPtr->next;
+      genfree(theEnv,(void *) tmpPtr->name,strlen(tmpPtr->name) + 1);
+      rtn_struct(theEnv,ruleFiredFunctionItem,tmpPtr);
+      tmpPtr = nextPtr;
+     }
+  }
+
+/*******************************************************/
+/* RunCommand: H/L access routine for the run command. */
+/*******************************************************/
 void RunCommand(
   Environment *theEnv,
   UDFContext *context,
@@ -1066,7 +1197,7 @@ bool RemoveBreak(
         }
      }
 
-   return(rv);
+   return rv;
   }
 
 /**************************************************/
@@ -1199,7 +1330,7 @@ void ShowBreaksCommand(
    else
      { theModule = GetCurrentModule(theEnv); }
 
-   ShowBreaks(theEnv,WDISPLAY,theModule);
+   ShowBreaks(theEnv,STDOUT,theModule);
   }
 
 /***********************************************/
@@ -1211,7 +1342,7 @@ void ListFocusStackCommand(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   ListFocusStack(theEnv,WDISPLAY);
+   ListFocusStack(theEnv,STDOUT);
   }
 
 /***************************************/
@@ -1222,7 +1353,7 @@ void ListFocusStack(
   Environment *theEnv,
   const char *logicalName)
   {
-   struct focus *theFocus;
+   FocalModule *theFocus;
 
    for (theFocus = EngineData(theEnv)->CurrentFocus;
         theFocus != NULL;
@@ -1258,7 +1389,7 @@ void GetFocusStack(
   Environment *theEnv,
   CLIPSValue *returnValue)
   {
-   struct focus *theFocus;
+   FocalModule *theFocus;
    Multifield *theList;
    unsigned long count = 0;
 
@@ -1319,40 +1450,6 @@ void PopFocusFunction(
      }
 
    returnValue->value = theModule->header.name;
-  }
-
-/******************************************/
-/* GetFocusFunction: H/L access routine   */
-/*   for the get-focus function.          */
-/******************************************/
-void GetFocusFunction(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
-   Defmodule *rv;
-
-   rv = GetFocus(theEnv);
-
-   if (rv == NULL)
-     {
-      returnValue->lexemeValue = FalseSymbol(theEnv);
-      return;
-     }
-
-   returnValue->value = rv->header.name;
-  }
-
-/*********************************/
-/* GetFocus: C access routine    */
-/*   for the get-focus function. */
-/*********************************/
-Defmodule *GetFocus(
-  Environment *theEnv)
-  {
-   if (EngineData(theEnv)->CurrentFocus == NULL) return NULL;
-
-   return EngineData(theEnv)->CurrentFocus->theModule;
   }
 
 /**************************************/

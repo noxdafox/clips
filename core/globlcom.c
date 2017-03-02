@@ -184,7 +184,7 @@ void ShowDefglobalsCommand(
    else
      { theModule = GetCurrentModule(theEnv); }
 
-   ShowDefglobals(theEnv,WDISPLAY,theModule);
+   ShowDefglobals(theEnv,STDOUT,theModule);
   }
 
 /**************************************/

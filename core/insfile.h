@@ -94,9 +94,9 @@ struct instanceFileData
    long                           BinaryLoadInstances(Environment *,const char *);
 #endif
    long                           LoadInstances(Environment *,const char *);
-   long                           LoadInstancesFromString(Environment *,const char *,size_t);
+   long                           LoadInstancesFromString(Environment *,const char *,long);
    long                           RestoreInstances(Environment *,const char *);
-   long                           RestoreInstancesFromString(Environment *,const char *,size_t);
+   long                           RestoreInstancesFromString(Environment *,const char *,long);
 
 #endif /* _H_insfile */
 

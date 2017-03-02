@@ -135,8 +135,9 @@ struct agendaData
    void                    ActivationPPForm(Activation *,StringBuilder *);
    void                    GetActivationBasisPPForm(Environment *,char *,size_t,Activation *);
    bool                    MoveActivationToTop(Environment *,Activation *);
-   bool                    ActivationDelete(Activation *,Environment *);
+   void                    DeleteActivation(Activation *);
    bool                    DetachActivation(Environment *,Activation *);
+   void                    DeleteAllActivations(Defmodule *);
    void                    Agenda(Environment *,const char *,Defmodule *);
    void                    RemoveActivation(Environment *,Activation *,bool,bool);
    void                    RemoveAllActivations(Environment *);
@@ -145,14 +146,16 @@ struct agendaData
    unsigned long           GetNumberOfActivations(Environment *);
    SalienceEvaluationType  GetSalienceEvaluation(Environment *);
    SalienceEvaluationType  SetSalienceEvaluation(Environment *,SalienceEvaluationType);
-   void                    RefreshAgenda(Defmodule *,Environment *);
-   void                    DefmoduleReorderAgenda(Defmodule *,Environment *);
+   void                    RefreshAgenda(Defmodule *);
+   void                    RefreshAllAgendas(Environment *);
+   void                    ReorderAgenda(Defmodule *);
+   void                    ReorderAllAgendas(Environment *);
    void                    InitializeAgenda(Environment *);
    void                    SetSalienceEvaluationCommand(Environment *,UDFContext *,UDFValue *);
    void                    GetSalienceEvaluationCommand(Environment *,UDFContext *,UDFValue *);
    void                    RefreshAgendaCommand(Environment *,UDFContext *,UDFValue *);
    void                    RefreshCommand(Environment *,UDFContext *,UDFValue *);
-   bool                    Refresh(Defrule *);
+   void                    Refresh(Defrule *);
 #if DEBUGGING_FUNCTIONS
    void                    AgendaCommand(Environment *,UDFContext *,UDFValue *);
 #endif

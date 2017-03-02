@@ -105,6 +105,8 @@ typedef enum
    void                           AlphaJoins(Environment *,Defrule *,long,struct joinInformation *);
    void                           BetaJoins(Environment *,Defrule *,long,struct joinInformation *);
    void                           JoinActivityResetCommand(Environment *,UDFContext *,UDFValue *);
+   void                           GetFocusFunction(Environment *,UDFContext *,UDFValue *);
+   Defmodule                     *GetFocus(Environment *);
 #if DEVELOPER
    void                           ShowJoinsCommand(Environment *,UDFContext *,UDFValue *);
    void                           RuleComplexityCommand(Environment *,UDFContext *,UDFValue *);

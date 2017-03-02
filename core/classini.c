@@ -361,8 +361,6 @@ void ObjectsRunTimeInitialize(
       for (j = 0 ; j < CLASS_TABLE_HASH_SIZE ; j++)
         for (cls = DefclassData(theEnv)->ClassTable[j] ; cls != NULL ; cls = cls->nxtHash)
           {
-           cls->header.env = theEnv;
-           
            for (i = 0 ; i < cls->slotCount ; i++)
              {
               /* =====================================================================
@@ -378,9 +376,6 @@ void ObjectsRunTimeInitialize(
                  cls->slots[i].defaultValue = tmpexp;
                 }
              }
-
-           for (i = 0; i < cls->handlerCount; i++)
-             { cls->handlers[i].header.env = theEnv; }
           }
      }
 
@@ -417,6 +412,11 @@ void ObjectsRunTimeInitialize(
    for (j = 0 ; j < CLASS_TABLE_HASH_SIZE ; j++)
      for (cls = DefclassData(theEnv)->ClassTable[j] ; cls != NULL ; cls = cls->nxtHash)
      {
+      cls->header.env = theEnv;
+         
+      for (i = 0; i < cls->handlerCount; i++)
+        { cls->handlers[i].header.env = theEnv; }
+
       for (i = 0 ; i < cls->slotCount ; i++)
         {
          if ((cls->slots[i].defaultValue != NULL) && (cls->slots[i].dynamicDefault == 0))

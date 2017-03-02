@@ -42,8 +42,8 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
-/*            Added CLIPSBlockStart and CLIPSBlockEnd        */
-/*            functions for garbage collection blocks.       */
+/*            Added GCBlockStart and GCBlockEnd functions    */
+/*            for garbage collection blocks.                 */
 /*                                                           */
 /*            Eval support for run time and bload only.      */
 /*                                                           */
@@ -535,7 +535,7 @@ void DelayedQueryDoForAllFacts(
    QUERY_TEMPLATE *qtemplates;
    unsigned rcnt;
    unsigned i;
-   CLIPSBlock gcBlock;
+   GCBlock gcb;
 
    returnValue->value = FalseSymbol(theEnv);
    qtemplates = DetermineQueryTemplates(theEnv,GetFirstArgument()->nextArg->nextArg,
@@ -555,7 +555,7 @@ void DelayedQueryDoForAllFacts(
    FactQueryData(theEnv)->AbortQuery = false;
    FactQueryData(theEnv)->QueryCore->action = GetFirstArgument()->nextArg;
 
-   CLIPSBlockStart(theEnv,&gcBlock);
+   GCBlockStart(theEnv,&gcb);
 
    while (FactQueryData(theEnv)->QueryCore->soln_set != NULL)
      {
@@ -576,7 +576,7 @@ void DelayedQueryDoForAllFacts(
       CallPeriodicTasks(theEnv);
      }
 
-   CLIPSBlockEnd(theEnv,&gcBlock,returnValue);
+   GCBlockEndUDF(theEnv,&gcb,returnValue);
    CallPeriodicTasks(theEnv);
 
    ProcedureFunctionData(theEnv)->BreakFlag = false;
@@ -924,9 +924,9 @@ static bool TestForFirstFactInTemplate(
   {
    Fact *theFact;
    UDFValue temp;
-   CLIPSBlock gcBlock;
+   GCBlock gcb;
 
-   CLIPSBlockStart(theEnv,&gcBlock);
+   GCBlockStart(theEnv,&gcb);
 
    theFact = templatePtr->factList;
    while (theFact != NULL)
@@ -963,7 +963,7 @@ static bool TestForFirstFactInTemplate(
         theFact = theFact->nextTemplateFact;
      }
 
-   CLIPSBlockEnd(theEnv,&gcBlock,NULL);
+   GCBlockEnd(theEnv,&gcb);
    CallPeriodicTasks(theEnv);
 
    if (theFact != NULL)
@@ -1026,9 +1026,9 @@ static void TestEntireTemplate(
   {
    Fact *theFact;
    UDFValue temp;
-   CLIPSBlock gcBlock;
+   GCBlock gcb;
 
-   CLIPSBlockStart(theEnv,&gcBlock);
+   GCBlockStart(theEnv,&gcb);
 
    theFact = templatePtr->factList;
    while (theFact != NULL)
@@ -1082,7 +1082,7 @@ static void TestEntireTemplate(
       CallPeriodicTasks(theEnv);
      }
 
-   CLIPSBlockEnd(theEnv,&gcBlock,NULL);
+   GCBlockEnd(theEnv,&gcb);
    CallPeriodicTasks(theEnv);
   }
 

@@ -614,8 +614,8 @@ void AproposCommand(
 
    while ((hashPtr = GetNextSymbolMatch(theEnv,argument,theLength,hashPtr,true,NULL)) != NULL)
      {
-      PrintString(theEnv,WDISPLAY,hashPtr->contents);
-      PrintString(theEnv,WDISPLAY,"\n");
+      PrintString(theEnv,STDOUT,hashPtr->contents);
+      PrintString(theEnv,STDOUT,"\n");
      }
   }
 
@@ -639,216 +639,216 @@ void OptionsCommand(
    /* flags for this executable.      */
    /*=================================*/
 
-   PrintString(theEnv,WDISPLAY,"Machine type: ");
+   PrintString(theEnv,STDOUT,"Machine type: ");
 
 #if GENERIC
-   PrintString(theEnv,WDISPLAY,"Generic ");
+   PrintString(theEnv,STDOUT,"Generic ");
 #endif
 #if UNIX_V
-   PrintString(theEnv,WDISPLAY,"UNIX System V or 4.2BSD ");
+   PrintString(theEnv,STDOUT,"UNIX System V or 4.2BSD ");
 #endif
 #if DARWIN
-   PrintString(theEnv,WDISPLAY,"Darwin ");
+   PrintString(theEnv,STDOUT,"Darwin ");
 #endif
 #if LINUX
-   PrintString(theEnv,WDISPLAY,"Linux ");
+   PrintString(theEnv,STDOUT,"Linux ");
 #endif
 #if UNIX_7
-   PrintString(theEnv,WDISPLAY,"UNIX System III Version 7 or Sun Unix ");
+   PrintString(theEnv,STDOUT,"UNIX System III Version 7 or Sun Unix ");
 #endif
 #if MAC_XCD
-   PrintString(theEnv,WDISPLAY,"Apple Macintosh with Xcode");
+   PrintString(theEnv,STDOUT,"Apple Macintosh with Xcode");
 #endif
 #if WIN_MVC
-   PrintString(theEnv,WDISPLAY,"Microsoft Windows with Microsoft Visual C++");
+   PrintString(theEnv,STDOUT,"Microsoft Windows with Microsoft Visual C++");
 #endif
 #if WIN_GCC
-   PrintString(theEnv,WDISPLAY,"Microsoft Windows with DJGPP");
+   PrintString(theEnv,STDOUT,"Microsoft Windows with DJGPP");
 #endif
-PrintString(theEnv,WDISPLAY,"\n");
+PrintString(theEnv,STDOUT,"\n");
 
-PrintString(theEnv,WDISPLAY,"Defrule construct is ");
+PrintString(theEnv,STDOUT,"Defrule construct is ");
 #if DEFRULE_CONSTRUCT
-  PrintString(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,STDOUT,"OFF\n");
 #endif
 
-PrintString(theEnv,WDISPLAY,"Defmodule construct is ");
+PrintString(theEnv,STDOUT,"Defmodule construct is ");
 #if DEFMODULE_CONSTRUCT
-  PrintString(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,STDOUT,"OFF\n");
 #endif
 
-PrintString(theEnv,WDISPLAY,"Deftemplate construct is ");
+PrintString(theEnv,STDOUT,"Deftemplate construct is ");
 #if DEFTEMPLATE_CONSTRUCT
-  PrintString(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,STDOUT,"OFF\n");
 #endif
 
-PrintString(theEnv,WDISPLAY,"  Fact-set queries are ");
+PrintString(theEnv,STDOUT,"  Fact-set queries are ");
 #if FACT_SET_QUERIES
-  PrintString(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,STDOUT,"OFF\n");
 #endif
 
 #if DEFTEMPLATE_CONSTRUCT
 
-PrintString(theEnv,WDISPLAY,"  Deffacts construct is ");
+PrintString(theEnv,STDOUT,"  Deffacts construct is ");
 #if DEFFACTS_CONSTRUCT
-  PrintString(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,STDOUT,"OFF\n");
 #endif
 
 #endif
 
-PrintString(theEnv,WDISPLAY,"Defglobal construct is ");
+PrintString(theEnv,STDOUT,"Defglobal construct is ");
 #if DEFGLOBAL_CONSTRUCT
-  PrintString(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,STDOUT,"OFF\n");
 #endif
 
-PrintString(theEnv,WDISPLAY,"Deffunction construct is ");
+PrintString(theEnv,STDOUT,"Deffunction construct is ");
 #if DEFFUNCTION_CONSTRUCT
-  PrintString(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,STDOUT,"OFF\n");
 #endif
 
-PrintString(theEnv,WDISPLAY,"Defgeneric/Defmethod constructs are ");
+PrintString(theEnv,STDOUT,"Defgeneric/Defmethod constructs are ");
 #if DEFGENERIC_CONSTRUCT
-  PrintString(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,STDOUT,"OFF\n");
 #endif
 
-PrintString(theEnv,WDISPLAY,"Object System is ");
+PrintString(theEnv,STDOUT,"Object System is ");
 #if OBJECT_SYSTEM
-  PrintString(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,STDOUT,"OFF\n");
 #endif
 
 #if OBJECT_SYSTEM
 
-PrintString(theEnv,WDISPLAY,"  Definstances construct is ");
+PrintString(theEnv,STDOUT,"  Definstances construct is ");
 #if DEFINSTANCES_CONSTRUCT
-  PrintString(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,STDOUT,"OFF\n");
 #endif
 
-PrintString(theEnv,WDISPLAY,"  Instance-set queries are ");
+PrintString(theEnv,STDOUT,"  Instance-set queries are ");
 #if INSTANCE_SET_QUERIES
-  PrintString(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,STDOUT,"OFF\n");
 #endif
 
-PrintString(theEnv,WDISPLAY,"  Binary loading of instances is ");
+PrintString(theEnv,STDOUT,"  Binary loading of instances is ");
 #if BLOAD_INSTANCES
-  PrintString(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,STDOUT,"OFF\n");
 #endif
 
-PrintString(theEnv,WDISPLAY,"  Binary saving of instances is ");
+PrintString(theEnv,STDOUT,"  Binary saving of instances is ");
 #if BSAVE_INSTANCES
-  PrintString(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,STDOUT,"OFF\n");
 #endif
 
 #endif
 
-PrintString(theEnv,WDISPLAY,"Extended math function package is ");
+PrintString(theEnv,STDOUT,"Extended math function package is ");
 #if EXTENDED_MATH_FUNCTIONS
-  PrintString(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,STDOUT,"OFF\n");
 #endif
 
-PrintString(theEnv,WDISPLAY,"Text processing function package is ");
+PrintString(theEnv,STDOUT,"Text processing function package is ");
 #if TEXTPRO_FUNCTIONS
-  PrintString(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,STDOUT,"OFF\n");
 #endif
 
-PrintString(theEnv,WDISPLAY,"Bload capability is ");
+PrintString(theEnv,STDOUT,"Bload capability is ");
 #if BLOAD_ONLY
-  PrintString(theEnv,WDISPLAY,"BLOAD ONLY");
+  PrintString(theEnv,STDOUT,"BLOAD ONLY");
 #endif
 #if BLOAD
-  PrintString(theEnv,WDISPLAY,"BLOAD");
+  PrintString(theEnv,STDOUT,"BLOAD");
 #endif
 #if BLOAD_AND_BSAVE
-  PrintString(theEnv,WDISPLAY,"BLOAD AND BSAVE");
+  PrintString(theEnv,STDOUT,"BLOAD AND BSAVE");
 #endif
 #if (! BLOAD_ONLY) && (! BLOAD) && (! BLOAD_AND_BSAVE)
-  PrintString(theEnv,WDISPLAY,"OFF ");
+  PrintString(theEnv,STDOUT,"OFF ");
 #endif
-PrintString(theEnv,WDISPLAY,"\n");
+PrintString(theEnv,STDOUT,"\n");
 
-PrintString(theEnv,WDISPLAY,"Construct compiler is ");
+PrintString(theEnv,STDOUT,"Construct compiler is ");
 #if CONSTRUCT_COMPILER
-  PrintString(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,STDOUT,"OFF\n");
 #endif
 
-PrintString(theEnv,WDISPLAY,"I/O function package is ");
+PrintString(theEnv,STDOUT,"I/O function package is ");
 #if IO_FUNCTIONS
-  PrintString(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,STDOUT,"OFF\n");
 #endif
 
-PrintString(theEnv,WDISPLAY,"String function package is ");
+PrintString(theEnv,STDOUT,"String function package is ");
 #if STRING_FUNCTIONS
-  PrintString(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,STDOUT,"OFF\n");
 #endif
 
-PrintString(theEnv,WDISPLAY,"Multifield function package is ");
+PrintString(theEnv,STDOUT,"Multifield function package is ");
 #if MULTIFIELD_FUNCTIONS
-  PrintString(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,STDOUT,"OFF\n");
 #endif
 
-PrintString(theEnv,WDISPLAY,"Debugging function package is ");
+PrintString(theEnv,STDOUT,"Debugging function package is ");
 #if DEBUGGING_FUNCTIONS
-  PrintString(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,STDOUT,"OFF\n");
 #endif
 
-PrintString(theEnv,WDISPLAY,"Window Interface flag is ");
+PrintString(theEnv,STDOUT,"Window Interface flag is ");
 #if WINDOW_INTERFACE
-   PrintString(theEnv,WDISPLAY,"ON\n");
+   PrintString(theEnv,STDOUT,"ON\n");
 #else
-   PrintString(theEnv,WDISPLAY,"OFF\n");
+   PrintString(theEnv,STDOUT,"OFF\n");
 #endif
 
-PrintString(theEnv,WDISPLAY,"Developer flag is ");
+PrintString(theEnv,STDOUT,"Developer flag is ");
 #if DEVELOPER
-   PrintString(theEnv,WDISPLAY,"ON\n");
+   PrintString(theEnv,STDOUT,"ON\n");
 #else
-   PrintString(theEnv,WDISPLAY,"OFF\n");
+   PrintString(theEnv,STDOUT,"OFF\n");
 #endif
 
-PrintString(theEnv,WDISPLAY,"Run time module is ");
+PrintString(theEnv,STDOUT,"Run time module is ");
 #if RUN_TIME
-  PrintString(theEnv,WDISPLAY,"ON\n");
+  PrintString(theEnv,STDOUT,"ON\n");
 #else
-  PrintString(theEnv,WDISPLAY,"OFF\n");
+  PrintString(theEnv,STDOUT,"OFF\n");
 #endif
   }
 

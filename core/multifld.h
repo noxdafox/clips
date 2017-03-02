@@ -71,7 +71,7 @@ typedef struct multifieldBuilder MultifieldBuilder;
 struct multifieldBuilder
   {
    Environment *mbEnv;
-   CLIPSValue *mbValueArray;
+   CLIPSValue *contents;
    size_t bufferReset;
    size_t length;
    size_t bufferMaximum;
@@ -84,11 +84,12 @@ struct multifieldBuilder
    void                           IncrementCLIPSValueMultifieldReferenceCount(Environment *,Multifield *);
    void                           DecrementCLIPSValueMultifieldReferenceCount(Environment *,Multifield *);
    Multifield                    *StringToMultifield(Environment *,const char *);
-   Multifield                    *CreateMultifield(Environment *,long);
+   Multifield                    *CreateMultifield(Environment *,size_t);
    void                           AddToMultifieldList(Environment *,Multifield *);
    void                           FlushMultifields(Environment *);
    void                           DuplicateMultifield(Environment *,UDFValue *,UDFValue *);
-   void                           PrintMultifield(Environment *,const char *,Multifield *,long,long,bool);
+   void                           PrintMultifield(Environment *,const char *,Multifield *);
+   void                           PrintMultifieldDriver(Environment *,const char *,Multifield *,long,long,bool);
    bool                           MultifieldDOsEqual(UDFValue *,UDFValue *);
    void                           StoreInMultifield(Environment *,UDFValue *,Expression *,bool);
    Multifield                    *CopyMultifield(Environment *,Multifield *);
@@ -104,8 +105,25 @@ struct multifieldBuilder
    MultifieldBuilder             *CreateMultifieldBuilder(Environment *,size_t);
    void                           MBReset(MultifieldBuilder *);
    void                           MBDispose(MultifieldBuilder *);
-   bool                           MBAppend(MultifieldBuilder *theMB,CLIPSValue *);
+   void                           MBAppend(MultifieldBuilder *theMB,CLIPSValue *);
    Multifield                    *MBCreate(MultifieldBuilder *);
+   Multifield                    *EmptyMultifield(Environment *);
+   void                           MBAppendCLIPSInteger(MultifieldBuilder *,CLIPSInteger *);
+   void                           MBAppendInt(MultifieldBuilder *,int);
+   void                           MBAppendLong(MultifieldBuilder *,long);
+   void                           MBAppendLongLong(MultifieldBuilder *,long long);
+   void                           MBAppendCLIPSFloat(MultifieldBuilder *,CLIPSFloat *);
+   void                           MBAppendFloat(MultifieldBuilder *,float);
+   void                           MBAppendDouble(MultifieldBuilder *,double);
+   void                           MBAppendCLIPSLexeme(MultifieldBuilder *,CLIPSLexeme *);
+   void                           MBAppendSymbol(MultifieldBuilder *,const char *);
+   void                           MBAppendString(MultifieldBuilder *,const char *);
+   void                           MBAppendInstanceName(MultifieldBuilder *,const char *);
+   void                           MBAppendCLIPSExternalAddress(MultifieldBuilder *,CLIPSExternalAddress *);
+   void                           MBAppendFact(MultifieldBuilder *,Fact *);
+   void                           MBAppendInstance(MultifieldBuilder *,Instance *);
+   void                           MBAppendMultifield(MultifieldBuilder *,Multifield *);
+   void                           MBAppendUDFValue(MultifieldBuilder *theMB,UDFValue *);
 
 #endif /* _H_multifld */
 

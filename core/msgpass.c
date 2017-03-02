@@ -55,8 +55,8 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
-/*            Added CLIPSBlockStart and CLIPSBlockEnd        */
-/*            functions for garbage collection blocks.       */
+/*            Added GCBlockStart and GCBlockEnd functions    */
+/*            for garbage collection blocks.                 */
 /*                                                           */
 /*************************************************************/
 
@@ -399,7 +399,7 @@ void CallNextHandler(
          MessageHandlerData(theEnv)->NextInCore = MessageHandlerData(theEnv)->NextInCore->nxt;
 #if DEBUGGING_FUNCTIONS
          if (MessageHandlerData(theEnv)->CurrentCore->hnd->trace)
-           WatchHandler(theEnv,WTRACE,MessageHandlerData(theEnv)->CurrentCore,BEGIN_TRACE);
+           WatchHandler(theEnv,STDOUT,MessageHandlerData(theEnv)->CurrentCore,BEGIN_TRACE);
 #endif
          if (CheckHandlerArgCount(theEnv))
            {
@@ -419,7 +419,7 @@ void CallNextHandler(
            }
 #if DEBUGGING_FUNCTIONS
          if (MessageHandlerData(theEnv)->CurrentCore->hnd->trace)
-           WatchHandler(theEnv,WTRACE,MessageHandlerData(theEnv)->CurrentCore,END_TRACE);
+           WatchHandler(theEnv,STDOUT,MessageHandlerData(theEnv)->CurrentCore,END_TRACE);
 #endif
         }
       else
@@ -431,7 +431,7 @@ void CallNextHandler(
       MessageHandlerData(theEnv)->NextInCore = MessageHandlerData(theEnv)->NextInCore->nxt;
 #if DEBUGGING_FUNCTIONS
       if (MessageHandlerData(theEnv)->CurrentCore->hnd->trace)
-        WatchHandler(theEnv,WTRACE,MessageHandlerData(theEnv)->CurrentCore,BEGIN_TRACE);
+        WatchHandler(theEnv,STDOUT,MessageHandlerData(theEnv)->CurrentCore,BEGIN_TRACE);
 #endif
       if (CheckHandlerArgCount(theEnv))
         {
@@ -452,7 +452,7 @@ void CallNextHandler(
 
 #if DEBUGGING_FUNCTIONS
       if (MessageHandlerData(theEnv)->CurrentCore->hnd->trace)
-        WatchHandler(theEnv,WTRACE,MessageHandlerData(theEnv)->CurrentCore,END_TRACE);
+        WatchHandler(theEnv,STDOUT,MessageHandlerData(theEnv)->CurrentCore,END_TRACE);
 #endif
      }
    MessageHandlerData(theEnv)->NextInCore = oldNext;
@@ -994,14 +994,14 @@ static bool PerformMessage(
 #if PROFILING_FUNCTIONS
    struct profileFrameInfo profileFrame;
 #endif
-   CLIPSBlock gcBlock;
+   GCBlock gcb;
 
    returnValue->value = FalseSymbol(theEnv);
    EvaluationData(theEnv)->EvaluationError = false;
    if (EvaluationData(theEnv)->HaltExecution)
      return false;
 
-   CLIPSBlockStart(theEnv,&gcBlock);
+   GCBlockStart(theEnv,&gcb);
 
    oldce = ExecutingConstruct(theEnv);
    SetExecutingConstruct(theEnv,true);
@@ -1019,7 +1019,7 @@ static bool PerformMessage(
       EvaluationData(theEnv)->CurrentEvaluationDepth--;
       MessageHandlerData(theEnv)->CurrentMessageName = oldName;
 
-      CLIPSBlockEnd(theEnv,&gcBlock,returnValue);
+      GCBlockEndUDF(theEnv,&gcb,returnValue);
       CallPeriodicTasks(theEnv);
 
       SetExecutingConstruct(theEnv,oldce);
@@ -1069,7 +1069,7 @@ static bool PerformMessage(
       EvaluationData(theEnv)->CurrentEvaluationDepth--;
       MessageHandlerData(theEnv)->CurrentMessageName = oldName;
 
-      CLIPSBlockEnd(theEnv,&gcBlock,returnValue);
+      GCBlockEndUDF(theEnv,&gcb,returnValue);
       CallPeriodicTasks(theEnv);
 
       SetExecutingConstruct(theEnv,oldce);
@@ -1097,9 +1097,9 @@ static bool PerformMessage(
          MessageHandlerData(theEnv)->NextInCore = MessageHandlerData(theEnv)->TopOfCore->nxt;
 #if DEBUGGING_FUNCTIONS
          if (MessageHandlerData(theEnv)->WatchMessages)
-           WatchMessage(theEnv,WTRACE,BEGIN_TRACE);
+           WatchMessage(theEnv,STDOUT,BEGIN_TRACE);
          if (MessageHandlerData(theEnv)->CurrentCore->hnd->trace)
-           WatchHandler(theEnv,WTRACE,MessageHandlerData(theEnv)->CurrentCore,BEGIN_TRACE);
+           WatchHandler(theEnv,STDOUT,MessageHandlerData(theEnv)->CurrentCore,BEGIN_TRACE);
 #endif
          if (CheckHandlerArgCount(theEnv))
            {
@@ -1123,9 +1123,9 @@ static bool PerformMessage(
 
 #if DEBUGGING_FUNCTIONS
          if (MessageHandlerData(theEnv)->CurrentCore->hnd->trace)
-           WatchHandler(theEnv,WTRACE,MessageHandlerData(theEnv)->CurrentCore,END_TRACE);
+           WatchHandler(theEnv,STDOUT,MessageHandlerData(theEnv)->CurrentCore,END_TRACE);
          if (MessageHandlerData(theEnv)->WatchMessages)
-           WatchMessage(theEnv,WTRACE,END_TRACE);
+           WatchMessage(theEnv,STDOUT,END_TRACE);
 #endif
         }
       else
@@ -1134,12 +1134,12 @@ static bool PerformMessage(
          MessageHandlerData(theEnv)->NextInCore = MessageHandlerData(theEnv)->TopOfCore;
 #if DEBUGGING_FUNCTIONS
          if (MessageHandlerData(theEnv)->WatchMessages)
-           WatchMessage(theEnv,WTRACE,BEGIN_TRACE);
+           WatchMessage(theEnv,STDOUT,BEGIN_TRACE);
 #endif
          CallHandlers(theEnv,returnValue);
 #if DEBUGGING_FUNCTIONS
          if (MessageHandlerData(theEnv)->WatchMessages)
-           WatchMessage(theEnv,WTRACE,END_TRACE);
+           WatchMessage(theEnv,STDOUT,END_TRACE);
 #endif
         }
 
@@ -1165,7 +1165,7 @@ static bool PerformMessage(
    EvaluationData(theEnv)->CurrentEvaluationDepth--;
    MessageHandlerData(theEnv)->CurrentMessageName = oldName;
 
-   CLIPSBlockEnd(theEnv,&gcBlock,returnValue);
+   GCBlockEndUDF(theEnv,&gcb,returnValue);
    CallPeriodicTasks(theEnv);
 
    SetExecutingConstruct(theEnv,oldce);
@@ -1258,7 +1258,7 @@ static void CallHandlers(
       MessageHandlerData(theEnv)->NextInCore = MessageHandlerData(theEnv)->NextInCore->nxt;
 #if DEBUGGING_FUNCTIONS
       if (MessageHandlerData(theEnv)->CurrentCore->hnd->trace)
-        WatchHandler(theEnv,WTRACE,MessageHandlerData(theEnv)->CurrentCore,BEGIN_TRACE);
+        WatchHandler(theEnv,STDOUT,MessageHandlerData(theEnv)->CurrentCore,BEGIN_TRACE);
 #endif
       if (CheckHandlerArgCount(theEnv))
         {
@@ -1281,7 +1281,7 @@ static void CallHandlers(
 
 #if DEBUGGING_FUNCTIONS
       if (MessageHandlerData(theEnv)->CurrentCore->hnd->trace)
-        WatchHandler(theEnv,WTRACE,MessageHandlerData(theEnv)->CurrentCore,END_TRACE);
+        WatchHandler(theEnv,STDOUT,MessageHandlerData(theEnv)->CurrentCore,END_TRACE);
 #endif
       ProcedureFunctionData(theEnv)->ReturnFlag = false;
       if ((MessageHandlerData(theEnv)->NextInCore == NULL) || EvaluationData(theEnv)->HaltExecution)
@@ -1297,7 +1297,7 @@ static void CallHandlers(
       MessageHandlerData(theEnv)->NextInCore = MessageHandlerData(theEnv)->NextInCore->nxt;
 #if DEBUGGING_FUNCTIONS
       if (MessageHandlerData(theEnv)->CurrentCore->hnd->trace)
-        WatchHandler(theEnv,WTRACE,MessageHandlerData(theEnv)->CurrentCore,BEGIN_TRACE);
+        WatchHandler(theEnv,STDOUT,MessageHandlerData(theEnv)->CurrentCore,BEGIN_TRACE);
 #endif
       if (CheckHandlerArgCount(theEnv))
         {
@@ -1321,7 +1321,7 @@ static void CallHandlers(
 
 #if DEBUGGING_FUNCTIONS
       if (MessageHandlerData(theEnv)->CurrentCore->hnd->trace)
-        WatchHandler(theEnv,WTRACE,MessageHandlerData(theEnv)->CurrentCore,END_TRACE);
+        WatchHandler(theEnv,STDOUT,MessageHandlerData(theEnv)->CurrentCore,END_TRACE);
 #endif
       ProcedureFunctionData(theEnv)->ReturnFlag = false;
 
@@ -1348,7 +1348,7 @@ static void CallHandlers(
       MessageHandlerData(theEnv)->NextInCore = MessageHandlerData(theEnv)->NextInCore->nxt;
 #if DEBUGGING_FUNCTIONS
       if (MessageHandlerData(theEnv)->CurrentCore->hnd->trace)
-        WatchHandler(theEnv,WTRACE,MessageHandlerData(theEnv)->CurrentCore,BEGIN_TRACE);
+        WatchHandler(theEnv,STDOUT,MessageHandlerData(theEnv)->CurrentCore,BEGIN_TRACE);
 #endif
       if (CheckHandlerArgCount(theEnv))
         {
@@ -1372,7 +1372,7 @@ static void CallHandlers(
 
 #if DEBUGGING_FUNCTIONS
       if (MessageHandlerData(theEnv)->CurrentCore->hnd->trace)
-        WatchHandler(theEnv,WTRACE,MessageHandlerData(theEnv)->CurrentCore,END_TRACE);
+        WatchHandler(theEnv,STDOUT,MessageHandlerData(theEnv)->CurrentCore,END_TRACE);
 #endif
       ProcedureFunctionData(theEnv)->ReturnFlag = false;
       if ((MessageHandlerData(theEnv)->NextInCore == NULL) || EvaluationData(theEnv)->HaltExecution)

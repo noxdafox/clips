@@ -77,7 +77,7 @@ struct chunkInfo
    struct chunkInfo *prevChunk;
    struct chunkInfo *nextFree;
    struct chunkInfo *lastFree;
-   long int size;
+   long size;
   };
 
 struct blockInfo
@@ -85,7 +85,7 @@ struct blockInfo
    struct blockInfo *nextBlock;
    struct blockInfo *prevBlock;
    struct chunkInfo *nextFree;
-   long int size;
+   long size;
   };
 
 struct memoryPtr
@@ -175,8 +175,8 @@ struct memoryPtr
 
 struct memoryData
   {
-   long int MemoryAmount;
-   long int MemoryCalls;
+   long MemoryAmount;
+   long MemoryCalls;
    bool ConserveMemory;
    OutOfMemoryFunction *OutOfMemoryCallback;
    struct memoryPtr *TempMemoryPtr;
@@ -194,8 +194,8 @@ struct memoryData
    void                          *genrealloc(Environment *,void *,size_t,size_t);
    long                           MemUsed(Environment *);
    long                           MemRequests(Environment *);
-   long                           UpdateMemoryUsed(Environment *,long int);
-   long                           UpdateMemoryRequests(Environment *,long int);
+   long                           UpdateMemoryUsed(Environment *,long);
+   long                           UpdateMemoryRequests(Environment *,long);
    long                           ReleaseMem(Environment *,long);
    void                          *gm1(Environment *,size_t);
    void                          *gm2(Environment *,size_t);

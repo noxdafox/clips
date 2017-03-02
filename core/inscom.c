@@ -143,7 +143,7 @@ void SetupInstances(
                                                      INSTANCE_ADDRESS_TYPE,0,0,0,
                                                      (EntityPrintFunction *) PrintInstanceName,
                                                      (EntityPrintFunction *) PrintInstanceLongForm,
-                                                     (bool (*)(void *,Environment *)) UnmakeInstance,
+                                                     (bool (*)(void *,Environment *)) UnmakeInstanceCallback,
                                                      NULL,
                                                      (void *(*)(void *,void *)) GetNextInstance,
                                                      (EntityBusyCountFunction *) DecrementInstanceCallback,
@@ -317,20 +317,34 @@ static void DeallocateInstanceData(
   DESCRIPTION  : DIRECTLY removes a named instance from the
                    hash table and its class's
                    instance list
-  INPUTS       : The instance address (NULL to delete all instances)
-  RETURNS      : 1 if successful, 0 otherwise
+  INPUTS       : The instance address
+  RETURNS      : True if successful, false otherwise
   SIDE EFFECTS : Instance is deallocated
   NOTES        : C interface for deleting instances
  *******************************************************************/
 bool DeleteInstance(
-  Instance *theInstance,
+  Instance *theInstance)
+  {
+   if (theInstance != NULL)
+     { return QuashInstance(theInstance->cls->header.env,theInstance); }
+     
+   return false;
+  }
+
+/*******************************************************************
+  NAME         : DeleteAllInstances
+  DESCRIPTION  : DIRECTLY removes all instances from the
+                 hash table and its class's instance list
+  INPUTS       : The environment
+  RETURNS      : True if successful, false otherwise
+  SIDE EFFECTS : Instance is deallocated
+  NOTES        : C interface for deleting instances
+ *******************************************************************/
+bool DeleteAllInstances(
   Environment *theEnv)
   {
    Instance *ins, *itmp;
    bool success = true;
-
-   if (theInstance != NULL)
-     { return QuashInstance(theEnv,theInstance); }
 
    ins = InstanceData(theEnv)->InstanceList;
    while (ins != NULL)
@@ -351,6 +365,59 @@ bool DeleteInstance(
    return success;
   }
 
+/**************************/
+/* UnmakeInstanceCallback */
+/**************************/
+bool UnmakeInstanceCallback(
+  Instance *theInstance,
+  Environment *theEnv)
+  {
+   return UnmakeInstance(theInstance);
+  }
+
+/*******************************************************************
+  NAME         : UnmakeAllInstances
+  DESCRIPTION  : Removes all instances from the environment
+  INPUTS       : The environment
+  RETURNS      : 1 if successful, 0 otherwise
+  SIDE EFFECTS : Instance is deallocated
+  NOTES        : C interface for deleting instances
+ *******************************************************************/
+bool UnmakeAllInstances(
+  Environment *theEnv)
+  {
+   bool success = true, svmaintain;
+   Instance *theInstance;
+   
+   svmaintain = InstanceData(theEnv)->MaintainGarbageInstances;
+   InstanceData(theEnv)->MaintainGarbageInstances = true;
+
+   theInstance = InstanceData(theEnv)->InstanceList;
+   while (theInstance != NULL)
+     {
+      DirectMessage(theEnv,MessageHandlerData(theEnv)->DELETE_SYMBOL,theInstance,NULL,NULL);
+
+      if (theInstance->garbage == 0)
+        { success = false; }
+
+      theInstance = theInstance->nxtList;
+      while ((theInstance != NULL) ? theInstance->garbage : false)
+        theInstance = theInstance->nxtList;
+     }
+
+   InstanceData(theEnv)->MaintainGarbageInstances = svmaintain;
+   CleanupInstances(theEnv,NULL);
+
+   if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
+       (EvaluationData(theEnv)->CurrentExpression == NULL) && (UtilityData(theEnv)->GarbageCollectionLocks == 0))
+     {
+      CleanCurrentGarbageFrame(theEnv,NULL);
+      CallPeriodicTasks(theEnv);
+     }
+
+   return success;
+  }
+
 /*******************************************************************
   NAME         : UnmakeInstance
   DESCRIPTION  : Removes a named instance via message-passing
@@ -360,39 +427,21 @@ bool DeleteInstance(
   NOTES        : C interface for deleting instances
  *******************************************************************/
 bool UnmakeInstance(
-  Instance *theInstance,
-  Environment *theEnv)
+  Instance *theInstance)
   {
    bool success = true, svmaintain;
-
+   Environment *theEnv = theInstance->cls->header.env;
+  
    svmaintain = InstanceData(theEnv)->MaintainGarbageInstances;
    InstanceData(theEnv)->MaintainGarbageInstances = true;
 
-   if (theInstance != NULL)
-     {
-      if (theInstance->garbage)
-        { success = false; }
-      else
-        {
-         DirectMessage(theEnv,MessageHandlerData(theEnv)->DELETE_SYMBOL,theInstance,NULL,NULL);
-         if (theInstance->garbage == 0)
-           { success = false; }
-        }
-     }
+   if (theInstance->garbage)
+     { success = false; }
    else
      {
-      theInstance = InstanceData(theEnv)->InstanceList;
-      while (theInstance != NULL)
-        {
-         DirectMessage(theEnv,MessageHandlerData(theEnv)->DELETE_SYMBOL,theInstance,NULL,NULL);
-
-         if (theInstance->garbage == 0)
-           { success = false; }
-
-         theInstance = theInstance->nxtList;
-         while ((theInstance != NULL) ? theInstance->garbage : false)
-           theInstance = theInstance->nxtList;
-        }
+      DirectMessage(theEnv,MessageHandlerData(theEnv)->DELETE_SYMBOL,theInstance,NULL,NULL);
+      if (theInstance->garbage == 0)
+        { success = false; }
      }
 
    InstanceData(theEnv)->MaintainGarbageInstances = svmaintain;
@@ -471,7 +520,7 @@ void InstancesCommand(
            }
         }
      }
-   Instances(theEnv,WDISPLAY,theDefmodule,className,inheritFlag);
+   Instances(theEnv,STDOUT,theDefmodule,className,inheritFlag);
   }
 
 /********************************************************
@@ -495,8 +544,8 @@ void PPInstanceCommand(
    ins = GetActiveInstance(theEnv);
    if (ins->garbage == 1)
      return;
-   PrintInstance(theEnv,WDISPLAY,ins,"\n");
-   PrintString(theEnv,WDISPLAY,"\n");
+   PrintInstance(theEnv,STDOUT,ins,"\n");
+   PrintString(theEnv,STDOUT,"\n");
   }
 
 /***************************************************************
@@ -705,7 +754,7 @@ bool ValidInstanceAddress(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-void DirectGetSlot(
+bool DirectGetSlot(
   Instance *theInstance,
   const char *sname,
   CLIPSValue *returnValue)
@@ -718,14 +767,14 @@ void DirectGetSlot(
      {
       SetEvaluationError(theEnv,true);
       returnValue->value = FalseSymbol(theEnv);
-      return;
+      return false;
      }
    sp = FindISlotByName(theEnv,theInstance,sname);
    if (sp == NULL)
      {
       SetEvaluationError(theEnv,true);
       returnValue->value = FalseSymbol(theEnv);
-      return;
+      return false;
      }
 
    returnValue->value = sp->value;
@@ -737,6 +786,8 @@ void DirectGetSlot(
       CleanCurrentGarbageFrame(theEnv,&temp);
       CallPeriodicTasks(theEnv);
      }
+     
+   return true;
   }
 
 /*********************************************************
@@ -1159,14 +1210,20 @@ void UnmakeInstanceCommand(
          returnValue->lexemeValue = FalseSymbol(theEnv);
          return;
         }
-      if (UnmakeInstance(ins,theEnv) == false)
-        rtn = false;
-
-      if (ins == NULL)
+        
+      if (ins != NULL)
         {
-         returnValue->lexemeValue = CreateBoolean(theEnv,rtn);
-         return;
+         if (UnmakeInstance(ins) == false)
+           rtn = false;
         }
+       else
+         {
+          if (UnmakeAllInstances(theEnv) == false)
+            rtn = false;
+          returnValue->lexemeValue = CreateBoolean(theEnv,rtn);
+          return;
+         }
+
       argNumber++;
      }
 
@@ -1624,8 +1681,8 @@ static void PrintInstance(
       else if (sp->multifieldValue->length != 0)
         {
          PrintString(theEnv,logicalName," ");
-         PrintMultifield(theEnv,logicalName,sp->multifieldValue,0,
-                         sp->multifieldValue->length - 1,false);
+         PrintMultifieldDriver(theEnv,logicalName,sp->multifieldValue,0,
+                               sp->multifieldValue->length - 1,false);
         }
       PrintString(theEnv,logicalName,")");
      }

@@ -151,7 +151,7 @@ void BrowseClassesCommand(
          return;
         }
      }
-   BrowseClasses(cls,WDISPLAY);
+   BrowseClasses(cls,STDOUT);
   }
 
 /****************************************************************
@@ -200,7 +200,7 @@ void DescribeClassCommand(
    if (theDefclass == NULL)
      { return; }
 
-   DescribeClass(theDefclass,WDISPLAY);
+   DescribeClass(theDefclass,STDOUT);
   }
 
 /******************************************************

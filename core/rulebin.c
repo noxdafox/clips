@@ -337,28 +337,28 @@ static void BsaveStorage(
   FILE *fp)
   {
    size_t space;
-   long int value;
+   long value;
 
    space = sizeof(long) * 5;
    GenWrite(&space,sizeof(size_t),fp);
-   GenWrite(&DefruleBinaryData(theEnv)->NumberOfDefruleModules,sizeof(long int),fp);
-   GenWrite(&DefruleBinaryData(theEnv)->NumberOfDefrules,sizeof(long int),fp);
-   GenWrite(&DefruleBinaryData(theEnv)->NumberOfJoins,sizeof(long int),fp);
-   GenWrite(&DefruleBinaryData(theEnv)->NumberOfLinks,sizeof(long int),fp);
+   GenWrite(&DefruleBinaryData(theEnv)->NumberOfDefruleModules,sizeof(long),fp);
+   GenWrite(&DefruleBinaryData(theEnv)->NumberOfDefrules,sizeof(long),fp);
+   GenWrite(&DefruleBinaryData(theEnv)->NumberOfJoins,sizeof(long),fp);
+   GenWrite(&DefruleBinaryData(theEnv)->NumberOfLinks,sizeof(long),fp);
 
    if (DefruleData(theEnv)->RightPrimeJoins == NULL)
      { value = -1; }
    else
      { value = DefruleData(theEnv)->RightPrimeJoins->bsaveID; }
 
-   GenWrite(&value,sizeof(long int),fp);
+   GenWrite(&value,sizeof(long),fp);
 
    if (DefruleData(theEnv)->LeftPrimeJoins == NULL)
      { value = -1; }
    else
      { value = DefruleData(theEnv)->LeftPrimeJoins->bsaveID; }
 
-   GenWrite(&value,sizeof(long int),fp);
+   GenWrite(&value,sizeof(long),fp);
   }
 
 /*******************************************/
@@ -457,7 +457,7 @@ static void BsaveDisjuncts(
   {
    Defrule *theDisjunct;
    struct bsaveDefrule tempDefrule;
-   long int disjunctExpressionCount = 0L;
+   long disjunctExpressionCount = 0L;
    bool first;
 
    /*=========================================*/
@@ -781,12 +781,12 @@ static void BloadStorage(
    /*=================================================*/
 
    GenReadBinary(theEnv,&space,sizeof(size_t));
-   GenReadBinary(theEnv,&DefruleBinaryData(theEnv)->NumberOfDefruleModules,sizeof(long int));
-   GenReadBinary(theEnv,&DefruleBinaryData(theEnv)->NumberOfDefrules,sizeof(long int));
-   GenReadBinary(theEnv,&DefruleBinaryData(theEnv)->NumberOfJoins,sizeof(long int));
-   GenReadBinary(theEnv,&DefruleBinaryData(theEnv)->NumberOfLinks,sizeof(long int));
-   GenReadBinary(theEnv,&DefruleBinaryData(theEnv)->RightPrimeIndex,sizeof(long int));
-   GenReadBinary(theEnv,&DefruleBinaryData(theEnv)->LeftPrimeIndex,sizeof(long int));
+   GenReadBinary(theEnv,&DefruleBinaryData(theEnv)->NumberOfDefruleModules,sizeof(long));
+   GenReadBinary(theEnv,&DefruleBinaryData(theEnv)->NumberOfDefrules,sizeof(long));
+   GenReadBinary(theEnv,&DefruleBinaryData(theEnv)->NumberOfJoins,sizeof(long));
+   GenReadBinary(theEnv,&DefruleBinaryData(theEnv)->NumberOfLinks,sizeof(long));
+   GenReadBinary(theEnv,&DefruleBinaryData(theEnv)->RightPrimeIndex,sizeof(long));
+   GenReadBinary(theEnv,&DefruleBinaryData(theEnv)->LeftPrimeIndex,sizeof(long));
 
    /*===================================*/
    /* Allocate the space needed for the */

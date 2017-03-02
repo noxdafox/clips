@@ -222,14 +222,14 @@ bool ParseDefmessageHandler(
    hnd = FindHandlerByAddress(cls,mname,mtype);
    if (GetPrintWhileLoading(theEnv) && GetCompilationsWatch(theEnv))
      {
-      PrintString(theEnv,WDIALOG,"   Handler ");
-      PrintString(theEnv,WDIALOG,mname->contents);
-      PrintString(theEnv,WDIALOG," ");
-      PrintString(theEnv,WDIALOG,MessageHandlerData(theEnv)->hndquals[mtype]);
+      PrintString(theEnv,STDOUT,"   Handler ");
+      PrintString(theEnv,STDOUT,mname->contents);
+      PrintString(theEnv,STDOUT," ");
+      PrintString(theEnv,STDOUT,MessageHandlerData(theEnv)->hndquals[mtype]);
       if (hnd == NULL)
-        PrintString(theEnv,WDIALOG," defined.\n");
+        PrintString(theEnv,STDOUT," defined.\n");
       else
-        PrintString(theEnv,WDIALOG," redefined.\n");
+        PrintString(theEnv,STDOUT," redefined.\n");
      }
 
    if ((hnd != NULL) ? hnd->system : false)

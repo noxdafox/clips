@@ -86,7 +86,7 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    SlotInfoSupportFunction(UDFContext *,UDFValue *,const char *,void (*)(Defclass *,const char *,CLIPSValue *));
+   static void                    SlotInfoSupportFunction(UDFContext *,UDFValue *,const char *,bool (*)(Defclass *,const char *,CLIPSValue *));
    static unsigned                CountSubclasses(Defclass *,bool,int);
    static unsigned                StoreSubclasses(Multifield *,unsigned,Defclass *,int,int,bool);
    static SlotDescriptor         *SlotInfoSlot(Environment *,UDFValue *,Defclass *,const char *,const char *);
@@ -693,7 +693,7 @@ void ClassSubclassAddresses(
 /**************/
 /* SlotFacets */
 /**************/
-void SlotFacets(
+bool SlotFacets(
   Defclass *theDefclass,
   const char *sname,
   CLIPSValue *returnValue)
@@ -706,7 +706,7 @@ void SlotFacets(
      {
       NormalizeMultifield(theEnv,&result);
       returnValue->value = result.value;
-      return;
+      return false;
      }
 
 #if DEFRULE_CONSTRUCT
@@ -779,12 +779,14 @@ void SlotFacets(
    returnValue->multifieldValue->contents[7].lexemeValue = CreateSymbol(theEnv,GetCreateAccessorString(sp));
    returnValue->multifieldValue->contents[8].lexemeValue = (sp->noWrite ? CreateSymbol(theEnv,"NIL") : sp->overrideMessage);
 #endif
+
+   return true;
   }
 
 /***************/
 /* SlotSources */
 /***************/
-void SlotSources(
+bool SlotSources(
   Defclass *theDefclass,
   const char *sname,
   CLIPSValue *returnValue)
@@ -801,7 +803,7 @@ void SlotSources(
      {
       NormalizeMultifield(theEnv,&result);
       returnValue->value = result.value;
-      return;
+      return false;
      }
    i = 1;
    ctop = get_struct(theEnv,classLink);
@@ -832,12 +834,14 @@ void SlotSources(
       returnValue->multifieldValue->contents[i].value = GetDefclassNamePointer(ctmp->cls);
      }
    DeleteClassLinks(theEnv,ctop);
+   
+   return true;
   }
 
 /*************/
 /* SlotTypes */
 /*************/
-void SlotTypes(
+bool SlotTypes(
   Defclass *theDefclass,
   const char *sname,
   CLIPSValue *returnValue)
@@ -853,7 +857,7 @@ void SlotTypes(
      {
       NormalizeMultifield(theEnv,&result);
       returnValue->value = result.value;
-      return;
+      return false;
      }
      
    if ((sp->constraint != NULL) ? sp->constraint->anyAllowed : true)
@@ -921,12 +925,14 @@ void SlotTypes(
        }
       j++;
      }
+     
+   return true;
   }
 
 /*********************/
 /* SlotAllowedValues */
 /*********************/
-void SlotAllowedValues(
+bool SlotAllowedValues(
   Defclass *theDefclass,
   const char *sname,
   CLIPSValue *returnValue)
@@ -941,13 +947,13 @@ void SlotAllowedValues(
      {
       NormalizeMultifield(theEnv,&result);
       returnValue->value = result.value;
-      return;
+      return false;
      }
 
    if ((sp->constraint != NULL) ? (sp->constraint->restrictionList == NULL) : true)
      {
       returnValue->value = FalseSymbol(theEnv);
-      return;
+      return true;
      }
 
    returnValue->value = CreateMultifield(theEnv,(unsigned long) ExpressionSize(sp->constraint->restrictionList));
@@ -959,12 +965,14 @@ void SlotAllowedValues(
       theExp = theExp->nextArg;
       i++;
      }
+     
+   return true;
   }
 
 /**********************/
 /* SlotAllowedClasses */
 /**********************/
-void SlotAllowedClasses(
+bool SlotAllowedClasses(
   Defclass *theDefclass,
   const char *sname,
   CLIPSValue *returnValue)
@@ -979,12 +987,12 @@ void SlotAllowedClasses(
      {
       NormalizeMultifield(theEnv,&result);
       returnValue->value = result.value;
-      return;
+      return false;
      }
    if ((sp->constraint != NULL) ? (sp->constraint->classList == NULL) : true)
      {
       returnValue->value = FalseSymbol(theEnv);
-      return;
+      return true;
      }
    returnValue->value = CreateMultifield(theEnv,(unsigned long) ExpressionSize(sp->constraint->classList));
    i = 0;
@@ -995,12 +1003,14 @@ void SlotAllowedClasses(
       theExp = theExp->nextArg;
       i++;
      }
+     
+   return true;
   }
 
 /*************/
 /* SlotRange */
 /*************/
-void SlotRange(
+bool SlotRange(
   Defclass *theDefclass,
   const char *sname,
   CLIPSValue *returnValue)
@@ -1013,7 +1023,7 @@ void SlotRange(
      {
       NormalizeMultifield(theEnv,&result);
       returnValue->value = result.value;
-      return;
+      return false;
      }
    if ((sp->constraint == NULL) ? false :
        (sp->constraint->anyAllowed || sp->constraint->floatsAllowed ||
@@ -1026,14 +1036,14 @@ void SlotRange(
    else
      {
       returnValue->value = FalseSymbol(theEnv);
-      return;
      }
+   return true;
   }
 
 /*******************/
 /* SlotCardinality */
 /*******************/
-void SlotCardinality(
+bool SlotCardinality(
   Defclass *theDefclass,
   const char *sname,
   CLIPSValue *returnValue)
@@ -1046,13 +1056,13 @@ void SlotCardinality(
      {
       NormalizeMultifield(theEnv,&result);
       returnValue->value = result.value;
-      return;
+      return false;
      }
      
    if (sp->multiple == 0)
      {
       returnValue->multifieldValue = CreateMultifield(theEnv,0L);
-      return;
+      return true;
      }
 
    returnValue->value = CreateMultifield(theEnv,2L);
@@ -1066,6 +1076,8 @@ void SlotCardinality(
       returnValue->multifieldValue->contents[0].value = SymbolData(theEnv)->Zero;
       returnValue->multifieldValue->contents[1].value = SymbolData(theEnv)->PositiveInfinity;
      }
+     
+   return true;
   }
 
 /* =========================================
@@ -1090,7 +1102,7 @@ static void SlotInfoSupportFunction(
   UDFContext *context,
   UDFValue *returnValue,
   const char *fnxname,
-  void (*fnx)(Defclass *,const char *,CLIPSValue *))
+  bool (*fnx)(Defclass *,const char *,CLIPSValue *))
   {
    CLIPSLexeme *ssym;
    Defclass *cls;

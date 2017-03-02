@@ -471,9 +471,9 @@ void PrintFact(
    if (theMultifield->length != 0)
      {
       PrintString(theEnv,logicalName," ");
-      PrintMultifield(theEnv,logicalName,theMultifield,0,
-                      (long) (theMultifield->length - 1),
-                      false);
+      PrintMultifieldDriver(theEnv,logicalName,theMultifield,0,
+                            (long) (theMultifield->length - 1),
+                            false);
      }
 
    PrintString(theEnv,logicalName,")");
@@ -521,7 +521,7 @@ bool RetractDriver(
 
    if (theFact == NULL)
      {
-      RemoveAllFacts(theEnv);
+      RetractAllFacts(theEnv);
       return true;
      }
 
@@ -549,11 +549,13 @@ bool RetractDriver(
    /*============================*/
 
 #if DEBUGGING_FUNCTIONS
-   if (theFact->whichDeftemplate->watch)
+   if (theFact->whichDeftemplate->watch &&
+       (! ConstructData(theEnv)->ClearReadyInProgress) &&
+       (! ConstructData(theEnv)->ClearInProgress))
      {
-      PrintString(theEnv,WTRACE,"<== ");
-      PrintFactWithIdentifier(theEnv,WTRACE,theFact,changeMap);
-      PrintString(theEnv,WTRACE,"\n");
+      PrintString(theEnv,STDOUT,"<== ");
+      PrintFactWithIdentifier(theEnv,STDOUT,theFact,changeMap);
+      PrintString(theEnv,STDOUT,"\n");
      }
 #endif
 
@@ -922,11 +924,13 @@ Fact *AssertDriver(
    /*==========================*/
 
 #if DEBUGGING_FUNCTIONS
-   if (theFact->whichDeftemplate->watch)
+   if (theFact->whichDeftemplate->watch &&
+       (! ConstructData(theEnv)->ClearReadyInProgress) &&
+       (! ConstructData(theEnv)->ClearInProgress))
      {
-      PrintString(theEnv,WTRACE,"==> ");
-      PrintFactWithIdentifier(theEnv,WTRACE,theFact,changeMap);
-      PrintString(theEnv,WTRACE,"\n");
+      PrintString(theEnv,STDOUT,"==> ");
+      PrintFactWithIdentifier(theEnv,STDOUT,theFact,changeMap);
+      PrintString(theEnv,STDOUT,"\n");
      }
 #endif
 
@@ -1003,14 +1007,21 @@ Fact *Assert(
   }
 
 /**************************************/
-/* RemoveAllFacts: Loops through the  */
+/* RetractAllFacts: Loops through the */
 /*   fact-list and removes each fact. */
 /**************************************/
-void RemoveAllFacts(
+bool RetractAllFacts(
   Environment *theEnv)
   {
+   bool rv = true;
+   
    while (FactData(theEnv)->FactList != NULL)
-     { Retract(FactData(theEnv)->FactList); }
+     {
+      if (! Retract(FactData(theEnv)->FactList))
+        { rv = false; }
+     }
+     
+   return rv;
   }
 
 /*********************************************/
@@ -1420,7 +1431,7 @@ void ReturnFact(
   Fact *theFact)
   {
    Multifield *theSegment, *subSegment;
-   long newSize, i;
+   size_t newSize, i;
 
    theSegment = &theFact->theProposition;
 
@@ -1699,7 +1710,7 @@ static void ResetFacts(
    /* Remove all facts from the fact list. */
    /*======================================*/
 
-   RemoveAllFacts(theEnv);
+   RetractAllFacts(theEnv);
   }
 
 /************************************************************/
@@ -1728,7 +1739,7 @@ static bool ClearFactsReady(
    /* Remove all facts from the fact list. */
    /*======================================*/
 
-   RemoveAllFacts(theEnv);
+   RetractAllFacts(theEnv);
 
    /*==============================================*/
    /* If for some reason there are any facts still */

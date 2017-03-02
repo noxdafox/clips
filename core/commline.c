@@ -634,7 +634,7 @@ void CommandLoop(
   {
    int inchar;
 
-   PrintString(theEnv,WPROMPT,CommandLineData(theEnv)->BannerString);
+   PrintString(theEnv,STDOUT,CommandLineData(theEnv)->BannerString);
    SetHaltExecution(theEnv,false);
    SetEvaluationError(theEnv,false);
 
@@ -677,7 +677,7 @@ void CommandLoop(
 #if ! WINDOW_INTERFACE
          fflush(stdin);
 #endif
-         PrintString(theEnv,WPROMPT,"\n");
+         PrintString(theEnv,STDOUT,"\n");
          PrintPrompt(theEnv);
         }
 
@@ -772,7 +772,7 @@ void CommandLoopBatchDriver(
 #if ! WINDOW_INTERFACE
          fflush(stdin);
 #endif
-         PrintString(theEnv,WPROMPT,"\n");
+         PrintString(theEnv,STDOUT,"\n");
          PrintPrompt(theEnv);
         }
 
@@ -844,7 +844,7 @@ bool CommandCompleteAndNotEmpty(
 void PrintPrompt(
    Environment *theEnv)
    {
-    PrintString(theEnv,WPROMPT,COMMAND_PROMPT);
+    PrintString(theEnv,STDOUT,COMMAND_PROMPT);
 
     if (CommandLineData(theEnv)->AfterPromptCallback != NULL)
       { (*CommandLineData(theEnv)->AfterPromptCallback)(theEnv); }
@@ -856,7 +856,7 @@ void PrintPrompt(
 void PrintBanner(
    Environment *theEnv)
    {
-    PrintString(theEnv,WPROMPT,CommandLineData(theEnv)->BannerString);
+    PrintString(theEnv,STDOUT,CommandLineData(theEnv)->BannerString);
    }
 
 /************************************************/

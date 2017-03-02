@@ -91,7 +91,7 @@ struct restriction
 struct defmethod
   {
    ConstructHeader header;
-   short index;
+   unsigned index;
    unsigned busy;
    short restrictionCount;
    short minRestrictions;
@@ -162,7 +162,7 @@ struct defgenericData
    bool                           SubsumeType(int,int);
 #endif
 
-   long                           FindMethodByIndex(Defgeneric *,long);
+   long                           FindMethodByIndex(Defgeneric *,unsigned);
 #if DEBUGGING_FUNCTIONS || PROFILING_FUNCTIONS
    void                           PrintMethod(Environment *,Defmethod *,StringBuilder *);
 #endif
@@ -170,7 +170,7 @@ struct defgenericData
    void                           PreviewGeneric(Environment *,UDFContext *,UDFValue *);
 #endif
    Defgeneric                    *CheckGenericExists(Environment *,const char *,const char *);
-   long                           CheckMethodExists(Environment *,const char *,Defgeneric *,long);
+   long                           CheckMethodExists(Environment *,const char *,Defgeneric *,unsigned);
 
 #if ! OBJECT_SYSTEM
    const char                    *TypeName(Environment *,int);
