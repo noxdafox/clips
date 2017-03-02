@@ -140,6 +140,7 @@ struct FunctionHash
    bool                           UDFFirstArgument(UDFContext *,unsigned,UDFValue *);
    bool                           UDFNextArgument(UDFContext *,unsigned,UDFValue *);
    void                           UDFThrowError(UDFContext *);
+   void                          *GetUDFContext(Environment *,const char *);
 
 #define UDFHasNextArgument(context) (context->lastArg != NULL)
 

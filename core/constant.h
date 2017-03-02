@@ -92,11 +92,11 @@ typedef enum
 #endif
 
 #ifndef CREATION_DATE_STRING
-#define CREATION_DATE_STRING "02/03/17"
+#define CREATION_DATE_STRING "03/01/17"
 #endif
 
 #ifndef BANNER_STRING
-#define BANNER_STRING "         CLIPS (Cypher Alpha 02/03/17)\n"
+#define BANNER_STRING "         CLIPS (Cypher Alpha 03/01/17)\n"
 #endif
 
 /*************************/

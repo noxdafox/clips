@@ -23,7 +23,7 @@ void JNIUserFunction(
 
    env = (JNIEnv *) GetEnvironmentContext(theEnv);
    
-   context = GetEnvironmentFunctionContext(theEnv);
+   context = theUDFContext->context;
 
    argCount = UDFArgumentCount(theUDFContext);
    arguments = (*env)->NewObject(env,

@@ -595,6 +595,34 @@ struct functionDefinition *FindFunction(
    return NULL;
   }
 
+/********************************************************/
+/* GetUDFContext: Returns the context associated a UDF. */
+/********************************************************/
+void *GetUDFContext(
+  Environment *theEnv,
+  const char *functionName)
+  {
+   struct FunctionHash *fhPtr;
+   unsigned hashValue;
+   CLIPSLexeme *findValue;
+
+   if (ExternalFunctionData(theEnv)->FunctionHashtable == NULL) return NULL;
+
+   hashValue = HashSymbol(functionName,SIZE_FUNCTION_HASH);
+
+   findValue = FindSymbolHN(theEnv,functionName,SYMBOL_BIT);
+
+   for (fhPtr = ExternalFunctionData(theEnv)->FunctionHashtable[hashValue];
+        fhPtr != NULL;
+        fhPtr = fhPtr->next)
+     {
+      if (fhPtr->fdPtr->callFunctionName == findValue)
+        { return fhPtr->fdPtr->context; }
+     }
+
+   return NULL;
+  }
+
 /*********************************************************/
 /* InitializeFunctionHashTable: Purpose is to initialize */
 /*   the function hash table to NULL.                    */

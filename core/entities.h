@@ -211,6 +211,7 @@ struct udfValue
 struct udfContext
   {
    Environment *environment;
+   void *context;
    FunctionDefinition *theFunction;
    int lastPosition;
    Expression *lastArg;

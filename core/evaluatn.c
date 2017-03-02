@@ -150,7 +150,6 @@ bool EvaluateExpression(
   UDFValue *returnValue)
   {
    struct expr *oldArgument;
-   void *oldContext;
    struct functionDefinition *fptr;
    UDFContext theUDFContext;
 #if PROFILING_FUNCTIONS
@@ -185,7 +184,6 @@ bool EvaluateExpression(
       case FCALL:
         {
          fptr = problem->functionValue;
-         oldContext = SetEnvironmentFunctionContext(theEnv,fptr->context);
 
 #if PROFILING_FUNCTIONS
          StartProfile(theEnv,&profileFrame,
@@ -197,6 +195,7 @@ bool EvaluateExpression(
          EvaluationData(theEnv)->CurrentExpression = problem;
 
          theUDFContext.environment = theEnv;
+         theUDFContext.context = fptr->context;
          theUDFContext.theFunction = fptr;
          theUDFContext.lastArg = problem->argList;
          theUDFContext.lastPosition = 1;
@@ -210,7 +209,6 @@ bool EvaluateExpression(
         EndProfile(theEnv,&profileFrame);
 #endif
 
-        SetEnvironmentFunctionContext(theEnv,oldContext);
         EvaluationData(theEnv)->CurrentExpression = oldArgument;
         break;
         }

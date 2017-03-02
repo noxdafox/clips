@@ -208,33 +208,6 @@ void *SetEnvironmentContext(
    return oldContext;
   }
 
-/*******************************************************/
-/* GetEnvironmentFunctionContext: Returns the function */
-/*   context of the specified environment.             */
-/*******************************************************/
-void *GetEnvironmentFunctionContext(
-  Environment *theEnvironment)
-  {
-   return theEnvironment->functionContext;
-  }
-
-/**************************************************/
-/* SetEnvironmentFunctionContext: Sets the router */
-/*   context of the specified environment.        */
-/**************************************************/
-void *SetEnvironmentFunctionContext(
-  Environment *theEnvironment,
-  void *theFunctionContext)
-  {
-   void *oldFunctionContext;
-
-   oldFunctionContext = theEnvironment->functionContext;
-
-   theEnvironment->functionContext = theFunctionContext;
-
-   return oldFunctionContext;
-  }
-
 /**************************************************/
 /* AddEnvironmentCleanupFunction: Adds a function */
 /*   to the ListOfCleanupEnvironmentFunctions.    */

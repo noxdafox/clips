@@ -881,7 +881,7 @@
 /*********************/
 /* setAgendaChanged: */
 /*********************/
-- (void) setAgendaChanged: (long int) theCount
+- (void) setAgendaChanged: (long) theCount
   {
    agendaChanged = theCount;
   }
@@ -889,7 +889,7 @@
 /******************/
 /* agendaChanged: */
 /******************/
-- (long int) agendaChanged
+- (long) agendaChanged
   {
    return agendaChanged;
   }
@@ -897,7 +897,7 @@
 /********************/
 /* setFactsChanged: */
 /********************/
-- (void) setFactsChanged: (long int) theCount
+- (void) setFactsChanged: (long) theCount
   {
    factsChanged = theCount;
   }
@@ -905,7 +905,7 @@
 /*****************/
 /* factsChanged: */
 /*****************/
-- (long int) factsChanged
+- (long) factsChanged
   {
    return factsChanged;
   }
@@ -913,7 +913,7 @@
 /************************/
 /* setInstancesChanged: */
 /************************/
-- (void) setInstancesChanged: (long int) theCount
+- (void) setInstancesChanged: (long) theCount
   {
    instancesChanged = theCount;
   }
@@ -921,7 +921,7 @@
 /*********************/
 /* instancesChanged: */
 /*********************/
-- (long int) instancesChanged
+- (long) instancesChanged
   {
    return instancesChanged;
   }

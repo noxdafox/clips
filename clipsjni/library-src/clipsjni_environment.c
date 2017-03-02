@@ -692,7 +692,7 @@ JNIEXPORT jboolean JNICALL Java_net_sf_clipsrules_jni_Environment_removeUserFunc
 
    void *oldContext = SetEnvironmentContext(JLongToPointer(clipsEnv),(void *) env); 
 
-   context = GetEnvironmentFunctionContext(theEnv);
+   context = GetUDFContext(theEnv,cFunctionName);
    if (context != NULL)
      {  (*env)->DeleteGlobalRef(env,context); }
 
