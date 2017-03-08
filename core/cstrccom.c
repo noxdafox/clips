@@ -529,6 +529,76 @@ Defmodule *GetConstructModule(
    return(constructPtr->whichModule->theModule);
   }
 
+/****************************************/
+/* UndefconstructAll: Generic C routine */
+/*   for deleting all constructs.       */
+/****************************************/
+bool UndefconstructAll(
+  Environment *theEnv,
+  Construct *constructClass)
+  {
+#if BLOAD_ONLY || RUN_TIME
+#if MAC_XCD
+#pragma unused(constructClass)
+#pragma unused(theEnv)
+#endif
+   return false;
+#else
+   ConstructHeader *currentConstruct, *nextConstruct;
+   bool success = true;
+   GCBlock gcb;
+
+   /*===================================================*/
+   /* Loop through all of the constructs in the module. */
+   /*===================================================*/
+
+   GCBlockStart(theEnv,&gcb);
+   
+   currentConstruct = (*constructClass->getNextItemFunction)(theEnv,NULL);
+   while (currentConstruct != NULL)
+     {
+      /*==============================*/
+      /* Remember the next construct. */
+      /*==============================*/
+
+      nextConstruct = (*constructClass->getNextItemFunction)(theEnv,currentConstruct);
+
+      /*=============================*/
+      /* Try deleting the construct. */
+      /*=============================*/
+
+      if ((*constructClass->isConstructDeletableFunction)(currentConstruct))
+        {
+         RemoveConstructFromModule(theEnv,currentConstruct);
+         (*constructClass->freeFunction)(theEnv,currentConstruct);
+        }
+      else
+        {
+         CantDeleteItemErrorMessage(theEnv,constructClass->constructName,
+                        (*constructClass->getConstructNameFunction)(currentConstruct)->contents);
+         success = false;
+        }
+
+      /*================================*/
+      /* Move on to the next construct. */
+      /*================================*/
+
+      currentConstruct = nextConstruct;
+     }
+     
+   GCBlockEnd(theEnv,&gcb);
+   CallPeriodicTasks(theEnv);
+   
+   /*============================================*/
+   /* Return true if all constructs successfully */
+   /* deleted, otherwise false.                  */
+   /*============================================*/
+
+   return success;
+
+#endif
+  }
+
 /*************************************/
 /* Undefconstruct: Generic C routine */
 /*   for deleting a construct.       */
@@ -546,8 +616,7 @@ bool Undefconstruct(
 #endif
    return false;
 #else
-   ConstructHeader *currentConstruct, *nextConstruct;
-   bool success;
+   GCBlock gcb;
 
    /*================================================*/
    /* Delete all constructs of the specified type if */
@@ -555,65 +624,7 @@ bool Undefconstruct(
    /*================================================*/
 
    if (theConstruct == NULL)
-     {
-      success = true;
-
-      /*===================================================*/
-      /* Loop through all of the constructs in the module. */
-      /*===================================================*/
-
-      currentConstruct = (*constructClass->getNextItemFunction)(theEnv,NULL);
-      while (currentConstruct != NULL)
-        {
-         /*==============================*/
-         /* Remember the next construct. */
-         /*==============================*/
-
-         nextConstruct = (*constructClass->getNextItemFunction)(theEnv,currentConstruct);
-
-         /*=============================*/
-         /* Try deleting the construct. */
-         /*=============================*/
-
-         if ((*constructClass->isConstructDeletableFunction)(currentConstruct))
-           {
-            RemoveConstructFromModule(theEnv,currentConstruct);
-            (*constructClass->freeFunction)(theEnv,currentConstruct);
-           }
-         else
-           {
-            CantDeleteItemErrorMessage(theEnv,constructClass->constructName,
-                        (*constructClass->getConstructNameFunction)(currentConstruct)->contents);
-            success = false;
-           }
-
-         /*================================*/
-         /* Move on to the next construct. */
-         /*================================*/
-
-         currentConstruct = nextConstruct;
-        }
-
-      /*=======================================*/
-      /* Perform periodic cleanup if embedded. */
-      /*=======================================*/
-
-      if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) &&
-          (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
-          (EvaluationData(theEnv)->CurrentExpression == NULL) &&
-          (UtilityData(theEnv)->GarbageCollectionLocks == 0))
-        {
-         CleanCurrentGarbageFrame(theEnv,NULL);
-         CallPeriodicTasks(theEnv);
-        }
-
-      /*============================================*/
-      /* Return true if all constructs successfully */
-      /* deleted, otherwise false.                  */
-      /*============================================*/
-
-      return(success);
-     }
+     { return UndefconstructAll(theEnv,constructClass); }
 
    /*==================================================*/
    /* Return false if the construct cannot be deleted. */
@@ -621,6 +632,12 @@ bool Undefconstruct(
 
    if ((*constructClass->isConstructDeletableFunction)(theConstruct) == false)
      { return false; }
+     
+   /*===================================*/
+   /* Start a garbage collection block. */
+   /*===================================*/
+   
+   GCBlockStart(theEnv,&gcb);
 
    /*===========================*/
    /* Remove the construct from */
@@ -635,18 +652,11 @@ bool Undefconstruct(
 
    (*constructClass->freeFunction)(theEnv,theConstruct);
 
-   /*=======================================*/
-   /* Perform periodic cleanup if embedded. */
-   /*=======================================*/
-
-   if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) &&
-       (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
-       (EvaluationData(theEnv)->CurrentExpression == NULL) &&
-       (UtilityData(theEnv)->GarbageCollectionLocks == 0))
-     {
-      CleanCurrentGarbageFrame(theEnv,NULL);
-      CallPeriodicTasks(theEnv);
-     }
+   /*===================================*/
+   /* End the garbage collection block. */
+   /*===================================*/
+   
+   GCBlockEnd(theEnv,&gcb);
 
    /*=============================*/
    /* Return true to indicate the */

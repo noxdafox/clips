@@ -65,6 +65,7 @@ typedef void ConstructActionFunction(Environment *,ConstructHeader *,void *);
    CLIPSLexeme                   *GetConstructModuleCommand(UDFContext *,const char *,Construct *);
    Defmodule                     *GetConstructModule(Environment *,const char *,Construct *);
    bool                           Undefconstruct(Environment *,ConstructHeader *,Construct *);
+   bool                           UndefconstructAll(Environment *,Construct *);
    void                           SaveConstruct(Environment *,Defmodule *,const char *,Construct *);
    const char                    *GetConstructNameString(ConstructHeader *);
    const char                    *GetConstructModuleName(ConstructHeader *);

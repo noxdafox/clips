@@ -670,15 +670,6 @@ bool RetractDriver(
 
    ForceLogicalRetractions(theEnv);
 
-   /*===========================================*/
-   /* Force periodic cleanup if the retract was */
-   /* executed from an embedded application.    */
-   /*===========================================*/
-
-   if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
-       (EvaluationData(theEnv)->CurrentExpression == NULL) && (UtilityData(theEnv)->GarbageCollectionLocks == 0))
-     { CleanCurrentGarbageFrame(theEnv,NULL); }
-
    /*==================================*/
    /* Update busy counts and ephemeral */
    /* garbage information.             */
@@ -710,7 +701,15 @@ static bool RetractCallback(
 bool Retract(
   Fact *theFact)
   {
-   return RetractDriver(theFact->whichDeftemplate->header.env,theFact,false,NULL);
+   GCBlock gcb;
+   bool rv;
+   Environment *theEnv = theFact->whichDeftemplate->header.env;
+   
+   GCBlockStart(theEnv,&gcb);
+   rv = RetractDriver(theEnv,theFact,false,NULL);
+   GCBlockEnd(theEnv,&gcb);
+   
+   return rv;
   }
 
 /*******************************************************************/
@@ -976,18 +975,6 @@ Fact *AssertDriver(
    /*=========================================*/
 
    if (EngineData(theEnv)->ExecutingRule == NULL) FlushGarbagePartialMatches(theEnv);
-
-   /*==========================================*/
-   /* Force periodic cleanup if the assert was */
-   /* executed from an embedded application.   */
-   /*==========================================*/
-
-   if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
-       (EvaluationData(theEnv)->CurrentExpression == NULL) && (UtilityData(theEnv)->GarbageCollectionLocks == 0))
-     {
-      CleanCurrentGarbageFrame(theEnv,NULL);
-      CallPeriodicTasks(theEnv);
-     }
 
    /*===============================*/
    /* Return a pointer to the fact. */
@@ -1648,17 +1635,28 @@ Fact *AssertString(
   Environment *theEnv,
   const char *theString)
   {
-   Fact *theFact;
+   Fact *theFact, *rv;
+   GCBlock gcb;
    int danglingConstructs;
    danglingConstructs = ConstructData(theEnv)->DanglingConstructs;
 
-   if ((theFact = StringToFact(theEnv,theString)) == NULL) return NULL;
+   GCBlockStart(theEnv,&gcb);
+
+   if ((theFact = StringToFact(theEnv,theString)) == NULL)
+     {
+      GCBlockEnd(theEnv,&gcb);
+      return NULL;
+     }
 
    if ((! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
        (EvaluationData(theEnv)->CurrentExpression == NULL))
      { ConstructData(theEnv)->DanglingConstructs = danglingConstructs; }
 
-   return Assert(theEnv,theFact);
+   rv = Assert(theEnv,theFact);
+   
+   GCBlockEnd(theEnv,&gcb);
+   
+   return rv;
   }
 
 /******************************************************/
@@ -2367,7 +2365,10 @@ void FBAbort(
   FactBuilder *theFB)
   {
    Environment *theEnv = theFB->fbEnv;
+   GCBlock gcb;
    int i;
+   
+   GCBlockStart(theEnv,&gcb);
    
    for (i = 0; i < theFB->fbDeftemplate->numberOfSlots; i++)
      {
@@ -2378,6 +2379,8 @@ void FBAbort(
         
       theFB->fbValueArray[i].voidValue = VoidConstant(theEnv);
      }
+     
+   GCBlockEnd(theEnv,&gcb);
   }
 
 /********************/
@@ -2818,9 +2821,12 @@ Fact *FMModify(
 void FMDispose(
   FactModifier *theFM)
   {
+   GCBlock gcb;
    Environment *theEnv = theFM->fmEnv;
    int i;
 
+   GCBlockStart(theEnv,&gcb);
+   
    /*========================*/
    /* Clear the value array. */
    /*========================*/
@@ -2854,6 +2860,8 @@ void FMDispose(
      { DecrementFactReferenceCount(theFM->fmOldFact); }
       
    rtn_struct(theEnv,factModifier,theFM);
+
+   GCBlockEnd(theEnv,&gcb);
   }
 
 /************/
@@ -2862,8 +2870,11 @@ void FMDispose(
 void FMAbort(
   FactModifier *theFM)
   {
+   GCBlock gcb;
    Environment *theEnv = theFM->fmEnv;
    int i;
+   
+   GCBlockStart(theEnv,&gcb);
    
    if (theFM->fmOldFact != NULL)
      {
@@ -2880,6 +2891,8 @@ void FMAbort(
      
    if (theFM->changeMap != NULL)
      { ClearBitString((void *) theFM->changeMap,CountToBitMapSize(theFM->fmOldFact->whichDeftemplate->numberOfSlots)); }
+
+   GCBlockEnd(theEnv,&gcb);
   }
 
 /**************/

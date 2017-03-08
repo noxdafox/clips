@@ -527,7 +527,7 @@ InstanceSlot *FindInstanceSlot(
    int i;
 
    i = FindInstanceTemplateSlot(theEnv,ins->cls,sname);
-   return((i != -1) ? ins->slotAddresses[i] : NULL);
+   return (i != -1) ? ins->slotAddresses[i] : NULL;
   }
 
 /********************************************************************
@@ -550,9 +550,9 @@ int FindInstanceTemplateSlot(
 
    sid = FindSlotNameID(theEnv,sname);
    if (sid == -1)
-     return(-1);
+     return -1;
    if (sid > (int) cls->maxSlotNameID)
-     return(-1);
+     return -1;
    return((int) cls->slotNameMap[sid] - 1);
   }
 
@@ -587,7 +587,7 @@ bool PutSlotValue(
       setVal->value = FalseSymbol(theEnv);
       return false;
      }
-   return(DirectPutSlotValue(theEnv,ins,sp,val,setVal));
+   return DirectPutSlotValue(theEnv,ins,sp,val,setVal);
   }
 
 /*******************************************************

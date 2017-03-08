@@ -188,6 +188,8 @@ Environment *CreateEnvironmentDriver(
 
    InitializeEnvironment(theEnvironment,symbolTable,floatTable,integerTable,
                          bitmapTable,externalAddressTable,functions);
+      
+   CleanCurrentGarbageFrame(theEnvironment,NULL);
 
    return theEnvironment;
   }

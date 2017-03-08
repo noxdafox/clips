@@ -410,7 +410,9 @@ bool Undeffunction(
    return false;
 #else
    Environment *theEnv;
-   
+   bool success;
+   GCBlock gcb;
+  
    if (theDeffunction == NULL)
      { theEnv = allEnv; }
    else
@@ -420,12 +422,25 @@ bool Undeffunction(
    if (Bloaded(theEnv) == true)
      return false;
 #endif
+
+   GCBlockStart(theEnv,&gcb);
    if (theDeffunction == NULL)
-      return(RemoveAllDeffunctions(theEnv));
+     {
+      success = RemoveAllDeffunctions(theEnv);
+      GCBlockEnd(theEnv,&gcb);
+      return success;
+     }
+      
    if (DeffunctionIsDeletable(theDeffunction) == false)
-     return false;
+     {
+      GCBlockEnd(theEnv,&gcb);
+      return false;
+     }
+     
    RemoveConstructFromModule(theEnv,&theDeffunction->header);
    RemoveDeffunction(theEnv,theDeffunction);
+   GCBlockEnd(theEnv,&gcb);
+
    return true;
 #endif
   }

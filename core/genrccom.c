@@ -670,24 +670,37 @@ bool Undefgeneric(
 #else
    Environment *theEnv;
    bool success = true;
+   GCBlock gcb;
 
    if (theDefgeneric == NULL)
      { theEnv = allEnv; }
    else
      { theEnv = theDefgeneric->header.env; }
      
+   GCBlockStart(theEnv,&gcb);
    if (theDefgeneric == NULL)
      {
       if (ClearDefmethods(theEnv) == false)
         success = false;
       if (ClearDefgenerics(theEnv) == false)
         success = false;
-      return(success);
+        
+      GCBlockEnd(theEnv,&gcb);
+        
+      return success ;
      }
+     
    if (DefgenericIsDeletable(theDefgeneric) == false)
-     return false;
+     {
+      GCBlockEnd(theEnv,&gcb);
+      return false;
+     }
+      
    RemoveConstructFromModule(theEnv,&theDefgeneric->header);
    RemoveDefgeneric(theEnv,theDefgeneric);
+   
+   GCBlockEnd(theEnv,&gcb);
+
    return true;
 #endif
   }
@@ -708,7 +721,10 @@ bool Undefmethod(
   Environment *allEnv)
   {
    Environment *theEnv;
-   
+#if (! RUN_TIME) && (! BLOAD_ONLY)
+   GCBlock gcb;
+#endif
+ 
    if (theDefgeneric == NULL)
      { theEnv = allEnv; }
    else
@@ -728,7 +744,6 @@ bool Undefmethod(
    PrintString(theEnv,WERROR,".\n");
    return false;
 #else
-   long nmi;
 
 #if BLOAD || BLOAD_AND_BSAVE
    if (Bloaded(theEnv) == true)
@@ -747,30 +762,46 @@ bool Undefmethod(
       return false;
      }
 #endif
+
+   GCBlockStart(theEnv,&gcb);
    if (theDefgeneric == NULL)
      {
+      bool success;
+      
       if (mi != 0)
         {
          PrintErrorID(theEnv,"GENRCCOM",3,false);
          PrintString(theEnv,WERROR,"Incomplete method specification for deletion.\n");
+         GCBlockEnd(theEnv,&gcb);
          return false;
         }
-      return(ClearDefmethods(theEnv));
+        
+      success = ClearDefmethods(theEnv);
+      GCBlockEnd(theEnv,&gcb);
+      return success;
      }
+     
    if (MethodsExecuting(theDefgeneric))
      {
       MethodAlterError(theEnv,theDefgeneric);
+      GCBlockEnd(theEnv,&gcb);
       return false;
      }
+     
    if (mi == 0)
-     RemoveAllExplicitMethods(theEnv,theDefgeneric);
+     { RemoveAllExplicitMethods(theEnv,theDefgeneric); }
    else
      {
-      nmi = CheckMethodExists(theEnv,"undefmethod",theDefgeneric,mi);
+      long nmi = CheckMethodExists(theEnv,"undefmethod",theDefgeneric,mi);
       if (nmi == -1)
-        return false;
+        {
+         GCBlockEnd(theEnv,&gcb);
+         return false;
+        }
       RemoveDefgenericMethod(theEnv,theDefgeneric,nmi);
      }
+     
+   GCBlockEnd(theEnv,&gcb);
    return true;
 #endif
   }

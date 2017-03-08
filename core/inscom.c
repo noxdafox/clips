@@ -325,8 +325,19 @@ static void DeallocateInstanceData(
 bool DeleteInstance(
   Instance *theInstance)
   {
+   GCBlock gcb;
+   bool success;
+   
    if (theInstance != NULL)
-     { return QuashInstance(theInstance->cls->header.env,theInstance); }
+     {
+      Environment *theEnv = theInstance->cls->header.env;
+      
+      GCBlockStart(theEnv,&gcb);
+      success = QuashInstance(theEnv,theInstance);
+      GCBlockEnd(theEnv,&gcb);
+      
+      return success;
+     }
      
    return false;
   }
@@ -344,7 +355,10 @@ bool DeleteAllInstances(
   Environment *theEnv)
   {
    Instance *ins, *itmp;
+   GCBlock gcb;
    bool success = true;
+   
+   GCBlockStart(theEnv,&gcb);
 
    ins = InstanceData(theEnv)->InstanceList;
    while (ins != NULL)
@@ -355,12 +369,7 @@ bool DeleteAllInstances(
         { success = false; }
      }
 
-   if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
-       (EvaluationData(theEnv)->CurrentExpression == NULL) && (UtilityData(theEnv)->GarbageCollectionLocks == 0))
-     {
-      CleanCurrentGarbageFrame(theEnv,NULL);
-      CallPeriodicTasks(theEnv);
-     }
+   GCBlockEnd(theEnv,&gcb);
 
    return success;
   }
@@ -387,7 +396,10 @@ bool UnmakeAllInstances(
   Environment *theEnv)
   {
    bool success = true, svmaintain;
+   GCBlock gcb;
    Instance *theInstance;
+   
+   GCBlockStart(theEnv,&gcb);
    
    svmaintain = InstanceData(theEnv)->MaintainGarbageInstances;
    InstanceData(theEnv)->MaintainGarbageInstances = true;
@@ -408,12 +420,7 @@ bool UnmakeAllInstances(
    InstanceData(theEnv)->MaintainGarbageInstances = svmaintain;
    CleanupInstances(theEnv,NULL);
 
-   if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
-       (EvaluationData(theEnv)->CurrentExpression == NULL) && (UtilityData(theEnv)->GarbageCollectionLocks == 0))
-     {
-      CleanCurrentGarbageFrame(theEnv,NULL);
-      CallPeriodicTasks(theEnv);
-     }
+   GCBlockEnd(theEnv,&gcb);
 
    return success;
   }
@@ -430,7 +437,10 @@ bool UnmakeInstance(
   Instance *theInstance)
   {
    bool success = true, svmaintain;
+   GCBlock gcb;
    Environment *theEnv = theInstance->cls->header.env;
+   
+   GCBlockStart(theEnv,&gcb);
   
    svmaintain = InstanceData(theEnv)->MaintainGarbageInstances;
    InstanceData(theEnv)->MaintainGarbageInstances = true;
@@ -447,12 +457,7 @@ bool UnmakeInstance(
    InstanceData(theEnv)->MaintainGarbageInstances = svmaintain;
    CleanupInstances(theEnv,NULL);
 
-   if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
-       (EvaluationData(theEnv)->CurrentExpression == NULL) && (UtilityData(theEnv)->GarbageCollectionLocks == 0))
-     {
-      CleanCurrentGarbageFrame(theEnv,NULL);
-      CallPeriodicTasks(theEnv);
-     }
+   GCBlockEnd(theEnv,&gcb);
 
    return success;
   }
@@ -641,13 +646,18 @@ Instance *MakeInstance(
   const char *mkstr)
   {
    const char *router = "***MKINS***";
+   GCBlock gcb;
    struct token tkn;
    Expression *top;
    UDFValue returnValue;
+   Instance *rv;
 
    returnValue.value = FalseSymbol(theEnv);
    if (OpenStringSource(theEnv,router,mkstr,0) == 0)
      return NULL;
+     
+   GCBlockStart(theEnv,&gcb);
+   
    GetToken(theEnv,router,&tkn);
    if (tkn.tknType == LEFT_PARENTHESIS_TOKEN)
      {
@@ -670,17 +680,14 @@ Instance *MakeInstance(
      SyntaxErrorMessage(theEnv,"instance definition");
    CloseStringSource(theEnv,router);
 
-   if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
-       (EvaluationData(theEnv)->CurrentExpression == NULL) && (UtilityData(theEnv)->GarbageCollectionLocks == 0))
-     {
-      CleanCurrentGarbageFrame(theEnv,NULL);
-      CallPeriodicTasks(theEnv);
-     }
-
    if (returnValue.value == FalseSymbol(theEnv))
-     return NULL;
+     { rv = NULL; }
+   else
+     { rv = FindInstanceBySymbol(theEnv,returnValue.lexemeValue); }
 
-   return FindInstanceBySymbol(theEnv,returnValue.lexemeValue);
+   GCBlockEnd(theEnv,&gcb);
+   
+   return rv;
   }
 
 /***************************************************************
@@ -760,7 +767,6 @@ bool DirectGetSlot(
   CLIPSValue *returnValue)
   {
    InstanceSlot *sp;
-   UDFValue temp;
    Environment *theEnv = theInstance->cls->header.env;
    
    if (theInstance->garbage == 1)
@@ -769,6 +775,7 @@ bool DirectGetSlot(
       returnValue->value = FalseSymbol(theEnv);
       return false;
      }
+     
    sp = FindISlotByName(theEnv,theInstance,sname);
    if (sp == NULL)
      {
@@ -778,14 +785,6 @@ bool DirectGetSlot(
      }
 
    returnValue->value = sp->value;
-
-   if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
-       (EvaluationData(theEnv)->CurrentExpression == NULL) && (UtilityData(theEnv)->GarbageCollectionLocks == 0))
-     {
-      CLIPSToUDFValue(returnValue,&temp);
-      CleanCurrentGarbageFrame(theEnv,&temp);
-      CallPeriodicTasks(theEnv);
-     }
      
    return true;
   }
@@ -807,6 +806,8 @@ bool DirectPutSlot(
   {
    InstanceSlot *sp;
    UDFValue junk, temp;
+   GCBlock gcb;
+   bool rv;
    Environment *theEnv = theInstance->cls->header.env;
    
    if ((theInstance->garbage == 1) || (val == NULL))
@@ -814,6 +815,7 @@ bool DirectPutSlot(
       SetEvaluationError(theEnv,true);
       return false;
      }
+     
    sp = FindISlotByName(theEnv,theInstance,sname);
    if (sp == NULL)
      {
@@ -821,18 +823,12 @@ bool DirectPutSlot(
       return false;
      }
 
+   GCBlockStart(theEnv,&gcb);
    CLIPSToUDFValue(val,&temp);
-   if (PutSlotValue(theEnv,theInstance,sp,&temp,&junk,"external put"))
-     {
-      if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
-          (EvaluationData(theEnv)->CurrentExpression == NULL) && (UtilityData(theEnv)->GarbageCollectionLocks == 0))
-        {
-         CleanCurrentGarbageFrame(theEnv,NULL);
-         CallPeriodicTasks(theEnv);
-        }
-      return true;
-     }
-   return false;
+   rv = PutSlotValue(theEnv,theInstance,sp,&temp,&junk,"external put");
+   GCBlockEnd(theEnv,&gcb);
+   
+   return rv;
   }
 
 /***************************************************

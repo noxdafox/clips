@@ -470,7 +470,7 @@ CLIPSLexeme *FindSymbolHN(
       {
        if (((1 << peek->header.type) & expectedType) &&
            (strcmp(str,peek->contents) == 0))
-         { return(peek); }
+         { return peek; }
       }
 
     return NULL;

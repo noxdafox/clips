@@ -1116,7 +1116,7 @@ short FindSlotNameID(
    snp = DefclassData(theEnv)->SlotNameTable[HashSlotName(slotName)];
    while ((snp != NULL) ? (snp->name != slotName) : false)
      snp = snp->nxt;
-   return((snp != NULL) ? (short) snp->id : (short) -1);
+   return (snp != NULL) ? snp->id : -1;
   }
 
 /***************************************************

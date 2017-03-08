@@ -74,7 +74,7 @@ typedef struct messageHandlerLink
    void             Send(Environment *,CLIPSValue *,const char *,const char *,CLIPSValue *);
    void             DestroyHandlerLinks(Environment *,HANDLER_LINK *);
    void             SendCommand(Environment *,UDFContext *,UDFValue *);
-   UDFValue      *GetNthMessageArgument(Environment *,int);
+   UDFValue        *GetNthMessageArgument(Environment *,int);
 
    bool             NextHandlerAvailable(Environment *);
    void             NextHandlerAvailableFunction(Environment *,UDFContext *,UDFValue *);

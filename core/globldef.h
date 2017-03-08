@@ -99,7 +99,7 @@ struct defglobal
    unsigned int watch   : 1;
    unsigned int inScope : 1;
    long busyCount;
-   UDFValue current;
+   CLIPSValue current;
    struct expr *initial;
   };
 
@@ -126,7 +126,7 @@ struct defglobalModule
    void                           DefglobalSetValue(Defglobal *,CLIPSValue *);
    void                           UpdateDefglobalScope(Environment *);
    Defglobal                     *GetNextDefglobalInScope(Environment *,Defglobal *);
-   bool                           QGetDefglobalValue(Environment *,Defglobal *,UDFValue *);
+   bool                           QGetDefglobalUDFValue(Environment *,Defglobal *,UDFValue *);
    const char                    *DefglobalModule(Defglobal *);
    const char                    *DefglobalName(Defglobal *);
    const char                    *DefglobalPPForm(Defglobal *);

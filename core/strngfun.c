@@ -858,8 +858,9 @@ bool Eval(
    /* issued from an embedded controller.      */
    /*==========================================*/
 
-   if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
-       (EvaluationData(theEnv)->CurrentExpression == NULL) && (UtilityData(theEnv)->GarbageCollectionLocks == 0))
+   if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) &&
+       (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
+       (EvaluationData(theEnv)->CurrentExpression == NULL))
      {
       if (returnValue != NULL)
         { CleanCurrentGarbageFrame(theEnv,&evalResult); }
@@ -888,7 +889,7 @@ void BuildFunction(
    UDFValue theArg;
 
    /*==================================================*/
-   /* The argument should be of type SYMBOL_TYPE or STRING_TYPE. */
+   /* The argument should be of type SYMBOL or STRING. */
    /*==================================================*/
 
    if (! UDFFirstArgument(context,LEXEME_BITS,&theArg))
@@ -912,7 +913,8 @@ bool Build(
    const char *constructType;
    struct token theToken;
    int errorFlag;
-
+   GCBlock gcb;
+   
    /*=====================================*/
    /* If embedded, clear the error flags. */
    /*=====================================*/
@@ -920,7 +922,7 @@ bool Build(
    if ((! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
        (EvaluationData(theEnv)->CurrentExpression == NULL))
      {
-      SetEvaluationError(theEnv,false);
+      SetEvaluationError(theEnv,false); // TBD WTD
       SetHaltExecution(theEnv,false);
      }
 
@@ -940,6 +942,12 @@ bool Build(
    if (OpenStringSource(theEnv,"build",theString,0) == 0)
      { return false; }
 
+   /*===================================*/
+   /* Start a garbage collection block. */
+   /*===================================*/
+
+   GCBlockStart(theEnv,&gcb);
+   
    /*================================*/
    /* The first token of a construct */
    /* must be a left parenthesis.    */
@@ -950,6 +958,7 @@ bool Build(
    if (theToken.tknType != LEFT_PARENTHESIS_TOKEN)
      {
       CloseStringSource(theEnv,"build");
+      GCBlockEnd(theEnv,&gcb);
       return false;
      }
 
@@ -961,6 +970,7 @@ bool Build(
    if (theToken.tknType != SYMBOL_TOKEN)
      {
       CloseStringSource(theEnv,"build");
+      GCBlockEnd(theEnv,&gcb);
       return false;
      }
 
@@ -992,17 +1002,11 @@ bool Build(
 
    DestroyPPBuffer(theEnv);
 
-   /*===========================================*/
-   /* Perform periodic cleanup if the build was */
-   /* issued from an embedded controller.       */
-   /*===========================================*/
-
-   if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
-       (EvaluationData(theEnv)->CurrentExpression == NULL) && (UtilityData(theEnv)->GarbageCollectionLocks == 0))
-     {
-      CleanCurrentGarbageFrame(theEnv,NULL);
-      CallPeriodicTasks(theEnv);
-     }
+   /*===================================*/
+   /* End the garbage collection block. */
+   /*===================================*/
+   
+   GCBlockEnd(theEnv,&gcb);
 
    /*===============================================*/
    /* Return true if the construct was successfully */

@@ -133,10 +133,6 @@ struct evaluationData
    void                           SetMultifieldErrorValue(Environment *,UDFValue *);
    void                           IncrementUDFValueReferenceCount(Environment *,UDFValue *);
    void                           DecrementUDFValueReferenceCount(Environment *,UDFValue *);
-#if DEFFUNCTION_CONSTRUCT || DEFGENERIC_CONSTRUCT
-   bool                           FunctionCall(Environment *,const char *,const char *,CLIPSValue *);
-   bool                           FunctionCall2(Environment *,Expression *,const char *,UDFValue *);
-#endif
    void                           CopyDataObject(Environment *,UDFValue *,UDFValue *,int);
    void                           AtomInstall(Environment *,int,void *);
    void                           AtomDeinstall(Environment *,int,void *);

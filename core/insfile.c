@@ -410,21 +410,22 @@ long BinaryLoadInstances(
   const char *theFile)
   {
    long i,instanceCount;
+   GCBlock gcb;
 
    if (GenOpenReadBinary(theEnv,"bload-instances",theFile) == 0)
      {
       OpenErrorMessage(theEnv,"bload-instances",theFile);
       SetEvaluationError(theEnv,true);
-      return(-1L);
+      return -1L;
      }
    if (VerifyBinaryHeader(theEnv,theFile) == false)
      {
       GenCloseBinary(theEnv);
       SetEvaluationError(theEnv,true);
-      return(-1L);
+      return -1L;
      }
 
-   IncrementGCLocks(theEnv);
+   GCBlockStart(theEnv,&gcb);
    ReadNeededAtomicValues(theEnv);
 
    InstanceFileData(theEnv)->BinaryInstanceFileOffset = 0L;
@@ -440,8 +441,8 @@ long BinaryLoadInstances(
          FreeAtomicValueStorage(theEnv);
          GenCloseBinary(theEnv);
          SetEvaluationError(theEnv,true);
-         DecrementGCLocks(theEnv);
-         return(i);
+         GCBlockEnd(theEnv,&gcb);
+         return i;
         }
      }
 
@@ -449,8 +450,8 @@ long BinaryLoadInstances(
    FreeAtomicValueStorage(theEnv);
    GenCloseBinary(theEnv);
 
-   DecrementGCLocks(theEnv);
-   return(instanceCount);
+   GCBlockEnd(theEnv,&gcb);
+   return instanceCount;
   }
 
 #endif

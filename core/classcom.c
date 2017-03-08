@@ -415,6 +415,8 @@ bool Undefclass(
    return false;
 #else
    Environment *theEnv;
+   bool success;
+   GCBlock gcb;
    
    if (theDefclass == NULL)
      { theEnv = allEnv; }
@@ -425,10 +427,18 @@ bool Undefclass(
    if (Bloaded(theEnv))
      return false;
 #endif
-   if (theDefclass == NULL)
-     { return RemoveAllUserClasses(theEnv); }
 
-   return DeleteClassUAG(theEnv,theDefclass);
+   GCBlockStart(theEnv,&gcb);
+   if (theDefclass == NULL)
+     {
+      success = RemoveAllUserClasses(theEnv);
+      GCBlockEnd(theEnv,&gcb);
+      return success;
+     }
+
+   success = DeleteClassUAG(theEnv,theDefclass);
+   GCBlockEnd(theEnv,&gcb);
+   return success;
 #endif
   }
 

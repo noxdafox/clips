@@ -242,7 +242,7 @@ bool ClearDefmethods(
         success = false;
       gfunc = GetNextDefgeneric(theEnv,gfunc);
      }
-   return(success);
+   return success;
   }
 
 /*****************************************************************

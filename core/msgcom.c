@@ -506,7 +506,11 @@ bool UndefmessageHandler(
   Environment *allEnv)
   {
    Environment *theEnv;
-   
+#if (! RUN_TIME) &&  (! BLOAD_ONLY)
+   bool success;
+   GCBlock gcb;
+#endif
+
    if (theDefclass == NULL)
      { theEnv = allEnv; }
    else
@@ -526,28 +530,38 @@ bool UndefmessageHandler(
       return false;
      }
 #endif
+   GCBlockStart(theEnv,&gcb);
    if (theDefclass == NULL)
      {
       if (mhi != 0)
         {
          PrintErrorID(theEnv,"MSGCOM",1,false);
          PrintString(theEnv,WERROR,"Incomplete message-handler specification for deletion.\n");
+         GCBlockEnd(theEnv,&gcb);
          return false;
         }
-      return WildDeleteHandler(theEnv,NULL,NULL,NULL);
+      success = WildDeleteHandler(theEnv,NULL,NULL,NULL);
+      GCBlockEnd(theEnv,&gcb);
+      return success;
      }
 
    if (mhi == 0)
-     { return WildDeleteHandler(theEnv,theDefclass,NULL,NULL); }
+     {
+      success = WildDeleteHandler(theEnv,theDefclass,NULL,NULL);
+      GCBlockEnd(theEnv,&gcb);
+      return success;
+     }
 
    if (HandlersExecuting(theDefclass))
      {
       HandlerDeleteError(theEnv,DefclassName(theDefclass));
+      GCBlockEnd(theEnv,&gcb);
       return false;
      }
 
    theDefclass->handlers[mhi-1].mark = 1;
    DeallocateMarkedHandlers(theEnv,theDefclass);
+   GCBlockEnd(theEnv,&gcb);
    return true;
 #endif
   }

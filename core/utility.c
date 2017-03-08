@@ -111,7 +111,6 @@ void InitializeUtilityData(
    UtilityData(theEnv)->CurrentGarbageFrame = &UtilityData(theEnv)->MasterGarbageFrame;
    UtilityData(theEnv)->CurrentGarbageFrame->topLevel = true;
 
-   UtilityData(theEnv)->GarbageCollectionLocks = 0;
    UtilityData(theEnv)->PeriodicFunctionsEnabled = true;
    UtilityData(theEnv)->YieldFunctionEnabled = true;
   }
@@ -1208,34 +1207,6 @@ void YieldTime(
      { (*UtilityData(theEnv)->YieldTimeFunction)(); }
   }
 
-/*******************************************/
-/* IncrementGCLocks: Increments the number */
-/*   of garbage collection locks.          */
-/*******************************************/
-void IncrementGCLocks(
-  Environment *theEnv)
-  {
-   UtilityData(theEnv)->GarbageCollectionLocks++;
-  }
-
-/*******************************************/
-/* DecrementGCLocks: Decrements the number */
-/*   of garbage collection locks.          */
-/*******************************************/
-void DecrementGCLocks(
-  Environment *theEnv)
-  {
-   if (UtilityData(theEnv)->GarbageCollectionLocks > 0)
-     { UtilityData(theEnv)->GarbageCollectionLocks--; }
-
-   if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
-       (EvaluationData(theEnv)->CurrentExpression == NULL) && (UtilityData(theEnv)->GarbageCollectionLocks == 0))
-     {
-      CleanCurrentGarbageFrame(theEnv,NULL);
-      CallPeriodicTasks(theEnv);
-     }
-  }
-
 /****************************/
 /* EnablePeriodicFunctions: */
 /****************************/
@@ -1249,7 +1220,7 @@ bool EnablePeriodicFunctions(
 
    UtilityData(theEnv)->PeriodicFunctionsEnabled = value;
 
-   return(oldValue);
+   return oldValue;
   }
 
 /************************/

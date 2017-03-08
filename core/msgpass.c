@@ -169,10 +169,12 @@ void Send(
    bool error;
    Expression *iexp;
    CLIPSLexeme *msym;
+   GCBlock gcb;
    UDFValue result;
 
-   if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) && (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
-       (EvaluationData(theEnv)->CurrentExpression == NULL) && (UtilityData(theEnv)->GarbageCollectionLocks == 0))
+   if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) &&
+       (! CommandLineData(theEnv)->EvaluatingTopLevelCommand) &&
+       (EvaluationData(theEnv)->CurrentExpression == NULL))
      {
       CleanCurrentGarbageFrame(theEnv,NULL);
       CallPeriodicTasks(theEnv);
@@ -182,6 +184,7 @@ void Send(
 
    if (returnValue != NULL)
      { returnValue->value = FalseSymbol(theEnv); }
+     
    msym = FindSymbolHN(theEnv,msg,SYMBOL_BIT);
    if (msym == NULL)
      {
@@ -189,6 +192,7 @@ void Send(
       SetEvaluationError(theEnv,true);
       return;
      }
+     
    iexp = GenConstant(theEnv,idata->header->type,idata->value);
    iexp->nextArg = ParseConstantArguments(theEnv,args,&error);
    if (error == true)
@@ -197,11 +201,15 @@ void Send(
       SetEvaluationError(theEnv,true);
       return;
      }
+     
    PerformMessage(theEnv,&result,iexp,msym);
-   NormalizeMultifield(theEnv,&result);
-   if (returnValue != NULL)
-     { returnValue->value = result.value; }
    ReturnExpression(theEnv,iexp);
+   
+   if (returnValue != NULL)
+     {
+      NormalizeMultifield(theEnv,&result);
+      returnValue->value = result.value;
+     }
   }
 
 /*****************************************************
