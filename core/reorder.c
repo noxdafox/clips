@@ -1322,7 +1322,7 @@ struct lhsParseNode *ExpressionToLHSParseNodes(
      {
       if (theList->pnType == SF_VARIABLE_NODE)
         {
-         theRestriction2 = GetNthRestriction2(theEnv,theFunction,i);
+         theRestriction2 = GetNthRestriction(theEnv,theFunction,i);
          theList->constraints = ArgumentTypeToConstraintRecord(theEnv,theRestriction2);
          theList->derivedConstraints = true;
         }

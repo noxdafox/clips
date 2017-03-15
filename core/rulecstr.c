@@ -787,7 +787,7 @@ static bool CheckArgumentForConstraintError(
    /* convert them to a constraint record.      */
    /*===========================================*/
 
-   theRestriction2 = GetNthRestriction2(theEnv,theFunction,i);
+   theRestriction2 = GetNthRestriction(theEnv,theFunction,i);
    constraint1 = ArgumentTypeToConstraintRecord(theEnv,theRestriction2);
 
    /*================================================*/

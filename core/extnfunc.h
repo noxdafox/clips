@@ -126,9 +126,7 @@ struct FunctionHash
    struct functionDefinition     *GetFunctionList(Environment *);
    void                           InstallFunctionList(Environment *,struct functionDefinition *);
    struct functionDefinition     *FindFunction(Environment *,const char *);
-   int                            GetNthRestriction(struct functionDefinition *,int);
-   unsigned                       GetNthRestriction2(Environment *,struct functionDefinition *,int);
-   const char                    *GetArgumentTypeName(int);
+   unsigned                       GetNthRestriction(Environment *,struct functionDefinition *,int);
    bool                           RemoveUDF(Environment *,const char *);
    int                            GetMinimumArgs(struct functionDefinition *);
    int                            GetMaximumArgs(struct functionDefinition *);

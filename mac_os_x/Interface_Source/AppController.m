@@ -553,7 +553,7 @@
 - (IBAction) showCLIPSExamples: (id) sender
   {
    [[NSWorkspace sharedWorkspace] 
-       openURL: [NSURL URLWithString: @"https://sourceforge.net/p/clipsrules/code/HEAD/tree/examples/"]];
+       openURL: [NSURL URLWithString: @"https://sourceforge.net/p/clipsrules/code/HEAD/tree/branches/64x/examples/"]];
   }
 
 /*****************************************/

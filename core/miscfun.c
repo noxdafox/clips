@@ -156,7 +156,7 @@ void MiscFunctionDefinitions(
    AddUDF(theEnv,"setgen","l",1,1,"l",SetgenFunction,"SetgenFunction",NULL);
 
    AddUDF(theEnv,"system","v",1,UNBOUNDED,"sy",SystemCommand,"SystemCommand",NULL);
-   AddUDF(theEnv,"length$","l",1,1,"sym",LengthFunction,"LengthFunction",NULL);
+   AddUDF(theEnv,"length$","l",1,1,"m",LengthFunction,"LengthFunction",NULL);
    AddUDF(theEnv,"time","d",0,0,NULL,TimeFunction,"TimeFunction",NULL);
    AddUDF(theEnv,"local-time","m",0,0,NULL,LocalTimeFunction,"LocalTimeFunction",NULL);
    AddUDF(theEnv,"gm-time","m",0,0,NULL,GMTimeFunction,"GMTimeFunction",NULL);

@@ -316,7 +316,7 @@ bool AddFunctionParser(
       PrintString(theEnv,WERROR,"Function parsers can only be added for existing functions.\n");
       return false;
      }
-   fdPtr->restrictions = NULL;
+
    fdPtr->parser = fpPtr;
    fdPtr->overloadable = false;
 
@@ -372,137 +372,11 @@ bool FuncSeqOvlFlags(
 
 #endif
 
-/*********************************************************/
-/* GetArgumentTypeName: Returns a descriptive string for */
-/*   a function argument type (used by DefineFunction2). */
-/*********************************************************/
-const char *GetArgumentTypeName(
-  int theRestriction)
-  {
-   switch ((char) theRestriction)
-     {
-      case 'a':
-        return("external address");
-
-      case 'e':
-        return("instance address, instance name, or symbol");
-
-      case 'd':
-      case 'f':
-        return("float");
-
-      case 'g':
-        return("integer, float, or symbol");
-
-      case 'h':
-        return("instance address, instance name, fact address, integer, or symbol");
-
-      case 'j':
-        return("symbol, string, or instance name");
-
-      case 'k':
-        return("symbol or string");
-
-      case 'i':
-      case 'l':
-        return("integer");
-
-      case 'm':
-        return("multifield");
-
-      case 'n':
-        return("integer or float");
-
-      case 'o':
-        return("instance name");
-
-      case 'p':
-        return("instance name or symbol");
-
-      case 'q':
-        return("multifield, symbol, or string");
-
-      case 's':
-        return("string");
-
-      case 'w':
-        return("symbol");
-
-      case 'x':
-        return("instance address");
-
-      case 'y':
-        return("fact-address");
-
-      case 'z':
-        return("fact-address, integer, or symbol");
-
-      case 'u':
-        return("non-void return value");
-     }
-
-   return("unknown argument type");
-  }
-
-/***************************************************/
-/* GetNthRestriction: Returns the restriction type */
-/*   for the nth parameter of a function.          */
-/***************************************************/
-int GetNthRestriction(
-  struct functionDefinition *theFunction,
-  int position)
-  {
-   int defaultRestriction = (int) 'u';
-   size_t theLength;
-   int i = 2;
-
-   /*===========================================================*/
-   /* If no restrictions at all are specified for the function, */
-   /* then return 'u' to indicate that any value is suitable as */
-   /* an argument to the function.                              */
-   /*===========================================================*/
-
-   if (theFunction == NULL) return(defaultRestriction);
-
-   if (theFunction->restrictions == NULL) return(defaultRestriction);
-
-   /*===========================================================*/
-   /* If no type restrictions are specified for the function,   */
-   /* then return 'u' to indicate that any value is suitable as */
-   /* an argument to the function.                              */
-   /*===========================================================*/
-
-   theLength = strlen(theFunction->restrictions->contents);
-
-   if (theLength < 3) return(defaultRestriction);
-
-   /*==============================================*/
-   /* Determine the functions default restriction. */
-   /*==============================================*/
-
-   defaultRestriction = (int) theFunction->restrictions->contents[i];
-
-   if (defaultRestriction == '*') defaultRestriction = (int) 'u';
-
-   /*=======================================================*/
-   /* If the requested position does not have a restriction */
-   /* specified, then return the default restriction.       */
-   /*=======================================================*/
-
-   if (theLength < (size_t) (position + 3)) return(defaultRestriction);
-
-   /*=========================================================*/
-   /* Return the restriction specified for the nth parameter. */
-   /*=========================================================*/
-
-   return((int) theFunction->restrictions->contents[position + 2]);
-  }
-
-/***************************************************/
-/* GetNthRestriction2: Returns the restriction type */
-/*   for the nth parameter of a function.          */
-/***************************************************/
-unsigned GetNthRestriction2(
+/***********************************************/
+/* GetNthRestriction: Returns the restriction  */
+/*   type for the nth parameter of a function. */
+/***********************************************/
+unsigned GetNthRestriction(
   Environment *theEnv,
   struct functionDefinition *theFunction,
   int position)

@@ -260,13 +260,6 @@ ERROR:
 CLIPS> (undeftemplate example)
 CLIPS> (defrule error ?f <- (example) => (modify ?f (x 3)))
 CLIPS> (defrule error => (modify 1 (x 3)))
-
-[TMPLTFUN1] Fact-indexes can only be used by modify as a top level command.
-
-ERROR:
-(defrule MAIN::error
-   =>
-   (modify 1
 CLIPS> (deftemplate example (field x (type INTEGER)))
 CLIPS> (defrule testit (example (x a)) =>)
 

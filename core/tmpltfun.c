@@ -137,8 +137,8 @@ void DeftemplateFunctions(
   Environment *theEnv)
   {
 #if ! RUN_TIME
-   AddUDF(theEnv,"modify","bf",0,UNBOUNDED,NULL,ModifyCommand,"ModifyCommand",NULL);
-   AddUDF(theEnv,"duplicate","bf",0,UNBOUNDED,NULL,DuplicateCommand,"DuplicateCommand",NULL);
+   AddUDF(theEnv,"modify","bf",0,UNBOUNDED,"*;lf",ModifyCommand,"ModifyCommand",NULL);
+   AddUDF(theEnv,"duplicate","bf",0,UNBOUNDED,"*;lf",DuplicateCommand,"DuplicateCommand",NULL);
 
    AddUDF(theEnv,"deftemplate-slot-names","bm",1,1,"y",DeftemplateSlotNamesFunction,"DeftemplateSlotNamesFunction",NULL);
    AddUDF(theEnv,"deftemplate-slot-default-value","*",2,2,"y",DeftemplateSlotDefaultValueFunction,"DeftemplateSlotDefaultValueFunction",NULL);
@@ -2258,7 +2258,7 @@ struct expr *ModifyParse(
   struct expr *top,
   const char *logicalName)
   {
-   return(ModAndDupParse(theEnv,top,logicalName,"modify"));
+   return ModAndDupParse(theEnv,top,logicalName,"modify");
   }
 
 /*************************************************/
@@ -2269,7 +2269,7 @@ struct expr *DuplicateParse(
   struct expr *top,
   const char *logicalName)
   {
-   return(ModAndDupParse(theEnv,top,logicalName,"duplicate"));
+   return ModAndDupParse(theEnv,top,logicalName,"duplicate");
   }
 
 /*************************************************************/
@@ -2298,20 +2298,15 @@ static struct expr *ModAndDupParse(
    if ((theToken.tknType == SF_VARIABLE_TOKEN) || (theToken.tknType == GBL_VARIABLE_TOKEN))
      { nextOne = GenConstant(theEnv,TokenTypeToType(theToken.tknType),theToken.value); }
    else if (theToken.tknType == INTEGER_TOKEN)
+     { nextOne = GenConstant(theEnv,INTEGER_TYPE,theToken.value); }
+   else if (theToken.tknType == LEFT_PARENTHESIS_TOKEN)
      {
-#if (! RUN_TIME)
-      if (! TopLevelCommand(theEnv))
+      nextOne = Function1Parse(theEnv,logicalName);
+      if (nextOne == NULL)
         {
-         PrintErrorID(theEnv,"TMPLTFUN",1,true);
-         PrintString(theEnv,WERROR,"Fact-indexes can only be used by ");
-         PrintString(theEnv,WERROR,name);
-         PrintString(theEnv,WERROR," as a top level command.\n");
          ReturnExpression(theEnv,top);
          return NULL;
         }
-#endif
-
-      nextOne = GenConstant(theEnv,INTEGER_TYPE,theToken.value);
      }
    else
      {
@@ -2320,8 +2315,6 @@ static struct expr *ModAndDupParse(
       return NULL;
      }
 
-   nextOne->nextArg = NULL;
-   nextOne->argList = NULL;
    top->argList = nextOne;
    nextOne = top->argList;
 
@@ -2439,7 +2432,7 @@ static struct expr *ModAndDupParse(
    /* Return the parsed modify/duplicate expression. */
    /*================================================*/
 
-   return(top);
+   return top;
   }
 
 #endif /* DEFTEMPLATE_CONSTRUCT */

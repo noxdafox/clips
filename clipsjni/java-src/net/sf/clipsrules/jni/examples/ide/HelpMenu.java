@@ -120,7 +120,7 @@ public class HelpMenu extends JMenu
    public void openOnlineExamples()
      {
       try
-        { openWebpage(new URL("https://sourceforge.net/p/clipsrules/code/HEAD/tree/examples/")); }
+        { openWebpage(new URL("https://sourceforge.net/p/clipsrules/code/HEAD/tree/branches/64x/examples/")); }
       catch (Exception e)
         { e.printStackTrace(); }
      }

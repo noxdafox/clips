@@ -79,13 +79,13 @@
 
 (defrule put-chest-on-floor "" 
   (goal-is-to (action unlock) (target ?chest))
-  ?monkey <- (monkey (holding ?chest))
+  ?monkey <- (monkey (location ?place) (on-top-of ?on) (holding ?chest))
   ?thing <- (thing (name ?chest))
   =>
   (println "Monkey throws the " ?chest " off the " 
-           ?monkey:on-top-of " onto the floor.")
+           ?on " onto the floor.")
   (modify ?monkey (holding blank))
-  (modify ?thing (location ?monkey:location) (on-top-of floor)))
+  (modify ?thing (location ?place) (on-top-of floor)))
 
 (defrule get-key-to-unlock "" 
   (goal-is-to (action unlock) (target ?obj))
@@ -107,13 +107,13 @@
 
 (defrule unlock-chest-with-key "" 
   ?goal <- (goal-is-to (action unlock) (target ?name))
-  ?chest <- (chest (name ?name) (unlocked-by ?key))
+  ?chest <- (chest (name ?name) (contents ?contents) (unlocked-by ?key))
   (thing (name ?name) (location ?place) (on-top-of ?on))
   (monkey (location ?place) (on-top-of ?on) (holding ?key))
   =>
   (println "Monkey opens the " ?name " with the " ?key 
-           " revealing the " ?chest:contents ".")
-  (assert (thing (name ?chest:contents) (location ?place) (on-top-of ?name)))
+           " revealing the " ?contents ".")
+  (assert (thing (name ?contents) (location ?place) (on-top-of ?name)))
   (modify ?chest (contents nothing))
   (retract ?goal))
 
@@ -194,12 +194,14 @@
 
 (defrule drop-object ""  
   ?goal <- (goal-is-to (action hold) (target blank))
-  ?monkey <- (monkey (holding ?name&~blank))
+  ?monkey <- (monkey (location ?place) 
+                     (on-top-of ?on) 
+                     (holding ?name&~blank))
   ?thing <- (thing (name ?name))
   =>
   (println "Monkey drops the " ?name ".")
   (modify ?monkey (holding blank))
-  (modify ?thing (location ?monkey:location) (on-top-of ?monkey:on-top-of))
+  (modify ?thing (location ?place) (on-top-of ?on))
   (retract ?goal))
 
 ;;;*********************

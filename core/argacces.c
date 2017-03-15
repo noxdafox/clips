@@ -383,16 +383,16 @@ void ExpectedTypeError2(
   const char *functionName,
   int whichArg)
   {
+   unsigned theRestriction;
    struct functionDefinition *theFunction;
-   const char *theType;
 
    theFunction = FindFunction(theEnv,functionName);
 
    if (theFunction == NULL) return;
 
-   theType = GetArgumentTypeName(GetNthRestriction(theFunction,whichArg));
-
-   ExpectedTypeError1(theEnv,functionName,whichArg,theType);
+   theRestriction = GetNthRestriction(theEnv,theFunction,whichArg);
+   ExpectedTypeError0(theEnv,functionName,whichArg);
+   PrintTypesString(theEnv,WERROR,theRestriction,true);
   }
 
 /***************************************************/

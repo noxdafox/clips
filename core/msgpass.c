@@ -169,7 +169,7 @@ void Send(
    bool error;
    Expression *iexp;
    CLIPSLexeme *msym;
-   GCBlock gcb;
+   // TBD GCBlock gcb;
    UDFValue result;
 
    if ((UtilityData(theEnv)->CurrentGarbageFrame->topLevel) &&
